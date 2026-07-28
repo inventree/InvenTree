@@ -16,6 +16,17 @@ Search results are organized by category (e.g. Parts, Stock, Manufacturing, etc.
 
 To navigate to the detail page for a particular search result, simply click on the desired result from the search results list. This will take you directly to the relevant page within the InvenTree system, allowing you to view and interact with the specific item or information you were searching for.
 
+### Preview Panel
+
+Instead of navigating directly to a result's detail page, search results can be configured to open in the [preview panel](./preview_panels.md), keeping the global search menu open behind it.
+
+To enable this behavior, both of the following user settings must be enabled, found in the *Search* tab of the [user settings](../../settings/user.md) page:
+
+- **Table Preview Panel** - enables the preview panel feature generally
+- **Search Results Preview Panel** - enables the preview panel specifically for global search results
+
+With both settings enabled, clicking on a search result opens the preview drawer instead of navigating away. As with other preview panel usages, hold `Ctrl` (or `Cmd` on macOS) while clicking, or middle-click, to bypass the preview and navigate directly to the detail page.
+
 ### Full Results
 
 The "global search" menu provides a limited set of search results for each category, typically showing the most relevant or recent results. To view the full set of search results for a particular category, click on the "View all results" button located at the top-left of the search results list for that category:

@@ -2762,6 +2762,25 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
             # The annotated quantity must also match the part.on_order quantity
             self.assertEqual(on_order, p.on_order)
 
+        # Test the 'on_order' filter
+        response = self.get(
+            reverse('api-part-list'),
+            {'category': paint.pk, 'on_order': True},
+            expected_code=200,
+        )
+
+        for item in response.data:
+            self.assertGreater(item['ordering'], 0)
+
+        response = self.get(
+            reverse('api-part-list'),
+            {'category': paint.pk, 'on_order': False},
+            expected_code=200,
+        )
+
+        for item in response.data:
+            self.assertLessEqual(item['ordering'], 0)
+
     def test_building(self):
         """Test the 'building' quantity annotations."""
         # Create a new "buildable" part

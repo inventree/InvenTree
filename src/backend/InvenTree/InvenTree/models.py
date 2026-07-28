@@ -75,6 +75,14 @@ class DiffMixin:
             if field.name == 'id':
                 continue
 
+            if field.is_relation:
+                # Compare the raw FK id first (no query) - only dereference to the
+                # full related object (one query each side) if it actually differs.
+                # In the common case (unchanged FK) this avoids two full-object
+                # fetches per relational field for every single save() call.
+                if getattr(self, field.attname) == getattr(db_instance, field.attname):
+                    continue
+
             if getattr(self, field.name) != getattr(db_instance, field.name):
                 deltas[field.name] = {
                     'old': getattr(db_instance, field.name),

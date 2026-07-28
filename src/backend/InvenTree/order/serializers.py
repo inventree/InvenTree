@@ -745,6 +745,14 @@ class PurchaseOrderLineItemSerializer(
         write_only=True,
     )
 
+    def __init__(self, *args, **kwargs):
+        """Set dynamic defaults for create-only fields."""
+        super().__init__(*args, **kwargs)
+
+        self.fields['merge_items'].default = get_global_setting(
+            'PURCHASEORDER_MERGE_LINE_ITEMS', backup_value=True
+        )
+
     sku = serializers.CharField(
         source='part.SKU', read_only=True, allow_null=True, label=_('SKU')
     )
@@ -1982,10 +1990,20 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
 
         with transaction.atomic():
             for entry in items:
+                stock_item = entry.get('stock_item')
+
+                # Lock the StockItem row, so that concurrent allocation requests are
+                # serialized against each other, and full_clean() below re-validates
+                # against the now-current (and now-locked) allocation counts
+                if not stock_item.lock_quantity():
+                    raise ValidationError({
+                        'stock_item': _('Stock item no longer exists')
+                    })
+
                 # Create a new SalesOrderAllocation
                 allocation = order.models.SalesOrderAllocation(
                     line=entry.get('line_item'),
-                    item=entry.get('stock_item'),
+                    item=stock_item,
                     quantity=entry.get('quantity'),
                     shipment=shipment,
                 )
@@ -2825,10 +2843,20 @@ class TransferOrderLineItemAllocationSerializer(serializers.Serializer):
 
         with transaction.atomic():
             for entry in items:
+                stock_item = entry.get('stock_item')
+
+                # Lock the StockItem row, so that concurrent allocation requests are
+                # serialized against each other, and full_clean() below re-validates
+                # against the now-current (and now-locked) allocation counts
+                if not stock_item.lock_quantity():
+                    raise ValidationError({
+                        'stock_item': _('Stock item no longer exists')
+                    })
+
                 # Create a new TransferOrderAllocation
                 allocation = order.models.TransferOrderAllocation(
                     line=entry.get('line_item'),
-                    item=entry.get('stock_item'),
+                    item=stock_item,
                     quantity=entry.get('quantity'),
                 )
 
@@ -2962,8 +2990,10 @@ class TransferOrderSerialAllocationSerializer(serializers.Serializer):
         """Validation for the serializer.
 
         - Ensure the serial_numbers and quantity fields match
-        - Check that all serial numbers exist
-        - Check that the serial numbers are not yet allocated
+
+        Note: Resolving serial numbers to StockItem objects (and checking their
+        availability) is deferred to save(), where it can be done under a
+        database lock - see save() for details.
         """
         data = super().validate(data)
 
@@ -2980,11 +3010,29 @@ class TransferOrderSerialAllocationSerializer(serializers.Serializer):
         except DjangoValidationError as e:
             raise ValidationError({'serial_numbers': e.messages})
 
+        return data
+
+    @transaction.atomic
+    def save(self):
+        """Allocate stock items against the transfer order.
+
+        Stock items are resolved from the requested serial numbers, and locked
+        (select_for_update, via StockItem.lock_quantity()) before their
+        availability is checked - this serializes concurrent allocation requests
+        against each other, so two requests cannot both allocate the same
+        serialized StockItem.
+        """
+        data = self.validated_data
+
+        line_item = data['line_item']
+        serials = data['serials']
+        part = line_item.part
+
         serials_not_exist = set()
         serials_unavailable = set()
-        stock_items_to_allocate = []
+        allocations = []
 
-        for serial in data['serials']:
+        for serial in serials:
             serial = str(serial).strip()
 
             items = stock.models.StockItem.objects.filter(
@@ -3001,12 +3049,20 @@ class TransferOrderSerialAllocationSerializer(serializers.Serializer):
                 serials_unavailable.add(str(serial))
                 continue
 
+            if not stock_item.lock_quantity():
+                serials_unavailable.add(str(serial))
+                continue
+
             if stock_item.unallocated_quantity() < 1:
                 serials_unavailable.add(str(serial))
                 continue
 
             # At this point, the serial number is valid, and can be added to the list
-            stock_items_to_allocate.append(stock_item)
+            allocations.append(
+                order.models.TransferOrderAllocation(
+                    line=line_item, item=stock_item, quantity=1
+                )
+            )
 
         if len(serials_not_exist) > 0:
             error_msg = _('No match found for the following serial numbers')
@@ -3022,26 +3078,4 @@ class TransferOrderSerialAllocationSerializer(serializers.Serializer):
 
             raise ValidationError({'serial_numbers': error_msg})
 
-        data['stock_items'] = stock_items_to_allocate
-
-        return data
-
-    def save(self):
-        """Allocate stock items against the transfer order."""
-        data = self.validated_data
-
-        line_item = data['line_item']
-        stock_items = data['stock_items']
-
-        allocations = []
-
-        for stock_item in stock_items:
-            # Create a new TransferOrderAllocation
-            allocations.append(
-                order.models.TransferOrderAllocation(
-                    line=line_item, item=stock_item, quantity=1
-                )
-            )
-
-        with transaction.atomic():
-            order.models.TransferOrderAllocation.objects.bulk_create(allocations)
+        order.models.TransferOrderAllocation.objects.bulk_create(allocations)

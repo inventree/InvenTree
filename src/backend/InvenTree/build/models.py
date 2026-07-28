@@ -1599,6 +1599,11 @@ class Build(
             )
         }
 
+        # Net additional quantity being requested against each StockItem by this call
+        # (regardless of whether it lands in a new or an existing BuildItem row)
+        requested = {}
+        stock_items = {}
+
         for item in items:
             build_line = item['build_line']
             stock_item = item['stock_item']
@@ -1627,6 +1632,49 @@ class Build(
             else:
                 # This is a new BuildItem
                 to_create[key] = BuildItem(quantity=quantity, **filters)
+
+            stock_items[stock_item.pk] = stock_item
+            requested[stock_item.pk] = requested.get(stock_item.pk, 0) + quantity
+
+        # Lock each referenced StockItem (in a consistent order, to avoid deadlocks
+        # against other allocation requests touching an overlapping set of items),
+        # and re-validate that the requested allocation still fits within the
+        # (now-locked, now-current) unallocated quantity of each item.
+        #
+        # Both the locking and the allocated-quantity lookup are done in bulk (rather
+        # than one query per StockItem) - critical for keeping the query count bounded
+        # when a single request references a large number of stock items.
+        pks = sorted(requested.keys())
+
+        locked_quantities = dict(
+            stock.models.StockItem.objects
+            .select_for_update()
+            .filter(pk__in=pks)
+            .order_by('pk')
+            .values_list('pk', 'quantity')
+        )
+
+        if len(locked_quantities) != len(pks):
+            raise ValidationError({'stock_item': _('Stock item no longer exists')})
+
+        allocated_quantities = stock.models.StockItem.bulk_allocation_count(
+            stock_items.values()
+        )
+
+        for pk in pks:
+            stock_item = stock_items[pk]
+            stock_item.quantity = locked_quantities[pk]
+
+            available = max(
+                stock_item.quantity - allocated_quantities.get(pk, decimal.Decimal(0)),
+                decimal.Decimal(0),
+            )
+
+            if requested[pk] > available:
+                q = InvenTree.helpers.clean_decimal(available)
+                raise ValidationError({
+                    'quantity': _(f'Available quantity ({q}) exceeded')
+                })
 
         BuildItem.objects.bulk_create(to_create.values(), batch_size=250)
         BuildItem.objects.bulk_update(to_update.values(), ['quantity'], batch_size=250)
