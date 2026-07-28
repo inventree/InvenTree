@@ -1640,13 +1640,35 @@ class Build(
         # against other allocation requests touching an overlapping set of items),
         # and re-validate that the requested allocation still fits within the
         # (now-locked, now-current) unallocated quantity of each item.
-        for pk in sorted(requested.keys()):
+        #
+        # Both the locking and the allocated-quantity lookup are done in bulk (rather
+        # than one query per StockItem) - critical for keeping the query count bounded
+        # when a single request references a large number of stock items.
+        pks = sorted(requested.keys())
+
+        locked_quantities = dict(
+            stock.models.StockItem.objects
+            .select_for_update()
+            .filter(pk__in=pks)
+            .order_by('pk')
+            .values_list('pk', 'quantity')
+        )
+
+        if len(locked_quantities) != len(pks):
+            raise ValidationError({'stock_item': _('Stock item no longer exists')})
+
+        allocated_quantities = stock.models.StockItem.bulk_allocation_count(
+            stock_items.values()
+        )
+
+        for pk in pks:
             stock_item = stock_items[pk]
+            stock_item.quantity = locked_quantities[pk]
 
-            if not stock_item.lock_quantity():
-                raise ValidationError({'stock_item': _('Stock item no longer exists')})
-
-            available = stock_item.unallocated_quantity()
+            available = max(
+                stock_item.quantity - allocated_quantities.get(pk, decimal.Decimal(0)),
+                decimal.Decimal(0),
+            )
 
             if requested[pk] > available:
                 q = InvenTree.helpers.clean_decimal(available)
