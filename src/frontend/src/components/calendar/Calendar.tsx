@@ -52,7 +52,7 @@ import {
 import type { CalendarState } from '../../hooks/UseCalendar';
 import { useLocalState } from '../../states/LocalState';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
-import { FilterSelectDrawer } from '../../tables/FilterSelectDrawer';
+import { FilterSelectDrawer } from '../tables/FilterSelectDrawer';
 
 export interface InvenTreeCalendarProps extends CalendarOptions {
   enableDownload?: boolean;

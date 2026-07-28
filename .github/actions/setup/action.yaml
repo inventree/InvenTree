@@ -39,14 +39,14 @@ runs:
     using: 'composite'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
 
       # Python installs
       - name: Set up Python ${{ env.python_version }}
         if: ${{ inputs.python == 'true' && env.python_version != '3.14' }}
-        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # pin@v5.0.0
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: ${{ env.python_version }}
           cache: pip
@@ -57,7 +57,7 @@ runs:
             contrib/dev_reqs/requirements.txt
       - name: Setup Python 3.14
         if: ${{ inputs.python == 'true' && env.python_version == '3.14' }}
-        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # pin@v5.0.0
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: ${{ env.python_version }}
       - name: Install Base Python Dependencies

@@ -148,3 +148,4 @@ The following [global settings](../settings/global.md) are available for transfe
 {{ globalsetting("TRANSFERORDER_ENABLED") }}
 {{ globalsetting("TRANSFERORDER_REFERENCE_PATTERN") }}
 {{ globalsetting("TRANSFERORDER_REQUIRE_RESPONSIBLE") }}
+{{ globalsetting("TRANSFERORDER_EDIT_COMPLETED_ORDERS") }}

@@ -17,7 +17,10 @@ export type InvenTreeHotkeyItem = [
   HotkeyItemOptions?
 ];
 
-export function useInvenTreeHotkeys(_keys: InvenTreeHotkeyItem[]) {
+export function useInvenTreeHotkeys(
+  _keys: InvenTreeHotkeyItem[],
+  tagsToIgnore?: string[]
+) {
   const keyelems: [string, string][] = _keys.map(([key, description]) => [
     key,
     description
@@ -29,7 +32,7 @@ export function useInvenTreeHotkeys(_keys: InvenTreeHotkeyItem[]) {
     HotkeyItemOptions?
   ][] = _keys.map(([key, _, handler, options]) => [key, handler, options]);
   // Register the hotkeys using the Mantine hook
-  useHotkeys(mappedHotkeys);
+  useHotkeys(mappedHotkeys, tagsToIgnore);
 
   // register to helper state to store hotkeys
   // This allows us to display the hotkeys in the UI

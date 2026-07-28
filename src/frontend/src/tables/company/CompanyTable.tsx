@@ -8,22 +8,24 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { navigateToLink } from '@lib/functions/Navigation';
+import { eventModified, navigateToLink } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
+import {
+  BooleanColumn,
+  CompanyColumn,
+  DescriptionColumn
+} from '../../components/tables/ColumnRenderers';
+import { TagsFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { companyFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { usePreviewDrawerState } from '../../states/PreviewDrawerState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import {
-  BooleanColumn,
-  CompanyColumn,
-  DescriptionColumn
-} from '../ColumnRenderers';
-import { TagsFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * A table which displays a list of company records,
@@ -49,6 +51,12 @@ export function CompanyTable({
 
   const navigate = useNavigate();
   const user = useUserState();
+  const previewDrawer = usePreviewDrawerState();
+  const userSettings = useUserSettingsState();
+
+  const showPreviewPanel = useMemo(() => {
+    return userSettings.isSet('ENABLE_PREVIEW_PANEL');
+  }, [userSettings]);
 
   const columns = useMemo(() => {
     return [
@@ -166,10 +174,20 @@ export function CompanyTable({
           params: {
             ...params
           },
-          onRowClick: (record: any, index: number, event: any) => {
-            if (record.pk) {
-              const base = path ?? 'company';
-              navigateToLink(`/${base}/${record.pk}`, navigate, event);
+          onRowClick: (record: any, _index: number, event: any) => {
+            if (!record.pk) return;
+            const url = `/${path ?? 'company'}/${record.pk}`;
+            if (!showPreviewPanel || eventModified(event as any)) {
+              navigateToLink(url, navigate, event);
+            } else {
+              previewDrawer.openPreview(
+                ModelType.company,
+                Number(record.pk),
+                undefined,
+                undefined,
+                undefined,
+                url
+              );
             }
           },
           modelType: ModelType.company,

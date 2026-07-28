@@ -33,7 +33,7 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
         }
 
         let preview = await api.post(
-          printingUrl,
+          printingUrl!,
           {
             items: [previewItem],
             template: template.pk

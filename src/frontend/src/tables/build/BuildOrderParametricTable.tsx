@@ -3,12 +3,12 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useMemo } from 'react';
-import { useGlobalSettingsState } from '../../states/SettingsStates';
 import {
   DescriptionColumn,
   PartColumn,
   ReferenceColumn
-} from '../ColumnRenderers';
+} from '../../components/tables/ColumnRenderers';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import ParametricDataTable from '../general/ParametricDataTable';
 import BuildOrderFilters from './BuildOrderFilters';
 

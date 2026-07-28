@@ -491,7 +491,7 @@ class ProjectCodeList(DataExportViewMixin, ListCreateAPI):
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = ['code']
-
+    filterset_fields = ['active']
     search_fields = ['code', 'description']
 
 
@@ -877,7 +877,7 @@ class ParameterTemplateFilter(FilterSet):
         """Metaclass options."""
 
         model = common.models.ParameterTemplate
-        fields = ['name', 'units', 'checkbox', 'enabled']
+        fields = ['name', 'units', 'checkbox', 'enabled', 'unique']
 
     has_choices = rest_filters.BooleanFilter(
         method='filter_has_choices', label='Has Choice'

@@ -24,7 +24,7 @@ import {
   TargetDateBeforeFilter,
   UpdatedAfterFilter,
   UpdatedBeforeFilter
-} from '../Filter';
+} from '../../components/tables/Filter';
 
 export default function PurchaseOrderFilters({
   includeDateFilters = true

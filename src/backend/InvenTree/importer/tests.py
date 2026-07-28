@@ -77,6 +77,80 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
         # Check that the new companies have been created
         self.assertEqual(n + 12, Company.objects.count())
 
+    def test_import_header_whitespace(self):
+        """Test that column headers with leading/trailing whitespace are handled correctly.
+
+        Regression test: column mappings are built from *stripped* header names, but
+        row data was previously extracted using the *raw* (unstripped) headers. If a
+        header had surrounding whitespace, the mapped column name would never match a
+        key in the row data, so that field was silently skipped during import.
+        """
+        from company.models import Company
+
+        n = Company.objects.count()
+
+        # Pad each header in the source file with extra whitespace
+        raw = self.helper_file('companies.csv').read()
+        lines = raw.splitlines()
+        headers = [f'  {header}  ' for header in lines[0].split(',')]
+        padded_data = '\n'.join([','.join(headers), *lines[1:]])
+
+        data_file = ContentFile(padded_data, 'companies_whitespace.csv')
+
+        session = DataImportSession.objects.create(
+            data_file=data_file, model_type='company'
+        )
+
+        session.extract_columns()
+
+        # Extracted column names should have whitespace stripped
+        for col in session.columns:
+            self.assertEqual(col, col.strip())
+
+        # Field mappings should be created correctly, against the *stripped* names
+        for field, col in [
+            ('website', 'Website'),
+            ('is_customer', 'Is customer'),
+            ('phone', 'Phone number'),
+            ('description', 'Company description'),
+            ('active', 'Active'),
+        ]:
+            self.assertTrue(
+                session.column_mappings.filter(field=field, column=col).exists()
+            )
+
+        # Run the data import
+        session.import_data()
+        self.assertEqual(session.rows.count(), 12)
+
+        rows = list(session.rows.all())
+
+        # Row data keys must be stripped, to match the mapped column names
+        for row in rows:
+            for key in row.row_data:
+                self.assertEqual(key, key.strip())
+
+        # Find the 'Arrow' row, and check that mapped fields were actually extracted
+        arrow_row = next(row for row in rows if row.data.get('name') == 'Arrow')
+        self.assertEqual(arrow_row.data.get('website'), 'https://www.arrow.com/')
+        self.assertEqual(arrow_row.data.get('description'), 'Arrow Electronics')
+        self.assertEqual(arrow_row.data.get('is_customer'), False)
+
+        for row in rows:
+            self.assertIsNotNone(row.data.get('name', None))
+            self.assertTrue(row.valid)
+
+            row.validate(commit=True)
+            self.assertTrue(row.complete)
+
+        # All rows accepted: rows and mappings are cleared, session is retained
+        session.refresh_from_db()
+        self.assertEqual(session.rows.count(), 0)
+        self.assertEqual(session.column_mappings.count(), 0)
+
+        # Check that the new companies have been created
+        self.assertEqual(n + 12, Company.objects.count())
+
     def test_field_defaults(self):
         """Test default field values."""
 

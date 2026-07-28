@@ -15,6 +15,15 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import {
+  CompanyColumn,
+  DescriptionColumn,
+  IPNColumn,
+  LinkColumn,
+  PartColumn
+} from '../../components/tables/ColumnRenderers';
+import { TagsFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -22,15 +31,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import {
-  CompanyColumn,
-  DescriptionColumn,
-  IPNColumn,
-  LinkColumn,
-  PartColumn
-} from '../ColumnRenderers';
-import { TagsFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
  * Construct a table listing manufacturer parts
@@ -133,10 +133,14 @@ export function ManufacturerPartTable({
     table: table
   });
 
+  const duplicateManufacturerPartFields = useManufacturerPartFields({
+    duplicateManufacturerPartId: selectedPart?.pk
+  });
+
   const duplicateManufacturerPart = useCreateApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
     title: t`Add Manufacturer Part`,
-    fields: useMemo(() => manufacturerPartFields, [manufacturerPartFields]),
+    fields: duplicateManufacturerPartFields,
     table: table,
     initialData: {
       ...selectedPart

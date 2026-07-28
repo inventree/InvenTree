@@ -113,10 +113,10 @@ Refer to the [sample plugins]({{ sourcedir("src/backend/InvenTree/plugin/samples
 
 A *PluginConfig* database entry will be created for each plugin "discovered" when the server launches. This configuration entry is used to determine if a particular plugin is enabled.
 
-The configuration entries must be enabled via the [InvenTree admin interface](../settings/admin.md).
+The configuration entries must be enabled via the [Admin Center](../settings/admin.md#admin-center).
 
 !!! warning "Disabled by Default"
-    Newly discovered plugins are disabled by default, and must be manually enabled (in the admin interface) by a user with staff privileges.
+    Newly discovered plugins are disabled by default, and must be manually enabled (in the Admin Center) by a user with staff privileges.
 
 ## Plugin Mixins
 

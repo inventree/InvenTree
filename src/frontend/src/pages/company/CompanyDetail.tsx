@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconInfoCircle,
@@ -17,20 +17,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
-import { apiUrl } from '@lib/functions/Api';
-import { TagsList } from '@lib/index';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import {
-  type DetailsField,
-  DetailsTable
-} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
-import { DetailsImage } from '../../components/details/DetailsImage';
-import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   DeleteItemAction,
+  DuplicateItemAction,
   EditItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
@@ -43,6 +36,7 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
 import { companyFields } from '../../forms/CompanyForms';
 import {
+  useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
@@ -56,6 +50,7 @@ import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import { CompanyDetailsPanel } from './CompanyDetailsPanel';
 
 export type CompanyDetailProps = {
   title: string;
@@ -85,101 +80,15 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     refetchOnMount: true
   });
 
-  const detailsPanel = useMemo(() => {
-    if (instanceQuery.isFetching) {
-      return <Skeleton />;
-    }
-
-    const tl: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'description',
-        label: t`Description`,
-        copy: true
-      },
-      {
-        type: 'link',
-        name: 'website',
-        label: t`Website`,
-        external: true,
-        copy: true,
-        hidden: !company.website
-      },
-      {
-        type: 'text',
-        name: 'phone',
-        label: t`Phone Number`,
-        copy: true,
-        hidden: !company.phone
-      },
-      {
-        type: 'text',
-        name: 'email',
-        label: t`Email Address`,
-        copy: true,
-        hidden: !company.email
-      },
-      {
-        type: 'text',
-        name: 'tax_id',
-        label: t`Tax ID`,
-        copy: true,
-        hidden: !company.tax_id
-      }
-    ];
-
-    const tr: DetailsField[] = [
-      {
-        type: 'string',
-        name: 'currency',
-        label: t`Default Currency`
-      },
-      {
-        type: 'boolean',
-        name: 'is_supplier',
-        label: t`Supplier`,
-        icon: 'suppliers'
-      },
-      {
-        type: 'boolean',
-        name: 'is_manufacturer',
-        label: t`Manufacturer`,
-        icon: 'manufacturers'
-      },
-      {
-        type: 'boolean',
-        name: 'is_customer',
-        label: t`Customer`,
-        icon: 'customers'
-      }
-    ];
-
-    return (
-      <ItemDetailsGrid>
-        <Stack gap='xs'>
-          <Grid grow>
-            <DetailsImage
-              appRole={UserRoles.purchase_order}
-              apiPath={apiUrl(ApiEndpoints.company_list, company.pk)}
-              src={company.image}
-              pk={company.pk}
-              refresh={refreshInstance}
-              imageActions={{
-                uploadFile: true,
-                downloadImage: true,
-                deleteFile: true
-              }}
-            />
-            <Grid.Col span={{ base: 12, sm: 8 }}>
-              <DetailsTable item={company} fields={tl} />
-            </Grid.Col>
-          </Grid>
-          <TagsList tags={company.tags} />
-        </Stack>
-        <DetailsTable item={company} fields={tr} />
-      </ItemDetailsGrid>
-    );
-  }, [company, instanceQuery]);
+  const detailsPanel = instanceQuery.isFetching ? (
+    <Skeleton />
+  ) : (
+    <CompanyDetailsPanel
+      instance={company}
+      allowImageEdit
+      refreshInstance={refreshInstance}
+    />
+  );
 
   const companyPanels: PanelType[] = useMemo(() => {
     return [
@@ -293,9 +202,21 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     url: ApiEndpoints.company_list,
     pk: company?.pk,
     title: t`Edit Company`,
-    fields: companyFields(),
+    fields: useMemo(() => companyFields({}), []),
     queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
+  });
+
+  const duplicateCompany = useCreateApiFormModal({
+    url: ApiEndpoints.company_list,
+    title: t`Duplicate Company`,
+    initialData: useMemo(() => ({ ...company }), [company]),
+    fields: useMemo(
+      () => companyFields({ duplicateCompanyId: company?.pk }),
+      [company]
+    ),
+    follow: true,
+    modelType: ModelType.company
   });
 
   const deleteCompany = useDeleteApiFormModal({
@@ -322,6 +243,10 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             hidden: !user.hasChangeRole(UserRoles.purchase_order),
             onClick: () => editCompany.open()
           }),
+          DuplicateItemAction({
+            hidden: !user.hasAddRole(UserRoles.purchase_order),
+            onClick: () => duplicateCompany.open()
+          }),
           DeleteItemAction({
             hidden: !user.hasDeleteRole(UserRoles.purchase_order),
             onClick: () => deleteCompany.open()
@@ -345,6 +270,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     <>
       {editCompany.modal}
       {deleteCompany.modal}
+      {duplicateCompany.modal}
       <InstanceDetail
         query={instanceQuery}
         requiredPermission={ModelType.company}

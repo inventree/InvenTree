@@ -3,7 +3,11 @@ import { ModelType } from '@lib/enums/ModelType';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { useMemo } from 'react';
-import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
+import {
+  DescriptionColumn,
+  PartColumn
+} from '../../components/tables/ColumnRenderers';
+import { renderPartStockCell } from '../../components/tables/PartStockCell';
 import ParametricDataTable from '../general/ParametricDataTable';
 import { PartTableFilters } from './PartTableFilters';
 
@@ -30,7 +34,8 @@ export default function ParametricPartTable({
       },
       {
         accessor: 'total_in_stock',
-        sortable: true
+        sortable: true,
+        render: renderPartStockCell
       }
     ];
   }, []);

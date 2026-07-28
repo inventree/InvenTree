@@ -4,7 +4,7 @@ import type { TableColumn } from '@lib/types/Tables';
 import { Group } from '@mantine/core';
 import { type ReactNode, useMemo } from 'react';
 import { ApiIcon } from '../../components/items/ApiIcon';
-import { DescriptionColumn } from '../ColumnRenderers';
+import { DescriptionColumn } from '../../components/tables/ColumnRenderers';
 import ParametricDataTable from '../general/ParametricDataTable';
 
 export default function StockLocationParametricTable({

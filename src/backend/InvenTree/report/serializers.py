@@ -37,9 +37,7 @@ class ReportSerializerBase(InvenTreeModelSerializer):
                 _('User must be authenticated to save report templates')
             )
 
-        instance = super().save(**kwargs)
-        instance.updated_by = user
-        instance.save(increment_revision=False)
+        instance = super().save(updated_by=user, **kwargs)
 
         return instance
 

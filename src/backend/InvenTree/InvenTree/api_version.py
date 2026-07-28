@@ -1,10 +1,67 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 512
+INVENTREE_API_VERSION = 529
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v529 -> 2026-07-26 : https://github.com/inventree/InvenTree/pull/12471
+    - Adds "on_order" filter to the Part API
+    - Enable sorting by "ordering" quantity on the Part API endpoint
+
+v528 -> 2026-07-26 : https://github.com/inventree/InvenTree/pull/12469
+    - Additional ordering options for SalesOrderAllocation API endpoint
+
+v527 -> 2026-07-24 : https://github.com/inventree/InvenTree/pull/12454
+    - Extend API with dedicated login-by-code re-send endpoint
+
+v526 -> 2026-07-24 : https://github.com/inventree/InvenTree/pull/12463
+    - Fix for data export on SalesOrderAllocation API endpoint
+
+v525 -> 2026-07-20 : https://github.com/inventree/InvenTree/pull/12409
+    - Type clarifications for some fields; no functional changes
+
+v524 -> 2026-07-20 : https://github.com/inventree/InvenTree/pull/12393
+    - Adds "discount" field to order line items (and extra line items)
+
+v523 -> 2026-07-14 : https://github.com/inventree/InvenTree/pull/12391
+    - Adds "bulk delete" support for order line item API endpoints (PurchaseOrder / SalesOrder / ReturnOrder / TransferOrder)
+    - Adds "bulk delete" support for order extra line item API endpoints
+    - Completed TransferOrder objects are now "locked" (controlled by the new TRANSFERORDER_EDIT_COMPLETED_ORDERS global setting)
+
+v522 -> 2026-07-14 : https://github.com/inventree/InvenTree/pull/12388
+    - Adds "unique" field to the ParameterTemplate model
+
+v521 -> 2026-07-12 : https://github.com/inventree/InvenTree/pull/12360
+    - Removes the MPTT mixin from the StockItem model, and removes the self-referential tree structure from the database.
+
+v520 -> 2026-07-11 : https://github.com/inventree/InvenTree/pull/12310
+    - Adds new "disassemble" API endpoint for stock items
+    - Allows a stock item to be broken down into component parts, based on its Bill of Materials
+
+v519 -> 2026-07-09 : https://github.com/inventree/InvenTree/pull/TODO
+    - Adds optional "roles" and "permissions" fields to the /user/me/ API endpoint, via the "?roles=true" query parameter
+
+v518 -> 2026-07-09 : https://github.com/inventree/InvenTree/pull/12341
+    - Enable import of internal part prices via the API
+
+v517 -> 2026-07-08 : https://github.com/inventree/InvenTree/pull/12336
+    - Fix currency code options for the PartPricing  model and API endpoints
+
+v516 -> 2026-07-03 : https://github.com/inventree/InvenTree/pull/12295
+    - Adds "consumable" field to the Part model and API endpoints
+
+v515 -> 2026-07-03 : https://github.com/inventree/InvenTree/pull/12298
+    - Change the file fields definition to binary (from uri) in the upload requests
+
+v514 -> 2026-07-02 : https://github.com/inventree/InvenTree/pull/12294
+    - Adds "duplicate" field to the BuildOrder, Company, ManufacturerPart, SupplierPart and SalesOrderShipment API endpoints
+    - Order duplication options: renames "order_id" field to "original", which now performs primary-key validation
+    - Part duplication options: renames "part" field to "original"
+
+v513 -> 2026-06-25 : https://github.com/inventree/InvenTree/pull/12250
+    - Adds "active" field to the ProjectCode model and API endpoints
 
 v512 -> 2026-06-20 : https://github.com/inventree/InvenTree/pull/12022
     - Adds optional "merge" field to each item in the Stock Transfer API endpoint

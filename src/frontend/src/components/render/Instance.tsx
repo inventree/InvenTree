@@ -17,11 +17,10 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo } from 'react';
 
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import { ModelType } from '@lib/enums/ModelType';
+import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type {
   InstanceRenderInterface,
-  ModelRendererDict,
   RemoteInstanceProps,
   RenderInlineModelProps,
   RenderInstanceProps
@@ -31,115 +30,20 @@ export type { InstanceRenderInterface } from '@lib/types/Rendering';
 import {
   getBaseUrl,
   getDetailUrl,
-  navigateToLink,
-  shortenString
-} from '@lib/index';
+  navigateToLink
+} from '@lib/functions/Navigation';
+import { shortenString } from '@lib/functions/String';
 import { IconLink } from '@tabler/icons-react';
 import { useApi } from '../../contexts/ApiContext';
 import { usePluginState } from '../../states/PluginState';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { Thumbnail } from '../images/Thumbnail';
-import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
-import {
-  RenderAddress,
-  RenderCompany,
-  RenderContact,
-  RenderManufacturerPart,
-  RenderSupplierPart
-} from './Company';
-import {
-  RenderContentType,
-  RenderError,
-  RenderImportSession,
-  RenderParameter,
-  RenderParameterTemplate,
-  RenderProjectCode,
-  RenderSelectionEntry,
-  RenderSelectionList,
-  RenderTag
-} from './Generic';
-import {
-  RenderPurchaseOrder,
-  RenderReturnOrder,
-  RenderReturnOrderLineItem,
-  RenderSalesOrder,
-  RenderSalesOrderShipment,
-  RenderTransferOrder,
-  RenderTransferOrderLineItem
-} from './Order';
-import { RenderPart, RenderPartCategory, RenderPartTestTemplate } from './Part';
-import { RenderPlugin } from './Plugin';
-import { RenderLabelTemplate, RenderReportTemplate } from './Report';
-import {
-  RenderStockItem,
-  RenderStockLocation,
-  RenderStockLocationType
-} from './Stock';
-import { RenderGroup, RenderOwner, RenderUser } from './User';
-
-/**
- * Lookup table for rendering a model instance
- */
-export const RendererLookup: ModelRendererDict = {
-  [ModelType.address]: RenderAddress,
-  [ModelType.build]: RenderBuildOrder,
-  [ModelType.buildline]: RenderBuildLine,
-  [ModelType.builditem]: RenderBuildItem,
-  [ModelType.company]: RenderCompany,
-  [ModelType.contact]: RenderContact,
-  [ModelType.parameter]: RenderParameter,
-  [ModelType.parametertemplate]: RenderParameterTemplate,
-  [ModelType.manufacturerpart]: RenderManufacturerPart,
-  [ModelType.owner]: RenderOwner,
-  [ModelType.part]: RenderPart,
-  [ModelType.partcategory]: RenderPartCategory,
-  [ModelType.parttesttemplate]: RenderPartTestTemplate,
-  [ModelType.projectcode]: RenderProjectCode,
-  [ModelType.purchaseorder]: RenderPurchaseOrder,
-  [ModelType.purchaseorderlineitem]: RenderPurchaseOrder,
-  [ModelType.returnorder]: RenderReturnOrder,
-  [ModelType.returnorderlineitem]: RenderReturnOrderLineItem,
-  [ModelType.salesorder]: RenderSalesOrder,
-  [ModelType.salesordershipment]: RenderSalesOrderShipment,
-  [ModelType.transferorder]: RenderTransferOrder,
-  [ModelType.transferorderlineitem]: RenderTransferOrderLineItem,
-  [ModelType.stocklocation]: RenderStockLocation,
-  [ModelType.stocklocationtype]: RenderStockLocationType,
-  [ModelType.stockitem]: RenderStockItem,
-  [ModelType.stockhistory]: RenderStockItem,
-  [ModelType.supplierpart]: RenderSupplierPart,
-  [ModelType.user]: RenderUser,
-  [ModelType.group]: RenderGroup,
-  [ModelType.importsession]: RenderImportSession,
-  [ModelType.reporttemplate]: RenderReportTemplate,
-  [ModelType.labeltemplate]: RenderLabelTemplate,
-  [ModelType.pluginconfig]: RenderPlugin,
-  [ModelType.contenttype]: RenderContentType,
-  [ModelType.selectionlist]: RenderSelectionList,
-  [ModelType.selectionentry]: RenderSelectionEntry,
-  [ModelType.error]: RenderError,
-  [ModelType.tag]: RenderTag
-};
+import './ModelRenderShim';
 
 /**
  * Render an instance of a database model, depending on the provided data
  */
 export function RenderInstance(props: RenderInstanceProps): ReactNode {
-  let RenderComponent:
-    | ((props: Readonly<InstanceRenderInterface>) => ReactNode)
-    | undefined;
-  // core model renderer
-  if (props.model !== undefined && props.custom_model === undefined) {
-    RenderComponent =
-      RendererLookup[props.model.toString().toLowerCase() as ModelType];
-  }
-  // custom model renderer (registered by a plugin) as a fallback to the core model renderer
-  RenderComponent ??= usePluginState().getRenderer(
-    props.custom_model ?? props.model ?? ''
-  );
-
-  const userSettings = useUserSettingsState();
-
   // Extract model information from the defined model type
   const modelInfo = useMemo(() => {
     if (!props.model) {
@@ -150,6 +54,22 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
       props.model.toString().toLowerCase() as ModelType
     ];
   }, [props.model]);
+
+  let RenderComponent:
+    | ((props: Readonly<InstanceRenderInterface>) => ReactNode)
+    | undefined;
+
+  // core model renderer
+  if (props.model !== undefined && props.custom_model === undefined) {
+    RenderComponent = modelInfo?.render;
+  }
+
+  // custom model renderer (registered by a plugin) as a fallback to the core model renderer
+  RenderComponent ??= usePluginState().getRenderer(
+    props.custom_model ?? props.model ?? ''
+  );
+
+  const userSettings = useUserSettingsState();
 
   const showHover: boolean = useMemo(() => {
     if (!modelInfo) {

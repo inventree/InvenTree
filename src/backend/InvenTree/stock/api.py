@@ -173,6 +173,36 @@ class StockItemConvert(StockItemContextMixin, CreateAPI):
     serializer_class = StockSerializers.ConvertStockItemSerializer
 
 
+@extend_schema(responses={201: StockSerializers.StockItemSerializer(many=True)})
+class StockItemDisassemble(StockItemContextMixin, CreateAPI):
+    """API endpoint for disassembling a stock item into its component parts.
+
+    The components are generated based on the BOM lines provided in the request,
+    which must be valid BOM lines for the part associated with the stock item.
+    """
+
+    serializer_class = StockSerializers.DisassembleStockItemSerializer
+    pagination_class = None
+
+    def create(self, request, *args, **kwargs):
+        """Disassemble the provided StockItem."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Perform the actual disassembly step
+        items = serializer.save()
+
+        queryset = StockSerializers.StockItemSerializer.annotate_queryset(
+            StockItem.objects.filter(pk__in=[item.pk for item in items])
+        )
+
+        response = StockSerializers.StockItemSerializer(
+            queryset, many=True, context=self.get_serializer_context()
+        )
+
+        return Response(response.data, status=status.HTTP_201_CREATED)
+
+
 class StockAdjustView(CreateAPI):
     """A generic class for handling stocktake actions.
 
@@ -552,6 +582,7 @@ class StockFilter(FilterSet):
         # Simple filter filters
         fields = [
             'supplier_part',
+            'parent',
             'belongs_to',
             'build',
             'customer',
@@ -880,15 +911,6 @@ class StockFilter(FilterSet):
             return queryset.exclude(purchase_price=None)
         return queryset.filter(purchase_price=None)
 
-    ancestor = rest_filters.ModelChoiceFilter(
-        label='Ancestor', queryset=StockItem.objects.all(), method='filter_ancestor'
-    )
-
-    @extend_schema_field(OpenApiTypes.INT)
-    def filter_ancestor(self, queryset, name, ancestor):
-        """Filter based on ancestor stock item."""
-        return queryset.filter(parent__in=ancestor.get_descendants(include_self=True))
-
     category = rest_filters.ModelChoiceFilter(
         label=_('Category'),
         queryset=PartCategory.objects.all(),
@@ -996,26 +1018,6 @@ class StockFilter(FilterSet):
             return queryset.filter(stale_filter)
         else:
             return queryset.exclude(stale_filter)
-
-    exclude_tree = rest_filters.NumberFilter(
-        method='filter_exclude_tree',
-        label=_('Exclude Tree'),
-        help_text=_(
-            'Provide a StockItem PK to exclude that item and all its descendants'
-        ),
-    )
-
-    def filter_exclude_tree(self, queryset, name, value):
-        """Exclude a StockItem and all of its descendants from the queryset."""
-        try:
-            root = StockItem.objects.get(pk=value)
-            pks_to_exclude = [
-                item.pk for item in root.get_descendants(include_self=True)
-            ]
-            return queryset.exclude(pk__in=pks_to_exclude)
-        except (ValueError, StockItem.DoesNotExist):
-            # If the value is invalid or the object doesn't exist, do nothing.
-            return queryset
 
     cascade = rest_filters.BooleanFilter(
         method='filter_cascade',
@@ -1771,6 +1773,11 @@ stock_api_urls = [
         '<int:pk>/',
         include([
             path('convert/', StockItemConvert.as_view(), name='api-stock-item-convert'),
+            path(
+                'disassemble/',
+                StockItemDisassemble.as_view(),
+                name='api-stock-item-disassemble',
+            ),
             path('install/', StockItemInstall.as_view(), name='api-stock-item-install'),
             meta_path(StockItem),
             path(
