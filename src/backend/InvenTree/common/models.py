@@ -1723,6 +1723,13 @@ class NotificationMessage(models.Model):
 
     message = models.CharField(max_length=250, blank=True, null=True)
 
+    link = models.URLField(
+        max_length=500,
+        blank=True,
+        null=True,
+        help_text=_('Optional explicit URL associated with this notification'),
+    )
+
     creation = models.DateTimeField(auto_now_add=True)
 
     read = models.BooleanField(default=False)
@@ -2046,9 +2053,12 @@ class Attachment(
 
     def __str__(self):
         """Human name for attachment."""
-        if self.attachment is not None:
+        if self.attachment and self.attachment.name:
             return os.path.basename(self.attachment.name)
-        return str(self.link)
+        elif self.link:
+            return str(self.link)
+        else:
+            return super().__str__()
 
     def validate_rename(self, filename: str):
         """Validate that the provided filename is valid, for renaming an attachment."""

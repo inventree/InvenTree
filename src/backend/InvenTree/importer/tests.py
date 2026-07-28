@@ -152,7 +152,47 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
         self.assertEqual(n + 12, Company.objects.count())
 
     def test_field_defaults(self):
-        """Test default field values."""
+        """Test default field values.
+
+        Regression test for bug #30 (dev/todo/bugs.md): validate_field_defaults
+        must reject any parsed JSON value that isn't actually a dict, not just
+        values which fail to parse as JSON at all.
+        """
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        def data_file():
+            # full_clean() reads the file eagerly, so each session needs its own
+            # freshly-opened (binary) copy
+            content = self.helper_file('companies.csv').read()
+            return ContentFile(content.encode(), 'companies.csv')
+
+        # A dict value is accepted as-is
+        session = DataImportSession(
+            data_file=data_file(), model_type='company', field_defaults={'name': 'Test'}
+        )
+        session.full_clean()
+
+        # A JSON-encoded dict string is also accepted (de-stringified)
+        session = DataImportSession(
+            data_file=data_file(),
+            model_type='company',
+            field_defaults='{"name": "Test"}',
+        )
+        session.full_clean()
+
+        # A JSON-encoded list is valid JSON, but not a dict - must be rejected
+        session = DataImportSession(
+            data_file=data_file(), model_type='company', field_defaults='[1, 2, 3]'
+        )
+        with self.assertRaises(DjangoValidationError):
+            session.full_clean()
+
+        # Garbage which does not even parse as JSON must also be rejected
+        session = DataImportSession(
+            data_file=data_file(), model_type='company', field_defaults='not valid json'
+        )
+        with self.assertRaises(DjangoValidationError):
+            session.full_clean()
 
     def test_lookup_field_ambiguous_match(self):
         """Test the behavior of lookup_related_field for ambiguous and pinned matches."""

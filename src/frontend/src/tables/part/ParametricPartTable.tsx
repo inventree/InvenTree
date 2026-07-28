@@ -7,6 +7,7 @@ import {
   DescriptionColumn,
   PartColumn
 } from '../../components/tables/ColumnRenderers';
+import { renderPartStockCell } from '../../components/tables/PartStockCell';
 import ParametricDataTable from '../general/ParametricDataTable';
 import { PartTableFilters } from './PartTableFilters';
 
@@ -33,7 +34,8 @@ export default function ParametricPartTable({
       },
       {
         accessor: 'total_in_stock',
-        sortable: true
+        sortable: true,
+        render: renderPartStockCell
       }
     ];
   }, []);

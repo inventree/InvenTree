@@ -1,13 +1,15 @@
 """Order model definitions."""
 
+import copy
 from decimal import Decimal
 from typing import Any, Optional, TypedDict
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
 from django.db.models import F, Q, QuerySet, Sum
+from django.db.models.base import ModelState
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
@@ -64,7 +66,8 @@ from order.status_codes import (
     TransferOrderStatusGroups,
 )
 from part import models as PartModels
-from plugin.events import trigger_event
+from plugin.events import bulk_trigger_event, trigger_event
+from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
 
 logger = structlog.get_logger('inventree')
@@ -157,7 +160,11 @@ class TotalPriceMixin(models.Model):
                 continue
 
             try:
-                total += line.quantity * convert_money(line.price, target_currency)
+                total += (
+                    line.quantity
+                    * convert_money(line.price, target_currency)
+                    * (1 - line.discount / 100)
+                )
             except MissingRate:
                 log_error('order.calculate_total_price')
                 logger.exception("Missing exchange rate for '%s'", target_currency)
@@ -171,7 +178,11 @@ class TotalPriceMixin(models.Model):
                 continue
 
             try:
-                total += line.quantity * convert_money(line.price, target_currency)
+                total += (
+                    line.quantity
+                    * convert_money(line.price, target_currency)
+                    * (1 - line.discount / 100)
+                )
             except MissingRate:
                 # Record the error, try to press on
 
@@ -470,8 +481,9 @@ class Order(
         )
 
     @property
-    def is_overdue(self):
-        """Method to determine if this order is overdue.
+    @report.mixins.report_attribute()
+    def is_overdue(self) -> bool:
+        """Determine if this order is overdue.
 
         Makes use of the overdue_filter() method to avoid code duplication
         """
@@ -579,20 +591,23 @@ class Order(
     )
 
     @property
-    def company(self):
-        """Return the company associated with this order.
+    @report.mixins.report_attribute()
+    def company(self) -> Optional[Company]:
+        """The company associated with this order.
 
         This method must be implemented by any subclass, as the 'company' field may be named differently for different order types (e.g. supplier vs customer).
         """
         raise NotImplementedError(f'company() method not implemented for {__class__}')
 
     @property
-    def order_address(self):
-        """Return the Address associated with this order."""
+    @report.mixins.report_attribute()
+    def order_address(self) -> Optional[Address]:
+        """The Address associated with this order."""
         return self.address or self.company.primary_address
 
     @property
-    def status_text(self):
+    @report.mixins.report_attribute()
+    def status_text(self) -> str:
         """Return the text representation of the current status. This will consider any custom status."""
         if self.get_custom_status() is not None:
             from generic.states.custom import (
@@ -843,6 +858,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         Order must be currently PENDING.
         """
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the transition side
+        # effects (duplicate events and notifications).
+        self.status = PurchaseOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_issue:
             self.status = PurchaseOrderStatus.PLACED.value
             self.issue_date = InvenTree.helpers.current_date()
@@ -864,6 +885,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         Order must be currently PLACED.
         """
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe status=PLACED, and each would run the completion side effects
+        # (duplicate events and pricing-update scheduling).
+        self.status = PurchaseOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.status == PurchaseOrderStatus.PLACED:
             self.status = PurchaseOrderStatus.COMPLETE.value
             self.complete_date = InvenTree.helpers.current_date()
@@ -945,6 +972,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def _action_cancel(self, *args, **kwargs):
         """Marks the PurchaseOrder as CANCELLED."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the cancellation side
+        # effects (duplicate events and notifications).
+        self.status = PurchaseOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_cancel:
             self.status = PurchaseOrderStatus.CANCELLED.value
             self.save()
@@ -970,6 +1003,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def _action_hold(self, *args, **kwargs):
         """Mark this purchase order as 'on hold'."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the hold side effects
+        # (duplicate events).
+        self.status = PurchaseOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_hold:
             self.status = PurchaseOrderStatus.ON_HOLD.value
             self.save()
@@ -1253,7 +1292,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 item.run_plugin_validation()
 
             # Bulk create the stock items and fetch the newly created instances
-            new_items = bulk_create_and_fetch(stock.models.StockItem, bulk_create_items)
+            new_items = list(
+                bulk_create_and_fetch(stock.models.StockItem, bulk_create_items)
+            )
 
             stock_items.extend(new_items)
 
@@ -1663,22 +1704,27 @@ class SalesOrder(TotalPriceMixin, Order):
             serial_numbers, quantity, part.get_latest_serial_number(), part=part
         )
 
+        serials = [str(serial).strip() for serial in serials]
+
         serials_not_exist = set()
         serials_unavailable = set()
         stock_items_to_allocate = []
 
+        # Bulk-fetch every candidate StockItem in a single query, keyed by serial,
+        # rather than querying once per requested serial number
+        candidate_items = {}
+
+        for item in stock.models.StockItem.objects.filter(
+            part=part, serial__in=serials, quantity=1
+        ):
+            candidate_items.setdefault(item.serial, item)
+
         for serial in serials:
-            serial = str(serial).strip()
+            stock_item = candidate_items.get(serial)
 
-            items = stock.models.StockItem.objects.filter(
-                part=part, serial=serial, quantity=1
-            )
-
-            if not items.exists():
+            if stock_item is None:
                 serials_not_exist.add(serial)
                 continue
-
-            stock_item = items[0]
 
             if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS'):
                 if (
@@ -1689,6 +1735,13 @@ class SalesOrder(TotalPriceMixin, Order):
                     continue
 
             if not stock_item.in_stock:
+                serials_unavailable.add(serial)
+                continue
+
+            # Lock the StockItem row, so that concurrent allocation requests are
+            # serialized against each other, and re-validate the unallocated
+            # quantity against the now-current (and now-locked) state
+            if not stock_item.lock_quantity():
                 serials_unavailable.add(serial)
                 continue
 
@@ -1799,6 +1852,12 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def _action_place(self, *args, **kwargs):
         """Change this order from 'PENDING' to 'IN_PROGRESS'."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the transition side
+        # effects (duplicate events and notifications).
+        self.status = SalesOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_issue:
             self.status = SalesOrderStatus.IN_PROGRESS.value
             self.issue_date = InvenTree.helpers.current_date()
@@ -1825,6 +1884,12 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def _action_hold(self, *args, **kwargs):
         """Mark this sales order as 'on hold'."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the hold side effects
+        # (duplicate events).
+        self.status = SalesOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_hold:
             self.status = SalesOrderStatus.ON_HOLD.value
             self.save()
@@ -1835,6 +1900,13 @@ class SalesOrder(TotalPriceMixin, Order):
     def _action_complete(self, *args, **kwargs):
         """Mark this order as "complete."""
         user = kwargs.pop('user', None)
+
+        # Lock this order against concurrent completion, and re-read the status
+        # from the database. Without this, two simultaneous completion requests
+        # can both observe an "open" status, and each would run the completion
+        # side effects (duplicate events, pricing updates, and shipped quantity
+        # updates against the virtual line items).
+        self.status = SalesOrder.objects.select_for_update().get(pk=self.pk).status
 
         if not self.can_complete(**kwargs):
             return False
@@ -1880,15 +1952,20 @@ class SalesOrder(TotalPriceMixin, Order):
         - Mark the order as 'cancelled'
         - Delete any StockItems which have been allocated
         """
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an "open" status, and each would run the cancellation side
+        # effects (duplicate events; the allocation deletion itself is
+        # idempotent).
+        self.status = SalesOrder.objects.select_for_update().get(pk=self.pk).status
+
         if not self.can_cancel:
             return False
 
         self.status = SalesOrderStatus.CANCELLED.value
         self.save()
 
-        for line in self.lines.all():
-            for allocation in line.allocations.all():
-                allocation.delete()
+        SalesOrderAllocation.objects.filter(line__order=self).delete()
 
         trigger_event(SalesOrderEvents.CANCELLED, id=self.pk)
 
@@ -2109,11 +2186,20 @@ class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         validators=[MinValueValidator(0)],
     )
 
+    discount = models.DecimalField(
+        verbose_name=_('Discount'),
+        help_text=_('Discount percentage applied to this line item (0-100)'),
+        default=0,
+        max_digits=5,
+        decimal_places=2,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+    )
+
     @property
     def total_line_price(self):
-        """Return the total price for this line item."""
+        """Return the total price for this line item, after any discount is applied."""
         if self.price:
-            return self.quantity * self.price
+            return self.quantity * self.price * (1 - self.discount / 100)
 
     line = models.CharField(
         max_length=20,
@@ -2781,6 +2867,199 @@ class SalesOrderShipment(
         return True
 
     @transaction.atomic
+    def complete_allocations(
+        self, allocations: QuerySet, user: Optional[User] = None
+    ) -> None:
+        """Complete a set of SalesOrderAllocation objects, marking their stock as shipped to the customer.
+
+        Arguments:
+            allocations: QuerySet of SalesOrderAllocation objects to complete
+            user: The user completing the allocations
+
+        Notes:
+            This unrolls what would otherwise be a per-allocation call, so that the underlying
+            StockItem, StockItemTracking, SalesOrderLineItem and SalesOrderAllocation writes can
+            be batched into a handful of bulk queries instead of several per allocation.
+        """
+        import part.tasks
+
+        order = self.order
+        customer = order.customer
+
+        # Preselect related fields to avoid per-row database queries below
+        allocations = allocations.select_related('line', 'item', 'item__part')
+
+        split_items = []  # (source_item, new_item, quantity) - stock to split off
+        shipped_items = []  # (target_item, quantity) - stock to mark as shipped
+
+        # Canonical (mutable) copy of each distinct StockItem being drawn from - multiple
+        # allocations may draw from the same StockItem, so track running state
+        seen_stock_items: dict = {}
+
+        # Track the lines which have already been processed, to avoid double counting
+        seen_lines: dict = {}
+
+        # Allocations whose 'item' now points at a newly-split-off StockItem
+        allocations_to_update = []
+
+        for allocation in allocations:
+            stock_item = seen_stock_items.get(allocation.item_id) or allocation.item
+            quantity = allocation.quantity
+
+            seen_stock_items[stock_item.pk] = stock_item
+
+            if quantity < stock_item.quantity:
+                # Split off exactly the shipped quantity into a new StockItem,
+                # leaving the remainder in place as available stock
+                new_item = copy.copy(stock_item)
+                new_item._state = ModelState()
+                new_item.pk = None
+                new_item.quantity = quantity
+                new_item.parent = stock_item
+
+                stock_item.quantity -= quantity
+
+                target_item = new_item
+                split_items.append((stock_item, new_item, quantity))
+
+                allocation.item = new_item
+                allocations_to_update.append(allocation)
+            else:
+                target_item = stock_item
+
+            # Resolve the final resting state of the target item now
+            target_item.sales_order = order
+            target_item.customer = customer
+            target_item.location = None
+
+            shipped_items.append((target_item, quantity))
+
+            # Increase the "shipped" quantity for the associated line
+            line = seen_lines.get(allocation.line_id) or allocation.line
+            line.shipped += quantity
+            seen_lines[line.pk] = line
+
+        # Nothing to do?
+        if not seen_stock_items:
+            return
+
+        # Bulk-create the newly split-off stock items - this resolves their primary keys,
+        # which the tracking entries below need
+        new_stock_item_data = [new_item for _, new_item, _ in split_items]
+
+        # Evaluate the queryset immediately (into a list) - otherwise, indexing into it
+        # below would re-query the database once per split item
+        new_stock_items = list(
+            bulk_create_and_fetch(stock.models.StockItem, new_stock_item_data)
+        )
+
+        # Backfill the newly created StockItem objects into the split_items list,
+        # then repoint every other reference to a placeholder (pk=None) copy at the
+        # newly persisted instance instead - shipped_items and allocations_to_update
+        # were populated with the pre-creation copies, which never gain a primary key
+        split_item_map = {}
+
+        for i, (source, placeholder, quantity) in enumerate(split_items):
+            persisted = new_stock_items[i]
+            split_item_map[id(placeholder)] = persisted
+            split_items[i] = (source, persisted, quantity)
+
+        shipped_items = [
+            (split_item_map.get(id(item), item), quantity)
+            for item, quantity in shipped_items
+        ]
+
+        for allocation in allocations_to_update:
+            allocation.item = split_item_map[id(allocation.item)]
+
+        tracking_entries = []
+        split_events = []
+        customer_events = []
+
+        # Split stock items for "split_items"
+        for source_item, new_item, quantity in split_items:
+            tracking_entries.append(
+                stock.models.StockItemTracking(
+                    item_id=new_item.pk,
+                    part_id=new_item.part_id,
+                    tracking_type=StockHistoryCode.SPLIT_FROM_PARENT.value,
+                    user=user,
+                    deltas={'stockitem': source_item.pk, 'quantity': float(quantity)},
+                )
+            )
+            tracking_entries.append(
+                stock.models.StockItemTracking(
+                    item_id=source_item.pk,
+                    part_id=source_item.part_id,
+                    tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value,
+                    user=user,
+                    deltas={
+                        'removed': float(quantity),
+                        'quantity': float(source_item.quantity),
+                    },
+                )
+            )
+
+            split_events.append(((), {'id': new_item.pk, 'parent': source_item.pk}))
+
+        # Ship stock items for "shipped_items"
+        for target_item, quantity in shipped_items:
+            deltas = {'quantity': float(quantity), 'salesorder': order.pk}
+
+            if customer is not None:
+                deltas['customer'] = customer.pk
+                deltas['customer_name'] = customer.name
+
+            tracking_entries.append(
+                stock.models.StockItemTracking(
+                    item_id=target_item.pk,
+                    part_id=target_item.part_id,
+                    tracking_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value,
+                    user=user,
+                    deltas=deltas,
+                )
+            )
+
+            customer_events.append((
+                (),
+                {'id': target_item.pk, 'customer': customer.pk if customer else None},
+            ))
+
+        # Flush all StockItem field changes (quantity reductions, and shipment details)
+        stock.models.StockItem.objects.bulk_update(
+            seen_stock_items.values(), ['quantity']
+        )
+        stock.models.StockItem.objects.bulk_update(
+            [item for item, _ in shipped_items], ['sales_order', 'customer', 'location']
+        )
+
+        stock.models.StockItemTracking.objects.bulk_create(tracking_entries)
+
+        # Update sales order lines for "seen_lines"
+        SalesOrderLineItem.objects.bulk_update(seen_lines.values(), ['shipped'])
+
+        # Repoint allocations onto their (possibly newly split) StockItem
+        if allocations_to_update:
+            SalesOrderAllocation.objects.bulk_update(allocations_to_update, ['item'])
+
+        # Queue the ITEM_SPLIT / ITEM_ASSIGNED_TO_CUSTOMER plugin events in bulk,
+        # rather than one offload_task() call (and one OrmQ insert) per item
+        bulk_trigger_event(StockEvents.ITEM_SPLIT, split_events)
+        bulk_trigger_event(StockEvents.ITEM_ASSIGNED_TO_CUSTOMER, customer_events)
+
+        # bulk_update()/bulk_create() above do not fire StockItem's post_save signal,
+        # which normally triggers a low-stock check for the affected part - so queue
+        # that check explicitly, once per distinct part touched by this call
+        touched_part_ids = {item.part_id for item in seen_stock_items.values()}
+
+        InvenTree.tasks.bulk_offload_task(
+            part.tasks.notify_low_stock_if_required,
+            [((part_id,), {}) for part_id in touched_part_ids],
+            group='notification',
+            force_async=True,
+        )
+
+    @transaction.atomic
     def complete_shipment(self, user, **kwargs):
         """Complete this particular shipment.
 
@@ -2913,9 +3192,13 @@ class SalesOrderAllocation(models.Model):
         sales_allocation_count = self.item.sales_order_allocation_count(
             exclude_allocations={'pk': self.pk}
         )
+        transfer_allocation_count = self.item.transfer_order_allocation_count()
 
         total_allocation = (
-            build_allocation_count + sales_allocation_count + self.quantity
+            build_allocation_count
+            + sales_allocation_count
+            + transfer_allocation_count
+            + self.quantity
         )
 
         if total_allocation > self.item.quantity:
@@ -2982,29 +3265,18 @@ class SalesOrderAllocation(models.Model):
         """Return the PurchaseOrder associated with this allocation."""
         return self.item.purchase_order
 
-    def complete_allocation(self, user):
+    def complete_allocation(self, user=None):
         """Complete this allocation (called when the parent SalesOrder is marked as "shipped").
 
-        Executes:
-        - Determine if the referenced StockItem needs to be "split" (if allocated quantity != stock quantity)
-        - Mark the StockItem as belonging to the Customer (this will remove it from stock)
+        Retained for backwards compatibility with external callers (e.g. plugins) which
+        complete allocations one at a time - delegates to the bulk
+        SalesOrderShipment.complete_allocations() implementation.
         """
-        order = self.line.order
-
-        item = self.item.allocateToCustomer(
-            order.customer, quantity=self.quantity, order=order, user=user
+        self.shipment.complete_allocations(
+            SalesOrderAllocation.objects.filter(pk=self.pk), user=user
         )
 
-        # Update the 'shipped' quantity
-        # Increment at the database level to prevent lost updates
-        self.line.shipped = F('shipped') + self.quantity
-        self.line.save(update_fields=['shipped'])
-        self.line.refresh_from_db(fields=['shipped'])
-
-        # Update our own reference to the StockItem
-        # (It may have changed if the stock was split)
-        self.item = item
-        self.save()
+        self.refresh_from_db()
 
 
 class ReturnOrder(TotalPriceMixin, Order):
@@ -3159,6 +3431,12 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def _action_hold(self, *args, **kwargs):
         """Mark this order as 'on hold' (if allowed)."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the hold side effects
+        # (duplicate events).
+        self.status = ReturnOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_hold:
             self.status = ReturnOrderStatus.ON_HOLD.value
             self.save()
@@ -3172,6 +3450,12 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def _action_cancel(self, *args, **kwargs):
         """Cancel this ReturnOrder (if not already cancelled)."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the cancellation side
+        # effects (duplicate events and notifications).
+        self.status = ReturnOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_cancel:
             self.status = ReturnOrderStatus.CANCELLED.value
             self.save()
@@ -3216,6 +3500,12 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def _action_place(self, *args, **kwargs):
         """Issue this ReturnOrder (if currently pending)."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the issue side effects
+        # (duplicate events and notifications).
+        self.status = ReturnOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_issue:
             self.status = ReturnOrderStatus.IN_PROGRESS.value
             self.issue_date = InvenTree.helpers.current_date()
@@ -3687,6 +3977,12 @@ class TransferOrder(Order):
 
         Order must be currently PENDING.
         """
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the issue side effects
+        # (duplicate events and notifications).
+        self.status = TransferOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_issue:
             self.status = TransferOrderStatus.ISSUED.value
             self.issue_date = InvenTree.helpers.current_date()
@@ -3713,6 +4009,12 @@ class TransferOrder(Order):
 
     def _action_hold(self, *args, **kwargs):
         """Mark this transfer order as 'on hold'."""
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an eligible status, and each would run the hold side effects
+        # (duplicate events).
+        self.status = TransferOrder.objects.select_for_update().get(pk=self.pk).status
+
         if self.can_hold:
             self.status = TransferOrderStatus.ON_HOLD.value
             self.save()
@@ -3792,6 +4094,13 @@ class TransferOrder(Order):
         - Mark the order as 'cancelled'
         - Delete any StockItems which have been allocated
         """
+        # Lock this order against concurrent transitions, and re-read the status
+        # from the database. Without this, two simultaneous requests can both
+        # observe an "open" status, and each would run the cancellation side
+        # effects (duplicate events; the allocation deletion itself is
+        # idempotent).
+        self.status = TransferOrder.objects.select_for_update().get(pk=self.pk).status
+
         if not self.can_cancel:
             return False
 
@@ -3989,9 +4298,15 @@ class TransferOrderAllocation(models.Model):
         sales_allocation_count = self.item.sales_order_allocation_count(
             exclude_allocations={'pk': self.pk}
         )
+        transfer_allocation_count = self.item.transfer_order_allocation_count(
+            exclude_allocations={'pk': self.pk}
+        )
 
         total_allocation = (
-            build_allocation_count + sales_allocation_count + self.quantity
+            build_allocation_count
+            + sales_allocation_count
+            + transfer_allocation_count
+            + self.quantity
         )
 
         if total_allocation > self.item.quantity:
@@ -4059,6 +4374,12 @@ class TransferOrderAllocation(models.Model):
         order: TransferOrder = self.line.order
         self.item: stock.models.StockItem  # for type hints
         self.line: TransferOrderLineItem  # for type hints
+
+        # Lock the stock item's row and refresh its quantity, so the branch
+        # selected below (consume / split / move) is chosen using the current
+        # committed quantity rather than a stale in-memory copy
+        if not self.item.lock_quantity():
+            raise ValidationError(_('Stock item no longer exists'))
 
         # The allocation is the only thing linking this stock item to the transfer
         # As a result, we must keep the allocation present even after completion

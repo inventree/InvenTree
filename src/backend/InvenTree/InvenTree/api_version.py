@@ -1,10 +1,32 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 523
+INVENTREE_API_VERSION = 530
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v530 -> 2026-07-28 : https://github.com/inventree/InvenTree/pull/12487
+    - Adds searching against ReportSnippet API endpoint
+
+v529 -> 2026-07-26 : https://github.com/inventree/InvenTree/pull/12471
+    - Adds "on_order" filter to the Part API
+    - Enable sorting by "ordering" quantity on the Part API endpoint
+
+v528 -> 2026-07-26 : https://github.com/inventree/InvenTree/pull/12469
+    - Additional ordering options for SalesOrderAllocation API endpoint
+
+v527 -> 2026-07-24 : https://github.com/inventree/InvenTree/pull/12454
+    - Extend API with dedicated login-by-code re-send endpoint
+
+v526 -> 2026-07-24 : https://github.com/inventree/InvenTree/pull/12463
+    - Fix for data export on SalesOrderAllocation API endpoint
+
+v525 -> 2026-07-20 : https://github.com/inventree/InvenTree/pull/12409
+    - Type clarifications for some fields; no functional changes
+
+v524 -> 2026-07-20 : https://github.com/inventree/InvenTree/pull/12393
+    - Adds "discount" field to order line items (and extra line items)
 
 v523 -> 2026-07-14 : https://github.com/inventree/InvenTree/pull/12391
     - Adds "bulk delete" support for order line item API endpoints (PurchaseOrder / SalesOrder / ReturnOrder / TransferOrder)

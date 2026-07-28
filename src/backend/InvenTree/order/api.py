@@ -684,7 +684,14 @@ class PurchaseOrderLineItemList(
 
         # possibly merge duplicate items
         line_item = None
-        if data.get('merge_items', True):
+        merge_items = data.get(
+            'merge_items',
+            common.settings.get_global_setting(
+                'PURCHASEORDER_MERGE_LINE_ITEMS', backup_value=True
+            ),
+        )
+
+        if merge_items:
             with transaction.atomic():
                 # Lock the matching row, so concurrent line creations cannot
                 # both read the same starting quantity (lost update)
@@ -744,7 +751,6 @@ class PurchaseOrderLineItemList(
         'reference',
         'SKU',
         'IPN',
-        'total_price',
         'target_date',
         'order',
         'status',
@@ -1088,6 +1094,8 @@ class SalesOrderLineItemList(
         'sale_price',
         'target_date',
         'line',
+        'status',
+        'shipment_date',
     ]
 
     ordering_field_aliases = {
@@ -1096,6 +1104,8 @@ class SalesOrderLineItemList(
         'IPN': 'part__IPN',
         'order': 'order__reference',
         'line': ['line_int', 'line', 'part__name'],
+        'status': 'order__status',
+        'shipment_date': 'order__shipment_date',
     }
 
     search_fields = ['part__name', 'quantity', 'reference']
@@ -1363,6 +1373,7 @@ class SalesOrderAllocationList(
     SalesOrderAllocationMixin,
     BulkDeleteMixin,
     BulkUpdateMixin,
+    DataExportViewMixin,
     OutputOptionsMixin,
     ListAPI,
 ):
