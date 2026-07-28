@@ -1035,11 +1035,19 @@ class StockItem(
         if type(self.batch) is str:
             self.batch = self.batch.strip()
 
-        if not get_global_setting('STOCK_ALLOW_EDIT_SERIAL'):
-            deltas = self.get_field_deltas()
-
+        if not get_global_setting('STOCK_ALLOW_EDIT_SERIAL') and self.pk:
             # Prevent editing of serial numbers if the item already has a serial number assigned
-            if 'serial' in deltas and deltas['serial']['old'] not in [None, '']:
+            # Note: A targeted single-column lookup is used here (rather than get_field_deltas(),
+            # which fetches and diffs *every* field, dereferencing every non-null FK in the
+            # process) since only the previous 'serial' value is actually needed.
+            old_serial = (
+                StockItem.objects
+                .filter(pk=self.pk)
+                .values_list('serial', flat=True)
+                .first()
+            )
+
+            if old_serial not in [None, ''] and old_serial != self.serial:
                 raise ValidationError({
                     'serial': _(
                         'Editing of serial numbers is not allowed - this item has already been assigned a serial number'
@@ -3246,20 +3254,37 @@ class StockItem(
 
         self._apply_model_reference_fields(kwargs, tracking_info)
 
-        quantity_updated = self.serialized or self.updateQuantity(count)
+        # Will updateQuantity() below actually change (and therefore save) the row?
+        # Mirrors updateQuantity()'s own change check - used to decide whether the
+        # stocktake stamp can ride along on that save, avoiding a second write.
+        quantity_will_change = not self.serialized and count != self.quantity
+
+        # Stamp the stocktake metadata *before* updating the quantity, so that when
+        # updateQuantity() performs its own save (below), this stamp - and the status/
+        # location/reference field changes already applied above - are written in that
+        # single query, rather than needing a second, otherwise-redundant save() after.
+        if fields_updated or self.serialized or quantity_will_change:
+            self.stocktake_date = InvenTree.helpers.current_date()
+            self.stocktake_user = user
+
+        raw_update_result = None if self.serialized else self.updateQuantity(count)
+        quantity_updated = self.serialized or raw_update_result
+
+        # True only if updateQuantity() actually performed the save above
+        # (as opposed to: serialized item, no change, or item deleted)
+        update_persisted = raw_update_result is True
 
         # Record the resulting quantity, whether or not this item survived the stocktake
         # (self.quantity is updated by updateQuantity() even if the item was deleted)
         tracking_info['quantity'] = 1 if self.serialized else float(self.quantity)
 
-        # Save if the quantity or any other field was changed.
+        # Save if the quantity or any other field was changed, and updateQuantity()
+        # didn't already do so above.
         # Note that updateQuantity() may have *deleted* the item (depleted to zero),
         # in which case there is nothing left to save.
         if self.pk and (quantity_updated or fields_updated):
-            self.stocktake_date = InvenTree.helpers.current_date()
-            self.stocktake_user = user
-
-            self.save(add_note=False)
+            if not update_persisted:
+                self.save(add_note=False)
 
             trigger_event(
                 StockEvents.ITEM_COUNTED,
@@ -3312,6 +3337,14 @@ class StockItem(
         self._apply_status_change(status, tracking_info)
         self._apply_model_reference_fields(kwargs, tracking_info)
 
+        # Determine up-front whether any optional fields will actually change,
+        # so we can skip the second save() below when updateQuantity() (which
+        # already writes the full row, including the status/reference field
+        # changes applied above) has already persisted everything that matters.
+        optional_fields_changed = any(
+            field in kwargs for field in StockItem.optional_transfer_fields()
+        )
+
         if self.updateQuantity(self.quantity + quantity):
             tracking_info['added'] = float(quantity)
             tracking_info['quantity'] = float(self.quantity)
@@ -3319,7 +3352,8 @@ class StockItem(
             # Optional fields which can be supplied in a 'stocktake' call
             self._apply_optional_transfer_fields(kwargs, tracking_info)
 
-            self.save(add_note=False)
+            if optional_fields_changed:
+                self.save(add_note=False)
 
             self.add_tracking_entry(
                 StockHistoryCode.STOCK_ADD,
@@ -3372,6 +3406,14 @@ class StockItem(
         self._apply_status_change(status, deltas)
         self._apply_model_reference_fields(kwargs, deltas)
 
+        # Determine up-front whether any optional fields will actually change,
+        # so we can skip the second save() below when updateQuantity() (which
+        # already writes the full row, including the status/reference field
+        # changes applied above) has already persisted everything that matters.
+        optional_fields_changed = any(
+            field in kwargs for field in StockItem.optional_transfer_fields()
+        )
+
         quantity_updated = self.updateQuantity(self.quantity - quantity)
 
         # Record the resulting quantity, whether or not this item survived the removal
@@ -3383,7 +3425,8 @@ class StockItem(
             # Optional fields which can be supplied in a 'stocktake' call
             self._apply_optional_transfer_fields(kwargs, deltas)
 
-            self.save(add_note=False)
+            if optional_fields_changed:
+                self.save(add_note=False)
 
         # Always record a tracking entry, even if the item was deleted as a result
         # of this removal (e.g. depleted to zero with delete_on_deplete set) -
