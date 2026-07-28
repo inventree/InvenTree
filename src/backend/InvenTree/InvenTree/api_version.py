@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 530
+INVENTREE_API_VERSION = 531
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v530 -> 2026-07-28 : https://github.com/inventree/InvenTree/pull/11971
+v531 -> 2026-07-28 : https://github.com/inventree/InvenTree/pull/11971
     - Removes direct "notes" field from any models which previously supported markdown notes
     - Adds a generic "Note" model which can be attached to any model type via a generic foreign key relationship
     - Allow multiple notes to be attached to a single object, and for notes to be created / edited / deleted via the API
+
+v530 -> 2026-07-28 : https://github.com/inventree/InvenTree/pull/12487
+    - Adds searching against ReportSnippet API endpoint
 
 v529 -> 2026-07-26 : https://github.com/inventree/InvenTree/pull/12471
     - Adds "on_order" filter to the Part API
