@@ -52,6 +52,7 @@ jobs:
               - src/backend/InvenTree/InvenTree/settings.py
               - src/backend/requirements.txt
               - tasks.py
+              - test_tasks.py
 
   # Build the docker image
   build:
@@ -94,6 +95,14 @@ jobs:
           docker run --rm inventree-test grep -q '"src/locales/fr/messages.ts"' /home/inventree/src/backend/InvenTree/web/static/web/.vite/manifest.json
           docker run --rm inventree-test grep -q '"src/locales/ru/messages.ts"' /home/inventree/src/backend/InvenTree/web/static/web/.vite/manifest.json
           docker run --rm inventree-test grep -q '"src/locales/zh_Hans/messages.ts"' /home/inventree/src/backend/InvenTree/web/static/web/.vite/manifest.json
+      - name: Test 'server-health' / 'worker-health' Invoke Tasks
+        # Run the unit tests for the invoke tasks used by the docker-compose healthchecks,
+        # against the actual built image (real 'invoke' install, real tasks.py).
+        # The test file is not baked into the image, so it is mounted in at runtime.
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}/test_tasks.py:/home/inventree/test_tasks.py:ro" \
+            inventree-test python -m unittest test_tasks -v
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
         run: docker compose --project-directory . -f contrib/container/dev-docker-compose.yml build --no-cache
@@ -124,6 +133,44 @@ jobs:
         run: |
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> contrib/container/docker.dev.env
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke dev.test --disable-pty --translations
+      - name: Start Production Stack (docker-compose.yml)
+        # Bring up the production docker-compose.yml stack, using the image built above.
+        # This exercises the full healthcheck chain (db, cache, server, worker, proxy),
+        # including the 'invoke server-health' / 'invoke worker-health' checks.
+        working-directory: contrib/container
+        env:
+          INVENTREE_TAG: test
+        run: |
+          docker tag inventree-test inventree/inventree:test
+          docker compose -f docker-compose.yml --env-file .env up -d
+      - name: Wait for Production Stack to become healthy
+        working-directory: contrib/container
+        run: |
+          services="inventree-db inventree-cache inventree-server inventree-worker inventree-proxy"
+          deadline=$((SECONDS + 360))
+          for service in $services; do
+            while true; do
+              status="$(docker inspect -f '{{.State.Health.Status}}' "$service" 2>/dev/null || echo missing)"
+              if [ "$status" = "healthy" ]; then
+                echo "Service '$service' is healthy"
+                break
+              fi
+              if [ "$status" = "unhealthy" ] || [ $SECONDS -ge $deadline ]; then
+                echo "::error::Service '$service' did not become healthy (status: $status)"
+                docker compose -f docker-compose.yml ps
+                docker compose -f docker-compose.yml logs "$service"
+                exit 1
+              fi
+              sleep 5
+            done
+          done
+      - name: Verify End-to-End Request Through Proxy
+        working-directory: contrib/container
+        run: curl --silent --show-error --fail http://localhost/api/system/health/
+      - name: Stop Production Stack
+        if: always()
+        working-directory: contrib/container
+        run: docker compose -f docker-compose.yml down -v
 
   # Run migration test
   migration_test:
