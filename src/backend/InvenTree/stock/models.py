@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import Q, QuerySet, Sum
+from django.db.models import Q, QuerySet, Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError, OperationalError
@@ -468,6 +468,23 @@ class StockItem(
         """Model meta options."""
 
         verbose_name = _('Stock Item')
+        constraints = [
+            # Baseline, database-enforced duplicate-serial guard: a given Part
+            # can never have two StockItem rows sharing the same serial number.
+            # This alone does not cover the "unique across a Part variant tree"
+            # (or globally-unique) semantics controlled by the
+            # SERIAL_NUMBER_GLOBALLY_UNIQUE setting - see
+            # StockItem._lock_serial_numbers() for that; a UniqueConstraint
+            # cannot reference the joined Part.tree_id field.
+            UniqueConstraint(
+                fields=['part', 'serial'],
+                # Non-serialized StockItems may store serial as either NULL or
+                # '' depending on the creation path - exclude both, since
+                # "no serial" is not a value this constraint should govern
+                condition=Q(serial__isnull=False) & ~Q(serial=''),
+                name='stock_item_unique_part_serial',
+            )
+        ]
 
     class MPTTMeta:
         """MPTT metaclass options."""
@@ -655,7 +672,68 @@ class StockItem(
             & Q(expiry_date__lt=InvenTree.helpers.current_date())
         )
 
+    @staticmethod
+    def _lock_serial_numbers(part: PartModels.Part, serials: list) -> None:
+        """Serialize concurrent serial number creation, and re-validate under the lock.
+
+        Must be called from within an atomic transaction. Serial number
+        uniqueness is scoped by the SERIAL_NUMBER_GLOBALLY_UNIQUE setting -
+        either across an entire Part variant tree (the default), or globally.
+        That scope depends on Part.tree_id, which is not a field on
+        StockItem, so it cannot be expressed as a database-level
+        UniqueConstraint on StockItem directly (a UniqueConstraint cannot
+        reference a joined field). Instead, this select_for_update()s
+        existing rows that already represent the relevant scope - every Part
+        in the tree, or (for the globally-unique case, where there is no
+        single tree to lock) the SERIAL_NUMBER_GLOBALLY_UNIQUE setting's own
+        row - so concurrent creation attempts within the same scope
+        serialize against each other. It then re-checks for conflicts
+        against StockItem while holding that lock. This closes the race
+        where two concurrent requests both read "no conflict" before either
+        has committed its creation.
+
+        Raises:
+            ValidationError: If any of the provided serial numbers now conflict
+        """
+        if get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
+            # There is no single Part tree covering "globally unique" - lock
+            # the setting's own row instead, so all concurrent global-scope
+            # creation attempts serialize against each other regardless of
+            # which part is involved. This row is guaranteed to already
+            # exist: reaching this branch means the setting is currently
+            # True, which can only happen if it was explicitly set (and
+            # therefore persisted) at some point.
+            setting, _created = common.models.InvenTreeSetting.objects.get_or_create(
+                key='SERIAL_NUMBER_GLOBALLY_UNIQUE', defaults={'value': str(True)}
+            )
+            common.models.InvenTreeSetting.objects.select_for_update().get(
+                pk=setting.pk
+            )
+        else:
+            # Lock every Part in this variant tree (this always includes
+            # 'part' itself), so concurrent creation attempts for any part in
+            # the same tree serialize against each other
+            list(
+                PartModels.Part.objects
+                .select_for_update()
+                .filter(tree_id=part.tree_id)
+                .order_by('pk')
+            )
+
+        # Re-validate for conflicts now that the lock is held - any
+        # concurrent request for the same scope has either already committed
+        # (and will now show up here) or is blocked behind this lock (and
+        # will see this request's result once it releases)
+        conflicts = part.find_conflicting_serial_numbers(serials)
+
+        if conflicts:
+            msg = _('The following serial numbers already exist or are invalid')
+            msg += ' : '
+            msg += ','.join(str(x) for x in conflicts)
+            raise ValidationError({'serial_numbers': msg})
+
     @classmethod
+    @transaction.atomic
     def _create_serial_numbers(cls, serials: list, **kwargs) -> QuerySet:
         """Create multiple stock items with the provided serial numbers.
 
@@ -672,8 +750,11 @@ class StockItem(
         This method uses bulk_create to create multiple StockItem objects in a single query,
         which is much more efficient than creating them one-by-one.
 
-        However, it does not perform any validation checks on the provided serial numbers,
-        and also does not generate any "stock tracking entries".
+        Concurrent calls for an overlapping set of serial numbers are
+        serialized against each other (see _lock_serial_numbers()), so unlike
+        other validation checks, this method's duplicate-serial protection is
+        safe even when the caller's own pre-check raced against another
+        request. It does not generate any "stock tracking entries".
 
         Note: This is an 'internal' function and should not be used by external code / plugins.
         """
@@ -722,6 +803,10 @@ class StockItem(
         if 'part' not in data:
             raise ValidationError({'part': _('Part must be specified')})
 
+        # Serialize against any other concurrent request creating an
+        # overlapping set of serial numbers, and re-validate under that lock
+        cls._lock_serial_numbers(data['part'], serials)
+
         parent = kwargs.pop('parent', None) or data.get('parent')
 
         data['parent'] = parent
@@ -741,7 +826,13 @@ class StockItem(
             items.append(StockItem(**data))
 
         # Create the StockItem objects in bulk
-        items = bulk_create_and_fetch(StockItem, items)
+        # (the IntegrityError catch is a defense-in-depth backstop against
+        # the database-level UniqueConstraint - _lock_serial_numbers() above
+        # should already have ruled out any conflict)
+        try:
+            items = bulk_create_and_fetch(StockItem, items)
+        except IntegrityError as exc:
+            raise ValidationError({'serial_numbers': str(exc)}) from exc
 
         # Trigger a 'created' event for the new items
         # Note that instead of a single event for each item,
@@ -944,11 +1035,19 @@ class StockItem(
         if type(self.batch) is str:
             self.batch = self.batch.strip()
 
-        if not get_global_setting('STOCK_ALLOW_EDIT_SERIAL'):
-            deltas = self.get_field_deltas()
-
+        if not get_global_setting('STOCK_ALLOW_EDIT_SERIAL') and self.pk:
             # Prevent editing of serial numbers if the item already has a serial number assigned
-            if 'serial' in deltas and deltas['serial']['old'] not in [None, '']:
+            # Note: A targeted single-column lookup is used here (rather than get_field_deltas(),
+            # which fetches and diffs *every* field, dereferencing every non-null FK in the
+            # process) since only the previous 'serial' value is actually needed.
+            old_serial = (
+                StockItem.objects
+                .filter(pk=self.pk)
+                .values_list('serial', flat=True)
+                .first()
+            )
+
+            if old_serial not in [None, ''] and old_serial != self.serial:
                 raise ValidationError({
                     'serial': _(
                         'Editing of serial numbers is not allowed - this item has already been assigned a serial number'
@@ -3155,20 +3254,37 @@ class StockItem(
 
         self._apply_model_reference_fields(kwargs, tracking_info)
 
-        quantity_updated = self.serialized or self.updateQuantity(count)
+        # Will updateQuantity() below actually change (and therefore save) the row?
+        # Mirrors updateQuantity()'s own change check - used to decide whether the
+        # stocktake stamp can ride along on that save, avoiding a second write.
+        quantity_will_change = not self.serialized and count != self.quantity
+
+        # Stamp the stocktake metadata *before* updating the quantity, so that when
+        # updateQuantity() performs its own save (below), this stamp - and the status/
+        # location/reference field changes already applied above - are written in that
+        # single query, rather than needing a second, otherwise-redundant save() after.
+        if fields_updated or self.serialized or quantity_will_change:
+            self.stocktake_date = InvenTree.helpers.current_date()
+            self.stocktake_user = user
+
+        raw_update_result = None if self.serialized else self.updateQuantity(count)
+        quantity_updated = self.serialized or raw_update_result
+
+        # True only if updateQuantity() actually performed the save above
+        # (as opposed to: serialized item, no change, or item deleted)
+        update_persisted = raw_update_result is True
 
         # Record the resulting quantity, whether or not this item survived the stocktake
         # (self.quantity is updated by updateQuantity() even if the item was deleted)
         tracking_info['quantity'] = 1 if self.serialized else float(self.quantity)
 
-        # Save if the quantity or any other field was changed.
+        # Save if the quantity or any other field was changed, and updateQuantity()
+        # didn't already do so above.
         # Note that updateQuantity() may have *deleted* the item (depleted to zero),
         # in which case there is nothing left to save.
         if self.pk and (quantity_updated or fields_updated):
-            self.stocktake_date = InvenTree.helpers.current_date()
-            self.stocktake_user = user
-
-            self.save(add_note=False)
+            if not update_persisted:
+                self.save(add_note=False)
 
             trigger_event(
                 StockEvents.ITEM_COUNTED,
@@ -3221,6 +3337,14 @@ class StockItem(
         self._apply_status_change(status, tracking_info)
         self._apply_model_reference_fields(kwargs, tracking_info)
 
+        # Determine up-front whether any optional fields will actually change,
+        # so we can skip the second save() below when updateQuantity() (which
+        # already writes the full row, including the status/reference field
+        # changes applied above) has already persisted everything that matters.
+        optional_fields_changed = any(
+            field in kwargs for field in StockItem.optional_transfer_fields()
+        )
+
         if self.updateQuantity(self.quantity + quantity):
             tracking_info['added'] = float(quantity)
             tracking_info['quantity'] = float(self.quantity)
@@ -3228,7 +3352,8 @@ class StockItem(
             # Optional fields which can be supplied in a 'stocktake' call
             self._apply_optional_transfer_fields(kwargs, tracking_info)
 
-            self.save(add_note=False)
+            if optional_fields_changed:
+                self.save(add_note=False)
 
             self.add_tracking_entry(
                 StockHistoryCode.STOCK_ADD,
@@ -3281,6 +3406,14 @@ class StockItem(
         self._apply_status_change(status, deltas)
         self._apply_model_reference_fields(kwargs, deltas)
 
+        # Determine up-front whether any optional fields will actually change,
+        # so we can skip the second save() below when updateQuantity() (which
+        # already writes the full row, including the status/reference field
+        # changes applied above) has already persisted everything that matters.
+        optional_fields_changed = any(
+            field in kwargs for field in StockItem.optional_transfer_fields()
+        )
+
         quantity_updated = self.updateQuantity(self.quantity - quantity)
 
         # Record the resulting quantity, whether or not this item survived the removal
@@ -3292,7 +3425,8 @@ class StockItem(
             # Optional fields which can be supplied in a 'stocktake' call
             self._apply_optional_transfer_fields(kwargs, deltas)
 
-            self.save(add_note=False)
+            if optional_fields_changed:
+                self.save(add_note=False)
 
         # Always record a tracking entry, even if the item was deleted as a result
         # of this removal (e.g. depleted to zero with delete_on_deplete set) -

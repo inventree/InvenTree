@@ -189,7 +189,7 @@ class TestTestResultMigration(MigratorTestCase):
             for jj in range(4):
                 si = StockItem.objects.create(
                     part=child,
-                    serial=str(1 + ii * jj),
+                    serial=str(1 + jj),
                     quantity=1,
                     tree_id=0,
                     level=0,
