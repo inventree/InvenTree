@@ -1,6 +1,7 @@
 """API tests for various user / auth API endpoints."""
 
 import datetime
+from unittest import mock
 
 from django.contrib.auth.models import Group, User
 from django.urls import reverse
@@ -472,6 +473,44 @@ class UserTokenTests(InvenTreeAPITestCase):
         token.save()
 
         self.client.get(me, expected_code=200)
+
+    def test_token_last_seen_no_clobber(self):
+        """Regression test: updating token.last_seen must overwrite other fields.
+
+        Simulates a revoke landing in the window between this request's token
+        lookup and its last_seen save, by revoking the token (directly against
+        the database) from inside a patched ApiToken.save().
+        """
+        token_key = self.get(
+            url=reverse('api-token'), data={'name': 'race'}, expected_code=200
+        ).data['token']
+
+        token = ApiToken.objects.get(key=token_key)
+
+        # Force last_seen to be 'stale' so the auth backend attempts to update it
+        ApiToken.objects.filter(pk=token.pk).update(
+            last_seen=datetime.date.today() - datetime.timedelta(days=1)
+        )
+
+        original_save = ApiToken.save
+
+        def revoke_then_save(self, *args, **kwargs):
+            # Simulate a concurrent request revoking this token, via a direct
+            # DB write, right before this request's last_seen save lands
+            ApiToken.objects.filter(pk=self.pk).update(revoked=True)
+            return original_save(self, *args, **kwargs)
+
+        self.client.logout()
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token_key)
+
+        with mock.patch.object(ApiToken, 'save', revoke_then_save):
+            self.client.get(reverse('api-user-me'), expected_code=200)
+
+        token.refresh_from_db()
+        self.assertTrue(
+            token.revoked,
+            'Concurrent revoke must not be clobbered by the last_seen update',
+        )
 
     def test_token_api(self):
         """Test the token API."""
