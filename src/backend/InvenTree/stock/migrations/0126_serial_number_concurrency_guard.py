@@ -21,22 +21,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.CreateModel(
-            name="SerialNumberLock",
-            fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("scope", models.IntegerField()),
-                ("serial", models.CharField(max_length=100)),
-            ],
-        ),
         migrations.AddConstraint(
             model_name="stockitem",
             constraint=models.UniqueConstraint(
@@ -45,12 +29,6 @@ class Migration(migrations.Migration):
                 ),
                 fields=("part", "serial"),
                 name="stock_item_unique_part_serial",
-            ),
-        ),
-        migrations.AddConstraint(
-            model_name="serialnumberlock",
-            constraint=models.UniqueConstraint(
-                fields=("scope", "serial"), name="unique_serial_lock"
             ),
         ),
     ]

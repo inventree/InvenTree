@@ -423,39 +423,6 @@ STOCK_SORT_CHOICES = [
 STOCK_SORT_DEFAULT = StockSortOrder.DATE_OLDEST
 
 
-class SerialNumberLock(models.Model):
-    """A lightweight, keyed mutex used to serialize concurrent serial number creation.
-
-    Serial number uniqueness is scoped by the SERIAL_NUMBER_GLOBALLY_UNIQUE
-    setting - either across an entire Part variant tree (the default), or
-    globally. That scope depends on Part.tree_id, which is not a field on
-    StockItem, so it cannot be expressed as a database-level UniqueConstraint
-    on StockItem directly (a UniqueConstraint cannot reference a joined
-    field). This model provides an alternative: a row that concurrent
-    creation attempts for the same (scope, serial) pair can select_for_update()
-    to serialize against each other - see StockItem._lock_serial_numbers().
-
-    Rows are never deleted - a stale row is harmless, since it does not itself
-    represent "this serial is taken" (that is always determined by a fresh
-    query against StockItem, taken while holding the row's lock). It is only
-    ever used as a lock target, so a freed serial number (e.g. after its
-    StockItem is deleted) remains reusable exactly as it is today.
-    """
-
-    class Meta:
-        """Model meta options."""
-
-        constraints = [
-            UniqueConstraint(fields=['scope', 'serial'], name='unique_serial_lock')
-        ]
-
-    # Either a Part.tree_id value (per-tree uniqueness) or a fixed sentinel
-    # value representing "globally unique" - see StockItem._lock_serial_numbers()
-    scope = models.IntegerField()
-
-    serial = models.CharField(max_length=100)
-
-
 class StockItem(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
@@ -705,43 +672,58 @@ class StockItem(
             & Q(expiry_date__lt=InvenTree.helpers.current_date())
         )
 
-    # Sentinel scope value used by _lock_serial_numbers() when serial numbers
-    # are configured to be globally unique (rather than unique per Part variant
-    # tree) - Part.tree_id values are always >= 1, so this can never collide
-    GLOBAL_SERIAL_LOCK_SCOPE = 0
-
     @staticmethod
     def _lock_serial_numbers(part: PartModels.Part, serials: list) -> None:
         """Serialize concurrent serial number creation, and re-validate under the lock.
 
-        Must be called from within an atomic transaction. Acquires a
-        select_for_update() lock (via SerialNumberLock) for each requested
-        serial number, scoped to match the SERIAL_NUMBER_GLOBALLY_UNIQUE
-        setting, then re-checks for conflicts against StockItem while holding
-        those locks. This closes the race where two concurrent requests both
-        read "no conflict" before either has committed its creation.
+        Must be called from within an atomic transaction. Serial number
+        uniqueness is scoped by the SERIAL_NUMBER_GLOBALLY_UNIQUE setting -
+        either across an entire Part variant tree (the default), or globally.
+        That scope depends on Part.tree_id, which is not a field on
+        StockItem, so it cannot be expressed as a database-level
+        UniqueConstraint on StockItem directly (a UniqueConstraint cannot
+        reference a joined field). Instead, this select_for_update()s
+        existing rows that already represent the relevant scope - every Part
+        in the tree, or (for the globally-unique case, where there is no
+        single tree to lock) the SERIAL_NUMBER_GLOBALLY_UNIQUE setting's own
+        row - so concurrent creation attempts within the same scope
+        serialize against each other. It then re-checks for conflicts
+        against StockItem while holding that lock. This closes the race
+        where two concurrent requests both read "no conflict" before either
+        has committed its creation.
 
         Raises:
             ValidationError: If any of the provided serial numbers now conflict
         """
-        scope = (
-            StockItem.GLOBAL_SERIAL_LOCK_SCOPE
-            if get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False)
-            else part.tree_id
-        )
-
-        # Lock in a consistent order, to avoid deadlocks against other
-        # concurrent creation requests touching an overlapping set of serials
-        for serial in sorted({str(serial) for serial in serials}):
-            lock, _created = SerialNumberLock.objects.get_or_create(
-                scope=scope, serial=serial
+        if get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
+            # There is no single Part tree covering "globally unique" - lock
+            # the setting's own row instead, so all concurrent global-scope
+            # creation attempts serialize against each other regardless of
+            # which part is involved. This row is guaranteed to already
+            # exist: reaching this branch means the setting is currently
+            # True, which can only happen if it was explicitly set (and
+            # therefore persisted) at some point.
+            setting, _created = common.models.InvenTreeSetting.objects.get_or_create(
+                key='SERIAL_NUMBER_GLOBALLY_UNIQUE', defaults={'value': str(True)}
             )
-            SerialNumberLock.objects.select_for_update().get(pk=lock.pk)
+            common.models.InvenTreeSetting.objects.select_for_update().get(
+                pk=setting.pk
+            )
+        else:
+            # Lock every Part in this variant tree (this always includes
+            # 'part' itself), so concurrent creation attempts for any part in
+            # the same tree serialize against each other
+            list(
+                PartModels.Part.objects
+                .select_for_update()
+                .filter(tree_id=part.tree_id)
+                .order_by('pk')
+            )
 
-        # Re-validate for conflicts now that the locks are held - any
-        # concurrent request for the same (scope, serial) pair has either
-        # already committed (and will now show up here) or is blocked behind
-        # this lock (and will see this request's result once it releases)
+        # Re-validate for conflicts now that the lock is held - any
+        # concurrent request for the same scope has either already committed
+        # (and will now show up here) or is blocked behind this lock (and
+        # will see this request's result once it releases)
         conflicts = part.find_conflicting_serial_numbers(serials)
 
         if conflicts:
