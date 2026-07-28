@@ -1667,7 +1667,6 @@ class BomItemSerializer(
             'raw_amount',
             'quantity',
             'piece_count',
-            'piece_size',
             'allow_variants',
             'inherited',
             'optional',
@@ -1721,15 +1720,10 @@ class BomItemSerializer(
         required=False,
         default=1,
         label=_('Piece Count'),
-        help_text=_('Number of pieces required (for cut-to-length items)'),
-    )
-
-    piece_size = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        default='',
-        label=_('Piece Size'),
-        help_text=_('Size of each piece (e.g. "250 mm")'),
+        help_text=_(
+            'Number of pieces required (for cut-to-length items). '
+            'Total material = quantity × piece_count.'
+        ),
     )
 
     part = serializers.PrimaryKeyRelatedField(

@@ -3651,8 +3651,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         setup_quantity: Extra required quantity for a build, to account for setup losses
         attrition: Estimated losses for a Build, expressed as a percentage (e.g. '2%')
         rounding_multiple: Rounding quantity when calculating the required quantity for a build
-        piece_count: Number of pieces required (for cut-to-length items like cables, tubing)
-        piece_size: Size of each piece (e.g. '250 mm'); when set, quantity = piece_count * piece_size
+        piece_count: Number of pieces required (for cut-to-length items like cables, tubing).
+            Total material = quantity × piece_count.
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
         validated: Boolean field indicating if this BOM item is valid (checksum matches)
@@ -3754,39 +3754,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         self.recalculate_quantity()
 
     def recalculate_quantity(self):
-        """Recalculate the 'quantity' field based on the 'raw_amount' field.
-
-        If piece_size is specified, the effective raw_amount is calculated as
-        piece_count * piece_size (for cut-to-length parts like cables, tubing,
-        or profiles). Otherwise, raw_amount is used directly.
-        """
-        # If piece_size is provided, compute total amount from piece_count * piece_size
-        if self.piece_size and self.piece_size.strip():
-            try:
-                piece_qty = InvenTree.conversion.convert_physical_value(
-                    self.piece_size, self.sub_part.units, strip_units=False
-                )
-
-                if float(piece_qty.magnitude) <= 0:
-                    raise ValidationError({
-                        'piece_size': _('Piece size must be greater than zero')
-                    })
-
-                total_magnitude = Decimal(piece_qty.magnitude) * Decimal(self.piece_count)
-
-                # Store the computed total as raw_amount for display consistency
-                if self.sub_part.units:
-                    self.raw_amount = f'{total_magnitude} {self.sub_part.units}'
-                else:
-                    self.raw_amount = str(total_magnitude)
-
-            except ValidationError:
-                raise
-            except Exception:
-                raise ValidationError({
-                    'piece_size': _('Invalid piece size value')
-                })
-
+        """Recalculate the 'quantity' field based on the 'raw_amount' field."""
         if self.raw_amount is None or self.raw_amount == '':
             self.raw_amount = self.quantity
 
@@ -4009,16 +3977,9 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         default=1,
         validators=[MinValueValidator(1)],
         verbose_name=_('Piece Count'),
-        help_text=_('Number of pieces required (for cut-to-length items)'),
-    )
-
-    piece_size = models.CharField(
-        max_length=25,
-        blank=True,
-        verbose_name=_('Piece Size'),
         help_text=_(
-            'Size of each piece (e.g. "250 mm"). '
-            'When specified, total quantity = piece_count × piece_size.'
+            'Number of pieces required (for cut-to-length items). '
+            'Total material = quantity × piece_count.'
         ),
     )
 
@@ -4077,7 +4038,6 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             'attrition',
             'rounding_multiple',
             'piece_count',
-            'piece_size',
             'reference',
             'optional',
             'inherited',
@@ -4240,9 +4200,14 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         Returns:
             Production quantity required for this component
+
+        Note:
+            For cut-to-length parts, quantity represents the per-piece size/length
+            and piece_count indicates how many pieces are needed.
+            Total material = quantity × piece_count × build_quantity.
         """
-        # Base quantity requirement
-        required = self.quantity * build_quantity
+        # Base quantity requirement (quantity is per-piece, piece_count is number of pieces)
+        required = self.quantity * self.piece_count * build_quantity
 
         # Account for attrition
         if self.attrition > 0:

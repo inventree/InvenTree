@@ -1,8 +1,9 @@
-"""Add piece_count and piece_size fields to BomItem model.
+"""Add piece_count field to BomItem model.
 
-These fields support cut-to-length parts (cables, tubing, profiles) where
-a BOM line requires multiple pieces of a specific size, rather than a
-single total quantity.
+This field supports cut-to-length parts (cables, tubing, profiles) where
+a BOM line requires multiple pieces of a specific size. The existing
+quantity field represents the per-piece size/length, and piece_count
+indicates how many pieces are needed. Total material = quantity × piece_count.
 """
 
 import django.core.validators
@@ -21,19 +22,9 @@ class Migration(migrations.Migration):
             name='piece_count',
             field=models.PositiveIntegerField(
                 default=1,
-                help_text='Number of pieces required (for cut-to-length items)',
+                help_text='Number of pieces required (for cut-to-length items). Total material = quantity × piece_count.',
                 validators=[django.core.validators.MinValueValidator(1)],
                 verbose_name='Piece Count',
-            ),
-        ),
-        migrations.AddField(
-            model_name='bomitem',
-            name='piece_size',
-            field=models.CharField(
-                blank=True,
-                help_text='Size of each piece (e.g. "250 mm"). When specified, total quantity = piece_count × piece_size.',
-                max_length=25,
-                verbose_name='Piece Size',
             ),
         ),
     ]

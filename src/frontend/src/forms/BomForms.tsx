@@ -44,11 +44,7 @@ export function bomItemFields({
     },
     piece_count: {
       label: t`Piece Count`,
-      description: t`Number of pieces required (for cut-to-length items)`
-    },
-    piece_size: {
-      label: t`Piece Size`,
-      description: t`Size of each piece (e.g. "250 mm")`
+      description: t`Number of pieces required (for cut-to-length items). Total material = quantity × piece_count.`
     },
     reference: {},
     setup_quantity: {},
