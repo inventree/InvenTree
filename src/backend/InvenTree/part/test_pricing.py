@@ -183,10 +183,7 @@ class PartPricingTests(InvenTreeTestCase):
         )
 
         sp = company.models.SupplierPart.objects.create(
-            supplier=supplier,
-            part=self.part,
-            SKU='PACK_TEST',
-            pack_quantity='1',
+            supplier=supplier, part=self.part, SKU='PACK_TEST', pack_quantity='1'
         )
 
         company.models.SupplierPriceBreak.objects.create(
