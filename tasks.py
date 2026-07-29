@@ -1882,8 +1882,27 @@ def setup_test(
             # Use SSH protocol for cloning the demo dataset
             URL = 'git@github.com:inventree/demo-dataset.git'
 
+        # InvenTree's trunk branch is named "master", but the demo-dataset
+        # repository uses "main" as its trunk branch - map this automatically
+        # so CI can pass through the detected target branch unmodified.
+        if not branch or branch == 'master':
+            branch = 'main'
+
+        if branch != 'main':
+            # Stable release branches (e.g. "1.4.x") may not yet exist in the
+            # demo-dataset repository (e.g. it has not been backported yet).
+            # Fall back to "main" in that case, rather than failing the clone.
+            result = c.run(
+                f'git ls-remote --heads {URL} {branch}', hide=True, warn=True
+            )
+            if not result.ok or not result.stdout.strip():
+                warning(
+                    f"Demo dataset has no branch named '{branch}' - falling back to 'main'"
+                )
+                branch = 'main'
+
         # Get test data
-        info('Cloning demo dataset ...')
+        info(f"Cloning demo dataset (branch '{branch}') ...")
         run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
 
     # Make sure migrations are done - might have just deleted sqlite database
