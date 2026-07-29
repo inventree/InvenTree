@@ -486,6 +486,7 @@ django==5.2.16 \
     #   django-error-report-2
     #   django-filter
     #   django-flags
+    #   django-fsm-2
     #   django-ical
     #   django-js-asset
     #   django-maintenance-mode
@@ -503,6 +504,7 @@ django==5.2.16 \
     #   django-stdimage
     #   django-storages
     #   django-structlog
+    #   django-stubs-ext
     #   django-taggit
     #   django-xforwardedfor-middleware
     #   djangorestframework
@@ -539,6 +541,9 @@ django-filter==26.1 \
 django-flags==5.2.0 \
     --hash=sha256:a3aee5e0d11e24e35f5ae4a423d52cad721f639181c1b1251e0148d8530a3f81 \
     --hash=sha256:aa22543410f68a4082c576f3be469ea67a51c933f8a43eb8b10f6236f158e17e
+    # via -r src/backend/requirements.in
+django-fsm-2==4.2.4 \
+    --hash=sha256:0072be359520075eee4baead3873e5eb8f1700b4f91e41208058cbea0ceae9b9
     # via -r src/backend/requirements.in
 django-ical==1.9.2 \
     --hash=sha256:44c9b6fa90d09f25e9ebaa91ed9eb007f079afbc23d6aac909cfc18188a8e90c \
@@ -621,6 +626,10 @@ django-structlog==10.1.0 \
     --hash=sha256:450842bfb03887fc14469570769e515d22ea67d753848a25cdbd05405382c090 \
     --hash=sha256:812f61dea873e559511f42c0f3a7cdc36d4472f6cc15460565a97e5cbe06a76d
     # via -r src/backend/requirements.in
+django-stubs-ext==6.0.6 \
+    --hash=sha256:5470c970f61a3ccf5aae7633feef1a097f944f417b955da200c9ac26ecd9134b \
+    --hash=sha256:e6f09884e48d7c5b250a373dfa22aa3e83bb91b8babbd8d05187f6b92247f232
+    # via django-fsm-2
 django-taggit==6.1.0 \
     --hash=sha256:ab776264bbc76cb3d7e49e1bf9054962457831bd21c3a42db9138b41956e4cf0 \
     --hash=sha256:c4d1199e6df34125dd36db5eb0efe545b254dec3980ce5dd80e6bab3e78757c3
@@ -1883,6 +1892,7 @@ typing-extensions==4.16.0 \
     --hash=sha256:dc983d19a509c94dba722ee6abd33940f7c05a89e243c47e907eb4db6f1a43e5
     # via
     #   django-redis
+    #   django-stubs-ext
     #   flexcache
     #   flexparser
     #   grpcio
