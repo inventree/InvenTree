@@ -19,6 +19,7 @@ import { PartCreationMenu } from '../../components/items/PartCreationMenu';
 import {
   BooleanColumn,
   CategoryColumn,
+  DecimalColumn,
   DefaultLocationColumn,
   DescriptionColumn,
   IPNColumn,
@@ -77,6 +78,13 @@ function partTableColumns(): TableColumn[] {
       filter: ['has_stock', 'low_stock', 'high_stock'],
       render: renderPartStockCell
     },
+    DecimalColumn({
+      accessor: 'ordering',
+      title: t`On Order`,
+      filter: 'on_order',
+      sortable: true,
+      defaultVisible: false
+    }),
     {
       accessor: 'price_range',
       title: t`Price Range`,
