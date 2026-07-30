@@ -3419,7 +3419,7 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
-    def can_issue(self):
+    def can_issue(self) -> bool:
         """Return True if this order can be issued."""
         return can_proceed(self.issue_order)
 
@@ -3909,10 +3909,6 @@ class TransferOrder(Order):
         if not user:
             user = kwargs.pop('user', None)
 
-        # Lock this order against concurrent completion, and re-read the status
-        # from the database. Without this, two simultaneous completion requests
-        # can both observe status=ISSUED, and each would process every allocation
-        # (duplicating all associated stock operations).
         self.can_complete(raise_error=True, **kwargs)
 
         for allocation in self.allocations():
