@@ -1003,9 +1003,6 @@ class Build(
             group='build',
         )
 
-        self.completion_date = InvenTree.helpers.current_date()
-        self.completed_by = user
-
     @inventree_transition(
         field=status,
         source=[BuildStatus.PENDING, BuildStatus.ON_HOLD],
