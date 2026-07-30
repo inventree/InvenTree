@@ -1,6 +1,10 @@
 import { Group, Paper, Space, Stack, Text } from '@mantine/core';
 
 import { StylishText } from '@lib/components/StylishText';
+import {
+  NextPrevAction,
+  type NextPrevTarget
+} from '@lib/components/nav/NextPrevAction';
 import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { shortenString } from '@lib/functions/String';
 import { t } from '@lingui/core/macro';
@@ -15,6 +19,17 @@ import type { PrimaryActionUIFeature } from '../plugins/PluginUIFeatureTypes';
 import { type Breadcrumb, BreadcrumbList } from './BreadcrumbList';
 import PageTitle from './PageTitle';
 
+export interface PageDetailNextPrev {
+  prev?: NextPrevTarget;
+  next?: NextPrevTarget;
+  labels?: {
+    prev?: ReactNode;
+    next?: ReactNode;
+    prevAria?: string;
+    nextAria?: string;
+  };
+}
+
 interface PageDetailInterface {
   title?: string;
   icon?: ReactNode;
@@ -28,6 +43,13 @@ interface PageDetailInterface {
   actions?: ReactNode[];
   editAction?: () => void;
   editEnabled?: boolean;
+  /**
+   * Optional previous / next navigation affordances. When provided, two
+   * compact icon buttons are rendered next to the action group, allowing
+   * the user to step between sibling instances without returning to the
+   * list view. See https://github.com/inventree/InvenTree/issues/12397.
+   */
+  nextPrev?: PageDetailNextPrev;
 }
 
 /**
@@ -48,7 +70,8 @@ export function PageDetail({
   breadcrumbAction,
   actions,
   editAction,
-  editEnabled
+  editEnabled,
+  nextPrev
 }: Readonly<PageDetailInterface>) {
   const userSettings = useUserSettingsState();
   const navigate = useNavigate();
@@ -186,6 +209,13 @@ export function PageDetail({
             </Group>
             {computedActions && (
               <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
+                {nextPrev && (
+                  <NextPrevAction
+                    prev={nextPrev.prev}
+                    next={nextPrev.next}
+                    labels={nextPrev.labels}
+                  />
+                )}
                 {computedActions.map((action, idx) => (
                   <Fragment key={idx}>{action}</Fragment>
                 ))}

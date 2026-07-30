@@ -147,6 +147,11 @@ export {
   DetailDrawerLink,
   DetailDrawerComponent
 } from './components/nav/DetailDrawer';
+export {
+  type NextPrevTarget,
+  type NextPrevActionProps,
+  NextPrevAction
+} from './components/nav/NextPrevAction';
 export { StylishText } from './components/StylishText';
 
 // State management
