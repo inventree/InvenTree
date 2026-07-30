@@ -40,10 +40,6 @@ env:
   INVENTREE_DB_HOST: "127.0.0.1"
   INVENTREE_DB_PORT: 5432
 
-  # Use the same-named branch of the demo dataset as the target branch of this build,
-  # so that stable branches are not broken by changes to the demo dataset on main
-  DEMO_DATASET_BRANCH: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
-
 jobs:
 
   paths-filter:
@@ -51,6 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       server: ${{ steps.filter.outputs.server }}
+      demo_dataset_branch: ${{ steps.demo-branch.outputs.branch }}
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
         with:
@@ -64,10 +61,29 @@ jobs:
               - .github/scripts/check_exported_data.py
               - 'src/backend/**'
               - 'tasks.py'
+      - name: Determine demo dataset branch
+        # For a pull request, use the actual target (base) branch.
+        # For a direct push, only trust the pushed ref if it looks like a trunk/stable
+        # branch (e.g. "master" or "1.4.x") - a push to an arbitrary feature/patch
+        # branch has no meaningful relationship to the demo-dataset repo's branches.
+        id: demo-branch
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            branch="${{ github.base_ref }}"
+          elif [[ "${{ github.ref_name }}" =~ ^(master|[0-9]+\.[0-9]+\.x)$ ]]; then
+            branch="${{ github.ref_name }}"
+          else
+            branch="main"
+          fi
+          echo "Demo dataset branch: $branch"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
   test:
     runs-on: ubuntu-latest
     needs: paths-filter
     if: needs.paths-filter.outputs.server == 'true' || contains(github.event.pull_request.labels.*.name, 'full-run')
+
+    env:
+      DEMO_DATASET_BRANCH: ${{ needs.paths-filter.outputs.demo_dataset_branch }}
 
     services:
       postgres:
