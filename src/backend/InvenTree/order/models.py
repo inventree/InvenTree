@@ -1842,7 +1842,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """Return True if this order can be placed on hold."""
         return can_proceed(self.hold_order)
 
-    def _ship_complete_action(self, user=None, **kwargs):
+    def _ship_complete_action(self, user=None, **kwargs) -> SalesOrderStatus:
         """Shared logic for ship_order and complete_order.
 
         Returns the target state (SHIPPED or COMPLETE) based on global settings
@@ -1875,10 +1875,9 @@ class SalesOrder(TotalPriceMixin, Order):
         trigger_event(SalesOrderEvents.COMPLETED, id=self.pk)
 
         if bypass_shipped or self.status == SalesOrderStatus.SHIPPED:
-            self.status = SalesOrderStatus.COMPLETE
+            return SalesOrderStatus.COMPLETE
         else:
-            self.status = SalesOrderStatus.SHIPPED
-        return self.status
+            return SalesOrderStatus.SHIPPED
 
     @inventree_transition(
         field=status,
