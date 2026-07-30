@@ -9,18 +9,21 @@ States can be extended with custom options for each InvenTree instance - those o
 from django_fsm import RETURN_VALUE, TransitionNotAllowed, can_proceed
 
 from . import fields
+from .deprecations import Deprecations, deprecated
 from .states import ColorEnum, StatusCode, StatusCodeMixin
 from .transition import StateTransitionMixin, TransitionMethod, inventree_transition
 
 __all__ = [
     'RETURN_VALUE',  # django_fsm import
     'ColorEnum',
+    'Deprecations',
     'StateTransitionMixin',
     'StatusCode',
     'StatusCodeMixin',
     'TransitionMethod',
     'TransitionNotAllowed',  # django_fsm import
     'can_proceed',  # django_fsm import
+    'deprecated',
     'fields',
     'inventree_transition',
 ]

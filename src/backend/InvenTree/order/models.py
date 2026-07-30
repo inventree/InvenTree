@@ -39,10 +39,12 @@ from common.settings import get_global_setting
 from company.models import Address, Company, Contact, SupplierPart
 from generic.states import (
     RETURN_VALUE,
+    Deprecations,
     StateTransitionMixin,
     StatusCodeMixin,
     TransitionNotAllowed,
     can_proceed,
+    deprecated,
     inventree_transition,
 )
 from generic.states.fields import InvenTreeCustomStatusModelField
@@ -859,8 +861,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         return line
 
-    # region state changes
-
+    # region fsm
     @inventree_transition(
         field=status,
         source=[PurchaseOrderStatus.PENDING, PurchaseOrderStatus.ON_HOLD],
@@ -882,10 +883,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
             extra_users=self.subscribed_users(),
         )
 
+    @deprecated('Use place_order() instead', version='1.5.0')
     def issue_order(self):
         """Equivalent to place_order()."""
         return self.place_order()
 
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
     def can_issue(self) -> bool:
         """Return True if this order can be issued (placed)."""
@@ -925,6 +928,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         The order must currently be PENDING or PLACED.
         """
 
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
     def can_hold(self) -> bool:
         """Return True if this order can be placed on hold."""
@@ -953,6 +957,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             extra_users=self.subscribed_users(),
         )
 
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
     def can_cancel(self) -> bool:
         """A PurchaseOrder can only be cancelled while it is open.
@@ -962,7 +967,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """
         return can_proceed(self.cancel_order)
 
-    # endregion
+    # endregion fsm
 
     @property
     def is_pending(self) -> bool:
@@ -1794,7 +1799,8 @@ class SalesOrder(TotalPriceMixin, Order):
 
         return True
 
-    # region state changes
+    # region fsm
+    @deprecated("Use 'issue_order' instead", version='1.5.0')
     def place_order(self):
         """Deprecated version of 'issue_order'."""
         return self.issue_order()
@@ -1820,6 +1826,7 @@ class SalesOrder(TotalPriceMixin, Order):
             extra_users=self.subscribed_users(),
         )
 
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
     def can_issue(self) -> bool:
         """Return True if this order can be issued."""
@@ -1837,6 +1844,7 @@ class SalesOrder(TotalPriceMixin, Order):
         The order must currently be PENDING or IN_PROGRESS.
         """
 
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
     def can_hold(self) -> bool:
         """Return True if this order can be placed on hold."""
@@ -1943,12 +1951,13 @@ class SalesOrder(TotalPriceMixin, Order):
             extra_users=self.subscribed_users(),
         )
 
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
     def can_cancel(self) -> bool:
         """Return True if this order can be cancelled."""
         return can_proceed(self.cancel_order)
 
-    # endregion
+    # endregion fsm
 
     @property
     def line_count(self) -> int:
@@ -3344,6 +3353,8 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Return True if this order is fully received."""
         return not self.lines.filter(received_date=None).exists()
 
+    # region fsm
+
     @inventree_transition(
         field=status,
         source=[ReturnOrderStatus.PENDING, ReturnOrderStatus.IN_PROGRESS],
@@ -3356,6 +3367,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         The order must currently be PENDING or IN_PROGRESS.
         """
 
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
     def can_hold(self):
         """Return True if this order can be placed on hold."""
@@ -3381,6 +3393,7 @@ class ReturnOrder(TotalPriceMixin, Order):
             extra_users=self.subscribed_users(),
         )
 
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
     def can_cancel(self):
         """Return True if this order can be cancelled."""
@@ -3399,10 +3412,12 @@ class ReturnOrder(TotalPriceMixin, Order):
         """
         self.complete_date = InvenTree.helpers.current_date()
 
+    @deprecated('Use issue_order directly', version='1.5.0')
     def place_order(self):
         """Deprecated version of 'issue_order'."""
         return self.issue_order()
 
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
     def can_issue(self):
         """Return True if this order can be issued."""
@@ -3429,6 +3444,7 @@ class ReturnOrder(TotalPriceMixin, Order):
             extra_users=self.subscribed_users(),
         )
 
+    # endregion fsm
     # endregion
 
     @transaction.atomic
@@ -3807,6 +3823,7 @@ class TransferOrder(Order):
         """Check if this order is "transferred" (all line items transferred)."""
         return all(line.is_completed() for line in self.lines.all())
 
+    # region fsm
     def can_complete(
         self, raise_error: bool = False, allow_incomplete_lines: bool = False
     ) -> bool:
@@ -3835,12 +3852,12 @@ class TransferOrder(Order):
 
         return True
 
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
     def can_issue(self) -> bool:
         """Return True if this order can be issued."""
         return can_proceed(self.issue_order)
 
-    # region state changes
     @inventree_transition(
         field=status,
         source=[TransferOrderStatus.PENDING, TransferOrderStatus.ON_HOLD],
@@ -3862,6 +3879,7 @@ class TransferOrder(Order):
             extra_users=self.subscribed_users(),
         )
 
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
     def can_hold(self) -> bool:
         """Return True if this order can be placed on hold."""
@@ -3929,6 +3947,7 @@ class TransferOrder(Order):
             extra_users=self.subscribed_users(),
         )
 
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
     def can_cancel(self) -> bool:
         """A TransferOrder can only be cancelled while it is open.
@@ -3938,7 +3957,7 @@ class TransferOrder(Order):
         """
         return can_proceed(self.cancel_order)
 
-    # endregion
+    # endregion fsm
 
     @property
     def line_count(self) -> int:
