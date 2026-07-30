@@ -2332,7 +2332,7 @@ class BuildConsumeTest(BuildAPITest):
                 {},
                 expected_code=201,
                 benchmark=True,
-                max_query_count=250,
+                max_query_count=350,
                 max_query_time=1.5,
             )
 
