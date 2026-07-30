@@ -260,11 +260,6 @@ class StateTransitionMixin:
         return default_action(current_state, target_state, instance, **kwargs)
 
 
-def _noop_default_action(current_state, target_state, instance, **kwargs):
-    """No-op default action for compatibility with transition handlers."""
-    return None
-
-
 def _run_plugin_transition_handlers(instance, source, target, default_action):
     """Run plugin transition handlers before a state transition.
 
@@ -305,3 +300,8 @@ def _run_plugin_transition_handlers(instance, source, target, default_action):
             result = handler.transition(source, target, instance, default_action)
             if result:
                 return result
+
+
+def _noop_default_action(current_state, target_state, instance, **kwargs):
+    """No-op default action for compatibility with transition handlers."""
+    return None
