@@ -52,6 +52,14 @@ jobs:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6.0.3
         with:
           persist-credentials: false
+          # Full history, not the default shallow depth=1: on a `push` event,
+          # paths-filter diffs against the repo's default branch (master), which can
+          # be a long way back for a branch based on an older release line (e.g.
+          # 1.4.x). A shallow clone forces paths-filter into an incremental
+          # fetch --deepen merge-base search, which is prone to a known git race
+          # ("fatal: shallow file has changed since we read it"). Fetching full
+          # history up front avoids that search entirely.
+          fetch-depth: 0
       - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # pin@v4.0.1
         id: filter
         with:
