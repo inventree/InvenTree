@@ -67,12 +67,19 @@ jobs:
         # For a direct push, only trust the pushed ref if it looks like a trunk/stable
         # branch (e.g. "master" or "1.4.x") - a push to an arbitrary feature/patch
         # branch has no meaningful relationship to the demo-dataset repo's branches.
+        # Note: github context values are passed in via env (not inline ${{ }}
+        # interpolation) since branch names are untrusted and must not be spliced
+        # directly into the script.
         id: demo-branch
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            branch="${{ github.base_ref }}"
-          elif [[ "${{ github.ref_name }}" =~ ^(master|[0-9]+\.[0-9]+\.x)$ ]]; then
-            branch="${{ github.ref_name }}"
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            branch="$BASE_REF"
+          elif [[ "$REF_NAME" =~ ^(master|[0-9]+\.[0-9]+\.x)$ ]]; then
+            branch="$REF_NAME"
           else
             branch="main"
           fi
