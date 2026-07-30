@@ -205,53 +205,6 @@ class TransitionMethod:
         )  # pragma: no cover
 
 
-def _noop_default_action(current_state, target_state, instance, **kwargs):
-    """No-op default action for compatibility with transition handlers."""
-    return None
-
-
-def _run_plugin_transition_handlers(instance, source, target, default_action):
-    """Run plugin transition handlers before a state transition.
-
-    A plugin handler may veto the transition by raising a ``ValidationError``.
-    """
-    if not isinstance(instance, StateTransitionMixin):
-        return
-
-    if not isinstance(instance, Model):
-        return
-
-    from InvenTree.exceptions import log_error
-    from plugin import PluginMixinEnum, registry
-
-    transition_plugins = registry.with_mixin(PluginMixinEnum.STATE_TRANSITION)
-
-    for plugin in transition_plugins:
-        try:
-            handlers = plugin.get_transition_handlers()
-        except Exception:
-            log_error('get_transition_handlers', plugin=plugin)
-            continue
-
-        if type(handlers) is not list:
-            logger.error(
-                'INVE-E9: Plugin %s returned invalid type for transition handlers',
-                plugin.slug,
-            )
-            continue
-
-        for handler in handlers:
-            if not isinstance(handler, TransitionMethod):
-                logger.error('INVE-E9: Invalid transition handler type: %s', handler)
-                continue
-
-            # Call the transition method.
-            # ValidationError raised here will propagate and cancel the transition.
-            result = handler.transition(source, target, instance, default_action)
-            if result:
-                return result
-
-
 class StateTransitionMixin:
     """Mixin class to enable plugin-controlled state transitions.
 
@@ -305,3 +258,50 @@ class StateTransitionMixin:
         if result:
             return result
         return default_action(current_state, target_state, instance, **kwargs)
+
+
+def _noop_default_action(current_state, target_state, instance, **kwargs):
+    """No-op default action for compatibility with transition handlers."""
+    return None
+
+
+def _run_plugin_transition_handlers(instance, source, target, default_action):
+    """Run plugin transition handlers before a state transition.
+
+    A plugin handler may veto the transition by raising a ``ValidationError``.
+    """
+    if not isinstance(instance, StateTransitionMixin):
+        return
+
+    if not isinstance(instance, Model):
+        return
+
+    from InvenTree.exceptions import log_error
+    from plugin import PluginMixinEnum, registry
+
+    transition_plugins = registry.with_mixin(PluginMixinEnum.STATE_TRANSITION)
+
+    for plugin in transition_plugins:
+        try:
+            handlers = plugin.get_transition_handlers()
+        except Exception:
+            log_error('get_transition_handlers', plugin=plugin)
+            continue
+
+        if type(handlers) is not list:
+            logger.error(
+                'INVE-E9: Plugin %s returned invalid type for transition handlers',
+                plugin.slug,
+            )
+            continue
+
+        for handler in handlers:
+            if not isinstance(handler, TransitionMethod):
+                logger.error('INVE-E9: Invalid transition handler type: %s', handler)
+                continue
+
+            # Call the transition method.
+            # ValidationError raised here will propagate and cancel the transition.
+            result = handler.transition(source, target, instance, default_action)
+            if result:
+                return result
