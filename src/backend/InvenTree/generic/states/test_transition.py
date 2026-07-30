@@ -171,8 +171,6 @@ class TransitionTests(InvenTreeTestCase):
         # Expect a "warning" message on each run
         # This assures us that the transition handler is being called
         msg = 'get_transition_handlers is intentionally broken in this plugin'
-        # TODO remove
-        return
 
         with self.assertWarnsMessage(UserWarning, msg):
             # No error should occur here
