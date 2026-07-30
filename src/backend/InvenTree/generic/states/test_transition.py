@@ -20,6 +20,7 @@ class InvenTreeTransitionTests(InvenTreeTestCase):
         'location',
         'stock',
         'order',
+        'return_order',
     ]
 
     def test_decorator_applied_to_purchase_order(self):
@@ -35,9 +36,7 @@ class InvenTreeTransitionTests(InvenTreeTestCase):
         po = PurchaseOrder.objects.filter(
             status=PurchaseOrderStatus.PENDING.value
         ).first()
-
-        if po is None:
-            self.skipTest('No PENDING purchase order available')
+        assert po
 
         # A PENDING order can be placed or cancelled, but not completed
         self.assertTrue(po.can_issue)
@@ -49,9 +48,7 @@ class InvenTreeTransitionTests(InvenTreeTestCase):
         po = PurchaseOrder.objects.filter(
             status=PurchaseOrderStatus.PENDING.value
         ).first()
-
-        if po is None:
-            self.skipTest('No PENDING purchase order available')
+        assert po
 
         # Place the order (PENDING → PLACED)
         result = po.place_order()
@@ -82,9 +79,7 @@ class InvenTreeTransitionTests(InvenTreeTestCase):
         po = PurchaseOrder.objects.filter(
             status=PurchaseOrderStatus.CANCELLED.value
         ).first()
-
-        if po is None:
-            self.skipTest('No CANCELLED purchase order available')
+        assert po
 
         # Attempting to place a cancelled order must return False (not raise)
         result = po.place_order()
@@ -99,9 +94,7 @@ class InvenTreeTransitionTests(InvenTreeTestCase):
         ro = ReturnOrder.objects.filter(
             status=ReturnOrderStatus.IN_PROGRESS.value
         ).first()
-
-        if ro is None:
-            self.skipTest('No IN_PROGRESS return order available')
+        assert ro
 
         # Can complete an IN_PROGRESS return order
         self.assertTrue(can_proceed(ro.complete_order))
@@ -114,9 +107,7 @@ class InvenTreeTransitionTests(InvenTreeTestCase):
         po = PurchaseOrder.objects.filter(
             status=PurchaseOrderStatus.PENDING.value
         ).first()
-
-        if po is None:
-            self.skipTest('No PENDING purchase order available')
+        assert po
 
         self.assertEqual(po.can_issue, can_proceed(po.place_order))
 
