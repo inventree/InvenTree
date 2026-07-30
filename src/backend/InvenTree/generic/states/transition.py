@@ -65,7 +65,7 @@ def inventree_transition(
                 ``django_fsm.RETURN_VALUE`` instance for dynamic targets.
         event: Optional event name to trigger after the transition.  If not provided no event is triggered.
         refresh_field: If True, the status field is updated from the database before the transition.
-        raise_error: If True, a ValueError exception is raised on invalid transitions instead of returning False.
+        raise_error: If True, a ValidationError exception is raised on invalid transitions instead of returning False.
         **extra: Additional keyword arguments forwarded to
                  ``django_fsm.transition`` (e.g. ``conditions``,
                  ``on_error``).
@@ -171,8 +171,8 @@ class TransitionMethod:
         """Perform a state transition.
 
         When used with ``@inventree_transition``-decorated methods, plugin
-        handlers are invoked via the ``pre_transition`` signal *before* the
-        method body executes.  The semantics are:
+        handlers are invoked before the decorated method body executes.
+        The semantics are:
 
         * **Ignore** - return ``False``.  Further handlers are attempted;
           the decorated method body executes as normal.
@@ -189,8 +189,9 @@ class TransitionMethod:
             current_state: int - Current state of the instance.
             target_state: int - Target state to transition to.
             instance: Model - The object instance to transition.
-            default_action: callable - No-op when called from the signal-based
-                handler; present for backward compatibility.
+            default_action: callable - No-op when called from the
+                ``inventree_transition`` wrapper; present for backward
+                compatibility.
             **kwargs: Additional keyword arguments for custom logic.
 
         Returns:
@@ -211,7 +212,7 @@ class StateTransitionMixin:
     Add this mixin to a Django model to gain:
 
     * Plugin hook support for all ``@inventree_transition``-decorated methods
-      (via the global ``pre_transition`` signal handler).
+      (via the ``inventree_transition`` decorator).
     * A legacy ``handle_transition`` method for backward compatibility with
       code that calls it directly.
 

@@ -197,7 +197,7 @@ class InvenTreeCustomStatusModelField(FSMFieldMixin, models.PositiveIntegerField
 
 
 class ExtraInvenTreeCustomStatusModelField(models.PositiveIntegerField):
-    """Custom field used to detect custom extenteded fields.
+    """Custom field used to detect custom extended fields.
 
     This is not intended to be used directly, if you want to support custom states in your model use InvenTreeCustomStatusModelField.
     """
