@@ -42,9 +42,11 @@ from common.models import ProjectCode
 from common.settings import get_global_setting
 from generic.enums import StringEnum
 from generic.states import (
+    Deprecations,
     StateTransitionMixin,
     StatusCodeMixin,
     can_proceed,
+    deprecated,
     inventree_transition,
 )
 from InvenTree.helpers_db import bulk_create_and_fetch
@@ -964,6 +966,7 @@ class Build(
         # which point to this Build Order
         self.allocated_stock.all().delete()
 
+    # region fsm
     @inventree_transition(
         field=status,
         source=[BuildStatus.PENDING, BuildStatus.PRODUCTION, BuildStatus.ON_HOLD],
@@ -1021,6 +1024,7 @@ class Build(
             check_build_stock, self, group='build', force_async=True
         )
 
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
     def can_issue(self) -> bool:
         """Returns True if this BuildOrder can be issued."""
@@ -1038,6 +1042,7 @@ class Build(
         The build must currently be PENDING or PRODUCTION.
         """
 
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
     def can_hold(self) -> bool:
         """Returns True if this BuildOrder can be placed on hold."""
@@ -1072,6 +1077,8 @@ class Build(
         # Date of 'completion' is the date the build was cancelled
         self.completion_date = InvenTree.helpers.current_date()
         self.completed_by = user
+
+    # endregion fsm
 
     @transaction.atomic
     def deallocate_stock(self, build_line=None, output=None):
