@@ -173,7 +173,7 @@ class TransitionTests(InvenTreeTestCase):
         msg = 'get_transition_handlers is intentionally broken in this plugin'
 
         with self.assertWarnsMessage(UserWarning, msg):
-            # Error is logged but not raised
+            # No error should occur here
             ro.complete_order()
             self.assertEqual(ro.status, ReturnOrderStatus.ON_HOLD.value)
 
@@ -185,11 +185,11 @@ class TransitionTests(InvenTreeTestCase):
 
         with self.assertLogs('inventree', level='ERROR') as cm:
             with self.assertWarnsMessage(UserWarning, msg):
-                # Error is logged but not raised
+                # No error should occur here
                 ro.issue_order()
                 self.assertEqual(ro.status, ReturnOrderStatus.IN_PROGRESS.value)
 
-            # Ensure correct error was logged
+            # Ensure correct eroror was logged
             self.assertIn('Invalid transition handler type: 1', str(cm.output[0]))
 
         # Now, enable the "WRONG_RETURN_TYPE" setting
@@ -197,7 +197,7 @@ class TransitionTests(InvenTreeTestCase):
 
         with self.assertLogs('inventree', level='ERROR') as cm:
             with self.assertWarnsMessage(UserWarning, msg):
-                # Error is logged but not raised
+                # No error should occur here
                 ro.hold_order()
                 self.assertEqual(ro.status, ReturnOrderStatus.ON_HOLD.value)
 

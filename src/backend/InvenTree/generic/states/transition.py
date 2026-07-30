@@ -25,12 +25,11 @@ def inventree_transition(
     raise_error: bool = False,
     **extra,
 ):
-    """Decorator that combines ``@django_fsm.transition`` with InvenTree conventions.
+    """Decorator that combines ``@django_fsm.transition`` with plugin transitions.
 
     Wraps a model method so that:
-
     * Source/target state validation is enforced via ``django_fsm.transition``.
-    * Plugin hooks are called automatically before the FSM transition executes.
+    * Plugin transitions are called automatically before the FSM transition executes.
     * The model instance is saved after a successful transition.
     * The whole operation is wrapped in a database transaction.
 
@@ -58,17 +57,13 @@ def inventree_transition(
             return can_proceed(self.place_order)
 
     Args:
-        field: The ``InvenTreeCustomStatusModelField`` (or its string name) that
-               holds the state.
+        field: The ``InvenTreeCustomStatusModelField`` (or its string name) that holds the state.
         source: Allowed source state(s) for the transition.
-        target: Target state after the transition.  May be a
-                ``django_fsm.RETURN_VALUE`` instance for dynamic targets.
-        event: Optional event name to trigger after the transition.  If not provided no event is triggered.
-        refresh_field: If True, the status field is updated from the database before the transition.
+        target: Target state after the transition.
+        event: Optional event (name) to trigger after the transition.  If not provided no event is triggered.
+        refresh_field: (default True) If True, the field is updated from the database before the transition.
         raise_error: If True, a ValidationError exception is raised on invalid transitions instead of returning False.
-        **extra: Additional keyword arguments forwarded to
-                 ``django_fsm.transition`` (e.g. ``conditions``,
-                 ``on_error``).
+        **extra: Additional keyword arguments forwarded to `django_fsm.transition` (e.g. `conditions`, `on_error`, `permission`).
     """
 
     def decorator(func):
@@ -230,10 +225,6 @@ class StateTransitionMixin:
             )
             def place_order(self):
                 pass
-
-            @property
-            def can_issue(self) -> bool:
-                return can_proceed(self.place_order)
     """
 
     def handle_transition(
