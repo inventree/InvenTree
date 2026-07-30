@@ -1,6 +1,5 @@
 """Classes and functions for plugin controlled object state transitions."""
 
-import warnings
 from collections.abc import Callable
 from enum import Enum
 from functools import wraps
@@ -11,76 +10,10 @@ from django.db.models import Model
 
 import structlog
 from django_fsm import TransitionNotAllowed, transition
-from django_fsm.signals import pre_transition
 
 from plugin.events import trigger_event
 
 logger = structlog.get_logger('inventree')
-
-
-def _plugin_pre_transition_handler(sender, instance, name, source, target, **kwargs):
-    """Handle pre-transition signal for plugin-based state transition hooks.
-
-    This function is connected to the django-fsm ``pre_transition`` signal and
-    invokes any registered plugin transition handlers before a state transition
-    is executed.  A plugin handler may veto the transition by raising a
-    ``ValidationError``.
-
-    Args:
-        sender: The model class that is transitioning.
-        instance: The model instance that is transitioning.
-        name: The name of the transition method.
-        source: The current state value.
-        target: The target state value.
-    """
-    if not isinstance(instance, StateTransitionMixin):
-        return
-
-    from InvenTree.exceptions import log_error
-    from plugin import PluginMixinEnum, registry
-
-    transition_plugins = registry.with_mixin(PluginMixinEnum.STATE_TRANSITION)
-
-    for plugin in transition_plugins:
-        try:
-            handlers = plugin.get_transition_handlers()
-        except Exception:
-            log_error('get_transition_handlers', plugin=plugin)
-            continue
-
-        if type(handlers) is not list:
-            logger.error(
-                'INVE-E9: Plugin %s returned invalid type for transition handlers',
-                plugin.slug,
-            )
-            continue
-
-        for handler in handlers:
-            if not isinstance(handler, TransitionMethod):
-                logger.error('INVE-E9: Invalid transition handler type: %s', handler)
-                continue
-
-            # Call the transition method.
-            # ValidationError raised here will propagate and cancel the transition.
-            result = handler.transition(source, target, instance, lambda *a, **kw: None)
-
-            if result:
-                # Historically, returning True meant "I handled it, skip the default
-                # action".  With django-fsm-2, the decorated method body always runs,
-                # so this flag no longer prevents execution.  Emit a warning so plugin
-                # authors can update their code.
-                warnings.warn(
-                    f'Plugin transition handler {handler!r} returned True, '
-                    'but the default transition action will still execute. '
-                    'Return False or raise ValidationError instead.',
-                    DeprecationWarning,
-                    stacklevel=2,
-                )
-                return
-
-
-# Connect the plugin hook to the global pre_transition signal.
-pre_transition.connect(_plugin_pre_transition_handler)
 
 
 def inventree_transition(
@@ -97,8 +30,7 @@ def inventree_transition(
     Wraps a model method so that:
 
     * Source/target state validation is enforced via ``django_fsm.transition``.
-    * Plugin hooks are called automatically via the ``pre_transition`` signal
-      (see ``_plugin_pre_transition_handler`` above).
+    * Plugin hooks are called automatically before the FSM transition executes.
     * The model instance is saved after a successful transition.
     * The whole operation is wrapped in a database transaction.
 
@@ -157,9 +89,19 @@ def inventree_transition(
                     # The object has been deleted, so we cannot proceed with the transition.
                     return False
 
+            # Run plugin transition handlers - if no step is taken the decorated method is called
+            result = _run_plugin_transition_handlers(
+                self,
+                getattr(self, field.name),
+                target,
+                default_action=_noop_default_action,
+            )
+            if result:
+                # A plugin handler has handled the transition, so we skip the decorated method.
+                return result
+
             # Execute the FSM-wrapped function.  This validates the source state,
-            # fires pre_transition (which invokes plugin hooks), runs the method
-            # body, and updates the field to the target state.
+            # runs the method body, and updates the field to the target state.
             try:
                 fsm_func(self, *args, **kwargs)
             except TransitionNotAllowed as exc:
@@ -193,7 +135,6 @@ def inventree_transition(
         # on the public wrapper method.
         if hasattr(fsm_func, '_django_fsm'):
             wrapper._django_fsm = fsm_func._django_fsm
-
         return wrapper
 
     return decorator
@@ -264,6 +205,53 @@ class TransitionMethod:
         )  # pragma: no cover
 
 
+def _noop_default_action(current_state, target_state, instance, **kwargs):
+    """No-op default action for compatibility with transition handlers."""
+    return None
+
+
+def _run_plugin_transition_handlers(instance, source, target, default_action):
+    """Run plugin transition handlers before a state transition.
+
+    A plugin handler may veto the transition by raising a ``ValidationError``.
+    """
+    if not isinstance(instance, StateTransitionMixin):
+        return
+
+    if not isinstance(instance, Model):
+        return
+
+    from InvenTree.exceptions import log_error
+    from plugin import PluginMixinEnum, registry
+
+    transition_plugins = registry.with_mixin(PluginMixinEnum.STATE_TRANSITION)
+
+    for plugin in transition_plugins:
+        try:
+            handlers = plugin.get_transition_handlers()
+        except Exception:
+            log_error('get_transition_handlers', plugin=plugin)
+            continue
+
+        if type(handlers) is not list:
+            logger.error(
+                'INVE-E9: Plugin %s returned invalid type for transition handlers',
+                plugin.slug,
+            )
+            continue
+
+        for handler in handlers:
+            if not isinstance(handler, TransitionMethod):
+                logger.error('INVE-E9: Invalid transition handler type: %s', handler)
+                continue
+
+            # Call the transition method.
+            # ValidationError raised here will propagate and cancel the transition.
+            result = handler.transition(source, target, instance, default_action)
+            if result:
+                return result
+
+
 class StateTransitionMixin:
     """Mixin class to enable plugin-controlled state transitions.
 
@@ -311,39 +299,9 @@ class StateTransitionMixin:
             default_action: Default action to be taken if none of the
                 transitions returns a boolean true value
         """
-        from InvenTree.exceptions import log_error
-        from plugin import PluginMixinEnum, registry
-
-        transition_plugins = registry.with_mixin(PluginMixinEnum.STATE_TRANSITION)
-
-        for plugin in transition_plugins:
-            try:
-                handlers = plugin.get_transition_handlers()
-            except Exception:
-                log_error('get_transition_handlers', plugin=plugin)
-                continue
-
-            if type(handlers) is not list:
-                logger.error(
-                    'INVE-E9: Plugin %s returned invalid type for transition handlers',
-                    plugin.slug,
-                )
-                continue
-
-            for handler in handlers:
-                if not isinstance(handler, TransitionMethod):
-                    logger.error(
-                        'INVE-E9: Invalid transition handler type: %s', handler
-                    )
-                    continue
-
-                # Call the transition method
-                result = handler.transition(
-                    current_state, target_state, instance, default_action, **kwargs
-                )
-
-                if result:
-                    return result
-
-        # Default action
+        result = _run_plugin_transition_handlers(
+            instance, current_state, target_state, default_action=default_action
+        )
+        if result:
+            return result
         return default_action(current_state, target_state, instance, **kwargs)
