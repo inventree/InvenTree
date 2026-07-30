@@ -9,8 +9,13 @@ from order.status_codes import PurchaseOrderStatus, ReturnOrderStatus
 from plugin import registry
 
 
-class InvenTreeTransitionTests(InvenTreeTestCase):
-    """Tests for the @inventree_transition decorator and FSM integration."""
+class TransitionTests(InvenTreeTestCase):
+    """Tests for custom state transition logic."""
+
+    def setUp(self):
+        """Set up the test environment."""
+        super().setUp()
+        self.ensurePluginsLoaded()
 
     fixtures = [
         'company',
@@ -23,7 +28,7 @@ class InvenTreeTransitionTests(InvenTreeTestCase):
         'return_order',
     ]
 
-    def test_decorator_applied_to_purchase_order(self):
+    def test_fsm_decorator_applied_to_purchase_order(self):
         """Verify @inventree_transition metadata is attached to PurchaseOrder methods."""
         # Methods decorated with @inventree_transition expose _django_fsm metadata
         self.assertTrue(hasattr(PurchaseOrder.place_order, '_django_fsm'))
@@ -31,7 +36,7 @@ class InvenTreeTransitionTests(InvenTreeTestCase):
         self.assertTrue(hasattr(PurchaseOrder.hold_order, '_django_fsm'))
         self.assertTrue(hasattr(PurchaseOrder.cancel_order, '_django_fsm'))
 
-    def test_can_proceed_purchase_order(self):
+    def test_fsm_can_proceed_purchase_order(self):
         """Test can_proceed() reflects current state correctly for PurchaseOrder."""
         po = PurchaseOrder.objects.filter(
             status=PurchaseOrderStatus.PENDING.value
@@ -43,7 +48,7 @@ class InvenTreeTransitionTests(InvenTreeTestCase):
         self.assertTrue(po.can_cancel)
         self.assertFalse(can_proceed(po.complete_order))
 
-    def test_purchase_order_transitions(self):
+    def test_fsm_purchase_order_transitions(self):
         """Test that PurchaseOrder transitions work correctly via @inventree_transition."""
         po = PurchaseOrder.objects.filter(
             status=PurchaseOrderStatus.PENDING.value
@@ -74,7 +79,7 @@ class InvenTreeTransitionTests(InvenTreeTestCase):
         po.refresh_from_db()
         self.assertEqual(po.status, PurchaseOrderStatus.CANCELLED.value)
 
-    def test_invalid_transition_returns_false(self):
+    def test_fsm_invalid_transition_returns_false(self):
         """Test that an invalid transition returns False (backward-compatible behaviour)."""
         po = PurchaseOrder.objects.filter(
             status=PurchaseOrderStatus.CANCELLED.value
@@ -89,7 +94,7 @@ class InvenTreeTransitionTests(InvenTreeTestCase):
         po.refresh_from_db()
         self.assertEqual(po.status, PurchaseOrderStatus.CANCELLED.value)
 
-    def test_return_order_transitions(self):
+    def test_fsm_return_order_transitions(self):
         """Test that ReturnOrder transitions work correctly via @inventree_transition."""
         ro = ReturnOrder.objects.filter(
             status=ReturnOrderStatus.IN_PROGRESS.value
@@ -102,7 +107,7 @@ class InvenTreeTransitionTests(InvenTreeTestCase):
         # Cannot issue an IN_PROGRESS return order (already issued)
         self.assertFalse(can_proceed(ro.issue_order))
 
-    def test_can_issue_property(self):
+    def test_fsm_can_issue_property(self):
         """Test the can_issue property delegates to can_proceed."""
         po = PurchaseOrder.objects.filter(
             status=PurchaseOrderStatus.PENDING.value
@@ -110,17 +115,6 @@ class InvenTreeTransitionTests(InvenTreeTestCase):
         assert po
 
         self.assertEqual(po.can_issue, can_proceed(po.place_order))
-
-
-class TransitionTests(InvenTreeTestCase):
-    """Tests for custom state transition logic."""
-
-    fixtures = ['company', 'return_order', 'part', 'stock', 'location', 'category']
-
-    def setUp(self):
-        """Set up the test environment."""
-        super().setUp()
-        self.ensurePluginsLoaded()
 
     def test_return_order(self):
         """Test transition of a return order."""
