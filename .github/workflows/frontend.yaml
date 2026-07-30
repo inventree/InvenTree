@@ -33,10 +33,6 @@ env:
   INVENTREE_BACKUP_DIR: /home/runner/work/InvenTree/test_inventree_backup
   INVENTREE_SITE_URL: http://localhost:8000
 
-  # Use the same-named branch of the demo dataset as the target branch of this build,
-  # so that stable branches are not broken by changes to the demo dataset on main
-  DEMO_DATASET_BRANCH: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
-
 permissions:
   contents: read
 
@@ -48,6 +44,7 @@ jobs:
     outputs:
       frontend: ${{ steps.filter.outputs.frontend }}
       force: ${{ steps.force.outputs.force }}
+      demo_dataset_branch: ${{ steps.demo-branch.outputs.branch }}
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -65,6 +62,22 @@ jobs:
         if: |
           contains(github.event.pull_request.labels.*.name, 'dependency') ||
           contains(github.event.pull_request.labels.*.name, 'full-run')
+      - name: Determine demo dataset branch
+        # For a pull request, use the actual target (base) branch.
+        # For a direct push, only trust the pushed ref if it looks like a trunk/stable
+        # branch (e.g. "master" or "1.4.x") - a push to an arbitrary feature/patch
+        # branch has no meaningful relationship to the demo-dataset repo's branches.
+        id: demo-branch
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            branch="${{ github.base_ref }}"
+          elif [[ "${{ github.ref_name }}" =~ ^(master|[0-9]+\.[0-9]+\.x)$ ]]; then
+            branch="${{ github.ref_name }}"
+          else
+            branch="main"
+          fi
+          echo "Demo dataset branch: $branch"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
 
 
   build:
@@ -125,6 +138,7 @@ jobs:
       id-token: write # Required for GitHub OIDC
     env:
       VITE_COVERAGE: false
+      DEMO_DATASET_BRANCH: ${{ needs.paths-filter.outputs.demo_dataset_branch }}
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -207,6 +221,7 @@ jobs:
     env:
       COVERAGE: true
       VITE_COVERAGE: true
+      DEMO_DATASET_BRANCH: ${{ needs.paths-filter.outputs.demo_dataset_branch }}
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
