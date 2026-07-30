@@ -1,6 +1,7 @@
 """Helper for deprecating old implementation details."""
 
 from enum import Enum
+from typing import Any, LiteralString, Optional, cast
 from warnings import deprecated as warn_deprecated
 
 
@@ -10,4 +11,12 @@ class Deprecations(Enum):
     CAN_PROCEED = 'Use can_proceed directly'
 
 
-deprecated = warn_deprecated
+class deprecated(warn_deprecated):  # noqa: N801
+    """Deprecation decorator for state transition methods."""
+
+    def __init__(
+        self, message: Any | str, version: Optional[str] = None, *args, **kwargs
+    ):
+        """Initialize the decorator with a deprecation reason."""
+        self.version = version
+        super().__init__(cast(LiteralString, message), *args, **kwargs)
