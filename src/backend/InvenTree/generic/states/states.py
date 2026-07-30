@@ -10,7 +10,7 @@ logger = logging.getLogger('inventree')
 
 
 class BaseEnum(enum.IntEnum):
-    """An `Enum` capabile of having its members have docstrings.
+    """An `Enum` capable of having its members have docstrings.
 
     Based on https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums
     """
@@ -270,7 +270,7 @@ class ColorEnum(Enum):
 class StatusCodeMixin:
     """Mixin class which handles custom 'status' fields.
 
-    - Implements a 'set_stutus' method which can be used to set the status of an object
+    - Implements a 'set_status' method which can be used to set the status of an object
     - Implements a 'get_status' method which can be used to retrieve the status of an object
 
     This mixin assumes that the implementing class has a 'status' field,
