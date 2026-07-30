@@ -441,13 +441,6 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         quantity = data['quantity']
         serial_numbers = data.get('serial_numbers', '')
 
-        if part.trackable and not serial_numbers:
-            raise ValidationError({
-                'serial_numbers': _(
-                    'Serial numbers must be provided for trackable parts'
-                )
-            })
-
         if serial_numbers:
             try:
                 self.serials = InvenTree.helpers.extract_serial_numbers(
