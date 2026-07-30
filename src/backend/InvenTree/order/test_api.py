@@ -4439,7 +4439,7 @@ class TransferOrderTest(OrderTest):
         with self.assertRaises(ValidationError) as err:
             instance_b.complete_order(None)
 
-        self.assertIn('Order is already complete', str(err.exception))
+        self.assertIn('Transfer Order is already Complete', str(err.exception))
 
         # The transferred quantity has not been double-counted
         line.refresh_from_db()
