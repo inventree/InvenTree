@@ -80,14 +80,20 @@ jobs:
           elif [[ "$REF_NAME" =~ ^(master|[0-9]+\.[0-9]+\.x)$ ]]; then
             branch="$REF_NAME"
           else
-            branch="main"
+            # A `push` to some other branch (e.g. a contributor's patch branch) has no
+            # meaningful target here - guessing "main" just reproduces the same failure
+            # this whole step exists to avoid (main's dataset can be schema-incompatible
+            # with an older release line). Leave it empty so the `test` job is skipped;
+            # the `pull_request` run for the same commit already covers this correctly
+            # against the real base branch.
+            branch=""
           fi
           echo "Demo dataset branch: $branch"
           echo "branch=$branch" >> "$GITHUB_OUTPUT"
   test:
     runs-on: ubuntu-latest
     needs: paths-filter
-    if: needs.paths-filter.outputs.server == 'true' || contains(github.event.pull_request.labels.*.name, 'full-run')
+    if: needs.paths-filter.outputs.demo_dataset_branch != '' && (needs.paths-filter.outputs.server == 'true' || contains(github.event.pull_request.labels.*.name, 'full-run'))
 
     env:
       DEMO_DATASET_BRANCH: ${{ needs.paths-filter.outputs.demo_dataset_branch }}

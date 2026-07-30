@@ -80,7 +80,13 @@ jobs:
           elif [[ "$REF_NAME" =~ ^(master|[0-9]+\.[0-9]+\.x)$ ]]; then
             branch="$REF_NAME"
           else
-            branch="main"
+            # A `push` to some other branch (e.g. a contributor's patch branch) has no
+            # meaningful target here - guessing "main" just reproduces the same failure
+            # this whole step exists to avoid (main's dataset can be schema-incompatible
+            # with an older release line). Leave it empty so the frontend jobs are
+            # skipped; the `pull_request` run for the same commit already covers this
+            # correctly against the real base branch.
+            branch=""
           fi
           echo "Demo dataset branch: $branch"
           echo "branch=$branch" >> "$GITHUB_OUTPUT"
@@ -120,7 +126,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: ["build", "paths-filter"]
-    if: github.ref == 'refs/heads/master' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
+    if: needs.paths-filter.outputs.demo_dataset_branch != '' && (github.ref == 'refs/heads/master' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true')
     strategy:
       fail-fast: false
       matrix:
@@ -201,7 +207,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: ["build", "paths-filter"]
-    if: github.ref == 'refs/heads/master' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
+    if: needs.paths-filter.outputs.demo_dataset_branch != '' && (github.ref == 'refs/heads/master' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true')
     strategy:
       fail-fast: false
       matrix:
