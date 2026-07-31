@@ -473,6 +473,22 @@ export function DecimalColumn(props: TableColumn): TableColumn {
   };
 }
 
+export function PercentageColumn(props: TableColumn): TableColumn {
+  return {
+    sortable: true,
+    render: (record: any) => {
+      const value = resolveItem(record, props.accessor ?? '');
+
+      if (value == null || value === 0) {
+        return '-';
+      }
+
+      return `${formatDecimal(value)}%`;
+    },
+    ...props
+  };
+}
+
 export function DescriptionColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'description',
