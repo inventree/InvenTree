@@ -425,9 +425,21 @@ test('Stock - Stock Actions', async ({ browser }) => {
 
 // Test conversion between part variants
 test('Stock - Convert', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'stock/item/242/details' });
+  const page = await doCachedLogin(browser, { url: 'part/78/stock' });
 
-  await page.getByText('widget.red.00 | Red Widget |').waitFor();
+  // Create a brand new stock item
+  await page
+    .getByRole('button', { name: 'action-button-add-stock-item' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'text-field-batch' })
+    .fill('BATCH_TEST');
+  await page.waitForTimeout(200);
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.waitForTimeout(2500);
+  await page.getByText('widget.red.00 | Red Widget |').first().waitFor();
+  await page.getByText('BATCH_TEST', { exact: true }).first().waitFor();
 
   // Convert to widget.red.02
   await page
