@@ -2244,19 +2244,25 @@ class BuildConsumeTest(BuildAPITest):
         for idx, component in enumerate(components):
             if idx % MULTI_ITEM_STRIDE == 0:
                 first_quantity = required_quantity * 3 // 5
-                stock_items.append([
-                    StockItem.objects.create(part=component, quantity=first_quantity),
-                    StockItem.objects.create(
-                        part=component, quantity=required_quantity - first_quantity
-                    ),
-                ])
+                stock_items.append(
+                    [
+                        StockItem.objects.create(
+                            part=component, quantity=first_quantity
+                        ),
+                        StockItem.objects.create(
+                            part=component, quantity=required_quantity - first_quantity
+                        ),
+                    ]
+                )
             else:
-                stock_items.append([
-                    StockItem.objects.create(
-                        part=component,
-                        quantity=required_quantity + (25 if idx % 2 else 0),
-                    )
-                ])
+                stock_items.append(
+                    [
+                        StockItem.objects.create(
+                            part=component,
+                            quantity=required_quantity + (25 if idx % 2 else 0),
+                        )
+                    ]
+                )
 
         # Starting point (before splitting stock)
         N_STOCK_ITEMS = StockItem.objects.count()
@@ -2268,17 +2274,21 @@ class BuildConsumeTest(BuildAPITest):
         for line, items in zip(build.build_lines.all(), stock_items, strict=True):
             if len(items) > 1:
                 for si in items:
-                    allocation_items.append({
-                        'build_line': line.pk,
-                        'stock_item': si.pk,
-                        'quantity': si.quantity,
-                    })
+                    allocation_items.append(
+                        {
+                            'build_line': line.pk,
+                            'stock_item': si.pk,
+                            'quantity': si.quantity,
+                        }
+                    )
             else:
-                allocation_items.append({
-                    'build_line': line.pk,
-                    'stock_item': items[0].pk,
-                    'quantity': required_quantity,
-                })
+                allocation_items.append(
+                    {
+                        'build_line': line.pk,
+                        'stock_item': items[0].pk,
+                        'quantity': required_quantity,
+                    }
+                )
 
         data = {'items': allocation_items}
 
@@ -2660,20 +2670,22 @@ class BuildCustomStatusTest(BuildAPITest):
         next_tree_id = (Build.objects.aggregate(m=Max('tree_id'))['m'] or 0) + 1
 
         # Create 100 build orders, cycling through the 10 custom statuses
-        Build.objects.bulk_create([
-            Build(
-                part=part,
-                reference=f'BO-QTEST-{i}',
-                quantity=1,
-                status=custom_statuses[i % 10].logical_key,
-                status_custom_key=custom_statuses[i % 10].key,
-                lft=1,
-                rght=2,
-                level=0,
-                tree_id=next_tree_id + i,
-            )
-            for i in range(100)
-        ])
+        Build.objects.bulk_create(
+            [
+                Build(
+                    part=part,
+                    reference=f'BO-QTEST-{i}',
+                    quantity=1,
+                    status=custom_statuses[i % 10].logical_key,
+                    status_custom_key=custom_statuses[i % 10].key,
+                    lft=1,
+                    rght=2,
+                    level=0,
+                    tree_id=next_tree_id + i,
+                )
+                for i in range(100)
+            ]
+        )
 
         # Lookup: custom_key -> custom_status_object, for quick per-row assertions
         custom_lookup = {cs.key: cs for cs in custom_statuses}

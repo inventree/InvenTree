@@ -23,7 +23,14 @@ import common.serializers
 import part.models as part_models
 import stock.models as stock_models
 import stock.serializers
-from build.models import Build, BuildItem, BuildLine
+from build.models import (
+    Build,
+    BuildItem,
+    BuildLine,
+    RepairOrder,
+    RepairOrderAllocation,
+    RepairOrderLineItem,
+)
 from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
@@ -411,11 +418,13 @@ class BuildDetail(BuildMixin, RetrieveUpdateDestroyAPI):
         build = self.get_object()
 
         if build.status != BuildStatus.CANCELLED:
-            raise ValidationError({
-                'non_field_errors': [
-                    _('Build must be cancelled before it can be deleted')
-                ]
-            })
+            raise ValidationError(
+                {
+                    'non_field_errors': [
+                        _('Build must be cancelled before it can be deleted')
+                    ]
+                }
+            )
 
         return super().destroy(request, *args, **kwargs)
 
@@ -508,8 +517,7 @@ class BuildLineFilter(FilterSet):
     def filter_allocated(self, queryset, name, value):
         """Filter by whether each BuildLine is fully allocated."""
         allocated_subquery = (
-            BuildItem.objects
-            .filter(build_line=OuterRef('pk'))
+            BuildItem.objects.filter(build_line=OuterRef('pk'))
             .values('build_line')
             .annotate(total=Sum('quantity'))
             .values('total')
@@ -549,8 +557,7 @@ class BuildLineFilter(FilterSet):
         - The quantity allocated for each BuildLine
         """
         allocated_subquery = (
-            BuildItem.objects
-            .filter(build_line=OuterRef('pk'))
+            BuildItem.objects.filter(build_line=OuterRef('pk'))
             .values('build_line')
             .annotate(total=Sum('quantity'))
             .values('total')
@@ -1204,68 +1211,128 @@ class BuildItemList(
     ]
 
 
+class RepairOrderList(ListCreateAPI):
+    """API endpoint for accessing a list of RepairOrder objects."""
+
+    queryset = RepairOrder.objects.all()
+    serializer_class = build.serializers.RepairOrderSerializer
+
+
+class RepairOrderDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single RepairOrder object."""
+
+    queryset = RepairOrder.objects.all()
+    serializer_class = build.serializers.RepairOrderSerializer
+
+
+class RepairOrderLineItemList(ListCreateAPI):
+    """API endpoint for accessing a list of RepairOrderLineItem objects."""
+
+    queryset = RepairOrderLineItem.objects.all()
+    serializer_class = build.serializers.RepairOrderLineItemSerializer
+
+
+class RepairOrderLineItemDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single RepairOrderLineItem object."""
+
+    queryset = RepairOrderLineItem.objects.all()
+    serializer_class = build.serializers.RepairOrderLineItemSerializer
+
+
+class RepairOrderAllocationList(ListCreateAPI):
+    """API endpoint for accessing a list of RepairOrderAllocation objects."""
+
+    queryset = RepairOrderAllocation.objects.all()
+    serializer_class = build.serializers.RepairOrderAllocationSerializer
+
+
+class RepairOrderAllocationDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single RepairOrderAllocation object."""
+
+    queryset = RepairOrderAllocation.objects.all()
+    serializer_class = build.serializers.RepairOrderAllocationSerializer
+
+
 build_api_urls = [
     # Build lines
     path(
         'line/',
-        include([
-            path('<int:pk>/', BuildLineDetail.as_view(), name='api-build-line-detail'),
-            path('', BuildLineList.as_view(), name='api-build-line-list'),
-        ]),
+        include(
+            [
+                path(
+                    '<int:pk>/', BuildLineDetail.as_view(), name='api-build-line-detail'
+                ),
+                path('', BuildLineList.as_view(), name='api-build-line-list'),
+            ]
+        ),
     ),
     # Build Items
     path(
         'item/',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(BuildItem),
-                    path('', BuildItemDetail.as_view(), name='api-build-item-detail'),
-                ]),
-            ),
-            path('', BuildItemList.as_view(), name='api-build-item-list'),
-        ]),
+        include(
+            [
+                path(
+                    '<int:pk>/',
+                    include(
+                        [
+                            meta_path(BuildItem),
+                            path(
+                                '',
+                                BuildItemDetail.as_view(),
+                                name='api-build-item-detail',
+                            ),
+                        ]
+                    ),
+                ),
+                path('', BuildItemList.as_view(), name='api-build-item-list'),
+            ]
+        ),
     ),
     # Build Detail
     path(
         '<int:pk>/',
-        include([
-            path('allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
-            path('consume/', BuildConsume.as_view(), name='api-build-consume'),
-            path(
-                'auto-allocate/',
-                BuildAutoAllocate.as_view(),
-                name='api-build-auto-allocate',
-            ),
-            path(
-                'complete/',
-                BuildOutputComplete.as_view(),
-                name='api-build-output-complete',
-            ),
-            path(
-                'create-output/',
-                BuildOutputCreate.as_view(),
-                name='api-build-output-create',
-            ),
-            path(
-                'delete-outputs/',
-                BuildOutputDelete.as_view(),
-                name='api-build-output-delete',
-            ),
-            path(
-                'scrap-outputs/',
-                BuildOutputScrap.as_view(),
-                name='api-build-output-scrap',
-            ),
-            path('issue/', BuildIssue.as_view(), name='api-build-issue'),
-            path('hold/', BuildHold.as_view(), name='api-build-hold'),
-            path('finish/', BuildFinish.as_view(), name='api-build-finish'),
-            path('cancel/', BuildCancel.as_view(), name='api-build-cancel'),
-            path('unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
-            meta_path(Build),
-            path('', BuildDetail.as_view(), name='api-build-detail'),
-        ]),
+        include(
+            [
+                path('allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
+                path('consume/', BuildConsume.as_view(), name='api-build-consume'),
+                path(
+                    'auto-allocate/',
+                    BuildAutoAllocate.as_view(),
+                    name='api-build-auto-allocate',
+                ),
+                path(
+                    'complete/',
+                    BuildOutputComplete.as_view(),
+                    name='api-build-output-complete',
+                ),
+                path(
+                    'create-output/',
+                    BuildOutputCreate.as_view(),
+                    name='api-build-output-create',
+                ),
+                path(
+                    'delete-outputs/',
+                    BuildOutputDelete.as_view(),
+                    name='api-build-output-delete',
+                ),
+                path(
+                    'scrap-outputs/',
+                    BuildOutputScrap.as_view(),
+                    name='api-build-output-scrap',
+                ),
+                path('issue/', BuildIssue.as_view(), name='api-build-issue'),
+                path('hold/', BuildHold.as_view(), name='api-build-hold'),
+                path('finish/', BuildFinish.as_view(), name='api-build-finish'),
+                path('cancel/', BuildCancel.as_view(), name='api-build-cancel'),
+                path(
+                    'unallocate/',
+                    BuildUnallocate.as_view(),
+                    name='api-build-unallocate',
+                ),
+                meta_path(Build),
+                path('', BuildDetail.as_view(), name='api-build-detail'),
+            ]
+        ),
     ),
     # Build order status code information
     path(
@@ -1276,4 +1343,75 @@ build_api_urls = [
     ),
     # Build List
     path('', BuildList.as_view(), name='api-build-list'),
+    # Repair Order endpoints
+    path(
+        'repair/',
+        include(
+            [
+                path(
+                    '<int:pk>/',
+                    include(
+                        [
+                            path(
+                                '',
+                                RepairOrderDetail.as_view(),
+                                name='api-repair-order-detail',
+                            )
+                        ]
+                    ),
+                ),
+                path('', RepairOrderList.as_view(), name='api-repair-order-list'),
+            ]
+        ),
+    ),
+    # Repair Order line item endpoints
+    path(
+        'repair-line/',
+        include(
+            [
+                path(
+                    '<int:pk>/',
+                    include(
+                        [
+                            path(
+                                '',
+                                RepairOrderLineItemDetail.as_view(),
+                                name='api-repair-order-line-detail',
+                            )
+                        ]
+                    ),
+                ),
+                path(
+                    '',
+                    RepairOrderLineItemList.as_view(),
+                    name='api-repair-order-line-list',
+                ),
+            ]
+        ),
+    ),
+    # Repair Order allocation endpoints
+    path(
+        'repair-allocation/',
+        include(
+            [
+                path(
+                    '<int:pk>/',
+                    include(
+                        [
+                            path(
+                                '',
+                                RepairOrderAllocationDetail.as_view(),
+                                name='api-repair-order-allocation-detail',
+                            )
+                        ]
+                    ),
+                ),
+                path(
+                    '',
+                    RepairOrderAllocationList.as_view(),
+                    name='api-repair-order-allocation-list',
+                ),
+            ]
+        ),
+    ),
 ]

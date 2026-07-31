@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('order', '0009_auto_20190606_2133'),
-    ]
+    dependencies = [('order', '0009_auto_20190606_2133')]
 
     operations = [
         migrations.AddField(
             model_name='purchaseorderlineitem',
             name='notes',
-            field=models.CharField(blank=True, help_text='Line item notes', max_length=500),
-        ),
+            field=models.CharField(
+                blank=True, help_text='Line item notes', max_length=500
+            ),
+        )
     ]

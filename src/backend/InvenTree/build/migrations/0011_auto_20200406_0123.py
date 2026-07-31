@@ -4,15 +4,8 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('build', '0010_auto_20200318_1027'),
-    ]
+    dependencies = [('build', '0010_auto_20200318_1027')]
 
     operations = [
-        migrations.RenameField(
-            model_name='build',
-            old_name='URL',
-            new_name='link',
-        ),
+        migrations.RenameField(model_name='build', old_name='URL', new_name='link')
     ]

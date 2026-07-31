@@ -55,7 +55,14 @@ from stock.serializers import (
 from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer, UserSerializer
 
-from .models import Build, BuildItem, BuildLine
+from .models import (
+    Build,
+    BuildItem,
+    BuildLine,
+    RepairOrder,
+    RepairOrderAllocation,
+    RepairOrderLineItem,
+)
 from .status_codes import BuildStatus
 from .validators import check_build_output
 
@@ -317,14 +324,18 @@ class BuildOutputQuantitySerializer(BuildOutputSerializer):
 
         if quantity is not None:
             if quantity <= 0:
-                raise ValidationError({
-                    'quantity': _('Quantity must be greater than zero')
-                })
+                raise ValidationError(
+                    {'quantity': _('Quantity must be greater than zero')}
+                )
 
             if quantity > output.quantity:
-                raise ValidationError({
-                    'quantity': _('Quantity cannot be greater than the output quantity')
-                })
+                raise ValidationError(
+                    {
+                        'quantity': _(
+                            'Quantity cannot be greater than the output quantity'
+                        )
+                    }
+                )
 
         if self.output_validator:
             # Call the parent serializer's output validator, if provided
@@ -936,9 +947,9 @@ class BuildAllocationItemSerializer(serializers.Serializer):
         if stock_item.part_id != build_line.bom_item.sub_part_id and (
             not build_line.bom_item.is_stock_item_valid(stock_item)
         ):
-            raise ValidationError({
-                'stock_item': _('Selected stock item does not match BOM line')
-            })
+            raise ValidationError(
+                {'stock_item': _('Selected stock item does not match BOM line')}
+            )
 
         # Check that the quantity does not exceed the available amount from the stock item
         allocated = self.context.get('_stock_item_allocated')
@@ -958,19 +969,23 @@ class BuildAllocationItemSerializer(serializers.Serializer):
 
         # Output *must* be set for trackable parts
         if output is None and build_line.bom_item.sub_part.trackable:
-            raise ValidationError({
-                'output': _(
-                    'Build output must be specified for allocation of tracked parts'
-                )
-            })
+            raise ValidationError(
+                {
+                    'output': _(
+                        'Build output must be specified for allocation of tracked parts'
+                    )
+                }
+            )
 
         # Output *cannot* be set for un-tracked parts
         if output is not None and not build_line.bom_item.sub_part.trackable:
-            raise ValidationError({
-                'output': _(
-                    'Build output cannot be specified for allocation of untracked parts'
-                )
-            })
+            raise ValidationError(
+                {
+                    'output': _(
+                        'Build output cannot be specified for allocation of untracked parts'
+                    )
+                }
+            )
 
         return data
 
@@ -1726,9 +1741,9 @@ class BuildConsumeAllocationSerializer(serializers.Serializer):
         quantity = data['quantity']
 
         if quantity > build_item.quantity:
-            raise ValidationError({
-                'quantity': _('Consumed quantity exceeds allocated quantity')
-            })
+            raise ValidationError(
+                {'quantity': _('Consumed quantity exceeds allocated quantity')}
+            )
 
         return data
 
@@ -1824,3 +1839,33 @@ class BuildConsumeSerializer(serializers.Serializer):
             raise ValidationError(_('At least one item or line must be provided'))
 
         return data
+
+
+class RepairOrderSerializer(NotesFieldMixin, InvenTreeModelSerializer):
+    """Serializer for a RepairOrder object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = RepairOrder
+        fields = ['pk', 'reference', 'customer', 'description', 'symptoms', 'status']
+
+
+class RepairOrderLineItemSerializer(InvenTreeModelSerializer):
+    """Serializer for a RepairOrderLineItem object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = RepairOrderLineItem
+        fields = ['pk', 'order', 'part', 'quantity']
+
+
+class RepairOrderAllocationSerializer(InvenTreeModelSerializer):
+    """Serializer for a RepairOrderAllocation object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = RepairOrderAllocation
+        fields = ['pk', 'line', 'item', 'quantity']

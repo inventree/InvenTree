@@ -8,134 +8,131 @@ import InvenTree.status_codes
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ("order", "0100_remove_returnorderattachment_order_and_more"),
-    ]
+    dependencies = [('order', '0100_remove_returnorderattachment_order_and_more')]
 
     operations = [
         migrations.AddField(
-            model_name="purchaseorder",
-            name="status_custom_key",
+            model_name='purchaseorder',
+            name='status_custom_key',
             field=generic.states.fields.ExtraInvenTreeCustomStatusModelField(
                 blank=True,
                 default=None,
-                help_text="Additional status information for this item",
+                help_text='Additional status information for this item',
                 null=True,
-                verbose_name="Custom status key",
+                verbose_name='Custom status key',
                 validators=[
                     generic.states.validators.CustomStatusCodeValidator(
                         status_class=InvenTree.status_codes.PurchaseOrderStatus
-                    ),
-                ]
+                    )
+                ],
             ),
         ),
         migrations.AddField(
-            model_name="returnorder",
-            name="status_custom_key",
+            model_name='returnorder',
+            name='status_custom_key',
             field=generic.states.fields.ExtraInvenTreeCustomStatusModelField(
                 blank=True,
                 default=None,
-                help_text="Additional status information for this item",
+                help_text='Additional status information for this item',
                 null=True,
-                verbose_name="Custom status key",
+                verbose_name='Custom status key',
                 validators=[
                     generic.states.validators.CustomStatusCodeValidator(
                         status_class=InvenTree.status_codes.ReturnOrderStatus
-                    ),
-                ]
+                    )
+                ],
             ),
         ),
         migrations.AddField(
-            model_name="returnorderlineitem",
-            name="outcome_custom_key",
+            model_name='returnorderlineitem',
+            name='outcome_custom_key',
             field=generic.states.fields.ExtraInvenTreeCustomStatusModelField(
                 blank=True,
                 default=None,
-                help_text="Additional status information for this item",
+                help_text='Additional status information for this item',
                 null=True,
-                verbose_name="Custom status key",
+                verbose_name='Custom status key',
                 validators=[
                     generic.states.validators.CustomStatusCodeValidator(
                         status_class=InvenTree.status_codes.ReturnOrderLineStatus
-                    ),
-                ]
+                    )
+                ],
             ),
         ),
         migrations.AddField(
-            model_name="salesorder",
-            name="status_custom_key",
+            model_name='salesorder',
+            name='status_custom_key',
             field=generic.states.fields.ExtraInvenTreeCustomStatusModelField(
                 blank=True,
                 default=None,
-                help_text="Additional status information for this item",
+                help_text='Additional status information for this item',
                 null=True,
-                verbose_name="Custom status key",
+                verbose_name='Custom status key',
                 validators=[
                     generic.states.validators.CustomStatusCodeValidator(
                         status_class=InvenTree.status_codes.SalesOrderStatus
-                    ),
-                ]
+                    )
+                ],
             ),
         ),
         migrations.AlterField(
-            model_name="purchaseorder",
-            name="status",
+            model_name='purchaseorder',
+            name='status',
             field=generic.states.fields.InvenTreeCustomStatusModelField(
                 choices=InvenTree.status_codes.PurchaseOrderStatus.items(),
                 default=10,
-                help_text="Purchase order status",
-                verbose_name="Status",
+                help_text='Purchase order status',
+                verbose_name='Status',
                 validators=[
                     generic.states.validators.CustomStatusCodeValidator(
                         status_class=InvenTree.status_codes.PurchaseOrderStatus
-                    ),
-                ]
+                    )
+                ],
             ),
         ),
         migrations.AlterField(
-            model_name="returnorder",
-            name="status",
+            model_name='returnorder',
+            name='status',
             field=generic.states.fields.InvenTreeCustomStatusModelField(
                 choices=InvenTree.status_codes.ReturnOrderStatus.items(),
                 default=10,
-                help_text="Return order status",
-                verbose_name="Status",
+                help_text='Return order status',
+                verbose_name='Status',
                 validators=[
                     generic.states.validators.CustomStatusCodeValidator(
                         status_class=InvenTree.status_codes.ReturnOrderStatus
-                    ),
-                ]
+                    )
+                ],
             ),
         ),
         migrations.AlterField(
-            model_name="returnorderlineitem",
-            name="outcome",
+            model_name='returnorderlineitem',
+            name='outcome',
             field=generic.states.fields.InvenTreeCustomStatusModelField(
                 choices=InvenTree.status_codes.ReturnOrderLineStatus.items(),
                 default=10,
-                help_text="Outcome for this line item",
-                verbose_name="Outcome",
+                help_text='Outcome for this line item',
+                verbose_name='Outcome',
                 validators=[
                     generic.states.validators.CustomStatusCodeValidator(
                         status_class=InvenTree.status_codes.ReturnOrderLineStatus
-                    ),
-                ]
+                    )
+                ],
             ),
         ),
         migrations.AlterField(
-            model_name="salesorder",
-            name="status",
+            model_name='salesorder',
+            name='status',
             field=generic.states.fields.InvenTreeCustomStatusModelField(
                 choices=InvenTree.status_codes.SalesOrderStatus.items(),
                 default=10,
-                help_text="Sales order status",
-                verbose_name="Status",
+                help_text='Sales order status',
+                verbose_name='Status',
                 validators=[
                     generic.states.validators.CustomStatusCodeValidator(
                         status_class=InvenTree.status_codes.SalesOrderStatus
-                    ),
-                ]
+                    )
+                ],
             ),
         ),
     ]

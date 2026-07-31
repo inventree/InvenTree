@@ -4,15 +4,12 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('build', '0007_auto_20191118_2321'),
-    ]
+    dependencies = [('build', '0007_auto_20191118_2321')]
 
     operations = [
         migrations.AlterField(
             model_name='build',
             name='notes',
             field=models.TextField(blank=True, help_text='Extra build notes'),
-        ),
+        )
     ]

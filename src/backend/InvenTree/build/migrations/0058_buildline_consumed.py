@@ -5,15 +5,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('build', '0057_build_external'),
-    ]
+    dependencies = [('build', '0057_build_external')]
 
     operations = [
         migrations.AddField(
             model_name='buildline',
             name='consumed',
-            field=models.DecimalField(decimal_places=5, default=0, help_text='Quantity of consumed stock', max_digits=15, validators=[django.core.validators.MinValueValidator(0)], verbose_name='Consumed'),
-        ),
+            field=models.DecimalField(
+                decimal_places=5,
+                default=0,
+                help_text='Quantity of consumed stock',
+                max_digits=15,
+                validators=[django.core.validators.MinValueValidator(0)],
+                verbose_name='Consumed',
+            ),
+        )
     ]

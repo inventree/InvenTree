@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('order', '0018_auto_20200406_0151'),
-    ]
+    dependencies = [('order', '0018_auto_20200406_0151')]
 
     operations = [
         migrations.AddField(
             model_name='purchaseorder',
             name='supplier_reference',
-            field=models.CharField(blank=True, help_text='Supplier order reference', max_length=64),
-        ),
+            field=models.CharField(
+                blank=True, help_text='Supplier order reference', max_length=64
+            ),
+        )
     ]

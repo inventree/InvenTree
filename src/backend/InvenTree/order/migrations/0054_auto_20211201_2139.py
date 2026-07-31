@@ -4,10 +4,7 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('order', '0053_auto_20211128_0151'),
-    ]
+    dependencies = [('order', '0053_auto_20211128_0151')]
 
     operations = [
         migrations.AlterField(

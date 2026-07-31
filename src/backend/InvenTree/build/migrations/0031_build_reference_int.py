@@ -4,15 +4,12 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('build', '0030_alter_build_reference'),
-    ]
+    dependencies = [('build', '0030_alter_build_reference')]
 
     operations = [
         migrations.AddField(
             model_name='build',
             name='reference_int',
             field=models.IntegerField(default=0),
-        ),
+        )
     ]

@@ -33,7 +33,7 @@ import stock.models
 import users.models
 from build.events import BuildEvents
 from build.filters import annotate_allocated_quantity, annotate_required_quantity
-from build.status_codes import BuildStatus, BuildStatusGroups
+from build.status_codes import BuildStatus, BuildStatusGroups, RepairOrderStatus
 from build.validators import (
     generate_next_build_reference,
     validate_build_order_reference,
@@ -178,23 +178,31 @@ class Build(
             if get_global_setting('BUILDORDER_REQUIRE_VALID_BOM'):
                 # Check that the BOM is valid
                 if not self.part.is_bom_valid():
-                    raise ValidationError({
-                        'part': _('Assembly BOM has not been validated')
-                    })
+                    raise ValidationError(
+                        {'part': _('Assembly BOM has not been validated')}
+                    )
 
             if get_global_setting('BUILDORDER_REQUIRE_ACTIVE_PART'):
                 # Check that the part is active
                 if not self.part.active:
-                    raise ValidationError({
-                        'part': _('Build order cannot be created for an inactive part')
-                    })
+                    raise ValidationError(
+                        {
+                            'part': _(
+                                'Build order cannot be created for an inactive part'
+                            )
+                        }
+                    )
 
             if get_global_setting('BUILDORDER_REQUIRE_LOCKED_PART'):
                 # Check that the part is locked
                 if not self.part.locked:
-                    raise ValidationError({
-                        'part': _('Build order cannot be created for an unlocked part')
-                    })
+                    raise ValidationError(
+                        {
+                            'part': _(
+                                'Build order cannot be created for an unlocked part'
+                            )
+                        }
+                    )
 
         # On first save (i.e. creation), run some extra checks
         if self.pk is None:
@@ -209,17 +217,19 @@ class Build(
         super().clean()
 
         if self.external and not self.part.purchaseable:
-            raise ValidationError({
-                'external': _(
-                    'Build orders can only be externally fulfilled for purchaseable parts'
-                )
-            })
+            raise ValidationError(
+                {
+                    'external': _(
+                        'Build orders can only be externally fulfilled for purchaseable parts'
+                    )
+                }
+            )
 
         if get_global_setting('BUILDORDER_REQUIRE_RESPONSIBLE'):
             if not self.responsible:
-                raise ValidationError({
-                    'responsible': _('Responsible user or group must be specified')
-                })
+                raise ValidationError(
+                    {'responsible': _('Responsible user or group must be specified')}
+                )
 
         # Prevent changing target part after creation
         if self.has_field_changed('part'):
@@ -227,9 +237,9 @@ class Build(
 
         # Target date should be *after* the start date
         if self.start_date and self.target_date and self.start_date > self.target_date:
-            raise ValidationError({
-                'target_date': _('Target date must be after start date')
-            })
+            raise ValidationError(
+                {'target_date': _('Target date must be after start date')}
+            )
 
     def report_context(self) -> BuildReportContext:
         """Generate custom report context data."""
@@ -696,8 +706,7 @@ class Build(
         # the current committed values. Stock adjustments elsewhere lock these
         # same rows, so concurrent adjustments cannot be silently overwritten.
         locked_quantities = dict(
-            stock.models.StockItem.objects
-            .select_for_update()
+            stock.models.StockItem.objects.select_for_update()
             .filter(pk__in={item.stock_item_id for item in build_items})
             .order_by('pk')
             .values_list('pk', 'quantity')
@@ -875,10 +884,9 @@ class Build(
                 )
             )
 
-            install_events.append((
-                (),
-                {'id': target_item.pk, 'assembly_id': output.pk},
-            ))
+            install_events.append(
+                ((), {'id': target_item.pk, 'assembly_id': output.pk})
+            )
 
             # Ensure the build item points to the (possibly newly split) stock item
             build_item.stock_item = target_item
@@ -1182,9 +1190,9 @@ class Build(
             location = self.destination or self.part.get_default_location()
 
         if self.part.has_trackable_parts and not serials:
-            raise ValidationError({
-                'serials': _('Serial numbers must be provided for trackable parts')
-            })
+            raise ValidationError(
+                {'serials': _('Serial numbers must be provided for trackable parts')}
+            )
 
         outputs = []
 
@@ -1316,8 +1324,7 @@ class Build(
             # allocation operations) so a concurrent allocation update cannot
             # be silently overwritten by the quantity decrement below
             items = (
-                BuildItem.objects
-                .select_for_update()
+                BuildItem.objects.select_for_update()
                 .filter(build_line=build_line)
                 .order_by('pk')
             )
@@ -1380,9 +1387,9 @@ class Build(
             raise ValidationError({'quantity': _('Quantity must be greater than zero')})
 
         if quantity > output.quantity:
-            raise ValidationError({
-                'quantity': _('Quantity cannot be greater than the output quantity')
-            })
+            raise ValidationError(
+                {'quantity': _('Quantity cannot be greater than the output quantity')}
+            )
 
         user = kwargs.get('user')
         notes = kwargs.get('notes', '')
@@ -1470,21 +1477,27 @@ class Build(
         if quantity is not None and quantity != output.quantity:
             # Cannot split a build output with allocated items
             if output.items_to_install.exists():
-                raise ValidationError({
-                    'quantity': _(
-                        'Cannot partially complete a build output with allocated items'
-                    )
-                })
+                raise ValidationError(
+                    {
+                        'quantity': _(
+                            'Cannot partially complete a build output with allocated items'
+                        )
+                    }
+                )
 
             if quantity <= 0:
-                raise ValidationError({
-                    'quantity': _('Quantity must be greater than zero')
-                })
+                raise ValidationError(
+                    {'quantity': _('Quantity must be greater than zero')}
+                )
 
             if quantity > output.quantity:
-                raise ValidationError({
-                    'quantity': _('Quantity cannot be greater than the output quantity')
-                })
+                raise ValidationError(
+                    {
+                        'quantity': _(
+                            'Quantity cannot be greater than the output quantity'
+                        )
+                    }
+                )
 
     @transaction.atomic
     def complete_build_output(
@@ -1647,8 +1660,7 @@ class Build(
         pks = sorted(requested.keys())
 
         locked_quantities = dict(
-            stock.models.StockItem.objects
-            .select_for_update()
+            stock.models.StockItem.objects.select_for_update()
             .filter(pk__in=pks)
             .order_by('pk')
             .values_list('pk', 'quantity')
@@ -1672,9 +1684,9 @@ class Build(
 
             if requested[pk] > available:
                 q = InvenTree.helpers.clean_decimal(available)
-                raise ValidationError({
-                    'quantity': _(f'Available quantity ({q}) exceeded')
-                })
+                raise ValidationError(
+                    {'quantity': _(f'Available quantity ({q}) exceeded')}
+                )
 
         BuildItem.objects.bulk_create(to_create.values(), batch_size=250)
         BuildItem.objects.bulk_update(to_update.values(), ['quantity'], batch_size=250)
@@ -2429,9 +2441,9 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         # BomItem did not exist or could not be validated.
         # Search for a new one
         if not valid:
-            raise ValidationError({
-                'stock_item': _('Selected stock item does not match BOM line')
-            })
+            raise ValidationError(
+                {'stock_item': _('Selected stock item does not match BOM line')}
+            )
 
     def check_allocated_quantity(self, raise_error: bool = False):
         """Ensure that the allocated quantity is valid.
@@ -2454,9 +2466,9 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         # Quantity must be 1 for serialized stock
         if self.stock_item.serialized and self.quantity != 1:
             self.quantity = 1
-            raise ValidationError({
-                'quantity': _('Quantity must be 1 for serialized stock')
-            })
+            raise ValidationError(
+                {'quantity': _('Quantity must be 1 for serialized stock')}
+            )
 
         # Allocated quantity cannot exceed available stock quantity
         if self.quantity > self.stock_item.quantity:
@@ -2550,3 +2562,152 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('Destination stock item'),
         limit_choices_to={'is_building': True},
     )
+
+
+class RepairOrder(
+    StatusCodeMixin,
+    StateTransitionMixin,
+    InvenTree.models.InvenTreeParameterMixin,
+    InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeTagsMixin,
+    report.mixins.InvenTreeReportMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.ReferenceIndexingMixin,
+    InvenTree.models.InvenTreeModel,
+):
+    """A RepairOrder represents a repair request from a customer."""
+
+    STATUS_CLASS = RepairOrderStatus
+    REFERENCE_PATTERN_SETTING = 'REPAIRORDER_REFERENCE_PATTERN'
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Repair Order')
+
+    reference = models.CharField(
+        max_length=100,
+        unique=True,
+        blank=False,
+        null=False,
+        help_text=_('Repair Order Reference'),
+        verbose_name=_('Reference'),
+    )
+
+    customer = models.ForeignKey(
+        'company.Company',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='repair_orders',
+        limit_choices_to={'is_customer': True},
+        verbose_name=_('Customer'),
+        help_text=_('Customer reference'),
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Repair order description'),
+    )
+
+    symptoms = models.TextField(
+        blank=True,
+        verbose_name=_('Symptoms'),
+        help_text=_('Reported symptoms or issues'),
+    )
+
+    status = generic.states.fields.InvenTreeCustomStatusModelField(
+        default=RepairOrderStatus.PENDING.value,
+        choices=RepairOrderStatus.items(),
+        status_class=RepairOrderStatus,
+        help_text=_('Repair order status'),
+        verbose_name=_('Status'),
+    )
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the RepairOrder model."""
+        return reverse('api-repair-order-list')
+
+    @classmethod
+    def barcode_model_type_code(cls) -> str:
+        """Return the associated barcode model type code for this model."""
+        return 'RP'
+
+
+class RepairOrderLineItem(InvenTree.models.InvenTreeMetadataModel):
+    """Model for a repair order line item."""
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Repair Order Line Item')
+
+    order = models.ForeignKey(
+        RepairOrder,
+        on_delete=models.CASCADE,
+        related_name='lines',
+        verbose_name=_('Repair Order'),
+    )
+
+    part = models.ForeignKey(
+        'part.Part',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='repair_order_line_items',
+        verbose_name=_('Part'),
+        help_text=_('Part to be consumed for repair'),
+    )
+
+    quantity = models.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        default=1,
+        verbose_name=_('Quantity'),
+        help_text=_('Item quantity required for repair'),
+    )
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the RepairOrderLineItem model."""
+        return reverse('api-repair-order-line-list')
+
+
+class RepairOrderAllocation(models.Model):
+    """Model linking RepairOrderLineItem to specific stock.StockItem quantities."""
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Repair Order Allocation')
+
+    line = models.ForeignKey(
+        RepairOrderLineItem,
+        on_delete=models.CASCADE,
+        related_name='allocations',
+        verbose_name=_('Line Item'),
+    )
+
+    item = models.ForeignKey(
+        'stock.StockItem',
+        on_delete=models.CASCADE,
+        related_name='repair_order_allocations',
+        verbose_name=_('Stock Item'),
+    )
+
+    quantity = models.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        default=1,
+        verbose_name=_('Quantity'),
+        help_text=_('Allocated stock quantity'),
+    )
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the RepairOrderAllocation model."""
+        return reverse('api-repair-order-allocation-list')
