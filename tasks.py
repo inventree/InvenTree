@@ -1845,10 +1845,16 @@ def _detect_ci_branch() -> Optional[str]:
     info('Running in GitHub Actions environment - detecting target branch')
 
     info('DEBUG INFORMATION:')
-    info('GITHUB_EVENT_NAME: ' + str(os.environ.get('GITHUB_EVENT_NAME')))
-    info('GITHUB_REF_NAME: ' + str(os.environ.get('GITHUB_REF_NAME')))
-    info('GITHUB_REF_TYPE: ' + str(os.environ.get('GITHUB_REF_TYPE')))
-    info('GITHUB_BASE_REF: ' + str(os.environ.get('GITHUB_BASE_REF')))
+
+    for a in [
+        'GITHUB_EVENT_NAME',
+        'GITHUB_REF_NAME',
+        'GITHUB_REF_TYPE',
+        'GITHUB_BASE_REF',
+        'GITHUB_REF',
+        'GITHUB_HEAD_REF',
+    ]:
+        info(f'{a}: ' + str(os.environ.get(a)))
 
     if os.environ.get('GITHUB_EVENT_NAME') == 'pull_request':
         return os.environ.get('GITHUB_BASE_REF')
