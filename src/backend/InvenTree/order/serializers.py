@@ -194,7 +194,7 @@ class AbstractOrderSerializer(
         except:
             raise ValidationError(_('Invalid custom status key'))
 
-        if custom_status.logical_key is not self.instance.status:
+        if custom_status.logical_key != self.instance.status:
             raise ValidationError(_('Invalid custom status key for this order status'))
 
         return value
