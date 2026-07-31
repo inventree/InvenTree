@@ -730,11 +730,21 @@ class OrderUpdatedAtTest(TestCase):
             self.assertGreaterEqual(self._refresh(instance).updated_at, before)
 
     def test_po_lineitem_admin_search(self):
-        """Test search fields for PurchaseOrderLineItemAdmin."""
-        from order.admin import PurchaseOrderLineItemAdmin
+        """Test search fields for PurchaseOrderLineItemAdmin, SalesOrderAllocationAdmin, and ReturnOrderLineItemAdmin."""
+        from order.admin import (
+            PurchaseOrderLineItemAdmin,
+            ReturnOrderLineItemAdmin,
+            SalesOrderAllocationAdmin,
+        )
 
-        admin_class = PurchaseOrderLineItemAdmin
-        self.assertIn('part__part__name', admin_class.search_fields)
-        self.assertIn('part__SKU', admin_class.search_fields)
-        self.assertIn('order__reference', admin_class.search_fields)
-        self.assertIn('order__supplier__name', admin_class.search_fields)
+        self.assertIn('part__part__name', PurchaseOrderLineItemAdmin.search_fields)
+        self.assertIn('part__SKU', PurchaseOrderLineItemAdmin.search_fields)
+        self.assertIn('order__reference', PurchaseOrderLineItemAdmin.search_fields)
+        self.assertIn('order__supplier__name', PurchaseOrderLineItemAdmin.search_fields)
+
+        self.assertIn('line__order__reference', SalesOrderAllocationAdmin.search_fields)
+        self.assertIn('line__part__name', SalesOrderAllocationAdmin.search_fields)
+        self.assertIn('item__part__name', SalesOrderAllocationAdmin.search_fields)
+
+        self.assertIn('order__reference', ReturnOrderLineItemAdmin.search_fields)
+        self.assertIn('item__part__name', ReturnOrderLineItemAdmin.search_fields)

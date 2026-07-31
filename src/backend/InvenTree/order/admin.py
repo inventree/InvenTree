@@ -149,6 +149,15 @@ class SalesOrderAllocationAdmin(admin.ModelAdmin):
 
     list_display = ('line', 'item', 'quantity')
 
+    search_fields = [
+        'line__order__reference',
+        'line__order__customer__name',
+        'line__part__name',
+        'item__part__name',
+        'item__part__IPN',
+        'item__serial',
+    ]
+
     autocomplete_fields = ('line', 'shipment', 'item')
 
 
@@ -170,6 +179,14 @@ class ReturnOrderLineItemAdmin(admin.ModelAdmin):
     """Admin class for ReturnOrderLine model."""
 
     list_display = ['order', 'item', 'reference']
+
+    search_fields = [
+        'order__reference',
+        'order__customer__name',
+        'item__part__name',
+        'item__serial',
+        'reference',
+    ]
 
     autocomplete_fields = ['item', 'order']
 
