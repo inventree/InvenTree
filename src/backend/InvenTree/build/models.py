@@ -1021,8 +1021,8 @@ class Build(
             check_build_stock, self, group='build', force_async=True
         )
 
-    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_issue(self) -> bool:
         """Returns True if this BuildOrder can be issued."""
         return can_proceed(self.issue_build)
@@ -1039,8 +1039,8 @@ class Build(
         The build must currently be PENDING or PRODUCTION.
         """
 
-    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_hold(self) -> bool:
         """Returns True if this BuildOrder can be placed on hold."""
         return can_proceed(self.hold_build)
