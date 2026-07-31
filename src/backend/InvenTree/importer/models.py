@@ -237,7 +237,14 @@ class DataImportSession(models.Model):
 
             # Extract a "default" value for the field, if one exists
             # Skip if one has already been provided by the user
-            if field not in self.field_defaults and 'default' in field_def:
+            # Skip entirely when updating existing records - a model-level "creation"
+            # default (e.g. quantity=1) must not silently overwrite existing data
+            # for fields the user hasn't chosen to map or default
+            if (
+                not self.update_records
+                and field not in self.field_defaults
+                and 'default' in field_def
+            ):
                 self.field_defaults[field] = field_def['default']
 
             # Generate a list of possible column names for this field
@@ -472,11 +479,14 @@ class DataImportSession(models.Model):
         required = {}
 
         for field, info in fields.items():
-            if info.get('required', False):
-                required[field] = info
-
-            elif self.update_records and field == self.ID_FIELD_LABEL:
-                # If we are updating records, the ID field is required
+            if self.update_records:
+                # When updating existing records, only the ID field is required -
+                # all other fields fall back to the existing value on the record
+                # being updated, so the serializer's usual "required" flag
+                # (which applies to *creating* a new instance) does not apply here
+                if field == self.ID_FIELD_LABEL:
+                    required[field] = info
+            elif info.get('required', False):
                 required[field] = info
 
         return required
@@ -933,6 +943,11 @@ class DataImportRow(models.Model):
             return serializer_class(
                 instance=instance,
                 data=self.serializer_data(),
+                # When updating an existing instance, treat this as a partial
+                # update - fields not present in the imported data should fall
+                # back to the existing value on the record, not fail validation
+                # or be overwritten with a blank/default value
+                partial=instance is not None,
                 context={'request': request},
             )
 
