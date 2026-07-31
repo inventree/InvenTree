@@ -282,7 +282,11 @@ class StatusCodeMixin:
 
         - Ensure custom status code values are correctly updated
         """
-        if self.status_class:
+        # Only need to verify the custom key against the DB if one is actually set -
+        # the 'key' column on InvenTreeCustomUserStateModel is non-nullable, so a
+        # query for key=None (i.e. no custom status) can never match and would only
+        # ever result in a no-op (custom_key is already None in that case).
+        if self.status_class and self.get_custom_status() is not None:
             # Check that the current 'logical key' actually matches the current status code
             custom_values = self.status_class.custom_queryset().filter(
                 logical_key=self.get_status(), key=self.get_custom_status()

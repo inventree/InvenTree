@@ -186,6 +186,7 @@ export function usePurchaseOrderLineItemFields({
         value: purchasePriceCurrency,
         onValueChange: setPurchasePriceCurrency
       },
+      discount: {},
       auto_pricing: {
         default: create !== false,
         value: autoPricing,
@@ -219,7 +220,9 @@ export function usePurchaseOrderLineItemFields({
     }
 
     if (create) {
-      fields['merge_items'] = {};
+      fields['merge_items'] = {
+        default: globalSettings.isSet('PURCHASEORDER_MERGE_LINE_ITEMS', true)
+      };
     }
 
     return fields;

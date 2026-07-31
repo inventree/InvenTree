@@ -7,7 +7,7 @@ import type { TableFilter } from '@lib/index';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
-import { Group, Skeleton, Stack } from '@mantine/core';
+import { Skeleton, Stack } from '@mantine/core';
 import {
   IconCalendar,
   IconInfoCircle,
@@ -24,11 +24,6 @@ import { useBarcodeScanDialog } from '../../components/barcodes/BarcodeScanDialo
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
-import {
-  type DetailsField,
-  DetailsTable
-} from '../../components/details/Details';
-import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   BarcodeActionDropdown,
   DeleteItemAction,
@@ -60,6 +55,7 @@ import StockLocationParametricTable from '../../tables/stock/StockLocationParame
 import { StockLocationTable } from '../../tables/stock/StockLocationTable';
 import TransferOrderParametricTable from '../../tables/stock/TransferOrderParametricTable';
 import { TransferOrderTable } from '../../tables/stock/TransferOrderTable';
+import { StockLocationDetailsPanel } from './StockLocationDetailsPanel';
 
 function TransferOrderCalendar() {
   const calendarFilters: TableFilter[] = useMemo(() => {
@@ -105,92 +101,12 @@ export default function Stock() {
     }
   });
 
-  const detailsPanel = useMemo(() => {
-    if (id && instanceQuery.isFetching) {
-      return <Skeleton />;
-    }
-
-    const left: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'name',
-        label: t`Name`,
-        copy: true,
-        value_formatter: () => (
-          <Group gap='xs'>
-            {location.icon && <ApiIcon name={location.icon} />}
-            {location.name}
-          </Group>
-        )
-      },
-      {
-        type: 'text',
-        name: 'pathstring',
-        label: t`Path`,
-        icon: 'sitemap',
-        copy: true,
-        hidden: !id
-      },
-      {
-        type: 'text',
-        name: 'description',
-        label: t`Description`,
-        copy: true
-      },
-      {
-        type: 'link',
-        name: 'parent',
-        model_field: 'name',
-        icon: 'location',
-        label: t`Parent Location`,
-        model: ModelType.stocklocation,
-        hidden: !location?.parent
-      }
-    ];
-
-    const right: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'items',
-        icon: 'stock',
-        label: t`Stock Items`,
-        value_formatter: () => location?.items || '0'
-      },
-      {
-        type: 'text',
-        name: 'sublocations',
-        icon: 'location',
-        label: t`Sublocations`,
-        hidden: !location?.sublocations
-      },
-      {
-        type: 'boolean',
-        name: 'structural',
-        label: t`Structural`,
-        icon: 'sitemap'
-      },
-      {
-        type: 'boolean',
-        name: 'external',
-        label: t`External`
-      },
-      {
-        type: 'string',
-        // TODO: render location type icon here (ref: #7237)
-        name: 'location_type_detail.name',
-        label: t`Location Type`,
-        hidden: !location?.location_type,
-        icon: 'packages'
-      }
-    ];
-
-    return (
-      <ItemDetailsGrid>
-        {id && location?.pk && <DetailsTable item={location} fields={left} />}
-        {id && location?.pk && <DetailsTable item={location} fields={right} />}
-      </ItemDetailsGrid>
+  const detailsPanel =
+    id && instanceQuery.isFetching ? (
+      <Skeleton />
+    ) : (
+      <StockLocationDetailsPanel instance={id ? location : undefined} />
     );
-  }, [location, instanceQuery]);
 
   const [sublocationView, setSublocationView] = useState<string>('table');
   const [transferOrderView, setTransferOrderView] = useState<string>('table');

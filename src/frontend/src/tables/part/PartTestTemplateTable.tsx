@@ -9,8 +9,7 @@ import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
-  RowEditAction,
-  RowViewAction
+  RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -26,6 +25,8 @@ import {
   DescriptionColumn
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import {
   useCreateApiFormModal,
@@ -208,7 +209,7 @@ export default function PartTestTemplateTable({
       if (record.part != partId) {
         // This test is defined for a parent part
         return [
-          RowViewAction({
+          AppRowViewAction({
             title: t`View Parent Part`,
             modelType: ModelType.part,
             modelId: record.part,

@@ -2,9 +2,11 @@
 
 import io
 
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test.utils import override_settings
 from django.urls import reverse
 
 from PIL import Image
@@ -12,7 +14,8 @@ from taggit.models import Tag
 
 import common.models
 from common.models import SelectionList, SelectionListEntry
-from InvenTree.unit_test import InvenTreeAPITestCase
+from common.settings import set_global_setting
+from InvenTree.unit_test import InvenTreeAPITestCase, findOffloadedEvent
 
 
 class DataOutputAPITests(InvenTreeAPITestCase):
@@ -73,6 +76,7 @@ class ParameterAPITests(InvenTreeAPITestCase):
             'model_type',
             'selectionlist',
             'enabled',
+            'unique',
         ]:
             self.assertIn(
                 field,
@@ -566,6 +570,269 @@ class ParameterAPITests(InvenTreeAPITestCase):
         self.assertFalse(
             common.models.Parameter.objects.filter(pk=parameter.pk).exists()
         )
+
+    @override_settings(
+        TESTING_TABLE_EVENTS=True,
+        PLUGIN_TESTING_EVENTS=True,
+        PLUGIN_TESTING_EVENTS_ASYNC=True,
+    )
+    def test_bulk_create_parameters(self):
+        """Test bulk creation of parameters via the API.
+
+        Test that:
+            - The correct number of items are created
+            - Instance creation events are offloaded to the background worker
+        """
+        from django_q.models import OrmQ
+
+        from part.models import Part
+
+        self.assignRole('part.add')
+
+        OrmQ.objects.all().delete()
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', True)
+
+        template = common.models.ParameterTemplate.objects.create(
+            name='Test Parameter',
+            description='A parameter template for testing bulk creation',
+            model_type=None,
+        )
+
+        # Generate a set of parts
+        parts = [
+            Part.objects.create(
+                name=f'Test Part {ii}', description='A part for testing'
+            )
+            for ii in range(50)
+        ]
+
+        N = common.models.Parameter.objects.count()
+
+        # Bulk-create parameters
+        response = self.post(
+            reverse('api-parameter-list'),
+            data=[
+                {
+                    'template': template.pk,
+                    'model_type': 'part.part',
+                    'model_id': part.pk,
+                    'data': f'Test data {part.pk}',
+                }
+                for part in parts
+            ],
+            benchmark=True,
+            max_query_count=500,
+            max_query_time=2.0,
+        )
+
+        self.assertEqual(len(response.data), 50)
+
+        # Check that the parameters have been created
+        self.assertEqual(common.models.Parameter.objects.count(), N + len(parts))
+
+        # We expect that 50 events have been offloaded to the background worker
+        self.assertGreaterEqual(OrmQ.objects.count(), len(parts))
+
+        # There should be a parameter for each part
+        for part in parts:
+            self.assertEqual(part.parameters.count(), 1)
+            parameter = part.parameters.first()
+            self.assertIsNotNone(parameter)
+            self.assertIsNotNone(parameter.updated)
+            self.assertIsNotNone(parameter.updated_by)
+            self.assertEqual(parameter.updated_by, self.user)
+
+            # Check that an associated event has been offloaded
+            self.assertIsNotNone(
+                findOffloadedEvent(
+                    'part_partparameter.created', matching_kwargs={'id': parameter.pk}
+                ),
+                f'No created event found for parameter {parameter.pk}',
+            )
+
+            # Check that an extra 'saved' event is *NOT* generated
+            self.assertIsNone(
+                findOffloadedEvent(
+                    'part_partparameter.saved', matching_kwargs={'id': parameter.pk}
+                ),
+                f'Unexpected saved event found for parameter {parameter.pk}',
+            )
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', False)
+
+    def test_parameter_uniqueness(self):
+        """Test the uniqueness options which can be applied to a ParameterTemplate."""
+        from company.models import Company
+        from part.models import Part
+
+        part_a = Part.objects.create(name='Part A', description='A part for testing')
+        part_b = Part.objects.create(name='Part B', description='A part for testing')
+        part_c = Part.objects.create(name='Part C', description='A part for testing')
+        company = Company.objects.create(
+            name='Test Company', description='A company for testing'
+        )
+
+        template = common.models.ParameterTemplate.objects.create(
+            name='Serial Number', description='A serial number parameter'
+        )
+
+        self.assertEqual(
+            template.unique, common.models.ParameterTemplate.UniqueOptions.NONE
+        )
+
+        param_a = common.models.Parameter(
+            template=template,
+            model_type=part_a.get_content_type(),
+            model_id=part_a.pk,
+            data='ABC123',
+        )
+        param_a.full_clean()
+        param_a.save()
+
+        # No uniqueness requirement - a duplicate value against a different part is fine
+        param_b = common.models.Parameter(
+            template=template,
+            model_type=part_b.get_content_type(),
+            model_id=part_b.pk,
+            data='ABC123',
+        )
+        param_b.full_clean()
+        param_b.save()
+
+        # Re-saving the existing instance (unchanged) should not raise any errors
+        param_a.full_clean()
+        param_a.save()
+
+        # Now, require uniqueness *per model type*
+        template.unique = common.models.ParameterTemplate.UniqueOptions.MODEL_TYPE
+        template.save()
+
+        # A new Part with the same value should be rejected
+        with self.assertRaises(ValidationError):
+            common.models.Parameter(
+                template=template,
+                model_type=part_c.get_content_type(),
+                model_id=part_c.pk,
+                data='ABC123',
+            ).full_clean()
+
+        # A case-insensitive match should also be rejected
+        with self.assertRaises(ValidationError):
+            common.models.Parameter(
+                template=template,
+                model_type=part_c.get_content_type(),
+                model_id=part_c.pk,
+                data='abc123',
+            ).full_clean()
+
+        # A different model type entirely is not affected by the 'model type' restriction
+        param_company = common.models.Parameter(
+            template=template,
+            model_type=company.get_content_type(),
+            model_id=company.pk,
+            data='ABC123',
+        )
+        param_company.full_clean()
+        param_company.save()
+
+        # Finally, require the value to be *globally* unique
+        template.unique = common.models.ParameterTemplate.UniqueOptions.GLOBAL
+        template.save()
+
+        with self.assertRaises(ValidationError):
+            common.models.Parameter(
+                template=template,
+                model_type=part_c.get_content_type(),
+                model_id=part_c.pk,
+                data='ABC123',
+            ).full_clean()
+
+    def test_parameter_uniqueness_units(self):
+        """Test that uniqueness checks are unit-aware for templates which define units.
+
+        Values expressed in different (but compatible) units which represent the
+        same physical quantity must be detected as duplicates.
+        """
+        from part.models import Part
+
+        part_a = Part.objects.create(name='Part A', description='A part for testing')
+        part_b = Part.objects.create(name='Part B', description='A part for testing')
+
+        template = common.models.ParameterTemplate.objects.create(
+            name='Resistance',
+            units='ohm',
+            description='A globally unique resistance parameter',
+            unique=common.models.ParameterTemplate.UniqueOptions.GLOBAL,
+        )
+
+        param_a = common.models.Parameter(
+            template=template,
+            model_type=part_a.get_content_type(),
+            model_id=part_a.pk,
+            data='1000',
+        )
+        param_a.full_clean()
+        param_a.save()
+
+        # A value expressed as '1k' ohms is numerically identical to '1000' ohms
+        with self.assertRaises(ValidationError):
+            common.models.Parameter(
+                template=template,
+                model_type=part_b.get_content_type(),
+                model_id=part_b.pk,
+                data='1k',
+            ).full_clean()
+
+        # A distinct value (in different units) is not a duplicate
+        param_b = common.models.Parameter(
+            template=template,
+            model_type=part_b.get_content_type(),
+            model_id=part_b.pk,
+            data='2k',
+        )
+        param_b.full_clean()
+        param_b.save()
+
+    def test_copy_unique_parameters(self):
+        """Test that 'unique' parameters are skipped when copying parameters between model instances."""
+        from part.models import Part
+
+        part_a = Part.objects.create(name='Part A', description='A part for testing')
+        part_b = Part.objects.create(name='Part B', description='A part for testing')
+
+        normal_template = common.models.ParameterTemplate.objects.create(
+            name='Color', description='A normal (non-unique) parameter'
+        )
+
+        unique_template = common.models.ParameterTemplate.objects.create(
+            name='Serial Number',
+            description='A globally unique parameter',
+            unique=common.models.ParameterTemplate.UniqueOptions.GLOBAL,
+        )
+
+        common.models.Parameter.objects.create(
+            template=normal_template,
+            model_type=part_a.get_content_type(),
+            model_id=part_a.pk,
+            data='Red',
+        )
+
+        common.models.Parameter.objects.create(
+            template=unique_template,
+            model_type=part_a.get_content_type(),
+            model_id=part_a.pk,
+            data='ABC123',
+        )
+
+        # Copy parameters from part_a to part_b
+        part_b.copy_parameters_from(part_a)
+
+        # The non-unique parameter should have been copied
+        self.assertEqual(part_b.get_parameter('Color').data, 'Red')
+
+        # The unique parameter should *not* have been copied, to avoid a conflicting value
+        self.assertIsNone(part_b.get_parameter('Serial Number'))
 
     def test_parameter_annotation(self):
         """Test that we can annotate parameters against a queryset."""

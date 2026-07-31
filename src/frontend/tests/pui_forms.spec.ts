@@ -2,8 +2,15 @@ import { createApi } from './api';
 /** Unit tests for form validation, rendering, etc */
 import { expect, test } from './baseFixtures';
 import { stevenuser } from './defaults';
-import { clickOnRowMenu, loadTab, navigate, openDetailAction } from './helpers';
+import {
+  clickOnRowMenu,
+  deletePart,
+  loadTab,
+  navigate,
+  openDetailAction
+} from './helpers';
 import { doCachedLogin } from './login';
+import { setSettingState } from './settings';
 
 // Test hover form action in related fields
 test('Forms - Hover', async ({ browser }) => {
@@ -314,4 +321,73 @@ test('Forms - Nested Object Field', async ({ browser }) => {
 
   // Confirm the part was created with the expected name
   await page.getByText(partName).first().waitFor();
+});
+
+// Regression for #12266: initial stock fields respect PART_CREATE_INITIAL setting
+test('Forms - Initial Stock Field', async ({ browser }) => {
+  await setSettingState({ setting: 'PART_CREATE_INITIAL', value: true });
+
+  const partName = `Initial Stock Part ${Date.now()}`;
+  await deletePart(partName);
+
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'part/category/index/parts'
+  });
+  await page.waitForURL('**/part/category/index/**');
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await page.getByLabel('text-field-name', { exact: true }).fill(partName);
+
+  const quantityField = page.getByLabel('number-field-initial_stock.quantity');
+  await expect(quantityField).toBeVisible();
+
+  await quantityField.fill('25');
+  await page.getByLabel('tree-field-initial_stock.location').fill('production');
+  await page.getByText('Electronics production facility').click();
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item Created').waitFor();
+
+  await page.getByText(partName).first().click();
+  await page
+    .getByLabel('panel-tabs-part')
+    .getByRole('tab', { name: 'Stock', exact: true })
+    .click();
+  await page.getByText('25').first().waitFor();
+
+  await deletePart(partName);
+  await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
+});
+
+test('Forms - Initial Stock hidden when setting disabled', async ({
+  browser
+}) => {
+  await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
+
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'part/category/index/parts'
+  });
+  await page.waitForURL('**/part/category/index/**');
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await page
+    .getByLabel('text-field-name', { exact: true })
+    .fill('No Initial Stock');
+
+  await expect(
+    page.getByLabel('number-field-initial_stock.quantity')
+  ).toBeHidden();
+  await expect(
+    page.getByLabel('tree-field-initial_stock.location')
+  ).toBeHidden();
 });

@@ -231,8 +231,6 @@ export default function SnippetTable() {
         props={{
           rowActions: rowActions,
           tableActions: tableActions,
-          enableSearch: false,
-          enableFilters: false,
           onRowClick: (record) => openDetailDrawer(record.pk)
         }}
       />

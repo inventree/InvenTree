@@ -98,7 +98,10 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
         if type(defaults) is not dict:
             try:
                 defaults = json.loads(str(defaults))
-            except:
+            except json.JSONDecodeError:
+                raise ValidationError(_('Invalid field defaults'))
+
+            if type(defaults) is not dict:
                 raise ValidationError(_('Invalid field defaults'))
 
         return defaults
@@ -111,7 +114,10 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
         if type(overrides) is not dict:
             try:
                 overrides = json.loads(str(overrides))
-            except:
+            except json.JSONDecodeError:
+                raise ValidationError(_('Invalid field overrides'))
+
+            if type(overrides) is not dict:
                 raise ValidationError(_('Invalid field overrides'))
 
         return overrides
@@ -124,7 +130,10 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
         if type(filters) is not dict:
             try:
                 filters = json.loads(str(filters))
-            except:
+            except json.JSONDecodeError:
+                raise ValidationError(_('Invalid field filters'))
+
+            if type(filters) is not dict:
                 raise ValidationError(_('Invalid field filters'))
 
         return filters
