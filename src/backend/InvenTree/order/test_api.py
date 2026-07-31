@@ -885,17 +885,15 @@ class PurchaseOrderTest(OrderTest):
 
         # Create 100 purchase orders, cycling through the custom statuses
         supplier = Company.objects.filter(is_supplier=True).first()
-        models.PurchaseOrder.objects.bulk_create(
-            [
-                models.PurchaseOrder(
-                    supplier=supplier,
-                    reference=f'PO-QTEST-{i}',
-                    status=custom_statuses[i % 10].logical_key,
-                    status_custom_key=custom_statuses[i % 10].key,
-                )
-                for i in range(100)
-            ]
-        )
+        models.PurchaseOrder.objects.bulk_create([
+            models.PurchaseOrder(
+                supplier=supplier,
+                reference=f'PO-QTEST-{i}',
+                status=custom_statuses[i % 10].logical_key,
+                status_custom_key=custom_statuses[i % 10].key,
+            )
+            for i in range(100)
+        ])
 
         # Query count must stay below the fixed threshold for all limit values.
         # An N+1 bug would push limit=50 or limit=100 well over the threshold.
@@ -955,14 +953,12 @@ class PurchaseOrderLineItemTest(OrderTest):
         """Test that we can bulk delete multiple PurchaseOrderExtraLine items via the API."""
         po = models.PurchaseOrder.objects.get(pk=1)
 
-        models.PurchaseOrderExtraLine.objects.bulk_create(
-            [
-                models.PurchaseOrderExtraLine(
-                    order=po, quantity=idx + 1, reference=f'Extra line {idx}'
-                )
-                for idx in range(3)
-            ]
-        )
+        models.PurchaseOrderExtraLine.objects.bulk_create([
+            models.PurchaseOrderExtraLine(
+                order=po, quantity=idx + 1, reference=f'Extra line {idx}'
+            )
+            for idx in range(3)
+        ])
 
         n = models.PurchaseOrderExtraLine.objects.count()
         items = list(
@@ -1526,12 +1522,10 @@ class PurchaseOrderReceiveTest(OrderTest):
         N_LINES = 250
 
         # Create some line items
-        models.PurchaseOrderLineItem.objects.bulk_create(
-            [
-                models.PurchaseOrderLineItem(order=po, part=sp, quantity=1000 + i)
-                for i in range(N_LINES)
-            ]
-        )
+        models.PurchaseOrderLineItem.objects.bulk_create([
+            models.PurchaseOrderLineItem(order=po, part=sp, quantity=1000 + i)
+            for i in range(N_LINES)
+        ])
 
         # Place the order
         po.place_order()
@@ -1600,12 +1594,10 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         N_LINES = 100
 
-        models.PurchaseOrderLineItem.objects.bulk_create(
-            [
-                models.PurchaseOrderLineItem(order=po, part=sp, quantity=10)
-                for _ in range(N_LINES)
-            ]
-        )
+        models.PurchaseOrderLineItem.objects.bulk_create([
+            models.PurchaseOrderLineItem(order=po, part=sp, quantity=10)
+            for _ in range(N_LINES)
+        ])
 
         po.place_order()
 
@@ -2258,17 +2250,15 @@ class SalesOrderTest(OrderTest):
         ]
 
         customer = Company.objects.filter(is_customer=True).first()
-        models.SalesOrder.objects.bulk_create(
-            [
-                models.SalesOrder(
-                    customer=customer,
-                    reference=f'SO-QTEST-{i}',
-                    status=custom_statuses[i % 10].logical_key,
-                    status_custom_key=custom_statuses[i % 10].key,
-                )
-                for i in range(100)
-            ]
-        )
+        models.SalesOrder.objects.bulk_create([
+            models.SalesOrder(
+                customer=customer,
+                reference=f'SO-QTEST-{i}',
+                status=custom_statuses[i % 10].logical_key,
+                status_custom_key=custom_statuses[i % 10].key,
+            )
+            for i in range(100)
+        ])
 
         for limit in [1, 5, 10, 25, 50, 100]:
             response = self.get(
@@ -2431,14 +2421,12 @@ class SalesOrderLineItemTest(OrderTest):
         """Test that we can bulk delete multiple SalesOrderExtraLine items via the API."""
         so = models.SalesOrder.objects.first()
 
-        models.SalesOrderExtraLine.objects.bulk_create(
-            [
-                models.SalesOrderExtraLine(
-                    order=so, quantity=idx + 1, reference=f'Extra line {idx}'
-                )
-                for idx in range(3)
-            ]
-        )
+        models.SalesOrderExtraLine.objects.bulk_create([
+            models.SalesOrderExtraLine(
+                order=so, quantity=idx + 1, reference=f'Extra line {idx}'
+            )
+            for idx in range(3)
+        ])
 
         n = models.SalesOrderExtraLine.objects.count()
         items = list(
@@ -2723,9 +2711,11 @@ class SalesOrderAllocateTest(OrderTest):
                     break
 
             # Fully-allocate each line
-            data['items'].append(
-                {'line_item': line.pk, 'stock_item': stock_item.pk, 'quantity': 5}
-            )
+            data['items'].append({
+                'line_item': line.pk,
+                'stock_item': stock_item.pk,
+                'quantity': 5,
+            })
 
         self.post(self.url, data, expected_code=201)
 
@@ -2773,9 +2763,11 @@ class SalesOrderAllocateTest(OrderTest):
                 raise self.fail('No stock item found for part')  # pragma: no cover
 
             # Fully-allocate each line
-            data['items'].append(
-                {'line_item': line.pk, 'stock_item': stock_item.pk, 'quantity': 5}
-            )
+            data['items'].append({
+                'line_item': line.pk,
+                'stock_item': stock_item.pk,
+                'quantity': 5,
+            })
 
         self.post(self.url, data, expected_code=201)
 
@@ -3719,14 +3711,12 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         """Test that we can bulk delete multiple ReturnOrderExtraLine items via the API."""
         ro = models.ReturnOrder.objects.first()
 
-        models.ReturnOrderExtraLine.objects.bulk_create(
-            [
-                models.ReturnOrderExtraLine(
-                    order=ro, quantity=idx + 1, reference=f'Extra line {idx}'
-                )
-                for idx in range(3)
-            ]
-        )
+        models.ReturnOrderExtraLine.objects.bulk_create([
+            models.ReturnOrderExtraLine(
+                order=ro, quantity=idx + 1, reference=f'Extra line {idx}'
+            )
+            for idx in range(3)
+        ])
 
         n = models.ReturnOrderExtraLine.objects.count()
         items = list(
@@ -4845,9 +4835,11 @@ class TransferOrderAllocateTest(OrderTest):
                     break
 
             # Fully-allocate each line
-            data['items'].append(
-                {'line_item': line.pk, 'stock_item': stock_item.pk, 'quantity': 5}
-            )
+            data['items'].append({
+                'line_item': line.pk,
+                'stock_item': stock_item.pk,
+                'quantity': 5,
+            })
 
         self.post(self.url, data, expected_code=201)
 
@@ -4866,7 +4858,8 @@ class TransferOrderAllocateTest(OrderTest):
         trackable_lines = self.order.lines.filter(part__trackable=True)
         for line in trackable_lines:
             stock_item = (
-                line.part.stock_items.exclude(serial=None)
+                line.part.stock_items
+                .exclude(serial=None)
                 .filter(StockItem.IN_STOCK_FILTER)
                 .first()
             )
@@ -4904,7 +4897,8 @@ class TransferOrderAllocateTest(OrderTest):
 
             # Allocate a matching variant
             parts: list[Part] = (
-                Part.objects.exclude(virtual=True)
+                Part.objects
+                .exclude(virtual=True)
                 .exclude(is_template=True)
                 .filter(variant_of=line.part.pk)
             )
@@ -4932,9 +4926,11 @@ class TransferOrderAllocateTest(OrderTest):
                 raise self.fail('No stock item found for part')  # pragma: no cover
 
             # Fully-allocate each line
-            data['items'].append(
-                {'line_item': line.pk, 'stock_item': stock_item.pk, 'quantity': 5}
-            )
+            data['items'].append({
+                'line_item': line.pk,
+                'stock_item': stock_item.pk,
+                'quantity': 5,
+            })
 
         self.post(self.url, data, expected_code=201)
 

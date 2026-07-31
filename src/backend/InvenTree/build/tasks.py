@@ -62,7 +62,8 @@ def consume_build_stock(
     # Condense the provided lines and items into a single BuildItem queryset,
     # preselecting the related StockItem to avoid per-item queries downstream
     build_items = (
-        BuildItem.objects.filter(
+        BuildItem.objects
+        .filter(
             Q(build_line__pk__in=lines) | Q(pk__in=items.keys()),
             build_line__build=build,
         )
@@ -159,7 +160,8 @@ def scrap_build_outputs(
             # Lock the output row, and re-check that it is still "in production" -
             # it may have been processed already (e.g. by a duplicated task)
             output = (
-                StockItem.objects.select_for_update()
+                StockItem.objects
+                .select_for_update()
                 .filter(pk=item['output_id'])
                 .first()
             )
@@ -220,7 +222,8 @@ def complete_build_outputs(
             # Lock the output row, and re-check that it is still "in production" -
             # it may have been processed already (e.g. by a duplicated task)
             output = (
-                StockItem.objects.select_for_update()
+                StockItem.objects
+                .select_for_update()
                 .filter(pk=item['output_id'])
                 .first()
             )
@@ -460,18 +463,16 @@ def check_build_stock(build):
         if available < required:
             # There is not sufficient stock for this part
 
-            lines.append(
-                {
-                    'link': InvenTree.helpers_model.construct_absolute_url(
-                        sub_part.get_absolute_url()
-                    ),
-                    'part': sub_part,
-                    'in_stock': in_stock,
-                    'allocated': allocated,
-                    'available': available,
-                    'required': required,
-                }
-            )
+            lines.append({
+                'link': InvenTree.helpers_model.construct_absolute_url(
+                    sub_part.get_absolute_url()
+                ),
+                'part': sub_part,
+                'in_stock': in_stock,
+                'allocated': allocated,
+                'available': available,
+                'required': required,
+            })
 
     if len(lines) == 0:
         # Nothing to do

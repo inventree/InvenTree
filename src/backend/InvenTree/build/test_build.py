@@ -242,7 +242,7 @@ class BuildTest(BuildTestBase):
         # Set build reference back to default value
         set_global_setting(
             'BUILDORDER_REFERENCE_PATTERN',
-            'BO-{ref:04d}',
+            'BO-{ref:04d}',  # noqa: RUF027
             change_user=None,
         )
 
@@ -265,7 +265,7 @@ class BuildTest(BuildTestBase):
             )
 
         # Try a new validator pattern
-        set_global_setting('BUILDORDER_REFERENCE_PATTERN', '{ref}-BO', change_user=None)
+        set_global_setting('BUILDORDER_REFERENCE_PATTERN', '{ref}-BO', change_user=None)  # noqa: RUF027
 
         for ref in ['1234-BO', '9999-BO']:
             Build.objects.create(
@@ -275,7 +275,7 @@ class BuildTest(BuildTestBase):
         # Set build reference back to default value
         set_global_setting(
             'BUILDORDER_REFERENCE_PATTERN',
-            'BO-{ref:04d}',
+            'BO-{ref:04d}',  # noqa: RUF027
             change_user=None,
         )
 
@@ -1535,20 +1535,10 @@ class BuildTaskTests(BuildTestBase):
         self.assertEqual(alloc.quantity, 20)
 
         # Duplicate entries within a single request are also merged
-        self.build.allocate_stock(
-            [
-                {
-                    'build_line': self.line_1,
-                    'stock_item': self.stock_1_1,
-                    'quantity': 1,
-                },
-                {
-                    'build_line': self.line_1,
-                    'stock_item': self.stock_1_1,
-                    'quantity': 2,
-                },
-            ]
-        )
+        self.build.allocate_stock([
+            {'build_line': self.line_1, 'stock_item': self.stock_1_1, 'quantity': 1},
+            {'build_line': self.line_1, 'stock_item': self.stock_1_1, 'quantity': 2},
+        ])
 
         alloc = BuildItem.objects.get(build_line=self.line_1, stock_item=self.stock_1_1)
         self.assertEqual(alloc.quantity, 3)
@@ -2139,15 +2129,13 @@ class BuildAllocateStockConcurrencyTest(TransactionTestCase):
 
         def allocate(build, build_line):
             try:
-                build.allocate_stock(
-                    [
-                        {
-                            'build_line': build_line,
-                            'stock_item': self.stock_item,
-                            'quantity': 5,
-                        }
-                    ]
-                )
+                build.allocate_stock([
+                    {
+                        'build_line': build_line,
+                        'stock_item': self.stock_item,
+                        'quantity': 5,
+                    }
+                ])
                 results.append('ok')
             except ValidationError:
                 results.append('rejected')
