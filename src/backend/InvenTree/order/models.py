@@ -888,8 +888,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Equivalent to place_order()."""
         return self.place_order()
 
-    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_issue(self) -> bool:
         """Return True if this order can be issued (placed)."""
         return can_proceed(self.place_order)
@@ -928,8 +928,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
         The order must currently be PENDING or PLACED.
         """
 
-    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_hold(self) -> bool:
         """Return True if this order can be placed on hold."""
         return can_proceed(self.hold_order)
@@ -957,8 +957,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
             extra_users=self.subscribed_users(),
         )
 
-    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_cancel(self) -> bool:
         """A PurchaseOrder can only be cancelled while it is open.
 
@@ -1826,8 +1826,8 @@ class SalesOrder(TotalPriceMixin, Order):
             extra_users=self.subscribed_users(),
         )
 
-    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_issue(self) -> bool:
         """Return True if this order can be issued."""
         return can_proceed(self.issue_order)
@@ -1844,8 +1844,8 @@ class SalesOrder(TotalPriceMixin, Order):
         The order must currently be PENDING or IN_PROGRESS.
         """
 
-    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_hold(self) -> bool:
         """Return True if this order can be placed on hold."""
         return can_proceed(self.hold_order)
@@ -1951,8 +1951,8 @@ class SalesOrder(TotalPriceMixin, Order):
             extra_users=self.subscribed_users(),
         )
 
-    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_cancel(self) -> bool:
         """Return True if this order can be cancelled."""
         return can_proceed(self.cancel_order)
@@ -3367,8 +3367,8 @@ class ReturnOrder(TotalPriceMixin, Order):
         The order must currently be PENDING or IN_PROGRESS.
         """
 
-    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_hold(self):
         """Return True if this order can be placed on hold."""
         return can_proceed(self.hold_order)
@@ -3393,8 +3393,8 @@ class ReturnOrder(TotalPriceMixin, Order):
             extra_users=self.subscribed_users(),
         )
 
-    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_cancel(self):
         """Return True if this order can be cancelled."""
         return can_proceed(self.cancel_order)
@@ -3417,8 +3417,8 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Deprecated version of 'issue_order'."""
         return self.issue_order()
 
-    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_issue(self) -> bool:
         """Return True if this order can be issued."""
         return can_proceed(self.issue_order)
@@ -3852,8 +3852,8 @@ class TransferOrder(Order):
 
         return True
 
-    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_issue(self) -> bool:
         """Return True if this order can be issued."""
         return can_proceed(self.issue_order)
@@ -3879,8 +3879,8 @@ class TransferOrder(Order):
             extra_users=self.subscribed_users(),
         )
 
-    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_hold(self) -> bool:
         """Return True if this order can be placed on hold."""
         return can_proceed(self.hold_order)
@@ -3943,8 +3943,8 @@ class TransferOrder(Order):
             extra_users=self.subscribed_users(),
         )
 
-    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_cancel(self) -> bool:
         """A TransferOrder can only be cancelled while it is open.
 
