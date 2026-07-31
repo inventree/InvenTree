@@ -1191,7 +1191,15 @@ test('Parts - Import supplier part', async ({ browser }) => {
   await page
     .getByRole('button', { name: 'action-button-import-part-BOLT-Steel-M5-5' })
     .click();
+
+  await page.waitForLoadState('networkidle');
   await page.waitForTimeout(250);
+
+  await page
+    .getByRole('textbox', { name: 'tree-field-field' })
+    .fill('electronics');
+  await page.getByText('ElectronicsElectronic').click();
+
   await page
     .getByRole('button', { name: 'action-button-import-part-now' })
     .click();
