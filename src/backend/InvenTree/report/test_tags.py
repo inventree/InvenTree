@@ -524,6 +524,17 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             svg,
         )
 
+        # Test with a missing SVG file - default behavior is to return an empty string
+        missing_path = 'missing_svg_image_123abc.svg'
+        self.assertEqual(report_tags.encode_svg_image(missing_path), '')
+        self.assertEqual(
+            report_tags.encode_svg_image(missing_path, raise_error=False), ''
+        )
+
+        # Test with a missing SVG file, with raise_error=True
+        with self.assertRaises(FileNotFoundError):
+            report_tags.encode_svg_image(missing_path, raise_error=True)
+
     def test_part_parameter(self):
         """Test the part_parameter template tag."""
         # Test with a valid part
