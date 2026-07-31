@@ -1837,12 +1837,33 @@ def test(
         manage(c, cmd, pty=pty)
 
 
+def _detect_ci_branch() -> Optional[str]:
+    """Attempt to auto-detect the target branch when running in GitHub CI.
+
+    - For pull_request events, GITHUB_BASE_REF holds the PR's target branch (e.g. "master" or "1.4.x")
+    - For push events, GITHUB_REF_NAME holds the branch being pushed to
+
+    Returns None if not running in GitHub Actions, or no branch could be determined.
+    """
+    if os.environ.get('GITHUB_ACTIONS') != 'true':
+        return None
+
+    base_ref = os.environ.get('GITHUB_BASE_REF')
+    if base_ref:
+        return base_ref
+
+    if os.environ.get('GITHUB_REF_TYPE') == 'branch':
+        return os.environ.get('GITHUB_REF_NAME')
+
+    return None
+
+
 @task(
     help={
         'dev': 'Set up development environment at the end',
         'validate_files': 'Validate media files are correctly copied',
         'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
-        'branch': 'Specify branch of demo-dataset to clone (default = main)',
+        'branch': 'Specify branch of demo-dataset to clone (default = auto-detected target branch in CI, else main)',
         'verbose': 'Print verbose output from management commands',
     }
 )
@@ -1854,7 +1875,7 @@ def setup_test(
     use_ssh=False,
     verbose=False,
     path='inventree-demo-dataset',
-    branch='main',
+    branch: Optional[str] = None,
 ):
     """Setup a testing environment."""
     from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
@@ -1876,22 +1897,16 @@ def setup_test(
         # Use SSH protocol for cloning the demo dataset
         URL = 'git@github.com:inventree/demo-dataset.git'
 
+    if not branch:
+        branch = _detect_ci_branch()
+        if branch:
+            info(f"Auto-detected target branch from CI: '{branch}'")
+
     # InvenTree's trunk branch is named "master", but the demo-dataset
     # repository uses "main" as its trunk branch - map this automatically
     # so CI can pass through the detected target branch unmodified.
     if not branch or branch == 'master':
         branch = 'main'
-
-    if branch != 'main':
-        # Stable release branches (e.g. "1.4.x") may not yet exist in the
-        # demo-dataset repository (e.g. it has not been backported yet).
-        # Fall back to "main" in that case, rather than failing the clone.
-        result = c.run(f'git ls-remote --heads {URL} {branch}', hide=True, warn=True)
-        if not result.ok or not result.stdout.strip():
-            warning(
-                f"Demo dataset has no branch named '{branch}' - falling back to 'main'"
-            )
-            branch = 'main'
 
     # Get test data
     info(f"Cloning demo dataset (branch '{branch}') ...")
