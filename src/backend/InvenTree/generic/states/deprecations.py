@@ -2,7 +2,12 @@
 
 from enum import Enum
 from typing import Any, Optional
-from warnings import deprecated as warn_deprecated
+
+# py (3, 12) does not ship with depreciation decorator, so we need to import it from typing_extensions
+try:
+    from warnings import deprecated as warn_deprecated
+except ImportError:
+    from typing_extensions import deprecated as warn_deprecated
 
 
 class Deprecations(Enum):

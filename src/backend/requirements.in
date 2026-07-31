@@ -54,6 +54,7 @@ sentry-sdk                              # Error reporting (optional)
 setuptools                              # Standard dependency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
 tqdm                                    # Progress bars for CLI
+typing_extensions                       # new features - for 3, 12 support
 weasyprint                              # PDF generation
 whitenoise                              # Enhanced static file serving
 
