@@ -1,9 +1,13 @@
 """Unit tests for the 'importer' app."""
 
 import os
+import threading
+from unittest import mock
 
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
+from django.db import connection
+from django.test import TransactionTestCase, skipUnlessDBFeature
 from django.urls import reverse
 
 from importer.models import DataImportColumnMap, DataImportRow, DataImportSession
@@ -259,6 +263,103 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
         quantity_mapping.lookup_field = 'IPN'
         with self.assertRaises(DjangoValidationError):
             quantity_mapping.save()
+
+
+@skipUnlessDBFeature('has_select_for_update')
+class DataImportRowConcurrencyTest(ImporterMixin, TransactionTestCase):
+    """Genuine cross-transaction regression test for row locking during a data-import update.
+
+    Uses two real threads (each with its own database connection) to reproduce the
+    lost-update race: two concurrent import rows updating *different* fields on the
+    same StockItem could both read the pre-update instance before either had
+    committed its save() - and since save() writes the *entire* instance, whichever
+    thread committed second would silently discard the first thread's change.
+
+    DataImportRow.validate() now locks the target row (select_for_update, inside
+    transaction.atomic()) for the duration of the read-modify-write cycle, so the
+    second thread's read is forced to wait until the first thread's transaction
+    commits - and therefore sees (and preserves) the first thread's change.
+    """
+
+    def setUp(self):
+        """Create a single StockItem to update concurrently."""
+        super().setUp()
+
+        from part.models import Part, PartCategory
+        from stock.models import StockItem
+
+        category = PartCategory.objects.create(
+            name='Concurrency Category', description='Test category'
+        )
+        self.part = Part.objects.create(
+            category=category, name='Concurrency Part', description='Test part'
+        )
+        self.item = StockItem.objects.create(part=self.part, quantity=10)
+
+    def helper_session(self) -> DataImportSession:
+        """Construct a minimal DataImportSession configured for stock item updates."""
+        return DataImportSession.objects.create(
+            data_file=self.helper_file('companies.csv'),
+            model_type='stockitem',
+            update_records=True,
+        )
+
+    def test_concurrent_update_does_not_lose_writes(self):
+        """Two concurrent updates to different fields must not clobber one another."""
+        start_barrier = threading.Barrier(2, timeout=5)
+        errors = []
+
+        # Wrap DataImportRow._get_update_instance() so both threads reach the
+        # (real, database-level) row lock at the same time - one wins the lock
+        # and proceeds through to commit, the other blocks until the winner's
+        # transaction completes.
+        original_get_update_instance = DataImportRow._get_update_instance
+
+        def synced_get_update_instance(row, instance_id, queryset):
+            start_barrier.wait(timeout=5)
+            return original_get_update_instance(row, instance_id, queryset)
+
+        def update(field, value):
+            try:
+                row = DataImportRow(
+                    session=self.helper_session(),
+                    # 'part' is a required field on StockItemSerializer, so it must
+                    # be included even though this row is only actually changing
+                    # 'field' - the fix under test is *locking*, not partial-update
+                    # support, so we work within the serializer's existing rules
+                    data={'id': self.item.pk, 'part': self.part.pk, field: value},
+                )
+                if not row.validate(commit=True):
+                    errors.append(row.errors)
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        with mock.patch.object(
+            DataImportRow, '_get_update_instance', synced_get_update_instance
+        ):
+            # Note: 'batch' is deliberately avoided here - it has a model-level
+            # default (generate_batch_code), and DRF applies a field's default to
+            # *any* non-partial update where the field is omitted, regardless of
+            # the existing instance value. That's a separate, already-tracked
+            # issue (GH #12499) and would confound this test, which is only
+            # about proving the row lock closes the read/write race.
+            thread_a = threading.Thread(target=update, args=('notes', 'notes-a'))
+            thread_b = threading.Thread(
+                target=update, args=('packaging', 'packaging-b')
+            )
+
+            thread_a.start()
+            thread_b.start()
+            thread_a.join(timeout=10)
+            thread_b.join(timeout=10)
+
+        self.assertEqual(errors, [])
+
+        self.item.refresh_from_db()
+        self.assertEqual(self.item.notes, 'notes-a')
+        self.assertEqual(self.item.packaging, 'packaging-b')
 
 
 class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):

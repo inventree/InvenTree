@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import FieldDoesNotExist
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.validators import FileExtensionValidator
-from django.db import models
+from django.db import models, transaction
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -936,6 +936,64 @@ class DataImportRow(models.Model):
                 context={'request': request},
             )
 
+    def _get_update_instance(self, instance_id, queryset):
+        """Fetch the target instance for an update, recording any error against this row.
+
+        Arguments:
+            instance_id: The primary key of the instance to fetch
+            queryset: The queryset to fetch the instance from (may be locked)
+
+        Returns:
+            The fetched instance, or None if it could not be found/resolved
+        """
+        try:
+            return queryset.get(pk=instance_id)
+        except self.session.model_class.DoesNotExist:
+            self.errors = {
+                'non_field_errors': _('No record found with the provided ID')
+                + f': {instance_id}'
+            }
+        except ValueError:
+            self.errors = {
+                'non_field_errors': _('Invalid ID format provided') + f': {instance_id}'
+            }
+        except Exception as e:
+            self.errors = {'non_field_errors': str(e)}
+
+        return None
+
+    def _process_serializer(self, serializer, commit) -> bool:
+        """Run is_valid() against the provided serializer, and save it if requested."""
+        if not serializer:
+            self.errors = {
+                'non_field_errors': 'No serializer class linked to this import session'
+            }
+            return False
+
+        result = False
+
+        try:
+            result = serializer.is_valid(raise_exception=True)
+        except (DjangoValidationError, DRFValidationError) as e:
+            self.errors = e.detail
+
+        if result:
+            self.errors = None
+
+            if commit:
+                try:
+                    serializer.save()
+                    self.complete = True
+
+                except ValueError as e:  # Exception as e:
+                    self.errors = {'non_field_errors': str(e)}
+                    result = False
+
+                self.save()
+                self.session.check_complete()
+
+        return result
+
     def validate(self, commit=False, request=None) -> bool:
         """Validate the data in this row against the linked serializer.
 
@@ -966,22 +1024,33 @@ class DataImportRow(models.Model):
                     _('ID is required for updating existing records.')
                 )
 
-            try:
-                instance = self.session.model_class.objects.get(pk=instance_id)
-            except self.session.model_class.DoesNotExist:
-                self.errors = {
-                    'non_field_errors': _('No record found with the provided ID')
-                    + f': {instance_id}'
-                }
-                return False
-            except ValueError:
-                self.errors = {
-                    'non_field_errors': _('Invalid ID format provided')
-                    + f': {instance_id}'
-                }
-                return False
-            except Exception as e:
-                self.errors = {'non_field_errors': str(e)}
+            queryset = self.session.model_class.objects
+
+            if commit:
+                # Lock the target row for the duration of the transaction. Without
+                # this, another process could modify the record between this read
+                # and the serializer.save() call in _process_serializer() - and as
+                # save() writes the *entire* instance (not just the fields present
+                # in the imported data), that concurrent change would be silently
+                # lost (a "lost update" race). The lock is held until the save
+                # completes below, so a concurrent writer blocks until this commit
+                # finishes rather than racing against it.
+                with transaction.atomic():
+                    instance = self._get_update_instance(
+                        instance_id, queryset.select_for_update()
+                    )
+
+                    if instance is None:
+                        return False
+
+                    serializer = self.construct_serializer(
+                        instance=instance, request=request
+                    )
+                    return self._process_serializer(serializer, commit)
+
+            instance = self._get_update_instance(instance_id, queryset)
+
+            if instance is None:
                 return False
 
             serializer = self.construct_serializer(instance=instance, request=request)
@@ -989,32 +1058,4 @@ class DataImportRow(models.Model):
         else:
             serializer = self.construct_serializer(request=request)
 
-        if not serializer:
-            self.errors = {
-                'non_field_errors': 'No serializer class linked to this import session'
-            }
-            return False
-
-        result = False
-
-        try:
-            result = serializer.is_valid(raise_exception=True)
-        except (DjangoValidationError, DRFValidationError) as e:
-            self.errors = e.detail
-
-        if result:
-            self.errors = None
-
-            if commit:
-                try:
-                    serializer.save()
-                    self.complete = True
-
-                except ValueError as e:  # Exception as e:
-                    self.errors = {'non_field_errors': str(e)}
-                    result = False
-
-                self.save()
-                self.session.check_complete()
-
-        return result
+        return self._process_serializer(serializer, commit)
