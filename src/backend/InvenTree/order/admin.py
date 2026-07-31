@@ -94,7 +94,14 @@ class PurchaseOrderLineItemAdmin(admin.ModelAdmin):
 
     list_display = ('order', 'part', 'quantity', 'reference')
 
-    search_fields = ('reference',)
+    search_fields = [
+        'part__part__name',
+        'part__part__description',
+        'part__SKU',
+        'order__reference',
+        'order__supplier__name',
+        'reference',
+    ]
 
     autocomplete_fields = ('order', 'part', 'destination')
 

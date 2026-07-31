@@ -40,6 +40,10 @@ env:
   INVENTREE_DB_HOST: "127.0.0.1"
   INVENTREE_DB_PORT: 5432
 
+  # Use the same-named branch of the demo dataset as the target branch of this build,
+  # so that stable branches are not broken by changes to the demo dataset on main
+  DEMO_DATASET_BRANCH: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
+
 jobs:
 
   paths-filter:
@@ -48,7 +52,7 @@ jobs:
     outputs:
       server: ${{ steps.filter.outputs.server }}
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4.0.2
@@ -76,7 +80,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -90,7 +94,7 @@ jobs:
       - name: Setup Postgres Database
         run: |
           invoke migrate
-          invoke dev.setup-test -i
+          invoke dev.setup-test -i --branch "$DEMO_DATASET_BRANCH"
       - name: Create Plugin Data
         run: |
           pip install -U inventree-dummy-app-plugin==0.1.0

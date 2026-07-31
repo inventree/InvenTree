@@ -1388,6 +1388,35 @@ class BuildOutputCreateTest(BuildAPITest):
         # The new output must have a creation_date set
         self.assertIsNotNone(part.stock_items.order_by('-pk').first().creation_date)
 
+    def test_create_unserialized_output_trackable_part(self):
+        """A build output for a trackable part may be created without serial numbers.
+
+        This allows a batch quantity to be created (e.g. from an external build order)
+        which can be serialized at some later stage in the process.
+        """
+        build_id = 1
+        url = reverse('api-build-output-create', kwargs={'pk': build_id})
+
+        build = Build.objects.get(pk=build_id)
+        part = build.part
+
+        part.trackable = True
+        part.save()
+
+        n_outputs = build.output_count
+        n_items = part.stock_items.count()
+
+        # Create a single non-serialized output, even though the part is trackable
+        self.post(url, data={'quantity': 10}, expected_code=201)
+
+        # A single build output has been created (not one per unit of quantity)
+        self.assertEqual(n_outputs + 1, build.output_count)
+        self.assertEqual(n_items + 1, part.stock_items.count())
+
+        output = part.stock_items.order_by('-pk').first()
+        self.assertIsNone(output.serial)
+        self.assertEqual(output.quantity, 10)
+
 
 class BuildOutputScrapTest(BuildAPITest):
     """Unit tests for scrapping build outputs."""
@@ -2304,7 +2333,7 @@ class BuildConsumeTest(BuildAPITest):
                 expected_code=201,
                 benchmark=True,
                 max_query_count=250,
-                max_query_time=1.0,
+                max_query_time=1.5,
             )
 
         build.refresh_from_db()

@@ -46,6 +46,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 import { api } from '../../App';
+import { openGlobalPreview } from '../../states/PreviewDrawerState';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { RenderInstance } from '../render/Instance';
@@ -464,6 +465,17 @@ export function SearchDrawer({
   function onResultClick(query: ModelType, pk: number, event: any) {
     const targetModel = ModelInformationDict[query];
     if (targetModel.url_detail == undefined) {
+      return;
+    }
+
+    const showPreviewPanel =
+      userSettings.isSet('ENABLE_PREVIEW_PANEL') &&
+      userSettings.isSet('SEARCH_RESULTS_PREVIEW_PANEL');
+
+    if (showPreviewPanel && !eventModified(event)) {
+      // Open the result in the preview panel, keeping the search drawer open
+      cancelEvent(event);
+      openGlobalPreview(query, pk);
       return;
     }
 

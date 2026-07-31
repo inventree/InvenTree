@@ -79,6 +79,7 @@ export default function UserSettings() {
               'SEARCH_WHOLE',
               'SEARCH_REGEX',
               'SEARCH_NOTES',
+              'SEARCH_RESULTS_PREVIEW_PANEL',
               'SEARCH_PREVIEW_RESULTS',
               'SEARCH_PREVIEW_SHOW_PARTS',
               'SEARCH_HIDE_INACTIVE_PARTS',
