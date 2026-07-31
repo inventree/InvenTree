@@ -83,6 +83,10 @@ jobs:
           BASE_REF: ${{ github.base_ref }}
           REF_NAME: ${{ github.ref_name }}
         run: |
+          echo "Determining demo dataset branch"
+          echo "Event name: $EVENT_NAME"
+          echo "Base ref: $BASE_REF"
+          echo "Ref name: $REF_NAME"
           if [ "$EVENT_NAME" = "pull_request" ]; then
             branch="$BASE_REF"
           elif [[ "$REF_NAME" =~ ^(master|[0-9]+\.[0-9]+\.x)$ ]]; then
