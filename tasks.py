@@ -1838,24 +1838,18 @@ def test(
 
 
 def _detect_ci_branch() -> Optional[str]:
-    """Attempt to auto-detect the target branch when running in GitHub CI.
-
-    - For pull_request events, GITHUB_BASE_REF holds the PR's target branch (e.g. "master" or "1.4.x")
-    - For push events, GITHUB_REF_NAME holds the branch being pushed to
-
-    Returns None if not running in GitHub Actions, or no branch could be determined.
-    """
+    """Return the target branch when running in GitHub Actions."""
     if os.environ.get('GITHUB_ACTIONS') != 'true':
         return None
 
-    base_ref = os.environ.get('GITHUB_BASE_REF')
-    if base_ref:
-        return base_ref
+    if os.environ.get('GITHUB_EVENT_NAME') == 'pull_request':
+        return os.environ.get('GITHUB_BASE_REF')
 
-    if os.environ.get('GITHUB_REF_TYPE') == 'branch':
-        return os.environ.get('GITHUB_REF_NAME')
-
-    return None
+    return (
+        os.environ.get('GITHUB_REF_NAME')
+        if os.environ.get('GITHUB_REF_TYPE') == 'branch'
+        else None
+    )
 
 
 @task(
