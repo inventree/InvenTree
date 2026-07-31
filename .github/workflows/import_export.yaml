@@ -87,10 +87,10 @@ jobs:
           pip-dependency: psycopg
           update: true
           static: false
-      - name: Setup Postgres Database
+      - name: Setup Test Data
         run: |
           invoke migrate
-          invoke dev.setup-test -i"
+          invoke dev.setup-test -i
       - name: Create Plugin Data
         run: |
           pip install -U inventree-dummy-app-plugin==0.1.0
