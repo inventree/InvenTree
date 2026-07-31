@@ -171,9 +171,9 @@ def get_ruleset_models() -> dict:
             'order_transferorderlineitem',
         ],
         RuleSetEnum.REPAIR_ORDER: [
-            'order_repairorder',
-            'order_repairorderlineitem',
-            'order_repairorderallocation',
+            'build_repairorder',
+            'build_repairorderlineitem',
+            'build_repairorderallocation',
         ],
     }
 
