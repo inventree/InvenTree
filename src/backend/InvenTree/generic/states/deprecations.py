@@ -5,7 +5,7 @@ from typing import Any, Optional
 
 # py (3, 12) does not ship with depreciation decorator, so we need to import it from typing_extensions
 try:
-    from warnings import deprecated as warn_deprecated
+    from warnings import deprecated as warn_deprecated  # ty: ignore[unresolved-import]
 except ImportError:
     from typing_extensions import deprecated as warn_deprecated
 
