@@ -56,7 +56,7 @@ msgstr "Másolás"
 
 #: lib/components/RowActions.tsx:56
 #: src/components/items/ActionDropdown.tsx:248
-#: src/components/nav/PageDetail.tsx:60
+#: src/components/nav/PageDetail.tsx:70
 msgid "Edit"
 msgstr "Szerkesztés"
 
@@ -106,7 +106,7 @@ msgstr "Műveletek"
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
 #: src/pages/Index/Settings/UserSettings.tsx:75
-#: src/pages/part/PartDetail.tsx:758
+#: src/pages/part/PartDetail.tsx:761
 msgid "Search"
 msgstr "Keresés"
 
@@ -168,7 +168,7 @@ msgstr "Nem"
 #: src/forms/StockForms.tsx:1887
 #: src/forms/TransferOrderForms.tsx:238
 #: src/pages/build/BuildOrderDetailsPanel.tsx:45
-#: src/pages/part/PartDetail.tsx:811
+#: src/pages/part/PartDetail.tsx:814
 #: src/pages/part/bom/BomCompare.tsx:203
 #: src/tables/build/BuildOrderParametricTable.tsx:29
 #: src/tables/part/PartTestResultTable.tsx:251
@@ -187,7 +187,7 @@ msgstr "Alkatrész"
 #: src/pages/part/CategoryDetail.tsx:272
 #: src/pages/part/CategoryDetail.tsx:316
 #: src/pages/part/PartCategoryDetailsPanel.tsx:69
-#: src/pages/part/PartDetail.tsx:533
+#: src/pages/part/PartDetail.tsx:536
 msgid "Parts"
 msgstr "Alkatrészek"
 
@@ -201,7 +201,7 @@ msgstr "Paraméter"
 #: src/components/wizards/ImportPartWizard.tsx:807
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:202
 #: src/pages/Index/Settings/SystemSettings.tsx:212
-#: src/pages/part/PartDetail.tsx:488
+#: src/pages/part/PartDetail.tsx:491
 msgid "Parameters"
 msgstr "Paraméterek"
 
@@ -266,7 +266,7 @@ msgstr "Alkatrész kategória"
 #: lib/enums/Roles.tsx:39
 #: src/pages/part/CategoryDetail.tsx:206
 #: src/pages/part/CategoryDetail.tsx:306
-#: src/pages/part/PartDetail.tsx:799
+#: src/pages/part/PartDetail.tsx:802
 msgid "Part Categories"
 msgstr "Alkatrész kategóriák"
 
@@ -327,7 +327,7 @@ msgid "Stock Location Types"
 msgstr "Készlethely típusok"
 
 #: lib/enums/ModelInformation.tsx:153
-#: src/pages/part/PartDetail.tsx:440
+#: src/pages/part/PartDetail.tsx:443
 msgid "Stock History"
 msgstr "Készlettörténet"
 
@@ -351,7 +351,7 @@ msgstr "Gyártási utasítás"
 #: src/defaults/actions.tsx:184
 #: src/pages/Index/Settings/SystemSettings.tsx:316
 #: src/pages/build/BuildIndex.tsx:87
-#: src/pages/part/PartDetail.tsx:419
+#: src/pages/part/PartDetail.tsx:422
 #: src/pages/sales/SalesOrderDetail.tsx:214
 msgid "Build Orders"
 msgstr "Gyártási utasítások"
@@ -422,7 +422,7 @@ msgstr "Beszerzési rendelés"
 #: src/pages/Index/Settings/SystemSettings.tsx:343
 #: src/pages/company/CompanyDetail.tsx:119
 #: src/pages/company/SupplierPartDetail.tsx:99
-#: src/pages/part/PartDetail.tsx:386
+#: src/pages/part/PartDetail.tsx:389
 #: src/pages/purchasing/PurchasingIndex.tsx:95
 msgid "Purchase Orders"
 msgstr "Beszerzési rendelések"
@@ -456,7 +456,7 @@ msgstr "Vevői rendelés"
 #: src/defaults/actions.tsx:143
 #: src/pages/Index/Settings/SystemSettings.tsx:361
 #: src/pages/company/CompanyDetail.tsx:139
-#: src/pages/part/PartDetail.tsx:398
+#: src/pages/part/PartDetail.tsx:401
 #: src/pages/sales/SalesIndex.tsx:107
 msgid "Sales Orders"
 msgstr "Vevői rendelések"
@@ -482,7 +482,7 @@ msgstr "Visszavétel"
 #: src/defaults/actions.tsx:165
 #: src/pages/Index/Settings/SystemSettings.tsx:373
 #: src/pages/company/CompanyDetail.tsx:146
-#: src/pages/part/PartDetail.tsx:409
+#: src/pages/part/PartDetail.tsx:412
 #: src/pages/sales/SalesIndex.tsx:147
 msgid "Return Orders"
 msgstr "Visszavételek"
@@ -507,7 +507,7 @@ msgstr ""
 #: lib/enums/Roles.tsx:45
 #: src/defaults/actions.tsx:154
 #: src/pages/Index/Settings/SystemSettings.tsx:386
-#: src/pages/part/PartDetail.tsx:426
+#: src/pages/part/PartDetail.tsx:429
 #: src/pages/stock/LocationDetail.tsx:165
 msgid "Transfer Orders"
 msgstr ""
@@ -2233,7 +2233,7 @@ msgstr "Új sor hozzáadása"
 #: src/components/forms/fields/TreeField.tsx:328
 #: src/components/render/Instance.tsx:145
 #: src/components/render/ModelHoverCard.tsx:73
-#: src/components/tables/InvenTreeTable.tsx:810
+#: src/components/tables/InvenTreeTable.tsx:833
 msgid "View details"
 msgstr "Részletek megtekintése"
 
@@ -2619,7 +2619,7 @@ msgstr "Nincsenek tételek"
 #: src/components/render/Stock.tsx:97
 #: src/components/tables/ColumnRenderers.tsx:265
 #: src/components/tables/PartStockCell.tsx:85
-#: src/pages/part/PartDetail.tsx:575
+#: src/pages/part/PartDetail.tsx:578
 #: src/pages/stock/StockDetail.tsx:669
 #: src/pages/stock/StockDetailsPanel.tsx:204
 #: src/tables/build/BuildAllocatedStockTable.tsx:128
@@ -3001,7 +3001,7 @@ msgstr "Kijelentkezés"
 #: src/defaults/links.tsx:47
 #: src/forms/StockForms.tsx:1475
 #: src/pages/Index/Settings/SystemSettings.tsx:260
-#: src/pages/part/PartDetail.tsx:298
+#: src/pages/part/PartDetail.tsx:301
 #: src/pages/stock/LocationDetail.tsx:396
 #: src/pages/stock/LocationDetail.tsx:438
 #: src/pages/stock/StockDetail.tsx:329
@@ -3057,6 +3057,15 @@ msgstr ""
 msgid "Error loading navigation tree."
 msgstr "Navigációs fát nem sikerült betölteni."
 
+#: src/components/nav/NextPrevAction.tsx:20
+msgid "Previous"
+msgstr ""
+
+#: src/components/nav/NextPrevAction.tsx:30
+#: src/components/wizards/ImportPartWizard.tsx:511
+msgid "Next"
+msgstr "Következő"
+
 #: src/components/nav/NotificationDrawer.tsx:183
 #: src/pages/Notifications.tsx:74
 msgid "Mark all as read"
@@ -3078,7 +3087,7 @@ msgstr "Hiba az értesítések betöltésekor."
 #~ msgid "Edit {title}"
 #~ msgstr "Edit {title}"
 
-#: src/components/nav/PageDetail.tsx:263
+#: src/components/nav/PageDetail.tsx:281
 msgid "Primary Action"
 msgstr ""
 
@@ -3104,7 +3113,7 @@ msgstr "Keresési csoport eltávolítása"
 
 #: src/components/nav/SearchDrawer.tsx:305
 #: src/pages/company/ManufacturerPartDetail.tsx:91
-#: src/pages/part/PartDetail.tsx:373
+#: src/pages/part/PartDetail.tsx:376
 #: src/pages/part/PartSupplierDetail.tsx:15
 #: src/pages/purchasing/PurchasingIndex.tsx:123
 msgid "Suppliers"
@@ -3417,12 +3426,12 @@ msgstr "Ismeretlen model: {model_name}"
 #: src/pages/company/CompanyDetail.tsx:262
 #: src/pages/company/SupplierPartDetail.tsx:216
 #: src/pages/core/UserDetail.tsx:210
-#: src/pages/part/PartDetail.tsx:620
+#: src/pages/part/PartDetail.tsx:623
 msgid "Inactive"
 msgstr "Inaktív"
 
 #: src/components/render/Part.tsx:31
-#: src/pages/part/PartDetail.tsx:626
+#: src/pages/part/PartDetail.tsx:629
 #: src/tables/part/PartTableFilters.tsx:103
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
@@ -3439,7 +3448,7 @@ msgstr "Nincs készlet"
 #: src/components/wizards/OrderPartsWizard.tsx:136
 #: src/pages/company/SupplierPartDetail.tsx:237
 #: src/pages/company/SupplierPartDetailsPanel.tsx:151
-#: src/pages/part/PartDetail.tsx:602
+#: src/pages/part/PartDetail.tsx:605
 #: src/pages/part/PartDetailsPanel.tsx:174
 #: src/tables/bom/BomTable.tsx:478
 #: src/tables/build/BuildLineTable.tsx:241
@@ -3450,7 +3459,7 @@ msgstr "Rendelve"
 
 #: src/components/render/Part.tsx:59
 #: src/components/wizards/OrderPartsWizard.tsx:142
-#: src/pages/part/PartDetail.tsx:608
+#: src/pages/part/PartDetail.tsx:611
 #: src/pages/part/PartDetailsPanel.tsx:213
 #: src/pages/stock/StockDetail.tsx:652
 #: src/tables/part/PartTestResultTable.tsx:316
@@ -3697,7 +3706,7 @@ msgid "Part is not active"
 msgstr "Az alkatrész nem aktív"
 
 #: src/components/tables/ColumnRenderers.tsx:75
-#: src/pages/part/PartDetail.tsx:494
+#: src/pages/part/PartDetail.tsx:497
 #: src/tables/bom/BomTable.tsx:713
 #: src/tables/part/PartTestTemplateTable.tsx:262
 msgid "Part is Locked"
@@ -3927,7 +3936,7 @@ msgstr "Tételek szűrése batch kód szerint"
 #: src/forms/StockForms.tsx:1890
 #: src/pages/company/SupplierPartDetail.tsx:221
 #: src/pages/company/SupplierPartDetailsPanel.tsx:144
-#: src/pages/part/PartDetail.tsx:569
+#: src/pages/part/PartDetail.tsx:572
 #: src/pages/part/PartDetailsPanel.tsx:160
 #: src/tables/purchasing/SupplierPartTable.tsx:274
 msgid "In Stock"
@@ -4334,24 +4343,24 @@ msgstr ""
 #~ msgid "Select from the available filters"
 #~ msgstr "Select from the available filters"
 
-#: src/components/tables/InvenTreeTable.tsx:53
-#: src/components/tables/InvenTreeTable.tsx:585
+#: src/components/tables/InvenTreeTable.tsx:54
+#: src/components/tables/InvenTreeTable.tsx:586
 msgid "No records found"
 msgstr "Nincs találat"
 
-#: src/components/tables/InvenTreeTable.tsx:167
+#: src/components/tables/InvenTreeTable.tsx:168
 msgid "Error loading table options"
 msgstr "Hiba a táblázat beállítások betöltésekor"
 
-#: src/components/tables/InvenTreeTable.tsx:630
+#: src/components/tables/InvenTreeTable.tsx:631
 msgid "Server returned incorrect data type"
 msgstr "A szerver hibás adattípust küldött vissza"
 
-#: src/components/tables/InvenTreeTable.tsx:663
+#: src/components/tables/InvenTreeTable.tsx:664
 msgid "Error loading table data"
 msgstr "Hiba a táblázat adatok betöltésekor"
 
-#: src/components/tables/InvenTreeTable.tsx:813
+#: src/components/tables/InvenTreeTable.tsx:836
 msgid "View {model}"
 msgstr "{model} megtekintése"
 
@@ -4848,12 +4857,8 @@ msgstr "Paraméterek Létrehozása"
 msgid "Create initial stock for the imported part."
 msgstr "Kezdő készlet létrehozása az importált alkatrészhez."
 
-#: src/components/wizards/ImportPartWizard.tsx:511
-msgid "Next"
-msgstr "Következő"
-
 #: src/components/wizards/ImportPartWizard.tsx:540
-#: src/pages/part/PartDetail.tsx:648
+#: src/pages/part/PartDetail.tsx:651
 #: src/tables/part/PartTable.tsx:205
 msgid "Edit Part"
 msgstr "Alkatrész szerkesztése"
@@ -5657,7 +5662,7 @@ msgstr "A lefoglalt készlet tételek visszakerülnek a készletbe"
 #: src/forms/BuildForms.tsx:971
 #: src/forms/SalesOrderForms.tsx:435
 #: src/forms/TransferOrderForms.tsx:239
-#: src/pages/part/PartDetail.tsx:590
+#: src/pages/part/PartDetail.tsx:593
 #: src/tables/build/BuildAllocatedStockTable.tsx:132
 #: src/tables/build/BuildLineTable.tsx:201
 #: src/tables/sales/SalesOrderLineItemTable.tsx:398
@@ -6581,7 +6586,7 @@ msgid "Delete selected stock items"
 msgstr "Kiválasztott készlet tételek törlése"
 
 #: src/hooks/UseStockAdjustActions.tsx:219
-#: src/pages/part/PartDetail.tsx:740
+#: src/pages/part/PartDetail.tsx:743
 msgid "Stock Actions"
 msgstr "Készlet műveletek"
 
@@ -8187,14 +8192,14 @@ msgstr "Az összeszerelt alkatrészhez nem lehet anyagjegyzék (BOM) definiálva
 #~ msgstr "Build Status"
 
 #: src/pages/build/BuildDetail.tsx:116
-#: src/pages/part/PartDetail.tsx:344
+#: src/pages/part/PartDetail.tsx:347
 #: src/pages/part/bom/BomActions.tsx:115
 #: src/pages/part/bom/BomActions.tsx:120
 msgid "BOM Not Validated"
 msgstr "Alkatrészjegyzék nincs ellenőrizve"
 
 #: src/pages/build/BuildDetail.tsx:118
-#: src/pages/part/PartDetail.tsx:346
+#: src/pages/part/PartDetail.tsx:349
 msgid "The Bill of Materials for this assembly has not been validated."
 msgstr ""
 
@@ -8273,7 +8278,7 @@ msgstr "Alárendelt gyártások"
 #~ msgstr "Test Statistics"
 
 #: src/pages/build/BuildDetail.tsx:349
-#: src/pages/part/PartDetail.tsx:471
+#: src/pages/part/PartDetail.tsx:474
 #: src/pages/stock/StockDetail.tsx:275
 #: src/tables/build/BuildOutputTable.tsx:760
 #: src/tables/stock/StockItemTestResultTable.tsx:174
@@ -8665,7 +8670,7 @@ msgstr "Gyártó adatai"
 
 #: src/pages/company/ManufacturerPartDetailsPanel.tsx:112
 #: src/pages/company/SupplierPartDetailsPanel.tsx:199
-#: src/pages/part/PartDetail.tsx:285
+#: src/pages/part/PartDetail.tsx:288
 msgid "Part Details"
 msgstr "Alkatrész részletei"
 
@@ -8700,7 +8705,7 @@ msgid "Add Supplier Part"
 msgstr "Beszállítói alkatrész hozzáadása"
 
 #: src/pages/company/SupplierPartDetail.tsx:231
-#: src/pages/part/PartDetail.tsx:584
+#: src/pages/part/PartDetail.tsx:587
 msgid "No Stock"
 msgstr "Nincs készlet"
 
@@ -8848,7 +8853,7 @@ msgstr "Alapértelmezett hely"
 #~ msgid "Bill of materials scheduled for validation"
 #~ msgstr "Bill of materials scheduled for validation"
 
-#: src/pages/part/PartDetail.tsx:272
+#: src/pages/part/PartDetail.tsx:275
 msgid "Select Part Revision"
 msgstr "Alkatrész revízió kiválasztása"
 
@@ -8860,7 +8865,7 @@ msgstr "Alkatrész revízió kiválasztása"
 #~ msgid "Edit part"
 #~ msgstr "Edit part"
 
-#: src/pages/part/PartDetail.tsx:317
+#: src/pages/part/PartDetail.tsx:320
 msgid "Variants"
 msgstr "Változatok"
 
@@ -8868,7 +8873,7 @@ msgstr "Változatok"
 #~ msgid "Duplicate part"
 #~ msgstr "Duplicate part"
 
-#: src/pages/part/PartDetail.tsx:324
+#: src/pages/part/PartDetail.tsx:327
 #: src/pages/stock/StockDetail.tsx:206
 msgid "Allocations"
 msgstr "Foglalások"
@@ -8877,27 +8882,27 @@ msgstr "Foglalások"
 #~ msgid "Delete part"
 #~ msgstr "Delete part"
 
-#: src/pages/part/PartDetail.tsx:331
+#: src/pages/part/PartDetail.tsx:334
 msgid "Bill of Materials"
 msgstr "Alkatrészjegyzék"
 
-#: src/pages/part/PartDetail.tsx:360
+#: src/pages/part/PartDetail.tsx:363
 msgid "Used In"
 msgstr "Felhasználva ebben"
 
-#: src/pages/part/PartDetail.tsx:367
+#: src/pages/part/PartDetail.tsx:370
 msgid "Part Pricing"
 msgstr "Alkatrész árak"
 
-#: src/pages/part/PartDetail.tsx:455
+#: src/pages/part/PartDetail.tsx:458
 msgid "Test Templates"
 msgstr "Teszt sablonok"
 
-#: src/pages/part/PartDetail.tsx:482
+#: src/pages/part/PartDetail.tsx:485
 msgid "Related Parts"
 msgstr "Kapcsolódó alkatrészek"
 
-#: src/pages/part/PartDetail.tsx:499
+#: src/pages/part/PartDetail.tsx:502
 msgid "Part parameters cannot be edited, as the part is locked"
 msgstr "Az alkatrész paraméterek nem szerkeszthetők, mivel az alkatrész zárolva van"
 
@@ -8909,7 +8914,7 @@ msgstr "Az alkatrész paraméterek nem szerkeszthetők, mivel az alkatrész zár
 #~ msgid "Consumable Part"
 #~ msgstr "Consumable Part"
 
-#: src/pages/part/PartDetail.tsx:596
+#: src/pages/part/PartDetail.tsx:599
 #: src/tables/part/PartTestTemplateTable.tsx:116
 #: src/tables/stock/StockItemTestResultTable.tsx:406
 msgid "Required"
@@ -8919,11 +8924,11 @@ msgstr "Kötelező"
 #~ msgid "Scheduling"
 #~ msgstr "Scheduling"
 
-#: src/pages/part/PartDetail.tsx:614
+#: src/pages/part/PartDetail.tsx:617
 msgid "Deficit"
 msgstr "Hiány"
 
-#: src/pages/part/PartDetail.tsx:632
+#: src/pages/part/PartDetail.tsx:635
 #: src/pages/part/bom/BomCompare.tsx:38
 #: src/tables/bom/BomTable.tsx:503
 #: src/tables/build/BuildLineTable.tsx:216
@@ -8931,17 +8936,17 @@ msgstr "Hiány"
 msgid "Consumable"
 msgstr "Fogyóeszköz"
 
-#: src/pages/part/PartDetail.tsx:661
+#: src/pages/part/PartDetail.tsx:664
 #: src/tables/part/PartTable.tsx:192
 #: src/tables/part/PartTable.tsx:243
 msgid "Add Part"
 msgstr "Alkatrész hozzáadása"
 
-#: src/pages/part/PartDetail.tsx:675
+#: src/pages/part/PartDetail.tsx:678
 msgid "Delete Part"
 msgstr "Alkatrész törlése"
 
-#: src/pages/part/PartDetail.tsx:684
+#: src/pages/part/PartDetail.tsx:687
 msgid "Deleting this part cannot be reversed"
 msgstr "Az alkatrész törlése nem visszavonható"
 
@@ -8949,31 +8954,31 @@ msgstr "Az alkatrész törlése nem visszavonható"
 #~ msgid "Default Supplier"
 #~ msgstr "Default Supplier"
 
-#: src/pages/part/PartDetail.tsx:746
+#: src/pages/part/PartDetail.tsx:749
 #: src/pages/stock/StockDetail.tsx:603
 msgid "Order"
 msgstr "Rendelés"
 
-#: src/pages/part/PartDetail.tsx:747
+#: src/pages/part/PartDetail.tsx:750
 #: src/pages/stock/StockDetail.tsx:604
 #: src/tables/build/BuildLineTable.tsx:851
 msgid "Order Stock"
 msgstr "Készlet rendelés"
 
-#: src/pages/part/PartDetail.tsx:759
+#: src/pages/part/PartDetail.tsx:762
 msgid "Search by serial number"
 msgstr "Sorozatszámra keresés"
 
-#: src/pages/part/PartDetail.tsx:767
+#: src/pages/part/PartDetail.tsx:770
 #: src/tables/part/PartTable.tsx:300
 msgid "Part Actions"
 msgstr "Alkatrész műveletek"
 
-#: src/pages/part/PartDetail.tsx:828
+#: src/pages/part/PartDetail.tsx:831
 msgid "Part locked"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:828
+#: src/pages/part/PartDetail.tsx:831
 msgid "Part unlocked"
 msgstr ""
 
@@ -13677,4 +13682,3 @@ msgstr "Olvasd el a dokumentációt"
 #: src/views/MobileAppView.tsx:42
 msgid "Ignore and continue to Desktop view"
 msgstr "Kihagyás és folytatás asztali nézetben"
-

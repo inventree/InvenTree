@@ -593,6 +593,13 @@ class StockFilter(FilterSet):
             'tags__slug',
         ]
 
+    pk_gt = rest_filters.NumberFilter(
+        field_name='pk', lookup_expr='gt', label='PK greater than'
+    )
+    pk_lt = rest_filters.NumberFilter(
+        field_name='pk', lookup_expr='lt', label='PK less than'
+    )
+
     # Relationship filters
     manufacturer = rest_filters.ModelChoiceFilter(
         label='Manufacturer',

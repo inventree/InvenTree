@@ -5,7 +5,8 @@ import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { shortenString } from '@lib/functions/String';
 import { t } from '@lingui/core/macro';
 import { Fragment, type ReactNode, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNextPrevSiblings } from '../../hooks/UseNextPrev';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import PrimaryActionButton from '../buttons/PrimaryActionButton';
@@ -13,6 +14,7 @@ import { ApiImage } from '../images/ApiImage';
 import { ApiIcon } from '../items/ApiIcon';
 import type { PrimaryActionUIFeature } from '../plugins/PluginUIFeatureTypes';
 import { type Breadcrumb, BreadcrumbList } from './BreadcrumbList';
+import { NextPrevAction } from './NextPrevAction';
 import PageTitle from './PageTitle';
 
 interface PageDetailInterface {
@@ -28,6 +30,7 @@ interface PageDetailInterface {
   actions?: ReactNode[];
   editAction?: () => void;
   editEnabled?: boolean;
+  pk?: number;
 }
 
 /**
@@ -48,11 +51,32 @@ export function PageDetail({
   breadcrumbAction,
   actions,
   editAction,
-  editEnabled
+  editEnabled,
+  pk
 }: Readonly<PageDetailInterface>) {
   const userSettings = useUserSettingsState();
   const navigate = useNavigate();
   const location = useLocation();
+  const params = useParams();
+  // Routes use `:id/*` — the panel is in the splat, not a named param
+  const currentPanel = params['*'] ? params['*'].replace(/\/$/, '') : undefined;
+
+  const { prevPk, nextPk, navParams } = useNextPrevSiblings(pk);
+
+  const navigateWithNav = (targetPk: number) => {
+    let base: string;
+    if (currentPanel) {
+      // Path is like /web/stock/item/501/stock-details/ — strip both trailing segments
+      base = location.pathname.replace(
+        /\/[^/]+\/[^/]+\/?$/,
+        `/${targetPk}/${currentPanel}/`
+      );
+    } else {
+      base = location.pathname.replace(/\/[^/]+\/?$/, `/${targetPk}/`);
+    }
+    const qs = new URLSearchParams(navParams).toString();
+    navigate(qs ? `${base}?${qs}` : base);
+  };
 
   useInvenTreeHotkeys([
     [
@@ -184,9 +208,17 @@ export function PageDetail({
                 </Group>
               )}
             </Group>
-            {computedActions && (
+            {(computedActions || prevPk || nextPk) && (
               <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
-                {computedActions.map((action, idx) => (
+                {(prevPk || nextPk) && (
+                  <NextPrevAction
+                    prevPk={prevPk}
+                    nextPk={nextPk}
+                    onPrev={() => navigateWithNav(prevPk!)}
+                    onNext={() => navigateWithNav(nextPk!)}
+                  />
+                )}
+                {computedActions?.map((action, idx) => (
                   <Fragment key={idx}>{action}</Fragment>
                 ))}
               </Group>

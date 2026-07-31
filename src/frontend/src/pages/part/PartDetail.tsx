@@ -862,6 +862,7 @@ export default function PartDetail() {
             editAction={editPart.open}
             editEnabled={user.hasChangeRole(UserRoles.part)}
             actions={partActions}
+            pk={part?.pk}
           />
           <PanelGroup
             pageKey='part'
