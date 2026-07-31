@@ -757,16 +757,6 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
               const queryFilters = getTableFilters(false);
               const ordering = queryFilters.ordering ?? '';
 
-              const DISPLAY_PARAMS = new Set([
-                'part_detail',
-                'location_detail',
-                'supplier_part_detail',
-                'path_detail',
-                'tags',
-                'limit',
-                'offset'
-              ]);
-
               const navCtx = encodeNavContext({
                 endpoint: url,
                 filters: Object.fromEntries(
@@ -775,7 +765,10 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
                       ([k, v]) =>
                         k !== 'ordering' &&
                         k !== 'search' &&
-                        !DISPLAY_PARAMS.has(k) &&
+                        k !== 'limit' &&
+                        k !== 'offset' &&
+                        k !== 'tags' &&
+                        !k.endsWith('_detail') &&
                         v !== undefined &&
                         v !== null &&
                         typeof v !== 'object' &&
