@@ -1,7 +1,7 @@
 """Helper for deprecating old implementation details."""
 
 from enum import Enum
-from typing import Any, LiteralString, Optional, cast
+from typing import Any, Optional
 from warnings import deprecated as warn_deprecated
 
 
@@ -19,4 +19,4 @@ class deprecated(warn_deprecated):  # noqa: N801
     ):
         """Initialize the decorator with a deprecation reason."""
         self.version = version
-        super().__init__(cast(LiteralString, message), *args, **kwargs)
+        super().__init__(str(message), *args, **kwargs)
