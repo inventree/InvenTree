@@ -1902,6 +1902,20 @@ def setup_test(
     if not branch or branch == 'master':
         branch = 'main'
 
+    if branch != 'main':
+        # Stable release branches (e.g. "1.4.x") may not yet exist in the
+        # demo-dataset repository (e.g. it has not been backported yet).
+        # A branch may also be auto-detected from a non-PR CI trigger (e.g.
+        # a "push" event), where it is just the pushed branch's own name
+        # rather than an actual demo-dataset branch. Fall back to "main"
+        # rather than failing the clone in either case.
+        result = c.run(f'git ls-remote --heads {URL} {branch}', hide=True, warn=True)
+        if not result.ok or not result.stdout.strip():
+            warning(
+                f"Demo dataset has no branch named '{branch}' - falling back to 'main'"
+            )
+            branch = 'main'
+
     # Get test data
     info(f"Cloning demo dataset (branch '{branch}') ...")
     run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
