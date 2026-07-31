@@ -1,9 +1,13 @@
 """Unit tests for the 'importer' app."""
 
 import os
+import threading
+from unittest import mock
 
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
+from django.db import connection
+from django.test import TransactionTestCase, skipUnlessDBFeature
 from django.urls import reverse
 
 from importer.models import DataImportColumnMap, DataImportRow, DataImportSession
@@ -152,7 +156,109 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
         self.assertEqual(n + 12, Company.objects.count())
 
     def test_field_defaults(self):
-        """Test default field values."""
+        """Test default field values.
+
+        Regression test for bug #30 (dev/todo/bugs.md): validate_field_defaults
+        must reject any parsed JSON value that isn't actually a dict, not just
+        values which fail to parse as JSON at all.
+        """
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        def data_file():
+            # full_clean() reads the file eagerly, so each session needs its own
+            # freshly-opened (binary) copy
+            content = self.helper_file('companies.csv').read()
+            return ContentFile(content.encode(), 'companies.csv')
+
+        # A dict value is accepted as-is
+        session = DataImportSession(
+            data_file=data_file(), model_type='company', field_defaults={'name': 'Test'}
+        )
+        session.full_clean()
+
+        # A JSON-encoded dict string is also accepted (de-stringified)
+        session = DataImportSession(
+            data_file=data_file(),
+            model_type='company',
+            field_defaults='{"name": "Test"}',
+        )
+        session.full_clean()
+
+        # A JSON-encoded list is valid JSON, but not a dict - must be rejected
+        session = DataImportSession(
+            data_file=data_file(), model_type='company', field_defaults='[1, 2, 3]'
+        )
+        with self.assertRaises(DjangoValidationError):
+            session.full_clean()
+
+        # Garbage which does not even parse as JSON must also be rejected
+        session = DataImportSession(
+            data_file=data_file(), model_type='company', field_defaults='not valid json'
+        )
+        with self.assertRaises(DjangoValidationError):
+            session.full_clean()
+
+    def test_update_existing_records(self):
+        """Test updating existing records via import, providing only the ID field.
+
+        Regression test for GH #12499: when updating existing records, only the
+        primary key should be required. Fields which are not mapped to a column
+        (and have no explicit override/default) must:
+        - not be flagged as "required" and block the mapping wizard
+        - not be auto-populated with a model-level "creation" default
+        - not overwrite the existing value on the target record
+        """
+        from part.models import Part, PartCategory
+        from stock.models import StockItem
+
+        category = PartCategory.objects.create(
+            name='Update Test Category', description='Test category'
+        )
+        part = Part.objects.create(
+            category=category, name='Update Test Part', description='Test part'
+        )
+
+        item = StockItem.objects.create(part=part, quantity=42, batch='Original batch')
+
+        csv_content = f'ID,batch\n{item.pk},Updated batch\n'
+        data_file = ContentFile(csv_content, 'stock_update.csv')
+
+        session = DataImportSession.objects.create(
+            data_file=data_file, model_type='stockitem', update_records=True
+        )
+
+        # Only the 'id' field should be required - 'quantity' and 'part' already
+        # exist on the target record, and must not be forced
+        required = session.required_fields()
+        self.assertIn('id', required)
+        self.assertNotIn('quantity', required)
+        self.assertNotIn('part', required)
+
+        # No model-level "creation" default should have been auto-populated for
+        # 'quantity' - doing so would silently overwrite the existing value
+        self.assertNotIn('quantity', session.field_defaults or {})
+
+        # Mapping is valid, even though 'quantity' and 'part' are unmapped
+        session.accept_mapping()
+
+        session.refresh_from_db()
+        self.assertEqual(session.rows.count(), 1)
+
+        row = session.rows.first()
+        self.assertTrue(row.valid)
+
+        # Unmapped fields must not appear in the extracted row data at all
+        self.assertNotIn('quantity', row.data)
+        self.assertNotIn('part', row.data)
+
+        self.assertTrue(row.validate(commit=True))
+        self.assertTrue(row.complete)
+
+        # Existing values for unmapped fields must be preserved
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 42)
+        self.assertEqual(item.part, part)
+        self.assertEqual(item.batch, 'Updated batch')
 
     def test_lookup_field_ambiguous_match(self):
         """Test the behavior of lookup_related_field for ambiguous and pinned matches."""
@@ -219,6 +325,103 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
         quantity_mapping.lookup_field = 'IPN'
         with self.assertRaises(DjangoValidationError):
             quantity_mapping.save()
+
+
+@skipUnlessDBFeature('has_select_for_update')
+class DataImportRowConcurrencyTest(ImporterMixin, TransactionTestCase):
+    """Genuine cross-transaction regression test for row locking during a data-import update.
+
+    Uses two real threads (each with its own database connection) to reproduce the
+    lost-update race: two concurrent import rows updating *different* fields on the
+    same StockItem could both read the pre-update instance before either had
+    committed its save() - and since save() writes the *entire* instance, whichever
+    thread committed second would silently discard the first thread's change.
+
+    DataImportRow.validate() now locks the target row (select_for_update, inside
+    transaction.atomic()) for the duration of the read-modify-write cycle, so the
+    second thread's read is forced to wait until the first thread's transaction
+    commits - and therefore sees (and preserves) the first thread's change.
+    """
+
+    def setUp(self):
+        """Create a single StockItem to update concurrently."""
+        super().setUp()
+
+        from part.models import Part, PartCategory
+        from stock.models import StockItem
+
+        category = PartCategory.objects.create(
+            name='Concurrency Category', description='Test category'
+        )
+        self.part = Part.objects.create(
+            category=category, name='Concurrency Part', description='Test part'
+        )
+        self.item = StockItem.objects.create(part=self.part, quantity=10)
+
+    def helper_session(self) -> DataImportSession:
+        """Construct a minimal DataImportSession configured for stock item updates."""
+        return DataImportSession.objects.create(
+            data_file=self.helper_file('companies.csv'),
+            model_type='stockitem',
+            update_records=True,
+        )
+
+    def test_concurrent_update_does_not_lose_writes(self):
+        """Two concurrent updates to different fields must not clobber one another."""
+        start_barrier = threading.Barrier(2, timeout=5)
+        errors = []
+
+        # Wrap DataImportRow._get_update_instance() so both threads reach the
+        # (real, database-level) row lock at the same time - one wins the lock
+        # and proceeds through to commit, the other blocks until the winner's
+        # transaction completes.
+        original_get_update_instance = DataImportRow._get_update_instance
+
+        def synced_get_update_instance(row, instance_id, queryset):
+            start_barrier.wait(timeout=5)
+            return original_get_update_instance(row, instance_id, queryset)
+
+        def update(field, value):
+            try:
+                row = DataImportRow(
+                    session=self.helper_session(),
+                    # 'part' is a required field on StockItemSerializer, so it must
+                    # be included even though this row is only actually changing
+                    # 'field' - the fix under test is *locking*, not partial-update
+                    # support, so we work within the serializer's existing rules
+                    data={'id': self.item.pk, 'part': self.part.pk, field: value},
+                )
+                if not row.validate(commit=True):
+                    errors.append(row.errors)
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        with mock.patch.object(
+            DataImportRow, '_get_update_instance', synced_get_update_instance
+        ):
+            # Note: 'batch' is deliberately avoided here - it has a model-level
+            # default (generate_batch_code), and DRF applies a field's default to
+            # *any* non-partial update where the field is omitted, regardless of
+            # the existing instance value. That's a separate, already-tracked
+            # issue (GH #12499) and would confound this test, which is only
+            # about proving the row lock closes the read/write race.
+            thread_a = threading.Thread(target=update, args=('notes', 'notes-a'))
+            thread_b = threading.Thread(
+                target=update, args=('packaging', 'packaging-b')
+            )
+
+            thread_a.start()
+            thread_b.start()
+            thread_a.join(timeout=10)
+            thread_b.join(timeout=10)
+
+        self.assertEqual(errors, [])
+
+        self.item.refresh_from_db()
+        self.assertEqual(self.item.notes, 'notes-a')
+        self.assertEqual(self.item.packaging, 'packaging-b')
 
 
 class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):

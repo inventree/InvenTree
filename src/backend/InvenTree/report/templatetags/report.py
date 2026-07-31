@@ -452,8 +452,13 @@ def uploaded_image(
 
 
 @register.simple_tag()
-def encode_svg_image(filename: str) -> str:
-    """Return a base64-encoded svg image data string."""
+def encode_svg_image(filename: str, raise_error: bool = False) -> str:
+    """Return a base64-encoded svg image data string.
+
+    Arguments:
+        filename: The filename of the svg image relative to the media root directory
+        raise_error: If True, raise an error if the file cannot be found (default = False)
+    """
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
@@ -466,7 +471,12 @@ def encode_svg_image(filename: str) -> str:
 
     # Read out the file contents
     # Note: This will check if the file exists, and raise an error if it does not
-    data = get_media_file_contents(filename)
+    data = get_media_file_contents(filename, raise_error=raise_error)
+
+    # If the file is empty, return an empty string
+    # Note that if raise_error is True, the above function will raise a FileNotFoundError if the file does not exist
+    if not data:
+        return ''
 
     # Return the base64-encoded data
     return 'data:image/svg+xml;charset=utf-8;base64,' + base64.b64encode(data).decode(
