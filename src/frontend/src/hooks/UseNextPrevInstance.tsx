@@ -1,7 +1,7 @@
 import { apiUrl } from '@lib/functions/Api';
 import { useCallback, useMemo } from 'react';
-import { useApi } from '../../contexts/ApiContext';
-import { useLocalLibState } from '../../states/LocalLibState';
+import { useApi } from '../contexts/ApiContext';
+import { useLocalLibState } from '../states/LocalLibState';
 
 /**
  * Hook for resolving the previous/next sibling instance for a detail page.
