@@ -217,6 +217,8 @@ class UserAPITests(InvenTreeAPITestCase):
         self.assertNotIn('permissions', response.data)
 
         # Check more detailed URL
+        # Viewing a group's roles requires the 'admin' role (roles are admin-scoped data)
+        self.assignRole('admin.view')
         response = self.get(
             reverse('api-group-detail', kwargs={'pk': pk}),
             data={'permission_detail': True},
@@ -578,6 +580,8 @@ class GroupDetailTests(InvenTreeAPITestCase):
         response = self.get(url, {'user_detail': 'true'}, expected_code=200)
         self.assertIn('users', response.data)
 
+        # Viewing a group's roles requires the 'admin' role (roles are admin-scoped data)
+        self.assignRole('admin.view')
         response = self.get(url, {'role_detail': 'true'}, expected_code=200)
         self.assertIn('roles', response.data)
 

@@ -57,6 +57,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
         'stock_location.add',
         'stock_location.delete',
         'stock.delete',
+        'part.view',
     ]
 
 
