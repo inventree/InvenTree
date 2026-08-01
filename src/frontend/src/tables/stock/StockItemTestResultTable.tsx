@@ -44,6 +44,7 @@ import {
 } from '../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
+import { compareTestResults } from '../../functions/comparison';
 
 export default function StockItemTestResultTable({
   partId,
@@ -84,45 +85,6 @@ export default function StockItemTestResultTable({
   useEffect(() => {
     table.refreshTable();
   }, [testTemplates]);
-
-  const compareTestResults = (a: any, b: any) => {
-  const finishedA = a.finished_datetime
-    ? new Date(a.finished_datetime).getTime()
-    : null;
-  const finishedB = b.finished_datetime
-    ? new Date(b.finished_datetime).getTime()
-    : null;
-
-  if (finishedA !== finishedB) {
-    if (finishedA === null) return 1;
-    if (finishedB === null) return -1;
-    return finishedB - finishedA;
-  }
-
-  const startedA = a.started_datetime
-    ? new Date(a.started_datetime).getTime()
-    : null;
-  const startedB = b.started_datetime
-    ? new Date(b.started_datetime).getTime()
-    : null;
-
-  if (startedA !== startedB) {
-    if (startedA === null) return 1;
-    if (startedB === null) return -1;
-    return startedB - startedA;
-  }
-
-  const dateA = a.date ? new Date(a.date).getTime() : null;
-  const dateB = b.date ? new Date(b.date).getTime() : null;
-
-  if (dateA !== dateB) {
-    if (dateA === null) return 1;
-    if (dateB === null) return -1;
-    return dateB - dateA;
-  }
-
-  return b.pk - a.pk;
-};
 
   // Format the test results based on the returned data
   const formatRecords = useCallback(

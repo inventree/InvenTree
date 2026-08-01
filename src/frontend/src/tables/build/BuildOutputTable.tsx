@@ -72,50 +72,12 @@ import {
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserState } from '../../states/UserState';
+import { compareTestResults } from '../../functions/comparison';
 import BuildLineTable from './BuildLineTable';
 
 type TestResultOverview = {
   name: string;
   result: boolean;
-};
-
-const compareTestResults = (a: any, b: any) => {
-  const finishedA = a.finished_datetime
-    ? new Date(a.finished_datetime).getTime()
-    : null;
-  const finishedB = b.finished_datetime
-    ? new Date(b.finished_datetime).getTime()
-    : null;
-
-  if (finishedA !== finishedB) {
-    if (finishedA === null) return 1;
-    if (finishedB === null) return -1;
-    return finishedB - finishedA;
-  }
-
-  const startedA = a.started_datetime
-    ? new Date(a.started_datetime).getTime()
-    : null;
-  const startedB = b.started_datetime
-    ? new Date(b.started_datetime).getTime()
-    : null;
-
-  if (startedA !== startedB) {
-    if (startedA === null) return 1;
-    if (startedB === null) return -1;
-    return startedB - startedA;
-  }
-
-  const dateA = a.date ? new Date(a.date).getTime() : null;
-  const dateB = b.date ? new Date(b.date).getTime() : null;
-
-  if (dateA !== dateB) {
-    if (dateA === null) return 1;
-    if (dateB === null) return -1;
-    return dateB - dateA;
-  }
-
-  return b.pk - a.pk;
 };
 
 /**
