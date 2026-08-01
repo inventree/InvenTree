@@ -80,9 +80,10 @@ def inventree_transition(
                     current_obj = type(self).objects.select_for_update().get(pk=self.pk)
                     new_value = getattr(current_obj, field.name)
                     setattr(self, field.name, new_value)
-                except type(self).DoesNotExist:
-                    # The object has been deleted, so we cannot proceed with the transition.
-                    return False
+                except type(self).DoesNotExist:  # pragma: no cover
+                    raise ValidationError(
+                        f'{self._meta.verbose_name} with pk={self.pk} does not exist in the database'
+                    )
 
             # Run plugin transition handlers - if no step is taken the decorated method is called
             result = _run_plugin_transition_handlers(
