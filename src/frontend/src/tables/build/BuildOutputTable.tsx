@@ -63,6 +63,7 @@ import {
   useStockFields,
   useStockItemSerializeFields
 } from '../../forms/StockForms';
+import { compareTestResults } from '../../functions/comparison';
 import { InvenTreeIcon } from '../../functions/icons';
 import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
@@ -72,7 +73,6 @@ import {
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserState } from '../../states/UserState';
-import { compareTestResults } from '../../functions/comparison';
 import BuildLineTable from './BuildLineTable';
 
 type TestResultOverview = {

@@ -36,6 +36,7 @@ import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
+import { compareTestResults } from '../../functions/comparison';
 import { useTestResultFields } from '../../forms/StockForms';
 import {
   useCreateApiFormModal,
@@ -44,7 +45,6 @@ import {
 } from '../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import { compareTestResults } from '../../functions/comparison';
 
 export default function StockItemTestResultTable({
   partId,
@@ -113,9 +113,7 @@ export default function StockItemTestResultTable({
       // Iterate through the returned records
       // Sort test results using the same priority as the backend:
       // finished_datetime -> started_datetime -> date -> pk
-      records
-        .sort(compareTestResults)
-        .forEach((record) => {
+      records.sort(compareTestResults).forEach((record) => {
           // Find matching template
           const idx = results.findIndex(
             (r: any) => r.templateId == record.template

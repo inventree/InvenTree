@@ -3799,12 +3799,7 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
 
         verbose_name = _('Stock Item Test Result')
 
-        ordering = (
-            '-finished_datetime',
-            '-started_datetime',
-            '-date',
-            '-pk',
-        )
+        ordering = ('-finished_datetime', '-started_datetime', '-date', '-pk')
 
     def __str__(self):
         """Return string representation."""
