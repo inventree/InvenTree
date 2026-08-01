@@ -1,6 +1,7 @@
 import { Boundary } from '@lib/components/Boundary';
 import { CopyableCell } from '@lib/components/CopyableCell';
 import { RowActions } from '@lib/components/RowActions';
+import type { DetailNavigationContext } from '@lib/types/Navigation';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
@@ -717,6 +718,34 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     [tableProps.modelType]
   );
 
+  // Preserve the current table page when opening a detail view. The detail
+  // page can then expose previous/next controls without knowing anything
+  // about this table's implementation or API endpoint.
+  const getDetailNavigation = useCallback(
+    (pk: string | number): DetailNavigationContext | undefined => {
+      if (!tableProps.modelType) {
+        return undefined;
+      }
+
+      const accessor = tableProps.modelField ?? 'pk';
+      const ids = tableState.records
+        .map((record) => resolveItem(record, accessor))
+        .filter((id): id is string | number => id !== undefined && id !== null);
+      const index = ids.findIndex((id) => String(id) === String(pk));
+
+      if (ids.length < 2 || index < 0) {
+        return undefined;
+      }
+
+      return {
+        modelType: tableProps.modelType,
+        ids,
+        index
+      };
+    },
+    [tableProps.modelField, tableProps.modelType, tableState.records]
+  );
+
   // Callback when a cell is clicked
   const handleCellClick = useCallback(
     ({
@@ -751,14 +780,25 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
           const url = getDetailUrl(tableProps.modelType, pk);
 
           if (!showPreviewPanel || eventModified(event as any)) {
-            navigateToLink(url, navigate, event);
+            const detailNavigation = getDetailNavigation(pk);
+
+            navigateToLink(url, navigate, event, {
+              state: detailNavigation
+                ? { detailNavigation }
+                : undefined
+            });
           } else {
             showRowPreview(pk);
           }
         }
       }
     },
-    [props.onRowClick, props.onCellClick, showPreviewPanel]
+    [
+      props.onRowClick,
+      props.onCellClick,
+      showPreviewPanel,
+      getDetailNavigation
+    ]
   );
 
   const supportsContextMenu = useMemo(() => {
@@ -820,7 +860,13 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
           onClick: (event: any) => {
             cancelEvent(event);
             if (!showPreviewPanel || eventModified(event as any)) {
-              navigateToLink(url, navigate, event);
+              const detailNavigation = getDetailNavigation(pk);
+
+              navigateToLink(url, navigate, event, {
+                state: detailNavigation
+                  ? { detailNavigation }
+                  : undefined
+              });
             } else {
               showRowPreview(pk);
             }
@@ -839,7 +885,8 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
       showPreviewPanel,
       showRowPreview,
       showContextMenu,
-      navigate
+      navigate,
+      getDetailNavigation
     ]
   );
 
