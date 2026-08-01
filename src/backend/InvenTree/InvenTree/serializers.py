@@ -128,7 +128,7 @@ class FilterableSerializerMixin:
 
         Order of operations:
 
-        - If we are generating the schema, always include the field
+        - If we are generating the schema, always include the field (unless the user does not have permission to view)
         - If this is a write request (POST, PUT, PATCH) and we are not exporting, always include the field
         - If this is a top-level serializer, check the request query parameters for the filter name
         - Check the kwargs provided to the serializer instance
@@ -164,7 +164,9 @@ class FilterableSerializerMixin:
 
         field_kwargs = field.serializer_kwargs or {}
 
-        # Skip filtering for a write request - all fields should be present for data creation
+        # Skip filtering for a write request
+        # All fields should be present for data creation,
+        # excepting those for which the user does not have the required permissions
         if method := getattr(self.request, 'method', None):
             if method not in SAFE_METHODS and not self.is_exporting():
                 return self.check_field_permission(field, True)
