@@ -224,10 +224,16 @@ class FilterableSerializerMixin:
         # from almost every non-admin user, which is a different (and much broader)
         # concern than embedding e.g. Part/Company records. Deliberately exempted here:
         # - auth_user: username attribution fields (issued_by_detail, checked_by_detail, ...)
+        # - auth_group: group membership/attribution (ExtendedUserSerializer.groups, ...)
         # - users_ruleset: role/permission listings (GroupSerializer.roles, ...)
-        from users.models import RuleSet
+        # - users_owner: user/group "owner" wrapper (responsible_detail, ...) - already in
+        #   get_ruleset_ignore() so check_user_permission would return True anyway, but
+        #   exempted explicitly here to document intent and skip the call
+        from django.contrib.auth.models import Group
 
-        if model in (get_user_model(), RuleSet):
+        from users.models import Owner, RuleSet
+
+        if model in (get_user_model(), Group, Owner, RuleSet):
             return included
 
         user = getattr(self.request, 'user', None)
