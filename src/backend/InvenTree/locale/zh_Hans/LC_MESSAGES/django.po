@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-28 13:52+0000\n"
-"PO-Revision-Date: 2026-07-28 13:54\n"
+"POT-Creation-Date: 2026-07-31 02:19+0000\n"
+"PO-Revision-Date: 2026-07-31 02:21\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -1555,7 +1555,7 @@ msgstr "已暂停"
 msgid "Cancelled"
 msgstr "已取消"
 
-#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:670
+#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:680
 #: importer/status_codes.py:27 order/status_codes.py:15
 #: order/status_codes.py:52 order/status_codes.py:84 order/status_codes.py:128
 msgid "Complete"
@@ -2308,7 +2308,7 @@ msgstr "模板"
 msgid "Parameter template"
 msgstr "参数模板"
 
-#: common/models.py:3068 common/models.py:3110 importer/models.py:664
+#: common/models.py:3068 common/models.py:3110 importer/models.py:674
 msgid "Data"
 msgstr "数据"
 
@@ -4773,110 +4773,110 @@ msgstr "更新现有记录"
 msgid "If enabled, existing records will be updated with new data"
 msgstr "若启用，现有记录将被新数据更新"
 
-#: importer/models.py:312
+#: importer/models.py:319
 msgid "Some required fields have not been mapped"
 msgstr "某些必填字段尚未映射"
 
-#: importer/models.py:414
+#: importer/models.py:421
 msgid "Completed Row Count History"
 msgstr "已完成条目数量历史记录"
 
-#: importer/models.py:417
+#: importer/models.py:424
 msgid "Row Count History"
 msgstr "条目数量历史记录"
 
-#: importer/models.py:440
+#: importer/models.py:447
 msgid "ID"
 msgstr "ID"
 
-#: importer/models.py:441
+#: importer/models.py:448
 msgid "Existing database identifier for the record"
 msgstr "记录的现有数据库标识符"
 
-#: importer/models.py:516
+#: importer/models.py:526
 msgid "Column is already mapped to a database field"
 msgstr "列已映射到数据库字段"
 
-#: importer/models.py:521
+#: importer/models.py:531
 msgid "Field is already mapped to a data column"
 msgstr "字段已映射到数据列"
 
-#: importer/models.py:530
+#: importer/models.py:540
 msgid "Column mapping must be linked to a valid import session"
 msgstr "列映射必须链接到有效的导入会话"
 
-#: importer/models.py:535
+#: importer/models.py:545
 msgid "Column does not exist in the data file"
 msgstr "数据文件中不存在列"
 
-#: importer/models.py:542
+#: importer/models.py:552
 msgid "Field does not exist in the target model"
 msgstr "目标模型中不存在字段"
 
-#: importer/models.py:546
+#: importer/models.py:556
 msgid "Selected field is read-only"
 msgstr "所选字段为只读"
 
-#: importer/models.py:552
+#: importer/models.py:562
 msgid "Lookup field can only be set for related (foreign-key) fields"
 msgstr "查找字段仅支持设置关联（外键）字段"
 
-#: importer/models.py:560
+#: importer/models.py:570
 #, python-brace-format
 msgid "Invalid lookup field. Valid options are: {options}"
 msgstr "查找字段无效，可用选项：{options}"
 
-#: importer/models.py:567 importer/models.py:654
+#: importer/models.py:577 importer/models.py:664
 msgid "Import Session"
 msgstr "导入会话"
 
-#: importer/models.py:571
+#: importer/models.py:581
 msgid "Field"
 msgstr "字段"
 
-#: importer/models.py:573
+#: importer/models.py:583
 msgid "Column"
 msgstr "列"
 
-#: importer/models.py:579
+#: importer/models.py:589
 msgid "Lookup Field"
 msgstr "查找字段"
 
-#: importer/models.py:581
+#: importer/models.py:591
 msgid "Database field to use for foreign-key lookup. Leave blank for automatic lookup."
 msgstr "用于外键检索的数据库字段，留空则自动检索。"
 
-#: importer/models.py:658
+#: importer/models.py:668
 msgid "Row Index"
 msgstr "行索引"
 
-#: importer/models.py:661
+#: importer/models.py:671
 msgid "Original row data"
 msgstr "原始行数据"
 
-#: importer/models.py:666 machine/models.py:114
+#: importer/models.py:676 machine/models.py:114
 msgid "Errors"
 msgstr "错误"
 
-#: importer/models.py:668 part/serializers.py:1161
+#: importer/models.py:678 part/serializers.py:1161
 msgid "Valid"
 msgstr "有效"
 
-#: importer/models.py:905
+#: importer/models.py:915
 msgid "Multiple matches found for value - please ensure the value is unique, or select a specific lookup field"
 msgstr "匹配到多条结果，请确保该值唯一，或指定专用查找字段"
 
-#: importer/models.py:966
-msgid "ID is required for updating existing records."
-msgstr "更新现有记录需要提供ID。"
-
-#: importer/models.py:973
+#: importer/models.py:968
 msgid "No record found with the provided ID"
 msgstr "没有找到与提供的ID相关的记录"
 
-#: importer/models.py:979
+#: importer/models.py:973
 msgid "Invalid ID format provided"
 msgstr "提供的ID格式无效"
+
+#: importer/models.py:1039
+msgid "ID is required for updating existing records."
+msgstr "更新现有记录需要提供ID。"
 
 #: importer/operations.py:31 importer/operations.py:52
 msgid "Unsupported data file format"
@@ -8904,19 +8904,19 @@ msgstr "无效的静态文件路径"
 msgid "Asset file not found"
 msgstr "未找到资源文件"
 
-#: report/templatetags/report.py:379 report/templatetags/report.py:495
+#: report/templatetags/report.py:379 report/templatetags/report.py:505
 msgid "Image file not found"
 msgstr "找不到图片文件"
 
-#: report/templatetags/report.py:464
+#: report/templatetags/report.py:469
 msgid "No image file specified"
 msgstr "未指定图片文件"
 
-#: report/templatetags/report.py:489
+#: report/templatetags/report.py:499
 msgid "part_image tag requires a Part instance"
 msgstr "parpart_image 标签需要一个零件实例"
 
-#: report/templatetags/report.py:581
+#: report/templatetags/report.py:591
 msgid "company_image tag requires a Company instance"
 msgstr "公司_图片标签需要一个公司实例"
 
