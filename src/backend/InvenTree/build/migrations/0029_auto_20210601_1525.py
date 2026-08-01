@@ -4,13 +4,16 @@ import logging
 
 from django.db import migrations
 
+
 logger = logging.getLogger('inventree')
 
 
 def assign_bom_items(apps, schema_editor):
-    """Run through existing BuildItem objects,
+    """
+    Run through existing BuildItem objects,
     and assign a matching BomItem
     """
+
     BuildItem = apps.get_model('build', 'builditem')
     BomItem = apps.get_model('part', 'bomitem')
     Part = apps.get_model('part', 'part')
@@ -19,13 +22,14 @@ def assign_bom_items(apps, schema_editor):
     count_total = 0
 
     for build_item in BuildItem.objects.all():  # pragma: no cover
+
         # Try to find a BomItem which matches the BuildItem
         # Note: Before this migration, variant stock assignment was not allowed,
         #       so BomItem lookup should be pretty easy
 
         if count_total == 0:
             # First time around
-            logger.info('Assigning BomItems to existing BuildItem objects')
+            logger.info("Assigning BomItems to existing BuildItem objects")
 
         count_total += 1
 
@@ -44,10 +48,13 @@ def assign_bom_items(apps, schema_editor):
             pass
 
     if count_total > 0:  # pragma: no cover
-        logger.info(f'Assigned BomItem for {count_valid}/{count_total} entries')
+        logger.info(f"Assigned BomItem for {count_valid}/{count_total} entries")
 
 
 class Migration(migrations.Migration):
-    dependencies = [('build', '0028_builditem_bom_item')]
+
+    dependencies = [
+        ('build', '0028_builditem_bom_item'),
+    ]
 
     operations = []

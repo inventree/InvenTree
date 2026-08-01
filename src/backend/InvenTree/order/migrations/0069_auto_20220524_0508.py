@@ -4,24 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('order', '0068_alter_salesorderallocation_unique_together')]
+
+    dependencies = [
+        ('order', '0068_alter_salesorderallocation_unique_together'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='salesordershipment',
             name='invoice_number',
-            field=models.CharField(
-                blank=True,
-                help_text='Reference number for associated invoice',
-                max_length=100,
-                verbose_name='Invoice Number',
-            ),
+            field=models.CharField(blank=True, help_text='Reference number for associated invoice', max_length=100, verbose_name='Invoice Number'),
         ),
         migrations.AddField(
             model_name='salesordershipment',
             name='link',
-            field=models.URLField(
-                blank=True, help_text='Link to external page', verbose_name='Link'
-            ),
+            field=models.URLField(blank=True, help_text='Link to external page', verbose_name='Link'),
         ),
     ]

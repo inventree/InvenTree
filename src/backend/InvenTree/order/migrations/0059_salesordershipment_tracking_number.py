@@ -4,17 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('order', '0058_auto_20211126_1210')]
+
+    dependencies = [
+        ('order', '0058_auto_20211126_1210'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='salesordershipment',
             name='tracking_number',
-            field=models.CharField(
-                blank=True,
-                help_text='Shipment tracking information',
-                max_length=100,
-                verbose_name='Tracking Number',
-            ),
-        )
+            field=models.CharField(blank=True, help_text='Shipment tracking information', max_length=100, verbose_name='Tracking Number'),
+        ),
     ]

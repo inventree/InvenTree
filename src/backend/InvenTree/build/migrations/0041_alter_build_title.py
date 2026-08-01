@@ -4,17 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('build', '0040_auto_20230404_1310')]
+
+    dependencies = [
+        ('build', '0040_auto_20230404_1310'),
+    ]
 
     operations = [
         migrations.AlterField(
             model_name='build',
             name='title',
-            field=models.CharField(
-                blank=True,
-                help_text='Brief description of the build (optional)',
-                max_length=100,
-                verbose_name='Description',
-            ),
-        )
+            field=models.CharField(blank=True, help_text='Brief description of the build (optional)', max_length=100, verbose_name='Description'),
+        ),
     ]

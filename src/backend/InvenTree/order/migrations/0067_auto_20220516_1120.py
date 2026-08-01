@@ -4,27 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('order', '0066_alter_purchaseorder_supplier')]
+
+    dependencies = [
+        ('order', '0066_alter_purchaseorder_supplier'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='purchaseorder',
             name='metadata',
-            field=models.JSONField(
-                blank=True,
-                help_text='JSON metadata field, for use by external plugins',
-                null=True,
-                verbose_name='Plugin Metadata',
-            ),
+            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
         ),
         migrations.AddField(
             model_name='salesorder',
             name='metadata',
-            field=models.JSONField(
-                blank=True,
-                help_text='JSON metadata field, for use by external plugins',
-                null=True,
-                verbose_name='Plugin Metadata',
-            ),
+            field=models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata'),
         ),
     ]

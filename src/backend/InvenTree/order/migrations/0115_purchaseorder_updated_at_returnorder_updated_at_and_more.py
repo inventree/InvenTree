@@ -4,37 +4,40 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('order', '0114_purchaseorderextraline_project_code_and_more')]
+
+    dependencies = [
+        ("order", "0114_purchaseorderextraline_project_code_and_more"),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name='purchaseorder',
-            name='updated_at',
+            model_name="purchaseorder",
+            name="updated_at",
             field=models.DateTimeField(
                 blank=True,
                 null=True,
-                help_text='Timestamp of last update',
-                verbose_name='Updated At',
+                help_text="Timestamp of last update",
+                verbose_name="Updated At",
             ),
         ),
         migrations.AddField(
-            model_name='returnorder',
-            name='updated_at',
+            model_name="returnorder",
+            name="updated_at",
             field=models.DateTimeField(
                 blank=True,
                 null=True,
-                help_text='Timestamp of last update',
-                verbose_name='Updated At',
+                help_text="Timestamp of last update",
+                verbose_name="Updated At",
             ),
         ),
         migrations.AddField(
-            model_name='salesorder',
-            name='updated_at',
+            model_name="salesorder",
+            name="updated_at",
             field=models.DateTimeField(
                 blank=True,
                 null=True,
-                help_text='Timestamp of last update',
-                verbose_name='Updated At',
+                help_text="Timestamp of last update",
+                verbose_name="Updated At",
             ),
         ),
     ]

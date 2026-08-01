@@ -4,22 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+
     dependencies = [
-        (
-            'order',
-            '0108_alter_purchaseorder_link_and_more_squashed_0109_alter_purchaseorderextraline_link_and_more',
-        )
+        ("order", "0108_alter_purchaseorder_link_and_more_squashed_0109_alter_purchaseorderextraline_link_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='salesorder',
-            name='issue_date',
+            model_name="salesorder",
+            name="issue_date",
             field=models.DateField(
                 blank=True,
-                help_text='Date order was issued',
+                help_text="Date order was issued",
                 null=True,
-                verbose_name='Issue Date',
+                verbose_name="Issue Date",
             ),
-        )
+        ),
     ]

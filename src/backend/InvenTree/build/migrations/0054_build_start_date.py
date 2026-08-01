@@ -4,17 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [('build', '0053_alter_build_part')]
+
+    dependencies = [
+        ('build', '0053_alter_build_part'),
+    ]
 
     operations = [
         migrations.AddField(
             model_name='build',
             name='start_date',
-            field=models.DateField(
-                blank=True,
-                help_text='Scheduled start date for this build order',
-                null=True,
-                verbose_name='Build start date',
-            ),
-        )
+            field=models.DateField(blank=True, help_text='Scheduled start date for this build order', null=True, verbose_name='Build start date'),
+        ),
     ]

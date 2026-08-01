@@ -4,75 +4,76 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+
     dependencies = [
-        ('order', '0115_purchaseorder_updated_at_returnorder_updated_at_and_more')
+        ("order", "0115_purchaseorder_updated_at_returnorder_updated_at_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='purchaseorderextraline',
-            name='line',
+            model_name="purchaseorderextraline",
+            name="line",
             field=models.CharField(
                 blank=True,
-                default='',
-                help_text='Line number for this item (optional)',
+                default="",
+                help_text="Line number for this item (optional)",
                 max_length=20,
-                verbose_name='Line Number',
+                verbose_name="Line Number",
             ),
         ),
         migrations.AddField(
-            model_name='purchaseorderlineitem',
-            name='line',
+            model_name="purchaseorderlineitem",
+            name="line",
             field=models.CharField(
                 blank=True,
-                default='',
-                help_text='Line number for this item (optional)',
+                default="",
+                help_text="Line number for this item (optional)",
                 max_length=20,
-                verbose_name='Line Number',
+                verbose_name="Line Number",
             ),
         ),
         migrations.AddField(
-            model_name='returnorderextraline',
-            name='line',
+            model_name="returnorderextraline",
+            name="line",
             field=models.CharField(
                 blank=True,
-                default='',
-                help_text='Line number for this item (optional)',
+                default="",
+                help_text="Line number for this item (optional)",
                 max_length=20,
-                verbose_name='Line Number',
+                verbose_name="Line Number",
             ),
         ),
         migrations.AddField(
-            model_name='returnorderlineitem',
-            name='line',
+            model_name="returnorderlineitem",
+            name="line",
             field=models.CharField(
                 blank=True,
-                default='',
-                help_text='Line number for this item (optional)',
+                default="",
+                help_text="Line number for this item (optional)",
                 max_length=20,
-                verbose_name='Line Number',
+                verbose_name="Line Number",
             ),
         ),
         migrations.AddField(
-            model_name='salesorderextraline',
-            name='line',
+            model_name="salesorderextraline",
+            name="line",
             field=models.CharField(
                 blank=True,
-                default='',
-                help_text='Line number for this item (optional)',
+                default="",
+                help_text="Line number for this item (optional)",
                 max_length=20,
-                verbose_name='Line Number',
+                verbose_name="Line Number",
             ),
         ),
         migrations.AddField(
-            model_name='salesorderlineitem',
-            name='line',
+            model_name="salesorderlineitem",
+            name="line",
             field=models.CharField(
                 blank=True,
-                default='',
-                help_text='Line number for this item (optional)',
+                default="",
+                help_text="Line number for this item (optional)",
                 max_length=20,
-                verbose_name='Line Number',
+                verbose_name="Line Number",
             ),
         ),
     ]

@@ -4,6 +4,7 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+
     dependencies = [
         ('stock', '0101_stockitemtestresult_metadata'),
         ('build', '0046_auto_20230606_1033'),
@@ -14,6 +15,12 @@ class Migration(migrations.Migration):
             name='builditem',
             unique_together={('build_line', 'stock_item', 'install_into')},
         ),
-        migrations.RemoveField(model_name='builditem', name='bom_item'),
-        migrations.RemoveField(model_name='builditem', name='build'),
+        migrations.RemoveField(
+            model_name='builditem',
+            name='bom_item',
+        ),
+        migrations.RemoveField(
+            model_name='builditem',
+            name='build',
+        ),
     ]

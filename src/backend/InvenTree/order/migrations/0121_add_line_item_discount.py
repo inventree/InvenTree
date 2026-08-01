@@ -5,114 +5,115 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+
     dependencies = [
-        ('order', '0120_purchaseorder_tags_returnorder_tags_salesorder_tags_and_more')
+        ("order", "0120_purchaseorder_tags_returnorder_tags_salesorder_tags_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='purchaseorderextraline',
-            name='discount',
+            model_name="purchaseorderextraline",
+            name="discount",
             field=models.DecimalField(
                 decimal_places=2,
                 default=0,
-                help_text='Discount percentage applied to this line item (0-100)',
+                help_text="Discount percentage applied to this line item (0-100)",
                 max_digits=5,
                 validators=[
                     django.core.validators.MinValueValidator(0),
                     django.core.validators.MaxValueValidator(100),
                 ],
-                verbose_name='Discount',
+                verbose_name="Discount",
             ),
         ),
         migrations.AddField(
-            model_name='purchaseorderlineitem',
-            name='discount',
+            model_name="purchaseorderlineitem",
+            name="discount",
             field=models.DecimalField(
                 decimal_places=2,
                 default=0,
-                help_text='Discount percentage applied to this line item (0-100)',
+                help_text="Discount percentage applied to this line item (0-100)",
                 max_digits=5,
                 validators=[
                     django.core.validators.MinValueValidator(0),
                     django.core.validators.MaxValueValidator(100),
                 ],
-                verbose_name='Discount',
+                verbose_name="Discount",
             ),
         ),
         migrations.AddField(
-            model_name='returnorderextraline',
-            name='discount',
+            model_name="returnorderextraline",
+            name="discount",
             field=models.DecimalField(
                 decimal_places=2,
                 default=0,
-                help_text='Discount percentage applied to this line item (0-100)',
+                help_text="Discount percentage applied to this line item (0-100)",
                 max_digits=5,
                 validators=[
                     django.core.validators.MinValueValidator(0),
                     django.core.validators.MaxValueValidator(100),
                 ],
-                verbose_name='Discount',
+                verbose_name="Discount",
             ),
         ),
         migrations.AddField(
-            model_name='returnorderlineitem',
-            name='discount',
+            model_name="returnorderlineitem",
+            name="discount",
             field=models.DecimalField(
                 decimal_places=2,
                 default=0,
-                help_text='Discount percentage applied to this line item (0-100)',
+                help_text="Discount percentage applied to this line item (0-100)",
                 max_digits=5,
                 validators=[
                     django.core.validators.MinValueValidator(0),
                     django.core.validators.MaxValueValidator(100),
                 ],
-                verbose_name='Discount',
+                verbose_name="Discount",
             ),
         ),
         migrations.AddField(
-            model_name='salesorderextraline',
-            name='discount',
+            model_name="salesorderextraline",
+            name="discount",
             field=models.DecimalField(
                 decimal_places=2,
                 default=0,
-                help_text='Discount percentage applied to this line item (0-100)',
+                help_text="Discount percentage applied to this line item (0-100)",
                 max_digits=5,
                 validators=[
                     django.core.validators.MinValueValidator(0),
                     django.core.validators.MaxValueValidator(100),
                 ],
-                verbose_name='Discount',
+                verbose_name="Discount",
             ),
         ),
         migrations.AddField(
-            model_name='salesorderlineitem',
-            name='discount',
+            model_name="salesorderlineitem",
+            name="discount",
             field=models.DecimalField(
                 decimal_places=2,
                 default=0,
-                help_text='Discount percentage applied to this line item (0-100)',
+                help_text="Discount percentage applied to this line item (0-100)",
                 max_digits=5,
                 validators=[
                     django.core.validators.MinValueValidator(0),
                     django.core.validators.MaxValueValidator(100),
                 ],
-                verbose_name='Discount',
+                verbose_name="Discount",
             ),
         ),
         migrations.AddField(
-            model_name='transferorderlineitem',
-            name='discount',
+            model_name="transferorderlineitem",
+            name="discount",
             field=models.DecimalField(
                 decimal_places=2,
                 default=0,
-                help_text='Discount percentage applied to this line item (0-100)',
+                help_text="Discount percentage applied to this line item (0-100)",
                 max_digits=5,
                 validators=[
                     django.core.validators.MinValueValidator(0),
                     django.core.validators.MaxValueValidator(100),
                 ],
-                verbose_name='Discount',
+                verbose_name="Discount",
             ),
         ),
     ]
