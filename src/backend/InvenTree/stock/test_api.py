@@ -1990,6 +1990,28 @@ class StockItemTest(StockAPITestCase):
             ],
         )
 
+    def test_part_detail_permissions(self):
+        """Test that the part_detail output option is only available to users with permission."""
+        url = reverse('api-stock-detail', kwargs={'pk': 1})
+
+        # User has permission to view parts
+        response = self.get(url, {'part_detail': True}, expected_code=200)
+
+        self.assertIn('pk', response.data)
+        self.assertIn('part', response.data)
+        self.assertIn('part_detail', response.data)
+
+        # Remove 'part view' permission from user
+        self.clearRoles()
+        response = self.get(url, {'part_detail': True}, expected_code=403)
+
+        self.assignRole('stock.view')
+
+        response = self.get(url, {'part_detail': True}, expected_code=200)
+        self.assertIn('pk', response.data)
+        self.assertIn('part', response.data)
+        self.assertNotIn('part_detail', response.data)
+
     def test_install(self):
         """Test that stock item can be installed into another item, via the API."""
         # Select the "parent" stock item
