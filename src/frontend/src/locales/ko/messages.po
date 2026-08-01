@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-07-27 07:31\n"
+"PO-Revision-Date: 2026-07-31 09:22\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -2204,7 +2204,7 @@ msgid "Loading"
 msgstr "불러오는 중"
 
 #: src/components/forms/fields/RelatedModelField.tsx:552
-#: src/components/forms/fields/TreeField.tsx:413
+#: src/components/forms/fields/TreeField.tsx:414
 #: src/components/nav/NavigationTree.tsx:403
 msgid "No results found"
 msgstr "결과를 찾을 수 없습니다"
@@ -2237,21 +2237,21 @@ msgstr "새 행 추가"
 msgid "View details"
 msgstr "상세 보기"
 
-#: src/components/forms/fields/TreeField.tsx:407
+#: src/components/forms/fields/TreeField.tsx:408
 msgid "Select..."
 msgstr "선택..."
 
-#: src/components/forms/fields/TreeField.tsx:413
+#: src/components/forms/fields/TreeField.tsx:414
 #: src/components/wizards/ImportPartWizard.tsx:221
 #: src/forms/StockForms.tsx:1266
 msgid "Loading..."
 msgstr "불러오는 중..."
 
-#: src/components/forms/fields/TreeField.tsx:439
+#: src/components/forms/fields/TreeField.tsx:440
 msgid "Collapse"
 msgstr "축소"
 
-#: src/components/forms/fields/TreeField.tsx:439
+#: src/components/forms/fields/TreeField.tsx:440
 msgid "Expand"
 msgstr "확장"
 
@@ -2550,6 +2550,46 @@ msgstr "언어 선택"
 #: src/components/items/OnlyStaff.tsx:11
 msgid "This information is only available for administrative users"
 msgstr "이 정보는 관리자 사용자만 볼 수 있습니다"
+
+#: src/components/items/PartCreationMenu.tsx:43
+msgid "Import Parts"
+msgstr "부품 수입"
+
+#: src/components/items/PartCreationMenu.tsx:62
+#: src/pages/part/PartDetail.tsx:661
+#: src/tables/part/PartTable.tsx:199
+msgid "Add Part"
+msgstr "부품 추가"
+
+#: src/components/items/PartCreationMenu.tsx:80
+msgid "Add Parts"
+msgstr "부품 추가"
+
+#: src/components/items/PartCreationMenu.tsx:86
+msgid "Create Part"
+msgstr "부품 생성"
+
+#: src/components/items/PartCreationMenu.tsx:88
+msgid "Create a new part"
+msgstr "새 부품 생성"
+
+#: src/components/items/PartCreationMenu.tsx:92
+#: src/tables/bom/BomTable.tsx:670
+#: src/tables/general/ParameterTable.tsx:203
+msgid "Import from File"
+msgstr "파일에서 가져오기"
+
+#: src/components/items/PartCreationMenu.tsx:94
+msgid "Import parts from a file"
+msgstr "파일에서 부품 가져오기"
+
+#: src/components/items/PartCreationMenu.tsx:99
+msgid "Import from Supplier"
+msgstr "공급업체로부터 수입"
+
+#: src/components/items/PartCreationMenu.tsx:101
+msgid "Import parts from a supplier plugin"
+msgstr "공급업체 플러그인에서 부품 가져오기"
 
 #: src/components/items/Placeholder.tsx:14
 #~ msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
@@ -3443,7 +3483,7 @@ msgstr "재고 없음"
 #: src/pages/part/PartDetailsPanel.tsx:174
 #: src/tables/bom/BomTable.tsx:478
 #: src/tables/build/BuildLineTable.tsx:241
-#: src/tables/part/PartTable.tsx:91
+#: src/tables/part/PartTable.tsx:83
 #: src/tables/part/PartTableFilters.tsx:149
 msgid "On Order"
 msgstr "주문시"
@@ -4854,7 +4894,7 @@ msgstr "다음"
 
 #: src/components/wizards/ImportPartWizard.tsx:540
 #: src/pages/part/PartDetail.tsx:648
-#: src/tables/part/PartTable.tsx:205
+#: src/tables/part/PartTable.tsx:161
 msgid "Edit Part"
 msgstr "부품 편집"
 
@@ -5030,7 +5070,7 @@ msgstr "선택한 부분의 오류를 수정해주세요"
 
 #: src/components/wizards/OrderPartsWizard.tsx:629
 #: src/tables/build/BuildLineTable.tsx:908
-#: src/tables/part/PartTable.tsx:316
+#: src/tables/part/PartTable.tsx:267
 #: src/tables/sales/SalesOrderLineItemTable.tsx:426
 #: src/tables/stock/TransferOrderLineItemTable.tsx:333
 msgid "Order Parts"
@@ -8931,12 +8971,6 @@ msgstr "부족분"
 msgid "Consumable"
 msgstr "소모품"
 
-#: src/pages/part/PartDetail.tsx:661
-#: src/tables/part/PartTable.tsx:192
-#: src/tables/part/PartTable.tsx:243
-msgid "Add Part"
-msgstr "부품 추가"
-
 #: src/pages/part/PartDetail.tsx:675
 msgid "Delete Part"
 msgstr "부품 삭제"
@@ -8965,7 +8999,7 @@ msgid "Search by serial number"
 msgstr "시리얼 번호로 검색"
 
 #: src/pages/part/PartDetail.tsx:767
-#: src/tables/part/PartTable.tsx:300
+#: src/tables/part/PartTable.tsx:251
 msgid "Part Actions"
 msgstr "부품 작업"
 
@@ -9084,7 +9118,7 @@ msgstr "날"
 #: src/pages/part/PartDetailsPanel.tsx:308
 #: src/pages/part/pricing/BomPricingPanel.tsx:82
 #: src/pages/part/pricing/VariantPricingPanel.tsx:98
-#: src/tables/part/PartTable.tsx:98
+#: src/tables/part/PartTable.tsx:90
 msgid "Price Range"
 msgstr "가격대"
 
@@ -9455,7 +9489,7 @@ msgstr "구매 가격"
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:226
 #: src/pages/stock/StockDetailsPanel.tsx:364
 #: src/tables/general/ParameterTable.tsx:101
-#: src/tables/general/ParametricDataTable.tsx:94
+#: src/tables/general/ParametricDataTable.tsx:101
 #: src/tables/settings/TemplateTable.tsx:261
 #: src/tables/stock/StockItemTable.tsx:166
 msgid "Last Updated"
@@ -10508,12 +10542,6 @@ msgstr "BOM 항목 추가"
 msgid "Add a single BOM item"
 msgstr "단일 BOM 항목 추가"
 
-#: src/tables/bom/BomTable.tsx:670
-#: src/tables/general/ParameterTable.tsx:203
-#: src/tables/part/PartTable.tsx:340
-msgid "Import from File"
-msgstr "파일에서 가져오기"
-
 #: src/tables/bom/BomTable.tsx:672
 msgid "Import BOM items from a file"
 msgstr "파일에서 BOM 항목 가져오기"
@@ -11186,7 +11214,7 @@ msgstr "내부 단위"
 
 #: src/tables/general/ParameterTable.tsx:109
 #: src/tables/general/ParameterTable.tsx:124
-#: src/tables/general/ParametricDataTable.tsx:103
+#: src/tables/general/ParametricDataTable.tsx:110
 #: src/tables/settings/TemplateTable.tsx:273
 msgid "Updated By"
 msgstr "업데이트한 사용자"
@@ -11204,14 +11232,14 @@ msgid "Import Parameters"
 msgstr "매개변수 가져오기"
 
 #: src/tables/general/ParameterTable.tsx:161
-#: src/tables/general/ParametricDataTable.tsx:307
-#: src/tables/general/ParametricDataTable.tsx:438
+#: src/tables/general/ParametricDataTable.tsx:324
+#: src/tables/general/ParametricDataTable.tsx:455
 msgid "Add Parameter"
 msgstr "매개변수 추가"
 
 #: src/tables/general/ParameterTable.tsx:172
 #: src/tables/general/ParameterTable.tsx:219
-#: src/tables/general/ParametricDataTable.tsx:331
+#: src/tables/general/ParametricDataTable.tsx:348
 msgid "Edit Parameter"
 msgstr "매개변수 편집"
 
@@ -11292,7 +11320,7 @@ msgstr "모델 유형"
 msgid "Filter by model type"
 msgstr "모델 유형으로 필터링"
 
-#: src/tables/general/ParametricDataTable.tsx:114
+#: src/tables/general/ParametricDataTable.tsx:121
 msgid "Click to edit"
 msgstr "수정하려면 클릭하세요."
 
@@ -11688,26 +11716,22 @@ msgstr ""
 msgid "Show completed line items"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:172
-msgid "Import Parts"
-msgstr "부품 수입"
-
-#: src/tables/part/PartTable.tsx:258
-#: src/tables/part/PartTable.tsx:306
+#: src/tables/part/PartTable.tsx:214
+#: src/tables/part/PartTable.tsx:257
 msgid "Set Category"
 msgstr "카테고리 설정"
+
+#: src/tables/part/PartTable.tsx:259
+msgid "Set category for selected parts"
+msgstr "선택한 부품에 대한 카테고리 설정"
+
+#: src/tables/part/PartTable.tsx:269
+msgid "Order selected parts"
+msgstr "선택한 부품 주문"
 
 #: src/tables/part/PartTable.tsx:287
 #~ msgid "Not Virtual"
 #~ msgstr "Not Virtual"
-
-#: src/tables/part/PartTable.tsx:308
-msgid "Set category for selected parts"
-msgstr "선택한 부품에 대한 카테고리 설정"
-
-#: src/tables/part/PartTable.tsx:318
-msgid "Order selected parts"
-msgstr "선택한 부품 주문"
 
 #: src/tables/part/PartTable.tsx:322
 #~ msgid "Has Stocktake"
@@ -11716,30 +11740,6 @@ msgstr "선택한 부품 주문"
 #: src/tables/part/PartTable.tsx:323
 #~ msgid "Filter by parts which have stocktake information"
 #~ msgstr "Filter by parts which have stocktake information"
-
-#: src/tables/part/PartTable.tsx:328
-msgid "Add Parts"
-msgstr "부품 추가"
-
-#: src/tables/part/PartTable.tsx:334
-msgid "Create Part"
-msgstr "부품 생성"
-
-#: src/tables/part/PartTable.tsx:336
-msgid "Create a new part"
-msgstr "새 부품 생성"
-
-#: src/tables/part/PartTable.tsx:342
-msgid "Import parts from a file"
-msgstr "파일에서 부품 가져오기"
-
-#: src/tables/part/PartTable.tsx:347
-msgid "Import from Supplier"
-msgstr "공급업체로부터 수입"
-
-#: src/tables/part/PartTable.tsx:349
-msgid "Import parts from a supplier plugin"
-msgstr "공급업체 플러그인에서 부품 가져오기"
 
 #: src/tables/part/PartTableFilters.tsx:14
 msgid "Filter by part active status"
