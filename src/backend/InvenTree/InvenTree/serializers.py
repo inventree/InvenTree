@@ -218,12 +218,16 @@ class FilterableSerializerMixin:
         if model is None:
             return included
 
-        # The 'auth_user' RuleSet is scoped to *managing* user accounts (admin-only),
-        # not to viewing username attribution (e.g. issued_by_detail / checked_by_detail).
-        # Gating those fields on the 'admin' role would hide basic attribution info from
-        # almost every non-admin user, which is a different (and much broader) concern than
-        # embedding actual business data - so the User model is deliberately exempted here.
-        if model is get_user_model():
+        # A handful of models describe *permission metadata itself* (who a user is,
+        # what a role can do) rather than embedded business data - gating these behind
+        # a role would hide a user's own account/role information from themselves and
+        # from almost every non-admin user, which is a different (and much broader)
+        # concern than embedding e.g. Part/Company records. Deliberately exempted here:
+        # - auth_user: username attribution fields (issued_by_detail, checked_by_detail, ...)
+        # - users_ruleset: role/permission listings (GroupSerializer.roles, ...)
+        from users.models import RuleSet
+
+        if model in (get_user_model(), RuleSet):
             return included
 
         user = getattr(self.request, 'user', None)
@@ -231,9 +235,17 @@ class FilterableSerializerMixin:
         if user is None:
             return included
 
+        cache = self.__dict__.setdefault('_field_permission_cache', {})
+        cache_key = (user.pk, model)
+
+        if cache_key in cache:
+            return cache[cache_key]
+
         from users.permissions import check_user_permission
 
-        return check_user_permission(user, model, 'view')
+        result = check_user_permission(user, model, 'view')
+        cache[cache_key] = result
+        return result
 
     def find_optional_fields(self):
         """Find all optional fields defined on this serializer."""
