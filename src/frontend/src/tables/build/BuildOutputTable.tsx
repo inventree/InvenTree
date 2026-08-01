@@ -79,6 +79,45 @@ type TestResultOverview = {
   result: boolean;
 };
 
+const compareTestResults = (a: any, b: any) => {
+  const finishedA = a.finished_datetime
+    ? new Date(a.finished_datetime).getTime()
+    : null;
+  const finishedB = b.finished_datetime
+    ? new Date(b.finished_datetime).getTime()
+    : null;
+
+  if (finishedA !== finishedB) {
+    if (finishedA === null) return 1;
+    if (finishedB === null) return -1;
+    return finishedB - finishedA;
+  }
+
+  const startedA = a.started_datetime
+    ? new Date(a.started_datetime).getTime()
+    : null;
+  const startedB = b.started_datetime
+    ? new Date(b.started_datetime).getTime()
+    : null;
+
+  if (startedA !== startedB) {
+    if (startedA === null) return 1;
+    if (startedB === null) return -1;
+    return startedB - startedA;
+  }
+
+  const dateA = a.date ? new Date(a.date).getTime() : null;
+  const dateB = b.date ? new Date(b.date).getTime() : null;
+
+  if (dateA !== dateB) {
+    if (dateA === null) return 1;
+    if (dateB === null) return -1;
+    return dateB - dateA;
+  }
+
+  return b.pk - a.pk;
+};
+
 /**
  * Detail drawer view for allocating stock against a specific build output
  */
@@ -277,9 +316,7 @@ export default function BuildOutputTable({
           // Find the "newest" result for this template in the returned data
           const result = record.tests
             ?.filter((test: any) => test.template == template.pk)
-            .sort((a: any, b: any) => {
-              return a.pk < b.pk ? 1 : -1;
-            })
+            .sort(compareTestResults)
             .shift();
 
           if (template?.required && result?.result) {

@@ -85,6 +85,45 @@ export default function StockItemTestResultTable({
     table.refreshTable();
   }, [testTemplates]);
 
+  const compareTestResults = (a: any, b: any) => {
+  const finishedA = a.finished_datetime
+    ? new Date(a.finished_datetime).getTime()
+    : null;
+  const finishedB = b.finished_datetime
+    ? new Date(b.finished_datetime).getTime()
+    : null;
+
+  if (finishedA !== finishedB) {
+    if (finishedA === null) return 1;
+    if (finishedB === null) return -1;
+    return finishedB - finishedA;
+  }
+
+  const startedA = a.started_datetime
+    ? new Date(a.started_datetime).getTime()
+    : null;
+  const startedB = b.started_datetime
+    ? new Date(b.started_datetime).getTime()
+    : null;
+
+  if (startedA !== startedB) {
+    if (startedA === null) return 1;
+    if (startedB === null) return -1;
+    return startedB - startedA;
+  }
+
+  const dateA = a.date ? new Date(a.date).getTime() : null;
+  const dateB = b.date ? new Date(b.date).getTime() : null;
+
+  if (dateA !== dateB) {
+    if (dateA === null) return 1;
+    if (dateB === null) return -1;
+    return dateB - dateA;
+  }
+
+  return b.pk - a.pk;
+};
+
   // Format the test results based on the returned data
   const formatRecords = useCallback(
     (records: any[]): any[] => {
@@ -110,12 +149,10 @@ export default function StockItemTestResultTable({
       });
 
       // Iterate through the returned records
-      // Note that the results are sorted by oldest first,
-      // to ensure that the most recent result is displayed "on top"
+      // Sort test results using the same priority as the backend:
+      // finished_datetime -> started_datetime -> date -> pk
       records
-        .sort((a: any, b: any) => {
-          return a.pk > b.pk ? 1 : -1;
-        })
+        .sort(compareTestResults)
         .forEach((record) => {
           // Find matching template
           const idx = results.findIndex(
