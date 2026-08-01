@@ -115,7 +115,7 @@ def inventree_transition(
                             f'{self._meta.verbose_name} is already {target_val}'
                         ) from exc
                     raise ValidationError(
-                        f'Invalid transition - cannot transition {field.name} (should be {source}, is {getattr(self, field.name)})'
+                        f'Invalid transition on {self._meta.verbose_name}.{field.name} (source value should be {source}, is {getattr(self, field.name)})'
                     ) from exc
                 return False
             # Persist all changes (including the updated status field) to the DB.

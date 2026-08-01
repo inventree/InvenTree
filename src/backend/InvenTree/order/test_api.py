@@ -4449,6 +4449,16 @@ class TransferOrderTest(OrderTest):
         line.refresh_from_db()
         self.assertEqual(line.transferred, 10)
 
+        # check that the wrong starting point also triggers an error
+        instance_b.status = TransferOrderStatus.CANCELLED.value
+        instance_b.save()
+        with self.assertRaises(ValidationError) as err:
+            instance_b.complete_order(None)
+        self.assertIn(
+            'Invalid transition on Transfer Order.status (source value should be 20, is 40)',
+            str(err.exception),
+        )
+
     def test_output_options(self):
         """Test the output options for the TransferOrder detail endpoint."""
         self.run_output_test(
