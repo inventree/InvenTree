@@ -86,14 +86,12 @@ def inventree_transition(
                     )
 
             # Run plugin transition handlers - if no step is taken the decorated method is called
-            result = _run_plugin_transition_handlers(
+            if result := _run_plugin_transition_handlers(
                 self,
                 getattr(self, field.name),
                 target,
                 default_action=_noop_default_action,
-            )
-            if result:
-                # A plugin handler has handled the transition, so we skip the decorated method.
+            ):
                 return result
 
             # Execute the FSM-wrapped function.  This validates the source state,
@@ -245,10 +243,9 @@ class StateTransitionMixin:
             default_action: Default action to be taken if none of the
                 transitions returns a boolean true value
         """
-        result = _run_plugin_transition_handlers(
+        if result := _run_plugin_transition_handlers(
             instance, current_state, target_state, default_action=default_action
-        )
-        if result:
+        ):
             return result
         return default_action(current_state, target_state, instance, **kwargs)
 
@@ -258,10 +255,9 @@ def _run_plugin_transition_handlers(instance, source, target, default_action):
 
     A plugin handler may veto the transition by raising a ``ValidationError``.
     """
-    if not isinstance(instance, StateTransitionMixin):
-        return
-
-    if not isinstance(instance, Model):
+    if not isinstance(instance, StateTransitionMixin) or not isinstance(
+        instance, Model
+    ):
         return
 
     from InvenTree.exceptions import log_error
