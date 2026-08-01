@@ -8,7 +8,7 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-07-27 07:31\n"
+"PO-Revision-Date: 2026-07-31 09:22\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -28,7 +28,7 @@ msgstr "خطأ في عرض مكوّن"
 
 #: lib/components/Boundary.tsx:20
 msgid "An error occurred while rendering this component."
-msgstr ""
+msgstr "حدث خطأ أثناء عرض هذا العنصر."
 
 #: lib/components/Boundary.tsx:23
 msgid "Try reloading the page, or contact your administrator if the problem persists."
@@ -42,7 +42,7 @@ msgstr "خطأ في التفاصيل"
 
 #: lib/components/CopyButton.tsx:49
 msgid "Copied"
-msgstr ""
+msgstr "منسوخ"
 
 #: lib/components/CopyButton.tsx:49
 msgid "Copy"
@@ -528,7 +528,7 @@ msgstr "العنوان"
 #: lib/enums/ModelInformation.tsx:272
 #: src/pages/company/CompanyDetail.tsx:181
 msgid "Addresses"
-msgstr ""
+msgstr "عناوين"
 
 #: lib/enums/ModelInformation.tsx:278
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:89
@@ -543,7 +543,7 @@ msgstr ""
 #: src/pages/company/CompanyDetail.tsx:175
 #: src/pages/core/CoreIndex.tsx:34
 msgid "Contacts"
-msgstr ""
+msgstr "جهات الاتصال"
 
 #: lib/enums/ModelInformation.tsx:285
 #: src/components/tables/ColumnRenderers.tsx:687
@@ -552,7 +552,7 @@ msgstr "مالك"
 
 #: lib/enums/ModelInformation.tsx:286
 msgid "Owners"
-msgstr ""
+msgstr "المالكون"
 
 #: lib/enums/ModelInformation.tsx:292
 #: src/components/tables/ColumnRenderers.tsx:637
@@ -2204,7 +2204,7 @@ msgid "Loading"
 msgstr "جارٍ التحميل"
 
 #: src/components/forms/fields/RelatedModelField.tsx:552
-#: src/components/forms/fields/TreeField.tsx:413
+#: src/components/forms/fields/TreeField.tsx:414
 #: src/components/nav/NavigationTree.tsx:403
 msgid "No results found"
 msgstr "لم يتم العثور على نتائج"
@@ -2237,21 +2237,21 @@ msgstr "إضافة صف جديد"
 msgid "View details"
 msgstr "عرض تفاصيل"
 
-#: src/components/forms/fields/TreeField.tsx:407
+#: src/components/forms/fields/TreeField.tsx:408
 msgid "Select..."
 msgstr "تحديد..."
 
-#: src/components/forms/fields/TreeField.tsx:413
+#: src/components/forms/fields/TreeField.tsx:414
 #: src/components/wizards/ImportPartWizard.tsx:221
 #: src/forms/StockForms.tsx:1266
 msgid "Loading..."
 msgstr "جارٍ التحميل..."
 
-#: src/components/forms/fields/TreeField.tsx:439
+#: src/components/forms/fields/TreeField.tsx:440
 msgid "Collapse"
 msgstr ""
 
-#: src/components/forms/fields/TreeField.tsx:439
+#: src/components/forms/fields/TreeField.tsx:440
 msgid "Expand"
 msgstr ""
 
@@ -2550,6 +2550,46 @@ msgstr "تحديد لغة"
 #: src/components/items/OnlyStaff.tsx:11
 msgid "This information is only available for administrative users"
 msgstr "هذا معلومات هو فقط متاح لـ administrative مستخدمون"
+
+#: src/components/items/PartCreationMenu.tsx:43
+msgid "Import Parts"
+msgstr "استيراد أصناف"
+
+#: src/components/items/PartCreationMenu.tsx:62
+#: src/pages/part/PartDetail.tsx:661
+#: src/tables/part/PartTable.tsx:199
+msgid "Add Part"
+msgstr "إضافة الصنف"
+
+#: src/components/items/PartCreationMenu.tsx:80
+msgid "Add Parts"
+msgstr "إضافة الأصناف"
+
+#: src/components/items/PartCreationMenu.tsx:86
+msgid "Create Part"
+msgstr "إنشاء الصنف"
+
+#: src/components/items/PartCreationMenu.tsx:88
+msgid "Create a new part"
+msgstr "إنشاء جديد صنف"
+
+#: src/components/items/PartCreationMenu.tsx:92
+#: src/tables/bom/BomTable.tsx:670
+#: src/tables/general/ParameterTable.tsx:203
+msgid "Import from File"
+msgstr "استيراد من ملف"
+
+#: src/components/items/PartCreationMenu.tsx:94
+msgid "Import parts from a file"
+msgstr "استيراد أصناف من ملف"
+
+#: src/components/items/PartCreationMenu.tsx:99
+msgid "Import from Supplier"
+msgstr "استيراد من مورد"
+
+#: src/components/items/PartCreationMenu.tsx:101
+msgid "Import parts from a supplier plugin"
+msgstr "استيراد أصناف من مورد إضافة"
 
 #: src/components/items/Placeholder.tsx:14
 #~ msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
@@ -3443,7 +3483,7 @@ msgstr "لا مخزون"
 #: src/pages/part/PartDetailsPanel.tsx:174
 #: src/tables/bom/BomTable.tsx:478
 #: src/tables/build/BuildLineTable.tsx:241
-#: src/tables/part/PartTable.tsx:91
+#: src/tables/part/PartTable.tsx:83
 #: src/tables/part/PartTableFilters.tsx:149
 msgid "On Order"
 msgstr "قيد الطلب"
@@ -4854,7 +4894,7 @@ msgstr "التالي"
 
 #: src/components/wizards/ImportPartWizard.tsx:540
 #: src/pages/part/PartDetail.tsx:648
-#: src/tables/part/PartTable.tsx:205
+#: src/tables/part/PartTable.tsx:161
 msgid "Edit Part"
 msgstr "تعديل الصنف"
 
@@ -5030,7 +5070,7 @@ msgstr "يرجى صحيح ال أخطاء في ال محدد أصناف"
 
 #: src/components/wizards/OrderPartsWizard.tsx:629
 #: src/tables/build/BuildLineTable.tsx:908
-#: src/tables/part/PartTable.tsx:316
+#: src/tables/part/PartTable.tsx:267
 #: src/tables/sales/SalesOrderLineItemTable.tsx:426
 #: src/tables/stock/TransferOrderLineItemTable.tsx:333
 msgid "Order Parts"
@@ -8931,12 +8971,6 @@ msgstr ""
 msgid "Consumable"
 msgstr "قابل للاستهلاك"
 
-#: src/pages/part/PartDetail.tsx:661
-#: src/tables/part/PartTable.tsx:192
-#: src/tables/part/PartTable.tsx:243
-msgid "Add Part"
-msgstr "إضافة الصنف"
-
 #: src/pages/part/PartDetail.tsx:675
 msgid "Delete Part"
 msgstr "حذف الصنف"
@@ -8965,7 +8999,7 @@ msgid "Search by serial number"
 msgstr "بحث حسب الرقم التسلسلي"
 
 #: src/pages/part/PartDetail.tsx:767
-#: src/tables/part/PartTable.tsx:300
+#: src/tables/part/PartTable.tsx:251
 msgid "Part Actions"
 msgstr "صنف إجراءات"
 
@@ -9084,7 +9118,7 @@ msgstr "أيام"
 #: src/pages/part/PartDetailsPanel.tsx:308
 #: src/pages/part/pricing/BomPricingPanel.tsx:82
 #: src/pages/part/pricing/VariantPricingPanel.tsx:98
-#: src/tables/part/PartTable.tsx:98
+#: src/tables/part/PartTable.tsx:90
 msgid "Price Range"
 msgstr "سعر Range"
 
@@ -9455,7 +9489,7 @@ msgstr "شراء التسعير"
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:226
 #: src/pages/stock/StockDetailsPanel.tsx:364
 #: src/tables/general/ParameterTable.tsx:101
-#: src/tables/general/ParametricDataTable.tsx:94
+#: src/tables/general/ParametricDataTable.tsx:101
 #: src/tables/settings/TemplateTable.tsx:261
 #: src/tables/stock/StockItemTable.tsx:166
 msgid "Last Updated"
@@ -10508,12 +10542,6 @@ msgstr "إضافة عناصر قائمة المواد"
 msgid "Add a single BOM item"
 msgstr "إضافة مفرد BOM عنصر"
 
-#: src/tables/bom/BomTable.tsx:670
-#: src/tables/general/ParameterTable.tsx:203
-#: src/tables/part/PartTable.tsx:340
-msgid "Import from File"
-msgstr "استيراد من ملف"
-
 #: src/tables/bom/BomTable.tsx:672
 msgid "Import BOM items from a file"
 msgstr "استيراد BOM عناصر من ملف"
@@ -11186,7 +11214,7 @@ msgstr "داخلي وحدات"
 
 #: src/tables/general/ParameterTable.tsx:109
 #: src/tables/general/ParameterTable.tsx:124
-#: src/tables/general/ParametricDataTable.tsx:103
+#: src/tables/general/ParametricDataTable.tsx:110
 #: src/tables/settings/TemplateTable.tsx:273
 msgid "Updated By"
 msgstr "تم التحديث حسب"
@@ -11204,14 +11232,14 @@ msgid "Import Parameters"
 msgstr "استيراد معلمات"
 
 #: src/tables/general/ParameterTable.tsx:161
-#: src/tables/general/ParametricDataTable.tsx:307
-#: src/tables/general/ParametricDataTable.tsx:438
+#: src/tables/general/ParametricDataTable.tsx:324
+#: src/tables/general/ParametricDataTable.tsx:455
 msgid "Add Parameter"
 msgstr "إضافة معلمة"
 
 #: src/tables/general/ParameterTable.tsx:172
 #: src/tables/general/ParameterTable.tsx:219
-#: src/tables/general/ParametricDataTable.tsx:331
+#: src/tables/general/ParametricDataTable.tsx:348
 msgid "Edit Parameter"
 msgstr "تعديل معلمة"
 
@@ -11292,7 +11320,7 @@ msgstr "نموذج نوع"
 msgid "Filter by model type"
 msgstr "تصفية حسب نموذج نوع"
 
-#: src/tables/general/ParametricDataTable.tsx:114
+#: src/tables/general/ParametricDataTable.tsx:121
 msgid "Click to edit"
 msgstr "انقر إلى تعديل"
 
@@ -11688,26 +11716,22 @@ msgstr ""
 msgid "Show completed line items"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:172
-msgid "Import Parts"
-msgstr "استيراد أصناف"
-
-#: src/tables/part/PartTable.tsx:258
-#: src/tables/part/PartTable.tsx:306
+#: src/tables/part/PartTable.tsx:214
+#: src/tables/part/PartTable.tsx:257
 msgid "Set Category"
 msgstr "تعيين فئة"
+
+#: src/tables/part/PartTable.tsx:259
+msgid "Set category for selected parts"
+msgstr "تعيين فئة لـ محدد أصناف"
+
+#: src/tables/part/PartTable.tsx:269
+msgid "Order selected parts"
+msgstr "طلب محدد أصناف"
 
 #: src/tables/part/PartTable.tsx:287
 #~ msgid "Not Virtual"
 #~ msgstr "Not Virtual"
-
-#: src/tables/part/PartTable.tsx:308
-msgid "Set category for selected parts"
-msgstr "تعيين فئة لـ محدد أصناف"
-
-#: src/tables/part/PartTable.tsx:318
-msgid "Order selected parts"
-msgstr "طلب محدد أصناف"
 
 #: src/tables/part/PartTable.tsx:322
 #~ msgid "Has Stocktake"
@@ -11716,30 +11740,6 @@ msgstr "طلب محدد أصناف"
 #: src/tables/part/PartTable.tsx:323
 #~ msgid "Filter by parts which have stocktake information"
 #~ msgstr "Filter by parts which have stocktake information"
-
-#: src/tables/part/PartTable.tsx:328
-msgid "Add Parts"
-msgstr "إضافة الأصناف"
-
-#: src/tables/part/PartTable.tsx:334
-msgid "Create Part"
-msgstr "إنشاء الصنف"
-
-#: src/tables/part/PartTable.tsx:336
-msgid "Create a new part"
-msgstr "إنشاء جديد صنف"
-
-#: src/tables/part/PartTable.tsx:342
-msgid "Import parts from a file"
-msgstr "استيراد أصناف من ملف"
-
-#: src/tables/part/PartTable.tsx:347
-msgid "Import from Supplier"
-msgstr "استيراد من مورد"
-
-#: src/tables/part/PartTable.tsx:349
-msgid "Import parts from a supplier plugin"
-msgstr "استيراد أصناف من مورد إضافة"
 
 #: src/tables/part/PartTableFilters.tsx:14
 msgid "Filter by part active status"

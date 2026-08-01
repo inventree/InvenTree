@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-29 08:03+0000\n"
+"POT-Creation-Date: 2026-07-31 09:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1556,7 +1556,7 @@ msgstr ""
 msgid "Cancelled"
 msgstr ""
 
-#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:670
+#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:680
 #: importer/status_codes.py:27 order/status_codes.py:15
 #: order/status_codes.py:52 order/status_codes.py:84 order/status_codes.py:128
 msgid "Complete"
@@ -2309,7 +2309,7 @@ msgstr ""
 msgid "Parameter template"
 msgstr ""
 
-#: common/models.py:3068 common/models.py:3110 importer/models.py:664
+#: common/models.py:3068 common/models.py:3110 importer/models.py:674
 msgid "Data"
 msgstr ""
 
@@ -4772,109 +4772,109 @@ msgstr ""
 msgid "If enabled, existing records will be updated with new data"
 msgstr ""
 
-#: importer/models.py:312
+#: importer/models.py:319
 msgid "Some required fields have not been mapped"
 msgstr ""
 
-#: importer/models.py:414
+#: importer/models.py:421
 msgid "Completed Row Count History"
 msgstr ""
 
-#: importer/models.py:417
+#: importer/models.py:424
 msgid "Row Count History"
 msgstr ""
 
-#: importer/models.py:440
+#: importer/models.py:447
 msgid "ID"
 msgstr ""
 
-#: importer/models.py:441
+#: importer/models.py:448
 msgid "Existing database identifier for the record"
 msgstr ""
 
-#: importer/models.py:516
+#: importer/models.py:526
 msgid "Column is already mapped to a database field"
 msgstr ""
 
-#: importer/models.py:521
+#: importer/models.py:531
 msgid "Field is already mapped to a data column"
 msgstr ""
 
-#: importer/models.py:530
+#: importer/models.py:540
 msgid "Column mapping must be linked to a valid import session"
 msgstr ""
 
-#: importer/models.py:535
+#: importer/models.py:545
 msgid "Column does not exist in the data file"
 msgstr ""
 
-#: importer/models.py:542
+#: importer/models.py:552
 msgid "Field does not exist in the target model"
 msgstr ""
 
-#: importer/models.py:546
+#: importer/models.py:556
 msgid "Selected field is read-only"
 msgstr ""
 
-#: importer/models.py:552
+#: importer/models.py:562
 msgid "Lookup field can only be set for related (foreign-key) fields"
 msgstr ""
 
-#: importer/models.py:560
+#: importer/models.py:570
 #, python-brace-format
 msgid "Invalid lookup field. Valid options are: {options}"
 msgstr ""
 
-#: importer/models.py:567 importer/models.py:654
+#: importer/models.py:577 importer/models.py:664
 msgid "Import Session"
 msgstr ""
 
-#: importer/models.py:571
+#: importer/models.py:581
 msgid "Field"
 msgstr ""
 
-#: importer/models.py:573
+#: importer/models.py:583
 msgid "Column"
 msgstr ""
 
-#: importer/models.py:579
+#: importer/models.py:589
 msgid "Lookup Field"
 msgstr ""
 
-#: importer/models.py:581
+#: importer/models.py:591
 msgid "Database field to use for foreign-key lookup. Leave blank for automatic lookup."
 msgstr ""
 
-#: importer/models.py:658
+#: importer/models.py:668
 msgid "Row Index"
 msgstr ""
 
-#: importer/models.py:661
+#: importer/models.py:671
 msgid "Original row data"
 msgstr ""
 
-#: importer/models.py:666 machine/models.py:114
+#: importer/models.py:676 machine/models.py:114
 msgid "Errors"
 msgstr ""
 
-#: importer/models.py:668 part/serializers.py:1161
+#: importer/models.py:678 part/serializers.py:1161
 msgid "Valid"
 msgstr ""
 
-#: importer/models.py:905
+#: importer/models.py:915
 msgid "Multiple matches found for value - please ensure the value is unique, or select a specific lookup field"
 msgstr ""
 
-#: importer/models.py:966
-msgid "ID is required for updating existing records."
-msgstr ""
-
-#: importer/models.py:973
+#: importer/models.py:968
 msgid "No record found with the provided ID"
 msgstr ""
 
-#: importer/models.py:979
+#: importer/models.py:973
 msgid "Invalid ID format provided"
+msgstr ""
+
+#: importer/models.py:1039
+msgid "ID is required for updating existing records."
 msgstr ""
 
 #: importer/operations.py:31 importer/operations.py:52
@@ -8903,19 +8903,19 @@ msgstr ""
 msgid "Asset file not found"
 msgstr ""
 
-#: report/templatetags/report.py:379 report/templatetags/report.py:495
+#: report/templatetags/report.py:379 report/templatetags/report.py:505
 msgid "Image file not found"
 msgstr ""
 
-#: report/templatetags/report.py:464
+#: report/templatetags/report.py:469
 msgid "No image file specified"
 msgstr ""
 
-#: report/templatetags/report.py:489
+#: report/templatetags/report.py:499
 msgid "part_image tag requires a Part instance"
 msgstr ""
 
-#: report/templatetags/report.py:581
+#: report/templatetags/report.py:591
 msgid "company_image tag requires a Company instance"
 msgstr ""
 
