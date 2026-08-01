@@ -31,11 +31,7 @@ env:
   INVENTREE_MEDIA_ROOT: /home/runner/work/InvenTree/test_inventree_media
   INVENTREE_STATIC_ROOT: /home/runner/work/InvenTree/test_inventree_static
   INVENTREE_BACKUP_DIR: /home/runner/work/InvenTree/test_inventree_backup
-  INVENTREE_SITE_URL: http://localhost:8000
-
-  # Use the same-named branch of the demo dataset as the target branch of this build,
-  # so that stable branches are not broken by changes to the demo dataset on main
-  DEMO_DATASET_BRANCH: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
+  INVENTREE_SITE_URL: http://localhost:8000s
 
 permissions:
   contents: read
@@ -140,7 +136,7 @@ jobs:
           pip-dependency: psycopg2
       - name: Set up test data
         run: |
-          invoke dev.setup-test -iv --branch "$DEMO_DATASET_BRANCH"
+          invoke dev.setup-test -iv
           invoke int.rebuild-thumbnails
       - name: Install dependencies
         run: invoke int.frontend-compile --extract
@@ -222,7 +218,7 @@ jobs:
           pip-dependency: psycopg2
       - name: Set up test data
         run: |
-          invoke dev.setup-test -iv --branch "$DEMO_DATASET_BRANCH"
+          invoke dev.setup-test -iv
           invoke int.rebuild-thumbnails
       - name: Install dependencies
         run: invoke int.frontend-compile --extract
