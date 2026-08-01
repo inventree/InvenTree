@@ -1863,7 +1863,7 @@ def _detect_ci_branch() -> Optional[str]:
         'dev': 'Set up development environment at the end',
         'validate_files': 'Validate media files are correctly copied',
         'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
-        'branch': 'Specify branch of demo-dataset to clone (default = auto-detected target branch in CI, else main)',
+        'branch': 'Specify branch of demo-dataset to clone',
         'verbose': 'Print verbose output from management commands',
     }
 )
@@ -1898,9 +1898,14 @@ def setup_test(
         URL = 'git@github.com:inventree/demo-dataset.git'
 
     if not branch:
-        branch = _detect_ci_branch()
-        if branch:
-            info(f"Auto-detected target branch from CI: '{branch}'")
+        # No branch specified - determine the InvenTree version
+        version = get_inventree_version()
+
+        # If the version is a stable release (e.g. "1.4.3")
+        # then we can try to use the corresponding branch in the demo-dataset repository
+        # (e.g. "1.4.x")
+        if re.match(r'^\d+\.\d+\.\d+$', version):
+            branch = f'{version.rsplit(".", 1)[0]}.x'
 
     # InvenTree's trunk branch is named "master", but the demo-dataset
     # repository uses "main" as its trunk branch - map this automatically
@@ -1911,10 +1916,6 @@ def setup_test(
     # Get test data
     info(f"Cloning demo dataset (branch '{branch}') ...")
     run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
-
-    # Make sure migrations are done - might have just deleted sqlite database
-    if not ignore_update:
-        migrate(c, verbose=verbose)
 
     # Load data
     info('Loading database records ...')
