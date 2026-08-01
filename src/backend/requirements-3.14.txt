@@ -2156,6 +2156,7 @@ urllib3==2.7.0 \
     #   -c src/backend/requirements.txt
     #   botocore
     #   django-anymail
+    #   django-oauth-toolkit
     #   dulwich
     #   requests
     #   sentry-sdk
