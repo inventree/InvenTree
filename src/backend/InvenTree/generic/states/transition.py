@@ -13,6 +13,8 @@ from django_fsm import TransitionNotAllowed, transition
 
 from plugin.events import trigger_event
 
+from .deprecations import deprecated
+
 logger = structlog.get_logger('inventree')
 
 
@@ -226,6 +228,7 @@ class StateTransitionMixin:
                 pass
     """
 
+    @deprecated('Use the @inventree_transition decorator instead', version='1.5.0')
     def handle_transition(
         self, current_state, target_state, instance, default_action, **kwargs
     ):
