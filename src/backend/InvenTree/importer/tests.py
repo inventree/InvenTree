@@ -194,6 +194,68 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
         with self.assertRaises(DjangoValidationError):
             session.full_clean()
 
+    def test_update_existing_records(self):
+        """Test updating existing records via import, providing only the ID field.
+
+        Regression test for GH #12499: when updating existing records, only the
+        primary key should be required. Fields which are not mapped to a column
+        (and have no explicit override/default) must:
+        - not be flagged as "required" and block the mapping wizard
+        - not be auto-populated with a model-level "creation" default
+        - not overwrite the existing value on the target record
+        """
+        from part.models import Part, PartCategory
+        from stock.models import StockItem
+
+        category = PartCategory.objects.create(
+            name='Update Test Category', description='Test category'
+        )
+        part = Part.objects.create(
+            category=category, name='Update Test Part', description='Test part'
+        )
+
+        item = StockItem.objects.create(part=part, quantity=42, batch='Original batch')
+
+        csv_content = f'ID,batch\n{item.pk},Updated batch\n'
+        data_file = ContentFile(csv_content, 'stock_update.csv')
+
+        session = DataImportSession.objects.create(
+            data_file=data_file, model_type='stockitem', update_records=True
+        )
+
+        # Only the 'id' field should be required - 'quantity' and 'part' already
+        # exist on the target record, and must not be forced
+        required = session.required_fields()
+        self.assertIn('id', required)
+        self.assertNotIn('quantity', required)
+        self.assertNotIn('part', required)
+
+        # No model-level "creation" default should have been auto-populated for
+        # 'quantity' - doing so would silently overwrite the existing value
+        self.assertNotIn('quantity', session.field_defaults or {})
+
+        # Mapping is valid, even though 'quantity' and 'part' are unmapped
+        session.accept_mapping()
+
+        session.refresh_from_db()
+        self.assertEqual(session.rows.count(), 1)
+
+        row = session.rows.first()
+        self.assertTrue(row.valid)
+
+        # Unmapped fields must not appear in the extracted row data at all
+        self.assertNotIn('quantity', row.data)
+        self.assertNotIn('part', row.data)
+
+        self.assertTrue(row.validate(commit=True))
+        self.assertTrue(row.complete)
+
+        # Existing values for unmapped fields must be preserved
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 42)
+        self.assertEqual(item.part, part)
+        self.assertEqual(item.batch, 'Updated batch')
+
     def test_lookup_field_ambiguous_match(self):
         """Test the behavior of lookup_related_field for ambiguous and pinned matches."""
         from django.core.exceptions import ValidationError as DjangoValidationError
