@@ -3461,6 +3461,66 @@ class BomItemTest(InvenTreeAPITestCase):
         can_build = response.data['can_build']
         self.assertAlmostEqual(can_build, 482.9, places=1)
 
+    def test_piece_count_get(self):
+        """Test that piece_count is returned in GET response for BomItem."""
+        bom_item = BomItem.objects.first()
+        assert bom_item
+
+        url = reverse('api-bom-item-detail', kwargs={'pk': bom_item.pk})
+        response = self.get(url, expected_code=200)
+
+        # piece_count should be present in the response
+        self.assertIn('piece_count', response.data)
+        # Default value is 1
+        self.assertEqual(response.data['piece_count'], 1)
+
+    def test_piece_count_post(self):
+        """Test creating a BomItem with piece_count via POST."""
+        url = reverse('api-bom-list')
+
+        # Create a BomItem with piece_count specified
+        data = {'part': 100, 'sub_part': 4, 'quantity': 200, 'piece_count': 10}
+        response = self.post(url, data, expected_code=201)
+
+        self.assertEqual(response.data['piece_count'], 10)
+        self.assertEqual(response.data['quantity'], 200)
+
+    def test_piece_count_post_default(self):
+        """Test that piece_count defaults to 1 when not specified in POST."""
+        url = reverse('api-bom-list')
+
+        data = {'part': 100, 'sub_part': 4, 'quantity': 50}
+        response = self.post(url, data, expected_code=201)
+
+        self.assertEqual(response.data['piece_count'], 1)
+
+    def test_piece_count_patch(self):
+        """Test updating piece_count via PATCH."""
+        bom_item = BomItem.objects.first()
+        assert bom_item
+
+        url = reverse('api-bom-item-detail', kwargs={'pk': bom_item.pk})
+
+        # Update piece_count
+        response = self.patch(url, {'piece_count': 7}, expected_code=200)
+        self.assertEqual(response.data['piece_count'], 7)
+
+        # Verify the change persisted
+        response = self.get(url, expected_code=200)
+        self.assertEqual(response.data['piece_count'], 7)
+
+    def test_piece_count_invalid_values(self):
+        """Test that invalid piece_count values are rejected via API."""
+        url = reverse('api-bom-list')
+
+        # piece_count = 0 should be rejected
+        data = {'part': 100, 'sub_part': 4, 'quantity': 10, 'piece_count': 0}
+        self.post(url, data, expected_code=400)
+
+        # piece_count = -1 should be rejected
+        data = {'part': 100, 'sub_part': 4, 'quantity': 10, 'piece_count': -1}
+        self.post(url, data, expected_code=400)
+
 
 class AttachmentTest(InvenTreeAPITestCase):
     """Unit tests for the Attachment API endpoint."""
