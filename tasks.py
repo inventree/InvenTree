@@ -1763,7 +1763,7 @@ def test_translations(c):
         'translations': 'Compile translations before running tests',
         'keepdb': 'Keep the test database after running tests (default = False)',
         'pytest': 'Use pytest to run tests',
-        'parallel': 'Set number of parallel test processes (default = auto)',
+        'parallel': 'Set number of parallel test processes (default = off)',
         'verbosity': 'Verbosity level for test output (default = 1)',
     }
 )
@@ -1778,7 +1778,7 @@ def test(
     translations: bool = False,
     keepdb: bool = False,
     pytest: bool = False,
-    parallel: str | int = 'auto',
+    parallel: Optional[int] = None,
     verbosity: int = 1,
 ):
     """Run unit-tests for InvenTree codebase.
