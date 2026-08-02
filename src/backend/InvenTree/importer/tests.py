@@ -407,7 +407,9 @@ class DataImportRowConcurrencyTest(ImporterMixin, TransactionTestCase):
             # the existing instance value. That's a separate, already-tracked
             # issue (GH #12499) and would confound this test, which is only
             # about proving the row lock closes the read/write race.
-            thread_a = threading.Thread(target=update, args=('notes', 'notes-a'))
+            thread_a = threading.Thread(
+                target=update, args=('link', 'https://example.com/a')
+            )
             thread_b = threading.Thread(
                 target=update, args=('packaging', 'packaging-b')
             )
@@ -420,7 +422,7 @@ class DataImportRowConcurrencyTest(ImporterMixin, TransactionTestCase):
         self.assertEqual(errors, [])
 
         self.item.refresh_from_db()
-        self.assertEqual(self.item.notes, 'notes-a')
+        self.assertEqual(self.item.link, 'https://example.com/a')
         self.assertEqual(self.item.packaging, 'packaging-b')
 
 
