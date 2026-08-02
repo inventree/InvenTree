@@ -4010,7 +4010,8 @@ class TransferOrderTest(OrderTest):
         self.assertEqual(instance_b.status, TransferOrderStatus.PENDING)
 
         with mock.patch('order.models.trigger_event') as trigger:
-            instance_b.cancel_order()
+            with self.assertRaises(ValidationError):
+                instance_b.cancel_order()
             trigger.assert_not_called()
 
         to.refresh_from_db()
