@@ -2489,7 +2489,18 @@ class StockItem(
         # Create a new tracking entry for each item
         history_items = []
 
+        # Every new item shares this exact part - avoid a redundant per-item
+        # part_id -> Part lookup (bulk_create_and_fetch() does not preserve the
+        # cached FK) by seeding each item's cache with the instance we already have
+        part = self.part
+
+        # Check (once) whether there are any test results to copy across, rather
+        # than re-querying an identical (and usually empty) result set per item
+        has_test_results = self.test_results.exists()
+
         for item in items:
+            item.part = part
+
             # Construct tracking entries for the new StockItem
             if entry := item.add_tracking_entry(
                 StockHistoryCode.SPLIT_FROM_PARENT,
@@ -2512,7 +2523,8 @@ class StockItem(
                 history_items.append(entry)
 
             # Copy any test results from this item to the new one
-            item.copyTestResultsFrom(self)
+            if has_test_results:
+                item.copyTestResultsFrom(self)
 
         StockItemTracking.objects.bulk_create(history_items, batch_size=250)
 
