@@ -1,15 +1,19 @@
 """Unit tests for the SalesOrder models."""
 
+import threading
 from datetime import datetime, timedelta
 from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
+from django.db import connection
 from django.db.models import Sum
+from django.test import TransactionTestCase, skipUnlessDBFeature
 from django.urls import reverse
 
 from django_q.models import OrmQ
+from rest_framework.exceptions import ValidationError as DRFValidationError
 
 import order.tasks
 from common.models import InvenTreeSetting, NotificationMessage
@@ -28,6 +32,7 @@ from order.models import (
     SalesOrderLineItem,
     SalesOrderShipment,
 )
+from order.serializers import SalesOrderShipmentAllocationSerializer
 from part.models import Part
 from stock.events import StockEvents
 from stock.models import StockItem, StockItemTracking, StockLocation
@@ -1177,3 +1182,125 @@ class SalesOrderAutoAllocateTest(InvenTreeTestCase):
         allocated_items = [a.item for a in allocs]
         self.assertNotIn(excluded, allocated_items)
         self.assertIn(included, allocated_items)
+
+
+@skipUnlessDBFeature('has_select_for_update')
+class SalesOrderAllocateStockConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test for sales order stock allocation.
+
+    Uses two real threads (each with its own database connection) to reproduce
+    the reported race: two concurrent allocation requests, against two
+    different SalesOrder line items but the *same* StockItem, could each read
+    the item's unallocated quantity before either had committed, and both
+    create a SalesOrderAllocation for the full quantity - over-allocating the
+    StockItem. There was no order-level lock serializing these requests
+    against each other, since they target different orders.
+
+    SalesOrderShipmentAllocationSerializer.save() now locks the referenced
+    StockItem (select_for_update, via StockItem.lock_quantity()) before
+    validating and creating each allocation, so only one of two concurrent
+    full-quantity allocation requests against a shared StockItem may succeed.
+    """
+
+    fixtures = ['users']
+
+    def setUp(self):
+        """Create two SalesOrders which both request the same shared StockItem."""
+        super().setUp()
+
+        self.user = get_user_model().objects.get(pk=1)
+
+        self.customer = Company.objects.create(
+            name='Concurrency customer',
+            description='Customer for allocation concurrency test',
+            is_customer=True,
+        )
+
+        self.part = Part.objects.create(
+            name='Concurrency salable part',
+            description='Part for allocation concurrency test',
+            salable=True,
+        )
+
+        self.order_a = SalesOrder.objects.create(
+            customer=self.customer, reference='SO-CONC-A'
+        )
+        self.order_b = SalesOrder.objects.create(
+            customer=self.customer, reference='SO-CONC-B'
+        )
+
+        self.line_a = SalesOrderLineItem.objects.create(
+            quantity=5, order=self.order_a, part=self.part
+        )
+        self.line_b = SalesOrderLineItem.objects.create(
+            quantity=5, order=self.order_b, part=self.part
+        )
+
+        # Only enough stock for *one* of the two full-quantity allocations below
+        self.stock_item = StockItem.objects.create(part=self.part, quantity=5)
+
+    def test_concurrent_allocation_does_not_over_allocate(self):
+        """Two concurrent full-quantity allocation requests must not both succeed."""
+        start_barrier = threading.Barrier(2, timeout=5)
+        errors = []
+        results = []
+
+        # Wrap StockItem.lock_quantity() so both threads reach the (real,
+        # database-level) row lock at the same time - one wins the lock and
+        # proceeds, the other blocks until the winner's transaction completes.
+        original_lock_quantity = StockItem.lock_quantity
+
+        def synced_lock_quantity(self_item):
+            start_barrier.wait(timeout=5)
+            return original_lock_quantity(self_item)
+
+        def allocate(line_item):
+            try:
+                serializer = SalesOrderShipmentAllocationSerializer(
+                    data={
+                        'items': [
+                            {
+                                'line_item': line_item.pk,
+                                'stock_item': self.stock_item.pk,
+                                'quantity': 5,
+                            }
+                        ]
+                    },
+                    context={'order': line_item.order},
+                )
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                results.append('ok')
+            except (ValidationError, DRFValidationError):
+                results.append('rejected')
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        thread_a = threading.Thread(target=allocate, args=(self.line_a,))
+        thread_b = threading.Thread(target=allocate, args=(self.line_b,))
+
+        with mock.patch.object(StockItem, 'lock_quantity', synced_lock_quantity):
+            thread_a.start()
+            thread_b.start()
+
+            thread_a.join(timeout=5)
+            thread_b.join(timeout=5)
+
+        self.assertFalse(thread_a.is_alive())
+        self.assertFalse(thread_b.is_alive())
+        self.assertEqual(errors, [])
+
+        # Exactly one request must have been rejected as over-allocating
+        self.assertEqual(sorted(results), ['ok', 'rejected'])
+
+        total_allocated = (
+            SalesOrderAllocation.objects.filter(item=self.stock_item).aggregate(
+                q=Sum('quantity')
+            )['q']
+            or 0
+        )
+
+        self.assertEqual(total_allocated, 5)
+        self.assertLessEqual(total_allocated, self.stock_item.quantity)

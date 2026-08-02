@@ -3,8 +3,10 @@
 import re
 import subprocess
 import sys
+from typing import Optional
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -17,7 +19,7 @@ from InvenTree.exceptions import log_error
 logger = structlog.get_logger('inventree')
 
 
-def pip_command(*args):
+def pip_command(*args) -> str:
     """Build and run a pip command using using the current python executable.
 
     Returns: The output of the pip command
@@ -35,9 +37,12 @@ def pip_command(*args):
 
     logger.info('Running pip command: %s', ' '.join(command))
 
-    return subprocess.check_output(
+    ret = subprocess.check_output(
         command, cwd=settings.BASE_DIR.parent, stderr=subprocess.STDOUT
-    )
+    ).decode('utf-8')
+    if 'No module named pip' in ret:
+        raise ValidationError(_('Pip is not installed in the current environment'))
+    return ret
 
 
 def handle_pip_error(error, path: str) -> list:
@@ -83,7 +88,7 @@ def get_install_info(packagename: str) -> dict:
     try:
         result = pip_command('show', packagename)
 
-        output = result.decode('utf-8').split('\n')
+        output = result.split('\n')
 
         for line in output:
             parts = line.split(':')
@@ -157,18 +162,12 @@ def install_plugins_file():
     return True
 
 
-def update_plugins_file(install_name, full_package=None, version=None, remove=False):
+def update_plugins_file(package_reference: str, remove: bool = False):
     """Add a plugin to the plugins file."""
     if remove:
-        logger.info('Removing plugin from plugins file: %s', install_name)
+        logger.info('Removing plugin from plugins file: %s', package_reference)
     else:
-        logger.info('Adding plugin to plugins file: %s', install_name)
-
-    # If a full package name is provided, use that instead
-    if full_package and full_package != install_name:
-        new_value = full_package
-    else:
-        new_value = f'{install_name}=={version}' if version else install_name
+        logger.info('Adding plugin to plugins file: %s', package_reference)
 
     pf = settings.PLUGIN_FILE
 
@@ -178,7 +177,7 @@ def update_plugins_file(install_name, full_package=None, version=None, remove=Fa
 
     def compare_line(line: str):
         """Check if a line in the file matches the installname."""
-        return re.match(rf'^{install_name}[\s=@]', line.strip())
+        return re.match(rf'^{package_reference}[\s=@]', line.strip())
 
     # First, read in existing plugin file
     try:
@@ -205,13 +204,13 @@ def update_plugins_file(install_name, full_package=None, version=None, remove=Fa
             found = True
             if not remove:
                 # Replace line with new install name
-                output.append(new_value)
+                output.append(package_reference)
         else:
             output.append(line)
 
     # Append plugin to file
     if not found and not remove:
-        output.append(new_value)
+        output.append(package_reference)
 
     # Write file back to disk
     try:
@@ -226,13 +225,18 @@ def update_plugins_file(install_name, full_package=None, version=None, remove=Fa
         log_error('update_plugins_file', scope='plugins')
 
 
-def install_plugin(url=None, packagename=None, user=None, version=None):
+def install_plugin(
+    user: Optional[User] = None,
+    url: Optional[str] = None,
+    packagename: Optional[str] = None,
+    version: Optional[str] = None,
+):
     """Install a plugin into the python virtual environment.
 
     Args:
+        user: user performing the installation
         packagename: Optional package name to install
         url: Optional URL to install from
-        user: Optional user performing the installation
         version: Optional version specifier
     """
     if user and not user.is_superuser:
@@ -244,47 +248,48 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
     logger.info('install_plugin: %s, %s', url, packagename)
 
     # build up the command
-    install_name = ['install', '-U', '--disable-pip-version-check']
-
-    full_pkg = ''
+    package_ref: Optional[str] = None
+    index_url = None
 
     if url:
-        # use custom registration / VCS
-        if True in [
-            identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn']
-        ]:
+        # VCS based install - this can just be a VCS reference
+        if url.startswith(('git+https://', 'hg+https://', 'svn+svn://')):
             # using a VCS provider
-            full_pkg = f'{packagename}@{url}' if packagename else url
-        elif url:
-            install_name.append('-i')
-            full_pkg = url
+            package_ref = f'{packagename}@{url}' if packagename else url
+        # http based index reference
+        elif url.startswith(('http://', 'https://')) and packagename:
+            package_ref = packagename
+            index_url = url
+        # Ignore url and just use default index
         elif packagename:
-            full_pkg = packagename
+            package_ref = packagename
+        else:
+            raise ValidationError(_('Invalid URL and no package name provided'))
 
     elif packagename:
-        # use pypi
-        full_pkg = packagename
+        # use default index - most often pypi
+        package_ref = packagename
 
         if version:
-            full_pkg = f'{full_pkg}=={version}'
-
-    if not full_pkg:
+            package_ref = f'{packagename}=={version}'
+    else:
         raise ValidationError(_('No package name or URL provided for installation'))
 
     # Sanitize the package name for installation
-    if any(c in full_pkg for c in ';&|`$()'):
+    if any(c in package_ref for c in ';&|`$()'):
         raise ValidationError(_('Invalid characters in package name or URL'))
 
-    install_name.append(full_pkg)
+    # Execute installation via pip
+    cmd: list[str] = ['install', '-U', '--disable-pip-version-check']
+    if index_url:
+        cmd += ['-i', index_url]
 
     ret = {}
-
-    # Execute installation via pip
     try:
-        result = pip_command(*install_name)
+        result = pip_command(*cmd, package_ref)
 
         ret['result'] = ret['success'] = _('Installed plugin successfully')
-        ret['output'] = str(result, 'utf-8')
+        ret['output'] = result
 
         if packagename and (info := get_install_info(packagename)):
             if path := info.get('location'):
@@ -298,7 +303,7 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
 
     if version := ret.get('version'):
         # Save plugin to plugins file
-        update_plugins_file(packagename, full_package=full_pkg, version=version)
+        update_plugins_file(package_reference=package_ref)
 
         # Reload the plugin registry, to discover the new plugin
         from plugin.registry import registry
@@ -388,7 +393,7 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
         raise ValidationError(_('Plugin installation not found'))
 
     # Update the plugins file
-    update_plugins_file(package_name, remove=True)
+    update_plugins_file(package_reference=package_name, remove=True)
 
     if delete_config:
         logger.info('Deleting plugin configuration from database: %s', cfg.key)

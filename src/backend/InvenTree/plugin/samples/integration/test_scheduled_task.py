@@ -1,6 +1,11 @@
 """Unit tests for scheduled tasks."""
 
-from django.test import TestCase
+import threading
+from unittest import mock
+
+from django.db import connection
+from django.db.models.query import QuerySet
+from django.test import TestCase, TransactionTestCase
 
 from plugin import InvenTreePlugin
 from plugin.helpers import MixinImplementationError
@@ -90,6 +95,75 @@ class ExampleScheduledTaskPluginTests(TestCase):
         # Check with wrong key
         with self.assertRaises(AttributeError):
             call_plugin_function('does_not_exist', 'member_func'), None
+
+
+class ScheduleMixinConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test for ScheduleMixin.register_tasks().
+
+    django_q's Schedule.name has no DB-level unique constraint, so two concurrent activation passes (e.g. multiple
+    worker processes starting up together) could both find zero matching Schedule
+    rows for a task and both create one - leaving a duplicate scheduled task that
+    then fires twice per interval.
+
+    register_tasks() now locks the plugin's PluginConfig row (select_for_update)
+    for the duration of task registration, so only one of two concurrent calls may
+    proceed through the check-then-write at a time.
+    """
+
+    def test_concurrent_register_tasks_does_not_duplicate(self):
+        """Two concurrent register_tasks() calls for the same plugin must not create duplicate Schedule rows."""
+        from django_q.models import Schedule
+
+        plg = registry.plugins['schedule']
+        self.assertTrue(plg)
+
+        # Warm the plugin-config cache in the main thread first, so the race
+        # window below only covers register_tasks() itself, not the (variable
+        # latency) first-time cache population that plugin_config() may trigger
+        self.assertIsNotNone(plg.plugin_config())
+
+        # Start from a clean slate
+        Schedule.objects.filter(name__istartswith='plugin.schedule.').delete()
+
+        start_barrier = threading.Barrier(2, timeout=15)
+        errors = []
+
+        # Wrap select_for_update() so both threads reach the (real, database-level)
+        # PluginConfig row lock at the same time - one wins the lock and proceeds
+        # through its full check-then-write, the other blocks until the winner's
+        # transaction completes.
+        original_select_for_update = QuerySet.select_for_update
+
+        def synced_select_for_update(self_qs, *args, **kwargs):
+            start_barrier.wait(timeout=15)
+            return original_select_for_update(self_qs, *args, **kwargs)
+
+        def run():
+            try:
+                plg.register_tasks()
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        thread_a = threading.Thread(target=run)
+        thread_b = threading.Thread(target=run)
+
+        with mock.patch.object(QuerySet, 'select_for_update', synced_select_for_update):
+            thread_a.start()
+            thread_b.start()
+            thread_a.join(timeout=10)
+            thread_b.join(timeout=10)
+
+        self.assertEqual(errors, [])
+
+        # Exactly one Schedule row per task, not two
+        for task_name in plg.get_task_names():
+            self.assertEqual(
+                Schedule.objects.filter(name=task_name).count(),
+                1,
+                f'Duplicate Schedule row created for {task_name}',
+            )
 
 
 class ScheduledTaskPluginTests(TestCase):

@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 529
+INVENTREE_API_VERSION = 530
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v530 -> 2026-07-28 : https://github.com/inventree/InvenTree/pull/12487
+    - Adds searching against ReportSnippet API endpoint
 
 v529 -> 2026-07-26 : https://github.com/inventree/InvenTree/pull/12471
     - Adds "on_order" filter to the Part API
