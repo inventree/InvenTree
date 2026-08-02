@@ -42,7 +42,6 @@ from generic.states import (
     Deprecations,
     StateTransitionMixin,
     StatusCodeMixin,
-    TransitionNotAllowed,
     can_proceed,
     deprecated,
     inventree_transition,
@@ -1860,9 +1859,7 @@ class SalesOrder(TotalPriceMixin, Order):
             TransitionNotAllowed: if business-logic preconditions are not met.
         """
         if not self.can_complete(**kwargs):
-            raise TransitionNotAllowed(
-                'Order cannot be shipped or completed at this time'
-            )
+            raise ValidationError('Order cannot be shipped or completed at this time')
 
         bypass_shipped = InvenTree.helpers.str2bool(
             get_global_setting('SALESORDER_SHIP_COMPLETE')

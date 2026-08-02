@@ -704,9 +704,11 @@ class PurchaseOrderTest(OrderTest):
         # completion must be skipped based on the database state
         self.assertEqual(po_b.status, PurchaseOrderStatus.PLACED)
 
-        with mock.patch('order.models.trigger_event') as trigger:
-            po_b.complete_order()
-            trigger.assert_not_called()
+        with self.assertRaises(ValidationError) as err:
+            with mock.patch('order.models.trigger_event') as trigger:
+                po_b.complete_order()
+                trigger.assert_not_called()
+        self.assertIn('Purchase Order is already Complete', str(err.exception))
 
         po.refresh_from_db()
         self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
@@ -3539,9 +3541,11 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         # completion must be skipped based on the database state
         self.assertEqual(order_b.status, ReturnOrderStatus.IN_PROGRESS.value)
 
-        with mock.patch('order.models.trigger_event') as trigger:
-            order_b.complete_order()
-            trigger.assert_not_called()
+        with self.assertRaises(ValidationError) as err:
+            with mock.patch('order.models.trigger_event') as trigger:
+                order_b.complete_order()
+                trigger.assert_not_called()
+        self.assertIn('Return Order is already Complete', str(err.exception))
 
         rma.refresh_from_db()
         self.assertEqual(rma.status, ReturnOrderStatus.COMPLETE.value)

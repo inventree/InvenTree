@@ -86,9 +86,10 @@ class TransitionTests(InvenTreeTestCase):
         ).first()
         assert po
 
-        # Attempting to place a cancelled order must return False (not raise)
-        result = po.place_order()
-        self.assertFalse(result)
+        # Attempting to place a cancelled order must raise
+        with self.assertRaises(ValidationError):
+            result = po.place_order()
+            self.assertFalse(result)
 
         # The order status must remain CANCELLED
         po.refresh_from_db()
