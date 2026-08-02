@@ -160,9 +160,6 @@ class TransitionTests(InvenTreeTestCase):
         ro = ReturnOrder.objects.get(pk=2)
         self.assertEqual(ro.status, ReturnOrderStatus.IN_PROGRESS.value)
 
-        # Transition to "ON HOLD" state
-        ro.hold_order()
-
         # Ensure plugin starts in a known state
         plugin = registry.get_plugin('sample-broken-transition')
         plugin.set_setting('BROKEN_GET_METHOD', False)
@@ -175,7 +172,7 @@ class TransitionTests(InvenTreeTestCase):
 
         with self.assertWarnsMessage(UserWarning, msg):
             # No error should occur here
-            ro.complete_order()
+            ro.hold_order()
             self.assertEqual(ro.status, ReturnOrderStatus.ON_HOLD.value)
 
         # No error should be logged
@@ -190,7 +187,7 @@ class TransitionTests(InvenTreeTestCase):
                 ro.issue_order()
                 self.assertEqual(ro.status, ReturnOrderStatus.IN_PROGRESS.value)
 
-            # Ensure correct eroror was logged
+            # Ensure correct error was logged
             self.assertIn('Invalid transition handler type: 1', str(cm.output[0]))
 
         # Now, enable the "WRONG_RETURN_TYPE" setting
