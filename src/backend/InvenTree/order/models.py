@@ -3899,7 +3899,6 @@ class TransferOrder(Order):
         source=TransferOrderStatus.ISSUED,
         target=TransferOrderStatus.COMPLETE,
         event=TransferOrderEvents.COMPLETED,
-        raise_error=True,
     )
     def complete_order(self, user=None, **kwargs):
         """Transition this TransferOrder to COMPLETE status.

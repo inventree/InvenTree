@@ -19,13 +19,7 @@ logger = structlog.get_logger('inventree')
 
 
 def inventree_transition(
-    field,
-    source,
-    target,
-    event=None,
-    refresh_field: bool = True,
-    raise_error: bool = False,
-    **extra,
+    field, source, target, event=None, refresh_field: bool = True, **extra
 ):
     """Decorator that combines ``@django_fsm.transition`` with plugin transitions.
 
@@ -64,7 +58,6 @@ def inventree_transition(
         target: Target state after the transition.
         event: Optional event (name) to trigger after the transition.  If not provided no event is triggered.
         refresh_field: (default True) If True, the field is updated from the database before the transition.
-        raise_error: If True, a ValidationError exception is raised on invalid transitions instead of returning False.
         **extra: Additional keyword arguments forwarded to `django_fsm.transition` (e.g. `conditions`, `on_error`, `permission`).
     """
 
@@ -104,20 +97,18 @@ def inventree_transition(
                 # Preserve backward-compatible behaviour: an invalid transition
                 # (wrong source state, failed condition, or explicit raise inside
                 # the method body) returns False rather than raising.
-                if raise_error:
-                    if getattr(self, field.name) == target:
-                        target_val = (
-                            target.label
-                            if isinstance(target, Enum) and hasattr(target, 'label')
-                            else target
-                        )
-                        raise ValidationError(
-                            f'{self._meta.verbose_name} is already {target_val}'
-                        ) from exc
+                if getattr(self, field.name) == target:
+                    target_val = (
+                        target.label
+                        if isinstance(target, Enum) and hasattr(target, 'label')
+                        else target
+                    )
                     raise ValidationError(
                         f'Invalid transition on {self._meta.verbose_name}.{field.name} (source value should be {source}, is {getattr(self, field.name)})'
                     ) from exc
-                return False
+                raise ValidationError(
+                    f'Invalid transition - cannot transition {field.name} (should be {source}, is {getattr(self, field.name)})'
+                ) from exc
             # Persist all changes (including the updated status field) to the DB.
             self.save()
 
