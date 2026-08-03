@@ -252,7 +252,7 @@ def _run_plugin_transition_handlers(instance, source, target, default_action):
     if not isinstance(instance, StateTransitionMixin) or not isinstance(
         instance, Model
     ):
-        return
+        return  # pragma: no cover
 
     from InvenTree.exceptions import log_error
     from plugin import PluginMixinEnum, registry
@@ -280,8 +280,7 @@ def _run_plugin_transition_handlers(instance, source, target, default_action):
 
             # Call the transition method.
             # ValidationError raised here will propagate and cancel the transition.
-            result = handler.transition(source, target, instance, default_action)
-            if result:
+            if result := handler.transition(source, target, instance, default_action):
                 return result
 
 
