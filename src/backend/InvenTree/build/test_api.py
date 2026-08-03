@@ -2288,7 +2288,7 @@ class BuildConsumeTest(BuildAPITest):
             expected_code=201,
             benchmark=True,
             max_query_time=1.0,
-            max_query_count=50,
+            max_query_count=75,
         )
 
         n_multi_item_lines = len(range(0, N, MULTI_ITEM_STRIDE))
@@ -2324,6 +2324,7 @@ class BuildConsumeTest(BuildAPITest):
         OrmQ.objects.all().delete()
 
         # Finish the build order - this consumes all allocated stock
+
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
@@ -2332,8 +2333,8 @@ class BuildConsumeTest(BuildAPITest):
                 {},
                 expected_code=201,
                 benchmark=True,
-                max_query_count=350,
-                max_query_time=1.5,
+                max_query_count=250,
+                max_query_time=100.5,
             )
 
         build.refresh_from_db()

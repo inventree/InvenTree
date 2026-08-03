@@ -2084,7 +2084,7 @@ class Build(
         """Rebuild required quantity field for each BuildLine object."""
         lines_to_update = []
 
-        for line in self.build_lines.all():
+        for line in self.build_lines.select_related('bom_item').all():
             line.quantity = line.bom_item.get_required_quantity(self.quantity)
             lines_to_update.append(line)
 
