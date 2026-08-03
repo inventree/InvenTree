@@ -137,11 +137,8 @@ class TransitionTests(InvenTreeTestCase):
 
         ro.responsible = Owner.create(obj=self.user)
         ro.save()
-        try:
-            result = ro.complete_order()
-            self.assertEqual(result, '123#abc!')
-        except ValidationError:
-            self.fail('ValidationError raised unexpectedly')
+        result = ro.complete_order()
+        self.assertEqual(result, '123#abc!')
         # There should be no change in the status of the return order
         self.assertEqual(ro.status, ReturnOrderStatus.IN_PROGRESS.value)
 
