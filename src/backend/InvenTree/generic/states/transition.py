@@ -222,7 +222,7 @@ class StateTransitionMixin:
     @deprecated('Use the @inventree_transition decorator instead', version='1.5.0')
     def handle_transition(
         self, current_state, target_state, instance, default_action, **kwargs
-    ):
+    ):  # pragma: no cover
         """Handle a state transition for an object.
 
         .. deprecated::
@@ -286,4 +286,4 @@ def _run_plugin_transition_handlers(instance, source, target, default_action):
 
 def _noop_default_action(current_state, target_state, instance, **kwargs):
     """No-op default action for compatibility with transition handlers."""
-    return None
+    return None  # pragma: no cover
