@@ -4,8 +4,13 @@ from django.core.exceptions import ValidationError
 
 from generic.states import can_proceed
 from InvenTree.unit_test import InvenTreeTestCase
-from order.models import PurchaseOrder, ReturnOrder
-from order.status_codes import PurchaseOrderStatus, ReturnOrderStatus
+from order.models import PurchaseOrder, ReturnOrder, SalesOrder, TransferOrder
+from order.status_codes import (
+    PurchaseOrderStatus,
+    ReturnOrderStatus,
+    SalesOrderStatus,
+    TransferOrderStatus,
+)
 from plugin import registry
 from users.models import Owner
 
@@ -26,7 +31,9 @@ class TransitionTests(InvenTreeTestCase):
         'location',
         'stock',
         'order',
+        'sales_order',
         'return_order',
+        'transfer_order',
     ]
 
     def test_fsm_decorator_applied_to_purchase_order(self):
@@ -48,6 +55,10 @@ class TransitionTests(InvenTreeTestCase):
         self.assertTrue(po.can_issue)
         self.assertTrue(po.can_cancel)
         self.assertFalse(can_proceed(po.complete_order))
+        self.assertTrue(po.is_open)
+
+        # depreceted methods
+        self.assertTrue(po.can_hold)
 
     def test_fsm_purchase_order_transitions(self):
         """Test that PurchaseOrder transitions work correctly via @inventree_transition."""
@@ -80,6 +91,16 @@ class TransitionTests(InvenTreeTestCase):
         po.refresh_from_db()
         self.assertEqual(po.status, PurchaseOrderStatus.CANCELLED.value)
 
+    def test_fsm_sale_order_transitions(self):
+        """Test that SaleOrder transitions work correctly via @inventree_transition."""
+        so = SalesOrder.objects.filter(status=SalesOrderStatus.PENDING.value).first()
+        assert so
+
+        # deprecated methods
+        self.assertTrue(so.can_issue)
+        self.assertTrue(so.can_hold)
+        self.assertTrue(so.can_cancel)
+
     def test_fsm_invalid_transition_returns_false(self):
         """Test that an invalid transition returns False (backward-compatible behaviour)."""
         po = PurchaseOrder.objects.filter(
@@ -107,6 +128,22 @@ class TransitionTests(InvenTreeTestCase):
 
         # Cannot issue an IN_PROGRESS return order (already issued)
         self.assertFalse(can_proceed(ro.issue_order))
+
+        # deprecated methods
+        self.assertTrue(ro.can_hold)
+        self.assertTrue(ro.can_cancel)
+        self.assertFalse(ro.can_issue)
+
+    def test_fsm_transferorder(self):
+        """Test that TransferOrder transitions work correctly via @inventree_transition."""
+        to = TransferOrder.objects.filter(
+            status=TransferOrderStatus.PENDING.value
+        ).first()
+        assert to
+
+        self.assertTrue(to.can_issue)
+        self.assertTrue(to.can_hold)
+        self.assertTrue(to.can_cancel)
 
     def test_fsm_can_issue_property(self):
         """Test the can_issue property delegates to can_proceed."""
