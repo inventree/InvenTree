@@ -40,10 +40,6 @@ env:
   INVENTREE_DB_HOST: "127.0.0.1"
   INVENTREE_DB_PORT: 5432
 
-  # Use the same-named branch of the demo dataset as the target branch of this build,
-  # so that stable branches are not broken by changes to the demo dataset on main
-  DEMO_DATASET_BRANCH: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
-
 jobs:
 
   paths-filter:
@@ -94,7 +90,7 @@ jobs:
       - name: Setup Postgres Database
         run: |
           invoke migrate
-          invoke dev.setup-test -i --branch "$DEMO_DATASET_BRANCH"
+          invoke dev.setup-test -i
       - name: Create Plugin Data
         run: |
           pip install -U inventree-dummy-app-plugin==0.1.0
