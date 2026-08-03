@@ -705,9 +705,8 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(po_b.status, PurchaseOrderStatus.PLACED)
 
         with self.assertRaises(ValidationError) as err:
-            with mock.patch('order.models.trigger_event') as trigger:
-                po_b.complete_order()
-                trigger.assert_not_called()
+            po_b.complete_order()
+
         self.assertIn('Purchase Order is already Complete', str(err.exception))
 
         po.refresh_from_db()
@@ -3542,9 +3541,8 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.assertEqual(order_b.status, ReturnOrderStatus.IN_PROGRESS.value)
 
         with self.assertRaises(ValidationError) as err:
-            with mock.patch('order.models.trigger_event') as trigger:
-                order_b.complete_order()
-                trigger.assert_not_called()
+            order_b.complete_order()
+
         self.assertIn('Return Order is already Complete', str(err.exception))
 
         rma.refresh_from_db()
