@@ -7,6 +7,7 @@ from InvenTree.unit_test import InvenTreeTestCase
 from order.models import PurchaseOrder, ReturnOrder
 from order.status_codes import PurchaseOrderStatus, ReturnOrderStatus
 from plugin import registry
+from users.models import Owner
 
 
 class TransitionTests(InvenTreeTestCase):
@@ -133,6 +134,16 @@ class TransitionTests(InvenTreeTestCase):
             'Return order without responsible owner can not be completed',
             str(e.exception),
         )
+
+        ro.responsible = Owner.create(obj=self.user)
+        ro.save()
+        try:
+            result = ro.complete_order()
+            self.assertEqual(result, '123#abc!')
+        except ValidationError:
+            self.fail('ValidationError raised unexpectedly')
+        # There should be no change in the status of the return order
+        self.assertEqual(ro.status, ReturnOrderStatus.IN_PROGRESS.value)
 
         # Now disable the plugin
         registry.set_plugin_state('sample-transition', False)
