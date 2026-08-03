@@ -58,7 +58,14 @@ class OrderTest(InvenTreeAPITestCase):
         'transfer_order',
     ]
 
-    roles = ['purchase_order.change', 'sales_order.change', 'transfer_order.change']
+    roles = [
+        'purchase_order.change',
+        'sales_order.change',
+        'transfer_order.change',
+        'part.view',
+        'stock.view',
+        'stock_location.view',
+    ]
 
     def filter(self, filters, count):
         """Test API filters."""
@@ -3620,7 +3627,7 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         'supplier_part',
         'stock',
     ]
-    roles = ['return_order.view']
+    roles = ['return_order.view', 'part.view', 'stock.view']
 
     def test_options(self):
         """Test the OPTIONS endpoint."""
