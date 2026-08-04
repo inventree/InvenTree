@@ -129,6 +129,18 @@ export function IPNColumn(props: TableColumnProps): TableColumn {
   };
 }
 
+export function RevisionColumn(props: TableColumnProps): TableColumn {
+  return {
+    accessor: 'part_detail.revision',
+    sortable: true,
+    switchable: true,
+    title: t`Revision`,
+    copyable: true,
+    defaultVisible: false,
+    ...props
+  };
+}
+
 export type StockColumnProps = TableColumnProps & {
   nullMessage?: string | ReactNode;
 };
@@ -456,6 +468,22 @@ export function DecimalColumn(props: TableColumn): TableColumn {
     render: (record: any) => {
       const value = resolveItem(record, props.accessor ?? '');
       return formatDecimal(value);
+    },
+    ...props
+  };
+}
+
+export function PercentageColumn(props: TableColumn): TableColumn {
+  return {
+    sortable: true,
+    render: (record: any) => {
+      const value = resolveItem(record, props.accessor ?? '');
+
+      if (value == null || value === 0) {
+        return '-';
+      }
+
+      return `${formatDecimal(value)}%`;
     },
     ...props
   };

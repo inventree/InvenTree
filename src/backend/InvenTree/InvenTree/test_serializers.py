@@ -12,6 +12,7 @@ from InvenTree.mixins import ListCreateAPI, OutputOptionsMixin
 from InvenTree.serializers import OptionalField
 from InvenTree.unit_test import InvenTreeAPITestCase
 from InvenTree.urls import backendpatterns
+from part.models import Part
 
 
 class SampleSerializer(
@@ -24,7 +25,15 @@ class SampleSerializer(
         """Meta options."""
 
         model = User
-        fields = ['field_a', 'field_b', 'field_c', 'field_d', 'field_e', 'id']
+        fields = [
+            'field_a',
+            'field_b',
+            'field_c',
+            'field_d',
+            'field_e',
+            'field_f',
+            'id',
+        ]
 
     field_a = SerializerMethodField(method_name='sample')
     field_b = OptionalField(
@@ -48,6 +57,15 @@ class SampleSerializer(
         serializer_kwargs={'method_name': 'sample'},
         filter_name='field_e',
         filter_by_query=False,
+    )
+
+    # Field which embeds a model the requesting user may not have permission to view
+    field_f = OptionalField(
+        serializer_class=SerializerMethodField,
+        serializer_kwargs={'method_name': 'sample'},
+        default_include=True,
+        filter_name='field_f',
+        model=Part,
     )
 
     def sample(self, obj):
@@ -192,3 +210,27 @@ class BarcodeSerializerMixinTest(InvenTreeAPITestCase):
 
         with self.assertRaises(ImproperlyConfigured):
             MissingFieldSerializer()
+
+    def test_permission_gating(self):
+        """An OptionalField which embeds a model should respect the model's permissions.
+
+        'field_f' defaults to included, but declares 'model=Part' - it should only
+        appear in the response if the requesting user actually has 'part.view'.
+        """
+        with self.settings(
+            ROOT_URLCONF=__name__,
+            CSRF_TRUSTED_ORIGINS=['http://testserver'],
+            SITE_URL='http://testserver',
+        ):
+            url = reverse('sample-list', urlconf=__name__)
+
+            # No 'part' role assigned - field should be hidden despite default_include=True
+            response = self.client.get(url)
+            self.assertContains(response, 'field_a')
+            self.assertNotContains(response, 'field_f')
+
+            # Assign the 'part.view' role - field should now appear
+            self.assignRole('part.view')
+            response = self.client.get(url)
+            self.assertContains(response, 'field_f')
+            self.assertEqual(response.data[0]['field_f'], 'sample123')

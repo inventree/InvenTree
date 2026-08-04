@@ -3,6 +3,7 @@
 from collections.abc import Iterable
 from typing import Any, Optional
 
+from django.apps import apps as global_apps
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils.encoding import force_str
@@ -117,11 +118,23 @@ class InvenTreeCustomStatusModelField(models.PositiveIntegerField):
         return name, path, args, kwargs
 
     def contribute_to_class(self, cls, name):
-        """Add the _custom_key field to the model."""
+        """Add the _custom_key field to the model.
+
+        Only auto-add the companion field for the 'live' app registry. Any other
+        registry (migration state, or the throwaway model registries that some
+        backends - e.g. SQLite's table-rebuild routine - construct internally)
+        either already has the field explicitly declared, or will get it via a
+        separate migration operation. Auto-adding it there too would create a
+        duplicate field on the model.
+        """
         cls._meta.supports_custom_status = True
 
-        if not hasattr(self, '_custom_key_field') and not hasattr(
-            cls, f'{name}_custom_key'
+        is_live_model = cls._meta.apps is global_apps
+
+        if (
+            is_live_model
+            and not hasattr(self, '_custom_key_field')
+            and not hasattr(cls, f'{name}_custom_key')
         ):
             self.add_field(cls, name)
 

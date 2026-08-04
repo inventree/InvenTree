@@ -41,7 +41,7 @@ If this tab is not visible, ensure that the *Enable Stock History* [user setting
 
 ### Stocktake Entry Generation
 
-By default, stocktake entries are generated automatically at regular intervals (see [settings](#stock-history-settings) below). However, users can generate a stocktake entry on demand, using the *Generate Stocktake Entry* button in the *Stock History* tab:
+By default, stocktake entries are generated automatically at regular intervals (see [settings](#stocktake-settings) below). However, users can generate a stocktake entry on demand, using the *Generate Stocktake Entry* button in the *Stock History* tab:
 
 {{ image("part/part_stocktake_manual.png", "Generate stocktake entry") }}
 
@@ -95,7 +95,7 @@ Enable or disable stocktake functionality. Note that by default, stocktake funct
 
 ### Automatic Stocktake Period
 
-Configure the number of days between generation of [automatic stocktake reports](#automatic-stocktake). If this value is set to zero, automatic stocktake reports will not be generated.
+Configure the number of days between generation of [automatic stocktake entries](#stocktake-entry-generation). If this value is set to zero, automatic stocktake entries will not be generated.
 
 ### Delete Old Stocktake Entries
 

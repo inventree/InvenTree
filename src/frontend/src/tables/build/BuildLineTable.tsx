@@ -1,6 +1,6 @@
 import { ActionButton } from '@lib/components/ActionButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
-import { RowEditAction, RowViewAction } from '@lib/components/RowActions';
+import { RowEditAction } from '@lib/components/RowActions';
 import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -33,10 +33,13 @@ import {
   IPNColumn,
   LocationColumn,
   PartColumn,
-  RenderPartColumn
+  RenderPartColumn,
+  RevisionColumn
 } from '../../components/tables/ColumnRenderers';
 import { PartCategoryFilter } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
 import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
@@ -132,7 +135,7 @@ export function BuildLineSubTable({
             onDeleteAllocation?.(record.pk);
           }
         },
-        RowViewAction({
+        AppRowViewAction({
           title: t`View Stock Item`,
           modelType: ModelType.stockitem,
           modelId: record.stock_item,
@@ -349,6 +352,7 @@ export default function BuildLineTable({
         }
       }),
       IPNColumn({}),
+      RevisionColumn({}),
       CategoryColumn({
         accessor: 'category_detail',
         defaultVisible: false,
@@ -866,7 +870,7 @@ export default function BuildLineTable({
             newBuildOrder.open();
           }
         },
-        RowViewAction({
+        AppRowViewAction({
           title: t`View Part`,
           modelType: ModelType.part,
           modelId: record.part,

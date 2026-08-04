@@ -1,5 +1,8 @@
 """Unit tests for the BomItem model."""
 
+import hashlib
+from unittest import mock
+
 import django.core.exceptions as django_exceptions
 from django.db import transaction
 from django.test import TestCase
@@ -459,6 +462,59 @@ class BomItemTest(TestCase):
         with self.assertRaises(django_exceptions.ValidationError):
             bom_item2.quantity = 99
             bom_item2.save()
+
+    def test_bom_hash_order_consistency(self):
+        """Regression test for BOM checksum instability due to non-deterministic item ordering.
+
+        See: https://github.com/inventree/InvenTree/issues/12445
+
+        get_bom_hash() must apply an explicit, stable ordering when iterating the BOM
+        items - otherwise the resulting hash can differ purely because the underlying
+        query returned rows in a different order (e.g. Postgres provides no ordering
+        guarantee unless an ORDER BY clause is specified).
+        """
+        assembly = Part.objects.create(
+            name='HashOrderAssembly', description='An assembly part', assembly=True
+        )
+
+        for ii in range(5):
+            sub_part = Part.objects.create(
+                name=f'HashOrderPart{ii}',
+                description='A sub-part for hash ordering test',
+                component=True,
+            )
+            BomItem.objects.create(part=assembly, sub_part=sub_part, quantity=ii + 1)
+
+        # Calling get_bom_hash() repeatedly must always return the same value
+        h1 = assembly.get_bom_hash()
+        h2 = assembly.get_bom_hash()
+        self.assertEqual(h1, h2)
+
+        def hash_items(items) -> str:
+            """Replicate the hashing logic of get_bom_hash(), for a given item order."""
+            result_hash = hashlib.md5(str(assembly.id).encode())
+
+            for item in items:
+                result_hash.update(str(item.get_item_hash()).encode())
+
+            return str(result_hash.digest())
+
+        items_forward = list(assembly.get_bom_items().order_by('pk'))
+        items_reverse = list(assembly.get_bom_items().order_by('-pk'))
+        self.assertEqual(items_forward, list(reversed(items_reverse)))
+
+        # Sanity check: hashing the *same* items in a different order produces a
+        # different result - so ordering genuinely matters here
+        self.assertNotEqual(hash_items(items_forward), hash_items(items_reverse))
+
+        # Simulate the underlying queryset returning BOM items in a non pk-ascending
+        # order (as could occur against a real database with no ORDER BY applied).
+        # get_bom_hash() must be unaffected, always normalizing to the same order.
+        reversed_queryset = assembly.get_bom_items().order_by('-pk')
+        with mock.patch.object(Part, 'get_bom_items', return_value=reversed_queryset):
+            hash_from_reversed_source = assembly.get_bom_hash()
+
+        self.assertEqual(hash_from_reversed_source, hash_items(items_forward))
 
     def test_bom_validated(self):
         """Test for caching of 'bom_validated' property."""

@@ -297,7 +297,7 @@ function NumberValue(props: Readonly<FieldProps>) {
   const value = props?.field_value;
 
   // Convert to double
-  const numberValue = Number.parseFloat(value.toString());
+  const numberValue = Number.parseFloat(value?.toString() ?? '');
 
   if (value === null || value === undefined) {
     return <Text size='sm'>'---'</Text>;
@@ -482,10 +482,12 @@ function CopyField({ value }: Readonly<{ value: string }>) {
 
 export function DetailsTableField({
   item,
-  field
+  field,
+  showIcons = true
 }: Readonly<{
   item: any;
   field: DetailsField;
+  showIcons?: boolean;
 }>) {
   function getFieldType(type: string) {
     switch (type) {
@@ -519,10 +521,12 @@ export function DetailsTableField({
     <Table.Tr style={{ verticalAlign: 'top' }}>
       <Table.Td style={{ minWidth: 75, lineBreak: 'auto', flex: 2 }}>
         <Group gap='xs' wrap='nowrap'>
-          <InvenTreeIcon
-            icon={field.icon ?? (field.name as keyof InvenTreeIconType)}
-          />
-          <Text style={{ paddingLeft: 10 }}>{field.label}</Text>
+          {showIcons && (
+            <InvenTreeIcon
+              icon={field.icon ?? (field.name as keyof InvenTreeIconType)}
+            />
+          )}
+          <Text style={{ paddingLeft: showIcons ? 10 : 0 }}>{field.label}</Text>
         </Group>
       </Table.Td>
       <Table.Td
@@ -542,15 +546,19 @@ export function DetailsTableField({
   );
 }
 
-export function DetailsTable({
-  item,
-  fields,
-  title
-}: Readonly<{
+export interface DetailsTableProps {
   item: any;
   fields: DetailsField[];
   title?: string;
-}>) {
+  showIcons?: boolean;
+}
+
+export function DetailsTable({
+  item,
+  fields,
+  title,
+  showIcons = true
+}: Readonly<DetailsTableProps>) {
   const visibleFields = useMemo(() => {
     return fields.filter((field) => !field.hidden);
   }, [fields]);
@@ -569,8 +577,13 @@ export function DetailsTable({
         {title && <StylishText size='lg'>{title}</StylishText>}
         <Table striped verticalSpacing={5} horizontalSpacing='sm'>
           <Table.Tbody>
-            {visibleFields.map((field: DetailsField, index: number) => (
-              <DetailsTableField field={field} item={item} key={index} />
+            {visibleFields.map((field: DetailsField) => (
+              <DetailsTableField
+                field={field}
+                item={item}
+                showIcons={showIcons}
+                key={field.name}
+              />
             ))}
           </Table.Tbody>
         </Table>

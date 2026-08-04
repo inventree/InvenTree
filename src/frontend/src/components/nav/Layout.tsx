@@ -29,6 +29,7 @@ import {
   type PluginUIFeature,
   PluginUIFeatureType
 } from '../plugins/PluginUIFeature';
+import GlobalPreviewDrawer from '../previews/GlobalPreviewDrawer';
 import { Footer } from './Footer';
 import { Header } from './Header';
 
@@ -148,6 +149,7 @@ export default function LayoutComponent() {
           )}
         </Flex>
         <GlobalImporterDrawer />
+        <GlobalPreviewDrawer />
       </>
     </ProtectedRoute>
   );
