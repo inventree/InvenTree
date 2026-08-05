@@ -47,7 +47,7 @@ export default defineConfig(({ command, mode }) => {
       }),
       istanbul({
         include: ['src/*', 'lib/*'],
-        exclude: ['node_modules', 'test/'],
+        exclude: ['node_modules/', 'playwright/', 'tests/'],
         extension: ['.js', '.ts', '.tsx'],
         requireEnv: true
       }),
@@ -90,7 +90,8 @@ export default defineConfig(({ command, mode }) => {
       }
     },
     define: {
-      ...__INVENTREE_VERSION_INFO__
+      ...__INVENTREE_VERSION_INFO__,
+      'process.env.NODE_ENV': JSON.stringify(mode)
     }
   };
 });

@@ -72,17 +72,33 @@ def extract_column_names(data_file) -> list:
     """
     data = load_data_file(data_file)
 
-    headers = []
+    return normalize_headers(data.headers)
 
-    for idx, header in enumerate(data.headers):
+
+def normalize_headers(headers) -> list:
+    """Normalize a list of raw column headers extracted from a data file.
+
+    Strips whitespace from each header, and generates a default header
+    for any column that does not have one. Must be used consistently
+    wherever column headers are extracted, so that column names used for
+    field mapping match the column names used when extracting row data.
+
+    Args:
+        headers: List of raw header values (as returned by tablib)
+
+    Returns:
+        List of normalized column names
+    """
+    result = []
+
+    for idx, header in enumerate(headers):
         if header:
-            header = str(header).strip()
-            headers.append(header)
+            result.append(str(header).strip())
         else:
             # If the header is empty, generate a default header
-            headers.append(f'Column {idx + 1}')
+            result.append(f'Column {idx + 1}')
 
-    return headers
+    return result
 
 
 def get_field_label(field) -> Optional[str]:

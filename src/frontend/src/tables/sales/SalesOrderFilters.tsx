@@ -20,11 +20,12 @@ import {
   ResponsibleFilter,
   StartDateAfterFilter,
   StartDateBeforeFilter,
+  TagsFilter,
   TargetDateAfterFilter,
   TargetDateBeforeFilter,
   UpdatedAfterFilter,
   UpdatedBeforeFilter
-} from '../Filter';
+} from '../../components/tables/Filter';
 
 export default function SalesOrderFilters({
   partId,
@@ -41,7 +42,8 @@ export default function SalesOrderFilters({
     HasProjectCodeFilter(),
     ProjectCodeFilter(),
     ResponsibleFilter(),
-    CreatedByFilter()
+    CreatedByFilter(),
+    TagsFilter({ modelType: ModelType.salesorder })
   ];
 
   const dateFilters: TableFilter[] = [

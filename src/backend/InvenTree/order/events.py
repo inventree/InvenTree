@@ -20,7 +20,7 @@ class SalesOrderEvents(BaseEventEnum):
     """Event enumeration for the SalesOrder models."""
 
     ISSUED = 'salesorder.issued'
-    HOLD = 'salesorder.onhold'
+    HOLD = 'salesorder.hold'
     COMPLETED = 'salesorder.completed'
     CANCELLED = 'salesorder.cancelled'
 

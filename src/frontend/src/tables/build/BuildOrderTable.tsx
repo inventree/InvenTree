@@ -9,14 +9,10 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
-import { useBuildOrderFields } from '../../forms/BuildForms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useGlobalSettingsState } from '../../states/SettingsStates';
-import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
+  CompletionDateColumn,
   CreationDateColumn,
-  DateColumn,
   DescriptionColumn,
   IPNColumn,
   LinkColumn,
@@ -28,8 +24,12 @@ import {
   StatusColumn,
   TargetDateColumn,
   UserColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { useBuildOrderFields } from '../../forms/BuildForms';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
+import { useUserState } from '../../states/UserState';
 import BuildOrderFilters from './BuildOrderFilters';
 
 /*
@@ -104,6 +104,7 @@ export function BuildOrderTable({
       BooleanColumn({
         accessor: 'external',
         title: t`External`,
+        filter: 'external',
         sortable: true,
         switchable: true,
         hidden: !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
@@ -115,14 +116,11 @@ export function BuildOrderTable({
         defaultVisible: false
       }),
       TargetDateColumn({}),
-      DateColumn({
-        accessor: 'completion_date',
-        title: t`Completion Date`,
-        sortable: true
-      }),
+      CompletionDateColumn({}),
       UserColumn({
         accessor: 'issued_by_detail',
         ordering: 'issued_by',
+        filter: 'issued_by',
         title: t`Issued By`
       }),
       ResponsibleColumn({}),

@@ -13,6 +13,16 @@ import type { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
+import {
+  DecimalColumn,
+  DescriptionColumn,
+  LineItemColumn,
+  LinkColumn,
+  NoteColumn,
+  PercentageColumn,
+  ProjectCodeColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { formatCurrency } from '../../defaults/formatters';
 import { extraLineItemFields } from '../../forms/CommonForms';
 import {
@@ -21,15 +31,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import {
-  DecimalColumn,
-  DescriptionColumn,
-  LineItemColumn,
-  LinkColumn,
-  NoteColumn,
-  ProjectCodeColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ExtraLineItemTable({
   endpoint,
@@ -69,13 +70,17 @@ export default function ExtraLineItemTable({
             currency: record.price_currency
           })
       },
+      PercentageColumn({
+        accessor: 'discount',
+        title: t`Discount`,
+        defaultVisible: false
+      }),
       {
         accessor: 'total_price',
         title: t`Total Price`,
         render: (record: any) =>
-          formatCurrency(record.price, {
-            currency: record.price_currency,
-            multiplier: record.quantity
+          formatCurrency(record.total_price, {
+            currency: record.price_currency
           })
       },
       ProjectCodeColumn({}),
@@ -179,6 +184,9 @@ export default function ExtraLineItemTable({
           params: {
             order: orderId
           },
+          enableSelection: true,
+          enableBulkDelete: editable && user.hasDeleteRole(role),
+          afterBulkDelete: orderDetailRefresh,
           defaultSortColumn: 'line',
           rowActions: rowActions,
           tableActions: tableActions

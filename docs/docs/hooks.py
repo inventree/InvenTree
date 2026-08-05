@@ -4,10 +4,10 @@ import json
 import os
 import re
 from datetime import datetime
-from distutils.version import StrictVersion  # type: ignore[import]
 from pathlib import Path
 
 import requests
+from packaging.version import Version
 
 here = Path(__file__).parent
 
@@ -57,7 +57,7 @@ def fetch_rtd_versions():
         print('No RTD token found - skipping RTD version fetch')
 
     # Sort versions by version number
-    versions = sorted(versions, key=lambda x: StrictVersion(x['version']), reverse=True)
+    versions = sorted(versions, key=lambda x: Version(x['version']), reverse=True)
 
     # Add "latest" version first
     if not any(x['title'] == 'latest' for x in versions):

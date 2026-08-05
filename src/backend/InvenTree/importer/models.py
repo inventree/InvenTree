@@ -6,9 +6,10 @@ from datetime import datetime
 from typing import Optional
 
 from django.contrib.auth.models import User
+from django.core.exceptions import FieldDoesNotExist
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.validators import FileExtensionValidator
-from django.db import models
+from django.db import models, transaction
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -152,6 +153,36 @@ class DataImportSession(models.Model):
 
         return supported_models().get(self.model_type, None)
 
+    def get_lookup_fields_for_field(self, field_name: str) -> list:
+        """Return the valid lookup fields for a given related (FK) field.
+
+        Returns a list of field names that can be used as a lookup key,
+        consisting of 'pk' plus any fields defined in IMPORT_ID_FIELDS on the related model.
+        """
+        model = self.get_related_model(field_name)
+
+        if not model:
+            return ['pk']
+
+        id_fields = ['pk']
+
+        if custom_fields := getattr(model, 'IMPORT_ID_FIELDS', None):
+            id_fields += custom_fields
+
+        return id_fields
+
+    @property
+    def field_lookup_mapping(self) -> dict:
+        """Return a dict of field -> lookup_field mappings for this import session.
+
+        Only entries where lookup_field is explicitly set are included.
+        """
+        return {
+            mapping.field: mapping.lookup_field
+            for mapping in self.column_mappings.all()
+            if mapping.lookup_field
+        }
+
     def get_related_model(self, field_name: str) -> Optional[models.Model]:
         """Return the related model for a given field name.
 
@@ -170,7 +201,7 @@ class DataImportSession(models.Model):
             related_field = model_class._meta.get_field(field_name)
             model = related_field.remote_field.model
             return model
-        except (AttributeError, models.FieldDoesNotExist):
+        except (AttributeError, FieldDoesNotExist):
             return None
 
     def extract_columns(self) -> None:
@@ -206,7 +237,14 @@ class DataImportSession(models.Model):
 
             # Extract a "default" value for the field, if one exists
             # Skip if one has already been provided by the user
-            if field not in self.field_defaults and 'default' in field_def:
+            # Skip entirely when updating existing records - a model-level "creation"
+            # default (e.g. quantity=1) must not silently overwrite existing data
+            # for fields the user hasn't chosen to map or default
+            if (
+                not self.update_records
+                and field not in self.field_defaults
+                and 'default' in field_def
+            ):
                 self.field_defaults[field] = field_def['default']
 
             # Generate a list of possible column names for this field
@@ -310,7 +348,7 @@ class DataImportSession(models.Model):
             logger.error('Failed to load data file')
             return
 
-        headers = df.headers
+        headers = importer.operations.normalize_headers(df.headers)
 
         imported_rows = []
 
@@ -344,14 +382,27 @@ class DataImportSession(models.Model):
         self.save()
 
     def check_complete(self) -> bool:
-        """Check if the import session is complete."""
+        """Check if the import session is complete.
+
+        When all rows have been accepted, the rows and column mappings are
+        deleted as they are no longer needed. The session itself is retained
+        as an audit record.
+        """
         if self.completed_row_count < self.row_count:
             return False
 
-        # Update the status of this session
         if self.status != DataImportStatusCode.COMPLETE.value:
             self.status = DataImportStatusCode.COMPLETE.value
+
+            # persist historic count values for reporting purposes
+            self.completed_row_count_history = self.completed_row_count
+            self.row_count_history = self.row_count
+
             self.save()
+
+            # Clear staging data now that all rows have been imported
+            self.rows.all().delete()
+            self.column_mappings.all().delete()
 
         return True
 
@@ -364,6 +415,14 @@ class DataImportSession(models.Model):
     def completed_row_count(self) -> int:
         """Return the number of completed rows for this session."""
         return self.rows.filter(complete=True).count()
+
+    # Historic values for reporting purposes
+    completed_row_count_history = models.PositiveIntegerField(
+        blank=True, null=True, verbose_name=_('Completed Row Count History')
+    )
+    row_count_history = models.PositiveIntegerField(
+        blank=True, null=True, verbose_name=_('Row Count History')
+    )
 
     def available_fields(self):
         """Returns information on the available fields.
@@ -401,6 +460,11 @@ class DataImportSession(models.Model):
                 if field.get('read_only', False):
                     continue
 
+                if field.get('type') == 'related field':
+                    field['lookup_fields'] = self.get_lookup_fields_for_field(
+                        field_name
+                    )
+
                 fields[field_name] = field
 
         # Cache the available fields against this instance
@@ -415,11 +479,14 @@ class DataImportSession(models.Model):
         required = {}
 
         for field, info in fields.items():
-            if info.get('required', False):
-                required[field] = info
-
-            elif self.update_records and field == self.ID_FIELD_LABEL:
-                # If we are updating records, the ID field is required
+            if self.update_records:
+                # When updating existing records, only the ID field is required -
+                # all other fields fall back to the existing value on the record
+                # being updated, so the serializer's usual "required" flag
+                # (which applies to *creating* a new instance) does not apply here
+                if field == self.ID_FIELD_LABEL:
+                    required[field] = info
+            elif info.get('required', False):
                 required[field] = info
 
         return required
@@ -488,6 +555,22 @@ class DataImportColumnMap(models.Model):
         if field_def.get('read_only', False):
             raise DjangoValidationError({'field': _('Selected field is read-only')})
 
+        if self.lookup_field:
+            if field_def.get('type') != 'related field':
+                raise DjangoValidationError({
+                    'lookup_field': _(
+                        'Lookup field can only be set for related (foreign-key) fields'
+                    )
+                })
+
+            valid_lookup_fields = self.session.get_lookup_fields_for_field(self.field)
+            if self.lookup_field not in valid_lookup_fields:
+                raise DjangoValidationError({
+                    'lookup_field': _(
+                        'Invalid lookup field. Valid options are: {options}'
+                    ).format(options=', '.join(valid_lookup_fields))
+                })
+
     session = models.ForeignKey(
         DataImportSession,
         on_delete=models.CASCADE,
@@ -498,6 +581,16 @@ class DataImportColumnMap(models.Model):
     field = models.CharField(max_length=100, verbose_name=_('Field'))
 
     column = models.CharField(blank=True, max_length=100, verbose_name=_('Column'))
+
+    lookup_field = models.CharField(
+        blank=True,
+        null=True,
+        max_length=100,
+        verbose_name=_('Lookup Field'),
+        help_text=_(
+            'Database field to use for foreign-key lookup. Leave blank for automatic lookup.'
+        ),
+    )
 
     @property
     def available_fields(self):
@@ -631,8 +724,11 @@ class DataImportRow(models.Model):
         default_values = self.default_values
 
         data = {}
+        extract_errors = {}
 
         self.related_field_map = {}
+
+        field_lookup_mapping = self.session.field_lookup_mapping
 
         # We have mapped column (file) to field (serializer) already
         for field, col in field_mapping.items():
@@ -661,7 +757,13 @@ class DataImportRow(models.Model):
             elif field_type == 'date':
                 value = self.convert_date_field(value)
             elif field_type == 'related field':
-                value = self.lookup_related_field(field, value)
+                try:
+                    value = self.lookup_related_field(
+                        field, value, lookup_field=field_lookup_mapping.get(field)
+                    )
+                except DjangoValidationError as exc:
+                    extract_errors[field] = exc.message
+                    continue
 
             # Use the default value, if provided
             if value is None and field in default_values:
@@ -703,6 +805,9 @@ class DataImportRow(models.Model):
 
         self.data = data
 
+        if extract_errors:
+            self.errors = extract_errors
+
         if commit:
             self.save()
 
@@ -726,7 +831,9 @@ class DataImportRow(models.Model):
         # If none of the formats matched, return the original value
         return value
 
-    def lookup_related_field(self, field_name: str, value: str) -> Optional[int]:
+    def lookup_related_field(
+        self, field_name: str, value: str, lookup_field: Optional[str] = None
+    ) -> Optional[int]:
         """Try to perform lookup against a related field.
 
         - This is used to convert a human-readable value (e.g. a supplier name) into a database reference (e.g. supplier ID).
@@ -735,6 +842,7 @@ class DataImportRow(models.Model):
         Arguments:
             field_name: The name of the field to perform the lookup against
             value: The value to be looked up
+            lookup_field: If provided, only query this specific model field (skips auto-lookup)
 
         Returns:
             A primary key value
@@ -758,21 +866,35 @@ class DataImportRow(models.Model):
                 'session': f'No related model found for field: {field_name}'
             })
 
-        valid_items = set()
-
         base_filters = (
             self.session.field_filters.get(field_name, {})
             if self.session.field_filters
             else {}
         )
 
-        # First priority is the PK (primary key) field
+        if lookup_field and type(lookup_field) is str:
+            # A specific lookup field has been chosen by the user — query only that field
+            try:
+                queryset = model.objects.filter(**{lookup_field: value}, **base_filters)
+            except ValueError:
+                return value
+
+            results = list(queryset[:2])
+
+            if len(results) == 1:
+                return results[0].pk
+
+            # Zero or multiple results — return raw value and let serializer report the error
+            return value
+
+        # Auto-lookup: try pk first, then any model-defined IMPORT_ID_FIELDS
         id_fields = ['pk']
 
         if custom_id_fields := getattr(model, 'IMPORT_ID_FIELDS', None):
             id_fields += custom_id_fields
 
-        # Iterate through the provided list - if any of the values match, we can perform the lookup
+        valid_items = set()
+
         for id_field in id_fields:
             try:
                 queryset = model.objects.filter(**{id_field: value}, **base_filters)
@@ -782,15 +904,19 @@ class DataImportRow(models.Model):
             # Evaluate at most two results to determine if there is exactly one match
             results = list(queryset[:2])
             if len(results) == 1:
-                # We have a single match against this field
                 valid_items.add(results[0].pk)
 
         if len(valid_items) == 1:
-            # We found a single valid match against the related model - return this value
             return valid_items.pop()
 
-        # We found either zero or multiple values matching against the related model
-        # Return the original value and let the serializer validation handle any errors against this field
+        if len(valid_items) > 1:
+            raise DjangoValidationError(
+                _(
+                    'Multiple matches found for value - please ensure the value is unique, or select a specific lookup field'
+                )
+            )
+
+        # No match found - return the original value and let the serializer validation handle it
         return value
 
     def serializer_data(self):
@@ -817,58 +943,42 @@ class DataImportRow(models.Model):
             return serializer_class(
                 instance=instance,
                 data=self.serializer_data(),
+                # When updating an existing instance, treat this as a partial
+                # update - fields not present in the imported data should fall
+                # back to the existing value on the record, not fail validation
+                # or be overwritten with a blank/default value
+                partial=instance is not None,
                 context={'request': request},
             )
 
-    def validate(self, commit=False, request=None) -> bool:
-        """Validate the data in this row against the linked serializer.
+    def _get_update_instance(self, instance_id, queryset):
+        """Fetch the target instance for an update, recording any error against this row.
 
         Arguments:
-            commit: If True, the data is saved to the database (if validation passes)
-            request: The request object (if available) for extracting user information
+            instance_id: The primary key of the instance to fetch
+            queryset: The queryset to fetch the instance from (may be locked)
 
         Returns:
-            True if the data is valid, False otherwise
-
-        Raises:
-            ValidationError: If the linked serializer is not valid
+            The fetched instance, or None if it could not be found/resolved
         """
-        if self.complete:
-            # Row has already been completed
-            return True
+        try:
+            return queryset.get(pk=instance_id)
+        except self.session.model_class.DoesNotExist:
+            self.errors = {
+                'non_field_errors': _('No record found with the provided ID')
+                + f': {instance_id}'
+            }
+        except ValueError:
+            self.errors = {
+                'non_field_errors': _('Invalid ID format provided') + f': {instance_id}'
+            }
+        except Exception as e:
+            self.errors = {'non_field_errors': str(e)}
 
-        if self.session.update_records:
-            # Extract the ID field from the data
-            instance_id = self.data.get(self.session.ID_FIELD_LABEL, None)
+        return None
 
-            if not instance_id:
-                raise DjangoValidationError(
-                    _('ID is required for updating existing records.')
-                )
-
-            try:
-                instance = self.session.model_class.objects.get(pk=instance_id)
-            except self.session.model_class.DoesNotExist:
-                self.errors = {
-                    'non_field_errors': _('No record found with the provided ID')
-                    + f': {instance_id}'
-                }
-                return False
-            except ValueError:
-                self.errors = {
-                    'non_field_errors': _('Invalid ID format provided')
-                    + f': {instance_id}'
-                }
-                return False
-            except Exception as e:
-                self.errors = {'non_field_errors': str(e)}
-                return False
-
-            serializer = self.construct_serializer(instance=instance, request=request)
-
-        else:
-            serializer = self.construct_serializer(request=request)
-
+    def _process_serializer(self, serializer, commit) -> bool:
+        """Run is_valid() against the provided serializer, and save it if requested."""
         if not serializer:
             self.errors = {
                 'non_field_errors': 'No serializer class linked to this import session'
@@ -898,3 +1008,69 @@ class DataImportRow(models.Model):
                 self.session.check_complete()
 
         return result
+
+    def validate(self, commit=False, request=None) -> bool:
+        """Validate the data in this row against the linked serializer.
+
+        Arguments:
+            commit: If True, the data is saved to the database (if validation passes)
+            request: The request object (if available) for extracting user information
+
+        Returns:
+            True if the data is valid, False otherwise
+
+        Raises:
+            ValidationError: If the linked serializer is not valid
+        """
+        if self.complete:
+            # Row has already been completed
+            return True
+
+        if self.errors:
+            # Errors were set during data extraction (e.g. ambiguous FK lookup)
+            return False
+
+        if self.session.update_records:
+            # Extract the ID field from the data
+            instance_id = self.data.get(self.session.ID_FIELD_LABEL, None)
+
+            if not instance_id:
+                raise DjangoValidationError(
+                    _('ID is required for updating existing records.')
+                )
+
+            queryset = self.session.model_class.objects
+
+            if commit:
+                # Lock the target row for the duration of the transaction. Without
+                # this, another process could modify the record between this read
+                # and the serializer.save() call in _process_serializer() - and as
+                # save() writes the *entire* instance (not just the fields present
+                # in the imported data), that concurrent change would be silently
+                # lost (a "lost update" race). The lock is held until the save
+                # completes below, so a concurrent writer blocks until this commit
+                # finishes rather than racing against it.
+                with transaction.atomic():
+                    instance = self._get_update_instance(
+                        instance_id, queryset.select_for_update()
+                    )
+
+                    if instance is None:
+                        return False
+
+                    serializer = self.construct_serializer(
+                        instance=instance, request=request
+                    )
+                    return self._process_serializer(serializer, commit)
+
+            instance = self._get_update_instance(instance_id, queryset)
+
+            if instance is None:
+                return False
+
+            serializer = self.construct_serializer(instance=instance, request=request)
+
+        else:
+            serializer = self.construct_serializer(request=request)
+
+        return self._process_serializer(serializer, commit)

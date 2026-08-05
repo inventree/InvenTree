@@ -52,7 +52,11 @@ export default defineConfig((cfg) =>
         },
         lib: {
           entry: {
-            index: resolve(__dirname, 'lib/index.ts')
+            index: resolve(__dirname, 'lib/index.ts'),
+            'plugin/InventreeHmrPlugin': resolve(
+              __dirname,
+              'lib/plugin/InventreeHmrPlugin.tsx'
+            )
           },
           name: 'InvenTree',
           formats: ['es']

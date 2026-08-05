@@ -4,6 +4,7 @@ import re
 
 from django.core.exceptions import SuspiciousFileOperation, ValidationError
 from django.core.files.storage import default_storage
+from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 
 import common.icons
@@ -171,3 +172,17 @@ def validate_variable_string(value: str):
     """The passed value must be a valid variable identifier string."""
     if not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', value):
         raise ValidationError(_('Value must be a valid variable identifier'))
+
+
+def validate_locale(value: str):
+    """Validate that the provided value is a valid locale string."""
+    from babel import Locale
+    from babel.core import UnknownLocaleError
+
+    if not value:
+        return
+
+    try:
+        Locale.parse(translation.to_locale(value))
+    except (UnknownLocaleError, ValueError) as e:
+        raise ValidationError(f"Invalid locale value: '{value}' - {e}")

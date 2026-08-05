@@ -38,6 +38,14 @@
     customer: 5
     status: 60  # Returned
 
+- model: order.salesorder
+  pk: 6
+  fields:
+    reference: 'ABC128'
+    description: "One sales order, please"
+    customer: 5
+    status: 30  # Complete
+
 # 1 x R_4K7_0603
 - model: order.salesorderlineitem
   pk: 1

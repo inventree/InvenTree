@@ -13,6 +13,11 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
+import {
+  BooleanColumn,
+  DescriptionColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { stockLocationFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
@@ -21,8 +26,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Stock location table
@@ -97,6 +100,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
       {
         accessor: 'location_type',
         sortable: false,
+        filter: ['has_location_type', 'location_type'],
         render: (record: any) => record.location_type_detail?.name
       }
     ];

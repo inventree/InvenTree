@@ -30,6 +30,19 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { RenderPart } from '../../components/render/Part';
+import {
+  BooleanColumn,
+  CategoryColumn,
+  DescriptionColumn,
+  IPNColumn,
+  NoteColumn,
+  ReferenceColumn,
+  RenderPartColumn
+} from '../../components/tables/ColumnRenderers';
+import { PartCategoryFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { bomItemFields, useEditBomSubstitutesForm } from '../../forms/BomForms';
@@ -45,19 +58,6 @@ import {
   useUserSettingsState
 } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import {
-  BooleanColumn,
-  CategoryColumn,
-  DescriptionColumn,
-  IPNColumn,
-  NoteColumn,
-  ReferenceColumn,
-  RenderPartColumn
-} from '../ColumnRenderers';
-import { PartCategoryFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import RowExpansionIcon from '../RowExpansionIcon';
-import { TableHoverCard } from '../TableHoverCard';
 import { subassemblyRowExpansion } from './BomSubassemblyTable';
 
 // Calculate the total stock quantity available for a given BomItem
@@ -171,11 +171,6 @@ export function BomTable({
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
       }),
-      BooleanColumn({
-        accessor: 'sub_part_detail.virtual',
-        defaultVisible: false,
-        title: t`Virtual Part`
-      }),
       ReferenceColumn({
         switchable: true
       }),
@@ -274,6 +269,12 @@ export function BomTable({
           );
         }
       },
+      BooleanColumn({
+        accessor: 'sub_part_detail.virtual',
+        filter: 'sub_part_virtual',
+        defaultVisible: false,
+        title: t`Virtual Part`
+      }),
       BooleanColumn({
         accessor: 'optional',
         defaultVisible: false

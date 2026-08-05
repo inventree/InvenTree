@@ -90,6 +90,13 @@ Once the "Add Line Item" form opens, select a part in the list.
 
 Fill out the rest of the form then click on <span class="badge inventree confirm">Submit</span>
 
+!!! info "Discount"
+    An optional [discount](../concepts/pricing.md#line-item-discount) percentage can be applied to each line item.
+
+### Extra Line Items
+
+While [line items](#add-line-items) must reference a particular part, extra line items are available for any other itemized information that needs to be conveyed with the order - for example freight charges or service fees. Extra line items support an optional [discount](../concepts/pricing.md#line-item-discount) percentage, the same as regular line items.
+
 ## Shipments
 
 After all line items were added to the sales order, user needs to create one or more [shipments](#sales-order-shipments) in order to allocate stock for those parts.
@@ -109,6 +116,79 @@ After shipments were created, user can either:
 * Create a build order for that part to cover the quantity of the sales order (click on {{ icon("tools") }} button)
 
 During the allocation process, user is required to select the desired shipment that will contain the stock items.
+
+### Auto Allocate Stock
+
+To speed up the allocation process, use the *Auto Allocate Stock* button ({{ icon("wand") }}) available in the *Line Items* tab. This automatically finds available stock and creates the required allocations with minimal user interaction.
+
+!!! info "Background Task"
+    Auto-allocation runs as a background task. The UI will display a progress indicator while the task is running.
+
+#### Selecting Lines to Allocate
+
+By default, auto-allocation processes **all unallocated line items** on the order. To restrict allocation to a subset of lines, select the desired rows in the *Line Items* table before pressing the button — the dialog will indicate how many lines are selected.
+
+#### Auto Allocation Options
+
+The auto-allocation dialog provides the following options:
+
+**Source Location**
+
+Restrict stock to a specific location (and all of its sub-locations). Leave blank to consider stock from any location.
+
+**Exclude Location**
+
+Exclude stock from a specific location (and all of its sub-locations). Useful for reserving stock in a particular area.
+
+**Shipment**
+
+Optionally assign all new allocations to a specific pending shipment. Only shipments that have not yet been completed are shown.
+
+**Interchangeable Stock**
+
+When enabled (default), stock may be drawn from multiple stock items or locations to fulfil a single line item. When disabled, a line item is only allocated if a single stock item can cover the entire remaining quantity.
+
+!!! warning "Take Care"
+    Enabling *Interchangeable Stock* means the auto-allocation routine will combine stock from different batches or locations. Review the resulting allocations if traceability is important.
+
+**Stock Priority**
+
+Controls the order in which matching stock items are consumed:
+
+| Option | Description |
+| --- | --- |
+| Oldest stock first (FIFO) | Stock items updated least recently are consumed first *(default)* |
+| Newest stock first (LIFO) | Stock items updated most recently are consumed first |
+| Smallest quantity first | Stock items with the lowest available quantity are consumed first |
+| Largest quantity first | Stock items with the highest available quantity are consumed first |
+| Soonest expiry date first | Stock items expiring earliest are consumed first; items with no expiry date are used last |
+
+**Serialized Stock**
+
+Controls whether serialized stock items are included in the auto-allocation:
+
+| Option | Description |
+| --- | --- |
+| Allow any stock | Both serialized and unserialized stock items are considered *(default)* |
+| Serialized stock only | Only stock items that carry a serial number are allocated |
+| Unserialized stock only | Only stock items without a serial number are allocated |
+
+#### Allocation Behaviour
+
+The auto-allocation routine performs the following steps for each eligible line item:
+
+1. Skips line items for *virtual* parts.
+2. Skips line items that are already fully allocated.
+3. Queries available stock for the line's part, applying any location and serialized-stock filters.
+4. Sorts the candidates according to the chosen *Stock Priority*.
+5. Greedily allocates from each stock item in turn until the remaining quantity for the line is satisfied.
+
+#### Removing Allocations
+
+Individual or multiple allocations can be removed from the *Allocated Stock* tab. Select the allocations to remove and use the *Delete* action.
+
+!!! warning "Shipped Allocations Protected"
+    Allocations that belong to a completed (shipped) shipment cannot be deleted.
 
 ### Check Shipment
 

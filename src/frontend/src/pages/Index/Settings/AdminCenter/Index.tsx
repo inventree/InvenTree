@@ -1,3 +1,6 @@
+import { PluginPanelKey } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import type { PanelGroupType, PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
@@ -5,6 +8,7 @@ import {
   IconCpu,
   IconDevicesPc,
   IconExclamationCircle,
+  IconFileCode,
   IconFileDownload,
   IconFileUpload,
   IconHome,
@@ -12,6 +16,7 @@ import {
   IconListDetails,
   IconMail,
   IconPackages,
+  IconPhoto,
   IconPlugConnected,
   IconQrcode,
   IconReport,
@@ -21,10 +26,6 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
-
-import { PluginPanelKey } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
-import type { PanelGroupType, PanelType } from '@lib/types/Panel';
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import PageTitle from '../../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
@@ -32,6 +33,8 @@ import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
+import ParameterTemplateTable from '../../../../tables/general/ParameterTemplateTable';
+import SelectionListTable from '../../../../tables/settings/SelectionListTable';
 
 const ReportTemplatePanel = Loadable(
   lazy(() => import('./ReportTemplatePanel'))
@@ -69,8 +72,6 @@ const MachineManagementPanel = Loadable(
   lazy(() => import('./MachineManagementPanel'))
 );
 
-const ParameterPanel = Loadable(lazy(() => import('./ParameterPanel')));
-
 const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
 );
@@ -101,6 +102,14 @@ const PartCategoryTemplateTable = Loadable(
 
 const LocationTypesTable = Loadable(
   lazy(() => import('../../../../tables/stock/LocationTypesTable'))
+);
+
+const SnippetTable = Loadable(
+  lazy(() => import('../../../../tables/settings/SnippetTable'))
+);
+
+const AssetTable = Loadable(
+  lazy(() => import('../../../../tables/settings/AssetTable'))
 );
 
 export default function AdminCenter() {
@@ -192,7 +201,14 @@ export default function AdminCenter() {
         name: 'parameters',
         label: t`Parameters`,
         icon: <IconList />,
-        content: <ParameterPanel />,
+        content: <ParameterTemplateTable />,
+        hidden: !user.hasViewRole(UserRoles.part)
+      },
+      {
+        name: 'selection-lists',
+        label: t`Selection Lists`,
+        icon: <IconList />,
+        content: <SelectionListTable />,
         hidden: !user.hasViewRole(UserRoles.part)
       },
       {
@@ -213,6 +229,18 @@ export default function AdminCenter() {
         label: t`Report Templates`,
         icon: <IconReport />,
         content: <ReportTemplatePanel />
+      },
+      {
+        name: 'snippets',
+        label: t`Report Snippets`,
+        icon: <IconFileCode />,
+        content: <SnippetTable />
+      },
+      {
+        name: 'assets',
+        label: t`Report Assets`,
+        icon: <IconPhoto />,
+        content: <AssetTable />
       },
       {
         name: 'location-types',
@@ -266,12 +294,13 @@ export default function AdminCenter() {
       {
         id: 'reporting',
         label: t`Reporting`,
-        panelIDs: ['labels', 'reports']
+        panelIDs: ['labels', 'reports', 'snippets', 'assets']
       },
       {
         id: 'plm',
         label: t`PLM`,
         panelIDs: [
+          'selection-lists',
           'parameters',
           'category-parameters',
           'location-types',

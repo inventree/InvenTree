@@ -2,16 +2,25 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { useMemo } from 'react';
-import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
+import { useMemo, useRef } from 'react';
+import { PartCreationMenu } from '../../components/items/PartCreationMenu';
+import {
+  DescriptionColumn,
+  PartColumn
+} from '../../components/tables/ColumnRenderers';
+import { renderPartStockCell } from '../../components/tables/PartStockCell';
 import ParametricDataTable from '../general/ParametricDataTable';
 import { PartTableFilters } from './PartTableFilters';
 
 export default function ParametricPartTable({
-  categoryId
+  categoryId,
+  enableImport = true
 }: Readonly<{
   categoryId?: any;
+  enableImport?: boolean;
 }>) {
+  const tableRefreshRef = useRef<() => void>(null!);
+
   const customFilters: TableFilter[] = useMemo(() => PartTableFilters(), []);
 
   const customColumns: TableColumn[] = useMemo(() => {
@@ -30,10 +39,23 @@ export default function ParametricPartTable({
       },
       {
         accessor: 'total_in_stock',
-        sortable: true
+        sortable: true,
+        render: renderPartStockCell
       }
     ];
   }, []);
+
+  const tableActions = useMemo(
+    () => [
+      <PartCreationMenu
+        key='part-creation-menu'
+        categoryId={categoryId}
+        enableImport={enableImport}
+        refreshRef={tableRefreshRef}
+      />
+    ],
+    [categoryId, enableImport]
+  );
 
   return (
     <ParametricDataTable
@@ -43,6 +65,8 @@ export default function ParametricPartTable({
       endpoint={ApiEndpoints.part_list}
       customColumns={customColumns}
       customFilters={customFilters}
+      customActions={tableActions}
+      refreshRef={tableRefreshRef}
       queryParams={{
         category: categoryId,
         cascade: true,

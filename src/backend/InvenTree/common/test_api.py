@@ -2,15 +2,20 @@
 
 import io
 
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test.utils import override_settings
 from django.urls import reverse
 
 from PIL import Image
+from taggit.models import Tag
 
 import common.models
-from InvenTree.unit_test import InvenTreeAPITestCase
+from common.models import SelectionList, SelectionListEntry
+from common.settings import set_global_setting
+from InvenTree.unit_test import InvenTreeAPITestCase, findOffloadedEvent
 
 
 class DataOutputAPITests(InvenTreeAPITestCase):
@@ -71,6 +76,7 @@ class ParameterAPITests(InvenTreeAPITestCase):
             'model_type',
             'selectionlist',
             'enabled',
+            'unique',
         ]:
             self.assertIn(
                 field,
@@ -565,6 +571,269 @@ class ParameterAPITests(InvenTreeAPITestCase):
             common.models.Parameter.objects.filter(pk=parameter.pk).exists()
         )
 
+    @override_settings(
+        TESTING_TABLE_EVENTS=True,
+        PLUGIN_TESTING_EVENTS=True,
+        PLUGIN_TESTING_EVENTS_ASYNC=True,
+    )
+    def test_bulk_create_parameters(self):
+        """Test bulk creation of parameters via the API.
+
+        Test that:
+            - The correct number of items are created
+            - Instance creation events are offloaded to the background worker
+        """
+        from django_q.models import OrmQ
+
+        from part.models import Part
+
+        self.assignRole('part.add')
+
+        OrmQ.objects.all().delete()
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', True)
+
+        template = common.models.ParameterTemplate.objects.create(
+            name='Test Parameter',
+            description='A parameter template for testing bulk creation',
+            model_type=None,
+        )
+
+        # Generate a set of parts
+        parts = [
+            Part.objects.create(
+                name=f'Test Part {ii}', description='A part for testing'
+            )
+            for ii in range(50)
+        ]
+
+        N = common.models.Parameter.objects.count()
+
+        # Bulk-create parameters
+        response = self.post(
+            reverse('api-parameter-list'),
+            data=[
+                {
+                    'template': template.pk,
+                    'model_type': 'part.part',
+                    'model_id': part.pk,
+                    'data': f'Test data {part.pk}',
+                }
+                for part in parts
+            ],
+            benchmark=True,
+            max_query_count=500,
+            max_query_time=2.0,
+        )
+
+        self.assertEqual(len(response.data), 50)
+
+        # Check that the parameters have been created
+        self.assertEqual(common.models.Parameter.objects.count(), N + len(parts))
+
+        # We expect that 50 events have been offloaded to the background worker
+        self.assertGreaterEqual(OrmQ.objects.count(), len(parts))
+
+        # There should be a parameter for each part
+        for part in parts:
+            self.assertEqual(part.parameters.count(), 1)
+            parameter = part.parameters.first()
+            self.assertIsNotNone(parameter)
+            self.assertIsNotNone(parameter.updated)
+            self.assertIsNotNone(parameter.updated_by)
+            self.assertEqual(parameter.updated_by, self.user)
+
+            # Check that an associated event has been offloaded
+            self.assertIsNotNone(
+                findOffloadedEvent(
+                    'part_partparameter.created', matching_kwargs={'id': parameter.pk}
+                ),
+                f'No created event found for parameter {parameter.pk}',
+            )
+
+            # Check that an extra 'saved' event is *NOT* generated
+            self.assertIsNone(
+                findOffloadedEvent(
+                    'part_partparameter.saved', matching_kwargs={'id': parameter.pk}
+                ),
+                f'Unexpected saved event found for parameter {parameter.pk}',
+            )
+
+        set_global_setting('ENABLE_PLUGINS_EVENTS', False)
+
+    def test_parameter_uniqueness(self):
+        """Test the uniqueness options which can be applied to a ParameterTemplate."""
+        from company.models import Company
+        from part.models import Part
+
+        part_a = Part.objects.create(name='Part A', description='A part for testing')
+        part_b = Part.objects.create(name='Part B', description='A part for testing')
+        part_c = Part.objects.create(name='Part C', description='A part for testing')
+        company = Company.objects.create(
+            name='Test Company', description='A company for testing'
+        )
+
+        template = common.models.ParameterTemplate.objects.create(
+            name='Serial Number', description='A serial number parameter'
+        )
+
+        self.assertEqual(
+            template.unique, common.models.ParameterTemplate.UniqueOptions.NONE
+        )
+
+        param_a = common.models.Parameter(
+            template=template,
+            model_type=part_a.get_content_type(),
+            model_id=part_a.pk,
+            data='ABC123',
+        )
+        param_a.full_clean()
+        param_a.save()
+
+        # No uniqueness requirement - a duplicate value against a different part is fine
+        param_b = common.models.Parameter(
+            template=template,
+            model_type=part_b.get_content_type(),
+            model_id=part_b.pk,
+            data='ABC123',
+        )
+        param_b.full_clean()
+        param_b.save()
+
+        # Re-saving the existing instance (unchanged) should not raise any errors
+        param_a.full_clean()
+        param_a.save()
+
+        # Now, require uniqueness *per model type*
+        template.unique = common.models.ParameterTemplate.UniqueOptions.MODEL_TYPE
+        template.save()
+
+        # A new Part with the same value should be rejected
+        with self.assertRaises(ValidationError):
+            common.models.Parameter(
+                template=template,
+                model_type=part_c.get_content_type(),
+                model_id=part_c.pk,
+                data='ABC123',
+            ).full_clean()
+
+        # A case-insensitive match should also be rejected
+        with self.assertRaises(ValidationError):
+            common.models.Parameter(
+                template=template,
+                model_type=part_c.get_content_type(),
+                model_id=part_c.pk,
+                data='abc123',
+            ).full_clean()
+
+        # A different model type entirely is not affected by the 'model type' restriction
+        param_company = common.models.Parameter(
+            template=template,
+            model_type=company.get_content_type(),
+            model_id=company.pk,
+            data='ABC123',
+        )
+        param_company.full_clean()
+        param_company.save()
+
+        # Finally, require the value to be *globally* unique
+        template.unique = common.models.ParameterTemplate.UniqueOptions.GLOBAL
+        template.save()
+
+        with self.assertRaises(ValidationError):
+            common.models.Parameter(
+                template=template,
+                model_type=part_c.get_content_type(),
+                model_id=part_c.pk,
+                data='ABC123',
+            ).full_clean()
+
+    def test_parameter_uniqueness_units(self):
+        """Test that uniqueness checks are unit-aware for templates which define units.
+
+        Values expressed in different (but compatible) units which represent the
+        same physical quantity must be detected as duplicates.
+        """
+        from part.models import Part
+
+        part_a = Part.objects.create(name='Part A', description='A part for testing')
+        part_b = Part.objects.create(name='Part B', description='A part for testing')
+
+        template = common.models.ParameterTemplate.objects.create(
+            name='Resistance',
+            units='ohm',
+            description='A globally unique resistance parameter',
+            unique=common.models.ParameterTemplate.UniqueOptions.GLOBAL,
+        )
+
+        param_a = common.models.Parameter(
+            template=template,
+            model_type=part_a.get_content_type(),
+            model_id=part_a.pk,
+            data='1000',
+        )
+        param_a.full_clean()
+        param_a.save()
+
+        # A value expressed as '1k' ohms is numerically identical to '1000' ohms
+        with self.assertRaises(ValidationError):
+            common.models.Parameter(
+                template=template,
+                model_type=part_b.get_content_type(),
+                model_id=part_b.pk,
+                data='1k',
+            ).full_clean()
+
+        # A distinct value (in different units) is not a duplicate
+        param_b = common.models.Parameter(
+            template=template,
+            model_type=part_b.get_content_type(),
+            model_id=part_b.pk,
+            data='2k',
+        )
+        param_b.full_clean()
+        param_b.save()
+
+    def test_copy_unique_parameters(self):
+        """Test that 'unique' parameters are skipped when copying parameters between model instances."""
+        from part.models import Part
+
+        part_a = Part.objects.create(name='Part A', description='A part for testing')
+        part_b = Part.objects.create(name='Part B', description='A part for testing')
+
+        normal_template = common.models.ParameterTemplate.objects.create(
+            name='Color', description='A normal (non-unique) parameter'
+        )
+
+        unique_template = common.models.ParameterTemplate.objects.create(
+            name='Serial Number',
+            description='A globally unique parameter',
+            unique=common.models.ParameterTemplate.UniqueOptions.GLOBAL,
+        )
+
+        common.models.Parameter.objects.create(
+            template=normal_template,
+            model_type=part_a.get_content_type(),
+            model_id=part_a.pk,
+            data='Red',
+        )
+
+        common.models.Parameter.objects.create(
+            template=unique_template,
+            model_type=part_a.get_content_type(),
+            model_id=part_a.pk,
+            data='ABC123',
+        )
+
+        # Copy parameters from part_a to part_b
+        part_b.copy_parameters_from(part_a)
+
+        # The non-unique parameter should have been copied
+        self.assertEqual(part_b.get_parameter('Color').data, 'Red')
+
+        # The unique parameter should *not* have been copied, to avoid a conflicting value
+        self.assertIsNone(part_b.get_parameter('Serial Number'))
+
     def test_parameter_annotation(self):
         """Test that we can annotate parameters against a queryset."""
         from company.models import Company
@@ -999,3 +1268,236 @@ class AttachmentThumbnailAPITests(InvenTreeAPITestCase):
             set_global_setting(
                 'INVENTREE_UPLOAD_MAX_SIZE', original_limit, change_user=None
             )
+
+
+class TagAPITests(InvenTreeAPITestCase):
+    """Tests for the Tag API endpoints and tag-based filtering."""
+
+    roles = 'all'
+
+    LIST_URL = 'api-tag-list'
+    DETAIL_URL = 'api-tag-detail'
+
+    def setUp(self):
+        """Create a small set of tagged objects for filter testing."""
+        super().setUp()
+
+        from part.models import Part
+
+        self.part_a = Part.objects.create(
+            name='Tagged Part A', description='Part with apple and banana tags'
+        )
+        self.part_b = Part.objects.create(
+            name='Tagged Part B', description='Part with apple tag only'
+        )
+        self.part_c = Part.objects.create(
+            name='Untagged Part C', description='Part with no tags'
+        )
+
+        self.part_a.tags.add('apple', 'banana')
+        self.part_b.tags.add('apple')
+
+    # ------------------------------------------------------------------
+    # Tag list / CRUD
+    # ------------------------------------------------------------------
+
+    def test_tag_list(self):
+        """Tag list endpoint should return all existing tags."""
+        url = reverse(self.LIST_URL)
+        response = self.get(url)
+
+        names = {t['name'] for t in response.data}
+        self.assertIn('apple', names)
+        self.assertIn('banana', names)
+
+    def test_tag_create(self):
+        """Staff users should be able to create tags via POST."""
+        url = reverse(self.LIST_URL)
+        n = Tag.objects.count()
+
+        response = self.post(url, {'name': 'cherry'}, expected_code=201)
+        self.assertEqual(response.data['name'], 'cherry')
+        self.assertEqual(Tag.objects.count(), n + 1)
+
+    def test_tag_create_non_staff(self):
+        """Non-staff users must not be able to create tags."""
+        self.user.is_staff = False
+        self.user.save()
+
+        url = reverse(self.LIST_URL)
+        self.post(url, {'name': 'forbidden'}, expected_code=403)
+
+    def test_tag_edit(self):
+        """Staff users should be able to rename a tag via PATCH."""
+        tag = Tag.objects.get(name='banana')
+        url = reverse(self.DETAIL_URL, kwargs={'pk': tag.pk})
+
+        response = self.patch(url, {'name': 'blueberry'}, expected_code=200)
+        self.assertEqual(response.data['name'], 'blueberry')
+
+        tag.refresh_from_db()
+        self.assertEqual(tag.name, 'blueberry')
+
+    def test_tag_delete(self):
+        """Staff users should be able to delete a tag."""
+        tag = Tag.objects.get(name='banana')
+        url = reverse(self.DETAIL_URL, kwargs={'pk': tag.pk})
+
+        self.delete(url, expected_code=204)
+        self.assertFalse(Tag.objects.filter(name='banana').exists())
+
+    def test_tag_search(self):
+        """The list endpoint should support free-text search."""
+        url = reverse(self.LIST_URL)
+
+        response = self.get(url, data={'search': 'app'})
+        names = [t['name'] for t in response.data]
+        self.assertIn('apple', names)
+        self.assertNotIn('banana', names)
+
+    # ------------------------------------------------------------------
+    # Filter by model type
+    # ------------------------------------------------------------------
+
+    def test_tag_filter_model_type(self):
+        """Tags applied to a given model type should be returned when filtering by model_type."""
+        url = reverse(self.LIST_URL)
+
+        # Filter for tags applied to Part objects
+        response = self.get(url, data={'model_type': 'part.part'})
+        names = {t['name'] for t in response.data}
+
+        self.assertIn('apple', names)
+        self.assertIn('banana', names)
+
+    def test_tag_filter_model_type_unrelated(self):
+        """Filtering by a model type that has no tagged objects should return an empty list."""
+        url = reverse(self.LIST_URL)
+
+        # StockItem has no tagged objects in this test
+        response = self.get(url, data={'model_type': 'stock.stockitem'})
+        self.assertEqual(len(response.data), 0)
+
+    def test_tag_filter_model_type_invalid(self):
+        """An unrecognised model_type value should return a 400 error."""
+        url = reverse(self.LIST_URL)
+        self.get(url, data={'model_type': 'notanapp.notamodel'}, expected_code=400)
+
+    # ------------------------------------------------------------------
+    # Filter Part list by tags
+    # ------------------------------------------------------------------
+
+    def test_part_filter_single_tag(self):
+        """Filtering parts by a single tag should return only parts with that tag."""
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tags': 'apple'})
+        pks = {p['pk'] for p in response.data}
+
+        self.assertIn(self.part_a.pk, pks)
+        self.assertIn(self.part_b.pk, pks)
+        self.assertNotIn(self.part_c.pk, pks)
+
+    def test_part_filter_multiple_tags_and(self):
+        """Filtering by comma-separated tags should return only parts that have ALL tags."""
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tags': 'apple,banana'})
+        pks = {p['pk'] for p in response.data}
+
+        self.assertIn(self.part_a.pk, pks)
+        self.assertNotIn(self.part_b.pk, pks)  # only has 'apple'
+        self.assertNotIn(self.part_c.pk, pks)  # no tags at all
+
+    def test_part_filter_tag_case_insensitive(self):
+        """Tag filtering should be case-insensitive."""
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tags': 'APPLE'})
+        pks = {p['pk'] for p in response.data}
+
+        self.assertIn(self.part_a.pk, pks)
+        self.assertIn(self.part_b.pk, pks)
+
+    def test_part_filter_nonexistent_tag(self):
+        """Filtering by a tag that no part has should return an empty result set."""
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tags': 'doesnotexist'})
+        self.assertEqual(len(response.data), 0)
+
+    def test_part_filter_tag_whitespace(self):
+        """Whitespace around comma-separated tag names should be ignored."""
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tags': ' apple , banana '})
+        pks = {p['pk'] for p in response.data}
+
+        self.assertIn(self.part_a.pk, pks)
+        self.assertNotIn(self.part_b.pk, pks)
+
+
+class SelectionListLockedTest(InvenTreeAPITestCase):
+    """Tests that a locked SelectionList rejects all entry mutations."""
+
+    def setUp(self):
+        """Create a locked SelectionList with one entry."""
+        super().setUp()
+
+        self.sel_list = SelectionList.objects.create(name='Locked List', locked=True)
+        self.entry = SelectionListEntry.objects.create(
+            list=self.sel_list, value='v1', label='Entry 1'
+        )
+
+        self.list_url = reverse(
+            'api-selectionlist-detail', kwargs={'pk': self.sel_list.pk}
+        )
+        self.entry_list_url = reverse(
+            'api-selectionlistentry-list', kwargs={'pk': self.sel_list.pk}
+        )
+        self.entry_detail_url = reverse(
+            'api-selectionlistentry-detail',
+            kwargs={'pk': self.sel_list.pk, 'entrypk': self.entry.pk},
+        )
+
+    def test_create_entry_locked(self):
+        """POST a new entry to a locked list should be rejected."""
+        response = self.post(
+            self.entry_list_url,
+            {'list': self.sel_list.pk, 'value': 'v2', 'label': 'Entry 2'},
+            expected_code=400,
+        )
+        self.assertIn('list', response.data)
+        self.assertIn('locked', str(response.data['list']).lower())
+
+    def test_update_entry_locked(self):
+        """PATCH an entry on a locked list should be rejected."""
+        response = self.patch(
+            self.entry_detail_url, {'label': 'Changed'}, expected_code=400
+        )
+        self.assertIn('list', response.data)
+        self.assertIn('locked', str(response.data['list']).lower())
+
+    def test_delete_entry_locked(self):
+        """DELETE an entry from a locked list should be rejected."""
+        self.delete(self.entry_detail_url, expected_code=403)
+        self.assertTrue(SelectionListEntry.objects.filter(pk=self.entry.pk).exists())
+
+    def test_patch_list_with_choices_locked(self):
+        """PATCH the list with a choices payload should be rejected when locked."""
+        response = self.patch(
+            self.list_url,
+            {'choices': [{'value': 'v2', 'label': 'New'}]},
+            expected_code=400,
+        )
+        self.assertIn('locked', response.data)
+
+    def test_patch_list_without_choices_preserves_entries(self):
+        """PATCH the list without choices should not touch entries (even when unlocked)."""
+        self.sel_list.locked = False
+        self.sel_list.save()
+
+        self.patch(self.list_url, {'name': 'Renamed List'}, expected_code=200)
+
+        # Entry must still exist — omitting choices must not delete entries
+        self.assertTrue(SelectionListEntry.objects.filter(pk=self.entry.pk).exists())

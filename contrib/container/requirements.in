@@ -1,18 +1,18 @@
 # Base python requirements for docker containers
 
 # Basic package requirements
-invoke>=2.2.0                   # Invoke build tool
-pyyaml>=6.0.1
-setuptools>=69.0.0
-wheel>=0.41.0
+invoke                          # Invoke build tool
+pyyaml
+setuptools
+wheel
 
 # Database links
 psycopg[binary, pool]
-mysqlclient>=2.2.0
-mariadb>=1.1.8
+mysqlclient
+mariadb
 
 # gunicorn web server
-gunicorn>=22.0.0
+gunicorn
 
 # LDAP required packages
 django-auth-ldap                # Django integration for ldap auth

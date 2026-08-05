@@ -2,8 +2,7 @@
 
 from unittest.mock import patch
 
-from django.conf import settings
-from django.http import Http404
+from django.http import Http404, HttpRequest
 from django.urls import reverse
 
 from error_report.models import Error
@@ -289,18 +288,63 @@ class MiddlewareTests(InvenTreeTestCase):
                 response, 'window.INVENTREE_SETTINGS', status_code=500
             )
 
-            # Log stuff # TODO remove
-            print(
-                '###DBG-TST###',
-                'site',
-                settings.SITE_URL,
-                'trusted',
-                settings.CSRF_TRUSTED_ORIGINS,
-            )
-
             # Check that the correct step triggers the error message
             self.assertContains(
                 response,
                 'INVE-E7: The visited path `http://testserver` does not match',
                 status_code=500,
             )
+
+    def test_csrf_failure(self):
+        """Test the custom CSRF failure handler."""
+        from InvenTree.middleware import csrf_failure
+
+        EXPECTED_DETAIL = 'CSRF verification failed. Ensure INVENTREE_SITE_URL and INVENTREE_TRUSTED_ORIGINS are configured correctly.'
+
+        def make_request(path, headers=None):
+            request = HttpRequest()
+            request.path = path
+            request.META['SERVER_NAME'] = 'testserver'
+            request.META['SERVER_PORT'] = '80'
+            for key, value in (headers or {}).items():
+                request.META[f'HTTP_{key.upper().replace("-", "_")}'] = value
+            return request
+
+        # API path -> JSON 403 with meaningful message
+        response = csrf_failure(
+            make_request('/api/part/'), reason='origin check failed'
+        )
+        self.assertEqual(response.status_code, 403)
+        import json
+
+        data = json.loads(response.content)
+        self.assertEqual(data['detail'], EXPECTED_DETAIL)
+
+        # allauth headless path -> JSON 403
+        response = csrf_failure(make_request('/_allauth/browser/v1/auth/login'))
+        self.assertEqual(response.status_code, 403)
+        data = json.loads(response.content)
+        self.assertEqual(data['detail'], EXPECTED_DETAIL)
+
+        # Accept: application/json header -> JSON 403
+        response = csrf_failure(
+            make_request('/some/other/path/', {'Accept': 'application/json'}),
+            reason='origin check failed',
+        )
+        self.assertEqual(response.status_code, 403)
+        data = json.loads(response.content)
+        self.assertEqual(data['detail'], EXPECTED_DETAIL)
+
+        # Content-Type: application/json header -> JSON 403
+        response = csrf_failure(
+            make_request('/some/other/path/', {'Content-Type': 'application/json'}),
+            reason='origin check failed',
+        )
+        self.assertEqual(response.status_code, 403)
+        data = json.loads(response.content)
+        self.assertEqual(data['detail'], EXPECTED_DETAIL)
+
+        # Plain browser request -> falls back to Django default CSRF page (403 HTML, not JSON)
+        response = csrf_failure(make_request('/web/'), reason='origin check failed')
+        self.assertEqual(response.status_code, 403)
+        self.assertNotIn(b'application/json', response.get('Content-Type', '').encode())

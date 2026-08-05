@@ -2,6 +2,7 @@
 
 import io
 import json
+import os
 import time
 from datetime import timedelta
 from http import HTTPStatus
@@ -221,6 +222,46 @@ class AttachmentTest(InvenTreeAPITestCase):
         url = attachment.fully_qualified_url()
         self.assertIs(type(url), str)
         self.assertIn(f'/media/attachments/part/{part.pk}/test', url)
+
+    def test_str_representation(self):
+        """Test the __str__ method of the Attachment model.
+
+        - If a file is attached, the string representation should be the file basename.
+        - If only a link is provided (no file), the string representation should be the link.
+        - If neither is set, fall back to the default django representation.
+        """
+        part = Part.objects.first()
+
+        # Case 1: Attachment has an uploaded file - string is the file basename
+        attachment = Attachment.objects.create(
+            attachment=self.generate_file('test.txt'),
+            comment='File attachment',
+            model_type='part',
+            model_id=part.pk,
+        )
+
+        self.assertTrue(str(attachment).startswith('test'))
+        self.assertTrue(str(attachment).endswith('.txt'))
+        self.assertEqual(str(attachment), os.path.basename(attachment.attachment.name))
+
+        # Case 2: Attachment has only a link (no uploaded file) - string is the link
+        link = 'https://www.example.org'
+        attachment = Attachment.objects.create(
+            link=link, comment='Link attachment', model_type='part', model_id=part.pk
+        )
+
+        self.assertEqual(str(attachment), link)
+
+        # Case 3: Attachment has neither a file nor a link set
+        # (bypass 'save' to skip the validation which requires one of these fields)
+        attachment = Attachment(
+            comment='Empty attachment', model_type='part', model_id=part.pk
+        )
+
+        self.assertFalse(attachment.attachment)
+        self.assertFalse(attachment.link)
+        self.assertEqual(str(attachment), super(Attachment, attachment).__str__())
+        self.assertEqual(str(attachment), f'Attachment object ({attachment.pk})')
 
 
 class SettingsTest(InvenTreeTestCase):
@@ -1752,6 +1793,22 @@ class ProjectCodesTest(InvenTreeAPITestCase):
             str(response.data['code']),
         )
 
+    def test_filter_active(self):
+        """Test that the 'active' field can be filtered via the API."""
+        # Mark one code as inactive
+        code = ProjectCode.objects.first()
+        code.active = False
+        code.save()
+
+        active_count = ProjectCode.objects.filter(active=True).count()
+        inactive_count = ProjectCode.objects.filter(active=False).count()
+
+        response = self.get(self.url, data={'active': True}, expected_code=200)
+        self.assertEqual(len(response.data), active_count)
+
+        response = self.get(self.url, data={'active': False}, expected_code=200)
+        self.assertEqual(len(response.data), inactive_count)
+
     def test_write_access(self):
         """Test that non-staff users have read-only access."""
         # By default user has staff access, can create a new project code
@@ -2103,43 +2160,58 @@ class SelectionListTest(InvenTreeAPITestCase):
         # Test adding a new list via the API
         response = self.post(
             reverse('api-selectionlist-list'),
-            {
-                'name': 'New List',
-                'active': True,
-                'choices': [{'value': '1', 'label': 'Test Entry'}],
-            },
+            {'name': 'New List', 'active': True},
             expected_code=201,
         )
         list_pk = response.data['pk']
         self.assertEqual(response.data['name'], 'New List')
         self.assertTrue(response.data['active'])
+
+        entry_list_url = reverse('api-selectionlistentry-list', kwargs={'pk': list_pk})
+
+        # Add an entry via the entry API
+        response = self.post(
+            entry_list_url,
+            {'list': list_pk, 'value': '1', 'label': 'Test Entry'},
+            expected_code=201,
+        )
+        entry_pk = response.data['id']
+        self.assertEqual(response.data['value'], '1')
+        self.assertEqual(response.data['label'], 'Test Entry')
+
+        # Verify the entry appears in the list's choices
+        response = self.get(
+            reverse('api-selectionlist-detail', kwargs={'pk': list_pk}),
+            data={'choices': True},
+            expected_code=200,
+        )
         self.assertEqual(len(response.data['choices']), 1)
         self.assertEqual(response.data['choices'][0]['value'], '1')
 
-        # Test editing the list choices via the API (remove and add in same call)
-        response = self.patch(
-            reverse('api-selectionlist-detail', kwargs={'pk': list_pk}),
-            {'choices': [{'value': '2', 'label': 'New Label'}]},
-            expected_code=200,
+        # Edit the entry via the entry detail API
+        entry_url = reverse(
+            'api-selectionlistentry-detail', kwargs={'pk': list_pk, 'entrypk': entry_pk}
         )
-        self.assertEqual(response.data['name'], 'New List')
-        self.assertTrue(response.data['active'])
-        self.assertEqual(len(response.data['choices']), 1)
-        self.assertEqual(response.data['choices'][0]['value'], '2')
-        self.assertEqual(response.data['choices'][0]['label'], 'New Label')
-        entry_id = response.data['choices'][0]['id']
+        response = self.patch(entry_url, {'label': 'Updated Label'}, expected_code=200)
+        self.assertEqual(response.data['value'], '1')
+        self.assertEqual(response.data['label'], 'Updated Label')
 
-        # Test changing an entry via list API
-        response = self.patch(
+        # Add a second entry, then delete the first via the entry detail API
+        self.post(
+            entry_list_url,
+            {'list': list_pk, 'value': '2', 'label': 'Second Entry'},
+            expected_code=201,
+        )
+        self.delete(entry_url, expected_code=204)
+
+        # Verify only the second entry remains
+        response = self.get(
             reverse('api-selectionlist-detail', kwargs={'pk': list_pk}),
-            {'choices': [{'id': entry_id, 'value': '2', 'label': 'New Label Text'}]},
+            data={'choices': True},
             expected_code=200,
         )
-        self.assertEqual(response.data['name'], 'New List')
-        self.assertTrue(response.data['active'])
         self.assertEqual(len(response.data['choices']), 1)
         self.assertEqual(response.data['choices'][0]['value'], '2')
-        self.assertEqual(response.data['choices'][0]['label'], 'New Label Text')
 
     def test_api_locked(self):
         """Test editing with locked/unlocked list."""

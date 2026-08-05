@@ -612,6 +612,7 @@ class GeneralApiTests(InvenTreeAPITestCase):
         response = self.get(
             url, headers={'Authorization': f'Token {token}'}, max_query_count=20
         )
+        self.assertIsNotNone(data.get('active_plugins'))
         self.assertGreater(len(response.json()['database']), 4)
 
         data = response.json()

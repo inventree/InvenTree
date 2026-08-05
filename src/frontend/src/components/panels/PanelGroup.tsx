@@ -37,7 +37,11 @@ import { Boundary } from '@lib/components/Boundary';
 import { StylishText } from '@lib/components/StylishText';
 import type { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { identifierString } from '@lib/functions/Conversion';
-import { cancelEvent } from '@lib/functions/Events';
+import {
+  type InvenTreeHotkeyItem,
+  cancelEvent,
+  useInvenTreeHotkeys
+} from '@lib/functions/Events';
 import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type {
@@ -334,6 +338,22 @@ function BasePanelGroup({
       return panel ?? '';
     }
   }, [activePanels, panel]);
+
+  // hotkeys
+  const hotkeys = useMemo(() => {
+    const keys: InvenTreeHotkeyItem[] = [];
+    activePanels.forEach((panel) => {
+      if (panel.hotkey) {
+        keys.push([
+          panel.hotkey,
+          t`Navigate to panel ${panel.name}`,
+          () => handlePanelChange(panel.name)
+        ]);
+      }
+    });
+    return keys;
+  }, [activePanels]);
+  useInvenTreeHotkeys(hotkeys);
 
   const [isDirty, setIsDirty] = useState(false);
   useWindowEvent('beforeunload', (event) => {

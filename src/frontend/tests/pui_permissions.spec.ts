@@ -2,7 +2,7 @@
  * Tests for UI permissions checks
  */
 
-import test from '@playwright/test';
+import { test } from './baseFixtures';
 import { adminuser, readeruser } from './defaults';
 import { clickOnRowMenu, loadTab } from './helpers';
 import { doCachedLogin } from './login';
@@ -72,6 +72,22 @@ test('Permissions - Reader', async ({ browser }) => {
   await page
     .getByRole('cell', { name: 'Thumbnail Blue Chair' })
     .locator('div')
+    .first()
+    .click();
+
+  // Click on the link in the detail drawer
+  await page.getByText('Allocated to Build Orders').waitFor();
+  await page.getByText('Component Part').waitFor();
+  await page
+    .getByRole('link', { name: 'Chair', exact: true })
+    .first()
+    .waitFor();
+  await page
+    .getByRole('link', { name: 'Chairs', exact: true })
+    .first()
+    .waitFor();
+  await page
+    .getByRole('link', { name: 'details-part-108', exact: true })
     .first()
     .click();
 

@@ -1,13 +1,17 @@
 """Unit testing for the various report models."""
 
 import os
+import tempfile
 from io import StringIO
+from pathlib import Path
+from unittest.mock import patch
 
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.test import TestCase
 from django.urls import reverse
 
 from pypdf import PdfReader
@@ -16,8 +20,9 @@ import report.models as report_models
 from build.models import Build
 from common.models import Attachment
 from common.settings import set_global_setting
+from InvenTree.config import get_base_dir
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
-from order.models import ReturnOrder, SalesOrder
+from order.models import PurchaseOrder, ReturnOrder, SalesOrder
 from part.models import Part
 from plugin.registry import registry
 from report.models import LabelTemplate, ReportTemplate
@@ -731,9 +736,406 @@ class TestReportTest(PrintTestMixins, ReportTest):
             self.run_print_test(SalesOrder, 'salesorder', label=False)
 
 
+class ReportPrintPermissionTest(InvenTreeAPITestCase):
+    """Test that the report print endpoint checks VIEW permission on the associated model type."""
+
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+        'order',
+    ]
+
+    superuser = False
+    roles = []
+
+    def setUp(self):
+        """Setup for permission tests."""
+        cache.clear()
+        apps.get_app_config('report').create_default_reports()
+        return super().setUp()
+
+    def test_report_print_model_permission(self):
+        """A user without VIEW permission on the model type must receive 403; granting the role allows printing."""
+        template = ReportTemplate.objects.filter(
+            enabled=True, model_type='purchaseorder'
+        ).first()
+        self.assertIsNotNone(template)
+
+        items = PurchaseOrder.objects.all()[:2]
+        self.assertGreater(len(items), 0)
+
+        url = reverse('api-report-print')
+        post_data = {'template': template.pk, 'items': [item.pk for item in items]}
+
+        # No roles assigned: expect permission denied
+        self.post(url, data=post_data, expected_code=403)
+
+        # Grant view access to purchase orders
+        self.assignRole('purchase_order.view')
+        cache.clear()
+
+        # Should now succeed
+        self.post(url, data=post_data, expected_code=201)
+
+    def test_report_print_disabled_template(self):
+        """Printing against a disabled report template must be rejected."""
+        self.assignRole('purchase_order.view')
+        cache.clear()
+
+        template = ReportTemplate.objects.filter(
+            enabled=True, model_type='purchaseorder'
+        ).first()
+        self.assertIsNotNone(template)
+
+        items = PurchaseOrder.objects.all()[:2]
+        self.assertGreater(len(items), 0)
+
+        url = reverse('api-report-print')
+        post_data = {'template': template.pk, 'items': [item.pk for item in items]}
+
+        # Enabled template: should succeed
+        self.post(url, data=post_data, expected_code=201)
+
+        # Disable the template and retry: should be rejected
+        template.enabled = False
+        template.save()
+
+        self.post(url, data=post_data, expected_code=400)
+
+
+class LabelPrintPermissionTest(InvenTreeAPITestCase):
+    """Test that the label print endpoint checks VIEW permission on the associated model type."""
+
+    fixtures = ['category', 'part', 'company', 'location', 'supplier_part', 'stock']
+
+    superuser = False
+    roles = []
+
+    def setUp(self):
+        """Setup for permission tests."""
+        cache.clear()
+        apps.get_app_config('report').create_default_labels()
+        return super().setUp()
+
+    def test_label_print_model_permission(self):
+        """A user without VIEW permission on the model type must receive 403; granting the role allows printing."""
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        self.assertIsNotNone(template)
+        self.assertGreater(template.width, 0)
+        self.assertGreater(template.height, 0)
+
+        items = Part.objects.all()[:2]
+        self.assertGreater(len(items), 0)
+
+        url = reverse('api-label-print')
+        post_data = {'template': template.pk, 'items': [item.pk for item in items]}
+
+        # No roles assigned: expect permission denied
+        self.post(url, data=post_data, expected_code=403)
+
+        # Grant view access to parts
+        self.assignRole('part.view')
+        cache.clear()
+
+        # Should now succeed
+        self.post(url, data=post_data, expected_code=201)
+
+    def test_label_print_disabled_template(self):
+        """Printing against a disabled label template must be rejected."""
+        self.assignRole('part.view')
+        cache.clear()
+
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        self.assertIsNotNone(template)
+        self.assertGreater(template.width, 0)
+        self.assertGreater(template.height, 0)
+
+        items = Part.objects.all()[:2]
+        self.assertGreater(len(items), 0)
+
+        url = reverse('api-label-print')
+        post_data = {'template': template.pk, 'items': [item.pk for item in items]}
+
+        # Enabled template: should succeed
+        self.post(url, data=post_data, expected_code=201)
+
+        # Disable the template and retry: should be rejected
+        template.enabled = False
+        template.save()
+
+        self.post(url, data=post_data, expected_code=400)
+
+
 class AdminTest(AdminTestCase):
     """Tests for the admin interface integration."""
 
     def test_admin(self):
         """Test the admin URL."""
         self.helper(model=ReportTemplate)
+
+
+class URLFetcherE2ETest(ReportTest):
+    """End-to-end test: the URL fetcher blocks malicious URLs during a real PDF render.
+
+    Extends ReportTest so that fixtures, auth, and default report templates are all
+    available.  The print task runs synchronously in test mode (no workers), so the
+    render completes inline and log output is captured within the same request.
+    """
+
+    def test_file_url_blocked_in_render(self):
+        """A template embedding a file:// URL must still produce a PDF, but the URL must be blocked and logged."""
+        from io import StringIO
+
+        # Upload a minimal report template that embeds a malicious file:// reference.
+        html = (
+            '<html><body>'
+            '<img src="file:///etc/passwd">'
+            '<p>Security test content</p>'
+            '</body></html>'
+        )
+        template_io = StringIO(html)
+        template_io.name = 'security_test_template.html'
+
+        response = self.post(
+            reverse('api-report-template-list'),
+            data={
+                'name': 'Security Test',
+                'description': 'Tests that file:// URLs are blocked during rendering',
+                'template': template_io,
+                'model_type': 'stockitem',
+            },
+            format=None,
+            expected_code=201,
+        )
+        template_pk = response.data['pk']
+
+        item = StockItem.objects.first()
+        self.assertIsNotNone(item)
+
+        # Render the template.  WeasyPrint catches the ValueError from our fetcher and
+        # continues, so the PDF is still generated — the blocked resource is just skipped.
+        with self.assertLogs('inventree', level='WARNING') as captured:
+            response = self.post(
+                reverse('api-report-print'),
+                {'template': template_pk, 'items': [item.pk]},
+                expected_code=201,
+            )
+
+        # A PDF output should have been produced despite the blocked resource.
+        self.assertTrue(response.data['output'].endswith('.pdf'))
+
+        # The fetcher must have logged a warning identifying the blocked URL.
+        blocked_warnings = [
+            msg
+            for msg in captured.output
+            if 'blocked file://' in msg and '/etc/passwd' in msg
+        ]
+        self.assertTrue(
+            blocked_warnings, 'Expected a blocked file:// warning in the log output'
+        )
+
+    def test_ssrf_url_blocked_in_render(self):
+        """A template embedding an HTTP URL to a private/reserved address must be blocked and logged."""
+        from io import StringIO
+
+        # 127.0.0.1 is loopback — validate_url_no_ssrf rejects it regardless of port.
+        html = (
+            '<html><body>'
+            '<img src="http://127.0.0.1/ssrf-probe">'
+            '<p>Security test content</p>'
+            '</body></html>'
+        )
+        template_io = StringIO(html)
+        template_io.name = 'ssrf_test_template.html'
+
+        response = self.post(
+            reverse('api-report-template-list'),
+            data={
+                'name': 'SSRF Test',
+                'description': 'Tests that SSRF URLs are blocked during rendering',
+                'template': template_io,
+                'model_type': 'stockitem',
+            },
+            format=None,
+            expected_code=201,
+        )
+        template_pk = response.data['pk']
+
+        item = StockItem.objects.first()
+        self.assertIsNotNone(item)
+
+        # Render the template.  WeasyPrint catches the ValueError from our fetcher and
+        # continues, so the PDF is still generated — the blocked resource is just skipped.
+        with self.assertLogs('inventree', level='WARNING') as captured:
+            response = self.post(
+                reverse('api-report-print'),
+                {'template': template_pk, 'items': [item.pk]},
+                expected_code=201,
+            )
+
+        # A PDF output should have been produced despite the blocked resource.
+        self.assertTrue(response.data['output'].endswith('.pdf'))
+
+        # The fetcher must have logged a warning for the blocked SSRF attempt.
+        blocked_warnings = [
+            msg
+            for msg in captured.output
+            if 'blocked URL' in msg and '127.0.0.1' in msg
+        ]
+        self.assertTrue(
+            blocked_warnings, 'Expected a blocked SSRF URL warning in the log output'
+        )
+
+    def test_fetch_urls_disabled_blocks_http(self):
+        """When REPORT_FETCH_URLS is False, any http/https URL in a template must be blocked."""
+        from io import StringIO
+
+        from common.settings import set_global_setting
+
+        # Use a publicly routable address so the test would reach the network if
+        # our guard were absent — we want to confirm it is stopped by the setting,
+        # not by a secondary SSRF IP check.
+        html = (
+            '<html><body>'
+            '<img src="https://example.com/image.png">'
+            '<p>Security test content</p>'
+            '</body></html>'
+        )
+        template_io = StringIO(html)
+        template_io.name = 'fetch_disabled_test_template.html'
+
+        response = self.post(
+            reverse('api-report-template-list'),
+            data={
+                'name': 'Fetch Disabled Test',
+                'description': 'Tests that HTTP fetching is blocked when REPORT_FETCH_URLS=False',
+                'template': template_io,
+                'model_type': 'stockitem',
+            },
+            format=None,
+            expected_code=201,
+        )
+        template_pk = response.data['pk']
+
+        item = StockItem.objects.first()
+        self.assertIsNotNone(item)
+
+        set_global_setting('REPORT_FETCH_URLS', False, change_user=None)
+
+        with self.assertLogs('inventree', level='WARNING') as captured:
+            response = self.post(
+                reverse('api-report-print'),
+                {'template': template_pk, 'items': [item.pk]},
+                expected_code=201,
+            )
+
+        self.assertTrue(response.data['output'].endswith('.pdf'))
+
+        blocked_warnings = [
+            msg
+            for msg in captured.output
+            if 'REPORT_FETCH_URLS' in msg and 'example.com' in msg
+        ]
+        self.assertTrue(
+            blocked_warnings, 'Expected a REPORT_FETCH_URLS warning in the log output'
+        )
+
+
+class URLFetcherTest(TestCase):
+    """Tests for InvenTreeURLFetcher security restrictions."""
+
+    def setUp(self):
+        """Import fetcher for each test."""
+        from report.fetcher import InvenTreeURLFetcher
+
+        self.fetcher = InvenTreeURLFetcher()
+
+    def test_file_url_blocked(self):
+        """file:// URLs must always be rejected regardless of path."""
+        for url in [
+            'file:///etc/passwd',
+            'file:///proc/self/environ',
+            f'file://{settings.MEDIA_ROOT}/report/assets/anything.png',
+            f'file://{settings.STATIC_ROOT}/some/font.ttf',
+        ]:
+            with self.assertRaises(ValueError, msg=f'Expected block for {url}'):
+                self.fetcher.fetch(url)
+
+    def test_unknown_scheme_blocked(self):
+        """Non-http/data/file schemes must be rejected."""
+        for url in ['ftp://example.com/file.txt', 'javascript://x']:
+            with self.assertRaises(ValueError, msg=f'Expected block for {url}'):
+                self.fetcher.fetch(url)
+
+    def test_data_uri_allowed(self):
+        """data: URIs must always be permitted."""
+        with patch('weasyprint.urls.URLFetcher.fetch', return_value={}):
+            self.fetcher.fetch('data:image/png;base64,abc123')
+            self.fetcher.fetch('data:text/css;base64,abc123')
+
+
+class DefaultTemplateFileTest(TestCase):
+    """Unit tests for building the default report and label template files."""
+
+    def test_file_size_matches_bytes(self):
+        """file_from_template must size the ContentFile by byte length.
+
+        Reading the template in text mode makes the size a character count,
+        which is smaller than the byte length for multi-byte content and breaks
+        uploads to S3 backends that enforce Content-Length.
+        """
+        config = apps.get_app_config('report')
+        filename = 'inventree_transfer_order_report.html'
+        content_file = config.file_from_template('report', filename)
+        path = get_base_dir().joinpath('report', 'templates', 'report', filename)
+        self.assertEqual(content_file.size, path.stat().st_size)
+
+    def test_file_from_template_is_encoding_agnostic(self):
+        """file_from_template must preserve the exact bytes for any encoding.
+
+        A text-mode read sizes the ContentFile by character count and needs the
+        correct decoder, so non-English content is both mis-sized and at risk of
+        corruption. Reading the raw bytes keeps the file identical to what is on
+        disk, so the size always matches the Content-Length used for S3 uploads.
+        The samples below cover non-ASCII text in a few encodings, including
+        multi-byte content where a character count would not equal the byte
+        length.
+        """
+        config = apps.get_app_config('report')
+
+        # (encoding, text, whether the encoding uses multi-byte characters).
+        # The utf cases hold characters that span more than one byte, so a
+        # character count would not equal the byte length; latin-1 stays
+        # single-byte and is included to show the read is not utf-8 specific.
+        cases = [
+            ('utf-8', 'Système de café ≤ 你好 в наявності 📦', True),
+            ('utf-16', 'Système de café ≤ 你好 в наявності 📦', True),
+            ('latin-1', 'Système de café àéîõü', False),
+        ]
+
+        for encoding, text, multibyte in cases:
+            with self.subTest(encoding=encoding):
+                body = f'<html><body>{text}</body></html>'
+                raw = body.encode(encoding)
+
+                if multibyte:
+                    # A character count would differ from the byte length here
+                    self.assertNotEqual(len(raw), len(body))
+
+                with tempfile.TemporaryDirectory() as tmp:
+                    base = Path(tmp)
+                    template_dir = base.joinpath('report', 'templates', 'report')
+                    template_dir.mkdir(parents=True)
+                    filename = f'encoding_{encoding}.html'
+                    template_dir.joinpath(filename).write_bytes(raw)
+
+                    with patch('report.apps.get_base_dir', return_value=base):
+                        content_file = config.file_from_template('report', filename)
+
+                # Size and content must match the raw bytes exactly
+                self.assertEqual(content_file.size, len(raw))
+                self.assertEqual(content_file.read(), raw)

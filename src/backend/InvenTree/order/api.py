@@ -6,6 +6,7 @@ from typing import cast
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.db.models import F, Q
 from django.http.response import JsonResponse
 from django.urls import include, path, re_path
@@ -22,6 +23,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 import build.models
+import common.filters
 import common.models
 import common.serializers
 import common.settings
@@ -31,6 +33,7 @@ import stock.serializers as stock_serializers
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import (
+    BulkDeleteMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
     ParameterListMixin,
@@ -101,9 +104,7 @@ class OrderCreateMixin:
         serializer = self.get_serializer(data=self.clean_data(request.data))
         serializer.is_valid(raise_exception=True)
 
-        item = serializer.save()
-        item.created_by = request.user
-        item.save()
+        serializer.save(created_by=request.user)
 
         headers = self.get_success_headers(serializer.data)
         return Response(
@@ -275,6 +276,8 @@ class OrderFilter(FilterSet):
         q4 = Q(target_date__lte=value)
 
         return queryset.filter(q1 | q2 | q3 | q4).distinct()
+
+    tags = common.filters.TagsFilter()
 
 
 class LineItemFilter(FilterSet):
@@ -681,19 +684,34 @@ class PurchaseOrderLineItemList(
 
         # possibly merge duplicate items
         line_item = None
-        if data.get('merge_items', True):
-            other_line = models.PurchaseOrderLineItem.objects.filter(
-                part=data.get('part'),
-                order=data.get('order'),
-                target_date=data.get('target_date'),
-                destination=data.get('destination'),
-            ).first()
+        merge_items = data.get(
+            'merge_items',
+            common.settings.get_global_setting(
+                'PURCHASEORDER_MERGE_LINE_ITEMS', backup_value=True
+            ),
+        )
 
-            if other_line is not None:
-                other_line.quantity += Decimal(data.get('quantity', 0))
-                other_line.save()
+        if merge_items:
+            with transaction.atomic():
+                # Lock the matching row, so concurrent line creations cannot
+                # both read the same starting quantity (lost update)
+                other_line = (
+                    models.PurchaseOrderLineItem.objects
+                    .select_for_update()
+                    .filter(
+                        part=data.get('part'),
+                        order=data.get('order'),
+                        target_date=data.get('target_date'),
+                        destination=data.get('destination'),
+                    )
+                    .first()
+                )
 
-                line_item = other_line
+                if other_line is not None:
+                    other_line.quantity += Decimal(data.get('quantity', 0))
+                    other_line.save()
+
+                    line_item = other_line
 
         # otherwise create a new line item
         if line_item is None:
@@ -733,7 +751,6 @@ class PurchaseOrderLineItemList(
         'reference',
         'SKU',
         'IPN',
-        'total_price',
         'target_date',
         'order',
         'status',
@@ -759,7 +776,7 @@ class PurchaseOrderLineItemDetail(
 
 
 class PurchaseOrderExtraLineList(
-    GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI
+    GeneralExtraLineList, OutputOptionsMixin, ListCreateDestroyAPIView
 ):
     """API endpoint for accessing a list of PurchaseOrderExtraLine objects."""
 
@@ -1051,7 +1068,10 @@ class SalesOrderLineItemOutputOptions(OutputConfiguration):
 
 
 class SalesOrderLineItemList(
-    SalesOrderLineItemMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+    SalesOrderLineItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for accessing a list of SalesOrderLineItem objects."""
 
@@ -1074,6 +1094,8 @@ class SalesOrderLineItemList(
         'sale_price',
         'target_date',
         'line',
+        'status',
+        'shipment_date',
     ]
 
     ordering_field_aliases = {
@@ -1082,6 +1104,8 @@ class SalesOrderLineItemList(
         'IPN': 'part__IPN',
         'order': 'order__reference',
         'line': ['line_int', 'line', 'part__name'],
+        'status': 'order__status',
+        'shipment_date': 'order__shipment_date',
     }
 
     search_fields = ['part__name', 'quantity', 'reference']
@@ -1095,7 +1119,9 @@ class SalesOrderLineItemDetail(
     output_options = SalesOrderLineItemOutputOptions
 
 
-class SalesOrderExtraLineList(GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI):
+class SalesOrderExtraLineList(
+    GeneralExtraLineList, OutputOptionsMixin, ListCreateDestroyAPIView
+):
     """API endpoint for accessing a list of SalesOrderExtraLine objects."""
 
     queryset = models.SalesOrderExtraLine.objects.all()
@@ -1168,6 +1194,50 @@ class SalesOrderAllocate(SalesOrderContextMixin, CreateAPI):
 
     queryset = models.SalesOrder.objects.none()
     serializer_class = serializers.SalesOrderShipmentAllocationSerializer
+
+
+class SalesOrderAutoAllocate(SalesOrderContextMixin, CreateAPI):
+    """API endpoint to automatically allocate stock against a SalesOrder.
+
+    - Offloads work to a background task and returns task detail
+    """
+
+    serializer_class = serializers.SalesOrderAutoAllocationSerializer
+
+    @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
+    def post(self, *args, **kwargs):
+        """Validate parameters and offload auto-allocation to a background task."""
+        from InvenTree.tasks import offload_task
+        from order.tasks import auto_allocate_sales_order
+
+        order_obj = self.get_object()
+        serializer = self.get_serializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        # Extract related models from the validated data
+        location = data.get('location')
+        exclude_location = data.get('exclude_location')
+        shipment = data.get('shipment')
+        line_items = data.get('line_items', [])
+
+        # Offload to the background worker
+        # Note: We provide the model ID values, not the model instances
+        task_id = offload_task(
+            auto_allocate_sales_order,
+            order_obj.pk,
+            location_id=location.pk if location else None,
+            exclude_location_id=exclude_location.pk if exclude_location else None,
+            shipment_id=shipment.pk if shipment else None,
+            line_ids=[item.pk for item in line_items] if line_items else None,
+            interchangeable=data['interchangeable'],
+            stock_sort_by=data['stock_sort_by'],
+            serialized_stock=data['serialized_stock'],
+            group='sales_order',
+        )
+
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+        return Response(response, status=response['http_status'])
 
 
 class SalesOrderAllocationFilter(FilterSet):
@@ -1300,13 +1370,22 @@ class SalesOrderAllocationOutputOptions(OutputConfiguration):
 
 
 class SalesOrderAllocationList(
-    SalesOrderAllocationMixin, BulkUpdateMixin, OutputOptionsMixin, ListAPI
+    SalesOrderAllocationMixin,
+    BulkDeleteMixin,
+    BulkUpdateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListAPI,
 ):
     """API endpoint for listing SalesOrderAllocation objects."""
 
     filterset_class = SalesOrderAllocationFilter
     filter_backends = SEARCH_ORDER_FILTER
     output_options = SalesOrderAllocationOutputOptions
+
+    def filter_delete_queryset(self, queryset, request):
+        """Prevent deletion of allocations that have already been shipped."""
+        return queryset.filter(shipment__shipment_date__isnull=True)
 
     ordering_fields = [
         'quantity',
@@ -1394,6 +1473,8 @@ class SalesOrderShipmentFilter(FilterSet):
         q2 = Q(order__status_custom_key=value)
 
         return queryset.filter(q1 | q2).distinct()
+
+    tags = common.filters.TagsFilter()
 
 
 class SalesOrderShipmentMixin:
@@ -1711,7 +1792,10 @@ class ReturnOrderLineItemOutputOptions(OutputConfiguration):
 
 
 class ReturnOrderLineItemList(
-    ReturnOrderLineItemMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+    ReturnOrderLineItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for accessing a list of ReturnOrderLineItemList objects."""
 
@@ -1754,7 +1838,9 @@ class ReturnOrderLineItemDetail(
     output_options = ReturnOrderLineItemOutputOptions
 
 
-class ReturnOrderExtraLineList(GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI):
+class ReturnOrderExtraLineList(
+    GeneralExtraLineList, OutputOptionsMixin, ListCreateDestroyAPIView
+):
     """API endpoint for accessing a list of ReturnOrderExtraLine objects."""
 
     queryset = models.ReturnOrderExtraLine.objects.all()
@@ -2249,7 +2335,10 @@ class TransferOrderLineItemOutputOptions(OutputConfiguration):
 
 
 class TransferOrderLineItemList(
-    TransferOrderLineItemMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+    TransferOrderLineItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for accessing a list of TransferOrderLineItem objects."""
 
@@ -2581,6 +2670,11 @@ order_api_urls = [
                         'allocate-serials/',
                         SalesOrderAllocateSerials.as_view(),
                         name='api-so-allocate-serials',
+                    ),
+                    path(
+                        'auto-allocate/',
+                        SalesOrderAutoAllocate.as_view(),
+                        name='api-so-auto-allocate',
                     ),
                     path('hold/', SalesOrderHold.as_view(), name='api-so-hold'),
                     path('cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),

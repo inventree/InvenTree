@@ -1,4 +1,4 @@
-import test from '@playwright/test';
+import { test } from './baseFixtures';
 import { stevenuser } from './defaults';
 import { globalSearch, loadTab, navigate } from './helpers';
 import { doCachedLogin } from './login';
@@ -35,6 +35,17 @@ test('Exporting - Orders', async ({ browser }) => {
 
   // Download list of purchase order items
   await page.getByRole('cell', { name: 'PO0014' }).click();
+
+  // Click through to the PurchaseOrder from the detail tab
+  await page
+    .getByLabel('Purchase Order PO0014 (PCBWOY)')
+    .getByRole('cell', { name: 'Ordering some PCBs' })
+    .waitFor();
+  await page
+    .getByRole('link', { name: 'details-purchaseorder-14' })
+    .first()
+    .click();
+
   await loadTab(page, 'Line Items');
   await openExportDialog(page);
   await page.getByRole('button', { name: 'Export', exact: true }).click();

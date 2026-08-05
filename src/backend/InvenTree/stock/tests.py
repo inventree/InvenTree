@@ -1,12 +1,19 @@
 """Tests for stock app."""
 
 import datetime
+import threading
+from unittest import mock
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.db import connection, transaction
 from django.db.models import Sum
-from django.test import override_settings
+from django.test import TransactionTestCase, override_settings, skipUnlessDBFeature
+from django.urls import reverse
 
+from django_q.models import OrmQ
 from djmoney.money import Money
+from rest_framework.test import APIClient
 
 from build.models import Build
 from common.models import InvenTreeSetting
@@ -14,6 +21,8 @@ from company.models import Company
 from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase
 from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
+from plugin.base.event.events import batch_events
+from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
 
 from .models import (
@@ -22,6 +31,7 @@ from .models import (
     StockItemTracking,
     StockLocation,
     StockLocationType,
+    batch_tracking_entries,
 )
 
 
@@ -346,6 +356,311 @@ class StockTest(StockTestBase):
         stock.splitStock(stock.quantity, None, self.user)
         self.assertEqual(StockItem.objects.filter(part=3).count(), n + 1)
 
+    def test_split_stock_tracking_deltas(self):
+        """The parent's SPLIT_CHILD_ITEM tracking entry must reference the new child item."""
+        parent = StockItem.objects.get(id=1234)
+        child = parent.splitStock(100, None, self.user)
+
+        parent_entry = parent.tracking_info.filter(
+            tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value
+        ).first()
+
+        self.assertIsNotNone(parent_entry)
+        self.assertEqual(parent_entry.deltas.get('stockitem'), child.pk)
+
+    def test_delete_reparents_children(self):
+        """Test that deleting an intermediate item re-links children to the grandparent."""
+        grandparent = StockItem.objects.get(id=1234)
+
+        parent = grandparent.splitStock(200, None, self.user)
+        child_a = parent.splitStock(50, None, self.user)
+        child_b = parent.splitStock(50, None, self.user)
+
+        self.assertEqual(parent.parent, grandparent)
+        self.assertEqual(child_a.parent, parent)
+        self.assertEqual(child_b.parent, parent)
+
+        # Deleting the intermediate item grafts its children onto the grandparent
+        parent.delete()
+
+        child_a.refresh_from_db()
+        child_b.refresh_from_db()
+
+        self.assertEqual(child_a.parent, grandparent)
+        self.assertEqual(child_b.parent, grandparent)
+
+        # Deleting a top-level item leaves its children with no parent
+        grandparent.delete()
+
+        child_a.refresh_from_db()
+        child_b.refresh_from_db()
+
+        self.assertIsNone(child_a.parent)
+        self.assertIsNone(child_b.parent)
+
+    def test_implicit_delete_reparents_children(self):
+        """Test child re-linking when items are deleted by depletion or merging."""
+        grandparent = StockItem.objects.get(id=1234)
+
+        # An item depleted to zero with delete_on_deplete set is deleted
+        parent = grandparent.splitStock(200, None, self.user)
+        child = parent.splitStock(50, None, self.user)
+
+        parent.delete_on_deplete = True
+        parent.save()
+
+        self.assertTrue(parent.take_stock(150, self.user, notes='Deplete'))
+        self.assertFalse(StockItem.objects.filter(pk=parent.pk).exists())
+
+        child.refresh_from_db()
+        self.assertEqual(child.parent, grandparent)
+
+        # An item absorbed by a merge is also deleted
+        source = grandparent.splitStock(100, None, self.user)
+        kid = source.splitStock(25, None, self.user)
+
+        target = StockItem.objects.create(
+            part=grandparent.part,
+            supplier_part=grandparent.supplier_part,
+            quantity=10,
+            location=grandparent.location,
+        )
+
+        target.merge_stock_items([source], raise_error=True, user=self.user)
+
+        self.assertFalse(StockItem.objects.filter(pk=source.pk).exists())
+
+        kid.refresh_from_db()
+        self.assertEqual(kid.parent, grandparent)
+
+    def test_over_adjustment_quantities(self):
+        """Stock adjustments are clamped to the available stock quantity.
+
+        Regression test: take_stock / allocateToCustomer / installStockItem
+        previously recorded the *requested* quantity in the stock history,
+        even when less stock was actually removed / allocated / installed.
+        """
+        part = Part.objects.create(
+            name='Clamp part',
+            description='A part for quantity clamping tests',
+            salable=True,
+            component=True,
+        )
+
+        # --- take_stock: remove more than available ---
+        item = StockItem.objects.create(part=part, quantity=10, delete_on_deplete=False)
+
+        self.assertTrue(item.take_stock(25, self.user, notes='over-remove'))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 0)
+
+        # History records the quantity which was *actually* removed
+        entry = item.tracking_info.latest('pk')
+        self.assertEqual(entry.deltas['removed'], 10.0)
+        self.assertEqual(entry.deltas['quantity'], 0.0)
+
+        # Removing stock from an empty item fails, and adds no history
+        n = item.tracking_info.count()
+        self.assertFalse(item.take_stock(5, self.user))
+        self.assertEqual(item.tracking_info.count(), n)
+
+        # --- allocateToCustomer: allocate more than available ---
+        customer = Company.objects.create(name='Clamp customer', is_customer=True)
+
+        item = StockItem.objects.create(part=part, quantity=10)
+
+        allocated = item.allocateToCustomer(customer, quantity=25, user=self.user)
+
+        # The whole item is allocated (no split occurs)
+        self.assertEqual(allocated.pk, item.pk)
+        self.assertEqual(allocated.customer, customer)
+
+        # History records the quantity which was *actually* allocated
+        entry = allocated.tracking_info.latest('pk')
+        self.assertEqual(entry.deltas['quantity'], 10.0)
+
+        # A zero quantity is rejected outright
+        item = StockItem.objects.create(part=part, quantity=10)
+
+        with self.assertRaises(ValidationError):
+            item.allocateToCustomer(customer, quantity=0, user=self.user)
+
+        # --- installStockItem: install more than available ---
+        assembly = Part.objects.create(
+            name='Clamp assembly',
+            description='An assembly for quantity clamping tests',
+            assembly=True,
+        )
+
+        parent_item = StockItem.objects.create(part=assembly, quantity=1)
+        component = StockItem.objects.create(part=part, quantity=10)
+
+        parent_item.installStockItem(component, 25, self.user, 'over-install')
+
+        component.refresh_from_db()
+        self.assertEqual(component.belongs_to, parent_item)
+        self.assertEqual(component.quantity, 10)
+
+        # Both history entries record the quantity which was *actually* installed
+        entry = component.tracking_info.filter(
+            tracking_type=StockHistoryCode.INSTALLED_INTO_ASSEMBLY
+        ).latest('pk')
+        self.assertEqual(entry.deltas['quantity'], 10.0)
+
+        entry = parent_item.tracking_info.filter(
+            tracking_type=StockHistoryCode.INSTALLED_CHILD_ITEM
+        ).latest('pk')
+        self.assertEqual(entry.deltas['quantity'], 10.0)
+
+        # A zero quantity is rejected outright
+        other = StockItem.objects.create(part=part, quantity=5)
+
+        with self.assertRaises(ValidationError):
+            parent_item.installStockItem(other, 0, self.user, 'bad install')
+
+    def test_uninstall_into_structural_location(self):
+        """Test that an item cannot be uninstalled into a structural location."""
+        parent = StockItem.objects.get(pk=1)
+
+        item = StockItem.objects.get(pk=2)
+        item.belongs_to = parent
+        item.save()
+
+        n_entries = item.tracking_info.count()
+        n_parent_entries = parent.tracking_info.count()
+
+        structural = StockLocation.objects.create(
+            name='Structural location', structural=True
+        )
+
+        with self.assertRaises(ValidationError):
+            item.uninstall_into_location(structural, self.user, 'Uninstalling')
+
+        # The item remains installed, with no location change or tracking entries
+        item.refresh_from_db()
+        self.assertEqual(item.belongs_to, parent)
+        self.assertNotEqual(item.location, structural)
+        self.assertEqual(item.tracking_info.count(), n_entries)
+        self.assertEqual(parent.tracking_info.count(), n_parent_entries)
+
+        # Uninstalling into a non-structural location is still permitted
+        item.uninstall_into_location(self.drawer2, self.user, 'Uninstalling')
+
+        item.refresh_from_db()
+        self.assertIsNone(item.belongs_to)
+        self.assertEqual(item.location, self.drawer2)
+
+    def test_child_items(self):
+        """Test the 'children' reverse relation and 'child_count' property.
+
+        Regression test: StockItem previously defined a 'children' property
+        (shadowed by the reverse FK accessor, and referencing a method which no
+        longer exists on the model). The property has been removed - 'children'
+        must resolve to the reverse foreign-key manager for the 'parent' field.
+        """
+        part = Part.objects.create(
+            name='Child test part', description='A part for child item testing'
+        )
+
+        parent = StockItem.objects.create(part=part, quantity=100)
+
+        self.assertEqual(parent.children.count(), 0)
+        self.assertEqual(parent.child_count, 0)
+        self.assertEqual(parent.get_children().count(), 0)
+
+        # Split off two child items
+        child_1 = parent.splitStock(10, None, self.user)
+        child_2 = parent.splitStock(20, None, self.user)
+
+        parent.refresh_from_db()
+        self.assertEqual(parent.quantity, 70)
+
+        children = parent.children.all()
+
+        self.assertEqual(children.count(), 2)
+        self.assertEqual(parent.child_count, 2)
+        self.assertIn(child_1, children)
+        self.assertIn(child_2, children)
+
+        # get_children() proxies the same relation
+        self.assertEqual(
+            list(parent.get_children().order_by('pk')), list(children.order_by('pk'))
+        )
+
+        # Only *direct* children are included
+        grandchild = child_1.splitStock(5, None, self.user)
+
+        self.assertEqual(parent.child_count, 2)
+        self.assertEqual(child_1.child_count, 1)
+        self.assertIn(grandchild, child_1.children.all())
+        self.assertNotIn(grandchild, parent.children.all())
+
+    def test_adjustment_stale_quantity(self):
+        """Stock adjustments operate on database quantities, not stale in-memory copies.
+
+        Simulates concurrent adjustment operations, where each worker holds
+        its own (stale) in-memory copy of the same StockItem.
+        """
+        item = StockItem.objects.get(pk=1234)
+        self.assertEqual(item.quantity, 1234)
+
+        # Remove stock via two independent in-memory copies
+        item_a = StockItem.objects.get(pk=item.pk)
+        item_b = StockItem.objects.get(pk=item.pk)
+
+        self.assertTrue(item_a.take_stock(100, self.user))
+        self.assertTrue(item_b.take_stock(200, self.user))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 934)
+
+        # Add stock via a stale copy
+        item_c = StockItem.objects.get(pk=item.pk)
+        item.take_stock(34, self.user)
+
+        self.assertTrue(item_c.add_stock(100, self.user))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 1000)
+
+        # Split stock via a stale copy
+        item_d = StockItem.objects.get(pk=item.pk)
+        item.take_stock(500, self.user)
+
+        child = item_d.splitStock(300, None, self.user)
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 200)
+        self.assertEqual(child.quantity, 300)
+
+        # A full-quantity move via a stale copy must not resurrect removed stock
+        item_e = StockItem.objects.get(pk=item.pk)
+        item.take_stock(50, self.user)
+
+        self.assertTrue(item_e.move(self.diningroom, 'Move', self.user))
+
+        item.refresh_from_db()
+        self.assertEqual(item.quantity, 150)
+        self.assertEqual(item.location, self.diningroom)
+
+    def test_merge_stale_quantity(self):
+        """Merging stock items uses database quantities, not stale in-memory values."""
+        part = Part.objects.get(pk=3)
+
+        target = StockItem.objects.create(part=part, quantity=100)
+        source = StockItem.objects.create(part=part, quantity=50)
+
+        # Hold a stale copy of the target, and adjust the real row underneath it
+        stale_target = StockItem.objects.get(pk=target.pk)
+        target.take_stock(60, self.user)
+
+        stale_target.merge_stock_items([source], user=self.user)
+
+        target.refresh_from_db()
+        self.assertEqual(target.quantity, 90)
+        self.assertFalse(StockItem.objects.filter(pk=source.pk).exists())
+
     def test_stocktake(self):
         """Test stocktake function."""
         # Perform stocktake
@@ -378,15 +693,83 @@ class StockTest(StockTestBase):
         self.assertEqual(it.status, StockStatus.OK.value)
 
         # Next, perform a valid stocktake
-        self.assertTrue(
-            it.stocktake(
-                100, None, notes='test stocktake', status=StockStatus.DAMAGED.value
-            )
+        it.stocktake(
+            100, None, notes='test stocktake', status=StockStatus.DAMAGED.value
         )
 
         it.refresh_from_db()
         self.assertEqual(it.quantity, 100)
         self.assertEqual(it.status, StockStatus.DAMAGED.value)
+
+    def get_counted_events(self):
+        """Helper: return queued OrmQ tasks corresponding to a StockEvents.ITEM_COUNTED event.
+
+        stocktake() also fires an ITEM_QUANTITY_UPDATED event (via updateQuantity()) and may
+        offload a (deduped) low-stock notification task, so tests filter down to just the
+        ITEM_COUNTED entries they care about, rather than asserting the raw queue total.
+        """
+        return [
+            task
+            for task in OrmQ.objects.all().order_by('id')
+            if task.args() == (StockEvents.ITEM_COUNTED,)
+        ]
+
+    def test_stocktake_batch_events(self):
+        """Test that batch_events() collapses per-item stocktake() events into one bulk write.
+
+        StockItem.stocktake() always calls trigger_event() exactly as it does when called
+        standalone (see test_stocktake_events_outside_batch below) - a bulk caller wraps its
+        loop in batch_events() to collapse those N individual event offloads into a single
+        bulk_trigger_event() call, fired when the enclosing transaction commits.
+        """
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        part = Part.objects.create(
+            name='Batch stocktake part', description='For batch stocktake testing'
+        )
+
+        items = [
+            StockItem.objects.create(part=part, location=self.home, quantity=idx + 1)
+            for idx in range(10)
+        ]
+
+        OrmQ.objects.all().delete()
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            # All 10 ITEM_COUNTED events should be queued via a single bulk write,
+            # fired when the transaction commits (captured here via captureOnCommitCallbacks)
+            with self.captureOnCommitCallbacks(execute=True):
+                with transaction.atomic(), batch_events():
+                    for idx, item in enumerate(items):
+                        item.stocktake(100 + idx, self.user, notes='Batch stocktake')
+
+        counted_tasks = self.get_counted_events()
+        self.assertEqual(len(counted_tasks), 10)
+
+        for idx, (task, item) in enumerate(zip(counted_tasks, items, strict=True)):
+            self.assertEqual(task.func(), 'plugin.base.event.events.register_event')
+            self.assertEqual(task.kwargs(), {'id': item.id, 'quantity': 100.0 + idx})
+
+    def test_stocktake_events_outside_batch(self):
+        """Test that stocktake() still fires events immediately when called outside batch_events()."""
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
+
+        item = StockItem.objects.get(pk=2)
+
+        OrmQ.objects.all().delete()
+
+        with self.settings(
+            PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
+        ):
+            item.stocktake(42, self.user, notes='Single stocktake')
+
+        # No batch_events() context was active, so the event was queued immediately -
+        # no transaction commit or captureOnCommitCallbacks is required to see it
+        counted_tasks = self.get_counted_events()
+        self.assertEqual(len(counted_tasks), 1)
+        self.assertEqual(counted_tasks[0].kwargs(), {'id': item.id, 'quantity': 42.0})
 
     def test_add_stock(self):
         """Test adding stock."""
@@ -729,6 +1112,13 @@ class StockTest(StockTestBase):
         self.assertEqual(s1.quantity, 60)
         self.assertIsNone(s1.purchase_price)
 
+        merge_entry = s1.tracking_info.filter(
+            tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
+        ).first()
+        self.assertIsNotNone(merge_entry)
+        self.assertEqual(merge_entry.deltas['added'], 50.0)
+        self.assertEqual(merge_entry.deltas['quantity'], 60.0)
+
         part.stock_items.all().delete()
 
         # Create some stock items with pricing information
@@ -765,6 +1155,54 @@ class StockTest(StockTestBase):
 
         # Final purchase price should be the weighted average
         self.assertAlmostEqual(s1.purchase_price.amount, 16.875, places=3)
+
+    def test_merge_protected_items(self):
+        """Stock items in a protected state cannot be absorbed by a merge.
+
+        Regression test: merge_stock_items() used to run the generic state checks
+        (in production, assigned to customer, etc.) against the *target* item only,
+        allowing e.g. a build output to be merged away and deleted.
+        """
+        part = Part.objects.first()
+        part.stock_items.all().delete()
+
+        target = StockItem.objects.create(part=part, quantity=10)
+
+        # The incoming item is "in production" (a build output)
+        part.assembly = True
+        part.save()
+
+        bo = Build.objects.create(
+            reference='BO-9998', part=part, title='Merge test build', quantity=20
+        )
+
+        building = StockItem.objects.create(
+            part=part, quantity=20, build=bo, is_building=True
+        )
+
+        # Without raise_error, the merge is refused silently
+        target.merge_stock_items([building])
+
+        target.refresh_from_db()
+        building.refresh_from_db()
+
+        self.assertEqual(part.stock_items.count(), 2)
+        self.assertEqual(target.quantity, 10)
+        self.assertEqual(building.quantity, 20)
+
+        # With raise_error, the merge raises a ValidationError
+        with self.assertRaises(ValidationError):
+            target.merge_stock_items([building], raise_error=True)
+
+        # An item assigned to a customer is likewise protected
+        customer = Company.objects.create(name='MergeCust', is_customer=True)
+        assigned = StockItem.objects.create(part=part, quantity=5, customer=customer)
+
+        target.merge_stock_items([assigned])
+
+        target.refresh_from_db()
+        self.assertEqual(target.quantity, 10)
+        self.assertTrue(StockItem.objects.filter(pk=assigned.pk).exists())
 
     def test_notify_low_stock(self):
         """Test that the 'notify_low_stock' task is triggered correctly."""
@@ -825,6 +1263,130 @@ class StockTest(StockTestBase):
                 part=part, quantity=10, purchase_price=Money(5, 'GBP')
             )
             self.assertEqual(item.purchase_price_currency, 'GBP')
+
+
+class TrackingEntryBatchTests(StockTestBase):
+    """Unit tests for the batch_tracking_entries() context manager."""
+
+    def test_entries_queued_and_flushed_on_commit(self):
+        """Tracking entries created inside batch_tracking_entries() are bulk-created on commit."""
+        item = StockItem.objects.get(pk=2)
+
+        n = StockItemTracking.objects.count()
+
+        with self.captureOnCommitCallbacks(execute=True):
+            with transaction.atomic(), batch_tracking_entries():
+                for idx in range(10):
+                    item.add_tracking_entry(
+                        StockHistoryCode.STOCK_COUNT,
+                        self.user,
+                        deltas={'quantity': idx},
+                        notes=f'Batch entry {idx}',
+                    )
+
+                # Nothing should be written yet - the batch only flushes on commit
+                self.assertEqual(StockItemTracking.objects.count(), n)
+
+        entries = StockItemTracking.objects.filter(item=item).order_by('id')[:10]
+        self.assertEqual(StockItemTracking.objects.count(), n + 10)
+
+        for idx, entry in enumerate(entries):
+            self.assertEqual(entry.tracking_type, StockHistoryCode.STOCK_COUNT)
+            self.assertEqual(entry.deltas.get('quantity'), idx)
+            self.assertEqual(entry.notes, f'Batch entry {idx}')
+
+    def test_entries_discarded_on_rollback(self):
+        """Tracking entries queued in a batch are discarded if the transaction rolls back."""
+        item = StockItem.objects.get(pk=2)
+
+        n = StockItemTracking.objects.count()
+
+        with self.captureOnCommitCallbacks(execute=True):
+            try:
+                with transaction.atomic(), batch_tracking_entries():
+                    item.add_tracking_entry(
+                        StockHistoryCode.STOCK_COUNT, self.user, deltas={'quantity': 1}
+                    )
+                    raise ValueError('boom')
+            except ValueError:
+                pass
+
+        self.assertEqual(StockItemTracking.objects.count(), n)
+
+    def test_entries_outside_batch_fire_immediately(self):
+        """Tracking entries created outside any batch are unaffected - saved immediately."""
+        item = StockItem.objects.get(pk=2)
+
+        n = StockItemTracking.objects.count()
+
+        item.add_tracking_entry(
+            StockHistoryCode.STOCK_COUNT, self.user, deltas={'quantity': 1}
+        )
+
+        # No transaction commit or captureOnCommitCallbacks needed - it was never queued
+        self.assertEqual(StockItemTracking.objects.count(), n + 1)
+
+    def test_nested_batch_share_one_flush(self):
+        """A nested batch_tracking_entries() call reuses the outer batch, rather than flushing twice."""
+        item = StockItem.objects.get(pk=2)
+
+        n = StockItemTracking.objects.count()
+
+        with self.captureOnCommitCallbacks(execute=True):
+            with transaction.atomic(), batch_tracking_entries():
+                item.add_tracking_entry(
+                    StockHistoryCode.STOCK_COUNT, self.user, deltas={'quantity': 1}
+                )
+                with batch_tracking_entries():
+                    item.add_tracking_entry(
+                        StockHistoryCode.STOCK_COUNT, self.user, deltas={'quantity': 2}
+                    )
+                self.assertEqual(StockItemTracking.objects.count(), n)
+
+        self.assertEqual(StockItemTracking.objects.count(), n + 2)
+
+    def test_commit_false_is_unaffected_by_batch(self):
+        """commit=False callers keep manual ownership of the entry, even inside a batch."""
+        item = StockItem.objects.get(pk=2)
+
+        n = StockItemTracking.objects.count()
+
+        with transaction.atomic(), batch_tracking_entries():
+            entry = item.add_tracking_entry(
+                StockHistoryCode.STOCK_COUNT,
+                self.user,
+                deltas={'quantity': 1},
+                commit=False,
+            )
+
+        # The entry was returned uncommitted - the batch never saw it, so it was never written
+        self.assertIsNotNone(entry)
+        self.assertIsNone(entry.pk)
+        self.assertEqual(StockItemTracking.objects.count(), n)
+
+    def test_stocktake_batch_tracking_entries(self):
+        """Integration test: batching stocktake() tracking entries via the StockCountSerializer path."""
+        part = Part.objects.create(
+            name='Batch tracking part', description='For batch tracking testing'
+        )
+
+        items = [
+            StockItem.objects.create(part=part, location=self.home, quantity=idx + 1)
+            for idx in range(10)
+        ]
+
+        n = StockItemTracking.objects.count()
+
+        with self.captureOnCommitCallbacks(execute=True):
+            with transaction.atomic(), batch_tracking_entries():
+                for idx, item in enumerate(items):
+                    item.stocktake(100 + idx, self.user, notes='Batch stocktake')
+
+        entries = StockItemTracking.objects.filter(
+            item__in=items, tracking_type=StockHistoryCode.STOCK_COUNT
+        ).order_by('id')
+        self.assertEqual(entries.count(), 10)
+        self.assertEqual(StockItemTracking.objects.count(), n + 10)
 
 
 class StockBarcodeTest(StockTestBase):
@@ -934,7 +1496,6 @@ class VariantTest(StockTestBase):
         # Attempt to create the same serial number but for a variant (should fail!)
         # Reset the primary key and tree_id values
         item.pk = None
-        item.tree_id = None
         item.part = Part.objects.get(pk=10004)
 
         with self.assertRaises(ValidationError):
@@ -1147,187 +1708,6 @@ class StockLocationTreeTest(StockTestBase):
 
         self.assertEqual(C21.get_ancestors().count(), 1)
         self.assertEqual(C22.get_ancestors().count(), 1)
-
-
-class StockTreeTest(StockTestBase):
-    """Unit test for StockItem tree structure."""
-
-    def test_stock_split(self):
-        """Test that stock splitting works correctly."""
-        part = Part.objects.create(name='My part', description='My part description')
-        location = StockLocation.objects.create(name='Test Location')
-
-        # Create an initial stock item
-        item = StockItem.objects.create(part=part, quantity=1000, location=location)
-
-        # Test that the initial MPTT values are correct
-        self.assertEqual(item.level, 0)
-        self.assertEqual(item.lft, 1)
-        self.assertEqual(item.rght, 2)
-
-        children = []
-
-        self.assertEqual(item.get_descendants(include_self=False).count(), 0)
-        self.assertEqual(item.get_descendants(include_self=True).count(), 1)
-
-        # Create child items by splitting stock
-        for idx in range(10):
-            child = item.splitStock(50, None, None)
-            children.append(child)
-
-            # Check that the child item has been correctly created
-            self.assertEqual(child.parent.pk, item.pk)
-            self.assertEqual(child.tree_id, item.tree_id)
-            self.assertEqual(child.level, 1)
-
-            item.refresh_from_db()
-            self.assertEqual(item.get_children().count(), idx + 1)
-            self.assertEqual(item.get_descendants(include_self=True).count(), idx + 2)
-
-        item.refresh_from_db()
-        n = item.get_descendants(include_self=True).count()
-
-        for child in children:
-            # Create multiple sub-childs
-            for _idx in range(3):
-                sub_child = child.splitStock(10, None, None)
-                self.assertEqual(sub_child.parent.pk, child.pk)
-                self.assertEqual(sub_child.tree_id, child.tree_id)
-                self.assertEqual(sub_child.level, 2)
-
-                self.assertEqual(sub_child.get_ancestors(include_self=True).count(), 3)
-
-            child.refresh_from_db()
-            self.assertEqual(child.get_descendants(include_self=True).count(), 4)
-
-        item.refresh_from_db()
-        self.assertEqual(item.get_descendants(include_self=True).count(), n + 30)
-
-    def test_tree_rebuild(self):
-        """Test that tree rebuild works correctly."""
-        part = Part.objects.create(name='My part', description='My part description')
-        location = StockLocation.objects.create(name='Test Location')
-
-        N = StockItem.objects.count()
-
-        # Create an initial stock item
-        item = StockItem.objects.create(part=part, quantity=1000, location=location)
-
-        # Split out ten child items
-        for _idx in range(10):
-            item.splitStock(10)
-
-        item.refresh_from_db()
-
-        self.assertEqual(StockItem.objects.count(), N + 11)
-        self.assertEqual(item.get_children().count(), 10)
-        self.assertEqual(item.get_descendants(include_self=True).count(), 11)
-
-        # Split the first child item
-        child = item.get_children().first()
-
-        self.assertEqual(child.parent, item)
-        self.assertEqual(child.tree_id, item.tree_id)
-        self.assertEqual(child.level, 1)
-
-        # Split out three grandchildren
-        for _ in range(3):
-            child.splitStock(2)
-
-        item.refresh_from_db()
-        child.refresh_from_db()
-
-        self.assertEqual(child.get_descendants(include_self=True).count(), 4)
-        self.assertEqual(child.get_children().count(), 3)
-
-        # Check tree structure for grandchildren
-        grandchildren = child.get_children()
-
-        for gc in grandchildren:
-            self.assertEqual(gc.parent, child)
-            self.assertEqual(gc.parent.parent, item)
-            self.assertEqual(gc.tree_id, item.tree_id)
-            self.assertEqual(gc.level, 2)
-            self.assertGreater(gc.lft, child.lft)
-            self.assertLess(gc.rght, child.rght)
-
-        self.assertEqual(item.get_children().count(), 10)
-        self.assertEqual(item.get_descendants(include_self=True).count(), 14)
-
-        # Now, delete the child node
-        # We expect that the grandchildren will be re-parented to the parent node
-        child.delete()
-
-        for gc in grandchildren:
-            gc.refresh_from_db()
-
-            # Check that the grandchildren have been re-parented to the top-level
-            self.assertEqual(gc.parent, item)
-            self.assertEqual(gc.tree_id, item.tree_id)
-            self.assertEqual(gc.level, 1)
-            self.assertGreater(gc.lft, item.lft)
-            self.assertLess(gc.rght, item.rght)
-
-        item.refresh_from_db()
-
-        self.assertEqual(item.get_children().count(), 12)
-        self.assertEqual(item.get_descendants(include_self=True).count(), 13)
-
-    def test_serialize(self):
-        """Test that StockItem serialization maintains tree structure."""
-        part = Part.objects.create(
-            name='My part', description='My part description', trackable=True
-        )
-
-        N = StockItem.objects.count()
-
-        # Create an initial stock item
-        item_1 = StockItem.objects.create(part=part, quantity=1000)
-        item_2 = item_1.splitStock(750)
-
-        item_1.refresh_from_db()
-
-        self.assertEqual(StockItem.objects.count(), N + 2)
-        self.assertEqual(item_1.get_children().count(), 1)
-        self.assertEqual(item_2.parent, item_1)
-
-        loc = StockLocation.objects.filter(structural=False).first()
-
-        # Serialize the secondary item
-        serials = [str(i) for i in range(20)]
-        items = item_2.serializeStock(20, serials, location=loc)
-
-        self.assertEqual(len(items), 20)
-        self.assertEqual(StockItem.objects.count(), N + 22)
-
-        item_1.refresh_from_db()
-        item_2.refresh_from_db()
-
-        self.assertEqual(item_1.get_children().count(), 1)
-        self.assertEqual(item_2.get_children().count(), 20)
-
-        for child in items:
-            self.assertEqual(child.tree_id, item_2.tree_id)
-            self.assertEqual(child.level, 2)
-            self.assertEqual(child.parent, item_2)
-            self.assertGreater(child.lft, item_2.lft)
-            self.assertLess(child.rght, item_2.rght)
-            self.assertEqual(child.location, loc)
-            self.assertIsNotNone(child.location)
-            self.assertEqual(child.tracking_info.count(), 2)
-
-        # Delete item_2 : we expect that all children will be re-parented to item_1
-        item_2.delete()
-
-        for child in items:
-            child.refresh_from_db()
-
-            # Check that the children have been re-parented to item_1
-            self.assertEqual(child.parent, item_1)
-            self.assertEqual(child.tree_id, item_1.tree_id)
-            self.assertEqual(child.level, 1)
-            self.assertGreater(child.lft, item_1.lft)
-            self.assertLess(child.rght, item_1.rght)
 
 
 class TestResultTest(StockTestBase):
@@ -1591,3 +1971,385 @@ class AdminTest(AdminTestCase):
     def test_admin(self):
         """Test the admin URL."""
         self.helper(model=StockLocationType)
+
+
+@skipUnlessDBFeature('has_select_for_update')
+class StockItemSerialConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test for StockItem._create_serial_numbers().
+
+    Uses two real threads (each with its own database connection) to reproduce
+    the reported race: two concurrent requests to create a StockItem with the
+    *same* serial number for the same Part could both check for conflicts
+    before either had committed its bulk_create - producing two StockItem rows
+    sharing one (part, serial) pair.
+
+    _create_serial_numbers() now locks (select_for_update, on the Part rows
+    covering the relevant scope - see StockItem._lock_serial_numbers()) and
+    re-validates for conflicts under that lock before creating anything, and
+    a database-level UniqueConstraint on (part, serial) backstops it, so only
+    one of two concurrent requests for the same serial number may succeed.
+    """
+
+    fixtures = ['users']
+
+    def setUp(self):
+        """Create a single trackable Part to create serialized stock against."""
+        super().setUp()
+
+        self.part = Part.objects.create(
+            name='Concurrency serial part',
+            description='Part for serial creation concurrency test',
+            trackable=True,
+        )
+
+    def test_concurrent_creation_does_not_duplicate_serial(self):
+        """Two concurrent requests for the same serial number must not both succeed."""
+        start_barrier = threading.Barrier(2, timeout=5)
+        errors = []
+        results = []
+
+        # Wrap StockItem._lock_serial_numbers() so both threads reach the
+        # (real, database-level) row lock at the same time - one wins the
+        # lock and proceeds, the other blocks until the winner's transaction
+        # completes.
+        original_lock_serial_numbers = StockItem._lock_serial_numbers
+
+        def synced_lock_serial_numbers(part, serials):
+            start_barrier.wait(timeout=5)
+            return original_lock_serial_numbers(part, serials)
+
+        def create():
+            try:
+                StockItem._create_serial_numbers(['SN-RACE'], part=self.part)
+                results.append('ok')
+            except ValidationError:
+                results.append('rejected')
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        thread_a = threading.Thread(target=create)
+        thread_b = threading.Thread(target=create)
+
+        with mock.patch.object(
+            StockItem, '_lock_serial_numbers', synced_lock_serial_numbers
+        ):
+            thread_a.start()
+            thread_b.start()
+
+            thread_a.join(timeout=5)
+            thread_b.join(timeout=5)
+
+        self.assertFalse(thread_a.is_alive())
+        self.assertFalse(thread_b.is_alive())
+        self.assertEqual(errors, [])
+
+        # Exactly one request must have been rejected as a duplicate
+        self.assertEqual(sorted(results), ['ok', 'rejected'])
+
+        # The serial number must only have been created once
+        self.assertEqual(
+            StockItem.objects.filter(part=self.part, serial='SN-RACE').count(), 1
+        )
+
+
+@skipUnlessDBFeature('has_select_for_update')
+class StockItemSerialBatchConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test for overlapping batch serial creation.
+
+    Extends the single-serial race in StockItemSerialConcurrencyTest to the
+    more realistic case of *bulk* serial number creation: three concurrent
+    requests, each creating 10 serial numbers, with the requested ranges
+    overlapping pairwise (but not all three sharing any single serial):
+
+        A: 1-10
+        B: 6-15   (overlaps A on 6-10, and C on 11-15)
+        C: 11-20
+
+    Since _create_serial_numbers() creates its whole batch atomically (a
+    conflict anywhere in the batch aborts the batch entirely), and A and C do
+    not share any serial with each other, exactly one of the following must
+    occur:
+
+        - B is rejected, and A and C both succeed in full, or
+        - B succeeds in full, and both A and C are rejected
+
+    In neither case can two of the three batches both succeed, and in neither
+    case can any serial number be created more than once. Since all three
+    batches target the same Part, StockItem._lock_serial_numbers() locks the
+    same Part rows for each of them (rather than locking anything specific to
+    the requested serials), so the three requests are fully serialized
+    against each other regardless of which serials they overlap on.
+    """
+
+    fixtures = ['users']
+
+    def setUp(self):
+        """Create a single trackable Part to create serialized stock against."""
+        super().setUp()
+
+        self.part = Part.objects.create(
+            name='Concurrency batch serial part',
+            description='Part for batch serial creation concurrency test',
+            trackable=True,
+        )
+
+    def test_concurrent_overlapping_batches_do_not_duplicate_serials(self):
+        """Three concurrent, partially-overlapping batch creation requests must stay consistent."""
+        start_barrier = threading.Barrier(3, timeout=10)
+        errors = []
+        results = {}
+        results_lock = threading.Lock()
+
+        # Wrap StockItem._lock_serial_numbers() so all three threads reach the
+        # (real, database-level) row locks at the same time, maximising
+        # contention across the overlapping sets of serial numbers.
+        original_lock_serial_numbers = StockItem._lock_serial_numbers
+
+        def synced_lock_serial_numbers(part, serials):
+            start_barrier.wait(timeout=10)
+            return original_lock_serial_numbers(part, serials)
+
+        batches = {
+            'a': [str(i) for i in range(1, 11)],  # 1-10
+            'b': [str(i) for i in range(6, 16)],  # 6-15
+            'c': [str(i) for i in range(11, 21)],  # 11-20
+        }
+
+        def create(name, serials):
+            try:
+                StockItem._create_serial_numbers(serials, part=self.part)
+                with results_lock:
+                    results[name] = 'ok'
+            except ValidationError:
+                with results_lock:
+                    results[name] = 'rejected'
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                with results_lock:
+                    errors.append(exc)
+            finally:
+                connection.close()
+
+        threads = [
+            threading.Thread(target=create, args=(name, serials))
+            for name, serials in batches.items()
+        ]
+
+        with mock.patch.object(
+            StockItem, '_lock_serial_numbers', synced_lock_serial_numbers
+        ):
+            for thread in threads:
+                thread.start()
+
+            for thread in threads:
+                thread.join(timeout=10)
+
+        for thread in threads:
+            self.assertFalse(thread.is_alive())
+        self.assertEqual(errors, [])
+        self.assertEqual(set(results.keys()), {'a', 'b', 'c'})
+
+        # Batch 'b' overlaps both 'a' and 'c', which do not overlap each
+        # other - so either 'b' alone wins, or both 'a' and 'c' win, never
+        # any other combination
+        ok = {name for name, outcome in results.items() if outcome == 'ok'}
+        self.assertIn(ok, [{'b'}, {'a', 'c'}])
+
+        # No serial number was created more than once
+        created_serials = list(
+            StockItem.objects.filter(part=self.part).values_list('serial', flat=True)
+        )
+        self.assertEqual(len(created_serials), len(set(created_serials)))
+
+        # The created serials are exactly the union of the winning batches -
+        # each successful batch's serials all exist, and (since a rejected
+        # batch creates nothing at all) nothing beyond that union exists
+        expected_serials = set()
+        for name in ok:
+            expected_serials.update(batches[name])
+
+        self.assertEqual(set(created_serials), expected_serials)
+
+
+@skipUnlessDBFeature('has_select_for_update')
+class StockItemSerialGloballyUniqueConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test for the globally-unique locking path.
+
+    Reproduces the same race as StockItemSerialConcurrencyTest, but with
+    SERIAL_NUMBER_GLOBALLY_UNIQUE enabled and the two concurrent requests
+    targeting *different* parts (in different variant trees). There is no
+    single Part tree covering this scope, so StockItem._lock_serial_numbers()
+    instead locks the SERIAL_NUMBER_GLOBALLY_UNIQUE setting's own row - this
+    verifies that still serializes the two requests correctly.
+    """
+
+    fixtures = ['users']
+
+    def setUp(self):
+        """Create two unrelated trackable Parts (in different variant trees)."""
+        super().setUp()
+
+        InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', True, None)
+        self.addCleanup(
+            InvenTreeSetting.set_setting, 'SERIAL_NUMBER_GLOBALLY_UNIQUE', False, None
+        )
+
+        self.part_a = Part.objects.create(
+            name='Globally-unique concurrency part A',
+            description='Part A for globally-unique serial concurrency test',
+            trackable=True,
+        )
+        self.part_b = Part.objects.create(
+            name='Globally-unique concurrency part B',
+            description='Part B for globally-unique serial concurrency test',
+            trackable=True,
+        )
+
+    def test_concurrent_creation_across_parts_does_not_duplicate_serial(self):
+        """Two concurrent requests for different parts must not both succeed."""
+        start_barrier = threading.Barrier(2, timeout=5)
+        errors = []
+        results = {}
+        results_lock = threading.Lock()
+
+        original_lock_serial_numbers = StockItem._lock_serial_numbers
+
+        def synced_lock_serial_numbers(part, serials):
+            start_barrier.wait(timeout=5)
+            return original_lock_serial_numbers(part, serials)
+
+        def create(name, part):
+            try:
+                StockItem._create_serial_numbers(['SN-RACE'], part=part)
+                with results_lock:
+                    results[name] = 'ok'
+            except ValidationError:
+                with results_lock:
+                    results[name] = 'rejected'
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                with results_lock:
+                    errors.append(exc)
+            finally:
+                connection.close()
+
+        thread_a = threading.Thread(target=create, args=('a', self.part_a))
+        thread_b = threading.Thread(target=create, args=('b', self.part_b))
+
+        with mock.patch.object(
+            StockItem, '_lock_serial_numbers', synced_lock_serial_numbers
+        ):
+            thread_a.start()
+            thread_b.start()
+
+            thread_a.join(timeout=5)
+            thread_b.join(timeout=5)
+
+        self.assertFalse(thread_a.is_alive())
+        self.assertFalse(thread_b.is_alive())
+        self.assertEqual(errors, [])
+
+        # Exactly one request must have been rejected as a duplicate, even
+        # though the two parts are unrelated
+        self.assertEqual(sorted(results.values()), ['ok', 'rejected'])
+
+        # The serial number must only have been created once, across both parts
+        self.assertEqual(
+            StockItem.objects.filter(
+                part__in=[self.part_a, self.part_b], serial='SN-RACE'
+            ).count(),
+            1,
+        )
+
+
+@skipUnlessDBFeature('has_select_for_update')
+class StockItemSerialAPIConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test driven through the real StockItem creation API.
+
+    Same race as StockItemSerialConcurrencyTest, but issued as five
+    concurrent HTTP POST requests against the 'api-stock-list' endpoint
+    (stock.api.StockList.create()) rather than calling
+    StockItem._create_serial_numbers() directly - this exercises the full
+    view/serializer stack (permission checks, serial number extraction,
+    pre-validation) under concurrency, not just the locking primitive itself.
+    """
+
+    fixtures = ['users']
+
+    def setUp(self):
+        """Create a superuser and a single trackable Part to create serialized stock against."""
+        super().setUp()
+
+        self.user = get_user_model().objects.get(username='sue_the_superuser')
+
+        self.part = Part.objects.create(
+            name='API concurrency serial part',
+            description='Part for API serial creation concurrency test',
+            trackable=True,
+        )
+
+    def test_concurrent_api_creation_does_not_duplicate_serial(self):
+        """Five concurrent API requests for the same serial number must not all succeed."""
+        n_threads = 5
+        start_barrier = threading.Barrier(n_threads, timeout=10)
+        errors = []
+        results = []
+        results_lock = threading.Lock()
+
+        url = reverse('api-stock-list')
+
+        # Wrap StockItem._lock_serial_numbers() so all five threads reach the
+        # (real, database-level) row lock at the same time, regardless of how
+        # long each request takes to reach that point.
+        original_lock_serial_numbers = StockItem._lock_serial_numbers
+
+        def synced_lock_serial_numbers(part, serials):
+            start_barrier.wait(timeout=10)
+            return original_lock_serial_numbers(part, serials)
+
+        def create():
+            client = APIClient()
+            client.force_authenticate(user=self.user)
+
+            try:
+                response = client.post(
+                    url,
+                    {
+                        'part': self.part.pk,
+                        'quantity': 1,
+                        'serial_numbers': 'SN-API-RACE',
+                    },
+                    format='json',
+                )
+                with results_lock:
+                    results.append(response.status_code)
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                with results_lock:
+                    errors.append(exc)
+            finally:
+                connection.close()
+
+        threads = [threading.Thread(target=create) for _ in range(n_threads)]
+
+        with mock.patch.object(
+            StockItem, '_lock_serial_numbers', synced_lock_serial_numbers
+        ):
+            for thread in threads:
+                thread.start()
+
+            for thread in threads:
+                thread.join(timeout=15)
+
+        for thread in threads:
+            self.assertFalse(thread.is_alive())
+        self.assertEqual(errors, [])
+
+        # Exactly one request must have succeeded; the rest must have been
+        # rejected as duplicates
+        self.assertEqual(results.count(201), 1)
+        self.assertEqual(results.count(400), n_threads - 1)
+
+        # The serial number must only have been created once
+        self.assertEqual(
+            StockItem.objects.filter(part=self.part, serial='SN-API-RACE').count(), 1
+        )

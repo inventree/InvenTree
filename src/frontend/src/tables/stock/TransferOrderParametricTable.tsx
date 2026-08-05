@@ -3,7 +3,10 @@ import { ModelType } from '@lib/enums/ModelType';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { type ReactNode, useMemo } from 'react';
-import { DescriptionColumn, ReferenceColumn } from '../ColumnRenderers';
+import {
+  DescriptionColumn,
+  ReferenceColumn
+} from '../../components/tables/ColumnRenderers';
 import {
   AssignedToMeFilter,
   OrderStatusFilter,
@@ -11,7 +14,7 @@ import {
   OverdueFilter,
   ProjectCodeFilter,
   ResponsibleFilter
-} from '../Filter';
+} from '../../components/tables/Filter';
 import ParametricDataTable from '../general/ParametricDataTable';
 
 export default function TransferOrderParametricTable({

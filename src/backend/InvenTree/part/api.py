@@ -12,6 +12,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers
 from rest_framework.response import Response
 
+import common.filters
 import common.serializers
 import part.tasks as part_tasks
 from data_exporter.mixins import DataExportViewMixin
@@ -20,6 +21,7 @@ from InvenTree.api import (
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
     ParameterListMixin,
+    TreeMixin,
     meta_path,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
@@ -283,25 +285,38 @@ class CategoryDetail(CategoryMixin, OutputOptionsMixin, CustomRetrieveUpdateDest
         )
 
 
-class CategoryTree(ListAPI):
+class CategoryTreeFilter(FilterSet):
+    """Custom filterset class for the CategoryTree endpoint."""
+
+    class Meta:
+        """Metaclass options for this filterset."""
+
+        model = PartCategory
+        fields = ['parent', 'tree_id', 'level']
+
+    max_level = rest_filters.NumberFilter(
+        label=_('Max Level'),
+        method='filter_max_level',
+        help_text=_('Limit the depth of the category tree'),
+    )
+
+    def filter_max_level(self, queryset, name, value):
+        """Filter by the maximum depth of the category tree."""
+        return queryset.filter(level__lte=value)
+
+
+class CategoryTree(TreeMixin, ListAPI):
     """API endpoint for accessing a list of PartCategory objects ready for rendering a tree."""
 
+    model_class = PartCategory
     queryset = PartCategory.objects.all()
-    serializer_class = part_serializers.CategoryTree
-
-    filter_backends = ORDER_FILTER
-
-    ordering_fields = ['level', 'name', 'subcategories']
-
-    ordering_field_aliases = {'level': ['level', 'name'], 'name': ['name', 'level']}
-
-    # Order by tree level (top levels first) and then name
-    ordering = ['level', 'name']
+    serializer_class = part_serializers.CategoryTreeSerializer
+    filterset_class = CategoryTreeFilter
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the CategoryTree endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
-        queryset = part_serializers.CategoryTree.annotate_queryset(queryset)
+        queryset = part_serializers.CategoryTreeSerializer.annotate_queryset(queryset)
         return queryset
 
 
@@ -769,6 +784,15 @@ class PartFilter(FilterSet):
             return queryset.filter(Q(unallocated_stock__gt=0))
         return queryset.filter(Q(unallocated_stock__lte=0))
 
+    # on_order filter
+    on_order = rest_filters.BooleanFilter(label='On order', method='filter_on_order')
+
+    def filter_on_order(self, queryset, name, value):
+        """Filter by whether the Part has any stock on order."""
+        if str2bool(value):
+            return queryset.filter(Q(ordering__gt=0))
+        return queryset.filter(Q(ordering__lte=0))
+
     convert_from = rest_filters.ModelChoiceFilter(
         label='Can convert from',
         queryset=Part.objects.all(),
@@ -910,9 +934,9 @@ class PartFilter(FilterSet):
 
     virtual = rest_filters.BooleanFilter()
 
-    tags_name = rest_filters.CharFilter(field_name='tags__name', lookup_expr='iexact')
+    consumable = rest_filters.BooleanFilter()
 
-    tags_slug = rest_filters.CharFilter(field_name='tags__slug', lookup_expr='iexact')
+    tags = common.filters.TagsFilter()
 
     # Created date filters
     created_before = InvenTreeDateFilter(
@@ -1081,6 +1105,7 @@ class PartList(
         'name',
         'creation_date',
         'IPN',
+        'ordering',
         'in_stock',
         'total_in_stock',
         'unallocated_stock',

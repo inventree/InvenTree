@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from django.contrib.auth.models import User
-from django.db.models import F, Q
+from django.db.models import DecimalField, F, OuterRef, Q, Subquery, Sum
+from django.db.models.functions import Coalesce
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
@@ -16,6 +17,7 @@ from rest_framework.response import Response
 
 import build.models as build_models
 import build.serializers
+import common.filters
 import common.models
 import common.serializers
 import part.models as part_models
@@ -307,6 +309,8 @@ class BuildFilter(FilterSet):
 
         return queryset
 
+    tags = common.filters.TagsFilter()
+
 
 class BuildMixin:
     """Mixin class for Build API endpoints."""
@@ -391,9 +395,7 @@ class BuildList(
         serializer = self.get_serializer(data=self.clean_data(request.data))
         serializer.is_valid(raise_exception=True)
 
-        build = serializer.save()
-        build.issued_by = request.user
-        build.save()
+        serializer.save(issued_by=request.user)
 
         headers = self.get_success_headers(serializer.data)
         return Response(
@@ -455,8 +457,21 @@ class BuildLineFilter(FilterSet):
 
     # Fields on related models
     consumable = rest_filters.BooleanFilter(
-        label=_('Consumable'), field_name='bom_item__consumable'
+        label=_('Consumable'), method='filter_consumable'
     )
+
+    def filter_consumable(self, queryset, name, value):
+        """Filter the queryset based on the "effective" consumable status of the BOM item.
+
+        A BuildLine is considered "consumable" if either the BOM item itself,
+        or the underlying part, is marked as consumable.
+        """
+        return queryset.filter(
+            part_models.BomItem.consumable_filter(
+                consumable=str2bool(value), prefix='bom_item__'
+            )
+        )
+
     optional = rest_filters.BooleanFilter(
         label=_('Optional'), field_name='bom_item__optional'
     )
@@ -492,9 +507,25 @@ class BuildLineFilter(FilterSet):
 
     def filter_allocated(self, queryset, name, value):
         """Filter by whether each BuildLine is fully allocated."""
+        allocated_subquery = (
+            BuildItem.objects
+            .filter(build_line=OuterRef('pk'))
+            .values('build_line')
+            .annotate(total=Sum('quantity'))
+            .values('total')
+        )
+
+        queryset = queryset.alias(
+            allocated_quantity=Coalesce(
+                Subquery(allocated_subquery), 0, output_field=DecimalField()
+            )
+        )
+
         if str2bool(value):
-            return queryset.filter(allocated__gte=F('quantity') - F('consumed'))
-        return queryset.filter(allocated__lt=F('quantity') - F('consumed'))
+            return queryset.filter(
+                allocated_quantity__gte=F('quantity') - F('consumed')
+            )
+        return queryset.filter(allocated_quantity__lt=F('quantity') - F('consumed'))
 
     consumed = rest_filters.BooleanFilter(label=_('Consumed'), method='filter_consumed')
 
@@ -517,8 +548,24 @@ class BuildLineFilter(FilterSet):
         - The quantity available for each BuildLine (including variants and substitutes)
         - The quantity allocated for each BuildLine
         """
-        flt = Q(
-            quantity__lte=F('allocated')
+        allocated_subquery = (
+            BuildItem.objects
+            .filter(build_line=OuterRef('pk'))
+            .values('build_line')
+            .annotate(total=Sum('quantity'))
+            .values('total')
+        )
+
+        queryset = queryset.alias(
+            allocated_quantity=Coalesce(
+                Subquery(allocated_subquery), 0, output_field=DecimalField()
+            )
+        )
+
+        # A query filter construct to determine the total quantity available for this BuildLine,
+        # taking into account any stock which is already allocated or consumed
+        available = (
+            F('allocated_quantity')
             + F('consumed')
             + F('available_stock')
             + F('available_substitute_stock')
@@ -526,8 +573,9 @@ class BuildLineFilter(FilterSet):
         )
 
         if str2bool(value):
-            return queryset.filter(flt)
-        return queryset.exclude(flt)
+            return queryset.filter(quantity__lte=available)
+
+        return queryset.filter(quantity__gt=available)
 
     on_order = rest_filters.BooleanFilter(label=_('On Order'), method='filter_on_order')
 
@@ -886,6 +934,8 @@ class BuildAutoAllocate(BuildOrderContextMixin, CreateAPI):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
 
+        build_lines = data.get('build_lines', [])
+
         # Offload the task to the background worker
         task_id = offload_task(
             auto_allocate_build,
@@ -896,6 +946,8 @@ class BuildAutoAllocate(BuildOrderContextMixin, CreateAPI):
             substitutes=data['substitutes'],
             optional_items=data['optional_items'],
             item_type=data.get('item_type', 'untracked'),
+            stock_sort_by=data['stock_sort_by'],
+            line_ids=[line.pk for line in build_lines] if build_lines else None,
             group='build',
         )
 

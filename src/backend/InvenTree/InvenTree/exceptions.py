@@ -19,12 +19,13 @@ logger = structlog.get_logger('inventree')
 
 
 def log_error(
-    path,
-    error_name=None,
-    error_info=None,
-    error_data=None,
+    path: Optional[str] = None,
+    error_name: Optional[str] = None,
+    error_info: Optional[str] = None,
+    error_data: Optional[str] = None,
     scope: Optional[str] = None,
     plugin: Optional[str] = None,
+    user_id: Optional[int] = None,
 ):
     """Log an error to the database.
 
@@ -37,6 +38,7 @@ def log_error(
         error_data: The error data (optional, overrides 'data')
         scope: The scope of the error (optional)
         plugin: The plugin name associated with this error (optional)
+        user_id: The user ID associated with this error (optional)
     """
     import InvenTree.ready
 
@@ -70,6 +72,9 @@ def log_error(
             data = '\n'.join(formatted_exception)
         except AttributeError:
             data = 'No traceback information available'
+
+    if user_id:
+        data = f'User ID: {user_id}\n{data}'
 
     # Log error to stderr
     logger.error(info)

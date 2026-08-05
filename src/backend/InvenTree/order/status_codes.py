@@ -63,10 +63,11 @@ class SalesOrderStatusGroups:
         SalesOrderStatus.PENDING.value,
         SalesOrderStatus.ON_HOLD.value,
         SalesOrderStatus.IN_PROGRESS.value,
+        SalesOrderStatus.SHIPPED.value,
     ]
 
     # Completed orders
-    COMPLETE = [SalesOrderStatus.SHIPPED.value, SalesOrderStatus.COMPLETE.value]
+    COMPLETE = [SalesOrderStatus.COMPLETE.value]
 
 
 class ReturnOrderStatus(StatusCode):

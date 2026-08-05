@@ -23,7 +23,15 @@ class DataImportColumnMapSerializer(InvenTreeModelSerializer):
         """Meta class options for the serializer."""
 
         model = importer.models.DataImportColumnMap
-        fields = ['pk', 'session', 'column', 'field', 'label', 'description']
+        fields = [
+            'pk',
+            'session',
+            'column',
+            'field',
+            'label',
+            'description',
+            'lookup_field',
+        ]
         read_only_fields = ['field', 'session']
 
     label = serializers.CharField(read_only=True)
@@ -54,6 +62,8 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
             'field_filters',
             'row_count',
             'completed_row_count',
+            'completed_row_count_history',
+            'row_count_history',
         ]
         read_only_fields = ['pk', 'user', 'status', 'columns']
 
@@ -88,7 +98,10 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
         if type(defaults) is not dict:
             try:
                 defaults = json.loads(str(defaults))
-            except:
+            except json.JSONDecodeError:
+                raise ValidationError(_('Invalid field defaults'))
+
+            if type(defaults) is not dict:
                 raise ValidationError(_('Invalid field defaults'))
 
         return defaults
@@ -101,7 +114,10 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
         if type(overrides) is not dict:
             try:
                 overrides = json.loads(str(overrides))
-            except:
+            except json.JSONDecodeError:
+                raise ValidationError(_('Invalid field overrides'))
+
+            if type(overrides) is not dict:
                 raise ValidationError(_('Invalid field overrides'))
 
         return overrides
@@ -114,7 +130,10 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
         if type(filters) is not dict:
             try:
                 filters = json.loads(str(filters))
-            except:
+            except json.JSONDecodeError:
+                raise ValidationError(_('Invalid field filters'))
+
+            if type(filters) is not dict:
                 raise ValidationError(_('Invalid field filters'))
 
         return filters
@@ -212,6 +231,8 @@ class DataImportAcceptRowSerializer(serializers.Serializer):
             row.validate(commit=True, request=request)
 
         if session := self.context.get('session', None):
+            # ensure current state is available
+            session.refresh_from_db()
             session.check_complete()
 
         return rows

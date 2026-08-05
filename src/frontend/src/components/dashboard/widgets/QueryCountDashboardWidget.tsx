@@ -129,6 +129,7 @@ export default function QueryCountDashboardWidget({
   title,
   description,
   modelType,
+  icon,
   enabled = true,
   params
 }: {
@@ -136,6 +137,7 @@ export default function QueryCountDashboardWidget({
   title: string;
   description: string;
   modelType: ModelType;
+  icon?: keyof InvenTreeIconType;
   enabled?: boolean;
   params: any;
 }): DashboardWidgetProps {
@@ -147,6 +149,7 @@ export default function QueryCountDashboardWidget({
     modelType: modelType,
     minWidth: 2,
     minHeight: 1,
+    icon: icon,
     render: () => (
       <QueryCountWidget modelType={modelType} title={title} params={params} />
     )
