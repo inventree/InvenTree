@@ -429,7 +429,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
         'supplier_part',
     ]
 
-    roles = ['part.add', 'part.change']
+    roles = ['part.add', 'part.change', 'purchase_order.view']
 
     def test_manufacturer_part_list(self):
         """Test the ManufacturerPart API list functionality."""

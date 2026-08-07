@@ -122,7 +122,7 @@
         "@babel/preset-typescript": "^8.0.1",
         "@babel/runtime": "^8.0.0",
         "@codecov/vite-plugin": "^2.0.1",
-        "@flakiness/playwright": "^1.13.0",
+        "@flakiness/playwright": "^2.0.0",
         "@lingui/babel-plugin-lingui-macro": "^5.9.5",
         "@lingui/cli": "^5.9.5",
         "@lingui/macro": "^5.9.5",

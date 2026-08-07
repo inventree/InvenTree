@@ -53,6 +53,7 @@ class PartImageTestMixin:
         'part.delete',
         'part_category.change',
         'part_category.add',
+        'stock_location.view',
     ]
 
     @classmethod
@@ -821,6 +822,7 @@ class PartAPITestBase(InvenTreeAPITestCase):
         'part.delete',
         'part_category.change',
         'part_category.add',
+        'stock_location.view',
     ]
 
 
@@ -2348,10 +2350,13 @@ class PartListTests(PartAPITestBase):
             query_count_with_price_breaks - query_count_without_price_breaks
         )
 
-        # There are 2 additional queries, 1 for the salepricebreak subselect and 1 for Currency codes because of InvenTreeCurrencySerializer
+        # There are 4 additional queries: 1 for the salepricebreak subselect, 1 for
+        # Currency codes because of InvenTreeCurrencySerializer, and 2 for the one-off
+        # permission check (fetch groups + rule sets) gating the price_breaks field's
+        # embedded PartSellPriceBreak model - this cost is fixed per-request, not per-row.
         self.assertLessEqual(
             query_difference,
-            2,
+            4,
             f'Query count difference too high: {query_difference} (with: {query_count_with_price_breaks}, without: {query_count_without_price_breaks})',
         )
 
@@ -3014,6 +3019,14 @@ class BomItemTest(InvenTreeAPITestCase):
         """Get the detail view for a single BomItem object."""
         from part.models import BomItemSubstitute
 
+        # Viewing 'substitutes' requires the 'bom' role (BomItemSubstitute is not
+        # covered by the part->bomitem RULESET_CHANGE_INHERIT fallback). Grant both
+        # 'add' and 'delete' so the 'bom' RuleSet ends up fully matching the existing
+        # part-inherited bomitem permissions - granting only 'view' would otherwise
+        # cause update_group_roles() to wipe those already-inherited permissions.
+        self.assignRole('bom.add')
+        self.assignRole('bom.delete')
+
         bom_item = BomItem.objects.get(pk=3)
 
         # Create some substitutes for this BomItem
@@ -3091,6 +3104,11 @@ class BomItemTest(InvenTreeAPITestCase):
 
     def test_output_options(self):
         """Test that various output options work as expected."""
+        # Viewing 'substitutes' requires the 'bom' role (see test_get_bom_detail for why
+        # both 'add' and 'delete' are granted together).
+        self.assignRole('bom.add')
+        self.assignRole('bom.delete')
+
         self.run_output_test(
             reverse('api-bom-item-detail', kwargs={'pk': 3}),
             [
