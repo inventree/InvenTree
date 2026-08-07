@@ -222,7 +222,7 @@ jobs:
           echo "Downloaded api.yaml"
       - name: Running OpenAPI Spec diff action
         id: breaking_changes
-        uses: oasdiff/oasdiff-action/diff@024f6c399f9a21ada1addb0f9a36ce1bfac995f1 # v0.1.4
+        uses: oasdiff/oasdiff-action/diff@b7c3adeb54330db1903d27c61db520e5661ad55b # v0.1.11
         with:
           base: "api.yaml"
           revision: "src/backend/InvenTree/schema.yml"
@@ -363,7 +363,7 @@ jobs:
           pip install .
         if: needs.paths-filter.outputs.submit-performance == 'true'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@f99becdce5e5d51fd556489ebef684f4ecfd6286 # v4.18.5
+        uses: CodSpeedHQ/action@f22792bfac16f3e14eb9fbea76f4a48e9cc22b93 # v4.19.1
         # check if we are in inventree/inventree - reporting only works in that OIDC context
         if: github.repository == 'inventree/InvenTree' && needs.paths-filter.outputs.submit-performance == 'true'
         with:
@@ -456,7 +456,7 @@ jobs:
         env:
           node_version: '>=24'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@f99becdce5e5d51fd556489ebef684f4ecfd6286 # v4.18.5
+        uses: CodSpeedHQ/action@f22792bfac16f3e14eb9fbea76f4a48e9cc22b93 # v4.19.1
         with:
           mode: walltime
           run: inv dev.test --pytest
@@ -680,4 +680,4 @@ jobs:
         with:
           persist-credentials: false
       - name: Run zizmor 🌈
-        uses: zizmorcore/zizmor-action@6599ee8b7a49aef6a770f63d261d214911a7ce02 # v0.6.0
+        uses: zizmorcore/zizmor-action@6fc4b006235f201fdab3722e17240ab420d580e5 # v0.6.1
