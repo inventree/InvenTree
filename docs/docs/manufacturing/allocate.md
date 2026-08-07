@@ -35,10 +35,12 @@ A [Bill of Materials](./bom.md) to generate an assembly may consist of a mixture
 
 ### Tracked Build Outputs
 
-If a Build Order is created for an assembled part which is itself designed as *trackable*, some extra restrictions apply:
+If the [BOM](./bom.md) for the assembled part contains one or more *tracked* (trackable) components, some extra restrictions apply when creating build outputs:
 
-- Build outputs must be single quantity
-- Build outputs must be serialized as they are created
+- Serial numbers *must* be provided when the build output is created - this allows the tracked sub-components to be allocated against a specific unit
+- Each generated build output is single quantity (one output per serial number)
+
+If the assembled part itself is *trackable*, but the BOM does not contain any tracked components, serial numbers are *not* required at the point of creation - a single build output may be created with a batch quantity, and [serialized later](../part/trackable.md#build-outputs-without-serial-numbers).
 
 ## Allocating Untracked Stock
 

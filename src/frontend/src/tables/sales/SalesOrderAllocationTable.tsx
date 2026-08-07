@@ -20,6 +20,7 @@ import {
   LocationColumn,
   PartColumn,
   ReferenceColumn,
+  RevisionColumn,
   StatusColumn
 } from '../../components/tables/ColumnRenderers';
 import {
@@ -109,6 +110,7 @@ export default function SalesOrderAllocationTable({
     return [
       ReferenceColumn({
         accessor: 'order_detail.reference',
+        ordering: 'order',
         title: t`Sales Order`,
         switchable: false,
         sortable: true,
@@ -128,11 +130,14 @@ export default function SalesOrderAllocationTable({
         hidden: showPartInfo != true,
         part: 'part_detail'
       }),
-      DescriptionColumn({
-        accessor: 'part_detail.description',
+      IPNColumn({
         hidden: showPartInfo != true
       }),
-      IPNColumn({
+      RevisionColumn({
+        hidden: showPartInfo != true
+      }),
+      DescriptionColumn({
+        accessor: 'part_detail.description',
         hidden: showPartInfo != true
       }),
       {

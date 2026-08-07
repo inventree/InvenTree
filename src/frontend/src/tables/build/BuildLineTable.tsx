@@ -33,7 +33,8 @@ import {
   IPNColumn,
   LocationColumn,
   PartColumn,
-  RenderPartColumn
+  RenderPartColumn,
+  RevisionColumn
 } from '../../components/tables/ColumnRenderers';
 import { PartCategoryFilter } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
@@ -351,6 +352,7 @@ export default function BuildLineTable({
         }
       }),
       IPNColumn({}),
+      RevisionColumn({}),
       CategoryColumn({
         accessor: 'category_detail',
         defaultVisible: false,

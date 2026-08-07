@@ -143,8 +143,16 @@ class StockItemSerialize(StockItemContextMixin, CreateAPI):
 
         queryset = StockSerializers.StockItemSerializer.annotate_queryset(items)
 
+        # Apply any additional prefetching required by optional fields which end up
+        # included in this response (e.g. 'tags', 'tests') - mirrors what
+        # OutputOptionsMixin.get_queryset() does for a normal list/retrieve request,
+        # which this manually-constructed response bypasses
+        context = self.get_serializer_context()
+        probe_serializer = StockSerializers.StockItemSerializer(context=context)
+        queryset = probe_serializer.prefetch_queryset(queryset)
+
         response = StockSerializers.StockItemSerializer(
-            queryset, many=True, context=self.get_serializer_context()
+            queryset, many=True, context=context
         )
 
         return Response(response.data, status=status.HTTP_201_CREATED)
@@ -582,6 +590,7 @@ class StockFilter(FilterSet):
         # Simple filter filters
         fields = [
             'supplier_part',
+            'parent',
             'belongs_to',
             'build',
             'customer',
@@ -910,15 +919,6 @@ class StockFilter(FilterSet):
             return queryset.exclude(purchase_price=None)
         return queryset.filter(purchase_price=None)
 
-    ancestor = rest_filters.ModelChoiceFilter(
-        label='Ancestor', queryset=StockItem.objects.all(), method='filter_ancestor'
-    )
-
-    @extend_schema_field(OpenApiTypes.INT)
-    def filter_ancestor(self, queryset, name, ancestor):
-        """Filter based on ancestor stock item."""
-        return queryset.filter(parent__in=ancestor.get_descendants(include_self=True))
-
     category = rest_filters.ModelChoiceFilter(
         label=_('Category'),
         queryset=PartCategory.objects.all(),
@@ -1026,26 +1026,6 @@ class StockFilter(FilterSet):
             return queryset.filter(stale_filter)
         else:
             return queryset.exclude(stale_filter)
-
-    exclude_tree = rest_filters.NumberFilter(
-        method='filter_exclude_tree',
-        label=_('Exclude Tree'),
-        help_text=_(
-            'Provide a StockItem PK to exclude that item and all its descendants'
-        ),
-    )
-
-    def filter_exclude_tree(self, queryset, name, value):
-        """Exclude a StockItem and all of its descendants from the queryset."""
-        try:
-            root = StockItem.objects.get(pk=value)
-            pks_to_exclude = [
-                item.pk for item in root.get_descendants(include_self=True)
-            ]
-            return queryset.exclude(pk__in=pks_to_exclude)
-        except (ValueError, StockItem.DoesNotExist):
-            # If the value is invalid or the object doesn't exist, do nothing.
-            return queryset
 
     cascade = rest_filters.BooleanFilter(
         method='filter_cascade',

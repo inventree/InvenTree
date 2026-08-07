@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import Q, QuerySet, Sum
+from django.db.models import Q, QuerySet, Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError, OperationalError
@@ -35,7 +35,6 @@ import InvenTree.ready
 import InvenTree.tasks
 import order.models
 import report.mixins
-import stock.tasks
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
@@ -43,6 +42,7 @@ from generic.enums import StringEnum
 from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
+from InvenTree.helpers_db import bulk_create_and_fetch
 from InvenTree.status_codes import (
     SalesOrderStatusGroups,
     StockHistoryCode,
@@ -227,6 +227,7 @@ class StockLocation(
     )
 
     @property
+    @report.mixins.report_attribute()
     def icon(self) -> str:
         """Get the current icon used for this location.
 
@@ -325,7 +326,8 @@ class StockLocation(
         return self.get_stock_items(cascade).count()
 
     @property
-    def item_count(self):
+    @report.mixins.report_attribute()
+    def item_count(self) -> int:
         """Simply returns the number of stock items in this location.
 
         Required for tree view serializer.
@@ -422,7 +424,6 @@ STOCK_SORT_DEFAULT = StockSortOrder.DATE_OLDEST
 
 
 class StockItem(
-    InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
@@ -431,7 +432,7 @@ class StockItem(
     report.mixins.InvenTreeReportMixin,
     common.models.MetaMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeTree,
+    InvenTree.models.InvenTreeModel,
 ):
     """A StockItem object represents a quantity of physical instances of a part.
 
@@ -467,6 +468,23 @@ class StockItem(
         """Model meta options."""
 
         verbose_name = _('Stock Item')
+        constraints = [
+            # Baseline, database-enforced duplicate-serial guard: a given Part
+            # can never have two StockItem rows sharing the same serial number.
+            # This alone does not cover the "unique across a Part variant tree"
+            # (or globally-unique) semantics controlled by the
+            # SERIAL_NUMBER_GLOBALLY_UNIQUE setting - see
+            # StockItem._lock_serial_numbers() for that; a UniqueConstraint
+            # cannot reference the joined Part.tree_id field.
+            UniqueConstraint(
+                fields=['part', 'serial'],
+                # Non-serialized StockItems may store serial as either NULL or
+                # '' depending on the creation path - exclude both, since
+                # "no serial" is not a value this constraint should govern
+                condition=Q(serial__isnull=False) & ~Q(serial=''),
+                name='stock_item_unique_part_serial',
+            )
+        ]
 
     class MPTTMeta:
         """MPTT metaclass options."""
@@ -551,6 +569,9 @@ class StockItem(
     def delete(self, ignore_serial_check: bool = False, **kwargs):
         """Custom delete method for StockItem model.
 
+        Any child items are re-linked to the parent of this item,
+        to preserve the stock item genealogy chain.
+
         Arguments:
             ignore_serial_check: If True, allow deletion of serialized stock items regardless of global setting
         """
@@ -560,21 +581,31 @@ class StockItem(
             if self.serialized:
                 raise ValidationError(_('Serialized stock items cannot be deleted'))
 
-        super().delete(**kwargs)
+        with transaction.atomic():
+            # Re-link any child items to the parent of this item,
+            # so the genealogy chain survives deletion of an intermediate item
+
+            parent = StockItem.objects.filter(pk=self.parent_id).first()
+            StockItem.objects.filter(parent=self).update(parent=parent)
+
+            super().delete(**kwargs)
 
     @staticmethod
     def get_api_url():
         """Return API url."""
         return reverse('api-stock-list')
 
-    def api_instance_filters(self):
-        """Custom API instance filters."""
-        return {'parent': {'exclude_tree': self.pk}}
-
     @classmethod
     def barcode_model_type_code(cls):
         """Return the associated barcode model type code for this model."""
         return 'SI'
+
+    def get_children(self):
+        """Return a queryset of all StockItem objects which are direct children of this StockItem.
+
+        Simply proxies the reverse foreign-key relation for the 'parent' field.
+        """
+        return self.children.all()
 
     def get_test_keys(self, include_installed=True):
         """Construct a flattened list of test 'keys' for this StockItem."""
@@ -641,7 +672,68 @@ class StockItem(
             & Q(expiry_date__lt=InvenTree.helpers.current_date())
         )
 
+    @staticmethod
+    def _lock_serial_numbers(part: PartModels.Part, serials: list) -> None:
+        """Serialize concurrent serial number creation, and re-validate under the lock.
+
+        Must be called from within an atomic transaction. Serial number
+        uniqueness is scoped by the SERIAL_NUMBER_GLOBALLY_UNIQUE setting -
+        either across an entire Part variant tree (the default), or globally.
+        That scope depends on Part.tree_id, which is not a field on
+        StockItem, so it cannot be expressed as a database-level
+        UniqueConstraint on StockItem directly (a UniqueConstraint cannot
+        reference a joined field). Instead, this select_for_update()s
+        existing rows that already represent the relevant scope - every Part
+        in the tree, or (for the globally-unique case, where there is no
+        single tree to lock) the SERIAL_NUMBER_GLOBALLY_UNIQUE setting's own
+        row - so concurrent creation attempts within the same scope
+        serialize against each other. It then re-checks for conflicts
+        against StockItem while holding that lock. This closes the race
+        where two concurrent requests both read "no conflict" before either
+        has committed its creation.
+
+        Raises:
+            ValidationError: If any of the provided serial numbers now conflict
+        """
+        if get_global_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False):
+            # There is no single Part tree covering "globally unique" - lock
+            # the setting's own row instead, so all concurrent global-scope
+            # creation attempts serialize against each other regardless of
+            # which part is involved. This row is guaranteed to already
+            # exist: reaching this branch means the setting is currently
+            # True, which can only happen if it was explicitly set (and
+            # therefore persisted) at some point.
+            setting, _created = common.models.InvenTreeSetting.objects.get_or_create(
+                key='SERIAL_NUMBER_GLOBALLY_UNIQUE', defaults={'value': str(True)}
+            )
+            common.models.InvenTreeSetting.objects.select_for_update().get(
+                pk=setting.pk
+            )
+        else:
+            # Lock every Part in this variant tree (this always includes
+            # 'part' itself), so concurrent creation attempts for any part in
+            # the same tree serialize against each other
+            list(
+                PartModels.Part.objects
+                .select_for_update()
+                .filter(tree_id=part.tree_id)
+                .order_by('pk')
+            )
+
+        # Re-validate for conflicts now that the lock is held - any
+        # concurrent request for the same scope has either already committed
+        # (and will now show up here) or is blocked behind this lock (and
+        # will see this request's result once it releases)
+        conflicts = part.find_conflicting_serial_numbers(serials)
+
+        if conflicts:
+            msg = _('The following serial numbers already exist or are invalid')
+            msg += ' : '
+            msg += ','.join(str(x) for x in conflicts)
+            raise ValidationError({'serial_numbers': msg})
+
     @classmethod
+    @transaction.atomic
     def _create_serial_numbers(cls, serials: list, **kwargs) -> QuerySet:
         """Create multiple stock items with the provided serial numbers.
 
@@ -658,8 +750,11 @@ class StockItem(
         This method uses bulk_create to create multiple StockItem objects in a single query,
         which is much more efficient than creating them one-by-one.
 
-        However, it does not perform any validation checks on the provided serial numbers,
-        and also does not generate any "stock tracking entries".
+        Concurrent calls for an overlapping set of serial numbers are
+        serialized against each other (see _lock_serial_numbers()), so unlike
+        other validation checks, this method's duplicate-serial protection is
+        safe even when the caller's own pre-check raced against another
+        request. It does not generate any "stock tracking entries".
 
         Note: This is an 'internal' function and should not be used by external code / plugins.
         """
@@ -708,20 +803,13 @@ class StockItem(
         if 'part' not in data:
             raise ValidationError({'part': _('Part must be specified')})
 
-        part = data['part']
+        # Serialize against any other concurrent request creating an
+        # overlapping set of serial numbers, and re-validate under that lock
+        cls._lock_serial_numbers(data['part'], serials)
 
         parent = kwargs.pop('parent', None) or data.get('parent')
-        tree_id = kwargs.pop('tree_id', StockItem.getNextTreeID())
 
-        if parent:
-            # Override with parent's tree_id if provided
-            tree_id = parent.tree_id
-
-        # Pre-calculate MPTT fields
-        data['parent'] = parent if parent else None
-        data['level'] = parent.level + 1 if parent else 0
-        data['lft'] = 0 if parent else 1
-        data['rght'] = 0 if parent else 2
+        data['parent'] = parent
 
         # Force single quantity for each item
         data['quantity'] = 1
@@ -734,29 +822,17 @@ class StockItem(
             else:
                 data['serial_int'] = 0
 
-            data['tree_id'] = tree_id
-
-            if not parent:
-                # No parent, this is a top-level item, so increment the tree_id
-                # This is because each new item is a "top-level" node in the StockItem tree
-                tree_id += 1
-
             # Construct a new StockItem from the provided dict
             items.append(StockItem(**data))
 
         # Create the StockItem objects in bulk
-        StockItem.objects.bulk_create(items, batch_size=250)
-
-        # We will need to rebuild the stock item tree manually, due to the bulk_create operation
-        if parent and parent.tree_id:
-            # Rebuild the tree structure for this StockItem tree
-            logger.info(
-                'Rebuilding StockItem tree structure for tree_id: %s', parent.tree_id
-            )
-            stock.tasks.rebuild_stock_item_tree(parent.tree_id)
-
-        # Fetch the new StockItem objects from the database
-        items = StockItem.objects.filter(part=part, serial__in=serials)
+        # (the IntegrityError catch is a defense-in-depth backstop against
+        # the database-level UniqueConstraint - _lock_serial_numbers() above
+        # should already have ruled out any conflict)
+        try:
+            items = bulk_create_and_fetch(StockItem, items)
+        except IntegrityError as exc:
+            raise ValidationError({'serial_numbers': str(exc)}) from exc
 
         # Trigger a 'created' event for the new items
         # Note that instead of a single event for each item,
@@ -882,7 +958,8 @@ class StockItem(
         return self.get_next_serialized_item(reverse=True)
 
     @property
-    def status_label(self):
+    @report.mixins.report_attribute()
+    def status_label(self) -> str:
         """Return label."""
         return StockStatus.label(self.status)
 
@@ -958,11 +1035,19 @@ class StockItem(
         if type(self.batch) is str:
             self.batch = self.batch.strip()
 
-        if not get_global_setting('STOCK_ALLOW_EDIT_SERIAL'):
-            deltas = self.get_field_deltas()
-
+        if not get_global_setting('STOCK_ALLOW_EDIT_SERIAL') and self.pk:
             # Prevent editing of serial numbers if the item already has a serial number assigned
-            if 'serial' in deltas and deltas['serial']['old'] not in [None, '']:
+            # Note: A targeted single-column lookup is used here (rather than get_field_deltas(),
+            # which fetches and diffs *every* field, dereferencing every non-null FK in the
+            # process) since only the previous 'serial' value is actually needed.
+            old_serial = (
+                StockItem.objects
+                .filter(pk=self.pk)
+                .values_list('serial', flat=True)
+                .first()
+            )
+
+            if old_serial not in [None, ''] and old_serial != self.serial:
                 raise ValidationError({
                     'serial': _(
                         'Editing of serial numbers is not allowed - this item has already been assigned a serial number'
@@ -1063,11 +1148,11 @@ class StockItem(
         """Returns part name."""
         return self.part.full_name
 
-    # Note: When a StockItem is deleted, a pre_delete signal handles the parent/child relationship
-    parent = TreeForeignKey(
-        'self',
+    # Note: When a StockItem is deleted, child items are re-linked to its parent (see delete())
+    parent = models.ForeignKey(
+        'stock.StockItem',
         verbose_name=_('Parent Stock Item'),
-        on_delete=models.DO_NOTHING,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
         related_name='children',
@@ -1387,6 +1472,7 @@ class StockItem(
         # Delete outstanding BuildOrder allocations
         self.allocations.all().delete()
 
+    @transaction.atomic
     def allocateToCustomer(
         self, customer, quantity=None, order=None, user=None, notes=None
     ):
@@ -1403,8 +1489,19 @@ class StockItem(
             user: User that performed the action
             notes: Notes field
         """
-        if quantity is None:
+        # Lock the database row, so concurrent adjustments are serialized
+        if not self.lock_quantity():
+            raise ValidationError(_('Stock item no longer exists'))
+
+        if quantity is None or self.serialized:
             quantity = self.quantity
+
+        # Cannot allocate more than the available quantity
+        # (also ensures the recorded history matches the actual allocation)
+        quantity = min(quantity, self.quantity)
+
+        if quantity <= 0:
+            raise ValidationError({'quantity': _('Quantity must be greater than zero')})
 
         if quantity >= self.quantity:
             item = self
@@ -1672,6 +1769,53 @@ class StockItem(
         """Return the quantity of this StockItem which is *not* allocated."""
         return max(self.quantity - self.allocation_count(), 0)
 
+    @staticmethod
+    def bulk_allocation_count(stock_items) -> dict:
+        """Bulk-compute the total allocated quantity (builds + sales orders + transfer orders) for a set of StockItem objects.
+
+        Mirrors the per-instance calculation in `allocation_count()`, but resolves the whole
+        set in 3 aggregate queries (one per allocation type) rather than one query per
+        allocation type *per item* - critical for validating requests which reference many
+        stock items at once.
+
+        Returns:
+            A {stock_item.pk: total_allocated_quantity} dict. Items with no allocations
+            of any kind are omitted (i.e. callers should default missing pks to zero).
+        """
+        pks = [item.pk for item in stock_items]
+
+        totals = {}
+
+        def _accumulate(queryset, group_field):
+            rows = queryset.values(group_field).annotate(
+                total=Coalesce(Sum('quantity'), Decimal(0))
+            )
+            for row in rows:
+                pk = row[group_field]
+                totals[pk] = totals.get(pk, Decimal(0)) + row['total']
+
+        _accumulate(
+            build.models.BuildItem.objects.filter(stock_item__in=pks), 'stock_item'
+        )
+
+        _accumulate(
+            order.models.SalesOrderAllocation.objects.filter(
+                item__in=pks,
+                line__order__status__in=SalesOrderStatusGroups.OPEN,
+                shipment__shipment_date=None,
+            ),
+            'item',
+        )
+
+        _accumulate(
+            order.models.TransferOrderAllocation.objects.filter(
+                item__in=pks, line__order__status__in=TransferOrderStatusGroups.OPEN
+            ),
+            'item',
+        )
+
+        return totals
+
     def can_delete(self):
         """Can this stock item be deleted?
 
@@ -1680,11 +1824,25 @@ class StockItem(
         - Is installed inside another StockItem
         - It has been assigned to a SalesOrder
         - It has been assigned to a BuildOrder
+        - It has active allocations against a SalesOrder or TransferOrder
+        - It is referenced by a ReturnOrder line item
         """
         if self.installed_item_count() > 0:
             return False
 
-        return self.sales_order is None
+        if self.sales_order is not None:
+            return False
+
+        if self.allocations.exists():
+            return False
+
+        if self.get_sales_order_allocations(active=True).exists():
+            return False
+
+        if self.get_transfer_order_allocations(active=True).exists():
+            return False
+
+        return not self.return_order_lines.exists()
 
     def get_installed_items(self, cascade: bool = False) -> set[StockItem]:
         """Return all stock items which are *installed* in this one!
@@ -1735,6 +1893,22 @@ class StockItem(
             notes: Any notes associated with the operation
             build: The BuildOrder to associate with the operation (optional)
         """
+        # Lock the database row, so concurrent adjustments are serialized
+        if not other_item.lock_quantity():
+            raise ValidationError(_('Stock item no longer exists'))
+
+        try:
+            quantity = Decimal(quantity)
+        except (InvalidOperation, TypeError):
+            raise ValidationError({'quantity': _('Invalid quantity value')})
+
+        if quantity <= 0:
+            raise ValidationError({'quantity': _('Quantity must be greater than zero')})
+
+        # Cannot install more than the available quantity
+        # (also ensures the recorded history matches the actual installation)
+        quantity = min(quantity, other_item.quantity)
+
         # If the quantity is less than the stock item, split the stock!
         stock_item = other_item.splitStock(quantity, None, user)
 
@@ -1786,6 +1960,11 @@ class StockItem(
         # If the stock item is not installed in anything, ignore
         if self.belongs_to is None:
             return False
+
+        if location and location.structural:
+            raise ValidationError({
+                'location': _('Cannot assign stock to structural location')
+            })
 
         # Add a transaction note to the parent item
         self.belongs_to.add_tracking_entry(
@@ -1937,6 +2116,10 @@ class StockItem(
         if quantity <= 0:
             raise ValidationError({'quantity': _('Quantity must be greater than zero')})
 
+        # Lock the database row, so concurrent adjustments are serialized
+        if not self.lock_quantity():
+            raise ValidationError(_('Stock item no longer exists'))
+
         if quantity > self.quantity:
             raise ValidationError({
                 'quantity': _('Quantity must not exceed available stock quantity')
@@ -2029,7 +2212,6 @@ class StockItem(
                 new_item.set_status(status, custom_values=custom_status_values)
 
             # Ensure the tree structure is observed
-            new_item.tree_id = None
             new_item.save(add_note=False)
 
             deltas = {'stockitem': self.pk, 'quantity': float(line_quantity)}
@@ -2078,17 +2260,9 @@ class StockItem(
             StockHistoryCode.DISASSEMBLED, user, notes=notes, deltas=deltas
         )
 
-        # Rebuild the stock tree for this item
-        stock.tasks.rebuild_stock_item_tree(self.tree_id)
-
         trigger_event(StockEvents.ITEM_DISASSEMBLED, id=self.pk)
 
         return items
-
-    @property
-    def children(self):
-        """Return a list of the child items which have been split from this stock item."""
-        return self.get_descendants(include_self=False)
 
     @property
     def child_count(self):
@@ -2265,6 +2439,10 @@ class StockItem(
         if quantity <= 0:
             raise ValidationError({'quantity': _('Quantity must be greater than zero')})
 
+        # Lock the database row, so concurrent adjustments are serialized
+        if not self.lock_quantity():
+            raise ValidationError(_('Stock item no longer exists'))
+
         if quantity > self.quantity:
             raise ValidationError({
                 'quantity': _(
@@ -2304,7 +2482,6 @@ class StockItem(
 
         # Set the parent ID correctly
         data['parent'] = self
-        data['tree_id'] = self.tree_id
 
         # Generate a new serial number for each item
         items = StockItem._create_serial_numbers(serials, **data)
@@ -2312,7 +2489,18 @@ class StockItem(
         # Create a new tracking entry for each item
         history_items = []
 
+        # Every new item shares this exact part - avoid a redundant per-item
+        # part_id -> Part lookup (bulk_create_and_fetch() does not preserve the
+        # cached FK) by seeding each item's cache with the instance we already have
+        part = self.part
+
+        # Check (once) whether there are any test results to copy across, rather
+        # than re-querying an identical (and usually empty) result set per item
+        has_test_results = self.test_results.exists()
+
         for item in items:
+            item.part = part
+
             # Construct tracking entries for the new StockItem
             if entry := item.add_tracking_entry(
                 StockHistoryCode.SPLIT_FROM_PARENT,
@@ -2335,7 +2523,8 @@ class StockItem(
                 history_items.append(entry)
 
             # Copy any test results from this item to the new one
-            item.copyTestResultsFrom(self)
+            if has_test_results:
+                item.copyTestResultsFrom(self)
 
         StockItemTracking.objects.bulk_create(history_items, batch_size=250)
 
@@ -2487,6 +2676,11 @@ class StockItem(
         if location is None:
             return None
 
+        # This item must itself be in a state which allows merging
+        # (e.g. not serialized, in production, installed, or assigned to an order / customer)
+        if not self.can_merge():
+            return None
+
         candidates = list(
             StockItem.objects
             .filter(part=self.part, location=location)
@@ -2527,8 +2721,28 @@ class StockItem(
         if len(other_items) == 0:
             return
 
-        # Keep track of the tree IDs that are being merged
-        tree_ids = {self.tree_id}
+        # Lock all database rows (in pk order, to avoid deadlocks between
+        # concurrent merges) and refresh the quantity of each item
+        items_to_merge = sorted([self, *other_items], key=lambda item: item.pk)
+
+        locked_quantities = dict(
+            StockItem.objects
+            .select_for_update()
+            .filter(pk__in=[item.pk for item in items_to_merge])
+            .values_list('pk', 'quantity')
+        )
+
+        for item in items_to_merge:
+            if item.pk not in locked_quantities:
+                if raise_error:
+                    raise ValidationError(_('Stock item no longer exists'))
+
+                logger.warning(
+                    'Stock item <%s> no longer exists - merge cancelled', item.pk
+                )
+                return
+
+            item.quantity = locked_quantities[item.pk]
 
         user = kwargs.get('user')
         location = kwargs.get('location', self.location)
@@ -2543,18 +2757,20 @@ class StockItem(
             pricing_data.append([self.purchase_price, self.quantity])
 
         for other in other_items:
-            # If the stock item cannot be merged, return
-            if not self.can_merge(other, raise_error=raise_error, **kwargs):
+            # Check the merge in both directions, so that the generic state checks
+            # (serialized, in production, installed, assigned to an order / customer)
+            # are applied to the incoming items as well as this one
+            if not self.can_merge(
+                other, raise_error=raise_error, **kwargs
+            ) or not other.can_merge(self, raise_error=raise_error, **kwargs):
                 logger.warning(
-                    'Stock item <%s> could not be merge into <%s>', other.pk, self.pk
+                    'Stock item <%s> could not be merged into <%s>', other.pk, self.pk
                 )
                 return
 
         merged_quantity = Decimal(0)
 
         for other in other_items:
-            tree_ids.add(other.tree_id)
-
             merged_quantity += other.quantity
             self.quantity += other.quantity
 
@@ -2626,19 +2842,6 @@ class StockItem(
 
         self.save()
 
-        # Rebuild stock trees as required
-        rebuild_result = True
-        for tree_id in tree_ids:
-            if not stock.tasks.rebuild_stock_item_tree(tree_id, rebuild_on_fail=False):
-                rebuild_result = False
-
-        if not rebuild_result:
-            # If the rebuild failed, offload the task to a background worker
-            logger.warning(
-                'Failed to rebuild stock item tree during merge_stock_items operation, offloading task.'
-            )
-            InvenTree.tasks.offload_task(stock.tasks.rebuild_stock_items, group='stock')
-
     @transaction.atomic
     def splitStock(self, quantity, location=None, user=None, **kwargs):
         """Split this stock item into two items, in the same location.
@@ -2698,6 +2901,10 @@ class StockItem(
         if quantity <= 0:
             return None
 
+        # Lock the database row, so concurrent adjustments are serialized
+        if not self.lock_quantity():
+            return None
+
         # Also doesn't make sense to split the full amount
         if quantity >= self.quantity:
             return None
@@ -2711,7 +2918,6 @@ class StockItem(
 
         # Update the new stock item to ensure the tree structure is observed
         new_stock.parent = self
-        new_stock.tree_id = None
 
         # Create 'deltas' dict to record changes for tracking
         deltas = {'stockitem': self.pk}
@@ -2759,9 +2965,6 @@ class StockItem(
             record_tracking=record_tracking,
         )
 
-        # Rebuild the tree for this parent item
-        stock.tasks.rebuild_stock_item_tree(self.tree_id)
-
         # Attempt to reload the new item from the database
         try:
             new_stock.refresh_from_db()
@@ -2786,6 +2989,7 @@ class StockItem(
         linking the resulting tracking entry back to the order which triggered it.
         """
         return [
+            'stockitem',
             'stockitemlocation',
             'transferorder',
             'purchaseorder',
@@ -2869,6 +3073,10 @@ class StockItem(
         """
         current_location = self.location
 
+        # Lock the database row, so concurrent adjustments are serialized
+        if not self.lock_quantity():
+            return False
+
         try:
             quantity = Decimal(kwargs.pop('quantity', self.quantity))
         except InvalidOperation:
@@ -2938,6 +3146,37 @@ class StockItem(
 
         return True
 
+    def lock_quantity(self) -> bool:
+        """Acquire a database row-level lock on this StockItem.
+
+        Once the lock is held, the 'quantity' field is refreshed from the database,
+        so that read-modify-write adjustments operate on the current committed value
+        rather than a (potentially stale) in-memory copy.
+
+        Note: Must be called from within a database transaction,
+        and the lock is held until that transaction completes.
+
+        Returns:
+            False if this StockItem no longer exists in the database.
+        """
+        if not self.pk:
+            return False
+
+        quantity = (
+            StockItem.objects
+            .select_for_update()
+            .filter(pk=self.pk)
+            .values_list('quantity', flat=True)
+            .first()
+        )
+
+        if quantity is None:
+            return False
+
+        self.quantity = quantity
+
+        return True
+
     @transaction.atomic
     def updateQuantity(self, quantity):
         """Update stock quantity for this item.
@@ -3000,6 +3239,10 @@ class StockItem(
         if count < 0:
             return False
 
+        # Lock the database row, so concurrent adjustments are serialized
+        if not self.lock_quantity():
+            return False
+
         tracking_info = {}
 
         location = kwargs.pop('location', None)
@@ -3012,22 +3255,48 @@ class StockItem(
 
         status = self._resolve_status_kwarg(kwargs)
         self._apply_status_change(status, tracking_info)
+
+        # Optional fields which can be supplied in a 'stocktake' call
+        self._apply_optional_transfer_fields(kwargs, tracking_info)
+
+        # Have any fields (other than quantity) been updated?
+        # Must be determined *before* model reference deltas are extracted,
+        # as those only affect the tracking entry (not the model instance)
+        fields_updated = len(tracking_info) > 0
+
         self._apply_model_reference_fields(kwargs, tracking_info)
 
-        quantity_updated = self.serialized or self.updateQuantity(count)
+        # Will updateQuantity() below actually change (and therefore save) the row?
+        # Mirrors updateQuantity()'s own change check - used to decide whether the
+        # stocktake stamp can ride along on that save, avoiding a second write.
+        quantity_will_change = not self.serialized and count != self.quantity
+
+        # Stamp the stocktake metadata *before* updating the quantity, so that when
+        # updateQuantity() performs its own save (below), this stamp - and the status/
+        # location/reference field changes already applied above - are written in that
+        # single query, rather than needing a second, otherwise-redundant save() after.
+        if fields_updated or self.serialized or quantity_will_change:
+            self.stocktake_date = InvenTree.helpers.current_date()
+            self.stocktake_user = user
+
+        raw_update_result = None if self.serialized else self.updateQuantity(count)
+        quantity_updated = self.serialized or raw_update_result
+
+        # True only if updateQuantity() actually performed the save above
+        # (as opposed to: serialized item, no change, or item deleted)
+        update_persisted = raw_update_result is True
 
         # Record the resulting quantity, whether or not this item survived the stocktake
         # (self.quantity is updated by updateQuantity() even if the item was deleted)
         tracking_info['quantity'] = 1 if self.serialized else float(self.quantity)
 
-        if quantity_updated:
-            self.stocktake_date = InvenTree.helpers.current_date()
-            self.stocktake_user = user
-
-            # Optional fields which can be supplied in a 'stocktake' call
-            self._apply_optional_transfer_fields(kwargs, tracking_info)
-
-            self.save(add_note=False)
+        # Save if the quantity or any other field was changed, and updateQuantity()
+        # didn't already do so above.
+        # Note that updateQuantity() may have *deleted* the item (depleted to zero),
+        # in which case there is nothing left to save.
+        if self.pk and (quantity_updated or fields_updated):
+            if not update_persisted:
+                self.save(add_note=False)
 
             trigger_event(
                 StockEvents.ITEM_COUNTED,
@@ -3070,11 +3339,23 @@ class StockItem(
         if quantity <= 0:
             return False
 
+        # Lock the database row, so concurrent adjustments are serialized
+        if not self.lock_quantity():
+            return False
+
         tracking_info = {}
 
         status = self._resolve_status_kwarg(kwargs)
         self._apply_status_change(status, tracking_info)
         self._apply_model_reference_fields(kwargs, tracking_info)
+
+        # Determine up-front whether any optional fields will actually change,
+        # so we can skip the second save() below when updateQuantity() (which
+        # already writes the full row, including the status/reference field
+        # changes applied above) has already persisted everything that matters.
+        optional_fields_changed = any(
+            field in kwargs for field in StockItem.optional_transfer_fields()
+        )
 
         if self.updateQuantity(self.quantity + quantity):
             tracking_info['added'] = float(quantity)
@@ -3083,7 +3364,8 @@ class StockItem(
             # Optional fields which can be supplied in a 'stocktake' call
             self._apply_optional_transfer_fields(kwargs, tracking_info)
 
-            self.save(add_note=False)
+            if optional_fields_changed:
+                self.save(add_note=False)
 
             self.add_tracking_entry(
                 StockHistoryCode.STOCK_ADD,
@@ -3119,7 +3401,15 @@ class StockItem(
         except InvalidOperation:
             return False
 
+        # Cannot remove more than the available quantity
+        # (also ensures the recorded history matches the actual removal)
+        quantity = min(quantity, self.quantity)
+
         if quantity <= 0:
+            return False
+
+        # Lock the database row, so concurrent adjustments are serialized
+        if not self.lock_quantity():
             return False
 
         deltas = {}
@@ -3127,6 +3417,14 @@ class StockItem(
         status = self._resolve_status_kwarg(kwargs)
         self._apply_status_change(status, deltas)
         self._apply_model_reference_fields(kwargs, deltas)
+
+        # Determine up-front whether any optional fields will actually change,
+        # so we can skip the second save() below when updateQuantity() (which
+        # already writes the full row, including the status/reference field
+        # changes applied above) has already persisted everything that matters.
+        optional_fields_changed = any(
+            field in kwargs for field in StockItem.optional_transfer_fields()
+        )
 
         quantity_updated = self.updateQuantity(self.quantity - quantity)
 
@@ -3139,7 +3437,8 @@ class StockItem(
             # Optional fields which can be supplied in a 'stocktake' call
             self._apply_optional_transfer_fields(kwargs, deltas)
 
-            self.save(add_note=False)
+            if optional_fields_changed:
+                self.save(add_note=False)
 
         # Always record a tracking entry, even if the item was deleted as a result
         # of this removal (e.g. depleted to zero with delete_on_deplete set) -

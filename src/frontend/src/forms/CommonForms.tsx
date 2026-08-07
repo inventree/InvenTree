@@ -91,6 +91,7 @@ export function extraLineItemFields(): ApiFormFieldSet {
     quantity: {},
     price: {},
     price_currency: {},
+    discount: {},
     project_code: ProjectCodeField(),
     notes: {},
     link: {}
@@ -111,7 +112,8 @@ export function useParameterTemplateFields(): ApiFormFieldSet {
           active: true
         }
       },
-      enabled: {}
+      enabled: {},
+      unique: {}
     };
   }, []);
 }
