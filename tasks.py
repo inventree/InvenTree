@@ -1659,15 +1659,33 @@ def server_health(c, address: str = 'http://localhost:8000', timeout: int = 5):
     """Check if the web server is healthy by requesting /api/system/health/.
 
     Exits 0 on HTTP 200, 1 otherwise.
-    No Django startup required.
+    Django startup only required when when INVENTREE_SITE_URL is not set
+    and no docker/devcontainer/pkg-installer env vars are set. Django exceptions
+    caught and logged as warnings, but do not cause the health check to fail.
     """
     import urllib.error
+    import urllib.parse
     import urllib.request
 
+    from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
+        get_setting,
+    )
+
     url = f'{address.rstrip("/")}/api/system/health/'
+    site_url = None
 
     try:
-        with urllib.request.urlopen(url, timeout=timeout) as response:
+        site_url = get_setting('INVENTREE_SITE_URL', 'site_url', None)
+    except (Exception, SystemExit) as exc:
+        warning(f'Could not determine configured site URL: {exc}')
+
+    request = urllib.request.Request(url)
+
+    if site_url and (hostname := urllib.parse.urlparse(site_url).hostname):
+        request.add_header('Host', hostname)
+
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
             if response.status == 200:
                 success(f'Server is healthy ({url})')
                 return
@@ -1835,6 +1853,12 @@ def test(
     else:
         # Run simple test runner, without coverage
         manage(c, cmd, pty=pty)
+
+
+@task
+def test_tasks(c):
+    """Run tests for the root Invoke tasks."""
+    run(c, 'pytest test_tasks.py')
 
 
 @task(
@@ -2501,6 +2525,7 @@ development = Collection(
     setup_test,
     shell,
     test,
+    test_tasks,
     test_translations,
     translate,
 )
