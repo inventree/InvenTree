@@ -529,6 +529,8 @@ REST_FRAMEWORK = {
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
     'TOKEN_MODEL': 'users.models.ApiToken',
+    'DEFAULT_THROTTLE_CLASSES': [],
+    'DEFAULT_THROTTLE_RATES': {},
 }
 
 if DEBUG:
@@ -543,6 +545,21 @@ if USE_JWT:
     JWT_AUTH_COOKIE = 'inventree-auth'
     JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
     INSTALLED_APPS.append('rest_framework_simplejwt')
+
+# Throtteling setup
+THROTTLE_ANON = get_setting('INVENTREE_THROTTLE_ANON', 'throttle.anon', '20/minute')
+THROTTLE_USER = get_setting('INVENTREE_THROTTLE_USER', 'throttle.user', '60/second')
+
+if not DEBUG and THROTTLE_ANON and str(THROTTLE_ANON).lower() != 'none':
+    REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['anon'] = THROTTLE_ANON
+    REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES'].append(
+        'rest_framework.throttling.AnonRateThrottle'
+    )
+if not DEBUG and THROTTLE_USER and str(THROTTLE_USER).lower() != 'none':
+    REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['user'] = THROTTLE_USER
+    REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES'].append(
+        'rest_framework.throttling.UserRateThrottle'
+    )
 
 # WSGI default setting
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
