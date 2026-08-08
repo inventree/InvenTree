@@ -5,7 +5,7 @@ from unittest import mock
 
 from django.db import connection
 from django.db.models.query import QuerySet
-from django.test import TestCase, TransactionTestCase
+from django.test import TestCase, TransactionTestCase, skipUnlessDBFeature
 
 from plugin import InvenTreePlugin
 from plugin.helpers import MixinImplementationError
@@ -97,6 +97,7 @@ class ExampleScheduledTaskPluginTests(TestCase):
             call_plugin_function('does_not_exist', 'member_func'), None
 
 
+@skipUnlessDBFeature('has_select_for_update')
 class ScheduleMixinConcurrencyTest(TransactionTestCase):
     """Genuine cross-transaction regression test for ScheduleMixin.register_tasks().
 
@@ -108,6 +109,14 @@ class ScheduleMixinConcurrencyTest(TransactionTestCase):
     register_tasks() now locks the plugin's PluginConfig row (select_for_update)
     for the duration of task registration, so only one of two concurrent calls may
     proceed through the check-then-write at a time.
+
+    This relies on genuine database-level row locking, which SQLite does not
+    provide - select_for_update() is silently a no-op there (Django's sqlite
+    backend reports has_select_for_update=False), so both threads can race
+    through the check-then-write and a "database is locked" error from one
+    thread can roll back an otherwise-successful transaction, making the test
+    flaky under sqlite for reasons unrelated to the code under test. Only run
+    it against backends where the lock is real (e.g. postgres, mysql).
     """
 
     def test_concurrent_register_tasks_does_not_duplicate(self):
