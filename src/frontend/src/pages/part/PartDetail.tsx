@@ -36,7 +36,7 @@ import {
   IconVersions
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
@@ -78,6 +78,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useNextPrevSiblings } from '../../hooks/UseNextPrevSiblings';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import {
   useGlobalSettingsState,
@@ -181,6 +182,55 @@ export default function PartDetail() {
     },
     refetchOnMount: true
   });
+
+  // Previous / next siblings, scoped to the same active filter set as the
+  // default part list view. The active filter is intentionally conservative:
+  // any future improvement that captures the originating list's full filter
+  // context can pass it in here.
+  // See https://github.com/inventree/InvenTree/issues/12397
+  const { prev: prevPart, next: nextPart } = useNextPrevSiblings({
+    model: ModelType.part,
+    pk: part?.pk ?? id,
+    filterParams: {
+      active: part?.active,
+      assembly: part?.assembly
+    },
+    enabled: !!part?.pk
+  });
+
+  const goToPart = useCallback(
+    (pk: number | string | undefined | null) => {
+      if (pk === undefined || pk === null) return;
+      navigate(getDetailUrl(ModelType.part, pk));
+    },
+    [navigate]
+  );
+
+  const partNextPrev = useMemo(() => {
+    if (!part?.pk) return undefined;
+    return {
+      prev:
+        prevPart === undefined
+          ? { loading: true }
+          : prevPart === null
+            ? undefined
+            : {
+                pk: prevPart.pk,
+                label: prevPart.label,
+                onClick: () => goToPart(prevPart.pk)
+              },
+      next:
+        nextPart === undefined
+          ? { loading: true }
+          : nextPart === null
+            ? undefined
+            : {
+                pk: nextPart.pk,
+                label: nextPart.label,
+                onClick: () => goToPart(nextPart.pk)
+              }
+    };
+  }, [part?.pk, prevPart, nextPart, goToPart]);
 
   const { instance: partRequirements, instanceQuery: partRequirementsQuery } =
     useInstance({
@@ -862,6 +912,7 @@ export default function PartDetail() {
             editAction={editPart.open}
             editEnabled={user.hasChangeRole(UserRoles.part)}
             actions={partActions}
+            nextPrev={partNextPrev}
           />
           <PanelGroup
             pageKey='part'
