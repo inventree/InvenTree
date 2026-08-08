@@ -113,7 +113,7 @@ export default function StockItemTestResultTable({
       // Iterate through the returned records
       // Sort test results using the same priority as the backend:
       // finished_datetime -> started_datetime -> date -> pk
-      records.sort(compareTestResults).forEach((record) => {
+      records.toSorted(compareTestResults).forEach((record) => {
         // Find matching template
         const idx = results.findIndex(
           (r: any) => r.templateId == record.template
