@@ -1,4 +1,4 @@
-import { Group, Paper, Space, Stack, Text } from '@mantine/core';
+import { Button, Group, Paper, Space, Stack, Text } from '@mantine/core';
 
 import { StylishText } from '@lib/components/StylishText';
 import { useInvenTreeHotkeys } from '@lib/functions/Events';
@@ -6,6 +6,7 @@ import { shortenString } from '@lib/functions/String';
 import { t } from '@lingui/core/macro';
 import { Fragment, type ReactNode, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useDetailNavigation } from '../../hooks/UseDetailNavigation';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import PrimaryActionButton from '../buttons/PrimaryActionButton';
@@ -53,6 +54,7 @@ export function PageDetail({
   const userSettings = useUserSettingsState();
   const navigate = useNavigate();
   const location = useLocation();
+  const detailNavigation = useDetailNavigation();
 
   useInvenTreeHotkeys([
     [
@@ -184,11 +186,33 @@ export function PageDetail({
                 </Group>
               )}
             </Group>
-            {computedActions && (
+            {(detailNavigation.previous ||
+              detailNavigation.next ||
+              computedActions.length > 0) && (
               <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
-                {computedActions.map((action, idx) => (
-                  <Fragment key={idx}>{action}</Fragment>
-                ))}
+                {detailNavigation.previous && (
+                  <Button
+                    component='a'
+                    href={detailNavigation.previous.href}
+                    onClick={detailNavigation.previous.onClick}
+                    size='xs'
+                    variant='subtle'
+                  >
+                    {t`Previous`}
+                  </Button>
+                )}
+                {detailNavigation.next && (
+                  <Button
+                    component='a'
+                    href={detailNavigation.next.href}
+                    onClick={detailNavigation.next.onClick}
+                    size='xs'
+                    variant='subtle'
+                  >
+                    {t`Next`}
+                  </Button>
+                )}
+                {computedActions}
               </Group>
             )}
           </Group>
