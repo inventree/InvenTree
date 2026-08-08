@@ -1,10 +1,12 @@
 """Provides helper functions used throughout the InvenTree project."""
 
+import base64
 import datetime
 import hashlib
 import inspect
 import io
 import json
+import mimetypes
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
@@ -262,27 +264,63 @@ def checkStaticFile(*args) -> bool:
     return static_storage.exists(str(fn))
 
 
-def getLogoImage(as_file=False, custom=True):
-    """Return the InvenTree logo image, or a custom logo if available."""
+def encodeFileDataUri(filename: str, data: Optional[bytes]) -> str:
+    """Encode raw file data as a base64 data URI.
+
+    Arguments:
+        filename: The filename associated with the data (used to guess the mime type)
+        data: The raw file data to encode
+
+    Returns:
+        A base64-encoded data URI string, or an empty string if no data is provided
+    """
+    if not data:
+        return ''
+
+    mime_type, _encoding = mimetypes.guess_type(str(filename))
+
+    if not mime_type:
+        mime_type = 'application/octet-stream'
+
+    encoded = base64.b64encode(data).decode('ascii')
+    return f'data:{mime_type};base64,{encoded}'
+
+
+def getLogoImage(as_file: bool = False, custom: bool = True) -> str:
+    """Return the InvenTree logo image, or a custom logo if available.
+
+    Arguments:
+        as_file: If True, return a base64-encoded data URI of the image contents,
+                 suitable for embedding directly into a generated report (default = False)
+        custom: If True, return a custom logo if one has been provided (default = True)
+    """
+    # Note: Imported here to avoid circular imports, as the 'report' app also imports from this module
+    from report.templatetags.report import (
+        get_media_file_contents,
+        get_static_file_contents,
+    )
+
     if custom and settings.CUSTOM_LOGO:
         static_storage = StaticFilesStorage()
 
         if static_storage.exists(settings.CUSTOM_LOGO):
-            storage = static_storage
-        elif default_storage.exists(settings.CUSTOM_LOGO):
-            storage = default_storage
-        else:
-            storage = None
-
-        if storage is not None:
             if as_file:
-                return f'file://{storage.path(settings.CUSTOM_LOGO)}'
-            return storage.url(settings.CUSTOM_LOGO)
+                return encodeFileDataUri(
+                    settings.CUSTOM_LOGO, get_static_file_contents(settings.CUSTOM_LOGO)
+                )
+            return static_storage.url(settings.CUSTOM_LOGO)
+        elif default_storage.exists(settings.CUSTOM_LOGO):
+            if as_file:
+                return encodeFileDataUri(
+                    settings.CUSTOM_LOGO, get_media_file_contents(settings.CUSTOM_LOGO)
+                )
+            return default_storage.url(settings.CUSTOM_LOGO)
 
     # If we have got to this point, return the default logo
     if as_file:
-        path = settings.STATIC_ROOT.joinpath('img/inventree.png')
-        return f'file://{path}'
+        return encodeFileDataUri(
+            'img/inventree.png', get_static_file_contents('img/inventree.png')
+        )
     return getStaticUrl('img/inventree.png')
 
 
