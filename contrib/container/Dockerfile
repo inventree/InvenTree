@@ -125,6 +125,9 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/1889911f0841e669de0be5
     nvm install $NODE_VERSION && corepack enable yarn && yarn config set network-timeout 600000 -g"
 RUN bash -c "source $HOME/.nvm/nvm.sh && cd '${INVENTREE_HOME}' && invoke int.frontend-compile --extract"
 
+COPY contrib/container/execute.sh ${INVENTREE_HOME}/execute.sh
+RUN chmod +x ${INVENTREE_HOME}/execute.sh
+
 # InvenTree production image:
 # - Copies required files from local directory
 # - Starts a gunicorn webserver
