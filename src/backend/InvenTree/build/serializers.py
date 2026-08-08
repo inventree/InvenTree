@@ -34,6 +34,7 @@ from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from InvenTree.fields import PrefetchedPrimaryKeyRelatedField
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
+    BarcodeSerializerMixin,
     BulkPrefetchSerializerMixin,
     CustomStatusSerializerMixin,
     DuplicateOptionsSerializer,
@@ -61,6 +62,7 @@ from .validators import check_build_output
 
 
 class BuildSerializer(
+    BarcodeSerializerMixin,
     CustomStatusSerializerMixin,
     FilterableSerializerMixin,
     NotesFieldMixin,
@@ -81,6 +83,7 @@ class BuildSerializer(
             'pk',
             'title',
             'barcode_hash',
+            'barcode_data',
             'batch',
             'creation_date',
             'completed',

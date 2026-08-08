@@ -8,6 +8,7 @@ from typing import Optional
 
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.files.storage import default_storage
 from django.db import models
@@ -1014,6 +1015,65 @@ class NotesFieldMixin:
                     and not InvenTree.ready.isGeneratingSchema()
                 ):
                     self.fields.pop('notes', None)
+
+
+class BarcodeSerializerMixin(serializers.Serializer):
+    """Serializer mixin for models which support custom (third-party) barcode assignment.
+
+    Exposes the read-only 'barcode_data' field (the linked barcode string) so that
+    it can be displayed in the user interface. Applies to any model inheriting from
+    InvenTree.models.InvenTreeBarcodeMixin (e.g. Part, StockItem, StockLocation).
+
+    Note: The serializer's Meta.fields must include 'barcode_data' for it to appear.
+    The field is read-only here; barcodes are assigned via the barcode link endpoints.
+
+    Correct configuration is validated on initialization (see __init__), which raises
+    ImproperlyConfigured if the mixin is applied incorrectly.
+    """
+
+    barcode_data = serializers.CharField(
+        read_only=True, label=_('Barcode Data'), help_text=_('Third party barcode data')
+    )
+
+    def __init__(self, *args, **kwargs):
+        """Validate that the serializer is correctly configured for barcode data.
+
+        For concrete model serializers this checks that:
+        - the underlying model supports custom barcodes (InvenTreeBarcodeMixin), and
+        - 'barcode_data' is included in Meta.fields.
+
+        This guards against the mixin being added to an incompatible serializer, or
+        being added without exposing the field.
+        """
+        super().__init__(*args, **kwargs)
+
+        meta = getattr(self, 'Meta', None)
+        model = getattr(meta, 'model', None)
+
+        # Abstract / non-model serializers (e.g. AbstractOrderSerializer) are skipped
+        if model is None:
+            return
+
+        # Import here to avoid a circular import at module load time
+        from InvenTree.models import InvenTreeBarcodeMixin
+
+        if not issubclass(model, InvenTreeBarcodeMixin):
+            raise ImproperlyConfigured(
+                f'{self.__class__.__name__} uses BarcodeSerializerMixin, but its model '
+                f"'{model.__name__}' does not inherit InvenTreeBarcodeMixin."
+            )
+
+        meta_fields = getattr(meta, 'fields', None)
+
+        if (
+            meta_fields is not None
+            and meta_fields != '__all__'
+            and 'barcode_data' not in meta_fields
+        ):
+            raise ImproperlyConfigured(
+                f'{self.__class__.__name__} uses BarcodeSerializerMixin, but '
+                f"'barcode_data' is missing from Meta.fields."
+            )
 
 
 class ContentTypeField(serializers.ChoiceField):

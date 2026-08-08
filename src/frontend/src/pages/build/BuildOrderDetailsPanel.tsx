@@ -10,7 +10,8 @@ import { TagsList } from '@lib/index';
 
 import {
   type DetailsField,
-  DetailsTable
+  DetailsTable,
+  barcodeDataField
 } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -105,7 +106,8 @@ export function BuildOrderDetailsPanel({
       model_field: 'reference',
       model: ModelType.build,
       hidden: !instance?.parent
-    }
+    },
+    barcodeDataField(instance)
   ];
 
   const tr: DetailsField[] = [

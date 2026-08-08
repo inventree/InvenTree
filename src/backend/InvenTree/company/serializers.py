@@ -15,6 +15,7 @@ from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
+    BarcodeSerializerMixin,
     DuplicateOptionsSerializer,
     FilterableSerializerMixin,
     InvenTreeCurrencySerializer,
@@ -231,6 +232,7 @@ class ContactSerializer(DataImportExportSerializerMixin, InvenTreeModelSerialize
 
 @register_importer()
 class ManufacturerPartSerializer(
+    BarcodeSerializerMixin,
     FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTreeTaggitSerializer,
@@ -257,6 +259,7 @@ class ManufacturerPartSerializer(
             'MPN',
             'link',
             'barcode_hash',
+            'barcode_data',
             'notes',
             'tags',
             'parameters',
@@ -355,6 +358,7 @@ class SupplierPriceBreakBriefSerializer(
 
 @register_importer()
 class SupplierPartSerializer(
+    BarcodeSerializerMixin,
     FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTreeTaggitSerializer,
@@ -398,6 +402,7 @@ class SupplierPartSerializer(
             'note',
             'pk',
             'barcode_hash',
+            'barcode_data',
             'packaging',
             'pack_quantity',
             'pack_quantity_native',

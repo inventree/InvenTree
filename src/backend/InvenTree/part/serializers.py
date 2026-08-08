@@ -533,6 +533,7 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 @register_importer()
 class PartSerializer(
+    InvenTree.serializers.BarcodeSerializerMixin,
     InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTree.serializers.NotesFieldMixin,
@@ -555,6 +556,7 @@ class PartSerializer(
             'active',
             'assembly',
             'barcode_hash',
+            'barcode_data',
             'category',
             'category_detail',
             'category_path',

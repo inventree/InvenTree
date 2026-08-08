@@ -3,7 +3,10 @@ import { Group, Skeleton } from '@mantine/core';
 
 import { ModelType } from '@lib/enums/ModelType';
 
-import type { DetailsField } from '../../components/details/Details';
+import {
+  type DetailsField,
+  barcodeDataField
+} from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { useParameterDetailsGrid } from '../../components/details/ParameterDetailsGrid';
 import { ApiIcon } from '../../components/items/ApiIcon';
@@ -49,7 +52,8 @@ export function StockLocationDetailsPanel({
       label: t`Parent Location`,
       model: ModelType.stocklocation,
       hidden: !instance?.parent
-    }
+    },
+    barcodeDataField(instance)
   ];
 
   const right: DetailsField[] = [

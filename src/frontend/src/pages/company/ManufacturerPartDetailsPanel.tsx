@@ -9,7 +9,8 @@ import { apiUrl } from '@lib/functions/Api';
 
 import {
   type DetailsField,
-  DetailsTable
+  DetailsTable,
+  barcodeDataField
 } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -47,7 +48,8 @@ export function ManufacturerPartDetailsPanel({
       copy: true,
       icon: 'info',
       hidden: !instance?.description
-    }
+    },
+    barcodeDataField(instance)
   ];
 
   const tr: DetailsField[] = [
