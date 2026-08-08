@@ -256,6 +256,89 @@ class BarcodeAPITest(InvenTreeAPITestCase):
             self.assertIn('object does not exist', str(response.data[k]))
 
 
+class BarcodeScanResultAPITest(InvenTreeAPITestCase):
+    """Tests for the BarcodeScanResult list / detail API endpoints."""
+
+    def setUp(self):
+        """Create barcode scan results for two different users."""
+        super().setUp()
+
+        from django.contrib.auth import get_user_model
+
+        self.other_user = get_user_model().objects.create_user(
+            username='otheruser', password='otherpassword', email='other@testing.com'
+        )
+
+        self.own_result = BarcodeScanResult.objects.create(
+            data='own-barcode', user=self.user
+        )
+        self.other_result = BarcodeScanResult.objects.create(
+            data='other-barcode', user=self.other_user
+        )
+
+    def test_list_non_staff(self):
+        """A non-staff user can only see their own barcode scan history."""
+        self.user.is_staff = False
+        self.user.save()
+
+        response = self.get(reverse('api-barcode-scan-result-list'), expected_code=200)
+
+        pks = [item['pk'] for item in response.data]
+
+        self.assertIn(self.own_result.pk, pks)
+        self.assertNotIn(self.other_result.pk, pks)
+
+    def test_list_staff(self):
+        """A staff user can see barcode scan history for all users."""
+        self.user.is_staff = True
+        self.user.save()
+
+        response = self.get(reverse('api-barcode-scan-result-list'), expected_code=200)
+
+        pks = [item['pk'] for item in response.data]
+
+        self.assertIn(self.own_result.pk, pks)
+        self.assertIn(self.other_result.pk, pks)
+
+    def test_detail_non_staff(self):
+        """A non-staff user cannot retrieve another user's barcode scan result."""
+        self.user.is_staff = False
+        self.user.save()
+
+        self.get(
+            reverse(
+                'api-barcode-scan-result-detail', kwargs={'pk': self.own_result.pk}
+            ),
+            expected_code=200,
+        )
+
+        self.get(
+            reverse(
+                'api-barcode-scan-result-detail', kwargs={'pk': self.other_result.pk}
+            ),
+            expected_code=404,
+        )
+
+    def test_detail_staff(self):
+        """A staff user can retrieve any user's barcode scan result."""
+        self.user.is_staff = True
+        self.user.save()
+
+        self.get(
+            reverse(
+                'api-barcode-scan-result-detail', kwargs={'pk': self.own_result.pk}
+            ),
+            expected_code=200,
+        )
+
+        self.get(
+            reverse(
+                'api-barcode-scan-result-detail', kwargs={'pk': self.other_result.pk}
+            ),
+            expected_code=200,
+        )
+
+
 class POAllocateTest(InvenTreeAPITestCase):
     """Unit tests for the barcode endpoint for allocating items to a purchase order."""
 
