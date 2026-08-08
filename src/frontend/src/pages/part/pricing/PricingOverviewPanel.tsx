@@ -1,3 +1,6 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { BarChart } from '@mantine/charts';
 import {
@@ -23,10 +26,6 @@ import {
 import type { UseQueryResult } from '@tanstack/react-query';
 import { DataTable } from 'mantine-datatable';
 import { type ReactNode, useCallback, useMemo } from 'react';
-
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { api } from '../../../App';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import {

@@ -1,6 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { useCallback, useMemo, useState } from 'react';
-
 import { ActionButton } from '@lib/components/ActionButton';
 import { type RowAction, RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -11,9 +8,12 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
 import { Alert } from '@mantine/core';
 import { IconCircleX, IconTruckDelivery } from '@tabler/icons-react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import {
   DescriptionColumn,
   IPNColumn,
@@ -28,8 +28,6 @@ import {
   StockLocationFilter
 } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
-
-import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import { formatDate } from '../../defaults/formatters';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
 import {

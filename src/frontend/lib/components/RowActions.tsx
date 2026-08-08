@@ -10,8 +10,11 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo, useState } from 'react';
 import { cancelEvent } from '../functions/Events';
-import { eventModified, getDetailUrl } from '../functions/Navigation';
-import { navigateToLink } from '../functions/Navigation';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '../functions/Navigation';
 import type { RowAction, RowViewProps } from '../types/Tables';
 
 export type { RowAction, RowViewProps } from '../types/Tables';

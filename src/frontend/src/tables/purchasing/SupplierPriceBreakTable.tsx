@@ -1,7 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Anchor, Group, Text } from '@mantine/core';
-import { useCallback, useMemo, useState } from 'react';
-
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -16,6 +12,9 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Anchor, Group, Text } from '@mantine/core';
+import { useCallback, useMemo, useState } from 'react';
 import { CompanyColumn } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { formatCurrency } from '../../defaults/formatters';

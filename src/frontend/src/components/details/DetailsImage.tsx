@@ -1,3 +1,7 @@
+import { ActionButton } from '@lib/components/ActionButton';
+import { StylishText } from '@lib/components/StylishText';
+import type { UserRoles } from '@lib/enums/Roles';
+import { cancelEvent } from '@lib/functions/Events';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -19,13 +23,8 @@ import {
 } from '@mantine/dropzone';
 import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { useEffect, useMemo, useState } from 'react';
-
-import { ActionButton } from '@lib/components/ActionButton';
-import { StylishText } from '@lib/components/StylishText';
-import type { UserRoles } from '@lib/enums/Roles';
-import { cancelEvent } from '@lib/functions/Events';
 import { showNotification } from '@mantine/notifications';
+import { useEffect, useMemo, useState } from 'react';
 import { api } from '../../App';
 import { InvenTreeIcon } from '../../functions/icons';
 import { showApiErrorMessage } from '../../functions/notifications';

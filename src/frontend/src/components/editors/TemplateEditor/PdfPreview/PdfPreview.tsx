@@ -1,9 +1,8 @@
-import { Trans } from '@lingui/react/macro';
-import { forwardRef, useImperativeHandle, useState } from 'react';
-
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { api } from '../../../../App';
 import type { PreviewAreaComponent } from '../TemplateEditor';
 

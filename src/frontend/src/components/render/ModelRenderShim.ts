@@ -21,6 +21,9 @@ import {
 } from './Generic';
 import {
   RenderPurchaseOrder,
+  RenderRepairOrder,
+  RenderRepairOrderAllocation,
+  RenderRepairOrderLineItem,
   RenderReturnOrder,
   RenderReturnOrderLineItem,
   RenderSalesOrder,
@@ -55,6 +58,9 @@ registerModelRenderers({
   [ModelType.projectcode]: RenderProjectCode,
   [ModelType.purchaseorder]: RenderPurchaseOrder,
   [ModelType.purchaseorderlineitem]: RenderPurchaseOrder,
+  [ModelType.repairorder]: RenderRepairOrder,
+  [ModelType.repairorderlineitem]: RenderRepairOrderLineItem,
+  [ModelType.repairorderallocation]: RenderRepairOrderAllocation,
   [ModelType.returnorder]: RenderReturnOrder,
   [ModelType.returnorderlineitem]: RenderReturnOrderLineItem,
   [ModelType.salesorder]: RenderSalesOrder,

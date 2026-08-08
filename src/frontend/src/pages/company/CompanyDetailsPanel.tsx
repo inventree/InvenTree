@@ -1,10 +1,9 @@
-import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
-
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { TagsList } from '@lib/index';
+import { t } from '@lingui/core/macro';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 
 import {
   type DetailsField,

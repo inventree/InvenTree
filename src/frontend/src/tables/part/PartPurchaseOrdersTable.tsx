@@ -1,7 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Text } from '@mantine/core';
-import { useMemo } from 'react';
-
 import { ProgressBar } from '@lib/components/ProgressBar';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -9,6 +5,9 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Text } from '@mantine/core';
+import { useMemo } from 'react';
 import {
   DateColumn,
   ReferenceColumn,

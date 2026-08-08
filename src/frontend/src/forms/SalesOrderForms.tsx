@@ -1,3 +1,13 @@
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import { toNumber } from '@lib/functions/Conversion';
+import type {
+  ApiFormAdjustFilterType,
+  ApiFormFieldSet,
+  ApiFormFieldType
+} from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Alert, Table, Text } from '@mantine/core';
 import {
@@ -9,22 +19,10 @@ import {
   IconUser,
   IconUsers
 } from '@tabler/icons-react';
+import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
-
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
-
-import { ProgressBar } from '@lib/components/ProgressBar';
-import { apiUrl } from '@lib/functions/Api';
-import { toNumber } from '@lib/functions/Conversion';
-import type {
-  ApiFormAdjustFilterType,
-  ApiFormFieldSet,
-  ApiFormFieldType
-} from '@lib/types/Forms';
-import dayjs from 'dayjs';
 import {
   TableFieldQuantityInput,
   type TableFieldRowProps
@@ -34,7 +32,7 @@ import useBackgroundTask from '../hooks/UseBackgroundTask';
 import { useCreateApiFormModal, useEditApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { useUserState } from '../states/UserState';
-import { ProjectCodeField, TagsField } from './CommonFields';
+import { ProjectCodeField } from './CommonFields';
 
 export function useSalesOrderFields({
   duplicateOrderId
@@ -68,7 +66,6 @@ export function useSalesOrderFields({
       target_date: {
         icon: <IconCalendar />
       },
-      tags: TagsField({}),
       link: {},
       contact: {
         icon: <IconUser />,
@@ -538,7 +535,6 @@ export function useSalesOrderShipmentFields({
       },
       tracking_number: {},
       invoice_number: {},
-      tags: TagsField({}),
       link: {}
     };
   }, [customerId, pending]);

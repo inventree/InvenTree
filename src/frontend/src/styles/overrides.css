@@ -1,30 +1,30 @@
 /* fullcalendar multimonth single-column (scroll-year) overrides */
 .fc-multimonth-singlecol .fc-multimonth-title {
-  padding: 0.35em 0;
+	padding: 0.35em 0;
 }
 
 /* Alternating month backgrounds in the multi-month scroll calendar view */
-[data-mantine-color-scheme='light'] .fc-day-month-odd:not(.fc-day-today) {
-  background-color: var(--mantine-color-gray-1);
+[data-mantine-color-scheme="light"] .fc-day-month-odd:not(.fc-day-today) {
+	background-color: var(--mantine-color-gray-1);
 }
-[data-mantine-color-scheme='dark'] .fc-day-month-odd:not(.fc-day-today) {
-  background-color: var(--mantine-color-dark-4);
+[data-mantine-color-scheme="dark"] .fc-day-month-odd:not(.fc-day-today) {
+	background-color: var(--mantine-color-dark-4);
 }
 
 /* Today highlight */
-[data-mantine-color-scheme='light'] .fc-day-today {
-  background-color: var(--mantine-color-blue-1) !important;
+[data-mantine-color-scheme="light"] .fc-day-today {
+	background-color: var(--mantine-color-blue-1) !important;
 }
-[data-mantine-color-scheme='dark'] .fc-day-today {
-  background-color: var(--mantine-color-blue-9) !important;
+[data-mantine-color-scheme="dark"] .fc-day-today {
+	background-color: var(--mantine-color-blue-9) !important;
 }
 
 /* mantine-datatable overrides */
 .mantine-datatable-pointer-cursor,
 .mantine-datatable-context-menu-cursor {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 .mantine-datatable-resizable-columns {
-  table-layout: auto !important;
+	table-layout: auto !important;
 }

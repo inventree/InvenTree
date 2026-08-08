@@ -1,12 +1,11 @@
-import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack, Text } from '@mantine/core';
-import { useMemo } from 'react';
-
 import TagsList from '@lib/components/TagsList';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { t } from '@lingui/core/macro';
+import { Grid, Skeleton, Stack, Text } from '@mantine/core';
+import { useMemo } from 'react';
 
 import {
   type DetailsField,

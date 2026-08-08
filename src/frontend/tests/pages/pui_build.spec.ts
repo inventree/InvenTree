@@ -165,7 +165,6 @@ test('Build Order - Tags', async ({ browser }) => {
   await expect(tagsField).toBeVisible();
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
-
 // Test that the build order reference field increments correctly
 test('Build Order - Reference', async ({ browser }) => {
   const page = await doCachedLogin(browser, {

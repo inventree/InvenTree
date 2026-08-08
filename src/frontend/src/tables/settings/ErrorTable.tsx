@@ -1,8 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Group, Loader, Stack, Table, Text } from '@mantine/core';
-import { useCallback, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-
 import { CopyButton } from '@lib/components/CopyButton';
 import { type RowAction, RowDeleteAction } from '@lib/components/RowActions';
 import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
@@ -10,6 +5,10 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Group, Loader, Stack, Table, Text } from '@mantine/core';
+import { useCallback, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';

@@ -1,3 +1,21 @@
+import { Boundary } from '@lib/components/Boundary';
+import { isTrue } from '@lib/functions/Conversion';
+import { useInvenTreeHotkeys } from '@lib/functions/Events';
+import {
+  type NestedDict,
+  constructFormUrl,
+  mapFields
+} from '@lib/functions/Forms';
+import { getDetailUrl } from '@lib/functions/Navigation';
+import {
+  invalidResponse,
+  showTimeoutNotification
+} from '@lib/functions/Notification';
+import type {
+  ApiFormFieldSet,
+  ApiFormFieldType,
+  ApiFormProps
+} from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import {
   Alert,
@@ -21,25 +39,6 @@ import {
   useForm
 } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-
-import { Boundary } from '@lib/components/Boundary';
-import { isTrue } from '@lib/functions/Conversion';
-import { useInvenTreeHotkeys } from '@lib/functions/Events';
-import {
-  type NestedDict,
-  constructFormUrl,
-  mapFields
-} from '@lib/functions/Forms';
-import { getDetailUrl } from '@lib/functions/Navigation';
-import {
-  invalidResponse,
-  showTimeoutNotification
-} from '@lib/functions/Notification';
-import type {
-  ApiFormFieldSet,
-  ApiFormFieldType,
-  ApiFormProps
-} from '@lib/types/Forms';
 import { useApi } from '../../contexts/ApiContext';
 import { isEquivalent } from '../../functions/comparison';
 import { constructField, extractAvailableFields } from '../../functions/forms';

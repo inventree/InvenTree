@@ -1,3 +1,6 @@
+import { StylishText } from '@lib/components/StylishText';
+import type { ModelType } from '@lib/enums/ModelType';
+import { identifierString } from '@lib/functions/Conversion';
 import { t } from '@lingui/core/macro';
 import {
   Button,
@@ -19,10 +22,6 @@ import {
   IconUnlink
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
-
-import { StylishText } from '@lib/components/StylishText';
-import type { ModelType } from '@lib/enums/ModelType';
-import { identifierString } from '@lib/functions/Conversion';
 import { InvenTreeIcon } from '../../functions/icons';
 import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from '../barcodes/QRCode';
 

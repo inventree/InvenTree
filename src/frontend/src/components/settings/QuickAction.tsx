@@ -1,3 +1,4 @@
+import { ApiEndpoints } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Button, Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
@@ -8,8 +9,6 @@ import {
   IconUsersGroup,
   type ReactNode
 } from '@tabler/icons-react';
-
-import { ApiEndpoints } from '@lib/index';
 import { docLinks } from '../../defaults/links';
 import {
   projectCodeFields,

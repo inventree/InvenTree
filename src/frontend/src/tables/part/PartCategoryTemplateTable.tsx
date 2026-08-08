@@ -1,7 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Alert, Group, Stack, Text } from '@mantine/core';
-import { useCallback, useMemo, useState } from 'react';
-
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
@@ -15,7 +11,10 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import { t } from '@lingui/core/macro';
+import { Alert, Group, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
+import { useCallback, useMemo, useState } from 'react';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useDynamicParameterValueField } from '../../forms/CommonForms';
 import {

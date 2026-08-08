@@ -1,15 +1,14 @@
+import { StylishText } from '@lib/components/StylishText';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
+import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { Drawer, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
-
-import { StylishText } from '@lib/components/StylishText';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
-import useTable from '@lib/hooks/UseTable';
-import type { TableColumn } from '@lib/types/Tables';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useUserState } from '../../states/UserState';
 

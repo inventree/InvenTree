@@ -1,15 +1,3 @@
-import { useMantineColorScheme, useMantineTheme } from '@mantine/core';
-import { Suspense, lazy, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useShallow } from 'zustand/react/shallow';
-import { api, queryClient } from '../../App';
-import { useLocalState } from '../../states/LocalState';
-import {
-  useGlobalSettingsState,
-  useUserSettingsState
-} from '../../states/SettingsStates';
-import { useUserState } from '../../states/UserState';
-
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import {
   INVENTREE_MANTINE_VERSION,
@@ -19,7 +7,12 @@ import {
 } from '@lib/types/Plugins';
 import type { InvenTreeTableRenderProps } from '@lib/types/Tables';
 import { i18n } from '@lingui/core';
+import { useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { useContextMenu } from 'mantine-contextmenu';
+import { Suspense, lazy, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useShallow } from 'zustand/react/shallow';
+import { api, queryClient } from '../../App';
 import { defaultLocale } from '../../contexts/LanguageContext';
 import {
   useAddStockItem,
@@ -45,6 +38,7 @@ import {
   getGlobalImporterState,
   openGlobalImporter
 } from '../../states/ImporterState';
+import { useLocalState } from '../../states/LocalState';
 import { usePluginState } from '../../states/PluginState';
 import {
   closeGlobalPreview,
@@ -52,10 +46,18 @@ import {
   openGlobalPreview
 } from '../../states/PreviewDrawerState';
 import { useServerApiState } from '../../states/ServerApiState';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsStates';
+import { useUserState } from '../../states/UserState';
 import { EditApiForm } from '../forms/ApiForm';
 import { Thumbnail } from '../images/Thumbnail';
-import { RenderInstance, RenderRemoteInstance } from '../render/Instance';
-import { RenderInlineModel } from '../render/Instance';
+import {
+  RenderInlineModel,
+  RenderInstance,
+  RenderRemoteInstance
+} from '../render/Instance';
 
 // Lazy loaded: useInvenTreeContext is used by the always-mounted nav Layout
 // to build the context handed to plugins, but tables.renderTable is only

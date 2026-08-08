@@ -1,3 +1,12 @@
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import type { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import type {
+  InstanceRenderInterface,
+  RemoteInstanceProps,
+  RenderInlineModelProps,
+  RenderInstanceProps
+} from '@lib/types/Rendering';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
@@ -16,17 +25,8 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo } from 'react';
 
-import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import type { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
-import type {
-  InstanceRenderInterface,
-  RemoteInstanceProps,
-  RenderInlineModelProps,
-  RenderInstanceProps
-} from '@lib/types/Rendering';
-
 export type { InstanceRenderInterface } from '@lib/types/Rendering';
+
 import {
   getBaseUrl,
   getDetailUrl,

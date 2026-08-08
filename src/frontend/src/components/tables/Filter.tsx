@@ -1,10 +1,9 @@
-import { t } from '@lingui/core/macro';
-
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { isTrue } from '@lib/functions/Conversion';
 import type { TableFilter, TableFilterChoice } from '@lib/types/Filters';
+import { t } from '@lingui/core/macro';
 import {
   type StatusLookup,
   useGlobalStatusState
@@ -346,7 +345,9 @@ export function IncludeVariantsFilter(): TableFilter {
 
 export function OrderStatusFilter({
   model
-}: { model: ModelType }): TableFilter {
+}: {
+  model: ModelType;
+}): TableFilter {
   return {
     name: 'status',
     label: t`Status`,
@@ -411,17 +412,11 @@ export function TagsFilter({
     name: 'tags',
     label: t`Tags`,
     description: t`Filter by tags`,
-    placeholder: t`Select tags`,
     type: 'api',
-    multi: true,
     apiUrl: apiUrl(ApiEndpoints.tag_list),
     model: ModelType.tag,
     modelRenderer: (instance: any) => instance.name,
-    apiFilter: modelType ? { model_type: modelType } : undefined,
-    transform: (item: any) => ({
-      value: item.name.toString(),
-      label: item.name.toString()
-    })
+    apiFilter: modelType ? { model_type: modelType } : undefined
   };
 }
 

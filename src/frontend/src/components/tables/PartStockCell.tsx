@@ -25,7 +25,7 @@ export function renderPartStockCell(record: any): ReactNode {
 
   let text = String(formatDecimal(stock));
 
-  let color: string | undefined = undefined;
+  let color: string | undefined;
 
   if (min_stock > stock) {
     extra.push(

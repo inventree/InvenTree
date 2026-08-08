@@ -24,7 +24,7 @@ export function ThemeContext({
 }: Readonly<{ children: JSX.Element }>) {
   const [userTheme] = useLocalState(useShallow((state) => [state.userTheme]));
 
-  let customUserTheme: MantineThemeOverride | undefined = undefined;
+  let customUserTheme: MantineThemeOverride | undefined;
 
   // Theme
   try {

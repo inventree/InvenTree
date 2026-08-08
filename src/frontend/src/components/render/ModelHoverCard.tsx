@@ -1,3 +1,6 @@
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import type { ModelType } from '@lib/enums/ModelType';
+import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import {
   ActionIcon,
@@ -7,13 +10,9 @@ import {
   Stack,
   Text
 } from '@mantine/core';
+import { IconLink } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
-
-import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import type { ModelType } from '@lib/enums/ModelType';
-import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
-import { IconLink } from '@tabler/icons-react';
 
 /**
  * Wraps children in a HoverCard showing the model label, pk, and a "View

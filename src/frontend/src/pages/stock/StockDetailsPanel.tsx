@@ -1,3 +1,10 @@
+import { ActionButton } from '@lib/components/ActionButton';
+import TagsList from '@lib/components/TagsList';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import {
   Button,
@@ -12,14 +19,6 @@ import {
 import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { ActionButton } from '@lib/components/ActionButton';
-import TagsList from '@lib/components/TagsList';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { UserRoles } from '@lib/enums/Roles';
-import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
 
 import {
   type DetailsField,
