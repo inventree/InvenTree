@@ -4282,8 +4282,13 @@ def update_pricing_after_delete(sender, instance, **kwargs):
         InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
         and not InvenTree.ready.isImportingData()
     ):
-        if instance.part:
-            instance.part.schedule_pricing_update(create=False)
+        try:
+            part = instance.part
+            part.schedule_pricing_update(create=False)
+        except Part.DoesNotExist:
+            # The part instance may have already been deleted,
+            # in which case we cannot update pricing
+            pass
 
 
 class BomItemSubstitute(InvenTree.models.InvenTreeMetadataModel):
