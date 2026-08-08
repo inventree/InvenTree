@@ -84,6 +84,9 @@ jobs:
           docker run --rm inventree-test test -f /home/inventree/gunicorn.conf.py
           docker run --rm inventree-test test -f /home/inventree/src/backend/requirements.txt
           docker run --rm inventree-test test -f /home/inventree/src/backend/InvenTree/manage.py
+          # Check that license information was generated into the image
+          docker run --rm inventree-test test -s /home/inventree/src/backend/InvenTree/InvenTree/licenses.txt
+          docker run --rm inventree-test test -s /home/inventree/src/backend/InvenTree/web/static/web/.vite/dependencies.json
           # Check that backend translations were compiled into the image (a few representative languages)
           docker run --rm inventree-test test -f /home/inventree/src/backend/InvenTree/locale/de/LC_MESSAGES/django.mo
           docker run --rm inventree-test test -f /home/inventree/src/backend/InvenTree/locale/fr/LC_MESSAGES/django.mo
@@ -195,14 +198,14 @@ jobs:
           fi
       - name: Login to Dockerhub
         if: github.event_name != 'pull_request' && steps.docker_login.outputs.skip_dockerhub_login != 'true'
-        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
+        uses: docker/login-action@371161bbe7024a29a25c5e19bfcbc0804fe9ad2c # v4.5.2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Log into registry ghcr.io
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
+        uses: docker/login-action@371161bbe7024a29a25c5e19bfcbc0804fe9ad2c # v4.5.2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}

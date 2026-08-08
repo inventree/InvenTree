@@ -2489,7 +2489,18 @@ class StockItem(
         # Create a new tracking entry for each item
         history_items = []
 
+        # Every new item shares this exact part - avoid a redundant per-item
+        # part_id -> Part lookup (bulk_create_and_fetch() does not preserve the
+        # cached FK) by seeding each item's cache with the instance we already have
+        part = self.part
+
+        # Check (once) whether there are any test results to copy across, rather
+        # than re-querying an identical (and usually empty) result set per item
+        has_test_results = self.test_results.exists()
+
         for item in items:
+            item.part = part
+
             # Construct tracking entries for the new StockItem
             if entry := item.add_tracking_entry(
                 StockHistoryCode.SPLIT_FROM_PARENT,
@@ -2512,7 +2523,8 @@ class StockItem(
                 history_items.append(entry)
 
             # Copy any test results from this item to the new one
-            item.copyTestResultsFrom(self)
+            if has_test_results:
+                item.copyTestResultsFrom(self)
 
         StockItemTracking.objects.bulk_create(history_items, batch_size=250)
 
@@ -3581,23 +3593,32 @@ class StockItem(
 def after_delete_stock_item(sender, instance: StockItem, **kwargs):
     """Function to be executed after a StockItem object is deleted."""
     from part import tasks as part_tasks
+    from part.models import Part
 
     if InvenTree.ready.isImportingData():
+        return
+
+    try:
+        base_part = instance.part
+    except Part.DoesNotExist:
+        return
+
+    if not base_part:
+        # Base part does not exist, or has been deleted
         return
 
     if InvenTree.ready.canAppAccessDatabase(allow_test=True):
         # Run this check in the background
         InvenTree.tasks.offload_task(
             part_tasks.notify_low_stock_if_required,
-            instance.part.pk,
+            base_part.pk,
             group='notification',
             force_async=True,
         )
 
     if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
         # Schedule an update on parent part pricing
-        if instance.part:
-            instance.part.schedule_pricing_update(create=False)
+        base_part.schedule_pricing_update(create=False)
 
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')

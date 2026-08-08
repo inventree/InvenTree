@@ -57,6 +57,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
         'stock_location.add',
         'stock_location.delete',
         'stock.delete',
+        'part.view',
     ]
 
 
@@ -1702,9 +1703,8 @@ class StockItemTest(StockAPITestCase):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            # TODO: 2026-07-12 : Refactor this API call
             response = self.post(
-                url, data, max_query_count=1300, benchmark=True, format='json'
+                url, data, max_query_count=150, benchmark=True, format='json'
             )
 
         self.assertEqual(response.status_code, 201)
@@ -1988,6 +1988,28 @@ class StockItemTest(StockAPITestCase):
                 'tests',
             ],
         )
+
+    def test_part_detail_permissions(self):
+        """Test that the part_detail output option is only available to users with permission."""
+        url = reverse('api-stock-detail', kwargs={'pk': 1})
+
+        # User has permission to view parts
+        response = self.get(url, {'part_detail': True}, expected_code=200)
+
+        self.assertIn('pk', response.data)
+        self.assertIn('part', response.data)
+        self.assertIn('part_detail', response.data)
+
+        # Remove 'part view' permission from user
+        self.clearRoles()
+        response = self.get(url, {'part_detail': True}, expected_code=403)
+
+        self.assignRole('stock.view')
+
+        response = self.get(url, {'part_detail': True}, expected_code=200)
+        self.assertIn('pk', response.data)
+        self.assertIn('part', response.data)
+        self.assertNotIn('part_detail', response.data)
 
     def test_install(self):
         """Test that stock item can be installed into another item, via the API."""
