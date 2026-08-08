@@ -1,5 +1,6 @@
 """Unit tests for the 'importer' app."""
 
+import datetime
 import os
 import threading
 from unittest import mock
@@ -80,6 +81,38 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
 
         # Check that the new companies have been created
         self.assertEqual(n + 12, Company.objects.count())
+
+    def test_row_data_datetime_serialization(self):
+        """Test that row data containing native datetime values can be saved.
+
+        Regression test for a Sentry crash: "Object of type datetime is not JSON
+        serializable when serializing dict item 'COMMENT'". Excel imports (via
+        tablib/openpyxl) return date-formatted cells as native datetime.datetime
+        objects rather than strings. These flow unmodified into row_data, which
+        is then persisted via DataImportRow.objects.bulk_create().
+
+        DataImportRow.row_data / data / errors (and the related JSONFields on
+        DataImportSession) previously had no `encoder=DjangoJSONEncoder`, so
+        Django's JSONField fell back to the plain stdlib json.JSONEncoder, which
+        cannot serialize datetime objects - raising a TypeError on save/bulk_create.
+        """
+        data_file = self.helper_file('companies.csv')
+
+        session = DataImportSession.objects.create(
+            data_file=data_file, model_type='company'
+        )
+
+        row = DataImportRow(
+            session=session,
+            row_index=0,
+            row_data={'COMMENT': datetime.datetime(2024, 5, 1, 12, 30)},
+        )
+
+        # This must not raise: TypeError: Object of type datetime is not JSON serializable
+        DataImportRow.objects.bulk_create([row])
+
+        row.refresh_from_db()
+        self.assertEqual(row.row_data['COMMENT'], '2024-05-01T12:30:00')
 
     def test_import_header_whitespace(self):
         """Test that column headers with leading/trailing whitespace are handled correctly.
