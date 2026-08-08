@@ -8,7 +8,7 @@ msgstr ""
 "Language: es\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-07-31 09:22\n"
+"PO-Revision-Date: 2026-08-08 00:47\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -754,7 +754,7 @@ msgstr ""
 
 #: lib/hooks/MonitorDataOutput.tsx:75
 msgid "Process completed successfully"
-msgstr ""
+msgstr "Proceso completado con éxito"
 
 #: src/components/DashboardItemProxy.tsx:34
 #~ msgid "Title"
