@@ -4,7 +4,7 @@ import { StylishText } from '@lib/components/StylishText';
 import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { shortenString } from '@lib/functions/String';
 import { t } from '@lingui/core/macro';
-import { Fragment, type ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDetailNavigation } from '../../hooks/UseDetailNavigation';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
@@ -132,40 +132,6 @@ export function PageDetail({
     return [...(extraActionArray ?? []), ...(actions ?? [])];
   }, [extraActions, actions]);
 
-  const detailNavigationActions = useMemo(() => {
-    const navigationActions: ReactNode[] = [];
-
-    if (detailNavigation.previous) {
-      navigationActions.push(
-        <Button
-          component='a'
-          href={detailNavigation.previous.href}
-          onClick={detailNavigation.previous.onClick}
-          size='xs'
-          variant='subtle'
-        >
-          {t`Previous`}
-        </Button>
-      );
-    }
-
-    if (detailNavigation.next) {
-      navigationActions.push(
-        <Button
-          component='a'
-          href={detailNavigation.next.href}
-          onClick={detailNavigation.next.onClick}
-          size='xs'
-          variant='subtle'
-        >
-          {t`Next`}
-        </Button>
-      );
-    }
-
-    return navigationActions;
-  }, [detailNavigation.next, detailNavigation.previous]);
-
   return (
     <>
       <PageTitle title={pageTitleString} />
@@ -220,14 +186,33 @@ export function PageDetail({
                 </Group>
               )}
             </Group>
-            {(detailNavigationActions.length > 0 || computedActions) && (
+            {(detailNavigation.previous ||
+              detailNavigation.next ||
+              computedActions.length > 0) && (
               <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
-                {detailNavigationActions.map((action, idx) => (
-                  <Fragment key={`detail-navigation-${idx}`}>{action}</Fragment>
-                ))}
-                {computedActions.map((action, idx) => (
-                  <Fragment key={idx}>{action}</Fragment>
-                ))}
+                {detailNavigation.previous && (
+                  <Button
+                    component='a'
+                    href={detailNavigation.previous.href}
+                    onClick={detailNavigation.previous.onClick}
+                    size='xs'
+                    variant='subtle'
+                  >
+                    {t`Previous`}
+                  </Button>
+                )}
+                {detailNavigation.next && (
+                  <Button
+                    component='a'
+                    href={detailNavigation.next.href}
+                    onClick={detailNavigation.next.onClick}
+                    size='xs'
+                    variant='subtle'
+                  >
+                    {t`Next`}
+                  </Button>
+                )}
+                {computedActions}
               </Group>
             )}
           </Group>

@@ -42,7 +42,7 @@ function appendQueryValue(query: URLSearchParams, key: string, value: unknown) {
     return;
   }
 
-  query.append(key, String(value));
+  query.append(key, value.toString());
 }
 
 export function serializeDetailNavigationQuery(
@@ -72,7 +72,7 @@ export function buildDetailNavigationUrl({
   pk: string | number;
   field: string;
 }): string {
-  const target = new URL(detailUrl, 'http://inventree.local');
+  const target = new URL(detailUrl, 'https://inventree.local');
   const query = serializeDetailNavigationQuery(queryParams);
 
   target.searchParams.set(DETAIL_NAVIGATION_PARAMS.api, apiUrl);
@@ -146,7 +146,7 @@ export function buildDetailNavigationTarget(
   targetIndex: number
 ): string {
   const nextPath = replaceDetailPk(pathname, context.pk, targetPk);
-  const target = new URL(`${nextPath}${search}`, 'http://inventree.local');
+  const target = new URL(`${nextPath}${search}`, 'https://inventree.local');
 
   target.searchParams.set(DETAIL_NAVIGATION_PARAMS.index, String(targetIndex));
   target.searchParams.set(DETAIL_NAVIGATION_PARAMS.pk, String(targetPk));
