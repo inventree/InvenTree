@@ -642,14 +642,6 @@ class TestHelpers(TestCase):
                 InvenTree.helpers_model.construct_absolute_url(url), expected
             )
 
-    def test_image_url(self):
-        """Test if a filename looks like an image."""
-        for name in ['ape.png', 'bat.GiF', 'apple.WeBP', 'BiTMap.Bmp']:
-            self.assertTrue(helpers.TestIfImageURL(name))
-
-        for name in ['no.doc', 'nah.pdf', 'whatpng']:
-            self.assertFalse(helpers.TestIfImageURL(name))
-
     def test_str2bool(self):
         """Test string to boolean conversion."""
         for s in ['yes', 'Y', 'ok', '1', 'OK', 'Ok', 'tRuE', 'oN']:

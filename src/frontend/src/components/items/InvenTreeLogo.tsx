@@ -4,8 +4,8 @@ import { type ReactNode, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { useShallow } from 'zustand/react/shallow';
+import InvenTreeIcon from '../../assets/inventree.svg';
 import { useServerApiState } from '../../states/ServerApiState';
-import InvenTreeIcon from './inventree.svg';
 
 export const InvenTreeLogoHomeButton = forwardRef<HTMLDivElement>(
   (props, ref) => {
@@ -26,16 +26,32 @@ export const InvenTreeLogoHomeButton = forwardRef<HTMLDivElement>(
  * - Uses the custom logo if one is defined on the server
  * - Otherwise, uses the default logo
  */
-export function InvenTreeLogo(): ReactNode {
+export function InvenTreeLogo({
+  size = 36
+}: {
+  size?: number;
+}): ReactNode {
   const [server] = useServerApiState(
     useShallow((state) => [state.server, state.fetchServerApiState])
   );
 
   if (server.server && server.customize?.logo) {
     return (
-      <img src={server.customize.logo} alt={t`InvenTree Logo`} height={28} />
+      <img
+        src={server.customize.logo}
+        alt={t`InvenTree Logo`}
+        width={size}
+        height={size}
+      />
     );
   }
 
-  return <img src={InvenTreeIcon} alt={t`InvenTree Logo`} height={28} />;
+  return (
+    <img
+      src={InvenTreeIcon}
+      alt={t`InvenTree Logo`}
+      width={size}
+      height={size}
+    />
+  );
 }
