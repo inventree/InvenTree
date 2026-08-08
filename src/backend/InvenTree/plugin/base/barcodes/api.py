@@ -848,6 +848,16 @@ class BarcodeScanResultMixin:
         """Return the queryset for the BarcodeScan API."""
         queryset = super().get_queryset()
 
+        try:
+            user = self.request.user
+        except AttributeError:
+            raise PermissionDenied('User information is not available')
+
+        # Allow staff users access to all BarcodeScanResult objects
+        if not user.is_staff:
+            # All other users are limited to viewing their own barcode scan history
+            queryset = queryset.filter(user=user)
+
         # Pre-fetch user data
         queryset = queryset.prefetch_related('user')
 
