@@ -8,6 +8,7 @@ from typing import Optional
 from django.contrib.auth.models import User
 from django.core.exceptions import FieldDoesNotExist
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.serializers.json import DjangoJSONEncoder
 from django.core.validators import FileExtensionValidator
 from django.db import models, transaction
 from django.urls import reverse
@@ -82,7 +83,9 @@ class DataImportSession(models.Model):
         ],
     )
 
-    columns = models.JSONField(blank=True, null=True, verbose_name=_('Columns'))
+    columns = models.JSONField(
+        blank=True, null=True, verbose_name=_('Columns'), encoder=DjangoJSONEncoder
+    )
 
     model_type = models.CharField(
         blank=False,
@@ -107,6 +110,7 @@ class DataImportSession(models.Model):
         null=True,
         verbose_name=_('Field Defaults'),
         validators=[importer.validators.validate_field_defaults],
+        encoder=DjangoJSONEncoder,
     )
 
     field_overrides = models.JSONField(
@@ -114,6 +118,7 @@ class DataImportSession(models.Model):
         null=True,
         verbose_name=_('Field Overrides'),
         validators=[importer.validators.validate_field_defaults],
+        encoder=DjangoJSONEncoder,
     )
 
     field_filters = models.JSONField(
@@ -121,6 +126,7 @@ class DataImportSession(models.Model):
         null=True,
         verbose_name=_('Field Filters'),
         validators=[importer.validators.validate_field_defaults],
+        encoder=DjangoJSONEncoder,
     )
 
     update_records = models.BooleanField(
@@ -668,12 +674,19 @@ class DataImportRow(models.Model):
     row_index = models.PositiveIntegerField(default=0, verbose_name=_('Row Index'))
 
     row_data = models.JSONField(
-        blank=True, null=True, verbose_name=_('Original row data')
+        blank=True,
+        null=True,
+        verbose_name=_('Original row data'),
+        encoder=DjangoJSONEncoder,
     )
 
-    data = models.JSONField(blank=True, null=True, verbose_name=_('Data'))
+    data = models.JSONField(
+        blank=True, null=True, verbose_name=_('Data'), encoder=DjangoJSONEncoder
+    )
 
-    errors = models.JSONField(blank=True, null=True, verbose_name=_('Errors'))
+    errors = models.JSONField(
+        blank=True, null=True, verbose_name=_('Errors'), encoder=DjangoJSONEncoder
+    )
 
     valid = models.BooleanField(default=False, verbose_name=_('Valid'))
 
@@ -762,7 +775,11 @@ class DataImportRow(models.Model):
                         field, value, lookup_field=field_lookup_mapping.get(field)
                     )
                 except DjangoValidationError as exc:
-                    extract_errors[field] = exc.message
+                    # exc.message only exists if the error was raised with a single
+                    # message string - lookup_related_field may also raise with a
+                    # dict (message_dict) or list (message), so use exc.messages,
+                    # which normalizes any construction to a flat list of strings.
+                    extract_errors[field] = '; '.join(exc.messages)
                     continue
 
             # Use the default value, if provided
