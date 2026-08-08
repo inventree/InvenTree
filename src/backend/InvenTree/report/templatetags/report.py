@@ -3,7 +3,6 @@
 import base64
 import copy
 import logging
-import mimetypes
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from io import BytesIO
@@ -323,12 +322,7 @@ def asset(filename: str, raise_error: bool = False) -> str | None:
     if not file_data:
         return None
 
-    mime_type, _encoding = mimetypes.guess_type(str(filename))
-    if not mime_type:
-        mime_type = 'application/octet-stream'
-
-    encoded = base64.b64encode(file_data).decode('ascii')
-    return f'data:{mime_type};base64,{encoded}'
+    return report.helpers.encode_file_base64(filename, file_data)
 
 
 @register.simple_tag()
