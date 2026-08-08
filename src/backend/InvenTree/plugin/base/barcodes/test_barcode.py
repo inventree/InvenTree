@@ -256,6 +256,50 @@ class BarcodeAPITest(InvenTreeAPITestCase):
             self.assertIn('object does not exist', str(response.data[k]))
 
 
+class POAllocateTest(InvenTreeAPITestCase):
+    """Unit tests for the barcode endpoint for allocating items to a purchase order."""
+
+    fixtures = ['category', 'company', 'part', 'location', 'stock']
+    roles = ['part.view']
+
+    @classmethod
+    def setUpTestData(cls):
+        """Setup for all tests."""
+        super().setUpTestData()
+
+        cls.supplier = company.models.Company.objects.filter(is_supplier=True).first()
+        cls.purchase_order = order.models.PurchaseOrder.objects.create(
+            supplier=cls.supplier
+        )
+
+    def postBarcode(self, barcode, expected_code=None, **kwargs):
+        """Post barcode and return results."""
+        data = {'barcode': barcode, **kwargs}
+
+        response = self.post(
+            reverse('api-barcode-po-allocate'), data=data, expected_code=expected_code
+        )
+
+        return response.data
+
+    def test_permission_denied(self):
+        """A user without the 'purchase_order.add' role cannot allocate against a PO via barcode scan."""
+        response = self.postBarcode(
+            'abcde', purchase_order=self.purchase_order.pk, expected_code=403
+        )
+
+        self.assertIn('do not have the required permissions', str(response['error']))
+
+        # Once the role is granted, the request proceeds past the permission check
+        # (still fails with 400, as 'abcde' does not match any barcode plugin -
+        # but that is a *different* error to the permission check above)
+        self.assignRole('purchase_order.add')
+
+        self.postBarcode(
+            'abcde', purchase_order=self.purchase_order.pk, expected_code=400
+        )
+
+
 class SOAllocateTest(InvenTreeAPITestCase):
     """Unit tests for the barcode endpoint for allocating items to a sales order."""
 
@@ -308,6 +352,36 @@ class SOAllocateTest(InvenTreeAPITestCase):
         )
 
         return response.data
+
+    def test_permission_denied(self):
+        """A user without the 'sales_order.add' role cannot allocate stock via barcode scan."""
+        self.clearRoles()
+
+        response = self.post(
+            reverse('api-barcode-so-allocate'),
+            data={
+                'barcode': self.stock_item.format_barcode(),
+                'sales_order': self.sales_order.pk,
+            },
+            expected_code=403,
+        )
+
+        self.assertIn(
+            'do not have the required permissions', str(response.data['error'])
+        )
+
+        # No allocation should have been created
+        self.assertEqual(self.line_item.allocated_quantity(), 0)
+
+        # Restore the required roles - the request should now succeed
+        self.assignRole('sales_order.add')
+        self.assignRole('stock.view')
+
+        self.postBarcode(
+            self.stock_item.format_barcode(),
+            sales_order=self.sales_order.pk,
+            expected_code=200,
+        )
 
     def test_no_data(self):
         """Test when no data is provided."""
