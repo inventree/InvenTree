@@ -506,21 +506,20 @@ class BuildTest(BuildAPITest):
         """
         bo = Build.objects.get(pk=1)
 
-        outputs = bo.build_outputs.filter(is_building=True)
-        self.assertGreater(outputs.count(), 0)
+        # Create a new build output
+        create_url = reverse('api-build-output-create', kwargs={'pk': bo.pk})
+        response = self.post(create_url, {'quantity': 1}, expected_code=201)
+        output = StockItem.objects.get(pk=response.data[0]['pk'])
 
         structural_location = StockLocation.objects.create(
             name='Structural location', structural=True
         )
 
-        complete_url = reverse('api-build-output-complete', kwargs={'pk': 1})
+        complete_url = reverse('api-build-output-complete', kwargs={'pk': bo.pk})
 
         response = self.post(
             complete_url,
-            {
-                'outputs': [{'output': output.pk} for output in outputs],
-                'location': structural_location.pk,
-            },
+            {'outputs': [{'output': output.pk}], 'location': structural_location.pk},
             expected_code=400,
         )
 
@@ -529,9 +528,8 @@ class BuildTest(BuildAPITest):
         )
 
         # None of the outputs should have been completed
-        for output in outputs:
-            output.refresh_from_db()
-            self.assertTrue(output.is_building)
+        output.refresh_from_db()
+        self.assertTrue(output.is_building)
 
     def test_download_build_orders(self):
         """Test that we can download a list of build orders via the API."""
