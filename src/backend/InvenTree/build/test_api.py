@@ -495,6 +495,39 @@ class BuildTest(BuildAPITest):
             'This build output has already been completed', str(response.data)
         )
 
+    def test_complete_build_output_structural_location(self):
+        """Test that a structural location is rejected by the BuildOutputComplete API.
+
+        Ref: this validation must happen synchronously in the serializer,
+        before the completion is offloaded to the background worker.
+        """
+        bo = Build.objects.get(pk=1)
+
+        # Create a new build output
+        create_url = reverse('api-build-output-create', kwargs={'pk': bo.pk})
+        response = self.post(create_url, {'quantity': 1}, expected_code=201)
+        output = StockItem.objects.get(pk=response.data[0]['pk'])
+
+        structural_location = StockLocation.objects.create(
+            name='Structural location', structural=True
+        )
+
+        complete_url = reverse('api-build-output-complete', kwargs={'pk': bo.pk})
+
+        response = self.post(
+            complete_url,
+            {'outputs': [{'output': output.pk}], 'location': structural_location.pk},
+            expected_code=400,
+        )
+
+        self.assertIn(
+            'Structural locations cannot be assigned stock items', str(response.data)
+        )
+
+        # None of the outputs should have been completed
+        output.refresh_from_db()
+        self.assertTrue(output.is_building)
+
     def test_download_build_orders(self):
         """Test that we can download a list of build orders via the API."""
         required_cols = [
