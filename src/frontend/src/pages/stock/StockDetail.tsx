@@ -751,6 +751,7 @@ export default function StockDetail() {
               setTreeOpen(true);
             }}
             actions={stockActions}
+            pk={stockitem?.pk}
           />
           <PanelGroup
             pageKey='stockitem'

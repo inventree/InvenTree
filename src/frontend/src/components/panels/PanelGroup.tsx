@@ -304,10 +304,10 @@ function BasePanelGroup({
       }
 
       if (event && eventModified(event)) {
-        const url = `${location.pathname}/../${targetPanel}`;
+        const url = `${location.pathname}/../${targetPanel}${location.search}`;
         navigateToLink(url, navigate, event);
       } else {
-        navigate(`../${targetPanel}`);
+        navigate(`../${targetPanel}${location.search}`);
       }
 
       localState.setLastUsedPanel(pageKey)(targetPanel);
@@ -508,6 +508,7 @@ function IndexPanelComponent({
   defaultPanel,
   panels
 }: Readonly<PanelProps>) {
+  const location = useLocation();
   const lastUsedPanel = useLocalState(
     useShallow((state) => {
       const panelName =
@@ -527,7 +528,7 @@ function IndexPanelComponent({
     })
   );
 
-  return <Navigate to={lastUsedPanel} replace />;
+  return <Navigate to={`${lastUsedPanel}${location.search}`} replace />;
 }
 
 /**

@@ -672,6 +672,13 @@ class PartFilter(FilterSet):
         label=_('Is Variant'), method='filter_is_variant'
     )
 
+    pk_gt = rest_filters.NumberFilter(
+        field_name='pk', lookup_expr='gt', label=_('PK greater than')
+    )
+    pk_lt = rest_filters.NumberFilter(
+        field_name='pk', lookup_expr='lt', label=_('PK less than')
+    )
+
     def filter_is_variant(self, queryset, name, value):
         """Filter by whether the Part is a variant or not."""
         return queryset.filter(variant_of__isnull=not str2bool(value))

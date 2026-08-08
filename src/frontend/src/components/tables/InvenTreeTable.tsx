@@ -36,6 +36,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useApi } from '../../contexts/ApiContext';
 import { extractAvailableFields } from '../../functions/forms';
 import { showApiErrorMessage } from '../../functions/notifications';
+import { encodeNavContext } from '../../hooks/UseNextPrev';
 import { useLocalState } from '../../states/LocalState';
 import { usePreviewDrawerState } from '../../states/PreviewDrawerState';
 import { useUserSettingsState } from '../../states/SettingsStates';
@@ -747,11 +748,45 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
 
         if (pk) {
           cancelEvent(event);
-          // If a model type is provided, navigate to the detail view for that model
-          const url = getDetailUrl(tableProps.modelType, pk);
+          const detailUrl = getDetailUrl(tableProps.modelType, pk);
 
           if (!showPreviewPanel || eventModified(event as any)) {
-            navigateToLink(url, navigate, event);
+            // Build nav context from current table state so the detail page
+            // can resolve prev/next against the same filtered/ordered set.
+            if (url) {
+              const queryFilters = getTableFilters(false);
+              const ordering = queryFilters.ordering ?? '';
+
+              const navCtx = encodeNavContext({
+                endpoint: url,
+                filters: Object.fromEntries(
+                  Object.entries(queryFilters)
+                    .filter(
+                      ([k, v]) =>
+                        k !== 'ordering' &&
+                        k !== 'search' &&
+                        k !== 'limit' &&
+                        k !== 'offset' &&
+                        k !== 'tags' &&
+                        !k.endsWith('_detail') &&
+                        v !== undefined &&
+                        v !== null &&
+                        typeof v !== 'object' &&
+                        v !== 'undefined' &&
+                        v !== 'null'
+                    )
+                    .map(([k, v]) => [k, String(v)])
+                ),
+                ordering: ordering || 'pk'
+              });
+              if (queryFilters.search) {
+                navCtx['_nav_search'] = String(queryFilters.search);
+              }
+              const qs = new URLSearchParams(navCtx).toString();
+              navigateToLink(`${detailUrl}?${qs}`, navigate, event);
+            } else {
+              navigateToLink(detailUrl, navigate, event);
+            }
           } else {
             showRowPreview(pk);
           }
