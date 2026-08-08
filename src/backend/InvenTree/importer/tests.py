@@ -188,6 +188,46 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
         # Check that the new companies have been created
         self.assertEqual(n + 12, Company.objects.count())
 
+    def test_import_encoding(self):
+        """Test that non-UTF-8 encoded data files are handled correctly.
+
+        Regression test: CSV files exported from Excel on Windows are commonly
+        encoded as cp1252 rather than utf-8. Previously, an unhandled
+        UnicodeDecodeError was raised (surfaced to the user as a server error)
+        instead of a well-formed ValidationError.
+        """
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        raw = self.helper_file('companies.csv').read()
+
+        # Encode the file data as cp1252, including a character not valid in utf-8
+        lines = raw.splitlines()
+        lines[1] = lines[1].replace('Arrow Electronics', 'Arrow Electronics \xb2')
+        cp1252_data = '\n'.join(lines).encode('cp1252')
+
+        data_file = ContentFile(cp1252_data, 'companies_cp1252.csv')
+
+        session = DataImportSession.objects.create(
+            data_file=data_file, model_type='company'
+        )
+
+        session.extract_columns()
+        session.import_data()
+
+        arrow_row = next(
+            row for row in session.rows.all() if row.data.get('name') == 'Arrow'
+        )
+        self.assertEqual(arrow_row.data.get('description'), 'Arrow Electronics ²')
+
+        # A file containing bytes which are not valid in either utf-8 or cp1252
+        # should raise a ValidationError, rather than an unhandled exception
+        invalid_data = ContentFile(b'name,website\r\n\x81\x8d,test\r\n', 'invalid.csv')
+
+        with self.assertRaises(DjangoValidationError):
+            DataImportSession.objects.create(
+                data_file=invalid_data, model_type='company'
+            ).extract_columns()
+
     def test_field_defaults(self):
         """Test default field values.
 
