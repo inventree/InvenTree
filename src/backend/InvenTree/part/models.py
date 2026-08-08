@@ -2957,7 +2957,9 @@ class PartPricing(common.models.MetaMixin):
             try:
                 self.refresh_from_db()
             except PartPricing.DoesNotExist:
-                pass
+                # The underlying Part (and this pricing entry) has been deleted
+                # since this update was scheduled - nothing to do
+                return
 
         self.update_bom_cost(save=False)
         self.update_purchase_cost(save=False)
