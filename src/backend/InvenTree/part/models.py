@@ -1049,11 +1049,20 @@ class Part(
             raise ValidationError(_('Duplicate part revision already exists.'))
 
         # Ensure unique across (Name, revision, IPN) (as specified)
-        if (self.revision or self.IPN) and (
-            Part.objects
-            .exclude(pk=self.pk)
-            .filter(name=self.name, revision=self.revision, IPN=self.IPN)
-            .exists()
+        # Note: the 'unique_part' database constraint only rejects a row when
+        # *all three* fields are non-null (Postgres treats NULL as distinct from
+        # NULL), so mirror that here rather than skipping whenever either field
+        # is merely blank - an empty string ('') still collides with another
+        # empty string at the database level, unlike None/NULL.
+        if (
+            self.IPN is not None
+            and self.revision is not None
+            and (
+                Part.objects
+                .exclude(pk=self.pk)
+                .filter(name=self.name, revision=self.revision, IPN=self.IPN)
+                .exists()
+            )
         ):
             raise ValidationError(
                 _('Part with this Name, IPN and Revision already exists.')
