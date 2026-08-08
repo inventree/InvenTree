@@ -110,8 +110,7 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
 
         # This must not raise: TypeError: Object of type datetime is not JSON serializable
         DataImportRow.objects.bulk_create([row])
-
-        row.refresh_from_db()
+        row = DataImportRow.objects.get(session=session, row_index=0)
         self.assertEqual(row.row_data['COMMENT'], '2024-05-01T12:30:00')
 
     def test_import_header_whitespace(self):
