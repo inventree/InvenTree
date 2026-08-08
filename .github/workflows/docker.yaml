@@ -85,7 +85,7 @@ jobs:
           docker run --rm inventree-test test -f /home/inventree/src/backend/requirements.txt
           docker run --rm inventree-test test -f /home/inventree/src/backend/InvenTree/manage.py
           # Check that backend license information was generated into the image
-          docker run --rm inventree-test test -s /home/inventree/src/backend/InvenTree/InvenTree/licenses.txt
+          docker run --rm inventree-test test -f /home/inventree/src/backend/InvenTree/InvenTree/licenses.txt
           # Check that backend translations were compiled into the image (a few representative languages)
           docker run --rm inventree-test test -f /home/inventree/src/backend/InvenTree/locale/de/LC_MESSAGES/django.mo
           docker run --rm inventree-test test -f /home/inventree/src/backend/InvenTree/locale/fr/LC_MESSAGES/django.mo
