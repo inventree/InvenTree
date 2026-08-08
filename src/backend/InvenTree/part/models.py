@@ -52,6 +52,7 @@ from common.currency import currency_code_default
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from InvenTree import helpers, validators
+from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize
@@ -2645,7 +2646,26 @@ class PartPricing(common.models.MetaMixin):
         Arguments:
             counter: Recursion counter (used to prevent infinite recursion)
             refresh: If specified, the PartPricing object will be refreshed from the database
+
+        Note:
+            Within a single request, repeated calls for the same part are cheap: a request-scoped
+            cache (see InvenTree.cache) short-circuits everything below after the first call,
+            avoiding redundant refresh_from_db() / existence-check queries for a part whose pricing
+            has already been resolved (scheduled or not) earlier in the same request. This does not
+            change behavior outside of a request (e.g. background tasks), where the cache is a
+            no-op and every call runs in full.
         """
+        cache_key = f'part-pricing-scheduled-{self.part_id}'
+        if get_session_cache(cache_key):
+            return
+
+        try:
+            self._schedule_for_update(counter=counter, refresh=refresh)
+        finally:
+            set_session_cache(cache_key, True)
+
+    def _schedule_for_update(self, counter: int = 0, refresh: bool = True):
+        """Implementation of schedule_for_update(), without the request-scoped cache guard."""
         import InvenTree.ready
 
         # If importing data, skip pricing update
