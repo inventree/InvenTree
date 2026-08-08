@@ -389,8 +389,6 @@ class BarcodePOAllocate(BarcodeView):
     - A SupplierPart object
     """
 
-    role_required = ['purchase_order.add']
-
     serializer_class = barcode_serializers.BarcodePOAllocateSerializer
 
     def get_supplier_part(
@@ -444,6 +442,13 @@ class BarcodePOAllocate(BarcodeView):
 
     def handle_barcode(self, barcode: str, request, **kwargs):
         """Scan the provided barcode data."""
+        if not check_user_permission(request.user, order.models.PurchaseOrder, 'add'):
+            raise PermissionDenied({
+                'error': _(
+                    'You do not have the required permissions for purchase orders'
+                )
+            })
+
         # The purchase order is provided as part of the request
         purchase_order = kwargs.get('purchase_order')
 
@@ -493,12 +498,17 @@ class BarcodePOReceive(BarcodeView):
     - location: The destination location for the received item (optional)
     """
 
-    role_required = ['purchase_order.add']
-
     serializer_class = barcode_serializers.BarcodePOReceiveSerializer
 
     def handle_barcode(self, barcode: str, request, **kwargs):
         """Handle a barcode scan for a purchase order item."""
+        if not check_user_permission(request.user, order.models.PurchaseOrder, 'add'):
+            raise PermissionDenied({
+                'error': _(
+                    'You do not have the required permissions for purchase orders'
+                )
+            })
+
         logger.debug("BarcodePOReceive: scanned barcode - '%s'", barcode)
 
         # Extract optional fields from the dataset
@@ -667,8 +677,6 @@ class BarcodeSOAllocate(BarcodeView):
     - Quantity
     """
 
-    role_required = ['sales_order.add']
-
     serializer_class = barcode_serializers.BarcodeSOAllocateSerializer
 
     def get_line_item(self, stock_item, **kwargs):
@@ -736,6 +744,11 @@ class BarcodeSOAllocate(BarcodeView):
             line: SalesOrderLineItem ID value (optional)
             shipment: SalesOrderShipment ID value (optional)
         """
+        if not check_user_permission(request.user, order.models.SalesOrder, 'add'):
+            raise PermissionDenied({
+                'error': _('You do not have the required permissions for sales orders')
+            })
+
         logger.debug("BarcodeSOAllocate: scanned barcode - '%s'", barcode)
 
         response = self.scan_barcode(barcode, request, **kwargs)

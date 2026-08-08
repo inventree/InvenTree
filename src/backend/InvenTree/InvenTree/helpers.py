@@ -262,27 +262,42 @@ def checkStaticFile(*args) -> bool:
     return static_storage.exists(str(fn))
 
 
-def getLogoImage(as_file=False, custom=True):
-    """Return the InvenTree logo image, or a custom logo if available."""
+def getLogoImage(as_file: bool = False, custom: bool = True) -> str:
+    """Return the InvenTree logo image, or a custom logo if available.
+
+    Arguments:
+        as_file: If True, return a base64-encoded data URI of the image contents,
+                 suitable for embedding directly into a generated report (default = False)
+        custom: If True, return a custom logo if one has been provided (default = True)
+    """
+    # Note: Imported here to avoid circular imports, as the 'report' app also imports from this module
+    import report.helpers
+    from report.templatetags.report import (
+        get_media_file_contents,
+        get_static_file_contents,
+    )
+
     if custom and settings.CUSTOM_LOGO:
         static_storage = StaticFilesStorage()
 
         if static_storage.exists(settings.CUSTOM_LOGO):
-            storage = static_storage
-        elif default_storage.exists(settings.CUSTOM_LOGO):
-            storage = default_storage
-        else:
-            storage = None
-
-        if storage is not None:
             if as_file:
-                return f'file://{storage.path(settings.CUSTOM_LOGO)}'
-            return storage.url(settings.CUSTOM_LOGO)
+                return report.helpers.encode_file_base64(
+                    settings.CUSTOM_LOGO, get_static_file_contents(settings.CUSTOM_LOGO)
+                )
+            return static_storage.url(settings.CUSTOM_LOGO)
+        elif default_storage.exists(settings.CUSTOM_LOGO):
+            if as_file:
+                return report.helpers.encode_file_base64(
+                    settings.CUSTOM_LOGO, get_media_file_contents(settings.CUSTOM_LOGO)
+                )
+            return default_storage.url(settings.CUSTOM_LOGO)
 
     # If we have got to this point, return the default logo
     if as_file:
-        path = settings.STATIC_ROOT.joinpath('img/inventree.png')
-        return f'file://{path}'
+        return report.helpers.encode_file_base64(
+            'img/inventree.png', get_static_file_contents('img/inventree.png')
+        )
     return getStaticUrl('img/inventree.png')
 
 
