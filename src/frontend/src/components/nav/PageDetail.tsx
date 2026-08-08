@@ -1,9 +1,10 @@
-import { Group, Paper, Space, Stack, Text } from '@mantine/core';
+import { ActionIcon, Group, Paper, Space, Stack, Text } from '@mantine/core';
 
 import { StylishText } from '@lib/components/StylishText';
 import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { shortenString } from '@lib/functions/String';
 import { t } from '@lingui/core/macro';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { Fragment, type ReactNode, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
@@ -14,6 +15,13 @@ import { ApiIcon } from '../items/ApiIcon';
 import type { PrimaryActionUIFeature } from '../plugins/PluginUIFeatureTypes';
 import { type Breadcrumb, BreadcrumbList } from './BreadcrumbList';
 import PageTitle from './PageTitle';
+
+export interface NextPrevInterface {
+  hasPrev: boolean;
+  hasNext: boolean;
+  onPrev: () => void;
+  onNext: () => void;
+}
 
 interface PageDetailInterface {
   title?: string;
@@ -28,6 +36,8 @@ interface PageDetailInterface {
   actions?: ReactNode[];
   editAction?: () => void;
   editEnabled?: boolean;
+  /** Optional previous/next sibling navigation, e.g. from useNextPrevInstance */
+  nextPrev?: NextPrevInterface;
 }
 
 /**
@@ -48,7 +58,8 @@ export function PageDetail({
   breadcrumbAction,
   actions,
   editAction,
-  editEnabled
+  editEnabled,
+  nextPrev
 }: Readonly<PageDetailInterface>) {
   const userSettings = useUserSettingsState();
   const navigate = useNavigate();
@@ -65,6 +76,22 @@ export function PageDetail({
         if (editEnabled ?? true) {
           editAction?.();
         }
+      }
+    ],
+    [
+      'alt+ArrowLeft',
+      t`Previous`,
+      (event) => {
+        if (event.repeat) return;
+        if (nextPrev?.hasPrev) nextPrev.onPrev();
+      }
+    ],
+    [
+      'alt+ArrowRight',
+      t`Next`,
+      (event) => {
+        if (event.repeat) return;
+        if (nextPrev?.hasNext) nextPrev.onNext();
       }
     ]
   ]);
@@ -184,13 +211,34 @@ export function PageDetail({
                 </Group>
               )}
             </Group>
-            {computedActions && (
-              <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
-                {computedActions.map((action, idx) => (
+            <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
+              {nextPrev && (
+                <Group gap={0} wrap='nowrap'>
+                  <ActionIcon
+                    variant='transparent'
+                    disabled={!nextPrev.hasPrev}
+                    onClick={nextPrev.onPrev}
+                    aria-label={t`Previous item`}
+                    data-testid='inventree-prev-item'
+                  >
+                    <IconChevronLeft />
+                  </ActionIcon>
+                  <ActionIcon
+                    variant='transparent'
+                    disabled={!nextPrev.hasNext}
+                    onClick={nextPrev.onNext}
+                    aria-label={t`Next item`}
+                    data-testid='inventree-next-item'
+                  >
+                    <IconChevronRight />
+                  </ActionIcon>
+                </Group>
+              )}
+              {computedActions &&
+                computedActions.map((action, idx) => (
                   <Fragment key={idx}>{action}</Fragment>
                 ))}
-              </Group>
-            )}
+            </Group>
           </Group>
         </Paper>
       </Stack>
