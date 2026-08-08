@@ -4,7 +4,7 @@ import { StylishText } from '@lib/components/StylishText';
 import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { shortenString } from '@lib/functions/String';
 import { t } from '@lingui/core/macro';
-import { type ReactNode, useMemo } from 'react';
+import { Fragment, type ReactNode, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDetailNavigation } from '../../hooks/UseDetailNavigation';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
