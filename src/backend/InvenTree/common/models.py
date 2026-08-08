@@ -3421,11 +3421,11 @@ class EmailMessage(models.Model):
 
     objects = NoDeleteManager()
 
-    def delete(self, *kwargs):
+    def delete(self, *args, **kwargs):
         """Delete entry - if not protected."""
         if get_global_setting('INVENTREE_PROTECT_EMAIL_LOG'):
             raise ValidationError(del_error_msg)
-        return super().delete(*kwargs)
+        return super().delete(*args, **kwargs)
 
 
 class EmailThread(InvenTree.models.InvenTreeMetadataModel):

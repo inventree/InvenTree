@@ -191,10 +191,10 @@ class AbstractOrderSerializer(
             custom_status = get_logical_value(
                 value, model=self.Meta.model._meta.model_name
             )
-        except:
+        except Exception:
             raise ValidationError(_('Invalid custom status key'))
 
-        if custom_status.logical_key is not self.instance.status:
+        if custom_status.logical_key != self.instance.status:
             raise ValidationError(_('Invalid custom status key for this order status'))
 
         return value
