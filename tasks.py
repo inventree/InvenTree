@@ -764,6 +764,9 @@ def install(
         f'pip-licenses --format=json --with-license-file --no-license-path > {lic_path}',
     )
 
+    if not lic_path.exists() or lic_path.stat().st_size == 0:
+        raise FileNotFoundError(f"License file was not generated at '{lic_path}'")
+
     success('Dependency installation complete')
 
 

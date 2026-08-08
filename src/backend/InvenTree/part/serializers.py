@@ -1270,7 +1270,7 @@ class PartStocktakeSerializer(
         if exclude_pk:
             self.fields.pop('pk', None)
 
-    quantity = serializers.FloatField()
+    quantity = InvenTree.serializers.InvenTreeDecimalField()
 
     cost_min = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
     cost_min_currency = InvenTree.serializers.InvenTreeCurrencySerializer()

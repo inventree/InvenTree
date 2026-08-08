@@ -572,6 +572,15 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         help_text=_('Location for completed build outputs'),
     )
 
+    def validate_location(self, location):
+        """Validate the provided location."""
+        if location and location.structural:
+            raise ValidationError(
+                _('Structural locations cannot be assigned stock items')
+            )
+
+        return location
+
     status_custom_key = StockStatusCustomSerializer(default=StockStatus.OK.value)
 
     accept_incomplete_allocation = serializers.BooleanField(
