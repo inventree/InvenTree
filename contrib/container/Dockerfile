@@ -150,8 +150,8 @@ COPY --from=builder_stage /root/.local /root/.local
 RUN bash -c "cd '${INVENTREE_HOME}' && invoke int.backend-compilemessages"
 
 # Generate license information for installed python packages
-RUN pip-licenses --format=json --with-license-file --no-license-path > "${INVENTREE_BACKEND_DIR}/InvenTree/licenses.txt" \
-    && test -s "${INVENTREE_BACKEND_DIR}/InvenTree/licenses.txt"
+RUN pip-licenses --format=json --with-license-file --no-license-path > "${INVENTREE_BACKEND_DIR}/InvenTree/InvenTree/licenses.txt" \
+    && test -s "${INVENTREE_BACKEND_DIR}/InvenTree/InvenTree/licenses.txt"
 
 # Launch the production server
 CMD ["sh", "-c", "exec gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} --chdir ${INVENTREE_BACKEND_DIR}/InvenTree"]
