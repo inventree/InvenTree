@@ -44,6 +44,8 @@ export type {
   FilterSetState
 } from './types/Filters';
 
+export type { DetailNavigationContext } from './types/Navigation';
+
 export type {
   ApiFormFieldChoice,
   ApiFormFieldHeader,
@@ -64,7 +66,8 @@ export { apiUrl } from './functions/Api';
 export {
   getBaseUrl,
   getDetailUrl,
-  navigateToLink
+  navigateToLink,
+  type NavigateToLinkOptions
 } from './functions/Navigation';
 
 export {
@@ -112,6 +115,11 @@ export { SearchInput } from './components/SearchInput';
 export { TableColumnSelect } from './components/TableColumnSelect';
 export { default as TagsList } from './components/TagsList';
 export { default as InvenTreeTable } from './components/InvenTreeTable';
+export {
+  DetailNavigation,
+  type DetailNavigationProps,
+  type DetailNavigationTarget
+} from './components/DetailNavigation';
 export {
   RowViewAction,
   RowDuplicateAction,

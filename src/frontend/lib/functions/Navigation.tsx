@@ -4,6 +4,11 @@ import type { ModelType } from '../enums/ModelType';
 import { apiUrl } from './Api';
 import { cancelEvent } from './Events';
 
+export type NavigateToLinkOptions = {
+  state?: unknown;
+  replace?: boolean;
+};
+
 export const getBaseUrl = (): string =>
   (window as any).INVENTREE_SETTINGS?.base_url || 'web';
 
@@ -88,7 +93,8 @@ export function getApiUrl(
 export const navigateToLink = (
   link: string,
   navigate: NavigateFunction,
-  event: any
+  event: any,
+  options?: NavigateToLinkOptions
 ) => {
   cancelEvent(event);
 
@@ -110,7 +116,7 @@ export const navigateToLink = (
       url = link.replace(base, '');
     }
 
-    navigate(url);
+    navigate(url, options);
   }
 };
 

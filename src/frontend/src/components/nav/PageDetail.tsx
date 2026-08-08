@@ -1,5 +1,9 @@
 import { Group, Paper, Space, Stack, Text } from '@mantine/core';
 
+import {
+  DetailNavigation,
+  type DetailNavigationProps
+} from '@lib/components/DetailNavigation';
 import { StylishText } from '@lib/components/StylishText';
 import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { shortenString } from '@lib/functions/String';
@@ -26,6 +30,7 @@ interface PageDetailInterface {
   thumbnailUrl?: string;
   breadcrumbAction?: () => void;
   actions?: ReactNode[];
+  navigation?: DetailNavigationProps;
   editAction?: () => void;
   editEnabled?: boolean;
 }
@@ -47,6 +52,7 @@ export function PageDetail({
   lastCrumb: last_crumb,
   breadcrumbAction,
   actions,
+  navigation,
   editAction,
   editEnabled
 }: Readonly<PageDetailInterface>) {
@@ -184,8 +190,9 @@ export function PageDetail({
                 </Group>
               )}
             </Group>
-            {computedActions && (
+            {(navigation || computedActions) && (
               <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
+                <DetailNavigation {...(navigation ?? {})} />
                 {computedActions.map((action, idx) => (
                   <Fragment key={idx}>{action}</Fragment>
                 ))}
