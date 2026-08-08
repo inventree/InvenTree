@@ -6,15 +6,23 @@ There is a rendered state for each state value. The rendered state is used for d
 States can be extended with custom options for each InvenTree instance - those options are stored in the database and need to link back to state values.
 """
 
+from django_fsm import RETURN_VALUE, can_proceed
+
 from . import fields
+from .deprecations import Deprecations, deprecated
 from .states import ColorEnum, StatusCode, StatusCodeMixin
-from .transition import StateTransitionMixin, TransitionMethod
+from .transition import StateTransitionMixin, TransitionMethod, inventree_transition
 
 __all__ = [
+    'RETURN_VALUE',  # django_fsm import
     'ColorEnum',
+    'Deprecations',
     'StateTransitionMixin',
     'StatusCode',
     'StatusCodeMixin',
     'TransitionMethod',
+    'can_proceed',  # django_fsm import
+    'deprecated',
     'fields',
+    'inventree_transition',
 ]
