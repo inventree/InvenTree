@@ -331,6 +331,45 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
         result = row.lookup_related_field('part', 'AMBIG-001', lookup_field='name')
         self.assertNotEqual(result, part_a.pk)
 
+    def test_extract_data_related_field_validation_error(self):
+        """Test that extract_data() handles a dict-constructed ValidationError.
+
+        Regression test: django.core.exceptions.ValidationError only exposes a
+        `.message` attribute when it was raised with a single message string.
+        lookup_related_field can also raise with a dict (e.g. "no related model
+        found for field") or a list, in which case `.message` does not exist and
+        accessing it raises: AttributeError: 'ValidationError' object has no
+        attribute 'message'. extract_data() must use `.messages` instead, which
+        normalizes any construction to a flat list of strings.
+        """
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        data_file = self.helper_file('companies.csv')
+        session = DataImportSession.objects.create(
+            data_file=data_file, model_type='stockitem'
+        )
+
+        row = DataImportRow(session=session, row_data={'Website': 'foo'})
+
+        field_mapping = {'part': 'Website'}
+        available_fields = {'part': {'type': 'related field'}}
+
+        with mock.patch.object(
+            DataImportRow,
+            'lookup_related_field',
+            side_effect=DjangoValidationError({
+                'session': 'No related model found for field: part'
+            }),
+        ):
+            # Must not raise: AttributeError: 'ValidationError' object has no attribute 'message'
+            row.extract_data(
+                field_mapping=field_mapping,
+                available_fields=available_fields,
+                commit=False,
+            )
+
+        self.assertEqual(row.errors, {'part': 'No related model found for field: part'})
+
     def test_lookup_field_validation(self):
         """Test that DataImportColumnMap.clean() validates the lookup_field value."""
         from django.core.exceptions import ValidationError as DjangoValidationError

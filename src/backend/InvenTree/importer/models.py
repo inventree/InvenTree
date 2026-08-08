@@ -775,7 +775,11 @@ class DataImportRow(models.Model):
                         field, value, lookup_field=field_lookup_mapping.get(field)
                     )
                 except DjangoValidationError as exc:
-                    extract_errors[field] = exc.message
+                    # exc.message only exists if the error was raised with a single
+                    # message string - lookup_related_field may also raise with a
+                    # dict (message_dict) or list (message), so use exc.messages,
+                    # which normalizes any construction to a flat list of strings.
+                    extract_errors[field] = '; '.join(exc.messages)
                     continue
 
             # Use the default value, if provided
