@@ -1040,15 +1040,27 @@ class SupplierPriceBreak(common.models.PriceBreak):
 )
 def after_save_supplier_price(sender, instance, created, **kwargs):
     """Callback function when a SupplierPriceBreak is created or updated."""
-    if (
-        (
-            InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
-            and not InvenTree.ready.isImportingData()
-        )
-        and instance.part
-        and instance.part.part
-    ):
-        instance.part.part.schedule_pricing_update(create=True)
+    from part.models import Part
+
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
+        return
+
+    if InvenTree.ready.isImportingData():
+        return
+
+    try:
+        supplier_part = instance.part
+    except SupplierPart.DoesNotExist:
+        # The underlying SupplierPart instance has been deleted
+        return
+
+    try:
+        base_part = supplier_part.part
+    except Part.DoesNotExist:
+        # The underlying Part instance has been deleted
+        return
+
+    base_part.schedule_pricing_update(create=True)
 
 
 @receiver(
@@ -1058,12 +1070,24 @@ def after_save_supplier_price(sender, instance, created, **kwargs):
 )
 def after_delete_supplier_price(sender, instance, **kwargs):
     """Callback function when a SupplierPriceBreak is deleted."""
-    if (
-        (
-            InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
-            and not InvenTree.ready.isImportingData()
-        )
-        and instance.part
-        and instance.part.part
-    ):
-        instance.part.part.schedule_pricing_update(create=False)
+    from part.models import Part
+
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
+        return
+
+    if InvenTree.ready.isImportingData():
+        return
+
+    try:
+        supplier_part = instance.part
+    except SupplierPart.DoesNotExist:
+        # The underlying SupplierPart instance has been deleted
+        return
+
+    try:
+        base_part = supplier_part.part
+    except Part.DoesNotExist:
+        # The underlying Part instance has been deleted
+        return
+
+    base_part.schedule_pricing_update(create=False)
