@@ -1,18 +1,12 @@
 """Mixins for (API) views in the whole project."""
 
-from django.core.exceptions import FieldDoesNotExist
-
 from rest_framework import generics, mixins, status
 from rest_framework.response import Response
 
 import data_exporter.mixins
 import importer.mixins
-from InvenTree.fields import InvenTreeNotesField, OutputConfiguration
-from InvenTree.helpers import (
-    clean_markdown,
-    remove_non_printable_characters,
-    strip_html_tags,
-)
+from InvenTree.fields import OutputConfiguration
+from InvenTree.helpers import remove_non_printable_characters, strip_html_tags
 from InvenTree.schema import schema_for_view_output_options
 from InvenTree.serializers import FilterableSerializerMixin
 
@@ -54,37 +48,9 @@ class CleanMixin:
         """Clean / sanitize a single input string."""
         cleaned = data
 
-        # By default, newline characters are removed
-        remove_newline = True
-        is_markdown = False
-
-        try:
-            if hasattr(self, 'serializer_class'):
-                model = self.serializer_class.Meta.model
-                field_base = model._meta.get_field(field)
-
-                # The following field types allow newline characters
-                allow_newline = [(InvenTreeNotesField, True)]
-
-                for field_type in allow_newline:
-                    if issubclass(type(field_base), field_type[0]):
-                        remove_newline = False
-                        is_markdown = field_type[1]
-                        break
-
-        except AttributeError:
-            pass
-        except FieldDoesNotExist:
-            pass
-
-        cleaned = remove_non_printable_characters(
-            cleaned, remove_newline=remove_newline
-        )
+        cleaned = remove_non_printable_characters(cleaned, remove_newline=True)
 
         cleaned = strip_html_tags(cleaned, field_name=field)
-
-        if is_markdown:
-            cleaned = clean_markdown(cleaned)
 
         return cleaned
 

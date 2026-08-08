@@ -34,6 +34,7 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconCoins,
+  IconCopy,
   IconCurrencyDollar,
   IconLink,
   IconPackage,
@@ -95,7 +96,8 @@ export function useStockFields({
   create = false,
   supplierPartId,
   pricing,
-  modalId
+  modalId,
+  duplicateStockItem
 }: {
   partId?: number;
   stockItem?: any;
@@ -103,6 +105,7 @@ export function useStockFields({
   create: boolean;
   supplierPartId?: number;
   pricing?: { [priceBreak: number]: [number, string] };
+  duplicateStockItem?: any;
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
 
@@ -315,6 +318,25 @@ export function useStockFields({
       delete fields.serial_numbers;
     }
 
+    // Additional fields for stock item duplication
+    if (create && duplicateStockItem?.pk) {
+      fields.duplicate = {
+        icon: <IconCopy />,
+        children: {
+          original: {
+            value: duplicateStockItem.pk,
+            hidden: true
+          },
+          copy_notes: { value: true },
+          copy_history: { value: false },
+          copy_tests: {
+            value: false,
+            hidden: !duplicateStockItem?.part_detail?.testable
+          }
+        }
+      };
+    }
+
     return fields;
   }, [
     stockItem,
@@ -329,6 +351,7 @@ export function useStockFields({
     purchasePriceCurrency,
     serialGenerator.result,
     batchGenerator.result,
+    duplicateStockItem,
     create
   ]);
 }

@@ -244,7 +244,7 @@ ALLOWED_ATTRIBUTES_SVG = [
 ]
 
 # Default allowlists (matching bleach's original defaults)
-# TODO: I do not see us needing a bunch of these but I do not want to introduce a breaking change; we might want to narroy this down with the next breaking change
+# TODO: I do not see us needing a bunch of these but I do not want to introduce a breaking change; we might want to narrow this down with the next breaking change
 DEFAULT_TAGS = frozenset([
     'a',
     'abbr',
@@ -259,7 +259,7 @@ DEFAULT_TAGS = frozenset([
     'strong',
     'ul',
 ])
-DEAFAULT_ATTRS = {'a': {'href', 'title'}, 'abbr': {'title'}, 'acronym': {'title'}}
+DEFAULT_ATTRS = {'a': {'href', 'title'}, 'abbr': {'title'}, 'acronym': {'title'}}
 DEFAULT_CSS = frozenset([
     'azimuth',
     'background-color',

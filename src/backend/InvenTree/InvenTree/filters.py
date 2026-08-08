@@ -37,6 +37,8 @@ class InvenTreeSearchFilter(filters.SearchFilter):
         - search_notes: If True, 'notes' is added to the search_fields if it isn't already present
         - search_regex: If True, search is performed on 'regex' comparison
         """
+        from InvenTree.models import InvenTreeNoteMixin
+
         search_notes = InvenTree.helpers.str2bool(
             request.query_params.get('search_notes', False)
         )
@@ -45,7 +47,18 @@ class InvenTreeSearchFilter(filters.SearchFilter):
 
         if search_notes and 'notes' not in search_fields:
             # don't modify existing list, create a new object so further queries aren't affected
-            search_fields = [*search_fields, 'notes']
+
+            model = view.get_serializer_class().Meta.model
+
+            notes_field: str = ''
+
+            if issubclass(model, InvenTreeNoteMixin):
+                notes_field = 'notes_list__content'
+            elif hasattr(model, 'notes'):
+                notes_field = 'notes'
+
+            if notes_field:
+                search_fields = [*search_fields, notes_field]
 
         regex = InvenTree.helpers.str2bool(
             request.query_params.get('search_regex', False)
