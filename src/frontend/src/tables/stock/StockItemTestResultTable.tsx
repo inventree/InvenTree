@@ -36,8 +36,8 @@ import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
-import { compareTestResults } from '../../functions/comparison';
 import { useTestResultFields } from '../../forms/StockForms';
+import { compareTestResults } from '../../functions/comparison';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -114,19 +114,19 @@ export default function StockItemTestResultTable({
       // Sort test results using the same priority as the backend:
       // finished_datetime -> started_datetime -> date -> pk
       records.sort(compareTestResults).forEach((record) => {
-          // Find matching template
-          const idx = results.findIndex(
-            (r: any) => r.templateId == record.template
-          );
-          if (idx >= 0) {
-            results[idx] = {
-              ...results[idx],
-              ...record
-            };
+        // Find matching template
+        const idx = results.findIndex(
+          (r: any) => r.templateId == record.template
+        );
+        if (idx >= 0) {
+          results[idx] = {
+            ...results[idx],
+            ...record
+          };
 
-            results[idx].results.push(record);
-          }
-        });
+          results[idx].results.push(record);
+        }
+      });
 
       return results;
     },
