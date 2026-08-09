@@ -1,11 +1,13 @@
-import { Group, Paper, Space, Stack, Text } from '@mantine/core';
+import { ActionIcon, Group, Paper, Space, Stack, Text, Tooltip } from '@mantine/core';
 
 import { StylishText } from '@lib/components/StylishText';
 import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { shortenString } from '@lib/functions/String';
 import { t } from '@lingui/core/macro';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { Fragment, type ReactNode, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useDetailNavigation } from '../../hooks/UseDetailNavigation';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import PrimaryActionButton from '../buttons/PrimaryActionButton';
@@ -53,6 +55,7 @@ export function PageDetail({
   const userSettings = useUserSettingsState();
   const navigate = useNavigate();
   const location = useLocation();
+  const detailNavigation = useDetailNavigation();
 
   useInvenTreeHotkeys([
     [
@@ -184,8 +187,34 @@ export function PageDetail({
                 </Group>
               )}
             </Group>
-            {computedActions && (
+            {(detailNavigation.previous ||
+              detailNavigation.next ||
+              computedActions.length > 0) && (
               <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
+                {detailNavigation.previous && (
+                  <Tooltip label={t`Previous`}>
+                    <ActionIcon
+                      aria-label={t`Previous`}
+                      component={Link}
+                      to={detailNavigation.previous.href}
+                      variant='subtle'
+                    >
+                      <IconChevronLeft />
+                    </ActionIcon>
+                  </Tooltip>
+                )}
+                {detailNavigation.next && (
+                  <Tooltip label={t`Next`}>
+                    <ActionIcon
+                      aria-label={t`Next`}
+                      component={Link}
+                      to={detailNavigation.next.href}
+                      variant='subtle'
+                    >
+                      <IconChevronRight />
+                    </ActionIcon>
+                  </Tooltip>
+                )}
                 {computedActions.map((action, idx) => (
                   <Fragment key={idx}>{action}</Fragment>
                 ))}

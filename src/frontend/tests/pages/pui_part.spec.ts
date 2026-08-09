@@ -71,6 +71,45 @@ test('Parts - Tabs', async ({ browser }) => {
   await loadTab(page, 'Build Orders');
 });
 
+test('Parts - Detail navigation keeps the list URL context', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/index/parts'
+  });
+
+  await clearTableFilters(page);
+  await page.getByPlaceholder('Search').fill('1551');
+  await page.waitForLoadState('networkidle');
+  await page.getByText('1551ABK').click();
+
+  await expect(page).toHaveURL(/_detail_nav_api=/);
+
+  const currentUrl = new URL(page.url());
+  const currentIndex = currentUrl.searchParams.get('_detail_nav_index');
+  const navigation = page
+    .getByRole('link', { name: 'Previous' })
+    .or(page.getByRole('link', { name: 'Next' }));
+
+  await expect(navigation).toBeVisible();
+  await navigation.first().click();
+  await page.waitForURL(
+    (url) =>
+      url.searchParams.get('_detail_nav_index') !== currentIndex &&
+      url.searchParams.get('_detail_nav_api') ===
+        currentUrl.searchParams.get('_detail_nav_api') &&
+      url.searchParams.get('_detail_nav_query') ===
+        currentUrl.searchParams.get('_detail_nav_query')
+  );
+
+  await page.reload();
+  await expect(
+    page
+      .getByRole('link', { name: 'Previous' })
+      .or(page.getByRole('link', { name: 'Next' }))
+  ).toBeVisible();
+});
+
 test('Parts - Image Selection', async ({ browser }) => {
   const page = await doCachedLogin(browser, { url: 'part/911/details' });
 
