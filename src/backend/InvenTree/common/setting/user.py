@@ -159,6 +159,14 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': 10,
         'validator': [int, MinValueValidator(1)],
     },
+    'SEARCH_RESULTS_PREVIEW_PANEL': {
+        'name': _('Search Results Preview Panel'),
+        'description': _(
+            'Open search results in the preview panel, rather than navigating directly to the result'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'SEARCH_REGEX': {
         'name': _('Regex Search'),
         'description': _('Enable regular expressions in search queries'),
@@ -222,6 +230,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
             ('MM/DD/YYYY', '02/22/2022'),
             ('MMM DD YYYY', 'Feb 22 2022'),
         ],
+    },
+    'ENABLE_PREVIEW_PANEL': {
+        'name': _('Table Preview Panel'),
+        'description': _('Display a preview panel when selecting items in tables'),
+        'default': False,
+        'validator': bool,
     },
     'DISPLAY_STOCKTAKE_TAB': {
         'name': _('Show Stock History'),

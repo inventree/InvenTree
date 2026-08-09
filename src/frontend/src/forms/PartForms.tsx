@@ -121,7 +121,7 @@ export function usePartFields({
     if (create && !virtual) {
       fields.copy_category_parameters = {};
 
-      if (virtual != false) {
+      if (globalSettings.isSet('PART_CREATE_INITIAL')) {
         fields.initial_stock = {
           icon: <IconPackages />,
           children: {

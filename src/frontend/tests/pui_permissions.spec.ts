@@ -75,6 +75,22 @@ test('Permissions - Reader', async ({ browser }) => {
     .first()
     .click();
 
+  // Click on the link in the detail drawer
+  await page.getByText('Allocated to Build Orders').waitFor();
+  await page.getByText('Component Part').waitFor();
+  await page
+    .getByRole('link', { name: 'Chair', exact: true })
+    .first()
+    .waitFor();
+  await page
+    .getByRole('link', { name: 'Chairs', exact: true })
+    .first()
+    .waitFor();
+  await page
+    .getByRole('link', { name: 'details-part-108', exact: true })
+    .first()
+    .click();
+
   await page
     .getByLabel('Part Details')
     .getByText('A chair - with blue paint')

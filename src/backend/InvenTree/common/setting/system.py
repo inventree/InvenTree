@@ -951,6 +951,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'TRANSFERORDER_EDIT_COMPLETED_ORDERS': {
+        'name': _('Edit Completed Transfer Orders'),
+        'description': _(
+            'Allow editing of transfer orders after they have been completed'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS': {
         'name': _('Block Incomplete Item Tests'),
         'description': _(
@@ -991,6 +999,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Auto Complete Purchase Orders'),
         'description': _(
             'Automatically mark purchase orders as complete when all line items are received'
+        ),
+        'default': True,
+        'validator': bool,
+    },
+    'PURCHASEORDER_MERGE_LINE_ITEMS': {
+        'name': _('Merge Purchase Order Line Items'),
+        'description': _(
+            'Merge new purchase order line items with existing lines that share the same part, destination, and target date'
         ),
         'default': True,
         'validator': bool,

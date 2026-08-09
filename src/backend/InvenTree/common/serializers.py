@@ -318,7 +318,9 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
         """Function to resolve generic object reference to target."""
         target = get_objectreference(obj, 'target_content_type', 'target_object_id')
 
-        if target and 'link' not in target:
+        if target and obj.link:
+            target['link'] = obj.link
+        elif target and 'link' not in target:
             # Check if object has an absolute_url function
             if hasattr(obj.target_object, 'get_absolute_url'):
                 target['link'] = obj.target_object.get_absolute_url()
@@ -874,6 +876,7 @@ class ParameterTemplateSerializer(
             'choices',
             'selectionlist',
             'enabled',
+            'unique',
         ]
 
     # Note: The choices are overridden at run-time on class initialization
@@ -946,9 +949,7 @@ class ParameterSerializer(
         if not target_model_class.check_related_permission('change', user):
             raise PermissionDenied(permission_error_msg)
 
-        instance = super().save(**kwargs)
-        instance.updated_by = user
-        instance.save()
+        instance = super().save(updated_by=user, **kwargs)
 
         return instance
 

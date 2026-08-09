@@ -154,7 +154,12 @@ type RowModelProps = {
   navigate: NavigateFunction;
 };
 
-export type RowViewProps = RowAction & RowModelProps;
+type RowViewBehaviorProps = {
+  isPreviewEnabled?: () => boolean;
+  openPreview?: (modelType: ModelType, modelId: number) => void;
+};
+
+export type RowViewProps = RowAction & RowModelProps & RowViewBehaviorProps;
 
 /**
  * Set of optional properties which can be passed to an InvenTreeTable component

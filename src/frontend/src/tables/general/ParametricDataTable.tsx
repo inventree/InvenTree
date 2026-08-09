@@ -1,5 +1,9 @@
 import { cancelEvent } from '@lib/functions/Events';
-import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import {
   ApiEndpoints,
@@ -17,7 +21,14 @@ import { Divider, Group, Text } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import {
+  type ReactNode,
+  type RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { TableHoverCard } from '../../components/tables/TableHoverCard';
@@ -28,6 +39,7 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { openGlobalPreview } from '../../states/PreviewDrawerState';
 import { useUserState } from '../../states/UserState';
 import {
   PARAMETER_FILTER_OPERATORS,
@@ -138,7 +150,9 @@ export default function ParametricDataTable({
   endpoint,
   queryParams,
   customFilters,
-  customColumns
+  customColumns,
+  customActions,
+  refreshRef
 }: {
   modelType: ModelType;
   modelId?: number;
@@ -148,11 +162,19 @@ export default function ParametricDataTable({
   queryParams?: Record<string, any>;
   customFilters?: TableFilter[];
   customColumns?: TableColumn[];
+  customActions?: ReactNode[];
+  refreshRef?: RefObject<() => void>;
 }) {
   const api = useApi();
   const table = useTable(`parametric-data-${modelType}`);
   const user = useUserState();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (refreshRef) {
+      refreshRef.current = table.refreshTable;
+    }
+  }, [table.refreshTable]);
 
   // Fetch all active parameter templates for the given model type
   const parameterTemplates = useQuery({
@@ -456,6 +478,7 @@ export default function ParametricDataTable({
         props={{
           enableDownload: true,
           rowActions: rowActions,
+          tableActions: customActions,
           tableFilters: tableFilters,
           params: {
             ...queryParams,
@@ -471,9 +494,12 @@ export default function ParametricDataTable({
               const col = column as any;
               onParameterClick(col.extra.template, record);
             } else if (record?.pk) {
-              // Navigate through to the detail page
               const url = getDetailUrl(modelType, record.pk);
-              navigateToLink(url, navigate, event);
+              if (eventModified(event as any)) {
+                navigateToLink(url, navigate, event);
+              } else {
+                openGlobalPreview(modelType, record.pk);
+              }
             }
           }
         }}

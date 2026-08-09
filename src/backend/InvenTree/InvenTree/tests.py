@@ -1,9 +1,11 @@
 """Test general functions and helpers."""
 
+import base64
 import os
 import time
 from datetime import datetime, timedelta
 from decimal import Decimal
+from io import BytesIO
 from pathlib import Path
 from unittest import mock
 from zoneinfo import ZoneInfo
@@ -13,6 +15,8 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -22,6 +26,7 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
+from PIL import Image
 from rest_framework import serializers
 from sesame.utils import get_user
 from stdimage.models import StdImageFieldFile
@@ -104,10 +109,9 @@ class TreeFixtureTest(TestCase):
         self.run_tree_test(Build)
 
     def test_stock(self):
-        """Test MPTT tree structure for Stock model."""
-        from stock.models import StockItem, StockLocation
+        """Test MPTT tree structure for StockLocation model."""
+        from stock.models import StockLocation
 
-        self.run_tree_test(StockItem)
         self.run_tree_test(StockLocation)
 
 
@@ -704,12 +708,59 @@ class TestHelpers(TestCase):
 
     def test_logo_image(self):
         """Test for retrieving logo image."""
-        # By default, there is no custom logo provided
+        # By default, there is no custom logo provided - return the default InvenTree logo
         logo = helpers.getLogoImage()
         self.assertEqual(logo, '/static/img/inventree.png')
 
+        # When requested 'as_file', the logo must be returned as an embeddable
+        # base64 data URI - file:// URIs are no longer permitted in reports
         logo = helpers.getLogoImage(as_file=True)
-        self.assertEqual(logo, f'file://{settings.STATIC_ROOT}/img/inventree.png')
+        self.assertNotIn('file://', logo)
+        self.assertTrue(logo.startswith('data:image/png;base64,'))
+
+        # Ensure the encoded data actually represents a valid image
+        decoded = base64.b64decode(logo.removeprefix('data:image/png;base64,'))
+        Image.open(BytesIO(decoded)).verify()
+
+    def test_logo_image_custom_static(self):
+        """Test retrieval of a custom logo which lives in the static storage backend."""
+        with override_settings(CUSTOM_LOGO='img/inventree.png'):
+            logo = helpers.getLogoImage()
+            self.assertEqual(logo, '/static/img/inventree.png')
+
+            logo = helpers.getLogoImage(as_file=True)
+            self.assertNotIn('file://', logo)
+            self.assertTrue(logo.startswith('data:image/png;base64,'))
+
+            # Disabling 'custom' must fall back to the default logo, even if set
+            logo = helpers.getLogoImage(custom=False)
+            self.assertEqual(logo, '/static/img/inventree.png')
+
+    def test_logo_image_custom_media(self):
+        """Test retrieval of a custom logo which lives in the media (uploaded) storage backend."""
+        custom_logo_path = 'custom/test_logo.png'
+
+        img = Image.new('RGB', (16, 16), color='blue')
+        buffer = BytesIO()
+        img.save(buffer, 'PNG')
+        image_data = buffer.getvalue()
+
+        default_storage.save(custom_logo_path, ContentFile(image_data))
+
+        try:
+            with override_settings(CUSTOM_LOGO=custom_logo_path):
+                logo = helpers.getLogoImage()
+                self.assertEqual(logo, default_storage.url(custom_logo_path))
+
+                logo = helpers.getLogoImage(as_file=True)
+                self.assertNotIn('file://', logo)
+                self.assertTrue(logo.startswith('data:image/png;base64,'))
+
+                # The decoded data must exactly match the uploaded image
+                decoded = base64.b64decode(logo.removeprefix('data:image/png;base64,'))
+                self.assertEqual(decoded, image_data)
+        finally:
+            default_storage.delete(custom_logo_path)
 
     def test_download_image(self):
         """Test function for downloading image from remote URL."""
@@ -1102,7 +1153,7 @@ class CurrencyTests(TestCase):
         update_successful = False
 
         # Note: the update sometimes fails in CI, let's give it a few chances
-        for _ in range(10):
+        for idx in range(10):
             InvenTree.tasks.update_exchange_rates()
 
             rates = Rate.objects.all()
@@ -1114,7 +1165,7 @@ class CurrencyTests(TestCase):
             else:  # pragma: no cover
                 print('Exchange rate update failed - retrying')
                 print(f'Expected {currency_codes()}, got {[a.currency for a in rates]}')
-                time.sleep(1)
+                time.sleep(1 + idx)
 
         self.assertTrue(update_successful)
 

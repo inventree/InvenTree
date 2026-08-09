@@ -19,8 +19,7 @@ import {
   type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
-  RowEditAction,
-  RowViewAction
+  RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -37,11 +36,15 @@ import {
   IPNColumn,
   LineItemColumn,
   LinkColumn,
+  PercentageColumn,
   ProjectCodeColumn,
   ReferenceColumn,
-  RenderPartColumn
+  RenderPartColumn,
+  RevisionColumn
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
 import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
@@ -102,6 +105,7 @@ export default function SalesOrderLineItemTable({
         }
       },
       IPNColumn({}),
+      RevisionColumn({}),
       DescriptionColumn({
         accessor: 'part_detail.description'
       }),
@@ -118,13 +122,18 @@ export default function SalesOrderLineItemTable({
             currency: record.sale_price_currency
           })
       },
+      PercentageColumn({
+        accessor: 'discount',
+        title: t`Discount`,
+        defaultVisible: false
+      }),
       {
         accessor: 'total_price',
         title: t`Total Price`,
         render: (record: any) =>
           formatCurrency(record.sale_price, {
             currency: record.sale_price_currency,
-            multiplier: record.quantity
+            multiplier: record.quantity * (1 - (record.discount ?? 0) / 100)
           })
       },
       DateColumn({
@@ -549,7 +558,7 @@ export default function SalesOrderLineItemTable({
             deleteLine.open();
           }
         }),
-        RowViewAction({
+        AppRowViewAction({
           title: t`View Part`,
           modelType: ModelType.part,
           modelId: record.part,
@@ -606,6 +615,9 @@ export default function SalesOrderLineItemTable({
         props={{
           enableSelection: true,
           enableDownload: true,
+          enableBulkDelete:
+            editable && user.hasDeleteRole(UserRoles.sales_order),
+          afterBulkDelete: orderDetailRefresh,
           params: {
             order: orderId,
             part_detail: true

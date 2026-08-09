@@ -117,9 +117,12 @@ Return Order line items can be added while the [status](#return-order-status-cod
 !!! info "Serialized Stock Only"
     Only stock items which are serialized can be selected for return from the customer
 
+!!! info "Discount"
+    An optional [discount](../concepts/pricing.md#line-item-discount) percentage can be applied to each line item.
+
 ### Extra Line Items
 
-While [line items](#line-items) must reference a particular stock item, extra line items are available for any other itemized information that needs to be conveyed with the order.
+While [line items](#line-items) must reference a particular stock item, extra line items are available for any other itemized information that needs to be conveyed with the order - for example freight charges or service fees. Extra line items support an optional [discount](../concepts/pricing.md#line-item-discount) percentage, the same as regular line items.
 
 ## Return Order Reports
 

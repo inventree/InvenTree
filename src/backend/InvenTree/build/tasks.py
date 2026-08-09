@@ -6,6 +6,7 @@ from typing import Optional
 
 from django.contrib.auth.models import User
 from django.db import transaction
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 import structlog
@@ -49,7 +50,7 @@ def consume_build_stock(
         items: Optional dict of BuildItem IDs (and quantities)to consume
         user_id: The ID of the user who initiated the stock consumption
     """
-    from build.models import Build, BuildItem, BuildLine
+    from build.models import Build, BuildItem
 
     build = Build.objects.get(pk=build_id)
     user = User.objects.filter(pk=user_id).first() if user_id else None
@@ -58,24 +59,19 @@ def consume_build_stock(
     items = items or {}
     notes = kwargs.pop('notes', '')
 
-    # Extract the relevant BuildLine and BuildItem objects
-    with transaction.atomic():
-        # Consume each of the specified BuildLine objects
-        for line_id in lines:
-            if build_line := BuildLine.objects.filter(pk=line_id, build=build).first():
-                for item in build_line.allocations.all():
-                    item.complete_allocation(
-                        quantity=item.quantity, notes=notes, user=user
-                    )
+    # Condense the provided lines and items into a single BuildItem queryset,
+    # preselecting the related StockItem to avoid per-item queries downstream
+    build_items = (
+        BuildItem.objects
+        .filter(
+            Q(build_line__pk__in=lines) | Q(pk__in=items.keys()),
+            build_line__build=build,
+        )
+        .select_related('stock_item', 'stock_item__part')
+        .distinct()
+    )
 
-        # Consume each of the specified BuildItem objects
-        for item_id, quantity in items.items():
-            if build_item := BuildItem.objects.filter(
-                pk=item_id, build_line__build=build
-            ).first():
-                build_item.complete_allocation(
-                    quantity=quantity, notes=notes, user=user
-                )
+    build.complete_allocations(build_items, quantities=items, notes=notes, user=user)
 
 
 @tracer.start_as_current_span('complete_build_allocations')
@@ -97,7 +93,7 @@ def complete_build_allocations(build_id: int, user_id: int):
     else:
         user = None
 
-    build_order.complete_allocations(user)
+    build_order.complete_outstanding_allocations(user)
 
 
 @tracer.start_as_current_span('delete_build_outputs')
@@ -115,9 +111,21 @@ def delete_build_outputs(build_id: int, output_ids: list, **kwargs):
 
     with transaction.atomic():
         for output_id in output_ids:
-            output = StockItem.objects.filter(pk=output_id).first()
-            if output:
-                build.delete_output(output)
+            # Lock the output row, and re-check that it is still "in production" -
+            # it may have been processed already (e.g. by a duplicated task)
+            output = StockItem.objects.select_for_update().filter(pk=output_id).first()
+
+            if not output:
+                continue
+
+            if not output.is_building:
+                logger.warning(
+                    'Build output <%s> is no longer in production - skipping deletion',
+                    output.pk,
+                )
+                continue
+
+            build.delete_output(output)
 
 
 @tracer.start_as_current_span('scrap_build_outputs')
@@ -149,16 +157,33 @@ def scrap_build_outputs(
 
     with transaction.atomic():
         for item in outputs:
-            output = StockItem.objects.filter(pk=item['output_id']).first()
-            if output:
-                build.scrap_build_output(
-                    output,
-                    item.get('quantity'),
-                    location,
-                    user=user,
-                    notes=notes,
-                    discard_allocations=discard_allocations,
+            # Lock the output row, and re-check that it is still "in production" -
+            # it may have been processed already (e.g. by a duplicated task)
+            output = (
+                StockItem.objects
+                .select_for_update()
+                .filter(pk=item['output_id'])
+                .first()
+            )
+
+            if not output:
+                continue
+
+            if not output.is_building:
+                logger.warning(
+                    'Build output <%s> is no longer in production - skipping scrap',
+                    output.pk,
                 )
+                continue
+
+            build.scrap_build_output(
+                output,
+                item.get('quantity'),
+                location,
+                user=user,
+                notes=notes,
+                discard_allocations=discard_allocations,
+            )
 
 
 @tracer.start_as_current_span('complete_build_outputs')
@@ -194,17 +219,34 @@ def complete_build_outputs(
 
     with transaction.atomic():
         for item in outputs:
-            output = StockItem.objects.filter(pk=item['output_id']).first()
-            if output:
-                build.complete_build_output(
-                    output,
-                    user,
-                    quantity=item.get('quantity'),
-                    location=location,
-                    status=status,
-                    notes=notes,
-                    required_tests=required_tests,
+            # Lock the output row, and re-check that it is still "in production" -
+            # it may have been processed already (e.g. by a duplicated task)
+            output = (
+                StockItem.objects
+                .select_for_update()
+                .filter(pk=item['output_id'])
+                .first()
+            )
+
+            if not output:
+                continue
+
+            if not output.is_building:
+                logger.warning(
+                    'Build output <%s> is no longer in production - skipping completion',
+                    output.pk,
                 )
+                continue
+
+            build.complete_build_output(
+                output,
+                user,
+                quantity=item.get('quantity'),
+                location=location,
+                status=status,
+                notes=notes,
+                required_tests=required_tests,
+            )
 
 
 @tracer.start_as_current_span('cancel_build')
@@ -257,15 +299,34 @@ def complete_build(build_id: int, user_id: int, trim_allocated_stock: bool = Fal
         trim_allocated_stock: If True, trim any allocated stock which was not consumed
     """
     from build.models import Build
+    from build.status_codes import BuildStatus
 
-    build = Build.objects.get(pk=build_id)
-    user = User.objects.filter(pk=user_id).first() if user_id else None
+    with transaction.atomic():
+        # Lock the build row: concurrent completion tasks (duplicate task
+        # delivery, or repeated completion requests while the build is still
+        # IN PRODUCTION) are serialized, and the status is re-checked below
+        build = Build.objects.select_for_update().get(pk=build_id)
 
-    if trim_allocated_stock:
-        build.trim_allocated_stock()
+        if build.status == BuildStatus.COMPLETE.value:
+            logger.warning(
+                'Build order <%s> is already complete - skipping completion task',
+                build.pk,
+            )
+            return
 
-    # Complete any remaining allocations for this build order
-    complete_build_allocations(build_id, user_id)
+        user = User.objects.filter(pk=user_id).first() if user_id else None
+
+        if trim_allocated_stock:
+            build.trim_allocated_stock()
+
+        # Complete any remaining allocations for this build order
+        complete_build_allocations(build_id, user_id)
+
+        # Mark the build as completed
+        build.completion_date = InvenTree.helpers.current_date()
+        build.completed_by = user
+        build.status = BuildStatus.COMPLETE.value
+        build.save()
 
     # Register an event
     trigger_event(BuildEvents.COMPLETED, id=build.pk)
