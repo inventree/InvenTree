@@ -1722,7 +1722,7 @@ class BomItemSerializer(
         label=_('Piece Count'),
         help_text=_(
             'Number of pieces required (for cut-to-length items). '
-            'Total material = quantity × piece_count.'
+            'Total material = quantity x piece_count.'
         ),
     )
 
