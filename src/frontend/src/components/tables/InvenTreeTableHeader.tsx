@@ -9,6 +9,7 @@ import {
   Paper,
   Space,
   Stack,
+  Text,
   Tooltip
 } from '@mantine/core';
 import {
@@ -122,6 +123,18 @@ export default function InvenTreeTableHeader({
     tableState.selectedRecords
   ]);
 
+  const deleteItemsText = useMemo(() => {
+    const N = bulkDeleteIds.length;
+
+    if (N === 0) {
+      return t`No items selected`;
+    } else if (N === 1) {
+      return t`1 selected item will be deleted`;
+    } else {
+      return t`${N} selected items will be deleted`;
+    }
+  }, [bulkDeleteIds]);
+
   const deleteRecords = useDeleteApiFormModal({
     url: tableUrl ?? '',
     title: t`Delete Selected Items`,
@@ -130,7 +143,10 @@ export default function InvenTreeTableHeader({
         color='red'
         title={t`Are you sure you want to delete the selected items?`}
       >
-        {t`This action cannot be undone`}
+        <Stack gap='xs'>
+          <Text size='sm'>{deleteItemsText}</Text>
+          <Text size='sm'>{t`This action cannot be undone`}</Text>
+        </Stack>
       </Alert>
     ),
     initialData: {
