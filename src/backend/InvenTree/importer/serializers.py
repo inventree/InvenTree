@@ -202,6 +202,7 @@ class DataImportRowSerializer(InvenTreeModelSerializer):
 
         return super().update(instance, validated_data)
 
+
 class DataImportAcceptRowSerializer(serializers.Serializer):
     """Serializer for accepting rows of data."""
 
