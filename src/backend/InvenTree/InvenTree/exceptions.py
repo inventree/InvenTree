@@ -115,13 +115,6 @@ def exception_handler(exc, context):
 
     response = None
 
-    # Pass exception to sentry.io handler
-    try:
-        InvenTree.sentry.report_exception(exc)
-    except Exception:
-        # If sentry.io fails, we don't want to crash the server!
-        pass
-
     # The Django app registry can be transiently un-ready while the plugin
     # registry is reloading apps (see plugin.registry.PluginsRegistry._reload_apps).
     # Any request handled by another thread/worker during that window can trip
@@ -141,8 +134,16 @@ def exception_handler(exc, context):
         return response
 
     # Catch any django validation error, and re-throw a DRF validation error
-    if isinstance(exc, DjangoValidationError):
+    elif isinstance(exc, DjangoValidationError):
         exc = DRFValidationError(detail=serializers.as_serializer_error(exc))
+
+    else:
+        # Pass any other (unhandled) exception to sentry.io handler
+        try:
+            InvenTree.sentry.report_exception(exc)
+        except Exception:
+            # If sentry.io fails, we don't want to crash the server!
+            pass
 
     # Default to the built-in DRF exception handler
     response = drfviews.exception_handler(exc, context)
