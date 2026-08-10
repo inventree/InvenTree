@@ -102,6 +102,26 @@ export default function InvenTreeTableHeader({
     searchTerm: tableState.searchTerm
   });
 
+  const bulkDeleteIds: number[] = useMemo(() => {
+    if (!tableProps.enableBulkDelete) {
+      return [];
+    }
+
+    const selectedRecords = tableState.selectedRecords ?? [];
+    const filterFn = tableProps.bulkDeleteFilter ?? (() => true);
+
+    return selectedRecords
+      .filter((record) => filterFn(record))
+      .map(
+        (record) => resolveItem(record, tableState.idAccessor || 'pk') as number
+      );
+  }, [
+    tableProps.enableBulkDelete,
+    tableProps.bulkDeleteFilter,
+    tableState.idAccessor,
+    tableState.selectedRecords
+  ]);
+
   const deleteRecords = useDeleteApiFormModal({
     url: tableUrl ?? '',
     title: t`Delete Selected Items`,
@@ -114,7 +134,7 @@ export default function InvenTreeTableHeader({
       </Alert>
     ),
     initialData: {
-      items: tableState.selectedIds
+      items: bulkDeleteIds
     },
     fields: {
       items: {
