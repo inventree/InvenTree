@@ -1,6 +1,7 @@
 """Unit testing for the various report models."""
 
 import os
+import socket
 import tempfile
 from io import StringIO
 from pathlib import Path
@@ -1076,6 +1077,49 @@ class URLFetcherTest(TestCase):
         with patch('weasyprint.urls.URLFetcher.fetch', return_value={}):
             self.fetcher.fetch('data:image/png;base64,abc123')
             self.fetcher.fetch('data:text/css;base64,abc123')
+
+    def test_dns_rebind_is_blocked_at_fetch_time(self):
+        """A hostname that resolves safely for validation but privately for the real fetch must be blocked.
+
+        Regression test: `validate_url_no_ssrf()` used to resolve the hostname once,
+        validate that result, and then discard it, so `InvenTreeURLFetcher.fetch()`
+        would delegate straight to WeasyPrint's own fetcher, which resolves the
+        hostname *again* independently. An attacker controlling DNS for their own
+        domain could answer the first ("check") lookup with a public IP and every
+        subsequent ("use") lookup with a private/internal one (DNS rebinding), so the
+        real request WeasyPrint made went somewhere the validator never saw.
+        """
+        set_global_setting('REPORT_FETCH_URLS', True, change_user=None)
+
+        public_addrinfo = [(2, 1, 6, '', ('93.184.216.34', 0))]
+        private_addrinfo = [(2, 1, 6, '', ('127.0.0.1', 0))]
+
+        calls = {'n': 0}
+
+        def rebinding_getaddrinfo(host, *args, **kwargs):
+            calls['n'] += 1
+            return public_addrinfo if calls['n'] == 1 else private_addrinfo
+
+        def fake_weasyprint_fetch(_self, url, headers=None):
+            # Simulate WeasyPrint's own fetch-time DNS resolution, performed
+            # independently of the validation InvenTreeURLFetcher already did.
+            socket.getaddrinfo('rebind.example.com', None)
+            return {'string': b'should never be reached'}
+
+        import InvenTree.helpers_model as helpers_model
+
+        with patch.object(
+            helpers_model, '_real_getaddrinfo', side_effect=rebinding_getaddrinfo
+        ):
+            with patch(
+                'weasyprint.urls.URLFetcher.fetch', side_effect=fake_weasyprint_fetch
+            ):
+                with self.assertRaises(socket.gaierror):
+                    self.fetcher.fetch('http://rebind.example.com/image.png')
+
+        # The validation-time lookup (safe) and the fetch-time lookup (private)
+        # must both have happened for this to be a meaningful regression test.
+        self.assertEqual(calls['n'], 2)
 
 
 class DefaultTemplateFileTest(TestCase):
