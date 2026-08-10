@@ -178,8 +178,6 @@ class PartPricingTests(InvenTreeTestCase):
     @override_settings(TESTING_PRICING=True)
     def test_supplier_part_pack_quantity_update(self):
         """Test that changing pack_quantity on a SupplierPart triggers pricing recalculation."""
-        pricing = self.part.pricing
-
         supplier = company.models.Company.objects.create(
             name='Pack Test Supplier', is_supplier=True
         )
@@ -192,6 +190,8 @@ class PartPricingTests(InvenTreeTestCase):
             part=sp, quantity=1, price=50, price_currency='USD'
         )
 
+        # Re-fetch pricing (the price break creation triggers the PartPricing row)
+        pricing = self.part.pricing
         pricing.refresh_from_db()
 
         # Price per unit should be $50 / 1 = $50
@@ -201,6 +201,7 @@ class PartPricingTests(InvenTreeTestCase):
         sp.pack_quantity = '100'
         sp.save()
 
+        pricing = self.part.pricing
         pricing.refresh_from_db()
 
         # Price per unit should now be $50 / 100 = $0.50
