@@ -117,7 +117,7 @@ jobs:
           python-version: ${{ env.python_version }}
           cache: "pip"
       - name: Run pre commit hook Checks
-        uses: j178/prek-action@5337cb91e0fa35a7ff31b9ca345126d8bbbcdf16 # v2.0.6
+        uses: j178/prek-action@4e14d07f9231acabce116ccfca13b13dd9755ece # v3.0.0
       - name: Check Version
         run: |
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt
@@ -165,7 +165,7 @@ jobs:
           pip install --require-hashes -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
-        uses: tcort/github-action-markdown-link-check@e7c7a18363c842693fadde5d41a3bd3573a7a225 # v1
+        uses: tcort/github-action-markdown-link-check@e047c5b37f24ab722bbef1a27b6fab7f96bc4068 # v1
         with:
           folder-path: docs
           config-file: docs/mlc_config.json
@@ -222,7 +222,7 @@ jobs:
           echo "Downloaded api.yaml"
       - name: Running OpenAPI Spec diff action
         id: breaking_changes
-        uses: oasdiff/oasdiff-action/diff@024f6c399f9a21ada1addb0f9a36ce1bfac995f1 # v0.1.4
+        uses: oasdiff/oasdiff-action/diff@b7c3adeb54330db1903d27c61db520e5661ad55b # v0.1.11
         with:
           base: "api.yaml"
           revision: "src/backend/InvenTree/schema.yml"
@@ -363,7 +363,7 @@ jobs:
           pip install .
         if: needs.paths-filter.outputs.submit-performance == 'true'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@f99becdce5e5d51fd556489ebef684f4ecfd6286 # v4.18.5
+        uses: CodSpeedHQ/action@0ca9cbbf4623b599a6c3ed4fc8a922942705d9f1 # v5.0.2
         # check if we are in inventree/inventree - reporting only works in that OIDC context
         if: github.repository == 'inventree/InvenTree' && needs.paths-filter.outputs.submit-performance == 'true'
         with:
@@ -456,7 +456,7 @@ jobs:
         env:
           node_version: '>=24'
       - name: Performance Reporting
-        uses: CodSpeedHQ/action@f99becdce5e5d51fd556489ebef684f4ecfd6286 # v4.18.5
+        uses: CodSpeedHQ/action@0ca9cbbf4623b599a6c3ed4fc8a922942705d9f1 # v5.0.2
         with:
           mode: walltime
           run: inv dev.test --pytest
@@ -680,4 +680,4 @@ jobs:
         with:
           persist-credentials: false
       - name: Run zizmor 🌈
-        uses: zizmorcore/zizmor-action@6599ee8b7a49aef6a770f63d261d214911a7ce02 # v0.6.0
+        uses: zizmorcore/zizmor-action@3dc1ecc9bcb9e94e9b2c709687979e1298497054 # v0.6.2

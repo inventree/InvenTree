@@ -93,6 +93,9 @@ The production docker compose configuration outlined on this page uses [Caddy](h
 
 The provided `Caddyfile` configuration file is setup to enable [Automatic HTTPS](https://caddyserver.com/docs/automatic-https) by default! All you have to do is specify a `https://` URL in the `INVENTREE_SITE_URL` variable.
 
+!!! warning "Standard Ports Required"
+    Automatic HTTPS requires that the Caddy container be reachable on the standard ports 80/443, so that it can complete a Let's Encrypt ACME challenge. This will not work if InvenTree is published on a non-standard port, or is running behind another reverse proxy. In those cases, terminate SSL at the external proxy instead, and run Caddy over plain HTTP - refer to [running behind an existing reverse proxy](./processes.md#integrating-with-existing-proxy).
+
 ### Containers
 
 The example docker compose file launches the following containers:

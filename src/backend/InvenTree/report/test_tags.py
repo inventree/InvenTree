@@ -228,11 +228,18 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 
     def test_logo_image(self):
         """Unit tests for the 'logo_image' tag."""
-        # By default, should return the core InvenTree logo
-        for b in [True, False]:
-            self.debug_mode(b)
-            logo = report_tags.logo_image()
-            self.assertIn('inventree.png', logo)
+        # In debug mode, a web-accessible URL to the logo is returned
+        self.debug_mode(True)
+        logo = report_tags.logo_image()
+        self.assertIn('inventree.png', logo)
+        self.assertNotIn('file://', logo)
+
+        # Outside of debug mode, an embeddable base64 data URI is returned instead
+        # of a file:// URL, which is no longer permitted in report templates
+        self.debug_mode(False)
+        logo = report_tags.logo_image()
+        self.assertNotIn('file://', logo)
+        self.assertTrue(logo.startswith('data:image/png;base64,'))
 
     def test_string_tags(self):
         """Simple tests for the string manipulation tags."""
