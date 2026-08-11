@@ -90,6 +90,11 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
   await page.getByLabel('number-field-quantity').fill('123');
   await page.getByRole('button', { name: 'Submit' }).click();
 
+  // Add small delay to improve test stability
+  await page.getByText('BATCH-123', { exact: true }).first().waitFor();
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(250);
+
   // Edit the resulting stock item
   await openDetailAction(page, 'stock-item', 'edit');
 
