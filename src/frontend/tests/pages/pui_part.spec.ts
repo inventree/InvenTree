@@ -87,11 +87,9 @@ test('Parts - Detail navigation keeps the list URL context', async ({
 
   const currentUrl = new URL(page.url());
   const currentIndex = currentUrl.searchParams.get('_detail_nav_index');
-  const navigation = page
-    .getByRole('link', { name: 'Previous' })
-    .or(page.getByRole('link', { name: 'Next' }));
+  const navigation = page.getByRole('link', { name: /^(Previous|Next)$/ });
 
-  await expect(navigation).toBeVisible();
+  await expect(navigation.first()).toBeVisible();
   await navigation.first().click();
   await page.waitForURL(
     (url) =>
@@ -104,9 +102,7 @@ test('Parts - Detail navigation keeps the list URL context', async ({
 
   await page.reload();
   await expect(
-    page
-      .getByRole('link', { name: 'Previous' })
-      .or(page.getByRole('link', { name: 'Next' }))
+    page.getByRole('link', { name: /^(Previous|Next)$/ }).first()
   ).toBeVisible();
 });
 

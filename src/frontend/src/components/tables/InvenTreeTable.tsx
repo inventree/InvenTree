@@ -735,11 +735,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
 
   const getDetailNavigationUrl = useCallback(
     (record: any, index: number): string | undefined => {
-      if (
-        !tableProps.modelType ||
-        !isSafeApiListUrl(url) ||
-        index < 0
-      ) {
+      if (!tableProps.modelType || !isSafeApiListUrl(url) || index < 0) {
         return undefined;
       }
 

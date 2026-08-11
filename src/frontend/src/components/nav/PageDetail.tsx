@@ -1,4 +1,12 @@
-import { ActionIcon, Group, Paper, Space, Stack, Text, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  Group,
+  Paper,
+  Space,
+  Stack,
+  Text,
+  Tooltip
+} from '@mantine/core';
 
 import { StylishText } from '@lib/components/StylishText';
 import { useInvenTreeHotkeys } from '@lib/functions/Events';

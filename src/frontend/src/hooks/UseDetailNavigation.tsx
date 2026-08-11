@@ -4,8 +4,8 @@ import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useApi } from '../contexts/ApiContext';
 import {
-  buildDetailNavigationTarget,
   type DetailNavigationTarget,
+  buildDetailNavigationTarget,
   readDetailNavigationContext
 } from '../functions/DetailNavigation';
 
