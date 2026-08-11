@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("stock", "0126_serial_number_concurrency_guard"),
+        ("stock", "0127_alter_stockitemtestresult_options"),
         ("common", "0051_remove_notesimage_model_id_and_more")
     ]
 
