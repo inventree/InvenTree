@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-28 13:52+0000\n"
-"PO-Revision-Date: 2026-07-28 13:55\n"
+"POT-Creation-Date: 2026-07-31 02:19+0000\n"
+"PO-Revision-Date: 2026-07-31 02:21\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -1555,7 +1555,7 @@ msgstr "保留中"
 msgid "Cancelled"
 msgstr "キャンセル済"
 
-#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:670
+#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:680
 #: importer/status_codes.py:27 order/status_codes.py:15
 #: order/status_codes.py:52 order/status_codes.py:84 order/status_codes.py:128
 msgid "Complete"
@@ -2308,7 +2308,7 @@ msgstr "テンプレート"
 msgid "Parameter template"
 msgstr "パラメータテンプレート"
 
-#: common/models.py:3068 common/models.py:3110 importer/models.py:664
+#: common/models.py:3068 common/models.py:3110 importer/models.py:674
 msgid "Data"
 msgstr "データ"
 
@@ -4771,110 +4771,110 @@ msgstr "既存の記録を更新する"
 msgid "If enabled, existing records will be updated with new data"
 msgstr "有効にされた場合、既存のレコードは新しいデータで更新されます"
 
-#: importer/models.py:312
+#: importer/models.py:319
 msgid "Some required fields have not been mapped"
 msgstr "一部の必須フィールドがマッピングされていません"
 
-#: importer/models.py:414
+#: importer/models.py:421
 msgid "Completed Row Count History"
 msgstr "完了行数の履歴"
 
-#: importer/models.py:417
+#: importer/models.py:424
 msgid "Row Count History"
 msgstr "行数の履歴"
 
-#: importer/models.py:440
+#: importer/models.py:447
 msgid "ID"
 msgstr "ID"
 
-#: importer/models.py:441
+#: importer/models.py:448
 msgid "Existing database identifier for the record"
 msgstr "レコードの既存データベース識別子"
 
-#: importer/models.py:516
+#: importer/models.py:526
 msgid "Column is already mapped to a database field"
 msgstr "カラムはすでにデータベースのフィールドにマッピングされています。"
 
-#: importer/models.py:521
+#: importer/models.py:531
 msgid "Field is already mapped to a data column"
 msgstr "フィールドはすでにデータ列にマッピングされています。"
 
-#: importer/models.py:530
+#: importer/models.py:540
 msgid "Column mapping must be linked to a valid import session"
 msgstr "カラムマッピングは有効なインポートセッションにリンクされている必要があります。"
 
-#: importer/models.py:535
+#: importer/models.py:545
 msgid "Column does not exist in the data file"
 msgstr "カラムがデータファイルに存在しません。"
 
-#: importer/models.py:542
+#: importer/models.py:552
 msgid "Field does not exist in the target model"
 msgstr "対象モデルにフィールドが存在しない"
 
-#: importer/models.py:546
+#: importer/models.py:556
 msgid "Selected field is read-only"
 msgstr "選択されたフィールドは読み取り専用です。"
 
-#: importer/models.py:552
+#: importer/models.py:562
 msgid "Lookup field can only be set for related (foreign-key) fields"
 msgstr "ルックアップ列は、関連する（外部キー）列にのみ設定できます"
 
-#: importer/models.py:560
+#: importer/models.py:570
 #, python-brace-format
 msgid "Invalid lookup field. Valid options are: {options}"
 msgstr "無効なルックアップ列。有効なオプション: {options}"
 
-#: importer/models.py:567 importer/models.py:654
+#: importer/models.py:577 importer/models.py:664
 msgid "Import Session"
 msgstr "インポートセッション"
 
-#: importer/models.py:571
+#: importer/models.py:581
 msgid "Field"
 msgstr "フィールド"
 
-#: importer/models.py:573
+#: importer/models.py:583
 msgid "Column"
 msgstr "列"
 
-#: importer/models.py:579
+#: importer/models.py:589
 msgid "Lookup Field"
 msgstr "ルックアップ列"
 
-#: importer/models.py:581
+#: importer/models.py:591
 msgid "Database field to use for foreign-key lookup. Leave blank for automatic lookup."
 msgstr "外部キー参照に使用するデータベースフィールドです。自動参照の場合は空白のままにしてください。"
 
-#: importer/models.py:658
+#: importer/models.py:668
 msgid "Row Index"
 msgstr "行インデックス"
 
-#: importer/models.py:661
+#: importer/models.py:671
 msgid "Original row data"
 msgstr "元の行データ"
 
-#: importer/models.py:666 machine/models.py:114
+#: importer/models.py:676 machine/models.py:114
 msgid "Errors"
 msgstr "エラー"
 
-#: importer/models.py:668 part/serializers.py:1161
+#: importer/models.py:678 part/serializers.py:1161
 msgid "Valid"
 msgstr "有効"
 
-#: importer/models.py:905
+#: importer/models.py:915
 msgid "Multiple matches found for value - please ensure the value is unique, or select a specific lookup field"
 msgstr "複数の一致が見つかりました - 値が一意であることを確認するか、特定の参照フィールドを選択してください"
 
-#: importer/models.py:966
-msgid "ID is required for updating existing records."
-msgstr "既存の記録を更新するにはIDが必要です。"
-
-#: importer/models.py:973
+#: importer/models.py:968
 msgid "No record found with the provided ID"
 msgstr "指定のIDで該当する記録は見つかりませんでした"
 
-#: importer/models.py:979
+#: importer/models.py:973
 msgid "Invalid ID format provided"
 msgstr "無効なID形式が指定されました"
+
+#: importer/models.py:1039
+msgid "ID is required for updating existing records."
+msgstr "既存の記録を更新するにはIDが必要です。"
 
 #: importer/operations.py:31 importer/operations.py:52
 msgid "Unsupported data file format"
@@ -8902,19 +8902,19 @@ msgstr "静的ファイルのパスが不正です"
 msgid "Asset file not found"
 msgstr "アセットファイルが見つかりません"
 
-#: report/templatetags/report.py:379 report/templatetags/report.py:495
+#: report/templatetags/report.py:379 report/templatetags/report.py:505
 msgid "Image file not found"
 msgstr "画像ファイルが見つかりません"
 
-#: report/templatetags/report.py:464
+#: report/templatetags/report.py:469
 msgid "No image file specified"
 msgstr "画像ファイルが指定されていません"
 
-#: report/templatetags/report.py:489
+#: report/templatetags/report.py:499
 msgid "part_image tag requires a Part instance"
 msgstr "part_image タグには Part インスタンスが必要です。"
 
-#: report/templatetags/report.py:581
+#: report/templatetags/report.py:591
 msgid "company_image tag requires a Company instance"
 msgstr "company_image タグには Company インスタンスが必要です。"
 

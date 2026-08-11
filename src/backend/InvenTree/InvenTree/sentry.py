@@ -36,6 +36,7 @@ def sentry_ignore_errors():  # pragma: no cover
         rest_framework.exceptions.AuthenticationFailed,
         rest_framework.exceptions.NotAuthenticated,
         rest_framework.exceptions.PermissionDenied,
+        rest_framework.exceptions.MethodNotAllowed,
         rest_framework.exceptions.ValidationError,
     ]
 
