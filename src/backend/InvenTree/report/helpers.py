@@ -3,6 +3,7 @@
 import base64
 import io
 import logging
+import mimetypes
 
 from django.utils.translation import gettext_lazy as _
 
@@ -76,6 +77,33 @@ def report_page_size_default():
         page_size = 'A4'
 
     return page_size
+
+
+def encode_file_base64(filename: str, data: bytes | None) -> str:
+    """Return a base-64 encoded data URI for raw file data.
+
+    Unlike encode_image_base64, this preserves the original file bytes and
+    format as-is (no PIL decode/re-encode), so it works for any file type
+    (e.g. SVG logos) and does not alter the source data.
+
+    Arguments:
+        filename: The filename associated with the data (used to guess the mime type)
+        data: The raw file data to encode
+
+    Returns:
+        str -- Base64 encoded data URI e.g. 'data:image/png;base64,xxxxxxxxx', or an
+        empty string if no data is provided
+    """
+    if not data:
+        return ''
+
+    mime_type, _encoding = mimetypes.guess_type(str(filename))
+
+    if not mime_type:
+        mime_type = 'application/octet-stream'
+
+    encoded = base64.b64encode(data).decode('ascii')
+    return f'data:{mime_type};base64,{encoded}'
 
 
 def encode_image_base64(image, img_format: str = 'PNG') -> str:

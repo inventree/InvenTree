@@ -741,6 +741,10 @@ export function BomTable({
             enableSelection: isEditing && !isLocked,
             enableBulkDelete:
               isEditing && !isLocked && user.hasDeleteRole(UserRoles.bom),
+            bulkDeleteFilter: (record: any) => {
+              // If the BOM item is defined for a different parent, then it cannot be deleted
+              return record.part === partId;
+            },
             enableDownload: true,
             rowExpansion: isEditing ? undefined : rowExpansion
           }}
