@@ -776,6 +776,41 @@ class TestHelpers(TestCase):
             large_img, timeout=10, max_size=10 * 1024 * 1024
         )
 
+    def test_download_image_dns_rebind_blocked(self):
+        """A hostname that resolves safely for validation but privately for the real fetch must be blocked.
+
+        Regression test: `validate_url_no_ssrf()` used to resolve the hostname once,
+        validate that result, and then discard it - the actual `requests.get()` call
+        resolved the same hostname again independently. An attacker controlling DNS
+        for their own domain could answer the first ("check") lookup with a public IP
+        and every subsequent ("use") lookup with a private/internal one (DNS
+        rebinding), so the real connection went somewhere the validator never saw.
+        """
+        public_addrinfo = [(2, 1, 6, '', ('93.184.216.34', 0))]
+        private_addrinfo = [(2, 1, 6, '', ('127.0.0.1', 0))]
+
+        calls = {'n': 0}
+
+        def rebinding_getaddrinfo(host, *args, **kwargs):
+            calls['n'] += 1
+            return public_addrinfo if calls['n'] == 1 else private_addrinfo
+
+        with mock.patch.object(
+            InvenTree.helpers_model,
+            '_real_getaddrinfo',
+            side_effect=rebinding_getaddrinfo,
+        ):
+            # The pre-check sees the safe public IP and passes; the *actual*
+            # connection attempt made by requests.get() must be independently
+            # guarded and must fail once it resolves to the private IP.
+            with self.assertRaisesRegex(Exception, 'Connection error'):
+                InvenTree.helpers_model.download_image_from_url(
+                    'http://rebind.example.com/image.png'
+                )
+
+        # Both the validation-time and connection-time lookups must have happened.
+        self.assertEqual(calls['n'], 2)
+
     def test_model_mixin(self):
         """Test the getModelsWithMixin function."""
         from InvenTree.models import InvenTreeBarcodeMixin
