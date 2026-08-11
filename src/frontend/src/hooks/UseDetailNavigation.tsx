@@ -1,17 +1,27 @@
 import { resolveItem } from '@lib/functions/Conversion';
+import { navigateToLink } from '@lib/functions/Navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useApi } from '../contexts/ApiContext';
 import {
-  buildDetailNavigationTarget,
   type DetailNavigationAction,
+  buildDetailNavigationTarget,
   readDetailNavigationContext
 } from '../functions/DetailNavigation';
+
+type DetailNavigationData = {
+  records: any[];
+  total: number;
+};
 
 export function useDetailNavigation(): {
   previous?: DetailNavigationAction;
   next?: DetailNavigationAction;
+  position?: {
+    current: number;
+    total: number;
+  };
   isLoading: boolean;
 } {
   const api = useApi();
@@ -33,9 +43,9 @@ export function useDetailNavigation(): {
       context?.pk,
       context?.field
     ],
-    queryFn: async () => {
+    queryFn: async (): Promise<DetailNavigationData> => {
       if (!context) {
-        return [];
+        return { records: [], total: 0 };
       }
 
       const params = new URLSearchParams(context.query);
@@ -49,12 +59,19 @@ export function useDetailNavigation(): {
         timeout: 10000
       });
 
-      const records = response.data?.results ?? response.data ?? [];
-      return Array.isArray(records) ? records : [];
+      const rawRecords = response.data?.results ?? response.data ?? [];
+      const records = Array.isArray(rawRecords) ? rawRecords : [];
+      const count = Number(response.data?.count);
+
+      return {
+        records,
+        total: Number.isFinite(count) && count >= 0 ? count : records.length
+      };
     }
   });
 
-  const records = listQuery.data ?? [];
+  const records = listQuery.data?.records ?? [];
+  const total = listQuery.data?.total ?? 0;
   const currentRecordIndex = context
     ? records.findIndex(
         (record: any) =>
@@ -87,20 +104,7 @@ export function useDetailNavigation(): {
 
     return {
       href,
-      onClick: (event) => {
-        if (
-          event.defaultPrevented ||
-          event.button !== 0 ||
-          event.ctrlKey ||
-          event.metaKey ||
-          event.shiftKey
-        ) {
-          return;
-        }
-
-        event.preventDefault();
-        navigate(href);
-      }
+      onClick: (event) => navigateToLink(href, navigate, event)
     };
   };
 
@@ -116,6 +120,13 @@ export function useDetailNavigation(): {
     next:
       currentRecordIndex < records.length - 1
         ? createAction(records[currentRecordIndex + 1], currentRecordIndex + 1)
+        : undefined,
+    position:
+      total > context.index
+        ? {
+            current: context.index + 1,
+            total
+          }
         : undefined,
     isLoading: listQuery.isLoading
   };

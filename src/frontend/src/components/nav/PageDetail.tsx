@@ -1,4 +1,13 @@
-import { Button, Group, Paper, Space, Stack, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Group,
+  Paper,
+  Space,
+  Stack,
+  Text,
+  Tooltip
+} from '@mantine/core';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 
 import { StylishText } from '@lib/components/StylishText';
 import { useInvenTreeHotkeys } from '@lib/functions/Events';
@@ -188,29 +197,46 @@ export function PageDetail({
             </Group>
             {(detailNavigation.previous ||
               detailNavigation.next ||
+              detailNavigation.position ||
               computedActions.length > 0) && (
               <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
                 {detailNavigation.previous && (
-                  <Button
-                    component='a'
-                    href={detailNavigation.previous.href}
-                    onClick={detailNavigation.previous.onClick}
+                  <Tooltip label={t`Previous`} position='top'>
+                    <ActionIcon
+                      component='a'
+                      href={detailNavigation.previous.href}
+                      onClick={detailNavigation.previous.onClick}
+                      size='sm'
+                      variant='subtle'
+                      aria-label={t`Previous`}
+                    >
+                      <IconChevronLeft size='1rem' />
+                    </ActionIcon>
+                  </Tooltip>
+                )}
+                {detailNavigation.position && (
+                  <Text
                     size='xs'
-                    variant='subtle'
+                    c='dimmed'
+                    px={4}
+                    aria-label='detail-navigation-position'
                   >
-                    {t`Previous`}
-                  </Button>
+                    {t`${detailNavigation.position.current} of ${detailNavigation.position.total}`}
+                  </Text>
                 )}
                 {detailNavigation.next && (
-                  <Button
-                    component='a'
-                    href={detailNavigation.next.href}
-                    onClick={detailNavigation.next.onClick}
-                    size='xs'
-                    variant='subtle'
-                  >
-                    {t`Next`}
-                  </Button>
+                  <Tooltip label={t`Next`} position='top'>
+                    <ActionIcon
+                      component='a'
+                      href={detailNavigation.next.href}
+                      onClick={detailNavigation.next.onClick}
+                      size='sm'
+                      variant='subtle'
+                      aria-label={t`Next`}
+                    >
+                      <IconChevronRight size='1rem' />
+                    </ActionIcon>
+                  </Tooltip>
                 )}
                 {computedActions}
               </Group>

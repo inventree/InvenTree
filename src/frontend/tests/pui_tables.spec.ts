@@ -1,3 +1,4 @@
+import { expect } from '@playwright/test';
 import { test } from './baseFixtures.js';
 import { stevenuser } from './defaults.js';
 import {
@@ -134,6 +135,36 @@ test('Tables - Pagination', async ({ browser }) => {
   await page.getByRole('menuitem', { name: '25', exact: true }).click();
 
   await page.getByText(/1 - 25 \/ \d+/).waitFor();
+});
+
+test('Tables - Detail navigation', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/index/parts/'
+  });
+
+  await clearTableFilters(page);
+
+  const firstRow = page.locator('tbody tr').first();
+  await firstRow.waitFor();
+  await firstRow.locator('td').nth(1).click();
+  await page.waitForURL(/\/web\/part\/\d+(?:\/.*)?$/);
+
+  const position = page.getByText(/^\d+ of \d+$/).first();
+  await expect(position).toHaveText(/1 of \d+/);
+
+  const next = page.getByRole('link', { name: 'Next', exact: true });
+  await expect(next).toBeVisible();
+  await expect(next.locator('svg')).toBeVisible();
+
+  await next.click();
+  await expect(position).toHaveText(/2 of \d+/);
+
+  const previous = page.getByRole('link', {
+    name: 'Previous',
+    exact: true
+  });
+  await expect(previous).toBeVisible();
+  await expect(previous.locator('svg')).toBeVisible();
 });
 
 test('Tables - Columns', async ({ browser }) => {
