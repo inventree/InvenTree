@@ -1,5 +1,6 @@
 """Unit tests for the 'importer' app."""
 
+import datetime
 import os
 import threading
 from unittest import mock
@@ -81,6 +82,37 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
         # Check that the new companies have been created
         self.assertEqual(n + 12, Company.objects.count())
 
+    def test_row_data_datetime_serialization(self):
+        """Test that row data containing native datetime values can be saved.
+
+        Regression test for a Sentry crash: "Object of type datetime is not JSON
+        serializable when serializing dict item 'COMMENT'". Excel imports (via
+        tablib/openpyxl) return date-formatted cells as native datetime.datetime
+        objects rather than strings. These flow unmodified into row_data, which
+        is then persisted via DataImportRow.objects.bulk_create().
+
+        DataImportRow.row_data / data / errors (and the related JSONFields on
+        DataImportSession) previously had no `encoder=DjangoJSONEncoder`, so
+        Django's JSONField fell back to the plain stdlib json.JSONEncoder, which
+        cannot serialize datetime objects - raising a TypeError on save/bulk_create.
+        """
+        data_file = self.helper_file('companies.csv')
+
+        session = DataImportSession.objects.create(
+            data_file=data_file, model_type='company'
+        )
+
+        row = DataImportRow(
+            session=session,
+            row_index=0,
+            row_data={'COMMENT': datetime.datetime(2024, 5, 1, 12, 30)},
+        )
+
+        # This must not raise: TypeError: Object of type datetime is not JSON serializable
+        DataImportRow.objects.bulk_create([row])
+        row = DataImportRow.objects.get(session=session, row_index=0)
+        self.assertEqual(row.row_data['COMMENT'], '2024-05-01T12:30:00')
+
     def test_import_header_whitespace(self):
         """Test that column headers with leading/trailing whitespace are handled correctly.
 
@@ -154,6 +186,46 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
 
         # Check that the new companies have been created
         self.assertEqual(n + 12, Company.objects.count())
+
+    def test_import_encoding(self):
+        """Test that non-UTF-8 encoded data files are handled correctly.
+
+        Regression test: CSV files exported from Excel on Windows are commonly
+        encoded as cp1252 rather than utf-8. Previously, an unhandled
+        UnicodeDecodeError was raised (surfaced to the user as a server error)
+        instead of a well-formed ValidationError.
+        """
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        raw = self.helper_file('companies.csv').read()
+
+        # Encode the file data as cp1252, including a character not valid in utf-8
+        lines = raw.splitlines()
+        lines[1] = lines[1].replace('Arrow Electronics', 'Arrow Electronics \xb2')
+        cp1252_data = '\n'.join(lines).encode('cp1252')
+
+        data_file = ContentFile(cp1252_data, 'companies_cp1252.csv')
+
+        session = DataImportSession.objects.create(
+            data_file=data_file, model_type='company'
+        )
+
+        session.extract_columns()
+        session.import_data()
+
+        arrow_row = next(
+            row for row in session.rows.all() if row.data.get('name') == 'Arrow'
+        )
+        self.assertEqual(arrow_row.data.get('description'), 'Arrow Electronics ²')
+
+        # A file containing bytes which are not valid in either utf-8 or cp1252
+        # should raise a ValidationError, rather than an unhandled exception
+        invalid_data = ContentFile(b'name,website\r\n\x81\x8d,test\r\n', 'invalid.csv')
+
+        with self.assertRaises(DjangoValidationError):
+            DataImportSession.objects.create(
+                data_file=invalid_data, model_type='company'
+            ).extract_columns()
 
     def test_field_defaults(self):
         """Test default field values.
@@ -297,6 +369,45 @@ class ImporterTest(ImporterMixin, InvenTreeTestCase):
         # Pinning the lookup field to 'name' resolves to the *other* part
         result = row.lookup_related_field('part', 'AMBIG-001', lookup_field='name')
         self.assertNotEqual(result, part_a.pk)
+
+    def test_extract_data_related_field_validation_error(self):
+        """Test that extract_data() handles a dict-constructed ValidationError.
+
+        Regression test: django.core.exceptions.ValidationError only exposes a
+        `.message` attribute when it was raised with a single message string.
+        lookup_related_field can also raise with a dict (e.g. "no related model
+        found for field") or a list, in which case `.message` does not exist and
+        accessing it raises: AttributeError: 'ValidationError' object has no
+        attribute 'message'. extract_data() must use `.messages` instead, which
+        normalizes any construction to a flat list of strings.
+        """
+        from django.core.exceptions import ValidationError as DjangoValidationError
+
+        data_file = self.helper_file('companies.csv')
+        session = DataImportSession.objects.create(
+            data_file=data_file, model_type='stockitem'
+        )
+
+        row = DataImportRow(session=session, row_data={'Website': 'foo'})
+
+        field_mapping = {'part': 'Website'}
+        available_fields = {'part': {'type': 'related field'}}
+
+        with mock.patch.object(
+            DataImportRow,
+            'lookup_related_field',
+            side_effect=DjangoValidationError({
+                'session': 'No related model found for field: part'
+            }),
+        ):
+            # Must not raise: AttributeError: 'ValidationError' object has no attribute 'message'
+            row.extract_data(
+                field_mapping=field_mapping,
+                available_fields=available_fields,
+                commit=False,
+            )
+
+        self.assertEqual(row.errors, {'part': 'No related model found for field: part'})
 
     def test_lookup_field_validation(self):
         """Test that DataImportColumnMap.clean() validates the lookup_field value."""

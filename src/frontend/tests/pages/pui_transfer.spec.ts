@@ -108,10 +108,16 @@ test('Transfer Order - Calendar', async ({ browser }) => {
   await navigate(page, 'stock/location/index/transfer-orders');
   await activateCalendarView(page);
 
-  // Export calendar data
+  // Export calendar data - assert on download instead of notification
   await page.getByLabel('calendar-export-data').click();
-  await page.getByRole('button', { name: 'Export', exact: true }).click();
-  await page.getByText('Process completed successfully').waitFor();
+
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.getByRole('button', { name: 'Export', exact: true }).click()
+  ]);
+  expect(download.suggestedFilename()).toMatch(
+    /InvenTree_TransferOrder.*\.csv$/i
+  );
 
   // Required because we downloaded a file
   await page.context().close();

@@ -57,6 +57,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
         'stock_location.add',
         'stock_location.delete',
         'stock.delete',
+        'part.view',
     ]
 
 
@@ -778,6 +779,49 @@ class StockItemListTest(StockAPITestCase):
         # 3 stock items associated with part 10004
         response = self.get_stock(part=10004)
         self.assertEqual(len(response), 3)
+
+    def test_filter_by_part_include_variants(self):
+        """Filter StockItem list by part, with / without including variants.
+
+        Regression test for https://github.com/inventree/InvenTree/issues/12232
+        - The 'Install Stock Item' form relies on 'include_variants=false' to avoid
+          surfacing variant stock which the BOM does not allow
+        """
+        category = part.models.PartCategory.objects.get(pk=3)
+
+        master_part = part.models.Part.objects.create(
+            name='Master Variant Part',
+            description='Master part which has variants',
+            category=category,
+            is_template=True,
+        )
+
+        variant_part = part.models.Part.objects.create(
+            name='Variant Part',
+            description='A variant of the master part',
+            category=category,
+            variant_of=master_part,
+        )
+
+        StockItem.objects.create(part=master_part, quantity=5)
+        StockItem.objects.create(part=variant_part, quantity=3)
+
+        # By default, 'include_variants' defaults to True - stock for both parts is returned
+        response = self.get_stock(part=master_part.pk)
+        self.assertEqual(len(response), 2)
+
+        response = self.get_stock(part=master_part.pk, include_variants=True)
+        self.assertEqual(len(response), 2)
+
+        # Exclude variants - only stock for the exact part is returned
+        response = self.get_stock(part=master_part.pk, include_variants=False)
+        self.assertEqual(len(response), 1)
+        self.assertEqual(response[0]['part'], master_part.pk)
+
+        # Filtering directly on the variant part is unaffected by 'include_variants'
+        response = self.get_stock(part=variant_part.pk, include_variants=False)
+        self.assertEqual(len(response), 1)
+        self.assertEqual(response[0]['part'], variant_part.pk)
 
     def test_filter_by_ipn(self):
         """Filter StockItem by IPN reference."""
@@ -1702,9 +1746,8 @@ class StockItemTest(StockAPITestCase):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            # TODO: 2026-07-12 : Refactor this API call
             response = self.post(
-                url, data, max_query_count=1300, benchmark=True, format='json'
+                url, data, max_query_count=150, benchmark=True, format='json'
             )
 
         self.assertEqual(response.status_code, 201)
@@ -1988,6 +2031,28 @@ class StockItemTest(StockAPITestCase):
                 'tests',
             ],
         )
+
+    def test_part_detail_permissions(self):
+        """Test that the part_detail output option is only available to users with permission."""
+        url = reverse('api-stock-detail', kwargs={'pk': 1})
+
+        # User has permission to view parts
+        response = self.get(url, {'part_detail': True}, expected_code=200)
+
+        self.assertIn('pk', response.data)
+        self.assertIn('part', response.data)
+        self.assertIn('part_detail', response.data)
+
+        # Remove 'part view' permission from user
+        self.clearRoles()
+        response = self.get(url, {'part_detail': True}, expected_code=403)
+
+        self.assignRole('stock.view')
+
+        response = self.get(url, {'part_detail': True}, expected_code=200)
+        self.assertIn('pk', response.data)
+        self.assertIn('part', response.data)
+        self.assertNotIn('part_detail', response.data)
 
     def test_install(self):
         """Test that stock item can be installed into another item, via the API."""

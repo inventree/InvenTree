@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 from typing import Optional
 
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.files.storage import default_storage
@@ -49,6 +50,12 @@ class OptionalField:
 
     This allows for optimization of database queries based only on the requested data.
 
+    If the field embeds another model's data (e.g. a nested "detail" serializer), the
+    requesting user's view permission against that model is checked before the field is
+    included - this is inferred from `serializer_class.Meta.model` unless `model` is
+    explicitly provided. This prevents a user from seeing embedded data (e.g. a Part,
+    via a BuildOrder's `part_detail`) that they do not have direct permission to view.
+
     Example:
     class MySerializer(FilterableSerializerMixin, serializers.ModelSerializer):
         my_optional_field = OptionalField(
@@ -70,6 +77,7 @@ class OptionalField:
     filter_name: Optional[str] = None
     filter_by_query: bool = True
     prefetch_fields: Optional[list[str]] = None
+    model: Optional[type] = None
 
 
 class FilterableSerializerMixin:
@@ -120,20 +128,27 @@ class FilterableSerializerMixin:
 
         Order of operations:
 
-        - If we are generating the schema, always include the field
+        - If we are generating the schema, always include the field (unless the user does not have permission to view)
         - If this is a write request (POST, PUT, PATCH) and we are not exporting, always include the field
         - If this is a top-level serializer, check the request query parameters for the filter name
         - Check the kwargs provided to the serializer instance
         - Finally, fall back to the default_include value for the field itself
+
+        Whatever the outcome of the above, if the field embeds another model's data, the
+        result is then narrowed by the requesting user's view permission against that
+        model (see `check_field_permission`) - the field is never included for a user who
+        cannot view the embedded model, regardless of query parameters or defaults.
         """
         field_ref = field.filter_name or field_name
 
         # If we have already found a value for this filter, use it
         # This allows multiple optional fields to share the same filter value
+        # Note: fields sharing a filter_ref may still embed different models, so the
+        # permission gate is re-applied per-field even when the raw value is cached
         cached_value = self.optional_filters.get(field_ref, None)
 
         if cached_value is not None:
-            return cached_value
+            return self.check_field_permission(field, cached_value)
 
         # First, check kwargs provided to the serializer instance
         # We also pop the value to avoid issues with nested serializers
@@ -149,10 +164,12 @@ class FilterableSerializerMixin:
 
         field_kwargs = field.serializer_kwargs or {}
 
-        # Skip filtering for a write request - all fields should be present for data creation
+        # Skip filtering for a write request
+        # All fields should be present for data creation,
+        # excepting those for which the user does not have the required permissions
         if method := getattr(self.request, 'method', None):
             if method not in SAFE_METHODS and not self.is_exporting():
-                return True
+                return self.check_field_permission(field, True)
             else:
                 # Ignore write_only fields for read requests
                 if field_kwargs.get('write_only', False):
@@ -175,7 +192,68 @@ class FilterableSerializerMixin:
         if value is None:
             value = field.default_include
 
-        return value
+        return self.check_field_permission(field, value)
+
+    def check_field_permission(self, field: OptionalField, included: bool) -> bool:
+        """Narrow an inclusion decision by the requesting user's view permission.
+
+        An OptionalField which embeds another model's data (e.g. `part_detail` embedding
+        a Part) should not be included unless the requesting user actually has view
+        permission on that model - otherwise a user could see e.g. Part data via a
+        BuildOrder's `part_detail` field without having Part view permission themselves.
+
+        Arguments:
+            field: The OptionalField instance being resolved
+            included: The inclusion decision made so far
+
+        Returns:
+            False if the field embeds a model the requesting user cannot view, otherwise
+            the original `included` value unchanged.
+        """
+        if not included:
+            return included
+
+        model = field.model or getattr(
+            getattr(field.serializer_class, 'Meta', None), 'model', None
+        )
+
+        if model is None:
+            return included
+
+        # A handful of models describe *permission metadata itself* (who a user is,
+        # what a role can do) rather than embedded business data - gating these behind
+        # a role would hide a user's own account/role information from themselves and
+        # from almost every non-admin user, which is a different (and much broader)
+        # concern than embedding e.g. Part/Company records. Deliberately exempted here:
+        # - auth_user: username attribution fields (issued_by_detail, checked_by_detail, ...)
+        # - auth_group: group membership/attribution (ExtendedUserSerializer.groups, ...)
+        # - users_ruleset: role/permission listings (GroupSerializer.roles, ...)
+        # - users_owner: user/group "owner" wrapper (responsible_detail, ...) - already in
+        #   get_ruleset_ignore() so check_user_permission would return True anyway, but
+        #   exempted explicitly here to document intent and skip the call
+        from django.contrib.auth.models import Group
+
+        from users.models import Owner, RuleSet
+
+        if model in (get_user_model(), Group, Owner, RuleSet):
+            return included
+
+        user = getattr(self.request, 'user', None)
+
+        if user is None:
+            return included
+
+        cache = self.__dict__.setdefault('_field_permission_cache', {})
+        cache_key = (user.pk, model)
+
+        if cache_key in cache:
+            return cache[cache_key]
+
+        from users.permissions import check_user_permission
+
+        result = check_user_permission(user, model, 'view')
+        cache[cache_key] = result
+        return result
 
     def find_optional_fields(self):
         """Find all optional fields defined on this serializer."""
