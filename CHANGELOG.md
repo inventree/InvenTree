@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking Changes
 
 - [#12507](https://github.com/inventree/InvenTree/pull/12507) calling an invalid or repeated state transition now raises a ValidationError. Plugins implementing state transitions should evaluate the PR and adapt their usage of transitions to gain the new safeguards.
+
+### Added
+
+### Changed
+
+### Removed
+
+## 1.5.0 - 2026-08-11
+
+### Breaking Changes
+
 - [#12529](https://github.com/inventree/InvenTree/pull/12529) removes related detail fields on API endpoints for which the user does not have view permissions.
 - [#12360](https://github.com/inventree/InvenTree/pull/12360) removes the MPTT mixin from the StockItem model, and removes the self-referential tree structure from the database. This change was made to simplify the StockItem model and improve performance, as the MPTT tree structure was causing significant overhead in certain operations. Any external client applications which made use of the MPTT functionality will need to be updated to account for this change.
 - [#12320](https://github.com/inventree/InvenTree/pull/12320) changes the default behavior of the `invoke migrate` command. Now, it no longer generates new migrations by default. Instead, it will only apply existing migrations to the database. If you want to detect and generate new migrations, you must now explicitly use the `--detect` flag. This change was made to prevent accidental generation of migrations when running the command, which could lead to unexpected changes in the database schema. Additionally, `invoke update` will no longer result in new migrations being generated, and will only apply existing migrations to the database. This change was made to ensure that the update process is predictable and does not introduce unexpected changes to the database schema.
@@ -41,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#12107](https://github.com/inventree/InvenTree/pull/12107) makes a breaking change to the `SalesOrderStatusGroups` enum, fixing a bug where the "shipped" status was not included in the "active" group. This change may affect any external client applications which make use of the `SalesOrderStatusGroups` enum, as the "shipped" status will now be included in the "active" group instead of the "complete" group. If you are using this enum in an external client application, you will need to update your application to account for this change.
 - [#9604](https://github.com/inventree/InvenTree/pull/9604) refactors user API endpoint to be less ambiguous
 - [#11893](https://github.com/inventree/InvenTree/pull/11893) bumps Node environment to version 24 LTS - this is only relevant if you build the frontend assets yourself
+- [#11951](https://github.com/inventree/InvenTree/pull/11951) adds API throtteling by default to make DoS attacks more difficult. This can be disabled by setting the `INVENTREE_THROTTLE_ANON` and `INVENTREE_THROTTLE_USER` settings to `None` (either via environment variable or config file). The default throttling rates are 20 requests per minute for anonymous users, and 20 requests per second for authenticated users.
 
 ### Added
 
