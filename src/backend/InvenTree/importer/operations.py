@@ -44,7 +44,15 @@ def load_data_file(data_file, file_format=None):
 
     # Excel formats expect binary data
     if file_format not in ['xls', 'xlsx']:
-        data = data.decode()
+        # Attempt to decode the file data as UTF-8 first, falling back to
+        # cp1252 (common for CSV files exported from Excel on Windows)
+        try:
+            data = data.decode('utf-8-sig')
+        except UnicodeDecodeError:
+            try:
+                data = data.decode('cp1252')
+            except UnicodeDecodeError:
+                raise ValidationError(_('Could not decode data file as text'))
 
     try:
         data = tablib.Dataset().load(data, headers=True, format=file_format)
