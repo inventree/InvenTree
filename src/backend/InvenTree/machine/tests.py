@@ -398,3 +398,18 @@ class AdminTest(AdminTestCase):
     def test_admin(self):
         """Test the admin URL."""
         self.helper(model=MachineConfig)
+
+    def test_machine_setting_inline_readonly_fields(self):
+        """Ensure MachineSettingInline uses 'readonly_fields' (not 'read_only_fields').
+
+        Django silently ignores 'read_only_fields' — only 'readonly_fields' is effective.
+        """
+        from machine.admin import MachineSettingInline
+
+        self.assertTrue(
+            hasattr(MachineSettingInline, 'readonly_fields'),
+            "MachineSettingInline must define 'readonly_fields' (not 'read_only_fields')",
+        )
+        self.assertIn('key', MachineSettingInline.readonly_fields)
+        self.assertIn('config_type', MachineSettingInline.readonly_fields)
+

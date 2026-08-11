@@ -753,3 +753,28 @@ class InstallerTests(TestCase):
         self.assertIn(
             'Only superuser accounts can administer plugins', str(e.exception)
         )
+
+
+class PluginAdminTests(TestCase):
+    """Tests for plugin admin configuration."""
+
+    def test_plugin_setting_inline_readonly_fields(self):
+        """Ensure PluginSettingInline and PluginUserSettingInline use 'readonly_fields' (not 'read_only_fields').
+
+        Django silently ignores 'read_only_fields' — only 'readonly_fields' is effective.
+        """
+        from plugin.admin import PluginSettingInline, PluginUserSettingInline
+
+        # Verify correct attribute name is used
+        self.assertTrue(
+            hasattr(PluginSettingInline, 'readonly_fields'),
+            "PluginSettingInline must define 'readonly_fields' (not 'read_only_fields')",
+        )
+        self.assertIn('key', PluginSettingInline.readonly_fields)
+
+        self.assertTrue(
+            hasattr(PluginUserSettingInline, 'readonly_fields'),
+            "PluginUserSettingInline must define 'readonly_fields' (not 'read_only_fields')",
+        )
+        self.assertIn('key', PluginUserSettingInline.readonly_fields)
+

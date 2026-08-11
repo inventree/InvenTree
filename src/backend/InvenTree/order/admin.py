@@ -192,7 +192,7 @@ class ReturnOrderLineItemAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.ReturnOrderExtraLine)
-class ReturnOrdeerExtraLineAdmin(GeneralExtraLineAdmin, admin.ModelAdmin):
+class ReturnOrderExtraLineAdmin(GeneralExtraLineAdmin, admin.ModelAdmin):
     """Admin class for the ReturnOrderExtraLine model."""
 
 
