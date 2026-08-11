@@ -9,6 +9,7 @@ from django.db import models
 from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 
+from django_fsm import FSMFieldMixin
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
@@ -90,11 +91,19 @@ class ExtraCustomChoiceField(CustomChoiceField):
         return super().to_representation(value) or value
 
 
-class InvenTreeCustomStatusModelField(models.PositiveIntegerField):
+class InvenTreeCustomStatusModelField(FSMFieldMixin, models.PositiveIntegerField):
     """Custom model field for extendable status codes.
 
-    Adds a secondary *_custom_key field to the model which can be used to store additional status information.
-    Models using this model field must also include the InvenTreeCustomStatusSerializerMixin in all serializers that create or update the value.
+    Extends Django's PositiveIntegerField with FSM (Finite State Machine) support
+    via django-fsm-2, enabling use of the @transition decorator directly on model
+    methods that use this field.
+
+    Adds a secondary *_custom_key field to the model which can be used to store
+    additional status information.
+
+    Models using this model field must also include the
+    InvenTreeCustomStatusSerializerMixin in all serializers that create or update
+    the value.
     """
 
     def __init__(self, *args, **kwargs):
@@ -109,12 +118,18 @@ class InvenTreeCustomStatusModelField(models.PositiveIntegerField):
             validators.append(CustomStatusCodeValidator(status_class=self.status_class))
 
         kwargs['validators'] = validators
+        # FSM protection is disabled by default; direct status assignment is still allowed
+        kwargs.setdefault('protected', False)
         super().__init__(*args, **kwargs)
 
     def deconstruct(self):
-        """Deconstruct the field for migrations."""
-        name, path, args, kwargs = super().deconstruct()
+        """Deconstruct the field for migrations.
 
+        FSM-specific kwargs (protected) are excluded to avoid spurious migrations,
+        since they do not affect the database schema.
+        """
+        name, path, args, kwargs = super().deconstruct()
+        kwargs.pop('protected', None)
         return name, path, args, kwargs
 
     def contribute_to_class(self, cls, name):
@@ -182,7 +197,7 @@ class InvenTreeCustomStatusModelField(models.PositiveIntegerField):
 
 
 class ExtraInvenTreeCustomStatusModelField(models.PositiveIntegerField):
-    """Custom field used to detect custom extenteded fields.
+    """Custom field used to detect custom extended fields.
 
     This is not intended to be used directly, if you want to support custom states in your model use InvenTreeCustomStatusModelField.
     """
