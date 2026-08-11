@@ -21,7 +21,14 @@ import { Divider, Group, Text } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import {
+  type ReactNode,
+  type RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { TableHoverCard } from '../../components/tables/TableHoverCard';
@@ -143,7 +150,9 @@ export default function ParametricDataTable({
   endpoint,
   queryParams,
   customFilters,
-  customColumns
+  customColumns,
+  customActions,
+  refreshRef
 }: {
   modelType: ModelType;
   modelId?: number;
@@ -153,11 +162,19 @@ export default function ParametricDataTable({
   queryParams?: Record<string, any>;
   customFilters?: TableFilter[];
   customColumns?: TableColumn[];
+  customActions?: ReactNode[];
+  refreshRef?: RefObject<() => void>;
 }) {
   const api = useApi();
   const table = useTable(`parametric-data-${modelType}`);
   const user = useUserState();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (refreshRef) {
+      refreshRef.current = table.refreshTable;
+    }
+  }, [table.refreshTable]);
 
   // Fetch all active parameter templates for the given model type
   const parameterTemplates = useQuery({
@@ -461,6 +478,7 @@ export default function ParametricDataTable({
         props={{
           enableDownload: true,
           rowActions: rowActions,
+          tableActions: customActions,
           tableFilters: tableFilters,
           params: {
             ...queryParams,
