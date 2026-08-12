@@ -1708,6 +1708,18 @@ class MagicLoginTest(InvenTreeTestCase):
         # And we should be logged in again
         self.assertEqual(resp.wsgi_request.user, self.user)
 
+    def test_duplicate_email(self):
+        """Test that duplicate email addresses do not raise a server error."""
+        User = get_user_model()
+        User.objects.create_user(
+            username='duplicate', email=self.user.email, password='password'
+        )
+
+        resp = self.client.post(reverse('sesame-generate'), {'email': self.user.email})
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.data, {'status': 'ok'})
+        self.assertEqual(len(mail.outbox), 0)
+
 
 class MaintenanceModeTest(InvenTreeTestCase):
     """Unit tests for maintenance mode."""
