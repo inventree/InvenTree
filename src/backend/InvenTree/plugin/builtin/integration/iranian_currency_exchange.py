@@ -36,7 +36,7 @@ class IranianCurrencyExchange(
 
     NAME = 'IranianCurrencyExchange'
     SLUG = 'iranian-currency-exchange'
-    AUTHOR = _('InvenTree contributors')
+    AUTHOR = _('Nooshin Shadiani')
     TITLE = _('Iranian Currency Exchange')
     DESCRIPTION = _('Manual or TGJU-provided USD to IRR exchange rates')
     VERSION = '1.0.0'
