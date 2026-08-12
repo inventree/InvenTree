@@ -6,7 +6,8 @@ import { TagsList } from '@lib/index';
 
 import {
   type DetailsField,
-  DetailsTable
+  DetailsTable,
+  barcodeDataField
 } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { useParameterDetailsGrid } from '../../components/details/ParameterDetailsGrid';
@@ -58,7 +59,8 @@ export function TransferOrderDetailsPanel({
       hidden:
         !instance?.status_custom_key ||
         instance?.status_custom_key == instance?.status
-    }
+    },
+    barcodeDataField(instance)
   ];
 
   const tr: DetailsField[] = [

@@ -6,6 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.core.exceptions import ImproperlyConfigured
 from django.urls import path, reverse
 
 from rest_framework.serializers import SerializerMethodField
@@ -133,6 +134,86 @@ class FilteredSerializers(InvenTreeAPITestCase):
             self.assertContains(response, 'field_c')
             self.assertContains(response, 'field_d')
             self.assertNotContains(response, 'field_e')
+
+
+class BarcodeSerializerMixinTest(InvenTreeAPITestCase):
+    """Tests for the shared BarcodeSerializerMixin.
+
+    Ref #11745: every model which supports custom (third-party) barcodes must
+    expose the linked barcode string ('barcode_data') via its API serializer,
+    as a read-only field, so that it can be displayed in the user interface.
+    """
+
+    def test_barcode_data_field_exposed(self):
+        """'barcode_data' must be present and read-only on every barcode serializer."""
+        from build.serializers import BuildSerializer
+        from company.serializers import (
+            ManufacturerPartSerializer,
+            SupplierPartSerializer,
+        )
+        from order.serializers import (
+            PurchaseOrderSerializer,
+            ReturnOrderSerializer,
+            SalesOrderSerializer,
+            SalesOrderShipmentSerializer,
+            TransferOrderSerializer,
+        )
+        from part.serializers import PartSerializer
+        from stock.serializers import LocationSerializer, StockItemSerializer
+
+        serializers = [
+            PartSerializer,
+            StockItemSerializer,
+            LocationSerializer,
+            BuildSerializer,
+            ManufacturerPartSerializer,
+            SupplierPartSerializer,
+            PurchaseOrderSerializer,
+            SalesOrderSerializer,
+            ReturnOrderSerializer,
+            TransferOrderSerializer,
+            SalesOrderShipmentSerializer,
+        ]
+
+        for serializer in serializers:
+            fields = serializer().fields
+            self.assertIn(
+                'barcode_data',
+                fields,
+                f"'barcode_data' missing from {serializer.__name__}",
+            )
+            self.assertTrue(
+                fields['barcode_data'].read_only,
+                f"'barcode_data' must be read-only in {serializer.__name__}",
+            )
+
+    def test_misconfiguration_raises(self):
+        """The mixin must reject serializers which are configured incorrectly."""
+        from part.models import Part
+
+        # Case 1: the model does not support custom barcodes
+        class NoBarcodeModelSerializer(
+            InvenTree.serializers.BarcodeSerializerMixin,
+            InvenTree.serializers.InvenTreeModelSerializer,
+        ):
+            class Meta:
+                model = User
+                fields = ['id', 'barcode_data']
+
+        with self.assertRaises(ImproperlyConfigured):
+            NoBarcodeModelSerializer()
+
+        # Case 2: 'barcode_data' is omitted from Meta.fields
+        class MissingFieldSerializer(
+            InvenTree.serializers.BarcodeSerializerMixin,
+            InvenTree.serializers.InvenTreeModelSerializer,
+        ):
+            class Meta:
+                model = Part
+                fields = ['pk']
+
+        with self.assertRaises(ImproperlyConfigured):
+            MissingFieldSerializer()
 
     def test_permission_gating(self):
         """An OptionalField which embeds a model should respect the model's permissions.
