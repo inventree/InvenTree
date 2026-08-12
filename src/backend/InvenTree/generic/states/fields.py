@@ -218,6 +218,12 @@ class InvenTreeCustomStatusSerializerMixin:
     _custom_fields_follower: Optional[list] = None
     _is_gathering = False
 
+    # Maps leader field name -> a throwaway instance of that field, built by
+    # `build_standard_field` as it constructs each leader field. Used by a
+    # later 'follower' (*_custom_key) field, built later in the same pass,
+    # to inherit choices/read_only state - see `build_standard_field` below.
+    _custom_leader_fields: Optional[dict] = None
+
     def update(self, instance, validated_data):
         """Ensure the custom field is updated if the leader was changed."""
         self.gather_custom_fields()
@@ -288,6 +294,31 @@ class InvenTreeCustomStatusSerializerMixin:
         """Use custom field for custom status model.
 
         This is required because of DRF overwriting all fields with choice sets.
+
+        Note: This method is called *while* the serializer's `fields` cached_property
+        is still being constructed (DRF builds fields one at a time, in `Meta.fields`
+        order). It must not access `self.fields` (or anything that does, like
+        `self.gather_custom_fields()`) - doing so would re-enter the `fields`
+        cached_property while it is already being computed, kicking off a second,
+        fully independent rebuild of the whole field set. Under concurrent access,
+        whichever of the two competing builds finishes last silently wins and gets
+        cached - intermittently dropping unrelated fields built earlier in the
+        original pass (e.g. an OptionalField like `tags`) if the second build
+        finishes without them.
+
+        Instead, a 'leader' field (e.g. `status`) records a throwaway instance of
+        itself on `self._custom_leader_fields` as it is built, so that its
+        'follower' field (`status_custom_key`), built later in the same pass, can
+        read its choices/read_only state directly - without touching `self.fields`.
+
+        That throwaway instance must be built the same way DRF's own `get_fields()`
+        builds the *real* one - which includes merging in `Meta.extra_kwargs` /
+        `Meta.read_only_fields` (e.g. `status` is typically listed as read-only
+        there). DRF applies that merge itself, in `get_fields()`, *after*
+        `build_field()` returns - a step this method is never otherwise party to.
+        Both `get_extra_kwargs()` and `include_extra_kwargs()` are pure functions
+        of `self.Meta` / plain dicts, so - unlike `self.fields` - they're safe to
+        call here.
         """
         field_cls, field_kwargs = super().build_standard_field(field_name, model_field)
         if issubclass(field_cls, ChoiceField) and isinstance(
@@ -296,6 +327,14 @@ class InvenTreeCustomStatusSerializerMixin:
             field_cls = CustomChoiceField
             field_kwargs['choice_mdl'] = model_field.model
             field_kwargs['choice_field'] = model_field.name
+
+            if self._custom_leader_fields is None:
+                self._custom_leader_fields = {}
+            leader_extra_kwargs = self.get_extra_kwargs().get(field_name, {})
+            leader_kwargs = self.include_extra_kwargs(
+                dict(field_kwargs), leader_extra_kwargs
+            )
+            self._custom_leader_fields[field_name] = field_cls(**leader_kwargs)
         elif isinstance(model_field, ExtraInvenTreeCustomStatusModelField):
             field_cls = ExtraCustomChoiceField
             field_kwargs['choice_mdl'] = model_field.model
@@ -303,10 +342,10 @@ class InvenTreeCustomStatusSerializerMixin:
             field_kwargs['is_custom'] = True
 
             # Inherit choices from leader
-            self.gather_custom_fields()
-            if self._custom_fields and field_name in self._custom_fields:
-                leader_field_name = field_name.replace('_custom_key', '')
-                leader_field = self.fields[leader_field_name]
+            leader_field_name = field_name.replace('_custom_key', '')
+            leader_field = (self._custom_leader_fields or {}).get(leader_field_name)
+
+            if leader_field is not None:
                 if hasattr(leader_field, 'choices'):
                     field_kwargs['choices'] = list(leader_field.choices.items())
                 elif hasattr(model_field.model, leader_field_name):
