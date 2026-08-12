@@ -23,7 +23,7 @@ from django.utils import timezone
 import pint.errors
 import requests_mock
 from djmoney.contrib.exchange.exceptions import MissingRate
-from djmoney.contrib.exchange.models import Rate, convert_money
+from djmoney.contrib.exchange.models import ExchangeBackend, Rate, convert_money
 from djmoney.money import Money
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 from PIL import Image
@@ -1181,6 +1181,41 @@ class CurrencyTests(TestCase):
         'NZD': 1.65,
         'USD': 1.0,
     }
+
+    def test_failed_rate_update_preserves_backend_timestamp(self):
+        """Do not make stale rates look fresh after a provider failure."""
+        from InvenTree.exchange import InvenTreeExchange
+
+        backend = ExchangeBackend.objects.create(
+            name='InvenTreeExchange', base_currency='USD'
+        )
+        Rate.objects.create(currency='IRR', value=1_878_000, backend=backend)
+
+        previous_update = timezone.now() - timedelta(days=1)
+        ExchangeBackend.objects.filter(pk=backend.pk).update(
+            last_update=previous_update
+        )
+
+        with mock.patch.object(InvenTreeExchange, 'get_rates', return_value={}):
+            result = InvenTreeExchange().update_rates(base_currency='USD')
+
+        backend.refresh_from_db()
+
+        self.assertIs(result, False)
+        self.assertEqual(backend.last_update, previous_update)
+        self.assertTrue(backend.rates.filter(currency='IRR').exists())
+
+    def test_failed_rate_update_is_not_recorded_as_success(self):
+        """Do not advance the task success marker when no rates were stored."""
+        from InvenTree.exchange import InvenTreeExchange
+
+        with (
+            mock.patch.object(InvenTreeExchange, 'update_rates', return_value=False),
+            mock.patch.object(InvenTree.tasks, 'record_task_success') as record_success,
+        ):
+            InvenTree.tasks.update_exchange_rates(force=True)
+
+        record_success.assert_not_called()
 
     @requests_mock.Mocker()
     def test_rates(self, requests_mocker):

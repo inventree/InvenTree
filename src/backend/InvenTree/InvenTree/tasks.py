@@ -941,15 +941,16 @@ def update_exchange_rates(force: bool = False):
     logger.info("Updating exchange rates using base currency '%s'", base)
 
     try:
-        backend.update_rates(base_currency=base)
+        rates_updated = backend.update_rates(base_currency=base)
 
-        # Remove any exchange rates which are not in the provided currencies
-        Rate.objects.filter(backend='InvenTreeExchange').exclude(
-            currency__in=currency_codes()
-        ).delete()
+        if rates_updated:
+            # Remove any exchange rates which are not in the provided currencies
+            Rate.objects.filter(backend='InvenTreeExchange').exclude(
+                currency__in=currency_codes()
+            ).delete()
 
-        # Record successful task execution
-        record_task_success('update_exchange_rates')
+            # Record successful task execution
+            record_task_success('update_exchange_rates')
 
     except (AppRegistryNotReady, OperationalError, ProgrammingError):
         logger.warning('Could not update exchange rates - database not ready')

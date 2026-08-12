@@ -77,12 +77,8 @@ class InvenTreeExchange(SimpleExchangeBackend):
         return rates
 
     @atomic
-    def update_rates(self, base_currency=None, **kwargs):
-        """Call to update all exchange rates."""
-        backend, _ = ExchangeBackend.objects.update_or_create(
-            name=self.name, defaults={'base_currency': base_currency}
-        )
-
+    def update_rates(self, base_currency=None, **kwargs) -> bool:
+        """Update all exchange rates, returning whether rates were stored."""
         if base_currency is None:
             base_currency = currency_code_default()
 
@@ -99,6 +95,10 @@ class InvenTreeExchange(SimpleExchangeBackend):
         rates = self.get_rates(base_currency=base_currency, symbols=symbols)
 
         if rates:
+            backend, _ = ExchangeBackend.objects.update_or_create(
+                name=self.name, defaults={'base_currency': base_currency}
+            )
+
             # Clear out existing rates
             backend.clear_rates()
 
@@ -106,9 +106,9 @@ class InvenTreeExchange(SimpleExchangeBackend):
                 Rate(currency=currency, value=amount, backend=backend)
                 for currency, amount in rates.items()
             ])
-        else:
-            logger.info(
-                'No exchange rates returned from backend - currencies not updated'
-            )
 
-        logger.info('Updated exchange rates for %s', base_currency)
+            logger.info('Updated exchange rates for %s', base_currency)
+            return True
+
+        logger.info('No exchange rates returned from backend - currencies not updated')
+        return False
