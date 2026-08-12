@@ -604,7 +604,7 @@ class BomItemTest(TestCase):
         self.assertEqual(item.piece_count, 1)
 
         # With piece_count=1, get_required_quantity should behave as before
-        item.quantity = 10
+        item.set_quantity(10)
         item.attrition = 0
         item.setup_quantity = 0
         item.rounding_multiple = None
@@ -622,7 +622,7 @@ class BomItemTest(TestCase):
         """
         item = BomItem.objects.get(part=100, sub_part=50)
 
-        item.quantity = 200
+        item.set_quantity(200)
         item.piece_count = 10
         item.attrition = 0
         item.setup_quantity = 0
@@ -642,7 +642,7 @@ class BomItemTest(TestCase):
         """Test piece_count combined with attrition percentage."""
         item = BomItem.objects.get(part=100, sub_part=50)
 
-        item.quantity = 100
+        item.set_quantity(100)
         item.piece_count = 5
         item.attrition = 10  # 10% attrition
         item.setup_quantity = 0
@@ -657,7 +657,7 @@ class BomItemTest(TestCase):
         """Test piece_count combined with setup_quantity."""
         item = BomItem.objects.get(part=100, sub_part=50)
 
-        item.quantity = 50
+        item.set_quantity(50)
         item.piece_count = 4
         item.attrition = 0
         item.setup_quantity = 20
@@ -672,7 +672,7 @@ class BomItemTest(TestCase):
         """Test piece_count combined with rounding_multiple."""
         item = BomItem.objects.get(part=100, sub_part=50)
 
-        item.quantity = 7
+        item.set_quantity(7)
         item.piece_count = 3
         item.attrition = 0
         item.setup_quantity = 0
