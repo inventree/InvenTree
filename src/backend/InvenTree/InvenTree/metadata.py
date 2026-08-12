@@ -219,8 +219,15 @@ class InvenTreeMetadata(SimpleMetadata):
 
         serializer_info = super().get_serializer_info(serializer)
 
-        # Look for any dynamic fields which were not available when the serializer was instantiated
-        if hasattr(serializer, 'Meta'):
+        # Look for any dynamic fields which were not available when the serializer was
+        # instantiated - this lets an OPTIONS/schema response document an OptionalField
+        # (e.g. `part_detail`) even when it wasn't included on this particular instance,
+        # by rehydrating it directly from the class attribute.
+        if (
+            hasattr(serializer, 'Meta')
+            and not getattr(serializer, '_is_importing', False)
+            and not getattr(serializer, '_exporting_data', False)
+        ):
             for field_name in serializer.Meta.fields:
                 if field_name in serializer_info:
                     # Already know about this one
