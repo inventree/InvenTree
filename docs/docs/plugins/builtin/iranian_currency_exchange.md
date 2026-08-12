@@ -5,9 +5,8 @@ title: Iranian Currency Exchange
 ## Iranian Currency Exchange
 
 The **Iranian Currency Exchange** plugin provides a USD to IRR exchange rate.
-It uses a manually configured rate by default and can optionally consume the
-documented [Navasan latest-rates
-API](https://www.navasan.tech/webserviceguide/#latest-rates).
+It uses a manually configured rate by default and can optionally fetch the
+free-market USD rate from [TGJU](https://www.tgju.org/currency).
 
 The plugin uses InvenTree's existing Django-Q2 scheduler. No additional Celery
 worker or settings package is required.
@@ -33,32 +32,51 @@ rounding error.
 
 ### Manual rate
 
-Leave **Enable USD exchange rate API** disabled and enter **Manual USD to IRR
-rate** as the number of Iranian rials per one US dollar. Rate updates then work
-without an Internet connection. After changing the manual rate, open Currency
-Management and select **Refresh exchange rates** to apply it immediately.
+Leave **Enable TGJU USD rate consumer** disabled and enter **Manual USD to IRR
+rate** as the number of Iranian rials per one US dollar. The plugin then makes
+no TGJU requests, so rate updates work without an Internet connection. After
+changing the manual rate, open Currency Management and select **Refresh
+exchange rates** to apply it immediately.
 
-### API consumer
+### TGJU consumer
 
-Set **Enable USD exchange rate API** to enabled, provide a Navasan API key, and
-explicitly select the unit returned for the account:
+Enable **Enable TGJU USD rate consumer** to fetch the rate from TGJU instead of
+using the manual value. The plugin reads TGJU's HTML using XPath, with these
+sources in order:
 
-- `IRR`: the API value is already in Iranian rials.
-- `IRT`: the API value is in toman and is multiplied by ten exactly once.
+1. [`https://www.tgju.org/currency`](https://www.tgju.org/currency), first using
+   the semantic market-row XPath:
 
-The unit selection is intentionally required. Treating toman as rial would
-produce a tenfold pricing error.
+   ```xpath
+   string((//tr[@data-market-row='price_dollar_rl']/@data-price)[1])
+   ```
 
-InvenTree's Django-Q2 scheduler refreshes the API-provided rate every eight
-hours. This makes at most 93 scheduled requests in a 31-day month, below
-Navasan's [current free allowance of 120 monthly
-requests](https://www.navasan.tech/pricing/). Navasan currently limits free
-keys to three months, so check the provider's current terms before deployment.
+   It then tries the XPath equivalent of TGJU's displayed-price selector:
 
-The scheduled task does nothing while the API consumer is disabled or this
+   ```xpath
+   string((//*[@id='l-price_dollar_rl']//*[contains(concat(' ', normalize-space(@class), ' '), ' info-price ')])[1])
+   ```
+
+2. [`https://www.tgju.org/profile/price_dollar_rl`](https://www.tgju.org/profile/price_dollar_rl),
+   using the current-rate field as a page-level fallback:
+
+   ```xpath
+   string((//*[@data-target='profile-tour-current_rate']//*[@data-col='info.last_trade.PDrCotVal'])[1])
+   ```
+
+The extracted value is Iranian rials per US dollar. It is stored as returned;
+the plugin does not multiply the value by ten.
+
+InvenTree's Django-Q2 scheduler refreshes the TGJU-provided rate every three
+hours. No Celery worker is required.
+
+The scheduled task does nothing while the TGJU consumer is disabled or this
 plugin is not the selected currency update plugin. A failed request, invalid
-response, missing key, or invalid rate returns no update, so the last valid
-exchange rates remain stored and their last-update timestamp is not advanced.
+rate, or TGJU DOM change which prevents the XPath selectors from matching
+returns no update. In that case, the last valid exchange rates remain stored
+and their last-update timestamp is not advanced. The manual value is an
+operator-selected offline alternative; it is not applied automatically after
+a TGJU fetch failure.
 
 ### Scope
 

@@ -33,7 +33,7 @@ The following builtin plugins are available in InvenTree:
 | Notifications | [Slack Notification](./slack_notification.md) | Slack notification plugin | No |
 | Notifications | [UI Notification](./ui_notification.md) | UI notification plugin | Yes |
 | Pricing | [Currency Exchange](./currency_exchange.md) | Currency exchange rate plugin | Yes |
-| Pricing | [Iranian Currency Exchange](./iranian_currency_exchange.md) | Manual or API-provided USD to IRR exchange rates | No |
+| Pricing | [Iranian Currency Exchange](./iranian_currency_exchange.md) | Manual or TGJU-provided USD to IRR exchange rates | No |
 
 ### Plugin Table
 
