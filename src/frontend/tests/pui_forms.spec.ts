@@ -14,12 +14,7 @@ import { setSettingState } from './settings';
 
 // Test hover form action in related fields
 test('Forms - Hover', async ({ browser }) => {
-  const page = await doCachedLogin(browser, {
-    user: stevenuser,
-    url: 'purchasing/index/purchaseorders'
-  });
-
-  // Patch user settings to ensure we can see "extra model info" on hover
+  // Patch user settings to ensure we can see "extra model info" on hover; done before load to avoid flakiness
   const api = await createApi({
     username: stevenuser.username,
     password: stevenuser.testcred
@@ -32,6 +27,11 @@ test('Forms - Hover', async ({ browser }) => {
   });
 
   expect(response.status()).toBe(200);
+
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'purchasing/index/purchaseorders'
+  });
 
   await page
     .getByRole('button', { name: 'action-button-add-purchase-' })

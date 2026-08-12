@@ -711,9 +711,10 @@ class PurchaseOrderTest(OrderTest):
         # completion must be skipped based on the database state
         self.assertEqual(po_b.status, PurchaseOrderStatus.PLACED)
 
-        with mock.patch('order.models.trigger_event') as trigger:
+        with self.assertRaises(ValidationError) as err:
             po_b.complete_order()
-            trigger.assert_not_called()
+
+        self.assertIn('Purchase Order is already Complete', str(err.exception))
 
         po.refresh_from_db()
         self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
@@ -3546,9 +3547,10 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         # completion must be skipped based on the database state
         self.assertEqual(order_b.status, ReturnOrderStatus.IN_PROGRESS.value)
 
-        with mock.patch('order.models.trigger_event') as trigger:
+        with self.assertRaises(ValidationError) as err:
             order_b.complete_order()
-            trigger.assert_not_called()
+
+        self.assertIn('Return Order is already Complete', str(err.exception))
 
         rma.refresh_from_db()
         self.assertEqual(rma.status, ReturnOrderStatus.COMPLETE.value)
@@ -4017,7 +4019,8 @@ class TransferOrderTest(OrderTest):
         self.assertEqual(instance_b.status, TransferOrderStatus.PENDING)
 
         with mock.patch('order.models.trigger_event') as trigger:
-            instance_b.cancel_order()
+            with self.assertRaises(ValidationError):
+                instance_b.cancel_order()
             trigger.assert_not_called()
 
         to.refresh_from_db()
@@ -4450,11 +4453,21 @@ class TransferOrderTest(OrderTest):
         with self.assertRaises(ValidationError) as err:
             instance_b.complete_order(None)
 
-        self.assertIn('Order is already complete', str(err.exception))
+        self.assertIn('Transfer Order is already Complete', str(err.exception))
 
         # The transferred quantity has not been double-counted
         line.refresh_from_db()
         self.assertEqual(line.transferred, 10)
+
+        # check that the wrong starting point also triggers an error
+        instance_b.status = TransferOrderStatus.CANCELLED.value
+        instance_b.save()
+        with self.assertRaises(ValidationError) as err:
+            instance_b.complete_order(None)
+        self.assertIn(
+            'Invalid transition on Transfer Order.status (source value should be 20, is 40)',
+            str(err.exception),
+        )
 
     def test_output_options(self):
         """Test the output options for the TransferOrder detail endpoint."""
