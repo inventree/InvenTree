@@ -295,6 +295,15 @@ class InvenTreeCustomStatusSerializerMixin:
         itself on `self._custom_leader_fields` as it is built, so that its
         'follower' field (`status_custom_key`), built later in the same pass, can
         read its choices/read_only state directly - without touching `self.fields`.
+
+        That throwaway instance must be built the same way DRF's own `get_fields()`
+        builds the *real* one - which includes merging in `Meta.extra_kwargs` /
+        `Meta.read_only_fields` (e.g. `status` is typically listed as read-only
+        there). DRF applies that merge itself, in `get_fields()`, *after*
+        `build_field()` returns - a step this method is never otherwise party to.
+        Both `get_extra_kwargs()` and `include_extra_kwargs()` are pure functions
+        of `self.Meta` / plain dicts, so - unlike `self.fields` - they're safe to
+        call here.
         """
         field_cls, field_kwargs = super().build_standard_field(field_name, model_field)
         if issubclass(field_cls, ChoiceField) and isinstance(
@@ -306,7 +315,11 @@ class InvenTreeCustomStatusSerializerMixin:
 
             if self._custom_leader_fields is None:
                 self._custom_leader_fields = {}
-            self._custom_leader_fields[field_name] = field_cls(**field_kwargs)
+            leader_extra_kwargs = self.get_extra_kwargs().get(field_name, {})
+            leader_kwargs = self.include_extra_kwargs(
+                dict(field_kwargs), leader_extra_kwargs
+            )
+            self._custom_leader_fields[field_name] = field_cls(**leader_kwargs)
         elif isinstance(model_field, ExtraInvenTreeCustomStatusModelField):
             field_cls = ExtraCustomChoiceField
             field_kwargs['choice_mdl'] = model_field.model
