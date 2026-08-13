@@ -3716,6 +3716,42 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
 
         self.assertEqual(models.ReturnOrderLineItem.objects.count(), n - 1)
 
+    def test_bulk_update(self):
+        """Test that we can bulk update the 'outcome' field for multiple ReturnOrderLineItems via the API."""
+        ro = models.ReturnOrder.objects.get(pk=6)
+
+        # Create some extra line items against the same order, so we have multiple to update
+        models.ReturnOrderLineItem.objects.bulk_create([
+            models.ReturnOrderLineItem(order=ro, item_id=1006, quantity=1),
+            models.ReturnOrderLineItem(order=ro, item_id=1007, quantity=1),
+        ])
+
+        items = list(
+            models.ReturnOrderLineItem.objects.filter(order=ro).values_list(
+                'pk', flat=True
+            )
+        )
+
+        self.assertEqual(len(items), 3)
+
+        for line in models.ReturnOrderLineItem.objects.filter(pk__in=items):
+            self.assertEqual(line.outcome, ReturnOrderLineStatus.PENDING)
+
+        url = reverse('api-return-order-line-list')
+
+        data = {'items': items, 'outcome': ReturnOrderLineStatus.REPAIR.value}
+
+        # Update should fail without the correct role
+        self.patch(url, data, expected_code=403)
+
+        self.assignRole('return_order.change')
+
+        response = self.patch(url, data, expected_code=200).data
+        self.assertEqual(len(response['items']), 3)
+
+        for line in models.ReturnOrderLineItem.objects.filter(pk__in=items):
+            self.assertEqual(line.outcome, ReturnOrderLineStatus.REPAIR.value)
+
     def test_extra_line_bulk_delete(self):
         """Test that we can bulk delete multiple ReturnOrderExtraLine items via the API."""
         ro = models.ReturnOrder.objects.first()
