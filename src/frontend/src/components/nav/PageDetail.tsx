@@ -141,14 +141,71 @@ export function PageDetail({
     return [...(extraActionArray ?? []), ...(actions ?? [])];
   }, [extraActions, actions]);
 
+  const hasDetailNavigation = Boolean(
+    detailNavigation.previous ||
+      detailNavigation.next ||
+      detailNavigation.position
+  );
+
   return (
     <>
       <PageTitle title={pageTitleString} />
       <Stack gap='xs'>
-        {computedBreadcrumbs && computedBreadcrumbs.length > 0 && (
+        {((computedBreadcrumbs?.length ?? 0) > 0 || hasDetailNavigation) && (
           <BreadcrumbList
             navCallback={breadcrumbAction}
-            breadcrumbs={computedBreadcrumbs}
+            breadcrumbs={computedBreadcrumbs ?? []}
+            rightSection={
+              hasDetailNavigation ? (
+                <Group
+                  gap={5}
+                  justify='right'
+                  wrap='nowrap'
+                  align='center'
+                  data-testid='detail-navigation'
+                  style={{ flexShrink: 0 }}
+                >
+                  {detailNavigation.previous && (
+                    <Tooltip label={t`Previous`} position='top'>
+                      <ActionIcon
+                        component='a'
+                        href={detailNavigation.previous.href}
+                        onClick={detailNavigation.previous.onClick}
+                        size='md'
+                        variant='subtle'
+                        aria-label={t`Previous`}
+                      >
+                        <IconChevronLeft size='1.25rem' />
+                      </ActionIcon>
+                    </Tooltip>
+                  )}
+                  {detailNavigation.position && (
+                    <Text
+                      size='xs'
+                      c='dimmed'
+                      px={4}
+                      aria-label='detail-navigation-position'
+                    >
+                      {t`${detailNavigation.position.current} of ${detailNavigation.position.total}`}
+                    </Text>
+                  )}
+                  {detailNavigation.next && (
+                    <Tooltip label={t`Next`} position='top'>
+                      <ActionIcon
+                        component='a'
+                        href={detailNavigation.next.href}
+                        onClick={detailNavigation.next.onClick}
+                        size='md'
+                        variant='subtle'
+                        aria-label={t`Next`}
+                      >
+                        <IconChevronRight size='1.25rem' />
+                      </ActionIcon>
+                    </Tooltip>
+                  )}
+                </Group>
+              ) : undefined
+            }
           />
         )}
         <Paper p='xs' radius='xs' shadow='xs'>
@@ -195,49 +252,8 @@ export function PageDetail({
                 </Group>
               )}
             </Group>
-            {(detailNavigation.previous ||
-              detailNavigation.next ||
-              detailNavigation.position ||
-              computedActions.length > 0) && (
-              <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
-                {detailNavigation.previous && (
-                  <Tooltip label={t`Previous`} position='top'>
-                    <ActionIcon
-                      component='a'
-                      href={detailNavigation.previous.href}
-                      onClick={detailNavigation.previous.onClick}
-                      size='sm'
-                      variant='subtle'
-                      aria-label={t`Previous`}
-                    >
-                      <IconChevronLeft size='1rem' />
-                    </ActionIcon>
-                  </Tooltip>
-                )}
-                {detailNavigation.position && (
-                  <Text
-                    size='xs'
-                    c='dimmed'
-                    px={4}
-                    aria-label='detail-navigation-position'
-                  >
-                    {t`${detailNavigation.position.current} of ${detailNavigation.position.total}`}
-                  </Text>
-                )}
-                {detailNavigation.next && (
-                  <Tooltip label={t`Next`} position='top'>
-                    <ActionIcon
-                      component='a'
-                      href={detailNavigation.next.href}
-                      onClick={detailNavigation.next.onClick}
-                      size='sm'
-                      variant='subtle'
-                      aria-label={t`Next`}
-                    >
-                      <IconChevronRight size='1rem' />
-                    </ActionIcon>
-                  </Tooltip>
-                )}
+            {computedActions.length > 0 && (
+              <Group gap={5} justify='right' wrap='nowrap' align='center'>
                 {computedActions}
               </Group>
             )}

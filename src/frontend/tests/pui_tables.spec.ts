@@ -152,6 +152,10 @@ test('Tables - Detail navigation', async ({ browser }) => {
   const position = page.getByText(/^\d+ of \d+$/).first();
   await expect(position).toHaveText(/1 of \d+/);
 
+  const breadcrumbBar = page.getByTestId('breadcrumb-list');
+  const detailNavigation = breadcrumbBar.getByTestId('detail-navigation');
+  await expect(detailNavigation).toBeVisible();
+
   const next = page.getByRole('link', { name: 'Next', exact: true });
   await expect(next).toBeVisible();
   await expect(next.locator('svg')).toBeVisible();

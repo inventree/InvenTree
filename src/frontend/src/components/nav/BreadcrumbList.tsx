@@ -24,10 +24,12 @@ export type Breadcrumb = {
  */
 export function BreadcrumbList({
   breadcrumbs,
-  navCallback
+  navCallback,
+  rightSection
 }: Readonly<{
   breadcrumbs: Breadcrumb[];
   navCallback?: () => void;
+  rightSection?: React.ReactNode;
 }>) {
   const navigate = useNavigate();
 
@@ -47,40 +49,48 @@ export function BreadcrumbList({
   }, [breadcrumbs]);
 
   return (
-    <Paper p='7' radius='xs' shadow='xs'>
-      <Group gap='xs'>
-        {navCallback && (
-          <ActionIcon
-            key='nav-breadcrumb-action'
-            aria-label='nav-breadcrumb-action'
-            onClick={navCallback}
-            variant='transparent'
-          >
-            <IconMenu2 />
-          </ActionIcon>
-        )}
-        <Breadcrumbs key='breadcrumbs' separator='>'>
-          {elements.map((breadcrumb, index) => {
-            return (
-              <Anchor
-                key={`${index}-${breadcrumb.name}`}
-                href={`/${baseUrl}${breadcrumb.url}`}
-                aria-label={`breadcrumb-${index}-${identifierString(
-                  breadcrumb.name
-                )}`}
-                onClick={(event: any) =>
-                  breadcrumb.url &&
-                  navigateToLink(breadcrumb.url, navigate, event)
-                }
-              >
-                <Group gap={4}>
-                  {breadcrumb.icon}
-                  <Text size='sm'>{breadcrumb.name}</Text>
-                </Group>
-              </Anchor>
-            );
-          })}
-        </Breadcrumbs>
+    <Paper p='7' radius='xs' shadow='xs' data-testid='breadcrumb-list'>
+      <Group gap='xs' justify='space-between' align='center' wrap='nowrap'>
+        <Group
+          gap='xs'
+          wrap='nowrap'
+          align='center'
+          style={{ flex: 1, minWidth: 0 }}
+        >
+          {navCallback && (
+            <ActionIcon
+              key='nav-breadcrumb-action'
+              aria-label='nav-breadcrumb-action'
+              onClick={navCallback}
+              variant='transparent'
+            >
+              <IconMenu2 />
+            </ActionIcon>
+          )}
+          <Breadcrumbs key='breadcrumbs' separator='>'>
+            {elements.map((breadcrumb, index) => {
+              return (
+                <Anchor
+                  key={`${index}-${breadcrumb.name}`}
+                  href={`/${baseUrl}${breadcrumb.url}`}
+                  aria-label={`breadcrumb-${index}-${identifierString(
+                    breadcrumb.name
+                  )}`}
+                  onClick={(event: any) =>
+                    breadcrumb.url &&
+                    navigateToLink(breadcrumb.url, navigate, event)
+                  }
+                >
+                  <Group gap={4} align='center'>
+                    {breadcrumb.icon}
+                    <Text size='sm'>{breadcrumb.name}</Text>
+                  </Group>
+                </Anchor>
+              );
+            })}
+          </Breadcrumbs>
+        </Group>
+        {rightSection}
       </Group>
     </Paper>
   );
