@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 531
 
 INVENTREE_API_TEXT = """
 
-v531 -> 2026-08-13 : no pull request yet
+v531 -> 2026-08-13 : https://github.com/inventree/InvenTree/pull/12635
     - Adds "bulk update" support for the ReturnOrderLineItem API endpoint
 
 v530 -> 2026-07-28 : https://github.com/inventree/InvenTree/pull/12487
