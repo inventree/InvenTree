@@ -305,8 +305,8 @@ class SalesOrderTest(InvenTreeAPITestCase):
             self.order.can_complete(raise_error=True)
 
         # Now try to ship it - should fail
-        result = self.order.ship_order(None)
-        self.assertFalse(result)
+        with self.assertRaises(ValidationError):
+            self.order.ship_order(None)
 
     def test_order_cancel_stale_instance_is_noop(self):
         """A second cancellation attempt with a stale order instance must be a no-op.
@@ -334,9 +334,8 @@ class SalesOrderTest(InvenTreeAPITestCase):
         # cancellation must be skipped based on the database state
         self.assertEqual(order_b.status, status.SalesOrderStatus.PENDING)
 
-        with mock.patch('order.models.trigger_event') as trigger:
+        with self.assertRaises(ValidationError):
             order_b.cancel_order()
-            trigger.assert_not_called()
 
         self.order.refresh_from_db()
         self.assertEqual(self.order.status, status.SalesOrderStatus.CANCELLED)
@@ -353,9 +352,8 @@ class SalesOrderTest(InvenTreeAPITestCase):
         self.assertEqual(SalesOrderAllocation.objects.count(), 2)
 
         # Attempt to ship the order (but shipments are not completed!)
-        result = self.order.ship_order(None)
-
-        self.assertFalse(result)
+        with self.assertRaises(ValidationError):
+            self.order.ship_order(None)
 
         self.assertIsNone(self.shipment.shipment_date)
         self.assertFalse(self.shipment.is_complete())
@@ -461,9 +459,8 @@ class SalesOrderTest(InvenTreeAPITestCase):
         # completion must be skipped based on the database state
         self.assertEqual(order_b.status, status.SalesOrderStatus.SHIPPED)
 
-        with mock.patch('order.models.trigger_event') as trigger:
+        with self.assertRaises(ValidationError):
             self.assertFalse(order_b.complete_order(None))
-            trigger.assert_not_called()
 
         self.order.refresh_from_db()
         self.assertEqual(self.order.status, status.SalesOrderStatus.COMPLETE)

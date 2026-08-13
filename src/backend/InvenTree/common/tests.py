@@ -4,6 +4,7 @@ import io
 import json
 import os
 import time
+import uuid
 from datetime import timedelta
 from http import HTTPStatus
 from unittest import mock
@@ -1333,6 +1334,18 @@ class NotificationTest(InvenTreeAPITestCase):
         self.assertFalse(NotificationEntry.check_recent('test.notification2', 1, delta))
 
         self.assertTrue(NotificationEntry.check_recent('test.notification', 1, delta))
+
+    def test_uuid_notification_entry(self):
+        """Notification entries support objects with UUID primary keys."""
+        notification_uid = uuid.uuid4()
+
+        NotificationEntry.notify('test.uuid_notification', notification_uid)
+
+        self.assertTrue(
+            NotificationEntry.check_recent(
+                'test.uuid_notification', notification_uid, timedelta(days=1)
+            )
+        )
 
     def test_api_list(self):
         """Test list URL."""

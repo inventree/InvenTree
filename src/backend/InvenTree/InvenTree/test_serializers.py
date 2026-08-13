@@ -1,5 +1,9 @@
 """Low level tests for serializers."""
 
+import sys
+import threading
+from concurrent.futures import ThreadPoolExecutor
+
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.urls import path, reverse
@@ -153,3 +157,62 @@ class FilteredSerializers(InvenTreeAPITestCase):
             response = self.client.get(url)
             self.assertContains(response, 'field_f')
             self.assertEqual(response.data[0]['field_f'], 'sample123')
+
+
+class ConcurrentOptionalFieldTests(InvenTreeAPITestCase):
+    """Regression test for a race condition in `FilterableSerializerMixin.get_field_names`.
+
+    When `Meta.fields` is a plain list (as it is for every real serializer in this
+    codebase), DRF's `ModelSerializer.get_field_names()` returns that *exact* list
+    object rather than a copy - a single list shared by every instance of the
+    serializer class, across every thread. `get_field_names()` used to `.append()`/
+    `.remove()` an OptionalField's name directly on that shared list.
+
+    Two concurrent requests that disagree on whether an OptionalField (here,
+    `field_b`) should be included could then corrupt each other's output: one
+    request's `.append('field_b')` could be immediately undone by another,
+    concurrent request's `.remove('field_b')` on the *same* list object, before
+    the first request's own field-building loop (DRF's `get_fields()`, which
+    iterates this same list) reached it - silently dropping the field from a
+    response that should have included it.
+    """
+
+    def test_concurrent_optional_field_inclusion(self):
+        """Serializers built concurrently with conflicting field_b inclusion must not corrupt each other.
+
+        Builds many `SampleSerializer` instances in parallel threads, alternating
+        whether `field_b` should be included (passed directly as a constructor
+        kwarg, per `FilterableSerializerMixin.is_field_included`, so this needs no
+        HTTP request/response machinery). Every instance's rendered `.data` must
+        match what *that* instance asked for, regardless of what other concurrently
+        running instances asked for.
+        """
+        errors = []
+        lock = threading.Lock()
+
+        def worker(include: bool):
+            serializer = SampleSerializer(self.user, field_b=include)
+            has_field_b = 'field_b' in serializer.data
+            if has_field_b != include:
+                with lock:
+                    errors.append((include, has_field_b))
+
+        # Force frequent thread switches - the race window between the shared
+        # list being fixed up and it being iterated over is only a handful of
+        # bytecodes wide, so the default switch interval rarely lands inside it.
+        old_interval = sys.getswitchinterval()
+        sys.setswitchinterval(1e-6)
+        try:
+            with ThreadPoolExecutor(max_workers=16) as executor:
+                futures = [executor.submit(worker, i % 2 == 0) for i in range(2000)]
+                for future in futures:
+                    future.result()
+        finally:
+            sys.setswitchinterval(old_interval)
+
+        self.assertEqual(
+            errors,
+            [],
+            f'{len(errors)} / 2000 concurrently-built serializers had the wrong '
+            f"'field_b' inclusion (expected, got) pairs shown above",
+        )

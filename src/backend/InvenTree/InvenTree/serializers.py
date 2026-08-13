@@ -296,7 +296,16 @@ class FilterableSerializerMixin:
 
     def get_field_names(self, declared_fields, info):
         """Remove unused fields before returning field names."""
-        field_names = super().get_field_names(declared_fields, info)
+        # Note: when `Meta.fields` is a list/tuple, DRF's base `get_field_names`
+        # returns that *exact* list object rather than a copy - a single list
+        # shared by every instance of this serializer class, across every thread.
+        # Copy it before mutating below - otherwise concurrent requests that
+        # disagree on whether an OptionalField (e.g. `tags`) should be included
+        # append/remove it on each other's shared list. A request whose own
+        # append lands can still have the field silently removed again by a
+        # concurrent request's `.remove()` before its own field-building loop
+        # (in DRF's `get_fields()`, which iterates this same list) reaches it.
+        field_names = list(super().get_field_names(declared_fields, info))
 
         # Add any optional fields which are included
         for field_name in self.optional_fields:

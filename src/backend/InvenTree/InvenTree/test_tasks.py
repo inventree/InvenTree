@@ -211,7 +211,7 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
             entry = NotificationEntry.objects.get()
 
             self.assertEqual(message.link, release_url)
-            self.assertEqual(entry.uid, 0)
+            self.assertEqual(entry.uid, '0')
 
             serialized = NotificationMessageSerializer(message).data
             self.assertEqual(serialized['target']['link'], release_url)

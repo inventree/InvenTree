@@ -1012,13 +1012,11 @@ USERSESSIONS_TRACK_ACTIVITY = True
 # allauth rate limiting: https://docs.allauth.org/en/latest/account/rate_limits.html
 # The default login rate limit is "5/m/user,5/m/ip,5/m/key"
 login_attempts = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5)
-
 try:
-    login_attempts = int(login_attempts)
-    login_attempts = f'{login_attempts}/m,{login_attempts}/m'
+    # Only the per-account ('key') limit is user-configurable with an int - use a str for more custom limits
+    login_attempts = f'10/m/ip,{int(login_attempts)}/m/key'
 except ValueError:  # pragma: no cover
     pass
-
 ACCOUNT_RATE_LIMITS = {'login_failed': login_attempts}
 
 # Default protocol for login
