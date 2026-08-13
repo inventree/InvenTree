@@ -69,6 +69,9 @@ class GetSimpleLoginView(GenericAPIView):
             return User.objects.get(email=email)
         except User.DoesNotExist:
             return None
+        except User.MultipleObjectsReturned:
+            logger.warning('Multiple users found with email: %s', email)
+            return None
 
     def create_link(self, user):
         """Create a login link for this user."""
