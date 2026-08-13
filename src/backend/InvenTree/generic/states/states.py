@@ -9,8 +9,8 @@ from typing import Optional
 logger = logging.getLogger('inventree')
 
 
-class BaseEnum(enum.IntEnum):  # noqa: PLW1641
-    """An `Enum` capabile of having its members have docstrings.
+class BaseEnum(enum.IntEnum):
+    """An `Enum` capable of having its members have docstrings.
 
     Based on https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums
     """
@@ -41,6 +41,14 @@ class BaseEnum(enum.IntEnum):  # noqa: PLW1641
             return self.value == obj.value
 
         return super().__eq__(obj)
+
+    def __hash__(self):
+        """Return integer hash so enum members are usable as dict keys and in sets.
+
+        Required because we define ``__eq__``: Python sets ``__hash__ = None``
+        when ``__eq__`` is overridden without a matching ``__hash__``.
+        """
+        return hash(self.value)
 
     def __ne__(self, obj):
         """Override inequality operator to allow comparison with int."""
@@ -262,7 +270,7 @@ class ColorEnum(Enum):
 class StatusCodeMixin:
     """Mixin class which handles custom 'status' fields.
 
-    - Implements a 'set_stutus' method which can be used to set the status of an object
+    - Implements a 'set_status' method which can be used to set the status of an object
     - Implements a 'get_status' method which can be used to retrieve the status of an object
 
     This mixin assumes that the implementing class has a 'status' field,
