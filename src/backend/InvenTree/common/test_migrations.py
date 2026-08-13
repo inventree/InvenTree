@@ -309,7 +309,7 @@ class TestNoteMigrations(MigratorTestCase):
         ('stock', '0125_remove_mptt_fields'),
     ]
 
-    migrate_to = ('common', '0051_remove_notesimage_model_id_and_more')
+    migrate_to = ('common', '0052_remove_notesimage_model_id_and_more')
 
     def generate_image(self, name: str):
         """Generate a dummy image file for upload."""
