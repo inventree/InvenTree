@@ -1067,7 +1067,10 @@ When a model has multiple notes and you want to render all of them, access the `
 
 ## Rendering Markdown
 
-Some data fields (such as the *Notes* field available on many internal database models) support [markdown formatting](https://en.wikipedia.org/wiki/Markdown). To render markdown content in a custom report, there are template filters made available through the [django-markdownify](https://github.com/erwinmatijsen/django-markdownify) library. This library provides functionality for converting markdown content to HTML representation, allowing it to be then rendered to PDF by the InvenTree report generation pipeline.
+Some data fields (such as those provided by custom plugin models) may support [markdown formatting](https://en.wikipedia.org/wiki/Markdown). To render markdown content in a custom report, there are template filters made available through the [django-markdownify](https://github.com/erwinmatijsen/django-markdownify) library. This library provides functionality for converting markdown content to HTML representation, allowing it to be then rendered to PDF by the InvenTree report generation pipeline.
+
+!!! info "Notes"
+    [Notes](../concepts/notes.md) content is rich-text (stored as HTML) rather than markdown, and is already sanitized. Use the [note](#note) tag to render it - do not pass it through `markdownify`.
 
 To render markdown content in a report, consider the following simplified example:
 
@@ -1076,9 +1079,9 @@ To render markdown content in a report, consider the following simplified exampl
 
 {% load markdownify %}
 
-<h3>Part Notes</h3>
+<h3>Description</h3>
 <p>
-    {{ part.notes | markdownify }}
+    {{ some_markdown_field | markdownify }}
 </p>
 {% endraw %}
 ```
