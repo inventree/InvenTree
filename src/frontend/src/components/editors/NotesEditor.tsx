@@ -195,11 +195,11 @@ export default function NotesEditor({
 
   const [selectedNote, setSelectedNote] = useState<any>(undefined);
 
-  const loadNote = useCallback(
-    (noteId: number) => {
-      const note = notesQuery.data?.find((note: any) => note.pk === noteId);
-      setSelectedNote(note);
-
+  // Push a note's content into the editor, discarding any local unsaved edits.
+  // Used both for switching to a different note, and for the explicit "reset"
+  // action, which intentionally discards unsaved changes.
+  const applyNoteContent = useCallback(
+    (note: any) => {
       if (editor && !editor.isDestroyed) {
         // Pass emitUpdate:false to avoid triggering dirty state when loading content
         editor.commands.setContent(
@@ -210,13 +210,30 @@ export default function NotesEditor({
 
       setIsDirty(false);
     },
-    [editor, notesQuery.data]
+    [editor]
   );
 
+  // Track which note's content is currently loaded into the editor. A
+  // background refetch of the notes list (e.g. after saving, editing a note's
+  // metadata elsewhere, or another tab changing notes) must not silently
+  // overwrite content the user is actively editing - only (re)load editor
+  // content when the selected note itself changes, or when there are no
+  // unsaved local edits to protect. Header metadata (title/description/etc.)
+  // stays in sync regardless, since only the editor content is at risk.
+  const loadedNoteIdRef = useRef<number | undefined>(undefined);
+
   useEffect(() => {
-    // setIsEditing(false);
-    loadNote(selectedNoteId ?? -1);
-  }, [editor, selectedNoteId, notesQuery.data]);
+    const noteId = selectedNoteId ?? -1;
+    const note = notesQuery.data?.find((note: any) => note.pk === noteId);
+
+    setSelectedNote(note);
+
+    const switchingNote = loadedNoteIdRef.current !== noteId;
+    if (switchingNote || !isDirty) {
+      loadedNoteIdRef.current = noteId;
+      applyNoteContent(note);
+    }
+  }, [editor, selectedNoteId, notesQuery.data, isDirty, applyNoteContent]);
 
   // Adjust the note selection
   useEffect(() => {
@@ -319,8 +336,11 @@ export default function NotesEditor({
   });
 
   const reloadNote = useCallback(() => {
-    loadNote(selectedNoteId ?? -1);
-  }, [selectedNoteId, loadNote]);
+    const note = notesQuery.data?.find(
+      (note: any) => note.pk === (selectedNoteId ?? -1)
+    );
+    applyNoteContent(note);
+  }, [selectedNoteId, notesQuery.data, applyNoteContent]);
 
   const saveNote = useCallback(() => {
     if (!selectedNoteId || !editor) {
