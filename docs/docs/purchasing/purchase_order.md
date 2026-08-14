@@ -92,12 +92,22 @@ Once the "Add Line Item" form opens, select a supplier part in the list.
 
 Fill out the rest of the form then click on <span class="badge inventree confirm">Submit</span>
 
+!!! info "Auto Pricing"
+    Enable the *Auto Pricing* option to automatically calculate the line item's *Unit Price* from the [supplier part pricing data](../part/pricing.md#supplier-pricing), based on the line item quantity. While enabled, the *Unit Price* field is calculated automatically and cannot be edited manually. This option is disabled by default.
+
+!!! info "Discount"
+    An optional [discount](../concepts/pricing.md#line-item-discount) percentage can be applied to each line item.
+
 #### Upload File
 
 It is possible to upload an exported purchase order from the supplier instead of manually entering each line item. To start the process, click on <span class="badge inventree confirm">{{ icon("upload") }} Upload File</span> button next to the <span class="badge inventree add">{{ icon("plus-circle") }} Add Line Item</span> button and follow the steps.
 
 !!! info "Supported Formats"
 	This process only supports tabular data and the following formats are supported: CSV, TSV, XLS, XLSX, JSON and YAML
+
+### Extra Line Items
+
+While [line items](#add-line-items) must reference a particular supplier part, extra line items are available for any other itemized information that needs to be conveyed with the order - for example freight charges or service fees. Extra line items support an optional [discount](../concepts/pricing.md#line-item-discount) percentage, the same as regular line items.
 
 ## Issue Order
 
@@ -128,6 +138,12 @@ When receiving items from a purchase order, the location of the items must be sp
 Each item marked as "received" is automatically converted into a stock item.
 
 To see the list of stock items created from the purchase order, click on the <span class="badge inventree nav side">{{ icon("arrow-right") }} Received Items</span> tab.
+
+### Serial Numbers
+
+If the part being received is [trackable](../part/trackable.md), serial numbers can optionally be entered at the point of receipt. If provided, an individual (serialized) stock item is created for each unit received.
+
+Serial numbers are *not* required to receive a trackable part - if left blank, a single (non-serialized) stock item is created for the received quantity. This is useful, for example, when receiving a batch of units against an [external build order](../manufacturing/external.md) which will be [serialized later](../part/trackable.md#build-outputs-without-serial-numbers) in the manufacturing process.
 
 ### Item Value Currency
 
@@ -215,3 +231,4 @@ The following [global settings](../settings/global.md) are available for purchas
 {{ globalsetting("PURCHASEORDER_CONVERT_CURRENCY") }}
 {{ globalsetting("PURCHASEORDER_EDIT_COMPLETED_ORDERS") }}
 {{ globalsetting("PURCHASEORDER_AUTO_COMPLETE") }}
+{{ globalsetting("PURCHASEORDER_MERGE_LINE_ITEMS") }}

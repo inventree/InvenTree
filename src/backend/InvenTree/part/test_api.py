@@ -52,6 +52,7 @@ class PartImageTestMixin:
         'part.delete',
         'part_category.change',
         'part_category.add',
+        'stock_location.view',
     ]
 
     @classmethod
@@ -820,6 +821,7 @@ class PartAPITestBase(InvenTreeAPITestCase):
         'part.delete',
         'part_category.change',
         'part_category.add',
+        'stock_location.view',
     ]
 
 
@@ -1636,6 +1638,36 @@ class PartCreationTests(PartAPITestBase):
         self.assertFalse(response.data['active'])
         self.assertFalse(response.data['purchaseable'])
 
+    def test_create_duplicate_no_ipn_revision(self):
+        """Test that creating a duplicate part (same name, no IPN/revision) returns a 400.
+
+        Regression test for a bug where the duplicate-name check was skipped
+        whenever IPN and revision were both blank, letting the request fall
+        through to an unhandled database IntegrityError (500) instead of a
+        proper validation error (400).
+        """
+        url = reverse('api-part-list')
+
+        data = {
+            'name': 'TEST1',
+            'category': 1,
+            'assembly': True,
+            'component': True,
+            'consumable': False,
+            'is_template': False,
+            'purchaseable': False,
+            'salable': False,
+            'testable': False,
+            'trackable': False,
+            'virtual': False,
+        }
+
+        self.post(url, data, expected_code=201)
+
+        # Attempting to create the exact same part again must be rejected cleanly
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('non_field_errors', response.data)
+
     def test_notes_on_create(self):
         """Test that notes can be set when creating a Part."""
         list_url = reverse('api-part-list')
@@ -2390,10 +2422,13 @@ class PartListTests(PartAPITestBase):
             query_count_with_price_breaks - query_count_without_price_breaks
         )
 
-        # There are 2 additional queries, 1 for the salepricebreak subselect and 1 for Currency codes because of InvenTreeCurrencySerializer
+        # There are 4 additional queries: 1 for the salepricebreak subselect, 1 for
+        # Currency codes because of InvenTreeCurrencySerializer, and 2 for the one-off
+        # permission check (fetch groups + rule sets) gating the price_breaks field's
+        # embedded PartSellPriceBreak model - this cost is fixed per-request, not per-row.
         self.assertLessEqual(
             query_difference,
-            2,
+            4,
             f'Query count difference too high: {query_difference} (with: {query_count_with_price_breaks}, without: {query_count_without_price_breaks})',
         )
 
@@ -2782,6 +2817,25 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
             # The annotated quantity must also match the part.on_order quantity
             self.assertEqual(on_order, p.on_order)
 
+        # Test the 'on_order' filter
+        response = self.get(
+            reverse('api-part-list'),
+            {'category': paint.pk, 'on_order': True},
+            expected_code=200,
+        )
+
+        for item in response.data:
+            self.assertGreater(item['ordering'], 0)
+
+        response = self.get(
+            reverse('api-part-list'),
+            {'category': paint.pk, 'on_order': False},
+            expected_code=200,
+        )
+
+        for item in response.data:
+            self.assertLessEqual(item['ordering'], 0)
+
     def test_building(self):
         """Test the 'building' quantity annotations."""
         # Create a new "buildable" part
@@ -3015,6 +3069,14 @@ class BomItemTest(InvenTreeAPITestCase):
         """Get the detail view for a single BomItem object."""
         from part.models import BomItemSubstitute
 
+        # Viewing 'substitutes' requires the 'bom' role (BomItemSubstitute is not
+        # covered by the part->bomitem RULESET_CHANGE_INHERIT fallback). Grant both
+        # 'add' and 'delete' so the 'bom' RuleSet ends up fully matching the existing
+        # part-inherited bomitem permissions - granting only 'view' would otherwise
+        # cause update_group_roles() to wipe those already-inherited permissions.
+        self.assignRole('bom.add')
+        self.assignRole('bom.delete')
+
         bom_item = BomItem.objects.get(pk=3)
 
         # Create some substitutes for this BomItem
@@ -3092,6 +3154,11 @@ class BomItemTest(InvenTreeAPITestCase):
 
     def test_output_options(self):
         """Test that various output options work as expected."""
+        # Viewing 'substitutes' requires the 'bom' role (see test_get_bom_detail for why
+        # both 'add' and 'delete' are granted together).
+        self.assignRole('bom.add')
+        self.assignRole('bom.delete')
+
         self.run_output_test(
             reverse('api-bom-item-detail', kwargs={'pk': 3}),
             [

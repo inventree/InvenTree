@@ -62,7 +62,7 @@ class TestDriverMachineInterface(TestMachineRegistryMixin, TestCase):
 
         # Check state now
         self.assertEqual(len(registry.get_machine_types()), 1)
-        self.assertEqual(len(registry.get_driver_types()), 3)
+        self.assertEqual(len(registry.get_driver_types()), 4)
         self.assertEqual(len(registry.get_machines()), 0)
 
         # Check for expected machine registry errors
@@ -79,6 +79,7 @@ class TestDriverMachineInterface(TestMachineRegistryMixin, TestCase):
         for slug in [
             'sample-printer-driver',
             'test-label-printer-api',
+            'test-label-printer-options',
             'test-label-printer-error',
         ]:
             instance = registry.get_driver_instance(slug)
@@ -187,23 +188,22 @@ class TestLabelPrinterMachineType(InvenTreeAPITestCase):
             else:
                 self.assertIsNone(machine)
 
-    def create_machine(self):
+    def create_machine(self, driver_key):
         """Create a new label printing machine."""
         registry.initialize(main=True)
 
         PLG_KEY = 'label-printer-test-plugin'
-        DRIVER_KEY = 'test-label-printer-api'
 
         # Ensure that the driver is initialized
         plg_registry.set_plugin_state(PLG_KEY, True)
 
-        driver = registry.get_driver_instance(DRIVER_KEY)
+        driver = registry.get_driver_instance(driver_key)
         self.assertIsNotNone(driver)
 
         machine_config = MachineConfig.objects.create(
             name='Test Label Printer',
             machine_type='label-printer',
-            driver=DRIVER_KEY,
+            driver=driver_key,
             active=True,
         )
 
@@ -218,7 +218,7 @@ class TestLabelPrinterMachineType(InvenTreeAPITestCase):
         """Test arbitrary function calls against a machine."""
         from machine.registry import call_machine_function
 
-        machine = self.create_machine()
+        machine = self.create_machine('test-label-printer-api')
 
         with self.assertRaises(AttributeError):
             call_machine_function(machine.pk, 'fake_function', custom_arg=123)
@@ -231,7 +231,7 @@ class TestLabelPrinterMachineType(InvenTreeAPITestCase):
         """Test the print label method."""
         plugin_ref = 'inventreelabelmachine'
 
-        machine = self.create_machine()
+        machine = self.create_machine('test-label-printer-api')
 
         # setup the label app
         apps.get_app_config('report').create_default_labels()
@@ -297,9 +297,95 @@ class TestLabelPrinterMachineType(InvenTreeAPITestCase):
 
         self.assertIn('is not a valid choice', str(response.data['machine']))
 
+    def test_printing_options_serializer(self):
+        """Test the printing options serializer."""
+        plugin_ref = 'inventreelabelmachine'
+
+        machine = self.create_machine('test-label-printer-options')
+        machine.set_setting('LABEL', 'D', '18')
+
+        # setup the label app
+        apps.get_app_config('report').create_default_labels()
+        plg_registry.reload_plugins()
+
+        config = cast(PluginConfig, plg_registry.get_plugin(plugin_ref).plugin_config())
+        config.active = True
+        config.save()
+
+        parts = Part.objects.all()[:2]
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template
+
+        url = reverse('api-label-print')
+
+        # Test print using machine defaults (LABEL: 18)
+        with self.assertLogs('inventree', level='WARNING') as cm:
+            self.post(
+                url,
+                {
+                    'plugin': config.key,
+                    'items': [a.pk for a in parts],
+                    'template': template.pk,
+                    'machine': str(machine.pk),
+                },
+                expected_code=201,
+            )
+
+        # Check for expected messages
+        messages = [
+            'Printing Label: TestingLabelPrinterDriverOptions',
+            f'machine: {machine.pk}',
+            f'label: {template.pk}',
+            f'item: {parts[0].pk}',
+            f'item: {parts[1].pk}',
+            'options: label: 18',
+        ]
+
+        for message in messages:
+            result = False
+            for item in cm.records:
+                if message in str(item):
+                    result = True
+                    break
+
+            self.assertTrue(result, f'Message not found: {message}')
+
+        # Test print using print options (label: 24)
+        with self.assertLogs('inventree', level='WARNING') as cm:
+            self.post(
+                url,
+                {
+                    'plugin': config.key,
+                    'items': [a.pk for a in parts],
+                    'template': template.pk,
+                    'machine': str(machine.pk),
+                    'driver_options': {'label': '24'},
+                },
+                expected_code=201,
+            )
+
+        # Check for expected messages
+        messages = [
+            'Printing Label: TestingLabelPrinterDriverOptions',
+            f'machine: {machine.pk}',
+            f'label: {template.pk}',
+            f'item: {parts[0].pk}',
+            f'item: {parts[1].pk}',
+            'options: label: 24',
+        ]
+
+        for message in messages:
+            result = False
+            for item in cm.records:
+                if message in str(item):
+                    result = True
+                    break
+
+            self.assertTrue(result, f'Message not found: {message}')
+
     def test_location_invalid_pk(self):
         """Test that location property returns None for an invalid PK without raising."""
-        machine = self.create_machine()
+        machine = self.create_machine('test-label-printer-api')
 
         machine.set_setting('LOCATION', 'M', 999999)
 

@@ -133,6 +133,7 @@ export function useReturnOrderLineItemFields({
       },
       price: {},
       price_currency: {},
+      discount: {},
       project_code: ProjectCodeField(),
       target_date: {},
       notes: {},

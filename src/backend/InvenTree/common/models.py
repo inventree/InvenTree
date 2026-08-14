@@ -1656,10 +1656,12 @@ class NotificationEntry(MetaMixin):
 
     key = models.CharField(max_length=250, blank=False)
 
-    uid = models.IntegerField()
+    # Notification references may point to models with UUID primary keys.
+    # Store the value as text so both integer and non-integer identifiers work.
+    uid = models.CharField(max_length=255)
 
     @classmethod
-    def check_recent(cls, key: str, uid: int, delta: timedelta):
+    def check_recent(cls, key: str, uid: str | int | uuid.UUID, delta: timedelta):
         """Test if a particular notification has been sent in the specified time period."""
         since = InvenTree.helpers.current_date() - delta
 
@@ -1668,7 +1670,7 @@ class NotificationEntry(MetaMixin):
         return entries.exists()
 
     @classmethod
-    def notify(cls, key: str, uid: int):
+    def notify(cls, key: str, uid: str | int | uuid.UUID):
         """Notify the database that a particular notification has been sent out."""
         entry, _ = cls.objects.get_or_create(key=key, uid=uid)
 
@@ -1722,6 +1724,13 @@ class NotificationMessage(models.Model):
     name = models.CharField(max_length=250, blank=False)
 
     message = models.CharField(max_length=250, blank=True, null=True)
+
+    link = models.URLField(
+        max_length=500,
+        blank=True,
+        null=True,
+        help_text=_('Optional explicit URL associated with this notification'),
+    )
 
     creation = models.DateTimeField(auto_now_add=True)
 
@@ -2046,9 +2055,12 @@ class Attachment(
 
     def __str__(self):
         """Human name for attachment."""
-        if self.attachment is not None:
+        if self.attachment and self.attachment.name:
             return os.path.basename(self.attachment.name)
-        return str(self.link)
+        elif self.link:
+            return str(self.link)
+        else:
+            return super().__str__()
 
     def validate_rename(self, filename: str):
         """Validate that the provided filename is valid, for renaming an attachment."""

@@ -1979,7 +1979,10 @@ class StockAdjustmentSerializer(serializers.Serializer):
 
         if pks:
             self.context['_stockitems'] = {
-                obj.pk: obj for obj in StockItem.objects.filter(pk__in=pks)
+                obj.pk: obj
+                for obj in StockItem.objects.filter(pk__in=pks).select_related(
+                    'part', 'location'
+                )
             }
 
         return super().to_internal_value(data)

@@ -3,6 +3,7 @@
 import base64
 import io
 import json
+import threading
 from datetime import date, datetime, timedelta
 from typing import Optional
 from unittest import mock
@@ -10,12 +11,14 @@ from unittest import mock
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import connection
+from django.test import TransactionTestCase, skipUnlessDBFeature
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 from djmoney.money import Money
 from icalendar import Calendar
 from rest_framework import status
+from rest_framework.exceptions import ValidationError as DRFValidationError
 
 from common.currency import currency_codes
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
@@ -24,6 +27,7 @@ from company.models import Company, SupplierPart, SupplierPriceBreak
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
 from order.models import SalesOrderAllocation, SalesOrderLineItem, SalesOrderShipment
+from order.serializers import TransferOrderSerialAllocationSerializer
 from order.status_codes import (
     PurchaseOrderStatus,
     ReturnOrderLineStatus,
@@ -54,7 +58,14 @@ class OrderTest(InvenTreeAPITestCase):
         'transfer_order',
     ]
 
-    roles = ['purchase_order.change', 'sales_order.change', 'transfer_order.change']
+    roles = [
+        'purchase_order.change',
+        'sales_order.change',
+        'transfer_order.change',
+        'part.view',
+        'stock.view',
+        'stock_location.view',
+    ]
 
     def filter(self, filters, count):
         """Test API filters."""
@@ -675,6 +686,39 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
 
+    def test_po_complete_stale_instance_is_noop(self):
+        """A second completion attempt with a stale order instance must be a no-op.
+
+        Regression test: _action_complete() checked 'status' on the caller's
+        (potentially stale) instance, so two concurrent completion requests could
+        both run the completion side effects (duplicate COMPLETED events and
+        duplicate pricing-update scheduling). The status is now re-read (under
+        lock) from the database before the check.
+        """
+        po = models.PurchaseOrder.objects.get(pk=3)
+        self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
+
+        # Two "concurrent" requests each hold their own instance of the order
+        po_a = models.PurchaseOrder.objects.get(pk=po.pk)
+        po_b = models.PurchaseOrder.objects.get(pk=po.pk)
+
+        po_a.complete_order()
+
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
+
+        # The second (stale) instance still believes the order is PLACED -
+        # completion must be skipped based on the database state
+        self.assertEqual(po_b.status, PurchaseOrderStatus.PLACED)
+
+        with self.assertRaises(ValidationError) as err:
+            po_b.complete_order()
+
+        self.assertIn('Purchase Order is already Complete', str(err.exception))
+
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
+
     def test_po_issue(self):
         """Test the PurchaseOrderIssue API endpoint."""
         po = models.PurchaseOrder.objects.get(pk=2)
@@ -1027,6 +1071,42 @@ class PurchaseOrderLineItemTest(OrderTest):
             expected_code=200,
         ).json()
         self.assertEqual(float(li5['purchase_price']), 1)
+
+    def test_po_line_merge_default_setting(self):
+        """Test that merge_items defaults to the global setting value."""
+        self.assignRole('purchase_order.add')
+
+        su = Company.objects.get(pk=1)
+        sp = SupplierPart.objects.get(pk=1)
+        po = models.PurchaseOrder.objects.create(
+            supplier=su, reference='PO-MERGE-DEFAULT'
+        )
+
+        set_global_setting('PURCHASEORDER_MERGE_LINE_ITEMS', False)
+
+        li1 = self.post(
+            reverse('api-po-line-list'),
+            {'order': po.pk, 'part': sp.pk, 'quantity': 1},
+            expected_code=201,
+        ).json()
+
+        li2 = self.post(
+            reverse('api-po-line-list'),
+            {'order': po.pk, 'part': sp.pk, 'quantity': 2},
+            expected_code=201,
+        ).json()
+
+        self.assertNotEqual(li1['pk'], li2['pk'])
+
+        set_global_setting('PURCHASEORDER_MERGE_LINE_ITEMS', True)
+
+        li3 = self.post(
+            reverse('api-po-line-list'),
+            {'order': po.pk, 'part': sp.pk, 'quantity': 3},
+            expected_code=201,
+        ).json()
+
+        self.assertEqual(li1['pk'], li3['pk'])
 
     def test_output_options(self):
         """Test PurchaseOrderLineItem output option endpoint."""
@@ -2275,6 +2355,60 @@ class SalesOrderLineItemTest(OrderTest):
         self.filter({'allocated': 'true'}, 1)
         self.filter({'allocated': 'false'}, n - 1)
 
+    def test_so_line_ordering(self):
+        """Test that the SalesOrderLineItem list can be ordered by order-related fields.
+
+        Regression test for aliased ordering fields ('status', 'shipment_date')
+        which are not present directly on the SalesOrderLineItem model,
+        but rather on the linked SalesOrder.
+        """
+        # Orders 1-3 are 'pending' (status=10), order 4 is 'shipped' (status=20),
+        # order 5 is 'returned' (status=60), order 6 is 'complete' (status=30)
+        # (refer to the 'sales_order' fixture data)
+
+        # Order by 'status' (aliased to 'order__status')
+        response = self.get(
+            self.url, {'ordering': 'status', 'order_detail': True}, expected_code=200
+        )
+
+        statuses = [item['order_detail']['status'] for item in response.data]
+        self.assertEqual(statuses, sorted(statuses))
+        self.assertEqual(statuses[0], SalesOrderStatus.PENDING.value)
+        self.assertEqual(statuses[-1], SalesOrderStatus.RETURNED.value)
+
+        # Reverse the ordering
+        response = self.get(
+            self.url, {'ordering': '-status', 'order_detail': True}, expected_code=200
+        )
+
+        statuses = [item['order_detail']['status'] for item in response.data]
+        self.assertEqual(statuses, sorted(statuses, reverse=True))
+        self.assertEqual(statuses[0], SalesOrderStatus.RETURNED.value)
+
+        # Order by 'shipment_date' (aliased to 'order__shipment_date')
+        order_a = models.SalesOrder.objects.get(pk=4)
+        order_b = models.SalesOrder.objects.get(pk=5)
+
+        order_a.shipment_date = date(2020, 1, 1)
+        order_a.save()
+
+        order_b.shipment_date = date(2024, 1, 1)
+        order_b.save()
+
+        response = self.get(self.url, {'ordering': 'shipment_date'}, expected_code=200)
+
+        order_ids = [item['order'] for item in response.data]
+
+        # Lines for 'order_a' (earlier shipment date) should sort before 'order_b'
+        self.assertLess(order_ids.index(order_a.pk), order_ids.index(order_b.pk))
+
+        # Reverse the ordering - 'order_b' should now come first
+        response = self.get(self.url, {'ordering': '-shipment_date'}, expected_code=200)
+
+        order_ids = [item['order'] for item in response.data]
+
+        self.assertLess(order_ids.index(order_b.pk), order_ids.index(order_a.pk))
+
     def test_so_line_bulk_delete(self):
         """Test that we can bulk delete multiple SalesOrderLineItems via the API."""
         n = models.SalesOrderLineItem.objects.count()
@@ -2807,6 +2941,36 @@ class SalesOrderAllocateTest(OrderTest):
         set_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS', False)
 
         response = self.post(self.url, data, expected_code=201)
+
+
+class SalesOrderAllocationDownloadTest(OrderTest):
+    """Unit tests for downloading SalesOrderAllocation data via the API endpoint."""
+
+    def test_download_csv(self):
+        """Test that SalesOrderAllocation data can be downloaded as a .csv file.
+
+        Regression test for a bug where the SalesOrderAllocation list endpoint
+        did not support data export.
+        """
+        url = reverse('api-so-allocation-list')
+
+        required_cols = ['ID', 'Item', 'Quantity', 'Shipment', 'Line', 'Part', 'Order']
+
+        with self.export_data(url, export_format='csv', expected_code=200) as file:
+            data = self.process_csv(
+                file,
+                required_cols=required_cols,
+                required_rows=SalesOrderAllocation.objects.count(),
+            )
+
+            for row in data:
+                allocation = SalesOrderAllocation.objects.get(pk=row['ID'])
+
+                self.assertEqual(row['Item'], str(allocation.item.pk))
+                self.assertEqual(float(row['Quantity']), float(allocation.quantity))
+                self.assertEqual(row['Line'], str(allocation.line.pk))
+                self.assertEqual(row['Part'], str(allocation.item.part.pk))
+                self.assertEqual(row['Order'], str(allocation.line.order.pk))
 
 
 class SalesOrderAllocateSerialsTest(OrderTest):
@@ -3383,9 +3547,10 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         # completion must be skipped based on the database state
         self.assertEqual(order_b.status, ReturnOrderStatus.IN_PROGRESS.value)
 
-        with mock.patch('order.models.trigger_event') as trigger:
+        with self.assertRaises(ValidationError) as err:
             order_b.complete_order()
-            trigger.assert_not_called()
+
+        self.assertIn('Return Order is already Complete', str(err.exception))
 
         rma.refresh_from_db()
         self.assertEqual(rma.status, ReturnOrderStatus.COMPLETE.value)
@@ -3464,7 +3629,7 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         'supplier_part',
         'stock',
     ]
-    roles = ['return_order.view']
+    roles = ['return_order.view', 'part.view', 'stock.view']
 
     def test_options(self):
         """Test the OPTIONS endpoint."""
@@ -3551,6 +3716,42 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
 
         self.assertEqual(models.ReturnOrderLineItem.objects.count(), n - 1)
 
+    def test_bulk_update(self):
+        """Test that we can bulk update the 'outcome' field for multiple ReturnOrderLineItems via the API."""
+        ro = models.ReturnOrder.objects.get(pk=6)
+
+        # Create some extra line items against the same order, so we have multiple to update
+        models.ReturnOrderLineItem.objects.bulk_create([
+            models.ReturnOrderLineItem(order=ro, item_id=1006, quantity=1),
+            models.ReturnOrderLineItem(order=ro, item_id=1007, quantity=1),
+        ])
+
+        items = list(
+            models.ReturnOrderLineItem.objects.filter(order=ro).values_list(
+                'pk', flat=True
+            )
+        )
+
+        self.assertEqual(len(items), 3)
+
+        for line in models.ReturnOrderLineItem.objects.filter(pk__in=items):
+            self.assertEqual(line.outcome, ReturnOrderLineStatus.PENDING)
+
+        url = reverse('api-return-order-line-list')
+
+        data = {'items': items, 'outcome': ReturnOrderLineStatus.REPAIR.value}
+
+        # Update should fail without the correct role
+        self.patch(url, data, expected_code=403)
+
+        self.assignRole('return_order.change')
+
+        response = self.patch(url, data, expected_code=200).data
+        self.assertEqual(len(response['items']), 3)
+
+        for line in models.ReturnOrderLineItem.objects.filter(pk__in=items):
+            self.assertEqual(line.outcome, ReturnOrderLineStatus.REPAIR.value)
+
     def test_extra_line_bulk_delete(self):
         """Test that we can bulk delete multiple ReturnOrderExtraLine items via the API."""
         ro = models.ReturnOrder.objects.first()
@@ -3577,6 +3778,79 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         self.delete(url, {'items': items}, expected_code=200)
 
         self.assertEqual(models.ReturnOrderExtraLine.objects.count(), n - 2)
+
+
+class ExtraLineTotalPriceTest(InvenTreeAPITestCase):
+    """Unit tests for the 'total_price' field on ExtraLine API endpoints.
+
+    Covers PurchaseOrderExtraLine, SalesOrderExtraLine and ReturnOrderExtraLine,
+    which all share the same 'total_price' field via AbstractExtraLineSerializer.
+    """
+
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+        'order',
+        'sales_order',
+        'return_order',
+    ]
+
+    roles = ['purchase_order.change', 'sales_order.change', 'return_order.change']
+
+    def check_total_price(
+        self, order, extra_line_model, list_url_name, detail_url_name
+    ):
+        """Create an ExtraLine with a known price/quantity/discount, and check total_price."""
+        line = extra_line_model.objects.create(
+            order=order, quantity=5, price=Money(10, 'USD'), discount=20
+        )
+
+        # 5 * 10 = 50, less 20% discount = 40
+        expected = 40
+
+        # List endpoint
+        response = self.get(
+            reverse(list_url_name), {'order': order.pk}, expected_code=200
+        )
+        result = next(r for r in response.data if r['pk'] == line.pk)
+        self.assertEqual(float(result['total_price']), expected)
+
+        # Detail endpoint
+        response = self.get(
+            reverse(detail_url_name, kwargs={'pk': line.pk}), expected_code=200
+        )
+        self.assertEqual(float(response.data['total_price']), expected)
+
+    def test_po_extra_line_total_price(self):
+        """Check 'total_price' for a PurchaseOrderExtraLine."""
+        self.check_total_price(
+            models.PurchaseOrder.objects.get(pk=1),
+            models.PurchaseOrderExtraLine,
+            'api-po-extra-line-list',
+            'api-po-extra-line-detail',
+        )
+
+    def test_so_extra_line_total_price(self):
+        """Check 'total_price' for a SalesOrderExtraLine."""
+        self.check_total_price(
+            models.SalesOrder.objects.get(pk=1),
+            models.SalesOrderExtraLine,
+            'api-so-extra-line-list',
+            'api-so-extra-line-detail',
+        )
+
+    def test_return_order_extra_line_total_price(self):
+        """Check 'total_price' for a ReturnOrderExtraLine."""
+        self.check_total_price(
+            models.ReturnOrder.objects.get(pk=1),
+            models.ReturnOrderExtraLine,
+            'api-return-order-extra-line-list',
+            'api-return-order-extra-line-detail',
+        )
 
 
 class TransferOrderTest(OrderTest):
@@ -3753,6 +4027,39 @@ class TransferOrderTest(OrderTest):
 
         to.refresh_from_db()
 
+        self.assertEqual(to.status, TransferOrderStatus.CANCELLED)
+
+    def test_transfer_order_cancel_stale_instance_is_noop(self):
+        """A second cancellation attempt with a stale order instance must be a no-op.
+
+        Regression test: _action_cancel() checked 'can_cancel' (derived from
+        'status') on the caller's (potentially stale) instance, so two concurrent
+        cancellation requests could both run the cancellation side effects
+        (duplicate CANCELLED events). The status is now re-read (under lock)
+        from the database before the check.
+        """
+        to = models.TransferOrder.objects.get(pk=1)
+        self.assertEqual(to.status, TransferOrderStatus.PENDING)
+
+        # Two "concurrent" requests each hold their own instance of the order
+        instance_a = models.TransferOrder.objects.get(pk=to.pk)
+        instance_b = models.TransferOrder.objects.get(pk=to.pk)
+
+        instance_a.cancel_order()
+
+        to.refresh_from_db()
+        self.assertEqual(to.status, TransferOrderStatus.CANCELLED)
+
+        # The second (stale) instance still believes the order is PENDING -
+        # cancellation must be skipped based on the database state
+        self.assertEqual(instance_b.status, TransferOrderStatus.PENDING)
+
+        with mock.patch('order.models.trigger_event') as trigger:
+            with self.assertRaises(ValidationError):
+                instance_b.cancel_order()
+            trigger.assert_not_called()
+
+        to.refresh_from_db()
         self.assertEqual(to.status, TransferOrderStatus.CANCELLED)
 
     def test_transfer_order_hold(self):
@@ -4082,6 +4389,60 @@ class TransferOrderTest(OrderTest):
         self.assertEqual(line.transferred, 4)
         self.assertEqual(item.quantity, 0)
 
+    def test_transfer_order_partial_allocation_stale_item_instance(self):
+        """A partial allocation must not fail completion if stock is reduced concurrently.
+
+        Regression test: transfer_quantity (and the choice between the "move" and
+        "split" branches) was computed from self.item.quantity as cached in memory
+        on the allocation instance. If the stock item's quantity was reduced by a
+        concurrent operation after the allocation was loaded, the stale value could
+        select the "split" branch when only a "move" of the entire (now-reduced)
+        item is actually possible - causing splitStock() to reject the now-oversized
+        split, and the whole order completion to fail. The stock item's row is now
+        locked and its quantity refreshed before the branch is chosen.
+        """
+        self.assignRole('transfer_order.add')
+        destination = StockLocation.objects.first()
+
+        to = models.TransferOrder.objects.create(
+            reference='TO-STALE-ITEM', description='Test TO', destination=destination
+        )
+
+        part = Part.objects.exclude(virtual=True).first()
+
+        line = models.TransferOrderLineItem.objects.create(
+            order=to, part=part, quantity=6
+        )
+
+        to.issue_order()
+
+        item = StockItem.objects.create(part=part, quantity=10, batch='to-stale-item')
+
+        # A partial allocation - less than the full stock item quantity
+        allocation = models.TransferOrderAllocation.objects.create(
+            quantity=6, line=line, item=item
+        )
+
+        # Load a second copy of the allocation, caching the item's original quantity
+        stale_allocation = models.TransferOrderAllocation.objects.get(pk=allocation.pk)
+        self.assertEqual(stale_allocation.item.quantity, 10)
+
+        # Reduce the available stock *after* the stale copy was loaded
+        # (simulating a concurrent stock adjustment)
+        item.quantity = 4
+        item.save()
+
+        # Completing the (stale) allocation must not raise, and must transfer
+        # only the quantity which is actually available
+        stale_allocation.complete_allocation(None)
+
+        item.refresh_from_db()
+        line.refresh_from_db()
+
+        self.assertEqual(item.location, destination)
+        self.assertEqual(item.quantity, 4)
+        self.assertEqual(line.transferred, 4)
+
     def test_transfer_order_complete_stale_instance(self):
         """A second completion attempt with a stale instance must be rejected.
 
@@ -4128,11 +4489,21 @@ class TransferOrderTest(OrderTest):
         with self.assertRaises(ValidationError) as err:
             instance_b.complete_order(None)
 
-        self.assertIn('Order is already complete', str(err.exception))
+        self.assertIn('Transfer Order is already Complete', str(err.exception))
 
         # The transferred quantity has not been double-counted
         line.refresh_from_db()
         self.assertEqual(line.transferred, 10)
+
+        # check that the wrong starting point also triggers an error
+        instance_b.status = TransferOrderStatus.CANCELLED.value
+        instance_b.save()
+        with self.assertRaises(ValidationError) as err:
+            instance_b.complete_order(None)
+        self.assertIn(
+            'Invalid transition on Transfer Order.status (source value should be 20, is 40)',
+            str(err.exception),
+        )
 
     def test_output_options(self):
         """Test the output options for the TransferOrder detail endpoint."""
@@ -4630,6 +5001,109 @@ class TransferOrderAllocateTest(OrderTest):
             reverse('api-transfer-order-allocation-list'),
             ['part_detail', 'item_detail', 'order_detail', 'location_detail'],
             assert_subset=True,
+        )
+
+
+@skipUnlessDBFeature('has_select_for_update')
+class TransferOrderSerialAllocateConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test for serial-based transfer order allocation.
+
+    Uses two real threads (each with its own database connection) to reproduce
+    the reported race: two concurrent requests to allocate the *same* serial
+    number (against two different TransferOrder line items) could both resolve
+    and validate the serialized StockItem as available before either had
+    committed its bulk_create - allocating the same physical unit twice.
+
+    TransferOrderSerialAllocationSerializer.save() now locks each resolved
+    StockItem (select_for_update, via StockItem.lock_quantity()) and
+    re-validates its unallocated quantity under that lock before it is added
+    to the batch that gets created, so only one of two concurrent requests for
+    the same serial number may succeed.
+    """
+
+    fixtures = ['users']
+
+    def setUp(self):
+        """Create two TransferOrder lines which both request the same serial number."""
+        super().setUp()
+
+        self.part = Part.objects.create(
+            name='Concurrency trackable part',
+            description='Part for serial allocation concurrency test',
+            trackable=True,
+        )
+
+        self.order_a = models.TransferOrder.objects.create(reference='TO-CONC-A')
+        self.order_b = models.TransferOrder.objects.create(reference='TO-CONC-B')
+
+        self.line_a = models.TransferOrderLineItem.objects.create(
+            order=self.order_a, part=self.part, quantity=1
+        )
+        self.line_b = models.TransferOrderLineItem.objects.create(
+            order=self.order_b, part=self.part, quantity=1
+        )
+
+        # Only a single physical unit exists for this serial number
+        self.stock_item = StockItem.objects.create(
+            part=self.part, quantity=1, serial='1'
+        )
+
+    def test_concurrent_allocation_does_not_duplicate_serial(self):
+        """Two concurrent requests for the same serial number must not both succeed."""
+        start_barrier = threading.Barrier(2, timeout=5)
+        errors = []
+        results = []
+
+        # Wrap StockItem.lock_quantity() so both threads reach the (real,
+        # database-level) row lock at the same time - one wins the lock and
+        # proceeds, the other blocks until the winner's transaction completes.
+        original_lock_quantity = StockItem.lock_quantity
+
+        def synced_lock_quantity(self_item):
+            start_barrier.wait(timeout=5)
+            return original_lock_quantity(self_item)
+
+        def allocate(line_item):
+            try:
+                serializer = TransferOrderSerialAllocationSerializer(
+                    data={
+                        'line_item': line_item.pk,
+                        'quantity': 1,
+                        'serial_numbers': '1',
+                    },
+                    context={'order': line_item.order},
+                )
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                results.append('ok')
+            except (ValidationError, DRFValidationError):
+                results.append('rejected')
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        thread_a = threading.Thread(target=allocate, args=(self.line_a,))
+        thread_b = threading.Thread(target=allocate, args=(self.line_b,))
+
+        with mock.patch.object(StockItem, 'lock_quantity', synced_lock_quantity):
+            thread_a.start()
+            thread_b.start()
+
+            thread_a.join(timeout=5)
+            thread_b.join(timeout=5)
+
+        self.assertFalse(thread_a.is_alive())
+        self.assertFalse(thread_b.is_alive())
+        self.assertEqual(errors, [])
+
+        # Exactly one request must have been rejected as unavailable
+        self.assertEqual(sorted(results), ['ok', 'rejected'])
+
+        # The serial number must only have been allocated once
+        self.assertEqual(
+            models.TransferOrderAllocation.objects.filter(item=self.stock_item).count(),
+            1,
         )
 
 
