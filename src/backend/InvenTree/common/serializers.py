@@ -856,6 +856,40 @@ class AttachmentSerializer(
         return super().save(**kwargs)
 
 
+def check_note_change_permission(user, *, template, model_type):
+    """Check whether a user is permitted to create, edit or delete a note.
+
+    Shared between NoteSerializer.save() (create/update) and NoteDetail's
+    destroy handling (delete), so all three operations enforce the same rule:
+    staff-only for templates, model 'change' permission otherwise.
+
+    Raises PermissionDenied if the user is not permitted.
+    """
+    from users.permissions import check_user_permission
+
+    if template:
+        if not user.is_staff:
+            raise PermissionDenied(
+                _('Only staff users can create or edit note templates')
+            )
+        return
+
+    target_model_class = model_type.model_class() if model_type else None
+
+    if not target_model_class or not issubclass(target_model_class, InvenTreeNoteMixin):
+        raise PermissionDenied(_('Invalid model type specified for note'))
+
+    permission_error_msg = _(
+        'User does not have permission to create or edit notes for this model'
+    )
+
+    if not check_user_permission(user, target_model_class, 'change'):
+        raise PermissionDenied(permission_error_msg)
+
+    if not target_model_class.check_related_permission('change', user):
+        raise PermissionDenied(permission_error_msg)
+
+
 class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     """Serializer for the Note model."""
 
@@ -903,38 +937,15 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
 
     def save(self, **kwargs):
         """Save the Note instance."""
-        from users.permissions import check_user_permission
-
         user = self.context.get('request').user
         is_template = self.validated_data.get(
             'template', getattr(self.instance, 'template', False)
         )
-
-        if is_template:
-            if not user.is_staff:
-                raise PermissionDenied(
-                    _('Only staff users can create or edit note templates')
-                )
-            return super().save(updated_by=user, **kwargs)
-
         model_type = self.validated_data.get('model_type') or (
             self.instance and self.instance.model_type
         )
 
-        target_model_class = model_type.model_class()
-
-        if not issubclass(target_model_class, InvenTreeNoteMixin):
-            raise PermissionDenied(_('Invalid model type specified for note'))
-
-        permission_error_msg = _(
-            'User does not have permission to create or edit notes for this model'
-        )
-
-        if not check_user_permission(user, target_model_class, 'change'):
-            raise PermissionDenied(permission_error_msg)
-
-        if not target_model_class.check_related_permission('change', user):
-            raise PermissionDenied(permission_error_msg)
+        check_note_change_permission(user, template=is_template, model_type=model_type)
 
         return super().save(updated_by=user, **kwargs)
 

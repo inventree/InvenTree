@@ -970,6 +970,21 @@ class NoteList(NoteMixin, ListCreateAPI):
 class NoteDetail(NoteMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for Note objects."""
 
+    def perform_destroy(self, instance):
+        """Enforce the same permission rules on delete as on create/update.
+
+        DRF's default destroy() calls instance.delete() directly, bypassing
+        NoteSerializer.save() (and the permission checks it performs) entirely.
+        Without this, get_queryset()'s 'view' permission gate is all that
+        stands between a user and deleting the note.
+        """
+        common.serializers.check_note_change_permission(
+            self.request.user,
+            template=instance.template,
+            model_type=instance.model_type,
+        )
+        super().perform_destroy(instance)
+
 
 class ParameterTemplateFilter(FilterSet):
     """FilterSet class for the ParameterTemplateList API endpoint."""
