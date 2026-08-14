@@ -55,7 +55,6 @@ import {
   IconTablePlus,
   IconTableRow
 } from '@tabler/icons-react';
-import { useShallow } from 'zustand/react/shallow';
 import { formatDate } from '../../defaults/formatters';
 import { useNoteFields, useNoteTemplateFields } from '../../forms/CommonForms';
 import {
@@ -63,7 +62,6 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
 import {
   DeleteItemAction,
@@ -121,7 +119,6 @@ export default function NotesEditor({
 }>) {
   const api = useApi();
   const user = useUserState();
-  const [_language] = useLocalState(useShallow((s) => [s.language]));
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
