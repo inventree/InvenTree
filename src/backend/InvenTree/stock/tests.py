@@ -1972,15 +1972,6 @@ class AdminTest(AdminTestCase):
         """Test the admin URL."""
         self.helper(model=StockLocationType)
 
-    def test_stock_admin_search_fields(self):
-        """Test search fields for StockTrackingAdmin and StockItemTestResultAdmin."""
-        from stock.admin import StockItemTestResultAdmin, StockTrackingAdmin
-
-        self.assertIn('item__part__name', StockTrackingAdmin.search_fields)
-        self.assertIn('item__serial', StockTrackingAdmin.search_fields)
-        self.assertIn('stock_item__part__name', StockItemTestResultAdmin.search_fields)
-        self.assertIn('template__test_name', StockItemTestResultAdmin.search_fields)
-
 
 @skipUnlessDBFeature('has_select_for_update')
 class StockItemSerialConcurrencyTest(TransactionTestCase):

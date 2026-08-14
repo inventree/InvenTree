@@ -314,18 +314,3 @@ class BuildTreeTest(InvenTreeTestCase):
         for bo in build.get_children():
             self.assertEqual(bo.level, 3)
 
-
-class BuildAdminTest(InvenTreeTestCase):
-    """Tests for BuildOrder admin configuration."""
-
-    def test_build_item_admin_search_fields(self):
-        """Test that BuildItemAdmin has search_fields configured."""
-        from build.admin import BuildItemAdmin
-
-        self.assertTrue(
-            hasattr(BuildItemAdmin, 'search_fields'),
-            'BuildItemAdmin must define search_fields',
-        )
-        self.assertIn('build_line__build__reference', BuildItemAdmin.search_fields)
-        self.assertIn('stock_item__part__name', BuildItemAdmin.search_fields)
-

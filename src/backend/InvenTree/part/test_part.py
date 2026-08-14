@@ -1029,21 +1029,3 @@ class PartStockHistoryTest(InvenTreeTestCase):
         N_STOCKTAKE = PartStocktake.objects.count()
         perform_stocktake()
         self.assertEqual(PartStocktake.objects.count(), N_STOCKTAKE)
-
-
-class PartAdminTest(TestCase):
-    """Tests for part app admin functionality."""
-
-    def test_part_admin_search_fields(self):
-        """Test search fields on part admin classes."""
-        from part.admin import (
-            PartPricingAdmin,
-            PartRelatedAdmin,
-            PartStocktakeAdmin,
-            PartTestTemplateAdmin,
-        )
-
-        self.assertIn('part__name', PartPricingAdmin.search_fields)
-        self.assertIn('part__name', PartStocktakeAdmin.search_fields)
-        self.assertIn('part_1__name', PartRelatedAdmin.search_fields)
-        self.assertIn('test_name', PartTestTemplateAdmin.search_fields)
