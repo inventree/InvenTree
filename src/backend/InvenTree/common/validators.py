@@ -29,6 +29,29 @@ def note_model_options():
     ]
 
 
+def validate_note_model_type(value):
+    """Ensure that the provided content type supports notes.
+
+    Accepts either a ContentType instance, or a raw primary key - Django calls
+    a ForeignKey's field-level validators with the raw attname value (the
+    related object's pk), while callers with an actual ContentType instance
+    in hand (e.g. Note.clean()) can pass it directly.
+    """
+    from django.contrib.contenttypes.models import ContentType
+
+    if not value:
+        return
+
+    if not isinstance(value, ContentType):
+        try:
+            value = ContentType.objects.get(pk=value)
+        except ContentType.DoesNotExist:
+            raise ValidationError(_('Invalid content type'))
+
+    if value.model_class() not in note_model_types():
+        raise ValidationError(_('Model type does not support notes'))
+
+
 def parameter_model_types():
     """Return a list of valid parameter model choices."""
     import InvenTree.helpers_model

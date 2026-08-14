@@ -3167,6 +3167,12 @@ class Note(
             if self.model_id is None:
                 raise ValidationError({'model_id': _('This field is required.')})
 
+        if self.model_type:
+            try:
+                common.validators.validate_note_model_type(self.model_type)
+            except ValidationError as e:
+                raise ValidationError({'model_type': e.message})
+
         if self.content:
             attrs = copy.deepcopy(nh3.ALLOWED_ATTRIBUTES)
 
@@ -3294,6 +3300,7 @@ class Note(
         on_delete=models.CASCADE,
         null=True,
         blank=True,
+        validators=[common.validators.validate_note_model_type],
         help_text=_('Target model type for this note'),
     )
 

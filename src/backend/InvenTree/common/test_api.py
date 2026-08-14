@@ -1159,6 +1159,76 @@ class NoteAPITests(InvenTreeAPITestCase):
         self.assertTrue(note_a_detail.data['primary'])
 
 
+class NoteModelTypeValidationTests(InvenTreeAPITestCase):
+    """Tests that Note.model_type is restricted to models which support notes.
+
+    Covers both the model-level validator (common.validators.validate_note_model_type,
+    attached via Note.model_type's `validators` and invoked explicitly in Note.clean(),
+    so it applies to any code path - not just the DRF serializer) and the API-level
+    check (ContentTypeField(mixin_class=InvenTreeNoteMixin, ...)) - both derive from
+    the same InvenTreeNoteMixin-based lookup, rather than maintaining separate lists.
+    """
+
+    def test_model_rejects_unsupported_content_type(self):
+        """Note.full_clean() rejects a content type which does not support notes."""
+        from django.contrib.auth import get_user_model
+        from django.contrib.contenttypes.models import ContentType
+        from django.core.exceptions import ValidationError
+
+        from common.models import Note
+
+        user_ct = ContentType.objects.get_for_model(get_user_model())
+
+        note = Note(model_type=user_ct, model_id=1, title='Bad Note')
+
+        with self.assertRaises(ValidationError) as cm:
+            note.full_clean()
+        self.assertIn('model_type', cm.exception.message_dict)
+
+    def test_save_rejects_unsupported_content_type(self):
+        """Note.save() rejects a content type which does not support notes.
+
+        Note.clean() explicitly invokes the shared validator, so this is caught
+        even when full_clean()/clean_fields() is never called - e.g. direct
+        Note.objects.create() calls from the admin, shell, or other app code.
+        """
+        from django.contrib.auth import get_user_model
+        from django.contrib.contenttypes.models import ContentType
+        from django.core.exceptions import ValidationError
+
+        from common.models import Note
+
+        user_ct = ContentType.objects.get_for_model(get_user_model())
+
+        with self.assertRaises(ValidationError):
+            Note.objects.create(model_type=user_ct, model_id=1, title='Bad Note')
+
+        self.assertFalse(Note.objects.filter(title='Bad Note').exists())
+
+    def test_model_accepts_supported_content_type(self):
+        """Note.full_clean() accepts a content type which does support notes."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import Note
+        from part.models import Part
+
+        part_ct = ContentType.objects.get_for_model(Part)
+
+        note = Note(model_type=part_ct, model_id=1, title='Good Note')
+        note.full_clean()
+
+    def test_api_rejects_unsupported_content_type(self):
+        """The Note API rejects a model_type which does not support notes."""
+        self.assignRole('part.change')
+
+        response = self.post(
+            reverse('api-note-list'),
+            data={'model_type': 'auth.user', 'model_id': 1, 'title': 'Bad Note'},
+            expected_code=400,
+        )
+        self.assertIn('model_type', response.data)
+
+
 class NoteContentSanitizationTests(InvenTreeAPITestCase):
     """Security tests for the Note API 'content' field.
 

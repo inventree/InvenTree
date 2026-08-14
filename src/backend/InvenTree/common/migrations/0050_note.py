@@ -81,6 +81,7 @@ class Migration(migrations.Migration):
                         help_text="Target model type for this note",
                         blank=True,
                         null=True,
+                        validators=[common.validators.validate_note_model_type]
                     ),
                 ),
                 (
