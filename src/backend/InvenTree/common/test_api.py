@@ -2155,3 +2155,323 @@ class NotePermissionAPITests(InvenTreeAPITestCase):
             expected_code=200,
         )
         self.assertEqual(len(response.data), 0)
+
+    # -------------------------------------------------------------------------
+    # Update (change) permission checks
+    # -------------------------------------------------------------------------
+
+    def test_update_note_no_role_returns_404(self):
+        """A user with no roles cannot even see the note, so gets a 404 on update.
+
+        Matches the existing GET/detail 404 case - the note is entirely absent
+        from get_queryset() without 'view' permission.
+        """
+        from common.models import Note
+
+        self.patch(
+            self._note_url(self.note.pk),
+            data={'content': '<p>Should Fail</p>'},
+            expected_code=404,
+        )
+        self.assertEqual(Note.objects.get(pk=self.note.pk).content, '<p>content</p>')
+
+    def test_update_note_view_only_role_is_denied(self):
+        """A user with only part.view cannot update a note for a Part.
+
+        Mirrors the create-permission check: 'view' does not imply 'change'.
+        """
+        self.assignRole('part.view')
+        self.patch(
+            self._note_url(self.note.pk),
+            data={'content': '<p>Should Fail</p>'},
+            expected_code=403,
+        )
+
+    def test_update_note_with_change_role_is_allowed(self):
+        """A user with part.change can update a note for a Part."""
+        self.assignRole('part.change')
+        response = self.patch(
+            self._note_url(self.note.pk),
+            data={'content': '<p>Updated</p>'},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['content'], '<p>Updated</p>')
+
+    # -------------------------------------------------------------------------
+    # Delete permission checks
+    # -------------------------------------------------------------------------
+
+    def test_delete_note_no_role_returns_404(self):
+        """A user with no roles cannot even see the note, so gets a 404 on delete.
+
+        This is the 'no visibility at all' case, and is expected to behave the
+        same way as the existing GET/detail 404 case.
+        """
+        from common.models import Note
+
+        self.delete(self._note_url(self.note.pk), expected_code=404)
+        self.assertTrue(Note.objects.filter(pk=self.note.pk).exists())
+
+    def test_delete_note_view_only_role_is_denied(self):
+        """A user with only 'view' permission must not be able to delete a note.
+
+        Regression test for a permission gap: NoteDetail (RetrieveUpdateDestroyAPI)
+        uses DRF's default destroy()/perform_destroy(), which calls
+        instance.delete() directly - bypassing NoteSerializer.save() entirely.
+        The 'change' permission check in NoteSerializer.save() therefore never
+        runs for DELETE requests, so a 'view'-only user (visible via
+        get_queryset(), but without 'change') is currently able to delete the
+        note. This must be denied, exactly like create/update are.
+        """
+        from common.models import Note
+
+        self.assignRole('part.view')
+        self.delete(self._note_url(self.note.pk), expected_code=403)
+        self.assertTrue(Note.objects.filter(pk=self.note.pk).exists())
+
+    def test_delete_note_with_change_role_is_allowed(self):
+        """A user with part.change can delete a note for a Part."""
+        from common.models import Note
+
+        self.assignRole('part.change')
+        self.delete(self._note_url(self.note.pk), expected_code=204)
+        self.assertFalse(Note.objects.filter(pk=self.note.pk).exists())
+
+
+class NoteTemplateAPITests(InvenTreeAPITestCase):
+    """API tests for 'template' Note instances (global notes, not linked to any model).
+
+    Template create/update is restricted to staff users by NoteSerializer.save().
+    That check does not run for DELETE requests (NoteDetail uses DRF's default
+    destroy(), which calls instance.delete() directly), and templates are always
+    included in get_queryset() regardless of role - so several cases below are
+    regression tests for a permission gap rather than confirmations of existing
+    correct behaviour.
+    """
+
+    # Test user is staff by default (InvenTree.unit_test.UserMixin); flip it
+    # explicitly per-test so intent is unambiguous.
+
+    def _note_url(self, pk=None):
+        if pk:
+            return reverse('api-note-detail', kwargs={'pk': pk})
+        return reverse('api-note-list')
+
+    def _create_template(self, title='Test Template'):
+        return common.models.Note.objects.create(
+            template=True, title=title, content='<p>template content</p>'
+        )
+
+    def test_staff_can_create_template(self):
+        """A staff user can create a note template without a model_type/model_id."""
+        self.user.is_staff = True
+        self.user.save()
+
+        response = self.post(
+            self._note_url(),
+            data={'template': True, 'title': 'My Template', 'content': '<p>hi</p>'},
+            expected_code=201,
+        )
+        self.assertTrue(response.data['template'])
+        self.assertIsNone(response.data['model_type'])
+
+    def test_non_staff_cannot_create_template(self):
+        """A non-staff user cannot create a note template."""
+        self.user.is_staff = False
+        self.user.save()
+
+        self.post(
+            self._note_url(),
+            data={'template': True, 'title': 'My Template', 'content': '<p>hi</p>'},
+            expected_code=403,
+        )
+        self.assertFalse(
+            common.models.Note.objects.filter(title='My Template').exists()
+        )
+
+    def test_staff_can_edit_template(self):
+        """A staff user can update an existing note template."""
+        self.user.is_staff = True
+        self.user.save()
+
+        template = self._create_template()
+        response = self.patch(
+            self._note_url(template.pk),
+            data={'content': '<p>updated</p>'},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['content'], '<p>updated</p>')
+
+    def test_non_staff_cannot_edit_template(self):
+        """A non-staff user cannot update an existing note template."""
+        self.user.is_staff = False
+        self.user.save()
+
+        template = self._create_template()
+        self.patch(
+            self._note_url(template.pk),
+            data={'content': '<p>updated</p>'},
+            expected_code=403,
+        )
+        template.refresh_from_db()
+        self.assertEqual(template.content, '<p>template content</p>')
+
+    def test_staff_can_delete_template(self):
+        """A staff user can delete a note template."""
+        self.user.is_staff = True
+        self.user.save()
+
+        template = self._create_template()
+        self.delete(self._note_url(template.pk), expected_code=204)
+        self.assertFalse(common.models.Note.objects.filter(pk=template.pk).exists())
+
+    def test_non_staff_cannot_delete_template(self):
+        """A non-staff user cannot delete a note template.
+
+        Regression test: see the NoteTemplateAPITests docstring - DELETE bypasses
+        the staff-only check that NoteSerializer.save() enforces for create/update.
+        """
+        self.user.is_staff = False
+        self.user.save()
+
+        template = self._create_template()
+        self.delete(self._note_url(template.pk), expected_code=403)
+        self.assertTrue(common.models.Note.objects.filter(pk=template.pk).exists())
+
+    def test_template_visible_to_any_authenticated_user(self):
+        """Templates are visible to any authenticated user, regardless of role."""
+        self.user.is_staff = False
+        self.user.save()
+
+        template = self._create_template()
+
+        response = self.get(self._note_url(template.pk), expected_code=200)
+        self.assertEqual(response.data['pk'], template.pk)
+
+        list_response = self.get(
+            self._note_url(), data={'template': True}, expected_code=200
+        )
+        pks = [n['pk'] for n in list_response.data]
+        self.assertIn(template.pk, pks)
+
+    def test_template_filter(self):
+        """The 'template' filter correctly separates templates from regular notes."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from part.models import Part
+
+        part = Part.objects.create(name='Filter Test Part', description='x')
+        ct = ContentType.objects.get_for_model(Part)
+
+        common.models.Note.objects.create(
+            model_type=ct, model_id=part.pk, title='Regular Note', content='<p>x</p>'
+        )
+        template = self._create_template(title='Filterable Template')
+
+        templates_only = self.get(
+            self._note_url(), data={'template': True}, expected_code=200
+        )
+        pks = [n['pk'] for n in templates_only.data]
+        self.assertIn(template.pk, pks)
+        self.assertTrue(all(n['template'] for n in templates_only.data))
+
+        non_templates = self.get(
+            self._note_url(), data={'template': False}, expected_code=200
+        )
+        pks = [n['pk'] for n in non_templates.data]
+        self.assertNotIn(template.pk, pks)
+
+
+class NotesImageAPITests(InvenTreeAPITestCase):
+    """API tests for the NotesImage endpoint (image uploads for note content)."""
+
+    def setUp(self):
+        """Create a Note to attach images to."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from part.models import Part
+
+        super().setUp()
+
+        self.part = Part.objects.create(name='Notes Image Test Part', description='x')
+        ct = ContentType.objects.get_for_model(Part)
+        self.note = common.models.Note.objects.create(
+            model_type=ct, model_id=self.part.pk, title='N', content='<p>c</p>'
+        )
+
+    def _generate_image(self, name='test.png'):
+        buf = io.BytesIO()
+        Image.new('RGB', (16, 16), color='blue').save(buf, format='PNG')
+        buf.seek(0)
+        return SimpleUploadedFile(name, buf.read(), content_type='image/png')
+
+    def test_upload_requires_note(self):
+        """Uploading an image without a linked 'note' is rejected."""
+        n = common.models.NotesImage.objects.count()
+
+        response = self.post(
+            reverse('api-notes-image-list'),
+            data={'image': self._generate_image()},
+            format='multipart',
+            expected_code=400,
+        )
+        self.assertIn('note', response.data)
+        self.assertEqual(common.models.NotesImage.objects.count(), n)
+
+    def test_upload_image(self):
+        """A valid image upload linked to a note succeeds and records the user."""
+        response = self.post(
+            reverse('api-notes-image-list'),
+            data={'image': self._generate_image(), 'note': self.note.pk},
+            format='multipart',
+            expected_code=201,
+        )
+
+        image = common.models.NotesImage.objects.get(pk=response.data['pk'])
+        self.assertEqual(image.note.pk, self.note.pk)
+        self.assertEqual(image.user, self.user)
+
+    def test_filter_by_note(self):
+        """The 'note' filter returns only images linked to the specified note."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from part.models import Part
+
+        other_part = Part.objects.create(name='Other Notes Image Part', description='x')
+        ct = ContentType.objects.get_for_model(Part)
+        other_note = common.models.Note.objects.create(
+            model_type=ct, model_id=other_part.pk, title='Other', content='<p>c</p>'
+        )
+
+        image_a = common.models.NotesImage.objects.create(note=self.note)
+        image_a.image.save('a.png', ContentFile(self._image_bytes()))
+
+        image_b = common.models.NotesImage.objects.create(note=other_note)
+        image_b.image.save('b.png', ContentFile(self._image_bytes()))
+
+        response = self.get(
+            reverse('api-notes-image-list'),
+            data={'note': self.note.pk},
+            expected_code=200,
+        )
+        pks = [i['pk'] for i in response.data]
+        self.assertIn(image_a.pk, pks)
+        self.assertNotIn(image_b.pk, pks)
+
+    def test_filter_by_model_type_and_model_id(self):
+        """The 'model_type'/'model_id' filters resolve via the linked note."""
+        image = common.models.NotesImage.objects.create(note=self.note)
+        image.image.save('c.png', ContentFile(self._image_bytes()))
+
+        response = self.get(
+            reverse('api-notes-image-list'),
+            data={'model_type': 'part', 'model_id': self.part.pk},
+            expected_code=200,
+        )
+        pks = [i['pk'] for i in response.data]
+        self.assertIn(image.pk, pks)
+
+    def _image_bytes(self):
+        buf = io.BytesIO()
+        Image.new('RGB', (16, 16), color='red').save(buf, format='PNG')
+        return buf.getvalue()
