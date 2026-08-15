@@ -60,6 +60,33 @@ export function getDetailUrl(
 }
 
 /**
+ * Add URL-persisted list context for previous/next navigation on a detail page.
+ */
+export function getDetailUrlWithNavigation(
+  model: ModelType,
+  pk: number | string,
+  endpoint: string,
+  filters: Record<string, unknown>,
+  index: number,
+  absolute?: boolean
+): string {
+  const detailUrl = getDetailUrl(model, pk, absolute);
+  if (!detailUrl || !endpoint || index < 0) return detailUrl;
+
+  const query = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      query.set(key, String(value));
+    }
+  });
+
+  const separator = detailUrl.includes('?') ? '&' : '?';
+  return `${detailUrl}${separator}_navApi=${encodeURIComponent(endpoint)}&${
+    `_nav=${encodeURIComponent(query.toString())}&_navIndex=${index}`
+  }`;
+}
+
+/**
  * Returns the API detail URL for a given model type.
  */
 export function getApiUrl(

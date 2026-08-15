@@ -1,11 +1,14 @@
-import { Group, Paper, Space, Stack, Text } from '@mantine/core';
+import { ActionIcon, Group, Paper, Space, Stack, Text, Tooltip } from '@mantine/core';
 
 import { StylishText } from '@lib/components/StylishText';
 import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { shortenString } from '@lib/functions/String';
 import { t } from '@lingui/core/macro';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
 import { Fragment, type ReactNode, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useApi } from '../../contexts/ApiContext';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import PrimaryActionButton from '../buttons/PrimaryActionButton';
@@ -28,6 +31,59 @@ interface PageDetailInterface {
   actions?: ReactNode[];
   editAction?: () => void;
   editEnabled?: boolean;
+}
+
+function DetailNavigation() {
+  const api = useApi();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const endpoint = searchParams.get('_navApi');
+  const encodedFilters = searchParams.get('_nav');
+  const currentIndex = Number(searchParams.get('_navIndex'));
+  const currentPk = location.pathname.split('/').filter(Boolean).at(-1);
+
+  const query = useQuery({
+    enabled: !!endpoint && encodedFilters !== null && Number.isInteger(currentIndex) && currentIndex >= 0,
+    queryKey: ['detail-navigation', endpoint, encodedFilters, currentIndex],
+    queryFn: async () => {
+      const params = new URLSearchParams(encodedFilters ?? '');
+      params.set('limit', '3');
+      params.set('offset', String(Math.max(0, currentIndex - 1)));
+      const response = await api.get(endpoint!, { params });
+      return response.data?.results ?? response.data ?? [];
+    }
+  });
+
+  if (!Array.isArray(query.data)) return null;
+  const localIndex = query.data.findIndex((record: any) => String(record.pk) === String(currentPk));
+  if (localIndex < 0) return null;
+
+  const navigateToRecord = (record: any, offset: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('_navIndex', String(offset));
+    const path = location.pathname.replace(/[^/]+\/?$/, `${record.pk}/`);
+    navigate(`${path}?${params.toString()}`);
+  };
+  const previous = localIndex > 0 ? query.data[localIndex - 1] : undefined;
+  const next = localIndex + 1 < query.data.length ? query.data[localIndex + 1] : undefined;
+
+  return (
+    <Group gap={2} wrap='nowrap'>
+      <Tooltip label={t`Previous`}>
+        <ActionIcon aria-label={t`Previous`} variant='subtle' disabled={!previous}
+          onClick={() => previous && navigateToRecord(previous, currentIndex - 1)}>
+          <IconChevronLeft size={18} />
+        </ActionIcon>
+      </Tooltip>
+      <Tooltip label={t`Next`}>
+        <ActionIcon aria-label={t`Next`} variant='subtle' disabled={!next}
+          onClick={() => next && navigateToRecord(next, currentIndex + 1)}>
+          <IconChevronRight size={18} />
+        </ActionIcon>
+      </Tooltip>
+    </Group>
+  );
 }
 
 /**
@@ -184,6 +240,7 @@ export function PageDetail({
                 </Group>
               )}
             </Group>
+            <DetailNavigation />
             {computedActions && (
               <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
                 {computedActions.map((action, idx) => (

@@ -5,7 +5,10 @@ import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import { mapFields } from '@lib/functions/Forms';
-import { eventModified, getDetailUrl } from '@lib/functions/Navigation';
+import {
+  eventModified,
+  getDetailUrlWithNavigation
+} from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { useStoredTableState } from '@lib/states/StoredTableState';
 import type { TableFilter } from '@lib/types/Filters';
@@ -748,10 +751,16 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         if (pk) {
           cancelEvent(event);
           // If a model type is provided, navigate to the detail view for that model
-          const url = getDetailUrl(tableProps.modelType, pk);
+          const detailUrl = getDetailUrlWithNavigation(
+            tableProps.modelType,
+            pk,
+            url ?? '',
+            getTableFilters(false),
+            (tableState.page - 1) * pageSize + index
+          );
 
           if (!showPreviewPanel || eventModified(event as any)) {
-            navigateToLink(url, navigate, event);
+            navigateToLink(detailUrl, navigate, event);
           } else {
             showRowPreview(pk);
           }
@@ -802,7 +811,13 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         // Add action to navigate to the detail view
         const accessor = props.modelField ?? 'pk';
         const pk = resolveItem(record, accessor);
-        const url = getDetailUrl(props.modelType, pk);
+        const detailUrl = getDetailUrlWithNavigation(
+          props.modelType,
+          pk,
+          url ?? '',
+          getTableFilters(false),
+          (tableState.page - 1) * pageSize + (tableState.records as any[]).indexOf(record)
+        );
 
         const model: string | undefined =
           ModelInformationDict[props.modelType]?.label?.();
@@ -820,7 +835,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
           onClick: (event: any) => {
             cancelEvent(event);
             if (!showPreviewPanel || eventModified(event as any)) {
-              navigateToLink(url, navigate, event);
+              navigateToLink(detailUrl, navigate, event);
             } else {
               showRowPreview(pk);
             }
