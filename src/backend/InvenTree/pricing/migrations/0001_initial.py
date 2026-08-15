@@ -109,8 +109,8 @@ class Migration(migrations.Migration):
                 (
                     "date",
                     models.DateTimeField(
-                        auto_now_add=True,
-                        help_text="Date at which this cost entry was calculated",
+                        auto_now=True,
+                        help_text="Date at which this cost entry was last updated",
                         verbose_name="Date",
                     ),
                 ),
@@ -169,5 +169,11 @@ class Migration(migrations.Migration):
                 "verbose_name": "Stock Item Cost",
                 "ordering": ["-date"],
             },
+        ),
+        migrations.AddConstraint(
+            model_name="stockitemcost",
+            constraint=models.UniqueConstraint(
+                fields=("stock_item", "cost_type"), name="unique_stock_item_cost_type"
+            ),
         ),
     ]

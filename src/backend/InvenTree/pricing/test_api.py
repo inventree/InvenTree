@@ -1,5 +1,6 @@
 """Unit tests for the pricing API."""
 
+from django.db import IntegrityError, transaction
 from django.urls import reverse
 
 from djmoney.money import Money
@@ -74,6 +75,42 @@ class StockItemCostListTest(PricingAPITestCase):
         self.assertEqual(cost.min_cost, Money('1.5', 'USD'))
         self.assertEqual(cost.max_cost, Money('2.5', 'USD'))
         self.assertEqual(cost.notes, 'Some notes')
+
+    def test_create_updates_existing_entry(self):
+        """Posting again for the same (stock_item, cost_type) pair updates the existing entry."""
+        first = StockItemCost.objects.create(
+            stock_item=self.stock_item,
+            cost_type=CostType.PURCHASE.value,
+            min_cost=Money(1, 'USD'),
+            max_cost=Money(2, 'USD'),
+            notes='Original',
+        )
+
+        data = {
+            'stock_item': self.stock_item.pk,
+            'cost_type': CostType.PURCHASE.value,
+            'min_cost': '3.000',
+            'min_cost_currency': 'USD',
+            'max_cost': '4.000',
+            'max_cost_currency': 'USD',
+            'notes': 'Updated',
+        }
+
+        response = self.post(self.list_url(), data, expected_code=200)
+
+        # No new entry should have been created - the existing one is updated
+        self.assertEqual(
+            StockItemCost.objects.filter(
+                stock_item=self.stock_item, cost_type=CostType.PURCHASE.value
+            ).count(),
+            1,
+        )
+
+        first.refresh_from_db()
+        self.assertEqual(response.data['pk'], first.pk)
+        self.assertEqual(first.min_cost, Money('3', 'USD'))
+        self.assertEqual(first.max_cost, Money('4', 'USD'))
+        self.assertEqual(first.notes, 'Updated')
 
     def test_create_no_permission(self):
         """A user without 'pricing.add' permission cannot create a cost entry."""
@@ -164,18 +201,27 @@ class StockItemCostDetailTest(PricingAPITestCase):
             ['part_detail', 'stock_item_detail', 'user_detail'],
         )
 
-    def test_update_not_allowed(self):
-        """StockItemCost entries are part of an append-only ledger, and cannot be updated.
-
-        Note: Grant 'change' permission here, to prove that PUT/PATCH are rejected
-        because no update endpoint exists - not merely due to a permission failure.
-        """
+    def test_update(self):
+        """A StockItemCost entry can be updated in place, given 'change' permission."""
         self.assignRole('pricing.change')
 
-        self.patch(
-            self.detail_url(self.cost.pk), {'notes': 'Updated'}, expected_code=405
+        response = self.patch(
+            self.detail_url(self.cost.pk), {'notes': 'Updated'}, expected_code=200
         )
-        self.put(self.detail_url(self.cost.pk), {'notes': 'Updated'}, expected_code=405)
+        self.assertEqual(response.data['notes'], 'Updated')
+
+        self.cost.refresh_from_db()
+        self.assertEqual(self.cost.notes, 'Updated')
+        self.assertEqual(self.cost.user, self.user)
+
+    def test_update_no_permission(self):
+        """A user without 'pricing.change' permission cannot update a cost entry."""
+        self.clearRoles()
+        self.assignRole('pricing.view')
+
+        self.patch(
+            self.detail_url(self.cost.pk), {'notes': 'Updated'}, expected_code=403
+        )
 
     def test_delete(self):
         """Test that a StockItemCost entry can be deleted."""
@@ -196,6 +242,27 @@ class StockItemCostDetailTest(PricingAPITestCase):
         self.stock_item.delete()
 
         self.assertFalse(StockItemCost.objects.filter(pk=pk).exists())
+
+
+class StockItemCostModelTest(PricingAPITestCase):
+    """Tests for the StockItemCost model itself."""
+
+    def test_unique_stock_item_cost_type(self):
+        """Only one entry may exist per (stock_item, cost_type) pair."""
+        StockItemCost.objects.create(
+            stock_item=self.stock_item,
+            cost_type=CostType.PURCHASE.value,
+            min_cost=Money(1, 'USD'),
+            max_cost=Money(2, 'USD'),
+        )
+
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            StockItemCost.objects.create(
+                stock_item=self.stock_item,
+                cost_type=CostType.PURCHASE.value,
+                min_cost=Money(3, 'USD'),
+                max_cost=Money(4, 'USD'),
+            )
 
 
 class StockItemCostStatusTest(PricingAPITestCase):

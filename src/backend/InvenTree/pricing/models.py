@@ -10,12 +10,11 @@ from .status_codes import CostType
 
 
 class StockItemCost(models.Model):
-    """Model representing a single landed-cost calculation for a StockItem.
+    """Model representing the most recent cost calculation for a StockItem.
 
-    This is an append-only ledger - a new entry is created every time the cost
-    of a StockItem is (re)calculated, rather than updating a single record in place.
-    This preserves a full history of how the cost of an item has changed over time
-    (e.g. as purchase invoices, duties, or freight costs are reconciled).
+    Only the latest cost entry is kept per (stock_item, cost_type) pair - recalculating
+    a cost updates the existing entry in place, rather than appending a new one.
+    Historical cost tracking may be added later, but is out of scope for now.
 
     Attributes:
         stock_item: The StockItem that this cost entry applies to
@@ -24,7 +23,7 @@ class StockItemCost(models.Model):
         min_cost: The minimum estimated cost for this entry
         max_cost: The maximum estimated cost for this entry
         cost: A single point-value estimate for this entry (e.g. a weighted / representative cost)
-        date: Date at which this cost entry was calculated
+        date: Date at which this cost entry was last updated
         user: The user associated with this cost calculation (nullable, e.g. for automated calculations)
         source_data: JSON field capturing the source data used to calculate this cost
         notes: Optional notes associated with this cost entry
@@ -35,6 +34,11 @@ class StockItemCost(models.Model):
 
         verbose_name = _('Stock Item Cost')
         ordering = ['-date']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['stock_item', 'cost_type'], name='unique_stock_item_cost_type'
+            )
+        ]
 
     stock_item = models.ForeignKey(
         'stock.StockItem',
@@ -82,10 +86,10 @@ class StockItemCost(models.Model):
     )
 
     date = models.DateTimeField(
-        auto_now_add=True,
+        auto_now=True,
         editable=False,
         verbose_name=_('Date'),
-        help_text=_('Date at which this cost entry was calculated'),
+        help_text=_('Date at which this cost entry was last updated'),
     )
 
     user = models.ForeignKey(
