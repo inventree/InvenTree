@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 530
+INVENTREE_API_VERSION = 531
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v531 -> 2026-08-13 : https://github.com/inventree/InvenTree/pull/12635
+    - Adds "bulk update" support for the ReturnOrderLineItem API endpoint
 
 v530 -> 2026-07-28 : https://github.com/inventree/InvenTree/pull/12487
     - Adds searching against ReportSnippet API endpoint
