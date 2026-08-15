@@ -16,7 +16,7 @@ def ldap_module():
     # The module imports django_auth_ldap and ldap at function level,
     # so we can import it directly without those packages installed
     # as long as we mock them for the get_ldap_config call.
-    import InvenTree.InvenTree.setting.ldap as ldap_mod
+    import InvenTree.setting.ldap as ldap_mod
 
     importlib.reload(ldap_mod)
     return ldap_mod
