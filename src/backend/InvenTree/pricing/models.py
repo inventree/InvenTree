@@ -96,7 +96,3 @@ class StockItemCost(models.Model):
         verbose_name=_('Notes'),
         help_text=_('Notes associated with this cost entry'),
     )
-
-    def __str__(self):
-        """Return string representation of this cost entry."""
-        return f'{self.stock_item} - {CostType(self.cost_type).label}'
