@@ -18,7 +18,6 @@ class StockItemCost(models.Model):
 
     Attributes:
         stock_item: The StockItem that this cost entry applies to
-        part: The Part associated with the linked StockItem (denormalized for query convenience)
         cost_type: The type (source) of this cost entry
         min_cost: The minimum estimated cost for this entry
         max_cost: The maximum estimated cost for this entry
@@ -46,15 +45,6 @@ class StockItemCost(models.Model):
         related_name='cost_entries',
         verbose_name=_('Stock Item'),
         help_text=_('Stock item to which this cost entry applies'),
-    )
-
-    part = models.ForeignKey(
-        'part.Part',
-        on_delete=models.CASCADE,
-        related_name='stock_cost_entries',
-        editable=False,
-        verbose_name=_('Part'),
-        help_text=_('Part associated with this cost entry'),
     )
 
     cost_type = models.PositiveIntegerField(
@@ -114,13 +104,6 @@ class StockItemCost(models.Model):
         verbose_name=_('Notes'),
         help_text=_('Notes associated with this cost entry'),
     )
-
-    def save(self, *args, **kwargs):
-        """Ensure that the 'part' link is always up to date."""
-        if self.stock_item:
-            self.part = self.stock_item.part
-
-        super().save(*args, **kwargs)
 
     def __str__(self):
         """Return string representation of this cost entry."""

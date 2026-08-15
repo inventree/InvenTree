@@ -133,17 +133,6 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "part",
-                    models.ForeignKey(
-                        editable=False,
-                        help_text="Part associated with this cost entry",
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="stock_cost_entries",
-                        to="part.part",
-                        verbose_name="Part",
-                    ),
-                ),
-                (
                     "stock_item",
                     models.ForeignKey(
                         help_text="Stock item to which this cost entry applies",
