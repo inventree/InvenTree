@@ -1,7 +1,6 @@
 """DRF API serializers for the pricing app."""
 
 import InvenTree.serializers
-import part.serializers as part_serializers
 import stock.serializers as stock_serializers
 from InvenTree.serializers import OptionalField
 from users.serializers import UserSerializer
@@ -23,15 +22,11 @@ class StockItemCostSerializer(
             'pk',
             'stock_item',
             'stock_item_detail',
-            'part',
-            'part_detail',
             'cost_type',
             'min_cost',
             'min_cost_currency',
             'max_cost',
             'max_cost_currency',
-            'cost',
-            'cost_currency',
             'date',
             'user',
             'user_detail',
@@ -39,16 +34,13 @@ class StockItemCostSerializer(
             'notes',
         ]
 
-        read_only_fields = ['date', 'part']
+        read_only_fields = ['stock_item', 'date']
 
     min_cost = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
     min_cost_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
 
     max_cost = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
     max_cost_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
-
-    cost = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
-    cost_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
 
     stock_item_detail = OptionalField(
         serializer_class=stock_serializers.StockItemSerializer,
@@ -59,13 +51,6 @@ class StockItemCostSerializer(
         },
         default_include=False,
         prefetch_fields=['stock_item'],
-    )
-
-    part_detail = OptionalField(
-        serializer_class=part_serializers.PartBriefSerializer,
-        serializer_kwargs={'source': 'part', 'read_only': True, 'allow_null': True},
-        default_include=False,
-        prefetch_fields=['part'],
     )
 
     user_detail = OptionalField(
