@@ -619,9 +619,10 @@ class BuildTest(BuildTestBase):
         # cancellation must be skipped based on the database state
         self.assertEqual(build_b.status, status.BuildStatus.PRODUCTION)
 
-        with mock.patch('build.models.trigger_event') as trigger:
+        with self.assertRaises(ValidationError) as err:
             build_b.cancel_build(None)
-            trigger.assert_not_called()
+
+        self.assertIn('Build Order is already Cancelled', str(err.exception))
 
         self.build.refresh_from_db()
         self.assertEqual(self.build.status, status.BuildStatus.CANCELLED)

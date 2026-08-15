@@ -1436,6 +1436,57 @@ class TagAPITests(InvenTreeAPITestCase):
         self.assertIn(self.part_a.pk, pks)
         self.assertNotIn(self.part_b.pk, pks)
 
+    # ------------------------------------------------------------------
+    # 'tags' as an OptionalField (data inclusion, not filtering)
+    # ------------------------------------------------------------------
+    #
+    # Every serializer below wires up its 'tags' field via
+    # `common.filters.enable_tags_filter()`, with `default_include=False` -
+    # so a plain detail request should never include tag data, and it should
+    # only appear when the caller explicitly asks for it via `?tags=true`.
+
+    def test_part_detail_tags_excluded_by_default(self):
+        """A plain part detail request should not include tag data."""
+        url = reverse('api-part-detail', kwargs={'pk': self.part_a.pk})
+
+        response = self.get(url, expected_code=200)
+        self.assertNotIn('tags', response.data)
+
+    def test_part_detail_tags_included_via_query_param(self):
+        """Requesting '?tags=true' on part detail should include the part's tag names."""
+        url = reverse('api-part-detail', kwargs={'pk': self.part_a.pk})
+
+        response = self.get(url, data={'tags': 'true'}, expected_code=200)
+        self.assertIn('tags', response.data)
+        self.assertEqual(set(response.data['tags']), {'apple', 'banana'})
+
+        # An untagged part should report an empty list, not omit the field
+        url = reverse('api-part-detail', kwargs={'pk': self.part_c.pk})
+        response = self.get(url, data={'tags': 'true'}, expected_code=200)
+        self.assertIn('tags', response.data)
+        self.assertEqual(response.data['tags'], [])
+
+    def test_part_list_tags_query_param_collides_with_tag_filter(self):
+        """On the list endpoint, '?tags=true' is *not* the OptionalField inclusion flag.
+
+        `PartFilter` (the list endpoint's FilterSet) declares its own 'tags' field
+        (a `TagsFilter`, for filtering by tag name - see the `test_part_filter_*`
+        tests above), which shadows the serializer's 'tags' OptionalField: both are
+        wired to the same query parameter name. django-filter processes the
+        FilterSet before the serializer runs, so '?tags=true' is filtered as "must
+        have a tag named 'true'" - which nothing does - rather than being treated
+        as a request to include each part's tag data.
+
+        This is presumably not the intended behaviour for a client trying to
+        request tag data on a list endpoint, but it is the current, real
+        behaviour - this test locks it in so a change to either `PartFilter` or
+        `enable_tags_filter()` is a deliberate decision rather than an accident.
+        """
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tags': 'true'}, expected_code=200)
+        self.assertEqual(response.data, [])
+
 
 class SelectionListLockedTest(InvenTreeAPITestCase):
     """Tests that a locked SelectionList rejects all entry mutations."""

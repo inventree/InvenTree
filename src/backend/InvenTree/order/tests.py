@@ -728,3 +728,13 @@ class OrderUpdatedAtTest(TestCase):
             before = self._refresh(instance).updated_at
             line.delete()
             self.assertGreaterEqual(self._refresh(instance).updated_at, before)
+
+    def test_po_lineitem_admin_search(self):
+        """Test search fields for PurchaseOrderLineItemAdmin."""
+        from order.admin import PurchaseOrderLineItemAdmin
+
+        admin_class = PurchaseOrderLineItemAdmin
+        self.assertIn('part__part__name', admin_class.search_fields)
+        self.assertIn('part__SKU', admin_class.search_fields)
+        self.assertIn('order__reference', admin_class.search_fields)
+        self.assertIn('order__supplier__name', admin_class.search_fields)

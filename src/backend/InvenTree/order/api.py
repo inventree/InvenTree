@@ -1793,6 +1793,7 @@ class ReturnOrderLineItemOutputOptions(OutputConfiguration):
 
 class ReturnOrderLineItemList(
     ReturnOrderLineItemMixin,
+    BulkUpdateMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
     ListCreateDestroyAPIView,

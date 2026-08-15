@@ -58,7 +58,14 @@ class OrderTest(InvenTreeAPITestCase):
         'transfer_order',
     ]
 
-    roles = ['purchase_order.change', 'sales_order.change', 'transfer_order.change']
+    roles = [
+        'purchase_order.change',
+        'sales_order.change',
+        'transfer_order.change',
+        'part.view',
+        'stock.view',
+        'stock_location.view',
+    ]
 
     def filter(self, filters, count):
         """Test API filters."""
@@ -704,9 +711,10 @@ class PurchaseOrderTest(OrderTest):
         # completion must be skipped based on the database state
         self.assertEqual(po_b.status, PurchaseOrderStatus.PLACED)
 
-        with mock.patch('order.models.trigger_event') as trigger:
+        with self.assertRaises(ValidationError) as err:
             po_b.complete_order()
-            trigger.assert_not_called()
+
+        self.assertIn('Purchase Order is already Complete', str(err.exception))
 
         po.refresh_from_db()
         self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
@@ -3539,9 +3547,10 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         # completion must be skipped based on the database state
         self.assertEqual(order_b.status, ReturnOrderStatus.IN_PROGRESS.value)
 
-        with mock.patch('order.models.trigger_event') as trigger:
+        with self.assertRaises(ValidationError) as err:
             order_b.complete_order()
-            trigger.assert_not_called()
+
+        self.assertIn('Return Order is already Complete', str(err.exception))
 
         rma.refresh_from_db()
         self.assertEqual(rma.status, ReturnOrderStatus.COMPLETE.value)
@@ -3620,7 +3629,7 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         'supplier_part',
         'stock',
     ]
-    roles = ['return_order.view']
+    roles = ['return_order.view', 'part.view', 'stock.view']
 
     def test_options(self):
         """Test the OPTIONS endpoint."""
@@ -3706,6 +3715,42 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         self.delete(url, {'items': items}, expected_code=200)
 
         self.assertEqual(models.ReturnOrderLineItem.objects.count(), n - 1)
+
+    def test_bulk_update(self):
+        """Test that we can bulk update the 'outcome' field for multiple ReturnOrderLineItems via the API."""
+        ro = models.ReturnOrder.objects.get(pk=6)
+
+        # Create some extra line items against the same order, so we have multiple to update
+        models.ReturnOrderLineItem.objects.bulk_create([
+            models.ReturnOrderLineItem(order=ro, item_id=1006, quantity=1),
+            models.ReturnOrderLineItem(order=ro, item_id=1007, quantity=1),
+        ])
+
+        items = list(
+            models.ReturnOrderLineItem.objects.filter(order=ro).values_list(
+                'pk', flat=True
+            )
+        )
+
+        self.assertEqual(len(items), 3)
+
+        for line in models.ReturnOrderLineItem.objects.filter(pk__in=items):
+            self.assertEqual(line.outcome, ReturnOrderLineStatus.PENDING)
+
+        url = reverse('api-return-order-line-list')
+
+        data = {'items': items, 'outcome': ReturnOrderLineStatus.REPAIR.value}
+
+        # Update should fail without the correct role
+        self.patch(url, data, expected_code=403)
+
+        self.assignRole('return_order.change')
+
+        response = self.patch(url, data, expected_code=200).data
+        self.assertEqual(len(response['items']), 3)
+
+        for line in models.ReturnOrderLineItem.objects.filter(pk__in=items):
+            self.assertEqual(line.outcome, ReturnOrderLineStatus.REPAIR.value)
 
     def test_extra_line_bulk_delete(self):
         """Test that we can bulk delete multiple ReturnOrderExtraLine items via the API."""
@@ -4010,7 +4055,8 @@ class TransferOrderTest(OrderTest):
         self.assertEqual(instance_b.status, TransferOrderStatus.PENDING)
 
         with mock.patch('order.models.trigger_event') as trigger:
-            instance_b.cancel_order()
+            with self.assertRaises(ValidationError):
+                instance_b.cancel_order()
             trigger.assert_not_called()
 
         to.refresh_from_db()
@@ -4443,11 +4489,21 @@ class TransferOrderTest(OrderTest):
         with self.assertRaises(ValidationError) as err:
             instance_b.complete_order(None)
 
-        self.assertIn('Order is already complete', str(err.exception))
+        self.assertIn('Transfer Order is already Complete', str(err.exception))
 
         # The transferred quantity has not been double-counted
         line.refresh_from_db()
         self.assertEqual(line.transferred, 10)
+
+        # check that the wrong starting point also triggers an error
+        instance_b.status = TransferOrderStatus.CANCELLED.value
+        instance_b.save()
+        with self.assertRaises(ValidationError) as err:
+            instance_b.complete_order(None)
+        self.assertIn(
+            'Invalid transition on Transfer Order.status (source value should be 20, is 40)',
+            str(err.exception),
+        )
 
     def test_output_options(self):
         """Test the output options for the TransferOrder detail endpoint."""
