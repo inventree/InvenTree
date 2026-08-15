@@ -87,26 +87,6 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "cost_currency",
-                    djmoney.models.fields.CurrencyField(
-                        choices=[], default="", editable=False, max_length=3, null=True
-                    ),
-                ),
-                (
-                    "cost",
-                    InvenTree.fields.InvenTreeModelMoneyField(
-                        blank=True,
-                        currency_choices=[],
-                        decimal_places=6,
-                        default_currency="",
-                        help_text="Single point-value estimate for this entry",
-                        max_digits=19,
-                        null=True,
-                        validators=[djmoney.models.validators.MinMoneyValidator(0)],
-                        verbose_name="Cost",
-                    ),
-                ),
-                (
                     "date",
                     models.DateTimeField(
                         auto_now=True,

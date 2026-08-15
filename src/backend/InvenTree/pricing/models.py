@@ -21,7 +21,6 @@ class StockItemCost(models.Model):
         cost_type: The type (source) of this cost entry
         min_cost: The minimum estimated cost for this entry
         max_cost: The maximum estimated cost for this entry
-        cost: A single point-value estimate for this entry (e.g. a weighted / representative cost)
         date: Date at which this cost entry was last updated
         user: The user associated with this cost calculation (nullable, e.g. for automated calculations)
         source_data: JSON field capturing the source data used to calculate this cost
@@ -66,13 +65,6 @@ class StockItemCost(models.Model):
         blank=True,
         verbose_name=_('Maximum Cost'),
         help_text=_('Maximum estimated cost for this entry'),
-    )
-
-    cost = InvenTree.fields.InvenTreeModelMoneyField(
-        null=True,
-        blank=True,
-        verbose_name=_('Cost'),
-        help_text=_('Single point-value estimate for this entry'),
     )
 
     date = models.DateTimeField(
