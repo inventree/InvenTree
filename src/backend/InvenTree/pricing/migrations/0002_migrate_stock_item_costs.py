@@ -1,6 +1,7 @@
 # Generated for the 'pricing' app on 2026-08-15
 
 from django.db import migrations
+from tqdm import tqdm
 
 from pricing.status_codes import CostType
 
@@ -26,10 +27,9 @@ def migrate_stock_item_costs(apps, schema_editor):
     if n == 0:
         return
 
-    print(f'\nMigrating purchase price data for {n} stock items into StockItemCost entries...')
-
     buffer = []
-    created = 0
+
+    progress = tqdm(total=n, desc='pricing.0002: Migrating StockItem purchase price data')
 
     for item in items.iterator(chunk_size=BATCH_SIZE):
         buffer.append(
@@ -47,16 +47,16 @@ def migrate_stock_item_costs(apps, schema_editor):
             StockItemCost.objects.bulk_create(
                 buffer, batch_size=BATCH_SIZE, ignore_conflicts=True
             )
-            created += len(buffer)
+            progress.update(len(buffer))
             buffer = []
 
     if buffer:
         StockItemCost.objects.bulk_create(
             buffer, batch_size=BATCH_SIZE, ignore_conflicts=True
         )
-        created += len(buffer)
+        progress.update(len(buffer))
 
-    print(f'\nMigrated {created} StockItemCost entries.')
+    progress.close()
 
 
 def remove_migrated_stock_item_costs(apps, schema_editor):
@@ -76,10 +76,9 @@ def remove_migrated_stock_item_costs(apps, schema_editor):
     if n == 0:
         return
 
-    print(f'\nRestoring purchase_price for {n} stock items from StockItemCost entries...')
-
     buffer = []
-    updated = 0
+
+    progress = tqdm(total=n, desc='pricing.0002: Restoring StockItem purchase price data')
 
     for cost in costs.iterator(chunk_size=BATCH_SIZE):
         buffer.append(
@@ -94,18 +93,18 @@ def remove_migrated_stock_item_costs(apps, schema_editor):
             StockItem.objects.bulk_update(
                 buffer, ['purchase_price', 'purchase_price_currency'], batch_size=BATCH_SIZE
             )
-            updated += len(buffer)
+            progress.update(len(buffer))
             buffer = []
 
     if buffer:
         StockItem.objects.bulk_update(
             buffer, ['purchase_price', 'purchase_price_currency'], batch_size=BATCH_SIZE
         )
-        updated += len(buffer)
+        progress.update(len(buffer))
 
-    deleted, _ = costs.delete()
+    progress.close()
 
-    print(f'\nRestored purchase_price for {updated} stock items and removed {deleted} StockItemCost entries.')
+    costs.delete()
 
 
 class Migration(migrations.Migration):
