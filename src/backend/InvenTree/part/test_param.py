@@ -252,7 +252,7 @@ class ParameterTests(TestCase):
             tmp.full_clean()
 
         # Test that invalid units fail
-        for unit in ['mmmmm', '-', 'x', int]:
+        for unit in ['mmmmm', '-', 'x', int, "piao's"]:
             tmp = ParameterTemplate(name='test', units=unit)
             with self.assertRaises(django_exceptions.ValidationError):
                 tmp.full_clean()
