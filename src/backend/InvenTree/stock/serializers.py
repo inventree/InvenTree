@@ -199,7 +199,7 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 
 class StockItemCostBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Brief serializer for a StockItemCost entry, embedded via StockItem.cost_detail.
+    """Brief serializer for the (calculated) StockItemCost summary, embedded via StockItem.cost_detail.
 
     Defined locally (rather than reusing pricing.serializers.StockItemCostSerializer)
     to avoid a circular import between the stock and pricing serializer modules.
@@ -211,13 +211,11 @@ class StockItemCostBriefSerializer(InvenTree.serializers.InvenTreeModelSerialize
         model = pricing_models.StockItemCost
         fields = [
             'pk',
-            'cost_type',
             'min_cost',
             'min_cost_currency',
             'max_cost',
             'max_cost_currency',
             'date',
-            'notes',
         ]
 
     min_cost = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
@@ -683,14 +681,14 @@ class StockItemSerializer(
     cost_detail = OptionalField(
         serializer_class=StockItemCostBriefSerializer,
         serializer_kwargs={
-            'label': _('Cost Entries'),
-            'source': 'cost_entries',
-            'many': True,
+            'label': _('Cost'),
+            'source': 'cost',
+            'many': False,
             'read_only': True,
             'allow_null': True,
         },
         default_include=False,
-        prefetch_fields=['cost_entries'],
+        prefetch_fields=['cost'],
     )
 
     quantity = InvenTreeDecimalField()

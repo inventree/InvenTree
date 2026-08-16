@@ -40,10 +40,9 @@ import {
 } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
+import { formatPriceRange } from '../../defaults/formatters';
 import { useStockFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { getPurchaseCost } from '../../functions/pricing';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
@@ -131,12 +130,12 @@ function stockItemTableColumns({
       switchable: true,
       hidden: !showPricing,
       defaultVisible: false,
-      render: (record: any) => {
-        const cost = getPurchaseCost(record.cost_detail);
-        return formatCurrency(cost?.min_cost, {
-          currency: cost?.min_cost_currency
-        });
-      }
+      render: (record: any) =>
+        formatPriceRange(
+          record.cost_detail?.min_cost,
+          record.cost_detail?.max_cost,
+          { currency: record.cost_detail?.min_cost_currency }
+        )
     },
     {
       accessor: 'stock_value',
@@ -144,10 +143,11 @@ function stockItemTableColumns({
       sortable: false,
       hidden: !showPricing || !hasPricingRole,
       render: (record: any) => {
-        const cost = getPurchaseCost(record.cost_detail);
-        const min_price = cost?.min_cost ?? record.part_detail?.pricing_min;
-        const max_price = cost?.max_cost ?? record.part_detail?.pricing_max;
-        const currency = cost?.min_cost_currency || undefined;
+        const min_price =
+          record.cost_detail?.min_cost ?? record.part_detail?.pricing_min;
+        const max_price =
+          record.cost_detail?.max_cost ?? record.part_detail?.pricing_max;
+        const currency = record.cost_detail?.min_cost_currency || undefined;
 
         return formatPriceRange(min_price, max_price, {
           currency: currency,

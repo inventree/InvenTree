@@ -49,14 +49,12 @@ import { StatusRenderer } from '../../components/render/StatusRenderer';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal } from '../../defaults/formatters';
-import { useStockItemCostForm } from '../../forms/PricingForms';
 import {
   useDisassembleStockItem,
   useStockFields,
   useStockItemSerializeFields
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { getPurchaseCost } from '../../functions/pricing';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -69,6 +67,7 @@ import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
+import StockItemCostEntryTable from '../../tables/stock/StockItemCostEntryTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
 import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
@@ -309,6 +308,17 @@ export default function StockDetail() {
           <Skeleton />
         )
       },
+      {
+        name: 'cost',
+        label: t`Stock Item Cost`,
+        icon: <IconCurrencyDollar />,
+        hidden: !user.hasViewRole(UserRoles.pricing),
+        content: stockitem?.pk ? (
+          <StockItemCostEntryTable itemId={stockitem.pk} />
+        ) : (
+          <Skeleton />
+        )
+      },
       AttachmentPanel({
         model_type: ModelType.stockitem,
         model_id: stockitem.pk
@@ -353,17 +363,6 @@ export default function StockDetail() {
     modalId: 'edit-stock-item',
     fields: editStockItemFields,
     queryParams: new URLSearchParams({ tags: 'true' }),
-    onFormSuccess: refreshInstance
-  });
-
-  const purchaseCost = useMemo(
-    () => getPurchaseCost(stockitem?.cost_detail),
-    [stockitem?.cost_detail]
-  );
-
-  const editStockItemCost = useStockItemCostForm({
-    stockItem: stockitem,
-    cost: purchaseCost,
     onFormSuccess: refreshInstance
   });
 
@@ -646,13 +645,6 @@ export default function StockDetail() {
             icon: <IconTransform color='blue' />,
             onClick: () => convertStockItem.open()
           },
-          {
-            name: t`Edit Cost`,
-            tooltip: t`Edit stock item cost`,
-            hidden: !user.hasAddRole(UserRoles.pricing),
-            icon: <IconCurrencyDollar color='blue' />,
-            onClick: () => editStockItemCost.open()
-          },
           DeleteItemAction({
             hidden: !user.hasDeleteRole(UserRoles.stock),
             onClick: () => deleteStockItem.open()
@@ -660,14 +652,7 @@ export default function StockDetail() {
         ]}
       />
     ];
-  }, [
-    id,
-    stockitem,
-    part,
-    user,
-    stockAdjustActions.menuActions,
-    editStockItemCost
-  ]);
+  }, [id, stockitem, part, user, stockAdjustActions.menuActions]);
 
   const stockBadges: ReactNode[] = useMemo(() => {
     let available = (stockitem?.quantity ?? 0) - (stockitem?.allocated ?? 0);
@@ -791,7 +776,6 @@ export default function StockDetail() {
         </Stack>
       </InstanceDetail>
       {editStockItem.modal}
-      {editStockItemCost.modal}
       {deleteStockItem.modal}
       {convertStockItem.modal}
       {duplicateStockItem.modal}

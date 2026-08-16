@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="StockItemCost",
+            name="StockItemCostEntry",
             fields=[
                 (
                     "id",
@@ -135,14 +135,87 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={
-                "verbose_name": "Stock Item Cost",
+                "verbose_name": "Stock Item Cost Entry",
                 "ordering": ["-date"],
             },
         ),
         migrations.AddConstraint(
-            model_name="stockitemcost",
+            model_name="stockitemcostentry",
             constraint=models.UniqueConstraint(
                 fields=("stock_item", "cost_type"), name="unique_stock_item_cost_type"
             ),
+        ),
+        migrations.CreateModel(
+            name="StockItemCost",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "min_cost_currency",
+                    djmoney.models.fields.CurrencyField(
+                        choices=[], default="", editable=False, max_length=3, null=True
+                    ),
+                ),
+                (
+                    "min_cost",
+                    InvenTree.fields.InvenTreeModelMoneyField(
+                        blank=True,
+                        currency_choices=[],
+                        decimal_places=6,
+                        default_currency="",
+                        help_text="Minimum total cost, calculated from all associated cost entries",
+                        max_digits=19,
+                        null=True,
+                        validators=[djmoney.models.validators.MinMoneyValidator(0)],
+                        verbose_name="Minimum Cost",
+                    ),
+                ),
+                (
+                    "max_cost_currency",
+                    djmoney.models.fields.CurrencyField(
+                        choices=[], default="", editable=False, max_length=3, null=True
+                    ),
+                ),
+                (
+                    "max_cost",
+                    InvenTree.fields.InvenTreeModelMoneyField(
+                        blank=True,
+                        currency_choices=[],
+                        decimal_places=6,
+                        default_currency="",
+                        help_text="Maximum total cost, calculated from all associated cost entries",
+                        max_digits=19,
+                        null=True,
+                        validators=[djmoney.models.validators.MinMoneyValidator(0)],
+                        verbose_name="Maximum Cost",
+                    ),
+                ),
+                (
+                    "date",
+                    models.DateTimeField(
+                        auto_now=True,
+                        help_text="Date at which this cost summary was last calculated",
+                        verbose_name="Date",
+                    ),
+                ),
+                (
+                    "stock_item",
+                    models.OneToOneField(
+                        help_text="Stock item to which this cost summary applies",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="cost",
+                        to="stock.stockitem",
+                        verbose_name="Stock Item",
+                    ),
+                ),
+            ],
+            options={"verbose_name": "Stock Item Cost"},
         ),
     ]

@@ -5,19 +5,19 @@ import stock.serializers as stock_serializers
 from InvenTree.serializers import OptionalField
 from users.serializers import UserSerializer
 
-from .models import StockItemCost
+from .models import StockItemCost, StockItemCostEntry
 
 
-class StockItemCostSerializer(
+class StockItemCostEntrySerializer(
     InvenTree.serializers.FilterableSerializerMixin,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
-    """Serializer for the StockItemCost model."""
+    """Serializer for the StockItemCostEntry model."""
 
     class Meta:
         """Metaclass options."""
 
-        model = StockItemCost
+        model = StockItemCostEntry
         fields = [
             'pk',
             'stock_item',
@@ -61,10 +61,41 @@ class StockItemCostSerializer(
     )
 
     def __init__(self, *args, **kwargs):
-        """Custom initialization for StockItemCostSerializer.
+        """Custom initialization for StockItemCostEntrySerializer.
 
         The 'user' field is set automatically from the request, and is not directly writeable.
         """
         super().__init__(*args, **kwargs)
 
         self.fields['user'].read_only = True
+
+
+class StockItemCostSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Serializer for the (read-only) StockItemCost summary model.
+
+    This model is automatically recalculated from StockItemCostEntry records
+    (see pricing.models), so every field here is read-only - it is exposed
+    purely so that the calculated summary can be looked up or embedded.
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItemCost
+        fields = [
+            'pk',
+            'stock_item',
+            'min_cost',
+            'min_cost_currency',
+            'max_cost',
+            'max_cost_currency',
+            'date',
+        ]
+
+        read_only_fields = fields
+
+    min_cost = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
+    min_cost_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
+
+    max_cost = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
+    max_cost_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
