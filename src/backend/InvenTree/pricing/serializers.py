@@ -34,7 +34,7 @@ class StockItemCostSerializer(
             'notes',
         ]
 
-        read_only_fields = ['stock_item', 'date']
+        read_only_fields = ['date']
 
     min_cost = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
     min_cost_currency = InvenTree.serializers.InvenTreeCurrencySerializer()

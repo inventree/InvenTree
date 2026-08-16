@@ -27,12 +27,10 @@ import {
 } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import {
-  getStatusCodeLabel,
-  getStatusCodes
-} from '../../components/render/StatusRenderer';
+import { getStatusCodeLabel } from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { useFindSerialNumberForm } from '../../forms/StockForms';
+import { getPurchaseCost } from '../../functions/pricing';
 import { useInstance } from '../../hooks/UseInstance';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 
@@ -313,12 +311,10 @@ export function StockDetailsPanel({
     }
   ];
 
-  const purchaseCost = useMemo(() => {
-    const purchaseKey = getStatusCodes('CostType')?.values?.PURCHASE?.key;
-    return instance?.cost_detail?.find(
-      (cost: any) => cost.cost_type === purchaseKey
-    );
-  }, [instance?.cost_detail]);
+  const purchaseCost = useMemo(
+    () => getPurchaseCost(instance?.cost_detail),
+    [instance?.cost_detail]
+  );
 
   const costFields: DetailsField[] = useMemo(() => {
     return (instance?.cost_detail ?? [])

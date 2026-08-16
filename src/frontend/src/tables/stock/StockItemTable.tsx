@@ -11,7 +11,6 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import { getStatusCodes } from '../../components/render/StatusRenderer';
 import {
   DateColumn,
   DescriptionColumn,
@@ -44,20 +43,11 @@ import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
 import { useStockFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { getPurchaseCost } from '../../functions/pricing';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-
-/**
- * Extract the "purchase" cost entry for a stock item record, if available
- */
-function getPurchaseCost(record: any): any {
-  const purchaseKey = getStatusCodes('CostType')?.values?.PURCHASE?.key;
-  return record.cost_detail?.find(
-    (cost: any) => cost.cost_type === purchaseKey
-  );
-}
 
 /**
  * Construct a list of columns for the stock item table
@@ -142,7 +132,7 @@ function stockItemTableColumns({
       hidden: !showPricing,
       defaultVisible: false,
       render: (record: any) => {
-        const cost = getPurchaseCost(record);
+        const cost = getPurchaseCost(record.cost_detail);
         return formatCurrency(cost?.min_cost, {
           currency: cost?.min_cost_currency
         });
@@ -154,7 +144,7 @@ function stockItemTableColumns({
       sortable: false,
       hidden: !showPricing || !hasPricingRole,
       render: (record: any) => {
-        const cost = getPurchaseCost(record);
+        const cost = getPurchaseCost(record.cost_detail);
         const min_price = cost?.min_cost ?? record.part_detail?.pricing_min;
         const max_price = cost?.max_cost ?? record.part_detail?.pricing_max;
         const currency = cost?.min_cost_currency || undefined;
@@ -428,7 +418,6 @@ export function StockItemTable({
     create: true,
     partId: params.part,
     supplierPartId: params.supplier_part,
-    pricing: params.pricing,
     modalId: 'add-stock-item'
   });
 

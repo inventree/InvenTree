@@ -5,6 +5,7 @@ import {
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
+  IconCurrencyDollar,
   IconHistory,
   IconInfoCircle,
   IconPackages,
@@ -48,12 +49,14 @@ import { StatusRenderer } from '../../components/render/StatusRenderer';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal } from '../../defaults/formatters';
+import { useStockItemCostForm } from '../../forms/PricingForms';
 import {
   useDisassembleStockItem,
   useStockFields,
   useStockItemSerializeFields
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { getPurchaseCost } from '../../functions/pricing';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -353,6 +356,17 @@ export default function StockDetail() {
     onFormSuccess: refreshInstance
   });
 
+  const purchaseCost = useMemo(
+    () => getPurchaseCost(stockitem?.cost_detail),
+    [stockitem?.cost_detail]
+  );
+
+  const editStockItemCost = useStockItemCostForm({
+    stockItem: stockitem,
+    cost: purchaseCost,
+    onFormSuccess: refreshInstance
+  });
+
   const convertStockItemFields: ApiFormFieldSet = useMemo(() => {
     return {
       part: {
@@ -632,6 +646,13 @@ export default function StockDetail() {
             icon: <IconTransform color='blue' />,
             onClick: () => convertStockItem.open()
           },
+          {
+            name: t`Edit Cost`,
+            tooltip: t`Edit stock item cost`,
+            hidden: !user.hasAddRole(UserRoles.pricing),
+            icon: <IconCurrencyDollar color='blue' />,
+            onClick: () => editStockItemCost.open()
+          },
           DeleteItemAction({
             hidden: !user.hasDeleteRole(UserRoles.stock),
             onClick: () => deleteStockItem.open()
@@ -639,7 +660,14 @@ export default function StockDetail() {
         ]}
       />
     ];
-  }, [id, stockitem, part, user, stockAdjustActions.menuActions]);
+  }, [
+    id,
+    stockitem,
+    part,
+    user,
+    stockAdjustActions.menuActions,
+    editStockItemCost
+  ]);
 
   const stockBadges: ReactNode[] = useMemo(() => {
     let available = (stockitem?.quantity ?? 0) - (stockitem?.allocated ?? 0);
@@ -763,6 +791,7 @@ export default function StockDetail() {
         </Stack>
       </InstanceDetail>
       {editStockItem.modal}
+      {editStockItemCost.modal}
       {deleteStockItem.modal}
       {convertStockItem.modal}
       {duplicateStockItem.modal}
