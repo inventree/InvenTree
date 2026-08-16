@@ -84,6 +84,14 @@ On some pages, a breadcrumb navigation trail is provided at the top of the page,
 
 {{ image("concepts/ui_breadcrumbs.png", "Breadcrumb Navigation") }}
 
+#### Filtered Detail Navigation
+
+When a detail page is opened from a table that supports detail navigation, the breadcrumb bar can show the current position in the table result set together with Previous and Next buttons. The navigation uses the table's active filters and sort order, so moving between records follows the same list the user was viewing.
+
+The navigation context is stored in the detail URL. This makes links shareable and allows the same filtered result set to be restored when the link is opened in a fresh browser context. The position indicator uses the full result count, while the buttons are hidden at the first and last records.
+
+The navigation controls also work with detail pages provided by frontend plugins that use the standard table and page components.
+
 ### Navigation Tree
 
 On some pages, a navigation tree is provided on the left-hand side of the page, next to the breadcrumbs. The navigation tree provides a hierarchical view of the current section of the system, allowing users to quickly navigate to related pages and sections.

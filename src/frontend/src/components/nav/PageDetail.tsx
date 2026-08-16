@@ -144,7 +144,8 @@ export function PageDetail({
   const hasDetailNavigation = Boolean(
     detailNavigation.previous ||
       detailNavigation.next ||
-      detailNavigation.position
+      detailNavigation.position ||
+      detailNavigation.isLoading
   );
 
   return (
@@ -163,8 +164,18 @@ export function PageDetail({
                   wrap='nowrap'
                   align='center'
                   data-testid='detail-navigation'
-                  style={{ flexShrink: 0 }}
+                  style={{ flexShrink: 0, minHeight: 36 }}
                 >
+                  {detailNavigation.position && (
+                    <Text
+                      size='xs'
+                      c='dimmed'
+                      px={4}
+                      aria-label='detail-navigation-position'
+                    >
+                      {t`${detailNavigation.position.current} of ${detailNavigation.position.total}`}
+                    </Text>
+                  )}
                   {detailNavigation.previous && (
                     <Tooltip label={t`Previous`} position='top'>
                       <ActionIcon
@@ -178,16 +189,6 @@ export function PageDetail({
                         <IconChevronLeft size='1.25rem' />
                       </ActionIcon>
                     </Tooltip>
-                  )}
-                  {detailNavigation.position && (
-                    <Text
-                      size='xs'
-                      c='dimmed'
-                      px={4}
-                      aria-label='detail-navigation-position'
-                    >
-                      {t`${detailNavigation.position.current} of ${detailNavigation.position.total}`}
-                    </Text>
                   )}
                   {detailNavigation.next && (
                     <Tooltip label={t`Next`} position='top'>

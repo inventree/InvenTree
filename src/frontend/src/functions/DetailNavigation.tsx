@@ -1,6 +1,14 @@
 import type { MouseEvent } from 'react';
 
 export const DETAIL_NAVIGATION_PARAMS = {
+  api: '_na',
+  query: '_nq',
+  index: '_ni',
+  pk: '_np',
+  field: '_nf'
+} as const;
+
+const LEGACY_DETAIL_NAVIGATION_PARAMS = {
   api: '_nav_api',
   query: '_nav_query',
   index: '_nav_index',
@@ -9,6 +17,49 @@ export const DETAIL_NAVIGATION_PARAMS = {
 } as const;
 
 const PAGINATION_PARAMS = new Set(['limit', 'offset', 'page']);
+const DEFAULT_DETAIL_NAVIGATION_FIELD = 'pk';
+
+// Keep common built-in list endpoints compact while preserving the full URL
+// for plugin and otherwise unknown endpoints.
+const DETAIL_NAVIGATION_API_ALIASES: Record<string, string> = {
+  '/api/part/': 'p',
+  '/api/part/category/': 'pc',
+  '/api/stock/': 's',
+  '/api/stock/location/': 'sl',
+  '/api/build/': 'b',
+  '/api/build/line/': 'bl',
+  '/api/build/item/': 'bi',
+  '/api/company/': 'c',
+  '/api/company/part/': 'sp',
+  '/api/company/part/manufacturer/': 'mp',
+  '/api/order/po/': 'po',
+  '/api/order/po-line/': 'pol',
+  '/api/order/so/': 'so',
+  '/api/order/so-line/': 'sol',
+  '/api/order/so/shipment/': 'sh',
+  '/api/order/ro/': 'ro',
+  '/api/order/ro-line/': 'rol',
+  '/api/order/transfer-order/': 'to',
+  '/api/order/transfer-order-line/': 'tol',
+  '/api/order/transfer-order-allocation/': 'toa',
+  '/api/order/so-allocation/': 'soa',
+  '/api/bom/': 'bom',
+  '/api/parameter/': 'pa',
+  '/api/parameter/template/': 'pt',
+  '/api/user/': 'u',
+  '/api/user/group/': 'ug',
+  '/api/project-code/': 'pr',
+  '/api/tag/': 'tag',
+  '/api/attachment/': 'at',
+  '/api/machine/': 'm'
+};
+
+const DETAIL_NAVIGATION_API_URLS = new Map(
+  Object.entries(DETAIL_NAVIGATION_API_ALIASES).map(([url, alias]) => [
+    alias,
+    url
+  ])
+);
 
 export type DetailNavigationContext = {
   apiUrl: string;
@@ -22,6 +73,70 @@ export type DetailNavigationAction = {
   href: string;
   onClick: (event: MouseEvent<HTMLAnchorElement>) => void;
 };
+
+type DetailNavigationParam = keyof typeof DETAIL_NAVIGATION_PARAMS;
+
+function getDetailNavigationParam(
+  params: URLSearchParams,
+  key: DetailNavigationParam
+): string | null {
+  return (
+    params.get(DETAIL_NAVIGATION_PARAMS[key]) ??
+    params.get(LEGACY_DETAIL_NAVIGATION_PARAMS[key])
+  );
+}
+
+function encodeDetailNavigationApi(apiUrl: string): string {
+  return DETAIL_NAVIGATION_API_ALIASES[apiUrl] ?? apiUrl;
+}
+
+function decodeDetailNavigationApi(apiUrl: string): string {
+  return DETAIL_NAVIGATION_API_URLS.get(apiUrl) ?? apiUrl;
+}
+
+function removeDetailNavigationParams(params: URLSearchParams) {
+  Object.values(DETAIL_NAVIGATION_PARAMS).forEach((key) => {
+    params.delete(key);
+  });
+
+  Object.values(LEGACY_DETAIL_NAVIGATION_PARAMS).forEach((key) => {
+    params.delete(key);
+  });
+}
+
+function setDetailNavigationParams(
+  target: URL,
+  {
+    apiUrl,
+    query,
+    index,
+    pk,
+    field
+  }: {
+    apiUrl: string;
+    query: string;
+    index: number;
+    pk: string | number;
+    field: string;
+  }
+) {
+  removeDetailNavigationParams(target.searchParams);
+
+  target.searchParams.set(
+    DETAIL_NAVIGATION_PARAMS.api,
+    encodeDetailNavigationApi(apiUrl)
+  );
+  target.searchParams.set(DETAIL_NAVIGATION_PARAMS.index, String(index));
+  target.searchParams.set(DETAIL_NAVIGATION_PARAMS.pk, String(pk));
+
+  if (field !== DEFAULT_DETAIL_NAVIGATION_FIELD) {
+    target.searchParams.set(DETAIL_NAVIGATION_PARAMS.field, field);
+  }
+
+  if (query) {
+    target.searchParams.set(DETAIL_NAVIGATION_PARAMS.query, query);
+  }
+}
 
 export function isSafeApiListUrl(url?: string): url is string {
   return !!url && url.startsWith('/api/') && !url.startsWith('//');
@@ -75,14 +190,13 @@ export function buildDetailNavigationUrl({
   const target = new URL(detailUrl, 'https://inventree.local');
   const query = serializeDetailNavigationQuery(queryParams);
 
-  target.searchParams.set(DETAIL_NAVIGATION_PARAMS.api, apiUrl);
-  target.searchParams.set(DETAIL_NAVIGATION_PARAMS.index, String(index));
-  target.searchParams.set(DETAIL_NAVIGATION_PARAMS.pk, String(pk));
-  target.searchParams.set(DETAIL_NAVIGATION_PARAMS.field, field);
-
-  if (query) {
-    target.searchParams.set(DETAIL_NAVIGATION_PARAMS.query, query);
-  }
+  setDetailNavigationParams(target, {
+    apiUrl,
+    query,
+    index,
+    pk,
+    field
+  });
 
   return `${target.pathname}${target.search}${target.hash}`;
 }
@@ -91,11 +205,16 @@ export function readDetailNavigationContext(
   search: string
 ): DetailNavigationContext | null {
   const params = new URLSearchParams(search);
-  const apiUrl = params.get(DETAIL_NAVIGATION_PARAMS.api);
-  const query = params.get(DETAIL_NAVIGATION_PARAMS.query) ?? '';
-  const index = Number(params.get(DETAIL_NAVIGATION_PARAMS.index));
-  const pk = params.get(DETAIL_NAVIGATION_PARAMS.pk);
-  const field = params.get(DETAIL_NAVIGATION_PARAMS.field) ?? 'pk';
+  const encodedApiUrl = getDetailNavigationParam(params, 'api');
+  const apiUrl = encodedApiUrl
+    ? decodeDetailNavigationApi(encodedApiUrl)
+    : null;
+  const query = getDetailNavigationParam(params, 'query') ?? '';
+  const index = Number(getDetailNavigationParam(params, 'index'));
+  const pk = getDetailNavigationParam(params, 'pk');
+  const field =
+    getDetailNavigationParam(params, 'field') ??
+    DEFAULT_DETAIL_NAVIGATION_FIELD;
 
   if (
     !apiUrl ||
@@ -148,8 +267,13 @@ export function buildDetailNavigationTarget(
   const nextPath = replaceDetailPk(pathname, context.pk, targetPk);
   const target = new URL(`${nextPath}${search}`, 'https://inventree.local');
 
-  target.searchParams.set(DETAIL_NAVIGATION_PARAMS.index, String(targetIndex));
-  target.searchParams.set(DETAIL_NAVIGATION_PARAMS.pk, String(targetPk));
+  setDetailNavigationParams(target, {
+    apiUrl: context.apiUrl,
+    query: context.query.toString(),
+    index: targetIndex,
+    pk: targetPk,
+    field: context.field
+  });
 
   return `${target.pathname}${target.search}${target.hash}`;
 }

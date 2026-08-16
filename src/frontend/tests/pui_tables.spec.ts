@@ -160,8 +160,24 @@ test('Tables - Detail navigation', async ({ browser }) => {
   await expect(next).toBeVisible();
   await expect(next.locator('svg')).toBeVisible();
 
+  const nextHref = await next.getAttribute('href');
+  expect(nextHref).toContain('_na=');
+  expect(nextHref).toContain('_ni=1');
+  expect(nextHref).toContain('_np=');
+  expect(nextHref).not.toContain('_nav_');
+  expect(nextHref).not.toContain('_nf=');
+
+  const initialBreadcrumbHeight = (await breadcrumbBar.boundingBox())?.height;
+
   await next.click();
   await expect(position).toHaveText(/2 of \d+/);
+
+  const nextBreadcrumbHeight = (await breadcrumbBar.boundingBox())?.height;
+  expect(initialBreadcrumbHeight).toBeDefined();
+  expect(nextBreadcrumbHeight).toBeDefined();
+  expect(
+    Math.abs((nextBreadcrumbHeight ?? 0) - (initialBreadcrumbHeight ?? 0))
+  ).toBeLessThanOrEqual(1);
 
   const previous = page.getByRole('link', {
     name: 'Previous',
