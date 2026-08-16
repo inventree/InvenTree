@@ -161,7 +161,7 @@ test('Tables - Detail navigation', async ({ browser }) => {
   await expect(next.locator('svg')).toBeVisible();
 
   const nextHref = await next.getAttribute('href');
-  expect(nextHref).toContain('_na=');
+  expect(nextHref).toContain('_na=p');
   expect(nextHref).toContain('_ni=1');
   expect(nextHref).toContain('_np=');
   expect(nextHref).not.toContain('_nav_');

@@ -1,13 +1,4 @@
-import {
-  ActionIcon,
-  Group,
-  Paper,
-  Space,
-  Stack,
-  Text,
-  Tooltip
-} from '@mantine/core';
-import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { Group, Paper, Space, Stack, Text } from '@mantine/core';
 
 import { StylishText } from '@lib/components/StylishText';
 import { useInvenTreeHotkeys } from '@lib/functions/Events';
@@ -22,7 +13,8 @@ import PrimaryActionButton from '../buttons/PrimaryActionButton';
 import { ApiImage } from '../images/ApiImage';
 import { ApiIcon } from '../items/ApiIcon';
 import type { PrimaryActionUIFeature } from '../plugins/PluginUIFeatureTypes';
-import { type Breadcrumb, BreadcrumbList } from './BreadcrumbList';
+import type { Breadcrumb } from './BreadcrumbList';
+import { PageDetailNavigationBar } from './PageDetailNavigationBar';
 import PageTitle from './PageTitle';
 
 interface PageDetailInterface {
@@ -141,74 +133,15 @@ export function PageDetail({
     return [...(extraActionArray ?? []), ...(actions ?? [])];
   }, [extraActions, actions]);
 
-  const hasDetailNavigation = Boolean(
-    detailNavigation.previous ||
-      detailNavigation.next ||
-      detailNavigation.position ||
-      detailNavigation.isLoading
-  );
-
   return (
     <>
       <PageTitle title={pageTitleString} />
       <Stack gap='xs'>
-        {((computedBreadcrumbs?.length ?? 0) > 0 || hasDetailNavigation) && (
-          <BreadcrumbList
-            navCallback={breadcrumbAction}
-            breadcrumbs={computedBreadcrumbs ?? []}
-            rightSection={
-              hasDetailNavigation ? (
-                <Group
-                  gap={5}
-                  justify='right'
-                  wrap='nowrap'
-                  align='center'
-                  data-testid='detail-navigation'
-                  style={{ flexShrink: 0, minHeight: 36 }}
-                >
-                  {detailNavigation.position && (
-                    <Text
-                      size='xs'
-                      c='dimmed'
-                      px={4}
-                      aria-label='detail-navigation-position'
-                    >
-                      {t`${detailNavigation.position.current} of ${detailNavigation.position.total}`}
-                    </Text>
-                  )}
-                  {detailNavigation.previous && (
-                    <Tooltip label={t`Previous`} position='top'>
-                      <ActionIcon
-                        component='a'
-                        href={detailNavigation.previous.href}
-                        onClick={detailNavigation.previous.onClick}
-                        size='md'
-                        variant='subtle'
-                        aria-label={t`Previous`}
-                      >
-                        <IconChevronLeft size='1.25rem' />
-                      </ActionIcon>
-                    </Tooltip>
-                  )}
-                  {detailNavigation.next && (
-                    <Tooltip label={t`Next`} position='top'>
-                      <ActionIcon
-                        component='a'
-                        href={detailNavigation.next.href}
-                        onClick={detailNavigation.next.onClick}
-                        size='md'
-                        variant='subtle'
-                        aria-label={t`Next`}
-                      >
-                        <IconChevronRight size='1.25rem' />
-                      </ActionIcon>
-                    </Tooltip>
-                  )}
-                </Group>
-              ) : undefined
-            }
-          />
-        )}
+        <PageDetailNavigationBar
+          breadcrumbAction={breadcrumbAction}
+          breadcrumbs={computedBreadcrumbs ?? []}
+          detailNavigation={detailNavigation}
+        />
         <Paper p='xs' radius='xs' shadow='xs'>
           <Group
             justify='space-between'
@@ -255,7 +188,9 @@ export function PageDetail({
             </Group>
             {computedActions.length > 0 && (
               <Group gap={5} justify='right' wrap='nowrap' align='center'>
-                {computedActions}
+                {computedActions.map((action, idx) => (
+                  <Fragment key={idx}>{action}</Fragment>
+                ))}
               </Group>
             )}
           </Group>

@@ -1,3 +1,5 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import type { MouseEvent } from 'react';
 
 export const DETAIL_NAVIGATION_PARAMS = {
@@ -8,54 +10,46 @@ export const DETAIL_NAVIGATION_PARAMS = {
   field: '_nf'
 } as const;
 
-const LEGACY_DETAIL_NAVIGATION_PARAMS = {
-  api: '_nav_api',
-  query: '_nav_query',
-  index: '_nav_index',
-  pk: '_nav_pk',
-  field: '_nav_field'
-} as const;
-
 const PAGINATION_PARAMS = new Set(['limit', 'offset', 'page']);
 const DEFAULT_DETAIL_NAVIGATION_FIELD = 'pk';
 
 // Keep common built-in list endpoints compact while preserving the full URL
 // for plugin and otherwise unknown endpoints.
-const DETAIL_NAVIGATION_API_ALIASES: Record<string, string> = {
-  '/api/part/': 'p',
-  '/api/part/category/': 'pc',
-  '/api/stock/': 's',
-  '/api/stock/location/': 'sl',
-  '/api/build/': 'b',
-  '/api/build/line/': 'bl',
-  '/api/build/item/': 'bi',
-  '/api/company/': 'c',
-  '/api/company/part/': 'sp',
-  '/api/company/part/manufacturer/': 'mp',
-  '/api/order/po/': 'po',
-  '/api/order/po-line/': 'pol',
-  '/api/order/so/': 'so',
-  '/api/order/so-line/': 'sol',
-  '/api/order/so/shipment/': 'sh',
-  '/api/order/ro/': 'ro',
-  '/api/order/ro-line/': 'rol',
-  '/api/order/transfer-order/': 'to',
-  '/api/order/transfer-order-line/': 'tol',
-  '/api/order/transfer-order-allocation/': 'toa',
-  '/api/order/so-allocation/': 'soa',
-  '/api/bom/': 'bom',
-  '/api/parameter/': 'pa',
-  '/api/parameter/template/': 'pt',
-  '/api/user/': 'u',
-  '/api/user/group/': 'ug',
-  '/api/project-code/': 'pr',
-  '/api/tag/': 'tag',
-  '/api/attachment/': 'at',
-  '/api/machine/': 'm'
-};
+const DETAIL_NAVIGATION_API_ALIASES = new Map<string, string>([
+  [apiUrl(ApiEndpoints.part_list), 'p'],
+  [apiUrl(ApiEndpoints.category_list), 'pc'],
+  [apiUrl(ApiEndpoints.stock_item_list), 's'],
+  [apiUrl(ApiEndpoints.stock_location_list), 'sl'],
+  [apiUrl(ApiEndpoints.build_order_list), 'b'],
+  [apiUrl(ApiEndpoints.build_line_list), 'bl'],
+  [apiUrl(ApiEndpoints.build_item_list), 'bi'],
+  [apiUrl(ApiEndpoints.company_list), 'c'],
+  [apiUrl(ApiEndpoints.supplier_part_list), 'sp'],
+  [apiUrl(ApiEndpoints.manufacturer_part_list), 'mp'],
+  [apiUrl(ApiEndpoints.purchase_order_list), 'po'],
+  [apiUrl(ApiEndpoints.purchase_order_line_list), 'pol'],
+  [apiUrl(ApiEndpoints.sales_order_list), 'so'],
+  [apiUrl(ApiEndpoints.sales_order_line_list), 'sol'],
+  [apiUrl(ApiEndpoints.sales_order_shipment_list), 'sh'],
+  [apiUrl(ApiEndpoints.return_order_list), 'ro'],
+  [apiUrl(ApiEndpoints.return_order_line_list), 'rol'],
+  [apiUrl(ApiEndpoints.transfer_order_list), 'to'],
+  [apiUrl(ApiEndpoints.transfer_order_line_list), 'tol'],
+  [apiUrl(ApiEndpoints.transfer_order_allocation_list), 'toa'],
+  [apiUrl(ApiEndpoints.sales_order_allocation_list), 'soa'],
+  [apiUrl(ApiEndpoints.bom_list), 'bom'],
+  [apiUrl(ApiEndpoints.parameter_list), 'pa'],
+  [apiUrl(ApiEndpoints.parameter_template_list), 'pt'],
+  [apiUrl(ApiEndpoints.user_list), 'u'],
+  [apiUrl(ApiEndpoints.group_list), 'ug'],
+  [apiUrl(ApiEndpoints.project_code_list), 'pr'],
+  [apiUrl(ApiEndpoints.tag_list), 'tag'],
+  [apiUrl(ApiEndpoints.attachment_list), 'at'],
+  [apiUrl(ApiEndpoints.machine_list), 'm']
+]);
 
 const DETAIL_NAVIGATION_API_URLS = new Map(
-  Object.entries(DETAIL_NAVIGATION_API_ALIASES).map(([url, alias]) => [
+  Array.from(DETAIL_NAVIGATION_API_ALIASES.entries()).map(([url, alias]) => [
     alias,
     url
   ])
@@ -80,14 +74,11 @@ function getDetailNavigationParam(
   params: URLSearchParams,
   key: DetailNavigationParam
 ): string | null {
-  return (
-    params.get(DETAIL_NAVIGATION_PARAMS[key]) ??
-    params.get(LEGACY_DETAIL_NAVIGATION_PARAMS[key])
-  );
+  return params.get(DETAIL_NAVIGATION_PARAMS[key]);
 }
 
 function encodeDetailNavigationApi(apiUrl: string): string {
-  return DETAIL_NAVIGATION_API_ALIASES[apiUrl] ?? apiUrl;
+  return DETAIL_NAVIGATION_API_ALIASES.get(apiUrl) ?? apiUrl;
 }
 
 function decodeDetailNavigationApi(apiUrl: string): string {
@@ -96,10 +87,6 @@ function decodeDetailNavigationApi(apiUrl: string): string {
 
 function removeDetailNavigationParams(params: URLSearchParams) {
   Object.values(DETAIL_NAVIGATION_PARAMS).forEach((key) => {
-    params.delete(key);
-  });
-
-  Object.values(LEGACY_DETAIL_NAVIGATION_PARAMS).forEach((key) => {
     params.delete(key);
   });
 }

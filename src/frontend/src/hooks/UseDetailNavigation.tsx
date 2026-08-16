@@ -15,7 +15,7 @@ type DetailNavigationData = {
   total: number;
 };
 
-export function useDetailNavigation(): {
+export type DetailNavigationState = {
   previous?: DetailNavigationAction;
   next?: DetailNavigationAction;
   position?: {
@@ -23,7 +23,9 @@ export function useDetailNavigation(): {
     total: number;
   };
   isLoading: boolean;
-} {
+};
+
+export function useDetailNavigation(): DetailNavigationState {
   const api = useApi();
   const location = useLocation();
   const navigate = useNavigate();

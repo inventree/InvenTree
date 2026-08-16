@@ -1,11 +1,4 @@
-import {
-  ActionIcon,
-  Anchor,
-  Breadcrumbs,
-  Group,
-  Paper,
-  Text
-} from '@mantine/core';
+import { ActionIcon, Anchor, Breadcrumbs, Group, Text } from '@mantine/core';
 import { IconMenu2 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -24,12 +17,10 @@ export type Breadcrumb = {
  */
 export function BreadcrumbList({
   breadcrumbs,
-  navCallback,
-  rightSection
+  navCallback
 }: Readonly<{
   breadcrumbs: Breadcrumb[];
   navCallback?: () => void;
-  rightSection?: React.ReactNode;
 }>) {
   const navigate = useNavigate();
 
@@ -49,49 +40,44 @@ export function BreadcrumbList({
   }, [breadcrumbs]);
 
   return (
-    <Paper p='7' radius='xs' shadow='xs' data-testid='breadcrumb-list'>
-      <Group gap='xs' justify='space-between' align='center' wrap='nowrap'>
-        <Group
-          gap='xs'
-          wrap='nowrap'
-          align='center'
-          style={{ flex: 1, minWidth: 0 }}
+    <Group
+      gap='xs'
+      wrap='nowrap'
+      align='center'
+      style={{ flex: 1, minWidth: 0 }}
+    >
+      {navCallback && (
+        <ActionIcon
+          key='nav-breadcrumb-action'
+          aria-label='nav-breadcrumb-action'
+          onClick={navCallback}
+          variant='transparent'
         >
-          {navCallback && (
-            <ActionIcon
-              key='nav-breadcrumb-action'
-              aria-label='nav-breadcrumb-action'
-              onClick={navCallback}
-              variant='transparent'
+          <IconMenu2 />
+        </ActionIcon>
+      )}
+      <Breadcrumbs key='breadcrumbs' separator='>'>
+        {elements.map((breadcrumb, index) => {
+          return (
+            <Anchor
+              key={`${index}-${breadcrumb.name}`}
+              href={`/${baseUrl}${breadcrumb.url}`}
+              aria-label={`breadcrumb-${index}-${identifierString(
+                breadcrumb.name
+              )}`}
+              onClick={(event: any) =>
+                breadcrumb.url &&
+                navigateToLink(breadcrumb.url, navigate, event)
+              }
             >
-              <IconMenu2 />
-            </ActionIcon>
-          )}
-          <Breadcrumbs key='breadcrumbs' separator='>'>
-            {elements.map((breadcrumb, index) => {
-              return (
-                <Anchor
-                  key={`${index}-${breadcrumb.name}`}
-                  href={`/${baseUrl}${breadcrumb.url}`}
-                  aria-label={`breadcrumb-${index}-${identifierString(
-                    breadcrumb.name
-                  )}`}
-                  onClick={(event: any) =>
-                    breadcrumb.url &&
-                    navigateToLink(breadcrumb.url, navigate, event)
-                  }
-                >
-                  <Group gap={4} align='center'>
-                    {breadcrumb.icon}
-                    <Text size='sm'>{breadcrumb.name}</Text>
-                  </Group>
-                </Anchor>
-              );
-            })}
-          </Breadcrumbs>
-        </Group>
-        {rightSection}
-      </Group>
-    </Paper>
+              <Group gap={4} align='center'>
+                {breadcrumb.icon}
+                <Text size='sm'>{breadcrumb.name}</Text>
+              </Group>
+            </Anchor>
+          );
+        })}
+      </Breadcrumbs>
+    </Group>
   );
 }
