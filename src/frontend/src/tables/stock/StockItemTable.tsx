@@ -11,6 +11,7 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import { getStatusCodes } from '../../components/render/StatusRenderer';
 import {
   DateColumn,
   DescriptionColumn,
@@ -49,14 +50,26 @@ import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 
 /**
+ * Extract the "purchase" cost entry for a stock item record, if available
+ */
+function getPurchaseCost(record: any): any {
+  const purchaseKey = getStatusCodes('CostType')?.values?.PURCHASE?.key;
+  return record.cost_detail?.find(
+    (cost: any) => cost.cost_type === purchaseKey
+  );
+}
+
+/**
  * Construct a list of columns for the stock item table
  */
 function stockItemTableColumns({
   showLocation,
-  showPricing
+  showPricing,
+  hasPricingRole
 }: {
   showLocation: boolean;
   showPricing: boolean;
+  hasPricingRole: boolean;
 }): TableColumn[] {
   return [
     PartColumn({
@@ -128,22 +141,23 @@ function stockItemTableColumns({
       switchable: true,
       hidden: !showPricing,
       defaultVisible: false,
-      render: (record: any) =>
-        formatCurrency(record.purchase_price, {
-          currency: record.purchase_price_currency
-        })
+      render: (record: any) => {
+        const cost = getPurchaseCost(record);
+        return formatCurrency(cost?.min_cost, {
+          currency: cost?.min_cost_currency
+        });
+      }
     },
     {
       accessor: 'stock_value',
       title: t`Stock Value`,
       sortable: false,
-      hidden: !showPricing,
+      hidden: !showPricing || !hasPricingRole,
       render: (record: any) => {
-        const min_price =
-          record.purchase_price || record.part_detail?.pricing_min;
-        const max_price =
-          record.purchase_price || record.part_detail?.pricing_max;
-        const currency = record.purchase_price_currency || undefined;
+        const cost = getPurchaseCost(record);
+        const min_price = cost?.min_cost ?? record.part_detail?.pricing_min;
+        const max_price = cost?.max_cost ?? record.part_detail?.pricing_max;
+        const currency = cost?.min_cost_currency || undefined;
 
         return formatPriceRange(min_price, max_price, {
           currency: currency,
@@ -383,9 +397,10 @@ export function StockItemTable({
     () =>
       stockItemTableColumns({
         showLocation: showLocation ?? true,
-        showPricing: showPricing ?? true
+        showPricing: showPricing ?? true,
+        hasPricingRole: user.hasViewRole(UserRoles.pricing)
       }),
-    [showLocation, showPricing]
+    [showLocation, showPricing, user]
   );
 
   const tableFilters: TableFilter[] = useMemo(
@@ -497,7 +512,10 @@ export function StockItemTable({
             ...params,
             part_detail: true,
             location_detail: true,
-            supplier_part_detail: true
+            supplier_part_detail: true,
+            ...(user.hasViewRole(UserRoles.pricing)
+              ? { cost_detail: true }
+              : {})
           }
         }}
       />

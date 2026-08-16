@@ -27,6 +27,10 @@ import {
 } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import {
+  getStatusCodeLabel,
+  getStatusCodes
+} from '../../components/render/StatusRenderer';
 import { formatCurrency } from '../../defaults/formatters';
 import { useFindSerialNumberForm } from '../../forms/StockForms';
 import { useInstance } from '../../hooks/UseInstance';
@@ -309,6 +313,34 @@ export function StockDetailsPanel({
     }
   ];
 
+  const purchaseCost = useMemo(() => {
+    const purchaseKey = getStatusCodes('CostType')?.values?.PURCHASE?.key;
+    return instance?.cost_detail?.find(
+      (cost: any) => cost.cost_type === purchaseKey
+    );
+  }, [instance?.cost_detail]);
+
+  const costFields: DetailsField[] = useMemo(() => {
+    return (instance?.cost_detail ?? [])
+      .filter((cost: any) => cost.pk !== purchaseCost?.pk)
+      .map((cost: any) => {
+        const label = getStatusCodeLabel('CostType', cost.cost_type) ?? t`Cost`;
+
+        return {
+          type: 'text',
+          name: `cost_detail_${cost.pk}`,
+          label: t`${label} Cost`,
+          icon: 'currency',
+          value_formatter: () =>
+            cost.min_cost === cost.max_cost
+              ? formatCurrency(cost.min_cost, {
+                  currency: cost.min_cost_currency
+                })
+              : `${formatCurrency(cost.min_cost, { currency: cost.min_cost_currency })} - ${formatCurrency(cost.max_cost, { currency: cost.max_cost_currency })}`
+        };
+      });
+  }, [instance?.cost_detail, purchaseCost]);
+
   const br: DetailsField[] = [
     {
       type: 'date',
@@ -322,10 +354,10 @@ export function StockDetailsPanel({
       name: 'purchase_price',
       label: t`Unit Price`,
       icon: 'currency',
-      hidden: !instance?.purchase_price,
+      hidden: !purchaseCost?.min_cost,
       value_formatter: () =>
-        formatCurrency(instance?.purchase_price, {
-          currency: instance?.purchase_price_currency
+        formatCurrency(purchaseCost?.min_cost, {
+          currency: purchaseCost?.min_cost_currency
         })
     },
     {
@@ -334,15 +366,16 @@ export function StockDetailsPanel({
       label: t`Stock Value`,
       icon: 'currency',
       hidden:
-        !instance?.purchase_price ||
+        !purchaseCost?.min_cost ||
         instance?.quantity == 1 ||
         instance?.quantity == 0,
       value_formatter: () =>
-        formatCurrency(instance?.purchase_price, {
-          currency: instance?.purchase_price_currency,
+        formatCurrency(purchaseCost?.min_cost, {
+          currency: purchaseCost?.min_cost_currency,
           multiplier: instance?.quantity
         })
     },
+    ...costFields,
     {
       type: 'text',
       name: 'packaging',

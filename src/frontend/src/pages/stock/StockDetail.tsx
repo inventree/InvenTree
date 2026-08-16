@@ -101,7 +101,8 @@ export default function StockDetail() {
       part_detail: true,
       location_detail: true,
       path_detail: true,
-      tags: true
+      tags: true,
+      ...(user.hasViewRole(UserRoles.pricing) ? { cost_detail: true } : {})
     }
   });
 

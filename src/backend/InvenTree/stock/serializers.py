@@ -26,6 +26,7 @@ import order.models
 import part.filters as part_filters
 import part.models as part_models
 import part.serializers as part_serializers
+import pricing.models as pricing_models
 import stock.filters
 import stock.status_codes
 from common.settings import get_global_setting
@@ -195,6 +196,35 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         model = StockLocation
         fields = ['pk', 'name', 'pathstring']
+
+
+class StockItemCostBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Brief serializer for a StockItemCost entry, embedded via StockItem.cost_detail.
+
+    Defined locally (rather than reusing pricing.serializers.StockItemCostSerializer)
+    to avoid a circular import between the stock and pricing serializer modules.
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        model = pricing_models.StockItemCost
+        fields = [
+            'pk',
+            'cost_type',
+            'min_cost',
+            'min_cost_currency',
+            'max_cost',
+            'max_cost_currency',
+            'date',
+            'notes',
+        ]
+
+    min_cost = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
+    min_cost_currency = InvenTreeCurrencySerializer()
+
+    max_cost = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
+    max_cost_currency = InvenTreeCurrencySerializer()
 
 
 @register_importer()
@@ -392,6 +422,7 @@ class StockItemSerializer(
             'child_items',
             'stale',
             # Optional fields (FK relationships)
+            'cost_detail',
             'location_detail',
             'location_path',
             'part_detail',
@@ -647,6 +678,19 @@ class StockItemSerializer(
             'test_results__user',
             'test_results__template',
         ],
+    )
+
+    cost_detail = OptionalField(
+        serializer_class=StockItemCostBriefSerializer,
+        serializer_kwargs={
+            'label': _('Cost Entries'),
+            'source': 'cost_entries',
+            'many': True,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
+        prefetch_fields=['cost_entries'],
     )
 
     quantity = InvenTreeDecimalField()
