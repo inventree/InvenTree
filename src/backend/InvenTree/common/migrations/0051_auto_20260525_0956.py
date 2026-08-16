@@ -4,6 +4,9 @@ from tqdm import tqdm
 
 from django.db import migrations
 
+# Number of instances processed per Note.bulk_create() / NotesImage.bulk_update() call
+BATCH_SIZE = 500
+
 
 def get_markdownify_settings() -> dict:
     """Return the settings for markdownify, or an empty dict if not defined."""
@@ -37,6 +40,64 @@ def markdown_to_html(value: str) -> str:
     return html
 
 
+def create_notes_batch(Note, NotesImage, content_type, model, instances, unlinked_images):
+    """Create Note objects (and link any associated images) for a batch of instances.
+
+    Issues a single bulk_create() for the notes, a single query + bulk_update() for
+    directly-linked images, and a single bulk_update() for images embedded in the
+    markdown content - instead of one Note.objects.create() and two image queries
+    *per instance*, which does not scale to tables with large numbers of notes.
+
+    `unlinked_images` is a shared list of not-yet-linked NotesImage objects, computed
+    once for the whole migration. Matched images are removed from it in place, so an
+    image can only ever be claimed by one note, matching the original per-instance
+    query's behaviour (each query only ever saw images not yet linked by a previous
+    instance).
+    """
+    notes = Note.objects.bulk_create(
+        [
+            Note(
+                title="Note",  # We don't have a title field in the old model, so we'll just use a default value
+                content=markdown_to_html(instance.notes),
+                model_type=content_type,
+                model_id=instance.pk,
+                primary=True,
+            )
+            for instance in instances
+        ],
+        batch_size=BATCH_SIZE,
+    )
+
+    notes_by_model_id = {instance.pk: note for instance, note in zip(instances, notes)}
+
+    # Images directly linked to one of these instances
+    direct_images = list(
+        NotesImage.objects.filter(
+            model_type__iexact=model, model_id__in=list(notes_by_model_id)
+        )
+    )
+    for image in direct_images:
+        image.note = notes_by_model_id[image.model_id]
+
+    # Images not directly linked to any instance, but still referenced in the
+    # markdown content itself
+    embedded_images = []
+    for instance, note in zip(instances, notes):
+        matched = [
+            image for image in unlinked_images if image.image.url in instance.notes
+        ]
+        for image in matched:
+            image.note = note
+            embedded_images.append(image)
+            unlinked_images.remove(image)
+
+    updated_images = direct_images + embedded_images
+    if updated_images:
+        NotesImage.objects.bulk_update(updated_images, ['note'], batch_size=BATCH_SIZE)
+
+    return notes
+
+
 def migrate_notes(apps, schema_editor):
     """Migrate existing notes to the new Note model."""
 
@@ -45,6 +106,17 @@ def migrate_notes(apps, schema_editor):
     # New target models
     Note = apps.get_model('common', 'Note')
     NotesImage = apps.get_model('common', 'NotesImage')
+
+    # Images not yet linked to any note, and not directly tied to a model instance -
+    # candidates for the "embedded in markdown content" match in create_notes_batch().
+    # Computed once for the whole migration (matched images are removed as they're
+    # claimed), rather than being re-queried and re-scanned from scratch for every
+    # single row being migrated.
+    unlinked_images = list(
+        NotesImage.objects.filter(note__isnull=True, model_id__isnull=True).exclude(
+            image__isnull=True
+        )
+    )
 
     for app, model in [
         ('build', 'build'),
@@ -64,47 +136,29 @@ def migrate_notes(apps, schema_editor):
         with_notes = OldModel.objects.exclude(notes__isnull=True).exclude(notes='')
         content_type, _created = ContentType.objects.get_or_create(app_label=app, model=model)
 
-        if not with_notes.exists():
+        total = with_notes.count()
+
+        if not total:
             continue
 
-        progress = tqdm(total=with_notes.count(), desc=f'Migration common.0045: Migrating notes for {app}.{model}')
+        progress = tqdm(total=total, desc=f'Migration common.0051: Migrating notes for {app}.{model}')
 
-        initial_note_count = Note.objects.count()
-        expected_note_count = initial_note_count + with_notes.count()
+        created = 0
+        batch = []
 
-        for instance in with_notes:
+        for instance in with_notes.iterator(chunk_size=BATCH_SIZE):
+            batch.append(instance)
 
-            content = markdown_to_html(instance.notes)
+            if len(batch) >= BATCH_SIZE:
+                created += len(create_notes_batch(Note, NotesImage, content_type, model, batch, unlinked_images))
+                progress.update(len(batch))
+                batch = []
 
-            note = Note.objects.create(
-                title="Note",  # We don't have a title field in the old model, so we'll just use a default value
-                content=content,
-                model_type=content_type,
-                model_id=instance.pk,
-                primary=True
-            )
+        if batch:
+            created += len(create_notes_batch(Note, NotesImage, content_type, model, batch, unlinked_images))
+            progress.update(len(batch))
 
-            # Find any existing NotesImage objects associated with this instance
-            images = NotesImage.objects.filter(model_type__iexact=model, model_id=instance.pk)
-            images.update(note=note)
-
-            # Find any notes images which do not directly reference the model instance, but are still referenced in the markdown content
-            unlinked_images = NotesImage.objects.filter(
-                note__isnull=True,
-                model_id__isnull=True
-            ).exclude(
-                image__isnull=True
-            )
-
-            for image in unlinked_images:
-                # If the image is referenced in the markdown content, link it to the note
-                if image.image.url in instance.notes:
-                    image.note = note
-                    image.save()
-
-            progress.update(1)
-
-        assert Note.objects.count() == expected_note_count, f"Expected {expected_note_count} notes, but found {Note.objects.count()} after migration."
+        assert created == total, f"Expected to create {total} notes for {app}.{model}, but created {created}."
 
 
 def remove_unlinked_images(apps, schema_editor):
