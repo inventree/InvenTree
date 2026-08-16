@@ -3690,6 +3690,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         setup_quantity: Extra required quantity for a build, to account for setup losses
         attrition: Estimated losses for a Build, expressed as a percentage (e.g. '2%')
         rounding_multiple: Rounding quantity when calculating the required quantity for a build
+        piece_count: Number of pieces required (for cut-to-length items like cables, tubing).
+            Total material = quantity x piece_count.
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
         validated: Boolean field indicating if this BOM item is valid (checksum matches)
@@ -4015,6 +4017,16 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         ),
     )
 
+    piece_count = models.PositiveIntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        verbose_name=_('Piece Count'),
+        help_text=_(
+            'Number of pieces required (for cut-to-length items). '
+            'Total material = quantity x piece_count.'
+        ),
+    )
+
     reference = models.CharField(
         max_length=5000,
         blank=True,
@@ -4069,6 +4081,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             'setup_quantity',
             'attrition',
             'rounding_multiple',
+            'piece_count',
             'reference',
             'optional',
             'inherited',
@@ -4231,9 +4244,14 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         Returns:
             Production quantity required for this component
+
+        Note:
+            For cut-to-length parts, quantity represents the per-piece size/length
+            and piece_count indicates how many pieces are needed.
+            Total material = quantity x piece_count x build_quantity.
         """
-        # Base quantity requirement
-        required = self.quantity * build_quantity
+        # Base quantity requirement (quantity is per-piece, piece_count is number of pieces)
+        required = self.quantity * self.piece_count * build_quantity
 
         # Account for attrition
         if self.attrition > 0:

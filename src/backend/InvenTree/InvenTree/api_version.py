@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 532
+INVENTREE_API_VERSION = 533
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v532 -> 2026-08-13 : https://github.com/inventree/InvenTree/pull/11971
+v533 -> 2026-08-16 : https://github.com/inventree/InvenTree/pull/11971
     - Removes direct "notes" field from any models which previously supported markdown notes
     - Adds a generic "Note" model which can be attached to any model type via a generic foreign key relationship
     - Allow multiple notes to be attached to a single object, and for notes to be created / edited / deleted via the API
+
+v532 -> 2026-08-15 : https://github.com/inventree/InvenTree/pull/12422
+    - Adds "piece_count" field to the BomItem model and API endpoints (for cut-to-length parts)
 
 v531 -> 2026-08-13 : https://github.com/inventree/InvenTree/pull/12635
     - Adds "bulk update" support for the ReturnOrderLineItem API endpoint
