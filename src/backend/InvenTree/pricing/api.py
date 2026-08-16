@@ -22,7 +22,7 @@ class StockItemCostFilter(FilterSet):
         """Metaclass options."""
 
         model = StockItemCost
-        fields = ['stock_item', 'part', 'user', 'cost_type']
+        fields = ['stock_item', 'user', 'cost_type']
 
     min_date = InvenTreeDateFilter(
         label='Date after', field_name='date', lookup_expr='gt'
@@ -41,7 +41,7 @@ class StockItemCostMixin:
 
     def get_queryset(self):
         """Return the queryset, prefetching related fields."""
-        return super().get_queryset().prefetch_related('stock_item', 'part', 'user')
+        return super().get_queryset().prefetch_related('stock_item', 'user')
 
 
 class StockItemCostList(StockItemCostMixin, ListCreateAPI):
