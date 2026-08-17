@@ -1,5 +1,7 @@
 """Custom field validators for InvenTree."""
 
+import tokenize
+
 from django.conf import settings
 from django.core import validators
 from django.core.exceptions import ValidationError
@@ -9,6 +11,7 @@ import pint.errors
 from moneyed import CURRENCIES
 
 import InvenTree.conversion
+import InvenTree.exceptions
 from common.settings import get_global_setting
 
 
@@ -24,7 +27,17 @@ def validate_physical_units(unit):
 
     try:
         ureg(unit)
-    except (AssertionError, AttributeError, pint.errors.UndefinedUnitError):
+    except (
+        AssertionError,
+        AttributeError,
+        pint.errors.UndefinedUnitError,
+        tokenize.TokenError,
+    ):
+        raise ValidationError(_('Invalid physical unit'))
+    except Exception:
+        # Pint parses unit expressions via the python tokenizer, so any
+        # other unexpected exception type may be raised for malformed input
+        InvenTree.exceptions.log_error('validate_physical_units', scope='validators')
         raise ValidationError(_('Invalid physical unit'))
 
 
