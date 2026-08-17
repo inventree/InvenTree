@@ -24,8 +24,8 @@ From the main menu, users can access the following items:
 - [Dashboard](#dashboard)
 - [Global Search](./global_search.md)
 - [Spotlight](#spotlight)
-- [Barcode Scanning](#barcode-scanning)
-- [Notifications](#notifications)
+- [Barcode Scanning](../../barcodes/index.md#quick-scan)
+- [Notifications](../../part/notification.md)
 - [User Menu](#user-menu)
 
 As well as allowing navigation to the following main sections:
