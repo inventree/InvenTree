@@ -929,8 +929,8 @@ class NoteMixin:
         Regular notes are only visible when the user has 'view' permission
         for the model type the note is linked to.
         """
-        from InvenTree.models import InvenTreeNoteMixin
-        from users.permissions import check_user_permission
+        import common.validators
+        from users.permissions import check_user_permission, prefetch_rule_sets
 
         qs = super().get_queryset()
         user = self.request.user
@@ -938,12 +938,16 @@ class NoteMixin:
         if user.is_superuser:
             return qs
 
-        allowed_ct_ids = []
-        for ct in ContentType.objects.all():
-            model_class = ct.model_class()
-            if model_class and issubclass(model_class, InvenTreeNoteMixin):
-                if check_user_permission(user, model_class, 'view'):
-                    allowed_ct_ids.append(ct.pk)
+        # Fetch the user's groups (with prefetched rule sets) once, and reuse it
+        # for every model type below - otherwise each check_user_permission()
+        # call re-fetches the same groups/rule-sets from scratch.
+        groups = prefetch_rule_sets(user)
+
+        allowed_ct_ids = [
+            ContentType.objects.get_for_model(model_class).pk
+            for model_class in common.validators.note_model_types()
+            if check_user_permission(user, model_class, 'view', groups=groups)
+        ]
 
         return qs.filter(Q(template=True) | Q(model_type__in=allowed_ct_ids))
 
