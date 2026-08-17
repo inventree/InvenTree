@@ -2108,6 +2108,11 @@ class StockItem(
             are copied across, while any source build order is recorded
             in the stock tracking history of each component.
         """
+        # Deferred import to avoid a circular import at module load time
+        # (stock -> pricing -> stock)
+        import pricing.models
+        from pricing.status_codes import CostType
+
         try:
             quantity = Decimal(quantity)
         except (InvalidOperation, ValueError):
@@ -2189,6 +2194,10 @@ class StockItem(
         # so that the cost is only spread across newly created stock items
         lines = self.allocate_disassembly_pricing(quantity, lines)
 
+        # Track newly created component items which were assigned a purchase
+        # price, so a matching StockItemCostEntry can be created for each
+        new_items = []
+
         for line in lines:
             bom_item = line['bom_item']
             line_quantity = Decimal(line['quantity'])
@@ -2214,6 +2223,8 @@ class StockItem(
             # Ensure the tree structure is observed
             new_item.save(add_note=False)
 
+            new_items.append(new_item)
+
             deltas = {'stockitem': self.pk, 'quantity': float(line_quantity)}
 
             # Record traceability links against the disassembled assembly
@@ -2232,6 +2243,22 @@ class StockItem(
             )
 
             items.append(new_item)
+
+        # Record a purchase cost entry for each newly created component that
+        # was assigned a (possibly allocated) purchase price
+        pricing.models.StockItemCostEntry.objects.bulk_set_costs([
+            {
+                'stock_item': new_item,
+                'cost_type': CostType.PURCHASE.value,
+                'min_cost': new_item.purchase_price,
+                'max_cost': new_item.purchase_price,
+                'min_cost_currency': new_item.purchase_price_currency,
+                'max_cost_currency': new_item.purchase_price_currency,
+                'user': user,
+            }
+            for new_item in new_items
+            if new_item.purchase_price is not None
+        ])
 
         # Consume this stock item.
         # Note: the item is deliberately retained (not deleted) at zero quantity,

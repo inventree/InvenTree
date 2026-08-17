@@ -25,6 +25,8 @@ from InvenTree.unit_test import (
     findOffloadedEvent,
 )
 from part.models import Part, PartTestTemplate
+from pricing.models import StockItemCost, StockItemCostEntry
+from pricing.status_codes import CostType
 from stock.models import (
     StockItem,
     StockItemTestResult,
@@ -2544,6 +2546,27 @@ class StockItemDisassembleTest(StockAPITestCase):
 
             self.assertIsNotNone(entry)
             self.assertEqual(entry.deltas['stockitem'], self.item.pk)
+
+    def test_disassemble_creates_cost_entries(self):
+        """Disassembly should record a matching StockItemCostEntry for each priced component."""
+        response = self.post(
+            self.url,
+            {'items': [{'bom_item': 1, 'quantity': 40}], 'quantity': 4},
+            expected_code=201,
+        )
+
+        item = StockItem.objects.get(pk=response.data[0]['pk'])
+
+        self.assertIsNotNone(item.purchase_price)
+
+        cost_entry = StockItemCostEntry.objects.get(stock_item=item)
+        self.assertEqual(cost_entry.cost_type, CostType.PURCHASE.value)
+        self.assertEqual(cost_entry.min_cost, item.purchase_price)
+        self.assertEqual(cost_entry.max_cost, item.purchase_price)
+
+        summary = StockItemCost.objects.get(stock_item=item)
+        self.assertEqual(summary.min_cost, item.purchase_price)
+        self.assertEqual(summary.max_cost, item.purchase_price)
 
     def test_full_disassembly(self):
         """Test that a fully disassembled item is retained at zero quantity."""
