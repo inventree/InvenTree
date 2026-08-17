@@ -43,6 +43,7 @@ from InvenTree.serializers import (
     InvenTreeTaggitSerializer,
     OptionalField,
     PrefetchSpec,
+    apply_duplicate_copy_options,
 )
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
@@ -212,13 +213,13 @@ class BuildSerializer(
         instance = super().create(validated_data)
 
         if duplicate:
-            original = duplicate['original']
-
-            if duplicate.get('copy_parameters', True):
-                instance.copy_parameters_from(original)
-
-            if duplicate.get('copy_notes', True):
-                instance.copy_notes_from(original)
+            apply_duplicate_copy_options(
+                instance,
+                duplicate,
+                duplicate['original'],
+                copy_notes=True,
+                copy_parameters=True,
+            )
 
         return instance
 

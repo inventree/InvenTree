@@ -41,6 +41,7 @@ from InvenTree.serializers import (
     InvenTreeMoneySerializer,
     InvenTreeTaggitSerializer,
     OptionalField,
+    apply_duplicate_copy_options,
 )
 from InvenTree.tasks import batch_offload_tasks
 from order.status_codes import (
@@ -270,11 +271,9 @@ class AbstractOrderSerializer(
                     line.order = instance
                     line.save()
 
-            if duplicate.get('copy_parameters', False):
-                instance.copy_parameters_from(original)
-
-            if duplicate.get('copy_notes', False):
-                instance.copy_notes_from(original)
+            apply_duplicate_copy_options(
+                instance, duplicate, original, copy_notes=False, copy_parameters=False
+            )
 
         return instance
 
@@ -1543,13 +1542,13 @@ class SalesOrderShipmentSerializer(
         instance = super().create(validated_data)
 
         if duplicate:
-            original = duplicate['original']
-
-            if duplicate.get('copy_parameters', True):
-                instance.copy_parameters_from(original)
-
-            if duplicate.get('copy_notes', True):
-                instance.copy_notes_from(original)
+            apply_duplicate_copy_options(
+                instance,
+                duplicate,
+                duplicate['original'],
+                copy_notes=True,
+                copy_parameters=True,
+            )
 
         return instance
 

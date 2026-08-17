@@ -1186,3 +1186,34 @@ class DuplicateOptionsSerializer(serializers.Serializer):
                 label=spec.get('label', spec['name']),
                 help_text=spec.get('help_text', ''),
             )
+
+
+def apply_duplicate_copy_options(
+    instance, duplicate: dict, original, **copy_defaults: bool
+) -> None:
+    """Apply the standard 'copy_<x>' duplicate-options onto a newly duplicated instance.
+
+    Many serializers which support duplication (Part/Company/ManufacturerPart/SupplierPart/
+    Build/PurchaseOrder/SalesOrder/ReturnOrder/TransferOrder/SalesOrderShipment) expose a set
+    of 'copy_<x>' boolean flags (e.g. copy_notes, copy_parameters) which each map onto an
+    identically-named `instance.copy_<x>_from(original)` method. This is the shared dispatch
+    for that convention, so adding a new flag - e.g. a future copy_attachments, once
+    InvenTreeAttachmentMixin grows a copy_attachments_from() method - is a one-line addition
+    at each call site rather than a new copy-pasted `if duplicate.get(...): instance.copy_..._
+    from(...)` block. Any duplicate flag whose target method doesn't follow the
+    copy_<x>_from() naming convention (e.g. Part's copy_bom/copy_image/copy_tests, or
+    StockItem's copy_history/copy_tests) must still be handled separately by the caller.
+
+    Arguments:
+        instance: The newly created instance to copy data onto
+        duplicate: The validated 'duplicate' options dict - callers are expected to have
+            already checked `if duplicate:` before calling this (and extracted `original`
+            from it), since they still need both to handle their own additional flags
+        original: The source instance to copy data from
+        **copy_defaults: One kwarg per 'copy_<x>' flag to apply, e.g.
+            `copy_notes=True, copy_parameters=True` - the kwarg's value is the default used
+            if that flag isn't present in `duplicate`
+    """
+    for flag, default in copy_defaults.items():
+        if duplicate.get(flag, default):
+            getattr(instance, f'{flag}_from')(original)

@@ -1051,15 +1051,13 @@ class PartSerializer(
             if duplicate.get('copy_bom', False):
                 instance.copy_bom_from(original)
 
-            if duplicate.get('copy_notes', False):
-                instance.copy_notes_from(original)
+            InvenTree.serializers.apply_duplicate_copy_options(
+                instance, duplicate, original, copy_notes=False, copy_parameters=False
+            )
 
             if duplicate.get('copy_image', False):
                 instance.image = original.image
                 instance.save()
-
-            if duplicate.get('copy_parameters', False):
-                instance.copy_parameters_from(original)
 
             if duplicate.get('copy_tests', False):
                 instance.copy_tests_from(original)

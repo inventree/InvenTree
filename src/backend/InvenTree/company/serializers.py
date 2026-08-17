@@ -24,6 +24,7 @@ from InvenTree.serializers import (
     InvenTreeMoneySerializer,
     InvenTreeTaggitSerializer,
     OptionalField,
+    apply_duplicate_copy_options,
 )
 
 from .models import (
@@ -205,13 +206,13 @@ class CompanySerializer(
         instance = super().create(validated_data)
 
         if duplicate:
-            original = duplicate['original']
-
-            if duplicate.get('copy_parameters', True):
-                instance.copy_parameters_from(original)
-
-            if duplicate.get('copy_notes', True):
-                instance.copy_notes_from(original)
+            apply_duplicate_copy_options(
+                instance,
+                duplicate,
+                duplicate['original'],
+                copy_notes=True,
+                copy_parameters=True,
+            )
 
         return instance
 
@@ -278,13 +279,13 @@ class ManufacturerPartSerializer(
         instance = super().create(validated_data)
 
         if duplicate:
-            original = duplicate['original']
-
-            if duplicate.get('copy_parameters', True):
-                instance.copy_parameters_from(original)
-
-            if duplicate.get('copy_notes', True):
-                instance.copy_notes_from(original)
+            apply_duplicate_copy_options(
+                instance,
+                duplicate,
+                duplicate['original'],
+                copy_notes=True,
+                copy_parameters=True,
+            )
 
         return instance
 
@@ -597,13 +598,13 @@ class SupplierPartSerializer(
             supplier_part.save(**kwargs)
 
         if duplicate:
-            original = duplicate['original']
-
-            if duplicate.get('copy_parameters', True):
-                supplier_part.copy_parameters_from(original)
-
-            if duplicate.get('copy_notes', True):
-                supplier_part.copy_notes_from(original)
+            apply_duplicate_copy_options(
+                supplier_part,
+                duplicate,
+                duplicate['original'],
+                copy_notes=True,
+                copy_parameters=True,
+            )
 
         return supplier_part
 
