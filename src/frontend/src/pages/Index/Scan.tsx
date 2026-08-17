@@ -1,7 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
-  ActionIcon,
   Alert,
   Divider,
   Grid,
@@ -12,29 +11,37 @@ import {
   Text
 } from '@mantine/core';
 import { randomId, useListState, useLocalStorage } from '@mantine/hooks';
-import {
-  IconAlertCircle,
-  IconNumber,
-  IconQuestionMark
-} from '@tabler/icons-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { IconAlertCircle, IconQuestionMark } from '@tabler/icons-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import type { ModelType } from '@lib/enums/ModelType';
+import { ModelType } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { notYetImplemented } from '@lib/functions/Notification';
 import { hideNotification, showNotification } from '@mantine/notifications';
 import dayjs from 'dayjs';
 import { api } from '../../App';
 import { BarcodeInput } from '../../components/barcodes/BarcodeInput';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import PageTitle from '../../components/nav/PageTitle';
+import { InvenTreeIcon } from '../../functions/icons';
 import { showApiErrorMessage } from '../../functions/notifications';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useUserState } from '../../states/UserState';
 import BarcodeScanTable from '../../tables/general/BarcodeScanTable';
 
+function stockCreatePayload(item: Record<string, any>) {
+  return {
+    quantity: item.quantity,
+    ...(item.location ? { location: item.location } : {})
+  };
+}
+
 export default function Scan() {
+  const user = useUserState();
   const [history, historyHandlers] = useListState<BarcodeScanItem>([]);
 
   const [historyStorage, setHistoryStorage] = useLocalStorage<
@@ -46,17 +53,20 @@ export default function Scan() {
 
   const [selection, setSelection] = useState<string[]>([]);
 
-  // Fetch model instance based on scan item
   const fetchInstance = useCallback(
     (item: BarcodeScanItem) => {
       if (!item.model || !item.pk) {
         return;
       }
 
-      // Prevent duplicates
-      if (history.find((i) => i.model == item.model && i.pk == item.pk)) {
-        hideNotification('duplicate-barcode');
+      // Parts may be scanned more than once (each scan is a stock item to create).
+      // Other models still de-duplicate — scanning the same stock item twice is noise.
+      const isDuplicate =
+        item.model !== ModelType.part &&
+        history.some((i) => i.model == item.model && i.pk == item.pk);
 
+      if (isDuplicate) {
+        hideNotification('duplicate-barcode');
         showNotification({
           id: 'duplicate-barcode',
           title: t`Duplicate`,
@@ -82,10 +92,9 @@ export default function Scan() {
           });
         });
     },
-    [api, history]
+    [history]
   );
 
-  // Barcode scanning callback function
   const scanBarcode = useCallback(
     (barcode: string) => {
       api
@@ -110,7 +119,6 @@ export default function Scan() {
             }
           }
 
-          // If no match is found, add an empty result
           if (!match) {
             historyHandlers.append({
               id: randomId(),
@@ -133,23 +141,95 @@ export default function Scan() {
     [fetchInstance]
   );
 
-  // save history data to session storage
   useEffect(() => {
     if (history.length === 0) return;
     setHistoryStorage(history);
   }, [history]);
 
-  // load data from session storage on mount
   useEffect(() => {
     historyHandlers.setState(historyStorage);
   }, [historyStorage]);
 
-  // Items selected for action
   const selectedItems: BarcodeScanItem[] = useMemo(() => {
     return history.filter((item) => selection.includes(item.id));
   }, [selection, history]);
 
-  // selected actions component
+  const selectedPartPks = useMemo(
+    () =>
+      selectedItems
+        .filter((item) => item.model === ModelType.part && item.pk)
+        .map((item) => item.pk as number),
+    [selectedItems]
+  );
+
+  const partPksRef = useRef(selectedPartPks);
+  partPksRef.current = selectedPartPks;
+
+  const canAddStock = user.hasAddRole(UserRoles.stock);
+
+  const bulkCreateStock = useCreateApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    title: t`Create Stock Items`,
+    successMessage: null,
+    fields: {
+      part: {
+        value: selectedPartPks[0],
+        hidden: true
+      },
+      quantity: {},
+      location: {}
+    },
+    initialData: {
+      part: selectedPartPks[0],
+      quantity: 1
+    },
+    preFormContent:
+      selectedPartPks.length > 1 ? (
+        <Alert color='blue' mb='sm'>
+          <Trans>
+            Creating stock items for {selectedPartPks.length} parts with the
+            same quantity and location
+          </Trans>
+        </Alert>
+      ) : undefined,
+    processFormData: (data) => ({
+      ...data,
+      part: partPksRef.current[0]
+    }),
+    onFormSuccess: async (response: any) => {
+      const created = Array.isArray(response) ? response[0] : response;
+      const template = stockCreatePayload(created);
+      const remaining = partPksRef.current.slice(1);
+
+      const results = await Promise.allSettled(
+        remaining.map((part) =>
+          api.post(apiUrl(ApiEndpoints.stock_item_list), { ...template, part })
+        )
+      );
+
+      const failed = results.filter((r) => r.status === 'rejected');
+      const createdCount = 1 + remaining.length - failed.length;
+
+      if (createdCount > 0) {
+        showNotification({
+          title: t`Success`,
+          message: t`Created ${createdCount} stock item(s)`,
+          color: 'green'
+        });
+      }
+
+      failed.forEach((result) => {
+        if (result.status !== 'rejected') return;
+        showApiErrorMessage({
+          error: result.reason,
+          title: t`Failed to create stock item`
+        });
+      });
+
+      setSelection([]);
+    }
+  });
+
   const SelectedActions = useMemo(() => {
     const uniqueObjectTypes = new Set(selectedItems.map((item) => item.model));
 
@@ -160,7 +240,9 @@ export default function Scan() {
           <Trans>Selected elements are not known</Trans>
         </Group>
       );
-    } else if (uniqueObjectTypes.size > 1) {
+    }
+
+    if (uniqueObjectTypes.size > 1) {
       return (
         <Group gap={0}>
           <IconAlertCircle color='orange' />
@@ -169,23 +251,30 @@ export default function Scan() {
       );
     }
 
+    if (uniqueObjectTypes.has(ModelType.part) && selectedPartPks.length > 0) {
+      return (
+        <>
+          <Text fz='sm' c='dimmed'>
+            <Trans>Create Stock Items</Trans>
+          </Text>
+          <Group>
+            <ActionButton
+              icon={<InvenTreeIcon icon='add' />}
+              tooltip={t`Create stock items for selected parts`}
+              disabled={!canAddStock}
+              onClick={() => bulkCreateStock.open()}
+            />
+          </Group>
+        </>
+      );
+    }
+
     return (
-      <>
-        <Text fz='sm' c='dimmed'>
-          <Trans>Actions ... </Trans>
-        </Text>
-        <Group>
-          <ActionIcon
-            onClick={notYetImplemented}
-            title={t`Count`}
-            variant='default'
-          >
-            <IconNumber />
-          </ActionIcon>
-        </Group>
-      </>
+      <Text fz='sm' c='dimmed'>
+        <Trans>Scan parts to create stock items</Trans>
+      </Text>
     );
-  }, [selectedItems]);
+  }, [selectedItems, selectedPartPks, bulkCreateStock, canAddStock]);
 
   return (
     <>
@@ -251,6 +340,7 @@ export default function Scan() {
           </Paper>
         </Grid.Col>
       </Grid>
+      {bulkCreateStock.modal}
     </>
   );
 }
