@@ -257,17 +257,29 @@ export default function NotesEditor({
     setSelectedNoteId((primary ?? notesQuery.data[0])?.pk ?? undefined);
   }, [notesQuery.data]);
 
+  // Templates are staff-only; regular notes follow the linked model's permissions
+  const hasNotePermission = useCallback(
+    (action: 'change' | 'delete'): boolean => {
+      if (templateMode) {
+        return user.isStaff();
+      }
+      if (!modelType) {
+        return false;
+      }
+      return action === 'change'
+        ? user.hasChangePermission(modelType)
+        : user.hasDeletePermission(modelType);
+    },
+    [user, modelType, templateMode]
+  );
+
   const canEdit: boolean = useMemo(
     () =>
-      (templateMode
-        ? user.isStaff()
-        : modelType
-          ? user.hasChangePermission(modelType)
-          : false) &&
+      hasNotePermission('change') &&
       notesQuery.isFetched &&
       notesQuery.isSuccess &&
       !!notesQuery.data,
-    [user, modelType, templateMode, notesQuery]
+    [hasNotePermission, notesQuery]
   );
 
   const isInTable = useEditorState({
@@ -480,12 +492,7 @@ export default function NotesEditor({
                           }),
                           DeleteItemAction({
                             hidden:
-                              !selectedNote ||
-                              !(templateMode
-                                ? user.isStaff()
-                                : modelType
-                                  ? user.hasDeletePermission(modelType)
-                                  : false),
+                              !selectedNote || !hasNotePermission('delete'),
                             onClick: () => {
                               deleteNote.open();
                             }
