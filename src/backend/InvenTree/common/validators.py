@@ -11,22 +11,33 @@ import common.icons
 from common.settings import get_global_setting
 
 
+def models_with_mixin(mixin_class) -> list:
+    """Return a list of models which inherit from the given mixin class."""
+    import InvenTree.helpers_model
+
+    return list(InvenTree.helpers_model.getModelsWithMixin(mixin_class))
+
+
+def model_options_for_mixin(mixin_class) -> list:
+    """Return (name, verbose_name) choices for models which inherit from the given mixin class."""
+    return [
+        (model.__name__.lower(), model._meta.verbose_name)
+        for model in models_with_mixin(mixin_class)
+    ]
+
+
 def note_model_types():
     """Return a list of valid note model choices."""
-    import InvenTree.helpers_model
     import InvenTree.models
 
-    return list(
-        InvenTree.helpers_model.getModelsWithMixin(InvenTree.models.InvenTreeNoteMixin)
-    )
+    return models_with_mixin(InvenTree.models.InvenTreeNoteMixin)
 
 
 def note_model_options():
     """Return a list of options for models which support notes."""
-    return [
-        (model.__name__.lower(), model._meta.verbose_name)
-        for model in note_model_types()
-    ]
+    import InvenTree.models
+
+    return model_options_for_mixin(InvenTree.models.InvenTreeNoteMixin)
 
 
 def validate_note_model_type(value):
@@ -54,52 +65,35 @@ def validate_note_model_type(value):
 
 def parameter_model_types():
     """Return a list of valid parameter model choices."""
-    import InvenTree.helpers_model
     import InvenTree.models
 
-    return list(
-        InvenTree.helpers_model.getModelsWithMixin(
-            InvenTree.models.InvenTreeParameterMixin
-        )
-    )
+    return models_with_mixin(InvenTree.models.InvenTreeParameterMixin)
 
 
 def parameter_model_options():
     """Return a list of options for models which support parameters."""
-    return [
-        (model.__name__.lower(), model._meta.verbose_name)
-        for model in parameter_model_types()
-    ]
+    import InvenTree.models
+
+    return model_options_for_mixin(InvenTree.models.InvenTreeParameterMixin)
 
 
 def parameter_template_model_options():
     """Return a list of options for models which support parameter templates."""
-    options = [
-        (model.__name__.lower(), model._meta.verbose_name)
-        for model in parameter_model_types()
-    ]
-
-    return [(None, _('All models')), *options]
+    return [(None, _('All models')), *parameter_model_options()]
 
 
 def attachment_model_types():
     """Return a list of valid attachment model choices."""
-    import InvenTree.helpers_model
     import InvenTree.models
 
-    return list(
-        InvenTree.helpers_model.getModelsWithMixin(
-            InvenTree.models.InvenTreeAttachmentMixin
-        )
-    )
+    return models_with_mixin(InvenTree.models.InvenTreeAttachmentMixin)
 
 
 def attachment_model_options():
     """Return a list of options for models which support attachments."""
-    return [
-        (model.__name__.lower(), model._meta.verbose_name)
-        for model in attachment_model_types()
-    ]
+    import InvenTree.models
+
+    return model_options_for_mixin(InvenTree.models.InvenTreeAttachmentMixin)
 
 
 def attachment_model_class_from_label(label: str):
