@@ -156,9 +156,14 @@ export default function Scan() {
 
   const selectedPartPks = useMemo(
     () =>
-      selectedItems
-        .filter((item) => item.model === ModelType.part && item.pk)
-        .map((item) => item.pk as number),
+      selectedItems.flatMap((item) => {
+        if (item.model !== ModelType.part || item.pk == null) {
+          return [];
+        }
+
+        const pk = Number(item.pk);
+        return Number.isFinite(pk) ? [pk] : [];
+      }),
     [selectedItems]
   );
 
