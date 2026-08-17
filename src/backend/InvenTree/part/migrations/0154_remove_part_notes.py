@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("part", "0152_alter_partpricing_currency"),
+        ("part", "0153_bomitem_piece_count_bomitem_piece_size"),
         ("common", "0052_remove_notesimage_model_id_and_more")
     ]
 

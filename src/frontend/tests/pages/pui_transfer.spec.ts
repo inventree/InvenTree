@@ -111,6 +111,8 @@ test('Transfer Order - Calendar', async ({ browser }) => {
   // Export calendar data - assert on download instead of notification
   await page.getByLabel('calendar-export-data').click();
 
+  await page.bringToFront();
+
   const [download] = await Promise.all([
     page.waitForEvent('download'),
     page.getByRole('button', { name: 'Export', exact: true }).click()

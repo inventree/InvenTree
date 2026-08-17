@@ -42,6 +42,10 @@ export function bomItemFields({
       label: t`Quantity`,
       description: t`Required component quantity`
     },
+    piece_count: {
+      label: t`Piece Count`,
+      description: t`Number of pieces required (for cut-to-length items). Total material = quantity × piece_count.`
+    },
     reference: {},
     setup_quantity: {},
     attrition: {},
