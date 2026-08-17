@@ -825,7 +825,6 @@ class AttachmentSerializer(
     def save(self, **kwargs):
         """Override the save method to handle the model_type field."""
         from InvenTree.models import InvenTreeAttachmentMixin
-        from users.permissions import check_user_permission
 
         model_type = self.validated_data.get('model_type', None)
 
@@ -839,21 +838,43 @@ class AttachmentSerializer(
             model_type
         )
 
-        if not issubclass(target_model_class, InvenTreeAttachmentMixin):
-            raise PermissionDenied(_('Invalid model type specified for attachment'))
-
-        permission_error_msg = _(
-            'User does not have permission to create or edit attachments for this model'
+        check_model_change_permission(
+            user,
+            target_model_class,
+            InvenTreeAttachmentMixin,
+            _('Invalid model type specified for attachment'),
+            _(
+                'User does not have permission to create or edit attachments for this model'
+            ),
         )
 
-        if not check_user_permission(user, target_model_class, 'change'):
-            raise PermissionDenied(permission_error_msg)
-
-        # Check that the user has the required permissions to attach files to the target model
-        if not target_model_class.check_related_permission('change', user):
-            raise PermissionDenied(permission_error_msg)
-
         return super().save(**kwargs)
+
+
+def check_model_change_permission(
+    user, target_model_class, mixin_class, invalid_model_msg, permission_error_msg
+):
+    """Ensure a user has 'change' permission against a generic-relation target model.
+
+    Shared by any serializer whose save() must verify both that the target model
+    supports a given mixin (e.g. Attachment/Parameter/Note), and that the user has
+    'change' permission against it - the sequence of checks is identical in each
+    case; only the mixin class and the (separately translated, so callers keep
+    full-sentence translator context) error messages differ.
+
+    Raises PermissionDenied if the model class is invalid, or the user lacks
+    permission.
+    """
+    from users.permissions import check_user_permission
+
+    if not target_model_class or not issubclass(target_model_class, mixin_class):
+        raise PermissionDenied(invalid_model_msg)
+
+    if not check_user_permission(user, target_model_class, 'change'):
+        raise PermissionDenied(permission_error_msg)
+
+    if not target_model_class.check_related_permission('change', user):
+        raise PermissionDenied(permission_error_msg)
 
 
 def check_note_change_permission(user, *, template, model_type):
@@ -865,8 +886,6 @@ def check_note_change_permission(user, *, template, model_type):
 
     Raises PermissionDenied if the user is not permitted.
     """
-    from users.permissions import check_user_permission
-
     if template:
         if not user.is_staff:
             raise PermissionDenied(
@@ -876,18 +895,13 @@ def check_note_change_permission(user, *, template, model_type):
 
     target_model_class = model_type.model_class() if model_type else None
 
-    if not target_model_class or not issubclass(target_model_class, InvenTreeNoteMixin):
-        raise PermissionDenied(_('Invalid model type specified for note'))
-
-    permission_error_msg = _(
-        'User does not have permission to create or edit notes for this model'
+    check_model_change_permission(
+        user,
+        target_model_class,
+        InvenTreeNoteMixin,
+        _('Invalid model type specified for note'),
+        _('User does not have permission to create or edit notes for this model'),
     )
-
-    if not check_user_permission(user, target_model_class, 'change'):
-        raise PermissionDenied(permission_error_msg)
-
-    if not target_model_class.check_related_permission('change', user):
-        raise PermissionDenied(permission_error_msg)
 
 
 class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
@@ -1039,9 +1053,6 @@ class ParameterSerializer(
 
     def save(self, **kwargs):
         """Save the Parameter instance."""
-        from InvenTree.models import InvenTreeParameterMixin
-        from users.permissions import check_user_permission
-
         model_type = self.validated_data.get('model_type', None)
 
         if model_type is None and self.instance:
@@ -1052,18 +1063,15 @@ class ParameterSerializer(
 
         target_model_class = model_type.model_class()
 
-        if not issubclass(target_model_class, InvenTreeParameterMixin):
-            raise PermissionDenied(_('Invalid model type specified for parameter'))
-
-        permission_error_msg = _(
-            'User does not have permission to create or edit parameters for this model'
+        check_model_change_permission(
+            user,
+            target_model_class,
+            InvenTreeParameterMixin,
+            _('Invalid model type specified for parameter'),
+            _(
+                'User does not have permission to create or edit parameters for this model'
+            ),
         )
-
-        if not check_user_permission(user, target_model_class, 'change'):
-            raise PermissionDenied(permission_error_msg)
-
-        if not target_model_class.check_related_permission('change', user):
-            raise PermissionDenied(permission_error_msg)
 
         instance = super().save(updated_by=user, **kwargs)
 
