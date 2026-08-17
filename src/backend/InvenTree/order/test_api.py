@@ -38,6 +38,8 @@ from order.status_codes import (
     TransferOrderStatusGroups,
 )
 from part.models import Part
+from pricing.models import StockItemCost, StockItemCostEntry
+from pricing.status_codes import CostType
 from stock.models import StockItem, StockLocation, StockSortOrder
 from stock.status_codes import StockHistoryCode, StockStatus
 from users.models import Owner
@@ -1399,6 +1401,48 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertTrue(
             StockItem.objects.filter(barcode_data='MY-UNIQUE-BARCODE-456').exists()
         )
+
+    def test_cost_entry_created(self):
+        """Receiving a line item with a purchase price should create a matching cost entry."""
+        line_1 = models.PurchaseOrderLineItem.objects.get(pk=1)
+        line_1.purchase_price = Money('12.500', 'USD')
+        line_1.save()
+
+        data = {'items': [{'line_item': 1, 'quantity': 50}], 'location': 1}
+
+        self.post(self.url, data, expected_code=201)
+
+        stock_item = StockItem.objects.filter(supplier_part=line_1.part).last()
+        self.assertIsNotNone(stock_item)
+
+        # A matching PURCHASE cost entry should have been created
+        entry = StockItemCostEntry.objects.get(stock_item=stock_item)
+        self.assertEqual(entry.cost_type, CostType.PURCHASE.value)
+        self.assertEqual(entry.min_cost, Money('12.5', 'USD'))
+        self.assertEqual(entry.max_cost, Money('12.5', 'USD'))
+        self.assertEqual(entry.user, self.user)
+
+        # A matching cached cost summary should also exist
+        summary = StockItemCost.objects.get(stock_item=stock_item)
+        self.assertEqual(summary.min_cost, Money('12.5', 'USD'))
+        self.assertEqual(summary.max_cost, Money('12.5', 'USD'))
+
+    def test_no_cost_entry_without_price(self):
+        """No cost entry should be created if the line item has no purchase price."""
+        line_1 = models.PurchaseOrderLineItem.objects.get(pk=1)
+        self.assertIsNone(line_1.purchase_price)
+
+        data = {'items': [{'line_item': 1, 'quantity': 50}], 'location': 1}
+
+        self.post(self.url, data, expected_code=201)
+
+        stock_item = StockItem.objects.filter(supplier_part=line_1.part).last()
+        self.assertIsNotNone(stock_item)
+
+        self.assertFalse(
+            StockItemCostEntry.objects.filter(stock_item=stock_item).exists()
+        )
+        self.assertFalse(StockItemCost.objects.filter(stock_item=stock_item).exists())
 
     def test_batch_code(self):
         """Test that we can supply a 'batch code' when receiving items."""

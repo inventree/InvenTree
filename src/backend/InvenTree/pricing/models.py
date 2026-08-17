@@ -21,6 +21,135 @@ from .status_codes import CostType
 logger = structlog.get_logger('inventree')
 
 
+class StockItemCostEntryManager(models.Manager):
+    """Manager providing helpers for assigning cost data to a StockItem.
+
+    This is the common entry point that other apps (order, stock, build, ...)
+    should use whenever a StockItem is assigned a cost - rather than each call
+    site hand-rolling its own StockItemCostEntry (+ StockItemCost summary)
+    construction. See `set_cost` for a single stock item, and `bulk_set_costs`
+    for many at once (e.g. receiving a large purchase order).
+    """
+
+    def set_cost(
+        self,
+        stock_item,
+        cost_type,
+        min_cost=None,
+        max_cost=None,
+        min_cost_currency=None,
+        max_cost_currency=None,
+        user=None,
+        notes='',
+        source_data=None,
+    ):
+        """Create or update the cost entry for a (stock_item, cost_type) pair.
+
+        Uses update_or_create() under the hood, so the normal save()-triggered
+        signals fire either way - the cached StockItemCost summary is kept in
+        sync automatically, whether this creates a new entry or updates an
+        existing one.
+        """
+        if min_cost_currency is None and isinstance(min_cost, Money):
+            min_cost_currency = min_cost.currency
+
+        if max_cost_currency is None and isinstance(max_cost, Money):
+            max_cost_currency = max_cost.currency
+
+        entry, _created = self.update_or_create(
+            stock_item=stock_item,
+            cost_type=cost_type,
+            defaults={
+                'min_cost': min_cost,
+                'min_cost_currency': min_cost_currency,
+                'max_cost': max_cost,
+                'max_cost_currency': max_cost_currency,
+                'user': user,
+                'notes': notes,
+                'source_data': source_data,
+            },
+        )
+
+        return entry
+
+    def bulk_set_costs(self, entries: list[dict]):
+        """Create or update cost entries for potentially many stock items at once.
+
+        Each dict in `entries` supports the same keys as `set_cost` (stock_item
+        and cost_type are required, the rest are optional).
+
+        A single bulk_create(update_conflicts=True) call is used to upsert every
+        entry in one query, regardless of whether a matching (stock_item,
+        cost_type) entry already exists. As bulk_create() does not call
+        save() and therefore does not trigger the usual signals, the cached
+        StockItemCost summary for every affected stock item is recalculated
+        afterwards via an offloaded 'update_stock_item_cost' task (batched into
+        a single bulk task-queue write, rather than one per stock item).
+        """
+        if not entries:
+            return []
+
+        objs = []
+        stock_items = {}
+
+        for data in entries:
+            stock_item = data['stock_item']
+            min_cost = data.get('min_cost')
+            max_cost = data.get('max_cost')
+
+            min_cost_currency = data.get('min_cost_currency')
+            if min_cost_currency is None and isinstance(min_cost, Money):
+                min_cost_currency = min_cost.currency
+
+            max_cost_currency = data.get('max_cost_currency')
+            if max_cost_currency is None and isinstance(max_cost, Money):
+                max_cost_currency = max_cost.currency
+
+            objs.append(
+                self.model(
+                    stock_item=stock_item,
+                    cost_type=data.get('cost_type', CostType.PURCHASE.value),
+                    min_cost=min_cost,
+                    min_cost_currency=min_cost_currency,
+                    max_cost=max_cost,
+                    max_cost_currency=max_cost_currency,
+                    user=data.get('user'),
+                    notes=data.get('notes', ''),
+                    source_data=data.get('source_data'),
+                )
+            )
+
+            stock_items[stock_item.pk] = stock_item
+
+        created = self.bulk_create(
+            objs,
+            batch_size=500,
+            update_conflicts=True,
+            unique_fields=['stock_item', 'cost_type'],
+            update_fields=[
+                'min_cost',
+                'min_cost_currency',
+                'max_cost',
+                'max_cost_currency',
+                'user',
+                'notes',
+                'source_data',
+            ],
+        )
+
+        # Deferred imports to avoid a circular import (pricing.models <-> pricing.tasks)
+        import pricing.tasks
+        from InvenTree.tasks import batch_offload_tasks, offload_task
+
+        with batch_offload_tasks():
+            for stock_item in stock_items.values():
+                offload_task(
+                    pricing.tasks.update_stock_item_cost, stock_item, group='pricing'
+                )
+
+        return created
+
+
 class StockItemCostEntry(models.Model):
     """Model representing a single cost contribution towards a StockItem.
 
@@ -52,6 +181,8 @@ class StockItemCostEntry(models.Model):
                 fields=['stock_item', 'cost_type'], name='unique_stock_item_cost_type'
             )
         ]
+
+    objects = StockItemCostEntryManager()
 
     stock_item = models.ForeignKey(
         'stock.StockItem',

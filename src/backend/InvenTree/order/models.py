@@ -1034,6 +1034,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
             serials: Optional list of serial numbers (optional)
             note: Optional notes for the item (optional)
         """
+        # Deferred import to avoid a circular import at module load time
+        # (order -> pricing -> stock -> order)
+        import pricing.models
+        from pricing.status_codes import CostType
+
         if self.status != PurchaseOrderStatus.PLACED:
             raise ValidationError(
                 "Lines can only be received against an order marked as 'PLACED'"
@@ -1278,6 +1283,23 @@ class PurchaseOrder(TotalPriceMixin, Order):
         stock.models.StockItemTracking.objects.bulk_create(
             tracking_entries, batch_size=250
         )
+
+        # Record a purchase cost entry for each newly received item that was
+        # assigned a purchase price (this may be a large number of items, so
+        # the bulk helper is used rather than creating entries one at a time)
+        pricing.models.StockItemCostEntry.objects.bulk_set_costs([
+            {
+                'stock_item': item,
+                'cost_type': CostType.PURCHASE.value,
+                'min_cost': item.purchase_price,
+                'max_cost': item.purchase_price,
+                'min_cost_currency': item.purchase_price_currency,
+                'max_cost_currency': item.purchase_price_currency,
+                'user': user,
+            }
+            for item in stock_items
+            if item.purchase_price is not None
+        ])
 
         # Update received quantity for each line item
         PurchaseOrderLineItem.objects.bulk_update(line_items_to_update, ['received'])
