@@ -12,6 +12,7 @@ import {
   type InstanceRenderInterface,
   RenderInlineModel
 } from './Instance';
+import { StatusRenderer } from './StatusRenderer';
 
 /**
  * Inline rendering of a single StockLocation instance
@@ -101,6 +102,8 @@ export function RenderStockItem(
   const showLocation: boolean = props.extra?.show_location !== false;
   const location: any = props.instance?.location_detail;
 
+  const statusKey = instance?.status_custom_key ?? instance?.status;
+
   // Form the "secondary" text to display
   const secondary: ReactNode = (
     <Group gap='xs' style={{ paddingLeft: '5px' }}>
@@ -109,6 +112,13 @@ export function RenderStockItem(
       )}
       {instance.batch && (
         <InlineSecondaryBadge title={t`Batch`} text={instance.batch} />
+      )}
+      {statusKey != null && (
+        <StatusRenderer
+          status={statusKey}
+          fallbackStatus={instance.status}
+          type={ModelType.stockitem}
+        />
       )}
     </Group>
   );
