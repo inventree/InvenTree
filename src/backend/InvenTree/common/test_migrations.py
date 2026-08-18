@@ -376,17 +376,27 @@ class TestNoteMigrations(MigratorTestCase):
             **tree,
         )
 
-        # Parts with empty notes should not generate a Note entry
-        Part.objects.create(
+        # Parts with empty notes and no directly-linked images should not
+        # generate a Note entry at all
+        empty_notes_part = Part.objects.create(
             name='Part with empty notes', description='x', notes='', **tree
         )
-        Part.objects.create(
+        null_notes_part = Part.objects.create(
             name='Part with null notes', description='x', notes=None, **tree
         )
 
         # An image which is directly linked to the part instance
         NotesImage.objects.create(
             image=self.generate_image('linked.png'), model_type='part', model_id=part.pk
+        )
+
+        # An image directly linked to a part whose notes field is blank - this
+        # must be preserved (migrated onto an empty placeholder note) rather
+        # than silently discarded, since it was legitimately attached
+        NotesImage.objects.create(
+            image=self.generate_image('blank_notes_linked.png'),
+            model_type='part',
+            model_id=empty_notes_part.pk,
         )
 
         company = Company.objects.create(
@@ -481,14 +491,17 @@ class TestNoteMigrations(MigratorTestCase):
         # Record the expected (model_type, model_id) values for later comparison
         self.expected_notes = [(model, instance.pk) for model, instance in instances]
         self.part_pk = part.pk
+        self.empty_notes_part_pk = empty_notes_part.pk
+        self.null_notes_part_pk = null_notes_part.pk
 
     def test_notes_migrated(self):
         """Test that a Note object has been created for each legacy notes field."""
         Note = self.new_state.apps.get_model('common', 'Note')
         ContentType = self.new_state.apps.get_model('contenttypes', 'ContentType')
 
-        # One note per instance with non-empty notes (and no extras)
-        self.assertEqual(Note.objects.count(), len(self.expected_notes))
+        # One note per instance with non-empty notes, plus one empty
+        # placeholder note for the blank-notes part with a linked image
+        self.assertEqual(Note.objects.count(), len(self.expected_notes) + 1)
 
         for model, pk in self.expected_notes:
             content_type = ContentType.objects.get(model=model)
@@ -502,20 +515,50 @@ class TestNoteMigrations(MigratorTestCase):
             self.assertIn('<strong>bold</strong>', note.content)
             self.assertNotIn('**', note.content)
 
+        part_content_type = ContentType.objects.get(model='part')
+
+        # The blank-notes part with a directly-linked image gets an empty
+        # placeholder note, so its image is preserved rather than discarded
+        placeholder_note = Note.objects.get(
+            model_type=part_content_type, model_id=self.empty_notes_part_pk
+        )
+        self.assertEqual(placeholder_note.content, '')
+        self.assertTrue(placeholder_note.primary)
+        self.assertFalse(placeholder_note.template)
+
+        # The blank-notes part with *no* linked image gets no note at all
+        self.assertFalse(
+            Note.objects.filter(
+                model_type=part_content_type, model_id=self.null_notes_part_pk
+            ).exists()
+        )
+
     def test_images_migrated(self):
         """Test that NotesImage objects are correctly linked or removed."""
         Note = self.new_state.apps.get_model('common', 'Note')
         ContentType = self.new_state.apps.get_model('contenttypes', 'ContentType')
         NotesImage = self.new_state.apps.get_model('common', 'NotesImage')
 
-        # The orphaned image has been removed
-        self.assertEqual(NotesImage.objects.count(), 2)
+        # The orphaned image has been removed; the other three (linked to the
+        # main part, embedded in its content, and directly linked to the
+        # blank-notes part) all survive
+        self.assertEqual(NotesImage.objects.count(), 3)
 
-        content_type = ContentType.objects.get(model='part')
-        note = Note.objects.get(model_type=content_type, model_id=self.part_pk)
+        part_content_type = ContentType.objects.get(model='part')
+        placeholder_note = Note.objects.get(
+            model_type=part_content_type, model_id=self.empty_notes_part_pk
+        )
+        blank_notes_image = NotesImage.objects.get(
+            image__icontains='blank_notes_linked'
+        )
+        self.assertEqual(blank_notes_image.note.pk, placeholder_note.pk)
 
-        # Both the directly linked image and the embedded image point to the part note
-        for image in NotesImage.objects.all():
+        note = Note.objects.get(model_type=part_content_type, model_id=self.part_pk)
+
+        # Both the directly linked image and the embedded image point to the
+        # main part's note - excluding the blank-notes part's own image, which
+        # points to its own placeholder note instead (checked above)
+        for image in NotesImage.objects.exclude(pk=blank_notes_image.pk):
             self.assertEqual(image.note.pk, note.pk)
 
 

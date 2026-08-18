@@ -98,6 +98,53 @@ def create_notes_batch(Note, NotesImage, content_type, model, instances, unlinke
     return notes
 
 
+def migrate_orphaned_images(Note, NotesImage, content_type, model):
+    """Preserve any still-unlinked, directly-attached images for the given model.
+
+    create_notes_batch() only processes instances whose legacy 'notes' field is
+    non-empty (there's no note content to migrate for a blank one), so a directly
+    linked NotesImage (model_type/model_id set at upload time, independent of
+    whatever the 'notes' field currently contains) attached to a blank-notes
+    instance is never picked up by it and would otherwise be silently discarded
+    by remove_unlinked_images() at the end of this migration.
+
+    Rather than losing these images, create one empty, primary Note per affected
+    instance to hold them. The 'delete_old_notes_images' scheduled task (see
+    common.tasks) already handles cleaning up images which remain unreferenced
+    in their note's content once they age out - same as it always did before
+    this refactor - so nothing further needs to happen here.
+    """
+    orphaned_images = list(
+        NotesImage.objects.filter(model_type__iexact=model, note__isnull=True)
+    )
+
+    if not orphaned_images:
+        return
+
+    model_ids = sorted({image.model_id for image in orphaned_images})
+
+    notes = Note.objects.bulk_create(
+        [
+            Note(
+                title="Note",
+                content='',
+                model_type=content_type,
+                model_id=model_id,
+                primary=True,
+            )
+            for model_id in model_ids
+        ],
+        batch_size=BATCH_SIZE,
+    )
+
+    notes_by_model_id = dict(zip(model_ids, notes))
+
+    for image in orphaned_images:
+        image.note = notes_by_model_id[image.model_id]
+
+    NotesImage.objects.bulk_update(orphaned_images, ['note'], batch_size=BATCH_SIZE)
+
+
 def migrate_notes(apps, schema_editor):
     """Migrate existing notes to the new Note model."""
 
@@ -138,30 +185,34 @@ def migrate_notes(apps, schema_editor):
 
         total = with_notes.count()
 
-        if not total:
-            continue
+        if total:
+            progress = tqdm(total=total, desc=f'Migration common.0051: Migrating notes for {app}.{model}')
 
-        progress = tqdm(total=total, desc=f'Migration common.0051: Migrating notes for {app}.{model}')
+            created = 0
+            batch = []
 
-        created = 0
-        batch = []
+            for instance in with_notes.iterator(chunk_size=BATCH_SIZE):
+                batch.append(instance)
 
-        for instance in with_notes.iterator(chunk_size=BATCH_SIZE):
-            batch.append(instance)
+                if len(batch) >= BATCH_SIZE:
+                    created += len(create_notes_batch(Note, NotesImage, content_type, model, batch, unlinked_images))
+                    progress.update(len(batch))
+                    batch = []
 
-            if len(batch) >= BATCH_SIZE:
+            if batch:
                 created += len(create_notes_batch(Note, NotesImage, content_type, model, batch, unlinked_images))
                 progress.update(len(batch))
-                batch = []
 
-        if batch:
-            created += len(create_notes_batch(Note, NotesImage, content_type, model, batch, unlinked_images))
-            progress.update(len(batch))
+            if created != total:
+                raise RuntimeError(
+                    f'Expected to create {total} notes for {app}.{model}, but created {created}.'
+                )
 
-        if created != total:
-            raise RuntimeError(
-                f'Expected to create {total} notes for {app}.{model}, but created {created}.'
-            )
+        # Handle any remaining directly-linked images for instances with blank
+        # notes - not covered by the with_notes loop above, so this must run
+        # even when total == 0 (i.e. no instance of this model has any notes
+        # text at all, but some may still have directly-attached images).
+        migrate_orphaned_images(Note, NotesImage, content_type, model)
 
 
 def remove_unlinked_images(apps, schema_editor):
