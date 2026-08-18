@@ -409,8 +409,6 @@ class StockItemSerializer(
             'creation_date',
             'stocktake_date',
             'updated',
-            'purchase_price',
-            'purchase_price_currency',
             'use_pack_size',
             'serial_numbers',
             # Annotated fields
@@ -709,16 +707,6 @@ class StockItemSerializer(
     stale = serializers.BooleanField(read_only=True, allow_null=True, label=_('Stale'))
     tracking_items = serializers.IntegerField(
         read_only=True, allow_null=True, label=_('Tracking Items')
-    )
-
-    purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
-        label=_('Purchase Price'),
-        allow_null=True,
-        help_text=_('Purchase price of this stock item, per unit or pack'),
-    )
-
-    purchase_price_currency = InvenTreeCurrencySerializer(
-        help_text=_('Purchase currency of this stock item')
     )
 
     purchase_order_reference = serializers.CharField(
