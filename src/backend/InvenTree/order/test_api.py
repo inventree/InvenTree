@@ -1642,6 +1642,66 @@ class PurchaseOrderReceiveTest(OrderTest):
             line.refresh_from_db()
             self.assertEqual(line.received, line.quantity)
 
+    def test_receive_note_recorded_on_tracking_entry(self):
+        """Test that a per-item 'note' is recorded on the tracking entry, not the StockItem.
+
+        StockItem no longer has its own 'notes' field - the note supplied when
+        receiving an item is expected to land on that item's
+        RECEIVED_AGAINST_PURCHASE_ORDER tracking entry instead.
+        """
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 50,
+                        'note': 'Damaged box, 2 units short',
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201,
+        ).data
+
+        stock_item = StockItem.objects.get(pk=response[0]['pk'])
+
+        self.assertEqual(stock_item.tracking_info.count(), 1)
+        entry = stock_item.tracking_info.first()
+        self.assertEqual(
+            entry.tracking_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
+        )
+        self.assertEqual(entry.notes, 'Damaged box, 2 units short')
+
+    def test_receive_note_recorded_on_tracking_entry_serialized(self):
+        """Test that a per-item 'note' reaches the tracking entry for serialized items too.
+
+        Serialized items are created via a different code path to non-serialized
+        ones (StockItem._create_serial_numbers(), rather than a bulk_create()), so
+        this is tested separately.
+        """
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 3,
+                        'serial_numbers': '200+',
+                        'note': 'Received via serialized batch',
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201,
+        )
+
+        for i in range(200, 203):
+            item = StockItem.objects.get(serial_int=i)
+            self.assertEqual(item.tracking_info.count(), 1)
+            entry = item.tracking_info.first()
+            self.assertEqual(entry.notes, 'Received via serialized batch')
+
     def test_bulk_receive_query_benchmark(self):
         """Benchmark: measure the number of DB queries required to receive 100 line items at once."""
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)

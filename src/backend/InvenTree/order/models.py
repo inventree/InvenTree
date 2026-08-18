@@ -1032,7 +1032,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
             batch_code: Optional batch code for the item (optional)
             expiry_date: Optional expiry date for the item (optional)
             serials: Optional list of serial numbers (optional)
-            note: Optional notes for the item (optional)
+            note: Optional note for the item (optional) - recorded against the
+                item's RECEIVED_AGAINST_PURCHASE_ORDER tracking entry, not the
+                StockItem itself
         """
         if self.status != PurchaseOrderStatus.PLACED:
             raise ValidationError(
@@ -1042,8 +1044,18 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # List of stock items which have been created
         stock_items: list[stock.models.StockItem] = []
 
+        # Per-item 'note' text, index-aligned with stock_items - StockItem no longer
+        # has its own 'notes' field, so this is threaded through to each item's
+        # RECEIVED_AGAINST_PURCHASE_ORDER tracking entry instead (see below)
+        stock_item_notes: list[str] = []
+
         # List of stock items to bulk create
         bulk_create_items: list[stock.models.StockItem] = []
+
+        # Notes for bulk_create_items, appended in lockstep - bulk_create_and_fetch()
+        # re-fetches fresh instances from the database, so any note has to be tracked
+        # positionally here rather than stashed on the (discarded) unsaved instance
+        bulk_create_notes: list[str] = []
 
         # List of tracking entries to create
         tracking_entries: list[stock.models.StockItemTracking] = []
@@ -1096,6 +1108,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             quantity = item['quantity']
             barcode = item.get('barcode', '')
+            note = item.get('note') or item.get('notes') or ''
 
             try:
                 if quantity < 0:
@@ -1233,6 +1246,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     new_item.run_plugin_validation()
 
                     stock_items.append(new_item)
+                    stock_item_notes.append(note)
 
             else:
                 new_item = stock.models.StockItem(**stock_data, serial='', parent=None)
@@ -1243,6 +1257,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     new_item.assign_barcode(barcode_data=barcode, save=False)
 
                 bulk_create_items.append(new_item)
+                bulk_create_notes.append(note)
 
         # Bulk create new stock items
         if len(bulk_create_items) > 0:
@@ -1259,9 +1274,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
             )
 
             stock_items.extend(new_items)
+            stock_item_notes.extend(bulk_create_notes)
 
         # Generate a new tracking entry for each stock item
-        for item in stock_items:
+        for item, item_note in zip(stock_items, stock_item_notes, strict=True):
             tracking_entries.append(
                 item.add_tracking_entry(
                     StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
@@ -1271,6 +1287,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                         'purchaseorder': self.pk,
                         'quantity': float(item.quantity),
                     },
+                    notes=item_note,
                     commit=False,
                 )
             )
@@ -1328,7 +1345,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
         Keyword Arguments:
             batch_code: Optional batch code for the new StockItem
             serials: Optional list of serial numbers to assign to the new StockItem(s)
-            notes: Optional notes field for the StockItem
+            note: Optional note, recorded against the item's tracking entry (not the
+                StockItem itself)
             packaging: Optional packaging field for the StockItem
             barcode: Optional barcode field for the StockItem
             notify: If true, notify users of received items
