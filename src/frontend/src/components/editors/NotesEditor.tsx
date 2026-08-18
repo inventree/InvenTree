@@ -356,7 +356,11 @@ export default function NotesEditor({
   }, [selectedNoteId, notesQuery.data, applyNoteContent]);
 
   const saveNote = useCallback(() => {
-    if (!selectedNoteId || !editor) {
+    // Guard against the global mod+s hotkey firing while there's nothing to
+    // save - e.g. the user isn't currently editing this note, or lacks
+    // permission to (in which case the editor was never made editable, so
+    // there's nothing dirty to persist anyway).
+    if (!canEdit || !isEditing || !selectedNoteId || !editor) {
       return;
     }
 
@@ -390,7 +394,7 @@ export default function NotesEditor({
       .finally(() => {
         notesQuery.refetch();
       });
-  }, [selectedNoteId, editor, setIsDirty]);
+  }, [canEdit, isEditing, selectedNoteId, editor, setIsDirty]);
 
   useHotkeys([['mod+s', saveNote]]);
 
