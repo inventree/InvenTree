@@ -327,6 +327,10 @@ export default function NotesEditor({
     url: apiUrl(ApiEndpoints.note_list),
     pk: selectedNoteId,
     onFormSuccess: () => {
+      // Deleting the currently-open note can leave no note selected (if it was
+      // the last one) - exit edit mode too, so the UI doesn't get stranded
+      // with 'isEditing' stuck true and nothing left to edit/select.
+      setIsEditing(false);
       setSelectedNoteId(undefined);
       notesQuery.refetch();
     }
@@ -492,7 +496,9 @@ export default function NotesEditor({
                           }),
                           DeleteItemAction({
                             hidden:
-                              !selectedNote || !hasNotePermission('delete'),
+                              !selectedNote ||
+                              isEditing ||
+                              !hasNotePermission('delete'),
                             onClick: () => {
                               deleteNote.open();
                             }
