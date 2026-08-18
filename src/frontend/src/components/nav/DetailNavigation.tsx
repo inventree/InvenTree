@@ -37,34 +37,36 @@ export function DetailNavigation({
           {t`${navigation.position.current} of ${navigation.position.total}`}
         </Text>
       )}
-      {navigation.previous && (
-        <Tooltip label={t`Previous`} position='top'>
-          <ActionIcon
-            component='a'
-            href={navigation.previous.href}
-            onClick={navigation.previous.onClick}
-            size='md'
-            variant='subtle'
-            aria-label={t`Previous`}
-          >
-            <IconChevronLeft size='1.25rem' />
-          </ActionIcon>
-        </Tooltip>
-      )}
-      {navigation.next && (
-        <Tooltip label={t`Next`} position='top'>
-          <ActionIcon
-            component='a'
-            href={navigation.next.href}
-            onClick={navigation.next.onClick}
-            size='md'
-            variant='subtle'
-            aria-label={t`Next`}
-          >
-            <IconChevronRight size='1.25rem' />
-          </ActionIcon>
-        </Tooltip>
-      )}
+      <Tooltip label={t`Previous`} position='top'>
+        <ActionIcon
+          component='a'
+          href={navigation.previous?.href}
+          onClick={
+            navigation.previous?.onClick ?? ((event) => event.preventDefault())
+          }
+          data-disabled={!navigation.previous || undefined}
+          aria-disabled={!navigation.previous}
+          size='md'
+          variant='subtle'
+          aria-label={t`Previous`}
+        >
+          <IconChevronLeft size='1.25rem' />
+        </ActionIcon>
+      </Tooltip>
+      <Tooltip label={t`Next`} position='top'>
+        <ActionIcon
+          component='a'
+          href={navigation.next?.href}
+          onClick={navigation.next?.onClick ?? ((event) => event.preventDefault())}
+          data-disabled={!navigation.next || undefined}
+          aria-disabled={!navigation.next}
+          size='md'
+          variant='subtle'
+          aria-label={t`Next`}
+        >
+          <IconChevronRight size='1.25rem' />
+        </ActionIcon>
+      </Tooltip>
     </Group>
   );
 }

@@ -156,6 +156,12 @@ test('Tables - Detail navigation', async ({ browser }) => {
   const detailNavigation = breadcrumbBar.getByTestId('detail-navigation');
   await expect(detailNavigation).toBeVisible();
 
+  const previous = page.getByLabel('Previous', { exact: true });
+  await expect(previous).toBeVisible();
+  await expect(previous.locator('svg')).toBeVisible();
+  await expect(previous).toHaveAttribute('aria-disabled', 'true');
+  await expect(previous).not.toHaveAttribute('href');
+
   const next = page.getByRole('link', { name: 'Next', exact: true });
   await expect(next).toBeVisible();
   await expect(next.locator('svg')).toBeVisible();
@@ -179,12 +185,10 @@ test('Tables - Detail navigation', async ({ browser }) => {
     Math.abs((nextBreadcrumbHeight ?? 0) - (initialBreadcrumbHeight ?? 0))
   ).toBeLessThanOrEqual(1);
 
-  const previous = page.getByRole('link', {
-    name: 'Previous',
-    exact: true
-  });
   await expect(previous).toBeVisible();
   await expect(previous.locator('svg')).toBeVisible();
+  await expect(previous).toHaveAttribute('aria-disabled', 'false');
+  await expect(previous).toHaveAttribute('href');
 });
 
 test('Tables - Columns', async ({ browser }) => {
