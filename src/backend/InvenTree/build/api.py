@@ -1114,6 +1114,20 @@ class NCRFilter(FilterSet):
         label='Filter by exact reference', field_name='reference', lookup_expr='iexact'
     )
 
+    assigned_to = rest_filters.ModelChoiceFilter(
+        queryset=Owner.objects.all(), field_name='responsible', label=_('Assigned To')
+    )
+
+    overdue = rest_filters.BooleanFilter(
+        label=_('NCR is overdue'), method='filter_overdue'
+    )
+
+    def filter_overdue(self, queryset, name, value):
+        """Filter the queryset to either include or exclude NCRs which are overdue."""
+        if str2bool(value):
+            return queryset.filter(NonConformance.get_overdue_filter())
+        return queryset.exclude(NonConformance.get_overdue_filter())
+
 
 class NCRMixin:
     """Mixin class for NonConformance (NCR) API endpoints."""

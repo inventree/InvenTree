@@ -8,6 +8,7 @@ import { ModelType } from '@lib/enums/ModelType';
  */
 export const statusCodeList: Record<string, ModelType> = {
   BuildStatus: ModelType.build,
+  NonConformanceStatus: ModelType.nonconformance,
   PurchaseOrderStatus: ModelType.purchaseorder,
   ReturnOrderStatus: ModelType.returnorder,
   ReturnOrderLineStatus: ModelType.returnorderlineitem,
@@ -18,6 +19,14 @@ export const statusCodeList: Record<string, ModelType> = {
   StockStatus: ModelType.stockitem,
   DataImportStatusCode: ModelType.importsession
 };
+
+/**
+ * NonConformance has a second, independent status-code field ('disposition') on the
+ * same model. There is no separate ModelType for it (it isn't a navigable entity of its
+ * own), so it is deliberately left out of statusCodeList above - callers reference the
+ * raw backend status-class name directly instead of a ModelType.
+ */
+export const ncrDispositionStatusType = 'NonConformanceDisposition';
 
 /*
  * Map the colors used in the backend to the colors used in the frontend

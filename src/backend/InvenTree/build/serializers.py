@@ -1977,13 +1977,12 @@ class NonConformanceStockItemSerializer(
             'read_only': True,
             'allow_null': True,
             'label': _('Stock Item'),
-            'part_detail': False,
             'location_detail': False,
             'supplier_part_detail': False,
             'path_detail': False,
         },
         default_include=True,
-        prefetch_fields=['stock_item'],
+        prefetch_fields=['stock_item', 'stock_item__part'],
     )
 
 

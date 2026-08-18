@@ -83,7 +83,9 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         id: 'build',
         title: t`Manufacturing`,
         link: '/manufacturing/',
-        hidden: !user.hasViewRole(UserRoles.build),
+        hidden:
+          !user.hasViewRole(UserRoles.build) &&
+          !user.hasViewRole(UserRoles.ncr),
         icon: 'build'
       },
       {

@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
+  IconAlertTriangle,
   IconCalendar,
   IconListDetails,
   IconTable,
@@ -25,6 +26,7 @@ import { useUserState } from '../../states/UserState';
 import BuildOrderFilters from '../../tables/build/BuildOrderFilters';
 import BuildOrderParametricTable from '../../tables/build/BuildOrderParametricTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+import { NonConformanceTable } from '../../tables/build/NonConformanceTable';
 
 function BuildOrderCalendar() {
   const globalSettings = useGlobalSettingsState();
@@ -86,6 +88,7 @@ export default function BuildIndex() {
         name: 'buildorder',
         label: t`Build Orders`,
         icon: <IconTools />,
+        hidden: !user.hasViewRole(UserRoles.build),
         selection: buildOrderView,
         onChange: setBuildOrderView,
         options: [
@@ -108,11 +111,21 @@ export default function BuildIndex() {
             content: <BuildOrderParametricTable />
           }
         ]
-      })
+      }),
+      {
+        name: 'ncr',
+        label: t`Non-Conformance Reports`,
+        icon: <IconAlertTriangle />,
+        hidden: !user.hasViewRole(UserRoles.ncr),
+        content: <NonConformanceTable />
+      }
     ];
   }, [user, buildOrderView]);
 
-  if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.build)) {
+  if (
+    !user.isLoggedIn() ||
+    (!user.hasViewRole(UserRoles.build) && !user.hasViewRole(UserRoles.ncr))
+  ) {
     return <PermissionDenied />;
   }
 

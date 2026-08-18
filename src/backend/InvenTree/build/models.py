@@ -38,6 +38,7 @@ from build.status_codes import (
     BuildStatusGroups,
     NonConformanceDisposition,
     NonConformanceStatus,
+    NonConformanceStatusGroups,
 )
 from build.validators import (
     generate_next_build_reference,
@@ -2555,6 +2556,15 @@ class NonConformance(
         MINOR = 10, _('Minor')
         MAJOR = 20, _('Major')
         CRITICAL = 30, _('Critical')
+
+    @classmethod
+    def get_overdue_filter(cls):
+        """Filter for determining if a NonConformance report is overdue."""
+        return (
+            Q(status__in=NonConformanceStatusGroups.OPEN_CODES)
+            & ~Q(target_date=None)
+            & Q(target_date__lte=InvenTree.helpers.current_date())
+        )
 
     @staticmethod
     def get_api_url():
