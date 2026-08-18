@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 532
+INVENTREE_API_VERSION = 533
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v533 -> 2026-08-18 : https://github.com/inventree/InvenTree/pull/12524
+    - Adds standalone API endpoints for StockItem pricing operations
+    - Adds new "pricing" permissions role
 
 v532 -> 2026-08-15 : https://github.com/inventree/InvenTree/pull/12422
     - Adds "piece_count" field to the BomItem model and API endpoints (for cut-to-length parts)
