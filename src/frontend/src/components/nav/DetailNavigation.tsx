@@ -57,7 +57,9 @@ export function DetailNavigation({
         <ActionIcon
           component='a'
           href={navigation.next?.href}
-          onClick={navigation.next?.onClick ?? ((event) => event.preventDefault())}
+          onClick={
+            navigation.next?.onClick ?? ((event) => event.preventDefault())
+          }
           data-disabled={!navigation.next || undefined}
           aria-disabled={!navigation.next}
           size='md'
