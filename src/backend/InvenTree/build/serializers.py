@@ -55,8 +55,8 @@ from stock.serializers import (
 from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer, UserSerializer
 
-from .models import Build, BuildItem, BuildLine
-from .status_codes import BuildStatus
+from .models import Build, BuildItem, BuildLine, NonConformance, NonConformanceStockItem
+from .status_codes import BuildStatus, NonConformanceDisposition
 from .validators import check_build_output
 
 
@@ -1833,3 +1833,231 @@ class BuildConsumeSerializer(serializers.Serializer):
             raise ValidationError(_('At least one item or line must be provided'))
 
         return data
+
+
+class NonConformanceSerializer(
+    CustomStatusSerializerMixin,
+    FilterableSerializerMixin,
+    NotesFieldMixin,
+    InvenTreeTaggitSerializer,
+    InvenTreeCustomStatusSerializerMixin,
+    InvenTreeModelSerializer,
+):
+    """Serializes a NonConformance (NCR) object."""
+
+    class Meta:
+        """Serializer metaclass."""
+
+        model = NonConformance
+        fields = [
+            'pk',
+            'reference',
+            'part',
+            'part_detail',
+            'title',
+            'description',
+            'status',
+            'status_text',
+            'status_custom_key',
+            'disposition',
+            'disposition_text',
+            'disposition_custom_key',
+            'build_order',
+            'build_order_reference',
+            'sales_order',
+            'sales_order_reference',
+            'purchase_order',
+            'purchase_order_reference',
+            'return_order',
+            'return_order_reference',
+            'quantity',
+            'severity',
+            'root_cause',
+            'corrective_action',
+            'responsible',
+            'responsible_detail',
+            'raised_by',
+            'raised_by_detail',
+            'creation_date',
+            'target_date',
+            'closed_date',
+            'link',
+            'notes',
+            'tags',
+            'barcode_hash',
+        ]
+        read_only_fields = [
+            'status',
+            'status_text',
+            'status_custom_key',
+            'disposition',
+            'disposition_text',
+            'disposition_custom_key',
+            'raised_by',
+            'creation_date',
+            'closed_date',
+        ]
+
+    reference = serializers.CharField(required=True)
+
+    part_detail = OptionalField(
+        serializer_class=part_serializers.PartBriefSerializer,
+        serializer_kwargs={'source': 'part', 'many': False, 'read_only': True},
+        default_include=True,
+        prefetch_fields=['part'],
+    )
+
+    responsible_detail = OptionalField(
+        serializer_class=OwnerSerializer,
+        serializer_kwargs={
+            'source': 'responsible',
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['responsible'],
+    )
+
+    raised_by_detail = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={
+            'source': 'raised_by',
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['raised_by'],
+    )
+
+    tags = common.filters.enable_tags_filter()
+
+    # Lightweight reference-only fields for the cross-app order links.
+    # A full nested "_detail" object is deliberately not provided for these -
+    # the order app already imports build.serializers, so importing order.serializers
+    # here in the other direction would create a circular import.
+    build_order_reference = serializers.CharField(
+        source='build_order.reference', read_only=True, allow_null=True
+    )
+    sales_order_reference = serializers.CharField(
+        source='sales_order.reference', read_only=True, allow_null=True
+    )
+    purchase_order_reference = serializers.CharField(
+        source='purchase_order.reference', read_only=True, allow_null=True
+    )
+    return_order_reference = serializers.CharField(
+        source='return_order.reference', read_only=True, allow_null=True
+    )
+
+    barcode_hash = serializers.CharField(read_only=True)
+
+    disposition_text = serializers.CharField(read_only=True)
+
+    def validate_reference(self, reference):
+        """Custom validation for the NonConformance reference field."""
+        NonConformance.validate_reference_field(reference)
+
+        return reference
+
+
+class NonConformanceStockItemSerializer(
+    FilterableSerializerMixin, InvenTreeModelSerializer
+):
+    """Serializes a NonConformanceStockItem object, linking a StockItem to an NCR."""
+
+    class Meta:
+        """Serializer metaclass."""
+
+        model = NonConformanceStockItem
+        fields = ['pk', 'ncr', 'stock_item', 'stock_item_detail', 'quantity', 'notes']
+
+    stock_item_detail = OptionalField(
+        serializer_class=StockItemSerializer,
+        serializer_kwargs={
+            'source': 'stock_item',
+            'read_only': True,
+            'allow_null': True,
+            'label': _('Stock Item'),
+            'part_detail': False,
+            'location_detail': False,
+            'supplier_part_detail': False,
+            'path_detail': False,
+        },
+        default_include=True,
+        prefetch_fields=['stock_item'],
+    )
+
+
+class NCRInvestigateSerializer(serializers.Serializer):
+    """DRF serializer for transitioning an NCR to the 'investigating' status."""
+
+    class Meta:
+        """Serializer metaclass."""
+
+        fields = []
+
+    def save(self):
+        """Transition the specified NCR to INVESTIGATING status."""
+        ncr = self.context['ncr']
+        ncr.investigate()
+
+
+class NCRDispositionSerializer(serializers.Serializer):
+    """DRF serializer for dispositioning an NCR."""
+
+    class Meta:
+        """Serializer metaclass."""
+
+        fields = ['disposition']
+
+    disposition = serializers.ChoiceField(
+        choices=NonConformanceDisposition.items(),
+        label=_('Disposition'),
+        help_text=_('Disposition to record for the affected material'),
+    )
+
+    def save(self):
+        """Transition the specified NCR to DISPOSITIONED status."""
+        ncr = self.context['ncr']
+        ncr.disposition_ncr(self.validated_data['disposition'])
+
+
+class NCRCloseSerializer(serializers.Serializer):
+    """DRF serializer for closing an NCR."""
+
+    class Meta:
+        """Serializer metaclass."""
+
+        fields = []
+
+    def save(self):
+        """Transition the specified NCR to CLOSED status."""
+        ncr = self.context['ncr']
+        ncr.close()
+
+
+class NCRCancelSerializer(serializers.Serializer):
+    """DRF serializer for cancelling an NCR."""
+
+    class Meta:
+        """Serializer metaclass."""
+
+        fields = []
+
+    def save(self):
+        """Transition the specified NCR to CANCELLED status."""
+        ncr = self.context['ncr']
+        ncr.cancel()
+
+
+class NCRReopenSerializer(serializers.Serializer):
+    """DRF serializer for reopening a closed or cancelled NCR."""
+
+    class Meta:
+        """Serializer metaclass."""
+
+        fields = []
+
+    def save(self):
+        """Transition the specified NCR back to OPEN status."""
+        ncr = self.context['ncr']
+        ncr.reopen()

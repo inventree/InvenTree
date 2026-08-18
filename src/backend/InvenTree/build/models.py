@@ -33,10 +33,17 @@ import stock.models
 import users.models
 from build.events import BuildEvents
 from build.filters import annotate_allocated_quantity, annotate_required_quantity
-from build.status_codes import BuildStatus, BuildStatusGroups
+from build.status_codes import (
+    BuildStatus,
+    BuildStatusGroups,
+    NonConformanceDisposition,
+    NonConformanceStatus,
+)
 from build.validators import (
     generate_next_build_reference,
+    generate_next_ncr_reference,
     validate_build_order_reference,
+    validate_ncr_reference,
 )
 from common.models import ProjectCode
 from common.settings import get_global_setting
@@ -2494,4 +2501,410 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         verbose_name=_('Install into'),
         help_text=_('Destination stock item'),
         limit_choices_to={'is_building': True},
+    )
+
+
+class NonConformance(
+    InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeTagsMixin,
+    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.ReferenceIndexingMixin,
+    StateTransitionMixin,
+    StatusCodeMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeModel,
+):
+    """A NonConformance report (NCR) records a quality problem identified against a Part.
+
+    Attributes:
+        reference: NCR reference (required, must be unique)
+        part: The part against which this NCR was raised (required)
+        title: Brief title describing the non-conformance (optional)
+        description: Description of the non-conformance (required)
+        status: Lifecycle status of the NCR (refer to status_codes.NonConformanceStatus)
+        disposition: What is to be done with the affected material (refer to status_codes.NonConformanceDisposition)
+        build_order: Reference to a Build object which this NCR relates to (optional)
+        sales_order: Reference to a SalesOrder object which this NCR relates to (optional)
+        purchase_order: Reference to a PurchaseOrder object which this NCR relates to (optional)
+        return_order: Reference to a ReturnOrder object which this NCR relates to (optional)
+        quantity: Affected quantity (optional, informational)
+        severity: Severity of the non-conformance (optional)
+        root_cause: Root cause of the non-conformance (optional, filled in during investigation)
+        corrective_action: Corrective action taken (optional, filled in during disposition/closure)
+        responsible: User or group responsible for resolving this NCR
+        raised_by: User who raised this NCR
+        creation_date: Date the NCR was created (auto)
+        target_date: Target date for resolution
+        closed_date: Date the NCR was closed (or cancelled)
+        link: External URL for extra information
+    """
+
+    STATUS_CLASS = NonConformanceStatus
+    REFERENCE_PATTERN_SETTING = 'NCR_REFERENCE_PATTERN'
+
+    class Meta:
+        """Metaclass options for the NonConformance model."""
+
+        verbose_name = _('Non-Conformance Report')
+        verbose_name_plural = _('Non-Conformance Reports')
+
+    class Severity(models.IntegerChoices):
+        """Choices for the severity of a NonConformance report."""
+
+        MINOR = 10, _('Minor')
+        MAJOR = 20, _('Major')
+        CRITICAL = 30, _('Critical')
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the NonConformance model."""
+        return reverse('api-ncr-list')
+
+    @classmethod
+    def api_defaults(cls, request=None):
+        """Return default values for this model when issuing an API OPTIONS request."""
+        defaults = {'reference': generate_next_ncr_reference()}
+
+        if request and request.user:
+            defaults['raised_by'] = request.user.pk
+
+        return defaults
+
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'NC'
+
+    def save(self, *args, **kwargs):
+        """Custom save method for the NonConformance model."""
+        self.reference_int = self.validate_reference_field(self.reference)
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        """Validate the NonConformance model."""
+        super().clean()
+
+        # Target date should be *after* the creation date
+        if (
+            self.pk
+            and self.target_date
+            and self.creation_date
+            and self.target_date < self.creation_date
+        ):
+            raise ValidationError({
+                'target_date': _('Target date must be after creation date')
+            })
+
+    def __str__(self):
+        """String representation of a NonConformance report."""
+        return self.reference
+
+    def get_absolute_url(self):
+        """Return the web URL associated with this NonConformance report."""
+        return InvenTree.helpers.pui_url(f'/manufacturing/ncr/{self.id}')
+
+    reference = models.CharField(
+        unique=True,
+        max_length=64,
+        blank=False,
+        help_text=_('Non-Conformance Report Reference'),
+        verbose_name=_('Reference'),
+        default=generate_next_ncr_reference,
+        validators=[validate_ncr_reference],
+    )
+
+    part = models.ForeignKey(
+        'part.Part',
+        verbose_name=_('Part'),
+        on_delete=models.CASCADE,
+        related_name='ncrs',
+        help_text=_('Part against which this non-conformance was raised'),
+    )
+
+    title = models.CharField(
+        verbose_name=_('Title'),
+        blank=True,
+        max_length=100,
+        help_text=_('Brief description of the non-conformance (optional)'),
+    )
+
+    description = models.TextField(
+        verbose_name=_('Description'),
+        blank=False,
+        help_text=_('Description of the non-conformance'),
+    )
+
+    status = generic.states.fields.InvenTreeCustomStatusModelField(
+        verbose_name=_('Status'),
+        default=NonConformanceStatus.OPEN.value,
+        choices=NonConformanceStatus.items(),
+        status_class=NonConformanceStatus,
+        validators=[MinValueValidator(0)],
+        help_text=_('Non-conformance report status'),
+    )
+
+    @property
+    def status_text(self):
+        """Return the text representation of the status field."""
+        return NonConformanceStatus.text(self.status)
+
+    disposition = generic.states.fields.InvenTreeCustomStatusModelField(
+        verbose_name=_('Disposition'),
+        default=NonConformanceDisposition.PENDING.value,
+        choices=NonConformanceDisposition.items(),
+        status_class=NonConformanceDisposition,
+        validators=[MinValueValidator(0)],
+        help_text=_('Disposition of affected material'),
+    )
+
+    @property
+    def disposition_text(self):
+        """Return the text representation of the disposition field."""
+        return NonConformanceDisposition.text(self.disposition)
+
+    build_order = models.ForeignKey(
+        'build.Build',
+        verbose_name=_('Build Order'),
+        on_delete=models.SET_NULL,
+        related_name='ncrs',
+        null=True,
+        blank=True,
+        help_text=_('Build order associated with this non-conformance'),
+    )
+
+    sales_order = models.ForeignKey(
+        'order.SalesOrder',
+        verbose_name=_('Sales Order'),
+        on_delete=models.SET_NULL,
+        related_name='ncrs',
+        null=True,
+        blank=True,
+        help_text=_('Sales order associated with this non-conformance'),
+    )
+
+    purchase_order = models.ForeignKey(
+        'order.PurchaseOrder',
+        verbose_name=_('Purchase Order'),
+        on_delete=models.SET_NULL,
+        related_name='ncrs',
+        null=True,
+        blank=True,
+        help_text=_('Purchase order associated with this non-conformance'),
+    )
+
+    return_order = models.ForeignKey(
+        'order.ReturnOrder',
+        verbose_name=_('Return Order'),
+        on_delete=models.SET_NULL,
+        related_name='ncrs',
+        null=True,
+        blank=True,
+        help_text=_('Return order associated with this non-conformance'),
+    )
+
+    quantity = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Quantity'),
+        help_text=_('Affected quantity (optional)'),
+    )
+
+    severity = models.PositiveIntegerField(
+        verbose_name=_('Severity'),
+        choices=Severity.choices,
+        null=True,
+        blank=True,
+        help_text=_('Severity of the non-conformance (optional)'),
+    )
+
+    root_cause = models.TextField(
+        verbose_name=_('Root Cause'),
+        blank=True,
+        help_text=_('Root cause of the non-conformance (optional)'),
+    )
+
+    corrective_action = models.TextField(
+        verbose_name=_('Corrective Action'),
+        blank=True,
+        help_text=_(
+            'Corrective action taken to resolve the non-conformance (optional)'
+        ),
+    )
+
+    responsible = models.ForeignKey(
+        users.models.Owner,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Responsible'),
+        help_text=_('User or group responsible for resolving this non-conformance'),
+        related_name='ncrs_responsible',
+    )
+
+    raised_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Raised By'),
+        help_text=_('User who raised this non-conformance'),
+        related_name='ncrs_raised',
+    )
+
+    creation_date = models.DateField(
+        auto_now_add=True, editable=False, verbose_name=_('Creation Date')
+    )
+
+    target_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_('Target Date'),
+        help_text=_('Target date for resolution of this non-conformance'),
+    )
+
+    closed_date = models.DateField(null=True, blank=True, verbose_name=_('Closed Date'))
+
+    link = InvenTree.fields.InvenTreeURLField(
+        verbose_name=_('External Link'),
+        blank=True,
+        help_text=_('Link to external URL'),
+        max_length=2000,
+    )
+
+    # region fsm
+    @inventree_transition(
+        field=status,
+        source=[NonConformanceStatus.OPEN],
+        target=NonConformanceStatus.INVESTIGATING,
+        event=BuildEvents.NCR_INVESTIGATING,
+    )
+    def investigate(self):
+        """Transition this NCR to INVESTIGATING status.
+
+        The NCR must currently be OPEN.
+        """
+
+    @inventree_transition(
+        field=status,
+        source=[NonConformanceStatus.OPEN, NonConformanceStatus.INVESTIGATING],
+        target=NonConformanceStatus.DISPOSITIONED,
+        event=BuildEvents.NCR_DISPOSITIONED,
+    )
+    def disposition_ncr(self, disposition: int):
+        """Transition this NCR to DISPOSITIONED status, recording the chosen disposition.
+
+        Arguments:
+            disposition: The chosen NonConformanceDisposition value (must not be PENDING)
+        """
+        valid_dispositions = [
+            d.value
+            for d in NonConformanceDisposition
+            if d.value != NonConformanceDisposition.PENDING.value
+        ]
+
+        if disposition not in valid_dispositions:
+            raise ValidationError({
+                'disposition': _('A valid disposition must be selected')
+            })
+
+        self.disposition = disposition
+
+    @inventree_transition(
+        field=status,
+        source=[NonConformanceStatus.DISPOSITIONED],
+        target=NonConformanceStatus.CLOSED,
+        event=BuildEvents.NCR_CLOSED,
+    )
+    def close(self):
+        """Transition this NCR to CLOSED status.
+
+        The NCR must currently be DISPOSITIONED.
+        """
+        self.closed_date = InvenTree.helpers.current_date()
+
+    @inventree_transition(
+        field=status,
+        source=[
+            NonConformanceStatus.OPEN,
+            NonConformanceStatus.INVESTIGATING,
+            NonConformanceStatus.DISPOSITIONED,
+        ],
+        target=NonConformanceStatus.CANCELLED,
+        event=BuildEvents.NCR_CANCELLED,
+    )
+    def cancel(self):
+        """Transition this NCR to CANCELLED status."""
+        self.closed_date = InvenTree.helpers.current_date()
+
+    @inventree_transition(
+        field=status,
+        source=[NonConformanceStatus.CLOSED, NonConformanceStatus.CANCELLED],
+        target=NonConformanceStatus.OPEN,
+        event=BuildEvents.NCR_REOPENED,
+    )
+    def reopen(self):
+        """Transition this NCR back to OPEN status."""
+        self.closed_date = None
+
+    # endregion fsm
+
+
+class NonConformanceStockItem(InvenTree.models.InvenTreeMetadataModel):
+    """Links a StockItem to a NonConformance report.
+
+    This is a simple association - unlike BuildItem / SalesOrderAllocation, it carries
+    no allocation semantics. The linked stock item may already have been scrapped,
+    shipped, or consumed by the time the NCR is raised or resolved.
+
+    Attributes:
+        ncr: Link to a NonConformance object
+        stock_item: Link to a StockItem object
+        quantity: Affected quantity of the linked stock item (optional)
+        notes: Free-text notes about this specific linkage (optional)
+    """
+
+    class Meta:
+        """Model meta options."""
+
+        unique_together = [('ncr', 'stock_item')]
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL used to access this model."""
+        return reverse('api-ncr-stock-item-list')
+
+    ncr = models.ForeignKey(
+        NonConformance,
+        on_delete=models.CASCADE,
+        related_name='stock_items',
+        verbose_name=_('Non-Conformance Report'),
+    )
+
+    stock_item = models.ForeignKey(
+        'stock.StockItem',
+        on_delete=models.CASCADE,
+        related_name='ncrs',
+        verbose_name=_('Stock Item'),
+        help_text=_('Stock item affected by this non-conformance'),
+    )
+
+    quantity = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Quantity'),
+        help_text=_('Affected quantity of this stock item (optional)'),
+    )
+
+    notes = models.CharField(
+        verbose_name=_('Notes'),
+        blank=True,
+        max_length=250,
+        help_text=_('Notes specific to this stock item linkage (optional)'),
     )
