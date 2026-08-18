@@ -159,7 +159,7 @@ test('Tables - Detail navigation', async ({ browser }) => {
   const previous = page.getByLabel('Previous', { exact: true });
   await expect(previous).toBeVisible();
   await expect(previous.locator('svg')).toBeVisible();
-  await expect(previous).toHaveAttribute('aria-disabled', 'true');
+  await expect(previous).toHaveAttribute('data-disabled', '');
   await expect(previous).not.toHaveAttribute('href');
 
   const next = page.getByRole('link', { name: 'Next', exact: true });
@@ -187,7 +187,7 @@ test('Tables - Detail navigation', async ({ browser }) => {
 
   await expect(previous).toBeVisible();
   await expect(previous.locator('svg')).toBeVisible();
-  await expect(previous).toHaveAttribute('aria-disabled', 'false');
+  await expect(previous).not.toHaveAttribute('data-disabled');
   await expect(previous).toHaveAttribute('href');
 });
 
