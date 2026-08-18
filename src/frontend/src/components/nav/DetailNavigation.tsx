@@ -41,11 +41,8 @@ export function DetailNavigation({
         <ActionIcon
           component='a'
           href={navigation.previous?.href}
-          onClick={
-            navigation.previous?.onClick ?? ((event) => event.preventDefault())
-          }
-          data-disabled={!navigation.previous || undefined}
-          aria-disabled={!navigation.previous}
+          onClick={navigation.previous?.onClick}
+          disabled={!navigation.previous}
           size='md'
           variant='subtle'
           aria-label={t`Previous`}
@@ -57,11 +54,8 @@ export function DetailNavigation({
         <ActionIcon
           component='a'
           href={navigation.next?.href}
-          onClick={
-            navigation.next?.onClick ?? ((event) => event.preventDefault())
-          }
-          data-disabled={!navigation.next || undefined}
-          aria-disabled={!navigation.next}
+          onClick={navigation.next?.onClick}
+          disabled={!navigation.next}
           size='md'
           variant='subtle'
           aria-label={t`Next`}
