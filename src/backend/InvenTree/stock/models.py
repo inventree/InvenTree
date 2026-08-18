@@ -2742,6 +2742,11 @@ class StockItem(
         - Tracking history for the *other* item is deleted
         - Any allocations (build order, sales order) are moved to this StockItem
         """
+        # Deferred import to avoid a circular import at module load time
+        # (stock -> pricing -> stock)
+        import pricing.models
+        from pricing.status_codes import CostType
+
         if isinstance(other_items, StockItem):
             other_items = [other_items]
 
@@ -2868,6 +2873,16 @@ class StockItem(
                 self.purchase_price = total_price / quantity
 
         self.save()
+
+        # Record a purchase cost entry reflecting the merged (weighted-average) price
+        if self.purchase_price is not None:
+            pricing.models.StockItemCostEntry.objects.set_cost(
+                self,
+                CostType.PURCHASE.value,
+                min_cost=self.purchase_price,
+                max_cost=self.purchase_price,
+                user=user,
+            )
 
     @transaction.atomic
     def splitStock(self, quantity, location=None, user=None, **kwargs):
