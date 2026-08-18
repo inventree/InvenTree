@@ -731,9 +731,21 @@ class InvenTreeNoteMixin(InvenTreePermissionCheckMixin, models.Model):
 
         content_type = ContentType.objects.get_for_model(self.__class__)
 
+        # Prefetch each note's images in a single extra query, rather than
+        # one 'images.all()' query per note.
+        #
         # Sort so primary note is saved last — Note.save() promotes the last
         # note saved with primary=True, which correctly mirrors the source.
-        source_notes = sorted(other.notes.all(), key=lambda n: n.primary)
+        # This (and the resulting demotion of sibling notes) is real business
+        # logic in Note.save(), so notes must still be saved one at a time,
+        # in this order - unlike common.migrations.0051's data migration,
+        # which bulk_create()s notes directly, this can't do the same: that
+        # migration operates on a historical model with no custom
+        # save()/clean() methods at all, so there's no primary-flag logic to
+        # preserve there in the first place.
+        source_notes = sorted(
+            other.notes.all().prefetch_related('images'), key=lambda n: n.primary
+        )
 
         for source_note in source_notes:
             new_note = common.models.Note(
@@ -746,7 +758,12 @@ class InvenTreeNoteMixin(InvenTreePermissionCheckMixin, models.Model):
             )
             new_note.save()
 
-            content_updated = False
+            # Read each source image's file data and write it to storage up front,
+            # then bulk_create() all of this note's NotesImage rows in one INSERT
+            # instead of one save() per image - unlike Note, NotesImage has no
+            # save()-time business logic, so this is safe to batch.
+            new_images = []
+
             for img in source_note.images.all():
                 if not img.image:
                     continue
@@ -761,16 +778,28 @@ class InvenTreeNoteMixin(InvenTreePermissionCheckMixin, models.Model):
                     img.image.close()
 
                 new_img = common.models.NotesImage(note=new_note, user=img.user)
-                new_img.image.save(filename, ContentFile(data), save=True)
+                # save=False: still writes the file to storage (and assigns the
+                # resulting name/url), but defers the NotesImage row itself to
+                # the bulk_create() below
+                new_img.image.save(filename, ContentFile(data), save=False)
+                new_images.append((old_url, new_img))
 
-                if old_url in new_note.content:
-                    new_note.content = new_note.content.replace(
-                        old_url, new_img.image.url
-                    )
-                    content_updated = True
+            if new_images:
+                common.models.NotesImage.objects.bulk_create([
+                    new_img for _, new_img in new_images
+                ])
 
-            if content_updated:
-                new_note.save()
+                content_updated = False
+
+                for old_url, new_img in new_images:
+                    if old_url in new_note.content:
+                        new_note.content = new_note.content.replace(
+                            old_url, new_img.image.url
+                        )
+                        content_updated = True
+
+                if content_updated:
+                    new_note.save()
 
     @property
     def primary_note(self):
