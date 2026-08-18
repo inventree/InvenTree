@@ -41,7 +41,7 @@ from company import models as CompanyModels
 from generic.enums import StringEnum
 from generic.states import StatusCodeMixin
 from generic.states.fields import InvenTreeCustomStatusModelField
-from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
+from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers_db import bulk_create_and_fetch
 from InvenTree.status_codes import (
     SalesOrderStatusGroups,
@@ -1338,15 +1338,6 @@ class StockItem(
     def status_text(self):
         """Return the text representation of the status field."""
         return StockStatus.text(self.status)
-
-    purchase_price = InvenTreeModelMoneyField(
-        max_digits=19,
-        decimal_places=6,
-        blank=True,
-        null=True,
-        verbose_name=_('Purchase Price'),
-        help_text=_('Single unit purchase price at time of purchase'),
-    )
 
     owner = models.ForeignKey(
         Owner,
