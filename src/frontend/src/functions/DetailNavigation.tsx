@@ -10,6 +10,9 @@ export const DETAIL_NAVIGATION_PARAMS = {
   field: '_nf'
 } as const;
 
+const DETAIL_NAVIGATION_PARAM_KEYS = new Set<string>(
+  Object.values(DETAIL_NAVIGATION_PARAMS)
+);
 const PAGINATION_PARAMS = new Set(['limit', 'offset', 'page']);
 const DEFAULT_DETAIL_NAVIGATION_FIELD = 'pk';
 
@@ -86,9 +89,38 @@ function decodeDetailNavigationApi(apiUrl: string): string {
 }
 
 function removeDetailNavigationParams(params: URLSearchParams) {
-  Object.values(DETAIL_NAVIGATION_PARAMS).forEach((key) => {
+  DETAIL_NAVIGATION_PARAM_KEYS.forEach((key) => {
     params.delete(key);
   });
+}
+
+function filterDetailNavigationParams(
+  params: URLSearchParams,
+  includeDetailNavigationParams: boolean
+): URLSearchParams {
+  const filteredParams = new URLSearchParams();
+
+  for (const [key, value] of params) {
+    if (
+      DETAIL_NAVIGATION_PARAM_KEYS.has(key) === includeDetailNavigationParams
+    ) {
+      filteredParams.append(key, value);
+    }
+  }
+
+  return filteredParams;
+}
+
+export function excludeDetailNavigationParams(
+  params: URLSearchParams
+): URLSearchParams {
+  return filterDetailNavigationParams(params, false);
+}
+
+export function extractDetailNavigationParams(
+  params: URLSearchParams
+): URLSearchParams {
+  return filterDetailNavigationParams(params, true);
 }
 
 function setDetailNavigationParams(

@@ -137,12 +137,99 @@ test('Tables - Pagination', async ({ browser }) => {
   await page.getByText(/1 - 25 \/ \d+/).waitFor();
 });
 
-test('Tables - Detail navigation', async ({ browser }) => {
+test('Tables - Navigation query parameters', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     url: 'part/category/index/parts/'
   });
 
   await clearTableFilters(page);
+
+  const navigationParams = new URLSearchParams({
+    _na: 'p',
+    _nq: 'search=530470',
+    _ni: '0',
+    _np: '69',
+    _nf: 'pk'
+  });
+
+  const waitForPartList = () =>
+    page.waitForResponse((response) => {
+      const url = new URL(response.url());
+
+      return (
+        response.request().method() === 'GET' &&
+        url.pathname === '/api/part/' &&
+        url.searchParams.has('limit')
+      );
+    });
+
+  const navigationRequest = waitForPartList();
+  await navigate(
+    page,
+    `part/category/index/parts/?${navigationParams.toString()}`
+  );
+
+  const navigationRequestUrl = new URL((await navigationRequest).url());
+
+  for (const key of navigationParams.keys()) {
+    expect(navigationRequestUrl.searchParams.has(key)).toBe(false);
+  }
+
+  await expect(page.getByText('Custom table filters are active')).toHaveCount(
+    0
+  );
+  await expect(page.getByLabel('table-select-filters')).toBeEnabled();
+
+  await setTableChoiceFilter(page, 'Assembly', 'Yes');
+
+  for (const [key, value] of navigationParams) {
+    expect(new URL(page.url()).searchParams.get(key)).toBe(value);
+  }
+
+  await clearTableFilters(page);
+
+  for (const [key, value] of navigationParams) {
+    expect(new URL(page.url()).searchParams.get(key)).toBe(value);
+  }
+
+  const searchParams = new URLSearchParams(navigationParams);
+  searchParams.set('search', '530470');
+
+  const searchRequest = waitForPartList();
+  await navigate(page, `part/category/index/parts/?${searchParams.toString()}`);
+
+  const searchRequestUrl = new URL((await searchRequest).url());
+  expect(searchRequestUrl.searchParams.get('search')).toBe('530470');
+
+  for (const key of navigationParams.keys()) {
+    expect(searchRequestUrl.searchParams.has(key)).toBe(false);
+  }
+
+  await expect(page.getByRole('cell', { name: '530470210' })).toBeVisible();
+
+  const queryFilterAlert = page
+    .getByRole('alert')
+    .filter({ hasText: 'Custom table filters are active' });
+  await expect(queryFilterAlert).toBeVisible();
+  await expect(page.getByLabel('table-select-filters')).toBeDisabled();
+
+  await queryFilterAlert.getByRole('button').click();
+  await expect(queryFilterAlert).toBeHidden();
+  await expect
+    .poll(() => new URL(page.url()).searchParams.has('search'))
+    .toBe(false);
+
+  for (const [key, value] of navigationParams) {
+    expect(new URL(page.url()).searchParams.get(key)).toBe(value);
+  }
+
+  await expect(page.getByLabel('table-select-filters')).toBeEnabled();
+});
+
+test('Tables - Detail navigation', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/index/parts/?search=530470'
+  });
 
   const firstRow = page.locator('tbody tr').first();
   await firstRow.waitFor();
@@ -150,7 +237,7 @@ test('Tables - Detail navigation', async ({ browser }) => {
   await page.waitForURL(/\/web\/part\/\d+(?:\/.*)?$/);
 
   const position = page.getByText(/^\d+ of \d+$/).first();
-  await expect(position).toHaveText(/1 of \d+/);
+  await expect(position).toHaveText('1 of 2');
 
   const breadcrumbBar = page.getByTestId('breadcrumb-list');
   const detailNavigation = breadcrumbBar.getByTestId('detail-navigation');
@@ -159,12 +246,13 @@ test('Tables - Detail navigation', async ({ browser }) => {
   const previous = page.getByLabel('Previous', { exact: true });
   await expect(previous).toBeVisible();
   await expect(previous.locator('svg')).toBeVisible();
-  await expect(previous).toHaveAttribute('data-disabled', '');
+  await expect(previous).toHaveAttribute('data-disabled', 'true');
   await expect(previous).not.toHaveAttribute('href');
 
-  const next = page.getByRole('link', { name: 'Next', exact: true });
+  const next = page.getByLabel('Next', { exact: true });
   await expect(next).toBeVisible();
   await expect(next.locator('svg')).toBeVisible();
+  await expect(next).not.toHaveAttribute('data-disabled');
 
   const nextHref = await next.getAttribute('href');
   expect(nextHref).toContain('_na=p');
@@ -176,7 +264,7 @@ test('Tables - Detail navigation', async ({ browser }) => {
   const initialBreadcrumbHeight = (await breadcrumbBar.boundingBox())?.height;
 
   await next.click();
-  await expect(position).toHaveText(/2 of \d+/);
+  await expect(position).toHaveText('2 of 2');
 
   const nextBreadcrumbHeight = (await breadcrumbBar.boundingBox())?.height;
   expect(initialBreadcrumbHeight).toBeDefined();
@@ -189,6 +277,18 @@ test('Tables - Detail navigation', async ({ browser }) => {
   await expect(previous.locator('svg')).toBeVisible();
   await expect(previous).not.toHaveAttribute('data-disabled');
   await expect(previous).toHaveAttribute('href');
+
+  await expect(next).toBeVisible();
+  await expect(next.locator('svg')).toBeVisible();
+  await expect(next).toHaveAttribute('data-disabled', 'true');
+  await expect(next).not.toHaveAttribute('href');
+
+  await previous.click();
+  await expect(position).toHaveText('1 of 2');
+  await expect(previous).toHaveAttribute('data-disabled', 'true');
+  await expect(previous).not.toHaveAttribute('href');
+  await expect(next).not.toHaveAttribute('data-disabled');
+  await expect(next).toHaveAttribute('href');
 });
 
 test('Tables - Columns', async ({ browser }) => {

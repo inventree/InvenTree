@@ -36,6 +36,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useApi } from '../../contexts/ApiContext';
 import {
   buildDetailNavigationUrl,
+  excludeDetailNavigationParams,
+  extractDetailNavigationParams,
   isSafeApiListUrl
 } from '../../functions/DetailNavigation';
 import { extractAvailableFields } from '../../functions/forms';
@@ -117,6 +119,20 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   const stickyTableHeader = useMemo(() => {
     return userSettings.isSet('STICKY_TABLE_HEADER');
   }, [userSettings]);
+
+  const tableSearchParams = useMemo(() => {
+    return searchParams
+      ? excludeDetailNavigationParams(searchParams)
+      : undefined;
+  }, [searchParams]);
+
+  const clearTableSearchParams = useCallback(() => {
+    setSearchParams?.(
+      searchParams
+        ? extractDetailNavigationParams(searchParams)
+        : new URLSearchParams()
+    );
+  }, [searchParams, setSearchParams]);
 
   // Key used for caching table data
   const cacheKey = useMemo(() => {
@@ -459,7 +475,11 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   useEffect(() => {
     tableState.setPage(1);
     tableState.clearSelectedRecords();
-  }, [tableState.searchTerm, tableState.filterSet.activeFilters, searchParams]);
+  }, [
+    tableState.searchTerm,
+    tableState.filterSet.activeFilters,
+    tableSearchParams
+  ]);
 
   // Account for invalid page offsets
   useEffect(() => {
@@ -493,9 +513,9 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         ...tableProps.params
       };
 
-      if (searchParams && searchParams.size > 0) {
+      if (tableSearchParams && tableSearchParams.size > 0) {
         // Allow override of filters based on URL query parameters
-        for (const [key, value] of searchParams) {
+        for (const [key, value] of tableSearchParams) {
           queryParams[key] = value;
         }
       } else if (tableState.filterSet.activeFilters) {
@@ -534,7 +554,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
       tableProps.params,
       tableProps.enablePagination,
       tableState.filterSet.activeFilters,
-      searchParams,
+      tableSearchParams,
       tableState.searchTerm,
       getOrderingTerm
     ]
@@ -719,7 +739,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   // Refetch data when the query parameters change
   useEffect(() => {
     refetch();
-  }, [searchParams]);
+  }, [tableSearchParams]);
 
   useEffect(() => {
     const loading: boolean =
@@ -1000,8 +1020,8 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
               hasSwitchableColumns={hasSwitchableColumns}
               columns={dataColumns}
               filters={filters}
-              queryFilters={searchParams}
-              clearQueryFilters={() => setSearchParams?.(new URLSearchParams())}
+              queryFilters={tableSearchParams}
+              clearQueryFilters={clearTableSearchParams}
               toggleColumn={toggleColumn}
             />
           </Boundary>
