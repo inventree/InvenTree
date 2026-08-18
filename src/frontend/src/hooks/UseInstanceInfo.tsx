@@ -35,6 +35,8 @@ export function useInstanceInfo({
   const query = useQuery<InstanceInfo>({
     queryKey: ['instance-info', modelType, modelId],
     enabled: !!modelType && !!modelId,
+    refetchOnMount: true,
+    staleTime: 10,
     queryFn: async () => {
       return api
         .get(apiUrl(ApiEndpoints.instance_info), {

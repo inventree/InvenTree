@@ -106,26 +106,34 @@ function PanelTabComponent({
 }) {
   const visibility = useDocumentVisibility();
 
-  // Check if we should display an indicator dot for this panel
+  const isDynamicDot = typeof panel.notification_dot === 'function';
+
+  // Check if we should display an indicator dot for this panel.
+  // Only self-fetching (function) dots go through react-query, as they need
+  // caching around their own async call. Static dot values are derived from
+  // props the caller already re-renders on, so they are read directly below -
+  // routing them through a query keyed only on panel.name would freeze the
+  // first-seen value (e.g. `null` before data loads) and never update.
   const notificationDot = useQuery({
-    enabled: panel.notification_dot !== undefined && visibility === 'visible',
+    enabled: isDynamicDot && visibility === 'visible',
     queryKey: ['panel-notification', panel.name],
     queryFn: async () => {
-      if (panel.notification_dot === undefined) {
-        return null;
-      } else if (typeof panel.notification_dot === 'function') {
+      if (typeof panel.notification_dot === 'function') {
         return await panel.notification_dot();
-      } else {
-        return panel.notification_dot as PanelIndicatorType;
       }
+      return null;
     },
     staleTime: 5 * 60 * 1000, // cache for 5 minutes
     refetchOnMount: false,
     refetchOnWindowFocus: false
   });
 
+  const indicatorValue: PanelIndicatorType | undefined = isDynamicDot
+    ? notificationDot.data
+    : (panel.notification_dot as PanelIndicatorType | undefined);
+
   const indicatorColor: MantineColor | undefined = useMemo(() => {
-    switch (notificationDot.data) {
+    switch (indicatorValue) {
       case 'info':
         return 'blue';
       case 'warning':
@@ -135,7 +143,7 @@ function PanelTabComponent({
       default:
         return undefined;
     }
-  }, [notificationDot.data]);
+  }, [indicatorValue]);
 
   return (
     <Tooltip
