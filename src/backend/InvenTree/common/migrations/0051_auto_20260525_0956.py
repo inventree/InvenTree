@@ -158,7 +158,10 @@ def migrate_notes(apps, schema_editor):
             created += len(create_notes_batch(Note, NotesImage, content_type, model, batch, unlinked_images))
             progress.update(len(batch))
 
-        assert created == total, f"Expected to create {total} notes for {app}.{model}, but created {created}."
+        if created != total:
+            raise RuntimeError(
+                f'Expected to create {total} notes for {app}.{model}, but created {created}.'
+            )
 
 
 def remove_unlinked_images(apps, schema_editor):
