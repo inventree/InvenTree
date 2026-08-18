@@ -4,6 +4,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
+from django.core.files.storage import default_storage
 from django.db.utils import IntegrityError, OperationalError
 from django.utils import timezone
 
@@ -105,6 +106,52 @@ def update_news_feed():
             pass
 
     logger.info('update_news_feed: Sync done')
+
+
+@tracer.start_as_current_span('delete_old_notes_images')
+@scheduled_task(ScheduledTask.DAILY)
+def delete_old_notes_images():
+    """Remove old, unreferenced notes images from the database.
+
+    Each NotesImage is linked to a specific Note via a required foreign key, so
+    (unlike the pre-refactor version of this task) we only need to check whether
+    the image is still referenced in *that one* note's content, rather than
+    searching every note-supporting model's table for a matching substring.
+
+    Anything older than ~3 months is removed, unless it is still referenced in
+    its associated note's content. Images whose file no longer exists in storage
+    are removed regardless of age, since there's nothing left to keep around.
+    """
+    try:
+        from common.models import NotesImage
+    except AppRegistryNotReady:
+        logger.info(
+            "Could not perform 'delete_old_notes_images' - App registry not ready"
+        )
+        return
+
+    # Remove any images whose file no longer exists in storage, regardless of
+    # age - there's nothing left to keep around
+    for image in NotesImage.objects.all():
+        if not image.image or not default_storage.exists(image.image.name):
+            logger.info(
+                'delete_old_notes_images: Deleting image %s - file does not exist',
+                image.pk,
+            )
+            image.delete()
+
+    before = InvenTree.helpers.current_date() - timedelta(days=90)
+
+    old_images = NotesImage.objects.filter(date__lte=before).select_related('note')
+
+    for image in old_images:
+        if image.image.url not in image.note.content:
+            logger.info(
+                'delete_old_notes_images: Deleting image %s - not referenced by note %s',
+                image.pk,
+                image.note.pk,
+            )
+            image.delete()
 
 
 @tracer.start_as_current_span('rebuild_parameters')

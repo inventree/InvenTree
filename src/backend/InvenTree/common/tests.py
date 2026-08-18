@@ -20,6 +20,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
+from django.utils import timezone
 
 from PIL import Image
 
@@ -55,6 +56,7 @@ from .models import (
     WebhookEndpoint,
     WebhookMessage,
 )
+from .tasks import delete_old_notes_images
 
 CONTENT_TYPE_JSON = 'application/json'
 
@@ -1844,6 +1846,67 @@ class NotesImageTest(InvenTreeAPITestCase):
         self.assertFalse(default_storage.exists(old_name))
         self.assertTrue(default_storage.exists(new_img.image.name))
         self.assertTrue(NotesImage.objects.filter(pk=new_img.pk).exists())
+
+
+class DeleteOldNotesImagesTaskTest(InvenTreeAPITestCase):
+    """Tests for the delete_old_notes_images scheduled task."""
+
+    def setUp(self):
+        """Create a Note to attach images to."""
+        super().setUp()
+
+        part = Part.objects.create(name='Notes Image Task Test Part', description='x')
+        part_ct = ContentType.objects.get_for_model(Part)
+        self.note = Note.objects.create(
+            model_type=part_ct, model_id=part.pk, title='N', content=''
+        )
+
+    def _generate_image_bytes(self) -> bytes:
+        buf = io.BytesIO()
+        Image.new('RGB', (16, 16), color='blue').save(buf, format='PNG')
+        return buf.getvalue()
+
+    def _create_image(
+        self, name: str, age_days: int = 0, referenced: bool = False
+    ) -> NotesImage:
+        image = NotesImage.objects.create(note=self.note)
+        image.image.save(name, ContentFile(self._generate_image_bytes()))
+
+        if referenced:
+            self.note.content = f'<img src="{image.image.url}">'
+            self.note.save()
+
+        if age_days:
+            NotesImage.objects.filter(pk=image.pk).update(
+                date=timezone.now() - timedelta(days=age_days)
+            )
+
+        return image
+
+    def test_old_unreferenced_image_is_removed(self):
+        """An old image no longer referenced by its note's content is removed."""
+        image = self._create_image('old_unreferenced.png', age_days=100)
+        delete_old_notes_images()
+        self.assertFalse(NotesImage.objects.filter(pk=image.pk).exists())
+
+    def test_old_referenced_image_is_kept(self):
+        """An old image still referenced by its note's content is kept."""
+        image = self._create_image('old_referenced.png', age_days=100, referenced=True)
+        delete_old_notes_images()
+        self.assertTrue(NotesImage.objects.filter(pk=image.pk).exists())
+
+    def test_recent_unreferenced_image_is_kept(self):
+        """A recently-uploaded, unreferenced image is kept - not yet old enough."""
+        image = self._create_image('recent_unreferenced.png')
+        delete_old_notes_images()
+        self.assertTrue(NotesImage.objects.filter(pk=image.pk).exists())
+
+    def test_missing_file_is_removed_regardless_of_age(self):
+        """An image whose file no longer exists in storage is removed, even if recent."""
+        image = self._create_image('missing_file.png')
+        default_storage.delete(image.image.name)
+        delete_old_notes_images()
+        self.assertFalse(NotesImage.objects.filter(pk=image.pk).exists())
 
 
 class ProjectCodesTest(InvenTreeAPITestCase):
