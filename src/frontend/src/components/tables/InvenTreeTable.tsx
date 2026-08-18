@@ -39,6 +39,7 @@ import { showApiErrorMessage } from '../../functions/notifications';
 import { useLocalState } from '../../states/LocalState';
 import { usePreviewDrawerState } from '../../states/PreviewDrawerState';
 import { useUserSettingsState } from '../../states/SettingsStates';
+import { setTableNavigationContext } from '../../states/TableNavigationState';
 import { ColumnFilterPopover } from './FilterSelectDrawer';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
 
@@ -746,6 +747,15 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         const pk = resolveItem(record, accessor);
 
         if (pk) {
+          // Record list context so the detail header can offer prev/next
+          setTableNavigationContext({
+            model: tableProps.modelType,
+            records: (tableState.records ?? []).map((record) =>
+              resolveItem(record, accessor)
+            ),
+            current: pk
+          });
+
           cancelEvent(event);
           // If a model type is provided, navigate to the detail view for that model
           const url = getDetailUrl(tableProps.modelType, pk);

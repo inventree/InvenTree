@@ -1,13 +1,19 @@
-import { Group, Paper, Space, Stack, Text } from '@mantine/core';
+import { ActionIcon, Group, Paper, Space, Stack, Text } from '@mantine/core';
 
 import { StylishText } from '@lib/components/StylishText';
 import { useInvenTreeHotkeys } from '@lib/functions/Events';
+import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
 import { shortenString } from '@lib/functions/String';
 import { t } from '@lingui/core/macro';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { Fragment, type ReactNode, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useUserSettingsState } from '../../states/SettingsStates';
+import {
+  setTableNavigationContext,
+  useTableNavigationState
+} from '../../states/TableNavigationState';
 import PrimaryActionButton from '../buttons/PrimaryActionButton';
 import { ApiImage } from '../images/ApiImage';
 import { ApiIcon } from '../items/ApiIcon';
@@ -53,6 +59,9 @@ export function PageDetail({
   const userSettings = useUserSettingsState();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const navigationState = useTableNavigationState();
+  const navigationContext = navigationState.context;
 
   useInvenTreeHotkeys([
     [
@@ -130,6 +139,65 @@ export function PageDetail({
     return [...(extraActionArray ?? []), ...(actions ?? [])];
   }, [extraActions, actions]);
 
+  // previous / next navigation between the records in the list the user came from
+  const detailNavigation = useMemo(() => {
+    if (!navigationContext) return null;
+
+    const index = navigationContext.records.findIndex(
+      (record) => String(record) === String(navigationContext.current)
+    );
+
+    if (index < 0) return null;
+
+    const previous = index > 0 ? navigationContext.records[index - 1] : null;
+    const next =
+      index < navigationContext.records.length - 1
+        ? navigationContext.records[index + 1]
+        : null;
+
+    if (previous == null && next == null) return null;
+
+    const goTo = (pk: number | string, event: any) => {
+      const url = getDetailUrl(navigationContext.model, pk);
+
+      if (url) {
+        navigateToLink(url, navigate, event);
+        setTableNavigationContext({ ...navigationContext, current: pk });
+      }
+    };
+
+    return (
+      <Group gap={2} justify='right' wrap='nowrap' align='center'>
+        <ActionIcon
+          variant='subtle'
+          disabled={previous == null}
+          title={t`Previous`}
+          aria-label='previous-object'
+          onClick={(event) => {
+            if (previous != null) {
+              goTo(previous, event);
+            }
+          }}
+        >
+          <IconChevronLeft />
+        </ActionIcon>
+        <ActionIcon
+          variant='subtle'
+          disabled={next == null}
+          title={t`Next`}
+          aria-label='next-object'
+          onClick={(event) => {
+            if (next != null) {
+              goTo(next, event);
+            }
+          }}
+        >
+          <IconChevronRight />
+        </ActionIcon>
+      </Group>
+    );
+  }, [navigationContext, navigate]);
+
   return (
     <>
       <PageTitle title={pageTitleString} />
@@ -184,6 +252,7 @@ export function PageDetail({
                 </Group>
               )}
             </Group>
+            {detailNavigation}
             {computedActions && (
               <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
                 {computedActions.map((action, idx) => (
