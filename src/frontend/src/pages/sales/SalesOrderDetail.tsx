@@ -40,6 +40,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -71,6 +72,11 @@ export default function SalesOrderDetail() {
       customer_detail: true,
       tags: true
     }
+  });
+
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.salesorder,
+    modelId: order?.pk
   });
 
   const orderCurrency = useMemo(() => {
@@ -222,16 +228,18 @@ export default function SalesOrderDetail() {
       },
       ParametersPanel({
         model_type: ModelType.salesorder,
-        model_id: order.pk
+        model_id: order.pk,
+        parameter_count: instanceInfo.parameter_count
       }),
       AttachmentPanel({
         model_type: ModelType.salesorder,
-        model_id: order.pk
+        model_id: order.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.salesorder,
         model_id: order.pk,
-        has_note: !!order.notes,
+        note_count: instanceInfo.note_count,
         // TODO @matmair - change API to include a "locked" attribute that we can check here
         editable:
           order.status == soStatus.COMPLETE &&
@@ -240,7 +248,7 @@ export default function SalesOrderDetail() {
             : undefined
       })
     ];
-  }, [order, id, user, soStatus, user]);
+  }, [order, id, user, soStatus, instanceInfo]);
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_issue, order.pk),

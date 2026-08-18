@@ -12,19 +12,19 @@ export default function NotesPanel({
   model_type,
   model_id,
   editable,
-  has_note
+  note_count
 }: {
   model_type: ModelType;
   model_id: number | undefined;
   editable?: boolean;
-  has_note?: boolean;
+  note_count?: number;
 }): PanelType {
   return {
     name: 'notes',
     label: t`Notes`,
     icon: <IconNotes />,
     hotkey: 'mod+Shift+N',
-    notification_dot: has_note ? 'info' : null,
+    notification_dot: note_count ? 'info' : null,
     content:
       model_type && model_id ? (
         <NotesEditor modelType={model_type} modelId={model_id} />

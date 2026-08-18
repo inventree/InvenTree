@@ -1256,3 +1256,31 @@ class TestEmailSerializer(serializers.Serializer):
         fields = ['email']
 
     email = serializers.EmailField(required=True)
+
+
+class InstanceInfoSerializer(serializers.Serializer):
+    """Serializer for aggregated per-instance counts (attachments, notes, parameters).
+
+    Backs a single generic lookup (see common.api.InstanceInfoView) that any
+    model instance's detail page can use to drive its Attachments/Notes/
+    Parameters tab notification dots from one request, instead of each tab
+    independently querying its own list endpoint just to read a count.
+    """
+
+    attachment_count = serializers.IntegerField(
+        label=_('Attachment Count'),
+        help_text=_('Number of attachments associated with this instance'),
+        read_only=True,
+    )
+
+    note_count = serializers.IntegerField(
+        label=_('Note Count'),
+        help_text=_('Number of notes associated with this instance'),
+        read_only=True,
+    )
+
+    parameter_count = serializers.IntegerField(
+        label=_('Parameter Count'),
+        help_text=_('Number of parameters associated with this instance'),
+        read_only=True,
+    )

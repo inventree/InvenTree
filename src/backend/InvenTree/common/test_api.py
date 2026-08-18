@@ -1063,6 +1063,137 @@ class AttachmentAPITests(InvenTreeAPITestCase):
             self.assertFalse(default_storage.exists(att.attachment.path))
 
 
+class InstanceInfoAPITests(InvenTreeAPITestCase):
+    """API tests for the InstanceInfoView (aggregated attachment/note/parameter counts)."""
+
+    roles = []
+
+    def setUp(self):
+        """Create a Part instance to query counts against."""
+        from part.models import Part
+
+        super().setUp()
+
+        self.part = Part.objects.create(name='Instance Info Test Part', description='x')
+
+    def _url(self, model_type=None, model_id=None):
+        params = {}
+        if model_type is not None:
+            params['model_type'] = model_type
+        if model_id is not None:
+            params['model_id'] = model_id
+        return reverse('api-instance-info'), params
+
+    def test_missing_params(self):
+        """Both model_type and model_id are required."""
+        url, _params = self._url()
+        response = self.get(url, expected_code=400)
+        self.assertIn('model_type', response.data)
+        self.assertIn('model_id', response.data)
+
+    def test_invalid_model_id(self):
+        """A non-numeric model_id is rejected."""
+        url, params = self._url('part', 'not-a-number')
+        response = self.get(url, data=params, expected_code=400)
+        self.assertIn('model_id', response.data)
+
+    def test_zero_counts(self):
+        """A part with no attachments/notes/parameters returns all zeros."""
+        url, params = self._url('part', self.part.pk)
+        response = self.get(url, data=params, expected_code=200)
+
+        self.assertEqual(response.data['attachment_count'], 0)
+        self.assertEqual(response.data['note_count'], 0)
+        self.assertEqual(response.data['parameter_count'], 0)
+
+    def test_nonexistent_model_type(self):
+        """An unsupported/unrecognized model_type returns all zeros, not an error."""
+        url, params = self._url('not_a_real_model', 1)
+        response = self.get(url, data=params, expected_code=200)
+
+        self.assertEqual(response.data['attachment_count'], 0)
+        self.assertEqual(response.data['note_count'], 0)
+        self.assertEqual(response.data['parameter_count'], 0)
+
+    def test_counts_reflect_related_objects(self):
+        """Counts reflect actual attachments/notes/parameters attached to the instance."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import Note, Parameter, ParameterTemplate
+        from part.models import Part
+
+        # note_count requires 'view' permission on the target model (see
+        # test_note_count_respects_view_permission for that behaviour in isolation)
+        self.assignRole('part.view')
+
+        part_ct = ContentType.objects.get_for_model(Part)
+
+        common.models.Attachment.objects.create(
+            model_type='part',
+            model_id=self.part.pk,
+            link='https://example.com',
+            comment='test attachment',
+        )
+
+        Note.objects.create(
+            model_type=part_ct, model_id=self.part.pk, title='N', content='<p>x</p>'
+        )
+
+        template = ParameterTemplate.objects.create(name='Colour')
+        Parameter.objects.create(
+            template=template, model_type=part_ct, model_id=self.part.pk, data='Red'
+        )
+
+        url, params = self._url('part', self.part.pk)
+        response = self.get(url, data=params, expected_code=200)
+
+        self.assertEqual(response.data['attachment_count'], 1)
+        self.assertEqual(response.data['note_count'], 1)
+        self.assertEqual(response.data['parameter_count'], 1)
+
+    def test_note_count_respects_view_permission(self):
+        """note_count is gated by 'view' permission on the target model, matching NoteList.
+
+        attachment_count / parameter_count are *not* gated (matching AttachmentList /
+        ParameterList, neither of which apply view-permission filtering today) - this
+        pins down that intentional asymmetry rather than accidentally widening or
+        narrowing either behaviour.
+        """
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import Note, Parameter, ParameterTemplate
+        from part.models import Part
+
+        part_ct = ContentType.objects.get_for_model(Part)
+
+        common.models.Attachment.objects.create(
+            model_type='part',
+            model_id=self.part.pk,
+            link='https://example.com',
+            comment='test attachment',
+        )
+        Note.objects.create(
+            model_type=part_ct, model_id=self.part.pk, title='N', content='<p>x</p>'
+        )
+        template = ParameterTemplate.objects.create(name='Colour')
+        Parameter.objects.create(
+            template=template, model_type=part_ct, model_id=self.part.pk, data='Red'
+        )
+
+        # No roles assigned - user cannot view Part notes
+        url, params = self._url('part', self.part.pk)
+        response = self.get(url, data=params, expected_code=200)
+
+        self.assertEqual(response.data['attachment_count'], 1)
+        self.assertEqual(response.data['note_count'], 0)
+        self.assertEqual(response.data['parameter_count'], 1)
+
+        # Once granted view permission, the note becomes visible too
+        self.assignRole('part.view')
+        response = self.get(url, data=params, expected_code=200)
+        self.assertEqual(response.data['note_count'], 1)
+
+
 class NoteAPITests(InvenTreeAPITestCase):
     """API tests for the Note model, focusing on the 'primary' flag behaviour."""
 

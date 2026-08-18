@@ -1311,6 +1311,79 @@ class ParameterDetail(ParameterMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for Parameter objects."""
 
 
+class InstanceInfoView(APIView):
+    """Return aggregated attachment/note/parameter counts for a single model instance.
+
+    A single generic lookup (given a model_type + model_id) for any detail page to
+    drive its Attachments/Notes/Parameters tab notification dots from one request,
+    instead of each tab independently querying its own list endpoint just to read
+    a count.
+
+    Each count reuses the filtering (and, for notes, the view-permission gating)
+    already implemented by the corresponding list endpoint.
+    """
+
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(name='model_type', type=str, required=True),
+            OpenApiParameter(name='model_id', type=int, required=True),
+        ],
+        responses={200: common.serializers.InstanceInfoSerializer},
+    )
+    def get(self, request, *args, **kwargs):
+        """Return counts of attachments, notes and parameters for the given instance."""
+        from InvenTree.models import (
+            InvenTreeAttachmentMixin,
+            InvenTreeNoteMixin,
+            InvenTreeParameterMixin,
+        )
+        from users.permissions import check_user_permission
+
+        model_type = request.query_params.get('model_type')
+        model_id = request.query_params.get('model_id')
+
+        if not model_type or not model_id:
+            raise ValidationError({
+                'model_type': _('This field is required'),
+                'model_id': _('This field is required'),
+            })
+
+        try:
+            model_id = int(model_id)
+        except (TypeError, ValueError):
+            raise ValidationError({'model_id': _('Invalid model ID')})
+
+        content_type = common.filters.determine_content_type(model_type)
+        model_class = content_type.model_class() if content_type else None
+
+        counts = {'attachment_count': 0, 'note_count': 0, 'parameter_count': 0}
+
+        if model_class:
+            if issubclass(model_class, InvenTreeAttachmentMixin):
+                counts['attachment_count'] = common.models.Attachment.objects.filter(
+                    model_type=model_class.__name__.lower(), model_id=model_id
+                ).count()
+
+            if issubclass(model_class, InvenTreeNoteMixin):
+                user = request.user
+                if user.is_superuser or check_user_permission(
+                    user, model_class, 'view'
+                ):
+                    counts['note_count'] = common.models.Note.objects.filter(
+                        model_type=content_type, model_id=model_id, template=False
+                    ).count()
+
+            if issubclass(model_class, InvenTreeParameterMixin):
+                counts['parameter_count'] = common.models.Parameter.objects.filter(
+                    model_type=content_type, model_id=model_id
+                ).count()
+
+        serializer = common.serializers.InstanceInfoSerializer(counts)
+        return Response(serializer.data)
+
+
 @method_decorator(cache_control(public=True, max_age=86400), name='dispatch')
 class IconList(ListAPI):
     """List view for available icon packages."""
@@ -1700,6 +1773,8 @@ common_api_urls = [
             path('', ParameterList.as_view(), name='api-parameter-list'),
         ]),
     ),
+    # Aggregated per-instance counts (attachments / notes / parameters)
+    path('instance-info/', InstanceInfoView.as_view(), name='api-instance-info'),
     # Metadata
     path(
         'metadata/',

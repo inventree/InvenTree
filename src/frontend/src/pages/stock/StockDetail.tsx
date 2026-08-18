@@ -60,6 +60,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -110,6 +111,11 @@ export default function StockDetail() {
     pk: stockitem?.part,
     hasPrimaryKey: true,
     defaultValue: {}
+  });
+
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.stockitem,
+    modelId: stockitem?.pk
   });
 
   const showBuildAllocations: boolean = useMemo(() => {
@@ -307,12 +313,13 @@ export default function StockDetail() {
       },
       AttachmentPanel({
         model_type: ModelType.stockitem,
-        model_id: stockitem.pk
+        model_id: stockitem.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.stockitem,
         model_id: stockitem.pk,
-        has_note: !!stockitem.notes
+        note_count: instanceInfo.note_count
       })
     ];
   }, [
@@ -321,7 +328,8 @@ export default function StockDetail() {
     showInstalledItems,
     stockitem,
     id,
-    user
+    user,
+    instanceInfo
   ]);
 
   const breadcrumbs = useMemo(
