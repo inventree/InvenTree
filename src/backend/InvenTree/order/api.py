@@ -383,13 +383,19 @@ class PurchaseOrderOutputOptions(OutputConfiguration):
 
 class PurchaseOrderViewSet(
     SerializerContextMixin,
-    OrderCreateMixin,  #
+    OrderCreateMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
     ParameterListMixin,
     RetrieveUpdateDestroyModelViewSet,
 ):
-    """Dummy 3."""
+    """API endpoint for accessing PurchaseOrder objects.
+
+    - GET: Return list of PurchaseOrder objects (with filters), or a single PurchaseOrder object
+    - POST: Create a new PurchaseOrder object
+    - PUT / PATCH: Update an existing PurchaseOrder object
+    - DELETE: Remove a PurchaseOrder object
+    """
 
     filterset_class = PurchaseOrderFilter
     filter_backends = SEARCH_ORDER_FILTER
@@ -666,7 +672,13 @@ class PurchaseOrderLineItemViewSet(
     BulkDeleteViewsetMixin,
     RetrieveUpdateDestroyModelViewSet,
 ):
-    """Dummy 2."""
+    """API endpoint for accessing PurchaseOrderLineItem objects.
+
+    - GET: Return list of PurchaseOrderLineItem objects (with filters), or a single object
+    - POST: Create a new PurchaseOrderLineItem object
+    - PUT / PATCH: Update an existing PurchaseOrderLineItem object
+    - DELETE: Remove a PurchaseOrderLineItem object (or bulk delete multiple objects)
+    """
 
     queryset = models.PurchaseOrderLineItem.objects.all()
     serializer_class = serializers.PurchaseOrderLineItemSerializer
@@ -785,9 +797,15 @@ order_router.register('po-line', PurchaseOrderLineItemViewSet, basename='api-po-
 
 
 class PurchaseOrderExtraLineViewSet(
-    GeneralExtraLineList, OutputOptionsMixin, CleanModelViewSet
+    GeneralExtraLineList, OutputOptionsMixin, BulkDeleteViewsetMixin, CleanModelViewSet
 ):
-    """Dummy 1."""
+    """API endpoint for accessing PurchaseOrderExtraLine objects.
+
+    - GET: Return list of PurchaseOrderExtraLine objects (with filters), or a single object
+    - POST: Create a new PurchaseOrderExtraLine object
+    - PUT / PATCH: Update an existing PurchaseOrderExtraLine object
+    - DELETE: Remove a PurchaseOrderExtraLine object (or bulk delete multiple objects)
+    """
 
     queryset = models.PurchaseOrderExtraLine.objects.all()
     serializer_class = serializers.PurchaseOrderExtraLineSerializer

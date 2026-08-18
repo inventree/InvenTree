@@ -16,7 +16,7 @@ from drf_spectacular.utils import (
     extend_schema,
     extend_schema_view,
 )
-from rest_framework import serializers
+from rest_framework import serializers, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 
 from InvenTree.permissions import OASTokenMixin
@@ -358,9 +358,12 @@ def schema_for_view_output_options(view_class):
         )
         parameters.append(param)
 
-    extended_view = extend_schema_view(get=extend_schema(parameters=parameters))(
-        view_class
-    )
+    # DRF viewsets dispatch GET requests to the 'list' action, rather than a 'get' method
+    operation = 'list' if issubclass(view_class, viewsets.ViewSetMixin) else 'get'
+
+    extended_view = extend_schema_view(**{
+        operation: extend_schema(parameters=parameters)
+    })(view_class)
     return extended_view
 
 
