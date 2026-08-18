@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-10 05:57\n"
+"PO-Revision-Date: 2026-08-15 23:48\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -105,7 +105,7 @@ msgstr "Aktionen"
 #: src/components/nav/Header.tsx:191
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
-#: src/pages/Index/Settings/UserSettings.tsx:75
+#: src/pages/Index/Settings/UserSettings.tsx:76
 #: src/pages/part/PartDetail.tsx:758
 msgid "Search"
 msgstr "Suche"
@@ -676,7 +676,7 @@ msgstr ""
 #: src/components/tables/InvenTreeTableHeader.tsx:164
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
-#: src/forms/BomForms.tsx:83
+#: src/forms/BomForms.tsx:87
 #: src/functions/auth.tsx:711
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
@@ -687,7 +687,7 @@ msgstr ""
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
-#: src/tables/bom/BomTable.tsx:592
+#: src/tables/bom/BomTable.tsx:605
 #: src/tables/settings/EmailTable.tsx:109
 #: src/tables/stock/StockItemTestResultTable.tsx:336
 msgid "Error"
@@ -839,7 +839,7 @@ msgstr "Der Barcode stimmt nicht mit dem erwarteten Modelltyp überein"
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
-#: src/tables/bom/BomTable.tsx:583
+#: src/tables/bom/BomTable.tsx:596
 #: src/tables/settings/PendingTasksTable.tsx:68
 msgid "Success"
 msgstr "Abgeschlossen"
@@ -1108,7 +1108,7 @@ msgstr "Startdatum"
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:141
 #: src/tables/part/PartPurchaseOrdersTable.tsx:110
 #: src/tables/part/PartSalesOrdersTable.tsx:72
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:159
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:176
 #: src/tables/sales/SalesOrderLineItemTable.tsx:142
 #: src/tables/stock/TransferOrderLineItemTable.tsx:117
 msgid "Target Date"
@@ -2421,7 +2421,7 @@ msgstr "Daten wurden erfolgreich importiert"
 #: src/components/modals/AboutInvenTreeModal.tsx:206
 #: src/components/modals/ServerInfoModal.tsx:134
 #: src/components/wizards/ImportPartWizard.tsx:773
-#: src/forms/BomForms.tsx:146
+#: src/forms/BomForms.tsx:150
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:687
 msgid "Close"
 msgstr "Schließen"
@@ -2574,7 +2574,7 @@ msgid "Create a new part"
 msgstr ""
 
 #: src/components/items/PartCreationMenu.tsx:92
-#: src/tables/bom/BomTable.tsx:670
+#: src/tables/bom/BomTable.tsx:683
 #: src/tables/general/ParameterTable.tsx:203
 msgid "Import from File"
 msgstr "Aus Datei importieren"
@@ -2924,7 +2924,7 @@ msgstr ""
 #: src/components/nav/NavigationDrawer.tsx:134
 #: src/components/nav/NotificationDrawer.tsx:181
 #: src/pages/Index/Settings/SystemSettings.tsx:146
-#: src/pages/Index/Settings/UserSettings.tsx:108
+#: src/pages/Index/Settings/UserSettings.tsx:109
 #: src/pages/Notifications.tsx:45
 #: src/pages/Notifications.tsx:130
 msgid "Notifications"
@@ -2971,8 +2971,8 @@ msgstr "Einstellungen"
 #: src/components/nav/NavigationDrawer.tsx:140
 #: src/components/nav/SettingsHeader.tsx:40
 #: src/defaults/actions.tsx:106
-#: src/pages/Index/Settings/UserSettings.tsx:145
-#: src/pages/Index/Settings/UserSettings.tsx:149
+#: src/pages/Index/Settings/UserSettings.tsx:146
+#: src/pages/Index/Settings/UserSettings.tsx:150
 msgid "User Settings"
 msgstr "Benutzer-Einstellungen"
 
@@ -3342,7 +3342,7 @@ msgstr "Paket"
 #: src/components/plugins/PluginDrawer.tsx:141
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:67
 #: src/pages/Index/Settings/PluginSettingsGroup.tsx:119
-#: src/pages/Index/Settings/UserSettings.tsx:130
+#: src/pages/Index/Settings/UserSettings.tsx:131
 msgid "Plugin Settings"
 msgstr "Plugin Einstellungen"
 
@@ -3470,7 +3470,7 @@ msgstr "Virtuell"
 
 #: src/components/render/Part.tsx:34
 #: src/components/tables/PartStockCell.tsx:113
-#: src/tables/bom/BomTable.tsx:335
+#: src/tables/bom/BomTable.tsx:348
 msgid "No stock"
 msgstr "Kein Bestand"
 
@@ -3481,7 +3481,7 @@ msgstr "Kein Bestand"
 #: src/pages/company/SupplierPartDetailsPanel.tsx:151
 #: src/pages/part/PartDetail.tsx:602
 #: src/pages/part/PartDetailsPanel.tsx:174
-#: src/tables/bom/BomTable.tsx:478
+#: src/tables/bom/BomTable.tsx:491
 #: src/tables/build/BuildLineTable.tsx:241
 #: src/tables/part/PartTable.tsx:83
 #: src/tables/part/PartTableFilters.tsx:149
@@ -3738,7 +3738,7 @@ msgstr "Teil ist nicht aktiv"
 
 #: src/components/tables/ColumnRenderers.tsx:75
 #: src/pages/part/PartDetail.tsx:494
-#: src/tables/bom/BomTable.tsx:713
+#: src/tables/bom/BomTable.tsx:726
 #: src/tables/part/PartTestTemplateTable.tsx:262
 msgid "Part is Locked"
 msgstr "Teil ist gesperrt"
@@ -3827,7 +3827,7 @@ msgstr "Dieser Lagerartikel wurde verbraucht"
 
 #: src/components/tables/ColumnRenderers.tsx:301
 #: src/components/tables/PartStockCell.tsx:134
-#: src/tables/bom/BomTable.tsx:386
+#: src/tables/bom/BomTable.tsx:399
 #: src/tables/sales/SalesOrderLineItemTable.tsx:197
 #: src/tables/stock/TransferOrderLineItemTable.tsx:172
 msgid "Stock Information"
@@ -3915,7 +3915,7 @@ msgstr "Währung"
 #: src/components/tables/ColumnRenderers.tsx:813
 #: src/pages/part/pricing/BomPricingPanel.tsx:61
 #: src/pages/part/pricing/BomPricingPanel.tsx:142
-#: src/tables/bom/BomTable.tsx:310
+#: src/tables/bom/BomTable.tsx:323
 #: src/tables/general/ExtraLineItemTable.tsx:80
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:265
 #: src/tables/purchasing/PurchaseOrderTable.tsx:101
@@ -4185,8 +4185,8 @@ msgstr "Ergebnisse für Teilvarianten einbeziehen"
 #: src/tables/part/PartPurchaseOrdersTable.tsx:46
 #: src/tables/part/PartSalesOrdersTable.tsx:45
 #: src/tables/part/PartTestResultTable.tsx:328
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:138
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:181
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:155
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:198
 #: src/tables/settings/CustomStateTable.tsx:79
 #: src/tables/settings/EmailTable.tsx:95
 #: src/tables/settings/ImportSessionTable.tsx:135
@@ -4446,7 +4446,7 @@ msgid "Active Filters"
 msgstr "Aktive Filter"
 
 #: src/components/tables/PartStockCell.tsx:11
-#: src/tables/bom/BomTable.tsx:330
+#: src/tables/bom/BomTable.tsx:343
 #: src/tables/sales/SalesOrderLineItemTable.tsx:149
 #: src/tables/sales/SalesOrderLineItemTable.tsx:207
 #: src/tables/sales/SalesOrderLineItemTable.tsx:224
@@ -4465,7 +4465,7 @@ msgid "Maximum stock"
 msgstr ""
 
 #: src/components/tables/PartStockCell.tsx:62
-#: src/tables/bom/BomTable.tsx:377
+#: src/tables/bom/BomTable.tsx:390
 msgid "Building"
 msgstr "Gebäude"
 
@@ -4482,13 +4482,13 @@ msgid "Sales Order Allocations"
 msgstr "Verkaufsauftragszuweisungen"
 
 #: src/components/tables/PartStockCell.tsx:93
-#: src/tables/bom/BomTable.tsx:343
+#: src/tables/bom/BomTable.tsx:356
 #: src/tables/build/BuildLineTable.tsx:295
 msgid "External stock"
 msgstr "Externer Bestand"
 
 #: src/components/tables/PartStockCell.tsx:101
-#: src/tables/bom/BomTable.tsx:360
+#: src/tables/bom/BomTable.tsx:373
 #: src/tables/build/BuildLineTable.tsx:268
 #: src/tables/sales/SalesOrderLineItemTable.tsx:174
 #: src/tables/stock/TransferOrderLineItemTable.tsx:149
@@ -5623,19 +5623,27 @@ msgstr "Über das InvenTree-Projekt"
 msgid "Required component quantity"
 msgstr ""
 
-#: src/forms/BomForms.tsx:123
+#: src/forms/BomForms.tsx:46
+msgid "Piece Count"
+msgstr ""
+
+#: src/forms/BomForms.tsx:47
+msgid "Number of pieces required (for cut-to-length items). Total material = quantity × piece_count."
+msgstr ""
+
+#: src/forms/BomForms.tsx:127
 msgid "Substitute Part"
 msgstr "Ersatz-Teil"
 
-#: src/forms/BomForms.tsx:140
+#: src/forms/BomForms.tsx:144
 msgid "Edit BOM Substitutes"
 msgstr "BOM Ersatz-Teile bearbeiten"
 
-#: src/forms/BomForms.tsx:147
+#: src/forms/BomForms.tsx:151
 msgid "Add Substitute"
 msgstr "Ersatz-Teil hinzufügen"
 
-#: src/forms/BomForms.tsx:148
+#: src/forms/BomForms.tsx:152
 msgid "Substitute added"
 msgstr "Ersatz-Teil hinzugefügt"
 
@@ -5872,8 +5880,8 @@ msgstr "Standard-Lagerort ausgewählt"
 
 #: src/forms/PurchaseOrderForms.tsx:564
 #: src/pages/part/PartDetailsPanel.tsx:268
-#: src/tables/bom/BomTable.tsx:276
-#: src/tables/bom/BomTable.tsx:468
+#: src/tables/bom/BomTable.tsx:289
+#: src/tables/bom/BomTable.tsx:481
 msgid "Virtual Part"
 msgstr "Virtuelles Teil"
 
@@ -5980,7 +5988,7 @@ msgstr "SKU"
 #: src/tables/part/PartPurchaseOrdersTable.tsx:136
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:211
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:286
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:176
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:193
 msgid "Received"
 msgstr "Erhalten"
 
@@ -6142,7 +6150,7 @@ msgstr "Einheiten Menge"
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:129
 #: src/pages/part/pricing/SupplierPricingPanel.tsx:67
 #: src/pages/stock/StockDetailsPanel.tsx:323
-#: src/tables/bom/BomTable.tsx:300
+#: src/tables/bom/BomTable.tsx:313
 #: src/tables/general/ExtraLineItemTable.tsx:67
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:256
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
@@ -7898,7 +7906,7 @@ msgstr "Datenmanagement"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:296
 #: src/pages/Index/Settings/SystemSettings.tsx:194
-#: src/pages/Index/Settings/UserSettings.tsx:120
+#: src/pages/Index/Settings/UserSettings.tsx:121
 msgid "Reporting"
 msgstr "Berichte"
 
@@ -8140,7 +8148,7 @@ msgstr ""
 #~ msgstr "Exchange Rates"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:152
-#: src/pages/Index/Settings/UserSettings.tsx:114
+#: src/pages/Index/Settings/UserSettings.tsx:115
 msgid "The settings below are specific to each available notification method"
 msgstr "Die folgenden Einstellungen sind spezifisch für jede verfügbare Benachrichtigungsmethode"
 
@@ -8556,8 +8564,8 @@ msgstr "Bauauftrag Anzahl"
 
 #: src/pages/build/BuildOrderDetailsPanel.tsx:121
 #: src/pages/part/PartDetailsPanel.tsx:224
-#: src/tables/bom/BomTable.tsx:393
-#: src/tables/bom/BomTable.tsx:436
+#: src/tables/bom/BomTable.tsx:406
+#: src/tables/bom/BomTable.tsx:449
 msgid "Can Build"
 msgstr "Herstellbar"
 
@@ -8977,7 +8985,7 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:632
 #: src/pages/part/bom/BomCompare.tsx:38
-#: src/tables/bom/BomTable.tsx:503
+#: src/tables/bom/BomTable.tsx:516
 #: src/tables/build/BuildLineTable.tsx:216
 #: src/tables/part/PartTableFilters.tsx:109
 msgid "Consumable"
@@ -9053,7 +9061,7 @@ msgid "Keywords"
 msgstr "Schlüsselwörter"
 
 #: src/pages/part/PartDetailsPanel.tsx:168
-#: src/tables/bom/BomTable.tsx:473
+#: src/tables/bom/BomTable.tsx:486
 #: src/tables/build/BuildLineTable.tsx:325
 #: src/tables/part/PartTableFilters.tsx:143
 #: src/tables/sales/SalesOrderLineItemTable.tsx:146
@@ -9093,7 +9101,7 @@ msgid "Template Part"
 msgstr "Vorlagenteil"
 
 #: src/pages/part/PartDetailsPanel.tsx:252
-#: src/tables/bom/BomTable.tsx:463
+#: src/tables/bom/BomTable.tsx:476
 msgid "Assembled Part"
 msgstr "Baugruppe"
 
@@ -9102,12 +9110,12 @@ msgid "Component Part"
 msgstr "Komponente"
 
 #: src/pages/part/PartDetailsPanel.tsx:257
-#: src/tables/bom/BomTable.tsx:448
+#: src/tables/bom/BomTable.tsx:461
 msgid "Testable Part"
 msgstr "Testbares Teil"
 
 #: src/pages/part/PartDetailsPanel.tsx:260
-#: src/tables/bom/BomTable.tsx:453
+#: src/tables/bom/BomTable.tsx:466
 msgid "Trackable Part"
 msgstr "Nachverfolgbares Teil"
 
@@ -9312,18 +9320,18 @@ msgid "Validated By"
 msgstr "Validiert von"
 
 #: src/pages/part/bom/BomCompare.tsx:35
-#: src/tables/bom/BomTable.tsx:493
+#: src/tables/bom/BomTable.tsx:506
 msgid "Allow Variants"
 msgstr ""
 
 #: src/pages/part/bom/BomCompare.tsx:36
-#: src/tables/bom/BomTable.tsx:488
+#: src/tables/bom/BomTable.tsx:501
 #: src/tables/bom/UsedInTable.tsx:92
 msgid "Inherited"
 msgstr "Vererbt"
 
 #: src/pages/part/bom/BomCompare.tsx:37
-#: src/tables/bom/BomTable.tsx:498
+#: src/tables/bom/BomTable.tsx:511
 #: src/tables/bom/UsedInTable.tsx:102
 #: src/tables/build/BuildLineTable.tsx:221
 msgid "Optional"
@@ -10364,7 +10372,7 @@ msgstr "Dieses BOM Element wurde nicht validiert"
 msgid "Part Information"
 msgstr "Teile-Informationen"
 
-#: src/tables/bom/BomTable.tsx:262
+#: src/tables/bom/BomTable.tsx:275
 msgid "Substitutes"
 msgstr "Ersatz-Teil"
 
@@ -10393,11 +10401,6 @@ msgstr "Ersatz-Teil"
 #~ msgstr "Bom item deleted"
 
 #: src/tables/bom/BomTable.tsx:351
-#: src/tables/build/BuildLineTable.tsx:258
-msgid "Includes substitute stock"
-msgstr "Ersatz Bestand einbeziehen"
-
-#: src/tables/bom/BomTable.tsx:351
 #~ msgid "Are you sure you want to remove this BOM item?"
 #~ msgstr "Are you sure you want to remove this BOM item?"
 
@@ -10405,168 +10408,173 @@ msgstr "Ersatz Bestand einbeziehen"
 #~ msgid "Validate BOM line"
 #~ msgstr "Validate BOM line"
 
-#: src/tables/bom/BomTable.tsx:369
+#: src/tables/bom/BomTable.tsx:364
+#: src/tables/build/BuildLineTable.tsx:258
+msgid "Includes substitute stock"
+msgstr "Ersatz Bestand einbeziehen"
+
+#: src/tables/bom/BomTable.tsx:382
 #: src/tables/build/BuildLineTable.tsx:286
 #: src/tables/sales/SalesOrderLineItemTable.tsx:188
 #: src/tables/stock/TransferOrderLineItemTable.tsx:163
 msgid "On order"
 msgstr "Bestellt"
 
-#: src/tables/bom/BomTable.tsx:428
+#: src/tables/bom/BomTable.tsx:441
 #: src/tables/build/BuildLineTable.tsx:527
 #: src/tables/build/BuildLineTable.tsx:572
 msgid "Consumable item"
 msgstr "Verbrauchsartikel"
 
-#: src/tables/bom/BomTable.tsx:431
+#: src/tables/bom/BomTable.tsx:444
 msgid "No available stock"
 msgstr "Kein Lagerbestand verfügbar"
 
-#: src/tables/bom/BomTable.tsx:449
+#: src/tables/bom/BomTable.tsx:462
 #: src/tables/build/BuildLineTable.tsx:232
 msgid "Show testable items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:454
+#: src/tables/bom/BomTable.tsx:467
 msgid "Show trackable items"
 msgstr "Nachverfolgbare Teile anzeigen"
 
-#: src/tables/bom/BomTable.tsx:458
+#: src/tables/bom/BomTable.tsx:471
 #: src/tables/purchasing/ManufacturerPartParametricTable.tsx:46
 #: src/tables/purchasing/ManufacturerPartTable.tsx:161
 #: src/tables/purchasing/SupplierPartTable.tsx:264
 msgid "Active Part"
 msgstr "Aktives Teil"
 
-#: src/tables/bom/BomTable.tsx:459
+#: src/tables/bom/BomTable.tsx:472
 #: src/tables/settings/ProjectCodeTable.tsx:105
 msgid "Show active items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:464
+#: src/tables/bom/BomTable.tsx:477
 #: src/tables/build/BuildLineTable.tsx:227
 msgid "Show assembled items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:469
+#: src/tables/bom/BomTable.tsx:482
 msgid "Show virtual items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:474
+#: src/tables/bom/BomTable.tsx:487
 msgid "Show items with available stock"
 msgstr "Artikel mit verfügbarem Lagerbestand anzeigen"
 
-#: src/tables/bom/BomTable.tsx:479
+#: src/tables/bom/BomTable.tsx:492
 msgid "Show items on order"
 msgstr "Artikel in Bestellung anzeigen"
 
-#: src/tables/bom/BomTable.tsx:483
+#: src/tables/bom/BomTable.tsx:496
 msgid "Validated"
 msgstr "Bestätigt"
 
-#: src/tables/bom/BomTable.tsx:484
+#: src/tables/bom/BomTable.tsx:497
 msgid "Show validated items"
 msgstr "Bestätigte Einträge anzeigen"
 
-#: src/tables/bom/BomTable.tsx:489
+#: src/tables/bom/BomTable.tsx:502
 #: src/tables/bom/UsedInTable.tsx:93
 msgid "Show inherited items"
 msgstr "Vererbte Elemente anzeigen"
 
-#: src/tables/bom/BomTable.tsx:494
+#: src/tables/bom/BomTable.tsx:507
 msgid "Show items which allow variant substitution"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:499
+#: src/tables/bom/BomTable.tsx:512
 #: src/tables/bom/UsedInTable.tsx:103
 msgid "Show optional items"
 msgstr "Optionale Elemente anzeigen"
 
-#: src/tables/bom/BomTable.tsx:504
+#: src/tables/bom/BomTable.tsx:517
 msgid "Show consumable items"
 msgstr "Verbrauchbare Artikel anzeigen"
 
-#: src/tables/bom/BomTable.tsx:508
+#: src/tables/bom/BomTable.tsx:521
 #: src/tables/part/PartTableFilters.tsx:137
 msgid "Has Pricing"
 msgstr "Hat Preise"
 
-#: src/tables/bom/BomTable.tsx:509
+#: src/tables/bom/BomTable.tsx:522
 msgid "Show items with pricing"
 msgstr "Artikel mit Preisen anzeigen"
 
-#: src/tables/bom/BomTable.tsx:531
+#: src/tables/bom/BomTable.tsx:544
 msgid "Import BOM Data"
 msgstr "BOM-Daten importieren"
 
-#: src/tables/bom/BomTable.tsx:542
-#: src/tables/bom/BomTable.tsx:664
+#: src/tables/bom/BomTable.tsx:555
+#: src/tables/bom/BomTable.tsx:677
 msgid "Add BOM Item"
 msgstr "Stücklisten-Position hinzufügen"
 
-#: src/tables/bom/BomTable.tsx:547
+#: src/tables/bom/BomTable.tsx:560
 msgid "BOM item created"
 msgstr "Stücklisten-Position erstellt"
 
-#: src/tables/bom/BomTable.tsx:554
+#: src/tables/bom/BomTable.tsx:567
 #: src/tables/bom/UsedInTable.tsx:123
 msgid "Edit BOM Item"
 msgstr "Stücklisten-Position bearbeiten"
 
-#: src/tables/bom/BomTable.tsx:556
+#: src/tables/bom/BomTable.tsx:569
 #: src/tables/bom/UsedInTable.tsx:127
 msgid "BOM item updated"
 msgstr "Stücklisten-Position aktualisiert"
 
-#: src/tables/bom/BomTable.tsx:563
+#: src/tables/bom/BomTable.tsx:576
 msgid "Delete BOM Item"
 msgstr "Stücklisten-Position löschen"
 
-#: src/tables/bom/BomTable.tsx:564
+#: src/tables/bom/BomTable.tsx:577
 msgid "BOM item deleted"
 msgstr "Stücklisten-Position gelöscht"
 
-#: src/tables/bom/BomTable.tsx:584
+#: src/tables/bom/BomTable.tsx:597
 msgid "BOM item validated"
 msgstr "BOM-Element validiert"
 
-#: src/tables/bom/BomTable.tsx:593
+#: src/tables/bom/BomTable.tsx:606
 msgid "Failed to validate BOM item"
 msgstr "Fehler beim Validieren des BOM-Elements"
 
-#: src/tables/bom/BomTable.tsx:605
+#: src/tables/bom/BomTable.tsx:618
 msgid "View BOM"
 msgstr "Stückliste anzeigen"
 
-#: src/tables/bom/BomTable.tsx:616
+#: src/tables/bom/BomTable.tsx:629
 msgid "Validate BOM Line"
 msgstr "BOM-Artikel bestätigen"
 
-#: src/tables/bom/BomTable.tsx:633
+#: src/tables/bom/BomTable.tsx:646
 msgid "Edit Substitutes"
 msgstr "Ersatzteil bearbeiten"
 
-#: src/tables/bom/BomTable.tsx:658
+#: src/tables/bom/BomTable.tsx:671
 msgid "Add BOM Items"
 msgstr "BOM-Artikel hinzufügen"
 
-#: src/tables/bom/BomTable.tsx:666
+#: src/tables/bom/BomTable.tsx:679
 msgid "Add a single BOM item"
 msgstr "Einzelnen BOM-Artikel hinzufügen"
 
-#: src/tables/bom/BomTable.tsx:672
+#: src/tables/bom/BomTable.tsx:685
 msgid "Import BOM items from a file"
 msgstr "BOM-Artikel aus Datei importieren"
 
-#: src/tables/bom/BomTable.tsx:680
+#: src/tables/bom/BomTable.tsx:693
 msgid "Edit BOM"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:690
+#: src/tables/bom/BomTable.tsx:703
 msgid "Finish Editing BOM"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:718
+#: src/tables/bom/BomTable.tsx:731
 msgid "Bill of materials cannot be edited, as the part is locked"
 msgstr "BOM kann nicht bearbeitet werden, weil das Teil gesperrt ist"
 
@@ -11183,7 +11191,7 @@ msgstr "Element anzeigen"
 
 #: src/tables/general/ExtraLineItemTable.tsx:75
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:260
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:154
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:171
 #: src/tables/sales/SalesOrderLineItemTable.tsx:127
 msgid "Discount"
 msgstr ""
@@ -11191,8 +11199,8 @@ msgstr ""
 #: src/tables/general/ExtraLineItemTable.tsx:102
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:303
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:409
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:86
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:192
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:88
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:209
 #: src/tables/sales/SalesOrderLineItemTable.tsx:260
 #: src/tables/sales/SalesOrderLineItemTable.tsx:413
 #: src/tables/stock/TransferOrderLineItemTable.tsx:266
@@ -11202,7 +11210,7 @@ msgstr "Position hinzufügen"
 
 #: src/tables/general/ExtraLineItemTable.tsx:115
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:326
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:99
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:101
 #: src/tables/sales/SalesOrderLineItemTable.tsx:279
 #: src/tables/stock/TransferOrderLineItemTable.tsx:283
 msgid "Edit Line Item"
@@ -11210,7 +11218,7 @@ msgstr "Position bearbeiten"
 
 #: src/tables/general/ExtraLineItemTable.tsx:124
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:335
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:108
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:110
 #: src/tables/sales/SalesOrderLineItemTable.tsx:288
 #: src/tables/stock/TransferOrderLineItemTable.tsx:292
 msgid "Delete Line Item"
@@ -12414,23 +12422,35 @@ msgstr "Zeige aktiven Lieferant"
 msgid "Show supplier parts with stock"
 msgstr ""
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:163
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:118
+msgid "Set Outcome"
+msgstr ""
+
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:121
+msgid "Adjust the outcome for the selected line items."
+msgstr ""
+
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:180
 msgid "Received Date"
 msgstr "Empfangsdatum"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:177
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:194
 msgid "Show items which have been received"
 msgstr "Empfangene Elemente anzeigen"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:182
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:199
 msgid "Filter by line item status"
 msgstr ""
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:200
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:217
 msgid "Receive selected items"
 msgstr "Ausgewählte Elemente empfangen"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:237
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:234
+msgid "Set outcome for selected items"
+msgstr ""
+
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:264
 msgid "Receive Item"
 msgstr "Element empfangen"
 

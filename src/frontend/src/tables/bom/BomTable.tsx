@@ -250,6 +250,19 @@ export function BomTable({
         }
       },
       {
+        accessor: 'piece_count',
+        defaultVisible: false,
+        sortable: true,
+        render: (record: any) => {
+          const piece_count = record.piece_count;
+          if (piece_count == null || piece_count <= 1) {
+            return '-';
+          } else {
+            return <Text size='xs'>{piece_count}</Text>;
+          }
+        }
+      },
+      {
         accessor: 'substitutes',
         defaultVisible: false,
         render: (row: any) => {

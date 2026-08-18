@@ -9,6 +9,7 @@ django-cors-headers                     # CORS headers extension for DRF
 django-dbbackup                         # Backup / restore of database and media files
 django-error-report-2                   # Error report viewer for the admin interface
 django-filter                           # Extended filtering options
+django-fsm-2                            # Finite state machine for Django models
 django-flags                            # Feature flags
 django-ical                             # iCal export for calendar views
 django-maintenance-mode                 # Shut down application while reloading etc.
@@ -53,6 +54,7 @@ sentry-sdk                              # Error reporting (optional)
 setuptools                              # Standard dependency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
 tqdm                                    # Progress bars for CLI
+typing_extensions                       # new features - for 3, 12 support
 weasyprint                              # PDF generation
 whitenoise                              # Enhanced static file serving
 

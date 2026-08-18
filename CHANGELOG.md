@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#12507](https://github.com/inventree/InvenTree/pull/12507) calling an invalid or repeated state transition now raises a ValidationError. Plugins implementing state transitions should evaluate the PR and adapt their usage of transitions to gain the new safeguards.
+
 ### Added
 
 ### Changed
@@ -26,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#12422](https://github.com/inventree/InvenTree/pull/12422) adds a "piece_count" field to the BomItem model, for representing cut-to-length parts. The total material required is calculated as `quantity x piece_count`.
 - Adds configurable default for merging purchase order line items via the `PURCHASEORDER_MERGE_LINE_ITEMS` global setting
 - [#12393](https://github.com/inventree/InvenTree/pull/12393) adds "discount" attribute to order line items, allowing users to specify a discount for each line item on an order. The discount can be specified as either a percentage or a fixed amount, and is applied to the line item total when calculating the order total.
 - [#12391](https://github.com/inventree/InvenTree/pull/12391) adds facility for bulk deleting line items against orders

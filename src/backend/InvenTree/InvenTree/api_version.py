@@ -1,13 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 531
+INVENTREE_API_VERSION = 533
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v531 -> 2026-07-27 : https://github.com/inventree/InvenTree/pull/12072
+v533 -> 2026-07-27 : https://github.com/inventree/InvenTree/pull/12072
     - Adds API endpoints for RepairOrder, RepairOrderLineItem, and RepairOrderAllocation models
+
+v532 -> 2026-08-15 : https://github.com/inventree/InvenTree/pull/12422
+    - Adds "piece_count" field to the BomItem model and API endpoints (for cut-to-length parts)
+
+v531 -> 2026-08-13 : https://github.com/inventree/InvenTree/pull/12635
+    - Adds "bulk update" support for the ReturnOrderLineItem API endpoint
 
 v530 -> 2026-07-28 : https://github.com/inventree/InvenTree/pull/12487
     - Adds searching against ReportSnippet API endpoint
