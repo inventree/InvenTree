@@ -54,6 +54,7 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
     SerializerContextMixin,
 )
+from InvenTree.serializers import apply_duplicate_copy_options
 from order.models import PurchaseOrder, ReturnOrder, SalesOrder, TransferOrder
 from order.serializers import (
     PurchaseOrderSerializer,
@@ -1273,8 +1274,10 @@ class StockList(
 
             original = duplicate['original']
 
-            if duplicate.get('copy_notes', True):
-                item.copy_notes_from(original)
+            # copy_history/copy_tests don't follow the copy_<x>_from() naming
+            # convention (copyHistoryFrom/copyTestResultsFrom), so still need
+            # handling here - only copy_notes can go through the shared helper
+            apply_duplicate_copy_options(item, duplicate, original, copy_notes=True)
 
             if duplicate.get('copy_history', False):
                 item.copyHistoryFrom(original)
