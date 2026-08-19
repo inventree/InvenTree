@@ -42,6 +42,10 @@ export function bomItemFields({
       label: t`Quantity`,
       description: t`Required component quantity`
     },
+    piece_count: {
+      label: t`Piece Count`,
+      description: t`Number of pieces required (for cut-to-length items). Total material = quantity × piece_count.`
+    },
     reference: {},
     setup_quantity: {},
     attrition: {},
@@ -75,7 +79,7 @@ function BomItemSubstituteRow({
               api
                 .delete(apiUrl(ApiEndpoints.bom_substitute_list, record.pk))
                 .then(() => {
-                  props.removeFn(props.idx);
+                  props.removeFn(props.rowId);
                 })
                 .catch((err) => {
                   showApiErrorMessage({
@@ -116,7 +120,7 @@ export function useEditBomSubstitutesForm(props: BomItemSubstituteFormProps) {
         modelRenderer: (row: TableFieldRowProps) => {
           const record = substitutes.find((r) => r.pk == row.item.pk);
           return record ? (
-            <BomItemSubstituteRow props={row} record={record} />
+            <BomItemSubstituteRow key={row.rowId} props={row} record={record} />
           ) : null;
         },
         headers: [

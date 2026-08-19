@@ -6,13 +6,14 @@ import { ModelType } from '@lib/enums/ModelType';
 import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { shortenString } from '@lib/functions/String';
-import { TableHoverCard } from '../../tables/TableHoverCard';
 import { ApiIcon } from '../items/ApiIcon';
+import { TableHoverCard } from '../tables/TableHoverCard';
 import {
   InlineSecondaryBadge,
   type InstanceRenderInterface,
   RenderInlineModel
 } from './Instance';
+import { StatusRenderer } from './StatusRenderer';
 
 /**
  * Inline rendering of a single StockLocation instance
@@ -48,12 +49,7 @@ export function RenderStockLocation(
     <RenderInlineModel
       {...props}
       tooltip={instance.pathstring}
-      prefix={
-        <>
-          {instance.level > 0 && `${'- '.repeat(instance.level)}`}
-          {instance.icon && <ApiIcon name={instance.icon} />}
-        </>
-      }
+      prefix={instance.icon && <ApiIcon name={instance.icon} />}
       primary={location}
       suffix={suffix}
       url={
@@ -107,6 +103,8 @@ export function RenderStockItem(
   const showLocation: boolean = props.extra?.show_location !== false;
   const location: any = props.instance?.location_detail;
 
+  const statusKey = instance?.status_custom_key ?? instance?.status;
+
   // Form the "secondary" text to display
   const secondary: ReactNode = (
     <Group gap='xs' style={{ paddingLeft: '5px' }}>
@@ -115,6 +113,13 @@ export function RenderStockItem(
       )}
       {instance.batch && (
         <InlineSecondaryBadge title={t`Batch`} text={instance.batch} />
+      )}
+      {statusKey != null && (
+        <StatusRenderer
+          status={statusKey}
+          fallbackStatus={instance.status}
+          type={ModelType.stockitem}
+        />
       )}
     </Group>
   );

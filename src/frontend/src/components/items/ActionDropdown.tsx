@@ -34,6 +34,7 @@ export type ActionDropdownItem = {
   hidden?: boolean;
   onClick: (event?: any) => void;
   indicator?: Omit<IndicatorProps, 'children'>;
+  hotkey?: string;
 };
 
 /**
@@ -184,7 +185,8 @@ export function BarcodeActionDropdown({
           title: t`Link Barcode`,
           icon: <IconLink />,
           tooltip: t`Link a custom barcode to this item`,
-          ChildItem: QRCodeLink
+          ChildItem: QRCodeLink,
+          hotkey: 'mod+L'
         }),
         GeneralBarcodeAction({
           hidden: hidden || !hash || !permission,
@@ -220,6 +222,7 @@ function GeneralBarcodeAction({
   icon: ReactNode;
   tooltip: string;
   ChildItem: any;
+  hotkey?: string;
 }): ActionDropdownItem {
   const onClick = () => {
     modals.open({
@@ -255,7 +258,8 @@ export function DeleteItemAction(
     ...props,
     icon: <IconTrash color='red' />,
     name: t`Delete`,
-    tooltip: props.tooltip ?? t`Delete item`
+    tooltip: props.tooltip ?? t`Delete item`,
+    hotkey: 'mod+X'
   };
 }
 
@@ -275,7 +279,8 @@ export function CancelItemAction(
     ...props,
     icon: <InvenTreeIcon icon='cancel' iconProps={{ color: 'red' }} />,
     name: t`Cancel`,
-    tooltip: props.tooltip ?? t`Cancel`
+    tooltip: props.tooltip ?? t`Cancel`,
+    hotkey: 'mod+X'
   };
 }
 
@@ -287,6 +292,7 @@ export function DuplicateItemAction(
     ...props,
     icon: <IconCopy color='green' />,
     name: t`Duplicate`,
-    tooltip: props.tooltip ?? t`Duplicate item`
+    tooltip: props.tooltip ?? t`Duplicate item`,
+    hotkey: 'mod+D'
   };
 }

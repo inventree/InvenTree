@@ -66,6 +66,7 @@ export default function StocktakeDashboardWidget(): DashboardWidgetProps {
     minHeight: 1,
     minWidth: 2,
     render: () => <StocktakeWidget />,
+    icon: 'stocktake',
     enabled: user.hasAddRole(UserRoles.part)
   };
 }

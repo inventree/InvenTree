@@ -1,10 +1,137 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 494
+INVENTREE_API_VERSION = 532
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v532 -> 2026-08-15 : https://github.com/inventree/InvenTree/pull/12422
+    - Adds "piece_count" field to the BomItem model and API endpoints (for cut-to-length parts)
+
+v531 -> 2026-08-13 : https://github.com/inventree/InvenTree/pull/12635
+    - Adds "bulk update" support for the ReturnOrderLineItem API endpoint
+
+v530 -> 2026-07-28 : https://github.com/inventree/InvenTree/pull/12487
+    - Adds searching against ReportSnippet API endpoint
+
+v529 -> 2026-07-26 : https://github.com/inventree/InvenTree/pull/12471
+    - Adds "on_order" filter to the Part API
+    - Enable sorting by "ordering" quantity on the Part API endpoint
+
+v528 -> 2026-07-26 : https://github.com/inventree/InvenTree/pull/12469
+    - Additional ordering options for SalesOrderAllocation API endpoint
+
+v527 -> 2026-07-24 : https://github.com/inventree/InvenTree/pull/12454
+    - Extend API with dedicated login-by-code re-send endpoint
+
+v526 -> 2026-07-24 : https://github.com/inventree/InvenTree/pull/12463
+    - Fix for data export on SalesOrderAllocation API endpoint
+
+v525 -> 2026-07-20 : https://github.com/inventree/InvenTree/pull/12409
+    - Type clarifications for some fields; no functional changes
+
+v524 -> 2026-07-20 : https://github.com/inventree/InvenTree/pull/12393
+    - Adds "discount" field to order line items (and extra line items)
+
+v523 -> 2026-07-14 : https://github.com/inventree/InvenTree/pull/12391
+    - Adds "bulk delete" support for order line item API endpoints (PurchaseOrder / SalesOrder / ReturnOrder / TransferOrder)
+    - Adds "bulk delete" support for order extra line item API endpoints
+    - Completed TransferOrder objects are now "locked" (controlled by the new TRANSFERORDER_EDIT_COMPLETED_ORDERS global setting)
+
+v522 -> 2026-07-14 : https://github.com/inventree/InvenTree/pull/12388
+    - Adds "unique" field to the ParameterTemplate model
+
+v521 -> 2026-07-12 : https://github.com/inventree/InvenTree/pull/12360
+    - Removes the MPTT mixin from the StockItem model, and removes the self-referential tree structure from the database.
+
+v520 -> 2026-07-11 : https://github.com/inventree/InvenTree/pull/12310
+    - Adds new "disassemble" API endpoint for stock items
+    - Allows a stock item to be broken down into component parts, based on its Bill of Materials
+
+v519 -> 2026-07-09 : https://github.com/inventree/InvenTree/pull/TODO
+    - Adds optional "roles" and "permissions" fields to the /user/me/ API endpoint, via the "?roles=true" query parameter
+
+v518 -> 2026-07-09 : https://github.com/inventree/InvenTree/pull/12341
+    - Enable import of internal part prices via the API
+
+v517 -> 2026-07-08 : https://github.com/inventree/InvenTree/pull/12336
+    - Fix currency code options for the PartPricing  model and API endpoints
+
+v516 -> 2026-07-03 : https://github.com/inventree/InvenTree/pull/12295
+    - Adds "consumable" field to the Part model and API endpoints
+
+v515 -> 2026-07-03 : https://github.com/inventree/InvenTree/pull/12298
+    - Change the file fields definition to binary (from uri) in the upload requests
+
+v514 -> 2026-07-02 : https://github.com/inventree/InvenTree/pull/12294
+    - Adds "duplicate" field to the BuildOrder, Company, ManufacturerPart, SupplierPart and SalesOrderShipment API endpoints
+    - Order duplication options: renames "order_id" field to "original", which now performs primary-key validation
+    - Part duplication options: renames "part" field to "original"
+
+v513 -> 2026-06-25 : https://github.com/inventree/InvenTree/pull/12250
+    - Adds "active" field to the ProjectCode model and API endpoints
+
+v512 -> 2026-06-20 : https://github.com/inventree/InvenTree/pull/12022
+    - Adds optional "merge" field to each item in the Stock Transfer API endpoint
+    - When merge is enabled, transferred stock is combined into compatible existing stock at the destination
+    - Stock merge tracking entries now include an "added" delta field.
+
+v511 -> 2026-06-19 : https://github.com/inventree/InvenTree/pull/12204
+    - Adds new filtering options to PartCategoryTree and StockLocationTree API endpoints
+
+v510 -> 2026-06-18 : https://github.com/inventree/InvenTree/pull/12197
+    - Require "staff" access permissions for the machine restart API endpoint
+
+v509 -> 2026-06-17 : https://github.com/inventree/InvenTree/pull/12184
+    - Adds "completed_row_count_history" and "row_count_history" fields to the DataImportSession model, which store the historic count of completed rows and total rows for a data import session.
+
+v508 -> 2026-06-17 : https://github.com/inventree/InvenTree/pull/11982
+   - An order's "status_custom_key" can be updated via PATCH API endpoint
+
+v507 -> 2026-06-16 : https://github.com/inventree/InvenTree/pull/12180
+    - Adds "lookup_field" parameter to the DataImportSessionSerializer, which allows for more flexible lookup of related objects during data import operations
+
+v506 -> 2026-06-15 : https://github.com/inventree/InvenTree/pull/12168
+    - Reduce permissions scope for a number of API endpoints, to improve security and ensure that users only have access to the data they need
+
+v505 -> 2026-06-15 : https://github.com/inventree/InvenTree/pull/12165
+    - Allow parameters to be specified against the PartCategory model
+
+v504 -> 2026-06-13 : https://github.com/inventree/InvenTree/pull/12139
+    - Adjustments to the SelectionList and SelectionListEntry API endpoints to support more efficient queries and data retrieval
+
+v503 -> 2026-06-11 : https://github.com/inventree/InvenTree/pull/12155
+    - Adds additional filtering and sorting options to the LabelTemplate API endpoint
+    - Adds additional filtering and sorting options to the ReportTemplate API endpoint
+
+v502 -> 2026-06-10 : https://github.com/inventree/InvenTree/pull/12142
+    - Prevents users from printing reports or labels against models for which they do not have adequate permissions. This change improves the security of the system by ensuring that users cannot access or print reports or labels for models they do not have permission to view.
+
+v501 -> 2026-06-05 : https://github.com/inventree/InvenTree/pull/12093
+    - Adds "read_only" attribute to PluginSetting API endpoint, which indicates whether a particular plugin setting is read-only (i.e. cannot be modified via the API)
+
+v500 -> 2026-06-03 : https://github.com/inventree/InvenTree/pull/12077
+    - Adds "tags" fields to multiple new model types
+    - Adds /api/tag/ endpoint for fetching tags
+    - Enable filtering various model types by tags
+
+v499 -> 2026-06-01 : https://github.com/inventree/InvenTree/pull/12057
+    - Fixes search field issues on the BarcodeScanHistory API endpoint
+
+v498 -> 2026-05-31 : https://github.com/inventree/InvenTree/pull/12055
+    - Updates the "status_text" field for models which support custom status values
+
+v497 -> 2026-05-27 : https://github.com/inventree/InvenTree/pull/12019
+    - Adds "location" field to StockCount API endpoint
+
+v496 -> 2026-05-26 : https://github.com/inventree/InvenTree/pull/12011
+    - Add "creation_date" field to the StockItem API endpoint
+
+v495 -> 2026-05-25 : https://github.com/inventree/InvenTree/pull/12000
+    - Adds "auto-allocate" API endpoint for sales orders
+    - Allow bulk-delete of SalesOrderAllocation objects via the API
+    - Add new allocation options to the Build auto-allocate API endpoint
 
 v494 -> 2026-05-23 : https://github.com/inventree/InvenTree/pull/11990
     - Offload build output operations to a background task, and return a task ID which can be used to monitor the progress of the task

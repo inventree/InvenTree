@@ -4,8 +4,12 @@ import { useId } from '@mantine/hooks';
 import { useCallback, useEffect, useMemo } from 'react';
 import { type Control, type FieldValues, useController } from 'react-hook-form';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { IconFileUpload } from '@tabler/icons-react';
+import type { NavigateFunction } from 'react-router-dom';
 import DateTimeField from '../DateTimeField';
 import { BooleanField } from './BooleanField';
 import { ChoiceField } from './ChoiceField';
@@ -16,7 +20,9 @@ import { NestedObjectField } from './NestedObjectField';
 import NumberField from './NumberField';
 import { RelatedModelField } from './RelatedModelField';
 import { TableField } from './TableField';
+import TagsField from './TagsField';
 import TextField from './TextField';
+import { TreeField } from './TreeField';
 
 /**
  * Render an individual form field
@@ -26,6 +32,7 @@ export function ApiFormField({
   definition,
   control,
   hideLabels,
+  navigate,
   url,
   setFields,
   onKeyDown
@@ -34,6 +41,7 @@ export function ApiFormField({
   definition: ApiFormFieldType;
   control: Control<FieldValues, any>;
   hideLabels?: boolean;
+  navigate?: NavigateFunction | null;
   url?: string;
   setFields?: React.Dispatch<React.SetStateAction<ApiFormFieldSet>>;
   onKeyDown?: (value: any) => void;
@@ -64,7 +72,7 @@ export function ApiFormField({
           : definition.value
       );
     }
-  }, [definition.value]);
+  }, [definition.value, definition.field_type]);
 
   const fieldDefinition: ApiFormFieldType = useMemo(() => {
     return {
@@ -113,17 +121,61 @@ export function ApiFormField({
     [fieldName, definition]
   );
 
+  // Stable wrapper so the identity passed to leaf field components does not
+  // change unless onKeyDown itself changes (onKeyDown may be undefined)
+  const safeOnKeyDown = useCallback(
+    (value: any) => {
+      onKeyDown?.(value);
+    },
+    [onKeyDown]
+  );
+
   // Construct the individual field
   const fieldInstance = useMemo(() => {
     switch (fieldDefinition.field_type) {
       case 'related field':
-        return (
-          <RelatedModelField
-            controller={controller}
-            definition={fieldDefinition}
-            fieldName={fieldName}
-          />
-        );
+        if (
+          fieldDefinition.api_url === apiUrl(ApiEndpoints.stock_location_list)
+        ) {
+          // Redirect location fields to the appropriate tree field
+          return (
+            <TreeField
+              controller={controller}
+              definition={fieldDefinition}
+              fieldName={fieldName}
+              endpoint={ApiEndpoints.stock_location_tree}
+              childIdentifier='sublocations'
+              genericPlaceholder={t`Select location`}
+              model={ModelType.stocklocation}
+              navigate={navigate}
+            />
+          );
+        } else if (
+          fieldDefinition.api_url === apiUrl(ApiEndpoints.category_list)
+        ) {
+          // Redirect category fields to the appropriate tree field
+          return (
+            <TreeField
+              controller={controller}
+              definition={fieldDefinition}
+              fieldName={fieldName}
+              endpoint={ApiEndpoints.category_tree}
+              childIdentifier='subcategories'
+              genericPlaceholder={t`Select category`}
+              model={ModelType.partcategory}
+              navigate={navigate}
+            />
+          );
+        } else {
+          return (
+            <RelatedModelField
+              definition={fieldDefinition}
+              controller={controller}
+              fieldName={fieldName}
+              navigate={navigate}
+            />
+          );
+        }
       case 'email':
       case 'url':
       case 'string':
@@ -134,9 +186,7 @@ export function ApiFormField({
             controller={controller}
             fieldName={fieldName}
             onChange={onChange}
-            onKeyDown={(value) => {
-              onKeyDown?.(value);
-            }}
+            onKeyDown={safeOnKeyDown}
           />
         );
       case 'password':
@@ -146,9 +196,7 @@ export function ApiFormField({
             controller={controller}
             fieldName={fieldName}
             onChange={onChange}
-            onKeyDown={(value) => {
-              onKeyDown?.(value);
-            }}
+            onKeyDown={safeOnKeyDown}
           />
         );
       case 'icon':
@@ -161,9 +209,7 @@ export function ApiFormField({
             controller={controller}
             definition={reducedDefinition}
             fieldName={fieldName}
-            onChange={(value: boolean) => {
-              onChange(value);
-            }}
+            onChange={onChange}
           />
         );
       case 'date':
@@ -188,9 +234,7 @@ export function ApiFormField({
               fieldDefinition.placeholderWarningCompare ?? undefined
             }
             placeholderWarning={fieldDefinition.placeholderWarning ?? undefined}
-            onChange={(value: any) => {
-              onChange(value);
-            }}
+            onChange={onChange}
           />
         );
       case 'choice':
@@ -242,8 +286,14 @@ export function ApiFormField({
           <TableField
             definition={fieldDefinition}
             fieldName={fieldName}
-            control={controller}
+            value={value}
+            onChange={field.onChange}
+            error={error}
           />
+        );
+      case 'tags':
+        return (
+          <TagsField controller={controller} definition={fieldDefinition} />
         );
       default:
         return (
@@ -262,7 +312,7 @@ export function ApiFormField({
     fieldName,
     fieldDefinition,
     onChange,
-    onKeyDown,
+    safeOnKeyDown,
     reducedDefinition,
     ref,
     setFields,

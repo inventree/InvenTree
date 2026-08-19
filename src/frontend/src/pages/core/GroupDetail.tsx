@@ -7,10 +7,7 @@ import { Paper, Skeleton, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  type DetailsField,
-  DetailsTable
-} from '../../components/details/Details';
+import type { DetailsField } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {} from '../../components/items/ActionDropdown';
 import { RoleTable, type RuleSet } from '../../components/items/RoleTable';
@@ -48,8 +45,9 @@ export default function GroupDetail() {
     ];
 
     return (
-      <ItemDetailsGrid>
-        <DetailsTable fields={tl} item={instance} title={t`Group Details`} />
+      <ItemDetailsGrid
+        tables={[{ fields: tl, item: instance, title: t`Group Details` }]}
+      >
         <Paper p='xs' withBorder>
           <Stack gap='xs'>
             <StylishText size='lg'>{t`Group Roles`}</StylishText>

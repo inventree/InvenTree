@@ -33,6 +33,24 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import {
+  LocationColumn,
+  PartColumn,
+  RenderPartColumn,
+  StatusColumn
+} from '../../components/tables/ColumnRenderers';
+import {
+  BatchFilter,
+  HasBatchCodeFilter,
+  IsSerializedFilter,
+  SerialFilter,
+  SerialGTEFilter,
+  SerialLTEFilter,
+  StatusFilterOptions,
+  StockLocationFilter
+} from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { useApi } from '../../contexts/ApiContext';
 import {
   useBuildAutoAllocateFields,
@@ -45,6 +63,7 @@ import {
   useStockFields,
   useStockItemSerializeFields
 } from '../../forms/StockForms';
+import { compareTestResults } from '../../functions/comparison';
 import { InvenTreeIcon } from '../../functions/icons';
 import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
@@ -54,24 +73,6 @@ import {
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserState } from '../../states/UserState';
-import {
-  LocationColumn,
-  PartColumn,
-  RenderPartColumn,
-  StatusColumn
-} from '../ColumnRenderers';
-import {
-  BatchFilter,
-  HasBatchCodeFilter,
-  IsSerializedFilter,
-  SerialFilter,
-  SerialGTEFilter,
-  SerialLTEFilter,
-  StatusFilterOptions,
-  StockLocationFilter
-} from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 import BuildLineTable from './BuildLineTable';
 
 type TestResultOverview = {
@@ -170,7 +171,8 @@ export default function BuildOutputTable({
 
   // Fetch the test templates associated with the partId
   const { data: testTemplates, refetch: refetchTestTemplates } = useQuery({
-    queryKey: ['buildoutputtests', partId, build],
+    staleTime: 60 * 1000, // Cache for 1 minute
+    queryKey: ['buildoutputtests', partId, buildId],
     queryFn: async () => {
       if (!partId || partId < 0) {
         return [];
@@ -200,6 +202,7 @@ export default function BuildOutputTable({
 
   // Fetch the "tracked" BOM items associated with the partId
   const { data: trackedItems, refetch: refetchTrackedItems } = useQuery({
+    staleTime: 60 * 1000, // Cache for 1 minute
     queryKey: ['trackeditems', buildId],
     queryFn: async () => {
       if (!buildId || buildId < 0) {
@@ -275,9 +278,7 @@ export default function BuildOutputTable({
           // Find the "newest" result for this template in the returned data
           const result = record.tests
             ?.filter((test: any) => test.template == template.pk)
-            .sort((a: any, b: any) => {
-              return a.pk < b.pk ? 1 : -1;
-            })
+            .sort(compareTestResults)
             .shift();
 
           if (template?.required && result?.result) {
@@ -307,7 +308,10 @@ export default function BuildOutputTable({
               allocated += allocation.quantity;
             });
 
-          if (allocated >= item.bom_item_detail.quantity) {
+          if (
+            item.bom_item_detail?.quantity &&
+            allocated >= item.bom_item_detail.quantity
+          ) {
             fullyAllocatedCount += 1;
           }
         });
@@ -508,7 +512,6 @@ export default function BuildOutputTable({
   const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       items: table.selectedRecords,
-      model: ModelType.stockitem,
       refresh: table.refreshTable,
       filters: {}
     };

@@ -55,7 +55,7 @@ export function getDetailUrl(
     }
   }
 
-  console.error(`No detail URL found for model ${model} <${pk}>`);
+  console.warn(`No detail URL found for model ${model} <${pk}>`);
   return '';
 }
 

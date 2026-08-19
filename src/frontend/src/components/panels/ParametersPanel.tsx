@@ -23,6 +23,7 @@ export default function ParametersPanel({
     name: 'parameters',
     label: t`Parameters`,
     icon: <IconListDetails />,
+    hotkey: 'mod+Shift+P',
     hidden: hidden ?? false,
     notification_dot: async () => {
       if (!model_type || !model_id) {

@@ -37,10 +37,23 @@ function BuildOrderCalendar() {
   }, [globalSettings]);
 
   const renderTooltip = useCallback((event: EventContentArg) => {
+    const order = event?.event?._def?.extendedProps?.order;
+
+    const extraEntries: { label: string; value: string | React.ReactNode }[] =
+      [];
+
+    if (order?.quantity) {
+      extraEntries.push({
+        label: t`Quantity`,
+        value: order.quantity
+      });
+    }
+
     return OrderCalendarToolTip({
       event: event,
       modelType: ModelType.part,
-      instanceLookup: 'part_detail'
+      instanceLookup: 'part_detail',
+      extraEntries: extraEntries
     });
   }, []);
 
@@ -48,8 +61,9 @@ function BuildOrderCalendar() {
     <OrderCalendar
       model={ModelType.build}
       role={UserRoles.build}
-      params={{ outstanding: true, part_detail: true }}
+      params={{ part_detail: true }}
       filters={calendarFilters}
+      initialFilters={[{ name: 'outstanding', value: 'true' }]}
       tooltip={renderTooltip}
     />
   );

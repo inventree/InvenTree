@@ -1,6 +1,7 @@
 """Template tags for rendering various barcodes."""
 
 from django import template
+from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 
 import barcode as python_barcode
@@ -70,7 +71,7 @@ def qrcode(data: str, **kwargs) -> str:
     data = str(data).strip()
 
     if not data:
-        raise ValueError("No data provided to 'qrcode' template tag")
+        raise ValidationError("qrcode: No data provided to 'qrcode' template tag")
 
     # Extract other arguments from kwargs
     fill_color = kwargs.pop('fill_color', 'black')
@@ -115,7 +116,7 @@ def barcode(data: str, barcode_class='code128', **kwargs) -> str:
     data = str(data).strip()
 
     if not data:
-        raise ValueError("No data provided to 'barcode' template tag")
+        raise ValidationError("barcode: No data provided to 'barcode' template tag")
 
     constructor = python_barcode.get_barcode_class(barcode_class)
 
@@ -134,17 +135,26 @@ def barcode(data: str, barcode_class='code128', **kwargs) -> str:
 
 
 @register.simple_tag()
-def datamatrix(data: str, **kwargs) -> str:
+def datamatrix(
+    data: str,
+    rectangular: bool = False,
+    fill_color: str = 'black',
+    back_color: str = 'white',
+    scale: float = 1.0,
+    border: int = 1,
+    fmt: str = 'PNG',
+    **kwargs,
+) -> str:
     """Render a DataMatrix barcode.
 
     Arguments:
         data: Data to encode
-
-    Keyword Arguments:
-        fill_color (str): Foreground color (default = 'black')
-        back_color (str): Background color (default = 'white')
-        scale (float): Matrix scaling factor (default = 1)
-        border (int): Border width (default = 1)
+        rectangular: Whether to generate a rectangular DataMatrix (default = False)
+        fill_color: Foreground color (default = 'black')
+        back_color: Background color (default = 'white')
+        scale: Scaling factor (default = 1)
+        border: Border width (default = 1)
+        fmt: Generated image format (default = 'PNG')
 
     Returns:
         image (str): base64 encoded image data
@@ -154,14 +164,11 @@ def datamatrix(data: str, **kwargs) -> str:
     data = str(data).strip()
 
     if not data:
-        raise ValueError("No data provided to 'datamatrix' template tag")
+        raise ValidationError(
+            "datamatrix: No data provided to 'datamatrix' template tag"
+        )
 
-    dm = DataMatrix(data)
-
-    fill_color = kwargs.pop('fill_color', 'black')
-    back_color = kwargs.pop('back_color', 'white')
-
-    border = kwargs.pop('border', 1)
+    dm = DataMatrix(data, rect=rectangular)
 
     try:
         border = int(border)
@@ -180,8 +187,6 @@ def datamatrix(data: str, **kwargs) -> str:
     except Exception:
         bg = ImageColor.getcolor('white', 'RGB')
 
-    scale = kwargs.pop('scale', 1)
-
     height = len(dm.matrix) + 2 * border
     width = len(dm.matrix[0]) + 2 * border
 
@@ -193,7 +198,8 @@ def datamatrix(data: str, **kwargs) -> str:
             if value:
                 img.putpixel((x + border, y + border), fg)
 
-    if scale != 1:
-        img = img.resize((int(width * scale), int(height * scale)))
+    img = img.resize(
+        (int(width * scale), int(height * scale)), Image.Resampling.NEAREST
+    )
 
-    return image_data(img, fmt='PNG')
+    return image_data(img, fmt=fmt)

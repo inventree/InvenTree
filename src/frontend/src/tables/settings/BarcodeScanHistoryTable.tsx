@@ -26,11 +26,11 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { RenderUser } from '../../components/render/User';
+import { UserFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import { UserFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
  * Render detail information for a particular barcode scan result.
@@ -258,23 +258,28 @@ export default function BarcodeScanHistoryTable() {
             icon={<IconExclamationCircle />}
             title={t`Logging Disabled`}
           >
-            <Text>{t`Barcode logging is not enabled`}</Text>
+            <Text>
+              {t`Barcode logging is not enabled.`}{' '}
+              {t`No barcode scan history will be recorded.`}
+            </Text>
           </Alert>
         )}
-        <InvenTreeTable
-          url={apiUrl(ApiEndpoints.barcode_history)}
-          tableState={table}
-          columns={tableColumns}
-          props={{
-            tableFilters: filters,
-            enableBulkDelete: canDelete,
-            rowActions: rowActions,
-            onRowClick: (row) => {
-              setSelectedResult(row);
-              open();
-            }
-          }}
-        />
+        {globalSettings.isSet('BARCODE_STORE_RESULTS') && (
+          <InvenTreeTable
+            url={apiUrl(ApiEndpoints.barcode_history)}
+            tableState={table}
+            columns={tableColumns}
+            props={{
+              tableFilters: filters,
+              enableBulkDelete: canDelete,
+              rowActions: rowActions,
+              onRowClick: (row) => {
+                setSelectedResult(row);
+                open();
+              }
+            }}
+          />
+        )}
       </Stack>
     </>
   );

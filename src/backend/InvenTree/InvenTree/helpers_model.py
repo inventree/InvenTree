@@ -1,14 +1,14 @@
 """Provides helper functions used throughout the InvenTree project that access the database."""
 
+import contextlib
+import contextvars
 import io
 import ipaddress
 import socket
-from decimal import Decimal
 from typing import Optional, cast
 from urllib.parse import urljoin, urlparse
 
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db.utils import OperationalError, ProgrammingError
 from django.utils.translation import gettext_lazy as _
@@ -16,8 +16,6 @@ from django.utils.translation import gettext_lazy as _
 import requests
 import requests.exceptions
 import structlog
-from djmoney.contrib.exchange.models import convert_money
-from djmoney.money import Money
 from PIL import Image
 
 from common.notifications import (
@@ -31,7 +29,6 @@ from InvenTree.cache import (
     get_session_cache,
     set_session_cache,
 )
-from InvenTree.format import format_money
 from InvenTree.ready import ignore_ready_warning
 
 logger = structlog.get_logger('inventree')
@@ -90,6 +87,66 @@ def construct_absolute_url(*arg, base_url=None, request=None):
     return urljoin(base_url, relative_url)
 
 
+_ssrf_guard_active = contextvars.ContextVar('ssrf_guard_active', default=False)
+_real_getaddrinfo = socket.getaddrinfo
+
+
+def _is_unsafe_ip(host: str) -> bool:
+    """Return True if the given (already-resolved) address string is private/reserved."""
+    ip = ipaddress.ip_address(host)
+    return ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved
+
+
+def _guarded_getaddrinfo(host, *args, **kwargs):
+    """Drop-in replacement for socket.getaddrinfo which enforces SSRF checks while active.
+
+    DNS resolution is otherwise delegated to the OS resolver on every connection
+    attempt an HTTP client makes - including ones made well after an earlier,
+    now-discarded resolution was validated by `validate_url_no_ssrf()`. An attacker
+    controlling authoritative DNS for their own domain can answer a first ("check")
+    lookup with a public IP and a later ("use") lookup with a private/internal one
+    (DNS rebinding), bypassing a validation step that only inspects the first answer.
+
+    Patching this at the socket layer means the *actual* resolution used to open the
+    real connection - whichever call that turns out to be - is the one that gets
+    checked, so there is no window between "validated" and "connected" for the
+    answer to change. The guard is only enforced while `ssrf_safe_context()` is
+    active in the current context, so unrelated resolutions (e.g. other threads
+    talking to the database/cache) are never affected.
+    """
+    result = _real_getaddrinfo(host, *args, **kwargs)
+
+    if _ssrf_guard_active.get():
+        for _family, _type, _proto, _canonname, sockaddr in result:
+            if _is_unsafe_ip(sockaddr[0]):
+                raise socket.gaierror(
+                    f'Host {host!r} resolved to a private or reserved address'
+                )
+
+    return result
+
+
+socket.getaddrinfo = _guarded_getaddrinfo
+
+
+@contextlib.contextmanager
+def ssrf_safe_context():
+    """Enforce SSRF IP validation on every DNS resolution performed within this block.
+
+    Wrap any code which resolves a user/attacker-influenced hostname and then
+    connects to it (e.g. `requests.get()`, or a library like WeasyPrint doing its
+    own resolution internally) in this context manager so that the resolution
+    backing the *actual* connection is validated, not just an earlier, separate
+    lookup whose result is discarded. See `_guarded_getaddrinfo` for why this
+    closes the DNS-rebinding TOCTOU gap that a standalone pre-check cannot.
+    """
+    token = _ssrf_guard_active.set(True)
+    try:
+        yield
+    finally:
+        _ssrf_guard_active.reset(token)
+
+
 def validate_url_no_ssrf(url):
     """Validate that a URL does not point to a private/internal network address.
 
@@ -114,9 +171,7 @@ def validate_url_no_ssrf(url):
         raise ValueError(_('Invalid URL: hostname could not be resolved'))
 
     for _family, _type, _proto, _canonname, sockaddr in addrinfo:
-        ip = ipaddress.ip_address(sockaddr[0])
-
-        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved:
+        if _is_unsafe_ip(sockaddr[0]):
             raise ValueError(_('URL points to a private or reserved IP address'))
 
 
@@ -163,35 +218,39 @@ def download_image_from_url(
     headers = {'User-Agent': user_agent} if user_agent else None
 
     try:
-        response = requests.get(
-            remote_url,
-            timeout=timeout,
-            allow_redirects=False,
-            stream=True,
-            headers=headers,
-        )
-
-        # Handle redirects manually to validate each destination
-        max_redirects = 5
-        redirect_count = 0
-
-        while response.is_redirect and redirect_count < max_redirects:
-            redirect_url = response.headers.get('Location')
-            if not redirect_url:
-                break
-
-            # Validate the redirect destination against SSRF
-            validator(redirect_url)
-            validate_url_no_ssrf(redirect_url)
-
-            redirect_count += 1
+        # SSRF protection: guard every DNS resolution made while actually connecting
+        # (not just the pre-check above) so a hostname cannot pass validation with
+        # one IP and then be connected to via a different, private one (DNS rebinding).
+        with ssrf_safe_context():
             response = requests.get(
-                redirect_url,
+                remote_url,
                 timeout=timeout,
                 allow_redirects=False,
                 stream=True,
                 headers=headers,
             )
+
+            # Handle redirects manually to validate each destination
+            max_redirects = 5
+            redirect_count = 0
+
+            while response.is_redirect and redirect_count < max_redirects:
+                redirect_url = response.headers.get('Location')
+                if not redirect_url:
+                    break
+
+                # Validate the redirect destination against SSRF
+                validator(redirect_url)
+                validate_url_no_ssrf(redirect_url)
+
+                redirect_count += 1
+                response = requests.get(
+                    redirect_url,
+                    timeout=timeout,
+                    allow_redirects=False,
+                    stream=True,
+                    headers=headers,
+                )
 
         if redirect_count >= max_redirects:
             raise ValueError(_('Too many redirects'))
@@ -250,85 +309,6 @@ def download_image_from_url(
         raise TypeError(_('Supplied URL is not a valid image file'))
 
     return img
-
-
-def render_currency(
-    money: Money,
-    decimal_places: Optional[int] = None,
-    currency: Optional[str] = None,
-    multiplier: Optional[Decimal] = None,
-    min_decimal_places: Optional[int] = None,
-    max_decimal_places: Optional[int] = None,
-    include_symbol: bool = True,
-):
-    """Render a currency / Money object to a formatted string (e.g. for reports).
-
-    Arguments:
-        money: The Money instance to be rendered
-        decimal_places: The number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
-        currency: Optionally convert to the specified currency
-        multiplier: An optional multiplier to apply to the money amount before rendering
-        min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
-        max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
-        include_symbol: If True, include the currency symbol in the output
-    """
-    if money in [None, '']:
-        return '-'
-
-    if type(money) is not Money:
-        # Try to convert to a Money object
-        try:
-            money = Money(
-                Decimal(str(money)),
-                currency or get_global_setting('INVENTREE_DEFAULT_CURRENCY'),
-            )
-        except Exception:
-            raise ValidationError(
-                f"render_currency: {_('Invalid money value')}: '{money}' ({type(money).__name__})"
-            )
-
-    if currency is not None:
-        # Attempt to convert to the provided currency
-        # If cannot be done, leave the original
-        try:
-            money = convert_money(money, currency)
-        except Exception:
-            pass
-
-    if multiplier is not None:
-        try:
-            money *= Decimal(str(multiplier).strip())
-        except Exception:
-            raise ValidationError(
-                f"render_currency: {_('Invalid multiplier value')}: '{multiplier}' ({type(multiplier).__name__})"
-            )
-
-    if min_decimal_places is None or not isinstance(min_decimal_places, (int, float)):
-        min_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
-
-    if max_decimal_places is None or not isinstance(max_decimal_places, (int, float)):
-        max_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES', 6)
-
-    value = Decimal(str(money.amount)).normalize()
-    value = str(value)
-
-    if decimal_places is not None and isinstance(decimal_places, (int, float)):
-        # Decimal place count is provided, use it
-        pass
-    elif '.' in value:
-        # If the value has a decimal point, use the number of decimal places in the value
-        decimal_places = len(value.split('.')[-1])
-    else:
-        # No decimal point, use 2 as a default
-        decimal_places = 2
-
-    # Clip the decimal places to the specified range
-    decimal_places = max(decimal_places, min_decimal_places)
-    decimal_places = min(decimal_places, max_decimal_places)
-
-    return format_money(
-        money, decimal_places=decimal_places, include_symbol=include_symbol
-    )
 
 
 @ignore_ready_warning

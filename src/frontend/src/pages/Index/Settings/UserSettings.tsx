@@ -55,15 +55,18 @@ export default function UserSettings() {
               'ICONS_IN_NAVBAR',
               'STICKY_HEADER',
               'STICKY_TABLE_HEADER',
+              'ENABLE_PREVIEW_PANEL',
               'SHOW_SPOTLIGHT',
               'BARCODE_IN_FORM_FIELDS',
               'DATE_DISPLAY_FORMAT',
               'FORMS_CLOSE_USING_ESCAPE',
               'DISPLAY_STOCKTAKE_TAB',
               'ENABLE_LAST_BREADCRUMB',
+              'SHOW_EXTRA_MODEL_INFO',
               'SHOW_FULL_LOCATION_IN_TABLES',
               'SHOW_FULL_CATEGORY_IN_TABLES',
-              'SHOW_BOM_SUBASSEMBLY_LEVELS'
+              'SHOW_BOM_SUBASSEMBLY_LEVELS',
+              'DISPLAY_ITEMS_FINAL_LEVEL'
             ]}
           />
         )
@@ -78,6 +81,7 @@ export default function UserSettings() {
               'SEARCH_WHOLE',
               'SEARCH_REGEX',
               'SEARCH_NOTES',
+              'SEARCH_RESULTS_PREVIEW_PANEL',
               'SEARCH_PREVIEW_RESULTS',
               'SEARCH_PREVIEW_SHOW_PARTS',
               'SEARCH_HIDE_INACTIVE_PARTS',

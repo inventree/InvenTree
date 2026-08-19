@@ -11,8 +11,7 @@ import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowCancelAction,
-  RowEditAction,
-  RowViewAction
+  RowEditAction
 } from '@lib/components/RowActions';
 import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -23,9 +22,18 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import {
+  CompanyColumn,
+  DateColumn,
+  LinkColumn,
+  StatusColumn
+} from '../../components/tables/ColumnRenderers';
+import { TagsFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
+import {
   useCheckShipmentForm,
   useCompleteShipmentForm,
-  useSalesOrderShipmentCompleteFields,
   useSalesOrderShipmentFields,
   useUncheckShipmentForm
 } from '../../forms/SalesOrderForms';
@@ -35,13 +43,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import {
-  CompanyColumn,
-  DateColumn,
-  LinkColumn,
-  StatusColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function SalesOrderShipmentTable({
   showOrderInfo = false,
@@ -70,8 +71,6 @@ export default function SalesOrderShipmentTable({
     customerId: customerId,
     pending: !selectedShipment.shipment_date
   });
-
-  const completeShipmentFields = useSalesOrderShipmentCompleteFields({});
 
   const newShipment = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_shipment_list,
@@ -161,6 +160,7 @@ export default function SalesOrderShipmentTable({
       {
         accessor: 'checked',
         title: t`Checked`,
+        filter: 'checked',
         switchable: true,
         sortable: false,
         render: (record: any) => <YesNoButton value={!!record.checked_by} />
@@ -170,12 +170,14 @@ export default function SalesOrderShipmentTable({
         title: t`Shipped`,
         switchable: true,
         sortable: false,
+        filter: 'shipped',
         render: (record: any) => <YesNoButton value={!!record.shipment_date} />
       },
       {
         accessor: 'delivered',
         title: t`Delivered`,
         switchable: true,
+        filter: 'delivered',
         sortable: false,
         render: (record: any) => <YesNoButton value={!!record.delivery_date} />
       },
@@ -254,7 +256,7 @@ export default function SalesOrderShipmentTable({
             deleteShipment.open();
           }
         }),
-        RowViewAction({
+        AppRowViewAction({
           title: t`View Sales Order`,
           modelType: ModelType.salesorder,
           modelId: record.order,
@@ -303,7 +305,8 @@ export default function SalesOrderShipmentTable({
         name: 'delivered',
         label: t`Delivered`,
         description: t`Show shipments which have been delivered`
-      }
+      },
+      TagsFilter({ modelType: ModelType.salesordershipment })
     ];
   }, []);
 

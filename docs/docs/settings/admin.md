@@ -4,24 +4,23 @@ title: InvenTree Admin Interfaces
 
 ## InvenTree Admin Interfaces
 
-There are multiple administration interfaces available in InvenTree, which provide different levels of access to the underlying resources and different operational safety.
+InvenTree provides multiple administration interfaces with different safety levels and intended use cases.
 
 [**Admin Center**](#admin-center):
 
-- Main interface for managing InvenTree
-- Robust verification and safety checks
+- Main administration interface for day-to-day operations
+- Uses API-backed flows with validation and safety checks
 
 [**System Settings**](#system-settings):
 
-- Access to all settings
-- Robust verification, requires reading the documentation
+- Access to global runtime settings
+- Available to staff users (or users with equivalent API scope)
 
-[**Backend Admin Interface**](#backend-admin-interface):
+[**Database Admin Interface**](./db_admin.md):
 
-- Low level access to the database
-- Few verification or safety checks
-- Requires knowledge of InvenTree internals
-- Recommended for advanced users only
+- Low-level database administration
+- Fewer safeguards than the Admin Center
+- Intended for advanced users and troubleshooting scenarios
 
 ### Admin Center
 
@@ -34,7 +33,13 @@ The Admin Center is the main interface for managing InvenTree. It provides a use
 - Integration with external services (via machines and plugins)
 - Reporting and statistics
 
-It can be access via the *Admin Center* link in the top right user menu, the *Admin Center* quick-link in the command palette, or via the navigation menu.
+#### Access Admin Center
+
+The Admin Center can be accessed in any of the following ways:
+
+- User menu in the top-right corner: *Admin Center*
+- Command palette quick action: *Admin Center*
+- Direct URL: `/web/settings/admin`
 
 #### Permissions
 
@@ -44,40 +49,6 @@ Some panes can only be accessed by users with specific permissions. For example,
 
 The System Settings interface provides ordered access to all global settings in InvenTree. Users need to have _staff_ privileges enabled or the _a:staff_ scope.
 
-### Backend Admin Interface
+### Database Admin Interface
 
-Users which have *staff* privileges have access to an Admin interface which provides extremely low level control of the database. Every item in the database is available and this interface provides a unrestricted option for directly viewing and modifying database objects.
-
-!!! warning "Caution"
-	Admin users should exercise extreme care when modifying data via the admin interface, as performing the wrong action may have unintended consequences!
-
-The admin interface allows *staff* users the ability to directly view / add / edit / delete database entries according to their [user permissions](./permissions.md).
-
-#### Access Backend Admin Interface
-
-To directly access the admin interface, append /admin/ to the InvenTree site URL - e.g. http://localhost:8000/admin/.
-
-An administration panel will be presented as shown below:
-
-{{ image("admin/admin.png", "Admin panel") }}
-
-#### View Database Objects
-
-Database objects can be listed and filtered directly. The image below shows an example of displaying existing part categories.
-
-{{ image("admin/part_cats.png", "Part categories") }}
-
-!!! info "Permissions"
-    A "staff" account does not necessarily provide access to all administration options, depending on the roles assigned to the user.
-
-##### Filtering
-
-Some admin views support filtering of results against specified criteria. For example, the list of Part objects can be filtered as follows:
-
-{{ image("admin/filter.png", "Filter part list") }}
-
-#### Edit Database Objects
-
-Individual database objects can be edited directly in the admin interface. The image below shows an example of editing a Part object:
-
-{{ image("admin/edit_part.png", "Edit part") }}
+For low-level administration tasks, use the [Database Admin Interface](./db_admin.md).

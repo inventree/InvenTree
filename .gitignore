@@ -111,5 +111,6 @@ api.yaml
 src/backend/InvenTree/web/static
 InvenTree/web/static
 
-# performance test results
+# test results and logs
+_tests*.txt
 .codspeed/

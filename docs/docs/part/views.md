@@ -8,7 +8,7 @@ The Part detail view page provides a detailed view of a single part in the syste
 
 ### Category Breadcrumb List
 
-The categories of each part is displayed on the top navigation bar as show in the above screenshot.
+The categories of each part is displayed on the top navigation bar.
 [Click here](./index.md#part-category) for more information about categories.
 
 ## Part Details
@@ -83,6 +83,10 @@ The *Build Orders* tab shows a list of the builds for this part. It provides a v
 
 The *Used In* tab displays a list of other parts that this part is used to make. This tab is only visible if the Part is a *component*.
 
+### Part Pricing
+
+The *Part Pricing* tab displays all available pricing information for the part, aggregated from multiple sources (internal pricing, supplier pricing, purchase history, BOM pricing, sale pricing, etc). Refer to the [part pricing documentation](./pricing.md) for further information.
+
 ### Suppliers
 
 The *Suppliers* tab displays all the *Part Suppliers* and *Part Manufacturers* for the selected *Part*.
@@ -101,6 +105,14 @@ This tab is only displayed if the part is marked as *Purchaseable*.
 
 The *Sales Orders* tab shows a list of the sales orders for this part. It provides a view for important sales order information like customer, status, creation and shipment dates.
 
+### Return Orders
+
+The *Return Orders* tab shows a list of the [return orders](../sales/return_order.md) which reference this part. This tab is only visible if the Part is marked as *Salable*, and the return order feature is enabled.
+
+### Transfer Orders
+
+The *Transfer Orders* tab shows a list of the [transfer orders](../stock/transfer_order.md) which reference this part. This tab is hidden if the Part is marked as *Virtual*, or the transfer order feature is not enabled.
+
 ### Stock History
 
 The *Stock History* tab provide historical stock level information. Refer to the [stock history documentation](./stocktake.md) for further information.
@@ -108,6 +120,10 @@ The *Stock History* tab provide historical stock level information. Refer to the
 ### Test Templates
 
 If a part is marked as *testable*, the user can define tests which must be performed on any stock items which are instances of this part. [Read more about testing](./test.md).
+
+### Test Results
+
+The *Test Results* tab displays [test result](../stock/test.md) data uploaded against *any* stock item of this part, aggregated into a single table. This differs from the *Test Templates* tab, which configures the tests themselves rather than displaying recorded results. This tab is only visible if the part is marked as *testable*.
 
 ### Related Parts
 

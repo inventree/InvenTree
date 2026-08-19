@@ -37,7 +37,11 @@ import { Boundary } from '@lib/components/Boundary';
 import { StylishText } from '@lib/components/StylishText';
 import type { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { identifierString } from '@lib/functions/Conversion';
-import { cancelEvent } from '@lib/functions/Events';
+import {
+  type InvenTreeHotkeyItem,
+  cancelEvent,
+  useInvenTreeHotkeys
+} from '@lib/functions/Events';
 import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type {
@@ -99,6 +103,7 @@ function PanelTabComponent({
   onClick: (event: any) => void;
 }) {
   const visibility = useDocumentVisibility();
+  const location = useLocation();
 
   // Check if we should display an indicator dot for this panel
   const notificationDot = useQuery({
@@ -168,7 +173,9 @@ function PanelTabComponent({
               textAlign: 'left'
             }}
             href={generateUrl(
-              `/${getBaseUrl()}${location.pathname}/${panel.name}`
+              `/${getBaseUrl()}${location.pathname}/${panel.name}${
+                location.search
+              }`
             )}
           >
             {expanded && panel.label}
@@ -300,10 +307,10 @@ function BasePanelGroup({
       }
 
       if (event && eventModified(event)) {
-        const url = `${location.pathname}/../${targetPanel}`;
+        const url = `${location.pathname}/../${targetPanel}${location.search}`;
         navigateToLink(url, navigate, event);
       } else {
-        navigate(`../${targetPanel}`);
+        navigate(`../${targetPanel}${location.search}`);
       }
 
       localState.setLastUsedPanel(pageKey)(targetPanel);
@@ -334,6 +341,22 @@ function BasePanelGroup({
       return panel ?? '';
     }
   }, [activePanels, panel]);
+
+  // hotkeys
+  const hotkeys = useMemo(() => {
+    const keys: InvenTreeHotkeyItem[] = [];
+    activePanels.forEach((panel) => {
+      if (panel.hotkey) {
+        keys.push([
+          panel.hotkey,
+          t`Navigate to panel ${panel.name}`,
+          () => handlePanelChange(panel.name)
+        ]);
+      }
+    });
+    return keys;
+  }, [activePanels]);
+  useInvenTreeHotkeys(hotkeys);
 
   const [isDirty, setIsDirty] = useState(false);
   useWindowEvent('beforeunload', (event) => {
@@ -488,6 +511,7 @@ function IndexPanelComponent({
   defaultPanel,
   panels
 }: Readonly<PanelProps>) {
+  const location = useLocation();
   const lastUsedPanel = useLocalState(
     useShallow((state) => {
       const panelName =
@@ -507,7 +531,7 @@ function IndexPanelComponent({
     })
   );
 
-  return <Navigate to={lastUsedPanel} replace />;
+  return <Navigate to={`${lastUsedPanel}${location.search}`} replace />;
 }
 
 /**

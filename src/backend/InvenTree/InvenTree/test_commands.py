@@ -1,5 +1,7 @@
 """Tests for custom InvenTree management commands."""
 
+import os
+import subprocess
 from pathlib import Path
 
 from django.conf import settings
@@ -14,6 +16,48 @@ from InvenTree.config import get_testfolder_dir
 
 class CommandTestCase(TestCase):
     """Test case for custom management commands."""
+
+    def test_makemigrations_currency_overrides_no_changes(self):
+        """Ensure currency list changes do not cause migration drift."""
+        currency_sets = ['USD,EUR,GBP', 'JPY,CNY,KRW']
+
+        for currency_codes in currency_sets:
+            with self.subTest(currency_codes=currency_codes):
+                old_value = os.environ.get('INVENTREE_CURRENCY_CODES')
+
+                try:
+                    os.environ['INVENTREE_CURRENCY_CODES'] = currency_codes
+                    project_dir = Path(__file__).resolve().parents[1]
+
+                    result = subprocess.run(
+                        [
+                            'python3',
+                            'manage.py',
+                            'makemigrations',
+                            '--check',
+                            '--dry-run',
+                            '--verbosity',
+                            '0',
+                        ],
+                        cwd=project_dir,
+                        env=os.environ.copy(),
+                        capture_output=True,
+                        text=True,
+                        check=False,
+                    )
+
+                    if result.returncode != 0:
+                        self.fail(
+                            'makemigrations reported schema changes '
+                            f'for INVENTREE_CURRENCY_CODES={currency_codes}\n'
+                            f'stdout:\n{result.stdout}\n'
+                            f'stderr:\n{result.stderr}'
+                        )
+                finally:
+                    if old_value is None:
+                        os.environ.pop('INVENTREE_CURRENCY_CODES', None)
+                    else:
+                        os.environ['INVENTREE_CURRENCY_CODES'] = old_value
 
     def test_schema(self):
         """Test the schema generation command."""

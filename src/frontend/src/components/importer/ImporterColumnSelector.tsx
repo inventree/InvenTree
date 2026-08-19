@@ -179,6 +179,55 @@ function ImporterDefaultField({
   );
 }
 
+function ImporterLookupFieldSelector({
+  column,
+  session
+}: Readonly<{ column: any; session: ImportSessionState }>) {
+  const api = useApi();
+
+  const fieldDef = session.availableFields[column.field];
+  const lookupFields: string[] = fieldDef?.lookup_fields ?? [];
+
+  const [selected, setSelected] = useState<string>(column.lookup_field ?? '');
+
+  useEffect(() => {
+    setSelected(column.lookup_field ?? '');
+  }, [column.lookup_field]);
+
+  if (lookupFields.length === 0) {
+    return null;
+  }
+
+  const options = [
+    { value: '', label: t`Auto` },
+    ...lookupFields.map((f: string) => ({ value: f, label: f }))
+  ];
+
+  const onChange = useCallback(
+    (value: string | null) => {
+      const next = value ?? '';
+      api
+        .patch(
+          apiUrl(ApiEndpoints.import_session_column_mapping_list, column.pk),
+          { lookup_field: next || null }
+        )
+        .then(() => setSelected(next))
+        .catch(() => {});
+    },
+    [column.pk]
+  );
+
+  return (
+    <Select
+      aria-label={`import-lookup-field-${column.field}`}
+      data={options}
+      value={selected}
+      onChange={onChange}
+      size='sm'
+    />
+  );
+}
+
 function ImporterColumnTableRow({
   session,
   column,
@@ -209,6 +258,9 @@ function ImporterColumnTableRow({
       </Table.Td>
       <Table.Td>
         <ImporterColumn column={column} options={options} />
+      </Table.Td>
+      <Table.Td>
+        <ImporterLookupFieldSelector column={column} session={session} />
       </Table.Td>
       <Table.Td>
         <ImporterDefaultField
@@ -285,6 +337,7 @@ export default function ImporterColumnSelector({
             <Table.Th>{t`Database Field`}</Table.Th>
             <Table.Th>{t`Field Description`}</Table.Th>
             <Table.Th>{t`Imported Column`}</Table.Th>
+            <Table.Th>{t`Lookup Field`}</Table.Th>
             <Table.Th>{t`Default Value`}</Table.Th>
           </Table.Tr>
         </Table.Thead>

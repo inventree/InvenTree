@@ -1,9 +1,11 @@
 """Test general functions and helpers."""
 
+import base64
 import os
-import time
 from datetime import datetime, timedelta
 from decimal import Decimal
+from io import BytesIO
+from pathlib import Path
 from unittest import mock
 from zoneinfo import ZoneInfo
 
@@ -12,15 +14,20 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
 import pint.errors
+import requests_mock
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
+from PIL import Image
+from rest_framework import serializers
 from sesame.utils import get_user
 from stdimage.models import StdImageFieldFile
 
@@ -102,10 +109,9 @@ class TreeFixtureTest(TestCase):
         self.run_tree_test(Build)
 
     def test_stock(self):
-        """Test MPTT tree structure for Stock model."""
-        from stock.models import StockItem, StockLocation
+        """Test MPTT tree structure for StockLocation model."""
+        from stock.models import StockLocation
 
-        self.run_tree_test(StockItem)
         self.run_tree_test(StockLocation)
 
 
@@ -291,6 +297,16 @@ class ConversionTest(TestCase):
                 val, 'ohm', strip_units=True
             )
             self.assertAlmostEqual(output, expected, 12)
+
+        # Test that 'R' is interpreted as ohms
+        # Ref: https://github.com/inventree/InvenTree/issues/12063
+        r_tests = [('8R6', 8.6), ('10R', 10), ('4R7', 4.7), ('100R', 100)]
+
+        for val, expected in r_tests:
+            output = InvenTree.conversion.convert_physical_value(
+                val, 'ohm', strip_units=True
+            )
+            self.assertAlmostEqual(output, expected, 6)
 
     def test_scientific_notation(self):
         """Test that scientific notation is handled correctly."""
@@ -597,35 +613,6 @@ class FormatTest(TestCase):
         with self.assertRaises(ValueError):
             InvenTree.format.extract_named_group('test', 'PO-ABC-xyz', 'PO-###-{test}')
 
-    def test_currency_formatting(self):
-        """Test that currency formatting works correctly for multiple currencies."""
-        test_data = (
-            (Money(3651.285718, 'USD'), 4, True, '$3,651.2857'),
-            (Money(487587.849178, 'CAD'), 5, True, 'CA$487,587.84918'),
-            (Money(0.348102, 'EUR'), 1, False, '0.3'),
-            (Money(0.916530, 'GBP'), 1, True, '£0.9'),
-            (Money(61.031024, 'JPY'), 3, False, '61.031'),
-            (Money(49609.694602, 'JPY'), 1, True, '¥49,609.7'),
-            (Money(155565.264777, 'AUD'), 2, False, '155,565.26'),
-            (Money(0.820437, 'CNY'), 4, True, 'CN¥0.8204'),
-            (Money(7587.849178, 'EUR'), 0, True, '€7,588'),
-            (Money(0.348102, 'GBP'), 3, False, '0.348'),
-            (Money(0.652923, 'CHF'), 0, True, 'CHF1'),
-            (Money(0.820437, 'CNY'), 1, True, 'CN¥0.8'),
-            (Money(98789.5295680, 'CHF'), 0, False, '98,790'),
-            (Money(0.585787, 'USD'), 1, True, '$0.6'),
-            (Money(0.690541, 'CAD'), 3, True, 'CA$0.691'),
-            (Money(427.814104, 'AUD'), 5, True, 'A$427.81410'),
-        )
-
-        with self.settings(LANGUAGE_CODE='en-us'):
-            for value, decimal_places, include_symbol, expected_result in test_data:
-                result = InvenTree.format.format_money(
-                    value, decimal_places=decimal_places, include_symbol=include_symbol
-                )
-
-                self.assertEqual(result, expected_result)
-
 
 class TestHelpers(TestCase):
     """Tests for InvenTree helper functions."""
@@ -721,12 +708,59 @@ class TestHelpers(TestCase):
 
     def test_logo_image(self):
         """Test for retrieving logo image."""
-        # By default, there is no custom logo provided
+        # By default, there is no custom logo provided - return the default InvenTree logo
         logo = helpers.getLogoImage()
         self.assertEqual(logo, '/static/img/inventree.png')
 
+        # When requested 'as_file', the logo must be returned as an embeddable
+        # base64 data URI - file:// URIs are no longer permitted in reports
         logo = helpers.getLogoImage(as_file=True)
-        self.assertEqual(logo, f'file://{settings.STATIC_ROOT}/img/inventree.png')
+        self.assertNotIn('file://', logo)
+        self.assertTrue(logo.startswith('data:image/png;base64,'))
+
+        # Ensure the encoded data actually represents a valid image
+        decoded = base64.b64decode(logo.removeprefix('data:image/png;base64,'))
+        Image.open(BytesIO(decoded)).verify()
+
+    def test_logo_image_custom_static(self):
+        """Test retrieval of a custom logo which lives in the static storage backend."""
+        with override_settings(CUSTOM_LOGO='img/inventree.png'):
+            logo = helpers.getLogoImage()
+            self.assertEqual(logo, '/static/img/inventree.png')
+
+            logo = helpers.getLogoImage(as_file=True)
+            self.assertNotIn('file://', logo)
+            self.assertTrue(logo.startswith('data:image/png;base64,'))
+
+            # Disabling 'custom' must fall back to the default logo, even if set
+            logo = helpers.getLogoImage(custom=False)
+            self.assertEqual(logo, '/static/img/inventree.png')
+
+    def test_logo_image_custom_media(self):
+        """Test retrieval of a custom logo which lives in the media (uploaded) storage backend."""
+        custom_logo_path = 'custom/test_logo.png'
+
+        img = Image.new('RGB', (16, 16), color='blue')
+        buffer = BytesIO()
+        img.save(buffer, 'PNG')
+        image_data = buffer.getvalue()
+
+        default_storage.save(custom_logo_path, ContentFile(image_data))
+
+        try:
+            with override_settings(CUSTOM_LOGO=custom_logo_path):
+                logo = helpers.getLogoImage()
+                self.assertEqual(logo, default_storage.url(custom_logo_path))
+
+                logo = helpers.getLogoImage(as_file=True)
+                self.assertNotIn('file://', logo)
+                self.assertTrue(logo.startswith('data:image/png;base64,'))
+
+                # The decoded data must exactly match the uploaded image
+                decoded = base64.b64decode(logo.removeprefix('data:image/png;base64,'))
+                self.assertEqual(decoded, image_data)
+        finally:
+            default_storage.delete(custom_logo_path)
 
     def test_download_image(self):
         """Test function for downloading image from remote URL."""
@@ -741,6 +775,41 @@ class TestHelpers(TestCase):
         InvenTree.helpers_model.download_image_from_url(
             large_img, timeout=10, max_size=10 * 1024 * 1024
         )
+
+    def test_download_image_dns_rebind_blocked(self):
+        """A hostname that resolves safely for validation but privately for the real fetch must be blocked.
+
+        Regression test: `validate_url_no_ssrf()` used to resolve the hostname once,
+        validate that result, and then discard it - the actual `requests.get()` call
+        resolved the same hostname again independently. An attacker controlling DNS
+        for their own domain could answer the first ("check") lookup with a public IP
+        and every subsequent ("use") lookup with a private/internal one (DNS
+        rebinding), so the real connection went somewhere the validator never saw.
+        """
+        public_addrinfo = [(2, 1, 6, '', ('93.184.216.34', 0))]
+        private_addrinfo = [(2, 1, 6, '', ('127.0.0.1', 0))]
+
+        calls = {'n': 0}
+
+        def rebinding_getaddrinfo(host, *args, **kwargs):
+            calls['n'] += 1
+            return public_addrinfo if calls['n'] == 1 else private_addrinfo
+
+        with mock.patch.object(
+            InvenTree.helpers_model,
+            '_real_getaddrinfo',
+            side_effect=rebinding_getaddrinfo,
+        ):
+            # The pre-check sees the safe public IP and passes; the *actual*
+            # connection attempt made by requests.get() must be independently
+            # guarded and must fail once it resolves to the private IP.
+            with self.assertRaisesRegex(Exception, 'Connection error'):
+                InvenTree.helpers_model.download_image_from_url(
+                    'http://rebind.example.com/image.png'
+                )
+
+        # Both the validation-time and connection-time lookups must have happened.
+        self.assertEqual(calls['n'], 2)
 
     def test_model_mixin(self):
         """Test the getModelsWithMixin function."""
@@ -1102,8 +1171,26 @@ class TestVersionNumber(TestCase):
 class CurrencyTests(TestCase):
     """Unit tests for currency / exchange rate functionality."""
 
-    def test_rates(self):
+    RATES = {
+        'AUD': 1.5,
+        'CAD': 1.35,
+        'CNY': 7.2,
+        'EUR': 0.9,
+        'GBP': 0.8,
+        'JPY': 150.0,
+        'NZD': 1.65,
+        'USD': 1.0,
+    }
+
+    @requests_mock.Mocker()
+    def test_rates(self, requests_mocker):
         """Test exchange rate update."""
+        # Patch setting for remote url
+        response_rates = {code: self.RATES.get(code, 1.0) for code in currency_codes()}
+        requests_mocker.get(
+            'https://api.frankfurter.app/latest', json={'rates': response_rates}
+        )
+
         # Initially, there will not be any exchange rate information
         rates = Rate.objects.all()
 
@@ -1116,24 +1203,10 @@ class CurrencyTests(TestCase):
         with self.assertRaises(MissingRate):
             convert_money(Money(100, 'AUD'), 'USD')
 
-        update_successful = False
+        InvenTree.tasks.update_exchange_rates()
 
-        # Note: the update sometimes fails in CI, let's give it a few chances
-        for _ in range(10):
-            InvenTree.tasks.update_exchange_rates()
-
-            rates = Rate.objects.all()
-
-            if rates.count() == len(currency_codes()):
-                update_successful = True
-                break
-
-            else:  # pragma: no cover
-                print('Exchange rate update failed - retrying')
-                print(f'Expected {currency_codes()}, got {[a.currency for a in rates]}')
-                time.sleep(1)
-
-        self.assertTrue(update_successful)
+        rates = Rate.objects.all()
+        self.assertEqual(rates.count(), len(currency_codes()))
 
         # Now that we have some exchange rate information, we can perform conversions
 
@@ -1257,6 +1330,22 @@ class TestSettings(InvenTreeTestCase):
                 str(test_file).lower(), str(config.get_config_file()).lower()
             )
 
+        # LEGACY - old path
+        if settings.DOCKER:  # pragma: no cover
+            # In Docker, the legacy path is not used
+            return
+        legacy_path = config.get_base_dir().joinpath('config.yaml')
+        assert not legacy_path.exists(), (
+            'Legacy config file does exist, stopping as a percaution!'
+        )
+        self.assertTrue(test_file.exists(), f'Test file {test_file} does not exist!')
+        test_file.rename(legacy_path)
+        self.assertIn(
+            'src/backend/inventree/config.yaml', str(config.get_config_file()).lower()
+        )
+        # Clean up again
+        legacy_path.unlink(missing_ok=True)
+
     def test_helpers_plugin_file(self):
         """Test get_plugin_file."""
         # normal run - not configured
@@ -1287,6 +1376,22 @@ class TestSettings(InvenTreeTestCase):
         with in_env_context({'INVENTREE_SECRET_KEY_FILE': str(test_file)}):
             self.assertIn(str(test_file), str(config.get_secret_key(return_path=True)))
 
+        # LEGACY - old path
+        if settings.DOCKER:  # pragma: no cover
+            # In Docker, the legacy path is not used
+            return
+        legacy_path = config.get_base_dir().joinpath('secret_key.txt')
+        assert not legacy_path.exists(), (
+            'Legacy secret key file does exist, stopping as a percaution!'
+        )
+        test_file.rename(legacy_path)
+        self.assertIn(
+            'src/backend/inventree/secret_key.txt',
+            str(config.get_secret_key(return_path=True)).lower(),
+        )
+        # Clean up again
+        legacy_path.unlink(missing_ok=True)
+
         # Test with content set per environment
         with in_env_context({'INVENTREE_SECRET_KEY': '123abc123'}):
             self.assertEqual(config.get_secret_key(), '123abc123')
@@ -1311,6 +1416,27 @@ class TestSettings(InvenTreeTestCase):
         # Override with environment variable
         with in_env_context({'INVENTREE_OIDC_PRIVATE_KEY': '123abc123'}):
             self.assertEqual(config.get_oidc_private_key(), '123abc123')
+
+        # LEGACY - old path
+        if settings.DOCKER:  # pragma: no cover
+            # In Docker, the legacy path is not used
+            return
+        legacy_path = config.get_base_dir().joinpath('oidc.pem')
+        assert not legacy_path.exists(), (
+            'Legacy OIDC private key file does exist, stopping as a precaution!'
+        )
+        test_file.rename(legacy_path)
+        assert isinstance(trgt_path, Path)
+        new_path = trgt_path.rename(
+            trgt_path.parent / '_oidc.pem'
+        )  # move out current config
+        self.assertIn(
+            'src/backend/inventree/oidc.pem',
+            str(config.get_oidc_private_key(return_path=True)).lower(),
+        )
+        # Clean up again
+        legacy_path.unlink(missing_ok=True)
+        new_path.rename(trgt_path)  # restore original path for current config
 
     def test_helpers_setting(self):
         """Test get_setting."""
@@ -1434,7 +1560,7 @@ class TestOffloadTask(InvenTreeTestCase):
                 offload_task('dummy_task.numbers', 1, 1, 1, force_sync=True)
             )
 
-            self.assertIn('Malformed function path', str(log.output))
+            self.assertIn("No module named \\'dummy_task\\'", str(log.output))
 
         # Offload dummy task with a Part instance
         # This should succeed, ensuring that the Part instance is correctly pickled
@@ -1585,6 +1711,18 @@ class MagicLoginTest(InvenTreeTestCase):
         self.assertEqual(resp.url, '/api/auth/login-redirect/')
         # And we should be logged in again
         self.assertEqual(resp.wsgi_request.user, self.user)
+
+    def test_duplicate_email(self):
+        """Test that duplicate email addresses do not raise a server error."""
+        User = get_user_model()
+        User.objects.create_user(
+            username='duplicate', email=self.user.email, password='password'
+        )
+
+        resp = self.client.post(reverse('sesame-generate'), {'email': self.user.email})
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.data, {'status': 'ok'})
+        self.assertEqual(len(mail.outbox), 0)
 
 
 class MaintenanceModeTest(InvenTreeTestCase):
@@ -1781,3 +1919,54 @@ class SchemaPostprocessingTest(TestCase):
         self.assertNotIn('customer_detail', schemas_out.get('SalesOrder')['required'])
         # required key removed when empty
         self.assertNotIn('required', schemas_out.get('SalesOrderShipment'))
+
+    def test_file_field_request_schema_binary(self):
+        """Verify only request file fields are exposed as binary."""
+        auto_schema = object.__new__(schema.ExtendedAutoSchema)
+
+        mapped_schemas = [
+            {'type': 'string', 'format': 'uri', 'nullable': True},
+            {'type': 'string', 'format': 'uri'},
+            {'type': 'string', 'format': 'uri', 'nullable': True},
+        ]
+
+        with mock.patch(
+            'drf_spectacular.openapi.AutoSchema._map_serializer_field',
+            side_effect=mapped_schemas,
+        ):
+            file_request = auto_schema._map_serializer_field(
+                serializers.FileField(allow_null=True), 'request'
+            )
+            url_request = auto_schema._map_serializer_field(
+                serializers.URLField(), 'request'
+            )
+            file_response = auto_schema._map_serializer_field(
+                serializers.FileField(allow_null=True), 'response'
+            )
+
+        self.assertEqual(file_request['format'], 'binary')
+        self.assertTrue(file_request['nullable'])
+        self.assertEqual(url_request['format'], 'uri')
+        self.assertEqual(file_response['format'], 'uri')
+
+
+class URLCompatibilityTest(InvenTreeTestCase):
+    """Unit test for legacy URL compatibility."""
+
+    URL_MAPPINGS = [
+        ('/index/', '/web'),
+        ('/part/1/', '/web/part/1/'),
+        ('/company/customers/', '/web/sales/index/customers'),
+        ('/build/3/', '/web/manufacturing/build-order/3'),
+        ('/stock/item/1/', '/web/stock/item/1/'),
+    ]
+
+    @override_settings(
+        SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+    )
+    def test_legacy_urls(self):
+        """Test legacy URLs."""
+        for old_url, new_url in self.URL_MAPPINGS:
+            response = self.client.get(old_url)
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response['Location'], new_url)

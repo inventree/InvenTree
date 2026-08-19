@@ -70,6 +70,11 @@ export type TableState = {
   idAccessor?: string;
 };
 
+export type TableColumnFilterType =
+  | string
+  | string[]
+  | (({ close }: { close: () => void }) => ReactNode);
+
 /**
  * Table column properties
  *
@@ -84,7 +89,7 @@ export type TableState = {
  * @param editable - Whether the value of this column can be edited
  * @param definition - Optional field definition for the column
  * @param render - A custom render function
- * @param filter - A custom filter function
+ * @param filter - Filter name (string) to look up from tableFilters and attach an inline icon, or a custom render function for the filter popover
  * @param filtering - Whether the column is filterable
  * @param width - The width of the column
  * @param minWidth - The minimum width of the column
@@ -109,7 +114,7 @@ export type TableColumnProps<T = any> = {
   editable?: boolean;
   definition?: ApiFormFieldType;
   render?: (record: T, index?: number) => any;
-  filter?: any;
+  filter?: TableColumnFilterType;
   filtering?: boolean;
   width?: number;
   minWidth?: string | number;
@@ -149,7 +154,12 @@ type RowModelProps = {
   navigate: NavigateFunction;
 };
 
-export type RowViewProps = RowAction & RowModelProps;
+type RowViewBehaviorProps = {
+  isPreviewEnabled?: () => boolean;
+  openPreview?: (modelType: ModelType, modelId: number) => void;
+};
+
+export type RowViewProps = RowAction & RowModelProps & RowViewBehaviorProps;
 
 /**
  * Set of optional properties which can be passed to an InvenTreeTable component
@@ -158,6 +168,7 @@ export type RowViewProps = RowAction & RowModelProps;
  * @param tableState : TableState - State manager for the table
  * @param defaultSortColumn : string - Default column to sort by
  * @param noRecordsText : string - Text to display when no records are found
+ * @param bulkDeleteFilter : (record: any) => boolean - Callback function to determine if a record is eligible for bulk deletion
  * @param enableBulkDelete : boolean - Enable bulk deletion of records
  * @param enableDownload : boolean - Enable download actions
  * @param enableFilters : boolean - Enable filter actions
@@ -188,6 +199,7 @@ export type InvenTreeTableProps<T = any> = {
   params?: any;
   defaultSortColumn?: string;
   noRecordsText?: string;
+  bulkDeleteFilter?: (record: T) => boolean;
   enableBulkDelete?: boolean;
   enableDownload?: boolean;
   enableFilters?: boolean;

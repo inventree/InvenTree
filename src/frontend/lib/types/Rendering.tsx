@@ -15,6 +15,7 @@ export interface InstanceRenderInterface {
   link?: boolean;
   navigate?: any;
   showSecondary?: boolean;
+  showHover?: boolean;
   extra?: Record<string, any>;
 }
 

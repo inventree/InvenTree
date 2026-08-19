@@ -155,6 +155,7 @@ export enum ApiEndpoints {
   stock_assign = 'stock/assign/',
   stock_status = 'stock/status/',
   stock_convert = 'stock/:id/convert/',
+  stock_disassemble = 'stock/:id/disassemble/',
   stock_install = 'stock/:id/install/',
   stock_uninstall = 'stock/:id/uninstall/',
   stock_serialize = 'stock/:id/serialize/',
@@ -182,6 +183,7 @@ export enum ApiEndpoints {
   sales_order_complete = 'order/so/:id/complete/',
   sales_order_allocate = 'order/so/:id/allocate/',
   sales_order_allocate_serials = 'order/so/:id/allocate-serials/',
+  sales_order_auto_allocate = 'order/so/:id/auto-allocate/',
 
   sales_order_line_list = 'order/so-line/',
   sales_order_extra_line_list = 'order/so-extra-line/',
@@ -258,6 +260,7 @@ export enum ApiEndpoints {
   config_list = 'admin/config/',
   parameter_list = 'parameter/',
   parameter_template_list = 'parameter/template/',
+  tag_list = 'tag/',
 
   // Internal system things
   system_internal_trace_end = 'system-internal/observability/end'
