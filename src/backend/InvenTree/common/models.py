@@ -3347,13 +3347,6 @@ class NotesImage(models.Model):
     Simply stores the image file, for use in the 'notes' field (of any models which support markdown).
     """
 
-    def delete(self, *args, **kwargs):
-        """Ensure that the image file is deleted from storage when the NotesImage instance is deleted."""
-        if self.image:
-            self.image.delete(save=False)
-
-        super().delete(*args, **kwargs)
-
     image = models.ImageField(
         upload_to=rename_notes_image, verbose_name=_('Image'), help_text=_('Image file')
     )
@@ -3365,6 +3358,21 @@ class NotesImage(models.Model):
     note = models.ForeignKey(
         Note, on_delete=models.CASCADE, null=False, blank=False, related_name='images'
     )
+
+
+@receiver(post_delete, sender=NotesImage, dispatch_uid='notesimage_post_delete')
+def after_notesimage_deleted(sender, instance, **kwargs):
+    """Remove the image file from storage once a NotesImage row is deleted.
+
+    A signal (rather than an overridden delete()) is required here: a NotesImage row is
+    usually removed via a cascade - e.g. deleting its parent Note, or
+    InvenTreeNoteMixin.delete() bulk-deleting all notes for a model instance being deleted.
+    Django's deletion Collector never calls a cascaded object's Python-level delete()
+    override, only its pre_delete/post_delete signals - regardless of whether the cascade
+    started from a single instance.delete() or a bulk QuerySet.delete().
+    """
+    if instance.image:
+        instance.image.delete(save=False)
 
 
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):

@@ -1785,6 +1785,46 @@ class NotesImageTest(InvenTreeAPITestCase):
         self.assertTrue(NotesImage.objects.filter(pk=ni1.pk).exists())
         self.assertTrue(default_storage.exists(name1))
 
+    def test_image_cleanup_on_cascade_delete(self):
+        """Images are removed from storage when their note is deleted via a cascade.
+
+        InvenTreeNoteMixin.delete() (and Note.delete()'s own cascade to its images) delete
+        notes/images via Django's deletion Collector, not by calling NotesImage.delete() on
+        each instance directly - the collector never invokes an overridden Model.delete()
+        on cascaded objects, only its pre_delete/post_delete signals. This exercises that
+        path specifically, rather than test_image_cleanup's direct note.save()-driven cleanup.
+        """
+        part = Part.objects.create(
+            name='Cascade Delete Cleanup Test Part',
+            description='Part for cascade-delete image-cleanup test',
+            active=False,  # Part.delete() refuses to delete an active part
+        )
+        part_ct = ContentType.objects.get_for_model(Part)
+
+        note = Note(
+            model_type=part_ct, model_id=part.pk, title='Cascade Test Note', content=''
+        )
+        note.save()
+
+        img_obj = Image.new('RGB', (10, 10), color='red')
+        with io.BytesIO() as buf:
+            img_obj.save(buf, format='PNG')
+            png_bytes = buf.getvalue()
+
+        ni = NotesImage(note=note)
+        ni.image.save('cascade_cleanup.png', ContentFile(png_bytes))
+        image_name = ni.image.name
+
+        self.assertTrue(default_storage.exists(image_name))
+
+        # Delete the *part*, not the note or image directly - this cascades
+        # Part -> InvenTreeNoteMixin.delete() -> Note -> NotesImage
+        part.delete()
+
+        self.assertFalse(NotesImage.objects.filter(pk=ni.pk).exists())
+        self.assertFalse(Note.objects.filter(pk=note.pk).exists())
+        self.assertFalse(default_storage.exists(image_name))
+
     def test_copy_notes_with_images(self):
         """Images are duplicated (file + DB record) when copy_notes_from is called.
 
