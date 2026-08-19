@@ -1289,6 +1289,57 @@ class NoteAPITests(InvenTreeAPITestCase):
         note_a_detail = self.get(self._note_url(note_a.data['pk']), expected_code=200)
         self.assertTrue(note_a_detail.data['primary'])
 
+    def test_phantom_row_race_retries_instead_of_500(self):
+        """Two concurrent creates of the *first* note for an instance must not 500.
+
+        Note.save()'s select_for_update() sibling lock has nothing to lock when no
+        sibling note exists yet, so it cannot by itself serialize two concurrent
+        creates of the first note for the same model instance - both can decide
+        they're primary before either commits. This can't be reproduced
+        deterministically with real threads inside a TestCase (each test runs
+        inside one wrapped, uncommitted transaction), so instead force the exact
+        failure mode Note.save() must handle: make its own first INSERT attempt
+        collide with the unique_primary_note_per_model constraint, as a genuine
+        second concurrent request's already-committed row would, and confirm it
+        retries as a non-primary note instead of letting the IntegrityError
+        surface as a raw 500.
+        """
+        from unittest import mock
+
+        from django.contrib.contenttypes.models import ContentType
+        from django.db import IntegrityError
+        from django.db.models import Model as DjangoModel
+
+        from common.models import Note
+
+        note = Note(
+            model_type=ContentType.objects.get_for_model(self.part.__class__),
+            model_id=self.part.pk,
+            title='Racing Note',
+            content='',
+        )
+
+        original_save = DjangoModel.save
+        attempts = []
+
+        def flaky_save(self_obj, *args, **kwargs):
+            """Fail the first save attempt for `note` only; behave normally otherwise."""
+            if self_obj is note and not attempts:
+                attempts.append(1)
+                raise IntegrityError(
+                    'duplicate key value violates unique constraint '
+                    '"unique_primary_note_per_model"'
+                )
+            return original_save(self_obj, *args, **kwargs)
+
+        with mock.patch.object(DjangoModel, 'save', new=flaky_save):
+            note.save()
+
+        # Lost the (simulated) race - demoted to non-primary, not left unsaved
+        self.assertFalse(note.primary)
+        self.assertTrue(Note.objects.filter(pk=note.pk).exists())
+        self.assertEqual(len(attempts), 1)
+
 
 class NoteModelTypeValidationTests(InvenTreeAPITestCase):
     """Tests that Note.model_type is restricted to models which support notes.

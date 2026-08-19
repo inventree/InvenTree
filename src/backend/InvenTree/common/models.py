@@ -3127,7 +3127,13 @@ class Note(
         self.check_save()
 
         if not self.template:
-            # Lock sibling notes to serialize concurrent primary-flag updates
+            is_create = self.pk is None
+
+            # Lock sibling notes to serialize concurrent primary-flag updates.
+            # This only has rows to lock once at least one sibling already
+            # exists - it cannot lock a row that doesn't exist yet, so it does
+            # *not* by itself serialize the very first note being created for
+            # a given model instance (see the is_create handling below).
             siblings = (
                 Note.objects
                 .select_for_update()
@@ -3148,7 +3154,25 @@ class Note(
                 siblings.update(primary=False)
 
             self.clean()
-            super().save(*args, **kwargs)
+
+            if is_create and self.primary:
+                # Phantom-row race: two concurrent creates of the first note for
+                # the same model instance can both reach here believing they're
+                # the only (and thus primary) one, since select_for_update()
+                # above had no existing sibling row to lock either of them
+                # against. Let the DB's own unique_primary_note_per_model
+                # constraint arbitrate instead - retry as a non-primary note if
+                # we lost the race, rather than surfacing a raw IntegrityError.
+                # A savepoint is required so a failed attempt only rolls back
+                # this insert, not the whole (outer) atomic transaction.
+                try:
+                    with transaction.atomic():
+                        super().save(*args, **kwargs)
+                except IntegrityError:
+                    self.primary = False
+                    super().save(*args, **kwargs)
+            else:
+                super().save(*args, **kwargs)
         else:
             # Templates skip primary-flag logic entirely
             self.primary = False
