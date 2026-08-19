@@ -35,8 +35,11 @@ export function useInstanceInfo({
   const query = useQuery<InstanceInfo>({
     queryKey: ['instance-info', modelType, modelId],
     enabled: !!modelType && !!modelId,
-    refetchOnMount: true,
-    staleTime: 10,
+    // These counts only drive tab notification dots (not displayed as numbers
+    // anywhere), so - matching the staleTime PanelGroup already uses for the
+    // dots themselves - a stale value for a few minutes is an acceptable
+    // trade-off against refetching on every page navigation/remount.
+    staleTime: 5 * 60 * 1000,
     queryFn: async () => {
       return api
         .get(apiUrl(ApiEndpoints.instance_info), {
