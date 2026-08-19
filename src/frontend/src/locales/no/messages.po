@@ -8178,6 +8178,10 @@ msgstr ""
 msgid "Stock Tracking"
 msgstr "Sporing av lager"
 
+#: src/pages/Index/Settings/SystemSettings.tsx:314
+msgid "External Build Orders"
+msgstr ""
+
 #: src/pages/Index/Settings/SystemSettings.tsx:317
 #~ msgid "Switch to User Setting"
 #~ msgstr "Switch to User Setting"
@@ -8339,6 +8343,16 @@ msgstr "Underordnede Produksjonsordrer"
 #: src/tables/stock/StockItemTestResultTable.tsx:171
 msgid "Test Results"
 msgstr ""
+
+#: src/pages/build/BuildDetail.tsx:367
+#: src/pages/part/PartDetail.tsx:548
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:262
+#: src/pages/sales/ReturnOrderDetail.tsx:240
+#: src/pages/sales/SalesOrderDetail.tsx:233
+#: src/tables/ColumnRenderers.tsx:665
+#: src/tables/Filter.tsx:397
+msgid "Responsible"
+msgstr "Ansvarlig"
 
 #: src/pages/build/BuildDetail.tsx:368
 #~ msgid "Reporting Actions"
@@ -9029,6 +9043,16 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:828
 msgid "Part unlocked"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:925
+#: src/tables/part/PartTestTemplateTable.tsx:112
+#: src/tables/stock/StockItemTestResultTable.tsx:405
+msgid "Required"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:943
+msgid "Deficit"
 msgstr ""
 
 #: src/pages/part/PartDetail.tsx:956
@@ -10174,6 +10198,18 @@ msgstr ""
 #~ msgid "Transfer"
 #~ msgstr "Transfer"
 
+#: src/pages/stock/StockDetail.tsx:914
+msgid "Stock Item Actions"
+msgstr ""
+
+#: src/pages/stock/StockDetail.tsx:925
+msgid "Convert"
+msgstr ""
+
+#: src/pages/stock/StockDetail.tsx:926
+msgid "Convert this stock item to a different part"
+msgstr ""
+
 #: src/pages/stock/StockDetail.tsx:950
 #~ msgid "Assign to Customer"
 #~ msgstr "Assign to Customer"
@@ -10339,6 +10375,10 @@ msgstr ""
 #~ msgid "Print actions"
 #~ msgstr "Print actions"
 
+#: src/tables/InvenTreeTable.tsx:600
+msgid "Error loading table data"
+msgstr ""
+
 #: src/tables/InvenTreeTable.tsx:655
 #: src/tables/InvenTreeTable.tsx:656
 #~ msgid "Barcode actions"
@@ -10392,9 +10432,20 @@ msgstr ""
 #~ msgid "Bom item updated"
 #~ msgstr "Bom item updated"
 
+#: src/tables/bom/BomTable.tsx:340
+#: src/tables/build/BuildLineTable.tsx:245
+msgid "Includes substitute stock"
+msgstr "Inkluderer erstatningsbeholdning"
+
 #: src/tables/bom/BomTable.tsx:348
 #~ msgid "Delete Bom Item"
 #~ msgstr "Delete Bom Item"
+
+#: src/tables/bom/BomTable.tsx:349
+#: src/tables/build/BuildLineTable.tsx:255
+#: src/tables/sales/SalesOrderLineItemTable.tsx:162
+msgid "Includes variant stock"
+msgstr "Inkluderer variantbeholdning"
 
 #: src/tables/bom/BomTable.tsx:349
 #~ msgid "Bom item deleted"
@@ -12514,6 +12565,10 @@ msgstr ""
 #: src/tables/sales/SalesOrderLineItemTable.tsx:280
 #~ msgid "Allocate stock"
 #~ msgstr "Allocate stock"
+
+#: src/tables/sales/SalesOrderLineItemTable.tsx:289
+msgid "Allocate Serial Numbers"
+msgstr ""
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:291
 #~ msgid "Allocate Serials"

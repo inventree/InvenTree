@@ -5,6 +5,16 @@ All major notable changes to this project will be documented in this file (start
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.0 - yyyy-mm-dd
+
+### Breaking Changes - Remove deprecated features and APIs
+
+- [#11111](https://github.com/inventree/InvenTree/pull/11111) - removes legacy metadata APIs
+- [#9814](https://github.com/inventree/InvenTree/pull/9814) - removes legacy config path support
+- [#11667](https://github.com/inventree/InvenTree/pull/11667) - removes legacy url patterns
+- [#11985](https://github.com/inventree/InvenTree/pull/11985) - removes legacy user endpoint fallback
+
+
 ## Unreleased - xxxx.xx.xx
 
 ### Breaking Changes

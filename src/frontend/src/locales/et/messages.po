@@ -8178,6 +8178,10 @@ msgstr ""
 msgid "Stock Tracking"
 msgstr ""
 
+#: src/pages/Index/Settings/SystemSettings.tsx:314
+msgid "External Build Orders"
+msgstr ""
+
 #: src/pages/Index/Settings/SystemSettings.tsx:317
 #~ msgid "Switch to User Setting"
 #~ msgstr "Switch to User Setting"
@@ -10174,6 +10178,18 @@ msgstr "Pole saadaval"
 #~ msgid "Transfer"
 #~ msgstr "Transfer"
 
+#: src/pages/stock/StockDetail.tsx:914
+msgid "Stock Item Actions"
+msgstr ""
+
+#: src/pages/stock/StockDetail.tsx:925
+msgid "Convert"
+msgstr ""
+
+#: src/pages/stock/StockDetail.tsx:926
+msgid "Convert this stock item to a different part"
+msgstr ""
+
 #: src/pages/stock/StockDetail.tsx:950
 #~ msgid "Assign to Customer"
 #~ msgstr "Assign to Customer"
@@ -10339,6 +10355,10 @@ msgstr ""
 #~ msgid "Print actions"
 #~ msgstr "Print actions"
 
+#: src/tables/InvenTreeTable.tsx:600
+msgid "Error loading table data"
+msgstr ""
+
 #: src/tables/InvenTreeTable.tsx:655
 #: src/tables/InvenTreeTable.tsx:656
 #~ msgid "Barcode actions"
@@ -10392,9 +10412,20 @@ msgstr ""
 #~ msgid "Bom item updated"
 #~ msgstr "Bom item updated"
 
+#: src/tables/bom/BomTable.tsx:340
+#: src/tables/build/BuildLineTable.tsx:245
+msgid "Includes substitute stock"
+msgstr "Sisaldab asenduslaosid"
+
 #: src/tables/bom/BomTable.tsx:348
 #~ msgid "Delete Bom Item"
 #~ msgstr "Delete Bom Item"
+
+#: src/tables/bom/BomTable.tsx:349
+#: src/tables/build/BuildLineTable.tsx:255
+#: src/tables/sales/SalesOrderLineItemTable.tsx:162
+msgid "Includes variant stock"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:349
 #~ msgid "Bom item deleted"
@@ -12515,6 +12546,10 @@ msgstr "Lisa saadetisele"
 #~ msgid "Allocate stock"
 #~ msgstr "Allocate stock"
 
+#: src/tables/sales/SalesOrderLineItemTable.tsx:289
+msgid "Allocate Serial Numbers"
+msgstr "Määra seerianumbrid"
+
 #: src/tables/sales/SalesOrderLineItemTable.tsx:291
 #~ msgid "Allocate Serials"
 #~ msgstr "Allocate Serials"
@@ -13194,6 +13229,10 @@ msgstr "On aktiivne"
 #: src/tables/settings/UserTable.tsx:180
 msgid "Designates whether this user should be treated as active. Unselect this instead of deleting accounts."
 msgstr "Määrab, kas seda kasutajat tuleks käsitleda aktiivsena. Tühistage see konto kustutamise asemel."
+
+#: src/tables/settings/UserTable.tsx:183
+#~ msgid "Is Staff"
+#~ msgstr "Is Staff"
 
 #: src/tables/settings/UserTable.tsx:183
 #~ msgid "Is Staff"

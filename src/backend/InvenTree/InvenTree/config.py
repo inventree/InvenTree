@@ -157,9 +157,6 @@ def get_config_file(create=True) -> Path:
 
     if cfg_filename:
         cfg_filename = Path(cfg_filename.strip()).resolve()
-    elif get_base_dir().joinpath('config.yaml').exists():
-        # If the config file is in the old directory, use that
-        cfg_filename = base_dir.joinpath('config.yaml').resolve()
     else:
         # Config file is *not* specified - use the default
         cfg_filename = conf_dir.joinpath('config.yaml').resolve()
@@ -437,8 +434,6 @@ def get_secret_key(return_path: bool = False) -> str | Path:
     # Look for secret key file
     if secret_key_file := get_setting('INVENTREE_SECRET_KEY_FILE', 'secret_key_file'):
         secret_key_file = Path(secret_key_file).resolve()
-    elif get_base_dir().joinpath('secret_key.txt').exists():
-        secret_key_file = get_base_dir().joinpath('secret_key.txt')
     else:
         # Default location for secret key file
         secret_key_file = get_config_dir().joinpath('secret_key.txt').resolve()
@@ -482,15 +477,9 @@ def get_oidc_private_key(return_path: bool = False) -> str | Path:
         )
     )
 
-    # Trying old default location
-    if not key_loc.exists():
-        old_def_path = get_base_dir().joinpath('oidc.pem')
-        if old_def_path.exists():
-            key_loc = old_def_path.resolve()
-
     check_config_dir('INVENTREE_OIDC_PRIVATE_KEY_FILE', key_loc)
     if key_loc.exists():
-        return key_loc.read_text() if not return_path else key_loc
+        return key_loc.read_text(encoding='utf-8') if not return_path else key_loc
     else:
         from cryptography.hazmat.primitives import serialization
         from cryptography.hazmat.primitives.asymmetric import rsa
@@ -510,7 +499,7 @@ def get_oidc_private_key(return_path: bool = False) -> str | Path:
                     encryption_algorithm=serialization.NoEncryption(),
                 )
             )
-        return key_loc.read_text() if not return_path else key_loc
+        return key_loc.read_text(encoding='utf-8') if not return_path else key_loc
 
 
 def get_custom_file(
@@ -586,15 +575,6 @@ def get_frontend_settings(debug=True):
         # In debug mode, show server selector by default
         # If no servers are specified, show server selector
         frontend_settings['show_server_selector'] = True
-
-    # Support compatibility with "legacy" URLs?
-    try:
-        frontend_settings['url_compatibility'] = bool(
-            frontend_settings.get('url_compatibility', True)
-        )
-    except Exception:
-        # If the value is not a boolean, set it to True
-        frontend_settings['url_compatibility'] = True
 
     return frontend_settings
 

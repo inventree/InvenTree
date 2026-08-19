@@ -2797,127 +2797,127 @@ msgstr ""
 msgid "Strict URL Validation"
 msgstr "Griežtas URL tikrinimas"
 
-#: common/setting/system.py:298
+#: common/setting/system.py:291
 msgid "Require schema specification when validating URLs"
 msgstr "Reikalauti schemos nurodymo tikrinant URL"
 
-#: common/setting/system.py:303
+#: common/setting/system.py:296
 msgid "Update Check Interval"
 msgstr "Atnaujinimų tikrinimo intervalas"
 
-#: common/setting/system.py:304
+#: common/setting/system.py:297
 msgid "How often to check for updates (set to zero to disable)"
 msgstr "Kaip dažnai tikrinti atnaujinimus (nulis – išjungti)"
 
-#: common/setting/system.py:310
+#: common/setting/system.py:303
 msgid "Automatic Backup"
 msgstr "Automatinė atsarginė kopija"
 
-#: common/setting/system.py:311
+#: common/setting/system.py:304
 msgid "Enable automatic backup of database and media files"
 msgstr "Įjungti automatinį duomenų bazės ir failų atsarginį kopijavimą"
 
-#: common/setting/system.py:316
+#: common/setting/system.py:309
 msgid "Auto Backup Interval"
 msgstr "Automatinio atsarginės kopijos kūrimo intervalas"
 
-#: common/setting/system.py:317
+#: common/setting/system.py:310
 msgid "Specify number of days between automated backup events"
 msgstr "Nurodykite dienų skaičių tarp atsarginių kopijų kūrimo"
 
-#: common/setting/system.py:323
+#: common/setting/system.py:316
 msgid "Task Deletion Interval"
 msgstr "Užduočių ištrynimo intervalas"
 
-#: common/setting/system.py:325
+#: common/setting/system.py:318
 msgid "Background task results will be deleted after specified number of days"
 msgstr "Foninių užduočių rezultatai bus ištrinti po nurodyto dienų skaičiaus"
 
-#: common/setting/system.py:332
+#: common/setting/system.py:325
 msgid "Error Log Deletion Interval"
 msgstr "Klaidų žurnalo ištrynimo intervalas"
 
-#: common/setting/system.py:333
+#: common/setting/system.py:326
 msgid "Error logs will be deleted after specified number of days"
 msgstr "Klaidų žurnalai bus ištrinti po nurodyto dienų skaičiaus"
 
-#: common/setting/system.py:339
+#: common/setting/system.py:332
 msgid "Notification Deletion Interval"
 msgstr "Pranešimų ištrynimo intervalas"
 
-#: common/setting/system.py:341
+#: common/setting/system.py:334
 msgid "User notifications will be deleted after specified number of days"
 msgstr "Vartotojų pranešimai bus ištrinti po nurodyto dienų skaičiaus"
 
-#: common/setting/system.py:348
+#: common/setting/system.py:341
 msgid "Email Deletion Interval"
 msgstr ""
 
-#: common/setting/system.py:350
+#: common/setting/system.py:343
 msgid "Email messages will be deleted after specified number of days"
 msgstr ""
 
-#: common/setting/system.py:357
+#: common/setting/system.py:350
 msgid "Protect Email Log"
 msgstr ""
 
-#: common/setting/system.py:358
+#: common/setting/system.py:351
 msgid "Prevent deletion of email log entries"
 msgstr ""
 
-#: common/setting/system.py:363
+#: common/setting/system.py:356
 msgid "Barcode Support"
 msgstr "Brūkšninių kodų palaikymas"
 
-#: common/setting/system.py:364
+#: common/setting/system.py:357
 msgid "Enable barcode scanner support in the web interface"
 msgstr "Įjungti brūkšninių kodų skaitytuvo palaikymą žiniatinklio sąsajoje"
 
-#: common/setting/system.py:369
+#: common/setting/system.py:362
 msgid "Store Barcode Results"
 msgstr "Išsaugoti brūkšninių kodų nuskaitymus"
 
-#: common/setting/system.py:370
+#: common/setting/system.py:363
 msgid "Store barcode scan results in the database"
 msgstr "Brūkšninių kodų nuskaitymo rezultatus išsaugoti duomenų bazėje"
 
-#: common/setting/system.py:375
+#: common/setting/system.py:368
 msgid "Barcode Scans Maximum Count"
 msgstr "Maksimalus nuskaitymų skaičius"
 
-#: common/setting/system.py:376
+#: common/setting/system.py:369
 msgid "Maximum number of barcode scan results to store"
 msgstr "Maksimalus saugomų brūkšninių kodų nuskaitymų skaičius"
 
-#: common/setting/system.py:381
+#: common/setting/system.py:374
 msgid "Barcode Input Delay"
 msgstr "Brūkšninio kodo įvesties delsimas"
 
-#: common/setting/system.py:382
+#: common/setting/system.py:375
 msgid "Barcode input processing delay time"
 msgstr "Brūkšninio kodo įvesties apdorojimo delsos laikas"
 
-#: common/setting/system.py:388
+#: common/setting/system.py:381
 msgid "Barcode Webcam Support"
 msgstr "Brūkšninių kodų palaikymas per kamerą"
 
-#: common/setting/system.py:389
+#: common/setting/system.py:382
 msgid "Allow barcode scanning via webcam in browser"
 msgstr "Leisti brūkšninių kodų nuskaitymą per naršyklės kamerą"
 
-#: common/setting/system.py:394
+#: common/setting/system.py:387
 msgid "Barcode Show Data"
 msgstr "Rodyti brūkšninio kodo duomenis"
 
-#: common/setting/system.py:395
+#: common/setting/system.py:388
 msgid "Display barcode data in browser as text"
 msgstr "Rodyti brūkšninio kodo duomenis naršyklėje kaip tekstą"
 
-#: common/setting/system.py:400
+#: common/setting/system.py:393
 msgid "Barcode Generation Plugin"
 msgstr "Brūkšninio kodo generavimo papildinys"
 
-#: common/setting/system.py:401
+#: common/setting/system.py:394
 msgid "Plugin to use for internal barcode data generation"
 msgstr "Papildinys vidiniam brūkšninių kodų generavimui"
 

@@ -5682,6 +5682,10 @@ msgstr "Concluir saídas de produção"
 msgid "Quantity to Scrap"
 msgstr "Quantidade a descartar"
 
+#: src/forms/BuildForms.tsx:469
+msgid "Build outputs have been scrapped"
+msgstr "Saídas de produção foram sucateadas"
+
 #: src/forms/BuildForms.tsx:470
 #~ msgid "Remove line"
 #~ msgstr "Remove line"
@@ -8178,6 +8182,10 @@ msgstr "Inventário da peça"
 msgid "Stock Tracking"
 msgstr "Rastreamento de estoque"
 
+#: src/pages/Index/Settings/SystemSettings.tsx:314
+msgid "External Build Orders"
+msgstr ""
+
 #: src/pages/Index/Settings/SystemSettings.tsx:317
 #~ msgid "Switch to User Setting"
 #~ msgstr "Switch to User Setting"
@@ -8961,6 +8969,79 @@ msgstr "Peças relacionadas"
 msgid "Part parameters cannot be edited, as the part is locked"
 msgstr "Os parâmetros da peça não podem ser editados, pois a peça está bloqueada"
 
+#: src/pages/part/PartDetail.tsx:364
+#: src/tables/settings/PendingTasksTable.tsx:51
+msgid "Keywords"
+msgstr "Palavras-chave"
+
+#: src/pages/part/PartDetail.tsx:392
+#: src/tables/bom/BomTable.tsx:462
+#: src/tables/build/BuildLineTable.tsx:311
+#: src/tables/part/PartTableFilters.tsx:135
+#: src/tables/sales/SalesOrderLineItemTable.tsx:134
+msgid "Available Stock"
+msgstr "Estoque Disponível"
+
+#: src/pages/part/PartDetail.tsx:398
+#: src/tables/bom/BomTable.tsx:358
+#: src/tables/build/BuildLineTable.tsx:273
+#: src/tables/sales/SalesOrderLineItemTable.tsx:176
+msgid "On order"
+msgstr "No pedido"
+
+#: src/pages/part/PartDetail.tsx:405
+msgid "Required for Orders"
+msgstr "Necessário para Pedidos"
+
+#: src/pages/part/PartDetail.tsx:416
+msgid "Allocated to Build Orders"
+msgstr "Alocado para Pedidos de Construção"
+
+#: src/pages/part/PartDetail.tsx:428
+msgid "Allocated to Sales Orders"
+msgstr "Alocado para Pedidos de Venda"
+
+#: src/pages/part/PartDetail.tsx:455
+msgid "Minimum Stock"
+msgstr "Estoque Mínimo"
+
+#: src/pages/part/PartDetail.tsx:462
+msgid "Maximum Stock"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:477
+#: src/tables/bom/UsedInTable.tsx:95
+#: src/tables/part/PartTableFilters.tsx:17
+msgid "Locked"
+msgstr "Bloqueado"
+
+#: src/pages/part/PartDetail.tsx:483
+msgid "Template Part"
+msgstr "Modelo de peça"
+
+#: src/pages/part/PartDetail.tsx:488
+#: src/tables/bom/BomTable.tsx:452
+msgid "Assembled Part"
+msgstr "Peça Montada"
+
+#: src/pages/part/PartDetail.tsx:493
+msgid "Component Part"
+msgstr "Parte do componente"
+
+#: src/pages/part/PartDetail.tsx:498
+#: src/tables/bom/BomTable.tsx:437
+msgid "Testable Part"
+msgstr "Parte Testável"
+
+#: src/pages/part/PartDetail.tsx:504
+#: src/tables/bom/BomTable.tsx:442
+msgid "Trackable Part"
+msgstr "Peça Rastreável"
+
+#: src/pages/part/PartDetail.tsx:509
+msgid "Purchaseable Part"
+msgstr "Parte comprável"
+
 #: src/pages/part/PartDetail.tsx:510
 #~ msgid "Stocktake By"
 #~ msgstr "Stocktake By"
@@ -9030,6 +9111,16 @@ msgstr "Peça bloqueada"
 #: src/pages/part/PartDetail.tsx:828
 msgid "Part unlocked"
 msgstr "Peça desbloqueada"
+
+#: src/pages/part/PartDetail.tsx:925
+#: src/tables/part/PartTestTemplateTable.tsx:112
+#: src/tables/stock/StockItemTestResultTable.tsx:405
+msgid "Required"
+msgstr "Obrigatório"
+
+#: src/pages/part/PartDetail.tsx:943
+msgid "Deficit"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:956
 #~ msgid "Count part stock"
@@ -10174,6 +10265,18 @@ msgstr "Indisponível"
 #~ msgid "Transfer"
 #~ msgstr "Transfer"
 
+#: src/pages/stock/StockDetail.tsx:914
+msgid "Stock Item Actions"
+msgstr "Ações de Estoque"
+
+#: src/pages/stock/StockDetail.tsx:925
+msgid "Convert"
+msgstr ""
+
+#: src/pages/stock/StockDetail.tsx:926
+msgid "Convert this stock item to a different part"
+msgstr ""
+
 #: src/pages/stock/StockDetail.tsx:950
 #~ msgid "Assign to Customer"
 #~ msgstr "Assign to Customer"
@@ -10339,6 +10442,10 @@ msgstr "Erro ao carregar o pacote de ícones do servidor"
 #~ msgid "Print actions"
 #~ msgstr "Print actions"
 
+#: src/tables/InvenTreeTable.tsx:600
+msgid "Error loading table data"
+msgstr ""
+
 #: src/tables/InvenTreeTable.tsx:655
 #: src/tables/InvenTreeTable.tsx:656
 #~ msgid "Barcode actions"
@@ -10392,9 +10499,20 @@ msgstr "Substitutos"
 #~ msgid "Bom item updated"
 #~ msgstr "Bom item updated"
 
+#: src/tables/bom/BomTable.tsx:340
+#: src/tables/build/BuildLineTable.tsx:245
+msgid "Includes substitute stock"
+msgstr "Incluir estoque de substitutos"
+
 #: src/tables/bom/BomTable.tsx:348
 #~ msgid "Delete Bom Item"
 #~ msgstr "Delete Bom Item"
+
+#: src/tables/bom/BomTable.tsx:349
+#: src/tables/build/BuildLineTable.tsx:255
+#: src/tables/sales/SalesOrderLineItemTable.tsx:162
+msgid "Includes variant stock"
+msgstr "Incluir estoque de variantes"
 
 #: src/tables/bom/BomTable.tsx:349
 #~ msgid "Bom item deleted"
@@ -10794,6 +10912,15 @@ msgstr "Totalmente alocado"
 msgid "Create Build Order"
 msgstr "Criar pedido de produção"
 
+#: src/tables/build/BuildLineTable.tsx:578
+#: src/tables/build/BuildOutputTable.tsx:227
+msgid "Stock allocation complete"
+msgstr ""
+
+#: src/tables/build/BuildLineTable.tsx:585
+#~ msgid "Auto allocation in progress"
+#~ msgstr "Auto allocation in progress"
+
 #: src/tables/build/BuildLineTable.tsx:598
 #~ msgid "Automatically allocate stock to this build according to the selected options"
 #~ msgstr "Automatically allocate stock to this build according to the selected options"
@@ -10869,6 +10996,10 @@ msgstr "Ver peça"
 #: src/tables/build/BuildOrderFilters.tsx:79
 msgid "Show external build orders"
 msgstr "Exibir pedidos de produção externos"
+
+#: src/tables/build/BuildOrderFilters.tsx:77
+msgid "Show external build orders"
+msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:116
 #~ msgid "Cascade"
@@ -12514,6 +12645,10 @@ msgstr "Atribuir à remessa"
 #: src/tables/sales/SalesOrderLineItemTable.tsx:280
 #~ msgid "Allocate stock"
 #~ msgstr "Allocate stock"
+
+#: src/tables/sales/SalesOrderLineItemTable.tsx:289
+msgid "Allocate Serial Numbers"
+msgstr "Alocar números de série"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:291
 #~ msgid "Allocate Serials"

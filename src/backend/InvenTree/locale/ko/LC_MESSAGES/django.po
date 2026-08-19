@@ -3935,6 +3935,54 @@ msgstr "장비 핑 사용"
 msgid "Enable periodic ping task of registered machines to check their status"
 msgstr "등록된 장비의 상태를 확인하기 위해 주기적으로 핑 작업을 수행합니다"
 
+#: common/setting/system.py:1201
+msgid "Starting day of the week, for display in calendar views"
+msgstr ""
+
+#: common/setting/system.py:1204
+msgid "Sunday"
+msgstr ""
+
+#: common/setting/system.py:1205
+msgid "Monday"
+msgstr ""
+
+#: common/setting/system.py:1206
+msgid "Tuesday"
+msgstr ""
+
+#: common/setting/system.py:1207
+msgid "Wednesday"
+msgstr ""
+
+#: common/setting/system.py:1208
+msgid "Thursday"
+msgstr ""
+
+#: common/setting/system.py:1209
+msgid "Friday"
+msgstr ""
+
+#: common/setting/system.py:1210
+msgid "Saturday"
+msgstr ""
+
+#: common/setting/system.py:1214
+msgid "Enable Test Station Data"
+msgstr "테스트 스테이션 데이터 사용"
+
+#: common/setting/system.py:1215
+msgid "Enable test station data collection for test results"
+msgstr "테스트 결과를 위한 테스트 스테이션 데이터 수집을 사용합니다"
+
+#: common/setting/system.py:1220
+msgid "Enable Machine Ping"
+msgstr "장비 핑 사용"
+
+#: common/setting/system.py:1222
+msgid "Enable periodic ping task of registered machines to check their status"
+msgstr "등록된 장비의 상태를 확인하기 위해 주기적으로 핑 작업을 수행합니다"
+
 #: common/setting/user.py:23
 msgid "Inline label display"
 msgstr "인라인 라벨 표시"
@@ -8092,6 +8140,11 @@ msgid "Provides native support for printing PDF labels"
 msgstr "PDF 라벨 인쇄에 대한 기본 지원을 제공합니다"
 
 #: plugin/builtin/labels/inventree_label.py:33
+#: plugin/builtin/labels/label_sheet.py:78
+msgid "Debug mode"
+msgstr "디버그 모드"
+
+#: plugin/builtin/labels/inventree_label.py:34
 #: plugin/builtin/labels/label_sheet.py:79
 msgid "Debug mode"
 msgstr "디버그 모드"
@@ -8362,6 +8415,16 @@ msgid "Plugin requires at least version {v}"
 msgstr "플러그인은 최소 버전 {v}가 필요합니다"
 
 #: plugin/registry.py:830
+#, python-brace-format
+msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
+msgstr "플러그인 '{p}'은(는) 현재 InvenTree 버전 {v}와 호환되지 않습니다"
+
+#: plugin/registry.py:789
+#, python-brace-format
+msgid "Plugin requires at least version {v}"
+msgstr "플러그인은 최소 버전 {v}가 필요합니다"
+
+#: plugin/registry.py:791
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "플러그인은 최대 버전 {v}까지 지원합니다"

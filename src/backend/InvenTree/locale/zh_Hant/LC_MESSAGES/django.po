@@ -2797,127 +2797,127 @@ msgstr ""
 msgid "Strict URL Validation"
 msgstr "嚴格的 URL 驗證"
 
-#: common/setting/system.py:298
+#: common/setting/system.py:291
 msgid "Require schema specification when validating URLs"
 msgstr "驗證 URL 時需要 schema 規範"
 
-#: common/setting/system.py:303
+#: common/setting/system.py:296
 msgid "Update Check Interval"
 msgstr "更新檢查間隔"
 
-#: common/setting/system.py:304
+#: common/setting/system.py:297
 msgid "How often to check for updates (set to zero to disable)"
 msgstr "檢查更新的頻率(設置為零以禁用)"
 
-#: common/setting/system.py:310
+#: common/setting/system.py:303
 msgid "Automatic Backup"
 msgstr "自動備份"
 
-#: common/setting/system.py:311
+#: common/setting/system.py:304
 msgid "Enable automatic backup of database and media files"
 msgstr "啟動資料庫和媒體文件自動備份"
 
-#: common/setting/system.py:316
+#: common/setting/system.py:309
 msgid "Auto Backup Interval"
 msgstr "自動備份間隔"
 
-#: common/setting/system.py:317
+#: common/setting/system.py:310
 msgid "Specify number of days between automated backup events"
 msgstr "指定自動備份之間的間隔天數"
 
-#: common/setting/system.py:323
+#: common/setting/system.py:316
 msgid "Task Deletion Interval"
 msgstr "任務刪除間隔"
 
-#: common/setting/system.py:325
+#: common/setting/system.py:318
 msgid "Background task results will be deleted after specified number of days"
 msgstr "後台任務結果將在指定天數後刪除"
 
-#: common/setting/system.py:332
+#: common/setting/system.py:325
 msgid "Error Log Deletion Interval"
 msgstr "錯誤日誌刪除間隔"
 
-#: common/setting/system.py:333
+#: common/setting/system.py:326
 msgid "Error logs will be deleted after specified number of days"
 msgstr "錯誤日誌將在指定天數後被刪除"
 
-#: common/setting/system.py:339
+#: common/setting/system.py:332
 msgid "Notification Deletion Interval"
 msgstr "通知刪除間隔"
 
-#: common/setting/system.py:341
+#: common/setting/system.py:334
 msgid "User notifications will be deleted after specified number of days"
 msgstr "用户通知將在指定天數後被刪除"
 
-#: common/setting/system.py:348
+#: common/setting/system.py:341
 msgid "Email Deletion Interval"
 msgstr "電子郵件刪除間隔"
 
-#: common/setting/system.py:350
+#: common/setting/system.py:343
 msgid "Email messages will be deleted after specified number of days"
 msgstr "電子郵件訊息將在指定天數後刪除"
 
-#: common/setting/system.py:357
+#: common/setting/system.py:350
 msgid "Protect Email Log"
 msgstr "保護電子郵件日誌"
 
-#: common/setting/system.py:358
+#: common/setting/system.py:351
 msgid "Prevent deletion of email log entries"
 msgstr "防止刪除電子郵件日誌紀錄"
 
-#: common/setting/system.py:363
+#: common/setting/system.py:356
 msgid "Barcode Support"
 msgstr "條形碼支持"
 
-#: common/setting/system.py:364
+#: common/setting/system.py:357
 msgid "Enable barcode scanner support in the web interface"
 msgstr "在網頁界面啓用條形碼掃描器支持"
 
-#: common/setting/system.py:369
+#: common/setting/system.py:362
 msgid "Store Barcode Results"
 msgstr "存儲條碼結果"
 
-#: common/setting/system.py:370
+#: common/setting/system.py:363
 msgid "Store barcode scan results in the database"
 msgstr "存儲條碼掃描結果"
 
-#: common/setting/system.py:375
+#: common/setting/system.py:368
 msgid "Barcode Scans Maximum Count"
 msgstr "條碼掃描最大計數"
 
-#: common/setting/system.py:376
+#: common/setting/system.py:369
 msgid "Maximum number of barcode scan results to store"
 msgstr "存儲條碼掃描結果的最大數量"
 
-#: common/setting/system.py:381
+#: common/setting/system.py:374
 msgid "Barcode Input Delay"
 msgstr "條形碼掃描延遲設置"
 
-#: common/setting/system.py:382
+#: common/setting/system.py:375
 msgid "Barcode input processing delay time"
 msgstr "條形碼輸入處理延遲時間"
 
-#: common/setting/system.py:388
+#: common/setting/system.py:381
 msgid "Barcode Webcam Support"
 msgstr "條碼攝像頭支持"
 
-#: common/setting/system.py:389
+#: common/setting/system.py:382
 msgid "Allow barcode scanning via webcam in browser"
 msgstr "允許通過網絡攝像頭掃描條形碼"
 
-#: common/setting/system.py:394
+#: common/setting/system.py:387
 msgid "Barcode Show Data"
 msgstr "條形碼顯示數據"
 
-#: common/setting/system.py:395
+#: common/setting/system.py:388
 msgid "Display barcode data in browser as text"
 msgstr "在瀏覽器中將條形碼數據顯示為文本"
 
-#: common/setting/system.py:400
+#: common/setting/system.py:393
 msgid "Barcode Generation Plugin"
 msgstr "條形碼生成插件"
 
-#: common/setting/system.py:401
+#: common/setting/system.py:394
 msgid "Plugin to use for internal barcode data generation"
 msgstr "用於內部條形碼數據生成的插件"
 

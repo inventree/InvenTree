@@ -2713,6 +2713,10 @@ msgstr "버전 정보"
 #~ msgstr "InvenTree Documentation"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
+msgid "Links"
+msgstr "모래밭"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:169
 #~ msgid "View Code on GitHub"
 #~ msgstr "View Code on GitHub"
 
@@ -10174,6 +10178,18 @@ msgstr "없는"
 #~ msgid "Transfer"
 #~ msgstr "Transfer"
 
+#: src/pages/stock/StockDetail.tsx:914
+msgid "Stock Item Actions"
+msgstr "재고 품목 작업"
+
+#: src/pages/stock/StockDetail.tsx:925
+msgid "Convert"
+msgstr ""
+
+#: src/pages/stock/StockDetail.tsx:926
+msgid "Convert this stock item to a different part"
+msgstr ""
+
 #: src/pages/stock/StockDetail.tsx:950
 #~ msgid "Assign to Customer"
 #~ msgstr "Assign to Customer"
@@ -10339,6 +10355,10 @@ msgstr "서버에서 아이콘 패키지를 불러오는 중 오류 발생"
 #~ msgid "Print actions"
 #~ msgstr "Print actions"
 
+#: src/tables/InvenTreeTable.tsx:600
+msgid "Error loading table data"
+msgstr "테이블 데이터를 불러오는 중 오류 발생"
+
 #: src/tables/InvenTreeTable.tsx:655
 #: src/tables/InvenTreeTable.tsx:656
 #~ msgid "Barcode actions"
@@ -10392,9 +10412,20 @@ msgstr "대체 부품"
 #~ msgid "Bom item updated"
 #~ msgstr "Bom item updated"
 
+#: src/tables/bom/BomTable.tsx:340
+#: src/tables/build/BuildLineTable.tsx:245
+msgid "Includes substitute stock"
+msgstr "대체재고 포함"
+
 #: src/tables/bom/BomTable.tsx:348
 #~ msgid "Delete Bom Item"
 #~ msgstr "Delete Bom Item"
+
+#: src/tables/bom/BomTable.tsx:349
+#: src/tables/build/BuildLineTable.tsx:255
+#: src/tables/sales/SalesOrderLineItemTable.tsx:162
+msgid "Includes variant stock"
+msgstr "변형 재고 포함"
 
 #: src/tables/bom/BomTable.tsx:349
 #~ msgid "Bom item deleted"
@@ -12514,6 +12545,10 @@ msgstr "출하에 할당"
 #: src/tables/sales/SalesOrderLineItemTable.tsx:280
 #~ msgid "Allocate stock"
 #~ msgstr "Allocate stock"
+
+#: src/tables/sales/SalesOrderLineItemTable.tsx:289
+msgid "Allocate Serial Numbers"
+msgstr "일련번호 할당"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:291
 #~ msgid "Allocate Serials"

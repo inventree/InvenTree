@@ -2797,127 +2797,127 @@ msgstr "画像およびファイルの最大アップロードサイズ"
 msgid "Strict URL Validation"
 msgstr "厳格なURLバリデーション"
 
-#: common/setting/system.py:298
+#: common/setting/system.py:291
 msgid "Require schema specification when validating URLs"
 msgstr "URL検証時にスキーマ指定を要求"
 
-#: common/setting/system.py:303
+#: common/setting/system.py:296
 msgid "Update Check Interval"
 msgstr "更新チェック間隔"
 
-#: common/setting/system.py:304
+#: common/setting/system.py:297
 msgid "How often to check for updates (set to zero to disable)"
 msgstr "アップデートをチェックする頻度 (ゼロに設定すると無効になります)"
 
-#: common/setting/system.py:310
+#: common/setting/system.py:303
 msgid "Automatic Backup"
 msgstr "自動バックアップ"
 
-#: common/setting/system.py:311
+#: common/setting/system.py:304
 msgid "Enable automatic backup of database and media files"
 msgstr "データベースとメディアファイルの自動バックアップ"
 
-#: common/setting/system.py:316
+#: common/setting/system.py:309
 msgid "Auto Backup Interval"
 msgstr "自動バックアップ間隔"
 
-#: common/setting/system.py:317
+#: common/setting/system.py:310
 msgid "Specify number of days between automated backup events"
 msgstr "自動バックアップイベント間の日数を指定"
 
-#: common/setting/system.py:323
+#: common/setting/system.py:316
 msgid "Task Deletion Interval"
 msgstr "タスク削除間隔"
 
-#: common/setting/system.py:325
+#: common/setting/system.py:318
 msgid "Background task results will be deleted after specified number of days"
 msgstr "バックグラウンドタスクの結果は、指定した日数後に削除されます。"
 
-#: common/setting/system.py:332
+#: common/setting/system.py:325
 msgid "Error Log Deletion Interval"
 msgstr "エラーログ削除間隔"
 
-#: common/setting/system.py:333
+#: common/setting/system.py:326
 msgid "Error logs will be deleted after specified number of days"
 msgstr "エラーログは指定した日数後に削除されます。"
 
-#: common/setting/system.py:339
+#: common/setting/system.py:332
 msgid "Notification Deletion Interval"
 msgstr "通知削除間隔"
 
-#: common/setting/system.py:341
+#: common/setting/system.py:334
 msgid "User notifications will be deleted after specified number of days"
 msgstr "ユーザー通知は指定された日数後に削除されます。"
 
-#: common/setting/system.py:348
+#: common/setting/system.py:341
 msgid "Email Deletion Interval"
 msgstr "メール削除間隔"
 
-#: common/setting/system.py:350
+#: common/setting/system.py:343
 msgid "Email messages will be deleted after specified number of days"
 msgstr "メールメッセージは、指定された日数が経過後に削除されます。"
 
-#: common/setting/system.py:357
+#: common/setting/system.py:350
 msgid "Protect Email Log"
 msgstr "メールログの保護"
 
-#: common/setting/system.py:358
+#: common/setting/system.py:351
 msgid "Prevent deletion of email log entries"
 msgstr "メールログエントリの削除を防止します"
 
-#: common/setting/system.py:363
+#: common/setting/system.py:356
 msgid "Barcode Support"
 msgstr "バーコードサポート"
 
-#: common/setting/system.py:364
+#: common/setting/system.py:357
 msgid "Enable barcode scanner support in the web interface"
 msgstr "ウェブインターフェイスでバーコードスキャナのサポートを有効にします。"
 
-#: common/setting/system.py:369
+#: common/setting/system.py:362
 msgid "Store Barcode Results"
 msgstr "店舗バーコード結果"
 
-#: common/setting/system.py:370
+#: common/setting/system.py:363
 msgid "Store barcode scan results in the database"
 msgstr "バーコードスキャン結果をデータベースに保存"
 
-#: common/setting/system.py:375
+#: common/setting/system.py:368
 msgid "Barcode Scans Maximum Count"
 msgstr "バーコードスキャン最大カウント"
 
-#: common/setting/system.py:376
+#: common/setting/system.py:369
 msgid "Maximum number of barcode scan results to store"
 msgstr "バーコードスキャン結果の最大保存数"
 
-#: common/setting/system.py:381
+#: common/setting/system.py:374
 msgid "Barcode Input Delay"
 msgstr "バーコード入力遅延"
 
-#: common/setting/system.py:382
+#: common/setting/system.py:375
 msgid "Barcode input processing delay time"
 msgstr "バーコード入力処理遅延時間"
 
-#: common/setting/system.py:388
+#: common/setting/system.py:381
 msgid "Barcode Webcam Support"
 msgstr "バーコードウェブカメラサポート"
 
-#: common/setting/system.py:389
+#: common/setting/system.py:382
 msgid "Allow barcode scanning via webcam in browser"
 msgstr "ブラウザのウェブカメラでバーコードのスキャンが可能"
 
-#: common/setting/system.py:394
+#: common/setting/system.py:387
 msgid "Barcode Show Data"
 msgstr "バーコード表示データ"
 
-#: common/setting/system.py:395
+#: common/setting/system.py:388
 msgid "Display barcode data in browser as text"
 msgstr "バーコードデータをテキストとしてブラウザに表示"
 
-#: common/setting/system.py:400
+#: common/setting/system.py:393
 msgid "Barcode Generation Plugin"
 msgstr "バーコード生成プラグイン"
 
-#: common/setting/system.py:401
+#: common/setting/system.py:394
 msgid "Plugin to use for internal barcode data generation"
 msgstr "内部バーコードデータ生成に使用するプラグイン"
 

@@ -8178,6 +8178,10 @@ msgstr ""
 msgid "Stock Tracking"
 msgstr ""
 
+#: src/pages/Index/Settings/SystemSettings.tsx:314
+msgid "External Build Orders"
+msgstr ""
+
 #: src/pages/Index/Settings/SystemSettings.tsx:317
 #~ msgid "Switch to User Setting"
 #~ msgstr "Switch to User Setting"
@@ -8339,6 +8343,16 @@ msgstr "Дочірні Замовлення на збірку"
 #: src/tables/stock/StockItemTestResultTable.tsx:171
 msgid "Test Results"
 msgstr ""
+
+#: src/pages/build/BuildDetail.tsx:367
+#: src/pages/part/PartDetail.tsx:548
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:262
+#: src/pages/sales/ReturnOrderDetail.tsx:240
+#: src/pages/sales/SalesOrderDetail.tsx:233
+#: src/tables/ColumnRenderers.tsx:665
+#: src/tables/Filter.tsx:397
+msgid "Responsible"
+msgstr "Відповідальний"
 
 #: src/pages/build/BuildDetail.tsx:368
 #~ msgid "Reporting Actions"
@@ -8961,6 +8975,79 @@ msgstr ""
 msgid "Part parameters cannot be edited, as the part is locked"
 msgstr ""
 
+#: src/pages/part/PartDetail.tsx:364
+#: src/tables/settings/PendingTasksTable.tsx:51
+msgid "Keywords"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:392
+#: src/tables/bom/BomTable.tsx:462
+#: src/tables/build/BuildLineTable.tsx:311
+#: src/tables/part/PartTableFilters.tsx:135
+#: src/tables/sales/SalesOrderLineItemTable.tsx:134
+msgid "Available Stock"
+msgstr "Доступний залишок"
+
+#: src/pages/part/PartDetail.tsx:398
+#: src/tables/bom/BomTable.tsx:358
+#: src/tables/build/BuildLineTable.tsx:273
+#: src/tables/sales/SalesOrderLineItemTable.tsx:176
+msgid "On order"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:405
+msgid "Required for Orders"
+msgstr "Потрібно для Замовлень збірки"
+
+#: src/pages/part/PartDetail.tsx:416
+msgid "Allocated to Build Orders"
+msgstr "Виділений запас для Замовлень на збірку"
+
+#: src/pages/part/PartDetail.tsx:428
+msgid "Allocated to Sales Orders"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:455
+msgid "Minimum Stock"
+msgstr "Мінімальний запас"
+
+#: src/pages/part/PartDetail.tsx:462
+msgid "Maximum Stock"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:477
+#: src/tables/bom/UsedInTable.tsx:95
+#: src/tables/part/PartTableFilters.tsx:17
+msgid "Locked"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:483
+msgid "Template Part"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:488
+#: src/tables/bom/BomTable.tsx:452
+msgid "Assembled Part"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:493
+msgid "Component Part"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:498
+#: src/tables/bom/BomTable.tsx:437
+msgid "Testable Part"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:504
+#: src/tables/bom/BomTable.tsx:442
+msgid "Trackable Part"
+msgstr "Відстежуваний елемент"
+
+#: src/pages/part/PartDetail.tsx:509
+msgid "Purchaseable Part"
+msgstr ""
+
 #: src/pages/part/PartDetail.tsx:510
 #~ msgid "Stocktake By"
 #~ msgstr "Stocktake By"
@@ -9029,6 +9116,16 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:828
 msgid "Part unlocked"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:925
+#: src/tables/part/PartTestTemplateTable.tsx:112
+#: src/tables/stock/StockItemTestResultTable.tsx:405
+msgid "Required"
+msgstr "Необхідний"
+
+#: src/pages/part/PartDetail.tsx:943
+msgid "Deficit"
 msgstr ""
 
 #: src/pages/part/PartDetail.tsx:956
@@ -10174,6 +10271,18 @@ msgstr ""
 #~ msgid "Transfer"
 #~ msgstr "Transfer"
 
+#: src/pages/stock/StockDetail.tsx:914
+msgid "Stock Item Actions"
+msgstr ""
+
+#: src/pages/stock/StockDetail.tsx:925
+msgid "Convert"
+msgstr ""
+
+#: src/pages/stock/StockDetail.tsx:926
+msgid "Convert this stock item to a different part"
+msgstr ""
+
 #: src/pages/stock/StockDetail.tsx:950
 #~ msgid "Assign to Customer"
 #~ msgstr "Assign to Customer"
@@ -10339,6 +10448,10 @@ msgstr ""
 #~ msgid "Print actions"
 #~ msgstr "Print actions"
 
+#: src/tables/InvenTreeTable.tsx:600
+msgid "Error loading table data"
+msgstr ""
+
 #: src/tables/InvenTreeTable.tsx:655
 #: src/tables/InvenTreeTable.tsx:656
 #~ msgid "Barcode actions"
@@ -10392,9 +10505,20 @@ msgstr ""
 #~ msgid "Bom item updated"
 #~ msgstr "Bom item updated"
 
+#: src/tables/bom/BomTable.tsx:340
+#: src/tables/build/BuildLineTable.tsx:245
+msgid "Includes substitute stock"
+msgstr ""
+
 #: src/tables/bom/BomTable.tsx:348
 #~ msgid "Delete Bom Item"
 #~ msgstr "Delete Bom Item"
+
+#: src/tables/bom/BomTable.tsx:349
+#: src/tables/build/BuildLineTable.tsx:255
+#: src/tables/sales/SalesOrderLineItemTable.tsx:162
+msgid "Includes variant stock"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:349
 #~ msgid "Bom item deleted"
@@ -12515,6 +12639,10 @@ msgstr "Призначити для відвантаження"
 #~ msgid "Allocate stock"
 #~ msgstr "Allocate stock"
 
+#: src/tables/sales/SalesOrderLineItemTable.tsx:289
+msgid "Allocate Serial Numbers"
+msgstr ""
+
 #: src/tables/sales/SalesOrderLineItemTable.tsx:291
 #~ msgid "Allocate Serials"
 #~ msgstr "Allocate Serials"
@@ -13194,6 +13322,10 @@ msgstr ""
 #: src/tables/settings/UserTable.tsx:180
 msgid "Designates whether this user should be treated as active. Unselect this instead of deleting accounts."
 msgstr "Чи активний користувач. Зніміть цю відмітку замість видалення акаунтів."
+
+#: src/tables/settings/UserTable.tsx:183
+#~ msgid "Is Staff"
+#~ msgstr "Is Staff"
 
 #: src/tables/settings/UserTable.tsx:183
 #~ msgid "Is Staff"

@@ -8178,6 +8178,10 @@ msgstr "零件盘点"
 msgid "Stock Tracking"
 msgstr "库存跟踪"
 
+#: src/pages/Index/Settings/SystemSettings.tsx:314
+msgid "External Build Orders"
+msgstr "外部生产订单"
+
 #: src/pages/Index/Settings/SystemSettings.tsx:317
 #~ msgid "Switch to User Setting"
 #~ msgstr "Switch to User Setting"
@@ -8961,6 +8965,79 @@ msgstr "关联零件"
 msgid "Part parameters cannot be edited, as the part is locked"
 msgstr "零件参数无法编辑，因为零件已锁定"
 
+#: src/pages/part/PartDetail.tsx:364
+#: src/tables/settings/PendingTasksTable.tsx:51
+msgid "Keywords"
+msgstr "关键词"
+
+#: src/pages/part/PartDetail.tsx:392
+#: src/tables/bom/BomTable.tsx:462
+#: src/tables/build/BuildLineTable.tsx:311
+#: src/tables/part/PartTableFilters.tsx:135
+#: src/tables/sales/SalesOrderLineItemTable.tsx:134
+msgid "Available Stock"
+msgstr "可用库存"
+
+#: src/pages/part/PartDetail.tsx:398
+#: src/tables/bom/BomTable.tsx:358
+#: src/tables/build/BuildLineTable.tsx:273
+#: src/tables/sales/SalesOrderLineItemTable.tsx:176
+msgid "On order"
+msgstr "订购中"
+
+#: src/pages/part/PartDetail.tsx:405
+msgid "Required for Orders"
+msgstr "订单必填项"
+
+#: src/pages/part/PartDetail.tsx:416
+msgid "Allocated to Build Orders"
+msgstr "分配生产订单"
+
+#: src/pages/part/PartDetail.tsx:428
+msgid "Allocated to Sales Orders"
+msgstr "分配销售订单"
+
+#: src/pages/part/PartDetail.tsx:455
+msgid "Minimum Stock"
+msgstr "最低库存"
+
+#: src/pages/part/PartDetail.tsx:462
+msgid "Maximum Stock"
+msgstr "最大库存"
+
+#: src/pages/part/PartDetail.tsx:477
+#: src/tables/bom/UsedInTable.tsx:95
+#: src/tables/part/PartTableFilters.tsx:17
+msgid "Locked"
+msgstr "已锁定"
+
+#: src/pages/part/PartDetail.tsx:483
+msgid "Template Part"
+msgstr "模板零件"
+
+#: src/pages/part/PartDetail.tsx:488
+#: src/tables/bom/BomTable.tsx:452
+msgid "Assembled Part"
+msgstr "组装零件"
+
+#: src/pages/part/PartDetail.tsx:493
+msgid "Component Part"
+msgstr "组件零件"
+
+#: src/pages/part/PartDetail.tsx:498
+#: src/tables/bom/BomTable.tsx:437
+msgid "Testable Part"
+msgstr "可测试零件"
+
+#: src/pages/part/PartDetail.tsx:504
+#: src/tables/bom/BomTable.tsx:442
+msgid "Trackable Part"
+msgstr "可追溯零件"
+
+#: src/pages/part/PartDetail.tsx:509
+msgid "Purchaseable Part"
+msgstr "可购买零件"
+
 #: src/pages/part/PartDetail.tsx:510
 #~ msgid "Stocktake By"
 #~ msgstr "Stocktake By"
@@ -9030,6 +9107,16 @@ msgstr "零件已锁定"
 #: src/pages/part/PartDetail.tsx:828
 msgid "Part unlocked"
 msgstr "零件已解锁"
+
+#: src/pages/part/PartDetail.tsx:925
+#: src/tables/part/PartTestTemplateTable.tsx:112
+#: src/tables/stock/StockItemTestResultTable.tsx:405
+msgid "Required"
+msgstr "必填"
+
+#: src/pages/part/PartDetail.tsx:943
+msgid "Deficit"
+msgstr "不足"
 
 #: src/pages/part/PartDetail.tsx:956
 #~ msgid "Count part stock"
@@ -10174,6 +10261,18 @@ msgstr "不可用"
 #~ msgid "Transfer"
 #~ msgstr "Transfer"
 
+#: src/pages/stock/StockDetail.tsx:914
+msgid "Stock Item Actions"
+msgstr "库存项操作"
+
+#: src/pages/stock/StockDetail.tsx:925
+msgid "Convert"
+msgstr "转换"
+
+#: src/pages/stock/StockDetail.tsx:926
+msgid "Convert this stock item to a different part"
+msgstr "将此库存商品转换为其他零件"
+
 #: src/pages/stock/StockDetail.tsx:950
 #~ msgid "Assign to Customer"
 #~ msgstr "Assign to Customer"
@@ -10339,6 +10438,10 @@ msgstr "服务器图标包加载错误"
 #~ msgid "Print actions"
 #~ msgstr "Print actions"
 
+#: src/tables/InvenTreeTable.tsx:600
+msgid "Error loading table data"
+msgstr "表格数据加载错误"
+
 #: src/tables/InvenTreeTable.tsx:655
 #: src/tables/InvenTreeTable.tsx:656
 #~ msgid "Barcode actions"
@@ -10392,9 +10495,20 @@ msgstr "替代料"
 #~ msgid "Bom item updated"
 #~ msgstr "Bom item updated"
 
+#: src/tables/bom/BomTable.tsx:340
+#: src/tables/build/BuildLineTable.tsx:245
+msgid "Includes substitute stock"
+msgstr "包括替代库存"
+
 #: src/tables/bom/BomTable.tsx:348
 #~ msgid "Delete Bom Item"
 #~ msgstr "Delete Bom Item"
+
+#: src/tables/bom/BomTable.tsx:349
+#: src/tables/build/BuildLineTable.tsx:255
+#: src/tables/sales/SalesOrderLineItemTable.tsx:162
+msgid "Includes variant stock"
+msgstr "包括变体库存"
 
 #: src/tables/bom/BomTable.tsx:349
 #~ msgid "Bom item deleted"
@@ -12514,6 +12628,10 @@ msgstr "安排发货"
 #: src/tables/sales/SalesOrderLineItemTable.tsx:280
 #~ msgid "Allocate stock"
 #~ msgstr "Allocate stock"
+
+#: src/tables/sales/SalesOrderLineItemTable.tsx:289
+msgid "Allocate Serial Numbers"
+msgstr "分配序列号"
 
 #: src/tables/sales/SalesOrderLineItemTable.tsx:291
 #~ msgid "Allocate Serials"
