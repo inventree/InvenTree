@@ -1,7 +1,13 @@
 import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
-import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import {
+  IconCancel,
+  IconChevronLeft,
+  IconChevronRight
+} from '@tabler/icons-react';
 
 import { t } from '@lingui/core/macro';
+import { useNavigate } from 'react-router-dom';
+import { removeDetailNavigationParams } from '../../functions/DetailNavigation';
 import type { DetailNavigationState } from '../../hooks/UseDetailNavigation';
 
 export function DetailNavigation({
@@ -13,6 +19,13 @@ export function DetailNavigation({
       navigation.position ||
       navigation.isLoading
   );
+  const navigate = useNavigate();
+
+  function handleClear() {
+    const url = new URL(window.location.href);
+    removeDetailNavigationParams(url.searchParams);
+    navigate(url);
+  }
 
   if (!hasNavigation) {
     return null;
@@ -27,6 +40,14 @@ export function DetailNavigation({
       data-testid='detail-navigation'
       style={{ flexShrink: 0, minHeight: 36 }}
     >
+      <Tooltip
+        label={t`Remove navigation filters from current view`}
+        position='top'
+      >
+        <ActionIcon onClick={handleClear} size='md' variant='subtle'>
+          <IconCancel size='1.25rem' />
+        </ActionIcon>
+      </Tooltip>
       {navigation.position && (
         <Text
           size='xs'

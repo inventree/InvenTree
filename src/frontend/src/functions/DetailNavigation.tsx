@@ -88,7 +88,7 @@ function decodeDetailNavigationApi(apiUrl: string): string {
   return DETAIL_NAVIGATION_API_URLS.get(apiUrl) ?? apiUrl;
 }
 
-function removeDetailNavigationParams(params: URLSearchParams) {
+export function removeDetailNavigationParams(params: URLSearchParams) {
   DETAIL_NAVIGATION_PARAM_KEYS.forEach((key) => {
     params.delete(key);
   });
