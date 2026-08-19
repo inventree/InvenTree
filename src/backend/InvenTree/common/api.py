@@ -1339,7 +1339,6 @@ class InstanceInfoView(APIView):
             InvenTreeNoteMixin,
             InvenTreeParameterMixin,
         )
-        from users.permissions import check_user_permission
 
         model_type = request.query_params.get('model_type')
         model_id = request.query_params.get('model_id')
@@ -1367,13 +1366,17 @@ class InstanceInfoView(APIView):
                 ).count()
 
             if issubclass(model_class, InvenTreeNoteMixin):
-                user = request.user
-                if user.is_superuser or check_user_permission(
-                    user, model_class, 'view'
-                ):
-                    counts['note_count'] = common.models.Note.objects.filter(
-                        model_type=content_type, model_id=model_id, template=False
-                    ).count()
+                # Route through NoteList's own get_queryset() (rather than
+                # re-deriving the view-permission check here) so this count can
+                # never drift from what the Notes list endpoint actually shows.
+                note_list_view = NoteList()
+                note_list_view.request = request
+                counts['note_count'] = (
+                    note_list_view
+                    .get_queryset()
+                    .filter(model_type=content_type, model_id=model_id, template=False)
+                    .count()
+                )
 
             if issubclass(model_class, InvenTreeParameterMixin):
                 counts['parameter_count'] = common.models.Parameter.objects.filter(
