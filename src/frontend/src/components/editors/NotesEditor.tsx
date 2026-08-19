@@ -76,31 +76,29 @@ function NoteInfoHover({ note }: { note: any }) {
   }
 
   return (
-    <HoverCard position='top-start'>
+    <HoverCard position='top-end'>
       <HoverCard.Target>
         <ActionIcon variant='transparent'>
           <IconInfoCircle />
         </ActionIcon>
       </HoverCard.Target>
       <HoverCard.Dropdown>
-        <Paper p='sm' shadow='sm' withBorder>
-          <Stack gap='xs'>
-            {note.updated && (
-              <Group gap='xs' justify='space-between'>
-                <Text fw='bold'>{t`Updated`}</Text>
-                <Text size='xs'>
-                  {formatDate(note.updated, { showTime: true })}
-                </Text>
-              </Group>
-            )}
-            {note.updated_by_detail && (
-              <Group gap='xs' justify='space-between'>
-                <Text fw='bold'>{t`Updated by`}</Text>
-                <RenderUser instance={note.updated_by_detail} />
-              </Group>
-            )}
-          </Stack>
-        </Paper>
+        <Stack gap='xs'>
+          {note.updated && (
+            <Group gap='xs' justify='space-between'>
+              <Text fw='bold'>{t`Updated`}</Text>
+              <Text size='xs'>
+                {formatDate(note.updated, { showTime: true })}
+              </Text>
+            </Group>
+          )}
+          {note.updated_by_detail && (
+            <Group gap='xs' justify='space-between'>
+              <Text fw='bold'>{t`Updated by`}</Text>
+              <RenderUser instance={note.updated_by_detail} />
+            </Group>
+          )}
+        </Stack>
       </HoverCard.Dropdown>
     </HoverCard>
   );
@@ -432,14 +430,13 @@ export default function NotesEditor({
               <Paper p='xs' shadow='sm' withBorder>
                 <Group justify='space-between'>
                   <Group justify='left' gap='lg'>
-                    <NoteInfoHover note={selectedNote} />
                     <Text fw='bold'>{selectedNote?.title}</Text>
                     <Text size='sm'>{selectedNote?.description}</Text>
                   </Group>
                   {canEdit && (
                     <Group justify='right' gap='xs'>
                       {!isEditing && (
-                        <Tooltip label={t`Edit note`}>
+                        <Tooltip label={t`Edit note`} position='top-end'>
                           <ActionIcon
                             aria-label='edit-note'
                             variant='transparent'
@@ -453,7 +450,7 @@ export default function NotesEditor({
                         <Badge color='yellow'>{t`Unsaved Changes`}</Badge>
                       )}
                       {isEditing && isDirty && (
-                        <Tooltip label={t`Save note`}>
+                        <Tooltip label={t`Save note`} position='top-end'>
                           <ActionIcon
                             aria-label='save-note'
                             variant='transparent'
@@ -466,7 +463,10 @@ export default function NotesEditor({
                         </Tooltip>
                       )}
                       {isEditing && isDirty && (
-                        <Tooltip label={t`Reset note content`}>
+                        <Tooltip
+                          label={t`Reset note content`}
+                          position='top-end'
+                        >
                           <ActionIcon
                             aria-label='reset-note'
                             variant='transparent'
@@ -478,7 +478,7 @@ export default function NotesEditor({
                         </Tooltip>
                       )}
                       {isEditing && !isDirty && (
-                        <Tooltip label={t`Finish editing`}>
+                        <Tooltip label={t`Finish editing`} position='top-end'>
                           <ActionIcon
                             aria-label='finish-editing-note'
                             variant='transparent'
@@ -489,8 +489,10 @@ export default function NotesEditor({
                           </ActionIcon>
                         </Tooltip>
                       )}
+                      <NoteInfoHover note={selectedNote} />
                       <OptionsActionDropdown
                         tooltip={t`Note Actions`}
+                        tooltipPosition='top-end'
                         actions={[
                           EditItemAction({
                             hidden: !selectedNote || !canEdit,
