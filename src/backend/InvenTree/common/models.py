@@ -2994,10 +2994,10 @@ class Parameter(
         """
         from InvenTree.models import InvenTreeParameterMixin
 
-        try:
-            instance = self.content_object
-        except InvenTree.models.InvenTreeModel.DoesNotExist:
-            return
+        # content_object is None (rather than raising) if the target row is
+        # missing - GenericForeignKey.__get__ catches ObjectDoesNotExist
+        # internally, it never propagates it.
+        instance = self.content_object
 
         if instance and isinstance(instance, InvenTreeParameterMixin):
             instance.check_parameter_save(self)
@@ -3006,10 +3006,7 @@ class Parameter(
         """Check if this parameter can be deleted."""
         from InvenTree.models import InvenTreeParameterMixin
 
-        try:
-            instance = self.content_object
-        except InvenTree.models.InvenTreeModel.DoesNotExist:
-            return
+        instance = self.content_object
 
         if instance and isinstance(instance, InvenTreeParameterMixin):
             instance.check_parameter_delete(self)
@@ -3277,10 +3274,10 @@ class Note(
         if self.template or not self.model_type:
             return
 
-        try:
-            instance = self.content_object
-        except InvenTree.models.InvenTreeModel.DoesNotExist:
-            return
+        # content_object is None (rather than raising) if the target row is
+        # missing - GenericForeignKey.__get__ catches ObjectDoesNotExist
+        # internally, it never propagates it.
+        instance = self.content_object
 
         if instance and isinstance(instance, InvenTreeNoteMixin):
             instance.check_note_save(self)
@@ -3292,10 +3289,7 @@ class Note(
         if self.template or not self.model_type:
             return
 
-        try:
-            instance = self.content_object
-        except InvenTree.models.InvenTreeModel.DoesNotExist:
-            return
+        instance = self.content_object
 
         if instance and isinstance(instance, InvenTreeNoteMixin):
             instance.check_note_delete(self)
