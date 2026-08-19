@@ -3,7 +3,7 @@ import { RichTextEditor } from '@mantine/tiptap';
 import '@mantine/tiptap/styles.css';
 import { useHotkeys } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { TableKit } from '@tiptap/extension-table';
 import { useEditor, useEditorState } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -117,6 +117,7 @@ export default function NotesEditor({
 }>) {
   const api = useApi();
   const user = useUserState();
+  const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -170,9 +171,14 @@ export default function NotesEditor({
     onUpdate: () => setIsDirty(true)
   });
 
+  const notesQueryKey = useMemo(
+    () => ['notes', modelType, modelId, templateMode],
+    [modelType, modelId, templateMode]
+  );
+
   // Fetch the available notes for the given model type and ID (or all templates)
   const notesQuery = useQuery({
-    queryKey: ['notes', modelType, modelId, templateMode],
+    queryKey: notesQueryKey,
     queryFn: async () => {
       const params: Record<string, any> = templateMode
         ? { template: true }
@@ -370,7 +376,17 @@ export default function NotesEditor({
 
     api
       .patch(url, { content: cleanHtml })
-      .then(() => {
+      .then((response) => {
+        // Merge the updated note directly into the cached notes list, rather
+        // than refetching - a refetch is async, so the content-sync effect
+        // (keyed on isDirty) can run against the *old* cached data in the gap
+        // between setIsDirty(false) below and the refetch resolving, visibly
+        // reverting the editor to the pre-save content until it lands.
+        queryClient.setQueryData(notesQueryKey, (previous: any[] | undefined) =>
+          previous?.map((note: any) =>
+            note.pk === selectedNoteId ? (response.data ?? note) : note
+          )
+        );
         setIsDirty(false);
         notifications.show({
           title: t`Success`,
@@ -388,11 +404,16 @@ export default function NotesEditor({
           id: 'note-update-status',
           autoClose: 2000
         });
-      })
-      .finally(() => {
-        notesQuery.refetch();
       });
-  }, [canEdit, isEditing, selectedNoteId, editor, setIsDirty]);
+  }, [
+    canEdit,
+    isEditing,
+    selectedNoteId,
+    editor,
+    queryClient,
+    notesQueryKey,
+    setIsDirty
+  ]);
 
   useHotkeys([['mod+s', saveNote]]);
 
