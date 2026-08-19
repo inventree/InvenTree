@@ -415,6 +415,16 @@ class TestNoteMigrations(MigratorTestCase):
             notes='Some **bold** sales order notes',
         )
 
+        # A part whose legacy notes contain raw HTML that markdown passes through
+        # unchanged - this must be stripped during migration, not just the markdown
+        # conversion, since bulk_create() never runs Note.clean()'s sanitizer
+        malicious_notes_part = Part.objects.create(
+            name='Part with malicious notes',
+            description='x',
+            notes='Some notes\n\n<script>alert(1)</script>\n\n<img src=x onerror=alert(1)>',
+            **tree,
+        )
+
         instances = [
             ('part', part),
             ('company', company),
@@ -493,6 +503,7 @@ class TestNoteMigrations(MigratorTestCase):
         self.part_pk = part.pk
         self.empty_notes_part_pk = empty_notes_part.pk
         self.null_notes_part_pk = null_notes_part.pk
+        self.malicious_notes_part_pk = malicious_notes_part.pk
 
     def test_notes_migrated(self):
         """Test that a Note object has been created for each legacy notes field."""
@@ -500,8 +511,9 @@ class TestNoteMigrations(MigratorTestCase):
         ContentType = self.new_state.apps.get_model('contenttypes', 'ContentType')
 
         # One note per instance with non-empty notes, plus one empty
-        # placeholder note for the blank-notes part with a linked image
-        self.assertEqual(Note.objects.count(), len(self.expected_notes) + 1)
+        # placeholder note for the blank-notes part with a linked image, plus
+        # one note for the malicious-notes part (see test_malicious_notes_sanitized)
+        self.assertEqual(Note.objects.count(), len(self.expected_notes) + 2)
 
         for model, pk in self.expected_notes:
             content_type = ContentType.objects.get(model=model)
@@ -532,6 +544,25 @@ class TestNoteMigrations(MigratorTestCase):
                 model_type=part_content_type, model_id=self.null_notes_part_pk
             ).exists()
         )
+
+    def test_malicious_notes_sanitized(self):
+        """Test that raw HTML in a legacy notes field is stripped during migration.
+
+        bulk_create() (used to migrate notes in bulk) never calls Note.save()/.clean(),
+        which is the only place the nh3 sanitizer normally runs - so this exercises the
+        migration's own sanitize_note_content() call instead.
+        """
+        Note = self.new_state.apps.get_model('common', 'Note')
+        ContentType = self.new_state.apps.get_model('contenttypes', 'ContentType')
+
+        part_content_type = ContentType.objects.get(model='part')
+        note = Note.objects.get(
+            model_type=part_content_type, model_id=self.malicious_notes_part_pk
+        )
+
+        self.assertNotIn('<script', note.content)
+        self.assertNotIn('onerror', note.content)
+        self.assertIn('Some notes', note.content)
 
     def test_images_migrated(self):
         """Test that NotesImage objects are correctly linked or removed."""
