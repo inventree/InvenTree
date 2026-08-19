@@ -847,7 +847,6 @@ class APISearchView(GenericAPIView):
                 is_viewset = issubclass(cls, viewsets.GenericViewSet) or issubclass(
                     cls, viewsets.ViewSetMixin
                 )
-
                 view = cls if is_viewset else cls()
 
                 # Override regular query params with specific ones for this search request

@@ -360,7 +360,6 @@ def schema_for_view_output_options(view_class):
 
     # DRF viewsets dispatch GET requests to the 'list' action, rather than a 'get' method
     operation = 'list' if issubclass(view_class, viewsets.ViewSetMixin) else 'get'
-
     extended_view = extend_schema_view(**{
         operation: extend_schema(parameters=parameters)
     })(view_class)

@@ -433,12 +433,7 @@ class DataExportViewMixin:
         output.mark_complete(output=ContentFile(datafile, filename))
 
     def list(self, request, *args, **kwargs):
-        """Override the list method to determine export options.
-
-        Overriding `list` (rather than `get`) ensures this also works for DRF
-        viewsets, which dispatch GET requests directly to `list` rather than
-        going through a `get` method.
-        """
+        """Override the list method to determine export options."""
         from common.serializers import DataOutputSerializer
 
         # If we are not exporting data, return the default response

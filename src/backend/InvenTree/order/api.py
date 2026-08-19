@@ -531,20 +531,7 @@ class PurchaseOrderViewSet(
         output_options=None,
     )
     def receive(self, request, pk=None):
-        """API endpoint to receive stock items against a PurchaseOrder.
-
-        - The purchase order is specified in the URL.
-        - Items to receive are specified as a list called "items" with the following options:
-            - line_item: pk of the PO Line item
-            - supplier_part: pk value of the supplier part
-            - quantity: quantity to receive
-            - status: stock item status
-            - expiry_date: stock item expiry date (optional)
-            - location: destination for stock item (optional)
-            - batch_code: the batch code for this stock item
-            - serial_numbers: serial numbers for this stock item
-        - A global location must also be specified. This is used when no locations are specified for items, and no location is given in the PO line item
-        """
+        """API endpoint to receive stock items against a PurchaseOrder."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         items = serializer.save()
