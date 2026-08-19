@@ -107,6 +107,7 @@ function PanelTabComponent({
   onClick: (event: any) => void;
 }) {
   const visibility = useDocumentVisibility();
+  const location = useLocation();
 
   const isDynamicDot = typeof panel.notification_dot === 'function';
 
@@ -184,7 +185,9 @@ function PanelTabComponent({
               textAlign: 'left'
             }}
             href={generateUrl(
-              `/${getBaseUrl()}${location.pathname}/${panel.name}`
+              `/${getBaseUrl()}${location.pathname}/${panel.name}${
+                location.search
+              }`
             )}
           >
             {expanded && panel.label}
@@ -310,10 +313,10 @@ function BasePanelGroup({
   const performPanelChange = useCallback(
     (targetPanel: string, event?: any) => {
       if (event && eventModified(event)) {
-        const url = `${location.pathname}/../${targetPanel}`;
+        const url = `${location.pathname}/../${targetPanel}${location.search}`;
         navigateToLink(url, navigate, event);
       } else {
-        navigate(`../${targetPanel}`);
+        navigate(`../${targetPanel}${location.search}`);
       }
 
       localState.setLastUsedPanel(pageKey)(targetPanel);
@@ -535,6 +538,7 @@ function IndexPanelComponent({
   defaultPanel,
   panels
 }: Readonly<PanelProps>) {
+  const location = useLocation();
   const lastUsedPanel = useLocalState(
     useShallow((state) => {
       const panelName =
@@ -554,7 +558,7 @@ function IndexPanelComponent({
     })
   );
 
-  return <Navigate to={lastUsedPanel} replace />;
+  return <Navigate to={`${lastUsedPanel}${location.search}`} replace />;
 }
 
 /**
