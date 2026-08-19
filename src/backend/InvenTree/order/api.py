@@ -458,8 +458,6 @@ class PurchaseOrderViewSet(
 
         return context
 
-    # TODO @matmair remove legacy return codes
-    @extend_schema(responses={201: serializers.PurchaseOrderHoldSerializer})
     @action(
         detail=True,
         methods=['post'],
@@ -471,10 +469,8 @@ class PurchaseOrderViewSet(
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data)
 
-    # TODO @matmair remove legacy return codes
-    @extend_schema(responses={201: serializers.PurchaseOrderCancelSerializer})
     @action(
         detail=True,
         methods=['post'],
@@ -489,10 +485,8 @@ class PurchaseOrderViewSet(
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data)
 
-    # TODO @matmair remove legacy return codes
-    @extend_schema(responses={201: serializers.PurchaseOrderCompleteSerializer})
     @action(
         detail=True,
         methods=['post'],
@@ -504,10 +498,8 @@ class PurchaseOrderViewSet(
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data)
 
-    # TODO @matmair remove legacy return codes
-    @extend_schema(responses={201: serializers.PurchaseOrderIssueSerializer})
     @action(
         detail=True,
         methods=['post'],
@@ -519,9 +511,8 @@ class PurchaseOrderViewSet(
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data)
 
-    @extend_schema(responses={201: stock_serializers.StockItemSerializer(many=True)})
     @action(
         detail=True,
         methods=['post'],
@@ -538,7 +529,7 @@ class PurchaseOrderViewSet(
         queryset = stock_serializers.StockItemSerializer.annotate_queryset(items)
 
         response = stock_serializers.StockItemSerializer(queryset, many=True)
-        return Response(response.data, status=status.HTTP_201_CREATED)
+        return Response(response.data)
 
 
 order_router.register('po', PurchaseOrderViewSet, basename='api-po')
