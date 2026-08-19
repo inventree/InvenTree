@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Alert,
   Box,
   Divider,
   Group,
@@ -15,6 +16,7 @@ import {
   UnstyledButton
 } from '@mantine/core';
 import {
+  IconExclamationCircle,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse
 } from '@tabler/icons-react';
@@ -336,7 +338,11 @@ function BasePanelGroup({
           children: (
             <>
               <Divider />
-              <Text>{t`You have unsaved changes. Are you sure you want to leave this panel?`}</Text>
+              <Alert
+                color='red'
+                icon={<IconExclamationCircle />}
+                p='sm'
+              >{t`You have unsaved changes. Are you sure you want to leave this panel?`}</Alert>
             </>
           ),
           labels: { confirm: t`Leave`, cancel: t`Stay` },
