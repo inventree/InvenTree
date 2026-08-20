@@ -66,9 +66,9 @@ class NonConformanceAdmin(admin.ModelAdmin):
 
     exclude = ['reference_int']
 
-    list_display = ('reference', 'title', 'part', 'status', 'disposition')
+    list_display = ('reference', 'description', 'part', 'status', 'disposition')
 
-    search_fields = ['reference', 'title', 'part__name', 'part__description']
+    search_fields = ['reference', 'description', 'part__name', 'part__description']
 
     autocomplete_fields = [
         'part',

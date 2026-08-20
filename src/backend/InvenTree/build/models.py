@@ -2521,7 +2521,6 @@ class NonConformance(
     Attributes:
         reference: NCR reference (required, must be unique)
         part: The part against which this NCR was raised (required)
-        title: Brief title describing the non-conformance (optional)
         description: Description of the non-conformance (required)
         status: Lifecycle status of the NCR (refer to status_codes.NonConformanceStatus)
         disposition: What is to be done with the affected material (refer to status_codes.NonConformanceDisposition)
@@ -2630,13 +2629,6 @@ class NonConformance(
         on_delete=models.CASCADE,
         related_name='ncrs',
         help_text=_('Part against which this non-conformance was raised'),
-    )
-
-    title = models.CharField(
-        verbose_name=_('Title'),
-        blank=True,
-        max_length=100,
-        help_text=_('Brief description of the non-conformance (optional)'),
     )
 
     description = models.TextField(

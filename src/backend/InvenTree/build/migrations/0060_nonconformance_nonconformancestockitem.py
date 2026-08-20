@@ -93,15 +93,6 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "title",
-                    models.CharField(
-                        blank=True,
-                        help_text="Brief description of the non-conformance (optional)",
-                        max_length=100,
-                        verbose_name="Title",
-                    ),
-                ),
-                (
                     "description",
                     models.TextField(
                         help_text="Description of the non-conformance",
