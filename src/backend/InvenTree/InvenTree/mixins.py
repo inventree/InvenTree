@@ -17,14 +17,9 @@ from InvenTree.schema import schema_for_view_output_options
 from InvenTree.serializers import FilterableSerializerMixin
 
 
-class CleanMixin:
-    """Model mixin class which cleans inputs using nh3."""
-
-    # Define a list of field names which will *not* be cleaned
-    SAFE_FIELDS = []
-
-    def create(self, request, *args, **kwargs):
-        """Override to clean data before processing it."""
+class CleanCreate:  # noqa: D101
+    def create(self, request, *args, **kwargs):  # noqa: D102
+        # Override to clean data before processing it
         serializer = self.get_serializer(data=self.clean_data(request.data))
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -33,8 +28,10 @@ class CleanMixin:
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
-    def update(self, request, *args, **kwargs):
-        """Override to clean data before processing it."""
+
+class CleanUpdate:  # noqa: D101
+    def update(self, request, *args, **kwargs):  # noqa: D102
+        # Override to clean data before processing it
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(
@@ -49,6 +46,13 @@ class CleanMixin:
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
+
+
+class CleanBase:
+    """Model mixin class which cleans inputs using nh3."""
+
+    # Define a list of field names which will *not* be cleaned
+    SAFE_FIELDS = []
 
     def clean_string(self, field: str, data: str) -> str:
         """Clean / sanitize a single input string."""
@@ -117,6 +121,14 @@ class CleanMixin:
             clean_data[k] = ret
 
         return clean_data
+
+
+class CleanMixin(CleanCreate, CleanUpdate, CleanBase):
+    """Model mixin class which cleans inputs using nh3."""
+
+
+class CleanUpdateOnlyMixin(CleanUpdate, CleanBase):
+    """Model mixin class which cleans inputs using nh3."""
 
 
 class ListAPI(generics.ListAPIView):
