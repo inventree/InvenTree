@@ -38,6 +38,8 @@ class PartPricingAdmin(admin.ModelAdmin):
 
     list_display = ('part', 'overall_min', 'overall_max')
 
+    search_fields = ['part__name', 'part__IPN', 'part__description']
+
     autocomplete_fields = ['part']
 
 
@@ -46,6 +48,8 @@ class PartStocktakeAdmin(admin.ModelAdmin):
     """Admin class for PartStocktake model."""
 
     list_display = ['part', 'date', 'quantity']
+
+    search_fields = ['part__name', 'part__IPN']
 
 
 @admin.register(models.PartCategory)
@@ -63,6 +67,8 @@ class PartCategoryAdmin(admin.ModelAdmin):
 class PartRelatedAdmin(admin.ModelAdmin):
     """Class to manage PartRelated objects."""
 
+    search_fields = ['part_1__name', 'part_2__name']
+
     autocomplete_fields = ('part_1', 'part_2')
 
 
@@ -72,6 +78,8 @@ class PartTestTemplateAdmin(admin.ModelAdmin):
 
     list_display = ('part', 'test_name', 'required')
     readonly_fields = ['key']
+
+    search_fields = ['part__name', 'test_name', 'description']
 
     autocomplete_fields = ('part',)
 
