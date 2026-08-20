@@ -296,4 +296,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'USE_TABLE_NAVIGATION': {
+        'name': _('Enable Filtered Detail Navigation'),
+        'description': _(
+            'Enable persisting of filtered detail navigation parameters to the view url'
+        ),
+        'default': True,
+        'validator': bool,
+    },
 }
