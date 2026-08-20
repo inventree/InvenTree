@@ -277,7 +277,7 @@ class OrderFilter(FilterSet):
 
         return queryset.filter(q1 | q2 | q3 | q4).distinct()
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class LineItemFilter(FilterSet):
@@ -1474,7 +1474,7 @@ class SalesOrderShipmentFilter(FilterSet):
 
         return queryset.filter(q1 | q2).distinct()
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class SalesOrderShipmentMixin:
