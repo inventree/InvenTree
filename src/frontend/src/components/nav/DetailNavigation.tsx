@@ -1,7 +1,13 @@
-import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
-import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { ActionIcon, Group, Space, Text, Tooltip } from '@mantine/core';
+import {
+  IconCancel,
+  IconChevronLeft,
+  IconChevronRight
+} from '@tabler/icons-react';
 
 import { t } from '@lingui/core/macro';
+import { useNavigate } from 'react-router-dom';
+import { removeDetailNavigationParams } from '../../functions/DetailNavigation';
 import type { DetailNavigationState } from '../../hooks/UseDetailNavigation';
 
 export function DetailNavigation({
@@ -13,10 +19,21 @@ export function DetailNavigation({
       navigation.position ||
       navigation.isLoading
   );
+  const navigate = useNavigate();
+
+  function handleClear() {
+    const url = new URL(window.location.href);
+    removeDetailNavigationParams(url.searchParams);
+    navigate(url);
+  }
 
   if (!hasNavigation) {
     return null;
   }
+
+  const lbl_next = t`Next item`;
+  const lbl_prev = t`Previous item`;
+  const lbl_clear = t`Remove navigation filters from current view`;
 
   return (
     <Group
@@ -37,7 +54,18 @@ export function DetailNavigation({
           {t`${navigation.position.current} of ${navigation.position.total}`}
         </Text>
       )}
-      <Tooltip label={t`Previous`} position='top'>
+      <Tooltip label={lbl_clear} position='top'>
+        <ActionIcon
+          onClick={handleClear}
+          size='md'
+          variant='subtle'
+          aria-label={lbl_clear}
+        >
+          <IconCancel size='1.25rem' />
+        </ActionIcon>
+      </Tooltip>
+      <Space />
+      <Tooltip label={lbl_prev} position='top'>
         <ActionIcon
           component='a'
           href={navigation.previous?.href}
@@ -45,12 +73,12 @@ export function DetailNavigation({
           disabled={!navigation.previous}
           size='md'
           variant='subtle'
-          aria-label={t`Previous`}
+          aria-label={lbl_prev}
         >
           <IconChevronLeft size='1.25rem' />
         </ActionIcon>
       </Tooltip>
-      <Tooltip label={t`Next`} position='top'>
+      <Tooltip label={lbl_next} position='top'>
         <ActionIcon
           component='a'
           href={navigation.next?.href}
@@ -58,7 +86,7 @@ export function DetailNavigation({
           disabled={!navigation.next}
           size='md'
           variant='subtle'
-          aria-label={t`Next`}
+          aria-label={lbl_next}
         >
           <IconChevronRight size='1.25rem' />
         </ActionIcon>

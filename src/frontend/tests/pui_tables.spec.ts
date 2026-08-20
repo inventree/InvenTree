@@ -243,13 +243,13 @@ test('Tables - Detail navigation', async ({ browser }) => {
   const detailNavigation = breadcrumbBar.getByTestId('detail-navigation');
   await expect(detailNavigation).toBeVisible();
 
-  const previous = page.getByLabel('Previous', { exact: true });
+  const previous = page.getByLabel('Previous item', { exact: true });
   await expect(previous).toBeVisible();
   await expect(previous.locator('svg')).toBeVisible();
   await expect(previous).toHaveAttribute('data-disabled', 'true');
   await expect(previous).not.toHaveAttribute('href');
 
-  const next = page.getByLabel('Next', { exact: true });
+  const next = page.getByLabel('Next item', { exact: true });
   await expect(next).toBeVisible();
   await expect(next.locator('svg')).toBeVisible();
   await expect(next).not.toHaveAttribute('data-disabled');
