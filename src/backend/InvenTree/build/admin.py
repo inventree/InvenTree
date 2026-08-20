@@ -40,6 +40,13 @@ class BuildItemAdmin(admin.ModelAdmin):
 
     list_display = ('stock_item', 'quantity')
 
+    search_fields = [
+        'build_line__build__reference',
+        'build_line__build__title',
+        'stock_item__part__name',
+        'stock_item__serial',
+    ]
+
     autocomplete_fields = ['build_line', 'stock_item', 'install_into']
 
 

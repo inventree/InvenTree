@@ -498,7 +498,7 @@ test('Stock - Return Items', async ({ browser }) => {
   await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('0');
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  await page.getByText('Errors exist for one or more form fields').waitFor();
+  await page.getByRole('alert', { name: 'Form Error' }).waitFor();
   await page.getByText('Quantity must be greater than zero').first().waitFor();
   await page.getByText('This field is required.').first().waitFor();
 });

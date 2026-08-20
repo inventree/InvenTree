@@ -5,13 +5,15 @@ import { t } from '@lingui/core/macro';
 import { Group, Paper, Space, Stack, Text } from '@mantine/core';
 import { Fragment, type ReactNode, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useDetailNavigation } from '../../hooks/UseDetailNavigation';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import PrimaryActionButton from '../buttons/PrimaryActionButton';
 import { ApiImage } from '../images/ApiImage';
 import { ApiIcon } from '../items/ApiIcon';
 import type { PrimaryActionUIFeature } from '../plugins/PluginUIFeatureTypes';
-import { type Breadcrumb, BreadcrumbList } from './BreadcrumbList';
+import type { Breadcrumb } from './BreadcrumbList';
+import { PageDetailNavigationBar } from './PageDetailNavigationBar';
 import PageTitle from './PageTitle';
 
 interface PageDetailInterface {
@@ -52,6 +54,7 @@ export function PageDetail({
   const userSettings = useUserSettingsState();
   const navigate = useNavigate();
   const location = useLocation();
+  const detailNavigation = useDetailNavigation();
 
   useInvenTreeHotkeys([
     [
@@ -133,12 +136,11 @@ export function PageDetail({
     <>
       <PageTitle title={pageTitleString} />
       <Stack gap='xs'>
-        {computedBreadcrumbs && computedBreadcrumbs.length > 0 && (
-          <BreadcrumbList
-            navCallback={breadcrumbAction}
-            breadcrumbs={computedBreadcrumbs}
-          />
-        )}
+        <PageDetailNavigationBar
+          breadcrumbAction={breadcrumbAction}
+          breadcrumbs={computedBreadcrumbs ?? []}
+          detailNavigation={detailNavigation}
+        />
         <Paper p='xs' radius='xs' shadow='xs'>
           <Group
             justify='space-between'
@@ -183,8 +185,8 @@ export function PageDetail({
                 </Group>
               )}
             </Group>
-            {computedActions && (
-              <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
+            {computedActions.length > 0 && (
+              <Group gap={5} justify='right' wrap='nowrap' align='center'>
                 {computedActions.map((action, idx) => (
                   <Fragment key={idx}>{action}</Fragment>
                 ))}

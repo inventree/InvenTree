@@ -105,6 +105,7 @@ function PanelTabComponent({
   onClick: (event: any) => void;
 }) {
   const visibility = useDocumentVisibility();
+  const location = useLocation();
 
   // Check if we should display an indicator dot for this panel
   const notificationDot = useQuery({
@@ -174,7 +175,9 @@ function PanelTabComponent({
               textAlign: 'left'
             }}
             href={generateUrl(
-              `/${getBaseUrl()}${location.pathname}/${panel.name}`
+              `/${getBaseUrl()}${location.pathname}/${panel.name}${
+                location.search
+              }`
             )}
           >
             {expanded && panel.label}
@@ -306,10 +309,10 @@ function BasePanelGroup({
       }
 
       if (event && eventModified(event)) {
-        const url = `${location.pathname}/../${targetPanel}`;
+        const url = `${location.pathname}/../${targetPanel}${location.search}`;
         navigateToLink(url, navigate, event);
       } else {
-        navigate(`../${targetPanel}`);
+        navigate(`../${targetPanel}${location.search}`);
       }
 
       localState.setLastUsedPanel(pageKey)(targetPanel);
@@ -510,6 +513,7 @@ function IndexPanelComponent({
   defaultPanel,
   panels
 }: Readonly<PanelProps>) {
+  const location = useLocation();
   const lastUsedPanel = useLocalState(
     useShallow((state) => {
       const panelName =
@@ -529,7 +533,7 @@ function IndexPanelComponent({
     })
   );
 
-  return <Navigate to={lastUsedPanel} replace />;
+  return <Navigate to={`${lastUsedPanel}${location.search}`} replace />;
 }
 
 /**
