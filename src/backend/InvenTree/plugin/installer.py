@@ -236,8 +236,8 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
         user: Optional user performing the installation
         version: Optional version specifier
     """
-    if user and not user.is_staff:
-        raise ValidationError(_('Only staff users can administer plugins'))
+    if user and not user.is_superuser:
+        raise ValidationError(_('Only superuser accounts can administer plugins'))
 
     if settings.PLUGINS_INSTALL_DISABLED:
         raise ValidationError(_('Plugin installation is disabled'))
@@ -268,6 +268,13 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
 
         if version:
             full_pkg = f'{full_pkg}=={version}'
+
+    if not full_pkg:
+        raise ValidationError(_('No package name or URL provided for installation'))
+
+    # Sanitize the package name for installation
+    if any(c in full_pkg for c in ';&|`$()'):
+        raise ValidationError(_('Invalid characters in package name or URL'))
 
     install_name.append(full_pkg)
 
@@ -332,6 +339,9 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
         delete_config: If True, delete the plugin configuration from the database
     """
     from plugin.registry import registry
+
+    if user and not user.is_superuser:
+        raise ValidationError(_('Only superuser accounts can administer plugins'))
 
     if settings.PLUGINS_INSTALL_DISABLED:
         raise ValidationError(_('Plugin uninstalling is disabled'))

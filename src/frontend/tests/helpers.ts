@@ -54,7 +54,11 @@ export const clearTableFilters = async (page: Page) => {
   await page.waitForLoadState('networkidle');
 };
 
-export const setTableChoiceFilter = async (page: Page, filter, value) => {
+export const setTableChoiceFilter = async (
+  page: Page,
+  filter: string,
+  value: string
+) => {
   await openFilterDrawer(page);
 
   await page.getByRole('button', { name: 'Add Filter' }).click();
@@ -116,7 +120,7 @@ export const navigate = async (
 /**
  * CLick on the 'tab' element with the provided name
  */
-export const loadTab = async (page: Page, tabName, exact?) => {
+export const loadTab = async (page: Page, tabName: string, exact?: boolean) => {
   await page
     .getByLabel(/panel-tabs-/)
     .getByRole('tab', { name: tabName, exact: exact ?? false })
@@ -140,7 +144,7 @@ export const activateCalendarView = async (page: Page) => {
 /**
  * Perform a 'global search' on the provided page, for the provided query text
  */
-export const globalSearch = async (page: Page, query) => {
+export const globalSearch = async (page: Page, query: string) => {
   await page.getByLabel('open-search').click();
   await page.getByLabel('global-search-input').clear();
   await page.getByPlaceholder('Enter search text').fill(query);
@@ -148,7 +152,7 @@ export const globalSearch = async (page: Page, query) => {
 };
 
 export const deletePart = async (name: string) => {
-  const api = await createApi();
+  const api = await createApi({});
   const parts = await api
     .get('part/', {
       params: { search: name }
@@ -162,4 +166,47 @@ export const deletePart = async (name: string) => {
     const res = await api.delete(`part/${existingPart.pk}/`);
     expect(res.status()).toBe(204);
   }
+};
+
+// Click on the column sorting toggle
+export const toggleColumnSorting = async (page: Page, columnName: string) => {
+  // Click on the column header to toggle sorting
+  const regex = new RegExp(
+    `^${columnName}\\s*(Not sorted|Sorted ascending|Sorted descending)$`,
+    'i'
+  );
+
+  await page.getByRole('button', { name: regex }).click();
+  await page.waitForTimeout(50);
+  await page.waitForLoadState('networkidle');
+};
+
+// Display the 'table' view
+export const showTableView = async (page: Page) => {
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Display the 'parameteric' view
+export const showParametricView = async (page: Page) => {
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-parametric' })
+    .click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Display the 'calendar' view
+export const showCalendarView = async (page: Page) => {
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-calendar' })
+    .click();
+  await page.waitForLoadState('networkidle');
+};
+
+// Check for an expected number of columns in the visible table
+export const expectTableColumnCount = async (page: Page, count: number) => {
+  const columns = page.locator('table thead tr th');
+  await expect(columns).toHaveCount(count);
 };

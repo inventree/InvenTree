@@ -194,7 +194,7 @@ class InvenTreeCustomStatusSerializerMixin:
         """Ensure the custom field is updated if the leader was changed."""
         self.gather_custom_fields()
         # Mirror values from leader to follower
-        for field in self._custom_fields_leader:
+        for field in self._custom_fields_leader or []:
             follower_field_name = f'{field}_custom_key'
             if (
                 field in self.initial_data
@@ -205,7 +205,7 @@ class InvenTreeCustomStatusSerializerMixin:
                 setattr(self.instance, follower_field_name, self.initial_data[field])
 
         # Mirror values from follower to leader
-        for field in self._custom_fields_follower:
+        for field in self._custom_fields_follower or []:
             leader_field_name = field.replace('_custom_key', '')
             if field in validated_data and leader_field_name not in self.initial_data:
                 try:
@@ -276,7 +276,7 @@ class InvenTreeCustomStatusSerializerMixin:
 
             # Inherit choices from leader
             self.gather_custom_fields()
-            if field_name in self._custom_fields:
+            if self._custom_fields and field_name in self._custom_fields:
                 leader_field_name = field_name.replace('_custom_key', '')
                 leader_field = self.fields[leader_field_name]
                 if hasattr(leader_field, 'choices'):

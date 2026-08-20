@@ -43,6 +43,7 @@ export function PartVariantTable({ part }: Readonly<{ part: any }>) {
           ancestor: part.pk
         }
       }}
+      tableName='part-variants'
       basePartInstance={part}
       defaultPartData={{
         ...part,

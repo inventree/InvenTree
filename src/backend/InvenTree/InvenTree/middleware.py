@@ -19,6 +19,11 @@ from error_report.middleware import ExceptionProcessor
 from common.settings import get_global_setting
 from InvenTree.cache import create_session_cache, delete_session_cache
 from InvenTree.config import CONFIG_LOOKUPS, inventreeInstaller
+from InvenTree.version import (
+    inventreeApiVersion,
+    inventreePythonVersion,
+    inventreeVersion,
+)
 from users.models import ApiToken
 
 logger = structlog.get_logger('inventree')
@@ -42,7 +47,7 @@ def get_token_from_request(request):
 
 
 def ensure_slashes(path: str):
-    """Ensure that slashes are suroudning the passed path."""
+    """Ensure that slashes are surrounding the passed path."""
     if not path.startswith('/'):
         path = f'/{path}'
     if not path.endswith('/'):
@@ -59,6 +64,7 @@ urls = [
 
 paths_ignore_handling = [
     '/api/',
+    '/plugin/',
     reverse('auth-check'),
     settings.MEDIA_URL,
     settings.STATIC_URL,
@@ -68,7 +74,7 @@ paths_ignore_handling = [
 paths_own_security = [
     '/api/',  # DRF handles API
     '/o/',  # oAuth2 library - has its own auth model
-    '/anymail/',  # Mails - wehbhooks etc
+    '/anymail/',  # Mails - webhooks etc
     '/accounts/',  # allauth account management - has its own auth model
     '/assets/',  # Web assets - only used for testing, no security model needed
     ensure_slashes(
@@ -322,7 +328,7 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
 
         # treat the accessed scheme and host
         accessed_scheme = request._current_scheme_host
-        referer = urlsplit(accessed_scheme)
+        referrer = urlsplit(accessed_scheme)
 
         site_url = urlsplit(settings.SITE_URL)
 
@@ -330,8 +336,8 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
         site_url_match = (
             (
                 # Exact match on domain
-                is_same_domain(referer.netloc, site_url.netloc)
-                and referer.scheme == site_url.scheme
+                is_same_domain(referrer.netloc, site_url.netloc)
+                and referrer.scheme == site_url.scheme
             )
             or (
                 # Lax protocol match, accessed URL starts with SITE_URL
@@ -341,7 +347,7 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
             or (
                 # Lax protocol match, same domain
                 settings.SITE_LAX_PROTOCOL_CHECK
-                and referer.hostname == site_url.hostname
+                and referrer.hostname == site_url.hostname
             )
         )
 
@@ -367,7 +373,7 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
         trusted_origins_match = (
             # Matching domain found in allowed origins
             any(
-                is_same_domain(referer.netloc, host)
+                is_same_domain(referrer.netloc, host)
                 for host in [
                     urlsplit(origin).netloc.lstrip('*')
                     for origin in settings.CSRF_TRUSTED_ORIGINS
@@ -377,7 +383,7 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
             # Lax protocol match allowed
             settings.SITE_LAX_PROTOCOL_CHECK
             and any(
-                referer.hostname == urlsplit(origin).hostname
+                referrer.hostname == urlsplit(origin).hostname
                 for origin in settings.CSRF_TRUSTED_ORIGINS
             )
         )
@@ -392,3 +398,15 @@ class InvenTreeHostSettingsMiddleware(MiddlewareMixin):
 
         # All checks passed
         return None
+
+
+class InvenTreeVersionHeaderMiddleware(MiddlewareMixin):
+    """Middleware to add the InvenTree version header to all responses."""
+
+    def process_response(self, request, response):
+        """Add the InvenTree version header to the response."""
+        response['X-InvenTree-Version'] = inventreeVersion()
+        response['X-InvenTree-API'] = inventreeApiVersion()
+        response['X-InvenTree-Python'] = inventreePythonVersion()
+        response['X-InvenTree-Installer'] = inventreeInstaller()
+        return response

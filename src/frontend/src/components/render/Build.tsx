@@ -36,13 +36,9 @@ export function RenderBuildLine({
 }: Readonly<InstanceRenderInterface>): ReactNode {
   return (
     <RenderInlineModel
-      primary={instance.part_detail.full_name}
-      secondary={instance.quantity}
-      suffix={StatusRenderer({
-        status: instance.status_custom_key,
-        type: ModelType.build
-      })}
-      image={instance.part_detail.thumbnail || instance.part_detail.image}
+      primary={instance.build_reference ?? instance.build}
+      suffix={instance.pk}
+      image={instance.part_detail?.thumbnail || instance.part_detail?.image}
     />
   );
 }

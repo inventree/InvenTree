@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='build',
             name='parent',
-            field=mptt.fields.TreeForeignKey(blank=True, help_text='BuildOrder to which this build is allocated', null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='children', to='build.Build', verbose_name='Parent Build'),
+            field=mptt.fields.TreeForeignKey(blank=True, help_text='Build Order to which this build is allocated', null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='children', to='build.Build', verbose_name='Parent Build'),
         ),
         migrations.AlterField(
             model_name='build',

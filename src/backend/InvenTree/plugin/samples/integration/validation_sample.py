@@ -68,7 +68,7 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
 
         if isinstance(instance, part.models.BomItem):
             if self.get_setting('BOM_ITEM_INTEGER'):
-                if float(instance.quantity) != int(instance.quantity):
+                if float(instance.quantity) != int(instance.quantity):  # noqa: RUF069
                     self.raise_error({
                         'quantity': 'Bom item quantity must be an integer'
                     })

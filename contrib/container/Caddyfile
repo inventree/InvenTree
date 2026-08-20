@@ -2,6 +2,7 @@
 # The following environment variables may be used:
 # - INVENTREE_SITE_URL: The upstream URL of the InvenTree site (default: inventree.localhost)
 # - INVENTREE_SERVER: The internal URL of the InvenTree container (default: http://inventree-server:8000)
+# - INVENTREE_WEB_PORT: The port on which the InvenTree web server listens (default: 8000)
 #
 # Note that while this file is a good starting point, it may need to be modified to suit your specific requirements
 #
@@ -20,7 +21,7 @@
 	header Allow GET,HEAD,OPTIONS
 	header Access-Control-Allow-Origin *
 	header Access-Control-Allow-Methods GET,HEAD,OPTIONS
-	header Access-Control-Allow-Headers Authorization,Content-Type,User-Agent
+	header Access-Control-Allow-Headers Authorization,Content-Type,User-Agent,traceparent
 
 	@cors_preflight{args[0]} method OPTIONS
 

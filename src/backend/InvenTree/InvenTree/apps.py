@@ -65,10 +65,12 @@ class InvenTreeConfig(AppConfig):
             self.start_background_tasks()
 
             if not InvenTree.ready.isInTestMode():  # pragma: no cover
-                # Update exchange rates
-                InvenTree.tasks.offload_task(InvenTree.tasks.update_exchange_rates)
                 # Let the background worker check for migrations
                 InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
+                # Update exchange rates
+                InvenTree.tasks.offload_task(
+                    InvenTree.tasks.update_exchange_rates, force_async=True
+                )
 
         self.update_site_url()
         self.load_unit_registry()
@@ -329,6 +331,11 @@ class InvenTreeConfig(AppConfig):
         """Ensures there are no open migrations, stop if inconsistent state."""
         global MIGRATIONS_CHECK_DONE
         if MIGRATIONS_CHECK_DONE:
+            return
+
+        # Exit early if we are not in a state where we can access the database,
+        # otherwise we might end up in a deadlock situation
+        if not InvenTree.ready.canAppAccessDatabase():
             return
 
         if not InvenTree.tasks.check_for_migrations():

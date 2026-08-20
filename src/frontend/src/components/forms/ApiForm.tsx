@@ -12,7 +12,7 @@ import {
 import { useId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   type FieldValues,
   FormProvider,
@@ -24,7 +24,11 @@ import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
 import { isTrue } from '@lib/functions/Conversion';
 import { getDetailUrl } from '@lib/functions/Navigation';
-import type { ApiFormFieldSet, ApiFormProps } from '@lib/types/Forms';
+import type {
+  ApiFormFieldSet,
+  ApiFormFieldType,
+  ApiFormProps
+} from '@lib/types/Forms';
 import { useApi } from '../../contexts/ApiContext';
 import {
   type NestedDict,
@@ -38,6 +42,7 @@ import {
   showTimeoutNotification
 } from '../../functions/notifications';
 import { Boundary } from '../Boundary';
+import { KeepFormOpenSwitch } from './KeepFormOpenSwitch';
 import { ApiFormField } from './fields/ApiFormField';
 
 export function OptionsApiForm({
@@ -165,6 +170,12 @@ export function ApiForm({
 }>) {
   const api = useApi();
   const queryClient = useQueryClient();
+  const keepOpenRef = useRef(false);
+
+  const onKeepOpenChange = (v: boolean) => {
+    keepOpenRef.current = v;
+    props.onKeepOpenChange?.(v);
+  };
 
   // Accessor for the navigation function (which is used to redirect the user)
   let navigate: NavigateFunction | null = null;
@@ -375,16 +386,29 @@ export function ApiForm({
 
     Object.keys(data).forEach((key: string) => {
       let value: any = data[key];
-      const field_type = fields[key]?.field_type;
-      const exclude = fields[key]?.exclude;
+      const field: ApiFormFieldType = fields[key] ?? {};
+      const field_type = field?.field_type;
+      const exclude = field?.exclude;
 
       if (field_type == 'file upload' && !!value) {
         hasFiles = true;
       }
 
-      // Ensure any boolean values are actually boolean
-      if (field_type === 'boolean') {
-        value = isTrue(value) || false;
+      // Special consideration for various field types
+      switch (field_type) {
+        case 'boolean':
+          // Ensure boolean values are actually boolean
+          value = isTrue(value) || false;
+          break;
+        case 'string':
+          // Replace null string values with an empty string
+          if (value === null && field?.allow_null == false) {
+            value = '';
+            jsonData[key] = value;
+          }
+          break;
+        default:
+          break;
       }
 
       // Stringify any JSON objects
@@ -393,7 +417,9 @@ export function ApiForm({
           case 'file upload':
             break;
           default:
-            value = JSON.stringify(value);
+            if (value !== null && value !== undefined) {
+              value = JSON.stringify(value);
+            }
             break;
         }
       }
@@ -440,9 +466,14 @@ export function ApiForm({
               props.onFormSuccess(response.data, form);
             }
 
-            if (props.follow && props.modelType && response.data?.pk) {
+            if (
+              props.follow &&
+              props.modelType &&
+              response.data?.pk &&
+              !keepOpenRef.current
+            ) {
               // If we want to automatically follow the returned data
-              if (!!navigate) {
+              if (!!navigate && !keepOpenRef.current) {
                 navigate(getDetailUrl(props.modelType, response.data?.pk));
               }
             } else if (props.table) {
@@ -569,7 +600,6 @@ export function ApiForm({
       </Paper>
     );
   }
-
   return (
     <Stack>
       <Boundary label={`ApiForm-${id}`}>
@@ -654,7 +684,12 @@ export function ApiForm({
 
         {/* Footer with Action Buttons */}
         <Divider />
-        <div>
+        <Group justify='space-between'>
+          <Group justify='left'>
+            {props.keepOpenOption && (
+              <KeepFormOpenSwitch onChange={onKeepOpenChange} />
+            )}
+          </Group>
           <Group justify='right'>
             {props.actions?.map((action, i) => (
               <Button
@@ -677,7 +712,7 @@ export function ApiForm({
               {props.submitText ?? t`Submit`}
             </Button>
           </Group>
-        </div>
+        </Group>
       </Boundary>
     </Stack>
   );

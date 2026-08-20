@@ -1,11 +1,11 @@
 import { systemKey, test } from './baseFixtures.js';
+import { adminuser } from './defaults.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState } from './settings.js';
 
 test('Modals - Admin', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+    user: adminuser
   });
 
   // use server info
@@ -104,9 +104,10 @@ test('Spotlight - No Keys', async ({ browser }) => {
   await page.waitForTimeout(250);
 
   // assert the nav headers are visible
-  await page.getByText('Navigation').waitFor();
-  await page.getByText('Documentation').waitFor();
+  await page.getByText('Navigation').first().waitFor();
+  await page.getByText('Documentation').first().waitFor();
   await page.getByText('About').first().waitFor();
+
   await page
     .getByRole('button', { name: 'Notifications', exact: true })
     .waitFor();

@@ -26,12 +26,15 @@ class SettingsKeyType(TypedDict, total=False):
         validator: Validation function/list of functions for the setting (optional, default: None, e.g: bool, int, str, MinValueValidator, ...)
         default: Default value or function that returns default value (optional)
         choices: Function that returns or value of list[tuple[str: key, str: display value]] (optional)
+        model_filters: Filters to apply when querying the associated model (optional)
         hidden: Hide this setting from settings page (optional)
         before_save: Function that gets called after save with *args, **kwargs (optional)
         after_save: Function that gets called after save with *args, **kwargs (optional)
         protected: Protected values are not returned to the client, instead "***" is returned (optional, default: False)
         required: Is this setting required to work, can be used in combination with .check_all_settings(...) (optional, default: False)
         model: Auto create a dropdown menu to select an associated model instance (e.g. 'company.company', 'auth.user' and 'auth.group' are possible too, optional)
+        confirm: Require an explicit confirmation before changing the setting (optional, default: False)
+        confirm_text: Text to display in the confirmation dialog (optional)
     """
 
     name: str
@@ -40,12 +43,15 @@ class SettingsKeyType(TypedDict, total=False):
     validator: Callable | list[Callable] | tuple[Callable]
     default: Callable | Any
     choices: list[tuple[str, str]] | Callable[[], list[tuple[str, str]]]
+    model_filters: dict[str, Any]
     hidden: bool
     before_save: Callable[..., None]
     after_save: Callable[..., None]
     protected: bool
     required: bool
     model: str
+    confirm: bool
+    confirm_text: str
 
 
 class InvenTreeSettingsKeyType(SettingsKeyType):

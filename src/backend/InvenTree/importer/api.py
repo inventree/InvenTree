@@ -73,6 +73,22 @@ class DataImportSessionMixin:
     serializer_class = importer.serializers.DataImportSessionSerializer
     permission_classes = [InvenTree.permissions.DataImporterPermission]
 
+    def get_queryset(self):
+        """Return the set of DataImportSession objects that the user has permission to view."""
+        queryset = super().get_queryset()
+
+        try:
+            user = self.request.user
+        except AttributeError:
+            raise PermissionDenied('User information is not available')
+
+        # Allow staff users access to all DataImportSession objects
+        if user.is_staff:
+            return queryset
+
+        # For non-staff users, only allow access to sessions that they have created
+        return queryset.filter(user=user)
+
 
 class DataImportSessionList(BulkDeleteMixin, DataImportSessionMixin, ListCreateAPI):
     """API endpoint for accessing a list of DataImportSession objects."""

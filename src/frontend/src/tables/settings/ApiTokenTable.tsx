@@ -26,7 +26,8 @@ export function ApiTokenTable({
   const [opened, { open, close }] = useDisclosure(false);
 
   const generateToken = useCreateApiFormModal({
-    url: ApiEndpoints.user_tokens,
+    url: ApiEndpoints.user_token,
+    method: 'GET',
     title: t`Generate Token`,
     fields: { name: {} },
     successMessage: t`Token generated`,
@@ -48,7 +49,7 @@ export function ApiTokenTable({
     return [];
   }, [only_myself]);
 
-  const table = useTable('api-tokens', 'id');
+  const table = useTable('api-tokens', { idAccessor: 'id' });
 
   const tableColumns = useMemo(() => {
     const cols = [
@@ -178,6 +179,7 @@ export function ApiTokenTable({
             onClose={close}
             title={<StylishText size='xl'>{t`Token`}</StylishText>}
             centered
+            data-testid='generated-api-token'
           >
             <Text c='dimmed'>
               <Trans>

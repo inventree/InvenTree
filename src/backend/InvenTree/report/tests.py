@@ -571,7 +571,9 @@ class TestReportTest(PrintTestMixins, ReportTest):
 
     def test_mdl_salesorder(self):
         """Test the SalesOrder model."""
-        self.run_print_test(SalesOrder, 'salesorder', label=False)
+        for enabled in [True, False]:
+            set_global_setting('REPORT_DEBUG_MODE', enabled)
+            self.run_print_test(SalesOrder, 'salesorder', label=False)
 
 
 class AdminTest(AdminTestCase):

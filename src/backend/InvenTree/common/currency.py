@@ -19,6 +19,11 @@ logger = structlog.get_logger('inventree')
 def currency_code_default(create: bool = True):
     """Returns the default currency code (or USD if not specified)."""
     from common.settings import get_global_setting
+    from InvenTree.ready import isRunningBackup, isRunningMigrations
+
+    if isRunningMigrations() or isRunningBackup():
+        # Prevent database writes during migration or backup operations
+        create = False
 
     code = ''
 
@@ -225,6 +230,6 @@ def get_price(
     quantity = decimal.Decimal(f'{quantity}')
 
     if pb_found:
-        cost = pb_cost * quantity
+        cost = decimal.Decimal(pb_cost) * quantity
         return InvenTree.helpers.normalize(cost + instance.base_cost)
     return None

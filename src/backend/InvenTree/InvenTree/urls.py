@@ -20,6 +20,7 @@ import build.api
 import common.api
 import company.api
 import importer.api
+import InvenTree.logging  # noqa: F401 - ensure logging handlers are registered
 import machine.api
 import order.api
 import part.api
@@ -187,6 +188,9 @@ urlpatterns.append(
 # Compatibility layer for old (CUI) URLs
 if settings.FRONTEND_SETTINGS.get('url_compatibility'):
     urlpatterns += cui_compatibility_urls(settings.FRONTEND_URL_BASE)
+
+if settings.DJANGO_SILK_ENABLED:
+    urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
 
 # Send any unknown URLs to the index page
 urlpatterns += [

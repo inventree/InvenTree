@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { Tooltip } from '@mantine/core';
-import { IconCopyCheck, IconX } from '@tabler/icons-react';
+import { IconCopyCheck, IconExclamationMark, IconX } from '@tabler/icons-react';
 
 /**
  * Custom "RightSection" component for form fields,
@@ -54,4 +54,22 @@ export default function AutoFillRightSection({
       </Tooltip>
     );
   }
+}
+
+export function AutoFillWarning({
+  fieldName,
+  message
+}: {
+  fieldName: string;
+  message: string;
+}) {
+  return (
+    <Tooltip label={message} position='top-end'>
+      <IconExclamationMark
+        aria-label={`field-${fieldName}-palceholder-warning`}
+        size='1rem'
+        color='orange'
+      />
+    </Tooltip>
+  );
 }

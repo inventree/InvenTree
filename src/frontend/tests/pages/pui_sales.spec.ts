@@ -5,7 +5,11 @@ import {
   clickOnRowMenu,
   globalSearch,
   loadTab,
-  setTableChoiceFilter
+  navigate,
+  setTableChoiceFilter,
+  showCalendarView,
+  showParametricView,
+  showTableView
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
 
@@ -18,15 +22,9 @@ test('Sales Orders - Tabs', async ({ browser }) => {
   await loadTab(page, 'Sales Orders');
   await page.waitForURL('**/web/sales/index/salesorders');
 
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-calendar' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+  await showParametricView(page);
+  await showCalendarView(page);
+  await showTableView(page);
 
   // Pending Shipments panel
   await loadTab(page, 'Pending Shipments');
@@ -37,25 +35,15 @@ test('Sales Orders - Tabs', async ({ browser }) => {
   await loadTab(page, 'Return Orders');
   await page.getByRole('cell', { name: 'NOISE-COMPLAINT' }).waitFor();
 
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-calendar' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+  await showParametricView(page);
+  await showCalendarView(page);
+  await showTableView(page);
 
   // Customers
   await loadTab(page, 'Customers');
 
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+  await showParametricView(page);
+  await showTableView(page);
 
   await page.getByText('Customer A').click();
   await loadTab(page, 'Notes');
@@ -205,6 +193,7 @@ test('Sales Orders - Shipments', async ({ browser }) => {
   await page.getByRole('cell', { name: tracking_number }).click();
 
   // Click through the various tabs
+  await loadTab(page, 'Parameters');
   await loadTab(page, 'Attachments');
   await loadTab(page, 'Notes');
   await loadTab(page, 'Allocated Stock');
@@ -249,6 +238,77 @@ test('Sales Orders - Shipments', async ({ browser }) => {
     .getByText(/SO0025/)
     .first()
     .click();
+});
+
+// Complete a shipment against a sales order
+test('Sales Orders - Complete Shipment', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/113/stock'
+  });
+
+  const serialNumber = `SN${Math.floor(Math.random() * 100000)}`;
+  const shipmentReference = `SHIP-${Math.floor(Math.random() * 100000)}`;
+
+  // First create some stock to allocate
+  await page
+    .getByRole('button', { name: 'action-button-add-stock-item' })
+    .click();
+  await page
+    .getByRole('textbox', { name: 'text-field-serial_numbers' })
+    .fill(serialNumber);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Stock item created').first().waitFor();
+
+  // Navigate to the sales order and create a new shipment
+  await navigate(page, '/sales/sales-order/7/shipments');
+  await page
+    .getByRole('button', { name: 'action-button-add-shipment' })
+    .click();
+  await page
+    .getByLabel('text-field-reference', { exact: true })
+    .fill(shipmentReference);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Shipment created').first().waitFor();
+
+  // Back to the "line items" tab to allocate stock
+  await loadTab(page, 'Line Items');
+  const cell = await page.getByRole('cell', { name: 'MAST', exact: true });
+  await clickOnRowMenu(cell);
+
+  // Allocate 1 item based on serial number
+  await page.getByRole('menuitem', { name: 'Allocate serials' }).click();
+  await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('1');
+  await page
+    .getByRole('textbox', { name: 'text-field-serial_numbers' })
+    .fill(serialNumber);
+  await page.getByLabel('related-field-shipment').fill(shipmentReference);
+  await page.getByText(`SO0007Shipment ${shipmentReference}`).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Stock allocated successfully').first().waitFor();
+
+  // Navigate to the shipment and mark it as "shipped"
+  await loadTab(page, 'Shipments');
+  await page.getByRole('cell', { name: shipmentReference }).click();
+  await page.getByText(shipmentReference).first().waitFor();
+  await page.getByText('Pending').first().waitFor();
+  await loadTab(page, 'Allocated Stock');
+
+  // Check that the serial number is allocated as expected
+  await page.getByRole('cell', { name: serialNumber }).waitFor();
+  await page.getByRole('button', { name: 'Send Shipment' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('Completing shipment').first().waitFor();
+  await page.getByText('Shipment completed').first().waitFor();
+
+  await page.getByText('Shipped', { exact: true }).first().waitFor();
+
+  // Finally, navigate to the stock item and check it has been allocated to the customer
+  await page.getByRole('cell', { name: serialNumber }).click();
+  await page.waitForLoadState('networkidle');
+  await page.getByText('Unavailable').first().waitFor();
+  await page.getByRole('link', { name: 'SO0007' }).waitFor();
+  await page.getByRole('cell', { name: 'Customer D' }).waitFor();
 });
 
 test('Sales Orders - Duplicate', async ({ browser }) => {

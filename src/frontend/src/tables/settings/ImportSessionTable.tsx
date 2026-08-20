@@ -9,7 +9,6 @@ import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
@@ -19,14 +18,14 @@ import {
   useDeleteApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
+import { useImporterState } from '../../states/ImporterState';
 import { DateColumn, StatusColumn } from '../ColumnRenderers';
 import { StatusFilterOptions, UserFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ImportSessionTable() {
   const table = useTable('importsession');
-
-  const [opened, setOpened] = useState<boolean>(false);
+  const openImporter = useImporterState((state) => state.openImporter);
 
   const [selectedSession, setSelectedSession] = useState<number | undefined>(
     undefined
@@ -47,7 +46,9 @@ export default function ImportSessionTable() {
     }),
     onFormSuccess: (response: any) => {
       setSelectedSession(response.pk);
-      setOpened(true);
+      openImporter(response.pk, {
+        onClose: table.refreshTable
+      });
       table.refreshTable();
     }
   });
@@ -159,17 +160,10 @@ export default function ImportSessionTable() {
           enableSelection: true,
           onRowClick: (record: any) => {
             setSelectedSession(record.pk);
-            setOpened(true);
+            openImporter(record.pk, {
+              onClose: table.refreshTable
+            });
           }
-        }}
-      />
-      <ImporterDrawer
-        sessionId={selectedSession ?? -1}
-        opened={selectedSession !== undefined && opened}
-        onClose={() => {
-          setSelectedSession(undefined);
-          setOpened(false);
-          table.refreshTable();
         }}
       />
     </>

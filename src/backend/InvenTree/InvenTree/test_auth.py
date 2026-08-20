@@ -38,7 +38,7 @@ class TestSsoGroupSync(TransactionTestCase):
             'SSO_GROUP_MAP', '{"idp_group": "inventree_group"}'
         )
         # configure sociallogin
-        extra_data = {'groups': ['idp_group']}
+        extra_data = {'userinfo': {'groups': ['idp_group']}}
         self.group = Group(name='inventree_group')
         self.group.save()
         # ensure default group exists

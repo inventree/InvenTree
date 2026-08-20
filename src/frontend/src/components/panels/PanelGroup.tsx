@@ -3,6 +3,7 @@ import {
   Box,
   Divider,
   Group,
+  Indicator,
   Loader,
   Paper,
   Stack,
@@ -253,19 +254,31 @@ function BasePanelGroup({
                             handlePanelChange(panel.name, event)
                           }
                         >
-                          <Group justify='left' gap='xs' wrap='nowrap'>
-                            <UnstyledButton
-                              component={'a'}
-                              style={{
-                                textAlign: 'left'
-                              }}
-                              href={generateUrl(
-                                `/${getBaseUrl()}${location.pathname}/${panel.name}`
-                              )}
-                            >
-                              {expanded && panel.label}
-                            </UnstyledButton>
-                          </Group>
+                          <Indicator
+                            color={
+                              panel.notification_dot == 'info'
+                                ? 'blue'
+                                : panel.notification_dot == 'warning'
+                                  ? 'yellow'
+                                  : 'red'
+                            }
+                            position='middle-end'
+                            disabled={!panel.notification_dot}
+                          >
+                            <Group justify='left' gap='xs' wrap='nowrap'>
+                              <UnstyledButton
+                                component={'a'}
+                                style={{
+                                  textAlign: 'left'
+                                }}
+                                href={generateUrl(
+                                  `/${getBaseUrl()}${location.pathname}/${panel.name}`
+                                )}
+                              >
+                                {expanded && panel.label}
+                              </UnstyledButton>
+                            </Group>
+                          </Indicator>
                         </Tabs.Tab>
                       </Tooltip>
                     )

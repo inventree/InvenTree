@@ -28,7 +28,8 @@ def annotate_location_items(filter: Optional[Q] = None):
 
     return Coalesce(
         Subquery(
-            subquery.annotate(
+            subquery
+            .annotate(
                 total=Func(F('pk'), function='COUNT', output_field=IntegerField())
             )
             .values('total')
@@ -50,7 +51,8 @@ def annotate_sub_locations():
 
     return Coalesce(
         Subquery(
-            subquery.annotate(
+            subquery
+            .annotate(
                 count=Func(F('pk'), function='COUNT', output_field=IntegerField())
             )
             .values('count')

@@ -33,7 +33,7 @@ def image_data(img, fmt='PNG') -> str:
 def clean_barcode(data):
     """Return a 'cleaned' string for encoding into a barcode / qrcode.
 
-    - This function runs the data through bleach, and removes any malicious HTML content.
+    - This function sanitizes the data using nh3, and removes any malicious HTML content.
     - Used to render raw barcode data into the rendered HTML templates
     """
     from InvenTree.helpers import strip_html_tags

@@ -291,13 +291,6 @@ class GroupMixin(SerializerContextMixin):
     serializer_class = GroupSerializer
     permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
 
-    def get_queryset(self):
-        """Return queryset for this endpoint.
-
-        Note that the queryset is filtered by the permissions of the current user.
-        """
-        return super().get_queryset().prefetch_related('rule_sets', 'user_set')
-
 
 class GroupOutputOptions(OutputConfiguration):
     """Holds all available output options for Group views."""
@@ -374,49 +367,44 @@ class GetAuthToken(GenericAPIView):
         - Existing tokens are *never* exposed again via the API
         - Once the token is provided, it can be used for auth until it expires
         """
-        if request.user.is_authenticated:
-            user = request.user
-            name = request.query_params.get('name', '')
+        if not request.user.is_authenticated:
+            raise exceptions.NotAuthenticated()  # pragma: no cover
 
-            name = ApiToken.sanitize_name(name)
+        user = request.user
+        name = request.query_params.get('name', '')
 
-            today = datetime.date.today()
+        name = ApiToken.sanitize_name(name)
 
-            # Find existing token, which has not expired
-            token = ApiToken.objects.filter(
-                user=user, name=name, revoked=False, expiry__gte=today
-            ).first()
+        today = datetime.date.today()
 
-            if not token:
-                # User is authenticated, and requesting a token against the provided name.
-                token = ApiToken.objects.create(user=request.user, name=name)
+        # Find existing token, which has not expired
+        token = ApiToken.objects.filter(
+            user=user, name=name, revoked=False, expiry__gte=today
+        ).first()
 
-                logger.info(
-                    "Created new API token for user '%s' (name='%s')",
-                    user.username,
-                    name,
-                )
+        if not token:
+            # User is authenticated, and requesting a token against the provided name.
+            token = ApiToken.objects.create(user=request.user, name=name)
+
+            logger.info(
+                "Created new API token for user '%s' (name='%s')", user.username, name
+            )
 
             # Add some metadata about the request
-            token.set_metadata('user_agent', request.headers.get('user-agent', ''))
-            token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
-            token.set_metadata('remote_host', request.META.get('REMOTE_HOST', ''))
-            token.set_metadata('remote_user', request.META.get('REMOTE_USER', ''))
-            token.set_metadata('server_name', request.META.get('SERVER_NAME', ''))
-            token.set_metadata('server_port', request.META.get('SERVER_PORT', ''))
+        token.set_metadata('user_agent', request.headers.get('user-agent', ''))
+        token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
+        token.set_metadata('remote_host', request.META.get('REMOTE_HOST', ''))
+        token.set_metadata('remote_user', request.META.get('REMOTE_USER', ''))
+        token.set_metadata('server_name', request.META.get('SERVER_NAME', ''))
+        token.set_metadata('server_port', request.META.get('SERVER_PORT', ''))
 
-            data = {'token': token.key, 'name': token.name, 'expiry': token.expiry}
+        data = {'token': token.key, 'name': token.name, 'expiry': token.expiry}
 
-            # Ensure that the users session is logged in
-            if not get_user(request).is_authenticated:
-                login(
-                    request, user, backend='django.contrib.auth.backends.ModelBackend'
-                )
+        # Ensure that the users session is logged in
+        if not get_user(request).is_authenticated:
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
-            return Response(data)
-
-        else:
-            raise exceptions.NotAuthenticated()  # pragma: no cover
+        return Response(data)
 
 
 class TokenMixin:

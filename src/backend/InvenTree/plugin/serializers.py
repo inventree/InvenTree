@@ -149,7 +149,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         if not data.get('confirm'):
             raise ValidationError({'confirm': _('Installation not confirmed')})
         if (not data.get('url')) and (not data.get('packagename')):
-            msg = _('Either packagename of URL must be provided')
+            msg = _('Either packagename or URL must be provided')
             raise ValidationError({'url': msg, 'packagename': msg})
 
         return data
@@ -164,6 +164,9 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         url = data.get('url', '')
         version = data.get('version', None)
         user = self.context['request'].user
+
+        if not user or not user.is_superuser:
+            raise ValidationError(_('Only superuser accounts can administer plugins'))
 
         return install_plugin(
             url=url, packagename=packagename, version=version, user=user
@@ -266,10 +269,13 @@ class PluginUninstallSerializer(serializers.Serializer):
         """Uninstall the specified plugin."""
         from plugin.installer import uninstall_plugin
 
+        user = self.context['request'].user
+
+        if not user or not user.is_superuser:
+            raise ValidationError(_('Only superuser accounts can administer plugins'))
+
         return uninstall_plugin(
-            instance,
-            user=self.context['request'].user,
-            delete_config=validated_data.get('delete_config', True),
+            instance, user=user, delete_config=validated_data.get('delete_config', True)
         )
 
 

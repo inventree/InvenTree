@@ -16,10 +16,15 @@ import { useUserState } from '../states/UserState';
 /**
  * Field set for BomItem form
  */
-export function bomItemFields(): ApiFormFieldSet {
+export function bomItemFields({
+  showAssembly = false
+}: {
+  showAssembly?: boolean;
+}): ApiFormFieldSet {
   return {
     part: {
-      hidden: true
+      disabled: true,
+      hidden: !showAssembly
     },
     sub_part: {
       filters: {

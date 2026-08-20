@@ -42,12 +42,7 @@ print(part.metadata)
 
 ### API Access
 
-For models which provide this metadata field, access is also provided via the API. Append `/metadata/` to the detail endpoint for a particular model instance to access.
-
-For example:
-
-{{ image("plugin/model_metadata_api.png", "Access model metadata via API", maxheight="400px") }}
-
+For models which provide this metadata field, access is also provided via the API. Use the generic `/metadata/<modelname>/<object id>/` endpoint to retrieve or update metadata information.
 
 #### PUT vs PATCH
 

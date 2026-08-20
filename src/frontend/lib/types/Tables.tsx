@@ -99,6 +99,8 @@ export type TableState = {
  * @param cellsStyle - The style of the cells in the column
  * @param extra - Extra data to pass to the render function
  * @param noContext - Disable context menu for this column
+ * @param copyable - Enable copy button on hover (uses accessor to get value, or custom function)
+ * @param copyAccessor - Custom accessor path for copy value (defaults to column accessor)
  */
 export type TableColumnProps<T = any> = {
   accessor?: string;
@@ -123,6 +125,8 @@ export type TableColumnProps<T = any> = {
   extra?: any;
   noContext?: boolean;
   style?: MantineStyleProp;
+  copyable?: boolean | ((record: T) => string);
+  copyAccessor?: string;
 };
 
 /**

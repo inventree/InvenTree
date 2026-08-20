@@ -69,7 +69,7 @@ export function AccountDetailPanel() {
         value: <YesNoUndefinedButton value={user?.profile?.active} />
       },
       {
-        label: t`Staff Access`,
+        label: t`Administrator`,
         value: <YesNoUndefinedButton value={user?.is_staff} />
       },
       {

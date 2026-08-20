@@ -17,8 +17,8 @@ interface LocalStateProps {
   hostKey: string;
   hostList: HostList;
   setHostList: (newHostList: HostList) => void;
-  language: string;
-  setLanguage: (newLanguage: string, noPatch?: boolean) => void;
+  language: string | null;
+  setLanguage: (newLanguage: string | null, noPatch?: boolean) => void;
   userTheme: UserTheme;
   setTheme: (
     newValues: {
@@ -78,7 +78,7 @@ export const useLocalState = create<LocalStateProps>()(
       hostKey: '',
       hostList: {},
       setHostList: (newHostList) => set({ hostList: newHostList }),
-      language: 'en',
+      language: null,
       setLanguage: (newLanguage, noPatch = false) => {
         set({ language: newLanguage });
         if (!noPatch) patchUser('language', newLanguage);

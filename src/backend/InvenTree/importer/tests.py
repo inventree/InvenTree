@@ -174,6 +174,36 @@ class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
         # Check that there are new database records
         self.assertEqual(PartCategory.objects.count(), N + 4)
 
+    def test_session_list(self):
+        """Test API endpoint which details the list of import sessions."""
+        url = reverse('api-importer-session-list')
+
+        # Construct a dummy file
+        f = self.helper_file('companies.csv')
+
+        for ii in range(5):
+            DataImportSession.objects.create(
+                data_file=f,
+                model_type='company',
+                user=self.user if ii % 2 == 0 else None,
+            )
+
+        # Staff user should see all sessions
+        self.user.is_staff = True
+        self.user.save()
+
+        response = self.get(url)
+        self.assertEqual(len(response.data), 5)
+
+        # Non-staff user should only see sessions which they own
+        self.user.is_staff = False
+        self.user.save()
+
+        response = self.get(url)
+        self.assertEqual(len(response.data), 3)
+        for session in response.data:
+            self.assertEqual(session['user'], self.user.pk)
+
 
 class AdminTest(ImporterMixin, AdminTestCase):
     """Tests for the admin interface integration."""

@@ -138,7 +138,7 @@ class MachineSettingSerializer(GenericReferencedSettingSerializer):
         """Custom init method to make the config_type field read only."""
         super().__init__(*args, **kwargs)
 
-        self.Meta.read_only_fields = ['config_type']  # type: ignore
+        self.Meta.read_only_fields = ['config_type']
 
 
 class BaseMachineClassSerializer(serializers.Serializer):

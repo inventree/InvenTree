@@ -30,7 +30,8 @@ interface RenderStatusLabelOptionsInterface {
 function renderStatusLabel(
   key: string | number,
   codes: StatusCodeListInterface,
-  options: RenderStatusLabelOptionsInterface = {}
+  options: RenderStatusLabelOptionsInterface = {},
+  fallback_key: string | number | null = null
 ) {
   let text = null;
   let color = null;
@@ -43,6 +44,19 @@ function renderStatusLabel(
       text = entry.label;
       color = entry.color;
       break;
+    }
+  }
+
+  if (!text && fallback_key !== null) {
+    // Handle fallback key (if provided)
+    for (const name in codes.values) {
+      const entry: StatusCodeInterface = codes.values[name];
+
+      if (entry?.key == fallback_key) {
+        text = entry.label;
+        color = entry.color;
+        break;
+      }
     }
   }
 
@@ -164,11 +178,13 @@ export function getStatusCodeLabel(
 export const StatusRenderer = ({
   status,
   type,
-  options
+  options,
+  fallbackStatus
 }: {
   status: string | number;
   type: ModelType | string;
   options?: RenderStatusLabelOptionsInterface;
+  fallbackStatus?: string | number | null;
 }) => {
   const statusCodes = getStatusCodes(type);
 
@@ -183,7 +199,7 @@ export const StatusRenderer = ({
     return null;
   }
 
-  return renderStatusLabel(status, statusCodes, options);
+  return renderStatusLabel(status, statusCodes, options, fallbackStatus);
 };
 
 /*

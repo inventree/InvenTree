@@ -6,7 +6,13 @@ import { getDetailUrl } from '@lib/functions/Navigation';
 import type { StockOperationProps } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Group, Skeleton, Stack, Text } from '@mantine/core';
-import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
+import {
+  IconInfoCircle,
+  IconListDetails,
+  IconPackages,
+  IconSitemap,
+  IconTable
+} from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../App';
@@ -30,6 +36,8 @@ import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
+import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { stockLocationFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
@@ -42,6 +50,7 @@ import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserState } from '../../states/UserState';
 import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import StockLocationParametricTable from '../../tables/stock/StockLocationParametricTable';
 import { StockLocationTable } from '../../tables/stock/StockLocationTable';
 
 export default function Stock() {
@@ -161,6 +170,8 @@ export default function Stock() {
     );
   }, [location, instanceQuery]);
 
+  const [sublocationView, setSublocationView] = useState<string>('table');
+
   const locationPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -169,12 +180,32 @@ export default function Stock() {
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
-      {
+      SegmentedControlPanel({
         name: 'sublocations',
         label: id ? t`Sublocations` : t`Stock Locations`,
         icon: <IconSitemap />,
-        content: <StockLocationTable parentId={id} />
-      },
+        hidden: !user.hasViewPermission(ModelType.stocklocation),
+        selection: sublocationView,
+        onChange: setSublocationView,
+        options: [
+          {
+            value: 'table',
+            label: t`Table View`,
+            icon: <IconTable />,
+            content: <StockLocationTable parentId={id} />
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: (
+              <StockLocationParametricTable
+                queryParams={id ? { parent: id } : {}}
+              />
+            )
+          }
+        ]
+      }),
       {
         name: 'stock-items',
         label: t`Stock Items`,
@@ -203,9 +234,14 @@ export default function Stock() {
             }}
           />
         )
-      }
+      },
+      ParametersPanel({
+        model_type: ModelType.stocklocation,
+        model_id: location.pk,
+        hidden: !location.pk
+      })
     ];
-  }, [location, id]);
+  }, [sublocationView, location, id]);
 
   const editLocation = useEditApiFormModal({
     url: ApiEndpoints.stock_location_list,
@@ -241,7 +277,7 @@ export default function Stock() {
         choices: deleteOptions
       },
       delete_sub_locations: {
-        label: t`Locations Action`,
+        label: t`Location Actions`,
         required: true,
         description: t`Action for child locations in this location`,
         field_type: 'choice',
@@ -271,6 +307,7 @@ export default function Stock() {
   const stockAdjustActions = useStockAdjustActions({
     formProps: stockOperationProps,
     enabled: true,
+    changeBatch: false,
     delete: false,
     merge: false,
     assign: false
@@ -344,15 +381,15 @@ export default function Stock() {
           perm={user.hasChangeRole(UserRoles.stock_location)}
           actions={[
             {
-              name: 'Scan in stock items',
+              name: t`Scan in stock items`,
               icon: <InvenTreeIcon icon='stock' />,
-              tooltip: 'Scan item into this location',
+              tooltip: t`Scan item into this location`,
               onClick: scanInStockItem.open
             },
             {
-              name: 'Scan in container',
+              name: t`Scan in container`,
               icon: <InvenTreeIcon icon='unallocated_stock' />,
-              tooltip: 'Scan container into this location',
+              tooltip: t`Scan container into this location`,
               onClick: scanInStockLocation.open
             }
           ]}

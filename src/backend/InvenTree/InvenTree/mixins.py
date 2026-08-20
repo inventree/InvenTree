@@ -19,7 +19,7 @@ from InvenTree.serializers import FilterableSerializerMixin
 
 
 class CleanMixin:
-    """Model mixin class which cleans inputs using the Mozilla bleach tools."""
+    """Model mixin class which cleans inputs using nh3."""
 
     # Define a list of field names which will *not* be cleaned
     SAFE_FIELDS = []
@@ -52,16 +52,7 @@ class CleanMixin:
         return Response(serializer.data)
 
     def clean_string(self, field: str, data: str) -> str:
-        """Clean / sanitize a single input string.
-
-        Note that this function will *allow* orphaned <>& characters,
-        which would normally be escaped by bleach.
-
-        Nominally, the only thing that will be "cleaned" will be HTML tags
-
-        Ref: https://github.com/mozilla/bleach/issues/192
-
-        """
+        """Clean / sanitize a single input string."""
         cleaned = data
 
         # By default, newline characters are removed
@@ -101,7 +92,7 @@ class CleanMixin:
     def clean_data(self, data: dict) -> dict:
         """Clean / sanitize data.
 
-        This uses Mozilla's bleach under the hood to disable certain html tags by
+        This uses nh3 under the hood to disable certain html tags by
         encoding them - this leads to script tags etc. to not work.
         The results can be longer then the input; might make some character combinations
         `ugly`. Prevents XSS on the server-level.
@@ -239,9 +230,16 @@ class OutputOptionsMixin:
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance with output options applied."""
-        if self.output_options and hasattr(self, 'request'):
+        request = getattr(self, 'request', None)
+
+        if self.output_options and request:
             params = self.request.query_params
             kwargs.update(self.output_options.format_params(params))
+
+        # Ensure the request is included in the serializer context
+        context = kwargs.get('context', {})
+        context['request'] = request
+        kwargs['context'] = context
 
         serializer = super().get_serializer(*args, **kwargs)
 
@@ -257,6 +255,19 @@ class OutputOptionsMixin:
             )
 
         return serializer
+
+    def get_queryset(self):
+        """Return the queryset with output options applied.
+
+        This automatically applies any prefetching defined against the optional fields.
+        """
+        queryset = super().get_queryset()
+        serializer = self.get_serializer()
+
+        if isinstance(serializer, FilterableSerializerMixin):
+            queryset = serializer.prefetch_queryset(queryset)
+
+        return queryset
 
 
 class SerializerContextMixin:

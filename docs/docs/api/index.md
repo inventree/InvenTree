@@ -106,7 +106,7 @@ response = request.get('http://localhost:8080/api/part/', data=data, headers=hea
 
 InvenTree has built-in support for using [oAuth2](https://oauth.net/2/) and OpenID Connect (OIDC) for authentication to the API. This enables using the instance as a very limited identity provider.
 
-A default application using a public client with PKCE enabled ships with each instance. Intended to be used with the python api and configured with very wide scopes this can also be used for quick tests - the cliend_id is `zDFnsiRheJIOKNx6aCQ0quBxECg1QBHtVFDPloJ6`.
+A default application using a public client with PKCE enabled ships with each instance. Intended to be used with the python api and configured with very wide scopes this can also be used for quick tests - the client_id is `zDFnsiRheJIOKNx6aCQ0quBxECg1QBHtVFDPloJ6`.
 
 #### Managing applications
 

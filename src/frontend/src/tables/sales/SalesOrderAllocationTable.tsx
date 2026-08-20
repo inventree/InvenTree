@@ -29,6 +29,7 @@ import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
 import {
   DescriptionColumn,
+  IPNColumn,
   LocationColumn,
   PartColumn,
   ReferenceColumn,
@@ -130,13 +131,9 @@ export default function SalesOrderAllocationTable({
         accessor: 'part_detail.description',
         hidden: showPartInfo != true
       }),
-      {
-        accessor: 'part_detail.IPN',
-        title: t`IPN`,
-        hidden: showPartInfo != true,
-        sortable: true,
-        ordering: 'IPN'
-      },
+      IPNColumn({
+        hidden: showPartInfo != true
+      }),
       {
         accessor: 'serial',
         title: t`Serial Number`,
@@ -149,7 +146,9 @@ export default function SalesOrderAllocationTable({
         title: t`Batch Code`,
         sortable: true,
         switchable: true,
-        render: (record: any) => record?.item_detail?.batch
+        render: (record: any) => record?.item_detail?.batch,
+        copyable: true,
+        copyAccessor: 'item_detail.batch'
       },
       {
         accessor: 'available',

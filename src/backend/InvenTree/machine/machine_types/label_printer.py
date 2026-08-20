@@ -111,7 +111,7 @@ class LabelPrinterBaseDriver(BaseDriver):
         Returns:
             A class instance of a DRF serializer class, by default this an instance of self.PrintingOptionsSerializer using the *args, **kwargs if existing for this driver
         """
-        return self.PrintingOptionsSerializer(*args, **kwargs)  # type: ignore
+        return self.PrintingOptionsSerializer(*args, **kwargs)
 
     # --- helper functions
     @property

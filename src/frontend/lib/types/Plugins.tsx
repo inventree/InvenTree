@@ -48,6 +48,13 @@ export type InvenTreeFormsContext = {
   stockActions: StockAdjustmentFormsContext;
 };
 
+export type ImporterDrawerContext = {
+  open: (sessionId: number, options?: { onClose?: () => void }) => void;
+  close: () => void;
+  isOpen: () => boolean;
+  sessionId: () => number | null;
+};
+
 /**
  * A set of properties which are passed to a plugin,
  * for rendering an element in the user interface.
@@ -59,6 +66,8 @@ export type InvenTreeFormsContext = {
  * @param globalSettings - The global settings (see ../states/SettingsState.tsx)
  * @param navigate - The navigation function (see react-router-dom)
  * @param theme - The current Mantine theme
+ * @param forms - A set of functions for opening various API forms (see ../components/Forms.tsx)
+ * @param importer - A set of functions for controlling the global importer drawer (see ../components/importer/GlobalImporterDrawer.tsx)
  * @param colorScheme - The current Mantine color scheme (e.g. 'light' / 'dark')
  * @param host - The current host URL
  * @param i18n - The i18n instance for translations (from @lingui/core)
@@ -87,6 +96,7 @@ export type InvenTreePluginContext = {
   navigate: NavigateFunction;
   theme: MantineTheme;
   forms: InvenTreeFormsContext;
+  importer: ImporterDrawerContext;
   colorScheme: MantineColorScheme;
   model?: ModelType | string;
   id?: string | number | null;

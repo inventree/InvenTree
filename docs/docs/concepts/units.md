@@ -72,6 +72,27 @@ Custom units can be defined to provide a new physical quantity, link existing un
 !!! tip "More Info"
     For further information, refer to the [pint documentation](https://pint.readthedocs.io/en/stable/advanced/defining.html) regarding custom unit definition
 
+### Built-in Custom Units
+
+InvenTree provides the following built-in custom units:
+
+| Unit | Description |
+| ---- | ----------- |
+| `piece` | A single item, dimensionless |
+| `each` | A single item, dimensionless |
+| `dozen` | Twelve items, dimensionless |
+| `hundred` | One hundred items, dimensionless |
+| `thousand` | One thousand items, dimensionless |
+
 ### Create Custom Units
 
 To view, edit and create custom units, locate the *Physical Units* tab in the [settings panel](../settings/global.md).
+
+
+### Dimensionless Units
+
+It is possible to define custom dimensionless units. These units can be used to provide context to otherwise dimensionless quantities.
+
+To create a new dimensionless unit, you must enter the literal `1` as the definition of the unit:
+
+{{ image("concepts/unit_dimensionless.png", "Creating a dimensionless custom unit") }}

@@ -1,6 +1,5 @@
 import type { PluginProps } from '@lib/types/Plugins';
-import type { NavigateFunction } from 'react-router-dom';
-import { setApiDefaults } from '../App';
+import { removeTraceId, setApiDefaults, setTraceId } from '../App';
 import { useGlobalStatusState } from './GlobalStatusState';
 import { useGuideState } from './GuideState';
 import { useIconState } from './IconState';
@@ -39,6 +38,7 @@ export interface ServerAPIProps {
     splash: string;
     login_message: string;
     navbar_message: string;
+    disable_theme_storage: boolean;
   };
 }
 
@@ -46,9 +46,7 @@ export interface ServerAPIProps {
  * Refetch all global state information.
  * Necessary on login, or if locale is changed.
  */
-export async function fetchGlobalStates(
-  navigate?: NavigateFunction | undefined
-) {
+export async function fetchGlobalStates() {
   const { isLoggedIn } = useUserState.getState();
 
   if (!isLoggedIn()) {
@@ -56,6 +54,7 @@ export async function fetchGlobalStates(
   }
 
   setApiDefaults();
+  const traceId = setTraceId();
   await Promise.all([
     useServerApiState.getState().fetchServerApiState(),
     useUserSettingsState.getState().fetchSettings(),
@@ -64,4 +63,5 @@ export async function fetchGlobalStates(
     useIconState.getState().fetchIcons(),
     useGuideState.getState().fetchGuides()
   ]);
+  removeTraceId(traceId);
 }

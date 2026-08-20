@@ -8,8 +8,7 @@ import {
   Group,
   Space,
   Stack,
-  Table,
-  Text
+  Table
 } from '@mantine/core';
 import type { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
@@ -20,11 +19,11 @@ import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ServerApiState';
-import { useUserState } from '../../states/UserState';
 import { CopyButton } from '../buttons/CopyButton';
 import { StylishText } from '../items/StylishText';
 
 import type { JSX } from 'react';
+import { OnlyStaff } from '../items/OnlyStaff';
 
 type AboutLookupRef = {
   ref: string;
@@ -42,15 +41,11 @@ export function AboutInvenTreeModal({
     modalBody: string;
   }>
 >) {
-  const [user] = useUserState(useShallow((state) => [state.user]));
-
-  if (!user?.is_staff)
-    return (
-      <Text>
-        <Trans>This information is only available for staff users</Trans>
-      </Text>
-    );
-  return <AboutContent context={context} id={id} innerProps={innerProps} />;
+  return (
+    <OnlyStaff>
+      <AboutContent context={context} id={id} innerProps={innerProps} />
+    </OnlyStaff>
+  );
 }
 
 const AboutContent = ({

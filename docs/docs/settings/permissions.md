@@ -50,6 +50,17 @@ Within each role, there are four levels of available permissions:
 | **Add** | The *add* permission allows the user to add / create database records associated with the particular role |
 | **Delete** | The *delete* permission allows the user to delete / remove database records associated with the particular role |
 
+## Dangerous User Flags
+
+In addition to the above permissions, there are two special flags that can be assigned to a user:
+- **Staff** - A user with the *staff* flag is able to access the admin interface, and can trigger dangerous actions that might have a security impact such as changing parsable files on the server (templates / reports / plugins). Some of these actions require the *admin* role to be assigned as well.
+- **Superuser** - A user with the *superuser* flag is able to access and change all data and functions of InvenTree. A superuser can modify and access all data that the InvenTree installation / server has access to - including shell access on the server OS itself. This is a very powerful flag, and should be used with caution.
+
+It is strongly recommended to register any users with staff / superuser flags with strong MFA methods to reduce the risk of unauthorized access. These accounts should be used with caution, and should not be used for day-to-day operations.
+
+Practicing account tiering is strongly recommended.
+
+
 ## Admin Interface Permissions
 
 If a user does not have the required permissions to perform a certain action in the admin interface, those options not be displayed.

@@ -37,6 +37,12 @@ In the example below, see that the *Wood Screw* line item is marked as consumabl
 
 Further, in the [Build Order](./build.md) stock allocation table, we see that this line item cannot be allocated, as it is *consumable*.
 
+### Optional BOM Line Items
+
+If a BOM line item is marked as *optional*, this means that the part and quantity information is tracked in the BOM, but this line item is not required to be allocated to a [Build Order](./build.md). This may be useful for certain items which are not strictly required for the build process to be completed.
+
+When completing a Build Order, the user can choose whether to include optional items in the build process or not. If optional items are included, they will be allocated to the Build Order as normal. If optional items are excluded, they will not be allocated to the Build Order, and the build process can be completed without them.
+
 ### Substitute BOM Line Items
 
 Where alternative parts can be used when building an assembly, these parts are assigned as *Substitute* parts in the Bill of Materials. A particular line item may have multiple substitute parts assigned to it. When allocating stock to a [Build Order](./build.md), stock items associated with any of the substitute parts may be allocated against the particular line item.

@@ -61,7 +61,7 @@ export function EmailTable() {
     ];
   }, []);
 
-  const table = useTable('emails', 'pk');
+  const table = useTable('emails', { idAccessor: 'pk' });
 
   const [selectedEmailId, setSelectedEmailId] = useState<string>('');
 

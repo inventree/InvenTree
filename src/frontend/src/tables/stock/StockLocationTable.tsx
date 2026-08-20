@@ -68,6 +68,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
       {
         accessor: 'name',
         switchable: false,
+        copyable: true,
         render: (record: any) => (
           <Group gap='xs'>
             {record.icon && <ApiIcon name={record.icon} />}
@@ -78,6 +79,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
       DescriptionColumn({}),
       {
         accessor: 'pathstring',
+        copyable: true,
         sortable: true
       },
       {
@@ -110,7 +112,8 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
     },
     follow: true,
     modelType: ModelType.stocklocation,
-    table: table
+    table: table,
+    keepOpenOption: true
   });
 
   const [selectedLocation, setSelectedLocation] = useState<number>(-1);

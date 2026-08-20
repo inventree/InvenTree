@@ -101,12 +101,18 @@ function ParameterCell({
  */
 export default function ParametricDataTable({
   modelType,
+  modelId,
+  relatedModel,
+  relatedModelId,
   endpoint,
   queryParams,
   customFilters,
   customColumns
 }: {
   modelType: ModelType;
+  modelId?: number;
+  relatedModel?: string;
+  relatedModelId?: number;
   endpoint: ApiEndpoints | string;
   queryParams?: Record<string, any>;
   customFilters?: TableFilter[];
@@ -125,8 +131,12 @@ export default function ParametricDataTable({
         .get(apiUrl(ApiEndpoints.parameter_template_list), {
           params: {
             active: true,
+            ordering: 'name',
             for_model: modelType,
-            exists_for_model: modelType
+            exists_for_model: modelType,
+            exists_for_model_id: modelId ?? undefined,
+            exists_for_related_model: relatedModel ?? undefined,
+            exists_for_related_model_id: relatedModelId ?? undefined
           }
         })
         .then((response) => response.data);

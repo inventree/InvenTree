@@ -248,6 +248,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             tableName='assigned-stock'
             showLocation={false}
             allowReturn
+            defaultInStock={null}
             params={{ customer: company.pk }}
           />
         ) : (
@@ -276,7 +277,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       }),
       NotesPanel({
         model_type: ModelType.company,
-        model_id: company.pk
+        model_id: company.pk,
+        has_note: !!company.notes
       })
     ];
   }, [id, company, user]);

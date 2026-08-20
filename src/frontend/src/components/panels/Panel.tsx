@@ -8,6 +8,7 @@ export type PanelType = {
   label: string;
   controls?: ReactNode;
   icon?: ReactNode;
+  notification_dot?: 'info' | 'warning' | 'danger' | null;
   content?: ReactNode;
   hidden?: boolean;
   disabled?: boolean;

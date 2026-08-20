@@ -26,7 +26,6 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Thumbnail } from '../../components/images/Thumbnail';
-import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { RenderPart } from '../../components/render/Part';
 import { useApi } from '../../contexts/ApiContext';
@@ -39,11 +38,13 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
+import { useImporterState } from '../../states/ImporterState';
 import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
   CategoryColumn,
   DescriptionColumn,
+  IPNColumn,
   NoteColumn,
   ReferenceColumn
 } from '../ColumnRenderers';
@@ -80,12 +81,7 @@ export function BomTable({
   const user = useUserState();
   const table = useTable('bom');
   const navigate = useNavigate();
-
-  const [importOpened, setImportOpened] = useState<boolean>(false);
-
-  const [selectedSession, setSelectedSession] = useState<number | undefined>(
-    undefined
-  );
+  const openImporter = useImporterState((state) => state.openImporter);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -129,11 +125,9 @@ export function BomTable({
           );
         }
       },
-      {
-        accessor: 'sub_part_detail.IPN',
-        title: t`IPN`,
-        sortable: true
-      },
+      IPNColumn({
+        accessor: 'sub_part_detail.IPN'
+      }),
       CategoryColumn({
         accessor: 'category_detail',
         defaultVisible: false,
@@ -425,6 +419,11 @@ export function BomTable({
         description: t`Show trackable items`
       },
       {
+        name: 'sub_part_active',
+        label: t`Active Part`,
+        description: t`Show active items`
+      },
+      {
         name: 'sub_part_assembly',
         label: t`Assembled Part`,
         description: t`Show assembled items`
@@ -497,15 +496,16 @@ export function BomTable({
     title: t`Import BOM Data`,
     fields: importSessionFields,
     onFormSuccess: (response: any) => {
-      setSelectedSession(response.pk);
-      setImportOpened(true);
+      openImporter(response.pk, {
+        onClose: table.refreshTable
+      });
     }
   });
 
   const newBomItem = useCreateApiFormModal({
     url: ApiEndpoints.bom_list,
     title: t`Add BOM Item`,
-    fields: bomItemFields(),
+    fields: bomItemFields({}),
     initialData: {
       part: partId
     },
@@ -517,7 +517,7 @@ export function BomTable({
     url: ApiEndpoints.bom_list,
     pk: selectedBomItem.pk,
     title: t`Edit BOM Item`,
-    fields: bomItemFields(),
+    fields: bomItemFields({}),
     successMessage: t`BOM item updated`,
     table: table
   });
@@ -670,9 +670,10 @@ export function BomTable({
             params: {
               ...params,
               part: partId,
-              category_detail: true,
+              substitutes: true,
               part_detail: true,
-              sub_part_detail: true
+              sub_part_detail: true,
+              category_detail: true
             },
             tableActions: tableActions,
             tableFilters: tableFilters,
@@ -685,15 +686,6 @@ export function BomTable({
           }}
         />
       </Stack>
-      <ImporterDrawer
-        sessionId={selectedSession ?? -1}
-        opened={selectedSession != undefined && importOpened}
-        onClose={() => {
-          setSelectedSession(undefined);
-          setImportOpened(false);
-          table.refreshTable();
-        }}
-      />
     </>
   );
 }

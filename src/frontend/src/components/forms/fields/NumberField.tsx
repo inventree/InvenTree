@@ -1,7 +1,7 @@
 import { NumberInput } from '@mantine/core';
 import { useId, useMemo } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
-import AutoFillRightSection from './AutoFillRightSection';
+import AutoFillRightSection, { AutoFillWarning } from './AutoFillRightSection';
 
 /**
  * Custom implementation of the mantine <NumberInput> component,
@@ -12,12 +12,16 @@ export default function NumberField({
   fieldName,
   definition,
   placeholderAutofill,
+  placeholderWarningCompare,
+  placeholderWarning,
   onChange
 }: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: any;
   fieldName: string;
   placeholderAutofill?: boolean;
+  placeholderWarningCompare?: number | string;
+  placeholderWarning?: string;
   onChange: (value: any) => void;
 }>) {
   const fieldId = useId();
@@ -56,6 +60,43 @@ export default function NumberField({
     return val;
   }, [definition.field_type, value]);
 
+  const rightSection = useMemo(() => {
+    if (
+      definition.placeholder &&
+      placeholderAutofill &&
+      numericalValue == null
+    ) {
+      return (
+        <AutoFillRightSection
+          value={field.value}
+          fieldName={field.name}
+          definition={definition}
+          onChange={onChange}
+        />
+      );
+    } else if (placeholderWarning && numericalValue != null) {
+      if (
+        placeholderWarningCompare != null &&
+        numericalValue === placeholderWarningCompare
+      ) {
+        return undefined;
+      }
+      return (
+        <AutoFillWarning fieldName={field.name} message={placeholderWarning} />
+      );
+    }
+    return undefined;
+  }, [
+    definition,
+    placeholderAutofill,
+    placeholderWarning,
+    placeholderWarningCompare,
+    numericalValue,
+    field.name,
+    field.value,
+    onChange
+  ]);
+
   return (
     <NumberInput
       {...definition}
@@ -74,18 +115,7 @@ export default function NumberField({
           onChange(value);
         }
       }}
-      rightSection={
-        definition.placeholder &&
-        placeholderAutofill &&
-        numericalValue == null && (
-          <AutoFillRightSection
-            value={field.value}
-            fieldName={field.name}
-            definition={definition}
-            onChange={onChange}
-          />
-        )
-      }
+      rightSection={rightSection}
     />
   );
 }

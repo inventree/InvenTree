@@ -3,7 +3,7 @@
 # - gunicorn as the InvenTree web server
 # - django-q as the InvenTree background worker process
 # - Caddy as a reverse proxy
-# - redis as the cache manager (optional, disabled by default)
+# - redis as the cache manager (optional, enabled by default)
 
 # ---------------------
 # READ BEFORE STARTING!
@@ -64,6 +64,8 @@ services:
             - .env
         expose:
             - ${INVENTREE_CACHE_PORT:-6379}
+        volumes:
+            - ${INVENTREE_EXT_VOLUME}/redis:/data
         restart: always
 
     # InvenTree web server service
@@ -74,12 +76,14 @@ services:
         container_name: inventree-server
         # Only change this port if you understand the stack.
         expose:
-            - 8000
+            - ${INVENTREE_WEB_PORT:-8000}
         depends_on:
             - inventree-db
             - inventree-cache
         env_file:
             - .env
+        environment:
+          INVENTREE_SERVER: http://inventree-server:${INVENTREE_WEB_PORT}
         volumes:
             # Data volume must map to /home/inventree/data
             - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z

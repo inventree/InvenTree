@@ -3,8 +3,7 @@
 - May be required after importing a new dataset, for example
 """
 
-import os
-
+from django.core.files.storage import default_storage
 from django.core.management.base import BaseCommand
 from django.db.utils import OperationalError, ProgrammingError
 
@@ -35,7 +34,7 @@ class Command(BaseCommand):
                 img_paths.append(x.path)
 
         if len(img_paths) > 0:
-            if all(os.path.exists(path) for path in img_paths):
+            if all(default_storage.exists(p) for p in img_paths):
                 # All images exist - skip further work
                 return
 

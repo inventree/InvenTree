@@ -9,9 +9,9 @@ from django_filters.rest_framework.filterset import FilterSet
 
 import part.models
 from data_exporter.mixins import DataExportViewMixin
-from InvenTree.api import ListCreateDestroyAPIView, MetadataView, ParameterListMixin
+from InvenTree.api import ListCreateDestroyAPIView, ParameterListMixin, meta_path
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
-from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
+from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
     ListCreateAPI,
     OutputOptionsMixin,
@@ -178,16 +178,13 @@ class ManufacturerPartMixin(SerializerContextMixin):
         """Return annotated queryset for the ManufacturerPart list endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related(
-            'part', 'manufacturer', 'supplier_parts', 'tags'
-        )
-
-        queryset = ManufacturerPart.annotate_parameters(queryset)
+        queryset = queryset.prefetch_related('supplier_parts')
 
         return queryset
 
 
 class ManufacturerPartList(
+    DataExportViewMixin,
     ManufacturerPartMixin,
     SerializerContextMixin,
     OutputOptionsMixin,
@@ -203,6 +200,14 @@ class ManufacturerPartList(
     filterset_class = ManufacturerPartFilter
     filter_backends = SEARCH_ORDER_FILTER
     output_options = ManufacturerOutputOptions
+
+    ordering_fields = ['part', 'IPN', 'MPN', 'manufacturer']
+
+    ordering_field_aliases = {
+        'part': 'part__name',
+        'IPN': 'part__IPN',
+        'manufacturer': 'manufacturer__name',
+    }
 
     search_fields = [
         'manufacturer__name',
@@ -244,6 +249,8 @@ class SupplierPartFilter(FilterSet):
         ]
 
     active = rest_filters.BooleanFilter(label=_('Supplier Part is Active'))
+
+    primary = rest_filters.BooleanFilter(label=_('Primary Supplier Part'))
 
     # Filter by 'active' status of linked part
     part_active = rest_filters.BooleanFilter(
@@ -304,11 +311,16 @@ class SupplierPartOutputOptions(OutputConfiguration):
         InvenTreeOutputOption(
             description='Include detailed information about the Supplier in the response',
             flag='supplier_detail',
-            default=True,
+            default=False,
         ),
         InvenTreeOutputOption(
             description='Include detailed information about the Manufacturer in the response',
             flag='manufacturer_detail',
+            default=False,
+        ),
+        InvenTreeOutputOption(
+            flag='manufacturer_part_detail',
+            description='Include detailed information about the linked ManufacturerPart in the response',
             default=False,
         ),
         InvenTreeOutputOption(
@@ -322,7 +334,7 @@ class SupplierPartOutputOptions(OutputConfiguration):
 class SupplierPartMixin:
     """Mixin class for SupplierPart API endpoints."""
 
-    queryset = SupplierPart.objects.all().prefetch_related('tags')
+    queryset = SupplierPart.objects.all()
     serializer_class = SupplierPartSerializer
 
     def get_queryset(self, *args, **kwargs):
@@ -330,9 +342,7 @@ class SupplierPartMixin:
         queryset = super().get_queryset(*args, **kwargs)
         queryset = SupplierPartSerializer.annotate_queryset(queryset)
 
-        queryset = queryset.prefetch_related(
-            'part', 'part__pricing_data', 'manufacturer_part__tags'
-        )
+        queryset = queryset.prefetch_related('part', 'part__pricing_data')
 
         return queryset
 
@@ -351,16 +361,18 @@ class SupplierPartList(
     """
 
     filterset_class = SupplierPartFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     output_options = SupplierPartOutputOptions
 
     ordering_fields = [
-        'SKU',
         'part',
         'supplier',
         'manufacturer',
         'active',
+        'primary',
+        'IPN',
         'MPN',
+        'SKU',
         'packaging',
         'pack_quantity',
         'in_stock',
@@ -371,8 +383,9 @@ class SupplierPartList(
         'part': 'part__name',
         'supplier': 'supplier__name',
         'manufacturer': 'manufacturer_part__manufacturer__name',
-        'MPN': 'manufacturer_part__MPN',
         'pack_quantity': ['pack_quantity_native', 'pack_quantity'],
+        'IPN': 'part__IPN',
+        'MPN': 'manufacturer_part__MPN',
     }
 
     search_fields = [
@@ -429,13 +442,6 @@ class SupplierPriceBreakMixin:
     queryset = SupplierPriceBreak.objects.all()
     serializer_class = SupplierPriceBreakSerializer
 
-    def get_queryset(self):
-        """Return annotated queryset for the SupplierPriceBreak list endpoint."""
-        queryset = super().get_queryset()
-        queryset = SupplierPriceBreakSerializer.annotate_queryset(queryset)
-
-        return queryset
-
 
 class SupplierPriceBreakOutputOptions(OutputConfiguration):
     """Available output options for the SupplierPriceBreak endpoints."""
@@ -455,7 +461,11 @@ class SupplierPriceBreakOutputOptions(OutputConfiguration):
 
 
 class SupplierPriceBreakList(
-    SupplierPriceBreakMixin, SerializerContextMixin, OutputOptionsMixin, ListCreateAPI
+    DataExportViewMixin,
+    SupplierPriceBreakMixin,
+    SerializerContextMixin,
+    OutputOptionsMixin,
+    ListCreateAPI,
 ):
     """API endpoint for list view of SupplierPriceBreak object.
 
@@ -466,7 +476,7 @@ class SupplierPriceBreakList(
     output_options = SupplierPriceBreakOutputOptions
 
     filterset_class = SupplierPriceBreakFilter
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['quantity', 'supplier', 'SKU', 'price']
 
     search_fields = ['part__SKU', 'part__supplier__name']
@@ -484,11 +494,7 @@ manufacturer_part_api_urls = [
     path(
         '<int:pk>/',
         include([
-            path(
-                'metadata/',
-                MetadataView.as_view(model=ManufacturerPart),
-                name='api-manufacturer-part-metadata',
-            ),
+            meta_path(ManufacturerPart),
             path(
                 '',
                 ManufacturerPartDetail.as_view(),
@@ -505,11 +511,7 @@ supplier_part_api_urls = [
     path(
         '<int:pk>/',
         include([
-            path(
-                'metadata/',
-                MetadataView.as_view(model=SupplierPart),
-                name='api-supplier-part-metadata',
-            ),
+            meta_path(SupplierPart),
             path('', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
         ]),
     ),
@@ -540,11 +542,7 @@ company_api_urls = [
     path(
         '<int:pk>/',
         include([
-            path(
-                'metadata/',
-                MetadataView.as_view(model=Company),
-                name='api-company-metadata',
-            ),
+            meta_path(Company),
             path('', CompanyDetail.as_view(), name='api-company-detail'),
         ]),
     ),
@@ -554,11 +552,7 @@ company_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=Contact),
-                        name='api-contact-metadata',
-                    ),
+                    meta_path(Contact),
                     path('', ContactDetail.as_view(), name='api-contact-detail'),
                 ]),
             ),

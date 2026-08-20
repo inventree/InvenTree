@@ -36,6 +36,7 @@ declare global {
       sentry_dsn?: string;
       environment?: string;
       mobile_mode?: 'default' | 'allow-ignore' | 'allow-always';
+      dangerous_hide_evelevated_alert?: boolean;
     };
     react: typeof React;
     React: typeof React;
@@ -107,6 +108,7 @@ if (window.INVENTREE_SETTINGS.sentry_dsn) {
   });
 }
 
+// Expose global objects for the plugin system
 (window as any).React = React;
 (window as any).ReactDOM = ReactDOM;
 (window as any).ReactDOMClient = ReactDOMClient;

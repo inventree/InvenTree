@@ -25,7 +25,8 @@ export enum FlowEnum {
   MfaAuthenticate = 'mfa_authenticate',
   Reauthenticate = 'reauthenticate',
   MfaReauthenticate = 'mfa_reauthenticate',
-  MfaTrust = 'mfa_trust'
+  MfaTrust = 'mfa_trust',
+  MfaRegister = 'mfa_register'
 }
 
 export interface Flow {

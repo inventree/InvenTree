@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
+import { readeruser } from '../defaults.ts';
 import {
   activateCalendarView,
   activateTableView,
@@ -9,7 +10,10 @@ import {
   loadTab,
   navigate,
   openFilterDrawer,
-  setTableChoiceFilter
+  setTableChoiceFilter,
+  showCalendarView,
+  showParametricView,
+  showTableView
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
 
@@ -18,53 +22,88 @@ test('Purchasing - Index', async ({ browser }) => {
 
   // Purchase Orders tab
   await loadTab(page, 'Purchase Orders');
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
+  await showParametricView(page);
+  await showCalendarView(page);
+  await showTableView(page);
 
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-calendar' })
-    .click();
-  await page.getByRole('button', { name: 'calendar-select-month' }).waitFor();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+  // Check default filters are applied
+  // By default, only outstanding orders are visible
+  await page.getByText(/1 - \d+ \/ \d+/).waitFor();
+
+  // Clearing the filters, more orders should be visible
+  await clearTableFilters(page);
+  await page.getByText(/1 - \d\d \/ \d\d/).waitFor();
 
   // Suppliers tab
   await loadTab(page, 'Suppliers');
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+  await showParametricView(page);
+  await showTableView(page);
+
+  // Check for expected values
+  await clearTableFilters(page);
+  await page.getByRole('cell', { name: 'DigiKey DigiKey' }).first().waitFor();
 
   // Supplier parts tab
   await loadTab(page, 'Supplier Parts');
+  await showParametricView(page);
+  await showTableView(page);
+
+  // Check for expected values
+  await clearTableFilters(page);
   await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+    .getByRole('textbox', { name: 'table-search-input' })
+    .fill('R_100K_0402');
+  await page.getByText('R_100K_0402_1%').first().waitFor();
+  await page.getByRole('cell', { name: 'RR05P100KDTR-ND' }).first().waitFor();
 
   // Manufacturers tab
   await loadTab(page, 'Manufacturers');
+  await showParametricView(page);
+  await showTableView(page);
+
+  // Check for expected values
+  await clearTableFilters(page);
   await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
-  await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+    .getByRole('cell', { name: 'Hammond Manufacturing Hammond' })
+    .first()
+    .waitFor();
 
   // Manufacturer parts tab
   await loadTab(page, 'Manufacturer Parts');
+  await showParametricView(page);
+  await showTableView(page);
+
+  // Check for expected values
+  await clearTableFilters(page);
+  await page.getByRole('cell', { name: 'ERA-2AEB104X' }).first().waitFor();
   await page
-    .getByRole('button', { name: 'segmented-icon-control-parametric' })
-    .click();
+    .getByRole('cell', { name: 'Bourns Inc. Bourns Inc.' })
+    .first()
+    .waitFor();
+});
+
+test('Purchasing - Manufacturer Parts', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'purchasing/index/manufacturer-parts'
+  });
+
   await page
-    .getByRole('button', { name: 'segmented-icon-control-table' })
-    .click();
+    .getByRole('textbox', { name: 'table-search-input' })
+    .fill('CPF0402B100KE1');
+  await page.getByText('R_100K_0402_1%').first().waitFor();
+  await page.getByRole('cell', { name: 'CPF0402B100KE1' }).waitFor();
+
+  // Check data exporter
+  await page.getByRole('button', { name: 'table-export-data' }).click();
+  await page.getByText('Select export plugin').waitFor();
+  await page
+    .getByRole('textbox', { name: 'choice-field-export_plugin' })
+    .fill('CSV');
+  await page.getByRole('button', { name: 'Export', exact: true }).click();
+  await page.getByText('Process completed successfully').waitFor();
+
+  await loadTab(page, 'Manufacturers');
+  await page.getByText('Murata Electronics').waitFor();
 });
 
 test('Purchase Orders - General', async ({ browser }) => {
@@ -225,7 +264,9 @@ test('Purchase Orders - Barcodes', async ({ browser }) => {
   // Ensure we can scan back to this page, with the associated barcode
   await page.getByRole('tab', { name: 'Sales' }).click();
   await page.waitForTimeout(250);
-  await page.getByRole('button', { name: 'Open Barcode Scanner' }).click();
+
+  await page.getByRole('button', { name: 'barcode-scan-button-any' }).click();
+
   await page.getByPlaceholder('Enter barcode data').fill('1234567890');
   await page.getByRole('button', { name: 'Scan', exact: true }).click();
 
@@ -243,8 +284,7 @@ test('Purchase Orders - Barcodes', async ({ browser }) => {
 
 test('Purchase Orders - Filters', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'reader',
-    password: 'readonly'
+    user: readeruser
   });
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
@@ -417,7 +457,8 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
     .getByRole('cell', { name: /Choose Location/ })
     .getByText('Room 101')
     .waitFor();
-  await page.getByText('Mechanical Lab').waitFor();
+
+  await page.getByText('Mechanical Lab').first().waitFor();
 
   await page.getByRole('button', { name: 'Cancel' }).click();
 
@@ -425,6 +466,22 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await navigate(page, 'purchasing/purchase-order/2/line-items');
 
   const cell = await page.getByText('Red Paint', { exact: true });
+
+  // First, ensure that the row has sufficient quantity to receive
+  // This is required to ensure the robustness of this test,
+  // as the test data may be modified by other tests
+  await clickOnRowMenu(cell);
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+  const quantityInput = await page.getByRole('textbox', {
+    name: 'number-field-quantity'
+  });
+  const quantity = Number.parseInt(await quantityInput.inputValue());
+  await quantityInput.fill((quantity + 100).toString());
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item Updated').waitFor();
+
+  // Now, receive the items
   await clickOnRowMenu(cell);
   await page.getByRole('menuitem', { name: 'Receive line item' }).click();
 
@@ -434,6 +491,7 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
 
   // Receive only a *single* item
   await page.getByLabel('number-field-quantity').fill('1');
+  await page.waitForTimeout(500);
 
   // Assign custom information
   await page.getByLabel('action-button-assign-batch-').click();
@@ -460,7 +518,43 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await loadTab(page, 'Received Stock');
   await clearTableFilters(page);
 
+  await page
+    .getByRole('textbox', { name: 'table-search-input' })
+    .fill('my-batch-code');
   await page.getByRole('cell', { name: 'my-batch-code' }).first().waitFor();
+});
+
+test('Purchase Orders - Receive Virtual Items', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'purchasing/purchase-order/19'
+  });
+
+  // Duplicate this order
+  await page.getByRole('button', { name: 'action-menu-order-actions' }).click();
+  await page.getByRole('menuitem', { name: 'Duplicate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('tab', { name: 'Order Details' }).waitFor();
+
+  // Issue the new order
+  await page.getByRole('button', { name: 'Issue Order' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Receive the line item
+  await loadTab(page, 'Line Items');
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page
+    .getByRole('button', { name: 'action-button-receive-items' })
+    .click();
+
+  await page
+    .getByRole('combobox', { name: 'related-field-location' })
+    .fill('factory');
+  await page.getByText('Factory/Storage Room A').click();
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // 1/1 items received
+  await page.getByText('1 / 1', { exact: true }).waitFor();
 });
 
 test('Purchase Orders - Duplicate', async ({ browser }) => {

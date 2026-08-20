@@ -4,7 +4,7 @@ title: Trackable Parts
 
 ## Stock Tracking
 
-Denoting a part as *Trackble* changes the way that [stock items](../stock/index.md) associated with the particular part are handled in the database. A trackable part also has more restrictions imposed by the database scheme.
+Denoting a part as *Trackable* changes the way that [stock items](../stock/index.md) associated with the particular part are handled in the database. A trackable part also has more restrictions imposed by the database scheme.
 
 For many parts in an InvenTree database, simply tracking current stock levels (and locations) is sufficient. However, some parts require more extensive tracking than simple stock level knowledge.
 

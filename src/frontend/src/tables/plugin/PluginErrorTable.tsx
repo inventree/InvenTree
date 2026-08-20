@@ -19,7 +19,9 @@ export interface PluginRegistryErrorI {
  * Table displaying list of plugin registry errors
  */
 export default function PluginErrorTable() {
-  const table = useTable('registryErrors', 'id');
+  const table = useTable('registryErrors', {
+    idAccessor: 'id'
+  });
 
   const registryErrorTableColumns: TableColumn<PluginRegistryErrorI>[] =
     useMemo(

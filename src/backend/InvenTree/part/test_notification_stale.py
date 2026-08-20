@@ -50,8 +50,8 @@ class StaleStockNotificationTests(InvenTreeTestCase):
         set_global_setting('STOCK_STALE_DAYS', 7, self.user)
 
         # Clear notifications
-        NotificationEntry.objects.all().delete()  # type: ignore[attr-defined]
-        NotificationMessage.objects.all().delete()  # type: ignore[attr-defined]
+        NotificationEntry.objects.all().delete()
+        NotificationMessage.objects.all().delete()
 
     def create_stock_items_with_expiry(self):
         """Create stock items with various expiry dates for testing."""
@@ -101,7 +101,7 @@ class StaleStockNotificationTests(InvenTreeTestCase):
         part.tasks.notify_stale_stock(self.user, [])
 
         # No notifications should be created
-        self.assertEqual(NotificationMessage.objects.count(), 0)  # type: ignore[attr-defined]
+        self.assertEqual(NotificationMessage.objects.count(), 0)
 
     def test_notify_stale_stock_single_item(self):
         """Test notify_stale_stock with a single stale item."""

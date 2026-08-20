@@ -24,6 +24,7 @@ import { useUserState } from '../../states/UserState';
 import {
   DecimalColumn,
   DescriptionColumn,
+  LineItemColumn,
   LinkColumn,
   NoteColumn,
   ProjectCodeColumn
@@ -50,6 +51,7 @@ export default function ExtraLineItemTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
+      LineItemColumn({}),
       {
         accessor: 'reference',
         switchable: false
@@ -177,6 +179,7 @@ export default function ExtraLineItemTable({
           params: {
             order: orderId
           },
+          defaultSortColumn: 'line',
           rowActions: rowActions,
           tableActions: tableActions
         }}

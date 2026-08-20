@@ -37,27 +37,29 @@ export const useServerApiState = create<ServerApiStateProps>()(
       server: emptyServerAPI,
       setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
       fetchServerApiState: async () => {
-        // Fetch server data
-        await api
-          .get(apiUrl(ApiEndpoints.api_server_info))
-          .then((response) => {
-            set({ server: response.data });
-          })
-          .catch(() => {
-            console.error('ERR: Error fetching server info');
-          });
+        await Promise.all([
+          // Fetch server data
+          api
+            .get(apiUrl(ApiEndpoints.api_server_info))
+            .then((response) => {
+              set({ server: response.data });
+            })
+            .catch(() => {
+              console.error('ERR: Error fetching server info');
+            }),
 
-        // Fetch login/SSO behaviour
-        await api
-          .get(apiUrl(ApiEndpoints.auth_config), {
-            headers: { Authorization: '' }
-          })
-          .then((response) => {
-            set({ auth_config: response.data.data });
-          })
-          .catch(() => {
-            console.error('ERR: Error fetching SSO information');
-          });
+          // Fetch login/SSO behaviour
+          api
+            .get(apiUrl(ApiEndpoints.auth_config), {
+              headers: { Authorization: '' }
+            })
+            .then((response) => {
+              set({ auth_config: response.data.data });
+            })
+            .catch(() => {
+              console.error('ERR: Error fetching SSO information');
+            })
+        ]);
       },
       auth_config: undefined,
       auth_context: undefined,

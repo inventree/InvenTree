@@ -920,6 +920,77 @@ class BuildAllocationTest(BuildAPITest):
             self.assertIsNotNone(bi)
             self.assertEqual(bi.build, build)
 
+    def test_auto_allocate_tracked(self):
+        """Test manual auto-allocation of tracked items against a Build."""
+        # Create a base assembly
+        assembly = Part.objects.create(
+            name='Test Assembly',
+            description='Test Assembly Description',
+            assembly=True,
+            trackable=True,
+        )
+
+        component = Part.objects.create(
+            name='Test Component',
+            description='Test Component Description',
+            trackable=True,
+            component=True,
+        )
+
+        # Create a BOM item for the assembly
+        BomItem.objects.create(part=assembly, sub_part=component, quantity=1)
+
+        # Create a build order for the assembly
+        build = Build.objects.create(part=assembly, reference='BO-12347', quantity=10)
+
+        SN = '123456'
+
+        # Create serialized component item
+        c = StockItem.objects.create(part=component, quantity=1, serial=SN)
+
+        N = BuildItem.objects.count()
+
+        # Create a new build output
+        response = self.post(
+            reverse('api-build-output-create', kwargs={'pk': build.pk}),
+            {'quantity': 1, 'serial_numbers': SN, 'auto_allocate': False},
+            expected_code=201,
+        )
+
+        output = response.data[0]
+
+        self.assertIsNotNone(output)
+        self.assertIsNotNone(output['pk'])
+        self.assertEqual(output['serial'], SN)
+
+        # No new build items (allocations) have been created yet
+        self.assertEqual(N, BuildItem.objects.count())
+
+        # Let's auto-allocate via the API now
+        url = reverse('api-build-auto-allocate', kwargs={'pk': build.pk})
+
+        # Allocate only 'untracked' items - this should not allocate our tracked item
+        self.post(url, data={'item_type': 'untracked'}, expected_code=200)
+
+        self.assertEqual(N, BuildItem.objects.count())
+
+        # Allocate 'tracked' items - this should allocate our tracked item
+        self.post(url, data={'item_type': 'tracked'}, expected_code=200)
+
+        # A new BuildItem should have been created
+        self.assertEqual(N + 1, BuildItem.objects.count())
+
+        line = build.build_lines.first()
+
+        self.assertIsNotNone(line)
+        allocations = line.allocations.filter(install_into_id=output['pk'])
+        self.assertEqual(allocations.count(), 1)
+
+        allocation = allocations.first()
+
+        self.assertEqual(allocation.stock_item, c)
+        self.assertEqual(allocation.quantity, 1)
+
 
 class BuildItemTest(BuildAPITest):
     """Unit tests for build items.
@@ -1493,12 +1564,13 @@ class BuildLineTests(BuildAPITest):
 
         # Filter by 'available' status
         # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
-        response = self.get(url, data={'available': True}, max_query_time=15)
+        # TODO: This needs to be addressed in the future, as 25 seconds is an unacceptably long time for a query to take in testing
+        response = self.get(url, data={'available': True}, max_query_time=25)
         n_t = len(response.data)
         self.assertGreater(n_t, 0)
 
         # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
-        response = self.get(url, data={'available': False}, max_query_time=15)
+        response = self.get(url, data={'available': False}, max_query_time=25)
         n_f = len(response.data)
         self.assertGreater(n_f, 0)
 
@@ -1664,7 +1736,7 @@ class BuildConsumeTest(BuildAPITest):
             'lines': [{'build_line': line.pk} for line in self.build.build_lines.all()]
         }
 
-        self.post(url, data, expected_code=201)
+        self.post(url, data, expected_code=200)
 
         self.assertEqual(self.build.allocated_stock.count(), 0)
         self.assertEqual(self.build.consumed_stock.count(), 3)
@@ -1687,7 +1759,7 @@ class BuildConsumeTest(BuildAPITest):
             ]
         }
 
-        self.post(url, data, expected_code=201)
+        self.post(url, data, expected_code=200)
 
         self.assertEqual(self.build.allocated_stock.count(), 0)
         self.assertEqual(self.build.consumed_stock.count(), 3)

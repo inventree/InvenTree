@@ -66,7 +66,7 @@ export function TableHoverCard({
       zIndex={zIndex}
     >
       <HoverCard.Target>
-        <Group gap='xs' justify='space-between' wrap='nowrap'>
+        <Group gap='xs' justify='space-between'>
           {value}
           <InvenTreeIcon
             icon={icon ?? 'info'}

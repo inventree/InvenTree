@@ -14,6 +14,7 @@ import { IconCheck, IconExclamationCircle } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 
 import { ModelType } from '@lib/enums/ModelType';
+import type { ApiFormFieldSet } from '@lib/index';
 import { useImportSession } from '../../hooks/UseImportSession';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { StylishText } from '../items/StylishText';
@@ -42,7 +43,7 @@ function ImportDrawerStepper({
     >
       <Stepper.Step label={t`Upload File`} />
       <Stepper.Step label={t`Map Columns`} />
-      <Stepper.Step label={t`Import Data`} />
+      <Stepper.Step label={t`Import Rows`} />
       <Stepper.Step label={t`Process Data`} />
       <Stepper.Step label={t`Complete Import`} />
     </Stepper>
@@ -51,10 +52,12 @@ function ImportDrawerStepper({
 
 export default function ImporterDrawer({
   sessionId,
+  customFields,
   opened,
   onClose
 }: Readonly<{
   sessionId: number;
+  customFields?: ApiFormFieldSet | null;
   opened: boolean;
   onClose: () => void;
 }>) {
@@ -93,9 +96,16 @@ export default function ImporterDrawer({
 
     switch (session.status) {
       case importSessionStatus.MAPPING:
-        return <ImporterColumnSelector session={session} />;
+        return (
+          <ImporterColumnSelector
+            session={session}
+            customFields={customFields}
+          />
+        );
       case importSessionStatus.PROCESSING:
-        return <ImporterDataSelector session={session} />;
+        return (
+          <ImporterDataSelector session={session} customFields={customFields} />
+        );
       case importSessionStatus.COMPLETE:
         return (
           <Stack gap='xs'>
@@ -133,7 +143,7 @@ export default function ImporterDrawer({
         <Divider />
       </Stack>
     );
-  }, [session.sessionData]);
+  }, [currentStep, session.sessionData]);
 
   return (
     <Drawer

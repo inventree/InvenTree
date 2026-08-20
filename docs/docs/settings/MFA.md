@@ -4,7 +4,7 @@ title: InvenTree Multi Factor Authentication
 
 ## Multi Factor Authentication
 
- InvenTree gives the option to use TOTP or statically generated backup tokens as an additional factor to password or SSO authentication. This is a widely adopted security feature on enterprise web services. We highly encourage to enable it if you expose your instance to the public internet.
+ InvenTree gives the option to use [TOTP](https://en.wikipedia.org/wiki/Time-based_One-Time_Password) or statically generated backup tokens as an additional factor to password or SSO authentication. This is a widely adopted security feature on enterprise web services. We highly encourage to enable it if you expose your instance to the public internet.
 
 As TOTP is an [open standard](https://datatracker.ietf.org/doc/html/rfc6238) there are a lot of different ways to hold your key and generate the time based tokens needed for authentication. That ranges from physical devices to password managers and mobile apps. We do not advertise any method but recommend to keep password and token generator separate from each other.
 

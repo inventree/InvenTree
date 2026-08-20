@@ -295,7 +295,8 @@ export default function SupplierPartDetail() {
       }),
       NotesPanel({
         model_type: ModelType.supplierpart,
-        model_id: supplierPart?.pk
+        model_id: supplierPart?.pk,
+        has_note: !!supplierPart?.notes
       })
     ];
   }, [supplierPart]);

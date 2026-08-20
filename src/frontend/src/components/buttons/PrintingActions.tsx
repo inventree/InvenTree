@@ -64,10 +64,12 @@ export function PrintingActions({
 
   const [itemIdList, setItemIdList] = useState<number[]>([]);
 
+  const [labelDialogOpen, setLabelDialogOpen] = useState<boolean>(false);
+
   // Fetch available printing fields via OPTIONS request
   const printingFields = useQuery({
-    enabled: labelPrintingEnabled,
-    queryKey: ['printingFields', modelType, pluginKey],
+    enabled: labelDialogOpen && !!modelType && !!labelPrintingEnabled,
+    queryKey: ['printingFields', modelType, pluginKey, labelDialogOpen],
     gcTime: 500,
     queryFn: () =>
       api
@@ -126,9 +128,11 @@ export function PrintingActions({
     fields: labelFields,
     timeout: 5000,
     onOpen: () => {
+      setLabelDialogOpen(true);
       setItemIdList(items);
     },
     onClose: () => {
+      setLabelDialogOpen(false);
       setPluginKey('');
     },
     submitText: t`Print`,

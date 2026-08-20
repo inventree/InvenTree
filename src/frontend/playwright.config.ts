@@ -48,13 +48,22 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome']
-      }
+      },
+      testIgnore: /customization/ // Ignore all tests in the "customization" folder for this project
     },
     {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox']
-      }
+      },
+      testIgnore: /customization/ // Ignore all tests in the "customization" folder for this project
+    },
+    {
+      name: 'customization',
+      use: {
+        ...devices['Desktop Firefox']
+      },
+      testIgnore: /pui_.*\.spec\.ts/ // Ignore all "pui_*.spec.ts" tests for this project
     }
   ],
 
@@ -87,6 +96,15 @@ export default defineConfig({
       stdout: 'pipe',
       stderr: 'pipe',
       timeout: 120 * 1000
+    },
+    {
+      command: 'invoke worker',
+      env: {
+        INVENTREE_DEBUG: 'True',
+        INVENTREE_LOG_LEVEL: 'INFO',
+        INVENTREE_PLUGINS_ENABLED: 'True',
+        INVENTREE_PLUGINS_MANDATORY: 'samplelocate'
+      }
     }
   ],
   globalSetup: './playwright/global-setup.ts',

@@ -83,6 +83,7 @@ export function extraLineItemFields(): ApiFormFieldSet {
     order: {
       hidden: true
     },
+    line: {},
     reference: {},
     description: {},
     quantity: {},

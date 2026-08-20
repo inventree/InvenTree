@@ -10,7 +10,7 @@ from django.db.utils import NotSupportedError
 from django.test import TestCase
 from django.utils import timezone
 
-from django_q.models import Schedule, Task
+from django_q.models import OrmQ, Schedule, Task
 from error_report.models import Error
 
 import InvenTree.tasks
@@ -234,11 +234,8 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
 
         msg = NotificationMessage.objects.last()
 
-        self.assertEqual(msg.name, 'Task Failure')
-        self.assertEqual(
-            msg.message,
-            "Background worker task 'InvenTree.tasks.failed_task' failed after 10 attempts",
-        )
+        self.assertEqual(msg.name, 'Server Error')
+        self.assertEqual(msg.message, 'An error has been logged by the server.')
 
     def test_delete_old_emails(self):
         """Test the delete_old_emails task."""
@@ -297,3 +294,74 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
             )
             msg.timestamp = timestamp
             msg.save()
+
+    def test_duplicate_tasks(self):
+        """Test for task duplication."""
+        # Start with a blank slate
+        OrmQ.objects.all().delete()
+
+        # Add some unique tasks
+        for idx in range(10):
+            InvenTree.tasks.offload_task(
+                f'dummy_module.dummy_function_{idx}', force_async=True
+            )
+
+        self.assertEqual(OrmQ.objects.count(), 10)
+
+        # Add some duplicate tasks
+        for _idx in range(10):
+            InvenTree.tasks.offload_task(
+                'dummy_module.dummy_function_x',
+                1,
+                2,
+                3,
+                animal='cat',
+                vegetable='carrot',
+                force_async=True,
+            )
+
+        # Only 1 extra task should have been added
+        self.assertEqual(OrmQ.objects.count(), 11)
+
+        # Add some more duplicate tasks, but ignore duplication checks
+        for _idx in range(10):
+            InvenTree.tasks.offload_task(
+                'dummy_module.dummy_function_y',
+                1,
+                2,
+                3,
+                animal='dog',
+                vegetable='yam',
+                force_async=True,
+                check_duplicates=False,
+            )
+
+        # 10 extra tasks should have been added
+        self.assertEqual(OrmQ.objects.count(), 21)
+
+        # Add more tasks, which are *not* duplicates based on args
+        for idx in range(10):
+            InvenTree.tasks.offload_task(
+                'dummy_module.dummy_function',
+                1,
+                idx,
+                3,
+                animal='cat',
+                vegetable='carrot',
+                force_async=True,
+            )
+
+        # Add more tasks, which are *not* duplicates based on kwargs
+        for idx in range(10):
+            InvenTree.tasks.offload_task(
+                'dummy_module.dummy_function',
+                1,
+                2,
+                3,
+                animal='cat',
+                vegetable=f'vegetable_{idx}',
+                force_async=True,
+            )
+
+        # 20 more tasks should have been added
+        self.assertEqual(OrmQ.objects.count(), 41)

@@ -1,5 +1,8 @@
 """Unit tests for base mixins for plugins."""
 
+from collections import OrderedDict, defaultdict
+from unittest.mock import MagicMock, patch
+
 from django.conf import settings
 from django.test import TestCase
 from django.urls import include, path, re_path
@@ -144,6 +147,56 @@ class AppMixinTest(BaseMixinDefinition, TestCase):
     def test_function(self):
         """Test that the sample plugin registers in settings."""
         self.assertIn('plugin.samples.integration', settings.INSTALLED_APPS)
+
+    def test_deactivate_nested_plugin_path(self):
+        """Test that _deactivate_mixin uses app_name (not plugin_path) for model deregistration.
+
+        External plugins with nested module paths (e.g. "purchase_quotation.purchase_quotation")
+        have plugin_path != app_name. Django registers models under app_name (the last component),
+        so using the full plugin_path to look up apps.all_models would access the wrong key
+        in the defaultdict and raise KeyError on .pop().
+        """
+        # Simulate a nested plugin path like an external plugin installed via:
+        #   entry_points={"inventree_plugins": [
+        #       "PurchaseQuotationPlugin = purchase_quotation.plugin:PurchaseQuotationPlugin"
+        #   ]}
+        # where the package structure is purchase_quotation/purchase_quotation/
+        nested_plugin_path = 'purchase_quotation.purchase_quotation'
+        app_name = 'purchase_quotation'  # Django registers models under this
+
+        # Set up a mock registry with the nested plugin path
+        mock_registry = MagicMock()
+        mock_registry.installed_apps = [nested_plugin_path]
+
+        # Create a fake model
+        mock_model = MagicMock()
+        mock_model._meta.model_name = 'purchasequotation'
+
+        # Create a mock app_config that returns our fake model
+        mock_app_config = MagicMock()
+        mock_app_config.get_models.return_value = [mock_model]
+
+        # Set up apps.all_models with the model registered under app_name
+        # (this is how Django actually stores it)
+        fake_all_models = defaultdict(OrderedDict)
+        fake_all_models[app_name]['purchasequotation'] = mock_model
+
+        with (
+            patch(
+                'plugin.base.integration.AppMixin.apps.get_app_config',
+                return_value=mock_app_config,
+            ),
+            patch('plugin.base.integration.AppMixin.apps.all_models', fake_all_models),
+        ):
+            # This should NOT raise KeyError - the fix ensures we use
+            # app_name (the last path component) instead of the full plugin_path
+            AppMixin._deactivate_mixin(mock_registry, force_reload=False)
+
+        # Verify the model was removed from the registry
+        self.assertNotIn('purchasequotation', fake_all_models.get(app_name, {}))
+        # Verify the full nested path was NOT used as a key
+        # (defaultdict would have created an empty entry if accessed)
+        self.assertNotIn(nested_plugin_path, fake_all_models)
 
 
 class NavigationMixinTest(BaseMixinDefinition, TestCase):

@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('key', models.CharField(help_text='Key of plugin', max_length=255, unique=True, verbose_name='Key')),
-                ('name', models.CharField(blank=True, help_text='PluginName of the plugin', max_length=255, null=True, verbose_name='Name')),
+                ('name', models.CharField(blank=True, help_text='Name of the plugin', max_length=255, null=True, verbose_name='Name')),
                 ('active', models.BooleanField(default=False, help_text='Is the plugin active', verbose_name='Active')),
             ],
         ),

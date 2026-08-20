@@ -35,7 +35,7 @@ export default function StarredToggleButton({
         showNotification({
           title: t`Subscription Updated`,
           id: 'subscription-update',
-          message: `Subscription ${starred ? 'removed' : 'added'}`,
+          message: starred ? t`Subscription removed` : t`Subscription added`,
           autoClose: 5000,
           color: 'blue'
         });
@@ -43,7 +43,7 @@ export default function StarredToggleButton({
       })
       .catch((error) => {
         showNotification({
-          title: 'Error',
+          title: t`Error`,
           message: error.message,
           autoClose: 5000,
           color: 'red'

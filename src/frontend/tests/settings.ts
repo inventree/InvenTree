@@ -16,7 +16,7 @@ export const setSettingState = async ({
   type?: 'global' | 'plugin';
   plugin?: string;
 }) => {
-  const api = await createApi();
+  const api = await createApi({});
   const url =
     type === 'global'
       ? `settings/global/${setting}/`
@@ -37,7 +37,7 @@ export const setPluginState = async ({
   plugin: string;
   state: boolean;
 }) => {
-  const api = await createApi();
+  const api = await createApi({});
   const response = await api.patch(`plugins/${plugin}/activate/`, {
     data: {
       active: state

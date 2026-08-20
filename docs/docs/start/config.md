@@ -92,24 +92,21 @@ The following debugging / logging options are available:
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_DEBUG | debug | Enable [debug mode](./index.md#debug-mode) | False |
-| INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable [query count logging](https://github.com/bradmontgomery/django-querycount) in the terminal | False |
+| INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable support for [django-querycount](../develop/index.md#django-querycount) middleware. | False |
+| INVENTREE_DEBUG_SILK | debug_silk | Enable support for [django-silk](../develop/index.md#django-silk) profiling tool. | False |
+| INVENTREE_DEBUG_SILK_PROFILING | debug_silk_profiling | Enable detailed profiling in django-silk | False |
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
 | INVENTREE_JSON_LOG | json_log | log as json | False |
 | INVENTREE_WRITE_LOG | write_log | Enable writing of log messages to file at config base | False |
 | INVENTREE_CONSOLE_LOG | console_log | Enable logging to console | True |
+| INVENTREE_SCHEMA_LEVEL | schema.level | Set level of added schema extensions detail (0-3) 0 = including no additional detail | 0 |
 
 ### Debug Mode
 
 Enabling the `INVENTREE_DEBUG` setting will turn on [Django debug mode]({% include "django.html" %}/ref/settings/#debug). This mode is intended for development purposes, and should not be enabled in a production environment. Read more about [InvenTree debug mode](./index.md#debug-mode).
 
-### Query Count Logging
-
-Enabling the `INVENTREE_DEBUG_QUERYCOUNT` setting will log the number of database queries executed for each page load. This can be useful for identifying performance bottlenecks in the InvenTree server. Note that this setting is only available if `INVENTREE_DEBUG` is also enabled.
-
-### Database Logging
-
-Enabling the `INVENTREE_DB_LOGGING` setting will log all database queries to the terminal. This can be useful for debugging database-related issues.
+In debug mode, there are additional [profiling tools](../develop/index.md#profiling-tools) available to help developers analyze and optimize performance.
 
 ## Server Access
 
@@ -187,7 +184,6 @@ You can also refer to the [Django documentation]({% include "django.html" %}/ref
 Proxy configuration can be complex, and any configuration beyond the basic setup is outside the scope of this documentation. You should refer to the documentation for the specific proxy server you are using.
 
 Refer to the [proxy server documentation](./processes.md#proxy-server) for more information.
-
 
 ## Admin Site
 
@@ -278,7 +274,7 @@ If running with a PostgreSQL database backend, the following additional options 
 | INVENTREE_DB_TIMEOUT | database.timeout | Database connection timeout (s) | 2 |
 | INVENTREE_DB_TCP_KEEPALIVES | database.tcp_keepalives | TCP keepalive | 1 |
 | INVENTREE_DB_TCP_KEEPALIVES_IDLE | database.tcp_keepalives_idle | Idle TCP keepalive | 1 |
-| INVENTREE_DB_TCP_KEEPALIVES_INTERNAL | database.tcp_keepalives_internal | Internal TCP keepalive | 1|
+| INVENTREE_DB_TCP_KEEPALIVES_INTERVAL | database.tcp_keepalives_interval | TCP keepalive interval | 1|
 | INVENTREE_DB_TCP_KEEPALIVES_COUNT | database.tcp_keepalives_count | TCP keepalive count | 5 |
 | INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | Database isolation level configured to "serializable" | False |
 
@@ -289,6 +285,18 @@ If running with a MySQL database backend, the following additional options are a
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | Database isolation level configured to "serializable" | False |
+
+### SQLite Settings
+
+!!! warning "SQLite Performance"
+    SQLite is not recommended for production use, and should only be used for testing or development purposes. If you are using SQLite in production, you may want to adjust the following settings to improve performance.
+
+If running with a SQLite database backend, the following additional options are available:
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_DB_TIMEOUT | database.timeout | Database connection timeout (s) | 10 |
+| INVENTREE_DB_WAL_MODE | database.wal_mode | Enable Write-Ahead Logging (WAL) mode for SQLite databases | True |
 
 ## Caching
 
@@ -337,10 +345,14 @@ The following email settings are available:
 | INVENTREE_EMAIL_PORT | email.port | Email server port | 25 |
 | INVENTREE_EMAIL_USERNAME | email.username | Email account username | *Not specified* |
 | INVENTREE_EMAIL_PASSWORD | email.password | Email account password | *Not specified* |
-| INVENTREE_EMAIL_TLS | email.tls | Enable TLS support | False |
-| INVENTREE_EMAIL_SSL | email.ssl | Enable SSL support | False |
+| INVENTREE_EMAIL_TLS | email.tls | Enable STARTTLS support (commonly port 567) | False |
+| INVENTREE_EMAIL_SSL | email.ssl | Enable legacy SSL/TLS support (commonly port 465) | False |
 | INVENTREE_EMAIL_SENDER | email.sender | Sending email address | *Not specified* |
 | INVENTREE_EMAIL_PREFIX | email.prefix | Prefix for subject text | [InvenTree] |
+
+### Email Backend
+
+The default email implementation uses the Django STMP backend. This should be sufficient for most implementations, although other backends can be used if required. Note that selection of a different backend requires must use fully qualified module path, and requires advanced knowledge.
 
 ### Sender Email
 
@@ -400,14 +412,10 @@ It is also possible to use alternative storage backends for static and media fil
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_S3_ACCESS_KEY | storage.s3.access_key | Access key | *Not specified* |
-| INVENTREE_S3_SECRET_KEY | storage.s3.secret_key | Secret key |
-| *Not specified* |
-| INVENTREE_S3_BUCKET_NAME | storage.s3.bucket_name | Bucket name, required by most providers |
-| *Not specified* |
-| INVENTREE_S3_REGION_NAME | storage.s3.region_name | S3 region name |
-| *Not specified* |
-| INVENTREE_S3_ENDPOINT_URL | storage.s3.endpoint_url | Custom S3 endpoint URL, defaults to AWS endpoints if not set |
-| *Not specified* |
+| INVENTREE_S3_SECRET_KEY | storage.s3.secret_key | Secret key | *Not specified* |
+| INVENTREE_S3_BUCKET_NAME | storage.s3.bucket_name | Bucket name, required by most providers | *Not specified* |
+| INVENTREE_S3_REGION_NAME | storage.s3.region_name | S3 region name | *Not specified* |
+| INVENTREE_S3_ENDPOINT_URL | storage.s3.endpoint_url | Custom S3 endpoint URL, defaults to AWS endpoints if not set | *Not specified* |
 | INVENTREE_S3_LOCATION | storage.s3.location | Sub-Location that should be used | inventree-server |
 | INVENTREE_S3_DEFAULT_ACL | storage.s3.default_acl | Default ACL for uploaded files, defaults to provider default if not set | *Not specified* |
 | INVENTREE_S3_VERIFY_SSL | storage.s3.verify_ssl | Verify SSL certificate for S3 endpoint | True |
@@ -458,6 +466,17 @@ The login-experience can be altered with the following settings:
 ### Authentication Backends
 
 Custom authentication backends can be used by specifying them here. These can for example be used to add [LDAP / AD login](https://django-auth-ldap.readthedocs.io/en/latest/) to InvenTree
+
+## Background Worker Options
+
+The following options are available for configuring the InvenTree [background worker process](./processes.md#background-worker):
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_BACKGROUND_WORKERS | background.workers | Number of background worker processes | 1 |
+| INVENTREE_BACKGROUND_TIMEOUT | background.timeout | Timeout for background worker tasks (seconds) | 90 |
+| INVENTREE_BACKGROUND_RETRY | background.retry | Time to wait before retrying a background task (seconds) | 300 |
+| INVENTREE_BACKGROUND_MAX_ATTEMPTS | background.max_attempts | Maximum number of attempts for a background task | 5 |
 
 ## Sentry Integration
 
@@ -516,6 +535,7 @@ Set the `INVENTREE_FRONTEND_SETTINGS` Environment variable to a JSON object or u
 | `url_compatibility` | Support compatibility with "legacy" URLs? | `true` |
 | `sentry_dsn` | Set a Sentry DSN url | *Not specified* |
 | `mobile_mode` | Controls if InvenTree web UI can be used by mobile devices. There are 3 options: `default` - does not allow mobile devices; `allow-ignore` - shows a mobile device detected banner with a button to ignore this warning AT THE USERS OWN RISK; `allow-always` - skips the mobile check and allows mobile devices always (of course at the server admins OWN RISK) | `default` |
+| `dangerous_hide_evelevated_alert` | Hides the elevated permissions alert in the UI. This is a dangerous option as using the UI with elevated permissions is against the threat model. | `false` |
 
 E.g. to allow mobile devices to ignore the mobile check, use the following Environment variable:
 
@@ -545,4 +565,4 @@ To override global settings, provide a "dictionary" of settings overrides in the
 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
-| GLOBAL_SETTINGS_OVERRIDES | global_settings_overrides | JSON object containing global settings overrides | *Not specified* |
+| INVENTREE_GLOBAL_SETTINGS | global_settings | JSON object containing global settings overrides | *Not specified* |
