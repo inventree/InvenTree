@@ -152,7 +152,7 @@ class ManufacturerPartFilter(FilterSet):
         field_name='manufacturer__active', label=_('Manufacturer is Active')
     )
 
-    tags = common.filters.TagsFilter(label=_('Tags'))
+    tags = common.filters.TagsFilter()
 
 
 class ManufacturerOutputOptions(OutputConfiguration):
@@ -308,7 +308,7 @@ class SupplierPartFilter(FilterSet):
         else:
             return queryset.exclude(in_stock__gt=0)
 
-    tags = common.filters.TagsFilter(label=_('Tags'))
+    tags = common.filters.TagsFilter()
 
 
 class SupplierPartOutputOptions(OutputConfiguration):
