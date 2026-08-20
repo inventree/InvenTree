@@ -172,7 +172,7 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'supplier_part': 4}, 0)
 
         # Filter by "tags"
-        self.filter({'tags': True}, 1)
+        self.filter({'tags': True}, 7)
 
     def test_total_price(self):
         """Unit tests for the 'total_price' field."""
