@@ -33,6 +33,7 @@ The *Display Settings* screen shows general display configuration options:
 {{ usersetting("SHOW_EXTRA_MODEL_INFO") }}
 {{ usersetting("SHOW_FULL_LOCATION_IN_TABLES") }}
 {{ usersetting("DISPLAY_ITEMS_FINAL_LEVEL") }}
+{{ usersetting("USE_TABLE_NAVIGATION") }}
 
 ### Search Settings
 

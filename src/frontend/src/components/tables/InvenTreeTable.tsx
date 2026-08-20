@@ -821,10 +821,11 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
 
         if (pk) {
           cancelEvent(event);
-          // If a model type is provided, navigate to the detail view for that model
-          const detailUrl =
-            getDetailNavigationUrl(record, index) ??
-            getDetailUrl(tableProps.modelType, pk);
+          // If a model type is provided and USE_TABLE_NAVIGATION is enabled, navigate to the detail view for that model
+          const detailUrl = userSettings.isSet('USE_TABLE_NAVIGATION')
+            ? (getDetailNavigationUrl(record, index) ??
+              getDetailUrl(tableProps.modelType, pk))
+            : getDetailUrl(tableProps.modelType, pk);
 
           if (!showPreviewPanel || eventModified(event as any)) {
             navigateToLink(detailUrl, navigate, event);
@@ -888,9 +889,10 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         const recordIndex = tableState.records.findIndex(
           (item) => String(resolveItem(item, accessor)) === String(pk)
         );
-        const detailUrl =
-          getDetailNavigationUrl(record, recordIndex) ??
-          getDetailUrl(props.modelType, pk);
+        const detailUrl = userSettings.isSet('USE_TABLE_NAVIGATION')
+          ? (getDetailNavigationUrl(record, recordIndex) ??
+            getDetailUrl(props.modelType, pk))
+          : getDetailUrl(props.modelType, pk);
 
         const model: string | undefined =
           ModelInformationDict[props.modelType]?.label?.();

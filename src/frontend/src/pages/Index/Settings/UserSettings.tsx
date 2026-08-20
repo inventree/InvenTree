@@ -66,7 +66,8 @@ export default function UserSettings() {
               'SHOW_FULL_LOCATION_IN_TABLES',
               'SHOW_FULL_CATEGORY_IN_TABLES',
               'SHOW_BOM_SUBASSEMBLY_LEVELS',
-              'DISPLAY_ITEMS_FINAL_LEVEL'
+              'DISPLAY_ITEMS_FINAL_LEVEL',
+              'USE_TABLE_NAVIGATION'
             ]}
           />
         )
