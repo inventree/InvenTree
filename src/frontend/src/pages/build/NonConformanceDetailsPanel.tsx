@@ -156,6 +156,7 @@ export function NonConformanceDetailsPanel({
       type: 'text',
       name: 'raised_by',
       label: t`Raised By`,
+      icon: 'user',
       badge: 'user',
       hidden: !instance?.raised_by
     },
