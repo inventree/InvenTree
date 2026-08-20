@@ -1,4 +1,4 @@
-import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Group, Space, Text, Tooltip } from '@mantine/core';
 import {
   IconCancel,
   IconChevronLeft,
@@ -44,16 +44,6 @@ export function DetailNavigation({
       data-testid='detail-navigation'
       style={{ flexShrink: 0, minHeight: 36 }}
     >
-      <Tooltip label={lbl_clear} position='top'>
-        <ActionIcon
-          onClick={handleClear}
-          size='md'
-          variant='subtle'
-          aria-label={lbl_clear}
-        >
-          <IconCancel size='1.25rem' />
-        </ActionIcon>
-      </Tooltip>
       {navigation.position && (
         <Text
           size='xs'
@@ -64,6 +54,17 @@ export function DetailNavigation({
           {t`${navigation.position.current} of ${navigation.position.total}`}
         </Text>
       )}
+      <Tooltip label={lbl_clear} position='top'>
+        <ActionIcon
+          onClick={handleClear}
+          size='md'
+          variant='subtle'
+          aria-label={lbl_clear}
+        >
+          <IconCancel size='1.25rem' />
+        </ActionIcon>
+      </Tooltip>
+      <Space />
       <Tooltip label={lbl_prev} position='top'>
         <ActionIcon
           component='a'
