@@ -215,6 +215,12 @@ jobs:
           echo "calculate release channel"
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
+      - name: cleanup
+        run: |
+          # remove .map files from static build - these are only needed for debug
+          find src/backend/InvenTree/web/static/web -name "*.map" -type f -delete
+          # remove the whole docs dir - we are not doing anything with them
+          rm -rf docs
       - name: Package - current release channel
         uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # main
         id: package
