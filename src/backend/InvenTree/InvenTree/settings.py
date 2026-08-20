@@ -12,7 +12,6 @@ database setup in this file.
 import logging
 import os
 import sys
-from pathlib import Path
 from typing import Optional
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -33,7 +32,16 @@ from InvenTree.version import checkMinPythonVersion, inventreeCommitHash
 from users.oauth2_scopes import oauth2_scopes
 
 from . import config
-from .setting import db_backend, locales, markdown, spectacular, storages
+from .setting import (
+    db_backend,
+    ldap,
+    locales,
+    markdown,
+    spectacular,
+    storages,
+    tracing,
+    worker,
+)
 
 try:
     import django_stubs_ext
@@ -48,7 +56,11 @@ INVENTREE_BASE_URL = 'https://inventree.org'
 INVENTREE_NEWS_URL = f'{INVENTREE_BASE_URL}/news/feed.atom'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
-TESTING = 'test' in sys.argv or 'TESTING' in os.environ or 'pytest' in sys.argv
+TESTING = (
+    'test' in sys.argv
+    or 'TESTING' in os.environ
+    or any('pytest' in arg for arg in sys.argv)
+)
 
 if TESTING:
     # Use a weaker password hasher for testing (improves testing speed)
@@ -80,6 +92,8 @@ DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', False)
 
 # Internal flag to determine if we are running in docker mode
 DOCKER = get_boolean_setting('INVENTREE_DOCKER', default_value=False)
+
+AUTO_UPDATE = get_boolean_setting('INVENTREE_AUTO_UPDATE', 'auto_update', False)
 
 # Configure logging settings
 LOG_LEVEL = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
@@ -222,9 +236,7 @@ PLUGIN_TESTING_EVENTS_ASYNC = False  # Flag if events are tested asynchronously
 PLUGIN_TESTING_RELOAD = False  # Flag if plugin reloading is in testing (check_reload)
 
 # Plugin development settings
-PLUGIN_DEV_SLUG = (
-    get_setting('INVENTREE_PLUGIN_DEV_SLUG', 'plugin_dev.slug') if DEBUG else None
-)
+PLUGIN_DEV_SLUG = get_setting('INVENTREE_PLUGIN_DEV_SLUG', 'plugin_dev.slug')
 
 PLUGIN_DEV_HOST = get_setting(
     'INVENTREE_PLUGIN_DEV_HOST', 'plugin_dev.host', 'http://localhost:5174'
@@ -386,8 +398,11 @@ MIDDLEWARE = CONFIG.get(
 
 # In DEBUG mode, add support for django-silk
 # Ref: https://silk.readthedocs.io/en/latest/
-DJANGO_SILK_ENABLED = DEBUG and get_boolean_setting(  # pragma: no cover
-    'INVENTREE_DEBUG_SILK', 'debug_silk', False
+DJANGO_SILK_ENABLED = (
+    get_boolean_setting(  # pragma: no cover
+        'INVENTREE_DEBUG_SILK', 'debug_silk', False
+    )
+    and DEBUG
 )
 
 if DJANGO_SILK_ENABLED:  # pragma: no cover
@@ -401,8 +416,11 @@ if DJANGO_SILK_ENABLED:  # pragma: no cover
 
 # In DEBUG mode, add support for django-querycount
 # Ref: https://github.com/bradmontgomery/django-querycount
-if DEBUG and get_boolean_setting(  # pragma: no cover
-    'INVENTREE_DEBUG_QUERYCOUNT', 'debug_querycount', False
+if (
+    get_boolean_setting(  # pragma: no cover
+        'INVENTREE_DEBUG_QUERYCOUNT', 'debug_querycount', False
+    )
+    and DEBUG
 ):
     MIDDLEWARE.append('querycount.middleware.QueryCountMiddleware')
     logger.debug('Running with debug_querycount middleware enabled')
@@ -437,14 +455,14 @@ AUTHENTICATION_BACKENDS = (
 
 # LDAP support
 LDAP_AUTH = get_boolean_setting('INVENTREE_LDAP_ENABLED', 'ldap.enabled', False)
-if LDAP_AUTH:  # pragma: no cover
-    import django_auth_ldap.config  # type: ignore[unresolved-import]
-    import ldap  # type: ignore[unresolved-import]
+LDAP_DEBUG = (
+    get_boolean_setting('INVENTREE_LDAP_DEBUG', 'ldap.debug', False) and LDAP_AUTH
+)
 
+if LDAP_AUTH:  # pragma: no cover
     AUTHENTICATION_BACKENDS.append('django_auth_ldap.backend.LDAPBackend')
 
     # debug mode to troubleshoot configuration
-    LDAP_DEBUG = get_boolean_setting('INVENTREE_LDAP_DEBUG', 'ldap.debug', False)
     if LDAP_DEBUG:
         if 'loggers' not in LOGGING:
             LOGGING['loggers'] = {}
@@ -453,113 +471,10 @@ if LDAP_AUTH:  # pragma: no cover
             'handlers': DEFAULT_LOG_HANDLER,
         }
 
-    # get global options from dict and use ldap.OPT_* as keys and values
-    global_options_dict = get_setting(
-        'INVENTREE_LDAP_GLOBAL_OPTIONS',
-        'ldap.global_options',
-        default_value=None,
-        typecast=dict,
-    )
-    global_options = {}
-    for k, v in global_options_dict.items():
-        # keys are always ldap.OPT_* constants
-        k_attr = getattr(ldap, k, None)
-        if not k.startswith('OPT_') or k_attr is None:
-            print(f"[LDAP] ldap.global_options, key '{k}' not found, skipping...")
-            continue
+    # Determine LDAP settings
+    ldap_settings = ldap.get_ldap_config(debug=LDAP_DEBUG)
+    globals().update(ldap_settings)
 
-        # values can also be other strings, e.g. paths
-        v_attr = v
-        if v.startswith('OPT_'):
-            v_attr = getattr(ldap, v, None)
-
-        if v_attr is None:
-            print(f"[LDAP] ldap.global_options, value key '{v}' not found, skipping...")
-            continue
-
-        global_options[k_attr] = v_attr
-    AUTH_LDAP_GLOBAL_OPTIONS = global_options
-    if LDAP_DEBUG:
-        print('[LDAP] ldap.global_options =', global_options)
-
-    AUTH_LDAP_SERVER_URI = get_setting('INVENTREE_LDAP_SERVER_URI', 'ldap.server_uri')
-    AUTH_LDAP_START_TLS = get_boolean_setting(
-        'INVENTREE_LDAP_START_TLS', 'ldap.start_tls', False
-    )
-    AUTH_LDAP_BIND_DN = get_setting('INVENTREE_LDAP_BIND_DN', 'ldap.bind_dn')
-    AUTH_LDAP_BIND_PASSWORD = get_setting(
-        'INVENTREE_LDAP_BIND_PASSWORD', 'ldap.bind_password'
-    )
-    AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
-        get_setting('INVENTREE_LDAP_SEARCH_BASE_DN', 'ldap.search_base_dn'),
-        ldap.SCOPE_SUBTREE,
-        str(
-            get_setting(
-                'INVENTREE_LDAP_SEARCH_FILTER_STR',
-                'ldap.search_filter_str',
-                '(uid= %(user)s)',
-            )
-        ),
-    )
-    AUTH_LDAP_USER_DN_TEMPLATE = get_setting(
-        'INVENTREE_LDAP_USER_DN_TEMPLATE', 'ldap.user_dn_template'
-    )
-    AUTH_LDAP_USER_ATTR_MAP = get_setting(
-        'INVENTREE_LDAP_USER_ATTR_MAP',
-        'ldap.user_attr_map',
-        {'first_name': 'givenName', 'last_name': 'sn', 'email': 'mail'},
-        dict,
-    )
-    AUTH_LDAP_ALWAYS_UPDATE_USER = get_boolean_setting(
-        'INVENTREE_LDAP_ALWAYS_UPDATE_USER', 'ldap.always_update_user', True
-    )
-    AUTH_LDAP_CACHE_TIMEOUT = get_setting(
-        'INVENTREE_LDAP_CACHE_TIMEOUT', 'ldap.cache_timeout', 3600, int
-    )
-
-    AUTH_LDAP_MIRROR_GROUPS = get_boolean_setting(
-        'INVENTREE_LDAP_MIRROR_GROUPS', 'ldap.mirror_groups', False
-    )
-    AUTH_LDAP_GROUP_OBJECT_CLASS = get_setting(
-        'INVENTREE_LDAP_GROUP_OBJECT_CLASS',
-        'ldap.group_object_class',
-        'groupOfUniqueNames',
-        str,
-    )
-    AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
-        get_setting('INVENTREE_LDAP_GROUP_SEARCH', 'ldap.group_search'),
-        ldap.SCOPE_SUBTREE,
-        f'(objectClass={AUTH_LDAP_GROUP_OBJECT_CLASS})',
-    )
-    AUTH_LDAP_GROUP_TYPE_CLASS = get_setting(
-        'INVENTREE_LDAP_GROUP_TYPE_CLASS',
-        'ldap.group_type_class',
-        'GroupOfUniqueNamesType',
-        str,
-    )
-    AUTH_LDAP_GROUP_TYPE_CLASS_ARGS = get_setting(
-        'INVENTREE_LDAP_GROUP_TYPE_CLASS_ARGS', 'ldap.group_type_class_args', [], list
-    )
-    AUTH_LDAP_GROUP_TYPE_CLASS_KWARGS = get_setting(
-        'INVENTREE_LDAP_GROUP_TYPE_CLASS_KWARGS',
-        'ldap.group_type_class_kwargs',
-        {'name_attr': 'cn'},
-        dict,
-    )
-    AUTH_LDAP_GROUP_TYPE = getattr(django_auth_ldap.config, AUTH_LDAP_GROUP_TYPE_CLASS)(
-        *AUTH_LDAP_GROUP_TYPE_CLASS_ARGS, **AUTH_LDAP_GROUP_TYPE_CLASS_KWARGS
-    )
-    AUTH_LDAP_REQUIRE_GROUP = get_setting(
-        'INVENTREE_LDAP_REQUIRE_GROUP', 'ldap.require_group'
-    )
-    AUTH_LDAP_DENY_GROUP = get_setting('INVENTREE_LDAP_DENY_GROUP', 'ldap.deny_group')
-    AUTH_LDAP_USER_FLAGS_BY_GROUP = get_setting(
-        'INVENTREE_LDAP_USER_FLAGS_BY_GROUP',
-        'ldap.user_flags_by_group',
-        default_value=None,
-        typecast=dict,
-    )
-    AUTH_LDAP_FIND_GROUP_PERMS = True
 
 # Allow secure http developer server in debug mode
 if DEBUG:
@@ -614,6 +529,8 @@ REST_FRAMEWORK = {
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
     'TOKEN_MODEL': 'users.models.ApiToken',
+    'DEFAULT_THROTTLE_CLASSES': [],
+    'DEFAULT_THROTTLE_RATES': {},
 }
 
 if DEBUG:
@@ -629,6 +546,21 @@ if USE_JWT:
     JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
     INSTALLED_APPS.append('rest_framework_simplejwt')
 
+# Throtteling setup
+THROTTLE_ANON = get_setting('INVENTREE_THROTTLE_ANON', 'throttle.anon', '20/minute')
+THROTTLE_USER = get_setting('INVENTREE_THROTTLE_USER', 'throttle.user', '60/second')
+
+if not DEBUG and THROTTLE_ANON and str(THROTTLE_ANON).lower() != 'none':
+    REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['anon'] = THROTTLE_ANON
+    REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES'].append(
+        'rest_framework.throttling.AnonRateThrottle'
+    )
+if not DEBUG and THROTTLE_USER and str(THROTTLE_USER).lower() != 'none':
+    REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['user'] = THROTTLE_USER
+    REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES'].append(
+        'rest_framework.throttling.UserRateThrottle'
+    )
+
 # WSGI default setting
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
@@ -642,107 +574,11 @@ Configure the database backend based on the user-specified values.
 
 logger.debug('Configuring database backend:')
 
-# Extract database configuration from the config.yaml file
-db_config = CONFIG.get('database', None) if CONFIG else None
+# Load database configuration from the config file and environment variables
+database = db_backend.get_db_backend()
+DB_ENGINE = database['ENGINE']
 
-if not db_config:
-    db_config = {}
-
-# Environment variables take preference over config file!
-
-db_keys = ['ENGINE', 'NAME', 'USER', 'PASSWORD', 'HOST', 'PORT']
-
-for key in db_keys:
-    # First, check the environment variables
-    env_key = f'INVENTREE_DB_{key}'
-    env_var = os.environ.get(env_key, None)
-
-    if env_var:
-        # Make use PORT is int
-        if key == 'PORT':
-            try:
-                env_var = int(env_var)
-            except ValueError:
-                logger.exception('Invalid number for %s: %s', env_key, env_var)
-        # Override configuration value
-        db_config[key] = env_var
-
-# Check that required database configuration options are specified
-required_keys = ['ENGINE', 'NAME']
-
-# Ensure all database keys are upper case
-db_config = {key.upper(): value for key, value in db_config.items()}
-
-for key in required_keys:
-    if key not in db_config:  # pragma: no cover
-        error_msg = (
-            f'Missing required database configuration value `INVENTREE_DB_{key}`'
-        )
-        logger.error(error_msg)
-
-        print('Error: ' + error_msg)
-        sys.exit(-1)
-
-"""
-Special considerations for the database 'ENGINE' setting.
-It can be specified in config.yaml (or envvar) as either (for example):
-- sqlite3
-- django.db.backends.sqlite3
-- django.db.backends.postgresql
-"""
-
-DB_ENGINE = db_config['ENGINE'].lower()
-
-# Correct common misspelling
-if DB_ENGINE == 'sqlite':
-    DB_ENGINE = 'sqlite3'  # pragma: no cover
-
-if DB_ENGINE in ['sqlite3', 'postgresql', 'mysql']:
-    # Prepend the required python module string
-    DB_ENGINE = f'django.db.backends.{DB_ENGINE}'
-    db_config['ENGINE'] = DB_ENGINE
-
-db_name = db_config['NAME']
-db_host = db_config.get('HOST', "''")
-
-if 'sqlite' in DB_ENGINE:
-    db_name = str(Path(db_name).resolve())
-    db_config['NAME'] = db_name
-
-logger.info('DB_ENGINE: %s', DB_ENGINE)
-logger.info('DB_NAME: %s', db_name)
-logger.info('DB_HOST: %s', db_host)
-
-"""
-In addition to base-level database configuration, we may wish to specify specific options to the database backend
-Ref: https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-OPTIONS
-"""
-
-# 'OPTIONS' or 'options' can be specified in config.yaml
-# Set useful sensible timeouts for a transactional webserver to communicate
-# with its database server, that is, if the webserver is having issues
-# connecting to the database server (such as a replica failover) don't sit and
-# wait for possibly an hour or more, just tell the client something went wrong
-# and let the client retry when they want to.
-db_options = db_config.get('OPTIONS', db_config.get('options'))
-
-if db_options is None:
-    db_options = {}
-
-# Set database-specific options
-db_backend.set_db_options(DB_ENGINE, db_options)
-
-# Provide OPTIONS dict back to the database configuration dict
-db_config['OPTIONS'] = db_options
-
-# Set testing options for the database
-db_config['TEST'] = {'CHARSET': 'utf8'}
-
-# Set collation option for mysql test database
-if 'mysql' in DB_ENGINE:
-    db_config['TEST']['COLLATION'] = 'utf8_general_ci'  # pragma: no cover
-
-DATABASES = {'default': db_config}
+DATABASES = {'default': database}
 
 # login settings
 REMOTE_LOGIN = get_boolean_setting(
@@ -776,122 +612,27 @@ if SENTRY_ENABLED and SENTRY_DSN and not TESTING:  # pragma: no cover
     init_sentry(SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags)
 
 # OpenTelemetry tracing
-TRACING_ENABLED = get_boolean_setting(
-    'INVENTREE_TRACING_ENABLED', 'tracing.enabled', False
+TRACING_ENABLED = (
+    get_boolean_setting('INVENTREE_TRACING_ENABLED', 'tracing.enabled', False)
+    and not isRunningBackup()
 )
-TRACING_DETAILS: Optional[dict] = None
 
-if TRACING_ENABLED and not isRunningBackup():  # pragma: no cover
-    from InvenTree.tracing import setup_instruments, setup_tracing
-
-    _t_endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing.endpoint', None)
-    _t_headers = get_setting('INVENTREE_TRACING_HEADERS', 'tracing.headers', None, dict)
-
-    if _t_headers is None:
-        _t_headers = {}
-
-    if _t_endpoint:
-        logger.info('OpenTelemetry tracing enabled')
-
-        TRACING_DETAILS = (
-            TRACING_DETAILS
-            if TRACING_DETAILS
-            else {
-                'endpoint': _t_endpoint,
-                'headers': _t_headers,
-                'resources_input': {
-                    **{'inventree.env.' + k: v for k, v in inventree_tags.items()},
-                    **get_setting(
-                        'INVENTREE_TRACING_RESOURCES',
-                        'tracing.resources',
-                        default_value=None,
-                        typecast=dict,
-                    ),
-                },
-                'console': get_boolean_setting(
-                    'INVENTREE_TRACING_CONSOLE', 'tracing.console', False
-                ),
-                'auth': get_setting(
-                    'INVENTREE_TRACING_AUTH',
-                    'tracing.auth',
-                    default_value=None,
-                    typecast=dict,
-                ),
-                'is_http': get_setting(
-                    'INVENTREE_TRACING_IS_HTTP', 'tracing.is_http', True
-                ),
-                'append_http': get_boolean_setting(
-                    'INVENTREE_TRACING_APPEND_HTTP', 'tracing.append_http', True
-                ),
-            }
-        )
-
-        # Run tracing/logging instrumentation
-        setup_tracing(**TRACING_DETAILS)
-        setup_instruments(DB_ENGINE)
-    else:
-        logger.warning('OpenTelemetry tracing not enabled because endpoint is not set')
-
-# endregion
+TRACING_DETAILS: Optional[dict] = tracing.configure_tracing(
+    DB_ENGINE, TRACING_ENABLED, inventree_tags
+)
 
 # Cache configuration
 GLOBAL_CACHE_ENABLED = is_global_cache_enabled()
 
 CACHES = {'default': get_cache_config(GLOBAL_CACHE_ENABLED)}
 
-BACKGROUND_WORKER_TIMEOUT = int(
-    get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)
+# Background task processing with django-q
+Q_CLUSTER = worker.get_worker_config(
+    DB_ENGINE,
+    global_cache=GLOBAL_CACHE_ENABLED,
+    sentry_dsn=SENTRY_DSN if SENTRY_ENABLED and SENTRY_DSN else None,
+    debug=DEBUG,
 )
-
-# Set the retry time for background workers to be slightly longer than the worker timeout, to ensure that workers have time to timeout before being retried
-BACKGROUND_WORKER_RETRY = max(
-    int(get_setting('INVENTREE_BACKGROUND_RETRY', 'background.retry', 300)),
-    BACKGROUND_WORKER_TIMEOUT + 120,
-)
-
-# Prevent running multiple background workers if global cache is disabled
-# This is to prevent scheduling conflicts due to the lack of a shared cache
-BACKGROUND_WORKER_COUNT = (
-    int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4))
-    if GLOBAL_CACHE_ENABLED
-    else 1
-)
-
-# If running with SQLite, limit background worker threads to 1 to prevent database locking issues
-if 'sqlite' in DB_ENGINE:
-    BACKGROUND_WORKER_COUNT = 1
-
-BACKGROUND_WORKER_ATTEMPTS = int(
-    get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)
-)
-
-# django-q background worker configuration
-Q_CLUSTER = {
-    'name': 'InvenTree',
-    'label': 'Background Tasks',
-    'workers': BACKGROUND_WORKER_COUNT,
-    'timeout': BACKGROUND_WORKER_TIMEOUT,
-    'retry': BACKGROUND_WORKER_RETRY,
-    'max_attempts': BACKGROUND_WORKER_ATTEMPTS,
-    'save_limit': 1000,
-    'queue_limit': 50,
-    'catch_up': False,
-    'bulk': 10,
-    'orm': 'default',
-    'cache': 'default',
-    'sync': False,
-    'poll': 1.5,
-}
-
-# Configure django-q sentry integration
-if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
-    Q_CLUSTER['error_reporter'] = {'sentry': {'dsn': SENTRY_DSN}}
-
-if GLOBAL_CACHE_ENABLED:  # pragma: no cover
-    # If using external redis cache, make the cache the broker for Django Q
-    # as well
-    Q_CLUSTER['django_redis'] = 'worker'
-
 
 SILENCED_SYSTEM_CHECKS = ['templates.E003', 'templates.W003']
 
@@ -966,10 +707,10 @@ INTERNAL_EMAIL_BACKEND = get_setting(
 )
 
 # SMTP backend
-EMAIL_HOST = get_setting('INVENTREE_EMAIL_HOST', 'email.host', '')
+EMAIL_HOST = get_setting('INVENTREE_EMAIL_HOST', 'email.host')
 EMAIL_PORT = get_setting('INVENTREE_EMAIL_PORT', 'email.port', 25, typecast=int)
-EMAIL_HOST_USER = get_setting('INVENTREE_EMAIL_USERNAME', 'email.username', '')
-EMAIL_HOST_PASSWORD = get_setting('INVENTREE_EMAIL_PASSWORD', 'email.password', '')
+EMAIL_HOST_USER = get_setting('INVENTREE_EMAIL_USERNAME', 'email.username')
+EMAIL_HOST_PASSWORD = get_setting('INVENTREE_EMAIL_PASSWORD', 'email.password')
 EMAIL_USE_TLS = get_boolean_setting('INVENTREE_EMAIL_TLS', 'email.tls', False)
 EMAIL_USE_SSL = get_boolean_setting('INVENTREE_EMAIL_SSL', 'email.ssl', False)
 # Anymail
@@ -1127,6 +868,7 @@ valid_cookie_modes = ['lax', 'strict', 'none']
 COOKIE_MODE = COOKIE_MODE.capitalize() if COOKIE_MODE in valid_cookie_modes else False
 
 # Additional CSRF settings
+CSRF_FAILURE_VIEW = 'InvenTree.middleware.csrf_failure'
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 CSRF_COOKIE_NAME = 'csrftoken'
 
@@ -1140,15 +882,13 @@ LANGUAGE_COOKIE_SAMESITE = COOKIE_MODE
 - Otherwise, use the value specified in the configuration file (or env var)
 """
 COOKIE_SECURE = (
-    False
-    if DEBUG
-    else (
-        SESSION_COOKIE_SAMESITE == 'None'
-        or get_boolean_setting(
-            'INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', False
-        )
-    )
+    get_boolean_setting('INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', False)
+    or SESSION_COOKIE_SAMESITE == 'None'
 )
+
+# Override COOKIE_SECURE value in DEBUG mode
+if DEBUG:
+    COOKIE_SECURE = False
 
 CSRF_COOKIE_SECURE = COOKIE_SECURE
 SESSION_COOKIE_SECURE = COOKIE_SECURE
@@ -1272,13 +1012,11 @@ USERSESSIONS_TRACK_ACTIVITY = True
 # allauth rate limiting: https://docs.allauth.org/en/latest/account/rate_limits.html
 # The default login rate limit is "5/m/user,5/m/ip,5/m/key"
 login_attempts = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5)
-
 try:
-    login_attempts = int(login_attempts)
-    login_attempts = f'{login_attempts}/m,{login_attempts}/m'
+    # Only the per-account ('key') limit is user-configurable with an int - use a str for more custom limits
+    login_attempts = f'10/m/ip,{int(login_attempts)}/m/key'
 except ValueError:  # pragma: no cover
     pass
-
 ACCOUNT_RATE_LIMITS = {'login_failed': login_attempts}
 
 # Default protocol for login
@@ -1378,6 +1116,21 @@ if len(GLOBAL_SETTINGS_OVERRIDES) > 0:
         # Set the global setting
         logger.debug('- Override value for %s = ********', key)
 
+# Plugin settings overrides
+# If provided, these values will override any plugin settings (and prevent them from being changed)
+# Specified as a nested dict: {plugin_slug: {SETTING_KEY: value}}
+PLUGIN_SETTING_OVERRIDES = get_setting(
+    'INVENTREE_PLUGIN_SETTINGS', 'plugin_settings', typecast=dict
+)
+
+if len(PLUGIN_SETTING_OVERRIDES) > 0:
+    logger.info(
+        'INVE-I1: Plugin settings overrides: %s', list(PLUGIN_SETTING_OVERRIDES.keys())
+    )
+    for slug, overrides in PLUGIN_SETTING_OVERRIDES.items():
+        for key in overrides:
+            logger.debug('- Override value for %s.%s = ********', slug, key)
+
 # User interface customization values
 CUSTOM_LOGO = get_setting('INVENTREE_CUSTOM_LOGO', 'customize.logo', typecast=str)
 
@@ -1447,3 +1200,6 @@ if 'dbbackup' not in STORAGES:
 if _media:
     MEDIA_URL = _media
 PRESIGNED_URL_EXPIRATION = 600
+
+# Taggit settings
+TAGGIT_CASE_INSENSITIVE = True

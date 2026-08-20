@@ -11,11 +11,9 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
 from InvenTree.serializers import (
-    FilterableListSerializer,
-    FilterableSerializerMethodField,
     FilterableSerializerMixin,
     InvenTreeModelSerializer,
-    enable_filter,
+    OptionalField,
 )
 
 from .models import ApiToken, Owner, RuleSet, UserProfile
@@ -56,7 +54,6 @@ class RuleSetSerializer(InvenTreeModelSerializer):
             'can_delete',
         ]
         read_only_fields = ['pk', 'name', 'label', 'group']
-        list_serializer_class = FilterableListSerializer
 
 
 class RoleSerializer(InvenTreeModelSerializer):
@@ -81,37 +78,47 @@ class RoleSerializer(InvenTreeModelSerializer):
 
     def get_roles(self, user: User) -> dict:
         """Roles associated with the user."""
-        roles = {}
-
-        # Cache the 'groups' queryset for the user
-        groups = prefetch_rule_sets(user)
-
-        for ruleset in RULESET_CHOICES:
-            role, _text = ruleset
-
-            permissions = []
-
-            for permission in RULESET_PERMISSIONS:
-                if check_user_role(user, role, permission, groups=groups):
-                    permissions.append(permission)
-
-            if len(permissions) > 0:
-                roles[role] = permissions
-            else:
-                roles[role] = None  # pragma: no cover
-
-        return roles
+        return get_user_roles(user)
 
     def get_permissions(self, user: User) -> dict:
         """Permissions associated with the user."""
-        if user.is_superuser:
-            permissions = Permission.objects.all()
-        else:
-            permissions = Permission.objects.filter(
-                Q(user=user) | Q(group__user=user)
-            ).distinct()
+        return get_user_permissions(user)
 
-        return generate_permission_dict(permissions)
+
+def get_user_roles(user: User) -> dict:
+    """Return a dict of the roles associated with the given user."""
+    roles = {}
+
+    # Cache the 'groups' queryset for the user
+    groups = prefetch_rule_sets(user)
+
+    for ruleset in RULESET_CHOICES:
+        role, _text = ruleset
+
+        permissions = []
+
+        for permission in RULESET_PERMISSIONS:
+            if check_user_role(user, role, permission, groups=groups):
+                permissions.append(permission)
+
+        if len(permissions) > 0:
+            roles[role] = permissions
+        else:
+            roles[role] = None  # pragma: no cover
+
+    return roles
+
+
+def get_user_permissions(user: User) -> dict:
+    """Return a dict of the permissions associated with the given user."""
+    if user.is_superuser:
+        permissions = Permission.objects.all()
+    else:
+        permissions = Permission.objects.filter(
+            Q(user=user) | Q(group__user=user)
+        ).distinct()
+
+    return generate_permission_dict(permissions)
 
 
 def generate_permission_dict(permissions) -> dict:
@@ -185,7 +192,6 @@ class UserSerializer(InvenTreeModelSerializer):
         model = User
         fields = ['pk', 'username', 'first_name', 'last_name', 'email']
         read_only_fields = ['username', 'email']
-        list_serializer_class = FilterableListSerializer
 
     username = serializers.CharField(label=_('Username'), help_text=_('Username'))
 
@@ -267,8 +273,9 @@ class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         model = Group
         fields = ['pk', 'name', 'permissions', 'roles', 'users']
 
-    permissions = enable_filter(
-        FilterableSerializerMethodField(allow_null=True, read_only=True),
+    permissions = OptionalField(
+        serializer_class=serializers.SerializerMethodField,
+        serializer_kwargs={'allow_null': True, 'read_only': True},
         filter_name='permission_detail',
     )
 
@@ -276,16 +283,26 @@ class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         """Return a list of permissions associated with the group."""
         return generate_permission_dict(group.permissions.all())
 
-    roles = enable_filter(
-        RuleSetSerializer(
-            source='rule_sets', many=True, read_only=True, allow_null=True
-        ),
+    roles = OptionalField(
+        serializer_class=RuleSetSerializer,
+        serializer_kwargs={
+            'source': 'rule_sets',
+            'many': True,
+            'read_only': True,
+            'allow_null': True,
+        },
         filter_name='role_detail',
         prefetch_fields=['rule_sets'],
     )
 
-    users = enable_filter(
-        UserSerializer(source='user_set', many=True, read_only=True, allow_null=True),
+    users = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={
+            'source': 'user_set',
+            'many': True,
+            'read_only': True,
+            'allow_null': True,
+        },
         filter_name='user_detail',
         prefetch_fields=['user_set'],
     )
@@ -383,7 +400,7 @@ class UserSetPasswordSerializer(serializers.Serializer):
     )
 
 
-class MeUserSerializer(ExtendedUserSerializer):
+class MeUserSerializer(FilterableSerializerMixin, ExtendedUserSerializer):
     """API serializer specifically for the 'me' endpoint."""
 
     class Meta(ExtendedUserSerializer.Meta):
@@ -394,7 +411,11 @@ class MeUserSerializer(ExtendedUserSerializer):
         """
 
         # Remove the 'group_ids' field, as this is not relevant for the 'me' endpoint
-        fields = [f for f in ExtendedUserSerializer.Meta.fields if f != 'group_ids']
+        fields = [
+            *(f for f in ExtendedUserSerializer.Meta.fields if f != 'group_ids'),
+            'roles',
+            'permissions',
+        ]
 
         read_only_fields = [
             *ExtendedUserSerializer.Meta.read_only_fields,
@@ -404,6 +425,31 @@ class MeUserSerializer(ExtendedUserSerializer):
         ]
 
     profile = UserProfileSerializer(many=False, read_only=True)
+
+    # Roles and permissions are only computed (and included) when the
+    # request explicitly asks for them via '?roles=true' - they require
+    # extra queries, and most callers of this endpoint only want basic
+    # user details. Shares a filter_name so both come back together, since
+    # they were previously served as a single '/user/me/roles/' response.
+    roles = OptionalField(
+        serializer_class=serializers.SerializerMethodField,
+        serializer_kwargs={'read_only': True},
+        filter_name='roles',
+    )
+
+    permissions = OptionalField(
+        serializer_class=serializers.SerializerMethodField,
+        serializer_kwargs={'allow_null': True, 'read_only': True},
+        filter_name='roles',
+    )
+
+    def get_roles(self, user: User) -> dict:
+        """Roles associated with the user."""
+        return get_user_roles(user)
+
+    def get_permissions(self, user: User) -> dict:
+        """Permissions associated with the user."""
+        return get_user_permissions(user)
 
     # Redefine the fields from ExtendedUserSerializer, to ensure they are marked as read-only
     is_staff = serializers.BooleanField(

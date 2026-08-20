@@ -73,7 +73,7 @@ export function useGenerator(props: GeneratorProps): GeneratorState {
   );
 
   // API query handler
-  const queryGenerator = useQuery({
+  useQuery({
     enabled: true,
     queryKey: [
       'generator',

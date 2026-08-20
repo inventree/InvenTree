@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
-import { readeruser } from '../defaults.ts';
+import { readeruser, stevenuser } from '../defaults.ts';
 import {
   activateCalendarView,
   activateTableView,
@@ -9,6 +9,7 @@ import {
   clickOnRowMenu,
   loadTab,
   navigate,
+  openDetailAction,
   openFilterDrawer,
   setTableChoiceFilter,
   showCalendarView,
@@ -82,6 +83,71 @@ test('Purchasing - Index', async ({ browser }) => {
     .waitFor();
 });
 
+test('Purchasing - Parameters', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'purchasing/purchase-order/11/parameters',
+    user: stevenuser
+  });
+
+  // Create a new parameter against this purchase order
+  await page
+    .getByRole('button', { name: 'action-menu-add-parameters' })
+    .click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-add-parameters-create-parameter'
+    })
+    .click();
+
+  // Check for button to add a new template
+  await page
+    .getByRole('button', {
+      name: 'action-button-create-new-parameter-template'
+    })
+    .click();
+  await page
+    .getByText('Create New Parameter Template', { exact: true })
+    .first()
+    .waitFor();
+  await page.getByRole('textbox', { name: 'text-field-description' }).waitFor();
+  await page.getByRole('textbox', { name: 'text-field-choices' }).waitFor();
+  await page
+    .getByLabel('Create New Parameter Template')
+    .getByRole('button', { name: 'Cancel' })
+    .click();
+
+  // We will use a "SelectionList" to choose the value here
+
+  // Select the template
+  await page
+    .getByRole('combobox', { name: 'related-field-template' })
+    .fill('animal');
+  await page.getByRole('option', { name: 'Animal Select an animal' }).click();
+
+  // Select an animal
+  await page.getByRole('combobox', { name: 'related-field-data' }).fill('cat');
+  await page.getByRole('option', { name: 'Caracal' }).click();
+
+  // Add a note and submit the form
+  await page
+    .getByRole('textbox', { name: 'text-field-note' })
+    .fill('The caracal is an interesting beast');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Let's edit this parameter to ensure the "edit" form works as expected
+  await clickOnRowMenu(await page.getByRole('cell', { name: 'Caracal' }));
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+
+  await page.getByRole('combobox', { name: 'related-field-data' }).fill('ox');
+  await page.getByRole('option', { name: 'Fennec Fox' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Finally, delete the parameter
+  await clickOnRowMenu(await page.getByRole('cell', { name: 'Fennec Fox' }));
+  await page.getByRole('menuitem', { name: 'Delete' }).click();
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+});
+
 test('Purchasing - Manufacturer Parts', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     url: 'purchasing/index/manufacturer-parts'
@@ -97,7 +163,7 @@ test('Purchasing - Manufacturer Parts', async ({ browser }) => {
   await page.getByRole('button', { name: 'table-export-data' }).click();
   await page.getByText('Select export plugin').waitFor();
   await page
-    .getByRole('textbox', { name: 'choice-field-export_plugin' })
+    .getByRole('combobox', { name: 'choice-field-export_plugin' })
     .fill('CSV');
   await page.getByRole('button', { name: 'Export', exact: true }).click();
   await page.getByText('Process completed successfully').waitFor();
@@ -113,7 +179,7 @@ test('Purchase Orders - General', async ({ browser }) => {
   await page.waitForURL('**/purchasing/index/**');
 
   await page.getByRole('cell', { name: 'PO0012' }).click();
-  await page.waitForTimeout(200);
+  await page.waitForLoadState('networkidle');
 
   await loadTab(page, 'Line Items');
   await loadTab(page, 'Received Stock');
@@ -213,7 +279,7 @@ test('Purchase Orders - Calendar', async ({ browser }) => {
   await page.getByRole('button', { name: 'Feb' }).waitFor();
   await page.getByRole('button', { name: 'Dec' }).click();
 
-  await page.getByText('December').waitFor();
+  await page.getByText('December').first().waitFor();
 
   // Put back into table view
   await activateTableView(page);
@@ -227,8 +293,7 @@ test('Purchase Orders - Barcodes', async ({ browser }) => {
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 
   // Display QR code
-  await page.getByLabel('action-menu-barcode-actions').click();
-  await page.getByLabel('action-menu-barcode-actions-view').click();
+  await openDetailAction(page, 'barcode', 'view');
   await page.getByRole('img', { name: 'QR Code' }).waitFor();
   await page.getByRole('banner').getByRole('button').click();
 
@@ -249,8 +314,7 @@ test('Purchase Orders - Barcodes', async ({ browser }) => {
   }
 
   // Link to barcode
-  await page.getByLabel('action-menu-barcode-actions', { exact: true }).click();
-  await page.getByLabel('action-menu-barcode-actions-link-barcode').click();
+  await openDetailAction(page, 'barcode', 'link-barcode');
 
   await page.getByLabel('barcode-input-scanner').click();
 
@@ -273,8 +337,7 @@ test('Purchase Orders - Barcodes', async ({ browser }) => {
   await page.getByText('Purchase Order: PO0013', { exact: true }).waitFor();
 
   // Unlink barcode
-  await page.getByLabel('action-menu-barcode-actions').click();
-  await page.getByLabel('action-menu-barcode-actions-unlink-barcode').click();
+  await openDetailAction(page, 'barcode', 'unlink-barcode');
   await page.getByRole('heading', { name: 'Unlink Barcode' }).waitFor();
   await page.getByText('This will remove the link to').waitFor();
   await page.getByRole('button', { name: 'Unlink Barcode' }).click();
@@ -366,8 +429,8 @@ test('Purchase Orders - Order Parts', async ({ browser }) => {
     await page.getByLabel(`Select record ${ii}`, { exact: true }).click();
   }
 
-  await page.getByLabel('action-menu-part-actions').click();
-  await page.getByLabel('action-menu-part-actions-order-parts').click();
+  await openDetailAction(page, 'part', 'order-parts');
+
   await page
     .getByRole('heading', { name: 'Order Parts' })
     .locator('div')
@@ -391,8 +454,7 @@ test('Purchase Orders - Order Parts', async ({ browser }) => {
   await navigate(page, 'part/69/');
   await page.waitForURL('**/part/69/**');
 
-  await page.getByLabel('action-menu-stock-actions').click();
-  await page.getByLabel('action-menu-stock-actions-order').click();
+  await openDetailAction(page, 'stock', 'order');
 
   // Select supplier part
   await page.getByLabel('related-field-supplier_part').click();
@@ -444,21 +506,40 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   // Select all line items to receive
   await loadTab(page, 'Line Items');
 
-  await page.getByLabel('Select all records').click();
-  await page.waitForTimeout(200);
+  await page.getByRole('cell', { name: '002.02-PCB' }).waitFor();
+
+  // Select all line items to receive
+  await page
+    .getByRole('region', { name: 'Line Items', exact: true })
+    .getByLabel('Select all records')
+    .click();
+  await page.waitForTimeout(100);
   await page.getByLabel('action-button-receive-items').click();
 
   // Check for display of individual locations
-  await page
-    .getByRole('cell', { name: /Choose Location/ })
-    .getByText('Parts Bins')
-    .waitFor();
-  await page
-    .getByRole('cell', { name: /Choose Location/ })
-    .getByText('Room 101')
-    .waitFor();
-
+  await page.getByText('Parts Bins').first().waitFor();
+  await page.getByText('Room 101').first().waitFor();
   await page.getByText('Mechanical Lab').first().waitFor();
+
+  // Editing the quantity for one row should not affect any other row
+  // (regression test for per-row TableField memoization)
+  const quantityInputs = page.getByRole('textbox', {
+    name: 'number-field-quantity'
+  });
+
+  // .count() does not auto-wait, so explicitly wait for the second row's
+  // input to be ready before relying on the total count being stable
+  await expect(quantityInputs.nth(1)).toBeVisible();
+
+  const rowCount = await quantityInputs.count();
+  expect(rowCount).toBeGreaterThanOrEqual(2);
+
+  await quantityInputs.nth(0).fill('11');
+  await quantityInputs.nth(1).fill('22');
+  await page.waitForTimeout(250);
+
+  await expect(quantityInputs.nth(0)).toHaveValue('11');
+  await expect(quantityInputs.nth(1)).toHaveValue('22');
 
   await page.getByRole('button', { name: 'Cancel' }).click();
 
@@ -486,8 +567,8 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await page.getByRole('menuitem', { name: 'Receive line item' }).click();
 
   // Select destination location
-  await page.getByLabel('related-field-location').click();
-  await page.getByRole('option', { name: 'Factory', exact: true }).click();
+  await page.getByLabel('tree-field-location').fill('factory');
+  await page.getByText('Factory', { exact: true }).click();
 
   // Receive only a *single* item
   await page.getByLabel('number-field-quantity').fill('1');
@@ -541,15 +622,18 @@ test('Purchase Orders - Receive Virtual Items', async ({ browser }) => {
 
   // Receive the line item
   await loadTab(page, 'Line Items');
-  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page.getByRole('cell', { name: 'Thumbnail CRM license' }).waitFor();
+
+  await page
+    .getByRole('region', { name: 'Line Items', exact: true })
+    .getByLabel('Select all records')
+    .click();
   await page
     .getByRole('button', { name: 'action-button-receive-items' })
     .click();
 
-  await page
-    .getByRole('combobox', { name: 'related-field-location' })
-    .fill('factory');
-  await page.getByText('Factory/Storage Room A').click();
+  await page.getByLabel('tree-field-location').fill('factory');
+  await page.getByText('Factory', { exact: true }).click();
 
   await page.getByRole('button', { name: 'Submit' }).click();
 
@@ -562,8 +646,7 @@ test('Purchase Orders - Duplicate', async ({ browser }) => {
     url: 'purchasing/purchase-order/13/detail'
   });
 
-  await page.getByLabel('action-menu-order-actions').click();
-  await page.getByLabel('action-menu-order-actions-duplicate').click();
+  await openDetailAction(page, 'order', 'duplicate');
 
   // Ensure a new reference is suggested
   await expect(

@@ -51,7 +51,7 @@ Each price range is calculated in the [Default Currency](../concepts/pricing.md#
 Price range data is [cached in the database](#price-data-caching) when underlying pricing information changes.
 
 !!! tip "Refresh Pricing"
-    While pricing data is [automatically updated](#data-updates), the user can also manually refresh the pricing calculations manually, by pressing the "Refresh" button in the overview section.
+    While pricing data is [automatically updated](#pricing-updates), the user can also manually refresh the pricing calculations manually, by pressing the "Refresh" button in the overview section.
 
 #### Overall Pricing
 

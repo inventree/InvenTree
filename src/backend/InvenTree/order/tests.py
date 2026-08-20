@@ -523,7 +523,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
 
             msg = messages.first()
 
-            self.assertEqual(msg.target_object_id, 1)
+            self.assertEqual(msg.target_object_id, str(1))
             self.assertEqual(msg.name, 'Overdue Purchase Order')
 
     def test_new_po_notification(self):

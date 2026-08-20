@@ -12,7 +12,8 @@ import {
   IconPackage,
   IconPhone
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { DuplicateField, TagsField } from './CommonFields';
 
 /**
  * Field set for SupplierPart instance
@@ -20,12 +21,16 @@ import { useMemo } from 'react';
 export function useSupplierPartFields({
   manufacturerId,
   manufacturerPartId,
-  partId
+  partId,
+  duplicateSupplierPartId
 }: {
   manufacturerId?: number;
   manufacturerPartId?: number;
   partId?: number;
+  duplicateSupplierPartId?: number | null;
 }) {
+  const [part, setPart] = useState<any>({});
+
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
@@ -35,6 +40,9 @@ export function useSupplierPartFields({
           part: partId,
           purchaseable: true,
           active: true
+        },
+        onValueChange: (value: any, record: any) => {
+          setPart(record);
         }
       },
       manufacturer_part: {
@@ -50,18 +58,34 @@ export function useSupplierPartFields({
             ...adjust.filters,
             part: adjust.data.part
           };
+        },
+        addCreateFields: {
+          part: {
+            value: part?.pk,
+            disabled: !!part?.pk
+          },
+          manufacturer: {},
+          MPN: {},
+          description: {},
+          link: {}
         }
       },
       supplier: {
         filters: {
           active: true,
           is_supplier: true
+        },
+        addCreateFields: {
+          name: {},
+          description: {},
+          is_supplier: { value: true, hidden: true }
         }
       },
       SKU: {
         icon: <IconHash />
       },
       description: {},
+      tags: TagsField({}),
       link: {
         icon: <IconLink />
       },
@@ -73,14 +97,34 @@ export function useSupplierPartFields({
         icon: <IconPackage />
       },
       primary: {},
-      active: {}
+      active: {},
+      duplicate: DuplicateField({
+        originalId: duplicateSupplierPartId,
+        extraFields: {
+          copy_parameters: {}
+        }
+      })
     };
 
+    if (!duplicateSupplierPartId) {
+      delete fields.duplicate;
+    }
+
     return fields;
-  }, [manufacturerId, manufacturerPartId, partId]);
+  }, [
+    manufacturerId,
+    manufacturerPartId,
+    partId,
+    part,
+    duplicateSupplierPartId
+  ]);
 }
 
-export function useManufacturerPartFields() {
+export function useManufacturerPartFields({
+  duplicateManufacturerPartId
+}: {
+  duplicateManufacturerPartId?: number | null;
+} = {}) {
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {},
@@ -88,22 +132,42 @@ export function useManufacturerPartFields() {
         filters: {
           active: true,
           is_manufacturer: true
+        },
+        addCreateFields: {
+          name: {},
+          description: {},
+          is_manufacturer: { value: true, hidden: true }
         }
       },
       MPN: {},
       description: {},
-      link: {}
+      tags: TagsField({}),
+      link: {},
+      duplicate: DuplicateField({
+        originalId: duplicateManufacturerPartId,
+        extraFields: {
+          copy_parameters: {}
+        }
+      })
     };
 
+    if (!duplicateManufacturerPartId) {
+      delete fields.duplicate;
+    }
+
     return fields;
-  }, []);
+  }, [duplicateManufacturerPartId]);
 }
 
 /**
  * Field set for editing a company instance
  */
-export function companyFields(): ApiFormFieldSet {
-  return {
+export function companyFields({
+  duplicateCompanyId
+}: {
+  duplicateCompanyId?: number | null;
+} = {}): ApiFormFieldSet {
+  const fields: ApiFormFieldSet = {
     name: {},
     description: {},
     website: {
@@ -118,10 +182,23 @@ export function companyFields(): ApiFormFieldSet {
     email: {
       icon: <IconAt />
     },
+    tags: TagsField({}),
     tax_id: {},
     is_supplier: {},
     is_manufacturer: {},
     is_customer: {},
-    active: {}
+    active: {},
+    duplicate: DuplicateField({
+      originalId: duplicateCompanyId,
+      extraFields: {
+        copy_parameters: {}
+      }
+    })
   };
+
+  if (!duplicateCompanyId) {
+    delete fields.duplicate;
+  }
+
+  return fields;
 }

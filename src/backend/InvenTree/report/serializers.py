@@ -11,6 +11,7 @@ from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeModelSerializer,
 )
+from users.serializers import UserSerializer
 
 
 class ReportSerializerBase(InvenTreeModelSerializer):
@@ -27,6 +28,19 @@ class ReportSerializerBase(InvenTreeModelSerializer):
         if len(self.fields['model_type'].choices) == 0:
             self.fields['model_type'].choices = report.helpers.report_model_options()
 
+    def save(self, **kwargs):
+        """Override the save method to capture the user information."""
+        user = self.context.get('request').user
+
+        if not user or not user.is_authenticated:
+            raise PermissionError(
+                _('User must be authenticated to save report templates')
+            )
+
+        instance = super().save(updated_by=user, **kwargs)
+
+        return instance
+
     @staticmethod
     def base_fields():
         """Base serializer field set."""
@@ -41,6 +55,9 @@ class ReportSerializerBase(InvenTreeModelSerializer):
             'enabled',
             'revision',
             'attach_to_model',
+            'updated',
+            'updated_by',
+            'updated_by_detail',
         ]
 
     template = InvenTreeAttachmentSerializerField(required=True)
@@ -54,6 +71,10 @@ class ReportSerializerBase(InvenTreeModelSerializer):
         required=True,
         allow_blank=False,
         allow_null=False,
+    )
+
+    updated_by_detail = UserSerializer(
+        source='updated_by', read_only=True, allow_null=True, many=False
     )
 
 
@@ -87,7 +108,7 @@ class ReportPrintSerializer(serializers.Serializer):
         fields = ['template', 'items']
 
     template = serializers.PrimaryKeyRelatedField(
-        queryset=report.models.ReportTemplate.objects.all(),
+        queryset=report.models.ReportTemplate.objects.filter(enabled=True),
         many=False,
         required=True,
         allow_null=False,
@@ -117,8 +138,18 @@ class LabelPrintSerializer(serializers.Serializer):
 
     def __init__(self, *args, **kwargs):
         """Override the constructor to add the extra plugin fields."""
-        # Reset to a known state
-        self.Meta.fields = ['template', 'items', 'plugin']
+
+        # Give this instance its own 'Meta.fields' list, appended to below depending
+        # on which plugin is selected. `Meta` is otherwise a single class-level
+        # object shared by every instance of this serializer - mutating its 'fields'
+        # list in place would let concurrent requests selecting different plugins
+        # corrupt each other's field list.
+        class Meta(self.Meta):
+            """Per-instance metaclass options."""
+
+            fields = ['template', 'items', 'plugin']
+
+        self.Meta = Meta
 
         if plugin_serializer := kwargs.pop('plugin_serializer', None):
             for key, field in plugin_serializer.fields.items():
@@ -128,7 +159,7 @@ class LabelPrintSerializer(serializers.Serializer):
         super().__init__(*args, **kwargs)
 
     template = serializers.PrimaryKeyRelatedField(
-        queryset=report.models.LabelTemplate.objects.all(),
+        queryset=report.models.LabelTemplate.objects.filter(enabled=True),
         many=False,
         required=True,
         allow_null=False,

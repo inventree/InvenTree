@@ -3,6 +3,7 @@
 from django.urls import include, path, re_path
 
 from drf_spectacular.utils import extend_schema
+from rest_framework import permissions
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -58,11 +59,11 @@ class MachineDetail(RetrieveUpdateDestroyAPI):
 def get_machine(machine_pk):
     """Get machine by pk.
 
-    Raises:
-        NotFound: If machine is not found
-
     Returns:
         BaseMachineType: The machine instance in the registry
+
+    Raises:
+        NotFound: If machine is not found
     """
     machine = registry.get_machine(machine_pk)
 
@@ -142,7 +143,10 @@ class MachineRestart(APIView):
     - POST: restart machine by pk
     """
 
-    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.IsStaffOrReadOnlyScope,
+    ]
 
     @extend_schema(
         request=None, responses={200: MachineSerializers.MachineRestartSerializer()}

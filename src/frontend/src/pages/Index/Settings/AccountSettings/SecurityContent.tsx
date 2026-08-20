@@ -1,3 +1,5 @@
+import { DefaultFallback } from '@lib/components/Boundary';
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import type { AuthConfig, AuthProvider } from '@lib/types/Auth';
@@ -30,8 +32,6 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import { DefaultFallback } from '../../../../components/Boundary';
-import { StylishText } from '../../../../components/items/StylishText';
 import { ProviderLogin, authApi } from '../../../../functions/auth';
 import { useServerApiState } from '../../../../states/ServerApiState';
 import { useUserState } from '../../../../states/UserState';
@@ -45,9 +45,12 @@ export function SecurityContent() {
 
   const user = useUserState();
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const onError = useCallback(
     (error: unknown, componentStack: string | undefined, eventId: string) => {
       console.error(`ERR: Error rendering component: ${error}`);
+      setErrorMessage(error instanceof Error ? error.message : String(error));
     },
     []
   );
@@ -95,7 +98,9 @@ export function SecurityContent() {
           </Accordion.Control>
           <Accordion.Panel>
             <ErrorBoundary
-              fallback={<DefaultFallback title={'API Table'} />}
+              fallback={
+                <DefaultFallback title={'API Table'} error={errorMessage} />
+              }
               onError={onError}
             >
               <ApiTokenTable only_myself />

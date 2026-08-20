@@ -19,7 +19,7 @@ export function RenderBuildOrder(
       primary={instance.reference}
       secondary={instance.title}
       suffix={StatusRenderer({
-        status: instance.status_custom_key,
+        status: instance.status_custom_key || instance.status,
         type: ModelType.build
       })}
       image={instance.part_detail?.thumbnail || instance.part_detail?.image}

@@ -79,7 +79,7 @@ function detect_python() {
     echo "${On_Red}"
     echo "# POI07| Python ${SETUP_PYTHON} not found - aborting!"
     echo "# POI07| Please ensure python can be executed with the command '$SETUP_PYTHON' by the current user '$USER'."
-    echo "# POI07| If you are using a different python version, please set the environment variable SETUP_PYTHON to the correct command - eg. 'python3.11'."
+    echo "# POI07| If you are using a different python version, please set the environment variable SETUP_PYTHON to the correct command - eg. 'python3.12'."
     echo "${Color_Off}"
     exit 1
   fi

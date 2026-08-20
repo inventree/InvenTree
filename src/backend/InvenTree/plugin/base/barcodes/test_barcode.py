@@ -15,6 +15,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
     """Tests for barcode api."""
 
     fixtures = ['category', 'part', 'location', 'stock']
+    roles = ['stock.view', 'stock_location.view', 'part.view']
 
     def setUp(self):
         """Setup for all tests."""
@@ -255,10 +256,138 @@ class BarcodeAPITest(InvenTreeAPITestCase):
             self.assertIn('object does not exist', str(response.data[k]))
 
 
+class BarcodeScanResultAPITest(InvenTreeAPITestCase):
+    """Tests for the BarcodeScanResult list / detail API endpoints."""
+
+    def setUp(self):
+        """Create barcode scan results for two different users."""
+        super().setUp()
+
+        from django.contrib.auth import get_user_model
+
+        self.other_user = get_user_model().objects.create_user(
+            username='otheruser', password='otherpassword', email='other@testing.com'
+        )
+
+        self.own_result = BarcodeScanResult.objects.create(
+            data='own-barcode', user=self.user
+        )
+        self.other_result = BarcodeScanResult.objects.create(
+            data='other-barcode', user=self.other_user
+        )
+
+    def test_list_non_staff(self):
+        """A non-staff user can only see their own barcode scan history."""
+        self.user.is_staff = False
+        self.user.save()
+
+        response = self.get(reverse('api-barcode-scan-result-list'), expected_code=200)
+
+        pks = [item['pk'] for item in response.data]
+
+        self.assertIn(self.own_result.pk, pks)
+        self.assertNotIn(self.other_result.pk, pks)
+
+    def test_list_staff(self):
+        """A staff user can see barcode scan history for all users."""
+        self.user.is_staff = True
+        self.user.save()
+
+        response = self.get(reverse('api-barcode-scan-result-list'), expected_code=200)
+
+        pks = [item['pk'] for item in response.data]
+
+        self.assertIn(self.own_result.pk, pks)
+        self.assertIn(self.other_result.pk, pks)
+
+    def test_detail_non_staff(self):
+        """A non-staff user cannot retrieve another user's barcode scan result."""
+        self.user.is_staff = False
+        self.user.save()
+
+        self.get(
+            reverse(
+                'api-barcode-scan-result-detail', kwargs={'pk': self.own_result.pk}
+            ),
+            expected_code=200,
+        )
+
+        self.get(
+            reverse(
+                'api-barcode-scan-result-detail', kwargs={'pk': self.other_result.pk}
+            ),
+            expected_code=404,
+        )
+
+    def test_detail_staff(self):
+        """A staff user can retrieve any user's barcode scan result."""
+        self.user.is_staff = True
+        self.user.save()
+
+        self.get(
+            reverse(
+                'api-barcode-scan-result-detail', kwargs={'pk': self.own_result.pk}
+            ),
+            expected_code=200,
+        )
+
+        self.get(
+            reverse(
+                'api-barcode-scan-result-detail', kwargs={'pk': self.other_result.pk}
+            ),
+            expected_code=200,
+        )
+
+
+class POAllocateTest(InvenTreeAPITestCase):
+    """Unit tests for the barcode endpoint for allocating items to a purchase order."""
+
+    fixtures = ['category', 'company', 'part', 'location', 'stock']
+    roles = ['part.view']
+
+    @classmethod
+    def setUpTestData(cls):
+        """Setup for all tests."""
+        super().setUpTestData()
+
+        cls.supplier = company.models.Company.objects.filter(is_supplier=True).first()
+        cls.purchase_order = order.models.PurchaseOrder.objects.create(
+            supplier=cls.supplier
+        )
+
+    def postBarcode(self, barcode, expected_code=None, **kwargs):
+        """Post barcode and return results."""
+        data = {'barcode': barcode, **kwargs}
+
+        response = self.post(
+            reverse('api-barcode-po-allocate'), data=data, expected_code=expected_code
+        )
+
+        return response.data
+
+    def test_permission_denied(self):
+        """A user without the 'purchase_order.add' role cannot allocate against a PO via barcode scan."""
+        response = self.postBarcode(
+            'abcde', purchase_order=self.purchase_order.pk, expected_code=403
+        )
+
+        self.assertIn('do not have the required permissions', str(response['error']))
+
+        # Once the role is granted, the request proceeds past the permission check
+        # (still fails with 400, as 'abcde' does not match any barcode plugin -
+        # but that is a *different* error to the permission check above)
+        self.assignRole('purchase_order.add')
+
+        self.postBarcode(
+            'abcde', purchase_order=self.purchase_order.pk, expected_code=400
+        )
+
+
 class SOAllocateTest(InvenTreeAPITestCase):
     """Unit tests for the barcode endpoint for allocating items to a sales order."""
 
     fixtures = ['category', 'company', 'part', 'location', 'stock']
+    roles = ['stock.view']
 
     @classmethod
     def setUpTestData(cls):
@@ -307,6 +436,36 @@ class SOAllocateTest(InvenTreeAPITestCase):
 
         return response.data
 
+    def test_permission_denied(self):
+        """A user without the 'sales_order.add' role cannot allocate stock via barcode scan."""
+        self.clearRoles()
+
+        response = self.post(
+            reverse('api-barcode-so-allocate'),
+            data={
+                'barcode': self.stock_item.format_barcode(),
+                'sales_order': self.sales_order.pk,
+            },
+            expected_code=403,
+        )
+
+        self.assertIn(
+            'do not have the required permissions', str(response.data['error'])
+        )
+
+        # No allocation should have been created
+        self.assertEqual(self.line_item.allocated_quantity(), 0)
+
+        # Restore the required roles - the request should now succeed
+        self.assignRole('sales_order.add')
+        self.assignRole('stock.view')
+
+        self.postBarcode(
+            self.stock_item.format_barcode(),
+            sales_order=self.sales_order.pk,
+            expected_code=200,
+        )
+
     def test_no_data(self):
         """Test when no data is provided."""
         result = self.postBarcode('', expected_code=400)
@@ -343,10 +502,14 @@ class SOAllocateTest(InvenTreeAPITestCase):
         # Test with barcode which points to a *part* instance
         item.part.assign_barcode(barcode_data='abcde')
 
+        # missing permission for viewing the part - error
+        self.postBarcode('abcde', sales_order=self.sales_order.pk, expected_code=403)
+
+        # Add part.view role and test again
+        self.assignRole('part.view')
         result = self.postBarcode(
             'abcde', sales_order=self.sales_order.pk, expected_code=400
         )
-
         self.assertIn('does not match an existing stock item', str(result['error']))
 
     def test_submit(self):

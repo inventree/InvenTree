@@ -63,10 +63,11 @@ class SalesOrderStatusGroups:
         SalesOrderStatus.PENDING.value,
         SalesOrderStatus.ON_HOLD.value,
         SalesOrderStatus.IN_PROGRESS.value,
+        SalesOrderStatus.SHIPPED.value,
     ]
 
     # Completed orders
-    COMPLETE = [SalesOrderStatus.SHIPPED.value, SalesOrderStatus.COMPLETE.value]
+    COMPLETE = [SalesOrderStatus.COMPLETE.value]
 
 
 class ReturnOrderStatus(StatusCode):
@@ -115,3 +116,30 @@ class ReturnOrderLineStatus(StatusCode):
 
     # Item is rejected
     REJECT = 60, _('Reject'), ColorEnum.danger
+
+
+class TransferOrderStatus(StatusCode):
+    """Defines a set of status codes for a TransferOrder."""
+
+    # Order status codes
+    PENDING = 10, _('Pending'), ColorEnum.secondary  # Order is pending (not yet issued)
+    ISSUED = 20, _('Issued'), ColorEnum.primary  # Order has been issued
+    ON_HOLD = 25, _('On Hold'), ColorEnum.warning  # Order is on hold
+    COMPLETE = 30, _('Complete'), ColorEnum.success  # Order has been completed
+    CANCELLED = 40, _('Cancelled'), ColorEnum.danger  # Order was cancelled
+
+
+class TransferOrderStatusGroups:
+    """Groups for TransferOrderStatus codes."""
+
+    # Open orders
+    OPEN = [
+        TransferOrderStatus.PENDING.value,
+        TransferOrderStatus.ON_HOLD.value,
+        TransferOrderStatus.ISSUED.value,
+    ]
+
+    # Failed orders
+    FAILED = [TransferOrderStatus.CANCELLED.value]
+
+    COMPLETE = [TransferOrderStatus.COMPLETE.value]

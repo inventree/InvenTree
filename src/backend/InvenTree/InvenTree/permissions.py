@@ -415,7 +415,6 @@ class GlobalSettingsPermissions(OASTokenMixin, permissions.BasePermission):
         """Check that the requesting user is 'admin'."""
         try:
             user = request.user
-
             if request.method in permissions.SAFE_METHODS:
                 return True
             # Any other methods require staff access permissions

@@ -43,8 +43,8 @@ class CategoryTest(TestCase):
         self.assertTrue(self.electronics.has_children)
         self.assertTrue(self.mechanical.has_children)
 
-        self.assertEqual(len(self.electronics.children.all()), 3)
-        self.assertEqual(len(self.mechanical.children.all()), 1)
+        self.assertEqual(self.electronics.children.count(), 3)
+        self.assertEqual(self.mechanical.children.count(), 1)
 
     def test_unique_children(self):
         """Test the 'unique_children' functionality."""

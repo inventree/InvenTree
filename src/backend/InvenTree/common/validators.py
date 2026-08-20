@@ -2,7 +2,9 @@
 
 import re
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import SuspiciousFileOperation, ValidationError
+from django.core.files.storage import default_storage
+from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 
 import common.icons
@@ -74,6 +76,21 @@ def validate_attachment_model_type(value):
     model_names = [el[0] for el in attachment_model_options()]
     if value not in model_names:
         raise ValidationError('Model type does not support attachments')
+
+
+def validate_attachment_file(attachment):
+    """Ensure that the provided attachment file is valid."""
+    max_size = get_global_setting('INVENTREE_UPLOAD_MAX_SIZE', create=False)
+
+    if attachment.size > (max_size * 1024 * 1024):
+        raise ValidationError(
+            _(f'File size exceeds maximum upload limit of {max_size} MB')
+        )
+
+    try:
+        default_storage.generate_filename(attachment.name)
+    except SuspiciousFileOperation:  # pragma: no cover
+        raise ValidationError(_('Invalid file name'))
 
 
 def validate_notes_model_type(value):
@@ -155,3 +172,17 @@ def validate_variable_string(value: str):
     """The passed value must be a valid variable identifier string."""
     if not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', value):
         raise ValidationError(_('Value must be a valid variable identifier'))
+
+
+def validate_locale(value: str):
+    """Validate that the provided value is a valid locale string."""
+    from babel import Locale
+    from babel.core import UnknownLocaleError
+
+    if not value:
+        return
+
+    try:
+        Locale.parse(translation.to_locale(value))
+    except (UnknownLocaleError, ValueError) as e:
+        raise ValidationError(f"Invalid locale value: '{value}' - {e}")

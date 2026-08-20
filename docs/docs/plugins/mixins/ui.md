@@ -183,6 +183,20 @@ The `get_ui_template_previews` feature type can be used to provide custom templa
       summary: False
       members: []
 
+### Primary Actions
+
+The `get_ui_primary_actions` method can be used to provide custom primary action, which are rendered in the header of the page, next to the title/name and any status indicators. These primary actions are typically used to provide quick access to common actions related to the current page.
+
+::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_primary_actions
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      extra:
+        show_source: True
+      summary: False
+      members: []
+
 ## Plugin Context
 
 When rendering certain content in the user interface, the rendering functions are passed a `context` object which contains information about the current page being rendered. The type of the `context` object is defined in the `PluginContext` file:

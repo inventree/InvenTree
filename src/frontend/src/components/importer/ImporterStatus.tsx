@@ -3,9 +3,9 @@ import { Center, Loader, Stack } from '@mantine/core';
 import { useInterval } from '@mantine/hooks';
 import { useMemo } from 'react';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ModelType } from '@lib/enums/ModelType';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
-import { StylishText } from '../items/StylishText';
 import { getStatusCodeLabel } from '../render/StatusRenderer';
 
 export default function ImporterStatus({

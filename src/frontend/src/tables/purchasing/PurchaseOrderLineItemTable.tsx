@@ -10,18 +10,35 @@ import {
   type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
-  RowEditAction,
-  RowViewAction
+  RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { formatDecimal } from '@lib/functions/Formatting';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { useNavigate } from 'react-router-dom';
 import { RenderInstance } from '../../components/render/Instance';
+import {
+  CurrencyColumn,
+  DescriptionColumn,
+  LineItemColumn,
+  LinkColumn,
+  LocationColumn,
+  NoteColumn,
+  PartColumn,
+  PercentageColumn,
+  ProjectCodeColumn,
+  ReferenceColumn,
+  TargetDateColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { formatCurrency } from '../../defaults/formatters';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
@@ -34,23 +51,8 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useTable } from '../../hooks/UseTable';
 import { useImporterState } from '../../states/ImporterState';
 import { useUserState } from '../../states/UserState';
-import {
-  CurrencyColumn,
-  DescriptionColumn,
-  LineItemColumn,
-  LinkColumn,
-  LocationColumn,
-  NoteColumn,
-  PartColumn,
-  ProjectCodeColumn,
-  ReferenceColumn,
-  TargetDateColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 
 /*
  * Display a table of purchase order line items, for a specific order
@@ -207,8 +209,7 @@ export function PurchaseOrderLineItemTable({
       {
         accessor: 'received',
         title: t`Received`,
-        sortable: false,
-
+        sortable: true,
         render: (record: any) => (
           <ProgressBar
             progressLabel={true}
@@ -254,13 +255,17 @@ export function PurchaseOrderLineItemTable({
         accessor: 'purchase_price',
         title: t`Unit Price`
       }),
+      PercentageColumn({
+        accessor: 'discount',
+        title: t`Discount`,
+        defaultVisible: false
+      }),
       {
         accessor: 'total_price',
         title: t`Total Price`,
         render: (record: any) =>
-          formatCurrency(record.purchase_price, {
-            currency: record.purchase_price_currency,
-            multiplier: record.quantity
+          formatCurrency(record.total_price, {
+            currency: record.purchase_price_currency
           })
       },
       TargetDateColumn({}),
@@ -377,7 +382,7 @@ export function PurchaseOrderLineItemTable({
             deleteLine.open();
           }
         }),
-        RowViewAction({
+        AppRowViewAction({
           hidden: !record.build_order,
           title: t`View Build Order`,
           modelType: ModelType.build,
@@ -416,7 +421,7 @@ export function PurchaseOrderLineItemTable({
         icon={<IconSquareArrowRight />}
         onClick={() => receiveLineItems.open()}
         disabled={table.selectedRecords.length === 0}
-        hidden={!orderPlaced || !user.hasChangeRole(UserRoles.purchase_order)}
+        hidden={!orderPlaced || !user.hasAddRole(UserRoles.purchase_order)}
       />
     ];
   }, [orderId, user, table, editable, orderPlaced]);
@@ -435,6 +440,9 @@ export function PurchaseOrderLineItemTable({
         props={{
           enableSelection: true,
           enableDownload: true,
+          enableBulkDelete:
+            editable && user.hasDeleteRole(UserRoles.purchase_order),
+          afterBulkDelete: orderDetailRefresh,
           defaultSortColumn: 'line',
           params: {
             ...params,

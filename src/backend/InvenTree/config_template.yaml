@@ -18,15 +18,15 @@
 # TO MAINTAINERS: Do not change database strings
 database:
   # --- Available options: ---
-  # ENGINE: Database engine. Selection from:
+  # engine: Database engine. Selection from:
   #         - mysql
   #         - postgresql
   #         - sqlite3
-  # NAME: Database name
-  # USER: Database username (if required)
-  # PASSWORD: Database password (if required)
-  # HOST: Database host address (if required)
-  # PORT: Database host port (if required)
+  # name: Database name
+  # user: Database username (if required)
+  # password: Database password (if required)
+  # host: Database host address (if required)
+  # port: Database host port (if required)
 
 # Base URL for the InvenTree server (or use the environment variable INVENTREE_SITE_URL)
 # site_url: 'http://localhost:8000'
@@ -162,6 +162,11 @@ cors:
 
   # regex:
 
+# Throttling is applied to the API by default to make DoS attacks more difficult; these can be disabled by setting them to None.
+# throttle:
+#   anon: '20/minute'
+#   user: '60/second'
+
 # MEDIA_ROOT is the local filesystem location for storing uploaded files
 #media_root: '/home/inventree/data/media'
 
@@ -235,6 +240,12 @@ ldap:
 #global_settings:
 #  INVENTREE_DEFAULT_CURRENCY: 'CNY'
 #  INVENTREE_RESTRICT_ABOUT: true
+
+# Override plugin settings (by plugin slug)
+# Settings specified here will be locked and cannot be changed via the UI
+#plugin_settings:
+#  plugin-slug:
+#    SETTING_KEY: 'value'
 
 # Storage configuration
 # Ref: https://docs.inventree.org/en/stable/start/config/#storage-backends

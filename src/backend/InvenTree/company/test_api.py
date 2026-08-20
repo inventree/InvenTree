@@ -478,7 +478,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
         'supplier_part',
     ]
 
-    roles = ['part.add', 'part.change']
+    roles = ['part.add', 'part.change', 'purchase_order.view']
 
     def test_manufacturer_part_list(self):
         """Test the ManufacturerPart API list functionality."""
@@ -506,6 +506,8 @@ class ManufacturerTest(InvenTreeAPITestCase):
     def test_manufacturer_part_detail(self):
         """Tests for the ManufacturerPart detail endpoint."""
         mp = ManufacturerPart.objects.first()
+
+        self.assertIsNotNone(mp)
 
         url = reverse('api-manufacturer-part-detail', kwargs={'pk': mp.pk})
 

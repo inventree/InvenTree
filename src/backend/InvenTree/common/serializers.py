@@ -1,4 +1,4 @@
-"""JSON serializers for common components."""
+"""API serializers for common components."""
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count, OuterRef, Subquery
@@ -12,6 +12,7 @@ from error_report.models import Error
 from flags.state import flag_state
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
+from taggit.models import Tag
 
 import common.filters
 import common.models as common_models
@@ -28,7 +29,8 @@ from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
-    enable_filter,
+    InvenTreeTaggitSerializer,
+    OptionalField,
 )
 from plugin import registry as plugin_registry
 from users.serializers import OwnerSerializer, UserSerializer
@@ -316,7 +318,9 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
         """Function to resolve generic object reference to target."""
         target = get_objectreference(obj, 'target_content_type', 'target_object_id')
 
-        if target and 'link' not in target:
+        if target and obj.link:
+            target['link'] = obj.link
+        elif target and 'link' not in target:
             # Check if object has an absolute_url function
             if hasattr(obj.target_object, 'get_absolute_url'):
                 target['link'] = obj.target_object.get_absolute_url()
@@ -381,7 +385,16 @@ class ConfigSerializer(serializers.Serializer):
         """Return the configuration data as a dictionary."""
         if not isinstance(instance, str):
             instance = list(instance.keys())[0]
-        return {'key': instance, **self.instance.get(instance)}
+
+        data = {'key': instance}
+
+        for k, v in self.instance.get(instance, {}).items():
+            if k == 'default_value':
+                # Skip sensitive default values
+                continue
+            data[k] = v
+
+        return data
 
 
 class NotesImageSerializer(InvenTreeModelSerializer):
@@ -406,11 +419,41 @@ class ProjectCodeSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
         """Meta options for ProjectCodeSerializer."""
 
         model = common_models.ProjectCode
-        fields = ['pk', 'code', 'description', 'responsible', 'responsible_detail']
+        fields = [
+            'pk',
+            'code',
+            'description',
+            'active',
+            'responsible',
+            'responsible_detail',
+        ]
 
     responsible_detail = OwnerSerializer(
         source='responsible', read_only=True, allow_null=True
     )
+
+
+@register_importer()
+class TagSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
+    """Serializer for the Tag model."""
+
+    class Meta:
+        """Meta options for TagSerializer."""
+
+        model = Tag
+        fields = ['pk', 'name', 'slug']
+        read_only_fields = ['pk', 'slug']
+
+    def validate(self, data):
+        """Slugify the received name to generate the slug."""
+        from django.utils.text import slugify
+
+        name = data.get('name', None)
+
+        if name is not None:
+            data['slug'] = slugify(name)
+
+        return data
 
 
 @register_importer()
@@ -711,7 +754,9 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
     result = serializers.CharField()
 
 
-class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
+class AttachmentSerializer(
+    FilterableSerializerMixin, InvenTreeTaggitSerializer, InvenTreeModelSerializer
+):
     """Serializer class for the Attachment model."""
 
     class Meta:
@@ -721,9 +766,11 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         fields = [
             'pk',
             'attachment',
+            'thumbnail',
             'filename',
             'link',
             'comment',
+            'is_image',
             'upload_date',
             'upload_user',
             'user_detail',
@@ -733,7 +780,14 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
             'tags',
         ]
 
-        read_only_fields = ['pk', 'file_size', 'upload_date', 'upload_user', 'filename']
+        read_only_fields = [
+            'pk',
+            'file_size',
+            'upload_date',
+            'upload_user',
+            'filename',
+            'is_image',
+        ]
 
     def __init__(self, *args, **kwargs):
         """Override the model_type field to provide dynamic choices."""
@@ -749,6 +803,8 @@ class AttachmentSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     user_detail = UserSerializer(source='upload_user', read_only=True, many=False)
 
     attachment = InvenTreeAttachmentSerializerField(required=False, allow_null=True)
+
+    thumbnail = InvenTreeImageSerializerField(read_only=True, allow_null=True)
 
     # The 'filename' field must be present in the serializer
     filename = serializers.CharField(
@@ -820,6 +876,7 @@ class ParameterTemplateSerializer(
             'choices',
             'selectionlist',
             'enabled',
+            'unique',
         ]
 
     # Note: The choices are overridden at run-time on class initialization
@@ -857,6 +914,7 @@ class ParameterSerializer(
             'note',
             'updated',
             'updated_by',
+            # Optional fields
             'template_detail',
             'updated_by_detail',
         ]
@@ -891,9 +949,7 @@ class ParameterSerializer(
         if not target_model_class.check_related_permission('change', user):
             raise PermissionDenied(permission_error_msg)
 
-        instance = super().save(**kwargs)
-        instance.updated_by = user
-        instance.save()
+        instance = super().save(updated_by=user, **kwargs)
 
         return instance
 
@@ -906,17 +962,22 @@ class ParameterSerializer(
         allow_null=False,
     )
 
-    updated_by_detail = enable_filter(
-        UserSerializer(
-            source='updated_by', read_only=True, allow_null=True, many=False
-        ),
-        True,
+    updated_by_detail = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={
+            'source': 'updated_by',
+            'read_only': True,
+            'allow_null': True,
+            'many': False,
+        },
+        default_include=True,
         prefetch_fields=['updated_by'],
     )
 
-    template_detail = enable_filter(
-        ParameterTemplateSerializer(source='template', read_only=True, many=False),
-        True,
+    template_detail = OptionalField(
+        serializer_class=ParameterTemplateSerializer,
+        serializer_kwargs={'source': 'template', 'read_only': True, 'many': False},
+        default_include=True,
         prefetch_fields=['template', 'template__model_type'],
     )
 
@@ -951,15 +1012,17 @@ class SelectionEntrySerializer(InvenTreeModelSerializer):
     def validate(self, attrs):
         """Ensure that the selection list is not locked."""
         ret = super().validate(attrs)
-        if self.instance and self.instance.list.locked:
+        list_obj = attrs.get('list') or (self.instance and self.instance.list)
+        if list_obj and list_obj.locked:
             raise serializers.ValidationError({'list': _('Selection list is locked')})
         return ret
 
 
-class SelectionListSerializer(InvenTreeModelSerializer):
+class SelectionListSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     """Serializer for a selection list."""
 
     _choices_validated: dict = {}
+    _choices_provided: bool = False
 
     class Meta:
         """Meta options for SelectionListSerializer."""
@@ -976,80 +1039,24 @@ class SelectionListSerializer(InvenTreeModelSerializer):
             'default',
             'created',
             'last_updated',
-            'choices',
             'entry_count',
+            'choices',
         ]
 
-    default = SelectionEntrySerializer(read_only=True, many=False)
-    choices = SelectionEntrySerializer(source='entries', many=True, required=False)
+    default = SelectionEntrySerializer(read_only=True, allow_null=True, many=False)
     entry_count = serializers.IntegerField(read_only=True)
+
+    choices = OptionalField(
+        serializer_class=SelectionEntrySerializer,
+        serializer_kwargs={'source': 'entries', 'many': True, 'read_only': True},
+        prefetch_fields=['entries'],
+        default_include=True,
+    )
 
     @staticmethod
     def annotate_queryset(queryset):
         """Add count of entries for each selection list."""
         return queryset.annotate(entry_count=Count('entries'))
-
-    def is_valid(self, *, raise_exception=False):
-        """Validate the selection list. Choices are validated separately."""
-        choices = (
-            self.initial_data.pop('choices')
-            if self.initial_data.get('choices') is not None
-            else []
-        )
-
-        # Validate the choices
-        _choices_validated = []
-        db_entries = (
-            {a.id: a for a in self.instance.entries.all()} if self.instance else {}
-        )
-
-        for choice in choices:
-            current_inst = db_entries.get(choice.get('id'))
-            serializer = SelectionEntrySerializer(
-                instance=current_inst,
-                data={'list': current_inst.list.pk if current_inst else None, **choice},
-            )
-            serializer.is_valid(raise_exception=raise_exception)
-            _choices_validated.append({
-                **serializer.validated_data,
-                'id': choice.get('id'),
-            })
-        self._choices_validated = _choices_validated
-
-        return super().is_valid(raise_exception=raise_exception)
-
-    def create(self, validated_data):
-        """Create a new selection list. Save the choices separately."""
-        list_entry = common_models.SelectionList.objects.create(**validated_data)
-        for choice_data in self._choices_validated:
-            common_models.SelectionListEntry.objects.create(**{
-                **choice_data,
-                'list': list_entry,
-            })
-        return list_entry
-
-    def update(self, instance, validated_data):
-        """Update an existing selection list. Save the choices separately."""
-        inst_mapping = {inst.id: inst for inst in instance.entries.all()}
-        existing_ids = {a.get('id') for a in self._choices_validated}
-
-        # Perform creations and updates.
-        ret = []
-        for data in self._choices_validated:
-            list_inst = data.get('list', None)
-            inst = inst_mapping.get(data.get('id'))
-            if inst is None:
-                if list_inst is None:
-                    data['list'] = instance
-                ret.append(SelectionEntrySerializer().create(data))
-            else:
-                ret.append(SelectionEntrySerializer().update(inst, data))
-
-        # Perform deletions.
-        for entry_id in inst_mapping.keys() - existing_ids:
-            inst_mapping[entry_id].delete()
-
-        return super().update(instance, validated_data)
 
     def validate(self, attrs):
         """Ensure that the selection list is not locked."""

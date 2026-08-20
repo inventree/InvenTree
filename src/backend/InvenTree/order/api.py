@@ -6,6 +6,7 @@ from typing import cast
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.db.models import F, Q
 from django.http.response import JsonResponse
 from django.urls import include, path, re_path
@@ -18,10 +19,12 @@ from django_ical.views import ICalFeed
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 import build.models
+import common.filters
 import common.models
 import common.serializers
 import common.settings
@@ -31,6 +34,8 @@ import stock.serializers as stock_serializers
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import (
+    BulkDeleteMixin,
+    BulkDeleteViewsetMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
     ParameterListMixin,
@@ -39,6 +44,11 @@ from InvenTree.api import (
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER, InvenTreeDateFilter
 from InvenTree.helpers import current_date, str2bool
+from InvenTree.helpers_api import (
+    CleanModelViewSet,
+    InvenTreeApiRouter,
+    RetrieveUpdateDestroyModelViewSet,
+)
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import (
     CreateAPI,
@@ -56,9 +66,13 @@ from order.status_codes import (
     ReturnOrderStatus,
     SalesOrderStatus,
     SalesOrderStatusGroups,
+    TransferOrderStatus,
+    TransferOrderStatusGroups,
 )
 from part.models import Part
 from users.models import Owner
+
+order_router = InvenTreeApiRouter()
 
 
 class GeneralExtraLineListOutputOptions(OutputConfiguration):
@@ -84,6 +98,8 @@ class GeneralExtraLineList(SerializerContextMixin, DataExportViewMixin):
 
     ordering_fields = ['quantity', 'notes', 'reference', 'line']
 
+    ordering_field_aliases = {'line': ['line_int', 'line']}
+
     search_fields = ['quantity', 'notes', 'reference', 'description']
 
     filterset_fields = ['order']
@@ -97,9 +113,7 @@ class OrderCreateMixin:
         serializer = self.get_serializer(data=self.clean_data(request.data))
         serializer.is_valid(raise_exception=True)
 
-        item = serializer.save()
-        item.created_by = request.user
-        item.save()
+        serializer.save(created_by=request.user)
 
         headers = self.get_success_headers(serializer.data)
         return Response(
@@ -272,6 +286,8 @@ class OrderFilter(FilterSet):
 
         return queryset.filter(q1 | q2 | q3 | q4).distinct()
 
+    tags = common.filters.TagsFilter()
+
 
 class LineItemFilter(FilterSet):
     """Base class for custom API filters for order line item list(s)."""
@@ -365,40 +381,29 @@ class PurchaseOrderOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption('supplier_detail')]
 
 
-class PurchaseOrderMixin(SerializerContextMixin):
-    """Mixin class for PurchaseOrder endpoints."""
-
-    queryset = models.PurchaseOrder.objects.all().prefetch_related(
-        'supplier', 'created_by'
-    )
-    serializer_class = serializers.PurchaseOrderSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        """Return the annotated queryset for this endpoint."""
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
-
-        return queryset
-
-
-class PurchaseOrderList(
-    PurchaseOrderMixin,
+class PurchaseOrderViewSet(
+    SerializerContextMixin,
     OrderCreateMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
     ParameterListMixin,
-    ListCreateAPI,
+    RetrieveUpdateDestroyModelViewSet,
 ):
-    """API endpoint for accessing a list of PurchaseOrder objects.
+    """API endpoint for accessing PurchaseOrder objects.
 
-    - GET: Return list of PurchaseOrder objects (with filters)
+    - GET: Return list of PurchaseOrder objects (with filters), or a single PurchaseOrder object
     - POST: Create a new PurchaseOrder object
+    - PUT / PATCH: Update an existing PurchaseOrder object
+    - DELETE: Remove a PurchaseOrder object
     """
 
     filterset_class = PurchaseOrderFilter
     filter_backends = SEARCH_ORDER_FILTER
     output_options = PurchaseOrderOutputOptions
+    queryset = models.PurchaseOrder.objects.all().prefetch_related(
+        'supplier', 'created_by'
+    )
+    serializer_class = serializers.PurchaseOrderSerializer
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
@@ -431,19 +436,11 @@ class PurchaseOrderList(
 
     ordering = '-reference'
 
-
-class PurchaseOrderDetail(
-    PurchaseOrderMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
-):
-    """API endpoint for detail view of a PurchaseOrder object."""
-
-    output_options = PurchaseOrderOutputOptions
-
-
-class PurchaseOrderContextMixin:
-    """Mixin to add purchase order object as serializer context variable."""
-
-    queryset = models.PurchaseOrder.objects.all()
+    def get_queryset(self, *args, **kwargs):
+        """Return the annotated queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
+        return queryset
 
     def get_serializer_context(self):
         """Add the PurchaseOrder object to the serializer context."""
@@ -461,64 +458,90 @@ class PurchaseOrderContextMixin:
 
         return context
 
+    # TODO @matmair remove legacy return codes
+    @extend_schema(responses={201: serializers.PurchaseOrderHoldSerializer})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=serializers.PurchaseOrderHoldSerializer,
+        output_options=None,
+    )
+    def hold(self, request, pk=None):
+        """API endpoint to place a PurchaseOrder on hold."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class PurchaseOrderHold(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to place a PurchaseOrder on hold."""
+    # TODO @matmair remove legacy return codes
+    @extend_schema(responses={201: serializers.PurchaseOrderCancelSerializer})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=serializers.PurchaseOrderCancelSerializer,
+        output_options=None,
+    )
+    def cancel(self, request, pk=None):
+        """API endpoint to 'cancel' a purchase order.
 
-    serializer_class = serializers.PurchaseOrderHoldSerializer
+        The purchase order must be in a state which can be cancelled
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    # TODO @matmair remove legacy return codes
+    @extend_schema(responses={201: serializers.PurchaseOrderCompleteSerializer})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=serializers.PurchaseOrderCompleteSerializer,
+        output_options=None,
+    )
+    def complete(self, request, pk=None):
+        """API endpoint to 'complete' a purchase order."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class PurchaseOrderCancel(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to 'cancel' a purchase order.
+    # TODO @matmair remove legacy return codes
+    @extend_schema(responses={201: serializers.PurchaseOrderIssueSerializer})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=serializers.PurchaseOrderIssueSerializer,
+        output_options=None,
+    )
+    def issue(self, request, pk=None):
+        """API endpoint to 'issue' (place) a PurchaseOrder."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    The purchase order must be in a state which can be cancelled
-    """
-
-    serializer_class = serializers.PurchaseOrderCancelSerializer
-
-
-class PurchaseOrderComplete(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to 'complete' a purchase order."""
-
-    serializer_class = serializers.PurchaseOrderCompleteSerializer
-
-
-class PurchaseOrderIssue(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to 'issue' (place) a PurchaseOrder."""
-
-    serializer_class = serializers.PurchaseOrderIssueSerializer
-
-
-@extend_schema(responses={201: stock_serializers.StockItemSerializer(many=True)})
-class PurchaseOrderReceive(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to receive stock items against a PurchaseOrder.
-
-    - The purchase order is specified in the URL.
-    - Items to receive are specified as a list called "items" with the following options:
-        - line_item: pk of the PO Line item
-        - supplier_part: pk value of the supplier part
-        - quantity: quantity to receive
-        - status: stock item status
-        - expiry_date: stock item expiry date (optional)
-        - location: destination for stock item (optional)
-        - batch_code: the batch code for this stock item
-        - serial_numbers: serial numbers for this stock item
-    - A global location must also be specified. This is used when no locations are specified for items, and no location is given in the PO line item
-    """
-
-    queryset = models.PurchaseOrderLineItem.objects.none()
-    serializer_class = serializers.PurchaseOrderReceiveSerializer
-    pagination_class = None
-
-    def create(self, request, *args, **kwargs):
-        """Override the create method to handle stock item creation."""
+    @extend_schema(responses={201: stock_serializers.StockItemSerializer(many=True)})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=serializers.PurchaseOrderReceiveSerializer,
+        pagination_class=None,
+        filter_backends=[],
+        output_options=None,
+    )
+    def receive(self, request, pk=None):
+        """API endpoint to receive stock items against a PurchaseOrder."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         items = serializer.save()
         queryset = stock_serializers.StockItemSerializer.annotate_queryset(items)
-        response = stock_serializers.StockItemSerializer(queryset, many=True)
 
+        response = stock_serializers.StockItemSerializer(queryset, many=True)
         return Response(response.data, status=status.HTTP_201_CREATED)
+
+
+order_router.register('po', PurchaseOrderViewSet, basename='api-po')
 
 
 class PurchaseOrderLineItemFilter(LineItemFilter):
@@ -629,42 +652,23 @@ class PurchaseOrderLineItemOutputOptions(OutputConfiguration):
     ]
 
 
-class PurchaseOrderLineItemMixin(SerializerContextMixin):
-    """Mixin class for PurchaseOrderLineItem endpoints."""
+class PurchaseOrderLineItemViewSet(
+    SerializerContextMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    BulkDeleteViewsetMixin,
+    RetrieveUpdateDestroyModelViewSet,
+):
+    """API endpoint for accessing PurchaseOrderLineItem objects.
+
+    - GET: Return list of PurchaseOrderLineItem objects (with filters), or a single object
+    - POST: Create a new PurchaseOrderLineItem object
+    - PUT / PATCH: Update an existing PurchaseOrderLineItem object
+    - DELETE: Remove a PurchaseOrderLineItem object (or bulk delete multiple objects)
+    """
 
     queryset = models.PurchaseOrderLineItem.objects.all()
     serializer_class = serializers.PurchaseOrderLineItemSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        """Return annotated queryset for this endpoint."""
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = serializers.PurchaseOrderLineItemSerializer.annotate_queryset(
-            queryset
-        )
-
-        return queryset
-
-    def perform_update(self, serializer):
-        """Override the perform_update method to auto-update pricing if required."""
-        super().perform_update(serializer)
-
-        # possibly auto-update pricing based on the supplier part pricing data
-        if serializer.validated_data.get('auto_pricing', True):
-            serializer.instance.update_pricing()
-
-
-class PurchaseOrderLineItemList(
-    PurchaseOrderLineItemMixin,
-    DataExportViewMixin,
-    OutputOptionsMixin,
-    ListCreateDestroyAPIView,
-):
-    """API endpoint for accessing a list of PurchaseOrderLineItem objects.
-
-    - GET: Return a list of PurchaseOrder Line Item objects
-    - POST: Create a new PurchaseOrderLineItem object
-    """
 
     filterset_class = PurchaseOrderLineItemFilter
     output_options = PurchaseOrderLineItemOutputOptions
@@ -677,19 +681,34 @@ class PurchaseOrderLineItemList(
 
         # possibly merge duplicate items
         line_item = None
-        if data.get('merge_items', True):
-            other_line = models.PurchaseOrderLineItem.objects.filter(
-                part=data.get('part'),
-                order=data.get('order'),
-                target_date=data.get('target_date'),
-                destination=data.get('destination'),
-            ).first()
+        merge_items = data.get(
+            'merge_items',
+            common.settings.get_global_setting(
+                'PURCHASEORDER_MERGE_LINE_ITEMS', backup_value=True
+            ),
+        )
 
-            if other_line is not None:
-                other_line.quantity += Decimal(data.get('quantity', 0))
-                other_line.save()
+        if merge_items:
+            with transaction.atomic():
+                # Lock the matching row, so concurrent line creations cannot
+                # both read the same starting quantity (lost update)
+                other_line = (
+                    models.PurchaseOrderLineItem.objects
+                    .select_for_update()
+                    .filter(
+                        part=data.get('part'),
+                        order=data.get('order'),
+                        target_date=data.get('target_date'),
+                        destination=data.get('destination'),
+                    )
+                    .first()
+                )
 
-                line_item = other_line
+                if other_line is not None:
+                    other_line.quantity += Decimal(data.get('quantity', 0))
+                    other_line.save()
+
+                    line_item = other_line
 
         # otherwise create a new line item
         if line_item is None:
@@ -717,7 +736,7 @@ class PurchaseOrderLineItemList(
         'order': 'order__reference',
         'status': 'order__status',
         'complete_date': 'order__complete_date',
-        'line': ['line', 'part__SKU'],
+        'line': ['line_int', 'line', 'part__SKU'],
     }
 
     ordering_fields = [
@@ -729,7 +748,6 @@ class PurchaseOrderLineItemList(
         'reference',
         'SKU',
         'IPN',
-        'total_price',
         'target_date',
         'order',
         'status',
@@ -745,29 +763,49 @@ class PurchaseOrderLineItemList(
         'reference',
     ]
 
+    def get_queryset(self):
+        """Return annotated queryset for this endpoint."""
+        queryset = super().get_queryset()
+        queryset = serializers.PurchaseOrderLineItemSerializer.annotate_queryset(
+            queryset
+        )
+        return queryset
 
-class PurchaseOrderLineItemDetail(
-    PurchaseOrderLineItemMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+    def perform_update(self, serializer):
+        """Override the perform_update method to auto-update pricing if required."""
+        super().perform_update(serializer)
+
+        # possibly auto-update pricing based on the supplier part pricing data
+        if serializer.validated_data.get('auto_pricing', True):
+            serializer.instance.update_pricing()
+
+
+order_router.register('po-line', PurchaseOrderLineItemViewSet, basename='api-po-line')
+
+
+class PurchaseOrderExtraLineViewSet(
+    GeneralExtraLineList, OutputOptionsMixin, BulkDeleteViewsetMixin, CleanModelViewSet
 ):
-    """Detail API endpoint for PurchaseOrderLineItem object."""
+    """API endpoint for accessing PurchaseOrderExtraLine objects.
 
-    output_options = PurchaseOrderLineItemOutputOptions
-
-
-class PurchaseOrderExtraLineList(
-    GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI
-):
-    """API endpoint for accessing a list of PurchaseOrderExtraLine objects."""
+    - GET: Return list of PurchaseOrderExtraLine objects (with filters), or a single object
+    - POST: Create a new PurchaseOrderExtraLine object
+    - PUT / PATCH: Update an existing PurchaseOrderExtraLine object
+    - DELETE: Remove a PurchaseOrderExtraLine object (or bulk delete multiple objects)
+    """
 
     queryset = models.PurchaseOrderExtraLine.objects.all()
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
 
+    def get_queryset(self):
+        """Return the annotated queryset for this endpoint."""
+        queryset = super().get_queryset()
+        return queryset.prefetch_related('order')
 
-class PurchaseOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a PurchaseOrderExtraLine object."""
 
-    queryset = models.PurchaseOrderExtraLine.objects.all()
-    serializer_class = serializers.PurchaseOrderExtraLineSerializer
+order_router.register(
+    'po-extra-line', PurchaseOrderExtraLineViewSet, basename='api-po-extra-line'
+)
 
 
 class SalesOrderFilter(OrderFilter):
@@ -1047,7 +1085,10 @@ class SalesOrderLineItemOutputOptions(OutputConfiguration):
 
 
 class SalesOrderLineItemList(
-    SalesOrderLineItemMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+    SalesOrderLineItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for accessing a list of SalesOrderLineItem objects."""
 
@@ -1070,6 +1111,8 @@ class SalesOrderLineItemList(
         'sale_price',
         'target_date',
         'line',
+        'status',
+        'shipment_date',
     ]
 
     ordering_field_aliases = {
@@ -1077,7 +1120,9 @@ class SalesOrderLineItemList(
         'part': 'part__name',
         'IPN': 'part__IPN',
         'order': 'order__reference',
-        'line': ['line', 'part__name'],
+        'line': ['line_int', 'line', 'part__name'],
+        'status': 'order__status',
+        'shipment_date': 'order__shipment_date',
     }
 
     search_fields = ['part__name', 'quantity', 'reference']
@@ -1091,7 +1136,9 @@ class SalesOrderLineItemDetail(
     output_options = SalesOrderLineItemOutputOptions
 
 
-class SalesOrderExtraLineList(GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI):
+class SalesOrderExtraLineList(
+    GeneralExtraLineList, OutputOptionsMixin, ListCreateDestroyAPIView
+):
     """API endpoint for accessing a list of SalesOrderExtraLine objects."""
 
     queryset = models.SalesOrderExtraLine.objects.all()
@@ -1164,6 +1211,50 @@ class SalesOrderAllocate(SalesOrderContextMixin, CreateAPI):
 
     queryset = models.SalesOrder.objects.none()
     serializer_class = serializers.SalesOrderShipmentAllocationSerializer
+
+
+class SalesOrderAutoAllocate(SalesOrderContextMixin, CreateAPI):
+    """API endpoint to automatically allocate stock against a SalesOrder.
+
+    - Offloads work to a background task and returns task detail
+    """
+
+    serializer_class = serializers.SalesOrderAutoAllocationSerializer
+
+    @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
+    def post(self, *args, **kwargs):
+        """Validate parameters and offload auto-allocation to a background task."""
+        from InvenTree.tasks import offload_task
+        from order.tasks import auto_allocate_sales_order
+
+        order_obj = self.get_object()
+        serializer = self.get_serializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        # Extract related models from the validated data
+        location = data.get('location')
+        exclude_location = data.get('exclude_location')
+        shipment = data.get('shipment')
+        line_items = data.get('line_items', [])
+
+        # Offload to the background worker
+        # Note: We provide the model ID values, not the model instances
+        task_id = offload_task(
+            auto_allocate_sales_order,
+            order_obj.pk,
+            location_id=location.pk if location else None,
+            exclude_location_id=exclude_location.pk if exclude_location else None,
+            shipment_id=shipment.pk if shipment else None,
+            line_ids=[item.pk for item in line_items] if line_items else None,
+            interchangeable=data['interchangeable'],
+            stock_sort_by=data['stock_sort_by'],
+            serialized_stock=data['serialized_stock'],
+            group='sales_order',
+        )
+
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+        return Response(response, status=response['http_status'])
 
 
 class SalesOrderAllocationFilter(FilterSet):
@@ -1296,13 +1387,22 @@ class SalesOrderAllocationOutputOptions(OutputConfiguration):
 
 
 class SalesOrderAllocationList(
-    SalesOrderAllocationMixin, BulkUpdateMixin, OutputOptionsMixin, ListAPI
+    SalesOrderAllocationMixin,
+    BulkDeleteMixin,
+    BulkUpdateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListAPI,
 ):
     """API endpoint for listing SalesOrderAllocation objects."""
 
     filterset_class = SalesOrderAllocationFilter
     filter_backends = SEARCH_ORDER_FILTER
     output_options = SalesOrderAllocationOutputOptions
+
+    def filter_delete_queryset(self, queryset, request):
+        """Prevent deletion of allocations that have already been shipped."""
+        return queryset.filter(shipment__shipment_date__isnull=True)
 
     ordering_fields = [
         'quantity',
@@ -1390,6 +1490,8 @@ class SalesOrderShipmentFilter(FilterSet):
         q2 = Q(order__status_custom_key=value)
 
         return queryset.filter(q1 | q2).distinct()
+
+    tags = common.filters.TagsFilter()
 
 
 class SalesOrderShipmentMixin:
@@ -1707,7 +1809,11 @@ class ReturnOrderLineItemOutputOptions(OutputConfiguration):
 
 
 class ReturnOrderLineItemList(
-    ReturnOrderLineItemMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateAPI
+    ReturnOrderLineItemMixin,
+    BulkUpdateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for accessing a list of ReturnOrderLineItemList objects."""
 
@@ -1728,7 +1834,7 @@ class ReturnOrderLineItemList(
     ]
 
     ordering_field_aliases = {
-        'line': ['line', 'item__part__name'],
+        'line': ['line_int', 'line', 'item__part__name'],
         'part': 'item__part__name',
         'IPN': 'item__part__IPN',
         'stock': ['item__quantity', 'item__serial_int', 'item__serial'],
@@ -1750,7 +1856,9 @@ class ReturnOrderLineItemDetail(
     output_options = ReturnOrderLineItemOutputOptions
 
 
-class ReturnOrderExtraLineList(GeneralExtraLineList, OutputOptionsMixin, ListCreateAPI):
+class ReturnOrderExtraLineList(
+    GeneralExtraLineList, OutputOptionsMixin, ListCreateDestroyAPIView
+):
     """API endpoint for accessing a list of ReturnOrderExtraLine objects."""
 
     queryset = models.ReturnOrderExtraLine.objects.all()
@@ -1762,6 +1870,524 @@ class ReturnOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
 
     queryset = models.ReturnOrderExtraLine.objects.all()
     serializer_class = serializers.ReturnOrderExtraLineSerializer
+
+
+class TransferOrderFilter(OrderFilter):
+    """Custom API filters for the TransferOrderList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = models.TransferOrder
+        fields = []
+
+    include_variants = rest_filters.BooleanFilter(
+        label=_('Include Variants'), method='filter_include_variants'
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), field_name='part', method='filter_part'
+    )
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_part(self, queryset, name, part):
+        """Filter by selected 'part'.
+
+        Note:
+        - If 'include_variants' is set to True, then all variants of the selected part will be included.
+        - Otherwise, just filter by the selected part.
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        if include_variants:
+            parts = part.get_descendants(include_self=True)
+        else:
+            parts = Part.objects.filter(pk=part.pk)
+
+        # Now that we have a queryset of parts, find all the matching return orders
+        line_items = models.TransferOrderLineItem.objects.filter(part__in=parts)
+
+        # Generate a list of ID values for the matching transfer orders
+        transfer_orders = line_items.values_list('order', flat=True).distinct()
+
+        # Now we have a list of matching IDs, filter the queryset
+        return queryset.filter(pk__in=transfer_orders)
+
+    completed_before = InvenTreeDateFilter(
+        label=_('Completed Before'), field_name='complete_date', lookup_expr='lt'
+    )
+
+    completed_after = InvenTreeDateFilter(
+        label=_('Completed After'), field_name='complete_date', lookup_expr='gt'
+    )
+
+
+class TransferOrderMixin(SerializerContextMixin):
+    """Mixin class for TransferOrder endpoints."""
+
+    queryset = models.TransferOrder.objects.all()
+    serializer_class = serializers.TransferOrderSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = serializers.TransferOrderSerializer.annotate_queryset(queryset)
+        queryset = queryset.prefetch_related('created_by', 'responsible')
+
+        return queryset
+
+
+class TransferOrderList(
+    TransferOrderMixin,
+    OrderCreateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ParameterListMixin,
+    ListCreateAPI,
+):
+    """API endpoint for accessing a list of TransferOrder objects."""
+
+    filterset_class = TransferOrderFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+    # TODO:
+    # output_options = TransferOrderOutputOptions
+
+    ordering_field_aliases = {
+        'reference': ['reference_int', 'reference'],
+        'project_code': ['project_code__code'],
+    }
+
+    ordering_fields = [
+        'creation_date',
+        'created_by',
+        'reference',
+        'line_items',
+        'status',
+        'start_date',
+        'target_date',
+        'complete_date',
+        'project_code',
+    ]
+
+    search_fields = ['reference', 'description', 'project_code__code']
+
+    ordering = '-reference'
+
+
+class TransferOrderDetail(
+    TransferOrderMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
+    """API endpoint for detail view of a single TransferOrder object."""
+
+    # output_options = TransferOrderOutputOptions
+
+
+class TransferOrderContextMixin:
+    """Simple mixin class to add a TransferOrder to the serializer context."""
+
+    queryset = models.TransferOrder.objects.all()
+
+    def get_serializer_context(self):
+        """Add the TransferOrder object to the serializer context."""
+        context = super().get_serializer_context()
+
+        # Pass the Transfer instance through to the serializer for validation
+        try:
+            context['order'] = models.TransferOrder.objects.get(
+                pk=self.kwargs.get('pk', None)
+            )
+        except Exception:
+            pass
+
+        context['request'] = self.request
+
+        return context
+
+
+class TransferOrderCancel(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to cancel a TransferOrder."""
+
+    serializer_class = serializers.TransferOrderCancelSerializer
+
+
+class TransferOrderHold(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to hold a TransferOrder."""
+
+    serializer_class = serializers.TransferOrderHoldSerializer
+
+
+class TransferOrderComplete(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to complete a TransferOrder."""
+
+    serializer_class = serializers.TransferOrderCompleteSerializer
+
+
+class TransferOrderIssue(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to issue a Transfer Order."""
+
+    serializer_class = serializers.TransferOrderIssueSerializer
+
+
+class TransferOrderAllocateSerials(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to allocation stock items against a TransferOrder, by specifying serial numbers."""
+
+    queryset = models.TransferOrder.objects.none()
+    serializer_class = serializers.TransferOrderSerialAllocationSerializer
+
+
+class TransferOrderAllocate(TransferOrderContextMixin, CreateAPI):
+    """API endpoint to allocate stock items against a TransferOrder.
+
+    - The TransferOrder is specified in the URL
+    - See the TransferOrderAllocationSerializer class
+    """
+
+    queryset = models.TransferOrder.objects.none()
+    serializer_class = serializers.TransferOrderLineItemAllocationSerializer
+
+
+class TransferOrderAllocationFilter(FilterSet):
+    """Custom filterset for the TransferOrderAllocationList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = models.TransferOrderAllocation
+        fields = ['line', 'item']
+
+    order = rest_filters.ModelChoiceFilter(
+        queryset=models.TransferOrder.objects.all(),
+        field_name='line__order',
+        label=_('Order'),
+    )
+
+    include_variants = rest_filters.BooleanFilter(
+        label=_('Include Variants'), method='filter_include_variants'
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), method='filter_part', label=_('Part')
+    )
+
+    @extend_schema_field(rest_framework.serializers.IntegerField(help_text=_('Part')))
+    def filter_part(self, queryset, name, part):
+        """Filter by the 'part' attribute.
+
+        Note:
+        - If "include_variants" is True, include all variants of the selected part
+        - Otherwise, just filter by the selected part
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        if include_variants:
+            parts = part.get_descendants(include_self=True)
+            return queryset.filter(item__part__in=parts)
+        else:
+            return queryset.filter(item__part=part)
+
+    outstanding = rest_filters.BooleanFilter(
+        label=_('Outstanding'), method='filter_outstanding'
+    )
+
+    def filter_outstanding(self, queryset, name, value):
+        """Filter by "outstanding" status (boolean)."""
+        if str2bool(value):
+            return queryset.filter(
+                line__order__status__in=TransferOrderStatusGroups.OPEN
+                # TODO: is there an additional filter here if we aren't using a "shipment"
+                # shipment__shipment_date=None,
+            )
+        return queryset.exclude(
+            # TODO: is there an additional filter here if we aren't using a "shipment"
+            # shipment__shipment_date=None,
+            line__order__status__in=TransferOrderStatusGroups.OPEN
+        )
+
+    location = rest_filters.ModelChoiceFilter(
+        queryset=stock_models.StockLocation.objects.all(),
+        label=_('Location'),
+        method='filter_location',
+    )
+
+    @extend_schema_field(
+        rest_framework.serializers.IntegerField(help_text=_('Location'))
+    )
+    def filter_location(self, queryset, name, location):
+        """Filter by the location of the allocated StockItem."""
+        locations = location.get_descendants(include_self=True)
+        return queryset.filter(item__location__in=locations)
+
+
+class TransferOrderAllocationMixin:
+    """Mixin class for TransferOrderAllocation endpoints."""
+
+    queryset = models.TransferOrderAllocation.objects.all()
+    serializer_class = serializers.TransferOrderAllocationSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Annotate the queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'item',
+            'item__sales_order',
+            'item__part',
+            'line__part',
+            'item__location',
+            'line__order',
+            'line__order__responsible',
+            'line__order__project_code',
+            'line__order__project_code__responsible',
+        ).select_related('line__part__pricing_data', 'item__part__pricing_data')
+
+        return queryset
+
+
+class TransferOrderAllocationOutputOptions(OutputConfiguration):
+    """Output options for the TransferOrderAllocation endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('item_detail'),
+        InvenTreeOutputOption('order_detail'),
+        InvenTreeOutputOption('location_detail'),
+    ]
+
+
+class TransferOrderAllocationList(
+    TransferOrderAllocationMixin, BulkUpdateMixin, OutputOptionsMixin, ListAPI
+):
+    """API endpoint for listing TransferOrderAllocation objects."""
+
+    filterset_class = TransferOrderAllocationFilter
+    filter_backends = SEARCH_ORDER_FILTER
+    output_options = TransferOrderAllocationOutputOptions
+
+    ordering_fields = [
+        'quantity',
+        'part',
+        'serial',
+        'IPN',
+        'batch',
+        'location',
+        'order',
+    ]
+
+    ordering_field_aliases = {
+        'IPN': 'item__part__IPN',
+        'part': 'item__part__name',
+        'serial': ['item__serial_int', 'item__serial'],
+        'batch': 'item__batch',
+        'location': 'item__location__name',
+        'order': 'line__order__reference',
+    }
+
+    search_fields = {
+        'item__part__name',
+        'item__part__IPN',
+        'item__serial',
+        'item__batch',
+    }
+
+
+class TransferOrderAllocationDetail(
+    TransferOrderAllocationMixin, RetrieveUpdateDestroyAPI
+):
+    """API endpoint for detail view of a TransferOrderAllocation object."""
+
+
+class TransferOrderLineItemFilter(LineItemFilter):
+    """Custom filters for TransferOrderLineItemList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = models.TransferOrderLineItem
+        fields = []
+
+    order = rest_filters.ModelChoiceFilter(
+        queryset=models.TransferOrder.objects.all(),
+        field_name='order',
+        label=_('Order'),
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(),
+        field_name='part',
+        label=_('Part'),
+        method='filter_part',
+    )
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_part(self, queryset, name, part):
+        """Filter TransferOrderLineItem by selected 'part'.
+
+        Note:
+        - If 'include_variants' is set to True, then all variants of the selected part will be included.
+        - Otherwise, just filter by the selected part.
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        # Construct a queryset of parts to filter by
+        if include_variants:
+            parts = part.get_descendants(include_self=True)
+        else:
+            parts = Part.objects.filter(pk=part.pk)
+
+        return queryset.filter(part__in=parts)
+
+    allocated = rest_filters.BooleanFilter(
+        label=_('Allocated'), method='filter_allocated'
+    )
+
+    def filter_allocated(self, queryset, name, value):
+        """Filter by lines which are 'allocated'.
+
+        A line is 'allocated' when allocated >= quantity
+        """
+        q = Q(allocated__gte=F('quantity'))
+
+        if str2bool(value):
+            return queryset.filter(q)
+        return queryset.exclude(q)
+
+    completed = rest_filters.BooleanFilter(
+        label=_('Completed'), method='filter_completed'
+    )
+
+    def filter_completed(self, queryset, name, value):
+        """Filter by lines which are "completed".
+
+        A line is 'completed' when transferred >= quantity
+        """
+        q = Q(transferred__gte=F('quantity'))
+
+        if str2bool(value):
+            return queryset.filter(q)
+        return queryset.exclude(q)
+
+    order_complete = rest_filters.BooleanFilter(
+        label=_('Order Complete'), method='filter_order_complete'
+    )
+
+    def filter_order_complete(self, queryset, name, value):
+        """Filter by whether the order is 'complete' or not."""
+        if str2bool(value):
+            return queryset.filter(order__status__in=TransferOrderStatusGroups.COMPLETE)
+
+        return queryset.exclude(order__status__in=TransferOrderStatusGroups.COMPLETE)
+
+    order_outstanding = rest_filters.BooleanFilter(
+        label=_('Order Outstanding'), method='filter_order_outstanding'
+    )
+
+    def filter_order_outstanding(self, queryset, name, value):
+        """Filter by whether the order is 'outstanding' or not."""
+        if str2bool(value):
+            return queryset.filter(order__status__in=TransferOrderStatusGroups.OPEN)
+
+        return queryset.exclude(order__status__in=TransferOrderStatusGroups.OPEN)
+
+
+class TransferOrderLineItemMixin(SerializerContextMixin):
+    """Mixin class for TransferOrderLineItem endpoints."""
+
+    queryset = models.TransferOrderLineItem.objects.all()
+    serializer_class = serializers.TransferOrderLineItemSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'part',
+            'allocations',
+            # 'allocations__transfer',
+            'allocations__item__part',
+            'allocations__item__location',
+            'order',
+        )
+
+        queryset = serializers.TransferOrderLineItemSerializer.annotate_queryset(
+            queryset
+        )
+
+        return queryset
+
+
+class TransferOrderLineItemOutputOptions(OutputConfiguration):
+    """Output options for the TransferOrderAllocation endpoint."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('part_detail'),
+        InvenTreeOutputOption('order_detail'),
+    ]
+
+
+class TransferOrderLineItemList(
+    TransferOrderLineItemMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
+):
+    """API endpoint for accessing a list of TransferOrderLineItem objects."""
+
+    filterset_class = TransferOrderLineItemFilter
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    output_options = TransferOrderLineItemOutputOptions
+
+    ordering_fields = [
+        'order',
+        'part',
+        'part__name',
+        'quantity',
+        'allocated',
+        'transferred',
+        'reference',
+        'target_date',
+    ]
+
+    ordering_field_aliases = {'part': 'part__name', 'order': 'order__reference'}
+
+    search_fields = ['part__name', 'quantity', 'reference']
+
+
+class TransferOrderLineItemDetail(
+    TransferOrderLineItemMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+):
+    """API endpoint for detail view of a TransferOrderLineItem object."""
+
+    output_options = TransferOrderLineItemOutputOptions
 
 
 class OrderCalendarExport(ICalFeed):
@@ -1842,6 +2468,8 @@ class OrderCalendarExport(ICalFeed):
             ordertype_title = _('Sales Order')
         elif obj['ordertype'] == 'return-order':
             ordertype_title = _('Return Order')
+        elif obj['ordertype'] == 'transfer-order':
+            ordertype_title = _('Transfer Order')
         else:
             ordertype_title = _('Unknown')
 
@@ -1887,6 +2515,15 @@ class OrderCalendarExport(ICalFeed):
                 ).filter(status__lt=ReturnOrderStatus.COMPLETE.value)
             else:
                 outlist = models.ReturnOrder.objects.filter(target_date__isnull=False)
+        elif obj['ordertype'] == 'transfer-order':
+            if obj['include_completed'] is False:
+                # Do not include completed orders from list in this case
+                # Complete status = 30
+                outlist = models.TransferOrder.objects.filter(
+                    target_date__isnull=False
+                ).filter(status__lt=TransferOrderStatus.COMPLETE.value)
+            else:
+                outlist = models.TransferOrder.objects.filter(target_date__isnull=False)
         else:
             outlist = []
 
@@ -1898,7 +2535,12 @@ class OrderCalendarExport(ICalFeed):
 
     def item_description(self, item):
         """Set the event description."""
-        return f'Company: {item.company.name}\nStatus: {item.get_status_display()}\nDescription: {item.description}'
+        if hasattr(item, 'company') and item.company:
+            return f'Company: {item.company.name}\nStatus: {item.get_status_display()}\nDescription: {item.description}'
+        else:
+            return (
+                f'Status: {item.get_status_display()}\nDescription: {item.description}'
+            )
 
     def item_start_datetime(self, item):
         """Set event start to target date. Goal is all-day event."""
@@ -1926,82 +2568,14 @@ class OrderCalendarExport(ICalFeed):
 
 
 order_api_urls = [
-    # API endpoints for purchase orders
+    # Purchase Order, Line Item, and Extra Line API endpoints via ViewSet router
+    path('', include(order_router.urls)),
+    # Purchase order status code information (requires custom kwargs)
     path(
-        'po/',
-        include([
-            # Individual purchase order detail URLs
-            path(
-                '<int:pk>/',
-                include([
-                    path(
-                        'cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'
-                    ),
-                    path('hold/', PurchaseOrderHold.as_view(), name='api-po-hold'),
-                    path(
-                        'complete/',
-                        PurchaseOrderComplete.as_view(),
-                        name='api-po-complete',
-                    ),
-                    path('issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
-                    meta_path(models.PurchaseOrder),
-                    path(
-                        'receive/',
-                        PurchaseOrderReceive.as_view(),
-                        name='api-po-receive',
-                    ),
-                    # PurchaseOrder detail API endpoint
-                    path('', PurchaseOrderDetail.as_view(), name='api-po-detail'),
-                ]),
-            ),
-            # Purchase order status code information
-            path(
-                'status/',
-                StatusView.as_view(),
-                {StatusView.MODEL_REF: PurchaseOrderStatus},
-                name='api-po-status-codes',
-            ),
-            # Purchase order list
-            path('', PurchaseOrderList.as_view(), name='api-po-list'),
-        ]),
-    ),
-    # API endpoints for purchase order line items
-    path(
-        'po-line/',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(models.PurchaseOrderLineItem),
-                    path(
-                        '',
-                        PurchaseOrderLineItemDetail.as_view(),
-                        name='api-po-line-detail',
-                    ),
-                ]),
-            ),
-            path('', PurchaseOrderLineItemList.as_view(), name='api-po-line-list'),
-        ]),
-    ),
-    # API endpoints for purchase order extra line
-    path(
-        'po-extra-line/',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(models.PurchaseOrderExtraLine),
-                    path(
-                        '',
-                        PurchaseOrderExtraLineDetail.as_view(),
-                        name='api-po-extra-line-detail',
-                    ),
-                ]),
-            ),
-            path(
-                '', PurchaseOrderExtraLineList.as_view(), name='api-po-extra-line-list'
-            ),
-        ]),
+        'po/status/',
+        StatusView.as_view(),
+        {StatusView.MODEL_REF: PurchaseOrderStatus},
+        name='api-po-status-codes',
     ),
     # API endpoints for sales orders
     path(
@@ -2046,6 +2620,11 @@ order_api_urls = [
                         'allocate-serials/',
                         SalesOrderAllocateSerials.as_view(),
                         name='api-so-allocate-serials',
+                    ),
+                    path(
+                        'auto-allocate/',
+                        SalesOrderAutoAllocate.as_view(),
+                        name='api-so-auto-allocate',
                     ),
                     path('hold/', SalesOrderHold.as_view(), name='api-so-hold'),
                     path('cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
@@ -2214,9 +2793,97 @@ order_api_urls = [
             ),
         ]),
     ),
+    # API endpoints for transfer orders
+    path(
+        'transfer-order/',
+        include([
+            # Transfer Order detail endpoints
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'allocate/',
+                        TransferOrderAllocate.as_view(),
+                        name='api-transfer-order-allocate',
+                    ),
+                    path(
+                        'allocate-serials/',
+                        TransferOrderAllocateSerials.as_view(),
+                        name='api-transfer-order-allocate-serials',
+                    ),
+                    path(
+                        'cancel/',
+                        TransferOrderCancel.as_view(),
+                        name='api-transfer-order-cancel',
+                    ),
+                    path(
+                        'hold/',
+                        TransferOrderHold.as_view(),
+                        name='api-transfer-order-hold',
+                    ),
+                    path(
+                        'complete/',
+                        TransferOrderComplete.as_view(),
+                        name='api-transfer-order-complete',
+                    ),
+                    path(
+                        'issue/',
+                        TransferOrderIssue.as_view(),
+                        name='api-transfer-order-issue',
+                    ),
+                    meta_path(models.TransferOrder),
+                    path(
+                        '',
+                        TransferOrderDetail.as_view(),
+                        name='api-transfer-order-detail',
+                    ),
+                ]),
+            ),
+            # Transfer Order list
+            path('', TransferOrderList.as_view(), name='api-transfer-order-list'),
+        ]),
+    ),
+    # API endpoints for transfer order line items
+    path(
+        'transfer-order-line/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(models.TransferOrderLineItem),
+                    path(
+                        '',
+                        TransferOrderLineItemDetail.as_view(),
+                        name='api-transfer-order-line-detail',
+                    ),
+                ]),
+            ),
+            path(
+                '',
+                TransferOrderLineItemList.as_view(),
+                name='api-transfer-order-line-list',
+            ),
+        ]),
+    ),
+    # API endpoints for sales order allocations
+    path(
+        'transfer-order-allocation/',
+        include([
+            path(
+                '<int:pk>/',
+                TransferOrderAllocationDetail.as_view(),
+                name='api-transfer-order-allocation-detail',
+            ),
+            path(
+                '',
+                TransferOrderAllocationList.as_view(),
+                name='api-transfer-order-allocation-list',
+            ),
+        ]),
+    ),
     # API endpoint for subscribing to ICS calendar of purchase/sales/return orders
     re_path(
-        r'^calendar/(?P<ordertype>purchase-order|sales-order|return-order)/calendar.ics',
+        r'^calendar/(?P<ordertype>purchase-order|sales-order|return-order|transfer-order)/calendar.ics',
         OrderCalendarExport(),
         name='api-po-so-calendar',
     ),

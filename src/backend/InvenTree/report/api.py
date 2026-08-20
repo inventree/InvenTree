@@ -7,8 +7,8 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 
 import django_filters.rest_framework.filters as rest_filters
-from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.rest_framework.filterset import FilterSet
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
@@ -16,10 +16,11 @@ import InvenTree.permissions
 import report.helpers
 import report.models
 import report.serializers
+import users.permissions
 from common.models import DataOutput
 from common.serializers import DataOutputSerializer
 from InvenTree.api import meta_path
-from InvenTree.filters import InvenTreeSearchFilter
+from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from plugin import PluginMixinEnum
 from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
@@ -79,7 +80,7 @@ class ReportFilter(ReportFilterBase):
         """Filter options."""
 
         model = report.models.ReportTemplate
-        fields = ['landscape']
+        fields = ['landscape', 'merge', 'attach_to_model', 'enabled', 'model_type']
 
 
 class LabelFilter(ReportFilterBase):
@@ -89,7 +90,7 @@ class LabelFilter(ReportFilterBase):
         """Filter options."""
 
         model = report.models.LabelTemplate
-        fields = []
+        fields = ['enabled']
 
 
 class LabelPrint(GenericAPIView):
@@ -161,6 +162,14 @@ class LabelPrint(GenericAPIView):
 
         template = serializer.validated_data['template']
 
+        model_class = template.get_model()
+        if model_class and not users.permissions.check_user_permission(
+            request.user, model_class, 'view'
+        ):
+            raise PermissionDenied(
+                _('You do not have permission to view this model type')
+            )
+
         if template.width <= 0 or template.height <= 0:
             raise ValidationError({'template': _('Invalid label dimensions')})
 
@@ -174,7 +183,7 @@ class LabelPrint(GenericAPIView):
 
         plugin = self.get_plugin_class(plugin_key, raise_error=True)
 
-        instances = template.get_model().objects.filter(pk__in=items)
+        instances = model_class.objects.filter(pk__in=items)
 
         # Sort the instances by the order of the provided items
         instances = sorted(instances, key=lambda item: items.index(item.pk))
@@ -215,6 +224,7 @@ class LabelPrint(GenericAPIView):
             template.pk,
             [item.pk for item in items_to_print],
             output.pk,
+            user.pk if user else None,
             plugin.slug,
             options=(plugin_serializer.data if plugin_serializer else {}),
         )
@@ -224,22 +234,26 @@ class LabelPrint(GenericAPIView):
         return Response(DataOutputSerializer(output).data, status=201)
 
 
-class LabelTemplateList(TemplatePermissionMixin, ListCreateAPI):
+class LabelTemplateMixin:
+    """Mixin class for label template API views."""
+
+    queryset = report.models.LabelTemplate.objects.all().prefetch_related('updated_by')
+    serializer_class = report.serializers.LabelTemplateSerializer
+
+
+class LabelTemplateList(TemplatePermissionMixin, LabelTemplateMixin, ListCreateAPI):
     """API endpoint for viewing list of LabelTemplate objects."""
 
-    queryset = report.models.LabelTemplate.objects.all()
-    serializer_class = report.serializers.LabelTemplateSerializer
     filterset_class = LabelFilter
-    filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
+    filter_backends = SEARCH_ORDER_FILTER
     search_fields = ['name', 'description']
-    ordering_fields = ['name', 'enabled']
+    ordering_fields = ['name', 'enabled', 'width', 'height']
 
 
-class LabelTemplateDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
+class LabelTemplateDetail(
+    TemplatePermissionMixin, LabelTemplateMixin, RetrieveUpdateDestroyAPI
+):
     """Detail API endpoint for label template model."""
-
-    queryset = report.models.LabelTemplate.objects.all()
-    serializer_class = report.serializers.LabelTemplateSerializer
 
 
 class ReportPrint(GenericAPIView):
@@ -256,9 +270,18 @@ class ReportPrint(GenericAPIView):
         serializer.is_valid(raise_exception=True)
 
         template = serializer.validated_data['template']
+
+        model_class = template.get_model()
+        if model_class and not users.permissions.check_user_permission(
+            request.user, model_class, 'view'
+        ):
+            raise PermissionDenied(
+                _('You do not have permission to view this model type')
+            )
+
         items = serializer.validated_data['items']
 
-        instances = template.get_model().objects.filter(pk__in=items)
+        instances = model_class.objects.filter(pk__in=items)
 
         # Sort the instances by the order of the provided items
         instances = sorted(instances, key=lambda item: items.index(item.pk))
@@ -293,29 +316,39 @@ class ReportPrint(GenericAPIView):
         item_ids = [item.pk for item in items_to_print]
 
         # Offload the task to the background worker
-        offload_task(report.tasks.print_reports, template.pk, item_ids, output.pk)
+        offload_task(
+            report.tasks.print_reports,
+            template.pk,
+            item_ids,
+            output.pk,
+            user.pk if user else None,
+        )
 
         output.refresh_from_db()
 
         return Response(DataOutputSerializer(output).data, status=201)
 
 
-class ReportTemplateList(TemplatePermissionMixin, ListCreateAPI):
+class ReportTemplateMixin:
+    """Mixin class for report template API views."""
+
+    queryset = report.models.ReportTemplate.objects.all().prefetch_related('updated_by')
+    serializer_class = report.serializers.ReportTemplateSerializer
+
+
+class ReportTemplateList(TemplatePermissionMixin, ReportTemplateMixin, ListCreateAPI):
     """API endpoint for viewing list of ReportTemplate objects."""
 
-    queryset = report.models.ReportTemplate.objects.all()
-    serializer_class = report.serializers.ReportTemplateSerializer
     filterset_class = ReportFilter
-    filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
+    filter_backends = SEARCH_ORDER_FILTER
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'enabled']
 
 
-class ReportTemplateDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
+class ReportTemplateDetail(
+    TemplatePermissionMixin, ReportTemplateMixin, RetrieveUpdateDestroyAPI
+):
     """Detail API endpoint for report template model."""
-
-    queryset = report.models.ReportTemplate.objects.all()
-    serializer_class = report.serializers.ReportTemplateSerializer
 
 
 class ReportSnippetList(TemplatePermissionMixin, ListCreateAPI):
@@ -323,6 +356,8 @@ class ReportSnippetList(TemplatePermissionMixin, ListCreateAPI):
 
     queryset = report.models.ReportSnippet.objects.all()
     serializer_class = report.serializers.ReportSnippetSerializer
+    filter_backends = SEARCH_ORDER_FILTER
+    search_fields = ['snippet', 'description']
 
 
 class ReportSnippetDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):

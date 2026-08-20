@@ -15,6 +15,7 @@ from datetime import timedelta, timezone
 from email.utils import make_msgid
 from enum import Enum
 from io import BytesIO
+from pathlib import Path
 from secrets import compare_digest
 from typing import Any, Optional
 
@@ -25,9 +26,10 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
-from django.core.exceptions import ValidationError
+from django.core.exceptions import SuspiciousFileOperation, ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.core.files.utils import validate_file_name
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.mail.utils import DNS_NAME
 from django.core.validators import MinLengthValidator, MinValueValidator
@@ -46,8 +48,8 @@ from django_q.signals import post_spawn
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from opentelemetry import trace
+from PIL import Image
 from rest_framework.exceptions import PermissionDenied
-from taggit.managers import TaggableManager
 
 import common.validators
 import InvenTree.conversion
@@ -179,6 +181,12 @@ class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('Project description'),
     )
 
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Is this project code active?'),
+    )
+
     responsible = models.ForeignKey(
         users.models.Owner,
         on_delete=models.SET_NULL,
@@ -247,11 +255,14 @@ class BaseInvenTreeSetting(models.Model):
 
             if len(missing_keys) > 0:
                 logger.info('Building %s default values for %s', len(missing_keys), cls)
-                cls.objects.bulk_create([
-                    cls(key=key, value=cls.get_setting_default(key), **kwargs)
-                    for key in missing_keys
-                    if not key.startswith('_')
-                ])
+                cls.objects.bulk_create(
+                    [
+                        cls(key=key, value=cls.get_setting_default(key), **kwargs)
+                        for key in missing_keys
+                        if not key.startswith('_')
+                    ],
+                    batch_size=250,
+                )
         except Exception as exc:
             logger.exception(
                 'Failed to build default values for %s (%s)', cls, type(exc)
@@ -1377,21 +1388,27 @@ class PriceBreak(MetaMixin):
         help_text=_('Unit price at specified quantity'),
     )
 
-    def convert_to(self, currency_code):
+    def convert_to(self, currency_code: str, raise_error: bool = False):
         """Convert the unit-price at this price break to the specified currency code.
 
-        Args:
+        Arguments:
             currency_code: The currency code to convert to (e.g "USD" or "AUD")
+            raise_error: If True, raise an error if the conversion fails. If False, return None.
         """
         try:
             converted = convert_money(self.price, currency_code)
-        except MissingRate:
+        except MissingRate:  # pragma: no cover
+            InvenTree.exceptions.log_error('PriceBreak.convert_to')
             logger.warning(
                 'No currency conversion rate available for %s -> %s',
                 self.price_currency,
                 currency_code,
             )
-            return self.price.amount
+
+            if raise_error:
+                raise
+
+            return None
 
         return converted.amount
 
@@ -1573,7 +1590,7 @@ class WebhookMessage(models.Model):
         worked_on: Was the work on this message finished?
     """
 
-    message_id = models.UUIDField(
+    message_id = InvenTree.fields.InvenTreeUUIDField(
         verbose_name=_('Message ID'),
         help_text=_('Unique identifier for this message'),
         primary_key=True,
@@ -1639,10 +1656,12 @@ class NotificationEntry(MetaMixin):
 
     key = models.CharField(max_length=250, blank=False)
 
-    uid = models.IntegerField()
+    # Notification references may point to models with UUID primary keys.
+    # Store the value as text so both integer and non-integer identifiers work.
+    uid = models.CharField(max_length=255)
 
     @classmethod
-    def check_recent(cls, key: str, uid: int, delta: timedelta):
+    def check_recent(cls, key: str, uid: str | int | uuid.UUID, delta: timedelta):
         """Test if a particular notification has been sent in the specified time period."""
         since = InvenTree.helpers.current_date() - delta
 
@@ -1651,7 +1670,7 @@ class NotificationEntry(MetaMixin):
         return entries.exists()
 
     @classmethod
-    def notify(cls, key: str, uid: int):
+    def notify(cls, key: str, uid: str | int | uuid.UUID):
         """Notify the database that a particular notification has been sent out."""
         entry, _ = cls.objects.get_or_create(key=key, uid=uid)
 
@@ -1673,7 +1692,7 @@ class NotificationMessage(models.Model):
         ContentType, on_delete=models.CASCADE, related_name='notification_target'
     )
 
-    target_object_id = models.PositiveIntegerField()
+    target_object_id = models.CharField(max_length=255)
 
     target_object = GenericForeignKey('target_content_type', 'target_object_id')
 
@@ -1686,7 +1705,7 @@ class NotificationMessage(models.Model):
         blank=True,
     )
 
-    source_object_id = models.PositiveIntegerField(null=True, blank=True)
+    source_object_id = models.CharField(max_length=255, null=True, blank=True)
 
     source_object = GenericForeignKey('source_content_type', 'source_object_id')
 
@@ -1705,6 +1724,13 @@ class NotificationMessage(models.Model):
     name = models.CharField(max_length=250, blank=False)
 
     message = models.CharField(max_length=250, blank=True, null=True)
+
+    link = models.URLField(
+        max_length=500,
+        blank=True,
+        null=True,
+        help_text=_('Optional explicit URL associated with this notification'),
+    )
 
     creation = models.DateTimeField(auto_now_add=True)
 
@@ -1917,7 +1943,11 @@ def rename_attachment(instance, filename: str):
     )
 
 
-class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+class Attachment(
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeTagsMixin,
+    InvenTree.models.InvenTreeModel,
+):
     """Class which represents an uploaded file attachment.
 
     An attachment can be either an uploaded file, or an external URL.
@@ -1927,6 +1957,8 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         model_id: The ID of the model to which this attachment is linked
         attachment: The uploaded file
         url: An external URL
+        thumbnail: A generated thumbnail for the uploaded file (if applicable)
+        is_image: True if this attachment is a valid image file
         comment: A comment or description for the attachment
         user: The user who uploaded the attachment
         upload_date: The date the attachment was uploaded
@@ -1934,6 +1966,8 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         metadata: Arbitrary metadata for the attachment (inherit from MetadataMixin)
         tags: Tags for the attachment
     """
+
+    THUMBNAIL_SIZE = 256
 
     class Meta:
         """Metaclass options."""
@@ -1945,6 +1979,31 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
 
         choice_fnc = common.validators.attachment_model_options
 
+    def delete(self, *args, **kwargs):
+        """Custom delete method for the Attachment model.
+
+        - Ensure that the attached file is deleted from storage when the database entry is removed
+        """
+        attachment = self.attachment
+        thumbnail = self.thumbnail
+
+        super().delete(*args, **kwargs)
+
+        # Delete the associated files from storage (if they exist)W
+        if attachment and default_storage.exists(attachment.name):
+            try:
+                # Remove the attached file from storage
+                default_storage.delete(attachment.name)
+            except Exception:  # pragma: no cover
+                pass
+
+        if thumbnail and default_storage.exists(thumbnail.name):
+            try:
+                # Remove the thumbnail file from storage
+                default_storage.delete(thumbnail.name)
+            except Exception:  # pragma: no cover
+                pass
+
     def save(self, *args, **kwargs):
         """Custom 'save' method for the Attachment model.
 
@@ -1952,6 +2011,10 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         - Ensure that the 'content_type' and 'object_id' fields are set
         - Run extra validations
         """
+        import common.tasks
+
+        rebuild = kwargs.pop('rebuild', True)
+
         # Either 'attachment' or 'link' must be specified!
         if not self.attachment and not self.link:
             raise ValidationError({
@@ -1979,6 +2042,12 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
             if self.file_size != 0:
                 super().save()
 
+        # Offload a background task to update the thumbnail for this attachment
+        if rebuild:
+            InvenTree.tasks.offload_task(
+                common.tasks.rebuild_attachment, self.pk, group='attachments'
+            )
+
     def clean_svg(self, field):
         """Sanitize SVG file before saving."""
         cleaned = sanitize_svg(field.file.read())
@@ -1986,9 +2055,66 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
 
     def __str__(self):
         """Human name for attachment."""
-        if self.attachment is not None:
+        if self.attachment and self.attachment.name:
             return os.path.basename(self.attachment.name)
-        return str(self.link)
+        elif self.link:
+            return str(self.link)
+        else:
+            return super().__str__()
+
+    def validate_rename(self, filename: str):
+        """Validate that the provided filename is valid, for renaming an attachment."""
+        filename = filename.strip()
+
+        if not self.attachment:
+            raise ValidationError(_('No file attached to rename'))
+
+        if not filename:
+            raise ValidationError(_('Filename cannot be empty'))
+
+        try:
+            validate_file_name(filename, allow_relative_path=False)
+        except SuspiciousFileOperation:
+            raise ValidationError(_('Invalid filename'))
+
+        current_ext = os.path.splitext(self.attachment.name)[1]
+        new_ext = os.path.splitext(filename)[1]
+
+        if current_ext.lower() != new_ext.lower():
+            raise ValidationError(_('Cannot change file extension'))
+
+    def rename(self, filename: str):
+        """Rename the attached file."""
+        self.validate_rename(filename)
+
+        old_path = Path(self.attachment.name)
+        new_path = old_path.parent / filename
+
+        if old_path == new_path:  # pragma: no cover
+            # No change in filename
+            return
+
+        if not new_path.is_relative_to(old_path.parent):  # pragma: no cover
+            raise ValidationError(_('Invalid filename'))
+
+        new_path = new_path.as_posix()
+
+        if default_storage.exists(new_path):
+            raise ValidationError(_('A file with this name already exists'))
+
+        # Create a new file with the new name, and delete the old file
+        new_path = default_storage.save(new_path, self.attachment.file)
+
+        # Ensure that the new file exists
+        if not default_storage.exists(new_path):  # pragma: no cover
+            raise ValidationError(_('Failed to save renamed file'))
+
+        # Update the database file path
+        self.attachment.name = new_path
+        self.save()
+
+        # Remove the old path
+        default_storage.delete(old_path)
 
     model_type = models.CharField(
         max_length=100,
@@ -2002,7 +2128,15 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
     attachment = models.FileField(
         upload_to=rename_attachment,
         verbose_name=_('Attachment'),
+        validators=[common.validators.validate_attachment_file],
         help_text=_('Select file to attach'),
+        blank=True,
+        null=True,
+    )
+
+    thumbnail = models.ImageField(
+        verbose_name=_('Thumbnail'),
+        help_text=_('Thumbnail image for this attachment'),
         blank=True,
         null=True,
     )
@@ -2039,11 +2173,15 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         help_text=_('Date the file was uploaded'),
     )
 
+    is_image = models.BooleanField(
+        default=False,
+        verbose_name=_('Is image'),
+        help_text=_('True if this attachment is a valid image file'),
+    )
+
     file_size = models.PositiveIntegerField(
         default=0, verbose_name=_('File size'), help_text=_('File size in bytes')
     )
-
-    tags = TaggableManager(blank=True)
 
     @property
     def basename(self):
@@ -2081,6 +2219,69 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
             raise ValidationError(_('Invalid model type specified for attachment'))
 
         return model_class.check_related_permission(permission, user)
+
+    def check_is_image(self) -> bool:
+        """Check if the attached file is an image.
+
+        We consider it a valid image if:
+
+        - The file exists in storage
+        - The file can be opened and verified by the PIL library
+
+        """
+        if not self.attachment:
+            return False
+
+        if not self.attachment.name:
+            return False
+
+        try:
+            if not default_storage.exists(self.attachment.name):
+                return False
+        except Exception:
+            return False
+
+        img_data = default_storage.open(self.attachment.name).read()
+
+        try:
+            Image.open(BytesIO(img_data)).verify()
+            return True
+        except Exception:
+            return False
+
+    def generate_thumbnail(self):
+        """Generate a thumbnail for the attached image."""
+        # Remove any existing thumbnail
+        if self.thumbnail:
+            self.thumbnail.delete(save=False)
+
+        if not self.attachment:
+            return
+
+        if not self.attachment.name or not default_storage.exists(self.attachment.name):
+            return
+
+        # TODO: Offload to plugins, for creating custom thumbnails for different file types
+        # TODO: If a plugin provides a thumbnail, return early
+
+        # Default action is to generate a thumbnail for image files
+        try:
+            img_data = default_storage.open(self.attachment.name).read()
+        except Exception:
+            # No file found, or file cannot be read - cannot generate thumbnail
+            return
+
+        try:
+            img = Image.open(BytesIO(img_data))
+            img.thumbnail((self.THUMBNAIL_SIZE, self.THUMBNAIL_SIZE))
+            thumb_io = BytesIO()
+            img.save(thumb_io, format='PNG')
+            thumb_io.seek(0)
+
+            thumb_name = f'thumb_{os.path.basename(self.attachment.name)}'
+            self.thumbnail.save(thumb_name, ContentFile(thumb_io.read()), save=False)
+        except Exception:
+            pass
 
 
 class InvenTreeCustomUserStateModel(models.Model):
@@ -2320,10 +2521,38 @@ class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeMo
         """Return the API URL associated with the SelectionList model."""
         return reverse('api-selectionlist-list')
 
-    def get_choices(self):
-        """Return the choices for the selection list."""
-        choices = self.entries.filter(active=True)
+    def get_choices(self, active: Optional[bool] = True):
+        """Return the choices for the selection list.
+
+        Arguments:
+            active: If specified, filter choices by active status
+
+        Returns:
+            List of choice values for this selection list
+        """
+        choices = self.entries.all()
+
+        if active is not None:
+            choices = choices.filter(active=active)
+
         return [c.value for c in choices]
+
+    def has_choice(self, value: str, active: Optional[bool] = None):
+        """Check if the selection list has a particular choice.
+
+        Arguments:
+            value: The value to check for
+            active: If specified, filter choices by active status
+
+        Returns:
+            True if the choice exists in the selection list, False otherwise
+        """
+        choices = self.entries.all()
+
+        if active is not None:
+            choices = choices.filter(active=active)
+
+        return choices.filter(value=value).exists()
 
 
 class SelectionListEntry(models.Model):
@@ -2422,6 +2651,19 @@ class ParameterTemplate(
         """Model choices for parameters."""
 
         choice_fnc = common.validators.parameter_template_model_options
+
+    class UniqueOptions(models.IntegerChoices):
+        """Enumeration of uniqueness options for a ParameterTemplate.
+
+        Attributes:
+            NONE: No uniqueness requirement is enforced (default)
+            MODEL_TYPE: Linked parameter values must be unique for a given model type
+            GLOBAL: Linked parameter values must be unique across all model types
+        """
+
+        NONE = 0, _('No uniqueness required')
+        MODEL_TYPE = 1, _('Unique for model type')
+        GLOBAL = 2, _('Globally unique')
 
     @staticmethod
     def get_api_url() -> str:
@@ -2566,6 +2808,15 @@ class ParameterTemplate(
         help_text=_('Is this parameter template enabled?'),
     )
 
+    unique = models.PositiveIntegerField(
+        default=UniqueOptions.NONE,
+        choices=UniqueOptions.choices,
+        verbose_name=_('Uniqueness'),
+        help_text=_(
+            'Enforce uniqueness of linked parameter values against this template'
+        ),
+    )
+
 
 @receiver(
     post_save, sender=ParameterTemplate, dispatch_uid='post_save_parameter_template'
@@ -2581,7 +2832,7 @@ def post_save_parameter_template(sender, instance, created, **kwargs):
                 common.tasks.rebuild_parameters,
                 instance.pk,
                 force_async=True,
-                group='part',
+                group='parameters',
             )
 
 
@@ -2671,6 +2922,13 @@ class Parameter(
             except ValidationError as e:
                 raise ValidationError({'data': e.message})
 
+        # Validate the parameter data against any uniqueness requirements imposed by the template
+        self.validate_uniqueness()
+
+        if InvenTree.ready.isReadOnlyCommand():
+            # Skip plugin validation checks during read-only management commands
+            return
+
         # Finally, run custom validation checks (via plugins)
         from plugin import PluginMixinEnum, registry
 
@@ -2713,6 +2971,42 @@ class Parameter(
             # Ref: https://github.com/inventree/InvenTree/issues/7593
             if math.isnan(self.data_numeric) or math.isinf(self.data_numeric):
                 self.data_numeric = None
+
+    def validate_uniqueness(self):
+        """Ensure that this Parameter satisfies any uniqueness requirements imposed by its template.
+
+        The ParameterTemplate.unique field determines the scope of the uniqueness check:
+
+        - NONE: No uniqueness check is performed
+        - MODEL_TYPE: The value must be unique amongst other parameters (for this template) linked to the same model type
+        - GLOBAL: The value must be unique amongst all other parameters linked to this template
+
+        Note: If the template defines a set of 'units', the comparison is performed against the
+        normalized 'data_numeric' value, so that equivalent values expressed in different
+        (but compatible) units are correctly detected as duplicates (e.g. '1k' and '1000' ohms).
+        """
+        uniqueness = self.template.unique
+
+        if uniqueness == ParameterTemplate.UniqueOptions.NONE:
+            return
+
+        if self.template.units and self.data_numeric is not None:
+            query = Parameter.objects.filter(
+                template=self.template, data_numeric=self.data_numeric
+            )
+        else:
+            query = Parameter.objects.filter(
+                template=self.template, data__iexact=self.data
+            )
+
+        if self.pk:
+            query = query.exclude(pk=self.pk)
+
+        if uniqueness == ParameterTemplate.UniqueOptions.MODEL_TYPE:
+            query = query.filter(model_type=self.model_type)
+
+        if query.exists():
+            raise ValidationError({'data': _('Parameter value must be unique')})
 
     def check_permission(self, permission, user):
         """Check if the user has the required permission for this parameter."""
@@ -3051,7 +3345,7 @@ class EmailMessage(models.Model):
         TRACK_READ = 'track_read', _('Track Read')
         TRACK_CLICK = 'track_click', _('Track Click')
 
-    global_id = models.UUIDField(
+    global_id = InvenTree.fields.InvenTreeUUIDField(
         verbose_name=_('Global ID'),
         help_text=_('Unique identifier for this message'),
         primary_key=True,
@@ -3129,11 +3423,11 @@ class EmailMessage(models.Model):
 
     objects = NoDeleteManager()
 
-    def delete(self, *kwargs):
+    def delete(self, *args, **kwargs):
         """Delete entry - if not protected."""
         if get_global_setting('INVENTREE_PROTECT_EMAIL_LOG'):
             raise ValidationError(del_error_msg)
-        return super().delete(*kwargs)
+        return super().delete(*args, **kwargs)
 
 
 class EmailThread(InvenTree.models.InvenTreeMetadataModel):
@@ -3147,6 +3441,11 @@ class EmailThread(InvenTree.models.InvenTreeMetadataModel):
         unique_together = [['key', 'global_id']]
         ordering = ['-updated']
 
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the EmailThread model."""
+        return reverse('api-email-list')
+
     key = models.CharField(
         max_length=250,
         verbose_name=_('Key'),
@@ -3154,7 +3453,7 @@ class EmailThread(InvenTree.models.InvenTreeMetadataModel):
         blank=True,
         help_text=_('Unique key for this thread (used to identify the thread)'),
     )
-    global_id = models.UUIDField(
+    global_id = InvenTree.fields.InvenTreeUUIDField(
         verbose_name=_('Global ID'),
         help_text=_('Unique identifier for this thread'),
         primary_key=True,

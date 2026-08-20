@@ -159,6 +159,14 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': 10,
         'validator': [int, MinValueValidator(1)],
     },
+    'SEARCH_RESULTS_PREVIEW_PANEL': {
+        'name': _('Search Results Preview Panel'),
+        'description': _(
+            'Open search results in the preview panel, rather than navigating directly to the result'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'SEARCH_REGEX': {
         'name': _('Regex Search'),
         'description': _('Enable regular expressions in search queries'),
@@ -223,6 +231,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
             ('MMM DD YYYY', 'Feb 22 2022'),
         ],
     },
+    'ENABLE_PREVIEW_PANEL': {
+        'name': _('Table Preview Panel'),
+        'description': _('Display a preview panel when selecting items in tables'),
+        'default': False,
+        'validator': bool,
+    },
     'DISPLAY_STOCKTAKE_TAB': {
         'name': _('Show Stock History'),
         'description': _('Display stock history information in the part detail page'),
@@ -232,6 +246,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'ENABLE_LAST_BREADCRUMB': {
         'name': _('Show Last Breadcrumb'),
         'description': _('Show the current page in breadcrumbs'),
+        'default': False,
+        'validator': bool,
+    },
+    'SHOW_EXTRA_MODEL_INFO': {
+        'name': _('Show Extra Model Information'),
+        'description': _('Display extra information in model selection dropdowns'),
         'default': False,
         'validator': bool,
     },
@@ -251,6 +271,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'SHOW_BOM_SUBASSEMBLY_LEVELS': {
+        'name': _('Show Subassemblies in BOM table'),
+        'description': _('Enable display of subassemblies in the BOM table'),
+        'default': True,
+        'validator': bool,
+    },
     'NOTIFICATION_ERROR_REPORT': {
         'name': _('Receive error reports'),
         'description': _('Receive notifications for system errors'),
@@ -261,5 +287,21 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Last used printing machines'),
         'description': _('Save the last used printing machines for a user'),
         'default': '',
+    },
+    'DISPLAY_ITEMS_FINAL_LEVEL': {
+        'name': _('Display Items at Final Level'),
+        'description': _(
+            'Automatically default to showing items/parts instead of sub-levels for locations or categories with no children'
+        ),
+        'default': False,
+        'validator': bool,
+    },
+    'USE_TABLE_NAVIGATION': {
+        'name': _('Enable Filtered Detail Navigation'),
+        'description': _(
+            'Enable persisting of filtered detail navigation parameters to the view url'
+        ),
+        'default': True,
+        'validator': bool,
     },
 }

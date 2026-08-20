@@ -13,7 +13,7 @@ import { __INVENTREE_VERSION_INFO__ } from './version-info';
 const IS_IN_WSL = platform().includes('WSL') || release().includes('WSL');
 
 if (IS_IN_WSL) {
-  console.log('WSL detected: using polling for file system events');
+  console.debug('WSL detected: using polling for file system events');
 }
 
 // Output directory for the built files
@@ -47,7 +47,7 @@ export default defineConfig(({ command, mode }) => {
       }),
       istanbul({
         include: ['src/*', 'lib/*'],
-        exclude: ['node_modules', 'test/'],
+        exclude: ['node_modules/', 'playwright/', 'tests/'],
         extension: ['.js', '.ts', '.tsx'],
         requireEnv: true
       }),
@@ -90,7 +90,8 @@ export default defineConfig(({ command, mode }) => {
       }
     },
     define: {
-      ...__INVENTREE_VERSION_INFO__
+      ...__INVENTREE_VERSION_INFO__,
+      'process.env.NODE_ENV': JSON.stringify(mode)
     }
   };
 });

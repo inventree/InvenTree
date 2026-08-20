@@ -210,3 +210,23 @@ export const expectTableColumnCount = async (page: Page, count: number) => {
   const columns = page.locator('table thead tr th');
   await expect(columns).toHaveCount(count);
 };
+
+// Open an "action" associated with the detail view of a page
+export const openDetailAction = async (
+  page: Page,
+  menuName: string,
+  actionName: string
+) => {
+  // Ensure idle state first
+  await page.waitForLoadState('networkidle');
+
+  // Click on the "actions" menu
+  await page.getByRole('button', { name: `action-menu-${menuName}` }).click();
+
+  // Click on the specified action
+  await page
+    .getByRole('menuitem', {
+      name: `action-menu-${menuName}-actions-${actionName}`
+    })
+    .click();
+};

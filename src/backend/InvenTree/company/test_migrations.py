@@ -299,7 +299,7 @@ class TestAddressMigration(MigratorTestCase):
         c1 = Company.objects.filter(name='Company 1').first()
         c2 = Company.objects.filter(name='Company 2').first()
 
-        self.assertEqual(len(Address.objects.all()), 2)
+        self.assertEqual(Address.objects.count(), 2)
 
         a1 = Address.objects.filter(company=c1.pk).first()
         a2 = Address.objects.filter(company=c2.pk).first()

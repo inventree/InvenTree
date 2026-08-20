@@ -208,7 +208,7 @@ def perform_stocktake(
 
     if generate_entry:
         # Bulk-create PartStocktake entries
-        part_models.PartStocktake.objects.bulk_create(history_entries)
+        part_models.PartStocktake.objects.bulk_create(history_entries, batch_size=250)
 
     if report_output:
         # Save report data, and mark as complete

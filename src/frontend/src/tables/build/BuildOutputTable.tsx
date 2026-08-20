@@ -24,14 +24,33 @@ import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
 import { type RowAction, RowEditAction } from '@lib/components/RowActions';
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import { StylishText } from '../../components/items/StylishText';
+import {
+  LocationColumn,
+  PartColumn,
+  RenderPartColumn,
+  StatusColumn
+} from '../../components/tables/ColumnRenderers';
+import {
+  BatchFilter,
+  HasBatchCodeFilter,
+  IsSerializedFilter,
+  SerialFilter,
+  SerialGTEFilter,
+  SerialLTEFilter,
+  StatusFilterOptions,
+  StockLocationFilter
+} from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { useApi } from '../../contexts/ApiContext';
 import {
   useBuildAutoAllocateFields,
@@ -44,6 +63,7 @@ import {
   useStockFields,
   useStockItemSerializeFields
 } from '../../forms/StockForms';
+import { compareTestResults } from '../../functions/comparison';
 import { InvenTreeIcon } from '../../functions/icons';
 import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
@@ -52,26 +72,7 @@ import {
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import {
-  LocationColumn,
-  PartColumn,
-  RenderPartColumn,
-  StatusColumn
-} from '../ColumnRenderers';
-import {
-  BatchFilter,
-  HasBatchCodeFilter,
-  IsSerializedFilter,
-  SerialFilter,
-  SerialGTEFilter,
-  SerialLTEFilter,
-  StatusFilterOptions,
-  StockLocationFilter
-} from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 import BuildLineTable from './BuildLineTable';
 
 type TestResultOverview = {
@@ -122,6 +123,9 @@ function OutputAllocationDrawer({
       opened={opened}
       onClose={close}
       withCloseButton
+      closeButtonProps={{
+        'aria-label': 'close-allocation-drawer'
+      }}
       closeOnEscape
       closeOnClickOutside
       styles={{
@@ -167,7 +171,8 @@ export default function BuildOutputTable({
 
   // Fetch the test templates associated with the partId
   const { data: testTemplates, refetch: refetchTestTemplates } = useQuery({
-    queryKey: ['buildoutputtests', partId, build],
+    staleTime: 60 * 1000, // Cache for 1 minute
+    queryKey: ['buildoutputtests', partId, buildId],
     queryFn: async () => {
       if (!partId || partId < 0) {
         return [];
@@ -197,6 +202,7 @@ export default function BuildOutputTable({
 
   // Fetch the "tracked" BOM items associated with the partId
   const { data: trackedItems, refetch: refetchTrackedItems } = useQuery({
+    staleTime: 60 * 1000, // Cache for 1 minute
     queryKey: ['trackeditems', buildId],
     queryFn: async () => {
       if (!buildId || buildId < 0) {
@@ -272,9 +278,7 @@ export default function BuildOutputTable({
           // Find the "newest" result for this template in the returned data
           const result = record.tests
             ?.filter((test: any) => test.template == template.pk)
-            .sort((a: any, b: any) => {
-              return a.pk < b.pk ? 1 : -1;
-            })
+            .sort(compareTestResults)
             .shift();
 
           if (template?.required && result?.result) {
@@ -304,7 +308,10 @@ export default function BuildOutputTable({
               allocated += allocation.quantity;
             });
 
-          if (allocated >= item.bom_item_detail.quantity) {
+          if (
+            item.bom_item_detail?.quantity &&
+            allocated >= item.bom_item_detail.quantity
+          ) {
             fullyAllocatedCount += 1;
           }
         });
@@ -343,31 +350,80 @@ export default function BuildOutputTable({
 
   const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
 
+  const [completeTaskId, setCompleteTaskId] = useState<string>('');
+  const [scrapTaskId, setScrapTaskId] = useState<string>('');
+  const [deleteTaskId, setDeleteTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: completeTaskId,
+    message: t`Completing build outputs`,
+    successMessage: t`Build outputs have been completed`,
+    onSuccess: () => {
+      table.refreshTable(true);
+      refreshBuild();
+    }
+  });
+
+  useBackgroundTask({
+    taskId: scrapTaskId,
+    message: t`Scrapping build outputs`,
+    successMessage: t`Build outputs have been scrapped`,
+    onSuccess: () => {
+      table.refreshTable(true);
+      refreshBuild();
+    }
+  });
+
+  useBackgroundTask({
+    taskId: deleteTaskId,
+    message: t`Cancelling build outputs`,
+    successMessage: t`Build outputs have been cancelled`,
+    onSuccess: () => {
+      table.refreshTable(true);
+      refreshBuild();
+    }
+  });
+
   const completeBuildOutputsForm = useCompleteBuildOutputsForm({
     build: build,
     outputs: selectedOutputs,
     hasTrackedItems: hasTrackedItems,
-    onFormSuccess: () => {
-      table.refreshTable(true);
-      refreshBuild();
+    onFormSuccess: (response: any) => {
+      if (response.task_id) {
+        setCompleteTaskId(response.task_id);
+      } else {
+        // If no task ID is returned, immediately refresh the table and build data
+        table.refreshTable(true);
+        refreshBuild();
+      }
     }
   });
 
   const scrapBuildOutputsForm = useScrapBuildOutputsForm({
     build: build,
     outputs: selectedOutputs,
-    onFormSuccess: () => {
-      table.refreshTable(true);
-      refreshBuild();
+    onFormSuccess: (response: any) => {
+      if (response.task_id) {
+        setScrapTaskId(response.task_id);
+      } else {
+        // If no task ID is returned, immediately refresh the table and build data
+        table.refreshTable(true);
+        refreshBuild();
+      }
     }
   });
 
   const cancelBuildOutputsForm = useCancelBuildOutputsForm({
     build: build,
     outputs: selectedOutputs,
-    onFormSuccess: () => {
-      table.refreshTable(true);
-      refreshBuild();
+    onFormSuccess: (response: any) => {
+      if (response.task_id) {
+        setDeleteTaskId(response.task_id);
+      } else {
+        // If no task ID is returned, immediately refresh the table and build data
+        table.refreshTable(true);
+        refreshBuild();
+      }
     }
   });
 
@@ -456,7 +512,6 @@ export default function BuildOutputTable({
   const stockOperationProps: StockOperationProps = useMemo(() => {
     return {
       items: table.selectedRecords,
-      model: ModelType.stockitem,
       refresh: table.refreshTable,
       filters: {}
     };

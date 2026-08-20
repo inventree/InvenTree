@@ -18,7 +18,7 @@ The basic requirements for configuring SSO are outlined below:
 
 1. Enable backend for each required SSO provider(s) in the [config file or environment variables](../start/config.md#single-sign-on).
 1. Create an external *app* with your provider of choice
-1. Add the required client configurations in the `SocialApp` app in the [admin interface](../settings/admin.md).
+1. Add the required client configurations in the `SocialApp` app in the [Database Admin interface](../settings/db_admin.md).
 1. Configure the *callback* URL for the external app.
 1. Enable SSO for the users in the [global settings](../settings/global.md).
 1. Configure [e-mail](../settings/email.md).
@@ -29,10 +29,10 @@ The first step is to ensure that the required provider modules are installed, vi
 
 There are two variables in the configuration file which define the operation of SSO:
 
-| Environment Variable |Configuration File | Description | More Info |
-| --- | --- | --- | --- |
-| INVENTREE_SOCIAL_BACKENDS | `social_backends` | A *list* of provider backends enabled for the InvenTree instance | [django-allauth docs](https://docs.allauth.org/en/latest/installation/quickstart.html) |
-| INVENTREE_SOCIAL_PROVIDERS | `social_providers` | A *dict* of settings specific to the installed providers | [provider documentation](https://docs.allauth.org/en/latest/socialaccount/providers/index.html) |
+{{ configtable() }}
+{{ configsetting("INVENTREE_SOCIAL_BACKENDS") }} A *list* of [social provider backends](https://docs.allauth.org/en/latest/installation/quickstart.html) enabled for the InvenTree instance |
+{{ configsetting("INVENTREE_SOCIAL_PROVIDERS") }} A *dict* of settings specific to the [installed providers](https://docs.allauth.org/en/latest/socialaccount/providers/index.html) |
+
 
 In the example below, SSO provider modules are activated for *google*, *github* and *microsoft*. Specific configuration options are specified for the *microsoft* provider module:
 
@@ -161,4 +161,4 @@ Make sure all users with admin privileges have sufficient passwords - they can r
 
 ## Error Handling
 
-If you encounter an error during the SSO process, the error should be logged in the InvenTree database. You can view the [error log](./logs.md) in the [admin interface](./admin.md) to see the details of the error.
+If you encounter an error during the SSO process, the error should be logged in the InvenTree database. You can view the [error log](./logs.md) in the [Admin Center](./admin.md#admin-center) to see the details of the error.

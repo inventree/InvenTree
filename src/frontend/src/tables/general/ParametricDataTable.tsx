@@ -1,34 +1,46 @@
 import { cancelEvent } from '@lib/functions/Events';
 import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
+import useTable from '@lib/hooks/UseTable';
+import {
   ApiEndpoints,
   type ApiFormFieldSet,
   type ModelType,
   UserRoles,
   YesNoButton,
   apiUrl,
-  formatDecimal,
-  getDetailUrl,
-  navigateToLink
+  formatDecimal
 } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
-import { Group } from '@mantine/core';
+import { Divider, Group, Text } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import {
+  type ReactNode,
+  type RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import { useNavigate } from 'react-router-dom';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { useApi } from '../../contexts/ApiContext';
+import { formatDate } from '../../defaults/formatters';
 import { useParameterFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
+import { openGlobalPreview } from '../../states/PreviewDrawerState';
 import { useUserState } from '../../states/UserState';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 import {
   PARAMETER_FILTER_OPERATORS,
   ParameterFilter
@@ -72,11 +84,41 @@ function ParameterCell({
     parameter.data_numeric != parameter.data
   ) {
     const numeric = formatDecimal(parameter.data_numeric, { digits: 15 });
-    extra.push(`${numeric} [${template.units}]`);
+
+    extra.push(
+      <Group gap='xs' justify='space-between'>
+        <Text size='sm' fw='bold'>
+          {numeric}
+        </Text>
+        <Text size='xs'>[{template.units}]</Text>
+      </Group>
+    );
+  }
+
+  if (parameter?.updated) {
+    extra.push(
+      <Group gap='xs' justify='space-between'>
+        <Text size='sm' fw='bold'>{t`Last Updated`}</Text>
+        <Text size='xs'>{formatDate(parameter.updated)}</Text>
+      </Group>
+    );
+  }
+
+  if (parameter?.updated_by_detail?.username) {
+    extra.push(
+      <Group gap='xs' justify='space-between'>
+        <Text size='sm' fw='bold'>{t`Updated By`}</Text>
+        <Text size='xs'>{parameter.updated_by_detail.username}</Text>
+      </Group>
+    );
   }
 
   if (hovered && canEdit) {
-    extra.push(t`Click to edit`);
+    if (extra.length > 0) {
+      extra.push(<Divider />);
+    }
+
+    extra.push(<Text size='xs'>{t`Click to edit`}</Text>);
   }
 
   return (
@@ -88,6 +130,7 @@ function ParameterCell({
             extra={extra}
             icon={hovered && canEdit ? 'edit' : 'info'}
             title={template.name}
+            minWidth={250}
           />
         </Group>
       </Group>
@@ -107,7 +150,9 @@ export default function ParametricDataTable({
   endpoint,
   queryParams,
   customFilters,
-  customColumns
+  customColumns,
+  customActions,
+  refreshRef
 }: {
   modelType: ModelType;
   modelId?: number;
@@ -117,11 +162,19 @@ export default function ParametricDataTable({
   queryParams?: Record<string, any>;
   customFilters?: TableFilter[];
   customColumns?: TableColumn[];
+  customActions?: ReactNode[];
+  refreshRef?: RefObject<() => void>;
 }) {
   const api = useApi();
   const table = useTable(`parametric-data-${modelType}`);
   const user = useUserState();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (refreshRef) {
+      refreshRef.current = table.refreshTable;
+    }
+  }, [table.refreshTable]);
 
   // Fetch all active parameter templates for the given model type
   const parameterTemplates = useQuery({
@@ -144,7 +197,7 @@ export default function ParametricDataTable({
     refetchOnMount: true
   });
 
-  /* Store filters against selected part parameters.
+  /* Store filters against selected parameters.
    * These are stored in the format:
    * {
    *   parameter_1: {
@@ -425,6 +478,7 @@ export default function ParametricDataTable({
         props={{
           enableDownload: true,
           rowActions: rowActions,
+          tableActions: customActions,
           tableFilters: tableFilters,
           params: {
             ...queryParams,
@@ -440,9 +494,12 @@ export default function ParametricDataTable({
               const col = column as any;
               onParameterClick(col.extra.template, record);
             } else if (record?.pk) {
-              // Navigate through to the detail page
               const url = getDetailUrl(modelType, record.pk);
-              navigateToLink(url, navigate, event);
+              if (eventModified(event as any)) {
+                navigateToLink(url, navigate, event);
+              } else {
+                openGlobalPreview(modelType, record.pk);
+              }
             }
           }
         }}

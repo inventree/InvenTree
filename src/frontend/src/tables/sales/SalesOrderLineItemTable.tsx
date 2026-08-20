@@ -1,11 +1,12 @@
 import { t } from '@lingui/core/macro';
-import { Group, Paper, Text } from '@mantine/core';
+import { Alert, Group, Paper, Text } from '@mantine/core';
 import {
   IconArrowRight,
   IconHash,
   IconShoppingCart,
   IconSquareArrowRight,
-  IconTools
+  IconTools,
+  IconWand
 } from '@tabler/icons-react';
 import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
@@ -18,31 +19,16 @@ import {
   type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
-  RowEditAction,
-  RowViewAction
+  RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { RenderPart } from '../../components/render/Part';
-import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatCurrency, formatDecimal } from '../../defaults/formatters';
-import { useBuildOrderFields } from '../../forms/BuildForms';
-import {
-  useAllocateToSalesOrderForm,
-  useSalesOrderAllocateSerialsFields,
-  useSalesOrderLineItemFields
-} from '../../forms/SalesOrderForms';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { useUserState } from '../../states/UserState';
 import {
   DateColumn,
   DecimalColumn,
@@ -50,13 +36,33 @@ import {
   IPNColumn,
   LineItemColumn,
   LinkColumn,
+  PercentageColumn,
   ProjectCodeColumn,
   ReferenceColumn,
-  RenderPartColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import RowExpansionIcon from '../RowExpansionIcon';
-import { TableHoverCard } from '../TableHoverCard';
+  RenderPartColumn,
+  RevisionColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
+import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
+import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
+import { formatCurrency, formatDecimal } from '../../defaults/formatters';
+import { useBuildOrderFields } from '../../forms/BuildForms';
+import {
+  useAllocateToSalesOrderForm,
+  useSalesOrderAllocateSerialsFields,
+  useSalesOrderAutoAllocateFields,
+  useSalesOrderLineItemFields
+} from '../../forms/SalesOrderForms';
+import useBackgroundTask from '../../hooks/UseBackgroundTask';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
+import { useUserState } from '../../states/UserState';
 import SalesOrderAllocationTable from './SalesOrderAllocationTable';
 
 export default function SalesOrderLineItemTable({
@@ -99,6 +105,7 @@ export default function SalesOrderLineItemTable({
         }
       },
       IPNColumn({}),
+      RevisionColumn({}),
       DescriptionColumn({
         accessor: 'part_detail.description'
       }),
@@ -115,13 +122,18 @@ export default function SalesOrderLineItemTable({
             currency: record.sale_price_currency
           })
       },
+      PercentageColumn({
+        accessor: 'discount',
+        title: t`Discount`,
+        defaultVisible: false
+      }),
       {
         accessor: 'total_price',
         title: t`Total Price`,
         render: (record: any) =>
           formatCurrency(record.sale_price, {
             currency: record.sale_price_currency,
-            multiplier: record.quantity
+            multiplier: record.quantity * (1 - (record.discount ?? 0) / 100)
           })
       },
       DateColumn({
@@ -327,6 +339,52 @@ export default function SalesOrderLineItemTable({
     }
   });
 
+  const [allocateTaskId, setAllocateTaskId] = useState<string>('');
+
+  useBackgroundTask({
+    taskId: allocateTaskId,
+    message: t`Allocating stock to sales order`,
+    successMessage: t`Stock allocation complete`,
+    onSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
+  const [autoAllocateInitialData, setAutoAllocateInitialData] = useState<any>(
+    {}
+  );
+
+  const autoAllocatePreFormContent = useMemo(() => {
+    const count = table.selectedRecords.length;
+    if (count > 0) {
+      return (
+        <Alert color='blue'>
+          <Text size='sm'>
+            {t`${count} line item(s) selected — only these lines will be allocated`}
+          </Text>
+        </Alert>
+      );
+    }
+    return (
+      <Alert color='green'>
+        <Text size='sm'>{t`All unallocated line items will be allocated`}</Text>
+      </Alert>
+    );
+  }, [table.selectedRecords.length]);
+
+  const autoAllocateStock = useCreateApiFormModal({
+    url: ApiEndpoints.sales_order_auto_allocate,
+    pk: orderId,
+    title: t`Auto Allocate Stock`,
+    fields: useSalesOrderAutoAllocateFields({ orderId }),
+    initialData: autoAllocateInitialData,
+    preFormContent: autoAllocatePreFormContent,
+    successMessage: null,
+    onFormSuccess: (response: any) => {
+      setAllocateTaskId(response.task_id);
+    }
+  });
+
   const [partsToOrder, setPartsToOrder] = useState<any[]>([]);
 
   const orderPartsWizard = OrderPartsWizard({
@@ -385,9 +443,28 @@ export default function SalesOrderLineItemTable({
           );
           allocateStock.open();
         }}
+      />,
+      <ActionButton
+        key='auto-allocate-stock'
+        tooltip={t`Auto Allocate Stock`}
+        icon={<IconWand />}
+        color='blue'
+        hidden={!editable || !user.hasChangeRole(UserRoles.sales_order)}
+        onClick={() => {
+          setAutoAllocateInitialData({
+            line_items: table.selectedRecords.map((r) => r.pk)
+          });
+          autoAllocateStock.open();
+        }}
       />
     ];
-  }, [user, orderId, table.hasSelectedRecords, table.selectedRecords]);
+  }, [
+    editable,
+    user,
+    orderId,
+    table.hasSelectedRecords,
+    table.selectedRecords
+  ]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
@@ -481,7 +558,7 @@ export default function SalesOrderLineItemTable({
             deleteLine.open();
           }
         }),
-        RowViewAction({
+        AppRowViewAction({
           title: t`View Part`,
           modelType: ModelType.part,
           modelId: record.part,
@@ -529,6 +606,7 @@ export default function SalesOrderLineItemTable({
       {newBuildOrder.modal}
       {allocateBySerials.modal}
       {allocateStock.modal}
+      {autoAllocateStock.modal}
       {orderPartsWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.sales_order_line_list)}
@@ -537,6 +615,9 @@ export default function SalesOrderLineItemTable({
         props={{
           enableSelection: true,
           enableDownload: true,
+          enableBulkDelete:
+            editable && user.hasDeleteRole(UserRoles.sales_order),
+          afterBulkDelete: orderDetailRefresh,
           params: {
             order: orderId,
             part_detail: true

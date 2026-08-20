@@ -8,16 +8,9 @@ import {
   CompanyColumn,
   DescriptionColumn,
   ReferenceColumn
-} from '../ColumnRenderers';
-import {
-  AssignedToMeFilter,
-  OrderStatusFilter,
-  OutstandingFilter,
-  OverdueFilter,
-  ProjectCodeFilter,
-  ResponsibleFilter
-} from '../Filter';
+} from '../../components/tables/ColumnRenderers';
 import ParametricDataTable from '../general/ParametricDataTable';
+import PurchaseOrderFilters from './PurchaseOrderFilters';
 
 export default function PurchaseOrderParametricTable({
   queryParams
@@ -42,14 +35,7 @@ export default function PurchaseOrderParametricTable({
   }, []);
 
   const customFilters: TableFilter[] = useMemo(() => {
-    return [
-      OrderStatusFilter({ model: ModelType.purchaseorder }),
-      OutstandingFilter(),
-      OverdueFilter(),
-      AssignedToMeFilter(),
-      ProjectCodeFilter(),
-      ResponsibleFilter()
-    ];
+    return PurchaseOrderFilters({ includeDateFilters: true });
   }, []);
 
   return (

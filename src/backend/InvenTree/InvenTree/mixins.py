@@ -6,7 +6,6 @@ from rest_framework import generics, mixins, status
 from rest_framework.response import Response
 
 import data_exporter.mixins
-import data_exporter.serializers
 import importer.mixins
 from InvenTree.fields import InvenTreeNotesField, OutputConfiguration
 from InvenTree.helpers import (
@@ -18,14 +17,9 @@ from InvenTree.schema import schema_for_view_output_options
 from InvenTree.serializers import FilterableSerializerMixin
 
 
-class CleanMixin:
-    """Model mixin class which cleans inputs using nh3."""
-
-    # Define a list of field names which will *not* be cleaned
-    SAFE_FIELDS = []
-
-    def create(self, request, *args, **kwargs):
-        """Override to clean data before processing it."""
+class CleanCreate:  # noqa: D101
+    def create(self, request, *args, **kwargs):  # noqa: D102
+        # Override to clean data before processing it
         serializer = self.get_serializer(data=self.clean_data(request.data))
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -34,8 +28,10 @@ class CleanMixin:
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
-    def update(self, request, *args, **kwargs):
-        """Override to clean data before processing it."""
+
+class CleanUpdate:  # noqa: D101
+    def update(self, request, *args, **kwargs):  # noqa: D102
+        # Override to clean data before processing it
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(
@@ -50,6 +46,13 @@ class CleanMixin:
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
+
+
+class CleanBase:
+    """Model mixin class which cleans inputs using nh3."""
+
+    # Define a list of field names which will *not* be cleaned
+    SAFE_FIELDS = []
 
     def clean_string(self, field: str, data: str) -> str:
         """Clean / sanitize a single input string."""
@@ -118,6 +121,14 @@ class CleanMixin:
             clean_data[k] = ret
 
         return clean_data
+
+
+class CleanMixin(CleanCreate, CleanUpdate, CleanBase):
+    """Model mixin class which cleans inputs using nh3."""
+
+
+class CleanUpdateOnlyMixin(CleanUpdate, CleanBase):
+    """Model mixin class which cleans inputs using nh3."""
 
 
 class ListAPI(generics.ListAPIView):
@@ -214,20 +225,6 @@ class OutputOptionsMixin:
         if getattr(cls, 'output_options', None) is not None:
             schema_for_view_output_options(cls)
 
-    def __init__(self) -> None:
-        """Initialize the mixin. Check that the serializer is compatible."""
-        super().__init__()
-
-        # Check that the serializer was defined
-        if (
-            hasattr(self, 'serializer_class')
-            and isinstance(self.serializer_class, type)
-            and (not issubclass(self.serializer_class, FilterableSerializerMixin))
-        ):
-            raise Exception(
-                'INVE-I2: `OutputOptionsMixin` can only be used with serializers that contain the `FilterableSerializerMixin` mixin'
-            )
-
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance with output options applied."""
         request = getattr(self, 'request', None)
@@ -241,20 +238,7 @@ class OutputOptionsMixin:
         context['request'] = request
         kwargs['context'] = context
 
-        serializer = super().get_serializer(*args, **kwargs)
-
-        # Check if the serializer actually can be filtered - makes not much sense to use this mixin without that prerequisite
-        if isinstance(
-            serializer, data_exporter.serializers.DataExportOptionsSerializer
-        ):
-            # Skip in this instance, special case for determining export options
-            pass
-        elif not isinstance(serializer, FilterableSerializerMixin):
-            raise Exception(
-                'INVE-I2: `OutputOptionsMixin` can only be used with serializers that contain the `FilterableSerializerMixin` mixin'
-            )
-
-        return serializer
+        return super().get_serializer(*args, **kwargs)
 
     def get_queryset(self):
         """Return the queryset with output options applied.

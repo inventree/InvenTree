@@ -9,16 +9,17 @@ import 'mantine-contextmenu/styles.css';
 import 'mantine-datatable/styles.css';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+
+import * as LinguiCore from '@lingui/core';
+import * as LinguiReact from '@lingui/react';
+// Global types to be exported for use in plugins
 import * as MantineCore from '@mantine/core';
 import * as MantineNotifications from '@mantine/notifications';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
-import './styles/overrides.css';
 
-// Lingui imports (required for plugin translation)
-import * as LinguiCore from '@lingui/core';
-import * as LinguiReact from '@lingui/react';
+import './styles/overrides.css';
 
 import { getBaseUrl } from '@lib/functions/Navigation';
 import type { HostList } from '@lib/types/Server';
@@ -36,7 +37,6 @@ declare global {
       sentry_dsn?: string;
       environment?: string;
       mobile_mode?: 'default' | 'allow-ignore' | 'allow-always';
-      dangerous_hide_evelevated_alert?: boolean;
     };
     react: typeof React;
     React: typeof React;
@@ -44,6 +44,8 @@ declare global {
     ReactDOMClient: typeof ReactDOMClient;
     MantineCore: typeof MantineCore;
     MantineNotifications: typeof MantineNotifications;
+    LinguiCore: typeof LinguiCore;
+    LinguiReact: typeof LinguiReact;
   }
 }
 
@@ -107,16 +109,6 @@ if (window.INVENTREE_SETTINGS.sentry_dsn) {
     environment: window.INVENTREE_SETTINGS.environment || 'default'
   });
 }
-
-// Expose global objects for the plugin system
-(window as any).React = React;
-(window as any).ReactDOM = ReactDOM;
-(window as any).ReactDOMClient = ReactDOMClient;
-(window as any).MantineCore = MantineCore;
-(window as any).MantineNotifications = MantineNotifications;
-(window as any).LinguiCore = LinguiCore;
-(window as any).LinguiReact = LinguiReact;
-
 // Redirect to base url if on /
 if (window.location.pathname === '/') {
   window.location.replace(`/${getBaseUrl()}`);
@@ -129,3 +121,12 @@ ReactDOMClient.createRoot(
     <MainView />
   </React.StrictMode>
 );
+
+// All window globals assigned here since these modules are already statically bundled
+window.React = React;
+window.ReactDOM = ReactDOM;
+window.ReactDOMClient = ReactDOMClient;
+window.MantineCore = MantineCore;
+window.MantineNotifications = MantineNotifications;
+window.LinguiCore = LinguiCore;
+window.LinguiReact = LinguiReact;

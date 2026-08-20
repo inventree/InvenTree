@@ -1,7 +1,9 @@
 import { RowDeleteAction, RowEditAction } from '@lib/components/RowActions';
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import { AddItemButton } from '@lib/index';
 import type { TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
@@ -17,7 +19,11 @@ import {
 } from '@mantine/core';
 import dayjs from 'dayjs';
 import { useCallback, useMemo, useState } from 'react';
-import { StylishText } from '../../components/items/StylishText';
+import {
+  DateColumn,
+  DecimalColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { formatDate, formatPriceRange } from '../../defaults/formatters';
 import { partStocktakeFields } from '../../forms/PartForms';
 import {
@@ -25,10 +31,7 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { DateColumn, DecimalColumn } from '../../tables/ColumnRenderers';
-import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 
 /*

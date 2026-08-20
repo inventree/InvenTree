@@ -5,10 +5,8 @@ import {
   IconCircleCheck,
   IconInfoCircle,
   IconLink,
-  IconList,
   IconSitemap,
   IconTruckDelivery,
-  IconUser,
   IconUsersGroup
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -23,6 +21,7 @@ import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import {
   TableFieldErrorWrapper,
+  TableFieldQuantityInput,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { StatusRenderer } from '../components/render/StatusRenderer';
@@ -30,22 +29,25 @@ import {
   RenderStockItem,
   RenderStockLocation
 } from '../components/render/Stock';
+import { RenderPartColumn } from '../components/tables/ColumnRenderers';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
-import { RenderPartColumn } from '../tables/ColumnRenderers';
+import { DuplicateField, ProjectCodeField, TagsField } from './CommonFields';
 
 /**
  * Field set for BuildOrder forms
  */
 export function useBuildOrderFields({
   create,
+  duplicateBuildId,
   modalId
 }: {
   create: boolean;
+  duplicateBuildId?: number | null;
   modalId: string;
 }): ApiFormFieldSet {
   const [destination, setDestination] = useState<number | null | undefined>(
@@ -93,9 +95,7 @@ export function useBuildOrderFields({
       },
       title: {},
       quantity: {},
-      project_code: {
-        icon: <IconList />
-      },
+      project_code: ProjectCodeField(),
       priority: {},
       parent: {
         icon: <IconSitemap />,
@@ -125,14 +125,9 @@ export function useBuildOrderFields({
         },
         value: destination
       },
+      tags: TagsField({}),
       link: {
         icon: <IconLink />
-      },
-      issued_by: {
-        icon: <IconUser />,
-        filters: {
-          is_active: true
-        }
       },
       responsible: {
         icon: <IconUsersGroup />,
@@ -140,7 +135,13 @@ export function useBuildOrderFields({
           is_active: true
         }
       },
-      external: {}
+      external: {},
+      duplicate: DuplicateField({
+        originalId: duplicateBuildId,
+        extraFields: {
+          copy_parameters: {}
+        }
+      })
     };
 
     if (!globalSettings.isSet('PROJECT_CODES_ENABLED', true)) {
@@ -151,8 +152,19 @@ export function useBuildOrderFields({
       delete fields.external;
     }
 
+    if (!duplicateBuildId) {
+      delete fields.duplicate;
+    }
+
     return fields;
-  }, [create, destination, batchCode, batchGenerator.result, globalSettings]);
+  }, [
+    create,
+    destination,
+    batchCode,
+    batchGenerator.result,
+    globalSettings,
+    duplicateBuildId
+  ]);
 }
 
 export function useBuildOrderOutputFields({
@@ -246,6 +258,10 @@ export function useBuildAutoAllocateFields({
       optional_items: {
         hidden: item_type === 'tracked',
         value: item_type === 'tracked' ? false : undefined
+      },
+      stock_sort_by: {},
+      build_lines: {
+        hidden: true
       }
     };
   }, [item_type]);
@@ -276,15 +292,10 @@ function BuildOutputFormRow({
 
     // Non-serialized output - quantity can be changed
     return (
-      <StandaloneField
-        fieldName='quantity'
-        fieldDefinition={{
-          field_type: 'number',
-          required: true,
-          value: props.item.quantity,
-          onValueChange: (value: any) => {
-            props.changeFn(props.idx, 'quantity', value);
-          }
+      <TableFieldQuantityInput
+        value={props.item.quantity ?? ''}
+        onChange={(value) => {
+          props.changeFn(props.rowId, 'quantity', value);
         }}
         error={props.rowErrors?.quantity?.message}
       />
@@ -314,7 +325,7 @@ function BuildOutputFormRow({
           />{' '}
         </Table.Td>
         <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
-          <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+          <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
         </Table.Td>
       </Table.Tr>
     </>
@@ -344,20 +355,26 @@ export function useCompleteBuildOutputsForm({
     );
   }, [location, build.destination, build.part_detail]);
 
+  // Memoize the outputs once to avoid re-rendering issues
+  const buildOutputs = useMemo(() => {
+    return outputs.map((output: any) => {
+      return {
+        id: output.pk,
+        output: output.pk,
+        quantity: output.quantity
+      };
+    });
+  }, [outputs]);
+
   const buildOutputCompleteFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
         field_type: 'table',
-        value: outputs.map((output: any) => {
-          return {
-            output: output.pk,
-            quantity: output.quantity
-          };
-        }),
+        value: buildOutputs,
         modelRenderer: (row: TableFieldRowProps) => {
           const record = outputs.find((output) => output.pk == row.item.output);
           return (
-            <BuildOutputFormRow props={row} record={record} key={record.pk} />
+            <BuildOutputFormRow props={row} record={record} key={row.rowId} />
           );
         },
         headers: [
@@ -392,7 +409,7 @@ export function useCompleteBuildOutputsForm({
     title: t`Complete Build Outputs`,
     fields: buildOutputCompleteFields,
     onFormSuccess: onFormSuccess,
-    successMessage: t`Build outputs have been completed`,
+    successMessage: null,
     size: '80%'
   });
 }
@@ -421,20 +438,26 @@ export function useScrapBuildOutputsForm({
     );
   }, [location, build.destination, build.part_detail]);
 
+  // Memoize the outputs once to avoid re-rendering issues
+  const buildOutputs = useMemo(() => {
+    return outputs.map((output: any) => {
+      return {
+        id: output.pk,
+        output: output.pk,
+        quantity: output.quantity
+      };
+    });
+  }, [outputs]);
+
   const buildOutputScrapFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
         field_type: 'table',
-        value: outputs.map((output: any) => {
-          return {
-            output: output.pk,
-            quantity: output.quantity
-          };
-        }),
+        value: buildOutputs,
         modelRenderer: (row: TableFieldRowProps) => {
           const record = outputs.find((output) => output.pk == row.item.output);
           return (
-            <BuildOutputFormRow props={row} record={record} key={record.pk} />
+            <BuildOutputFormRow props={row} record={record} key={row.rowId} />
           );
         },
         headers: [
@@ -473,7 +496,7 @@ export function useScrapBuildOutputsForm({
     ),
     fields: buildOutputScrapFields,
     onFormSuccess: onFormSuccess,
-    successMessage: t`Build outputs have been scrapped`,
+    successMessage: null,
     size: '80%'
   });
 }
@@ -487,15 +510,21 @@ export function useCancelBuildOutputsForm({
   outputs: any[];
   onFormSuccess: (response: any) => void;
 }) {
+  // Memoize the outputs once to avoid re-rendering issues
+  const buildOutputs = useMemo(() => {
+    return outputs.map((output: any) => {
+      return {
+        id: output.pk,
+        output: output.pk
+      };
+    });
+  }, [outputs]);
+
   const buildOutputCancelFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
         field_type: 'table',
-        value: outputs.map((output: any) => {
-          return {
-            output: output.pk
-          };
-        }),
+        value: buildOutputs,
         modelRenderer: (row: TableFieldRowProps) => {
           const record = outputs.find((output) => output.pk == row.item.output);
           return (
@@ -534,7 +563,7 @@ export function useCancelBuildOutputsForm({
     ),
     fields: buildOutputCancelFields,
     onFormSuccess: onFormSuccess,
-    successMessage: t`Build outputs have been cancelled`,
+    successMessage: null,
     size: '80%'
   });
 }
@@ -551,6 +580,8 @@ function BuildAllocateLineRow({
   record: any;
   sourceLocation: number | undefined;
 }>) {
+  const [quantity, setQuantity] = useState<number>(props.item?.quantity ?? 0);
+
   const stockField: ApiFormFieldType = useMemo(() => {
     return {
       field_type: 'related field',
@@ -571,7 +602,7 @@ function BuildAllocateLineRow({
       value: props.item.stock_item,
       name: 'stock_item',
       onValueChange: (value: any, instance: any) => {
-        props.changeFn(props.idx, 'stock_item', value);
+        props.changeFn(props.rowId, 'stock_item', value);
 
         // Update the allocated quantity based on the selected stock item
         if (instance) {
@@ -579,7 +610,7 @@ function BuildAllocateLineRow({
 
           if (available < props.item.quantity) {
             props.changeFn(
-              props.idx,
+              props.rowId,
               'quantity',
               Math.min(props.item.quantity, available)
             );
@@ -588,18 +619,6 @@ function BuildAllocateLineRow({
       }
     };
   }, [record, props]);
-
-  const quantityField: ApiFormFieldType = useMemo(() => {
-    return {
-      field_type: 'number',
-      name: 'quantity',
-      required: true,
-      value: props.item.quantity,
-      onValueChange: (value: any) => {
-        props.changeFn(props.idx, 'quantity', value);
-      }
-    };
-  }, [props]);
 
   return (
     <Table.Tr key={`table-row-${record.pk}`}>
@@ -625,14 +644,18 @@ function BuildAllocateLineRow({
         />
       </Table.Td>
       <Table.Td>
-        <StandaloneField
-          fieldName='quantity'
-          fieldDefinition={quantityField}
+        <TableFieldQuantityInput
+          min={0}
+          value={quantity}
+          onChange={(value) => {
+            setQuantity(value === '' ? 0 : value);
+            props.changeFn(props.rowId, 'quantity', value);
+          }}
           error={props.rowErrors?.quantity?.message}
         />
       </Table.Td>
       <Table.Td>
-        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+        <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
       </Table.Td>
     </Table.Tr>
   );
@@ -660,6 +683,16 @@ export function useAllocateStockToBuildForm({
     undefined
   );
 
+  // Memoize the line items once to avoid re-rendering
+  const buildLines = useMemo(() => {
+    return lineItems.map((item) => {
+      return {
+        id: item.pk,
+        ...item
+      };
+    });
+  }, [lineItems]);
+
   const buildAllocateFields: ApiFormFieldSet = useMemo(() => {
     const fields: ApiFormFieldSet = {
       items: {
@@ -676,10 +709,10 @@ export function useAllocateStockToBuildForm({
         modelRenderer: (row: TableFieldRowProps) => {
           // Find the matching record from the passed 'lineItems'
           const record =
-            lineItems.find((item) => item.pk == row.item.build_line) ?? {};
+            buildLines.find((item) => item.pk == row.item.build_line) ?? {};
           return (
             <BuildAllocateLineRow
-              key={row.idx}
+              key={row.rowId}
               output={output}
               props={row}
               record={record}
@@ -756,6 +789,7 @@ export function useAllocateStockToBuildForm({
         })
         .map((item) => {
           return {
+            id: item.pk,
             build_line: item.pk,
             stock_item: undefined,
             quantity: Math.max(
@@ -777,6 +811,8 @@ function BuildConsumeItemRow({
   props: TableFieldRowProps;
   record: any;
 }) {
+  const [quantity, setQuantity] = useState<number>(props.item?.quantity ?? 0);
+
   return (
     <Table.Tr key={`table-row-${record.pk}`}>
       <Table.Td>
@@ -792,21 +828,18 @@ function BuildConsumeItemRow({
       </Table.Td>
       <Table.Td>{record.quantity}</Table.Td>
       <Table.Td>
-        <StandaloneField
-          fieldName='quantity'
-          fieldDefinition={{
-            field_type: 'number',
-            required: true,
-            value: props.item.quantity,
-            onValueChange: (value: any) => {
-              props.changeFn(props.idx, 'quantity', value);
-            }
+        <TableFieldQuantityInput
+          min={0}
+          value={quantity}
+          onChange={(value) => {
+            setQuantity(value === '' ? 0 : value);
+            props.changeFn(props.rowId, 'quantity', value);
           }}
           error={props.rowErrors?.quantity?.message}
         />
       </Table.Td>
       <Table.Td>
-        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+        <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
       </Table.Td>
     </Table.Tr>
   );
@@ -842,7 +875,7 @@ export function useConsumeBuildItemsForm({
           );
 
           return (
-            <BuildConsumeItemRow key={row.idx} props={row} record={record} />
+            <BuildConsumeItemRow key={row.rowId} props={row} record={record} />
           );
         }
       },
@@ -861,6 +894,7 @@ export function useConsumeBuildItemsForm({
     initialData: {
       items: allocatedItems.map((item) => {
         return {
+          id: item.pk,
           build_item: item.pk,
           quantity: item.quantity
         };
@@ -905,7 +939,7 @@ function BuildConsumeLineRow({
         />
       </Table.Td>
       <Table.Td>
-        <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+        <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
       </Table.Td>
     </Table.Tr>
   );
@@ -943,7 +977,7 @@ export function useConsumeBuildLinesForm({
           );
 
           return (
-            <BuildConsumeLineRow key={row.idx} props={row} record={record} />
+            <BuildConsumeLineRow key={row.rowId} props={row} record={record} />
           );
         }
       },
@@ -958,9 +992,11 @@ export function useConsumeBuildLinesForm({
     successMessage: null,
     onFormSuccess: onFormSuccess,
     fields: consumeFields,
+    size: '80%',
     initialData: {
       lines: filteredLines.map((item) => {
         return {
+          id: item.pk,
           build_line: item.pk
         };
       })

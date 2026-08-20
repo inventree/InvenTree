@@ -36,8 +36,8 @@ export const doLogin = async (page: Page, options?: LoginOptions) => {
 
   await page.waitForURL('**/web/login');
 
-  await page.getByLabel('username').fill(username);
-  await page.getByLabel('password').fill(password);
+  await page.getByRole('textbox', { name: 'login-username' }).fill(username);
+  await page.getByRole('textbox', { name: 'login-password' }).fill(password);
 
   await page.waitForTimeout(100);
 

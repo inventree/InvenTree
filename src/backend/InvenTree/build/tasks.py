@@ -6,6 +6,7 @@ from typing import Optional
 
 from django.contrib.auth.models import User
 from django.db import transaction
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 import structlog
@@ -49,7 +50,7 @@ def consume_build_stock(
         items: Optional dict of BuildItem IDs (and quantities)to consume
         user_id: The ID of the user who initiated the stock consumption
     """
-    from build.models import Build, BuildItem, BuildLine
+    from build.models import Build, BuildItem
 
     build = Build.objects.get(pk=build_id)
     user = User.objects.filter(pk=user_id).first() if user_id else None
@@ -58,24 +59,19 @@ def consume_build_stock(
     items = items or {}
     notes = kwargs.pop('notes', '')
 
-    # Extract the relevant BuildLine and BuildItem objects
-    with transaction.atomic():
-        # Consume each of the specified BuildLine objects
-        for line_id in lines:
-            if build_line := BuildLine.objects.filter(pk=line_id, build=build).first():
-                for item in build_line.allocations.all():
-                    item.complete_allocation(
-                        quantity=item.quantity, notes=notes, user=user
-                    )
+    # Condense the provided lines and items into a single BuildItem queryset,
+    # preselecting the related StockItem to avoid per-item queries downstream
+    build_items = (
+        BuildItem.objects
+        .filter(
+            Q(build_line__pk__in=lines) | Q(pk__in=items.keys()),
+            build_line__build=build,
+        )
+        .select_related('stock_item', 'stock_item__part')
+        .distinct()
+    )
 
-        # Consume each of the specified BuildItem objects
-        for item_id, quantity in items.items():
-            if build_item := BuildItem.objects.filter(
-                pk=item_id, build_line__build=build
-            ).first():
-                build_item.complete_allocation(
-                    quantity=quantity, notes=notes, user=user
-                )
+    build.complete_allocations(build_items, quantities=items, notes=notes, user=user)
 
 
 @tracer.start_as_current_span('complete_build_allocations')
@@ -97,7 +93,280 @@ def complete_build_allocations(build_id: int, user_id: int):
     else:
         user = None
 
-    build_order.complete_allocations(user)
+    build_order.complete_outstanding_allocations(user)
+
+
+@tracer.start_as_current_span('delete_build_outputs')
+def delete_build_outputs(build_id: int, output_ids: list, **kwargs):
+    """Delete (cancel) specified build outputs for a BuildOrder.
+
+    Arguments:
+        build_id: The ID of the BuildOrder
+        output_ids: List of StockItem PKs to delete
+    """
+    from build.models import Build
+    from stock.models import StockItem
+
+    build = Build.objects.get(pk=build_id)
+
+    with transaction.atomic():
+        for output_id in output_ids:
+            # Lock the output row, and re-check that it is still "in production" -
+            # it may have been processed already (e.g. by a duplicated task)
+            output = StockItem.objects.select_for_update().filter(pk=output_id).first()
+
+            if not output:
+                continue
+
+            if not output.is_building:
+                logger.warning(
+                    'Build output <%s> is no longer in production - skipping deletion',
+                    output.pk,
+                )
+                continue
+
+            build.delete_output(output)
+
+
+@tracer.start_as_current_span('scrap_build_outputs')
+def scrap_build_outputs(
+    build_id: int,
+    outputs: list,
+    location_id: int,
+    notes: str = '',
+    discard_allocations: bool = False,
+    user_id: int | None = None,
+    **kwargs,
+):
+    """Scrap specified build outputs for a BuildOrder.
+
+    Arguments:
+        build_id: The ID of the BuildOrder
+        outputs: List of dicts with 'output_id' and 'quantity'
+        location_id: PK of the destination StockLocation
+        notes: Reason for scrapping
+        discard_allocations: If True, discard (not consume) allocations
+        user_id: PK of the user initiating the action
+    """
+    from build.models import Build
+    from stock.models import StockItem, StockLocation
+
+    build = Build.objects.get(pk=build_id)
+    location = StockLocation.objects.get(pk=location_id)
+    user = User.objects.filter(pk=user_id).first() if user_id else None
+
+    with transaction.atomic():
+        for item in outputs:
+            # Lock the output row, and re-check that it is still "in production" -
+            # it may have been processed already (e.g. by a duplicated task)
+            output = (
+                StockItem.objects
+                .select_for_update()
+                .filter(pk=item['output_id'])
+                .first()
+            )
+
+            if not output:
+                continue
+
+            if not output.is_building:
+                logger.warning(
+                    'Build output <%s> is no longer in production - skipping scrap',
+                    output.pk,
+                )
+                continue
+
+            build.scrap_build_output(
+                output,
+                item.get('quantity'),
+                location,
+                user=user,
+                notes=notes,
+                discard_allocations=discard_allocations,
+            )
+
+
+@tracer.start_as_current_span('complete_build_outputs')
+def complete_build_outputs(
+    build_id: int,
+    outputs: list,
+    location_id: int | None,
+    status: int,
+    notes: str = '',
+    user_id: int | None = None,
+    **kwargs,
+):
+    """Complete specified build outputs for a BuildOrder.
+
+    Arguments:
+        build_id: The ID of the BuildOrder
+        outputs: List of dicts with 'output_id' and optional 'quantity'
+        location_id: PK of the destination StockLocation (or None)
+        status: Stock status code to assign to completed outputs
+        notes: Completion notes
+        user_id: PK of the user initiating the action
+    """
+    from build.models import Build
+    from stock.models import StockItem, StockLocation
+
+    build = Build.objects.get(pk=build_id)
+    location = (
+        StockLocation.objects.filter(pk=location_id).first() if location_id else None
+    )
+    user = User.objects.filter(pk=user_id).first() if user_id else None
+
+    required_tests = build.part.getRequiredTests()
+
+    with transaction.atomic():
+        for item in outputs:
+            # Lock the output row, and re-check that it is still "in production" -
+            # it may have been processed already (e.g. by a duplicated task)
+            output = (
+                StockItem.objects
+                .select_for_update()
+                .filter(pk=item['output_id'])
+                .first()
+            )
+
+            if not output:
+                continue
+
+            if not output.is_building:
+                logger.warning(
+                    'Build output <%s> is no longer in production - skipping completion',
+                    output.pk,
+                )
+                continue
+
+            build.complete_build_output(
+                output,
+                user,
+                quantity=item.get('quantity'),
+                location=location,
+                status=status,
+                notes=notes,
+                required_tests=required_tests,
+            )
+
+
+@tracer.start_as_current_span('cancel_build')
+def cancel_build(
+    build_id: int,
+    user_id: int,
+    remove_allocated_stock: bool = False,
+    remove_incomplete_outputs: bool = False,
+):
+    """Tasks to run after a BuildOrder is cancelled.
+
+    Arguments:
+        build_id: The ID of the BuildOrder which has been cancelled
+        user_id: The ID of the user who cancelled the BuildOrder
+        remove_allocated_stock: If True, consume any allocated stock
+        remove_incomplete_outputs: If True, delete any incomplete build outputs
+
+    """
+    from build.models import Build
+
+    build = Build.objects.get(pk=build_id)
+
+    if remove_allocated_stock:
+        complete_build_allocations(build_id, user_id)
+    else:
+        build.allocated_stock.all().delete()
+
+    if remove_incomplete_outputs:
+        build.build_outputs.filter(is_building=True).delete()
+
+    # Notify users that the order has been canceled
+    InvenTree.helpers_model.notify_responsible(
+        build,
+        Build,
+        exclude=build.issued_by,
+        content=common.notifications.InvenTreeNotificationBodies.OrderCanceled,
+        extra_users=build.part.get_subscribers(),
+    )
+
+    trigger_event(BuildEvents.CANCELLED, id=build.pk)
+
+
+@tracer.start_as_current_span('complete_build')
+def complete_build(build_id: int, user_id: int, trim_allocated_stock: bool = False):
+    """Tasks to run after a BuildOrder is completed.
+
+    Arguments:
+        build_id: The ID of the BuildOrder which has been completed
+        user_id: The ID of the user who completed the BuildOrder
+        trim_allocated_stock: If True, trim any allocated stock which was not consumed
+    """
+    from build.models import Build
+    from build.status_codes import BuildStatus
+
+    with transaction.atomic():
+        # Lock the build row: concurrent completion tasks (duplicate task
+        # delivery, or repeated completion requests while the build is still
+        # IN PRODUCTION) are serialized, and the status is re-checked below
+        build = Build.objects.select_for_update().get(pk=build_id)
+
+        if build.status == BuildStatus.COMPLETE.value:
+            logger.warning(
+                'Build order <%s> is already complete - skipping completion task',
+                build.pk,
+            )
+            return
+
+        user = User.objects.filter(pk=user_id).first() if user_id else None
+
+        if trim_allocated_stock:
+            build.trim_allocated_stock()
+
+        # Complete any remaining allocations for this build order
+        complete_build_allocations(build_id, user_id)
+
+        # Mark the build as completed
+        build.completion_date = InvenTree.helpers.current_date()
+        build.completed_by = user
+        build.status = BuildStatus.COMPLETE.value
+        build.save()
+
+    # Register an event
+    trigger_event(BuildEvents.COMPLETED, id=build.pk)
+
+    # Notify users that this build has been completed
+    targets = [build.issued_by, build.responsible]
+
+    # Also inform anyone subscribed to the assembly part
+    targets.extend(build.part.get_subscribers())
+
+    # Notify those users interested in the parent build
+    if build.parent:
+        targets.append(build.parent.issued_by)
+        targets.append(build.parent.responsible)
+
+    # Notify users if this build points to a sales order
+    if build.sales_order:
+        targets.append(build.sales_order.created_by)
+        targets.append(build.sales_order.responsible)
+
+    name = _(f'Build order {build} has been completed')
+
+    context = {
+        'build': build,
+        'name': name,
+        'slug': 'build.completed',
+        'message': _('A build order has been completed'),
+        'link': InvenTree.helpers_model.construct_absolute_url(
+            build.get_absolute_url()
+        ),
+        'template': {'html': 'email/build_order_completed.html', 'subject': name},
+    }
+
+    common.notifications.trigger_notification(
+        build,
+        'build.completed',
+        targets=targets,
+        context=context,
+        target_exclude=[user],
+    )
 
 
 @tracer.start_as_current_span('update_build_order_lines')

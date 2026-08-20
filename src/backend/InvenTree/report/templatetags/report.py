@@ -1,6 +1,7 @@
 """Custom template tags for report generation."""
 
 import base64
+import copy
 import logging
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
@@ -10,14 +11,22 @@ from typing import Any, Optional
 
 from django import template
 from django.apps.registry import apps
+from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.exceptions import SuspiciousFileOperation, ValidationError
 from django.core.files.storage import default_storage
 from django.db.models import Model
 from django.db.models.query import QuerySet
+from django.utils import translation
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from babel import Locale
+from babel.core import UnknownLocaleError
+from babel.dates import format_date as babel_format_date
+from babel.dates import format_datetime as babel_format_datetime
+from babel.numbers import format_decimal as babel_format_decimal
+from babel.numbers import parse_pattern
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -37,6 +46,22 @@ register = template.Library()
 
 
 logger = logging.getLogger('inventree')
+
+
+def get_locale(locale: Optional[str] = None) -> Locale:
+    """Resolve and return a babel Locale.
+
+    Args:
+        locale: Optional locale string (e.g. 'en-us'). Falls back to LANGUAGE_CODE.
+
+    Raises:
+        ValidationError: If the locale string is invalid.
+    """
+    language = locale or settings.LANGUAGE_CODE
+    try:
+        return Locale.parse(translation.to_locale(language))
+    except (UnknownLocaleError, ValueError) as e:
+        raise ValidationError(f"Invalid locale '{language}' - {e}")
 
 
 @register.simple_tag()
@@ -288,13 +313,16 @@ def asset(filename: str, raise_error: bool = False) -> str | None:
         else:
             return None
 
-    # In debug mode, return a web URL to the asset file (rather than a local file path)
+    # In debug mode, return a web URL to the asset file (rather than encoded data)
     if get_global_setting('REPORT_DEBUG_MODE', cache=False):
         return default_storage.url(str(full_path))
 
-    storage_path = default_storage.path(str(full_path))
+    file_data = get_media_file_contents(full_path, raise_error=raise_error)
 
-    return f'file://{storage_path}'
+    if not file_data:
+        return None
+
+    return report.helpers.encode_file_base64(filename, file_data)
 
 
 @register.simple_tag()
@@ -417,8 +445,13 @@ def uploaded_image(
 
 
 @register.simple_tag()
-def encode_svg_image(filename: str) -> str:
-    """Return a base64-encoded svg image data string."""
+def encode_svg_image(filename: str, raise_error: bool = False) -> str:
+    """Return a base64-encoded svg image data string.
+
+    Arguments:
+        filename: The filename of the svg image relative to the media root directory
+        raise_error: If True, raise an error if the file cannot be found (default = False)
+    """
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
@@ -431,7 +464,12 @@ def encode_svg_image(filename: str) -> str:
 
     # Read out the file contents
     # Note: This will check if the file exists, and raise an error if it does not
-    data = get_media_file_contents(filename)
+    data = get_media_file_contents(filename, raise_error=raise_error)
+
+    # If the file is empty, return an empty string
+    # Note that if raise_error is True, the above function will raise a FileNotFoundError if the file does not exist
+    if not data:
+        return ''
 
     # Return the base64-encoded data
     return 'data:image/svg+xml;charset=utf-8;base64,' + base64.b64encode(data).decode(
@@ -452,7 +490,7 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
         TypeError: If provided part is not a Part instance
     """
     if not part or not isinstance(part, Part):
-        raise TypeError(_('part_image tag requires a Part instance'))
+        raise ValidationError(_('part_image tag requires a Part instance'))
 
     image_filename = InvenTree.helpers.image2name(part.image, preview, thumbnail)
 
@@ -478,28 +516,22 @@ def parameter(
     Returns:
         A Parameter object, or the provided default value if not found
     """
-    if instance is None:
-        raise ValueError('parameter tag requires a valid Model instance')
+    if instance is None or not isinstance(instance, Model):
+        raise ValidationError('parameter tag requires a valid Model instance')
 
-    if not isinstance(instance, Model) or not hasattr(instance, 'parameters'):
-        raise TypeError("parameter tag requires a Model with 'parameters' attribute")
+    if not hasattr(instance, 'parameters'):
+        raise ValidationError(
+            "parameter tag requires a Model with 'parameters' attribute"
+        )
+
+    parameters = instance.parameters_list.all().prefetch_related('template')
 
     # First try with exact match
-    if (
-        parameter := instance.parameters
-        .prefetch_related('template')
-        .filter(template__name=parameter_name)
-        .first()
-    ):
+    if parameter := parameters.filter(template__name=parameter_name).first():
         return parameter
 
     # Next, try with case-insensitive match
-    if (
-        parameter := instance.parameters
-        .prefetch_related('template')
-        .filter(template__name__iexact=parameter_name)
-        .first()
-    ):
+    if parameter := parameters.filter(template__name__iexact=parameter_name).first():
         return parameter
 
     return None
@@ -769,9 +801,98 @@ def modulo(x: Any, y: Any, cast: Optional[type] = None) -> Any:
 
 
 @register.simple_tag
-def render_currency(money, **kwargs):
-    """Render a currency / Money object."""
-    return InvenTree.helpers_model.render_currency(money, **kwargs)
+def render_currency(
+    money: Money | str | int | float | Decimal,
+    decimal_places: Optional[int] = None,
+    currency: Optional[str] = None,
+    multiplier: Optional[Decimal] = None,
+    max_decimal_places: Optional[int] = None,
+    include_symbol: bool = True,
+    leading: Optional[int] = None,
+    fmt: Optional[str] = None,
+    locale: Optional[str] = None,
+    **kwargs,
+) -> str:
+    """Render a currency / Money object to a formatted string.
+
+    Arguments:
+        money: The Money instance to be rendered
+        currency: Optionally convert to the specified currency before rendering
+        multiplier: Optional multiplier to apply to the amount before rendering
+        decimal_places: Minimum (forced) decimal places, e.g. decimal_places=2 gives '.00'. Defaults to the locale/currency standard.
+        max_decimal_places: Maximum decimal places (optional digits beyond decimal_places), e.g. max_decimal_places=4 allows up to 4.
+        include_symbol: If True, include the currency symbol in the output
+        leading: Minimum number of leading digits to render before the decimal point (default = 1)
+        fmt: Optional Babel number pattern string. When provided, takes priority over all other formatting options.
+        locale: Optional locale override (e.g. 'en-us', 'de-de'). Defaults to server LANGUAGE_CODE.
+    """
+    if money in [None, '']:
+        return '-'
+
+    # If the supplied value is *not* a Money instance, attempt to convert it into one
+    if not isinstance(money, Money):
+        try:
+            money = Money(
+                Decimal(str(money)),
+                currency or get_global_setting('INVENTREE_DEFAULT_CURRENCY'),
+            )
+        except Exception:
+            raise ValidationError(f'render_currency: invalid money value - {money!r}')
+
+    if currency is not None:
+        try:
+            money = convert_money(money, currency)
+        except Exception:
+            pass
+
+    if multiplier is not None:
+        try:
+            money *= Decimal(str(multiplier).strip())
+        except Exception:
+            raise ValidationError(
+                f'render_currency: invalid multiplier value - {multiplier!r}'
+            )
+
+    locale = get_locale(locale)
+
+    # If a custom fmt pattern is applied, that overrides other formatting options
+    if fmt:
+        pattern = parse_pattern(fmt)
+        return pattern.apply(
+            money.amount,
+            locale,
+            currency=money.currency.code if include_symbol else '',
+            currency_digits=False,
+            decimal_quantization=True,
+        )
+
+    pattern = copy.copy(locale.currency_formats['standard'])
+
+    if decimal_places is None or not isinstance(decimal_places, (int, float)):
+        decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
+
+    if max_decimal_places is None or not isinstance(max_decimal_places, (int, float)):
+        max_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES', 6)
+
+    pattern.frac_prec = (decimal_places, max(decimal_places, max_decimal_places))
+
+    if leading is not None:
+        try:
+            leading = int(leading) or 0
+        except (ValueError, TypeError):
+            leading = 0
+        if leading > 0:
+            min_int, max_int = pattern.int_prec
+            pattern.int_prec = (max(leading, min_int), max(leading, max_int))
+
+    return pattern.apply(
+        money.amount,
+        locale,
+        currency=money.currency.code if include_symbol else '',
+        currency_digits=decimal_places is None and max_decimal_places is None,
+        decimal_quantization=decimal_places is not None
+        or max_decimal_places is not None,
+    )
 
 
 @register.simple_tag
@@ -868,82 +989,109 @@ def render_html_text(text: str, **kwargs):
 @register.simple_tag
 def format_number(
     number: int | float | Decimal,
-    decimal_places: Optional[int] = None,
     multiplier: Optional[int | float | Decimal] = None,
     integer: bool = False,
-    leading: int = 0,
-    separator: Optional[str] = None,
+    separator: bool = False,
+    leading: Optional[int] = None,
+    decimal_places: Optional[int] = None,
+    max_decimal_places: Optional[int] = None,
+    fmt: Optional[str] = None,
+    locale: Optional[str] = None,
+    **kwargs,
 ) -> str:
     """Render a number with optional formatting options.
 
     Arguments:
         number: The number to be formatted
-        decimal_places: Number of decimal places to render
         multiplier: Optional multiplier to apply to the number before formatting
         integer: Boolean, whether to render the number as an integer
-        leading: Number of leading zeros (default = 0)
-        separator: Character to use as a thousands separator (default = None)
+        separator: Boolean, whether to include a thousands separator
+        leading: Minimum number of leading digits to render (default = 1)
+        decimal_places: Number of decimal places to render (default = 0)
+        max_decimal_places: Maximum number of decimal places to render (default = 0)
+        separator:
+        fmt: Optional format string for the number - if provided, takes priority over 'decimal_places' and 'leading'
+        locale: Optional locale override (e.g. 'en-us', 'de-de'). When set, babel controls decimal and thousands separators.
     """
     check_nulls('format_number', number)
 
+    # Check that the provided number is valid
     try:
         number = Decimal(str(number).strip())
     except Exception:
         # If the number cannot be converted to a Decimal, just return the original value
         return str(number)
 
+    number = float(number)
+
     if multiplier is not None:
-        number *= Decimal(str(multiplier).strip())
+        number *= float(multiplier)
 
     if integer:
-        # Convert to integer
-        number = Decimal(int(number))
+        number = int(number)
 
-    # Normalize the number (remove trailing zeroes)
-    number = number.normalize()
+    # Construct a formatting string for the number, based on the provided options
+    if not fmt:
+        fmt = '###,###,###,###,##0'  # Default format string - this will be modified based on the provided options
 
-    if decimal_places is not None:
-        try:
-            decimal_places = int(decimal_places)
-            number = round(number, decimal_places)
-        except ValueError:
-            pass
+        # The 'leading' option specifies the minimum number of leading digits to render (not including decimal places)
+        if leading is not None:
+            try:
+                leading = int(leading) or 0
+            except (ValueError, TypeError):
+                leading = 0
 
-    # Re-encode, and normalize again
-    # Ensure that the output never uses scientific notation
-    value = Decimal(number)
-    value = (
-        value.quantize(Decimal(1))
-        if value == value.to_integral()
-        else value.normalize()
+            if leading > 1:
+                fmt = fmt[::-1].replace('#', '0', (leading - 1))[::-1]
+
+        if not bool(separator):
+            fmt = fmt.replace(',', '')
+
+        if decimal_places is not None or max_decimal_places is not None:
+            # Account for decimal places, if provided
+
+            try:
+                decimal_places = int(decimal_places) or 0
+            except (ValueError, TypeError):
+                decimal_places = 0
+
+            try:
+                max_decimal_places = int(max_decimal_places) or 0
+            except (ValueError, TypeError):
+                max_decimal_places = 0
+
+            fmt += '.' + '0' * decimal_places
+
+            if max_decimal_places > decimal_places:
+                fmt += '#' * (max_decimal_places - decimal_places)
+        elif not integer:
+            # No decimal places specified, allow any number of decimal places (up to the precision of the Decimal)
+            fmt += '.####################'
+
+    babel_locale = get_locale(locale)
+
+    return babel_format_decimal(
+        number, format=fmt, locale=babel_locale, numbering_system='latn'
     )
-
-    if separator:
-        value = f'{value:,}'
-        value = value.replace(',', separator)
-    else:
-        value = f'{value}'
-
-    if leading is not None:
-        try:
-            leading = int(leading)
-            value = '0' * leading + value
-        except ValueError:
-            pass
-
-    return value
 
 
 @register.simple_tag
 def format_datetime(
-    dt: datetime, timezone: Optional[str] = None, fmt: Optional[str] = None
+    dt: datetime,
+    timezone: Optional[str] = None,
+    fmt: Optional[str] = None,
+    locale: Optional[str] = None,
+    date_format: str = 'medium',
+    **kwargs,
 ):
     """Format a datetime object for display.
 
     Arguments:
         dt: The datetime object to format
         timezone: The timezone to use for the date (defaults to the server timezone)
-        fmt: The format string to use (defaults to ISO formatting)
+        fmt: The strftime format string to use. When provided, takes priority over locale and date_format.
+        locale: Optional locale override (e.g. 'en-us', 'de-de'). Used for locale-aware formatting when no fmt is given.
+        date_format: Babel date format style. One of 'full', 'long', 'medium' (default), 'short'.
     """
     check_nulls('format_datetime', dt)
 
@@ -951,18 +1099,27 @@ def format_datetime(
 
     if fmt:
         return dt.strftime(fmt)
-    else:
-        return dt.isoformat()
+
+    return babel_format_datetime(dt, format=date_format, locale=get_locale(locale))
 
 
 @register.simple_tag
-def format_date(dt: date, timezone: Optional[str] = None, fmt: Optional[str] = None):
+def format_date(
+    dt: date,
+    timezone: Optional[str] = None,
+    fmt: Optional[str] = None,
+    locale: Optional[str] = None,
+    date_format: str = 'medium',
+    **kwargs,
+):
     """Format a date object for display.
 
     Arguments:
         dt: The date to format
         timezone: The timezone to use for the date (defaults to the server timezone)
-        fmt: The format string to use (defaults to ISO formatting)
+        fmt: The strftime format string to use. When provided, takes priority over locale and date_format.
+        locale: Optional locale override (e.g. 'en-us', 'de-de'). Used for locale-aware formatting when no fmt is given.
+        date_format: Babel date format style. One of 'full', 'long', 'medium' (default), 'short'.
     """
     check_nulls('format_date', dt)
 
@@ -973,8 +1130,8 @@ def format_date(dt: date, timezone: Optional[str] = None, fmt: Optional[str] = N
 
     if fmt:
         return dt.strftime(fmt)
-    else:
-        return dt.isoformat()
+
+    return babel_format_date(dt, format=date_format, locale=get_locale(locale))
 
 
 @register.simple_tag()
@@ -1036,3 +1193,196 @@ def include_icon_fonts(ttf: bool = False, woff: bool = False):
     """
 
     return mark_safe(icon_class + '\n'.join(fonts))
+
+
+@register.simple_tag()
+def lowercase(value: str) -> str:
+    """Convert a string to lowercase.
+
+    Arguments:
+        value: The string to be converted
+    """
+    if not value:
+        return ''
+    return str(value).lower()
+
+
+@register.simple_tag()
+def uppercase(value: str) -> str:
+    """Convert a string to uppercase.
+
+    Arguments:
+        value: The string to be converted
+    """
+    if not value:
+        return ''
+    return str(value).upper()
+
+
+@register.simple_tag()
+def titlecase(value: str) -> str:
+    """Convert a string to title case.
+
+    Arguments:
+        value: The string to be converted
+    """
+    if not value:
+        return ''
+    return str(value).title()
+
+
+@register.simple_tag()
+def strip(value: str, chars: Optional[str] = ' ') -> str:
+    """Strip leading and trailing characters from a string.
+
+    Arguments:
+        value: The string to be stripped
+        chars: The set of characters to strip from the string (default = whitespace)
+    """
+    if not value:
+        return ''
+    return str(value).strip(chars)
+
+
+@register.simple_tag()
+def lstrip(value: str, chars: Optional[str] = ' ') -> str:
+    """Strip leading characters from a string.
+
+    Arguments:
+        value: The string to be stripped
+        chars: The set of characters to strip from the string (default = whitespace)
+    """
+    if not value:
+        return ''
+    return str(value).lstrip(chars)
+
+
+@register.simple_tag()
+def rstrip(value: str, chars: Optional[str] = ' ') -> str:
+    """Strip trailing characters from a string.
+
+    Arguments:
+        value: The string to be stripped
+        chars: The set of characters to strip from the string (default = whitespace)
+    """
+    if not value:
+        return ''
+    return str(value).rstrip(chars)
+
+
+@register.simple_tag()
+def split(value: str, separator: str = ',') -> list:
+    """Split a string into a list, using the provided separator (default = ',').
+
+    Arguments:
+        value: The string to be split
+        separator: The character to use as a separator (default = ',')
+    """
+    if not value:
+        return []
+    return [v.strip() for v in str(value).split(separator)]
+
+
+@register.simple_tag()
+def join(value: list, separator: str = ',') -> str:
+    """Join a list of items into a string, using the provided separator (default = ',').
+
+    Arguments:
+        value: The list of items to be joined
+        separator: The character to use as a separator (default = ',')
+    """
+    if not value:
+        return ''
+    return separator.join(str(v) for v in value)
+
+
+@register.simple_tag()
+def length(value: Any) -> int:
+    """Return the length of a list or string.
+
+    Arguments:
+        value: The value to be measured (e.g. a list or string)
+    """
+    if value is None:
+        return 0
+    try:
+        return len(value)
+    except TypeError:
+        return 0
+
+
+@register.simple_tag()
+def replace(value: str, old: str, new: str = '') -> str:
+    """Replace occurrences of a substring within a string with a new value.
+
+    Arguments:
+        value: The original string
+        old: The substring to be replaced
+        new: The value to replace the old substring with (default = "")
+    """
+    if not value:
+        return ''
+    return str(value).replace(old, new)
+
+
+@register.simple_tag()
+def first(value: list, default: Any = None) -> Any:
+    """Return the first item in a list, or a default value if the list is empty.
+
+    Arguments:
+        value: The list from which to retrieve the first item
+        default: The value to return if the list is empty (default = None)
+    """
+    if not value:
+        return default
+    try:
+        return value[0]
+    except (IndexError, TypeError):
+        return default
+
+
+@register.simple_tag()
+def last(value: list, default: Any = None) -> Any:
+    """Return the last item in a list, or a default value if the list is empty.
+
+    Arguments:
+        value: The list from which to retrieve the last item
+        default: The value to return if the list is empty (default = None)
+    """
+    if not value:
+        return default
+    try:
+        return value[-1]
+    except (IndexError, TypeError):
+        return default
+
+
+@register.simple_tag()
+def reverse(value: list) -> list:
+    """Return a reversed version of the provided list.
+
+    Arguments:
+        value: The list to be reversed
+    """
+    if not value:
+        return []
+    try:
+        return value[::-1]
+    except TypeError:
+        return []
+
+
+@register.simple_tag()
+def truncate(value: list, length: int) -> list:
+    """Return a truncated version of the provided list.
+
+    Arguments:
+        value: The list to be truncated
+        length: The maximum length of the returned list
+    """
+    if not value:
+        return []
+    try:
+        return value[:length]
+    except TypeError:
+        return []

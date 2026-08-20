@@ -15,10 +15,12 @@ _roles = {
     'part': 'Role Parts',
     'stock_location': 'Role Stock Locations',
     'stock': 'Role Stock Items',
+    'bom': 'Role Bills of Material',
     'build': 'Role Build Orders',
     'purchase_order': 'Role Purchase Orders',
     'sales_order': 'Role Sales Orders',
     'return_order': 'Role Return Orders',
+    'transfer_order': 'Role Transfer Orders',
 }
 _methods = {'view': 'GET', 'add': 'POST', 'change': 'PUT / PATCH', 'delete': 'DELETE'}
 

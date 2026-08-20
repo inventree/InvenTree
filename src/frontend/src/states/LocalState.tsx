@@ -33,11 +33,15 @@ interface LocalStateProps {
   setLayouts: (layouts: any, noPatch?: boolean) => void;
   showSampleDashboard: boolean;
   setShowSampleDashboard: (value: boolean) => void;
+  // printing
+  lastUsedPrinting: Record<string, { plugin?: string; template?: number }>;
+  setLastUsedPrinting: (
+    modelType: string,
+    values: { plugin?: string; template?: number }
+  ) => void;
   // panels
   lastUsedPanels: Record<string, string>;
   setLastUsedPanel: (panelKey: string) => (value: string) => void;
-  detailDrawerStack: number;
-  addDetailDrawer: (value: number | false) => void;
   navigationOpen: boolean;
   setNavigationOpen: (value: boolean) => void;
   allowMobile: boolean;
@@ -124,6 +128,25 @@ export const useLocalState = create<LocalStateProps>()(
       setShowSampleDashboard: (value) => {
         set({ showSampleDashboard: value });
       },
+      // printing
+      lastUsedPrinting: {},
+      setLastUsedPrinting: (modelType, values) => {
+        const current = get().lastUsedPrinting[modelType] || {};
+        if (
+          current.plugin !== values.plugin ||
+          current.template !== values.template
+        ) {
+          set({
+            lastUsedPrinting: {
+              ...get().lastUsedPrinting,
+              [modelType]: {
+                ...current,
+                ...values
+              }
+            }
+          });
+        }
+      },
       // panels
       lastUsedPanels: {},
       setLastUsedPanel: (panelKey) => (value) => {
@@ -133,15 +156,6 @@ export const useLocalState = create<LocalStateProps>()(
             lastUsedPanels: { ...get().lastUsedPanels, [panelKey]: value }
           });
         }
-      },
-
-      // detail drawers
-      detailDrawerStack: 0,
-      addDetailDrawer: (value) => {
-        set({
-          detailDrawerStack:
-            value === false ? 0 : get().detailDrawerStack + value
-        });
       },
       // navigation
       navigationOpen: false,
@@ -162,11 +176,11 @@ export const useLocalState = create<LocalStateProps>()(
 /*
 pushes changes in user profile to backend
 */
-function patchUser(key: 'language' | 'theme' | 'widgets', val: any) {
+export function patchUser(key: 'language' | 'theme' | 'widgets', val: any) {
   const uid = useUserState.getState().userId();
   if (uid) {
-    api.patch(apiUrl(ApiEndpoints.user_profile), { [key]: val });
+    api.patch(apiUrl(ApiEndpoints.user_me_profile), { [key]: val });
   } else {
-    console.log('user not logged in, not patching');
+    console.warn('user not logged in, not patching');
   }
 }

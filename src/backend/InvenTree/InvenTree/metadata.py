@@ -219,8 +219,15 @@ class InvenTreeMetadata(SimpleMetadata):
 
         serializer_info = super().get_serializer_info(serializer)
 
-        # Look for any dynamic fields which were not available when the serializer was instantiated
-        if hasattr(serializer, 'Meta'):
+        # Look for any dynamic fields which were not available when the serializer was
+        # instantiated - this lets an OPTIONS/schema response document an OptionalField
+        # (e.g. `part_detail`) even when it wasn't included on this particular instance,
+        # by rehydrating it directly from the class attribute.
+        if (
+            hasattr(serializer, 'Meta')
+            and not getattr(serializer, '_is_importing', False)
+            and not getattr(serializer, '_exporting_data', False)
+        ):
             for field_name in serializer.Meta.fields:
                 if field_name in serializer_info:
                     # Already know about this one
@@ -280,14 +287,26 @@ class InvenTreeMetadata(SimpleMetadata):
                     elif name in model_default_values:
                         serializer_info[name]['default'] = model_default_values[name]
 
-                    for field_key, model_key in extra_attributes.items():
-                        field_value = getattr(serializer.fields[name], field_key, None)
-                        model_value = getattr(field, model_key, None)
+                    # Note: `name` may be present in `serializer_info` (above) without
+                    # being a live entry in `serializer.fields` - the 'dynamic fields'
+                    # lookup a few lines up adds metadata for OptionalFields that were
+                    # excluded from *this* serializer instance (e.g. no matching query
+                    # parameter was supplied), by rehydrating them directly from the
+                    # class attribute. A model field can coincidentally share its name
+                    # with such an OptionalField (e.g. `Group.permissions`, a real M2M
+                    # field, vs. `GroupSerializer.permissions`, a computed OptionalField)
+                    # - only touch `serializer.fields[name]` once we know it's real.
+                    if name in serializer.fields:
+                        for field_key, model_key in extra_attributes.items():
+                            field_value = getattr(
+                                serializer.fields[name], field_key, None
+                            )
+                            model_value = getattr(field, model_key, None)
 
-                        if value := self.override_value(
-                            name, field_key, field_value, model_value
-                        ):
-                            serializer_info[name][field_key] = value
+                            if value := self.override_value(
+                                name, field_key, field_value, model_value
+                            ):
+                                serializer_info[name][field_key] = value
 
             # Iterate through relations
             for name, relation in model_fields.relations.items():
@@ -311,14 +330,19 @@ class InvenTreeMetadata(SimpleMetadata):
                     relation.model_field.get_limit_choices_to()
                 )
 
-                for field_key, model_key in extra_attributes.items():
-                    field_value = getattr(serializer.fields[name], field_key, None)
-                    model_value = getattr(relation.model_field, model_key, None)
+                # See the comment above, in the 'simple fields' loop - `name` being in
+                # `serializer_info` doesn't guarantee it's a live `serializer.fields`
+                # entry (it may be a rehydrated, excluded OptionalField that happens to
+                # share its name with a real model relation).
+                if name in serializer.fields:
+                    for field_key, model_key in extra_attributes.items():
+                        field_value = getattr(serializer.fields[name], field_key, None)
+                        model_value = getattr(relation.model_field, model_key, None)
 
-                    if value := self.override_value(
-                        name, field_key, field_value, model_value
-                    ):
-                        serializer_info[name][field_key] = value
+                        if value := self.override_value(
+                            name, field_key, field_value, model_value
+                        ):
+                            serializer_info[name][field_key] = value
 
                 if name in model_default_values:
                     serializer_info[name]['default'] = model_default_values[name]
@@ -380,6 +404,15 @@ class InvenTreeMetadata(SimpleMetadata):
 
         We take the regular DRF metadata and add our own unique flavor
         """
+        from InvenTree.serializers import OptionalField
+
+        if isinstance(field, OptionalField) or issubclass(
+            field.__class__, OptionalField
+        ):
+            # Rehydrate the OptionalField for proper introspection
+            rehydrated_field = field.serializer_class(**(field.serializer_kwargs or {}))
+            return self.get_field_info(rehydrated_field)
+
         # Try to add the child property to the dependent field to be used by the super call
         if self.label_lookup[field] == 'dependent field':
             field.get_child(raise_exception=True)

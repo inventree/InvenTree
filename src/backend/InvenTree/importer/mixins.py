@@ -3,6 +3,8 @@
 from rest_framework import fields, serializers
 from taggit.serializers import TagListSerializerField
 
+import InvenTree.serializers
+
 
 class DataImportSerializerMixin:
     """Mixin class for adding data import functionality to a DRF serializer."""
@@ -39,6 +41,14 @@ class DataImportSerializerMixin:
 
             # Exclude fields which are excluded for data import
             for field in self.get_import_exclude_fields(**kwargs):
+                self.fields.pop(field, None)
+
+            # Duplication options are never used for data import
+            for field in [
+                name
+                for name, field in self.fields.items()
+                if isinstance(field, InvenTree.serializers.DuplicateOptionsSerializer)
+            ]:
                 self.fields.pop(field, None)
 
         else:

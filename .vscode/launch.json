@@ -36,7 +36,9 @@
       "program": "${workspaceFolder}/src/backend/InvenTree/manage.py",
       "args": [
         "runserver",
-        "0.0.0.0:8000"
+        "0.0.0.0:8000",
+        // "--sync",// Synchronize worker tasks to foreground thread
+        // "--noreload", // disable auto-reload
       ],
       "django": true,
       "justMyCode": false
@@ -45,7 +47,7 @@
       "name": "InvenTree invoke schema",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/.venv/lib/python3.11/site-packages/invoke/__main__.py",
+      "program": "${workspaceFolder}/.venv/lib/python3.12/site-packages/invoke/__main__.py",
       "cwd": "${workspaceFolder}",
       "args": [
         "dev.schema","--ignore-warnings"

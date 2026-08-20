@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { IconSquareArrowRight } from '@tabler/icons-react';
+import { IconFlag, IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
@@ -13,21 +13,10 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { formatCurrency } from '../../defaults/formatters';
-import {
-  useReceiveReturnOrderLineItems,
-  useReturnOrderLineItemFields
-} from '../../forms/ReturnOrderForms';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
-import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useTable } from '../../hooks/UseTable';
-import { useUserState } from '../../states/UserState';
+import { Alert } from '@mantine/core';
 import {
   DateColumn,
   DescriptionColumn,
@@ -35,13 +24,27 @@ import {
   LinkColumn,
   NoteColumn,
   PartColumn,
+  PercentageColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   StatusColumn,
   StockColumn
-} from '../ColumnRenderers';
-import { StatusFilterOptions } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+} from '../../components/tables/ColumnRenderers';
+import { StatusFilterOptions } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { formatCurrency } from '../../defaults/formatters';
+import {
+  useReceiveReturnOrderLineItems,
+  useReturnOrderLineItemFields
+} from '../../forms/ReturnOrderForms';
+import {
+  useBulkEditApiFormModal,
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
+import useStatusCodes from '../../hooks/UseStatusCodes';
+import { useUserState } from '../../states/UserState';
 
 export default function ReturnOrderLineItemTable({
   orderId,
@@ -109,6 +112,21 @@ export default function ReturnOrderLineItemTable({
     table: table
   });
 
+  const setOutcome = useBulkEditApiFormModal({
+    url: ApiEndpoints.return_order_line_list,
+    items: table.selectedIds,
+    title: t`Set Outcome`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Adjust the outcome for the selected line items.`}
+      </Alert>
+    ),
+    fields: {
+      outcome: {}
+    },
+    onFormSuccess: table.refreshTable
+  });
+
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       LineItemColumn({}),
@@ -148,6 +166,11 @@ export default function ReturnOrderLineItemTable({
         render: (record: any) =>
           formatCurrency(record.price, { currency: record.price_currency })
       },
+      PercentageColumn({
+        accessor: 'discount',
+        title: t`Discount`,
+        defaultVisible: false
+      }),
       DateColumn({
         accessor: 'target_date',
         title: t`Target Date`
@@ -194,13 +217,25 @@ export default function ReturnOrderLineItemTable({
         tooltip={t`Receive selected items`}
         icon={<IconSquareArrowRight />}
         hidden={
-          !editable || inProgress || !user.hasChangeRole(UserRoles.return_order)
+          !editable ||
+          !inProgress ||
+          !user.hasChangeRole(UserRoles.return_order)
         }
         onClick={() => {
           setSelectedItems(
             table.selectedRecords.filter((record: any) => !record.received_date)
           );
           receiveLineItems.open();
+        }}
+        disabled={table.selectedRecords.length == 0}
+      />,
+      <ActionButton
+        key='set-outcome'
+        tooltip={t`Set outcome for selected items`}
+        icon={<IconFlag />}
+        hidden={!editable || !user.hasChangeRole(UserRoles.return_order)}
+        onClick={() => {
+          setOutcome.open();
         }}
         disabled={table.selectedRecords.length == 0}
       />
@@ -258,6 +293,7 @@ export default function ReturnOrderLineItemTable({
       {editLine.modal}
       {deleteLine.modal}
       {receiveLineItems.modal}
+      {setOutcome.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.return_order_line_list)}
         tableState={table}
@@ -271,7 +307,10 @@ export default function ReturnOrderLineItemTable({
           },
           defaultSortColumn: 'line',
           enableSelection:
-            inProgress && user.hasChangeRole(UserRoles.return_order),
+            editable && user.hasChangeRole(UserRoles.return_order),
+          enableBulkDelete:
+            editable && user.hasDeleteRole(UserRoles.return_order),
+          afterBulkDelete: orderDetailRefresh,
           tableActions: tableActions,
           tableFilters: tableFilters,
           rowActions: rowActions,

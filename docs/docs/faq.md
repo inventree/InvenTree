@@ -35,7 +35,7 @@ If the installed version of invoke is too old, users may see error messages duri
 Make sure you are running a stable or production release of InvenTree. The frontend panel is not included in development releases.
 More Information: [Error Codes - INVE-E1](./settings/error_codes.md#inve-e1)
 
-### No module named <xxx>
+### No module named xyz
 
 During the install or update process, you may be presented with an error like:
 
@@ -195,3 +195,34 @@ This means that either:
 - The docker user does not have write permission to the specified directory
 
 In either case, ensure that the directory is available *on your local machine* and the user account has the required permissions.
+
+### Running on a Non-Standard Port / Behind an Existing Reverse Proxy
+
+If you want to serve InvenTree on a port other than 80/443 (for example, because those ports are already used by another service on your host), or you want to place InvenTree behind an existing reverse proxy which already handles SSL for other services, refer to:
+
+- [Proxy (external) port configuration](./start/docker_install.md#proxy-external-port) - the `INVENTREE_HTTP_PORT` / `INVENTREE_HTTPS_PORT` variables
+- [Integrating with an existing reverse proxy](./start/processes.md#integrating-with-existing-proxy) - a worked example, including the required `INVENTREE_TRUSTED_ORIGINS` setting
+
+!!! tip "Automatic HTTPS"
+    The bundled Caddy proxy's [Automatic HTTPS](./start/docker.md#ssl-certificates) only works if it is reachable on the standard ports 80/443, for the Let's Encrypt ACME challenge. If that is not the case for your setup, terminate SSL at your external proxy instead.
+
+
+## Error Rendering Component
+
+Sometimes, following a software update, you may find that certain components of the web interface are not rendering correctly, and presented with a message similar to the screenshot below:
+
+{{ image("faq/boundary.png", "Error Rendering Component") }}
+
+This is often due to a caching issue with your web browser. Try performing a hard refresh of the page to clear the cache, this should resolve the issue in most cases.
+
+If the problem persists, refer to the [troubleshooting guide](./troubleshooting.md) for further assistance.
+
+## Expression tree is too large
+
+If you are running a large InvenTree deployment on an SQLite database, you may encounter an error similar to:
+
+```
+Expression tree is too large (maximum depth 1000)
+```
+
+This is a [known limitation of SQLite](https://www.sqlite.org/limits.html) which can occur when performing complex queries on a large database. Due to [structural limitations](./start/processes.md#sqlite-limitations) of SQLite, it is recommended to use a more robust database backend such as PostgreSQL for larger deployments.

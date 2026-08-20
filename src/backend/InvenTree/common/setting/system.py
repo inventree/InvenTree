@@ -235,6 +235,18 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
         'default': False,
     },
+    'INVENTREE_SHOW_SUPERUSER_BANNER': {
+        'name': _('Show superuser banner'),
+        'description': _('Show a warning banner in the UI when logged in as superuser'),
+        'validator': bool,
+        'default': True,
+    },
+    'INVENTREE_SHOW_ADMIN_BANNER': {
+        'name': _('Show admin banner'),
+        'description': _('Show a warning banner in the UI when logged in as admin'),
+        'validator': bool,
+        'default': False,
+    },
     'INVENTREE_COMPANY_NAME': {
         'name': _('Company name'),
         'description': _('Internal company name'),
@@ -274,25 +286,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'choices': common.currency.currency_exchange_plugins,
         'default': 'inventreecurrencyexchange',
     },
-    'INVENTREE_DOWNLOAD_FROM_URL': {
-        'name': _('Download from URL'),
-        'description': _('Allow download of remote images and files from external URL'),
-        'validator': bool,
-        'default': False,
-    },
-    'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE': {
-        'name': _('Download Size Limit'),
-        'description': _('Maximum allowable download size for remote image'),
+    'INVENTREE_UPLOAD_MAX_SIZE': {
+        'name': _('Upload Size Limit'),
+        'description': _('Maximum allowable upload size for images and files'),
         'units': 'MB',
-        'default': 1,
-        'validator': [int, MinValueValidator(1), MaxValueValidator(25)],
-    },
-    'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT': {
-        'name': _('User-agent used to download from URL'),
-        'description': _(
-            'Allow to override the user-agent used to download images and files from external URL (leave blank for the default)'
-        ),
-        'default': '',
+        'default': 10,
+        'validator': [int, MinValueValidator(1)],
     },
     'INVENTREE_STRICT_URLS': {
         'name': _('Strict URL Validation'),
@@ -402,6 +401,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Plugin to use for internal barcode data generation'),
         'choices': barcode_plugins,
         'default': 'inventreebarcode',
+    },
+    'PART_ENABLE_LOCKING': {
+        'name': _('Part Locking'),
+        'description': _('Enable locking of parts to prevent modification'),
+        'validator': bool,
+        'default': True,
     },
     'PART_ENABLE_REVISION': {
         'name': _('Part Revisions'),
@@ -672,6 +677,12 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'REPORT_FETCH_URLS': {
+        'name': _('Report URL Fetching'),
+        'description': _('Allow fetching of remote URLs when generating reports'),
+        'default': False,
+        'validator': bool,
+    },
     'REPORT_LOG_ERRORS': {
         'name': _('Log Report Errors'),
         'description': _('Log errors which occur when generating reports'),
@@ -701,6 +712,18 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'STOCK_DELETE_DEPLETED_DEFAULT': {
         'name': _('Delete Depleted Stock'),
         'description': _('Determines default behavior when a stock item is depleted'),
+        'default': True,
+        'validator': bool,
+    },
+    'STOCK_ALLOW_EDIT_SERIAL': {
+        'name': _('Allow Edit Serial Number'),
+        'description': _('Allow editing of serial number for stock items'),
+        'default': True,
+        'validator': bool,
+    },
+    'STOCK_ALLOW_DELETE_SERIALIZED': {
+        'name': _('Delete Serialized Stock'),
+        'description': _('Allow deletion of stock items which have a serial number'),
         'default': True,
         'validator': bool,
     },
@@ -770,6 +793,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'STOCK_MERGE_ON_TRANSFER': {
+        'name': _('Merge stock with existing stock on transfer by default'),
+        'description': _(
+            'Default state for merge stock on transfer behaviour. (Can be changed per transfer if desired)'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'BUILDORDER_REFERENCE_PATTERN': {
         'name': _('Build Order Reference Pattern'),
         'description': _('Required pattern for generating Build Order reference field'),
@@ -811,6 +842,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'BUILDORDER_EXTERNAL_BUILDS': {
         'name': _('External Build Orders'),
         'description': _('Enable external build order functionality'),
+        'default': False,
+        'validator': bool,
+    },
+    'BUILDORDER_EXTERNAL_REQUIRED': {
+        'name': _('Require External Build Orders'),
+        'description': _(
+            'Require an external build order when ordering assembled parts from an external supplier'
+        ),
         'default': False,
         'validator': bool,
     },
@@ -892,6 +931,42 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'TRANSFERORDER_ENABLED': {
+        'name': _('Enable Transfer Orders'),
+        'description': _('Enable transfer order functionality in the user interface'),
+        'validator': bool,
+        'default': False,
+    },
+    'TRANSFERORDER_REFERENCE_PATTERN': {
+        'name': _('Transfer Order Reference Pattern'),
+        'description': _(
+            'Required pattern for generating Transfer Order reference field'
+        ),
+        'default': 'TO-{ref:04d}',
+        'validator': order.validators.validate_transfer_order_reference_pattern,
+    },
+    'TRANSFERORDER_REQUIRE_RESPONSIBLE': {
+        'name': _('Require Responsible Owner'),
+        'description': _('A responsible owner must be assigned to each order'),
+        'default': False,
+        'validator': bool,
+    },
+    'TRANSFERORDER_EDIT_COMPLETED_ORDERS': {
+        'name': _('Edit Completed Transfer Orders'),
+        'description': _(
+            'Allow editing of transfer orders after they have been completed'
+        ),
+        'default': False,
+        'validator': bool,
+    },
+    'SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS': {
+        'name': _('Block Incomplete Item Tests'),
+        'description': _(
+            'Prevent allocation of stock items to sales orders if required item tests are incomplete'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'PURCHASEORDER_REFERENCE_PATTERN': {
         'name': _('Purchase Order Reference Pattern'),
         'description': _(
@@ -924,6 +999,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Auto Complete Purchase Orders'),
         'description': _(
             'Automatically mark purchase orders as complete when all line items are received'
+        ),
+        'default': True,
+        'validator': bool,
+    },
+    'PURCHASEORDER_MERGE_LINE_ITEMS': {
+        'name': _('Merge Purchase Order Line Items'),
+        'description': _(
+            'Merge new purchase order line items with existing lines that share the same part, destination, and target date'
         ),
         'default': True,
         'validator': bool,
@@ -1175,6 +1258,29 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Display Users Profiles on their profile page'),
         'default': True,
         'validator': bool,
+    },
+    'WEEK_STARTS_ON': {
+        'name': _('Week Starts On'),
+        'description': _('Starting day of the week, for display in calendar views'),
+        'default': '1',
+        'choices': [
+            ('0', _('Sunday')),
+            ('1', _('Monday')),
+            ('2', _('Tuesday')),
+            ('3', _('Wednesday')),
+            ('4', _('Thursday')),
+            ('5', _('Friday')),
+            ('6', _('Saturday')),
+        ],
+    },
+    'CALENDAR_HORIZON_MONTHS': {
+        'name': _('Calendar Horizon'),
+        'description': _(
+            'Number of months into the future to display in calendar views'
+        ),
+        'default': 12,
+        'validator': [int, MinValueValidator(1)],
+        'units': _('months'),
     },
     'TEST_STATION_DATA': {
         'name': _('Enable Test Station Data'),

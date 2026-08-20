@@ -17,19 +17,19 @@ The django-dbbackup library provides [multiple configuration options](https://ar
 
 The following configuration options are available for backup:
 
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_BACKUP_STORAGE | backup_storage | Backup storage backend. Refer to the [storage backend documentation](#storage-backend). | django.core.files.storage.FileSystemStorage |
-| INVENTREE_BACKUP_DIR | backup_dir | Backup storage directory. | *No default* |
-| INVENTREE_BACKUP_OPTIONS | backup_options | Specific options for the selected storage backend (dict) | *No default* |
-| INVENTREE_BACKUP_CONNECTOR_OPTIONS | backup_connector_options | Specific options for the database connector (dict). Refer to the [database connector options](#database-connector). | *No default* |
-| INVENTREE_BACKUP_SEND_EMAIL | backup_send_email | If True, an email is sent to the site admin when an error occurs during a backup or restore procedure. | False |
-| INVENTREE_BACKUP_EMAIL_PREFIX | backup_email_prefix | Prefix for the subject line of backup-related emails. | `[InvenTree Backup]` |
-| INVENTREE_BACKUP_GPG_RECIPIENT | backup_gpg_recipient | Specify GPG recipient if using encryption for backups. | *No default* |
-| INVENTREE_BACKUP_DATE_FORMAT | backup_date_format | Date format string used to format timestamps in backup filenames. | `%Y-%m-%d-%H%M%S` |
-| INVENTREE_BACKUP_DATABASE_FILENAME_TEMPLATE | backup_database_filename_template | Template string used to generate database backup filenames. | `InvenTree-db-{datetime}.{extension}` |
-| INVENTREE_BACKUP_MEDIA_FILENAME_TEMPLATE | backup_media_filename_template | Template string used to generate media backup filenames. | `InvenTree-media-{datetime}.{extension}` |
-| INVENTREE_BACKUP_RESTORE_ALLOW_NEWER_VERSION | backup_restore_allow_newer_version | If True, allows restoring a backup created with a newer version of InvenTree. This is dangerous as it can lead to hard-to-debug data loss. | False |
+{{ configtable() }}
+{{ configsetting("INVENTREE_BACKUP_STORAGE") }} Backup storage backend. Refer to the [storage backend documentation](#storage-backend). |
+{{ configsetting("INVENTREE_BACKUP_DIR") }} Backup storage directory. |
+{{ configsetting("INVENTREE_BACKUP_OPTIONS") }} Specific options for the selected storage backend (dict) |
+{{ configsetting("INVENTREE_BACKUP_CONNECTOR_OPTIONS") }} Specific options for the database connector (dict). Refer to the [database connector options](#database-connector) |
+{{ configsetting("INVENTREE_BACKUP_SEND_EMAIL") }} If True, an email is sent to the site admin when an error occurs during a backup or restore procedure. |
+{{ configsetting("INVENTREE_BACKUP_EMAIL_PREFIX") }} Prefix for the subject line of backup-related emails. |
+{{ configsetting("INVENTREE_BACKUP_GPG_RECIPIENT") }} Specify GPG recipient if using encryption for backups. |
+{{ configsetting("INVENTREE_BACKUP_DATE_FORMAT") }} Date format string used to format timestamps in backup filenames. |
+{{ configsetting("INVENTREE_BACKUP_DATABASE_FILENAME_TEMPLATE") }} Template string used to generate database backup filenames.
+{{ configsetting("INVENTREE_BACKUP_MEDIA_FILENAME_TEMPLATE") }} Template string used to generate media backup filenames. |
+{{ configsetting("INVENTREE_BACKUP_RESTORE_ALLOW_NEWER_VERSION") }} If True, allows restoring a backup created with a newer version of InvenTree. This is dangerous as it can lead to hard-to-debug data loss. |
+
 
 ### Storage Backend
 

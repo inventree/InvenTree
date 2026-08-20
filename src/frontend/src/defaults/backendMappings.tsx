@@ -11,6 +11,8 @@ export const statusCodeList: Record<string, ModelType> = {
   PurchaseOrderStatus: ModelType.purchaseorder,
   ReturnOrderStatus: ModelType.returnorder,
   ReturnOrderLineStatus: ModelType.returnorderlineitem,
+  TransferOrderStatus: ModelType.transferorder,
+  TransferOrderLineStatus: ModelType.transferorderlineitem,
   SalesOrderStatus: ModelType.salesorder,
   StockHistoryCode: ModelType.stockhistory,
   StockStatus: ModelType.stockitem,

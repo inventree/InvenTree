@@ -5,25 +5,26 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ProgressBar } from '@lib/components/ProgressBar';
-import { RowViewAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { useTable } from '../../hooks/UseTable';
-import { useUserState } from '../../states/UserState';
 import {
   DescriptionColumn,
   IPNColumn,
   PartColumn,
   ProjectCodeColumn,
   StatusColumn
-} from '../ColumnRenderers';
-import { IncludeVariantsFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import RowExpansionIcon from '../RowExpansionIcon';
+} from '../../components/tables/ColumnRenderers';
+import { IncludeVariantsFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
+import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
+import { useUserState } from '../../states/UserState';
 import SalesOrderAllocationTable from '../sales/SalesOrderAllocationTable';
 
 export default function PartSalesAllocationsTable({
@@ -41,6 +42,8 @@ export default function PartSalesAllocationsTable({
         accessor: 'order',
         title: t`Sales Order`,
         switchable: false,
+        sortable: true,
+        ordering: 'order',
         render: (record: any) => (
           <Group wrap='nowrap' gap='xs'>
             <RowExpansionIcon
@@ -84,7 +87,7 @@ export default function PartSalesAllocationsTable({
   const rowActions = useCallback(
     (record: any) => {
       return [
-        RowViewAction({
+        AppRowViewAction({
           title: t`View Sales Order`,
           modelType: ModelType.salesorder,
           modelId: record.order,

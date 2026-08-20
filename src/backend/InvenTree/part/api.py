@@ -12,6 +12,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers
 from rest_framework.response import Response
 
+import common.filters
 import common.serializers
 import part.tasks as part_tasks
 from data_exporter.mixins import DataExportViewMixin
@@ -20,6 +21,7 @@ from InvenTree.api import (
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
     ParameterListMixin,
+    TreeMixin,
     meta_path,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
@@ -264,9 +266,12 @@ class CategoryDetail(CategoryMixin, OutputOptionsMixin, CustomRetrieveUpdateDest
 
     def destroy(self, request, *args, **kwargs):
         """Delete a Part category instance via the API."""
-        delete_parts = str2bool(request.data.get('delete_parts', False))
+        serializer = part_serializers.CategoryDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        delete_parts = str2bool(serializer.validated_data.get('delete_parts', False))
         delete_child_categories = str2bool(
-            request.data.get('delete_child_categories', False)
+            serializer.validated_data.get('delete_child_categories', False)
         )
 
         return super().destroy(
@@ -280,25 +285,38 @@ class CategoryDetail(CategoryMixin, OutputOptionsMixin, CustomRetrieveUpdateDest
         )
 
 
-class CategoryTree(ListAPI):
+class CategoryTreeFilter(FilterSet):
+    """Custom filterset class for the CategoryTree endpoint."""
+
+    class Meta:
+        """Metaclass options for this filterset."""
+
+        model = PartCategory
+        fields = ['parent', 'tree_id', 'level']
+
+    max_level = rest_filters.NumberFilter(
+        label=_('Max Level'),
+        method='filter_max_level',
+        help_text=_('Limit the depth of the category tree'),
+    )
+
+    def filter_max_level(self, queryset, name, value):
+        """Filter by the maximum depth of the category tree."""
+        return queryset.filter(level__lte=value)
+
+
+class CategoryTree(TreeMixin, ListAPI):
     """API endpoint for accessing a list of PartCategory objects ready for rendering a tree."""
 
+    model_class = PartCategory
     queryset = PartCategory.objects.all()
-    serializer_class = part_serializers.CategoryTree
-
-    filter_backends = ORDER_FILTER
-
-    ordering_fields = ['level', 'name', 'subcategories']
-
-    ordering_field_aliases = {'level': ['level', 'name'], 'name': ['name', 'level']}
-
-    # Order by tree level (top levels first) and then name
-    ordering = ['level', 'name']
+    serializer_class = part_serializers.CategoryTreeSerializer
+    filterset_class = CategoryTreeFilter
 
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the CategoryTree endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
-        queryset = part_serializers.CategoryTree.annotate_queryset(queryset)
+        queryset = part_serializers.CategoryTreeSerializer.annotate_queryset(queryset)
         return queryset
 
 
@@ -599,6 +617,7 @@ class PartValidateBOM(RetrieveUpdateAPI):
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartBomValidateSerializer
+    role_required = 'bom'
 
     @extend_schema(
         responses={
@@ -609,7 +628,7 @@ class PartValidateBOM(RetrieveUpdateAPI):
     def update(self, request, *args, **kwargs):
         """Validate the referenced BomItem instance.
 
-        As this task if offloaded to the background worker,
+        As this task is offloaded to the background worker,
         we return information about the background task which is performing the validation.
         """
         part = self.get_object()
@@ -728,6 +747,23 @@ class PartFilter(FilterSet):
         # Filter items which have an 'in_stock' level higher than 'minimum_stock'
         return queryset.filter(Q(total_in_stock__gte=F('minimum_stock')))
 
+    high_stock = rest_filters.BooleanFilter(
+        label='High stock', method='filter_high_stock'
+    )
+
+    def filter_high_stock(self, queryset, name, value):
+        """Filter by "high stock" status."""
+        if str2bool(value):
+            # Ignore any parts which do not have a specified 'maximum_stock' level
+            # Filter items which have an 'in_stock' level higher than 'maximum_stock'
+            return queryset.exclude(maximum_stock=0).filter(
+                Q(total_in_stock__gt=F('maximum_stock'))
+            )
+        # Filter items which have an 'in_stock' level lower than 'maximum_stock'
+        return queryset.filter(
+            Q(total_in_stock__lte=F('maximum_stock')) | Q(maximum_stock=0)
+        ).distinct()
+
     # has_stock filter
     has_stock = rest_filters.BooleanFilter(label='Has stock', method='filter_has_stock')
 
@@ -747,6 +783,15 @@ class PartFilter(FilterSet):
         if str2bool(value):
             return queryset.filter(Q(unallocated_stock__gt=0))
         return queryset.filter(Q(unallocated_stock__lte=0))
+
+    # on_order filter
+    on_order = rest_filters.BooleanFilter(label='On order', method='filter_on_order')
+
+    def filter_on_order(self, queryset, name, value):
+        """Filter by whether the Part has any stock on order."""
+        if str2bool(value):
+            return queryset.filter(Q(ordering__gt=0))
+        return queryset.filter(Q(ordering__lte=0))
 
     convert_from = rest_filters.ModelChoiceFilter(
         label='Can convert from',
@@ -889,9 +934,9 @@ class PartFilter(FilterSet):
 
     virtual = rest_filters.BooleanFilter()
 
-    tags_name = rest_filters.CharFilter(field_name='tags__name', lookup_expr='iexact')
+    consumable = rest_filters.BooleanFilter()
 
-    tags_slug = rest_filters.CharFilter(field_name='tags__slug', lookup_expr='iexact')
+    tags = common.filters.TagsFilter()
 
     # Created date filters
     created_before = InvenTreeDateFilter(
@@ -1056,9 +1101,11 @@ class PartList(
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
+        'id',
         'name',
         'creation_date',
         'IPN',
+        'ordering',
         'in_stock',
         'total_in_stock',
         'unallocated_stock',
@@ -1288,6 +1335,10 @@ class BomFilter(FilterSet):
         label=_('Assembly part is testable'), field_name='part__testable'
     )
 
+    part_locked = rest_filters.BooleanFilter(
+        label=_('Assembly part is locked'), field_name='part__locked'
+    )
+
     # Filters for linked 'sub_part'
     sub_part_active = rest_filters.BooleanFilter(
         label=_('Component part is active'), field_name='sub_part__active'
@@ -1404,7 +1455,11 @@ class BomOutputOptions(OutputConfiguration):
 
 
 class BomList(
-    BomMixin, DataExportViewMixin, OutputOptionsMixin, ListCreateDestroyAPIView
+    BomMixin,
+    BulkUpdateMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    ListCreateDestroyAPIView,
 ):
     """API endpoint for accessing a list of BomItem objects.
 

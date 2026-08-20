@@ -34,8 +34,10 @@ class ApiTokenAuthentication(TokenAuthentication):
 
         if token.last_seen != datetime.date.today():
             # Update the last-seen date
+            # Note: Use update_fields to avoid clobbering concurrent changes to
+            # other fields on this token (e.g. a concurrent revocation)
             token.last_seen = datetime.date.today()
-            token.save()
+            token.save(update_fields=['last_seen'])
 
         return (user, token)
 

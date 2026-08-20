@@ -47,9 +47,7 @@ User.add_to_class('__str__', user_model_str)  # Overriding User.__str__
 
 
 if settings.LDAP_AUTH:
-    from django_auth_ldap.backend import (  # type: ignore[unresolved-import]
-        populate_user,
-    )
+    from django_auth_ldap.backend import populate_user  # ty: ignore[unresolved-import]
 
     @receiver(populate_user)
     def create_email_address(user, **kwargs):
@@ -179,9 +177,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         if self.pk is None:
             return self.key  # pragma: no cover
 
-        M = len(self.key) - 20
-
-        return self.key[:8] + '*' * M + self.key[-12:]
+        return InvenTree.helpers.sanitize_token(self.key)
 
     @property
     @admin.display(boolean=True, description=_('Expired'))

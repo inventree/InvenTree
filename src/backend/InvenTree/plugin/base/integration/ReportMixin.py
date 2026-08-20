@@ -24,7 +24,7 @@ class ReportMixin:
         super().__init__()
         self.add_mixin(PluginMixinEnum.REPORT, True, __class__)
 
-    def add_report_context(self, report_instance, model_instance, request, context):
+    def add_report_context(self, report_instance, model_instance, user, context):
         """Add extra context to the provided report instance.
 
         By default, this method does nothing.
@@ -32,11 +32,11 @@ class ReportMixin:
         Args:
             report_instance: The report instance to add context to
             model_instance: The model instance which initiated the report generation
-            request: The request object which initiated the report generation
+            user: The user to associate with the generated report
             context: The context dictionary to add to
         """
 
-    def add_label_context(self, label_instance, model_instance, request, context):
+    def add_label_context(self, label_instance, model_instance, user, context):
         """Add extra context to the provided label instance.
 
         By default, this method does nothing.
@@ -44,18 +44,18 @@ class ReportMixin:
         Args:
             label_instance: The label instance to add context to
             model_instance: The model instance which initiated the label generation
-            request: The request object which initiated the label generation
+            user: The user to associate with the generated label
             context: The context dictionary to add to
         """
 
-    def report_callback(self, template, instance, report, request, **kwargs):
+    def report_callback(self, template, instance, report, user, **kwargs):
         """Callback function called after a report is generated.
 
         Arguments:
             template: The ReportTemplate model
             instance: The instance of the target model
             report: The generated report object
-            request: The initiating request object
+            user: The user to associate with the generated report
 
         The default implementation does nothing.
         """

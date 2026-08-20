@@ -1,17 +1,18 @@
 import { IconUsers } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import type { ModelType } from '@lib/enums/ModelType';
+import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import type { ApiFormFieldSet } from '@lib/types/Forms';
-import { t } from '@lingui/core/macro';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface
 } from '../components/render/StatusRenderer';
 import { useApi } from '../contexts/ApiContext';
 import { useGlobalStatusState } from '../states/GlobalStatusState';
+import { useUserState } from '../states/UserState';
+import { ProjectCodeField } from './CommonFields';
 
 export function projectCodeFields(): ApiFormFieldSet {
   return {
@@ -19,7 +20,8 @@ export function projectCodeFields(): ApiFormFieldSet {
     description: {},
     responsible: {
       icon: <IconUsers />
-    }
+    },
+    active: {}
   };
 }
 
@@ -89,12 +91,170 @@ export function extraLineItemFields(): ApiFormFieldSet {
     quantity: {},
     price: {},
     price_currency: {},
-    project_code: {
-      description: t`Select project code for this line item`
-    },
+    discount: {},
+    project_code: ProjectCodeField(),
     notes: {},
     link: {}
   };
+}
+
+export function useParameterTemplateFields(): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      name: {},
+      description: {},
+      units: {},
+      model_type: {},
+      choices: {},
+      checkbox: {},
+      selectionlist: {
+        filters: {
+          active: true
+        }
+      },
+      enabled: {},
+      unique: {}
+    };
+  }, []);
+}
+
+/**
+ * Shared hook for the dynamic "value" field on parameter forms.
+ *
+ * When the user selects a parameter template, the field type for the
+ * corresponding value input (data / default_value) must change to match the
+ * template's data type (boolean, choice, related-field selection list, or
+ * plain string).  This hook encapsulates that state so it can be reused
+ * across the "Add Parameter" and "Add Category Parameter" forms.
+ *
+ * @param resetDep - When this value changes all internal state is reset to
+ *   defaults.  Pass a stringified key derived from the form's context (e.g.
+ *   `${modelType}-${modelId}`) so the field resets when the context switches.
+ */
+export function useDynamicParameterValueField(resetDep?: any): {
+  onTemplateValueChange: (value: any, record: any) => void;
+  valueFieldConfig: ApiFormFieldType;
+  reset: () => void;
+} {
+  const api = useApi();
+
+  const [selectionListId, setSelectionListId] = useState<number | null>(null);
+  const [choices, setChoices] = useState<any[]>([]);
+  const [fieldType, setFieldType] = useState<
+    'string' | 'boolean' | 'choice' | 'related field'
+  >('string');
+  const [data, setData] = useState<string>('');
+
+  const reset = useCallback(() => {
+    setSelectionListId(null);
+    setFieldType('string');
+    setChoices([]);
+    setData('');
+  }, []);
+
+  useEffect(() => {
+    reset();
+  }, [resetDep, reset]);
+
+  const fetchSelectionEntry = useCallback(
+    (value: any) => {
+      if (!value || !selectionListId) {
+        return null;
+      }
+
+      return api
+        .get(apiUrl(ApiEndpoints.selectionentry_list, selectionListId), {
+          params: { value: value }
+        })
+        .then((response) => {
+          if (response.data && response.data.length == 1) {
+            return response.data[0];
+          } else {
+            return null;
+          }
+        });
+    },
+    [selectionListId]
+  );
+
+  const onTemplateValueChange = useCallback(
+    (value: any, record: any) => {
+      setSelectionListId(record?.selectionlist || null);
+      setData('');
+
+      if (record?.checkbox) {
+        setChoices([]);
+        setFieldType('boolean');
+        setData('false');
+      } else if (record?.choices) {
+        const _choices: string[] = record.choices.split(',');
+
+        if (_choices.length > 0) {
+          setChoices(
+            _choices.map((choice) => ({
+              display_name: choice.trim(),
+              value: choice.trim()
+            }))
+          );
+          setFieldType('choice');
+        } else {
+          setChoices([]);
+          setFieldType('string');
+          setData('');
+        }
+      } else if (record?.selectionlist) {
+        setFieldType('related field');
+        setData('');
+      } else {
+        setFieldType('string');
+        setData('');
+      }
+    },
+    [setFieldType, setData, setChoices]
+  );
+
+  const valueFieldConfig: ApiFormFieldType = useMemo(
+    () => ({
+      value: data,
+      onValueChange: (value: any, record: any) => {
+        if (fieldType === 'related field' && selectionListId) {
+          // For related fields, store the primary key value (not the string representation)
+          setData(record?.value ?? value);
+        } else {
+          setData(value);
+        }
+      },
+      field_type: fieldType,
+      choices: fieldType === 'choice' ? choices : undefined,
+      default: fieldType === 'boolean' ? false : undefined,
+      pk_field:
+        fieldType === 'related field' && selectionListId ? 'value' : undefined,
+      model:
+        fieldType === 'related field' && selectionListId
+          ? ModelType.selectionentry
+          : undefined,
+      api_url:
+        fieldType === 'related field' && selectionListId
+          ? apiUrl(ApiEndpoints.selectionentry_list, selectionListId)
+          : undefined,
+      filters: fieldType === 'related field' ? { active: true } : undefined,
+      adjustValue: (value: any) => {
+        let v: string = value.toString().trim();
+
+        if (fieldType === 'boolean') {
+          if (v.toLowerCase() !== 'true') {
+            v = 'false';
+          }
+        }
+
+        return v;
+      },
+      singleFetchFunction: fetchSelectionEntry
+    }),
+    [data, fieldType, choices, selectionListId, fetchSelectionEntry]
+  );
+
+  return { onTemplateValueChange, valueFieldConfig, reset };
 }
 
 export function useParameterFields({
@@ -104,24 +264,15 @@ export function useParameterFields({
   modelType: ModelType;
   modelId: number;
 }): ApiFormFieldSet {
-  const api = useApi();
+  const user = useUserState.getState();
+  const templateCreateFields = useParameterTemplateFields();
 
-  // Valid field choices
-  const [choices, setChoices] = useState<any[]>([]);
-
-  // Field type for "data" input
-  const [fieldType, setFieldType] = useState<'string' | 'boolean' | 'choice'>(
-    'string'
+  const resetKey = useMemo(
+    () => `${modelType}-${modelId}`,
+    [modelType, modelId]
   );
-
-  const [data, setData] = useState<string>('');
-
-  // Reset the field type and choices when the model changes
-  useEffect(() => {
-    setFieldType('string');
-    setChoices([]);
-    setData('');
-  }, [modelType, modelId]);
+  const { onTemplateValueChange, valueFieldConfig } =
+    useDynamicParameterValueField(resetKey);
 
   return useMemo(() => {
     return {
@@ -138,75 +289,37 @@ export function useParameterFields({
           for_model: modelType,
           enabled: true
         },
-        onValueChange: (value: any, record: any) => {
-          // Adjust the type of the "data" field based on the selected template
-          if (record?.checkbox) {
-            // This is a "checkbox" field
-            setChoices([]);
-            setFieldType('boolean');
-          } else if (record?.choices) {
-            const _choices: string[] = record.choices.split(',');
-
-            if (_choices.length > 0) {
-              setChoices(
-                _choices.map((choice) => {
-                  return {
-                    display_name: choice.trim(),
-                    value: choice.trim()
-                  };
-                })
-              );
-              setFieldType('choice');
-            } else {
-              setChoices([]);
-              setFieldType('string');
-            }
-          } else if (record?.selectionlist) {
-            api
-              .get(
-                apiUrl(ApiEndpoints.selectionlist_detail, record.selectionlist)
-              )
-              .then((res) => {
-                setChoices(
-                  res.data.choices.map((item: any) => {
-                    return {
-                      value: item.value,
-                      display_name: item.label
-                    };
-                  })
-                );
-                setFieldType('choice');
-              });
-          } else {
-            setChoices([]);
-            setFieldType('string');
-          }
-        }
+        onValueChange: onTemplateValueChange,
+        addCreateFields: user.isStaff() ? templateCreateFields : undefined
       },
-      data: {
-        value: data,
-        onValueChange: (value: any) => {
-          setData(value);
-        },
-        type: fieldType,
-        field_type: fieldType,
-        choices: fieldType === 'choice' ? choices : undefined,
-        default: fieldType === 'boolean' ? false : undefined,
-        adjustValue: (value: any) => {
-          // Coerce boolean value into a string (required by backend)
-
-          let v: string = value.toString().trim();
-
-          if (fieldType === 'boolean') {
-            if (v.toLowerCase() !== 'true') {
-              v = 'false';
-            }
-          }
-
-          return v;
-        }
-      },
+      data: valueFieldConfig,
       note: {}
     };
-  }, [data, modelType, fieldType, choices, modelId]);
+  }, [
+    modelType,
+    modelId,
+    onTemplateValueChange,
+    valueFieldConfig,
+    templateCreateFields,
+    user
+  ]);
+}
+
+export function selectionListFields(): ApiFormFieldSet {
+  return {
+    name: {},
+    description: {},
+    active: {},
+    source_plugin: {},
+    source_string: {}
+  };
+}
+
+export function selectionEntryFields(): ApiFormFieldSet {
+  return {
+    value: {},
+    label: {},
+    description: {},
+    active: {}
+  };
 }

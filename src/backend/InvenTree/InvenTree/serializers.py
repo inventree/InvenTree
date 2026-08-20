@@ -2,9 +2,11 @@
 
 from collections import OrderedDict
 from copy import deepcopy
+from dataclasses import dataclass
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Optional
 
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.files.storage import default_storage
@@ -21,11 +23,10 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import SAFE_METHODS
-from rest_framework.serializers import DecimalField
+from rest_framework.serializers import DecimalField, Serializer
 from rest_framework.utils import model_meta
-from taggit.serializers import TaggitSerializer, TagListSerializerField
+from taggit.serializers import TaggitSerializer
 
-import common.models as common_models
 import InvenTree.ready
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
@@ -33,94 +34,325 @@ from InvenTree.helpers import str2bool
 from InvenTree.helpers_model import getModelsWithMixin
 
 
-# region path filtering
-class FilterableSerializerField:
-    """Mixin to mark serializer as filterable.
+@dataclass
+class OptionalField:
+    """DataClass used to optionally enable a serializer field.
 
-    This needs to be used in conjunction with `enable_filter` on the serializer field!
-    """
+    This is used in conjunction with the `FilterableSerializerMixin` to allow
+    dynamic inclusion or exclusion of serializer fields at runtime.
 
-    is_filterable = None
-    is_filterable_vals = {}
+    Adding OptionalField instances to a serializer class is more "efficient"
+    than directly adding the field (and later removing it),
+    as the field is never instantiated unless it is required.
 
-    # Options for automatic queryset prefetching
-    prefetch_fields: Optional[list[str]] = None
+    Additionally, you can specify prefetch fields which will be applied
+    to the queryset, *only* if the field is included in the final serializer.
 
-    def __init__(self, *args, **kwargs):
-        """Initialize the serializer."""
-        self.is_filterable = kwargs.pop('is_filterable', None)
-        self.is_filterable_vals = kwargs.pop('is_filterable_vals', {})
-        self.prefetch_fields = kwargs.pop('prefetch_fields', None)
+    This allows for optimization of database queries based only on the requested data.
 
-        super().__init__(*args, **kwargs)
+    If the field embeds another model's data (e.g. a nested "detail" serializer), the
+    requesting user's view permission against that model is checked before the field is
+    included - this is inferred from `serializer_class.Meta.model` unless `model` is
+    explicitly provided. This prevents a user from seeing embedded data (e.g. a Part,
+    via a BuildOrder's `part_detail`) that they do not have direct permission to view.
 
-
-def enable_filter(
-    func: Any,
-    default_include: bool = False,
-    filter_name: Optional[str] = None,
-    filter_by_query: bool = True,
-    prefetch_fields: Optional[list[str]] = None,
-):
-    """Decorator for marking a serializer field as filterable.
-
-    This can be customized by passing in arguments. This only works in conjunction with serializer fields or serializers that contain the `FilterableSerializerField` mixin.
-
-    Args:
-        func: The serializer field to mark as filterable. Will automatically be passed when used as a decorator.
-        default_include (bool): If True, the field will be included by default unless explicitly excluded. If False, the field will be excluded by default unless explicitly included.
-        filter_name (str, optional): The name of the filter parameter to use in the URL. If None, the function name of the (decorated) function will be used.
-        filter_by_query (bool): If True, also look for filter parameters in the request query parameters.
-        prefetch_fields (list of str, optional): List of related fields to prefetch when this field is included. This can be used to optimize database queries.
-
-    Returns:
-        The decorated serializer field, marked as filterable.
-    """
-    # Ensure this function can be actually filtered
-    if not issubclass(func.__class__, FilterableSerializerField):
-        raise TypeError(
-            'INVE-I2: `enable_filter` can only be applied to serializer fields / serializers that contain the `FilterableSerializerField` mixin!'
+    Example:
+    class MySerializer(FilterableSerializerMixin, serializers.ModelSerializer):
+        my_optional_field = OptionalField(
+            serializer_class=serializers.CharField,
+            default_include=False,
+            filter_name='include_my_field',
+            serializer_kwargs={
+                'help_text': 'This is an optional field',
+                'read_only': True,
+            },
+            prefetch_fields=['related_field'],
         )
 
-    # Mark the function as filterable
-    func._kwargs['is_filterable'] = True
-    func._kwargs['is_filterable_vals'] = {
-        'default': default_include,
-        'filter_name': filter_name if filter_name else func.field_name,
-        'filter_by_query': filter_by_query,
-    }
+    """
 
-    # Attach queryset prefetching information
-    func._kwargs['prefetch_fields'] = prefetch_fields
-
-    return func
+    serializer_class: Serializer
+    serializer_kwargs: Optional[dict] = None
+    default_include: bool = False
+    filter_name: Optional[str] = None
+    filter_by_query: bool = True
+    prefetch_fields: Optional[list[str]] = None
+    model: Optional[type] = None
 
 
 class FilterableSerializerMixin:
     """Mixin that enables filtering of marked fields on a serializer.
 
-    Use the `enable_filter` decorator to mark serializer fields as filterable.
+    Use the `OptionalField` helper class to mark serializer fields as filterable.
     This introduces overhead during initialization, so only use this mixin when necessary.
-    If you need to mark a serializer as filterable but it does not contain any filterable fields, set `no_filters = True` to avoid getting an exception that protects against over-application of this mixin.
     """
 
-    _was_filtered = False
-    no_filters = False
-    """If True, do not raise an exception if no filterable fields are found."""
-    filter_on_query = True
-    """If True, also look for filter parameters in the request query parameters."""
+    optional_filters: dict = None
+    fields_to_remove: set = None
+    optional_fields: set = None
+    filter_on_query: bool = True
 
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer. This gathers and applies filters through kwargs."""
-        # add list_serializer_class to meta if not present - reduces duplication
-        if not isinstance(self, FilterableListSerializer) and (
-            not hasattr(self.Meta, 'list_serializer_class')
-        ):
-            self.Meta.list_serializer_class = FilterableListSerializer
+        # Extract some useful context information for later use
+        context = kwargs.get('context', {})
+        self.request = context.get('request', None) or getattr(self, 'request', None)
+        self.request_query_params = (
+            dict(getattr(self.request, 'query_params', {})) if self.request else {}
+        )
 
-        self.gather_filters(kwargs)
+        self.gather_optional_fields(kwargs)
+
         super().__init__(*args, **kwargs)
-        self.do_filtering()
+
+        # Ensure any fields we are *not* using are removed
+        for field_name in self.fields_to_remove:
+            self.fields.pop(field_name, None)
+
+    def is_exporting(self) -> bool:
+        """Determine if we are exporting data."""
+        return getattr(self, '_exporting_data', False)
+
+    def is_field_included(
+        self, field_name: str, field: OptionalField, kwargs: dict
+    ) -> bool:
+        """Determine at runtime whether an OptionalField should be included.
+
+        Arguments:
+            field_name: Name of the field
+            field: The OptionalField instance
+            kwargs: The kwargs provided to the serializer instance
+
+        Returns:
+            True if the field should be included, False otherwise.
+
+        Order of operations:
+
+        - If we are generating the schema, always include the field (unless the user does not have permission to view)
+        - If this is a write request (POST, PUT, PATCH) and we are not exporting, always include the field
+        - If this is a top-level serializer, check the request query parameters for the filter name
+        - Check the kwargs provided to the serializer instance
+        - Finally, fall back to the default_include value for the field itself
+
+        Whatever the outcome of the above, if the field embeds another model's data, the
+        result is then narrowed by the requesting user's view permission against that
+        model (see `check_field_permission`) - the field is never included for a user who
+        cannot view the embedded model, regardless of query parameters or defaults.
+        """
+        field_ref = field.filter_name or field_name
+
+        # If we have already found a value for this filter, use it
+        # This allows multiple optional fields to share the same filter value
+        # Note: fields sharing a filter_ref may still embed different models, so the
+        # permission gate is re-applied per-field even when the raw value is cached
+        cached_value = self.optional_filters.get(field_ref, None)
+
+        if cached_value is not None:
+            return self.check_field_permission(field, cached_value)
+
+        # First, check kwargs provided to the serializer instance
+        # We also pop the value to avoid issues with nested serializers
+        value = kwargs.pop(field_ref, None)
+
+        # We do not want to pop fields while generating the schema
+        if InvenTree.ready.isGeneratingSchema():
+            return True
+
+        if value is not None:
+            # Cache the value for future reference
+            self.optional_filters[field_ref] = value
+
+        field_kwargs = field.serializer_kwargs or {}
+
+        # Skip filtering for a write request
+        # All fields should be present for data creation,
+        # excepting those for which the user does not have the required permissions
+        if method := getattr(self.request, 'method', None):
+            if method not in SAFE_METHODS and not self.is_exporting():
+                return self.check_field_permission(field, True)
+            else:
+                # Ignore write_only fields for read requests
+                if field_kwargs.get('write_only', False):
+                    return False
+
+        # For a top-level serializer, check request query parameters
+        if self.request and self.filter_on_query and field.filter_by_query:
+            param_value = self.request.query_params.get(field_ref, None)
+
+            if param_value is not None:
+                # Convert from list to single value if needed
+                if type(param_value) == list and len(param_value) == 1:
+                    param_value = param_value[0]
+
+                value = str2bool(param_value)
+
+                # Cache the value for future reference
+                self.optional_filters[field_ref] = value
+
+        if value is None:
+            value = field.default_include
+
+        return self.check_field_permission(field, value)
+
+    def check_field_permission(self, field: OptionalField, included: bool) -> bool:
+        """Narrow an inclusion decision by the requesting user's view permission.
+
+        An OptionalField which embeds another model's data (e.g. `part_detail` embedding
+        a Part) should not be included unless the requesting user actually has view
+        permission on that model - otherwise a user could see e.g. Part data via a
+        BuildOrder's `part_detail` field without having Part view permission themselves.
+
+        Arguments:
+            field: The OptionalField instance being resolved
+            included: The inclusion decision made so far
+
+        Returns:
+            False if the field embeds a model the requesting user cannot view, otherwise
+            the original `included` value unchanged.
+        """
+        if not included:
+            return included
+
+        model = field.model or getattr(
+            getattr(field.serializer_class, 'Meta', None), 'model', None
+        )
+
+        if model is None:
+            return included
+
+        # A handful of models describe *permission metadata itself* (who a user is,
+        # what a role can do) rather than embedded business data - gating these behind
+        # a role would hide a user's own account/role information from themselves and
+        # from almost every non-admin user, which is a different (and much broader)
+        # concern than embedding e.g. Part/Company records. Deliberately exempted here:
+        # - auth_user: username attribution fields (issued_by_detail, checked_by_detail, ...)
+        # - auth_group: group membership/attribution (ExtendedUserSerializer.groups, ...)
+        # - users_ruleset: role/permission listings (GroupSerializer.roles, ...)
+        # - users_owner: user/group "owner" wrapper (responsible_detail, ...) - already in
+        #   get_ruleset_ignore() so check_user_permission would return True anyway, but
+        #   exempted explicitly here to document intent and skip the call
+        from django.contrib.auth.models import Group
+
+        from users.models import Owner, RuleSet
+
+        if model in (get_user_model(), Group, Owner, RuleSet):
+            return included
+
+        user = getattr(self.request, 'user', None)
+
+        if user is None:
+            return included
+
+        cache = self.__dict__.setdefault('_field_permission_cache', {})
+        cache_key = (user.pk, model)
+
+        if cache_key in cache:
+            return cache[cache_key]
+
+        from users.permissions import check_user_permission
+
+        result = check_user_permission(user, model, 'view')
+        cache[cache_key] = result
+        return result
+
+    def find_optional_fields(self):
+        """Find all optional fields defined on this serializer."""
+        optional_fields = {}
+
+        # Walk upwards through the class hierarchy
+        seen_vars = set()
+
+        for base in self.__class__.__mro__:
+            for field_name, field in vars(base).items():
+                if field_name in seen_vars:
+                    continue
+
+                seen_vars.add(field_name)
+
+                if field and isinstance(field, OptionalField):
+                    optional_fields[field_name] = field
+
+        return optional_fields
+
+    def gather_optional_fields(self, kwargs):
+        """Determine which optional fields will be included on this serializer.
+
+        Note that there may be instances of OptionalField in the field set,
+        which need to either be instantiated or removed.
+        """
+        self.optional_filters = {}
+        self.prefetch_list = set()
+        self.fields_to_remove = set()
+        self.optional_fields = set()
+
+        for field_name, field in self.find_optional_fields().items():
+            if self.is_field_included(field_name, field, kwargs):
+                self.optional_fields.add(field_name)
+                # Add prefetch information
+                if field.prefetch_fields:
+                    for pf in field.prefetch_fields:
+                        self.prefetch_list.add(pf)
+            else:
+                self.fields_to_remove.add(field_name)
+
+    def get_field_names(self, declared_fields, info):
+        """Remove unused fields before returning field names."""
+        # Note: when `Meta.fields` is a list/tuple, DRF's base `get_field_names`
+        # returns that *exact* list object rather than a copy - a single list
+        # shared by every instance of this serializer class, across every thread.
+        # Copy it before mutating below - otherwise concurrent requests that
+        # disagree on whether an OptionalField (e.g. `tags`) should be included
+        # append/remove it on each other's shared list. A request whose own
+        # append lands can still have the field silently removed again by a
+        # concurrent request's `.remove()` before its own field-building loop
+        # (in DRF's `get_fields()`, which iterates this same list) reaches it.
+        field_names = list(super().get_field_names(declared_fields, info))
+
+        # Add any optional fields which are included
+        for field_name in self.optional_fields:
+            if field_name not in field_names:
+                field_names.append(field_name)
+
+        # Remove any fields which are marked for removal
+        for field_name in self.fields_to_remove:
+            if field_name in field_names:
+                field_names.remove(field_name)
+
+        return field_names
+
+    def build_optional_field(self, field_name: str):
+        """Build an optional field, based on the provided field name."""
+        field = getattr(self, field_name, None)
+
+        if field and isinstance(field, OptionalField):
+            serializer_kwargs = {**field.serializer_kwargs} or {}
+            return field.serializer_class, serializer_kwargs
+
+    def build_relational_field(self, field_name, relation_info):
+        """Handle a special case where an OptionalField shadows a model relation."""
+        if field_name in self.optional_fields:
+            if field := self.build_optional_field(field_name):
+                return field
+
+        return super().build_relational_field(field_name, relation_info)
+
+    def build_property_field(self, field_name, model_class):
+        """Handle a special case where an OptionalField shadows a model property."""
+        if field_name in self.optional_fields:
+            if field := self.build_optional_field(field_name):
+                return field
+
+        return super().build_property_field(field_name, model_class)
+
+    def build_unknown_field(self, field_name, model_class):
+        """Perform lazy initialization of OptionalFields.
+
+        The DRF framework calls this method when it encounters a field which is not yet initialized.
+        """
+        if field := self.build_optional_field(field_name):
+            return field
+
+        return super().build_unknown_field(field_name, model_class)
 
     def prefetch_queryset(self, queryset: QuerySet) -> QuerySet:
         """Apply any prefetching to the queryset based on the optionally included fields.
@@ -140,161 +372,155 @@ class FilterableSerializerMixin:
             if getattr(request, '_metadata_requested', False):
                 return queryset
 
-        # Gather up the set of simple 'prefetch' fields and functions
-        prefetch_fields = set()
-
-        filterable_fields = [
-            field
-            for field in self.fields.values()
-            if getattr(field, 'is_filterable', None)
-        ]
-
-        for field in filterable_fields:
-            if prefetch_names := getattr(field, 'prefetch_fields', None):
-                for pf in prefetch_names:
-                    prefetch_fields.add(pf)
-
-        if prefetch_fields and len(prefetch_fields) > 0:
-            queryset = queryset.prefetch_related(*list(prefetch_fields))
+        if self.prefetch_list and len(self.prefetch_list) > 0:
+            queryset = queryset.prefetch_related(*list(self.prefetch_list))
 
         return queryset
 
-    def gather_filters(self, kwargs) -> None:
-        """Gather filterable fields through introspection."""
-        context = kwargs.get('context', {})
-        request = context.get('request', None) or getattr(self, 'request', None)
 
-        # Gather query parameters from the request context
-        query_params = dict(getattr(request, 'query_params', {})) if request else {}
+@dataclass
+class PrefetchSpec:
+    """Describes a single bulk-prefetch to run against incoming (un-validated) request data.
 
-        # Fast exit if this has already been done or would not have any effect
-        if getattr(self, '_was_filtered', False) or not hasattr(self, 'fields'):
-            return
+    Used by `BulkPrefetchSerializerMixin` to populate the {pk: instance} caches that
+    `InvenTree.fields.PrefetchedPrimaryKeyRelatedField` looks up against.
 
-        # Actually gather the filterable fields
-        # Also see `enable_filter` where` is_filterable and is_filterable_vals are set
-        self.filter_targets: dict[str, dict] = {
-            str(k): {'serializer': a, **getattr(a, 'is_filterable_vals', {})}
-            for k, a in self.fields.items()
-            if getattr(a, 'is_filterable', None)
-        }
+    Attributes:
+        list_field: Name of the list field in the raw request data (e.g. 'items').
+        pk_field: Name of the pk-valued key within each entry of that list (e.g. 'stock_item').
+        queryset: Base queryset used to resolve the collected pks (e.g. `StockItem.objects.select_related(...)`).
+        cache_key: Context key to store the resulting {pk: instance} map under - must match
+            the `cache_key` passed to the corresponding `PrefetchedPrimaryKeyRelatedField`.
+    """
 
-        # Remove filter args from kwargs to avoid issues with super().__init__
-        popped_kwargs = {}  # store popped kwargs as a arg might be reused for multiple fields
-        tgs_vals: dict[str, bool] = {}
-        for k, v in self.filter_targets.items():
-            pop_ref = v['filter_name'] or k
-            val = kwargs.pop(pop_ref, popped_kwargs.get(pop_ref))
-            # Optionally also look in query parameters
-            # Note that we only do this for a top-level serializer, to avoid issues with nested serializers
-            if (
-                request
-                and val is None
-                and self.filter_on_query
-                and v.get('filter_by_query', True)
-            ):
-                val = query_params.pop(pop_ref, None)
+    list_field: str
+    pk_field: str
+    queryset: QuerySet
+    cache_key: str
 
-                if isinstance(val, list) and len(val) == 1:
-                    val = val[0]
 
-            if val:  # Save popped value for reuse
-                popped_kwargs[pop_ref] = val
-            tgs_vals[k] = (
-                str2bool(val) if isinstance(val, (str, int, float)) else val
-            )  # Support for various filtering style for backwards compatibility
+class BulkPrefetchSerializerMixin:
+    """Mixin for a parent serializer whose nested list fields use PrefetchedPrimaryKeyRelatedField.
 
-        self.filter_target_values = tgs_vals
-        self._was_filtered = True
+    Without this mixin, PrefetchedPrimaryKeyRelatedField falls back to one .get() query per
+    list entry, since no cache has been populated in the context - for a request with
+    hundreds of entries, that turns validation itself into an O(n) query cost.
 
-        # Ensure this mixin is not broadly applied as it is expensive on scale (total CI time increased by 21% when running all coverage tests)
-        if len(self.filter_targets) == 0 and not self.no_filters:
-            raise Exception(
-                'INVE-I2: No filter targets found in fields, remove `PathScopedMixin`'
+    Subclasses declare `prefetch_fields`, a list of `PrefetchSpec` objects describing which
+    lists of raw entries to bulk-resolve before per-field validation runs:
+
+        class MySerializer(BulkPrefetchSerializerMixin, serializers.Serializer):
+            prefetch_fields = [
+                PrefetchSpec('items', 'stock_item', StockItem.objects.all(), '_stock_item'),
+                PrefetchSpec('items', 'build_line', BuildLine.objects.all(), '_build_line'),
+            ]
+
+            items = MyItemSerializer(many=True)
+
+        class MyItemSerializer(serializers.Serializer):
+            stock_item = PrefetchedPrimaryKeyRelatedField(
+                cache_key='_stock_item', queryset=StockItem.objects.all()
+            )
+            build_line = PrefetchedPrimaryKeyRelatedField(
+                cache_key='_build_line', queryset=BuildLine.objects.all()
             )
 
-    def do_filtering(self) -> None:
-        """Do the actual filtering."""
-        # This serializer might not contain filters or we do not want to pop fields while generating the schema
-        if (
-            not hasattr(self, 'filter_target_values')
-            or InvenTree.ready.isGeneratingSchema()
-        ):
-            return
+    Multiple specs may share the same `list_field` (as above), one per pk-valued key
+    that needs resolving within each entry.
+    """
 
-        is_exporting = getattr(self, '_exporting_data', False)
+    prefetch_fields: list[PrefetchSpec] = []
 
-        # Skip filtering for a write requests - all fields should be present for data creation
-        if request := self.context.get('request', None):
-            if method := getattr(request, 'method', None):
-                if method not in SAFE_METHODS and not is_exporting:
-                    return
+    @staticmethod
+    def _extract_pks(entries, key: str) -> set:
+        """Pull the raw pk values for 'key' out of a list of raw (un-validated) dicts.
 
-        # Throw out fields which are not requested (either by default or explicitly)
-        for k, v in self.filter_target_values.items():
-            # See `enable_filter` where` is_filterable and is_filterable_vals are set
-            value = v if v is not None else bool(self.filter_targets[k]['default'])
-            if value is not True:
-                self.fields.pop(k, None)
+        Silently ignores entries which are not dicts, or whose value cannot be
+        interpreted as an integer pk - those are left for the per-field validation
+        (PrefetchedPrimaryKeyRelatedField) to reject with the usual error message.
+        """
+        pks = set()
 
+        for entry in entries or []:
+            if not isinstance(entry, dict):
+                continue
 
-# special serializers which allow filtering
-class FilterableListSerializer(
-    FilterableSerializerField, FilterableSerializerMixin, serializers.ListSerializer
-):
-    """Custom ListSerializer which allows filtering of fields."""
+            try:
+                pks.add(int(entry.get(key)))
+            except (TypeError, ValueError):
+                continue
 
+        return pks
 
-# special serializer fields which allow filtering
-class FilterableListField(FilterableSerializerField, serializers.ListField):
-    """Custom ListField which allows filtering."""
+    def to_internal_value(self, data):
+        """Bulk-prefetch the objects referenced by each declared PrefetchSpec.
 
+        Populating context[cache_key] here means PrefetchedPrimaryKeyRelatedField resolves
+        each entry via an O(1) dict lookup, so the whole request is validated in a fixed,
+        small number of queries instead of one query per list entry.
+        """
+        if isinstance(data, dict):
+            for spec in self.prefetch_fields:
+                pks = self._extract_pks(data.get(spec.list_field), spec.pk_field)
 
-class FilterableSerializerMethodField(
-    FilterableSerializerField, serializers.SerializerMethodField
-):
-    """Custom SerializerMethodField which allows filtering."""
+                self.context[spec.cache_key] = {
+                    obj.pk: obj for obj in spec.queryset.filter(pk__in=pks)
+                }
 
+            self.after_prefetch(data)
 
-class FilterableDateTimeField(FilterableSerializerField, serializers.DateTimeField):
-    """Custom DateTimeField which allows filtering."""
+        return super().to_internal_value(data)
 
+    def after_prefetch(self, data):
+        """Optional hook called once the pk caches are populated, before nested field validation runs.
 
-class FilterableFloatField(FilterableSerializerField, serializers.FloatField):
-    """Custom FloatField which allows filtering."""
-
-
-class FilterableCharField(FilterableSerializerField, serializers.CharField):
-    """Custom CharField which allows filtering."""
-
-
-class FilterableIntegerField(FilterableSerializerField, serializers.IntegerField):
-    """Custom IntegerField which allows filtering."""
-
-
-class FilterableJSONField(FilterableSerializerField, serializers.JSONField):
-    """Custom JSONField which allows filtering."""
-
-
-class FilterableTagListField(FilterableSerializerField, TagListSerializerField):
-    """Custom TagListSerializerField which allows filtering."""
-
-    class Meta:
-        """Empty Meta class."""
-
-
-# endregion
+        Override this to bulk-compute anything else that per-entry `validate_<field>()`
+        or `validate()` methods would otherwise recompute one entry at a time - e.g. an
+        aggregate that would otherwise cost one query per entry. Stash the result in
+        `self.context` (the same mechanism `prefetch_fields` uses) so nested serializers
+        can look it up.
+        """
 
 
 class EmptySerializer(serializers.Serializer):
     """Empty serializer for use in testing."""
 
 
-class InvenTreeMoneySerializer(FilterableSerializerField, MoneyField):
+class TreePathSerializer(serializers.Serializer):
+    """Serializer field for representing a tree path."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = [
+            'pk',
+            'name',
+            # Any fields after this point are optional, and can be included via extra_fields
+            'icon',
+        ]
+
+    def __init__(self, *args, extra_fields: Optional[list[str]] = None, **kwargs):
+        """Initialize the TreePathSerializer."""
+        super().__init__(*args, **kwargs)
+
+        allowed_fields = ['pk', 'name', *(extra_fields or [])]
+
+        if InvenTree.ready.isGeneratingSchema():
+            return
+
+        for field in list(self.fields.keys()):
+            if field not in allowed_fields:
+                self.fields.pop(field, None)
+
+    pk = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(read_only=True)
+    icon = serializers.CharField(required=False, read_only=True, allow_null=True)
+
+
+class InvenTreeMoneySerializer(MoneyField):
     """Custom serializer for 'MoneyField', which ensures that passed values are numerically valid.
 
     Ref: https://github.com/django-money/django-money/blob/master/djmoney/contrib/django_rest_framework/fields.py
-    This field allows filtering.
     """
 
     def __init__(self, *args, **kwargs):
@@ -481,7 +707,7 @@ class DependentField(serializers.Field):
         return None
 
 
-class InvenTreeModelSerializer(FilterableSerializerField, serializers.ModelSerializer):
+class InvenTreeModelSerializer(serializers.ModelSerializer):
     """Inherits the standard Django ModelSerializer class, but also ensures that the underlying model class data are checked on validation."""
 
     # Switch out URLField mapping
@@ -565,7 +791,7 @@ class InvenTreeModelSerializer(FilterableSerializerField, serializers.ModelSeria
 
         Default implementation returns an empty list
         """
-        return []
+        return getattr(self, 'SKIP_CREATE_FIELDS', [])
 
     def save(self, **kwargs):
         """Catch any django ValidationError thrown at the moment `save` is called, and re-throw as a DRF ValidationError."""
@@ -664,10 +890,6 @@ class InvenTreeTaggitSerializer(TaggitSerializer):
         return self._save_tags(tag_object, to_be_tagged)
 
 
-class InvenTreeTagModelSerializer(InvenTreeTaggitSerializer, InvenTreeModelSerializer):
-    """Combination of InvenTreeTaggitSerializer and InvenTreeModelSerializer."""
-
-
 class InvenTreeAttachmentSerializerField(serializers.FileField):
     """Override the DRF native FileField serializer, to remove the leading server path.
 
@@ -729,6 +951,56 @@ class InvenTreeDecimalField(serializers.FloatField):
             raise serializers.ValidationError(_('Invalid value'))
 
 
+class CustomStatusSerializerMixin(serializers.Serializer):
+    """Serializer mixin for models that support custom status values.
+
+    Provides a `status_text` SerializerMethodField that resolves custom
+    status labels with a single database query per model per serializer
+    context (i.e. one query for a whole list page) rather than one query per
+    object (N+1).
+    """
+
+    status_text = serializers.SerializerMethodField()
+
+    @extend_schema_field(serializers.CharField(allow_null=True))
+    def get_status_text(self, instance) -> Optional[str]:
+        """Return the human-readable status text for the instance.
+
+        Uses a per-context cache keyed by model name so that all objects in a
+        single serialization pass share one DB hit for custom label lookup.
+
+        During write operations DRF may call to_representation on the raw
+        validated_data dict rather than a model instance (e.g. when building
+        response headers).  Return None in that case — the response body is
+        always produced from a real instance via a separate serializer call.
+        """
+        if not hasattr(instance, 'get_custom_status'):
+            return None
+
+        custom_key = instance.get_custom_status()
+
+        if custom_key is None:
+            return instance.status_class.label(instance.get_status())
+
+        model_name = instance._meta.model_name
+        cache_key = f'_custom_status_labels_{model_name}'
+
+        # Cache a dict of custom status labels for this model, if not already cached
+        if cache_key not in self.context:
+            from common.models import InvenTreeCustomUserStateModel
+
+            self.context[cache_key] = {
+                obj.key: obj.label
+                for obj in InvenTreeCustomUserStateModel.objects.filter(
+                    model__model=model_name
+                )
+            }
+
+        return self.context[cache_key].get(
+            custom_key, instance.status_class.label(instance.get_status())
+        )
+
+
 class NotesFieldMixin:
     """Serializer mixin for handling 'notes' fields.
 
@@ -741,57 +1013,16 @@ class NotesFieldMixin:
         super().__init__(*args, **kwargs)
 
         if hasattr(self, 'context'):
+            request = self.context.get('request', None)
+            method = getattr(request, 'method', None)
+
             if view := self.context.get('view', None):
                 if (
                     issubclass(view.__class__, ListModelMixin)
+                    and method in SAFE_METHODS
                     and not InvenTree.ready.isGeneratingSchema()
                 ):
                     self.fields.pop('notes', None)
-
-
-class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
-    """Mixin class which allows downloading an 'image' from a remote URL.
-
-    Adds the optional, write-only `remote_image` field to the serializer
-    """
-
-    def skip_create_fields(self):
-        """Ensure the 'remote_image' field is skipped when creating a new instance."""
-        return ['remote_image']
-
-    remote_image = serializers.URLField(
-        required=False,
-        allow_blank=True,
-        write_only=True,
-        label=_('Remote Image'),
-        help_text=_('URL of remote image file'),
-    )
-
-    def validate_remote_image(self, url):
-        """Perform custom validation for the remote image URL.
-
-        - Attempt to download the image and store it against this object instance
-        - Catches and re-throws any errors
-        """
-        from InvenTree.helpers_model import download_image_from_url
-
-        if not url:
-            return
-
-        if not common_models.InvenTreeSetting.get_setting(
-            'INVENTREE_DOWNLOAD_FROM_URL'
-        ):
-            raise ValidationError(
-                _('Downloading images from remote URL is not enabled')
-            )
-
-        try:
-            self.remote_image_file = download_image_from_url(url)
-        except Exception:
-            self.remote_image_file = None
-            raise ValidationError(_('Failed to download image from remote URL'))
-
-        return url
 
 
 class ContentTypeField(serializers.ChoiceField):
@@ -885,3 +1116,104 @@ class ContentTypeField(serializers.ChoiceField):
                 )
 
         return content_type
+
+
+class DuplicateOptionsSerializer(serializers.Serializer):
+    """Generic serializer for specifying copy options when duplicating a model instance.
+
+    Builds its fields dynamically at instantiation time so the same class can be
+    reused for any model without subclassing.
+    """
+
+    # Special 'shortcut' fields which are used for multiple models
+    DEFAULT_FIELDS = [
+        (
+            'copy_parameters',
+            _('Copy Parameters'),
+            _('Copy parameters from the original item'),
+            False,
+        ),
+        (
+            'copy_lines',
+            _('Copy Lines'),
+            _('Copy line items from the original order'),
+            False,
+        ),
+        (
+            'copy_extra_lines',
+            _('Copy Extra Lines'),
+            _('Copy extra line items from the original order'),
+            False,
+        ),
+    ]
+
+    def __init__(
+        self,
+        queryset: QuerySet,
+        *args,
+        copy_fields: Optional[list[dict]] = None,
+        **kwargs,
+    ):
+        """Initialise the serializer and dynamically attach fields.
+
+        Arguments:
+            queryset: Queryset used for the `original` PrimaryKeyRelatedField.
+            copy_fields: Optional list of dicts, each describing one boolean copy toggle.
+                Keys:
+                    name: (str, required)
+                    label: (str, optional)
+                    help_text: (str, optional)
+                    default: (bool, optional, default True)
+        """
+        # Enforce certain properties onto this serializer
+        kwargs['label'] = kwargs.get('label', _('Duplication Options'))
+        kwargs['help_text'] = kwargs.get(
+            'help_text', _('Specify options for duplicating this item')
+        )
+        kwargs['required'] = False
+        kwargs['write_only'] = True
+
+        copy_fields = copy_fields or []
+        copy_field_names = [spec['name'] for spec in copy_fields]
+
+        # Apply "default" fields
+        for name, label, help_text, default_value in self.DEFAULT_FIELDS:
+            popped_value = kwargs.pop(name, default_value)
+
+            if name in copy_field_names:
+                # Manually supplied field, continue
+                continue
+
+            if popped_value:
+                copy_fields.append({
+                    'name': name,
+                    'label': label,
+                    'help_text': help_text,
+                    'default': True,
+                })
+
+        super().__init__(*args, **kwargs)
+
+        # Re-class the instance with a model-specific subclass,
+        # so that each model generates a unique schema component name
+        if self.__class__ is DuplicateOptionsSerializer:
+            self.__class__ = type(
+                f'{queryset.model.__name__}DuplicateOptionsSerializer',
+                (DuplicateOptionsSerializer,),
+                {},
+            )
+
+        self.fields['original'] = serializers.PrimaryKeyRelatedField(
+            queryset=queryset,
+            required=True,
+            label=_('Original'),
+            help_text=_('Select instance to duplicate'),
+        )
+
+        for spec in copy_fields or []:
+            self.fields[spec['name']] = serializers.BooleanField(
+                required=False,
+                default=spec.get('default', True),
+                label=spec.get('label', spec['name']),
+                help_text=spec.get('help_text', ''),
+            )

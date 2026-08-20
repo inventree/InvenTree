@@ -33,6 +33,7 @@ from InvenTree.mixins import (
     SerializerContextMixin,
     UpdateAPI,
 )
+from InvenTree.schema import exclude_from_schema
 from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import ApiToken, Owner, RuleSet, UserProfile
 from users.serializers import (
@@ -247,6 +248,24 @@ class MeUserDetail(RetrieveUpdateAPI, UserDetail):
         """
         return None
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='roles',
+                type=bool,
+                location=OpenApiParameter.QUERY,
+                description='Include the roles and permissions associated with the current user in the response',
+            )
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        """Retrieve details for the current user.
+
+        Pass '?roles=true' to also include the user's roles and permissions
+        (previously only available via the separate '/user/me/roles/' endpoint).
+        """
+        return super().get(request, *args, **kwargs)
+
 
 class UserList(ListCreateAPI):
     """List endpoint for detail on all users.
@@ -256,7 +275,7 @@ class UserList(ListCreateAPI):
     - Otherwise authenticated users have read-only access
     """
 
-    queryset = User.objects.all()
+    queryset = User.objects.all().prefetch_related('groups')
     serializer_class = UserCreateSerializer
 
     # User must have the right role, AND be a staff user, else read-only
@@ -289,7 +308,7 @@ class GroupMixin(SerializerContextMixin):
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
+    permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
 
 
 class GroupOutputOptions(OutputConfiguration):
@@ -326,7 +345,7 @@ class RuleSetMixin:
 
     queryset = RuleSet.objects.all()
     serializer_class = RuleSetSerializer
-    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
+    permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
 
 
 class RuleSetList(RuleSetMixin, ListAPI):
@@ -501,8 +520,38 @@ class UserProfileDetail(RetrieveUpdateAPI):
 
 
 user_urls = [
-    path('roles/', RoleDetails.as_view(), name='api-user-roles'),
-    path('token/', ensure_csrf_cookie(GetAuthToken.as_view()), name='api-token'),
+    # Legacy endpoints (to avoid breaking existing API clients)
+    # TODO @matmair - remove these legacy endpoints in the next breaking release
+    path(
+        'roles/',
+        exclude_from_schema(RoleDetails, '/api/user/me/roles/').as_view(),
+        name='api-user-roles_legacy',
+    ),
+    path(
+        'token/',
+        ensure_csrf_cookie(
+            exclude_from_schema(GetAuthToken, '/api/user/me/token/').as_view()
+        ),
+        name='api-token_legacy',
+    ),
+    path(
+        'profile/',
+        exclude_from_schema(UserProfileDetail, '/api/user/me/profile/').as_view(),
+        name='api-user-profile_legacy',
+    ),
+    # Individual user endpoints
+    path(
+        'me/',
+        include([
+            path('profile/', UserProfileDetail.as_view(), name='api-user-profile'),
+            path('roles/', RoleDetails.as_view(), name='api-user-roles'),
+            path(
+                'token/', ensure_csrf_cookie(GetAuthToken.as_view()), name='api-token'
+            ),
+            path('', MeUserDetail.as_view(), name='api-user-me'),
+        ]),
+    ),
+    # User related endpoints
     path(
         'tokens/',
         include([
@@ -510,8 +559,6 @@ user_urls = [
             path('', TokenListView.as_view(), name='api-token-list'),
         ]),
     ),
-    path('me/', MeUserDetail.as_view(), name='api-user-me'),
-    path('profile/', UserProfileDetail.as_view(), name='api-user-profile'),
     path(
         'owner/',
         include([

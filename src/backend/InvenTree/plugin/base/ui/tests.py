@@ -1,5 +1,8 @@
 """Unit tests for base mixins for plugins."""
 
+from unittest import mock
+
+from django.core.exceptions import AppRegistryNotReady
 from django.urls import reverse
 
 from common.models import InvenTreeSetting
@@ -85,6 +88,24 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
 
         response = self.get(url)
         self.assertEqual(len(response.data), 3)
+
+    def test_ui_feature_list_app_registry_not_ready(self):
+        """A mid-reload AppRegistryNotReady should surface as a 503, not a 500.
+
+        Regression test: the plugin registry can force-reload Django's app registry
+        (e.g. when ENABLE_PLUGINS_INTERFACE is toggled - see
+        common.setting.system.reload_plugin_registry) while other requests are still
+        being served, so this endpoint's own settings lookup can race that reload.
+        """
+        url = reverse('api-plugin-ui-feature-list', kwargs={'feature': 'dashboard'})
+
+        with mock.patch(
+            'plugin.base.ui.api.get_global_setting', side_effect=AppRegistryNotReady()
+        ):
+            response = self.get(url, expected_code=503)
+
+        self.assertEqual(response.data['error'], 'AppRegistryNotReady')
+        self.assertEqual(response['Retry-After'], '1')
 
     def test_ui_panels(self):
         """Test that the sample UI plugin provides custom panels."""
@@ -233,3 +254,13 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
         self.assertEqual(response.data[0]['plugin_name'], 'sampleui')
         self.assertEqual(response.data[0]['key'], 'sample-nav-item')
         self.assertEqual(response.data[0]['title'], 'Sample Nav Item')
+
+    def test_ui_primary_actions(self):
+        """Test that the sample UI plugin provides custom primary actions."""
+        response = self.get(
+            reverse('api-plugin-ui-feature-list', kwargs={'feature': 'primary_action'})
+        )
+        self.assertEqual(1, len(response.data))
+        self.assertEqual(response.data[0]['plugin_name'], 'sampleui')
+        self.assertEqual(response.data[0]['key'], 'sample-primary-action')
+        self.assertEqual(response.data[0]['title'], 'Sample Primary Action')

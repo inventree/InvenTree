@@ -1,0 +1,98 @@
+import type { ModelType } from '@lib/enums/ModelType';
+import type { PreviewType } from '@lib/types/Preview';
+import { create } from 'zustand';
+
+type PreviewDrawerId = number | string | undefined;
+
+interface PreviewDrawerStateProps {
+  isOpen: boolean;
+  modelType?: ModelType;
+  id?: number | string;
+  instance?: any;
+  filters?: Record<string, any>;
+  preview?: PreviewType;
+  targetUrl?: string;
+  onCloseCallback?: () => void;
+  openPreview: (
+    modelType: ModelType,
+    id: PreviewDrawerId,
+    instance?: any,
+    preview?: PreviewType,
+    onClose?: () => void,
+    targetUrl?: string,
+    filters?: Record<string, any>
+  ) => void;
+  closePreview: () => void;
+}
+
+export const usePreviewDrawerState = create<PreviewDrawerStateProps>()(
+  (set, get) => ({
+    isOpen: false,
+    modelType: undefined,
+    id: undefined,
+    instance: undefined,
+    filters: undefined,
+    preview: undefined,
+    targetUrl: undefined,
+    onCloseCallback: undefined,
+
+    openPreview: (
+      modelType: ModelType,
+      id: number | string | undefined,
+      instance?: any,
+      preview?: PreviewType,
+      onClose?: () => void,
+      targetUrl?: string,
+      filters?: Record<string, any>
+    ) => {
+      set({
+        modelType,
+        id,
+        instance,
+        preview,
+        targetUrl,
+        filters,
+        isOpen: true,
+        onCloseCallback: onClose
+      });
+    },
+
+    closePreview: () => {
+      const callback = get().onCloseCallback;
+
+      set({
+        isOpen: false,
+        instance: undefined,
+        id: undefined,
+        preview: undefined,
+        targetUrl: undefined,
+        filters: undefined,
+        onCloseCallback: undefined
+      });
+
+      callback?.();
+    }
+  })
+);
+
+export function openGlobalPreview(
+  modelType: ModelType,
+  id?: number | string | undefined,
+  instance?: any,
+  preview?: PreviewType,
+  onClose?: () => void,
+  targetUrl?: string,
+  filters?: Record<string, any>
+) {
+  usePreviewDrawerState
+    .getState()
+    .openPreview(modelType, id, instance, preview, onClose, targetUrl, filters);
+}
+
+export function closeGlobalPreview() {
+  usePreviewDrawerState.getState().closePreview();
+}
+
+export function getGlobalPreviewState() {
+  return usePreviewDrawerState.getState();
+}

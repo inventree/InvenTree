@@ -345,4 +345,8 @@ def sanitize_svg(
         link_rel=None,
     )
 
+    # Replace non-breaking spaces with regular spaces to prevent SVG rendering issues
+    for nbsp in ['&nbsp;', '&#160;']:
+        cleaned = cleaned.replace(nbsp, ' ')
+
     return cleaned

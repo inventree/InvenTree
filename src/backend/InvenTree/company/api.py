@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework.filterset import FilterSet
 
+import common.filters
 import part.models
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, ParameterListMixin, meta_path
@@ -37,6 +38,18 @@ from .serializers import (
 )
 
 
+class CompanyFilter(FilterSet):
+    """Custom API filters for the CompanyList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = Company
+        fields = ['is_customer', 'is_manufacturer', 'is_supplier', 'name', 'active']
+
+    tags = common.filters.TagsFilter()
+
+
 class CompanyMixin(OutputOptionsMixin):
     """Mixin class for Company API endpoints."""
 
@@ -62,13 +75,7 @@ class CompanyList(CompanyMixin, ParameterListMixin, DataExportViewMixin, ListCre
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = [
-        'is_customer',
-        'is_manufacturer',
-        'is_supplier',
-        'name',
-        'active',
-    ]
+    filterset_class = CompanyFilter
 
     search_fields = ['name', 'description', 'website', 'tax_id']
 
@@ -145,6 +152,8 @@ class ManufacturerPartFilter(FilterSet):
         field_name='manufacturer__active', label=_('Manufacturer is Active')
     )
 
+    tags = common.filters.TagsFilter(label=_('Tags'))
+
 
 class ManufacturerOutputOptions(OutputConfiguration):
     """Available output options for the ManufacturerPart endpoints."""
@@ -179,6 +188,7 @@ class ManufacturerPartMixin(SerializerContextMixin):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related('supplier_parts')
+        queryset = queryset.prefetch_related('part', 'part__pricing_data')
 
         return queryset
 
@@ -297,6 +307,8 @@ class SupplierPartFilter(FilterSet):
             return queryset.filter(in_stock__gt=0)
         else:
             return queryset.exclude(in_stock__gt=0)
+
+    tags = common.filters.TagsFilter(label=_('Tags'))
 
 
 class SupplierPartOutputOptions(OutputConfiguration):

@@ -1,10 +1,13 @@
 import {
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '@lib/components/RowActions';
+import useTable from '@lib/hooks/UseTable';
+import {
   AddItemButton,
   ApiEndpoints,
   type ApiFormFieldSet,
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction,
   UserRoles,
   apiUrl
 } from '@lib/index';
@@ -12,16 +15,19 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
+import {
+  BooleanColumn,
+  DescriptionColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { useParameterTemplateFields } from '../../forms/CommonForms';
 import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Render a table of ParameterTemplate objects
@@ -30,18 +36,7 @@ export default function ParameterTemplateTable() {
   const table = useTable('parameter-templates');
   const user = useUserState();
 
-  const parameterTemplateFields: ApiFormFieldSet = useMemo(() => {
-    return {
-      name: {},
-      description: {},
-      units: {},
-      model_type: {},
-      choices: {},
-      checkbox: {},
-      selectionlist: {},
-      enabled: {}
-    };
-  }, []);
+  const parameterTemplateFields: ApiFormFieldSet = useParameterTemplateFields();
 
   const newTemplate = useCreateApiFormModal({
     url: ApiEndpoints.parameter_template_list,

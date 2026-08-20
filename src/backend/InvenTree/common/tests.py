@@ -2,7 +2,9 @@
 
 import io
 import json
+import os
 import time
+import uuid
 from datetime import timedelta
 from http import HTTPStatus
 from unittest import mock
@@ -86,6 +88,11 @@ class AttachmentTest(InvenTreeAPITestCase):
         }
 
         for fn, expected in filenames.items():
+            expected_path = f'attachments/part/{part.pk}/{expected}'
+            # Remove the file if it already exists (i.e. from a previous test run)
+            if default_storage.exists(expected_path):
+                default_storage.delete(expected_path)
+
             attachment = Attachment.objects.create(
                 attachment=self.generate_file(fn),
                 comment=f'Testing filename: {fn}',
@@ -93,7 +100,6 @@ class AttachmentTest(InvenTreeAPITestCase):
                 model_id=part.pk,
             )
 
-            expected_path = f'attachments/part/{part.pk}/{expected}'
             self.assertEqual(attachment.attachment.name, expected_path)
             self.assertEqual(attachment.file_size, 15)
 
@@ -217,6 +223,46 @@ class AttachmentTest(InvenTreeAPITestCase):
         url = attachment.fully_qualified_url()
         self.assertIs(type(url), str)
         self.assertIn(f'/media/attachments/part/{part.pk}/test', url)
+
+    def test_str_representation(self):
+        """Test the __str__ method of the Attachment model.
+
+        - If a file is attached, the string representation should be the file basename.
+        - If only a link is provided (no file), the string representation should be the link.
+        - If neither is set, fall back to the default django representation.
+        """
+        part = Part.objects.first()
+
+        # Case 1: Attachment has an uploaded file - string is the file basename
+        attachment = Attachment.objects.create(
+            attachment=self.generate_file('test.txt'),
+            comment='File attachment',
+            model_type='part',
+            model_id=part.pk,
+        )
+
+        self.assertTrue(str(attachment).startswith('test'))
+        self.assertTrue(str(attachment).endswith('.txt'))
+        self.assertEqual(str(attachment), os.path.basename(attachment.attachment.name))
+
+        # Case 2: Attachment has only a link (no uploaded file) - string is the link
+        link = 'https://www.example.org'
+        attachment = Attachment.objects.create(
+            link=link, comment='Link attachment', model_type='part', model_id=part.pk
+        )
+
+        self.assertEqual(str(attachment), link)
+
+        # Case 3: Attachment has neither a file nor a link set
+        # (bypass 'save' to skip the validation which requires one of these fields)
+        attachment = Attachment(
+            comment='Empty attachment', model_type='part', model_id=part.pk
+        )
+
+        self.assertFalse(attachment.attachment)
+        self.assertFalse(attachment.link)
+        self.assertEqual(str(attachment), super(Attachment, attachment).__str__())
+        self.assertEqual(str(attachment), f'Attachment object ({attachment.pk})')
 
 
 class SettingsTest(InvenTreeTestCase):
@@ -1288,6 +1334,18 @@ class NotificationTest(InvenTreeAPITestCase):
 
         self.assertTrue(NotificationEntry.check_recent('test.notification', 1, delta))
 
+    def test_uuid_notification_entry(self):
+        """Notification entries support objects with UUID primary keys."""
+        notification_uid = uuid.uuid4()
+
+        NotificationEntry.notify('test.uuid_notification', notification_uid)
+
+        self.assertTrue(
+            NotificationEntry.check_recent(
+                'test.uuid_notification', notification_uid, timedelta(days=1)
+            )
+        )
+
     def test_api_list(self):
         """Test list URL."""
         url = reverse('api-notifications-list')
@@ -1304,11 +1362,40 @@ class NotificationTest(InvenTreeAPITestCase):
 
         self.assertEqual(
             response.data['description'],
-            'List view for all notifications of the current user.',
+            'Notifications for the current user.\n\n- User can only view / delete their own notification objects',
         )
 
         # POST action should fail (not allowed)
         response = self.post(url, {}, expected_code=405)
+
+    def test_api_read(self):
+        """Test that NotificationMessage can be marked as read."""
+        # Create a notification message
+        NotificationMessage.objects.create(
+            user=self.user,
+            category='test',
+            message='This is a test notification',
+            target_object=self.user,
+        )
+        user2 = get_user_model().objects.get(pk=2)
+        NotificationMessage.objects.create(
+            user=user2,
+            category='test',
+            message='This is a second test notification',
+            target_object=user2,
+        )
+
+        url = reverse('api-notifications-list')
+        self.assertEqual(NotificationMessage.objects.filter(read=True).count(), 0)
+        self.assertEqual(len(self.get(url, expected_code=200).data), 1)
+
+        # Read with readall endpoint
+        self.post(reverse('api-notifications-readall'), {}, expected_code=200)
+
+        self.assertEqual(NotificationMessage.objects.filter(read=True).count(), 1)
+        self.assertEqual(len(self.get(url, expected_code=200).data), 1)
+        # filtered by read status should be 0
+        self.assertEqual(len(self.get(url, {'read': False}, expected_code=200).data), 0)
 
     def test_bulk_delete(self):
         """Tests for bulk deletion of user notifications."""
@@ -1719,6 +1806,22 @@ class ProjectCodesTest(InvenTreeAPITestCase):
             str(response.data['code']),
         )
 
+    def test_filter_active(self):
+        """Test that the 'active' field can be filtered via the API."""
+        # Mark one code as inactive
+        code = ProjectCode.objects.first()
+        code.active = False
+        code.save()
+
+        active_count = ProjectCode.objects.filter(active=True).count()
+        inactive_count = ProjectCode.objects.filter(active=False).count()
+
+        response = self.get(self.url, data={'active': True}, expected_code=200)
+        self.assertEqual(len(response.data), active_count)
+
+        response = self.get(self.url, data={'active': False}, expected_code=200)
+        self.assertEqual(len(response.data), inactive_count)
+
     def test_write_access(self):
         """Test that non-staff users have read-only access."""
         # By default user has staff access, can create a new project code
@@ -1835,7 +1938,7 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
 
     def test_api(self):
         """Test the CustomUnit API."""
-        response = self.get(reverse('api-all-unit-list'))
+        response = self.get(reverse('api-custom-unit-all'))
         self.assertIn('default_system', response.data)
         self.assertIn('available_systems', response.data)
         self.assertIn('available_units', response.data)
@@ -2070,43 +2173,58 @@ class SelectionListTest(InvenTreeAPITestCase):
         # Test adding a new list via the API
         response = self.post(
             reverse('api-selectionlist-list'),
-            {
-                'name': 'New List',
-                'active': True,
-                'choices': [{'value': '1', 'label': 'Test Entry'}],
-            },
+            {'name': 'New List', 'active': True},
             expected_code=201,
         )
         list_pk = response.data['pk']
         self.assertEqual(response.data['name'], 'New List')
         self.assertTrue(response.data['active'])
+
+        entry_list_url = reverse('api-selectionlistentry-list', kwargs={'pk': list_pk})
+
+        # Add an entry via the entry API
+        response = self.post(
+            entry_list_url,
+            {'list': list_pk, 'value': '1', 'label': 'Test Entry'},
+            expected_code=201,
+        )
+        entry_pk = response.data['id']
+        self.assertEqual(response.data['value'], '1')
+        self.assertEqual(response.data['label'], 'Test Entry')
+
+        # Verify the entry appears in the list's choices
+        response = self.get(
+            reverse('api-selectionlist-detail', kwargs={'pk': list_pk}),
+            data={'choices': True},
+            expected_code=200,
+        )
         self.assertEqual(len(response.data['choices']), 1)
         self.assertEqual(response.data['choices'][0]['value'], '1')
 
-        # Test editing the list choices via the API (remove and add in same call)
-        response = self.patch(
-            reverse('api-selectionlist-detail', kwargs={'pk': list_pk}),
-            {'choices': [{'value': '2', 'label': 'New Label'}]},
-            expected_code=200,
+        # Edit the entry via the entry detail API
+        entry_url = reverse(
+            'api-selectionlistentry-detail', kwargs={'pk': list_pk, 'entrypk': entry_pk}
         )
-        self.assertEqual(response.data['name'], 'New List')
-        self.assertTrue(response.data['active'])
-        self.assertEqual(len(response.data['choices']), 1)
-        self.assertEqual(response.data['choices'][0]['value'], '2')
-        self.assertEqual(response.data['choices'][0]['label'], 'New Label')
-        entry_id = response.data['choices'][0]['id']
+        response = self.patch(entry_url, {'label': 'Updated Label'}, expected_code=200)
+        self.assertEqual(response.data['value'], '1')
+        self.assertEqual(response.data['label'], 'Updated Label')
 
-        # Test changing an entry via list API
-        response = self.patch(
+        # Add a second entry, then delete the first via the entry detail API
+        self.post(
+            entry_list_url,
+            {'list': list_pk, 'value': '2', 'label': 'Second Entry'},
+            expected_code=201,
+        )
+        self.delete(entry_url, expected_code=204)
+
+        # Verify only the second entry remains
+        response = self.get(
             reverse('api-selectionlist-detail', kwargs={'pk': list_pk}),
-            {'choices': [{'id': entry_id, 'value': '2', 'label': 'New Label Text'}]},
+            data={'choices': True},
             expected_code=200,
         )
-        self.assertEqual(response.data['name'], 'New List')
-        self.assertTrue(response.data['active'])
         self.assertEqual(len(response.data['choices']), 1)
         self.assertEqual(response.data['choices'][0]['value'], '2')
-        self.assertEqual(response.data['choices'][0]['label'], 'New Label Text')
 
     def test_api_locked(self):
         """Test editing with locked/unlocked list."""

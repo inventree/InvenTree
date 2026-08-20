@@ -1,5 +1,5 @@
 import { TextInput } from '@mantine/core';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useId, useMemo, useState } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import AutoFillRightSection from './AutoFillRightSection';
 
@@ -8,7 +8,7 @@ import AutoFillRightSection from './AutoFillRightSection';
  * used for rendering text input fields in forms.
  * Uses a debounced value to prevent excessive re-renders.
  */
-export default function TextField({
+function TextField({
   controller,
   fieldName,
   definition,
@@ -29,7 +29,7 @@ export default function TextField({
     fieldState: { error }
   } = controller;
 
-  const { value } = useMemo(() => field, [field]);
+  const { value } = field;
 
   const [textValue, setTextValue] = useState<string>(value || '');
 
@@ -45,9 +45,19 @@ export default function TextField({
     setTextValue(value || '');
   }, [value]);
 
+  /* Construct a "cut-down" version of the definition,
+   * which does not include any attributes that the lower components do not recognize
+   */
+  const fieldDefinition = useMemo(() => {
+    return {
+      ...definition,
+      allow_blank: undefined
+    };
+  }, [definition]);
+
   return (
     <TextInput
-      {...definition}
+      {...fieldDefinition}
       ref={field.ref}
       id={fieldId}
       aria-label={`text-field-${field.name}`}
@@ -81,3 +91,5 @@ export default function TextField({
     />
   );
 }
+
+export default memo(TextField);

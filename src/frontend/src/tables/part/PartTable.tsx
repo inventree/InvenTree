@@ -7,24 +7,30 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import type { TableFilter } from '@lib/types/Filters';
+import useTable from '@lib/hooks/UseTable';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
-import { Group, Text } from '@mantine/core';
-import {
-  IconFileUpload,
-  IconPackageImport,
-  IconPlus,
-  IconShoppingCart
-} from '@tabler/icons-react';
-import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import { IconShoppingCart } from '@tabler/icons-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
-import ImportPartWizard from '../../components/wizards/ImportPartWizard';
+import { PartCreationMenu } from '../../components/items/PartCreationMenu';
+import {
+  BooleanColumn,
+  CategoryColumn,
+  DecimalColumn,
+  DefaultLocationColumn,
+  DescriptionColumn,
+  IPNColumn,
+  LinkColumn,
+  PartColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { renderPartStockCell } from '../../components/tables/PartStockCell';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
-import { dataImporterSessionFields } from '../../forms/ImporterForms';
+import { formatPriceRange } from '../../defaults/formatters';
+import { DuplicateField } from '../../forms/CommonFields';
 import { usePartFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
@@ -32,21 +38,9 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { usePluginsWithMixin } from '../../hooks/UsePlugins';
-import { useTable } from '../../hooks/UseTable';
-import { useImporterState } from '../../states/ImporterState';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import {
-  CategoryColumn,
-  DefaultLocationColumn,
-  DescriptionColumn,
-  IPNColumn,
-  LinkColumn,
-  PartColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
+import { PartTableFilters } from './PartTableFilters';
 
 /**
  * Construct a list of columns for the part table
@@ -55,7 +49,8 @@ function partTableColumns(): TableColumn[] {
   return [
     PartColumn({
       part: '',
-      accessor: 'name'
+      accessor: 'name',
+      filter: ['active', 'locked', 'starred']
     }),
     IPNColumn({
       accessor: 'IPN'
@@ -67,7 +62,8 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'units',
       sortable: true,
-      copyable: true
+      copyable: true,
+      filter: 'has_units'
     },
     DescriptionColumn({}),
     CategoryColumn({
@@ -79,250 +75,39 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'total_in_stock',
       sortable: true,
-
-      render: (record) => {
-        const extra: ReactNode[] = [];
-
-        const stock = record?.total_in_stock ?? 0;
-        const allocated =
-          (record?.allocated_to_build_orders ?? 0) +
-          (record?.allocated_to_sales_orders ?? 0);
-        const available = Math.max(0, stock - allocated);
-        const min_stock = record?.minimum_stock ?? 0;
-
-        let text = String(formatDecimal(stock));
-
-        let color: string | undefined = undefined;
-
-        if (min_stock > stock) {
-          extra.push(
-            <Text key='min-stock' c='orange'>
-              {`${t`Minimum stock`}: ${formatDecimal(min_stock)}`}
-            </Text>
-          );
-
-          color = 'orange';
-        }
-
-        if (record.ordering > 0) {
-          extra.push(
-            <Text key='on-order'>{`${t`On Order`}: ${formatDecimal(record.ordering)}`}</Text>
-          );
-        }
-
-        if (record.building) {
-          extra.push(
-            <Text key='building'>{`${t`Building`}: ${formatDecimal(record.building)}`}</Text>
-          );
-        }
-
-        if (record.allocated_to_build_orders > 0) {
-          extra.push(
-            <Text key='bo-allocations'>
-              {`${t`Build Order Allocations`}: ${formatDecimal(record.allocated_to_build_orders)}`}
-            </Text>
-          );
-        }
-
-        if (record.allocated_to_sales_orders > 0) {
-          extra.push(
-            <Text key='so-allocations'>
-              {`${t`Sales Order Allocations`}: ${formatDecimal(record.allocated_to_sales_orders)}`}
-            </Text>
-          );
-        }
-
-        if (available != stock) {
-          extra.push(
-            <Text key='available'>
-              {t`Available`}: {formatDecimal(available)}
-            </Text>
-          );
-        }
-
-        if (record.external_stock > 0) {
-          extra.push(
-            <Text key='external'>
-              {t`External stock`}: {formatDecimal(record.external_stock)}
-            </Text>
-          );
-        }
-
-        if (stock <= 0) {
-          color = 'red';
-          text = t`No stock`;
-        } else if (available <= 0) {
-          color = 'orange';
-        } else if (available < min_stock) {
-          color = 'yellow';
-        }
-
-        return (
-          <TableHoverCard
-            value={
-              <Group gap='xs' justify='left' wrap='nowrap'>
-                <Text c={color}>{text}</Text>
-                {record.units && (
-                  <Text size='xs' c={color}>
-                    [{record.units}]
-                  </Text>
-                )}
-              </Group>
-            }
-            title={t`Stock Information`}
-            extra={extra}
-          />
-        );
-      }
+      filter: ['has_stock', 'low_stock', 'high_stock'],
+      render: renderPartStockCell
     },
+    DecimalColumn({
+      accessor: 'ordering',
+      title: t`On Order`,
+      filter: 'on_order',
+      sortable: true,
+      defaultVisible: false
+    }),
     {
       accessor: 'price_range',
       title: t`Price Range`,
       sortable: true,
       ordering: 'pricing_max',
+      filter: 'has_pricing',
       defaultVisible: false,
       render: (record: any) =>
         formatPriceRange(record.pricing_min, record.pricing_max)
     },
+    BooleanColumn({
+      accessor: 'assembly',
+      defaultVisible: false
+    }),
+    BooleanColumn({
+      accessor: 'virtual',
+      defaultVisible: false
+    }),
+    BooleanColumn({
+      accessor: 'consumable',
+      defaultVisible: false
+    }),
     LinkColumn({})
-  ];
-}
-
-/**
- * Construct a set of filters for the part table
- */
-function partTableFilters(): TableFilter[] {
-  return [
-    {
-      name: 'active',
-      label: t`Active`,
-      description: t`Filter by part active status`,
-      type: 'boolean'
-    },
-    {
-      name: 'locked',
-      label: t`Locked`,
-      description: t`Filter by part locked status`,
-      type: 'boolean'
-    },
-    {
-      name: 'assembly',
-      label: t`Assembly`,
-      description: t`Filter by assembly attribute`,
-      type: 'boolean'
-    },
-    {
-      name: 'bom_valid',
-      label: t`BOM Valid`,
-      description: t`Filter by parts with a valid BOM`,
-      type: 'boolean'
-    },
-    {
-      name: 'cascade',
-      label: t`Include Subcategories`,
-      description: t`Include parts in subcategories`,
-      type: 'boolean'
-    },
-    {
-      name: 'component',
-      label: t`Component`,
-      description: t`Filter by component attribute`,
-      type: 'boolean'
-    },
-    {
-      name: 'testable',
-      label: t`Testable`,
-      description: t`Filter by testable attribute`,
-      type: 'boolean'
-    },
-    {
-      name: 'trackable',
-      label: t`Trackable`,
-      description: t`Filter by trackable attribute`,
-      type: 'boolean'
-    },
-    {
-      name: 'has_units',
-      label: t`Has Units`,
-      description: t`Filter by parts which have units`,
-      type: 'boolean'
-    },
-    {
-      name: 'has_ipn',
-      label: t`Has IPN`,
-      description: t`Filter by parts which have an internal part number`,
-      type: 'boolean'
-    },
-    {
-      name: 'has_stock',
-      label: t`Has Stock`,
-      description: t`Filter by parts which have stock`,
-      type: 'boolean'
-    },
-    {
-      name: 'low_stock',
-      label: t`Low Stock`,
-      description: t`Filter by parts which have low stock`,
-      type: 'boolean'
-    },
-    {
-      name: 'purchaseable',
-      label: t`Purchaseable`,
-      description: t`Filter by parts which are purchaseable`,
-      type: 'boolean'
-    },
-    {
-      name: 'salable',
-      label: t`Salable`,
-      description: t`Filter by parts which are salable`,
-      type: 'boolean'
-    },
-    {
-      name: 'virtual',
-      label: t`Virtual`,
-      description: t`Filter by parts which are virtual`,
-      type: 'boolean'
-    },
-    {
-      name: 'is_template',
-      label: t`Is Template`,
-      description: t`Filter by parts which are templates`,
-      type: 'boolean'
-    },
-    {
-      name: 'is_variant',
-      label: t`Is Variant`,
-      description: t`Filter by parts which are variants`,
-      type: 'boolean'
-    },
-    {
-      name: 'is_revision',
-      label: t`Is Revision`,
-      description: t`Filter by parts which are revisions`
-    },
-    {
-      name: 'has_revisions',
-      label: t`Has Revisions`,
-      description: t`Filter by parts which have revisions`
-    },
-    {
-      name: 'has_pricing',
-      label: t`Has Pricing`,
-      description: t`Filter by parts which have pricing information`,
-      type: 'boolean'
-    },
-    {
-      name: 'unallocated_stock',
-      label: t`Available Stock`,
-      description: t`Filter by parts which have available stock`,
-      type: 'boolean'
-    },
-    {
-      name: 'starred',
-      label: t`Subscribed`,
-      description: t`Filter by parts to which the user is subscribed`,
-      type: 'boolean'
-    }
   ];
 }
 
@@ -345,7 +130,8 @@ export function PartListTable({
   defaultPartData?: any;
 }>) {
   const tableColumns = useMemo(() => partTableColumns(), []);
-  const tableFilters = useMemo(() => partTableFilters(), []);
+
+  const tableFilters = useMemo(() => PartTableFilters(), []);
 
   const table = useTable(tableName ?? 'part-list', {
     initialFilters: [
@@ -357,51 +143,15 @@ export function PartListTable({
   });
   const user = useUserState();
   const globalSettings = useGlobalSettingsState();
-  const openImporter = useImporterState((state) => state.openImporter);
+  const refreshRef = useRef<() => void>(null!);
 
-  const importSessionFields = useMemo(() => {
-    const fields = dataImporterSessionFields({
-      modelType: ModelType.part
-    });
-
-    // Override default field values with provided fields
-    fields.field_defaults.value = {
-      ...props?.params,
-      ...defaultPartData
-    };
-
-    return fields;
-  }, [defaultPartData, props?.params]);
-
-  const importParts = useCreateApiFormModal({
-    url: ApiEndpoints.import_session_list,
-    title: t`Import Parts`,
-    fields: importSessionFields,
-    onFormSuccess: (response: any) => {
-      openImporter(response.pk, {
-        onClose: table.refreshTable
-      });
-    }
-  });
+  useEffect(() => {
+    refreshRef.current = table.refreshTable;
+  }, [table.refreshTable]);
 
   const initialPartData = useMemo(() => {
     return defaultPartData ?? props?.params ?? {};
   }, [defaultPartData, props?.params]);
-
-  const newPartFields = usePartFields({
-    create: true,
-    duplicatePartInstance: basePartInstance
-  });
-
-  const newPart = useCreateApiFormModal({
-    url: ApiEndpoints.part_list,
-    title: t`Add Part`,
-    fields: newPartFields,
-    initialData: initialPartData,
-    follow: true,
-    modelType: ModelType.part,
-    keepOpenOption: true
-  });
 
   const [selectedPart, setSelectedPart] = useState<any>({});
 
@@ -418,12 +168,9 @@ export function PartListTable({
   const duplicatePartFields: ApiFormFieldSet = useMemo(() => {
     return {
       ...createPartFields,
-      duplicate: {
-        children: {
-          part: {
-            value: selectedPart.pk,
-            hidden: true
-          },
+      duplicate: DuplicateField({
+        originalId: selectedPart.pk,
+        extraFields: {
           copy_image: {
             value: true
           },
@@ -443,7 +190,7 @@ export function PartListTable({
             hidden: !selectedPart.testable
           }
         }
-      }
+      })
     };
   }, [createPartFields, globalSettings, selectedPart]);
 
@@ -472,11 +219,6 @@ export function PartListTable({
   });
 
   const orderPartsWizard = OrderPartsWizard({ parts: table.selectedRecords });
-
-  const supplierPlugins = usePluginsWithMixin('supplier');
-  const importPartWizard = ImportPartWizard({
-    categoryId: initialPartData.category
-  });
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
@@ -532,47 +274,22 @@ export function PartListTable({
           }
         ]}
       />,
-      <ActionDropdown
-        key='add-parts-actions'
-        tooltip={t`Add Parts`}
-        position='bottom-start'
-        icon={<IconPlus />}
-        hidden={!user.hasAddRole(UserRoles.part)}
-        actions={[
-          {
-            name: t`Create Part`,
-            icon: <IconPlus />,
-            tooltip: t`Create a new part`,
-            onClick: () => newPart.open()
-          },
-          {
-            name: t`Import from File`,
-            icon: <IconFileUpload />,
-            tooltip: t`Import parts from a file`,
-            onClick: () => importParts.open(),
-            hidden: !enableImport
-          },
-          {
-            name: t`Import from Supplier`,
-            icon: <IconPackageImport />,
-            tooltip: t`Import parts from a supplier plugin`,
-            hidden: !enableImport || supplierPlugins.length === 0,
-            onClick: () => importPartWizard.openWizard()
-          }
-        ]}
+      <PartCreationMenu
+        key='part-creation-menu'
+        initialData={initialPartData}
+        basePartInstance={basePartInstance}
+        enableImport={enableImport}
+        refreshRef={refreshRef}
       />
     ];
-  }, [user, enableImport, table.hasSelectedRecords, supplierPlugins]);
+  }, [user, enableImport, table.hasSelectedRecords]);
 
   return (
     <>
-      {newPart.modal}
       {duplicatePart.modal}
       {editPart.modal}
       {setCategory.modal}
-      {importParts.modal}
       {orderPartsWizard.wizard}
-      {importPartWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.part_list)}
         tableState={table}

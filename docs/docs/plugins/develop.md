@@ -41,7 +41,7 @@ If you want to make your life easier, try to follow these guidelines; break wher
 from plugin import InvenTreePlugin, registry
 from plugin.mixins import APICallMixin, SettingsMixin, ScheduleMixin, BarcodeMixin
 ```
-- Feliver as a package (see [below](#packaging))
+- Deliver as a package (see [below](#packaging))
 - If you need to use a private infrastructure, use the 'Releases' functions in GitHub or Gitlab. Point to the 'latest' release endpoint when installing to make sure the update function works
 - Tag your GitHub repo with `inventree` and `inventreeplugins` to make discovery easier. A discovery mechanism using these tags is on the roadmap.
 - Use GitHub actions to test your plugin regularly (you can [schedule actions](https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows#schedule)) against the 'latest' [docker-build](https://hub.docker.com/r/inventree/inventree) of InvenTree
@@ -113,10 +113,10 @@ Refer to the [sample plugins]({{ sourcedir("src/backend/InvenTree/plugin/samples
 
 A *PluginConfig* database entry will be created for each plugin "discovered" when the server launches. This configuration entry is used to determine if a particular plugin is enabled.
 
-The configuration entries must be enabled via the [InvenTree admin interface](../settings/admin.md).
+The configuration entries must be enabled via the [Admin Center](../settings/admin.md#admin-center).
 
 !!! warning "Disabled by Default"
-    Newly discovered plugins are disabled by default, and must be manually enabled (in the admin interface) by a user with staff privileges.
+    Newly discovered plugins are disabled by default, and must be manually enabled (in the Admin Center) by a user with staff privileges.
 
 ## Plugin Mixins
 

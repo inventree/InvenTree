@@ -1,8 +1,9 @@
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { IconBuildingStore, IconCopy, IconPackages } from '@tabler/icons-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useGlobalSettingsState } from '../states/SettingsStates';
+import { TagsField } from './CommonFields';
 
 /**
  * Construct a set of fields for creating / editing a Part instance
@@ -22,6 +23,12 @@ export function usePartFields({
   const [purchaseable, setPurchaseable] = useState<boolean | undefined>(
     undefined
   );
+
+  // Set the initial state for the tracked fields based on the global settings
+  useEffect(() => {
+    setVirtual(globalSettings.isSet('PART_VIRTUAL'));
+    setPurchaseable(globalSettings.isSet('PART_PURCHASEABLE'));
+  }, [partId, create]);
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
@@ -48,6 +55,7 @@ export function usePartFields({
         }
       },
       keywords: {},
+      tags: TagsField({}),
       units: {},
       link: {},
       default_location: {
@@ -57,6 +65,7 @@ export function usePartFields({
       },
       default_expiry: {},
       minimum_stock: {},
+      maximum_stock: {},
       responsible: {
         filters: {
           is_active: true
@@ -94,6 +103,9 @@ export function usePartFields({
           setVirtual(value);
         }
       },
+      consumable: {
+        default: false
+      },
       locked: {},
       active: {},
       starred: {
@@ -109,7 +121,7 @@ export function usePartFields({
     if (create && !virtual) {
       fields.copy_category_parameters = {};
 
-      if (virtual != false) {
+      if (globalSettings.isSet('PART_CREATE_INITIAL')) {
         fields.initial_stock = {
           icon: <IconPackages />,
           children: {
@@ -147,7 +159,7 @@ export function usePartFields({
       fields.duplicate = {
         icon: <IconCopy />,
         children: {
-          part: {
+          original: {
             value: duplicatePartInstance?.pk,
             hidden: true
           },
@@ -185,6 +197,11 @@ export function usePartFields({
     // Pop 'expiry' field if expiry not enabled
     if (!globalSettings.isSet('STOCK_ENABLE_EXPIRY')) {
       delete fields['default_expiry'];
+    }
+
+    // Remove "locked" field if locking not enabled
+    if (!globalSettings.isSet('PART_ENABLE_LOCKING')) {
+      delete fields['locked'];
     }
 
     if (create) {

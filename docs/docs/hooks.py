@@ -4,10 +4,10 @@ import json
 import os
 import re
 from datetime import datetime
-from distutils.version import StrictVersion  # type: ignore[import]
 from pathlib import Path
 
 import requests
+from packaging.version import Version
 
 here = Path(__file__).parent
 
@@ -57,7 +57,7 @@ def fetch_rtd_versions():
         print('No RTD token found - skipping RTD version fetch')
 
     # Sort versions by version number
-    versions = sorted(versions, key=lambda x: StrictVersion(x['version']), reverse=True)
+    versions = sorted(versions, key=lambda x: Version(x['version']), reverse=True)
 
     # Add "latest" version first
     if not any(x['title'] == 'latest' for x in versions):
@@ -280,9 +280,27 @@ def on_post_build(*args, **kwargs):
     ignored_settings = {
         'global': ['SERVER_RESTART_REQUIRED'],
         'user': ['LAST_USED_PRINTING_MACHINES'],
+        'config': [
+            'INVENTREE_DB_TCP_KEEPALIVES',
+            'INVENTREE_DB_TCP_KEEPALIVES_IDLE',
+            'INVENTREE_DB_TCP_KEEPALIVES_INTERVAL',
+            'INVENTREE_DB_TCP_KEEPALIVES_COUNT',
+            'INVENTREE_DB_ISOLATION_SERIALIZABLE',
+            'INVENTREE_DB_WAL_MODE',
+            'INVENTREE_PLUGIN_DIR',
+            'INVENTREE_DOCKER',
+            'INVENTREE_FLAGS',
+            'INVENTREE_REMOTE_LOGIN',
+            'INVENTREE_REMOTE_LOGIN_HEADER',
+            'TEST_TRANSLATIONS',
+            'INVENTREE_FRONTEND_URL_BASE',
+            'INVENTREE_FRONTEND_API_HOST',
+            'INVENTREE_FRONTEND_SETTINGS',
+            'INVENTREE_LOGOUT_REDIRECT_URL',
+        ],
     }
 
-    for group in ['global', 'user']:
+    for group in ['global', 'user', 'config']:
         expected = expected_settings.get(group, {})
         observed = observed_settings.get(group, {})
         ignored = ignored_settings.get(group, [])

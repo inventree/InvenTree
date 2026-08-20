@@ -23,10 +23,17 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
+import { RowDeleteAction, RowEditAction } from '@lib/components/RowActions';
+import { StylishText } from '@lib/components/StylishText';
 import { YesNoButton } from '@lib/components/YesNoButton';
+import {
+  DetailDrawer,
+  DetailDrawerLink
+} from '@lib/components/nav/DetailDrawer';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import { RowDeleteAction, RowEditAction, formatDecimal } from '@lib/index';
+import useTable from '@lib/hooks/UseTable';
+import { formatDecimal } from '@lib/index';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
 import type { InvenTreeTableProps } from '@lib/types/Tables';
 import { Trans } from '@lingui/react/macro';
@@ -37,26 +44,20 @@ import {
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
 import { InfoItem } from '../../components/items/InfoItem';
-import { StylishText } from '../../components/items/StylishText';
 import { UnavailableIndicator } from '../../components/items/UnavailableIndicator';
-import {
-  DetailDrawer,
-  DetailDrawerLink
-} from '../../components/nav/DetailDrawer';
 import {
   StatusRenderer,
   TableStatusRenderer
 } from '../../components/render/StatusRenderer';
 import { MachineSettingList } from '../../components/settings/SettingList';
+import { BooleanColumn } from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useApi } from '../../contexts/ApiContext';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 import type { MachineDriverI, MachineTypeI } from './MachineTypeTable';
 
 interface MachineI {

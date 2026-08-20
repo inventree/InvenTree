@@ -5,10 +5,12 @@ import json
 import os
 import pathlib
 import re
+import shlex
 import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from functools import wraps
 from pathlib import Path
 from platform import python_version
@@ -16,7 +18,7 @@ from typing import Optional
 
 import invoke
 from invoke import Collection, task
-from invoke.exceptions import UnexpectedExit
+from invoke.exceptions import Exit, UnexpectedExit
 
 
 def safe_value(fnc):
@@ -200,9 +202,20 @@ def state_logger(fn=None, method_name=None):
             do_log = is_debug_environment()
             if do_log:
                 info(f'# task | {func.method_name} | start')
-            func(c, *args, **kwargs)
+
+            t1 = time.time()
+            try:
+                func(c, *args, **kwargs)
+            except KeyboardInterrupt:
+                error('INVE-W15: Process interrupted by user.')
+                sys.exit(1)
+            except UnexpectedExit:
+                error(f"Task '{func.method_name}' failed with an error.")
+                raise
+            t2 = time.time()
+
             if do_log:
-                info(f'# task | {func.method_name} | done')
+                info(f'# task | {func.method_name} | done | elapsed: {t2 - t1:.2f}s')
 
         return wrapped
 
@@ -367,7 +380,7 @@ def content_excludes(
 
     # Optionally exclude user auth data
     if not allow_auth:
-        excludes.extend(['auth.group', 'auth.user'])
+        excludes.extend(['auth.group', 'auth.user', 'users.userprofile'])
 
     # Optionally exclude user token information
     if not allow_tokens:
@@ -464,7 +477,7 @@ def run(
     return result
 
 
-def manage(c, cmd, pty: bool = False, env=None, **kwargs):
+def manage(c, cmd, pty: bool = False, env=None, verbose: bool = False, **kwargs):
     """Runs a given command against django's "manage.py" script.
 
     Args:
@@ -472,10 +485,54 @@ def manage(c, cmd, pty: bool = False, env=None, **kwargs):
         cmd: Django command to run.
         pty (bool, optional): Run an interactive session. Defaults to False.
         env (dict, optional): Environment variables to pass to the command. Defaults to None.
+        verbose (bool, optional): Print verbose output from the command. Defaults to False.
     """
+    if verbose:
+        info(f'Running command: python3 manage.py {cmd}')
+        cmd += ' -v 1'
+    else:
+        cmd += ' -v 0'
+
     return run(
         c, f'python3 manage.py {cmd}', manage_py_dir(), pty=pty, env=env, **kwargs
     )
+
+
+def manage_interactive(cmd: str, env=None, verbose: bool = False):
+    """Run a Django management command with inherited stdio.
+
+    This bypasses Invoke PTY mediation and mirrors direct shell usage, which is
+    required for some interactive commands in Docker environments.
+
+    Args:
+        cmd: Django management command and arguments.
+        env: Optional environment variables to add for command execution.
+        verbose: If True, print the resolved command before execution.
+
+    Raises:
+        Exit: If the subprocess returns a non-zero exit code.
+    """
+    args = ['python3', 'manage.py', *shlex.split(cmd)]
+
+    # Keep behavior aligned with `manage`: default to quiet output.
+    if '-v' not in cmd and '--verbosity' not in cmd:
+        args.extend(['-v', '1' if verbose else '0'])
+
+    if verbose:
+        info(f'Running interactive command: {" ".join(args)}')
+
+    cmd_env = dict(os.environ)
+    if env:
+        cmd_env.update(env)
+
+    # Avoid Invoke's PTY stdin mediation for interactive commands; run with
+    # inherited stdio to match direct `manage.py` behavior in Docker TTYs.
+    result = subprocess.run(args, cwd=manage_py_dir(), env=cmd_env, check=False)
+
+    if result.returncode != 0:
+        error(f"ERROR: InvenTree command failed: '{' '.join(args)}'")
+        warning('- Refer to the error messages in the log above for more information')
+        raise Exit(code=result.returncode)
 
 
 def installed_apps(c) -> list[str]:
@@ -499,8 +556,19 @@ def run_install(
     run_preflight=True,
     version_check=False,
     pinned=True,
+    verbose: bool = False,
 ):
-    """Run the installation of python packages from a requirements file."""
+    """Run the installation of python packages from a requirements file.
+
+    Arguments:
+        c: Command line context.
+        uv: Whether to use UV (experimental package manager) instead of pip.
+        install_file: Path to the requirements file to install from.
+        run_preflight: Whether to run the preflight installation step (installing pip/uv itself). Default is True.
+        version_check: Whether to check for a version-specific requirements file. Default is False.
+        pinned: Whether to use the --require-hashes option when installing packages. Default is True.
+        verbose: Whether to print verbose output from pip install commands. Default is False.
+    """
     if version_check:
         # Test if there is a version specific requirements file
         sys_ver_s = python_version().split('.')
@@ -518,25 +586,28 @@ def run_install(
 
     # Install required Python packages with PIP
     if not uv:
+        # Optionally run preflight first
         if run_preflight:
             run(
                 c,
-                'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools',
+                f'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools {"" if verbose else "--quiet"}',
             )
+            info('Installed package manager')
+
         run(
             c,
-            f'pip3 install --no-cache-dir --disable-pip-version-check -U {"--require-hashes" if pinned else ""} -r {install_file}',
+            f'pip3 install --no-cache-dir --disable-pip-version-check -U {"--require-hashes" if pinned else ""} -r {install_file} {"" if verbose else "--quiet"}',
         )
     else:
         if run_preflight:
             run(
                 c,
-                'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools',
+                f'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools {"" if verbose else "--quiet"}',
             )
             info('Installed package manager')
         run(
             c,
-            f'uv pip install -U {"--require-hashes" if pinned else ""} -r {install_file}',
+            f'uv pip install -U {"--require-hashes" if pinned else ""} -r {install_file} {"" if verbose else "--quiet"}',
         )
 
 
@@ -605,28 +676,34 @@ def check_file_existence(filename: Path, overwrite: bool = False):
             sys.exit(1)
 
 
-@task
+@task(help={'verbose': 'Print verbose output from the command'})
 @state_logger
-def wait(c):
+def wait(c, verbose: bool = False):
     """Wait until the database connection is ready."""
-    info('Waiting for database connection...')
-    return manage(c, 'wait_for_db')
+    return manage(c, 'wait_for_db', verbose=verbose)
 
 
 # Install tasks
 # region tasks
-@task(help={'uv': 'Use UV (experimental package manager)'})
+@task(
+    help={
+        'uv': 'Use UV (experimental package manager)',
+        'verbose': 'Print verbose output from installation commands',
+    }
+)
 @state_logger
-def plugins(c, uv=False):
+def plugins(c, uv: bool = False, verbose: bool = False):
     """Installs all plugins as specified in 'plugins.txt'."""
     from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
         get_plugin_file,
     )
 
-    run_install(c, uv, get_plugin_file(), run_preflight=False, pinned=False)
+    run_install(
+        c, uv, get_plugin_file(), run_preflight=False, pinned=False, verbose=verbose
+    )
 
     # Collect plugin static files
-    manage(c, 'collectplugins')
+    manage(c, 'collectplugins', verbose=verbose)
 
 
 @task(
@@ -634,29 +711,51 @@ def plugins(c, uv=False):
         'uv': 'Use UV package manager (experimental)',
         'skip_plugins': 'Skip plugin installation',
         'dev': 'Install development requirements instead of production requirements',
+        'verbose': 'Print verbose output from pip install commands',
     }
 )
 @state_logger
-def install(c, uv=False, skip_plugins=False, dev=False):
-    """Installs required python packages."""
+def install(
+    c,
+    uv: bool = False,
+    skip_plugins: bool = False,
+    dev: bool = False,
+    verbose: bool = False,
+):
+    """Install required python packages for InvenTree.
+
+    Arguments:
+        c: Command line context.
+        uv: Use UV package manager (experimental) instead of pip. Default is False.
+        skip_plugins: Skip plugin installation. Default is False.
+        dev: Install development requirements instead of production requirements. Default is False.
+        verbose: Print verbose output from pip install commands. Default is False.
+    """
+    info('Installing required python packages...')
+
     if dev:
         run_install(
             c,
             uv,
             local_dir().joinpath('src/backend/requirements-dev.txt'),
             version_check=True,
+            verbose=verbose,
         )
         success('Dependency installation complete')
         return
 
     # Ensure path is relative to *this* directory
     run_install(
-        c, uv, local_dir().joinpath('src/backend/requirements.txt'), version_check=True
+        c,
+        uv,
+        local_dir().joinpath('src/backend/requirements.txt'),
+        version_check=True,
+        verbose=verbose,
     )
 
     # Run plugins install
     if not skip_plugins:
-        plugins(c, uv=uv)
+        plugins(c, uv=uv, verbose=verbose)
 
     # Compile license information
     lic_path = manage_py_dir().joinpath('InvenTree', 'licenses.txt')
@@ -665,27 +764,31 @@ def install(c, uv=False, skip_plugins=False, dev=False):
         f'pip-licenses --format=json --with-license-file --no-license-path > {lic_path}',
     )
 
+    if not lic_path.exists() or lic_path.stat().st_size == 0:
+        raise FileNotFoundError(f"License file was not generated at '{lic_path}'")
+
     success('Dependency installation complete')
 
 
-@task(help={'tests': 'Set up test dataset at the end'})
-def setup_dev(c, tests=False):
+@task(
+    help={
+        'tests': 'Set up test dataset at the end',
+        'verbose': 'Print verbose output from commands',
+    }
+)
+def setup_dev(c, tests: bool = False, verbose: bool = False):
     """Sets up everything needed for the dev environment."""
     # Install required Python packages with PIP
-    install(c, uv=False, skip_plugins=True, dev=True)
+    install(c, uv=False, skip_plugins=True, dev=True, verbose=verbose)
 
-    # Install pre-commit hook
-    info('Installing pre-commit for checks before git commits...')
-    run(c, 'pre-commit install')
-
-    # Update all the hooks
-    run(c, 'pre-commit autoupdate')
-
-    success('pre-commit set up complete')
+    # Install prek hook
+    info('Installing prek for checks before git commits...')
+    run(c, 'prek install')
+    success('prek set up complete')
 
     # Set up test-data if flag is set
     if tests:
-        setup_test(c)
+        setup_test(c, verbose=verbose)
 
 
 # Setup / maintenance tasks
@@ -700,7 +803,7 @@ def shell(c):
 @task
 def superuser(c):
     """Create a superuser/admin account for the database."""
-    manage(c, 'createsuperuser', pty=True)
+    manage_interactive('createsuperuser')
 
 
 @task
@@ -725,7 +828,7 @@ def rebuild_thumbnails(c):
 @state_logger
 def clean_settings(c):
     """Clean the setting tables of old settings."""
-    info('Cleaning old settings from the database')
+    info('Cleaning old settings from the database...')
     manage(c, 'clean_settings')
     success('Settings cleaned successfully')
 
@@ -797,12 +900,29 @@ def translate(c, ignore_static=False, no_frontend=False):
     success('Translation files built successfully')
 
 
-@task
+@task(help={'verbose': 'Print verbose output'})
 @state_logger('backend_trans')
-def backend_trans(c):
+def backend_trans(c, verbose: bool = False):
     """Compile backend Django translation files."""
-    info('Compiling backend translations')
-    manage(c, 'compilemessages')
+    info('Compiling backend translations...')
+    manage(c, 'compilemessages', verbose=verbose)
+    success('Backend translations compiled successfully')
+
+
+@task(help={'verbose': 'Print verbose output'})
+@state_logger('backend_compilemessages')
+def backend_compilemessages(c, verbose: bool = False):
+    """Compile backend Django translation files without loading InvenTree settings."""
+    info('Compiling backend translations...')
+
+    cmd = 'python3 -m django compilemessages'
+
+    if verbose:
+        cmd += ' -v 1'
+    else:
+        cmd += ' -v 0'
+
+    run(c, cmd, manage_py_dir())
     success('Backend translations compiled successfully')
 
 
@@ -944,20 +1064,36 @@ def listbackups(c):
     manage(c, 'listbackups')
 
 
-@task(pre=[wait], post=[rebuild_models, rebuild_thumbnails])
+@task(
+    pre=[wait],
+    post=[rebuild_models, rebuild_thumbnails],
+    help={
+        'verbose': 'Print verbose output from migration commands',
+        'detect': 'Detect and create new migrations based on changes to models',
+    },
+)
 @state_logger
-def migrate(c):
-    """Performs database migrations.
+def migrate(c, detect: bool = False, verbose: bool = False):
+    """Performs database migrations. This is a critical step if the database schema has been altered.
 
-    This is a critical step if the database schema have been altered!
+    Arguments:
+        c: Command line context.
+        detect: Whether to detect and create new migrations based on changes to models. Default is False.
+        verbose: Whether to print verbose output from migration commands. Default is False.
     """
     info('Running InvenTree database migrations...')
 
-    # Run custom management command which wraps migrations in "maintenance mode"
-    manage(c, 'makemigrations')
-    manage(c, 'runmigrations', pty=True)
-    manage(c, 'migrate --run-syncdb')
-    manage(c, 'remove_stale_contenttypes --include-stale-apps --no-input', pty=True)
+    if detect:
+        manage(c, 'makemigrations', verbose=verbose)
+
+    manage(c, 'runmigrations', pty=True, verbose=verbose)
+    manage(c, 'migrate --run-syncdb', verbose=verbose)
+    manage(
+        c,
+        'remove_stale_contenttypes --include-stale-apps --no-input',
+        pty=True,
+        verbose=verbose,
+    )
 
     success('InvenTree database migrations completed')
 
@@ -978,6 +1114,7 @@ def showmigrations(c, app=''):
         'no_frontend': 'Skip frontend compilation/download step',
         'skip_static': 'Skip static file collection step',
         'uv': 'Use UV (experimental package manager)',
+        'verbose': 'Print verbose output from installation commands',
     },
 )
 @state_logger
@@ -990,6 +1127,7 @@ def update(
     no_frontend: bool = False,
     skip_static: bool = False,
     uv: bool = False,
+    verbose: bool = False,
 ):
     """Update InvenTree installation.
 
@@ -1009,7 +1147,7 @@ def update(
     info('Updating InvenTree installation...')
 
     # Ensure required components are installed
-    install(c, uv=uv)
+    install(c, uv=uv, verbose=verbose)
 
     # Skip backend translation compilation on docker, unless explicitly requested.
     # Users can also forcefully disable the step via `--no-backend`.
@@ -1019,7 +1157,7 @@ def update(
         else:
             info('Skipping backend translation compilation (INVENTREE_DOCKER flag set)')
     else:
-        backend_trans(c)
+        backend_trans(c, verbose=verbose)
 
     if not skip_backup:
         backup(c)
@@ -1052,7 +1190,7 @@ def update(
         # Note: frontend has already been compiled if required
         static(c, frontend=False)
 
-    success('InvenTree update complete!')
+    success('InvenTree update complete')
 
 
 # Data tasks
@@ -1066,8 +1204,8 @@ def update(
         'exclude_plugins': 'Exclude plugin data from the output file (default = False)',
         'include_sso': 'Include SSO token data in the output file (default = False)',
         'include_session': 'Include user session data in the output file (default = False)',
-    },
-    pre=[wait],
+        'verbose': 'Print verbose output from management commands',
+    }
 )
 def export_records(
     c,
@@ -1079,6 +1217,7 @@ def export_records(
     exclude_plugins: bool = False,
     include_sso: bool = False,
     include_session: bool = False,
+    verbose: bool = False,
 ):
     """Export all database records to a file."""
     # Get an absolute path to the file
@@ -1087,6 +1226,8 @@ def export_records(
         target = local_dir().joinpath(filename).resolve()
 
     info(f"Exporting database records to file '{target}'")
+
+    wait(c, verbose=verbose)
 
     check_file_existence(target, overwrite)
 
@@ -1104,8 +1245,7 @@ def export_records(
         cmd = f"dumpdata --natural-foreign --indent 2 --output '{tmpfile.name}' {excludes}"
 
         # Dump data to temporary file
-        manage(c, cmd, pty=True)
-
+        manage(c, cmd, pty=True, verbose=verbose)
         info('Running data post-processing step...')
 
         # Post-process the file, to remove any "permissions" specified for a user or group
@@ -1213,10 +1353,10 @@ def validate_import_metadata(
         'filename': 'Input filename',
         'clear': 'Clear existing data before import',
         'strict': 'Strict mode - fail if any issues are detected with the metadata (default = False)',
-        'retain_temp': 'Retain temporary files at end of process (default = False)',
         'ignore_nonexistent': 'Ignore non-existent database models (default = False)',
         'exclude_plugins': 'Exclude plugin data from the import process (default = False)',
         'skip_migrations': 'Skip the migration step after clearing data (default = False)',
+        'verbose': 'Print verbose output from management commands',
     },
     pre=[wait],
     post=[rebuild_models, rebuild_thumbnails],
@@ -1225,11 +1365,11 @@ def import_records(
     c,
     filename='data.json',
     clear: bool = False,
-    retain_temp: bool = False,
     strict: bool = False,
     exclude_plugins: bool = False,
     ignore_nonexistent: bool = False,
     skip_migrations: bool = False,
+    verbose: bool = False,
 ):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
@@ -1243,10 +1383,10 @@ def import_records(
         sys.exit(1)
 
     if clear:
-        delete_data(c, force=True, migrate=True)
+        delete_data(c, force=True, migrate=True, verbose=verbose)
 
     if not skip_migrations:
-        migrate(c)
+        migrate(c, verbose=verbose)
 
     info(f"Importing database records from '{target}'")
 
@@ -1274,6 +1414,7 @@ def import_records(
     ) -> tempfile.NamedTemporaryFile:
         """Helper function to save data to a temporary file, and then load into the database."""
         nonlocal ignore_nonexistent
+        nonlocal verbose
         nonlocal c
 
         # Skip if there is no data to load
@@ -1299,7 +1440,7 @@ def import_records(
         if excludes:
             cmd += f' -i {excludes}'
 
-        manage(c, cmd, pty=True)
+        manage(c, cmd, pty=True, verbose=verbose)
 
     # Iterate through each entry in the provided data file, and separate out into different categories based on the model type
     for entry in data:
@@ -1347,8 +1488,8 @@ def import_records(
     if not exclude_plugins:
         load_data('plugins', plugin_data, app='plugin')
 
-        # Now that the plugins have been loaded, run database migrations again to ensure any new plugins have their database schema up to date
-        if not skip_migrations:
+        if len(plugin_data) > 0 and not skip_migrations:
+            # Now that the plugins have been loaded, run database migrations again to ensure any new plugins have their database schema up to date
             migrate(c)
 
     # Run validation again - ensure that the plugin apps have been loaded correctly
@@ -1363,22 +1504,25 @@ def import_records(
     help={
         'force': 'Force deletion of all data without confirmation',
         'migrate': 'Run migrations before deleting data (default = False)',
+        'verbose': 'Print verbose output from management commands',
     }
 )
-def delete_data(c, force: bool = False, migrate: bool = False):
+def delete_data(c, force: bool = False, migrate: bool = False, verbose: bool = False):
     """Delete all database records!
 
     Warning: This will REALLY delete all records in the database!!
     """
-    info('Deleting all data from InvenTree database...')
+    info('Deleting existing data from InvenTree database...')
 
     if migrate:
-        manage(c, 'migrate --run-syncdb')
+        manage(c, 'migrate --run-syncdb', verbose=verbose)
 
     if force:
-        manage(c, 'flush --noinput')
+        manage(c, 'flush --noinput', verbose=verbose)
     else:
-        manage(c, 'flush')
+        manage_interactive('flush', verbose=verbose)
+
+    success('Existing data deleted')
 
 
 @task(post=[rebuild_models, rebuild_thumbnails])
@@ -1472,10 +1616,75 @@ def server(c, address='0.0.0.0:8000', no_reload=False, no_threading=False):
     manage(c, cmd, pty=True)
 
 
-@task(pre=[wait])
-def worker(c):
-    """Run the InvenTree background worker process."""
-    manage(c, 'qcluster', pty=True)
+@task(pre=[wait], help={'verbose': 'Print verbose output from the command'})
+def worker(c, verbose: bool = False):
+    """Run the InvenTree background worker process.
+
+    Launches a django-q2 cluster to process background tasks.
+    Ref: https://django-q2.readthedocs.io
+    """
+    manage(c, 'qcluster', pty=True, verbose=verbose)
+
+
+@task(help={'timeout': 'Maximum minutes since last heartbeat (default: 3)'})
+def worker_health(c, timeout: int = 3):
+    """Check if the background worker is healthy by reading the heartbeat file.
+
+    Exits 0 if the worker has run within the last TIMEOUT minutes, 1 otherwise.
+    No Django startup or database access is required.
+    """
+    heartbeat_file = Path(tempfile.gettempdir()) / 'inventree_worker_heartbeat'
+
+    if heartbeat_file.exists():
+        try:
+            age_seconds = time.time() - float(heartbeat_file.read_text().strip())
+            if age_seconds < timeout * 60:
+                success(
+                    f'Worker is healthy (last heartbeat {int(age_seconds) // 60}m {int(age_seconds) % 60}s ago)'
+                )
+                return
+            warning(
+                f'Heartbeat file is stale ({int(age_seconds) // 60}m {int(age_seconds) % 60}s old)'
+            )
+        except Exception as e:
+            warning(f'Could not read heartbeat file: {e}')
+    else:
+        warning(f'Heartbeat file not found: {heartbeat_file}')
+
+    error('Worker health check failed')
+    raise Exit(code=1)
+
+
+@task(
+    help={
+        'address': 'Server address to check (default: http://localhost:8000)',
+        'timeout': 'Request timeout in seconds (default: 5)',
+    }
+)
+def server_health(c, address: str = 'http://localhost:8000', timeout: int = 5):
+    """Check if the web server is healthy by requesting /api/system/health/.
+
+    Exits 0 on HTTP 200, 1 otherwise.
+    No Django startup required.
+    """
+    import urllib.error
+    import urllib.request
+
+    url = f'{address.rstrip("/")}/api/system/health/'
+
+    try:
+        with urllib.request.urlopen(url, timeout=timeout) as response:
+            if response.status == 200:
+                success(f'Server is healthy ({url})')
+                return
+            warning(f'Unexpected status {response.status} from {url}')
+    except urllib.error.URLError as e:
+        warning(f'Could not reach server at {url}: {e.reason}')
+    except Exception as e:
+        warning(f'Unexpected error checking {url}: {e}')
+
+    error('Server health check failed')
+    raise Exit(code=1)
 
 
 @task(post=[static, server])
@@ -1637,19 +1846,23 @@ def test(
 @task(
     help={
         'dev': 'Set up development environment at the end',
+        'keep': 'Keep existing demo dataset (do not re-clone)',
         'validate_files': 'Validate media files are correctly copied',
         'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
-        'branch': 'Specify branch of demo-dataset to clone (default = main)',
+        'branch': 'Specify branch of demo-dataset to clone',
+        'verbose': 'Print verbose output from management commands',
     }
 )
 def setup_test(
     c,
-    ignore_update=False,
-    dev=False,
-    validate_files=False,
-    use_ssh=False,
-    path='inventree-demo-dataset',
-    branch='main',
+    ignore_update: bool = False,
+    dev: bool = False,
+    keep: bool = False,
+    validate_files: bool = False,
+    use_ssh: bool = False,
+    verbose: bool = False,
+    path: str = 'inventree-demo-dataset',
+    branch: Optional[str] = None,
 ):
     """Setup a testing environment."""
     from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
@@ -1657,32 +1870,67 @@ def setup_test(
     )
 
     if not ignore_update:
-        update(c)
+        update(c, verbose=verbose)
 
     template_dir = local_dir().joinpath(path)
 
-    # Remove old data directory
-    if template_dir.exists():
-        info('Removing old data ...')
-        run(c, f'rm {template_dir} -r')
+    if not keep:
+        # Remove old data directory
+        if template_dir.exists():
+            run(c, f'rm {template_dir} -r')
 
-    URL = 'https://github.com/inventree/demo-dataset'
+        URL = 'https://github.com/inventree/demo-dataset'
 
-    if use_ssh:
-        # Use SSH protocol for cloning the demo dataset
-        URL = 'git@github.com:inventree/demo-dataset.git'
+        if use_ssh:
+            # Use SSH protocol for cloning the demo dataset
+            URL = 'git@github.com:inventree/demo-dataset.git'
 
-    # Get test data
-    info('Cloning demo dataset ...')
-    run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
+        if not branch:
+            # No branch specified - determine the InvenTree version
+            version = get_inventree_version()
+
+            # If the version is a stable release (e.g. "1.4.3")
+            # then we can try to use the corresponding branch in the demo-dataset repository
+            # (e.g. "1.4.x")
+            if re.match(r'^\d+\.\d+\.\d+$', version):
+                branch = f'{version.rsplit(".", 1)[0]}.x'
+
+        # InvenTree's trunk branch is named "master", but the demo-dataset
+        # repository uses "main" as its trunk branch - map this automatically
+        # so CI can pass through the detected target branch unmodified.
+        if not branch or branch == 'master':
+            branch = 'main'
+
+        if branch != 'main':
+            # Stable release branches (e.g. "1.4.x") may not yet exist in the
+            # demo-dataset repository (e.g. it has not been backported yet).
+            # Fall back to "main" in that case, rather than failing the clone.
+            result = c.run(
+                f'git ls-remote --heads {URL} {branch}', hide=True, warn=True
+            )
+            if not result.ok or not result.stdout.strip():
+                warning(
+                    f"Demo dataset has no branch named '{branch}' - falling back to 'main'"
+                )
+                branch = 'main'
+
+        # Get test data
+        info(f"Cloning demo dataset (branch '{branch}') ...")
+        run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
 
     # Make sure migrations are done - might have just deleted sqlite database
     if not ignore_update:
-        migrate(c)
+        migrate(c, verbose=verbose)
 
     # Load data
     info('Loading database records ...')
-    import_records(c, filename=template_dir.joinpath('inventree_data.json'), clear=True)
+    import_records(
+        c,
+        filename=template_dir.joinpath('inventree_data.json'),
+        clear=True,
+        ignore_nonexistent=True,
+        verbose=verbose,
+    )
 
     # Copy media files
     src = template_dir.joinpath('media')
@@ -1718,7 +1966,7 @@ def setup_test(
 
     # Set up development setup if flag is set
     if dev:
-        setup_dev(c)
+        setup_dev(c, verbose=verbose)
 
 
 @task(
@@ -1777,7 +2025,12 @@ def export_definitions(c, basedir: str = ''):
     """Export various definitions."""
     if basedir != '' and basedir.endswith('/') is False:
         basedir += '/'
+
     base_path = Path(basedir, 'generated').resolve()
+
+    if not base_path.exists():
+        info(f'Creating export directory: {base_path}')
+        base_path.mkdir(parents=True, exist_ok=True)
 
     filenames = [
         base_path.joinpath('inventree_settings.json'),
@@ -1929,7 +2182,7 @@ def frontend_build(c):
     Args:
         c: Context variable
     """
-    info('Building frontend')
+    info('Building frontend...')
     yarn(c, 'yarn run build')
 
     def write_info(path: Path, content: str):
@@ -1956,6 +2209,8 @@ def frontend_build(c):
         )
     except Exception:
         warning('Failed to write frontend version marker')
+
+    success('Frontend build complete')
 
 
 @task
@@ -2209,12 +2464,19 @@ def doc_schema(c):
     help={
         'address': 'Host and port to run the server on (default: localhost:8080)',
         'compile_schema': 'Compile the API schema documentation first (default: False)',
+        'export_settings': 'Export settings definitions before starting the server (default: True)',
     }
 )
-def docs_server(c, address='localhost:8080', compile_schema=False):
+def docs_server(
+    c,
+    address='localhost:8080',
+    compile_schema: bool = False,
+    export_settings: bool = True,
+):
     """Start a local mkdocs server to view the documentation."""
     # Extract settings definitions
-    export_definitions(c, basedir='docs')
+    if export_settings:
+        export_definitions(c, basedir='docs')
 
     if compile_schema:
         doc_schema(c)
@@ -2284,6 +2546,7 @@ internal = Collection(
     clear_generated,
     export_settings_definitions,
     export_definitions,
+    backend_compilemessages,
     frontend_build,
     frontend_check,
     frontend_compile,
@@ -2312,6 +2575,8 @@ ns = Collection(
     version,
     wait,
     worker,
+    worker_health,
+    server_health,
     monitor,
     build_docs,
 )

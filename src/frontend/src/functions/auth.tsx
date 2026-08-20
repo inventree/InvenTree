@@ -15,7 +15,7 @@ import { api, setApiDefaults } from '../App';
 import { useLocalState } from '../states/LocalState';
 import { useServerApiState } from '../states/ServerApiState';
 import { useUserState } from '../states/UserState';
-import { fetchGlobalStates } from '../states/states';
+import { fetchGlobalStates, resetGlobalStatesFetched } from '../states/states';
 import { showLoginNotification } from './notifications';
 import { generateUrl } from './urls';
 
@@ -129,9 +129,24 @@ export async function doBasicLogin(
             });
             break;
           default:
+            const data = err.response?.data ?? {};
+
+            let msg: string = t`Check your input and try again.`;
+
+            // Extract error message from response data
+            if (data?.detail) {
+              msg = data.detail;
+            } else if (data?.message) {
+              msg = data.message;
+            } else if (data?.error) {
+              msg = data.error;
+            } else if (data?.errors && Array.isArray(data.errors)) {
+              msg = data.errors[0]?.message ?? msg;
+            }
+
             notifications.show({
               title: `${t`Login failed`} (${err.response.status})`,
-              message: t`Check your input and try again.`,
+              message: msg,
               id: 'auth-login-error',
               color: 'red'
             });
@@ -156,7 +171,7 @@ export async function doBasicLogin(
   // we are successfully logged in - gather required states for app
   if (loginDone) {
     await fetchUserState();
-    await fetchGlobalStates();
+    await fetchGlobalStates(true);
     observeProfile();
   } else if (!success) {
     clearUserState();
@@ -212,6 +227,10 @@ export const doLogout = async (navigate: NavigateFunction) => {
     await authApi(apiUrl(ApiEndpoints.auth_session), undefined, 'delete').catch(
       () => {}
     );
+    // remove MFA token (mfa_trusted)
+    document.cookie =
+      'mfa_trusted=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
     showLoginNotification({
       title: t`Logged Out`,
       message: t`Successfully logged out`
@@ -221,6 +240,7 @@ export const doLogout = async (navigate: NavigateFunction) => {
   clearUserState();
   clearCsrfCookie();
   setAuthContext(undefined);
+  resetGlobalStatesFetched();
   navigate('/login');
 };
 
@@ -436,6 +456,10 @@ export const checkLoginState = async (
     MfaSetupOk(navigate).then(async (isOk) => {
       if (isOk) {
         observeProfile();
+        // Not forced: this runs on every page load's auth check, and
+        // LanguageContext's own locale-activation effect (which always
+        // runs first, since it gates rendering of this component's whole
+        // route tree) will typically have already triggered this fetch.
         await fetchGlobalStates();
 
         followRedirect(navigate, redirect);
@@ -486,7 +510,7 @@ function handleSuccessFullAuth(
     if (isOk) {
       await fetchUserState();
       observeProfile();
-      await fetchGlobalStates();
+      await fetchGlobalStates(true);
 
       if (location !== undefined) {
         followRedirect(navigate, location?.state);

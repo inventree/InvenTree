@@ -6,21 +6,13 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import { ActionButton, formatDecimal } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { Alert } from '@mantine/core';
 import { IconCircleDashedCheck, IconCircleX } from '@tabler/icons-react';
-import { useConsumeBuildItemsForm } from '../../forms/BuildForms';
-import useBackgroundTask from '../../hooks/UseBackgroundTask';
-import {
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
-import { useTable } from '../../hooks/UseTable';
-import { useUserState } from '../../states/UserState';
 import {
   DecimalColumn,
   IPNColumn,
@@ -29,9 +21,20 @@ import {
   ReferenceColumn,
   StatusColumn,
   StockColumn
-} from '../ColumnRenderers';
-import { IncludeVariantsFilter, StockLocationFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+} from '../../components/tables/ColumnRenderers';
+import {
+  IncludeVariantsFilter,
+  StockLocationFilter
+} from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { useConsumeBuildItemsForm } from '../../forms/BuildForms';
+import useBackgroundTask from '../../hooks/UseBackgroundTask';
+import {
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
+import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
+import { useUserState } from '../../states/UserState';
 
 /**
  * Render a table of allocated stock for a build.
@@ -233,7 +236,6 @@ export default function BuildAllocatedStockTable({
 
     return {
       items: stockItems,
-      model: ModelType.stockitem,
       refresh: table.refreshTable
     };
   }, [table.selectedRecords, table.refreshTable]);

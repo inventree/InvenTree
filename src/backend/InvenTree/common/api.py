@@ -20,16 +20,23 @@ import django_q.models
 import django_q.tasks
 from django_filters.rest_framework.filterset import FilterSet
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
-from drf_spectacular.utils import OpenApiResponse, extend_schema
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    OpenApiResponse,
+    extend_schema,
+    extend_schema_view,
+)
 from error_report.models import Error
 from opentelemetry import trace
 from pint._typing import UnitLike
-from rest_framework import generics, serializers
+from rest_framework import serializers, viewsets
+from rest_framework.decorators import action
 from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from sql_util.utils import SubqueryCount
+from taggit.models import Tag
 
 import common.filters
 import common.models
@@ -44,6 +51,7 @@ from generic.states.api import urlpattern as generic_states_api_urls
 from InvenTree.api import (
     BulkCreateMixin,
     BulkDeleteMixin,
+    BulkDeleteViewsetMixin,
     GenericMetadataView,
     SimpleGenericMetadataView,
     meta_path,
@@ -51,6 +59,11 @@ from InvenTree.api import (
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors, str2bool
+from InvenTree.helpers_api import (
+    InvenTreeApiRouter,
+    RetrieveDestroyModelViewSet,
+    RetrieveUpdateDestroyModelViewSet,
+)
 from InvenTree.helpers_email import send_email
 from InvenTree.mixins import (
     CreateAPI,
@@ -58,7 +71,6 @@ from InvenTree.mixins import (
     ListCreateAPI,
     OutputOptionsMixin,
     RetrieveAPI,
-    RetrieveDestroyAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
@@ -71,6 +83,10 @@ from InvenTree.permissions import (
     IsSuperuserOrSuperScope,
     UserSettingsPermissionsOrScope,
 )
+from InvenTree.serializers import EmptySerializer
+
+admin_router = InvenTreeApiRouter()
+common_router = InvenTreeApiRouter()
 
 
 class CsrfExemptMixin:
@@ -155,14 +171,18 @@ class WebhookView(CsrfExemptMixin, APIView):
             raise NotFound()
 
 
-class CurrencyExchangeView(APIView):
-    """API endpoint for displaying currency information."""
+class CurrencyViewSet(viewsets.GenericViewSet):
+    """Viewset for currency exchange information."""
 
     permission_classes = [IsAuthenticatedOrReadScope]
-    serializer_class = None
+    serializer_class = EmptySerializer
 
-    @extend_schema(responses={200: common.serializers.CurrencyExchangeSerializer})
-    def get(self, request, fmt=None):
+    @action(
+        detail=False,
+        methods=['get'],
+        serializer_class=common.serializers.CurrencyExchangeSerializer,
+    )
+    def exchange(self, request, fmt=None):
         """Return information on available currency conversions."""
         # Extract a list of all available rates
         try:
@@ -195,23 +215,21 @@ class CurrencyExchangeView(APIView):
 
         return Response(response)
 
-
-class CurrencyRefreshView(APIView):
-    """API endpoint for manually refreshing currency exchange rates.
-
-    User must be a 'staff' user to access this endpoint
-    """
-
-    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
-    serializer_class = None
-
-    def post(self, request, *args, **kwargs):
+    @action(
+        detail=False,
+        methods=['post'],
+        permission_classes=[IsAuthenticatedOrReadScope, IsAdminUser],
+    )
+    def refresh(self, request, *args, **kwargs):
         """Performing a POST request will update currency exchange rates."""
         from InvenTree.tasks import update_exchange_rates
 
         update_exchange_rates(force=True)
 
         return Response({'success': 'Exchange rates updated'})
+
+
+common_router.register('currency', CurrencyViewSet, basename='api-currency')
 
 
 class SettingsList(ListAPI):
@@ -325,12 +343,22 @@ class UserSettingsDetail(RetrieveUpdateAPI):
         )
 
 
-class NotificationMessageMixin:
-    """Generic mixin for NotificationMessage."""
+class NotificationMessageViewSet(
+    BulkDeleteViewsetMixin, RetrieveUpdateDestroyModelViewSet
+):
+    """Notifications for the current user.
+
+    - User can only view / delete their own notification objects
+    """
 
     queryset = common.models.NotificationMessage.objects.all()
     serializer_class = common.serializers.NotificationMessageSerializer
     permission_classes = [UserSettingsPermissionsOrScope]
+
+    filter_backends = SEARCH_ORDER_FILTER
+    ordering_fields = ['category', 'name', 'read', 'creation']
+    search_fields = ['name', 'message']
+    filterset_fields = ['category', 'read']
 
     def get_queryset(self):
         """Return prefetched queryset."""
@@ -347,20 +375,6 @@ class NotificationMessageMixin:
         )
 
         return queryset
-
-
-class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
-    """List view for all notifications of the current user."""
-
-    permission_classes = [IsAuthenticatedOrReadScope]
-
-    filter_backends = SEARCH_ORDER_FILTER
-
-    ordering_fields = ['category', 'name', 'read', 'creation']
-
-    search_fields = ['name', 'message']
-
-    filterset_fields = ['category', 'read']
 
     def filter_queryset(self, queryset):
         """Only list notifications which apply to the current user."""
@@ -382,18 +396,10 @@ class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
         queryset = queryset.filter(user=request.user)
         return queryset
 
-
-class NotificationDetail(NotificationMessageMixin, RetrieveUpdateDestroyAPI):
-    """Detail view for an individual notification object.
-
-    - User can only view / delete their own notification objects
-    """
-
-
-class NotificationReadAll(NotificationMessageMixin, RetrieveAPI):
-    """API endpoint to mark all notifications as read."""
-
-    def get(self, request, *args, **kwargs):
+    @action(
+        detail=False, methods=['post'], permission_classes=[IsAuthenticatedOrReadScope]
+    )
+    def readall(self, request, *args, **kwargs):
         """Set all messages for the current user as read."""
         try:
             self.queryset.filter(user=request.user, read=False).update(read=True)
@@ -404,46 +410,49 @@ class NotificationReadAll(NotificationMessageMixin, RetrieveAPI):
             )
 
 
-class NewsFeedMixin:
-    """Generic mixin for NewsFeedEntry."""
+common_router.register(
+    'notifications', NotificationMessageViewSet, basename='api-notifications'
+)
+
+
+class NewsFeedViewSet(BulkDeleteViewsetMixin, RetrieveUpdateDestroyModelViewSet):
+    """Newsfeed from the official inventree.org website."""
 
     queryset = common.models.NewsFeedEntry.objects.all()
     serializer_class = common.serializers.NewsFeedEntrySerializer
     permission_classes = [IsAdminOrAdminScope]
 
-
-class NewsFeedEntryList(NewsFeedMixin, BulkDeleteMixin, ListAPI):
-    """List view for all news items."""
-
     filter_backends = ORDER_FILTER
-
     ordering = '-published'
-
     ordering_fields = ['published', 'author', 'read']
-
     filterset_fields = ['read']
 
 
-class NewsFeedEntryDetail(NewsFeedMixin, RetrieveUpdateDestroyAPI):
-    """Detail view for an individual news feed object."""
+common_router.register('news', NewsFeedViewSet, basename='api-news')
 
 
-class ConfigList(ListAPI):
-    """List view for all accessed configurations."""
+@extend_schema_view(
+    retrieve=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='key',
+                description='Unique identifier for this configuration',
+                required=True,
+                location=OpenApiParameter.PATH,
+            )
+        ]
+    )
+)
+class ConfigViewSet(viewsets.ReadOnlyModelViewSet):
+    """All accessed/in-use configurations."""
 
     queryset = CONFIG_LOOKUPS
     serializer_class = common.serializers.ConfigSerializer
     permission_classes = [IsSuperuserOrSuperScope]
+    lookup_field = 'key'
 
     # Specifically disable pagination for this view
     pagination_class = None
-
-
-class ConfigDetail(RetrieveAPI):
-    """Detail view for an individual configuration."""
-
-    serializer_class = common.serializers.ConfigSerializer
-    permission_classes = [IsSuperuserOrSuperScope]
 
     def get_object(self):
         """Attempt to find a config object with the provided key."""
@@ -452,6 +461,9 @@ class ConfigDetail(RetrieveAPI):
         if not value:
             raise NotFound()
         return {key: value}
+
+
+admin_router.register('config', ConfigViewSet, basename='api-config')
 
 
 class NotesImageList(ListCreateAPI):
@@ -467,9 +479,7 @@ class NotesImageList(ListCreateAPI):
 
     def perform_create(self, serializer):
         """Create (upload) a new notes image."""
-        image = serializer.save()
-        image.user = self.request.user
-        image.save()
+        serializer.save(user=self.request.user)
 
 
 class ProjectCodeList(DataExportViewMixin, ListCreateAPI):
@@ -481,7 +491,7 @@ class ProjectCodeList(DataExportViewMixin, ListCreateAPI):
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = ['code']
-
+    filterset_fields = ['active']
     search_fields = ['code', 'description']
 
 
@@ -493,7 +503,49 @@ class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [IsStaffOrReadOnlyScope]
 
 
-class CustomUnitList(DataExportViewMixin, ListCreateAPI):
+class TagFilter(FilterSet):
+    """Custom filters for the TagList API endpoint."""
+
+    class Meta:
+        """Metaclass options for the filterset."""
+
+        model = Tag
+        fields = []
+
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter to tags which have been applied to the given model type."""
+        ct = common.filters.determine_content_type(value)
+
+        if ct is None:
+            raise ValidationError({'model_type': f'Invalid model type: {value}'})
+
+        return queryset.filter(taggit_taggeditem_items__content_type=ct).distinct()
+
+
+class TagMixin:
+    """Mixin class for Tag views."""
+
+    serializer_class = common.serializers.TagSerializer
+    queryset = Tag.objects.all()
+    permission_classes = [IsStaffOrReadOnlyScope]
+
+
+class TagList(TagMixin, ListCreateAPI):
+    """List view for all tags."""
+
+    filterset_class = TagFilter
+    filter_backends = SEARCH_ORDER_FILTER
+    ordering_fields = ['name']
+    search_fields = ['name']
+
+
+class TagDetail(TagMixin, RetrieveUpdateDestroyAPI):
+    """Detail view for a particular tag."""
+
+
+class CustomUnitViewset(DataExportViewMixin, viewsets.ModelViewSet):
     """List view for custom units."""
 
     queryset = common.models.CustomUnit.objects.all()
@@ -501,22 +553,12 @@ class CustomUnitList(DataExportViewMixin, ListCreateAPI):
     permission_classes = [IsStaffOrReadOnlyScope]
     filter_backends = SEARCH_ORDER_FILTER
 
-
-class CustomUnitDetail(RetrieveUpdateDestroyAPI):
-    """Detail view for a particular custom unit."""
-
-    queryset = common.models.CustomUnit.objects.all()
-    serializer_class = common.serializers.CustomUnitSerializer
-    permission_classes = [IsStaffOrReadOnlyScope]
-
-
-class AllUnitList(RetrieveAPI):
-    """List of all defined units."""
-
-    serializer_class = common.serializers.AllUnitListResponseSerializer
-    permission_classes = [IsStaffOrReadOnlyScope]
-
-    def get(self, request, *args, **kwargs):
+    @action(
+        detail=False,
+        methods=['get'],
+        serializer_class=common.serializers.AllUnitListResponseSerializer,
+    )
+    def all(self, request, *args, **kwargs):
         """Return a list of all available units."""
         reg = InvenTree.conversion.get_unit_registry()
         all_units = {k: self.get_unit(reg, k) for k in reg}
@@ -535,12 +577,15 @@ class AllUnitList(RetrieveAPI):
         return {
             'name': k,
             'is_alias': reg.get_name(k) == k,
-            'compatible_units': [str(a) for a in unit.compatible_units()],
+            'compatible_units': [str(a) for a in unit.compatible_units()],  # ty:ignore[missing-argument]
             'isdimensionless': unit.dimensionless,
         }
 
 
-class ErrorMessageList(BulkDeleteMixin, ListAPI):
+common_router.register('units', CustomUnitViewset, basename='api-custom-unit')
+
+
+class ErrorMessageViewSet(BulkDeleteViewsetMixin, RetrieveUpdateDestroyModelViewSet):
     """List view for server error messages."""
 
     queryset = Error.objects.all()
@@ -556,12 +601,7 @@ class ErrorMessageList(BulkDeleteMixin, ListAPI):
     search_fields = ['info', 'data']
 
 
-class ErrorMessageDetail(RetrieveUpdateDestroyAPI):
-    """Detail view for a single error message."""
-
-    queryset = Error.objects.all()
-    serializer_class = common.serializers.ErrorMessageSerializer
-    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
+common_router.register('error-report', ErrorMessageViewSet, basename='api-error')
 
 
 class BackgroundTaskDetail(APIView):
@@ -718,7 +758,17 @@ class AttachmentFilter(FilterSet):
         """Metaclass options."""
 
         model = common.models.Attachment
-        fields = ['model_type', 'model_id', 'upload_user']
+        fields = ['model_type', 'model_id', 'upload_user', 'is_image']
+
+    has_thumbnail = rest_filters.BooleanFilter(
+        label=_('Has Thumbnail'), method='filter_has_thumbnail'
+    )
+
+    def filter_has_thumbnail(self, queryset, name, value):
+        """Filter attachments based on whether they have a thumbnail or not."""
+        if value:
+            return queryset.exclude(thumbnail=None).exclude(thumbnail='')
+        return queryset.filter(Q(thumbnail=None) | Q(thumbnail='')).distinct()
 
     is_link = rest_filters.BooleanFilter(label=_('Is Link'), method='filter_is_link')
 
@@ -735,6 +785,8 @@ class AttachmentFilter(FilterSet):
         if value:
             return queryset.exclude(attachment=None).exclude(attachment='')
         return queryset.filter(Q(attachment=None) | Q(attachment='')).distinct()
+
+    tags = common.filters.TagsFilter()
 
 
 class AttachmentMixin:
@@ -756,9 +808,7 @@ class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
 
     def perform_create(self, serializer):
         """Save the user information when a file is uploaded."""
-        attachment = serializer.save()
-        attachment.upload_user = self.request.user
-        attachment.save()
+        serializer.save(upload_user=self.request.user)
 
     def validate_delete(self, queryset, request) -> None:
         """Ensure that the user has correct permissions for a bulk-delete.
@@ -782,8 +832,34 @@ class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
 class AttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for Attachment objects."""
 
+    def update(self, request, *args, **kwargs):
+        """Update an existing attachment object."""
+        attachment = self.get_object()
+
+        if not attachment.check_permission('change', request.user):
+            raise PermissionDenied(
+                _('User does not have permission to edit this attachment')
+            )
+
+        partial = kwargs.pop('partial', False)
+        data = self.clean_data(request.data)
+
+        # Extract filename first
+        filename = data.pop('filename', None)
+
+        # Run other validation / updates first, before attempting to rename the file
+        serializer = self.get_serializer(attachment, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        # User is attempting to rename the file
+        if filename and attachment.basename and filename != attachment.basename:
+            attachment.rename(filename)
+
+        return Response(serializer.data)
+
     def destroy(self, request, *args, **kwargs):
-        """Check user permissions before deleting an attachment."""
+        """Delete an existing attachment object."""
         attachment = self.get_object()
 
         if not attachment.check_permission('delete', request.user):
@@ -801,7 +877,7 @@ class ParameterTemplateFilter(FilterSet):
         """Metaclass options."""
 
         model = common.models.ParameterTemplate
-        fields = ['name', 'units', 'checkbox', 'enabled']
+        fields = ['name', 'units', 'checkbox', 'enabled', 'unique']
 
     has_choices = rest_filters.BooleanFilter(
         method='filter_has_choices', label='Has Choice'
@@ -1127,8 +1203,8 @@ class IconList(ListAPI):
         return list(get_icon_packs().values())
 
 
-class SelectionListList(ListCreateAPI):
-    """List view for SelectionList objects."""
+class SelectionListMixin(OutputOptionsMixin):
+    """Mixin for SelectionList views."""
 
     queryset = common.models.SelectionList.objects.all()
     serializer_class = common.serializers.SelectionListSerializer
@@ -1139,12 +1215,12 @@ class SelectionListList(ListCreateAPI):
         return self.serializer_class.annotate_queryset(super().get_queryset())
 
 
-class SelectionListDetail(RetrieveUpdateDestroyAPI):
-    """Detail view for a SelectionList object."""
+class SelectionListList(SelectionListMixin, ListCreateAPI):
+    """List view for SelectionList objects."""
 
-    queryset = common.models.SelectionList.objects.all()
-    serializer_class = common.serializers.SelectionListSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
+
+class SelectionListDetail(SelectionListMixin, RetrieveUpdateDestroyAPI):
+    """Detail view for a SelectionList object."""
 
 
 class EntryMixin:
@@ -1162,21 +1238,39 @@ class EntryMixin:
         queryset = queryset.prefetch_related('list')
         return queryset
 
+    def perform_destroy(self, instance):
+        """Prevent deletion of entries belonging to a locked selection list."""
+        if instance.list.locked:
+            raise PermissionDenied(_('Selection list is locked'))
+        super().perform_destroy(instance)
+
 
 class SelectionEntryList(EntryMixin, ListCreateAPI):
     """List view for SelectionEntry objects."""
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['list', 'label', 'active']
+
+    search_fields = ['label', 'description']
+
+    filterset_fields = ['active', 'value', 'list']
 
 
 class SelectionEntryDetail(EntryMixin, RetrieveUpdateDestroyAPI):
     """Detail view for a SelectionEntry object."""
 
 
-class DataOutputEndpointMixin:
+class DataOutputViewSet(BulkDeleteViewsetMixin, RetrieveDestroyModelViewSet):
     """Mixin class for DataOutput endpoints."""
 
     queryset = common.models.DataOutput.objects.all()
     serializer_class = common.serializers.DataOutputSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
+
+    filter_backends = SEARCH_ORDER_FILTER
+    ordering_fields = ['pk', 'user', 'plugin', 'output_type', 'created']
+    filterset_fields = ['user']
 
     def get_queryset(self):
         """Return the set of DataOutput objects which the user has permission to view."""
@@ -1195,28 +1289,15 @@ class DataOutputEndpointMixin:
         return queryset.filter(user=user)
 
 
-class DataOutputList(DataOutputEndpointMixin, BulkDeleteMixin, ListAPI):
-    """List view for DataOutput objects."""
-
-    filter_backends = SEARCH_ORDER_FILTER
-    ordering_fields = ['pk', 'user', 'plugin', 'output_type', 'created']
-    filterset_fields = ['user']
+common_router.register('data-output', DataOutputViewSet, basename='api-data-output')
 
 
-class DataOutputDetail(DataOutputEndpointMixin, generics.DestroyAPIView, RetrieveAPI):
-    """Detail view for a DataOutput object."""
-
-
-class EmailMessageMixin:
-    """Mixin class for Email endpoints."""
+class EmailViewSet(BulkDeleteViewsetMixin, RetrieveDestroyModelViewSet):
+    """Backend E-Mail management for administrative purposes."""
 
     queryset = common.models.EmailMessage.objects.all()
     serializer_class = common.serializers.EmailMessageSerializer
     permission_classes = [IsSuperuserOrSuperScope]
-
-
-class EmailMessageList(EmailMessageMixin, BulkDeleteMixin, ListAPI):
-    """List view for email objects."""
 
     filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = [
@@ -1237,19 +1318,16 @@ class EmailMessageList(EmailMessageMixin, BulkDeleteMixin, ListAPI):
         'thread_id_key',
     ]
 
-
-class EmailMessageDetail(EmailMessageMixin, RetrieveDestroyAPI):
-    """Detail view for an email object."""
-
-
-class TestEmail(CreateAPI):
-    """Send a test email."""
-
-    serializer_class = common.serializers.TestEmailSerializer
-    permission_classes = [IsSuperuserOrSuperScope]
-
-    def perform_create(self, serializer):
+    @action(
+        detail=False,
+        methods=['post'],
+        serializer_class=common.serializers.TestEmailSerializer,
+    )
+    def test(self, request):
         """Send a test email."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         data = serializer.validated_data
 
         delivered, reason = send_email(
@@ -1261,6 +1339,10 @@ class TestEmail(CreateAPI):
             raise serializers.ValidationError(
                 detail=f'Failed to send test email: "{reason}"'
             )  # pragma: no cover
+        return Response(serializer.data)
+
+
+admin_router.register('email', EmailViewSet, basename='api-email')
 
 
 class HealthCheckStatusSerializer(serializers.Serializer):
@@ -1319,6 +1401,7 @@ class ObservabilityEndSerializer(serializers.Serializer):
 class ObservabilityEnd(CreateAPI):
     """Endpoint for observability tools."""
 
+    # Note: This endpoint can be called anonymously, as it needs to function before the user is authenticated (e.g. during login)
     permission_classes = [AllowAnyOrReadScope]
     serializer_class = ObservabilityEndSerializer
 
@@ -1483,13 +1566,6 @@ common_api_urls = [
             path('', ParameterList.as_view(), name='api-parameter-list'),
         ]),
     ),
-    path(
-        'error-report/',
-        include([
-            path('<int:pk>/', ErrorMessageDetail.as_view(), name='api-error-detail'),
-            path('', ErrorMessageList.as_view(), name='api-error-list'),
-        ]),
-    ),
     # Metadata
     path(
         'metadata/',
@@ -1522,70 +1598,12 @@ common_api_urls = [
             path('', ProjectCodeList.as_view(), name='api-project-code-list'),
         ]),
     ),
-    # Custom physical units
+    # Tags (via django-taggit)
     path(
-        'units/',
+        'tag/',
         include([
-            path(
-                '<int:pk>/',
-                include([
-                    path('', CustomUnitDetail.as_view(), name='api-custom-unit-detail')
-                ]),
-            ),
-            path('all/', AllUnitList.as_view(), name='api-all-unit-list'),
-            path('', CustomUnitList.as_view(), name='api-custom-unit-list'),
-        ]),
-    ),
-    # Currencies
-    path(
-        'currency/',
-        include([
-            path(
-                'exchange/',
-                CurrencyExchangeView.as_view(),
-                name='api-currency-exchange',
-            ),
-            path(
-                'refresh/', CurrencyRefreshView.as_view(), name='api-currency-refresh'
-            ),
-        ]),
-    ),
-    # Notifications
-    path(
-        'notifications/',
-        include([
-            # Individual purchase order detail URLs
-            path(
-                '<int:pk>/',
-                include([
-                    path(
-                        '',
-                        NotificationDetail.as_view(),
-                        name='api-notifications-detail',
-                    )
-                ]),
-            ),
-            # Read all
-            path(
-                'readall/',
-                NotificationReadAll.as_view(),
-                name='api-notifications-readall',
-            ),
-            # Notification messages list
-            path('', NotificationList.as_view(), name='api-notifications-list'),
-        ]),
-    ),
-    # News
-    path(
-        'news/',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    path('', NewsFeedEntryDetail.as_view(), name='api-news-detail')
-                ]),
-            ),
-            path('', NewsFeedEntryList.as_view(), name='api-news-list'),
+            path('<int:pk>/', TagDetail.as_view(), name='api-tag-detail'),
+            path('', TagList.as_view(), name='api-tag-list'),
         ]),
     ),
     # Flags
@@ -1617,16 +1635,6 @@ common_api_urls = [
     path('icons/', IconList.as_view(), name='api-icon-list'),
     # Selection lists
     path('selection/', include(selection_urls)),
-    # Data output
-    path(
-        'data-output/',
-        include([
-            path(
-                '<int:pk>/', DataOutputDetail.as_view(), name='api-data-output-detail'
-            ),
-            path('', DataOutputList.as_view(), name='api-data-output-list'),
-        ]),
-    ),
     # System APIs (related to basic system functions)
     path(
         'system/',
@@ -1647,19 +1655,8 @@ common_api_urls = [
             )
         ]),
     ),
+    # Router
+    path('', include(common_router.urls)),
 ]
 
-admin_api_urls = [
-    # Admin
-    path('config/', ConfigList.as_view(), name='api-config-list'),
-    path('config/<str:key>/', ConfigDetail.as_view(), name='api-config-detail'),
-    # Email
-    path(
-        'email/',
-        include([
-            path('test/', TestEmail.as_view(), name='api-email-test'),
-            path('<str:pk>/', EmailMessageDetail.as_view(), name='api-email-detail'),
-            path('', EmailMessageList.as_view(), name='api-email-list'),
-        ]),
-    ),
-]
+admin_api_urls = admin_router.urls
