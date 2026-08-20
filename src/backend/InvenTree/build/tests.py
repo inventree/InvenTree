@@ -313,4 +313,3 @@ class BuildTreeTest(InvenTreeTestCase):
         self.assertEqual(build.get_children().count(), 3)
         for bo in build.get_children():
             self.assertEqual(bo.level, 3)
-

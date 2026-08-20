@@ -81,11 +81,7 @@ class StockTrackingAdmin(admin.ModelAdmin):
 
     list_display = ('item', 'date', 'label')
 
-    search_fields = [
-        'item__part__name',
-        'item__serial',
-        'notes',
-    ]
+    search_fields = ['item__part__name', 'item__serial', 'notes']
 
     autocomplete_fields = ['item']
 

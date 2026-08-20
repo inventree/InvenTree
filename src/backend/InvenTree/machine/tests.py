@@ -398,4 +398,3 @@ class AdminTest(AdminTestCase):
     def test_admin(self):
         """Test the admin URL."""
         self.helper(model=MachineConfig)
-

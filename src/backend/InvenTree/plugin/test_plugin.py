@@ -753,4 +753,3 @@ class InstallerTests(TestCase):
         self.assertIn(
             'Only superuser accounts can administer plugins', str(e.exception)
         )
-
