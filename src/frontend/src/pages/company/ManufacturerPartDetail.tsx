@@ -54,7 +54,7 @@ export default function ManufacturerPartDetail() {
     params: {
       part_detail: true,
       manufacturer_detail: true,
-      tags: true
+      include_tags: true
     }
   });
 
@@ -123,7 +123,7 @@ export default function ManufacturerPartDetail() {
     pk: manufacturerPart?.pk,
     title: t`Edit Manufacturer Part`,
     fields: editManufacturerPartFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
+    queryParams: new URLSearchParams({ include_tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 

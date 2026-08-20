@@ -177,7 +177,7 @@ export default function PartDetail() {
     pk: id,
     params: {
       path_detail: true,
-      tags: true
+      include_tags: true
     },
     refetchOnMount: true
   });
@@ -647,7 +647,7 @@ export default function PartDetail() {
     pk: part.pk,
     title: t`Edit Part`,
     fields: partFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
+    queryParams: new URLSearchParams({ include_tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 

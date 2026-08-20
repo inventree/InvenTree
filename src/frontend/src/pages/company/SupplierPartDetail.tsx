@@ -62,7 +62,7 @@ export default function SupplierPartDetail() {
       part_detail: true,
       supplier_detail: true,
       manufacturer_detail: true,
-      tags: true
+      include_tags: true
     }
   });
 
@@ -169,7 +169,7 @@ export default function SupplierPartDetail() {
     pk: supplierPart?.pk,
     title: t`Edit Supplier Part`,
     fields: supplierPartFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
+    queryParams: new URLSearchParams({ include_tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 

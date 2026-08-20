@@ -224,7 +224,7 @@ export default function BuildDetail() {
     pk: id,
     params: {
       part_detail: true,
-      tags: true
+      include_tags: true
     },
     hasPrimaryKey: true,
     defaultValue: {},
@@ -393,7 +393,7 @@ export default function BuildDetail() {
     title: t`Edit Build Order`,
     modalId: 'edit-build-order',
     fields: editBuildOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
+    queryParams: new URLSearchParams({ include_tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 

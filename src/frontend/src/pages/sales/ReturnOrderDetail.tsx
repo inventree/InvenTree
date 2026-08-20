@@ -60,7 +60,7 @@ export default function ReturnOrderDetail() {
     pk: id,
     params: {
       customer_detail: true,
-      tags: true
+      include_tags: true
     }
   });
 
@@ -186,7 +186,7 @@ export default function ReturnOrderDetail() {
     pk: order.pk,
     title: t`Edit Return Order`,
     fields: returnOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
+    queryParams: new URLSearchParams({ include_tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }

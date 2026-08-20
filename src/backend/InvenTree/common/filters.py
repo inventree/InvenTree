@@ -439,6 +439,6 @@ def enable_tags_filter(default: bool = False):
         serializer_class=TagListSerializerField,
         serializer_kwargs={'required': False},
         default_include=default,
-        filter_name='tags',
+        filter_name='include_tags',
         prefetch_fields=['tags', 'tagged_items', 'tagged_items__tag'],
     )

@@ -101,7 +101,7 @@ export default function StockDetail() {
       part_detail: true,
       location_detail: true,
       path_detail: true,
-      tags: true
+      include_tags: true
     }
   });
 
@@ -348,7 +348,7 @@ export default function StockDetail() {
     title: t`Edit Stock Item`,
     modalId: 'edit-stock-item',
     fields: editStockItemFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
+    queryParams: new URLSearchParams({ include_tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 

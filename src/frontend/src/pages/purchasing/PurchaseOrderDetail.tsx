@@ -60,7 +60,7 @@ export default function PurchaseOrderDetail() {
     pk: id,
     params: {
       supplier_detail: true,
-      tags: true
+      include_tags: true
     },
     refetchOnMount: true
   });
@@ -84,7 +84,7 @@ export default function PurchaseOrderDetail() {
     pk: id,
     title: t`Edit Purchase Order`,
     fields: purchaseOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
+    queryParams: new URLSearchParams({ include_tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }

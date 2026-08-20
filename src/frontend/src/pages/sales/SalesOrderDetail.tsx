@@ -69,7 +69,7 @@ export default function SalesOrderDetail() {
     pk: id,
     params: {
       customer_detail: true,
-      tags: true
+      include_tags: true
     }
   });
 
@@ -101,7 +101,7 @@ export default function SalesOrderDetail() {
     pk: order.pk,
     title: t`Edit Sales Order`,
     fields: salesOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
+    queryParams: new URLSearchParams({ include_tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }

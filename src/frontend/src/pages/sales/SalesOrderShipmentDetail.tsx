@@ -61,7 +61,7 @@ export default function SalesOrderShipmentDetail() {
     pk: id,
     params: {
       order_detail: true,
-      tags: true
+      include_tags: true
     }
   });
 
@@ -122,7 +122,7 @@ export default function SalesOrderShipmentDetail() {
     pk: shipment.pk,
     fields: editShipmentFields,
     title: t`Edit Shipment`,
-    queryParams: new URLSearchParams({ tags: 'true' }),
+    queryParams: new URLSearchParams({ include_tags: 'true' }),
     onFormSuccess: refreshShipment
   });
 

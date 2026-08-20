@@ -59,7 +59,7 @@ export default function TransferOrderDetail() {
     endpoint: ApiEndpoints.transfer_order_list,
     pk: id,
     params: {
-      tags: true
+      include_tags: true
     }
   });
 
@@ -210,7 +210,7 @@ export default function TransferOrderDetail() {
     pk: order.pk,
     title: t`Edit Transfer Order`,
     fields: transferOrderFields,
-    queryParams: new URLSearchParams({ tags: 'true' }),
+    queryParams: new URLSearchParams({ include_tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }
