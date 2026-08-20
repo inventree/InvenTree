@@ -27,7 +27,7 @@ class DataImportColumnMapAdmin(admin.TabularInline):
                 session = queryset.first().session
                 db_field.choices = [(col, col) for col in session.columns]
 
-        return super().formfield_for_choice_field(db_field, request, **kwargs)
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 
 @admin.register(importer.models.DataImportSession)
