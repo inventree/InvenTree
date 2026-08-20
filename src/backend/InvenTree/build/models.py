@@ -31,7 +31,7 @@ import part.models
 import report.mixins
 import stock.models
 import users.models
-from build.events import BuildEvents
+from build.events import BuildEvents, RepairOrderEvents
 from build.filters import annotate_allocated_quantity, annotate_required_quantity
 from build.status_codes import BuildStatus, BuildStatusGroups, RepairOrderStatus
 from build.validators import (
@@ -2559,6 +2559,65 @@ class RepairOrder(
         help_text=_('Repair order status'),
         verbose_name=_('Status'),
     )
+
+    # region fsm
+    @inventree_transition(
+        field=status,
+        source=[RepairOrderStatus.PENDING, RepairOrderStatus.ON_HOLD],
+        target=RepairOrderStatus.IN_PROGRESS,
+        event=RepairOrderEvents.ISSUED,
+    )
+    def issue_repair(self):
+        """Transition this RepairOrder to IN_PROGRESS status.
+
+        The repair order must currently be PENDING or ON_HOLD.
+        """
+
+    @inventree_transition(
+        field=status,
+        source=[RepairOrderStatus.PENDING, RepairOrderStatus.IN_PROGRESS],
+        target=RepairOrderStatus.ON_HOLD,
+        event=RepairOrderEvents.HOLD,
+    )
+    def hold_repair(self):
+        """Transition this RepairOrder to ON_HOLD status.
+
+        The repair order must currently be PENDING or IN_PROGRESS.
+        """
+
+    @inventree_transition(
+        field=status,
+        source=[
+            RepairOrderStatus.PENDING,
+            RepairOrderStatus.IN_PROGRESS,
+            RepairOrderStatus.ON_HOLD,
+        ],
+        target=RepairOrderStatus.COMPLETE,
+        event=RepairOrderEvents.COMPLETED,
+    )
+    def complete_repair(self):
+        """Transition this RepairOrder to COMPLETE status.
+
+        The repair order must currently be PENDING, IN_PROGRESS, or ON_HOLD.
+        """
+
+    @inventree_transition(
+        field=status,
+        source=[
+            RepairOrderStatus.PENDING,
+            RepairOrderStatus.IN_PROGRESS,
+            RepairOrderStatus.ON_HOLD,
+        ],
+        target=RepairOrderStatus.CANCELLED,
+        event=RepairOrderEvents.CANCELLED,
+    )
+    def cancel_repair(self):
+        """Transition this RepairOrder to CANCELLED status.
+
+        The repair order must currently be PENDING, IN_PROGRESS, or ON_HOLD.
+        """
+
+    # endregion fsm
 
     @staticmethod
     def get_api_url():

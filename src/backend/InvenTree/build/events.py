@@ -18,3 +18,12 @@ class BuildEvents(BaseEventEnum):
     # Build output events
     OUTPUT_CREATED = 'buildoutput.created'
     OUTPUT_COMPLETED = 'buildoutput.completed'
+
+
+class RepairOrderEvents(BaseEventEnum):
+    """Event enumeration for the RepairOrder model."""
+
+    ISSUED = 'repairorder.issued'
+    HOLD = 'repairorder.hold'
+    COMPLETED = 'repairorder.completed'
+    CANCELLED = 'repairorder.cancelled'
