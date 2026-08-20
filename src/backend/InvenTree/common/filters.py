@@ -104,16 +104,19 @@ class TagsFilter(rest_filters.CharFilter):
         ?tags=apple,banana   → returns only items tagged with both 'apple' AND 'banana'
     """
 
-    def __init__(self, *args, **kwargs):
+    _is_viewset: bool = False
+
+    def __init__(self, is_viewset: bool = False, *args, **kwargs):
         """Initialize the filter."""
         if 'label' not in kwargs:
             kwargs['label'] = _('Tags')
 
+        self._is_viewset = is_viewset
         super().__init__(*args, **kwargs)
 
     def filter(self, qs, value):
         """Filter queryset to items matching all provided tag names."""
-        if not value:
+        if not value or (self._is_viewset and InvenTree.helpers.is_bool(value)):
             return qs
 
         tag_names = [t.strip() for t in value.split(',') if t.strip()]

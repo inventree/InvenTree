@@ -374,6 +374,8 @@ class PurchaseOrderFilter(OrderFilter):
         """
         return queryset.filter(lines__build_order=build).distinct()
 
+    tags = common.filters.TagsFilter(is_viewset=True)
+
 
 class PurchaseOrderOutputOptions(OutputConfiguration):
     """Output options for the PurchaseOrder endpoint."""
