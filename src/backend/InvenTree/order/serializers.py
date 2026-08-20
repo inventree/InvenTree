@@ -1225,8 +1225,6 @@ class SalesOrderSerializer(
         read_only=True, allow_null=True, label=_('Allocated Lines')
     )
 
-    tags = common.filters.enable_tags_filter()
-
 
 class SalesOrderIssueSerializer(OrderAdjustSerializer):
     """Serializer for issuing a SalesOrder."""
