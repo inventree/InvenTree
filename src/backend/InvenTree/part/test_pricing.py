@@ -16,6 +16,8 @@ import stock.models
 from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeTestCase
 from order.status_codes import PurchaseOrderStatus
+from pricing.models import StockItemCostEntry
+from pricing.status_codes import CostType
 
 
 class PartPricingTests(InvenTreeTestCase):
@@ -255,11 +257,12 @@ class PartPricingTests(InvenTreeTestCase):
         prices = [(10, 'AUD'), (5, 'USD'), (2, 'CAD')]
 
         for price, currency in prices:
-            stock.models.StockItem.objects.create(
-                part=p,
-                quantity=10,
-                purchase_price=price,
-                purchase_price_currency=currency,
+            item = stock.models.StockItem.objects.create(part=p, quantity=10)
+            StockItemCostEntry.objects.set_cost(
+                item,
+                CostType.PURCHASE.value,
+                min_cost=Money(price, currency),
+                max_cost=Money(price, currency),
             )
 
         # Ensure that initially, stock item pricing is disabled
@@ -514,8 +517,12 @@ class PartPricingTests(InvenTreeTestCase):
 
         # Create some stock items
         for _idx in range(3):
-            stock.models.StockItem.objects.create(
-                part=p, quantity=10, purchase_price=Money(10, 'USD')
+            item = stock.models.StockItem.objects.create(part=p, quantity=10)
+            StockItemCostEntry.objects.set_cost(
+                item,
+                CostType.PURCHASE.value,
+                min_cost=Money(10, 'USD'),
+                max_cost=Money(10, 'USD'),
             )
 
         # Manually schedule a pricing update (does not happen automatically in testing)

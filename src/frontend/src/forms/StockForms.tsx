@@ -833,7 +833,7 @@ export function useDisassembleStockItem({
               (Number(elem.quantity) || 0) * (Number(stockItem.quantity) || 0),
             purchase_price: null,
             purchase_price_currency:
-              stockItem.purchase_price_currency ?? undefined
+              stockItem.cost_detail?.min_cost_currency ?? undefined
           };
         }),
         modelRenderer: (row: TableFieldRowProps) => {

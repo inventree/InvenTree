@@ -2,6 +2,7 @@
 
 from collections import OrderedDict
 from datetime import timedelta
+from decimal import Decimal, InvalidOperation
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
@@ -11,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 
 import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework.filterset import FilterSet
+from djmoney.money import Money
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
@@ -26,6 +28,7 @@ import InvenTree.permissions
 import stock.serializers as StockSerializers
 from build.models import Build
 from build.serializers import BuildSerializer
+from common.currency import currency_code_default
 from company.models import Company, ManufacturerPart, SupplierPart
 from company.serializers import CompanySerializer
 from data_exporter.mixins import DataExportViewMixin
@@ -914,10 +917,14 @@ class StockFilter(FilterSet):
     )
 
     def filter_has_purchase_price(self, queryset, name, value):
-        """Filter by having a purchase price."""
+        """Filter by whether a calculated cost has been recorded against the item.
+
+        Note: 'purchase_price' has been replaced by pricing.models.StockItemCost -
+        this filter name is kept for API compatibility.
+        """
         if str2bool(value):
-            return queryset.exclude(purchase_price=None)
-        return queryset.filter(purchase_price=None)
+            return queryset.exclude(cost__isnull=True)
+        return queryset.filter(cost__isnull=True)
 
     category = rest_filters.ModelChoiceFilter(
         label=_('Category'),
@@ -1206,6 +1213,26 @@ class StockList(
         # Do this regardless of results above
         data.pop('use_pack_size', None)
 
+        # 'purchase_price' is not a StockItem model field - extract it here (after
+        # any pack-size adjustment above) so a matching StockItemCostEntry can be
+        # created for the new item(s) once they exist (see the end of this method)
+        purchase_price_raw = data.pop('purchase_price', None)
+        purchase_price_currency = (
+            data.pop('purchase_price_currency', None) or currency_code_default()
+        )
+
+        purchase_price = None
+
+        if purchase_price_raw not in (None, ''):
+            try:
+                purchase_price = Money(
+                    Decimal(str(purchase_price_raw)), purchase_price_currency
+                )
+            except (InvalidOperation, ValueError):
+                raise ValidationError({
+                    'purchase_price': _('Invalid purchase price supplied')
+                })
+
         # Extract 'status' flag from data
         status_raw = data.pop('status', None)
         status_custom = data.pop('status_custom_key', None)
@@ -1299,6 +1326,8 @@ class StockList(
 
                 response_data = response.data
 
+                created_items = items
+
             else:
                 # Create a single StockItem object
                 # Note: This automatically creates a tracking entry
@@ -1316,6 +1345,26 @@ class StockList(
                     ).data
                 ]
 
+                created_items = [item]
+
+            # Record a purchase cost entry for each newly created item, if a
+            # purchase price was supplied (purchase_price is not a StockItem
+            # model field - see pricing.models.StockItemCostEntry)
+            if purchase_price is not None:
+                import pricing.models
+                from pricing.status_codes import CostType
+
+                pricing.models.StockItemCostEntry.objects.bulk_set_costs([
+                    {
+                        'stock_item': created_item,
+                        'cost_type': CostType.PURCHASE.value,
+                        'min_cost': purchase_price,
+                        'max_cost': purchase_price,
+                        'user': user,
+                    }
+                    for created_item in created_items
+                ])
+
         return Response(
             response_data,
             status=status.HTTP_201_CREATED,
@@ -1331,6 +1380,9 @@ class StockList(
         'SKU': 'supplier_part__SKU',
         'MPN': 'supplier_part__manufacturer_part__MPN',
         'stock': ['quantity', 'serial_int', 'serial'],
+        # 'purchase_price' has been replaced by pricing.models.StockItemCost -
+        # kept as an ordering key alias for API compatibility
+        'purchase_price': 'cost__min_cost',
     }
 
     ordering_fields = [

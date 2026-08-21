@@ -10,7 +10,7 @@ from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import Q, QuerySet, Sum, UniqueConstraint
@@ -457,7 +457,6 @@ class StockItem(
         is_building: Boolean field indicating if this stock item is currently being built (or is "in production")
         purchase_order: Link to a PurchaseOrder (if this stock item was created from a PurchaseOrder)
         sales_order: Link to a SalesOrder object (if the StockItem has been assigned to a SalesOrder)
-        purchase_price: The unit purchase price for this StockItem - this is the unit price at time of purchase (if this item was purchased from an external supplier)
         packaging: Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc)
     """
 
@@ -1986,10 +1985,10 @@ class StockItem(
         self.save()
 
     def allocate_disassembly_pricing(self, quantity, lines: list) -> list:
-        """Allocate the purchase price of this stock item across disassembly lines.
+        """Allocate the (calculated) cost of this stock item across disassembly lines.
 
         Automatic cost allocation is only performed if:
-        - This stock item has a recorded purchase price
+        - This stock item has a calculated cost (see pricing.models.StockItemCost)
         - None of the provided lines specify an explicit purchase price
 
         The total cost is apportioned across the lines pro-rata,
@@ -2004,7 +2003,9 @@ class StockItem(
         Returns:
             The list of lines, with 'purchase_price' values filled in where possible
         """
-        if not self.purchase_price:
+        unit_cost = self.cost_price
+
+        if not unit_cost:
             return lines
 
         if any(line.get('purchase_price') is not None for line in lines):
@@ -2043,7 +2044,7 @@ class StockItem(
             return lines
 
         # Total cost of the disassembled units
-        total_cost = self.purchase_price * quantity
+        total_cost = unit_cost * quantity
 
         for line, weight in zip(lines, weights, strict=True):
             line_quantity = Decimal(line['quantity'])
@@ -2185,8 +2186,10 @@ class StockItem(
         # so that the cost is only spread across newly created stock items
         lines = self.allocate_disassembly_pricing(quantity, lines)
 
-        # Track newly created component items which were assigned a purchase
-        # price, so a matching StockItemCostEntry can be created for each
+        # Track newly created component items (and their assigned purchase
+        # price, if any) so a matching StockItemCostEntry can be created for each.
+        # Note: 'purchase_price' is a line-item dict key (see allocate_disassembly_pricing
+        # and DisassemblyLineSerializer) - it is not a StockItem model field
         new_items = []
 
         for line in lines:
@@ -2205,7 +2208,6 @@ class StockItem(
                 parent=self,
                 batch=self.batch,
                 purchase_order=self.purchase_order,
-                purchase_price=line.get('purchase_price', None),
             )
 
             if status := line.get('status'):
@@ -2214,7 +2216,7 @@ class StockItem(
             # Ensure the tree structure is observed
             new_item.save(add_note=False)
 
-            new_items.append(new_item)
+            new_items.append((new_item, line.get('purchase_price')))
 
             deltas = {'stockitem': self.pk, 'quantity': float(line_quantity)}
 
@@ -2241,14 +2243,12 @@ class StockItem(
             {
                 'stock_item': new_item,
                 'cost_type': CostType.PURCHASE.value,
-                'min_cost': new_item.purchase_price,
-                'max_cost': new_item.purchase_price,
-                'min_cost_currency': new_item.purchase_price_currency,
-                'max_cost_currency': new_item.purchase_price_currency,
+                'min_cost': price,
+                'max_cost': price,
                 'user': user,
             }
-            for new_item in new_items
-            if new_item.purchase_price is not None
+            for new_item, price in new_items
+            if price is not None
         ])
 
         # Consume this stock item.
@@ -2281,6 +2281,18 @@ class StockItem(
         trigger_event(StockEvents.ITEM_DISASSEMBLED, id=self.pk)
 
         return items
+
+    @property
+    def cost_price(self):
+        """Return the calculated unit cost for this StockItem, or None if not available.
+
+        This is a convenience accessor for pricing.models.StockItemCost - the
+        cached summary of all StockItemCostEntry records for this item.
+        """
+        try:
+            return self.cost.min_cost
+        except ObjectDoesNotExist:
+            return None
 
     @property
     def child_count(self):
@@ -2776,8 +2788,8 @@ class StockItem(
         # Keep track of pricing data for the merged data
         pricing_data = []
 
-        if self.purchase_price:
-            pricing_data.append([self.purchase_price, self.quantity])
+        if (cost := self.cost_price) is not None:
+            pricing_data.append([cost, self.quantity])
 
         for other in other_items:
             # Check the merge in both directions, so that the generic state checks
@@ -2797,9 +2809,9 @@ class StockItem(
             merged_quantity += other.quantity
             self.quantity += other.quantity
 
-            if other.purchase_price:
+            if (other_cost := other.cost_price) is not None:
                 # Only add pricing data if it is available
-                pricing_data.append([other.purchase_price, other.quantity])
+                pricing_data.append([other_cost, other.quantity])
 
             # Any "build order allocations" for the other item must be assigned to this one
             for allocation in other.allocations.all():
@@ -2841,7 +2853,9 @@ class StockItem(
         # Update the location of the item
         self.location = location
 
-        # Update the unit price - calculate weighted average of available pricing data
+        # Calculate the weighted average of available pricing data
+        merged_unit_cost = None
+
         if len(pricing_data) > 0:
             unit_price, quantity = pricing_data[0]
 
@@ -2861,17 +2875,17 @@ class StockItem(
                     continue
 
             if quantity > 0:
-                self.purchase_price = total_price / quantity
+                merged_unit_cost = total_price / quantity
 
         self.save()
 
         # Record a purchase cost entry reflecting the merged (weighted-average) price
-        if self.purchase_price is not None:
+        if merged_unit_cost is not None:
             pricing.models.StockItemCostEntry.objects.set_cost(
                 self,
                 CostType.PURCHASE.value,
-                min_cost=self.purchase_price,
-                max_cost=self.purchase_price,
+                min_cost=merged_unit_cost,
+                max_cost=merged_unit_cost,
                 user=user,
             )
 

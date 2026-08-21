@@ -17,6 +17,7 @@ import build.models
 import company.models
 import order.models
 import part.models
+from common.currency import currency_code_default
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
 from InvenTree.unit_test import (
@@ -1024,11 +1025,29 @@ class StockItemListTest(StockAPITestCase):
 
     def test_filter_has_purchase_price(self):
         """Filter StockItem by has_purchase_price."""
+        total = StockItem.objects.count()
+
+        # No stock items have cost data by default
+        response = self.get_stock(has_purchase_price=True)
+        self.assertEqual(len(response), 0)
+
+        response = self.get_stock(has_purchase_price=False)
+        self.assertEqual(len(response), total)
+
+        # Assign a calculated cost to a single stock item
+        item = StockItem.objects.first()
+        StockItemCostEntry.objects.set_cost(
+            item,
+            CostType.PURCHASE.value,
+            min_cost=Money(10, 'USD'),
+            max_cost=Money(10, 'USD'),
+        )
+
         response = self.get_stock(has_purchase_price=True)
         self.assertEqual(len(response), 1)
 
         response = self.get_stock(has_purchase_price=False)
-        self.assertEqual(len(response), 28)
+        self.assertEqual(len(response), total - 1)
 
     def test_filter_stale(self):
         """Filter StockItem by stale."""
@@ -1787,7 +1806,7 @@ class StockItemTest(StockAPITestCase):
         part_4 = part.models.Part.objects.get(pk=4)
         self.assertEqual(part_4.available_stock, current_count + 3)
         stock_4 = StockItem.objects.get(pk=response.data[0]['pk'])
-        self.assertEqual(stock_4.purchase_price, Money('123.450000', 'USD'))
+        self.assertEqual(stock_4.cost_price, Money('123.450000', 'USD'))
 
         # POST with valid supplier part, no pack size defined
         # Send use_pack_size along, make sure this doesn't break stuff
@@ -1811,7 +1830,7 @@ class StockItemTest(StockAPITestCase):
         part_4 = part.models.Part.objects.get(pk=4)
         self.assertEqual(part_4.available_stock, current_count + 12)
         stock_4 = StockItem.objects.get(pk=response.data[0]['pk'])
-        self.assertEqual(stock_4.purchase_price, Money('123.450000', 'USD'))
+        self.assertEqual(stock_4.cost_price, Money('123.450000', 'USD'))
 
         # POST with valid supplier part, WITH pack size defined - but ignore
         # Supplier part 6 is a 100-pack, otherwise same as SP 5
@@ -1833,7 +1852,7 @@ class StockItemTest(StockAPITestCase):
         part_4 = part.models.Part.objects.get(pk=4)
         self.assertEqual(part_4.available_stock, current_count + 3)
         stock_4 = StockItem.objects.get(pk=response.data[0]['pk'])
-        self.assertEqual(stock_4.purchase_price, Money('123.450000', 'USD'))
+        self.assertEqual(stock_4.cost_price, Money('123.450000', 'USD'))
 
         # POST with valid supplier part, WITH pack size defined and used
         # Supplier part 6 is a 100-pack, otherwise same as SP 5
@@ -1855,7 +1874,7 @@ class StockItemTest(StockAPITestCase):
         part_4 = part.models.Part.objects.get(pk=4)
         self.assertEqual(part_4.available_stock, current_count + 3 * 100)
         stock_4 = StockItem.objects.get(pk=response.data[0]['pk'])
-        self.assertEqual(stock_4.purchase_price, Money('1.234500', 'USD'))
+        self.assertEqual(stock_4.cost_price, Money('1.234500', 'USD'))
 
     def test_creation_with_serials(self):
         """Test that serialized stock items can be created via the API."""
@@ -1988,38 +2007,60 @@ class StockItemTest(StockAPITestCase):
         self.assertEqual(response.data[0]['expiry_date'], expiry.isoformat())
 
     def test_purchase_price(self):
-        """Test that we can correctly read and adjust purchase price information via the API."""
+        """Test that we can set purchase price via the API, recorded as a StockItemCostEntry.
+
+        'purchase_price' is a write-only convenience field on StockItemSerializer -
+        it is not itself a StockItem field, so it is never present in a read response.
+        """
         url = reverse('api-stock-detail', kwargs={'pk': 1})
+        item = StockItem.objects.get(pk=1)
 
-        data = self.get(url, expected_code=200).data
+        # No cost entry exists by default
+        self.assertFalse(StockItemCostEntry.objects.filter(stock_item=item).exists())
 
-        # Check fixture values
-        self.assertAlmostEqual(data['purchase_price'], 123, 3)
-        self.assertEqual(data['purchase_price_currency'], 'AUD')
+        # Set an initial price
+        self.patch(
+            url,
+            {'purchase_price': 123, 'purchase_price_currency': 'AUD'},
+            expected_code=200,
+        )
 
-        # Update just the amount
-        data = self.patch(url, {'purchase_price': 456}, expected_code=200).data
+        cost_entry = StockItemCostEntry.objects.get(
+            stock_item=item, cost_type=CostType.PURCHASE.value
+        )
+        self.assertAlmostEqual(cost_entry.min_cost.amount, 123, places=3)
+        self.assertEqual(str(cost_entry.min_cost_currency), 'AUD')
 
-        self.assertAlmostEqual(data['purchase_price'], 456, 3)
-        self.assertEqual(data['purchase_price_currency'], 'AUD')
+        # Update just the amount - the existing currency should be preserved
+        self.patch(url, {'purchase_price': 456}, expected_code=200)
 
-        # Update the currency
-        data = self.patch(
-            url, {'purchase_price_currency': 'NZD'}, expected_code=200
-        ).data
-
-        self.assertEqual(data['purchase_price_currency'], 'NZD')
-
-        # Clear the price field
-        data = self.patch(url, {'purchase_price': None}, expected_code=200).data
-
-        self.assertEqual(data['purchase_price'], None)
+        cost_entry.refresh_from_db()
+        self.assertAlmostEqual(cost_entry.min_cost.amount, 456, places=3)
+        self.assertEqual(str(cost_entry.min_cost_currency), 'AUD')
 
         # Invalid currency code
-        data = self.patch(url, {'purchase_price_currency': 'xyz'}, expected_code=400)
+        self.patch(url, {'purchase_price_currency': 'xyz'}, expected_code=400)
 
-        data = self.get(url).data
-        self.assertEqual(data['purchase_price_currency'], 'NZD')
+        # Clear the price - the cost entry (and its summary) should be removed
+        self.patch(url, {'purchase_price': None}, expected_code=200)
+
+        self.assertFalse(
+            StockItemCostEntry.objects.filter(
+                stock_item=item, cost_type=CostType.PURCHASE.value
+            ).exists()
+        )
+        self.assertFalse(StockItemCost.objects.filter(stock_item=item).exists())
+
+    def test_unrelated_update_does_not_touch_cost_entry(self):
+        """Updating a field unrelated to pricing should not create a spurious cost entry."""
+        url = reverse('api-stock-detail', kwargs={'pk': 1})
+
+        item = StockItem.objects.get(pk=1)
+        self.assertFalse(StockItemCostEntry.objects.filter(stock_item=item).exists())
+
+        self.patch(url, {'packaging': 'a box'}, expected_code=200)
+
+        self.assertFalse(StockItemCostEntry.objects.filter(stock_item=item).exists())
 
     def test_output_options(self):
         """Test the output options for StockItemt detail."""
@@ -2387,10 +2428,13 @@ class StockItemDisassembleTest(StockAPITestCase):
         self.assembly = part.models.Part.objects.get(pk=100)
 
         self.item = StockItem.objects.create(
-            part=self.assembly,
-            quantity=10,
-            location=StockLocation.objects.get(pk=1),
-            purchase_price=Money(100, 'USD'),
+            part=self.assembly, quantity=10, location=StockLocation.objects.get(pk=1)
+        )
+        StockItemCostEntry.objects.set_cost(
+            self.item,
+            CostType.PURCHASE.value,
+            min_cost=Money(100, 'USD'),
+            max_cost=Money(100, 'USD'),
         )
 
         self.url = reverse('api-stock-item-disassemble', kwargs={'pk': self.item.pk})
@@ -2528,9 +2572,9 @@ class StockItemDisassembleTest(StockAPITestCase):
         self.assertEqual(item_50.parent.pk, self.item.pk)
 
         # Total cost (4 x 100 USD) is allocated evenly across 52 units
-        self.assertAlmostEqual(float(item_1.purchase_price.amount), 400 / 52, places=4)
-        self.assertAlmostEqual(float(item_50.purchase_price.amount), 400 / 52, places=4)
-        self.assertEqual(str(item_1.purchase_price.currency), 'USD')
+        self.assertAlmostEqual(float(item_1.cost_price.amount), 400 / 52, places=4)
+        self.assertAlmostEqual(float(item_50.cost_price.amount), 400 / 52, places=4)
+        self.assertEqual(str(item_1.cost_price.currency), 'USD')
 
         # Check stock tracking entries have been created
         self.assertTrue(
@@ -2557,16 +2601,16 @@ class StockItemDisassembleTest(StockAPITestCase):
 
         item = StockItem.objects.get(pk=response.data[0]['pk'])
 
-        self.assertIsNotNone(item.purchase_price)
+        self.assertIsNotNone(item.cost_price)
 
         cost_entry = StockItemCostEntry.objects.get(stock_item=item)
         self.assertEqual(cost_entry.cost_type, CostType.PURCHASE.value)
-        self.assertEqual(cost_entry.min_cost, item.purchase_price)
-        self.assertEqual(cost_entry.max_cost, item.purchase_price)
+        self.assertEqual(cost_entry.min_cost, item.cost_price)
+        self.assertEqual(cost_entry.max_cost, item.cost_price)
 
         summary = StockItemCost.objects.get(stock_item=item)
-        self.assertEqual(summary.min_cost, item.purchase_price)
-        self.assertEqual(summary.max_cost, item.purchase_price)
+        self.assertEqual(summary.min_cost, item.cost_price)
+        self.assertEqual(summary.max_cost, item.cost_price)
 
     def test_full_disassembly(self):
         """Test that a fully disassembled item is retained at zero quantity."""
@@ -2622,6 +2666,11 @@ class StockItemDisassembleTest(StockAPITestCase):
 
     def test_explicit_pricing(self):
         """Test that automatic cost allocation is skipped if explicit pricing is provided."""
+        # Use the default currency directly, as the resulting StockItemCost
+        # summary is always calculated in that currency, and no exchange
+        # rate is registered here to convert from any other currency
+        currency = currency_code_default()
+
         response = self.post(
             self.url,
             {
@@ -2630,7 +2679,7 @@ class StockItemDisassembleTest(StockAPITestCase):
                         'bom_item': 1,
                         'quantity': 10,
                         'purchase_price': 5,
-                        'purchase_price_currency': 'NZD',
+                        'purchase_price_currency': currency,
                     },
                     {'bom_item': 4, 'quantity': 3},
                 ],
@@ -2639,10 +2688,13 @@ class StockItemDisassembleTest(StockAPITestCase):
             expected_code=201,
         )
 
-        prices = {entry['part']: entry['purchase_price'] for entry in response.data}
+        items = {
+            entry['part']: StockItem.objects.get(pk=entry['pk'])
+            for entry in response.data
+        }
 
-        self.assertAlmostEqual(prices[1], 5, places=3)
-        self.assertIsNone(prices[50])
+        self.assertAlmostEqual(float(items[1].cost_price.amount), 5, places=3)
+        self.assertIsNone(items[50].cost_price)
 
     def install_item(self, part_pk: int, quantity, **kwargs) -> StockItem:
         """Install a new stock item into the assembly under test."""
@@ -2709,7 +2761,13 @@ class StockItemDisassembleTest(StockAPITestCase):
 
     def test_installed_items_full_coverage(self):
         """No new stock item is created for a line fully covered by installed items."""
-        sub = self.install_item(1, 120, purchase_price=Money(3, 'USD'))
+        sub = self.install_item(1, 120)
+        StockItemCostEntry.objects.set_cost(
+            sub,
+            CostType.PURCHASE.value,
+            min_cost=Money(3, 'USD'),
+            max_cost=Money(3, 'USD'),
+        )
 
         n = StockItem.objects.count()
 
@@ -2733,14 +2791,12 @@ class StockItemDisassembleTest(StockAPITestCase):
         self.assertIsNone(sub.belongs_to)
 
         # The uninstalled item retains its own purchase price
-        self.assertEqual(sub.purchase_price, Money(3, 'USD'))
+        self.assertEqual(sub.cost_price, Money(3, 'USD'))
 
         # The total cost (10 x 100 USD) is spread only across newly created units
         new_item = StockItem.objects.get(part=50, parent=self.item)
         self.assertEqual(new_item.quantity, 30)
-        self.assertAlmostEqual(
-            float(new_item.purchase_price.amount), 1000 / 30, places=4
-        )
+        self.assertAlmostEqual(float(new_item.cost_price.amount), 1000 / 30, places=4)
 
     def test_installed_items_leftover(self):
         """Installed items which do not match a BOM line are still uninstalled."""

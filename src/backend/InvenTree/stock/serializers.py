@@ -29,6 +29,7 @@ import part.serializers as part_serializers
 import pricing.models as pricing_models
 import stock.filters
 import stock.status_codes
+from common.currency import currency_code_default
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
@@ -43,6 +44,7 @@ from InvenTree.serializers import (
 )
 from InvenTree.tasks import batch_offload_tasks
 from plugin.base.event.events import batch_events
+from pricing.status_codes import CostType
 from users.serializers import UserSerializer
 
 from .models import (
@@ -411,6 +413,8 @@ class StockItemSerializer(
             'updated',
             'use_pack_size',
             'serial_numbers',
+            'purchase_price',
+            'purchase_price_currency',
             # Annotated fields
             'allocated',
             'expired',
@@ -499,6 +503,23 @@ class StockItemSerializer(
         help_text=_('Enter serial numbers for new items'),
     )
 
+    """
+    'purchase_price' is not a StockItem model field - it is accepted here as a
+    write-only convenience so a matching StockItemCostEntry can be created or
+    updated (see the custom update() method below, and pricing.models)
+    """
+    purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
+        write_only=True,
+        required=False,
+        allow_null=True,
+        label=_('Purchase Price'),
+        help_text=_('Unit purchase price, recorded as a StockItemCostEntry'),
+    )
+
+    purchase_price_currency = InvenTreeCurrencySerializer(
+        write_only=True, required=False, label=_('Purchase Currency')
+    )
+
     def validate_part(self, part):
         """Ensure the provided Part instance is valid."""
         if part.virtual:
@@ -522,7 +543,40 @@ class StockItemSerializer(
                 status_code  # for compatibility with custom "leader/follower" concept in super().update()
             )
 
+        # 'purchase_price' is not a StockItem model/serializer field - it is
+        # accepted here as a write-only convenience so a matching
+        # StockItemCostEntry can be created/updated (see pricing.models)
+        purchase_price = validated_data.pop('purchase_price', None)
+        purchase_price_currency = validated_data.pop('purchase_price_currency', None)
+
         instance = super().update(instance, validated_data=validated_data)
+
+        if purchase_price is not None:
+            if not purchase_price_currency:
+                # No explicit currency provided - default to the currency of
+                # the existing cost entry (if any), else the global default
+                existing = pricing_models.StockItemCostEntry.objects.filter(
+                    stock_item=instance, cost_type=CostType.PURCHASE.value
+                ).first()
+                purchase_price_currency = (
+                    existing.min_cost_currency if existing else currency_code_default()
+                )
+
+            pricing_models.StockItemCostEntry.objects.set_cost(
+                instance,
+                CostType.PURCHASE.value,
+                min_cost=purchase_price,
+                max_cost=purchase_price,
+                min_cost_currency=purchase_price_currency,
+                max_cost_currency=purchase_price_currency,
+                user=instance._user,
+            )
+        elif 'purchase_price' in self.initial_data:
+            # Client explicitly sent 'purchase_price: null' - clear the matching
+            # cost entry, rather than leaving it untouched or creating a null one
+            pricing_models.StockItemCostEntry.objects.filter(
+                stock_item=instance, cost_type=CostType.PURCHASE.value
+            ).delete()
 
         return instance
 
