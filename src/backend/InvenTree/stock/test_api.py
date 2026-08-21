@@ -1023,15 +1023,15 @@ class StockItemListTest(StockAPITestCase):
         response = self.get_stock(sent_to_customer=False)
         self.assertEqual(len(response), 29)  # TODO: adjust test dataset
 
-    def test_filter_has_purchase_price(self):
-        """Filter StockItem by has_purchase_price."""
+    def test_filter_has_unit_cost(self):
+        """Filter StockItem by has_unit_cost."""
         total = StockItem.objects.count()
 
         # No stock items have cost data by default
-        response = self.get_stock(has_purchase_price=True)
+        response = self.get_stock(has_unit_cost=True)
         self.assertEqual(len(response), 0)
 
-        response = self.get_stock(has_purchase_price=False)
+        response = self.get_stock(has_unit_cost=False)
         self.assertEqual(len(response), total)
 
         # Assign a calculated cost to a single stock item
@@ -1043,10 +1043,10 @@ class StockItemListTest(StockAPITestCase):
             max_cost=Money(10, 'USD'),
         )
 
-        response = self.get_stock(has_purchase_price=True)
+        response = self.get_stock(has_unit_cost=True)
         self.assertEqual(len(response), 1)
 
-        response = self.get_stock(has_purchase_price=False)
+        response = self.get_stock(has_unit_cost=False)
         self.assertEqual(len(response), total - 1)
 
     def test_filter_stale(self):

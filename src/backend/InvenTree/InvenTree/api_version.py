@@ -11,7 +11,8 @@ v534 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/12524
     - Adds new "pricing" permissions role
     - Removes the "purchase_price" / "purchase_price_currency" fields from the StockItem model
     - "purchase_price" / "purchase_price_currency" remain as write-only fields on the StockItem serializer, recorded as a StockItemCostEntry rather than a model field
-    - The "has_purchase_price" StockItem filter and "purchase_price" ordering key are unchanged, now backed by the calculated StockItemCost summary
+    - Renames the StockItem "has_purchase_price" filter to "has_unit_cost"
+    - Renames the StockItem "purchase_price" ordering key to "unit_cost"
 
 v533 -> 2026-08-18 : https://github.com/inventree/InvenTree/pull/12317
     - Refactors the PurchaseOrder, PurchaseOrderLineItem and PurchaseOrderExtraLine API endpoints to use DRF viewsets

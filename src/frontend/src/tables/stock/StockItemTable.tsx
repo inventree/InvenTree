@@ -124,7 +124,7 @@ function stockItemTableColumns({
       copyable: true
     },
     {
-      accessor: 'purchase_price',
+      accessor: 'unit_cost',
       title: t`Unit Price`,
       sortable: true,
       switchable: true,
@@ -268,9 +268,9 @@ function stockItemTableFilters({
       description: t`Show tracked items`
     },
     {
-      name: 'has_purchase_price',
-      label: t`Has Purchase Price`,
-      description: t`Show items which have a purchase price`
+      name: 'has_unit_cost',
+      label: t`Has Unit Cost`,
+      description: t`Show items which have a calculated unit cost`
     },
     {
       name: 'expired',

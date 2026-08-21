@@ -912,16 +912,12 @@ class StockFilter(FilterSet):
             return queryset.filter(quantity__lte=0)
         return queryset.exclude(quantity__lte=0)
 
-    has_purchase_price = rest_filters.BooleanFilter(
-        label='Has purchase price', method='filter_has_purchase_price'
+    has_unit_cost = rest_filters.BooleanFilter(
+        label='Has unit cost', method='filter_has_unit_cost'
     )
 
-    def filter_has_purchase_price(self, queryset, name, value):
-        """Filter by whether a calculated cost has been recorded against the item.
-
-        Note: 'purchase_price' has been replaced by pricing.models.StockItemCost -
-        this filter name is kept for API compatibility.
-        """
+    def filter_has_unit_cost(self, queryset, name, value):
+        """Filter by whether a calculated cost has been recorded against the item."""
         if str2bool(value):
             return queryset.exclude(cost__isnull=True)
         return queryset.filter(cost__isnull=True)
@@ -1380,9 +1376,7 @@ class StockList(
         'SKU': 'supplier_part__SKU',
         'MPN': 'supplier_part__manufacturer_part__MPN',
         'stock': ['quantity', 'serial_int', 'serial'],
-        # 'purchase_price' has been replaced by pricing.models.StockItemCost -
-        # kept as an ordering key alias for API compatibility
-        'purchase_price': 'cost__min_cost',
+        'unit_cost': 'cost__min_cost',
     }
 
     ordering_fields = [
@@ -1392,7 +1386,7 @@ class StockList(
         'part__name',
         'part__IPN',
         'updated',
-        'purchase_price',
+        'unit_cost',
         'creation_date',
         'stocktake_date',
         'expiry_date',
