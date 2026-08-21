@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 534
 
 INVENTREE_API_TEXT = """
 
-v534 -> 2026-07-27 : https://github.com/inventree/InvenTree/pull/12072
+v534 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/12072
     - Adds API endpoints for RepairOrder, RepairOrderLineItem, and RepairOrderAllocation models
 
 v533 -> 2026-08-18 : https://github.com/inventree/InvenTree/pull/12317
