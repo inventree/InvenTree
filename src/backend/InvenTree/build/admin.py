@@ -66,7 +66,7 @@ class NonConformanceAdmin(admin.ModelAdmin):
 
     exclude = ['reference_int']
 
-    list_display = ('reference', 'description', 'part', 'status', 'disposition')
+    list_display = ('reference', 'description', 'part', 'status')
 
     search_fields = ['reference', 'description', 'part__name', 'part__description']
 
@@ -85,6 +85,6 @@ class NonConformanceAdmin(admin.ModelAdmin):
 class NonConformanceStockItemAdmin(admin.ModelAdmin):
     """Class for managing the NonConformanceStockItem model via the admin interface."""
 
-    list_display = ('ncr', 'stock_item', 'quantity')
+    list_display = ('ncr', 'stock_item', 'quantity', 'disposition')
 
     autocomplete_fields = ['ncr', 'stock_item']

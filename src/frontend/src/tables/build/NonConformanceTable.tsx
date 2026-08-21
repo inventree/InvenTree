@@ -7,7 +7,6 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
-import { TableStatusRenderer } from '../../components/render/StatusRenderer';
 import {
   CreationDateColumn,
   DescriptionColumn,
@@ -18,7 +17,6 @@ import {
   TargetDateColumn
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
-import { ncrDispositionStatusType } from '../../defaults/backendMappings';
 import { useNonConformanceFields } from '../../forms/NCRForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
@@ -39,24 +37,8 @@ export function NonConformanceTable({
     return [
       ReferenceColumn({}),
       PartColumn({}),
-      DescriptionColumn({
-        accessor: 'title'
-      }),
+      DescriptionColumn({}),
       StatusColumn({ model: ModelType.nonconformance }),
-      {
-        accessor: 'disposition',
-        title: t`Disposition`,
-        sortable: true,
-        switchable: true,
-        minWidth: '50px',
-        // 'disposition' is a second, independent status-code field on the same model -
-        // there's no separate ModelType for it, so it can't use the StatusColumn helper
-        // (which is hardcoded to the 'status'/'status_custom_key' field names)
-        render: TableStatusRenderer(
-          ncrDispositionStatusType as ModelType,
-          'disposition'
-        )
-      },
       TargetDateColumn({}),
       CreationDateColumn({
         defaultVisible: false

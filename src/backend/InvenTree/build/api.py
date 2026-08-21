@@ -1071,20 +1071,6 @@ class NCRFilter(FilterSet):
 
         return queryset.filter(q1 | q2).distinct()
 
-    disposition = rest_filters.NumberFilter(
-        label=_('NCR Disposition'), method='filter_disposition'
-    )
-
-    def filter_disposition(self, queryset, name, value):
-        """Filter by integer disposition code.
-
-        Note: Also account for the possibility of a custom status code
-        """
-        q1 = Q(disposition=value, disposition_custom_key__isnull=True)
-        q2 = Q(disposition_custom_key=value)
-
-        return queryset.filter(q1 | q2).distinct()
-
     active = rest_filters.BooleanFilter(
         label=_('NCR is active'), method='filter_active'
     )
@@ -1156,7 +1142,6 @@ class NCRList(NCRMixin, OutputOptionsMixin, ListCreateAPI):
         'reference',
         'part',
         'status',
-        'disposition',
         'creation_date',
         'target_date',
         'closed_date',
@@ -1170,7 +1155,6 @@ class NCRList(NCRMixin, OutputOptionsMixin, ListCreateAPI):
     ordering = '-reference'
     search_fields = [
         'reference',
-        'title',
         'description',
         'part__name',
         'part__IPN',
@@ -1267,7 +1251,7 @@ class NCRStockItemFilter(FilterSet):
         """Metaclass options."""
 
         model = NonConformanceStockItem
-        fields = ['ncr', 'stock_item']
+        fields = ['ncr', 'stock_item', 'disposition']
 
 
 class NCRStockItemList(NCRStockItemMixin, ListCreateAPI):

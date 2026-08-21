@@ -1,7 +1,5 @@
 import { t } from '@lingui/core/macro';
 
-import { ncrDispositionStatusType } from '../../defaults/backendMappings';
-
 import { ModelType } from '@lib/enums/ModelType';
 import type { TableFilter } from '@lib/types/Filters';
 import {
@@ -9,7 +7,6 @@ import {
   OrderStatusFilter,
   OverdueFilter,
   ResponsibleFilter,
-  StatusFilterOptions,
   TagsFilter,
   UserFilter
 } from '../../components/tables/Filter';
@@ -17,12 +14,6 @@ import {
 export default function NonConformanceFilters(): TableFilter[] {
   return [
     OrderStatusFilter({ model: ModelType.nonconformance }),
-    {
-      name: 'disposition',
-      label: t`Disposition`,
-      description: t`Filter by NCR disposition`,
-      choiceFunction: StatusFilterOptions(ncrDispositionStatusType as ModelType)
-    },
     {
       name: 'active',
       label: t`Active`,

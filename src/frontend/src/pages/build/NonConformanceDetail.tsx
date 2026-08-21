@@ -24,11 +24,7 @@ import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { ncrDispositionStatusType } from '../../defaults/backendMappings';
-import {
-  useNonConformanceDispositionFields,
-  useNonConformanceFields
-} from '../../forms/NCRForms';
+import { useNonConformanceFields } from '../../forms/NCRForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
   useCreateApiFormModal,
@@ -120,16 +116,6 @@ export default function NonConformanceDetail() {
       />
     ];
 
-    if (ncr.disposition) {
-      badges.push(
-        <StatusRenderer
-          status={ncr.disposition_custom_key || ncr.disposition}
-          type={ncrDispositionStatusType}
-          options={{ size: 'lg' }}
-        />
-      );
-    }
-
     return badges;
   }, [ncr, instanceQuery]);
 
@@ -151,13 +137,11 @@ export default function NonConformanceDetail() {
     successMessage: t`NCR is now under investigation`
   });
 
-  const dispositionFields = useNonConformanceDispositionFields();
-
   const dispositionNcr = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.ncr_disposition, ncr.pk),
     title: t`Set Disposition`,
-    fields: dispositionFields,
     onFormSuccess: refreshInstance,
+    preFormWarning: t`Confirm that every linked stock item has been assigned a disposition`,
     successMessage: t`Disposition recorded`
   });
 

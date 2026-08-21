@@ -14,7 +14,6 @@ import {
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { useParameterDetailsGrid } from '../../components/details/ParameterDetailsGrid';
-import { ncrDispositionStatusType } from '../../defaults/backendMappings';
 
 function severityLabel(severity: number | undefined | null): string {
   switch (severity) {
@@ -60,13 +59,6 @@ export function NonConformanceDetailsPanel({
       copy: true
     },
     {
-      type: 'text',
-      name: 'title',
-      label: t`Title`,
-      hidden: !instance?.title,
-      copy: true
-    },
-    {
       type: 'status',
       name: 'status',
       label: t`Status`,
@@ -81,12 +73,6 @@ export function NonConformanceDetailsPanel({
       hidden:
         !instance?.status_custom_key ||
         instance?.status_custom_key == instance?.status
-    },
-    {
-      type: 'status',
-      name: 'disposition',
-      label: t`Disposition`,
-      model: ncrDispositionStatusType as ModelType
     },
     {
       type: 'text',

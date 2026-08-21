@@ -2523,7 +2523,6 @@ class NonConformance(
         part: The part against which this NCR was raised (required)
         description: Description of the non-conformance (required)
         status: Lifecycle status of the NCR (refer to status_codes.NonConformanceStatus)
-        disposition: What is to be done with the affected material (refer to status_codes.NonConformanceDisposition)
         build_order: Reference to a Build object which this NCR relates to (optional)
         sales_order: Reference to a SalesOrder object which this NCR relates to (optional)
         purchase_order: Reference to a PurchaseOrder object which this NCR relates to (optional)
@@ -2650,20 +2649,6 @@ class NonConformance(
     def status_text(self):
         """Return the text representation of the status field."""
         return NonConformanceStatus.text(self.status)
-
-    disposition = generic.states.fields.InvenTreeCustomStatusModelField(
-        verbose_name=_('Disposition'),
-        default=NonConformanceDisposition.PENDING.value,
-        choices=NonConformanceDisposition.items(),
-        status_class=NonConformanceDisposition,
-        validators=[MinValueValidator(0)],
-        help_text=_('Disposition of affected material'),
-    )
-
-    @property
-    def disposition_text(self):
-        """Return the text representation of the disposition field."""
-        return NonConformanceDisposition.text(self.disposition)
 
     build_order = models.ForeignKey(
         'build.Build',
@@ -2796,24 +2781,27 @@ class NonConformance(
         target=NonConformanceStatus.DISPOSITIONED,
         event=BuildEvents.NCR_DISPOSITIONED,
     )
-    def disposition_ncr(self, disposition: int):
-        """Transition this NCR to DISPOSITIONED status, recording the chosen disposition.
+    def disposition_ncr(self):
+        """Transition this NCR to DISPOSITIONED status.
 
-        Arguments:
-            disposition: The chosen NonConformanceDisposition value (must not be PENDING)
+        The disposition itself is recorded per linked stock item
+        (NonConformanceStockItem.disposition) rather than on the NCR as a whole - a
+        single NCR may cover multiple units that end up with different outcomes (some
+        use-as-is, some scrapped). This transition just confirms that stage of the
+        workflow is complete: every linked stock item must have been assigned a
+        disposition other than PENDING. An NCR with no linked stock items has nothing
+        to check and transitions freely.
         """
-        valid_dispositions = [
-            d.value
-            for d in NonConformanceDisposition
-            if d.value != NonConformanceDisposition.PENDING.value
-        ]
+        pending = self.stock_items.filter(
+            disposition=NonConformanceDisposition.PENDING.value
+        )
 
-        if disposition not in valid_dispositions:
+        if pending.exists():
             raise ValidationError({
-                'disposition': _('A valid disposition must be selected')
+                'disposition': _(
+                    'All linked stock items must be assigned a disposition'
+                )
             })
-
-        self.disposition = disposition
 
     @inventree_transition(
         field=status,
@@ -2866,6 +2854,8 @@ class NonConformanceStockItem(InvenTree.models.InvenTreeMetadataModel):
         ncr: Link to a NonConformance object
         stock_item: Link to a StockItem object
         quantity: Affected quantity of the linked stock item (optional)
+        disposition: What is to be done with this specific stock item (refer to
+            status_codes.NonConformanceDisposition)
         notes: Free-text notes about this specific linkage (optional)
     """
 
@@ -2922,6 +2912,19 @@ class NonConformanceStockItem(InvenTree.models.InvenTreeMetadataModel):
         verbose_name=_('Quantity'),
         help_text=_('Affected quantity of this stock item (optional)'),
     )
+
+    disposition = models.PositiveIntegerField(
+        verbose_name=_('Disposition'),
+        default=NonConformanceDisposition.PENDING.value,
+        choices=NonConformanceDisposition.items(),
+        validators=[MinValueValidator(0)],
+        help_text=_('Disposition of this stock item'),
+    )
+
+    @property
+    def disposition_text(self):
+        """Return the text representation of the disposition field."""
+        return NonConformanceDisposition.text(self.disposition)
 
     notes = models.CharField(
         verbose_name=_('Notes'),

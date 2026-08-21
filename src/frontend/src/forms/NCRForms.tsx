@@ -19,7 +19,6 @@ export function useNonConformanceFields({
         disabled: !!partId,
         filters: { active: true }
       },
-      title: {},
       description: {},
       severity: {},
       build_order: {},
@@ -45,17 +44,6 @@ export function useNonConformanceFields({
 }
 
 /**
- * Field set for the "set disposition" NCR transition action.
- */
-export function useNonConformanceDispositionFields(): ApiFormFieldSet {
-  return useMemo(() => {
-    return {
-      disposition: {}
-    };
-  }, []);
-}
-
-/**
  * Field set for linking a StockItem to a NonConformance (NCR) report.
  */
 export function useNonConformanceStockItemFields({
@@ -78,6 +66,7 @@ export function useNonConformanceStockItemFields({
         }
       },
       quantity: {},
+      disposition: {},
       notes: {}
     };
   }, [ncrId, partId]);

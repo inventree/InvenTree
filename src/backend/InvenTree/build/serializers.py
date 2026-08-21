@@ -56,7 +56,7 @@ from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer, UserSerializer
 
 from .models import Build, BuildItem, BuildLine, NonConformance, NonConformanceStockItem
-from .status_codes import BuildStatus, NonConformanceDisposition
+from .status_codes import BuildStatus
 from .validators import check_build_output
 
 
@@ -1854,14 +1854,10 @@ class NonConformanceSerializer(
             'reference',
             'part',
             'part_detail',
-            'title',
             'description',
             'status',
             'status_text',
             'status_custom_key',
-            'disposition',
-            'disposition_text',
-            'disposition_custom_key',
             'build_order',
             'build_order_reference',
             'sales_order',
@@ -1890,9 +1886,6 @@ class NonConformanceSerializer(
             'status',
             'status_text',
             'status_custom_key',
-            'disposition',
-            'disposition_text',
-            'disposition_custom_key',
             'raised_by',
             'creation_date',
             'closed_date',
@@ -1950,8 +1943,6 @@ class NonConformanceSerializer(
 
     barcode_hash = serializers.CharField(read_only=True)
 
-    disposition_text = serializers.CharField(read_only=True)
-
     def validate_reference(self, reference):
         """Custom validation for the NonConformance reference field."""
         NonConformance.validate_reference_field(reference)
@@ -1968,7 +1959,16 @@ class NonConformanceStockItemSerializer(
         """Serializer metaclass."""
 
         model = NonConformanceStockItem
-        fields = ['pk', 'ncr', 'stock_item', 'stock_item_detail', 'quantity', 'notes']
+        fields = [
+            'pk',
+            'ncr',
+            'stock_item',
+            'stock_item_detail',
+            'quantity',
+            'disposition',
+            'disposition_text',
+            'notes',
+        ]
 
     stock_item_detail = OptionalField(
         serializer_class=StockItemSerializer,
@@ -1984,6 +1984,8 @@ class NonConformanceStockItemSerializer(
         default_include=True,
         prefetch_fields=['stock_item', 'stock_item__part'],
     )
+
+    disposition_text = serializers.CharField(read_only=True)
 
 
 class NCRInvestigateSerializer(serializers.Serializer):
@@ -2001,23 +2003,22 @@ class NCRInvestigateSerializer(serializers.Serializer):
 
 
 class NCRDispositionSerializer(serializers.Serializer):
-    """DRF serializer for dispositioning an NCR."""
+    """DRF serializer for confirming an NCR's dispositioning stage is complete.
+
+    Disposition values themselves are recorded per linked stock item
+    (NonConformanceStockItem.disposition, set via the stock-item endpoint) - this
+    serializer takes no input, it just triggers the status transition.
+    """
 
     class Meta:
         """Serializer metaclass."""
 
-        fields = ['disposition']
-
-    disposition = serializers.ChoiceField(
-        choices=NonConformanceDisposition.items(),
-        label=_('Disposition'),
-        help_text=_('Disposition to record for the affected material'),
-    )
+        fields = []
 
     def save(self):
         """Transition the specified NCR to DISPOSITIONED status."""
         ncr = self.context['ncr']
-        ncr.disposition_ncr(self.validated_data['disposition'])
+        ncr.disposition_ncr()
 
 
 class NCRCloseSerializer(serializers.Serializer):

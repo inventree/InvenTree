@@ -9,6 +9,7 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { RowAction } from '@lib/types/Tables';
+import { TableStatusRenderer } from '../../components/render/StatusRenderer';
 import {
   DecimalColumn,
   NoteColumn,
@@ -16,6 +17,7 @@ import {
   StockColumn
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { ncrDispositionStatusType } from '../../defaults/backendMappings';
 import { useNonConformanceStockItemFields } from '../../forms/NCRForms';
 import {
   useCreateApiFormModal,
@@ -45,6 +47,17 @@ export default function NonConformanceStockItemTable({
       DecimalColumn({
         accessor: 'quantity'
       }),
+      {
+        accessor: 'disposition',
+        title: t`Disposition`,
+        sortable: true,
+        switchable: true,
+        minWidth: '50px',
+        render: TableStatusRenderer(
+          ncrDispositionStatusType as ModelType,
+          'disposition'
+        )
+      },
       NoteColumn({})
     ];
   }, []);

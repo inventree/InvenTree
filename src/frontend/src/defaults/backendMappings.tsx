@@ -21,10 +21,9 @@ export const statusCodeList: Record<string, ModelType> = {
 };
 
 /**
- * NonConformance has a second, independent status-code field ('disposition') on the
- * same model. There is no separate ModelType for it (it isn't a navigable entity of its
- * own), so it is deliberately left out of statusCodeList above - callers reference the
- * raw backend status-class name directly instead of a ModelType.
+ * NonConformanceStockItem.disposition is a status-code field, but NonConformanceStockItem
+ * isn't a navigable entity of its own so there is no separate ModelType for it - callers
+ * reference the raw backend status-class name directly instead of a ModelType.
  */
 export const ncrDispositionStatusType = 'NonConformanceDisposition';
 
