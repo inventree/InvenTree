@@ -181,8 +181,8 @@ export const ModelInformationDict: ModelDict = {
     icon: 'build_order'
   },
   nonconformance: {
-    label: () => t`Non-Conformance Report`,
-    label_multiple: () => t`Non-Conformance Reports`,
+    label: () => t`Non-Conformance`,
+    label_multiple: () => t`Non-Conformances`,
     url_overview: '/manufacturing/index/ncr',
     url_detail: '/manufacturing/ncr/:pk/',
     api_endpoint: ApiEndpoints.ncr_list,

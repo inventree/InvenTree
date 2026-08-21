@@ -114,7 +114,7 @@ export default function BuildIndex() {
       }),
       {
         name: 'ncr',
-        label: t`Non-Conformance Reports`,
+        label: t`Non-Conformances`,
         icon: <IconAlertTriangle />,
         hidden: !user.hasViewRole(UserRoles.ncr),
         content: <NonConformanceTable />

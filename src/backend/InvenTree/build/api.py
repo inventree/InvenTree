@@ -1483,7 +1483,7 @@ build_api_urls = [
     ),
     # Non-Conformance Reports (NCR)
     path(
-        'ncr/',
+        'non-conformance/',
         include([
             path(
                 'stock-item/',
