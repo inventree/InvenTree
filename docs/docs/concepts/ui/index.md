@@ -92,6 +92,9 @@ The navigation context is stored in the detail URL. This makes links shareable a
 
 The navigation controls also work with detail pages provided by frontend plugins that use the standard table and page components.
 
+!!! tip
+    This behaviour can be controlled by users with the setting `USE_TABLE_NAVIGATION`.
+
 ### Navigation Tree
 
 On some pages, a navigation tree is provided on the left-hand side of the page, next to the breadcrumbs. The navigation tree provides a hierarchical view of the current section of the system, allowing users to quickly navigate to related pages and sections.
