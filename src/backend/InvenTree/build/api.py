@@ -316,7 +316,7 @@ class BuildFilter(FilterSet):
 
         return queryset
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class BuildMixin:
