@@ -85,6 +85,7 @@ export function useSupplierPartFields({
         icon: <IconHash />
       },
       description: {},
+      tags: TagsField({}),
       link: {
         icon: <IconLink />
       },
@@ -181,6 +182,7 @@ export function companyFields({
     email: {
       icon: <IconAt />
     },
+    tags: TagsField({}),
     tax_id: {},
     is_supplier: {},
     is_manufacturer: {},

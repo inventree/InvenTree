@@ -1,3 +1,9 @@
+import { t } from '@lingui/core/macro';
+import { Group, Text } from '@mantine/core';
+import type { DataTableRowExpansionProps } from 'mantine-datatable';
+import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { ProgressBar } from '@lib/components/ProgressBar';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -6,12 +12,6 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { t } from '@lingui/core/macro';
-import { Group, Text } from '@mantine/core';
-import type { DataTableRowExpansionProps } from 'mantine-datatable';
-import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import {
   DescriptionColumn,
   IPNColumn,
@@ -21,6 +21,8 @@ import {
 } from '../../components/tables/ColumnRenderers';
 import { IncludeVariantsFilter } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
 import { useUserState } from '../../states/UserState';
 import SalesOrderAllocationTable from '../sales/SalesOrderAllocationTable';

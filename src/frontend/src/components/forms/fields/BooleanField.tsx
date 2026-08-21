@@ -34,7 +34,7 @@ function BooleanFieldComponent({
 
   // Coerce the value to a (stringified) boolean value
   const booleanValue: boolean = useMemo(() => {
-    return isTrue(value);
+    return isTrue(value ?? definition.default ?? false);
   }, [value]);
 
   const handleChange = useCallback(
@@ -45,7 +45,7 @@ function BooleanFieldComponent({
   return (
     <Switch
       {...definition}
-      defaultValue={definition.default ?? false}
+      defaultValue={undefined}
       checked={booleanValue}
       id={fieldId}
       aria-label={`boolean-field-${fieldName}`}

@@ -15,7 +15,11 @@ import {
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
 
-function EmailStatusBadge({ status }: { status: any }): ReactNode {
+function EmailStatusBadge({
+  status
+}: {
+  status: any;
+}): ReactNode {
   switch (status) {
     case 'A':
       return <Badge color='blue'>{t`Announced`}</Badge>;

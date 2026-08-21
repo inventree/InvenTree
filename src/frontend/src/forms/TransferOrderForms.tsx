@@ -13,7 +13,7 @@ import {
 import { RenderPartColumn } from '../components/tables/ColumnRenderers';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
-import { ProjectCodeField } from './CommonFields';
+import { ProjectCodeField, TagsField } from './CommonFields';
 
 export function useTransferOrderFields({
   duplicateOrderId
@@ -40,6 +40,7 @@ export function useTransferOrderFields({
         }
       },
       consume: {},
+      tags: TagsField({}),
       link: {},
       responsible: {
         filters: {

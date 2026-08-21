@@ -1,5 +1,6 @@
-import { ModelType } from '@lib/enums/ModelType';
 import { t } from '@lingui/core/macro';
+
+import { ModelType } from '@lib/enums/ModelType';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import type { DashboardWidgetProps } from './DashboardWidget';

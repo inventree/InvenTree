@@ -1,6 +1,3 @@
-import { AddItemButton } from '@lib/components/AddItemButton';
-import { identifierString } from '@lib/functions/Conversion';
-import type { ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -25,6 +22,10 @@ import {
   useMemo,
   useRef
 } from 'react';
+
+import { AddItemButton } from '@lib/components/AddItemButton';
+import { identifierString } from '@lib/functions/Conversion';
+import type { ApiFormFieldType } from '@lib/types/Forms';
 import { isEquivalent } from '../../../functions/comparison';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { StandaloneField } from '../StandaloneField';

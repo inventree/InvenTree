@@ -1,7 +1,3 @@
-import { CopyButton } from '@lib/components/CopyButton';
-import { StylishText } from '@lib/components/StylishText';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -16,12 +12,18 @@ import {
 } from '@mantine/core';
 import type { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
-import type { JSX } from 'react';
+
+import { CopyButton } from '@lib/components/CopyButton';
+import { StylishText } from '@lib/components/StylishText';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { apiUrl } from '@lib/functions/Api';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
 import { docLinks } from '../../defaults/links';
 import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ServerApiState';
+
+import type { JSX } from 'react';
 import { OnlyStaff } from '../items/OnlyStaff';
 
 type AboutLookupRef = {

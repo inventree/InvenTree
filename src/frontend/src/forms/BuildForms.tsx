@@ -1,8 +1,3 @@
-import { ProgressBar } from '@lib/components/ProgressBar';
-import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
-import { apiUrl } from '@lib/functions/Api';
-import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { Alert, Divider, Group, List, Stack, Table, Text } from '@mantine/core';
 import {
@@ -15,8 +10,15 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
+
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
+
+import { ProgressBar } from '@lib/components/ProgressBar';
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import {
   TableFieldErrorWrapper,
   TableFieldQuantityInput,
@@ -34,7 +36,7 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
-import { DuplicateField, ProjectCodeField } from './CommonFields';
+import { DuplicateField, ProjectCodeField, TagsField } from './CommonFields';
 
 /**
  * Field set for BuildOrder forms
@@ -123,6 +125,7 @@ export function useBuildOrderFields({
         },
         value: destination
       },
+      tags: TagsField({}),
       link: {
         icon: <IconLink />
       },

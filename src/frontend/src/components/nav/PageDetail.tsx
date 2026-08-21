@@ -1,8 +1,9 @@
+import { Group, Paper, Space, Stack, Text } from '@mantine/core';
+
 import { StylishText } from '@lib/components/StylishText';
 import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { shortenString } from '@lib/functions/String';
 import { t } from '@lingui/core/macro';
-import { Group, Paper, Space, Stack, Text } from '@mantine/core';
 import { Fragment, type ReactNode, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDetailNavigation } from '../../hooks/UseDetailNavigation';

@@ -25,7 +25,6 @@ import {
 import type { DataTableRowExpansionProps } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import {
   BooleanColumn,
   CategoryColumn,
@@ -39,6 +38,8 @@ import {
 } from '../../components/tables/ColumnRenderers';
 import { PartCategoryFilter } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
 import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';

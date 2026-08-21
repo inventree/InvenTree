@@ -8,8 +8,9 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { BarcodeScanItem } from '../../components/barcodes/BarcodeScanItem';
 import { RenderInstance } from '../../components/render/Instance';
-import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import { useUserState } from '../../states/UserState';
 
 /**

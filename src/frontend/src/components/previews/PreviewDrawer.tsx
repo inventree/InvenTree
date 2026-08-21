@@ -1,3 +1,14 @@
+import {
+  ActionIcon,
+  Anchor,
+  Divider,
+  Drawer,
+  Group,
+  LoadingOverlay,
+  Stack,
+  Tooltip
+} from '@mantine/core';
+
 import { StylishText } from '@lib/components/StylishText';
 import { cancelEvent } from '@lib/functions/Events';
 import {
@@ -9,16 +20,6 @@ import {
 import type { ModelType } from '@lib/index';
 import type { PreviewType } from '@lib/types/Preview';
 import { t } from '@lingui/core/macro';
-import {
-  ActionIcon,
-  Anchor,
-  Divider,
-  Drawer,
-  Group,
-  LoadingOverlay,
-  Stack,
-  Tooltip
-} from '@mantine/core';
 import { IconArrowRight } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';

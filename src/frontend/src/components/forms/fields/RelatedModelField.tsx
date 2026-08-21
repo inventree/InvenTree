@@ -1,10 +1,3 @@
-import { ActionButton } from '@lib/components/ActionButton';
-import {
-  ModelInformationDict,
-  type TranslatableModelInformationInterface
-} from '@lib/enums/ModelInformation';
-import { apiUrl } from '@lib/functions/Api';
-import type { ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import {
   Group,
@@ -14,7 +7,6 @@ import {
   useMantineTheme
 } from '@mantine/core';
 import { useDebouncedValue, useId } from '@mantine/hooks';
-import { IconPlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import {
   type ReactNode,
@@ -31,8 +23,17 @@ import {
   type UseFormReturn,
   useFormContext
 } from 'react-hook-form';
-import type { NavigateFunction } from 'react-router-dom';
 import Select from 'react-select';
+
+import { ActionButton } from '@lib/components/ActionButton';
+import {
+  ModelInformationDict,
+  type TranslatableModelInformationInterface
+} from '@lib/enums/ModelInformation';
+import { apiUrl } from '@lib/functions/Api';
+import type { ApiFormFieldType } from '@lib/types/Forms';
+import { IconPlus } from '@tabler/icons-react';
+import type { NavigateFunction } from 'react-router-dom';
 import { useApi } from '../../../contexts/ApiContext';
 import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import {
