@@ -173,6 +173,9 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'supplier_part': 3}, 2)
         self.filter({'supplier_part': 4}, 0)
 
+        # Filter by "tags"
+        self.filter({'tags': True}, 7)
+
     def test_total_price(self):
         """Unit tests for the 'total_price' field."""
         # Ensure we have exchange rate data
@@ -720,6 +723,18 @@ class PurchaseOrderTest(OrderTest):
 
         po.refresh_from_db()
         self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
+
+    def test_po_hold(self):
+        """Test the PurchaseOrderHold API endpoint."""
+        po = models.PurchaseOrder.objects.get(pk=1)
+        url = reverse('api-po-hold', kwargs={'pk': po.pk})
+
+        # Try to hold the PO, without required permissions
+        self.post(url, {}, expected_code=403)
+        self.assignRole('purchase_order.add')
+        self.post(url, {}, expected_code=201)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.ON_HOLD)
 
     def test_po_issue(self):
         """Test the PurchaseOrderIssue API endpoint."""
