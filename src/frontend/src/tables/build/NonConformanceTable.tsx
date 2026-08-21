@@ -87,6 +87,7 @@ export function NonConformanceTable({
           tableActions: tableActions,
           modelType: ModelType.nonconformance,
           enableSelection: true,
+          enableReports: true,
           enableDownload: true
         }}
       />

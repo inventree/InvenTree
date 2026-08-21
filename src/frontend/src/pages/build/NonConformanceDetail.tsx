@@ -11,6 +11,7 @@ import { apiUrl } from '@lib/functions/Api';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import {
   BarcodeActionDropdown,
   CancelItemAction,
@@ -213,6 +214,11 @@ export default function NonConformanceDetail() {
         model={ModelType.nonconformance}
         pk={ncr.pk}
         hash={ncr?.barcode_hash}
+      />,
+      <PrintingActions
+        modelType={ModelType.nonconformance}
+        items={[ncr.pk]}
+        enableReports
       />,
       <OptionsActionDropdown
         tooltip={t`NCR Actions`}

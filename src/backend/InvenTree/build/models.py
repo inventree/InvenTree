@@ -2505,7 +2505,26 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
+class NonConformanceReportContext(report.mixins.BaseReportContext, TypedDict):
+    """Context for the NonConformance model.
+
+    Attributes:
+        description: Description of the non-conformance
+        ncr: The NonConformance instance itself
+        part: The part against which this non-conformance was raised
+        reference: The reference field of the NonConformance
+        stock_items: Query set of all NonConformanceStockItem objects linked to this non-conformance
+    """
+
+    description: str
+    ncr: 'NonConformance'
+    part: part.models.Part
+    reference: str
+    stock_items: report.mixins.QuerySet['NonConformanceStockItem']
+
+
 class NonConformance(
+    report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeTagsMixin,
@@ -2611,6 +2630,16 @@ class NonConformance(
     def get_absolute_url(self):
         """Return the web URL associated with this NonConformance report."""
         return InvenTree.helpers.pui_url(f'/manufacturing/ncr/{self.id}')
+
+    def report_context(self) -> NonConformanceReportContext:
+        """Generate custom report context data."""
+        return {
+            'description': self.description,
+            'ncr': self,
+            'part': self.part,
+            'reference': self.reference,
+            'stock_items': self.stock_items.all(),
+        }
 
     reference = models.CharField(
         unique=True,
