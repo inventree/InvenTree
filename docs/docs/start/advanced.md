@@ -75,6 +75,29 @@ Next you can start configuring the connection. Either use the config file or set
 | `INVENTREE_LDAP_DENY_GROUP` | `ldap.deny_group` | If set, users _must not_ be in this group to log in to InvenTree |
 | `INVENTREE_LDAP_USER_FLAGS_BY_GROUP` | `ldap.user_flags_by_group` | LDAP group to InvenTree user flag map, can be json if used as env, in yml directly specify the object. See config template for example, default: `{}` |
 
+#### Active Directory
+
+When connecting to Microsoft Active Directory, login may fail with an error like *failed to map the username to a DN* even when bind credentials and search filters are correct. This often happens because AD returns referral responses that `python-ldap` follows by default.
+
+Disable LDAP referrals in your `config.yaml`:
+
+```yaml
+ldap:
+  enabled: true
+  server_uri: "ldap://ldap.example.local:389"
+  bind_dn: "DOMAIN\\ldap_bind"
+  bind_password: "secret"
+  search_base_dn: "DC=example,DC=local"
+  search_filter_str: "(sAMAccountName=%(user)s)"
+  global_options:
+    OPT_REFERRALS: OPT_OFF
+```
+
+After changing LDAP settings, restart the InvenTree server and worker containers so the configuration is reloaded.
+
+!!! tip "Debugging"
+    Set `INVENTREE_LDAP_DEBUG=True` while troubleshooting, then disable it again once authentication works.
+
 ## Tracing support
 
 Starting with 0.14.0 InvenTree supports sending traces, logs and metrics to OpenTelemetry compatible endpoints (both HTTP and gRPC). A [list of vendors](https://opentelemetry.io/ecosystem/vendors) is available on the project site.
