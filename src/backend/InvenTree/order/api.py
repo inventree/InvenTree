@@ -374,7 +374,7 @@ class PurchaseOrderFilter(OrderFilter):
         """
         return queryset.filter(lines__build_order=build).distinct()
 
-    tags = common.filters.TagsFilter(is_viewset=True)
+    tags = common.filters.TagsFilter()
 
 
 class PurchaseOrderOutputOptions(OutputConfiguration):
