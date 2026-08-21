@@ -749,9 +749,24 @@ class BuildOrderContextMixin:
         try:
             ctx['build'] = self.get_build()
         except NotFound:
+            # Swallowed here (e.g. schema generation may call this without a
+            # resolvable pk) - create() below is what actually enforces a 404
+            # for a real request against a non-existent build.
             pass
 
         return ctx
+
+    def create(self, request, *args, **kwargs):
+        """Ensure the target Build actually exists before attempting the action.
+
+        Without this, a POST against a non-existent pk would fall through to the
+        action serializer's save(), which unconditionally reads
+        self.context['build'] - raising an unhandled KeyError (HTTP 500) instead of
+        the intended 404.
+        """
+        self.get_build()
+
+        return super().create(request, *args, **kwargs)
 
 
 @extend_schema(responses={201: stock.serializers.StockItemSerializer(many=True)})
