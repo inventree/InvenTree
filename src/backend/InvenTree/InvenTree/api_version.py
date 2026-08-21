@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 534
 
 INVENTREE_API_TEXT = """
 
-v533 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/11971
+v534 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/11971
     - Removes direct "notes" field from any models which previously supported markdown notes
     - Adds a generic "Note" model which can be attached to any model type via a generic foreign key relationship
     - Allow multiple notes to be attached to a single object, and for notes to be created / edited / deleted via the API
