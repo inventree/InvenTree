@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 01:47+0000\n"
-"PO-Revision-Date: 2026-08-16 01:50\n"
+"POT-Creation-Date: 2026-08-20 23:35+0000\n"
+"PO-Revision-Date: 2026-08-20 23:38\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -53,7 +53,7 @@ msgstr "Ce champ doit être unique"
 msgid "Item no longer matches the provided criteria"
 msgstr ""
 
-#: InvenTree/api.py:861 InvenTree/models.py:1459
+#: InvenTree/api.py:864 InvenTree/models.py:1459
 msgid "User does not have permission to view this model"
 msgstr "L'utilisateur n'a pas la permission de voir ce modèle"
 
@@ -590,7 +590,7 @@ msgstr "Unité invalide"
 msgid "Not a valid currency code"
 msgstr "Code de devise invalide"
 
-#: build/api.py:57 order/api.py:119 order/api.py:288 order/api.py:1467
+#: build/api.py:57 order/api.py:128 order/api.py:297 order/api.py:1486
 #: order/serializers.py:99
 msgid "Order Status"
 msgstr "Statut de la commande"
@@ -599,8 +599,8 @@ msgstr "Statut de la commande"
 msgid "Parent Build"
 msgstr "Fabrication parente"
 
-#: build/api.py:87 build/api.py:1055 order/api.py:565 order/api.py:804
-#: order/api.py:1259 order/api.py:1571 order/api.py:1868 order/api.py:2058
+#: build/api.py:87 build/api.py:1055 order/api.py:583 order/api.py:823
+#: order/api.py:1278 order/api.py:1590 order/api.py:1887 order/api.py:2077
 #: stock/api.py:632
 msgid "Include Variants"
 msgstr "Inclure les variantes"
@@ -608,8 +608,8 @@ msgstr "Inclure les variantes"
 #: build/api.py:103 build/api.py:490 build/api.py:1069 build/models.py:291
 #: build/serializers.py:1200 build/serializers.py:1376
 #: build/serializers.py:1469 company/models.py:1038 company/serializers.py:473
-#: order/api.py:316 order/api.py:320 order/api.py:961 order/api.py:1272
-#: order/api.py:1275 order/api.py:2071 order/api.py:2074 order/api.py:2228
+#: order/api.py:325 order/api.py:329 order/api.py:980 order/api.py:1291
+#: order/api.py:1294 order/api.py:2090 order/api.py:2093 order/api.py:2247
 #: order/models.py:2331 order/models.py:2499 order/models.py:2500
 #: order/models.py:4021 order/models.py:4022 part/api.py:1179 part/api.py:1182
 #: part/api.py:1399 part/models.py:530 part/models.py:3226 part/models.py:3369
@@ -646,7 +646,7 @@ msgstr "Catégorie"
 msgid "Ancestor Build"
 msgstr "Version Précédente"
 
-#: build/api.py:155 order/api.py:137
+#: build/api.py:155 order/api.py:146
 msgid "Assigned to me"
 msgstr "Attribué à moi"
 
@@ -694,11 +694,11 @@ msgstr "Terminé avant"
 msgid "Completed after"
 msgstr "Terminé après"
 
-#: build/api.py:252 order/api.py:242
+#: build/api.py:252 order/api.py:251
 msgid "Min Date"
 msgstr "Date min"
 
-#: build/api.py:275 order/api.py:261
+#: build/api.py:275 order/api.py:270
 msgid "Max Date"
 msgstr "Date maximale"
 
@@ -733,12 +733,12 @@ msgstr "Suivi"
 msgid "Testable"
 msgstr "Testable"
 
-#: build/api.py:495 order/api.py:1025 order/api.py:1457 order/api.py:2292
+#: build/api.py:495 order/api.py:1044 order/api.py:1476 order/api.py:2311
 msgid "Order Outstanding"
 msgstr "Commande en cours"
 
-#: build/api.py:505 build/serializers.py:1512 order/api.py:984
-#: order/api.py:2251
+#: build/api.py:505 build/serializers.py:1512 order/api.py:1003
+#: order/api.py:2270
 msgid "Allocated"
 msgstr "Allouée"
 
@@ -772,8 +772,8 @@ msgstr "Ordre de Fabrication"
 
 #: build/api.py:1106 build/api.py:1110 build/serializers.py:412
 #: build/serializers.py:518 build/serializers.py:569 build/serializers.py:1250
-#: build/serializers.py:1256 order/api.py:1319 order/api.py:1324
-#: order/api.py:2110 order/api.py:2115 order/serializers.py:867
+#: build/serializers.py:1256 order/api.py:1338 order/api.py:1343
+#: order/api.py:2129 order/api.py:2134 order/serializers.py:867
 #: order/serializers.py:1007 order/serializers.py:2294 part/serializers.py:1358
 #: stock/api.py:1038 stock/serializers.py:116 stock/serializers.py:626
 #: stock/serializers.py:746 stock/serializers.py:930 stock/serializers.py:1039
@@ -955,7 +955,7 @@ msgstr "Émis par"
 msgid "User who issued this build order"
 msgstr "Utilisateur ayant émis cette commande de construction"
 
-#: build/models.py:427 common/models.py:195 order/api.py:187
+#: build/models.py:427 common/models.py:195 order/api.py:196
 #: order/models.py:577 part/models.py:1379
 #: report/templates/report/inventree_build_order_report.html:158
 msgid "Responsible"
@@ -983,7 +983,7 @@ msgid "Priority of this build order"
 msgstr "Priorité de cet ordre de fabrication"
 
 #: build/models.py:451 common/models.py:159 common/models.py:173
-#: order/api.py:173 order/models.py:517 order/models.py:2179
+#: order/api.py:182 order/models.py:517 order/models.py:2179
 msgid "Project Code"
 msgstr "Code du projet"
 
@@ -1455,8 +1455,8 @@ msgstr ""
 msgid "Build"
 msgstr "Construire"
 
-#: build/serializers.py:1288 company/models.py:641 order/api.py:329
-#: order/api.py:334 order/api.py:561 order/serializers.py:635
+#: build/serializers.py:1288 company/models.py:641 order/api.py:338
+#: order/api.py:343 order/api.py:579 order/serializers.py:635
 #: stock/models.py:1175 stock/serializers.py:593
 msgid "Supplier Part"
 msgstr "Pièce fournisseur"
@@ -1641,12 +1641,11 @@ msgstr "Aucun code de devise valide fourni"
 msgid "No plugin"
 msgstr "Pas de plugin"
 
-#: common/filters.py:110 company/api.py:155 company/api.py:311 stock/api.py:415
-#: stock/api.py:1070
+#: common/filters.py:112
 msgid "Tags"
 msgstr ""
 
-#: common/filters.py:390
+#: common/filters.py:393
 msgid "Project Code Label"
 msgstr "Code du projet Étiquette"
 
@@ -2533,7 +2532,7 @@ msgstr "{verbose_name} annulé"
 msgid "A order that is assigned to you was canceled"
 msgstr "Une commande qui vous est assignée a été annulée"
 
-#: common/notifications.py:73 common/notifications.py:80 order/api.py:612
+#: common/notifications.py:73 common/notifications.py:80 order/api.py:630
 msgid "Items Received"
 msgstr "Articles reçus"
 
@@ -4271,6 +4270,14 @@ msgstr ""
 msgid "Automatically default to showing items/parts instead of sub-levels for locations or categories with no children"
 msgstr ""
 
+#: common/setting/user.py:300
+msgid "Enable Filtered Detail Navigation"
+msgstr ""
+
+#: common/setting/user.py:302
+msgid "Enable persisting of filtered detail navigation parameters to the view url"
+msgstr ""
+
 #: common/validators.py:40
 msgid "All models"
 msgstr "Tous les modèles"
@@ -4985,7 +4992,7 @@ msgstr "Nombre de copies à imprimer pour chaque étiquette"
 msgid "Connected"
 msgstr "Connecté"
 
-#: machine/machine_types/label_printer.py:236 order/api.py:2457
+#: machine/machine_types/label_printer.py:236 order/api.py:2476
 msgid "Unknown"
 msgstr "Inconnu"
 
@@ -5113,117 +5120,117 @@ msgstr "Progression maximale"
 msgid "Maximum value for progress type, required if type=progress"
 msgstr "Valeur maximale pour le type de progression, requis si type=progress"
 
-#: order/api.py:133
+#: order/api.py:142
 msgid "Order Reference"
 msgstr "Référence de commande"
 
-#: order/api.py:161 order/api.py:1292 order/api.py:2091
+#: order/api.py:170 order/api.py:1311 order/api.py:2110
 msgid "Outstanding"
 msgstr "Remarquable"
 
-#: order/api.py:177
+#: order/api.py:186
 msgid "Has Project Code"
 msgstr "A le code du projet"
 
-#: order/api.py:191 order/models.py:554
+#: order/api.py:200 order/models.py:554
 msgid "Created By"
 msgstr "Créé par"
 
-#: order/api.py:195
+#: order/api.py:204
 msgid "Created Before"
 msgstr "Créé avant"
 
-#: order/api.py:199
+#: order/api.py:208
 msgid "Created After"
 msgstr "Créé après"
 
-#: order/api.py:203
+#: order/api.py:212
 msgid "Has Start Date"
 msgstr "A la date de début"
 
-#: order/api.py:211
+#: order/api.py:220
 msgid "Start Date Before"
 msgstr "Date de début Avant"
 
-#: order/api.py:215
+#: order/api.py:224
 msgid "Start Date After"
 msgstr "Date de début Après"
 
-#: order/api.py:219
+#: order/api.py:228
 msgid "Has Target Date"
 msgstr "A une date cible"
 
-#: order/api.py:227
+#: order/api.py:236
 msgid "Target Date Before"
 msgstr "Date cible Avant"
 
-#: order/api.py:231
+#: order/api.py:240
 msgid "Target Date After"
 msgstr "Date cible Après"
 
-#: order/api.py:235
+#: order/api.py:244
 msgid "Updated Before"
 msgstr ""
 
-#: order/api.py:239
+#: order/api.py:248
 msgid "Updated After"
 msgstr ""
 
-#: order/api.py:292
+#: order/api.py:301
 msgid "Has Pricing"
 msgstr "Possède un Tarif"
 
-#: order/api.py:345 order/api.py:846 order/api.py:1612 order/api.py:1909
+#: order/api.py:354 order/api.py:865 order/api.py:1631 order/api.py:1928
 msgid "Completed Before"
 msgstr "Terminé avant"
 
-#: order/api.py:349 order/api.py:850 order/api.py:1616 order/api.py:1913
+#: order/api.py:358 order/api.py:869 order/api.py:1635 order/api.py:1932
 msgid "Completed After"
 msgstr "Terminé après"
 
-#: order/api.py:355 order/api.py:359
+#: order/api.py:364 order/api.py:368
 msgid "External Build Order"
 msgstr "Ordre de fabrication externe"
 
-#: order/api.py:544 order/api.py:946 order/api.py:1255 order/api.py:2054
-#: order/api.py:2213 order/models.py:2312 order/models.py:2438
+#: order/api.py:562 order/api.py:965 order/api.py:1274 order/api.py:2073
+#: order/api.py:2232 order/models.py:2312 order/models.py:2438
 #: order/models.py:2490 order/models.py:2672 order/models.py:3061
 #: order/models.py:3579 order/models.py:3645 order/models.py:4012
 msgid "Order"
 msgstr "Commande"
 
-#: order/api.py:548 order/api.py:1014 order/api.py:2281
+#: order/api.py:566 order/api.py:1033 order/api.py:2300
 msgid "Order Complete"
 msgstr "Commande Complétée"
 
-#: order/api.py:580 order/api.py:584 order/serializers.py:775
+#: order/api.py:598 order/api.py:602 order/serializers.py:775
 msgid "Internal Part"
 msgstr "Pièces Internes"
 
-#: order/api.py:602
+#: order/api.py:620
 msgid "Order Pending"
 msgstr "Commande En Attente"
 
-#: order/api.py:999 order/api.py:2266
+#: order/api.py:1018 order/api.py:2285
 msgid "Completed"
 msgstr "Terminé"
 
-#: order/api.py:1308
+#: order/api.py:1327
 msgid "Has Shipment"
 msgstr "Fait l'objet d'une expédition"
 
-#: order/api.py:1527
+#: order/api.py:1546
 msgid "Shipment not found"
 msgstr ""
 
-#: order/api.py:2449 order/models.py:656 order/models.py:2313
+#: order/api.py:2468 order/models.py:656 order/models.py:2313
 #: order/models.py:2439
 #: report/templates/report/inventree_purchase_order_report.html:14
 #: stock/serializers.py:134 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
 msgstr "Commande d’achat"
 
-#: order/api.py:2451 order/models.py:1377 order/models.py:2491
+#: order/api.py:2470 order/models.py:1377 order/models.py:2491
 #: order/models.py:2673 order/models.py:3062
 #: report/templates/report/inventree_build_order_report.html:135
 #: report/templates/report/inventree_sales_order_report.html:14
@@ -5232,14 +5239,14 @@ msgstr "Commande d’achat"
 msgid "Sales Order"
 msgstr "Commandes"
 
-#: order/api.py:2453 order/models.py:3228 order/models.py:3580
+#: order/api.py:2472 order/models.py:3228 order/models.py:3580
 #: order/models.py:3646
 #: report/templates/report/inventree_return_order_report.html:13
 #: templates/email/overdue_return_order.html:15
 msgid "Return Order"
 msgstr "Retour de commande"
 
-#: order/api.py:2455 order/models.py:3668 order/models.py:4013
+#: order/api.py:2474 order/models.py:3668 order/models.py:4013
 #: report/templates/report/inventree_transfer_order_report.html:12
 msgid "Transfer Order"
 msgstr ""
