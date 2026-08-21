@@ -25,9 +25,11 @@ import {
 import { useUserState } from '../../states/UserState';
 
 export default function NonConformanceStockItemTable({
-  ncrId
+  ncrId,
+  partId
 }: Readonly<{
   ncrId?: number;
+  partId?: number;
 }>) {
   const user = useUserState();
   const table = useTable('ncr-stock-item');
@@ -49,8 +51,8 @@ export default function NonConformanceStockItemTable({
 
   const [selectedItemId, setSelectedItemId] = useState<number>(0);
 
-  const addFields = useNonConformanceStockItemFields({ ncrId });
-  const editFields = useNonConformanceStockItemFields({ ncrId });
+  const addFields = useNonConformanceStockItemFields({ ncrId, partId });
+  const editFields = useNonConformanceStockItemFields({ ncrId, partId });
 
   const addStockItem = useCreateApiFormModal({
     url: ApiEndpoints.ncr_stock_item_list,

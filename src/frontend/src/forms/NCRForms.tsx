@@ -59,9 +59,11 @@ export function useNonConformanceDispositionFields(): ApiFormFieldSet {
  * Field set for linking a StockItem to a NonConformance (NCR) report.
  */
 export function useNonConformanceStockItemFields({
-  ncrId
+  ncrId,
+  partId
 }: {
   ncrId?: number;
+  partId?: number;
 } = {}): ApiFormFieldSet {
   return useMemo(() => {
     return {
@@ -69,9 +71,14 @@ export function useNonConformanceStockItemFields({
         value: ncrId,
         hidden: true
       },
-      stock_item: {},
+      stock_item: {
+        filters: {
+          part: partId,
+          include_variants: false
+        }
+      },
       quantity: {},
       notes: {}
     };
-  }, [ncrId]);
+  }, [ncrId, partId]);
 }

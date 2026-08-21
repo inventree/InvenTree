@@ -2879,6 +2879,25 @@ class NonConformanceStockItem(InvenTree.models.InvenTreeMetadataModel):
         """Return the API URL used to access this model."""
         return reverse('api-ncr-stock-item-list')
 
+    def clean(self):
+        """Validate the NonConformanceStockItem link.
+
+        The linked stock item must reference the same part as the NCR itself -
+        an NCR is raised against a specific part, so it does not make sense to
+        link stock of a different part to it.
+        """
+        super().clean()
+
+        try:
+            if self.ncr and self.stock_item and self.stock_item.part != self.ncr.part:
+                raise ValidationError({
+                    'stock_item': _(
+                        'Selected stock item does not match the part for this non-conformance report'
+                    )
+                })
+        except (NonConformance.DoesNotExist, stock.models.StockItem.DoesNotExist):
+            pass
+
     ncr = models.ForeignKey(
         NonConformance,
         on_delete=models.CASCADE,

@@ -87,7 +87,9 @@ export default function NonConformanceDetail() {
         name: 'stock-items',
         label: t`Stock Items`,
         icon: <IconList />,
-        content: <NonConformanceStockItemTable ncrId={ncr.pk} />
+        content: (
+          <NonConformanceStockItemTable ncrId={ncr.pk} partId={ncr.part} />
+        )
       },
       ParametersPanel({
         model_type: ModelType.nonconformance,
