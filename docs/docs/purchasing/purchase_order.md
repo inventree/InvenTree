@@ -139,6 +139,12 @@ Each item marked as "received" is automatically converted into a stock item.
 
 To see the list of stock items created from the purchase order, click on the <span class="badge inventree nav side">{{ icon("arrow-right") }} Received Items</span> tab.
 
+### Serial Numbers
+
+If the part being received is [trackable](../part/trackable.md), serial numbers can optionally be entered at the point of receipt. If provided, an individual (serialized) stock item is created for each unit received.
+
+Serial numbers are *not* required to receive a trackable part - if left blank, a single (non-serialized) stock item is created for the received quantity. This is useful, for example, when receiving a batch of units against an [external build order](../manufacturing/external.md) which will be [serialized later](../part/trackable.md#build-outputs-without-serial-numbers) in the manufacturing process.
+
 ### Item Value Currency
 
 The unit cost of the purchase order line item is transferred across to the created stock item. By default, the same currency is used for the stock item as was used for the purchase order line item.

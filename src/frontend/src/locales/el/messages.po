@@ -8,7 +8,7 @@ msgstr ""
 "Language: el\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-07-20 10:47\n"
+"PO-Revision-Date: 2026-08-15 23:48\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -82,20 +82,20 @@ msgstr "Διαγραφή"
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:148
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:323
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:414
-#: src/tables/build/BuildOutputTable.tsx:666
+#: src/tables/build/BuildOutputTable.tsx:665
 msgid "Cancel"
 msgstr "Ακύρωση"
 
 #: lib/components/RowActions.tsx:146
 #: src/components/nav/NavigationDrawer.tsx:185
-#: src/forms/PurchaseOrderForms.tsx:929
-#: src/forms/StockForms.tsx:910
-#: src/forms/StockForms.tsx:1477
-#: src/forms/StockForms.tsx:1525
-#: src/forms/StockForms.tsx:1594
-#: src/forms/StockForms.tsx:1643
-#: src/forms/StockForms.tsx:1682
-#: src/forms/StockForms.tsx:1800
+#: src/forms/PurchaseOrderForms.tsx:931
+#: src/forms/StockForms.tsx:911
+#: src/forms/StockForms.tsx:1478
+#: src/forms/StockForms.tsx:1526
+#: src/forms/StockForms.tsx:1595
+#: src/forms/StockForms.tsx:1644
+#: src/forms/StockForms.tsx:1683
+#: src/forms/StockForms.tsx:1801
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:976
 msgid "Actions"
 msgstr "Ενέργειες"
@@ -105,8 +105,8 @@ msgstr "Ενέργειες"
 #: src/components/nav/Header.tsx:191
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
-#: src/pages/Index/Settings/UserSettings.tsx:75
-#: src/pages/part/PartDetail.tsx:754
+#: src/pages/Index/Settings/UserSettings.tsx:76
+#: src/pages/part/PartDetail.tsx:758
 msgid "Search"
 msgstr "Αναζήτηση"
 
@@ -146,29 +146,29 @@ msgstr "Όχι"
 
 #: lib/enums/ModelInformation.tsx:61
 #: src/components/tables/ColumnRenderers.tsx:93
-#: src/components/wizards/OrderPartsWizard.tsx:281
+#: src/components/wizards/OrderPartsWizard.tsx:285
 #: src/forms/BuildForms.tsx:381
 #: src/forms/BuildForms.tsx:464
 #: src/forms/BuildForms.tsx:540
 #: src/forms/BuildForms.tsx:702
 #: src/forms/BuildForms.tsx:866
 #: src/forms/BuildForms.tsx:970
-#: src/forms/PurchaseOrderForms.tsx:925
+#: src/forms/PurchaseOrderForms.tsx:927
 #: src/forms/ReturnOrderForms.tsx:241
 #: src/forms/SalesOrderForms.tsx:434
 #: src/forms/StockForms.tsx:393
-#: src/forms/StockForms.tsx:1472
-#: src/forms/StockForms.tsx:1520
-#: src/forms/StockForms.tsx:1589
-#: src/forms/StockForms.tsx:1638
-#: src/forms/StockForms.tsx:1677
-#: src/forms/StockForms.tsx:1726
-#: src/forms/StockForms.tsx:1796
-#: src/forms/StockForms.tsx:1843
-#: src/forms/StockForms.tsx:1887
+#: src/forms/StockForms.tsx:1473
+#: src/forms/StockForms.tsx:1521
+#: src/forms/StockForms.tsx:1590
+#: src/forms/StockForms.tsx:1639
+#: src/forms/StockForms.tsx:1678
+#: src/forms/StockForms.tsx:1727
+#: src/forms/StockForms.tsx:1797
+#: src/forms/StockForms.tsx:1844
+#: src/forms/StockForms.tsx:1888
 #: src/forms/TransferOrderForms.tsx:238
 #: src/pages/build/BuildOrderDetailsPanel.tsx:45
-#: src/pages/part/PartDetail.tsx:807
+#: src/pages/part/PartDetail.tsx:811
 #: src/pages/part/bom/BomCompare.tsx:203
 #: src/tables/build/BuildOrderParametricTable.tsx:29
 #: src/tables/part/PartTestResultTable.tsx:251
@@ -187,7 +187,7 @@ msgstr "Προϊόν"
 #: src/pages/part/CategoryDetail.tsx:272
 #: src/pages/part/CategoryDetail.tsx:316
 #: src/pages/part/PartCategoryDetailsPanel.tsx:69
-#: src/pages/part/PartDetail.tsx:529
+#: src/pages/part/PartDetail.tsx:533
 msgid "Parts"
 msgstr "Προϊόντα"
 
@@ -201,7 +201,7 @@ msgstr ""
 #: src/components/wizards/ImportPartWizard.tsx:807
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:202
 #: src/pages/Index/Settings/SystemSettings.tsx:212
-#: src/pages/part/PartDetail.tsx:484
+#: src/pages/part/PartDetail.tsx:488
 msgid "Parameters"
 msgstr "Παράμετροι"
 
@@ -225,7 +225,7 @@ msgstr "Δοκιμαστικά Πρότυπα Προϊόντων"
 
 #: lib/enums/ModelInformation.tsx:91
 #: src/components/previews/models/SupplierPartPreview.tsx:15
-#: src/components/wizards/OrderPartsWizard.tsx:293
+#: src/components/wizards/OrderPartsWizard.tsx:297
 #: src/pages/company/SupplierPartDetail.tsx:256
 #: src/pages/stock/StockDetailsPanel.tsx:228
 #: src/tables/build/BuildAllocatedStockTable.tsx:155
@@ -266,7 +266,7 @@ msgstr "Κατηγορία Προϊόντος"
 #: lib/enums/Roles.tsx:39
 #: src/pages/part/CategoryDetail.tsx:206
 #: src/pages/part/CategoryDetail.tsx:306
-#: src/pages/part/PartDetail.tsx:795
+#: src/pages/part/PartDetail.tsx:799
 msgid "Part Categories"
 msgstr "Κατηγορίες Προϊόντων"
 
@@ -327,7 +327,7 @@ msgid "Stock Location Types"
 msgstr "Τύποι Τοποθεσιών Αποθέματος"
 
 #: lib/enums/ModelInformation.tsx:153
-#: src/pages/part/PartDetail.tsx:436
+#: src/pages/part/PartDetail.tsx:440
 msgid "Stock History"
 msgstr "Ιστορικό Αποθέματος"
 
@@ -351,7 +351,7 @@ msgstr "Εντολή Κατασκευής"
 #: src/defaults/actions.tsx:184
 #: src/pages/Index/Settings/SystemSettings.tsx:316
 #: src/pages/build/BuildIndex.tsx:87
-#: src/pages/part/PartDetail.tsx:415
+#: src/pages/part/PartDetail.tsx:419
 #: src/pages/sales/SalesOrderDetail.tsx:214
 msgid "Build Orders"
 msgstr "Εντολές Κατασκευής"
@@ -406,7 +406,7 @@ msgstr "Κωδικοί Έργων"
 
 #: lib/enums/ModelInformation.tsx:199
 #: src/components/previews/models/PurchaseOrderPreview.tsx:15
-#: src/components/wizards/OrderPartsWizard.tsx:346
+#: src/components/wizards/OrderPartsWizard.tsx:350
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:34
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:367
 #: src/pages/stock/StockDetailsPanel.tsx:288
@@ -444,7 +444,8 @@ msgstr "Γραμμές Εντολής Αγοράς"
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:58
 #: src/pages/stock/StockDetailsPanel.tsx:297
 #: src/tables/part/PartSalesAllocationsTable.tsx:43
-#: src/tables/sales/SalesOrderAllocationTable.tsx:113
+#: src/tables/part/PartSalesOrdersTable.tsx:39
+#: src/tables/sales/SalesOrderAllocationTable.tsx:114
 #: src/tables/sales/SalesOrderShipmentTable.tsx:135
 #: src/tables/stock/StockTrackingTable.tsx:164
 msgid "Sales Order"
@@ -481,7 +482,7 @@ msgstr "Εντολή Επιστροφής"
 #: src/defaults/actions.tsx:165
 #: src/pages/Index/Settings/SystemSettings.tsx:373
 #: src/pages/company/CompanyDetail.tsx:146
-#: src/pages/part/PartDetail.tsx:405
+#: src/pages/part/PartDetail.tsx:409
 #: src/pages/sales/SalesIndex.tsx:147
 msgid "Return Orders"
 msgstr "Εντολές Επιστροφής"
@@ -506,7 +507,7 @@ msgstr ""
 #: lib/enums/Roles.tsx:45
 #: src/defaults/actions.tsx:154
 #: src/pages/Index/Settings/SystemSettings.tsx:386
-#: src/pages/part/PartDetail.tsx:422
+#: src/pages/part/PartDetail.tsx:426
 #: src/pages/stock/LocationDetail.tsx:165
 msgid "Transfer Orders"
 msgstr ""
@@ -670,12 +671,12 @@ msgstr ""
 #: src/components/modals/LicenseModal.tsx:85
 #: src/components/nav/NavigationTree.tsx:398
 #: src/components/nav/NotificationDrawer.tsx:235
-#: src/components/nav/SearchDrawer.tsx:588
+#: src/components/nav/SearchDrawer.tsx:600
 #: src/components/settings/SettingList.tsx:158
-#: src/components/tables/InvenTreeTableHeader.tsx:128
+#: src/components/tables/InvenTreeTableHeader.tsx:164
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
-#: src/forms/BomForms.tsx:83
+#: src/forms/BomForms.tsx:87
 #: src/functions/auth.tsx:711
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
@@ -686,9 +687,9 @@ msgstr ""
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
-#: src/tables/bom/BomTable.tsx:592
+#: src/tables/bom/BomTable.tsx:605
 #: src/tables/settings/EmailTable.tsx:109
-#: src/tables/stock/StockItemTestResultTable.tsx:339
+#: src/tables/stock/StockItemTestResultTable.tsx:336
 msgid "Error"
 msgstr "Σφάλμα"
 
@@ -818,8 +819,8 @@ msgstr "Εισάγετε δεδομένα γραμμοκώδικα"
 #: src/components/barcodes/BarcodeScanDialog.tsx:56
 #: src/components/buttons/ScanButton.tsx:56
 #: src/components/nav/NavigationDrawer.tsx:122
-#: src/forms/PurchaseOrderForms.tsx:532
-#: src/forms/PurchaseOrderForms.tsx:672
+#: src/forms/PurchaseOrderForms.tsx:534
+#: src/forms/PurchaseOrderForms.tsx:674
 msgid "Scan Barcode"
 msgstr "Σάρωση Γραμμοκώδικα"
 
@@ -838,7 +839,7 @@ msgstr "Ο γραμμοκώδικας δεν ταιριάζει με τον αν
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
-#: src/tables/bom/BomTable.tsx:583
+#: src/tables/bom/BomTable.tsx:596
 #: src/tables/settings/PendingTasksTable.tsx:68
 msgid "Success"
 msgstr "Επιτυχία"
@@ -905,7 +906,7 @@ msgstr "Αυτό θα αφαιρέσει τη σύνδεση με τον σχε�
 
 #: src/components/barcodes/QRCode.tsx:205
 #: src/components/items/ActionDropdown.tsx:194
-#: src/forms/PurchaseOrderForms.tsx:662
+#: src/forms/PurchaseOrderForms.tsx:664
 msgid "Unlink Barcode"
 msgstr "Αποσύνδεση Γραμμοκώδικα"
 
@@ -1070,7 +1071,7 @@ msgid "Refresh calendar"
 msgstr ""
 
 #: src/components/calendar/Calendar.tsx:334
-#: src/components/tables/InvenTreeTableHeader.tsx:293
+#: src/components/tables/InvenTreeTableHeader.tsx:329
 msgid "Export data"
 msgstr ""
 
@@ -1106,7 +1107,8 @@ msgstr "Ημερομηνία Έναρξης"
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:212
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:141
 #: src/tables/part/PartPurchaseOrdersTable.tsx:110
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:159
+#: src/tables/part/PartSalesOrdersTable.tsx:72
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:176
 #: src/tables/sales/SalesOrderLineItemTable.tsx:142
 #: src/tables/stock/TransferOrderLineItemTable.tsx:117
 msgid "Target Date"
@@ -1501,7 +1503,7 @@ msgid "Remove the associated image from this item?"
 msgstr "Αφαίρεση της σχετικής εικόνας από αυτό το στοιχείο;"
 
 #: src/components/details/DetailsImage.tsx:82
-#: src/forms/StockForms.tsx:1593
+#: src/forms/StockForms.tsx:1594
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:326
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:417
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:898
@@ -1511,8 +1513,8 @@ msgstr "Αφαίρεση της σχετικής εικόνας από αυτό 
 #: src/tables/build/BuildAllocatedStockTable.tsx:278
 #: src/tables/build/BuildLineTable.tsx:129
 #: src/tables/build/BuildLineTable.tsx:726
-#: src/tables/sales/SalesOrderAllocationTable.tsx:228
-#: src/tables/sales/SalesOrderAllocationTable.tsx:251
+#: src/tables/sales/SalesOrderAllocationTable.tsx:229
+#: src/tables/sales/SalesOrderAllocationTable.tsx:252
 #: src/tables/stock/TransferOrderAllocationTable.tsx:183
 #: src/tables/stock/TransferOrderAllocationTable.tsx:199
 msgid "Remove"
@@ -2128,7 +2130,7 @@ msgstr "Plugins"
 #: src/tables/part/PartTestTemplateTable.tsx:121
 #: src/tables/settings/TemplateTable.tsx:296
 #: src/tables/settings/TemplateTable.tsx:408
-#: src/tables/stock/StockItemTestResultTable.tsx:421
+#: src/tables/stock/StockItemTestResultTable.tsx:418
 msgid "Enabled"
 msgstr "Ενεργό"
 
@@ -2202,7 +2204,7 @@ msgid "Loading"
 msgstr "Φόρτωση"
 
 #: src/components/forms/fields/RelatedModelField.tsx:552
-#: src/components/forms/fields/TreeField.tsx:413
+#: src/components/forms/fields/TreeField.tsx:414
 #: src/components/nav/NavigationTree.tsx:403
 msgid "No results found"
 msgstr "Δεν βρέθηκαν αποτελέσματα"
@@ -2220,36 +2222,36 @@ msgstr ""
 msgid "modelRenderer entry required for tables"
 msgstr "Απαιτείται modelRenderer για πίνακες"
 
-#: src/components/forms/fields/TableField.tsx:329
+#: src/components/forms/fields/TableField.tsx:350
 msgid "No entries available"
 msgstr "Δεν υπάρχουν διαθέσιμες εγγραφές"
 
-#: src/components/forms/fields/TableField.tsx:340
+#: src/components/forms/fields/TableField.tsx:361
 msgid "Add new row"
 msgstr "Προσθήκη νέας γραμμής"
 
 #: src/components/forms/fields/TreeField.tsx:328
 #: src/components/render/Instance.tsx:145
 #: src/components/render/ModelHoverCard.tsx:73
-#: src/components/tables/InvenTreeTable.tsx:809
+#: src/components/tables/InvenTreeTable.tsx:810
 msgid "View details"
 msgstr "Προβολή λεπτομερειών"
 
-#: src/components/forms/fields/TreeField.tsx:407
+#: src/components/forms/fields/TreeField.tsx:408
 msgid "Select..."
 msgstr ""
 
-#: src/components/forms/fields/TreeField.tsx:413
+#: src/components/forms/fields/TreeField.tsx:414
 #: src/components/wizards/ImportPartWizard.tsx:221
-#: src/forms/StockForms.tsx:1266
+#: src/forms/StockForms.tsx:1267
 msgid "Loading..."
 msgstr "Φόρτωση..."
 
-#: src/components/forms/fields/TreeField.tsx:439
+#: src/components/forms/fields/TreeField.tsx:440
 msgid "Collapse"
 msgstr ""
 
-#: src/components/forms/fields/TreeField.tsx:439
+#: src/components/forms/fields/TreeField.tsx:440
 msgid "Expand"
 msgstr ""
 
@@ -2303,7 +2305,7 @@ msgstr "Φιλτράρισμα ανά κατάσταση εγκυρότητας"
 
 #: src/components/importer/ImportDataSelector.tsx:396
 #: src/components/wizards/WizardDrawer.tsx:113
-#: src/tables/build/BuildOutputTable.tsx:638
+#: src/tables/build/BuildOutputTable.tsx:637
 msgid "Complete"
 msgstr "Ολοκληρωμένο"
 
@@ -2419,7 +2421,7 @@ msgstr "Τα δεδομένα εισήχθησαν με επιτυχία"
 #: src/components/modals/AboutInvenTreeModal.tsx:206
 #: src/components/modals/ServerInfoModal.tsx:134
 #: src/components/wizards/ImportPartWizard.tsx:773
-#: src/forms/BomForms.tsx:146
+#: src/forms/BomForms.tsx:150
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:687
 msgid "Close"
 msgstr "Κλείσιμο"
@@ -2453,8 +2455,8 @@ msgstr "Επιλογές"
 #~ msgstr "Link custom barcode"
 
 #: src/components/items/ActionDropdown.tsx:172
-#: src/components/tables/InvenTreeTableHeader.tsx:196
-#: src/components/tables/InvenTreeTableHeader.tsx:197
+#: src/components/tables/InvenTreeTableHeader.tsx:232
+#: src/components/tables/InvenTreeTableHeader.tsx:233
 msgid "Barcode Actions"
 msgstr "Ενέργειες Barcode"
 
@@ -2549,6 +2551,46 @@ msgstr "Επιλέξτε γλώσσα"
 msgid "This information is only available for administrative users"
 msgstr ""
 
+#: src/components/items/PartCreationMenu.tsx:43
+msgid "Import Parts"
+msgstr "Εισαγωγή προϊόντων"
+
+#: src/components/items/PartCreationMenu.tsx:62
+#: src/pages/part/PartDetail.tsx:661
+#: src/tables/part/PartTable.tsx:199
+msgid "Add Part"
+msgstr "Προσθήκη Προϊόντος"
+
+#: src/components/items/PartCreationMenu.tsx:80
+msgid "Add Parts"
+msgstr "Προσθήκη προϊόντων"
+
+#: src/components/items/PartCreationMenu.tsx:86
+msgid "Create Part"
+msgstr "Δημιουργία προϊόντος"
+
+#: src/components/items/PartCreationMenu.tsx:88
+msgid "Create a new part"
+msgstr "Δημιουργία νέου προϊόντος"
+
+#: src/components/items/PartCreationMenu.tsx:92
+#: src/tables/bom/BomTable.tsx:683
+#: src/tables/general/ParameterTable.tsx:203
+msgid "Import from File"
+msgstr "Εισαγωγή από αρχείο"
+
+#: src/components/items/PartCreationMenu.tsx:94
+msgid "Import parts from a file"
+msgstr "Εισαγωγή εξαρτημάτων από αρχείο"
+
+#: src/components/items/PartCreationMenu.tsx:99
+msgid "Import from Supplier"
+msgstr "Εισαγωγή από προμηθευτή"
+
+#: src/components/items/PartCreationMenu.tsx:101
+msgid "Import parts from a supplier plugin"
+msgstr "Εισαγωγή εξαρτημάτων από πρόσθετο προμηθευτή"
+
 #: src/components/items/Placeholder.tsx:14
 #~ msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
 #~ msgstr "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
@@ -2592,8 +2634,8 @@ msgid "Change"
 msgstr "Αλλαγή"
 
 #: src/components/items/RoleTable.tsx:150
-#: src/forms/StockForms.tsx:1642
-#: src/tables/stock/StockItemTestResultTable.tsx:369
+#: src/forms/StockForms.tsx:1643
+#: src/tables/stock/StockItemTestResultTable.tsx:366
 msgid "Add"
 msgstr "Προσθήκη"
 
@@ -2616,8 +2658,8 @@ msgstr "Κανένα στοιχείο"
 #: src/components/items/TransferList.tsx:161
 #: src/components/render/Stock.tsx:97
 #: src/components/tables/ColumnRenderers.tsx:265
-#: src/components/tables/PartStockCell.tsx:79
-#: src/pages/part/PartDetail.tsx:571
+#: src/components/tables/PartStockCell.tsx:85
+#: src/pages/part/PartDetail.tsx:575
 #: src/pages/stock/StockDetail.tsx:669
 #: src/pages/stock/StockDetailsPanel.tsx:204
 #: src/tables/build/BuildAllocatedStockTable.tsx:128
@@ -2882,7 +2924,7 @@ msgstr ""
 #: src/components/nav/NavigationDrawer.tsx:134
 #: src/components/nav/NotificationDrawer.tsx:181
 #: src/pages/Index/Settings/SystemSettings.tsx:146
-#: src/pages/Index/Settings/UserSettings.tsx:107
+#: src/pages/Index/Settings/UserSettings.tsx:109
 #: src/pages/Notifications.tsx:45
 #: src/pages/Notifications.tsx:130
 msgid "Notifications"
@@ -2929,8 +2971,8 @@ msgstr "Ρυθμίσεις"
 #: src/components/nav/NavigationDrawer.tsx:140
 #: src/components/nav/SettingsHeader.tsx:40
 #: src/defaults/actions.tsx:106
-#: src/pages/Index/Settings/UserSettings.tsx:144
-#: src/pages/Index/Settings/UserSettings.tsx:148
+#: src/pages/Index/Settings/UserSettings.tsx:146
+#: src/pages/Index/Settings/UserSettings.tsx:150
 msgid "User Settings"
 msgstr "Ρυθμίσεις χρήστη"
 
@@ -2997,7 +3039,7 @@ msgstr "Αποσύνδεση"
 #: src/components/render/Part.tsx:36
 #: src/components/wizards/ImportPartWizard.tsx:808
 #: src/defaults/links.tsx:47
-#: src/forms/StockForms.tsx:1475
+#: src/forms/StockForms.tsx:1476
 #: src/pages/Index/Settings/SystemSettings.tsx:260
 #: src/pages/part/PartDetail.tsx:298
 #: src/pages/stock/LocationDetail.tsx:396
@@ -3080,27 +3122,27 @@ msgstr "Σφάλμα φόρτωσης ειδοποιήσεων."
 msgid "Primary Action"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:111
+#: src/components/nav/SearchDrawer.tsx:112
 msgid "No Overview Available"
 msgstr "Δεν υπάρχει διαθέσιμη επισκόπηση"
 
-#: src/components/nav/SearchDrawer.tsx:112
+#: src/components/nav/SearchDrawer.tsx:113
 msgid "No overview available for this model type"
 msgstr "Δεν υπάρχει διαθέσιμη επισκόπηση για αυτόν τον τύπο μοντέλου"
 
-#: src/components/nav/SearchDrawer.tsx:130
+#: src/components/nav/SearchDrawer.tsx:131
 msgid "View all results"
 msgstr "Προβολή όλων των αποτελεσμάτων"
 
-#: src/components/nav/SearchDrawer.tsx:145
+#: src/components/nav/SearchDrawer.tsx:146
 msgid "results"
 msgstr "αποτελέσματα"
 
-#: src/components/nav/SearchDrawer.tsx:149
+#: src/components/nav/SearchDrawer.tsx:150
 msgid "Remove search group"
 msgstr "Αφαίρεση ομάδας αναζήτησης"
 
-#: src/components/nav/SearchDrawer.tsx:304
+#: src/components/nav/SearchDrawer.tsx:305
 #: src/pages/company/ManufacturerPartDetail.tsx:91
 #: src/pages/part/PartDetail.tsx:373
 #: src/pages/part/PartSupplierDetail.tsx:15
@@ -3108,13 +3150,13 @@ msgstr "Αφαίρεση ομάδας αναζήτησης"
 msgid "Suppliers"
 msgstr "Προμηθευτές"
 
-#: src/components/nav/SearchDrawer.tsx:314
+#: src/components/nav/SearchDrawer.tsx:315
 #: src/pages/part/PartSupplierDetail.tsx:23
 #: src/pages/purchasing/PurchasingIndex.tsx:173
 msgid "Manufacturers"
 msgstr "Κατασκευαστές"
 
-#: src/components/nav/SearchDrawer.tsx:324
+#: src/components/nav/SearchDrawer.tsx:325
 #: src/pages/sales/SalesIndex.tsx:175
 msgid "Customers"
 msgstr "Πελάτες"
@@ -3123,41 +3165,41 @@ msgstr "Πελάτες"
 #~ msgid "No results"
 #~ msgstr "No results"
 
-#: src/components/nav/SearchDrawer.tsx:493
+#: src/components/nav/SearchDrawer.tsx:505
 msgid "Enter search text"
 msgstr "Εισάγετε κείμενο αναζήτησης"
 
-#: src/components/nav/SearchDrawer.tsx:504
+#: src/components/nav/SearchDrawer.tsx:516
 msgid "Refresh search results"
 msgstr "Ανανέωση αποτελεσμάτων αναζήτησης"
 
-#: src/components/nav/SearchDrawer.tsx:515
-#: src/components/nav/SearchDrawer.tsx:522
+#: src/components/nav/SearchDrawer.tsx:527
+#: src/components/nav/SearchDrawer.tsx:534
 msgid "Search Options"
 msgstr "Επιλογές αναζήτησης"
 
-#: src/components/nav/SearchDrawer.tsx:525
+#: src/components/nav/SearchDrawer.tsx:537
 msgid "Whole word search"
 msgstr "Αναζήτηση ολόκληρης λέξης"
 
-#: src/components/nav/SearchDrawer.tsx:534
+#: src/components/nav/SearchDrawer.tsx:546
 msgid "Regex search"
 msgstr "Αναζήτηση με regex"
 
-#: src/components/nav/SearchDrawer.tsx:543
+#: src/components/nav/SearchDrawer.tsx:555
 msgid "Notes search"
 msgstr "Αναζήτηση στις σημειώσεις"
 
-#: src/components/nav/SearchDrawer.tsx:591
+#: src/components/nav/SearchDrawer.tsx:603
 msgid "An error occurred during search query"
 msgstr "Παρουσιάστηκε σφάλμα κατά την αναζήτηση"
 
-#: src/components/nav/SearchDrawer.tsx:602
+#: src/components/nav/SearchDrawer.tsx:614
 #: src/tables/part/PartTestTemplateTable.tsx:86
 msgid "No Results"
 msgstr "Κανένα αποτέλεσμα"
 
-#: src/components/nav/SearchDrawer.tsx:605
+#: src/components/nav/SearchDrawer.tsx:617
 msgid "No results available for search query"
 msgstr "Δεν υπάρχουν αποτελέσματα για το ερώτημα αναζήτησης"
 
@@ -3166,7 +3208,7 @@ msgid "Attachments"
 msgstr "Συνημμένα"
 
 #: src/components/panels/NotesPanel.tsx:27
-#: src/forms/StockForms.tsx:1545
+#: src/forms/StockForms.tsx:1546
 #: src/tables/part/PartTestResultTable.tsx:218
 #: src/tables/stock/StockTrackingTable.tsx:279
 msgid "Notes"
@@ -3300,7 +3342,7 @@ msgstr "Πακέτο"
 #: src/components/plugins/PluginDrawer.tsx:141
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:67
 #: src/pages/Index/Settings/PluginSettingsGroup.tsx:119
-#: src/pages/Index/Settings/UserSettings.tsx:129
+#: src/pages/Index/Settings/UserSettings.tsx:131
 msgid "Plugin Settings"
 msgstr "Ρυθμίσεις πρόσθετου"
 
@@ -3375,7 +3417,7 @@ msgstr ""
 
 #: src/components/previews/models/SalesOrderShipmentPreview.tsx:15
 #: src/components/render/Order.tsx:122
-#: src/tables/sales/SalesOrderAllocationTable.tsx:177
+#: src/tables/sales/SalesOrderAllocationTable.tsx:178
 msgid "Shipment"
 msgstr "Αποστολή"
 
@@ -3415,38 +3457,40 @@ msgstr "Άγνωστο μοντέλο: {model_name}"
 #: src/pages/company/CompanyDetail.tsx:262
 #: src/pages/company/SupplierPartDetail.tsx:216
 #: src/pages/core/UserDetail.tsx:210
-#: src/pages/part/PartDetail.tsx:616
+#: src/pages/part/PartDetail.tsx:620
 msgid "Inactive"
 msgstr "Ανενεργό"
 
 #: src/components/render/Part.tsx:31
-#: src/pages/part/PartDetail.tsx:622
+#: src/pages/part/PartDetail.tsx:626
 #: src/tables/part/PartTableFilters.tsx:103
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
 msgstr "Εικονικό"
 
 #: src/components/render/Part.tsx:34
-#: src/components/tables/PartStockCell.tsx:107
-#: src/tables/bom/BomTable.tsx:335
+#: src/components/tables/PartStockCell.tsx:113
+#: src/tables/bom/BomTable.tsx:348
 msgid "No stock"
 msgstr "Χωρίς απόθεμα"
 
 #: src/components/render/Part.tsx:51
-#: src/components/tables/PartStockCell.tsx:50
-#: src/components/wizards/OrderPartsWizard.tsx:135
+#: src/components/tables/PartStockCell.tsx:53
+#: src/components/wizards/OrderPartsWizard.tsx:136
 #: src/pages/company/SupplierPartDetail.tsx:237
 #: src/pages/company/SupplierPartDetailsPanel.tsx:151
-#: src/pages/part/PartDetail.tsx:598
+#: src/pages/part/PartDetail.tsx:602
 #: src/pages/part/PartDetailsPanel.tsx:174
-#: src/tables/bom/BomTable.tsx:478
+#: src/tables/bom/BomTable.tsx:491
 #: src/tables/build/BuildLineTable.tsx:241
+#: src/tables/part/PartTable.tsx:83
+#: src/tables/part/PartTableFilters.tsx:149
 msgid "On Order"
 msgstr "Σε παραγγελία"
 
 #: src/components/render/Part.tsx:59
-#: src/components/wizards/OrderPartsWizard.tsx:141
-#: src/pages/part/PartDetail.tsx:604
+#: src/components/wizards/OrderPartsWizard.tsx:142
+#: src/pages/part/PartDetail.tsx:608
 #: src/pages/part/PartDetailsPanel.tsx:213
 #: src/pages/stock/StockDetail.tsx:652
 #: src/tables/part/PartTestResultTable.tsx:316
@@ -3476,18 +3520,18 @@ msgstr "Κατηγορία"
 #: src/components/tables/ColumnRenderers.tsx:394
 #: src/components/tables/Filter.tsx:507
 #: src/forms/BuildForms.tsx:868
-#: src/forms/PurchaseOrderForms.tsx:705
-#: src/forms/StockForms.tsx:634
-#: src/forms/StockForms.tsx:672
-#: src/forms/StockForms.tsx:1473
-#: src/forms/StockForms.tsx:1521
-#: src/forms/StockForms.tsx:1590
-#: src/forms/StockForms.tsx:1639
-#: src/forms/StockForms.tsx:1678
-#: src/forms/StockForms.tsx:1727
-#: src/forms/StockForms.tsx:1797
-#: src/forms/StockForms.tsx:1844
-#: src/forms/StockForms.tsx:1888
+#: src/forms/PurchaseOrderForms.tsx:707
+#: src/forms/StockForms.tsx:635
+#: src/forms/StockForms.tsx:673
+#: src/forms/StockForms.tsx:1474
+#: src/forms/StockForms.tsx:1522
+#: src/forms/StockForms.tsx:1591
+#: src/forms/StockForms.tsx:1640
+#: src/forms/StockForms.tsx:1679
+#: src/forms/StockForms.tsx:1728
+#: src/forms/StockForms.tsx:1798
+#: src/forms/StockForms.tsx:1845
+#: src/forms/StockForms.tsx:1889
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:88
 #: src/pages/core/UserDetail.tsx:155
 #: src/pages/stock/StockDetailsPanel.tsx:237
@@ -3496,27 +3540,27 @@ msgid "Location"
 msgstr "Τοποθεσία"
 
 #: src/components/render/Stock.tsx:94
-#: src/forms/StockForms.tsx:679
+#: src/forms/StockForms.tsx:680
 #: src/pages/stock/StockDetail.tsx:657
 #: src/pages/stock/StockDetailsPanel.tsx:135
-#: src/tables/build/BuildOutputTable.tsx:109
-#: src/tables/sales/SalesOrderAllocationTable.tsx:144
+#: src/tables/build/BuildOutputTable.tsx:110
+#: src/tables/sales/SalesOrderAllocationTable.tsx:145
 #: src/tables/stock/TransferOrderAllocationTable.tsx:130
 msgid "Serial Number"
 msgstr "Σειριακός αριθμός"
 
 #: src/components/render/Stock.tsx:99
-#: src/components/wizards/OrderPartsWizard.tsx:385
+#: src/components/wizards/OrderPartsWizard.tsx:389
 #: src/forms/BomForms.tsx:42
 #: src/forms/BuildForms.tsx:283
 #: src/forms/BuildForms.tsx:706
 #: src/forms/BuildForms.tsx:870
-#: src/forms/PurchaseOrderForms.tsx:928
+#: src/forms/PurchaseOrderForms.tsx:930
 #: src/forms/ReturnOrderForms.tsx:242
 #: src/forms/SalesOrderForms.tsx:437
-#: src/forms/StockForms.tsx:684
-#: src/forms/StockForms.tsx:908
-#: src/forms/StockForms.tsx:1523
+#: src/forms/StockForms.tsx:685
+#: src/forms/StockForms.tsx:909
+#: src/forms/StockForms.tsx:1524
 #: src/forms/TransferOrderForms.tsx:241
 #: src/pages/build/BuildIndex.tsx:47
 #: src/pages/part/PartStockHistoryDetail.tsx:64
@@ -3543,15 +3587,15 @@ msgstr "Ποσότητα"
 #: src/forms/BuildForms.tsx:384
 #: src/forms/BuildForms.tsx:467
 #: src/forms/BuildForms.tsx:542
-#: src/forms/StockForms.tsx:1474
-#: src/forms/StockForms.tsx:1522
-#: src/forms/StockForms.tsx:1591
-#: src/forms/StockForms.tsx:1640
-#: src/forms/StockForms.tsx:1679
-#: src/forms/StockForms.tsx:1728
-#: src/forms/StockForms.tsx:1798
-#: src/forms/StockForms.tsx:1845
-#: src/forms/StockForms.tsx:1889
+#: src/forms/StockForms.tsx:1475
+#: src/forms/StockForms.tsx:1523
+#: src/forms/StockForms.tsx:1592
+#: src/forms/StockForms.tsx:1641
+#: src/forms/StockForms.tsx:1680
+#: src/forms/StockForms.tsx:1729
+#: src/forms/StockForms.tsx:1799
+#: src/forms/StockForms.tsx:1846
+#: src/forms/StockForms.tsx:1890
 #: src/tables/build/BuildLineTable.tsx:109
 msgid "Batch"
 msgstr "Παραγωγική παρτίδα"
@@ -3693,8 +3737,8 @@ msgid "Part is not active"
 msgstr "Το Προϊόν δεν είναι ενεργό"
 
 #: src/components/tables/ColumnRenderers.tsx:75
-#: src/pages/part/PartDetail.tsx:490
-#: src/tables/bom/BomTable.tsx:713
+#: src/pages/part/PartDetail.tsx:494
+#: src/tables/bom/BomTable.tsx:726
 #: src/tables/part/PartTestTemplateTable.tsx:262
 msgid "Part is Locked"
 msgstr "Το Προϊόν είναι Κλειδωμένο"
@@ -3782,8 +3826,8 @@ msgid "This stock item has been depleted"
 msgstr "Αυτό το Προϊόν αποθέματος έχει εξαντληθεί"
 
 #: src/components/tables/ColumnRenderers.tsx:301
-#: src/components/tables/PartStockCell.tsx:128
-#: src/tables/bom/BomTable.tsx:386
+#: src/components/tables/PartStockCell.tsx:134
+#: src/tables/bom/BomTable.tsx:399
 #: src/tables/sales/SalesOrderLineItemTable.tsx:197
 #: src/tables/stock/TransferOrderLineItemTable.tsx:172
 msgid "Stock Information"
@@ -3816,13 +3860,13 @@ msgid "Reference"
 msgstr "Αναφορά"
 
 #: src/components/tables/ColumnRenderers.tsx:553
-#: src/forms/PurchaseOrderForms.tsx:846
+#: src/forms/PurchaseOrderForms.tsx:848
 #: src/pages/company/SupplierPartDetailsPanel.tsx:74
 msgid "Note"
 msgstr "Σημείωση"
 
 #: src/components/tables/ColumnRenderers.tsx:581
-#: src/tables/build/BuildOutputTable.tsx:716
+#: src/tables/build/BuildOutputTable.tsx:715
 msgid "Allocated Lines"
 msgstr "Κατανεμημένες γραμμές"
 
@@ -3857,7 +3901,8 @@ msgstr "Ημερομηνία Ολοκλήρωσης"
 
 #: src/components/tables/ColumnRenderers.tsx:767
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:152
-#: src/tables/sales/SalesOrderAllocationTable.tsx:186
+#: src/tables/part/PartSalesOrdersTable.tsx:77
+#: src/tables/sales/SalesOrderAllocationTable.tsx:187
 #: src/tables/sales/SalesOrderShipmentTable.tsx:186
 msgid "Shipment Date"
 msgstr "Ημερομηνία Αποστολής"
@@ -3870,7 +3915,7 @@ msgstr "Νόμισμα"
 #: src/components/tables/ColumnRenderers.tsx:813
 #: src/pages/part/pricing/BomPricingPanel.tsx:61
 #: src/pages/part/pricing/BomPricingPanel.tsx:142
-#: src/tables/bom/BomTable.tsx:310
+#: src/tables/bom/BomTable.tsx:323
 #: src/tables/general/ExtraLineItemTable.tsx:80
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:265
 #: src/tables/purchasing/PurchaseOrderTable.tsx:101
@@ -3893,16 +3938,16 @@ msgid "Show items which have a batch code"
 msgstr "Εμφάνιση ειδών με κωδικό παρτίδας"
 
 #: src/components/tables/Filter.tsx:125
-#: src/forms/PurchaseOrderForms.tsx:775
-#: src/forms/StockForms.tsx:691
+#: src/forms/PurchaseOrderForms.tsx:777
+#: src/forms/StockForms.tsx:692
 #: src/pages/build/BuildOrderDetailsPanel.tsx:186
 #: src/pages/stock/StockDetail.tsx:679
 #: src/pages/stock/StockDetailsPanel.tsx:220
 #: src/tables/build/BuildAllocatedStockTable.tsx:119
-#: src/tables/build/BuildOutputTable.tsx:114
+#: src/tables/build/BuildOutputTable.tsx:115
 #: src/tables/part/PartTestResultTable.tsx:273
 #: src/tables/part/PartTestResultTable.tsx:298
-#: src/tables/sales/SalesOrderAllocationTable.tsx:151
+#: src/tables/sales/SalesOrderAllocationTable.tsx:152
 #: src/tables/stock/TransferOrderAllocationTable.tsx:137
 msgid "Batch Code"
 msgstr "Κωδικός παρτίδας"
@@ -3912,17 +3957,17 @@ msgid "Filter items by batch code"
 msgstr "Φιλτράρισμα ειδών ανά κωδικό παρτίδας"
 
 #: src/components/tables/Filter.tsx:134
-#: src/components/wizards/OrderPartsWizard.tsx:129
-#: src/forms/StockForms.tsx:1592
-#: src/forms/StockForms.tsx:1641
-#: src/forms/StockForms.tsx:1680
-#: src/forms/StockForms.tsx:1729
-#: src/forms/StockForms.tsx:1799
-#: src/forms/StockForms.tsx:1846
-#: src/forms/StockForms.tsx:1890
+#: src/components/wizards/OrderPartsWizard.tsx:130
+#: src/forms/StockForms.tsx:1593
+#: src/forms/StockForms.tsx:1642
+#: src/forms/StockForms.tsx:1681
+#: src/forms/StockForms.tsx:1730
+#: src/forms/StockForms.tsx:1800
+#: src/forms/StockForms.tsx:1847
+#: src/forms/StockForms.tsx:1891
 #: src/pages/company/SupplierPartDetail.tsx:221
 #: src/pages/company/SupplierPartDetailsPanel.tsx:144
-#: src/pages/part/PartDetail.tsx:565
+#: src/pages/part/PartDetail.tsx:569
 #: src/pages/part/PartDetailsPanel.tsx:160
 #: src/tables/purchasing/SupplierPartTable.tsx:274
 msgid "In Stock"
@@ -3974,6 +4019,7 @@ msgid "Show orders assigned to me"
 msgstr "Εμφάνιση παραγγελιών που έχουν ανατεθεί σε εμένα"
 
 #: src/components/tables/Filter.tsx:186
+#: src/tables/part/PartSalesOrdersTable.tsx:93
 #: src/tables/sales/SalesOrderAllocationTable.tsx:91
 #: src/tables/stock/TransferOrderAllocationTable.tsx:81
 msgid "Outstanding"
@@ -4121,11 +4167,11 @@ msgstr "Συμπερίληψη αποτελεσμάτων για παραλλα�
 #: src/forms/BuildForms.tsx:385
 #: src/forms/BuildForms.tsx:468
 #: src/forms/BuildForms.tsx:543
-#: src/forms/PurchaseOrderForms.tsx:836
+#: src/forms/PurchaseOrderForms.tsx:838
 #: src/forms/ReturnOrderForms.tsx:195
 #: src/forms/ReturnOrderForms.tsx:243
-#: src/forms/StockForms.tsx:649
-#: src/forms/StockForms.tsx:1387
+#: src/forms/StockForms.tsx:650
+#: src/forms/StockForms.tsx:1388
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
 #: src/pages/build/BuildOrderDetailsPanel.tsx:67
 #: src/pages/core/UserDetail.tsx:148
@@ -4134,12 +4180,13 @@ msgstr "Συμπερίληψη αποτελεσμάτων για παραλλα�
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:72
 #: src/pages/stock/StockDetailsPanel.tsx:108
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:49
-#: src/tables/build/BuildOutputTable.tsx:499
+#: src/tables/build/BuildOutputTable.tsx:498
 #: src/tables/machine/MachineListTable.tsx:388
 #: src/tables/part/PartPurchaseOrdersTable.tsx:46
+#: src/tables/part/PartSalesOrdersTable.tsx:45
 #: src/tables/part/PartTestResultTable.tsx:328
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:138
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:181
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:155
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:198
 #: src/tables/settings/CustomStateTable.tsx:79
 #: src/tables/settings/EmailTable.tsx:95
 #: src/tables/settings/ImportSessionTable.tsx:135
@@ -4150,6 +4197,7 @@ msgstr "Κατάσταση"
 
 #: src/components/tables/Filter.tsx:353
 #: src/tables/part/PartPurchaseOrdersTable.tsx:142
+#: src/tables/part/PartSalesOrdersTable.tsx:104
 msgid "Filter by order status"
 msgstr "Φιλτράρισμα ανά κατάσταση παραγγελίας"
 
@@ -4255,7 +4303,7 @@ msgstr "Αφαίρεση φίλτρου"
 #: src/components/tables/FilterSelectDrawer.tsx:290
 #: src/pages/part/PartStockHistoryDetail.tsx:67
 #: src/tables/part/PartTestResultTable.tsx:210
-#: src/tables/stock/StockItemTestResultTable.tsx:208
+#: src/tables/stock/StockItemTestResultTable.tsx:205
 msgid "Value"
 msgstr "Τιμή"
 
@@ -4298,7 +4346,7 @@ msgid "Delete filter group"
 msgstr ""
 
 #: src/components/tables/FilterSelectDrawer.tsx:649
-#: src/components/tables/InvenTreeTableHeader.tsx:263
+#: src/components/tables/InvenTreeTableHeader.tsx:299
 msgid "Table Filters"
 msgstr "Φίλτρα Πίνακα"
 
@@ -4343,50 +4391,62 @@ msgstr "Ο διακομιστής επέστρεψε λανθασμένο τύπ
 msgid "Error loading table data"
 msgstr "Σφάλμα φόρτωσης δεδομένων πίνακα"
 
-#: src/components/tables/InvenTreeTable.tsx:812
+#: src/components/tables/InvenTreeTable.tsx:813
 msgid "View {model}"
 msgstr "Προβολή {model}"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:107
+#: src/components/tables/InvenTreeTableHeader.tsx:130
+msgid "No items selected"
+msgstr ""
+
+#: src/components/tables/InvenTreeTableHeader.tsx:132
+msgid "1 selected item will be deleted"
+msgstr ""
+
+#: src/components/tables/InvenTreeTableHeader.tsx:134
+msgid "{N} selected items will be deleted"
+msgstr ""
+
+#: src/components/tables/InvenTreeTableHeader.tsx:140
 msgid "Delete Selected Items"
 msgstr "Διαγραφή Επιλεγμένων Ειδών"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:111
+#: src/components/tables/InvenTreeTableHeader.tsx:144
 msgid "Are you sure you want to delete the selected items?"
 msgstr "Είστε βέβαιοι ότι θέλετε να διαγράψετε τα επιλεγμένα είδη;"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:113
+#: src/components/tables/InvenTreeTableHeader.tsx:148
 #: src/tables/plugin/PluginListTable.tsx:327
 msgid "This action cannot be undone"
 msgstr "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:124
+#: src/components/tables/InvenTreeTableHeader.tsx:160
 msgid "Items deleted"
 msgstr "Τα είδη διαγράφηκαν"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:129
+#: src/components/tables/InvenTreeTableHeader.tsx:165
 msgid "Failed to delete items"
 msgstr "Αποτυχία διαγραφής ειδών"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:180
+#: src/components/tables/InvenTreeTableHeader.tsx:216
 msgid "Custom table filters are active"
 msgstr "Τα προσαρμοσμένα φίλτρα πίνακα είναι ενεργά"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:206
+#: src/components/tables/InvenTreeTableHeader.tsx:242
 #: src/tables/general/BarcodeScanTable.tsx:95
 msgid "Delete selected records"
 msgstr "Διαγραφή επιλεγμένων εγγραφών"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:226
+#: src/components/tables/InvenTreeTableHeader.tsx:262
 msgid "Refresh data"
 msgstr "Ανανέωση δεδομένων"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:275
+#: src/components/tables/InvenTreeTableHeader.tsx:311
 msgid "Active Filters"
 msgstr "Ενεργά Φίλτρα"
 
 #: src/components/tables/PartStockCell.tsx:11
-#: src/tables/bom/BomTable.tsx:330
+#: src/tables/bom/BomTable.tsx:343
 #: src/tables/sales/SalesOrderLineItemTable.tsx:149
 #: src/tables/sales/SalesOrderLineItemTable.tsx:207
 #: src/tables/sales/SalesOrderLineItemTable.tsx:224
@@ -4404,38 +4464,38 @@ msgstr "Ελάχιστο απόθεμα"
 msgid "Maximum stock"
 msgstr ""
 
-#: src/components/tables/PartStockCell.tsx:56
-#: src/tables/bom/BomTable.tsx:377
+#: src/components/tables/PartStockCell.tsx:62
+#: src/tables/bom/BomTable.tsx:390
 msgid "Building"
 msgstr "Σε κατασκευή"
 
-#: src/components/tables/PartStockCell.tsx:63
+#: src/components/tables/PartStockCell.tsx:69
 #: src/pages/part/PartAllocationPanel.tsx:21
 #: src/pages/stock/StockDetail.tsx:225
 msgid "Build Order Allocations"
 msgstr "Κατανομές Εντολών Κατασκευής"
 
-#: src/components/tables/PartStockCell.tsx:71
+#: src/components/tables/PartStockCell.tsx:77
 #: src/pages/part/PartAllocationPanel.tsx:31
 #: src/pages/stock/StockDetail.tsx:240
 msgid "Sales Order Allocations"
 msgstr "Κατανομές Παραγγελιών Πώλησης"
 
-#: src/components/tables/PartStockCell.tsx:87
-#: src/tables/bom/BomTable.tsx:343
+#: src/components/tables/PartStockCell.tsx:93
+#: src/tables/bom/BomTable.tsx:356
 #: src/tables/build/BuildLineTable.tsx:295
 msgid "External stock"
 msgstr "Εξωτερικό απόθεμα"
 
-#: src/components/tables/PartStockCell.tsx:95
-#: src/tables/bom/BomTable.tsx:360
+#: src/components/tables/PartStockCell.tsx:101
+#: src/tables/bom/BomTable.tsx:373
 #: src/tables/build/BuildLineTable.tsx:268
 #: src/tables/sales/SalesOrderLineItemTable.tsx:174
 #: src/tables/stock/TransferOrderLineItemTable.tsx:149
 msgid "Includes variant stock"
 msgstr "Περιλαμβάνει απόθεμα παραλλαγών"
 
-#: src/components/tables/PartStockCell.tsx:100
+#: src/components/tables/PartStockCell.tsx:106
 msgid "Direct stock"
 msgstr ""
 
@@ -4845,8 +4905,8 @@ msgid "Next"
 msgstr "Επόμενο"
 
 #: src/components/wizards/ImportPartWizard.tsx:540
-#: src/pages/part/PartDetail.tsx:644
-#: src/tables/part/PartTable.tsx:197
+#: src/pages/part/PartDetail.tsx:648
+#: src/tables/part/PartTable.tsx:161
 msgid "Edit Part"
 msgstr "Επεξεργασία Προϊόντος"
 
@@ -4912,117 +4972,117 @@ msgstr "Επιβεβαίωση εισαγωγής"
 msgid "Done"
 msgstr "Ολοκληρώθηκε"
 
-#: src/components/wizards/OrderPartsWizard.tsx:75
+#: src/components/wizards/OrderPartsWizard.tsx:76
 msgid "Error fetching part requirements"
 msgstr "Σφάλμα κατά την ανάκτηση απαιτήσεων Προϊόντος"
 
-#: src/components/wizards/OrderPartsWizard.tsx:113
+#: src/components/wizards/OrderPartsWizard.tsx:114
 msgid "Requirements"
 msgstr "Απαιτήσεις"
 
-#: src/components/wizards/OrderPartsWizard.tsx:117
+#: src/components/wizards/OrderPartsWizard.tsx:118
 msgid "Build Requirements"
 msgstr "Απαιτήσεις παραγωγής"
 
-#: src/components/wizards/OrderPartsWizard.tsx:123
+#: src/components/wizards/OrderPartsWizard.tsx:124
 msgid "Sales Requirements"
 msgstr "Απαιτήσεις πωλήσεων"
 
-#: src/components/wizards/OrderPartsWizard.tsx:146
+#: src/components/wizards/OrderPartsWizard.tsx:147
 #: src/tables/build/BuildLineTable.tsx:430
 msgid "Required Quantity"
 msgstr "Απαιτούμενη ποσότητα"
 
-#: src/components/wizards/OrderPartsWizard.tsx:205
+#: src/components/wizards/OrderPartsWizard.tsx:207
 msgid "New Purchase Order"
 msgstr "Νέα παραγγελία αγοράς"
 
-#: src/components/wizards/OrderPartsWizard.tsx:207
+#: src/components/wizards/OrderPartsWizard.tsx:209
 msgid "Purchase order created"
 msgstr "Η παραγγελία αγοράς δημιουργήθηκε"
 
-#: src/components/wizards/OrderPartsWizard.tsx:219
+#: src/components/wizards/OrderPartsWizard.tsx:221
 msgid "New Supplier Part"
 msgstr "Νέο Προϊόν προμηθευτή"
 
-#: src/components/wizards/OrderPartsWizard.tsx:221
+#: src/components/wizards/OrderPartsWizard.tsx:223
 #: src/tables/purchasing/SupplierPartTable.tsx:218
 #: src/tables/purchasing/SupplierPartTable.tsx:311
 msgid "Supplier part created"
 msgstr "Το Προϊόν προμηθευτή δημιουργήθηκε"
 
-#: src/components/wizards/OrderPartsWizard.tsx:249
+#: src/components/wizards/OrderPartsWizard.tsx:253
 msgid "Add to Purchase Order"
 msgstr "Προσθήκη στην παραγγελία αγοράς"
 
-#: src/components/wizards/OrderPartsWizard.tsx:261
+#: src/components/wizards/OrderPartsWizard.tsx:265
 msgid "Part added to purchase order"
 msgstr "Το Προϊόν προστέθηκε στην παραγγελία αγοράς"
 
-#: src/components/wizards/OrderPartsWizard.tsx:306
+#: src/components/wizards/OrderPartsWizard.tsx:310
 msgid "Select supplier part"
 msgstr "Επιλέξτε Προϊόν προμηθευτή"
 
-#: src/components/wizards/OrderPartsWizard.tsx:331
+#: src/components/wizards/OrderPartsWizard.tsx:335
 msgid "Copy supplier part number"
 msgstr ""
 
-#: src/components/wizards/OrderPartsWizard.tsx:334
+#: src/components/wizards/OrderPartsWizard.tsx:338
 msgid "New supplier part"
 msgstr "Νέο Προϊόν προμηθευτή"
 
-#: src/components/wizards/OrderPartsWizard.tsx:358
+#: src/components/wizards/OrderPartsWizard.tsx:362
 msgid "Select purchase order"
 msgstr "Επιλέξτε παραγγελία αγοράς"
 
-#: src/components/wizards/OrderPartsWizard.tsx:372
+#: src/components/wizards/OrderPartsWizard.tsx:376
 msgid "New purchase order"
 msgstr "Νέα παραγγελία αγοράς"
 
-#: src/components/wizards/OrderPartsWizard.tsx:428
+#: src/components/wizards/OrderPartsWizard.tsx:432
 msgid "Add to selected purchase order"
 msgstr "Προσθήκη στην επιλεγμένη παραγγελία αγοράς"
 
-#: src/components/wizards/OrderPartsWizard.tsx:445
-#: src/components/wizards/OrderPartsWizard.tsx:583
+#: src/components/wizards/OrderPartsWizard.tsx:449
+#: src/components/wizards/OrderPartsWizard.tsx:587
 msgid "No parts selected"
 msgstr "Δεν επιλέχθηκαν προϊόντα"
 
-#: src/components/wizards/OrderPartsWizard.tsx:446
+#: src/components/wizards/OrderPartsWizard.tsx:450
 msgid "No purchaseable parts selected"
 msgstr "Δεν επιλέχθηκαν αγοραζόμενα Προϊόντα"
 
-#: src/components/wizards/OrderPartsWizard.tsx:482
+#: src/components/wizards/OrderPartsWizard.tsx:486
 msgid "Parts Added"
 msgstr "Τα Προϊόντα προστέθηκαν"
 
-#: src/components/wizards/OrderPartsWizard.tsx:483
+#: src/components/wizards/OrderPartsWizard.tsx:487
 msgid "All selected parts added to a purchase order"
 msgstr "Όλα τα επιλεγμένα Προϊόντα προστέθηκαν σε παραγγελία αγοράς"
 
-#: src/components/wizards/OrderPartsWizard.tsx:584
+#: src/components/wizards/OrderPartsWizard.tsx:588
 msgid "You must select at least one part to order"
 msgstr "Πρέπει να επιλέξετε τουλάχιστον ένα Προϊόν για παραγγελία"
 
-#: src/components/wizards/OrderPartsWizard.tsx:595
+#: src/components/wizards/OrderPartsWizard.tsx:599
 msgid "Supplier part is required"
 msgstr "Απαιτείται Προϊόν προμηθευτή"
 
-#: src/components/wizards/OrderPartsWizard.tsx:599
+#: src/components/wizards/OrderPartsWizard.tsx:603
 msgid "Quantity is required"
 msgstr "Απαιτείται ποσότητα"
 
-#: src/components/wizards/OrderPartsWizard.tsx:612
+#: src/components/wizards/OrderPartsWizard.tsx:616
 msgid "Invalid part selection"
 msgstr "Μη έγκυρη επιλογή Προϊόντος"
 
-#: src/components/wizards/OrderPartsWizard.tsx:614
+#: src/components/wizards/OrderPartsWizard.tsx:618
 msgid "Please correct the errors in the selected parts"
 msgstr "Παρακαλώ διορθώστε τα σφάλματα στα επιλεγμένα Προϊόντα"
 
-#: src/components/wizards/OrderPartsWizard.tsx:625
+#: src/components/wizards/OrderPartsWizard.tsx:629
 #: src/tables/build/BuildLineTable.tsx:908
-#: src/tables/part/PartTable.tsx:308
+#: src/tables/part/PartTable.tsx:267
 #: src/tables/sales/SalesOrderLineItemTable.tsx:426
 #: src/tables/stock/TransferOrderLineItemTable.tsx:333
 msgid "Order Parts"
@@ -5563,19 +5623,27 @@ msgstr "Σχετικά με το έργο InvenTree"
 msgid "Required component quantity"
 msgstr ""
 
-#: src/forms/BomForms.tsx:123
+#: src/forms/BomForms.tsx:46
+msgid "Piece Count"
+msgstr ""
+
+#: src/forms/BomForms.tsx:47
+msgid "Number of pieces required (for cut-to-length items). Total material = quantity × piece_count."
+msgstr ""
+
+#: src/forms/BomForms.tsx:127
 msgid "Substitute Part"
 msgstr "Προϊόν υποκατάστασης"
 
-#: src/forms/BomForms.tsx:140
+#: src/forms/BomForms.tsx:144
 msgid "Edit BOM Substitutes"
 msgstr "Επεξεργασία υποκαταστάτων BOM"
 
-#: src/forms/BomForms.tsx:147
+#: src/forms/BomForms.tsx:151
 msgid "Add Substitute"
 msgstr "Προσθήκη υποκατάστατου"
 
-#: src/forms/BomForms.tsx:148
+#: src/forms/BomForms.tsx:152
 msgid "Substitute added"
 msgstr "Το υποκατάστατο προστέθηκε"
 
@@ -5593,7 +5661,7 @@ msgstr "Το υποκατάστατο προστέθηκε"
 #: src/forms/BuildForms.tsx:465
 #: src/forms/BuildForms.tsx:757
 #: src/tables/build/BuildAllocatedStockTable.tsx:150
-#: src/tables/build/BuildOutputTable.tsx:688
+#: src/tables/build/BuildOutputTable.tsx:687
 #: src/tables/part/PartTestResultTable.tsx:285
 msgid "Build Output"
 msgstr "Αποτέλεσμα κατασκευής"
@@ -5649,7 +5717,7 @@ msgstr "Τα δεσμευμένα είδη θα επιστραφούν στο α
 #: src/forms/BuildForms.tsx:971
 #: src/forms/SalesOrderForms.tsx:435
 #: src/forms/TransferOrderForms.tsx:239
-#: src/pages/part/PartDetail.tsx:586
+#: src/pages/part/PartDetail.tsx:590
 #: src/tables/build/BuildAllocatedStockTable.tsx:132
 #: src/tables/build/BuildLineTable.tsx:201
 #: src/tables/sales/SalesOrderLineItemTable.tsx:398
@@ -5681,7 +5749,7 @@ msgstr "Επιλέξτε την τοποθεσία προέλευσης για �
 #: src/tables/build/BuildLineTable.tsx:817
 #: src/tables/build/BuildLineTable.tsx:822
 #: src/tables/build/BuildLineTable.tsx:923
-#: src/tables/build/BuildOutputTable.tsx:238
+#: src/tables/build/BuildOutputTable.tsx:239
 #: src/tables/sales/SalesOrderLineItemTable.tsx:436
 #: src/tables/sales/SalesOrderLineItemTable.tsx:481
 #: src/tables/stock/TransferOrderLineItemTable.tsx:343
@@ -5757,7 +5825,7 @@ msgstr ""
 #: src/pages/part/PartCategoryDetailsPanel.tsx:58
 #: src/pages/part/PartDetailsPanel.tsx:269
 #: src/tables/part/PartCategoryTable.tsx:95
-#: src/tables/part/PartTableFilters.tsx:149
+#: src/tables/part/PartTableFilters.tsx:155
 msgid "Subscribed"
 msgstr "Σε εγγραφή"
 
@@ -5790,34 +5858,34 @@ msgstr "Εγγραφή σε ειδοποιήσεις για αυτή την κα
 #~ msgid "Remove item from list"
 #~ msgstr "Remove item from list"
 
-#: src/forms/PurchaseOrderForms.tsx:479
+#: src/forms/PurchaseOrderForms.tsx:481
 msgid "Choose Location"
 msgstr "Επιλογή τοποθεσίας"
 
-#: src/forms/PurchaseOrderForms.tsx:487
+#: src/forms/PurchaseOrderForms.tsx:489
 msgid "Item Destination selected"
 msgstr "Επιλέχθηκε προορισμός Προϊόντος"
 
-#: src/forms/PurchaseOrderForms.tsx:497
+#: src/forms/PurchaseOrderForms.tsx:499
 msgid "Part category default location selected"
 msgstr "Επιλέχθηκε η προεπιλεγμένη τοποθεσία της κατηγορίας"
 
-#: src/forms/PurchaseOrderForms.tsx:507
+#: src/forms/PurchaseOrderForms.tsx:509
 msgid "Received stock location selected"
 msgstr "Επιλέχθηκε τοποθεσία παραληφθέντος αποθέματος"
 
-#: src/forms/PurchaseOrderForms.tsx:515
+#: src/forms/PurchaseOrderForms.tsx:517
 msgid "Default location selected"
 msgstr "Επιλέχθηκε η προεπιλεγμένη τοποθεσία"
 
-#: src/forms/PurchaseOrderForms.tsx:562
+#: src/forms/PurchaseOrderForms.tsx:564
 #: src/pages/part/PartDetailsPanel.tsx:268
-#: src/tables/bom/BomTable.tsx:276
-#: src/tables/bom/BomTable.tsx:468
+#: src/tables/bom/BomTable.tsx:289
+#: src/tables/bom/BomTable.tsx:481
 msgid "Virtual Part"
 msgstr "Εικονικό Προϊόν"
 
-#: src/forms/PurchaseOrderForms.tsx:563
+#: src/forms/PurchaseOrderForms.tsx:565
 msgid "This part is virtual, no physical stock will be received."
 msgstr ""
 
@@ -5829,36 +5897,36 @@ msgstr ""
 #~ msgid "Store at line item destination"
 #~ msgstr "Store at line item destination"
 
-#: src/forms/PurchaseOrderForms.tsx:597
-#: src/forms/StockForms.tsx:576
+#: src/forms/PurchaseOrderForms.tsx:599
+#: src/forms/StockForms.tsx:577
 msgid "Set Location"
 msgstr "Ορισμός τοποθεσίας"
 
-#: src/forms/PurchaseOrderForms.tsx:606
+#: src/forms/PurchaseOrderForms.tsx:608
 msgid "Assign Batch Code"
 msgstr "Ανάθεση κωδικού παρτίδας"
 
-#: src/forms/PurchaseOrderForms.tsx:616
+#: src/forms/PurchaseOrderForms.tsx:618
 msgid "Assign Serial Numbers"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:628
+#: src/forms/PurchaseOrderForms.tsx:630
 msgid "Set Expiry Date"
 msgstr "Ορισμός ημερομηνίας λήξης"
 
-#: src/forms/PurchaseOrderForms.tsx:637
-#: src/forms/StockForms.tsx:1357
+#: src/forms/PurchaseOrderForms.tsx:639
+#: src/forms/StockForms.tsx:1358
 msgid "Adjust Packaging"
 msgstr "Προσαρμογή συσκευασίας"
 
-#: src/forms/PurchaseOrderForms.tsx:646
-#: src/forms/StockForms.tsx:584
-#: src/forms/StockForms.tsx:1348
+#: src/forms/PurchaseOrderForms.tsx:648
+#: src/forms/StockForms.tsx:585
+#: src/forms/StockForms.tsx:1349
 #: src/hooks/UseStockAdjustActions.tsx:152
 msgid "Change Status"
 msgstr "Αλλαγή κατάστασης"
 
-#: src/forms/PurchaseOrderForms.tsx:653
+#: src/forms/PurchaseOrderForms.tsx:655
 msgid "Add Note"
 msgstr "Προσθήκη σημείωσης"
 
@@ -5866,43 +5934,43 @@ msgstr "Προσθήκη σημείωσης"
 #~ msgid "Receive line items"
 #~ msgstr "Receive line items"
 
-#: src/forms/PurchaseOrderForms.tsx:720
+#: src/forms/PurchaseOrderForms.tsx:722
 msgid "Store at default location"
 msgstr "Αποθήκευση στην προεπιλεγμένη τοποθεσία"
 
-#: src/forms/PurchaseOrderForms.tsx:735
+#: src/forms/PurchaseOrderForms.tsx:737
 msgid "Store at line item destination "
 msgstr "Αποθήκευση στον προορισμό της γραμμής "
 
-#: src/forms/PurchaseOrderForms.tsx:751
+#: src/forms/PurchaseOrderForms.tsx:753
 msgid "Store with already received stock"
 msgstr "Αποθήκευση με ήδη παραληφθέν απόθεμα"
 
-#: src/forms/PurchaseOrderForms.tsx:776
+#: src/forms/PurchaseOrderForms.tsx:778
 msgid "Enter batch code for received items"
 msgstr "Εισαγάγετε κωδικό παρτίδας για τα παραληφθέντα είδη"
 
-#: src/forms/PurchaseOrderForms.tsx:789
+#: src/forms/PurchaseOrderForms.tsx:791
 #: src/forms/StockForms.tsx:247
 msgid "Serial Numbers"
 msgstr "Σειριακοί αριθμοί"
 
-#: src/forms/PurchaseOrderForms.tsx:790
+#: src/forms/PurchaseOrderForms.tsx:792
 msgid "Enter serial numbers for received items"
 msgstr "Εισαγάγετε σειριακούς αριθμούς για τα παραληφθέντα είδη"
 
-#: src/forms/PurchaseOrderForms.tsx:807
+#: src/forms/PurchaseOrderForms.tsx:809
 #: src/pages/stock/StockDetailsPanel.tsx:316
 #: src/tables/stock/StockItemTable.tsx:171
 msgid "Expiry Date"
 msgstr "Ημερομηνία λήξης"
 
-#: src/forms/PurchaseOrderForms.tsx:808
+#: src/forms/PurchaseOrderForms.tsx:810
 msgid "Enter an expiry date for received items"
 msgstr "Εισαγάγετε ημερομηνία λήξης για τα παραληφθέντα είδη"
 
-#: src/forms/PurchaseOrderForms.tsx:822
-#: src/forms/StockForms.tsx:1403
+#: src/forms/PurchaseOrderForms.tsx:824
+#: src/forms/StockForms.tsx:1404
 #: src/pages/company/SupplierPartDetailsPanel.tsx:126
 #: src/pages/company/SupplierPartDetailsPanel.tsx:184
 #: src/pages/stock/StockDetailsPanel.tsx:350
@@ -5910,25 +5978,25 @@ msgstr "Εισαγάγετε ημερομηνία λήξης για τα παρ�
 msgid "Packaging"
 msgstr "Συσκευασία"
 
-#: src/forms/PurchaseOrderForms.tsx:926
+#: src/forms/PurchaseOrderForms.tsx:928
 #: src/pages/company/SupplierPartDetailsPanel.tsx:92
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:49
 msgid "SKU"
 msgstr "SKU"
 
-#: src/forms/PurchaseOrderForms.tsx:927
+#: src/forms/PurchaseOrderForms.tsx:929
 #: src/tables/part/PartPurchaseOrdersTable.tsx:136
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:211
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:286
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:176
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:193
 msgid "Received"
 msgstr "Παραλήφθηκε"
 
-#: src/forms/PurchaseOrderForms.tsx:944
+#: src/forms/PurchaseOrderForms.tsx:946
 msgid "Receive Line Items"
 msgstr "Παραλαβή Προϊόντων γραμμής"
 
-#: src/forms/PurchaseOrderForms.tsx:950
+#: src/forms/PurchaseOrderForms.tsx:952
 msgid "Items received"
 msgstr "Ελήφθησαν τα είδη"
 
@@ -6025,44 +6093,44 @@ msgstr "Προσθήκη είδους αποθέματος"
 msgid "Select the part to install"
 msgstr "Επιλέξτε το Προϊόν προς εγκατάσταση"
 
-#: src/forms/StockForms.tsx:525
+#: src/forms/StockForms.tsx:526
 #: src/pages/stock/StockDetail.tsx:289
 msgid "Installed Items"
 msgstr "Εγκατεστημένα Είδη"
 
-#: src/forms/StockForms.tsx:556
+#: src/forms/StockForms.tsx:557
 msgid "Automatic"
 msgstr ""
 
-#: src/forms/StockForms.tsx:596
+#: src/forms/StockForms.tsx:597
 msgid "This row cannot be removed as it has installed items"
 msgstr ""
 
-#: src/forms/StockForms.tsx:609
+#: src/forms/StockForms.tsx:610
 msgid "The following installed items will be uninstalled during disassembly"
 msgstr ""
 
-#: src/forms/StockForms.tsx:635
+#: src/forms/StockForms.tsx:636
 msgid "Custom location for the component items"
 msgstr ""
 
-#: src/forms/StockForms.tsx:650
+#: src/forms/StockForms.tsx:651
 msgid "Status for the component items"
 msgstr ""
 
-#: src/forms/StockForms.tsx:673
+#: src/forms/StockForms.tsx:674
 msgid "No location set"
 msgstr ""
 
-#: src/forms/StockForms.tsx:757
+#: src/forms/StockForms.tsx:758
 msgid "Additional Installed Items"
 msgstr ""
 
-#: src/forms/StockForms.tsx:761
+#: src/forms/StockForms.tsx:762
 msgid "The following items are installed within this stock item, but do not match a listed component. They will be uninstalled during disassembly."
 msgstr ""
 
-#: src/forms/StockForms.tsx:906
+#: src/forms/StockForms.tsx:907
 #: src/pages/part/pricing/BomPricingPanel.tsx:81
 #: src/pages/part/pricing/BomPricingPanel.tsx:105
 #: src/tables/bom/UsedInTable.tsx:66
@@ -6070,19 +6138,19 @@ msgstr ""
 msgid "Component"
 msgstr "Συστατικό"
 
-#: src/forms/StockForms.tsx:907
+#: src/forms/StockForms.tsx:908
 #: src/tables/build/BuildLineTable.tsx:414
 msgid "Unit Quantity"
 msgstr "Ποσότητα μονάδας"
 
-#: src/forms/StockForms.tsx:909
+#: src/forms/StockForms.tsx:910
 #: src/pages/part/pricing/BomPricingPanel.tsx:133
 #: src/pages/part/pricing/PriceBreakPanel.tsx:174
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:72
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:129
 #: src/pages/part/pricing/SupplierPricingPanel.tsx:67
 #: src/pages/stock/StockDetailsPanel.tsx:323
-#: src/tables/bom/BomTable.tsx:300
+#: src/tables/bom/BomTable.tsx:313
 #: src/tables/general/ExtraLineItemTable.tsx:67
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:256
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
@@ -6090,201 +6158,201 @@ msgstr "Ποσότητα μονάδας"
 msgid "Unit Price"
 msgstr "Τιμή Μονάδας"
 
-#: src/forms/StockForms.tsx:928
+#: src/forms/StockForms.tsx:929
 msgid "Disassemble Stock Item"
 msgstr ""
 
-#: src/forms/StockForms.tsx:937
+#: src/forms/StockForms.tsx:938
 msgid "Stock item disassembled"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1020
+#: src/forms/StockForms.tsx:1021
 msgid "Confirm Stock Transfer"
 msgstr "Επιβεβαίωση μεταφοράς αποθέματος"
 
-#: src/forms/StockForms.tsx:1141
+#: src/forms/StockForms.tsx:1142
 msgid "Confirm Stock Return"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1153
-#: src/forms/StockForms.tsx:1336
+#: src/forms/StockForms.tsx:1154
+#: src/forms/StockForms.tsx:1337
 msgid "Move to default location"
 msgstr "Μετακίνηση στην προεπιλεγμένη τοποθεσία"
 
-#: src/forms/StockForms.tsx:1366
-#: src/forms/StockForms.tsx:1539
+#: src/forms/StockForms.tsx:1367
+#: src/forms/StockForms.tsx:1540
 msgid "Merge into existing stock"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1476
+#: src/forms/StockForms.tsx:1477
 msgid "Move"
 msgstr "Μετακίνηση"
 
-#: src/forms/StockForms.tsx:1524
+#: src/forms/StockForms.tsx:1525
 msgid "Return"
 msgstr "Επιστροφή"
 
-#: src/forms/StockForms.tsx:1540
+#: src/forms/StockForms.tsx:1541
 msgid "Merge returned items into existing stock items if possible"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1546
+#: src/forms/StockForms.tsx:1547
 msgid "Stock transaction notes"
 msgstr ""
 
-#: src/forms/StockForms.tsx:1681
+#: src/forms/StockForms.tsx:1682
 #: src/pages/Index/Scan.tsx:180
 msgid "Count"
 msgstr "Καταμέτρηση"
 
-#: src/forms/StockForms.tsx:1959
+#: src/forms/StockForms.tsx:1960
 #: src/hooks/UseStockAdjustActions.tsx:112
 msgid "Add Stock"
 msgstr "Προσθήκη αποθέματος"
 
-#: src/forms/StockForms.tsx:1960
+#: src/forms/StockForms.tsx:1961
 msgid "Stock added"
 msgstr "Το απόθεμα προστέθηκε"
 
-#: src/forms/StockForms.tsx:1963
+#: src/forms/StockForms.tsx:1964
 msgid "Increase the quantity of the selected stock items by a given amount."
 msgstr "Αυξήστε την ποσότητα των επιλεγμένων ειδών αποθέματος κατά μια δεδομένη τιμή."
 
-#: src/forms/StockForms.tsx:1974
+#: src/forms/StockForms.tsx:1975
 #: src/hooks/UseStockAdjustActions.tsx:122
 msgid "Remove Stock"
 msgstr "Αφαίρεση αποθέματος"
 
-#: src/forms/StockForms.tsx:1975
+#: src/forms/StockForms.tsx:1976
 msgid "Stock removed"
 msgstr "Το απόθεμα αφαιρέθηκε"
 
-#: src/forms/StockForms.tsx:1978
+#: src/forms/StockForms.tsx:1979
 msgid "Decrease the quantity of the selected stock items by a given amount."
 msgstr "Μείωση της ποσότητας των επιλεγμένων ειδών αποθέματος κατά μια δεδομένη τιμή."
 
-#: src/forms/StockForms.tsx:2000
+#: src/forms/StockForms.tsx:2001
 #: src/hooks/UseStockAdjustActions.tsx:132
 msgid "Transfer Stock"
 msgstr "Μεταφορά αποθέματος"
 
-#: src/forms/StockForms.tsx:2001
+#: src/forms/StockForms.tsx:2002
 msgid "Stock transferred"
 msgstr "Το απόθεμα μεταφέρθηκε"
 
-#: src/forms/StockForms.tsx:2004
+#: src/forms/StockForms.tsx:2005
 msgid "Transfer selected items to the specified location."
 msgstr "Μεταφέρετε τα επιλεγμένα είδη στην καθορισμένη τοποθεσία."
 
-#: src/forms/StockForms.tsx:2015
+#: src/forms/StockForms.tsx:2016
 #: src/hooks/UseStockAdjustActions.tsx:182
 msgid "Return Stock"
 msgstr "Επιστροφή αποθέματος"
 
-#: src/forms/StockForms.tsx:2016
+#: src/forms/StockForms.tsx:2017
 msgid "Stock returned"
 msgstr "Το απόθεμα επιστράφηκε"
 
-#: src/forms/StockForms.tsx:2019
+#: src/forms/StockForms.tsx:2020
 msgid "Return selected items into stock, to the specified location."
 msgstr "Επιστροφή των επιλεγμένων ειδών στο απόθεμα, στην καθορισμένη τοποθεσία."
 
-#: src/forms/StockForms.tsx:2035
+#: src/forms/StockForms.tsx:2036
 #: src/hooks/UseStockAdjustActions.tsx:102
 msgid "Count Stock"
 msgstr "Καταμέτρηση αποθέματος"
 
-#: src/forms/StockForms.tsx:2036
+#: src/forms/StockForms.tsx:2037
 msgid "Stock counted"
 msgstr "Το απόθεμα καταμετρήθηκε"
 
-#: src/forms/StockForms.tsx:2039
+#: src/forms/StockForms.tsx:2040
 msgid "Count the selected stock items, and adjust the quantity accordingly."
 msgstr "Καταμετρήστε τα επιλεγμένα είδη αποθέματος και προσαρμόστε την ποσότητα ανάλογα."
 
-#: src/forms/StockForms.tsx:2050
+#: src/forms/StockForms.tsx:2051
 msgid "Change Stock Status"
 msgstr "Αλλαγή κατάστασης αποθέματος"
 
-#: src/forms/StockForms.tsx:2051
+#: src/forms/StockForms.tsx:2052
 msgid "Stock status changed"
 msgstr "Η κατάσταση αποθέματος άλλαξε"
 
-#: src/forms/StockForms.tsx:2054
+#: src/forms/StockForms.tsx:2055
 msgid "Change the status of the selected stock items."
 msgstr "Αλλαγή της κατάστασης των επιλεγμένων ειδών αποθέματος."
 
-#: src/forms/StockForms.tsx:2077
+#: src/forms/StockForms.tsx:2078
 #: src/hooks/UseStockAdjustActions.tsx:162
 msgid "Change Batch Code"
 msgstr ""
 
-#: src/forms/StockForms.tsx:2080
+#: src/forms/StockForms.tsx:2081
 msgid "Change batch code for the selected stock items"
 msgstr ""
 
-#: src/forms/StockForms.tsx:2097
+#: src/forms/StockForms.tsx:2098
 #: src/hooks/UseStockAdjustActions.tsx:142
 msgid "Merge Stock"
 msgstr "Συγχώνευση αποθέματος"
 
-#: src/forms/StockForms.tsx:2098
+#: src/forms/StockForms.tsx:2099
 msgid "Stock merged"
 msgstr "Το απόθεμα συγχωνεύτηκε"
 
-#: src/forms/StockForms.tsx:2100
+#: src/forms/StockForms.tsx:2101
 msgid "Merge Stock Items"
 msgstr "Συγχώνευση ειδών αποθέματος"
 
-#: src/forms/StockForms.tsx:2102
+#: src/forms/StockForms.tsx:2103
 msgid "Merge operation cannot be reversed"
 msgstr "Η ενέργεια συγχώνευσης δεν μπορεί να αναιρεθεί"
 
-#: src/forms/StockForms.tsx:2103
+#: src/forms/StockForms.tsx:2104
 msgid "Tracking information may be lost when merging items"
 msgstr "Οι πληροφορίες ιχνηλάτησης μπορεί να χαθούν κατά τη συγχώνευση"
 
-#: src/forms/StockForms.tsx:2104
+#: src/forms/StockForms.tsx:2105
 msgid "Supplier information may be lost when merging items"
 msgstr "Οι πληροφορίες προμηθευτή μπορεί να χαθούν κατά τη συγχώνευση"
 
-#: src/forms/StockForms.tsx:2122
+#: src/forms/StockForms.tsx:2123
 msgid "Assign Stock to Customer"
 msgstr "Ανάθεση αποθέματος σε πελάτη"
 
-#: src/forms/StockForms.tsx:2123
+#: src/forms/StockForms.tsx:2124
 msgid "Stock assigned to customer"
 msgstr "Το απόθεμα ανατέθηκε στον πελάτη"
 
-#: src/forms/StockForms.tsx:2133
+#: src/forms/StockForms.tsx:2134
 msgid "Delete Stock Items"
 msgstr "Διαγραφή ειδών αποθέματος"
 
-#: src/forms/StockForms.tsx:2134
+#: src/forms/StockForms.tsx:2135
 msgid "Stock deleted"
 msgstr "Το απόθεμα διαγράφηκε"
 
-#: src/forms/StockForms.tsx:2137
+#: src/forms/StockForms.tsx:2138
 msgid "This operation will permanently delete the selected stock items."
 msgstr "Αυτή η ενέργεια θα διαγράψει μόνιμα τα επιλεγμένα είδη αποθέματος."
 
-#: src/forms/StockForms.tsx:2146
+#: src/forms/StockForms.tsx:2147
 msgid "Parent stock location"
 msgstr "Γονική τοποθεσία αποθέματος"
 
-#: src/forms/StockForms.tsx:2273
+#: src/forms/StockForms.tsx:2274
 msgid "Find Serial Number"
 msgstr "Εύρεση σειριακού αριθμού"
 
-#: src/forms/StockForms.tsx:2284
+#: src/forms/StockForms.tsx:2285
 msgid "No matching items"
 msgstr "Δεν βρέθηκαν αντίστοιχα είδη"
 
-#: src/forms/StockForms.tsx:2290
+#: src/forms/StockForms.tsx:2291
 msgid "Multiple matching items"
 msgstr "Πολλαπλά αντίστοιχα είδη"
 
-#: src/forms/StockForms.tsx:2299
+#: src/forms/StockForms.tsx:2300
 msgid "Invalid response from server"
 msgstr "Μη έγκυρη απόκριση από τον διακομιστή"
 
@@ -6573,7 +6641,7 @@ msgid "Delete selected stock items"
 msgstr "Διαγραφή των επιλεγμένων ειδών αποθέματος"
 
 #: src/hooks/UseStockAdjustActions.tsx:219
-#: src/pages/part/PartDetail.tsx:736
+#: src/pages/part/PartDetail.tsx:740
 msgid "Stock Actions"
 msgstr "Ενέργειες Αποθέματος"
 
@@ -7259,7 +7327,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:403
 #: src/tables/build/BuildAllocatedStockTable.tsx:186
 #: src/tables/build/BuildLineTable.tsx:729
-#: src/tables/sales/SalesOrderAllocationTable.tsx:224
+#: src/tables/sales/SalesOrderAllocationTable.tsx:225
 #: src/tables/stock/TransferOrderAllocationTable.tsx:179
 msgid "Confirm Removal"
 msgstr ""
@@ -7838,7 +7906,7 @@ msgstr "Διαχείριση Δεδομένων"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:296
 #: src/pages/Index/Settings/SystemSettings.tsx:194
-#: src/pages/Index/Settings/UserSettings.tsx:119
+#: src/pages/Index/Settings/UserSettings.tsx:121
 msgid "Reporting"
 msgstr "Αναφορές"
 
@@ -8080,7 +8148,7 @@ msgstr ""
 #~ msgstr "Exchange Rates"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:152
-#: src/pages/Index/Settings/UserSettings.tsx:113
+#: src/pages/Index/Settings/UserSettings.tsx:115
 msgid "The settings below are specific to each available notification method"
 msgstr "Οι παρακάτω ρυθμίσεις είναι ειδικές για κάθε διαθέσιμη μέθοδο ειδοποίησης"
 
@@ -8234,7 +8302,7 @@ msgstr "Απαιτούμενα Προϊόντα"
 #: src/pages/sales/SalesOrderDetail.tsx:200
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:86
 #: src/pages/stock/TransferOrderDetail.tsx:157
-#: src/tables/part/PartSalesAllocationsTable.tsx:72
+#: src/tables/part/PartSalesAllocationsTable.tsx:74
 msgid "Allocated Stock"
 msgstr "Δεσμευμένο Απόθεμα"
 
@@ -8265,10 +8333,10 @@ msgstr "Θυγατρικές Εντολές Κατασκευής"
 #~ msgstr "Test Statistics"
 
 #: src/pages/build/BuildDetail.tsx:349
-#: src/pages/part/PartDetail.tsx:467
+#: src/pages/part/PartDetail.tsx:471
 #: src/pages/stock/StockDetail.tsx:275
-#: src/tables/build/BuildOutputTable.tsx:760
-#: src/tables/stock/StockItemTestResultTable.tsx:174
+#: src/tables/build/BuildOutputTable.tsx:759
+#: src/tables/stock/StockItemTestResultTable.tsx:171
 msgid "Test Results"
 msgstr "Αποτελέσματα Δοκιμών"
 
@@ -8496,8 +8564,8 @@ msgstr "Ποσότητα Κατασκευής"
 
 #: src/pages/build/BuildOrderDetailsPanel.tsx:121
 #: src/pages/part/PartDetailsPanel.tsx:224
-#: src/tables/bom/BomTable.tsx:393
-#: src/tables/bom/BomTable.tsx:436
+#: src/tables/bom/BomTable.tsx:406
+#: src/tables/bom/BomTable.tsx:449
 msgid "Can Build"
 msgstr "Μπορεί να Κατασκευαστεί"
 
@@ -8521,6 +8589,7 @@ msgstr "Δημιουργήθηκε"
 
 #: src/pages/build/BuildOrderDetailsPanel.tsx:220
 #: src/tables/build/BuildOrderTable.tsx:76
+#: src/tables/part/PartSalesOrdersTable.tsx:98
 #: src/tables/sales/SalesOrderLineItemTable.tsx:403
 #: src/tables/stock/TransferOrderLineItemTable.tsx:498
 msgid "Completed"
@@ -8591,6 +8660,7 @@ msgstr "Προεπιλεγμένο Νόμισμα"
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:66
 #: src/pages/stock/StockDetailsPanel.tsx:306
 #: src/tables/company/CompanyTable.tsx:126
+#: src/tables/part/PartSalesOrdersTable.tsx:51
 #: src/tables/sales/ReturnOrderParametricTable.tsx:25
 #: src/tables/sales/ReturnOrderTable.tsx:64
 #: src/tables/sales/SalesOrderParametricTable.tsx:25
@@ -8690,7 +8760,7 @@ msgid "Add Supplier Part"
 msgstr "Προσθήκη Προϊόντος Προμηθευτή"
 
 #: src/pages/company/SupplierPartDetail.tsx:231
-#: src/pages/part/PartDetail.tsx:580
+#: src/pages/part/PartDetail.tsx:584
 msgid "No Stock"
 msgstr "Χωρίς Απόθεμα"
 
@@ -8879,15 +8949,15 @@ msgstr "Χρησιμοποιείται Σε"
 msgid "Part Pricing"
 msgstr "Τιμολόγηση Προϊόντος"
 
-#: src/pages/part/PartDetail.tsx:451
+#: src/pages/part/PartDetail.tsx:455
 msgid "Test Templates"
 msgstr "Πρότυπα Δοκιμών"
 
-#: src/pages/part/PartDetail.tsx:478
+#: src/pages/part/PartDetail.tsx:482
 msgid "Related Parts"
 msgstr "Σχετικά Προϊόντα"
 
-#: src/pages/part/PartDetail.tsx:495
+#: src/pages/part/PartDetail.tsx:499
 msgid "Part parameters cannot be edited, as the part is locked"
 msgstr "Οι παράμετροι προϊόντος δεν μπορούν να επεξεργαστούν επειδή το προϊόν είναι κλειδωμένο"
 
@@ -8899,39 +8969,33 @@ msgstr "Οι παράμετροι προϊόντος δεν μπορούν να 
 #~ msgid "Consumable Part"
 #~ msgstr "Consumable Part"
 
-#: src/pages/part/PartDetail.tsx:592
+#: src/pages/part/PartDetail.tsx:596
 #: src/tables/part/PartTestTemplateTable.tsx:116
-#: src/tables/stock/StockItemTestResultTable.tsx:406
+#: src/tables/stock/StockItemTestResultTable.tsx:403
 msgid "Required"
 msgstr "Απαιτείται"
-
-#: src/pages/part/PartDetail.tsx:610
-msgid "Deficit"
-msgstr ""
 
 #: src/pages/part/PartDetail.tsx:613
 #~ msgid "Scheduling"
 #~ msgstr "Scheduling"
 
-#: src/pages/part/PartDetail.tsx:628
+#: src/pages/part/PartDetail.tsx:614
+msgid "Deficit"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:632
 #: src/pages/part/bom/BomCompare.tsx:38
-#: src/tables/bom/BomTable.tsx:503
+#: src/tables/bom/BomTable.tsx:516
 #: src/tables/build/BuildLineTable.tsx:216
 #: src/tables/part/PartTableFilters.tsx:109
 msgid "Consumable"
 msgstr "Αναλώσιμο"
 
-#: src/pages/part/PartDetail.tsx:657
-#: src/tables/part/PartTable.tsx:184
-#: src/tables/part/PartTable.tsx:235
-msgid "Add Part"
-msgstr "Προσθήκη Προϊόντος"
-
-#: src/pages/part/PartDetail.tsx:671
+#: src/pages/part/PartDetail.tsx:675
 msgid "Delete Part"
 msgstr "Διαγραφή Προϊόντος"
 
-#: src/pages/part/PartDetail.tsx:680
+#: src/pages/part/PartDetail.tsx:684
 msgid "Deleting this part cannot be reversed"
 msgstr "Η διαγραφή αυτού του Προϊόντος δεν μπορεί να αναιρεθεί"
 
@@ -8939,31 +9003,31 @@ msgstr "Η διαγραφή αυτού του Προϊόντος δεν μπορ
 #~ msgid "Default Supplier"
 #~ msgstr "Default Supplier"
 
-#: src/pages/part/PartDetail.tsx:742
+#: src/pages/part/PartDetail.tsx:746
 #: src/pages/stock/StockDetail.tsx:603
 msgid "Order"
 msgstr "Παραγγελία"
 
-#: src/pages/part/PartDetail.tsx:743
+#: src/pages/part/PartDetail.tsx:747
 #: src/pages/stock/StockDetail.tsx:604
 #: src/tables/build/BuildLineTable.tsx:851
 msgid "Order Stock"
 msgstr "Παραγγελία Αποθέματος"
 
-#: src/pages/part/PartDetail.tsx:755
+#: src/pages/part/PartDetail.tsx:759
 msgid "Search by serial number"
 msgstr "Αναζήτηση με σειριακό αριθμό"
 
-#: src/pages/part/PartDetail.tsx:763
-#: src/tables/part/PartTable.tsx:292
+#: src/pages/part/PartDetail.tsx:767
+#: src/tables/part/PartTable.tsx:251
 msgid "Part Actions"
 msgstr "Ενέργειες Προϊόντος"
 
-#: src/pages/part/PartDetail.tsx:824
+#: src/pages/part/PartDetail.tsx:828
 msgid "Part locked"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:824
+#: src/pages/part/PartDetail.tsx:828
 msgid "Part unlocked"
 msgstr ""
 
@@ -8997,7 +9061,7 @@ msgid "Keywords"
 msgstr "Λέξεις-Κλειδιά"
 
 #: src/pages/part/PartDetailsPanel.tsx:168
-#: src/tables/bom/BomTable.tsx:473
+#: src/tables/bom/BomTable.tsx:486
 #: src/tables/build/BuildLineTable.tsx:325
 #: src/tables/part/PartTableFilters.tsx:143
 #: src/tables/sales/SalesOrderLineItemTable.tsx:146
@@ -9037,7 +9101,7 @@ msgid "Template Part"
 msgstr "Πρότυπο Προϊόν"
 
 #: src/pages/part/PartDetailsPanel.tsx:252
-#: src/tables/bom/BomTable.tsx:463
+#: src/tables/bom/BomTable.tsx:476
 msgid "Assembled Part"
 msgstr "Συναρμολογημένο Προϊόν"
 
@@ -9046,12 +9110,12 @@ msgid "Component Part"
 msgstr "Προϊόν Συστατικού"
 
 #: src/pages/part/PartDetailsPanel.tsx:257
-#: src/tables/bom/BomTable.tsx:448
+#: src/tables/bom/BomTable.tsx:461
 msgid "Testable Part"
 msgstr "Ελέγξιμο Προϊόν"
 
 #: src/pages/part/PartDetailsPanel.tsx:260
-#: src/tables/bom/BomTable.tsx:453
+#: src/tables/bom/BomTable.tsx:466
 msgid "Trackable Part"
 msgstr "Ανιχνεύσιμο Προϊόν"
 
@@ -9256,18 +9320,18 @@ msgid "Validated By"
 msgstr "Επικυρώθηκε Από"
 
 #: src/pages/part/bom/BomCompare.tsx:35
-#: src/tables/bom/BomTable.tsx:493
+#: src/tables/bom/BomTable.tsx:506
 msgid "Allow Variants"
 msgstr "Να επιτρέπονται παραλλαγές"
 
 #: src/pages/part/bom/BomCompare.tsx:36
-#: src/tables/bom/BomTable.tsx:488
+#: src/tables/bom/BomTable.tsx:501
 #: src/tables/bom/UsedInTable.tsx:92
 msgid "Inherited"
 msgstr "Κληρονομημένο"
 
 #: src/pages/part/bom/BomCompare.tsx:37
-#: src/tables/bom/BomTable.tsx:498
+#: src/tables/bom/BomTable.tsx:511
 #: src/tables/bom/UsedInTable.tsx:102
 #: src/tables/build/BuildLineTable.tsx:221
 msgid "Optional"
@@ -9445,7 +9509,7 @@ msgstr "Τιμολόγηση Αγορών"
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:226
 #: src/pages/stock/StockDetailsPanel.tsx:364
 #: src/tables/general/ParameterTable.tsx:101
-#: src/tables/general/ParametricDataTable.tsx:94
+#: src/tables/general/ParametricDataTable.tsx:101
 #: src/tables/settings/TemplateTable.tsx:261
 #: src/tables/stock/StockItemTable.tsx:166
 msgid "Last Updated"
@@ -10029,7 +10093,7 @@ msgid "Stock Operations"
 msgstr "Λειτουργίες Αποθέματος"
 
 #: src/pages/stock/StockDetail.tsx:579
-#: src/tables/build/BuildOutputTable.tsx:627
+#: src/tables/build/BuildOutputTable.tsx:626
 msgid "Serialize"
 msgstr "Σειριοποίηση"
 
@@ -10308,7 +10372,7 @@ msgstr "Αυτό το στοιχείο BOM δεν έχει επικυρωθεί"
 msgid "Part Information"
 msgstr "Πληροφορίες Προϊόντος"
 
-#: src/tables/bom/BomTable.tsx:262
+#: src/tables/bom/BomTable.tsx:275
 msgid "Substitutes"
 msgstr "Υποκατάστατα"
 
@@ -10337,11 +10401,6 @@ msgstr "Υποκατάστατα"
 #~ msgstr "Bom item deleted"
 
 #: src/tables/bom/BomTable.tsx:351
-#: src/tables/build/BuildLineTable.tsx:258
-msgid "Includes substitute stock"
-msgstr "Περιλαμβάνει υποκατάστατο απόθεμα"
-
-#: src/tables/bom/BomTable.tsx:351
 #~ msgid "Are you sure you want to remove this BOM item?"
 #~ msgstr "Are you sure you want to remove this BOM item?"
 
@@ -10349,174 +10408,173 @@ msgstr "Περιλαμβάνει υποκατάστατο απόθεμα"
 #~ msgid "Validate BOM line"
 #~ msgstr "Validate BOM line"
 
-#: src/tables/bom/BomTable.tsx:369
+#: src/tables/bom/BomTable.tsx:364
+#: src/tables/build/BuildLineTable.tsx:258
+msgid "Includes substitute stock"
+msgstr "Περιλαμβάνει υποκατάστατο απόθεμα"
+
+#: src/tables/bom/BomTable.tsx:382
 #: src/tables/build/BuildLineTable.tsx:286
 #: src/tables/sales/SalesOrderLineItemTable.tsx:188
 #: src/tables/stock/TransferOrderLineItemTable.tsx:163
 msgid "On order"
 msgstr "Σε παραγγελία"
 
-#: src/tables/bom/BomTable.tsx:428
+#: src/tables/bom/BomTable.tsx:441
 #: src/tables/build/BuildLineTable.tsx:527
 #: src/tables/build/BuildLineTable.tsx:572
 msgid "Consumable item"
 msgstr "Αναλώσιμο στοιχείο"
 
-#: src/tables/bom/BomTable.tsx:431
+#: src/tables/bom/BomTable.tsx:444
 msgid "No available stock"
 msgstr "Δεν υπάρχει διαθέσιμο απόθεμα"
 
-#: src/tables/bom/BomTable.tsx:449
+#: src/tables/bom/BomTable.tsx:462
 #: src/tables/build/BuildLineTable.tsx:232
 msgid "Show testable items"
 msgstr "Εμφάνιση δοκιμασμένων στοιχείων"
 
-#: src/tables/bom/BomTable.tsx:454
+#: src/tables/bom/BomTable.tsx:467
 msgid "Show trackable items"
 msgstr "Εμφάνιση ιχνηλάσιμων στοιχείων"
 
-#: src/tables/bom/BomTable.tsx:458
+#: src/tables/bom/BomTable.tsx:471
 #: src/tables/purchasing/ManufacturerPartParametricTable.tsx:46
 #: src/tables/purchasing/ManufacturerPartTable.tsx:161
 #: src/tables/purchasing/SupplierPartTable.tsx:264
 msgid "Active Part"
 msgstr "Ενεργό προϊόν"
 
-#: src/tables/bom/BomTable.tsx:459
+#: src/tables/bom/BomTable.tsx:472
 #: src/tables/settings/ProjectCodeTable.tsx:105
 msgid "Show active items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:464
+#: src/tables/bom/BomTable.tsx:477
 #: src/tables/build/BuildLineTable.tsx:227
 msgid "Show assembled items"
 msgstr "Εμφάνιση συναρμολογημένων στοιχείων"
 
-#: src/tables/bom/BomTable.tsx:469
+#: src/tables/bom/BomTable.tsx:482
 msgid "Show virtual items"
 msgstr "Εμφάνιση εικονικών στοιχείων"
 
-#: src/tables/bom/BomTable.tsx:474
+#: src/tables/bom/BomTable.tsx:487
 msgid "Show items with available stock"
 msgstr "Εμφάνιση Προϊόντων με διαθέσιμο απόθεμα"
 
-#: src/tables/bom/BomTable.tsx:479
+#: src/tables/bom/BomTable.tsx:492
 msgid "Show items on order"
 msgstr "Εμφάνιση Προϊόντων σε παραγγελία"
 
-#: src/tables/bom/BomTable.tsx:483
+#: src/tables/bom/BomTable.tsx:496
 msgid "Validated"
 msgstr "Επικυρωμένο"
 
-#: src/tables/bom/BomTable.tsx:484
+#: src/tables/bom/BomTable.tsx:497
 msgid "Show validated items"
 msgstr "Εμφάνιση επικυρωμένων στοιχείων"
 
-#: src/tables/bom/BomTable.tsx:489
+#: src/tables/bom/BomTable.tsx:502
 #: src/tables/bom/UsedInTable.tsx:93
 msgid "Show inherited items"
 msgstr "Εμφάνιση κληρονομημένων στοιχείων"
 
-#: src/tables/bom/BomTable.tsx:494
+#: src/tables/bom/BomTable.tsx:507
 msgid "Show items which allow variant substitution"
 msgstr "Εμφάνιση Προϊόντων που επιτρέπουν αντικατάσταση παραλλαγών"
 
-#: src/tables/bom/BomTable.tsx:499
+#: src/tables/bom/BomTable.tsx:512
 #: src/tables/bom/UsedInTable.tsx:103
 msgid "Show optional items"
 msgstr "Εμφάνιση προαιρετικών στοιχείων"
 
-#: src/tables/bom/BomTable.tsx:504
+#: src/tables/bom/BomTable.tsx:517
 msgid "Show consumable items"
 msgstr "Εμφάνιση αναλώσιμων στοιχείων"
 
-#: src/tables/bom/BomTable.tsx:508
+#: src/tables/bom/BomTable.tsx:521
 #: src/tables/part/PartTableFilters.tsx:137
 msgid "Has Pricing"
 msgstr "Έχει τιμολόγηση"
 
-#: src/tables/bom/BomTable.tsx:509
+#: src/tables/bom/BomTable.tsx:522
 msgid "Show items with pricing"
 msgstr "Εμφάνιση στοιχείων με τιμολόγηση"
 
-#: src/tables/bom/BomTable.tsx:531
+#: src/tables/bom/BomTable.tsx:544
 msgid "Import BOM Data"
 msgstr "Εισαγωγή δεδομένων BOM"
 
-#: src/tables/bom/BomTable.tsx:542
-#: src/tables/bom/BomTable.tsx:664
+#: src/tables/bom/BomTable.tsx:555
+#: src/tables/bom/BomTable.tsx:677
 msgid "Add BOM Item"
 msgstr "Προσθήκη στοιχείου BOM"
 
-#: src/tables/bom/BomTable.tsx:547
+#: src/tables/bom/BomTable.tsx:560
 msgid "BOM item created"
 msgstr "Το στοιχείο BOM δημιουργήθηκε"
 
-#: src/tables/bom/BomTable.tsx:554
+#: src/tables/bom/BomTable.tsx:567
 #: src/tables/bom/UsedInTable.tsx:123
 msgid "Edit BOM Item"
 msgstr "Επεξεργασία στοιχείου BOM"
 
-#: src/tables/bom/BomTable.tsx:556
+#: src/tables/bom/BomTable.tsx:569
 #: src/tables/bom/UsedInTable.tsx:127
 msgid "BOM item updated"
 msgstr "Το στοιχείο BOM ενημερώθηκε"
 
-#: src/tables/bom/BomTable.tsx:563
+#: src/tables/bom/BomTable.tsx:576
 msgid "Delete BOM Item"
 msgstr "Διαγραφή στοιχείου BOM"
 
-#: src/tables/bom/BomTable.tsx:564
+#: src/tables/bom/BomTable.tsx:577
 msgid "BOM item deleted"
 msgstr "Το στοιχείο BOM διαγράφηκε"
 
-#: src/tables/bom/BomTable.tsx:584
+#: src/tables/bom/BomTable.tsx:597
 msgid "BOM item validated"
 msgstr "Το στοιχείο BOM επικυρώθηκε"
 
-#: src/tables/bom/BomTable.tsx:593
+#: src/tables/bom/BomTable.tsx:606
 msgid "Failed to validate BOM item"
 msgstr "Αποτυχία επικύρωσης στοιχείου BOM"
 
-#: src/tables/bom/BomTable.tsx:605
+#: src/tables/bom/BomTable.tsx:618
 msgid "View BOM"
 msgstr "Προβολή BOM"
 
-#: src/tables/bom/BomTable.tsx:616
+#: src/tables/bom/BomTable.tsx:629
 msgid "Validate BOM Line"
 msgstr "Επικύρωση γραμμής BOM"
 
-#: src/tables/bom/BomTable.tsx:633
+#: src/tables/bom/BomTable.tsx:646
 msgid "Edit Substitutes"
 msgstr "Επεξεργασία υποκατάστατων"
 
-#: src/tables/bom/BomTable.tsx:658
+#: src/tables/bom/BomTable.tsx:671
 msgid "Add BOM Items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:666
+#: src/tables/bom/BomTable.tsx:679
 msgid "Add a single BOM item"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:670
-#: src/tables/general/ParameterTable.tsx:203
-#: src/tables/part/PartTable.tsx:332
-msgid "Import from File"
-msgstr "Εισαγωγή από αρχείο"
-
-#: src/tables/bom/BomTable.tsx:672
+#: src/tables/bom/BomTable.tsx:685
 msgid "Import BOM items from a file"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:680
+#: src/tables/bom/BomTable.tsx:693
 msgid "Edit BOM"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:690
+#: src/tables/bom/BomTable.tsx:703
 msgid "Finish Editing BOM"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:718
+#: src/tables/bom/BomTable.tsx:731
 msgid "Bill of materials cannot be edited, as the part is locked"
 msgstr "Το BOM δεν μπορεί να επεξεργαστεί, επειδή το Προϊόν είναι κλειδωμένο"
 
@@ -10592,8 +10650,9 @@ msgstr "Εμφάνιση Προϊόντων δεσμευμένων για απο
 #: src/tables/build/BuildAllocatedStockTable.tsx:100
 #: src/tables/part/PartBuildAllocationsTable.tsx:85
 #: src/tables/part/PartPurchaseOrdersTable.tsx:141
-#: src/tables/part/PartSalesAllocationsTable.tsx:68
-#: src/tables/sales/SalesOrderAllocationTable.tsx:125
+#: src/tables/part/PartSalesAllocationsTable.tsx:70
+#: src/tables/part/PartSalesOrdersTable.tsx:103
+#: src/tables/sales/SalesOrderAllocationTable.tsx:126
 #: src/tables/sales/SalesOrderShipmentTable.tsx:144
 #: src/tables/stock/TransferOrderAllocationTable.tsx:110
 msgid "Order Status"
@@ -10619,14 +10678,14 @@ msgstr "Επεξεργασία κατανομής αποθέματος"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:182
 #: src/tables/build/BuildLineTable.tsx:725
-#: src/tables/sales/SalesOrderAllocationTable.tsx:222
+#: src/tables/sales/SalesOrderAllocationTable.tsx:223
 #: src/tables/stock/TransferOrderAllocationTable.tsx:177
 msgid "Remove Allocated Stock"
 msgstr ""
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:187
 #: src/tables/build/BuildLineTable.tsx:730
-#: src/tables/sales/SalesOrderAllocationTable.tsx:225
+#: src/tables/sales/SalesOrderAllocationTable.tsx:226
 #: src/tables/stock/TransferOrderAllocationTable.tsx:180
 msgid "Are you sure you want to remove this allocated stock from the order?"
 msgstr ""
@@ -10647,7 +10706,7 @@ msgstr "Κατανάλωση"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:279
 #: src/tables/build/BuildLineTable.tsx:130
-#: src/tables/sales/SalesOrderAllocationTable.tsx:252
+#: src/tables/sales/SalesOrderAllocationTable.tsx:253
 #: src/tables/stock/TransferOrderAllocationTable.tsx:200
 msgid "Remove allocated stock"
 msgstr ""
@@ -10740,12 +10799,12 @@ msgstr "Δημιουργία εντολής κατασκευής"
 #~ msgstr "Automatically allocate stock to this build according to the selected options"
 
 #: src/tables/build/BuildLineTable.tsx:613
-#: src/tables/build/BuildOutputTable.tsx:228
+#: src/tables/build/BuildOutputTable.tsx:229
 msgid "Allocating stock to build order"
 msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:614
-#: src/tables/build/BuildOutputTable.tsx:229
+#: src/tables/build/BuildOutputTable.tsx:230
 #: src/tables/sales/SalesOrderLineItemTable.tsx:347
 msgid "Stock allocation complete"
 msgstr ""
@@ -10753,8 +10812,8 @@ msgstr ""
 #: src/tables/build/BuildLineTable.tsx:624
 #: src/tables/build/BuildLineTable.tsx:632
 #: src/tables/build/BuildLineTable.tsx:892
-#: src/tables/build/BuildOutputTable.tsx:252
-#: src/tables/build/BuildOutputTable.tsx:538
+#: src/tables/build/BuildOutputTable.tsx:253
+#: src/tables/build/BuildOutputTable.tsx:537
 #: src/tables/sales/SalesOrderLineItemTable.tsx:378
 #: src/tables/sales/SalesOrderLineItemTable.tsx:449
 msgid "Auto Allocate Stock"
@@ -10776,8 +10835,8 @@ msgstr ""
 #: src/tables/build/BuildLineTable.tsx:692
 #: src/tables/build/BuildLineTable.tsx:841
 #: src/tables/build/BuildLineTable.tsx:945
-#: src/tables/build/BuildOutputTable.tsx:450
-#: src/tables/build/BuildOutputTable.tsx:455
+#: src/tables/build/BuildOutputTable.tsx:449
+#: src/tables/build/BuildOutputTable.tsx:454
 msgid "Deallocate Stock"
 msgstr "Αποδέσμευση αποθέματος"
 
@@ -10827,10 +10886,6 @@ msgstr "Εμφάνιση εξωτερικών εντολών κατασκευή�
 #~ msgid "Show overdue status"
 #~ msgstr "Show overdue status"
 
-#: src/tables/build/BuildOrderTable.tsx:127
-#~ msgid "Show outstanding orders"
-#~ msgstr "Show outstanding orders"
-
 #: src/tables/build/BuildOrderTable.tsx:139
 #: src/tables/purchasing/PurchaseOrderTable.tsx:71
 #: src/tables/sales/ReturnOrderTable.tsx:62
@@ -10842,7 +10897,7 @@ msgstr "Εμφάνιση εξωτερικών εντολών κατασκευή�
 #~ msgid "Filter by user who issued this order"
 #~ msgstr "Filter by user who issued this order"
 
-#: src/tables/build/BuildOutputTable.tsx:102
+#: src/tables/build/BuildOutputTable.tsx:103
 msgid "Build Output Stock Allocation"
 msgstr "Κατανομή αποθέματος εξόδου κατασκευής"
 
@@ -10854,7 +10909,7 @@ msgstr "Κατανομή αποθέματος εξόδου κατασκευής"
 #~ msgid "Auto-allocation in progress"
 #~ msgstr "Auto-allocation in progress"
 
-#: src/tables/build/BuildOutputTable.tsx:253
+#: src/tables/build/BuildOutputTable.tsx:254
 msgid "Automatically allocate tracked BOM items to this build according to the selected options"
 msgstr ""
 
@@ -10862,49 +10917,49 @@ msgstr ""
 #~ msgid "Edit build output"
 #~ msgstr "Edit build output"
 
-#: src/tables/build/BuildOutputTable.tsx:335
-#: src/tables/build/BuildOutputTable.tsx:579
+#: src/tables/build/BuildOutputTable.tsx:334
+#: src/tables/build/BuildOutputTable.tsx:578
 msgid "Add Build Output"
 msgstr "Προσθήκη εξόδου κατασκευής"
 
-#: src/tables/build/BuildOutputTable.tsx:338
+#: src/tables/build/BuildOutputTable.tsx:337
 msgid "Build output created"
 msgstr "Η έξοδος κατασκευής δημιουργήθηκε"
 
-#: src/tables/build/BuildOutputTable.tsx:360
+#: src/tables/build/BuildOutputTable.tsx:359
 msgid "Completing build outputs"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:361
+#: src/tables/build/BuildOutputTable.tsx:360
 msgid "Build outputs have been completed"
 msgstr "Τα αποτελέσματα κατασκευής ολοκληρώθηκαν"
 
-#: src/tables/build/BuildOutputTable.tsx:370
+#: src/tables/build/BuildOutputTable.tsx:369
 msgid "Scrapping build outputs"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:371
+#: src/tables/build/BuildOutputTable.tsx:370
 msgid "Build outputs have been scrapped"
 msgstr "Τα αποτελέσματα κατασκευής έχουν απορριφθεί"
 
-#: src/tables/build/BuildOutputTable.tsx:380
+#: src/tables/build/BuildOutputTable.tsx:379
 msgid "Cancelling build outputs"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:381
+#: src/tables/build/BuildOutputTable.tsx:380
 msgid "Build outputs have been cancelled"
 msgstr "Τα αποτελέσματα κατασκευής ακυρώθηκαν"
 
-#: src/tables/build/BuildOutputTable.tsx:441
-#: src/tables/build/BuildOutputTable.tsx:649
+#: src/tables/build/BuildOutputTable.tsx:440
+#: src/tables/build/BuildOutputTable.tsx:648
 msgid "Edit Build Output"
 msgstr "Επεξεργασία εξόδου κατασκευής"
 
-#: src/tables/build/BuildOutputTable.tsx:457
+#: src/tables/build/BuildOutputTable.tsx:456
 msgid "This action will deallocate all stock from the selected build output"
 msgstr "Αυτή η ενέργεια θα αποδεσμεύσει όλο το απόθεμα από την επιλεγμένη έξοδο κατασκευής"
 
-#: src/tables/build/BuildOutputTable.tsx:482
+#: src/tables/build/BuildOutputTable.tsx:481
 msgid "Serialize Build Output"
 msgstr "Σειριοποίηση εξόδου κατασκευής"
 
@@ -10912,69 +10967,69 @@ msgstr "Σειριοποίηση εξόδου κατασκευής"
 #~ msgid "View Build Output"
 #~ msgstr "View Build Output"
 
-#: src/tables/build/BuildOutputTable.tsx:500
+#: src/tables/build/BuildOutputTable.tsx:499
 #: src/tables/part/PartTestResultTable.tsx:329
 #: src/tables/stock/StockItemTable.tsx:203
 msgid "Filter by stock status"
 msgstr "Φιλτράρισμα κατά κατάσταση αποθέματος"
 
-#: src/tables/build/BuildOutputTable.tsx:546
+#: src/tables/build/BuildOutputTable.tsx:545
 msgid "Complete selected outputs"
 msgstr "Ολοκλήρωση επιλεγμένων εξόδων"
 
-#: src/tables/build/BuildOutputTable.tsx:557
+#: src/tables/build/BuildOutputTable.tsx:556
 msgid "Scrap selected outputs"
 msgstr "Απόρριψη επιλεγμένων εξόδων"
 
-#: src/tables/build/BuildOutputTable.tsx:568
+#: src/tables/build/BuildOutputTable.tsx:567
 msgid "Cancel selected outputs"
 msgstr "Ακύρωση επιλεγμένων εξόδων"
 
-#: src/tables/build/BuildOutputTable.tsx:599
+#: src/tables/build/BuildOutputTable.tsx:598
 msgid "Allocate"
 msgstr "Κατανομή"
 
-#: src/tables/build/BuildOutputTable.tsx:600
+#: src/tables/build/BuildOutputTable.tsx:599
 msgid "Allocate stock to build output"
 msgstr "Κατανομή αποθέματος στην έξοδο κατασκευής"
 
-#: src/tables/build/BuildOutputTable.tsx:613
+#: src/tables/build/BuildOutputTable.tsx:612
 msgid "Deallocate"
 msgstr "Αποδέσμευση"
 
-#: src/tables/build/BuildOutputTable.tsx:614
+#: src/tables/build/BuildOutputTable.tsx:613
 msgid "Deallocate stock from build output"
 msgstr "Αποδέσμευση αποθέματος από την έξοδο κατασκευής"
 
-#: src/tables/build/BuildOutputTable.tsx:628
+#: src/tables/build/BuildOutputTable.tsx:627
 msgid "Serialize build output"
 msgstr "Σειριοποίηση εξόδου κατασκευής"
 
-#: src/tables/build/BuildOutputTable.tsx:639
+#: src/tables/build/BuildOutputTable.tsx:638
 msgid "Complete build output"
 msgstr "Ολοκλήρωση εξόδου κατασκευής"
 
-#: src/tables/build/BuildOutputTable.tsx:656
+#: src/tables/build/BuildOutputTable.tsx:655
 msgid "Scrap"
 msgstr "Απόρριψη"
 
-#: src/tables/build/BuildOutputTable.tsx:657
+#: src/tables/build/BuildOutputTable.tsx:656
 msgid "Scrap build output"
 msgstr "Απόρριψη εξόδου κατασκευής"
 
-#: src/tables/build/BuildOutputTable.tsx:667
+#: src/tables/build/BuildOutputTable.tsx:666
 msgid "Cancel build output"
 msgstr "Ακύρωση εξόδου κατασκευής"
 
-#: src/tables/build/BuildOutputTable.tsx:731
+#: src/tables/build/BuildOutputTable.tsx:730
 msgid "Required Tests"
 msgstr "Απαιτούμενες δοκιμές"
 
-#: src/tables/build/BuildOutputTable.tsx:807
+#: src/tables/build/BuildOutputTable.tsx:806
 msgid "External Build"
 msgstr "Εξωτερική κατασκευή"
 
-#: src/tables/build/BuildOutputTable.tsx:809
+#: src/tables/build/BuildOutputTable.tsx:808
 msgid "This build order is fulfilled by an external purchase order"
 msgstr "Αυτή η εντολή κατασκευής εκτελείται μέσω εξωτερικής εντολής αγοράς"
 
@@ -11136,7 +11191,7 @@ msgstr "Προβολή Προϊόντος"
 
 #: src/tables/general/ExtraLineItemTable.tsx:75
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:260
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:154
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:171
 #: src/tables/sales/SalesOrderLineItemTable.tsx:127
 msgid "Discount"
 msgstr ""
@@ -11144,8 +11199,8 @@ msgstr ""
 #: src/tables/general/ExtraLineItemTable.tsx:102
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:303
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:409
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:86
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:192
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:88
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:209
 #: src/tables/sales/SalesOrderLineItemTable.tsx:260
 #: src/tables/sales/SalesOrderLineItemTable.tsx:413
 #: src/tables/stock/TransferOrderLineItemTable.tsx:266
@@ -11155,7 +11210,7 @@ msgstr "Προσθήκη γραμμής"
 
 #: src/tables/general/ExtraLineItemTable.tsx:115
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:326
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:99
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:101
 #: src/tables/sales/SalesOrderLineItemTable.tsx:279
 #: src/tables/stock/TransferOrderLineItemTable.tsx:283
 msgid "Edit Line Item"
@@ -11163,7 +11218,7 @@ msgstr "Επεξεργασία γραμμής"
 
 #: src/tables/general/ExtraLineItemTable.tsx:124
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:335
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:108
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:110
 #: src/tables/sales/SalesOrderLineItemTable.tsx:288
 #: src/tables/stock/TransferOrderLineItemTable.tsx:292
 msgid "Delete Line Item"
@@ -11179,7 +11234,7 @@ msgstr "Εσωτερικές μονάδες"
 
 #: src/tables/general/ParameterTable.tsx:109
 #: src/tables/general/ParameterTable.tsx:124
-#: src/tables/general/ParametricDataTable.tsx:103
+#: src/tables/general/ParametricDataTable.tsx:110
 #: src/tables/settings/TemplateTable.tsx:273
 msgid "Updated By"
 msgstr "Ενημερώθηκε από"
@@ -11197,14 +11252,14 @@ msgid "Import Parameters"
 msgstr ""
 
 #: src/tables/general/ParameterTable.tsx:161
-#: src/tables/general/ParametricDataTable.tsx:307
-#: src/tables/general/ParametricDataTable.tsx:438
+#: src/tables/general/ParametricDataTable.tsx:324
+#: src/tables/general/ParametricDataTable.tsx:455
 msgid "Add Parameter"
 msgstr "Προσθήκη παραμέτρου"
 
 #: src/tables/general/ParameterTable.tsx:172
 #: src/tables/general/ParameterTable.tsx:219
-#: src/tables/general/ParametricDataTable.tsx:331
+#: src/tables/general/ParametricDataTable.tsx:348
 msgid "Edit Parameter"
 msgstr "Επεξεργασία παραμέτρου"
 
@@ -11285,7 +11340,7 @@ msgstr "Τύπος μοντέλου"
 msgid "Filter by model type"
 msgstr ""
 
-#: src/tables/general/ParametricDataTable.tsx:114
+#: src/tables/general/ParametricDataTable.tsx:121
 msgid "Click to edit"
 msgstr "Κάντε κλικ για επεξεργασία"
 
@@ -11668,35 +11723,35 @@ msgstr "Εμφάνιση εκκρεμών παραγγελιών"
 msgid "Show received items"
 msgstr "Εμφάνιση παραληφθέντων Προϊόντων"
 
-#: src/tables/part/PartSalesAllocationsTable.tsx:89
+#: src/tables/part/PartSalesAllocationsTable.tsx:91
 #: src/tables/sales/SalesOrderShipmentTable.tsx:260
 msgid "View Sales Order"
 msgstr "Προβολή παραγγελίας πώλησης"
 
-#: src/tables/part/PartTable.tsx:164
-msgid "Import Parts"
-msgstr "Εισαγωγή προϊόντων"
+#: src/tables/part/PartSalesOrdersTable.tsx:94
+msgid "Show outstanding orders"
+msgstr ""
 
-#: src/tables/part/PartTable.tsx:250
-#: src/tables/part/PartTable.tsx:298
+#: src/tables/part/PartSalesOrdersTable.tsx:99
+msgid "Show completed line items"
+msgstr ""
+
+#: src/tables/part/PartTable.tsx:214
+#: src/tables/part/PartTable.tsx:257
 msgid "Set Category"
 msgstr "Ορισμός κατηγορίας"
+
+#: src/tables/part/PartTable.tsx:259
+msgid "Set category for selected parts"
+msgstr "Ορισμός κατηγορίας για τα επιλεγμένα προϊόντα"
+
+#: src/tables/part/PartTable.tsx:269
+msgid "Order selected parts"
+msgstr "Παραγγελία επιλεγμένων προϊόντων"
 
 #: src/tables/part/PartTable.tsx:287
 #~ msgid "Not Virtual"
 #~ msgstr "Not Virtual"
-
-#: src/tables/part/PartTable.tsx:300
-msgid "Set category for selected parts"
-msgstr "Ορισμός κατηγορίας για τα επιλεγμένα προϊόντα"
-
-#: src/tables/part/PartTable.tsx:310
-msgid "Order selected parts"
-msgstr "Παραγγελία επιλεγμένων προϊόντων"
-
-#: src/tables/part/PartTable.tsx:320
-msgid "Add Parts"
-msgstr "Προσθήκη προϊόντων"
 
 #: src/tables/part/PartTable.tsx:322
 #~ msgid "Has Stocktake"
@@ -11705,26 +11760,6 @@ msgstr "Προσθήκη προϊόντων"
 #: src/tables/part/PartTable.tsx:323
 #~ msgid "Filter by parts which have stocktake information"
 #~ msgstr "Filter by parts which have stocktake information"
-
-#: src/tables/part/PartTable.tsx:326
-msgid "Create Part"
-msgstr "Δημιουργία προϊόντος"
-
-#: src/tables/part/PartTable.tsx:328
-msgid "Create a new part"
-msgstr "Δημιουργία νέου προϊόντος"
-
-#: src/tables/part/PartTable.tsx:334
-msgid "Import parts from a file"
-msgstr "Εισαγωγή εξαρτημάτων από αρχείο"
-
-#: src/tables/part/PartTable.tsx:339
-msgid "Import from Supplier"
-msgstr "Εισαγωγή από προμηθευτή"
-
-#: src/tables/part/PartTable.tsx:341
-msgid "Import parts from a supplier plugin"
-msgstr "Εισαγωγή εξαρτημάτων από πρόσθετο προμηθευτή"
 
 #: src/tables/part/PartTableFilters.tsx:14
 msgid "Filter by part active status"
@@ -11855,6 +11890,10 @@ msgid "Filter by parts which have available stock"
 msgstr "Φιλτράρισμα προϊόντων με διαθέσιμο απόθεμα"
 
 #: src/tables/part/PartTableFilters.tsx:150
+msgid "Filter by parts which are on order"
+msgstr ""
+
+#: src/tables/part/PartTableFilters.tsx:156
 msgid "Filter by parts to which the user is subscribed"
 msgstr "Φιλτράρισμα προϊόντων στα οποία ο χρήστης έχει εγγραφεί"
 
@@ -11862,14 +11901,14 @@ msgstr "Φιλτράρισμα προϊόντων στα οποία ο χρήσ�
 #: src/tables/part/PartTestResultTable.tsx:185
 #: src/tables/part/PartTestResultTable.tsx:339
 #: src/tables/part/PartTestResultTable.tsx:353
-#: src/tables/stock/StockItemTestResultTable.tsx:297
-#: src/tables/stock/StockItemTestResultTable.tsx:370
-#: src/tables/stock/StockItemTestResultTable.tsx:431
+#: src/tables/stock/StockItemTestResultTable.tsx:294
+#: src/tables/stock/StockItemTestResultTable.tsx:367
+#: src/tables/stock/StockItemTestResultTable.tsx:428
 msgid "Add Test Result"
 msgstr "Προσθήκη αποτελέσματος δοκιμής"
 
 #: src/tables/part/PartTestResultTable.tsx:114
-#: src/tables/stock/StockItemTestResultTable.tsx:299
+#: src/tables/stock/StockItemTestResultTable.tsx:296
 msgid "Test result added"
 msgstr "Το αποτέλεσμα δοκιμής προστέθηκε"
 
@@ -11882,7 +11921,7 @@ msgid "Test results added"
 msgstr "Τα αποτελέσματα δοκιμής προστέθηκαν"
 
 #: src/tables/part/PartTestResultTable.tsx:184
-#: src/tables/stock/StockItemTestResultTable.tsx:198
+#: src/tables/stock/StockItemTestResultTable.tsx:195
 msgid "No Result"
 msgstr "Κανένα αποτέλεσμα"
 
@@ -12383,23 +12422,35 @@ msgstr "Εμφάνιση ενεργών προμηθευτών"
 msgid "Show supplier parts with stock"
 msgstr "Εμφάνιση προϊόντων προμηθευτή με απόθεμα"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:163
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:118
+msgid "Set Outcome"
+msgstr ""
+
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:121
+msgid "Adjust the outcome for the selected line items."
+msgstr ""
+
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:180
 msgid "Received Date"
 msgstr "Ημερομηνία παραλαβής"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:177
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:194
 msgid "Show items which have been received"
 msgstr "Εμφάνιση Προϊόντων που έχουν παραληφθεί"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:182
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:199
 msgid "Filter by line item status"
 msgstr "Φιλτράρισμα βάσει κατάστασης γραμμής"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:200
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:217
 msgid "Receive selected items"
 msgstr "Παραλαβή επιλεγμένων Προϊόντων"
 
-#: src/tables/sales/ReturnOrderLineItemTable.tsx:237
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:234
+msgid "Set outcome for selected items"
+msgstr ""
+
+#: src/tables/sales/ReturnOrderLineItemTable.tsx:264
 msgid "Receive Item"
 msgstr "Παραλαβή Προϊόντος"
 
@@ -12416,27 +12467,27 @@ msgstr "Ανατέθηκε σε αποστολή"
 msgid "Show allocations assigned to a shipment"
 msgstr "Εμφάνιση δεσμεύσεων που έχουν ανατεθεί σε αποστολή"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:160
+#: src/tables/sales/SalesOrderAllocationTable.tsx:161
 #: src/tables/stock/TransferOrderAllocationTable.tsx:144
 msgid "Available Quantity"
 msgstr "Διαθέσιμη ποσότητα"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:167
+#: src/tables/sales/SalesOrderAllocationTable.tsx:168
 #: src/tables/stock/TransferOrderAllocationTable.tsx:151
 msgid "Allocated Quantity"
 msgstr "Δεσμευμένη ποσότητα"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:181
-#: src/tables/sales/SalesOrderAllocationTable.tsx:195
+#: src/tables/sales/SalesOrderAllocationTable.tsx:182
+#: src/tables/sales/SalesOrderAllocationTable.tsx:196
 msgid "No shipment"
 msgstr "Καμία αποστολή"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:193
+#: src/tables/sales/SalesOrderAllocationTable.tsx:194
 msgid "Not shipped"
 msgstr "Δεν έχει αποσταλεί"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:215
-#: src/tables/sales/SalesOrderAllocationTable.tsx:239
+#: src/tables/sales/SalesOrderAllocationTable.tsx:216
+#: src/tables/sales/SalesOrderAllocationTable.tsx:240
 #: src/tables/stock/TransferOrderAllocationTable.tsx:170
 #: src/tables/stock/TransferOrderAllocationTable.tsx:191
 msgid "Edit Allocation"
@@ -12447,16 +12498,16 @@ msgstr "Επεξεργασία δέσμευσης"
 #~ msgid "Delete Allocation"
 #~ msgstr "Delete Allocation"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:265
 #: src/tables/sales/SalesOrderAllocationTable.tsx:266
+#: src/tables/sales/SalesOrderAllocationTable.tsx:267
 msgid "View Shipment"
 msgstr "Προβολή αποστολής"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:320
+#: src/tables/sales/SalesOrderAllocationTable.tsx:321
 msgid "Assign to Shipment"
 msgstr "Ανάθεση σε αποστολή"
 
-#: src/tables/sales/SalesOrderAllocationTable.tsx:336
+#: src/tables/sales/SalesOrderAllocationTable.tsx:337
 msgid "Assign to shipment"
 msgstr "Ανάθεση σε αποστολή"
 
@@ -12635,7 +12686,7 @@ msgstr "Endpoint"
 
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:89
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:208
-#: src/tables/stock/StockItemTestResultTable.tsx:192
+#: src/tables/stock/StockItemTestResultTable.tsx:189
 msgid "Result"
 msgstr "Αποτέλεσμα"
 
@@ -12828,7 +12879,7 @@ msgid "Task ID"
 msgstr "ID εργασίας"
 
 #: src/tables/settings/FailedTasksTable.tsx:42
-#: src/tables/stock/StockItemTestResultTable.tsx:234
+#: src/tables/stock/StockItemTestResultTable.tsx:231
 msgid "Started"
 msgstr "Ξεκίνησε"
 
@@ -13483,81 +13534,81 @@ msgstr "Παραγγελία Προϊόντων"
 #~ msgid "Delete stock"
 #~ msgstr "Delete stock"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:144
+#: src/tables/stock/StockItemTestResultTable.tsx:141
 msgid "Test"
 msgstr "Τεστ"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:181
+#: src/tables/stock/StockItemTestResultTable.tsx:178
 msgid "Test result for installed stock item"
 msgstr "Αποτέλεσμα τεστ για εγκατεστημένο Προϊόν αποθέματος"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:212
+#: src/tables/stock/StockItemTestResultTable.tsx:209
 msgid "Attachment"
 msgstr "Συνημμένο"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:228
+#: src/tables/stock/StockItemTestResultTable.tsx:225
 msgid "Test station"
 msgstr "Σταθμός δοκιμής"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:250
+#: src/tables/stock/StockItemTestResultTable.tsx:247
 msgid "Finished"
 msgstr "Ολοκληρώθηκε"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:308
-#: src/tables/stock/StockItemTestResultTable.tsx:380
+#: src/tables/stock/StockItemTestResultTable.tsx:305
+#: src/tables/stock/StockItemTestResultTable.tsx:377
 msgid "Edit Test Result"
 msgstr "Επεξεργασία αποτελέσματος τεστ"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:310
+#: src/tables/stock/StockItemTestResultTable.tsx:307
 msgid "Test result updated"
 msgstr "Το αποτέλεσμα του τεστ ενημερώθηκε"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:316
-#: src/tables/stock/StockItemTestResultTable.tsx:389
+#: src/tables/stock/StockItemTestResultTable.tsx:313
+#: src/tables/stock/StockItemTestResultTable.tsx:386
 msgid "Delete Test Result"
 msgstr "Διαγραφή αποτελέσματος τεστ"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:318
+#: src/tables/stock/StockItemTestResultTable.tsx:315
 msgid "Test result deleted"
 msgstr "Το αποτέλεσμα του τεστ διαγράφηκε"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:332
+#: src/tables/stock/StockItemTestResultTable.tsx:329
 msgid "Test Passed"
 msgstr "Επιτυχής δοκιμή"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:333
+#: src/tables/stock/StockItemTestResultTable.tsx:330
 msgid "Test result has been recorded"
 msgstr "Το αποτέλεσμα του τεστ καταχωρήθηκε"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:340
+#: src/tables/stock/StockItemTestResultTable.tsx:337
 msgid "Failed to record test result"
 msgstr "Αποτυχία καταγραφής αποτελέσματος τεστ"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:357
+#: src/tables/stock/StockItemTestResultTable.tsx:354
 msgid "Pass Test"
 msgstr "Επιτυχής Δοκιμή"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:407
+#: src/tables/stock/StockItemTestResultTable.tsx:404
 msgid "Show results for required tests"
 msgstr "Εμφάνιση αποτελεσμάτων για υποχρεωτικά τεστ"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:411
+#: src/tables/stock/StockItemTestResultTable.tsx:408
 msgid "Include Installed"
 msgstr "Συμπερίληψη εγκατεστημένων"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:412
+#: src/tables/stock/StockItemTestResultTable.tsx:409
 msgid "Show results for installed stock items"
 msgstr "Εμφάνιση αποτελεσμάτων για εγκατεστημένα Προϊόντα"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:416
+#: src/tables/stock/StockItemTestResultTable.tsx:413
 msgid "Passed"
 msgstr "Επιτυχία"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:417
+#: src/tables/stock/StockItemTestResultTable.tsx:414
 msgid "Show only passed tests"
 msgstr "Εμφάνιση μόνο επιτυχημένων τεστ"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:422
+#: src/tables/stock/StockItemTestResultTable.tsx:419
 msgid "Show results for enabled tests"
 msgstr "Εμφάνιση αποτελεσμάτων για ενεργά τεστ"
 

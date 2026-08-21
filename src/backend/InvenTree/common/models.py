@@ -1656,10 +1656,12 @@ class NotificationEntry(MetaMixin):
 
     key = models.CharField(max_length=250, blank=False)
 
-    uid = models.IntegerField()
+    # Notification references may point to models with UUID primary keys.
+    # Store the value as text so both integer and non-integer identifiers work.
+    uid = models.CharField(max_length=255)
 
     @classmethod
-    def check_recent(cls, key: str, uid: int, delta: timedelta):
+    def check_recent(cls, key: str, uid: str | int | uuid.UUID, delta: timedelta):
         """Test if a particular notification has been sent in the specified time period."""
         since = InvenTree.helpers.current_date() - delta
 
@@ -1668,7 +1670,7 @@ class NotificationEntry(MetaMixin):
         return entries.exists()
 
     @classmethod
-    def notify(cls, key: str, uid: int):
+    def notify(cls, key: str, uid: str | int | uuid.UUID):
         """Notify the database that a particular notification has been sent out."""
         entry, _ = cls.objects.get_or_create(key=key, uid=uid)
 
@@ -3421,11 +3423,11 @@ class EmailMessage(models.Model):
 
     objects = NoDeleteManager()
 
-    def delete(self, *kwargs):
+    def delete(self, *args, **kwargs):
         """Delete entry - if not protected."""
         if get_global_setting('INVENTREE_PROTECT_EMAIL_LOG'):
             raise ValidationError(del_error_msg)
-        return super().delete(*kwargs)
+        return super().delete(*args, **kwargs)
 
 
 class EmailThread(InvenTree.models.InvenTreeMetadataModel):

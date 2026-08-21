@@ -498,6 +498,39 @@ class BuildTest(BuildAPITest):
             'This build output has already been completed', str(response.data)
         )
 
+    def test_complete_build_output_structural_location(self):
+        """Test that a structural location is rejected by the BuildOutputComplete API.
+
+        Ref: this validation must happen synchronously in the serializer,
+        before the completion is offloaded to the background worker.
+        """
+        bo = Build.objects.get(pk=1)
+
+        # Create a new build output
+        create_url = reverse('api-build-output-create', kwargs={'pk': bo.pk})
+        response = self.post(create_url, {'quantity': 1}, expected_code=201)
+        output = StockItem.objects.get(pk=response.data[0]['pk'])
+
+        structural_location = StockLocation.objects.create(
+            name='Structural location', structural=True
+        )
+
+        complete_url = reverse('api-build-output-complete', kwargs={'pk': bo.pk})
+
+        response = self.post(
+            complete_url,
+            {'outputs': [{'output': output.pk}], 'location': structural_location.pk},
+            expected_code=400,
+        )
+
+        self.assertIn(
+            'Structural locations cannot be assigned stock items', str(response.data)
+        )
+
+        # None of the outputs should have been completed
+        output.refresh_from_db()
+        self.assertTrue(output.is_building)
+
     def test_download_build_orders(self):
         """Test that we can download a list of build orders via the API."""
         required_cols = [
@@ -1387,6 +1420,35 @@ class BuildOutputCreateTest(BuildAPITest):
 
         # The new output must have a creation_date set
         self.assertIsNotNone(part.stock_items.order_by('-pk').first().creation_date)
+
+    def test_create_unserialized_output_trackable_part(self):
+        """A build output for a trackable part may be created without serial numbers.
+
+        This allows a batch quantity to be created (e.g. from an external build order)
+        which can be serialized at some later stage in the process.
+        """
+        build_id = 1
+        url = reverse('api-build-output-create', kwargs={'pk': build_id})
+
+        build = Build.objects.get(pk=build_id)
+        part = build.part
+
+        part.trackable = True
+        part.save()
+
+        n_outputs = build.output_count
+        n_items = part.stock_items.count()
+
+        # Create a single non-serialized output, even though the part is trackable
+        self.post(url, data={'quantity': 10}, expected_code=201)
+
+        # A single build output has been created (not one per unit of quantity)
+        self.assertEqual(n_outputs + 1, build.output_count)
+        self.assertEqual(n_items + 1, part.stock_items.count())
+
+        output = part.stock_items.order_by('-pk').first()
+        self.assertIsNone(output.serial)
+        self.assertEqual(output.quantity, 10)
 
 
 class BuildOutputScrapTest(BuildAPITest):
@@ -2315,8 +2377,8 @@ class BuildConsumeTest(BuildAPITest):
                 {},
                 expected_code=201,
                 benchmark=True,
-                max_query_count=250,
-                max_query_time=1.0,
+                max_query_count=180,
+                max_query_time=1.5,
             )
 
         build.refresh_from_db()

@@ -619,9 +619,10 @@ class BuildTest(BuildTestBase):
         # cancellation must be skipped based on the database state
         self.assertEqual(build_b.status, status.BuildStatus.PRODUCTION)
 
-        with mock.patch('build.models.trigger_event') as trigger:
+        with self.assertRaises(ValidationError) as err:
             build_b.cancel_build(None)
-            trigger.assert_not_called()
+
+        self.assertIn('Build Order is already Cancelled', str(err.exception))
 
         self.build.refresh_from_db()
         self.assertEqual(self.build.status, status.BuildStatus.CANCELLED)
@@ -2046,3 +2047,131 @@ class BuildSubtractAllocatedStockConcurrencyTest(TransactionTestCase):
         # thread "won" the race for the row lock
         self.assertEqual(self.build_line.consumed, 10)
         self.assertFalse(BuildItem.objects.filter(pk=self.build_item.pk).exists())
+
+
+@skipUnlessDBFeature('has_select_for_update')
+class BuildAllocateStockConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test for Build.allocate_stock().
+
+    Uses two real threads (each with its own database connection) to reproduce
+    the reported race: two concurrent allocation requests, against two
+    different Builds but the *same* StockItem, could each read the item's
+    unallocated quantity before either had committed, and both create a
+    BuildItem for the full quantity - over-allocating the StockItem. Because
+    the requests target different Builds, the pre-existing Build-row lock
+    does not serialize them.
+
+    allocate_stock() now locks the referenced StockItem (select_for_update,
+    via StockItem.lock_quantity()) and re-validates the unallocated quantity
+    under that lock before writing, so only one of two concurrent
+    full-quantity allocation requests against a shared StockItem may succeed.
+    """
+
+    fixtures = ['users']
+
+    def setUp(self):
+        """Create two Builds which both require the same shared StockItem."""
+        super().setUp()
+
+        self.user = get_user_model().objects.get(pk=1)
+
+        self.assembly_a = Part.objects.create(
+            name='Concurrency assembly A',
+            description='Assembly for allocate_stock concurrency test',
+            assembly=True,
+        )
+        self.assembly_b = Part.objects.create(
+            name='Concurrency assembly B',
+            description='Assembly for allocate_stock concurrency test',
+            assembly=True,
+        )
+        self.sub_part = Part.objects.create(
+            name='Shared concurrency component',
+            description='Component for allocate_stock concurrency test',
+            component=True,
+        )
+
+        BomItem.objects.create(part=self.assembly_a, sub_part=self.sub_part, quantity=1)
+        BomItem.objects.create(part=self.assembly_b, sub_part=self.sub_part, quantity=1)
+
+        self.build_a = Build.objects.create(
+            reference=generate_next_build_reference(),
+            part=self.assembly_a,
+            quantity=1,
+            issued_by=self.user,
+        )
+        self.build_b = Build.objects.create(
+            reference=generate_next_build_reference(),
+            part=self.assembly_b,
+            quantity=1,
+            issued_by=self.user,
+        )
+
+        self.build_line_a = BuildLine.objects.get(build=self.build_a)
+        self.build_line_b = BuildLine.objects.get(build=self.build_b)
+
+        # Only enough stock for *one* of the two full-quantity allocations below
+        self.stock_item = StockItem.objects.create(part=self.sub_part, quantity=5)
+
+    def test_concurrent_allocation_does_not_over_allocate(self):
+        """Two concurrent full-quantity allocation requests must not both succeed."""
+        start_barrier = threading.Barrier(2, timeout=5)
+        errors = []
+        results = []
+
+        # Wrap StockItem.lock_quantity() so both threads reach the (real,
+        # database-level) row lock at the same time - one wins the lock and
+        # proceeds, the other blocks until the winner's transaction completes.
+        original_lock_quantity = StockItem.lock_quantity
+
+        def synced_lock_quantity(self_item):
+            start_barrier.wait(timeout=5)
+            return original_lock_quantity(self_item)
+
+        def allocate(build, build_line):
+            try:
+                build.allocate_stock([
+                    {
+                        'build_line': build_line,
+                        'stock_item': self.stock_item,
+                        'quantity': 5,
+                    }
+                ])
+                results.append('ok')
+            except ValidationError:
+                results.append('rejected')
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        thread_a = threading.Thread(
+            target=allocate, args=(self.build_a, self.build_line_a)
+        )
+        thread_b = threading.Thread(
+            target=allocate, args=(self.build_b, self.build_line_b)
+        )
+
+        with mock.patch.object(StockItem, 'lock_quantity', synced_lock_quantity):
+            thread_a.start()
+            thread_b.start()
+
+            thread_a.join(timeout=5)
+            thread_b.join(timeout=5)
+
+        self.assertFalse(thread_a.is_alive())
+        self.assertFalse(thread_b.is_alive())
+        self.assertEqual(errors, [])
+
+        # Exactly one request must have been rejected as over-allocating
+        self.assertEqual(sorted(results), ['ok', 'rejected'])
+
+        total_allocated = (
+            BuildItem.objects.filter(stock_item=self.stock_item).aggregate(
+                q=Sum('quantity')
+            )['q']
+            or 0
+        )
+
+        self.assertEqual(total_allocated, 5)
+        self.assertLessEqual(total_allocated, self.stock_item.quantity)

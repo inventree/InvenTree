@@ -441,13 +441,6 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         quantity = data['quantity']
         serial_numbers = data.get('serial_numbers', '')
 
-        if part.trackable and not serial_numbers:
-            raise ValidationError({
-                'serial_numbers': _(
-                    'Serial numbers must be provided for trackable parts'
-                )
-            })
-
         if serial_numbers:
             try:
                 self.serials = InvenTree.helpers.extract_serial_numbers(
@@ -576,6 +569,15 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         label=_('Location'),
         help_text=_('Location for completed build outputs'),
     )
+
+    def validate_location(self, location):
+        """Validate the provided location."""
+        if location and location.structural:
+            raise ValidationError(
+                _('Structural locations cannot be assigned stock items')
+            )
+
+        return location
 
     status_custom_key = StockStatusCustomSerializer(default=StockStatus.OK.value)
 

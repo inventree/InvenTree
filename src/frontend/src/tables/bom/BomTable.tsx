@@ -251,6 +251,19 @@ export function BomTable({
         }
       },
       {
+        accessor: 'piece_count',
+        defaultVisible: false,
+        sortable: true,
+        render: (record: any) => {
+          const piece_count = record.piece_count;
+          if (piece_count == null || piece_count <= 1) {
+            return '-';
+          } else {
+            return <Text size='xs'>{piece_count}</Text>;
+          }
+        }
+      },
+      {
         accessor: 'substitutes',
         defaultVisible: false,
         render: (row: any) => {
@@ -742,6 +755,10 @@ export function BomTable({
             enableSelection: isEditing && !isLocked,
             enableBulkDelete:
               isEditing && !isLocked && user.hasDeleteRole(UserRoles.bom),
+            bulkDeleteFilter: (record: any) => {
+              // If the BOM item is defined for a different parent, then it cannot be deleted
+              return record.part === partId;
+            },
             enableDownload: true,
             rowExpansion: isEditing ? undefined : rowExpansion
           }}

@@ -3,6 +3,7 @@
 import base64
 import io
 import json
+import threading
 from datetime import date, datetime, timedelta
 from typing import Optional
 from unittest import mock
@@ -10,12 +11,14 @@ from unittest import mock
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import connection
+from django.test import TransactionTestCase, skipUnlessDBFeature
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 from djmoney.money import Money
 from icalendar import Calendar
 from rest_framework import status
+from rest_framework.exceptions import ValidationError as DRFValidationError
 
 from common.currency import currency_codes
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
@@ -24,6 +27,7 @@ from company.models import Company, SupplierPart, SupplierPriceBreak
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
 from order.models import SalesOrderAllocation, SalesOrderLineItem, SalesOrderShipment
+from order.serializers import TransferOrderSerialAllocationSerializer
 from order.status_codes import (
     PurchaseOrderStatus,
     ReturnOrderLineStatus,
@@ -54,7 +58,14 @@ class OrderTest(InvenTreeAPITestCase):
         'transfer_order',
     ]
 
-    roles = ['purchase_order.change', 'sales_order.change', 'transfer_order.change']
+    roles = [
+        'purchase_order.change',
+        'sales_order.change',
+        'transfer_order.change',
+        'part.view',
+        'stock.view',
+        'stock_location.view',
+    ]
 
     def filter(self, filters, count):
         """Test API filters."""
@@ -159,6 +170,9 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'supplier_part': 1}, 1)
         self.filter({'supplier_part': 3}, 2)
         self.filter({'supplier_part': 4}, 0)
+
+        # Filter by "tags"
+        self.filter({'tags': True}, 7)
 
     def test_total_price(self):
         """Unit tests for the 'total_price' field."""
@@ -700,12 +714,25 @@ class PurchaseOrderTest(OrderTest):
         # completion must be skipped based on the database state
         self.assertEqual(po_b.status, PurchaseOrderStatus.PLACED)
 
-        with mock.patch('order.models.trigger_event') as trigger:
+        with self.assertRaises(ValidationError) as err:
             po_b.complete_order()
-            trigger.assert_not_called()
+
+        self.assertIn('Purchase Order is already Complete', str(err.exception))
 
         po.refresh_from_db()
         self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
+
+    def test_po_hold(self):
+        """Test the PurchaseOrderHold API endpoint."""
+        po = models.PurchaseOrder.objects.get(pk=1)
+        url = reverse('api-po-hold', kwargs={'pk': po.pk})
+
+        # Try to hold the PO, without required permissions
+        self.post(url, {}, expected_code=403)
+        self.assignRole('purchase_order.add')
+        self.post(url, {}, expected_code=201)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.ON_HOLD)
 
     def test_po_issue(self):
         """Test the PurchaseOrderIssue API endpoint."""
@@ -3535,9 +3562,10 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         # completion must be skipped based on the database state
         self.assertEqual(order_b.status, ReturnOrderStatus.IN_PROGRESS.value)
 
-        with mock.patch('order.models.trigger_event') as trigger:
+        with self.assertRaises(ValidationError) as err:
             order_b.complete_order()
-            trigger.assert_not_called()
+
+        self.assertIn('Return Order is already Complete', str(err.exception))
 
         rma.refresh_from_db()
         self.assertEqual(rma.status, ReturnOrderStatus.COMPLETE.value)
@@ -3616,7 +3644,7 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         'supplier_part',
         'stock',
     ]
-    roles = ['return_order.view']
+    roles = ['return_order.view', 'part.view', 'stock.view']
 
     def test_options(self):
         """Test the OPTIONS endpoint."""
@@ -3702,6 +3730,42 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         self.delete(url, {'items': items}, expected_code=200)
 
         self.assertEqual(models.ReturnOrderLineItem.objects.count(), n - 1)
+
+    def test_bulk_update(self):
+        """Test that we can bulk update the 'outcome' field for multiple ReturnOrderLineItems via the API."""
+        ro = models.ReturnOrder.objects.get(pk=6)
+
+        # Create some extra line items against the same order, so we have multiple to update
+        models.ReturnOrderLineItem.objects.bulk_create([
+            models.ReturnOrderLineItem(order=ro, item_id=1006, quantity=1),
+            models.ReturnOrderLineItem(order=ro, item_id=1007, quantity=1),
+        ])
+
+        items = list(
+            models.ReturnOrderLineItem.objects.filter(order=ro).values_list(
+                'pk', flat=True
+            )
+        )
+
+        self.assertEqual(len(items), 3)
+
+        for line in models.ReturnOrderLineItem.objects.filter(pk__in=items):
+            self.assertEqual(line.outcome, ReturnOrderLineStatus.PENDING)
+
+        url = reverse('api-return-order-line-list')
+
+        data = {'items': items, 'outcome': ReturnOrderLineStatus.REPAIR.value}
+
+        # Update should fail without the correct role
+        self.patch(url, data, expected_code=403)
+
+        self.assignRole('return_order.change')
+
+        response = self.patch(url, data, expected_code=200).data
+        self.assertEqual(len(response['items']), 3)
+
+        for line in models.ReturnOrderLineItem.objects.filter(pk__in=items):
+            self.assertEqual(line.outcome, ReturnOrderLineStatus.REPAIR.value)
 
     def test_extra_line_bulk_delete(self):
         """Test that we can bulk delete multiple ReturnOrderExtraLine items via the API."""
@@ -4006,7 +4070,8 @@ class TransferOrderTest(OrderTest):
         self.assertEqual(instance_b.status, TransferOrderStatus.PENDING)
 
         with mock.patch('order.models.trigger_event') as trigger:
-            instance_b.cancel_order()
+            with self.assertRaises(ValidationError):
+                instance_b.cancel_order()
             trigger.assert_not_called()
 
         to.refresh_from_db()
@@ -4439,11 +4504,21 @@ class TransferOrderTest(OrderTest):
         with self.assertRaises(ValidationError) as err:
             instance_b.complete_order(None)
 
-        self.assertIn('Order is already complete', str(err.exception))
+        self.assertIn('Transfer Order is already Complete', str(err.exception))
 
         # The transferred quantity has not been double-counted
         line.refresh_from_db()
         self.assertEqual(line.transferred, 10)
+
+        # check that the wrong starting point also triggers an error
+        instance_b.status = TransferOrderStatus.CANCELLED.value
+        instance_b.save()
+        with self.assertRaises(ValidationError) as err:
+            instance_b.complete_order(None)
+        self.assertIn(
+            'Invalid transition on Transfer Order.status (source value should be 20, is 40)',
+            str(err.exception),
+        )
 
     def test_output_options(self):
         """Test the output options for the TransferOrder detail endpoint."""
@@ -4941,6 +5016,109 @@ class TransferOrderAllocateTest(OrderTest):
             reverse('api-transfer-order-allocation-list'),
             ['part_detail', 'item_detail', 'order_detail', 'location_detail'],
             assert_subset=True,
+        )
+
+
+@skipUnlessDBFeature('has_select_for_update')
+class TransferOrderSerialAllocateConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test for serial-based transfer order allocation.
+
+    Uses two real threads (each with its own database connection) to reproduce
+    the reported race: two concurrent requests to allocate the *same* serial
+    number (against two different TransferOrder line items) could both resolve
+    and validate the serialized StockItem as available before either had
+    committed its bulk_create - allocating the same physical unit twice.
+
+    TransferOrderSerialAllocationSerializer.save() now locks each resolved
+    StockItem (select_for_update, via StockItem.lock_quantity()) and
+    re-validates its unallocated quantity under that lock before it is added
+    to the batch that gets created, so only one of two concurrent requests for
+    the same serial number may succeed.
+    """
+
+    fixtures = ['users']
+
+    def setUp(self):
+        """Create two TransferOrder lines which both request the same serial number."""
+        super().setUp()
+
+        self.part = Part.objects.create(
+            name='Concurrency trackable part',
+            description='Part for serial allocation concurrency test',
+            trackable=True,
+        )
+
+        self.order_a = models.TransferOrder.objects.create(reference='TO-CONC-A')
+        self.order_b = models.TransferOrder.objects.create(reference='TO-CONC-B')
+
+        self.line_a = models.TransferOrderLineItem.objects.create(
+            order=self.order_a, part=self.part, quantity=1
+        )
+        self.line_b = models.TransferOrderLineItem.objects.create(
+            order=self.order_b, part=self.part, quantity=1
+        )
+
+        # Only a single physical unit exists for this serial number
+        self.stock_item = StockItem.objects.create(
+            part=self.part, quantity=1, serial='1'
+        )
+
+    def test_concurrent_allocation_does_not_duplicate_serial(self):
+        """Two concurrent requests for the same serial number must not both succeed."""
+        start_barrier = threading.Barrier(2, timeout=5)
+        errors = []
+        results = []
+
+        # Wrap StockItem.lock_quantity() so both threads reach the (real,
+        # database-level) row lock at the same time - one wins the lock and
+        # proceeds, the other blocks until the winner's transaction completes.
+        original_lock_quantity = StockItem.lock_quantity
+
+        def synced_lock_quantity(self_item):
+            start_barrier.wait(timeout=5)
+            return original_lock_quantity(self_item)
+
+        def allocate(line_item):
+            try:
+                serializer = TransferOrderSerialAllocationSerializer(
+                    data={
+                        'line_item': line_item.pk,
+                        'quantity': 1,
+                        'serial_numbers': '1',
+                    },
+                    context={'order': line_item.order},
+                )
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                results.append('ok')
+            except (ValidationError, DRFValidationError):
+                results.append('rejected')
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        thread_a = threading.Thread(target=allocate, args=(self.line_a,))
+        thread_b = threading.Thread(target=allocate, args=(self.line_b,))
+
+        with mock.patch.object(StockItem, 'lock_quantity', synced_lock_quantity):
+            thread_a.start()
+            thread_b.start()
+
+            thread_a.join(timeout=5)
+            thread_b.join(timeout=5)
+
+        self.assertFalse(thread_a.is_alive())
+        self.assertFalse(thread_b.is_alive())
+        self.assertEqual(errors, [])
+
+        # Exactly one request must have been rejected as unavailable
+        self.assertEqual(sorted(results), ['ok', 'rejected'])
+
+        # The serial number must only have been allocated once
+        self.assertEqual(
+            models.TransferOrderAllocation.objects.filter(item=self.stock_item).count(),
+            1,
         )
 
 
