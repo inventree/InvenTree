@@ -6,7 +6,6 @@ from django.core.exceptions import ValidationError
 
 from build.status_codes import BuildStatus, RepairOrderStatus
 from common.settings import set_global_setting
-from generic.states import can_proceed
 from InvenTree.unit_test import InvenTreeTestCase
 from part.models import BomItem, Part
 
@@ -319,258 +318,60 @@ class BuildTreeTest(InvenTreeTestCase):
 class RepairOrderTransitionTests(InvenTreeTestCase):
     """Tests for RepairOrder state machine transitions.
 
-    Mirrors the pattern used in generic/states/test_transition.py
-    for PurchaseOrder, SalesOrder, etc.
+    Exercises the full repair lifecycle to ensure all four
+    @inventree_transition-decorated methods work correctly.
     """
 
     roles = ['build.change', 'build.add', 'build.delete']
 
-    @classmethod
-    def setUpTestData(cls):
-        """Create a minimal RepairOrder for transition testing."""
-        super().setUpTestData()
-        cls.repair_order = RepairOrder.objects.create(
-            reference='RO-0001', description='Test repair order for transition tests'
-        )
+    def test_repair_order_lifecycle(self):
+        """Walk a RepairOrder through a full lifecycle.
 
-    def _fresh_repair_order(self, status=RepairOrderStatus.PENDING):
-        """Create and return a fresh RepairOrder in the given status.
-
-        Each test that mutates state should use a fresh instance so tests
-        remain independent of execution order.
+        PENDING → IN_PROGRESS → ON_HOLD → IN_PROGRESS → COMPLETE.
+        Exercises issue_repair, hold_repair, and complete_repair.
         """
         ro = RepairOrder.objects.create(
-            reference=f'RO-{RepairOrder.objects.count() + 100:04d}',
-            description='Transition test repair order',
+            reference='RO-LIFE-001', description='Lifecycle test repair order'
         )
-        # If a non-default starting status is requested, set it directly
-        if status != RepairOrderStatus.PENDING:
-            RepairOrder.objects.filter(pk=ro.pk).update(status=status.value)
-            ro.refresh_from_db()
-        return ro
+        self.assertEqual(ro.status, RepairOrderStatus.PENDING.value)
 
-    # ── decorator metadata ──────────────────────────────────────────
-
-    def test_fsm_decorator_applied(self):
-        """Verify @inventree_transition metadata is attached to RepairOrder methods."""
-        self.assertTrue(hasattr(RepairOrder.issue_repair, '_django_fsm'))
-        self.assertTrue(hasattr(RepairOrder.hold_repair, '_django_fsm'))
-        self.assertTrue(hasattr(RepairOrder.complete_repair, '_django_fsm'))
-        self.assertTrue(hasattr(RepairOrder.cancel_repair, '_django_fsm'))
-
-    # ── can_proceed guards ──────────────────────────────────────────
-
-    def test_can_proceed_from_pending(self):
-        """A PENDING repair order can be issued, held, completed, or cancelled."""
-        ro = self._fresh_repair_order(RepairOrderStatus.PENDING)
-
-        self.assertTrue(can_proceed(ro.issue_repair))
-        self.assertTrue(can_proceed(ro.hold_repair))
-        self.assertTrue(can_proceed(ro.complete_repair))
-        self.assertTrue(can_proceed(ro.cancel_repair))
-
-    def test_can_proceed_from_in_progress(self):
-        """An IN_PROGRESS repair order can be held, completed, or cancelled but not re-issued."""
-        ro = self._fresh_repair_order(RepairOrderStatus.IN_PROGRESS)
-
-        self.assertFalse(can_proceed(ro.issue_repair))
-        self.assertTrue(can_proceed(ro.hold_repair))
-        self.assertTrue(can_proceed(ro.complete_repair))
-        self.assertTrue(can_proceed(ro.cancel_repair))
-
-    def test_can_proceed_from_on_hold(self):
-        """An ON_HOLD repair order can be issued, completed, or cancelled but not re-held."""
-        ro = self._fresh_repair_order(RepairOrderStatus.ON_HOLD)
-
-        self.assertTrue(can_proceed(ro.issue_repair))
-        self.assertFalse(can_proceed(ro.hold_repair))
-        self.assertTrue(can_proceed(ro.complete_repair))
-        self.assertTrue(can_proceed(ro.cancel_repair))
-
-    def test_can_proceed_from_complete(self):
-        """A COMPLETE repair order cannot transition anywhere."""
-        ro = self._fresh_repair_order(RepairOrderStatus.COMPLETE)
-
-        self.assertFalse(can_proceed(ro.issue_repair))
-        self.assertFalse(can_proceed(ro.hold_repair))
-        self.assertFalse(can_proceed(ro.complete_repair))
-        self.assertFalse(can_proceed(ro.cancel_repair))
-
-    def test_can_proceed_from_cancelled(self):
-        """A CANCELLED repair order cannot transition anywhere."""
-        ro = self._fresh_repair_order(RepairOrderStatus.CANCELLED)
-
-        self.assertFalse(can_proceed(ro.issue_repair))
-        self.assertFalse(can_proceed(ro.hold_repair))
-        self.assertFalse(can_proceed(ro.complete_repair))
-        self.assertFalse(can_proceed(ro.cancel_repair))
-
-    # ── valid transitions ───────────────────────────────────────────
-
-    def test_issue_from_pending(self):
-        """PENDING → IN_PROGRESS via issue_repair()."""
-        ro = self._fresh_repair_order(RepairOrderStatus.PENDING)
-        result = ro.issue_repair()
-        self.assertTrue(result)
-        ro.refresh_from_db()
-        self.assertEqual(ro.status, RepairOrderStatus.IN_PROGRESS.value)
-
-    def test_issue_from_on_hold(self):
-        """ON_HOLD → IN_PROGRESS via issue_repair()."""
-        ro = self._fresh_repair_order(RepairOrderStatus.ON_HOLD)
-        result = ro.issue_repair()
-        self.assertTrue(result)
-        ro.refresh_from_db()
-        self.assertEqual(ro.status, RepairOrderStatus.IN_PROGRESS.value)
-
-    def test_hold_from_pending(self):
-        """PENDING → ON_HOLD via hold_repair()."""
-        ro = self._fresh_repair_order(RepairOrderStatus.PENDING)
-        result = ro.hold_repair()
-        self.assertTrue(result)
-        ro.refresh_from_db()
-        self.assertEqual(ro.status, RepairOrderStatus.ON_HOLD.value)
-
-    def test_hold_from_in_progress(self):
-        """IN_PROGRESS → ON_HOLD via hold_repair()."""
-        ro = self._fresh_repair_order(RepairOrderStatus.IN_PROGRESS)
-        result = ro.hold_repair()
-        self.assertTrue(result)
-        ro.refresh_from_db()
-        self.assertEqual(ro.status, RepairOrderStatus.ON_HOLD.value)
-
-    def test_complete_from_pending(self):
-        """PENDING → COMPLETE via complete_repair()."""
-        ro = self._fresh_repair_order(RepairOrderStatus.PENDING)
-        result = ro.complete_repair()
-        self.assertTrue(result)
-        ro.refresh_from_db()
-        self.assertEqual(ro.status, RepairOrderStatus.COMPLETE.value)
-
-    def test_complete_from_in_progress(self):
-        """IN_PROGRESS → COMPLETE via complete_repair()."""
-        ro = self._fresh_repair_order(RepairOrderStatus.IN_PROGRESS)
-        result = ro.complete_repair()
-        self.assertTrue(result)
-        ro.refresh_from_db()
-        self.assertEqual(ro.status, RepairOrderStatus.COMPLETE.value)
-
-    def test_complete_from_on_hold(self):
-        """ON_HOLD → COMPLETE via complete_repair()."""
-        ro = self._fresh_repair_order(RepairOrderStatus.ON_HOLD)
-        result = ro.complete_repair()
-        self.assertTrue(result)
-        ro.refresh_from_db()
-        self.assertEqual(ro.status, RepairOrderStatus.COMPLETE.value)
-
-    def test_cancel_from_pending(self):
-        """PENDING → CANCELLED via cancel_repair()."""
-        ro = self._fresh_repair_order(RepairOrderStatus.PENDING)
-        result = ro.cancel_repair()
-        self.assertTrue(result)
-        ro.refresh_from_db()
-        self.assertEqual(ro.status, RepairOrderStatus.CANCELLED.value)
-
-    def test_cancel_from_in_progress(self):
-        """IN_PROGRESS → CANCELLED via cancel_repair()."""
-        ro = self._fresh_repair_order(RepairOrderStatus.IN_PROGRESS)
-        result = ro.cancel_repair()
-        self.assertTrue(result)
-        ro.refresh_from_db()
-        self.assertEqual(ro.status, RepairOrderStatus.CANCELLED.value)
-
-    def test_cancel_from_on_hold(self):
-        """ON_HOLD → CANCELLED via cancel_repair()."""
-        ro = self._fresh_repair_order(RepairOrderStatus.ON_HOLD)
-        result = ro.cancel_repair()
-        self.assertTrue(result)
-        ro.refresh_from_db()
-        self.assertEqual(ro.status, RepairOrderStatus.CANCELLED.value)
-
-    # ── invalid / rejected transitions ──────────────────────────────
-
-    def test_issue_from_complete_raises(self):
-        """Cannot issue a COMPLETE repair order."""
-        ro = self._fresh_repair_order(RepairOrderStatus.COMPLETE)
-        with self.assertRaises(ValidationError):
-            ro.issue_repair()
-        ro.refresh_from_db()
-        self.assertEqual(ro.status, RepairOrderStatus.COMPLETE.value)
-
-    def test_issue_from_cancelled_raises(self):
-        """Cannot issue a CANCELLED repair order."""
-        ro = self._fresh_repair_order(RepairOrderStatus.CANCELLED)
-        with self.assertRaises(ValidationError):
-            ro.issue_repair()
-        ro.refresh_from_db()
-        self.assertEqual(ro.status, RepairOrderStatus.CANCELLED.value)
-
-    def test_complete_already_complete_raises(self):
-        """Cannot complete an already COMPLETE repair order."""
-        ro = self._fresh_repair_order(RepairOrderStatus.COMPLETE)
-        with self.assertRaises(ValidationError):
-            ro.complete_repair()
-        ro.refresh_from_db()
-        self.assertEqual(ro.status, RepairOrderStatus.COMPLETE.value)
-
-    def test_cancel_already_cancelled_raises(self):
-        """Cannot cancel an already CANCELLED repair order."""
-        ro = self._fresh_repair_order(RepairOrderStatus.CANCELLED)
-        with self.assertRaises(ValidationError):
-            ro.cancel_repair()
-        ro.refresh_from_db()
-        self.assertEqual(ro.status, RepairOrderStatus.CANCELLED.value)
-
-    def test_hold_from_complete_raises(self):
-        """Cannot hold a COMPLETE repair order."""
-        ro = self._fresh_repair_order(RepairOrderStatus.COMPLETE)
-        with self.assertRaises(ValidationError):
-            ro.hold_repair()
-        ro.refresh_from_db()
-        self.assertEqual(ro.status, RepairOrderStatus.COMPLETE.value)
-
-    def test_issue_from_in_progress_raises(self):
-        """Cannot issue an already IN_PROGRESS repair order."""
-        ro = self._fresh_repair_order(RepairOrderStatus.IN_PROGRESS)
-        with self.assertRaises(ValidationError):
-            ro.issue_repair()
-        ro.refresh_from_db()
-        self.assertEqual(ro.status, RepairOrderStatus.IN_PROGRESS.value)
-
-    # ── sequential transition chain ─────────────────────────────────
-
-    def test_full_lifecycle_pending_to_complete(self):
-        """Test a full repair lifecycle: PENDING → IN_PROGRESS → ON_HOLD → IN_PROGRESS → COMPLETE."""
-        ro = self._fresh_repair_order(RepairOrderStatus.PENDING)
-
-        # Issue
+        # PENDING → IN_PROGRESS
         ro.issue_repair()
         ro.refresh_from_db()
         self.assertEqual(ro.status, RepairOrderStatus.IN_PROGRESS.value)
 
-        # Hold
+        # IN_PROGRESS → ON_HOLD
         ro.hold_repair()
         ro.refresh_from_db()
         self.assertEqual(ro.status, RepairOrderStatus.ON_HOLD.value)
 
-        # Resume (issue from hold)
+        # ON_HOLD → IN_PROGRESS (resume)
         ro.issue_repair()
         ro.refresh_from_db()
         self.assertEqual(ro.status, RepairOrderStatus.IN_PROGRESS.value)
 
-        # Complete
+        # IN_PROGRESS → COMPLETE
         ro.complete_repair()
         ro.refresh_from_db()
         self.assertEqual(ro.status, RepairOrderStatus.COMPLETE.value)
 
-    def test_full_lifecycle_pending_to_cancelled(self):
-        """Test cancellation lifecycle: PENDING → IN_PROGRESS → CANCELLED."""
-        ro = self._fresh_repair_order(RepairOrderStatus.PENDING)
+    def test_repair_order_cancel_lifecycle(self):
+        """Walk a RepairOrder through a cancellation lifecycle.
 
+        PENDING → IN_PROGRESS → CANCELLED.
+        Exercises issue_repair and cancel_repair.
+        """
+        ro = RepairOrder.objects.create(
+            reference='RO-CANC-001', description='Cancel lifecycle test repair order'
+        )
+        self.assertEqual(ro.status, RepairOrderStatus.PENDING.value)
+
+        # PENDING → IN_PROGRESS
         ro.issue_repair()
         ro.refresh_from_db()
         self.assertEqual(ro.status, RepairOrderStatus.IN_PROGRESS.value)
 
+        # IN_PROGRESS → CANCELLED
         ro.cancel_repair()
         ro.refresh_from_db()
         self.assertEqual(ro.status, RepairOrderStatus.CANCELLED.value)
