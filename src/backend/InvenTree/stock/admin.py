@@ -81,6 +81,8 @@ class StockTrackingAdmin(admin.ModelAdmin):
 
     list_display = ('item', 'date', 'label')
 
+    search_fields = ['item__part__name', 'item__serial', 'notes']
+
     autocomplete_fields = ['item']
 
     def has_add_permission(self, request):
@@ -101,5 +103,13 @@ class StockItemTestResultAdmin(admin.ModelAdmin):
     """Admin class for StockItemTestResult."""
 
     list_display = ('stock_item', 'test_name', 'result', 'value')
+
+    search_fields = [
+        'stock_item__part__name',
+        'stock_item__serial',
+        'template__test_name',
+        'value',
+        'notes',
+    ]
 
     autocomplete_fields = ['stock_item']

@@ -10,7 +10,7 @@ class MachineSettingInline(admin.TabularInline):
 
     model = models.MachineSetting
 
-    read_only_fields = ['key', 'config_type']
+    readonly_fields = ['key', 'config_type']
 
     def has_add_permission(self, request, obj):
         """The machine settings should not be meddled with manually."""
