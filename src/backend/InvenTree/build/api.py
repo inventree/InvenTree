@@ -1197,9 +1197,24 @@ class NCRContextMixin:
         try:
             ctx['ncr'] = self.get_ncr()
         except NotFound:
+            # Swallowed here (e.g. schema generation may call this without a
+            # resolvable pk) - create() below is what actually enforces a 404
+            # for a real request against a non-existent NCR.
             pass
 
         return ctx
+
+    def create(self, request, *args, **kwargs):
+        """Ensure the target NCR actually exists before attempting the transition.
+
+        Without this, a POST against a non-existent pk would fall through to the
+        transition serializer's save(), which unconditionally reads
+        self.context['ncr'] - raising an unhandled KeyError (HTTP 500) instead of
+        the intended 404.
+        """
+        self.get_ncr()
+
+        return super().create(request, *args, **kwargs)
 
 
 class NCRInvestigate(NCRContextMixin, CreateAPI):
