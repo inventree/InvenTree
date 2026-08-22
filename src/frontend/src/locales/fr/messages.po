@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-15 23:48\n"
+"PO-Revision-Date: 2026-08-21 05:09\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -56,12 +56,12 @@ msgstr "Dupliquer"
 
 #: lib/components/RowActions.tsx:56
 #: src/components/items/ActionDropdown.tsx:248
-#: src/components/nav/PageDetail.tsx:60
+#: src/components/nav/PageDetail.tsx:63
 msgid "Edit"
 msgstr "Éditer"
 
 #: lib/components/RowActions.tsx:66
-#: src/components/forms/ApiForm.tsx:835
+#: src/components/forms/ApiForm.tsx:852
 #: src/components/items/ActionDropdown.tsx:260
 #: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:174
@@ -105,7 +105,7 @@ msgstr "Actions"
 #: src/components/nav/Header.tsx:191
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
-#: src/pages/Index/Settings/UserSettings.tsx:76
+#: src/pages/Index/Settings/UserSettings.tsx:77
 #: src/pages/part/PartDetail.tsx:758
 msgid "Search"
 msgstr "Rechercher"
@@ -835,7 +835,7 @@ msgstr "Le Code-barre ne correspond pas au type de modèle attendu"
 #: src/components/barcodes/BarcodeScanDialog.tsx:161
 #: src/components/editors/NotesEditor.tsx:91
 #: src/components/editors/NotesEditor.tsx:125
-#: src/components/forms/ApiForm.tsx:533
+#: src/components/forms/ApiForm.tsx:550
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
@@ -1560,7 +1560,7 @@ msgid "Clear"
 msgstr "Effacer"
 
 #: src/components/details/DetailsImage.tsx:305
-#: src/components/forms/ApiForm.tsx:777
+#: src/components/forms/ApiForm.tsx:794
 #: src/contexts/ThemeContext.tsx:56
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:151
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:570
@@ -1829,8 +1829,8 @@ msgstr "Erreur serveur"
 msgid "A server error occurred"
 msgstr "Une erreur serveur s'est produite"
 
-#: src/components/forms/ApiForm.tsx:109
-#: src/components/forms/ApiForm.tsx:696
+#: src/components/forms/ApiForm.tsx:112
+#: src/components/forms/ApiForm.tsx:713
 msgid "Form Error"
 msgstr "Erreur de formulaire"
 
@@ -1838,15 +1838,15 @@ msgstr "Erreur de formulaire"
 #~ msgid "Form Errors Exist"
 #~ msgstr "Form Errors Exist"
 
-#: src/components/forms/ApiForm.tsx:657
+#: src/components/forms/ApiForm.tsx:674
 msgid "Submit form"
 msgstr "Envoyer le formulaire"
 
-#: src/components/forms/ApiForm.tsx:706
+#: src/components/forms/ApiForm.tsx:723
 msgid "Errors exist for one or more form fields"
 msgstr "Il existe des erreurs pour un ou plusieurs champs du formulaire"
 
-#: src/components/forms/ApiForm.tsx:815
+#: src/components/forms/ApiForm.tsx:832
 #: src/hooks/UseForm.tsx:143
 #: src/tables/plugin/PluginListTable.tsx:217
 msgid "Update"
@@ -2233,7 +2233,7 @@ msgstr "Ajouter une nouvelle ligne"
 #: src/components/forms/fields/TreeField.tsx:328
 #: src/components/render/Instance.tsx:145
 #: src/components/render/ModelHoverCard.tsx:73
-#: src/components/tables/InvenTreeTable.tsx:810
+#: src/components/tables/InvenTreeTable.tsx:900
 msgid "View details"
 msgstr "Vue des détails"
 
@@ -2656,7 +2656,7 @@ msgid "No items"
 msgstr "Aucun élément"
 
 #: src/components/items/TransferList.tsx:161
-#: src/components/render/Stock.tsx:97
+#: src/components/render/Stock.tsx:98
 #: src/components/tables/ColumnRenderers.tsx:265
 #: src/components/tables/PartStockCell.tsx:85
 #: src/pages/part/PartDetail.tsx:575
@@ -2915,6 +2915,24 @@ msgstr "Il y a des migrations de base de données en attente."
 msgid "Learn more about {code}"
 msgstr "En savoir plus sur {code}"
 
+#: src/components/nav/DetailNavigation.tsx:34
+msgid "Next item"
+msgstr ""
+
+#: src/components/nav/DetailNavigation.tsx:35
+msgid "Previous item"
+msgstr ""
+
+#: src/components/nav/DetailNavigation.tsx:36
+msgid "Remove navigation filters from current view"
+msgstr ""
+
+#. placeholder {0}: navigation.position.current
+#. placeholder {1}: navigation.position.total
+#: src/components/nav/DetailNavigation.tsx:54
+msgid "{0} of {1}"
+msgstr ""
+
 #: src/components/nav/Header.tsx:63
 #: src/components/nav/Header.tsx:70
 msgid "Open search"
@@ -2924,7 +2942,7 @@ msgstr ""
 #: src/components/nav/NavigationDrawer.tsx:134
 #: src/components/nav/NotificationDrawer.tsx:181
 #: src/pages/Index/Settings/SystemSettings.tsx:146
-#: src/pages/Index/Settings/UserSettings.tsx:109
+#: src/pages/Index/Settings/UserSettings.tsx:110
 #: src/pages/Notifications.tsx:45
 #: src/pages/Notifications.tsx:130
 msgid "Notifications"
@@ -2971,8 +2989,8 @@ msgstr "Paramètres"
 #: src/components/nav/NavigationDrawer.tsx:140
 #: src/components/nav/SettingsHeader.tsx:40
 #: src/defaults/actions.tsx:106
-#: src/pages/Index/Settings/UserSettings.tsx:146
-#: src/pages/Index/Settings/UserSettings.tsx:150
+#: src/pages/Index/Settings/UserSettings.tsx:147
+#: src/pages/Index/Settings/UserSettings.tsx:151
 msgid "User Settings"
 msgstr "Paramètres de l'utilisateur"
 
@@ -3118,7 +3136,7 @@ msgstr "Impossible de charger les notifications."
 #~ msgid "Edit {title}"
 #~ msgstr "Edit {title}"
 
-#: src/components/nav/PageDetail.tsx:263
+#: src/components/nav/PageDetail.tsx:265
 msgid "Primary Action"
 msgstr ""
 
@@ -3214,24 +3232,24 @@ msgstr "Fichiers joints"
 msgid "Notes"
 msgstr "Notes"
 
-#: src/components/panels/PanelGroup.tsx:278
+#: src/components/panels/PanelGroup.tsx:281
 msgid "Plugin Provided"
 msgstr "Plugin fourni"
 
-#: src/components/panels/PanelGroup.tsx:299
+#: src/components/panels/PanelGroup.tsx:302
 msgid "You have unsaved changes, are you sure you want to navigate away from this panel?"
 msgstr "Vous avez des modifications non enregistrées, êtes-vous sûr de vouloir quitter ce panneau ?"
 
 #. placeholder {0}: panel.name
-#: src/components/panels/PanelGroup.tsx:349
+#: src/components/panels/PanelGroup.tsx:352
 msgid "Navigate to panel {0}"
 msgstr ""
 
-#: src/components/panels/PanelGroup.tsx:409
+#: src/components/panels/PanelGroup.tsx:412
 msgid "Collapse panels"
 msgstr "Replier les panneaux"
 
-#: src/components/panels/PanelGroup.tsx:409
+#: src/components/panels/PanelGroup.tsx:412
 msgid "Expand panels"
 msgstr "Déplier les panneaux"
 
@@ -3342,7 +3360,7 @@ msgstr "Paquet"
 #: src/components/plugins/PluginDrawer.tsx:141
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:67
 #: src/pages/Index/Settings/PluginSettingsGroup.tsx:119
-#: src/pages/Index/Settings/UserSettings.tsx:131
+#: src/pages/Index/Settings/UserSettings.tsx:132
 msgid "Plugin Settings"
 msgstr "Paramètres du plug-in"
 
@@ -3513,9 +3531,9 @@ msgstr "Détails"
 msgid "Category"
 msgstr "Catégorie"
 
-#: src/components/render/Stock.tsx:36
-#: src/components/render/Stock.tsx:109
-#: src/components/render/Stock.tsx:127
+#: src/components/render/Stock.tsx:37
+#: src/components/render/Stock.tsx:112
+#: src/components/render/Stock.tsx:137
 #: src/components/tables/ColumnRenderers.tsx:385
 #: src/components/tables/ColumnRenderers.tsx:394
 #: src/components/tables/Filter.tsx:507
@@ -3539,7 +3557,7 @@ msgstr "Catégorie"
 msgid "Location"
 msgstr "Emplacement"
 
-#: src/components/render/Stock.tsx:94
+#: src/components/render/Stock.tsx:95
 #: src/forms/StockForms.tsx:680
 #: src/pages/stock/StockDetail.tsx:657
 #: src/pages/stock/StockDetailsPanel.tsx:135
@@ -3549,7 +3567,7 @@ msgstr "Emplacement"
 msgid "Serial Number"
 msgstr "Numéro de série"
 
-#: src/components/render/Stock.tsx:99
+#: src/components/render/Stock.tsx:100
 #: src/components/wizards/OrderPartsWizard.tsx:389
 #: src/forms/BomForms.tsx:42
 #: src/forms/BuildForms.tsx:283
@@ -3583,7 +3601,7 @@ msgstr "Numéro de série"
 msgid "Quantity"
 msgstr "Quantité"
 
-#: src/components/render/Stock.tsx:112
+#: src/components/render/Stock.tsx:115
 #: src/forms/BuildForms.tsx:384
 #: src/forms/BuildForms.tsx:467
 #: src/forms/BuildForms.tsx:542
@@ -4374,24 +4392,24 @@ msgstr ""
 #~ msgid "Select from the available filters"
 #~ msgstr "Select from the available filters"
 
-#: src/components/tables/InvenTreeTable.tsx:53
-#: src/components/tables/InvenTreeTable.tsx:585
+#: src/components/tables/InvenTreeTable.tsx:59
+#: src/components/tables/InvenTreeTable.tsx:652
 msgid "No records found"
 msgstr "Pas d'enregistrement trouvé"
 
-#: src/components/tables/InvenTreeTable.tsx:167
+#: src/components/tables/InvenTreeTable.tsx:187
 msgid "Error loading table options"
 msgstr "Impossible de charger la table des options"
 
-#: src/components/tables/InvenTreeTable.tsx:630
+#: src/components/tables/InvenTreeTable.tsx:697
 msgid "Server returned incorrect data type"
 msgstr "Le serveur à retourner un type de donnée incorrect"
 
-#: src/components/tables/InvenTreeTable.tsx:663
+#: src/components/tables/InvenTreeTable.tsx:730
 msgid "Error loading table data"
 msgstr "Impossible de charger le tableau de données"
 
-#: src/components/tables/InvenTreeTable.tsx:813
+#: src/components/tables/InvenTreeTable.tsx:903
 msgid "View {model}"
 msgstr ""
 
@@ -7906,7 +7924,7 @@ msgstr "Gestion des données"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:296
 #: src/pages/Index/Settings/SystemSettings.tsx:194
-#: src/pages/Index/Settings/UserSettings.tsx:121
+#: src/pages/Index/Settings/UserSettings.tsx:122
 msgid "Reporting"
 msgstr "Rapports"
 
@@ -8148,7 +8166,7 @@ msgstr ""
 #~ msgstr "Exchange Rates"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:152
-#: src/pages/Index/Settings/UserSettings.tsx:115
+#: src/pages/Index/Settings/UserSettings.tsx:116
 msgid "The settings below are specific to each available notification method"
 msgstr "Les paramètres ci-dessous sont spécifiques à chaque méthode de notification disponible"
 
