@@ -963,12 +963,12 @@ class Build(
             'build_line__bom_item__sub_part',
         )
 
-        # Record pooled manufacturing cost across every completed output of this
+        # Record pooled material cost across every completed output of this
         # build, from these untracked (order-level) allocations - must run before
         # they are consumed/deleted below
         import build.pricing
 
-        build.pricing.record_pooled_manufacturing_cost(self, items, user)
+        build.pricing.record_pooled_material_cost(self, items, user)
 
         self.complete_allocations(build_items=items, user=user)
 
@@ -1488,11 +1488,11 @@ class Build(
             'build_line__bom_item__sub_part',
         )
 
-        # Record manufacturing cost against this output, from its own tracked
+        # Record material cost against this output, from its own tracked
         # allocations - must run before those allocations are consumed/deleted below
         import build.pricing
 
-        build.pricing.record_output_manufacturing_cost(output, allocated_items, user)
+        build.pricing.record_output_material_cost(output, allocated_items, user)
 
         self.complete_allocations(build_items=allocated_items, user=user)
 

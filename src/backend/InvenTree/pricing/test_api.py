@@ -280,7 +280,15 @@ class StockItemCostEntryStatusTest(PricingAPITestCase):
 
         values = response.data['values']
 
-        for name in ['PURCHASE', 'LANDED', 'MANUFACTURING', 'MANUAL', 'SYSTEM']:
+        for name in [
+            'PURCHASE',
+            'LANDED',
+            'MATERIAL',
+            'MATERIAL_ESTIMATED',
+            'MANUFACTURING',
+            'MANUAL',
+            'SYSTEM',
+        ]:
             self.assertIn(name, values)
 
 

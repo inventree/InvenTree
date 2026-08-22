@@ -1,16 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 534
+INVENTREE_API_VERSION = 535
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v535 -> 2026-08-22 : https://github.com/inventree/InvenTree/pull/12524
+    - Adds "MATERIAL" and "MATERIAL (Estimated)" StockItemCostEntry cost types, automatically recorded against build order outputs for the cost of consumed BOM components
+    - Adds a reserved (not yet populated) "MANUFACTURING" StockItemCostEntry cost type, for a future manufacturing process cost (labor, overhead)
 
 v534 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/12524
     - Adds standalone API endpoints for StockItem pricing operations
     - Adds new "pricing" permissions role
     - Removes the "purchase_price" / "purchase_price_currency" fields from the StockItem model
-    - "purchase_price" / "purchase_price_currency" remain as write-only fields on the StockItem serializer, recorded as a StockItemCostEntry rather than a model field
     - Renames the StockItem "has_purchase_price" filter to "has_unit_cost"
     - Renames the StockItem "purchase_price" ordering key to "unit_cost"
 

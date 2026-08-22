@@ -24,12 +24,14 @@ Only one cost entry may exist per *(stock item, cost type)* pair - adding a new 
 | --- | --- |
 | Purchase | Cost taken directly from a purchase (e.g. a received purchase order line item) |
 | Landed | Purchase cost plus additional landed costs (freight, duty, handling, etc) |
-| Manufacturing | Cost calculated from a build order (BOM cost plus labor / overhead) |
+| Material | Cost of BOM components consumed by a build order, from allocated stock which itself has a recorded cost |
+| Material (Estimated) | Cost of BOM components consumed by a build order, from allocated stock with no recorded cost - estimated from the component part's price range instead |
+| Manufacturing | Reserved for manufacturing *process* cost (e.g. labor, overhead) added during a build - distinct from Material, which is the cost of the components consumed |
 | Manual | Cost manually entered (or overridden) by a user |
 | System | Cost calculated automatically by the pricing system (e.g. a pricing plugin) |
 
-!!! warning "Manufacturing Cost"
-    Automatic recording of a *Manufacturing* cost entry when a build order is completed (amortizing allocated component cost across the resulting build outputs) is planned, but not yet implemented - see [Known Limitations](#known-limitations) below.
+!!! warning "Manufacturing Process Cost"
+    *Manufacturing* process cost (labor, overhead) is not yet calculated anywhere - the cost type exists, but nothing populates it yet. Only *Material* cost (see [How Cost Entries are Created](#how-cost-entries-are-created) below) is currently recorded automatically from build orders - see [Known Limitations](#known-limitations) below.
 
 ### Cost Summary
 
@@ -81,11 +83,13 @@ Cost entries can be created (or updated) in a number of ways:
 - **Stock disassembly**: [disassembling](./disassemble.md#automatic-cost-allocation) a stock item automatically apportions its unit cost across the generated component stock items, recorded as a *Purchase* cost entry against each
 - **Stock merge**: [merging](./adjust.md#merge-stock) two or more stock items automatically calculates a new *Purchase* cost entry for the merged item, as a quantity-weighted average of the cost of the merged items
 - **Direct stock item creation / update**: the [Stock API](../api/index.md) accepts a `purchase_price` (and `purchase_price_currency`) value when creating or updating a stock item, which is recorded as a *Purchase* cost entry - this is a write-only convenience field, rather than a stored property of the stock item itself
+- **Build order completion**: completing a [build order](../manufacturing/build.md) automatically records *Material* (or *Material (Estimated)*, if the allocated stock has no recorded cost) cost entries against each completed build output, based on the cost of the BOM components allocated to it - both stock directly allocated to a specific output, and stock allocated to the build order as a whole (apportioned evenly, per unit, across every completed output)
 
 ### Known Limitations
 
 - **No cost history**: only the most recent value for each *(stock item, cost type)* pair is retained - there is no historical ledger of cost changes over time for a given stock item
-- **Build order completion**: cost entries are not yet automatically recorded when a build order is completed - allocated component cost is not yet amortized across build outputs as a *Manufacturing* cost entry (see [Cost Types](#cost-types) above). This is planned for a future release.
+- **Manufacturing process cost**: only the *cost of components* consumed by a build order is recorded automatically (as *Material* / *Material (Estimated)*) - manufacturing *process* cost (labor, overhead) is not yet calculated anywhere, even though the *Manufacturing* cost type exists for this purpose. This is planned for a future release.
+- **Consumable and virtual BOM lines**: build order material cost does not yet account for consumable or virtual BOM lines - see the "Manufacturing Costs" section of `dev/todo/pricing.md` for the follow-up plan
 - **CSV import**: bulk cost data cannot currently be imported via the stock item CSV import process
 
 ### Related Documentation

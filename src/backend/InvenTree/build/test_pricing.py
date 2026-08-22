@@ -1,4 +1,4 @@
-"""Unit tests for build order manufacturing cost calculation (see build/pricing.py).
+"""Unit tests for build order material cost calculation (see build/pricing.py).
 
 Note:
     Consumable and virtual BOM lines are not yet costed here - see the
@@ -17,8 +17,8 @@ from pricing.status_codes import CostType
 from .test_build import BuildTestBase
 
 
-class BuildManufacturingCostTest(BuildTestBase):
-    """Tests for automatic manufacturing cost allocation on build order completion.
+class BuildMaterialCostTest(BuildTestBase):
+    """Tests for automatic material cost allocation on build order completion.
 
     Reuses the BOM fixture from BuildTestBase:
         - 5 x sub_part_1 (non-trackable) per assembly -> untracked allocation
@@ -74,7 +74,7 @@ class BuildManufacturingCostTest(BuildTestBase):
         return part.pricing
 
     def test_tracked_measured_cost(self):
-        """A tracked allocation with a recorded cost produces a measured MANUFACTURING entry."""
+        """A tracked allocation with a recorded cost produces a measured MATERIAL entry."""
         StockItemCostEntry.objects.set_cost(
             self.stock_3_1,
             CostType.PURCHASE.value,
@@ -87,7 +87,7 @@ class BuildManufacturingCostTest(BuildTestBase):
         self.build.complete_build_output(self.output_1, self.user)
 
         entry = StockItemCostEntry.objects.get(
-            stock_item=self.output_1, cost_type=CostType.MANUFACTURING.value
+            stock_item=self.output_1, cost_type=CostType.MATERIAL.value
         )
 
         # (6 units * cost) / 3 output units
@@ -97,8 +97,7 @@ class BuildManufacturingCostTest(BuildTestBase):
         # No estimated entry, since the allocated stock had a recorded cost
         self.assertFalse(
             StockItemCostEntry.objects.filter(
-                stock_item=self.output_1,
-                cost_type=CostType.MANUFACTURING_ESTIMATED.value,
+                stock_item=self.output_1, cost_type=CostType.MATERIAL_ESTIMATED.value
             ).exists()
         )
 
@@ -110,7 +109,7 @@ class BuildManufacturingCostTest(BuildTestBase):
         self.build.complete_build_output(self.output_1, self.user)
 
         entry = StockItemCostEntry.objects.get(
-            stock_item=self.output_1, cost_type=CostType.MANUFACTURING_ESTIMATED.value
+            stock_item=self.output_1, cost_type=CostType.MATERIAL_ESTIMATED.value
         )
 
         self.assertEqual(entry.min_cost, Money(2, 'USD'))  # (6 * 1) / 3
@@ -118,7 +117,7 @@ class BuildManufacturingCostTest(BuildTestBase):
 
         self.assertFalse(
             StockItemCostEntry.objects.filter(
-                stock_item=self.output_1, cost_type=CostType.MANUFACTURING.value
+                stock_item=self.output_1, cost_type=CostType.MATERIAL.value
             ).exists()
         )
 
@@ -151,7 +150,7 @@ class BuildManufacturingCostTest(BuildTestBase):
         # (50 units * 1 USD) / 10 total completed units = 5 USD/unit, applied to every output
         for output in (self.output_1, self.output_2):
             entry = StockItemCostEntry.objects.get(
-                stock_item=output, cost_type=CostType.MANUFACTURING.value
+                stock_item=output, cost_type=CostType.MATERIAL.value
             )
             self.assertEqual(entry.min_cost, Money(5, 'USD'))
             self.assertEqual(entry.max_cost, Money(5, 'USD'))
@@ -185,7 +184,7 @@ class BuildManufacturingCostTest(BuildTestBase):
 
         for output in (self.output_1, self.output_2):
             entry = StockItemCostEntry.objects.get(
-                stock_item=output, cost_type=CostType.MANUFACTURING.value
+                stock_item=output, cost_type=CostType.MATERIAL.value
             )
             # 4 (tracked) + 5 (pooled) = 9 USD/unit
             self.assertEqual(entry.min_cost, Money(9, 'USD'))
@@ -206,7 +205,7 @@ class BuildManufacturingCostTest(BuildTestBase):
         self.build.complete_build_output(self.output_1, self.user)
 
         entry = StockItemCostEntry.objects.get(
-            stock_item=self.output_1, cost_type=CostType.MANUFACTURING.value
+            stock_item=self.output_1, cost_type=CostType.MATERIAL.value
         )
 
         self.assertEqual(str(entry.min_cost_currency), 'USD')

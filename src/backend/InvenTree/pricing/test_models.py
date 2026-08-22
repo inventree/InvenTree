@@ -215,7 +215,7 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
         """add_cost() should create a new entry if none exists, exactly like set_cost()."""
         entry = StockItemCostEntry.objects.add_cost(
             self.stock_item,
-            CostType.MANUFACTURING.value,
+            CostType.MATERIAL.value,
             min_cost=Money(1, 'USD'),
             max_cost=Money(2, 'USD'),
         )
@@ -228,14 +228,14 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
         """add_cost() should add to (not replace) an existing entry's value."""
         StockItemCostEntry.objects.set_cost(
             self.stock_item,
-            CostType.MANUFACTURING.value,
+            CostType.MATERIAL.value,
             min_cost=Money(1, 'USD'),
             max_cost=Money(2, 'USD'),
         )
 
         entry = StockItemCostEntry.objects.add_cost(
             self.stock_item,
-            CostType.MANUFACTURING.value,
+            CostType.MATERIAL.value,
             min_cost=Money(5, 'USD'),
             max_cost=Money(5, 'USD'),
         )
@@ -253,13 +253,13 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
         """add_cost() should leave an existing value untouched if the added delta is None."""
         StockItemCostEntry.objects.set_cost(
             self.stock_item,
-            CostType.MANUFACTURING.value,
+            CostType.MATERIAL.value,
             min_cost=Money(1, 'USD'),
             max_cost=Money(2, 'USD'),
         )
 
         entry = StockItemCostEntry.objects.add_cost(
-            self.stock_item, CostType.MANUFACTURING.value, min_cost=Money(5, 'USD')
+            self.stock_item, CostType.MATERIAL.value, min_cost=Money(5, 'USD')
         )
 
         self.assertEqual(entry.min_cost, Money(6, 'USD'))
@@ -271,14 +271,14 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
 
         StockItemCostEntry.objects.set_cost(
             self.stock_item,
-            CostType.MANUFACTURING.value,
+            CostType.MATERIAL.value,
             min_cost=Money(1, 'USD'),
             max_cost=Money(1, 'USD'),
         )
 
         entry = StockItemCostEntry.objects.add_cost(
             self.stock_item,
-            CostType.MANUFACTURING.value,
+            CostType.MATERIAL.value,
             min_cost=Money(1.5, 'AUD'),  # 1.5 AUD == 1 USD
             max_cost=Money(1.5, 'AUD'),
         )
@@ -292,14 +292,14 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
         # Note: generate_exchange_rates() is deliberately not called here
         StockItemCostEntry.objects.set_cost(
             self.stock_item,
-            CostType.MANUFACTURING.value,
+            CostType.MATERIAL.value,
             min_cost=Money(1, 'USD'),
             max_cost=Money(1, 'USD'),
         )
 
         entry = StockItemCostEntry.objects.add_cost(
             self.stock_item,
-            CostType.MANUFACTURING.value,
+            CostType.MATERIAL.value,
             min_cost=Money(2, 'AUD'),
             max_cost=Money(2, 'AUD'),
         )

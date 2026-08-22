@@ -1,6 +1,11 @@
-"""Manufacturing cost calculation helpers for the 'build' app.
+"""Material cost calculation helpers for the 'build' app.
 
 See dev/todo/pricing.md ("Manufacturing Costs") for the design this implements.
+
+Note:
+    This only accounts for the cost of BOM components consumed by a build
+    (CostType.MATERIAL / MATERIAL_ESTIMATED) - manufacturing *process* cost
+    (labor, overhead - CostType.MANUFACTURING) is not yet calculated anywhere.
 
 Note:
     Consumable and virtual BOM lines are not yet accounted for here - see the
@@ -14,8 +19,8 @@ from djmoney.money import Money
 from common.currency import currency_code_default
 
 
-def _accumulate_manufacturing_cost(build_items):
-    """Sum measured/estimated manufacturing cost contributions from a list of BuildItem allocations.
+def _accumulate_material_cost(build_items):
+    """Sum measured/estimated material cost contributions from a list of BuildItem allocations.
 
     For each allocation, the consumed StockItem's own recorded cost is used if
     available ("measured"); otherwise the underlying component part's cached
@@ -114,13 +119,13 @@ def _accumulate_manufacturing_cost(build_items):
     )
 
 
-def record_output_manufacturing_cost(output, allocated_items, user=None):
-    """Record manufacturing cost against a build output, from its own tracked allocations.
+def record_output_material_cost(output, allocated_items, user=None):
+    """Record material cost against a build output, from its own tracked allocations.
 
     Called from Build.complete_build_output(), before the provided (tracked,
     per-output) BuildItem allocations are consumed and deleted. Only accounts
     for stock directly allocated to this specific output - see
-    `record_pooled_manufacturing_cost` for untracked (order-level) allocations.
+    `record_pooled_material_cost` for untracked (order-level) allocations.
 
     Arguments:
         output: The StockItem (build output) being completed
@@ -137,13 +142,13 @@ def record_output_manufacturing_cost(output, allocated_items, user=None):
         return
 
     measured_min, measured_max, estimated_min, estimated_max = (
-        _accumulate_manufacturing_cost(allocated_items)
+        _accumulate_material_cost(allocated_items)
     )
 
     if measured_min is not None or measured_max is not None:
         pricing.models.StockItemCostEntry.objects.set_cost(
             output,
-            CostType.MANUFACTURING.value,
+            CostType.MATERIAL.value,
             min_cost=measured_min / output.quantity if measured_min else None,
             max_cost=measured_max / output.quantity if measured_max else None,
             user=user,
@@ -152,20 +157,20 @@ def record_output_manufacturing_cost(output, allocated_items, user=None):
     if estimated_min is not None or estimated_max is not None:
         pricing.models.StockItemCostEntry.objects.set_cost(
             output,
-            CostType.MANUFACTURING_ESTIMATED.value,
+            CostType.MATERIAL_ESTIMATED.value,
             min_cost=estimated_min / output.quantity if estimated_min else None,
             max_cost=estimated_max / output.quantity if estimated_max else None,
             user=user,
         )
 
 
-def record_pooled_manufacturing_cost(build, untracked_items, user=None):
-    """Amortize pooled (untracked) manufacturing cost evenly across every completed output of a build.
+def record_pooled_material_cost(build, untracked_items, user=None):
+    """Amortize pooled (untracked) material cost evenly across every completed output of a build.
 
     Called from Build.complete_outstanding_allocations(), before the provided
     (untracked, order-level) BuildItem allocations are consumed and deleted.
     This is always an ADDITION to any cost already recorded per-output by
-    `record_output_manufacturing_cost` for that same output's own tracked
+    `record_output_material_cost` for that same output's own tracked
     allocations, not a replacement.
 
     Splitting a pooled total across outputs by quantity share, then dividing
@@ -191,14 +196,14 @@ def record_pooled_manufacturing_cost(build, untracked_items, user=None):
         return
 
     measured_min, measured_max, estimated_min, estimated_max = (
-        _accumulate_manufacturing_cost(untracked_items)
+        _accumulate_material_cost(untracked_items)
     )
 
     for output in outputs:
         if measured_min is not None or measured_max is not None:
             pricing.models.StockItemCostEntry.objects.add_cost(
                 output,
-                CostType.MANUFACTURING.value,
+                CostType.MATERIAL.value,
                 min_cost=measured_min / total_quantity if measured_min else None,
                 max_cost=measured_max / total_quantity if measured_max else None,
                 user=user,
@@ -207,7 +212,7 @@ def record_pooled_manufacturing_cost(build, untracked_items, user=None):
         if estimated_min is not None or estimated_max is not None:
             pricing.models.StockItemCostEntry.objects.add_cost(
                 output,
-                CostType.MANUFACTURING_ESTIMATED.value,
+                CostType.MATERIAL_ESTIMATED.value,
                 min_cost=estimated_min / total_quantity if estimated_min else None,
                 max_cost=estimated_max / total_quantity if estimated_max else None,
                 user=user,

@@ -7,6 +7,7 @@ import djmoney.models.validators
 from django.conf import settings
 from django.db import migrations, models
 
+from pricing.status_codes import CostType
 
 class Migration(migrations.Migration):
 
@@ -34,14 +35,7 @@ class Migration(migrations.Migration):
                 (
                     "cost_type",
                     models.PositiveIntegerField(
-                        choices=[
-                            (10, "Purchase"),
-                            (20, "Landed"),
-                            (30, "Manufacturing"),
-                            (35, "Manufacturing (Estimated)"),
-                            (40, "Manual"),
-                            (50, "System"),
-                        ],
+                        choices=CostType.items(),
                         default=10,
                         help_text="Source of this cost entry",
                         verbose_name="Cost Type",
