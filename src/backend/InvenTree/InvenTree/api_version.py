@@ -6,16 +6,15 @@ INVENTREE_API_VERSION = 535
 
 INVENTREE_API_TEXT = """
 
-v535 -> 2026-08-22 : https://github.com/inventree/InvenTree/pull/12524
-    - Adds "MATERIAL" and "MATERIAL (Estimated)" StockItemCostEntry cost types, automatically recorded against build order outputs for the cost of consumed BOM components
-    - Adds a reserved (not yet populated) "MANUFACTURING" StockItemCostEntry cost type, for a future manufacturing process cost (labor, overhead)
-
-v534 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/12524
+v535 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/12524
     - Adds standalone API endpoints for StockItem pricing operations
     - Adds new "pricing" permissions role
     - Removes the "purchase_price" / "purchase_price_currency" fields from the StockItem model
     - Renames the StockItem "has_purchase_price" filter to "has_unit_cost"
     - Renames the StockItem "purchase_price" ordering key to "unit_cost"
+
+v534 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/12672
+    - rename 'tags' filter to 'tag_name' to avoid name clash with the 'tags' field on various API endpoints
 
 v533 -> 2026-08-18 : https://github.com/inventree/InvenTree/pull/12317
     - Refactors the PurchaseOrder, PurchaseOrderLineItem and PurchaseOrderExtraLine API endpoints to use DRF viewsets

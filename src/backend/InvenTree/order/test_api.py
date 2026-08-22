@@ -5538,3 +5538,90 @@ class SalesOrderAllocationBulkDeleteAPITest(InvenTreeAPITestCase):
         self.assertEqual(
             SalesOrderAllocation.objects.filter(pk__in=shipped_ids).count(), 2
         )
+
+
+class OrderActionMissingPkTest(InvenTreeAPITestCase):
+    """Regression tests for a class of bugs in the order-app action endpoints.
+
+    Each order type's *ContextMixin looks up the target order in
+    get_serializer_context(), but silently swallows a not-found result (needed so
+    schema/OPTIONS introspection doesn't break). Without an explicit check
+    elsewhere, a POST against a non-existent pk fell through to the action
+    serializer's save(), which unconditionally reads self.context['order'] - an
+    unhandled KeyError (HTTP 500) rather than a clean 404.
+
+    Fixed by SalesOrderContextMixin/ReturnOrderContextMixin/TransferOrderContextMixin
+    .create(), and (since PurchaseOrderViewSet's actions are plain ViewSet @action
+    methods rather than CreateAPI subclasses) an explicit check at the top of each
+    PurchaseOrderViewSet action method.
+    """
+
+    roles = [
+        'purchase_order.add',
+        'sales_order.add',
+        'return_order.add',
+        'transfer_order.add',
+    ]
+
+    def test_purchase_order_actions_404(self):
+        """Each PurchaseOrderViewSet action should 404, not 500, for a bad pk.
+
+        Note: PurchaseOrderViewSet.get_order() is a deliberate raw lookup rather
+        than self.get_object() - the latter routes through
+        ParameterListMixin.filter_queryset(), which assumes
+        self.serializer_class.Meta.model exists. That's true for the default
+        PurchaseOrderSerializer, but not for the plain-Serializer action classes
+        used here, so self.get_object() would raise an unrelated AttributeError.
+        """
+        for url_name in [
+            'api-po-hold',
+            'api-po-cancel',
+            'api-po-complete',
+            'api-po-issue',
+            'api-po-receive',
+        ]:
+            url = reverse(url_name, kwargs={'pk': 999999})
+            self.post(url, {}, expected_code=404)
+
+    def test_sales_order_actions_404(self):
+        """Each SalesOrderContextMixin-based action should 404, not 500, for a bad pk."""
+        for url_name in [
+            'api-so-hold',
+            'api-so-cancel',
+            'api-so-issue',
+            'api-so-complete',
+            'api-so-allocate',
+            'api-so-allocate-serials',
+        ]:
+            url = reverse(url_name, kwargs={'pk': 999999})
+            self.post(url, {}, expected_code=404)
+
+    def test_sales_order_auto_allocate_already_safe(self):
+        """SalesOrderAutoAllocate overrides post() and already calls get_object() itself."""
+        url = reverse('api-so-auto-allocate', kwargs={'pk': 999999})
+        self.post(url, {}, expected_code=404)
+
+    def test_return_order_actions_404(self):
+        """Each ReturnOrderContextMixin-based action should 404, not 500, for a bad pk."""
+        for url_name in [
+            'api-return-order-cancel',
+            'api-ro-hold',
+            'api-return-order-complete',
+            'api-return-order-issue',
+            'api-return-order-receive',
+        ]:
+            url = reverse(url_name, kwargs={'pk': 999999})
+            self.post(url, {}, expected_code=404)
+
+    def test_transfer_order_actions_404(self):
+        """Each TransferOrderContextMixin-based action should 404, not 500, for a bad pk."""
+        for url_name in [
+            'api-transfer-order-cancel',
+            'api-transfer-order-hold',
+            'api-transfer-order-complete',
+            'api-transfer-order-issue',
+            'api-transfer-order-allocate',
+            'api-transfer-order-allocate-serials',
+        ]:
+            url = reverse(url_name, kwargs={'pk': 999999})
+            self.post(url, {}, expected_code=404)

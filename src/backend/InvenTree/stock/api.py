@@ -415,7 +415,7 @@ class StockLocationFilter(FilterSet):
 
         return queryset
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class StockLocationMixin(SerializerContextMixin):
@@ -1070,7 +1070,7 @@ class StockFilter(FilterSet):
         children = loc_obj.getUniqueChildren()
         return queryset.filter(location__in=children)
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class StockApiMixin(SerializerContextMixin):
