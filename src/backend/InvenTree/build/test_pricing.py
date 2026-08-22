@@ -5,14 +5,18 @@ Note:
     "Manufacturing Costs" section of dev/todo/pricing.md for the follow-up plan.
 """
 
+from decimal import Decimal
+
 from django.core.cache import cache
 
 from djmoney.money import Money
 
 from build.models import BuildItem, BuildLine
 from common.settings import set_global_setting
+from part.models import BomItem, Part
 from pricing.models import StockItemCostEntry
 from pricing.status_codes import CostType
+from stock.models import StockItem
 
 from .test_build import BuildTestBase
 
@@ -229,3 +233,116 @@ class BuildMaterialCostTest(BuildTestBase):
         self.assertFalse(
             StockItemCostEntry.objects.filter(stock_item=self.output_1).exists()
         )
+
+    def test_full_multi_output_cycle_with_mixed_costs(self):
+        """A single end-to-end build cycle exercising every combination in one run.
+
+        Covers, all at once:
+        - measured and estimated contributions mixed together in the same run
+        - two different tracked components feeding the same outputs
+        - three completed outputs, including a single-unit ("serialized-like") one
+        - currency conversion combined with multiple outputs
+        - MATERIAL_ESTIMATED at the pooled (whole-build) level, not just per-output
+
+        Component roles (all per single assembly unit, i.e. BOM ratio):
+        - sub_part_3 (existing, trackable, 2/unit): tracked, MEASURED, cost in AUD
+        - sub_part_4 (new, trackable, 1/unit): tracked, ESTIMATED (price-range fallback)
+        - sub_part_1 (existing, untracked, pooled): MEASURED
+        - sub_part_2 (existing, untracked, pooled): ESTIMATED (price-range fallback)
+
+        Every quantity below is deliberately chosen as a multiple of either the
+        per-output quantity or the total completed quantity (11 = 3 + 7 + 1), so
+        the expected per-unit rate is a clean, uniform value on every output.
+        """
+        self.generate_exchange_rates()
+
+        # A second trackable component, added directly to self.assembly's BOM.
+        # The matching BuildLine is created directly, rather than relying on any
+        # BOM-change signal to create it for the already-existing build order
+        sub_part_4 = Part.objects.create(
+            name='Widget D', description='A widget', component=True, trackable=True
+        )
+        bom_item_4 = BomItem.objects.create(
+            part=self.assembly, sub_part=sub_part_4, quantity=1
+        )
+        BuildLine.objects.create(
+            build=self.build, bom_item=bom_item_4, quantity=Decimal(10)
+        )
+        stock_4_1 = StockItem.objects.create(part=sub_part_4, quantity=1000)
+
+        # A third output - a single-unit output, alongside output_1 (qty 3) and
+        # output_2 (qty 7) - total completed quantity is therefore 3 + 7 + 1 = 11
+        output_3 = StockItem.objects.create(
+            part=self.assembly, quantity=1, is_building=True, build=self.build
+        )
+        outputs = [self.output_1, self.output_2, output_3]
+
+        # A fresh stock item for the pooled ESTIMATED component, rather than
+        # reusing (and inflating the quantity of) a shared class-level fixture item
+        stock_2_new = StockItem.objects.create(part=self.sub_part_2, quantity=1000)
+
+        # Tracked, MEASURED: 3 AUD == 2 USD at the registered exchange rate
+        StockItemCostEntry.objects.set_cost(
+            self.stock_3_1,
+            CostType.PURCHASE.value,
+            min_cost=Money(3, 'AUD'),
+            max_cost=Money(3, 'AUD'),
+        )
+
+        # Tracked, ESTIMATED: no recorded cost on stock_4_1 - falls back to this
+        self.set_part_price_range(sub_part_4, Money(2, 'USD'), Money(4, 'USD'))
+
+        # Pooled, MEASURED
+        StockItemCostEntry.objects.set_cost(
+            self.stock_1_2,
+            CostType.PURCHASE.value,
+            min_cost=Money(1, 'USD'),
+            max_cost=Money(1, 'USD'),
+        )
+
+        # Pooled, ESTIMATED: no recorded cost on stock_2_new - falls back to this
+        self.set_part_price_range(self.sub_part_2, Money(1, 'USD'), Money(3, 'USD'))
+
+        # Tracked allocations: both sub_part_3 and sub_part_4 feed every output,
+        # proportional to its own quantity (2x / 1x per assembly unit respectively)
+        for output in outputs:
+            self.allocate_stock(
+                output,
+                {self.stock_3_1: 2 * output.quantity, stock_4_1: 1 * output.quantity},
+            )
+
+        # Pooled allocations: sized as multiples of the total completed quantity
+        # (11), for a clean per-unit division
+        self.allocate_stock(None, {self.stock_1_2: 22})
+        self.allocate_stock(None, {stock_2_new: 33})
+
+        for output in outputs:
+            self.build.complete_build_output(output, self.user)
+
+        self.build.complete_build(self.user)
+        self.build.refresh_from_db()
+
+        # MEASURED: tracked (2/unit x $2 USD-equivalent = $4/unit) + pooled
+        # (22 units x $1 / 11 total = $2/unit) = $6/unit, uniform on every output
+        #
+        # ESTIMATED: tracked (1/unit x $2-$4 range = $2-$4/unit) + pooled
+        # (33 units x $1-$3 range / 11 total = $3-$9/unit) = $5-$13/unit, uniform
+        for output in outputs:
+            material = StockItemCostEntry.objects.get(
+                stock_item=output, cost_type=CostType.MATERIAL.value
+            )
+            self.assertEqual(material.min_cost, Money(6, 'USD'))
+            self.assertEqual(material.max_cost, Money(6, 'USD'))
+
+            estimated = StockItemCostEntry.objects.get(
+                stock_item=output, cost_type=CostType.MATERIAL_ESTIMATED.value
+            )
+            self.assertEqual(estimated.min_cost, Money(5, 'USD'))
+            self.assertEqual(estimated.max_cost, Money(13, 'USD'))
+
+            # Never a MANUFACTURING (process cost) entry - nothing populates that yet
+            self.assertFalse(
+                StockItemCostEntry.objects.filter(
+                    stock_item=output, cost_type=CostType.MANUFACTURING.value
+                ).exists()
+            )
