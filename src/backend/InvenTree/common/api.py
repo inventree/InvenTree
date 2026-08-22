@@ -807,7 +807,7 @@ class AttachmentFilter(FilterSet):
             return queryset.exclude(attachment=None).exclude(attachment='')
         return queryset.filter(Q(attachment=None) | Q(attachment='')).distinct()
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class AttachmentMixin:

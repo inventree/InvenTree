@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 534
+INVENTREE_API_VERSION = 535
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v534 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/11971
+v535 -> 2026-08-22 : https://github.com/inventree/InvenTree/pull/11971
     - Removes direct "notes" field from any models which previously supported markdown notes
     - Adds a generic "Note" model which can be attached to any model type via a generic foreign key relationship
     - Allow multiple notes to be attached to a single object, and for notes to be created / edited / deleted via the API
+
+v534 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/12672
+    - rename 'tags' filter to 'tag_name' to avoid name clash with the 'tags' field on various API endpoints
 
 v533 -> 2026-08-18 : https://github.com/inventree/InvenTree/pull/12317
     - Refactors the PurchaseOrder, PurchaseOrderLineItem and PurchaseOrderExtraLine API endpoints to use DRF viewsets
