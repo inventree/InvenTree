@@ -57,7 +57,8 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
       title: t`Manufacturing`,
       icon: <IconBuildingFactory2 />,
       visible:
-        user.hasViewRole(UserRoles.build) || user.hasViewRole(UserRoles.ncr)
+        user.hasViewRole(UserRoles.build) ||
+        (globalSettings.isSet('NCR_ENABLED') && user.hasViewRole(UserRoles.ncr))
     },
     {
       name: 'purchasing',

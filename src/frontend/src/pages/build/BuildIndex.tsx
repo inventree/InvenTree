@@ -76,6 +76,13 @@ function BuildOrderCalendar() {
  */
 export default function BuildIndex() {
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
+
+  const ncrEnabled = useMemo(
+    () =>
+      globalSettings.isSet('NCR_ENABLED') && user.hasViewRole(UserRoles.ncr),
+    [globalSettings, user]
+  );
 
   const [buildOrderView, setBuildOrderView] = useLocalStorage<string>({
     key: 'build-order-view',
@@ -116,15 +123,15 @@ export default function BuildIndex() {
         name: 'ncr',
         label: t`Non-Conformances`,
         icon: <IconAlertTriangle />,
-        hidden: !user.hasViewRole(UserRoles.ncr),
+        hidden: !ncrEnabled,
         content: <NonConformanceTable />
       }
     ];
-  }, [user, buildOrderView]);
+  }, [user, buildOrderView, ncrEnabled]);
 
   if (
     !user.isLoggedIn() ||
-    (!user.hasViewRole(UserRoles.build) && !user.hasViewRole(UserRoles.ncr))
+    (!user.hasViewRole(UserRoles.build) && !ncrEnabled)
   ) {
     return <PermissionDenied />;
   }

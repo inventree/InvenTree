@@ -85,7 +85,10 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         link: '/manufacturing/',
         hidden:
           !user.hasViewRole(UserRoles.build) &&
-          !user.hasViewRole(UserRoles.ncr),
+          !(
+            globalSettings.isSet('NCR_ENABLED') &&
+            user.hasViewRole(UserRoles.ncr)
+          ),
         icon: 'build'
       },
       {
