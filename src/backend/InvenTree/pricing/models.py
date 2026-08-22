@@ -1,7 +1,7 @@
 """Database models for the 'pricing' app."""
 
 from django.contrib.auth import get_user_model
-from django.db import models
+from django.db import models, transaction
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
@@ -19,6 +19,28 @@ from common.currency import currency_code_default
 from .status_codes import CostType
 
 logger = structlog.get_logger('inventree')
+
+
+def convert_to_default_currency(money):
+    """Convert a money value into the default currency.
+
+    If no exchange rate is available, the error is logged and None is
+    returned, rather than allowing the calculation to fail outright.
+    """
+    if money is None:
+        return None
+
+    target_currency = currency_code_default()
+
+    try:
+        return convert_money(money, target_currency)
+    except MissingRate:
+        logger.warning(
+            'No currency conversion rate available for %s -> %s',
+            money.currency,
+            target_currency,
+        )
+        return None
 
 
 class StockItemCostEntryManager(models.Manager):
@@ -69,6 +91,80 @@ class StockItemCostEntryManager(models.Manager):
                 'source_data': source_data,
             },
         )
+
+        return entry
+
+    def add_cost(
+        self, stock_item, cost_type, min_cost=None, max_cost=None, user=None, notes=''
+    ):
+        """Add to (rather than overwrite) the cost entry for a (stock_item, cost_type) pair.
+
+        Unlike `set_cost`, this increments any existing min_cost/max_cost values
+        rather than replacing them - used where a cost contribution is computed
+        in more than one pass (e.g. build order manufacturing cost, where a
+        per-output pass and a later whole-build pooled-allocation pass both need
+        to contribute to the same entry). If no matching entry exists yet, one is
+        created from the given values, exactly as `set_cost` would.
+
+        min_cost / max_cost must be Money instances (or None) - unlike `set_cost`,
+        there is no separate `*_currency` argument, since an amount with no
+        currency cannot be added to anything.
+
+        If an existing entry's currency differs from the value being added, the
+        added value is converted into the entry's existing currency first. If no
+        exchange rate is available, that particular addition is skipped (logged
+        as a warning) rather than failing outright - consistent with
+        StockItemCost's own currency-conversion behaviour.
+        """
+
+        def _add(existing, delta):
+            if delta is None:
+                return existing
+
+            if existing is None:
+                return delta
+
+            if str(existing.currency) != str(delta.currency):
+                try:
+                    delta = convert_money(delta, existing.currency)
+                except MissingRate:
+                    logger.warning(
+                        'No currency conversion rate available for %s -> %s',
+                        delta.currency,
+                        existing.currency,
+                    )
+                    return existing
+
+            return existing + delta
+
+        with transaction.atomic():
+            entry = (
+                self
+                .select_for_update()
+                .filter(stock_item=stock_item, cost_type=cost_type)
+                .first()
+            )
+
+            if entry is None:
+                return self.set_cost(
+                    stock_item,
+                    cost_type,
+                    min_cost=min_cost,
+                    max_cost=max_cost,
+                    user=user,
+                    notes=notes,
+                )
+
+            entry.min_cost = _add(entry.min_cost, min_cost)
+            entry.max_cost = _add(entry.max_cost, max_cost)
+
+            if user is not None:
+                entry.user = user
+
+            if notes:
+                entry.notes = notes
+
+            entry.save()
 
         return entry
 
@@ -302,20 +398,7 @@ class StockItemCost(models.Model):
         If no exchange rate is available, the error is logged and None is
         returned, rather than allowing the calculation to fail outright.
         """
-        if money is None:
-            return None
-
-        target_currency = currency_code_default()
-
-        try:
-            return convert_money(money, target_currency)
-        except MissingRate:
-            logger.warning(
-                'No currency conversion rate available for %s -> %s',
-                money.currency,
-                target_currency,
-            )
-            return None
+        return convert_to_default_currency(money)
 
     def update_cost(self, save=True):
         """Recalculate min_cost / max_cost as the sum of all cost entries."""

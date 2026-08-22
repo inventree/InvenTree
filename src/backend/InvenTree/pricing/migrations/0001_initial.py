@@ -38,6 +38,7 @@ class Migration(migrations.Migration):
                             (10, "Purchase"),
                             (20, "Landed"),
                             (30, "Manufacturing"),
+                            (35, "Manufacturing (Estimated)"),
                             (40, "Manual"),
                             (50, "System"),
                         ],
