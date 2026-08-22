@@ -47,7 +47,7 @@ class CompanyFilter(FilterSet):
         model = Company
         fields = ['is_customer', 'is_manufacturer', 'is_supplier', 'name', 'active']
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class CompanyMixin(OutputOptionsMixin):
@@ -152,7 +152,7 @@ class ManufacturerPartFilter(FilterSet):
         field_name='manufacturer__active', label=_('Manufacturer is Active')
     )
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class ManufacturerOutputOptions(OutputConfiguration):
@@ -308,7 +308,7 @@ class SupplierPartFilter(FilterSet):
         else:
             return queryset.exclude(in_stock__gt=0)
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class SupplierPartOutputOptions(OutputConfiguration):

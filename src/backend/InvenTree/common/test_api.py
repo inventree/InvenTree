@@ -1391,7 +1391,7 @@ class TagAPITests(InvenTreeAPITestCase):
         """Filtering parts by a single tag should return only parts with that tag."""
         url = reverse('api-part-list')
 
-        response = self.get(url, data={'tags': 'apple'})
+        response = self.get(url, data={'tag_name': 'apple'})
         pks = {p['pk'] for p in response.data}
 
         self.assertIn(self.part_a.pk, pks)
@@ -1402,7 +1402,7 @@ class TagAPITests(InvenTreeAPITestCase):
         """Filtering by comma-separated tags should return only parts that have ALL tags."""
         url = reverse('api-part-list')
 
-        response = self.get(url, data={'tags': 'apple,banana'})
+        response = self.get(url, data={'tag_name': 'apple,banana'})
         pks = {p['pk'] for p in response.data}
 
         self.assertIn(self.part_a.pk, pks)
@@ -1413,7 +1413,7 @@ class TagAPITests(InvenTreeAPITestCase):
         """Tag filtering should be case-insensitive."""
         url = reverse('api-part-list')
 
-        response = self.get(url, data={'tags': 'APPLE'})
+        response = self.get(url, data={'tag_name': 'APPLE'})
         pks = {p['pk'] for p in response.data}
 
         self.assertIn(self.part_a.pk, pks)
@@ -1423,14 +1423,14 @@ class TagAPITests(InvenTreeAPITestCase):
         """Filtering by a tag that no part has should return an empty result set."""
         url = reverse('api-part-list')
 
-        response = self.get(url, data={'tags': 'doesnotexist'})
+        response = self.get(url, data={'tag_name': 'doesnotexist'})
         self.assertEqual(len(response.data), 0)
 
     def test_part_filter_tag_whitespace(self):
         """Whitespace around comma-separated tag names should be ignored."""
         url = reverse('api-part-list')
 
-        response = self.get(url, data={'tags': ' apple , banana '})
+        response = self.get(url, data={'tag_name': ' apple , banana '})
         pks = {p['pk'] for p in response.data}
 
         self.assertIn(self.part_a.pk, pks)
@@ -1484,7 +1484,7 @@ class TagAPITests(InvenTreeAPITestCase):
         """
         url = reverse('api-part-list')
 
-        response = self.get(url, data={'tags': 'true'}, expected_code=200)
+        response = self.get(url, data={'tag_name': 'true'}, expected_code=200)
         self.assertEqual(response.data, [])
 
 
