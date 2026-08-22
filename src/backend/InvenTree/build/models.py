@@ -31,9 +31,9 @@ import part.models
 import report.mixins
 import stock.models
 import users.models
-from build.events import BuildEvents
+from build.events import BuildEvents, RepairOrderEvents
 from build.filters import annotate_allocated_quantity, annotate_required_quantity
-from build.status_codes import BuildStatus, BuildStatusGroups
+from build.status_codes import BuildStatus, BuildStatusGroups, RepairOrderStatus
 from build.validators import (
     generate_next_build_reference,
     validate_build_order_reference,
@@ -2495,3 +2495,211 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('Destination stock item'),
         limit_choices_to={'is_building': True},
     )
+
+
+class RepairOrder(
+    StatusCodeMixin,
+    StateTransitionMixin,
+    InvenTree.models.InvenTreeParameterMixin,
+    InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeTagsMixin,
+    report.mixins.InvenTreeReportMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.ReferenceIndexingMixin,
+    InvenTree.models.InvenTreeModel,
+):
+    """A RepairOrder represents a repair request from a customer."""
+
+    STATUS_CLASS = RepairOrderStatus
+    REFERENCE_PATTERN_SETTING = 'REPAIRORDER_REFERENCE_PATTERN'
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Repair Order')
+
+    reference = models.CharField(
+        max_length=100,
+        unique=True,
+        blank=False,
+        null=False,
+        help_text=_('Repair Order Reference'),
+        verbose_name=_('Reference'),
+    )
+
+    customer = models.ForeignKey(
+        'company.Company',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='repair_orders',
+        limit_choices_to={'is_customer': True},
+        verbose_name=_('Customer'),
+        help_text=_('Customer reference'),
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Repair order description'),
+    )
+
+    symptoms = models.TextField(
+        blank=True,
+        verbose_name=_('Symptoms'),
+        help_text=_('Reported symptoms or issues'),
+    )
+
+    status = generic.states.fields.InvenTreeCustomStatusModelField(
+        default=RepairOrderStatus.PENDING.value,
+        choices=RepairOrderStatus.items(),
+        status_class=RepairOrderStatus,
+        help_text=_('Repair order status'),
+        verbose_name=_('Status'),
+    )
+
+    # region fsm
+    @inventree_transition(
+        field=status,
+        source=[RepairOrderStatus.PENDING, RepairOrderStatus.ON_HOLD],
+        target=RepairOrderStatus.IN_PROGRESS,
+        event=RepairOrderEvents.ISSUED,
+    )
+    def issue_repair(self):
+        """Transition this RepairOrder to IN_PROGRESS status.
+
+        The repair order must currently be PENDING or ON_HOLD.
+        """
+
+    @inventree_transition(
+        field=status,
+        source=[RepairOrderStatus.PENDING, RepairOrderStatus.IN_PROGRESS],
+        target=RepairOrderStatus.ON_HOLD,
+        event=RepairOrderEvents.HOLD,
+    )
+    def hold_repair(self):
+        """Transition this RepairOrder to ON_HOLD status.
+
+        The repair order must currently be PENDING or IN_PROGRESS.
+        """
+
+    @inventree_transition(
+        field=status,
+        source=[
+            RepairOrderStatus.PENDING,
+            RepairOrderStatus.IN_PROGRESS,
+            RepairOrderStatus.ON_HOLD,
+        ],
+        target=RepairOrderStatus.COMPLETE,
+        event=RepairOrderEvents.COMPLETED,
+    )
+    def complete_repair(self):
+        """Transition this RepairOrder to COMPLETE status.
+
+        The repair order must currently be PENDING, IN_PROGRESS, or ON_HOLD.
+        """
+
+    @inventree_transition(
+        field=status,
+        source=[
+            RepairOrderStatus.PENDING,
+            RepairOrderStatus.IN_PROGRESS,
+            RepairOrderStatus.ON_HOLD,
+        ],
+        target=RepairOrderStatus.CANCELLED,
+        event=RepairOrderEvents.CANCELLED,
+    )
+    def cancel_repair(self):
+        """Transition this RepairOrder to CANCELLED status.
+
+        The repair order must currently be PENDING, IN_PROGRESS, or ON_HOLD.
+        """
+
+    # endregion fsm
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the RepairOrder model."""
+        return reverse('api-repair-order-list')
+
+    @classmethod
+    def barcode_model_type_code(cls) -> str:
+        """Return the associated barcode model type code for this model."""
+        return 'RP'
+
+
+class RepairOrderLineItem(InvenTree.models.InvenTreeMetadataModel):
+    """Model for a repair order line item."""
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Repair Order Line Item')
+
+    order = models.ForeignKey(
+        RepairOrder,
+        on_delete=models.CASCADE,
+        related_name='lines',
+        verbose_name=_('Repair Order'),
+    )
+
+    part = models.ForeignKey(
+        'part.Part',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='repair_order_line_items',
+        verbose_name=_('Part'),
+        help_text=_('Part to be consumed for repair'),
+    )
+
+    quantity = models.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        default=1,
+        verbose_name=_('Quantity'),
+        help_text=_('Item quantity required for repair'),
+    )
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the RepairOrderLineItem model."""
+        return reverse('api-repair-order-line-list')
+
+
+class RepairOrderAllocation(models.Model):
+    """Model linking RepairOrderLineItem to specific stock.StockItem quantities."""
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Repair Order Allocation')
+
+    line = models.ForeignKey(
+        RepairOrderLineItem,
+        on_delete=models.CASCADE,
+        related_name='allocations',
+        verbose_name=_('Line Item'),
+    )
+
+    item = models.ForeignKey(
+        'stock.StockItem',
+        on_delete=models.CASCADE,
+        related_name='repair_order_allocations',
+        verbose_name=_('Stock Item'),
+    )
+
+    quantity = models.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        default=1,
+        verbose_name=_('Quantity'),
+        help_text=_('Allocated stock quantity'),
+    )
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the RepairOrderAllocation model."""
+        return reverse('api-repair-order-allocation-list')

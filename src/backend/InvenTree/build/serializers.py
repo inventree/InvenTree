@@ -55,7 +55,14 @@ from stock.serializers import (
 from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer, UserSerializer
 
-from .models import Build, BuildItem, BuildLine
+from .models import (
+    Build,
+    BuildItem,
+    BuildLine,
+    RepairOrder,
+    RepairOrderAllocation,
+    RepairOrderLineItem,
+)
 from .status_codes import BuildStatus
 from .validators import check_build_output
 
@@ -1833,3 +1840,33 @@ class BuildConsumeSerializer(serializers.Serializer):
             raise ValidationError(_('At least one item or line must be provided'))
 
         return data
+
+
+class RepairOrderSerializer(NotesFieldMixin, InvenTreeModelSerializer):
+    """Serializer for a RepairOrder object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = RepairOrder
+        fields = ['pk', 'reference', 'customer', 'description', 'symptoms', 'status']
+
+
+class RepairOrderLineItemSerializer(InvenTreeModelSerializer):
+    """Serializer for a RepairOrderLineItem object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = RepairOrderLineItem
+        fields = ['pk', 'order', 'part', 'quantity']
+
+
+class RepairOrderAllocationSerializer(InvenTreeModelSerializer):
+    """Serializer for a RepairOrderAllocation object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = RepairOrderAllocation
+        fields = ['pk', 'line', 'item', 'quantity']

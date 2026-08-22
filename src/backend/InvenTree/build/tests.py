@@ -4,12 +4,12 @@ from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
 
-from build.status_codes import BuildStatus
+from build.status_codes import BuildStatus, RepairOrderStatus
 from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeTestCase
 from part.models import BomItem, Part
 
-from .models import Build
+from .models import Build, RepairOrder
 
 
 class BuildTestSimple(InvenTreeTestCase):
@@ -313,3 +313,65 @@ class BuildTreeTest(InvenTreeTestCase):
         self.assertEqual(build.get_children().count(), 3)
         for bo in build.get_children():
             self.assertEqual(bo.level, 3)
+
+
+class RepairOrderTransitionTests(InvenTreeTestCase):
+    """Tests for RepairOrder state machine transitions.
+
+    Exercises the full repair lifecycle to ensure all four
+    @inventree_transition-decorated methods work correctly.
+    """
+
+    roles = ['build.change', 'build.add', 'build.delete']
+
+    def test_repair_order_lifecycle(self):
+        """Walk a RepairOrder through a full lifecycle.
+
+        PENDING → IN_PROGRESS → ON_HOLD → IN_PROGRESS → COMPLETE.
+        Exercises issue_repair, hold_repair, and complete_repair.
+        """
+        ro = RepairOrder.objects.create(
+            reference='RO-LIFE-001', description='Lifecycle test repair order'
+        )
+        self.assertEqual(ro.status, RepairOrderStatus.PENDING.value)
+
+        # PENDING → IN_PROGRESS
+        ro.issue_repair()
+        ro.refresh_from_db()
+        self.assertEqual(ro.status, RepairOrderStatus.IN_PROGRESS.value)
+
+        # IN_PROGRESS → ON_HOLD
+        ro.hold_repair()
+        ro.refresh_from_db()
+        self.assertEqual(ro.status, RepairOrderStatus.ON_HOLD.value)
+
+        # ON_HOLD → IN_PROGRESS (resume)
+        ro.issue_repair()
+        ro.refresh_from_db()
+        self.assertEqual(ro.status, RepairOrderStatus.IN_PROGRESS.value)
+
+        # IN_PROGRESS → COMPLETE
+        ro.complete_repair()
+        ro.refresh_from_db()
+        self.assertEqual(ro.status, RepairOrderStatus.COMPLETE.value)
+
+    def test_repair_order_cancel_lifecycle(self):
+        """Walk a RepairOrder through a cancellation lifecycle.
+
+        PENDING → IN_PROGRESS → CANCELLED.
+        Exercises issue_repair and cancel_repair.
+        """
+        ro = RepairOrder.objects.create(
+            reference='RO-CANC-001', description='Cancel lifecycle test repair order'
+        )
+        self.assertEqual(ro.status, RepairOrderStatus.PENDING.value)
+
+        # PENDING → IN_PROGRESS
+        ro.issue_repair()
+        ro.refresh_from_db()
+        self.assertEqual(ro.status, RepairOrderStatus.IN_PROGRESS.value)
+
+        # IN_PROGRESS → CANCELLED
+        ro.cancel_repair()
+        ro.refresh_from_db()
+        self.assertEqual(ro.status, RepairOrderStatus.CANCELLED.value)

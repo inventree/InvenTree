@@ -25,3 +25,26 @@ class BuildStatusGroups:
     ]
 
     COMPLETE = [BuildStatus.COMPLETE.value]
+
+
+class RepairOrderStatus(StatusCode):
+    """Defines a set of status codes for a RepairOrder."""
+
+    PENDING = 10, _('Pending'), ColorEnum.secondary  # Repair is pending
+    IN_PROGRESS = 20, _('In Progress'), ColorEnum.primary  # Repair is underway
+    ON_HOLD = 25, _('On Hold'), ColorEnum.warning  # Repair is on hold
+    COMPLETE = 30, _('Complete'), ColorEnum.success  # Repair has been completed
+    CANCELLED = 40, _('Cancelled'), ColorEnum.danger  # Repair was cancelled
+
+
+class RepairOrderStatusGroups:
+    """Groups for RepairOrderStatus codes."""
+
+    # Open orders
+    OPEN = [
+        RepairOrderStatus.PENDING.value,
+        RepairOrderStatus.ON_HOLD.value,
+        RepairOrderStatus.IN_PROGRESS.value,
+    ]
+
+    COMPLETE = [RepairOrderStatus.COMPLETE.value]

@@ -164,6 +164,7 @@ nav:
     - Required Quantity: manufacturing/required.md
     - Allocating Stock: manufacturing/allocate.md
     - External Manufacturing: manufacturing/external.md
+    - Repair Orders: manufacturing/repair.md
     - Example Build Order: manufacturing/example.md
   - Purchasing:
     - Purchasing: purchasing/index.md

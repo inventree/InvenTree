@@ -23,7 +23,14 @@ import common.serializers
 import part.models as part_models
 import stock.models as stock_models
 import stock.serializers
-from build.models import Build, BuildItem, BuildLine
+from build.models import (
+    Build,
+    BuildItem,
+    BuildLine,
+    RepairOrder,
+    RepairOrderAllocation,
+    RepairOrderLineItem,
+)
 from build.status_codes import BuildStatus, BuildStatusGroups
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
@@ -1219,6 +1226,48 @@ class BuildItemList(
     ]
 
 
+class RepairOrderList(ListCreateAPI):
+    """API endpoint for accessing a list of RepairOrder objects."""
+
+    queryset = RepairOrder.objects.all()
+    serializer_class = build.serializers.RepairOrderSerializer
+
+
+class RepairOrderDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single RepairOrder object."""
+
+    queryset = RepairOrder.objects.all()
+    serializer_class = build.serializers.RepairOrderSerializer
+
+
+class RepairOrderLineItemList(ListCreateAPI):
+    """API endpoint for accessing a list of RepairOrderLineItem objects."""
+
+    queryset = RepairOrderLineItem.objects.all()
+    serializer_class = build.serializers.RepairOrderLineItemSerializer
+
+
+class RepairOrderLineItemDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single RepairOrderLineItem object."""
+
+    queryset = RepairOrderLineItem.objects.all()
+    serializer_class = build.serializers.RepairOrderLineItemSerializer
+
+
+class RepairOrderAllocationList(ListCreateAPI):
+    """API endpoint for accessing a list of RepairOrderAllocation objects."""
+
+    queryset = RepairOrderAllocation.objects.all()
+    serializer_class = build.serializers.RepairOrderAllocationSerializer
+
+
+class RepairOrderAllocationDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single RepairOrderAllocation object."""
+
+    queryset = RepairOrderAllocation.objects.all()
+    serializer_class = build.serializers.RepairOrderAllocationSerializer
+
+
 build_api_urls = [
     # Build lines
     path(
@@ -1291,4 +1340,59 @@ build_api_urls = [
     ),
     # Build List
     path('', BuildList.as_view(), name='api-build-list'),
+    # Repair Order endpoints
+    path(
+        'repair/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        '', RepairOrderDetail.as_view(), name='api-repair-order-detail'
+                    )
+                ]),
+            ),
+            path('', RepairOrderList.as_view(), name='api-repair-order-list'),
+        ]),
+    ),
+    # Repair Order line item endpoints
+    path(
+        'repair-line/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        '',
+                        RepairOrderLineItemDetail.as_view(),
+                        name='api-repair-order-line-detail',
+                    )
+                ]),
+            ),
+            path(
+                '', RepairOrderLineItemList.as_view(), name='api-repair-order-line-list'
+            ),
+        ]),
+    ),
+    # Repair Order allocation endpoints
+    path(
+        'repair-allocation/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        '',
+                        RepairOrderAllocationDetail.as_view(),
+                        name='api-repair-order-allocation-detail',
+                    )
+                ]),
+            ),
+            path(
+                '',
+                RepairOrderAllocationList.as_view(),
+                name='api-repair-order-allocation-list',
+            ),
+        ]),
+    ),
 ]
