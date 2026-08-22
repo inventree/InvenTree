@@ -861,6 +861,22 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'NCR_ENABLED': {
+        'name': _('Enable Non-Conformance Reports'),
+        'description': _(
+            'Enable non-conformance report functionality in the user interface'
+        ),
+        'validator': bool,
+        'default': False,
+    },
+    'NCR_REFERENCE_PATTERN': {
+        'name': _('NCR Reference Pattern'),
+        'description': _(
+            'Required pattern for generating Non-Conformance Report reference field'
+        ),
+        'default': 'NCR-{ref:04d}',
+        'validator': build.validators.validate_ncr_reference_pattern,
+    },
     'RETURNORDER_ENABLED': {
         'name': _('Enable Return Orders'),
         'description': _('Enable return order functionality in the user interface'),

@@ -1,5 +1,6 @@
 import type { InvenTreeIconType, TablerIconType } from '@lib/types/Icons';
 import {
+  IconAlertTriangle,
   IconArrowBack,
   IconArrowBigDownLineFilled,
   IconArrowMerge,
@@ -153,6 +154,7 @@ const icons: InvenTreeIconType = {
   build: IconTools,
   build_order: IconTools,
   builds: IconTools,
+  ncr: IconAlertTriangle,
   used_in: IconStack2,
   consume: IconCircleDashedCheck,
   manufacturers: IconBuildingFactory2,

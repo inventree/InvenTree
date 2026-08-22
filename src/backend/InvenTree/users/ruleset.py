@@ -16,6 +16,7 @@ class RuleSetEnum(StringEnum):
     STOCK_LOCATION = 'stock_location'
     STOCK = 'stock'
     BUILD = 'build'
+    NCR = 'ncr'
     PURCHASE_ORDER = 'purchase_order'
     SALES_ORDER = 'sales_order'
     RETURN_ORDER = 'return_order'
@@ -32,6 +33,7 @@ RULESET_CHOICES = [
     (RuleSetEnum.STOCK_LOCATION, _('Stock Locations')),
     (RuleSetEnum.STOCK, _('Stock Items')),
     (RuleSetEnum.BUILD, _('Build Orders')),
+    (RuleSetEnum.NCR, _('Non-Conformance Reports')),
     (RuleSetEnum.PURCHASE_ORDER, _('Purchase Orders')),
     (RuleSetEnum.SALES_ORDER, _('Sales Orders')),
     (RuleSetEnum.RETURN_ORDER, _('Return Orders')),
@@ -110,6 +112,7 @@ def get_ruleset_models() -> dict:
             'stock_stockitem',
             'stock_stocklocation',
         ],
+        RuleSetEnum.NCR: ['build_nonconformance', 'build_nonconformancestockitem'],
         RuleSetEnum.PART_CATEGORY: [
             'part_partcategory',
             'part_partcategoryparametertemplate',

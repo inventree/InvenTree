@@ -18,3 +18,11 @@ class BuildEvents(BaseEventEnum):
     # Build output events
     OUTPUT_CREATED = 'buildoutput.created'
     OUTPUT_COMPLETED = 'buildoutput.completed'
+
+    # Non-conformance report (NCR) events
+    NCR_RAISED = 'ncr.raised'
+    NCR_INVESTIGATING = 'ncr.investigating'
+    NCR_DISPOSITIONED = 'ncr.dispositioned'
+    NCR_CLOSED = 'ncr.closed'
+    NCR_CANCELLED = 'ncr.cancelled'
+    NCR_REOPENED = 'ncr.reopened'
