@@ -1233,24 +1233,17 @@ class NCRContextMixin:
 
 
 class NCRInvestigate(NCRContextMixin, CreateAPI):
-    """API endpoint for transitioning an NCR to the 'investigating' status."""
+    """API endpoint for transitioning an NCR to the 'in progress' status."""
 
     queryset = NonConformance.objects.all()
     serializer_class = build.serializers.NCRInvestigateSerializer
 
 
-class NCRDisposition(NCRContextMixin, CreateAPI):
-    """API endpoint for dispositioning an NCR."""
+class NCRComplete(NCRContextMixin, CreateAPI):
+    """API endpoint for completing an NCR."""
 
     queryset = NonConformance.objects.all()
-    serializer_class = build.serializers.NCRDispositionSerializer
-
-
-class NCRClose(NCRContextMixin, CreateAPI):
-    """API endpoint for closing an NCR."""
-
-    queryset = NonConformance.objects.all()
-    serializer_class = build.serializers.NCRCloseSerializer
+    serializer_class = build.serializers.NCRCompleteSerializer
 
 
 class NCRCancel(NCRContextMixin, CreateAPI):
@@ -1258,13 +1251,6 @@ class NCRCancel(NCRContextMixin, CreateAPI):
 
     queryset = NonConformance.objects.all()
     serializer_class = build.serializers.NCRCancelSerializer
-
-
-class NCRReopen(NCRContextMixin, CreateAPI):
-    """API endpoint for reopening a closed or cancelled NCR."""
-
-    queryset = NonConformance.objects.all()
-    serializer_class = build.serializers.NCRReopenSerializer
 
 
 class NCRStockItemMixin:
@@ -1538,14 +1524,8 @@ build_api_urls = [
                         NCRInvestigate.as_view(),
                         name='api-ncr-investigate',
                     ),
-                    path(
-                        'disposition/',
-                        NCRDisposition.as_view(),
-                        name='api-ncr-disposition',
-                    ),
-                    path('close/', NCRClose.as_view(), name='api-ncr-close'),
+                    path('complete/', NCRComplete.as_view(), name='api-ncr-complete'),
                     path('cancel/', NCRCancel.as_view(), name='api-ncr-cancel'),
-                    path('reopen/', NCRReopen.as_view(), name='api-ncr-reopen'),
                     meta_path(NonConformance),
                     path('', NCRDetail.as_view(), name='api-ncr-detail'),
                 ]),

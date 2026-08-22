@@ -21,8 +21,6 @@ class BuildEvents(BaseEventEnum):
 
     # Non-conformance report (NCR) events
     NCR_RAISED = 'ncr.raised'
-    NCR_INVESTIGATING = 'ncr.investigating'
-    NCR_DISPOSITIONED = 'ncr.dispositioned'
-    NCR_CLOSED = 'ncr.closed'
+    NCR_IN_PROGRESS = 'ncr.in_progress'
+    NCR_COMPLETED = 'ncr.completed'
     NCR_CANCELLED = 'ncr.cancelled'
-    NCR_REOPENED = 'ncr.reopened'

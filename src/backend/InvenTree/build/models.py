@@ -2667,7 +2667,7 @@ class NonConformance(
 
     status = generic.states.fields.InvenTreeCustomStatusModelField(
         verbose_name=_('Status'),
-        default=NonConformanceStatus.OPEN.value,
+        default=NonConformanceStatus.PENDING.value,
         choices=NonConformanceStatus.items(),
         status_class=NonConformanceStatus,
         validators=[MinValueValidator(0)],
@@ -2794,32 +2794,32 @@ class NonConformance(
     # region fsm
     @inventree_transition(
         field=status,
-        source=[NonConformanceStatus.OPEN],
-        target=NonConformanceStatus.INVESTIGATING,
-        event=BuildEvents.NCR_INVESTIGATING,
+        source=[NonConformanceStatus.PENDING],
+        target=NonConformanceStatus.IN_PROGRESS,
+        event=BuildEvents.NCR_IN_PROGRESS,
     )
     def investigate(self):
-        """Transition this NCR to INVESTIGATING status.
+        """Transition this NCR to IN_PROGRESS status.
 
-        The NCR must currently be OPEN.
+        The NCR must currently be PENDING.
         """
 
     @inventree_transition(
         field=status,
-        source=[NonConformanceStatus.OPEN, NonConformanceStatus.INVESTIGATING],
-        target=NonConformanceStatus.DISPOSITIONED,
-        event=BuildEvents.NCR_DISPOSITIONED,
+        source=[NonConformanceStatus.PENDING, NonConformanceStatus.IN_PROGRESS],
+        target=NonConformanceStatus.COMPLETE,
+        event=BuildEvents.NCR_COMPLETED,
     )
-    def disposition_ncr(self):
-        """Transition this NCR to DISPOSITIONED status.
+    def complete(self):
+        """Transition this NCR to COMPLETE status.
 
         The disposition itself is recorded per linked stock item
         (NonConformanceStockItem.disposition) rather than on the NCR as a whole - a
         single NCR may cover multiple units that end up with different outcomes (some
-        use-as-is, some scrapped). This transition just confirms that stage of the
+        use-as-is, some scrapped). This transition validates that stage of the
         workflow is complete: every linked stock item must have been assigned a
         disposition other than PENDING. An NCR with no linked stock items has nothing
-        to check and transitions freely.
+        to check and completes freely.
         """
         pending = self.stock_items.filter(
             disposition=NonConformanceDisposition.PENDING.value
@@ -2832,42 +2832,17 @@ class NonConformance(
                 )
             })
 
-    @inventree_transition(
-        field=status,
-        source=[NonConformanceStatus.DISPOSITIONED],
-        target=NonConformanceStatus.CLOSED,
-        event=BuildEvents.NCR_CLOSED,
-    )
-    def close(self):
-        """Transition this NCR to CLOSED status.
-
-        The NCR must currently be DISPOSITIONED.
-        """
         self.closed_date = InvenTree.helpers.current_date()
 
     @inventree_transition(
         field=status,
-        source=[
-            NonConformanceStatus.OPEN,
-            NonConformanceStatus.INVESTIGATING,
-            NonConformanceStatus.DISPOSITIONED,
-        ],
+        source=[NonConformanceStatus.PENDING, NonConformanceStatus.IN_PROGRESS],
         target=NonConformanceStatus.CANCELLED,
         event=BuildEvents.NCR_CANCELLED,
     )
     def cancel(self):
         """Transition this NCR to CANCELLED status."""
         self.closed_date = InvenTree.helpers.current_date()
-
-    @inventree_transition(
-        field=status,
-        source=[NonConformanceStatus.CLOSED, NonConformanceStatus.CANCELLED],
-        target=NonConformanceStatus.OPEN,
-        event=BuildEvents.NCR_REOPENED,
-    )
-    def reopen(self):
-        """Transition this NCR back to OPEN status."""
-        self.closed_date = None
 
     # endregion fsm
 

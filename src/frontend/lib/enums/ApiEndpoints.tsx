@@ -109,10 +109,8 @@ export enum ApiEndpoints {
   // Non-Conformance Report (NCR) API endpoints
   ncr_list = 'build/non-conformance/',
   ncr_investigate = 'build/non-conformance/:id/investigate/',
-  ncr_disposition = 'build/non-conformance/:id/disposition/',
-  ncr_close = 'build/non-conformance/:id/close/',
+  ncr_complete = 'build/non-conformance/:id/complete/',
   ncr_cancel = 'build/non-conformance/:id/cancel/',
-  ncr_reopen = 'build/non-conformance/:id/reopen/',
   ncr_status_list = 'build/non-conformance/status/',
   ncr_disposition_status_list = 'build/non-conformance/disposition/',
   ncr_stock_item_list = 'build/non-conformance/stock-item/',

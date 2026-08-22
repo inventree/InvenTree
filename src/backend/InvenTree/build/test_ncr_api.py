@@ -62,7 +62,7 @@ class NCRAPITest(InvenTreeAPITestCase):
         ).data
 
         self.assertEqual(data['reference'], 'NCR-0001')
-        self.assertEqual(data['status'], NonConformanceStatus.OPEN.value)
+        self.assertEqual(data['status'], NonConformanceStatus.PENDING.value)
 
         # The user who created the NCR should be recorded automatically
         ncr = NonConformance.objects.get(pk=data['pk'])
@@ -119,7 +119,7 @@ class NCRAPITest(InvenTreeAPITestCase):
 
         # Filter by status
         data = self.get(
-            url, {'status': NonConformanceStatus.INVESTIGATING.value}, expected_code=200
+            url, {'status': NonConformanceStatus.IN_PROGRESS.value}, expected_code=200
         ).data
         self.assertEqual([r['pk'] for r in data], [ncr_2.pk])
 
@@ -142,21 +142,22 @@ class NCRAPITest(InvenTreeAPITestCase):
         self.post(url, expected_code=201)
 
         ncr.refresh_from_db()
-        self.assertEqual(ncr.status, NonConformanceStatus.INVESTIGATING.value)
+        self.assertEqual(ncr.status, NonConformanceStatus.IN_PROGRESS.value)
 
     def test_invalid_transition_returns_400(self):
         """Calling a transition endpoint from an invalid source state returns HTTP 400."""
         self.assignRole('ncr.add')
         ncr = NonConformance.objects.create(part=self.part, description='Issue')
+        ncr.complete()
 
-        # Can't close an NCR that hasn't been dispositioned yet
-        url = reverse('api-ncr-close', kwargs={'pk': ncr.pk})
+        # Can't complete an NCR that has already been completed
+        url = reverse('api-ncr-complete', kwargs={'pk': ncr.pk})
         response = self.post(url, expected_code=400)
 
         self.assertIn('non_field_errors', response.data)
 
         ncr.refresh_from_db()
-        self.assertEqual(ncr.status, NonConformanceStatus.OPEN.value)
+        self.assertEqual(ncr.status, NonConformanceStatus.COMPLETE.value)
 
     def test_transition_endpoint_404_for_unknown_pk(self):
         """Transition endpoints should 404 for a non-existent NCR (once permission is granted)."""
@@ -165,13 +166,12 @@ class NCRAPITest(InvenTreeAPITestCase):
         url = reverse('api-ncr-investigate', kwargs={'pk': 999999})
         self.post(url, expected_code=404)
 
-    def test_disposition_endpoint_full_flow(self):
-        """Exercise the full disposition workflow through the API.
+    def test_complete_endpoint_full_flow(self):
+        """Exercise the full completion workflow through the API.
 
-        - disposition is blocked while a linked item is still PENDING
+        - completing is blocked while a linked item is still PENDING
         - setting the item's disposition via PATCH unblocks it
-        - disposition succeeds and moves status to DISPOSITIONED
-        - close then succeeds
+        - completing succeeds and moves status straight to COMPLETE
         """
         self.assignRole('ncr.add')
         self.assignRole('ncr.change')
@@ -185,12 +185,12 @@ class NCRAPITest(InvenTreeAPITestCase):
             reverse('api-ncr-investigate', kwargs={'pk': ncr.pk}), expected_code=201
         )
 
-        disposition_url = reverse('api-ncr-disposition', kwargs={'pk': ncr.pk})
+        complete_url = reverse('api-ncr-complete', kwargs={'pk': ncr.pk})
 
         # Item is still PENDING - blocked. The model raises a dict-keyed
         # ValidationError here (not a bare message), so it surfaces under its
         # field name rather than 'non_field_errors'.
-        response = self.post(disposition_url, expected_code=400)
+        response = self.post(complete_url, expected_code=400)
         self.assertIn('disposition', response.data)
 
         # Set the item's disposition via the stock-item endpoint
@@ -201,21 +201,15 @@ class NCRAPITest(InvenTreeAPITestCase):
             expected_code=200,
         )
 
-        # Now the disposition transition should succeed
-        self.post(disposition_url, expected_code=201)
+        # Now the complete transition should succeed
+        self.post(complete_url, expected_code=201)
 
         ncr.refresh_from_db()
-        self.assertEqual(ncr.status, NonConformanceStatus.DISPOSITIONED.value)
-
-        # And now it can be closed
-        self.post(reverse('api-ncr-close', kwargs={'pk': ncr.pk}), expected_code=201)
-
-        ncr.refresh_from_db()
-        self.assertEqual(ncr.status, NonConformanceStatus.CLOSED.value)
+        self.assertEqual(ncr.status, NonConformanceStatus.COMPLETE.value)
         self.assertIsNotNone(ncr.closed_date)
 
-    def test_cancel_and_reopen_endpoints(self):
-        """Test the 'cancel' and 'reopen' transition endpoints."""
+    def test_cancel_endpoint(self):
+        """Test the 'cancel' transition endpoint."""
         self.assignRole('ncr.add')
         ncr = NonConformance.objects.create(part=self.part, description='Issue')
 
@@ -223,12 +217,7 @@ class NCRAPITest(InvenTreeAPITestCase):
 
         ncr.refresh_from_db()
         self.assertEqual(ncr.status, NonConformanceStatus.CANCELLED.value)
-
-        self.post(reverse('api-ncr-reopen', kwargs={'pk': ncr.pk}), expected_code=201)
-
-        ncr.refresh_from_db()
-        self.assertEqual(ncr.status, NonConformanceStatus.OPEN.value)
-        self.assertIsNone(ncr.closed_date)
+        self.assertIsNotNone(ncr.closed_date)
 
     def test_status_and_disposition_code_endpoints(self):
         """The status/disposition metadata endpoints should list all known codes."""

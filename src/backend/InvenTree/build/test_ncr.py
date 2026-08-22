@@ -34,14 +34,14 @@ class NonConformanceModelTest(InvenTreeTestCase):
         self.assertEqual(str(ncr_1), 'NCR-0001')
 
     def test_default_status(self):
-        """A freshly created NCR should default to OPEN status and PENDING-free of a disposition."""
+        """A freshly created NCR should default to PENDING status."""
         part = Part.objects.get(pk=1)
         ncr = NonConformance.objects.create(part=part, description='Some problem')
 
-        self.assertEqual(ncr.status, NonConformanceStatus.OPEN.value)
-        self.assertEqual(ncr.status_text, 'Open')
+        self.assertEqual(ncr.status, NonConformanceStatus.PENDING.value)
+        self.assertEqual(ncr.status_text, 'Pending')
 
-        # The NCR itself no longer carries a disposition field - it lives on
+        # The NCR itself does not carry a disposition field - it lives on
         # NonConformanceStockItem instead
         self.assertFalse(hasattr(ncr, 'disposition'))
 
@@ -85,11 +85,10 @@ class NonConformanceModelTest(InvenTreeTestCase):
         self.assertNotIn(not_overdue, overdue_qs)
         self.assertNotIn(no_target_date, overdue_qs)
 
-        # Closing the overdue NCR should remove it from the overdue queryset,
+        # Completing the overdue NCR should remove it from the overdue queryset,
         # even though its target date is still in the past
         overdue.investigate()
-        overdue.disposition_ncr()
-        overdue.close()
+        overdue.complete()
 
         overdue_qs = NonConformance.objects.filter(NonConformance.get_overdue_filter())
         self.assertNotIn(overdue, overdue_qs)
@@ -184,15 +183,16 @@ class NonConformanceStockItemModelTest(InvenTreeTestCase):
 class NonConformanceTransitionTest(InvenTreeTestCase):
     """Tests for the NonConformance status state machine.
 
-    Disposition is recorded per-linked-item (NonConformanceStockItem.disposition), but the
-    NCR's own status transitions (OPEN -> INVESTIGATING -> DISPOSITIONED -> CLOSED, plus
-    CANCELLED / reopening) live on the NonConformance model itself and are exercised here.
+    Mirrors BuildStatus's shape: PENDING -> IN_PROGRESS -> COMPLETE, plus CANCELLED as a
+    terminal branch from either open state. Disposition is recorded per-linked-item
+    (NonConformanceStockItem.disposition) and validated as part of the 'complete'
+    transition, rather than being a separate NCR-level status of its own.
     """
 
     fixtures = ['category', 'part', 'location', 'stock']
 
     def setUp(self):
-        """Create a fresh OPEN NonConformance for each test."""
+        """Create a fresh PENDING NonConformance for each test."""
         super().setUp()
 
         self.part = Part.objects.get(pk=1)
@@ -213,87 +213,72 @@ class NonConformanceTransitionTest(InvenTreeTestCase):
         return link
 
     def test_investigate(self):
-        """OPEN -> INVESTIGATING is a valid transition."""
-        self.assertEqual(self.ncr.status, NonConformanceStatus.OPEN.value)
+        """PENDING -> IN_PROGRESS is a valid transition."""
+        self.assertEqual(self.ncr.status, NonConformanceStatus.PENDING.value)
 
         self.ncr.investigate()
 
-        self.assertEqual(self.ncr.status, NonConformanceStatus.INVESTIGATING.value)
+        self.assertEqual(self.ncr.status, NonConformanceStatus.IN_PROGRESS.value)
 
         # Refresh from DB to make sure the transition was actually persisted
         self.ncr.refresh_from_db()
-        self.assertEqual(self.ncr.status, NonConformanceStatus.INVESTIGATING.value)
+        self.assertEqual(self.ncr.status, NonConformanceStatus.IN_PROGRESS.value)
 
     def test_investigate_invalid_source(self):
-        """INVESTIGATING -> INVESTIGATING (or from any closed state) is not a valid transition."""
+        """IN_PROGRESS -> IN_PROGRESS (or from any closed state) is not a valid transition."""
         self.ncr.investigate()
 
         with self.assertRaises(ValidationError):
             self.ncr.investigate()
 
-        self.assertEqual(self.ncr.status, NonConformanceStatus.INVESTIGATING.value)
+        self.assertEqual(self.ncr.status, NonConformanceStatus.IN_PROGRESS.value)
 
-    def test_disposition_blocked_by_pending_item(self):
-        """disposition_ncr() must refuse to run while any linked item is still PENDING."""
+    def test_complete_blocked_by_pending_item(self):
+        """complete() must refuse to run while any linked item is still PENDING."""
         self.link_item(1, disposition=NonConformanceDisposition.SCRAP.value)
         self.link_item(2)  # left at the PENDING default
 
         self.ncr.investigate()
 
         with self.assertRaises(ValidationError) as exc:
-            self.ncr.disposition_ncr()
+            self.ncr.complete()
 
         self.assertIn('disposition', exc.exception.message_dict)
 
         # Status must not have moved
         self.ncr.refresh_from_db()
-        self.assertEqual(self.ncr.status, NonConformanceStatus.INVESTIGATING.value)
+        self.assertEqual(self.ncr.status, NonConformanceStatus.IN_PROGRESS.value)
 
-    def test_disposition_succeeds_once_all_items_dispositioned(self):
-        """disposition_ncr() succeeds once every linked item has a non-PENDING disposition."""
+    def test_complete_succeeds_once_all_items_dispositioned(self):
+        """complete() succeeds once every linked item has a non-PENDING disposition."""
         self.link_item(1, disposition=NonConformanceDisposition.SCRAP.value)
         self.link_item(2, disposition=NonConformanceDisposition.USE_AS_IS.value)
 
         self.ncr.investigate()
-        self.ncr.disposition_ncr()
+        self.assertIsNone(self.ncr.closed_date)
 
-        self.assertEqual(self.ncr.status, NonConformanceStatus.DISPOSITIONED.value)
+        self.ncr.complete()
 
-    def test_disposition_succeeds_with_no_linked_items(self):
-        """An NCR with no linked stock items has nothing to check, and dispositions freely."""
+        self.assertEqual(self.ncr.status, NonConformanceStatus.COMPLETE.value)
+        self.assertEqual(self.ncr.closed_date, InvenTree.helpers.current_date())
+
+    def test_complete_succeeds_with_no_linked_items(self):
+        """An NCR with no linked stock items has nothing to check, and completes freely."""
         self.assertEqual(self.ncr.stock_items.count(), 0)
 
         self.ncr.investigate()
-        self.ncr.disposition_ncr()
+        self.ncr.complete()
 
-        self.assertEqual(self.ncr.status, NonConformanceStatus.DISPOSITIONED.value)
+        self.assertEqual(self.ncr.status, NonConformanceStatus.COMPLETE.value)
 
-    def test_disposition_directly_from_open(self):
-        """disposition_ncr() is also valid directly from OPEN (investigation is optional)."""
-        self.ncr.disposition_ncr()
+    def test_complete_directly_from_pending(self):
+        """complete() is also valid directly from PENDING (investigation is optional)."""
+        self.ncr.complete()
 
-        self.assertEqual(self.ncr.status, NonConformanceStatus.DISPOSITIONED.value)
-
-    def test_close_requires_dispositioned(self):
-        """close() is only valid from DISPOSITIONED."""
-        with self.assertRaises(ValidationError):
-            self.ncr.close()
-
-        self.ncr.investigate()
-
-        with self.assertRaises(ValidationError):
-            self.ncr.close()
-
-        self.ncr.disposition_ncr()
-        self.assertIsNone(self.ncr.closed_date)
-
-        self.ncr.close()
-
-        self.assertEqual(self.ncr.status, NonConformanceStatus.CLOSED.value)
-        self.assertEqual(self.ncr.closed_date, InvenTree.helpers.current_date())
+        self.assertEqual(self.ncr.status, NonConformanceStatus.COMPLETE.value)
 
     def test_cancel_from_open_states(self):
-        """cancel() is valid from OPEN, INVESTIGATING, and DISPOSITIONED."""
+        """cancel() is valid from PENDING and IN_PROGRESS."""
         for status in NonConformanceStatusGroups.OPEN_CODES:
             ncr = NonConformance.objects.create(
                 part=self.part, description=f'Cancel test from {status}'
@@ -307,64 +292,38 @@ class NonConformanceTransitionTest(InvenTreeTestCase):
             self.assertIsNotNone(ncr.closed_date)
 
     def test_cancel_from_closed_states_invalid(self):
-        """cancel() is not valid once an NCR is already CLOSED or CANCELLED."""
+        """cancel() is not valid once an NCR is already COMPLETE or CANCELLED."""
         self.ncr.investigate()
-        self.ncr.disposition_ncr()
-        self.ncr.close()
+        self.ncr.complete()
 
         with self.assertRaises(ValidationError):
             self.ncr.cancel()
 
-    def test_reopen_from_closed(self):
-        """reopen() moves a CLOSED (or CANCELLED) NCR back to OPEN, clearing closed_date."""
-        self.ncr.investigate()
-        self.ncr.disposition_ncr()
-        self.ncr.close()
-        self.assertIsNotNone(self.ncr.closed_date)
-
-        self.ncr.reopen()
-
-        self.assertEqual(self.ncr.status, NonConformanceStatus.OPEN.value)
-        self.assertIsNone(self.ncr.closed_date)
-
-    def test_reopen_from_cancelled(self):
-        """reopen() also works from CANCELLED."""
-        self.ncr.cancel()
-        self.ncr.reopen()
-
-        self.assertEqual(self.ncr.status, NonConformanceStatus.OPEN.value)
-        self.assertIsNone(self.ncr.closed_date)
-
-    def test_reopen_invalid_source(self):
-        """reopen() is not valid from an already-open state."""
-        with self.assertRaises(ValidationError):
-            self.ncr.reopen()
-
-        self.ncr.investigate()
+        cancelled = NonConformance.objects.create(
+            part=self.part, description='Already cancelled'
+        )
+        cancelled.cancel()
 
         with self.assertRaises(ValidationError):
-            self.ncr.reopen()
+            cancelled.cancel()
 
     def test_full_lifecycle(self):
         """Walk an NCR through its entire lifecycle end-to-end."""
         self.link_item(1)
 
-        self.assertEqual(self.ncr.status, NonConformanceStatus.OPEN.value)
+        self.assertEqual(self.ncr.status, NonConformanceStatus.PENDING.value)
 
         self.ncr.investigate()
-        self.assertEqual(self.ncr.status, NonConformanceStatus.INVESTIGATING.value)
+        self.assertEqual(self.ncr.status, NonConformanceStatus.IN_PROGRESS.value)
 
-        # Can't disposition yet - the linked item is still PENDING
+        # Can't complete yet - the linked item is still PENDING
         with self.assertRaises(ValidationError):
-            self.ncr.disposition_ncr()
+            self.ncr.complete()
 
         item = self.ncr.stock_items.get()
         item.disposition = NonConformanceDisposition.REWORK.value
         item.save()
 
-        self.ncr.disposition_ncr()
-        self.assertEqual(self.ncr.status, NonConformanceStatus.DISPOSITIONED.value)
-
-        self.ncr.close()
-        self.assertEqual(self.ncr.status, NonConformanceStatus.CLOSED.value)
+        self.ncr.complete()
+        self.assertEqual(self.ncr.status, NonConformanceStatus.COMPLETE.value)
         self.assertIsNotNone(self.ncr.closed_date)

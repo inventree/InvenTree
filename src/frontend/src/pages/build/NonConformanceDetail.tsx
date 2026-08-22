@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
-import { Stack } from '@mantine/core';
-import { IconInfoCircle, IconList } from '@tabler/icons-react';
+import { Alert, Stack } from '@mantine/core';
+import { IconCircleCheck, IconInfoCircle, IconList } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -26,7 +26,6 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { useNonConformanceFields } from '../../forms/NCRForms';
-import { InvenTreeIcon } from '../../functions/icons';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -62,7 +61,7 @@ export default function NonConformanceDetail() {
 
   const ncrOpen = useMemo(() => {
     return (
-      ncr.status == ncrStatus.OPEN || ncr.status == ncrStatus.INVESTIGATING
+      ncr.status == ncrStatus.PENDING || ncr.status == ncrStatus.IN_PROGRESS
     );
   }, [ncr, ncrStatus]);
 
@@ -138,20 +137,18 @@ export default function NonConformanceDetail() {
     successMessage: t`NCR is now under investigation`
   });
 
-  const dispositionNcr = useCreateApiFormModal({
-    url: apiUrl(ApiEndpoints.ncr_disposition, ncr.pk),
-    title: t`Set Disposition`,
+  const completeNcr = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.ncr_complete, ncr.pk),
+    title: t`Complete NCR`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Confirm that every linked stock item has been assigned a disposition`,
-    successMessage: t`Disposition recorded`
-  });
-
-  const closeNcr = useCreateApiFormModal({
-    url: apiUrl(ApiEndpoints.ncr_close, ncr.pk),
-    title: t`Close NCR`,
-    onFormSuccess: refreshInstance,
-    preFormWarning: t`Close this NCR`,
-    successMessage: t`NCR closed`
+    preFormContent: (
+      <Alert
+        color='green'
+        icon={<IconCircleCheck />}
+        title={t`Mark this NCR as complete`}
+      />
+    ),
+    successMessage: t`NCR completed`
   });
 
   const cancelNcr = useCreateApiFormModal({
@@ -162,52 +159,29 @@ export default function NonConformanceDetail() {
     successMessage: t`NCR cancelled`
   });
 
-  const reopenNcr = useCreateApiFormModal({
-    url: apiUrl(ApiEndpoints.ncr_reopen, ncr.pk),
-    title: t`Reopen NCR`,
-    onFormSuccess: refreshInstance,
-    preFormWarning: t`Reopen this NCR`,
-    successMessage: t`NCR reopened`
-  });
-
   const ncrActions = useMemo(() => {
     const canEdit: boolean = user.hasChangeRole(UserRoles.ncr);
 
-    const canInvestigate: boolean = canEdit && ncr.status == ncrStatus.OPEN;
+    const canInvestigate: boolean = canEdit && ncr.status == ncrStatus.PENDING;
 
-    const canDisposition: boolean =
-      canEdit &&
-      (ncr.status == ncrStatus.OPEN || ncr.status == ncrStatus.INVESTIGATING);
-
-    const canClose: boolean = canEdit && ncr.status == ncrStatus.DISPOSITIONED;
+    const canComplete: boolean = canEdit && ncrOpen;
 
     const canCancel: boolean = canEdit && ncrOpen;
-
-    const canReopen: boolean =
-      canEdit &&
-      (ncr.status == ncrStatus.CLOSED || ncr.status == ncrStatus.CANCELLED);
 
     return [
       <PrimaryActionButton
         title={t`Investigate`}
-        icon='search'
+        icon='issue'
         hidden={!canInvestigate}
         color='blue'
         onClick={() => investigateNcr.open()}
       />,
       <PrimaryActionButton
-        title={t`Set Disposition`}
-        icon='tick_off'
-        hidden={!canDisposition}
-        color='yellow'
-        onClick={() => dispositionNcr.open()}
-      />,
-      <PrimaryActionButton
-        title={t`Close`}
+        title={t`Complete`}
         icon='complete'
-        hidden={!canClose}
+        hidden={!canComplete}
         color='green'
-        onClick={() => closeNcr.open()}
+        onClick={() => completeNcr.open()}
       />,
       <AdminButton model={ModelType.nonconformance} id={ncr.pk} />,
       <BarcodeActionDropdown
@@ -232,13 +206,7 @@ export default function NonConformanceDetail() {
             tooltip: t`Cancel NCR`,
             hidden: !canCancel,
             onClick: () => cancelNcr.open()
-          }),
-          {
-            icon: <InvenTreeIcon icon='return' />,
-            tooltip: t`Reopen NCR`,
-            hidden: !canReopen,
-            onClick: () => reopenNcr.open()
-          }
+          })
         ]}
       />
     ];
@@ -248,10 +216,8 @@ export default function NonConformanceDetail() {
     <>
       {editNcr.modal}
       {investigateNcr.modal}
-      {dispositionNcr.modal}
-      {closeNcr.modal}
+      {completeNcr.modal}
       {cancelNcr.modal}
-      {reopenNcr.modal}
       <InstanceDetail query={instanceQuery} requiredRole={UserRoles.ncr}>
         <Stack gap='xs'>
           <PageDetail

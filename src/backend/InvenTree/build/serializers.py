@@ -1989,7 +1989,7 @@ class NonConformanceStockItemSerializer(
 
 
 class NCRInvestigateSerializer(serializers.Serializer):
-    """DRF serializer for transitioning an NCR to the 'investigating' status."""
+    """DRF serializer for transitioning an NCR to the 'in progress' status."""
 
     class Meta:
         """Serializer metaclass."""
@@ -1997,17 +1997,18 @@ class NCRInvestigateSerializer(serializers.Serializer):
         fields = []
 
     def save(self):
-        """Transition the specified NCR to INVESTIGATING status."""
+        """Transition the specified NCR to IN_PROGRESS status."""
         ncr = self.context['ncr']
         ncr.investigate()
 
 
-class NCRDispositionSerializer(serializers.Serializer):
-    """DRF serializer for confirming an NCR's dispositioning stage is complete.
+class NCRCompleteSerializer(serializers.Serializer):
+    """DRF serializer for completing an NCR.
 
-    Disposition values themselves are recorded per linked stock item
+    Disposition values are recorded per linked stock item
     (NonConformanceStockItem.disposition, set via the stock-item endpoint) - this
-    serializer takes no input, it just triggers the status transition.
+    serializer takes no input, it just triggers the status transition, which itself
+    validates that every linked item has been assigned a disposition.
     """
 
     class Meta:
@@ -2016,23 +2017,9 @@ class NCRDispositionSerializer(serializers.Serializer):
         fields = []
 
     def save(self):
-        """Transition the specified NCR to DISPOSITIONED status."""
+        """Transition the specified NCR to COMPLETE status."""
         ncr = self.context['ncr']
-        ncr.disposition_ncr()
-
-
-class NCRCloseSerializer(serializers.Serializer):
-    """DRF serializer for closing an NCR."""
-
-    class Meta:
-        """Serializer metaclass."""
-
-        fields = []
-
-    def save(self):
-        """Transition the specified NCR to CLOSED status."""
-        ncr = self.context['ncr']
-        ncr.close()
+        ncr.complete()
 
 
 class NCRCancelSerializer(serializers.Serializer):
@@ -2047,17 +2034,3 @@ class NCRCancelSerializer(serializers.Serializer):
         """Transition the specified NCR to CANCELLED status."""
         ncr = self.context['ncr']
         ncr.cancel()
-
-
-class NCRReopenSerializer(serializers.Serializer):
-    """DRF serializer for reopening a closed or cancelled NCR."""
-
-    class Meta:
-        """Serializer metaclass."""
-
-        fields = []
-
-    def save(self):
-        """Transition the specified NCR back to OPEN status."""
-        ncr = self.context['ncr']
-        ncr.reopen()

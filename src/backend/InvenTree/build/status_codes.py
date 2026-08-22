@@ -30,40 +30,30 @@ class BuildStatusGroups:
 class NonConformanceStatus(StatusCode):
     """Status codes for a NonConformance report (NCR)."""
 
-    OPEN = (
-        10,
-        _('Open'),
-        ColorEnum.secondary,
-    )  # NCR has been raised, not yet investigated
-    INVESTIGATING = (
+    PENDING = 10, _('Pending'), ColorEnum.secondary  # NCR has been raised
+    IN_PROGRESS = (
         20,
-        _('Investigating'),
+        _('In Progress'),
         ColorEnum.primary,
     )  # Root cause investigation underway
-    DISPOSITIONED = (
-        30,
-        _('Dispositioned'),
-        ColorEnum.warning,
-    )  # Disposition has been decided
-    CLOSED = 40, _('Closed'), ColorEnum.success  # NCR has been closed out
     CANCELLED = (
-        50,
+        30,
         _('Cancelled'),
         ColorEnum.danger,
     )  # NCR was raised in error / withdrawn
+    COMPLETE = 40, _('Complete'), ColorEnum.success  # NCR has been closed out
 
 
 class NonConformanceStatusGroups:
     """Groups for NonConformanceStatus codes."""
 
     OPEN_CODES = [
-        NonConformanceStatus.OPEN.value,
-        NonConformanceStatus.INVESTIGATING.value,
-        NonConformanceStatus.DISPOSITIONED.value,
+        NonConformanceStatus.PENDING.value,
+        NonConformanceStatus.IN_PROGRESS.value,
     ]
 
     CLOSED_CODES = [
-        NonConformanceStatus.CLOSED.value,
+        NonConformanceStatus.COMPLETE.value,
         NonConformanceStatus.CANCELLED.value,
     ]
 

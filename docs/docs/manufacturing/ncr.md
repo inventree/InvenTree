@@ -11,6 +11,10 @@ An NCR behaves like a lightweight order - it has a reference number, a status wo
 !!! tip "Also Known As"
     A Non-Conformance Report may also be referred to as a *Non-Conformity Report*, or simply an *NCR*.
 
+### Enable Non-Conformance Report Functionality
+
+By default, Non-Conformance Report functionality is disabled - it must be enabled by a *staff* user from the settings page, via the {{ globalsetting("NCR_ENABLED", short=True) }} setting. Once enabled, the "Non-Conformances" tab becomes available on the Manufacturing page.
+
 ### View Non-Conformance Reports
 
 To navigate to the Non-Conformance Report display, select *Manufacturing* from the main navigation menu, and *Non-Conformances* from the sidebar. This shows a table of all Non-Conformance Reports, which can be filtered to only show the reports you are interested in.
@@ -25,11 +29,10 @@ Each Non-Conformance Report has a specific status code, indicating where it is i
 
 | Status | Description |
 | --- | --- |
-| Open | The NCR has been raised, but not yet investigated |
-| Investigating | Root cause investigation is underway |
-| Dispositioned | A disposition has been decided for all affected stock items |
-| Closed | The NCR has been closed out |
+| Pending | The NCR has been raised, but not yet investigated |
+| In Progress | Root cause investigation is underway |
 | Cancelled | The NCR was raised in error, or withdrawn |
+| Complete | The NCR has been closed out |
 
 **Source Code**
 
@@ -46,7 +49,7 @@ Refer to the source code for the NCR status codes:
 NCR Status supports [custom states](../concepts/custom_states.md).
 
 !!! info "Status vs. Disposition"
-    *Status* tracks where the NCR is in its own lifecycle. *Disposition* - what has been decided about the affected material - is a separate concept, recorded against each individual [linked stock item](#linked-stock-items) rather than the NCR as a whole. See [Item Disposition](#item-disposition) below.
+    *Status* tracks where the NCR is in its own lifecycle. *Disposition* - what has been decided about the affected material - is a separate concept, recorded against each individual [linked stock item](#linked-stock-items) rather than the NCR as a whole, and validated as part of the [Complete](#complete) action rather than being its own status. See [Item Disposition](#item-disposition) below.
 
 ## Create a Non-Conformance Report
 
@@ -143,32 +146,28 @@ NCR notes (which support markdown formatting) are displayed in the *Notes* tab.
 
 ## Investigate
 
-To move an NCR into investigation, click the {{ icon("search", title="Investigate") }} *Investigate* button on the NCR detail page. This is available while the NCR is *Open*, and moves it into the *Investigating* status.
+To move an NCR into investigation, click the {{ icon("issue", color="blue", title="Investigate") }} *Investigate* button on the NCR detail page. This is available while the NCR is *Pending*, and moves it into the *In Progress* status.
 
-## Set Disposition
+!!! info "Optional Step"
+    Investigating first is optional - an NCR can also be completed directly from *Pending*.
 
-Once every [linked stock item](#linked-stock-items) has been assigned a [disposition](#item-disposition) other than *Pending*, click the {{ icon("clipboard-check", title="Set Disposition") }} *Set Disposition* button to move the NCR into the *Dispositioned* status.
+## Complete
+
+Click the {{ icon("complete", color="green", title="Complete") }} *Complete* button to close out the NCR. This is available while the NCR is *Pending* or *In Progress*.
 
 !!! warning "All Items Must Be Dispositioned"
-    If any linked stock item is still at the *Pending* disposition, this action is rejected. An NCR with no linked stock items has nothing to check, and can be dispositioned freely.
-
-This action is available while the NCR is *Open* or *Investigating* - moving into investigation first is optional.
-
-## Close
-
-Once a disposition has been decided, click the {{ icon("circle-check", color="green", title="Close") }} *Close* button to close out the NCR. This is only available once the NCR is in the *Dispositioned* status.
+    Completing an NCR validates that every [linked stock item](#linked-stock-items) has been assigned a [disposition](#item-disposition) other than *Pending* - if any linked item is still *Pending*, the action is rejected. An NCR with no linked stock items has nothing to check, and completes freely.
 
 ## Cancel
 
-If an NCR was raised in error, or should otherwise be withdrawn, it can be cancelled instead of closed. Click the {{ icon("cancel", color="red", title="Cancel") }} *Cancel* option under the {{ icon("tools") }} actions menu to cancel the NCR. This is available from any open status (*Open*, *Investigating*, or *Dispositioned*).
+If an NCR was raised in error, or should otherwise be withdrawn, it can be cancelled instead of completed. Click the {{ icon("cancel", color="red", title="Cancel") }} *Cancel* option under the {{ icon("tools") }} actions menu to cancel the NCR. This is available while the NCR is *Pending* or *In Progress*.
 
-## Reopen
-
-A *Closed* or *Cancelled* NCR can be reopened, moving it back to the *Open* status. Click the {{ icon("arrow-back", title="Reopen") }} *Reopen* option under the {{ icon("tools") }} actions menu.
+!!! info "No Reopening"
+    Once an NCR is *Complete* or *Cancelled*, it is final - the same as a [Build Order](./build.md), it cannot be reopened.
 
 ## NCR Scheduling
 
-An NCR can optionally be assigned a *Target Date* for resolution. If the target date passes while the NCR is still in an open status (*Open*, *Investigating*, or *Dispositioned*), the NCR is considered *overdue*. This can be useful for tracking NCRs which are behind schedule.
+An NCR can optionally be assigned a *Target Date* for resolution. If the target date passes while the NCR is still *Pending* or *In Progress*, the NCR is considered *overdue*. This can be useful for tracking NCRs which are behind schedule.
 
 ## Non-Conformance Report Reports
 
@@ -180,4 +179,5 @@ The following [global settings](../settings/global.md) are available for adjusti
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
+{{ globalsetting("NCR_ENABLED") }}
 {{ globalsetting("NCR_REFERENCE_PATTERN") }}
