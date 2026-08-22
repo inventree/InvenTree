@@ -466,16 +466,37 @@ class ConfigViewSet(viewsets.ReadOnlyModelViewSet):
 admin_router.register('config', ConfigViewSet, basename='api-config')
 
 
+class NotesImageFilter(FilterSet):
+    """Filterset for the NotesImage API endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = common.models.NotesImage
+        fields = ['user', 'note']
+
+    model_id = rest_filters.NumberFilter(
+        label=_('Model ID'), field_name='note__model_id'
+    )
+
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter queryset to include only Parameters of the given model type."""
+        return common.filters.filter_content_type(
+            queryset, 'note__model_type', value, allow_null=False
+        )
+
+
 class NotesImageList(ListCreateAPI):
     """List view for all notes images."""
 
     queryset = common.models.NotesImage.objects.all()
     serializer_class = common.serializers.NotesImageSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
+    filterset_class = NotesImageFilter
 
     filter_backends = SEARCH_ORDER_FILTER
-
-    search_fields = ['user', 'model_type', 'model_id']
 
     def perform_create(self, serializer):
         """Create (upload) a new notes image."""
@@ -870,6 +891,105 @@ class AttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
         return super().destroy(request, *args, **kwargs)
 
 
+class NoteFilter(FilterSet):
+    """Filterset class for the NoteList API endpoint."""
+
+    class Meta:
+        """Metaclass options for the filterset."""
+
+        model = common.models.Note
+        fields = ['model_type', 'model_id', 'updated_by', 'template']
+
+    template = rest_filters.BooleanFilter(label='Template')
+
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter queryset by model type, allowing null for global templates."""
+        return common.filters.filter_content_type(
+            queryset, 'model_type', value, allow_null=True
+        )
+
+
+class NoteMixin:
+    """Mixin class for the Note views."""
+
+    # Ignore default sanitizing of the 'content' field
+    # Note: This is handled explicitly in the 'save' method of the Note model
+    SAFE_FIELDS = ['content']
+
+    queryset = common.models.Note.objects.all()
+    serializer_class = common.serializers.NoteSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    def get_queryset(self):
+        """Filter notes to those the requesting user has view permission for.
+
+        Template notes (no attached model) are always visible.
+        Regular notes are only visible when the user has 'view' permission
+        for the model type the note is linked to.
+        """
+        import common.validators
+        from users.permissions import check_user_permission, prefetch_rule_sets
+
+        qs = super().get_queryset()
+        user = self.request.user
+
+        if user.is_superuser:
+            return qs
+
+        # Fetch the user's groups (with prefetched rule sets) once, and reuse it
+        # for every model type below - otherwise each check_user_permission()
+        # call re-fetches the same groups/rule-sets from scratch.
+        groups = prefetch_rule_sets(user)
+
+        allowed_ct_ids = [
+            ContentType.objects.get_for_model(model_class).pk
+            for model_class in common.validators.note_model_types()
+            if check_user_permission(user, model_class, 'view', groups=groups)
+        ]
+
+        return qs.filter(Q(template=True) | Q(model_type__in=allowed_ct_ids))
+
+
+class NoteList(NoteMixin, ListCreateAPI):
+    """List API endpoint for Note objects."""
+
+    filter_backends = SEARCH_ORDER_FILTER
+    filterset_class = NoteFilter
+
+    ordering = '-primary'
+    ordering_fields = [
+        'model_id',
+        'model_type',
+        'updated_by',
+        'updated',
+        'primary',
+        'template',
+        'title',
+    ]
+    search_fields = ['title', 'description', 'content']
+
+
+class NoteDetail(NoteMixin, RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for Note objects."""
+
+    def perform_destroy(self, instance):
+        """Enforce the same permission rules on delete as on create/update.
+
+        DRF's default destroy() calls instance.delete() directly, bypassing
+        NoteSerializer.save() (and the permission checks it performs) entirely.
+        Without this, get_queryset()'s 'view' permission gate is all that
+        stands between a user and deleting the note.
+        """
+        common.serializers.check_note_change_permission(
+            self.request.user,
+            template=instance.template,
+            model_type=instance.model_type,
+        )
+        super().perform_destroy(instance)
+
+
 class ParameterTemplateFilter(FilterSet):
     """FilterSet class for the ParameterTemplateList API endpoint."""
 
@@ -1191,6 +1311,82 @@ class ParameterDetail(ParameterMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for Parameter objects."""
 
 
+class InstanceInfoView(APIView):
+    """Return aggregated attachment/note/parameter counts for a single model instance.
+
+    A single generic lookup (given a model_type + model_id) for any detail page to
+    drive its Attachments/Notes/Parameters tab notification dots from one request,
+    instead of each tab independently querying its own list endpoint just to read
+    a count.
+
+    Each count reuses the filtering (and, for notes, the view-permission gating)
+    already implemented by the corresponding list endpoint.
+    """
+
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(name='model_type', type=str, required=True),
+            OpenApiParameter(name='model_id', type=int, required=True),
+        ],
+        responses={200: common.serializers.InstanceInfoSerializer},
+    )
+    def get(self, request, *args, **kwargs):
+        """Return counts of attachments, notes and parameters for the given instance."""
+        from InvenTree.models import (
+            InvenTreeAttachmentMixin,
+            InvenTreeNoteMixin,
+            InvenTreeParameterMixin,
+        )
+
+        model_type = request.query_params.get('model_type')
+        model_id = request.query_params.get('model_id')
+
+        if not model_type or not model_id:
+            raise ValidationError({
+                'model_type': _('This field is required'),
+                'model_id': _('This field is required'),
+            })
+
+        try:
+            model_id = int(model_id)
+        except (TypeError, ValueError):
+            raise ValidationError({'model_id': _('Invalid model ID')})
+
+        content_type = common.filters.determine_content_type(model_type)
+        model_class = content_type.model_class() if content_type else None
+
+        counts = {'attachment_count': 0, 'note_count': 0, 'parameter_count': 0}
+
+        if model_class:
+            if issubclass(model_class, InvenTreeAttachmentMixin):
+                counts['attachment_count'] = common.models.Attachment.objects.filter(
+                    model_type=model_class.__name__.lower(), model_id=model_id
+                ).count()
+
+            if issubclass(model_class, InvenTreeNoteMixin):
+                # Route through NoteList's own get_queryset() (rather than
+                # re-deriving the view-permission check here) so this count can
+                # never drift from what the Notes list endpoint actually shows.
+                note_list_view = NoteList()
+                note_list_view.request = request
+                counts['note_count'] = (
+                    note_list_view
+                    .get_queryset()
+                    .filter(model_type=content_type, model_id=model_id, template=False)
+                    .count()
+                )
+
+            if issubclass(model_class, InvenTreeParameterMixin):
+                counts['parameter_count'] = common.models.Parameter.objects.filter(
+                    model_type=content_type, model_id=model_id
+                ).count()
+
+        serializer = common.serializers.InstanceInfoSerializer(counts)
+        return Response(serializer.data)
+
+
 @method_decorator(cache_control(public=True, max_age=86400), name='dispatch')
 class IconList(ListAPI):
     """List view for available icon packages."""
@@ -1498,8 +1694,6 @@ settings_api_urls = [
 common_api_urls = [
     # Webhooks
     path('webhook/<slug:endpoint>/', WebhookView.as_view(), name='api-webhook'),
-    # Uploaded images for notes
-    path('notes-image-upload/', NotesImageList.as_view(), name='api-notes-image-list'),
     # Background task information
     path(
         'background-task/',
@@ -1529,6 +1723,22 @@ common_api_urls = [
                 ]),
             ),
             path('', AttachmentList.as_view(), name='api-attachment-list'),
+        ]),
+    ),
+    # Notes
+    path(
+        'note/',
+        include([
+            # Uploaded images for notes
+            path('image/', NotesImageList.as_view(), name='api-notes-image-list'),
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(common.models.Note),
+                    path('', NoteDetail.as_view(), name='api-note-detail'),
+                ]),
+            ),
+            path('', NoteList.as_view(), name='api-note-list'),
         ]),
     ),
     # Parameters and templates
@@ -1566,6 +1776,8 @@ common_api_urls = [
             path('', ParameterList.as_view(), name='api-parameter-list'),
         ]),
     ),
+    # Aggregated per-instance counts (attachments / notes / parameters)
+    path('instance-info/', InstanceInfoView.as_view(), name='api-instance-info'),
     # Metadata
     path(
         'metadata/',

@@ -22,7 +22,7 @@ from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
-from InvenTree.models import InvenTreeParameterMixin
+from InvenTree.models import InvenTreeNoteMixin, InvenTreeParameterMixin
 from InvenTree.serializers import (
     ContentTypeField,
     FilterableSerializerMixin,
@@ -404,7 +404,7 @@ class NotesImageSerializer(InvenTreeModelSerializer):
         """Meta options for NotesImageSerializer."""
 
         model = common_models.NotesImage
-        fields = ['pk', 'image', 'user', 'date', 'model_type', 'model_id']
+        fields = ['pk', 'image', 'user', 'date', 'note']
 
         read_only_fields = ['date', 'user']
 
@@ -825,7 +825,6 @@ class AttachmentSerializer(
     def save(self, **kwargs):
         """Override the save method to handle the model_type field."""
         from InvenTree.models import InvenTreeAttachmentMixin
-        from users.permissions import check_user_permission
 
         model_type = self.validated_data.get('model_type', None)
 
@@ -839,21 +838,152 @@ class AttachmentSerializer(
             model_type
         )
 
-        if not issubclass(target_model_class, InvenTreeAttachmentMixin):
-            raise PermissionDenied(_('Invalid model type specified for attachment'))
-
-        permission_error_msg = _(
-            'User does not have permission to create or edit attachments for this model'
+        check_model_change_permission(
+            user,
+            target_model_class,
+            InvenTreeAttachmentMixin,
+            _('Invalid model type specified for attachment'),
+            _(
+                'User does not have permission to create or edit attachments for this model'
+            ),
         )
 
-        if not check_user_permission(user, target_model_class, 'change'):
-            raise PermissionDenied(permission_error_msg)
-
-        # Check that the user has the required permissions to attach files to the target model
-        if not target_model_class.check_related_permission('change', user):
-            raise PermissionDenied(permission_error_msg)
-
         return super().save(**kwargs)
+
+
+def check_model_change_permission(
+    user, target_model_class, mixin_class, invalid_model_msg, permission_error_msg
+):
+    """Ensure a user has 'change' permission against a generic-relation target model.
+
+    Shared by any serializer whose save() must verify both that the target model
+    supports a given mixin (e.g. Attachment/Parameter/Note), and that the user has
+    'change' permission against it - the sequence of checks is identical in each
+    case; only the mixin class and the (separately translated, so callers keep
+    full-sentence translator context) error messages differ.
+
+    Raises PermissionDenied if the model class is invalid, or the user lacks
+    permission.
+    """
+    from users.permissions import check_user_permission
+
+    if not target_model_class or not issubclass(target_model_class, mixin_class):
+        raise PermissionDenied(invalid_model_msg)
+
+    if not check_user_permission(user, target_model_class, 'change'):
+        raise PermissionDenied(permission_error_msg)
+
+    if not target_model_class.check_related_permission('change', user):
+        raise PermissionDenied(permission_error_msg)
+
+
+def check_note_change_permission(user, *, template, model_type):
+    """Check whether a user is permitted to create, edit or delete a note.
+
+    Shared between NoteSerializer.save() (create/update) and NoteDetail's
+    destroy handling (delete), so all three operations enforce the same rule:
+    staff-only for templates, model 'change' permission otherwise.
+
+    Raises PermissionDenied if the user is not permitted.
+    """
+    if template:
+        if not user.is_staff:
+            raise PermissionDenied(
+                _('Only staff users can create or edit note templates')
+            )
+        return
+
+    target_model_class = model_type.model_class() if model_type else None
+
+    check_model_change_permission(
+        user,
+        target_model_class,
+        InvenTreeNoteMixin,
+        _('Invalid model type specified for note'),
+        _('User does not have permission to create or edit notes for this model'),
+    )
+
+
+class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
+    """Serializer for the Note model."""
+
+    class Meta:
+        """Meta options for NoteSerializer."""
+
+        model = common_models.Note
+        fields = [
+            'pk',
+            'template',
+            'model_type',
+            'model_id',
+            'primary',
+            'title',
+            'description',
+            'content',
+            'updated',
+            'updated_by',
+        ]
+
+        read_only_fields = ['updated', 'updated_by']
+
+    def validate(self, data):
+        """Validate note data — templates need no model_id; regular notes require both."""
+        data = super().validate(data)
+
+        is_template = data.get('template', getattr(self.instance, 'template', False))
+
+        if not is_template:
+            model_type = data.get('model_type') or getattr(
+                self.instance, 'model_type', None
+            )
+            model_id = data.get('model_id') or getattr(self.instance, 'model_id', None)
+
+            if not model_type:
+                raise serializers.ValidationError({
+                    'model_type': _('This field is required.')
+                })
+            if model_id is None:
+                raise serializers.ValidationError({
+                    'model_id': _('This field is required.')
+                })
+
+        return data
+
+    def save(self, **kwargs):
+        """Save the Note instance."""
+        user = self.context.get('request').user
+        is_template = self.validated_data.get(
+            'template', getattr(self.instance, 'template', False)
+        )
+        model_type = self.validated_data.get('model_type') or (
+            self.instance and self.instance.model_type
+        )
+
+        check_note_change_permission(user, template=is_template, model_type=model_type)
+
+        return super().save(updated_by=user, **kwargs)
+
+    # Note: The choices are overridden at run-time on class initialization
+    model_type = ContentTypeField(
+        mixin_class=InvenTreeNoteMixin,
+        choices=common.validators.note_model_options,
+        label=_('Model Type'),
+        default=None,
+        allow_null=True,
+        required=False,
+    )
+
+    updated_by_detail = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={
+            'source': 'updated_by',
+            'read_only': True,
+            'allow_null': True,
+            'many': False,
+        },
+        default_include=True,
+        prefetch_fields=['updated_by'],
+    )
 
 
 @register_importer()
@@ -923,9 +1053,6 @@ class ParameterSerializer(
 
     def save(self, **kwargs):
         """Save the Parameter instance."""
-        from InvenTree.models import InvenTreeParameterMixin
-        from users.permissions import check_user_permission
-
         model_type = self.validated_data.get('model_type', None)
 
         if model_type is None and self.instance:
@@ -936,18 +1063,15 @@ class ParameterSerializer(
 
         target_model_class = model_type.model_class()
 
-        if not issubclass(target_model_class, InvenTreeParameterMixin):
-            raise PermissionDenied(_('Invalid model type specified for parameter'))
-
-        permission_error_msg = _(
-            'User does not have permission to create or edit parameters for this model'
+        check_model_change_permission(
+            user,
+            target_model_class,
+            InvenTreeParameterMixin,
+            _('Invalid model type specified for parameter'),
+            _(
+                'User does not have permission to create or edit parameters for this model'
+            ),
         )
-
-        if not check_user_permission(user, target_model_class, 'change'):
-            raise PermissionDenied(permission_error_msg)
-
-        if not target_model_class.check_related_permission('change', user):
-            raise PermissionDenied(permission_error_msg)
 
         instance = super().save(updated_by=user, **kwargs)
 
@@ -1132,3 +1256,31 @@ class TestEmailSerializer(serializers.Serializer):
         fields = ['email']
 
     email = serializers.EmailField(required=True)
+
+
+class InstanceInfoSerializer(serializers.Serializer):
+    """Serializer for aggregated per-instance counts (attachments, notes, parameters).
+
+    Backs a single generic lookup (see common.api.InstanceInfoView) that any
+    model instance's detail page can use to drive its Attachments/Notes/
+    Parameters tab notification dots from one request, instead of each tab
+    independently querying its own list endpoint just to read a count.
+    """
+
+    attachment_count = serializers.IntegerField(
+        label=_('Attachment Count'),
+        help_text=_('Number of attachments associated with this instance'),
+        read_only=True,
+    )
+
+    note_count = serializers.IntegerField(
+        label=_('Note Count'),
+        help_text=_('Number of notes associated with this instance'),
+        read_only=True,
+    )
+
+    parameter_count = serializers.IntegerField(
+        label=_('Parameter Count'),
+        help_text=_('Number of parameters associated with this instance'),
+        read_only=True,
+    )

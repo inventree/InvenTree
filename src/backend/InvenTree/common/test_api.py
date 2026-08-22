@@ -1063,6 +1063,712 @@ class AttachmentAPITests(InvenTreeAPITestCase):
             self.assertFalse(default_storage.exists(att.attachment.path))
 
 
+class InstanceInfoAPITests(InvenTreeAPITestCase):
+    """API tests for the InstanceInfoView (aggregated attachment/note/parameter counts)."""
+
+    roles = []
+
+    def setUp(self):
+        """Create a Part instance to query counts against."""
+        from part.models import Part
+
+        super().setUp()
+
+        self.part = Part.objects.create(name='Instance Info Test Part', description='x')
+
+    def _url(self, model_type=None, model_id=None):
+        params = {}
+        if model_type is not None:
+            params['model_type'] = model_type
+        if model_id is not None:
+            params['model_id'] = model_id
+        return reverse('api-instance-info'), params
+
+    def test_missing_params(self):
+        """Both model_type and model_id are required."""
+        url, _params = self._url()
+        response = self.get(url, expected_code=400)
+        self.assertIn('model_type', response.data)
+        self.assertIn('model_id', response.data)
+
+    def test_invalid_model_id(self):
+        """A non-numeric model_id is rejected."""
+        url, params = self._url('part', 'not-a-number')
+        response = self.get(url, data=params, expected_code=400)
+        self.assertIn('model_id', response.data)
+
+    def test_zero_counts(self):
+        """A part with no attachments/notes/parameters returns all zeros."""
+        url, params = self._url('part', self.part.pk)
+        response = self.get(url, data=params, expected_code=200)
+
+        self.assertEqual(response.data['attachment_count'], 0)
+        self.assertEqual(response.data['note_count'], 0)
+        self.assertEqual(response.data['parameter_count'], 0)
+
+    def test_nonexistent_model_type(self):
+        """An unsupported/unrecognized model_type returns all zeros, not an error."""
+        url, params = self._url('not_a_real_model', 1)
+        response = self.get(url, data=params, expected_code=200)
+
+        self.assertEqual(response.data['attachment_count'], 0)
+        self.assertEqual(response.data['note_count'], 0)
+        self.assertEqual(response.data['parameter_count'], 0)
+
+    def test_counts_reflect_related_objects(self):
+        """Counts reflect actual attachments/notes/parameters attached to the instance."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import Note, Parameter, ParameterTemplate
+        from part.models import Part
+
+        # note_count requires 'view' permission on the target model (see
+        # test_note_count_respects_view_permission for that behaviour in isolation)
+        self.assignRole('part.view')
+
+        part_ct = ContentType.objects.get_for_model(Part)
+
+        common.models.Attachment.objects.create(
+            model_type='part',
+            model_id=self.part.pk,
+            link='https://example.com',
+            comment='test attachment',
+        )
+
+        Note.objects.create(
+            model_type=part_ct, model_id=self.part.pk, title='N', content='<p>x</p>'
+        )
+
+        template = ParameterTemplate.objects.create(name='Colour')
+        Parameter.objects.create(
+            template=template, model_type=part_ct, model_id=self.part.pk, data='Red'
+        )
+
+        url, params = self._url('part', self.part.pk)
+        response = self.get(url, data=params, expected_code=200)
+
+        self.assertEqual(response.data['attachment_count'], 1)
+        self.assertEqual(response.data['note_count'], 1)
+        self.assertEqual(response.data['parameter_count'], 1)
+
+    def test_note_count_respects_view_permission(self):
+        """note_count is gated by 'view' permission on the target model, matching NoteList.
+
+        attachment_count / parameter_count are *not* gated (matching AttachmentList /
+        ParameterList, neither of which apply view-permission filtering today) - this
+        pins down that intentional asymmetry rather than accidentally widening or
+        narrowing either behaviour.
+        """
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import Note, Parameter, ParameterTemplate
+        from part.models import Part
+
+        part_ct = ContentType.objects.get_for_model(Part)
+
+        common.models.Attachment.objects.create(
+            model_type='part',
+            model_id=self.part.pk,
+            link='https://example.com',
+            comment='test attachment',
+        )
+        Note.objects.create(
+            model_type=part_ct, model_id=self.part.pk, title='N', content='<p>x</p>'
+        )
+        template = ParameterTemplate.objects.create(name='Colour')
+        Parameter.objects.create(
+            template=template, model_type=part_ct, model_id=self.part.pk, data='Red'
+        )
+
+        # No roles assigned - user cannot view Part notes
+        url, params = self._url('part', self.part.pk)
+        response = self.get(url, data=params, expected_code=200)
+
+        self.assertEqual(response.data['attachment_count'], 1)
+        self.assertEqual(response.data['note_count'], 0)
+        self.assertEqual(response.data['parameter_count'], 1)
+
+        # Once granted view permission, the note becomes visible too
+        self.assignRole('part.view')
+        response = self.get(url, data=params, expected_code=200)
+        self.assertEqual(response.data['note_count'], 1)
+
+
+class NoteAPITests(InvenTreeAPITestCase):
+    """API tests for the Note model, focusing on the 'primary' flag behaviour."""
+
+    def setUp(self):
+        """Create a Part instance to attach notes to."""
+        from part.models import Part
+
+        super().setUp()
+
+        self.assignRole('part.add')
+
+        self.part = Part.objects.create(
+            name='Test Part', description='A part for testing notes'
+        )
+
+    def _note_url(self, pk=None):
+        if pk:
+            return reverse('api-note-detail', kwargs={'pk': pk})
+        return reverse('api-note-list')
+
+    def _create_note(self, title, primary=None, expected_code=201):
+        data = {'model_type': 'part', 'model_id': self.part.pk, 'title': title}
+        if primary is not None:
+            data['primary'] = primary
+        return self.post(self._note_url(), data=data, expected_code=expected_code)
+
+    def test_first_note_is_primary(self):
+        """A note created when no other notes exist is automatically primary."""
+        response = self._create_note('Only Note')
+        self.assertTrue(response.data['primary'])
+
+    def test_second_note_not_primary_by_default(self):
+        """Notes created after the first are not primary by default."""
+        first = self._create_note('First Note')
+        second = self._create_note('Second Note')
+
+        self.assertTrue(first.data['primary'])
+        self.assertFalse(second.data['primary'])
+
+        # Confirm the first is still marked primary in the database
+        from common.models import Note
+
+        self.assertTrue(Note.objects.get(pk=first.data['pk']).primary)
+
+    def test_setting_primary_clears_others(self):
+        """Marking a note as primary demotes all sibling notes."""
+        first = self._create_note('First Note')
+        second = self._create_note('Second Note')
+        third = self._create_note('Third Note')
+
+        # Only the first should be primary after creation
+        self.assertTrue(first.data['primary'])
+        self.assertFalse(second.data['primary'])
+        self.assertFalse(third.data['primary'])
+
+        # Promote the third note via PATCH
+        response = self.patch(
+            self._note_url(third.data['pk']), data={'primary': True}, expected_code=200
+        )
+        self.assertTrue(response.data['primary'])
+
+        # Verify via the list endpoint that only the third is primary
+        list_response = self.get(
+            self._note_url(),
+            data={'model_type': 'part', 'model_id': self.part.pk},
+            expected_code=200,
+        )
+        primary_pks = [n['pk'] for n in list_response.data if n['primary']]
+        self.assertEqual(primary_pks, [third.data['pk']])
+
+    def test_primary_flag_isolated_per_model_instance(self):
+        """Primary flag changes on one model instance do not affect notes on another."""
+        from part.models import Part
+
+        other_part = Part.objects.create(name='Other Part', description='Another part')
+
+        note_a = self._create_note('Note on Part A')
+        self.assertTrue(note_a.data['primary'])
+
+        # Create a note on the other part; it should be primary for *that* part
+        note_b_response = self.post(
+            self._note_url(),
+            data={
+                'model_type': 'part',
+                'model_id': other_part.pk,
+                'title': 'Note on Part B',
+            },
+            expected_code=201,
+        )
+        self.assertTrue(note_b_response.data['primary'])
+
+        # The note on Part A should still be primary
+        note_a_detail = self.get(self._note_url(note_a.data['pk']), expected_code=200)
+        self.assertTrue(note_a_detail.data['primary'])
+
+    def test_phantom_row_race_retries_instead_of_500(self):
+        """Two concurrent creates of the *first* note for an instance must not 500.
+
+        Note.save()'s select_for_update() sibling lock has nothing to lock when no
+        sibling note exists yet, so it cannot by itself serialize two concurrent
+        creates of the first note for the same model instance - both can decide
+        they're primary before either commits. This can't be reproduced
+        deterministically with real threads inside a TestCase (each test runs
+        inside one wrapped, uncommitted transaction), so instead force the exact
+        failure mode Note.save() must handle: make its own first INSERT attempt
+        collide with the unique_primary_note_per_model constraint, as a genuine
+        second concurrent request's already-committed row would, and confirm it
+        retries as a non-primary note instead of letting the IntegrityError
+        surface as a raw 500.
+        """
+        from unittest import mock
+
+        from django.contrib.contenttypes.models import ContentType
+        from django.db import IntegrityError
+        from django.db.models import Model as DjangoModel
+
+        from common.models import Note
+
+        note = Note(
+            model_type=ContentType.objects.get_for_model(self.part.__class__),
+            model_id=self.part.pk,
+            title='Racing Note',
+            content='',
+        )
+
+        original_save = DjangoModel.save
+        attempts = []
+
+        def flaky_save(self_obj, *args, **kwargs):
+            """Fail the first save attempt for `note` only; behave normally otherwise."""
+            if self_obj is note and not attempts:
+                attempts.append(1)
+                raise IntegrityError(
+                    'duplicate key value violates unique constraint '
+                    '"unique_primary_note_per_model"'
+                )
+            return original_save(self_obj, *args, **kwargs)
+
+        with mock.patch.object(DjangoModel, 'save', new=flaky_save):
+            note.save()
+
+        # Lost the (simulated) race - demoted to non-primary, not left unsaved
+        self.assertFalse(note.primary)
+        self.assertTrue(Note.objects.filter(pk=note.pk).exists())
+        self.assertEqual(len(attempts), 1)
+
+
+class NoteModelTypeValidationTests(InvenTreeAPITestCase):
+    """Tests that Note.model_type is restricted to models which support notes.
+
+    Covers both the model-level validator (common.validators.validate_note_model_type,
+    attached via Note.model_type's `validators` and invoked explicitly in Note.clean(),
+    so it applies to any code path - not just the DRF serializer) and the API-level
+    check (ContentTypeField(mixin_class=InvenTreeNoteMixin, ...)) - both derive from
+    the same InvenTreeNoteMixin-based lookup, rather than maintaining separate lists.
+    """
+
+    def test_model_rejects_unsupported_content_type(self):
+        """Note.full_clean() rejects a content type which does not support notes."""
+        from django.contrib.auth import get_user_model
+        from django.contrib.contenttypes.models import ContentType
+        from django.core.exceptions import ValidationError
+
+        from common.models import Note
+
+        user_ct = ContentType.objects.get_for_model(get_user_model())
+
+        note = Note(model_type=user_ct, model_id=1, title='Bad Note')
+
+        with self.assertRaises(ValidationError) as cm:
+            note.full_clean()
+        self.assertIn('model_type', cm.exception.message_dict)
+
+    def test_save_rejects_unsupported_content_type(self):
+        """Note.save() rejects a content type which does not support notes.
+
+        Note.clean() explicitly invokes the shared validator, so this is caught
+        even when full_clean()/clean_fields() is never called - e.g. direct
+        Note.objects.create() calls from the admin, shell, or other app code.
+        """
+        from django.contrib.auth import get_user_model
+        from django.contrib.contenttypes.models import ContentType
+        from django.core.exceptions import ValidationError
+
+        from common.models import Note
+
+        user_ct = ContentType.objects.get_for_model(get_user_model())
+
+        with self.assertRaises(ValidationError):
+            Note.objects.create(model_type=user_ct, model_id=1, title='Bad Note')
+
+        self.assertFalse(Note.objects.filter(title='Bad Note').exists())
+
+    def test_model_accepts_supported_content_type(self):
+        """Note.full_clean() accepts a content type which does support notes."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import Note
+        from part.models import Part
+
+        part_ct = ContentType.objects.get_for_model(Part)
+
+        note = Note(model_type=part_ct, model_id=1, title='Good Note')
+        note.full_clean()
+
+    def test_api_rejects_unsupported_content_type(self):
+        """The Note API rejects a model_type which does not support notes."""
+        self.assignRole('part.change')
+
+        response = self.post(
+            reverse('api-note-list'),
+            data={'model_type': 'auth.user', 'model_id': 1, 'title': 'Bad Note'},
+            expected_code=400,
+        )
+        self.assertIn('model_type', response.data)
+
+
+class NoteContentSanitizationTests(InvenTreeAPITestCase):
+    """Security tests for the Note API 'content' field.
+
+    The content field accepts raw HTML which is sanitized by nh3 before
+    persistence. These tests verify that known XSS vectors are neutralised
+    both at the model level (Note.clean()) and through the API (POST/PATCH).
+    """
+
+    def setUp(self):
+        """Create a Part instance to attach notes to."""
+        from part.models import Part
+
+        super().setUp()
+
+        self.assignRole('part.add')
+
+        self.part = Part.objects.create(
+            name='Security Test Part', description='Part for note security testing'
+        )
+
+    def _note_url(self, pk=None):
+        if pk:
+            return reverse('api-note-detail', kwargs={'pk': pk})
+        return reverse('api-note-list')
+
+    def _create_note_with_content(self, content, expected_code=201):
+        return self.post(
+            self._note_url(),
+            data={
+                'model_type': 'part',
+                'model_id': self.part.pk,
+                'title': 'Security Test Note',
+                'content': content,
+            },
+            expected_code=expected_code,
+        )
+
+    # -------------------------------------------------------------------------
+    # Model-level sanitization (Note.clean() called directly)
+    # -------------------------------------------------------------------------
+
+    def test_model_clean_strips_script_tags(self):
+        """Note.clean() removes <script> tags, preserving safe surrounding content."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import Note
+
+        ct = ContentType.objects.get_for_model(self.part.__class__)
+        note = Note(
+            model_type=ct,
+            model_id=self.part.pk,
+            title='Model-level test',
+            content="<script>alert('xss')</script><p>Safe content</p>",
+        )
+        note.clean()
+        self.assertNotIn('<script', note.content.lower())
+        self.assertIn('Safe content', note.content)
+
+    def test_model_clean_strips_event_handlers(self):
+        """Note.clean() strips inline event-handler attributes from allowed tags."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import Note
+
+        ct = ContentType.objects.get_for_model(self.part.__class__)
+        note = Note(
+            model_type=ct,
+            model_id=self.part.pk,
+            title='Event handler test',
+            content='<p onclick="alert(\'xss\')">text</p>',
+        )
+        note.clean()
+        self.assertNotIn('onclick', note.content.lower())
+        self.assertIn('text', note.content)
+
+    def test_model_clean_strips_javascript_protocol(self):
+        """Note.clean() removes javascript: from href attributes."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import Note
+
+        ct = ContentType.objects.get_for_model(self.part.__class__)
+        note = Note(
+            model_type=ct,
+            model_id=self.part.pk,
+            title='Protocol test',
+            content='<a href="javascript:alert(\'xss\')">link</a>',
+        )
+        note.clean()
+        self.assertNotIn('javascript:', note.content.lower())
+
+    # -------------------------------------------------------------------------
+    # API - script injection (POST)
+    # -------------------------------------------------------------------------
+
+    def test_api_script_tag_stripped(self):
+        """<script> tags are stripped when content is submitted via the API."""
+        response = self._create_note_with_content(
+            "<script>alert('xss')</script><p>hello</p>"
+        )
+        content = response.data['content']
+        self.assertNotIn('<script', content.lower())
+        self.assertIn('hello', content)
+
+    def test_api_uppercase_script_stripped(self):
+        """Uppercase <SCRIPT> tags are stripped."""
+        response = self._create_note_with_content("<SCRIPT>alert('xss')</SCRIPT>")
+        self.assertNotIn('<script', response.data['content'].lower())
+
+    def test_api_mixed_case_script_stripped(self):
+        """Mixed-case <ScRiPt> tags are stripped."""
+        response = self._create_note_with_content("<ScRiPt>alert('xss')</ScRiPt>")
+        self.assertNotIn('<script', response.data['content'].lower())
+
+    # -------------------------------------------------------------------------
+    # API - event handler injection
+    # -------------------------------------------------------------------------
+
+    def test_api_onerror_handler_stripped(self):
+        """Onerror attribute is stripped from img tags."""
+        response = self._create_note_with_content("<img src='x' onerror='alert(1)'>")
+        self.assertNotIn('onerror', response.data['content'].lower())
+
+    def test_api_onload_handler_stripped(self):
+        """Onload attribute is stripped (e.g. on svg tags)."""
+        response = self._create_note_with_content(
+            "<svg onload='alert(1)'><rect/></svg>"
+        )
+        self.assertNotIn('onload', response.data['content'].lower())
+
+    def test_api_onclick_handler_stripped(self):
+        """Onclick attribute is stripped from otherwise-allowed tags."""
+        response = self._create_note_with_content("<p onclick='alert(1)'>click me</p>")
+        self.assertNotIn('onclick', response.data['content'].lower())
+
+    def test_api_onmouseover_handler_stripped(self):
+        """Onmouseover attribute is stripped."""
+        response = self._create_note_with_content("<a onmouseover='alert(1)'>hover</a>")
+        self.assertNotIn('onmouseover', response.data['content'].lower())
+
+    def test_api_onfocus_handler_stripped(self):
+        """Onfocus attribute on an input element is stripped."""
+        response = self._create_note_with_content(
+            "<input onfocus='alert(1)' autofocus>"
+        )
+        self.assertNotIn('onfocus', response.data['content'].lower())
+
+    # -------------------------------------------------------------------------
+    # API - javascript: / vbscript: protocol injection
+    # -------------------------------------------------------------------------
+
+    def test_api_javascript_href_stripped(self):
+        """javascript: href is removed from anchor tags."""
+        response = self._create_note_with_content(
+            "<a href='javascript:alert(1)'>click</a>"
+        )
+        self.assertNotIn('javascript:', response.data['content'].lower())
+
+    def test_api_javascript_href_uppercase_stripped(self):
+        """JAVASCRIPT: href (uppercase) is removed from anchor tags."""
+        response = self._create_note_with_content(
+            "<a href='JAVASCRIPT:alert(1)'>click</a>"
+        )
+        self.assertNotIn('javascript:', response.data['content'].lower())
+
+    def test_api_vbscript_href_stripped(self):
+        """vbscript: href is removed from anchor tags."""
+        response = self._create_note_with_content(
+            "<a href='vbscript:msgbox(1)'>click</a>"
+        )
+        self.assertNotIn('vbscript:', response.data['content'].lower())
+
+    # -------------------------------------------------------------------------
+    # API - dangerous tag removal
+    # -------------------------------------------------------------------------
+
+    def test_api_iframe_stripped(self):
+        """<iframe> tags are stripped entirely."""
+        response = self._create_note_with_content(
+            "<iframe src='https://evil.example.com'></iframe>"
+        )
+        self.assertNotIn('<iframe', response.data['content'].lower())
+
+    def test_api_object_stripped(self):
+        """<object> tags are stripped entirely."""
+        response = self._create_note_with_content("<object data='evil.swf'></object>")
+        self.assertNotIn('<object', response.data['content'].lower())
+
+    def test_api_embed_stripped(self):
+        """<embed> tags are stripped entirely."""
+        response = self._create_note_with_content("<embed src='evil.swf'>")
+        self.assertNotIn('<embed', response.data['content'].lower())
+
+    def test_api_base_tag_stripped(self):
+        """<base> tags are stripped (prevents base-URL hijacking)."""
+        response = self._create_note_with_content(
+            "<base href='https://evil.example.com'>"
+        )
+        self.assertNotIn('<base', response.data['content'].lower())
+
+    def test_api_link_tag_stripped(self):
+        """<link> tags are stripped (prevents external stylesheet injection)."""
+        response = self._create_note_with_content(
+            "<link rel='stylesheet' href='evil.css'>"
+        )
+        self.assertNotIn('<link', response.data['content'].lower())
+
+    def test_api_meta_refresh_stripped(self):
+        """<meta http-equiv=refresh> tags are stripped."""
+        response = self._create_note_with_content(
+            "<meta http-equiv='refresh' content='0;url=https://evil.example.com'>"
+        )
+        self.assertNotIn('<meta', response.data['content'].lower())
+
+    def test_api_form_stripped(self):
+        """<form> tags are stripped (prevents CSRF / phishing via injected forms)."""
+        response = self._create_note_with_content(
+            "<form action='https://evil.example.com'><input name='x'></form>"
+        )
+        self.assertNotIn('<form', response.data['content'].lower())
+
+    # -------------------------------------------------------------------------
+    # API - CSS / style injection
+    # -------------------------------------------------------------------------
+
+    def test_api_style_attribute_javascript_stripped(self):
+        """Style attributes containing javascript: expressions are stripped."""
+        response = self._create_note_with_content(
+            "<div style='background:url(javascript:alert(1))'>x</div>"
+        )
+        self.assertNotIn('javascript:', response.data['content'].lower())
+
+    def test_api_style_expression_stripped(self):
+        """IE-era CSS expression() is stripped from style attributes."""
+        response = self._create_note_with_content(
+            '<p style="width:expression(alert(\'xss\'))">x</p>'
+        )
+        self.assertNotIn('expression(', response.data['content'].lower())
+
+    # -------------------------------------------------------------------------
+    # API - SVG-based XSS
+    # -------------------------------------------------------------------------
+
+    def test_api_svg_onload_stripped(self):
+        """SVG with onload handler is sanitized."""
+        response = self._create_note_with_content(
+            "<svg xmlns='http://www.w3.org/2000/svg' onload='alert(1)'>"
+            "<rect width='100' height='100'/></svg>"
+        )
+        self.assertNotIn('onload', response.data['content'].lower())
+
+    def test_api_svg_animate_javascript_stripped(self):
+        """SVG animate element with javascript: href value is stripped."""
+        response = self._create_note_with_content(
+            "<svg><animate attributeName='href' values='javascript:alert(1)'/></svg>"
+        )
+        self.assertNotIn('javascript:', response.data['content'].lower())
+
+    # -------------------------------------------------------------------------
+    # API - data URI injection
+    # -------------------------------------------------------------------------
+
+    def test_api_data_uri_in_img_src_stripped(self):
+        """data: URI in img src containing a script payload is stripped."""
+        response = self._create_note_with_content(
+            '<img src="data:text/html,<script>alert(1)</script>">'
+        )
+        content = response.data['content']
+        self.assertNotIn('<script', content.lower())
+        # The data: URI should be stripped from the src attribute
+        self.assertNotIn('data:text/html', content.lower())
+
+    # -------------------------------------------------------------------------
+    # API - PATCH also sanitizes (not just POST)
+    # -------------------------------------------------------------------------
+
+    def test_api_patch_sanitizes_content(self):
+        """Updating note content via PATCH also sanitises the payload."""
+        note = self._create_note_with_content('<p>Original safe content</p>')
+        pk = note.data['pk']
+
+        response = self.patch(
+            self._note_url(pk),
+            data={'content': "<script>alert('xss')</script><p>Updated</p>"},
+            expected_code=200,
+        )
+        content = response.data['content']
+        self.assertNotIn('<script', content.lower())
+        self.assertIn('Updated', content)
+
+    # -------------------------------------------------------------------------
+    # API - sanitized content is persisted, not just masked in response
+    # -------------------------------------------------------------------------
+
+    def test_sanitized_content_persisted_in_database(self):
+        """Sanitization is applied before DB write, not only in the API response."""
+        from common.models import Note
+
+        payload = "<script>alert('xss')</script><p>Safe text</p>"
+        response = self._create_note_with_content(payload)
+        pk = response.data['pk']
+
+        note = Note.objects.get(pk=pk)
+        self.assertNotIn('<script', note.content.lower())
+        self.assertIn('Safe text', note.content)
+
+    # -------------------------------------------------------------------------
+    # Regression - safe HTML is not over-sanitized
+    # -------------------------------------------------------------------------
+
+    def test_safe_inline_formatting_preserved(self):
+        """Legitimate inline HTML (strong, em) survives sanitization."""
+        safe_html = '<p>Normal <strong>bold</strong> and <em>italic</em> text</p>'
+        response = self._create_note_with_content(safe_html)
+        content = response.data['content']
+        self.assertIn('<strong>', content)
+        self.assertIn('<em>', content)
+
+    def test_safe_https_link_preserved(self):
+        """An anchor with an https:// href is kept after sanitization."""
+        response = self._create_note_with_content(
+            '<a href="https://example.com">documentation</a>'
+        )
+        content = response.data['content']
+        self.assertIn('https://example.com', content)
+        self.assertIn('documentation', content)
+
+    def test_blockquote_preserved(self):
+        """Block-level formatting elements such as blockquote are preserved."""
+        response = self._create_note_with_content(
+            '<blockquote><p>Quoted text</p></blockquote>'
+        )
+        content = response.data['content']
+        self.assertIn('<blockquote>', content)
+        self.assertIn('Quoted text', content)
+
+    def test_empty_content_accepted(self):
+        """An empty content field is valid and stored as-is."""
+        response = self._create_note_with_content('')
+        self.assertEqual(response.data['content'], '')
+
+    def test_plain_text_content_preserved(self):
+        """Plain text with no HTML tags is stored without modification."""
+        plain = 'Just plain text, no HTML here.'
+        response = self._create_note_with_content(plain)
+        self.assertEqual(response.data['content'], plain)
+
+    def test_html_entities_in_plain_text_not_executed(self):
+        """HTML-entity-encoded script tags in plain text are not executed as markup."""
+        # &lt;script&gt; is already-escaped user text — it should be stored
+        # safely and not interpreted as a tag.
+        entity_payload = '&lt;script&gt;alert(1)&lt;/script&gt;'
+        response = self._create_note_with_content(entity_payload)
+        content = response.data['content']
+        # Must not contain a live <script> tag
+        self.assertNotIn('<script', content.lower())
+
+
 class AttachmentThumbnailAPITests(InvenTreeAPITestCase):
     """Tests for thumbnail generation when uploading attachments via the API."""
 
@@ -1552,3 +2258,472 @@ class SelectionListLockedTest(InvenTreeAPITestCase):
 
         # Entry must still exist — omitting choices must not delete entries
         self.assertTrue(SelectionListEntry.objects.filter(pk=self.entry.pk).exists())
+
+
+class NotePermissionAPITests(InvenTreeAPITestCase):
+    """Tests for Note API permission enforcement.
+
+    Covers two requirements:
+      1. Users cannot create/edit notes against a model they lack change permission for.
+      2. Users cannot view notes against a model they lack view permission for.
+    """
+
+    # No roles by default — each test assigns only what it needs
+    roles = []
+
+    def setUp(self):
+        """Create a Part and a pre-existing note for permission tests."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import Note
+        from part.models import Part
+
+        super().setUp()
+
+        self.part = Part.objects.create(
+            name='Perm Test Part', description='Part for permission testing'
+        )
+
+        # Create a note directly via ORM (bypasses API permission checks)
+        ct = ContentType.objects.get_for_model(Part)
+        self.note = Note.objects.create(
+            model_type=ct,
+            model_id=self.part.pk,
+            title='Pre-existing Note',
+            content='<p>content</p>',
+        )
+
+    def _note_url(self, pk=None):
+        if pk:
+            return reverse('api-note-detail', kwargs={'pk': pk})
+        return reverse('api-note-list')
+
+    # -------------------------------------------------------------------------
+    # Upload (create) permission checks
+    # -------------------------------------------------------------------------
+
+    def test_create_note_no_role_is_denied(self):
+        """A user with no roles cannot create a note for a Part."""
+        self.post(
+            self._note_url(),
+            data={
+                'model_type': 'part',
+                'model_id': self.part.pk,
+                'title': 'Should Fail',
+            },
+            expected_code=403,
+        )
+
+    def test_create_note_view_only_role_is_denied(self):
+        """A user with only part.view cannot create a note for a Part.
+
+        'view' does not imply 'change' in the InvenTree ruleset hierarchy.
+        """
+        self.assignRole('part.view')
+        self.post(
+            self._note_url(),
+            data={
+                'model_type': 'part',
+                'model_id': self.part.pk,
+                'title': 'Should Fail',
+            },
+            expected_code=403,
+        )
+
+    def test_create_note_with_change_role_is_allowed(self):
+        """A user with part.change can create a note for a Part."""
+        self.assignRole('part.change')
+        response = self.post(
+            self._note_url(),
+            data={
+                'model_type': 'part',
+                'model_id': self.part.pk,
+                'title': 'Should Succeed',
+            },
+            expected_code=201,
+        )
+        self.assertEqual(response.data['title'], 'Should Succeed')
+
+    def test_create_note_with_add_role_is_allowed(self):
+        """A user with part.add can create a note (add implies change in InvenTree)."""
+        self.assignRole('part.add')
+        response = self.post(
+            self._note_url(),
+            data={
+                'model_type': 'part',
+                'model_id': self.part.pk,
+                'title': 'Add Role Note',
+            },
+            expected_code=201,
+        )
+        self.assertEqual(response.data['title'], 'Add Role Note')
+
+    # -------------------------------------------------------------------------
+    # View (read) permission checks
+    # -------------------------------------------------------------------------
+
+    def test_list_notes_no_role_returns_empty(self):
+        """A user with no roles cannot see notes attached to a Part."""
+        response = self.get(
+            self._note_url(),
+            data={'model_type': 'part', 'model_id': self.part.pk},
+            expected_code=200,
+        )
+        self.assertEqual(len(response.data), 0)
+
+    def test_list_notes_with_view_role_returns_notes(self):
+        """A user with part.view can see notes attached to a Part."""
+        self.assignRole('part.view')
+        response = self.get(
+            self._note_url(),
+            data={'model_type': 'part', 'model_id': self.part.pk},
+            expected_code=200,
+        )
+        pks = [n['pk'] for n in response.data]
+        self.assertIn(self.note.pk, pks)
+
+    def test_detail_note_no_role_returns_404(self):
+        """A user with no roles gets 404 when accessing a note detail for a Part."""
+        self.get(self._note_url(self.note.pk), expected_code=404)
+
+    def test_detail_note_with_view_role_returns_200(self):
+        """A user with part.view can access a specific note for a Part."""
+        self.assignRole('part.view')
+        response = self.get(self._note_url(self.note.pk), expected_code=200)
+        self.assertEqual(response.data['pk'], self.note.pk)
+
+    def test_list_notes_unrelated_role_does_not_leak(self):
+        """A user with a role that has no Part access cannot see Part notes.
+
+        purchase_order.view covers company/order tables; 'part_part' is NOT
+        in that ruleset, so Part notes must remain invisible to this user.
+        Note: build.view would be wrong here because 'part_part' IS listed in
+        the build ruleset (builds need to read parts).
+        """
+        self.assignRole('purchase_order.view')
+        response = self.get(
+            self._note_url(),
+            data={'model_type': 'part', 'model_id': self.part.pk},
+            expected_code=200,
+        )
+        self.assertEqual(len(response.data), 0)
+
+    # -------------------------------------------------------------------------
+    # Update (change) permission checks
+    # -------------------------------------------------------------------------
+
+    def test_update_note_no_role_returns_404(self):
+        """A user with no roles cannot even see the note, so gets a 404 on update.
+
+        Matches the existing GET/detail 404 case - the note is entirely absent
+        from get_queryset() without 'view' permission.
+        """
+        from common.models import Note
+
+        self.patch(
+            self._note_url(self.note.pk),
+            data={'content': '<p>Should Fail</p>'},
+            expected_code=404,
+        )
+        self.assertEqual(Note.objects.get(pk=self.note.pk).content, '<p>content</p>')
+
+    def test_update_note_view_only_role_is_denied(self):
+        """A user with only part.view cannot update a note for a Part.
+
+        Mirrors the create-permission check: 'view' does not imply 'change'.
+        """
+        self.assignRole('part.view')
+        self.patch(
+            self._note_url(self.note.pk),
+            data={'content': '<p>Should Fail</p>'},
+            expected_code=403,
+        )
+
+    def test_update_note_with_change_role_is_allowed(self):
+        """A user with part.change can update a note for a Part."""
+        self.assignRole('part.change')
+        response = self.patch(
+            self._note_url(self.note.pk),
+            data={'content': '<p>Updated</p>'},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['content'], '<p>Updated</p>')
+
+    # -------------------------------------------------------------------------
+    # Delete permission checks
+    # -------------------------------------------------------------------------
+
+    def test_delete_note_no_role_returns_404(self):
+        """A user with no roles cannot even see the note, so gets a 404 on delete.
+
+        This is the 'no visibility at all' case, and is expected to behave the
+        same way as the existing GET/detail 404 case.
+        """
+        from common.models import Note
+
+        self.delete(self._note_url(self.note.pk), expected_code=404)
+        self.assertTrue(Note.objects.filter(pk=self.note.pk).exists())
+
+    def test_delete_note_view_only_role_is_denied(self):
+        """A user with only 'view' permission must not be able to delete a note.
+
+        Regression test for a permission gap: NoteDetail (RetrieveUpdateDestroyAPI)
+        uses DRF's default destroy()/perform_destroy(), which calls
+        instance.delete() directly - bypassing NoteSerializer.save() entirely.
+        The 'change' permission check in NoteSerializer.save() therefore never
+        runs for DELETE requests, so a 'view'-only user (visible via
+        get_queryset(), but without 'change') is currently able to delete the
+        note. This must be denied, exactly like create/update are.
+        """
+        from common.models import Note
+
+        self.assignRole('part.view')
+        self.delete(self._note_url(self.note.pk), expected_code=403)
+        self.assertTrue(Note.objects.filter(pk=self.note.pk).exists())
+
+    def test_delete_note_with_change_role_is_allowed(self):
+        """A user with part.change can delete a note for a Part."""
+        from common.models import Note
+
+        self.assignRole('part.change')
+        self.delete(self._note_url(self.note.pk), expected_code=204)
+        self.assertFalse(Note.objects.filter(pk=self.note.pk).exists())
+
+
+class NoteTemplateAPITests(InvenTreeAPITestCase):
+    """API tests for 'template' Note instances (global notes, not linked to any model).
+
+    Template create/update is restricted to staff users by NoteSerializer.save().
+    That check does not run for DELETE requests (NoteDetail uses DRF's default
+    destroy(), which calls instance.delete() directly), and templates are always
+    included in get_queryset() regardless of role - so several cases below are
+    regression tests for a permission gap rather than confirmations of existing
+    correct behaviour.
+    """
+
+    # Test user is staff by default (InvenTree.unit_test.UserMixin); flip it
+    # explicitly per-test so intent is unambiguous.
+
+    def _note_url(self, pk=None):
+        if pk:
+            return reverse('api-note-detail', kwargs={'pk': pk})
+        return reverse('api-note-list')
+
+    def _create_template(self, title='Test Template'):
+        return common.models.Note.objects.create(
+            template=True, title=title, content='<p>template content</p>'
+        )
+
+    def test_staff_can_create_template(self):
+        """A staff user can create a note template without a model_type/model_id."""
+        self.user.is_staff = True
+        self.user.save()
+
+        response = self.post(
+            self._note_url(),
+            data={'template': True, 'title': 'My Template', 'content': '<p>hi</p>'},
+            expected_code=201,
+        )
+        self.assertTrue(response.data['template'])
+        self.assertIsNone(response.data['model_type'])
+
+    def test_non_staff_cannot_create_template(self):
+        """A non-staff user cannot create a note template."""
+        self.user.is_staff = False
+        self.user.save()
+
+        self.post(
+            self._note_url(),
+            data={'template': True, 'title': 'My Template', 'content': '<p>hi</p>'},
+            expected_code=403,
+        )
+        self.assertFalse(
+            common.models.Note.objects.filter(title='My Template').exists()
+        )
+
+    def test_staff_can_edit_template(self):
+        """A staff user can update an existing note template."""
+        self.user.is_staff = True
+        self.user.save()
+
+        template = self._create_template()
+        response = self.patch(
+            self._note_url(template.pk),
+            data={'content': '<p>updated</p>'},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['content'], '<p>updated</p>')
+
+    def test_non_staff_cannot_edit_template(self):
+        """A non-staff user cannot update an existing note template."""
+        self.user.is_staff = False
+        self.user.save()
+
+        template = self._create_template()
+        self.patch(
+            self._note_url(template.pk),
+            data={'content': '<p>updated</p>'},
+            expected_code=403,
+        )
+        template.refresh_from_db()
+        self.assertEqual(template.content, '<p>template content</p>')
+
+    def test_staff_can_delete_template(self):
+        """A staff user can delete a note template."""
+        self.user.is_staff = True
+        self.user.save()
+
+        template = self._create_template()
+        self.delete(self._note_url(template.pk), expected_code=204)
+        self.assertFalse(common.models.Note.objects.filter(pk=template.pk).exists())
+
+    def test_non_staff_cannot_delete_template(self):
+        """A non-staff user cannot delete a note template.
+
+        Regression test: see the NoteTemplateAPITests docstring - DELETE bypasses
+        the staff-only check that NoteSerializer.save() enforces for create/update.
+        """
+        self.user.is_staff = False
+        self.user.save()
+
+        template = self._create_template()
+        self.delete(self._note_url(template.pk), expected_code=403)
+        self.assertTrue(common.models.Note.objects.filter(pk=template.pk).exists())
+
+    def test_template_visible_to_any_authenticated_user(self):
+        """Templates are visible to any authenticated user, regardless of role."""
+        self.user.is_staff = False
+        self.user.save()
+
+        template = self._create_template()
+
+        response = self.get(self._note_url(template.pk), expected_code=200)
+        self.assertEqual(response.data['pk'], template.pk)
+
+        list_response = self.get(
+            self._note_url(), data={'template': True}, expected_code=200
+        )
+        pks = [n['pk'] for n in list_response.data]
+        self.assertIn(template.pk, pks)
+
+    def test_template_filter(self):
+        """The 'template' filter correctly separates templates from regular notes."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from part.models import Part
+
+        part = Part.objects.create(name='Filter Test Part', description='x')
+        ct = ContentType.objects.get_for_model(Part)
+
+        common.models.Note.objects.create(
+            model_type=ct, model_id=part.pk, title='Regular Note', content='<p>x</p>'
+        )
+        template = self._create_template(title='Filterable Template')
+
+        templates_only = self.get(
+            self._note_url(), data={'template': True}, expected_code=200
+        )
+        pks = [n['pk'] for n in templates_only.data]
+        self.assertIn(template.pk, pks)
+        self.assertTrue(all(n['template'] for n in templates_only.data))
+
+        non_templates = self.get(
+            self._note_url(), data={'template': False}, expected_code=200
+        )
+        pks = [n['pk'] for n in non_templates.data]
+        self.assertNotIn(template.pk, pks)
+
+
+class NotesImageAPITests(InvenTreeAPITestCase):
+    """API tests for the NotesImage endpoint (image uploads for note content)."""
+
+    def setUp(self):
+        """Create a Note to attach images to."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from part.models import Part
+
+        super().setUp()
+
+        self.part = Part.objects.create(name='Notes Image Test Part', description='x')
+        ct = ContentType.objects.get_for_model(Part)
+        self.note = common.models.Note.objects.create(
+            model_type=ct, model_id=self.part.pk, title='N', content='<p>c</p>'
+        )
+
+    def _generate_image(self, name='test.png'):
+        buf = io.BytesIO()
+        Image.new('RGB', (16, 16), color='blue').save(buf, format='PNG')
+        buf.seek(0)
+        return SimpleUploadedFile(name, buf.read(), content_type='image/png')
+
+    def test_upload_requires_note(self):
+        """Uploading an image without a linked 'note' is rejected."""
+        n = common.models.NotesImage.objects.count()
+
+        response = self.post(
+            reverse('api-notes-image-list'),
+            data={'image': self._generate_image()},
+            format='multipart',
+            expected_code=400,
+        )
+        self.assertIn('note', response.data)
+        self.assertEqual(common.models.NotesImage.objects.count(), n)
+
+    def test_upload_image(self):
+        """A valid image upload linked to a note succeeds and records the user."""
+        response = self.post(
+            reverse('api-notes-image-list'),
+            data={'image': self._generate_image(), 'note': self.note.pk},
+            format='multipart',
+            expected_code=201,
+        )
+
+        image = common.models.NotesImage.objects.get(pk=response.data['pk'])
+        self.assertEqual(image.note.pk, self.note.pk)
+        self.assertEqual(image.user, self.user)
+
+    def test_filter_by_note(self):
+        """The 'note' filter returns only images linked to the specified note."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from part.models import Part
+
+        other_part = Part.objects.create(name='Other Notes Image Part', description='x')
+        ct = ContentType.objects.get_for_model(Part)
+        other_note = common.models.Note.objects.create(
+            model_type=ct, model_id=other_part.pk, title='Other', content='<p>c</p>'
+        )
+
+        image_a = common.models.NotesImage.objects.create(note=self.note)
+        image_a.image.save('a.png', ContentFile(self._image_bytes()))
+
+        image_b = common.models.NotesImage.objects.create(note=other_note)
+        image_b.image.save('b.png', ContentFile(self._image_bytes()))
+
+        response = self.get(
+            reverse('api-notes-image-list'),
+            data={'note': self.note.pk},
+            expected_code=200,
+        )
+        pks = [i['pk'] for i in response.data]
+        self.assertIn(image_a.pk, pks)
+        self.assertNotIn(image_b.pk, pks)
+
+    def test_filter_by_model_type_and_model_id(self):
+        """The 'model_type'/'model_id' filters resolve via the linked note."""
+        image = common.models.NotesImage.objects.create(note=self.note)
+        image.image.save('c.png', ContentFile(self._image_bytes()))
+
+        response = self.get(
+            reverse('api-notes-image-list'),
+            data={'model_type': 'part', 'model_id': self.part.pk},
+            expected_code=200,
+        )
+        pks = [i['pk'] for i in response.data]
+        self.assertIn(image.pk, pks)
+
+    def _image_bytes(self):
+        buf = io.BytesIO()
+        Image.new('RGB', (16, 16), color='red').save(buf, format='PNG')
+        return buf.getvalue()

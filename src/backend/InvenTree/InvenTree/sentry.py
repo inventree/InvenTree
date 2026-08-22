@@ -81,7 +81,7 @@ def report_exception(exc, scope: Optional[dict] = None):  # pragma: no cover
     if any(isinstance(exc, e) for e in sentry_ignore_errors()):
         return
 
-    # Error may also be passed in from the loggingn context
+    # Error may also be passed in from the logging context
     if hasattr(exc, 'event'):
         event = getattr(exc, 'event', None)
 

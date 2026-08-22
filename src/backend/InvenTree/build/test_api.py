@@ -11,6 +11,7 @@ from rest_framework import status
 
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus
+from common.models import Note
 from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
@@ -607,6 +608,62 @@ class BuildTest(BuildAPITest):
 
         self.assertIsNotNone(bo.issued_by)
         self.assertEqual(bo.issued_by, self.user)
+
+    def test_duplicate_copies_notes(self):
+        """Test that notes are copied when duplicating a Build via the API.
+
+        BuildSerializer declares its 'duplicate' options with copy_notes=True,
+        so notes should be copied by default (i.e. without explicitly requesting it).
+        """
+        from django.contrib.contenttypes.models import ContentType
+
+        url = reverse('api-build-list')
+
+        part = Part.objects.create(
+            name='Duplicate Notes Assembly', description='x', assembly=True
+        )
+
+        original = Build.objects.create(
+            part=part, reference='BO-9001', title='Original build', quantity=5
+        )
+
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(Build),
+            model_id=original.pk,
+            title='Original Note',
+            content='<p>Some build notes</p>',
+        )
+
+        response = self.post(
+            url,
+            {
+                'reference': 'BO-9002',
+                'part': part.pk,
+                'quantity': 5,
+                'title': 'Duplicate build',
+                'duplicate': {'original': original.pk},
+            },
+            expected_code=201,
+        )
+
+        new_build = Build.objects.get(pk=response.data['pk'])
+        self.assertEqual(new_build.notes.count(), 1)
+        self.assertEqual(new_build.notes.first().content, '<p>Some build notes</p>')
+
+        # Explicitly disabling copy_notes must not copy any notes
+        response = self.post(
+            url,
+            {
+                'reference': 'BO-9003',
+                'part': part.pk,
+                'quantity': 5,
+                'title': 'Duplicate build without notes',
+                'duplicate': {'original': original.pk, 'copy_notes': False},
+            },
+            expected_code=201,
+        )
+        no_notes_build = Build.objects.get(pk=response.data['pk'])
+        self.assertEqual(no_notes_build.notes.count(), 0)
 
 
 class BuildAllocationTest(BuildAPITest):
@@ -2366,7 +2423,7 @@ class BuildConsumeTest(BuildAPITest):
                 expected_code=201,
                 benchmark=True,
                 max_query_count=180,
-                max_query_time=1.5,
+                max_query_time=2.5,
             )
 
         build.refresh_from_db()

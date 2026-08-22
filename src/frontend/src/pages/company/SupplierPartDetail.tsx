@@ -37,6 +37,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useUserState } from '../../states/UserState';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import SupplierPriceBreakTable from '../../tables/purchasing/SupplierPriceBreakTable';
@@ -64,6 +65,11 @@ export default function SupplierPartDetail() {
       manufacturer_detail: true,
       tags: true
     }
+  });
+
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.supplierpart,
+    modelId: supplierPart?.pk
   });
 
   const panels: PanelType[] = useMemo(() => {
@@ -119,19 +125,21 @@ export default function SupplierPartDetail() {
       },
       ParametersPanel({
         model_type: ModelType.supplierpart,
-        model_id: supplierPart?.pk
+        model_id: supplierPart?.pk,
+        parameter_count: instanceInfo.parameter_count
       }),
       AttachmentPanel({
         model_type: ModelType.supplierpart,
-        model_id: supplierPart?.pk
+        model_id: supplierPart?.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.supplierpart,
         model_id: supplierPart?.pk,
-        has_note: !!supplierPart?.notes
+        note_count: instanceInfo.note_count
       })
     ];
-  }, [supplierPart]);
+  }, [supplierPart, instanceInfo]);
 
   const supplierPartActions = useMemo(() => {
     return [
