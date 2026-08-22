@@ -26,8 +26,10 @@ import order.models
 import part.filters as part_filters
 import part.models as part_models
 import part.serializers as part_serializers
+import pricing.models as pricing_models
 import stock.filters
 import stock.status_codes
+from common.currency import currency_code_default
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
@@ -42,6 +44,7 @@ from InvenTree.serializers import (
 )
 from InvenTree.tasks import batch_offload_tasks
 from plugin.base.event.events import batch_events
+from pricing.status_codes import CostType
 from users.serializers import UserSerializer
 
 from .models import (
@@ -195,6 +198,33 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         model = StockLocation
         fields = ['pk', 'name', 'pathstring']
+
+
+class StockItemCostBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Brief serializer for the (calculated) StockItemCost summary, embedded via StockItem.cost_detail.
+
+    Defined locally (rather than reusing pricing.serializers.StockItemCostSerializer)
+    to avoid a circular import between the stock and pricing serializer modules.
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        model = pricing_models.StockItemCost
+        fields = [
+            'pk',
+            'min_cost',
+            'min_cost_currency',
+            'max_cost',
+            'max_cost_currency',
+            'date',
+        ]
+
+    min_cost = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
+    min_cost_currency = InvenTreeCurrencySerializer()
+
+    max_cost = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
+    max_cost_currency = InvenTreeCurrencySerializer()
 
 
 @register_importer()
@@ -381,10 +411,10 @@ class StockItemSerializer(
             'creation_date',
             'stocktake_date',
             'updated',
-            'purchase_price',
-            'purchase_price_currency',
             'use_pack_size',
             'serial_numbers',
+            'purchase_price',
+            'purchase_price_currency',
             # Annotated fields
             'allocated',
             'expired',
@@ -392,6 +422,7 @@ class StockItemSerializer(
             'child_items',
             'stale',
             # Optional fields (FK relationships)
+            'cost_detail',
             'location_detail',
             'location_path',
             'part_detail',
@@ -472,6 +503,23 @@ class StockItemSerializer(
         help_text=_('Enter serial numbers for new items'),
     )
 
+    """
+    'purchase_price' is not a StockItem model field - it is accepted here as a
+    write-only convenience so a matching StockItemCostEntry can be created or
+    updated (see the custom update() method below, and pricing.models)
+    """
+    purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
+        write_only=True,
+        required=False,
+        allow_null=True,
+        label=_('Purchase Price'),
+        help_text=_('Unit purchase price, recorded as a StockItemCostEntry'),
+    )
+
+    purchase_price_currency = InvenTreeCurrencySerializer(
+        write_only=True, required=False, label=_('Purchase Currency')
+    )
+
     def validate_part(self, part):
         """Ensure the provided Part instance is valid."""
         if part.virtual:
@@ -495,7 +543,40 @@ class StockItemSerializer(
                 status_code  # for compatibility with custom "leader/follower" concept in super().update()
             )
 
+        # 'purchase_price' is not a StockItem model/serializer field - it is
+        # accepted here as a write-only convenience so a matching
+        # StockItemCostEntry can be created/updated (see pricing.models)
+        purchase_price = validated_data.pop('purchase_price', None)
+        purchase_price_currency = validated_data.pop('purchase_price_currency', None)
+
         instance = super().update(instance, validated_data=validated_data)
+
+        if purchase_price is not None:
+            if not purchase_price_currency:
+                # No explicit currency provided - default to the currency of
+                # the existing cost entry (if any), else the global default
+                existing = pricing_models.StockItemCostEntry.objects.filter(
+                    stock_item=instance, cost_type=CostType.PURCHASE.value
+                ).first()
+                purchase_price_currency = (
+                    existing.min_cost_currency if existing else currency_code_default()
+                )
+
+            pricing_models.StockItemCostEntry.objects.set_cost(
+                instance,
+                CostType.PURCHASE.value,
+                min_cost=purchase_price,
+                max_cost=purchase_price,
+                min_cost_currency=purchase_price_currency,
+                max_cost_currency=purchase_price_currency,
+                user=instance._user,
+            )
+        elif 'purchase_price' in self.initial_data:
+            # Client explicitly sent 'purchase_price: null' - clear the matching
+            # cost entry, rather than leaving it untouched or creating a null one
+            pricing_models.StockItemCostEntry.objects.filter(
+                stock_item=instance, cost_type=CostType.PURCHASE.value
+            ).delete()
 
         return instance
 
@@ -649,6 +730,19 @@ class StockItemSerializer(
         ],
     )
 
+    cost_detail = OptionalField(
+        serializer_class=StockItemCostBriefSerializer,
+        serializer_kwargs={
+            'label': _('Cost'),
+            'source': 'cost',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
+        prefetch_fields=['cost'],
+    )
+
     quantity = InvenTreeDecimalField()
 
     # Annotated fields
@@ -667,16 +761,6 @@ class StockItemSerializer(
     stale = serializers.BooleanField(read_only=True, allow_null=True, label=_('Stale'))
     tracking_items = serializers.IntegerField(
         read_only=True, allow_null=True, label=_('Tracking Items')
-    )
-
-    purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
-        label=_('Purchase Price'),
-        allow_null=True,
-        help_text=_('Purchase price of this stock item, per unit or pack'),
-    )
-
-    purchase_price_currency = InvenTreeCurrencySerializer(
-        help_text=_('Purchase currency of this stock item')
     )
 
     purchase_order_reference = serializers.CharField(

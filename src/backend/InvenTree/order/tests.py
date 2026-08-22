@@ -22,6 +22,8 @@ from InvenTree.unit_test import (
 )
 from order.status_codes import PurchaseOrderStatus
 from part.models import Part
+from pricing.models import StockItemCostEntry
+from pricing.status_codes import CostType
 from stock.models import StockItem, StockLocation
 from users.models import Owner
 
@@ -398,11 +400,15 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
 
         loc = StockLocation.objects.get(id=1)
 
-        # Receive 1x item against line_1
-        po.receive_line_item(line_1, loc, 1, user=None)
+        # Receiving stock defers StockItemCost recalculation to an on_commit
+        # callback (see StockItemCostEntry.bulk_set_costs), which requires
+        # this wrapper to fire outside of the API test client
+        with self.captureOnCommitCallbacks(execute=True):
+            # Receive 1x item against line_1
+            po.receive_line_item(line_1, loc, 1, user=None)
 
-        # Receive 5x item against line_2
-        po.receive_line_item(line_2, loc, 5, user=None)
+            # Receive 5x item against line_2
+            po.receive_line_item(line_2, loc, 5, user=None)
 
         line_1.refresh_from_db()
         line_2.refresh_from_db()
@@ -431,7 +437,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         # Ensure that received quantity and unit purchase price data are correct
         si = si.first()
         self.assertEqual(si.quantity, 10)
-        self.assertEqual(si.purchase_price, Money(100, 'USD'))
+        self.assertEqual(si.cost_price, Money(100, 'USD'))
 
         si = StockItem.objects.filter(supplier_part=sp_2)
         self.assertEqual(si.count(), 1)
@@ -439,7 +445,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         # Ensure that received quantity and unit purchase price data are correct
         si = si.first()
         self.assertEqual(si.quantity, 0.5)
-        self.assertEqual(si.purchase_price, Money(100, 'USD'))
+        self.assertEqual(si.cost_price, Money(100, 'USD'))
 
     def test_receive_convert_currency(self):
         """Test receiving orders with different currencies."""
@@ -462,22 +468,34 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         order.place_order()
 
         # Receive a line item, should be converted to GBP
-        order.receive_line_item(line, loc, 50, user=None)
+        # (StockItemCost recalculation is deferred to an on_commit callback,
+        # so it must be forced to fire outside of the API test client)
+        with self.captureOnCommitCallbacks(execute=True):
+            order.receive_line_item(line, loc, 50, user=None)
         item = order.stock_items.order_by('-pk').first()
 
         self.assertEqual(item.quantity, 50)
-        self.assertEqual(item.purchase_price_currency, 'USD')
-        self.assertAlmostEqual(item.purchase_price.amount, Decimal(0.7353), 3)
+        self.assertEqual(str(item.cost_price.currency), 'USD')
+        self.assertAlmostEqual(item.cost_price.amount, Decimal(0.7353), 3)
 
         # Disable auto conversion
         set_global_setting('PURCHASEORDER_CONVERT_CURRENCY', False)
 
-        order.receive_line_item(line, loc, 30, user=None)
+        with self.captureOnCommitCallbacks(execute=True):
+            order.receive_line_item(line, loc, 30, user=None)
         item = order.stock_items.order_by('-pk').first()
 
         self.assertEqual(item.quantity, 30)
-        self.assertEqual(item.purchase_price_currency, 'CAD')
-        self.assertAlmostEqual(item.purchase_price.amount, Decimal(1.25), 3)
+
+        # The recorded cost entry retains its original (unconverted) currency.
+        # Note: item.cost_price reflects the StockItemCost *summary*, which is
+        # always calculated in the default currency, so it is not suitable
+        # for checking the currency of the underlying entry itself
+        cost_entry = StockItemCostEntry.objects.get(
+            stock_item=item, cost_type=CostType.PURCHASE.value
+        )
+        self.assertEqual(str(cost_entry.min_cost.currency), 'CAD')
+        self.assertAlmostEqual(cost_entry.min_cost.amount, Decimal(1.25), 3)
 
     def test_overdue_notification(self):
         """Test overdue purchase order notification.

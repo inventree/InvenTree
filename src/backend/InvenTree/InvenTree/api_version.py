@@ -1,10 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 534
+INVENTREE_API_VERSION = 535
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v535 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/12524
+    - Adds standalone API endpoints for StockItem pricing operations
+    - Adds new "pricing" permissions role
+    - Removes the "purchase_price" / "purchase_price_currency" fields from the StockItem model
+    - Renames the StockItem "has_purchase_price" filter to "has_unit_cost"
+    - Renames the StockItem "purchase_price" ordering key to "unit_cost"
 
 v534 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/12672
     - rename 'tags' filter to 'tag_name' to avoid name clash with the 'tags' field on various API endpoints

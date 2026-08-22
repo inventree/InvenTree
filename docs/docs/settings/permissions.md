@@ -32,6 +32,7 @@ InvenTree functionality is split into a number of distinct roles. A group will h
 | **Build** | The *build* role is related to accessing manufacturing / Build Order |
 | **Part** | The *part* role is related to accessing Part data |
 | **Part Category** | The *part category* role is related to accessing Part Category data |
+| **Pricing** | The *pricing* role is related to accessing and managing [stock item cost](../stock/costs.md) data |
 | **Purchase Order** | The *purchase* role is related to accessing Purchase Order data |
 | **Return Order** | The *return* role is related to accessing Return Order data |
 | **Sales Order** | The *sales* role is related to accessing Sales Order data |

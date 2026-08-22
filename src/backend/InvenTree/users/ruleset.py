@@ -12,6 +12,7 @@ class RuleSetEnum(StringEnum):
     ADMIN = 'admin'
     PART_CATEGORY = 'part_category'
     PART = 'part'
+    PRICING = 'pricing'
     BOM = 'bom'
     STOCK_LOCATION = 'stock_location'
     STOCK = 'stock'
@@ -28,6 +29,7 @@ RULESET_CHOICES = [
     (RuleSetEnum.ADMIN, _('Admin')),
     (RuleSetEnum.PART_CATEGORY, _('Part Categories')),
     (RuleSetEnum.PART, _('Parts')),
+    (RuleSetEnum.PRICING, _('Part Pricing')),
     (RuleSetEnum.BOM, _('Bills of Material')),
     (RuleSetEnum.STOCK_LOCATION, _('Stock Locations')),
     (RuleSetEnum.STOCK, _('Stock Items')),
@@ -128,6 +130,7 @@ def get_ruleset_models() -> dict:
             'company_supplierpart',
             'company_manufacturerpart',
         ],
+        RuleSetEnum.PRICING: ['pricing_stockitemcost', 'pricing_stockitemcostentry'],
         RuleSetEnum.STOCK_LOCATION: ['stock_stocklocation', 'stock_stocklocationtype'],
         RuleSetEnum.STOCK: [
             'stock_stockitem',
