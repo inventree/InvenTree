@@ -41,14 +41,12 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import RepairOrderLineItemTable from '../../tables/sales/RepairOrderLineItemTable';
 
 export default function RepairOrderDetail() {
   const { id } = useParams();
   const user = useUserState();
-  const globalSettings = useGlobalSettingsState();
 
   const {
     instance: order,
@@ -58,8 +56,7 @@ export default function RepairOrderDetail() {
     endpoint: ApiEndpoints.repair_order_list,
     pk: id,
     params: {
-      customer_detail: true,
-      asset_detail: true
+      customer_detail: true
     }
   });
 
@@ -73,11 +70,7 @@ export default function RepairOrderDetail() {
     );
   }, [order, roStatus]);
 
-  const lineItemsEditable: boolean = useMemo(() => {
-    return (
-      orderOpen || globalSettings.isSet('RETURNORDER_EDIT_COMPLETED_ORDERS')
-    );
-  }, [orderOpen, globalSettings]);
+  const lineItemsEditable: boolean = orderOpen;
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
@@ -97,13 +90,6 @@ export default function RepairOrderDetail() {
         icon: 'customers',
         label: t`Customer`,
         model: ModelType.company
-      },
-      {
-        type: 'link',
-        name: 'asset',
-        icon: 'part',
-        label: t`Fixed Asset`,
-        model: ModelType.stockitem
       },
       {
         type: 'text',
@@ -135,15 +121,6 @@ export default function RepairOrderDetail() {
       }
     ];
 
-    const tr: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'line_items',
-        label: t`Line Items`,
-        icon: 'list'
-      }
-    ];
-
     return (
       <ItemDetailsGrid>
         <Grid grow>
@@ -157,7 +134,6 @@ export default function RepairOrderDetail() {
             <DetailsTable fields={tl} item={order} />
           </Grid.Col>
         </Grid>
-        <DetailsTable fields={tr} item={order} />
       </ItemDetailsGrid>
     );
   }, [order, instanceQuery]);
@@ -183,7 +159,6 @@ export default function RepairOrderDetail() {
               <Accordion.Panel>
                 <RepairOrderLineItemTable
                   orderId={order.pk}
-                  order={order}
                   orderDetailRefresh={refreshInstance}
                   editable={lineItemsEditable}
                 />
@@ -284,7 +259,8 @@ export default function RepairOrderDetail() {
   });
 
   const orderActions = useMemo(() => {
-    const canEdit: boolean = user.hasChangeRole(UserRoles.repair_order);
+    const canEdit: boolean =
+      orderOpen && user.hasChangeRole(UserRoles.repair_order);
 
     const canIssue: boolean =
       canEdit &&
@@ -335,7 +311,7 @@ export default function RepairOrderDetail() {
         tooltip={t`Order Actions`}
         actions={[
           EditItemAction({
-            hidden: !user.hasChangeRole(UserRoles.repair_order),
+            hidden: !canEdit,
             tooltip: t`Edit order`,
             onClick: () => {
               editRepairOrder.open();
@@ -359,7 +335,7 @@ export default function RepairOrderDetail() {
         ]}
       />
     ];
-  }, [user, order, roStatus]);
+  }, [user, order, roStatus, orderOpen]);
 
   const subtitle: string = useMemo(() => {
     return order.customer_detail?.name || '';
@@ -389,7 +365,9 @@ export default function RepairOrderDetail() {
               { name: order.reference, url: `/sales/repair-order/${order.pk}` }
             ]}
             editAction={editRepairOrder.open}
-            editEnabled={user.hasChangePermission(ModelType.repairorder)}
+            editEnabled={
+              orderOpen && user.hasChangePermission(ModelType.repairorder)
+            }
           />
           <PanelGroup
             pageKey='repairorder'

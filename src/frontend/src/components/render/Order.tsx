@@ -1,4 +1,5 @@
 import { ModelType } from '@lib/enums/ModelType';
+import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
@@ -115,11 +116,8 @@ export function RenderRepairOrderLineItem(
   return (
     <RenderInlineModel
       {...props}
-      primary={instance.reference}
-      suffix={StatusRenderer({
-        status: instance.outcome,
-        type: ModelType.repairorderlineitem
-      })}
+      primary={instance.part_detail?.full_name ?? instance.part}
+      suffix={<Text size='xs'>{formatDecimal(instance.quantity)}</Text>}
     />
   );
 }

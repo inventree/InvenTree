@@ -23,32 +23,21 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useUserState } from '../../states/UserState';
 
 export default function RepairOrderLineItemTable({
   orderId,
-  order,
   orderDetailRefresh,
   editable
 }: Readonly<{
   orderId: number;
-  order: any;
   orderDetailRefresh: () => void;
   editable: boolean;
 }>) {
   const table = useTable('repair-order-line-item');
   const user = useUserState();
 
-  const roStatus = useStatusCodes({ modelType: ModelType.repairorder });
-
   const [selectedLine, setSelectedLine] = useState<number>(0);
-
-  const inProgress: boolean = useMemo(() => {
-    return (
-      order.status == roStatus.PENDING || order.status == roStatus.IN_PROGRESS
-    );
-  }, [order, roStatus]);
 
   const newLineFields = useRepairOrderLineItemFields({
     orderId: orderId,

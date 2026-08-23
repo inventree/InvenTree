@@ -18,11 +18,6 @@ export function useRepairOrderFields({
           active: true
         }
       },
-      asset: {
-        filters: {
-          is_building: false
-        }
-      },
       symptoms: {}
     };
 

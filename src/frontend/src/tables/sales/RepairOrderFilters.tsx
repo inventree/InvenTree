@@ -14,7 +14,6 @@ import {
 export default function RepairOrderFilters({
   includeDateFilters = true
 }: {
-  partId?: number;
   includeDateFilters?: boolean;
 }): TableFilter[] {
   const filters: TableFilter[] = [

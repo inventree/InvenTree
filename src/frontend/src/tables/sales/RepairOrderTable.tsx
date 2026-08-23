@@ -12,8 +12,7 @@ import {
   DescriptionColumn,
   LinkColumn,
   ReferenceColumn,
-  StatusColumn,
-  StockColumn
+  StatusColumn
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useRepairOrderFields } from '../../forms/RepairOrderForms';
@@ -22,29 +21,24 @@ import { useUserState } from '../../states/UserState';
 import RepairOrderFilters from './RepairOrderFilters';
 
 export function RepairOrderTable({
-  partId,
   customerId
 }: Readonly<{
-  partId?: number;
   customerId?: number;
 }>) {
-  const table = useTable(
-    !!partId ? 'repairorders-part' : 'repairorders-index',
-    {
-      initialFilters: [
-        {
-          name: 'outstanding',
-          value: 'true'
-        }
-      ]
-    }
-  );
+  const table = useTable('repairorders-index', {
+    initialFilters: [
+      {
+        name: 'outstanding',
+        value: 'true'
+      }
+    ]
+  });
 
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return RepairOrderFilters({ partId: partId, includeDateFilters: true });
-  }, [partId]);
+    return RepairOrderFilters({ includeDateFilters: true });
+  }, []);
 
   const tableColumns = useMemo(() => {
     return [
@@ -57,10 +51,6 @@ export function RepairOrderTable({
           <CompanyColumn company={record.customer_detail} />
         )
       },
-      StockColumn({
-        accessor: 'asset_detail',
-        title: t`Fixed Asset`
-      }),
       DescriptionColumn({}),
       StatusColumn({ model: ModelType.repairorder }),
       LinkColumn({})
@@ -101,10 +91,8 @@ export function RepairOrderTable({
         columns={tableColumns}
         props={{
           params: {
-            part: partId,
             customer: customerId,
-            customer_detail: true,
-            asset_detail: true
+            customer_detail: true
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
