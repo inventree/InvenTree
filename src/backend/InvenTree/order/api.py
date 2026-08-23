@@ -405,6 +405,14 @@ class PurchaseOrderViewSet(
         'supplier', 'created_by'
     )
     serializer_class = serializers.PurchaseOrderSerializer
+    transition_options = {
+        'cancel_order': {'name': 'cancel'},
+        'complete_order': {'name': 'complete'},
+        # TODO: add support for custom serializer
+        # 'serializer': serializers.PurchaseOrderCompleteSerializer},
+        'hold_order': {'name': 'hold'},
+        'place_order': {'name': 'issue'},
+    }
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
