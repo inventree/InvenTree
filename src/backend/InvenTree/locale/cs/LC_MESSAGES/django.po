@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-20 23:35+0000\n"
-"PO-Revision-Date: 2026-08-20 23:38\n"
+"POT-Creation-Date: 2026-08-21 21:47+0000\n"
+"PO-Revision-Date: 2026-08-21 21:50\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -590,7 +590,7 @@ msgstr "Neplatná fyzikální jednotka"
 msgid "Not a valid currency code"
 msgstr "Neplatný kód měny"
 
-#: build/api.py:57 order/api.py:128 order/api.py:297 order/api.py:1486
+#: build/api.py:57 order/api.py:128 order/api.py:297 order/api.py:1537
 #: order/serializers.py:99
 msgid "Order Status"
 msgstr "Stav objednávky"
@@ -599,17 +599,17 @@ msgstr "Stav objednávky"
 msgid "Parent Build"
 msgstr "Nadřazená sestava"
 
-#: build/api.py:87 build/api.py:1055 order/api.py:583 order/api.py:823
-#: order/api.py:1278 order/api.py:1590 order/api.py:1887 order/api.py:2077
+#: build/api.py:87 build/api.py:1070 order/api.py:612 order/api.py:852
+#: order/api.py:1329 order/api.py:1641 order/api.py:1958 order/api.py:2168
 #: stock/api.py:632
 msgid "Include Variants"
 msgstr "Zahrnout varianty"
 
-#: build/api.py:103 build/api.py:490 build/api.py:1069 build/models.py:291
+#: build/api.py:103 build/api.py:490 build/api.py:1084 build/models.py:291
 #: build/serializers.py:1200 build/serializers.py:1376
 #: build/serializers.py:1469 company/models.py:1038 company/serializers.py:473
-#: order/api.py:325 order/api.py:329 order/api.py:980 order/api.py:1291
-#: order/api.py:1294 order/api.py:2090 order/api.py:2093 order/api.py:2247
+#: order/api.py:325 order/api.py:329 order/api.py:1009 order/api.py:1342
+#: order/api.py:1345 order/api.py:2181 order/api.py:2184 order/api.py:2338
 #: order/models.py:2331 order/models.py:2499 order/models.py:2500
 #: order/models.py:4021 order/models.py:4022 part/api.py:1179 part/api.py:1182
 #: part/api.py:1399 part/models.py:530 part/models.py:3226 part/models.py:3369
@@ -733,12 +733,12 @@ msgstr "Sledováno"
 msgid "Testable"
 msgstr "Testovatelné"
 
-#: build/api.py:495 order/api.py:1044 order/api.py:1476 order/api.py:2311
+#: build/api.py:495 order/api.py:1073 order/api.py:1527 order/api.py:2402
 msgid "Order Outstanding"
 msgstr "Objednávka nevyřízená"
 
-#: build/api.py:505 build/serializers.py:1512 order/api.py:1003
-#: order/api.py:2270
+#: build/api.py:505 build/serializers.py:1512 order/api.py:1032
+#: order/api.py:2361
 msgid "Allocated"
 msgstr "Přiděleno"
 
@@ -763,17 +763,17 @@ msgstr "Na objednávku"
 msgid "Build not found"
 msgstr "Sestava nenalezena"
 
-#: build/api.py:1092 build/models.py:128 order/models.py:2364
+#: build/api.py:1107 build/models.py:128 order/models.py:2364
 #: report/templates/report/inventree_build_order_report.html:105
 #: stock/serializers.py:98 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
 msgid "Build Order"
 msgstr "Výrobní příkaz"
 
-#: build/api.py:1106 build/api.py:1110 build/serializers.py:412
+#: build/api.py:1121 build/api.py:1125 build/serializers.py:412
 #: build/serializers.py:518 build/serializers.py:569 build/serializers.py:1250
-#: build/serializers.py:1256 order/api.py:1338 order/api.py:1343
-#: order/api.py:2129 order/api.py:2134 order/serializers.py:867
+#: build/serializers.py:1256 order/api.py:1389 order/api.py:1394
+#: order/api.py:2220 order/api.py:2225 order/serializers.py:867
 #: order/serializers.py:1007 order/serializers.py:2294 part/serializers.py:1358
 #: stock/api.py:1038 stock/serializers.py:116 stock/serializers.py:626
 #: stock/serializers.py:746 stock/serializers.py:930 stock/serializers.py:1039
@@ -784,11 +784,11 @@ msgstr "Výrobní příkaz"
 msgid "Location"
 msgstr "Lokace"
 
-#: build/api.py:1118 part/serializers.py:1383
+#: build/api.py:1133 part/serializers.py:1383
 msgid "Output"
 msgstr "Výstup"
 
-#: build/api.py:1120
+#: build/api.py:1135
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr "Filtrovat podle ID výstupní položky zásoby. Použijte 'null' pro nalezení odinstalovaných položek sestavení."
 
@@ -1456,7 +1456,7 @@ msgid "Build"
 msgstr "Sestavení"
 
 #: build/serializers.py:1288 company/models.py:641 order/api.py:338
-#: order/api.py:343 order/api.py:579 order/serializers.py:635
+#: order/api.py:343 order/api.py:608 order/serializers.py:635
 #: stock/models.py:1175 stock/serializers.py:593
 msgid "Supplier Part"
 msgstr "Díl dodavatele"
@@ -1641,11 +1641,11 @@ msgstr "Nejsou uvedeny žádné platné kódy měn"
 msgid "No plugin"
 msgstr "Žádný plugin"
 
-#: common/filters.py:112
+#: common/filters.py:110
 msgid "Tags"
 msgstr "Tagy"
 
-#: common/filters.py:393
+#: common/filters.py:390
 msgid "Project Code Label"
 msgstr "Popisek kódu projektu"
 
@@ -2532,7 +2532,7 @@ msgstr "{verbose_name} zrušeno"
 msgid "A order that is assigned to you was canceled"
 msgstr "Objednávka, která je vám přidělena, byla zrušena"
 
-#: common/notifications.py:73 common/notifications.py:80 order/api.py:630
+#: common/notifications.py:73 common/notifications.py:80 order/api.py:659
 msgid "Items Received"
 msgstr "Přijaté položky"
 
@@ -4992,7 +4992,7 @@ msgstr "Počet kopií, které se mají tisknout pro každý štítek"
 msgid "Connected"
 msgstr "Připojeno"
 
-#: machine/machine_types/label_printer.py:236 order/api.py:2476
+#: machine/machine_types/label_printer.py:236 order/api.py:2567
 msgid "Unknown"
 msgstr "Neznámý"
 
@@ -5124,7 +5124,7 @@ msgstr "Maximální hodnota pro pokrok typu, vyžadováno pokud typ=pokrok"
 msgid "Order Reference"
 msgstr "Označení objednávky"
 
-#: order/api.py:170 order/api.py:1311 order/api.py:2110
+#: order/api.py:170 order/api.py:1362 order/api.py:2201
 msgid "Outstanding"
 msgstr "Vynikající"
 
@@ -5180,11 +5180,11 @@ msgstr "Aktualizováno po"
 msgid "Has Pricing"
 msgstr "Má cenu"
 
-#: order/api.py:354 order/api.py:865 order/api.py:1631 order/api.py:1928
+#: order/api.py:354 order/api.py:894 order/api.py:1682 order/api.py:1999
 msgid "Completed Before"
 msgstr "Dokončeno před"
 
-#: order/api.py:358 order/api.py:869 order/api.py:1635 order/api.py:1932
+#: order/api.py:358 order/api.py:898 order/api.py:1686 order/api.py:2003
 msgid "Completed After"
 msgstr "Dokončeno po"
 
@@ -5192,45 +5192,61 @@ msgstr "Dokončeno po"
 msgid "External Build Order"
 msgstr "Externí výrobní příkaz"
 
-#: order/api.py:562 order/api.py:965 order/api.py:1274 order/api.py:2073
-#: order/api.py:2232 order/models.py:2312 order/models.py:2438
+#: order/api.py:459
+msgid "Purchase order not found"
+msgstr ""
+
+#: order/api.py:591 order/api.py:994 order/api.py:1325 order/api.py:2164
+#: order/api.py:2323 order/models.py:2312 order/models.py:2438
 #: order/models.py:2490 order/models.py:2672 order/models.py:3061
 #: order/models.py:3579 order/models.py:3645 order/models.py:4012
 msgid "Order"
 msgstr "Objednávka"
 
-#: order/api.py:566 order/api.py:1033 order/api.py:2300
+#: order/api.py:595 order/api.py:1062 order/api.py:2391
 msgid "Order Complete"
 msgstr "Objednávka byla dokončena"
 
-#: order/api.py:598 order/api.py:602 order/serializers.py:775
+#: order/api.py:627 order/api.py:631 order/serializers.py:775
 msgid "Internal Part"
 msgstr "Interní díl"
 
-#: order/api.py:620
+#: order/api.py:649
 msgid "Order Pending"
 msgstr "Objednávka čeká na vyřízení"
 
-#: order/api.py:1018 order/api.py:2285
+#: order/api.py:1047 order/api.py:2376
 msgid "Completed"
 msgstr "Dokončeno"
 
-#: order/api.py:1327
+#: order/api.py:1196
+msgid "Sales order not found"
+msgstr ""
+
+#: order/api.py:1378
 msgid "Has Shipment"
 msgstr "Má zásilku"
 
-#: order/api.py:1546
+#: order/api.py:1597
 msgid "Shipment not found"
 msgstr "Zásilka nebyla nalezena"
 
-#: order/api.py:2468 order/models.py:656 order/models.py:2313
+#: order/api.py:1775
+msgid "Return order not found"
+msgstr ""
+
+#: order/api.py:2078
+msgid "Transfer order not found"
+msgstr ""
+
+#: order/api.py:2559 order/models.py:656 order/models.py:2313
 #: order/models.py:2439
 #: report/templates/report/inventree_purchase_order_report.html:14
 #: stock/serializers.py:134 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
 msgstr "Nákupní objednávka"
 
-#: order/api.py:2470 order/models.py:1377 order/models.py:2491
+#: order/api.py:2561 order/models.py:1377 order/models.py:2491
 #: order/models.py:2673 order/models.py:3062
 #: report/templates/report/inventree_build_order_report.html:135
 #: report/templates/report/inventree_sales_order_report.html:14
@@ -5239,14 +5255,14 @@ msgstr "Nákupní objednávka"
 msgid "Sales Order"
 msgstr "Prodejní objednávka"
 
-#: order/api.py:2472 order/models.py:3228 order/models.py:3580
+#: order/api.py:2563 order/models.py:3228 order/models.py:3580
 #: order/models.py:3646
 #: report/templates/report/inventree_return_order_report.html:13
 #: templates/email/overdue_return_order.html:15
 msgid "Return Order"
 msgstr "Vratka"
 
-#: order/api.py:2474 order/models.py:3668 order/models.py:4013
+#: order/api.py:2565 order/models.py:3668 order/models.py:4013
 #: report/templates/report/inventree_transfer_order_report.html:12
 msgid "Transfer Order"
 msgstr "Převodní příkaz"
