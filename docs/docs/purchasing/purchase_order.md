@@ -32,18 +32,6 @@ Each Purchase Order has a specific status code which indicates the current state
 
 {{ statuscodes("PurchaseOrderStatus") }}
 
-**Source Code**
-
-Refer to the source code for the Purchase Order status codes:
-
-::: order.status_codes.PurchaseOrderStatus
-    options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
-
 Purchase Order Status supports [custom states](../concepts/custom_states.md).
 
 ### Purchase Order Currency

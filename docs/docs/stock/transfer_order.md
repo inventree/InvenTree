@@ -33,18 +33,6 @@ Each Transfer Order has a specific status code, which represents the state of th
 
 {{ statuscodes("TransferOrderStatus") }}
 
-**Source Code**
-
-Refer to the source code for the Transfer Order status codes:
-
-::: order.status_codes.TransferOrderStatus
-    options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
-
 Transfer Order Status supports [custom states](../concepts/custom_states.md).
 
 ### Transfer Order Parameters

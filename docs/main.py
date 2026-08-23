@@ -336,11 +336,11 @@ def define_env(env):
         with open(observed_status_codes_file, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4)
 
-        ret_data = '| Status | Description |\n| --- | --- |\n'
+        ret_data = '| Status | Value | Description |\n| --- | --- | --- |\n'
 
         for item in status_class['values']:
             description = item['description'] or item['label']
-            ret_data += f'| {item["label"]} | {description} |\n'
+            ret_data += f'| {item["label"]} | {item["key"]} | {description} |\n'
 
         return ret_data
 

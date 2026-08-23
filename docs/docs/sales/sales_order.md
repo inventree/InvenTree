@@ -33,18 +33,6 @@ Each Sales Order has a specific status code, which represents the state of the o
 
 {{ statuscodes("SalesOrderStatus") }}
 
-**Source Code**
-
-Refer to the source code for the Sales Order status codes:
-
-::: order.status_codes.SalesOrderStatus
-    options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
-
 Sales Order Status supports [custom states](../concepts/custom_states.md).
 
 ### Sales Order Currency

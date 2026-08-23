@@ -57,18 +57,6 @@ Each Return Order has a specific status code, as follows:
 
 {{ statuscodes("ReturnOrderStatus") }}
 
-**Source Code**
-
-Refer to the source code for the Return Order status codes:
-
-::: order.status_codes.ReturnOrderStatus
-    options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
-
 Return Order Status supports [custom states](../concepts/custom_states.md).
 
 ## Create a Return Order

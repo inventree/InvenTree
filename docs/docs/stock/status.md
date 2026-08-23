@@ -18,18 +18,6 @@ The *status* of a given stock item is displayed on the stock item detail page:
 
 {{ image("stock/stock_status_label.png", title="Stock status label") }}
 
-**Source Code**
-
-Refer to the source code for the Stock status codes:
-
-::: stock.status_codes.StockStatus
-    options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
-
 ### Custom Status Codes
 
 Stock Status supports [custom states](../concepts/custom_states.md).

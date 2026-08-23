@@ -18,12 +18,6 @@ There are a couple of predefined status codes for label printers. By default the
 
 {{ statuscodes("LabelPrinterStatus") }}
 
-::: machine.machine_types.label_printer.LabelPrinterStatus
-    options:
-        heading_level: 4
-        show_bases: false
-        show_docstring_description: false
-
 ### LabelPrintingDriver API
 
 ::: machine.machine_types.LabelPrinterBaseDriver
