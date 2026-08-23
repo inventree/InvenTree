@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 534
+INVENTREE_API_VERSION = 535
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v535 -> 2026-08-23 : https://github.com/inventree/InvenTree/pull/12693
+    - Small docstring updates for automated transition API documentation generation
 
 v534 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/12672
     - rename 'tags' filter to 'tag_name' to avoid name clash with the 'tags' field on various API endpoints
