@@ -1062,6 +1062,79 @@ class AttachmentAPITests(InvenTreeAPITestCase):
             # Ensure that the file associated with each attachment has been removed
             self.assertFalse(default_storage.exists(att.attachment.path))
 
+    def test_attachment_read_permissions(self):
+        """Test that reading attachments is gated on the linked model's own view permission.
+
+        A user should not be able to list or retrieve attachments linked to a model
+        type they have no view permission for, even though attachments themselves
+        have no RuleSet of their own (see users.ruleset.get_ruleset_ignore).
+        """
+        from common.models import Attachment
+        from part.models import Part
+        from stock.models import StockItem
+
+        part = Part.objects.create(name='Attachable Part', description='A part')
+        item = StockItem.objects.create(part=part, quantity=10)
+
+        part_attachment = Attachment.objects.create(
+            model_type='part',
+            model_id=part.pk,
+            comment='part attachment',
+            link='https://example.com/part',
+        )
+        stock_attachment = Attachment.objects.create(
+            model_type='stockitem',
+            model_id=item.pk,
+            comment='stock attachment',
+            link='https://example.com/stock',
+        )
+
+        # User has no roles at all - should see nothing, and be denied on direct retrieve
+        list_url = reverse('api-attachment-list')
+        response = self.get(list_url, expected_code=200)
+        result_ids = {result['pk'] for result in response.data}
+        self.assertNotIn(part_attachment.pk, result_ids)
+        self.assertNotIn(stock_attachment.pk, result_ids)
+
+        self.get(
+            reverse('api-attachment-detail', kwargs={'pk': part_attachment.pk}),
+            expected_code=403,
+        )
+        self.get(
+            reverse('api-attachment-detail', kwargs={'pk': stock_attachment.pk}),
+            expected_code=403,
+        )
+
+        # Grant 'view' permission on 'part' only
+        self.assignRole('part.view')
+
+        response = self.get(list_url, expected_code=200)
+        result_ids = {result['pk'] for result in response.data}
+        self.assertIn(part_attachment.pk, result_ids)
+        self.assertNotIn(stock_attachment.pk, result_ids)
+
+        self.get(
+            reverse('api-attachment-detail', kwargs={'pk': part_attachment.pk}),
+            expected_code=200,
+        )
+        self.get(
+            reverse('api-attachment-detail', kwargs={'pk': stock_attachment.pk}),
+            expected_code=403,
+        )
+
+        # Granting 'stock' view permission too now exposes both
+        self.assignRole('stock.view')
+
+        response = self.get(list_url, expected_code=200)
+        result_ids = {result['pk'] for result in response.data}
+        self.assertIn(part_attachment.pk, result_ids)
+        self.assertIn(stock_attachment.pk, result_ids)
+
+        self.get(
+            reverse('api-attachment-detail', kwargs={'pk': stock_attachment.pk}),
+            expected_code=200,
+        )
+
 
 class AttachmentThumbnailAPITests(InvenTreeAPITestCase):
     """Tests for thumbnail generation when uploading attachments via the API."""
