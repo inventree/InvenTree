@@ -39,3 +39,17 @@ class GenericStateClassSerializer(serializers.Serializer):
     values = serializers.DictField(
         child=GenericStateValueSerializer(), label=_('Values'), required=True
     )
+
+
+class AvailableTransitionSerializer(serializers.Serializer):
+    """One entry of the ``_transition`` listing.
+
+    ``url_path`` is the detail-relative path of the endpoint running the transition.
+    """
+
+    name = serializers.CharField(read_only=True)
+    url_path = serializers.CharField(read_only=True)
+    target = serializers.CharField(read_only=True)
+    label = serializers.CharField(read_only=True)
+    blocked = serializers.BooleanField(read_only=True)
+    blocking_reason = serializers.CharField(read_only=True, allow_null=True)
