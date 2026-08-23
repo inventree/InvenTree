@@ -15,12 +15,15 @@ from rest_framework.response import Response
 
 from InvenTree.serializers import EmptySerializer
 
-from .introspection import available_transitions, state_fields, transition_methods
+from .introspection import (
+    TransitionInfo,
+    available_transitions,
+    state_fields,
+    transition_methods,
+)
+from .serializers import AvailableTransitionSerializer
 
-# from .serializers import AvailableTransitionSerializer
-
-#: URL segment every transition endpoint sits under, keeping them clear of model field routes.
-TRANSITION_URL_PREFIX = '_transition'
+TRANSITION_URL_PREFIX = 'transitions'
 
 
 def current_state(instance: Any, field_name: str | None = None) -> str | None:
@@ -333,40 +336,40 @@ class FSMTransitionMixin:
             if getattr(handler, 'transition_name', None)
         }
 
-    # @action(
-    #     detail=True,
-    #     methods=['get'],
-    #     url_path=TRANSITION_URL_PREFIX,
-    #     url_name='transitions',
-    #     serializer_class=AvailableTransitionSerializer,
-    # )
-    # def transitions(self, request: Request, pk: str | None = None) -> Response:
-    #     """List the FSM transitions reachable from this object's current state.
+    @action(
+        detail=True,
+        methods=['get'],
+        url_path=TRANSITION_URL_PREFIX,
+        url_name='transitions',
+        serializer_class=AvailableTransitionSerializer,
+    )
+    def transitions(self, request: Request, pk: str | None = None, *kwargs) -> Response:
+        """List the FSM transitions reachable from this object's current state.
 
-    #     Blocked transitions are included and flagged with their reason.
+        Blocked transitions are included and flagged with their reason.
 
-    #     Only transitions this viewset exposes as an endpoint are reported: ``available_transitions``
-    #     matches by state field name, so restricting the answer to this viewset's own endpoints keeps
-    #     every entry something the client can POST to.
-    #     """
-    #     instance = self.get_object()
-    #     paths = self.transition_url_paths()
+        Only transitions this viewset exposes as an endpoint are reported: ``available_transitions``
+        matches by state field name, so restricting the answer to this viewset's own endpoints keeps
+        every entry something the client can POST to.
+        """
+        instance = self.get_object()
+        paths = self.transition_url_paths()
 
-    #     available: list[TransitionInfo] = [
-    #         entry for entry in available_transitions(instance) if entry.name in paths
-    #     ]
-    #     data = [
-    #         {
-    #             'name': entry.name,
-    #             'url_path': paths[entry.name],
-    #             'target': entry.target,
-    #             'label': entry.label,
-    #             'blocked': entry.blocked,
-    #             'blocking_reason': entry.blocking_reason,
-    #         }
-    #         for entry in available
-    #     ]
-    #     return Response(AvailableTransitionSerializer(data, many=True).data)
+        available: list[TransitionInfo] = [
+            entry for entry in available_transitions(instance) if entry.name in paths
+        ]
+        data = [
+            {
+                'name': entry.name,
+                'url_path': paths[entry.name],
+                'target': entry.target,
+                'label': entry.label,
+                'blocked': entry.blocked,
+                'blocking_reason': entry.blocking_reason,
+            }
+            for entry in available
+        ]
+        return Response(AvailableTransitionSerializer(data, many=True).data)
 
 
 __all__ = [
