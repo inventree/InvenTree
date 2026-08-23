@@ -524,10 +524,6 @@ class PurchaseOrderCompleteSerializer(OrderAdjustSerializer):
 
         return {'is_complete': order.is_complete}
 
-    def save(self):
-        """Save the serializer to 'complete' the order."""
-        self.order.complete_order()
-
 
 @register_importer()
 class PurchaseOrderLineItemSerializer(
