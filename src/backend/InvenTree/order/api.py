@@ -405,6 +405,7 @@ class PurchaseOrderViewSet(
         'supplier', 'created_by'
     )
     serializer_class = serializers.PurchaseOrderSerializer
+    # TODO @matmair remove legacy return codes
     transition_options = {
         'cancel_order': {'name': 'cancel', 'return_code': 201},
         'complete_order': {
