@@ -94,7 +94,6 @@ def transition_action(
     *,
     name: str | None = None,
     url_path: str | None = None,
-    arg_serializer: type[serializers.Serializer] | None = None,
     return_code: int = status.HTTP_200_OK,
     pass_user: bool = False,
     serializer_class: type[serializers.Serializer] | None = None,
@@ -108,8 +107,6 @@ def transition_action(
         method_name: Name of the transition method on the model.
         name: Attribute name on the viewset. Defaults to ``method_name``.
         url_path: Path segment under ``_transition/``. Defaults to ``name``, hyphenated.
-        arg_serializer: Serializer validating the request body. Its ``transition_kwargs()``, else
-            its ``validated_data``, is passed to the transition as keyword arguments.
         return_code: HTTP status code to return on success. Defaults to `200`.
         pass_user: Pass the requesting user to the transition as ``user=``.
         serializer_class: Serializer to use for the response body. Defaults to an empty serializer
@@ -126,9 +123,10 @@ def transition_action(
     def endpoint(self, request: Request, pk: str | None = None) -> Response:
         instance = self.get_object()
         kwargs: dict[str, Any] = {}
+        context = self.get_serializer_context()
 
-        if arg_serializer is not None:
-            payload = arg_serializer(data=request.data)
+        if serializer_class is not None:
+            payload = serializer_class(data=request.data, context=context)
             payload.is_valid(raise_exception=True)
             extract = getattr(payload, 'transition_kwargs', None)
             kwargs.update(extract() if extract else dict(payload.validated_data))
@@ -149,25 +147,18 @@ def transition_action(
 
         instance.refresh_from_db()
 
-        serial = (
-            self.get_serializer(instance)
-            if not arg_serializer
-            else arg_serializer(instance)
-        )
-        return Response(serial.data, status=return_code)
+        serial = serializer_class if serializer_class else self.get_serializer_class()
+        serializer = serial(instance, context=self.get_serializer_context())
+        return Response(serializer.data, status=return_code)
 
-    model_name = 'object'
     endpoint.__name__ = attr_name
     endpoint.__qualname__ = attr_name
-    endpoint.__doc__ = f"API endpoint to '{method_name}' a {model_name}."
+    endpoint.__doc__ = f"API endpoint to '{method_name}' the current item."
     # Read back by FSMTransitionMixin.transition_url_paths().
     endpoint.transition_name = method_name
-
-    optional_kwargs = {}
-    if serializer_class is not None:
-        optional_kwargs['serializer_class'] = serializer_class
-    else:
-        optional_kwargs['serializer_class'] = EmptySerializer
+    serializer_class = (
+        serializer_class if serializer_class is not None else EmptySerializer
+    )
 
     ret = action(
         detail=True,
@@ -176,14 +167,12 @@ def transition_action(
         # TODO @matmair add option to rename the urlname
         url_name=segment,
         output_options=None,
-        **optional_kwargs,
+        serializer_class=serializer_class,
     )(endpoint)
 
     # add decorator if custom return_code is required
     if return_code != status.HTTP_200_OK:
-        ret = extend_schema(
-            responses={return_code: optional_kwargs['serializer_class']}
-        )(ret)
+        ret = extend_schema(responses={return_code: serializer_class})(ret)
 
     return ret
 

@@ -454,16 +454,7 @@ class PurchaseOrderViewSet(
         return queryset
 
     def get_order(self):
-        """Return the PurchaseOrder object associated with this API endpoint.
-
-        Note: deliberately a raw lookup rather than self.get_object() - the latter
-        routes through ParameterListMixin.filter_queryset(), which assumes
-        self.serializer_class.Meta.model exists. That's true for the default
-        PurchaseOrderSerializer, but not for the plain-Serializer action classes
-        (PurchaseOrderHoldSerializer etc.) used by hold/cancel/complete/issue/receive
-        below, so calling get_object() from those actions raises an unrelated
-        AttributeError instead of the intended 404.
-        """
+        """Return the PurchaseOrder object associated with this API endpoint."""
         try:
             return models.PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
         except (ValueError, models.PurchaseOrder.DoesNotExist):
