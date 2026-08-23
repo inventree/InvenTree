@@ -23,7 +23,7 @@ from .introspection import (
 )
 from .serializers import AvailableTransitionSerializer
 
-TRANSITION_URL_PREFIX = 'transitions'
+TRANSITION_URL_PREFIX = '_transitions'
 
 
 def current_state(instance: Any, field_name: str | None = None) -> str | None:
