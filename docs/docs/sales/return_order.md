@@ -55,25 +55,7 @@ Various filters are available to configure which orders are displayed, and how t
 
 Each Return Order has a specific status code, as follows:
 
-| Status | Description |
-| --- | --- |
-| Pending | The return order has been created, but not sent to the customer |
-| In Progress | The return order has been issued to the customer |
-| On Hold | The return order has been placed on hold, but is still active |
-| Complete | The return order was marked as complete, and is now closed |
-| Cancelled | The return order was cancelled, and is now closed |
-
-**Source Code**
-
-Refer to the source code for the Return Order status codes:
-
-::: order.status_codes.ReturnOrderStatus
-    options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
+{{ statuscodes("ReturnOrderStatus") }}
 
 Return Order Status supports [custom states](../concepts/custom_states.md).
 
@@ -126,14 +108,7 @@ Each line item tracks a *Cost* (the cost associated with the return, repair, or 
 
 Each line item has an *Outcome*, which records the disposition decided for the returned item:
 
-| Outcome | Description |
-| --- | --- |
-| Pending | No outcome has been decided yet (default value for a new line item) |
-| Return | The item is to be returned to the customer, with no further action |
-| Repair | The item is to be repaired, and returned to the customer |
-| Replace | The item is to be replaced with a new item |
-| Refund | The item cannot be repaired, and a refund is to be issued |
-| Reject | The return is rejected |
+{{ statuscodes("ReturnOrderLineStatus") }}
 
 The *Outcome* is not available when a line item is first created - it can only be set afterwards, by editing the line item. Selecting an outcome is a manual, record-keeping step only: InvenTree does not automatically create a replacement order, issue a refund, or link to a [repair](../manufacturing/index.md) process based on the selected outcome. Any follow-up action (raising a new [Sales Order](./sales_order.md) for a replacement, processing a refund, or tracking a repair) must currently be actioned separately.
 

@@ -810,6 +810,26 @@ class AttachmentFilter(FilterSet):
     tag_name = common.filters.TagsFilter()
 
 
+def get_viewable_attachment_model_types(user) -> set:
+    """Return the set of attachment 'model_type' labels the user has 'view' permission for.
+
+    Attachments are a generic table keyed by (model_type, model_id), with no RuleSet
+    mapping of their own - so read access is based on the *linked* model's own
+    RuleSet permission instead, mirroring how AttachmentDetail already checks
+    'change'/'delete' via Attachment.check_permission() for writes.
+    """
+    from common.validators import attachment_model_types
+    from users.permissions import check_user_permission, prefetch_rule_sets
+
+    groups = prefetch_rule_sets(user)
+
+    return {
+        model.__name__.lower()
+        for model in attachment_model_types()
+        if check_user_permission(user, model, 'view', groups=groups)
+    }
+
+
 class AttachmentMixin:
     """Mixin class for Attachment views."""
 
@@ -826,6 +846,14 @@ class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
 
     ordering_fields = ['model_id', 'model_type', 'upload_date', 'file_size']
     search_fields = ['comment', 'model_id', 'model_type']
+
+    def get_queryset(self):
+        """Restrict the queryset to attachments linked to a model the user can view."""
+        queryset = super().get_queryset()
+
+        allowed_types = get_viewable_attachment_model_types(self.request.user)
+
+        return queryset.filter(model_type__in=allowed_types)
 
     def perform_create(self, serializer):
         """Save the user information when a file is uploaded."""
@@ -852,6 +880,17 @@ class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
 
 class AttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for Attachment objects."""
+
+    def retrieve(self, request, *args, **kwargs):
+        """Retrieve a single attachment object, if the user has view permission."""
+        attachment = self.get_object()
+
+        if not attachment.check_permission('view', request.user):
+            raise PermissionDenied(
+                _('User does not have permission to view this attachment')
+            )
+
+        return super().retrieve(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
         """Update an existing attachment object."""
