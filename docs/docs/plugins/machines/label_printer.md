@@ -10,7 +10,7 @@ Label printer machines can directly print labels for various items in InvenTree.
 
 To implement a custom label printer driver, you need to write a plugin which implements the [MachineDriverMixin](../mixins/machine.md) and returns a list of label printer drivers in the `get_machine_drivers` method.
 
-Take a look at the most basic required code for a driver in this [example](./overview.md#example-driver). Next either implement the [`print_label`](#machine.machine_types.LabelPrinterBaseDriver.print_label) or [`print_labels`](#machine.machine_types.LabelPrinterBaseDriver.print_labels) function.
+Take a look at the most basic required code for a driver in this [example](./overview.md#example-driver). Next either implement the [`print_label`](#labelprintingdriver-api) or [`print_labels`](#labelprintingdriver-api) function.
 
 ### Label Printer Status
 
