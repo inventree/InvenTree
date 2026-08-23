@@ -1842,14 +1842,34 @@ class BuildConsumeSerializer(serializers.Serializer):
         return data
 
 
-class RepairOrderSerializer(NotesFieldMixin, InvenTreeModelSerializer):
+class RepairOrderSerializer(
+    NotesFieldMixin, InvenTreeCustomStatusSerializerMixin, InvenTreeModelSerializer
+):
     """Serializer for a RepairOrder object."""
 
     class Meta:
         """Metaclass options."""
 
         model = RepairOrder
-        fields = ['pk', 'reference', 'customer', 'description', 'symptoms', 'status']
+        fields = [
+            'pk',
+            'reference',
+            'customer',
+            'description',
+            'symptoms',
+            'status',
+            'creation_date',
+            'target_date',
+            'completion_date',
+            'responsible',
+            'issued_by',
+            'line_items',
+        ]
+        read_only_fields = ['creation_date', 'status']
+
+    line_items = serializers.PrimaryKeyRelatedField(
+        source='lines', many=True, read_only=True
+    )
 
 
 class RepairOrderLineItemSerializer(InvenTreeModelSerializer):
@@ -1870,3 +1890,55 @@ class RepairOrderAllocationSerializer(InvenTreeModelSerializer):
 
         model = RepairOrderAllocation
         fields = ['pk', 'line', 'item', 'quantity']
+
+
+class RepairOrderAdjustSerializer(serializers.Serializer):
+    """Generic serializer class for adjusting the status of a RepairOrder."""
+
+    class Meta:
+        """Metaclass options.
+
+        By default, there are no fields required for this serializer type.
+        """
+
+        fields = []
+
+    @property
+    def order(self):
+        """Return the order object associated with this serializer.
+
+        Note: It is passed in via the serializer context data.
+        """
+        return self.context['order']
+
+
+class RepairOrderIssueSerializer(RepairOrderAdjustSerializer):
+    """Serializer for issuing a RepairOrder."""
+
+    def save(self):
+        """Save the serializer to 'issue' the repair order."""
+        self.order.issue_repair()
+
+
+class RepairOrderHoldSerializer(RepairOrderAdjustSerializer):
+    """Serializer for placing a RepairOrder on hold."""
+
+    def save(self):
+        """Save the serializer to 'hold' the repair order."""
+        self.order.hold_repair()
+
+
+class RepairOrderCompleteSerializer(RepairOrderAdjustSerializer):
+    """Serializer for completing a RepairOrder."""
+
+    def save(self):
+        """Save the serializer to 'complete' the repair order."""
+        self.order.complete_repair()
+
+
+class RepairOrderCancelSerializer(RepairOrderAdjustSerializer):
+    """Serializer for cancelling a RepairOrder."""
+
+    def save(self):
+        """Save the serializer to 'cancel' the repair order."""
+        self.order.cancel_repair()

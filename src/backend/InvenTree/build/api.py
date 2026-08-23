@@ -31,7 +31,7 @@ from build.models import (
     RepairOrderAllocation,
     RepairOrderLineItem,
 )
-from build.status_codes import BuildStatus, BuildStatusGroups
+from build.status_codes import BuildStatus, BuildStatusGroups, RepairOrderStatus
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import BulkDeleteMixin, ParameterListMixin, meta_path
@@ -1240,6 +1240,72 @@ class RepairOrderDetail(RetrieveUpdateDestroyAPI):
     serializer_class = build.serializers.RepairOrderSerializer
 
 
+class RepairOrderContextMixin:
+    """Simple mixin class to add a RepairOrder to the serializer context."""
+
+    queryset = RepairOrder.objects.all()
+
+    def get_order(self):
+        """Return the RepairOrder object associated with this API endpoint."""
+        try:
+            return RepairOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except (ValueError, RepairOrder.DoesNotExist):
+            raise NotFound(_('Repair order not found'))
+
+    def get_serializer_context(self):
+        """Add the RepairOrder object to the serializer context."""
+        context = super().get_serializer_context()
+
+        # Pass the RepairOrder instance through to the serializer for validation
+        try:
+            context['order'] = self.get_order()
+        except NotFound:
+            # Swallowed here (e.g. schema generation may call this without a
+            # resolvable pk) - create() below is what actually enforces a 404
+            # for a real request against a non-existent order.
+            pass
+
+        context['request'] = self.request
+
+        return context
+
+    def create(self, request, *args, **kwargs):
+        """Ensure the target RepairOrder actually exists before attempting the action.
+
+        Without this, a POST against a non-existent pk would fall through to the
+        action serializer's save(), which unconditionally reads
+        self.context['order'] - raising an unhandled KeyError (HTTP 500) instead of
+        the intended 404.
+        """
+        self.get_order()
+
+        return super().create(request, *args, **kwargs)
+
+
+class RepairOrderIssue(RepairOrderContextMixin, CreateAPI):
+    """API endpoint to issue a RepairOrder."""
+
+    serializer_class = build.serializers.RepairOrderIssueSerializer
+
+
+class RepairOrderHold(RepairOrderContextMixin, CreateAPI):
+    """API endpoint to hold a RepairOrder."""
+
+    serializer_class = build.serializers.RepairOrderHoldSerializer
+
+
+class RepairOrderComplete(RepairOrderContextMixin, CreateAPI):
+    """API endpoint to complete a RepairOrder."""
+
+    serializer_class = build.serializers.RepairOrderCompleteSerializer
+
+
+class RepairOrderCancel(RepairOrderContextMixin, CreateAPI):
+    """API endpoint to cancel a RepairOrder."""
+
+    serializer_class = build.serializers.RepairOrderCancelSerializer
+
+
 class RepairOrderLineItemList(ListCreateAPI):
     """API endpoint for accessing a list of RepairOrderLineItem objects."""
 
@@ -1348,9 +1414,35 @@ build_api_urls = [
                 '<int:pk>/',
                 include([
                     path(
+                        'issue/',
+                        RepairOrderIssue.as_view(),
+                        name='api-repair-order-issue',
+                    ),
+                    path(
+                        'hold/', RepairOrderHold.as_view(), name='api-repair-order-hold'
+                    ),
+                    path(
+                        'complete/',
+                        RepairOrderComplete.as_view(),
+                        name='api-repair-order-complete',
+                    ),
+                    path(
+                        'cancel/',
+                        RepairOrderCancel.as_view(),
+                        name='api-repair-order-cancel',
+                    ),
+                    meta_path(RepairOrder),
+                    path(
                         '', RepairOrderDetail.as_view(), name='api-repair-order-detail'
-                    )
+                    ),
                 ]),
+            ),
+            # Repair order status code information
+            path(
+                'status/',
+                StatusView.as_view(),
+                {StatusView.MODEL_REF: RepairOrderStatus},
+                name='api-repair-order-status-codes',
             ),
             path('', RepairOrderList.as_view(), name='api-repair-order-list'),
         ]),

@@ -33,10 +33,17 @@ import stock.models
 import users.models
 from build.events import BuildEvents, RepairOrderEvents
 from build.filters import annotate_allocated_quantity, annotate_required_quantity
-from build.status_codes import BuildStatus, BuildStatusGroups, RepairOrderStatus
+from build.status_codes import (
+    BuildStatus,
+    BuildStatusGroups,
+    RepairOrderStatus,
+    RepairOrderStatusGroups,
+)
 from build.validators import (
     generate_next_build_reference,
+    generate_next_repair_order_reference,
     validate_build_order_reference,
+    validate_repair_order_reference,
 )
 from common.models import ProjectCode
 from common.settings import get_global_setting
@@ -2510,7 +2517,20 @@ class RepairOrder(
     InvenTree.models.ReferenceIndexingMixin,
     InvenTree.models.InvenTreeModel,
 ):
-    """A RepairOrder represents a repair request from a customer."""
+    """A RepairOrder represents a repair request from a customer.
+
+    Attributes:
+        reference: Unique repair order reference
+        customer: Reference to the customer company
+        description: Long form description of the repair
+        symptoms: Reported symptoms or issues
+        status: Repair order status code
+        creation_date: Date the order was created (auto)
+        target_date: Expected or desired completion date
+        completion_date: Date the order was completed
+        responsible: User (or group) responsible for the repair
+        issued_by: User who issued this repair order
+    """
 
     STATUS_CLASS = RepairOrderStatus
     REFERENCE_PATTERN_SETTING = 'REPAIRORDER_REFERENCE_PATTERN'
@@ -2520,6 +2540,60 @@ class RepairOrder(
 
         verbose_name = _('Repair Order')
 
+    def __str__(self):
+        """String representation of a RepairOrder."""
+        return self.reference
+
+    def save(self, *args, **kwargs):
+        """Custom save method for the RepairOrder model.
+
+        Enforces locking: completed/cancelled orders cannot be modified
+        (except for status transitions driven by the FSM).
+        """
+        self.reference_int = self.validate_reference_field(self.reference)
+
+        update = self.pk is not None
+
+        if update and self.check_locked(True):
+            # Allow status transitions through the FSM
+            if self.get_db_instance().status != self.status:
+                pass
+            else:
+                raise ValidationError({
+                    'reference': _('This order is locked and cannot be modified')
+                })
+
+        if not self.pk and not self.creation_date:
+            self.creation_date = InvenTree.helpers.current_date()
+
+        super().save(*args, **kwargs)
+
+    def check_locked(self, db: bool = False) -> bool:
+        """Check if this repair order is 'locked'.
+
+        A locked order cannot be modified after it has been completed or cancelled.
+
+        Arguments:
+            db: If True, check with the database. If False, check the instance.
+        """
+        return self.check_complete(db=db)
+
+    def check_complete(self, db: bool = False) -> bool:
+        """Check if this repair order is in a terminal state.
+
+        Arguments:
+            db: If True, check with the database. If False, check the instance.
+        """
+        status = self.get_db_instance().status if db else self.status
+        return status in (
+            RepairOrderStatusGroups.COMPLETE + RepairOrderStatusGroups.CANCELLED
+        )
+
+    @classmethod
+    def get_status_class(cls):
+        """Return the RepairOrderStatusGroups class."""
+        return RepairOrderStatusGroups
+
     reference = models.CharField(
         max_length=100,
         unique=True,
@@ -2527,6 +2601,8 @@ class RepairOrder(
         null=False,
         help_text=_('Repair Order Reference'),
         verbose_name=_('Reference'),
+        default=generate_next_repair_order_reference,
+        validators=[validate_repair_order_reference],
     )
 
     customer = models.ForeignKey(
@@ -2558,6 +2634,41 @@ class RepairOrder(
         status_class=RepairOrderStatus,
         help_text=_('Repair order status'),
         verbose_name=_('Status'),
+    )
+
+    creation_date = models.DateField(
+        auto_now_add=True, editable=False, verbose_name=_('Creation Date')
+    )
+
+    target_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_('Target completion date'),
+        help_text=_('Target date for repair completion'),
+    )
+
+    completion_date = models.DateField(
+        null=True, blank=True, verbose_name=_('Completion Date')
+    )
+
+    issued_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Issued by'),
+        help_text=_('User who issued this repair order'),
+        related_name='repairorders_issued',
+    )
+
+    responsible = models.ForeignKey(
+        users.models.Owner,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Responsible'),
+        help_text=_('User or group responsible for this repair order'),
+        related_name='repairorders_responsible',
     )
 
     # region fsm
@@ -2600,6 +2711,7 @@ class RepairOrder(
 
         The repair order must currently be PENDING, IN_PROGRESS, or ON_HOLD.
         """
+        self.completion_date = InvenTree.helpers.current_date()
 
     @inventree_transition(
         field=status,
@@ -2637,6 +2749,22 @@ class RepairOrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         """Model meta options."""
 
         verbose_name = _('Repair Order Line Item')
+
+    def save(self, *args, **kwargs):
+        """Custom save — prevent modification when the parent order is locked."""
+        if self.order.check_locked():
+            raise ValidationError({
+                'order': _('This order is locked and cannot be modified')
+            })
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """Custom delete — prevent deletion when the parent order is locked."""
+        if self.order.check_locked():
+            raise ValidationError({
+                'order': _('This order is locked and cannot be modified')
+            })
+        super().delete(*args, **kwargs)
 
     order = models.ForeignKey(
         RepairOrder,

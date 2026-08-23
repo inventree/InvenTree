@@ -48,3 +48,5 @@ class RepairOrderStatusGroups:
     ]
 
     COMPLETE = [RepairOrderStatus.COMPLETE.value]
+
+    CANCELLED = [RepairOrderStatus.CANCELLED.value]
