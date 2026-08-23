@@ -7,7 +7,21 @@ from generic.enums import StringEnum
 
 
 class RuleSetEnum(StringEnum):
-    """Enumeration of ruleset names."""
+    """Enumeration of ruleset names.
+
+    Attributes:
+        ADMIN: Assigning user permissions, and other administrative tasks
+        PART_CATEGORY: Accessing Part Category data
+        PART: Accessing Part data
+        BOM: Accessing Bill of Materials data
+        STOCK_LOCATION: Accessing Stock Location data
+        STOCK: Accessing Stock Item data
+        BUILD: Accessing manufacturing / Build Order data
+        PURCHASE_ORDER: Accessing Purchase Order data
+        SALES_ORDER: Accessing Sales Order data
+        RETURN_ORDER: Accessing Return Order data
+        TRANSFER_ORDER: Accessing Transfer Order data
+    """
 
     ADMIN = 'admin'
     PART_CATEGORY = 'part_category'
