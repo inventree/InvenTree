@@ -2038,6 +2038,7 @@ def export_definitions(c, basedir: str = ''):
         base_path.joinpath('inventree_filters.yml'),
         base_path.joinpath('inventree_report_context.json'),
         base_path.joinpath('inventree_status_codes.json'),
+        base_path.joinpath('inventree_roles.json'),
     ]
 
     info('Exporting definitions...')
@@ -2054,6 +2055,9 @@ def export_definitions(c, basedir: str = ''):
 
     check_file_existence(filenames[4], overwrite=True)
     manage(c, f'export_status_codes {filenames[4]}', pty=True)
+
+    check_file_existence(filenames[5], overwrite=True)
+    manage(c, f'export_roles {filenames[5]}', pty=True)
 
     info('Exporting definitions complete')
 

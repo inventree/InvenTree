@@ -41,6 +41,7 @@ global TAGS
 global FILTERS
 global REPORT_CONTEXT
 global STATUS_CODES
+global ROLES
 
 # Read in the InvenTree settings file
 here = Path(__file__).parent
@@ -87,6 +88,9 @@ with open(gen_base.joinpath('inventree_status_codes.json'), encoding='utf-8') as
 # Report context
 with open(gen_base.joinpath('inventree_report_context.json'), encoding='utf-8') as f:
     REPORT_CONTEXT = json.load(f)
+# User permission roles
+with open(gen_base.joinpath('inventree_roles.json'), encoding='utf-8') as f:
+    ROLES = json.load(f)
 
 
 def get_repo_url(raw=False):
@@ -469,6 +473,25 @@ def define_env(env):
                 ret_data += f'| {value["library"]} | {value["name"]} | {title} |\n'
             ret_data += '\n'
         ret_data += '\n'
+
+        return ret_data
+
+    @env.macro
+    def roles():
+        """Render a markdown table of the available user permission roles.
+
+        The table is built directly from `docs/generated/inventree_roles.json`
+        (produced by the `export_roles` management command, sourced from
+        `users.ruleset.RULESET_CHOICES`), so it can never drift out of sync with
+        the roles actually defined in the source code.
+        """
+        global ROLES
+
+        ret_data = '| Role | Description |\n| --- | --- |\n'
+
+        for role in ROLES:
+            description = role['description'] or role['label']
+            ret_data += f'| **{role["label"]}** | {description} |\n'
 
         return ret_data
 
