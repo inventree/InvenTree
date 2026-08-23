@@ -94,6 +94,7 @@ def transition_action(
     name: str | None = None,
     url_path: str | None = None,
     arg_serializer: type[serializers.Serializer] | None = None,
+    return_code: int = status.HTTP_200_OK,
     pass_user: bool = False,
 ) -> Any:
     """Build a ``POST`` detail endpoint running one FSM transition method.
@@ -107,6 +108,7 @@ def transition_action(
         url_path: Path segment under ``_transition/``. Defaults to ``name``, hyphenated.
         arg_serializer: Serializer validating the request body. Its ``transition_kwargs()``, else
             its ``validated_data``, is passed to the transition as keyword arguments.
+        return_code: HTTP status code to return on success. Defaults to `200`.
         pass_user: Pass the requesting user to the transition as ``user=``.
 
     Returns:
@@ -143,7 +145,13 @@ def transition_action(
             )
 
         instance.refresh_from_db()
-        return Response(self.get_serializer(instance).data, status=status.HTTP_200_OK)
+
+        serial = (
+            self.get_serializer(instance)
+            if not arg_serializer
+            else arg_serializer(instance)
+        )
+        return Response(serial.data, status=return_code)
 
     model_name = 'object'
     endpoint.__name__ = attr_name
@@ -156,7 +164,8 @@ def transition_action(
         detail=True,
         methods=['post'],
         url_path=path,
-        url_name=f'transition-{segment}',
+        # TODO @matmair add option to rename the urlname
+        url_name=segment,
         # serializer_class=EmptySerializer
     )(endpoint)
 

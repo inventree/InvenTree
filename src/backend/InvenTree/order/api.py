@@ -406,12 +406,14 @@ class PurchaseOrderViewSet(
     )
     serializer_class = serializers.PurchaseOrderSerializer
     transition_options = {
-        'cancel_order': {'name': 'cancel'},
-        'complete_order': {'name': 'complete'},
-        # TODO: add support for custom serializer
-        # 'serializer': serializers.PurchaseOrderCompleteSerializer},
-        'hold_order': {'name': 'hold'},
-        'place_order': {'name': 'issue'},
+        'cancel_order': {'name': 'cancel', 'return_code': 201},
+        'complete_order': {
+            'name': 'complete',
+            'return_code': 201,
+            'arg_serializer': serializers.PurchaseOrderCompleteSerializer,
+        },
+        'hold_order': {'name': 'hold', 'return_code': 201},
+        'place_order': {'name': 'issue', 'return_code': 201},
     }
 
     ordering_field_aliases = {
