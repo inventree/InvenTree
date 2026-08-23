@@ -410,7 +410,7 @@ class PurchaseOrderViewSet(
         'complete_order': {
             'name': 'complete',
             'return_code': 201,
-            'arg_serializer': serializers.PurchaseOrderCompleteSerializer,
+            'serializer_class': serializers.PurchaseOrderCompleteSerializer,
         },
         'hold_order': {'name': 'hold', 'return_code': 201},
         'place_order': {'name': 'issue', 'return_code': 201},

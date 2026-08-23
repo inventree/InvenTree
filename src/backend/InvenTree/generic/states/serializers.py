@@ -42,10 +42,7 @@ class GenericStateClassSerializer(serializers.Serializer):
 
 
 class AvailableTransitionSerializer(serializers.Serializer):
-    """One entry of the ``_transition`` listing.
-
-    ``url_path`` is the detail-relative path of the endpoint running the transition.
-    """
+    """Listing of available transitions for a given object."""
 
     name = serializers.CharField(read_only=True)
     url_path = serializers.CharField(read_only=True)

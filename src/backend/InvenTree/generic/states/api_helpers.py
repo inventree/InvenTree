@@ -7,10 +7,13 @@ from typing import Any
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 
+from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, status
 from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
+
+from InvenTree.serializers import EmptySerializer
 
 from .introspection import available_transitions, state_fields, transition_methods
 
@@ -71,8 +74,6 @@ def transition_error(
     reason: str | None = None
 
     if info is None:
-        # Not available from the current state: wrong source, or already applied (no-ops are
-        # rejected, CLAUDE.md §5).
         detail = (
             f"Transition '{transition_name}' is not available from state '{state}'."
         )
@@ -96,6 +97,7 @@ def transition_action(
     arg_serializer: type[serializers.Serializer] | None = None,
     return_code: int = status.HTTP_200_OK,
     pass_user: bool = False,
+    serializer_class: type[serializers.Serializer] | None = None,
 ) -> Any:
     """Build a ``POST`` detail endpoint running one FSM transition method.
 
@@ -110,6 +112,7 @@ def transition_action(
             its ``validated_data``, is passed to the transition as keyword arguments.
         return_code: HTTP status code to return on success. Defaults to `200`.
         pass_user: Pass the requesting user to the transition as ``user=``.
+        serializer_class: Serializer to use for the response body. Defaults to an empty serializer
 
     Returns:
         A DRF ``@action``-decorated method, ready to assign as a viewset class attribute.
@@ -160,14 +163,29 @@ def transition_action(
     # Read back by FSMTransitionMixin.transition_url_paths().
     endpoint.transition_name = method_name
 
-    return action(
+    optional_kwargs = {}
+    if serializer_class is not None:
+        optional_kwargs['serializer_class'] = serializer_class
+    else:
+        optional_kwargs['serializer_class'] = EmptySerializer
+
+    ret = action(
         detail=True,
         methods=['post'],
         url_path=path,
         # TODO @matmair add option to rename the urlname
         url_name=segment,
-        # serializer_class=EmptySerializer
+        output_options=None,
+        **optional_kwargs,
     )(endpoint)
+
+    # add decorator if custom return_code is required
+    if return_code != status.HTTP_200_OK:
+        ret = extend_schema(
+            responses={return_code: optional_kwargs['serializer_class']}
+        )(ret)
+
+    return ret
 
 
 def transition_call_plan(func: Any) -> tuple[bool, tuple[str, ...]]:
@@ -185,7 +203,7 @@ def transition_call_plan(func: Any) -> tuple[bool, tuple[str, ...]]:
     """
     try:
         signature = inspect.signature(func)
-    except (TypeError, ValueError):  # pragma: no cover - builtins and C callables
+    except (TypeError, ValueError):  # pragma: no cover
         return False, ()
 
     pass_user = False
