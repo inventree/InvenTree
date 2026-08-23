@@ -262,7 +262,11 @@ export default function SalesIndex() {
     ];
   }, [user, customersView, salesOrderView, returnOrderView, repairOrderView]);
 
-  if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.sales_order)) {
+  if (
+    !user.isLoggedIn() ||
+    (!user.hasViewRole(UserRoles.sales_order) &&
+      !user.hasViewRole(UserRoles.repair_order))
+  ) {
     return <PermissionDenied />;
   }
 

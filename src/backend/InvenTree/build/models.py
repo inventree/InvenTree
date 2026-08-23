@@ -2706,11 +2706,29 @@ class RepairOrder(
         target=RepairOrderStatus.COMPLETE,
         event=RepairOrderEvents.COMPLETED,
     )
-    def complete_repair(self):
+    def complete_repair(self, user=None):
         """Transition this RepairOrder to COMPLETE status.
 
         The repair order must currently be PENDING, IN_PROGRESS, or ON_HOLD.
         """
+        with transaction.atomic():
+            for allocation in RepairOrderAllocation.objects.filter(
+                line__order=self
+            ).select_related('item', 'line__part'):
+                allocation.full_clean()
+
+                if not allocation.item.take_stock(
+                    quantity=allocation.quantity,
+                    user=user,
+                    code=StockHistoryCode.STOCK_REMOVE,
+                    notes=_('Consumed by repair order'),
+                ):
+                    raise ValidationError({
+                        'allocations': _('Failed to consume repair order stock')
+                    })
+
+                allocation.delete()
+
         self.completion_date = InvenTree.helpers.current_date()
 
     @inventree_transition(
@@ -2728,6 +2746,9 @@ class RepairOrder(
 
         The repair order must currently be PENDING, IN_PROGRESS, or ON_HOLD.
         """
+        with transaction.atomic():
+            for allocation in RepairOrderAllocation.objects.filter(line__order=self):
+                allocation.delete()
 
     # endregion fsm
 
@@ -2758,6 +2779,15 @@ class RepairOrderLineItem(InvenTree.models.InvenTreeMetadataModel):
             })
         super().save(*args, **kwargs)
 
+    def clean(self):
+        """Validate the RepairOrderLineItem object."""
+        super().clean()
+
+        if self.quantity <= 0:
+            raise ValidationError({
+                'quantity': _('Line item quantity must be greater than zero')
+            })
+
     def delete(self, *args, **kwargs):
         """Custom delete — prevent deletion when the parent order is locked."""
         if self.order.check_locked():
@@ -2787,6 +2817,7 @@ class RepairOrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         max_digits=15,
         decimal_places=5,
         default=1,
+        validators=[MinValueValidator(0)],
         verbose_name=_('Quantity'),
         help_text=_('Item quantity required for repair'),
     )
@@ -2804,6 +2835,35 @@ class RepairOrderAllocation(models.Model):
         """Model meta options."""
 
         verbose_name = _('Repair Order Allocation')
+
+    def clean(self):
+        """Validate the RepairOrderAllocation object."""
+        super().clean()
+
+        errors = {}
+
+        if self.quantity <= 0:
+            errors['quantity'] = _('Allocation quantity must be greater than zero')
+
+        try:
+            if not self.item:
+                raise ValidationError({'item': _('Stock item has not been assigned')})
+        except stock.models.StockItem.DoesNotExist:
+            raise ValidationError({'item': _('Stock item has not been assigned')})
+
+        try:
+            if self.line.part != self.item.part:
+                errors['item'] = _(
+                    'Cannot allocate stock item to a line with a different part'
+                )
+        except part.models.Part.DoesNotExist:
+            errors['line'] = _('Cannot allocate stock to a line without a part')
+
+        if self.quantity > self.item.quantity:
+            errors['quantity'] = _('Allocation quantity cannot exceed stock quantity')
+
+        if len(errors) > 0:
+            raise ValidationError(errors)
 
     line = models.ForeignKey(
         RepairOrderLineItem,
@@ -2823,6 +2883,7 @@ class RepairOrderAllocation(models.Model):
         max_digits=15,
         decimal_places=5,
         default=1,
+        validators=[MinValueValidator(0)],
         verbose_name=_('Quantity'),
         help_text=_('Allocated stock quantity'),
     )
