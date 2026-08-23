@@ -1085,13 +1085,13 @@ def migrate(c, detect: bool = False, verbose: bool = False):
     info('Running InvenTree database migrations...')
 
     if detect:
-        manage(c, 'makemigrations', verbose=verbose)
+        manage(c, 'makemigrations --traceback', verbose=verbose)
 
     manage(c, 'runmigrations', pty=True, verbose=verbose)
-    manage(c, 'migrate --run-syncdb', verbose=verbose)
+    manage(c, 'migrate --run-syncdb --traceback', verbose=verbose)
     manage(
         c,
-        'remove_stale_contenttypes --include-stale-apps --no-input',
+        'remove_stale_contenttypes --include-stale-apps --no-input --traceback',
         pty=True,
         verbose=verbose,
     )
@@ -1516,12 +1516,12 @@ def delete_data(c, force: bool = False, migrate: bool = False, verbose: bool = F
     info('Deleting existing data from InvenTree database...')
 
     if migrate:
-        manage(c, 'migrate --run-syncdb', verbose=verbose)
+        manage(c, 'migrate --run-syncdb --traceback', verbose=verbose)
 
     if force:
-        manage(c, 'flush --noinput', verbose=verbose)
+        manage(c, 'flush --traceback --noinput', verbose=verbose)
     else:
-        manage_interactive('flush', verbose=verbose)
+        manage_interactive('flush --traceback', verbose=verbose)
 
     success('Existing data deleted')
 
