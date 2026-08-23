@@ -30,15 +30,7 @@ The following view modes are available:
 
 Each Purchase Order has a specific status code which indicates the current state of the order:
 
-| Status | Description |
-| --- | --- |
-| Pending | The purchase order has been created, but has not been submitted to the supplier |
-| In Progress | The purchase order has been issued to the supplier, and is in progress |
-| On Hold | The purchase order has been placed on hold, but is still active |
-| Complete | The purchase order has been completed, and is now closed |
-| Cancelled | The purchase order was cancelled, and is now closed |
-| Lost | The purchase order was lost, and is now closed |
-| Returned | The purchase order was returned, and is now closed |
+{{ statuscodes("PurchaseOrderStatus") }}
 
 **Source Code**
 

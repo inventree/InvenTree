@@ -17,6 +17,24 @@ Some examples of events that may trigger stock tracking entries include:
 - Allocation of stock items to orders (e.g. shipping items against sales orders)
 - Consumption of stock items during build processes (e.g. using items to complete a build order)
 
+### Tracking Entry Types
+
+Each stock tracking entry records a specific *type*, indicating which event triggered it:
+
+{{ statuscodes("StockHistoryCode") }}
+
+**Source Code**
+
+Refer to the source code for the stock tracking entry types:
+
+::: stock.status_codes.StockHistoryCode
+    options:
+        show_bases: False
+        show_root_heading: False
+        show_root_toc_entry: False
+        show_source: True
+        members: []
+
 ## Viewing Stock Tracking History
 
 There are multiple ways to view the stock tracking history for a particular stock item or part via the user interface.

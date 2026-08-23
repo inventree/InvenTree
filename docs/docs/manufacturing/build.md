@@ -71,13 +71,7 @@ Read more about build outputs [here](./output.md).
 
 Each *Build Order* has an associated *Status* flag, which indicates the state of the build:
 
-| Status | Description |
-| ----------- | ----------- |
-| `Pending` | Build order has been created, but is not yet in production |
-| `Production` | Build order is currently in production |
-| `On Hold` | Build order has been placed on hold, but is still active |
-| `Cancelled` | Build order has been cancelled |
-| `Completed` | Build order has been completed |
+{{ statuscodes("BuildStatus") }}
 
 **Source Code**
 

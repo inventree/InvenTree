@@ -16,6 +16,8 @@ Take a look at the most basic required code for a driver in this [example](./ove
 
 There are a couple of predefined status codes for label printers. By default the `UNKNOWN` status code is set for each machine, but they can be changed at any time by the driver. For more info about status code see [Machine status codes](./overview.md#machine-status).
 
+{{ statuscodes("LabelPrinterStatus") }}
+
 ::: machine.machine_types.label_printer.LabelPrinterStatus
     options:
         heading_level: 4
