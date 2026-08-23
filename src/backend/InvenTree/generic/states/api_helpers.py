@@ -145,18 +145,19 @@ def transition_action(
         instance.refresh_from_db()
         return Response(self.get_serializer(instance).data, status=status.HTTP_200_OK)
 
+    model_name = 'object'
     endpoint.__name__ = attr_name
     endpoint.__qualname__ = attr_name
-    endpoint.__doc__ = (
-        f'Run the ``{method_name}`` FSM transition on this object.\n\n'
-        'Returns the updated object, or HTTP 400 with the blocking reason if the transition is not '
-        "allowed from the object's current state."
-    )
+    endpoint.__doc__ = f"API endpoint to '{method_name}' a {model_name}."
     # Read back by FSMTransitionMixin.transition_url_paths().
     endpoint.transition_name = method_name
 
     return action(
-        detail=True, methods=['post'], url_path=path, url_name=f'transition-{segment}'
+        detail=True,
+        methods=['post'],
+        url_path=path,
+        url_name=f'transition-{segment}',
+        # serializer_class=EmptySerializer
     )(endpoint)
 
 
@@ -196,13 +197,9 @@ def transition_call_plan(func: Any) -> tuple[bool, tuple[str, ...]]:
 
 
 class FSMTransitionMixin:
-    """Viewset mixin exposing every FSM transition of the viewset's model under ``_transition/``.
+    """Viewset mixin for exposing all FSM transitions on a model."""
 
-    Mix into any DRF viewset. Endpoints are generated on subclass creation.
-    """
-
-    #: Per-transition overrides keyed by model method name. Values are :func:`transition_action`
-    #: keyword arguments — ``name``, ``url_path``, ``arg_serializer``, ``pass_user``.
+    #: Per-transition overrides keyed by model method name
     transition_options: dict[str, dict[str, Any]] = {}
 
     #: Model method names to leave unexposed, including ones inherited from a base viewset.
