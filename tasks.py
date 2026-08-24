@@ -1084,13 +1084,13 @@ def migrate(c, detect: bool = False, verbose: bool = False):
     info('Running InvenTree database migrations...')
 
     if detect:
-        manage(c, 'makemigrations', verbose=verbose)
+        manage(c, 'makemigrations --traceback', verbose=verbose)
 
     manage(c, 'runmigrations', pty=True, verbose=verbose)
-    manage(c, 'migrate --run-syncdb', verbose=verbose)
+    manage(c, 'migrate --run-syncdb --traceback', verbose=verbose)
     manage(
         c,
-        'remove_stale_contenttypes --include-stale-apps --no-input',
+        'remove_stale_contenttypes --include-stale-apps --no-input --traceback',
         pty=True,
         verbose=verbose,
     )
@@ -1515,12 +1515,12 @@ def delete_data(c, force: bool = False, migrate: bool = False, verbose: bool = F
     info('Deleting existing data from InvenTree database...')
 
     if migrate:
-        manage(c, 'migrate --run-syncdb', verbose=verbose)
+        manage(c, 'migrate --run-syncdb --traceback', verbose=verbose)
 
     if force:
-        manage(c, 'flush --noinput', verbose=verbose)
+        manage(c, 'flush --traceback --noinput', verbose=verbose)
     else:
-        manage_interactive('flush', verbose=verbose)
+        manage_interactive('flush --traceback', verbose=verbose)
 
     success('Existing data deleted')
 
@@ -2037,6 +2037,8 @@ def export_definitions(c, basedir: str = ''):
         base_path.joinpath('inventree_tags.yml'),
         base_path.joinpath('inventree_filters.yml'),
         base_path.joinpath('inventree_report_context.json'),
+        base_path.joinpath('inventree_status_codes.json'),
+        base_path.joinpath('inventree_roles.json'),
     ]
 
     info('Exporting definitions...')
@@ -2050,6 +2052,12 @@ def export_definitions(c, basedir: str = ''):
 
     check_file_existence(filenames[3], overwrite=True)
     manage(c, f'export_report_context {filenames[3]}', pty=True)
+
+    check_file_existence(filenames[4], overwrite=True)
+    manage(c, f'export_status_codes {filenames[4]}', pty=True)
+
+    check_file_existence(filenames[5], overwrite=True)
+    manage(c, f'export_roles {filenames[5]}', pty=True)
 
     info('Exporting definitions complete')
 

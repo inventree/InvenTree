@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-16 01:47+0000\n"
-"PO-Revision-Date: 2026-08-16 01:50\n"
+"POT-Creation-Date: 2026-08-23 09:09+0000\n"
+"PO-Revision-Date: 2026-08-23 09:11\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "Language: zh_TW\n"
@@ -53,7 +53,7 @@ msgstr "此欄位須唯一值。"
 msgid "Item no longer matches the provided criteria"
 msgstr ""
 
-#: InvenTree/api.py:861 InvenTree/models.py:1459
+#: InvenTree/api.py:864 InvenTree/models.py:1459
 msgid "User does not have permission to view this model"
 msgstr "用户沒有權限查閲當前模型。"
 
@@ -590,7 +590,7 @@ msgstr "無效的物理單位"
 msgid "Not a valid currency code"
 msgstr "無效的貨幣代碼"
 
-#: build/api.py:57 order/api.py:119 order/api.py:288 order/api.py:1467
+#: build/api.py:57 order/api.py:128 order/api.py:297 order/api.py:1537
 #: order/serializers.py:99
 msgid "Order Status"
 msgstr "訂單狀態"
@@ -599,17 +599,17 @@ msgstr "訂單狀態"
 msgid "Parent Build"
 msgstr "上層生產工單"
 
-#: build/api.py:87 build/api.py:1055 order/api.py:565 order/api.py:804
-#: order/api.py:1259 order/api.py:1571 order/api.py:1868 order/api.py:2058
+#: build/api.py:87 build/api.py:1070 order/api.py:612 order/api.py:852
+#: order/api.py:1329 order/api.py:1641 order/api.py:1958 order/api.py:2168
 #: stock/api.py:632
 msgid "Include Variants"
 msgstr "包含變體"
 
-#: build/api.py:103 build/api.py:490 build/api.py:1069 build/models.py:291
+#: build/api.py:103 build/api.py:490 build/api.py:1084 build/models.py:291
 #: build/serializers.py:1200 build/serializers.py:1376
 #: build/serializers.py:1469 company/models.py:1038 company/serializers.py:473
-#: order/api.py:316 order/api.py:320 order/api.py:961 order/api.py:1272
-#: order/api.py:1275 order/api.py:2071 order/api.py:2074 order/api.py:2228
+#: order/api.py:325 order/api.py:329 order/api.py:1009 order/api.py:1342
+#: order/api.py:1345 order/api.py:2181 order/api.py:2184 order/api.py:2338
 #: order/models.py:2331 order/models.py:2499 order/models.py:2500
 #: order/models.py:4021 order/models.py:4022 part/api.py:1179 part/api.py:1182
 #: part/api.py:1399 part/models.py:530 part/models.py:3226 part/models.py:3369
@@ -646,7 +646,7 @@ msgstr "類別"
 msgid "Ancestor Build"
 msgstr "可測試部分"
 
-#: build/api.py:155 order/api.py:137
+#: build/api.py:155 order/api.py:146
 msgid "Assigned to me"
 msgstr "分配給我"
 
@@ -694,11 +694,11 @@ msgstr "完成於之前"
 msgid "Completed after"
 msgstr "完成於之後"
 
-#: build/api.py:252 order/api.py:242
+#: build/api.py:252 order/api.py:251
 msgid "Min Date"
 msgstr "最小日期"
 
-#: build/api.py:275 order/api.py:261
+#: build/api.py:275 order/api.py:270
 msgid "Max Date"
 msgstr "最大日期"
 
@@ -733,12 +733,12 @@ msgstr "追蹤中"
 msgid "Testable"
 msgstr "可測試"
 
-#: build/api.py:495 order/api.py:1025 order/api.py:1457 order/api.py:2292
+#: build/api.py:495 order/api.py:1073 order/api.py:1527 order/api.py:2402
 msgid "Order Outstanding"
 msgstr "訂單未完成"
 
-#: build/api.py:505 build/serializers.py:1512 order/api.py:984
-#: order/api.py:2251
+#: build/api.py:505 build/serializers.py:1512 order/api.py:1032
+#: order/api.py:2361
 msgid "Allocated"
 msgstr "已分配"
 
@@ -763,17 +763,17 @@ msgstr "已訂購"
 msgid "Build not found"
 msgstr "找不到生產記錄"
 
-#: build/api.py:1092 build/models.py:128 order/models.py:2364
+#: build/api.py:1107 build/models.py:128 order/models.py:2364
 #: report/templates/report/inventree_build_order_report.html:105
 #: stock/serializers.py:98 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
 msgid "Build Order"
 msgstr "生產工單"
 
-#: build/api.py:1106 build/api.py:1110 build/serializers.py:412
+#: build/api.py:1121 build/api.py:1125 build/serializers.py:412
 #: build/serializers.py:518 build/serializers.py:569 build/serializers.py:1250
-#: build/serializers.py:1256 order/api.py:1319 order/api.py:1324
-#: order/api.py:2110 order/api.py:2115 order/serializers.py:867
+#: build/serializers.py:1256 order/api.py:1389 order/api.py:1394
+#: order/api.py:2220 order/api.py:2225 order/serializers.py:867
 #: order/serializers.py:1007 order/serializers.py:2294 part/serializers.py:1358
 #: stock/api.py:1038 stock/serializers.py:116 stock/serializers.py:626
 #: stock/serializers.py:746 stock/serializers.py:930 stock/serializers.py:1039
@@ -784,15 +784,15 @@ msgstr "生產工單"
 msgid "Location"
 msgstr "地點"
 
-#: build/api.py:1118 part/serializers.py:1383
+#: build/api.py:1133 part/serializers.py:1383
 msgid "Output"
 msgstr "產出"
 
-#: build/api.py:1120
+#: build/api.py:1135
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr "依產出庫存項目 ID 篩選。使用 'null' 尋找未安裝的生產項目。"
 
-#: build/models.py:129 users/ruleset.py:34
+#: build/models.py:129 users/ruleset.py:48
 msgid "Build Orders"
 msgstr "生產工單"
 
@@ -955,7 +955,7 @@ msgstr "發布者"
 msgid "User who issued this build order"
 msgstr "發布此生產工單的使用者"
 
-#: build/models.py:427 common/models.py:195 order/api.py:187
+#: build/models.py:427 common/models.py:195 order/api.py:196
 #: order/models.py:577 part/models.py:1379
 #: report/templates/report/inventree_build_order_report.html:158
 msgid "Responsible"
@@ -983,7 +983,7 @@ msgid "Priority of this build order"
 msgstr "此生產工單的優先程度"
 
 #: build/models.py:451 common/models.py:159 common/models.py:173
-#: order/api.py:173 order/models.py:517 order/models.py:2179
+#: order/api.py:182 order/models.py:517 order/models.py:2179
 msgid "Project Code"
 msgstr "專案代碼"
 
@@ -1455,8 +1455,8 @@ msgstr "安裝至"
 msgid "Build"
 msgstr "生產"
 
-#: build/serializers.py:1288 company/models.py:641 order/api.py:329
-#: order/api.py:334 order/api.py:561 order/serializers.py:635
+#: build/serializers.py:1288 company/models.py:641 order/api.py:338
+#: order/api.py:343 order/api.py:608 order/serializers.py:635
 #: stock/models.py:1175 stock/serializers.py:593
 msgid "Supplier Part"
 msgstr "供應商零件"
@@ -1543,30 +1543,30 @@ msgstr "重複的生產行分配"
 msgid "At least one item or line must be provided"
 msgstr "至少必須提供一個項目或一行"
 
-#: build/status_codes.py:11 generic/states/tests.py:21
-#: generic/states/tests.py:131 order/status_codes.py:12
-#: order/status_codes.py:44 order/status_codes.py:77 order/status_codes.py:103
-#: order/status_codes.py:125
+#: build/status_codes.py:19 generic/states/tests.py:21
+#: generic/states/tests.py:131 order/status_codes.py:21
+#: order/status_codes.py:64 order/status_codes.py:100 order/status_codes.py:131
+#: order/status_codes.py:150
 msgid "Pending"
 msgstr "待定"
 
-#: build/status_codes.py:12
+#: build/status_codes.py:20
 msgid "Production"
 msgstr "生產"
 
-#: build/status_codes.py:13 order/status_codes.py:14 order/status_codes.py:51
-#: order/status_codes.py:82 order/status_codes.py:127
+#: build/status_codes.py:21 order/status_codes.py:23 order/status_codes.py:67
+#: order/status_codes.py:102 order/status_codes.py:152
 msgid "On Hold"
 msgstr "被掛起"
 
-#: build/status_codes.py:14 order/status_codes.py:16 order/status_codes.py:53
-#: order/status_codes.py:85 order/status_codes.py:129
+#: build/status_codes.py:22 order/status_codes.py:25 order/status_codes.py:69
+#: order/status_codes.py:104 order/status_codes.py:154
 msgid "Cancelled"
 msgstr "已取消"
 
-#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:693
-#: importer/status_codes.py:27 order/status_codes.py:15
-#: order/status_codes.py:52 order/status_codes.py:84 order/status_codes.py:128
+#: build/status_codes.py:23 generic/states/tests.py:23 importer/models.py:693
+#: importer/status_codes.py:23 order/status_codes.py:24
+#: order/status_codes.py:68 order/status_codes.py:103 order/status_codes.py:153
 msgid "Complete"
 msgstr "完成"
 
@@ -1609,19 +1609,23 @@ msgstr "是否鏈接"
 msgid "Is File"
 msgstr "是否為文件"
 
-#: common/api.py:828
+#: common/api.py:856
 msgid "User does not have permission to delete these attachments"
 msgstr "用户沒有權限刪除此附件"
 
-#: common/api.py:841
+#: common/api.py:869
+msgid "User does not have permission to view this attachment"
+msgstr ""
+
+#: common/api.py:880
 msgid "User does not have permission to edit this attachment"
 msgstr ""
 
-#: common/api.py:867
+#: common/api.py:906
 msgid "User does not have permission to delete this attachment"
 msgstr "用户沒有權限刪除此附件"
 
-#: common/api.py:1244 common/serializers.py:1017 common/serializers.py:1065
+#: common/api.py:1283 common/serializers.py:1017 common/serializers.py:1065
 msgid "Selection list is locked"
 msgstr "選擇列表已鎖定"
 
@@ -1641,8 +1645,7 @@ msgstr "未提供有效的貨幣代碼"
 msgid "No plugin"
 msgstr "暫無插件"
 
-#: common/filters.py:110 company/api.py:155 company/api.py:311 stock/api.py:415
-#: stock/api.py:1070
+#: common/filters.py:110
 msgid "Tags"
 msgstr ""
 
@@ -2533,7 +2536,7 @@ msgstr "{verbose_name} 已取消"
 msgid "A order that is assigned to you was canceled"
 msgstr "分配給您的訂單已取消"
 
-#: common/notifications.py:73 common/notifications.py:80 order/api.py:612
+#: common/notifications.py:73 common/notifications.py:80 order/api.py:659
 msgid "Items Received"
 msgstr "收到的物品"
 
@@ -4271,6 +4274,14 @@ msgstr ""
 msgid "Automatically default to showing items/parts instead of sub-levels for locations or categories with no children"
 msgstr ""
 
+#: common/setting/user.py:300
+msgid "Enable Filtered Detail Navigation"
+msgstr ""
+
+#: common/setting/user.py:302
+msgid "Enable persisting of filtered detail navigation parameters to the view url"
+msgstr ""
+
 #: common/validators.py:40
 msgid "All models"
 msgstr "所有模型"
@@ -4732,7 +4743,7 @@ msgstr "類別"
 msgid "Values"
 msgstr "值"
 
-#: generic/states/tests.py:22 order/status_codes.py:13
+#: generic/states/tests.py:22 order/status_codes.py:22
 msgid "Placed"
 msgstr "放置"
 
@@ -4937,11 +4948,11 @@ msgstr "行包含無效數據"
 msgid "Row has already been completed"
 msgstr "行已完成"
 
-#: importer/status_codes.py:13
+#: importer/status_codes.py:19
 msgid "Initializing"
 msgstr "正在初始化"
 
-#: importer/status_codes.py:18
+#: importer/status_codes.py:20
 msgid "Mapping Columns"
 msgstr "映射列"
 
@@ -4949,7 +4960,7 @@ msgstr "映射列"
 msgid "Importing Data"
 msgstr "導入數據"
 
-#: importer/status_codes.py:24
+#: importer/status_codes.py:22
 msgid "Processing Data"
 msgstr "處理數據中"
 
@@ -4985,7 +4996,7 @@ msgstr "每個標籤要打印的份數"
 msgid "Connected"
 msgstr "已連接"
 
-#: machine/machine_types/label_printer.py:236 order/api.py:2457
+#: machine/machine_types/label_printer.py:236 order/api.py:2567
 msgid "Unknown"
 msgstr "未知"
 
@@ -5113,117 +5124,133 @@ msgstr "最大進度"
 msgid "Maximum value for progress type, required if type=progress"
 msgstr "進度類型的最大值，當 type=progress 時為必填"
 
-#: order/api.py:133
+#: order/api.py:142
 msgid "Order Reference"
 msgstr "訂單參考"
 
-#: order/api.py:161 order/api.py:1292 order/api.py:2091
+#: order/api.py:170 order/api.py:1362 order/api.py:2201
 msgid "Outstanding"
 msgstr "未完成"
 
-#: order/api.py:177
+#: order/api.py:186
 msgid "Has Project Code"
 msgstr "有項目編碼"
 
-#: order/api.py:191 order/models.py:554
+#: order/api.py:200 order/models.py:554
 msgid "Created By"
 msgstr "創建人"
 
-#: order/api.py:195
+#: order/api.py:204
 msgid "Created Before"
 msgstr "建立時間早於"
 
-#: order/api.py:199
+#: order/api.py:208
 msgid "Created After"
 msgstr "建立時間晚於"
 
-#: order/api.py:203
+#: order/api.py:212
 msgid "Has Start Date"
 msgstr "具有開始日期"
 
-#: order/api.py:211
+#: order/api.py:220
 msgid "Start Date Before"
 msgstr "開始日期早於"
 
-#: order/api.py:215
+#: order/api.py:224
 msgid "Start Date After"
 msgstr "開始日期晚於"
 
-#: order/api.py:219
+#: order/api.py:228
 msgid "Has Target Date"
 msgstr "具有目標日期"
 
-#: order/api.py:227
+#: order/api.py:236
 msgid "Target Date Before"
 msgstr "目標日期早於"
 
-#: order/api.py:231
+#: order/api.py:240
 msgid "Target Date After"
 msgstr "目標日期晚於"
 
-#: order/api.py:235
+#: order/api.py:244
 msgid "Updated Before"
 msgstr "更新之前"
 
-#: order/api.py:239
+#: order/api.py:248
 msgid "Updated After"
 msgstr "更新之後"
 
-#: order/api.py:292
+#: order/api.py:301
 msgid "Has Pricing"
 msgstr "有定價"
 
-#: order/api.py:345 order/api.py:846 order/api.py:1612 order/api.py:1909
+#: order/api.py:354 order/api.py:894 order/api.py:1682 order/api.py:1999
 msgid "Completed Before"
 msgstr "完成時間早於"
 
-#: order/api.py:349 order/api.py:850 order/api.py:1616 order/api.py:1913
+#: order/api.py:358 order/api.py:898 order/api.py:1686 order/api.py:2003
 msgid "Completed After"
 msgstr "完成時間晚於"
 
-#: order/api.py:355 order/api.py:359
+#: order/api.py:364 order/api.py:368
 msgid "External Build Order"
 msgstr "外部生產工單"
 
-#: order/api.py:544 order/api.py:946 order/api.py:1255 order/api.py:2054
-#: order/api.py:2213 order/models.py:2312 order/models.py:2438
+#: order/api.py:459
+msgid "Purchase order not found"
+msgstr ""
+
+#: order/api.py:591 order/api.py:994 order/api.py:1325 order/api.py:2164
+#: order/api.py:2323 order/models.py:2312 order/models.py:2438
 #: order/models.py:2490 order/models.py:2672 order/models.py:3061
 #: order/models.py:3579 order/models.py:3645 order/models.py:4012
 msgid "Order"
 msgstr "訂單"
 
-#: order/api.py:548 order/api.py:1014 order/api.py:2281
+#: order/api.py:595 order/api.py:1062 order/api.py:2391
 msgid "Order Complete"
 msgstr "訂單完成"
 
-#: order/api.py:580 order/api.py:584 order/serializers.py:775
+#: order/api.py:627 order/api.py:631 order/serializers.py:775
 msgid "Internal Part"
 msgstr "內部零件"
 
-#: order/api.py:602
+#: order/api.py:649
 msgid "Order Pending"
 msgstr "訂單待定"
 
-#: order/api.py:999 order/api.py:2266
+#: order/api.py:1047 order/api.py:2376
 msgid "Completed"
 msgstr "已完成"
 
-#: order/api.py:1308
+#: order/api.py:1196
+msgid "Sales order not found"
+msgstr ""
+
+#: order/api.py:1378
 msgid "Has Shipment"
 msgstr "已出貨"
 
-#: order/api.py:1527
+#: order/api.py:1597
 msgid "Shipment not found"
 msgstr "找不到發貨紀錄"
 
-#: order/api.py:2449 order/models.py:656 order/models.py:2313
+#: order/api.py:1775
+msgid "Return order not found"
+msgstr ""
+
+#: order/api.py:2078
+msgid "Transfer order not found"
+msgstr ""
+
+#: order/api.py:2559 order/models.py:656 order/models.py:2313
 #: order/models.py:2439
 #: report/templates/report/inventree_purchase_order_report.html:14
 #: stock/serializers.py:134 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
 msgstr "採購訂單"
 
-#: order/api.py:2451 order/models.py:1377 order/models.py:2491
+#: order/api.py:2561 order/models.py:1377 order/models.py:2491
 #: order/models.py:2673 order/models.py:3062
 #: report/templates/report/inventree_build_order_report.html:135
 #: report/templates/report/inventree_sales_order_report.html:14
@@ -5232,14 +5259,14 @@ msgstr "採購訂單"
 msgid "Sales Order"
 msgstr "銷售訂單"
 
-#: order/api.py:2453 order/models.py:3228 order/models.py:3580
+#: order/api.py:2563 order/models.py:3228 order/models.py:3580
 #: order/models.py:3646
 #: report/templates/report/inventree_return_order_report.html:13
 #: templates/email/overdue_return_order.html:15
 msgid "Return Order"
 msgstr "退貨訂單"
 
-#: order/api.py:2455 order/models.py:3668 order/models.py:4013
+#: order/api.py:2565 order/models.py:3668 order/models.py:4013
 #: report/templates/report/inventree_transfer_order_report.html:12
 msgid "Transfer Order"
 msgstr ""
@@ -5589,7 +5616,7 @@ msgstr "售出價格"
 msgid "Unit sale price"
 msgstr "單位售出價格"
 
-#: order/models.py:2519 order/status_codes.py:50
+#: order/models.py:2519 order/status_codes.py:66
 msgid "Shipped"
 msgstr "已配送"
 
@@ -6117,39 +6144,39 @@ msgstr ""
 msgid "Order has incomplete allocations"
 msgstr ""
 
-#: order/status_codes.py:17 order/status_codes.py:54 stock/status_codes.py:16
+#: order/status_codes.py:26 order/status_codes.py:70 stock/status_codes.py:27
 msgid "Lost"
 msgstr "丟失"
 
-#: order/status_codes.py:18 order/status_codes.py:55 stock/status_codes.py:24
+#: order/status_codes.py:27 order/status_codes.py:71 stock/status_codes.py:29
 msgid "Returned"
 msgstr "已退回"
 
-#: order/status_codes.py:47 order/status_codes.py:80
+#: order/status_codes.py:65 order/status_codes.py:101
 msgid "In Progress"
 msgstr "正在進行"
 
-#: order/status_codes.py:106
+#: order/status_codes.py:132
 msgid "Return"
 msgstr "退回"
 
-#: order/status_codes.py:109
+#: order/status_codes.py:133
 msgid "Repair"
 msgstr "維修"
 
-#: order/status_codes.py:112
+#: order/status_codes.py:134
 msgid "Replace"
 msgstr "替換"
 
-#: order/status_codes.py:115
+#: order/status_codes.py:135
 msgid "Refund"
 msgstr "退款"
 
-#: order/status_codes.py:118
+#: order/status_codes.py:136
 msgid "Reject"
 msgstr "拒絕"
 
-#: order/status_codes.py:126
+#: order/status_codes.py:151
 #: report/templates/report/inventree_build_order_report.html:121
 msgid "Issued"
 msgstr "已派發"
@@ -6314,7 +6341,7 @@ msgstr "使用"
 msgid "Part Category"
 msgstr "零件類別"
 
-#: part/models.py:95 users/ruleset.py:29
+#: part/models.py:95 users/ruleset.py:43
 msgid "Part Categories"
 msgstr "零件類別"
 
@@ -6367,7 +6394,7 @@ msgstr "默認值"
 msgid "Default Parameter Value"
 msgstr "默認參數值"
 
-#: part/models.py:531 part/serializers.py:135 users/ruleset.py:30
+#: part/models.py:531 part/serializers.py:135 users/ruleset.py:44
 msgid "Parts"
 msgstr "零件"
 
@@ -7141,7 +7168,7 @@ msgid "Outstanding quantity of this part scheduled to be built"
 msgstr "此零件排程待製造未完成數量"
 
 #: part/serializers.py:856 stock/serializers.py:1264 stock/serializers.py:1480
-#: users/ruleset.py:33
+#: users/ruleset.py:47
 msgid "Stock Items"
 msgstr "庫存項"
 
@@ -9128,7 +9155,7 @@ msgstr "為所有沒有圖標的位置設置默認圖標(可選)"
 msgid "Stock Location"
 msgstr "庫存地點"
 
-#: stock/models.py:152 users/ruleset.py:32
+#: stock/models.py:152 users/ruleset.py:46
 msgid "Stock Locations"
 msgstr "庫存地點"
 
@@ -9834,147 +9861,147 @@ msgstr "下一個序列號"
 msgid "Previous Serial Number"
 msgstr "上一個序列號"
 
-#: stock/status_codes.py:11
+#: stock/status_codes.py:22
 msgid "OK"
 msgstr "OK"
 
-#: stock/status_codes.py:12
+#: stock/status_codes.py:23
 msgid "Attention needed"
 msgstr "需要關注"
 
-#: stock/status_codes.py:13
+#: stock/status_codes.py:24
 msgid "Damaged"
 msgstr "破損"
 
-#: stock/status_codes.py:14
+#: stock/status_codes.py:25
 msgid "Destroyed"
 msgstr "銷燬"
 
-#: stock/status_codes.py:15
+#: stock/status_codes.py:26
 msgid "Rejected"
 msgstr "拒絕"
 
-#: stock/status_codes.py:19
+#: stock/status_codes.py:28
 msgid "Quarantined"
 msgstr "隔離"
 
-#: stock/status_codes.py:44
+#: stock/status_codes.py:95
 msgid "Legacy stock tracking entry"
 msgstr "舊庫存跟蹤條目"
 
-#: stock/status_codes.py:46
+#: stock/status_codes.py:97
 msgid "Stock item created"
 msgstr "庫存項已創建"
 
-#: stock/status_codes.py:49
+#: stock/status_codes.py:100
 msgid "Edited stock item"
 msgstr "已編輯庫存項"
 
-#: stock/status_codes.py:50
+#: stock/status_codes.py:101
 msgid "Assigned serial number"
 msgstr "已分配序列號"
 
-#: stock/status_codes.py:53
+#: stock/status_codes.py:104
 msgid "Stock counted"
 msgstr "庫存計數"
 
-#: stock/status_codes.py:54
+#: stock/status_codes.py:105
 msgid "Stock manually added"
 msgstr "已手動添加庫存"
 
-#: stock/status_codes.py:55
+#: stock/status_codes.py:106
 msgid "Stock manually removed"
 msgstr "已手動刪除庫存"
 
-#: stock/status_codes.py:56
+#: stock/status_codes.py:107
 msgid "Serialized stock items"
 msgstr "序列化庫存品項"
 
-#: stock/status_codes.py:58
+#: stock/status_codes.py:109
 msgid "Returned to stock"
 msgstr "退回庫存"
 
-#: stock/status_codes.py:61
+#: stock/status_codes.py:112
 msgid "Location changed"
 msgstr "地點已更改"
 
-#: stock/status_codes.py:62
+#: stock/status_codes.py:113
 msgid "Stock updated"
 msgstr "庫存已更新"
 
-#: stock/status_codes.py:65
+#: stock/status_codes.py:116
 msgid "Installed into assembly"
 msgstr "已安裝到裝配中"
 
-#: stock/status_codes.py:66
+#: stock/status_codes.py:117
 msgid "Removed from assembly"
 msgstr "已從裝配中刪除"
 
-#: stock/status_codes.py:68
+#: stock/status_codes.py:119
 msgid "Installed component item"
 msgstr "已安裝組件項"
 
-#: stock/status_codes.py:69
+#: stock/status_codes.py:120
 msgid "Removed component item"
 msgstr "已刪除組件項"
 
-#: stock/status_codes.py:72
+#: stock/status_codes.py:123
 msgid "Split from parent item"
 msgstr "從上級項拆分"
 
-#: stock/status_codes.py:73
+#: stock/status_codes.py:124
 msgid "Split child item"
 msgstr "拆分子項"
 
-#: stock/status_codes.py:76
+#: stock/status_codes.py:127
 msgid "Merged stock items"
 msgstr "合併的庫存項"
 
-#: stock/status_codes.py:79
+#: stock/status_codes.py:130
 msgid "Disassembled into components"
 msgstr ""
 
-#: stock/status_codes.py:80
+#: stock/status_codes.py:131
 msgid "Created from disassembly"
 msgstr ""
 
-#: stock/status_codes.py:83
+#: stock/status_codes.py:134
 msgid "Converted to variant"
 msgstr "轉換為變體"
 
-#: stock/status_codes.py:86
+#: stock/status_codes.py:137
 msgid "Build order output created"
 msgstr "已創建生產訂單產出"
 
-#: stock/status_codes.py:87
+#: stock/status_codes.py:138
 msgid "Build order output completed"
 msgstr "生產訂單已出產"
 
-#: stock/status_codes.py:88
+#: stock/status_codes.py:139
 msgid "Build order output rejected"
 msgstr "生產訂單產出被拒絕"
 
-#: stock/status_codes.py:89
+#: stock/status_codes.py:140
 msgid "Consumed by build order"
 msgstr "被工單消耗的"
 
-#: stock/status_codes.py:92
+#: stock/status_codes.py:143
 msgid "Shipped against Sales Order"
 msgstr "按銷售訂單出貨"
 
-#: stock/status_codes.py:95
+#: stock/status_codes.py:146
 msgid "Received against Purchase Order"
 msgstr "按採購訂單接收"
 
-#: stock/status_codes.py:98
+#: stock/status_codes.py:149
 msgid "Returned against Return Order"
 msgstr "按退貨訂單退回"
 
-#: stock/status_codes.py:101
+#: stock/status_codes.py:152
 msgid "Sent to customer"
 msgstr "寄送給客户"
 
-#: stock/status_codes.py:102
+#: stock/status_codes.py:153
 msgid "Returned from customer"
 msgstr "從客户端退回"
 
@@ -10304,27 +10331,27 @@ msgstr "主要群組"
 msgid "Primary group for the user"
 msgstr "使用者的主要群組"
 
-#: users/ruleset.py:28
+#: users/ruleset.py:42
 msgid "Admin"
 msgstr "管理員"
 
-#: users/ruleset.py:31
+#: users/ruleset.py:45
 msgid "Bills of Material"
 msgstr ""
 
-#: users/ruleset.py:35
+#: users/ruleset.py:49
 msgid "Purchase Orders"
 msgstr "採購訂單"
 
-#: users/ruleset.py:36
+#: users/ruleset.py:50
 msgid "Sales Orders"
 msgstr "銷售訂單"
 
-#: users/ruleset.py:37
+#: users/ruleset.py:51
 msgid "Return Orders"
 msgstr "退貨訂單"
 
-#: users/ruleset.py:38
+#: users/ruleset.py:52
 msgid "Transfer Orders"
 msgstr ""
 

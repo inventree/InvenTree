@@ -379,9 +379,11 @@ test('Purchase Orders - Price Breaks', async ({ browser }) => {
     url: 'purchasing/purchase-order/14/line-items'
   });
 
+  await page.getByRole('button', { name: 'action-menu-add-line-item' }).click();
   await page
-    .getByRole('button', { name: 'action-button-add-line-item' })
+    .getByRole('menuitem', { name: 'action-menu-add-line-item-add' })
     .click();
+
   await page.getByLabel('related-field-part').fill('002.01');
   await page.getByRole('option', { name: 'PCBWOY PCB-002.01' }).click();
 

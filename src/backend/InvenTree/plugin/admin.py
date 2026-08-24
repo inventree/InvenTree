@@ -39,7 +39,7 @@ class PluginSettingInline(admin.TabularInline):
 
     model = models.PluginSetting
 
-    read_only_fields = ['key']
+    readonly_fields = ['key']
 
     def has_add_permission(self, request, obj):
         """The plugin settings should not be meddled with manually."""
@@ -51,7 +51,7 @@ class PluginUserSettingInline(admin.TabularInline):
 
     model = models.PluginUserSetting
 
-    read_only_fields = ['key']
+    readonly_fields = ['key']
 
     def has_add_permission(self, request, obj):
         """The plugin user settings should not be meddled with manually."""
