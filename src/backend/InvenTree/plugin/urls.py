@@ -4,7 +4,6 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.urls.exceptions import Resolver404
-from django.views.decorators.http import require_http_methods
 from django.views.generic.base import RedirectView
 
 from common.validators import get_global_setting
@@ -59,7 +58,6 @@ def get_plugin_urls():
     return re_path(f'^{PLUGIN_BASE}/', include((urls, 'plugin')))
 
 
-@require_http_methods(['GET'])
 def wellknownindexview(request):
     """Simple view that returns a list of all well-known URLs as JSON."""
     from plugin.registry import registry

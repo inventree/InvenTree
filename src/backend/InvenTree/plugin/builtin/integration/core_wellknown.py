@@ -3,7 +3,6 @@
 from django.http import HttpRequest, JsonResponse
 from django.urls import path, reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.decorators.http import require_http_methods
 
 import InvenTree.helpers
 from plugin import InvenTreePlugin
@@ -32,7 +31,6 @@ class InvenTreeWellKnown(WellKnownMixin, UrlsMixin, InvenTreePlugin):
         # placeholder for more
         return data
 
-    @require_http_methods(['GET'])
     def view_passkey(self, request, *args, **kwargs):
         """Return the passkey well-known entry."""
         passkey_web = request.build_absolute_uri(
