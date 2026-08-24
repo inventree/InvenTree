@@ -23,5 +23,5 @@ class Migration(migrations.Migration):
     dependencies = [('users', '0015_alter_userprofile_type')]
 
     operations = [
-        migrations.RunPython(remove_legacy_table, reverse_code=migrations.RunPython.noop)
+        migrations.RunPython(remove_legacy_table, reverse_code=migrations.RunPython.noop, atomic=False)
     ]
