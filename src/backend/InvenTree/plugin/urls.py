@@ -1,7 +1,8 @@
 """URL lookup for plugin app."""
 
 from django.conf import settings
-from django.urls import include, re_path
+from django.http import JsonResponse
+from django.urls import include, path, re_path
 from django.urls.exceptions import Resolver404
 from django.views.generic.base import RedirectView
 
@@ -55,3 +56,56 @@ def get_plugin_urls():
     )
 
     return re_path(f'^{PLUGIN_BASE}/', include((urls, 'plugin')))
+
+
+def wellknownindexview(request):
+    """Simple view that returns a list of all well-known URLs as JSON."""
+    from plugin.registry import registry
+
+    well_known_urls = {}
+    if registry.is_ready:
+        for plugin in registry.with_mixin(PluginMixinEnum.WELLKNOWN):
+            try:
+                if urls := plugin.get_well_known_urls(request):
+                    for name, url in urls:
+                        well_known_urls[name] = request.build_absolute_uri(url)
+            except Exception:
+                log_error('WellKnownView', plugin=plugin.slug)
+                continue
+
+    return JsonResponse({'well_known_urls': well_known_urls})
+
+
+def get_wellknown_urls():
+    """Returns a urlpattern that can be integrated into the global urls (as redirects)."""
+    from plugin.registry import registry
+
+    urls = []
+
+    if registry.is_ready:
+        for plugin in registry.with_mixin(PluginMixinEnum.WELLKNOWN):
+            try:
+                if well_known_urls := plugin.get_well_known_urls(request=None):
+                    for name, url in well_known_urls:
+                        urls.append(
+                            path(
+                                name,
+                                RedirectView.as_view(url=url, permanent=False),
+                                name=name,
+                            )
+                        )
+                        urls.append(
+                            re_path(
+                                f'^{name}/.*$',
+                                RedirectView.as_view(url=url, permanent=False),
+                                name=name,
+                            )
+                        )
+            except Exception:
+                log_error('get_wellknown_urls', plugin=plugin.slug)
+                continue
+
+    # Add index page that lists all well-known URLs
+    urls.append(path('', wellknownindexview, name='index'))
+
+    return path('.well-known/', include((urls, 'well-known')))

@@ -15,15 +15,15 @@ class WellKnownMixin:
     def __init__(self):
         """Register the mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.WELL_KNOWN, True, __class__)
+        self.add_mixin(PluginMixinEnum.WELLKNOWN, True, __class__)
 
-    def get_well_known_urls(self) -> list[tuple[str, str]]:
+    def get_well_known_urls(self, request=None) -> list[tuple[str, str]]:
         """Get well-known URLs.
 
         This method *must* be implemented by the plugin class.
 
         Arguments:
-            None
+            request: The Django request object (optional)
 
         Returns:
             A list of well-known URLs as (name, url) tuples, or None if not available

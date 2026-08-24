@@ -100,6 +100,7 @@ class PluginsRegistry:
         'inventreelabel',
         'inventreelabelmachine',
         'parameter-exporter',
+        'inventree-well-known',
     ]
 
     ready: bool
