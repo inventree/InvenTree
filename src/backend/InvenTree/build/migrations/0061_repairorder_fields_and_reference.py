@@ -11,7 +11,7 @@ import build.validators
 class Migration(migrations.Migration):
     dependencies = [
         ('build', '0060_repairorder_repairorderlineitem_and_more'),
-        ('users', '0011_alter_ruleset_name'),
+        ('users', '0016_remove_legacy_user_sessions_table'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
