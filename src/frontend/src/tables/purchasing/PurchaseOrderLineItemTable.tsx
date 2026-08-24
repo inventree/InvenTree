@@ -1,10 +1,9 @@
 import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
-import { IconFileArrowLeft, IconSquareArrowRight } from '@tabler/icons-react';
+import { IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
-import { AddItemButton } from '@lib/components/AddItemButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
 import {
   type RowAction,
@@ -37,6 +36,7 @@ import {
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 
+import { LineItemCreationMenu } from '../../components/items/LineItemCreationMenu';
 import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { formatCurrency } from '../../defaults/formatters';
@@ -397,23 +397,19 @@ export function PurchaseOrderLineItemTable({
   // Custom table actions
   const tableActions = useMemo(() => {
     return [
-      <ActionButton
-        key='import-line-items'
-        hidden={!editable || !user.hasAddRole(UserRoles.purchase_order)}
-        tooltip={t`Import Line Items`}
-        icon={<IconFileArrowLeft />}
-        onClick={() => importLineItems.open()}
-      />,
-      <AddItemButton
-        key='add-line-item'
+      <LineItemCreationMenu
+        key='add-line-item-actions'
         tooltip={t`Add Line Item`}
-        onClick={() => {
+        addLabel={t`Add Line Item`}
+        importLabel={t`Import Line Items`}
+        hidden={!editable || !user.hasAddRole(UserRoles.purchase_order)}
+        onAdd={() => {
           setInitialData({
             order: orderId
           });
           newLine.open();
         }}
-        hidden={!editable || !user?.hasAddRole(UserRoles.purchase_order)}
+        onImport={() => importLineItems.open()}
       />,
       <ActionButton
         key='receive-items'
