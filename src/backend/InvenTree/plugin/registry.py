@@ -998,7 +998,7 @@ class PluginsRegistry:
         as any custom AppMixin plugins require admin integration
         """
         from InvenTree.urls import urlpatterns
-        from plugin.urls import get_plugin_urls
+        from plugin.urls import get_plugin_urls, get_wellknown_urls
 
         for index, url in enumerate(urlpatterns):
             app_name = getattr(url, 'app_name', None)
@@ -1012,6 +1012,9 @@ class PluginsRegistry:
 
             if app_name == 'plugin':
                 urlpatterns[index] = get_plugin_urls()
+
+            if app_name == 'well-known':
+                urlpatterns[index] = get_wellknown_urls()
 
         # Refresh the URL cache
         clear_url_caches()
