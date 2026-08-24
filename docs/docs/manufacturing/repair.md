@@ -76,20 +76,34 @@ Repair Order Status supports [custom states](../concepts/custom_states.md).
 
 ### Status Lifecycle
 
-The typical lifecycle of a Repair Order follows this progression:
+The following diagram shows **all** valid status transitions for a Repair Order:
 
 ```mermaid
-graph LR
-    A["Pending"] --> B["In Progress"]
-    B --> C["Complete"]
-    A --> D["Cancelled"]
-    B --> E["On Hold"]
-    E --> B
-    B --> D
+stateDiagram-v2
+    [*] --> Pending
+
+    Pending --> InProgress : Issue
+    Pending --> OnHold : Hold
+    Pending --> Complete : Complete
+    Pending --> Cancelled : Cancel
+
+    InProgress --> OnHold : Hold
+    InProgress --> Complete : Complete
+    InProgress --> Cancelled : Cancel
+
+    OnHold --> InProgress : Issue (Resume)
+    OnHold --> Complete : Complete
+    OnHold --> Cancelled : Cancel
+
+    Complete --> [*]
+    Cancelled --> [*]
 ```
 
 !!! info "Active Orders"
     Orders with a status of *Pending*, *In Progress*, or *On Hold* are considered **active** (open) orders.
+
+!!! warning "Terminal States"
+    Once a Repair Order reaches *Complete* or *Cancelled* status, it is **locked**. No further modifications can be made to the order or its line items.
 
 ## Line Items
 
@@ -119,6 +133,31 @@ Each Repair Order can contain one or more *Line Items*, which specify the parts 
 
 !!! info "Multiple Allocations"
     Multiple stock items can be allocated against a single line item, if a single stock item does not have sufficient quantity for the repair.
+
+### Stock Consumption on Completion
+
+When a Repair Order is **completed**, all allocated stock is physically consumed (removed from inventory). The allocated quantity is subtracted from each stock item and the allocation records are deleted.
+
+### Stock Release on Cancellation
+
+When a Repair Order is **cancelled**, all allocation records are deleted *without* consuming stock. The reserved quantities are released back to general inventory.
+
+## Repair Orders vs. Return Orders
+
+Repair Orders and [Return Orders](../order/return_order.md) both deal with items coming back from customers, but they serve different purposes:
+
+| Aspect | Repair Order | Return Order |
+| --- | --- | --- |
+| **Purpose** | Fix, refurbish, or rework an existing item | Receive returned goods back into inventory |
+| **Stock effect** | *Consumes* replacement parts from inventory | *Receives* items back into stock |
+| **Parts consumed** | Replacement parts are allocated and consumed on completion | No parts are consumed — items are received as-is |
+| **Typical use case** | Warranty repair, rework, refurbishment | Product return, RMA, exchange |
+| **Line items** | Parts needed *for the repair* | Items being *returned by the customer* |
+
+!!! tip "When to use which"
+    - Use a **Return Order** when a customer is sending items back and you need to receive them into your inventory (e.g., product returns, RMA processing).
+    - Use a **Repair Order** when you need to *fix* an item using parts from your inventory (e.g., warranty repairs, component replacement, refurbishment).
+    - The two can be used together: a Return Order receives the faulty item, and a Repair Order tracks the actual repair work.
 
 ## Repair Order Features
 

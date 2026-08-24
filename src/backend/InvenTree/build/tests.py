@@ -3,10 +3,11 @@
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 
 from build.status_codes import BuildStatus, RepairOrderStatus
 from common.settings import set_global_setting
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
 from part.models import BomItem, Part
 
 from .models import Build, RepairOrder
@@ -375,3 +376,247 @@ class RepairOrderTransitionTests(InvenTreeTestCase):
         ro.cancel_repair()
         ro.refresh_from_db()
         self.assertEqual(ro.status, RepairOrderStatus.CANCELLED.value)
+
+
+class RepairOrderAPITests(InvenTreeAPITestCase):
+    """API-level tests for RepairOrder endpoints.
+
+    Covers:
+    - Permission gating (403 without repair_order role)
+    - FSM transition endpoints (issue, hold, complete, cancel)
+    - Serializer validation (read-only status field)
+    - Line item and allocation validation
+    - Stock consumption on completion
+    """
+
+    fixtures = ['category', 'part', 'location', 'stock']
+
+    # Start with NO roles — we test permission denial first
+    roles = []
+
+    def setUp(self):
+        """Create a RepairOrder for tests to act on."""
+        super().setUp()
+
+        # Grant repair_order add/change/delete so most tests pass.
+        # Individual tests that check permission denial will remove roles first.
+        self.assignRole('repair_order.add')
+        self.assignRole('repair_order.change')
+        self.assignRole('repair_order.delete')
+        self.assignRole('repair_order.view')
+
+        self.ro = RepairOrder.objects.create(
+            reference='RO-API-001', description='API test repair order'
+        )
+
+    # ── Permission gating ──────────────────────────────────────────
+
+    def test_list_requires_role(self):
+        """GET /api/build/repair/ returns 403 without repair_order.view."""
+        # Remove all roles
+        self.clearRoles()
+
+        url = reverse('api-repair-order-list')
+        self.get(url, expected_code=403)
+
+    def test_list_with_role(self):
+        """GET /api/build/repair/ returns 200 with repair_order.view."""
+        url = reverse('api-repair-order-list')
+        response = self.get(url, expected_code=200)
+        self.assertGreaterEqual(len(response.data), 1)
+
+    def test_create_requires_role(self):
+        """POST /api/build/repair/ returns 403 without repair_order.add."""
+        self.clearRoles()
+
+        url = reverse('api-repair-order-list')
+        self.post(url, {'description': 'should fail'}, expected_code=403)
+
+    def test_create_with_role(self):
+        """POST /api/build/repair/ creates an order with correct defaults."""
+        url = reverse('api-repair-order-list')
+        data = self.post(
+            url, {'description': 'Created via API'}, expected_code=201
+        ).data
+
+        self.assertIn('pk', data)
+        self.assertEqual(data['status'], RepairOrderStatus.PENDING.value)
+
+    # ── Serializer validation ──────────────────────────────────────
+
+    def test_status_is_read_only(self):
+        """PATCH should not allow direct status changes (read-only field)."""
+        url = reverse('api-repair-order-detail', kwargs={'pk': self.ro.pk})
+        self.patch(url, {'status': RepairOrderStatus.COMPLETE.value}, expected_code=200)
+        self.ro.refresh_from_db()
+        # Status must NOT have changed — it's read-only
+        self.assertEqual(self.ro.status, RepairOrderStatus.PENDING.value)
+
+    # ── FSM transition endpoints ───────────────────────────────────
+
+    def test_issue_transition(self):
+        """POST issue/ moves PENDING → IN_PROGRESS."""
+        url = reverse('api-repair-order-issue', kwargs={'pk': self.ro.pk})
+        self.post(url, expected_code=201)
+        self.ro.refresh_from_db()
+        self.assertEqual(self.ro.status, RepairOrderStatus.IN_PROGRESS.value)
+
+    def test_hold_transition(self):
+        """POST hold/ moves PENDING → ON_HOLD."""
+        url = reverse('api-repair-order-hold', kwargs={'pk': self.ro.pk})
+        self.post(url, expected_code=201)
+        self.ro.refresh_from_db()
+        self.assertEqual(self.ro.status, RepairOrderStatus.ON_HOLD.value)
+
+    def test_complete_transition(self):
+        """POST complete/ moves PENDING → COMPLETE."""
+        url = reverse('api-repair-order-complete', kwargs={'pk': self.ro.pk})
+        self.post(url, expected_code=201)
+        self.ro.refresh_from_db()
+        self.assertEqual(self.ro.status, RepairOrderStatus.COMPLETE.value)
+        self.assertIsNotNone(self.ro.completion_date)
+
+    def test_cancel_transition(self):
+        """POST cancel/ moves PENDING → CANCELLED."""
+        url = reverse('api-repair-order-cancel', kwargs={'pk': self.ro.pk})
+        self.post(url, expected_code=201)
+        self.ro.refresh_from_db()
+        self.assertEqual(self.ro.status, RepairOrderStatus.CANCELLED.value)
+
+    def test_transition_requires_role(self):
+        """POST issue/ returns 403 without repair_order.add."""
+        self.clearRoles()
+
+        url = reverse('api-repair-order-issue', kwargs={'pk': self.ro.pk})
+        self.post(url, expected_code=403)
+
+    def test_full_fsm_via_api(self):
+        """Full lifecycle via API: PENDING → IN_PROGRESS → ON_HOLD → IN_PROGRESS → COMPLETE."""
+        pk = self.ro.pk
+
+        # PENDING → IN_PROGRESS
+        self.post(
+            reverse('api-repair-order-issue', kwargs={'pk': pk}), expected_code=201
+        )
+
+        # IN_PROGRESS → ON_HOLD
+        self.post(
+            reverse('api-repair-order-hold', kwargs={'pk': pk}), expected_code=201
+        )
+
+        # ON_HOLD → IN_PROGRESS (resume)
+        self.post(
+            reverse('api-repair-order-issue', kwargs={'pk': pk}), expected_code=201
+        )
+
+        # IN_PROGRESS → COMPLETE
+        self.post(
+            reverse('api-repair-order-complete', kwargs={'pk': pk}), expected_code=201
+        )
+
+        self.ro.refresh_from_db()
+        self.assertEqual(self.ro.status, RepairOrderStatus.COMPLETE.value)
+
+    def test_locked_order_rejects_transitions(self):
+        """A completed order should reject further transitions."""
+        # Complete the order
+        self.ro.complete_repair()
+        self.ro.save()
+
+        # Attempt to issue again — should fail
+        url = reverse('api-repair-order-issue', kwargs={'pk': self.ro.pk})
+        self.post(url, expected_code=400)
+
+    # ── Line item and allocation validation ────────────────────────
+
+    def test_line_item_creation(self):
+        """Create a line item via the API."""
+        p = Part.objects.filter(component=True).first()
+
+        url = reverse('api-repair-order-line-list')
+        data = self.post(
+            url, {'order': self.ro.pk, 'part': p.pk, 'quantity': 3}, expected_code=201
+        ).data
+
+        self.assertEqual(data['order'], self.ro.pk)
+        self.assertEqual(float(data['quantity']), 3.0)
+
+    def test_allocation_creation_and_consumption(self):
+        """Allocate stock to a line item, then complete the order.
+
+        Verify that the stock quantity is reduced after completion.
+        """
+        from stock.models import StockItem
+
+        p = Part.objects.filter(component=True).first()
+        if p is None:
+            self.skipTest('No component parts available')
+
+        # Find or create a stock item for this part
+        si = StockItem.objects.filter(part=p, quantity__gte=5).first()
+        if si is None:
+            from stock.models import StockLocation
+
+            loc = StockLocation.objects.first()
+            si = StockItem.objects.create(part=p, quantity=100, location=loc)
+
+        original_qty = float(si.quantity)
+
+        # Create a line item
+        from build.models import RepairOrderLineItem
+
+        line = RepairOrderLineItem.objects.create(order=self.ro, part=p, quantity=2)
+
+        # Create an allocation
+        from build.models import RepairOrderAllocation
+
+        alloc = RepairOrderAllocation.objects.create(line=line, item=si, quantity=2)
+        alloc.full_clean()  # Validate — should pass
+
+        # Complete the order (consumes stock)
+        self.ro.issue_repair()
+        self.ro.complete_repair(user=self.user)
+        self.ro.save()
+
+        si.refresh_from_db()
+        self.assertEqual(float(si.quantity), original_qty - 2)
+
+        # Allocation should be deleted after completion
+        self.assertEqual(
+            RepairOrderAllocation.objects.filter(line__order=self.ro).count(), 0
+        )
+
+    def test_cancel_releases_allocations(self):
+        """Cancelling an order deletes all allocations without consuming stock."""
+        from stock.models import StockItem
+
+        p = Part.objects.filter(component=True).first()
+        if p is None:
+            self.skipTest('No component parts available')
+
+        si = StockItem.objects.filter(part=p, quantity__gte=5).first()
+        if si is None:
+            from stock.models import StockLocation
+
+            loc = StockLocation.objects.first()
+            si = StockItem.objects.create(part=p, quantity=100, location=loc)
+
+        original_qty = float(si.quantity)
+
+        from build.models import RepairOrderAllocation, RepairOrderLineItem
+
+        line = RepairOrderLineItem.objects.create(order=self.ro, part=p, quantity=3)
+        RepairOrderAllocation.objects.create(line=line, item=si, quantity=3)
+
+        # Cancel the order
+        self.ro.cancel_repair()
+        self.ro.save()
+
+        si.refresh_from_db()
+        # Stock should NOT have been consumed
+        self.assertEqual(float(si.quantity), original_qty)
+
+        # Allocations should be deleted
+        self.assertEqual(
+            RepairOrderAllocation.objects.filter(line__order=self.ro).count(), 0
+        )
