@@ -33,4 +33,4 @@ class WellKnownMixin:
         """
         raise MixinNotImplementedError(
             'Plugin must implement get_well_known_urls method'
-        )
+        )  # pragma: no cover
