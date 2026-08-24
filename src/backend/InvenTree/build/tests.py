@@ -332,7 +332,7 @@ class RepairOrderTransitionTests(InvenTreeTestCase):
         Exercises issue_repair, hold_repair, and complete_repair.
         """
         ro = RepairOrder.objects.create(
-            reference='RO-LIFE-001', description='Lifecycle test repair order'
+            reference='RO-0001', description='Lifecycle test repair order'
         )
         self.assertEqual(ro.status, RepairOrderStatus.PENDING.value)
 
@@ -363,7 +363,7 @@ class RepairOrderTransitionTests(InvenTreeTestCase):
         Exercises issue_repair and cancel_repair.
         """
         ro = RepairOrder.objects.create(
-            reference='RO-CANC-001', description='Cancel lifecycle test repair order'
+            reference='RO-0002', description='Cancel lifecycle test repair order'
         )
         self.assertEqual(ro.status, RepairOrderStatus.PENDING.value)
 
@@ -406,7 +406,7 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         self.assignRole('repair_order.view')
 
         self.ro = RepairOrder.objects.create(
-            reference='RO-API-001', description='API test repair order'
+            reference='RO-0003', description='API test repair order'
         )
 
     # ── Permission gating ──────────────────────────────────────────

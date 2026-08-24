@@ -144,7 +144,7 @@ When a Repair Order is **cancelled**, all allocation records are deleted *withou
 
 ## Repair Orders vs. Return Orders
 
-Repair Orders and [Return Orders](../order/return_order.md) both deal with items coming back from customers, but they serve different purposes:
+Repair Orders and [Return Orders](../sales/return_order.md) both deal with items coming back from customers, but they serve different purposes:
 
 | Aspect | Repair Order | Return Order |
 | --- | --- | --- |
