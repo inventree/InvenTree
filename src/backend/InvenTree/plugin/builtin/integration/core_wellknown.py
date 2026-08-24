@@ -5,6 +5,7 @@ from django.urls import path, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
 import InvenTree.helpers
+from InvenTree.permissions import auth_exempt
 from plugin import InvenTreePlugin
 from plugin.mixins import UrlsMixin, WellKnownMixin
 
@@ -31,6 +32,7 @@ class InvenTreeWellKnown(WellKnownMixin, UrlsMixin, InvenTreePlugin):
         # placeholder for more
         return data
 
+    @auth_exempt
     def view_passkey(self, request, *args, **kwargs):
         """Return the passkey well-known entry."""
         passkey_web = request.build_absolute_uri(

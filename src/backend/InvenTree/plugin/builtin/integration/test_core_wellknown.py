@@ -3,11 +3,18 @@
 from django.test import override_settings
 from django.urls import reverse
 
+from common.models import InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
+from plugin.registry import registry
 
 
 class InvenTreeWellKnownTest(InvenTreeAPITestCase):
     """Tests for the InvenTreeWellKnown plugin."""
+
+    def setUp(self):
+        """Setup some testing drivers/machines."""
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_URL', True, None)
+        registry.reload_plugins()
 
     @override_settings(
         SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
