@@ -69,7 +69,7 @@ def wellknownindexview(request):
                 if urls := plugin.get_well_known_urls(request):
                     for name, url in urls:
                         well_known_urls[name] = request.build_absolute_uri(url)
-            except Exception:
+            except Exception:  # pragma: no cover
                 log_error('WellKnownView', plugin=plugin.slug)
                 continue
 
@@ -101,7 +101,7 @@ def get_wellknown_urls():
                                 name=name,
                             )
                         )
-            except Exception:
+            except Exception:  # pragma: no cover
                 log_error('get_wellknown_urls', plugin=plugin.slug)
                 continue
 
