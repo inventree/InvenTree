@@ -1,7 +1,7 @@
 """Base plugin which defines the built-in well-known entries."""
 
 from django.http import HttpRequest, JsonResponse
-from django.urls import path, reverse
+from django.urls import path, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 
@@ -27,7 +27,7 @@ class InvenTreeWellKnown(WellKnownMixin, UrlsMixin, InvenTreePlugin):
         data = []
 
         # See https://www.w3.org/TR/passkey-endpoints/
-        data.append(('passkey-endpoints', reverse(f'plugin:{self.slug}:passkey')))
+        data.append(('passkey-endpoints', reverse_lazy(f'plugin:{self.slug}:passkey')))
 
         # placeholder for more
         return data
