@@ -7,9 +7,10 @@ from functools import wraps
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Model
+from django.utils.translation import gettext_lazy as _
 
 import structlog
-from django_fsm import TransitionNotAllowed, transition
+from django_fsm import State, TransitionNotAllowed, transition
 
 from plugin.events import trigger_event
 
@@ -97,11 +98,20 @@ def inventree_transition(
                 # Preserve backward-compatible behaviour: an invalid transition
                 # (wrong source state, failed condition, or explicit raise inside
                 # the method body) returns False rather than raising.
-                if getattr(self, field.name) == target:
+                #
+                # `target` may be a State proxy (e.g. DEFERRABLE) rather than a
+                # plain value - such proxies expose their real, fixed target via
+                # a `.target` attribute, so unwrap that for this comparison. A
+                # proxy with no single fixed target (e.g. RETURN_VALUE) falls
+                # back to the generic "invalid transition" message below, since
+                # there is no one value to compare against.
+                resolved_target = getattr(target, 'target', target)
+                if getattr(self, field.name) == resolved_target:
                     target_val = (
-                        target.label
-                        if isinstance(target, Enum) and hasattr(target, 'label')
-                        else target
+                        resolved_target.label
+                        if isinstance(resolved_target, Enum)
+                        and hasattr(resolved_target, 'label')
+                        else resolved_target
                     )
                     raise ValidationError(
                         f'{self._meta.verbose_name} is already {target_val}'
@@ -125,6 +135,68 @@ def inventree_transition(
         return wrapper
 
     return decorator
+
+
+class DEFERRABLE(State):
+    """Target-state proxy for a transition whose real work may be offloaded to a background worker.
+
+    Use this as the ``target=`` of ``@inventree_transition`` for a method whose body
+    calls ``InvenTree.tasks.offload_task(...)`` and returns that call's result
+    directly (do not swallow it). ``offload_task()`` returns one of three things,
+    and the actual next state is resolved accordingly:
+
+    * ``True`` - the task ran synchronously, inline (no worker was available) - the
+      real work is already finished, so the transition completes: the field is set
+      to ``target``.
+    * ``False`` - the task could not even be scheduled - nothing will ever perform
+      this transition now, so a ``ValidationError`` is raised rather than silently
+      pretending the transition happened.
+    * anything else (a task ID) - the work was genuinely queued for a background
+      worker and has not run yet. The field is left as its current (source) value;
+      the background task is responsible for performing the real transition itself
+      once it actually finishes the work.
+
+    Without this, a transition method that merely offloads work would have the
+    field advanced to ``target`` the instant it returns - regardless of whether a
+    worker has run yet - which lets any "is this already done?" guard in the
+    offloaded task itself misfire on its first (and only) real run. See
+    ``Build.complete_build()`` for a worked example.
+
+    Usage::
+
+        @inventree_transition(
+            field=status,
+            source=[...],
+            target=DEFERRABLE(status, MyStatus.COMPLETE),
+        )
+        def complete_thing(self, ...):
+            return InvenTree.tasks.offload_task(my_app.tasks.complete_thing, self.pk, ...)
+    """
+
+    def __init__(self, field, target) -> None:
+        """Store the status field (to read the current value back from) and the real target."""
+        self.field = field
+        self.target = target
+        self.allowed_states = []
+
+    def get_state(self, model, transition, result, args=None, kwargs=None):
+        """Resolve the actual next state from the offload_task() return value."""
+        if result is True:
+            # The offloaded task ran synchronously, inline, on its own copy of
+            # this row, and has already saved its results to the database.
+            # Refresh so those changes are not clobbered by the wrapper's own
+            # save() call, which is about to write this (now-stale) instance.
+            model.refresh_from_db()
+            return self.target
+
+        if result is False:
+            raise ValidationError(
+                _('Failed to offload background task for this transition')
+            )
+
+        # Anything else (a task ID) means the work was genuinely deferred to a
+        # background worker - the transition has not actually happened yet
+        return self.field.get_state(model)
 
 
 class TransitionMethod:
