@@ -1678,6 +1678,27 @@ class SanitizerTest(TestCase):
         # Test that invalid string is cleaned
         self.assertNotEqual(dangerous_string, sanitize_svg(dangerous_string))
 
+    def test_svg_sanitizer_smil_bypass(self):
+        """Test that SMIL animation elements cannot be used to smuggle a javascript: URL.
+
+        A <set>/<animate>/<animateTransform> element can assign a `javascript:` value to
+        another element's `href`/`xlink:href` at render time via its `to`/`from`/`values`
+        attribute. These attributes are not treated as URLs by the sanitizer, so simply
+        stripping `javascript:` from `href`-like attributes is not sufficient - the
+        elements themselves must not be permitted.
+        """
+        malicious_string = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <a xlink:href="https://example.com">
+        <set attributeName="xlink:href" to="javascript:alert(document.domain)" />
+        <text x="10" y="20">Click me</text>
+        </a>
+        </svg>"""
+
+        cleaned = sanitize_svg(malicious_string)
+
+        self.assertNotIn('javascript:', cleaned)
+        self.assertNotIn('<set', cleaned)
+
 
 class MagicLoginTest(InvenTreeTestCase):
     """Test magic login token generation."""

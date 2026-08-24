@@ -286,7 +286,7 @@ class OrderFilter(FilterSet):
 
         return queryset.filter(q1 | q2 | q3 | q4).distinct()
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class LineItemFilter(FilterSet):
@@ -373,8 +373,6 @@ class PurchaseOrderFilter(OrderFilter):
         To achieve this, we return any order which has a line item which is allocated to the build order.
         """
         return queryset.filter(lines__build_order=build).distinct()
-
-    tags = common.filters.TagsFilter(is_viewset=True)
 
 
 class PurchaseOrderOutputOptions(OutputConfiguration):
@@ -1546,7 +1544,7 @@ class SalesOrderShipmentFilter(FilterSet):
 
         return queryset.filter(q1 | q2).distinct()
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class SalesOrderShipmentMixin:
