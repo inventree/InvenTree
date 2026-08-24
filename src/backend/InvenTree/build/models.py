@@ -42,6 +42,7 @@ from common.models import ProjectCode
 from common.settings import get_global_setting
 from generic.enums import StringEnum
 from generic.states import (
+    RETURN_VALUE,
     Deprecations,
     StateTransitionMixin,
     StatusCodeMixin,
@@ -970,7 +971,12 @@ class Build(
     @inventree_transition(
         field=status,
         source=[BuildStatus.PENDING, BuildStatus.PRODUCTION, BuildStatus.ON_HOLD],
-        target=BuildStatus.COMPLETE,
+        target=RETURN_VALUE(
+            BuildStatus.PENDING,
+            BuildStatus.PRODUCTION,
+            BuildStatus.ON_HOLD,
+            BuildStatus.COMPLETE,
+        ),
     )
     def complete_build(self, user: User, trim_allocated_stock: bool = False):
         """Transition this Build to COMPLETE status.
@@ -978,6 +984,13 @@ class Build(
         Arguments:
             user: The user who is completing the build
             trim_allocated_stock: If True, trim any allocated stock
+
+        Notes:
+            The actual completion work (consuming allocations, deleting BuildItem
+            records, etc.) is done by build.tasks.complete_build(),
+            which runs in the background worker.
+
+            If the task is offloaded, we do not change the build status here.
         """
         import build.tasks
 
@@ -994,14 +1007,33 @@ class Build(
                 _('Cannot complete build order with incomplete outputs')
             )
 
+        # Capture the pre-transition status, to return as a no-op target below
+        # if the completion work is genuinely deferred to a background worker
+        current_status = self.status
+
         # Offload background task to complete build allocations
-        InvenTree.tasks.offload_task(
+        result = InvenTree.tasks.offload_task(
             build.tasks.complete_build,
             self.pk,
             user.pk if user else None,
             trim_allocated_stock=trim_allocated_stock,
             group='build',
         )
+
+        if result is False:
+            # The task could not even be scheduled - nothing will ever complete
+            # this build, so do not pretend the transition succeeded
+            raise ValidationError(_('Failed to offload build completion task'))
+
+        if result is True:
+            # offload_task() ran the task synchronously and inline (no worker was
+            # available) - the real completion work is already finished
+            return BuildStatus.COMPLETE.value
+
+        # The task was genuinely queued for a background worker and has not run
+        # yet - leave the status as it was; build.tasks.complete_build() will
+        # perform the real transition once it actually completes the work
+        return current_status
 
     @inventree_transition(
         field=status,
