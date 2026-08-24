@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-21 21:47+0000\n"
-"PO-Revision-Date: 2026-08-21 21:50\n"
+"POT-Creation-Date: 2026-08-23 09:09+0000\n"
+"PO-Revision-Date: 2026-08-23 09:12\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -792,7 +792,7 @@ msgstr "Çıktı"
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr "Çıktı stok kalemi ID'sine göre filtrele. Takılmamış üretim kalemlerini bulmak için ‘null’ kullan."
 
-#: build/models.py:129 users/ruleset.py:34
+#: build/models.py:129 users/ruleset.py:48
 msgid "Build Orders"
 msgstr "Üretim Emirleri"
 
@@ -1543,30 +1543,30 @@ msgstr "Üretim satırı tahsisini yinele"
 msgid "At least one item or line must be provided"
 msgstr "En az bir kalem veya satır sağlanmalıdır"
 
-#: build/status_codes.py:11 generic/states/tests.py:21
-#: generic/states/tests.py:131 order/status_codes.py:12
-#: order/status_codes.py:44 order/status_codes.py:77 order/status_codes.py:103
-#: order/status_codes.py:125
+#: build/status_codes.py:19 generic/states/tests.py:21
+#: generic/states/tests.py:131 order/status_codes.py:21
+#: order/status_codes.py:64 order/status_codes.py:100 order/status_codes.py:131
+#: order/status_codes.py:150
 msgid "Pending"
 msgstr "Bekliyor"
 
-#: build/status_codes.py:12
+#: build/status_codes.py:20
 msgid "Production"
 msgstr "Üretim"
 
-#: build/status_codes.py:13 order/status_codes.py:14 order/status_codes.py:51
-#: order/status_codes.py:82 order/status_codes.py:127
+#: build/status_codes.py:21 order/status_codes.py:23 order/status_codes.py:67
+#: order/status_codes.py:102 order/status_codes.py:152
 msgid "On Hold"
 msgstr "Beklemede"
 
-#: build/status_codes.py:14 order/status_codes.py:16 order/status_codes.py:53
-#: order/status_codes.py:85 order/status_codes.py:129
+#: build/status_codes.py:22 order/status_codes.py:25 order/status_codes.py:69
+#: order/status_codes.py:104 order/status_codes.py:154
 msgid "Cancelled"
 msgstr "İptal edildi"
 
-#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:693
-#: importer/status_codes.py:27 order/status_codes.py:15
-#: order/status_codes.py:52 order/status_codes.py:84 order/status_codes.py:128
+#: build/status_codes.py:23 generic/states/tests.py:23 importer/models.py:693
+#: importer/status_codes.py:23 order/status_codes.py:24
+#: order/status_codes.py:68 order/status_codes.py:103 order/status_codes.py:153
 msgid "Complete"
 msgstr "Tamamlandı"
 
@@ -1609,19 +1609,23 @@ msgstr "Link Olanlar"
 msgid "Is File"
 msgstr "Dosya Olanlar"
 
-#: common/api.py:828
+#: common/api.py:856
 msgid "User does not have permission to delete these attachments"
 msgstr "Kullanıcının bu ekleri silmek için izni yok"
 
-#: common/api.py:841
+#: common/api.py:869
+msgid "User does not have permission to view this attachment"
+msgstr ""
+
+#: common/api.py:880
 msgid "User does not have permission to edit this attachment"
 msgstr "Kullanıcının bu eki düzenleme izni yok"
 
-#: common/api.py:867
+#: common/api.py:906
 msgid "User does not have permission to delete this attachment"
 msgstr "Kullanıcının bu eki silmek için izni yok"
 
-#: common/api.py:1244 common/serializers.py:1017 common/serializers.py:1065
+#: common/api.py:1283 common/serializers.py:1017 common/serializers.py:1065
 msgid "Selection list is locked"
 msgstr "Seçim listesi kilitli"
 
@@ -4739,7 +4743,7 @@ msgstr "Sınıf"
 msgid "Values"
 msgstr "Değerler"
 
-#: generic/states/tests.py:22 order/status_codes.py:13
+#: generic/states/tests.py:22 order/status_codes.py:22
 msgid "Placed"
 msgstr "Sipariş verildi"
 
@@ -4944,11 +4948,11 @@ msgstr "Satır geçersiz veri içeriyor"
 msgid "Row has already been completed"
 msgstr "Satır zaten tamamlandı"
 
-#: importer/status_codes.py:13
+#: importer/status_codes.py:19
 msgid "Initializing"
 msgstr "Başlatılıyor"
 
-#: importer/status_codes.py:18
+#: importer/status_codes.py:20
 msgid "Mapping Columns"
 msgstr "Sütunları Eşleme"
 
@@ -4956,7 +4960,7 @@ msgstr "Sütunları Eşleme"
 msgid "Importing Data"
 msgstr "Veri İçe Aktarılıyor"
 
-#: importer/status_codes.py:24
+#: importer/status_codes.py:22
 msgid "Processing Data"
 msgstr "Veri İşleniyor"
 
@@ -5612,7 +5616,7 @@ msgstr "Satış Fiyatı"
 msgid "Unit sale price"
 msgstr "Birim satış fiyatı"
 
-#: order/models.py:2519 order/status_codes.py:50
+#: order/models.py:2519 order/status_codes.py:66
 msgid "Shipped"
 msgstr "Sevk edildi"
 
@@ -6140,39 +6144,39 @@ msgstr "Üretimin eksik tahsisler ile tamamlanmasına izin ver"
 msgid "Order has incomplete allocations"
 msgstr "Üretimin eksik tahsisleri var"
 
-#: order/status_codes.py:17 order/status_codes.py:54 stock/status_codes.py:16
+#: order/status_codes.py:26 order/status_codes.py:70 stock/status_codes.py:27
 msgid "Lost"
 msgstr "Kayıp"
 
-#: order/status_codes.py:18 order/status_codes.py:55 stock/status_codes.py:24
+#: order/status_codes.py:27 order/status_codes.py:71 stock/status_codes.py:29
 msgid "Returned"
 msgstr "İade"
 
-#: order/status_codes.py:47 order/status_codes.py:80
+#: order/status_codes.py:65 order/status_codes.py:101
 msgid "In Progress"
 msgstr "Devam Ediyor"
 
-#: order/status_codes.py:106
+#: order/status_codes.py:132
 msgid "Return"
 msgstr "Geri Dön"
 
-#: order/status_codes.py:109
+#: order/status_codes.py:133
 msgid "Repair"
 msgstr "Onar"
 
-#: order/status_codes.py:112
+#: order/status_codes.py:134
 msgid "Replace"
 msgstr "Değiştir"
 
-#: order/status_codes.py:115
+#: order/status_codes.py:135
 msgid "Refund"
 msgstr "Geri öde"
 
-#: order/status_codes.py:118
+#: order/status_codes.py:136
 msgid "Reject"
 msgstr "Reddet"
 
-#: order/status_codes.py:126
+#: order/status_codes.py:151
 #: report/templates/report/inventree_build_order_report.html:121
 msgid "Issued"
 msgstr "Düzenlendi"
@@ -6337,7 +6341,7 @@ msgstr "Kullanımlar"
 msgid "Part Category"
 msgstr "Parça Kategorisi"
 
-#: part/models.py:95 users/ruleset.py:29
+#: part/models.py:95 users/ruleset.py:43
 msgid "Part Categories"
 msgstr "Parça Kategorileri"
 
@@ -6390,7 +6394,7 @@ msgstr "Varsayılan Değer"
 msgid "Default Parameter Value"
 msgstr "Varsayılan Parametre Değeri"
 
-#: part/models.py:531 part/serializers.py:135 users/ruleset.py:30
+#: part/models.py:531 part/serializers.py:135 users/ruleset.py:44
 msgid "Parts"
 msgstr "Parçalar"
 
@@ -7164,7 +7168,7 @@ msgid "Outstanding quantity of this part scheduled to be built"
 msgstr "Bu parçanın üretilmesi planlanan açık miktarı"
 
 #: part/serializers.py:856 stock/serializers.py:1264 stock/serializers.py:1480
-#: users/ruleset.py:33
+#: users/ruleset.py:47
 msgid "Stock Items"
 msgstr "Stok Kalemleri"
 
@@ -9151,7 +9155,7 @@ msgstr "Simge atanmamış tüm konumlar için varsayılan simge (isteğe bağlı
 msgid "Stock Location"
 msgstr "Stok Konumu"
 
-#: stock/models.py:152 users/ruleset.py:32
+#: stock/models.py:152 users/ruleset.py:46
 msgid "Stock Locations"
 msgstr "Stok Konumları"
 
@@ -9857,147 +9861,147 @@ msgstr "Sıradaki Seri Numarası"
 msgid "Previous Serial Number"
 msgstr "Önceki Seri Numarası"
 
-#: stock/status_codes.py:11
+#: stock/status_codes.py:22
 msgid "OK"
 msgstr "TAMAM"
 
-#: stock/status_codes.py:12
+#: stock/status_codes.py:23
 msgid "Attention needed"
 msgstr "Dikkat gerekli"
 
-#: stock/status_codes.py:13
+#: stock/status_codes.py:24
 msgid "Damaged"
 msgstr "Hasarlı"
 
-#: stock/status_codes.py:14
+#: stock/status_codes.py:25
 msgid "Destroyed"
 msgstr "Kullanılamaz durumda"
 
-#: stock/status_codes.py:15
+#: stock/status_codes.py:26
 msgid "Rejected"
 msgstr "Reddedildi"
 
-#: stock/status_codes.py:19
+#: stock/status_codes.py:28
 msgid "Quarantined"
 msgstr "Karantinaya alındı"
 
-#: stock/status_codes.py:44
+#: stock/status_codes.py:95
 msgid "Legacy stock tracking entry"
 msgstr "Eski stok takip kaydı"
 
-#: stock/status_codes.py:46
+#: stock/status_codes.py:97
 msgid "Stock item created"
 msgstr "Stok kalemi oluşturuldu"
 
-#: stock/status_codes.py:49
+#: stock/status_codes.py:100
 msgid "Edited stock item"
 msgstr "Düzenlenen stok kalemi"
 
-#: stock/status_codes.py:50
+#: stock/status_codes.py:101
 msgid "Assigned serial number"
 msgstr "Atanan seri numarası"
 
-#: stock/status_codes.py:53
+#: stock/status_codes.py:104
 msgid "Stock counted"
 msgstr "Stok sayıldı"
 
-#: stock/status_codes.py:54
+#: stock/status_codes.py:105
 msgid "Stock manually added"
 msgstr "Stok manuel olarak eklendi"
 
-#: stock/status_codes.py:55
+#: stock/status_codes.py:106
 msgid "Stock manually removed"
 msgstr "Stok manuel olarak çıkarıldı"
 
-#: stock/status_codes.py:56
+#: stock/status_codes.py:107
 msgid "Serialized stock items"
 msgstr "Seri numaralı stok kalemleri"
 
-#: stock/status_codes.py:58
+#: stock/status_codes.py:109
 msgid "Returned to stock"
 msgstr "Stoğa geri alındı"
 
-#: stock/status_codes.py:61
+#: stock/status_codes.py:112
 msgid "Location changed"
 msgstr "Konum değişti"
 
-#: stock/status_codes.py:62
+#: stock/status_codes.py:113
 msgid "Stock updated"
 msgstr "Stok Güncellendi"
 
-#: stock/status_codes.py:65
+#: stock/status_codes.py:116
 msgid "Installed into assembly"
 msgstr "Montaj yerine takıldı"
 
-#: stock/status_codes.py:66
+#: stock/status_codes.py:117
 msgid "Removed from assembly"
 msgstr "Montajdan çıkarıldı"
 
-#: stock/status_codes.py:68
+#: stock/status_codes.py:119
 msgid "Installed component item"
 msgstr "Takılan bileşen"
 
-#: stock/status_codes.py:69
+#: stock/status_codes.py:120
 msgid "Removed component item"
 msgstr "Bileşen ögesinden çıkarıldı"
 
-#: stock/status_codes.py:72
+#: stock/status_codes.py:123
 msgid "Split from parent item"
 msgstr "Üst ögeden ayır"
 
-#: stock/status_codes.py:73
+#: stock/status_codes.py:124
 msgid "Split child item"
 msgstr "Alt ögeyi ayır"
 
-#: stock/status_codes.py:76
+#: stock/status_codes.py:127
 msgid "Merged stock items"
 msgstr "Birleştirilen stok kalemleri"
 
-#: stock/status_codes.py:79
+#: stock/status_codes.py:130
 msgid "Disassembled into components"
 msgstr ""
 
-#: stock/status_codes.py:80
+#: stock/status_codes.py:131
 msgid "Created from disassembly"
 msgstr ""
 
-#: stock/status_codes.py:83
+#: stock/status_codes.py:134
 msgid "Converted to variant"
 msgstr "Varyanta dönüştürüldü"
 
-#: stock/status_codes.py:86
+#: stock/status_codes.py:137
 msgid "Build order output created"
 msgstr "Üretim emri çıktısı oluşturuldu"
 
-#: stock/status_codes.py:87
+#: stock/status_codes.py:138
 msgid "Build order output completed"
 msgstr "Üretim emri çıktısı tamamlandı"
 
-#: stock/status_codes.py:88
+#: stock/status_codes.py:139
 msgid "Build order output rejected"
 msgstr "Üretim emri çıktısı reddedildi"
 
-#: stock/status_codes.py:89
+#: stock/status_codes.py:140
 msgid "Consumed by build order"
 msgstr "Üretim emri tarafından tüketildi"
 
-#: stock/status_codes.py:92
+#: stock/status_codes.py:143
 msgid "Shipped against Sales Order"
 msgstr "Satış siparişi kapsamında sevk edildi"
 
-#: stock/status_codes.py:95
+#: stock/status_codes.py:146
 msgid "Received against Purchase Order"
 msgstr "Satın alma siparişi kapsamında teslim alındı"
 
-#: stock/status_codes.py:98
+#: stock/status_codes.py:149
 msgid "Returned against Return Order"
 msgstr "İade siparişine karşılık iade edildi"
 
-#: stock/status_codes.py:101
+#: stock/status_codes.py:152
 msgid "Sent to customer"
 msgstr "Müşteriye gönderildi"
 
-#: stock/status_codes.py:102
+#: stock/status_codes.py:153
 msgid "Returned from customer"
 msgstr "Müşteriden geri döndü"
 
@@ -10327,27 +10331,27 @@ msgstr "Birincil Grup"
 msgid "Primary group for the user"
 msgstr "Kullanıcının birincil grubu"
 
-#: users/ruleset.py:28
+#: users/ruleset.py:42
 msgid "Admin"
 msgstr "Yönetici"
 
-#: users/ruleset.py:31
+#: users/ruleset.py:45
 msgid "Bills of Material"
 msgstr "Ürün Ağaçları"
 
-#: users/ruleset.py:35
+#: users/ruleset.py:49
 msgid "Purchase Orders"
 msgstr "Satın Alma Siparişleri"
 
-#: users/ruleset.py:36
+#: users/ruleset.py:50
 msgid "Sales Orders"
 msgstr "Satış Siparişleri"
 
-#: users/ruleset.py:37
+#: users/ruleset.py:51
 msgid "Return Orders"
 msgstr "İade Siparişleri"
 
-#: users/ruleset.py:38
+#: users/ruleset.py:52
 msgid "Transfer Orders"
 msgstr "Aktarım Emirleri"
 
