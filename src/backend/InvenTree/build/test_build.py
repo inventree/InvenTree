@@ -2283,3 +2283,63 @@ class BuildCompleteAsyncOffloadTest(BuildTestBase):
         self.assertFalse(
             BuildItem.objects.filter(build_line__build=self.build).exists()
         )
+
+
+class BuildCancelAsyncOffloadTest(BuildTestBase):
+    """Regression test for Build.cancel_build() when genuinely offloaded to a background worker.
+
+    Mirrors BuildCompleteAsyncOffloadTest: forces InvenTree.tasks.offload_task() down its
+    genuine asynchronous branch (as if a real django_q cluster were running), so
+    build.tasks.cancel_build() is left queued - unexecuted - rather than collapsed into the
+    same call via the synchronous test-mode fallback. Checks that the cleanup (removing
+    allocations, recording who/when it was cancelled) only happens once the queued task is
+    actually driven, and that the build order ends up in a fully consistent cancelled state.
+    """
+
+    def test_cancel_build_after_genuine_async_offload(self):
+        """Cancelling a build via a truly-offloaded task must still clean up correctly."""
+        user = get_user_model().objects.get(pk=1)
+
+        self.build.issue_build()
+
+        # Allocate some untracked stock, to be consumed on cancellation
+        BuildItem.objects.create(
+            build_line=self.line_1, stock_item=self.stock_1_2, quantity=40
+        )
+
+        self.assertIsNone(self.build.completion_date)
+
+        OrmQ.objects.all().delete()
+
+        with mock.patch('InvenTree.status.is_worker_running', return_value=True):
+            self.build.cancel_build(user, remove_allocated_stock=True)
+
+        # The cancellation task must be queued for the worker, not executed inline
+        task = findOffloadedTask(
+            'build.tasks.cancel_build', matching_args=[self.build.pk]
+        )
+        self.assertIsNotNone(task)
+
+        # Nothing has happened yet - the queued task has not actually run
+        stale = Build.objects.get(pk=self.build.pk)
+        self.assertEqual(stale.status, BuildStatus.PRODUCTION)
+        self.assertIsNone(stale.completion_date)
+        self.assertTrue(BuildItem.objects.filter(build_line=self.line_1).exists())
+        self.assertFalse(StockItem.objects.filter(parent=self.stock_1_2).exists())
+
+        # Now simulate the worker actually picking up and running the queued task
+        build.tasks.cancel_build(self.build.pk, user.pk, remove_allocated_stock=True)
+
+        self.build.refresh_from_db()
+
+        # The build must be marked cancelled, with a completion date and user recorded
+        self.assertEqual(self.build.status, BuildStatus.CANCELLED)
+        self.assertIsNotNone(self.build.completion_date)
+        self.assertEqual(self.build.completed_by, user)
+
+        # The allocation must have been consumed (not just silently deleted)
+        self.assertFalse(BuildItem.objects.filter(build_line=self.line_1).exists())
+        split_child = StockItem.objects.get(
+            parent=self.stock_1_2, consumed_by=self.build
+        )
+        self.assertEqual(split_child.quantity, 40)

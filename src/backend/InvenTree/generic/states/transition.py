@@ -98,11 +98,20 @@ def inventree_transition(
                 # Preserve backward-compatible behaviour: an invalid transition
                 # (wrong source state, failed condition, or explicit raise inside
                 # the method body) returns False rather than raising.
-                if getattr(self, field.name) == target:
+                #
+                # `target` may be a State proxy (e.g. DEFERRABLE) rather than a
+                # plain value - such proxies expose their real, fixed target via
+                # a `.target` attribute, so unwrap that for this comparison. A
+                # proxy with no single fixed target (e.g. RETURN_VALUE) falls
+                # back to the generic "invalid transition" message below, since
+                # there is no one value to compare against.
+                resolved_target = getattr(target, 'target', target)
+                if getattr(self, field.name) == resolved_target:
                     target_val = (
-                        target.label
-                        if isinstance(target, Enum) and hasattr(target, 'label')
-                        else target
+                        resolved_target.label
+                        if isinstance(resolved_target, Enum)
+                        and hasattr(resolved_target, 'label')
+                        else resolved_target
                     )
                     raise ValidationError(
                         f'{self._meta.verbose_name} is already {target_val}'
@@ -173,6 +182,11 @@ class DEFERRABLE(State):
     def get_state(self, model, transition, result, args=None, kwargs=None):
         """Resolve the actual next state from the offload_task() return value."""
         if result is True:
+            # The offloaded task ran synchronously, inline, on its own copy of
+            # this row, and has already saved its results to the database.
+            # Refresh so those changes are not clobbered by the wrapper's own
+            # save() call, which is about to write this (now-stale) instance.
+            model.refresh_from_db()
             return self.target
 
         if result is False:
