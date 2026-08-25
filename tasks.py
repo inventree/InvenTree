@@ -334,6 +334,7 @@ def builtin_apps():
         'generic',
         'machine',
         'web',
+        'scim',
     ]
 
 
