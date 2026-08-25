@@ -938,7 +938,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
         }
       }
     };
-  }, [filteredItems, records, props, stockStatusCodes]);
+  }, [filteredItems, records, props.orderPk, stockStatusCodes]);
 
   return useCreateApiFormModal({
     ...props.formProps,
