@@ -1,5 +1,7 @@
 """Tests for the 'scim' app."""
 
+import json
+
 from django.test import override_settings
 from django.urls import reverse
 
@@ -223,10 +225,27 @@ class ScimProtocolTests(InvenTreeAPITestCase):
         cls.credentials(HTTP_AUTHORIZATION=f'Bearer {self.secret}')
 
         scim_client = SyncSCIMClient(cls)
+        ignore_tags = {
+            'crud:read:attributes',  # 1: we do not have this attribute
+            'patch:add',  # 2: we do not map these attributes to the User model right now
+            'patch:remove',  # 2:see above
+            'patch:replace',  # 2: see above
+            'check_replace',  # BD
+            'crud:delete',  # 3: there is no deleting users right now
+        }
         results = check_server(scim_client)
-        for result in results:
-            if result.status.value != 1:
-                print(result.status.name, result.title)
+        failures = [result for result in results if result.status.value not in (1, 7)]
+
+        if failures:
+            details = '\n'.join(
+                f'{result.status.name}: {result.title} - {result.reason}'
+                for result in failures
+                if not ignore_tags.intersection(result.tags)
+            )
+            if details:
+                self.fail(
+                    f'SCIM conformance suite reported failures:\n{details}'
+                )  # pragma: no cover
 
 
 class PatchedApiClient(APIClient):
@@ -241,7 +260,11 @@ class PatchedApiClient(APIClient):
         """Override the generic method to set the SCIM media type."""
         if content_type is None:
             content_type = 'application/scim+json'
-        path = self.base_url + path
+        path = self.base_url + path if not '/scim/v2/' in path else path
+
+        if json_data := extra.pop('json', None):
+            data = json.dumps(json_data)
+            format = 'json'  # noqa: A001
         return super().generic(
             method, path, data=data, format=format, content_type=content_type, **extra
         )

@@ -1,12 +1,13 @@
 """URL patterns for the SCIM 2.0 provisioning endpoint (`/scim/v2/...`)."""
 
-from django.urls import path
+from django.urls import path, re_path
 
 from scim.views import (
     GroupDetailView,
     GroupsView,
     ResourceTypesView,
     SchemasView,
+    ScimNotFoundView,
     ServiceProviderConfigView,
     UserDetailView,
     UsersView,
@@ -32,4 +33,4 @@ scim_urls = [
     path('Groups/<int:pk>', GroupDetailView.as_view(), name='scim-group-detail'),
 ]
 
-urlpatterns = scim_urls
+urlpatterns = scim_urls + [re_path(r'^(?P<path>.*)$', ScimNotFoundView.as_view())]  # noqa: RUF005

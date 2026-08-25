@@ -8,10 +8,17 @@ Groups: discovery (ServiceProviderConfig / ResourceTypes / Schemas), and CRUD
 
 from django.contrib.auth.models import Group as DjangoGroup
 from django.contrib.auth.models import User as DjangoUser
+from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 
 import structlog
 from pydantic import ValidationError
+from rest_framework.exceptions import (
+    APIException,
+    AuthenticationFailed,
+    NotAuthenticated,
+)
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -101,7 +108,38 @@ class ScimAPIView(APIView):
         if isinstance(exc, ValidationError):
             return scim_error(400, str(exc), 'invalidValue')
 
+        if isinstance(exc, Http404):
+            return scim_error(404, 'Resource not found')
+
+        if isinstance(exc, DjangoPermissionDenied):
+            return scim_error(403, str(exc) or 'Forbidden')
+
+        if isinstance(exc, (AuthenticationFailed, NotAuthenticated)):
+            return scim_error(
+                exc.status_code,
+                str(exc.detail) if hasattr(exc, 'detail') else str(exc),
+                None,
+            )
+
+        if isinstance(exc, APIException):
+            detail = exc.detail
+            if isinstance(detail, (list, dict)):
+                detail = str(detail)
+            return scim_error(exc.status_code, str(detail), None)
+
         return super().handle_exception(exc)
+
+
+class ScimNotFoundView(ScimAPIView):
+    """Return a SCIM Error object for routes that are not part of the SCIM surface."""
+
+    authentication_classes = []
+    permission_classes = []
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+
+    def dispatch(self, request, *args, **kwargs):
+        """Always return a SCIM-formatted 404 error, rather than a Django 404 page."""
+        return scim_error(404, f"Resource '{request.path}' not found")
 
 
 class ServiceProviderConfigView(ScimAPIView):
