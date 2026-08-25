@@ -177,6 +177,7 @@ export default function PurchaseOrderDetail() {
               <Accordion.Panel>
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.purchase_order_extra_line_list}
+                  importModelType='purchaseorderextraline'
                   orderId={order.pk}
                   orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}

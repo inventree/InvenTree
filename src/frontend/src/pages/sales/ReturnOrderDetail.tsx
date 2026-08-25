@@ -142,6 +142,7 @@ export default function ReturnOrderDetail() {
               <Accordion.Panel>
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.return_order_extra_line_list}
+                  importModelType='returnorderextraline'
                   orderId={order.pk}
                   orderDetailRefresh={refreshInstance}
                   currency={orderCurrency}
