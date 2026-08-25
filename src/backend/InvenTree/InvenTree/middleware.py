@@ -66,6 +66,7 @@ urls = [
 paths_ignore_handling = [
     '/api/',
     '/plugin/',
+    '/scim/',
     reverse('auth-check'),
     settings.MEDIA_URL,
     settings.STATIC_URL,
@@ -77,6 +78,7 @@ paths_own_security = [
     '/o/',  # oAuth2 library - has its own auth model
     '/anymail/',  # Mails - webhooks etc
     '/accounts/',  # allauth account management - has its own auth model
+    '/scim/',  # SCIM provisioning endpoint - authenticated via its own bearer secret
     '/assets/',  # Web assets - only used for testing, no security model needed
     ensure_slashes(
         settings.STATIC_URL

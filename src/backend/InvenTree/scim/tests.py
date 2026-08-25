@@ -1,0 +1,210 @@
+"""Tests for the 'scim' app."""
+
+from django.contrib.auth.models import Group, User
+from django.urls import reverse
+
+from InvenTree.unit_test import InvenTreeAPITestCase
+from scim.models import ScimConfiguration
+
+
+class ScimConfigurationModelTests(InvenTreeAPITestCase):
+    """Tests for the ScimConfiguration model."""
+
+    def test_singleton(self):
+        """Only a single configuration object can ever exist."""
+        a = ScimConfiguration.load()
+        b = ScimConfiguration.load()
+        self.assertEqual(a.pk, b.pk)
+        self.assertEqual(ScimConfiguration.objects.count(), 1)
+
+    def test_generate_and_verify_secret(self):
+        """A generated secret can be verified, but only while enabled."""
+        config = ScimConfiguration.load()
+        self.assertFalse(config.has_secret)
+
+        secret = config.generate_secret()
+        config.enabled = True
+        config.save()
+
+        self.assertTrue(config.has_secret)
+        self.assertTrue(config.verify_secret(secret))
+        self.assertFalse(config.verify_secret('not-the-secret'))
+        self.assertFalse(config.verify_secret(''))
+
+        # Disabling the endpoint rejects the (still valid) secret
+        config.enabled = False
+        config.save()
+        self.assertFalse(config.verify_secret(secret))
+
+    def test_rotate_invalidates_previous_secret(self):
+        """Generating a new secret invalidates the previous one."""
+        config = ScimConfiguration.load()
+        first = config.generate_secret()
+        config.enabled = True
+        config.save()
+
+        second = config.generate_secret()
+
+        self.assertFalse(config.verify_secret(first))
+        self.assertTrue(config.verify_secret(second))
+
+    def test_revoke(self):
+        """Revoking clears the secret and disables the endpoint."""
+        config = ScimConfiguration.load()
+        secret = config.generate_secret()
+        config.enabled = True
+        config.save()
+
+        config.revoke()
+
+        self.assertFalse(config.enabled)
+        self.assertFalse(config.has_secret)
+        self.assertFalse(config.verify_secret(secret))
+
+
+class ScimAdminAPITests(InvenTreeAPITestCase):
+    """Tests for the Admin Center facing SCIM configuration API."""
+
+    def test_non_superuser_denied(self):
+        """A non-superuser cannot view or manage the SCIM configuration."""
+        self.get(reverse('api-scim-list'), expected_code=403)
+        self.post(reverse('api-scim-generate'), expected_code=403)
+        self.post(reverse('api-scim-disable'), expected_code=403)
+
+    def test_generate_rotate_disable(self):
+        """A superuser can generate, rotate and disable the SCIM secret."""
+        self.user.is_superuser = True
+        self.user.save()
+
+        response = self.get(reverse('api-scim-list'), expected_code=200)
+        self.assertFalse(response.data['enabled'])
+        self.assertFalse(response.data['has_secret'])
+
+        response = self.post(reverse('api-scim-generate'), expected_code=200)
+        secret = response.data['secret']
+        self.assertTrue(secret)
+
+        config = ScimConfiguration.load()
+        self.assertTrue(config.enabled)
+        self.assertTrue(config.verify_secret(secret))
+
+        response = self.post(reverse('api-scim-generate'), expected_code=200)
+        new_secret = response.data['secret']
+        self.assertNotEqual(secret, new_secret)
+
+        self.post(reverse('api-scim-disable'), expected_code=200)
+        config.refresh_from_db()
+        self.assertFalse(config.enabled)
+        self.assertFalse(config.has_secret)
+
+
+class ScimProtocolTests(InvenTreeAPITestCase):
+    """Tests for the SCIM 2.0 protocol endpoint."""
+
+    def setUp(self):
+        """Enable SCIM and generate a bearer secret for use in tests."""
+        super().setUp()
+        self.config = ScimConfiguration.load()
+        self.secret = self.config.generate_secret()
+        self.config.enabled = True
+        self.config.save()
+
+    def auth_header(self, secret=None):
+        """Return the kwargs required to attach a SCIM bearer token to a request."""
+        return {'HTTP_AUTHORIZATION': f'Bearer {secret or self.secret}'}
+
+    def test_service_provider_config_is_public(self):
+        """The discovery endpoints do not require authentication."""
+        self.get(reverse('scim-service-provider-config'), expected_code=200)
+        self.get(reverse('scim-resource-types'), expected_code=200)
+        self.get(reverse('scim-schemas'), expected_code=200)
+
+    def test_users_endpoint_requires_bearer_token(self):
+        """The Users endpoint rejects requests without a valid bearer token."""
+        self.get(reverse('scim-users'), expected_code=401)
+        self.get(reverse('scim-users'), expected_code=401, **self.auth_header('wrong'))
+
+    def test_list_users(self):
+        """A valid bearer token can list users."""
+        response = self.get(
+            reverse('scim-users'), expected_code=200, **self.auth_header()
+        )
+        usernames = [u['userName'] for u in response.data['Resources']]
+        self.assertIn(self.user.username, usernames)
+
+    def test_create_update_deactivate_user(self):
+        """A user can be provisioned, patched, and deactivated via SCIM."""
+        payload = {
+            'schemas': ['urn:ietf:params:scim:schemas:core:2.0:User'],
+            'userName': 'scim.jdoe',
+            'name': {'givenName': 'Jane', 'familyName': 'Doe'},
+            'emails': [{'value': 'jdoe@example.org', 'primary': True}],
+            'active': True,
+        }
+        response = self.post(
+            reverse('scim-users'), data=payload, expected_code=201, **self.auth_header()
+        )
+        user_id = response.data['id']
+        self.assertTrue(User.objects.filter(username='scim.jdoe').exists())
+
+        # Duplicate userName is rejected
+        self.post(
+            reverse('scim-users'), data=payload, expected_code=409, **self.auth_header()
+        )
+
+        # Deactivate via PATCH
+        patch_payload = {
+            'schemas': ['urn:ietf:params:scim:api:messages:2.0:PatchOp'],
+            'Operations': [{'op': 'replace', 'path': 'active', 'value': False}],
+        }
+        response = self.patch(
+            reverse('scim-user-detail', kwargs={'pk': user_id}),
+            data=patch_payload,
+            expected_code=200,
+            **self.auth_header(),
+        )
+        self.assertFalse(response.data['active'])
+        self.assertFalse(User.objects.get(pk=user_id).is_active)
+
+        # Deactivate via DELETE (soft-delete semantics)
+        self.delete(
+            reverse('scim-user-detail', kwargs={'pk': user_id}),
+            expected_code=204,
+            **self.auth_header(),
+        )
+        self.assertTrue(User.objects.filter(pk=user_id).exists())
+
+    def test_filter_users_by_username(self):
+        """Users can be filtered by an exact userName match."""
+        response = self.get(
+            reverse('scim-users'),
+            data={'filter': f'userName eq "{self.user.username}"'},
+            expected_code=200,
+            **self.auth_header(),
+        )
+        self.assertEqual(response.data['totalResults'], 1)
+        self.assertEqual(response.data['Resources'][0]['userName'], self.user.username)
+
+    def test_create_group_with_members(self):
+        """A group can be provisioned with initial membership via SCIM."""
+        payload = {
+            'schemas': ['urn:ietf:params:scim:schemas:core:2.0:Group'],
+            'displayName': 'scim-engineering',
+            'members': [{'value': str(self.user.pk), 'type': 'User'}],
+        }
+        response = self.post(
+            reverse('scim-groups'),
+            data=payload,
+            expected_code=201,
+            **self.auth_header(),
+        )
+        group = Group.objects.get(pk=response.data['id'])
+        self.assertEqual(group.name, 'scim-engineering')
+        self.assertIn(self.user, group.user_set.all())
+
+        self.delete(
+            reverse('scim-group-detail', kwargs={'pk': group.pk}),
+            expected_code=204,
+            **self.auth_header(),
+        )
+        self.assertFalse(Group.objects.filter(pk=group.pk).exists())
