@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-21 21:47+0000\n"
-"PO-Revision-Date: 2026-08-21 21:50\n"
+"POT-Creation-Date: 2026-08-23 09:09+0000\n"
+"PO-Revision-Date: 2026-08-23 09:11\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -792,7 +792,7 @@ msgstr "产出"
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr "按产出库存项ID筛选，使用“null”查找未安装的生产项。"
 
-#: build/models.py:129 users/ruleset.py:34
+#: build/models.py:129 users/ruleset.py:48
 msgid "Build Orders"
 msgstr "生产订单"
 
@@ -1543,30 +1543,30 @@ msgstr "重复的订单行项目分配"
 msgid "At least one item or line must be provided"
 msgstr "必须提供至少一个物料项或行项目"
 
-#: build/status_codes.py:11 generic/states/tests.py:21
-#: generic/states/tests.py:131 order/status_codes.py:12
-#: order/status_codes.py:44 order/status_codes.py:77 order/status_codes.py:103
-#: order/status_codes.py:125
+#: build/status_codes.py:19 generic/states/tests.py:21
+#: generic/states/tests.py:131 order/status_codes.py:21
+#: order/status_codes.py:64 order/status_codes.py:100 order/status_codes.py:131
+#: order/status_codes.py:150
 msgid "Pending"
 msgstr "待生产"
 
-#: build/status_codes.py:12
+#: build/status_codes.py:20
 msgid "Production"
 msgstr "生产中"
 
-#: build/status_codes.py:13 order/status_codes.py:14 order/status_codes.py:51
-#: order/status_codes.py:82 order/status_codes.py:127
+#: build/status_codes.py:21 order/status_codes.py:23 order/status_codes.py:67
+#: order/status_codes.py:102 order/status_codes.py:152
 msgid "On Hold"
 msgstr "已暂停"
 
-#: build/status_codes.py:14 order/status_codes.py:16 order/status_codes.py:53
-#: order/status_codes.py:85 order/status_codes.py:129
+#: build/status_codes.py:22 order/status_codes.py:25 order/status_codes.py:69
+#: order/status_codes.py:104 order/status_codes.py:154
 msgid "Cancelled"
 msgstr "已取消"
 
-#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:693
-#: importer/status_codes.py:27 order/status_codes.py:15
-#: order/status_codes.py:52 order/status_codes.py:84 order/status_codes.py:128
+#: build/status_codes.py:23 generic/states/tests.py:23 importer/models.py:693
+#: importer/status_codes.py:23 order/status_codes.py:24
+#: order/status_codes.py:68 order/status_codes.py:103 order/status_codes.py:153
 msgid "Complete"
 msgstr "完成"
 
@@ -1609,19 +1609,23 @@ msgstr "是否链接"
 msgid "Is File"
 msgstr "是否为文件"
 
-#: common/api.py:828
+#: common/api.py:856
 msgid "User does not have permission to delete these attachments"
 msgstr "用户没有权限删除此附件"
 
-#: common/api.py:841
+#: common/api.py:869
+msgid "User does not have permission to view this attachment"
+msgstr ""
+
+#: common/api.py:880
 msgid "User does not have permission to edit this attachment"
 msgstr "用户没有编辑此附件的权限"
 
-#: common/api.py:867
+#: common/api.py:906
 msgid "User does not have permission to delete this attachment"
 msgstr "用户没有权限删除此附件"
 
-#: common/api.py:1244 common/serializers.py:1017 common/serializers.py:1065
+#: common/api.py:1283 common/serializers.py:1017 common/serializers.py:1065
 msgid "Selection list is locked"
 msgstr "选择列表已锁定"
 
@@ -4741,7 +4745,7 @@ msgstr "类别"
 msgid "Values"
 msgstr "值"
 
-#: generic/states/tests.py:22 order/status_codes.py:13
+#: generic/states/tests.py:22 order/status_codes.py:22
 msgid "Placed"
 msgstr "放置"
 
@@ -4946,11 +4950,11 @@ msgstr "行包含无效数据"
 msgid "Row has already been completed"
 msgstr "行已完成"
 
-#: importer/status_codes.py:13
+#: importer/status_codes.py:19
 msgid "Initializing"
 msgstr "正在初始化"
 
-#: importer/status_codes.py:18
+#: importer/status_codes.py:20
 msgid "Mapping Columns"
 msgstr "映射列"
 
@@ -4958,7 +4962,7 @@ msgstr "映射列"
 msgid "Importing Data"
 msgstr "导入数据"
 
-#: importer/status_codes.py:24
+#: importer/status_codes.py:22
 msgid "Processing Data"
 msgstr "处理数据中"
 
@@ -5614,7 +5618,7 @@ msgstr "售出价格"
 msgid "Unit sale price"
 msgstr "单位售出价格"
 
-#: order/models.py:2519 order/status_codes.py:50
+#: order/models.py:2519 order/status_codes.py:66
 msgid "Shipped"
 msgstr "已配送"
 
@@ -6142,39 +6146,39 @@ msgstr "允许单据在库存未完全分配完成时结案"
 msgid "Order has incomplete allocations"
 msgstr "单据存在未完成分配的物料"
 
-#: order/status_codes.py:17 order/status_codes.py:54 stock/status_codes.py:16
+#: order/status_codes.py:26 order/status_codes.py:70 stock/status_codes.py:27
 msgid "Lost"
 msgstr "丢失"
 
-#: order/status_codes.py:18 order/status_codes.py:55 stock/status_codes.py:24
+#: order/status_codes.py:27 order/status_codes.py:71 stock/status_codes.py:29
 msgid "Returned"
 msgstr "已退回"
 
-#: order/status_codes.py:47 order/status_codes.py:80
+#: order/status_codes.py:65 order/status_codes.py:101
 msgid "In Progress"
 msgstr "正在进行"
 
-#: order/status_codes.py:106
+#: order/status_codes.py:132
 msgid "Return"
 msgstr "退回"
 
-#: order/status_codes.py:109
+#: order/status_codes.py:133
 msgid "Repair"
 msgstr "维修"
 
-#: order/status_codes.py:112
+#: order/status_codes.py:134
 msgid "Replace"
 msgstr "替換"
 
-#: order/status_codes.py:115
+#: order/status_codes.py:135
 msgid "Refund"
 msgstr "退款"
 
-#: order/status_codes.py:118
+#: order/status_codes.py:136
 msgid "Reject"
 msgstr "拒绝"
 
-#: order/status_codes.py:126
+#: order/status_codes.py:151
 #: report/templates/report/inventree_build_order_report.html:121
 msgid "Issued"
 msgstr "已派发"
@@ -6339,7 +6343,7 @@ msgstr "使用"
 msgid "Part Category"
 msgstr "零件类别"
 
-#: part/models.py:95 users/ruleset.py:29
+#: part/models.py:95 users/ruleset.py:43
 msgid "Part Categories"
 msgstr "零件类别"
 
@@ -6392,7 +6396,7 @@ msgstr "默认值"
 msgid "Default Parameter Value"
 msgstr "默认参数值"
 
-#: part/models.py:531 part/serializers.py:135 users/ruleset.py:30
+#: part/models.py:531 part/serializers.py:135 users/ruleset.py:44
 msgid "Parts"
 msgstr "零件"
 
@@ -7166,7 +7170,7 @@ msgid "Outstanding quantity of this part scheduled to be built"
 msgstr "此零件计划待产数量"
 
 #: part/serializers.py:856 stock/serializers.py:1264 stock/serializers.py:1480
-#: users/ruleset.py:33
+#: users/ruleset.py:47
 msgid "Stock Items"
 msgstr "库存项"
 
@@ -9153,7 +9157,7 @@ msgstr "为所有没有图标的位置设置默认图标(可选)"
 msgid "Stock Location"
 msgstr "库存地点"
 
-#: stock/models.py:152 users/ruleset.py:32
+#: stock/models.py:152 users/ruleset.py:46
 msgid "Stock Locations"
 msgstr "库存地点"
 
@@ -9859,147 +9863,147 @@ msgstr "下一个序列号"
 msgid "Previous Serial Number"
 msgstr "上一个序列号"
 
-#: stock/status_codes.py:11
+#: stock/status_codes.py:22
 msgid "OK"
 msgstr "OK"
 
-#: stock/status_codes.py:12
+#: stock/status_codes.py:23
 msgid "Attention needed"
 msgstr "需要关注"
 
-#: stock/status_codes.py:13
+#: stock/status_codes.py:24
 msgid "Damaged"
 msgstr "破损"
 
-#: stock/status_codes.py:14
+#: stock/status_codes.py:25
 msgid "Destroyed"
 msgstr "销毁"
 
-#: stock/status_codes.py:15
+#: stock/status_codes.py:26
 msgid "Rejected"
 msgstr "拒绝"
 
-#: stock/status_codes.py:19
+#: stock/status_codes.py:28
 msgid "Quarantined"
 msgstr "隔离"
 
-#: stock/status_codes.py:44
+#: stock/status_codes.py:95
 msgid "Legacy stock tracking entry"
 msgstr "旧库存跟踪条目"
 
-#: stock/status_codes.py:46
+#: stock/status_codes.py:97
 msgid "Stock item created"
 msgstr "库存项已创建"
 
-#: stock/status_codes.py:49
+#: stock/status_codes.py:100
 msgid "Edited stock item"
 msgstr "已编辑库存项"
 
-#: stock/status_codes.py:50
+#: stock/status_codes.py:101
 msgid "Assigned serial number"
 msgstr "已分配序列号"
 
-#: stock/status_codes.py:53
+#: stock/status_codes.py:104
 msgid "Stock counted"
 msgstr "库存计数"
 
-#: stock/status_codes.py:54
+#: stock/status_codes.py:105
 msgid "Stock manually added"
 msgstr "已手动添加库存"
 
-#: stock/status_codes.py:55
+#: stock/status_codes.py:106
 msgid "Stock manually removed"
 msgstr "已手动删除库存"
 
-#: stock/status_codes.py:56
+#: stock/status_codes.py:107
 msgid "Serialized stock items"
 msgstr "已序列化的库存物品"
 
-#: stock/status_codes.py:58
+#: stock/status_codes.py:109
 msgid "Returned to stock"
 msgstr "退回库存"
 
-#: stock/status_codes.py:61
+#: stock/status_codes.py:112
 msgid "Location changed"
 msgstr "地点已更改"
 
-#: stock/status_codes.py:62
+#: stock/status_codes.py:113
 msgid "Stock updated"
 msgstr "库存已更新"
 
-#: stock/status_codes.py:65
+#: stock/status_codes.py:116
 msgid "Installed into assembly"
 msgstr "已安装到装配中"
 
-#: stock/status_codes.py:66
+#: stock/status_codes.py:117
 msgid "Removed from assembly"
 msgstr "已从装配中删除"
 
-#: stock/status_codes.py:68
+#: stock/status_codes.py:119
 msgid "Installed component item"
 msgstr "已安装组件项"
 
-#: stock/status_codes.py:69
+#: stock/status_codes.py:120
 msgid "Removed component item"
 msgstr "已删除组件项"
 
-#: stock/status_codes.py:72
+#: stock/status_codes.py:123
 msgid "Split from parent item"
 msgstr "从上级项拆分"
 
-#: stock/status_codes.py:73
+#: stock/status_codes.py:124
 msgid "Split child item"
 msgstr "拆分子项"
 
-#: stock/status_codes.py:76
+#: stock/status_codes.py:127
 msgid "Merged stock items"
 msgstr "合并的库存项"
 
-#: stock/status_codes.py:79
+#: stock/status_codes.py:130
 msgid "Disassembled into components"
 msgstr "已拆解为组件"
 
-#: stock/status_codes.py:80
+#: stock/status_codes.py:131
 msgid "Created from disassembly"
 msgstr "由拆解生成"
 
-#: stock/status_codes.py:83
+#: stock/status_codes.py:134
 msgid "Converted to variant"
 msgstr "转换为变体"
 
-#: stock/status_codes.py:86
+#: stock/status_codes.py:137
 msgid "Build order output created"
 msgstr "已创建生产订单产出"
 
-#: stock/status_codes.py:87
+#: stock/status_codes.py:138
 msgid "Build order output completed"
 msgstr "生产订单已出产"
 
-#: stock/status_codes.py:88
+#: stock/status_codes.py:139
 msgid "Build order output rejected"
 msgstr "生产订单产出被拒绝"
 
-#: stock/status_codes.py:89
+#: stock/status_codes.py:140
 msgid "Consumed by build order"
 msgstr "被生产订单消耗"
 
-#: stock/status_codes.py:92
+#: stock/status_codes.py:143
 msgid "Shipped against Sales Order"
 msgstr "根据销售订单发货"
 
-#: stock/status_codes.py:95
+#: stock/status_codes.py:146
 msgid "Received against Purchase Order"
 msgstr "根据采购订单接收"
 
-#: stock/status_codes.py:98
+#: stock/status_codes.py:149
 msgid "Returned against Return Order"
 msgstr "根据退货订单退货"
 
-#: stock/status_codes.py:101
+#: stock/status_codes.py:152
 msgid "Sent to customer"
 msgstr "发往客户"
 
-#: stock/status_codes.py:102
+#: stock/status_codes.py:153
 msgid "Returned from customer"
 msgstr "客户退回"
 
@@ -10329,27 +10333,27 @@ msgstr "主组"
 msgid "Primary group for the user"
 msgstr "用户主组"
 
-#: users/ruleset.py:28
+#: users/ruleset.py:42
 msgid "Admin"
 msgstr "管理员"
 
-#: users/ruleset.py:31
+#: users/ruleset.py:45
 msgid "Bills of Material"
 msgstr "物料清单"
 
-#: users/ruleset.py:35
+#: users/ruleset.py:49
 msgid "Purchase Orders"
 msgstr "采购订单"
 
-#: users/ruleset.py:36
+#: users/ruleset.py:50
 msgid "Sales Orders"
 msgstr "销售订单"
 
-#: users/ruleset.py:37
+#: users/ruleset.py:51
 msgid "Return Orders"
 msgstr "退货订单"
 
-#: users/ruleset.py:38
+#: users/ruleset.py:52
 msgid "Transfer Orders"
 msgstr "调拨单"
 
