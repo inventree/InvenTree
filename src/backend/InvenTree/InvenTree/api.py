@@ -878,6 +878,14 @@ class APISearchView(GenericAPIView):
                         req.user = request.user
                         req.GET = params
 
+                        # Copy META from the original request, so that host/scheme
+                        # information is available (e.g. for pagination links).
+                        # Strip content-length/type, as this is a synthetic GET
+                        # request with no body of its own to parse.
+                        req.META = request.META.copy()
+                        req.META.pop('CONTENT_LENGTH', None)
+                        req.META.pop('CONTENT_TYPE', None)
+
                         list_method = cls.as_view({'get': 'list'})(req, *args, **kwargs)
                     else:
                         list_method = view.list(request, *args, **kwargs)

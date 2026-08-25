@@ -266,16 +266,36 @@ def cancel_build(
 
     """
     from build.models import Build
+    from build.status_codes import BuildStatus
 
-    build = Build.objects.get(pk=build_id)
+    with transaction.atomic():
+        # Lock the build row: concurrent cancellation tasks (duplicate task
+        # delivery, or repeated cancellation requests) are serialized, and the
+        # status is re-checked below
+        build = Build.objects.select_for_update().get(pk=build_id)
 
-    if remove_allocated_stock:
-        complete_build_allocations(build_id, user_id)
-    else:
-        build.allocated_stock.all().delete()
+        if build.status == BuildStatus.CANCELLED.value:
+            logger.warning(
+                'Build order <%s> is already cancelled - skipping cancellation task',
+                build.pk,
+            )
+            return
 
-    if remove_incomplete_outputs:
-        build.build_outputs.filter(is_building=True).delete()
+        user = User.objects.filter(pk=user_id).first() if user_id else None
+
+        if remove_allocated_stock:
+            complete_build_allocations(build_id, user_id)
+        else:
+            build.allocated_stock.all().delete()
+
+        if remove_incomplete_outputs:
+            build.build_outputs.filter(is_building=True).delete()
+
+        # Mark the build as cancelled
+        build.completion_date = InvenTree.helpers.current_date()
+        build.completed_by = user
+        build.status = BuildStatus.CANCELLED.value
+        build.save()
 
     # Notify users that the order has been canceled
     InvenTree.helpers_model.notify_responsible(

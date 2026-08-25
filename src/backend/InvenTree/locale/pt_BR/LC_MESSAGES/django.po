@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-21 21:47+0000\n"
-"PO-Revision-Date: 2026-08-21 21:50\n"
+"POT-Creation-Date: 2026-08-23 09:09+0000\n"
+"PO-Revision-Date: 2026-08-24 12:24\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -792,7 +792,7 @@ msgstr "Saída"
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr "Filtrar por ID do item de estoque de saída. Use 'null' para encontrar itens de produção não instalados."
 
-#: build/models.py:129 users/ruleset.py:34
+#: build/models.py:129 users/ruleset.py:48
 msgid "Build Orders"
 msgstr "Pedidos de produção"
 
@@ -1543,30 +1543,30 @@ msgstr "Alocação de linha de produção duplicada"
 msgid "At least one item or line must be provided"
 msgstr "Pelo menos um item ou uma linha deve ser fornecido"
 
-#: build/status_codes.py:11 generic/states/tests.py:21
-#: generic/states/tests.py:131 order/status_codes.py:12
-#: order/status_codes.py:44 order/status_codes.py:77 order/status_codes.py:103
-#: order/status_codes.py:125
+#: build/status_codes.py:19 generic/states/tests.py:21
+#: generic/states/tests.py:131 order/status_codes.py:21
+#: order/status_codes.py:64 order/status_codes.py:100 order/status_codes.py:131
+#: order/status_codes.py:150
 msgid "Pending"
 msgstr "Pendentes"
 
-#: build/status_codes.py:12
+#: build/status_codes.py:20
 msgid "Production"
 msgstr "Produção"
 
-#: build/status_codes.py:13 order/status_codes.py:14 order/status_codes.py:51
-#: order/status_codes.py:82 order/status_codes.py:127
+#: build/status_codes.py:21 order/status_codes.py:23 order/status_codes.py:67
+#: order/status_codes.py:102 order/status_codes.py:152
 msgid "On Hold"
 msgstr "Em espera"
 
-#: build/status_codes.py:14 order/status_codes.py:16 order/status_codes.py:53
-#: order/status_codes.py:85 order/status_codes.py:129
+#: build/status_codes.py:22 order/status_codes.py:25 order/status_codes.py:69
+#: order/status_codes.py:104 order/status_codes.py:154
 msgid "Cancelled"
 msgstr "Cancelado"
 
-#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:693
-#: importer/status_codes.py:27 order/status_codes.py:15
-#: order/status_codes.py:52 order/status_codes.py:84 order/status_codes.py:128
+#: build/status_codes.py:23 generic/states/tests.py:23 importer/models.py:693
+#: importer/status_codes.py:23 order/status_codes.py:24
+#: order/status_codes.py:68 order/status_codes.py:103 order/status_codes.py:153
 msgid "Complete"
 msgstr "Concluído"
 
@@ -1609,19 +1609,23 @@ msgstr "É um link"
 msgid "Is File"
 msgstr "É um arquivo"
 
-#: common/api.py:828
+#: common/api.py:856
 msgid "User does not have permission to delete these attachments"
 msgstr "O usuário não tem permissão para excluir esses anexos"
 
-#: common/api.py:841
+#: common/api.py:869
+msgid "User does not have permission to view this attachment"
+msgstr "O usuário não tem permissão para visualizar este anexo"
+
+#: common/api.py:880
 msgid "User does not have permission to edit this attachment"
 msgstr "O usuário não tem permissão para editar este anexo"
 
-#: common/api.py:867
+#: common/api.py:906
 msgid "User does not have permission to delete this attachment"
 msgstr "O usuário não tem permissão para excluir esse anexo"
 
-#: common/api.py:1244 common/serializers.py:1017 common/serializers.py:1065
+#: common/api.py:1283 common/serializers.py:1017 common/serializers.py:1065
 msgid "Selection list is locked"
 msgstr "Lista de seleção bloqueada"
 
@@ -4272,11 +4276,11 @@ msgstr "Exibir automaticamente itens/peças em vez de subníveis para locais ou 
 
 #: common/setting/user.py:300
 msgid "Enable Filtered Detail Navigation"
-msgstr ""
+msgstr "Habilitar navegação filtrada entre detalhes"
 
 #: common/setting/user.py:302
 msgid "Enable persisting of filtered detail navigation parameters to the view url"
-msgstr ""
+msgstr "Habilitar a persistência dos parâmetros de navegação filtrada entre detalhes na URL da página"
 
 #: common/validators.py:40
 msgid "All models"
@@ -4739,7 +4743,7 @@ msgstr "Turma"
 msgid "Values"
 msgstr "Valores"
 
-#: generic/states/tests.py:22 order/status_codes.py:13
+#: generic/states/tests.py:22 order/status_codes.py:22
 msgid "Placed"
 msgstr "Localizado"
 
@@ -4944,11 +4948,11 @@ msgstr "A linha contém dados inválidos"
 msgid "Row has already been completed"
 msgstr "A linha já foi concluída"
 
-#: importer/status_codes.py:13
+#: importer/status_codes.py:19
 msgid "Initializing"
 msgstr "Inicialização"
 
-#: importer/status_codes.py:18
+#: importer/status_codes.py:20
 msgid "Mapping Columns"
 msgstr "Mapeando colunas"
 
@@ -4956,7 +4960,7 @@ msgstr "Mapeando colunas"
 msgid "Importing Data"
 msgstr "Importando dados"
 
-#: importer/status_codes.py:24
+#: importer/status_codes.py:22
 msgid "Processing Data"
 msgstr "Processando dados"
 
@@ -5194,7 +5198,7 @@ msgstr "Pedido de produção vencido"
 
 #: order/api.py:459
 msgid "Purchase order not found"
-msgstr ""
+msgstr "Pedido de compra não encontrado"
 
 #: order/api.py:591 order/api.py:994 order/api.py:1325 order/api.py:2164
 #: order/api.py:2323 order/models.py:2312 order/models.py:2438
@@ -5221,7 +5225,7 @@ msgstr "Concluído"
 
 #: order/api.py:1196
 msgid "Sales order not found"
-msgstr ""
+msgstr "Pedido de venda não encontrado"
 
 #: order/api.py:1378
 msgid "Has Shipment"
@@ -5233,11 +5237,11 @@ msgstr "Remessa não encontrada"
 
 #: order/api.py:1775
 msgid "Return order not found"
-msgstr ""
+msgstr "Pedido de devolução não encontrado"
 
 #: order/api.py:2078
 msgid "Transfer order not found"
-msgstr ""
+msgstr "Pedido de transferência não encontrado"
 
 #: order/api.py:2559 order/models.py:656 order/models.py:2313
 #: order/models.py:2439
@@ -5612,7 +5616,7 @@ msgstr "Preço de venda"
 msgid "Unit sale price"
 msgstr "Preço de venda unitário"
 
-#: order/models.py:2519 order/status_codes.py:50
+#: order/models.py:2519 order/status_codes.py:66
 msgid "Shipped"
 msgstr "Enviado"
 
@@ -6140,39 +6144,39 @@ msgstr "Permitir que o pedido seja concluído com alocações incompletas"
 msgid "Order has incomplete allocations"
 msgstr "O pedido tem alocações incompletas"
 
-#: order/status_codes.py:17 order/status_codes.py:54 stock/status_codes.py:16
+#: order/status_codes.py:26 order/status_codes.py:70 stock/status_codes.py:27
 msgid "Lost"
 msgstr "Perdido"
 
-#: order/status_codes.py:18 order/status_codes.py:55 stock/status_codes.py:24
+#: order/status_codes.py:27 order/status_codes.py:71 stock/status_codes.py:29
 msgid "Returned"
 msgstr "Devolvido"
 
-#: order/status_codes.py:47 order/status_codes.py:80
+#: order/status_codes.py:65 order/status_codes.py:101
 msgid "In Progress"
 msgstr "Em andamento"
 
-#: order/status_codes.py:106
+#: order/status_codes.py:132
 msgid "Return"
 msgstr "Devolução"
 
-#: order/status_codes.py:109
+#: order/status_codes.py:133
 msgid "Repair"
 msgstr "Consertar"
 
-#: order/status_codes.py:112
+#: order/status_codes.py:134
 msgid "Replace"
 msgstr "Substituição"
 
-#: order/status_codes.py:115
+#: order/status_codes.py:135
 msgid "Refund"
 msgstr "Reembolso"
 
-#: order/status_codes.py:118
+#: order/status_codes.py:136
 msgid "Reject"
 msgstr "Rejeitado"
 
-#: order/status_codes.py:126
+#: order/status_codes.py:151
 #: report/templates/report/inventree_build_order_report.html:121
 msgid "Issued"
 msgstr "Emitido"
@@ -6337,7 +6341,7 @@ msgstr "Usos"
 msgid "Part Category"
 msgstr "Categoria da peça"
 
-#: part/models.py:95 users/ruleset.py:29
+#: part/models.py:95 users/ruleset.py:43
 msgid "Part Categories"
 msgstr "Categorias de peça"
 
@@ -6390,7 +6394,7 @@ msgstr "Valor padrão"
 msgid "Default Parameter Value"
 msgstr "Valor padrão do parâmetro"
 
-#: part/models.py:531 part/serializers.py:135 users/ruleset.py:30
+#: part/models.py:531 part/serializers.py:135 users/ruleset.py:44
 msgid "Parts"
 msgstr "Peças"
 
@@ -7164,7 +7168,7 @@ msgid "Outstanding quantity of this part scheduled to be built"
 msgstr "Quantidade pendente desta peça programada para produção"
 
 #: part/serializers.py:856 stock/serializers.py:1264 stock/serializers.py:1480
-#: users/ruleset.py:33
+#: users/ruleset.py:47
 msgid "Stock Items"
 msgstr "Itens de estoque"
 
@@ -9151,7 +9155,7 @@ msgstr "Ícone padrão para todos os locais que não têm ícone definido (opcio
 msgid "Stock Location"
 msgstr "Local de estoque"
 
-#: stock/models.py:152 users/ruleset.py:32
+#: stock/models.py:152 users/ruleset.py:46
 msgid "Stock Locations"
 msgstr "Locais de estoque"
 
@@ -9857,147 +9861,147 @@ msgstr "Próximo número de série"
 msgid "Previous Serial Number"
 msgstr "Número de série anterior"
 
-#: stock/status_codes.py:11
+#: stock/status_codes.py:22
 msgid "OK"
 msgstr "OK"
 
-#: stock/status_codes.py:12
+#: stock/status_codes.py:23
 msgid "Attention needed"
 msgstr "Atenção necessária"
 
-#: stock/status_codes.py:13
+#: stock/status_codes.py:24
 msgid "Damaged"
 msgstr "Danificado"
 
-#: stock/status_codes.py:14
+#: stock/status_codes.py:25
 msgid "Destroyed"
 msgstr "Destruído"
 
-#: stock/status_codes.py:15
+#: stock/status_codes.py:26
 msgid "Rejected"
 msgstr "Rejeitado"
 
-#: stock/status_codes.py:19
+#: stock/status_codes.py:28
 msgid "Quarantined"
 msgstr "Em quarentena"
 
-#: stock/status_codes.py:44
+#: stock/status_codes.py:95
 msgid "Legacy stock tracking entry"
 msgstr "Registro de rastreamento de estoque legado"
 
-#: stock/status_codes.py:46
+#: stock/status_codes.py:97
 msgid "Stock item created"
 msgstr "Item de estoque criado"
 
-#: stock/status_codes.py:49
+#: stock/status_codes.py:100
 msgid "Edited stock item"
 msgstr "Item de estoque editado"
 
-#: stock/status_codes.py:50
+#: stock/status_codes.py:101
 msgid "Assigned serial number"
 msgstr "Número de série atribuído"
 
-#: stock/status_codes.py:53
+#: stock/status_codes.py:104
 msgid "Stock counted"
 msgstr "Estoque contado"
 
-#: stock/status_codes.py:54
+#: stock/status_codes.py:105
 msgid "Stock manually added"
 msgstr "Estoque adicionado manualmente"
 
-#: stock/status_codes.py:55
+#: stock/status_codes.py:106
 msgid "Stock manually removed"
 msgstr "Estoque removido manualmente"
 
-#: stock/status_codes.py:56
+#: stock/status_codes.py:107
 msgid "Serialized stock items"
 msgstr "Itens de estoque serializados"
 
-#: stock/status_codes.py:58
+#: stock/status_codes.py:109
 msgid "Returned to stock"
 msgstr "Devolvido ao estoque"
 
-#: stock/status_codes.py:61
+#: stock/status_codes.py:112
 msgid "Location changed"
 msgstr "Local alterado"
 
-#: stock/status_codes.py:62
+#: stock/status_codes.py:113
 msgid "Stock updated"
 msgstr "Estoque atualizado"
 
-#: stock/status_codes.py:65
+#: stock/status_codes.py:116
 msgid "Installed into assembly"
 msgstr "Instalado na montagem"
 
-#: stock/status_codes.py:66
+#: stock/status_codes.py:117
 msgid "Removed from assembly"
 msgstr "Removido da montagem"
 
-#: stock/status_codes.py:68
+#: stock/status_codes.py:119
 msgid "Installed component item"
 msgstr "Item componente instalado"
 
-#: stock/status_codes.py:69
+#: stock/status_codes.py:120
 msgid "Removed component item"
 msgstr "Item componente removido"
 
-#: stock/status_codes.py:72
+#: stock/status_codes.py:123
 msgid "Split from parent item"
 msgstr "Separado do item pai"
 
-#: stock/status_codes.py:73
+#: stock/status_codes.py:124
 msgid "Split child item"
 msgstr "Item filho separado"
 
-#: stock/status_codes.py:76
+#: stock/status_codes.py:127
 msgid "Merged stock items"
 msgstr "Itens de estoque mesclados"
 
-#: stock/status_codes.py:79
+#: stock/status_codes.py:130
 msgid "Disassembled into components"
 msgstr "Desmontado em componentes"
 
-#: stock/status_codes.py:80
+#: stock/status_codes.py:131
 msgid "Created from disassembly"
 msgstr "Criado a partir da desmontagem"
 
-#: stock/status_codes.py:83
+#: stock/status_codes.py:134
 msgid "Converted to variant"
 msgstr "Convertido em variante"
 
-#: stock/status_codes.py:86
+#: stock/status_codes.py:137
 msgid "Build order output created"
 msgstr "Saída do pedido de produção criada"
 
-#: stock/status_codes.py:87
+#: stock/status_codes.py:138
 msgid "Build order output completed"
 msgstr "Saída do pedido de produção concluída"
 
-#: stock/status_codes.py:88
+#: stock/status_codes.py:139
 msgid "Build order output rejected"
 msgstr "Saída do pedido de produção rejeitada"
 
-#: stock/status_codes.py:89
+#: stock/status_codes.py:140
 msgid "Consumed by build order"
 msgstr "Consumido por pedido de produção"
 
-#: stock/status_codes.py:92
+#: stock/status_codes.py:143
 msgid "Shipped against Sales Order"
 msgstr "Enviado para pedido de venda"
 
-#: stock/status_codes.py:95
+#: stock/status_codes.py:146
 msgid "Received against Purchase Order"
 msgstr "Recebido para pedido de compra"
 
-#: stock/status_codes.py:98
+#: stock/status_codes.py:149
 msgid "Returned against Return Order"
 msgstr "Devolvido para pedido de devolução"
 
-#: stock/status_codes.py:101
+#: stock/status_codes.py:152
 msgid "Sent to customer"
 msgstr "Enviado ao cliente"
 
-#: stock/status_codes.py:102
+#: stock/status_codes.py:153
 msgid "Returned from customer"
 msgstr "Devolvido pelo cliente"
 
@@ -10327,27 +10331,27 @@ msgstr "Grupo principal"
 msgid "Primary group for the user"
 msgstr "Grupo principal do usuário"
 
-#: users/ruleset.py:28
+#: users/ruleset.py:42
 msgid "Admin"
 msgstr "Admin"
 
-#: users/ruleset.py:31
+#: users/ruleset.py:45
 msgid "Bills of Material"
 msgstr "Listas de materiais"
 
-#: users/ruleset.py:35
+#: users/ruleset.py:49
 msgid "Purchase Orders"
 msgstr "Pedidos de compra"
 
-#: users/ruleset.py:36
+#: users/ruleset.py:50
 msgid "Sales Orders"
 msgstr "Pedidos de venda"
 
-#: users/ruleset.py:37
+#: users/ruleset.py:51
 msgid "Return Orders"
 msgstr "Pedidos de devolução"
 
-#: users/ruleset.py:38
+#: users/ruleset.py:52
 msgid "Transfer Orders"
 msgstr "Pedidos de transferência"
 
