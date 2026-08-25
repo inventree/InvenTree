@@ -119,17 +119,27 @@ export function PurchaseOrderLineItemTable({
 
   const [singleRecord, setSingleRecord] = useState(null);
 
+  // Keep a stable array reference for unchanged selections, so downstream
+  // memoization isn't defeated by a fresh array literal on every render
+  // (which was resetting in-progress edits in the "receive items" modal)
+  const receiveItems = useMemo(
+    () => (singleRecord ? [singleRecord] : table.selectedRecords),
+    [singleRecord, table.selectedRecords]
+  );
+
+  const onReceiveItemsClose = useCallback(() => {
+    table.clearSelectedRecords();
+    table.refreshTable();
+    // Timeout is a small hack to prevent function being called before re-render
+    setTimeout(() => setSingleRecord(null), 500);
+  }, [table]);
+
   const receiveLineItems = useReceiveLineItems({
-    items: singleRecord ? [singleRecord] : table.selectedRecords,
+    items: receiveItems,
     orderPk: orderId,
     destinationPk: order.destination,
     formProps: {
-      // Timeout is a small hack to prevent function being called before re-render
-      onClose: () => {
-        table.clearSelectedRecords();
-        table.refreshTable();
-        setTimeout(() => setSingleRecord(null), 500);
-      }
+      onClose: onReceiveItemsClose
     }
   });
 
