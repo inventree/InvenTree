@@ -30,8 +30,7 @@ class ScimConfigurationSerializer(serializers.ModelSerializer):
 
         if request is not None:
             return request.build_absolute_uri(path)
-
-        return path
+        return path  # pragma: no cover
 
 
 class ScimSecretSerializer(serializers.Serializer):
@@ -53,5 +52,4 @@ class ScimSecretSerializer(serializers.Serializer):
 
         if request is not None:
             return request.build_absolute_uri(path)
-
-        return path
+        return path  # pragma: no cover

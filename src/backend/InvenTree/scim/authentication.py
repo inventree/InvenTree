@@ -34,7 +34,7 @@ class ScimServiceUser:
 
     def __str__(self):
         """String representation of the SCIM service user."""
-        return self.username
+        return self.username  # pragma: no cover
 
 
 class ScimBearerAuthentication(authentication.BaseAuthentication):
@@ -68,7 +68,3 @@ class ScimBearerAuthentication(authentication.BaseAuthentication):
         config.mark_used()
 
         return (ScimServiceUser(), None)
-
-    def authenticate_header(self, request):
-        """Return the value for the WWW-Authenticate header on a 401 response."""
-        return f'Bearer realm="{self.www_authenticate_realm}"'

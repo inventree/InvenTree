@@ -47,7 +47,7 @@ class ScimConfiguration(models.Model):
 
     def __str__(self):
         """String representation of the SCIM configuration."""
-        return 'SCIM Configuration'
+        return 'SCIM Configuration'  # pragma: no cover
 
     def save(self, *args, **kwargs):
         """Ensure that only a single instance of this model can ever exist."""

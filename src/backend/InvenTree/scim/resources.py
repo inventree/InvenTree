@@ -13,12 +13,7 @@ FILTER_RE = re.compile(r'^\s*(\w+)\s+eq\s+"([^"]*)"\s*$', re.IGNORECASE)
 
 
 def parse_filter(filter_string: str | None) -> tuple[str, str] | None:
-    """Parse a (very limited) SCIM filter expression of the form `attribute eq "value"`.
-
-    This covers the filters that Identity Providers actually issue in practice
-    (existence checks by userName / displayName before provisioning a new
-    resource) - the full SCIM filter grammar is not implemented.
-    """
+    """Parse a (very limited) SCIM filter expression of the form `attribute eq "value"`."""
     if not filter_string:
         return None
 

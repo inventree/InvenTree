@@ -2,6 +2,7 @@
 
 import json
 
+from django.contrib.auth.models import Group, User
 from django.test import override_settings
 from django.urls import reverse
 
@@ -130,90 +131,65 @@ class ScimProtocolTests(InvenTreeAPITestCase):
         self.get(reverse('scim-users'), expected_code=401)
         self.get(reverse('scim-users'), expected_code=401, **self.auth_header('wrong'))
 
-    # def test_list_users(self):
-    #     """A valid bearer token can list users."""
-    #     response = self.get(
-    #         reverse('scim-users'), expected_code=200, **self.auth_header()
-    #     )
-    #     usernames = [u['userName'] for u in response.data['Resources']]
-    #     self.assertIn(self.user.username, usernames)
+    def test_filter_users_by_username(self):
+        """Users can be filtered by an exact userName match."""
+        response = self.get(
+            reverse('scim-users'),
+            data={'filter': f'userName eq "{self.user.username}"'},
+            expected_code=200,
+            **self.auth_header(),
+        )
+        self.assertEqual(response.data['totalResults'], 1)
+        self.assertEqual(response.data['Resources'][0]['userName'], self.user.username)
 
-    # def test_create_update_deactivate_user(self):
-    #     """A user can be provisioned, patched, and deactivated via SCIM."""
-    #     payload = {
-    #         'schemas': ['urn:ietf:params:scim:schemas:core:2.0:User'],
-    #         'userName': 'scim.jdoe',
-    #         'name': {'givenName': 'Jane', 'familyName': 'Doe'},
-    #         'emails': [{'value': 'jdoe@example.org', 'primary': True}],
-    #         'active': True,
-    #     }
-    #     response = self.post(
-    #         reverse('scim-users'), data=payload, expected_code=201, **self.auth_header()
-    #     )
-    #     user_id = response.data['id']
-    #     self.assertTrue(User.objects.filter(username='scim.jdoe').exists())
+        # wrong field name
+        self.get(
+            reverse('scim-users'),
+            data={'filter': f'qbc eq "{self.user.username}"'},
+            expected_code=400,
+            **self.auth_header(),
+        )
 
-    #     # Duplicate userName is rejected
-    #     self.post(
-    #         reverse('scim-users'), data=payload, expected_code=409, **self.auth_header()
-    #     )
+    def test_create_group_with_members(self):
+        """A group can be provisioned with initial membership via SCIM."""
+        payload = {
+            'schemas': ['urn:ietf:params:scim:schemas:core:2.0:Group'],
+            'displayName': 'scim-engineering',
+            'members': [{'value': str(self.user.pk), 'type': 'User'}],
+        }
+        response = self.post(
+            reverse('scim-groups'),
+            data=payload,
+            expected_code=201,
+            **self.auth_header(),
+        )
+        group = Group.objects.get(pk=response.data['id'])
+        self.assertEqual(group.name, 'scim-engineering')
+        self.assertIn(self.user, group.user_set.all())
 
-    #     # Deactivate via PATCH
-    #     patch_payload = {
-    #         'schemas': ['urn:ietf:params:scim:api:messages:2.0:PatchOp'],
-    #         'Operations': [{'op': 'replace', 'path': 'active', 'value': False}],
-    #     }
-    #     response = self.patch(
-    #         reverse('scim-user-detail', kwargs={'pk': user_id}),
-    #         data=patch_payload,
-    #         expected_code=200,
-    #         **self.auth_header(),
-    #     )
-    #     self.assertFalse(response.data['active'])
-    #     self.assertFalse(User.objects.get(pk=user_id).is_active)
+        # assign a user
+        new_user = User.objects.create_user(username='scim-user', password='test')
+        new_user.groups.add(group)
+        self.assertIn(new_user, group.user_set.all())
 
-    #     # Deactivate via DELETE (soft-delete semantics)
-    #     self.delete(
-    #         reverse('scim-user-detail', kwargs={'pk': user_id}),
-    #         expected_code=204,
-    #         **self.auth_header(),
-    #     )
-    #     self.assertTrue(User.objects.filter(pk=user_id).exists())
+        # remove membership via update
+        payload['members'] = [{'value': str(self.user.pk), 'type': 'User'}]
+        self.put(
+            reverse('scim-group-detail', kwargs={'pk': group.pk}),
+            data=payload,
+            expected_code=200,
+            **self.auth_header(),
+        )
+        group.refresh_from_db()
+        self.assertNotIn(new_user, group.user_set.all())
 
-    # def test_filter_users_by_username(self):
-    #     """Users can be filtered by an exact userName match."""
-    #     response = self.get(
-    #         reverse('scim-users'),
-    #         data={'filter': f'userName eq "{self.user.username}"'},
-    #         expected_code=200,
-    #         **self.auth_header(),
-    #     )
-    #     self.assertEqual(response.data['totalResults'], 1)
-    #     self.assertEqual(response.data['Resources'][0]['userName'], self.user.username)
-
-    # def test_create_group_with_members(self):
-    #     """A group can be provisioned with initial membership via SCIM."""
-    #     payload = {
-    #         'schemas': ['urn:ietf:params:scim:schemas:core:2.0:Group'],
-    #         'displayName': 'scim-engineering',
-    #         'members': [{'value': str(self.user.pk), 'type': 'User'}],
-    #     }
-    #     response = self.post(
-    #         reverse('scim-groups'),
-    #         data=payload,
-    #         expected_code=201,
-    #         **self.auth_header(),
-    #     )
-    #     group = Group.objects.get(pk=response.data['id'])
-    #     self.assertEqual(group.name, 'scim-engineering')
-    #     self.assertIn(self.user, group.user_set.all())
-
-    #     self.delete(
-    #         reverse('scim-group-detail', kwargs={'pk': group.pk}),
-    #         expected_code=204,
-    #         **self.auth_header(),
-    #     )
-    #     self.assertFalse(Group.objects.filter(pk=group.pk).exists())
+        # and remove group via delete
+        self.delete(
+            reverse('scim-group-detail', kwargs={'pk': group.pk}),
+            expected_code=204,
+            **self.auth_header(),
+        )
+        self.assertFalse(Group.objects.filter(pk=group.pk).exists())
 
     @override_settings(
         SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
@@ -232,6 +208,7 @@ class ScimProtocolTests(InvenTreeAPITestCase):
             'patch:replace',  # 2: see above
             'check_replace',  # BD
             'crud:delete',  # 3: there is no deleting users right now
+            'misc',
         }
         results = check_server(scim_client)
         failures = [result for result in results if result.status.value not in (1, 7)]

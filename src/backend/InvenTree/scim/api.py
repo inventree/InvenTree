@@ -31,6 +31,8 @@ scim_urls = [
     path('Users/<int:pk>', UserDetailView.as_view(), name='scim-user-detail'),
     path('Groups', GroupsView.as_view(), name='scim-groups'),
     path('Groups/<int:pk>', GroupDetailView.as_view(), name='scim-group-detail'),
+    # catchall
+    re_path('.*', ScimNotFoundView.as_view(), name='scim-not-found'),
 ]
 
-urlpatterns = scim_urls + [re_path(r'^(?P<path>.*)$', ScimNotFoundView.as_view())]  # noqa: RUF005
+urlpatterns = scim_urls
