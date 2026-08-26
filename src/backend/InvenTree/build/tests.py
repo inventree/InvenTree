@@ -519,9 +519,8 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
 
     def test_locked_order_rejects_transitions(self):
         """A completed order should reject further transitions."""
-        # Complete the order
+        # Complete the order (transition already persists the new status)
         self.ro.complete_repair()
-        self.ro.save()
 
         # Attempt to issue again — should fail
         url = reverse('api-repair-order-issue', kwargs={'pk': self.ro.pk})
@@ -573,10 +572,9 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         alloc = RepairOrderAllocation.objects.create(line=line, item=si, quantity=2)
         alloc.full_clean()  # Validate — should pass
 
-        # Complete the order (consumes stock)
+        # Complete the order (consumes stock; transition already persists the new status)
         self.ro.issue_repair()
         self.ro.complete_repair(user=self.user)
-        self.ro.save()
 
         si.refresh_from_db()
         self.assertEqual(float(si.quantity), original_qty - 2)
@@ -608,9 +606,8 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         line = RepairOrderLineItem.objects.create(order=self.ro, part=p, quantity=3)
         RepairOrderAllocation.objects.create(line=line, item=si, quantity=3)
 
-        # Cancel the order
+        # Cancel the order (transition already persists the new status)
         self.ro.cancel_repair()
-        self.ro.save()
 
         si.refresh_from_db()
         # Stock should NOT have been consumed
