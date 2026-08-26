@@ -263,6 +263,8 @@ class BaseResourceView(ScimAPIView):
 
     def list(self, request):
         """Handle GET (list) requests, with minimal filter and pagination support."""
+        if not self.scim_model:
+            raise NotImplementedError('Missing scim_model')  # pragma: no cover
         queryset = self.get_queryset()
 
         parsed_filter = parse_filter(request.query_params.get('filter'))
@@ -283,6 +285,7 @@ class BaseResourceView(ScimAPIView):
         resources = [self.to_scim(obj) for obj in page]
 
         response = ListResponse[self.scim_model](
+            schemas=['urn:ietf:params:scim:api:messages:2.0:ListResponse'],
             total_results=total_results,
             items_per_page=len(resources),
             start_index=start_index,
