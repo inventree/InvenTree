@@ -130,6 +130,7 @@ class ScimProtocolTests(InvenTreeAPITestCase):
         """The Users endpoint rejects requests without a valid bearer token."""
         self.get(reverse('scim-users'), expected_code=401)
         self.get(reverse('scim-users'), expected_code=401, **self.auth_header('wrong'))
+        self.get(reverse('scim-users'), expected_code=401, HTTP_AUTHORIZATION='Bearer')
 
     def test_filter_users_by_username(self):
         """Users can be filtered by an exact userName match."""
@@ -147,6 +148,14 @@ class ScimProtocolTests(InvenTreeAPITestCase):
             reverse('scim-users'),
             data={'filter': f'qbc eq "{self.user.username}"'},
             expected_code=400,
+            **self.auth_header(),
+        )
+
+        # no known filter
+        self.get(
+            reverse('scim-users'),
+            data={'filter': f'userName noq "{self.user.username}"'},
+            expected_code=200,
             **self.auth_header(),
         )
 
