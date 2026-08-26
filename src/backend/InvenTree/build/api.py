@@ -1232,6 +1232,21 @@ class RepairOrderList(ListCreateAPI):
     queryset = RepairOrder.objects.all()
     serializer_class = build.serializers.RepairOrderSerializer
 
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = [
+        'reference',
+        'customer__name',
+        'status',
+        'creation_date',
+        'target_date',
+        'completion_date',
+    ]
+
+    ordering = '-reference'
+
+    search_fields = ['reference', 'description', 'symptoms', 'customer__name']
+
 
 class RepairOrderDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single RepairOrder object."""

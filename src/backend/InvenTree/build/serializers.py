@@ -1843,7 +1843,10 @@ class BuildConsumeSerializer(serializers.Serializer):
 
 
 class RepairOrderSerializer(
-    NotesFieldMixin, InvenTreeCustomStatusSerializerMixin, InvenTreeModelSerializer
+    NotesFieldMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    FilterableSerializerMixin,
+    InvenTreeModelSerializer,
 ):
     """Serializer for a RepairOrder object."""
 
@@ -1855,6 +1858,7 @@ class RepairOrderSerializer(
             'pk',
             'reference',
             'customer',
+            'customer_detail',
             'description',
             'symptoms',
             'status',
@@ -1866,6 +1870,17 @@ class RepairOrderSerializer(
             'line_items',
         ]
         read_only_fields = ['creation_date', 'status']
+
+    customer_detail = OptionalField(
+        serializer_class=company.serializers.CompanyBriefSerializer,
+        serializer_kwargs={
+            'source': 'customer',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        prefetch_fields=['customer'],
+    )
 
     line_items = serializers.PrimaryKeyRelatedField(
         source='lines', many=True, read_only=True
