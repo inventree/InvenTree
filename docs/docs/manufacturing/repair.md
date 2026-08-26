@@ -52,25 +52,7 @@ The following parameters are available for each Repair Order, and can be edited 
 
 Each *Repair Order* has an associated *Status* flag, which indicates the current state of the repair:
 
-| Status | Description |
-| --- | --- |
-| `Pending` | Repair order has been created, but work has not yet started |
-| `In Progress` | Repair work is actively underway |
-| `On Hold` | Repair order has been paused, but is still considered active |
-| `Complete` | Repair has been successfully completed |
-| `Cancelled` | Repair order has been cancelled |
-
-**Source Code**
-
-Refer to the source code for the Repair Order status codes:
-
-::: build.status_codes.RepairOrderStatus
-    options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
+{{ statuscodes("RepairOrderStatus") }}
 
 Repair Order Status supports [custom states](../concepts/custom_states.md).
 
@@ -182,6 +164,15 @@ Repair Order [notes](../concepts/attachments.md) support markdown formatting, an
 ### Reporting
 
 Custom [reports](../report/index.md) can be generated against each Repair Order.
+
+## Repair Order Settings
+
+The following [global settings](../settings/global.md) are available for repair orders:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("REPAIRORDER_ENABLED") }}
+{{ globalsetting("REPAIRORDER_REFERENCE_PATTERN") }}
 
 ## Repair Order Permissions
 

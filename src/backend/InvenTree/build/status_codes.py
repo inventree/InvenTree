@@ -36,13 +36,21 @@ class BuildStatusGroups:
 
 
 class RepairOrderStatus(StatusCode):
-    """Defines a set of status codes for a RepairOrder."""
+    """Defines a set of status codes for a RepairOrder.
 
-    PENDING = 10, _('Pending'), ColorEnum.secondary  # Repair is pending
-    IN_PROGRESS = 20, _('In Progress'), ColorEnum.primary  # Repair is underway
-    ON_HOLD = 25, _('On Hold'), ColorEnum.warning  # Repair is on hold
-    COMPLETE = 30, _('Complete'), ColorEnum.success  # Repair has been completed
-    CANCELLED = 40, _('Cancelled'), ColorEnum.danger  # Repair was cancelled
+    Attributes:
+        PENDING: Repair order has been created, but work has not yet started
+        IN_PROGRESS: Repair work is actively underway
+        ON_HOLD: Repair order has been paused, but is still considered active
+        COMPLETE: Repair has been successfully completed
+        CANCELLED: Repair order has been cancelled
+    """
+
+    PENDING = 10, _('Pending'), ColorEnum.secondary
+    IN_PROGRESS = 20, _('In Progress'), ColorEnum.primary
+    ON_HOLD = 25, _('On Hold'), ColorEnum.warning
+    COMPLETE = 30, _('Complete'), ColorEnum.success
+    CANCELLED = 40, _('Cancelled'), ColorEnum.danger
 
 
 class RepairOrderStatusGroups:
