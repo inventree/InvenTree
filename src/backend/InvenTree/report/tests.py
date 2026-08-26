@@ -18,9 +18,10 @@ from django.urls import reverse
 from pypdf import PdfReader
 
 import report.models as report_models
-from build.models import Build
+from build.models import Build, RepairOrder
 from common.models import Attachment
 from common.settings import set_global_setting
+from company.models import Company
 from InvenTree.config import get_base_dir
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
 from order.models import PurchaseOrder, ReturnOrder, SalesOrder
@@ -729,6 +730,18 @@ class TestReportTest(PrintTestMixins, ReportTest):
     def test_mdl_returnorder(self):
         """Test the ReturnOrder model."""
         self.run_print_test(ReturnOrder, 'returnorder', label=False)
+
+    def test_mdl_repairorder(self):
+        """Test the RepairOrder model."""
+        customer = Company.objects.filter(is_customer=True).first()
+        assert customer
+
+        for idx in range(2):
+            RepairOrder.objects.create(
+                customer=customer, description=f'Test repair order {idx}'
+            )
+
+        self.run_print_test(RepairOrder, 'repairorder', label=False)
 
     def test_mdl_salesorder(self):
         """Test the SalesOrder model."""

@@ -47,6 +47,7 @@ from build.validators import (
 )
 from common.models import ProjectCode
 from common.settings import get_global_setting
+from company.models import Company
 from generic.enums import StringEnum
 from generic.states import (
     DEFERRABLE,
@@ -2516,6 +2517,28 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
+class RepairOrderReportContext(report.mixins.BaseReportContext, TypedDict):
+    """Context for the RepairOrder model.
+
+    Attributes:
+        customer: The customer company associated with this repair order
+        description: The description field of the RepairOrder
+        lines: Query set of all RepairOrderLineItem objects associated with the RepairOrder
+        order: The RepairOrder instance itself
+        reference: The reference field of the RepairOrder
+        symptoms: The reported symptoms / issues for this repair order
+        title: The title (string representation) of the RepairOrder
+    """
+
+    customer: Optional[Company]
+    description: str
+    lines: report.mixins.QuerySet['RepairOrderLineItem']
+    order: 'RepairOrder'
+    reference: str
+    symptoms: str
+    title: str
+
+
 class RepairOrder(
     StatusCodeMixin,
     StateTransitionMixin,
@@ -2555,6 +2578,18 @@ class RepairOrder(
     def __str__(self):
         """String representation of a RepairOrder."""
         return self.reference
+
+    def report_context(self) -> RepairOrderReportContext:
+        """Generate custom report context data."""
+        return {
+            'customer': self.customer,
+            'description': self.description,
+            'lines': self.lines.all(),
+            'order': self,
+            'reference': self.reference,
+            'symptoms': self.symptoms,
+            'title': str(self),
+        }
 
     def save(self, *args, **kwargs):
         """Custom save method for the RepairOrder model.
