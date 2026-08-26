@@ -76,7 +76,12 @@ def scim_dump(obj) -> dict:
 
 def scim_error(status: int, detail: str, scim_type: str | None = None) -> Response:
     """Build a SCIM-formatted error response."""
-    error = Error(status=status, scim_type=scim_type, detail=detail)
+    error = Error(
+        schemas=['urn:ietf:params:scim:api:messages:2.0:Error'],
+        status=status,
+        scim_type=scim_type,
+        detail=detail,
+    )
     return Response(
         scim_dump(error), status=status, content_type='application/scim+json'
     )
@@ -147,6 +152,7 @@ class ServiceProviderConfigView(ScimAPIView):
     def get(self, request, *args, **kwargs):
         """Return the service provider configuration."""
         config = ServiceProviderConfig(
+            schemas=['urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig'],
             documentation_uri='https://docs.inventree.org/en/latest/settings/scim/',
             patch=Patch(supported=True),
             bulk=Bulk(supported=False, max_operations=0, max_payload_size=0),
@@ -173,6 +179,7 @@ class ResourceTypesView(ScimAPIView):
 
     resource_types = {
         'User': ResourceType(
+            schemas=['urn:ietf:params:scim:schemas:core:2.0:ResourceType'],
             id='User',
             name='User',
             endpoint='/scim/v2/Users',
@@ -180,6 +187,7 @@ class ResourceTypesView(ScimAPIView):
             schema_='urn:ietf:params:scim:schemas:core:2.0:User',
         ),
         'Group': ResourceType(
+            schemas=['urn:ietf:params:scim:schemas:core:2.0:ResourceType'],
             id='Group',
             name='Group',
             endpoint='/scim/v2/Groups',
@@ -200,6 +208,7 @@ class ResourceTypesView(ScimAPIView):
 
         resources = list(self.resource_types.values())
         response = ListResponse[ResourceType](
+            schemas=['urn:ietf:params:scim:api:messages:2.0:ListResponse'],
             total_results=len(resources),
             items_per_page=len(resources),
             start_index=1,
@@ -228,6 +237,7 @@ class SchemasView(ScimAPIView):
 
         resources = list(schemas.values())
         response = ListResponse[Schema](
+            schemas=['urn:ietf:params:scim:api:messages:2.0:ListResponse'],
             total_results=len(resources),
             items_per_page=len(resources),
             start_index=1,

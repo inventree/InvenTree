@@ -51,6 +51,7 @@ def user_to_scim(user: DjangoUser) -> User:
     ] or None
 
     return User(
+        schemas=['urn:ietf:params:scim:schemas:core:2.0:User'],
         id=str(user.pk),
         user_name=user.username,
         name=name,
@@ -99,6 +100,7 @@ def group_to_scim(group: DjangoGroup) -> Group:
     ] or None
 
     return Group(
+        schemas=['urn:ietf:params:scim:schemas:core:2.0:Group'],
         id=str(group.pk),
         display_name=group.name,
         members=members,
