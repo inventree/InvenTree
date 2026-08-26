@@ -2641,6 +2641,16 @@ class RepairOrder(
         """Return the RepairOrderStatusGroups class."""
         return RepairOrderStatusGroups
 
+    @classmethod
+    def overdue_filter(cls):
+        """A generic implementation of an 'overdue' filter for the RepairOrder model."""
+        today = InvenTree.helpers.current_date()
+        return (
+            Q(status__in=cls.get_status_class().OPEN)
+            & ~Q(target_date=None)
+            & Q(target_date__lt=today)
+        )
+
     reference = models.CharField(
         max_length=100,
         unique=True,

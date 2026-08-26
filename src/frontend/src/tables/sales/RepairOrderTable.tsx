@@ -9,10 +9,15 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import {
   CompanyColumn,
+  CompletionDateColumn,
+  CreationDateColumn,
   DescriptionColumn,
   LinkColumn,
   ReferenceColumn,
-  StatusColumn
+  ResponsibleColumn,
+  StatusColumn,
+  TargetDateColumn,
+  UserColumn
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useRepairOrderFields } from '../../forms/RepairOrderForms';
@@ -52,7 +57,26 @@ export function RepairOrderTable({
         )
       },
       DescriptionColumn({}),
+      {
+        accessor: 'line_items',
+        title: t`Line Items`,
+        sortable: false,
+        render: (record: any) => record.line_items?.length ?? 0
+      },
       StatusColumn({ model: ModelType.repairorder }),
+      CreationDateColumn({
+        defaultVisible: false
+      }),
+      TargetDateColumn({}),
+      CompletionDateColumn({}),
+      UserColumn({
+        accessor: 'issued_by_detail',
+        ordering: 'issued_by',
+        filter: 'issued_by',
+        title: t`Issued By`,
+        defaultVisible: false
+      }),
+      ResponsibleColumn({}),
       LinkColumn({})
     ];
   }, []);

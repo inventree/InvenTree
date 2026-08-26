@@ -1866,7 +1866,9 @@ class RepairOrderSerializer(
             'target_date',
             'completion_date',
             'responsible',
+            'responsible_detail',
             'issued_by',
+            'issued_by_detail',
             'line_items',
         ]
         read_only_fields = ['creation_date', 'status']
@@ -1880,6 +1882,26 @@ class RepairOrderSerializer(
             'allow_null': True,
         },
         prefetch_fields=['customer'],
+    )
+
+    issued_by_detail = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={'source': 'issued_by', 'read_only': True},
+        default_include=True,
+        filter_name='user_detail',
+        prefetch_fields=['issued_by'],
+    )
+
+    responsible_detail = OptionalField(
+        serializer_class=OwnerSerializer,
+        serializer_kwargs={
+            'source': 'responsible',
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        filter_name='user_detail',
+        prefetch_fields=['responsible'],
     )
 
     line_items = serializers.PrimaryKeyRelatedField(

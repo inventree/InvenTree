@@ -617,3 +617,91 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         self.assertEqual(
             RepairOrderAllocation.objects.filter(line__order=self.ro).count(), 0
         )
+
+    # ── Filtering and ordering ──────────────────────────────────────
+
+    def test_outstanding_filter(self):
+        """The 'outstanding' filter should only match open repair orders."""
+        # self.ro is PENDING (open) by default
+        completed = RepairOrder.objects.create(
+            reference='RO-1001', description='Completed order'
+        )
+        completed.complete_repair()
+
+        url = reverse('api-repair-order-list')
+
+        response = self.get(url, {'outstanding': True}, expected_code=200)
+        pks = {item['pk'] for item in response.data}
+        self.assertIn(self.ro.pk, pks)
+        self.assertNotIn(completed.pk, pks)
+
+        response = self.get(url, {'outstanding': False}, expected_code=200)
+        pks = {item['pk'] for item in response.data}
+        self.assertNotIn(self.ro.pk, pks)
+        self.assertIn(completed.pk, pks)
+
+    def test_overdue_filter(self):
+        """The 'overdue' filter should only match open orders past their target date."""
+        today = datetime.now().date()
+
+        overdue = RepairOrder.objects.create(
+            reference='RO-1002',
+            description='Overdue order',
+            target_date=today - timedelta(days=5),
+        )
+
+        not_overdue = RepairOrder.objects.create(
+            reference='RO-1003',
+            description='Not overdue order',
+            target_date=today + timedelta(days=5),
+        )
+
+        url = reverse('api-repair-order-list')
+
+        response = self.get(url, {'overdue': True}, expected_code=200)
+        pks = {item['pk'] for item in response.data}
+        self.assertIn(overdue.pk, pks)
+        self.assertNotIn(not_overdue.pk, pks)
+        self.assertNotIn(self.ro.pk, pks)  # no target_date set
+
+        response = self.get(url, {'overdue': False}, expected_code=200)
+        pks = {item['pk'] for item in response.data}
+        self.assertNotIn(overdue.pk, pks)
+        self.assertIn(not_overdue.pk, pks)
+
+    def test_reference_filter(self):
+        """The 'reference' filter should match exactly (case-insensitive)."""
+        url = reverse('api-repair-order-list')
+
+        response = self.get(
+            url, {'reference': self.ro.reference.lower()}, expected_code=200
+        )
+        pks = {item['pk'] for item in response.data}
+        self.assertEqual(pks, {self.ro.pk})
+
+    def test_target_date_ordering(self):
+        """Repair orders should be sortable by target_date."""
+        today = datetime.now().date()
+
+        first = RepairOrder.objects.create(
+            reference='RO-1004', description='Earlier', target_date=today
+        )
+        second = RepairOrder.objects.create(
+            reference='RO-1005',
+            description='Later',
+            target_date=today + timedelta(days=10),
+        )
+
+        url = reverse('api-repair-order-list')
+
+        response = self.get(url, {'ordering': 'target_date'}, expected_code=200)
+        pks = [item['pk'] for item in response.data]
+        self.assertLess(pks.index(first.pk), pks.index(second.pk))
+
+    def test_search_by_reference(self):
+        """The global 'search' parameter should match against reference/description."""
+        url = reverse('api-repair-order-list')
+
+        response = self.get(url, {'search': self.ro.reference}, expected_code=200)
+        pks = {item['pk'] for item in response.data}
+        self.assertIn(self.ro.pk, pks)

@@ -7,8 +7,7 @@ import {
   MinDateFilter,
   OrderStatusFilter,
   OutstandingFilter,
-  UpdatedAfterFilter,
-  UpdatedBeforeFilter
+  OverdueFilter
 } from '../../components/tables/Filter';
 
 export default function RepairOrderFilters({
@@ -18,16 +17,15 @@ export default function RepairOrderFilters({
 }): TableFilter[] {
   const filters: TableFilter[] = [
     OrderStatusFilter({ model: ModelType.repairorder }),
-    OutstandingFilter()
+    OutstandingFilter(),
+    OverdueFilter()
   ];
 
   const dateFilters: TableFilter[] = [
     MinDateFilter(),
     MaxDateFilter(),
     CreatedBeforeFilter(),
-    CreatedAfterFilter(),
-    UpdatedBeforeFilter(),
-    UpdatedAfterFilter()
+    CreatedAfterFilter()
   ];
 
   if (includeDateFilters) {

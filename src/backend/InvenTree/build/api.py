@@ -31,7 +31,12 @@ from build.models import (
     RepairOrderAllocation,
     RepairOrderLineItem,
 )
-from build.status_codes import BuildStatus, BuildStatusGroups, RepairOrderStatus
+from build.status_codes import (
+    BuildStatus,
+    BuildStatusGroups,
+    RepairOrderStatus,
+    RepairOrderStatusGroups,
+)
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import BulkDeleteMixin, ParameterListMixin, meta_path
@@ -1226,12 +1231,124 @@ class BuildItemList(
     ]
 
 
+class RepairOrderFilter(FilterSet):
+    """Custom filterset for the RepairOrderList API endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = RepairOrder
+        fields = ['customer']
+
+    status = rest_filters.NumberFilter(label=_('Order Status'), method='filter_status')
+
+    def filter_status(self, queryset, name, value):
+        """Filter by integer status code.
+
+        Note: Also account for the possibility of a custom status code
+        """
+        q1 = Q(status=value, status_custom_key__isnull=True)
+        q2 = Q(status_custom_key=value)
+
+        return queryset.filter(q1 | q2).distinct()
+
+    outstanding = rest_filters.BooleanFilter(
+        label=_('Outstanding'), method='filter_outstanding'
+    )
+
+    def filter_outstanding(self, queryset, name, value):
+        """Filter by whether the repair order is 'outstanding' (open)."""
+        if str2bool(value):
+            return queryset.filter(status__in=RepairOrderStatusGroups.OPEN)
+        return queryset.exclude(status__in=RepairOrderStatusGroups.OPEN)
+
+    overdue = rest_filters.BooleanFilter(label=_('Overdue'), method='filter_overdue')
+
+    def filter_overdue(self, queryset, name, value):
+        """Filter by whether the repair order is 'overdue'."""
+        if str2bool(value):
+            return queryset.filter(RepairOrder.overdue_filter())
+        return queryset.exclude(RepairOrder.overdue_filter())
+
+    # Exact match for reference
+    reference = rest_filters.CharFilter(
+        label=_('Order Reference'), field_name='reference', lookup_expr='iexact'
+    )
+
+    assigned_to = rest_filters.ModelChoiceFilter(
+        queryset=Owner.objects.all(), field_name='responsible', label=_('Responsible')
+    )
+
+    issued_by = rest_filters.ModelChoiceFilter(
+        queryset=User.objects.all(), field_name='issued_by', label=_('Issued By')
+    )
+
+    created_before = InvenTreeDateFilter(
+        label=_('Created Before'), field_name='creation_date', lookup_expr='lt'
+    )
+
+    created_after = InvenTreeDateFilter(
+        label=_('Created After'), field_name='creation_date', lookup_expr='gt'
+    )
+
+    has_target_date = rest_filters.BooleanFilter(
+        label=_('Has Target Date'), method='filter_has_target_date'
+    )
+
+    def filter_has_target_date(self, queryset, name, value):
+        """Filter by whether or not the repair order has a target date."""
+        return queryset.filter(target_date__isnull=not str2bool(value))
+
+    target_date_before = InvenTreeDateFilter(
+        label=_('Target Date Before'), field_name='target_date', lookup_expr='lt'
+    )
+
+    target_date_after = InvenTreeDateFilter(
+        label=_('Target Date After'), field_name='target_date', lookup_expr='gt'
+    )
+
+    completed_before = InvenTreeDateFilter(
+        label=_('Completed Before'), field_name='completion_date', lookup_expr='lt'
+    )
+
+    completed_after = InvenTreeDateFilter(
+        label=_('Completed After'), field_name='completion_date', lookup_expr='gt'
+    )
+
+    min_date = InvenTreeDateFilter(label=_('Min Date'), method='filter_min_date')
+
+    def filter_min_date(self, queryset, name, value):
+        """Filter the queryset to include repair orders *active after* a specified date.
+
+        Used in combination with filter_max_date to provide a queryset which
+        matches a particular range of dates (e.g. for the calendar view).
+        """
+        q1 = Q(creation_date__gte=value)
+        q2 = Q(target_date__gte=value)
+
+        return queryset.filter(q1 | q2).distinct()
+
+    max_date = InvenTreeDateFilter(label=_('Max Date'), method='filter_max_date')
+
+    def filter_max_date(self, queryset, name, value):
+        """Filter the queryset to include repair orders *active before* a specified date.
+
+        Used in combination with filter_min_date to provide a queryset which
+        matches a particular range of dates (e.g. for the calendar view).
+        """
+        q1 = Q(creation_date__lte=value)
+        q2 = Q(target_date__lte=value)
+
+        return queryset.filter(q1 | q2).distinct()
+
+
 class RepairOrderList(ListCreateAPI):
     """API endpoint for accessing a list of RepairOrder objects."""
 
     queryset = RepairOrder.objects.all()
     serializer_class = build.serializers.RepairOrderSerializer
 
+    filterset_class = RepairOrderFilter
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
@@ -1241,6 +1358,8 @@ class RepairOrderList(ListCreateAPI):
         'creation_date',
         'target_date',
         'completion_date',
+        'responsible',
+        'issued_by',
     ]
 
     ordering = '-reference'
