@@ -38,6 +38,15 @@ class DataImportSessionAdmin(admin.ModelAdmin):
 
     list_filter = ['status']
 
+    search_fields = [
+        'user__username',
+        'user__first_name',
+        'user__last_name',
+        'model_type',
+    ]
+
+    autocomplete_fields = ['user']
+
     inlines = [DataImportColumnMapAdmin]
 
     def get_readonly_fields(self, request, obj=None):
@@ -65,6 +74,10 @@ class DataImportRowAdmin(admin.ModelAdmin):
     """Admin interface for the DataImportRow model."""
 
     list_display = ['id', 'session', 'row_index']
+
+    search_fields = ['session__id', 'row_index']
+
+    autocomplete_fields = ['session']
 
     def get_readonly_fields(self, request, obj=None):
         """Return the readonly fields for the admin interface."""
