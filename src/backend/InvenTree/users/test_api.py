@@ -1,6 +1,7 @@
 """API tests for various user / auth API endpoints."""
 
 import datetime
+from unittest import mock
 
 from django.contrib.auth.models import Group, User
 from django.urls import reverse
@@ -473,6 +474,44 @@ class UserTokenTests(InvenTreeAPITestCase):
 
         self.client.get(me, expected_code=200)
 
+    def test_token_last_seen_no_clobber(self):
+        """Regression test: updating token.last_seen must overwrite other fields.
+
+        Simulates a revoke landing in the window between this request's token
+        lookup and its last_seen save, by revoking the token (directly against
+        the database) from inside a patched ApiToken.save().
+        """
+        token_key = self.get(
+            url=reverse('api-token'), data={'name': 'race'}, expected_code=200
+        ).data['token']
+
+        token = ApiToken.objects.get(key=token_key)
+
+        # Force last_seen to be 'stale' so the auth backend attempts to update it
+        ApiToken.objects.filter(pk=token.pk).update(
+            last_seen=datetime.date.today() - datetime.timedelta(days=1)
+        )
+
+        original_save = ApiToken.save
+
+        def revoke_then_save(self, *args, **kwargs):
+            # Simulate a concurrent request revoking this token, via a direct
+            # DB write, right before this request's last_seen save lands
+            ApiToken.objects.filter(pk=self.pk).update(revoked=True)
+            return original_save(self, *args, **kwargs)
+
+        self.client.logout()
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token_key)
+
+        with mock.patch.object(ApiToken, 'save', revoke_then_save):
+            self.client.get(reverse('api-user-me'), expected_code=200)
+
+        token.refresh_from_db()
+        self.assertTrue(
+            token.revoked,
+            'Concurrent revoke must not be clobbered by the last_seen update',
+        )
+
     def test_token_api(self):
         """Test the token API."""
         url = reverse('api-token-list')
@@ -547,3 +586,82 @@ class GroupDetailTests(InvenTreeAPITestCase):
 
         response = self.get(url, {'permission_detail': 'false'}, expected_code=200)
         self.assertNotIn('permissions', response.data)
+
+
+class RuleSetPermissionTests(InvenTreeAPITestCase):
+    """Tests for permission enforcement on the Group / RuleSet API endpoints.
+
+    Regression tests for a privilege-escalation bug where a *staff* user
+    (without the 'admin' role) was able to write to these endpoints - in
+    particular, granting themselves 'admin' RuleSet permissions via the
+    RuleSet API, despite not holding the 'admin' role themselves.
+    """
+
+    def test_group_write_requires_admin_role(self):
+        """A staff-only user (without the 'admin' role) cannot write to the Group API."""
+        url = reverse('api-group-detail', kwargs={'pk': self.group.pk})
+
+        # Sanity check - the default test user is staff, but has no assigned roles
+        self.assertTrue(self.user.is_staff)
+
+        # Read access is still permitted
+        self.get(url, expected_code=200)
+
+        # Write access is rejected, as the user does not have the 'admin' role
+        self.patch(url, {'name': 'renamed-group'}, expected_code=403)
+
+        self.group.refresh_from_db()
+        self.assertNotEqual(self.group.name, 'renamed-group')
+
+        # Once the 'admin' role is granted, the write succeeds
+        self.assignRole('admin.change')
+        self.patch(url, {'name': 'renamed-group'}, expected_code=200)
+
+        self.group.refresh_from_db()
+        self.assertEqual(self.group.name, 'renamed-group')
+
+    def test_ruleset_write_requires_admin_role(self):
+        """A staff-only user cannot self-escalate permissions via the RuleSet API."""
+        admin_ruleset = self.group.rule_sets.get(name='admin')
+        url = reverse('api-ruleset-detail', kwargs={'pk': admin_ruleset.pk})
+
+        # Sanity check - the default test user is staff, but has no assigned roles
+        self.assertTrue(self.user.is_staff)
+        self.assertFalse(admin_ruleset.can_change)
+
+        # Read access is still permitted
+        self.get(url, expected_code=200)
+
+        # Attempt to self-escalate to full 'admin' ruleset permissions
+        self.patch(
+            url,
+            {'can_view': True, 'can_add': True, 'can_change': True, 'can_delete': True},
+            expected_code=403,
+        )
+
+        admin_ruleset.refresh_from_db()
+        self.assertFalse(admin_ruleset.can_change)
+
+        # Granting the 'admin' role directly (not via the API) allows the write
+        self.assignRole('admin.change')
+        self.patch(url, {'can_delete': True}, expected_code=200)
+
+        admin_ruleset.refresh_from_db()
+        self.assertTrue(admin_ruleset.can_delete)
+
+    def test_non_staff_user_read_only(self):
+        """A non-staff, non-admin authenticated user retains read-only access."""
+        self.user.is_staff = False
+        self.user.save()
+
+        group_url = reverse('api-group-detail', kwargs={'pk': self.group.pk})
+        ruleset_url = reverse(
+            'api-ruleset-detail',
+            kwargs={'pk': self.group.rule_sets.get(name='admin').pk},
+        )
+
+        self.get(group_url, expected_code=200)
+        self.get(ruleset_url, expected_code=200)
+
+        self.patch(group_url, {'name': 'renamed-group'}, expected_code=403)
+        self.patch(ruleset_url, {'can_change': True}, expected_code=403)

@@ -1,10 +1,25 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 529
+INVENTREE_API_VERSION = 534
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v534 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/12672
+    - rename 'tags' filter to 'tag_name' to avoid name clash with the 'tags' field on various API endpoints
+
+v533 -> 2026-08-18 : https://github.com/inventree/InvenTree/pull/12317
+    - Refactors the PurchaseOrder, PurchaseOrderLineItem and PurchaseOrderExtraLine API endpoints to use DRF viewsets
+
+v532 -> 2026-08-15 : https://github.com/inventree/InvenTree/pull/12422
+    - Adds "piece_count" field to the BomItem model and API endpoints (for cut-to-length parts)
+
+v531 -> 2026-08-13 : https://github.com/inventree/InvenTree/pull/12635
+    - Adds "bulk update" support for the ReturnOrderLineItem API endpoint
+
+v530 -> 2026-07-28 : https://github.com/inventree/InvenTree/pull/12487
+    - Adds searching against ReportSnippet API endpoint
 
 v529 -> 2026-07-26 : https://github.com/inventree/InvenTree/pull/12471
     - Adds "on_order" filter to the Part API

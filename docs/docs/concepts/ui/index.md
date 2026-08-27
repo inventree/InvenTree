@@ -24,8 +24,8 @@ From the main menu, users can access the following items:
 - [Dashboard](#dashboard)
 - [Global Search](./global_search.md)
 - [Spotlight](#spotlight)
-- [Barcode Scanning](#barcode-scanning)
-- [Notifications](#notifications)
+- [Barcode Scanning](../../barcodes/index.md#quick-scan)
+- [Notifications](../../part/notification.md)
 - [User Menu](#user-menu)
 
 As well as allowing navigation to the following main sections:
@@ -83,6 +83,17 @@ The panel sidebar can be collapsed to provide more space for the main content ar
 On some pages, a breadcrumb navigation trail is provided at the top of the page, just below the main menu. Breadcrumbs provide a visual representation of the user's current location within the system and allow for easy navigation back to previous pages.
 
 {{ image("concepts/ui_breadcrumbs.png", "Breadcrumb Navigation") }}
+
+#### Filtered Detail Navigation
+
+When a detail page is opened from a table that supports detail navigation, the breadcrumb bar can show the current position in the table result set together with Previous and Next buttons. The navigation uses the table's active filters and sort order, so moving between records follows the same list the user was viewing.
+
+The navigation context is stored in the detail URL. This makes links shareable and allows the same filtered result set to be restored when the link is opened in a fresh browser context. The position indicator uses the full result count, while the buttons are hidden at the first and last records.
+
+The navigation controls also work with detail pages provided by frontend plugins that use the standard table and page components.
+
+!!! tip
+    This behaviour can be controlled by users with the setting `USE_TABLE_NAVIGATION`.
 
 ### Navigation Tree
 

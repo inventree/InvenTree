@@ -35,13 +35,22 @@ The following options are available when creating a new build output:
 | Option | Description |
 | --- | --- |
 | Quantity | The number of items to create as part of this build output |
-| Serial Numbers | If this is a tracked build output, the serial numbers for each of the generated outputs |
+| Serial Numbers | Optional serial numbers for the generated outputs - see [below](#creating-outputs-without-serial-numbers) for when this field may be left blank |
 | Batch Code | Batch code identifier for the generated output(s) |
 | Auto Allocate Serial Numbers | If selected, any available tracked subcomponents which already have serial numbers assigned, will be automatically assigned to matching build outputs |
 
 ### Specifying Serial Numbers
 
 Refer to the [serial number generation guide](../stock/tracking.md#generating-serial-numbers) for further information on serial number input.
+
+### Creating Outputs Without Serial Numbers
+
+Serial numbers are not required when creating a build output, even if the part being built is marked as [trackable](../part/trackable.md). This allows a batch quantity to be produced up-front - for example, a quantity of PCBs which will not be individually serialized until later in the manufacturing process, or units received into an [external build order](./external.md) which are not yet serialized.
+
+If the *Serial Numbers* field is left blank, a single build output is created with the specified *Quantity*, rather than one output per unit. This output remains a single (non-serialized) [stock item](../stock/index.md), which can be serialized at a later stage - for example, by splitting it into individual units and assigning serial numbers - before it is [completed](#complete-build-output).
+
+!!! note "Tracked BOM Items"
+    If the [Bill of Materials](./bom.md) for the assembled part contains tracked sub-components, serial numbers are still required when creating build outputs - see [tracked build outputs](./allocate.md#tracked-build-outputs) for further information.
 
 ## Complete Build Output
 

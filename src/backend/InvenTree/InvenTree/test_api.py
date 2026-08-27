@@ -4,12 +4,15 @@ from base64 import b64encode
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from django.core.exceptions import AppRegistryNotReady
+from django.test import TestCase
 from django.urls import reverse
 
 from rest_framework import status
 
 from InvenTree.api import read_license_file
 from InvenTree.api_version import INVENTREE_API_VERSION
+from InvenTree.exceptions import exception_handler
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
 from InvenTree.version import inventreeApiText, parse_version_text
 from users.ruleset import RULESET_NAMES
@@ -64,6 +67,25 @@ class HTMLAPITests(InvenTreeTestCase):
         for method in methods:
             response = getattr(self.client, method)('/api/anc')
             self.assertEqual(response.status_code, 404)
+
+
+class ExceptionHandlerTests(TestCase):
+    """Tests for the custom DRF exception handler."""
+
+    def test_app_registry_not_ready(self):
+        """AppRegistryNotReady should be reported as a transient 503, not a 500.
+
+        Regression test: this can be raised on a request served by one thread while
+        the plugin registry is mid-reload on another (see
+        plugin.registry.PluginsRegistry._reload_apps, which briefly clears Django's
+        app registry) - it is not a genuine server error, so the client should be
+        told to retry rather than seeing a hard failure.
+        """
+        response = exception_handler(AppRegistryNotReady(), {})
+
+        self.assertEqual(response.status_code, 503)
+        self.assertEqual(response.data['error'], 'AppRegistryNotReady')
+        self.assertEqual(response['Retry-After'], '1')
 
 
 class ApiAccessTests(InvenTreeAPITestCase):
@@ -310,6 +332,26 @@ class SearchTests(InvenTreeAPITestCase):
         for d in data:
             response = self.post(reverse('api-search'), d, expected_code=400)
             self.assertIn('Search term must be provided', str(response.data))
+
+    def test_viewset_pagination(self):
+        """Test that a paginated 'next' link can be constructed for viewset-backed result types.
+
+        Regression test: the search endpoint dispatches to viewset-based result types
+        (e.g. PurchaseOrderViewSet) using a synthetic request object. If that request
+        is missing WSGI environ data (e.g. SERVER_NAME), pagination raises a KeyError
+        when building the 'next' link.
+        """
+        self.assignRole('purchase_order.view')
+
+        response = self.post(
+            reverse('api-search'),
+            {'search': 'PO', 'limit': 2, 'purchaseorder': {}},
+            expected_code=200,
+        )
+
+        result = response.data['purchaseorder']
+        self.assertGreater(result['count'], 2)
+        self.assertIsNotNone(result['next'])
 
     def test_results(self):
         """Test individual result types."""
