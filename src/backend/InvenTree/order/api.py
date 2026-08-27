@@ -1478,12 +1478,14 @@ class SalesOrderAllocationList(
         'shipment_date': 'shipment__shipment_date',
     }
 
-    search_fields = {
+    search_fields = [
         'item__part__name',
         'item__part__IPN',
         'item__serial',
         'item__batch',
-    }
+        'line__order__reference',
+        'line__order__customer__name',
+    ]
 
 
 class SalesOrderAllocationDetail(SalesOrderAllocationMixin, RetrieveUpdateDestroyAPI):
@@ -2294,12 +2296,13 @@ class TransferOrderAllocationList(
         'order': 'line__order__reference',
     }
 
-    search_fields = {
+    search_fields = [
         'item__part__name',
         'item__part__IPN',
         'item__serial',
         'item__batch',
-    }
+        'line__order__reference',
+    ]
 
 
 class TransferOrderAllocationDetail(

@@ -192,13 +192,8 @@ class CurrencyViewSet(viewsets.GenericViewSet):
 
         # Information on last update
         try:
-            backend = ExchangeBackend.objects.filter(name='InvenTreeExchange')
-
-            if backend.exists():
-                backend = backend.first()
-                updated = backend.last_update
-            else:
-                updated = None
+            backend = ExchangeBackend.objects.filter(name='InvenTreeExchange').first()
+            updated = backend.last_update if backend else None
         except Exception:
             updated = None
 
@@ -242,7 +237,7 @@ class SettingsList(ListAPI):
 
     ordering_fields = ['pk', 'key', 'name']
 
-    search_fields = ['key']
+    search_fields = ['key', 'value']
 
 
 class GlobalSettingsList(SettingsList):
