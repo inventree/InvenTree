@@ -1238,7 +1238,7 @@ class RepairOrderFilter(FilterSet):
         """Metaclass options."""
 
         model = RepairOrder
-        fields = ['customer']
+        fields = ['customer', 'part']
 
     status = rest_filters.NumberFilter(label=_('Order Status'), method='filter_status')
 
@@ -1354,6 +1354,7 @@ class RepairOrderList(ListCreateAPI):
     ordering_fields = [
         'reference',
         'customer__name',
+        'part__name',
         'status',
         'creation_date',
         'target_date',
@@ -1364,7 +1365,13 @@ class RepairOrderList(ListCreateAPI):
 
     ordering = '-reference'
 
-    search_fields = ['reference', 'description', 'symptoms', 'customer__name']
+    search_fields = [
+        'reference',
+        'description',
+        'symptoms',
+        'customer__name',
+        'part__name',
+    ]
 
 
 class RepairOrderDetail(RetrieveUpdateDestroyAPI):

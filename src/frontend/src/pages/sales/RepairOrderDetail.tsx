@@ -56,7 +56,8 @@ export default function RepairOrderDetail() {
     endpoint: ApiEndpoints.repair_order_list,
     pk: id,
     params: {
-      customer_detail: true
+      customer_detail: true,
+      part_detail: true
     }
   });
 
@@ -90,6 +91,14 @@ export default function RepairOrderDetail() {
         icon: 'customers',
         label: t`Customer`,
         model: ModelType.company
+      },
+      {
+        type: 'link',
+        name: 'part',
+        icon: 'part',
+        label: t`Part`,
+        model: ModelType.part,
+        hidden: !order.part
       },
       {
         type: 'text',

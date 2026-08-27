@@ -2673,6 +2673,16 @@ class RepairOrder(
         help_text=_('Customer reference'),
     )
 
+    part = models.ForeignKey(
+        'part.Part',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='repair_orders',
+        verbose_name=_('Part'),
+        help_text=_('Part associated with this repair order'),
+    )
+
     description = models.CharField(
         max_length=250,
         verbose_name=_('Description'),

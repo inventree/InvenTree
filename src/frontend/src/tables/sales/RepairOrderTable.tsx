@@ -7,6 +7,7 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
+import { RenderPart } from '../../components/render/Part';
 import {
   CompanyColumn,
   CompletionDateColumn,
@@ -55,6 +56,15 @@ export function RepairOrderTable({
         render: (record: any) => (
           <CompanyColumn company={record.customer_detail} />
         )
+      },
+      {
+        accessor: 'part',
+        title: t`Part`,
+        sortable: true,
+        render: (record: any) =>
+          record.part_detail ? (
+            <RenderPart instance={record.part_detail} />
+          ) : null
       },
       DescriptionColumn({}),
       {
@@ -116,7 +126,8 @@ export function RepairOrderTable({
         props={{
           params: {
             customer: customerId,
-            customer_detail: true
+            customer_detail: true,
+            part_detail: true
           },
           tableFilters: tableFilters,
           tableActions: tableActions,

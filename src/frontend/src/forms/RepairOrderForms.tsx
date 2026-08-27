@@ -18,6 +18,11 @@ export function useRepairOrderFields({
           active: true
         }
       },
+      part: {
+        filters: {
+          active: true
+        }
+      },
       symptoms: {}
     };
 

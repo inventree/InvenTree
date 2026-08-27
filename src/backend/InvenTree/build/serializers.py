@@ -1859,6 +1859,8 @@ class RepairOrderSerializer(
             'reference',
             'customer',
             'customer_detail',
+            'part',
+            'part_detail',
             'description',
             'symptoms',
             'status',
@@ -1882,6 +1884,18 @@ class RepairOrderSerializer(
             'allow_null': True,
         },
         prefetch_fields=['customer'],
+    )
+
+    part_detail = OptionalField(
+        serializer_class=part_serializers.PartBriefSerializer,
+        serializer_kwargs={
+            'source': 'part',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['part', 'part__category', 'part__pricing_data'],
     )
 
     issued_by_detail = OptionalField(
