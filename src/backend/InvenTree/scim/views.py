@@ -1,10 +1,4 @@
-"""SCIM 2.0 protocol views (RFC7643 / RFC7644).
-
-Implements the minimal set of endpoints required by common Identity
-Providers (Okta, Microsoft Entra ID, OneLogin, ...) to provision Users and
-Groups: discovery (ServiceProviderConfig / ResourceTypes / Schemas), and CRUD
-+ PATCH on Users and Groups.
-"""
+"""SCIM 2.0 protocol views."""
 
 from django.contrib.auth.models import Group as DjangoGroup
 from django.contrib.auth.models import User as DjangoUser
@@ -12,6 +6,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 
 import structlog
+from drf_spectacular.utils import extend_schema
 from pydantic import ValidationError
 from rest_framework.decorators import (
     api_view,
@@ -138,8 +133,9 @@ class ScimAPIView(APIView):
         return super().handle_exception(exc)  # pragma: no cover
 
 
+@extend_schema(exclude=True)
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
-@renderer_classes([ScimRenderer, JSONRenderer])
+@renderer_classes([ScimRenderer])
 @permission_classes([])
 @authentication_classes([])
 def scim_error_view(request, format=None):
