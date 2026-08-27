@@ -395,7 +395,7 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
     roles = []
 
     def setUp(self):
-        """Create a RepairOrder for tests to act on."""
+        """Create a RepairOrder and a Part for tests to act on."""
         super().setUp()
 
         # Grant repair_order add/change/delete so most tests pass.
@@ -405,8 +405,11 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         self.assignRole('repair_order.delete')
         self.assignRole('repair_order.view')
 
+        # Pick a Part from the fixture so part-related tests have a target.
+        self.part = Part.objects.first()
+
         self.ro = RepairOrder.objects.create(
-            reference='RO-0003', description='API test repair order'
+            reference='RO-0003', description='API test repair order', part=self.part
         )
 
     # ── Permission gating ──────────────────────────────────────────
@@ -436,11 +439,14 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         """POST /api/build/repair/ creates an order with correct defaults."""
         url = reverse('api-repair-order-list')
         data = self.post(
-            url, {'description': 'Created via API'}, expected_code=201
+            url,
+            {'description': 'Created via API', 'part': self.part.pk},
+            expected_code=201,
         ).data
 
         self.assertIn('pk', data)
         self.assertEqual(data['status'], RepairOrderStatus.PENDING.value)
+        self.assertEqual(data['part'], self.part.pk)
 
     # ── Serializer validation ──────────────────────────────────────
 
@@ -703,5 +709,62 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         url = reverse('api-repair-order-list')
 
         response = self.get(url, {'search': self.ro.reference}, expected_code=200)
+        pks = {item['pk'] for item in response.data}
+        self.assertIn(self.ro.pk, pks)
+
+    # ── Part field coverage ─────────────────────────────────────────
+
+    def test_repair_order_part_functionality(self):
+        """Verify the part FK and part_detail serializer field work end-to-end.
+
+        Covers:
+        - Creating a RepairOrder with a part assigned (via API)
+        - part_detail nested serializer is returned in list responses
+        - Filtering the list endpoint by part PK
+        - Searching by part name
+        """
+        url = reverse('api-repair-order-list')
+
+        # ── 1. Create via API with a part assigned ─────────────────
+        data = self.post(
+            url,
+            {'description': 'Part-scoped repair order', 'part': self.part.pk},
+            expected_code=201,
+        ).data
+
+        new_pk = data['pk']
+        self.assertEqual(data['part'], self.part.pk)
+
+        # ── 2. part_detail nested serializer is present ────────────
+        response = self.get(url, {'part_detail': True}, expected_code=200)
+        items = {item['pk']: item for item in response.data}
+
+        # self.ro was created in setUp with self.part — verify it too
+        self.assertIn(self.ro.pk, items)
+        ro_data = items[self.ro.pk]
+        self.assertIn('part_detail', ro_data)
+        self.assertIsNotNone(ro_data['part_detail'])
+        self.assertEqual(ro_data['part_detail']['pk'], self.part.pk)
+
+        # The newly created order should also carry part_detail
+        self.assertIn(new_pk, items)
+        self.assertEqual(items[new_pk]['part_detail']['pk'], self.part.pk)
+
+        # ── 3. Filter by part PK ───────────────────────────────────
+        response = self.get(url, {'part': self.part.pk}, expected_code=200)
+        pks = {item['pk'] for item in response.data}
+        self.assertIn(self.ro.pk, pks)
+        self.assertIn(new_pk, pks)
+
+        # A repair order without a part should NOT appear in this filter
+        no_part_ro = RepairOrder.objects.create(
+            reference='RO-NOPART', description='No part assigned'
+        )
+        response = self.get(url, {'part': self.part.pk}, expected_code=200)
+        pks = {item['pk'] for item in response.data}
+        self.assertNotIn(no_part_ro.pk, pks)
+
+        # ── 4. Search by part name hits part__name search field ────
+        response = self.get(url, {'search': self.part.name}, expected_code=200)
         pks = {item['pk'] for item in response.data}
         self.assertIn(self.ro.pk, pks)
