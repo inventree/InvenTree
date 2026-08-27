@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from '../baseFixtures';
+import { readeruser } from '../defaults';
 import {
   clearTableFilters,
   clickOnParamFilter,
@@ -14,6 +15,9 @@ import {
   showParametricView,
   showTableView
 } from '../helpers';
+
+import { adminuser } from '../defaults';
+
 import { doCachedLogin } from '../login';
 import { setPluginState, setSettingState } from '../settings';
 
@@ -503,6 +507,7 @@ test('Parts - Details - Upload image modal accepts pasted clipboard image', asyn
   await page
     .getByRole('tabpanel', { name: 'Part Details' })
     .locator('img')
+    .first()
     .hover();
 
   const uploadButton = page
@@ -550,10 +555,13 @@ test('Parts - Details - Upload image modal accepts pasted clipboard image', asyn
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Image uploaded').waitFor();
 
+  await page.reload();
+
   // Now remove the associated image
   await page
     .getByRole('tabpanel', { name: 'Part Details' })
     .locator('img')
+    .first()
     .hover();
   await page
     .getByRole('button', { name: 'action-button-delete-image' })
@@ -672,7 +680,10 @@ test('Parts - Allocations', async ({ browser }) => {
 
 test('Parts - Pricing (Nothing, BOM)', async ({ browser }) => {
   // Part with no history
-  const page = await doCachedLogin(browser, { url: 'part/82/pricing' });
+  const page = await doCachedLogin(browser, {
+    url: 'part/82/pricing',
+    user: adminuser
+  });
 
   await page.getByText('Small plastic enclosure, black').waitFor();
   await loadTab(page, 'Part Pricing');
@@ -709,6 +720,18 @@ test('Parts - Pricing (Nothing, BOM)', async ({ browser }) => {
   await page.getByRole('button', { name: 'Quantity Not sorted' }).waitFor();
   await page.getByRole('button', { name: 'Unit Price Not sorted' }).waitFor();
 
+  // View part details via detail drawer
+  await page
+    .getByRole('cell', { name: 'Thumbnail Blue Paint' })
+    .first()
+    .click();
+  await page.getByRole('link', { name: 'details-part-' }).first().waitFor();
+  await page.getByText('Allocated to Build Orders').waitFor();
+  await page.getByText('440[litres]').waitFor();
+
+  // Close the drawer with the escape key
+  await page.keyboard.press('Escape');
+
   // We expect some pricing data to be displayed
   await page
     .getByLabel('BOM Pricing')
@@ -722,6 +745,10 @@ test('Parts - Pricing (Nothing, BOM)', async ({ browser }) => {
     .getByRole('table')
     .getByText('Wood Screw')
     .click();
+
+  // We need to navigate via the preview drawer
+  await page.getByRole('link', { name: 'details-part-98' }).click();
+
   await page.waitForURL('**/part/98/**');
 });
 
@@ -1164,7 +1191,15 @@ test('Parts - Import supplier part', async ({ browser }) => {
   await page
     .getByRole('button', { name: 'action-button-import-part-BOLT-Steel-M5-5' })
     .click();
+
+  await page.waitForLoadState('networkidle');
   await page.waitForTimeout(250);
+
+  await page
+    .getByRole('textbox', { name: 'tree-field-field' })
+    .fill('electronics');
+  await page.getByText('ElectronicsElectronic').click();
+
   await page
     .getByRole('button', { name: 'action-button-import-part-now' })
     .click();
@@ -1182,4 +1217,76 @@ test('Parts - Import supplier part', async ({ browser }) => {
   // cleanup imported part if it exists
   await deletePart('BOLT-Steel-M5-5');
   await deletePart('BOLT-M5-5');
+});
+
+test('Parts - Add button visible in Parametric View (admin)', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, { url: 'part/category/4/parts' });
+
+  await showParametricView(page);
+
+  await expect(
+    page.getByRole('button', { name: 'action-menu-add-parts' })
+  ).toBeVisible();
+});
+
+test('Parts - Add button opens Create Part form in Parametric View', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, { url: 'part/category/4/parts' });
+
+  await showParametricView(page);
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await expect(page.getByText('Add Part', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
+test('Parts - Add button hidden in Parametric View (reader)', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/4/parts',
+    user: readeruser
+  });
+
+  await showParametricView(page);
+
+  await expect(
+    page.getByRole('button', { name: 'action-menu-add-parts' })
+  ).toHaveCount(0);
+});
+
+test('Parts - Create part via Parametric View submits to API', async ({
+  browser
+}) => {
+  const testPartName = 'TEST-PARAMETRIC-ADD-PART';
+
+  await deletePart(testPartName);
+
+  const page = await doCachedLogin(browser, { url: 'part/category/4/parts' });
+
+  await showParametricView(page);
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await page.getByLabel('text-field-name', { exact: true }).fill(testPartName);
+  await page
+    .getByLabel('text-field-description', { exact: true })
+    .fill('Created from Parametric View integration test');
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForLoadState('networkidle');
+
+  await page.getByText(testPartName).first().waitFor();
+
+  await deletePart(testPartName);
 });

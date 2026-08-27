@@ -15,7 +15,7 @@ import { api, setApiDefaults } from '../App';
 import { useLocalState } from '../states/LocalState';
 import { useServerApiState } from '../states/ServerApiState';
 import { useUserState } from '../states/UserState';
-import { fetchGlobalStates } from '../states/states';
+import { fetchGlobalStates, resetGlobalStatesFetched } from '../states/states';
 import { showLoginNotification } from './notifications';
 import { generateUrl } from './urls';
 
@@ -171,7 +171,7 @@ export async function doBasicLogin(
   // we are successfully logged in - gather required states for app
   if (loginDone) {
     await fetchUserState();
-    await fetchGlobalStates();
+    await fetchGlobalStates(true);
     observeProfile();
   } else if (!success) {
     clearUserState();
@@ -240,6 +240,7 @@ export const doLogout = async (navigate: NavigateFunction) => {
   clearUserState();
   clearCsrfCookie();
   setAuthContext(undefined);
+  resetGlobalStatesFetched();
   navigate('/login');
 };
 
@@ -455,6 +456,10 @@ export const checkLoginState = async (
     MfaSetupOk(navigate).then(async (isOk) => {
       if (isOk) {
         observeProfile();
+        // Not forced: this runs on every page load's auth check, and
+        // LanguageContext's own locale-activation effect (which always
+        // runs first, since it gates rendering of this component's whole
+        // route tree) will typically have already triggered this fetch.
         await fetchGlobalStates();
 
         followRedirect(navigate, redirect);
@@ -505,7 +510,7 @@ function handleSuccessFullAuth(
     if (isOk) {
       await fetchUserState();
       observeProfile();
-      await fetchGlobalStates();
+      await fetchGlobalStates(true);
 
       if (location !== undefined) {
         followRedirect(navigate, location?.state);

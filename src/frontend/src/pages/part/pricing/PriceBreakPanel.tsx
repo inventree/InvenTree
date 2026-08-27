@@ -161,7 +161,8 @@ export default function PriceBreakPanel({
               part: part.pk
             },
             tableActions: tableActions,
-            rowActions: rowActions
+            rowActions: rowActions,
+            enableDownload: true
           }}
         />
         {table.records.length > 0 ? (

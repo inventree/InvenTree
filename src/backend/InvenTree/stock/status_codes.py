@@ -6,24 +6,27 @@ from generic.states import ColorEnum, StatusCode
 
 
 class StockStatus(StatusCode):
-    """Status codes for Stock."""
+    """Status codes for Stock.
 
-    OK = 10, _('OK'), ColorEnum.success  # Item is OK
-    ATTENTION = 50, _('Attention needed'), ColorEnum.warning  # Item requires attention
-    DAMAGED = 55, _('Damaged'), ColorEnum.warning  # Item is damaged
-    DESTROYED = 60, _('Destroyed'), ColorEnum.danger  # Item is destroyed
-    REJECTED = 65, _('Rejected'), ColorEnum.danger  # Item is rejected
-    LOST = 70, _('Lost'), ColorEnum.dark  # Item has been lost
-    QUARANTINED = (
-        75,
-        _('Quarantined'),
-        ColorEnum.info,
-    )  # Item has been quarantined and is unavailable
-    RETURNED = (
-        85,
-        _('Returned'),
-        ColorEnum.warning,
-    )  # Item has been returned from a customer
+    Attributes:
+        OK: Stock item is healthy, nothing wrong to report
+        ATTENTION: Stock item hasn't been checked or tested yet
+        DAMAGED: Stock item is not functional in its present state
+        DESTROYED: Stock item has been destroyed
+        REJECTED: Stock item did not pass the quality control standards
+        LOST: Stock item has been lost
+        QUARANTINED: Stock item has been intentionally isolated and is unavailable
+        RETURNED: Stock item has been returned from a customer
+    """
+
+    OK = 10, _('OK'), ColorEnum.success
+    ATTENTION = 50, _('Attention needed'), ColorEnum.warning
+    DAMAGED = 55, _('Damaged'), ColorEnum.warning
+    DESTROYED = 60, _('Destroyed'), ColorEnum.danger
+    REJECTED = 65, _('Rejected'), ColorEnum.danger
+    LOST = 70, _('Lost'), ColorEnum.dark
+    QUARANTINED = 75, _('Quarantined'), ColorEnum.info
+    RETURNED = 85, _('Returned'), ColorEnum.warning
 
 
 class StockStatusGroups:
@@ -39,7 +42,55 @@ class StockStatusGroups:
 
 
 class StockHistoryCode(StatusCode):
-    """Status codes for StockHistory."""
+    """Status codes for StockHistory.
+
+    Attributes:
+        LEGACY: Legacy stock tracking entry, created before tracking entry types existed
+        CREATED: Stock item created
+
+        EDITED: Stock item was manually edited
+        ASSIGNED_SERIAL: A serial number was assigned to the stock item
+
+        STOCK_COUNT: Stock was manually counted
+        STOCK_ADD: Stock was manually added
+        STOCK_REMOVE: Stock was manually removed
+        STOCK_SERIALIZED: Stock items were serialized
+
+        RETURNED_TO_STOCK: Stock item was returned to stock
+
+        STOCK_MOVE: The location of the stock item was changed
+        STOCK_UPDATE: Stock item was updated
+
+        INSTALLED_INTO_ASSEMBLY: Stock item was installed into an assembly
+        REMOVED_FROM_ASSEMBLY: Stock item was removed from an assembly
+
+        INSTALLED_CHILD_ITEM: A component item was installed into this stock item
+        REMOVED_CHILD_ITEM: A component item was removed from this stock item
+
+        SPLIT_FROM_PARENT: Stock item was split from a parent stock item
+        SPLIT_CHILD_ITEM: A child stock item was split from this stock item
+
+        MERGED_STOCK_ITEMS: Multiple stock items were merged into this one
+
+        DISASSEMBLED: Stock item was disassembled into its component items
+        CREATED_FROM_DISASSEMBLY: Stock item was created as a result of disassembly
+
+        CONVERTED_TO_VARIANT: Stock item was converted to a variant of its part
+
+        BUILD_OUTPUT_CREATED: Stock item was created as a build order output
+        BUILD_OUTPUT_COMPLETED: Stock item (a build order output) was completed
+        BUILD_OUTPUT_REJECTED: Stock item (a build order output) was rejected
+        BUILD_CONSUMED: Stock item was consumed by a build order
+
+        SHIPPED_AGAINST_SALES_ORDER: Stock item was shipped against a Sales Order
+
+        RECEIVED_AGAINST_PURCHASE_ORDER: Stock item was received against a Purchase Order
+
+        RETURNED_AGAINST_RETURN_ORDER: Stock item was returned against a Return Order
+
+        SENT_TO_CUSTOMER: Stock item was sent to a customer
+        RETURNED_FROM_CUSTOMER: Stock item was returned from a customer
+    """
 
     LEGACY = 0, _('Legacy stock tracking entry')
 
@@ -55,7 +106,7 @@ class StockHistoryCode(StatusCode):
     STOCK_REMOVE = 12, _('Stock manually removed')
     STOCK_SERIALIZED = 13, _('Serialized stock items')
 
-    RETURNED_TO_STOCK = 15, _('Returned to stock')  # Stock item returned to stock
+    RETURNED_TO_STOCK = 15, _('Returned to stock')
 
     # Location operations
     STOCK_MOVE = 20, _('Location changed')
@@ -74,6 +125,10 @@ class StockHistoryCode(StatusCode):
 
     # Stock merging operations
     MERGED_STOCK_ITEMS = 45, _('Merged stock items')
+
+    # Stock disassembly operations
+    DISASSEMBLED = 46, _('Disassembled into components')
+    CREATED_FROM_DISASSEMBLY = 47, _('Created from disassembly')
 
     # Convert stock item to variant
     CONVERTED_TO_VARIANT = 48, _('Converted to variant')

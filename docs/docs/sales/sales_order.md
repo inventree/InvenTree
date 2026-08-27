@@ -31,28 +31,7 @@ The following view modes are available:
 
 Each Sales Order has a specific status code, which represents the state of the order:
 
-| Status | Description |
-| --- | --- |
-| Pending | The sales order has been created, but has not been finalized or submitted |
-| In Progress | The sales order has been issued, and is in progress |
-| On Hold | The sales order has been placed on hold, but is still active |
-| Shipped | The sales order has been shipped, but is not yet complete |
-| Complete | The sales order is fully completed, and is now closed |
-| Cancelled | The sales order was cancelled, and is now closed |
-| Lost | The sales order was lost, and is now closed |
-| Returned | The sales order was returned, and is now closed |
-
-**Source Code**
-
-Refer to the source code for the Sales Order status codes:
-
-::: order.status_codes.SalesOrderStatus
-    options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
+{{ statuscodes("SalesOrderStatus") }}
 
 Sales Order Status supports [custom states](../concepts/custom_states.md).
 
@@ -89,6 +68,13 @@ Once the "Add Line Item" form opens, select a part in the list.
     Only parts that have the "Salable" attribute enabled will be shown and can be selected
 
 Fill out the rest of the form then click on <span class="badge inventree confirm">Submit</span>
+
+!!! info "Discount"
+    An optional [discount](../concepts/pricing.md#line-item-discount) percentage can be applied to each line item.
+
+### Extra Line Items
+
+While [line items](#add-line-items) must reference a particular part, extra line items are available for any other itemized information that needs to be conveyed with the order - for example freight charges or service fees. Extra line items support an optional [discount](../concepts/pricing.md#line-item-discount) percentage, the same as regular line items.
 
 ## Shipments
 

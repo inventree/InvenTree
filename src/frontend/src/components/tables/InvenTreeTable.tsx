@@ -5,7 +5,7 @@ import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { resolveItem } from '@lib/functions/Conversion';
 import { cancelEvent } from '@lib/functions/Events';
 import { mapFields } from '@lib/functions/Forms';
-import { getDetailUrl } from '@lib/functions/Navigation';
+import { eventModified, getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { useStoredTableState } from '@lib/states/StoredTableState';
 import type { TableFilter } from '@lib/types/Filters';
@@ -34,9 +34,16 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useApi } from '../../contexts/ApiContext';
+import {
+  buildDetailNavigationUrl,
+  excludeDetailNavigationParams,
+  extractDetailNavigationParams,
+  isSafeApiListUrl
+} from '../../functions/DetailNavigation';
 import { extractAvailableFields } from '../../functions/forms';
 import { showApiErrorMessage } from '../../functions/notifications';
 import { useLocalState } from '../../states/LocalState';
+import { usePreviewDrawerState } from '../../states/PreviewDrawerState';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { ColumnFilterPopover } from './FilterSelectDrawer';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
@@ -105,9 +112,27 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
 
   const userSettings = useUserSettingsState();
 
+  const showPreviewPanel = useMemo(() => {
+    return userSettings.isSet('ENABLE_PREVIEW_PANEL');
+  }, [userSettings]);
+
   const stickyTableHeader = useMemo(() => {
     return userSettings.isSet('STICKY_TABLE_HEADER');
   }, [userSettings]);
+
+  const tableSearchParams = useMemo(() => {
+    return searchParams
+      ? excludeDetailNavigationParams(searchParams)
+      : undefined;
+  }, [searchParams]);
+
+  const clearTableSearchParams = useCallback(() => {
+    setSearchParams?.(
+      searchParams
+        ? extractDetailNavigationParams(searchParams)
+        : new URLSearchParams()
+    );
+  }, [searchParams, setSearchParams]);
 
   // Key used for caching table data
   const cacheKey = useMemo(() => {
@@ -450,7 +475,11 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   useEffect(() => {
     tableState.setPage(1);
     tableState.clearSelectedRecords();
-  }, [tableState.searchTerm, tableState.filterSet.activeFilters, searchParams]);
+  }, [
+    tableState.searchTerm,
+    tableState.filterSet.activeFilters,
+    tableSearchParams
+  ]);
 
   // Account for invalid page offsets
   useEffect(() => {
@@ -484,9 +513,9 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         ...tableProps.params
       };
 
-      if (searchParams && searchParams.size > 0) {
+      if (tableSearchParams && tableSearchParams.size > 0) {
         // Allow override of filters based on URL query parameters
-        for (const [key, value] of searchParams) {
+        for (const [key, value] of tableSearchParams) {
           queryParams[key] = value;
         }
       } else if (tableState.filterSet.activeFilters) {
@@ -525,9 +554,52 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
       tableProps.params,
       tableProps.enablePagination,
       tableState.filterSet.activeFilters,
-      searchParams,
+      tableSearchParams,
       tableState.searchTerm,
       getOrderingTerm
+    ]
+  );
+
+  const getDetailNavigationUrl = useCallback(
+    (record: any, index: number): string | undefined => {
+      if (
+        !tableProps.modelType ||
+        !url ||
+        !isSafeApiListUrl(url) ||
+        index < 0
+      ) {
+        return undefined;
+      }
+
+      const accessor = tableProps.modelField ?? 'pk';
+      const pk = resolveItem(record, accessor);
+
+      if (pk === null || pk === undefined || pk === '') {
+        return undefined;
+      }
+
+      const absoluteIndex =
+        tableProps.enablePagination === false
+          ? index
+          : (tableState.page - 1) * pageSize + index;
+
+      return buildDetailNavigationUrl({
+        detailUrl: getDetailUrl(tableProps.modelType, pk),
+        apiUrl: url,
+        queryParams: getTableFilters(false),
+        index: absoluteIndex,
+        pk,
+        field: accessor
+      });
+    },
+    [
+      getTableFilters,
+      pageSize,
+      tableProps.enablePagination,
+      tableProps.modelField,
+      tableProps.modelType,
+      tableState.page,
+      url
     ]
   );
 
@@ -667,7 +739,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   // Refetch data when the query parameters change
   useEffect(() => {
     refetch();
-  }, [searchParams]);
+  }, [tableSearchParams]);
 
   useEffect(() => {
     const loading: boolean =
@@ -700,6 +772,25 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     tableState.setRecords(tableData ?? apiData ?? []);
   }, [tableData, apiData]);
 
+  const previewDrawer = usePreviewDrawerState();
+
+  // Callback to display "preview" view for a row (if available)
+  const showRowPreview = useCallback(
+    (pk: string | number, targetUrl?: string) => {
+      if (tableProps.modelType && pk) {
+        previewDrawer.openPreview(
+          tableProps.modelType,
+          Number(pk),
+          undefined,
+          undefined,
+          undefined,
+          targetUrl
+        );
+      }
+    },
+    [tableProps.modelType]
+  );
+
   // Callback when a cell is clicked
   const handleCellClick = useCallback(
     ({
@@ -730,13 +821,28 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
 
         if (pk) {
           cancelEvent(event);
-          // If a model type is provided, navigate to the detail view for that model
-          const url = getDetailUrl(tableProps.modelType, pk);
-          navigateToLink(url, navigate, event);
+          // If a model type is provided and USE_TABLE_NAVIGATION is enabled, navigate to the detail view for that model
+          const detailUrl = userSettings.isSet('USE_TABLE_NAVIGATION')
+            ? (getDetailNavigationUrl(record, index) ??
+              getDetailUrl(tableProps.modelType, pk))
+            : getDetailUrl(tableProps.modelType, pk);
+
+          if (!showPreviewPanel || eventModified(event as any)) {
+            navigateToLink(detailUrl, navigate, event);
+          } else {
+            showRowPreview(pk, detailUrl);
+          }
         }
       }
     },
-    [props.onRowClick, props.onCellClick]
+    [
+      getDetailNavigationUrl,
+      props.onCellClick,
+      props.onRowClick,
+      showPreviewPanel,
+      showRowPreview,
+      tableProps.modelType
+    ]
   );
 
   const supportsContextMenu = useMemo(() => {
@@ -744,65 +850,90 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   }, [props.onCellContextMenu, props.rowActions, props.modelType]);
 
   // Callback when a cell is right-clicked
-  const handleCellContextMenu = ({
-    record,
-    column,
-    event
-  }: {
-    record: any;
-    column: any;
-    event: any;
-  }) => {
-    if (column?.noContext === true) {
-      return;
-    }
-    if (props.onCellContextMenu) {
-      return props.onCellContextMenu(record, event);
-    }
-
-    const empty = () => {};
-    let items: ContextMenuItemOptions[] = [];
-
-    if (!!props.rowActions) {
-      items = props.rowActions(record).map((action) => ({
-        key: action.title ?? '',
-        title: action.title ?? '',
-        color: action.color,
-        icon: action.icon,
-        onClick: action.onClick ?? empty,
-        hidden: action.hidden,
-        disabled: action.disabled
-      }));
-    }
-
-    if (props.modelType && props.detailAction !== false) {
-      // Add action to navigate to the detail view
-      const accessor = props.modelField ?? 'pk';
-      const pk = resolveItem(record, accessor);
-      const url = getDetailUrl(props.modelType, pk);
-
-      const model: string | undefined =
-        ModelInformationDict[props.modelType]?.label?.();
-
-      let detailsText: string = t`View details`;
-
-      if (!!model) {
-        detailsText = t`View ${model}`;
+  const handleCellContextMenu = useCallback(
+    ({
+      record,
+      column,
+      event
+    }: {
+      record: any;
+      column: any;
+      event: any;
+    }) => {
+      if (column?.noContext === true) {
+        return;
+      }
+      if (props.onCellContextMenu) {
+        return props.onCellContextMenu(record, event);
       }
 
-      items.push({
-        key: 'detail',
-        title: detailsText,
-        icon: <IconArrowRight />,
-        onClick: (event: any) => {
-          cancelEvent(event);
-          navigateToLink(url, navigate, event);
-        }
-      });
-    }
+      const empty = () => {};
+      let items: ContextMenuItemOptions[] = [];
 
-    return showContextMenu?.(items)(event);
-  };
+      if (!!props.rowActions) {
+        items = props.rowActions(record).map((action) => ({
+          key: action.title ?? '',
+          title: action.title ?? '',
+          color: action.color,
+          icon: action.icon,
+          onClick: action.onClick ?? empty,
+          hidden: action.hidden,
+          disabled: action.disabled
+        }));
+      }
+
+      if (props.modelType && props.detailAction !== false) {
+        // Add action to navigate to the detail view
+        const accessor = props.modelField ?? 'pk';
+        const pk = resolveItem(record, accessor);
+        const recordIndex = tableState.records.findIndex(
+          (item) => String(resolveItem(item, accessor)) === String(pk)
+        );
+        const detailUrl = userSettings.isSet('USE_TABLE_NAVIGATION')
+          ? (getDetailNavigationUrl(record, recordIndex) ??
+            getDetailUrl(props.modelType, pk))
+          : getDetailUrl(props.modelType, pk);
+
+        const model: string | undefined =
+          ModelInformationDict[props.modelType]?.label?.();
+
+        let detailsText: string = t`View details`;
+
+        if (!!model) {
+          detailsText = t`View ${model}`;
+        }
+
+        items.push({
+          key: 'detail',
+          title: detailsText,
+          icon: <IconArrowRight />,
+          onClick: (event: any) => {
+            cancelEvent(event);
+            if (!showPreviewPanel || eventModified(event as any)) {
+              navigateToLink(detailUrl, navigate, event);
+            } else {
+              showRowPreview(pk, detailUrl);
+            }
+          }
+        });
+      }
+
+      return showContextMenu?.(items)(event);
+    },
+    [
+      props.onCellContextMenu,
+      props.rowActions,
+      props.modelType,
+      props.detailAction,
+      props.modelField,
+      getDetailNavigationUrl,
+      showPreviewPanel,
+      showRowPreview,
+      showContextMenu,
+      navigate,
+      tableState.records
+    ]
+  );
 
   // Pagination refresh table if pageSize changes
   const updatePageSize = useCallback((size: number) => {
@@ -891,8 +1022,8 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
               hasSwitchableColumns={hasSwitchableColumns}
               columns={dataColumns}
               filters={filters}
-              queryFilters={searchParams}
-              clearQueryFilters={() => setSearchParams?.(new URLSearchParams())}
+              queryFilters={tableSearchParams}
+              clearQueryFilters={clearTableSearchParams}
               toggleColumn={toggleColumn}
             />
           </Boundary>

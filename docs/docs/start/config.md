@@ -65,7 +65,7 @@ The following basic options are available:
 {{ configsetting("INVENTREE_SITE_URL") }} Specify a fixed site URL |
 {{ configsetting("INVENTREE_TIMEZONE") }} Server timezone |
 {{ configsetting("INVENTREE_ADMIN_ENABLED") }} Enable the [django administrator interface]({% include "django.html" %}/ref/contrib/admin/) |
-{{ configsetting("INVENTREE_ADMIN_URL") }}  URL for accessing [admin interface](../settings/admin.md) |
+{{ configsetting("INVENTREE_ADMIN_URL") }}  URL for accessing the [Database Admin interface](../settings/db_admin.md) |
 {{ configsetting("INVENTREE_LANGUAGE") }} Default language |
 {{ configsetting("INVENTREE_AUTO_UPDATE") }} Database migrations will be run automatically |
 
@@ -122,6 +122,9 @@ Depending on how your InvenTree installation is configured, you will need to pay
 !!! success "INVENTREE_SITE_URL"
     If you have specified the `INVENTREE_SITE_URL`, this will automatically be used as a trusted CSRF and CORS host (see below).
 
+!!! tip "Running Behind a Reverse Proxy"
+    If InvenTree is served behind an existing reverse proxy (e.g. NGINX, Traefik) with SSL termination happening upstream, refer to the [worked example](./processes.md#integrating-with-existing-proxy) for the combination of `INVENTREE_TRUSTED_ORIGINS` and `INVENTREE_USE_X_FORWARDED_*` settings that setup requires.
+
 {{ configtable() }}
 {{ configsetting("INVENTREE_ALLOWED_HOSTS") }} List of allowed hosts |
 {{ configsetting("INVENTREE_TRUSTED_ORIGINS", default="Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list.") }} List of trusted origins. Refer to the [django documentation]({% include "django.html" %}/ref/settings/#csrf-trusted-origins) |
@@ -136,7 +139,8 @@ Depending on how your InvenTree installation is configured, you will need to pay
 | `INVENTREE_X_FORWARDED_PROTO_NAME` | `x_forwarded_proto_name` | `HTTP_X_FORWARDED_PROTO` | Name of the header to use for forwarded protocol information |
 {{ configsetting("INVENTREE_SESSION_COOKIE_SECURE") }} Enforce secure session cookies |
 {{ configsetting("INVENTREE_COOKIE_SAMESITE") }} Session cookie mode. Must be one of `Strict | Lax | None | False`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) and the [django documentation]({% include "django.html" %}/ref/settings/#std-setting-SESSION_COOKIE_SAMESITE) for more information. |
-
+{{ configsetting("INVENTREE_THROTTLE_ANON") }} Throttle rate for anonymous users (e.g. '20/minute') |
+{{ configsetting("INVENTREE_THROTTLE_USER") }} Throttle rate for authenticated users (e.g. '5/second') |
 
 ### Debug Mode
 

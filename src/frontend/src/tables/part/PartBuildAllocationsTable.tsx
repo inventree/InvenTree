@@ -5,7 +5,6 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ProgressBar } from '@lib/components/ProgressBar';
-import { RowViewAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -22,6 +21,8 @@ import {
 } from '../../components/tables/ColumnRenderers';
 import { IncludeVariantsFilter } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
 import { useUserState } from '../../states/UserState';
 import { BuildLineSubTable } from '../build/BuildLineTable';
@@ -120,7 +121,7 @@ export default function PartBuildAllocationsTable({
   const rowActions = useCallback(
     (record: any) => {
       return [
-        RowViewAction({
+        AppRowViewAction({
           title: t`View Build Order`,
           modelType: ModelType.build,
           modelId: record.build,

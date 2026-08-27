@@ -1,9 +1,8 @@
 import { t } from '@lingui/core/macro';
-import { IconSquareArrowRight } from '@tabler/icons-react';
+import { IconFlag, IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
-import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
@@ -16,6 +15,8 @@ import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import { Alert } from '@mantine/core';
+import { LineItemCreationMenu } from '../../components/items/LineItemCreationMenu';
 import {
   DateColumn,
   DescriptionColumn,
@@ -23,6 +24,7 @@ import {
   LinkColumn,
   NoteColumn,
   PartColumn,
+  PercentageColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   StatusColumn,
@@ -31,16 +33,19 @@ import {
 import { StatusFilterOptions } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { formatCurrency } from '../../defaults/formatters';
+import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   useReceiveReturnOrderLineItems,
   useReturnOrderLineItemFields
 } from '../../forms/ReturnOrderForms';
 import {
+  useBulkEditApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
+import { useImporterState } from '../../states/ImporterState';
 import { useUserState } from '../../states/UserState';
 
 export default function ReturnOrderLineItemTable({
@@ -60,6 +65,7 @@ export default function ReturnOrderLineItemTable({
 }>) {
   const table = useTable('return-order-line-item');
   const user = useUserState();
+  const openImporter = useImporterState((state) => state.openImporter);
 
   const roStatus = useStatusCodes({ modelType: ModelType.returnorder });
 
@@ -109,6 +115,48 @@ export default function ReturnOrderLineItemTable({
     table: table
   });
 
+  const importSessionFields = useMemo(() => {
+    const fields = dataImporterSessionFields({
+      modelType: ModelType.returnorderlineitem
+    });
+
+    fields.field_overrides.value = {
+      order: orderId
+    };
+
+    fields.field_defaults.value = {
+      price_currency: currency
+    };
+
+    return fields;
+  }, [orderId, currency]);
+
+  const importLineItems = useCreateApiFormModal({
+    url: ApiEndpoints.import_session_list,
+    title: t`Import Line Items`,
+    fields: importSessionFields,
+    onFormSuccess: (response: any) => {
+      openImporter(response.pk, {
+        onClose: table.refreshTable
+      });
+    }
+  });
+
+  const setOutcome = useBulkEditApiFormModal({
+    url: ApiEndpoints.return_order_line_list,
+    items: table.selectedIds,
+    title: t`Set Outcome`,
+    preFormContent: (
+      <Alert color='blue'>
+        {t`Adjust the outcome for the selected line items.`}
+      </Alert>
+    ),
+    fields: {
+      outcome: {}
+    },
+    onFormSuccess: table.refreshTable
+  });
+
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       LineItemColumn({}),
@@ -148,6 +196,11 @@ export default function ReturnOrderLineItemTable({
         render: (record: any) =>
           formatCurrency(record.price, { currency: record.price_currency })
       },
+      PercentageColumn({
+        accessor: 'discount',
+        title: t`Discount`,
+        defaultVisible: false
+      }),
       DateColumn({
         accessor: 'target_date',
         title: t`Target Date`
@@ -181,13 +234,16 @@ export default function ReturnOrderLineItemTable({
 
   const tableActions = useMemo(() => {
     return [
-      <AddItemButton
-        key='add-line-item'
+      <LineItemCreationMenu
+        key='add-line-item-actions'
         tooltip={t`Add Line Item`}
+        addLabel={t`Add Line Item`}
+        importLabel={t`Import Line Items`}
         hidden={!editable || !user.hasAddRole(UserRoles.return_order)}
-        onClick={() => {
+        onAdd={() => {
           newLine.open();
         }}
+        onImport={() => importLineItems.open()}
       />,
       <ActionButton
         key='receive-items'
@@ -205,9 +261,26 @@ export default function ReturnOrderLineItemTable({
           receiveLineItems.open();
         }}
         disabled={table.selectedRecords.length == 0}
+      />,
+      <ActionButton
+        key='set-outcome'
+        tooltip={t`Set outcome for selected items`}
+        icon={<IconFlag />}
+        hidden={!editable || !user.hasChangeRole(UserRoles.return_order)}
+        onClick={() => {
+          setOutcome.open();
+        }}
+        disabled={table.selectedRecords.length == 0}
       />
     ];
-  }, [user, editable, inProgress, orderId, table.selectedRecords]);
+  }, [
+    user,
+    editable,
+    inProgress,
+    orderId,
+    table.selectedRecords,
+    importLineItems
+  ]);
 
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
 
@@ -260,6 +333,8 @@ export default function ReturnOrderLineItemTable({
       {editLine.modal}
       {deleteLine.modal}
       {receiveLineItems.modal}
+      {setOutcome.modal}
+      {importLineItems.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.return_order_line_list)}
         tableState={table}
@@ -273,7 +348,10 @@ export default function ReturnOrderLineItemTable({
           },
           defaultSortColumn: 'line',
           enableSelection:
-            inProgress && user.hasChangeRole(UserRoles.return_order),
+            editable && user.hasChangeRole(UserRoles.return_order),
+          enableBulkDelete:
+            editable && user.hasDeleteRole(UserRoles.return_order),
+          afterBulkDelete: orderDetailRefresh,
           tableActions: tableActions,
           tableFilters: tableFilters,
           rowActions: rowActions,

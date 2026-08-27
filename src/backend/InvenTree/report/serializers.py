@@ -37,9 +37,7 @@ class ReportSerializerBase(InvenTreeModelSerializer):
                 _('User must be authenticated to save report templates')
             )
 
-        instance = super().save(**kwargs)
-        instance.updated_by = user
-        instance.save(increment_revision=False)
+        instance = super().save(updated_by=user, **kwargs)
 
         return instance
 
@@ -140,8 +138,18 @@ class LabelPrintSerializer(serializers.Serializer):
 
     def __init__(self, *args, **kwargs):
         """Override the constructor to add the extra plugin fields."""
-        # Reset to a known state
-        self.Meta.fields = ['template', 'items', 'plugin']
+
+        # Give this instance its own 'Meta.fields' list, appended to below depending
+        # on which plugin is selected. `Meta` is otherwise a single class-level
+        # object shared by every instance of this serializer - mutating its 'fields'
+        # list in place would let concurrent requests selecting different plugins
+        # corrupt each other's field list.
+        class Meta(self.Meta):
+            """Per-instance metaclass options."""
+
+            fields = ['template', 'items', 'plugin']
+
+        self.Meta = Meta
 
         if plugin_serializer := kwargs.pop('plugin_serializer', None):
             for key, field in plugin_serializer.fields.items():

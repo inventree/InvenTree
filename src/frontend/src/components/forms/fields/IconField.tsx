@@ -17,7 +17,14 @@ import {
 import { useDebouncedValue, useElementSize } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
 import Fuse from 'fuse.js';
-import { startTransition, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  memo,
+  startTransition,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import { FixedSizeGrid as Grid } from 'react-window';
 
@@ -26,7 +33,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { useIconState } from '../../../states/IconState';
 import { ApiIcon } from '../../items/ApiIcon';
 
-export default function IconField({
+function IconField({
   controller,
   definition
 }: Readonly<{
@@ -53,6 +60,7 @@ export default function IconField({
           description={definition.description}
           required={definition.required}
           error={definition.error ?? error?.message}
+          aria-label={`icon-field-${field.name}`}
           ref={field.ref}
           component='button'
           type='button'
@@ -98,6 +106,8 @@ export default function IconField({
     </Combobox>
   );
 }
+
+export default memo(IconField);
 
 type RenderIconType = {
   package: string;

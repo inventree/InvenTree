@@ -248,6 +248,24 @@ class MeUserDetail(RetrieveUpdateAPI, UserDetail):
         """
         return None
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='roles',
+                type=bool,
+                location=OpenApiParameter.QUERY,
+                description='Include the roles and permissions associated with the current user in the response',
+            )
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        """Retrieve details for the current user.
+
+        Pass '?roles=true' to also include the user's roles and permissions
+        (previously only available via the separate '/user/me/roles/' endpoint).
+        """
+        return super().get(request, *args, **kwargs)
+
 
 class UserList(ListCreateAPI):
     """List endpoint for detail on all users.
@@ -290,7 +308,7 @@ class GroupMixin(SerializerContextMixin):
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
+    permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
 
 
 class GroupOutputOptions(OutputConfiguration):
@@ -327,7 +345,7 @@ class RuleSetMixin:
 
     queryset = RuleSet.objects.all()
     serializer_class = RuleSetSerializer
-    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
+    permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
 
 
 class RuleSetList(RuleSetMixin, ListAPI):

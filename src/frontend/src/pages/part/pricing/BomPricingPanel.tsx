@@ -19,6 +19,7 @@ import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import {
   DateColumn,
+  IPNColumn,
   PartColumn
 } from '../../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../components/tables/InvenTreeTable';
@@ -103,6 +104,9 @@ export default function BomPricingPanel({
         accessor: 'name',
         title: t`Component`,
         part: 'sub_part_detail'
+      }),
+      IPNColumn({
+        accessor: 'sub_part_detail.IPN'
       }),
       {
         accessor: 'quantity',

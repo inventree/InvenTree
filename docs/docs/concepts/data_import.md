@@ -4,7 +4,7 @@ title: Importing Data
 
 ## Importing Data
 
-External data can be imported via the admin interface, allowing for rapid integration of existing datasets, or bulk editing of table data.
+External data can be imported via the [Admin Center](../settings/admin.md#admin-center), allowing for rapid integration of existing datasets, or bulk editing of table data.
 
 !!! danger "Danger"
     Uploading bulk data directly is a non-reversible action.
@@ -39,6 +39,12 @@ Some models allow for mapping based on other "natural key" fields (e.g. the `ref
 
 Importing data is a multi-step process, which is managed via an *import session*. An import session is created when the user initiates a data import, and is used to track the progress of the data import process.
 
+### Import Session Status
+
+Each import session has a specific status code, indicating where it is in the import process:
+
+{{ statuscodes("DataImportStatusCode") }}
+
 ### Import Session List
 
 The import session is managed by the InvenTree server, and all import session data is stored on the server. As the import process can be time-consuming, the user can navigate away from the import page and return later to check on the progress of the import.
@@ -57,7 +63,7 @@ An import session can be initiated from a number of different contexts within th
 
 Staff users can create an import session from within the [Admin Center](../settings/admin.md#admin-center). This is a general-purpose import session, and the user will be required to select the type of data to import.
 
-Users can quickly navigate to the data import management page from the [spotlight search](../concepts/user_interface.md#spotlight), by searching for "import" and selecting the "Import data" option.
+Users can quickly navigate to the data import management page from the [spotlight search](./ui/index.md#spotlight), by searching for "import" and selecting the "Import data" option.
 
 ### Data Tables
 

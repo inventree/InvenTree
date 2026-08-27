@@ -98,7 +98,7 @@ class TagsFilter(rest_filters.CharFilter):
     """Filter which accepts a comma-separated list of tag names and returns only objects that have ALL of the specified tags.
 
     Example usage in a FilterSet:
-        tags = TagsFilter(label=_('Tags'))
+        tags = TagsFilter()
 
     Example query:
         ?tags=apple,banana   → returns only items tagged with both 'apple' AND 'banana'

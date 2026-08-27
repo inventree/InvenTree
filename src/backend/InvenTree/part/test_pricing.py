@@ -1,5 +1,7 @@
 """Unit tests for Part pricing calculations."""
 
+from unittest import mock
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.test.utils import override_settings
 
@@ -172,6 +174,39 @@ class PartPricingTests(InvenTreeTestCase):
 
         self.assertIsNone(pricing.supplier_price_min)
         self.assertIsNone(pricing.supplier_price_max)
+
+    @override_settings(TESTING_PRICING=True)
+    def test_supplier_part_pack_quantity_update(self):
+        """Test that changing pack_quantity on a SupplierPart triggers pricing recalculation."""
+        supplier = company.models.Company.objects.create(
+            name='Pack Test Supplier', is_supplier=True
+        )
+
+        sp = company.models.SupplierPart.objects.create(
+            supplier=supplier, part=self.part, SKU='PACK_TEST', pack_quantity='1'
+        )
+
+        company.models.SupplierPriceBreak.objects.create(
+            part=sp, quantity=1, price=50, price_currency='USD'
+        )
+
+        # Re-fetch pricing (the price break creation triggers the PartPricing row)
+        pricing = self.part.pricing
+        pricing.refresh_from_db()
+
+        # Price per unit should be $50 / 1 = $50
+        self.assertEqual(pricing.supplier_price_min, Money(50, 'USD'))
+
+        # Now update pack_quantity to 100 (i.e. 100 units per pack)
+        sp.pack_quantity = '100'
+        sp.save()
+
+        pricing = self.part.pricing
+        pricing.refresh_from_db()
+
+        # Price per unit should now be $50 / 100 = $0.50
+        self.assertEqual(pricing.supplier_price_min, Money('0.5', 'USD'))
+        self.assertEqual(pricing.supplier_price_max, Money('0.5', 'USD'))
 
     @override_settings(TESTING_PRICING=True)
     def test_internal_pricing(self):
@@ -430,6 +465,38 @@ class PartPricingTests(InvenTreeTestCase):
 
         # Check that PartPricing objects have been created
         self.assertEqual(part.models.PartPricing.objects.count(), 101)
+
+    def test_check_missing_pricing_batches_scheduling(self):
+        """check_missing_pricing() must batch its scheduling calls, not scan the task queue per part.
+
+        Regression test: without batching, each PartPricing.schedule_for_update() call triggers
+        offload_task() -> check_existing_task(), which scans and unpickles every row in the task
+        queue to look for a duplicate. Calling this once per part inside check_missing_pricing's
+        loops made scheduling cost grow with the queue backlog, which is what caused a background
+        worker timeout in production (Sentry: "Task exceeded maximum timeout value (90 seconds)"
+        raised from check_existing_task).
+        """
+        from part.tasks import check_missing_pricing
+
+        # Create some parts (deliberately not using TESTING_PRICING here, so that
+        # schedule_for_update() actually offloads via the task queue rather than running inline)
+        for ii in range(20):
+            part.models.Part.objects.create(
+                name=f'Part_{ii}', description='A test part'
+            )
+
+        # Ensure there is no pricing data
+        part.models.PartPricing.objects.all().delete()
+
+        with self.captureOnCommitCallbacks(execute=True):
+            with mock.patch('InvenTree.tasks.check_existing_task') as mock_check:
+                check_missing_pricing()
+
+        # Scheduling was batched - the per-call duplicate-check scan never ran
+        mock_check.assert_not_called()
+
+        # PartPricing objects were still created and scheduled for a background update
+        self.assertEqual(part.models.PartPricing.objects.count(), 21)
 
     @override_settings(TESTING_PRICING=True)
     def test_delete_part_with_stock_items(self):

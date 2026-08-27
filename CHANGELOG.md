@@ -9,10 +9,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#12507](https://github.com/inventree/InvenTree/pull/12507) calling an invalid or repeated state transition now raises a ValidationError. Plugins implementing state transitions should evaluate the PR and adapt their usage of transitions to gain the new safeguards.
+- [#12672](https://github.com/inventree/InvenTree/pull/12672) renames the newly added `tags` filter from 1.4.0 (https://github.com/inventree/InvenTree/pull/12077) to `tag_name` to remove a nameclash.
+
+
+### Added
+
+### Changed
+
+### Removed
+
+## 1.5.0 - 2026-08-11
+
+### Breaking Changes
+
+- [#12529](https://github.com/inventree/InvenTree/pull/12529) removes related detail fields on API endpoints for which the user does not have view permissions.
+- [#12360](https://github.com/inventree/InvenTree/pull/12360) removes the MPTT mixin from the StockItem model, and removes the self-referential tree structure from the database. This change was made to simplify the StockItem model and improve performance, as the MPTT tree structure was causing significant overhead in certain operations. Any external client applications which made use of the MPTT functionality will need to be updated to account for this change.
+- [#12320](https://github.com/inventree/InvenTree/pull/12320) changes the default behavior of the `invoke migrate` command. Now, it no longer generates new migrations by default. Instead, it will only apply existing migrations to the database. If you want to detect and generate new migrations, you must now explicitly use the `--detect` flag. This change was made to prevent accidental generation of migrations when running the command, which could lead to unexpected changes in the database schema. Additionally, `invoke update` will no longer result in new migrations being generated, and will only apply existing migrations to the database. This change was made to ensure that the update process is predictable and does not introduce unexpected changes to the database schema.
 - [#12223](https://github.com/inventree/InvenTree/pull/12223) removes support for python 3.11 and stops providing packages for Debian 11 and Ubuntu 20.04.
 
 ### Added
 
+- [#12422](https://github.com/inventree/InvenTree/pull/12422) adds a "piece_count" field to the BomItem model, for representing cut-to-length parts. The total material required is calculated as `quantity x piece_count`.
+- Adds configurable default for merging purchase order line items via the `PURCHASEORDER_MERGE_LINE_ITEMS` global setting
+- [#12393](https://github.com/inventree/InvenTree/pull/12393) adds "discount" attribute to order line items, allowing users to specify a discount for each line item on an order. The discount can be specified as either a percentage or a fixed amount, and is applied to the line item total when calculating the order total.
+- [#12391](https://github.com/inventree/InvenTree/pull/12391) adds facility for bulk deleting line items against orders
+- [#12388](https://github.com/inventree/InvenTree/pull/12388) adds uniqueness requirements options for the Parameter and ParameterTemplate models. This allows users to specify whether a parameter value should be unique for a given model type, or globally unique across all models.
+- [#12310](https://github.com/inventree/InvenTree/pull/12310) adds the ability to disassemble (or break apart) assembled stock items into their component parts, based on the Bill of Materials (BOM) associated with the stock item. This allows users to easily break down assembled items into their constituent parts, which can be useful for inventory management and tracking purposes.
+- [#12117](https://github.com/inventree/InvenTree/pull/12117) adds a "preview" drawer to the InvenTree table component, allowing users to preview the details of a selected row without navigating away from the table view. This feature is optional and can be enabled or disabled via the `PREVIEW_DRAWER_ENABLED` system setting.
+- [#12341](https://github.com/inventree/InvenTree/pull/12341) adds support for importing internal part prices.
 - [#12295](https://github.com/inventree/InvenTree/pull/12295) adds "consumable" field to the Part model and API endpoints
 - [#12250](https://github.com/inventree/InvenTree/pull/12250) adds "active" field to the ProjectCode model and API endpoints
 
@@ -30,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#12107](https://github.com/inventree/InvenTree/pull/12107) makes a breaking change to the `SalesOrderStatusGroups` enum, fixing a bug where the "shipped" status was not included in the "active" group. This change may affect any external client applications which make use of the `SalesOrderStatusGroups` enum, as the "shipped" status will now be included in the "active" group instead of the "complete" group. If you are using this enum in an external client application, you will need to update your application to account for this change.
 - [#9604](https://github.com/inventree/InvenTree/pull/9604) refactors user API endpoint to be less ambiguous
 - [#11893](https://github.com/inventree/InvenTree/pull/11893) bumps Node environment to version 24 LTS - this is only relevant if you build the frontend assets yourself
+- [#11951](https://github.com/inventree/InvenTree/pull/11951) adds API throtteling by default to make DoS attacks more difficult. This can be disabled by setting the `INVENTREE_THROTTLE_ANON` and `INVENTREE_THROTTLE_USER` settings to `None` (either via environment variable or config file). The default throttling rates are 20 requests per minute for anonymous users, and 20 requests per second for authenticated users.
 
 ### Added
 

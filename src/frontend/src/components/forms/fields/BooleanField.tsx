@@ -2,10 +2,10 @@ import { isTrue } from '@lib/functions/Conversion';
 import type { ApiFormFieldType } from '@lib/types/Forms';
 import { Switch } from '@mantine/core';
 import { useId } from '@mantine/hooks';
-import { useEffect, useMemo } from 'react';
+import { memo, useCallback, useEffect, useMemo } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
-export function BooleanField({
+function BooleanFieldComponent({
   controller,
   definition,
   fieldName,
@@ -37,6 +37,11 @@ export function BooleanField({
     return isTrue(value ?? definition.default ?? false);
   }, [value]);
 
+  const handleChange = useCallback(
+    (event: any) => onChange(event.currentTarget.checked || false),
+    [onChange]
+  );
+
   return (
     <Switch
       {...definition}
@@ -47,7 +52,9 @@ export function BooleanField({
       radius='lg'
       size='sm'
       error={definition.error ?? error?.message}
-      onChange={(event: any) => onChange(event.currentTarget.checked || false)}
+      onChange={handleChange}
     />
   );
 }
+
+export const BooleanField = memo(BooleanFieldComponent);

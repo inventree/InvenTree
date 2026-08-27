@@ -15,7 +15,7 @@ from datetime import timedelta as td
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = '1.5.0 dev'
+INVENTREE_SW_VERSION = '1.6.0 dev'
 
 # Minimum supported Python version
 MIN_PYTHON_VERSION = (3, 12)
@@ -133,27 +133,14 @@ def isInvenTreeDevelopmentVersion() -> bool:
     return inventreeVersion().endswith('dev')
 
 
-def inventreeDocsVersion() -> str:
-    """Return the version string matching the latest documentation.
-
-    Development -> "latest"
-    Release -> "major.minor.sub" e.g. "0.5.2"
-    """
-    if isInvenTreeDevelopmentVersion():
-        return 'latest'
-
-    return INVENTREE_SW_VERSION
-
-
 def inventreeDocUrl() -> str:
     """Return URL for InvenTree documentation site."""
-    tag = inventreeDocsVersion()
-    return f'https://docs.inventree.org/en/{tag}'
+    return 'https://docs.inventree.org'
 
 
 def inventreeAppUrl() -> str:
     """Return URL for InvenTree app site."""
-    return 'https://docs.inventree.org/en/stable/app/'
+    return 'https://docs.inventree.org/en/latest/app/'
 
 
 def inventreeGithubUrl() -> str:

@@ -53,6 +53,8 @@ A *Template* part is one which can have *variants* which exist underneath it. [R
 
 If a part is designated as an *Assembly* it can be created (or built) from other component parts. As an example, a circuit board assembly is made using multiple electronic components, which are tracked in the system. An *Assembly* Part has a Bill of Materials (BOM) which lists all the required sub-components. [Read further information about BOM management here](../manufacturing/bom.md).
 
+An assembled stock item can also be broken back down into its component parts, using the [disassembly](../stock/disassemble.md) process.
+
 ### Component
 
 If a part is designated as a *Component* it can be used as a sub-component of an *Assembly*. [Read further information about BOM management here](../manufacturing/bom.md)

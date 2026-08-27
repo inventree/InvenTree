@@ -26,6 +26,7 @@ import {
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { identifierString } from '@lib/functions/Conversion';
 import type { ApiFormFieldType } from '@lib/types/Forms';
+import { isEquivalent } from '../../../functions/comparison';
 import { InvenTreeIcon } from '../../../functions/icons';
 import { StandaloneField } from '../StandaloneField';
 
@@ -67,7 +68,20 @@ function TableFieldRow({
     );
   }
 
-  const nonFieldErrors = rowErrors?.non_field_errors;
+  // Render every error associated with this row, regardless of whether
+  // the modelRenderer also displays it next to a specific field -
+  // this guarantees no backend error is ever silently dropped
+  const rowErrorMessages: { key: string; message: string }[] = [];
+
+  if (rowErrors && typeof rowErrors === 'object') {
+    for (const [key, value] of Object.entries<any>(rowErrors)) {
+      const message = value?.message ?? value;
+
+      if (message) {
+        rowErrorMessages.push({ key, message });
+      }
+    }
+  }
 
   return (
     <>
@@ -78,17 +92,25 @@ function TableFieldRow({
         changeFn: changeFn,
         removeFn: removeFn
       })}
-      {nonFieldErrors && (
-        <Table.Tr key={`table-row-${rowId}-non-field-errors`}>
+      {rowErrorMessages.length > 0 && (
+        <Table.Tr key={`table-row-${rowId}-errors`}>
           <Table.Td colSpan={columnCount}>
-            <Group gap='xs'>
-              <ActionIcon size='sm' variant='transparent' c='red'>
-                <IconCornerDownRight />
-              </ActionIcon>
-              <Text size='xs' c='red'>
-                {nonFieldErrors.message ?? nonFieldErrors}
-              </Text>
-            </Group>
+            <Stack gap={4}>
+              {rowErrorMessages.map(({ key, message }) => (
+                <Group
+                  gap='xs'
+                  wrap='nowrap'
+                  key={`table-row-${rowId}-error-${key}`}
+                >
+                  <ActionIcon size='sm' variant='transparent' c='red'>
+                    <IconCornerDownRight />
+                  </ActionIcon>
+                  <Text size='xs' c='red'>
+                    {message}
+                  </Text>
+                </Group>
+              ))}
+            </Stack>
           </Table.Td>
         </Table.Tr>
       )}
@@ -97,42 +119,13 @@ function TableFieldRow({
 }
 
 // Memoize each table field row, so that we don't re-render the entire table when a single row is updated
-function areShallowEqual(previousValue: any, nextValue: any): boolean {
-  if (previousValue === nextValue) {
-    return true;
-  }
-
-  if (!previousValue || !nextValue) {
-    return false;
-  }
-
-  if (typeof previousValue !== 'object' || typeof nextValue !== 'object') {
-    return previousValue === nextValue;
-  }
-
-  const previousKeys = Object.keys(previousValue);
-  const nextKeys = Object.keys(nextValue);
-
-  if (previousKeys.length !== nextKeys.length) {
-    return false;
-  }
-
-  for (const key of previousKeys) {
-    if (previousValue[key] !== nextValue[key]) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
 const MemoizedTableFieldRow = memo(
   TableFieldRow,
   (previousProps, nextProps) => {
     return (
       previousProps.rowId === nextProps.rowId &&
-      areShallowEqual(previousProps.item, nextProps.item) &&
-      areShallowEqual(previousProps.rowErrors, nextProps.rowErrors) &&
+      isEquivalent(previousProps.item, nextProps.item) &&
+      isEquivalent(previousProps.rowErrors, nextProps.rowErrors) &&
       previousProps.modelRenderer === nextProps.modelRenderer &&
       previousProps.changeFn === nextProps.changeFn &&
       previousProps.removeFn === nextProps.removeFn &&
@@ -388,8 +381,8 @@ export const TableField = memo(
     return (
       previousProps.definition === nextProps.definition &&
       previousProps.fieldName === nextProps.fieldName &&
-      areShallowEqual(previousProps.value, nextProps.value) &&
-      areShallowEqual(previousProps.error, nextProps.error) &&
+      isEquivalent(previousProps.value, nextProps.value) &&
+      isEquivalent(previousProps.error, nextProps.error) &&
       previousProps.onChange === nextProps.onChange
     );
   }

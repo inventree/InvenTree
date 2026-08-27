@@ -6,8 +6,9 @@ from pathlib import Path
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
-from django.http import JsonResponse
+from django.http import HttpRequest, JsonResponse
 from django.urls import path, reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.base import RedirectView
@@ -30,6 +31,8 @@ from common.settings import get_global_setting
 from InvenTree import helpers, ready
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
+from InvenTree.tasks import batch_offload_tasks
+from plugin.base.event.events import batch_events
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 from users.permissions import check_user_permission, prefetch_rule_sets
@@ -510,7 +513,7 @@ class BulkCreateMixin:
                 if has_unique_errors:
                     raise ValidationError(unique_errors)
 
-            with transaction.atomic():
+            with transaction.atomic(), batch_events(), batch_offload_tasks():
                 for item in data:
                     serializer = self.get_serializer(data=item)
                     if serializer.is_valid():
@@ -534,7 +537,11 @@ class BulkUpdateMixin(BulkOperationMixin):
 
     Bulk update allows for multiple items to be updated in a single API query,
     rather than using multiple API calls to the various detail endpoints.
+
+    Each instance is validated and saved individually, so that any custom save methods are triggered.
     """
+
+    BULK_ID_FIELD: str = 'pk'
 
     def validate_update(self, queryset, request) -> None:
         """Perform validation right before updating.
@@ -579,17 +586,35 @@ class BulkUpdateMixin(BulkOperationMixin):
         # Perform the update operation
         data = request.data
 
-        n = queryset.count()
+        # Extract the primary key values up-front:
+        # Each instance is re-fetched from the database immediately before it is
+        # updated, as saving one instance may alter database state which other
+        # instances in the queryset depend on (e.g. MPTT tree structure fields).
+        # Saving a stale instance can result in database corruption (and it must
+        # be the *instance* that is fresh - refresh_from_db is not sufficient here,
+        # as MPTT caches original field values when the instance is loaded).
+        pk_values = sorted(queryset.values_list(self.BULK_ID_FIELD, flat=True))
 
         instance_data = []
 
-        with transaction.atomic():
+        with transaction.atomic(), batch_events(), batch_offload_tasks():
             # Perform object update
             # Note that we do not perform a bulk-update operation here,
             # as we want to trigger any custom post_save methods on the model
 
             # Run validation first
-            for instance in queryset:
+            for pk in pk_values:
+                try:
+                    instance = queryset.select_for_update(of=('self',)).get(**{
+                        self.BULK_ID_FIELD: pk
+                    })
+                except ObjectDoesNotExist:
+                    raise ValidationError({
+                        'non_field_errors': _(
+                            'Item no longer matches the provided criteria'
+                        )
+                    })
+
                 serializer = self.get_serializer(instance, data=data, partial=True)
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
@@ -597,7 +622,7 @@ class BulkUpdateMixin(BulkOperationMixin):
                 instance_data.append(serializer.data)
 
         return Response(
-            {'success': f'Updated {n} items', 'items': instance_data}, status=200
+            {'success': 'Updated multiple items', 'items': instance_data}, status=200
         )
 
 
@@ -669,7 +694,7 @@ class CommonBulkDeleteMixin(BulkOperationMixin):
         # Keep track of how many items we deleted
         n_deleted = queryset.count()
 
-        with transaction.atomic():
+        with transaction.atomic(), batch_events(), batch_offload_tasks():
             # Perform object deletion
             # Note that we do not perform a bulk-delete operation here,
             # as we want to trigger any custom post_delete methods on the model
@@ -755,7 +780,7 @@ class APISearchView(GenericAPIView):
             'supplierpart': company.api.SupplierPartList,
             'part': part.api.PartList,
             'partcategory': part.api.CategoryList,
-            'purchaseorder': order.api.PurchaseOrderList,
+            'purchaseorder': order.api.PurchaseOrderViewSet,
             'returnorder': order.api.ReturnOrderList,
             'salesorder': order.api.SalesOrderList,
             'salesordershipment': order.api.SalesOrderShipmentList,
@@ -819,7 +844,10 @@ class APISearchView(GenericAPIView):
                 if type(params) is not dict:
                     continue
 
-                view = cls()
+                is_viewset = issubclass(cls, viewsets.GenericViewSet) or issubclass(
+                    cls, viewsets.ViewSetMixin
+                )
+                view = cls if is_viewset else cls()
 
                 # Override regular query params with specific ones for this search request
                 cloned_request._request.GET = params
@@ -838,7 +866,25 @@ class APISearchView(GenericAPIView):
                     continue
 
                 try:
-                    results[key] = view.list(request, *args, **kwargs).data
+                    if is_viewset:
+                        # use dummy request to call the list method of the viewset
+                        req = HttpRequest()
+                        req.method = 'GET'
+                        req.user = request.user
+                        req.GET = params
+
+                        # Copy META from the original request, so that host/scheme
+                        # information is available (e.g. for pagination links).
+                        # Strip content-length/type, as this is a synthetic GET
+                        # request with no body of its own to parse.
+                        req.META = request.META.copy()
+                        req.META.pop('CONTENT_LENGTH', None)
+                        req.META.pop('CONTENT_TYPE', None)
+
+                        list_method = cls.as_view({'get': 'list'})(req, *args, **kwargs)
+                    else:
+                        list_method = view.list(request, *args, **kwargs)
+                    results[key] = list_method.data
                 except Exception as exc:
                     results[key] = {'error': str(exc)}
 

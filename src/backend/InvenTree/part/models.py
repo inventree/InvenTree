@@ -9,7 +9,7 @@ import os
 import re
 from datetime import timedelta
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
-from typing import TypedDict, cast
+from typing import Optional, TypedDict, cast
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -35,6 +35,7 @@ from mptt.models import TreeForeignKey
 
 import common.currency
 import common.models
+import company.models
 import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.helpers
@@ -51,6 +52,7 @@ from common.currency import currency_code_default
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from InvenTree import helpers, validators
+from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize
@@ -1003,6 +1005,7 @@ class Part(
         return InvenTree.helpers.increment_serial_number(sn, self)
 
     @property
+    @report.mixins.report_attribute()
     def full_name(self) -> str:
         """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in InvenTree settings."""
         return part_helpers.render_part_full_name(self)
@@ -1050,11 +1053,20 @@ class Part(
             raise ValidationError(_('Duplicate part revision already exists.'))
 
         # Ensure unique across (Name, revision, IPN) (as specified)
-        if (self.revision or self.IPN) and (
-            Part.objects
-            .exclude(pk=self.pk)
-            .filter(name=self.name, revision=self.revision, IPN=self.IPN)
-            .exists()
+        # Note: the 'unique_part' database constraint only rejects a row when
+        # *all three* fields are non-null (Postgres treats NULL as distinct from
+        # NULL), so mirror that here rather than skipping whenever either field
+        # is merely blank - an empty string ('') still collides with another
+        # empty string at the database level, unlike None/NULL.
+        if (
+            self.IPN is not None
+            and self.revision is not None
+            and (
+                Part.objects
+                .exclude(pk=self.pk)
+                .filter(name=self.name, revision=self.revision, IPN=self.IPN)
+                .exists()
+            )
         ):
             raise ValidationError(
                 _('Part with this Name, IPN and Revision already exists.')
@@ -1214,7 +1226,8 @@ class Part(
         return None
 
     @property
-    def default_supplier(self):
+    @report.mixins.report_attribute()
+    def default_supplier(self) -> Optional[company.models.SupplierPart]:
         """Return the default (primary) SupplierPart for this Part.
 
         This function is included for backwards compatibility,
@@ -1369,14 +1382,15 @@ class Part(
     )
 
     @property
-    def category_path(self):
+    def category_path(self) -> str:
         """Return the category path of this Part instance."""
         if self.category:
             return self.category.pathstring
         return ''
 
     @property
-    def available_stock(self):
+    @report.mixins.report_attribute()
+    def available_stock(self) -> Decimal:
         """Return the total available stock.
 
         - This subtracts stock which is already allocated to builds
@@ -1614,7 +1628,8 @@ class Part(
             PartStar.objects.filter(part=self, user=user).delete()
 
     @property
-    def can_build(self):
+    @report.mixins.report_attribute()
+    def can_build(self) -> Decimal:
         """Return the number of units that can be build with available stock."""
         import part.filters
 
@@ -1646,7 +1661,7 @@ class Part(
         return int(max(can_build_quantity, 0))
 
     @property
-    def active_builds(self):
+    def active_builds(self) -> int:
         """Return a list of outstanding builds.
 
         Builds marked as 'complete' or 'cancelled' are ignored
@@ -1654,11 +1669,9 @@ class Part(
         return self.builds.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
 
     @property
-    def quantity_being_built(self, include_variants: bool = True):
+    @report.mixins.report_attribute()
+    def quantity_being_built(self) -> Decimal:
         """Return the current number of parts currently being built.
-
-        Arguments:
-            include_variants: If True, include variants of this part in the calculation
 
         Note: This is the total quantity of Build orders, *not* the number of build outputs.
               In this fashion, it is the "projected" quantity of builds
@@ -1667,12 +1680,8 @@ class Part(
             status__in=BuildStatusGroups.ACTIVE_CODES
         )
 
-        if include_variants:
-            # If we are including variants, get all parts in the variant tree
-            builds = builds.filter(part__in=self.get_descendants(include_self=True))
-        else:
-            # Only look at this part
-            builds = builds.filter(part=self)
+        # We are including variants, get all parts in the variant tree
+        builds = builds.filter(part__in=self.get_descendants(include_self=True))
 
         quantity = 0
 
@@ -1683,7 +1692,7 @@ class Part(
         return quantity
 
     @property
-    def quantity_in_production(self, include_variants: bool = True):
+    def quantity_in_production(self, include_variants: bool = True) -> Decimal:
         """Quantity of this part currently actively in production.
 
         Arguments:
@@ -1877,7 +1886,8 @@ class Part(
         return query['t']
 
     @property
-    def total_stock(self):
+    @report.mixins.report_attribute()
+    def total_stock(self) -> Decimal:
         """Return the total stock quantity for this part.
 
         - Part may be stored in multiple locations
@@ -2030,7 +2040,7 @@ class Part(
         return list(parts)
 
     @property
-    def has_bom(self):
+    def has_bom(self) -> bool:
         """Return True if this Part instance has any BOM items."""
         return self.get_bom_items().exists()
 
@@ -2042,7 +2052,7 @@ class Part(
         return queryset
 
     @property
-    def has_trackable_parts(self):
+    def has_trackable_parts(self) -> bool:
         """Return True if any parts linked in the Bill of Materials are trackable.
 
         This is important when building the part.
@@ -2050,16 +2060,16 @@ class Part(
         return self.get_trackable_parts().exists()
 
     @property
-    def bom_count(self):
+    def bom_count(self) -> int:
         """Return the number of items contained in the BOM for this part."""
         return self.get_bom_items().count()
 
     @property
-    def used_in_count(self):
+    def used_in_count(self) -> int:
         """Return the number of part BOMs that this part appears in."""
         return len(self.get_used_in())
 
-    def get_bom_hash(self):
+    def get_bom_hash(self) -> str:
         """Return a checksum hash for the BOM for this part.
 
         Used to determine if the BOM has changed (and needs to be signed off!)
@@ -2068,7 +2078,14 @@ class Part(
         result_hash = hashlib.md5(str(self.id).encode())
 
         # List *all* BOM items (including inherited ones!)
-        bom_items = self.get_bom_items().all().prefetch_related('part', 'sub_part')
+        # Note: We must order the BOM items in a consistent way, otherwise the hash will change if the order of the items changes
+        bom_items = (
+            self
+            .get_bom_items()
+            .all()
+            .prefetch_related('part', 'sub_part')
+            .order_by('pk')
+        )
 
         for item in bom_items:
             result_hash.update(str(item.get_item_hash()).encode())
@@ -2141,7 +2158,7 @@ class Part(
         if parts is None:
             parts = set()
 
-        bom_items = self.get_bom_items()
+        bom_items = self.get_bom_items().prefetch_related('sub_part')
 
         for bom_item in bom_items:
             sub_part = bom_item.sub_part
@@ -2214,150 +2231,6 @@ class Part(
             # which can cause issues down the track
             pass
 
-    def get_price_info(self, quantity=1, buy=True, bom=True, internal=False):
-        """Return a simplified pricing string for this part.
-
-        Args:
-            quantity: Number of units to calculate price for
-            buy: Include supplier pricing (default = True)
-            bom: Include BOM pricing (default = True)
-            internal: Include internal pricing (default = False)
-        """
-        price_range = self.get_price_range(quantity, buy, bom, internal)
-
-        if price_range is None:
-            return None
-
-        min_price, max_price = price_range
-
-        if min_price == max_price:
-            return min_price
-
-        min_price = normalize(min_price)
-        max_price = normalize(max_price)
-
-        return f'{min_price} - {max_price}'
-
-    def get_supplier_price_range(self, quantity=1):
-        """Return the supplier price range of this part.
-
-        Actions:
-        - Checks if there is any supplier pricing information associated with this Part
-        - Iterate through available supplier pricing and select (min, max)
-        - Returns tuple of (min, max)
-
-        Arguments:
-            quantity: Quantity at which to calculate price (default=1)
-
-        Returns: (min, max) tuple or (None, None) if no supplier pricing available
-        """
-        min_price = None
-        max_price = None
-
-        for supplier in self.supplier_parts.all():
-            price = supplier.get_price(quantity)
-
-            if price is None:
-                continue
-
-            if min_price is None or price < min_price:
-                min_price = price
-
-            if max_price is None or price > max_price:
-                max_price = price
-
-        if min_price is None or max_price is None:
-            return None
-
-        min_price = normalize(min_price)
-        max_price = normalize(max_price)
-
-        return (min_price, max_price)
-
-    def get_bom_price_range(self, quantity=1, internal=False, purchase=False):
-        """Return the price range of the BOM for this part.
-
-        Adds the minimum price for all components in the BOM.
-        Note: If the BOM contains items without pricing information,
-        these items cannot be included in the BOM!
-        """
-        min_price = None
-        max_price = None
-
-        for item in self.get_bom_items().select_related('sub_part'):
-            if item.sub_part.pk == self.pk:
-                logger.warning('WARNING: BomItem ID %s contains itself in BOM', item.pk)
-                continue
-
-            q = Decimal(quantity)
-            i = Decimal(item.quantity)
-
-            prices = item.sub_part.get_price_range(
-                q * i, internal=internal, purchase=purchase
-            )
-
-            if prices is None:
-                continue
-
-            low, high = prices
-
-            if min_price is None:
-                min_price = 0
-
-            if max_price is None:
-                max_price = 0
-
-            min_price += low
-            max_price += high
-
-        if min_price is None or max_price is None:
-            return None
-
-        min_price = normalize(min_price)
-        max_price = normalize(max_price)
-
-        return (min_price, max_price)
-
-    def get_price_range(
-        self, quantity=1, buy=True, bom=True, internal=False, purchase=False
-    ):
-        """Return the price range for this part.
-
-        This price can be either:
-        - Supplier price (if purchased from suppliers)
-        - BOM price (if built from other parts)
-        - Internal price (if set for the part)
-        - Purchase price (if set for the part)
-
-        Returns:
-            Minimum of the supplier, BOM, internal or purchase price. If no pricing available, returns None
-        """
-        # only get internal price if set and should be used
-        if internal and self.has_internal_price_breaks:
-            internal_price = self.get_internal_price(quantity)
-            return internal_price, internal_price
-
-        # only get purchase price if set and should be used
-        if purchase:
-            purchase_price = self.get_purchase_price(quantity)
-            if purchase_price:
-                return purchase_price
-
-        buy_price_range = self.get_supplier_price_range(quantity) if buy else None
-        bom_price_range = (
-            self.get_bom_price_range(quantity, internal=internal) if bom else None
-        )
-
-        if buy_price_range is None:
-            return bom_price_range
-
-        elif bom_price_range is None:
-            return buy_price_range
-        return (
-            min(buy_price_range[0], bom_price_range[0]),
-            max(buy_price_range[1], bom_price_range[1]),
-        )
-
     base_cost = models.DecimalField(
         max_digits=19,
         decimal_places=6,
@@ -2373,73 +2246,6 @@ class Part(
         verbose_name=_('multiple'),
         help_text=_('Sell multiple'),
     )
-
-    get_price = common.currency.get_price
-
-    @property
-    def has_price_breaks(self):
-        """Return True if this part has sale price breaks."""
-        return self.price_breaks.exists()
-
-    @property
-    def price_breaks(self):
-        """Return the associated price breaks in the correct order."""
-        return self.salepricebreaks.order_by('quantity').all()
-
-    @property
-    def unit_pricing(self):
-        """Returns the price of this Part at quantity=1."""
-        return self.get_price(1)
-
-    def add_price_break(self, quantity, price):
-        """Create a new price break for this part.
-
-        Args:
-            quantity: Numerical quantity
-            price: Must be a Money object
-        """
-        # Check if a price break at that quantity already exists...
-        if self.price_breaks.filter(quantity=quantity, part=self.pk).exists():
-            return
-
-        PartSellPriceBreak.objects.create(part=self, quantity=quantity, price=price)
-
-    def get_internal_price(self, quantity, moq=True, multiples=True, currency=None):
-        """Return the internal price of this Part at the specified quantity."""
-        return common.currency.get_price(
-            self, quantity, moq, multiples, currency, break_name='internal_price_breaks'
-        )
-
-    @property
-    def has_internal_price_breaks(self):
-        """Return True if this Part has internal pricing information."""
-        return self.internal_price_breaks.exists()
-
-    @property
-    def internal_price_breaks(self):
-        """Return the associated price breaks in the correct order."""
-        return self.internalpricebreaks.order_by('quantity').all()
-
-    def get_purchase_price(self, quantity):
-        """Calculate the purchase price for this part at the specified quantity.
-
-        - Looks at available supplier pricing data
-        - Calculates the price base on the closest price point
-        """
-        currency = currency_code_default()
-        try:
-            prices = [
-                convert_money(item.purchase_price, currency).amount
-                for item in self.stock_items.all()
-                if item.purchase_price
-            ]
-        except MissingRate:
-            prices = None
-
-        if prices:
-            return min(prices) * quantity, max(prices) * quantity
-
-        return None
 
     @transaction.atomic
     def copy_bom_from(self, other, clear: bool = True, **kwargs):
@@ -2559,6 +2365,14 @@ class Part(
             if category_template.template.pk in template_ids:
                 continue
 
+            # Skip templates which enforce a uniqueness requirement - applying the same
+            # default value to every part in the category would create conflicting values
+            if (
+                category_template.template.unique
+                != common.models.ParameterTemplate.UniqueOptions.NONE
+            ):
+                continue
+
             template_ids.add(category_template.template.pk)
 
             parameters.append(
@@ -2647,7 +2461,8 @@ class Part(
         return orders
 
     @property
-    def on_order(self):
+    @report.mixins.report_attribute()
+    def on_order(self) -> Decimal:
         """Return the total number of items on order for this part.
 
         Note that some supplier parts may have a different pack_quantity attribute,
@@ -2840,7 +2655,26 @@ class PartPricing(common.models.MetaMixin):
         Arguments:
             counter: Recursion counter (used to prevent infinite recursion)
             refresh: If specified, the PartPricing object will be refreshed from the database
+
+        Note:
+            Within a single request, repeated calls for the same part are cheap: a request-scoped
+            cache (see InvenTree.cache) short-circuits everything below after the first call,
+            avoiding redundant refresh_from_db() / existence-check queries for a part whose pricing
+            has already been resolved (scheduled or not) earlier in the same request. This does not
+            change behavior outside of a request (e.g. background tasks), where the cache is a
+            no-op and every call runs in full.
         """
+        cache_key = f'part-pricing-scheduled-{self.part_id}'
+        if get_session_cache(cache_key):
+            return
+
+        try:
+            self._schedule_for_update(counter=counter, refresh=refresh)
+        finally:
+            set_session_cache(cache_key, True)
+
+    def _schedule_for_update(self, counter: int = 0, refresh: bool = True):
+        """Implementation of schedule_for_update(), without the request-scoped cache guard."""
         import InvenTree.ready
 
         # If importing data, skip pricing update
@@ -2948,7 +2782,9 @@ class PartPricing(common.models.MetaMixin):
             try:
                 self.refresh_from_db()
             except PartPricing.DoesNotExist:
-                pass
+                # The underlying Part (and this pricing entry) has been deleted
+                # since this update was scheduled - nothing to do
+                return
 
         self.update_bom_cost(save=False)
         self.update_purchase_cost(save=False)
@@ -3378,7 +3214,7 @@ class PartPricing(common.models.MetaMixin):
         max_length=10,
         verbose_name=_('Currency'),
         help_text=_('Currency used to cache pricing calculations'),
-        choices=common.currency.currency_code_mappings(),
+        validators=[validators.validate_currency_code],
     )
 
     scheduled_for_update = models.BooleanField(default=False)
@@ -3599,6 +3435,7 @@ class PartInternalPriceBreak(common.models.PriceBreak):
         """Metaclass providing extra model definition."""
 
         unique_together = ('part', 'quantity')
+        verbose_name = _('Part Internal Price Break')
 
     @staticmethod
     def get_api_url():
@@ -3853,6 +3690,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         setup_quantity: Extra required quantity for a build, to account for setup losses
         attrition: Estimated losses for a Build, expressed as a percentage (e.g. '2%')
         rounding_multiple: Rounding quantity when calculating the required quantity for a build
+        piece_count: Number of pieces required (for cut-to-length items like cables, tubing).
+            Total material = quantity x piece_count.
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
         validated: Boolean field indicating if this BOM item is valid (checksum matches)
@@ -3888,6 +3727,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         allow_variants: bool = True,
         allow_substitutes: bool = True,
         allow_inactive: bool = True,
+        variant_parts=None,
     ):
         """Return a list of valid parts which can be allocated against this BomItem.
 
@@ -3895,6 +3735,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             allow_variants: If True, include variants of the sub_part
             allow_substitutes: If True, include any directly specified substitute parts
             allow_inactive: If True, include inactive parts in the returned list
+            variant_parts: Optional pre-fetched iterable of sub_part's descendants,
+                to avoid re-querying the part tree when the caller already has it
 
         Includes:
         - The referenced sub_part
@@ -3908,7 +3750,9 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         # Variant parts (if allowed)
         if allow_variants and self.allow_variants:
-            for variant in self.sub_part.get_descendants(include_self=False):
+            if variant_parts is None:
+                variant_parts = self.sub_part.get_descendants(include_self=False)
+            for variant in variant_parts:
                 parts.add(variant)
 
         # Substitute parts
@@ -4173,6 +4017,16 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         ),
     )
 
+    piece_count = models.PositiveIntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        verbose_name=_('Piece Count'),
+        help_text=_(
+            'Number of pieces required (for cut-to-length items). '
+            'Total material = quantity x piece_count.'
+        ),
+    )
+
     reference = models.CharField(
         max_length=5000,
         blank=True,
@@ -4227,6 +4081,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             'setup_quantity',
             'attrition',
             'rounding_multiple',
+            'piece_count',
             'reference',
             'optional',
             'inherited',
@@ -4389,9 +4244,14 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         Returns:
             Production quantity required for this component
+
+        Note:
+            For cut-to-length parts, quantity represents the per-piece size/length
+            and piece_count indicates how many pieces are needed.
+            Total material = quantity x piece_count x build_quantity.
         """
-        # Base quantity requirement
-        required = self.quantity * build_quantity
+        # Base quantity requirement (quantity is per-piece, piece_count is number of pieces)
+        required = self.quantity * self.piece_count * build_quantity
 
         # Account for attrition
         if self.attrition > 0:
@@ -4471,8 +4331,13 @@ def update_pricing_after_delete(sender, instance, **kwargs):
         InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
         and not InvenTree.ready.isImportingData()
     ):
-        if instance.part:
-            instance.part.schedule_pricing_update(create=False)
+        try:
+            part = instance.part
+            part.schedule_pricing_update(create=False)
+        except Part.DoesNotExist:
+            # The part instance may have already been deleted,
+            # in which case we cannot update pricing
+            pass
 
 
 class BomItemSubstitute(InvenTree.models.InvenTreeMetadataModel):
