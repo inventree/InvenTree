@@ -498,6 +498,39 @@ class BuildTest(BuildAPITest):
             'This build output has already been completed', str(response.data)
         )
 
+    def test_complete_build_output_structural_location(self):
+        """Test that a structural location is rejected by the BuildOutputComplete API.
+
+        Ref: this validation must happen synchronously in the serializer,
+        before the completion is offloaded to the background worker.
+        """
+        bo = Build.objects.get(pk=1)
+
+        # Create a new build output
+        create_url = reverse('api-build-output-create', kwargs={'pk': bo.pk})
+        response = self.post(create_url, {'quantity': 1}, expected_code=201)
+        output = StockItem.objects.get(pk=response.data[0]['pk'])
+
+        structural_location = StockLocation.objects.create(
+            name='Structural location', structural=True
+        )
+
+        complete_url = reverse('api-build-output-complete', kwargs={'pk': bo.pk})
+
+        response = self.post(
+            complete_url,
+            {'outputs': [{'output': output.pk}], 'location': structural_location.pk},
+            expected_code=400,
+        )
+
+        self.assertIn(
+            'Structural locations cannot be assigned stock items', str(response.data)
+        )
+
+        # None of the outputs should have been completed
+        output.refresh_from_db()
+        self.assertTrue(output.is_building)
+
     def test_download_build_orders(self):
         """Test that we can download a list of build orders via the API."""
         required_cols = [
@@ -2332,7 +2365,7 @@ class BuildConsumeTest(BuildAPITest):
                 {},
                 expected_code=201,
                 benchmark=True,
-                max_query_count=250,
+                max_query_count=180,
                 max_query_time=1.5,
             )
 
@@ -3000,3 +3033,46 @@ class BuildAutoAllocateAPITest(InvenTreeAPITestCase):
             self.assertEqual(fa.count(), 4)
             allocated = sum(a.quantity for a in fa)
             self.assertEqual(allocated, 130)  # 130 allocated to each line
+
+
+class BuildActionMissingPkTest(InvenTreeAPITestCase):
+    """Regression tests for a class of bugs in the Build action endpoints.
+
+    BuildOrderContextMixin looks up the target Build in get_serializer_context(), but
+    silently swallows a not-found result (needed so schema/OPTIONS introspection
+    doesn't break). Without an explicit check elsewhere, a POST against a
+    non-existent pk fell through to the action serializer's save(), which
+    unconditionally reads self.context['build'] - an unhandled KeyError (HTTP 500)
+    rather than a clean 404. Fixed by BuildOrderContextMixin.create().
+    """
+
+    roles = ['build.add']
+
+    def test_actions_404_for_missing_build(self):
+        """Every BuildOrderContextMixin-based action should 404, not 500, for a bad pk."""
+        for url_name in [
+            'api-build-issue',
+            'api-build-hold',
+            'api-build-cancel',
+            'api-build-finish',
+            'api-build-allocate',
+        ]:
+            url = reverse(url_name, kwargs={'pk': 999999})
+            self.post(url, {}, expected_code=404)
+
+    def test_output_actions_already_safe(self):
+        """The build-output actions already guard against a missing build themselves.
+
+        (BuildOutputScrap/Complete/Delete/AutoAllocate/Consume all call
+        self.get_build() explicitly at the top of a custom post() override, which
+        already raises NotFound correctly - this test just locks that in.)
+        """
+        for url_name in [
+            'api-build-output-scrap',
+            'api-build-output-complete',
+            'api-build-output-delete',
+            'api-build-auto-allocate',
+            'api-build-consume',
+        ]:
+            url = reverse(url_name, kwargs={'pk': 999999})
+            self.post(url, {}, expected_code=404)

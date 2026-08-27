@@ -52,6 +52,7 @@ from common.currency import currency_code_default
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from InvenTree import helpers, validators
+from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize
@@ -1052,11 +1053,20 @@ class Part(
             raise ValidationError(_('Duplicate part revision already exists.'))
 
         # Ensure unique across (Name, revision, IPN) (as specified)
-        if (self.revision or self.IPN) and (
-            Part.objects
-            .exclude(pk=self.pk)
-            .filter(name=self.name, revision=self.revision, IPN=self.IPN)
-            .exists()
+        # Note: the 'unique_part' database constraint only rejects a row when
+        # *all three* fields are non-null (Postgres treats NULL as distinct from
+        # NULL), so mirror that here rather than skipping whenever either field
+        # is merely blank - an empty string ('') still collides with another
+        # empty string at the database level, unlike None/NULL.
+        if (
+            self.IPN is not None
+            and self.revision is not None
+            and (
+                Part.objects
+                .exclude(pk=self.pk)
+                .filter(name=self.name, revision=self.revision, IPN=self.IPN)
+                .exists()
+            )
         ):
             raise ValidationError(
                 _('Part with this Name, IPN and Revision already exists.')
@@ -2645,7 +2655,26 @@ class PartPricing(common.models.MetaMixin):
         Arguments:
             counter: Recursion counter (used to prevent infinite recursion)
             refresh: If specified, the PartPricing object will be refreshed from the database
+
+        Note:
+            Within a single request, repeated calls for the same part are cheap: a request-scoped
+            cache (see InvenTree.cache) short-circuits everything below after the first call,
+            avoiding redundant refresh_from_db() / existence-check queries for a part whose pricing
+            has already been resolved (scheduled or not) earlier in the same request. This does not
+            change behavior outside of a request (e.g. background tasks), where the cache is a
+            no-op and every call runs in full.
         """
+        cache_key = f'part-pricing-scheduled-{self.part_id}'
+        if get_session_cache(cache_key):
+            return
+
+        try:
+            self._schedule_for_update(counter=counter, refresh=refresh)
+        finally:
+            set_session_cache(cache_key, True)
+
+    def _schedule_for_update(self, counter: int = 0, refresh: bool = True):
+        """Implementation of schedule_for_update(), without the request-scoped cache guard."""
         import InvenTree.ready
 
         # If importing data, skip pricing update
@@ -2753,7 +2782,9 @@ class PartPricing(common.models.MetaMixin):
             try:
                 self.refresh_from_db()
             except PartPricing.DoesNotExist:
-                pass
+                # The underlying Part (and this pricing entry) has been deleted
+                # since this update was scheduled - nothing to do
+                return
 
         self.update_bom_cost(save=False)
         self.update_purchase_cost(save=False)
@@ -3659,6 +3690,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         setup_quantity: Extra required quantity for a build, to account for setup losses
         attrition: Estimated losses for a Build, expressed as a percentage (e.g. '2%')
         rounding_multiple: Rounding quantity when calculating the required quantity for a build
+        piece_count: Number of pieces required (for cut-to-length items like cables, tubing).
+            Total material = quantity x piece_count.
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
         validated: Boolean field indicating if this BOM item is valid (checksum matches)
@@ -3984,6 +4017,16 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         ),
     )
 
+    piece_count = models.PositiveIntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        verbose_name=_('Piece Count'),
+        help_text=_(
+            'Number of pieces required (for cut-to-length items). '
+            'Total material = quantity x piece_count.'
+        ),
+    )
+
     reference = models.CharField(
         max_length=5000,
         blank=True,
@@ -4038,6 +4081,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             'setup_quantity',
             'attrition',
             'rounding_multiple',
+            'piece_count',
             'reference',
             'optional',
             'inherited',
@@ -4200,9 +4244,14 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         Returns:
             Production quantity required for this component
+
+        Note:
+            For cut-to-length parts, quantity represents the per-piece size/length
+            and piece_count indicates how many pieces are needed.
+            Total material = quantity x piece_count x build_quantity.
         """
-        # Base quantity requirement
-        required = self.quantity * build_quantity
+        # Base quantity requirement (quantity is per-piece, piece_count is number of pieces)
+        required = self.quantity * self.piece_count * build_quantity
 
         # Account for attrition
         if self.attrition > 0:
@@ -4282,8 +4331,13 @@ def update_pricing_after_delete(sender, instance, **kwargs):
         InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
         and not InvenTree.ready.isImportingData()
     ):
-        if instance.part:
-            instance.part.schedule_pricing_update(create=False)
+        try:
+            part = instance.part
+            part.schedule_pricing_update(create=False)
+        except Part.DoesNotExist:
+            # The part instance may have already been deleted,
+            # in which case we cannot update pricing
+            pass
 
 
 class BomItemSubstitute(InvenTree.models.InvenTreeMetadataModel):

@@ -1273,7 +1273,7 @@ class PartStocktakeSerializer(
         if exclude_pk:
             self.fields.pop('pk', None)
 
-    quantity = serializers.FloatField()
+    quantity = InvenTree.serializers.InvenTreeDecimalField()
 
     cost_min = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
     cost_min_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
@@ -1666,6 +1666,7 @@ class BomItemSerializer(
             'reference',
             'raw_amount',
             'quantity',
+            'piece_count',
             'allow_variants',
             'inherited',
             'optional',
@@ -1713,6 +1714,16 @@ class BomItemSerializer(
 
     rounding_multiple = InvenTree.serializers.InvenTreeDecimalField(
         required=False, allow_null=True
+    )
+
+    piece_count = serializers.IntegerField(
+        required=False,
+        default=1,
+        label=_('Piece Count'),
+        help_text=_(
+            'Number of pieces required (for cut-to-length items). '
+            'Total material = quantity x piece_count.'
+        ),
     )
 
     part = serializers.PrimaryKeyRelatedField(

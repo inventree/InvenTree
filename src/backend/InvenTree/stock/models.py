@@ -3401,15 +3401,20 @@ class StockItem(
         except InvalidOperation:
             return False
 
-        # Cannot remove more than the available quantity
-        # (also ensures the recorded history matches the actual removal)
-        quantity = min(quantity, self.quantity)
-
         if quantity <= 0:
             return False
 
         # Lock the database row, so concurrent adjustments are serialized
         if not self.lock_quantity():
+            return False
+
+        # Cannot remove more than the available quantity
+        # (also ensures the recorded history matches the actual removal)
+        # This must happen *after* the lock above, so it is checked against
+        # the current database value rather than a potentially stale copy
+        quantity = min(quantity, self.quantity)
+
+        if quantity <= 0:
             return False
 
         deltas = {}
@@ -3593,23 +3598,32 @@ class StockItem(
 def after_delete_stock_item(sender, instance: StockItem, **kwargs):
     """Function to be executed after a StockItem object is deleted."""
     from part import tasks as part_tasks
+    from part.models import Part
 
     if InvenTree.ready.isImportingData():
+        return
+
+    try:
+        base_part = instance.part
+    except Part.DoesNotExist:
+        return
+
+    if not base_part:
+        # Base part does not exist, or has been deleted
         return
 
     if InvenTree.ready.canAppAccessDatabase(allow_test=True):
         # Run this check in the background
         InvenTree.tasks.offload_task(
             part_tasks.notify_low_stock_if_required,
-            instance.part.pk,
+            base_part.pk,
             group='notification',
             force_async=True,
         )
 
     if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
         # Schedule an update on parent part pricing
-        if instance.part:
-            instance.part.schedule_pricing_update(create=False)
+        base_part.schedule_pricing_update(create=False)
 
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
@@ -3810,6 +3824,8 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         """Meta data for the StockItemTestResult class."""
 
         verbose_name = _('Stock Item Test Result')
+
+        ordering = ('-finished_datetime', '-started_datetime', '-date', '-pk')
 
     def __str__(self):
         """Return string representation."""

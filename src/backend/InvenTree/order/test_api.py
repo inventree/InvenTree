@@ -58,7 +58,14 @@ class OrderTest(InvenTreeAPITestCase):
         'transfer_order',
     ]
 
-    roles = ['purchase_order.change', 'sales_order.change', 'transfer_order.change']
+    roles = [
+        'purchase_order.change',
+        'sales_order.change',
+        'transfer_order.change',
+        'part.view',
+        'stock.view',
+        'stock_location.view',
+    ]
 
     def filter(self, filters, count):
         """Test API filters."""
@@ -163,6 +170,9 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'supplier_part': 1}, 1)
         self.filter({'supplier_part': 3}, 2)
         self.filter({'supplier_part': 4}, 0)
+
+        # Filter by "tags"
+        self.filter({'tags': True}, 7)
 
     def test_total_price(self):
         """Unit tests for the 'total_price' field."""
@@ -704,12 +714,25 @@ class PurchaseOrderTest(OrderTest):
         # completion must be skipped based on the database state
         self.assertEqual(po_b.status, PurchaseOrderStatus.PLACED)
 
-        with mock.patch('order.models.trigger_event') as trigger:
+        with self.assertRaises(ValidationError) as err:
             po_b.complete_order()
-            trigger.assert_not_called()
+
+        self.assertIn('Purchase Order is already Complete', str(err.exception))
 
         po.refresh_from_db()
         self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
+
+    def test_po_hold(self):
+        """Test the PurchaseOrderHold API endpoint."""
+        po = models.PurchaseOrder.objects.get(pk=1)
+        url = reverse('api-po-hold', kwargs={'pk': po.pk})
+
+        # Try to hold the PO, without required permissions
+        self.post(url, {}, expected_code=403)
+        self.assignRole('purchase_order.add')
+        self.post(url, {}, expected_code=201)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.ON_HOLD)
 
     def test_po_issue(self):
         """Test the PurchaseOrderIssue API endpoint."""
@@ -3539,9 +3562,10 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         # completion must be skipped based on the database state
         self.assertEqual(order_b.status, ReturnOrderStatus.IN_PROGRESS.value)
 
-        with mock.patch('order.models.trigger_event') as trigger:
+        with self.assertRaises(ValidationError) as err:
             order_b.complete_order()
-            trigger.assert_not_called()
+
+        self.assertIn('Return Order is already Complete', str(err.exception))
 
         rma.refresh_from_db()
         self.assertEqual(rma.status, ReturnOrderStatus.COMPLETE.value)
@@ -3620,7 +3644,7 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         'supplier_part',
         'stock',
     ]
-    roles = ['return_order.view']
+    roles = ['return_order.view', 'part.view', 'stock.view']
 
     def test_options(self):
         """Test the OPTIONS endpoint."""
@@ -3706,6 +3730,42 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         self.delete(url, {'items': items}, expected_code=200)
 
         self.assertEqual(models.ReturnOrderLineItem.objects.count(), n - 1)
+
+    def test_bulk_update(self):
+        """Test that we can bulk update the 'outcome' field for multiple ReturnOrderLineItems via the API."""
+        ro = models.ReturnOrder.objects.get(pk=6)
+
+        # Create some extra line items against the same order, so we have multiple to update
+        models.ReturnOrderLineItem.objects.bulk_create([
+            models.ReturnOrderLineItem(order=ro, item_id=1006, quantity=1),
+            models.ReturnOrderLineItem(order=ro, item_id=1007, quantity=1),
+        ])
+
+        items = list(
+            models.ReturnOrderLineItem.objects.filter(order=ro).values_list(
+                'pk', flat=True
+            )
+        )
+
+        self.assertEqual(len(items), 3)
+
+        for line in models.ReturnOrderLineItem.objects.filter(pk__in=items):
+            self.assertEqual(line.outcome, ReturnOrderLineStatus.PENDING)
+
+        url = reverse('api-return-order-line-list')
+
+        data = {'items': items, 'outcome': ReturnOrderLineStatus.REPAIR.value}
+
+        # Update should fail without the correct role
+        self.patch(url, data, expected_code=403)
+
+        self.assignRole('return_order.change')
+
+        response = self.patch(url, data, expected_code=200).data
+        self.assertEqual(len(response['items']), 3)
+
+        for line in models.ReturnOrderLineItem.objects.filter(pk__in=items):
+            self.assertEqual(line.outcome, ReturnOrderLineStatus.REPAIR.value)
 
     def test_extra_line_bulk_delete(self):
         """Test that we can bulk delete multiple ReturnOrderExtraLine items via the API."""
@@ -4010,7 +4070,8 @@ class TransferOrderTest(OrderTest):
         self.assertEqual(instance_b.status, TransferOrderStatus.PENDING)
 
         with mock.patch('order.models.trigger_event') as trigger:
-            instance_b.cancel_order()
+            with self.assertRaises(ValidationError):
+                instance_b.cancel_order()
             trigger.assert_not_called()
 
         to.refresh_from_db()
@@ -4443,11 +4504,21 @@ class TransferOrderTest(OrderTest):
         with self.assertRaises(ValidationError) as err:
             instance_b.complete_order(None)
 
-        self.assertIn('Order is already complete', str(err.exception))
+        self.assertIn('Transfer Order is already Complete', str(err.exception))
 
         # The transferred quantity has not been double-counted
         line.refresh_from_db()
         self.assertEqual(line.transferred, 10)
+
+        # check that the wrong starting point also triggers an error
+        instance_b.status = TransferOrderStatus.CANCELLED.value
+        instance_b.save()
+        with self.assertRaises(ValidationError) as err:
+            instance_b.complete_order(None)
+        self.assertIn(
+            'Invalid transition on Transfer Order.status (source value should be 20, is 40)',
+            str(err.exception),
+        )
 
     def test_output_options(self):
         """Test the output options for the TransferOrder detail endpoint."""
@@ -5423,3 +5494,90 @@ class SalesOrderAllocationBulkDeleteAPITest(InvenTreeAPITestCase):
         self.assertEqual(
             SalesOrderAllocation.objects.filter(pk__in=shipped_ids).count(), 2
         )
+
+
+class OrderActionMissingPkTest(InvenTreeAPITestCase):
+    """Regression tests for a class of bugs in the order-app action endpoints.
+
+    Each order type's *ContextMixin looks up the target order in
+    get_serializer_context(), but silently swallows a not-found result (needed so
+    schema/OPTIONS introspection doesn't break). Without an explicit check
+    elsewhere, a POST against a non-existent pk fell through to the action
+    serializer's save(), which unconditionally reads self.context['order'] - an
+    unhandled KeyError (HTTP 500) rather than a clean 404.
+
+    Fixed by SalesOrderContextMixin/ReturnOrderContextMixin/TransferOrderContextMixin
+    .create(), and (since PurchaseOrderViewSet's actions are plain ViewSet @action
+    methods rather than CreateAPI subclasses) an explicit check at the top of each
+    PurchaseOrderViewSet action method.
+    """
+
+    roles = [
+        'purchase_order.add',
+        'sales_order.add',
+        'return_order.add',
+        'transfer_order.add',
+    ]
+
+    def test_purchase_order_actions_404(self):
+        """Each PurchaseOrderViewSet action should 404, not 500, for a bad pk.
+
+        Note: PurchaseOrderViewSet.get_order() is a deliberate raw lookup rather
+        than self.get_object() - the latter routes through
+        ParameterListMixin.filter_queryset(), which assumes
+        self.serializer_class.Meta.model exists. That's true for the default
+        PurchaseOrderSerializer, but not for the plain-Serializer action classes
+        used here, so self.get_object() would raise an unrelated AttributeError.
+        """
+        for url_name in [
+            'api-po-hold',
+            'api-po-cancel',
+            'api-po-complete',
+            'api-po-issue',
+            'api-po-receive',
+        ]:
+            url = reverse(url_name, kwargs={'pk': 999999})
+            self.post(url, {}, expected_code=404)
+
+    def test_sales_order_actions_404(self):
+        """Each SalesOrderContextMixin-based action should 404, not 500, for a bad pk."""
+        for url_name in [
+            'api-so-hold',
+            'api-so-cancel',
+            'api-so-issue',
+            'api-so-complete',
+            'api-so-allocate',
+            'api-so-allocate-serials',
+        ]:
+            url = reverse(url_name, kwargs={'pk': 999999})
+            self.post(url, {}, expected_code=404)
+
+    def test_sales_order_auto_allocate_already_safe(self):
+        """SalesOrderAutoAllocate overrides post() and already calls get_object() itself."""
+        url = reverse('api-so-auto-allocate', kwargs={'pk': 999999})
+        self.post(url, {}, expected_code=404)
+
+    def test_return_order_actions_404(self):
+        """Each ReturnOrderContextMixin-based action should 404, not 500, for a bad pk."""
+        for url_name in [
+            'api-return-order-cancel',
+            'api-ro-hold',
+            'api-return-order-complete',
+            'api-return-order-issue',
+            'api-return-order-receive',
+        ]:
+            url = reverse(url_name, kwargs={'pk': 999999})
+            self.post(url, {}, expected_code=404)
+
+    def test_transfer_order_actions_404(self):
+        """Each TransferOrderContextMixin-based action should 404, not 500, for a bad pk."""
+        for url_name in [
+            'api-transfer-order-cancel',
+            'api-transfer-order-hold',
+            'api-transfer-order-complete',
+            'api-transfer-order-issue',
+            'api-transfer-order-allocate',
+            'api-transfer-order-allocate-serials',
+        ]:
+            url = reverse(url_name, kwargs={'pk': 999999})
+            self.post(url, {}, expected_code=404)
