@@ -7,10 +7,10 @@ from scim.views import (
     GroupsView,
     ResourceTypesView,
     SchemasView,
-    ScimNotFoundView,
     ServiceProviderConfigView,
     UserDetailView,
     UsersView,
+    scim_error_view,
 )
 
 scim_urls = [
@@ -32,7 +32,7 @@ scim_urls = [
     path('Groups', GroupsView.as_view(), name='scim-groups'),
     path('Groups/<int:pk>', GroupDetailView.as_view(), name='scim-group-detail'),
     # catchall
-    re_path('.*', ScimNotFoundView.as_view(), name='scim-not-found'),
+    re_path('.*', scim_error_view, name='scim-not-found'),
 ]
 
 urlpatterns = scim_urls

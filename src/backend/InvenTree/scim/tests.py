@@ -217,7 +217,6 @@ class ScimProtocolTests(InvenTreeAPITestCase):
             'patch:replace',  # 2: see above
             'check_replace',  # BD
             'crud:delete',  # 3: there is no deleting users right now
-            'misc',
         }
         results = check_server(scim_client)
         failures = [result for result in results if result.status.value not in (1, 7)]

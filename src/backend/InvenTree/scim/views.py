@@ -13,6 +13,12 @@ from django.shortcuts import get_object_or_404
 
 import structlog
 from pydantic import ValidationError
+from rest_framework.decorators import (
+    api_view,
+    authentication_classes,
+    permission_classes,
+    renderer_classes,
+)
 from rest_framework.exceptions import (
     APIException,
     AuthenticationFailed,
@@ -101,7 +107,7 @@ class ScimAPIView(APIView):
 
     authentication_classes = [ScimBearerAuthentication]
     permission_classes = [IsScimAuthenticated]
-    renderer_classes = [ScimRenderer]
+    renderer_classes = [ScimRenderer, JSONRenderer]
     parser_classes = [ScimParser, JSONParser]
 
     def handle_exception(self, exc):
@@ -132,15 +138,13 @@ class ScimAPIView(APIView):
         return super().handle_exception(exc)  # pragma: no cover
 
 
-class ScimNotFoundView(ScimAPIView):
-    """Return a SCIM Error object for routes that are not part of the SCIM surface."""
-
-    authentication_classes = []
-    permission_classes = []
-
-    def dispatch(self, request, *args, **kwargs):
-        """Always return a SCIM-formatted 404 error, rather than a Django 404 page."""
-        return scim_error(404, f"Resource '{request.path}' not found")
+@api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
+@renderer_classes([ScimRenderer, JSONRenderer])
+@permission_classes([])
+@authentication_classes([])
+def scim_error_view(request, format=None):
+    """Always return a SCIM-formatted 404 error, rather than a Django 404 page."""
+    return scim_error(404, f"Resource '{request.path}' not found")
 
 
 class ServiceProviderConfigView(ScimAPIView):
