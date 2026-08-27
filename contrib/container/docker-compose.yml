@@ -156,11 +156,7 @@ services:
         env_file:
             - .env
         healthcheck:
-            test:
-                [
-                    'CMD-SHELL',
-                    'host=$$(printf "%s" "$${INVENTREE_SITE_URL:-}" | cut -d"," -f1 | sed -E "s#https?://##; s#/.*##"); if [ -n "$${host}" ]; then wget -qO- --header="Host: $${host}" http://127.0.0.1/api/system/health/; else wget -qO- http://127.0.0.1/api/system/health/; fi | grep -Eq "\"status\"[[:space:]]*:[[:space:]]*\"ok\""',
-                ]
+            test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1:9090/api/system/health/']
             interval: 20s
             timeout: 5s
             retries: 10
