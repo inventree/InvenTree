@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-23 09:09+0000\n"
-"PO-Revision-Date: 2026-08-23 09:11\n"
+"POT-Creation-Date: 2026-08-27 05:02+0000\n"
+"PO-Revision-Date: 2026-08-27 05:05\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -117,7 +117,7 @@ msgstr "無効な10進数値"
 #: build/serializers.py:591 build/serializers.py:1775 company/models.py:828
 #: order/models.py:2154
 #: report/templates/report/inventree_build_order_report.html:172
-#: stock/models.py:3780 stock/models.py:3906 stock/serializers.py:753
+#: stock/models.py:3785 stock/models.py:3911 stock/serializers.py:753
 #: stock/serializers.py:935 stock/serializers.py:1114 stock/serializers.py:1280
 #: stock/serializers.py:1664 stock/serializers.py:1753
 #: stock/serializers.py:1962
@@ -289,7 +289,7 @@ msgstr "無効な選択です"
 msgid "Name"
 msgstr "お名前"
 
-#: InvenTree/models.py:1105 build/models.py:273 common/models.py:180
+#: InvenTree/models.py:1105 build/models.py:274 common/models.py:180
 #: common/models.py:2459 common/models.py:2600 common/models.py:2777
 #: company/models.py:563 company/models.py:819 order/models.py:508
 #: order/models.py:2199 part/models.py:1142 report/models.py:228
@@ -595,7 +595,7 @@ msgstr "有効な通貨コードではありません。"
 msgid "Order Status"
 msgstr "注文ステータス"
 
-#: build/api.py:83 build/models.py:285
+#: build/api.py:83 build/models.py:286
 msgid "Parent Build"
 msgstr "親ビルド"
 
@@ -605,7 +605,7 @@ msgstr "親ビルド"
 msgid "Include Variants"
 msgstr "バリアントを含む"
 
-#: build/api.py:103 build/api.py:490 build/api.py:1084 build/models.py:291
+#: build/api.py:103 build/api.py:490 build/api.py:1084 build/models.py:292
 #: build/serializers.py:1200 build/serializers.py:1376
 #: build/serializers.py:1469 company/models.py:1038 company/serializers.py:473
 #: order/api.py:325 order/api.py:329 order/api.py:1009 order/api.py:1342
@@ -742,7 +742,7 @@ msgstr "受注残高"
 msgid "Allocated"
 msgstr "割り当てられた"
 
-#: build/api.py:530 build/models.py:2213 build/serializers.py:1429
+#: build/api.py:530 build/models.py:2225 build/serializers.py:1429
 msgid "Consumed"
 msgstr "消費されました"
 
@@ -763,7 +763,7 @@ msgstr "注文中"
 msgid "Build not found"
 msgstr "ビルドが見つかりません"
 
-#: build/api.py:1107 build/models.py:128 order/models.py:2364
+#: build/api.py:1107 build/models.py:129 order/models.py:2364
 #: report/templates/report/inventree_build_order_report.html:105
 #: stock/serializers.py:98 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
@@ -792,43 +792,43 @@ msgstr "出力"
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr "出力ストックアイテムIDでフィルタリングします。未インストールビルドアイテムを検索するには「null」をご使用ください。"
 
-#: build/models.py:129 users/ruleset.py:48
+#: build/models.py:130 users/ruleset.py:48
 msgid "Build Orders"
 msgstr "組立注文"
 
-#: build/models.py:189
+#: build/models.py:190
 msgid "Assembly BOM has not been validated"
 msgstr "アセンブリBOMが検証されていません"
 
-#: build/models.py:196
+#: build/models.py:197
 msgid "Build order cannot be created for an inactive part"
 msgstr "非アクティブな部品にビルドオーダーを作成できません。"
 
-#: build/models.py:203
+#: build/models.py:204
 msgid "Build order cannot be created for an unlocked part"
 msgstr "ロックされていない部品にビルドオーダーを作成できません。"
 
-#: build/models.py:221
+#: build/models.py:222
 msgid "Build orders can only be externally fulfilled for purchaseable parts"
 msgstr "ビルドオーダーを外部委託できるのは、購入可能部品のみです"
 
-#: build/models.py:228 order/models.py:422
+#: build/models.py:229 order/models.py:422
 msgid "Responsible user or group must be specified"
 msgstr "担当ユーザーまたはグループを指定する必要があります。"
 
-#: build/models.py:233
+#: build/models.py:234
 msgid "Build order part cannot be changed"
 msgstr "ビルドオーダー部品は変更できません"
 
-#: build/models.py:238 order/models.py:440
+#: build/models.py:239 order/models.py:440
 msgid "Target date must be after start date"
 msgstr "目標期日は開始日以降であること"
 
-#: build/models.py:266
+#: build/models.py:267
 msgid "Build Order Reference"
 msgstr "ビルド・オーダー・リファレンス"
 
-#: build/models.py:267 build/serializers.py:1407 order/models.py:721
+#: build/models.py:268 build/serializers.py:1407 order/models.py:721
 #: order/models.py:1440 order/models.py:2147 order/models.py:3294
 #: order/models.py:3736 part/models.py:4033
 #: report/templates/report/inventree_bill_of_materials_report.html:139
@@ -839,187 +839,187 @@ msgstr "ビルド・オーダー・リファレンス"
 msgid "Reference"
 msgstr "参照"
 
-#: build/models.py:276
+#: build/models.py:277
 msgid "Brief description of the build (optional)"
 msgstr "建築の簡単な説明（任意）"
 
-#: build/models.py:286
+#: build/models.py:287
 msgid "Build Order to which this build is allocated"
 msgstr "このビルドが引き当てられているビルドオーダー"
 
-#: build/models.py:295
+#: build/models.py:296
 msgid "Select part to build"
 msgstr "製造する部品の選択"
 
-#: build/models.py:300
+#: build/models.py:301
 msgid "Sales Order Reference"
 msgstr "セールス・オーダー・リファレンス"
 
-#: build/models.py:305
+#: build/models.py:306
 msgid "Sales Order to which this build is allocated"
 msgstr "このビルドが引き当てられている受注"
 
-#: build/models.py:310 build/serializers.py:1061 order/models.py:3756
+#: build/models.py:311 build/serializers.py:1061 order/models.py:3756
 #: order/serializers.py:2033
 msgid "Source Location"
 msgstr "ソース・ロケーション"
 
-#: build/models.py:316
+#: build/models.py:317
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
 msgstr "このビルドで在庫を取得する場所を選択します（任意の在庫場所から取得する場合は空白のままにしてください）。"
 
-#: build/models.py:322
+#: build/models.py:323
 msgid "External Build"
 msgstr "外部ビルド"
 
-#: build/models.py:323
+#: build/models.py:324
 msgid "This build order is fulfilled externally"
 msgstr "このビルドオーダーは外部委託されます。"
 
-#: build/models.py:328 order/models.py:3766
+#: build/models.py:329 order/models.py:3766
 msgid "Destination Location"
 msgstr "目的地"
 
-#: build/models.py:333
+#: build/models.py:334
 msgid "Select location where the completed items will be stored"
 msgstr "完成したアイテムの保管場所を選択"
 
-#: build/models.py:337
+#: build/models.py:338
 msgid "Build Quantity"
 msgstr "数量"
 
-#: build/models.py:340
+#: build/models.py:341
 msgid "Number of stock items to build"
 msgstr "構築するストックアイテムの数"
 
-#: build/models.py:344
+#: build/models.py:345
 msgid "Completed items"
 msgstr "完成品"
 
-#: build/models.py:346
+#: build/models.py:347
 msgid "Number of stock items which have been completed"
 msgstr "完了した在庫アイテムの数"
 
-#: build/models.py:350
+#: build/models.py:351
 msgid "Build Status"
 msgstr "組立状況"
 
-#: build/models.py:355
+#: build/models.py:356
 msgid "Build status code"
 msgstr "ビルドステータスコード"
 
-#: build/models.py:364 build/serializers.py:399 order/serializers.py:883
+#: build/models.py:365 build/serializers.py:399 order/serializers.py:883
 #: stock/models.py:1239 stock/serializers.py:90 stock/serializers.py:1920
 msgid "Batch Code"
 msgstr "バッチコード"
 
-#: build/models.py:368 build/serializers.py:400
+#: build/models.py:369 build/serializers.py:400
 msgid "Batch code for this build output"
 msgstr "このビルド出力のバッチコード"
 
-#: build/models.py:372 order/models.py:545 order/serializers.py:164
+#: build/models.py:373 order/models.py:545 order/serializers.py:164
 #: part/models.py:1362 stock/models.py:1320
 msgid "Creation Date"
 msgstr "作成日時"
 
-#: build/models.py:378
+#: build/models.py:379
 msgid "Build start date"
 msgstr "ビルド開始日"
 
-#: build/models.py:379
+#: build/models.py:380
 msgid "Scheduled start date for this build order"
 msgstr "この注文の開始予定日"
 
-#: build/models.py:385
+#: build/models.py:386
 msgid "Target completion date"
 msgstr "完成目標日"
 
-#: build/models.py:387
+#: build/models.py:388
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "ビルド完了目標日。この日付を過ぎると、ビルドは期限切れになります。"
 
-#: build/models.py:392 order/models.py:769 order/models.py:3333
+#: build/models.py:393 order/models.py:769 order/models.py:3333
 #: order/models.py:3785
 msgid "Completion Date"
 msgstr "完了日"
 
-#: build/models.py:400
+#: build/models.py:401
 msgid "completed by"
 msgstr "完了者"
 
-#: build/models.py:409
+#: build/models.py:410
 msgid "Issued by"
 msgstr "発行者"
 
-#: build/models.py:410
+#: build/models.py:411
 msgid "User who issued this build order"
 msgstr "このビルドオーダーを発行したユーザー"
 
-#: build/models.py:427 common/models.py:195 order/api.py:196
+#: build/models.py:428 common/models.py:195 order/api.py:196
 #: order/models.py:577 part/models.py:1379
 #: report/templates/report/inventree_build_order_report.html:158
 msgid "Responsible"
 msgstr "責任"
 
-#: build/models.py:428
+#: build/models.py:429
 msgid "User or group responsible for this build order"
 msgstr "このビルドオーダーを担当するユーザーまたはグループ"
 
-#: build/models.py:433 stock/models.py:1232
+#: build/models.py:434 stock/models.py:1232
 msgid "External Link"
 msgstr "外部リンク"
 
-#: build/models.py:435 common/models.py:2148 part/models.py:1194
+#: build/models.py:436 common/models.py:2148 part/models.py:1194
 #: stock/models.py:1234
 msgid "Link to external URL"
 msgstr "外部 サイト へのリンク"
 
-#: build/models.py:440
+#: build/models.py:441
 msgid "Build Priority"
 msgstr "組立優先度"
 
-#: build/models.py:443
+#: build/models.py:444
 msgid "Priority of this build order"
 msgstr "建設順序の優先順位"
 
-#: build/models.py:451 common/models.py:159 common/models.py:173
+#: build/models.py:452 common/models.py:159 common/models.py:173
 #: order/api.py:182 order/models.py:517 order/models.py:2179
 msgid "Project Code"
 msgstr "プロジェクトコード"
 
-#: build/models.py:452
+#: build/models.py:453
 msgid "Project code for this build order"
 msgstr "プロジェクトコード"
 
-#: build/models.py:989
+#: build/models.py:997
 msgid "Cannot complete build order with open child builds"
 msgstr "製造中の子ビルドがあるため、ビルドオーダーを完了できません"
 
-#: build/models.py:994
+#: build/models.py:1002
 msgid "Cannot complete build order with incomplete outputs"
 msgstr "不完全な出力があるため、ビルドオーダーを完了できません"
 
-#: build/models.py:1131
+#: build/models.py:1143
 msgid "Serial numbers must be provided for trackable parts"
 msgstr "追跡可能な部品については、シリアル番号の提示が必要です。"
 
-#: build/models.py:1223 build/models.py:1309
+#: build/models.py:1235 build/models.py:1321
 msgid "No build output specified"
 msgstr "ビルド出力が指定されていません"
 
-#: build/models.py:1226
+#: build/models.py:1238
 msgid "Build output is already completed"
 msgstr "ビルド出力はすでに完了しています"
 
-#: build/models.py:1229 build/models.py:1318 build/models.py:1396
+#: build/models.py:1241 build/models.py:1330 build/models.py:1408
 msgid "Build output does not match Build Order"
 msgstr "ビルド出力がビルド順序と一致しません"
 
-#: build/models.py:1315 build/models.py:1393
+#: build/models.py:1327 build/models.py:1405
 msgid "Build output has already been completed"
 msgstr ""
 
-#: build/models.py:1325 build/models.py:1426 build/serializers.py:321
+#: build/models.py:1337 build/models.py:1438 build/serializers.py:321
 #: build/serializers.py:375 build/serializers.py:918 build/serializers.py:1726
 #: order/models.py:819 order/serializers.py:643 order/serializers.py:878
 #: part/models.py:3831 stock/models.py:1079 stock/models.py:1504
@@ -1029,43 +1029,43 @@ msgstr ""
 msgid "Quantity must be greater than zero"
 msgstr "数量はゼロより大きくなければなりません"
 
-#: build/models.py:1329 build/models.py:1431 build/serializers.py:326
+#: build/models.py:1341 build/models.py:1443 build/serializers.py:326
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "数量が出力数量を上回ることはできません"
 
-#: build/models.py:1405
+#: build/models.py:1417
 msgid "Build output has not passed all required tests"
 msgstr "ビルド出力は、必要なすべてのテストを通過していません"
 
-#: build/models.py:1413
+#: build/models.py:1425
 msgid "Allocated stock items are still in production"
 msgstr "引き当て済みの在庫品は、現在生産中です"
 
-#: build/models.py:1420
+#: build/models.py:1432
 msgid "Cannot partially complete a build output with allocated items"
 msgstr "割り当てられた項目を含むビルド出力の一部のみを完了することはできません"
 
-#: build/models.py:1603 order/models.py:4208 order/serializers.py:1997
+#: build/models.py:1615 order/models.py:4208 order/serializers.py:1997
 #: order/serializers.py:2848 stock/models.py:1494 stock/models.py:1898
 #: stock/models.py:2121 stock/models.py:2444 stock/models.py:2738
 msgid "Stock item no longer exists"
 msgstr ""
 
-#: build/models.py:1621 build/serializers.py:966 order/serializers.py:1775
+#: build/models.py:1633 build/serializers.py:966 order/serializers.py:1775
 #: order/serializers.py:2804
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "使用可能数量（{q}）を超過"
 
-#: build/models.py:2167
+#: build/models.py:2179
 msgid "Build Order Line Item"
 msgstr "ビルドオーダーラインアイテム"
 
-#: build/models.py:2192
+#: build/models.py:2204
 msgid "Build object"
 msgstr "ビルドオブジェクト"
 
-#: build/models.py:2204 build/models.py:2484 build/serializers.py:307
+#: build/models.py:2216 build/models.py:2496 build/serializers.py:307
 #: build/serializers.py:360 build/serializers.py:1428 common/models.py:1379
 #: order/models.py:2110 order/models.py:3185 order/models.py:4175
 #: order/serializers.py:1884 order/serializers.py:2388
@@ -1089,40 +1089,40 @@ msgstr "ビルドオブジェクト"
 msgid "Quantity"
 msgstr "数量"
 
-#: build/models.py:2205
+#: build/models.py:2217
 msgid "Required quantity for build order"
 msgstr "注文数量"
 
-#: build/models.py:2214
+#: build/models.py:2226
 msgid "Quantity of consumed stock"
 msgstr "消費された在庫の数量"
 
-#: build/models.py:2315
+#: build/models.py:2327
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "ビルド項目は、ビルド出力を指定する必要があります。"
 
-#: build/models.py:2378 build/serializers.py:949
+#: build/models.py:2390 build/serializers.py:949
 msgid "Selected stock item does not match BOM line"
 msgstr "選択された在庫品目が部品表に一致しません。"
 
-#: build/models.py:2397
+#: build/models.py:2409
 msgid "Allocated quantity must be greater than zero"
 msgstr "引き当て数はゼロより大きくなければなりません"
 
-#: build/models.py:2403
+#: build/models.py:2415
 msgid "Quantity must be 1 for serialized stock"
 msgstr "シリアル在庫の場合、数量は1でなければなりません。"
 
-#: build/models.py:2413
+#: build/models.py:2425
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "割当数量({q})は在庫可能数量({a})を超えてはなりません。"
 
-#: build/models.py:2430 order/models.py:3134 order/models.py:4139
+#: build/models.py:2442 order/models.py:3134 order/models.py:4139
 msgid "Stock item is over-allocated"
 msgstr "在庫が過剰配分"
 
-#: build/models.py:2474 build/serializers.py:901 build/serializers.py:1217
+#: build/models.py:2486 build/serializers.py:901 build/serializers.py:1217
 #: order/serializers.py:1712 order/serializers.py:1733
 #: order/serializers.py:2750 order/serializers.py:2771
 #: report/templates/report/inventree_sales_order_shipment_report.html:29
@@ -1131,19 +1131,19 @@ msgstr "在庫が過剰配分"
 msgid "Stock Item"
 msgstr "在庫商品"
 
-#: build/models.py:2475
+#: build/models.py:2487
 msgid "Source stock item"
 msgstr "ソース在庫品"
 
-#: build/models.py:2485
+#: build/models.py:2497
 msgid "Stock quantity to allocate to build"
 msgstr "建設に割り当てる在庫量"
 
-#: build/models.py:2494
+#: build/models.py:2506
 msgid "Install into"
 msgstr "インストール"
 
-#: build/models.py:2495
+#: build/models.py:2507
 msgid "Destination stock item"
 msgstr "仕向け地在庫品"
 
@@ -1570,29 +1570,29 @@ msgstr "キャンセル済"
 msgid "Complete"
 msgstr "完了"
 
-#: build/tasks.py:350
+#: build/tasks.py:370
 #, python-brace-format
 msgid "Build order {build} has been completed"
 msgstr "ビルドオーダー{build}が完了しました"
 
-#: build/tasks.py:356
+#: build/tasks.py:376
 msgid "A build order has been completed"
 msgstr "建設発注が完了しました"
 
-#: build/tasks.py:487
+#: build/tasks.py:507
 msgid "Stock required for build order"
 msgstr "受注生産に必要な在庫"
 
-#: build/tasks.py:497
+#: build/tasks.py:517
 #, python-brace-format
 msgid "Build order {build} requires additional stock"
 msgstr "ビルドオーダー{build}には追加の在庫が必要となります"
 
-#: build/tasks.py:521
+#: build/tasks.py:541
 msgid "Overdue Build Order"
 msgstr "期限切れ注文"
 
-#: build/tasks.py:526
+#: build/tasks.py:546
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
 msgstr "ビルドオーダー{bo}は現在期限切れです"
@@ -1908,7 +1908,7 @@ msgstr "定義"
 msgid "Unit definition"
 msgstr "ユニットの定義"
 
-#: common/models.py:1975 common/models.py:2130 stock/models.py:3901
+#: common/models.py:1975 common/models.py:2130 stock/models.py:3906
 #: stock/serializers.py:263
 msgid "Attachment"
 msgstr "添付ファイル"
@@ -2026,7 +2026,7 @@ msgid "State logical key that is equal to this custom state in business logic"
 msgstr "ビジネスロジックでこのカスタムステートに等しいステート論理キー"
 
 #: common/models.py:2321 common/models.py:2588 machine/serializers.py:27
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:3893
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:3898
 msgid "Value"
 msgstr "値"
 
@@ -2385,7 +2385,7 @@ msgid "Response data from the barcode scan"
 msgstr "バーコードスキャンによるレスポンスデータ"
 
 #: common/models.py:3158 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:3887
+#: stock/models.py:3892
 msgid "Result"
 msgstr "結果"
 
@@ -4747,6 +4747,10 @@ msgstr "値"
 msgid "Placed"
 msgstr "設置済"
 
+#: generic/states/transition.py:194
+msgid "Failed to offload background task for this transition"
+msgstr ""
+
 #: generic/states/validators.py:21
 msgid "Invalid status code"
 msgstr "無効なステータスコード"
@@ -6795,7 +6799,7 @@ msgid "Total available stock at time of stocktake"
 msgstr "ストックテイク時の在庫可能量"
 
 #: part/models.py:3388 report/templates/report/inventree_test_report.html:106
-#: stock/models.py:3933
+#: stock/models.py:3938
 msgid "Date"
 msgstr "日付"
 
@@ -9402,7 +9406,7 @@ msgstr "シリアル番号はリストとして提供されなければなりま
 msgid "Quantity does not match serial numbers"
 msgstr "数量がシリアル番号と一致しません"
 
-#: stock/models.py:2606 stock/models.py:3851
+#: stock/models.py:2606 stock/models.py:3856
 msgid "Test template does not exist"
 msgstr "テストテンプレートが存在しません"
 
@@ -9450,67 +9454,67 @@ msgstr "在庫状況コードが一致していること"
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "在庫がないため移動できません。"
 
-#: stock/models.py:3731
+#: stock/models.py:3736
 msgid "Stock Item Tracking"
 msgstr "ストックアイテムのトラッキング"
 
-#: stock/models.py:3781
+#: stock/models.py:3786
 msgid "Entry notes"
 msgstr "記入上の注意"
 
-#: stock/models.py:3821
+#: stock/models.py:3826
 msgid "Stock Item Test Result"
 msgstr "在庫品テスト結果"
 
-#: stock/models.py:3854
+#: stock/models.py:3859
 msgid "Value must be provided for this test"
 msgstr "このテストには値を指定する必要があります。"
 
-#: stock/models.py:3858
+#: stock/models.py:3863
 msgid "Attachment must be uploaded for this test"
 msgstr "このテストには添付ファイルをアップロードする必要があります。"
 
-#: stock/models.py:3863
+#: stock/models.py:3868
 msgid "Invalid value for this test"
 msgstr "このテストでは無効な値です。"
 
-#: stock/models.py:3887
+#: stock/models.py:3892
 msgid "Test result"
 msgstr "試験結果"
 
-#: stock/models.py:3894
+#: stock/models.py:3899
 msgid "Test output value"
 msgstr "テスト出力値"
 
-#: stock/models.py:3902 stock/serializers.py:264
+#: stock/models.py:3907 stock/serializers.py:264
 msgid "Test result attachment"
 msgstr "試験結果添付"
 
-#: stock/models.py:3906
+#: stock/models.py:3911
 msgid "Test notes"
 msgstr "テストノート"
 
-#: stock/models.py:3914
+#: stock/models.py:3919
 msgid "Test station"
 msgstr "テストステーション"
 
-#: stock/models.py:3915
+#: stock/models.py:3920
 msgid "The identifier of the test station where the test was performed"
 msgstr "試験が実施された試験ステーションの識別子。"
 
-#: stock/models.py:3921
+#: stock/models.py:3926
 msgid "Started"
 msgstr "開始"
 
-#: stock/models.py:3922
+#: stock/models.py:3927
 msgid "The timestamp of the test start"
 msgstr "テスト開始のタイムスタンプ"
 
-#: stock/models.py:3928
+#: stock/models.py:3933
 msgid "Finished"
 msgstr "修了済み"
 
-#: stock/models.py:3929
+#: stock/models.py:3934
 msgid "The timestamp of the test finish"
 msgstr "テスト終了のタイムスタンプ"
 

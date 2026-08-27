@@ -3401,15 +3401,20 @@ class StockItem(
         except InvalidOperation:
             return False
 
-        # Cannot remove more than the available quantity
-        # (also ensures the recorded history matches the actual removal)
-        quantity = min(quantity, self.quantity)
-
         if quantity <= 0:
             return False
 
         # Lock the database row, so concurrent adjustments are serialized
         if not self.lock_quantity():
+            return False
+
+        # Cannot remove more than the available quantity
+        # (also ensures the recorded history matches the actual removal)
+        # This must happen *after* the lock above, so it is checked against
+        # the current database value rather than a potentially stale copy
+        quantity = min(quantity, self.quantity)
+
+        if quantity <= 0:
             return False
 
         deltas = {}
