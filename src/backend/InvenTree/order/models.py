@@ -1,5 +1,6 @@
 """Order model definitions."""
 
+import copy
 from decimal import Decimal
 from typing import Any, Optional, TypedDict
 
@@ -8,6 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
 from django.db.models import F, Q, QuerySet, Sum
+from django.db.models.base import ModelState
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
@@ -35,7 +37,15 @@ from common.currency import currency_code_default
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import get_global_setting
 from company.models import Address, Company, Contact, SupplierPart
-from generic.states import StateTransitionMixin, StatusCodeMixin
+from generic.states import (
+    RETURN_VALUE,
+    Deprecations,
+    StateTransitionMixin,
+    StatusCodeMixin,
+    can_proceed,
+    deprecated,
+    inventree_transition,
+)
 from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (
@@ -64,7 +74,8 @@ from order.status_codes import (
     TransferOrderStatusGroups,
 )
 from part import models as PartModels
-from plugin.events import trigger_event
+from plugin.events import bulk_trigger_event, trigger_event
+from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
 
 logger = structlog.get_logger('inventree')
@@ -478,8 +489,9 @@ class Order(
         )
 
     @property
-    def is_overdue(self):
-        """Method to determine if this order is overdue.
+    @report.mixins.report_attribute()
+    def is_overdue(self) -> bool:
+        """Determine if this order is overdue.
 
         Makes use of the overdue_filter() method to avoid code duplication
         """
@@ -587,20 +599,23 @@ class Order(
     )
 
     @property
-    def company(self):
-        """Return the company associated with this order.
+    @report.mixins.report_attribute()
+    def company(self) -> Optional[Company]:
+        """The company associated with this order.
 
         This method must be implemented by any subclass, as the 'company' field may be named differently for different order types (e.g. supplier vs customer).
         """
         raise NotImplementedError(f'company() method not implemented for {__class__}')
 
     @property
-    def order_address(self):
-        """Return the Address associated with this order."""
+    @report.mixins.report_attribute()
+    def order_address(self) -> Optional[Address]:
+        """The Address associated with this order."""
         return self.address or self.company.primary_address
 
     @property
-    def status_text(self):
+    @report.mixins.report_attribute()
+    def status_text(self) -> str:
         """Return the text representation of the current status. This will consider any custom status."""
         if self.get_custom_status() is not None:
             from generic.states.custom import (
@@ -845,92 +860,113 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         return line
 
-    # region state changes
-    def _action_place(self, *args, **kwargs):
-        """Marks the PurchaseOrder as PLACED.
+    # region fsm
+    @inventree_transition(
+        field=status,
+        source=[PurchaseOrderStatus.PENDING, PurchaseOrderStatus.ON_HOLD],
+        target=PurchaseOrderStatus.PLACED,
+        event=PurchaseOrderEvents.PLACED,
+    )
+    def place_order(self):
+        """Transition this PurchaseOrder to PLACED status.
 
-        Order must be currently PENDING.
+        The order must currently be PENDING or ON_HOLD.
         """
-        if self.can_issue:
-            self.status = PurchaseOrderStatus.PLACED.value
-            self.issue_date = InvenTree.helpers.current_date()
-            self.save()
+        self.issue_date = InvenTree.helpers.current_date()
 
-            trigger_event(PurchaseOrderEvents.PLACED, id=self.pk)
+        notify_responsible(
+            self,
+            PurchaseOrder,
+            exclude=self.created_by,
+            content=InvenTreeNotificationBodies.NewOrder,
+            extra_users=self.subscribed_users(),
+        )
 
-            # Notify users that the order has been placed
-            notify_responsible(
-                self,
-                PurchaseOrder,
-                exclude=self.created_by,
-                content=InvenTreeNotificationBodies.NewOrder,
-                extra_users=self.subscribed_users(),
-            )
-
-    def _action_complete(self, *args, **kwargs):
-        """Marks the PurchaseOrder as COMPLETE.
-
-        Order must be currently PLACED.
-        """
-        if self.status == PurchaseOrderStatus.PLACED:
-            self.status = PurchaseOrderStatus.COMPLETE.value
-            self.complete_date = InvenTree.helpers.current_date()
-
-            self.save()
-
-            unique_parts = set()
-
-            # Schedule pricing update for any referenced parts
-            for line in self.lines.all().prefetch_related('part__part'):
-                # Ensure we only check 'unique' parts
-                if line.part and line.part.part:
-                    unique_parts.add(line.part.part)
-
-            for part in unique_parts:
-                part.schedule_pricing_update(create=True, refresh=False)
-
-            trigger_event(PurchaseOrderEvents.COMPLETED, id=self.pk)
-
-    @transaction.atomic
+    @deprecated('Use place_order() instead', version='1.5.0')
     def issue_order(self):
-        """Equivalent to 'place_order'."""
+        """Equivalent to place_order()."""
         return self.place_order()
 
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_issue(self) -> bool:
-        """Return True if this order can be issued."""
-        return self.status in [
-            PurchaseOrderStatus.PENDING.value,
-            PurchaseOrderStatus.ON_HOLD.value,
-        ]
+        """Return True if this order can be issued (placed)."""
+        return can_proceed(self.place_order)
 
-    @transaction.atomic
-    def place_order(self):
-        """Attempt to transition to PLACED status."""
-        return self.handle_transition(
-            self.status, PurchaseOrderStatus.PLACED.value, self, self._action_place
-        )
-
-    @transaction.atomic
+    @inventree_transition(
+        field=status,
+        source=PurchaseOrderStatus.PLACED,
+        target=PurchaseOrderStatus.COMPLETE,
+        event=PurchaseOrderEvents.COMPLETED,
+    )
     def complete_order(self):
-        """Attempt to transition to COMPLETE status."""
-        return self.handle_transition(
-            self.status, PurchaseOrderStatus.COMPLETE.value, self, self._action_complete
-        )
+        """Transition this PurchaseOrder to COMPLETE status.
 
-    @transaction.atomic
+        The order must currently be PLACED.
+        """
+        self.complete_date = InvenTree.helpers.current_date()
+
+        unique_parts = set()
+
+        for line in self.lines.all().prefetch_related('part__part'):
+            if line.part and line.part.part:
+                unique_parts.add(line.part.part)
+
+        for part in unique_parts:
+            part.schedule_pricing_update(create=True, refresh=False)
+
+    @inventree_transition(
+        field=status,
+        source=[PurchaseOrderStatus.PENDING, PurchaseOrderStatus.PLACED],
+        target=PurchaseOrderStatus.ON_HOLD,
+        event=PurchaseOrderEvents.HOLD,
+    )
     def hold_order(self):
-        """Attempt to transition to ON_HOLD status."""
-        return self.handle_transition(
-            self.status, PurchaseOrderStatus.ON_HOLD.value, self, self._action_hold
+        """Transition this PurchaseOrder to ON_HOLD status.
+
+        The order must currently be PENDING or PLACED.
+        """
+
+    @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
+    def can_hold(self) -> bool:
+        """Return True if this order can be placed on hold."""
+        return can_proceed(self.hold_order)
+
+    @inventree_transition(
+        field=status,
+        source=[
+            PurchaseOrderStatus.PENDING,
+            PurchaseOrderStatus.ON_HOLD,
+            PurchaseOrderStatus.PLACED,
+        ],
+        target=PurchaseOrderStatus.CANCELLED,
+        event=PurchaseOrderEvents.CANCELLED,
+    )
+    def cancel_order(self):
+        """Transition this PurchaseOrder to CANCELLED status.
+
+        The order must currently be open (PENDING, ON_HOLD, or PLACED).
+        """
+        notify_responsible(
+            self,
+            PurchaseOrder,
+            exclude=self.created_by,
+            content=InvenTreeNotificationBodies.OrderCanceled,
+            extra_users=self.subscribed_users(),
         )
 
-    @transaction.atomic
-    def cancel_order(self):
-        """Attempt to transition to CANCELLED status."""
-        return self.handle_transition(
-            self.status, PurchaseOrderStatus.CANCELLED.value, self, self._action_cancel
-        )
+    @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
+    def can_cancel(self) -> bool:
+        """A PurchaseOrder can only be cancelled while it is open.
+
+        - Status is PLACED
+        - Status is PENDING (or ON_HOLD)
+        """
+        return can_proceed(self.cancel_order)
+
+    # endregion fsm
 
     @property
     def is_pending(self) -> bool:
@@ -941,50 +977,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
     def is_open(self) -> bool:
         """Return True if the PurchaseOrder is 'open'."""
         return self.status in PurchaseOrderStatusGroups.OPEN
-
-    @property
-    def can_cancel(self) -> bool:
-        """A PurchaseOrder can only be cancelled under the following circumstances.
-
-        - Status is PLACED
-        - Status is PENDING (or ON_HOLD)
-        """
-        return self.status in PurchaseOrderStatusGroups.OPEN
-
-    def _action_cancel(self, *args, **kwargs):
-        """Marks the PurchaseOrder as CANCELLED."""
-        if self.can_cancel:
-            self.status = PurchaseOrderStatus.CANCELLED.value
-            self.save()
-
-            trigger_event(PurchaseOrderEvents.CANCELLED, id=self.pk)
-
-            # Notify users that the order has been canceled
-            notify_responsible(
-                self,
-                PurchaseOrder,
-                exclude=self.created_by,
-                content=InvenTreeNotificationBodies.OrderCanceled,
-                extra_users=self.subscribed_users(),
-            )
-
-    @property
-    def can_hold(self) -> bool:
-        """Return True if this order can be placed on hold."""
-        return self.status in [
-            PurchaseOrderStatus.PENDING.value,
-            PurchaseOrderStatus.PLACED.value,
-        ]
-
-    def _action_hold(self, *args, **kwargs):
-        """Mark this purchase order as 'on hold'."""
-        if self.can_hold:
-            self.status = PurchaseOrderStatus.ON_HOLD.value
-            self.save()
-
-            trigger_event(PurchaseOrderEvents.HOLD, id=self.pk)
-
-    # endregion
 
     def pending_line_items(self) -> QuerySet:
         """Return a list of pending line items for this order.
@@ -1261,7 +1253,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 item.run_plugin_validation()
 
             # Bulk create the stock items and fetch the newly created instances
-            new_items = bulk_create_and_fetch(stock.models.StockItem, bulk_create_items)
+            new_items = list(
+                bulk_create_and_fetch(stock.models.StockItem, bulk_create_items)
+            )
 
             stock_items.extend(new_items)
 
@@ -1671,22 +1665,27 @@ class SalesOrder(TotalPriceMixin, Order):
             serial_numbers, quantity, part.get_latest_serial_number(), part=part
         )
 
+        serials = [str(serial).strip() for serial in serials]
+
         serials_not_exist = set()
         serials_unavailable = set()
         stock_items_to_allocate = []
 
+        # Bulk-fetch every candidate StockItem in a single query, keyed by serial,
+        # rather than querying once per requested serial number
+        candidate_items = {}
+
+        for item in stock.models.StockItem.objects.filter(
+            part=part, serial__in=serials, quantity=1
+        ):
+            candidate_items.setdefault(item.serial, item)
+
         for serial in serials:
-            serial = str(serial).strip()
+            stock_item = candidate_items.get(serial)
 
-            items = stock.models.StockItem.objects.filter(
-                part=part, serial=serial, quantity=1
-            )
-
-            if not items.exists():
+            if stock_item is None:
                 serials_not_exist.add(serial)
                 continue
-
-            stock_item = items[0]
 
             if get_global_setting('SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS'):
                 if (
@@ -1697,6 +1696,13 @@ class SalesOrder(TotalPriceMixin, Order):
                     continue
 
             if not stock_item.in_stock:
+                serials_unavailable.add(serial)
+                continue
+
+            # Lock the StockItem row, so that concurrent allocation requests are
+            # serialized against each other, and re-validate the unallocated
+            # quantity against the now-current (and now-locked) state
+            if not stock_item.lock_quantity():
                 serials_unavailable.add(serial)
                 continue
 
@@ -1792,68 +1798,74 @@ class SalesOrder(TotalPriceMixin, Order):
 
         return True
 
-    # region state changes
+    # region fsm
+    @deprecated("Use 'issue_order' instead", version='1.5.0')
     def place_order(self):
         """Deprecated version of 'issue_order'."""
-        self.issue_order()
+        return self.issue_order()
+
+    @inventree_transition(
+        field=status,
+        source=[SalesOrderStatus.PENDING, SalesOrderStatus.ON_HOLD],
+        target=SalesOrderStatus.IN_PROGRESS,
+        event=SalesOrderEvents.ISSUED,
+    )
+    def issue_order(self):
+        """Transition this SalesOrder to IN_PROGRESS status.
+
+        The order must currently be PENDING or ON_HOLD.
+        """
+        self.issue_date = InvenTree.helpers.current_date()
+
+        notify_responsible(
+            self,
+            SalesOrder,
+            exclude=self.created_by,
+            content=InvenTreeNotificationBodies.NewOrder,
+            extra_users=self.subscribed_users(),
+        )
 
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_issue(self) -> bool:
         """Return True if this order can be issued."""
-        return self.status in [
-            SalesOrderStatus.PENDING.value,
-            SalesOrderStatus.ON_HOLD.value,
-        ]
+        return can_proceed(self.issue_order)
 
-    def _action_place(self, *args, **kwargs):
-        """Change this order from 'PENDING' to 'IN_PROGRESS'."""
-        if self.can_issue:
-            self.status = SalesOrderStatus.IN_PROGRESS.value
-            self.issue_date = InvenTree.helpers.current_date()
-            self.save()
+    @inventree_transition(
+        field=status,
+        source=[SalesOrderStatus.PENDING, SalesOrderStatus.IN_PROGRESS],
+        target=SalesOrderStatus.ON_HOLD,
+        event=SalesOrderEvents.HOLD,
+    )
+    def hold_order(self):
+        """Transition this SalesOrder to ON_HOLD status.
 
-            trigger_event(SalesOrderEvents.ISSUED, id=self.pk)
-
-            # Notify users that the order has been placed
-            notify_responsible(
-                self,
-                SalesOrder,
-                exclude=self.created_by,
-                content=InvenTreeNotificationBodies.NewOrder,
-                extra_users=self.subscribed_users(),
-            )
+        The order must currently be PENDING or IN_PROGRESS.
+        """
 
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_hold(self) -> bool:
         """Return True if this order can be placed on hold."""
-        return self.status in [
-            SalesOrderStatus.PENDING.value,
-            SalesOrderStatus.IN_PROGRESS.value,
-        ]
+        return can_proceed(self.hold_order)
 
-    def _action_hold(self, *args, **kwargs):
-        """Mark this sales order as 'on hold'."""
-        if self.can_hold:
-            self.status = SalesOrderStatus.ON_HOLD.value
-            self.save()
+    def _ship_complete_action(self, user=None, **kwargs) -> SalesOrderStatus:
+        """Shared logic for ship_order and complete_order.
 
-            trigger_event(SalesOrderEvents.HOLD, id=self.pk)
+        Returns the target state (SHIPPED or COMPLETE) based on global settings
+        and the current order state.
 
-    @transaction.atomic
-    def _action_complete(self, *args, **kwargs):
-        """Mark this order as "complete."""
-        user = kwargs.pop('user', None)
-
+        Raises:
+            TransitionNotAllowed: if business-logic preconditions are not met.
+        """
         if not self.can_complete(**kwargs):
-            return False
+            raise ValidationError('Order cannot be shipped or completed at this time')
 
         bypass_shipped = InvenTree.helpers.str2bool(
             get_global_setting('SALESORDER_SHIP_COMPLETE')
         )
 
-        # Update line items
         for line in self.lines.all():
-            # Mark any "virtual" parts as shipped at this point
             if line.part and line.part.virtual and line.shipped != line.quantity:
                 line.shipped = line.quantity
                 line.save()
@@ -1861,46 +1873,73 @@ class SalesOrder(TotalPriceMixin, Order):
             if line.part:
                 line.part.schedule_pricing_update(create=True)
 
-        if bypass_shipped or self.status == SalesOrderStatus.SHIPPED:
-            self.status = SalesOrderStatus.COMPLETE.value
-        else:
-            self.status = SalesOrderStatus.SHIPPED.value
-
         if self.shipment_date is None:
             self.shipped_by = user
             self.shipment_date = InvenTree.helpers.current_date()
 
-        self.save()
-
         trigger_event(SalesOrderEvents.COMPLETED, id=self.pk)
 
-        return True
+        if bypass_shipped or self.status == SalesOrderStatus.SHIPPED:
+            return SalesOrderStatus.COMPLETE
+        else:
+            return SalesOrderStatus.SHIPPED
 
-    @property
-    def can_cancel(self) -> bool:
-        """Return True if this order can be cancelled."""
-        return self.is_open
+    @inventree_transition(
+        field=status,
+        source=[
+            SalesOrderStatus.PENDING,
+            SalesOrderStatus.IN_PROGRESS,
+            SalesOrderStatus.ON_HOLD,
+            SalesOrderStatus.SHIPPED,
+        ],
+        target=RETURN_VALUE(SalesOrderStatus.SHIPPED, SalesOrderStatus.COMPLETE),
+    )
+    def ship_order(self, user=None, **kwargs):
+        """Attempt to ship or complete this SalesOrder.
 
-    def _action_cancel(self, *args, **kwargs):
-        """Cancel this order (only if it is "open").
-
-        Executes:
-        - Mark the order as 'cancelled'
-        - Delete any StockItems which have been allocated
+        The order must currently be PENDING, IN_PROGRESS, ON_HOLD, or already SHIPPED.
+        Depending on global settings, the order will transition to SHIPPED or COMPLETE.
         """
-        if not self.can_cancel:
-            return False
+        return self._ship_complete_action(user=user, **kwargs)
 
-        self.status = SalesOrderStatus.CANCELLED.value
-        self.save()
+    @inventree_transition(
+        field=status,
+        source=[
+            SalesOrderStatus.PENDING,
+            SalesOrderStatus.IN_PROGRESS,
+            SalesOrderStatus.ON_HOLD,
+            SalesOrderStatus.SHIPPED,
+        ],
+        target=RETURN_VALUE(SalesOrderStatus.SHIPPED, SalesOrderStatus.COMPLETE),
+    )
+    def complete_order(self, user=None, **kwargs):
+        """Attempt to complete this SalesOrder.
 
+        The order must currently be IN_PROGRESS, ON_HOLD, or SHIPPED.
+        Depending on global settings, the order will transition to SHIPPED or COMPLETE.
+        """
+        return self._ship_complete_action(user=user, **kwargs)
+
+    @inventree_transition(
+        field=status,
+        source=[
+            SalesOrderStatus.PENDING,
+            SalesOrderStatus.ON_HOLD,
+            SalesOrderStatus.IN_PROGRESS,
+            SalesOrderStatus.SHIPPED,
+        ],
+        target=SalesOrderStatus.CANCELLED,
+        event=SalesOrderEvents.CANCELLED,
+    )
+    def cancel_order(self):
+        """Transition this SalesOrder to CANCELLED status.
+
+        Deletes all pending stock allocations.
+        """
         for line in self.lines.all():
             for allocation in line.allocations.all():
                 allocation.delete()
 
-        trigger_event(SalesOrderEvents.CANCELLED, id=self.pk)
-
-        # Notify users that the order has been canceled
         notify_responsible(
             self,
             SalesOrder,
@@ -1909,54 +1948,13 @@ class SalesOrder(TotalPriceMixin, Order):
             extra_users=self.subscribed_users(),
         )
 
-        return True
+    @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
+    def can_cancel(self) -> bool:
+        """Return True if this order can be cancelled."""
+        return can_proceed(self.cancel_order)
 
-    @transaction.atomic
-    def issue_order(self):
-        """Attempt to transition to IN_PROGRESS status."""
-        return self.handle_transition(
-            self.status, SalesOrderStatus.IN_PROGRESS.value, self, self._action_place
-        )
-
-    @transaction.atomic
-    def ship_order(self, user, **kwargs):
-        """Attempt to transition to SHIPPED status."""
-        return self.handle_transition(
-            self.status,
-            SalesOrderStatus.SHIPPED.value,
-            self,
-            self._action_complete,
-            user=user,
-            **kwargs,
-        )
-
-    @transaction.atomic
-    def complete_order(self, user, **kwargs):
-        """Attempt to transition to COMPLETED status."""
-        return self.handle_transition(
-            self.status,
-            SalesOrderStatus.COMPLETE.value,
-            self,
-            self._action_complete,
-            user=user,
-            **kwargs,
-        )
-
-    @transaction.atomic
-    def hold_order(self):
-        """Attempt to transition to ON_HOLD status."""
-        return self.handle_transition(
-            self.status, SalesOrderStatus.ON_HOLD.value, self, self._action_hold
-        )
-
-    @transaction.atomic
-    def cancel_order(self):
-        """Attempt to transition to CANCELLED status."""
-        return self.handle_transition(
-            self.status, SalesOrderStatus.CANCELLED.value, self, self._action_cancel
-        )
-
-    # endregion
+    # endregion fsm
 
     @property
     def line_count(self) -> int:
@@ -2798,6 +2796,199 @@ class SalesOrderShipment(
         return True
 
     @transaction.atomic
+    def complete_allocations(
+        self, allocations: QuerySet, user: Optional[User] = None
+    ) -> None:
+        """Complete a set of SalesOrderAllocation objects, marking their stock as shipped to the customer.
+
+        Arguments:
+            allocations: QuerySet of SalesOrderAllocation objects to complete
+            user: The user completing the allocations
+
+        Notes:
+            This unrolls what would otherwise be a per-allocation call, so that the underlying
+            StockItem, StockItemTracking, SalesOrderLineItem and SalesOrderAllocation writes can
+            be batched into a handful of bulk queries instead of several per allocation.
+        """
+        import part.tasks
+
+        order = self.order
+        customer = order.customer
+
+        # Preselect related fields to avoid per-row database queries below
+        allocations = allocations.select_related('line', 'item', 'item__part')
+
+        split_items = []  # (source_item, new_item, quantity) - stock to split off
+        shipped_items = []  # (target_item, quantity) - stock to mark as shipped
+
+        # Canonical (mutable) copy of each distinct StockItem being drawn from - multiple
+        # allocations may draw from the same StockItem, so track running state
+        seen_stock_items: dict = {}
+
+        # Track the lines which have already been processed, to avoid double counting
+        seen_lines: dict = {}
+
+        # Allocations whose 'item' now points at a newly-split-off StockItem
+        allocations_to_update = []
+
+        for allocation in allocations:
+            stock_item = seen_stock_items.get(allocation.item_id) or allocation.item
+            quantity = allocation.quantity
+
+            seen_stock_items[stock_item.pk] = stock_item
+
+            if quantity < stock_item.quantity:
+                # Split off exactly the shipped quantity into a new StockItem,
+                # leaving the remainder in place as available stock
+                new_item = copy.copy(stock_item)
+                new_item._state = ModelState()
+                new_item.pk = None
+                new_item.quantity = quantity
+                new_item.parent = stock_item
+
+                stock_item.quantity -= quantity
+
+                target_item = new_item
+                split_items.append((stock_item, new_item, quantity))
+
+                allocation.item = new_item
+                allocations_to_update.append(allocation)
+            else:
+                target_item = stock_item
+
+            # Resolve the final resting state of the target item now
+            target_item.sales_order = order
+            target_item.customer = customer
+            target_item.location = None
+
+            shipped_items.append((target_item, quantity))
+
+            # Increase the "shipped" quantity for the associated line
+            line = seen_lines.get(allocation.line_id) or allocation.line
+            line.shipped += quantity
+            seen_lines[line.pk] = line
+
+        # Nothing to do?
+        if not seen_stock_items:
+            return
+
+        # Bulk-create the newly split-off stock items - this resolves their primary keys,
+        # which the tracking entries below need
+        new_stock_item_data = [new_item for _, new_item, _ in split_items]
+
+        # Evaluate the queryset immediately (into a list) - otherwise, indexing into it
+        # below would re-query the database once per split item
+        new_stock_items = list(
+            bulk_create_and_fetch(stock.models.StockItem, new_stock_item_data)
+        )
+
+        # Backfill the newly created StockItem objects into the split_items list,
+        # then repoint every other reference to a placeholder (pk=None) copy at the
+        # newly persisted instance instead - shipped_items and allocations_to_update
+        # were populated with the pre-creation copies, which never gain a primary key
+        split_item_map = {}
+
+        for i, (source, placeholder, quantity) in enumerate(split_items):
+            persisted = new_stock_items[i]
+            split_item_map[id(placeholder)] = persisted
+            split_items[i] = (source, persisted, quantity)
+
+        shipped_items = [
+            (split_item_map.get(id(item), item), quantity)
+            for item, quantity in shipped_items
+        ]
+
+        for allocation in allocations_to_update:
+            allocation.item = split_item_map[id(allocation.item)]
+
+        tracking_entries = []
+        split_events = []
+        customer_events = []
+
+        # Split stock items for "split_items"
+        for source_item, new_item, quantity in split_items:
+            tracking_entries.append(
+                stock.models.StockItemTracking(
+                    item_id=new_item.pk,
+                    part_id=new_item.part_id,
+                    tracking_type=StockHistoryCode.SPLIT_FROM_PARENT.value,
+                    user=user,
+                    deltas={'stockitem': source_item.pk, 'quantity': float(quantity)},
+                )
+            )
+            tracking_entries.append(
+                stock.models.StockItemTracking(
+                    item_id=source_item.pk,
+                    part_id=source_item.part_id,
+                    tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value,
+                    user=user,
+                    deltas={
+                        'removed': float(quantity),
+                        'quantity': float(source_item.quantity),
+                    },
+                )
+            )
+
+            split_events.append(((), {'id': new_item.pk, 'parent': source_item.pk}))
+
+        # Ship stock items for "shipped_items"
+        for target_item, quantity in shipped_items:
+            deltas = {'quantity': float(quantity), 'salesorder': order.pk}
+
+            if customer is not None:
+                deltas['customer'] = customer.pk
+                deltas['customer_name'] = customer.name
+
+            tracking_entries.append(
+                stock.models.StockItemTracking(
+                    item_id=target_item.pk,
+                    part_id=target_item.part_id,
+                    tracking_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value,
+                    user=user,
+                    deltas=deltas,
+                )
+            )
+
+            customer_events.append((
+                (),
+                {'id': target_item.pk, 'customer': customer.pk if customer else None},
+            ))
+
+        # Flush all StockItem field changes (quantity reductions, and shipment details)
+        stock.models.StockItem.objects.bulk_update(
+            seen_stock_items.values(), ['quantity']
+        )
+        stock.models.StockItem.objects.bulk_update(
+            [item for item, _ in shipped_items], ['sales_order', 'customer', 'location']
+        )
+
+        stock.models.StockItemTracking.objects.bulk_create(tracking_entries)
+
+        # Update sales order lines for "seen_lines"
+        SalesOrderLineItem.objects.bulk_update(seen_lines.values(), ['shipped'])
+
+        # Repoint allocations onto their (possibly newly split) StockItem
+        if allocations_to_update:
+            SalesOrderAllocation.objects.bulk_update(allocations_to_update, ['item'])
+
+        # Queue the ITEM_SPLIT / ITEM_ASSIGNED_TO_CUSTOMER plugin events in bulk,
+        # rather than one offload_task() call (and one OrmQ insert) per item
+        bulk_trigger_event(StockEvents.ITEM_SPLIT, split_events)
+        bulk_trigger_event(StockEvents.ITEM_ASSIGNED_TO_CUSTOMER, customer_events)
+
+        # bulk_update()/bulk_create() above do not fire StockItem's post_save signal,
+        # which normally triggers a low-stock check for the affected part - so queue
+        # that check explicitly, once per distinct part touched by this call
+        touched_part_ids = {item.part_id for item in seen_stock_items.values()}
+
+        InvenTree.tasks.bulk_offload_task(
+            part.tasks.notify_low_stock_if_required,
+            [((part_id,), {}) for part_id in touched_part_ids],
+            group='notification',
+            force_async=True,
+        )
+
+    @transaction.atomic
     def complete_shipment(self, user, **kwargs):
         """Complete this particular shipment.
 
@@ -2930,9 +3121,13 @@ class SalesOrderAllocation(models.Model):
         sales_allocation_count = self.item.sales_order_allocation_count(
             exclude_allocations={'pk': self.pk}
         )
+        transfer_allocation_count = self.item.transfer_order_allocation_count()
 
         total_allocation = (
-            build_allocation_count + sales_allocation_count + self.quantity
+            build_allocation_count
+            + sales_allocation_count
+            + transfer_allocation_count
+            + self.quantity
         )
 
         if total_allocation > self.item.quantity:
@@ -2999,29 +3194,18 @@ class SalesOrderAllocation(models.Model):
         """Return the PurchaseOrder associated with this allocation."""
         return self.item.purchase_order
 
-    def complete_allocation(self, user):
+    def complete_allocation(self, user=None):
         """Complete this allocation (called when the parent SalesOrder is marked as "shipped").
 
-        Executes:
-        - Determine if the referenced StockItem needs to be "split" (if allocated quantity != stock quantity)
-        - Mark the StockItem as belonging to the Customer (this will remove it from stock)
+        Retained for backwards compatibility with external callers (e.g. plugins) which
+        complete allocations one at a time - delegates to the bulk
+        SalesOrderShipment.complete_allocations() implementation.
         """
-        order = self.line.order
-
-        item = self.item.allocateToCustomer(
-            order.customer, quantity=self.quantity, order=order, user=user
+        self.shipment.complete_allocations(
+            SalesOrderAllocation.objects.filter(pk=self.pk), user=user
         )
 
-        # Update the 'shipped' quantity
-        # Increment at the database level to prevent lost updates
-        self.line.shipped = F('shipped') + self.quantity
-        self.line.save(update_fields=['shipped'])
-        self.line.refresh_from_db(fields=['shipped'])
-
-        # Update our own reference to the StockItem
-        # (It may have changed if the stock was split)
-        self.item = item
-        self.save()
+        self.refresh_from_db()
 
 
 class ReturnOrder(TotalPriceMixin, Order):
@@ -3166,117 +3350,98 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Return True if this order is fully received."""
         return not self.lines.filter(received_date=None).exists()
 
+    # region fsm
+
+    @inventree_transition(
+        field=status,
+        source=[ReturnOrderStatus.PENDING, ReturnOrderStatus.IN_PROGRESS],
+        target=ReturnOrderStatus.ON_HOLD,
+        event=ReturnOrderEvents.HOLD,
+    )
+    def hold_order(self):
+        """Transition this ReturnOrder to ON_HOLD status.
+
+        The order must currently be PENDING or IN_PROGRESS.
+        """
+
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_hold(self):
         """Return True if this order can be placed on hold."""
-        return self.status in [
-            ReturnOrderStatus.PENDING.value,
-            ReturnOrderStatus.IN_PROGRESS.value,
-        ]
+        return can_proceed(self.hold_order)
 
-    def _action_hold(self, *args, **kwargs):
-        """Mark this order as 'on hold' (if allowed)."""
-        if self.can_hold:
-            self.status = ReturnOrderStatus.ON_HOLD.value
-            self.save()
-
-            trigger_event(ReturnOrderEvents.HOLD, id=self.pk)
+    @inventree_transition(
+        field=status,
+        source=[
+            ReturnOrderStatus.PENDING,
+            ReturnOrderStatus.ON_HOLD,
+            ReturnOrderStatus.IN_PROGRESS,
+        ],
+        target=ReturnOrderStatus.CANCELLED,
+        event=ReturnOrderEvents.CANCELLED,
+    )
+    def cancel_order(self):
+        """Transition this ReturnOrder to CANCELLED status."""
+        notify_responsible(
+            self,
+            ReturnOrder,
+            exclude=self.created_by,
+            content=InvenTreeNotificationBodies.OrderCanceled,
+            extra_users=self.subscribed_users(),
+        )
 
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_cancel(self):
         """Return True if this order can be cancelled."""
-        return self.status in ReturnOrderStatusGroups.OPEN
+        return can_proceed(self.cancel_order)
 
-    def _action_cancel(self, *args, **kwargs):
-        """Cancel this ReturnOrder (if not already cancelled)."""
-        if self.can_cancel:
-            self.status = ReturnOrderStatus.CANCELLED.value
-            self.save()
+    @inventree_transition(
+        field=status,
+        source=ReturnOrderStatus.IN_PROGRESS,
+        target=ReturnOrderStatus.COMPLETE,
+        event=ReturnOrderEvents.COMPLETED,
+    )
+    def complete_order(self):
+        """Transition this ReturnOrder to COMPLETE status.
 
-            trigger_event(ReturnOrderEvents.CANCELLED, id=self.pk)
+        The order must currently be IN_PROGRESS.
+        """
+        self.complete_date = InvenTree.helpers.current_date()
 
-            # Notify users that the order has been canceled
-            notify_responsible(
-                self,
-                ReturnOrder,
-                exclude=self.created_by,
-                content=InvenTreeNotificationBodies.OrderCanceled,
-                extra_users=self.subscribed_users(),
-            )
-
-    def _action_complete(self, *args, **kwargs):
-        """Complete this ReturnOrder (if not already completed)."""
-        # Lock this order against concurrent completion, and re-read the status
-        # from the database. Without this, two simultaneous completion requests
-        # can both observe status=IN_PROGRESS, and each would run the completion
-        # side effects (duplicate events and notifications).
-        self.status = ReturnOrder.objects.select_for_update().get(pk=self.pk).status
-
-        if self.status == ReturnOrderStatus.IN_PROGRESS.value:
-            self.status = ReturnOrderStatus.COMPLETE.value
-            self.complete_date = InvenTree.helpers.current_date()
-            self.save()
-
-            trigger_event(ReturnOrderEvents.COMPLETED, id=self.pk)
-
+    @deprecated('Use issue_order directly', version='1.5.0')
     def place_order(self):
-        """Deprecated version of 'issue_order."""
-        self.issue_order()
+        """Deprecated version of 'issue_order'."""
+        return self.issue_order()
 
     @property
-    def can_issue(self):
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
+    def can_issue(self) -> bool:
         """Return True if this order can be issued."""
-        return self.status in [
-            ReturnOrderStatus.PENDING.value,
-            ReturnOrderStatus.ON_HOLD.value,
-        ]
+        return can_proceed(self.issue_order)
 
-    def _action_place(self, *args, **kwargs):
-        """Issue this ReturnOrder (if currently pending)."""
-        if self.can_issue:
-            self.status = ReturnOrderStatus.IN_PROGRESS.value
-            self.issue_date = InvenTree.helpers.current_date()
-            self.save()
-
-            trigger_event(ReturnOrderEvents.ISSUED, id=self.pk)
-
-            # Notify users that the order has been placed
-            notify_responsible(
-                self,
-                ReturnOrder,
-                exclude=self.created_by,
-                content=InvenTreeNotificationBodies.NewOrder,
-                extra_users=self.subscribed_users(),
-            )
-
-    @transaction.atomic
-    def hold_order(self):
-        """Attempt to transition to ON_HOLD status."""
-        return self.handle_transition(
-            self.status, ReturnOrderStatus.ON_HOLD.value, self, self._action_hold
-        )
-
-    @transaction.atomic
+    @inventree_transition(
+        field=status,
+        source=[ReturnOrderStatus.PENDING, ReturnOrderStatus.ON_HOLD],
+        target=ReturnOrderStatus.IN_PROGRESS,
+        event=ReturnOrderEvents.ISSUED,
+    )
     def issue_order(self):
-        """Attempt to transition to IN_PROGRESS status."""
-        return self.handle_transition(
-            self.status, ReturnOrderStatus.IN_PROGRESS.value, self, self._action_place
+        """Transition this ReturnOrder to IN_PROGRESS status.
+
+        The order must currently be PENDING or ON_HOLD.
+        """
+        self.issue_date = InvenTree.helpers.current_date()
+
+        notify_responsible(
+            self,
+            ReturnOrder,
+            exclude=self.created_by,
+            content=InvenTreeNotificationBodies.NewOrder,
+            extra_users=self.subscribed_users(),
         )
 
-    @transaction.atomic
-    def complete_order(self):
-        """Attempt to transition to COMPLETE status."""
-        return self.handle_transition(
-            self.status, ReturnOrderStatus.COMPLETE.value, self, self._action_complete
-        )
-
-    @transaction.atomic
-    def cancel_order(self):
-        """Attempt to transition to CANCELLED status."""
-        return self.handle_transition(
-            self.status, ReturnOrderStatus.CANCELLED.value, self, self._action_cancel
-        )
-
+    # endregion fsm
     # endregion
 
     @transaction.atomic
@@ -3655,6 +3820,7 @@ class TransferOrder(Order):
         """Check if this order is "transferred" (all line items transferred)."""
         return all(line.is_completed() for line in self.lines.all())
 
+    # region fsm
     def can_complete(
         self, raise_error: bool = False, allow_incomplete_lines: bool = False
     ) -> bool:
@@ -3684,145 +3850,87 @@ class TransferOrder(Order):
         return True
 
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_issue(self) -> bool:
         """Return True if this order can be issued."""
-        return self.status in [
-            TransferOrderStatus.PENDING.value,
-            TransferOrderStatus.ON_HOLD.value,
-        ]
+        return can_proceed(self.issue_order)
 
-    @transaction.atomic
+    @inventree_transition(
+        field=status,
+        source=[TransferOrderStatus.PENDING, TransferOrderStatus.ON_HOLD],
+        target=TransferOrderStatus.ISSUED,
+        event=TransferOrderEvents.ISSUED,
+    )
     def issue_order(self):
-        """Attempt to transition to PLACED status."""
-        return self.handle_transition(
-            self.status, TransferOrderStatus.ISSUED.value, self, self._action_issue
+        """Transition this TransferOrder to ISSUED status.
+
+        The order must currently be PENDING or ON_HOLD.
+        """
+        self.issue_date = InvenTree.helpers.current_date()
+
+        notify_responsible(
+            self,
+            TransferOrder,
+            exclude=self.created_by,
+            content=InvenTreeNotificationBodies.NewOrder,
+            extra_users=self.subscribed_users(),
         )
 
-    # region state changes
-    def _action_issue(self, *args, **kwargs):
-        """Marks the TransferOrder as ISSUED.
-
-        Order must be currently PENDING.
-        """
-        if self.can_issue:
-            self.status = TransferOrderStatus.ISSUED.value
-            self.issue_date = InvenTree.helpers.current_date()
-            self.save()
-
-            trigger_event(TransferOrderEvents.ISSUED, id=self.pk)
-
-            # Notify users that the order has been issued
-            notify_responsible(
-                self,
-                TransferOrder,
-                exclude=self.created_by,
-                content=InvenTreeNotificationBodies.NewOrder,
-                extra_users=self.subscribed_users(),
-            )
-
     @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
     def can_hold(self) -> bool:
         """Return True if this order can be placed on hold."""
-        return self.status in [
-            TransferOrderStatus.PENDING.value,
-            TransferOrderStatus.ISSUED.value,
-        ]
+        return can_proceed(self.hold_order)
 
-    def _action_hold(self, *args, **kwargs):
-        """Mark this transfer order as 'on hold'."""
-        if self.can_hold:
-            self.status = TransferOrderStatus.ON_HOLD.value
-            self.save()
-
-            trigger_event(TransferOrderEvents.HOLD, id=self.pk)
-
-    @transaction.atomic
-    def _action_complete(self, *args, **kwargs):
-        """Marks the TransferOrder as COMPLETE.
-
-        Order must be currently ISSUED.
-        """
-        user = kwargs.pop('user', None)
-
-        # Lock this order against concurrent completion, and re-read the status
-        # from the database. Without this, two simultaneous completion requests
-        # can both observe status=ISSUED, and each would process every allocation
-        # (duplicating all associated stock operations).
-        self.status = TransferOrder.objects.select_for_update().get(pk=self.pk).status
-
-        if not self.can_complete(raise_error=True, **kwargs):
-            return False
-
-        if self.status == TransferOrderStatus.ISSUED:
-            for allocation in self.allocations():
-                # execute each transfer
-                allocation.complete_allocation(user)
-
-            self.status = TransferOrderStatus.COMPLETE.value
-            self.complete_date = InvenTree.helpers.current_date()
-
-            self.save()
-
-            trigger_event(TransferOrderEvents.COMPLETED, id=self.pk)
-
-            return True
-
-    @transaction.atomic
-    def complete_order(self, user, **kwargs):
-        """Attempt to transition to COMPLETE status."""
-        return self.handle_transition(
-            self.status,
-            TransferOrderStatus.COMPLETE.value,
-            self,
-            self._action_complete,
-            user=user,
-            **kwargs,
-        )
-
-    @transaction.atomic
+    @inventree_transition(
+        field=status,
+        source=[TransferOrderStatus.PENDING, TransferOrderStatus.ISSUED],
+        target=TransferOrderStatus.ON_HOLD,
+        event=TransferOrderEvents.HOLD,
+    )
     def hold_order(self):
-        """Attempt to transition to ON_HOLD status."""
-        return self.handle_transition(
-            self.status, TransferOrderStatus.ON_HOLD.value, self, self._action_hold
-        )
+        """Transition this TransferOrder to ON_HOLD status."""
 
-    @transaction.atomic
+    @inventree_transition(
+        field=status,
+        source=TransferOrderStatus.ISSUED,
+        target=TransferOrderStatus.COMPLETE,
+        event=TransferOrderEvents.COMPLETED,
+    )
+    def complete_order(self, user=None, **kwargs):
+        """Transition this TransferOrder to COMPLETE status.
+
+        The order must currently be ISSUED and meet all completion requirements.
+        """
+        if not user:
+            user = kwargs.pop('user', None)
+
+        self.can_complete(raise_error=True, **kwargs)
+
+        for allocation in self.allocations():
+            allocation.complete_allocation(user)
+
+        self.complete_date = InvenTree.helpers.current_date()
+
+    @inventree_transition(
+        field=status,
+        source=[
+            TransferOrderStatus.PENDING,
+            TransferOrderStatus.ON_HOLD,
+            TransferOrderStatus.ISSUED,
+        ],
+        target=TransferOrderStatus.CANCELLED,
+        event=TransferOrderEvents.CANCELLED,
+    )
     def cancel_order(self):
-        """Attempt to transition to CANCELLED status."""
-        return self.handle_transition(
-            self.status, TransferOrderStatus.CANCELLED.value, self, self._action_cancel
-        )
+        """Transition this TransferOrder to CANCELLED status.
 
-    @property
-    def can_cancel(self) -> bool:
-        """A TransferOrder can only be cancelled under the following circumstances.
-
-        - Status is ISSUED
-        - Status is PENDING (or ON_HOLD)
+        Deletes all pending stock allocations.
         """
-        return self.status in TransferOrderStatusGroups.OPEN
-
-    def _action_cancel(self, *args, **kwargs):
-        """Cancel this TransferOrder (only if we're allowed to).
-
-        Executes:
-        - Mark the order as 'cancelled'
-        - Delete any StockItems which have been allocated
-        """
-        if not self.can_cancel:
-            return False
-
-        self.status = TransferOrderStatus.CANCELLED.value
-        self.save()
-
-        # delete allocations
         for line in self.lines.all():
             for allocation in line.allocations.all():
                 allocation.delete()
 
-        trigger_event(TransferOrderEvents.CANCELLED, id=self.pk)
-
-        # Notify users that the order has been canceled
         notify_responsible(
             self,
             TransferOrder,
@@ -3831,7 +3939,17 @@ class TransferOrder(Order):
             extra_users=self.subscribed_users(),
         )
 
-    # endregion
+    @property
+    @deprecated(Deprecations.CAN_PROCEED, version='1.5.0')
+    def can_cancel(self) -> bool:
+        """A TransferOrder can only be cancelled while it is open.
+
+        - Status is ISSUED
+        - Status is PENDING (or ON_HOLD)
+        """
+        return can_proceed(self.cancel_order)
+
+    # endregion fsm
 
     @property
     def line_count(self) -> int:
@@ -4006,9 +4124,15 @@ class TransferOrderAllocation(models.Model):
         sales_allocation_count = self.item.sales_order_allocation_count(
             exclude_allocations={'pk': self.pk}
         )
+        transfer_allocation_count = self.item.transfer_order_allocation_count(
+            exclude_allocations={'pk': self.pk}
+        )
 
         total_allocation = (
-            build_allocation_count + sales_allocation_count + self.quantity
+            build_allocation_count
+            + sales_allocation_count
+            + transfer_allocation_count
+            + self.quantity
         )
 
         if total_allocation > self.item.quantity:
@@ -4076,6 +4200,12 @@ class TransferOrderAllocation(models.Model):
         order: TransferOrder = self.line.order
         self.item: stock.models.StockItem  # for type hints
         self.line: TransferOrderLineItem  # for type hints
+
+        # Lock the stock item's row and refresh its quantity, so the branch
+        # selected below (consume / split / move) is chosen using the current
+        # committed quantity rather than a stale in-memory copy
+        if not self.item.lock_quantity():
+            raise ValidationError(_('Stock item no longer exists'))
 
         # The allocation is the only thing linking this stock item to the transfer
         # As a result, we must keep the allocation present even after completion

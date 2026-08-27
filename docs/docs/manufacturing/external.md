@@ -65,6 +65,8 @@ Once the purchase order has been created, add the assembly part to the purchase 
 
 Follow the normal process for receiving items against the purchase order. When the items are received from the external supplier, they will be marked as "build outputs" against the external build order.
 
+If the assembled part is [trackable](../part/trackable.md), [serial numbers](../purchasing/purchase_order.md#serial-numbers) may optionally be entered at the point of receipt - or the items can be received without serial numbers, and [serialized later](../part/trackable.md#build-outputs-without-serial-numbers).
+
 {{ image("build/external_build_receive_items.png", "Receive items against purchase order") }}
 
 The received items will now be registered as "incomplete outputs" against the external build order:

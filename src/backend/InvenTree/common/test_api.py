@@ -1062,6 +1062,79 @@ class AttachmentAPITests(InvenTreeAPITestCase):
             # Ensure that the file associated with each attachment has been removed
             self.assertFalse(default_storage.exists(att.attachment.path))
 
+    def test_attachment_read_permissions(self):
+        """Test that reading attachments is gated on the linked model's own view permission.
+
+        A user should not be able to list or retrieve attachments linked to a model
+        type they have no view permission for, even though attachments themselves
+        have no RuleSet of their own (see users.ruleset.get_ruleset_ignore).
+        """
+        from common.models import Attachment
+        from part.models import Part
+        from stock.models import StockItem
+
+        part = Part.objects.create(name='Attachable Part', description='A part')
+        item = StockItem.objects.create(part=part, quantity=10)
+
+        part_attachment = Attachment.objects.create(
+            model_type='part',
+            model_id=part.pk,
+            comment='part attachment',
+            link='https://example.com/part',
+        )
+        stock_attachment = Attachment.objects.create(
+            model_type='stockitem',
+            model_id=item.pk,
+            comment='stock attachment',
+            link='https://example.com/stock',
+        )
+
+        # User has no roles at all - should see nothing, and be denied on direct retrieve
+        list_url = reverse('api-attachment-list')
+        response = self.get(list_url, expected_code=200)
+        result_ids = {result['pk'] for result in response.data}
+        self.assertNotIn(part_attachment.pk, result_ids)
+        self.assertNotIn(stock_attachment.pk, result_ids)
+
+        self.get(
+            reverse('api-attachment-detail', kwargs={'pk': part_attachment.pk}),
+            expected_code=403,
+        )
+        self.get(
+            reverse('api-attachment-detail', kwargs={'pk': stock_attachment.pk}),
+            expected_code=403,
+        )
+
+        # Grant 'view' permission on 'part' only
+        self.assignRole('part.view')
+
+        response = self.get(list_url, expected_code=200)
+        result_ids = {result['pk'] for result in response.data}
+        self.assertIn(part_attachment.pk, result_ids)
+        self.assertNotIn(stock_attachment.pk, result_ids)
+
+        self.get(
+            reverse('api-attachment-detail', kwargs={'pk': part_attachment.pk}),
+            expected_code=200,
+        )
+        self.get(
+            reverse('api-attachment-detail', kwargs={'pk': stock_attachment.pk}),
+            expected_code=403,
+        )
+
+        # Granting 'stock' view permission too now exposes both
+        self.assignRole('stock.view')
+
+        response = self.get(list_url, expected_code=200)
+        result_ids = {result['pk'] for result in response.data}
+        self.assertIn(part_attachment.pk, result_ids)
+        self.assertIn(stock_attachment.pk, result_ids)
+
+        self.get(
+            reverse('api-attachment-detail', kwargs={'pk': stock_attachment.pk}),
+            expected_code=200,
+        )
+
 
 class AttachmentThumbnailAPITests(InvenTreeAPITestCase):
     """Tests for thumbnail generation when uploading attachments via the API."""
@@ -1391,7 +1464,7 @@ class TagAPITests(InvenTreeAPITestCase):
         """Filtering parts by a single tag should return only parts with that tag."""
         url = reverse('api-part-list')
 
-        response = self.get(url, data={'tags': 'apple'})
+        response = self.get(url, data={'tag_name': 'apple'})
         pks = {p['pk'] for p in response.data}
 
         self.assertIn(self.part_a.pk, pks)
@@ -1402,7 +1475,7 @@ class TagAPITests(InvenTreeAPITestCase):
         """Filtering by comma-separated tags should return only parts that have ALL tags."""
         url = reverse('api-part-list')
 
-        response = self.get(url, data={'tags': 'apple,banana'})
+        response = self.get(url, data={'tag_name': 'apple,banana'})
         pks = {p['pk'] for p in response.data}
 
         self.assertIn(self.part_a.pk, pks)
@@ -1413,7 +1486,7 @@ class TagAPITests(InvenTreeAPITestCase):
         """Tag filtering should be case-insensitive."""
         url = reverse('api-part-list')
 
-        response = self.get(url, data={'tags': 'APPLE'})
+        response = self.get(url, data={'tag_name': 'APPLE'})
         pks = {p['pk'] for p in response.data}
 
         self.assertIn(self.part_a.pk, pks)
@@ -1423,18 +1496,69 @@ class TagAPITests(InvenTreeAPITestCase):
         """Filtering by a tag that no part has should return an empty result set."""
         url = reverse('api-part-list')
 
-        response = self.get(url, data={'tags': 'doesnotexist'})
+        response = self.get(url, data={'tag_name': 'doesnotexist'})
         self.assertEqual(len(response.data), 0)
 
     def test_part_filter_tag_whitespace(self):
         """Whitespace around comma-separated tag names should be ignored."""
         url = reverse('api-part-list')
 
-        response = self.get(url, data={'tags': ' apple , banana '})
+        response = self.get(url, data={'tag_name': ' apple , banana '})
         pks = {p['pk'] for p in response.data}
 
         self.assertIn(self.part_a.pk, pks)
         self.assertNotIn(self.part_b.pk, pks)
+
+    # ------------------------------------------------------------------
+    # 'tags' as an OptionalField (data inclusion, not filtering)
+    # ------------------------------------------------------------------
+    #
+    # Every serializer below wires up its 'tags' field via
+    # `common.filters.enable_tags_filter()`, with `default_include=False` -
+    # so a plain detail request should never include tag data, and it should
+    # only appear when the caller explicitly asks for it via `?tags=true`.
+
+    def test_part_detail_tags_excluded_by_default(self):
+        """A plain part detail request should not include tag data."""
+        url = reverse('api-part-detail', kwargs={'pk': self.part_a.pk})
+
+        response = self.get(url, expected_code=200)
+        self.assertNotIn('tags', response.data)
+
+    def test_part_detail_tags_included_via_query_param(self):
+        """Requesting '?tags=true' on part detail should include the part's tag names."""
+        url = reverse('api-part-detail', kwargs={'pk': self.part_a.pk})
+
+        response = self.get(url, data={'tags': 'true'}, expected_code=200)
+        self.assertIn('tags', response.data)
+        self.assertEqual(set(response.data['tags']), {'apple', 'banana'})
+
+        # An untagged part should report an empty list, not omit the field
+        url = reverse('api-part-detail', kwargs={'pk': self.part_c.pk})
+        response = self.get(url, data={'tags': 'true'}, expected_code=200)
+        self.assertIn('tags', response.data)
+        self.assertEqual(response.data['tags'], [])
+
+    def test_part_list_tags_query_param_collides_with_tag_filter(self):
+        """On the list endpoint, '?tags=true' is *not* the OptionalField inclusion flag.
+
+        `PartFilter` (the list endpoint's FilterSet) declares its own 'tags' field
+        (a `TagsFilter`, for filtering by tag name - see the `test_part_filter_*`
+        tests above), which shadows the serializer's 'tags' OptionalField: both are
+        wired to the same query parameter name. django-filter processes the
+        FilterSet before the serializer runs, so '?tags=true' is filtered as "must
+        have a tag named 'true'" - which nothing does - rather than being treated
+        as a request to include each part's tag data.
+
+        This is presumably not the intended behaviour for a client trying to
+        request tag data on a list endpoint, but it is the current, real
+        behaviour - this test locks it in so a change to either `PartFilter` or
+        `enable_tags_filter()` is a deliberate decision rather than an accident.
+        """
+        url = reverse('api-part-list')
+
+        response = self.get(url, data={'tag_name': 'true'}, expected_code=200)
+        self.assertEqual(response.data, [])
 
 
 class SelectionListLockedTest(InvenTreeAPITestCase):

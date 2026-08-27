@@ -19,6 +19,7 @@ from django_ical.views import ICalFeed
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
@@ -34,6 +35,7 @@ from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import (
     BulkDeleteMixin,
+    BulkDeleteViewsetMixin,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
     ParameterListMixin,
@@ -42,6 +44,11 @@ from InvenTree.api import (
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER, InvenTreeDateFilter
 from InvenTree.helpers import current_date, str2bool
+from InvenTree.helpers_api import (
+    CleanModelViewSet,
+    InvenTreeApiRouter,
+    RetrieveUpdateDestroyModelViewSet,
+)
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import (
     CreateAPI,
@@ -64,6 +71,8 @@ from order.status_codes import (
 )
 from part.models import Part
 from users.models import Owner
+
+order_router = InvenTreeApiRouter()
 
 
 class GeneralExtraLineListOutputOptions(OutputConfiguration):
@@ -277,7 +286,7 @@ class OrderFilter(FilterSet):
 
         return queryset.filter(q1 | q2 | q3 | q4).distinct()
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class LineItemFilter(FilterSet):
@@ -372,40 +381,29 @@ class PurchaseOrderOutputOptions(OutputConfiguration):
     OPTIONS = [InvenTreeOutputOption('supplier_detail')]
 
 
-class PurchaseOrderMixin(SerializerContextMixin):
-    """Mixin class for PurchaseOrder endpoints."""
-
-    queryset = models.PurchaseOrder.objects.all().prefetch_related(
-        'supplier', 'created_by'
-    )
-    serializer_class = serializers.PurchaseOrderSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        """Return the annotated queryset for this endpoint."""
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
-
-        return queryset
-
-
-class PurchaseOrderList(
-    PurchaseOrderMixin,
+class PurchaseOrderViewSet(
+    SerializerContextMixin,
     OrderCreateMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
     ParameterListMixin,
-    ListCreateAPI,
+    RetrieveUpdateDestroyModelViewSet,
 ):
-    """API endpoint for accessing a list of PurchaseOrder objects.
+    """API endpoint for accessing PurchaseOrder objects.
 
-    - GET: Return list of PurchaseOrder objects (with filters)
+    - GET: Return list of PurchaseOrder objects (with filters), or a single PurchaseOrder object
     - POST: Create a new PurchaseOrder object
+    - PUT / PATCH: Update an existing PurchaseOrder object
+    - DELETE: Remove a PurchaseOrder object
     """
 
     filterset_class = PurchaseOrderFilter
     filter_backends = SEARCH_ORDER_FILTER
     output_options = PurchaseOrderOutputOptions
+    queryset = models.PurchaseOrder.objects.all().prefetch_related(
+        'supplier', 'created_by'
+    )
+    serializer_class = serializers.PurchaseOrderSerializer
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
@@ -438,19 +436,27 @@ class PurchaseOrderList(
 
     ordering = '-reference'
 
+    def get_queryset(self, *args, **kwargs):
+        """Return the annotated queryset for this endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
+        return queryset
 
-class PurchaseOrderDetail(
-    PurchaseOrderMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
-):
-    """API endpoint for detail view of a PurchaseOrder object."""
+    def get_order(self):
+        """Return the PurchaseOrder object associated with this API endpoint.
 
-    output_options = PurchaseOrderOutputOptions
-
-
-class PurchaseOrderContextMixin:
-    """Mixin to add purchase order object as serializer context variable."""
-
-    queryset = models.PurchaseOrder.objects.all()
+        Note: deliberately a raw lookup rather than self.get_object() - the latter
+        routes through ParameterListMixin.filter_queryset(), which assumes
+        self.serializer_class.Meta.model exists. That's true for the default
+        PurchaseOrderSerializer, but not for the plain-Serializer action classes
+        (PurchaseOrderHoldSerializer etc.) used by hold/cancel/complete/issue/receive
+        below, so calling get_object() from those actions raises an unrelated
+        AttributeError instead of the intended 404.
+        """
+        try:
+            return models.PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except (ValueError, models.PurchaseOrder.DoesNotExist):
+            raise NotFound(_('Purchase order not found'))
 
     def get_serializer_context(self):
         """Add the PurchaseOrder object to the serializer context."""
@@ -458,74 +464,115 @@ class PurchaseOrderContextMixin:
 
         # Pass the purchase order through to the serializer for validation
         try:
-            context['order'] = models.PurchaseOrder.objects.get(
-                pk=self.kwargs.get('pk', None)
-            )
-        except Exception:
+            context['order'] = self.get_order()
+        except NotFound:
+            # Swallowed here (e.g. schema generation may call this without a
+            # resolvable pk) - each action method below is what actually enforces
+            # a 404 for a real request against a non-existent order.
             pass
 
         context['request'] = self.request
 
         return context
 
+    # TODO @matmair remove legacy return codes
+    @extend_schema(responses={201: serializers.PurchaseOrderHoldSerializer})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=serializers.PurchaseOrderHoldSerializer,
+        output_options=None,
+    )
+    def hold(self, request, pk=None):
+        """API endpoint to place a PurchaseOrder on hold."""
+        # Ensure the target order actually exists (raises NotFound -> 404 otherwise) -
+        # without this, a non-existent pk would fall through to the serializer's
+        # save(), which unconditionally reads self.context['order'], raising an
+        # unhandled KeyError (HTTP 500) instead of a clean 404.
+        self.get_order()
 
-class PurchaseOrderHold(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to place a PurchaseOrder on hold."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    serializer_class = serializers.PurchaseOrderHoldSerializer
+    # TODO @matmair remove legacy return codes
+    @extend_schema(responses={201: serializers.PurchaseOrderCancelSerializer})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=serializers.PurchaseOrderCancelSerializer,
+        output_options=None,
+    )
+    def cancel(self, request, pk=None):
+        """API endpoint to 'cancel' a purchase order.
 
+        The purchase order must be in a state which can be cancelled
+        """
+        self.get_order()
 
-class PurchaseOrderCancel(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to 'cancel' a purchase order.
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    The purchase order must be in a state which can be cancelled
-    """
+    # TODO @matmair remove legacy return codes
+    @extend_schema(responses={201: serializers.PurchaseOrderCompleteSerializer})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=serializers.PurchaseOrderCompleteSerializer,
+        output_options=None,
+    )
+    def complete(self, request, pk=None):
+        """API endpoint to 'complete' a purchase order."""
+        self.get_order()
 
-    serializer_class = serializers.PurchaseOrderCancelSerializer
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    # TODO @matmair remove legacy return codes
+    @extend_schema(responses={201: serializers.PurchaseOrderIssueSerializer})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=serializers.PurchaseOrderIssueSerializer,
+        output_options=None,
+    )
+    def issue(self, request, pk=None):
+        """API endpoint to 'issue' (place) a PurchaseOrder."""
+        self.get_order()
 
-class PurchaseOrderComplete(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to 'complete' a purchase order."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    serializer_class = serializers.PurchaseOrderCompleteSerializer
+    @extend_schema(responses={201: stock_serializers.StockItemSerializer(many=True)})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=serializers.PurchaseOrderReceiveSerializer,
+        pagination_class=None,
+        filter_backends=[],
+        output_options=None,
+    )
+    def receive(self, request, pk=None):
+        """API endpoint to receive stock items against a PurchaseOrder."""
+        self.get_order()
 
-
-class PurchaseOrderIssue(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to 'issue' (place) a PurchaseOrder."""
-
-    serializer_class = serializers.PurchaseOrderIssueSerializer
-
-
-@extend_schema(responses={201: stock_serializers.StockItemSerializer(many=True)})
-class PurchaseOrderReceive(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to receive stock items against a PurchaseOrder.
-
-    - The purchase order is specified in the URL.
-    - Items to receive are specified as a list called "items" with the following options:
-        - line_item: pk of the PO Line item
-        - supplier_part: pk value of the supplier part
-        - quantity: quantity to receive
-        - status: stock item status
-        - expiry_date: stock item expiry date (optional)
-        - location: destination for stock item (optional)
-        - batch_code: the batch code for this stock item
-        - serial_numbers: serial numbers for this stock item
-    - A global location must also be specified. This is used when no locations are specified for items, and no location is given in the PO line item
-    """
-
-    queryset = models.PurchaseOrderLineItem.objects.none()
-    serializer_class = serializers.PurchaseOrderReceiveSerializer
-    pagination_class = None
-
-    def create(self, request, *args, **kwargs):
-        """Override the create method to handle stock item creation."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         items = serializer.save()
         queryset = stock_serializers.StockItemSerializer.annotate_queryset(items)
-        response = stock_serializers.StockItemSerializer(queryset, many=True)
 
+        response = stock_serializers.StockItemSerializer(queryset, many=True)
         return Response(response.data, status=status.HTTP_201_CREATED)
+
+
+order_router.register('po', PurchaseOrderViewSet, basename='api-po')
 
 
 class PurchaseOrderLineItemFilter(LineItemFilter):
@@ -636,42 +683,23 @@ class PurchaseOrderLineItemOutputOptions(OutputConfiguration):
     ]
 
 
-class PurchaseOrderLineItemMixin(SerializerContextMixin):
-    """Mixin class for PurchaseOrderLineItem endpoints."""
+class PurchaseOrderLineItemViewSet(
+    SerializerContextMixin,
+    DataExportViewMixin,
+    OutputOptionsMixin,
+    BulkDeleteViewsetMixin,
+    RetrieveUpdateDestroyModelViewSet,
+):
+    """API endpoint for accessing PurchaseOrderLineItem objects.
+
+    - GET: Return list of PurchaseOrderLineItem objects (with filters), or a single object
+    - POST: Create a new PurchaseOrderLineItem object
+    - PUT / PATCH: Update an existing PurchaseOrderLineItem object
+    - DELETE: Remove a PurchaseOrderLineItem object (or bulk delete multiple objects)
+    """
 
     queryset = models.PurchaseOrderLineItem.objects.all()
     serializer_class = serializers.PurchaseOrderLineItemSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        """Return annotated queryset for this endpoint."""
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = serializers.PurchaseOrderLineItemSerializer.annotate_queryset(
-            queryset
-        )
-
-        return queryset
-
-    def perform_update(self, serializer):
-        """Override the perform_update method to auto-update pricing if required."""
-        super().perform_update(serializer)
-
-        # possibly auto-update pricing based on the supplier part pricing data
-        if serializer.validated_data.get('auto_pricing', True):
-            serializer.instance.update_pricing()
-
-
-class PurchaseOrderLineItemList(
-    PurchaseOrderLineItemMixin,
-    DataExportViewMixin,
-    OutputOptionsMixin,
-    ListCreateDestroyAPIView,
-):
-    """API endpoint for accessing a list of PurchaseOrderLineItem objects.
-
-    - GET: Return a list of PurchaseOrder Line Item objects
-    - POST: Create a new PurchaseOrderLineItem object
-    """
 
     filterset_class = PurchaseOrderLineItemFilter
     output_options = PurchaseOrderLineItemOutputOptions
@@ -684,7 +712,14 @@ class PurchaseOrderLineItemList(
 
         # possibly merge duplicate items
         line_item = None
-        if data.get('merge_items', True):
+        merge_items = data.get(
+            'merge_items',
+            common.settings.get_global_setting(
+                'PURCHASEORDER_MERGE_LINE_ITEMS', backup_value=True
+            ),
+        )
+
+        if merge_items:
             with transaction.atomic():
                 # Lock the matching row, so concurrent line creations cannot
                 # both read the same starting quantity (lost update)
@@ -759,29 +794,49 @@ class PurchaseOrderLineItemList(
         'reference',
     ]
 
+    def get_queryset(self):
+        """Return annotated queryset for this endpoint."""
+        queryset = super().get_queryset()
+        queryset = serializers.PurchaseOrderLineItemSerializer.annotate_queryset(
+            queryset
+        )
+        return queryset
 
-class PurchaseOrderLineItemDetail(
-    PurchaseOrderLineItemMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI
+    def perform_update(self, serializer):
+        """Override the perform_update method to auto-update pricing if required."""
+        super().perform_update(serializer)
+
+        # possibly auto-update pricing based on the supplier part pricing data
+        if serializer.validated_data.get('auto_pricing', True):
+            serializer.instance.update_pricing()
+
+
+order_router.register('po-line', PurchaseOrderLineItemViewSet, basename='api-po-line')
+
+
+class PurchaseOrderExtraLineViewSet(
+    GeneralExtraLineList, OutputOptionsMixin, BulkDeleteViewsetMixin, CleanModelViewSet
 ):
-    """Detail API endpoint for PurchaseOrderLineItem object."""
+    """API endpoint for accessing PurchaseOrderExtraLine objects.
 
-    output_options = PurchaseOrderLineItemOutputOptions
-
-
-class PurchaseOrderExtraLineList(
-    GeneralExtraLineList, OutputOptionsMixin, ListCreateDestroyAPIView
-):
-    """API endpoint for accessing a list of PurchaseOrderExtraLine objects."""
+    - GET: Return list of PurchaseOrderExtraLine objects (with filters), or a single object
+    - POST: Create a new PurchaseOrderExtraLine object
+    - PUT / PATCH: Update an existing PurchaseOrderExtraLine object
+    - DELETE: Remove a PurchaseOrderExtraLine object (or bulk delete multiple objects)
+    """
 
     queryset = models.PurchaseOrderExtraLine.objects.all()
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
 
+    def get_queryset(self):
+        """Return the annotated queryset for this endpoint."""
+        queryset = super().get_queryset()
+        return queryset.prefetch_related('order')
 
-class PurchaseOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a PurchaseOrderExtraLine object."""
 
-    queryset = models.PurchaseOrderExtraLine.objects.all()
-    serializer_class = serializers.PurchaseOrderExtraLineSerializer
+order_router.register(
+    'po-extra-line', PurchaseOrderExtraLineViewSet, basename='api-po-extra-line'
+)
 
 
 class SalesOrderFilter(OrderFilter):
@@ -1087,6 +1142,8 @@ class SalesOrderLineItemList(
         'sale_price',
         'target_date',
         'line',
+        'status',
+        'shipment_date',
     ]
 
     ordering_field_aliases = {
@@ -1095,6 +1152,8 @@ class SalesOrderLineItemList(
         'IPN': 'part__IPN',
         'order': 'order__reference',
         'line': ['line_int', 'line', 'part__name'],
+        'status': 'order__status',
+        'shipment_date': 'order__shipment_date',
     }
 
     search_fields = ['part__name', 'quantity', 'reference']
@@ -1129,6 +1188,13 @@ class SalesOrderContextMixin:
 
     queryset = models.SalesOrder.objects.all()
 
+    def get_order(self):
+        """Return the SalesOrder object associated with this API endpoint."""
+        try:
+            return models.SalesOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except (ValueError, models.SalesOrder.DoesNotExist):
+            raise NotFound(_('Sales order not found'))
+
     def get_serializer_context(self):
         """Add the 'order' reference to the serializer context for any classes which inherit this mixin."""
         ctx = super().get_serializer_context()
@@ -1136,11 +1202,26 @@ class SalesOrderContextMixin:
         ctx['request'] = self.request
 
         try:
-            ctx['order'] = models.SalesOrder.objects.get(pk=self.kwargs.get('pk', None))
-        except Exception:
+            ctx['order'] = self.get_order()
+        except NotFound:
+            # Swallowed here (e.g. schema generation may call this without a
+            # resolvable pk) - create() below is what actually enforces a 404
+            # for a real request against a non-existent order.
             pass
 
         return ctx
+
+    def create(self, request, *args, **kwargs):
+        """Ensure the target SalesOrder actually exists before attempting the action.
+
+        Without this, a POST against a non-existent pk would fall through to the
+        action serializer's save(), which unconditionally reads
+        self.context['order'] - raising an unhandled KeyError (HTTP 500) instead of
+        the intended 404.
+        """
+        self.get_order()
+
+        return super().create(request, *args, **kwargs)
 
 
 class SalesOrderHold(SalesOrderContextMixin, CreateAPI):
@@ -1362,6 +1443,7 @@ class SalesOrderAllocationList(
     SalesOrderAllocationMixin,
     BulkDeleteMixin,
     BulkUpdateMixin,
+    DataExportViewMixin,
     OutputOptionsMixin,
     ListAPI,
 ):
@@ -1462,7 +1544,7 @@ class SalesOrderShipmentFilter(FilterSet):
 
         return queryset.filter(q1 | q2).distinct()
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class SalesOrderShipmentMixin:
@@ -1685,21 +1767,41 @@ class ReturnOrderContextMixin:
 
     queryset = models.ReturnOrder.objects.all()
 
+    def get_order(self):
+        """Return the ReturnOrder object associated with this API endpoint."""
+        try:
+            return models.ReturnOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except (ValueError, models.ReturnOrder.DoesNotExist):
+            raise NotFound(_('Return order not found'))
+
     def get_serializer_context(self):
-        """Add the PurchaseOrder object to the serializer context."""
+        """Add the ReturnOrder object to the serializer context."""
         context = super().get_serializer_context()
 
         # Pass the ReturnOrder instance through to the serializer for validation
         try:
-            context['order'] = models.ReturnOrder.objects.get(
-                pk=self.kwargs.get('pk', None)
-            )
-        except Exception:
+            context['order'] = self.get_order()
+        except NotFound:
+            # Swallowed here (e.g. schema generation may call this without a
+            # resolvable pk) - create() below is what actually enforces a 404
+            # for a real request against a non-existent order.
             pass
 
         context['request'] = self.request
 
         return context
+
+    def create(self, request, *args, **kwargs):
+        """Ensure the target ReturnOrder actually exists before attempting the action.
+
+        Without this, a POST against a non-existent pk would fall through to the
+        action serializer's save(), which unconditionally reads
+        self.context['order'] - raising an unhandled KeyError (HTTP 500) instead of
+        the intended 404.
+        """
+        self.get_order()
+
+        return super().create(request, *args, **kwargs)
 
 
 class ReturnOrderCancel(ReturnOrderContextMixin, CreateAPI):
@@ -1781,6 +1883,7 @@ class ReturnOrderLineItemOutputOptions(OutputConfiguration):
 
 class ReturnOrderLineItemList(
     ReturnOrderLineItemMixin,
+    BulkUpdateMixin,
     DataExportViewMixin,
     OutputOptionsMixin,
     ListCreateDestroyAPIView,
@@ -1967,21 +2070,41 @@ class TransferOrderContextMixin:
 
     queryset = models.TransferOrder.objects.all()
 
+    def get_order(self):
+        """Return the TransferOrder object associated with this API endpoint."""
+        try:
+            return models.TransferOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except (ValueError, models.TransferOrder.DoesNotExist):
+            raise NotFound(_('Transfer order not found'))
+
     def get_serializer_context(self):
         """Add the TransferOrder object to the serializer context."""
         context = super().get_serializer_context()
 
         # Pass the Transfer instance through to the serializer for validation
         try:
-            context['order'] = models.TransferOrder.objects.get(
-                pk=self.kwargs.get('pk', None)
-            )
-        except Exception:
+            context['order'] = self.get_order()
+        except NotFound:
+            # Swallowed here (e.g. schema generation may call this without a
+            # resolvable pk) - create() below is what actually enforces a 404
+            # for a real request against a non-existent order.
             pass
 
         context['request'] = self.request
 
         return context
+
+    def create(self, request, *args, **kwargs):
+        """Ensure the target TransferOrder actually exists before attempting the action.
+
+        Without this, a POST against a non-existent pk would fall through to the
+        action serializer's save(), which unconditionally reads
+        self.context['order'] - raising an unhandled KeyError (HTTP 500) instead of
+        the intended 404.
+        """
+        self.get_order()
+
+        return super().create(request, *args, **kwargs)
 
 
 class TransferOrderCancel(TransferOrderContextMixin, CreateAPI):
@@ -2538,82 +2661,14 @@ class OrderCalendarExport(ICalFeed):
 
 
 order_api_urls = [
-    # API endpoints for purchase orders
+    # Purchase Order, Line Item, and Extra Line API endpoints via ViewSet router
+    path('', include(order_router.urls)),
+    # Purchase order status code information (requires custom kwargs)
     path(
-        'po/',
-        include([
-            # Individual purchase order detail URLs
-            path(
-                '<int:pk>/',
-                include([
-                    path(
-                        'cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'
-                    ),
-                    path('hold/', PurchaseOrderHold.as_view(), name='api-po-hold'),
-                    path(
-                        'complete/',
-                        PurchaseOrderComplete.as_view(),
-                        name='api-po-complete',
-                    ),
-                    path('issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
-                    meta_path(models.PurchaseOrder),
-                    path(
-                        'receive/',
-                        PurchaseOrderReceive.as_view(),
-                        name='api-po-receive',
-                    ),
-                    # PurchaseOrder detail API endpoint
-                    path('', PurchaseOrderDetail.as_view(), name='api-po-detail'),
-                ]),
-            ),
-            # Purchase order status code information
-            path(
-                'status/',
-                StatusView.as_view(),
-                {StatusView.MODEL_REF: PurchaseOrderStatus},
-                name='api-po-status-codes',
-            ),
-            # Purchase order list
-            path('', PurchaseOrderList.as_view(), name='api-po-list'),
-        ]),
-    ),
-    # API endpoints for purchase order line items
-    path(
-        'po-line/',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(models.PurchaseOrderLineItem),
-                    path(
-                        '',
-                        PurchaseOrderLineItemDetail.as_view(),
-                        name='api-po-line-detail',
-                    ),
-                ]),
-            ),
-            path('', PurchaseOrderLineItemList.as_view(), name='api-po-line-list'),
-        ]),
-    ),
-    # API endpoints for purchase order extra line
-    path(
-        'po-extra-line/',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    meta_path(models.PurchaseOrderExtraLine),
-                    path(
-                        '',
-                        PurchaseOrderExtraLineDetail.as_view(),
-                        name='api-po-extra-line-detail',
-                    ),
-                ]),
-            ),
-            path(
-                '', PurchaseOrderExtraLineList.as_view(), name='api-po-extra-line-list'
-            ),
-        ]),
+        'po/status/',
+        StatusView.as_view(),
+        {StatusView.MODEL_REF: PurchaseOrderStatus},
+        name='api-po-status-codes',
     ),
     # API endpoints for sales orders
     path(

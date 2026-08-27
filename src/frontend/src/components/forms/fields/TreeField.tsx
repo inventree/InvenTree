@@ -384,6 +384,7 @@ function TreeFieldComponent({
             }}
             searchable
             filter={() => true}
+            allowDeselect={false}
             clearable={showNavigateSection ? false : !definition.required}
             rightSection={navigateRightSection}
             rightSectionPointerEvents={showNavigateSection ? 'all' : undefined}

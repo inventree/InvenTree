@@ -228,11 +228,18 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 
     def test_logo_image(self):
         """Unit tests for the 'logo_image' tag."""
-        # By default, should return the core InvenTree logo
-        for b in [True, False]:
-            self.debug_mode(b)
-            logo = report_tags.logo_image()
-            self.assertIn('inventree.png', logo)
+        # In debug mode, a web-accessible URL to the logo is returned
+        self.debug_mode(True)
+        logo = report_tags.logo_image()
+        self.assertIn('inventree.png', logo)
+        self.assertNotIn('file://', logo)
+
+        # Outside of debug mode, an embeddable base64 data URI is returned instead
+        # of a file:// URL, which is no longer permitted in report templates
+        self.debug_mode(False)
+        logo = report_tags.logo_image()
+        self.assertNotIn('file://', logo)
+        self.assertTrue(logo.startswith('data:image/png;base64,'))
 
     def test_string_tags(self):
         """Simple tests for the string manipulation tags."""
@@ -522,6 +529,17 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmc+',
             svg,
         )
+
+        # Test with a missing SVG file - default behavior is to return an empty string
+        missing_path = 'missing_svg_image_123abc.svg'
+        self.assertEqual(report_tags.encode_svg_image(missing_path), '')
+        self.assertEqual(
+            report_tags.encode_svg_image(missing_path, raise_error=False), ''
+        )
+
+        # Test with a missing SVG file, with raise_error=True
+        with self.assertRaises(FileNotFoundError):
+            report_tags.encode_svg_image(missing_path, raise_error=True)
 
     def test_part_parameter(self):
         """Test the part_parameter template tag."""

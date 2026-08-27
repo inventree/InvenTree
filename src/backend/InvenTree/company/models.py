@@ -2,7 +2,7 @@
 
 import os
 from decimal import Decimal
-from typing import TypedDict
+from typing import Optional, TypedDict
 
 from django.apps import apps
 from django.conf import settings
@@ -229,7 +229,8 @@ class Company(
     )
 
     @property
-    def address(self):
+    @report.mixins.report_attribute()
+    def address(self) -> Optional[str]:
         """Return the string representation for the primary address.
 
         This property exists for backwards compatibility
@@ -239,7 +240,8 @@ class Company(
         return str(addr) if addr is not None else None
 
     @property
-    def primary_address(self):
+    @report.mixins.report_attribute()
+    def primary_address(self) -> Optional['Address']:
         """Returns address object of primary address for this Company."""
         # We may have a pre-fetched primary address list
         if hasattr(self, 'primary_address_list'):
@@ -254,7 +256,8 @@ class Company(
         return self.addresses.filter(primary=True).first()
 
     @property
-    def currency_code(self):
+    @report.mixins.report_attribute()
+    def currency_code(self) -> str:
         """Return the currency code associated with this company.
 
         - If the currency code is invalid, use the default currency
@@ -276,7 +279,8 @@ class Company(
         return InvenTree.helpers.pui_url(f'/purchasing/manufacturer/{self.id}')
 
     @property
-    def parts(self):
+    @report.mixins.report_attribute()
+    def parts(self) -> report.mixins.QuerySet['SupplierPart']:
         """Return SupplierPart objects which are supplied or manufactured by this company."""
         return SupplierPart.objects.filter(
             Q(supplier=self.id) | Q(manufacturer_part__manufacturer=self.id)
@@ -1035,20 +1039,62 @@ class SupplierPriceBreak(common.models.PriceBreak):
     )
 
 
+@receiver(post_save, sender=SupplierPart, dispatch_uid='post_save_supplier_part')
+def after_save_supplier_part(sender, instance, created, **kwargs):
+    """Callback function when a SupplierPart is created or updated.
+
+    Triggers a pricing update for the linked Part, so that changes to
+    pack_quantity are reflected in Part pricing and BOM cost rollups.
+    """
+    if (
+        InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
+        and not InvenTree.ready.isImportingData()
+        and instance.part
+    ):
+        instance.part.schedule_pricing_update(create=True)
+
+
+@receiver(post_delete, sender=SupplierPart, dispatch_uid='post_delete_supplier_part')
+def after_delete_supplier_part(sender, instance, **kwargs):
+    """Callback function when a SupplierPart is deleted.
+
+    Triggers a pricing update for the linked Part, so that removal of a
+    supplier part is reflected in Part pricing and BOM cost rollups.
+    """
+    if (
+        InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
+        and not InvenTree.ready.isImportingData()
+        and instance.part
+    ):
+        instance.part.schedule_pricing_update(create=False)
+
+
 @receiver(
     post_save, sender=SupplierPriceBreak, dispatch_uid='post_save_supplier_price_break'
 )
 def after_save_supplier_price(sender, instance, created, **kwargs):
     """Callback function when a SupplierPriceBreak is created or updated."""
-    if (
-        (
-            InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
-            and not InvenTree.ready.isImportingData()
-        )
-        and instance.part
-        and instance.part.part
-    ):
-        instance.part.part.schedule_pricing_update(create=True)
+    from part.models import Part
+
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
+        return
+
+    if InvenTree.ready.isImportingData():
+        return
+
+    try:
+        supplier_part = instance.part
+    except SupplierPart.DoesNotExist:
+        # The underlying SupplierPart instance has been deleted
+        return
+
+    try:
+        base_part = supplier_part.part
+    except Part.DoesNotExist:
+        # The underlying Part instance has been deleted
+        return
+
+    base_part.schedule_pricing_update(create=True)
 
 
 @receiver(
@@ -1058,12 +1104,24 @@ def after_save_supplier_price(sender, instance, created, **kwargs):
 )
 def after_delete_supplier_price(sender, instance, **kwargs):
     """Callback function when a SupplierPriceBreak is deleted."""
-    if (
-        (
-            InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
-            and not InvenTree.ready.isImportingData()
-        )
-        and instance.part
-        and instance.part.part
-    ):
-        instance.part.part.schedule_pricing_update(create=False)
+    from part.models import Part
+
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
+        return
+
+    if InvenTree.ready.isImportingData():
+        return
+
+    try:
+        supplier_part = instance.part
+    except SupplierPart.DoesNotExist:
+        # The underlying SupplierPart instance has been deleted
+        return
+
+    try:
+        base_part = supplier_part.part
+    except Part.DoesNotExist:
+        # The underlying Part instance has been deleted
+        return
+
+    base_part.schedule_pricing_update(create=False)

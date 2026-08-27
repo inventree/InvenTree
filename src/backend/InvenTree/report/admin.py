@@ -15,6 +15,8 @@ class ReportAdmin(admin.ModelAdmin):
 
     list_filter = ('model_type', 'enabled')
 
+    search_fields = ['name', 'description']
+
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         """Provide custom choices for 'model_type' field."""
         if db_field.name == 'model_type':
@@ -29,9 +31,13 @@ class ReportSnippetAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'snippet', 'description')
 
+    search_fields = ['description']
+
 
 @admin.register(ReportAsset)
 class ReportAssetAdmin(admin.ModelAdmin):
     """Admin class for the ReportAsset model."""
 
     list_display = ('id', 'asset', 'description')
+
+    search_fields = ['description']

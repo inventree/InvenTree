@@ -55,25 +55,7 @@ Various filters are available to configure which orders are displayed, and how t
 
 Each Return Order has a specific status code, as follows:
 
-| Status | Description |
-| --- | --- |
-| Pending | The return order has been created, but not sent to the customer |
-| In Progress | The return order has been issued to the customer |
-| On Hold | The return order has been placed on hold, but is still active |
-| Complete | The return order was marked as complete, and is now closed |
-| Cancelled | The return order was cancelled, and is now closed |
-
-**Source Code**
-
-Refer to the source code for the Return Order status codes:
-
-::: order.status_codes.ReturnOrderStatus
-    options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
+{{ statuscodes("ReturnOrderStatus") }}
 
 Return Order Status supports [custom states](../concepts/custom_states.md).
 
@@ -120,9 +102,78 @@ Return Order line items can be added while the [status](#return-order-status-cod
 !!! info "Discount"
     An optional [discount](../concepts/pricing.md#line-item-discount) percentage can be applied to each line item.
 
+Each line item tracks a *Cost* (the cost associated with the return, repair, or replacement of the item) in addition to the quantity, [target date](#order-scheduling) and notes fields common to other order types. This cost is purely informational - it is not linked to any accounting or invoicing system.
+
+#### Line Item Outcome
+
+Each line item has an *Outcome*, which records the disposition decided for the returned item:
+
+{{ statuscodes("ReturnOrderLineStatus") }}
+
+The *Outcome* is not available when a line item is first created - it can only be set afterwards, by editing the line item. Selecting an outcome is a manual, record-keeping step only: InvenTree does not automatically create a replacement order, issue a refund, or link to a [repair](../manufacturing/index.md) process based on the selected outcome. Any follow-up action (raising a new [Sales Order](./sales_order.md) for a replacement, processing a refund, or tracking a repair) must currently be actioned separately.
+
+Return Order Line Item outcome supports [custom states](../concepts/custom_states.md).
+
 ### Extra Line Items
 
 While [line items](#line-items) must reference a particular stock item, extra line items are available for any other itemized information that needs to be conveyed with the order - for example freight charges or service fees. Extra line items support an optional [discount](../concepts/pricing.md#line-item-discount) percentage, the same as regular line items.
+
+## Issue Order
+
+Once all line items have been added, click on the {{ icon("send", title="Issue") }} button on the main return order detail panel and confirm the order has been issued to the customer. This moves the order into the *In Progress* state, and allows [line items to be received](#receive-line-items).
+
+## Receive Line Items
+
+As returned items arrive from the customer, they can be marked as "received" against the return order. This is the point at which the return order actually affects stock.
+
+To receive one or more line items:
+
+* either individually: click on the {{ icon("square-arrow-right") }} *Receive Item* button on the row for a specific line item
+* or in bulk: select multiple unreceived rows in the line item table, then click on the {{ icon("square-arrow-right") }} *Receive selected items* button above the table
+
+!!! note "Permissions"
+    Marking line items as received requires the "Return order" ADD permission.
+
+!!! note "Order Status"
+    Line items can only be received while the order [status](#return-order-status-codes) is *In Progress*.
+
+In the "Receive Items" form, a destination *Location* must be selected - this is where the returned stock will be placed. An optional per-item *Status* can also be set for each item being received (for example, to mark an item as damaged or destroyed on arrival); if left unset, received items default to a *Quarantined* stock status, since they have not yet been inspected.
+
+Receiving a line item performs the following actions on the underlying stock item:
+
+* Transfers the stock item to the selected destination location
+* Sets the stock item status (defaulting to *Quarantined*)
+* Removes the *Customer* reference from the stock item
+* Clears any outstanding sales order allocations against the stock item
+* Adds a tracking entry recording the return
+
+!!! info "Partial Returns"
+    If a customer returns less than the full quantity of a non-serialized stock item, InvenTree automatically splits the returned quantity into a new stock item, leaving the remainder of the original stock item untouched (e.g. still recorded as sold to the customer).
+
+Once received, a line item's *Outcome* can be set - see [Line Item Outcome](#line-item-outcome) above.
+
+## Complete Order
+
+Once all returned items have been received and any outcomes have been actioned, click on the {{ icon("circle-check", color="green") }} button on the main return order detail panel and confirm the order as complete.
+
+It is not necessary for every line item to be marked as *received* before an order can be completed - this allows an order to be closed out even if some items were never returned by the customer.
+
+## Cancel Order
+
+If the return will not be processed, the order can be cancelled instead. Click on the {{ icon("circle-x", color="red") }} *Cancel order* option under the {{ icon("tools") }} order actions menu, and confirm the return order has been cancelled.
+
+## Hold Order
+
+An open order (*Pending* or *In Progress*) can be placed *On Hold*, to indicate that it is temporarily paused without being cancelled. Click on the {{ icon("hand-stop", title="Hold") }} *Hold order* option under the {{ icon("tools") }} order actions menu to place the order on hold. A held order can subsequently be [issued](#issue-order) again to resume progress.
+
+## Duplicate Return Order
+
+Duplicating a Return Order allows the user to quickly create a new *copy* of an existing order, using the same customer information.
+
+To duplicate an existing order, select the *Duplicate order* action from the menu in the top-right of the screen.
+
+!!! info "Line Items Not Copied"
+    Unlike Purchase Orders and Sales Orders, Return Order line items are *not* copied when duplicating an order - each line item is tied to a specific physical stock item being returned, so this information cannot be sensibly duplicated. Extra line items and parameters can optionally be copied.
 
 ## Return Order Reports
 

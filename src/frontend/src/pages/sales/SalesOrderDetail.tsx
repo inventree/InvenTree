@@ -173,6 +173,7 @@ export default function SalesOrderDetail() {
               <Accordion.Panel>
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.sales_order_extra_line_list}
+                  importModelType='salesorderextraline'
                   orderId={order.pk}
                   editable={lineItemsEditable}
                   orderDetailRefresh={refreshInstance}
