@@ -80,6 +80,7 @@ paths_own_security = [
     '/accounts/',  # allauth account management - has its own auth model
     '/scim/',  # SCIM provisioning endpoint - authenticated via its own bearer secret
     '/assets/',  # Web assets - only used for testing, no security model needed
+    '/.well-known/',
     ensure_slashes(
         settings.STATIC_URL
     ),  # Static files  - static files are considered safe to serve
