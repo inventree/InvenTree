@@ -435,9 +435,11 @@ test('Sales Orders - Price Breaks', async ({ browser }) => {
     url: 'sales/sales-order/14/line-items'
   });
 
+  await page.getByRole('button', { name: 'action-menu-add-line-item' }).click();
   await page
-    .getByRole('button', { name: 'action-button-add-line-item' })
+    .getByRole('menuitem', { name: 'action-menu-add-line-item-add' })
     .click();
+
   await page.getByLabel('related-field-part').fill('software');
   await page.getByRole('option', { name: 'Software License' }).click();
 
