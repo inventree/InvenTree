@@ -167,13 +167,27 @@ urlpatterns += platform_urls
 if settings.PLUGINS_ENABLED:
     urlpatterns.append(get_plugin_urls())
 
-# Server running in "DEBUG" mode?
+# Static file access (only in DEBUG mode; production uses collectstatic + web server)
 if settings.DEBUG:
-    # Static file access
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-    # Media file access
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Media file access - always serve (single-machine deployment without reverse proxy)
+# Auth is handled by AuthRequiredMiddleware + DRF token/session auth
+from django.views.static import serve as media_serve
+
+media_url = settings.MEDIA_URL.lstrip('/')
+media_root = settings.MEDIA_ROOT
+if not media_url:
+    media_url = 'media/'
+
+urlpatterns += [
+    re_path(
+        r'^media/(?P<path>.*)$',
+        media_serve,
+        {'document_root': media_root},
+        name='media-serve',
+    ),
+]
 
 # Redirect for favicon.ico
 urlpatterns.append(
