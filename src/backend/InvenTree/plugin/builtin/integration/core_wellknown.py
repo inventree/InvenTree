@@ -4,6 +4,8 @@ from django.http import HttpRequest, JsonResponse
 from django.urls import path, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
+from flags.state import flag_enabled
+
 import InvenTree.helpers
 from InvenTree.permissions import auth_exempt
 from plugin import InvenTreePlugin
@@ -29,7 +31,19 @@ class InvenTreeWellKnown(WellKnownMixin, UrlsMixin, InvenTreePlugin):
         # See https://www.w3.org/TR/passkey-endpoints/
         data.append(('passkey-endpoints', reverse_lazy(f'plugin:{self.slug}:passkey')))
 
-        # placeholder for more
+        # Check if OIDC is enabled, and if so, add the relevant entries
+        try:
+            if flag_enabled('OIDC', request=request):
+                data.append((
+                    'openid-configuration',
+                    str(reverse_lazy('oauth2_provider:oidc-connect-discovery-info')),
+                ))
+        except Exception:
+            # If the flag is not evaluated successfully, we can ignore it
+            pass
+
+        # TODO security.txt https://securitytxt.org/
+
         return data
 
     @auth_exempt
