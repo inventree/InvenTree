@@ -2,6 +2,7 @@
 
 import base64
 import logging
+import os
 from typing import Optional
 
 from opentelemetry import metrics, trace
@@ -26,6 +27,7 @@ from InvenTree.version import inventreeVersion
 
 TRACE_PROC = None
 TRACE_PROV = None
+TRACE_PID = None
 
 
 def setup_tracing(
@@ -57,9 +59,13 @@ def setup_tracing(
         )  # pragma: no cover
         return  # pragma: no cover
 
-    # check if trace is already set up - if so, skip
-    global TRACE_PROC, TRACE_PROV
-    if TRACE_PROV is not None:
+    # Check if trace is already set up in this process - if so, skip.
+    # Gunicorn's preload_app runs this once in the master before forking workers;
+    # each forked worker inherits TRACE_PROV but not the exporter's background
+    # thread (which does not survive fork), so re-setup must still happen once
+    # per worker PID - hence keying the guard on the PID, not just TRACE_PROV.
+    global TRACE_PROC, TRACE_PROV, TRACE_PID
+    if TRACE_PROV is not None and os.getpid() == TRACE_PID:
         return
 
     # Logger configuration
@@ -164,6 +170,7 @@ def setup_tracing(
 
     TRACE_PROC = trace_processor
     TRACE_PROV = trace_provider
+    TRACE_PID = os.getpid()
 
 
 def setup_instruments(db_engine: str):  # pragma: no cover

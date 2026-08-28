@@ -41,6 +41,7 @@ class TracingSetupTest(SimpleTestCase):
         super().setUp()
         tracing.TRACE_PROC = None
         tracing.TRACE_PROV = None
+        tracing.TRACE_PID = None
 
         self.logger = logging.getLogger('inventree')
         self.handlers_before = list(self.logger.handlers)
@@ -49,6 +50,7 @@ class TracingSetupTest(SimpleTestCase):
         """Reset global tracing state, and remove any handlers added by setup_tracing."""
         tracing.TRACE_PROC = None
         tracing.TRACE_PROV = None
+        tracing.TRACE_PID = None
 
         for handler in list(self.logger.handlers):
             if handler not in self.handlers_before:
@@ -56,15 +58,26 @@ class TracingSetupTest(SimpleTestCase):
 
         super().tearDown()
 
-    def call_setup(self, **kwargs):
+    def call_setup(self, pid=None, **kwargs):
         """Call setup_tracing with all SDK/exporter classes mocked out.
+
+        Args:
+            pid: If given, os.getpid() is mocked to return this value for the
+                duration of the call - used to simulate a forked worker process.
 
         Returns the mock.patch context's mocked TracerProvider class, so callers can
         assert on whether tracing was actually (re)configured.
         """
-        patches = [mock.patch(target) for target in SDK_PATCHES + GRPC_EXPORTER_PATCHES]
+        targets = SDK_PATCHES + GRPC_EXPORTER_PATCHES
+        if pid is not None:
+            targets = [*targets, 'InvenTree.tracing.os.getpid']
+
+        patches = [mock.patch(target) for target in targets]
         mocks = [patcher.start() for patcher in patches]
         self.addCleanup(lambda: [patcher.stop() for patcher in patches])
+
+        if pid is not None:
+            mocks[-1].return_value = pid
 
         kwargs.setdefault('endpoint', 'http://localhost:4317')
         kwargs.setdefault('headers', {'x-test': 'value'})
@@ -96,6 +109,31 @@ class TracingSetupTest(SimpleTestCase):
 
         mock_tracer_provider = self.call_setup()
         mock_tracer_provider.assert_not_called()
+
+    def test_reconfigures_after_simulated_fork(self):
+        """setup_tracing must reconfigure in a forked child process, even though it inherits TRACE_PROV from the parent.
+
+        Regression test for gunicorn's `preload_app = True`: settings (and so
+        setup_tracing) are imported once in the master process before workers are
+        forked. Each forked worker inherits TRACE_PROV via copy-on-write memory, but
+        the parent's BatchSpanProcessor background thread does not survive fork()
+        (only the forking thread continues in the child), so post_fork's explicit
+        setup_tracing() call must still be able to reconfigure a real exporter in
+        each worker rather than being skipped as "already configured".
+        """
+        # First call, simulating the pre-fork master process (pid 100)
+        master_tracer_provider = self.call_setup(pid=100)
+        master_tracer_provider.assert_called_once()
+        self.assertEqual(tracing.TRACE_PID, 100)
+
+        # Second call with the SAME pid must still be skipped (same-process guard)
+        same_pid_tracer_provider = self.call_setup(pid=100)
+        same_pid_tracer_provider.assert_not_called()
+
+        # Second call from a DIFFERENT pid, simulating a forked worker, must reconfigure
+        worker_tracer_provider = self.call_setup(pid=200)
+        worker_tracer_provider.assert_called_once()
+        self.assertEqual(tracing.TRACE_PID, 200)
 
     def test_missing_endpoint_or_headers_skips_setup(self):
         """setup_tracing should skip setup if endpoint or headers are not provided."""
