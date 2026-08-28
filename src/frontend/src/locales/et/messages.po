@@ -8,7 +8,7 @@ msgstr ""
 "Language: et\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-24 12:24\n"
+"PO-Revision-Date: 2026-08-25 04:38\n"
 "Last-Translator: \n"
 "Language-Team: Estonian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -66,7 +66,7 @@ msgstr "Muuda"
 #: src/components/items/RoleTable.tsx:155
 #: src/hooks/UseForm.tsx:174
 #: src/pages/Notifications.tsx:109
-#: src/tables/plugin/PluginListTable.tsx:254
+#: src/tables/plugin/PluginListTable.tsx:253
 msgid "Delete"
 msgstr "Kustuta"
 
@@ -88,7 +88,7 @@ msgstr "Tühista"
 
 #: lib/components/RowActions.tsx:146
 #: src/components/nav/NavigationDrawer.tsx:185
-#: src/forms/PurchaseOrderForms.tsx:931
+#: src/forms/PurchaseOrderForms.tsx:939
 #: src/forms/StockForms.tsx:911
 #: src/forms/StockForms.tsx:1478
 #: src/forms/StockForms.tsx:1526
@@ -153,7 +153,7 @@ msgstr "Ei"
 #: src/forms/BuildForms.tsx:702
 #: src/forms/BuildForms.tsx:866
 #: src/forms/BuildForms.tsx:970
-#: src/forms/PurchaseOrderForms.tsx:927
+#: src/forms/PurchaseOrderForms.tsx:935
 #: src/forms/ReturnOrderForms.tsx:241
 #: src/forms/SalesOrderForms.tsx:434
 #: src/forms/StockForms.tsx:393
@@ -341,7 +341,7 @@ msgstr "Laoseisu ajalood"
 #: src/pages/stock/StockDetailsPanel.tsx:280
 #: src/tables/build/BuildAllocatedStockTable.tsx:88
 #: src/tables/part/PartBuildAllocationsTable.tsx:46
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:155
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:165
 #: src/tables/stock/StockTrackingTable.tsx:142
 msgid "Build Order"
 msgstr ""
@@ -622,7 +622,7 @@ msgid "Report Templates"
 msgstr ""
 
 #: lib/enums/ModelInformation.tsx:331
-#: src/components/plugins/PluginDrawer.tsx:153
+#: src/components/plugins/PluginDrawer.tsx:168
 msgid "Plugin Configuration"
 msgstr ""
 
@@ -819,8 +819,8 @@ msgstr ""
 #: src/components/barcodes/BarcodeScanDialog.tsx:56
 #: src/components/buttons/ScanButton.tsx:56
 #: src/components/nav/NavigationDrawer.tsx:122
-#: src/forms/PurchaseOrderForms.tsx:534
-#: src/forms/PurchaseOrderForms.tsx:674
+#: src/forms/PurchaseOrderForms.tsx:533
+#: src/forms/PurchaseOrderForms.tsx:673
 msgid "Scan Barcode"
 msgstr ""
 
@@ -906,7 +906,7 @@ msgstr "See eemaldab lingi seotud vöötikoodile"
 
 #: src/components/barcodes/QRCode.tsx:205
 #: src/components/items/ActionDropdown.tsx:194
-#: src/forms/PurchaseOrderForms.tsx:664
+#: src/forms/PurchaseOrderForms.tsx:663
 msgid "Unlink Barcode"
 msgstr "Linki ribakood"
 
@@ -1848,7 +1848,7 @@ msgstr "Ühes või mitmes vormiväljas on vigu"
 
 #: src/components/forms/ApiForm.tsx:832
 #: src/hooks/UseForm.tsx:143
-#: src/tables/plugin/PluginListTable.tsx:217
+#: src/tables/plugin/PluginListTable.tsx:216
 msgid "Update"
 msgstr "Värskenda"
 
@@ -2034,7 +2034,7 @@ msgstr "Võõrustaja"
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:70
 #: src/components/forms/InstanceOptions.tsx:125
-#: src/components/plugins/PluginDrawer.tsx:68
+#: src/components/plugins/PluginDrawer.tsx:85
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
 #: src/pages/part/PartCategoryDetailsPanel.tsx:22
 #: src/pages/part/PartDetailsPanel.tsx:79
@@ -2104,7 +2104,7 @@ msgid "Server"
 msgstr "Server"
 
 #: src/components/forms/InstanceOptions.tsx:131
-#: src/components/plugins/PluginDrawer.tsx:88
+#: src/components/plugins/PluginDrawer.tsx:103
 #: src/tables/plugin/PluginListTable.tsx:134
 msgid "Version"
 msgstr "Versioon"
@@ -3262,19 +3262,19 @@ msgstr ""
 msgid "Item location requested"
 msgstr ""
 
-#: src/components/plugins/PluginDrawer.tsx:47
+#: src/components/plugins/PluginDrawer.tsx:66
 msgid "Plugin Inactive"
 msgstr ""
 
-#: src/components/plugins/PluginDrawer.tsx:50
+#: src/components/plugins/PluginDrawer.tsx:69
 msgid "Plugin is not active"
 msgstr ""
 
-#: src/components/plugins/PluginDrawer.tsx:59
+#: src/components/plugins/PluginDrawer.tsx:78
 msgid "Plugin Information"
 msgstr ""
 
-#: src/components/plugins/PluginDrawer.tsx:73
+#: src/components/plugins/PluginDrawer.tsx:88
 #: src/components/tables/ColumnRenderers.tsx:495
 #: src/pages/build/BuildOrderDetailsPanel.tsx:96
 #: src/pages/company/CompanyDetailsPanel.tsx:29
@@ -3295,11 +3295,11 @@ msgstr ""
 msgid "Description"
 msgstr "Kirjeldus"
 
-#: src/components/plugins/PluginDrawer.tsx:78
+#: src/components/plugins/PluginDrawer.tsx:93
 msgid "Author"
 msgstr ""
 
-#: src/components/plugins/PluginDrawer.tsx:83
+#: src/components/plugins/PluginDrawer.tsx:98
 #: src/components/tables/ColumnRenderers.tsx:717
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:42
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:39
@@ -3307,7 +3307,7 @@ msgstr ""
 msgid "Date"
 msgstr "Kuupäev"
 
-#: src/components/plugins/PluginDrawer.tsx:93
+#: src/components/plugins/PluginDrawer.tsx:108
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:68
 #: src/pages/core/UserDetail.tsx:78
 #: src/pages/core/UserDetail.tsx:208
@@ -3321,7 +3321,7 @@ msgstr "Kuupäev"
 #: src/tables/part/PartTableFilters.tsx:13
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:101
-#: src/tables/plugin/PluginListTable.tsx:427
+#: src/tables/plugin/PluginListTable.tsx:431
 #: src/tables/purchasing/SupplierPartTable.tsx:139
 #: src/tables/purchasing/SupplierPartTable.tsx:254
 #: src/tables/settings/ApiTokenTable.tsx:66
@@ -3331,33 +3331,33 @@ msgstr "Kuupäev"
 msgid "Active"
 msgstr "Aktiivne"
 
-#: src/components/plugins/PluginDrawer.tsx:99
+#: src/components/plugins/PluginDrawer.tsx:114
 #: src/pages/company/CompanyDetailsPanel.tsx:35
 #: src/tables/plugin/PluginListTable.tsx:147
 msgid "Website"
 msgstr "Veebileht"
 
-#: src/components/plugins/PluginDrawer.tsx:113
+#: src/components/plugins/PluginDrawer.tsx:128
 msgid "Package Name"
 msgstr ""
 
-#: src/components/plugins/PluginDrawer.tsx:119
+#: src/components/plugins/PluginDrawer.tsx:134
 msgid "Installation Path"
 msgstr ""
 
-#: src/components/plugins/PluginDrawer.tsx:124
+#: src/components/plugins/PluginDrawer.tsx:139
 #: src/tables/machine/MachineTypeTable.tsx:185
 #: src/tables/machine/MachineTypeTable.tsx:294
 #: src/tables/plugin/PluginListTable.tsx:107
-#: src/tables/plugin/PluginListTable.tsx:432
+#: src/tables/plugin/PluginListTable.tsx:436
 msgid "Builtin"
 msgstr ""
 
-#: src/components/plugins/PluginDrawer.tsx:129
+#: src/components/plugins/PluginDrawer.tsx:144
 msgid "Package"
 msgstr "Pakett"
 
-#: src/components/plugins/PluginDrawer.tsx:141
+#: src/components/plugins/PluginDrawer.tsx:156
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:67
 #: src/pages/Index/Settings/PluginSettingsGroup.tsx:119
 #: src/pages/Index/Settings/UserSettings.tsx:132
@@ -3538,7 +3538,7 @@ msgstr "Kategooria"
 #: src/components/tables/ColumnRenderers.tsx:394
 #: src/components/tables/Filter.tsx:507
 #: src/forms/BuildForms.tsx:868
-#: src/forms/PurchaseOrderForms.tsx:707
+#: src/forms/PurchaseOrderForms.tsx:706
 #: src/forms/StockForms.tsx:635
 #: src/forms/StockForms.tsx:673
 #: src/forms/StockForms.tsx:1474
@@ -3573,7 +3573,7 @@ msgstr "Seerianumber"
 #: src/forms/BuildForms.tsx:283
 #: src/forms/BuildForms.tsx:706
 #: src/forms/BuildForms.tsx:870
-#: src/forms/PurchaseOrderForms.tsx:930
+#: src/forms/PurchaseOrderForms.tsx:938
 #: src/forms/ReturnOrderForms.tsx:242
 #: src/forms/SalesOrderForms.tsx:437
 #: src/forms/StockForms.tsx:685
@@ -3594,8 +3594,8 @@ msgstr "Seerianumber"
 #: src/tables/build/BuildLineTable.tsx:99
 #: src/tables/part/PartPurchaseOrdersTable.tsx:103
 #: src/tables/part/PartTestResultTable.tsx:282
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:173
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:204
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:183
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:214
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:69
 #: src/tables/stock/StockTrackingTable.tsx:105
 msgid "Quantity"
@@ -3878,7 +3878,7 @@ msgid "Reference"
 msgstr "Viide"
 
 #: src/components/tables/ColumnRenderers.tsx:553
-#: src/forms/PurchaseOrderForms.tsx:848
+#: src/forms/PurchaseOrderForms.tsx:850
 #: src/pages/company/SupplierPartDetailsPanel.tsx:74
 msgid "Note"
 msgstr "Märkus"
@@ -3935,7 +3935,7 @@ msgstr "Valuuta"
 #: src/pages/part/pricing/BomPricingPanel.tsx:142
 #: src/tables/bom/BomTable.tsx:323
 #: src/tables/general/ExtraLineItemTable.tsx:86
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:265
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:275
 #: src/tables/purchasing/PurchaseOrderTable.tsx:101
 #: src/tables/sales/ReturnOrderTable.tsx:99
 #: src/tables/sales/SalesOrderLineItemTable.tsx:162
@@ -3956,7 +3956,7 @@ msgid "Show items which have a batch code"
 msgstr "Näita üksusi, millel on partiikood"
 
 #: src/components/tables/Filter.tsx:125
-#: src/forms/PurchaseOrderForms.tsx:777
+#: src/forms/PurchaseOrderForms.tsx:776
 #: src/forms/StockForms.tsx:692
 #: src/pages/build/BuildOrderDetailsPanel.tsx:186
 #: src/pages/stock/StockDetail.tsx:679
@@ -4185,7 +4185,7 @@ msgstr ""
 #: src/forms/BuildForms.tsx:385
 #: src/forms/BuildForms.tsx:468
 #: src/forms/BuildForms.tsx:543
-#: src/forms/PurchaseOrderForms.tsx:838
+#: src/forms/PurchaseOrderForms.tsx:840
 #: src/forms/ReturnOrderForms.tsx:195
 #: src/forms/ReturnOrderForms.tsx:243
 #: src/forms/StockForms.tsx:650
@@ -5876,34 +5876,34 @@ msgstr ""
 #~ msgid "Remove item from list"
 #~ msgstr "Remove item from list"
 
-#: src/forms/PurchaseOrderForms.tsx:481
+#: src/forms/PurchaseOrderForms.tsx:480
 msgid "Choose Location"
 msgstr "Vali asukoht"
 
-#: src/forms/PurchaseOrderForms.tsx:489
+#: src/forms/PurchaseOrderForms.tsx:488
 msgid "Item Destination selected"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:499
+#: src/forms/PurchaseOrderForms.tsx:498
 msgid "Part category default location selected"
 msgstr "Osakategooria vaikimisi asukoht valitud"
 
-#: src/forms/PurchaseOrderForms.tsx:509
+#: src/forms/PurchaseOrderForms.tsx:508
 msgid "Received stock location selected"
 msgstr "Kättesaadud varude asukoha valitud"
 
-#: src/forms/PurchaseOrderForms.tsx:517
+#: src/forms/PurchaseOrderForms.tsx:516
 msgid "Default location selected"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:564
+#: src/forms/PurchaseOrderForms.tsx:563
 #: src/pages/part/PartDetailsPanel.tsx:268
 #: src/tables/bom/BomTable.tsx:289
 #: src/tables/bom/BomTable.tsx:481
 msgid "Virtual Part"
 msgstr "Virtuaalne osa"
 
-#: src/forms/PurchaseOrderForms.tsx:565
+#: src/forms/PurchaseOrderForms.tsx:564
 msgid "This part is virtual, no physical stock will be received."
 msgstr ""
 
@@ -5915,36 +5915,36 @@ msgstr ""
 #~ msgid "Store at line item destination"
 #~ msgstr "Store at line item destination"
 
-#: src/forms/PurchaseOrderForms.tsx:599
+#: src/forms/PurchaseOrderForms.tsx:598
 #: src/forms/StockForms.tsx:577
 msgid "Set Location"
 msgstr "Määra asukoht"
 
-#: src/forms/PurchaseOrderForms.tsx:608
+#: src/forms/PurchaseOrderForms.tsx:607
 msgid "Assign Batch Code"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:618
+#: src/forms/PurchaseOrderForms.tsx:617
 msgid "Assign Serial Numbers"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:630
+#: src/forms/PurchaseOrderForms.tsx:629
 msgid "Set Expiry Date"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:639
+#: src/forms/PurchaseOrderForms.tsx:638
 #: src/forms/StockForms.tsx:1358
 msgid "Adjust Packaging"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:648
+#: src/forms/PurchaseOrderForms.tsx:647
 #: src/forms/StockForms.tsx:585
 #: src/forms/StockForms.tsx:1349
 #: src/hooks/UseStockAdjustActions.tsx:152
 msgid "Change Status"
 msgstr "Muuda staatust"
 
-#: src/forms/PurchaseOrderForms.tsx:655
+#: src/forms/PurchaseOrderForms.tsx:654
 msgid "Add Note"
 msgstr "Lisa märkus"
 
@@ -5952,69 +5952,69 @@ msgstr "Lisa märkus"
 #~ msgid "Receive line items"
 #~ msgstr "Receive line items"
 
-#: src/forms/PurchaseOrderForms.tsx:722
+#: src/forms/PurchaseOrderForms.tsx:721
 msgid "Store at default location"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:737
+#: src/forms/PurchaseOrderForms.tsx:736
 msgid "Store at line item destination "
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:753
+#: src/forms/PurchaseOrderForms.tsx:752
 msgid "Store with already received stock"
 msgstr "Pood juba saadud varudega"
 
-#: src/forms/PurchaseOrderForms.tsx:778
+#: src/forms/PurchaseOrderForms.tsx:777
 msgid "Enter batch code for received items"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:791
+#: src/forms/PurchaseOrderForms.tsx:793
 #: src/forms/StockForms.tsx:247
 msgid "Serial Numbers"
 msgstr "Seerianumbrid"
 
-#: src/forms/PurchaseOrderForms.tsx:792
+#: src/forms/PurchaseOrderForms.tsx:794
 msgid "Enter serial numbers for received items"
 msgstr "Sisesta saadus ühikute seerianumbrid"
 
-#: src/forms/PurchaseOrderForms.tsx:809
+#: src/forms/PurchaseOrderForms.tsx:811
 #: src/pages/stock/StockDetailsPanel.tsx:316
 #: src/tables/stock/StockItemTable.tsx:171
 msgid "Expiry Date"
 msgstr "Aegumise kuupäev"
 
-#: src/forms/PurchaseOrderForms.tsx:810
+#: src/forms/PurchaseOrderForms.tsx:812
 msgid "Enter an expiry date for received items"
 msgstr "Sisesta saabunud ühikute aegumise kuupäevad"
 
-#: src/forms/PurchaseOrderForms.tsx:824
+#: src/forms/PurchaseOrderForms.tsx:826
 #: src/forms/StockForms.tsx:1404
 #: src/pages/company/SupplierPartDetailsPanel.tsx:126
 #: src/pages/company/SupplierPartDetailsPanel.tsx:184
 #: src/pages/stock/StockDetailsPanel.tsx:350
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:224
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:234
 msgid "Packaging"
 msgstr "Pakkimine"
 
-#: src/forms/PurchaseOrderForms.tsx:928
+#: src/forms/PurchaseOrderForms.tsx:936
 #: src/pages/company/SupplierPartDetailsPanel.tsx:92
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:49
 msgid "SKU"
 msgstr "Tootekood"
 
-#: src/forms/PurchaseOrderForms.tsx:929
+#: src/forms/PurchaseOrderForms.tsx:937
 #: src/tables/part/PartPurchaseOrdersTable.tsx:136
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:211
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:286
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:221
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:296
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:223
 msgid "Received"
 msgstr "Saabunud"
 
-#: src/forms/PurchaseOrderForms.tsx:946
+#: src/forms/PurchaseOrderForms.tsx:954
 msgid "Receive Line Items"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:952
+#: src/forms/PurchaseOrderForms.tsx:960
 msgid "Items received"
 msgstr ""
 
@@ -6170,7 +6170,7 @@ msgstr ""
 #: src/pages/stock/StockDetailsPanel.tsx:323
 #: src/tables/bom/BomTable.tsx:313
 #: src/tables/general/ExtraLineItemTable.tsx:73
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:256
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:266
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
 #: src/tables/stock/StockItemTable.tsx:126
 msgid "Unit Price"
@@ -8789,8 +8789,8 @@ msgstr "Osa kirjeldus"
 
 #: src/pages/company/SupplierPartDetailsPanel.tsx:133
 #: src/tables/part/PartPurchaseOrdersTable.tsx:82
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:189
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:230
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:199
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:240
 #: src/tables/purchasing/SupplierPartTable.tsx:173
 msgid "Pack Quantity"
 msgstr "Kogus pakis"
@@ -9686,7 +9686,7 @@ msgid "Completed Line Items"
 msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:100
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:275
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:285
 msgid "Destination"
 msgstr "Sihtkoht"
 
@@ -11208,16 +11208,16 @@ msgid "View Item"
 msgstr ""
 
 #: src/tables/general/ExtraLineItemTable.tsx:81
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:260
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:270
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:201
 #: src/tables/sales/SalesOrderLineItemTable.tsx:157
 msgid "Discount"
 msgstr ""
 
 #: src/tables/general/ExtraLineItemTable.tsx:108
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:303
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:402
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:403
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:313
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:412
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:413
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:91
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:239
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:240
@@ -11230,7 +11230,7 @@ msgid "Add Line Item"
 msgstr ""
 
 #: src/tables/general/ExtraLineItemTable.tsx:121
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:326
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:336
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:104
 #: src/tables/sales/SalesOrderLineItemTable.tsx:309
 #: src/tables/stock/TransferOrderLineItemTable.tsx:283
@@ -11238,7 +11238,7 @@ msgid "Edit Line Item"
 msgstr ""
 
 #: src/tables/general/ExtraLineItemTable.tsx:130
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:335
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:345
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:113
 #: src/tables/sales/SalesOrderLineItemTable.tsx:318
 #: src/tables/stock/TransferOrderLineItemTable.tsx:292
@@ -11248,7 +11248,7 @@ msgstr ""
 #: src/tables/general/ExtraLineItemTable.tsx:151
 #: src/tables/general/ExtraLineItemTable.tsx:195
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:111
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:404
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:414
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:136
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:241
 #: src/tables/sales/SalesOrderLineItemTable.tsx:106
@@ -11655,7 +11655,7 @@ msgid "Required Stock"
 msgstr "Nõutud laoseis"
 
 #: src/tables/part/PartBuildAllocationsTable.tsx:125
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:387
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:397
 msgid "View Build Order"
 msgstr ""
 
@@ -11744,7 +11744,7 @@ msgstr ""
 #~ msgstr "Add parameter template"
 
 #: src/tables/part/PartPurchaseOrdersTable.tsx:88
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:195
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:205
 msgid "Total Quantity"
 msgstr "Kogus kokku"
 
@@ -12126,7 +12126,7 @@ msgstr "Plugin"
 #~ msgstr "An error occurred while fetching plugin details"
 
 #: src/tables/plugin/PluginListTable.tsx:113
-#: src/tables/plugin/PluginListTable.tsx:437
+#: src/tables/plugin/PluginListTable.tsx:441
 msgid "Mandatory"
 msgstr "Kohustuslik"
 
@@ -12160,23 +12160,23 @@ msgstr "Kirjeldust pole saadaval"
 #~ msgid "Package information"
 #~ msgstr "Package information"
 
-#: src/tables/plugin/PluginListTable.tsx:166
+#: src/tables/plugin/PluginListTable.tsx:165
 msgid "Confirm plugin activation"
 msgstr "Kinnitage pistikmooduli aktiveerimine"
 
-#: src/tables/plugin/PluginListTable.tsx:167
+#: src/tables/plugin/PluginListTable.tsx:166
 msgid "Confirm plugin deactivation"
 msgstr "Kinnitage pistikmoodulite deaktiveerimine"
 
-#: src/tables/plugin/PluginListTable.tsx:172
+#: src/tables/plugin/PluginListTable.tsx:171
 msgid "The selected plugin will be activated"
 msgstr "Valitud pistiklahendus aktiveeritakse"
 
-#: src/tables/plugin/PluginListTable.tsx:173
+#: src/tables/plugin/PluginListTable.tsx:172
 msgid "The selected plugin will be deactivated"
 msgstr "Valitud pistiklahendus inaktiveeritakse"
 
-#: src/tables/plugin/PluginListTable.tsx:191
+#: src/tables/plugin/PluginListTable.tsx:190
 msgid "Deactivate"
 msgstr "Lülita välja"
 
@@ -12184,28 +12184,28 @@ msgstr "Lülita välja"
 #~ msgid "Plugin settings"
 #~ msgstr "Plugin settings"
 
-#: src/tables/plugin/PluginListTable.tsx:205
+#: src/tables/plugin/PluginListTable.tsx:204
 msgid "Activate"
 msgstr "Aktiveeri"
 
-#: src/tables/plugin/PluginListTable.tsx:206
+#: src/tables/plugin/PluginListTable.tsx:205
 msgid "Activate selected plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:218
+#: src/tables/plugin/PluginListTable.tsx:217
 msgid "Update selected plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:236
+#: src/tables/plugin/PluginListTable.tsx:235
 #: src/tables/stock/InstalledItemsTable.tsx:104
 msgid "Uninstall"
 msgstr "Eemalda"
 
-#: src/tables/plugin/PluginListTable.tsx:237
+#: src/tables/plugin/PluginListTable.tsx:236
 msgid "Uninstall selected plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:255
+#: src/tables/plugin/PluginListTable.tsx:254
 msgid "Delete selected plugin configuration"
 msgstr ""
 
@@ -12230,7 +12230,7 @@ msgstr ""
 #~ msgstr "Install plugin"
 
 #: src/tables/plugin/PluginListTable.tsx:292
-#: src/tables/plugin/PluginListTable.tsx:384
+#: src/tables/plugin/PluginListTable.tsx:388
 msgid "Install Plugin"
 msgstr "Paigalda plugin"
 
@@ -12294,7 +12294,7 @@ msgstr "Pluginid said edukalt taaskäivitatud"
 #~ msgid "Deactivating plugin"
 #~ msgstr "Deactivating plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:377
+#: src/tables/plugin/PluginListTable.tsx:381
 msgid "Reload Plugins"
 msgstr "Laadi pluginad uuesti"
 
@@ -12302,19 +12302,19 @@ msgstr "Laadi pluginad uuesti"
 #~ msgid "Plugin updated"
 #~ msgstr "Plugin updated"
 
-#: src/tables/plugin/PluginListTable.tsx:400
-msgid "Plugin Detail"
-msgstr "Plugina üksikasjad"
-
 #: src/tables/plugin/PluginListTable.tsx:403
 #~ msgid "Error updating plugin"
 #~ msgstr "Error updating plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:442
+#: src/tables/plugin/PluginListTable.tsx:404
+msgid "Plugin Detail"
+msgstr "Plugina üksikasjad"
+
+#: src/tables/plugin/PluginListTable.tsx:446
 msgid "Sample"
 msgstr "Näidis"
 
-#: src/tables/plugin/PluginListTable.tsx:447
+#: src/tables/plugin/PluginListTable.tsx:451
 #: src/tables/stock/StockItemTable.tsx:247
 msgid "Installed"
 msgstr "Paigaldatud"
@@ -12372,19 +12372,19 @@ msgstr ""
 #~ msgid "Are you sure you want to remove this manufacturer part?"
 #~ msgstr "Are you sure you want to remove this manufacturer part?"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:234
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:244
 msgid "Supplier Code"
 msgstr ""
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:242
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:252
 msgid "Supplier Link"
 msgstr ""
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:249
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:259
 msgid "Manufacturer Code"
 msgstr ""
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:287
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:297
 msgid "Show line items which have been received"
 msgstr ""
 
@@ -12394,11 +12394,11 @@ msgstr ""
 #~ msgid "Add line item"
 #~ msgstr "Add line item"
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:356
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:366
 msgid "Receive line item"
 msgstr ""
 
-#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:416
+#: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:426
 msgid "Receive items"
 msgstr ""
 

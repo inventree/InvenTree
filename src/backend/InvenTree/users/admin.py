@@ -20,6 +20,14 @@ class ApiTokenAdmin(admin.ModelAdmin):
 
     list_display = ('token', 'user', 'name', 'expiry', 'active')
     list_filter = ('user', 'revoked')
+    search_fields = [
+        'name',
+        'user__username',
+        'user__first_name',
+        'user__last_name',
+        'user__email',
+    ]
+    autocomplete_fields = ('user',)
     fields = (
         'token',
         'user',
