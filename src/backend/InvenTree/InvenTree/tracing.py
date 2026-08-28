@@ -58,7 +58,8 @@ def setup_tracing(
         return  # pragma: no cover
 
     # check if trace is already set up - if so, skip
-    if trace.get_tracer_provider() is not None:
+    global TRACE_PROC, TRACE_PROV
+    if TRACE_PROV is not None:
         return
 
     # Logger configuration
@@ -161,7 +162,6 @@ def setup_tracing(
     logger = logging.getLogger('inventree')
     logger.addHandler(handler)
 
-    global TRACE_PROC, TRACE_PROV
     TRACE_PROC = trace_processor
     TRACE_PROV = trace_provider
 
