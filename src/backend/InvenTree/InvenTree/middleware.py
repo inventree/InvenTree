@@ -84,6 +84,9 @@ paths_own_security = [
     ensure_slashes(
         settings.FRONTEND_URL_BASE
     ),  # Frontend files - frontend paths have their own security model
+    ensure_slashes(
+        settings.MEDIA_URL
+    ),  # Media files - served with DRF token / session auth in single-machine mode
 ]
 """Paths that handle their own security model."""
 pages_mfa_bypass = [
