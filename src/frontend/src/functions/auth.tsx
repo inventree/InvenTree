@@ -481,12 +481,24 @@ export const checkLoginState = async (
     await loginSuccess();
   } else if (!no_redirect) {
     setLoginChecked(true);
-    navigate('/login', { state: redirect });
+
+    // A user authenticated via SSO, but with no matching local account, is
+    // left by the server in a pending 'provider_signup' flow rather than
+    // being logged in - route them to finish registration instead of
+    // silently bouncing them back to the login page.
+    const { auth_context } = useServerApiState.getState();
+    const providerSignupPending = auth_context?.flows?.some(
+      (flow: any) => flow.id == FlowEnum.ProviderSignup && flow.is_pending
+    );
+
+    navigate(providerSignupPending ? '/provider-signup' : '/login', {
+      state: redirect
+    });
   }
   setLoginChecked(true);
 };
 
-function handleSuccessFullAuth(
+export function handleSuccessFullAuth(
   response: any,
   navigate: NavigateFunction,
   location?: Location<any>,
