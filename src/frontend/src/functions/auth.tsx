@@ -5,6 +5,7 @@ import {
 } from '@github/webauthn-json/browser-ponyfill';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { getBaseUrl } from '@lib/functions/Navigation';
 import { type AuthProvider, FlowEnum } from '@lib/types/Auth';
 import { t } from '@lingui/core/macro';
 import { notifications, showNotification } from '@mantine/notifications';
@@ -558,7 +559,17 @@ export async function ProviderLogin(
   await ensureCsrf();
   post(generateUrl(apiUrl(ApiEndpoints.auth_provider_redirect)), {
     provider: provider.id,
-    callback_url: generateUrl('/logged-in'),
+    // Return to wherever this page is actually being served from, not the
+    // configured API host - the two differ whenever the frontend and
+    // backend are hosted separately (e.g. the vite dev server, or a
+    // decoupled-frontend deployment). The '/web' base is normally added
+    // back in server-side by Django's compatibility redirect for bare
+    // (non-API-host) paths, which only exists on the Django side - so add
+    // it explicitly rather than relying on that.
+    callback_url: generateUrl(
+      `/${getBaseUrl()}/logged-in`,
+      window.location.origin
+    ),
     process: process,
     csrfmiddlewaretoken: getCsrfCookie()
   });

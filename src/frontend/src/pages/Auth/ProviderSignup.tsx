@@ -33,9 +33,13 @@ export default function ProviderSignup() {
       .get(apiUrl(ApiEndpoints.auth_provider_signup))
       .then((response) => {
         const data = response.data?.data ?? {};
+        // Suggested email addresses come back as their own list (not on
+        // `user`) - prefer the primary one, falling back to the first.
+        const emails = data?.email ?? [];
+        const email = emails.find((e: any) => e.primary) ?? emails[0];
         form.setValues({
           username: data?.user?.username ?? '',
-          email: data?.user?.email ?? ''
+          email: email?.email ?? ''
         });
         setProviderName(data?.account?.provider?.name ?? t`your provider`);
         setLoading(false);

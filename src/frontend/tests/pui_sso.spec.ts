@@ -16,7 +16,29 @@ import { setSettingState } from './settings.js';
  * authorization-code exchange and pending-flow logic, not just the new
  * frontend page in isolation.
  */
-test('SSO - Complete registration for a new SSO user', async ({ page }) => {
+// Remove any account left over from a previous run - including one that
+// failed partway, before its own cleanup could execute - since an existing
+// SocialAccount link makes allauth log straight in instead of hitting the
+// pending 'provider_signup' flow this test exists to cover.
+async function deleteMockSsoUser() {
+  const api = await createApi({});
+  // user/ is unpaginated by default (no PAGE_SIZE configured) - returns a
+  // plain array rather than a { results: [...] } envelope.
+  const users = await api
+    .get(`user/?search=${mockSsoUser.username}`)
+    .then((response) => response.json());
+  const existing = users.find(
+    (user: any) => user.username === mockSsoUser.username
+  );
+  if (existing) {
+    await api.delete(`user/${existing.pk}/`);
+  }
+}
+
+test.beforeEach(deleteMockSsoUser);
+test.afterEach(deleteMockSsoUser);
+
+test('SSO - Complete Registration', async ({ page }) => {
   // Allow SSO self-registration, but disable auto-signup - this is what
   // forces a brand-new SSO identity into the pending 'provider_signup' flow
   // instead of silently creating (or rejecting) an account.
@@ -52,16 +74,4 @@ test('SSO - Complete registration for a new SSO user', async ({ page }) => {
       name: `${mockSsoUser.firstName} ${mockSsoUser.lastName}`
     })
     .waitFor();
-
-  // Clean up the created account, so the test can be re-run locally
-  const api = await createApi({});
-  const { results } = await api
-    .get(`user/?search=${mockSsoUser.username}`)
-    .then((response) => response.json());
-  const created = results.find(
-    (user: any) => user.username === mockSsoUser.username
-  );
-
-  expect(created).toBeDefined();
-  await api.delete(`user/${created.pk}/`);
 });

@@ -42,7 +42,6 @@ export function SsoButton({ provider }: Readonly<{ provider: AuthProvider }>) {
       <Button
         leftSection={getBrandIcon(provider)}
         radius='xl'
-        component='a'
         onClick={() => ProviderLogin(provider)}
       >
         {provider.name}

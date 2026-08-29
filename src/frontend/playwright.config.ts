@@ -81,9 +81,7 @@ export default defineConfig({
       stderr: 'pipe',
       timeout: 120 * 1000
     },
-    // Mock OIDC provider - see tests/pui_sso.spec.ts. Started independently
-    // of the backend below: its discovery document is only ever fetched
-    // on-demand, during an actual SSO login attempt, not at Django startup.
+    // Mock OIDC provider - see tests/pui_sso.spec.ts
     {
       command: 'node ./playwright/mock-oidc-server.mjs',
       env: {
