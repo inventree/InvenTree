@@ -96,6 +96,12 @@ class DataImportSessionList(BulkDeleteMixin, DataImportSessionMixin, ListCreateA
     filter_backends = SEARCH_ORDER_FILTER
     filterset_fields = ['model_type', 'status', 'user']
     ordering_fields = ['timestamp', 'status', 'model_type']
+    search_fields = [
+        'model_type',
+        'user__username',
+        'user__first_name',
+        'user__last_name',
+    ]
 
 
 class DataImportSessionDetail(DataImportSessionMixin, RetrieveUpdateDestroyAPI):
@@ -188,6 +194,10 @@ class DataImportColumnMappingList(DataImportSessionChildMixin, ListAPI):
     filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = ['session']
+
+    ordering_fields = ['column_label', 'field_name', 'session']
+
+    search_fields = ['column_label', 'field_name']
 
 
 class DataImportColumnMappingDetail(DataImportSessionChildMixin, RetrieveUpdateAPI):

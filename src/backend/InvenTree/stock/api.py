@@ -545,7 +545,7 @@ class StockLocationTypeList(ListCreateAPI):
 
     ordering = ['-location_count']
 
-    search_fields = ['name']
+    search_fields = ['name', 'description']
 
     def get_queryset(self):
         """Override the queryset method to include location count."""
@@ -1225,32 +1225,31 @@ class StockList(
                 serials = extract_serial_numbers(
                     serial_numbers, quantity, part.get_latest_serial_number(), part=part
                 )
-
-                # Determine if any of the specified serial numbers are invalid
-                # Note "invalid" means either they already exist, or do not pass custom rules
-                invalid = []
-                errors = []
-
-                try:
-                    invalid = part.find_conflicting_serial_numbers(serials)
-                except DjangoValidationError as exc:
-                    errors.append(exc.message)
-
-                if len(invalid) > 0:
-                    msg = _('The following serial numbers already exist or are invalid')
-                    msg += ' : '
-                    msg += ','.join([str(e) for e in invalid])
-
-                    errors.append(msg)
-
-                if len(errors) > 0:
-                    raise ValidationError({'serial_numbers': errors})
-
             except DjangoValidationError as e:
                 raise ValidationError({
                     'quantity': e.messages,
                     'serial_numbers': e.messages,
                 })
+
+            # Determine if any of the specified serial numbers are invalid
+            # Note "invalid" means either they already exist, or do not pass custom rules
+            invalid = []
+            errors = []
+
+            try:
+                invalid = part.find_conflicting_serial_numbers(serials)
+            except DjangoValidationError as exc:
+                errors.append(exc.message)
+
+            if len(invalid) > 0:
+                msg = _('The following serial numbers already exist or are invalid')
+                msg += ' : '
+                msg += ','.join([str(e) for e in invalid])
+
+                errors.append(msg)
+
+            if len(errors) > 0:
+                raise ValidationError({'serial_numbers': errors})
 
         if serials is not None:
             """If the stock item is going to be serialized, set the quantity to 1."""
@@ -1691,7 +1690,16 @@ class StockTrackingList(
 
     ordering_fields = ['date']
 
-    search_fields = ['notes']
+    search_fields = [
+        'title',
+        'notes',
+        'user__username',
+        'user__first_name',
+        'user__last_name',
+        'item__part__name',
+        'item__part__IPN',
+        'item__serial',
+    ]
 
 
 stock_api_urls = [
