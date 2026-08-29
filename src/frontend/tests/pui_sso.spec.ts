@@ -75,3 +75,36 @@ test('SSO - Complete Registration', async ({ page }) => {
     })
     .waitFor();
 });
+
+test('SSO - Registration Disabled', async ({ page }) => {
+  // Allow SSO login, but disable self-registration - a brand-new SSO
+  // identity has no matching local account, and nothing should silently
+  // create one.
+  await setSettingState({ setting: 'LOGIN_ENABLE_SSO', value: true });
+  await setSettingState({ setting: 'LOGIN_ENABLE_SSO_REG', value: false });
+
+  await navigate(page, logoutUrl, { waitUntil: 'load' });
+  await page.waitForURL('**/web/login');
+
+  await page.getByRole('button', { name: 'Mock SSO' }).click();
+
+  // django-allauth rejects the pending signup server-side (raises
+  // SignupClosedException) before a 'provider_signup' flow is ever
+  // recorded, so the frontend never reaches '/provider-signup' here - it
+  // lands back on '/logged-in' with an 'error' query param appended (see
+  // on_authentication_error() in allauth/headless/socialaccount/internal.py),
+  // which LoggedIn.tsx must surface as a visible error instead of silently
+  // bouncing back to a blank login page.
+  await page.waitForURL('**/web/login');
+  await page.getByText('SSO Login Failed').waitFor();
+  await page.getByText('Registration via SSO is currently disabled.').waitFor();
+
+  // No account should have been created
+  const api = await createApi({});
+  const users = await api
+    .get(`user/?search=${mockSsoUser.username}`)
+    .then((response) => response.json());
+  expect(
+    users.find((user: any) => user.username === mockSsoUser.username)
+  ).toBeUndefined();
+});
