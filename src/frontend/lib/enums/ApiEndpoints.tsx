@@ -161,6 +161,9 @@ export enum ApiEndpoints {
   stock_serialize = 'stock/:id/serialize/',
   stock_serial_info = 'stock/:id/serial-numbers/',
 
+  // Stock item pricing endpoints
+  stock_item_cost_entry_list = 'pricing/cost-entry/',
+
   // Generator API endpoints
   generate_batch_code = 'generate/batch-code/',
   generate_serial_number = 'generate/serial-number/',

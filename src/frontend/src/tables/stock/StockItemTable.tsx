@@ -40,7 +40,7 @@ import {
 } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
-import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
+import { formatPriceRange } from '../../defaults/formatters';
 import { useStockFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
@@ -53,10 +53,12 @@ import { useUserState } from '../../states/UserState';
  */
 function stockItemTableColumns({
   showLocation,
-  showPricing
+  showPricing,
+  hasPricingRole
 }: {
   showLocation: boolean;
   showPricing: boolean;
+  hasPricingRole: boolean;
 }): TableColumn[] {
   return [
     PartColumn({
@@ -122,28 +124,30 @@ function stockItemTableColumns({
       copyable: true
     },
     {
-      accessor: 'purchase_price',
+      accessor: 'unit_cost',
       title: t`Unit Price`,
       sortable: true,
       switchable: true,
       hidden: !showPricing,
       defaultVisible: false,
       render: (record: any) =>
-        formatCurrency(record.purchase_price, {
-          currency: record.purchase_price_currency
-        })
+        formatPriceRange(
+          record.cost_detail?.min_cost,
+          record.cost_detail?.max_cost,
+          { currency: record.cost_detail?.min_cost_currency }
+        )
     },
     {
       accessor: 'stock_value',
       title: t`Stock Value`,
       sortable: false,
-      hidden: !showPricing,
+      hidden: !showPricing || !hasPricingRole,
       render: (record: any) => {
         const min_price =
-          record.purchase_price || record.part_detail?.pricing_min;
+          record.cost_detail?.min_cost ?? record.part_detail?.pricing_min;
         const max_price =
-          record.purchase_price || record.part_detail?.pricing_max;
-        const currency = record.purchase_price_currency || undefined;
+          record.cost_detail?.max_cost ?? record.part_detail?.pricing_max;
+        const currency = record.cost_detail?.min_cost_currency || undefined;
 
         return formatPriceRange(min_price, max_price, {
           currency: currency,
@@ -264,9 +268,9 @@ function stockItemTableFilters({
       description: t`Show tracked items`
     },
     {
-      name: 'has_purchase_price',
-      label: t`Has Purchase Price`,
-      description: t`Show items which have a purchase price`
+      name: 'has_unit_cost',
+      label: t`Has Unit Cost`,
+      description: t`Show items which have a calculated unit cost`
     },
     {
       name: 'expired',
@@ -383,9 +387,10 @@ export function StockItemTable({
     () =>
       stockItemTableColumns({
         showLocation: showLocation ?? true,
-        showPricing: showPricing ?? true
+        showPricing: showPricing ?? true,
+        hasPricingRole: user.hasViewRole(UserRoles.pricing)
       }),
-    [showLocation, showPricing]
+    [showLocation, showPricing, user]
   );
 
   const tableFilters: TableFilter[] = useMemo(
@@ -413,7 +418,6 @@ export function StockItemTable({
     create: true,
     partId: params.part,
     supplierPartId: params.supplier_part,
-    pricing: params.pricing,
     modalId: 'add-stock-item'
   });
 
@@ -497,7 +501,10 @@ export function StockItemTable({
             ...params,
             part_detail: true,
             location_detail: true,
-            supplier_part_detail: true
+            supplier_part_detail: true,
+            ...(user.hasViewRole(UserRoles.pricing)
+              ? { cost_detail: true }
+              : {})
           }
         }}
       />

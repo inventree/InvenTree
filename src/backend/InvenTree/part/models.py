@@ -2962,7 +2962,7 @@ class PartPricing(common.models.MetaMixin):
 
         # Also check if manual stock item pricing is included
         if get_global_setting('PRICING_USE_STOCK_PRICING', True):
-            items = self.part.stock_items.all()
+            items = self.part.stock_items.select_related('cost').all()
 
             # Limit to stock items updated within a certain window
             days = int(get_global_setting('PRICING_STOCK_ITEM_AGE_DAYS', 0))
@@ -2972,7 +2972,10 @@ class PartPricing(common.models.MetaMixin):
                 items = items.filter(updated__gte=date_threshold)
 
             for item in items:
-                cost = self.convert(item.purchase_price)
+                if (item_cost := item.cost_price) is None:
+                    continue
+
+                cost = self.convert(item_cost)
 
                 # Skip if the cost could not be converted (for some reason)
                 if cost is None:

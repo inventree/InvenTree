@@ -27,7 +27,7 @@ import {
 } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import { formatCurrency } from '../../defaults/formatters';
+import { formatPriceRange } from '../../defaults/formatters';
 import { useFindSerialNumberForm } from '../../forms/StockForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
@@ -319,14 +319,18 @@ export function StockDetailsPanel({
     },
     {
       type: 'text',
-      name: 'purchase_price',
+      name: 'unit_cost',
       label: t`Unit Price`,
       icon: 'currency',
-      hidden: !instance?.purchase_price,
+      hidden:
+        instance?.cost_detail?.min_cost == null &&
+        instance?.cost_detail?.max_cost == null,
       value_formatter: () =>
-        formatCurrency(instance?.purchase_price, {
-          currency: instance?.purchase_price_currency
-        })
+        formatPriceRange(
+          instance?.cost_detail?.min_cost,
+          instance?.cost_detail?.max_cost,
+          { currency: instance?.cost_detail?.min_cost_currency }
+        )
     },
     {
       type: 'text',
@@ -334,14 +338,19 @@ export function StockDetailsPanel({
       label: t`Stock Value`,
       icon: 'currency',
       hidden:
-        !instance?.purchase_price ||
+        (instance?.cost_detail?.min_cost == null &&
+          instance?.cost_detail?.max_cost == null) ||
         instance?.quantity == 1 ||
         instance?.quantity == 0,
       value_formatter: () =>
-        formatCurrency(instance?.purchase_price, {
-          currency: instance?.purchase_price_currency,
-          multiplier: instance?.quantity
-        })
+        formatPriceRange(
+          instance?.cost_detail?.min_cost,
+          instance?.cost_detail?.max_cost,
+          {
+            currency: instance?.cost_detail?.min_cost_currency,
+            multiplier: instance?.quantity
+          }
+        )
     },
     {
       type: 'text',

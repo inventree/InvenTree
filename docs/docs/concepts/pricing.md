@@ -23,6 +23,17 @@ Throughout this documentation (and within InvenTree) the concepts of *cost* and 
 | Price | The theoretical amount of money required to pay for something. |
 | Cost | The actual amount of money paid. |
 
+## Cost Tracking
+
+While *price* (as defined [above](#terminology)) is primarily tracked at the [Part](../part/pricing.md) level, *cost* - the actual amount paid - is tracked at the [Stock Item](../stock/costs.md) level, via one or more *cost entries* recorded against each stock item. These entries are automatically combined into a cached cost summary for the item, which in turn feeds into part-level purchase cost calculations.
+
+Refer to the following pages for details specific to each level:
+
+| Level | Documentation | Description |
+| --- | --- | --- |
+| Part | [Part Pricing](../part/pricing.md) | Cached price *ranges*, aggregated from multiple sources (BOM, supplier, internal, purchase history, variants, sale history) |
+| Stock Item | [Stock Item Costs](../stock/costs.md) | Individual *cost entries* recorded against a specific stock item, and the calculated cost summary derived from them |
+
 ## Line Items
 
 Orders (Purchase Orders, Sales Orders, and Return Orders) are made up of *line items*, each linking a *Quantity* to a *Unit Price*. A line item's *Line Total* is calculated as follows:

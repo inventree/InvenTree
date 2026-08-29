@@ -127,7 +127,7 @@ Serial numbers are *not* required to receive a trackable part - if left blank, a
 
 ### Item Value Currency
 
-The unit cost of the purchase order line item is transferred across to the created stock item. By default, the same currency is used for the stock item as was used for the purchase order line item.
+The unit cost of the purchase order line item is transferred across to the created stock item, recorded as a [purchase cost entry](../stock/costs.md#cost-types). By default, the same currency is used for the stock item as was used for the purchase order line item.
 
 However, if the [Convert Currency](#purchase-order-settings) setting is enabled, the currency of the stock item will be converted to the [default currency](../concepts/pricing.md#default-currency) of the system. This may be useful when ordering stock in a different currency, to ensure that the unit cost of the stock item is converted to the base currency at the time of receipt.
 
@@ -140,9 +140,9 @@ Rather than receiving the bundle as a single opaque stock quantity, InvenTree al
 1. Create a part to represent the bundle itself, and mark it as an [assembly](../part/index.md#assembly)
 2. Link a [supplier part](./supplier.md#supplier-parts) to the bundle part, representing how it is purchased from the supplier
 3. Define a [Bill of Materials](../manufacturing/bom.md) for the bundle part, listing each of the individual components and the quantity contained within a single bundle
-4. Create and receive a purchase order against the bundle's supplier part, as normal - a single stock item is created for the bundle, retaining the purchase price and source purchase order of the order as a whole
+4. Create and receive a purchase order against the bundle's supplier part, as normal - a single stock item is created for the bundle, retaining the [unit cost](../stock/costs.md) and source purchase order of the order as a whole
 
-Once the individual components are actually required, the received bundle stock item can be [disassembled](../stock/disassemble.md) into its component parts. The purchase price and traceability data (batch code, source purchase order) of the original bundle are automatically apportioned across the newly generated component stock items.
+Once the individual components are actually required, the received bundle stock item can be [disassembled](../stock/disassemble.md) into its component parts. The unit cost and traceability data (batch code, source purchase order) of the original bundle are automatically apportioned across the newly generated component stock items.
 
 !!! tip "Pack Size vs Bundled Items"
     A supplier part with a [pack size](./supplier.md#supplier-part-pack-size) greater than one still represents multiple units of the *same* part - the pack size simply determines how many physical units are added to stock per unit ordered. A *bundled* item is different: a single supplier part represents an assortment of *different* components, which must be disassembled before the individual components can be used or sold separately.
