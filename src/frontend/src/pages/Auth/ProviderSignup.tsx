@@ -69,7 +69,7 @@ export default function ProviderSignup() {
             success: false
           });
         }
-        navigate('/login');
+        navigate('/login', { state: location?.state });
       });
   }, []);
 
