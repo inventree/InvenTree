@@ -1,6 +1,6 @@
 import { createApi } from './api.js';
 import { expect, test } from './baseFixtures.js';
-import { logoutUrl, mockSsoUser } from './defaults.js';
+import { apiUrl, logoutUrl, mockSsoUser } from './defaults.js';
 import { navigate } from './helpers.js';
 import { setSettingState } from './settings.js';
 
@@ -107,4 +107,54 @@ test('SSO - Registration Disabled', async ({ page }) => {
   expect(
     users.find((user: any) => user.username === mockSsoUser.username)
   ).toBeUndefined();
+});
+
+test('SSO - Disabled', async ({ page }) => {
+  // Master switch off, regardless of registration settings - the button
+  // should disappear, and a direct attempt at the redirect endpoint
+  // (bypassing the now-hidden button) must still be rejected server-side
+  // by CustomSocialAccountAdapter.pre_social_login(), not just hidden
+  // client-side.
+  await setSettingState({ setting: 'LOGIN_ENABLE_SSO', value: false });
+
+  await navigate(page, logoutUrl, { waitUntil: 'load' });
+  await page.waitForURL('**/web/login');
+
+  await expect(page.getByRole('button', { name: 'Mock SSO' })).toBeHidden();
+
+  await page.evaluate(async (apiBase) => {
+    // Populate the CSRF cookie, then submit the same redirect form
+    // ProviderLogin() would have, driving the flow the hidden button would
+    // otherwise start.
+    await fetch(`${apiBase}auth/v1/auth/session`, { credentials: 'include' });
+    const csrftoken = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('csrftoken='))
+      ?.split('=')[1];
+
+    const form = document.createElement('form');
+    form.method = 'post';
+    form.action = `${apiBase}auth/v1/auth/provider/redirect`;
+    const fields: Record<string, string> = {
+      provider: 'mock',
+      callback_url: `${window.location.origin}/web/logged-in`,
+      process: 'login',
+      csrfmiddlewaretoken: csrftoken ?? ''
+    };
+    for (const [key, value] of Object.entries(fields)) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = value;
+      form.appendChild(input);
+    }
+    document.body.appendChild(form);
+    form.submit();
+  }, apiUrl);
+
+  await page.waitForURL('**/web/login');
+  await page.getByText('SSO Login Failed').waitFor();
+  await page
+    .getByText('You do not have permission to log in this way.')
+    .waitFor();
 });
