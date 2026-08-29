@@ -405,6 +405,11 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         self.assignRole('repair_order.delete')
         self.assignRole('repair_order.view')
 
+        # Needed for 'part_detail' to be included in serialized output -
+        # OptionalField gates embedded model data behind view permission
+        # on that model (see InvenTree.serializers.check_field_permission).
+        self.assignRole('part.view')
+
         # Pick a Part from the fixture so part-related tests have a target.
         self.part = Part.objects.first()
 
@@ -758,7 +763,7 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
 
         # A repair order without a part should NOT appear in this filter
         no_part_ro = RepairOrder.objects.create(
-            reference='RO-NOPART', description='No part assigned'
+            reference='RO-8888', description='No part assigned'
         )
         response = self.get(url, {'part': self.part.pk}, expected_code=200)
         pks = {item['pk'] for item in response.data}
