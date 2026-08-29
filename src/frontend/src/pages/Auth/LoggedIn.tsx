@@ -41,7 +41,7 @@ export default function Logged_In() {
         message: ssoErrorMessage(error),
         success: false
       });
-      navigate('/login');
+      navigate('/login', { state: location?.state });
       return;
     }
 
