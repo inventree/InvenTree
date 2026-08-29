@@ -75,8 +75,6 @@ class DataImportRowAdmin(admin.ModelAdmin):
 
     list_display = ['id', 'session', 'row_index']
 
-    search_fields = ['session__id', 'row_index']
-
     autocomplete_fields = ['session']
 
     def get_readonly_fields(self, request, obj=None):
