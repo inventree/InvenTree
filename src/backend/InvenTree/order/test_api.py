@@ -908,15 +908,17 @@ class PurchaseOrderTest(OrderTest):
 
         # Create 100 purchase orders, cycling through the custom statuses
         supplier = Company.objects.filter(is_supplier=True).first()
-        models.PurchaseOrder.objects.bulk_create([
-            models.PurchaseOrder(
-                supplier=supplier,
-                reference=f'PO-QTEST-{i}',
-                status=custom_statuses[i % 10].logical_key,
-                status_custom_key=custom_statuses[i % 10].key,
-            )
-            for i in range(100)
-        ])
+        models.PurchaseOrder.objects.bulk_create(
+            [
+                models.PurchaseOrder(
+                    supplier=supplier,
+                    reference=f'PO-QTEST-{i}',
+                    status=custom_statuses[i % 10].logical_key,
+                    status_custom_key=custom_statuses[i % 10].key,
+                )
+                for i in range(100)
+            ]
+        )
 
         # Query count must stay below the fixed threshold for all limit values.
         # An N+1 bug would push limit=50 or limit=100 well over the threshold.
@@ -976,12 +978,14 @@ class PurchaseOrderLineItemTest(OrderTest):
         """Test that we can bulk delete multiple PurchaseOrderExtraLine items via the API."""
         po = models.PurchaseOrder.objects.get(pk=1)
 
-        models.PurchaseOrderExtraLine.objects.bulk_create([
-            models.PurchaseOrderExtraLine(
-                order=po, quantity=idx + 1, reference=f'Extra line {idx}'
-            )
-            for idx in range(3)
-        ])
+        models.PurchaseOrderExtraLine.objects.bulk_create(
+            [
+                models.PurchaseOrderExtraLine(
+                    order=po, quantity=idx + 1, reference=f'Extra line {idx}'
+                )
+                for idx in range(3)
+            ]
+        )
 
         n = models.PurchaseOrderExtraLine.objects.count()
         items = list(
@@ -1545,10 +1549,12 @@ class PurchaseOrderReceiveTest(OrderTest):
         N_LINES = 250
 
         # Create some line items
-        models.PurchaseOrderLineItem.objects.bulk_create([
-            models.PurchaseOrderLineItem(order=po, part=sp, quantity=1000 + i)
-            for i in range(N_LINES)
-        ])
+        models.PurchaseOrderLineItem.objects.bulk_create(
+            [
+                models.PurchaseOrderLineItem(order=po, part=sp, quantity=1000 + i)
+                for i in range(N_LINES)
+            ]
+        )
 
         # Place the order
         po.place_order()
@@ -1617,10 +1623,12 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         N_LINES = 100
 
-        models.PurchaseOrderLineItem.objects.bulk_create([
-            models.PurchaseOrderLineItem(order=po, part=sp, quantity=10)
-            for _ in range(N_LINES)
-        ])
+        models.PurchaseOrderLineItem.objects.bulk_create(
+            [
+                models.PurchaseOrderLineItem(order=po, part=sp, quantity=10)
+                for _ in range(N_LINES)
+            ]
+        )
 
         po.place_order()
 
@@ -2273,15 +2281,17 @@ class SalesOrderTest(OrderTest):
         ]
 
         customer = Company.objects.filter(is_customer=True).first()
-        models.SalesOrder.objects.bulk_create([
-            models.SalesOrder(
-                customer=customer,
-                reference=f'SO-QTEST-{i}',
-                status=custom_statuses[i % 10].logical_key,
-                status_custom_key=custom_statuses[i % 10].key,
-            )
-            for i in range(100)
-        ])
+        models.SalesOrder.objects.bulk_create(
+            [
+                models.SalesOrder(
+                    customer=customer,
+                    reference=f'SO-QTEST-{i}',
+                    status=custom_statuses[i % 10].logical_key,
+                    status_custom_key=custom_statuses[i % 10].key,
+                )
+                for i in range(100)
+            ]
+        )
 
         for limit in [1, 5, 10, 25, 50, 100]:
             response = self.get(
@@ -2444,12 +2454,14 @@ class SalesOrderLineItemTest(OrderTest):
         """Test that we can bulk delete multiple SalesOrderExtraLine items via the API."""
         so = models.SalesOrder.objects.first()
 
-        models.SalesOrderExtraLine.objects.bulk_create([
-            models.SalesOrderExtraLine(
-                order=so, quantity=idx + 1, reference=f'Extra line {idx}'
-            )
-            for idx in range(3)
-        ])
+        models.SalesOrderExtraLine.objects.bulk_create(
+            [
+                models.SalesOrderExtraLine(
+                    order=so, quantity=idx + 1, reference=f'Extra line {idx}'
+                )
+                for idx in range(3)
+            ]
+        )
 
         n = models.SalesOrderExtraLine.objects.count()
         items = list(
@@ -2734,11 +2746,9 @@ class SalesOrderAllocateTest(OrderTest):
                     break
 
             # Fully-allocate each line
-            data['items'].append({
-                'line_item': line.pk,
-                'stock_item': stock_item.pk,
-                'quantity': 5,
-            })
+            data['items'].append(
+                {'line_item': line.pk, 'stock_item': stock_item.pk, 'quantity': 5}
+            )
 
         self.post(self.url, data, expected_code=201)
 
@@ -2786,11 +2796,9 @@ class SalesOrderAllocateTest(OrderTest):
                 raise self.fail('No stock item found for part')  # pragma: no cover
 
             # Fully-allocate each line
-            data['items'].append({
-                'line_item': line.pk,
-                'stock_item': stock_item.pk,
-                'quantity': 5,
-            })
+            data['items'].append(
+                {'line_item': line.pk, 'stock_item': stock_item.pk, 'quantity': 5}
+            )
 
         self.post(self.url, data, expected_code=201)
 
@@ -3736,10 +3744,12 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         ro = models.ReturnOrder.objects.get(pk=6)
 
         # Create some extra line items against the same order, so we have multiple to update
-        models.ReturnOrderLineItem.objects.bulk_create([
-            models.ReturnOrderLineItem(order=ro, item_id=1006, quantity=1),
-            models.ReturnOrderLineItem(order=ro, item_id=1007, quantity=1),
-        ])
+        models.ReturnOrderLineItem.objects.bulk_create(
+            [
+                models.ReturnOrderLineItem(order=ro, item_id=1006, quantity=1),
+                models.ReturnOrderLineItem(order=ro, item_id=1007, quantity=1),
+            ]
+        )
 
         items = list(
             models.ReturnOrderLineItem.objects.filter(order=ro).values_list(
@@ -3771,12 +3781,14 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         """Test that we can bulk delete multiple ReturnOrderExtraLine items via the API."""
         ro = models.ReturnOrder.objects.first()
 
-        models.ReturnOrderExtraLine.objects.bulk_create([
-            models.ReturnOrderExtraLine(
-                order=ro, quantity=idx + 1, reference=f'Extra line {idx}'
-            )
-            for idx in range(3)
-        ])
+        models.ReturnOrderExtraLine.objects.bulk_create(
+            [
+                models.ReturnOrderExtraLine(
+                    order=ro, quantity=idx + 1, reference=f'Extra line {idx}'
+                )
+                for idx in range(3)
+            ]
+        )
 
         n = models.ReturnOrderExtraLine.objects.count()
         items = list(
@@ -4906,11 +4918,9 @@ class TransferOrderAllocateTest(OrderTest):
                     break
 
             # Fully-allocate each line
-            data['items'].append({
-                'line_item': line.pk,
-                'stock_item': stock_item.pk,
-                'quantity': 5,
-            })
+            data['items'].append(
+                {'line_item': line.pk, 'stock_item': stock_item.pk, 'quantity': 5}
+            )
 
         self.post(self.url, data, expected_code=201)
 
@@ -4929,8 +4939,7 @@ class TransferOrderAllocateTest(OrderTest):
         trackable_lines = self.order.lines.filter(part__trackable=True)
         for line in trackable_lines:
             stock_item = (
-                line.part.stock_items
-                .exclude(serial=None)
+                line.part.stock_items.exclude(serial=None)
                 .filter(StockItem.IN_STOCK_FILTER)
                 .first()
             )
@@ -4968,8 +4977,7 @@ class TransferOrderAllocateTest(OrderTest):
 
             # Allocate a matching variant
             parts: list[Part] = (
-                Part.objects
-                .exclude(virtual=True)
+                Part.objects.exclude(virtual=True)
                 .exclude(is_template=True)
                 .filter(variant_of=line.part.pk)
             )
@@ -4997,11 +5005,9 @@ class TransferOrderAllocateTest(OrderTest):
                 raise self.fail('No stock item found for part')  # pragma: no cover
 
             # Fully-allocate each line
-            data['items'].append({
-                'line_item': line.pk,
-                'stock_item': stock_item.pk,
-                'quantity': 5,
-            })
+            data['items'].append(
+                {'line_item': line.pk, 'stock_item': stock_item.pk, 'quantity': 5}
+            )
 
         self.post(self.url, data, expected_code=201)
 
@@ -5581,3 +5587,102 @@ class OrderActionMissingPkTest(InvenTreeAPITestCase):
         ]:
             url = reverse(url_name, kwargs={'pk': 999999})
             self.post(url, {}, expected_code=404)
+
+
+class OrderAllocationValidationTest(InvenTreeAPITestCase):
+    """Unit tests for SalesOrderAllocation and TransferOrderAllocation validation."""
+
+    fixtures = ['company', 'users', 'location']
+
+    roles = [
+        'sales_order.add',
+        'sales_order.change',
+        'transfer_order.add',
+        'transfer_order.change',
+    ]
+
+    @classmethod
+    def setUpTestData(cls):
+        """Set up test data with base parts, variant parts, and unrelated parts."""
+        super().setUpTestData()
+
+        cls.customer = models.Company.objects.create(
+            name='Alloc Customer', is_customer=True, description=''
+        )
+        cls.base_part = Part.objects.create(
+            name='Base Widget', salable=True, is_template=True, description=''
+        )
+        cls.variant_part = Part.objects.create(
+            name='Variant Widget A',
+            salable=True,
+            variant_of=cls.base_part,
+            description='',
+        )
+        cls.unrelated_part = Part.objects.create(
+            name='Unrelated Gadget', salable=True, description=''
+        )
+
+        cls.location = StockLocation.objects.first()
+
+    def test_sales_order_allocation_validation(self):
+        """Test validation when allocating stock to a SalesOrder."""
+        order = models.SalesOrder.objects.create(
+            customer=self.customer, reference='SO-ALLOC-TEST-1'
+        )
+        line = models.SalesOrderLineItem.objects.create(
+            order=order, part=self.base_part, quantity=10
+        )
+        shipment = models.SalesOrderShipment.objects.create(order=order, reference='1')
+
+        # Stock items
+        variant_stock = StockItem.objects.create(
+            part=self.variant_part, quantity=10, location=self.location
+        )
+        unrelated_stock = StockItem.objects.create(
+            part=self.unrelated_part, quantity=10, location=self.location
+        )
+
+        # Allocating valid variant should succeed
+        alloc_variant = models.SalesOrderAllocation(
+            line=line, item=variant_stock, quantity=5, shipment=shipment
+        )
+        alloc_variant.full_clean()
+        alloc_variant.save()
+
+        # Allocating unrelated part should raise ValidationError
+        alloc_invalid = models.SalesOrderAllocation(
+            line=line, item=unrelated_stock, quantity=5, shipment=shipment
+        )
+        with self.assertRaises(ValidationError):
+            alloc_invalid.full_clean()
+
+    def test_transfer_order_allocation_validation(self):
+        """Test validation when allocating stock to a TransferOrder."""
+        dest_loc = StockLocation.objects.create(name='Dest Location')
+        order = models.TransferOrder.objects.create(
+            location=dest_loc, reference='TO-ALLOC-TEST-1'
+        )
+        line = models.TransferOrderLineItem.objects.create(
+            order=order, part=self.base_part, quantity=10
+        )
+
+        variant_stock = StockItem.objects.create(
+            part=self.variant_part, quantity=10, location=self.location
+        )
+        unrelated_stock = StockItem.objects.create(
+            part=self.unrelated_part, quantity=10, location=self.location
+        )
+
+        # Allocating valid variant should succeed
+        alloc_variant = models.TransferOrderAllocation(
+            line=line, item=variant_stock, quantity=5
+        )
+        alloc_variant.full_clean()
+        alloc_variant.save()
+
+        # Allocating unrelated part should raise ValidationError
+        alloc_invalid = models.TransferOrderAllocation(
+            line=line, item=unrelated_stock, quantity=5
+        )
+        with self.assertRaises(ValidationError):
+            alloc_invalid.full_clean()
