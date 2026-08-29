@@ -90,7 +90,10 @@ export default function ProviderSignup() {
         const errors = err.response?.data?.errors;
         if (Array.isArray(errors)) {
           for (const e of errors) {
-            if (e.param && e.param in form.values) {
+            if (
+              e.param &&
+              Object.prototype.hasOwnProperty.call(form.values, e.param)
+            ) {
               form.setFieldError(e.param, e.message);
             } else {
               setFormError(e.message);
