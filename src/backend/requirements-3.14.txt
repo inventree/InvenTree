@@ -108,9 +108,9 @@ boto3==1.43.77 \
     #   -c src/backend/requirements.txt
     #   django-anymail
     #   django-storages
-botocore==1.43.77 \
-    --hash=sha256:b33300395e2fb994ec8baafff76a600184e426ec7ea462cc59a0e8d1469d557e \
-    --hash=sha256:e88d86643daa1d85e1c4e9644187aca60325955c596ea2eea646730857998631
+botocore==1.43.83 \
+    --hash=sha256:bf75a6cf587c22d968e43e79fe122c39f82deafbe9c3422bc5d3e80b6210fc98 \
+    --hash=sha256:d9389b3b74400c34219965a2fb858c1d48744718865ee0496fd03bd5b21b943f
     # via
     #   -c src/backend/requirements.txt
     #   boto3
@@ -1588,7 +1588,6 @@ packaging==26.3 \
     --hash=sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c
     # via
     #   -c src/backend/requirements.txt
-    #   gunicorn
     #   opentelemetry-instrumentation
 paramiko==5.0.0 \
     --hash=sha256:36763b5b95c2a0dcfdf1abc48e48156ee425b21efe2f0e787c2dd5a95c0e5e79 \
