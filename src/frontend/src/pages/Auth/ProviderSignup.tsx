@@ -45,14 +45,30 @@ export default function ProviderSignup() {
         setLoading(false);
       })
       .catch((err) => {
+        // Whatever the reason, there is no pending signup left to complete -
+        // always show *something* rather than silently bouncing back to a
+        // blank login page (the exact failure mode this page exists to fix).
         if (err?.response?.status === 403) {
           showLoginNotification({
-            title: t`Registration failed`,
+            title: t`Registration Failed`,
             message: t`SSO registration is currently disabled.`,
             success: false
           });
+        } else if (err?.response?.status === 409) {
+          // No pending signup in the session - e.g. this page was loaded
+          // directly, or the signup session has since expired.
+          showLoginNotification({
+            title: t`Registration Failed`,
+            message: t`Your SSO sign-in session has expired. Please try logging in again.`,
+            success: false
+          });
+        } else {
+          showLoginNotification({
+            title: t`Registration Failed`,
+            message: t`An error occurred while completing SSO registration. Please try logging in again.`,
+            success: false
+          });
         }
-        // No (or no longer valid) pending signup to complete
         navigate('/login');
       });
   }, []);

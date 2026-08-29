@@ -16,27 +16,79 @@ import { setSettingState } from './settings.js';
  * authorization-code exchange and pending-flow logic, not just the new
  * frontend page in isolation.
  */
-// Remove any account left over from a previous run - including one that
-// failed partway, before its own cleanup could execute - since an existing
-// SocialAccount link makes allauth log straight in instead of hitting the
-// pending 'provider_signup' flow this test exists to cover.
-async function deleteMockSsoUser() {
+// Every throwaway username any test in this file creates - kept in one
+// place so cleanup can't miss one.
+const TEST_USERNAMES = [
+  mockSsoUser.username,
+  'existingemailuser',
+  'ssoconnecttest'
+];
+
+async function deleteUserByUsername(username: string) {
   const api = await createApi({});
   // user/ is unpaginated by default (no PAGE_SIZE configured) - returns a
   // plain array rather than a { results: [...] } envelope.
   const users = await api
-    .get(`user/?search=${mockSsoUser.username}`)
+    .get(`user/?search=${username}`)
     .then((response) => response.json());
-  const existing = users.find(
-    (user: any) => user.username === mockSsoUser.username
-  );
+  const existing = users.find((user: any) => user.username === username);
   if (existing) {
     await api.delete(`user/${existing.pk}/`);
   }
 }
 
-test.beforeEach(deleteMockSsoUser);
-test.afterEach(deleteMockSsoUser);
+// Remove any account left over from a previous run - including one that
+// failed partway, before its own cleanup could execute (a Playwright test
+// timeout aborts the test function rather than waiting for an in-flight
+// `finally` block to complete). An existing SocialAccount link in
+// particular makes allauth log straight in instead of hitting the pending
+// 'provider_signup' flow most of these tests exist to cover - and a leftover
+// local user makes the next run's own creation of it fail outright.
+async function cleanupTestUsers() {
+  for (const username of TEST_USERNAMES) {
+    await deleteUserByUsername(username);
+  }
+}
+
+test.beforeEach(cleanupTestUsers);
+test.afterEach(cleanupTestUsers);
+
+/*
+ * Create a throwaway local (non-SSO) user for tests that need one already
+ * sitting in the database - e.g. an existing account colliding with the
+ * mock SSO identity's username/email. Admin-created users get a random
+ * password, so a known one is set separately wherever a test needs to log
+ * in as this user directly.
+ */
+async function createLocalUser({
+  username,
+  email,
+  password
+}: {
+  username: string;
+  email: string;
+  password?: string;
+}) {
+  const api = await createApi({});
+  const user = await api
+    .post('user/', {
+      data: { username, email, first_name: 'Test', last_name: 'Fixture' }
+    })
+    .then((response) => response.json());
+
+  if (password) {
+    await api.patch(`user/${user.pk}/set-password/`, {
+      data: { password, override_warning: true }
+    });
+  }
+
+  return user;
+}
+
+async function deleteUser(pk: number) {
+  const api = await createApi({});
+  await api.delete(`user/${pk}/`);
+}
 
 test('SSO - Complete Registration', async ({ page }) => {
   // Allow SSO self-registration, but disable auto-signup - this is what
@@ -157,4 +209,220 @@ test('SSO - Disabled', async ({ page }) => {
   await page
     .getByText('You do not have permission to log in this way.')
     .waitFor();
+});
+
+test('SSO - Provider Signup Page With No Pending Signup', async ({ page }) => {
+  // Loading '/provider-signup' with no pending signup in the session - e.g.
+  // a direct visit, a bookmark, or a reload after the session has expired -
+  // used to silently bounce back to a blank '/login' with zero explanation
+  // (the server correctly returns 409, but the page ignored the status and
+  // just navigated away). Regression test for that fix.
+  await setSettingState({ setting: 'LOGIN_ENABLE_SSO', value: true });
+  await setSettingState({ setting: 'LOGIN_ENABLE_SSO_REG', value: true });
+
+  await navigate(page, logoutUrl, { waitUntil: 'load' });
+  await page.waitForURL('**/web/login');
+
+  await navigate(page, 'provider-signup', { waitUntil: 'load' });
+
+  await page.waitForURL('**/web/login');
+  await page.getByText('Registration Failed').waitFor();
+  await page
+    .getByText(
+      'Your SSO sign-in session has expired. Please try logging in again.'
+    )
+    .waitFor();
+});
+
+test('SSO - Auto Signup', async ({ page }) => {
+  // LOGIN_SIGNUP_SSO_AUTO's default value - a brand-new SSO identity should
+  // be signed up and logged in automatically, with no confirmation step at
+  // all. This is the most common real-world path, and the opposite of
+  // 'SSO - Complete Registration' above (which explicitly disables this).
+  await setSettingState({ setting: 'LOGIN_ENABLE_SSO', value: true });
+  await setSettingState({ setting: 'LOGIN_ENABLE_SSO_REG', value: true });
+  await setSettingState({ setting: 'LOGIN_SIGNUP_SSO_AUTO', value: true });
+
+  await navigate(page, logoutUrl, { waitUntil: 'load' });
+  await page.waitForURL('**/web/login');
+
+  await page.getByRole('button', { name: 'Mock SSO' }).click();
+
+  // Straight through to the dashboard - never touches '/provider-signup'
+  await page.waitForURL(/\/web(\/home)?/);
+  await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
+  await page
+    .getByRole('button', {
+      name: `${mockSsoUser.firstName} ${mockSsoUser.lastName}`
+    })
+    .waitFor();
+
+  // The account was created using the claims from the mock IdP
+  const api = await createApi({});
+  const users = await api
+    .get(`user/?search=${mockSsoUser.username}`)
+    .then((response) => response.json());
+  const created = users.find(
+    (user: any) => user.username === mockSsoUser.username
+  );
+  expect(created).toBeDefined();
+  expect(created.email).toEqual(mockSsoUser.email);
+});
+
+test('SSO - Existing User Login', async ({ page }) => {
+  // A second login as the same SSO identity should go straight through -
+  // the SocialAccount is already linked from the first login, so none of
+  // the new-user signup logic (or its own 'auto signup' gate) applies.
+  await setSettingState({ setting: 'LOGIN_ENABLE_SSO', value: true });
+  await setSettingState({ setting: 'LOGIN_ENABLE_SSO_REG', value: true });
+  await setSettingState({ setting: 'LOGIN_SIGNUP_SSO_AUTO', value: true });
+
+  // First login creates and links the account. Waiting for 'navigation-menu'
+  // (not just the URL) matters here - '/\/web(\/home)?/' is unanchored and
+  // also matches the transient '/web/logged-in' stop along the way, so a
+  // bare waitForURL can resolve before the login has actually settled,
+  // racing the setSettingState() call right after it.
+  await navigate(page, logoutUrl, { waitUntil: 'load' });
+  await page.waitForURL('**/web/login');
+  await page.getByRole('button', { name: 'Mock SSO' }).click();
+  await page.waitForURL(/\/web(\/home)?/);
+  await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
+
+  // Disable auto-signup entirely - if this second login were mistakenly
+  // treated as a new signup, it would now hit '/provider-signup' instead
+  await setSettingState({ setting: 'LOGIN_SIGNUP_SSO_AUTO', value: false });
+
+  await navigate(page, logoutUrl, { waitUntil: 'load' });
+  await page.waitForURL('**/web/login');
+  await page.getByRole('button', { name: 'Mock SSO' }).click();
+
+  // Straight through again - no confirmation step for an already-linked account
+  await page.waitForURL(/\/web(\/home)?/);
+  await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
+});
+
+test('SSO - Existing Local Account With Matching Email', async ({ page }) => {
+  // A separate local account with the SAME email as the SSO identity, but
+  // no linked SocialAccount, must not be silently merged into or
+  // duplicated - django-allauth surfaces a clear validation error instead,
+  // asking the user to log in normally and connect the SSO account there.
+  await setSettingState({ setting: 'LOGIN_ENABLE_SSO', value: true });
+  await setSettingState({ setting: 'LOGIN_ENABLE_SSO_REG', value: true });
+  await setSettingState({ setting: 'LOGIN_SIGNUP_SSO_AUTO', value: false });
+
+  const existing = await createLocalUser({
+    username: 'existingemailuser',
+    email: mockSsoUser.email
+  });
+
+  try {
+    await navigate(page, logoutUrl, { waitUntil: 'load' });
+    await page.waitForURL('**/web/login');
+    await page.getByRole('button', { name: 'Mock SSO' }).click();
+
+    // Still treated as a pending new signup - no auto-link by email
+    await page.waitForURL('**/web/provider-signup');
+    await page.getByRole('button', { name: 'Complete Registration' }).click();
+
+    await page
+      .getByText(
+        'An account already exists with this email address. Please sign in to that account first, then connect your Mock SSO account.'
+      )
+      .waitFor();
+
+    // No second/duplicate account was created
+    const api = await createApi({});
+    const users = await api
+      .get(`user/?search=${mockSsoUser.username}`)
+      .then((response) => response.json());
+    expect(
+      users.find((user: any) => user.username === mockSsoUser.username)
+    ).toBeUndefined();
+  } finally {
+    await deleteUser(existing.pk);
+  }
+});
+
+test('SSO - Username Collision On Signup', async ({ page }) => {
+  // The suggested username from the IdP collides with a different,
+  // unrelated existing user - the signup form must surface that as a field
+  // error rather than crashing or silently failing.
+  await setSettingState({ setting: 'LOGIN_ENABLE_SSO', value: true });
+  await setSettingState({ setting: 'LOGIN_ENABLE_SSO_REG', value: true });
+  await setSettingState({ setting: 'LOGIN_SIGNUP_SSO_AUTO', value: false });
+
+  const existing = await createLocalUser({
+    username: mockSsoUser.username,
+    email: 'someoneelse@example.org'
+  });
+
+  try {
+    await navigate(page, logoutUrl, { waitUntil: 'load' });
+    await page.waitForURL('**/web/login');
+    await page.getByRole('button', { name: 'Mock SSO' }).click();
+    await page.waitForURL('**/web/provider-signup');
+
+    // The suggested username is still prefilled, even though it collides
+    await expect(page.getByLabel('provider-signup-username')).toHaveValue(
+      mockSsoUser.username
+    );
+
+    await page.getByRole('button', { name: 'Complete Registration' }).click();
+    await page.getByText('A user with that username already exists.').waitFor();
+
+    // Still on the signup page - no account was created or logged into
+    await expect(page).toHaveURL(/\/web\/provider-signup/);
+  } finally {
+    await deleteUser(existing.pk);
+  }
+});
+
+test('SSO - Connect Provider To Existing Account', async ({ page }) => {
+  // An already-logged-in (non-SSO) user can link an SSO provider to their
+  // account from Account Settings > Security - a separate entry point
+  // (ProviderLogin(provider, 'connect')) from the login page's button.
+  await setSettingState({ setting: 'LOGIN_ENABLE_SSO', value: true });
+
+  const password = 'Test-Password-1234!';
+  const user = await createLocalUser({
+    username: 'ssoconnecttest',
+    email: 'ssoconnecttest@example.org',
+    password
+  });
+
+  try {
+    await navigate(page, logoutUrl, { waitUntil: 'load' });
+    await page.waitForURL('**/web/login');
+    await page.getByLabel('login-username').fill(user.username);
+    await page.getByLabel('login-password').fill(password);
+    await page.getByRole('button', { name: 'Log In' }).click();
+    // '/\/web(\/home)?/' is unanchored, so it also matches the transient
+    // '/web/logged-in' stop along the way - wait for 'navigation-menu' too,
+    // so the following navigate() isn't racing a still-settling login.
+    await page.waitForURL(/\/web(\/home)?/);
+    await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
+
+    await navigate(page, 'settings/user/security', {
+      waitUntil: 'networkidle'
+    });
+    await page.getByText('Single Sign On').click();
+    await page.getByRole('button', { name: 'Mock SSO' }).click();
+
+    // Real redirect out to the mock IdP and back - lands on the dashboard,
+    // not back on the settings page (get_connect_redirect_url() always
+    // returns the frontend root)
+    await page.waitForURL(/\/web(\/home)?/);
+    await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
+
+    // Confirm the provider now shows as connected to this account
+    await navigate(page, 'settings/user/security', {
+      waitUntil: 'networkidle'
+    });
+    await page.getByText('Single Sign On').click();
+    await page.getByText(`Mock SSO: ${mockSsoUser.email}`).waitFor();
+  } finally {
+    // Deleting the user cascades away the SocialAccount link too, so the
+    // mock identity is unlinked again for other tests
+    await deleteUser(user.pk);
+  }
 });
