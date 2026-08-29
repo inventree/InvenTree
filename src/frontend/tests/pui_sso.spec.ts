@@ -24,15 +24,22 @@ const TEST_USERNAMES = [
   'ssoconnecttest'
 ];
 
-async function deleteUserByUsername(username: string) {
+async function findUserByUsername(username: string): Promise<any> {
   const api = await createApi({});
-  // user/ is unpaginated by default (no PAGE_SIZE configured) - returns a
-  // plain array rather than a { results: [...] } envelope.
-  const users = await api
-    .get(`user/?search=${username}`)
+  const data = await api
+    .get(`user/?search=${encodeURIComponent(username)}`)
     .then((response) => response.json());
-  const existing = users.find((user: any) => user.username === username);
+  // user/ is unpaginated by default (no PAGE_SIZE configured) - returns a
+  // plain array - but fall back to a { results: [...] } envelope too, in
+  // case pagination is ever turned on for it.
+  const users = Array.isArray(data) ? data : (data?.results ?? []);
+  return users.find((user: any) => user.username === username);
+}
+
+async function deleteUserByUsername(username: string) {
+  const existing = await findUserByUsername(username);
   if (existing) {
+    const api = await createApi({});
     await api.delete(`user/${existing.pk}/`);
   }
 }
@@ -152,13 +159,7 @@ test('SSO - Registration Disabled', async ({ page }) => {
   await page.getByText('Registration via SSO is currently disabled.').waitFor();
 
   // No account should have been created
-  const api = await createApi({});
-  const users = await api
-    .get(`user/?search=${mockSsoUser.username}`)
-    .then((response) => response.json());
-  expect(
-    users.find((user: any) => user.username === mockSsoUser.username)
-  ).toBeUndefined();
+  expect(await findUserByUsername(mockSsoUser.username)).toBeUndefined();
 });
 
 test('SSO - Disabled', async ({ page }) => {
@@ -258,13 +259,7 @@ test('SSO - Auto Signup', async ({ page }) => {
     .waitFor();
 
   // The account was created using the claims from the mock IdP
-  const api = await createApi({});
-  const users = await api
-    .get(`user/?search=${mockSsoUser.username}`)
-    .then((response) => response.json());
-  const created = users.find(
-    (user: any) => user.username === mockSsoUser.username
-  );
+  const created = await findUserByUsername(mockSsoUser.username);
   expect(created).toBeDefined();
   expect(created.email).toEqual(mockSsoUser.email);
 });
@@ -331,13 +326,7 @@ test('SSO - Existing Local Account With Matching Email', async ({ page }) => {
       .waitFor();
 
     // No second/duplicate account was created
-    const api = await createApi({});
-    const users = await api
-      .get(`user/?search=${mockSsoUser.username}`)
-      .then((response) => response.json());
-    expect(
-      users.find((user: any) => user.username === mockSsoUser.username)
-    ).toBeUndefined();
+    expect(await findUserByUsername(mockSsoUser.username)).toBeUndefined();
   } finally {
     await deleteUser(existing.pk);
   }

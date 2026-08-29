@@ -34,6 +34,10 @@ const brandIcons: { [key: string]: JSX.Element } = {
   microsoft: <IconBrandAzure />
 };
 
+function getBrandIcon(provider: AuthProvider) {
+  return brandIcons[provider.id] || <IconLogin />;
+}
+
 export function SsoButton({ provider }: Readonly<{ provider: AuthProvider }>) {
   return (
     <Tooltip
@@ -48,7 +52,4 @@ export function SsoButton({ provider }: Readonly<{ provider: AuthProvider }>) {
       </Button>
     </Tooltip>
   );
-}
-function getBrandIcon(provider: AuthProvider) {
-  return brandIcons[provider.id] || <IconLogin />;
 }
