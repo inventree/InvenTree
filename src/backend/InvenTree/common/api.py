@@ -237,7 +237,7 @@ class SettingsList(ListAPI):
 
     ordering_fields = ['pk', 'key', 'name']
 
-    search_fields = ['key', 'value']
+    search_fields = ['key']
 
 
 class GlobalSettingsList(SettingsList):
