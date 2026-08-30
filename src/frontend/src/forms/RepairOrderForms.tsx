@@ -15,13 +15,6 @@ export function useRepairOrderFields({
     const fields: ApiFormFieldSet = {
       reference: {},
       description: {},
-      customer: {
-        disabled: duplicateOrderId != undefined,
-        filters: {
-          is_customer: true,
-          active: true
-        }
-      },
       part: {
         filters: {
           assembly: true,
@@ -29,6 +22,13 @@ export function useRepairOrderFields({
         }
       },
       symptoms: {},
+      customer: {
+        disabled: duplicateOrderId != undefined,
+        filters: {
+          is_customer: true,
+          active: true
+        }
+      },
       start_date: {
         icon: <IconCalendar />
       },
