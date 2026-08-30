@@ -31,7 +31,7 @@ import {
   IconShieldOff
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, queryClient } from '../../../../App';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
@@ -90,6 +90,33 @@ function ScimManagementPanel() {
     return <Loader />;
   }
 
+  const scimTableData = useMemo(
+    () => [
+      [
+        <Trans>Status</Trans>,
+        data?.enabled ? (
+          <Badge color='green'>
+            <Trans>Enabled</Trans>
+          </Badge>
+        ) : (
+          <Badge color='gray'>
+            <Trans>Disabled</Trans>
+          </Badge>
+        )
+      ],
+      [
+        <Trans>Base URL</Trans>,
+        <Group gap='xs' wrap='nowrap'>
+          <Code>{data?.base_url}</Code>
+          <CopyButton value={data?.base_url} />
+        </Group>
+      ],
+      [<Trans>Secret Generated</Trans>, data?.secret_generated ?? '-'],
+      [<Trans>Last Used</Trans>, data?.last_used ?? '-']
+    ],
+    [data?.enabled, data?.base_url, data?.secret_generated, data?.last_used]
+  );
+
   return (
     <Stack gap='md'>
       <Modal
@@ -124,49 +151,7 @@ function ScimManagementPanel() {
         </Trans>
       </Alert>
 
-      <Table>
-        <Table.Tbody>
-          <Table.Tr>
-            <Table.Td>
-              <Trans>Status</Trans>
-            </Table.Td>
-            <Table.Td>
-              {data?.enabled ? (
-                <Badge color='green'>
-                  <Trans>Enabled</Trans>
-                </Badge>
-              ) : (
-                <Badge color='gray'>
-                  <Trans>Disabled</Trans>
-                </Badge>
-              )}
-            </Table.Td>
-          </Table.Tr>
-          <Table.Tr>
-            <Table.Td>
-              <Trans>Base URL</Trans>
-            </Table.Td>
-            <Table.Td>
-              <Group gap='xs' wrap='nowrap'>
-                <Code>{data?.base_url}</Code>
-                <CopyButton value={data?.base_url} />
-              </Group>
-            </Table.Td>
-          </Table.Tr>
-          <Table.Tr>
-            <Table.Td>
-              <Trans>Secret Generated</Trans>
-            </Table.Td>
-            <Table.Td>{data?.secret_generated ?? '-'}</Table.Td>
-          </Table.Tr>
-          <Table.Tr>
-            <Table.Td>
-              <Trans>Last Used</Trans>
-            </Table.Td>
-            <Table.Td>{data?.last_used ?? '-'}</Table.Td>
-          </Table.Tr>
-        </Table.Tbody>
-      </Table>
+      <Table data={{ body: scimTableData }} />
 
       <Divider />
 
