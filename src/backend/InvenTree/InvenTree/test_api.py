@@ -93,12 +93,10 @@ class ExceptionHandlerTests(TestCase):
 class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
     """Tests for the built-in OIDC application metadata and deletion guard."""
 
+    superuser = True
+
     def test_builtin_client_metadata_and_delete_block(self):
         """The built-in default OIDC client should be flagged and protected from deletion."""
-        self.user.is_superuser = True
-        self.user.save()
-        self.client.force_login(self.user)
-
         Application.objects.filter(client_id=DEFAULT_OIDC_APP_ID).delete()
         built_in = Application.objects.create(
             name='Built-In OIDC Client',
@@ -128,10 +126,6 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
 
     def test_create_application(self):
         """An admin should be able to create a custom OAuth2 application."""
-        self.user.is_superuser = True
-        self.user.save()
-        self.client.force_login(self.user)
-
         payload = {
             'name': 'Custom OAuth App',
             'client_type': Application.CLIENT_PUBLIC,
@@ -141,7 +135,6 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
             'skip_authorization': False,
             'algorithm': Application.RS256_ALGORITHM,
         }
-
         response = self.client.post(reverse('api-oauth2-list'), payload, format='json')
 
         self.assertEqual(response.status_code, 201, response.content)
