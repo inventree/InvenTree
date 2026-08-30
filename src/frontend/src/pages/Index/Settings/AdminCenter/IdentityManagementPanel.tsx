@@ -198,12 +198,109 @@ function ScimManagementPanel() {
 }
 
 function SSOManagementPanel() {
-  const authenticationSettingsPath = '/settings/system/authentication';
   const navigate = useNavigate();
+
+  return (
+    <Stack gap='md'>
+      TBD
+      <GlobalSettingList
+        heading={t`Single Sign-On (SSO) Settings`}
+        keys={[
+          'LOGIN_ENABLE_SSO',
+          'LOGIN_ENABLE_SSO_REG',
+          'LOGIN_SIGNUP_SSO_AUTO'
+        ]}
+      />
+      <Alert color='blue'>
+        <Trans>
+          More settings can be found in the{' '}
+          <Anchor
+            onClick={(event: any) =>
+              navigateToLink('/settings/system/authentication', navigate, event)
+            }
+            style={{ textDecoration: 'underline' }}
+          >
+            system settings
+          </Anchor>
+          .
+        </Trans>
+      </Alert>
+    </Stack>
+  );
+}
+
+function OAuthCredentialsModal({
+  opened,
+  onClose,
+  client
+}: {
+  opened: boolean;
+  onClose: () => void;
+  client: {
+    client_id?: string;
+    client_secret?: string;
+  };
+}) {
+  return (
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title={t`OAuth application created`}
+      centered
+      size='auto'
+      styles={{
+        body: { minWidth: '40rem' },
+        content: { width: 'fit-content' }
+      }}
+    >
+      <Stack gap='sm'>
+        <Text>
+          <Trans>
+            Copy these values now. The client secret is only shown once.
+          </Trans>
+        </Text>
+        <Table
+          withTableBorder
+          withColumnBorders
+          data={{
+            head: [<Trans>Field</Trans>, <Trans>Value</Trans>],
+            body: [
+              [
+                <Text fw={600} size='sm'>
+                  <Trans>Client ID</Trans>
+                </Text>,
+                <Group justify='space-between' wrap='nowrap'>
+                  <Code block>{client.client_id ?? '-'}</Code>
+                  <CopyButton value={client.client_id ?? ''} />
+                </Group>
+              ],
+              [
+                <Text fw={600} size='sm'>
+                  <Trans>Client Secret</Trans>
+                </Text>,
+                <Group justify='space-between' wrap='nowrap'>
+                  <Code block>{client.client_secret ?? '-'}</Code>
+                  <CopyButton value={client.client_secret ?? ''} />
+                </Group>
+              ]
+            ]
+          }}
+        />
+      </Stack>
+    </Modal>
+  );
+}
+
+function OAuthManagementPanel() {
   const table = useTable('oauth-applications', { idAccessor: 'id' });
   const [selectedOAuthApplication, setSelectedOAuthApplication] = useState<
     number | undefined
   >(undefined);
+  const [createdClient, setCreatedClient] = useState<{
+    client_id?: string;
+    client_secret?: string;
+  }>({});
+  const [createdModalOpened, setCreatedModalOpened] = useState(false);
 
   const newOAuthApplication = useCreateApiFormModal({
     url: ApiEndpoints.admin_oauth,
@@ -219,6 +316,13 @@ function SSOManagementPanel() {
         field_type: 'boolean'
       },
       algorithm: {}
+    },
+    onFormSuccess: (data: any) => {
+      setCreatedClient({
+        client_id: data?.client_id,
+        client_secret: data?.client_secret
+      });
+      setCreatedModalOpened(true);
     }
   });
 
@@ -299,6 +403,11 @@ function SSOManagementPanel() {
 
   return (
     <Stack gap='md'>
+      <OAuthCredentialsModal
+        opened={createdModalOpened}
+        onClose={() => setCreatedModalOpened(false)}
+        client={createdClient}
+      />
       {newOAuthApplication.modal}
       {deleteOAuthApplication.modal}
       <InvenTreeTable
@@ -315,28 +424,6 @@ function SSOManagementPanel() {
           tableActions: tableActions
         }}
       />
-      <GlobalSettingList
-        heading={t`Single Sign-On (SSO) Settings`}
-        keys={[
-          'LOGIN_ENABLE_SSO',
-          'LOGIN_ENABLE_SSO_REG',
-          'LOGIN_SIGNUP_SSO_AUTO'
-        ]}
-      />
-      <Alert color='blue'>
-        <Trans>
-          More settings can be found in the{' '}
-          <Anchor
-            onClick={(event: any) =>
-              navigateToLink(authenticationSettingsPath, navigate, event)
-            }
-            style={{ textDecoration: 'underline' }}
-          >
-            system settings
-          </Anchor>
-          .
-        </Trans>
-      </Alert>
     </Stack>
   );
 }
@@ -389,7 +476,9 @@ export default function IdentityManagementPanel() {
           <Accordion.Control>
             {headerSection(t`oAuth2 Provider`, true)}
           </Accordion.Control>
-          <Accordion.Panel>TBD</Accordion.Panel>
+          <Accordion.Panel>
+            <OAuthManagementPanel />
+          </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
     </>

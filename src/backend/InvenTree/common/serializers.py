@@ -10,6 +10,7 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from error_report.models import Error
 from flags.state import flag_state
+from oauth2_provider.generators import generate_client_secret
 from oauth2_provider.models import Application
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
@@ -1146,6 +1147,7 @@ class OAuth2ApplicationSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'client_id',
+            'client_secret',
             'name',
             'client_type',
             'authorization_grant_type',
@@ -1155,7 +1157,7 @@ class OAuth2ApplicationSerializer(serializers.ModelSerializer):
             'algorithm',
             'is_builtin',
         ]
-        read_only_fields = ['id', 'client_id', 'is_builtin']
+        read_only_fields = ['id', 'client_id', 'client_secret', 'is_builtin']
 
     is_builtin = serializers.SerializerMethodField()
 
@@ -1163,3 +1165,25 @@ class OAuth2ApplicationSerializer(serializers.ModelSerializer):
     def get_is_builtin(self, obj: Application) -> bool:
         """Indicate whether this OAuth2 application is the built-in InvenTree client."""
         return obj.client_id == DEFAULT_OIDC_APP_ID
+
+    def create(self, validated_data):
+        """Preserve the plaintext client secret for the create response before hashing."""
+        raw_secret = validated_data.get('client_secret', None)
+        if raw_secret is None:
+            raw_secret = generate_client_secret()
+            validated_data['client_secret'] = raw_secret
+
+        instance = Application(**validated_data)
+        instance._raw_client_secret = raw_secret
+        instance.save()
+        return instance
+
+    def to_representation(self, instance):
+        """Expose the plaintext secret only for a newly-created OAuth app instance."""
+        data = super().to_representation(instance)
+        raw_secret = getattr(instance, '_raw_client_secret', None)
+        if raw_secret is not None:
+            data['client_secret'] = raw_secret
+        else:
+            data.pop('client_secret', None)
+        return data

@@ -139,8 +139,20 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
 
         self.assertEqual(response.status_code, 201, response.content)
         self.assertTrue(Application.objects.filter(name='Custom OAuth App').exists())
-        self.assertIn('client_id', response.json())
-        self.assertNotIn('client_secret', response.json())
+        payload = response.json()
+        self.assertIn('client_id', payload)
+        self.assertIn('client_secret', payload)
+        self.assertNotEqual(payload['client_secret'], '')
+        self.assertFalse(payload['client_secret'].startswith('pbkdf2_sha256$'))
+
+        # repeated GET should not return the plaintext secret
+        response = self.client.get(
+            reverse('api-oauth2-detail', kwargs={'pk': payload['id']})
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertIn('client_id', payload)
+        self.assertNotIn('client_secret', payload)
 
 
 class ApiAccessTests(InvenTreeAPITestCase):
