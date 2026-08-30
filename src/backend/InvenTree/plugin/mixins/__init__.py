@@ -17,6 +17,7 @@ from plugin.base.integration.SettingsMixin import SettingsMixin
 from plugin.base.integration.TransitionMixin import TransitionMixin
 from plugin.base.integration.UrlsMixin import UrlsMixin
 from plugin.base.integration.ValidationMixin import ValidationMixin
+from plugin.base.integration.WellKnownMixin import WellKnownMixin
 from plugin.base.label.mixins import LabelPrintingMixin
 from plugin.base.locate.mixins import LocateMixin
 from plugin.base.mail.mixins import MailMixin
@@ -48,5 +49,6 @@ __all__ = [
     'UrlsMixin',
     'UserInterfaceMixin',
     'ValidationMixin',
+    'WellKnownMixin',
     'supplier',
 ]

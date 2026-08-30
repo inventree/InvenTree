@@ -41,6 +41,7 @@ export enum ApiEndpoints {
   auth_email_verify = 'auth/v1/auth/email/verify',
   auth_providers = 'auth/v1/account/providers',
   auth_provider_redirect = 'auth/v1/auth/provider/redirect',
+  auth_provider_signup = 'auth/v1/auth/provider/signup',
   auth_config = 'auth/v1/config',
 
   // Generic API endpoints

@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 535
+INVENTREE_API_VERSION = 536
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v535 -> 2026-08-24 : https://github.com/inventree/InvenTree/pull/12072
+v536 -> 2026-08-30 : https://github.com/inventree/InvenTree/pull/12072
     - Adds API endpoints for RepairOrder, RepairOrderLineItem, and RepairOrderAllocation models
+
+v535 -> 2026-08-29 : https://github.com/inventree/InvenTree/pull/12739
+    - Adds SSO registration API endpoint for creating new users via SSO
 
 v534 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/12672
     - rename 'tags' filter to 'tag_name' to avoid name clash with the 'tags' field on various API endpoints

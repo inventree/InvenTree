@@ -28,7 +28,7 @@ import plugin.api
 import report.api
 import stock.api
 import users.api
-from plugin.urls import get_plugin_urls
+from plugin.urls import get_plugin_urls, get_wellknown_urls
 from web.urls import cui_compatibility_urls
 from web.urls import urlpatterns as platform_urls
 
@@ -166,6 +166,9 @@ urlpatterns += platform_urls
 # Append custom plugin URLs (if custom plugin support is enabled)
 if settings.PLUGINS_ENABLED:
     urlpatterns.append(get_plugin_urls())
+
+# Append well-known URLs
+urlpatterns.append(get_wellknown_urls())
 
 # Server running in "DEBUG" mode?
 if settings.DEBUG:
