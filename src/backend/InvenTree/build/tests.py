@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from build.status_codes import BuildStatus, RepairOrderStatus
 from common.settings import set_global_setting
-from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
+from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase, InvenTreeTestCase
 from part.models import BomItem, Part
 
 from .models import Build, RepairOrder
@@ -1152,3 +1152,15 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         large_n = self._query_count_for(url, params)
 
         self.assertEqual(small_n, large_n)
+
+
+class RepairOrderAdminTest(AdminTestCase):
+    """Tests for the RepairOrder admin interface integration."""
+
+    fixtures = ['category', 'part', 'location', 'stock']
+
+    def test_admin(self):
+        """Test the admin URL for RepairOrder."""
+        self.helper(
+            model=RepairOrder, model_kwargs={'description': 'Admin test repair order'}
+        )

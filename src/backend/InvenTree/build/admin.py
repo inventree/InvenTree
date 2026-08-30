@@ -65,11 +65,11 @@ class BuildLineAdmin(admin.ModelAdmin):
 class RepairOrderAdmin(admin.ModelAdmin):
     """Admin class for the RepairOrder model."""
 
-    list_display = ['reference', 'customer', 'status', 'description']
+    list_display = ['reference', 'customer', 'part', 'status', 'description']
 
-    search_fields = ['reference', 'customer__name', 'description']
+    search_fields = ['reference', 'customer__name', 'part__name', 'description']
 
-    autocomplete_fields = ['customer']
+    autocomplete_fields = ['customer', 'part']
 
 
 @admin.register(RepairOrderLineItem)
