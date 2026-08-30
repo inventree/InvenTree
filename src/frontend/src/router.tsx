@@ -64,6 +64,10 @@ export const BuildDetail = Loadable(
   lazy(() => import('./pages/build/BuildDetail'))
 );
 
+export const NonConformanceDetail = Loadable(
+  lazy(() => import('./pages/build/NonConformanceDetail'))
+);
+
 export const PurchasingIndex = Loadable(
   lazy(() => import('./pages/purchasing/PurchasingIndex'))
 );
@@ -192,6 +196,7 @@ export const routes = (
         <Route index element={<Navigate to='index/' />} />
         <Route path='index/*' element={<BuildIndex />} />
         <Route path='build-order/:id/*' element={<BuildDetail />} />
+        <Route path='ncr/:id/*' element={<NonConformanceDetail />} />
       </Route>
       <Route path='purchasing/'>
         <Route index element={<Navigate to='index/' />} />
