@@ -15,6 +15,7 @@ import {
   Loader,
   Modal,
   Paper,
+  SimpleGrid,
   Stack,
   Table,
   Text
@@ -194,16 +195,28 @@ function ScimManagementPanel() {
 }
 
 export default function IdentityManagementPanel() {
+  const identity_overview = t`InvenTree can be integrated with external Identity Providers and act as one.`;
+  const identity_inbound = t`External Identities can be pushed to InvenTree via Single Sign-On (SSO) and SCIM.`;
+  const identity_outbound = t`InvenTree can act as an Identity Provider for external applications via the built-in oAuth2 provider.`;
+
   return (
-    <Accordion variant='separated' defaultValue='scim' chevronPosition='left'>
-      <Accordion.Item value='scim'>
-        <Accordion.Control>
-          <StylishText size='lg'>{t`SCIM Provisioning`}</StylishText>
-        </Accordion.Control>
-        <Accordion.Panel>
-          <ScimManagementPanel />
-        </Accordion.Panel>
-      </Accordion.Item>
-    </Accordion>
+    <>
+      {identity_overview}
+      <SimpleGrid cols={2} spacing='md' mt='md' mb='md'>
+        <div>{identity_inbound}</div>
+        <div>{identity_outbound}</div>
+      </SimpleGrid>
+
+      <Accordion variant='separated' defaultValue='scim' chevronPosition='left'>
+        <Accordion.Item value='scim'>
+          <Accordion.Control>
+            <StylishText size='lg'>{t`SCIM Provisioning`}</StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <ScimManagementPanel />
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
+    </>
   );
 }
