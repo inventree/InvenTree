@@ -2615,6 +2615,15 @@ class RepairOrder(
 
         super().save(*args, **kwargs)
 
+    def clean(self):
+        """Validate the RepairOrder model."""
+        super().clean()
+
+        if self.start_date and self.target_date and self.start_date > self.target_date:
+            raise ValidationError({
+                'target_date': _('Target date must be after start date')
+            })
+
     def check_locked(self, db: bool = False) -> bool:
         """Check if this repair order is 'locked'.
 
@@ -2708,6 +2717,13 @@ class RepairOrder(
         auto_now_add=True, editable=False, verbose_name=_('Creation Date')
     )
 
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_('Repair start date'),
+        help_text=_('Scheduled start date for this repair order'),
+    )
+
     target_date = models.DateField(
         null=True,
         blank=True,
@@ -2737,6 +2753,13 @@ class RepairOrder(
         verbose_name=_('Responsible'),
         help_text=_('User or group responsible for this repair order'),
         related_name='repairorders_responsible',
+    )
+
+    link = InvenTree.fields.InvenTreeURLField(
+        verbose_name=_('External Link'),
+        blank=True,
+        help_text=_('Link to external URL'),
+        max_length=2000,
     )
 
     # region fsm

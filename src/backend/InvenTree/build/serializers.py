@@ -1866,12 +1866,14 @@ class RepairOrderSerializer(
             'symptoms',
             'status',
             'creation_date',
+            'start_date',
             'target_date',
             'completion_date',
             'responsible',
             'responsible_detail',
             'issued_by',
             'issued_by_detail',
+            'link',
             'line_items',
         ]
         read_only_fields = ['creation_date', 'status']

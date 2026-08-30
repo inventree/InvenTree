@@ -1,5 +1,6 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { t } from '@lingui/core/macro';
+import { IconCalendar, IconLink } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import type { ApiFormFieldSet } from '@lib/types/Forms';
@@ -27,7 +28,16 @@ export function useRepairOrderFields({
           active: true
         }
       },
-      symptoms: {}
+      symptoms: {},
+      start_date: {
+        icon: <IconCalendar />
+      },
+      target_date: {
+        icon: <IconCalendar />
+      },
+      link: {
+        icon: <IconLink />
+      }
     };
 
     // Order duplication fields

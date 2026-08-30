@@ -709,6 +709,81 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         pks = [item['pk'] for item in response.data]
         self.assertLess(pks.index(first.pk), pks.index(second.pk))
 
+    def test_start_date_target_date_ordering_validated(self):
+        """A start_date after the target_date should be rejected."""
+        today = datetime.now().date()
+
+        ro = RepairOrder(
+            reference='RO-1006',
+            description='Bad dates',
+            start_date=today + timedelta(days=10),
+            target_date=today,
+        )
+
+        with self.assertRaises(ValidationError):
+            ro.full_clean()
+
+        # Reversed (valid) order should pass
+        ro.start_date, ro.target_date = ro.target_date, ro.start_date
+        ro.full_clean()
+
+    def test_start_date_filters(self):
+        """The 'has_start_date'/'start_date_before'/'start_date_after' filters should work."""
+        today = datetime.now().date()
+
+        with_start = RepairOrder.objects.create(
+            reference='RO-1007', description='Has a start date', start_date=today
+        )
+        without_start = RepairOrder.objects.create(
+            reference='RO-1008', description='No start date'
+        )
+
+        url = reverse('api-repair-order-list')
+
+        response = self.get(url, {'has_start_date': True}, expected_code=200)
+        pks = {item['pk'] for item in response.data}
+        self.assertIn(with_start.pk, pks)
+        self.assertNotIn(without_start.pk, pks)
+
+        response = self.get(
+            url,
+            {'start_date_after': (today - timedelta(days=1)).isoformat()},
+            expected_code=200,
+        )
+        pks = {item['pk'] for item in response.data}
+        self.assertIn(with_start.pk, pks)
+        self.assertNotIn(without_start.pk, pks)
+
+        response = self.get(
+            url,
+            {'start_date_before': (today - timedelta(days=1)).isoformat()},
+            expected_code=200,
+        )
+        pks = {item['pk'] for item in response.data}
+        self.assertNotIn(with_start.pk, pks)
+
+    def test_min_max_date_filters_include_start_date(self):
+        """The 'min_date'/'max_date' calendar filters should account for start_date."""
+        today = datetime.now().date()
+
+        future_start = RepairOrder.objects.create(
+            reference='RO-1009',
+            description='Starts in the future',
+            start_date=today + timedelta(days=30),
+        )
+
+        url = reverse('api-repair-order-list')
+
+        # min_date in the past should still pick up an order starting in the future
+        response = self.get(url, {'min_date': today.isoformat()}, expected_code=200)
+        pks = {item['pk'] for item in response.data}
+        self.assertIn(future_start.pk, pks)
+
+        # max_date before the start date should exclude it
+        response = self.get(url, {'max_date': today.isoformat()}, expected_code=200)
+        pks = {item['pk'] for item in response.data}
+        self.assertNotIn(future_start.pk, pks)
+
     def test_search_by_reference(self):
         """The global 'search' parameter should match against reference/description."""
         url = reverse('api-repair-order-list')

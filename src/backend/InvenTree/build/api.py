@@ -1291,6 +1291,22 @@ class RepairOrderFilter(FilterSet):
         label=_('Created After'), field_name='creation_date', lookup_expr='gt'
     )
 
+    has_start_date = rest_filters.BooleanFilter(
+        label=_('Has Start Date'), method='filter_has_start_date'
+    )
+
+    def filter_has_start_date(self, queryset, name, value):
+        """Filter by whether or not the repair order has a start date."""
+        return queryset.filter(start_date__isnull=not str2bool(value))
+
+    start_date_before = InvenTreeDateFilter(
+        label=_('Start Date Before'), field_name='start_date', lookup_expr='lt'
+    )
+
+    start_date_after = InvenTreeDateFilter(
+        label=_('Start Date After'), field_name='start_date', lookup_expr='gt'
+    )
+
     has_target_date = rest_filters.BooleanFilter(
         label=_('Has Target Date'), method='filter_has_target_date'
     )
@@ -1323,10 +1339,11 @@ class RepairOrderFilter(FilterSet):
         Used in combination with filter_max_date to provide a queryset which
         matches a particular range of dates (e.g. for the calendar view).
         """
-        q1 = Q(creation_date__gte=value)
-        q2 = Q(target_date__gte=value)
+        q1 = Q(creation_date__gte=value, start_date__isnull=True)
+        q2 = Q(start_date__gte=value)
+        q3 = Q(target_date__gte=value)
 
-        return queryset.filter(q1 | q2).distinct()
+        return queryset.filter(q1 | q2 | q3).distinct()
 
     max_date = InvenTreeDateFilter(label=_('Max Date'), method='filter_max_date')
 
@@ -1336,10 +1353,11 @@ class RepairOrderFilter(FilterSet):
         Used in combination with filter_min_date to provide a queryset which
         matches a particular range of dates (e.g. for the calendar view).
         """
-        q1 = Q(creation_date__lte=value)
-        q2 = Q(target_date__lte=value)
+        q1 = Q(creation_date__lte=value, start_date__isnull=True)
+        q2 = Q(start_date__lte=value)
+        q3 = Q(target_date__lte=value)
 
-        return queryset.filter(q1 | q2).distinct()
+        return queryset.filter(q1 | q2 | q3).distinct()
 
 
 class RepairOrderList(OutputOptionsMixin, ListCreateAPI):
@@ -1357,6 +1375,7 @@ class RepairOrderList(OutputOptionsMixin, ListCreateAPI):
         'part__name',
         'status',
         'creation_date',
+        'start_date',
         'target_date',
         'completion_date',
         'responsible',

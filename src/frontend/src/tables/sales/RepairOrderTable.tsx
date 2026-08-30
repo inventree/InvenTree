@@ -16,6 +16,7 @@ import {
   LinkColumn,
   ReferenceColumn,
   ResponsibleColumn,
+  StartDateColumn,
   StatusColumn,
   TargetDateColumn,
   UserColumn
@@ -80,6 +81,9 @@ export function RepairOrderTable({
       },
       StatusColumn({ model: ModelType.repairorder }),
       CreationDateColumn({
+        defaultVisible: false
+      }),
+      StartDateColumn({
         defaultVisible: false
       }),
       TargetDateColumn({}),

@@ -1,13 +1,21 @@
 import { ModelType } from '@lib/enums/ModelType';
 import type { TableFilter } from '@lib/types/Filters';
 import {
+  CompletedAfterFilter,
+  CompletedBeforeFilter,
   CreatedAfterFilter,
   CreatedBeforeFilter,
+  HasStartDateFilter,
+  HasTargetDateFilter,
   MaxDateFilter,
   MinDateFilter,
   OrderStatusFilter,
   OutstandingFilter,
-  OverdueFilter
+  OverdueFilter,
+  StartDateAfterFilter,
+  StartDateBeforeFilter,
+  TargetDateAfterFilter,
+  TargetDateBeforeFilter
 } from '../../components/tables/Filter';
 
 export default function RepairOrderFilters({
@@ -25,7 +33,15 @@ export default function RepairOrderFilters({
     MinDateFilter(),
     MaxDateFilter(),
     CreatedBeforeFilter(),
-    CreatedAfterFilter()
+    CreatedAfterFilter(),
+    HasStartDateFilter(),
+    StartDateBeforeFilter(),
+    StartDateAfterFilter(),
+    HasTargetDateFilter(),
+    TargetDateBeforeFilter(),
+    TargetDateAfterFilter(),
+    CompletedBeforeFilter(),
+    CompletedAfterFilter()
   ];
 
   if (includeDateFilters) {
