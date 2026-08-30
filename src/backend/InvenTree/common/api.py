@@ -63,6 +63,7 @@ from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors, str2bool
 from InvenTree.helpers_api import (
+    CleanModelViewSet,
     InvenTreeApiRouter,
     RetrieveDestroyModelViewSet,
     RetrieveUpdateDestroyModelViewSet,
@@ -1475,8 +1476,8 @@ class ObservabilityEnd(CreateAPI):
         return Response({'status': 'ok'})
 
 
-class ApplicationViewSet(RetrieveDestroyModelViewSet):
-    """ViewSet for managing oAuth2 applications."""
+class ApplicationViewSet(CleanModelViewSet):
+    """Manage a oAuth2 (provider side) application."""
 
     queryset = Application.objects.all()
     serializer_class = OAuth2ApplicationSerializer

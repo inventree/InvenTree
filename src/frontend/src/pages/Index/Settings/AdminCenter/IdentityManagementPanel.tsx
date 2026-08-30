@@ -1,4 +1,7 @@
+import { AddItemButton } from '@lib/components/AddItemButton';
 import { CopyButton } from '@lib/components/CopyButton';
+import { RowDeleteAction } from '@lib/components/RowActions';
+import type { RowAction } from '@lib/components/RowActions';
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
@@ -32,12 +35,16 @@ import {
   IconShieldOff
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, queryClient } from '../../../../App';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { InvenTreeTable } from '../../../../components/tables/InvenTreeTable';
 import { showApiErrorMessage } from '../../../../functions/notifications';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal
+} from '../../../../hooks/UseForm';
 
 function ScimManagementPanel() {
   const [secret, setSecret] = useState<string>('');
@@ -194,6 +201,33 @@ function SSOManagementPanel() {
   const authenticationSettingsPath = '/settings/system/authentication';
   const navigate = useNavigate();
   const table = useTable('oauth-applications', { idAccessor: 'id' });
+  const [selectedOAuthApplication, setSelectedOAuthApplication] = useState<
+    number | undefined
+  >(undefined);
+
+  const newOAuthApplication = useCreateApiFormModal({
+    url: ApiEndpoints.admin_oauth,
+    title: t`Add OAuth Application`,
+    table: table,
+    fields: {
+      name: {},
+      client_type: {},
+      authorization_grant_type: {},
+      redirect_uris: {},
+      post_logout_redirect_uris: {},
+      skip_authorization: {
+        field_type: 'boolean'
+      },
+      algorithm: {}
+    }
+  });
+
+  const deleteOAuthApplication = useDeleteApiFormModal({
+    url: ApiEndpoints.admin_oauth,
+    pk: selectedOAuthApplication,
+    title: t`Delete OAuth Application`,
+    table: table
+  });
 
   const oauthColumns = useMemo(
     () => [
@@ -239,8 +273,34 @@ function SSOManagementPanel() {
     []
   );
 
+  const rowActions = useCallback(
+    (record: any): RowAction[] => [
+      RowDeleteAction({
+        hidden: !!record.is_builtin,
+        onClick: () => {
+          setSelectedOAuthApplication(record.id);
+          deleteOAuthApplication.open();
+        }
+      })
+    ],
+    [deleteOAuthApplication]
+  );
+
+  const tableActions = useMemo(
+    () => [
+      <AddItemButton
+        key={'add-oauth-application'}
+        tooltip={t`Add OAuth Application`}
+        onClick={() => newOAuthApplication.open()}
+      />
+    ],
+    [newOAuthApplication]
+  );
+
   return (
     <Stack gap='md'>
+      {newOAuthApplication.modal}
+      {deleteOAuthApplication.modal}
       <InvenTreeTable
         tableState={table}
         url={apiUrl(ApiEndpoints.admin_oauth)}
@@ -250,7 +310,9 @@ function SSOManagementPanel() {
           enableColumnSwitching: true,
           enableSelection: false,
           enablePagination: true,
-          enableRefresh: true
+          enableRefresh: true,
+          rowActions: rowActions,
+          tableActions: tableActions
         }}
       />
       <GlobalSettingList

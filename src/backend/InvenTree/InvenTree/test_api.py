@@ -126,6 +126,29 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 403)
         self.assertTrue(Application.objects.filter(pk=built_in.pk).exists())
 
+    def test_create_application(self):
+        """An admin should be able to create a custom OAuth2 application."""
+        self.user.is_superuser = True
+        self.user.save()
+        self.client.force_login(self.user)
+
+        payload = {
+            'name': 'Custom OAuth App',
+            'client_type': Application.CLIENT_PUBLIC,
+            'authorization_grant_type': Application.GRANT_AUTHORIZATION_CODE,
+            'redirect_uris': 'https://example.com/callback',
+            'post_logout_redirect_uris': 'https://example.com/logout',
+            'skip_authorization': False,
+            'algorithm': Application.RS256_ALGORITHM,
+        }
+
+        response = self.client.post(reverse('api-oauth2-list'), payload, format='json')
+
+        self.assertEqual(response.status_code, 201, response.content)
+        self.assertTrue(Application.objects.filter(name='Custom OAuth App').exists())
+        self.assertIn('client_id', response.json())
+        self.assertNotIn('client_secret', response.json())
+
 
 class ApiAccessTests(InvenTreeAPITestCase):
     """Tests for various access scenarios with the InvenTree API."""

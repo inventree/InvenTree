@@ -1155,7 +1155,7 @@ class OAuth2ApplicationSerializer(serializers.ModelSerializer):
             'algorithm',
             'is_builtin',
         ]
-        read_only_fields = fields
+        read_only_fields = ['id', 'client_id', 'is_builtin']
 
     is_builtin = serializers.SerializerMethodField()
 
