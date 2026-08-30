@@ -55,7 +55,10 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
       name: 'manufacturing',
       title: t`Manufacturing`,
       icon: <IconBuildingFactory2 />,
-      visible: user.hasViewRole(UserRoles.build)
+      visible:
+        user.hasViewRole(UserRoles.build) ||
+        (globalSettings.isSet('REPAIRORDER_ENABLED') &&
+          user.hasViewRole(UserRoles.repair_order))
     },
     {
       name: 'purchasing',
@@ -70,9 +73,7 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
       visible:
         user.hasViewRole(UserRoles.sales_order) ||
         (globalSettings.isSet('RETURNORDER_ENABLED') &&
-          user.hasViewRole(UserRoles.return_order)) ||
-        (globalSettings.isSet('REPAIRORDER_ENABLED') &&
-          user.hasViewRole(UserRoles.repair_order))
+          user.hasViewRole(UserRoles.return_order))
     }
   ];
 
