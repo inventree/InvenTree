@@ -411,7 +411,7 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         self.assignRole('part.view')
 
         # Pick a Part from the fixture so part-related tests have a target.
-        self.part = Part.objects.first()
+        self.part = Part.objects.filter(assembly=True).first()
 
         self.ro = RepairOrder.objects.create(
             reference='RO-0003', description='API test repair order', part=self.part

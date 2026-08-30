@@ -27,18 +27,23 @@ import { useUserState } from '../../states/UserState';
 import RepairOrderFilters from './RepairOrderFilters';
 
 export function RepairOrderTable({
+  partId,
   customerId
 }: Readonly<{
+  partId?: number;
   customerId?: number;
 }>) {
-  const table = useTable('repairorders-index', {
-    initialFilters: [
-      {
-        name: 'outstanding',
-        value: 'true'
-      }
-    ]
-  });
+  const table = useTable(
+    !!partId ? 'repairorders-part' : 'repairorders-index',
+    {
+      initialFilters: [
+        {
+          name: 'outstanding',
+          value: 'true'
+        }
+      ]
+    }
+  );
 
   const user = useUserState();
 
@@ -98,6 +103,7 @@ export function RepairOrderTable({
     title: t`Add Repair Order`,
     fields: repairOrderFields,
     initialData: {
+      part: partId,
       customer: customerId
     },
     follow: true,
@@ -125,6 +131,7 @@ export function RepairOrderTable({
         columns={tableColumns}
         props={{
           params: {
+            part: partId,
             customer: customerId,
             customer_detail: true,
             part_detail: true

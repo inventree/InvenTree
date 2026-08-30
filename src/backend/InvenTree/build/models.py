@@ -2679,6 +2679,7 @@ class RepairOrder(
         blank=True,
         null=True,
         related_name='repair_orders',
+        limit_choices_to={'assembly': True},
         verbose_name=_('Part'),
         help_text=_('Part associated with this repair order'),
     )

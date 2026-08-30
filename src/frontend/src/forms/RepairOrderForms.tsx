@@ -20,6 +20,7 @@ export function useRepairOrderFields({
       },
       part: {
         filters: {
+          assembly: true,
           active: true
         }
       },
