@@ -480,6 +480,14 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         # Status must NOT have changed — it's read-only
         self.assertEqual(self.ro.status, RepairOrderStatus.PENDING.value)
 
+    def test_completion_date_is_read_only(self):
+        """PATCH should not allow directly setting completion_date - it's set by complete_repair()."""
+        url = reverse('api-repair-order-detail', kwargs={'pk': self.ro.pk})
+        today = datetime.now().date()
+        self.patch(url, {'completion_date': today.isoformat()}, expected_code=200)
+        self.ro.refresh_from_db()
+        self.assertIsNone(self.ro.completion_date)
+
     # ── FSM transition endpoints ───────────────────────────────────
 
     def test_issue_transition(self):
