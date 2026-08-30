@@ -91,6 +91,7 @@ import { TagsField } from './CommonFields';
  */
 export function useStockFields({
   partId,
+  locationId,
   stockItem,
   create = false,
   supplierPartId,
@@ -98,6 +99,7 @@ export function useStockFields({
   modalId
 }: {
   partId?: number;
+  locationId?: number;
   stockItem?: any;
   modalId: string;
   create: boolean;
@@ -112,6 +114,9 @@ export function useStockFields({
   const [supplierPart, setSupplierPart] = useState<number | null>(
     supplierPartId ?? null
   );
+
+  // Keep track of the "location" for the new stock item
+  const [location, setLocation] = useState<number | null>(locationId ?? null);
 
   const [expiryDate, setExpiryDate] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number | null>(null);
@@ -198,6 +203,15 @@ export function useStockFields({
               dayjs().add(expiry_days, 'days').format('YYYY-MM-DD')
             );
           }
+
+          // Fill out the default location for the part, if not already set
+          setLocation(
+            (current) =>
+              current ??
+              record?.default_location ??
+              record?.category_default_location ??
+              null
+          );
         }
       },
       supplier_part: {
@@ -227,7 +241,9 @@ export function useStockFields({
       location: {
         // Cannot adjust location for existing stock items
         hidden: !create,
+        value: location,
         onValueChange: (value) => {
+          setLocation(value);
           batchGenerator.update({ location: value });
         },
         filters: {
@@ -323,6 +339,7 @@ export function useStockFields({
     partId,
     globalSettings,
     supplierPart,
+    location,
     create,
     supplierPartId,
     purchasePrice,
