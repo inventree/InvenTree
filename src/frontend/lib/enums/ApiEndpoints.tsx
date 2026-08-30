@@ -207,6 +207,7 @@ export enum ApiEndpoints {
   repair_order_hold = 'order/repair/:id/hold/',
   repair_order_cancel = 'order/repair/:id/cancel/',
   repair_order_complete = 'order/repair/:id/complete/',
+  repair_order_auto_allocate = 'order/repair/:id/auto-allocate/',
   repair_order_line_list = 'order/repair-line/',
   repair_order_allocation_list = 'order/repair-allocation/',
 

@@ -127,12 +127,10 @@ export function RenderRepairOrderAllocation({
 }: Readonly<{
   instance: any;
 }>): ReactNode {
-  const order = instance.order_detail || {};
-
   return (
     <RenderInlineModel
-      primary={order.reference}
-      suffix={<Text size='xs'>{`${t`Allocation`} ${instance.pk}`}</Text>}
+      primary={instance.item_detail?.part_detail?.full_name ?? instance.item}
+      suffix={<Text size='xs'>{formatDecimal(instance.quantity)}</Text>}
     />
   );
 }

@@ -168,6 +168,7 @@ export default function RepairOrderDetail() {
               <Accordion.Panel>
                 <RepairOrderLineItemTable
                   orderId={order.pk}
+                  assemblyPartId={order.part}
                   orderDetailRefresh={refreshInstance}
                   editable={lineItemsEditable}
                 />

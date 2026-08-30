@@ -1447,11 +1447,36 @@ class RepairOrderCancel(RepairOrderContextMixin, CreateAPI):
     serializer_class = build.serializers.RepairOrderCancelSerializer
 
 
+class RepairOrderAutoAllocate(RepairOrderContextMixin, CreateAPI):
+    """API endpoint to auto-allocate stock against a RepairOrder."""
+
+    serializer_class = build.serializers.RepairOrderAutoAllocateSerializer
+
+
+class RepairOrderLineItemFilter(FilterSet):
+    """Custom filterset for the RepairOrderLineItemList API endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = RepairOrderLineItem
+        fields = ['order', 'part']
+
+
 class RepairOrderLineItemList(ListCreateAPI):
     """API endpoint for accessing a list of RepairOrderLineItem objects."""
 
     queryset = RepairOrderLineItem.objects.all()
     serializer_class = build.serializers.RepairOrderLineItemSerializer
+    filterset_class = RepairOrderLineItemFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+    def get_queryset(self):
+        """Annotate the queryset with the allocated quantity for each line item."""
+        queryset = super().get_queryset()
+        return build.serializers.RepairOrderLineItemSerializer.annotate_queryset(
+            queryset
+        )
 
 
 class RepairOrderLineItemDetail(RetrieveUpdateDestroyAPI):
@@ -1460,12 +1485,31 @@ class RepairOrderLineItemDetail(RetrieveUpdateDestroyAPI):
     queryset = RepairOrderLineItem.objects.all()
     serializer_class = build.serializers.RepairOrderLineItemSerializer
 
+    def get_queryset(self):
+        """Annotate the queryset with the allocated quantity for this line item."""
+        queryset = super().get_queryset()
+        return build.serializers.RepairOrderLineItemSerializer.annotate_queryset(
+            queryset
+        )
 
-class RepairOrderAllocationList(ListCreateAPI):
+
+class RepairOrderAllocationFilter(FilterSet):
+    """Custom filterset for the RepairOrderAllocationList API endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = RepairOrderAllocation
+        fields = ['line', 'item']
+
+
+class RepairOrderAllocationList(BulkDeleteMixin, ListCreateAPI):
     """API endpoint for accessing a list of RepairOrderAllocation objects."""
 
     queryset = RepairOrderAllocation.objects.all()
     serializer_class = build.serializers.RepairOrderAllocationSerializer
+    filterset_class = RepairOrderAllocationFilter
+    filter_backends = SEARCH_ORDER_FILTER
 
 
 class RepairOrderAllocationDetail(RetrieveUpdateDestroyAPI):
@@ -1571,6 +1615,11 @@ build_api_urls = [
                         'cancel/',
                         RepairOrderCancel.as_view(),
                         name='api-repair-order-cancel',
+                    ),
+                    path(
+                        'auto-allocate/',
+                        RepairOrderAutoAllocate.as_view(),
+                        name='api-repair-order-auto-allocate',
                     ),
                     meta_path(RepairOrder),
                     path(

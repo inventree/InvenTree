@@ -2820,6 +2820,83 @@ class RepairOrder(
 
     # endregion fsm
 
+    def auto_allocate_stock(
+        self,
+        location=None,
+        exclude_location=None,
+        stock_sort_by: str = stock.models.STOCK_SORT_DEFAULT,
+    ):
+        """Automatically allocate stock against every outstanding line item on this order.
+
+        Arguments:
+            location: If provided, only consider stock items located here (or in a
+                sub-location of this location)
+            exclude_location: If provided, exclude stock items located here (or in a
+                sub-location of this location)
+            stock_sort_by: A `stock.models.StockSortOrder` value controlling the
+                preferred order in which matching stock items are consumed
+
+        For each line item with an unallocated quantity remaining, greedily consumes
+        from whatever stock is currently available for that part (in the order given
+        by `stock_sort_by`), splitting across multiple stock items if a single one
+        isn't enough. Lines with no part set, or which are already fully allocated,
+        are skipped. Unlike BuildOrder's auto-allocation, this does not consider
+        variants/substitutes (a RepairOrderLineItem references a single concrete part
+        directly) and runs synchronously rather than as a background task, as repair
+        orders are expected to be small in scope.
+        """
+        with transaction.atomic():
+            for line in self.lines.all():
+                if not line.part:
+                    continue
+
+                outstanding = line.unallocated_quantity()
+
+                if outstanding <= 0:
+                    continue
+
+                available_stock = stock.models.StockItem.objects.filter(
+                    stock.models.StockItem.IN_STOCK_FILTER, part=line.part
+                )
+
+                if location:
+                    sublocations = location.get_descendants(include_self=True)
+                    available_stock = available_stock.filter(
+                        location__in=list(sublocations)
+                    )
+
+                if exclude_location:
+                    sublocations = exclude_location.get_descendants(include_self=True)
+                    available_stock = available_stock.exclude(
+                        location__in=list(sublocations)
+                    )
+
+                if stock_sort_by == stock.models.StockSortOrder.EXPIRY_SOONEST:
+                    available_stock = available_stock.order_by(
+                        F('expiry_date').asc(nulls_last=True)
+                    )
+                else:
+                    available_stock = available_stock.order_by(stock_sort_by)
+
+                for stock_item in available_stock:
+                    if outstanding <= 0:
+                        break
+
+                    available = stock_item.unallocated_quantity()
+
+                    if available <= 0:
+                        continue
+
+                    quantity = min(outstanding, available)
+
+                    allocation = RepairOrderAllocation(
+                        line=line, item=stock_item, quantity=quantity
+                    )
+                    allocation.full_clean()
+                    allocation.save()
+
+                    outstanding -= quantity
+
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the RepairOrder model."""
@@ -2890,6 +2967,17 @@ class RepairOrderLineItem(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('Item quantity required for repair'),
     )
 
+    def allocated_quantity(self):
+        """Return the total quantity of stock allocated against this line item."""
+        allocated = self.allocations.aggregate(
+            q=Coalesce(Sum('quantity'), 0, output_field=models.DecimalField())
+        )
+        return allocated['q']
+
+    def unallocated_quantity(self):
+        """Return the outstanding quantity still to be allocated for this line item."""
+        return max(self.quantity - self.allocated_quantity(), 0)
+
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the RepairOrderLineItem model."""
@@ -2903,6 +2991,22 @@ class RepairOrderAllocation(models.Model):
         """Model meta options."""
 
         verbose_name = _('Repair Order Allocation')
+
+    def save(self, *args, **kwargs):
+        """Custom save — prevent modification when the parent order is locked."""
+        if self.line.order.check_locked():
+            raise ValidationError({
+                'line': _('This order is locked and cannot be modified')
+            })
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """Custom delete — prevent deletion when the parent order is locked."""
+        if self.line.order.check_locked():
+            raise ValidationError({
+                'line': _('This order is locked and cannot be modified')
+            })
+        super().delete(*args, **kwargs)
 
     def clean(self):
         """Validate the RepairOrderAllocation object."""
@@ -2927,8 +3031,22 @@ class RepairOrderAllocation(models.Model):
         except part.models.Part.DoesNotExist:
             errors['line'] = _('Cannot allocate stock to a line without a part')
 
-        if self.quantity > self.item.quantity:
-            errors['quantity'] = _('Allocation quantity cannot exceed stock quantity')
+        if 'quantity' not in errors and 'item' not in errors:
+            # Determine how much of this stock item is *actually* still available,
+            # accounting for every other allocation against it (build, sales,
+            # transfer, and other repair orders) - not just its raw quantity.
+            available = self.item.unallocated_quantity()
+
+            if self.pk:
+                # This allocation already exists - its own prior commitment
+                # shouldn't count against itself when checking for an increase.
+                previous = RepairOrderAllocation.objects.get(pk=self.pk)
+                available += previous.quantity
+
+            if self.quantity > available:
+                errors['quantity'] = _(
+                    'Allocation quantity cannot exceed available stock'
+                )
 
         if len(errors) > 0:
             raise ValidationError(errors)

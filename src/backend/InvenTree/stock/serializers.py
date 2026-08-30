@@ -532,6 +532,7 @@ class StockItemSerializer(
             # For now, stock allocated to a transfer order will not impact its availability
             # + Coalesce(SubquerySum('transfer_order_allocations__quantity'), Decimal(0))
             + Coalesce(SubquerySum('allocations__quantity'), Decimal(0))
+            + Coalesce(SubquerySum('repair_order_allocations__quantity'), Decimal(0))
         )
 
         # Annotate the queryset with the number of tracking items

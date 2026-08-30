@@ -9,6 +9,7 @@ from django.db import models, transaction
 from django.db.models import (
     BooleanField,
     Case,
+    DecimalField,
     ExpressionWrapper,
     F,
     FloatField,
@@ -1923,24 +1924,73 @@ class RepairOrderSerializer(
     )
 
 
-class RepairOrderLineItemSerializer(InvenTreeModelSerializer):
+class RepairOrderLineItemSerializer(
+    FilterableSerializerMixin, InvenTreeModelSerializer
+):
     """Serializer for a RepairOrderLineItem object."""
 
     class Meta:
         """Metaclass options."""
 
         model = RepairOrderLineItem
-        fields = ['pk', 'order', 'part', 'quantity']
+        fields = ['pk', 'order', 'part', 'part_detail', 'quantity', 'allocated']
+
+    part_detail = OptionalField(
+        serializer_class=part_serializers.PartBriefSerializer,
+        serializer_kwargs={
+            'source': 'part',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['part'],
+    )
+
+    allocated = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        read_only=True,
+        default=0,
+        label=_('Allocated Quantity'),
+    )
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate the queryset with the total allocated quantity for each line item."""
+        return queryset.annotate(
+            allocated=Coalesce(
+                Sum('allocations__quantity'), 0, output_field=DecimalField()
+            )
+        )
 
 
-class RepairOrderAllocationSerializer(InvenTreeModelSerializer):
+class RepairOrderAllocationSerializer(
+    FilterableSerializerMixin, InvenTreeModelSerializer
+):
     """Serializer for a RepairOrderAllocation object."""
 
     class Meta:
         """Metaclass options."""
 
         model = RepairOrderAllocation
-        fields = ['pk', 'line', 'item', 'quantity']
+        fields = ['pk', 'line', 'item', 'item_detail', 'quantity']
+
+    item_detail = OptionalField(
+        serializer_class=StockItemSerializer,
+        serializer_kwargs={
+            'source': 'item',
+            'read_only': True,
+            'allow_null': True,
+            'label': _('Stock Item'),
+            'part_detail': False,
+            'location_detail': True,
+            'supplier_part_detail': False,
+            'path_detail': False,
+        },
+        default_include=True,
+        prefetch_fields=['item', 'item__part', 'item__location'],
+    )
 
 
 class RepairOrderAdjustSerializer(serializers.Serializer):
@@ -1993,3 +2043,49 @@ class RepairOrderCancelSerializer(RepairOrderAdjustSerializer):
     def save(self):
         """Save the serializer to 'cancel' the repair order."""
         self.order.cancel_repair()
+
+
+class RepairOrderAutoAllocateSerializer(RepairOrderAdjustSerializer):
+    """Serializer for auto-allocating stock against a RepairOrder."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['location', 'exclude_location', 'stock_sort_by']
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Source Location'),
+        help_text=_(
+            'Stock location where parts are to be sourced (leave blank to take from any location)'
+        ),
+    )
+
+    exclude_location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Exclude Location'),
+        help_text=_('Exclude stock items from this selected location'),
+    )
+
+    stock_sort_by = serializers.ChoiceField(
+        default=stock_models.STOCK_SORT_DEFAULT,
+        choices=stock_models.STOCK_SORT_CHOICES,
+        label=_('Stock Priority'),
+        help_text=_('Preferred order in which matching stock items are consumed'),
+    )
+
+    def save(self):
+        """Save the serializer to auto-allocate stock against the repair order."""
+        data = self.validated_data
+
+        self.order.auto_allocate_stock(
+            location=data.get('location'),
+            exclude_location=data.get('exclude_location'),
+            stock_sort_by=data.get('stock_sort_by', stock_models.STOCK_SORT_DEFAULT),
+        )

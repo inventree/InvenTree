@@ -1,6 +1,9 @@
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
 import type { ApiFormFieldSet } from '@lib/types/Forms';
+import { useCreateApiFormModal } from '../hooks/UseForm';
 
 export function useRepairOrderFields({
   duplicateOrderId
@@ -48,9 +51,11 @@ export function useRepairOrderFields({
 
 export function useRepairOrderLineItemFields({
   orderId,
+  assemblyPartId,
   create
 }: {
   orderId: number;
+  assemblyPartId?: number;
   create?: boolean;
 }) {
   return useMemo(() => {
@@ -61,10 +66,62 @@ export function useRepairOrderLineItemFields({
       },
       part: {
         filters: {
-          active: true
+          active: true,
+          in_bom_for: assemblyPartId || undefined
         }
       },
       quantity: {}
     };
-  }, [create, orderId]);
+  }, [create, orderId, assemblyPartId]);
+}
+
+export function useRepairOrderAutoAllocateFields(): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      location: {},
+      exclude_location: {},
+      stock_sort_by: {}
+    };
+  }, []);
+}
+
+export function useAllocateStockToRepairOrderForm({
+  lineItem,
+  onFormSuccess
+}: {
+  lineItem: any;
+  onFormSuccess: () => void;
+}) {
+  const fields: ApiFormFieldSet = useMemo(() => {
+    const outstanding = Math.max(
+      (lineItem?.quantity ?? 0) - (lineItem?.allocated ?? 0),
+      0
+    );
+
+    return {
+      line: {
+        hidden: true,
+        value: lineItem?.pk
+      },
+      item: {
+        filters: {
+          part: lineItem?.part,
+          available: true,
+          part_detail: true,
+          location_detail: true
+        }
+      },
+      quantity: {
+        value: outstanding
+      }
+    };
+  }, [lineItem]);
+
+  return useCreateApiFormModal({
+    url: ApiEndpoints.repair_order_allocation_list,
+    title: t`Allocate Stock`,
+    fields: fields,
+    onFormSuccess: onFormSuccess,
+    successMessage: t`Stock allocated`
+  });
 }

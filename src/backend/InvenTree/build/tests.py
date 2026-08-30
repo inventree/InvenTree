@@ -773,3 +773,213 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         response = self.get(url, {'search': self.part.name}, expected_code=200)
         pks = {item['pk'] for item in response.data}
         self.assertIn(self.ro.pk, pks)
+
+    # ── Allocation workflow ──────────────────────────────────────────
+
+    def test_line_item_list_filters_by_order(self):
+        """The line-item list endpoint must only return lines for the requested order."""
+        from build.models import RepairOrderLineItem
+
+        other_ro = RepairOrder.objects.create(
+            reference='RO-7100', description='A different repair order'
+        )
+
+        line_mine = RepairOrderLineItem.objects.create(
+            order=self.ro, part=self.part, quantity=1
+        )
+        line_other = RepairOrderLineItem.objects.create(
+            order=other_ro, part=self.part, quantity=1
+        )
+
+        url = reverse('api-repair-order-line-list')
+        response = self.get(url, {'order': self.ro.pk}, expected_code=200)
+        pks = {item['pk'] for item in response.data}
+
+        self.assertIn(line_mine.pk, pks)
+        self.assertNotIn(line_other.pk, pks)
+
+    def test_allocation_list_filters_by_line(self):
+        """The allocation list endpoint must only return allocations for the requested line."""
+        from build.models import RepairOrderAllocation, RepairOrderLineItem
+        from stock.models import StockItem, StockLocation
+
+        p = Part.objects.filter(component=True).first()
+        loc = StockLocation.objects.first()
+        si = StockItem.objects.create(part=p, quantity=10, location=loc)
+
+        line_a = RepairOrderLineItem.objects.create(order=self.ro, part=p, quantity=2)
+        line_b = RepairOrderLineItem.objects.create(order=self.ro, part=p, quantity=2)
+
+        alloc_a = RepairOrderAllocation.objects.create(line=line_a, item=si, quantity=1)
+        alloc_b = RepairOrderAllocation.objects.create(line=line_b, item=si, quantity=1)
+
+        url = reverse('api-repair-order-allocation-list')
+        response = self.get(url, {'line': line_a.pk}, expected_code=200)
+        pks = {item['pk'] for item in response.data}
+
+        self.assertIn(alloc_a.pk, pks)
+        self.assertNotIn(alloc_b.pk, pks)
+
+    def test_line_item_allocated_quantity_annotation(self):
+        """The 'allocated' field on a line item should reflect the sum of its allocations."""
+        from build.models import RepairOrderAllocation, RepairOrderLineItem
+        from stock.models import StockItem, StockLocation
+
+        p = Part.objects.filter(component=True).first()
+        loc = StockLocation.objects.first()
+        si = StockItem.objects.create(part=p, quantity=10, location=loc)
+
+        line = RepairOrderLineItem.objects.create(order=self.ro, part=p, quantity=5)
+
+        url = reverse('api-repair-order-line-detail', kwargs={'pk': line.pk})
+        response = self.get(url, expected_code=200)
+        self.assertEqual(float(response.data['allocated']), 0.0)
+
+        RepairOrderAllocation.objects.create(line=line, item=si, quantity=3)
+
+        response = self.get(url, expected_code=200)
+        self.assertEqual(float(response.data['allocated']), 3.0)
+
+    def test_allocation_rejects_over_commit(self):
+        """An allocation cannot exceed a stock item's *unallocated* quantity.
+
+        This accounts for quantity already committed to *other* allocations
+        against the same stock item, not just its raw on-hand quantity.
+        """
+        from build.models import RepairOrderAllocation, RepairOrderLineItem
+        from stock.models import StockItem, StockLocation
+
+        p = Part.objects.filter(component=True).first()
+        loc = StockLocation.objects.first()
+        si = StockItem.objects.create(part=p, quantity=10, location=loc)
+
+        line_a = RepairOrderLineItem.objects.create(order=self.ro, part=p, quantity=8)
+        line_b = RepairOrderLineItem.objects.create(order=self.ro, part=p, quantity=8)
+
+        # First allocation takes 8 of the 10 available - fine.
+        RepairOrderAllocation.objects.create(line=line_a, item=si, quantity=8)
+
+        # Second allocation against the *same* stock item requests 8 more,
+        # but only 2 remain unallocated - should be rejected.
+        with self.assertRaises(ValidationError):
+            second = RepairOrderAllocation(line=line_b, item=si, quantity=8)
+            second.full_clean()
+
+        # Requesting only the remaining 2 should succeed.
+        third = RepairOrderAllocation(line=line_b, item=si, quantity=2)
+        third.full_clean()
+        third.save()
+
+    def test_allocation_rejects_changes_on_locked_order(self):
+        """Allocations cannot be added or removed once the parent order is locked."""
+        from build.models import RepairOrderAllocation, RepairOrderLineItem
+        from stock.models import StockItem, StockLocation
+
+        p = Part.objects.filter(component=True).first()
+        loc = StockLocation.objects.first()
+        si = StockItem.objects.create(part=p, quantity=10, location=loc)
+
+        line = RepairOrderLineItem.objects.create(order=self.ro, part=p, quantity=2)
+        allocation = RepairOrderAllocation.objects.create(
+            line=line, item=si, quantity=1
+        )
+
+        self.ro.cancel_repair()
+
+        with self.assertRaises(ValidationError):
+            RepairOrderAllocation.objects.create(line=line, item=si, quantity=1)
+
+        with self.assertRaises(ValidationError):
+            allocation.delete()
+
+    def test_auto_allocate_stock(self):
+        """POST auto-allocate/ should allocate available stock against outstanding lines."""
+        from build.models import RepairOrderAllocation, RepairOrderLineItem
+        from stock.models import StockItem, StockLocation
+
+        p = Part.objects.filter(component=True).first()
+        loc = StockLocation.objects.first()
+        si = StockItem.objects.create(part=p, quantity=10, location=loc)
+
+        line = RepairOrderLineItem.objects.create(order=self.ro, part=p, quantity=4)
+
+        url = reverse('api-repair-order-auto-allocate', kwargs={'pk': self.ro.pk})
+        self.post(url, expected_code=201)
+
+        total_allocated = sum(
+            a.quantity for a in RepairOrderAllocation.objects.filter(line=line)
+        )
+        self.assertEqual(float(total_allocated), 4.0)
+
+        si.refresh_from_db()
+        # Auto-allocation only reserves stock - it does not consume it.
+        self.assertEqual(float(si.quantity), 10.0)
+
+    def test_auto_allocate_requires_role(self):
+        """POST auto-allocate/ should require repair_order.add permission."""
+        self.clearRoles()
+
+        url = reverse('api-repair-order-auto-allocate', kwargs={'pk': self.ro.pk})
+        self.post(url, expected_code=403)
+
+    def test_auto_allocate_respects_source_location(self):
+        """The 'location' option should restrict auto-allocation to that location (or its children)."""
+        from build.models import RepairOrderAllocation, RepairOrderLineItem
+        from stock.models import StockItem, StockLocation
+
+        p = Part.objects.filter(component=True).first()
+        loc_a = StockLocation.objects.create(name='Location A')
+        loc_b = StockLocation.objects.create(name='Location B')
+
+        si_a = StockItem.objects.create(part=p, quantity=10, location=loc_a)
+        StockItem.objects.create(part=p, quantity=10, location=loc_b)
+
+        line = RepairOrderLineItem.objects.create(order=self.ro, part=p, quantity=4)
+
+        url = reverse('api-repair-order-auto-allocate', kwargs={'pk': self.ro.pk})
+        self.post(url, {'location': loc_a.pk}, expected_code=201)
+
+        allocations = RepairOrderAllocation.objects.filter(line=line)
+        self.assertEqual(allocations.count(), 1)
+        self.assertEqual(allocations.first().item.pk, si_a.pk)
+
+    def test_auto_allocate_excludes_location(self):
+        """The 'exclude_location' option should skip stock items in that location."""
+        from build.models import RepairOrderAllocation, RepairOrderLineItem
+        from stock.models import StockItem, StockLocation
+
+        p = Part.objects.filter(component=True).first()
+        loc_a = StockLocation.objects.create(name='Excluded Location')
+        loc_b = StockLocation.objects.create(name='Included Location')
+
+        StockItem.objects.create(part=p, quantity=10, location=loc_a)
+        si_b = StockItem.objects.create(part=p, quantity=10, location=loc_b)
+
+        line = RepairOrderLineItem.objects.create(order=self.ro, part=p, quantity=4)
+
+        url = reverse('api-repair-order-auto-allocate', kwargs={'pk': self.ro.pk})
+        self.post(url, {'exclude_location': loc_a.pk}, expected_code=201)
+
+        allocations = RepairOrderAllocation.objects.filter(line=line)
+        self.assertEqual(allocations.count(), 1)
+        self.assertEqual(allocations.first().item.pk, si_b.pk)
+
+    def test_auto_allocate_stock_sort_by(self):
+        """The 'stock_sort_by' option should control which stock item is preferred."""
+        from build.models import RepairOrderAllocation, RepairOrderLineItem
+        from stock.models import StockItem, StockLocation
+
+        p = Part.objects.filter(component=True).first()
+        loc = StockLocation.objects.first()
+
+        small = StockItem.objects.create(part=p, quantity=2, location=loc)
+        large = StockItem.objects.create(part=p, quantity=20, location=loc)
+
+        line = RepairOrderLineItem.objects.create(order=self.ro, part=p, quantity=1)
+
+        url = reverse('api-repair-order-auto-allocate', kwargs={'pk': self.ro.pk})
+        self.post(url, {'stock_sort_by': 'quantity'}, expected_code=201)
+
+        allocation = RepairOrderAllocation.objects.get(line=line)
+        self.assertEqual(allocation.item.pk, small.pk)
+        self.assertNotEqual(allocation.item.pk, large.pk)
