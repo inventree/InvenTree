@@ -1,13 +1,45 @@
 """Data migration unit tests for the 'common' app."""
 
+import importlib
 import io
 import os
+from unittest import mock
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 from PIL import Image
+
+
+def generate_note_image(name: str):
+    """Generate a dummy image file for upload."""
+    buf = io.BytesIO()
+    Image.new('RGB', (64, 64), color='red').save(buf, format='PNG')
+    return ContentFile(buf.getvalue(), name=name)
+
+
+def get_historical_model(state, app: str, model: str):
+    """Fetch a historical model, working around the duplicate-column ORM bug.
+
+    Historical models with a custom status field enumerate 'status_custom_key' twice
+    (once from contribute_to_class on the status field, once from the explicit
+    AddField migration), so ORM-generated INSERTs fail with
+    'column specified more than once'. Remove the duplicated field entries here.
+    """
+    model_class = state.apps.get_model(app, model)
+
+    seen = set()
+
+    for field in list(model_class._meta.local_fields):
+        if field.name in seen:
+            model_class._meta.local_fields.remove(field)
+        else:
+            seen.add(field.name)
+
+    model_class._meta._expire_cache()
+
+    return model_class
 
 
 def get_legacy_models():
@@ -311,60 +343,36 @@ class TestNoteMigrations(MigratorTestCase):
 
     migrate_to = ('common', '0052_remove_notesimage_model_id_and_more')
 
-    def generate_image(self, name: str):
-        """Generate a dummy image file for upload."""
-        buf = io.BytesIO()
-        Image.new('RGB', (64, 64), color='red').save(buf, format='PNG')
-        return ContentFile(buf.getvalue(), name=name)
-
-    def get_model(self, app: str, model: str):
-        """Fetch a historical model, working around the duplicate-column ORM bug.
-
-        Historical models with a custom status field enumerate 'status_custom_key' twice
-        (once from contribute_to_class on the status field, once from the explicit
-        AddField migration), so ORM-generated INSERTs fail with
-        'column specified more than once'. Remove the duplicated field entries here.
-        """
-        model_class = self.old_state.apps.get_model(app, model)
-
-        seen = set()
-
-        for field in list(model_class._meta.local_fields):
-            if field.name in seen:
-                model_class._meta.local_fields.remove(field)
-            else:
-                seen.add(field.name)
-
-        model_class._meta._expire_cache()
-
-        return model_class
-
     def prepare(self):
         """Create instances of each model type which supports notes."""
         # Dummy MPPT data
         tree = {'tree_id': 0, 'level': 0, 'lft': 0, 'rght': 0}
 
-        NotesImage = self.get_model('common', 'NotesImage')
+        NotesImage = get_historical_model(self.old_state, 'common', 'NotesImage')
 
-        Part = self.get_model('part', 'Part')
-        Build = self.get_model('build', 'Build')
-        StockItem = self.get_model('stock', 'StockItem')
-        Company = self.get_model('company', 'Company')
-        ManufacturerPart = self.get_model('company', 'ManufacturerPart')
-        SupplierPart = self.get_model('company', 'SupplierPart')
-        PurchaseOrder = self.get_model('order', 'PurchaseOrder')
-        SalesOrder = self.get_model('order', 'SalesOrder')
-        ReturnOrder = self.get_model('order', 'ReturnOrder')
-        SalesOrderShipment = self.get_model('order', 'SalesOrderShipment')
-        TransferOrder = self.get_model('order', 'TransferOrder')
+        Part = get_historical_model(self.old_state, 'part', 'Part')
+        Build = get_historical_model(self.old_state, 'build', 'Build')
+        StockItem = get_historical_model(self.old_state, 'stock', 'StockItem')
+        Company = get_historical_model(self.old_state, 'company', 'Company')
+        ManufacturerPart = get_historical_model(
+            self.old_state, 'company', 'ManufacturerPart'
+        )
+        SupplierPart = get_historical_model(self.old_state, 'company', 'SupplierPart')
+        PurchaseOrder = get_historical_model(self.old_state, 'order', 'PurchaseOrder')
+        SalesOrder = get_historical_model(self.old_state, 'order', 'SalesOrder')
+        ReturnOrder = get_historical_model(self.old_state, 'order', 'ReturnOrder')
+        SalesOrderShipment = get_historical_model(
+            self.old_state, 'order', 'SalesOrderShipment'
+        )
+        TransferOrder = get_historical_model(self.old_state, 'order', 'TransferOrder')
 
         # An image which is not linked to any model, but is embedded in the notes markdown
         embedded_image = NotesImage.objects.create(
-            image=self.generate_image('embedded.png')
+            image=generate_note_image('embedded.png')
         )
 
         # An image which is not linked to any model, and not referenced anywhere
-        NotesImage.objects.create(image=self.generate_image('orphan.png'))
+        NotesImage.objects.create(image=generate_note_image('orphan.png'))
 
         part = Part.objects.create(
             name='Test Part',
@@ -387,14 +395,14 @@ class TestNoteMigrations(MigratorTestCase):
 
         # An image which is directly linked to the part instance
         NotesImage.objects.create(
-            image=self.generate_image('linked.png'), model_type='part', model_id=part.pk
+            image=generate_note_image('linked.png'), model_type='part', model_id=part.pk
         )
 
         # An image directly linked to a part whose notes field is blank - this
         # must be preserved (migrated onto an empty placeholder note) rather
         # than silently discarded, since it was legitimately attached
         NotesImage.objects.create(
-            image=self.generate_image('blank_notes_linked.png'),
+            image=generate_note_image('blank_notes_linked.png'),
             model_type='part',
             model_id=empty_notes_part.pk,
         )
@@ -591,6 +599,91 @@ class TestNoteMigrations(MigratorTestCase):
         # points to its own placeholder note instead (checked above)
         for image in NotesImage.objects.exclude(pk=blank_notes_image.pk):
             self.assertEqual(image.note.pk, note.pk)
+
+
+class TestNoteMigrationBatching(MigratorTestCase):
+    """Test that common.0051 correctly migrates notes which span multiple batches.
+
+    Note.bulk_create() batches are only flushed once BATCH_SIZE (500 in production)
+    instances have accumulated, plus a final trailing flush for whatever's left over.
+    A bug in that boundary handling - e.g. the trailing partial batch never being
+    flushed, or the per-batch zip(instances, notes) misaligning across separate
+    bulk_create() calls - would silently drop or cross-link notes, but every instance
+    in TestNoteMigrations fits in a single batch, so it can't catch that. BATCH_SIZE is
+    patched down here so a small, fast-to-create number of instances is enough to force
+    multiple batches, including a non-full trailing one.
+    """
+
+    migrate_from = [
+        ('common', '0048_notificationmessage_link'),
+        ('build', '0059_build_tags'),
+        ('company', '0080_company_tags'),
+        ('order', '0121_add_line_item_discount'),
+        ('part', '0152_alter_partpricing_currency'),
+        ('stock', '0125_remove_mptt_fields'),
+    ]
+
+    migrate_to = ('common', '0052_remove_notesimage_model_id_and_more')
+
+    # 7 instances over batches of 3 forces two full flushes plus a trailing partial one
+    BATCH_SIZE = 3
+    N_INSTANCES = 7
+
+    def setUp(self):
+        """Patch the migration's BATCH_SIZE down before it runs."""
+        migration_module = importlib.import_module(
+            'common.migrations.0051_auto_20260525_0956'
+        )
+        with mock.patch.object(migration_module, 'BATCH_SIZE', self.BATCH_SIZE):
+            super().setUp()
+
+    def prepare(self):
+        """Create more instances of one model than fit in a single migration batch."""
+        tree = {'tree_id': 0, 'level': 0, 'lft': 0, 'rght': 0}
+
+        NotesImage = get_historical_model(self.old_state, 'common', 'NotesImage')
+        Part = get_historical_model(self.old_state, 'part', 'Part')
+
+        self.parts = [
+            Part.objects.create(
+                name=f'Test Part {i}',
+                description=f'Description {i}',
+                notes=f'Notes for part {i}',
+                **tree,
+            )
+            for i in range(self.N_INSTANCES)
+        ]
+
+        # Directly linked to the part in the middle of one batch - if a batch
+        # boundary ever misaligned the notes/instances pairing, this would end up
+        # linked to the wrong neighbour's note instead
+        self.linked_image = NotesImage.objects.create(
+            image=generate_note_image('linked.png'),
+            model_type='part',
+            model_id=self.parts[4].pk,
+        )
+
+    def test_all_notes_migrated_across_batches(self):
+        """Every instance gets exactly one, correctly-matched note - batch boundaries aren't visible."""
+        Note = self.new_state.apps.get_model('common', 'Note')
+        NotesImage = self.new_state.apps.get_model('common', 'NotesImage')
+        ContentType = self.new_state.apps.get_model('contenttypes', 'ContentType')
+
+        content_type = ContentType.objects.get(model='part')
+
+        self.assertEqual(
+            Note.objects.filter(model_type=content_type).count(), self.N_INSTANCES
+        )
+
+        for i, part in enumerate(self.parts):
+            note = Note.objects.get(model_type=content_type, model_id=part.pk)
+            self.assertIn(f'Notes for part {i}', note.content)
+
+        expected_note = Note.objects.get(
+            model_type=content_type, model_id=self.parts[4].pk
+        )
+        image = NotesImage.objects.get(pk=self.linked_image.pk)
+        self.assertEqual(image.note.pk, expected_note.pk)
 
 
 def prep_currency_migration(self, vals: str):
