@@ -270,7 +270,7 @@ export default function AdminCenter() {
       },
       {
         name: 'identity',
-        label: t`Identity`,
+        label: t`Identity Federation`,
         icon: <IconShieldLock />,
         content: <IdentityManagementPanel />,
         hidden: !user.hasViewRole(UserRoles.admin)
