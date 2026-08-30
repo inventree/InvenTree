@@ -230,6 +230,7 @@ class InfoApiSerializer(serializers.Serializer):
     class SettingsSerializer(serializers.Serializer):
         """Serializer for InfoApiSerializer."""
 
+        sso_enabled = serializers.BooleanField()
         sso_registration = serializers.BooleanField()
         registration_enabled = serializers.BooleanField()
         password_forgotten_enabled = serializers.BooleanField()
@@ -329,6 +330,7 @@ class InfoView(APIView):
             if (is_staff and settings.INVENTREE_ADMIN_ENABLED)
             else None,
             'settings': {
+                'sso_enabled': get_global_setting('LOGIN_ENABLE_SSO'),
                 'sso_registration': registration_enabled('LOGIN_ENABLE_SSO_REG'),
                 'registration_enabled': registration_enabled('LOGIN_ENABLE_REG'),
                 'password_forgotten_enabled': get_global_setting(
@@ -872,6 +874,14 @@ class APISearchView(GenericAPIView):
                         req.method = 'GET'
                         req.user = request.user
                         req.GET = params
+
+                        # Copy META from the original request, so that host/scheme
+                        # information is available (e.g. for pagination links).
+                        # Strip content-length/type, as this is a synthetic GET
+                        # request with no body of its own to parse.
+                        req.META = request.META.copy()
+                        req.META.pop('CONTENT_LENGTH', None)
+                        req.META.pop('CONTENT_TYPE', None)
 
                         list_method = cls.as_view({'get': 'list'})(req, *args, **kwargs)
                     else:

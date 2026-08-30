@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-21 21:47+0000\n"
-"PO-Revision-Date: 2026-08-21 21:50\n"
+"POT-Creation-Date: 2026-08-27 05:02+0000\n"
+"PO-Revision-Date: 2026-08-27 05:05\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
@@ -117,7 +117,7 @@ msgstr "غير صالح عشري قيمة"
 #: build/serializers.py:591 build/serializers.py:1775 company/models.py:828
 #: order/models.py:2154
 #: report/templates/report/inventree_build_order_report.html:172
-#: stock/models.py:3780 stock/models.py:3906 stock/serializers.py:753
+#: stock/models.py:3785 stock/models.py:3911 stock/serializers.py:753
 #: stock/serializers.py:935 stock/serializers.py:1114 stock/serializers.py:1280
 #: stock/serializers.py:1664 stock/serializers.py:1753
 #: stock/serializers.py:1962
@@ -289,7 +289,7 @@ msgstr "غير صالح choice"
 msgid "Name"
 msgstr "الاسم"
 
-#: InvenTree/models.py:1105 build/models.py:273 common/models.py:180
+#: InvenTree/models.py:1105 build/models.py:274 common/models.py:180
 #: common/models.py:2459 common/models.py:2600 common/models.py:2777
 #: company/models.py:563 company/models.py:819 order/models.py:508
 #: order/models.py:2199 part/models.py:1142 report/models.py:228
@@ -595,7 +595,7 @@ msgstr "غير صالح عملة رمز"
 msgid "Order Status"
 msgstr "حالة الطلب"
 
-#: build/api.py:83 build/models.py:285
+#: build/api.py:83 build/models.py:286
 msgid "Parent Build"
 msgstr "الأصل إنتاج"
 
@@ -605,7 +605,7 @@ msgstr "الأصل إنتاج"
 msgid "Include Variants"
 msgstr "تضمين متغيرات"
 
-#: build/api.py:103 build/api.py:490 build/api.py:1084 build/models.py:291
+#: build/api.py:103 build/api.py:490 build/api.py:1084 build/models.py:292
 #: build/serializers.py:1200 build/serializers.py:1376
 #: build/serializers.py:1469 company/models.py:1038 company/serializers.py:473
 #: order/api.py:325 order/api.py:329 order/api.py:1009 order/api.py:1342
@@ -742,7 +742,7 @@ msgstr "طلب متبقي"
 msgid "Allocated"
 msgstr "مخصص"
 
-#: build/api.py:530 build/models.py:2213 build/serializers.py:1429
+#: build/api.py:530 build/models.py:2225 build/serializers.py:1429
 msgid "Consumed"
 msgstr "مستهلك"
 
@@ -763,7 +763,7 @@ msgstr "قيد الطلب"
 msgid "Build not found"
 msgstr "إنتاج غير تم العثور"
 
-#: build/api.py:1107 build/models.py:128 order/models.py:2364
+#: build/api.py:1107 build/models.py:129 order/models.py:2364
 #: report/templates/report/inventree_build_order_report.html:105
 #: stock/serializers.py:98 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
@@ -792,43 +792,43 @@ msgstr "مخرج"
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr "تصفية حسب مخرج عنصر المخزون ID. استخدام 'null' إلى find غير مثبت إنتاج عناصر."
 
-#: build/models.py:129 users/ruleset.py:34
+#: build/models.py:130 users/ruleset.py:48
 msgid "Build Orders"
 msgstr "أوامر الإنتاج"
 
-#: build/models.py:189
+#: build/models.py:190
 msgid "Assembly BOM has not been validated"
 msgstr "تجميع BOM لديه غير تم تم التحقق"
 
-#: build/models.py:196
+#: build/models.py:197
 msgid "Build order cannot be created for an inactive part"
 msgstr "أمر الإنتاج لا يمكن يكون تم الإنشاء لـ غير نشط صنف"
 
-#: build/models.py:203
+#: build/models.py:204
 msgid "Build order cannot be created for an unlocked part"
 msgstr "أمر الإنتاج لا يمكن يكون تم الإنشاء لـ غير مقفل صنف"
 
-#: build/models.py:221
+#: build/models.py:222
 msgid "Build orders can only be externally fulfilled for purchaseable parts"
 msgstr "أوامر الإنتاج يمكن فقط يكون externally fulfilled لـ قابل للشراء أصناف"
 
-#: build/models.py:228 order/models.py:422
+#: build/models.py:229 order/models.py:422
 msgid "Responsible user or group must be specified"
 msgstr "يجب أن يكون مسؤول مستخدم أو مجموعة محدد"
 
-#: build/models.py:233
+#: build/models.py:234
 msgid "Build order part cannot be changed"
 msgstr "أمر الإنتاج صنف لا يمكن يكون تم التغيير"
 
-#: build/models.py:238 order/models.py:440
+#: build/models.py:239 order/models.py:440
 msgid "Target date must be after start date"
 msgstr "يجب أن يكون تاريخ هدف تاريخ بعد بدء"
 
-#: build/models.py:266
+#: build/models.py:267
 msgid "Build Order Reference"
 msgstr "أمر الإنتاج مرجع"
 
-#: build/models.py:267 build/serializers.py:1407 order/models.py:721
+#: build/models.py:268 build/serializers.py:1407 order/models.py:721
 #: order/models.py:1440 order/models.py:2147 order/models.py:3294
 #: order/models.py:3736 part/models.py:4033
 #: report/templates/report/inventree_bill_of_materials_report.html:139
@@ -839,187 +839,187 @@ msgstr "أمر الإنتاج مرجع"
 msgid "Reference"
 msgstr "المرجع"
 
-#: build/models.py:276
+#: build/models.py:277
 msgid "Brief description of the build (optional)"
 msgstr "Brief وصف لـ ال إنتاج (اختياري)"
 
-#: build/models.py:286
+#: build/models.py:287
 msgid "Build Order to which this build is allocated"
 msgstr "أمر الإنتاج إلى الذي هذا إنتاج هو مخصص"
 
-#: build/models.py:295
+#: build/models.py:296
 msgid "Select part to build"
 msgstr "تحديد صنف إلى إنتاج"
 
-#: build/models.py:300
+#: build/models.py:301
 msgid "Sales Order Reference"
 msgstr "طلب البيع مرجع"
 
-#: build/models.py:305
+#: build/models.py:306
 msgid "Sales Order to which this build is allocated"
 msgstr "طلب البيع إلى الذي هذا إنتاج هو مخصص"
 
-#: build/models.py:310 build/serializers.py:1061 order/models.py:3756
+#: build/models.py:311 build/serializers.py:1061 order/models.py:3756
 #: order/serializers.py:2033
 msgid "Source Location"
 msgstr "المصدر موقع"
 
-#: build/models.py:316
+#: build/models.py:317
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
 msgstr "تحديد موقع إلى take مخزون من لـ هذا إنتاج (ترك فارغ إلى take من أي موقع المخزون)"
 
-#: build/models.py:322
+#: build/models.py:323
 msgid "External Build"
 msgstr "خارجي إنتاج"
 
-#: build/models.py:323
+#: build/models.py:324
 msgid "This build order is fulfilled externally"
 msgstr "هذا أمر الإنتاج هو fulfilled externally"
 
-#: build/models.py:328 order/models.py:3766
+#: build/models.py:329 order/models.py:3766
 msgid "Destination Location"
 msgstr "الوجهة موقع"
 
-#: build/models.py:333
+#: build/models.py:334
 msgid "Select location where the completed items will be stored"
 msgstr "تحديد موقع حيث ال مكتمل عناصر سوف يكون مخزن"
 
-#: build/models.py:337
+#: build/models.py:338
 msgid "Build Quantity"
 msgstr "كمية إنتاج"
 
-#: build/models.py:340
+#: build/models.py:341
 msgid "Number of stock items to build"
 msgstr "عدد عناصر المخزون إلى إنتاج"
 
-#: build/models.py:344
+#: build/models.py:345
 msgid "Completed items"
 msgstr "مكتمل عناصر"
 
-#: build/models.py:346
+#: build/models.py:347
 msgid "Number of stock items which have been completed"
 msgstr "عدد عناصر المخزون الذي لديه تم مكتمل"
 
-#: build/models.py:350
+#: build/models.py:351
 msgid "Build Status"
 msgstr "حالة إنتاج"
 
-#: build/models.py:355
+#: build/models.py:356
 msgid "Build status code"
 msgstr "إنتاج حالة رمز"
 
-#: build/models.py:364 build/serializers.py:399 order/serializers.py:883
+#: build/models.py:365 build/serializers.py:399 order/serializers.py:883
 #: stock/models.py:1239 stock/serializers.py:90 stock/serializers.py:1920
 msgid "Batch Code"
 msgstr "رمز الدفعة"
 
-#: build/models.py:368 build/serializers.py:400
+#: build/models.py:369 build/serializers.py:400
 msgid "Batch code for this build output"
 msgstr "رمز الدفعة لـ هذا مخرجات الإنتاج"
 
-#: build/models.py:372 order/models.py:545 order/serializers.py:164
+#: build/models.py:373 order/models.py:545 order/serializers.py:164
 #: part/models.py:1362 stock/models.py:1320
 msgid "Creation Date"
 msgstr "تاريخ الإنشاء"
 
-#: build/models.py:378
+#: build/models.py:379
 msgid "Build start date"
 msgstr "تاريخ إنتاج بدء"
 
-#: build/models.py:379
+#: build/models.py:380
 msgid "Scheduled start date for this build order"
 msgstr "مجدول بدء تاريخ لـ هذا أمر الإنتاج"
 
-#: build/models.py:385
+#: build/models.py:386
 msgid "Target completion date"
 msgstr "تاريخ هدف إكمال"
 
-#: build/models.py:387
+#: build/models.py:388
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "التاريخ المستهدف لـ إنتاج إكمال. إنتاج سوف يكون متأخر بعد هذا تاريخ."
 
-#: build/models.py:392 order/models.py:769 order/models.py:3333
+#: build/models.py:393 order/models.py:769 order/models.py:3333
 #: order/models.py:3785
 msgid "Completion Date"
 msgstr "تاريخ الإكمال"
 
-#: build/models.py:400
+#: build/models.py:401
 msgid "completed by"
 msgstr "مكتمل حسب"
 
-#: build/models.py:409
+#: build/models.py:410
 msgid "Issued by"
 msgstr "مصروف حسب"
 
-#: build/models.py:410
+#: build/models.py:411
 msgid "User who issued this build order"
 msgstr "مستخدم من مصروف هذا أمر الإنتاج"
 
-#: build/models.py:427 common/models.py:195 order/api.py:196
+#: build/models.py:428 common/models.py:195 order/api.py:196
 #: order/models.py:577 part/models.py:1379
 #: report/templates/report/inventree_build_order_report.html:158
 msgid "Responsible"
 msgstr "مسؤول"
 
-#: build/models.py:428
+#: build/models.py:429
 msgid "User or group responsible for this build order"
 msgstr "مستخدم أو مجموعة مسؤول لـ هذا أمر الإنتاج"
 
-#: build/models.py:433 stock/models.py:1232
+#: build/models.py:434 stock/models.py:1232
 msgid "External Link"
 msgstr "خارجي رابط"
 
-#: build/models.py:435 common/models.py:2148 part/models.py:1194
+#: build/models.py:436 common/models.py:2148 part/models.py:1194
 #: stock/models.py:1234
 msgid "Link to external URL"
 msgstr "رابط إلى خارجي URL"
 
-#: build/models.py:440
+#: build/models.py:441
 msgid "Build Priority"
 msgstr "إنتاج Priority"
 
-#: build/models.py:443
+#: build/models.py:444
 msgid "Priority of this build order"
 msgstr "Priority لـ هذا أمر الإنتاج"
 
-#: build/models.py:451 common/models.py:159 common/models.py:173
+#: build/models.py:452 common/models.py:159 common/models.py:173
 #: order/api.py:182 order/models.py:517 order/models.py:2179
 msgid "Project Code"
 msgstr "مشروع رمز"
 
-#: build/models.py:452
+#: build/models.py:453
 msgid "Project code for this build order"
 msgstr "مشروع رمز لـ هذا أمر الإنتاج"
 
-#: build/models.py:989
+#: build/models.py:997
 msgid "Cannot complete build order with open child builds"
 msgstr "لا يمكن مكتمل أمر الإنتاج مع فتح فرعي builds"
 
-#: build/models.py:994
+#: build/models.py:1002
 msgid "Cannot complete build order with incomplete outputs"
 msgstr "لا يمكن مكتمل أمر الإنتاج مع غير مكتمل مخرجات"
 
-#: build/models.py:1131
+#: build/models.py:1143
 msgid "Serial numbers must be provided for trackable parts"
 msgstr "يجب أن يكون الأرقام التسلسلية مقدم لـ قابل للتتبع أصناف"
 
-#: build/models.py:1223 build/models.py:1309
+#: build/models.py:1235 build/models.py:1321
 msgid "No build output specified"
 msgstr "لا مخرجات الإنتاج محدد"
 
-#: build/models.py:1226
+#: build/models.py:1238
 msgid "Build output is already completed"
 msgstr "مخرجات الإنتاج هو بالفعل مكتمل"
 
-#: build/models.py:1229 build/models.py:1318 build/models.py:1396
+#: build/models.py:1241 build/models.py:1330 build/models.py:1408
 msgid "Build output does not match Build Order"
 msgstr "مخرجات الإنتاج يقوم غير مطابقة أمر الإنتاج"
 
-#: build/models.py:1315 build/models.py:1393
+#: build/models.py:1327 build/models.py:1405
 msgid "Build output has already been completed"
 msgstr ""
 
-#: build/models.py:1325 build/models.py:1426 build/serializers.py:321
+#: build/models.py:1337 build/models.py:1438 build/serializers.py:321
 #: build/serializers.py:375 build/serializers.py:918 build/serializers.py:1726
 #: order/models.py:819 order/serializers.py:643 order/serializers.py:878
 #: part/models.py:3831 stock/models.py:1079 stock/models.py:1504
@@ -1029,43 +1029,43 @@ msgstr ""
 msgid "Quantity must be greater than zero"
 msgstr "يجب أن يكون الكمية أكبر من صفر"
 
-#: build/models.py:1329 build/models.py:1431 build/serializers.py:326
+#: build/models.py:1341 build/models.py:1443 build/serializers.py:326
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "كمية كمية لا يمكن يكون أكبر من ال مخرج"
 
-#: build/models.py:1405
+#: build/models.py:1417
 msgid "Build output has not passed all required tests"
 msgstr "مخرجات الإنتاج لديه غير نجح الكل مطلوب اختبارات"
 
-#: build/models.py:1413
+#: build/models.py:1425
 msgid "Allocated stock items are still in production"
 msgstr "مخصص عناصر المخزون هي ما زال في الإنتاج"
 
-#: build/models.py:1420
+#: build/models.py:1432
 msgid "Cannot partially complete a build output with allocated items"
 msgstr "لا يمكن partially مكتمل مخرجات الإنتاج مع مخصص عناصر"
 
-#: build/models.py:1603 order/models.py:4208 order/serializers.py:1997
+#: build/models.py:1615 order/models.py:4208 order/serializers.py:1997
 #: order/serializers.py:2848 stock/models.py:1494 stock/models.py:1898
 #: stock/models.py:2121 stock/models.py:2444 stock/models.py:2738
 msgid "Stock item no longer exists"
 msgstr ""
 
-#: build/models.py:1621 build/serializers.py:966 order/serializers.py:1775
+#: build/models.py:1633 build/serializers.py:966 order/serializers.py:1775
 #: order/serializers.py:2804
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "متاح كمية ({q}) exceeded"
 
-#: build/models.py:2167
+#: build/models.py:2179
 msgid "Build Order Line Item"
 msgstr "أمر الإنتاج بند"
 
-#: build/models.py:2192
+#: build/models.py:2204
 msgid "Build object"
 msgstr "إنتاج كائن"
 
-#: build/models.py:2204 build/models.py:2484 build/serializers.py:307
+#: build/models.py:2216 build/models.py:2496 build/serializers.py:307
 #: build/serializers.py:360 build/serializers.py:1428 common/models.py:1379
 #: order/models.py:2110 order/models.py:3185 order/models.py:4175
 #: order/serializers.py:1884 order/serializers.py:2388
@@ -1089,40 +1089,40 @@ msgstr "إنتاج كائن"
 msgid "Quantity"
 msgstr "الكمية"
 
-#: build/models.py:2205
+#: build/models.py:2217
 msgid "Required quantity for build order"
 msgstr "مطلوب كمية لـ أمر الإنتاج"
 
-#: build/models.py:2214
+#: build/models.py:2226
 msgid "Quantity of consumed stock"
 msgstr "كمية مستهلك مخزون"
 
-#: build/models.py:2315
+#: build/models.py:2327
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "إنتاج عنصر يجب تحديد مخرجات الإنتاج، بصفته master صنف هو معلّم بصفته قابل للتتبع"
 
-#: build/models.py:2378 build/serializers.py:949
+#: build/models.py:2390 build/serializers.py:949
 msgid "Selected stock item does not match BOM line"
 msgstr "محدد عنصر المخزون يقوم غير مطابقة BOM سطر"
 
-#: build/models.py:2397
+#: build/models.py:2409
 msgid "Allocated quantity must be greater than zero"
 msgstr "يجب أن يكون كمية مخصص أكبر من صفر"
 
-#: build/models.py:2403
+#: build/models.py:2415
 msgid "Quantity must be 1 for serialized stock"
 msgstr "يجب أن يكون الكمية 1 لـ مسلسل مخزون"
 
-#: build/models.py:2413
+#: build/models.py:2425
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "مخصص كمية ({q}) يجب غير تجاوز متاح مخزون كمية ({a})"
 
-#: build/models.py:2430 order/models.py:3134 order/models.py:4139
+#: build/models.py:2442 order/models.py:3134 order/models.py:4139
 msgid "Stock item is over-allocated"
 msgstr "عنصر المخزون هو over-allocated"
 
-#: build/models.py:2474 build/serializers.py:901 build/serializers.py:1217
+#: build/models.py:2486 build/serializers.py:901 build/serializers.py:1217
 #: order/serializers.py:1712 order/serializers.py:1733
 #: order/serializers.py:2750 order/serializers.py:2771
 #: report/templates/report/inventree_sales_order_shipment_report.html:29
@@ -1131,19 +1131,19 @@ msgstr "عنصر المخزون هو over-allocated"
 msgid "Stock Item"
 msgstr "عنصر مخزون"
 
-#: build/models.py:2475
+#: build/models.py:2487
 msgid "Source stock item"
 msgstr "المصدر عنصر المخزون"
 
-#: build/models.py:2485
+#: build/models.py:2497
 msgid "Stock quantity to allocate to build"
 msgstr "مخزون كمية إلى تخصيص إلى إنتاج"
 
-#: build/models.py:2494
+#: build/models.py:2506
 msgid "Install into"
 msgstr "تثبيت إلى"
 
-#: build/models.py:2495
+#: build/models.py:2507
 msgid "Destination stock item"
 msgstr "الوجهة عنصر المخزون"
 
@@ -1543,56 +1543,56 @@ msgstr "نسخ إنتاج سطر تخصيص"
 msgid "At least one item or line must be provided"
 msgstr "يجب أن يكون عند أقل واحد عنصر أو سطر مقدم"
 
-#: build/status_codes.py:11 generic/states/tests.py:21
-#: generic/states/tests.py:131 order/status_codes.py:12
-#: order/status_codes.py:44 order/status_codes.py:77 order/status_codes.py:103
-#: order/status_codes.py:125
+#: build/status_codes.py:19 generic/states/tests.py:21
+#: generic/states/tests.py:131 order/status_codes.py:21
+#: order/status_codes.py:64 order/status_codes.py:100 order/status_codes.py:131
+#: order/status_codes.py:150
 msgid "Pending"
 msgstr "قيد الانتظار"
 
-#: build/status_codes.py:12
+#: build/status_codes.py:20
 msgid "Production"
 msgstr "الإنتاج"
 
-#: build/status_codes.py:13 order/status_codes.py:14 order/status_codes.py:51
-#: order/status_codes.py:82 order/status_codes.py:127
+#: build/status_codes.py:21 order/status_codes.py:23 order/status_codes.py:67
+#: order/status_codes.py:102 order/status_codes.py:152
 msgid "On Hold"
 msgstr "على تعليق"
 
-#: build/status_codes.py:14 order/status_codes.py:16 order/status_codes.py:53
-#: order/status_codes.py:85 order/status_codes.py:129
+#: build/status_codes.py:22 order/status_codes.py:25 order/status_codes.py:69
+#: order/status_codes.py:104 order/status_codes.py:154
 msgid "Cancelled"
 msgstr "ملغى"
 
-#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:693
-#: importer/status_codes.py:27 order/status_codes.py:15
-#: order/status_codes.py:52 order/status_codes.py:84 order/status_codes.py:128
+#: build/status_codes.py:23 generic/states/tests.py:23 importer/models.py:693
+#: importer/status_codes.py:23 order/status_codes.py:24
+#: order/status_codes.py:68 order/status_codes.py:103 order/status_codes.py:153
 msgid "Complete"
 msgstr "مكتمل"
 
-#: build/tasks.py:350
+#: build/tasks.py:370
 #, python-brace-format
 msgid "Build order {build} has been completed"
 msgstr "أمر الإنتاج {build} لديه تم مكتمل"
 
-#: build/tasks.py:356
+#: build/tasks.py:376
 msgid "A build order has been completed"
 msgstr "أمر الإنتاج لديه تم مكتمل"
 
-#: build/tasks.py:487
+#: build/tasks.py:507
 msgid "Stock required for build order"
 msgstr "مخزون مطلوب لـ أمر الإنتاج"
 
-#: build/tasks.py:497
+#: build/tasks.py:517
 #, python-brace-format
 msgid "Build order {build} requires additional stock"
 msgstr "أمر الإنتاج {build} يتطلب additional مخزون"
 
-#: build/tasks.py:521
+#: build/tasks.py:541
 msgid "Overdue Build Order"
 msgstr "متأخر أمر الإنتاج"
 
-#: build/tasks.py:526
+#: build/tasks.py:546
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
 msgstr "أمر الإنتاج {bo} هو الآن متأخر"
@@ -1609,19 +1609,23 @@ msgstr "هو رابط"
 msgid "Is File"
 msgstr "هو ملف"
 
-#: common/api.py:828
+#: common/api.py:856
 msgid "User does not have permission to delete these attachments"
 msgstr "مستخدم يقوم غير لديه صلاحية إلى حذف هذه مرفقات"
 
-#: common/api.py:841
+#: common/api.py:869
+msgid "User does not have permission to view this attachment"
+msgstr ""
+
+#: common/api.py:880
 msgid "User does not have permission to edit this attachment"
 msgstr "مستخدم يقوم غير لديه صلاحية إلى تعديل هذا مرفق"
 
-#: common/api.py:867
+#: common/api.py:906
 msgid "User does not have permission to delete this attachment"
 msgstr "مستخدم يقوم غير لديه صلاحية إلى حذف هذا مرفق"
 
-#: common/api.py:1244 common/serializers.py:1017 common/serializers.py:1065
+#: common/api.py:1283 common/serializers.py:1017 common/serializers.py:1065
 msgid "Selection list is locked"
 msgstr "اختيار قائمة هو مقفل"
 
@@ -1904,7 +1908,7 @@ msgstr ""
 msgid "Unit definition"
 msgstr "وحدة definition"
 
-#: common/models.py:1975 common/models.py:2130 stock/models.py:3901
+#: common/models.py:1975 common/models.py:2130 stock/models.py:3906
 #: stock/serializers.py:263
 msgid "Attachment"
 msgstr "المرفق"
@@ -2022,7 +2026,7 @@ msgid "State logical key that is equal to this custom state in business logic"
 msgstr "حالة منطقي مفتاح ذلك هو equal إلى هذا مخصص حالة في business logic"
 
 #: common/models.py:2321 common/models.py:2588 machine/serializers.py:27
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:3893
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:3898
 msgid "Value"
 msgstr "القيمة"
 
@@ -2381,7 +2385,7 @@ msgid "Response data from the barcode scan"
 msgstr "استجابة بيانات من ال مسح الباركود"
 
 #: common/models.py:3158 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:3887
+#: stock/models.py:3892
 msgid "Result"
 msgstr "نتيجة"
 
@@ -4739,8 +4743,12 @@ msgstr ""
 msgid "Values"
 msgstr "قيم"
 
-#: generic/states/tests.py:22 order/status_codes.py:13
+#: generic/states/tests.py:22 order/status_codes.py:22
 msgid "Placed"
+msgstr ""
+
+#: generic/states/transition.py:194
+msgid "Failed to offload background task for this transition"
 msgstr ""
 
 #: generic/states/validators.py:21
@@ -4944,11 +4952,11 @@ msgstr "صف يحتوي غير صالح بيانات"
 msgid "Row has already been completed"
 msgstr "صف لديه بالفعل تم مكتمل"
 
-#: importer/status_codes.py:13
+#: importer/status_codes.py:19
 msgid "Initializing"
 msgstr ""
 
-#: importer/status_codes.py:18
+#: importer/status_codes.py:20
 msgid "Mapping Columns"
 msgstr "Mapping أعمدة"
 
@@ -4956,7 +4964,7 @@ msgstr "Mapping أعمدة"
 msgid "Importing Data"
 msgstr "Importing بيانات"
 
-#: importer/status_codes.py:24
+#: importer/status_codes.py:22
 msgid "Processing Data"
 msgstr "Processing بيانات"
 
@@ -5612,7 +5620,7 @@ msgstr "سعر البيع"
 msgid "Unit sale price"
 msgstr "وحدة سعر البيع"
 
-#: order/models.py:2519 order/status_codes.py:50
+#: order/models.py:2519 order/status_codes.py:66
 msgid "Shipped"
 msgstr "مشحون"
 
@@ -6140,39 +6148,39 @@ msgstr "السماح طلب إلى مكتمل مع غير مكتمل تخصيص�
 msgid "Order has incomplete allocations"
 msgstr "طلب لديه غير مكتمل تخصيصات"
 
-#: order/status_codes.py:17 order/status_codes.py:54 stock/status_codes.py:16
+#: order/status_codes.py:26 order/status_codes.py:70 stock/status_codes.py:27
 msgid "Lost"
 msgstr ""
 
-#: order/status_codes.py:18 order/status_codes.py:55 stock/status_codes.py:24
+#: order/status_codes.py:27 order/status_codes.py:71 stock/status_codes.py:29
 msgid "Returned"
 msgstr "مرتجع"
 
-#: order/status_codes.py:47 order/status_codes.py:80
+#: order/status_codes.py:65 order/status_codes.py:101
 msgid "In Progress"
 msgstr "في Progress"
 
-#: order/status_codes.py:106
+#: order/status_codes.py:132
 msgid "Return"
 msgstr "إرجاع"
 
-#: order/status_codes.py:109
+#: order/status_codes.py:133
 msgid "Repair"
 msgstr ""
 
-#: order/status_codes.py:112
+#: order/status_codes.py:134
 msgid "Replace"
 msgstr ""
 
-#: order/status_codes.py:115
+#: order/status_codes.py:135
 msgid "Refund"
 msgstr ""
 
-#: order/status_codes.py:118
+#: order/status_codes.py:136
 msgid "Reject"
 msgstr "رفض"
 
-#: order/status_codes.py:126
+#: order/status_codes.py:151
 #: report/templates/report/inventree_build_order_report.html:121
 msgid "Issued"
 msgstr "مصروف"
@@ -6337,7 +6345,7 @@ msgstr ""
 msgid "Part Category"
 msgstr "فئة الأصناف"
 
-#: part/models.py:95 users/ruleset.py:29
+#: part/models.py:95 users/ruleset.py:43
 msgid "Part Categories"
 msgstr "فئات الأصناف"
 
@@ -6390,7 +6398,7 @@ msgstr "افتراضي قيمة"
 msgid "Default Parameter Value"
 msgstr "افتراضي معلمة قيمة"
 
-#: part/models.py:531 part/serializers.py:135 users/ruleset.py:30
+#: part/models.py:531 part/serializers.py:135 users/ruleset.py:44
 msgid "Parts"
 msgstr "الأصناف"
 
@@ -6791,7 +6799,7 @@ msgid "Total available stock at time of stocktake"
 msgstr "إجمالي متاح مخزون عند وقت لـ جرد المخزون"
 
 #: part/models.py:3388 report/templates/report/inventree_test_report.html:106
-#: stock/models.py:3933
+#: stock/models.py:3938
 msgid "Date"
 msgstr "التاريخ"
 
@@ -7164,7 +7172,7 @@ msgid "Outstanding quantity of this part scheduled to be built"
 msgstr "متبقي كمية لـ هذا صنف مجدول إلى يكون built"
 
 #: part/serializers.py:856 stock/serializers.py:1264 stock/serializers.py:1480
-#: users/ruleset.py:33
+#: users/ruleset.py:47
 msgid "Stock Items"
 msgstr "عناصر المخزون"
 
@@ -9151,7 +9159,7 @@ msgstr "افتراضي أيقونة لـ الكل مواقع ذلك لديه ل�
 msgid "Stock Location"
 msgstr "موقع مخزون"
 
-#: stock/models.py:152 users/ruleset.py:32
+#: stock/models.py:152 users/ruleset.py:46
 msgid "Stock Locations"
 msgstr "مواقع المخزون"
 
@@ -9398,7 +9406,7 @@ msgstr "يجب أن يكون الأرقام التسلسلية مقدم بصفت
 msgid "Quantity does not match serial numbers"
 msgstr "كمية يقوم غير مطابقة الأرقام التسلسلية"
 
-#: stock/models.py:2606 stock/models.py:3851
+#: stock/models.py:2606 stock/models.py:3856
 msgid "Test template does not exist"
 msgstr "اختبار قالب يقوم غير موجود"
 
@@ -9446,67 +9454,67 @@ msgstr "مخزون حالة رموز يجب مطابقة"
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "StockItem لا يمكن يكون moved بصفته هو هو غير في مخزون"
 
-#: stock/models.py:3731
+#: stock/models.py:3736
 msgid "Stock Item Tracking"
 msgstr "عنصر المخزون تتبع"
 
-#: stock/models.py:3781
+#: stock/models.py:3786
 msgid "Entry notes"
 msgstr "سجل ملاحظات"
 
-#: stock/models.py:3821
+#: stock/models.py:3826
 msgid "Stock Item Test Result"
 msgstr "عنصر المخزون نتيجة الاختبار"
 
-#: stock/models.py:3854
+#: stock/models.py:3859
 msgid "Value must be provided for this test"
 msgstr "يجب أن يكون القيمة مقدم لـ هذا اختبار"
 
-#: stock/models.py:3858
+#: stock/models.py:3863
 msgid "Attachment must be uploaded for this test"
 msgstr "يجب أن يكون المرفق تم الرفع لـ هذا اختبار"
 
-#: stock/models.py:3863
+#: stock/models.py:3868
 msgid "Invalid value for this test"
 msgstr "غير صالح قيمة لـ هذا اختبار"
 
-#: stock/models.py:3887
+#: stock/models.py:3892
 msgid "Test result"
 msgstr "نتيجة الاختبار"
 
-#: stock/models.py:3894
+#: stock/models.py:3899
 msgid "Test output value"
 msgstr "اختبار مخرج قيمة"
 
-#: stock/models.py:3902 stock/serializers.py:264
+#: stock/models.py:3907 stock/serializers.py:264
 msgid "Test result attachment"
 msgstr "نتيجة الاختبار مرفق"
 
-#: stock/models.py:3906
+#: stock/models.py:3911
 msgid "Test notes"
 msgstr "اختبار ملاحظات"
 
-#: stock/models.py:3914
+#: stock/models.py:3919
 msgid "Test station"
 msgstr "اختبار station"
 
-#: stock/models.py:3915
+#: stock/models.py:3920
 msgid "The identifier of the test station where the test was performed"
 msgstr "ال معرف لـ ال اختبار station حيث ال اختبار كان performed"
 
-#: stock/models.py:3921
+#: stock/models.py:3926
 msgid "Started"
 msgstr "بدأ"
 
-#: stock/models.py:3922
+#: stock/models.py:3927
 msgid "The timestamp of the test start"
 msgstr "ال طابع زمني لـ ال اختبار بدء"
 
-#: stock/models.py:3928
+#: stock/models.py:3933
 msgid "Finished"
 msgstr ""
 
-#: stock/models.py:3929
+#: stock/models.py:3934
 msgid "The timestamp of the test finish"
 msgstr "ال طابع زمني لـ ال اختبار finish"
 
@@ -9857,147 +9865,147 @@ msgstr "Next الرقم التسلسلي"
 msgid "Previous Serial Number"
 msgstr "Previous الرقم التسلسلي"
 
-#: stock/status_codes.py:11
+#: stock/status_codes.py:22
 msgid "OK"
 msgstr "موافق"
 
-#: stock/status_codes.py:12
+#: stock/status_codes.py:23
 msgid "Attention needed"
 msgstr ""
 
-#: stock/status_codes.py:13
+#: stock/status_codes.py:24
 msgid "Damaged"
 msgstr ""
 
-#: stock/status_codes.py:14
+#: stock/status_codes.py:25
 msgid "Destroyed"
 msgstr ""
 
-#: stock/status_codes.py:15
+#: stock/status_codes.py:26
 msgid "Rejected"
 msgstr "مرفوض"
 
-#: stock/status_codes.py:19
+#: stock/status_codes.py:28
 msgid "Quarantined"
 msgstr ""
 
-#: stock/status_codes.py:44
+#: stock/status_codes.py:95
 msgid "Legacy stock tracking entry"
 msgstr "Legacy مخزون تتبع سجل"
 
-#: stock/status_codes.py:46
+#: stock/status_codes.py:97
 msgid "Stock item created"
 msgstr "عنصر المخزون تم الإنشاء"
 
-#: stock/status_codes.py:49
+#: stock/status_codes.py:100
 msgid "Edited stock item"
 msgstr "تم التحرير عنصر المخزون"
 
-#: stock/status_codes.py:50
+#: stock/status_codes.py:101
 msgid "Assigned serial number"
 msgstr "مسند الرقم التسلسلي"
 
-#: stock/status_codes.py:53
+#: stock/status_codes.py:104
 msgid "Stock counted"
 msgstr "مخزون counted"
 
-#: stock/status_codes.py:54
+#: stock/status_codes.py:105
 msgid "Stock manually added"
 msgstr "مخزون يدويًا تمت الإضافة"
 
-#: stock/status_codes.py:55
+#: stock/status_codes.py:106
 msgid "Stock manually removed"
 msgstr "مخزون يدويًا تمت الإزالة"
 
-#: stock/status_codes.py:56
+#: stock/status_codes.py:107
 msgid "Serialized stock items"
 msgstr "مسلسل عناصر المخزون"
 
-#: stock/status_codes.py:58
+#: stock/status_codes.py:109
 msgid "Returned to stock"
 msgstr "مرتجع إلى مخزون"
 
-#: stock/status_codes.py:61
+#: stock/status_codes.py:112
 msgid "Location changed"
 msgstr "موقع تم التغيير"
 
-#: stock/status_codes.py:62
+#: stock/status_codes.py:113
 msgid "Stock updated"
 msgstr "مخزون تم التحديث"
 
-#: stock/status_codes.py:65
+#: stock/status_codes.py:116
 msgid "Installed into assembly"
 msgstr "مثبت إلى تجميع"
 
-#: stock/status_codes.py:66
+#: stock/status_codes.py:117
 msgid "Removed from assembly"
 msgstr "تمت الإزالة من تجميع"
 
-#: stock/status_codes.py:68
+#: stock/status_codes.py:119
 msgid "Installed component item"
 msgstr "مثبت مكوّن عنصر"
 
-#: stock/status_codes.py:69
+#: stock/status_codes.py:120
 msgid "Removed component item"
 msgstr "تمت الإزالة مكوّن عنصر"
 
-#: stock/status_codes.py:72
+#: stock/status_codes.py:123
 msgid "Split from parent item"
 msgstr "تقسيم من الأصل عنصر"
 
-#: stock/status_codes.py:73
+#: stock/status_codes.py:124
 msgid "Split child item"
 msgstr "تقسيم فرعي عنصر"
 
-#: stock/status_codes.py:76
+#: stock/status_codes.py:127
 msgid "Merged stock items"
 msgstr "Merged عناصر المخزون"
 
-#: stock/status_codes.py:79
+#: stock/status_codes.py:130
 msgid "Disassembled into components"
 msgstr ""
 
-#: stock/status_codes.py:80
+#: stock/status_codes.py:131
 msgid "Created from disassembly"
 msgstr ""
 
-#: stock/status_codes.py:83
+#: stock/status_codes.py:134
 msgid "Converted to variant"
 msgstr "Converted إلى متغير"
 
-#: stock/status_codes.py:86
+#: stock/status_codes.py:137
 msgid "Build order output created"
 msgstr "أمر الإنتاج مخرج تم الإنشاء"
 
-#: stock/status_codes.py:87
+#: stock/status_codes.py:138
 msgid "Build order output completed"
 msgstr "أمر الإنتاج مخرج مكتمل"
 
-#: stock/status_codes.py:88
+#: stock/status_codes.py:139
 msgid "Build order output rejected"
 msgstr "أمر الإنتاج مخرج مرفوض"
 
-#: stock/status_codes.py:89
+#: stock/status_codes.py:140
 msgid "Consumed by build order"
 msgstr "مستهلك حسب أمر الإنتاج"
 
-#: stock/status_codes.py:92
+#: stock/status_codes.py:143
 msgid "Shipped against Sales Order"
 msgstr "مشحون مقابل طلب البيع"
 
-#: stock/status_codes.py:95
+#: stock/status_codes.py:146
 msgid "Received against Purchase Order"
 msgstr "مستلم مقابل طلب الشراء"
 
-#: stock/status_codes.py:98
+#: stock/status_codes.py:149
 msgid "Returned against Return Order"
 msgstr "مرتجع مقابل طلب الإرجاع"
 
-#: stock/status_codes.py:101
+#: stock/status_codes.py:152
 msgid "Sent to customer"
 msgstr "تم الإرسال إلى عميل"
 
-#: stock/status_codes.py:102
+#: stock/status_codes.py:153
 msgid "Returned from customer"
 msgstr "مرتجع من عميل"
 
@@ -10327,27 +10335,27 @@ msgstr "أساسي مجموعة"
 msgid "Primary group for the user"
 msgstr "أساسي مجموعة لـ ال مستخدم"
 
-#: users/ruleset.py:28
+#: users/ruleset.py:42
 msgid "Admin"
 msgstr "مسؤول"
 
-#: users/ruleset.py:31
+#: users/ruleset.py:45
 msgid "Bills of Material"
 msgstr "Bills لـ Material"
 
-#: users/ruleset.py:35
+#: users/ruleset.py:49
 msgid "Purchase Orders"
 msgstr "طلبات الشراء"
 
-#: users/ruleset.py:36
+#: users/ruleset.py:50
 msgid "Sales Orders"
 msgstr "طلبات البيع"
 
-#: users/ruleset.py:37
+#: users/ruleset.py:51
 msgid "Return Orders"
 msgstr "طلبات الإرجاع"
 
-#: users/ruleset.py:38
+#: users/ruleset.py:52
 msgid "Transfer Orders"
 msgstr "طلبات التحويل"
 

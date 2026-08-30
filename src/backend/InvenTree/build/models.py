@@ -50,6 +50,7 @@ from common.models import ProjectCode
 from common.settings import get_global_setting
 from generic.enums import StringEnum
 from generic.states import (
+    DEFERRABLE,
     Deprecations,
     StateTransitionMixin,
     StatusCodeMixin,
@@ -978,7 +979,7 @@ class Build(
     @inventree_transition(
         field=status,
         source=[BuildStatus.PENDING, BuildStatus.PRODUCTION, BuildStatus.ON_HOLD],
-        target=BuildStatus.COMPLETE,
+        target=DEFERRABLE(status, BuildStatus.COMPLETE),
     )
     def complete_build(self, user: User, trim_allocated_stock: bool = False):
         """Transition this Build to COMPLETE status.
@@ -986,6 +987,13 @@ class Build(
         Arguments:
             user: The user who is completing the build
             trim_allocated_stock: If True, trim any allocated stock
+
+        Notes:
+            The actual completion work (consuming allocations, deleting BuildItem
+            records, etc.) is done by build.tasks.complete_build(), which may run
+            inline or genuinely asynchronously on a background worker - see
+            DEFERRABLE for why the target is resolved from offload_task()'s return
+            value rather than being fixed.
         """
         import build.tasks
 
@@ -1002,8 +1010,9 @@ class Build(
                 _('Cannot complete build order with incomplete outputs')
             )
 
-        # Offload background task to complete build allocations
-        InvenTree.tasks.offload_task(
+        # Offload background task to complete build allocations. DEFERRABLE
+        # inspects this return value directly, so it must be returned as-is.
+        return InvenTree.tasks.offload_task(
             build.tasks.complete_build,
             self.pk,
             user.pk if user else None,
@@ -1056,21 +1065,28 @@ class Build(
     @inventree_transition(
         field=status,
         source=[BuildStatus.PENDING, BuildStatus.PRODUCTION, BuildStatus.ON_HOLD],
-        target=BuildStatus.CANCELLED,
+        target=DEFERRABLE(status, BuildStatus.CANCELLED),
     )
     def cancel_build(self, user=None, **kwargs):
         """Transition this Build to CANCELLED status.
 
         Offloads expensive cleanup operations (de-allocating stock, removing
         incomplete outputs) to a background task.
+
+        Notes:
+            See DEFERRABLE - build.tasks.cancel_build() performs the actual
+            cleanup and sets completion_date/completed_by/status itself, once
+            that work is genuinely finished, in case it runs asynchronously.
         """
         import build.tasks
 
         remove_allocated_stock = kwargs.get('remove_allocated_stock', False)
         remove_incomplete_outputs = kwargs.get('remove_incomplete_outputs', False)
 
-        # Offload background task to take care of the expensive operations
-        InvenTree.tasks.offload_task(
+        # Offload background task to take care of the expensive operations.
+        # DEFERRABLE inspects this return value directly, so it must be
+        # returned as-is.
+        return InvenTree.tasks.offload_task(
             build.tasks.cancel_build,
             self.pk,
             user.pk if user else None,
@@ -1078,10 +1094,6 @@ class Build(
             remove_incomplete_outputs=remove_incomplete_outputs,
             group='build',
         )
-
-        # Date of 'completion' is the date the build was cancelled
-        self.completion_date = InvenTree.helpers.current_date()
-        self.completed_by = user
 
     # endregion fsm
 

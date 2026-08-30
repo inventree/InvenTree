@@ -145,6 +145,7 @@ Supported mixin classes are:
 | [UserInterfaceMixin](./mixins/ui.md) | Add custom user interface features |
 | [UrlsMixin](./mixins/urls.md) | Respond to custom URL endpoints |
 | [ValidationMixin](./mixins/validation.md) | Provide custom validation of database models |
+| [WellKnownMixin](./mixins/wellknown.md) | Provide well-known endpoints on the root of an instance |
 
 ## Plugin Concepts
 

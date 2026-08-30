@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-21 21:47+0000\n"
-"PO-Revision-Date: 2026-08-21 21:50\n"
+"POT-Creation-Date: 2026-08-27 05:02+0000\n"
+"PO-Revision-Date: 2026-08-27 05:05\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -117,7 +117,7 @@ msgstr "Ongeldige decimale waarde"
 #: build/serializers.py:591 build/serializers.py:1775 company/models.py:828
 #: order/models.py:2154
 #: report/templates/report/inventree_build_order_report.html:172
-#: stock/models.py:3780 stock/models.py:3906 stock/serializers.py:753
+#: stock/models.py:3785 stock/models.py:3911 stock/serializers.py:753
 #: stock/serializers.py:935 stock/serializers.py:1114 stock/serializers.py:1280
 #: stock/serializers.py:1664 stock/serializers.py:1753
 #: stock/serializers.py:1962
@@ -289,7 +289,7 @@ msgstr "Ongeldige keuze"
 msgid "Name"
 msgstr "Naam"
 
-#: InvenTree/models.py:1105 build/models.py:273 common/models.py:180
+#: InvenTree/models.py:1105 build/models.py:274 common/models.py:180
 #: common/models.py:2459 common/models.py:2600 common/models.py:2777
 #: company/models.py:563 company/models.py:819 order/models.py:508
 #: order/models.py:2199 part/models.py:1142 report/models.py:228
@@ -595,7 +595,7 @@ msgstr "Geen geldige valutacode"
 msgid "Order Status"
 msgstr "Status van bestelling"
 
-#: build/api.py:83 build/models.py:285
+#: build/api.py:83 build/models.py:286
 msgid "Parent Build"
 msgstr "Bovenliggende Productie"
 
@@ -605,7 +605,7 @@ msgstr "Bovenliggende Productie"
 msgid "Include Variants"
 msgstr "Inclusief varianten"
 
-#: build/api.py:103 build/api.py:490 build/api.py:1084 build/models.py:291
+#: build/api.py:103 build/api.py:490 build/api.py:1084 build/models.py:292
 #: build/serializers.py:1200 build/serializers.py:1376
 #: build/serializers.py:1469 company/models.py:1038 company/serializers.py:473
 #: order/api.py:325 order/api.py:329 order/api.py:1009 order/api.py:1342
@@ -742,7 +742,7 @@ msgstr "Openstaande order"
 msgid "Allocated"
 msgstr "Toegewezen"
 
-#: build/api.py:530 build/models.py:2213 build/serializers.py:1429
+#: build/api.py:530 build/models.py:2225 build/serializers.py:1429
 msgid "Consumed"
 msgstr "Verbruikt"
 
@@ -763,7 +763,7 @@ msgstr "In bestelling"
 msgid "Build not found"
 msgstr "Build niet gevonden"
 
-#: build/api.py:1107 build/models.py:128 order/models.py:2364
+#: build/api.py:1107 build/models.py:129 order/models.py:2364
 #: report/templates/report/inventree_build_order_report.html:105
 #: stock/serializers.py:98 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
@@ -792,43 +792,43 @@ msgstr "Uitvoer"
 msgid "Filter by output stock item ID. Use 'null' to find uninstalled build items."
 msgstr "Filter op uitvoer standaard item ID. Gebruik 'null' om niet geïnstalleerde build items te vinden."
 
-#: build/models.py:129 users/ruleset.py:34
+#: build/models.py:130 users/ruleset.py:48
 msgid "Build Orders"
 msgstr "Productieorders"
 
-#: build/models.py:189
+#: build/models.py:190
 msgid "Assembly BOM has not been validated"
 msgstr "Assemblage stuklijst is niet gevalideerd"
 
-#: build/models.py:196
+#: build/models.py:197
 msgid "Build order cannot be created for an inactive part"
 msgstr "Bouw bestelling kan niet worden aangemaakt voor een inactief onderdeel"
 
-#: build/models.py:203
+#: build/models.py:204
 msgid "Build order cannot be created for an unlocked part"
 msgstr "Maken opdracht kan niet worden gemaakt voor een ontgrendeld onderdeel"
 
-#: build/models.py:221
+#: build/models.py:222
 msgid "Build orders can only be externally fulfilled for purchaseable parts"
 msgstr "Bestellingen bouwen kan alleen extern worden vervuld voor aankochte onderdelen"
 
-#: build/models.py:228 order/models.py:422
+#: build/models.py:229 order/models.py:422
 msgid "Responsible user or group must be specified"
 msgstr "Verantwoorde gebruiker of groep moet worden opgegeven"
 
-#: build/models.py:233
+#: build/models.py:234
 msgid "Build order part cannot be changed"
 msgstr "Bouworder onderdeel kan niet worden gewijzigd"
 
-#: build/models.py:238 order/models.py:440
+#: build/models.py:239 order/models.py:440
 msgid "Target date must be after start date"
 msgstr "Doeldatum moet na startdatum zijn"
 
-#: build/models.py:266
+#: build/models.py:267
 msgid "Build Order Reference"
 msgstr "Productieorderreferentie"
 
-#: build/models.py:267 build/serializers.py:1407 order/models.py:721
+#: build/models.py:268 build/serializers.py:1407 order/models.py:721
 #: order/models.py:1440 order/models.py:2147 order/models.py:3294
 #: order/models.py:3736 part/models.py:4033
 #: report/templates/report/inventree_bill_of_materials_report.html:139
@@ -839,187 +839,187 @@ msgstr "Productieorderreferentie"
 msgid "Reference"
 msgstr "Referentie"
 
-#: build/models.py:276
+#: build/models.py:277
 msgid "Brief description of the build (optional)"
 msgstr "Korte beschrijving van de build (optioneel)"
 
-#: build/models.py:286
+#: build/models.py:287
 msgid "Build Order to which this build is allocated"
 msgstr "Productie-opdracht waar dit product aan is toegewezen"
 
-#: build/models.py:295
+#: build/models.py:296
 msgid "Select part to build"
 msgstr "Selecteer onderdeel om te produceren"
 
-#: build/models.py:300
+#: build/models.py:301
 msgid "Sales Order Reference"
 msgstr "Verkooporder Referentie"
 
-#: build/models.py:305
+#: build/models.py:306
 msgid "Sales Order to which this build is allocated"
 msgstr "Productieopdracht waar dit productie aan is toegewezen"
 
-#: build/models.py:310 build/serializers.py:1061 order/models.py:3756
+#: build/models.py:311 build/serializers.py:1061 order/models.py:3756
 #: order/serializers.py:2033
 msgid "Source Location"
 msgstr "Bronlocatie"
 
-#: build/models.py:316
+#: build/models.py:317
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
 msgstr "Selecteer de locatie waar de voorraad van de productie vandaan moet komen (laat leeg om vanaf elke standaard locatie te nemen)"
 
-#: build/models.py:322
+#: build/models.py:323
 msgid "External Build"
 msgstr "Externe bouw"
 
-#: build/models.py:323
+#: build/models.py:324
 msgid "This build order is fulfilled externally"
 msgstr "Deze bouw opdracht is extern uitgevoerd"
 
-#: build/models.py:328 order/models.py:3766
+#: build/models.py:329 order/models.py:3766
 msgid "Destination Location"
 msgstr "Bestemmings Locatie"
 
-#: build/models.py:333
+#: build/models.py:334
 msgid "Select location where the completed items will be stored"
 msgstr "Selecteer locatie waar de voltooide items zullen worden opgeslagen"
 
-#: build/models.py:337
+#: build/models.py:338
 msgid "Build Quantity"
 msgstr "Productiehoeveelheid"
 
-#: build/models.py:340
+#: build/models.py:341
 msgid "Number of stock items to build"
 msgstr "Aantal voorraaditems om te produceren"
 
-#: build/models.py:344
+#: build/models.py:345
 msgid "Completed items"
 msgstr "Voltooide voorraadartikelen"
 
-#: build/models.py:346
+#: build/models.py:347
 msgid "Number of stock items which have been completed"
 msgstr "Aantal voorraadartikelen die zijn voltooid"
 
-#: build/models.py:350
+#: build/models.py:351
 msgid "Build Status"
 msgstr "Productiestatus"
 
-#: build/models.py:355
+#: build/models.py:356
 msgid "Build status code"
 msgstr "Productiestatuscode"
 
-#: build/models.py:364 build/serializers.py:399 order/serializers.py:883
+#: build/models.py:365 build/serializers.py:399 order/serializers.py:883
 #: stock/models.py:1239 stock/serializers.py:90 stock/serializers.py:1920
 msgid "Batch Code"
 msgstr "Batchcode"
 
-#: build/models.py:368 build/serializers.py:400
+#: build/models.py:369 build/serializers.py:400
 msgid "Batch code for this build output"
 msgstr "Batchcode voor deze productieuitvoer"
 
-#: build/models.py:372 order/models.py:545 order/serializers.py:164
+#: build/models.py:373 order/models.py:545 order/serializers.py:164
 #: part/models.py:1362 stock/models.py:1320
 msgid "Creation Date"
 msgstr "Aanmaakdatum"
 
-#: build/models.py:378
+#: build/models.py:379
 msgid "Build start date"
 msgstr "Bouw start datum"
 
-#: build/models.py:379
+#: build/models.py:380
 msgid "Scheduled start date for this build order"
 msgstr "Geplande startdatum voor deze bestelling"
 
-#: build/models.py:385
+#: build/models.py:386
 msgid "Target completion date"
 msgstr "Verwachte opleveringsdatum"
 
-#: build/models.py:387
+#: build/models.py:388
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Doeldatum voor productie voltooiing. Productie zal achterstallig zijn na deze datum."
 
-#: build/models.py:392 order/models.py:769 order/models.py:3333
+#: build/models.py:393 order/models.py:769 order/models.py:3333
 #: order/models.py:3785
 msgid "Completion Date"
 msgstr "Opleveringsdatum"
 
-#: build/models.py:400
+#: build/models.py:401
 msgid "completed by"
 msgstr "voltooid door"
 
-#: build/models.py:409
+#: build/models.py:410
 msgid "Issued by"
 msgstr "Uitgegeven door"
 
-#: build/models.py:410
+#: build/models.py:411
 msgid "User who issued this build order"
 msgstr "Gebruiker die de productieorder heeft gegeven"
 
-#: build/models.py:427 common/models.py:195 order/api.py:196
+#: build/models.py:428 common/models.py:195 order/api.py:196
 #: order/models.py:577 part/models.py:1379
 #: report/templates/report/inventree_build_order_report.html:158
 msgid "Responsible"
 msgstr "Verantwoordelijke"
 
-#: build/models.py:428
+#: build/models.py:429
 msgid "User or group responsible for this build order"
 msgstr "Gebruiker of groep verantwoordelijk voor deze bouwopdracht"
 
-#: build/models.py:433 stock/models.py:1232
+#: build/models.py:434 stock/models.py:1232
 msgid "External Link"
 msgstr "Externe Link"
 
-#: build/models.py:435 common/models.py:2148 part/models.py:1194
+#: build/models.py:436 common/models.py:2148 part/models.py:1194
 #: stock/models.py:1234
 msgid "Link to external URL"
 msgstr "Link naar externe URL"
 
-#: build/models.py:440
+#: build/models.py:441
 msgid "Build Priority"
 msgstr "Bouw prioriteit"
 
-#: build/models.py:443
+#: build/models.py:444
 msgid "Priority of this build order"
 msgstr "Prioriteit van deze bouwopdracht"
 
-#: build/models.py:451 common/models.py:159 common/models.py:173
+#: build/models.py:452 common/models.py:159 common/models.py:173
 #: order/api.py:182 order/models.py:517 order/models.py:2179
 msgid "Project Code"
 msgstr "Project code"
 
-#: build/models.py:452
+#: build/models.py:453
 msgid "Project code for this build order"
 msgstr "Project code voor deze build order"
 
-#: build/models.py:989
+#: build/models.py:997
 msgid "Cannot complete build order with open child builds"
 msgstr "Kan de bouwopdracht niet voltooien zolang onderliggende bouwopdrachten nog openstaan"
 
-#: build/models.py:994
+#: build/models.py:1002
 msgid "Cannot complete build order with incomplete outputs"
 msgstr "Kan de bouwopdracht niet voltooien zolang de output onvolledig is"
 
-#: build/models.py:1131
+#: build/models.py:1143
 msgid "Serial numbers must be provided for trackable parts"
 msgstr "Serienummers moeten worden opgegeven voor traceerbare onderdelen"
 
-#: build/models.py:1223 build/models.py:1309
+#: build/models.py:1235 build/models.py:1321
 msgid "No build output specified"
 msgstr "Geen productie uitvoer opgegeven"
 
-#: build/models.py:1226
+#: build/models.py:1238
 msgid "Build output is already completed"
 msgstr "Productie uitvoer is al voltooid"
 
-#: build/models.py:1229 build/models.py:1318 build/models.py:1396
+#: build/models.py:1241 build/models.py:1330 build/models.py:1408
 msgid "Build output does not match Build Order"
 msgstr "Productuitvoer komt niet overeen met de Productieorder"
 
-#: build/models.py:1315 build/models.py:1393
+#: build/models.py:1327 build/models.py:1405
 msgid "Build output has already been completed"
 msgstr ""
 
-#: build/models.py:1325 build/models.py:1426 build/serializers.py:321
+#: build/models.py:1337 build/models.py:1438 build/serializers.py:321
 #: build/serializers.py:375 build/serializers.py:918 build/serializers.py:1726
 #: order/models.py:819 order/serializers.py:643 order/serializers.py:878
 #: part/models.py:3831 stock/models.py:1079 stock/models.py:1504
@@ -1029,43 +1029,43 @@ msgstr ""
 msgid "Quantity must be greater than zero"
 msgstr "Hoeveelheid moet groter zijn dan nul"
 
-#: build/models.py:1329 build/models.py:1431 build/serializers.py:326
+#: build/models.py:1341 build/models.py:1443 build/serializers.py:326
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "Hoeveelheid kan niet groter zijn dan aantal"
 
-#: build/models.py:1405
+#: build/models.py:1417
 msgid "Build output has not passed all required tests"
 msgstr "Build output heeft niet alle vereiste tests doorstaan"
 
-#: build/models.py:1413
+#: build/models.py:1425
 msgid "Allocated stock items are still in production"
 msgstr "Voorraadproducten zijn nog in productie"
 
-#: build/models.py:1420
+#: build/models.py:1432
 msgid "Cannot partially complete a build output with allocated items"
 msgstr "Kan een build uitvoer niet gedeeltelijk voltooien met de toegewezen items"
 
-#: build/models.py:1603 order/models.py:4208 order/serializers.py:1997
+#: build/models.py:1615 order/models.py:4208 order/serializers.py:1997
 #: order/serializers.py:2848 stock/models.py:1494 stock/models.py:1898
 #: stock/models.py:2121 stock/models.py:2444 stock/models.py:2738
 msgid "Stock item no longer exists"
 msgstr ""
 
-#: build/models.py:1621 build/serializers.py:966 order/serializers.py:1775
+#: build/models.py:1633 build/serializers.py:966 order/serializers.py:1775
 #: order/serializers.py:2804
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "Beschikbare hoeveelheid ({q}) overschreden"
 
-#: build/models.py:2167
+#: build/models.py:2179
 msgid "Build Order Line Item"
 msgstr "Bouw order regel item"
 
-#: build/models.py:2192
+#: build/models.py:2204
 msgid "Build object"
 msgstr "Bouw object"
 
-#: build/models.py:2204 build/models.py:2484 build/serializers.py:307
+#: build/models.py:2216 build/models.py:2496 build/serializers.py:307
 #: build/serializers.py:360 build/serializers.py:1428 common/models.py:1379
 #: order/models.py:2110 order/models.py:3185 order/models.py:4175
 #: order/serializers.py:1884 order/serializers.py:2388
@@ -1089,40 +1089,40 @@ msgstr "Bouw object"
 msgid "Quantity"
 msgstr "Hoeveelheid"
 
-#: build/models.py:2205
+#: build/models.py:2217
 msgid "Required quantity for build order"
 msgstr "Vereiste hoeveelheid voor bouwopdracht"
 
-#: build/models.py:2214
+#: build/models.py:2226
 msgid "Quantity of consumed stock"
 msgstr "Aantal van verbruikte voorraad"
 
-#: build/models.py:2315
+#: build/models.py:2327
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Productieartikel moet een productieuitvoer specificeren, omdat het hoofdonderdeel gemarkeerd is als traceerbaar"
 
-#: build/models.py:2378 build/serializers.py:949
+#: build/models.py:2390 build/serializers.py:949
 msgid "Selected stock item does not match BOM line"
 msgstr "Geselecteerde voorraadartikelen komen niet overeen met de BOM-regel"
 
-#: build/models.py:2397
+#: build/models.py:2409
 msgid "Allocated quantity must be greater than zero"
 msgstr "Toegewezen hoeveelheid moet groter zijn dan nul"
 
-#: build/models.py:2403
+#: build/models.py:2415
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Hoeveelheid moet 1 zijn voor geserialiseerde voorraad"
 
-#: build/models.py:2413
+#: build/models.py:2425
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Toegewezen hoeveelheid ({q}) mag de beschikbare voorraad ({a}) niet overschrijden"
 
-#: build/models.py:2430 order/models.py:3134 order/models.py:4139
+#: build/models.py:2442 order/models.py:3134 order/models.py:4139
 msgid "Stock item is over-allocated"
 msgstr "Voorraad item is te veel toegewezen"
 
-#: build/models.py:2474 build/serializers.py:901 build/serializers.py:1217
+#: build/models.py:2486 build/serializers.py:901 build/serializers.py:1217
 #: order/serializers.py:1712 order/serializers.py:1733
 #: order/serializers.py:2750 order/serializers.py:2771
 #: report/templates/report/inventree_sales_order_shipment_report.html:29
@@ -1131,19 +1131,19 @@ msgstr "Voorraad item is te veel toegewezen"
 msgid "Stock Item"
 msgstr "Voorraadartikel"
 
-#: build/models.py:2475
+#: build/models.py:2487
 msgid "Source stock item"
 msgstr "Bron voorraadartikel"
 
-#: build/models.py:2485
+#: build/models.py:2497
 msgid "Stock quantity to allocate to build"
 msgstr "Voorraad hoeveelheid toe te wijzen aan productie"
 
-#: build/models.py:2494
+#: build/models.py:2506
 msgid "Install into"
 msgstr "Installeren in"
 
-#: build/models.py:2495
+#: build/models.py:2507
 msgid "Destination stock item"
 msgstr "Bestemming voorraadartikel"
 
@@ -1543,56 +1543,56 @@ msgstr "Dupliceer build line toewijzing"
 msgid "At least one item or line must be provided"
 msgstr "Ten minste één item of regel moet worden opgegeven"
 
-#: build/status_codes.py:11 generic/states/tests.py:21
-#: generic/states/tests.py:131 order/status_codes.py:12
-#: order/status_codes.py:44 order/status_codes.py:77 order/status_codes.py:103
-#: order/status_codes.py:125
+#: build/status_codes.py:19 generic/states/tests.py:21
+#: generic/states/tests.py:131 order/status_codes.py:21
+#: order/status_codes.py:64 order/status_codes.py:100 order/status_codes.py:131
+#: order/status_codes.py:150
 msgid "Pending"
 msgstr "Bezig"
 
-#: build/status_codes.py:12
+#: build/status_codes.py:20
 msgid "Production"
 msgstr "Productie"
 
-#: build/status_codes.py:13 order/status_codes.py:14 order/status_codes.py:51
-#: order/status_codes.py:82 order/status_codes.py:127
+#: build/status_codes.py:21 order/status_codes.py:23 order/status_codes.py:67
+#: order/status_codes.py:102 order/status_codes.py:152
 msgid "On Hold"
 msgstr "In de wacht"
 
-#: build/status_codes.py:14 order/status_codes.py:16 order/status_codes.py:53
-#: order/status_codes.py:85 order/status_codes.py:129
+#: build/status_codes.py:22 order/status_codes.py:25 order/status_codes.py:69
+#: order/status_codes.py:104 order/status_codes.py:154
 msgid "Cancelled"
 msgstr "Geannuleerd"
 
-#: build/status_codes.py:15 generic/states/tests.py:23 importer/models.py:693
-#: importer/status_codes.py:27 order/status_codes.py:15
-#: order/status_codes.py:52 order/status_codes.py:84 order/status_codes.py:128
+#: build/status_codes.py:23 generic/states/tests.py:23 importer/models.py:693
+#: importer/status_codes.py:23 order/status_codes.py:24
+#: order/status_codes.py:68 order/status_codes.py:103 order/status_codes.py:153
 msgid "Complete"
 msgstr "Voltooid"
 
-#: build/tasks.py:350
+#: build/tasks.py:370
 #, python-brace-format
 msgid "Build order {build} has been completed"
 msgstr "Productieorder {build} is voltooid"
 
-#: build/tasks.py:356
+#: build/tasks.py:376
 msgid "A build order has been completed"
 msgstr "Een productieorder is voltooid"
 
-#: build/tasks.py:487
+#: build/tasks.py:507
 msgid "Stock required for build order"
 msgstr "Voorraad vereist voor productieorder"
 
-#: build/tasks.py:497
+#: build/tasks.py:517
 #, python-brace-format
 msgid "Build order {build} requires additional stock"
 msgstr "Bouw order {build} vereist extra voorraad"
 
-#: build/tasks.py:521
+#: build/tasks.py:541
 msgid "Overdue Build Order"
 msgstr "Achterstallige Productieorder"
 
-#: build/tasks.py:526
+#: build/tasks.py:546
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
 msgstr "Productieorder {bo} is nu achterstallig"
@@ -1609,19 +1609,23 @@ msgstr "Is koppeling"
 msgid "Is File"
 msgstr "Is een bestand"
 
-#: common/api.py:828
+#: common/api.py:856
 msgid "User does not have permission to delete these attachments"
 msgstr "Gebruiker heeft geen toestemming om deze bijlagen te verwijderen"
 
-#: common/api.py:841
+#: common/api.py:869
+msgid "User does not have permission to view this attachment"
+msgstr ""
+
+#: common/api.py:880
 msgid "User does not have permission to edit this attachment"
 msgstr "Gebruiker heeft geen toestemming om deze bijlage te bewerken."
 
-#: common/api.py:867
+#: common/api.py:906
 msgid "User does not have permission to delete this attachment"
 msgstr "Gebruiker heeft geen toestemming om deze bijlage te verwijderen."
 
-#: common/api.py:1244 common/serializers.py:1017 common/serializers.py:1065
+#: common/api.py:1283 common/serializers.py:1017 common/serializers.py:1065
 msgid "Selection list is locked"
 msgstr "Lijst met selecties is vergrendeld"
 
@@ -1904,7 +1908,7 @@ msgstr "Definitie"
 msgid "Unit definition"
 msgstr "Definitie van eenheid"
 
-#: common/models.py:1975 common/models.py:2130 stock/models.py:3901
+#: common/models.py:1975 common/models.py:2130 stock/models.py:3906
 #: stock/serializers.py:263
 msgid "Attachment"
 msgstr "Bijlage"
@@ -2022,7 +2026,7 @@ msgid "State logical key that is equal to this custom state in business logic"
 msgstr "Staat logische sleutel die gelijk is aan deze staat in zakelijke logica"
 
 #: common/models.py:2321 common/models.py:2588 machine/serializers.py:27
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:3893
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:3898
 msgid "Value"
 msgstr "Waarde"
 
@@ -2381,7 +2385,7 @@ msgid "Response data from the barcode scan"
 msgstr "Reactiegegevens van de barcode scan"
 
 #: common/models.py:3158 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:3887
+#: stock/models.py:3892
 msgid "Result"
 msgstr "Resultaat"
 
@@ -4739,9 +4743,13 @@ msgstr "Klasse"
 msgid "Values"
 msgstr "Waardes"
 
-#: generic/states/tests.py:22 order/status_codes.py:13
+#: generic/states/tests.py:22 order/status_codes.py:22
 msgid "Placed"
 msgstr "Geplaatst"
+
+#: generic/states/transition.py:194
+msgid "Failed to offload background task for this transition"
+msgstr ""
 
 #: generic/states/validators.py:21
 msgid "Invalid status code"
@@ -4944,11 +4952,11 @@ msgstr "Regel bevat ongeldige gegevens"
 msgid "Row has already been completed"
 msgstr "Regel is al voltooid"
 
-#: importer/status_codes.py:13
+#: importer/status_codes.py:19
 msgid "Initializing"
 msgstr "Initialiseren"
 
-#: importer/status_codes.py:18
+#: importer/status_codes.py:20
 msgid "Mapping Columns"
 msgstr "Toewijzing van kolommen"
 
@@ -4956,7 +4964,7 @@ msgstr "Toewijzing van kolommen"
 msgid "Importing Data"
 msgstr "Gegevens importeren"
 
-#: importer/status_codes.py:24
+#: importer/status_codes.py:22
 msgid "Processing Data"
 msgstr "Gegevens verwerken"
 
@@ -5612,7 +5620,7 @@ msgstr "Verkoopprijs"
 msgid "Unit sale price"
 msgstr "Prijs per stuk"
 
-#: order/models.py:2519 order/status_codes.py:50
+#: order/models.py:2519 order/status_codes.py:66
 msgid "Shipped"
 msgstr "Verzonden"
 
@@ -6141,39 +6149,39 @@ msgstr ""
 msgid "Order has incomplete allocations"
 msgstr ""
 
-#: order/status_codes.py:17 order/status_codes.py:54 stock/status_codes.py:16
+#: order/status_codes.py:26 order/status_codes.py:70 stock/status_codes.py:27
 msgid "Lost"
 msgstr "Kwijt"
 
-#: order/status_codes.py:18 order/status_codes.py:55 stock/status_codes.py:24
+#: order/status_codes.py:27 order/status_codes.py:71 stock/status_codes.py:29
 msgid "Returned"
 msgstr "Retour"
 
-#: order/status_codes.py:47 order/status_codes.py:80
+#: order/status_codes.py:65 order/status_codes.py:101
 msgid "In Progress"
 msgstr "In Behandeling"
 
-#: order/status_codes.py:106
+#: order/status_codes.py:132
 msgid "Return"
 msgstr "Retour"
 
-#: order/status_codes.py:109
+#: order/status_codes.py:133
 msgid "Repair"
 msgstr "Herstel"
 
-#: order/status_codes.py:112
+#: order/status_codes.py:134
 msgid "Replace"
 msgstr "Vervangen"
 
-#: order/status_codes.py:115
+#: order/status_codes.py:135
 msgid "Refund"
 msgstr "Restitutie"
 
-#: order/status_codes.py:118
+#: order/status_codes.py:136
 msgid "Reject"
 msgstr "Afwijzen"
 
-#: order/status_codes.py:126
+#: order/status_codes.py:151
 #: report/templates/report/inventree_build_order_report.html:121
 msgid "Issued"
 msgstr "Uitgegeven"
@@ -6338,7 +6346,7 @@ msgstr "Gebruik"
 msgid "Part Category"
 msgstr "Onderdeel Categorie"
 
-#: part/models.py:95 users/ruleset.py:29
+#: part/models.py:95 users/ruleset.py:43
 msgid "Part Categories"
 msgstr "Onderdeel Categorieën"
 
@@ -6391,7 +6399,7 @@ msgstr "Standaard waarde"
 msgid "Default Parameter Value"
 msgstr "Standaard Parameter Waarde"
 
-#: part/models.py:531 part/serializers.py:135 users/ruleset.py:30
+#: part/models.py:531 part/serializers.py:135 users/ruleset.py:44
 msgid "Parts"
 msgstr "Onderdelen"
 
@@ -6792,7 +6800,7 @@ msgid "Total available stock at time of stocktake"
 msgstr "Totale voorraad op het moment van voorraadcontrole"
 
 #: part/models.py:3388 report/templates/report/inventree_test_report.html:106
-#: stock/models.py:3933
+#: stock/models.py:3938
 msgid "Date"
 msgstr "Datum"
 
@@ -7165,7 +7173,7 @@ msgid "Outstanding quantity of this part scheduled to be built"
 msgstr "Er zal een onuitputtelijke hoeveelheid van dit deel worden gebouwd"
 
 #: part/serializers.py:856 stock/serializers.py:1264 stock/serializers.py:1480
-#: users/ruleset.py:33
+#: users/ruleset.py:47
 msgid "Stock Items"
 msgstr "Voorraadartikelen"
 
@@ -9152,7 +9160,7 @@ msgstr "Standaardpictogram voor alle locaties waarvoor geen pictogram is ingeste
 msgid "Stock Location"
 msgstr "Voorraadlocatie"
 
-#: stock/models.py:152 users/ruleset.py:32
+#: stock/models.py:152 users/ruleset.py:46
 msgid "Stock Locations"
 msgstr "Voorraadlocaties"
 
@@ -9399,7 +9407,7 @@ msgstr "Serienummers moeten als lijst worden opgegeven"
 msgid "Quantity does not match serial numbers"
 msgstr "Hoeveelheid komt niet overeen met serienummers"
 
-#: stock/models.py:2606 stock/models.py:3851
+#: stock/models.py:2606 stock/models.py:3856
 msgid "Test template does not exist"
 msgstr "Testsjabloon bestaat niet"
 
@@ -9447,67 +9455,67 @@ msgstr "De voorraad statuscodes moeten overeenkomen"
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Voorraadartikel kan niet worden verplaatst omdat het niet op voorraad is"
 
-#: stock/models.py:3731
+#: stock/models.py:3736
 msgid "Stock Item Tracking"
 msgstr "Voorraad item volgen"
 
-#: stock/models.py:3781
+#: stock/models.py:3786
 msgid "Entry notes"
 msgstr "Item notities"
 
-#: stock/models.py:3821
+#: stock/models.py:3826
 msgid "Stock Item Test Result"
 msgstr "Resultaat voorraad test resultaten"
 
-#: stock/models.py:3854
+#: stock/models.py:3859
 msgid "Value must be provided for this test"
 msgstr "Waarde moet voor deze test worden opgegeven"
 
-#: stock/models.py:3858
+#: stock/models.py:3863
 msgid "Attachment must be uploaded for this test"
 msgstr "Bijlage moet worden geüpload voor deze test"
 
-#: stock/models.py:3863
+#: stock/models.py:3868
 msgid "Invalid value for this test"
 msgstr "Ongeldige waarde voor deze test"
 
-#: stock/models.py:3887
+#: stock/models.py:3892
 msgid "Test result"
 msgstr "Test resultaat"
 
-#: stock/models.py:3894
+#: stock/models.py:3899
 msgid "Test output value"
 msgstr "Test uitvoer waarde"
 
-#: stock/models.py:3902 stock/serializers.py:264
+#: stock/models.py:3907 stock/serializers.py:264
 msgid "Test result attachment"
 msgstr "Test resultaat bijlage"
 
-#: stock/models.py:3906
+#: stock/models.py:3911
 msgid "Test notes"
 msgstr "Test notities"
 
-#: stock/models.py:3914
+#: stock/models.py:3919
 msgid "Test station"
 msgstr "Test station"
 
-#: stock/models.py:3915
+#: stock/models.py:3920
 msgid "The identifier of the test station where the test was performed"
 msgstr "De identificatie van het teststation waar de test werd uitgevoerd"
 
-#: stock/models.py:3921
+#: stock/models.py:3926
 msgid "Started"
 msgstr "Gestart"
 
-#: stock/models.py:3922
+#: stock/models.py:3927
 msgid "The timestamp of the test start"
 msgstr "Het tijdstip van de start test"
 
-#: stock/models.py:3928
+#: stock/models.py:3933
 msgid "Finished"
 msgstr "Afgerond"
 
-#: stock/models.py:3929
+#: stock/models.py:3934
 msgid "The timestamp of the test finish"
 msgstr "Het tijdstip van de afgeronde test"
 
@@ -9858,147 +9866,147 @@ msgstr "Volgend serienummer"
 msgid "Previous Serial Number"
 msgstr "Vorig serienummer"
 
-#: stock/status_codes.py:11
+#: stock/status_codes.py:22
 msgid "OK"
 msgstr "Ok"
 
-#: stock/status_codes.py:12
+#: stock/status_codes.py:23
 msgid "Attention needed"
 msgstr "Aandacht nodig"
 
-#: stock/status_codes.py:13
+#: stock/status_codes.py:24
 msgid "Damaged"
 msgstr "Beschadigd"
 
-#: stock/status_codes.py:14
+#: stock/status_codes.py:25
 msgid "Destroyed"
 msgstr "Verwoest"
 
-#: stock/status_codes.py:15
+#: stock/status_codes.py:26
 msgid "Rejected"
 msgstr "Afgewezen"
 
-#: stock/status_codes.py:19
+#: stock/status_codes.py:28
 msgid "Quarantined"
 msgstr "In quarantaine geplaatst"
 
-#: stock/status_codes.py:44
+#: stock/status_codes.py:95
 msgid "Legacy stock tracking entry"
 msgstr "Verouderde volgcode"
 
-#: stock/status_codes.py:46
+#: stock/status_codes.py:97
 msgid "Stock item created"
 msgstr "Voorraaditem gemaakt"
 
-#: stock/status_codes.py:49
+#: stock/status_codes.py:100
 msgid "Edited stock item"
 msgstr "Bewerken voorraadartikel"
 
-#: stock/status_codes.py:50
+#: stock/status_codes.py:101
 msgid "Assigned serial number"
 msgstr "Serienummer toegewezen"
 
-#: stock/status_codes.py:53
+#: stock/status_codes.py:104
 msgid "Stock counted"
 msgstr "Voorraad geteld"
 
-#: stock/status_codes.py:54
+#: stock/status_codes.py:105
 msgid "Stock manually added"
 msgstr "Voorraad handmatig toegevoegd"
 
-#: stock/status_codes.py:55
+#: stock/status_codes.py:106
 msgid "Stock manually removed"
 msgstr "Voorraad handmatig verwijderd"
 
-#: stock/status_codes.py:56
+#: stock/status_codes.py:107
 msgid "Serialized stock items"
 msgstr "Geserialiseerde voorraadartikelen"
 
-#: stock/status_codes.py:58
+#: stock/status_codes.py:109
 msgid "Returned to stock"
 msgstr "Terug naar voorraad"
 
-#: stock/status_codes.py:61
+#: stock/status_codes.py:112
 msgid "Location changed"
 msgstr "Locatie veranderd"
 
-#: stock/status_codes.py:62
+#: stock/status_codes.py:113
 msgid "Stock updated"
 msgstr "Voorraad bijgewerkt"
 
-#: stock/status_codes.py:65
+#: stock/status_codes.py:116
 msgid "Installed into assembly"
 msgstr "Gemonteerd"
 
-#: stock/status_codes.py:66
+#: stock/status_codes.py:117
 msgid "Removed from assembly"
 msgstr "Gedemonteerd"
 
-#: stock/status_codes.py:68
+#: stock/status_codes.py:119
 msgid "Installed component item"
 msgstr "Geïnstalleerd componentartikel"
 
-#: stock/status_codes.py:69
+#: stock/status_codes.py:120
 msgid "Removed component item"
 msgstr "Verwijderd componentartikel"
 
-#: stock/status_codes.py:72
+#: stock/status_codes.py:123
 msgid "Split from parent item"
 msgstr "Splits van bovenliggend item"
 
-#: stock/status_codes.py:73
+#: stock/status_codes.py:124
 msgid "Split child item"
 msgstr "Splits onderliggende item"
 
-#: stock/status_codes.py:76
+#: stock/status_codes.py:127
 msgid "Merged stock items"
 msgstr "Samengevoegde voorraadartikelen"
 
-#: stock/status_codes.py:79
+#: stock/status_codes.py:130
 msgid "Disassembled into components"
 msgstr ""
 
-#: stock/status_codes.py:80
+#: stock/status_codes.py:131
 msgid "Created from disassembly"
 msgstr ""
 
-#: stock/status_codes.py:83
+#: stock/status_codes.py:134
 msgid "Converted to variant"
 msgstr "Geconverteerd naar variant"
 
-#: stock/status_codes.py:86
+#: stock/status_codes.py:137
 msgid "Build order output created"
 msgstr "Product aangemaakt"
 
-#: stock/status_codes.py:87
+#: stock/status_codes.py:138
 msgid "Build order output completed"
 msgstr "Product voltooid"
 
-#: stock/status_codes.py:88
+#: stock/status_codes.py:139
 msgid "Build order output rejected"
 msgstr "Build order uitvoer afgewezen"
 
-#: stock/status_codes.py:89
+#: stock/status_codes.py:140
 msgid "Consumed by build order"
 msgstr "Verbruikt door productieorder"
 
-#: stock/status_codes.py:92
+#: stock/status_codes.py:143
 msgid "Shipped against Sales Order"
 msgstr "Verzonden onder verkooporder"
 
-#: stock/status_codes.py:95
+#: stock/status_codes.py:146
 msgid "Received against Purchase Order"
 msgstr "Ontvangen onder verkooporder"
 
-#: stock/status_codes.py:98
+#: stock/status_codes.py:149
 msgid "Returned against Return Order"
 msgstr "Geretourneerd onder retourorder"
 
-#: stock/status_codes.py:101
+#: stock/status_codes.py:152
 msgid "Sent to customer"
 msgstr "Naar klant verzonden"
 
-#: stock/status_codes.py:102
+#: stock/status_codes.py:153
 msgid "Returned from customer"
 msgstr "Geretourneerd door klant"
 
@@ -10328,27 +10336,27 @@ msgstr "Primaire groep"
 msgid "Primary group for the user"
 msgstr "Primaire groep van de gebruiker"
 
-#: users/ruleset.py:28
+#: users/ruleset.py:42
 msgid "Admin"
 msgstr "Administrator"
 
-#: users/ruleset.py:31
+#: users/ruleset.py:45
 msgid "Bills of Material"
 msgstr ""
 
-#: users/ruleset.py:35
+#: users/ruleset.py:49
 msgid "Purchase Orders"
 msgstr "Inkooporders"
 
-#: users/ruleset.py:36
+#: users/ruleset.py:50
 msgid "Sales Orders"
 msgstr "Verkooporders"
 
-#: users/ruleset.py:37
+#: users/ruleset.py:51
 msgid "Return Orders"
 msgstr "Retour orders"
 
-#: users/ruleset.py:38
+#: users/ruleset.py:52
 msgid "Transfer Orders"
 msgstr ""
 
