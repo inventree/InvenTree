@@ -374,6 +374,7 @@ export default function StockDetail() {
 
   const duplicateStockItemFields = useStockFields({
     create: true,
+    locationId: stockitem.location,
     modalId: 'duplicate-stock-item'
   });
 
