@@ -325,6 +325,19 @@ class RepairOrderTransitionTests(InvenTreeTestCase):
 
     roles = ['build.change', 'build.add', 'build.delete']
 
+    @classmethod
+    def setUpTestData(cls):
+        """Create an assembly Part for repair orders to be scoped to."""
+        super().setUpTestData()
+
+        cls.assembly = Part.objects.create(
+            name='Repair Test Assembly',
+            description='A test assembly part for repair orders',
+            assembly=True,
+            active=True,
+            locked=False,
+        )
+
     def test_repair_order_lifecycle(self):
         """Walk a RepairOrder through a full lifecycle.
 
@@ -332,7 +345,9 @@ class RepairOrderTransitionTests(InvenTreeTestCase):
         Exercises issue_repair, hold_repair, and complete_repair.
         """
         ro = RepairOrder.objects.create(
-            reference='RO-0001', description='Lifecycle test repair order'
+            reference='RO-0001',
+            description='Lifecycle test repair order',
+            part=self.assembly,
         )
         self.assertEqual(ro.status, RepairOrderStatus.PENDING.value)
 
@@ -363,7 +378,9 @@ class RepairOrderTransitionTests(InvenTreeTestCase):
         Exercises issue_repair and cancel_repair.
         """
         ro = RepairOrder.objects.create(
-            reference='RO-0002', description='Cancel lifecycle test repair order'
+            reference='RO-0002',
+            description='Cancel lifecycle test repair order',
+            part=self.assembly,
         )
         self.assertEqual(ro.status, RepairOrderStatus.PENDING.value)
 
@@ -635,7 +652,7 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         """The 'outstanding' filter should only match open repair orders."""
         # self.ro is PENDING (open) by default
         completed = RepairOrder.objects.create(
-            reference='RO-1001', description='Completed order'
+            reference='RO-1001', description='Completed order', part=self.part
         )
         completed.complete_repair()
 
@@ -659,12 +676,14 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
             reference='RO-1002',
             description='Overdue order',
             target_date=today - timedelta(days=5),
+            part=self.part,
         )
 
         not_overdue = RepairOrder.objects.create(
             reference='RO-1003',
             description='Not overdue order',
             target_date=today + timedelta(days=5),
+            part=self.part,
         )
 
         url = reverse('api-repair-order-list')
@@ -695,12 +714,16 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         today = datetime.now().date()
 
         first = RepairOrder.objects.create(
-            reference='RO-1004', description='Earlier', target_date=today
+            reference='RO-1004',
+            description='Earlier',
+            target_date=today,
+            part=self.part,
         )
         second = RepairOrder.objects.create(
             reference='RO-1005',
             description='Later',
             target_date=today + timedelta(days=10),
+            part=self.part,
         )
 
         url = reverse('api-repair-order-list')
@@ -718,6 +741,7 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
             description='Bad dates',
             start_date=today + timedelta(days=10),
             target_date=today,
+            part=self.part,
         )
 
         with self.assertRaises(ValidationError):
@@ -732,10 +756,13 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         today = datetime.now().date()
 
         with_start = RepairOrder.objects.create(
-            reference='RO-1007', description='Has a start date', start_date=today
+            reference='RO-1007',
+            description='Has a start date',
+            start_date=today,
+            part=self.part,
         )
         without_start = RepairOrder.objects.create(
-            reference='RO-1008', description='No start date'
+            reference='RO-1008', description='No start date', part=self.part
         )
 
         url = reverse('api-repair-order-list')
@@ -770,6 +797,7 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
             reference='RO-1009',
             description='Starts in the future',
             start_date=today + timedelta(days=30),
+            part=self.part,
         )
 
         url = reverse('api-repair-order-list')
@@ -793,6 +821,20 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         self.assertIn(self.ro.pk, pks)
 
     # ── Part field coverage ─────────────────────────────────────────
+
+    def test_part_is_required(self):
+        """'part' must be provided - both via the API and at the model level."""
+        url = reverse('api-repair-order-list')
+
+        response = self.post(
+            url, {'description': 'Missing part'}, expected_code=400
+        ).data
+        self.assertIn('part', response)
+
+        with self.assertRaises(ValidationError):
+            RepairOrder(
+                reference='RO-8888', description='No part assigned'
+            ).full_clean()
 
     def test_repair_order_part_functionality(self):
         """Verify the part FK and part_detail serializer field work end-to-end.
@@ -835,14 +877,6 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         pks = {item['pk'] for item in response.data}
         self.assertIn(self.ro.pk, pks)
         self.assertIn(new_pk, pks)
-
-        # A repair order without a part should NOT appear in this filter
-        no_part_ro = RepairOrder.objects.create(
-            reference='RO-8888', description='No part assigned'
-        )
-        response = self.get(url, {'part': self.part.pk}, expected_code=200)
-        pks = {item['pk'] for item in response.data}
-        self.assertNotIn(no_part_ro.pk, pks)
 
         # ── 4. Search by part name hits part__name search field ────
         response = self.get(url, {'search': self.part.name}, expected_code=200)
@@ -887,7 +921,7 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         from build.models import RepairOrderLineItem
 
         other_ro = RepairOrder.objects.create(
-            reference='RO-7100', description='A different repair order'
+            reference='RO-7100', description='A different repair order', part=self.part
         )
 
         line_mine = RepairOrderLineItem.objects.create(
@@ -1192,6 +1226,8 @@ class RepairOrderAdminTest(AdminTestCase):
 
     def test_admin(self):
         """Test the admin URL for RepairOrder."""
+        part = Part.objects.filter(assembly=True).first()
         self.helper(
-            model=RepairOrder, model_kwargs={'description': 'Admin test repair order'}
+            model=RepairOrder,
+            model_kwargs={'description': 'Admin test repair order', 'part': part},
         )

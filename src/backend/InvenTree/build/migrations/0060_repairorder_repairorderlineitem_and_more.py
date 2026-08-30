@@ -208,11 +208,9 @@ class Migration(migrations.Migration):
                 (
                     "part",
                     models.ForeignKey(
-                        blank=True,
                         help_text="Part associated with this repair order",
                         limit_choices_to={"assembly": True},
-                        null=True,
-                        on_delete=django.db.models.deletion.SET_NULL,
+                        on_delete=django.db.models.deletion.CASCADE,
                         related_name="repair_orders",
                         to="part.part",
                         verbose_name="Part",

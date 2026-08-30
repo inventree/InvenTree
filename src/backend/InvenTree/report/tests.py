@@ -736,9 +736,12 @@ class TestReportTest(PrintTestMixins, ReportTest):
         customer = Company.objects.filter(is_customer=True).first()
         assert customer
 
+        part = Part.objects.filter(assembly=True).first()
+        assert part
+
         for idx in range(2):
             RepairOrder.objects.create(
-                customer=customer, description=f'Test repair order {idx}'
+                customer=customer, description=f'Test repair order {idx}', part=part
             )
 
         self.run_print_test(RepairOrder, 'repairorder', label=False)

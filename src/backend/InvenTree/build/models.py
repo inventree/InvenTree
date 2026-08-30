@@ -2684,9 +2684,7 @@ class RepairOrder(
 
     part = models.ForeignKey(
         'part.Part',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+        on_delete=models.CASCADE,
         related_name='repair_orders',
         limit_choices_to={'assembly': True},
         verbose_name=_('Part'),

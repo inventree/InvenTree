@@ -401,9 +401,12 @@ class SearchTests(InvenTreeAPITestCase):
     def test_repairorder_results(self):
         """Test that RepairOrder results are included in the global search."""
         from build.models import RepairOrder
+        from part.models import Part
 
         RepairOrder.objects.create(
-            reference='RO-9999', description='Global search test repair order'
+            reference='RO-9999',
+            description='Global search test repair order',
+            part=Part.objects.filter(assembly=True).first(),
         )
 
         # No role assigned - should return a permission error
