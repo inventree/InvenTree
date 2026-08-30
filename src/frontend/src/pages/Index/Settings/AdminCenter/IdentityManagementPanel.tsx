@@ -5,6 +5,7 @@ import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
+  Accordion,
   Alert,
   Badge,
   Button,
@@ -26,7 +27,7 @@ import { useState } from 'react';
 import { api, queryClient } from '../../../../App';
 import { showApiErrorMessage } from '../../../../functions/notifications';
 
-export default function ScimManagementPanel() {
+function ScimManagementPanel() {
   const [secret, setSecret] = useState<string>('');
   const [
     secretModalOpened,
@@ -189,5 +190,20 @@ export default function ScimManagementPanel() {
         </Trans>
       </Text>
     </Stack>
+  );
+}
+
+export default function IdentityManagementPanel() {
+  return (
+    <Accordion variant='separated' defaultValue='scim' chevronPosition='left'>
+      <Accordion.Item value='scim'>
+        <Accordion.Control>
+          <StylishText size='lg'>{t`SCIM Provisioning`}</StylishText>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <ScimManagementPanel />
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
   );
 }

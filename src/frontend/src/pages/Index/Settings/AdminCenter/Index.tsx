@@ -73,8 +73,8 @@ const MachineManagementPanel = Loadable(
   lazy(() => import('./MachineManagementPanel'))
 );
 
-const ScimManagementPanel = Loadable(
-  lazy(() => import('./ScimManagementPanel'))
+const IdentityManagementPanel = Loadable(
+  lazy(() => import('./IdentityManagementPanel'))
 );
 
 const ErrorReportTable = Loadable(
@@ -272,7 +272,7 @@ export default function AdminCenter() {
         name: 'identity',
         label: t`Identity`,
         icon: <IconShieldLock />,
-        content: <ScimManagementPanel />,
+        content: <IdentityManagementPanel />,
         hidden: !user.hasViewRole(UserRoles.admin)
       }
     ];
