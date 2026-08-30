@@ -849,6 +849,37 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         pks = {item['pk'] for item in response.data}
         self.assertIn(self.ro.pk, pks)
 
+    def test_part_filter_include_variants(self):
+        """The 'part' filter should optionally include repair orders for variant parts."""
+        from part.models import Part
+
+        template = Part.objects.get(name='Chair Template')
+        variant = Part.objects.filter(variant_of=template).first()
+        assert variant
+
+        variant_ro = RepairOrder.objects.create(
+            reference='RO-1010', description='Repair for a variant', part=variant
+        )
+
+        url = reverse('api-repair-order-list')
+
+        # Without 'include_variants', filtering by the template should NOT match
+        response = self.get(url, {'part': template.pk}, expected_code=200)
+        pks = {item['pk'] for item in response.data}
+        self.assertNotIn(variant_ro.pk, pks)
+
+        # With 'include_variants', it should
+        response = self.get(
+            url, {'part': template.pk, 'include_variants': True}, expected_code=200
+        )
+        pks = {item['pk'] for item in response.data}
+        self.assertIn(variant_ro.pk, pks)
+
+        # Filtering directly by the variant's own pk should always match, regardless
+        response = self.get(url, {'part': variant.pk}, expected_code=200)
+        pks = {item['pk'] for item in response.data}
+        self.assertIn(variant_ro.pk, pks)
+
     # ── Allocation workflow ──────────────────────────────────────────
 
     def test_line_item_list_filters_by_order(self):

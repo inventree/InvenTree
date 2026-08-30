@@ -49,8 +49,8 @@ export function RepairOrderTable({
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return RepairOrderFilters({ includeDateFilters: true });
-  }, []);
+    return RepairOrderFilters({ partId: partId, includeDateFilters: true });
+  }, [partId]);
 
   const tableColumns = useMemo(() => {
     return [

@@ -7,6 +7,7 @@ import {
   CreatedBeforeFilter,
   HasStartDateFilter,
   HasTargetDateFilter,
+  IncludeVariantsFilter,
   MaxDateFilter,
   MinDateFilter,
   OrderStatusFilter,
@@ -19,8 +20,10 @@ import {
 } from '../../components/tables/Filter';
 
 export default function RepairOrderFilters({
+  partId,
   includeDateFilters = true
 }: {
+  partId?: number;
   includeDateFilters?: boolean;
 }): TableFilter[] {
   const filters: TableFilter[] = [
@@ -28,6 +31,10 @@ export default function RepairOrderFilters({
     OutstandingFilter(),
     OverdueFilter()
   ];
+
+  if (!!partId) {
+    filters.push(IncludeVariantsFilter());
+  }
 
   const dateFilters: TableFilter[] = [
     MinDateFilter(),
