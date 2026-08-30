@@ -109,8 +109,7 @@ export default function ScimManagementPanel() {
         <Trans>
           SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra
           ID, OneLogin) to automatically provision and deprovision Users and
-          Groups. Single Sign-On (interactive login) is configured separately,
-          under Single Sign On.
+          Groups.
         </Trans>
       </Alert>
 
