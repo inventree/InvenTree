@@ -27,6 +27,7 @@ from drf_spectacular.utils import (
     extend_schema_view,
 )
 from error_report.models import Error
+from oauth2_provider.models import Application
 from opentelemetry import trace
 from pint._typing import UnitLike
 from rest_framework import serializers, viewsets
@@ -45,6 +46,7 @@ import InvenTree.conversion
 import InvenTree.models
 import InvenTree.ready
 from common.icons import get_icon_packs
+from common.serializers import OAuth2ApplicationSerializer
 from common.settings import get_global_setting
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import urlpattern as generic_states_api_urls
@@ -56,6 +58,7 @@ from InvenTree.api import (
     SimpleGenericMetadataView,
     meta_path,
 )
+from InvenTree.apps import DEFAULT_OIDC_APP_ID
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors, str2bool
@@ -1472,6 +1475,30 @@ class ObservabilityEnd(CreateAPI):
         return Response({'status': 'ok'})
 
 
+class ApplicationViewSet(RetrieveDestroyModelViewSet):
+    """ViewSet for managing oAuth2 applications."""
+
+    queryset = Application.objects.all()
+    serializer_class = OAuth2ApplicationSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete an OAuth2 application.
+
+        Deletion of the built-in default OIDC client is not allowed.
+        """
+        instance = self.get_object()
+
+        if instance.client_id == DEFAULT_OIDC_APP_ID:
+            raise PermissionDenied(
+                _('The built-in default OIDC client cannot be deleted.')
+            )
+
+        return super().destroy(request, *args, **kwargs)
+
+
+# oAuth2 admin
+admin_router.register('oauth2', ApplicationViewSet, basename='api-oauth2')
+
 selection_urls = [
     path(
         '<int:pk>/',
@@ -1701,5 +1728,6 @@ common_api_urls = [
 
 # SCIM admin
 admin_router.register('scim', ScimConfigViewSet, basename='api-scim')
+
 
 admin_api_urls = admin_router.urls

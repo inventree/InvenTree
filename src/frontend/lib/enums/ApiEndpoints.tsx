@@ -258,6 +258,7 @@ export enum ApiEndpoints {
   notes_image_upload = 'notes-image-upload/',
   email_list = 'admin/email/',
   email_test = 'admin/email/test/',
+  admin_oauth = 'admin/oauth2/',
   scim_config = 'admin/scim/',
   scim_generate = 'admin/scim/generate/',
   scim_disable = 'admin/scim/disable/',

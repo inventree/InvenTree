@@ -8,10 +8,12 @@ from django.core.exceptions import AppRegistryNotReady
 from django.test import TestCase
 from django.urls import reverse
 
+from oauth2_provider.models import Application
 from rest_framework import status
 
 from InvenTree.api import read_license_file
 from InvenTree.api_version import INVENTREE_API_VERSION
+from InvenTree.apps import DEFAULT_OIDC_APP_ID
 from InvenTree.exceptions import exception_handler
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
 from InvenTree.version import inventreeApiText, parse_version_text
@@ -86,6 +88,43 @@ class ExceptionHandlerTests(TestCase):
         self.assertEqual(response.status_code, 503)
         self.assertEqual(response.data['error'], 'AppRegistryNotReady')
         self.assertEqual(response['Retry-After'], '1')
+
+
+class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
+    """Tests for the built-in OIDC application metadata and deletion guard."""
+
+    def test_builtin_client_metadata_and_delete_block(self):
+        """The built-in default OIDC client should be flagged and protected from deletion."""
+        self.user.is_superuser = True
+        self.user.save()
+        self.client.force_login(self.user)
+
+        Application.objects.filter(client_id=DEFAULT_OIDC_APP_ID).delete()
+        built_in = Application.objects.create(
+            name='Built-In OIDC Client',
+            client_id=DEFAULT_OIDC_APP_ID,
+            client_secret='secret',
+            redirect_uris='https://example.com/callback',
+            client_type=Application.CLIENT_PUBLIC,
+            authorization_grant_type=Application.GRANT_AUTHORIZATION_CODE,
+            algorithm=Application.RS256_ALGORITHM,
+        )
+
+        response = self.client.get(reverse('api-oauth2-list'))
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertTrue(
+            any(
+                item['client_id'] == DEFAULT_OIDC_APP_ID and item['is_builtin']
+                for item in payload
+            )
+        )
+
+        response = self.client.delete(
+            reverse('api-oauth2-detail', kwargs={'pk': built_in.pk})
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Application.objects.filter(pk=built_in.pk).exists())
 
 
 class ApiAccessTests(InvenTreeAPITestCase):

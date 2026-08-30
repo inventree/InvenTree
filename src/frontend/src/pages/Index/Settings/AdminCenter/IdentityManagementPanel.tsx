@@ -3,6 +3,7 @@ import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
+import useTable from '@lib/hooks/UseTable';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
@@ -35,6 +36,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, queryClient } from '../../../../App';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
+import { InvenTreeTable } from '../../../../components/tables/InvenTreeTable';
 import { showApiErrorMessage } from '../../../../functions/notifications';
 
 function ScimManagementPanel() {
@@ -86,10 +88,6 @@ function ScimManagementPanel() {
       });
   };
 
-  if (isFetching && !data) {
-    return <Loader />;
-  }
-
   const scimTableData = useMemo(
     () => [
       [
@@ -116,6 +114,10 @@ function ScimManagementPanel() {
     ],
     [data?.enabled, data?.base_url, data?.secret_generated, data?.last_used]
   );
+
+  if (isFetching && !data) {
+    return <Loader />;
+  }
 
   return (
     <Stack gap='md'>
@@ -191,11 +193,66 @@ function ScimManagementPanel() {
 function SSOManagementPanel() {
   const authenticationSettingsPath = '/settings/system/authentication';
   const navigate = useNavigate();
+  const table = useTable('oauth-applications', { idAccessor: 'id' });
+
+  const oauthColumns = useMemo(
+    () => [
+      {
+        accessor: 'name',
+        title: t`Name`,
+        sortable: true,
+        switchable: false
+      },
+      {
+        accessor: 'client_id',
+        title: t`Client ID`,
+        sortable: true,
+        switchable: false
+      },
+      {
+        accessor: 'client_type',
+        title: t`Client Type`,
+        sortable: true,
+        switchable: true
+      },
+      {
+        accessor: 'authorization_grant_type',
+        title: t`Grant Type`,
+        sortable: true,
+        switchable: true
+      },
+      {
+        accessor: 'redirect_uris',
+        title: t`Redirect URIs`,
+        sortable: true,
+        switchable: true,
+        render: (record: any) => record.redirect_uris || '-'
+      },
+      {
+        accessor: 'is_builtin',
+        title: t`Built-in`,
+        sortable: true,
+        switchable: true,
+        render: (record: any) => (record.is_builtin ? t`Yes` : t`No`)
+      }
+    ],
+    []
+  );
+
   return (
     <Stack gap='md'>
-      <Alert icon={<IconShieldLock />} color='blue'>
-        Actual mgmt TBD
-      </Alert>
+      <InvenTreeTable
+        tableState={table}
+        url={apiUrl(ApiEndpoints.admin_oauth)}
+        columns={oauthColumns}
+        props={{
+          enableSearch: true,
+          enableColumnSwitching: true,
+          enableSelection: false,
+          enablePagination: true,
+          enableRefresh: true
+        }}
+      />
       <GlobalSettingList
         heading={t`Single Sign-On (SSO) Settings`}
         keys={[
