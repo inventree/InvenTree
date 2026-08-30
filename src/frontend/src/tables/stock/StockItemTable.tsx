@@ -412,6 +412,7 @@ export function StockItemTable({
   const newStockItemFields = useStockFields({
     create: true,
     partId: params.part,
+    locationId: params.location,
     supplierPartId: params.supplier_part,
     pricing: params.pricing,
     modalId: 'add-stock-item'
@@ -423,8 +424,7 @@ export function StockItemTable({
     modalId: 'add-stock-item',
     fields: newStockItemFields,
     initialData: {
-      part: params.part,
-      location: params.location
+      part: params.part
     },
     follow: params.openNewStockItem ?? true,
     table: table,
