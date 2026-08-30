@@ -22,7 +22,12 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
-import { IconShieldLock, IconShieldOff } from '@tabler/icons-react';
+import {
+  IconArrowBigLeft,
+  IconArrowBigRight,
+  IconShieldLock,
+  IconShieldOff
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { api, queryClient } from '../../../../App';
@@ -194,6 +199,15 @@ function ScimManagementPanel() {
   );
 }
 
+function headerSection(text: string, out = false) {
+  return (
+    <Group>
+      {out ? <IconArrowBigLeft size={16} /> : <IconArrowBigRight size={16} />}
+      <StylishText size='lg'>{text}</StylishText>
+    </Group>
+  );
+}
+
 export default function IdentityManagementPanel() {
   const identity_overview = t`InvenTree can be integrated with external Identity Providers and act as one.`;
   const identity_inbound = t`External Identities can be pushed to InvenTree via Single Sign-On (SSO) and SCIM.`;
@@ -210,11 +224,21 @@ export default function IdentityManagementPanel() {
       <Accordion variant='separated' defaultValue='scim' chevronPosition='left'>
         <Accordion.Item value='scim'>
           <Accordion.Control>
-            <StylishText size='lg'>{t`SCIM Provisioning`}</StylishText>
+            {headerSection(t`SCIM Provisioning`)}
           </Accordion.Control>
           <Accordion.Panel>
             <ScimManagementPanel />
           </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value='sso'>
+          <Accordion.Control>{headerSection(t`SSO`)}</Accordion.Control>
+          <Accordion.Panel>TBD</Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value='oauth2'>
+          <Accordion.Control>
+            {headerSection(t`oAuth2 Provider`, true)}
+          </Accordion.Control>
+          <Accordion.Panel>TBD</Accordion.Panel>
         </Accordion.Item>
       </Accordion>
     </>
