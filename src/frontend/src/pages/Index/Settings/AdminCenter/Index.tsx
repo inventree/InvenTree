@@ -21,6 +21,7 @@ import {
   IconQrcode,
   IconReport,
   IconScale,
+  IconShieldLock,
   IconSitemap,
   IconTags,
   IconUsersGroup
@@ -70,6 +71,10 @@ const PluginManagementPanel = Loadable(
 
 const MachineManagementPanel = Loadable(
   lazy(() => import('./MachineManagementPanel'))
+);
+
+const ScimManagementPanel = Loadable(
+  lazy(() => import('./ScimManagementPanel'))
 );
 
 const ErrorReportTable = Loadable(
@@ -262,6 +267,13 @@ export default function AdminCenter() {
         icon: <IconDevicesPc />,
         content: <MachineManagementPanel />,
         hidden: !user.hasViewRole(UserRoles.admin)
+      },
+      {
+        name: 'identity',
+        label: t`Identity`,
+        icon: <IconShieldLock />,
+        content: <ScimManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
       }
     ];
   }, [user]);
@@ -273,6 +285,7 @@ export default function AdminCenter() {
         label: t`Operations`,
         panelIDs: [
           'user',
+          'identity',
           'barcode-history',
           'background',
           'errors',

@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#12713](https://github.com/inventree/InvenTree/pull/12713) adds SCIM 2 provisioning support, allowing InvenTree to be integrated with external identity providers for user management.
+
 ### Changed
 
 ### Removed
