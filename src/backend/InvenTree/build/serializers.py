@@ -1944,7 +1944,7 @@ class RepairOrderLineItemSerializer(
             'allow_null': True,
         },
         default_include=True,
-        prefetch_fields=['part'],
+        prefetch_fields=['part', 'part__category', 'part__pricing_data'],
     )
 
     allocated = serializers.DecimalField(

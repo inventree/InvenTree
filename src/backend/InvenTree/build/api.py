@@ -1342,7 +1342,7 @@ class RepairOrderFilter(FilterSet):
         return queryset.filter(q1 | q2).distinct()
 
 
-class RepairOrderList(ListCreateAPI):
+class RepairOrderList(OutputOptionsMixin, ListCreateAPI):
     """API endpoint for accessing a list of RepairOrder objects."""
 
     queryset = RepairOrder.objects.all()
@@ -1373,12 +1373,22 @@ class RepairOrderList(ListCreateAPI):
         'part__name',
     ]
 
+    def get_queryset(self):
+        """Prefetch line items, in addition to any requested optional detail fields."""
+        queryset = super().get_queryset()
+        return queryset.prefetch_related('lines')
 
-class RepairOrderDetail(RetrieveUpdateDestroyAPI):
+
+class RepairOrderDetail(OutputOptionsMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single RepairOrder object."""
 
     queryset = RepairOrder.objects.all()
     serializer_class = build.serializers.RepairOrderSerializer
+
+    def get_queryset(self):
+        """Prefetch line items, in addition to any requested optional detail fields."""
+        queryset = super().get_queryset()
+        return queryset.prefetch_related('lines')
 
 
 class RepairOrderContextMixin:
@@ -1463,7 +1473,7 @@ class RepairOrderLineItemFilter(FilterSet):
         fields = ['order', 'part']
 
 
-class RepairOrderLineItemList(ListCreateAPI):
+class RepairOrderLineItemList(OutputOptionsMixin, ListCreateAPI):
     """API endpoint for accessing a list of RepairOrderLineItem objects."""
 
     queryset = RepairOrderLineItem.objects.all()
@@ -1479,7 +1489,7 @@ class RepairOrderLineItemList(ListCreateAPI):
         )
 
 
-class RepairOrderLineItemDetail(RetrieveUpdateDestroyAPI):
+class RepairOrderLineItemDetail(OutputOptionsMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single RepairOrderLineItem object."""
 
     queryset = RepairOrderLineItem.objects.all()
@@ -1503,7 +1513,7 @@ class RepairOrderAllocationFilter(FilterSet):
         fields = ['line', 'item']
 
 
-class RepairOrderAllocationList(BulkDeleteMixin, ListCreateAPI):
+class RepairOrderAllocationList(BulkDeleteMixin, OutputOptionsMixin, ListCreateAPI):
     """API endpoint for accessing a list of RepairOrderAllocation objects."""
 
     queryset = RepairOrderAllocation.objects.all()
@@ -1512,7 +1522,7 @@ class RepairOrderAllocationList(BulkDeleteMixin, ListCreateAPI):
     filter_backends = SEARCH_ORDER_FILTER
 
 
-class RepairOrderAllocationDetail(RetrieveUpdateDestroyAPI):
+class RepairOrderAllocationDetail(OutputOptionsMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single RepairOrderAllocation object."""
 
     queryset = RepairOrderAllocation.objects.all()

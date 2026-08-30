@@ -983,3 +983,97 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         allocation = RepairOrderAllocation.objects.get(line=line)
         self.assertEqual(allocation.item.pk, small.pk)
         self.assertNotEqual(allocation.item.pk, large.pk)
+
+    # ── Query count regression tests (no N+1) ───────────────────────
+
+    def _query_count_for(self, url, params: dict) -> int:
+        """Return the number of DB queries executed for a single GET request.
+
+        Issues one throwaway request first to warm up process-level caches
+        (ContentType lookups, permission role sets) that would otherwise make
+        the *first* measurement in a test look artificially expensive relative
+        to the second - which would mask a genuine N+1 in the comparison, or
+        even flip the comparison the wrong way. Uses a generous max_query_count
+        on the measured request so a genuine N+1 regression doesn't trip that
+        assertion before this helper gets a chance to return the actual count.
+        """
+        self.get(url, params, expected_code=200, max_query_count=1000)
+
+        with self.assertNumQueriesLessThan(1000, url=url) as context:
+            self.get(url, params, expected_code=200, max_query_count=1000)
+        return len(context.captured_queries)
+
+    def test_repair_order_list_no_n_plus_one(self):
+        """The order list's query count should not grow with the number of orders."""
+        from company.models import Company
+
+        customer = Company.objects.create(name='Query Count Customer', is_customer=True)
+
+        url = reverse('api-repair-order-list')
+        params = {'customer_detail': True, 'part_detail': True}
+
+        for i in range(2):
+            RepairOrder.objects.create(
+                reference=f'RO-{9100 + i}',
+                description='Query count test',
+                customer=customer,
+                part=self.part,
+            )
+        small_n = self._query_count_for(url, params)
+
+        for i in range(20):
+            RepairOrder.objects.create(
+                reference=f'RO-{9200 + i}',
+                description='Query count test',
+                customer=customer,
+                part=self.part,
+            )
+        large_n = self._query_count_for(url, params)
+
+        self.assertEqual(small_n, large_n)
+
+    def test_line_item_list_no_n_plus_one(self):
+        """The line-item list's query count should not grow with the number of lines."""
+        from build.models import RepairOrderLineItem
+
+        parts = list(Part.objects.filter(component=True)[:5])
+        url = reverse('api-repair-order-line-list')
+        params = {'order': self.ro.pk, 'part_detail': True}
+
+        for i in range(2):
+            RepairOrderLineItem.objects.create(
+                order=self.ro, part=parts[i % len(parts)], quantity=1
+            )
+        small_n = self._query_count_for(url, params)
+
+        for i in range(20):
+            RepairOrderLineItem.objects.create(
+                order=self.ro, part=parts[i % len(parts)], quantity=1
+            )
+        large_n = self._query_count_for(url, params)
+
+        self.assertEqual(small_n, large_n)
+
+    def test_allocation_list_no_n_plus_one(self):
+        """The allocation list's query count should not grow with the number of allocations."""
+        from build.models import RepairOrderAllocation, RepairOrderLineItem
+        from stock.models import StockItem, StockLocation
+
+        p = Part.objects.filter(component=True).first()
+        loc = StockLocation.objects.first()
+        line = RepairOrderLineItem.objects.create(order=self.ro, part=p, quantity=100)
+
+        url = reverse('api-repair-order-allocation-list')
+        params = {'line': line.pk, 'item_detail': True}
+
+        for _ in range(2):
+            si = StockItem.objects.create(part=p, quantity=1, location=loc)
+            RepairOrderAllocation.objects.create(line=line, item=si, quantity=1)
+        small_n = self._query_count_for(url, params)
+
+        for _ in range(20):
+            si = StockItem.objects.create(part=p, quantity=1, location=loc)
+            RepairOrderAllocation.objects.create(line=line, item=si, quantity=1)
+        large_n = self._query_count_for(url, params)
+
+        self.assertEqual(small_n, large_n)
