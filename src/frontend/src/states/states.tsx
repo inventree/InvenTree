@@ -28,6 +28,7 @@ export interface ServerAPIProps {
   default_locale: null | string;
   django_admin: null | string;
   settings: {
+    sso_enabled: null | boolean;
     sso_registration: null | boolean;
     registration_enabled: null | boolean;
     password_forgotten_enabled: null | boolean;
