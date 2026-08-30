@@ -1876,7 +1876,7 @@ class RepairOrderSerializer(
             'link',
             'line_items',
         ]
-        read_only_fields = ['creation_date', 'status']
+        read_only_fields = ['creation_date', 'completion_date', 'status']
 
     customer_detail = OptionalField(
         serializer_class=company.serializers.CompanyBriefSerializer,

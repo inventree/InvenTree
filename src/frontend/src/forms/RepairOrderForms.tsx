@@ -1,6 +1,6 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { t } from '@lingui/core/macro';
-import { IconCalendar, IconLink } from '@tabler/icons-react';
+import { IconCalendar, IconLink, IconUsers } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import type { ApiFormFieldSet } from '@lib/types/Forms';
@@ -34,6 +34,12 @@ export function useRepairOrderFields({
       },
       target_date: {
         icon: <IconCalendar />
+      },
+      responsible: {
+        filters: {
+          is_active: true
+        },
+        icon: <IconUsers />
       },
       link: {
         icon: <IconLink />
