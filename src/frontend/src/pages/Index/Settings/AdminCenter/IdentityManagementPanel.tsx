@@ -2,11 +2,13 @@ import { CopyButton } from '@lib/components/CopyButton';
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { navigateToLink } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
   Accordion,
   Alert,
+  Anchor,
   Badge,
   Button,
   Code,
@@ -30,7 +32,9 @@ import {
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api, queryClient } from '../../../../App';
+import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { showApiErrorMessage } from '../../../../functions/notifications';
 
 function ScimManagementPanel() {
@@ -199,6 +203,40 @@ function ScimManagementPanel() {
   );
 }
 
+function SSOManagementPanel() {
+  const authenticationSettingsPath = '/settings/system/authentication';
+  const navigate = useNavigate();
+  return (
+    <Stack gap='md'>
+      <Alert icon={<IconShieldLock />} color='blue'>
+        Actual mgmt TBD
+      </Alert>
+      <GlobalSettingList
+        heading={t`Single Sign-On (SSO) Settings`}
+        keys={[
+          'LOGIN_ENABLE_SSO',
+          'LOGIN_ENABLE_SSO_REG',
+          'LOGIN_SIGNUP_SSO_AUTO'
+        ]}
+      />
+      <Alert color='blue'>
+        <Trans>
+          More settings can be found in the{' '}
+          <Anchor
+            onClick={(event: any) =>
+              navigateToLink(authenticationSettingsPath, navigate, event)
+            }
+            style={{ textDecoration: 'underline' }}
+          >
+            system settings
+          </Anchor>
+          .
+        </Trans>
+      </Alert>
+    </Stack>
+  );
+}
+
 function headerSection(text: string, out = false) {
   return (
     <Group>
@@ -221,7 +259,12 @@ export default function IdentityManagementPanel() {
         <div>{identity_outbound}</div>
       </SimpleGrid>
 
-      <Accordion variant='separated' defaultValue='scim' chevronPosition='left'>
+      <Accordion
+        variant='separated'
+        defaultValue={['scim']}
+        chevronPosition='left'
+        multiple
+      >
         <Accordion.Item value='scim'>
           <Accordion.Control>
             {headerSection(t`SCIM Provisioning`)}
@@ -231,8 +274,12 @@ export default function IdentityManagementPanel() {
           </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item value='sso'>
-          <Accordion.Control>{headerSection(t`SSO`)}</Accordion.Control>
-          <Accordion.Panel>TBD</Accordion.Panel>
+          <Accordion.Control>
+            {headerSection(t`Single Sign-On (SSO)`)}
+          </Accordion.Control>
+          <Accordion.Panel>
+            <SSOManagementPanel />
+          </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item value='oauth2'>
           <Accordion.Control>
