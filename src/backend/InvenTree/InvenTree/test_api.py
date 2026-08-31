@@ -1,11 +1,13 @@
 """Low level tests for the InvenTree API."""
 
+import hashlib
 from base64 import b64encode
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from urllib.parse import parse_qs, urlsplit
 
 from django.core.exceptions import AppRegistryNotReady
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from oauth2_provider.models import Application
@@ -90,6 +92,9 @@ class ExceptionHandlerTests(TestCase):
         self.assertEqual(response['Retry-After'], '1')
 
 
+@override_settings(
+    SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+)
 class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
     """Tests for the built-in OIDC application metadata and deletion guard."""
 
@@ -153,6 +158,86 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
         payload = response.json()
         self.assertIn('client_id', payload)
         self.assertNotIn('client_secret', payload)
+
+    def test_oauth2_application_token_can_access_profile(self):
+        """A custom OAuth2 client should be able to use a valid token to read the current profile."""
+        payload = {
+            'name': 'Profile OAuth App',
+            'client_type': Application.CLIENT_CONFIDENTIAL,
+            'authorization_grant_type': Application.GRANT_AUTHORIZATION_CODE,
+            'redirect_uris': 'https://example.com/callback',
+            'post_logout_redirect_uris': 'https://example.com/logout',
+            'skip_authorization': False,
+            'algorithm': Application.RS256_ALGORITHM,
+        }
+        response = self.client.post(reverse('api-oauth2-list'), payload, format='json')
+        self.assertEqual(response.status_code, 201, response.content)
+
+        app = response.json()
+        client_id = app['client_id']
+        client_secret = app['client_secret']
+        challenge_verifier = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk'
+        code_challenge = (
+            __import__('base64')
+            .urlsafe_b64encode(
+                hashlib.sha256(challenge_verifier.encode('utf-8')).digest()
+            )
+            .rstrip(b'=')
+            .decode('ascii')
+        )
+        auth_params = {
+            'client_id': client_id,
+            'redirect_uri': 'https://example.com/callback',
+            'response_type': 'code',
+            'scope': 'openid g:read',
+            'state': 'abc123',
+            'code_challenge': code_challenge,
+            'code_challenge_method': 'S256',
+        }
+
+        self.client.logout()
+        response = self.client.get(reverse('api-user-profile'))
+        self.assertEqual(response.status_code, 401)
+
+        self.login()
+        response = self.client.get(
+            reverse('oauth2_provider:authorize'), data=auth_params
+        )
+        self.assertEqual(response.status_code, 200, response.content)
+
+        response = self.client.post(
+            reverse('oauth2_provider:authorize'), {**auth_params, 'allow': 'true'}
+        )
+        self.assertEqual(response.status_code, 302, response.content)
+        self.assertIn('code=', response['Location'])
+        code = parse_qs(urlsplit(response['Location']).query)['code'][0]
+
+        response = self.client.post(
+            reverse('oauth2_provider:token'),
+            {
+                'grant_type': 'authorization_code',
+                'client_id': client_id,
+                'client_secret': client_secret,
+                'code': code,
+                'redirect_uri': 'https://example.com/callback',
+                'code_verifier': challenge_verifier,
+            },
+            content_type='application/x-www-form-urlencoded',
+        )
+        self.assertEqual(response.status_code, 200, response.content)
+        token_data = response.json()
+        self.assertIn('access_token', token_data)
+        access_token = token_data['access_token']
+
+        self.client.logout()
+        response = self.client.get(
+            reverse('api-user-profile'), HTTP_AUTHORIZATION=f'Bearer {access_token}'
+        )
+        self.assertEqual(response.status_code, 200, response.content)
+        profile = response.json()
+        self.assertIn('language', profile)
+        self.assertIn('theme', profile)
+        self.assertIn('widgets', profile)
 
 
 class ApiAccessTests(InvenTreeAPITestCase):
