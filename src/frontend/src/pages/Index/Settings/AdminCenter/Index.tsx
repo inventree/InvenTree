@@ -15,6 +15,7 @@ import {
   IconList,
   IconListDetails,
   IconMail,
+  IconNotes,
   IconPackages,
   IconPhoto,
   IconPlugConnected,
@@ -72,6 +73,8 @@ const PluginManagementPanel = Loadable(
 const MachineManagementPanel = Loadable(
   lazy(() => import('./MachineManagementPanel'))
 );
+
+const NoteTemplatePanel = Loadable(lazy(() => import('./NoteTemplatePanel')));
 
 const ScimManagementPanel = Loadable(
   lazy(() => import('./ScimManagementPanel'))
@@ -217,6 +220,13 @@ export default function AdminCenter() {
         hidden: !user.hasViewRole(UserRoles.part)
       },
       {
+        name: 'notes',
+        label: t`Note Templates`,
+        icon: <IconNotes />,
+        content: <NoteTemplatePanel />,
+        hidden: !user.isStaff()
+      },
+      {
         name: 'category-parameters',
         label: t`Category Parameters`,
         icon: <IconSitemap />,
@@ -316,6 +326,7 @@ export default function AdminCenter() {
           'selection-lists',
           'parameters',
           'category-parameters',
+          'notes',
           'location-types',
           'stocktake'
         ]
