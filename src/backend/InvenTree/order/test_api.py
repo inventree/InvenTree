@@ -645,6 +645,58 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(po_dup.extra_lines.count(), po.extra_lines.count())
         self.assertEqual(po_dup.lines.count(), 0)
 
+    def test_po_duplicate_copies_notes(self):
+        """Test that notes are copied when duplicating a PurchaseOrder via the API.
+
+        PurchaseOrderSerializer declares its 'duplicate' options with
+        copy_notes=True, so notes should be copied by default (i.e. without
+        explicitly requesting it).
+        """
+        from common.models import Note
+
+        self.assignRole('purchase_order.add')
+
+        po = models.PurchaseOrder.objects.get(pk=1)
+
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(models.PurchaseOrder),
+            model_id=po.pk,
+            title='Original Note',
+            content='<p>Some purchase order notes</p>',
+        )
+
+        response = self.post(
+            reverse('api-po-list'),
+            {
+                'supplier': po.supplier.pk,
+                'reference': 'PO-9997',
+                'description': po.description,
+                'duplicate': {'original': po.pk},
+            },
+            expected_code=201,
+        )
+
+        po_dup = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(po_dup.notes.count(), 1)
+        self.assertEqual(
+            po_dup.notes.first().content, '<p>Some purchase order notes</p>'
+        )
+
+        # Explicitly disabling copy_notes must not copy any notes
+        response = self.post(
+            reverse('api-po-list'),
+            {
+                'supplier': po.supplier.pk,
+                'reference': 'PO-9996',
+                'description': po.description,
+                'duplicate': {'original': po.pk, 'copy_notes': False},
+            },
+            expected_code=201,
+        )
+
+        po_no_notes = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(po_no_notes.notes.count(), 0)
+
     def test_po_cancel(self):
         """Test the PurchaseOrderCancel API endpoint."""
         po = models.PurchaseOrder.objects.get(pk=1)
@@ -1627,6 +1679,66 @@ class PurchaseOrderReceiveTest(OrderTest):
             line.refresh_from_db()
             self.assertEqual(line.received, line.quantity)
 
+    def test_receive_note_recorded_on_tracking_entry(self):
+        """Test that a per-item 'note' is recorded on the tracking entry, not the StockItem.
+
+        StockItem no longer has its own 'notes' field - the note supplied when
+        receiving an item is expected to land on that item's
+        RECEIVED_AGAINST_PURCHASE_ORDER tracking entry instead.
+        """
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 50,
+                        'note': 'Damaged box, 2 units short',
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201,
+        ).data
+
+        stock_item = StockItem.objects.get(pk=response[0]['pk'])
+
+        self.assertEqual(stock_item.tracking_info.count(), 1)
+        entry = stock_item.tracking_info.first()
+        self.assertEqual(
+            entry.tracking_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
+        )
+        self.assertEqual(entry.notes, 'Damaged box, 2 units short')
+
+    def test_receive_note_recorded_on_tracking_entry_serialized(self):
+        """Test that a per-item 'note' reaches the tracking entry for serialized items too.
+
+        Serialized items are created via a different code path to non-serialized
+        ones (StockItem._create_serial_numbers(), rather than a bulk_create()), so
+        this is tested separately.
+        """
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 3,
+                        'serial_numbers': '200+',
+                        'note': 'Received via serialized batch',
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201,
+        )
+
+        for i in range(200, 203):
+            item = StockItem.objects.get(serial_int=i)
+            self.assertEqual(item.tracking_info.count(), 1)
+            entry = item.tracking_info.first()
+            self.assertEqual(entry.notes, 'Received via serialized batch')
+
     def test_bulk_receive_query_benchmark(self):
         """Benchmark: measure the number of DB queries required to receive 100 line items at once."""
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
@@ -2057,6 +2169,58 @@ class SalesOrderTest(OrderTest):
         self.assertEqual(duplicate_so.reference, 'SO-12346')
         self.assertEqual(duplicate_so.customer, so.customer)
         self.assertEqual(duplicate_so.parameters.count(), 5)
+
+    def test_so_duplicate_copies_notes(self):
+        """Test that notes are copied when duplicating a SalesOrder via the API.
+
+        SalesOrderSerializer declares its 'duplicate' options with
+        copy_notes=True, so notes should be copied by default (i.e. without
+        explicitly requesting it).
+        """
+        from common.models import Note
+
+        url = reverse('api-so-list')
+
+        self.assignRole('sales_order.add')
+
+        so = models.SalesOrder.objects.get(pk=1)
+
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(models.SalesOrder),
+            model_id=so.pk,
+            title='Original Note',
+            content='<p>Some sales order notes</p>',
+        )
+
+        response = self.post(
+            url,
+            {
+                'reference': 'SO-12347',
+                'customer': so.customer.pk,
+                'duplicate': {'original': so.pk},
+            },
+            expected_code=201,
+        )
+
+        duplicate_so = models.SalesOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(duplicate_so.notes.count(), 1)
+        self.assertEqual(
+            duplicate_so.notes.first().content, '<p>Some sales order notes</p>'
+        )
+
+        # Explicitly disabling copy_notes must not copy any notes
+        response = self.post(
+            url,
+            {
+                'reference': 'SO-12348',
+                'customer': so.customer.pk,
+                'duplicate': {'original': so.pk, 'copy_notes': False},
+            },
+            expected_code=201,
+        )
+
+        no_notes_so = models.SalesOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(no_notes_so.notes.count(), 0)
 
     def test_so_cancel(self):
         """Test API endpoint for cancelling a SalesOrder."""
@@ -2927,6 +3091,54 @@ class SalesOrderAllocateTest(OrderTest):
         self.assertEqual(
             len(response.data), count_before + 3 * models.SalesOrder.objects.count()
         )
+
+    def test_shipment_duplicate_copies_notes(self):
+        """Test that notes are copied when duplicating a SalesOrderShipment via the API.
+
+        SalesOrderShipmentSerializer declares its 'duplicate' options with
+        copy_notes=True, so notes should be copied by default (i.e. without
+        explicitly requesting it).
+        """
+        from common.models import Note
+
+        url = reverse('api-so-shipment-list')
+
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(models.SalesOrderShipment),
+            model_id=self.shipment.pk,
+            title='Original Note',
+            content='<p>Some shipment notes</p>',
+        )
+
+        response = self.post(
+            url,
+            {
+                'order': self.order.pk,
+                'reference': 'SH-DUP',
+                'duplicate': {'original': self.shipment.pk},
+            },
+            expected_code=201,
+        )
+
+        duplicate = models.SalesOrderShipment.objects.get(pk=response.data['pk'])
+        self.assertEqual(duplicate.notes.count(), 1)
+        self.assertEqual(duplicate.notes.first().content, '<p>Some shipment notes</p>')
+
+        # Explicitly disabling copy_notes must not copy any notes
+        response = self.post(
+            url,
+            {
+                'order': self.order.pk,
+                'reference': 'SH-DUP-NO-NOTES',
+                'duplicate': {'original': self.shipment.pk, 'copy_notes': False},
+            },
+            expected_code=201,
+        )
+
+        no_notes_duplicate = models.SalesOrderShipment.objects.get(
+            pk=response.data['pk']
+        )
+        self.assertEqual(no_notes_duplicate.notes.count(), 0)
 
     def test_output_options(self):
         """Test the various output options for the SalesOrderAllocation detail endpoint."""
