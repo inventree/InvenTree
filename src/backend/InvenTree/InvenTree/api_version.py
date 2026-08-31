@@ -1,12 +1,20 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 536
+INVENTREE_API_VERSION = 538
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v536 -> 2026-08-30 : https://github.com/inventree/InvenTree/pull/xxxx
+v538 -> 2026-09-01 : https://github.com/inventree/InvenTree/pull/12731
+    - Adds management APIs for oAuth2 provider applications
+
+v537 -> 2026-08-31 : https://github.com/inventree/InvenTree/pull/11971
+    - Removes direct "notes" field from any models which previously supported markdown notes
+    - Adds a generic "Note" model which can be attached to any model type via a generic foreign key relationship
+    - Allow multiple notes to be attached to a single object, and for notes to be created / edited / deleted via the API
+
+v536 -> 2026-08-30 : https://github.com/inventree/InvenTree/pull/12713
     - Adds SCIM 2 provisioning support
 
 v535 -> 2026-08-29 : https://github.com/inventree/InvenTree/pull/12739
@@ -61,7 +69,7 @@ v520 -> 2026-07-11 : https://github.com/inventree/InvenTree/pull/12310
     - Adds new "disassemble" API endpoint for stock items
     - Allows a stock item to be broken down into component parts, based on its Bill of Materials
 
-v519 -> 2026-07-09 : https://github.com/inventree/InvenTree/pull/TODO
+v519 -> 2026-07-09 : https://github.com/inventree/InvenTree/pull/12334
     - Adds optional "roles" and "permissions" fields to the /user/me/ API endpoint, via the "?roles=true" query parameter
 
 v518 -> 2026-07-09 : https://github.com/inventree/InvenTree/pull/12341
