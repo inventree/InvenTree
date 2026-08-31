@@ -23,8 +23,8 @@ from InvenTree.serializers import (
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     InvenTreeTaggitSerializer,
-    NotesFieldMixin,
     OptionalField,
+    apply_duplicate_copy_options,
 )
 
 from .models import (
@@ -111,7 +111,6 @@ class CompanySerializer(
     FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTreeTaggitSerializer,
-    NotesFieldMixin,
     InvenTreeModelSerializer,
 ):
     """Serializer for Company object (full detail)."""
@@ -143,7 +142,6 @@ class CompanySerializer(
             'is_customer',
             'is_manufacturer',
             'is_supplier',
-            'notes',
             'parts_supplied',
             'parts_manufactured',
             'primary_address',
@@ -196,7 +194,9 @@ class CompanySerializer(
 
     parameters = common.filters.enable_parameters_filter()
 
-    duplicate = DuplicateOptionsSerializer(Company.objects.all(), copy_parameters=True)
+    duplicate = DuplicateOptionsSerializer(
+        Company.objects.all(), copy_parameters=True, copy_notes=True
+    )
 
     @transaction.atomic
     def create(self, validated_data):
@@ -206,10 +206,13 @@ class CompanySerializer(
         instance = super().create(validated_data)
 
         if duplicate:
-            original = duplicate['original']
-
-            if duplicate.get('copy_parameters', True):
-                instance.copy_parameters_from(original)
+            apply_duplicate_copy_options(
+                instance,
+                duplicate,
+                duplicate['original'],
+                copy_notes=True,
+                copy_parameters=True,
+            )
 
         return instance
 
@@ -234,7 +237,6 @@ class ManufacturerPartSerializer(
     FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTreeTaggitSerializer,
-    NotesFieldMixin,
     InvenTreeModelSerializer,
 ):
     """Serializer for ManufacturerPart object."""
@@ -257,7 +259,6 @@ class ManufacturerPartSerializer(
             'MPN',
             'link',
             'barcode_hash',
-            'notes',
             'tags',
             'parameters',
         ]
@@ -267,7 +268,7 @@ class ManufacturerPartSerializer(
     parameters = common.filters.enable_parameters_filter()
 
     duplicate = DuplicateOptionsSerializer(
-        ManufacturerPart.objects.all(), copy_parameters=True
+        ManufacturerPart.objects.all(), copy_parameters=True, copy_notes=True
     )
 
     @transaction.atomic
@@ -278,10 +279,13 @@ class ManufacturerPartSerializer(
         instance = super().create(validated_data)
 
         if duplicate:
-            original = duplicate['original']
-
-            if duplicate.get('copy_parameters', True):
-                instance.copy_parameters_from(original)
+            apply_duplicate_copy_options(
+                instance,
+                duplicate,
+                duplicate['original'],
+                copy_notes=True,
+                copy_parameters=True,
+            )
 
         return instance
 
@@ -358,7 +362,6 @@ class SupplierPartSerializer(
     FilterableSerializerMixin,
     DataImportExportSerializerMixin,
     InvenTreeTaggitSerializer,
-    NotesFieldMixin,
     InvenTreeModelSerializer,
 ):
     """Serializer for SupplierPart object."""
@@ -407,7 +410,6 @@ class SupplierPartSerializer(
             'supplier',
             'supplier_detail',
             'updated',
-            'notes',
             'part_detail',
             'tags',
             'price_breaks',
@@ -542,7 +544,7 @@ class SupplierPartSerializer(
     updated = serializers.DateTimeField(allow_null=True, read_only=True)
 
     duplicate = DuplicateOptionsSerializer(
-        SupplierPart.objects.all(), copy_parameters=True
+        SupplierPart.objects.all(), copy_parameters=True, copy_notes=True
     )
 
     @staticmethod
@@ -596,10 +598,13 @@ class SupplierPartSerializer(
             supplier_part.save(**kwargs)
 
         if duplicate:
-            original = duplicate['original']
-
-            if duplicate.get('copy_parameters', True):
-                supplier_part.copy_parameters_from(original)
+            apply_duplicate_copy_options(
+                supplier_part,
+                duplicate,
+                duplicate['original'],
+                copy_notes=True,
+                copy_parameters=True,
+            )
 
         return supplier_part
 
