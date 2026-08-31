@@ -198,6 +198,7 @@ nav:
       - User Permissions: settings/permissions.md
       - Single Sign on: settings/SSO.md
       - Multi Factor Authentication: settings/MFA.md
+      - SCIM Provisioning: settings/SCIM.md
       - Email Settings: settings/email.md
       - Experimental Features: settings/experimental.md
     - Operations:
@@ -237,6 +238,7 @@ nav:
       - URL Mixin: plugins/mixins/urls.md
       - User Interface Mixin: plugins/mixins/ui.md
       - Validation Mixin: plugins/mixins/validation.md
+      - Well-Known Mixin: plugins/mixins/wellknown.md
     - Machines:
       - Overview: plugins/machines/overview.md
       - Label Printer: plugins/machines/label_printer.md

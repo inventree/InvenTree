@@ -52,8 +52,8 @@ function NotificationEntry({
   const model_type = notification.target?.model_type;
   const model_id = notification.target?.model_id;
 
-  // If a valid model type is provided, that overrides the specified link
-  if (model_type as ModelType) {
+  // If a valid model type is provided, and no explicit link, construct a link
+  if (!link && (model_type as ModelType)) {
     const model_info = ModelInformationDict[model_type as ModelType];
     if (model_info?.url_detail && model_id) {
       link = getDetailUrl(model_type as ModelType, model_id);
