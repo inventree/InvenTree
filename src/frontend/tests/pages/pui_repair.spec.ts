@@ -4,7 +4,7 @@ import { doCachedLogin } from '../login';
 
 test('Repair Orders - Basic Navigation', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    url: 'sales/index/repairorders'
+    url: 'manufacturing/index/repairorders'
   });
 
   // Verify the Repair Orders panel is visible
@@ -13,13 +13,16 @@ test('Repair Orders - Basic Navigation', async ({ browser }) => {
 
 test('Repair Orders - Create and Lifecycle', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    url: 'sales/index/repairorders'
+    url: 'manufacturing/index/repairorders'
   });
 
   // Click the "Add Repair Order" button
   await page.getByLabel('action-button-add-repair-order').click();
 
-  // Fill out the creation form
+  // Fill out the creation form - part is required
+  await page.getByLabel('related-field-part').fill('MAST');
+  await page.getByText('MAST | Master Assembly').click();
+
   await page.getByLabel('text-field-description').fill('E2E Test Repair Order');
   await page.getByRole('button', { name: 'Submit' }).click();
 
