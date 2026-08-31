@@ -215,12 +215,12 @@ Health checks also control service startup order. Dependent services wait until 
 | --- | --- | --- |
 | `inventree-db` | PostgreSQL `pg_isready` | None |
 | `inventree-cache` | `redis-cli ping` | None |
-| `inventree-server` | HTTP request to `/api/system/health/` | Database and cache must be healthy |
+| `inventree-server` | `invoke server-health` against `http://localhost:${INVENTREE_WEB_PORT:-8000}` | Database and cache must be healthy |
 | `inventree-worker` | `invoke worker-health` | Web server must be healthy |
-| `inventree-proxy` | HTTP request to `/api/system/health/` via the proxy | Web server and worker must be healthy |
+| `inventree-proxy` | `wget --spider` to `http://127.0.0.1:9090/api/system/health/` | Web server and worker must be healthy |
 
 !!! info "Health Endpoint"
-    The web server exposes a lightweight health endpoint at `/api/system/health/`. This endpoint is also used by external monitoring systems and does not require authentication.
+    The web server exposes a lightweight, unauthenticated health endpoint at `/api/system/health/`. The reverse-proxy health check probes this endpoint through Caddy on port `9090`. External monitoring systems can use the same path.
 
 ### View Container Health
 
@@ -240,12 +240,12 @@ Look for the `Health` section in the output.
 
 ### Manual Health Checks
 
-The InvenTree invoke tool provides commands for manually checking service health inside a running container. These commands are also used by the Docker health checks for the web server and background worker.
+The InvenTree invoke tool provides commands for manually checking service health inside a running container. These commands match the Docker health checks for the web server and background worker.
 
 Check the web server:
 
 ```bash
-docker compose exec inventree-server invoke server-health
+docker compose exec inventree-server invoke server-health --address "http://localhost:8000"
 ```
 
 Check the background worker:
