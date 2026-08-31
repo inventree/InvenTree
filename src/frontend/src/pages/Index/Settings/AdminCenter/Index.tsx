@@ -22,6 +22,7 @@ import {
   IconQrcode,
   IconReport,
   IconScale,
+  IconShieldLock,
   IconSitemap,
   IconTags,
   IconUsersGroup
@@ -74,6 +75,10 @@ const MachineManagementPanel = Loadable(
 );
 
 const NoteTemplatePanel = Loadable(lazy(() => import('./NoteTemplatePanel')));
+
+const ScimManagementPanel = Loadable(
+  lazy(() => import('./ScimManagementPanel'))
+);
 
 const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
@@ -272,6 +277,13 @@ export default function AdminCenter() {
         icon: <IconDevicesPc />,
         content: <MachineManagementPanel />,
         hidden: !user.hasViewRole(UserRoles.admin)
+      },
+      {
+        name: 'identity',
+        label: t`Identity`,
+        icon: <IconShieldLock />,
+        content: <ScimManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
       }
     ];
   }, [user]);
@@ -283,6 +295,7 @@ export default function AdminCenter() {
         label: t`Operations`,
         panelIDs: [
           'user',
+          'identity',
           'barcode-history',
           'background',
           'errors',

@@ -84,6 +84,7 @@ from InvenTree.permissions import (
     UserSettingsPermissionsOrScope,
 )
 from InvenTree.serializers import EmptySerializer
+from scim.admin_api import ScimConfigViewSet
 
 admin_router = InvenTreeApiRouter()
 common_router = InvenTreeApiRouter()
@@ -1909,5 +1910,8 @@ common_api_urls = [
     # Router
     path('', include(common_router.urls)),
 ]
+
+# SCIM admin
+admin_router.register('scim', ScimConfigViewSet, basename='api-scim')
 
 admin_api_urls = admin_router.urls
