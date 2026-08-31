@@ -17,7 +17,7 @@ import build.models
 import company.models
 import order.models
 import part.models
-from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
+from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting, Note
 from common.settings import set_global_setting
 from InvenTree.unit_test import (
     InvenTreeAPIPerformanceTestCase,
@@ -1633,6 +1633,50 @@ class StockItemTest(StockAPITestCase):
         )
 
         self.assertEqual(response.data[0]['location'], None)
+
+    def test_duplicate_copies_notes(self):
+        """Test that notes are copied when duplicating a StockItem via the API.
+
+        StockItemSerializer declares its 'duplicate' options with copy_notes=True,
+        so notes should be copied by default (i.e. without explicitly requesting it).
+        """
+        part = Part.objects.create(name='Duplicate Notes Part', description='x')
+
+        original = StockItem.objects.create(part=part, quantity=10)
+
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(StockItem),
+            model_id=original.pk,
+            title='Original Note',
+            content='<p>Some stock item notes</p>',
+        )
+
+        response = self.post(
+            self.list_url,
+            data={
+                'part': part.pk,
+                'quantity': 5,
+                'duplicate': {'original': original.pk},
+            },
+            expected_code=201,
+        )
+
+        new_item = StockItem.objects.get(pk=response.data[0]['pk'])
+        self.assertEqual(new_item.notes.count(), 1)
+        self.assertEqual(new_item.notes.first().content, '<p>Some stock item notes</p>')
+
+        # Explicitly disabling copy_notes must not copy any notes
+        response = self.post(
+            self.list_url,
+            data={
+                'part': part.pk,
+                'quantity': 5,
+                'duplicate': {'original': original.pk, 'copy_notes': False},
+            },
+            expected_code=201,
+        )
+        no_notes_item = StockItem.objects.get(pk=response.data[0]['pk'])
+        self.assertEqual(no_notes_item.notes.count(), 0)
 
     def test_stock_item_create(self):
         """Test creation of a StockItem via the API."""
