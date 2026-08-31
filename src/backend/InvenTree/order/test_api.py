@@ -5612,6 +5612,7 @@ class OrderAllocationValidationTest(InvenTreeAPITestCase):
             variant_of=cls.base_part,
             description='',
         )
+        cls.base_part.refresh_from_db()
         cls.unrelated_part = Part.objects.create(
             name='Unrelated Gadget', salable=True, description=''
         )
@@ -5654,7 +5655,7 @@ class OrderAllocationValidationTest(InvenTreeAPITestCase):
         """Test validation when allocating stock to a TransferOrder."""
         dest_loc = StockLocation.objects.create(name='Dest Location')
         order = models.TransferOrder.objects.create(
-            location=dest_loc, reference='TO-ALLOC-TEST-1'
+            destination=dest_loc, reference='TO-ALLOC-TEST-1'
         )
         line = models.TransferOrderLineItem.objects.create(
             order=order, part=self.base_part, quantity=10
