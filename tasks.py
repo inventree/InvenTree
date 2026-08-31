@@ -1861,12 +1861,6 @@ def test(
         manage(c, cmd, pty=pty)
 
 
-@task
-def test_tasks(c):
-    """Run tests for the root Invoke tasks."""
-    run(c, 'pytest test_tasks.py')
-
-
 @task(
     help={
         'dev': 'Set up development environment at the end',
@@ -2569,7 +2563,6 @@ development = Collection(
     setup_test,
     shell,
     test,
-    test_tasks,
     test_translations,
     translate,
 )
