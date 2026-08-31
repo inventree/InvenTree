@@ -18,16 +18,13 @@ The basic requirements for configuring SSO are outlined below:
 
 1. Enable backend for each required SSO provider(s) in the [config file or environment variables](../start/config.md#single-sign-on).
 1. Create an external *app* with your provider of choice
-1. Add the required client configurations as a *Social application* in the [Database Admin interface](../settings/db_admin.md) (Django admin at `/admin/`).
+1. Add the required client configurations as a *Social application* in the [Database Admin interface](./db_admin.md).
 1. Configure the *callback* URL for the external app.
 1. Enable SSO for the users in the [global settings](../settings/global.md).
 1. Configure [e-mail](../settings/email.md).
 
 !!! info "Two-step setup"
-    Provider modules are enabled in `config.yaml` (or environment variables). Client IDs, secrets, and site assignments are **not** configured there — they must be added as *Social applications* in the Database Admin interface. SSO providers cannot be configured via the InvenTree API.
-
-!!! tip "Access the Database Admin"
-    Open the Database Admin at `/admin/` (note the trailing slash). If `/admin` redirects away, use `/admin/` instead. Ensure [`INVENTREE_ADMIN_ENABLED`](../start/config.md#admin-site) is enabled and sign in with a staff account. See the [Database Admin guide](../settings/db_admin.md) for details.
+    Provider modules are enabled in `config.yaml` (or environment variables). Client IDs, secrets, and site assignments are **not** configured there — they must be added as *Social applications* in the [Database Admin interface](./db_admin.md). SSO providers cannot be configured via the InvenTree API.
 
 ### Enable Provider Backends
 
@@ -67,19 +64,11 @@ In general, the external app will generate a *key* and *secret* pair - although 
 
 ### Add Client Configurations
 
-Once your external SSO app has been created, you need to create a new *Social application* entry in the Database Admin interface.
-
-#### Open the Database Admin
-
-1. Sign in to InvenTree with a staff account
-1. Navigate to `/admin/` (include the trailing slash)
-1. Under **Social accounts**, select **Social applications**
+Once your external SSO app has been created, you need to create a new *Social application* entry in the [Database Admin interface](./db_admin.md) (under **Social accounts** → **Social applications** — not in the Admin Center).
 
 #### Create Social Application
 
-Select **Add social application** (top right of the social applications list).
-
-The screenshot below shows the Database Admin home page. Social applications are listed under the **Social accounts** section — not in the InvenTree Admin Center settings screens.
+Select **Add social application** (top right of the social applications list). Social applications are listed under the **Social accounts** section of the Database Admin — not in the InvenTree Admin Center settings screens.
 
 {{ image("settings/social_account_add.png", "Database Admin — Social applications section") }}
 
