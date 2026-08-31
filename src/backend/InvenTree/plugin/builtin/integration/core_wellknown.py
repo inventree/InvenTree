@@ -38,11 +38,9 @@ class InvenTreeWellKnown(WellKnownMixin, UrlsMixin, InvenTreePlugin):
                     'openid-configuration',
                     str(reverse_lazy('oauth2_provider:oidc-connect-discovery-info')),
                 ))
-        except Exception:
+        except Exception:  # pragma: no cover
             # If the flag is not evaluated successfully, we can ignore it
             pass
-
-        # TODO security.txt https://securitytxt.org/
 
         return data
 

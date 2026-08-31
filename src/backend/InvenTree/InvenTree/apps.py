@@ -348,7 +348,9 @@ class InvenTreeConfig(AppConfig):
 
         from oauth2_provider.models import Application
 
-        if Application.objects.filter(client_id=DEFAULT_OIDC_APP_ID).exists():
+        if Application.objects.filter(
+            client_id=DEFAULT_OIDC_APP_ID
+        ).exists():  # pragma: no cover
             logger.info('Default OIDC client already exists - skipping creation')
             OIDC_CLIENT_CHECKED = True
             return
