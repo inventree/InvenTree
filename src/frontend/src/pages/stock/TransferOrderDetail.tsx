@@ -37,6 +37,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -61,6 +62,11 @@ export default function TransferOrderDetail() {
     params: {
       tags: true
     }
+  });
+
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.transferorder,
+    modelId: order?.pk
   });
 
   const toStatus = useStatusCodes({ modelType: ModelType.transferorder });
@@ -174,18 +180,21 @@ export default function TransferOrderDetail() {
       },
       ParametersPanel({
         model_type: ModelType.transferorder,
-        model_id: order.pk
+        model_id: order.pk,
+        parameter_count: instanceInfo.parameter_count
       }),
       AttachmentPanel({
         model_type: ModelType.transferorder,
-        model_id: order.pk
+        model_id: order.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.transferorder,
-        model_id: order.pk
+        model_id: order.pk,
+        note_count: instanceInfo.note_count
       })
     ];
-  }, [order, id, user]);
+  }, [order, id, user, instanceInfo]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading
