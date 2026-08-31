@@ -26,6 +26,7 @@ import order.api
 import part.api
 import plugin.api
 import report.api
+import scim.api
 import stock.api
 import users.api
 from plugin.urls import get_plugin_urls, get_wellknown_urls
@@ -137,6 +138,8 @@ backendpatterns = [
     path('accounts/', include('allauth.urls')),
     # OAuth2
     flagged_path('OIDC', 'o/', include(oauth2_urls)),
+    # SCIM 2 provisioning endpoint
+    path('scim/v2/', include(scim.api)),
     path(
         'accounts/login/',
         RedirectView.as_view(url=f'/{settings.FRONTEND_URL_BASE}', permanent=False),
