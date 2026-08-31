@@ -23,7 +23,7 @@ Consider the use-case for your plugin and define the exact function of the plugi
 - Do you need to run in the background ([ScheduleMixin](./mixins/schedule.md)) or when things in InvenTree change ([EventMixin](./mixins/event.md))?
 - Does the plugin need configuration that should be user changeable ([SettingsMixin](./mixins/settings.md)) or static (just use a yaml in the config dir)?
 - You want to receive webhooks? Do not code your own untested function, use the WebhookEndpoint model as a base and override the perform_action method.
-- Do you need the full power of Django with custom models and all the complexity that comes with that – welcome to the danger zone and [AppMixin](./mixins/app.md). The plugin will be treated as a app by django and can maybe rack the whole instance.
+- Do you need the full power of Django with custom models and all the complexity that comes with that - welcome to the danger zone and [AppMixin](./mixins/app.md). The plugin will be treated as a app by django and can maybe rack the whole instance.
 
 ### Define Metadata
 
@@ -145,6 +145,7 @@ Supported mixin classes are:
 | [UserInterfaceMixin](./mixins/ui.md) | Add custom user interface features |
 | [UrlsMixin](./mixins/urls.md) | Respond to custom URL endpoints |
 | [ValidationMixin](./mixins/validation.md) | Provide custom validation of database models |
+| [WellKnownMixin](./mixins/wellknown.md) | Provide well-known endpoints on the root of an instance |
 
 ## Plugin Concepts
 

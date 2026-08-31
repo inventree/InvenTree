@@ -30,6 +30,18 @@
 	}
 }
 
+# Internal-only health check endpoint, on port 9090
+# This only serves to check that the Caddy container is running correctly
+:9090 {
+	handle /api/system/health/* {
+		reverse_proxy {$INVENTREE_SERVER:"http://inventree-server:8000"}
+	}
+
+	handle {
+		respond 404
+	}
+}
+
 # The default server address is configured in the .env file
 # If not specified, the proxy listens for all http/https traffic
 # If you need to listen on multiple addresses, or use a different port, you can modify this section directly
