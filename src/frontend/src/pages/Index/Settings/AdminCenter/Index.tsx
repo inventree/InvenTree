@@ -74,6 +74,8 @@ const MachineManagementPanel = Loadable(
   lazy(() => import('./MachineManagementPanel'))
 );
 
+const NoteTemplatePanel = Loadable(lazy(() => import('./NoteTemplatePanel')));
+
 const IdentityManagementPanel = Loadable(
   lazy(() => import('./IdentityManagementPanel'))
 );
