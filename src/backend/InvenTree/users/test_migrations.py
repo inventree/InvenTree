@@ -61,7 +61,16 @@ class TestBackfillUserProfiles(MigratorTestCase):
 class MFAMigrations(MigratorTestCase):
     """Test entire schema migration sequence for the users app."""
 
-    migrate_from = ('users', '0012_alter_ruleset_can_view')
+    # NOTE: otp_totp / otp_static are pinned explicitly (not just relying on
+    # 'users' 0012) because the merged cross-app migration plan that
+    # django_test_migrations truncates against is only incidentally ordered -
+    # unrelated migrations elsewhere in the project can shift whether these
+    # third-party app migrations land before or after 'users' 0012.
+    migrate_from = [
+        ('users', '0012_alter_ruleset_can_view'),
+        ('otp_totp', '0002_auto_20190420_0723'),
+        ('otp_static', '0002_throttling'),
+    ]
     migrate_to = ('users', '0013_migrate_mfa_20240408_1659')
 
     def prepare(self):

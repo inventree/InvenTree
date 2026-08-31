@@ -316,6 +316,7 @@ INSTALLED_APPS = [
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
+    'scim.apps.ScimConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
     'machine.apps.MachineConfig',
@@ -608,8 +609,15 @@ SENTRY_SAMPLE_RATE = float(
     get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1)
 )
 
+# Whether to include PII (e.g. user id/email, IP address, request data) in reported events
+SENTRY_SEND_PII = get_boolean_setting(
+    'INVENTREE_SENTRY_SEND_PII', 'sentry_send_pii', False
+)
+
 if SENTRY_ENABLED and SENTRY_DSN and not TESTING:  # pragma: no cover
-    init_sentry(SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags)
+    init_sentry(
+        SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags, send_pii=SENTRY_SEND_PII
+    )
 
 # OpenTelemetry tracing
 TRACING_ENABLED = (

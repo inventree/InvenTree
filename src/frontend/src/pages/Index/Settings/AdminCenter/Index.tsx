@@ -15,12 +15,14 @@ import {
   IconList,
   IconListDetails,
   IconMail,
+  IconNotes,
   IconPackages,
   IconPhoto,
   IconPlugConnected,
   IconQrcode,
   IconReport,
   IconScale,
+  IconShieldLock,
   IconSitemap,
   IconTags,
   IconUsersGroup
@@ -70,6 +72,12 @@ const PluginManagementPanel = Loadable(
 
 const MachineManagementPanel = Loadable(
   lazy(() => import('./MachineManagementPanel'))
+);
+
+const NoteTemplatePanel = Loadable(lazy(() => import('./NoteTemplatePanel')));
+
+const ScimManagementPanel = Loadable(
+  lazy(() => import('./ScimManagementPanel'))
 );
 
 const ErrorReportTable = Loadable(
@@ -212,6 +220,13 @@ export default function AdminCenter() {
         hidden: !user.hasViewRole(UserRoles.part)
       },
       {
+        name: 'notes',
+        label: t`Note Templates`,
+        icon: <IconNotes />,
+        content: <NoteTemplatePanel />,
+        hidden: !user.isStaff()
+      },
+      {
         name: 'category-parameters',
         label: t`Category Parameters`,
         icon: <IconSitemap />,
@@ -262,6 +277,13 @@ export default function AdminCenter() {
         icon: <IconDevicesPc />,
         content: <MachineManagementPanel />,
         hidden: !user.hasViewRole(UserRoles.admin)
+      },
+      {
+        name: 'identity',
+        label: t`Identity`,
+        icon: <IconShieldLock />,
+        content: <ScimManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
       }
     ];
   }, [user]);
@@ -273,6 +295,7 @@ export default function AdminCenter() {
         label: t`Operations`,
         panelIDs: [
           'user',
+          'identity',
           'barcode-history',
           'background',
           'errors',
@@ -303,6 +326,7 @@ export default function AdminCenter() {
           'selection-lists',
           'parameters',
           'category-parameters',
+          'notes',
           'location-types',
           'stocktake'
         ]
