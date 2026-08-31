@@ -193,8 +193,13 @@ class CurrencyViewSet(viewsets.GenericViewSet):
 
         # Information on last update
         try:
-            backend = ExchangeBackend.objects.filter(name='InvenTreeExchange').first()
-            updated = backend.last_update if backend else None
+            backend = ExchangeBackend.objects.filter(name='InvenTreeExchange')
+
+            if backend.exists():
+                backend = backend.first()
+                updated = backend.last_update
+            else:
+                updated = None
         except Exception:
             updated = None
 

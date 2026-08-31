@@ -461,7 +461,6 @@ class TokenListView(TokenMixin, ListCreateAPI):
     filter_backends = SEARCH_ORDER_FILTER
     search_fields = [
         'name',
-        'key',
         'user__username',
         'user__first_name',
         'user__last_name',
