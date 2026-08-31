@@ -41,7 +41,7 @@ def sentry_ignore_errors():  # pragma: no cover
     ]
 
 
-def init_sentry(dsn, sample_rate, tags):  # pragma: no cover
+def init_sentry(dsn, sample_rate, tags, send_pii=False):  # pragma: no cover
     """Initialize sentry.io error reporting."""
     logger.info('Initializing sentry.io integration')
 
@@ -49,7 +49,7 @@ def init_sentry(dsn, sample_rate, tags):  # pragma: no cover
         dsn=dsn,
         integrations=[DjangoIntegration()],
         traces_sample_rate=sample_rate,
-        send_default_pii=True,
+        send_default_pii=send_pii,
         ignore_errors=sentry_ignore_errors(),
         release=InvenTree.version.INVENTREE_SW_VERSION,
         environment='development'
@@ -81,7 +81,7 @@ def report_exception(exc, scope: Optional[dict] = None):  # pragma: no cover
     if any(isinstance(exc, e) for e in sentry_ignore_errors()):
         return
 
-    # Error may also be passed in from the loggingn context
+    # Error may also be passed in from the logging context
     if hasattr(exc, 'event'):
         event = getattr(exc, 'event', None)
 
