@@ -18,7 +18,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("build", "0059_build_tags"),
+        ("build", "0060_remove_build_notes"),
         ("company", "0080_company_tags"),
         ("part", "0153_bomitem_piece_count_bomitem_piece_size"),
         ("stock", "0127_alter_stockitemtestresult_options"),
