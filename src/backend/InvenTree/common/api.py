@@ -1680,8 +1680,16 @@ class SocialAppSerializer(serializers.ModelSerializer):
         """Meta options for SocialAppSerializer."""
 
         model = SocialApp
-        fields = ['name', 'provider', 'provider_id', 'client_id', 'secret', 'settings']
-        read_only_fields = ['provider_id']
+        fields = [
+            'id',
+            'name',
+            'provider',
+            'provider_id',
+            'client_id',
+            'secret',
+            'settings',
+        ]
+        read_only_fields = ['id']
 
     def __init__(self, *args, **kwargs):
         """Populate provider choices from the active allauth registry."""
@@ -1693,6 +1701,20 @@ class SocialAppSerializer(serializers.ModelSerializer):
         if value not in [provider[0] for provider in providers.registry.as_choices()]:
             raise serializers.ValidationError(_('Provider is not supported'))
         return value
+
+    def validate(self, data):
+        """Ensure that the provider is unique across all SocialApp records."""
+        provider = data.get('provider', None)
+        if (
+            provider
+            and SocialApp.objects.filter(provider=provider).exists()
+            and provider not in ('saml', 'openid_connect')
+        ):
+            raise serializers.ValidationError({
+                'provider': _('A SocialApp with this provider already exists')
+            })
+
+        return data
 
 
 class SocialAppViewSet(CleanModelViewSet):

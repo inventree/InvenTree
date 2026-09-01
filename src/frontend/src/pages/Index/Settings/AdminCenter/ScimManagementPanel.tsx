@@ -1,6 +1,6 @@
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { CopyButton } from '@lib/components/CopyButton';
-import { RowDeleteAction } from '@lib/components/RowActions';
+import { RowDeleteAction, RowEditAction } from '@lib/components/RowActions';
 import type { RowAction } from '@lib/components/RowActions';
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -43,7 +43,8 @@ import { InvenTreeTable } from '../../../../components/tables/InvenTreeTable';
 import { showApiErrorMessage } from '../../../../functions/notifications';
 import {
   useCreateApiFormModal,
-  useDeleteApiFormModal
+  useDeleteApiFormModal,
+  useEditApiFormModal
 } from '../../../../hooks/UseForm';
 
 export function ScimManagementPanel() {
@@ -227,6 +228,22 @@ function SSOManagementPanel() {
     fields: {
       name: {},
       provider: {},
+      provider_id: {},
+      client_id: {},
+      secret: {},
+      settings: {}
+    }
+  });
+
+  const editSsoApplication = useEditApiFormModal({
+    url: ApiEndpoints.sso_list,
+    pk: selectedSsoApplication,
+    title: t`Edit SSO Application`,
+    table: table,
+    fields: {
+      name: {},
+      provider: {},
+      provider_id: {},
       client_id: {},
       secret: {},
       settings: {}
@@ -247,6 +264,24 @@ function SSOManagementPanel() {
         title: t`Name`,
         sortable: true,
         switchable: false
+      },
+      {
+        accessor: 'provider',
+        title: t`Provider`,
+        sortable: true,
+        switchable: true
+      },
+      {
+        accessor: 'provider_id',
+        title: t`Provider ID`,
+        sortable: true,
+        switchable: true
+      },
+      {
+        accessor: 'client_id',
+        title: t`Client ID`,
+        sortable: true,
+        switchable: true
       }
     ],
     []
@@ -254,15 +289,20 @@ function SSOManagementPanel() {
 
   const rowActions = useCallback(
     (record: any): RowAction[] => [
+      RowEditAction({
+        onClick: () => {
+          setSelectedSsoApplication(record.id);
+          editSsoApplication.open();
+        }
+      }),
       RowDeleteAction({
-        hidden: !!record.is_builtin,
         onClick: () => {
           setSelectedSsoApplication(record.id);
           deleteSsoApplication.open();
         }
       })
     ],
-    [deleteSsoApplication]
+    [deleteSsoApplication, editSsoApplication]
   );
 
   const tableActions = useMemo(
@@ -279,6 +319,7 @@ function SSOManagementPanel() {
   return (
     <Stack gap='md'>
       {newSsoApplication.modal}
+      {editSsoApplication.modal}
       {deleteSsoApplication.modal}
       <InvenTreeTable
         tableState={table}
