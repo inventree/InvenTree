@@ -63,6 +63,8 @@ LABEL org.opencontainers.image.vendor="inventree" \
 # Install basic system level packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git gettext libldap2 wget curl ssh \
+    # Used by the entrypoint script to drop root privileges in the production image
+    gosu \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
     weasyprint libpango-1.0-0 libcairo2 poppler-utils \
     # Database client libraries
@@ -82,6 +84,11 @@ EXPOSE 8000
 
 # Fix invoke command path for InvenTree environment check
 RUN python -m pip install --no-cache-dir -U invoke
+
+# Dedicated non-root user for running InvenTree in the 'production' image.
+# Fixed uid/gid so that operators can chown their host-mounted data volume to match.
+RUN groupadd --gid 1000 inventree \
+    && useradd --uid 1000 --gid inventree --home-dir ${INVENTREE_HOME} --shell /bin/bash inventree
 
 RUN mkdir -p ${INVENTREE_HOME}
 WORKDIR ${INVENTREE_HOME}
@@ -132,6 +139,10 @@ FROM inventree_base AS production
 
 ENV INVENTREE_DEBUG=False
 
+# Container starts as root, but init.sh drops to this user before launching the
+# CMD (fixing up ownership of the mounted data volume along the way) - see init.sh
+ENV INVENTREE_RUN_AS_USER="inventree"
+
 # As .git directory is not available in production image, we pass the commit information via ENV
 ENV INVENTREE_COMMIT_HASH="${commit_hash}"
 ENV INVENTREE_COMMIT_DATE="${commit_date}"
@@ -141,6 +152,11 @@ COPY src/backend/InvenTree ${INVENTREE_BACKEND_DIR}/InvenTree
 COPY src/backend/requirements.txt ${INVENTREE_BACKEND_DIR}/requirements.txt
 
 # Copy compiled dependencies from prebuild image
+# PYTHONUSERBASE must be pinned explicitly: pip installed these packages as --user
+# under root, and Python resolves the user site-packages dir relative to the *running*
+# user's home directory unless overridden - without this, imports break once we
+# switch away from root below.
+ENV PYTHONUSERBASE=/root/.local
 ENV PATH=/root/.local/bin:$PATH
 
 COPY --from=builder_stage ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web
@@ -152,6 +168,14 @@ RUN bash -c "cd '${INVENTREE_HOME}' && invoke int.backend-compilemessages"
 # Generate license information for installed python packages
 RUN pip-licenses --format=json --with-license-file --no-license-path > "${INVENTREE_BACKEND_DIR}/InvenTree/InvenTree/licenses.txt" \
     && test -s "${INVENTREE_BACKEND_DIR}/InvenTree/InvenTree/licenses.txt"
+
+# Fix up ownership of the application code/static files, and open up read access to
+# the --user installed python packages under /root/.local (not readable by other users
+# by default) - init.sh drops to the non-root 'inventree' user before launch, and
+# additionally fixes up ownership of the (host-mounted) data volume at that point.
+RUN chown -R inventree:inventree ${INVENTREE_HOME} \
+    && chmod 755 /root \
+    && chmod -R o+rX /root/.local
 
 # Launch the production server
 CMD ["sh", "-c", "exec gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} --chdir ${INVENTREE_BACKEND_DIR}/InvenTree"]
