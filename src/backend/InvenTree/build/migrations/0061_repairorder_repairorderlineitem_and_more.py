@@ -54,16 +54,6 @@ class Migration(migrations.Migration):
                 ),
                 ("reference_int", models.BigIntegerField(default=0)),
                 (
-                    "notes",
-                    InvenTree.fields.InvenTreeNotesField(
-                        blank=True,
-                        help_text="Markdown notes (optional)",
-                        max_length=50000,
-                        null=True,
-                        verbose_name="Notes",
-                    ),
-                ),
-                (
                     "barcode_data",
                     models.CharField(
                         blank=True,

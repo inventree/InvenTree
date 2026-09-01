@@ -40,6 +40,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useUserState } from '../../states/UserState';
 import RepairOrderLineItemTable from '../../tables/sales/RepairOrderLineItemTable';
@@ -59,6 +60,11 @@ export default function RepairOrderDetail() {
       customer_detail: true,
       part_detail: true
     }
+  });
+
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.repairorder,
+    modelId: order?.pk
   });
 
   const roStatus = useStatusCodes({ modelType: ModelType.repairorder });
@@ -179,19 +185,21 @@ export default function RepairOrderDetail() {
       },
       ParametersPanel({
         model_type: ModelType.repairorder,
-        model_id: order.pk
+        model_id: order.pk,
+        parameter_count: instanceInfo.parameter_count
       }),
       AttachmentPanel({
         model_type: ModelType.repairorder,
-        model_id: order.pk
+        model_id: order.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.repairorder,
         model_id: order.pk,
-        has_note: !!order.notes
+        note_count: instanceInfo.note_count
       })
     ];
-  }, [order, id, user, lineItemsEditable]);
+  }, [order, id, user, lineItemsEditable, instanceInfo]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading

@@ -155,7 +155,9 @@ File [attachments](../concepts/attachments.md) can be uploaded against a Repair 
 
 ### Notes
 
-Repair Order [notes](../concepts/attachments.md) support markdown formatting, and can be used to record detailed information about the repair process.
+One or more rich-text notes can be attached to a Repair Order, and are displayed in the *Notes* tab.
+
+[Read about notes](../concepts/notes.md).
 
 ### Tags
 

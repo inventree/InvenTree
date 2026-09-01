@@ -2545,7 +2545,7 @@ class RepairOrder(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
