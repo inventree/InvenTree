@@ -4,7 +4,6 @@
 {% load report %}
 {% load barcode %}
 {% load inventree_extras %}
-{% load markdownify %}
 
 {% block page_margin %}
 margin: 2cm;
@@ -159,9 +158,11 @@ table td {
     </tbody>
 </table>
 
-{% if order.notes %}
 <h3>{% trans "Notes" %}</h3>
-{{ order.notes|markdownify }}
+
+{% note order as order_notes_content %}
+{% if order_notes_content %}
+{{ order_notes_content }}
 {% endif %}
 
 {% endblock page_content %}

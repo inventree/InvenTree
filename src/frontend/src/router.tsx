@@ -196,6 +196,7 @@ export const routes = (
         <Route index element={<Navigate to='index/' />} />
         <Route path='index/*' element={<BuildIndex />} />
         <Route path='build-order/:id/*' element={<BuildDetail />} />
+        <Route path='repair-order/:id/*' element={<RepairOrderDetail />} />
       </Route>
       <Route path='purchasing/'>
         <Route index element={<Navigate to='index/' />} />
@@ -216,7 +217,6 @@ export const routes = (
         <Route path='sales-order/:id/*' element={<SalesOrderDetail />} />
         <Route path='shipment/:id/*' element={<SalesOrderShipmentDetail />} />
         <Route path='return-order/:id/*' element={<ReturnOrderDetail />} />
-        <Route path='repair-order/:id/*' element={<RepairOrderDetail />} />
         <Route path='customer/:id/*' element={<CustomerDetail />} />
       </Route>
       <Route path='core/'>

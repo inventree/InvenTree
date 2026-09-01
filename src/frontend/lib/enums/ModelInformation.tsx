@@ -254,8 +254,8 @@ export const ModelInformationDict: ModelDict = {
   repairorder: {
     label: () => t`Repair Order`,
     label_multiple: () => t`Repair Orders`,
-    url_overview: '/sales/index/repairorders',
-    url_detail: '/sales/repair-order/:pk/',
+    url_overview: '/manufacturing/index/repairorders',
+    url_detail: '/manufacturing/repair-order/:pk/',
     api_endpoint: ApiEndpoints.repair_order_list,
     admin_url: '/build/repairorder/',
     supports_barcode: true,

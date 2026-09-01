@@ -9,6 +9,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
@@ -378,9 +379,12 @@ export default function RepairOrderDetail() {
             imageUrl={order.customer_detail?.image}
             badges={orderBadges}
             actions={orderActions}
-            breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+            breadcrumbs={[{ name: t`Manufacturing`, url: '/manufacturing' }]}
             lastCrumb={[
-              { name: order.reference, url: `/sales/repair-order/${order.pk}` }
+              {
+                name: order.reference,
+                url: getDetailUrl(ModelType.repairorder, order.pk)
+              }
             ]}
             editAction={editRepairOrder.open}
             editEnabled={
