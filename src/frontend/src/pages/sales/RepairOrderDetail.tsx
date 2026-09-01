@@ -59,7 +59,8 @@ export default function RepairOrderDetail() {
     pk: id,
     params: {
       customer_detail: true,
-      part_detail: true
+      part_detail: true,
+      tags: true
     }
   });
 
@@ -225,6 +226,7 @@ export default function RepairOrderDetail() {
     pk: order.pk,
     title: t`Edit Repair Order`,
     fields: repairOrderFields,
+    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: () => {
       refreshInstance();
     }

@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { useCreateApiFormModal } from '../hooks/UseForm';
+import { TagsField } from './CommonFields';
 
 export function useRepairOrderFields({
   duplicateOrderId
@@ -43,7 +44,8 @@ export function useRepairOrderFields({
       },
       link: {
         icon: <IconLink />
-      }
+      },
+      tags: TagsField({})
     };
 
     // Order duplication fields

@@ -858,6 +858,24 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
         with self.assertRaises(ValidationError):
             self.ro.full_clean()
 
+    def test_tags(self):
+        """Tags should be writable via PATCH, and only included in GET responses when requested."""
+        url = reverse('api-repair-order-detail', kwargs={'pk': self.ro.pk})
+
+        response = self.patch(url, {'tags': ['tag1', 'tag2']}, expected_code=200)
+        self.assertEqual(sorted(response.data['tags']), ['tag1', 'tag2'])
+
+        self.ro.refresh_from_db()
+        self.assertEqual(self.ro.tags.count(), 2)
+        self.assertEqual(sorted(t.name for t in self.ro.tags.all()), ['tag1', 'tag2'])
+
+        # Without the 'tags' filter, a plain GET should not include tag data
+        response = self.get(url, expected_code=200)
+        self.assertNotIn('tags', response.data)
+
+        response = self.get(url, {'tags': True}, expected_code=200)
+        self.assertEqual(sorted(response.data['tags']), ['tag1', 'tag2'])
+
     def test_repair_order_part_functionality(self):
         """Verify the part FK and part_detail serializer field work end-to-end.
 
