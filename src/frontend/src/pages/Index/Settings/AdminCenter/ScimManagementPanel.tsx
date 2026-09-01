@@ -1,11 +1,18 @@
+import { AddItemButton } from '@lib/components/AddItemButton';
 import { CopyButton } from '@lib/components/CopyButton';
+import { RowDeleteAction } from '@lib/components/RowActions';
+import type { RowAction } from '@lib/components/RowActions';
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { navigateToLink } from '@lib/functions/Navigation';
+import useTable from '@lib/hooks/UseTable';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
+  Accordion,
   Alert,
+  Anchor,
   Badge,
   Button,
   Code,
@@ -14,19 +21,32 @@ import {
   Loader,
   Modal,
   Paper,
+  SimpleGrid,
   Stack,
   Table,
   Text
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
-import { IconShieldLock, IconShieldOff } from '@tabler/icons-react';
+import {
+  IconArrowBigLeft,
+  IconArrowBigRight,
+  IconShieldLock,
+  IconShieldOff
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api, queryClient } from '../../../../App';
+import { GlobalSettingList } from '../../../../components/settings/SettingList';
+import { InvenTreeTable } from '../../../../components/tables/InvenTreeTable';
 import { showApiErrorMessage } from '../../../../functions/notifications';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal
+} from '../../../../hooks/UseForm';
 
-export default function ScimManagementPanel() {
+export function ScimManagementPanel() {
   const [secret, setSecret] = useState<string>('');
   const [
     secretModalOpened,
@@ -190,5 +210,161 @@ export default function ScimManagementPanel() {
         </Trans>
       </Text>
     </Stack>
+  );
+}
+
+function SSOManagementPanel() {
+  const navigate = useNavigate();
+  const table = useTable('sso-applications', { idAccessor: 'id' });
+  const [selectedSsoApplication, setSelectedSsoApplication] = useState<
+    number | undefined
+  >(undefined);
+
+  const newSsoApplication = useCreateApiFormModal({
+    url: ApiEndpoints.sso_list,
+    title: t`Add SSO Application`,
+    table: table,
+    fields: {
+      name: {},
+      provider: {},
+      client_id: {},
+      secret: {},
+      settings: {}
+    }
+  });
+
+  const deleteSsoApplication = useDeleteApiFormModal({
+    url: ApiEndpoints.sso_list,
+    pk: selectedSsoApplication,
+    title: t`Delete SSO Application`,
+    table: table
+  });
+
+  const ssoColumns = useMemo(
+    () => [
+      {
+        accessor: 'name',
+        title: t`Name`,
+        sortable: true,
+        switchable: false
+      }
+    ],
+    []
+  );
+
+  const rowActions = useCallback(
+    (record: any): RowAction[] => [
+      RowDeleteAction({
+        hidden: !!record.is_builtin,
+        onClick: () => {
+          setSelectedSsoApplication(record.id);
+          deleteSsoApplication.open();
+        }
+      })
+    ],
+    [deleteSsoApplication]
+  );
+
+  const tableActions = useMemo(
+    () => [
+      <AddItemButton
+        key={'add-sso-application'}
+        tooltip={t`Add SSO Application`}
+        onClick={() => newSsoApplication.open()}
+      />
+    ],
+    [newSsoApplication]
+  );
+
+  return (
+    <Stack gap='md'>
+      {newSsoApplication.modal}
+      {deleteSsoApplication.modal}
+      <InvenTreeTable
+        tableState={table}
+        url={apiUrl(ApiEndpoints.sso_list)}
+        columns={ssoColumns}
+        props={{
+          enableSearch: true,
+          enableColumnSwitching: true,
+          enableSelection: false,
+          enablePagination: true,
+          enableRefresh: true,
+          rowActions: rowActions,
+          tableActions: tableActions
+        }}
+      />
+      <GlobalSettingList
+        heading={t`Single Sign-On (SSO) Settings`}
+        keys={[
+          'LOGIN_ENABLE_SSO',
+          'LOGIN_ENABLE_SSO_REG',
+          'LOGIN_SIGNUP_SSO_AUTO'
+        ]}
+      />
+      <Alert color='blue'>
+        <Trans>
+          More settings can be found in the{' '}
+          <Anchor
+            onClick={(event: any) =>
+              navigateToLink('/settings/system/authentication', navigate, event)
+            }
+            style={{ textDecoration: 'underline' }}
+          >
+            system settings
+          </Anchor>
+          .
+        </Trans>
+      </Alert>
+    </Stack>
+  );
+}
+
+function headerSection(text: string, out = false) {
+  return (
+    <Group>
+      {out ? <IconArrowBigLeft size={16} /> : <IconArrowBigRight size={16} />}
+      <StylishText size='lg'>{text}</StylishText>
+    </Group>
+  );
+}
+
+export default function IdentityManagementPanel() {
+  const identity_overview = t`InvenTree can be integrated with external Identity Providers and act as one.`;
+  const identity_inbound = t`External Identities can be pushed to InvenTree via Single Sign-On (SSO) and SCIM.`;
+  const identity_outbound = t`InvenTree can act as an Identity Provider for external applications via the built-in oAuth2 provider.`;
+
+  return (
+    <>
+      {identity_overview}
+      <SimpleGrid cols={2} spacing='md' mt='md' mb='md'>
+        <div>{identity_inbound}</div>
+        <div>{identity_outbound}</div>
+      </SimpleGrid>
+
+      <Accordion
+        variant='separated'
+        defaultValue={['scim']}
+        chevronPosition='left'
+        multiple
+      >
+        <Accordion.Item value='scim'>
+          <Accordion.Control>
+            {headerSection(t`SCIM Provisioning`)}
+          </Accordion.Control>
+          <Accordion.Panel>
+            <ScimManagementPanel />
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value='sso'>
+          <Accordion.Control>
+            {headerSection(t`Single Sign-On (SSO)`)}
+          </Accordion.Control>
+          <Accordion.Panel>
+            <SSOManagementPanel />
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
+    </>
   );
 }

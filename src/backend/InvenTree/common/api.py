@@ -18,6 +18,8 @@ from django.views.decorators.csrf import csrf_exempt
 import django_filters.rest_framework.filters as rest_filters
 import django_q.models
 import django_q.tasks
+from allauth.socialaccount import providers
+from allauth.socialaccount.models import SocialApp
 from django_filters.rest_framework.filterset import FilterSet
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import (
@@ -60,6 +62,7 @@ from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors, str2bool
 from InvenTree.helpers_api import (
+    CleanModelViewSet,
     InvenTreeApiRouter,
     RetrieveDestroyModelViewSet,
     RetrieveUpdateDestroyModelViewSet,
@@ -1667,6 +1670,39 @@ class ObservabilityEnd(CreateAPI):
 
         return Response({'status': 'ok'})
 
+
+class SocialAppSerializer(serializers.ModelSerializer):
+    """Serializer for SocialApp records."""
+
+    provider = serializers.ChoiceField(choices=[])
+
+    class Meta:
+        """Meta options for SocialAppSerializer."""
+
+        model = SocialApp
+        fields = ['name', 'provider', 'provider_id', 'client_id', 'secret', 'settings']
+        read_only_fields = ['provider_id']
+
+    def __init__(self, *args, **kwargs):
+        """Populate provider choices from the active allauth registry."""
+        super().__init__(*args, **kwargs)
+        self.fields['provider'].choices = providers.registry.as_choices()
+
+    def validate_provider(self, value):
+        """Ensure the selected provider is supported by the active allauth registry."""
+        if value not in [provider[0] for provider in providers.registry.as_choices()]:
+            raise serializers.ValidationError(_('Provider is not supported'))
+        return value
+
+
+class SocialAppViewSet(CleanModelViewSet):
+    """Manage a SocialApp (client side) application."""
+
+    queryset = SocialApp.objects.all()
+    serializer_class = SocialAppSerializer
+
+
+admin_router.register('sso', SocialAppViewSet, basename='api-sso')
 
 selection_urls = [
     path(

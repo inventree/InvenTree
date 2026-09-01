@@ -1001,9 +1001,10 @@ for app in _SOCIAL_BACKENDS:  # pragma: no cover
 
     INSTALLED_APPS.append(app)
 
-SOCIALACCOUNT_PROVIDERS = get_setting(
+_PROVIDER_SETTINGS = get_setting(
     'INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None, typecast=dict
 )
+SOCIALACCOUNT_PROVIDERS = {**{a: {} for a in DEFAULT_SOCIAL}, **_PROVIDER_SETTINGS}
 
 SOCIALACCOUNT_STORE_TOKENS = True
 
