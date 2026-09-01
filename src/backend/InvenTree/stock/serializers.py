@@ -328,6 +328,8 @@ class StockItemSerializer(
 
     export_exclude_fields = ['tags', 'tracking_items']
 
+    SKIP_CREATE_FIELDS = ['duplicate']
+
     export_child_fields = [
         'part_detail.name',
         'part_detail.description',
@@ -363,7 +365,6 @@ class StockItemSerializer(
             'in_stock',
             'is_building',
             'link',
-            'notes',
             'owner',
             'packaging',
             'parent',
@@ -385,6 +386,7 @@ class StockItemSerializer(
             'purchase_price_currency',
             'use_pack_size',
             'serial_numbers',
+            'duplicate',
             # Annotated fields
             'allocated',
             'expired',
@@ -470,6 +472,28 @@ class StockItemSerializer(
         required=False,
         allow_null=True,
         help_text=_('Enter serial numbers for new items'),
+    )
+
+    # Extra field used only for creation of a new StockItem instance
+    duplicate = InvenTree.serializers.DuplicateOptionsSerializer(
+        StockItem.objects.all(),
+        label=_('Duplicate Stock Item'),
+        help_text=_('Copy initial data from another stock item'),
+        copy_notes=True,
+        copy_fields=[
+            {
+                'name': 'copy_tests',
+                'label': _('Copy Test Results'),
+                'help_text': _('Copy test results from the original stock item'),
+                'default': False,
+            },
+            {
+                'name': 'copy_history',
+                'label': _('Copy History'),
+                'help_text': _('Copy stock history from the original stock item'),
+                'default': False,
+            },
+        ],
     )
 
     def validate_part(self, part):

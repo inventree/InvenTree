@@ -42,9 +42,9 @@ from InvenTree.serializers import (
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     InvenTreeTaggitSerializer,
-    NotesFieldMixin,
     OptionalField,
     PrefetchSpec,
+    apply_duplicate_copy_options,
 )
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
@@ -71,7 +71,6 @@ from .validators import check_build_output
 class BuildSerializer(
     CustomStatusSerializerMixin,
     FilterableSerializerMixin,
-    NotesFieldMixin,
     InvenTreeTaggitSerializer,
     DataImportExportSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -113,7 +112,6 @@ class BuildSerializer(
             'status_custom_key',
             'target_date',
             'take_from',
-            'notes',
             'link',
             'issued_by',
             'issued_by_detail',
@@ -205,7 +203,9 @@ class BuildSerializer(
 
         return queryset
 
-    duplicate = DuplicateOptionsSerializer(Build.objects.all(), copy_parameters=True)
+    duplicate = DuplicateOptionsSerializer(
+        Build.objects.all(), copy_parameters=True, copy_notes=True
+    )
 
     def __init__(self, *args, **kwargs):
         """Determine if extra serializer fields are required."""
@@ -221,10 +221,13 @@ class BuildSerializer(
         instance = super().create(validated_data)
 
         if duplicate:
-            original = duplicate['original']
-
-            if duplicate.get('copy_parameters', True):
-                instance.copy_parameters_from(original)
+            apply_duplicate_copy_options(
+                instance,
+                duplicate,
+                duplicate['original'],
+                copy_notes=True,
+                copy_parameters=True,
+            )
 
         return instance
 
@@ -1566,12 +1569,9 @@ class BuildLineSerializer(
         # Defer expensive fields which we do not need for this serializer
 
         queryset = queryset.defer(
-            'build__notes',
             'build__metadata',
             'bom_item__metadata',
-            'bom_item__part__notes',
             'bom_item__part__metadata',
-            'bom_item__sub_part__notes',
             'bom_item__sub_part__metadata',
         )
 
@@ -1844,7 +1844,6 @@ class BuildConsumeSerializer(serializers.Serializer):
 
 
 class RepairOrderSerializer(
-    NotesFieldMixin,
     InvenTreeCustomStatusSerializerMixin,
     FilterableSerializerMixin,
     InvenTreeModelSerializer,
