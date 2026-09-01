@@ -2525,6 +2525,7 @@ class RepairOrderReportContext(report.mixins.BaseReportContext, TypedDict):
         description: The description field of the RepairOrder
         lines: Query set of all RepairOrderLineItem objects associated with the RepairOrder
         order: The RepairOrder instance itself
+        part: The Part object being repaired
         reference: The reference field of the RepairOrder
         symptoms: The reported symptoms / issues for this repair order
         title: The title (string representation) of the RepairOrder
@@ -2534,6 +2535,7 @@ class RepairOrderReportContext(report.mixins.BaseReportContext, TypedDict):
     description: str
     lines: report.mixins.QuerySet['RepairOrderLineItem']
     order: 'RepairOrder'
+    part: part.models.Part
     reference: str
     symptoms: str
     title: str
@@ -2586,6 +2588,7 @@ class RepairOrder(
             'description': self.description,
             'lines': self.lines.all(),
             'order': self,
+            'part': self.part,
             'reference': self.reference,
             'symptoms': self.symptoms,
             'title': str(self),
@@ -2618,6 +2621,10 @@ class RepairOrder(
     def clean(self):
         """Validate the RepairOrder model."""
         super().clean()
+
+        # Prevent changing the repaired part after creation
+        if self.has_field_changed('part'):
+            raise ValidationError({'part': _('Repair order part cannot be changed')})
 
         if self.start_date and self.target_date and self.start_date > self.target_date:
             raise ValidationError({

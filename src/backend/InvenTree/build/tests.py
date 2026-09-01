@@ -844,6 +844,20 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
                 reference='RO-8888', description='No part assigned'
             ).full_clean()
 
+    def test_part_is_immutable(self):
+        """'part' cannot be changed after creation - both via the API and at the model level."""
+        other_part = Part.objects.filter(assembly=True).exclude(pk=self.part.pk).first()
+        assert other_part
+
+        url = reverse('api-repair-order-detail', kwargs={'pk': self.ro.pk})
+        self.patch(url, {'part': other_part.pk}, expected_code=400)
+        self.ro.refresh_from_db()
+        self.assertEqual(self.ro.part, self.part)
+
+        self.ro.part = other_part
+        with self.assertRaises(ValidationError):
+            self.ro.full_clean()
+
     def test_repair_order_part_functionality(self):
         """Verify the part FK and part_detail serializer field work end-to-end.
 

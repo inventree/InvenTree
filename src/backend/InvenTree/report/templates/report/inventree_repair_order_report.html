@@ -87,6 +87,10 @@ table td {
         <td>{% internal_link order.get_absolute_url reference %}</td>
     </tr>
     <tr>
+        <th>{% trans "Part" %}</th>
+        <td>{% internal_link part.get_absolute_url part.full_name %}</td>
+    </tr>
+    <tr>
         <th>{% trans "Description" %}</th>
         <td>{{ description }}</td>
     </tr>
