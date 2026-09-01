@@ -626,9 +626,14 @@ class PluginsRegistry:
 
             # Gather Modules
             if parent_path:
-                raw_module = SourceFileLoader(
+                loader = SourceFileLoader(
                     plugin_dir, str(parent_obj.joinpath('__init__.py'))
-                ).load_module()
+                )
+                spec = importlib.util.spec_from_loader(plugin_dir, loader)
+                if spec is None:
+                    continue
+                raw_module = importlib.util.module_from_spec(spec)
+                loader.exec_module(raw_module)
             else:
                 raw_module = importlib.import_module(plugin_dir)
 
