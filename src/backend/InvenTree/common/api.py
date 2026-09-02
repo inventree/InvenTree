@@ -1270,7 +1270,7 @@ class ParameterTemplateMixin:
         'model_type'
     )
     serializer_class = common.serializers.ParameterTemplateSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
+    permission_classes = [IsStaffOrReadOnlyScope]
 
 
 class ParameterTemplateList(ParameterTemplateMixin, DataExportViewMixin, ListCreateAPI):
@@ -1444,7 +1444,7 @@ class SelectionListMixin(OutputOptionsMixin):
 
     queryset = common.models.SelectionList.objects.all()
     serializer_class = common.serializers.SelectionListSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
+    permission_classes = [IsStaffOrReadOnlyScope]
 
     def get_queryset(self):
         """Override the queryset method to include entry count."""
@@ -1464,7 +1464,7 @@ class EntryMixin:
 
     queryset = common.models.SelectionListEntry.objects.all()
     serializer_class = common.serializers.SelectionEntrySerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
+    permission_classes = [IsStaffOrReadOnlyScope]
     lookup_url_kwarg = 'entrypk'
 
     def get_queryset(self):
