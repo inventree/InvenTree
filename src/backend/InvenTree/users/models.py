@@ -496,6 +496,15 @@ class UserProfile(InvenTree.models.MetadataMixin):
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name='profile', verbose_name=_('User')
     )
+
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this profile.
+
+        UserProfile has no RuleSet permissions of its own,
+        so we manually check if the user is the owner of this profile.
+        """
+        return self.user_id == user.pk
+
     language = models.CharField(
         max_length=10,
         blank=True,
