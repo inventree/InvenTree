@@ -185,6 +185,38 @@ class ParameterAPITests(InvenTreeAPITestCase):
         self.assertIsNone(response.data['model_type'])
         self.assertFalse(response.data['enabled'])
 
+    def test_template_write_requires_staff(self):
+        """Non-staff users cannot create, edit or delete a ParameterTemplate."""
+        template = common.models.ParameterTemplate.objects.create(
+            name='Staff Only Template', description='desc'
+        )
+        detail_url = reverse(
+            'api-parameter-template-detail', kwargs={'pk': template.pk}
+        )
+
+        self.user.is_staff = False
+        self.user.save()
+
+        self.post(
+            reverse('api-parameter-template-list'),
+            {'name': 'Non-staff Template', 'description': 'desc'},
+            expected_code=403,
+        )
+        self.assertFalse(
+            common.models.ParameterTemplate.objects.filter(
+                name='Non-staff Template'
+            ).exists()
+        )
+
+        self.patch(detail_url, {'description': 'changed'}, expected_code=403)
+        template.refresh_from_db()
+        self.assertEqual(template.description, 'desc')
+
+        self.delete(detail_url, expected_code=403)
+        self.assertTrue(
+            common.models.ParameterTemplate.objects.filter(pk=template.pk).exists()
+        )
+
     def test_template_filters(self):
         """Tests for API filters against ParameterTemplate endpoint."""
         from company.models import Company
@@ -2337,6 +2369,103 @@ class SelectionListLockedTest(InvenTreeAPITestCase):
 
         # Entry must still exist — omitting choices must not delete entries
         self.assertTrue(SelectionListEntry.objects.filter(pk=self.entry.pk).exists())
+
+
+class SelectionListStaffPermissionAPITests(InvenTreeAPITestCase):
+    """Tests that non-staff users cannot create/edit/delete SelectionList catalog objects."""
+
+    def setUp(self):
+        """Create a SelectionList with one entry, owned by a staff user."""
+        super().setUp()
+
+        self.sel_list = SelectionList.objects.create(name='Test List')
+        self.entry = SelectionListEntry.objects.create(
+            list=self.sel_list, value='v1', label='Entry 1'
+        )
+
+        self.list_url = reverse('api-selectionlist-list')
+        self.detail_url = reverse(
+            'api-selectionlist-detail', kwargs={'pk': self.sel_list.pk}
+        )
+        self.entry_list_url = reverse(
+            'api-selectionlistentry-list', kwargs={'pk': self.sel_list.pk}
+        )
+        self.entry_detail_url = reverse(
+            'api-selectionlistentry-detail',
+            kwargs={'pk': self.sel_list.pk, 'entrypk': self.entry.pk},
+        )
+
+    def test_non_staff_cannot_create_list(self):
+        """A non-staff user cannot create a new SelectionList."""
+        self.user.is_staff = False
+        self.user.save()
+
+        self.post(self.list_url, {'name': 'Non-staff List'}, expected_code=403)
+        self.assertFalse(SelectionList.objects.filter(name='Non-staff List').exists())
+
+    def test_non_staff_cannot_edit_list(self):
+        """A non-staff user cannot update an existing SelectionList."""
+        self.user.is_staff = False
+        self.user.save()
+
+        self.patch(self.detail_url, {'name': 'Renamed'}, expected_code=403)
+        self.sel_list.refresh_from_db()
+        self.assertEqual(self.sel_list.name, 'Test List')
+
+    def test_non_staff_cannot_delete_list(self):
+        """A non-staff user cannot delete a SelectionList."""
+        self.user.is_staff = False
+        self.user.save()
+
+        self.delete(self.detail_url, expected_code=403)
+        self.assertTrue(SelectionList.objects.filter(pk=self.sel_list.pk).exists())
+
+    def test_non_staff_cannot_create_entry(self):
+        """A non-staff user cannot create a new SelectionListEntry."""
+        self.user.is_staff = False
+        self.user.save()
+
+        self.post(
+            self.entry_list_url,
+            {'list': self.sel_list.pk, 'value': 'v2', 'label': 'Entry 2'},
+            expected_code=403,
+        )
+        self.assertFalse(SelectionListEntry.objects.filter(value='v2').exists())
+
+    def test_non_staff_cannot_edit_entry(self):
+        """A non-staff user cannot update an existing SelectionListEntry."""
+        self.user.is_staff = False
+        self.user.save()
+
+        self.patch(self.entry_detail_url, {'label': 'Changed'}, expected_code=403)
+        self.entry.refresh_from_db()
+        self.assertEqual(self.entry.label, 'Entry 1')
+
+    def test_non_staff_cannot_delete_entry(self):
+        """A non-staff user cannot delete a SelectionListEntry."""
+        self.user.is_staff = False
+        self.user.save()
+
+        self.delete(self.entry_detail_url, expected_code=403)
+        self.assertTrue(SelectionListEntry.objects.filter(pk=self.entry.pk).exists())
+
+    def test_staff_can_still_manage_lists_and_entries(self):
+        """A staff user retains full create/edit/delete access."""
+        self.user.is_staff = True
+        self.user.save()
+
+        response = self.post(self.list_url, {'name': 'Staff List'}, expected_code=201)
+        pk = response.data['pk']
+
+        self.patch(
+            reverse('api-selectionlist-detail', kwargs={'pk': pk}),
+            {'name': 'Staff List Renamed'},
+            expected_code=200,
+        )
+
+        self.delete(
+            reverse('api-selectionlist-detail', kwargs={'pk': pk}), expected_code=204
+        )
 
 
 class NotePermissionAPITests(InvenTreeAPITestCase):
