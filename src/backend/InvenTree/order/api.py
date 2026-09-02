@@ -64,6 +64,7 @@ from order.status_codes import (
 )
 from part.models import Part
 from users.models import Owner
+from users.permissions import check_user_permission
 
 
 class GeneralExtraLineListOutputOptions(OutputConfiguration):
@@ -2386,6 +2387,32 @@ class OrderCalendarExport(ICalFeed):
     timezone = settings.TIME_ZONE
     file_name = 'calendar.ics'
 
+    # Map the URL 'ordertype' kwarg to the corresponding order model,
+    # so that access can be checked against the matching RuleSet
+    ORDER_MODELS = {
+        'purchase-order': models.PurchaseOrder,
+        'sales-order': models.SalesOrder,
+        'return-order': models.ReturnOrder,
+        'transfer-order': models.TransferOrder,
+    }
+
+    def check_permission(self, request, **kwargs):
+        """Check that the requesting user has 'view' permission for the requested order type.
+
+        Returns a 403 JsonResponse if the user lacks the required RuleSet permission,
+        or None if access is permitted.
+        """
+        model = self.ORDER_MODELS.get(kwargs.get('ordertype'))
+
+        if model is not None and not check_user_permission(request.user, model, 'view'):
+            response = JsonResponse({
+                'detail': 'You do not have permission to view this resource.'
+            })
+            response.status_code = 403
+            return response
+
+        return None
+
     def __call__(self, request, *args, **kwargs):
         """Overload call in order to check for authentication.
 
@@ -2402,6 +2429,8 @@ class OrderCalendarExport(ICalFeed):
 
         if request.user.is_authenticated:
             # Authenticated on first try - maybe normal browser call?
+            if forbidden := self.check_permission(request, **kwargs):
+                return forbidden
             return super().__call__(request, *args, **kwargs)
 
         # No login yet - check in headers
@@ -2420,6 +2449,8 @@ class OrderCalendarExport(ICalFeed):
         # Check again
         if request.user.is_authenticated:
             # Authenticated after second try
+            if forbidden := self.check_permission(request, **kwargs):
+                return forbidden
             return super().__call__(request, *args, **kwargs)
 
         # Still nothing - return Unauth. header with info on how to authenticate
