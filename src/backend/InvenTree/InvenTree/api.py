@@ -645,13 +645,18 @@ class ParameterListMixin:
         serializer_class = (
             getattr(self, 'serializer_class', None) or self.get_serializer_class()
         )
-
-        model_class = serializer_class.Meta.model
+        model_class = getattr(getattr(serializer_class, 'Meta', None), 'model', None)
 
         # Apply ordering based on query parameter
-        queryset = common.filters.order_by_parameter(
-            queryset, model_class, self.request.query_params.get('ordering', None)
-        )
+        if model_class is not None:
+            ordering = (
+                self.request.query_params.get('ordering', None)
+                if hasattr(self, 'request')
+                else {}
+            )
+            queryset = common.filters.order_by_parameter(
+                queryset, model_class, ordering
+            )
 
         return queryset
 

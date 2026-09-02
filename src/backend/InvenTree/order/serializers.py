@@ -493,25 +493,6 @@ class OrderAdjustSerializer(serializers.Serializer):
         return self.context['order']
 
 
-class PurchaseOrderHoldSerializer(OrderAdjustSerializer):
-    """Serializer for placing a PurchaseOrder on hold."""
-
-    def save(self):
-        """Save the serializer to 'hold' the order."""
-        self.order.hold_order()
-
-
-class PurchaseOrderCancelSerializer(OrderAdjustSerializer):
-    """Serializer for cancelling a PurchaseOrder."""
-
-    def save(self):
-        """Save the serializer to 'cancel' the order."""
-        if not self.order.can_cancel:
-            raise ValidationError(_('Order cannot be cancelled'))
-
-        self.order.cancel_order()
-
-
 class PurchaseOrderCompleteSerializer(OrderAdjustSerializer):
     """Serializer for completing a purchase order."""
 
@@ -541,18 +522,6 @@ class PurchaseOrderCompleteSerializer(OrderAdjustSerializer):
         order = self.context['order']
 
         return {'is_complete': order.is_complete}
-
-    def save(self):
-        """Save the serializer to 'complete' the order."""
-        self.order.complete_order()
-
-
-class PurchaseOrderIssueSerializer(OrderAdjustSerializer):
-    """Serializer for issuing (sending) a purchase order."""
-
-    def save(self):
-        """Save the serializer to 'place' the order."""
-        self.order.place_order()
 
 
 @register_importer()
