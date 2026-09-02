@@ -943,6 +943,21 @@ class PurchaseOrderTest(OrderTest):
         )
         self.assertEqual(response.status_code, 200)
 
+    def test_po_calendar_no_permission(self):
+        """Test that an authenticated user without purchase_order view permission is denied."""
+        self.clearRoles()
+
+        response = self.get(
+            reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}),
+            expected_code=403,
+            format=None,
+        )
+
+        resp_dict = response.json()
+        self.assertEqual(
+            resp_dict['detail'], 'You do not have permission to view this resource.'
+        )
+
     def test_po_custom_status_query_count(self):
         """Test that listing PurchaseOrders with custom statuses does not cause N+1 queries.
 
@@ -2312,6 +2327,21 @@ class SalesOrderTest(OrderTest):
 
         self.assertGreaterEqual(n_events, 1)
         self.assertEqual(number_orders_incl_complete, n_events)
+
+    def test_so_calendar_no_permission(self):
+        """Test that an authenticated user without sales_order view permission is denied."""
+        self.clearRoles()
+
+        response = self.get(
+            reverse('api-po-so-calendar', kwargs={'ordertype': 'sales-order'}),
+            expected_code=403,
+            format=None,
+        )
+
+        resp_dict = response.json()
+        self.assertEqual(
+            resp_dict['detail'], 'You do not have permission to view this resource.'
+        )
 
     def test_export(self):
         """Test we can export the SalesOrder list."""
@@ -3815,6 +3845,21 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         calendar = Calendar.from_ical(response.content)
         self.assertIsInstance(calendar, Calendar)
 
+    def test_ro_calendar_no_permission(self):
+        """Test that an authenticated user without return_order view permission is denied."""
+        self.clearRoles()
+
+        response = self.get(
+            reverse('api-po-so-calendar', kwargs={'ordertype': 'return-order'}),
+            expected_code=403,
+            format=None,
+        )
+
+        resp_dict = response.json()
+        self.assertEqual(
+            resp_dict['detail'], 'You do not have permission to view this resource.'
+        )
+
     def test_export(self):
         """Test data export for the ReturnOrder API endpoints."""
         # Export return orders
@@ -4401,6 +4446,21 @@ class TransferOrderTest(OrderTest):
 
         self.assertGreaterEqual(n_events, 1)
         self.assertEqual(number_orders_incl_complete, n_events)
+
+    def test_transfer_order_calendar_no_permission(self):
+        """Test that an authenticated user without transfer_order view permission is denied."""
+        self.clearRoles()
+
+        response = self.get(
+            reverse('api-po-so-calendar', kwargs={'ordertype': 'transfer-order'}),
+            expected_code=403,
+            format=None,
+        )
+
+        resp_dict = response.json()
+        self.assertEqual(
+            resp_dict['detail'], 'You do not have permission to view this resource.'
+        )
 
     def test_export(self):
         """Test we can export the TransferOrder list."""
