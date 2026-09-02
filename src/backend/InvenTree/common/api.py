@@ -499,8 +499,37 @@ class NotesImageList(ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
 
+    def get_queryset(self):
+        """Filter notes images to those linked to a note the requesting user can view."""
+        import common.validators
+        from users.permissions import check_user_permission, prefetch_rule_sets
+
+        qs = super().get_queryset()
+        user = self.request.user
+
+        if user.is_superuser:
+            return qs
+
+        groups = prefetch_rule_sets(user)
+
+        allowed_ct_ids = [
+            ContentType.objects.get_for_model(model_class).pk
+            for model_class in common.validators.note_model_types()
+            if check_user_permission(user, model_class, 'view', groups=groups)
+        ]
+
+        return qs.filter(
+            Q(note__template=True) | Q(note__model_type__in=allowed_ct_ids)
+        )
+
     def perform_create(self, serializer):
         """Create (upload) a new notes image."""
+        note = serializer.validated_data['note']
+
+        common.serializers.check_note_change_permission(
+            self.request.user, template=note.template, model_type=note.model_type
+        )
+
         serializer.save(user=self.request.user)
 
 
@@ -1270,7 +1299,7 @@ class ParameterTemplateMixin:
         'model_type'
     )
     serializer_class = common.serializers.ParameterTemplateSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
+    permission_classes = [IsStaffOrReadOnlyScope]
 
 
 class ParameterTemplateList(ParameterTemplateMixin, DataExportViewMixin, ListCreateAPI):
@@ -1315,6 +1344,35 @@ class ParameterMixin:
     serializer_class = common.serializers.ParameterSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
+    def get_queryset(self):
+        """Filter parameters to those the requesting user has view permission for.
+
+        Parameter has no RuleSet permissions of its own (see
+        users.ruleset.get_ruleset_ignore()) - access is instead scoped by the
+        'view' permission of the model type the parameter is linked to.
+        """
+        import common.validators
+        from users.permissions import check_user_permission, prefetch_rule_sets
+
+        qs = super().get_queryset()
+        user = self.request.user
+
+        if user.is_superuser:
+            return qs
+
+        # Fetch the user's groups (with prefetched rule sets) once, and reuse it
+        # for every model type below - otherwise each check_user_permission()
+        # call re-fetches the same groups/rule-sets from scratch.
+        groups = prefetch_rule_sets(user)
+
+        allowed_ct_ids = [
+            ContentType.objects.get_for_model(model_class).pk
+            for model_class in common.validators.parameter_model_types()
+            if check_user_permission(user, model_class, 'view', groups=groups)
+        ]
+
+        return qs.filter(model_type__in=allowed_ct_ids)
+
 
 class ParameterList(
     OutputOptionsMixin,
@@ -1346,9 +1404,43 @@ class ParameterList(
 
     unique_create_fields = ['model_type', 'model_id', 'template']
 
+    def validate_delete(self, queryset, request) -> None:
+        """Ensure that the user has correct permissions for a bulk-delete.
+
+        - Extract all model types from the provided queryset
+        - Ensure that the user has correct 'delete' permissions for each linked model
+        """
+        from users.permissions import check_user_permission
+
+        content_type_ids = queryset.values_list('model_type', flat=True).distinct()
+
+        for content_type in ContentType.objects.filter(pk__in=content_type_ids):
+            model_class = content_type.model_class()
+
+            if not model_class or not check_user_permission(
+                request.user, model_class, 'delete'
+            ):
+                raise ValidationError(
+                    _('User does not have permission to delete these parameters')
+                )
+
 
 class ParameterDetail(ParameterMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for Parameter objects."""
+
+    def perform_destroy(self, instance):
+        """Enforce a delete permission check on the linked model before deleting.
+
+        DRF's default destroy() calls instance.delete() directly, bypassing
+        ParameterSerializer.save() (and the permission checks it performs)
+        entirely. Without this, get_queryset()'s 'view' permission gate is
+        all that stands between a user and deleting the parameter.
+        """
+        if not instance.check_permission('delete', self.request.user):
+            raise PermissionDenied(
+                _('User does not have permission to delete this parameter')
+            )
+        super().perform_destroy(instance)
 
 
 class InstanceInfoView(APIView):
@@ -1444,7 +1536,7 @@ class SelectionListMixin(OutputOptionsMixin):
 
     queryset = common.models.SelectionList.objects.all()
     serializer_class = common.serializers.SelectionListSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
+    permission_classes = [IsStaffOrReadOnlyScope]
 
     def get_queryset(self):
         """Override the queryset method to include entry count."""
@@ -1464,7 +1556,7 @@ class EntryMixin:
 
     queryset = common.models.SelectionListEntry.objects.all()
     serializer_class = common.serializers.SelectionEntrySerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
+    permission_classes = [IsStaffOrReadOnlyScope]
     lookup_url_kwarg = 'entrypk'
 
     def get_queryset(self):
