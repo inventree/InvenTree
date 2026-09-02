@@ -1,6 +1,17 @@
 import { test } from '../baseFixtures';
 import { loadTab } from '../helpers';
 import { doCachedLogin } from '../login';
+import { setSettingState } from '../settings';
+
+test.beforeAll(async () => {
+  // Enable Repair Orders feature flag — hidden by default
+  await setSettingState({ setting: 'REPAIRORDER_ENABLED', value: true });
+});
+
+test.afterAll(async () => {
+  // Restore default state to avoid side effects on other tests
+  await setSettingState({ setting: 'REPAIRORDER_ENABLED', value: false });
+});
 
 test('Repair Orders - Basic Navigation', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
