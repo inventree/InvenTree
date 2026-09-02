@@ -989,7 +989,7 @@ SOCIAL_BACKENDS = get_setting(
 )
 
 DEFAULT_SOCIAL = ['saml', 'openid_connect']
-_SOCIAL_BACKENDS = [*DEFAULT_SOCIAL, *SOCIAL_BACKENDS]
+_SOCIAL_BACKENDS = {*DEFAULT_SOCIAL, *SOCIAL_BACKENDS}
 
 # region auth
 for app in _SOCIAL_BACKENDS:  # pragma: no cover
