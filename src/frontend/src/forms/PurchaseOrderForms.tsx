@@ -908,7 +908,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
             // here would make the backend treat this line as if the user
             // had explicitly chosen the PO's default, blocking any override.
             location: elem.destination ?? null,
-            quantity: elem.quantity - elem.received,
+            quantity: Math.max(0, elem.quantity - elem.received),
             expiry_date: null,
             batch_code: '',
             serial_numbers: '',
