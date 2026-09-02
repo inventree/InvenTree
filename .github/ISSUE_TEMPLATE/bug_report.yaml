@@ -1,6 +1,7 @@
 name: "Bug"
 description: "Create a bug report to help us improve InvenTree!"
 labels: ["bug", "question", "triage:not-checked"]
+type: "bug"
 body:
   - type: checkboxes
     id: no-duplicate-issues
@@ -52,7 +53,7 @@ body:
       required: true
     attributes:
       label: "Version Information"
-      description: "The version info block."
+      description: "The version info block. An incomplete version block or just a version number can lead to unread closure of the issue."
       placeholder: "You can get this by going to the `About InvenTree` section in the upper right corner and clicking on the `copy version information` button"
   - type: dropdown
     id: tried-reproduce
@@ -81,3 +82,11 @@ body:
       render: shell
     validations:
       required: false
+  - type: checkboxes
+    id: report-check
+    attributes:
+      label: "I have reviewed this report for correctness and filled out all sections."
+      description: "Due to a rise in automatically filled AI reports that are now fully reviewed/true this needs to be answered."
+      options:
+        - label: "I have checked this report. I acknowledge that filing of bugs via AI agent without review might lead to being blocked."
+          required: true
