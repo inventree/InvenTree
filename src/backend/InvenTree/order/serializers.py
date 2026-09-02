@@ -1584,7 +1584,7 @@ class SalesOrderAllocationSerializer(
             'location_detail',
             'shipment_detail',
         ]
-        read_only_fields = ['line', '']
+        read_only_fields = ['line']
 
     part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
     order = serializers.PrimaryKeyRelatedField(
@@ -2891,7 +2891,7 @@ class TransferOrderAllocationSerializer(
             'order_detail',
             'location_detail',
         ]
-        read_only_fields = ['line', '']
+        read_only_fields = ['line']
 
     part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
     order = serializers.PrimaryKeyRelatedField(
