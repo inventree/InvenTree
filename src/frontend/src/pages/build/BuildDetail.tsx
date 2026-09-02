@@ -49,6 +49,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -231,6 +232,11 @@ export default function BuildDetail() {
     refetchOnMount: true
   });
 
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.build,
+    modelId: build?.pk
+  });
+
   const buildPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -357,22 +363,25 @@ export default function BuildDetail() {
       },
       ParametersPanel({
         model_type: ModelType.build,
-        model_id: build.pk
+        model_id: build.pk,
+        parameter_count: instanceInfo.parameter_count
       }),
       AttachmentPanel({
         model_type: ModelType.build,
-        model_id: build.pk
+        model_id: build.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.build,
         model_id: build.pk,
-        has_note: !!build.notes
+        note_count: instanceInfo.note_count
       })
     ];
   }, [
     build,
     id,
     user,
+    instanceInfo,
 
     buildStatus,
     globalSettings,

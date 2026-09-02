@@ -6,9 +6,9 @@ asgiref==3.12.1 \
     # via
     #   -c src/backend/requirements.txt
     #   django
-django==5.2.16 \
-    --hash=sha256:04f354bf9d807a86ad1a8392fe3808d362358a8eafc322848e0e43e59b24371d \
-    --hash=sha256:59ea02020c3136fce14bef0bbece21a10a4febef5eed1c51c22ae468efa22200
+django==5.2.17 \
+    --hash=sha256:9d4d93be539a18ab80d058eb515900e10951e04c537c5a6b394fc49528d3251f \
+    --hash=sha256:f04fb3b36ee119e1af4fa1d397d5fd6cf12700f49321e84d4f4c642c5b1973db
     # via
     #   -c src/backend/requirements.txt
     #   -r contrib/container/requirements.in
@@ -17,9 +17,9 @@ django-auth-ldap==5.3.0 \
     --hash=sha256:743d8107b146240b46f7e97207dc06cb11facc0cd70dce490b7ca09dd5643d19 \
     --hash=sha256:aa880415983149b072f876d976ef8ec755a438090e176817998263a6ed9e1038
     # via -r contrib/container/requirements.in
-gunicorn==26.1.0 \
-    --hash=sha256:1413d777bf99d31ebeb08acd354b01f1ecc44db0aa7b811ae7b86c669232e4f7 \
-    --hash=sha256:9f45bcddec5e9dc7a25a3bdccb0c6832f11fd5d4739b1ee36c8d2fec25f1dc86
+gunicorn==26.2.0 \
+    --hash=sha256:62b864895d9ebff0b2f9867ba04fe811c93121596540830c9c916d0769668447 \
+    --hash=sha256:bd249d0b3f7972f7432f0a6b6ff3b3ee2d129f70cd1ff6c09a9dd9e29a2b88e3
     # via
     #   -c src/backend/requirements.txt
     #   -r contrib/container/requirements.in

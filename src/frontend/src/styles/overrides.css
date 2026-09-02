@@ -28,3 +28,10 @@
 .mantine-datatable-resizable-columns {
   table-layout: auto !important;
 }
+
+/*
+ * Force mantine table to 100% so columns stretch to fill.
+ */
+.mantine-datatable-resize-locked {
+  width: 100% !important;
+}
