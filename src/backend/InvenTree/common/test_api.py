@@ -9,6 +9,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.utils import override_settings
 from django.urls import reverse
 
+from allauth.socialaccount import providers
 from PIL import Image
 from taggit.models import Tag
 
@@ -54,6 +55,48 @@ class DataOutputAPITests(InvenTreeAPITestCase):
         self.user.save()
         response = self.get(url)
         self.assertEqual(len(response.data), 5)
+
+
+class SocialAppAPITests(InvenTreeAPITestCase):
+    """Tests for the SocialApp API serializer."""
+
+    roles = 'all'
+
+    def test_provider_choices_and_validation(self):
+        """Provider choices should come from the allauth registry and reject invalid values."""
+        from common.api import SocialAppSerializer
+
+        available = [provider[0] for provider in providers.registry.as_choices()]
+
+        serializer = SocialAppSerializer()
+        provider_field = serializer.fields['provider']
+
+        self.assertDictEqual(
+            dict(provider_field.choices), dict(providers.registry.as_choices())
+        )
+        self.assertCountEqual(available, list(provider_field.choices.keys()))
+
+        url = reverse('api-sso-list')
+        options = self.options(url)
+        actions = options.data['actions']['GET']
+
+        self.assertIn('provider', actions)
+        self.assertCountEqual(
+            [choice['value'] for choice in actions['provider']['choices']], available
+        )
+        self.assertEqual(
+            {
+                choice['value']: choice['display_name']
+                for choice in actions['provider']['choices']
+            },
+            dict(providers.registry.as_choices()),
+        )
+
+        invalid = SocialAppSerializer(
+            data={'name': 'Bad Provider', 'provider': 'not-a-provider'}
+        )
+        self.assertFalse(invalid.is_valid())
+        self.assertIn('provider', invalid.errors)
 
 
 class ParameterAPITests(InvenTreeAPITestCase):
