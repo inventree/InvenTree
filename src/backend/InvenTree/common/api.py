@@ -1766,7 +1766,21 @@ class ObservabilityEnd(CreateAPI):
 class SocialAppSerializer(serializers.ModelSerializer):
     """Serializer for SocialApp records."""
 
-    provider = serializers.ChoiceField(choices=[])
+    provider = serializers.ChoiceField(label=_('Provider'), choices=[])
+    name = serializers.CharField(
+        label=_('Name'),
+        help_text=_(
+            'Human friendly name for the application - will be displayed to users'
+        ),
+    )
+    provider_id = serializers.CharField(
+        label=_('Provider ID'),
+        help_text=_(
+            'Unique identifier - required for generic providers that can be configured multiple times such as SAML or OpenID Connect'
+        ),
+        required=False,
+        allow_blank=True,
+    )
 
     class Meta:
         """Meta options for SocialAppSerializer."""
