@@ -4120,11 +4120,6 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             if value is None:
                 value = ''
 
-            if field == 'piece_count' and value == 1:
-                # Skip the piece_count field if it is 1 (default value)
-                # This is to provide backwards compatibility from before this field was added
-                continue
-
             # Normalize decimal values to ensure consistent representation
             # These values are only included if they are non-zero
             # This is to provide some backwards compatibility from before these fields were added
@@ -4168,7 +4163,11 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         if len(self.checksum) == 0:
             return False
 
-        return self.get_item_hash() == self.checksum
+        # Fallback to legacy item hash if the primary calculation does not match
+        return (
+            self.get_item_hash() == self.checksum
+            or self.get_item_hash(include_part_names=True) == self.checksum
+        )
 
     @property
     def is_consumable(self) -> bool:
