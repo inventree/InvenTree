@@ -903,6 +903,9 @@ class GenericMetadataView(RetrieveUpdateAPI):
     serializer_class = MetadataSerializer
     permission_classes = [InvenTree.permissions.ContentTypePermission]
 
+    # Enforce limited range of lookup fields to prevent arbitrary queryset filtering
+    ALLOWED_LOOKUP_FIELDS = {'pk', 'key'}
+
     def get_permission_model(self):
         """Return the 'permission' model associated with this view."""
         model_name = self.kwargs.get('model', None)
@@ -946,6 +949,17 @@ class GenericMetadataView(RetrieveUpdateAPI):
             'lookup_value' if 'lookup_field' in self.kwargs else 'pk'
         )
         return super().dispatch(request, *args, **kwargs)
+
+    def initial(self, request, *args, **kwargs):
+        """Validate the lookup field before any queryset is touched.
+
+        This runs inside APIView's own exception handling (unlike dispatch(),
+        which runs before it), and *before* permission checks - so an invalid
+        lookup field is rejected without ever executing a query.
+        """
+        if self.lookup_field not in self.ALLOWED_LOOKUP_FIELDS:
+            raise ValidationError(f"Invalid lookup field '{self.lookup_field}'")
+        return super().initial(request, *args, **kwargs)
 
 
 class SimpleGenericMetadataView(GenericMetadataView):
