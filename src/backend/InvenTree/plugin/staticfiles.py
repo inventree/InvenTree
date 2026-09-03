@@ -5,7 +5,16 @@ All of the public functions in this module read and/or write the same shared
 with each other - see inventree#12769. Each one therefore acquires
 PLUGIN_STATIC_FILES_LEASE for its full duration; nothing below should touch
 `staticfiles_storage` outside of a section that holds this lease.
+
+Everything that touches `staticfiles_storage` goes through the Storage API only
+(`.save`/`.delete`/`.exists`/`.listdir`/`.open`) - STATIC_ROOT is not assumed to
+be local disk, since some deployments configure a remote backend (e.g. S3),
+which has no rename/move primitive and no local filesystem path to operate on
+directly.
 """
+
+import tempfile
+from pathlib import Path
 
 from django.contrib.staticfiles.storage import staticfiles_storage
 
@@ -47,8 +56,58 @@ def clear_static_dir(path: str, recursive: bool = True):
     logger.info('Cleared static directory: %s', path)
 
 
+def _parent_dirs(relative_paths) -> set:
+    """Return every directory (relative, no trailing slash) implied by a set of file paths.
+
+    e.g. {'a/b/c.js'} -> {'a', 'a/b'}
+    """
+    dirs = set()
+
+    for relative_path in relative_paths:
+        parts = relative_path.split('/')[:-1]
+
+        for i in range(1, len(parts) + 1):
+            dirs.add('/'.join(parts[:i]))
+
+    return dirs
+
+
+def _iter_storage_files(prefix: str):
+    """Recursively yield paths, relative to `prefix`, of every file under a storage prefix.
+
+    Arguments:
+        prefix: The storage prefix to search under
+
+    Yields:
+        Relative paths of every file under the specified prefix, with no leading slash.
+    """
+    if not staticfiles_storage.exists(prefix):
+        return
+
+    dirs, files = staticfiles_storage.listdir(prefix)
+
+    yield from files
+
+    for d in dirs:
+        for relative_path in _iter_storage_files(f'{prefix}{d}/'):
+            yield f'{d}/{relative_path}'
+
+
 def _copy_plugin_static_files(slug: str):
     """Copy static files for the specified plugin.
+
+    First copies the plugin's static files into a local temporary directory, so
+    that a failure reading the plugin's own source files (a crash, a permission
+    error, a source file disappearing mid-read) is caught before anything is
+    written to the live destination at all. Only once that full copy has
+    succeeded are the files written into the live destination - one at a time,
+    deleting any existing file of the same name first (the storage API has no
+    in-place overwrite: saving over an existing name otherwise gets a
+    '_XXXXXXX' collision-avoidance suffix instead, which is one of the ways the
+    original bug corrupted the output). Files that existed at the destination
+    before but are not part of the new content are only removed as the final
+    step, so the destination is never emptied outright and a reader never sees
+    a file go missing before its replacement has already landed.
 
     Caller must already hold PLUGIN_STATIC_FILES_LEASE.
     """
@@ -65,39 +124,56 @@ def _copy_plugin_static_files(slug: str):
     if not source_path.is_dir():
         return
 
-    # Create prefix for the destination path
     destination_prefix = f'plugins/{slug}/'
+    previous_files = set(_iter_storage_files(destination_prefix))
 
-    # Clear the destination path
-    clear_static_dir(destination_prefix)
+    with tempfile.TemporaryDirectory(prefix=f'inventree-plugin-{slug}-') as tmp_dir:
+        staging_path = Path(tmp_dir)
+        relative_paths = []
 
-    items = list(source_path.glob('*'))
+        for item in source_path.rglob('*'):
+            if not item.is_file():
+                continue
 
-    idx = 0
-    copied = 0
+            relative_path = item.relative_to(source_path).as_posix()
+            target = staging_path / relative_path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(item.read_bytes())
 
-    while idx < len(items):
-        item = items[idx]
+            relative_paths.append(relative_path)
 
-        idx += 1
-
-        if item.is_dir():
-            items.extend(item.glob('*'))
-            continue
-
-        if item.is_file():
-            relative_path = item.relative_to(source_path)
-
+        # Everything is readable and staged locally - now write it to the live
+        # destination, one file at a time
+        for relative_path in relative_paths:
             destination_path = f'{destination_prefix}{relative_path}'
 
-            with item.open('rb') as src:
-                staticfiles_storage.save(destination_path, src)
+            if staticfiles_storage.exists(destination_path):
+                staticfiles_storage.delete(destination_path)
 
-            logger.debug('- copied %s to %s', item, destination_path)
-            copied += 1
+            with (staging_path / relative_path).open('rb') as content:
+                staticfiles_storage.save(destination_path, content)
 
-    if copied > 0:
-        logger.info("Copied %s static files for plugin '%s'.", copied, slug)
+            logger.debug('- copied %s to %s', relative_path, destination_path)
+
+    # Remove any files that were part of the previous content but are not part
+    # of this one - only now that the new content is fully in place
+    stale_files = previous_files - set(relative_paths)
+
+    for stale_path in stale_files:
+        staticfiles_storage.delete(f'{destination_prefix}{stale_path}')
+
+    # A directory that only contained stale files is now empty, but not removed
+    # by the file deletions above - remove any such directories too (deepest
+    # first, so each is already empty by the time its own turn comes)
+    stale_dirs = _parent_dirs(stale_files) - _parent_dirs(relative_paths)
+
+    for stale_dir in sorted(stale_dirs, key=lambda d: d.count('/'), reverse=True):
+        staticfiles_storage.delete(f'{destination_prefix}{stale_dir}/')
+
+    if relative_paths:
+        logger.info(
+            "Copied %s static files for plugin '%s'.", len(relative_paths), slug
+        )
 
 
 def collect_plugins_static_files():
