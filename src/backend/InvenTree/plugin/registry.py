@@ -105,27 +105,33 @@ def _try_acquire_lease(key: str) -> bool:
 
     Returns True if the lease was acquired (the caller should perform the guarded
     work, then call `_release_lease`), or False if another process already holds
-    an unexpired lease.
+    an unexpired lease - or the database is not ready to be queried at all.
     """
     from common.models import InvenTreeSetting
 
     claim_key = f'{key.upper()}_CLAIMED_AT'
     now = timezone.now()
 
-    with transaction.atomic():
-        InvenTreeSetting.objects.get_or_create(key=claim_key, defaults={'value': ''})
-        setting = InvenTreeSetting.objects.select_for_update().get(
-            key__iexact=claim_key
-        )
+    try:
+        with transaction.atomic():
+            InvenTreeSetting.objects.get_or_create(
+                key=claim_key, defaults={'value': ''}
+            )
+            setting = InvenTreeSetting.objects.select_for_update().get(
+                key__iexact=claim_key
+            )
 
-        claimed_at = _parse_claim(setting.value)
+            claimed_at = _parse_claim(setting.value)
 
-        if claimed_at is not None and (now - claimed_at) < CLAIM_LEASE:
-            return False
+            if claimed_at is not None and (now - claimed_at) < CLAIM_LEASE:
+                return False
 
-        setting.value = now.isoformat()
-        setting.save()
-        return True
+            setting.value = now.isoformat()
+            setting.save()
+            return True
+    except (IntegrityError, OperationalError, ProgrammingError):
+        logger.debug("Could not acquire lease for '%s' - database not ready", key)
+        return False
 
 
 def _acquire_lease_blocking(
@@ -158,12 +164,20 @@ def _release_lease(key: str):
 
     claim_key = f'{key.upper()}_CLAIMED_AT'
 
-    with transaction.atomic():
-        setting = InvenTreeSetting.objects.select_for_update().get(
-            key__iexact=claim_key
-        )
-        setting.value = ''
-        setting.save()
+    try:
+        with transaction.atomic():
+            setting = InvenTreeSetting.objects.select_for_update().get(
+                key__iexact=claim_key
+            )
+            setting.value = ''
+            setting.save()
+    except (
+        IntegrityError,
+        OperationalError,
+        ProgrammingError,
+        InvenTreeSetting.DoesNotExist,
+    ):
+        logger.debug("Could not release lease for '%s' - database not ready", key)
 
 
 def _claim_hash_setting(key: str, new_value: str) -> Optional[str]:

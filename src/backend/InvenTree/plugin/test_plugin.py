@@ -562,6 +562,28 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         finally:
             registry.plugins = original_plugins
 
+    def test_lease_survives_database_not_ready(self):
+        """Test that the lease functions degrade gracefully if the database is not ready."""
+        from django.db.utils import ProgrammingError
+
+        from common.models import InvenTreeSetting
+        from plugin.registry import _release_lease, _try_acquire_lease
+
+        with mock.patch.object(
+            InvenTreeSetting.objects,
+            'get_or_create',
+            side_effect=ProgrammingError('relation does not exist'),
+        ):
+            self.assertFalse(_try_acquire_lease('_test_lease_db_not_ready'))
+
+        with mock.patch.object(
+            InvenTreeSetting.objects,
+            'select_for_update',
+            side_effect=ProgrammingError('relation does not exist'),
+        ):
+            # Must not raise
+            _release_lease('_test_lease_db_not_ready')
+
     def test_lease_acquire_release(self):
         """Test that _try_acquire_lease / _release_lease provide mutual exclusion."""
         from plugin.registry import _release_lease, _try_acquire_lease
