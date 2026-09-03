@@ -27,6 +27,7 @@ from drf_spectacular.utils import (
     extend_schema_view,
 )
 from error_report.models import Error
+from oauth2_provider.generators import generate_client_secret
 from oauth2_provider.models import Application
 from opentelemetry import trace
 from pint._typing import UnitLike
@@ -1783,6 +1784,25 @@ class ApplicationViewSet(CleanModelViewSet):
             )
 
         return super().destroy(request, *args, **kwargs)
+
+    @extend_schema(request=None, responses={200: OAuth2ApplicationSerializer()})
+    @action(detail=True, methods=['post'])
+    def regenerate(self, request, *args, **kwargs):
+        """Regenerate the client secret."""
+        instance = self.get_object()
+
+        if instance.client_id == DEFAULT_OIDC_APP_ID:
+            raise PermissionDenied(
+                _('The built-in default OIDC client secret cannot be regenerated.')
+            )
+
+        secret = generate_client_secret()
+        instance.client_secret = secret
+        instance._raw_client_secret = secret
+        instance.save()
+
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 # oAuth2 admin

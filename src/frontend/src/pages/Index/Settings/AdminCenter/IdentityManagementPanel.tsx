@@ -232,7 +232,8 @@ function SSOManagementPanel() {
 function OAuthCredentialsModal({
   opened,
   onClose,
-  client
+  client,
+  title
 }: {
   opened: boolean;
   onClose: () => void;
@@ -240,12 +241,13 @@ function OAuthCredentialsModal({
     client_id?: string;
     client_secret?: string;
   };
+  title: string;
 }) {
   return (
     <Modal
       opened={opened}
       onClose={onClose}
-      title={t`OAuth application created`}
+      title={title}
       centered
       size='auto'
       styles={{
@@ -301,6 +303,7 @@ function OAuthManagementPanel() {
     client_secret?: string;
   }>({});
   const [createdModalOpened, setCreatedModalOpened] = useState(false);
+  const [modalTitle, setModalTitle] = useState(t`OAuth application created`);
 
   const newOAuthApplication = useCreateApiFormModal({
     url: ApiEndpoints.admin_oauth,
@@ -339,9 +342,34 @@ function OAuthManagementPanel() {
         client_id: data?.client_id,
         client_secret: data?.client_secret
       });
+      setModalTitle(t`OAuth application created`);
       setCreatedModalOpened(true);
     }
   });
+
+  const regenerateOAuthApplicationSecret = useCallback((record: any) => {
+    api
+      .post(apiUrl(ApiEndpoints.admin_oauth_regenerate, record.id))
+      .then((res) => {
+        setCreatedClient({
+          client_id: res.data.client_id,
+          client_secret: res.data.client_secret
+        });
+        setModalTitle(t`OAuth application secret regenerated`);
+        setCreatedModalOpened(true);
+        showNotification({
+          title: t`OAuth secret rotated`,
+          message: t`The new client secret is only shown once`,
+          color: 'green'
+        });
+      })
+      .catch((error) => {
+        showApiErrorMessage({
+          error,
+          title: t`Error regenerating OAuth client secret`
+        });
+      });
+  }, []);
 
   const deleteOAuthApplication = useDeleteApiFormModal({
     url: ApiEndpoints.admin_oauth,
@@ -396,6 +424,13 @@ function OAuthManagementPanel() {
 
   const rowActions = useCallback(
     (record: any): RowAction[] => [
+      {
+        title: t`Regenerate Secret`,
+        color: 'blue',
+        icon: <IconShieldLock size={16} />,
+        hidden: !!record.is_builtin,
+        onClick: () => regenerateOAuthApplicationSecret(record)
+      },
       RowDeleteAction({
         hidden: !!record.is_builtin,
         onClick: () => {
@@ -404,7 +439,7 @@ function OAuthManagementPanel() {
         }
       })
     ],
-    [deleteOAuthApplication]
+    [deleteOAuthApplication, regenerateOAuthApplicationSecret]
   );
 
   const tableActions = useMemo(
@@ -424,6 +459,7 @@ function OAuthManagementPanel() {
         opened={createdModalOpened}
         onClose={() => setCreatedModalOpened(false)}
         client={createdClient}
+        title={modalTitle}
       />
       {newOAuthApplication.modal}
       {deleteOAuthApplication.modal}

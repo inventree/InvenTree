@@ -261,6 +261,7 @@ export enum ApiEndpoints {
   email_list = 'admin/email/',
   email_test = 'admin/email/test/',
   admin_oauth = 'admin/oauth2/',
+  admin_oauth_regenerate = 'admin/oauth2/:id/regenerate/',
   scim_config = 'admin/scim/',
   scim_generate = 'admin/scim/generate/',
   scim_disable = 'admin/scim/disable/',
