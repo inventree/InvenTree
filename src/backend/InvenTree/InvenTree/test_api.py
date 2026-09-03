@@ -125,11 +125,17 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
             )
         )
 
-        response = self.client.delete(
-            reverse('api-oauth2-detail', kwargs={'pk': built_in.pk})
+        # no delete
+        response = self.delete(
+            reverse('api-oauth2-detail', kwargs={'pk': built_in.pk}), expected_code=403
         )
-        self.assertEqual(response.status_code, 403)
         self.assertTrue(Application.objects.filter(pk=built_in.pk).exists())
+
+        # no secret regeneration
+        self.post(
+            reverse('api-oauth2-regenerate', kwargs={'pk': built_in.pk}),
+            expected_code=403,
+        )
 
     def test_create_application(self):
         """An admin should be able to create a custom OAuth2 application."""
@@ -148,9 +154,10 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
         self.assertTrue(Application.objects.filter(name='Custom OAuth App').exists())
         payload = response.json()
         self.assertIn('client_id', payload)
-        self.assertIn('client_secret', payload)
-        self.assertNotEqual(payload['client_secret'], '')
-        self.assertFalse(payload['client_secret'].startswith('pbkdf2_sha256$'))
+        secret_1 = payload['client_secret']
+        assert secret_1 is not None
+        self.assertNotEqual(secret_1, '')
+        self.assertFalse(secret_1.startswith('pbkdf2_sha256$'))
 
         # repeated GET should not return the plaintext secret
         response = self.client.get(
@@ -160,6 +167,17 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
         payload = response.json()
         self.assertIn('client_id', payload)
         self.assertNotIn('client_secret', payload)
+
+        # regenerating the secret should return a new plaintext secret
+        response = self.client.post(
+            reverse('api-oauth2-regenerate', kwargs={'pk': payload['id']})
+        )
+        self.assertEqual(response.status_code, 200)
+        result = response.json()
+        secret_2 = result['client_secret']
+        assert secret_2 is not None
+        self.assertFalse(secret_2.startswith('pbkdf2_sha256$'))
+        self.assertNotEqual(secret_1, secret_2)
 
     def test_oauth2_application_token_can_access_profile(self):
         """A custom OAuth2 client should be able to use a valid token to read the current profile."""
