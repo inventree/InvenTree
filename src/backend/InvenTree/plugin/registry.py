@@ -128,6 +128,30 @@ def _try_acquire_lease(key: str) -> bool:
         return True
 
 
+def _acquire_lease_blocking(
+    key: str, timeout: float = 60, poll_interval: float = 0.5
+) -> bool:
+    """Repeatedly attempt `_try_acquire_lease` until it succeeds or `timeout` elapses.
+
+    Callers of this are not latency-sensitive (only ever triggered by an admin
+    action, or a startup/reload event) - so it is preferable to wait briefly for
+    a concurrent holder to finish, rather than silently skipping the guarded work
+    the first time the lease happens to be held.
+
+    Returns True if the lease was acquired, or False if `timeout` elapsed first.
+    """
+    deadline = time.monotonic() + timeout
+
+    while True:
+        if _try_acquire_lease(key):
+            return True
+
+        if time.monotonic() >= deadline:
+            return False
+
+        time.sleep(poll_interval)
+
+
 def _release_lease(key: str):
     """Release a lease previously acquired via `_try_acquire_lease`."""
     from common.models import InvenTreeSetting

@@ -1,20 +1,32 @@
-"""Static files management for InvenTree plugins."""
+"""Static files management for InvenTree plugins.
+
+All of the public functions in this module read and/or write the same shared
+'plugins/' static output directory tree, and are not safe to run concurrently
+with each other - see inventree#12769. Each one therefore acquires
+PLUGIN_STATIC_FILES_LEASE for its full duration; nothing below should touch
+`staticfiles_storage` outside of a section that holds this lease.
+"""
 
 from django.contrib.staticfiles.storage import staticfiles_storage
 
 import structlog
 
-from plugin.registry import registry
+from plugin.registry import _acquire_lease_blocking, _release_lease, registry
 
 logger = structlog.get_logger('inventree')
 
+# Only one static-file collection operation (bulk or per-plugin) may run at a time.
+PLUGIN_STATIC_FILES_LEASE = '_PLUGIN_STATIC_FILES'
 
-def clear_static_dir(path, recursive=True):
+
+def clear_static_dir(path: str, recursive: bool = True):
     """Clear the specified directory from the 'static' output directory.
 
     Arguments:
         path: The path to the directory to clear
         recursive: If True, clear the directory recursively
+
+    Caller must already hold PLUGIN_STATIC_FILES_LEASE.
     """
     if not staticfiles_storage.exists(path):
         return
@@ -35,41 +47,11 @@ def clear_static_dir(path, recursive=True):
     logger.info('Cleared static directory: %s', path)
 
 
-def collect_plugins_static_files():
-    """Copy static files from all installed plugins into the static directory."""
-    registry.check_reload()
+def _copy_plugin_static_files(slug: str):
+    """Copy static files for the specified plugin.
 
-    logger.info('Collecting static files for all installed plugins.')
-
-    for slug in registry.plugins:
-        copy_plugin_static_files(slug, check_reload=False)
-
-
-def clear_plugins_static_files():
-    """Clear out static files for plugins which are no longer active."""
-    installed_plugins = set(registry.plugins.keys())
-
-    path = 'plugins/'
-
-    # Check that the directory actually exists
-    if not staticfiles_storage.exists(path):
-        return
-
-    # Get all static files in the 'plugins' static directory
-    dirs, _files = staticfiles_storage.listdir('plugins/')
-
-    for d in dirs:
-        # Check if the directory is a plugin directory
-        if d not in installed_plugins:
-            # Clear out the static files for this plugin
-            clear_static_dir(f'plugins/{d}/', recursive=True)
-
-
-def copy_plugin_static_files(slug, check_reload=True):
-    """Copy static files for the specified plugin."""
-    if check_reload:
-        registry.check_reload()
-
+    Caller must already hold PLUGIN_STATIC_FILES_LEASE.
+    """
     plugin = registry.get_plugin(slug)
 
     if not plugin:
@@ -118,6 +100,80 @@ def copy_plugin_static_files(slug, check_reload=True):
         logger.info("Copied %s static files for plugin '%s'.", copied, slug)
 
 
+def collect_plugins_static_files():
+    """Copy static files from all installed plugins into the static directory."""
+    registry.check_reload()
+
+    if not _acquire_lease_blocking(PLUGIN_STATIC_FILES_LEASE):
+        logger.error(
+            'Could not acquire plugin static files lease - skipping collection'
+        )
+        return
+
+    try:
+        logger.info('Collecting static files for all installed plugins.')
+
+        for slug in registry.plugins:
+            _copy_plugin_static_files(slug)
+    finally:
+        _release_lease(PLUGIN_STATIC_FILES_LEASE)
+
+
+def clear_plugins_static_files():
+    """Clear out static files for plugins which are no longer active."""
+    if not _acquire_lease_blocking(PLUGIN_STATIC_FILES_LEASE):
+        logger.error('Could not acquire plugin static files lease - skipping cleanup')
+        return
+
+    try:
+        installed_plugins = set(registry.plugins.keys())
+
+        path = 'plugins/'
+
+        # Check that the directory actually exists
+        if not staticfiles_storage.exists(path):
+            return
+
+        # Get all static files in the 'plugins' static directory
+        dirs, _files = staticfiles_storage.listdir('plugins/')
+
+        for d in dirs:
+            # Check if the directory is a plugin directory
+            if d not in installed_plugins:
+                # Clear out the static files for this plugin
+                clear_static_dir(f'plugins/{d}/', recursive=True)
+    finally:
+        _release_lease(PLUGIN_STATIC_FILES_LEASE)
+
+
+def copy_plugin_static_files(slug, check_reload=True):
+    """Copy static files for the specified plugin."""
+    if check_reload:
+        registry.check_reload()
+
+    if not _acquire_lease_blocking(PLUGIN_STATIC_FILES_LEASE):
+        logger.error(
+            "Could not acquire plugin static files lease - skipping collection for plugin '%s'",
+            slug,
+        )
+        return
+
+    try:
+        _copy_plugin_static_files(slug)
+    finally:
+        _release_lease(PLUGIN_STATIC_FILES_LEASE)
+
+
 def clear_plugin_static_files(slug: str, recursive: bool = True):
     """Clear static files for the specified plugin."""
-    clear_static_dir(f'plugins/{slug}/', recursive=recursive)
+    if not _acquire_lease_blocking(PLUGIN_STATIC_FILES_LEASE):
+        logger.error(
+            "Could not acquire plugin static files lease - skipping removal for plugin '%s'",
+            slug,
+        )
+        return
+
+    try:
+        clear_static_dir(f'plugins/{slug}/', recursive=recursive)
+    finally:
+        _release_lease(PLUGIN_STATIC_FILES_LEASE)
