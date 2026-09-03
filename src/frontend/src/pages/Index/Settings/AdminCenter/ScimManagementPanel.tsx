@@ -1,4 +1,3 @@
-import { AddItemButton } from '@lib/components/AddItemButton';
 import { CopyButton } from '@lib/components/CopyButton';
 import { RowDeleteAction, RowEditAction } from '@lib/components/RowActions';
 import type { RowAction } from '@lib/components/RowActions';
@@ -31,6 +30,7 @@ import { showNotification } from '@mantine/notifications';
 import {
   IconArrowBigLeft,
   IconArrowBigRight,
+  IconPlus,
   IconShieldLock,
   IconShieldOff
 } from '@tabler/icons-react';
@@ -46,6 +46,7 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../../../hooks/UseForm';
+import { useLocalState } from '../../../../states/LocalState';
 
 export function ScimManagementPanel() {
   const [secret, setSecret] = useState<string>('');
@@ -216,7 +217,9 @@ export function ScimManagementPanel() {
 
 function SSOManagementPanel() {
   const navigate = useNavigate();
+  const { getHost } = useLocalState();
   const table = useTable('sso-applications', { idAccessor: 'id' });
+  const [oidcCallback, setOidcCallback] = useState<string | null>(null);
   const [selectedSsoApplication, setSelectedSsoApplication] = useState<
     number | undefined
   >(undefined);
@@ -232,6 +235,60 @@ function SSOManagementPanel() {
       client_id: {},
       secret: {},
       settings: {}
+    }
+  });
+
+  const newOidcSsoApplication = useCreateApiFormModal({
+    url: ApiEndpoints.sso_list,
+    title: t`Add OIDC SSO Application`,
+    table: table,
+    fields: {
+      provider: {
+        hidden: true,
+        value: 'openid_connect'
+      },
+      name: {},
+      provider_id: { required: true },
+      client_id: {},
+      secret: { required: true },
+      oauth_pkce_enabled: {
+        field_type: 'boolean',
+        label: t`OAuth PKCE Enabled`,
+        description: t`Use Proof Key for Code Exchange during OIDC login with this application`,
+        default: true
+      },
+      server_url: {
+        field_type: 'string',
+        label: t`OIDC Server URL`,
+        description: t`Base URL of the OIDC provider`
+      },
+      uid_field: {
+        field_type: 'string',
+        label: t`UID Field`,
+        description: t`OIDC claim used as the user's unique identifier`,
+        default: 'sub'
+      }
+    },
+    processFormData: (data) => {
+      const { oauth_pkce_enabled, server_url, uid_field, ...applicationData } =
+        data;
+
+      return {
+        ...applicationData,
+        settings: {
+          oauth_pkce_enabled,
+          server_url,
+          uid_field
+        }
+      };
+    },
+    onFormSuccess: (data) => {
+      setOidcCallback(
+        new URL(
+          `/accounts/oidc/${data.provider_id}/login/callback/`,
+          getHost()
+        ).toString()
+      );
     }
   });
 
@@ -307,13 +364,22 @@ function SSOManagementPanel() {
 
   const tableActions = useMemo(
     () => [
-      <AddItemButton
+      <Button
         key={'add-generic-sso-application'}
-        tooltip={t`Add generic SSO Application`}
+        leftSection={<IconPlus size={16} />}
         onClick={() => newGenericSsoApplication.open()}
-      />
+      >
+        <Trans>Add Generic App</Trans>
+      </Button>,
+      <Button
+        key={'add-oidc-sso-application'}
+        leftSection={<IconPlus size={16} />}
+        onClick={() => newOidcSsoApplication.open()}
+      >
+        <Trans>Add OIDC App</Trans>
+      </Button>
     ],
-    [newGenericSsoApplication]
+    [newGenericSsoApplication, newOidcSsoApplication]
   );
 
   return (
@@ -331,6 +397,23 @@ function SSOManagementPanel() {
         </Trans>
       </Text>
       {newGenericSsoApplication.modal}
+      <Modal
+        opened={oidcCallback !== null}
+        onClose={() => setOidcCallback(null)}
+        title={<StylishText size='xl'>{t`OIDC Callback URL`}</StylishText>}
+        centered
+      >
+        <Stack gap='sm'>
+          <Text>{t`Add this callback URL to your OIDC provider.`}</Text>
+          <Group justify='space-between' wrap='nowrap'>
+            <Code style={{ wordBreak: 'break-all', whiteSpace: 'normal' }}>
+              {oidcCallback}
+            </Code>
+            <CopyButton value={oidcCallback ?? ''} />
+          </Group>
+        </Stack>
+      </Modal>
+      {newOidcSsoApplication.modal}
       {editSsoApplication.modal}
       {deleteSsoApplication.modal}
       <InvenTreeTable
