@@ -283,7 +283,7 @@ class UserList(ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    search_fields = ['first_name', 'last_name', 'username']
+    search_fields = ['first_name', 'last_name', 'username', 'email']
 
     ordering_fields = [
         'email',
@@ -459,16 +459,14 @@ class TokenListView(TokenMixin, ListCreateAPI):
     """List of user tokens for current user."""
 
     filter_backends = SEARCH_ORDER_FILTER
-    search_fields = ['name', 'key']
-    ordering_fields = [
-        'created',
-        'expiry',
-        'last_seen',
-        'user',
+    search_fields = [
         'name',
-        'revoked',
-        'revoked',
+        'user__username',
+        'user__first_name',
+        'user__last_name',
+        'user__email',
     ]
+    ordering_fields = ['created', 'expiry', 'last_seen', 'user', 'name', 'revoked']
     filterset_fields = ['revoked', 'user']
     queryset = ApiToken.objects.none()
 
