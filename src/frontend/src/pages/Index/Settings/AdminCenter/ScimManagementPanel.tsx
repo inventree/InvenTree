@@ -221,7 +221,7 @@ function SSOManagementPanel() {
     number | undefined
   >(undefined);
 
-  const newSsoApplication = useCreateApiFormModal({
+  const newGenericSsoApplication = useCreateApiFormModal({
     url: ApiEndpoints.sso_list,
     title: t`Add SSO Application`,
     table: table,
@@ -308,12 +308,12 @@ function SSOManagementPanel() {
   const tableActions = useMemo(
     () => [
       <AddItemButton
-        key={'add-sso-application'}
-        tooltip={t`Add SSO Application`}
-        onClick={() => newSsoApplication.open()}
+        key={'add-generic-sso-application'}
+        tooltip={t`Add generic SSO Application`}
+        onClick={() => newGenericSsoApplication.open()}
       />
     ],
-    [newSsoApplication]
+    [newGenericSsoApplication]
   );
 
   return (
@@ -330,7 +330,7 @@ function SSOManagementPanel() {
           The documentation goes more in depth on SSO setup steps.
         </Trans>
       </Text>
-      {newSsoApplication.modal}
+      {newGenericSsoApplication.modal}
       {editSsoApplication.modal}
       {deleteSsoApplication.modal}
       <InvenTreeTable
