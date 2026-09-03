@@ -318,6 +318,15 @@ function SSOManagementPanel() {
 
   return (
     <Stack gap='md'>
+      <Text>
+        <Trans>
+          Frontend Single Sign-On (SSO) based on django-allauth. By default OIDC
+          (client) and SAML is enabled. You can add more specific providers
+          using the `INVENTREE_SOCIAL_BACKENDS` config key. After a restart
+          those providers become available below. The docs go more in depth on
+          SSO setup steps.
+        </Trans>
+      </Text>
       {newSsoApplication.modal}
       {editSsoApplication.modal}
       {deleteSsoApplication.modal}
