@@ -1,13 +1,25 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 538
+INVENTREE_API_VERSION = 542
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v538 -> 2026-09-01 : https://github.com/inventree/InvenTree/pull/12731
+v542 -> 2026-09-03 : https://github.com/inventree/InvenTree/pull/12731
     - Adds management APIs for oAuth2 provider applications
+
+v541 -> 2026-09-03 : https://github.com/inventree/InvenTree/pull/12770
+    - Prevent DELETE operation against the /api/user/me/ endpoint
+
+v540 -> 2026-09-04 : https://github.com/inventree/InvenTree/pull/12773
+    - Adds a "system_state" field to the info endpoint for non-critical general system state information
+
+v539 -> 2026-09-02 : https://github.com/inventree/InvenTree/pull/12723
+    - Adds search fields to AddressList, ContactList, UserList, GroupList, RuleSetList, and TokenListView API endpoints
+
+v538 -> 2026-09-02 : https://github.com/inventree/InvenTree/pull/12763
+    - Fix API permissions for the SelectionList endpoints
 
 v537 -> 2026-08-31 : https://github.com/inventree/InvenTree/pull/11971
     - Removes direct "notes" field from any models which previously supported markdown notes
