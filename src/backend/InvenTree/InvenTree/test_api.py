@@ -115,8 +115,7 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
             algorithm=Application.RS256_ALGORITHM,
         )
 
-        response = self.client.get(reverse('api-oauth2-list'))
-        self.assertEqual(response.status_code, 200)
+        response = self.get(reverse('api-oauth2-list'))
         payload = response.json()
         self.assertTrue(
             any(
@@ -148,9 +147,10 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
             'skip_authorization': False,
             'algorithm': Application.RS256_ALGORITHM,
         }
-        response = self.client.post(reverse('api-oauth2-list'), payload, format='json')
+        response = self.post(
+            reverse('api-oauth2-list'), payload, expected_code=201, format='json'
+        )
 
-        self.assertEqual(response.status_code, 201, response.content)
         self.assertTrue(Application.objects.filter(name='Custom OAuth App').exists())
         payload = response.json()
         self.assertIn('client_id', payload)
@@ -160,19 +160,16 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
         self.assertFalse(secret_1.startswith('pbkdf2_sha256$'))
 
         # repeated GET should not return the plaintext secret
-        response = self.client.get(
-            reverse('api-oauth2-detail', kwargs={'pk': payload['id']})
-        )
-        self.assertEqual(response.status_code, 200)
+        response = self.get(reverse('api-oauth2-detail', kwargs={'pk': payload['id']}))
         payload = response.json()
         self.assertIn('client_id', payload)
         self.assertNotIn('client_secret', payload)
 
         # regenerating the secret should return a new plaintext secret
-        response = self.client.post(
-            reverse('api-oauth2-regenerate', kwargs={'pk': payload['id']})
+        response = self.post(
+            reverse('api-oauth2-regenerate', kwargs={'pk': payload['id']}),
+            expected_code=200,
         )
-        self.assertEqual(response.status_code, 200)
         result = response.json()
         secret_2 = result['client_secret']
         assert secret_2 is not None
@@ -190,8 +187,9 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
             'skip_authorization': False,
             'algorithm': Application.RS256_ALGORITHM,
         }
-        response = self.client.post(reverse('api-oauth2-list'), payload, format='json')
-        self.assertEqual(response.status_code, 201, response.content)
+        response = self.post(
+            reverse('api-oauth2-list'), payload, expected_code=201, format='json'
+        )
 
         app = response.json()
         client_id = app['client_id']
@@ -215,27 +213,24 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
             'code_challenge_method': 'S256',
         }
 
-        self.client.logout()
-        response = self.client.get(reverse('api-user-profile'))
-        self.assertEqual(response.status_code, 401)
+        self.logout()
+        response = self.get(reverse('api-user-profile'), expected_code=401)
 
         self.login()
-        response = self.client.get(
-            reverse('oauth2_provider:authorize'), data=auth_params
-        )
-        self.assertEqual(response.status_code, 200, response.content)
+        response = self.get(reverse('oauth2_provider:authorize'), data=auth_params)
 
-        response = self.client.post(
-            reverse('oauth2_provider:authorize'), {**auth_params, 'allow': 'true'}
+        response = self.post(
+            reverse('oauth2_provider:authorize'),
+            data={**auth_params, 'allow': 'true'},
+            expected_code=302,
         )
-        self.assertEqual(response.status_code, 302, response.content)
         self.assertIn('code=', response['Location'])
         code = parse_qs(urlsplit(response['Location']).query)['code'][0]
 
-        response = self.client.post(
+        response = self.post(
             reverse('oauth2_provider:token'),
             {
-                'grant_type': 'authorization_code',
+                'grant_type': 'authorization-code',
                 'client_id': client_id,
                 'client_secret': client_secret,
                 'code': code,
@@ -243,17 +238,16 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
                 'code_verifier': challenge_verifier,
             },
             content_type='application/x-www-form-urlencoded',
+            expected_code=200,
         )
-        self.assertEqual(response.status_code, 200, response.content)
         token_data = response.json()
         self.assertIn('access_token', token_data)
         access_token = token_data['access_token']
 
-        self.client.logout()
-        response = self.client.get(
+        self.logout()
+        response = self.get(
             reverse('api-user-profile'), HTTP_AUTHORIZATION=f'Bearer {access_token}'
         )
-        self.assertEqual(response.status_code, 200, response.content)
         profile = response.json()
         self.assertIn('language', profile)
         self.assertIn('theme', profile)
