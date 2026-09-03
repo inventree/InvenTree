@@ -562,6 +562,116 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         finally:
             registry.plugins = original_plugins
 
+    def test_lease_acquire_release(self):
+        """Test that _try_acquire_lease / _release_lease provide mutual exclusion."""
+        from plugin.registry import _release_lease, _try_acquire_lease
+
+        key = '_test_lease_acquire_release'
+
+        # First attempt succeeds
+        self.assertTrue(_try_acquire_lease(key))
+
+        # A second attempt while the lease is held must fail
+        self.assertFalse(_try_acquire_lease(key))
+
+        # Once released, it can be acquired again
+        _release_lease(key)
+        self.assertTrue(_try_acquire_lease(key))
+
+        _release_lease(key)
+
+    def test_lease_expires_after_grace_period(self):
+        """Test that an abandoned lease (e.g. a crashed holder) can be reclaimed."""
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        from common.settings import set_global_setting
+        from plugin.registry import CLAIM_LEASE, _release_lease, _try_acquire_lease
+
+        key = '_test_lease_expiry'
+
+        self.assertTrue(_try_acquire_lease(key))
+
+        # A fresh claim cannot be immediately re-acquired by someone else
+        self.assertFalse(_try_acquire_lease(key))
+
+        # Simulate a crash: back-date the claim beyond the grace period
+        stale_claim = timezone.now() - CLAIM_LEASE - timedelta(seconds=1)
+        set_global_setting(f'{key}_CLAIMED_AT', stale_claim.isoformat())
+
+        # The stale claim is now treated as abandoned, and can be re-acquired
+        self.assertTrue(_try_acquire_lease(key))
+
+        _release_lease(key)
+
+    def test_acquire_lease_blocking_times_out(self):
+        """Test that _acquire_lease_blocking gives up after its timeout, rather than hanging."""
+        import time
+
+        from plugin.registry import (
+            _acquire_lease_blocking,
+            _release_lease,
+            _try_acquire_lease,
+        )
+
+        key = '_test_lease_blocking_timeout'
+
+        self.assertTrue(_try_acquire_lease(key))
+
+        start = time.monotonic()
+        acquired = _acquire_lease_blocking(key, timeout=0.3, poll_interval=0.05)
+        elapsed = time.monotonic() - start
+
+        self.assertFalse(acquired)
+        self.assertGreaterEqual(elapsed, 0.3)
+        self.assertLess(elapsed, 5)
+
+        _release_lease(key)
+
+        # Once free, a blocking acquire succeeds without waiting for the timeout
+        self.assertTrue(_acquire_lease_blocking(key, timeout=0.3, poll_interval=0.05))
+        _release_lease(key)
+
+    def test_claim_hash_setting_reverts_on_failure(self):
+        """Test that a failed claim reverts the setting value, so it is retried later."""
+        from common.settings import get_global_setting
+        from plugin.registry import _claim_hash_setting, _release_hash_claim
+
+        key = '_test_claim_hash_revert'
+
+        # No previous value - claiming should succeed and report '' as the previous value
+        previous = _claim_hash_setting(key, 'new-value')
+        self.assertEqual(previous, '')
+        self.assertEqual(get_global_setting(key, '', create=False), 'new-value')
+
+        # Simulate the guarded work failing
+        _release_hash_claim(key, success=False, previous_value=previous)
+
+        # The value should have been reverted, and the lease released
+        self.assertEqual(get_global_setting(key, '', create=False), '')
+
+        # A subsequent claim for the same target value should succeed again - it
+        # must not be treated as "already up to date"
+        previous = _claim_hash_setting(key, 'new-value')
+        self.assertEqual(previous, '')
+
+        _release_hash_claim(key, success=True, previous_value=previous)
+        self.assertEqual(get_global_setting(key, '', create=False), 'new-value')
+
+    def test_claim_hash_setting_skips_if_already_current(self):
+        """Test that claiming the same value twice in a row is a no-op the second time."""
+        from plugin.registry import _claim_hash_setting, _release_hash_claim
+
+        key = '_test_claim_hash_already_current'
+
+        previous = _claim_hash_setting(key, 'v1')
+        self.assertIsNotNone(previous)
+        _release_hash_claim(key, success=True, previous_value=previous)
+
+        # Claiming the same value again should be a no-op - nothing to do
+        self.assertIsNone(_claim_hash_setting(key, 'v1'))
+
     def test_builtin_mandatory_plugins(self):
         """Test that mandatory builtin plugins are always loaded."""
         from plugin.models import PluginConfig

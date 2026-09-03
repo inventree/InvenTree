@@ -109,7 +109,7 @@ def _try_acquire_lease(key: str) -> bool:
     """
     from common.models import InvenTreeSetting
 
-    claim_key = f'{key}_CLAIMED_AT'
+    claim_key = f'{key.upper()}_CLAIMED_AT'
     now = timezone.now()
 
     with transaction.atomic():
@@ -156,7 +156,7 @@ def _release_lease(key: str):
     """Release a lease previously acquired via `_try_acquire_lease`."""
     from common.models import InvenTreeSetting
 
-    claim_key = f'{key}_CLAIMED_AT'
+    claim_key = f'{key.upper()}_CLAIMED_AT'
 
     with transaction.atomic():
         setting = InvenTreeSetting.objects.select_for_update().get(

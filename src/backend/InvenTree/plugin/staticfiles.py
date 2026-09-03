@@ -106,8 +106,16 @@ def _copy_plugin_static_files(slug: str):
     '_XXXXXXX' collision-avoidance suffix instead, which is one of the ways the
     original bug corrupted the output). Files that existed at the destination
     before but are not part of the new content are only removed as the final
-    step, so the destination is never emptied outright and a reader never sees
-    a file go missing before its replacement has already landed.
+    step, so files that are not being replaced are never affected.
+
+    This does not give the same guarantee for a file that *is* being replaced:
+    the delete-then-save pair for that one file is not atomic (the storage API
+    has no rename/replace primitive to make it so), so a write failure at that
+    exact moment can leave that single file transiently missing, even though
+    every other file keeps whatever content (old or new) it already had. This
+    is a large reduction in blast radius versus clearing the whole directory
+    up front (the original bug), and self-heals on the next successful run,
+    but it is not an absolute guarantee for the one in-flight file.
 
     Caller must already hold PLUGIN_STATIC_FILES_LEASE.
     """
@@ -141,6 +149,10 @@ def _copy_plugin_static_files(slug: str):
             target.write_bytes(item.read_bytes())
 
             relative_paths.append(relative_path)
+
+        # Deterministic order, so behaviour (and any partial-failure outcome)
+        # does not depend on filesystem directory iteration order
+        relative_paths.sort()
 
         # Everything is readable and staged locally - now write it to the live
         # destination, one file at a time
