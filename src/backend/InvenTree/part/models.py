@@ -2069,11 +2069,15 @@ class Part(
         """Return the number of part BOMs that this part appears in."""
         return len(self.get_used_in())
 
-    def get_bom_hash(self) -> str:
+    def get_bom_hash(self, include_part_names: bool = False) -> str:
         """Return a checksum hash for the BOM for this part.
 
         Used to determine if the BOM has changed (and needs to be signed off!)
         The hash is calculated by hashing each line item in the BOM. Returns a string representation of a hash object which can be compared with a stored value
+
+        Arguments:
+            include_part_names: If True, include the part names in the hash calculation (default = False, legacy support).
+
         """
         result_hash = hashlib.md5(str(self.id).encode())
 
@@ -2088,7 +2092,9 @@ class Part(
         )
 
         for item in bom_items:
-            result_hash.update(str(item.get_item_hash()).encode())
+            result_hash.update(
+                str(item.get_item_hash(include_part_names=include_part_names)).encode()
+            )
 
         return str(result_hash.digest())
 
@@ -4089,18 +4095,31 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             'allow_variants',
         ]
 
-    def get_item_hash(self) -> str:
-        """Calculate the checksum hash of this BOM line item."""
+    def get_item_hash(self, include_part_names: bool = False) -> str:
+        """Calculate the checksum hash of this BOM line item.
+
+        Arguments:
+            include_part_names: If True, include the names of the parts in the hash calculation (default = False, legacy support)
+        """
         # Seed the hash with the ID of this BOM item
         result_hash = hashlib.md5(b'')
 
         for field in self.hash_fields():
+            # Skip the str representation of the parts unless explicitly requested
+            if not include_part_names and field in ['part', 'sub_part']:
+                continue
+
             # Get the value of the field
             value = getattr(self, field, None)
 
             # If the value is None, use an empty string
             if value is None:
                 value = ''
+
+            if field == 'piece_count' and value == 1:
+                # Skip the piece_count field if it is 1 (default value)
+                # This is to provide backwards compatibility from before this field was added
+                continue
 
             # Normalize decimal values to ensure consistent representation
             # These values are only included if they are non-zero
