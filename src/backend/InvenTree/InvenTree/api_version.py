@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 540
+INVENTREE_API_VERSION = 541
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v540 -> 2026-09-03 : https://github.com/inventree/InvenTree/pull/12770
+v541 -> 2026-09-03 : https://github.com/inventree/InvenTree/pull/12770
     - Prevent DELETE operation against the /api/user/me/ endpoint
+
+v540 -> 2026-09-04 : https://github.com/inventree/InvenTree/pull/12773
+    - Adds a "system_state" field to the info endpoint for non-critical general system state information
 
 v539 -> 2026-09-02 : https://github.com/inventree/InvenTree/pull/12723
     - Adds search fields to AddressList, ContactList, UserList, GroupList, RuleSetList, and TokenListView API endpoints

@@ -267,6 +267,8 @@ class InfoApiSerializer(serializers.Serializer):
     target = serializers.CharField(read_only=True, allow_null=True)
     django_admin = serializers.CharField(read_only=True)
     settings = SettingsSerializer(read_only=True, many=False)
+    """System state details that are mainly for warning purposes and do not require a hard API contract."""
+    system_state = serializers.JSONField(read_only=True)
 
 
 class InfoView(APIView):
@@ -337,6 +339,7 @@ class InfoView(APIView):
                     'LOGIN_ENABLE_PWD_FORGOT'
                 ),
             },
+            'system_state': {'cors_allow_all': settings.CORS_ALLOW_ALL_ORIGINS},
         }
 
         return JsonResponse(data)
