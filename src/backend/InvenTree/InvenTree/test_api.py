@@ -4,7 +4,7 @@ import hashlib
 from base64 import b64encode
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from urllib.parse import parse_qs, urlsplit
+from urllib.parse import parse_qs, urlencode, urlsplit
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady
@@ -217,11 +217,12 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
         response = self.get(reverse('api-user-profile'), expected_code=401)
 
         self.login()
-        response = self.get(reverse('oauth2_provider:authorize'), data=auth_params)
+        response = self.get(reverse('oauth2_provider:authorize'), auth_params)
 
         response = self.post(
             reverse('oauth2_provider:authorize'),
-            data={**auth_params, 'allow': 'true'},
+            {**auth_params, 'allow': 'true'},
+            format=None,
             expected_code=302,
         )
         self.assertIn('code=', response['Location'])
@@ -229,14 +230,15 @@ class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
 
         response = self.post(
             reverse('oauth2_provider:token'),
-            {
-                'grant_type': 'authorization-code',
+            urlencode({
+                'grant_type': 'authorization_code',
                 'client_id': client_id,
                 'client_secret': client_secret,
                 'code': code,
                 'redirect_uri': 'https://example.com/callback',
                 'code_verifier': challenge_verifier,
-            },
+            }),
+            format=None,
             content_type='application/x-www-form-urlencoded',
             expected_code=200,
         )
