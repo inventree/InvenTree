@@ -638,6 +638,12 @@ class ParameterAPITests(InvenTreeAPITestCase):
         self.assertEqual(data['data'], '-2 inches')
         self.assertAlmostEqual(data['data_numeric'], -50.8, places=2)
 
+        # Deleting requires 'delete' permission against the linked model - the
+        # 'add' permission granted above is not sufficient
+        response = self.delete(url, expected_code=403)
+
+        self.assignRole('part.delete')
+
         # Finally, delete the Parameter via the API
         response = self.delete(url, expected_code=204)
 
@@ -2890,6 +2896,10 @@ class NotesImageAPITests(InvenTreeAPITestCase):
 
         super().setUp()
 
+        # 'change' also grants 'view' (see RuleSet.save()), covering both the
+        # upload permission check and the get_queryset() view-permission filter
+        self.assignRole('part.change')
+
         self.part = Part.objects.create(name='Notes Image Test Part', description='x')
         ct = ContentType.objects.get_for_model(Part)
         self.note = common.models.Note.objects.create(
@@ -2972,3 +2982,307 @@ class NotesImageAPITests(InvenTreeAPITestCase):
         buf = io.BytesIO()
         Image.new('RGB', (16, 16), color='red').save(buf, format='PNG')
         return buf.getvalue()
+
+
+class ParameterPermissionAPITests(InvenTreeAPITestCase):
+    """Tests for Parameter API permission enforcement."""
+
+    # No roles by default - each test assigns only what it needs
+    roles = []
+
+    def setUp(self):
+        """Create a Part, ParameterTemplate and pre-existing Parameter."""
+        from part.models import Part
+
+        super().setUp()
+
+        self.part = Part.objects.create(
+            name='Perm Test Part', description='Part for permission testing'
+        )
+
+        self.template = common.models.ParameterTemplate.objects.create(
+            name='Perm Test Template', model_type=self.part.get_content_type()
+        )
+
+        # Create a parameter directly via ORM (bypasses API permission checks)
+        self.parameter = common.models.Parameter.objects.create(
+            model_type=self.part.get_content_type(),
+            model_id=self.part.pk,
+            template=self.template,
+            data='1',
+        )
+
+    def _parameter_url(self, pk=None):
+        if pk:
+            return reverse('api-parameter-detail', kwargs={'pk': pk})
+        return reverse('api-parameter-list')
+
+    def test_list_parameters_no_role_returns_empty(self):
+        """A user with no roles cannot see parameters attached to a Part."""
+        response = self.get(
+            self._parameter_url(),
+            data={'model_type': 'part', 'model_id': self.part.pk},
+            expected_code=200,
+        )
+        self.assertEqual(len(response.data), 0)
+
+    def test_list_parameters_with_view_role_returns_parameters(self):
+        """A user with part.view can see parameters attached to a Part."""
+        self.assignRole('part.view')
+        response = self.get(
+            self._parameter_url(),
+            data={'model_type': 'part', 'model_id': self.part.pk},
+            expected_code=200,
+        )
+        pks = [p['pk'] for p in response.data]
+        self.assertIn(self.parameter.pk, pks)
+
+    def test_detail_parameter_no_role_returns_404(self):
+        """A user with no roles gets 404 for a parameter attached to a Part."""
+        self.get(self._parameter_url(self.parameter.pk), expected_code=404)
+
+    def test_delete_parameter_view_only_role_is_denied(self):
+        """A user with only 'view' permission must not be able to delete a parameter.
+
+        Regression test: ParameterDetail (RetrieveUpdateDestroyAPI) used DRF's
+        default destroy()/perform_destroy(), which calls instance.delete()
+        directly - bypassing any permission check entirely. A 'view'-only user
+        (visible via get_queryset(), but without 'delete') must not be able to
+        delete the parameter.
+        """
+        self.assignRole('part.view')
+        self.delete(self._parameter_url(self.parameter.pk), expected_code=403)
+        self.assertTrue(
+            common.models.Parameter.objects.filter(pk=self.parameter.pk).exists()
+        )
+
+    def test_delete_parameter_with_delete_role_is_allowed(self):
+        """A user with part.delete can delete a parameter for a Part."""
+        self.assignRole('part.delete')
+        self.delete(self._parameter_url(self.parameter.pk), expected_code=204)
+        self.assertFalse(
+            common.models.Parameter.objects.filter(pk=self.parameter.pk).exists()
+        )
+
+    def test_bulk_delete_parameter_view_only_role_is_denied(self):
+        """A user with only 'view' permission must not be able to bulk-delete parameters.
+
+        Regression test: ParameterList (BulkDeleteMixin) had no validate_delete()
+        override, so the bulk-delete endpoint bypassed permission checks entirely.
+        """
+        self.assignRole('part.view')
+        self.delete(
+            self._parameter_url(),
+            data={'items': [self.parameter.pk]},
+            expected_code=400,
+        )
+        self.assertTrue(
+            common.models.Parameter.objects.filter(pk=self.parameter.pk).exists()
+        )
+
+    def test_bulk_delete_parameter_with_delete_role_is_allowed(self):
+        """A user with part.delete can bulk-delete parameters for a Part."""
+        self.assignRole('part.delete')
+        self.delete(
+            self._parameter_url(),
+            data={'items': [self.parameter.pk]},
+            expected_code=200,
+        )
+        self.assertFalse(
+            common.models.Parameter.objects.filter(pk=self.parameter.pk).exists()
+        )
+
+
+class NotesImagePermissionAPITests(InvenTreeAPITestCase):
+    """Tests for NotesImage API permission enforcement.
+
+    Regression coverage for a permission gap: NotesImageList had no queryset
+    scoping and no permission check in perform_create(), so a user with no
+    (or insufficient) permission against the model a note was attached to
+    could still see, and attach images to, that note.
+    """
+
+    # No roles by default - each test assigns only what it needs
+    roles = []
+
+    def setUp(self):
+        """Create a Part and a pre-existing Note to attach images to."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from part.models import Part
+
+        super().setUp()
+
+        self.part = Part.objects.create(
+            name='Perm Test Part', description='Part for permission testing'
+        )
+        ct = ContentType.objects.get_for_model(Part)
+        self.note = common.models.Note.objects.create(
+            model_type=ct, model_id=self.part.pk, title='N', content='<p>c</p>'
+        )
+        self.image = common.models.NotesImage.objects.create(note=self.note)
+        self.image.image.save('a.png', ContentFile(self._image_bytes()))
+
+    def _image_bytes(self):
+        buf = io.BytesIO()
+        Image.new('RGB', (16, 16), color='blue').save(buf, format='PNG')
+        return buf.getvalue()
+
+    def _generate_upload(self, name='test.png'):
+        buf = io.BytesIO()
+        Image.new('RGB', (16, 16), color='blue').save(buf, format='PNG')
+        buf.seek(0)
+        return SimpleUploadedFile(name, buf.read(), content_type='image/png')
+
+    def test_list_images_no_role_returns_empty(self):
+        """A user with no roles cannot see images attached to the note."""
+        response = self.get(reverse('api-notes-image-list'), expected_code=200)
+        pks = [i['pk'] for i in response.data]
+        self.assertNotIn(self.image.pk, pks)
+
+    def test_list_images_with_view_role_returns_images(self):
+        """A user with part.view can see images attached to the note."""
+        self.assignRole('part.view')
+        response = self.get(reverse('api-notes-image-list'), expected_code=200)
+        pks = [i['pk'] for i in response.data]
+        self.assertIn(self.image.pk, pks)
+
+    def test_upload_no_role_is_denied(self):
+        """A user with no roles cannot attach an image to the note."""
+        self.post(
+            reverse('api-notes-image-list'),
+            data={'image': self._generate_upload(), 'note': self.note.pk},
+            format='multipart',
+            expected_code=403,
+        )
+
+    def test_upload_view_only_role_is_denied(self):
+        """A user with only part.view cannot attach an image to the note.
+
+        'view' does not imply 'change' in the InvenTree ruleset hierarchy.
+        """
+        self.assignRole('part.view')
+        self.post(
+            reverse('api-notes-image-list'),
+            data={'image': self._generate_upload(), 'note': self.note.pk},
+            format='multipart',
+            expected_code=403,
+        )
+
+    def test_upload_with_change_role_is_allowed(self):
+        """A user with part.change can attach an image to the note."""
+        self.assignRole('part.change')
+        self.post(
+            reverse('api-notes-image-list'),
+            data={'image': self._generate_upload(), 'note': self.note.pk},
+            format='multipart',
+            expected_code=201,
+        )
+
+
+class GenericMetadataAuthorizationTests(InvenTreeAPITestCase):
+    """Tests for the generic '/api/metadata/<model>/pk/<pk>/' endpoint.
+
+    Regression coverage for a permission gap: several models (Attachment,
+    Parameter, Note, ProjectCode) have no RuleSet permissions of their own
+    (see users.ruleset.get_ruleset_ignore()) - access to them is meant to be
+    scoped by a different rule instead (typically the RuleSet permission of
+    another model they're linked to). ContentTypePermission previously
+    treated that ignore-listing as blanket permission-exemption for *any*
+    request against the object's own (ignore-listed) model, regardless of
+    what its dedicated endpoint enforces - so this generic, catch-all
+    metadata endpoint could read/write metadata on any Attachment/Parameter/
+    Note/ProjectCode, bypassing whatever permission its own endpoint required.
+    """
+
+    roles = []
+
+    def setUp(self):
+        """Create a Part plus one linked Attachment, Parameter and Note."""
+        from part.models import Part
+
+        super().setUp()
+
+        self.part = Part.objects.create(name='Metadata Perm Test Part', description='x')
+
+        self.attachment = common.models.Attachment.objects.create(
+            model_type='part', model_id=self.part.pk, link='https://example.com'
+        )
+
+        template = common.models.ParameterTemplate.objects.create(
+            name='Metadata Perm Test Template', model_type=self.part.get_content_type()
+        )
+        self.parameter = common.models.Parameter.objects.create(
+            model_type=self.part.get_content_type(),
+            model_id=self.part.pk,
+            template=template,
+            data='1',
+        )
+
+        self.note = common.models.Note.objects.create(
+            model_type=self.part.get_content_type(),
+            model_id=self.part.pk,
+            title='N',
+            content='<p>c</p>',
+        )
+
+        self.project_code = common.models.ProjectCode.objects.create(code='PERM-001')
+
+    def _metadata_url(self, model, pk):
+        return reverse('api-generic-metadata', kwargs={'model': model, 'pk': pk})
+
+    def test_attachment_metadata_requires_linked_permission(self):
+        """Attachment metadata is scoped by 'view'/'change' on the linked Part."""
+        url = self._metadata_url('attachment', self.attachment.pk)
+
+        self.get(url, expected_code=403)
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=403)
+
+        self.assignRole('part.view')
+        self.get(url, expected_code=200)
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=403)
+
+        self.assignRole('part.change')
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=200)
+
+    def test_parameter_metadata_requires_linked_permission(self):
+        """Parameter metadata is scoped by 'view'/'change' on the linked Part."""
+        url = self._metadata_url('parameter', self.parameter.pk)
+
+        self.get(url, expected_code=403)
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=403)
+
+        self.assignRole('part.view')
+        self.get(url, expected_code=200)
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=403)
+
+        self.assignRole('part.change')
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=200)
+
+    def test_note_metadata_requires_linked_permission(self):
+        """Note metadata is scoped by 'view'/'change' on the linked Part."""
+        url = self._metadata_url('note', self.note.pk)
+
+        self.get(url, expected_code=403)
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=403)
+
+        self.assignRole('part.view')
+        self.get(url, expected_code=200)
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=403)
+
+        self.assignRole('part.change')
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=200)
+
+    def test_project_code_metadata_requires_staff_for_write(self):
+        """ProjectCode metadata mirrors the staff-only write restriction of its own endpoint."""
+        url = self._metadata_url('projectcode', self.project_code.pk)
+
+        # Reading metadata does not require staff (matches IsStaffOrReadOnlyScope)
+        self.user.is_staff = False
+        self.user.save()
+        self.get(url, expected_code=200)
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=403)
+
+        self.user.is_staff = True
+        self.user.save()
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=200)

@@ -170,6 +170,10 @@ class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
         """String representation of a ProjectCode."""
         return self.code
 
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this project code."""
+        return permission == 'view' or user.is_staff
+
     code = models.CharField(
         max_length=50,
         unique=True,
@@ -3298,6 +3302,20 @@ class Note(
         """Perform custom delete checks before deleting a Note instance."""
         self.check_delete()
         super().delete(*args, **kwargs)
+
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this note."""
+        from InvenTree.models import InvenTreeNoteMixin
+
+        if self.template:
+            return user.is_staff
+
+        model_class = self.model_type.model_class() if self.model_type else None
+
+        if not model_class or not issubclass(model_class, InvenTreeNoteMixin):
+            return False
+
+        return model_class.check_related_permission(permission, user)
 
     def cleanup_images(self):
         """Remove any images which are no longer referenced in the note content."""
