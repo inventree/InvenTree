@@ -2112,7 +2112,11 @@ class Part(
             # If there is no BOM checksum, then the BOM is not valid
             return False
 
-        return self.get_bom_hash() == self.bom_checksum
+        # Fallback to legacy BOM hash if the primary calculation does not match
+        return (
+            self.get_bom_hash() == self.bom_checksum
+            or self.get_bom_hash(include_part_names=True) == self.bom_checksum
+        )
 
     @transaction.atomic
     def validate_bom(self, user, valid: bool = True):
