@@ -307,15 +307,32 @@ function OAuthManagementPanel() {
     title: t`Add OAuth Application`,
     table: table,
     fields: {
-      name: {},
-      client_type: {},
-      authorization_grant_type: {},
+      name: {
+        label: t`Name`,
+        description: t`A human-readable name for the OAuth application`
+      },
+      client_type: {
+        label: t`Client Type`,
+        description: t`The type of OAuth client (confidential or public - prefer public for browser-based applications)`,
+        default: 'public'
+      },
+      authorization_grant_type: {
+        label: t`Authorization Grant Type`,
+        description: t`The type of OAuth2 grant schema to use - authorization code is recommended for most applications`,
+        default: 'authorization-code'
+      },
       redirect_uris: {},
       post_logout_redirect_uris: {},
       skip_authorization: {
-        field_type: 'boolean'
+        field_type: 'boolean',
+        label: t`Skip Authorization`,
+        description: t`If enabled, users will not be prompted to authorize this application when logging in - use with caution!`
       },
-      algorithm: {}
+      algorithm: {
+        label: t`Sign Algorithm`,
+        description: t`The algorithm used to sign the OAuth2 tokens - required for OIDC`,
+        default: 'RS256'
+      }
     },
     onFormSuccess: (data: any) => {
       setCreatedClient({
