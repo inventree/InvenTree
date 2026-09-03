@@ -365,6 +365,7 @@ class InvenTreeConfig(AppConfig):
             redirect_uris=[f'{settings.SITE_URL}/oidc/callback/', 'http://localhost'],
             # scopes='openid profile email g:read',
             algorithm=Application.RS256_ALGORITHM,
+            skip_authorization=True,
         )
         logger.info('Default OIDC client created: %s', client)
         OIDC_CLIENT_CHECKED = True
