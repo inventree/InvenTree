@@ -254,11 +254,11 @@ function OAuthCredentialsModal({
       }}
     >
       <Stack gap='sm'>
-        <Text>
+        <Alert color='red' mb='sm'>
           <Trans>
             Copy these values now. The client secret is only shown once.
           </Trans>
-        </Text>
+        </Alert>
         <Table
           withTableBorder
           withColumnBorders
