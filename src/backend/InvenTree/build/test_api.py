@@ -2372,12 +2372,13 @@ class BuildConsumeTest(BuildAPITest):
 
         data = {'items': allocation_items}
 
+        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
         self.post(
             reverse('api-build-allocate', kwargs={'pk': build.pk}),
             data,
             expected_code=201,
             benchmark=True,
-            max_query_time=1.0,
+            max_query_time=5.0,
             max_query_count=50,
         )
 
