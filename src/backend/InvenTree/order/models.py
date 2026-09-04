@@ -3124,7 +3124,7 @@ class SalesOrderAllocation(models.Model):
         try:
             if self.line.part != self.item.part:
                 variants = self.line.part.get_descendants(include_self=True)
-                if self.line.part not in variants:
+                if self.item.part not in variants:
                     errors['item'] = _(
                         'Cannot allocate stock item to a line with a different part'
                     )
@@ -4127,7 +4127,7 @@ class TransferOrderAllocation(models.Model):
         try:
             if self.line.part != self.item.part:
                 variants = self.line.part.get_descendants(include_self=True)
-                if self.line.part not in variants:
+                if self.item.part not in variants:
                     errors['item'] = _(
                         'Cannot allocate stock item to a line with a different part'
                     )
