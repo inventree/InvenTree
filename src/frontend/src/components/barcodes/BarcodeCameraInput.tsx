@@ -174,7 +174,6 @@ export default function BarcodeCameraInput({
     try {
       const constraints: MediaStreamConstraints = {
         video: {
-          facingMode: { ideal: 'environment' },
           ...(target.id ? { deviceId: { ideal: target.id } } : {}),
           width: { ideal: 1920 },
           height: { ideal: 1080 }
@@ -284,8 +283,7 @@ export default function BarcodeCameraInput({
           {
             fps: 15,
             qrbox: { width: 300, height: 300 },
-            aspectRatio: 1.0,
-            videoConstraints: { facingMode: 'environment' }
+            aspectRatio: 1.0
           },
           (decodedText) => {
             scanner.pause();
