@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { TagsList } from '@lib/index';
 
@@ -9,6 +10,7 @@ import {
   DetailsTable
 } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import { LineItemOverviewTable } from '../../components/details/LineItemOverviewTable';
 import { useParameterDetailsGrid } from '../../components/details/ParameterDetailsGrid';
 
 export function TransferOrderDetailsPanel({
@@ -176,6 +178,16 @@ export function TransferOrderDetailsPanel({
         </Grid>
         <TagsList tags={instance.tags} />
       </Stack>
+      <LineItemOverviewTable
+        title={t`Line Items`}
+        endpoint={ApiEndpoints.transfer_order_line_list}
+        params={{ order: instance?.pk, part_detail: true }}
+        progressLabel={t`Transferred`}
+        progress={(record: any) => ({
+          value: record.transferred,
+          maximum: record.quantity
+        })}
+      />
     </ItemDetailsGrid>
   );
 }
