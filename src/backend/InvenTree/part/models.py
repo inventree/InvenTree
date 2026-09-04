@@ -4120,6 +4120,11 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             if value is None:
                 value = ''
 
+            if field == 'piece_count' and value == 1:
+                # Ignore the piece_count field if it is 1 (default value)
+                # This is to ensure backwards compatibility with BOM checksums calculated before this field was added
+                continue
+
             # Normalize decimal values to ensure consistent representation
             # These values are only included if they are non-zero
             # This is to provide some backwards compatibility from before these fields were added
