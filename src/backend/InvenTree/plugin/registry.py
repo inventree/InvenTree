@@ -11,7 +11,6 @@ import os
 import sys
 import time
 from collections import OrderedDict
-from datetime import datetime, timedelta
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
 from threading import Lock
@@ -20,10 +19,8 @@ from typing import Any, Optional
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
-from django.db import transaction
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from django.urls import clear_url_caches, path
-from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
@@ -43,6 +40,7 @@ from .helpers import (
     handle_error,
     log_registry_error,
 )
+from .lease import release_lease, try_acquire_lease
 from .plugin import InvenTreePlugin
 
 logger = structlog.get_logger('inventree')
@@ -77,145 +75,6 @@ def registry_entrypoint(check_reload: bool = True, default_value: Any = None) ->
         return wrapper
 
     return decorator
-
-
-# How long to honor a claim on a hash-tracking setting
-CLAIM_LEASE = timedelta(minutes=5)
-
-
-def _parse_claim(value: str) -> Optional[datetime]:
-    """Parse a claim timestamp (as written by `_try_acquire_lease`), if any."""
-    if not value:
-        return None
-
-    try:
-        return datetime.fromisoformat(value)
-    except ValueError:
-        return None
-
-
-def _try_acquire_lease(key: str) -> bool:
-    """Attempt to acquire a short-lived, cross-process lease for the given key.
-
-    The lease is recorded as a separate '<key>_CLAIMED_AT' setting, checked and
-    written under a row lock - but the lock is only held for this brief read/write,
-    never for the (potentially slow) work the lease protects against running twice.
-    A lease older than CLAIM_LEASE is treated as abandoned and may be re-acquired,
-    so a crashed holder does not block progress forever.
-
-    Returns True if the lease was acquired (the caller should perform the guarded
-    work, then call `_release_lease`), or False if another process already holds
-    an unexpired lease - or the database is not ready to be queried at all.
-    """
-    from common.models import InvenTreeSetting
-
-    claim_key = f'{key.upper()}_CLAIMED_AT'
-    now = timezone.now()
-
-    try:
-        with transaction.atomic():
-            InvenTreeSetting.objects.get_or_create(
-                key=claim_key, defaults={'value': ''}
-            )
-            setting = InvenTreeSetting.objects.select_for_update().get(
-                key__iexact=claim_key
-            )
-
-            claimed_at = _parse_claim(setting.value)
-
-            if claimed_at is not None and (now - claimed_at) < CLAIM_LEASE:
-                return False
-
-            setting.value = now.isoformat()
-            setting.save()
-            return True
-    except (IntegrityError, OperationalError, ProgrammingError):
-        logger.debug("Could not acquire lease for '%s' - database not ready", key)
-        return False
-
-
-def _acquire_lease_blocking(
-    key: str, timeout: float = 60, poll_interval: float = 0.5
-) -> bool:
-    """Repeatedly attempt `_try_acquire_lease` until it succeeds or `timeout` elapses.
-
-    Callers of this are not latency-sensitive (only ever triggered by an admin
-    action, or a startup/reload event) - so it is preferable to wait briefly for
-    a concurrent holder to finish, rather than silently skipping the guarded work
-    the first time the lease happens to be held.
-
-    Returns True if the lease was acquired, or False if `timeout` elapsed first.
-    """
-    deadline = time.monotonic() + timeout
-
-    while True:
-        if _try_acquire_lease(key):
-            return True
-
-        if time.monotonic() >= deadline:
-            return False
-
-        time.sleep(poll_interval)
-
-
-def _release_lease(key: str):
-    """Release a lease previously acquired via `_try_acquire_lease`."""
-    from common.models import InvenTreeSetting
-
-    claim_key = f'{key.upper()}_CLAIMED_AT'
-
-    try:
-        with transaction.atomic():
-            setting = InvenTreeSetting.objects.select_for_update().get(
-                key__iexact=claim_key
-            )
-            setting.value = ''
-            setting.save()
-    except (
-        IntegrityError,
-        OperationalError,
-        ProgrammingError,
-        InvenTreeSetting.DoesNotExist,
-    ):
-        logger.debug("Could not release lease for '%s' - database not ready", key)
-
-
-def _claim_hash_setting(key: str, new_value: str) -> Optional[str]:
-    """Claim the right to update a hash-tracking global setting to `new_value`.
-
-    Combines a lease (see `_try_acquire_lease`) with the setting's value itself:
-    once the lease is acquired, the new value is written immediately (as a claim),
-    so that other processes checking the same setting see it and skip - even
-    though the work the new value represents has not actually been done yet.
-
-    Returns the setting's previous value if the claim was won (the caller should
-    now perform the guarded work, then call `_release_hash_claim`), or None if
-    the value is already up to date, or another process holds an unexpired claim.
-    """
-    if not _try_acquire_lease(key):
-        return None
-
-    current = get_global_setting(key, '', create=False, cache=False)
-
-    if current == new_value:
-        # Someone else already finished this exact change - nothing to claim
-        _release_lease(key)
-        return None
-
-    set_global_setting(key, new_value)
-    return current
-
-
-def _release_hash_claim(key: str, success: bool, previous_value: str):
-    """Release a claim previously taken out by `_claim_hash_setting`.
-
-    On failure, the value is reverted to `previous_value` so that a future check
-    retries the work, rather than treating the failed attempt as done.
-    """
-    if not success:
-        set_global_setting(key, previous_value)
-
-    _release_lease(key)
 
 
 class PluginsRegistry:
@@ -821,7 +680,22 @@ class PluginsRegistry:
         self.mixin_modules = collected_mixins
 
     def install_plugin_file(self):
-        """Make sure all plugins are installed in the current environment."""
+        """Make sure all plugins are installed in the current environment.
+
+        The hash is only persisted *after* a successful install, never before -
+        the lease alone is what stops two processes from installing at once (a
+        process that cannot acquire it simply skips, since another one is
+        already handling it). Writing the hash as soon as the lease is acquired
+        would be a narrower window with a worse failure mode: a process killed
+        outright (OOM, a container stopped mid-install) between that write and
+        actually finishing would leave the hash pointing at content that was
+        never installed, and - unlike a normal exception - a hard kill does not
+        run `finally`, so nothing would ever revert it. The next check would
+        then see the hash already matches and skip forever, until the plugins
+        file changes again. Persisting only on success means a kill at any
+        point simply leaves the previous hash in place, so the next check
+        retries normally.
+        """
         from plugin.installer import install_plugins_file, plugins_file_hash
 
         file_hash = plugins_file_hash()
@@ -829,19 +703,30 @@ class PluginsRegistry:
         if file_hash is None:
             return
 
-        previous_hash = _claim_hash_setting('_PLUGIN_FILE_HASH', file_hash)
+        current_hash = get_global_setting(
+            '_PLUGIN_FILE_HASH', '', create=False, cache=False
+        )
 
-        if previous_hash is None:
+        if current_hash == file_hash:
             return
 
-        success = False
+        if not try_acquire_lease('_PLUGIN_FILE_HASH'):
+            return
 
         try:
-            # Only keep the claimed hash if installation actually succeeded -
-            # otherwise a failed install would never be retried
-            success = install_plugins_file() is not False
+            # Re-check under the lease: another process may have already
+            # installed this exact change while we were waiting to acquire it
+            current_hash = get_global_setting(
+                '_PLUGIN_FILE_HASH', '', create=False, cache=False
+            )
+
+            if current_hash == file_hash:
+                return
+
+            if install_plugins_file() is not False:
+                set_global_setting('_PLUGIN_FILE_HASH', file_hash)
         finally:
-            _release_hash_claim('_PLUGIN_FILE_HASH', success, previous_hash)
+            release_lease('_PLUGIN_FILE_HASH')
 
     # endregion
 
@@ -1296,7 +1181,7 @@ class PluginsRegistry:
             return False
 
         # A mismatch was observed - acquire a short-lived lease before reloading
-        if not _try_acquire_lease('_PLUGIN_REGISTRY_HASH'):
+        if not try_acquire_lease('_PLUGIN_REGISTRY_HASH'):
             return False
 
         try:
@@ -1313,7 +1198,7 @@ class PluginsRegistry:
             self.reload_plugins(full_reload=True, force_reload=True, collect=True)
             return True
         finally:
-            _release_lease('_PLUGIN_REGISTRY_HASH')
+            release_lease('_PLUGIN_REGISTRY_HASH')
 
     # endregion
 

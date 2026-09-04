@@ -14,7 +14,8 @@ from django.test import TestCase
 
 import plugin.staticfiles as plugin_staticfiles
 from InvenTree.unit_test import PluginRegistryMixin
-from plugin.registry import _try_acquire_lease, registry
+from plugin.lease import try_acquire_lease
+from plugin.registry import registry
 
 
 class FakePlugin:
@@ -208,20 +209,18 @@ class StaticFilesLeaseEngagementTests(PluginStaticFilesTestCase):
     """Tests that the public staticfiles.py entry points actually engage the shared lease."""
 
     def with_short_timeout(self):
-        """Patch _acquire_lease_blocking (as imported into staticfiles.py) to fail fast."""
+        """Patch acquire_lease_blocking (as imported into staticfiles.py) to fail fast."""
         return mock.patch.object(
             plugin_staticfiles,
-            '_acquire_lease_blocking',
-            side_effect=lambda key, **kw: _try_acquire_lease(key),
+            'acquire_lease_blocking',
+            side_effect=lambda key, **kw: try_acquire_lease(key),
         )
 
     def test_copy_plugin_static_files_skips_when_lease_held(self):
         """copy_plugin_static_files() must not run while the lease is held elsewhere."""
         source_dir = self.write_source({'a.js': 'v1'})
 
-        self.assertTrue(
-            _try_acquire_lease(plugin_staticfiles.PLUGIN_STATIC_FILES_LEASE)
-        )
+        self.assertTrue(try_acquire_lease(plugin_staticfiles.PLUGIN_STATIC_FILES_LEASE))
         try:
             with self.with_short_timeout():
                 with mock.patch.object(
@@ -231,7 +230,7 @@ class StaticFilesLeaseEngagementTests(PluginStaticFilesTestCase):
                         self.slug, check_reload=False
                     )
         finally:
-            plugin_staticfiles._release_lease(
+            plugin_staticfiles.release_lease(
                 plugin_staticfiles.PLUGIN_STATIC_FILES_LEASE
             )
 
@@ -240,16 +239,14 @@ class StaticFilesLeaseEngagementTests(PluginStaticFilesTestCase):
 
     def test_collect_plugins_static_files_skips_when_lease_held(self):
         """collect_plugins_static_files() must not run while the lease is held elsewhere."""
-        self.assertTrue(
-            _try_acquire_lease(plugin_staticfiles.PLUGIN_STATIC_FILES_LEASE)
-        )
+        self.assertTrue(try_acquire_lease(plugin_staticfiles.PLUGIN_STATIC_FILES_LEASE))
         try:
             with self.with_short_timeout():
                 with mock.patch.object(registry, 'check_reload'):
                     # Should return immediately without raising or iterating plugins
                     plugin_staticfiles.collect_plugins_static_files()
         finally:
-            plugin_staticfiles._release_lease(
+            plugin_staticfiles.release_lease(
                 plugin_staticfiles.PLUGIN_STATIC_FILES_LEASE
             )
 
@@ -257,14 +254,12 @@ class StaticFilesLeaseEngagementTests(PluginStaticFilesTestCase):
         """clear_plugin_static_files() must not run while the lease is held elsewhere."""
         self.copy_files({'a.js': 'v1'})
 
-        self.assertTrue(
-            _try_acquire_lease(plugin_staticfiles.PLUGIN_STATIC_FILES_LEASE)
-        )
+        self.assertTrue(try_acquire_lease(plugin_staticfiles.PLUGIN_STATIC_FILES_LEASE))
         try:
             with self.with_short_timeout():
                 plugin_staticfiles.clear_plugin_static_files(self.slug)
         finally:
-            plugin_staticfiles._release_lease(
+            plugin_staticfiles.release_lease(
                 plugin_staticfiles.PLUGIN_STATIC_FILES_LEASE
             )
 

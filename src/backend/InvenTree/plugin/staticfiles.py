@@ -20,7 +20,8 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 
 import structlog
 
-from plugin.registry import _acquire_lease_blocking, _release_lease, registry
+from plugin.lease import acquire_lease_blocking, release_lease
+from plugin.registry import registry
 
 logger = structlog.get_logger('inventree')
 
@@ -192,7 +193,7 @@ def collect_plugins_static_files():
     """Copy static files from all installed plugins into the static directory."""
     registry.check_reload()
 
-    if not _acquire_lease_blocking(PLUGIN_STATIC_FILES_LEASE):
+    if not acquire_lease_blocking(PLUGIN_STATIC_FILES_LEASE):
         logger.error(
             'Could not acquire plugin static files lease - skipping collection'
         )
@@ -204,12 +205,12 @@ def collect_plugins_static_files():
         for slug in registry.plugins:
             _copy_plugin_static_files(slug)
     finally:
-        _release_lease(PLUGIN_STATIC_FILES_LEASE)
+        release_lease(PLUGIN_STATIC_FILES_LEASE)
 
 
 def clear_plugins_static_files():
     """Clear out static files for plugins which are no longer active."""
-    if not _acquire_lease_blocking(PLUGIN_STATIC_FILES_LEASE):
+    if not acquire_lease_blocking(PLUGIN_STATIC_FILES_LEASE):
         logger.error('Could not acquire plugin static files lease - skipping cleanup')
         return
 
@@ -231,7 +232,7 @@ def clear_plugins_static_files():
                 # Clear out the static files for this plugin
                 clear_static_dir(f'plugins/{d}/', recursive=True)
     finally:
-        _release_lease(PLUGIN_STATIC_FILES_LEASE)
+        release_lease(PLUGIN_STATIC_FILES_LEASE)
 
 
 def copy_plugin_static_files(slug, check_reload=True):
@@ -239,7 +240,7 @@ def copy_plugin_static_files(slug, check_reload=True):
     if check_reload:
         registry.check_reload()
 
-    if not _acquire_lease_blocking(PLUGIN_STATIC_FILES_LEASE):
+    if not acquire_lease_blocking(PLUGIN_STATIC_FILES_LEASE):
         logger.error(
             "Could not acquire plugin static files lease - skipping collection for plugin '%s'",
             slug,
@@ -249,12 +250,12 @@ def copy_plugin_static_files(slug, check_reload=True):
     try:
         _copy_plugin_static_files(slug)
     finally:
-        _release_lease(PLUGIN_STATIC_FILES_LEASE)
+        release_lease(PLUGIN_STATIC_FILES_LEASE)
 
 
 def clear_plugin_static_files(slug: str, recursive: bool = True):
     """Clear static files for the specified plugin."""
-    if not _acquire_lease_blocking(PLUGIN_STATIC_FILES_LEASE):
+    if not acquire_lease_blocking(PLUGIN_STATIC_FILES_LEASE):
         logger.error(
             "Could not acquire plugin static files lease - skipping removal for plugin '%s'",
             slug,
@@ -264,4 +265,4 @@ def clear_plugin_static_files(slug: str, recursive: bool = True):
     try:
         clear_static_dir(f'plugins/{slug}/', recursive=recursive)
     finally:
-        _release_lease(PLUGIN_STATIC_FILES_LEASE)
+        release_lease(PLUGIN_STATIC_FILES_LEASE)
