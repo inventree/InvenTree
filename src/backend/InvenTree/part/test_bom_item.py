@@ -704,3 +704,53 @@ class BomItemTest(TestCase):
         # piece_count = 100 is a valid value
         item.piece_count = 100
         item.full_clean()  # Should not raise
+
+    def test_item_hash_piece_count_default(self):
+        """Regression test: a default 'piece_count' must not affect the checksum.
+
+        The 'piece_count' field is ignored by get_item_hash() when it holds its
+        default value (1), so that checksums calculated before this field was
+        added remain valid. Simulate a "legacy" checksum (calculated without
+        'piece_count' in the hashed fields) and confirm it still matches the
+        checksum calculated by the current code for a default piece_count.
+        """
+        item = BomItem.objects.get(part=100, sub_part=50)
+        item.piece_count = 1
+        item.save()
+
+        current_hash = item.get_item_hash()
+
+        legacy_fields = [f for f in item.hash_fields() if f != 'piece_count']
+
+        with mock.patch.object(BomItem, 'hash_fields', return_value=legacy_fields):
+            legacy_hash = item.get_item_hash()
+
+        self.assertEqual(current_hash, legacy_hash)
+
+        # A checksum validated under the "legacy" hashing scheme must still
+        # validate correctly against the current (piece_count aware) scheme
+        item.checksum = legacy_hash
+        item.save()
+        self.assertTrue(item.is_line_valid)
+
+    def test_item_hash_piece_count_non_default(self):
+        """A non-default 'piece_count' value must change the checksum hash."""
+        item = BomItem.objects.get(part=100, sub_part=50)
+        item.piece_count = 1
+        item.save()
+
+        # Validate the BOM item hash with the default piece_count
+        item.validate_hash()
+        self.assertTrue(item.is_line_valid)
+
+        # Changing piece_count away from the default must invalidate the checksum
+        item.piece_count = 5
+        item.save()
+        self.assertFalse(item.is_line_valid)
+
+        h_non_default = item.get_item_hash()
+
+        item.piece_count = 1
+        h_default = item.get_item_hash()
+
+        self.assertNotEqual(h_default, h_non_default)
