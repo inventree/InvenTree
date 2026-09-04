@@ -1358,6 +1358,8 @@ def validate_import_metadata(
         'exclude_plugins': 'Exclude plugin data from the import process (default = False)',
         'skip_migrations': 'Skip the migration step after clearing data (default = False)',
         'verbose': 'Print verbose output from management commands',
+        'bulk': 'Use the faster bulkloaddata command instead of loaddata (default = False)',
+        'ignore_conflicts': 'Skip records that violate a unique constraint, instead of raising an error (requires --bulk, default = False)',
     },
     pre=[wait],
     post=[rebuild_models, rebuild_thumbnails],
@@ -1371,6 +1373,8 @@ def import_records(
     ignore_nonexistent: bool = False,
     skip_migrations: bool = False,
     verbose: bool = False,
+    bulk: bool = False,
+    ignore_conflicts: bool = False,
 ):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
@@ -1382,6 +1386,10 @@ def import_records(
     if not target.exists():
         error(f"ERROR: File '{target}' does not exist")
         sys.exit(1)
+
+    if ignore_conflicts and not bulk:
+        warning('--ignore-conflicts has no effect without --bulk - ignoring')
+        ignore_conflicts = False
 
     if clear:
         delete_data(c, force=True, migrate=True, verbose=verbose)
@@ -1416,6 +1424,8 @@ def import_records(
         """Helper function to save data to a temporary file, and then load into the database."""
         nonlocal ignore_nonexistent
         nonlocal verbose
+        nonlocal bulk
+        nonlocal ignore_conflicts
         nonlocal c
 
         # Skip if there is no data to load
@@ -1429,13 +1439,18 @@ def import_records(
         ) as f_out:
             f_out.write(json.dumps(data, indent=2))
 
-        cmd = f'loaddata {f_out.name} -v 0 --force-color'
+        cmd = (
+            f'{"bulkloaddata" if bulk else "loaddata"} {f_out.name} -v 0 --force-color'
+        )
 
         if app:
             cmd += f' --app {app}'
 
         if ignore_nonexistent:
             cmd += ' --ignorenonexistent'
+
+        if bulk and ignore_conflicts:
+            cmd += ' --ignore-conflicts'
 
         # A set of content types to exclude from the import process
         if excludes:
