@@ -281,8 +281,8 @@ export default function BarcodeCameraInput({
         .start(
           target.id,
           {
-            fps: 15,
-            qrbox: { width: 300, height: 300 },
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
             aspectRatio: 1.0
           },
           (decodedText) => {
