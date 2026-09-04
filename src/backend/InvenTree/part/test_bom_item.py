@@ -596,6 +596,80 @@ class BomItemTest(TestCase):
 
         self.assertIsNotNone(assembly.bom_checked_date)
 
+    def test_bom_hash_legacy_compatibility(self):
+        """Regression test for BOM checksum drift caused by unrelated Part edits.
+
+        get_bom_hash() / get_item_hash() used to include the string representation
+        of the linked 'part' and 'sub_part' objects (which embeds the part's name
+        and description). This meant that editing a component's name or
+        description - with no change to the BOM itself - would silently
+        invalidate every assembly which referenced it.
+
+        The fix excludes part names from the *default* hash calculation, but must
+        still recognize checksums calculated by the *old* algorithm (via the
+        'include_part_names' fallback), so that BOMs validated before this change
+        are not all instantly marked invalid.
+        """
+        assembly = Part.objects.create(
+            name='LegacyHashAssembly', description='An assembly part', assembly=True
+        )
+
+        sub_part = Part.objects.create(
+            name='LegacyHashSubPart', description='Original description', component=True
+        )
+
+        bom_item = BomItem.objects.create(part=assembly, sub_part=sub_part, quantity=1)
+
+        # The 'include_part_names' flag must actually change the calculated hash
+        self.assertNotEqual(
+            assembly.get_bom_hash(), assembly.get_bom_hash(include_part_names=True)
+        )
+        self.assertNotEqual(
+            bom_item.get_item_hash(), bom_item.get_item_hash(include_part_names=True)
+        )
+
+        # Validate the BOM, then overwrite the stored checksums with the *legacy*
+        # (part-name-inclusive) hash, to simulate a BOM which was validated
+        # before this change was introduced
+        assembly.validate_bom(user=None, valid=True)
+        assembly.bom_checksum = assembly.get_bom_hash(include_part_names=True)
+        assembly.save()
+
+        bom_item.validate_hash(valid=True)
+        bom_item.checksum = bom_item.get_item_hash(include_part_names=True)
+        bom_item.save(check_lock=False)
+
+        # A legacy checksum must still be recognized as valid, via the fallback
+        self.assertTrue(assembly.is_bom_valid())
+        self.assertTrue(BomItem.objects.get(pk=bom_item.pk).is_line_valid)
+
+        # Re-validating a legacy BOM must store a new-format checksum, which no
+        # longer depends on the part/sub_part string representation
+        assembly.validate_bom(user=None, valid=True)
+        self.assertEqual(assembly.bom_checksum, assembly.get_bom_hash())
+        self.assertNotEqual(
+            assembly.bom_checksum, assembly.get_bom_hash(include_part_names=True)
+        )
+
+        fresh_item = BomItem.objects.get(pk=bom_item.pk)
+        self.assertEqual(fresh_item.checksum, fresh_item.get_item_hash())
+
+        # Editing the sub-part's name/description must *not* invalidate a BOM
+        # which has been validated under the new algorithm
+        sub_part.name = 'A renamed sub-part'
+        sub_part.description = 'An updated description'
+        sub_part.save()
+
+        self.assertTrue(assembly.is_bom_valid())
+        self.assertTrue(BomItem.objects.get(pk=bom_item.pk).is_line_valid)
+
+        # Sanity check: the fix must not mask a *genuine* BOM change
+        bom_item.set_quantity(2)
+        bom_item.save()
+
+        self.assertFalse(assembly.is_bom_valid())
+        self.assertFalse(BomItem.objects.get(pk=bom_item.pk).is_line_valid)
+
     def test_piece_count_default(self):
         """Test that piece_count defaults to 1 and does not change existing behavior."""
         item = BomItem.objects.get(part=100, sub_part=50)
