@@ -364,15 +364,13 @@ class TestQueryMixin:
     """Mixin class for testing query counts."""
 
     # Default query count threshold value
-    # TODO: This value should be reduced
-    MAX_QUERY_COUNT = 250
+    MAX_QUERY_COUNT = 100
 
-    WARNING_QUERY_THRESHOLD = 100
+    WARNING_QUERY_THRESHOLD = 50
 
     # Default query time threshold value
-    # TODO: This value should be reduced
     # Note: There is a lot of variability in the query time in unit testing...
-    MAX_QUERY_TIME = 7.5
+    MAX_QUERY_TIME = 5.0
 
     @contextmanager
     def assertNumQueriesLessThan(
@@ -828,6 +826,7 @@ class InvenTreeAPITestCase(
                 url,
                 {param: 'true', **(additional_params or {})},
                 expected_code=200,
+                max_query_time=5.0,
                 msg=f'Testing {param}=true returns anything but 200',
             )
             self.assertIn(
