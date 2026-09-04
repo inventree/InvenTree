@@ -1169,7 +1169,7 @@ FLAGS = {
     'NEXT_GEN': [
         {'condition': 'parameter', 'value': 'ngen='}
     ],  # Should next-gen features be turned on?
-    'OIDC': [{'condition': 'parameter', 'value': 'oidc='}],
+    'OIDC': [{'condition': 'boolean', 'value': True}],
 }
 
 # Get custom flags from environment/yaml
@@ -1197,7 +1197,7 @@ OAUTH2_PROVIDER = {
     # OIDC
     'OIDC_ENABLED': True,
     'OIDC_RSA_PRIVATE_KEY': get_oidc_private_key(),
-    'PKCE_REQUIRED': False,
+    'PKCE_REQUIRED': True,
 }
 OAUTH2_CHECK_EXCLUDED = [  # This setting mutes schema checks for these rule/method combinations
     '/api/email/generate/:post',

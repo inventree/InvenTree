@@ -29,6 +29,8 @@ from drf_spectacular.utils import (
     extend_schema_view,
 )
 from error_report.models import Error
+from oauth2_provider.generators import generate_client_secret
+from oauth2_provider.models import Application
 from opentelemetry import trace
 from pint._typing import UnitLike
 from rest_framework import serializers, viewsets
@@ -47,6 +49,7 @@ import InvenTree.conversion
 import InvenTree.models
 import InvenTree.ready
 from common.icons import get_icon_packs
+from common.serializers import OAuth2ApplicationSerializer
 from common.settings import get_global_setting
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import urlpattern as generic_states_api_urls
@@ -58,6 +61,7 @@ from InvenTree.api import (
     SimpleGenericMetadataView,
     meta_path,
 )
+from InvenTree.apps import DEFAULT_OIDC_APP_ID
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors, str2bool
@@ -1831,6 +1835,50 @@ class SocialAppViewSet(CleanModelViewSet):
 
 
 admin_router.register('sso', SocialAppViewSet, basename='api-sso')
+
+
+class ApplicationViewSet(CleanModelViewSet):
+    """Manage a oAuth2 (provider side) application."""
+
+    queryset = Application.objects.all()
+    serializer_class = OAuth2ApplicationSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete an OAuth2 application.
+
+        Deletion of the built-in default OIDC client is not allowed.
+        """
+        instance = self.get_object()
+
+        if instance.client_id == DEFAULT_OIDC_APP_ID:
+            raise PermissionDenied(
+                _('The built-in default OIDC client cannot be deleted.')
+            )
+
+        return super().destroy(request, *args, **kwargs)
+
+    @extend_schema(request=None, responses={200: OAuth2ApplicationSerializer()})
+    @action(detail=True, methods=['post'])
+    def regenerate(self, request, *args, **kwargs):
+        """Regenerate the client secret."""
+        instance = self.get_object()
+
+        if instance.client_id == DEFAULT_OIDC_APP_ID:
+            raise PermissionDenied(
+                _('The built-in default OIDC client secret cannot be regenerated.')
+            )
+
+        secret = generate_client_secret()
+        instance.client_secret = secret
+        instance._raw_client_secret = secret
+        instance.save()
+
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+
+# oAuth2 admin
+admin_router.register('oauth2', ApplicationViewSet, basename='api-oauth2')
 
 selection_urls = [
     path(
