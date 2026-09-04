@@ -53,6 +53,11 @@ import { useUserState } from '../../states/UserState';
 import { RenderInstance } from '../render/Instance';
 import { getModelInfo } from '../render/ModelType';
 
+// Minimum number of characters required before firing a (non-regex) search query.
+// Very short terms match broadly against every searched field across every model,
+// which is expensive to compute and rarely useful to the user.
+const MIN_SEARCH_LENGTH = 2;
+
 // Define type for handling individual search queries
 type SearchQuery = {
   model: ModelType;
@@ -391,9 +396,13 @@ export function SearchDrawer({
   }, [searchText]);
 
   // Function for performing the actual search query
-  const performSearch = async () => {
-    // Return empty result set if no search text
-    if (!searchText) {
+  const performSearch = async ({ signal }: { signal: AbortSignal }) => {
+    // Return empty result set if no search text, or too short to be worth searching on
+    // (a very short term matches broadly against every searched field, and is rarely useful)
+    if (
+      !searchText ||
+      (!searchRegex && searchText.length < MIN_SEARCH_LENGTH)
+    ) {
       return [];
     }
 
@@ -413,7 +422,7 @@ export function SearchDrawer({
     });
 
     return api
-      .post(apiUrl(ApiEndpoints.api_search), params)
+      .post(apiUrl(ApiEndpoints.api_search), params, { signal })
       .then((response) => response.data);
   };
 
