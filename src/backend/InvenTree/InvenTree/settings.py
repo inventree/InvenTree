@@ -788,11 +788,6 @@ SITE_MULTI = get_boolean_setting('INVENTREE_SITE_MULTI', 'site_multi', False)
 # If a SITE_ID is specified
 SITE_ID = get_setting('INVENTREE_SITE_ID', 'site_id', 1 if SITE_MULTI else None)
 
-# Load the allauth social backends
-SOCIAL_BACKENDS = get_setting(
-    'INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list
-)
-
 if not SITE_MULTI:
     INSTALLED_APPS.remove('django.contrib.sites')
 
@@ -988,8 +983,16 @@ else:
 FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
 FRONTEND_URL_BASE = FRONTEND_SETTINGS['base_url']
 
+# Load the allauth social backends
+SOCIAL_BACKENDS = get_setting(
+    'INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list
+)
+
+DEFAULT_SOCIAL = ['saml', 'openid_connect']
+_SOCIAL_BACKENDS = {*DEFAULT_SOCIAL, *SOCIAL_BACKENDS}
+
 # region auth
-for app in SOCIAL_BACKENDS:  # pragma: no cover
+for app in _SOCIAL_BACKENDS:  # pragma: no cover
     # Ensure that the app starts with 'allauth.socialaccount.providers'
     social_prefix = 'allauth.socialaccount.providers.'
 
@@ -998,9 +1001,12 @@ for app in SOCIAL_BACKENDS:  # pragma: no cover
 
     INSTALLED_APPS.append(app)
 
-SOCIALACCOUNT_PROVIDERS = get_setting(
+SOCIALACCOUNT_PROVIDERS = {a: {} for a in DEFAULT_SOCIAL}
+_PROVIDER_SETTINGS = get_setting(
     'INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None, typecast=dict
 )
+if _PROVIDER_SETTINGS and isinstance(_PROVIDER_SETTINGS, dict):
+    SOCIALACCOUNT_PROVIDERS.update(_PROVIDER_SETTINGS)
 
 SOCIALACCOUNT_STORE_TOKENS = True
 

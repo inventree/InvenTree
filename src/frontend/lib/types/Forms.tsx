@@ -100,7 +100,8 @@ export type ApiFormFieldType = {
     | 'nested object'
     | 'dependent field'
     | 'table'
-    | 'tags';
+    | 'tags'
+    | 'json';
   api_url?: string;
   pk_field?: string;
   model?: ModelType;

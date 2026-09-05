@@ -18,6 +18,8 @@ from django.views.decorators.csrf import csrf_exempt
 import django_filters.rest_framework.filters as rest_filters
 import django_q.models
 import django_q.tasks
+from allauth.socialaccount import providers
+from allauth.socialaccount.models import SocialApp
 from django_filters.rest_framework.filterset import FilterSet
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import (
@@ -1763,6 +1765,76 @@ class ObservabilityEnd(CreateAPI):
             span.add_link(span_context)
 
         return Response({'status': 'ok'})
+
+
+class SocialAppSerializer(serializers.ModelSerializer):
+    """Serializer for SocialApp records."""
+
+    provider = serializers.ChoiceField(label=_('Provider'), choices=[])
+    name = serializers.CharField(
+        label=_('Name'),
+        help_text=_(
+            'Human friendly name for the application - will be displayed to users'
+        ),
+    )
+    provider_id = serializers.CharField(
+        label=_('Provider ID'),
+        help_text=_(
+            'Unique identifier - required for generic providers that can be configured multiple times such as SAML or OpenID Connect'
+        ),
+        required=False,
+        allow_blank=True,
+    )
+
+    class Meta:
+        """Meta options for SocialAppSerializer."""
+
+        model = SocialApp
+        fields = [
+            'id',
+            'name',
+            'provider',
+            'provider_id',
+            'client_id',
+            'secret',
+            'settings',
+        ]
+        read_only_fields = ['id']
+
+    def __init__(self, *args, **kwargs):
+        """Populate provider choices from the active allauth registry."""
+        super().__init__(*args, **kwargs)
+        self.fields['provider'].choices = providers.registry.as_choices()
+
+    def validate_provider(self, value):
+        """Ensure the selected provider is supported by the active allauth registry."""
+        if value not in [provider[0] for provider in providers.registry.as_choices()]:
+            raise serializers.ValidationError(_('Provider is not supported'))
+        return value
+
+    def validate(self, data):
+        """Ensure that the provider is unique across all SocialApp records."""
+        provider = data.get('provider', None)
+        if (
+            provider
+            and SocialApp.objects.filter(provider=provider).exists()
+            and provider not in ('saml', 'openid_connect')
+        ):
+            raise serializers.ValidationError({
+                'provider': _('A SocialApp with this provider already exists')
+            })
+
+        return data
+
+
+class SocialAppViewSet(CleanModelViewSet):
+    """Manage a SocialApp (client side) application."""
+
+    queryset = SocialApp.objects.all()
+    serializer_class = SocialAppSerializer
+
+
+admin_router.register('sso', SocialAppViewSet, basename='api-sso')
 
 
 class ApplicationViewSet(CleanModelViewSet):

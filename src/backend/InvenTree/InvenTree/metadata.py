@@ -492,3 +492,4 @@ class InvenTreeMetadata(SimpleMetadata):
 
 
 InvenTreeMetadata.label_lookup[DependentField] = 'dependent field'
+InvenTreeMetadata.label_lookup[serializers.JSONField] = 'json'

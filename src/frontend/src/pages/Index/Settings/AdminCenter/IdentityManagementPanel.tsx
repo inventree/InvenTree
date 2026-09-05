@@ -1,6 +1,6 @@
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { CopyButton } from '@lib/components/CopyButton';
-import { RowDeleteAction } from '@lib/components/RowActions';
+import { RowDeleteAction, RowEditAction } from '@lib/components/RowActions';
 import type { RowAction } from '@lib/components/RowActions';
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -31,6 +31,7 @@ import { showNotification } from '@mantine/notifications';
 import {
   IconArrowBigLeft,
   IconArrowBigRight,
+  IconPlus,
   IconShieldLock,
   IconShieldOff
 } from '@tabler/icons-react';
@@ -43,8 +44,10 @@ import { InvenTreeTable } from '../../../../components/tables/InvenTreeTable';
 import { showApiErrorMessage } from '../../../../functions/notifications';
 import {
   useCreateApiFormModal,
-  useDeleteApiFormModal
+  useDeleteApiFormModal,
+  useEditApiFormModal
 } from '../../../../hooks/UseForm';
+import { useLocalState } from '../../../../states/LocalState';
 
 function ScimManagementPanel() {
   const [secret, setSecret] = useState<string>('');
@@ -199,10 +202,219 @@ function ScimManagementPanel() {
 
 function SSOManagementPanel() {
   const navigate = useNavigate();
+  const { getHost } = useLocalState();
+  const table = useTable('sso-applications', { idAccessor: 'id' });
+  const [oidcCallback, setOidcCallback] = useState<string | null>(null);
+  const [selectedSsoApplication, setSelectedSsoApplication] = useState<
+    number | undefined
+  >(undefined);
+
+  const newGenericSsoApplication = useCreateApiFormModal({
+    url: ApiEndpoints.sso_list,
+    title: t`Add SSO Application`,
+    table: table,
+    fields: {
+      name: {},
+      provider: {},
+      provider_id: {},
+      client_id: {},
+      secret: {},
+      settings: {}
+    }
+  });
+
+  const newOidcSsoApplication = useCreateApiFormModal({
+    url: ApiEndpoints.sso_list,
+    title: t`Add OIDC SSO Application`,
+    table: table,
+    fields: {
+      provider: {
+        hidden: true,
+        value: 'openid_connect'
+      },
+      name: {},
+      provider_id: { required: true },
+      client_id: {},
+      secret: { required: true },
+      oauth_pkce_enabled: {
+        field_type: 'boolean',
+        label: t`OAuth PKCE Enabled`,
+        description: t`Use Proof Key for Code Exchange during OIDC login with this application`,
+        default: true
+      },
+      server_url: {
+        field_type: 'string',
+        label: t`OIDC Server URL`,
+        description: t`Base URL of the OIDC provider`
+      },
+      uid_field: {
+        field_type: 'string',
+        label: t`UID Field`,
+        description: t`OIDC claim used as the user's unique identifier`,
+        default: 'sub'
+      }
+    },
+    processFormData: (data) => {
+      const { oauth_pkce_enabled, server_url, uid_field, ...applicationData } =
+        data;
+
+      return {
+        ...applicationData,
+        settings: {
+          oauth_pkce_enabled,
+          server_url,
+          uid_field
+        }
+      };
+    },
+    onFormSuccess: (data) => {
+      setOidcCallback(
+        new URL(
+          `/accounts/oidc/${data.provider_id}/login/callback/`,
+          getHost()
+        ).toString()
+      );
+    }
+  });
+
+  const editSsoApplication = useEditApiFormModal({
+    url: ApiEndpoints.sso_list,
+    pk: selectedSsoApplication,
+    title: t`Edit SSO Application`,
+    table: table,
+    fields: {
+      name: {},
+      provider: {},
+      provider_id: {},
+      client_id: {},
+      secret: {},
+      settings: {}
+    }
+  });
+
+  const deleteSsoApplication = useDeleteApiFormModal({
+    url: ApiEndpoints.sso_list,
+    pk: selectedSsoApplication,
+    title: t`Delete SSO Application`,
+    table: table
+  });
+
+  const ssoColumns = useMemo(
+    () => [
+      {
+        accessor: 'name',
+        title: t`Name`,
+        sortable: true,
+        switchable: false
+      },
+      {
+        accessor: 'provider',
+        title: t`Provider`,
+        sortable: true,
+        switchable: true
+      },
+      {
+        accessor: 'provider_id',
+        title: t`Provider ID`,
+        sortable: true,
+        switchable: true
+      },
+      {
+        accessor: 'client_id',
+        title: t`Client ID`,
+        sortable: true,
+        switchable: true
+      }
+    ],
+    []
+  );
+
+  const rowActions = useCallback(
+    (record: any): RowAction[] => [
+      RowEditAction({
+        onClick: () => {
+          setSelectedSsoApplication(record.id);
+          editSsoApplication.open();
+        }
+      }),
+      RowDeleteAction({
+        onClick: () => {
+          setSelectedSsoApplication(record.id);
+          deleteSsoApplication.open();
+        }
+      })
+    ],
+    [deleteSsoApplication, editSsoApplication]
+  );
+
+  const tableActions = useMemo(
+    () => [
+      <Button
+        key={'add-generic-sso-application'}
+        leftSection={<IconPlus size={16} />}
+        onClick={() => newGenericSsoApplication.open()}
+      >
+        <Trans>Add Generic App</Trans>
+      </Button>,
+      <Button
+        key={'add-oidc-sso-application'}
+        leftSection={<IconPlus size={16} />}
+        onClick={() => newOidcSsoApplication.open()}
+      >
+        <Trans>Add OIDC App</Trans>
+      </Button>
+    ],
+    [newGenericSsoApplication, newOidcSsoApplication]
+  );
 
   return (
     <Stack gap='md'>
-      TBD
+      <Text>
+        <Trans>
+          Frontend Single Sign-On (SSO) is based on django-allauth. By default
+          generic OIDC (client) and SAML providers are enabled.
+          <br />
+          You can add more specific providers using the
+          `INVENTREE_SOCIAL_BACKENDS` config key. After a restart those
+          providers become available below.
+          <br />
+          The documentation goes more in depth on SSO setup steps.
+        </Trans>
+      </Text>
+      {newGenericSsoApplication.modal}
+      <Modal
+        opened={oidcCallback !== null}
+        onClose={() => setOidcCallback(null)}
+        title={<StylishText size='xl'>{t`OIDC Callback URL`}</StylishText>}
+        centered
+      >
+        <Stack gap='sm'>
+          <Text>{t`Add this callback URL to your OIDC provider.`}</Text>
+          <Group justify='space-between' wrap='nowrap'>
+            <Code style={{ wordBreak: 'break-all', whiteSpace: 'normal' }}>
+              {oidcCallback}
+            </Code>
+            <CopyButton value={oidcCallback ?? ''} />
+          </Group>
+        </Stack>
+      </Modal>
+      {newOidcSsoApplication.modal}
+      {editSsoApplication.modal}
+      {deleteSsoApplication.modal}
+      <InvenTreeTable
+        tableState={table}
+        url={apiUrl(ApiEndpoints.sso_list)}
+        columns={ssoColumns}
+        props={{
+          enableSearch: true,
+          enableColumnSwitching: true,
+          enableSelection: false,
+          enablePagination: true,
+          enableRefresh: true,
+          rowActions: rowActions,
+          tableActions: tableActions
+        }}
+      />
       <GlobalSettingList
         heading={t`Single Sign-On (SSO) Settings`}
         keys={[
