@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 06:48+0000\n"
-"PO-Revision-Date: 2026-08-31 06:50\n"
+"POT-Creation-Date: 2026-09-04 03:18+0000\n"
+"PO-Revision-Date: 2026-09-04 03:20\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -17,43 +17,43 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:374
+#: InvenTree/api.py:377
 msgid "API endpoint not found"
 msgstr "Конечная точка API не обнаружена"
 
-#: InvenTree/api.py:447
+#: InvenTree/api.py:450
 msgid "List of items must be provided for bulk operation"
 msgstr "Для массовой операции необходимо указать список позиций"
 
-#: InvenTree/api.py:454
+#: InvenTree/api.py:457
 msgid "Items must be provided as a list"
 msgstr "Элементы должны быть представлены в виде списка"
 
-#: InvenTree/api.py:462
+#: InvenTree/api.py:465
 msgid "Invalid items list provided"
 msgstr "Предоставлен недопустимый список элементов"
 
-#: InvenTree/api.py:467
+#: InvenTree/api.py:470
 msgid "All filter must only be used with true"
 msgstr "Все фильтры будут использоваться с параметром True"
 
-#: InvenTree/api.py:472
+#: InvenTree/api.py:475
 msgid "No items match the provided criteria"
 msgstr "Нет элементов, соответствующих заданным критериям"
 
-#: InvenTree/api.py:496
+#: InvenTree/api.py:499
 msgid "No data provided"
 msgstr "Данные не предоставлены"
 
-#: InvenTree/api.py:512
+#: InvenTree/api.py:515
 msgid "This field must be unique."
 msgstr "Поле должно быть уникальным."
 
-#: InvenTree/api.py:616
+#: InvenTree/api.py:619
 msgid "Item no longer matches the provided criteria"
 msgstr ""
 
-#: InvenTree/api.py:866 InvenTree/models.py:1566
+#: InvenTree/api.py:869 InvenTree/models.py:1566
 msgid "User does not have permission to view this model"
 msgstr "У пользователя недостаточно прав для просмотра этой модели!"
 
@@ -114,7 +114,7 @@ msgid "Invalid decimal value"
 msgstr "Не верное десятичное значение"
 
 #: InvenTree/fields.py:286 build/serializers.py:533 build/serializers.py:594
-#: build/serializers.py:1775 common/models.py:3084 company/models.py:828
+#: build/serializers.py:1775 common/models.py:3088 company/models.py:828
 #: order/models.py:2173
 #: report/templates/report/inventree_build_order_report.html:171
 #: stock/models.py:3785 stock/models.py:3911 stock/serializers.py:777
@@ -277,17 +277,17 @@ msgstr "Номер ссылки слишком большой"
 msgid "Invalid choice"
 msgstr "Неверный выбор"
 
-#: InvenTree/models.py:1251 common/models.py:1458 common/models.py:1858
-#: common/models.py:2294 common/models.py:2419 common/models.py:2729
+#: InvenTree/models.py:1251 common/models.py:1462 common/models.py:1862
+#: common/models.py:2298 common/models.py:2423 common/models.py:2733
 #: common/serializers.py:681 generic/states/serializers.py:20
 #: machine/models.py:28 part/models.py:1119 plugin/models.py:54
 #: report/models.py:222 stock/models.py:89
 msgid "Name"
 msgstr "Название"
 
-#: InvenTree/models.py:1257 build/models.py:274 common/models.py:183
-#: common/models.py:2426 common/models.py:2567 common/models.py:2744
-#: common/models.py:3344 company/models.py:563 company/models.py:819
+#: InvenTree/models.py:1257 build/models.py:274 common/models.py:187
+#: common/models.py:2430 common/models.py:2571 common/models.py:2748
+#: common/models.py:3362 company/models.py:563 company/models.py:819
 #: order/models.py:508 order/models.py:2218 part/models.py:1142
 #: report/models.py:228 report/models.py:872 report/models.py:898
 #: report/templates/report/inventree_build_order_report.html:116
@@ -299,7 +299,7 @@ msgstr "Описание"
 msgid "Description (optional)"
 msgstr "Описание (необязательно)"
 
-#: InvenTree/models.py:1273 common/models.py:3431
+#: InvenTree/models.py:1273 common/models.py:3449
 msgid "Path"
 msgstr "Путь"
 
@@ -335,7 +335,7 @@ msgstr "Ошибка сервера"
 msgid "An error has been logged by the server."
 msgstr "Сервер зарегистрировал ошибку."
 
-#: InvenTree/models.py:1767 common/models.py:3369
+#: InvenTree/models.py:1767 common/models.py:3387
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:34
@@ -590,7 +590,7 @@ msgstr "Неверная физическая единица"
 msgid "Not a valid currency code"
 msgstr "Неверный код валюты"
 
-#: build/api.py:57 order/api.py:128 order/api.py:297 order/api.py:1537
+#: build/api.py:57 order/api.py:129 order/api.py:298 order/api.py:1540
 #: order/serializers.py:98
 msgid "Order Status"
 msgstr "Статус заказа"
@@ -599,8 +599,8 @@ msgstr "Статус заказа"
 msgid "Parent Build"
 msgstr "Родительский заказ на производство"
 
-#: build/api.py:87 build/api.py:1070 order/api.py:612 order/api.py:852
-#: order/api.py:1329 order/api.py:1641 order/api.py:1958 order/api.py:2168
+#: build/api.py:87 build/api.py:1070 order/api.py:613 order/api.py:853
+#: order/api.py:1330 order/api.py:1644 order/api.py:1961 order/api.py:2171
 #: stock/api.py:633
 msgid "Include Variants"
 msgstr "Включая варианты"
@@ -608,13 +608,13 @@ msgstr "Включая варианты"
 #: build/api.py:103 build/api.py:490 build/api.py:1084 build/models.py:292
 #: build/serializers.py:1203 build/serializers.py:1379
 #: build/serializers.py:1472 company/models.py:1038 company/serializers.py:475
-#: order/api.py:325 order/api.py:329 order/api.py:1009 order/api.py:1342
-#: order/api.py:1345 order/api.py:2181 order/api.py:2184 order/api.py:2338
+#: order/api.py:326 order/api.py:330 order/api.py:1010 order/api.py:1343
+#: order/api.py:1346 order/api.py:2184 order/api.py:2187 order/api.py:2342
 #: order/models.py:2350 order/models.py:2518 order/models.py:2519
 #: order/models.py:4039 order/models.py:4040 part/api.py:1179 part/api.py:1182
 #: part/api.py:1399 part/models.py:530 part/models.py:3226 part/models.py:3369
 #: part/models.py:3427 part/models.py:3449 part/models.py:3471
-#: part/models.py:3612 part/models.py:3941 part/models.py:4395
+#: part/models.py:3612 part/models.py:3941 part/models.py:4400
 #: part/serializers.py:1333 part/serializers.py:2010
 #: report/templates/report/inventree_bill_of_materials_report.html:110
 #: report/templates/report/inventree_bill_of_materials_report.html:137
@@ -646,7 +646,7 @@ msgstr "Категория"
 msgid "Ancestor Build"
 msgstr "Родительская сборка"
 
-#: build/api.py:155 order/api.py:146
+#: build/api.py:155 order/api.py:147
 msgid "Assigned to me"
 msgstr "Назначено мне"
 
@@ -694,11 +694,11 @@ msgstr "Завершено до"
 msgid "Completed after"
 msgstr "Завершено после"
 
-#: build/api.py:252 order/api.py:251
+#: build/api.py:252 order/api.py:252
 msgid "Min Date"
 msgstr "Минимальная дата"
 
-#: build/api.py:275 order/api.py:270
+#: build/api.py:275 order/api.py:271
 msgid "Max Date"
 msgstr "Максимальная дата"
 
@@ -733,12 +733,12 @@ msgstr "Отслеживается"
 msgid "Testable"
 msgstr "Тестируемая"
 
-#: build/api.py:495 order/api.py:1073 order/api.py:1527 order/api.py:2402
+#: build/api.py:495 order/api.py:1074 order/api.py:1530 order/api.py:2406
 msgid "Order Outstanding"
 msgstr "Невыполненные заказы"
 
-#: build/api.py:505 build/serializers.py:1515 order/api.py:1032
-#: order/api.py:2361
+#: build/api.py:505 build/serializers.py:1515 order/api.py:1033
+#: order/api.py:2365
 msgid "Allocated"
 msgstr "Зарезервировано"
 
@@ -772,15 +772,15 @@ msgstr "Заказ на производство"
 
 #: build/api.py:1121 build/api.py:1125 build/serializers.py:415
 #: build/serializers.py:521 build/serializers.py:572 build/serializers.py:1253
-#: build/serializers.py:1259 order/api.py:1389 order/api.py:1394
-#: order/api.py:2220 order/api.py:2225 order/serializers.py:866
+#: build/serializers.py:1259 order/api.py:1390 order/api.py:1395
+#: order/api.py:2223 order/api.py:2228 order/serializers.py:866
 #: order/serializers.py:1006 order/serializers.py:2296 part/serializers.py:1353
 #: stock/api.py:1039 stock/serializers.py:116 stock/serializers.py:650
 #: stock/serializers.py:770 stock/serializers.py:954 stock/serializers.py:1063
 #: stock/serializers.py:1131 stock/serializers.py:1770
 #: stock/serializers.py:2043 stock/serializers.py:2171
 #: stock/serializers.py:2280 templates/email/stale_stock_notification.html:18
-#: users/models.py:545
+#: users/models.py:554
 msgid "Location"
 msgstr "Расположение"
 
@@ -955,7 +955,7 @@ msgstr "Создано"
 msgid "User who issued this build order"
 msgstr "Пользователь, создавший этот заказ на производство"
 
-#: build/models.py:428 common/models.py:198 order/api.py:196
+#: build/models.py:428 common/models.py:202 order/api.py:197
 #: order/models.py:577 part/models.py:1379
 #: report/templates/report/inventree_build_order_report.html:157
 msgid "Responsible"
@@ -969,7 +969,7 @@ msgstr "Пользователь, ответственный за этот за�
 msgid "External Link"
 msgstr "Внешняя ссылка"
 
-#: build/models.py:436 common/models.py:2115 part/models.py:1194
+#: build/models.py:436 common/models.py:2119 part/models.py:1194
 #: stock/models.py:1234
 msgid "Link to external URL"
 msgstr "Ссылка на внешний URL"
@@ -982,8 +982,8 @@ msgstr "Приоритет производства"
 msgid "Priority of this build order"
 msgstr "Приоритет этого заказа на производство"
 
-#: build/models.py:452 common/models.py:162 common/models.py:176
-#: order/api.py:182 order/models.py:517 order/models.py:2198
+#: build/models.py:452 common/models.py:162 common/models.py:180
+#: order/api.py:183 order/models.py:517 order/models.py:2198
 msgid "Project Code"
 msgstr "Код проекта"
 
@@ -1066,7 +1066,7 @@ msgid "Build object"
 msgstr "Объект производства"
 
 #: build/models.py:2216 build/models.py:2496 build/serializers.py:310
-#: build/serializers.py:363 build/serializers.py:1431 common/models.py:1382
+#: build/serializers.py:363 build/serializers.py:1431 common/models.py:1386
 #: order/models.py:2129 order/models.py:3203 order/models.py:4193
 #: order/serializers.py:1886 order/serializers.py:2390
 #: order/serializers.py:2978 part/models.py:3383 part/models.py:3971
@@ -1455,8 +1455,8 @@ msgstr "Установить в"
 msgid "Build"
 msgstr "Сборка"
 
-#: build/serializers.py:1291 company/models.py:641 order/api.py:338
-#: order/api.py:343 order/api.py:608 order/serializers.py:634
+#: build/serializers.py:1291 company/models.py:641 order/api.py:339
+#: order/api.py:344 order/api.py:609 order/serializers.py:634
 #: stock/models.py:1175 stock/serializers.py:617
 msgid "Supplier Part"
 msgstr "Деталь поставщика"
@@ -1486,7 +1486,7 @@ msgid "Allow Variants"
 msgstr "Есть варианты"
 
 #: build/serializers.py:1434 build/serializers.py:1440 part/models.py:3705
-#: part/models.py:4387 stock/api.py:937 stock/serializers.py:1038
+#: part/models.py:4392 stock/api.py:937 stock/serializers.py:1038
 msgid "BOM Item"
 msgstr "Позиция BOM"
 
@@ -1597,47 +1597,55 @@ msgstr "Просроченный заказ сборки"
 msgid "Build order {bo} is now overdue"
 msgstr "Заказ на производство {bo} просрочен"
 
-#: common/api.py:480 common/models.py:3017
+#: common/api.py:480 common/models.py:3021
 msgid "Model ID"
 msgstr "ID модели"
 
-#: common/api.py:786
+#: common/api.py:815
 msgid "Has Thumbnail"
 msgstr "Есть миниатюра"
 
-#: common/api.py:795
+#: common/api.py:824
 msgid "Is Link"
 msgstr "Ссылка"
 
-#: common/api.py:803
+#: common/api.py:832
 msgid "Is File"
 msgstr "Файл"
 
-#: common/api.py:878
+#: common/api.py:907
 msgid "User does not have permission to delete these attachments"
 msgstr "У пользователя нет прав для удаления этих вложений"
 
-#: common/api.py:891
+#: common/api.py:920
 msgid "User does not have permission to view this attachment"
 msgstr ""
 
-#: common/api.py:902
+#: common/api.py:931
 msgid "User does not have permission to edit this attachment"
 msgstr "У пользователя нет разрешёния на изменение этого вложения"
 
-#: common/api.py:928
+#: common/api.py:957
 msgid "User does not have permission to delete this attachment"
 msgstr "У пользователя нет прав на удаление этого вложения"
 
-#: common/api.py:1388 common/api.py:1389
+#: common/api.py:1424
+msgid "User does not have permission to delete these parameters"
+msgstr ""
+
+#: common/api.py:1441
+msgid "User does not have permission to delete this parameter"
+msgstr ""
+
+#: common/api.py:1480 common/api.py:1481
 msgid "This field is required"
 msgstr ""
 
-#: common/api.py:1395
+#: common/api.py:1487
 msgid "Invalid model ID"
 msgstr ""
 
-#: common/api.py:1480 common/serializers.py:1141 common/serializers.py:1189
+#: common/api.py:1572 common/serializers.py:1141 common/serializers.py:1189
 msgid "Selection list is locked"
 msgstr "Список выбора заблокирован"
 
@@ -1665,7 +1673,7 @@ msgstr "Теги"
 msgid "Project Code Label"
 msgstr "Название кода проекта"
 
-#: common/models.py:111 common/models.py:136 common/models.py:3771
+#: common/models.py:111 common/models.py:136 common/models.py:3789
 msgid "Updated"
 msgstr "Обновлено"
 
@@ -1681,65 +1689,65 @@ msgstr "Обновлено"
 msgid "User who last updated this object"
 msgstr "Пользователь, последний раз обновивший этот объект"
 
-#: common/models.py:177
+#: common/models.py:181
 msgid "Unique project code"
 msgstr "Уникальный код проекта"
 
-#: common/models.py:184
+#: common/models.py:188
 msgid "Project description"
 msgstr "Описание проекта"
 
-#: common/models.py:189 common/models.py:1463 common/models.py:2439
-#: common/models.py:2574 company/models.py:194 company/models.py:787
+#: common/models.py:193 common/models.py:1467 common/models.py:2443
+#: common/models.py:2578 company/models.py:194 company/models.py:787
 #: machine/models.py:43 part/models.py:1310 plugin/models.py:69
-#: stock/api.py:702 users/models.py:191 users/models.py:550
+#: stock/api.py:702 users/models.py:191 users/models.py:559
 #: users/serializers.py:349 users/serializers.py:470
 msgid "Active"
 msgstr "Активный"
 
-#: common/models.py:190
+#: common/models.py:194
 msgid "Is this project code active?"
 msgstr "Этот код проекта активен?"
 
-#: common/models.py:199
+#: common/models.py:203
 msgid "User or group responsible for this project"
 msgstr "Пользователь или группа, ответственные за этот проект"
 
-#: common/models.py:798 common/models.py:1314 common/models.py:1352
+#: common/models.py:802 common/models.py:1318 common/models.py:1356
 msgid "Settings key"
 msgstr "Ключ настроек"
 
-#: common/models.py:802
+#: common/models.py:806
 msgid "Settings value"
 msgstr "Значения настроек"
 
-#: common/models.py:857
+#: common/models.py:861
 msgid "Chosen value is not a valid option"
 msgstr "Выбранное значение не является допустимым"
 
-#: common/models.py:873
+#: common/models.py:877
 msgid "Value must be a boolean value"
 msgstr "Значение должно быть булевым"
 
-#: common/models.py:881
+#: common/models.py:885
 msgid "Value must be an integer value"
 msgstr "Значение должно быть целым числом"
 
-#: common/models.py:889
+#: common/models.py:893
 msgid "Value must be a valid number"
 msgstr "Значение должно быть допустимым числом"
 
-#: common/models.py:914
+#: common/models.py:918
 msgid "Value does not pass validation checks"
 msgstr "Значение не прошло проверку"
 
-#: common/models.py:936
+#: common/models.py:940
 msgid "Key string must be unique"
 msgstr "Строка ключа должна быть уникальной"
 
-#: common/models.py:1360 common/models.py:1361 common/models.py:1471
-#: common/models.py:1472 common/models.py:1719 common/models.py:1720
-#: common/models.py:2131 common/models.py:2132 common/models.py:3419
+#: common/models.py:1364 common/models.py:1365 common/models.py:1475
+#: common/models.py:1476 common/models.py:1723 common/models.py:1724
+#: common/models.py:2135 common/models.py:2136 common/models.py:3437
 #: importer/models.py:105 part/models.py:3478 part/models.py:3506
 #: plugin/models.py:392 plugin/models.py:393
 #: report/templates/report/inventree_test_report.html:105 users/models.py:122
@@ -1747,108 +1755,108 @@ msgstr "Строка ключа должна быть уникальной"
 msgid "User"
 msgstr "Пользователь"
 
-#: common/models.py:1383
+#: common/models.py:1387
 msgid "Price break quantity"
 msgstr "Скидка распространяется на заданное количество"
 
-#: common/models.py:1390 company/serializers.py:352 order/models.py:2235
+#: common/models.py:1394 company/serializers.py:352 order/models.py:2235
 #: order/models.py:3641
 msgid "Price"
 msgstr "Цена"
 
-#: common/models.py:1391
+#: common/models.py:1395
 msgid "Unit price at specified quantity"
 msgstr "Цена за единицу для указанного количества"
 
-#: common/models.py:1448 common/models.py:1633
+#: common/models.py:1452 common/models.py:1637
 msgid "Endpoint"
 msgstr "Конечная точка"
 
-#: common/models.py:1449
+#: common/models.py:1453
 msgid "Endpoint at which this webhook is received"
 msgstr "Конечная точка, на которой принимается этот веб-хук"
 
-#: common/models.py:1459
+#: common/models.py:1463
 msgid "Name for this webhook"
 msgstr "Имя для этого веб-хука"
 
-#: common/models.py:1463
+#: common/models.py:1467
 msgid "Is this webhook active"
 msgstr "Этот веб-хук активен?"
 
-#: common/models.py:1479 users/models.py:170
+#: common/models.py:1483 users/models.py:170
 msgid "Token"
 msgstr "Токен"
 
-#: common/models.py:1480
+#: common/models.py:1484
 msgid "Token for access"
 msgstr "Токен для доступа"
 
-#: common/models.py:1488
+#: common/models.py:1492
 msgid "Secret"
 msgstr "Секрет"
 
-#: common/models.py:1489
+#: common/models.py:1493
 msgid "Shared secret for HMAC"
 msgstr "Общий ключ для HMAC"
 
-#: common/models.py:1597 common/models.py:3656
+#: common/models.py:1601 common/models.py:3674
 msgid "Message ID"
 msgstr "ID Сообщения"
 
-#: common/models.py:1598 common/models.py:3646
+#: common/models.py:1602 common/models.py:3664
 msgid "Unique identifier for this message"
 msgstr "Уникальный идентификатор этого сообщения"
 
-#: common/models.py:1606
+#: common/models.py:1610
 msgid "Host"
 msgstr "Хост"
 
-#: common/models.py:1607
+#: common/models.py:1611
 msgid "Host from which this message was received"
 msgstr "Хост, с которого было получено это сообщение"
 
-#: common/models.py:1615
+#: common/models.py:1619
 msgid "Header"
 msgstr "Заголовок"
 
-#: common/models.py:1616
+#: common/models.py:1620
 msgid "Header of this message"
 msgstr "Заголовок этого сообщения"
 
-#: common/models.py:1623
+#: common/models.py:1627
 msgid "Body"
 msgstr "Тело"
 
-#: common/models.py:1624
+#: common/models.py:1628
 msgid "Body of this message"
 msgstr "Текст этого сообщения"
 
-#: common/models.py:1634
+#: common/models.py:1638
 msgid "Endpoint on which this message was received"
 msgstr "Конечная точка, на которую было получено это сообщение"
 
-#: common/models.py:1639
+#: common/models.py:1643
 msgid "Worked on"
 msgstr "Работал над"
 
-#: common/models.py:1640
+#: common/models.py:1644
 msgid "Was the work on this message finished?"
 msgstr "Работа над этим сообщением завершена?"
 
-#: common/models.py:1735
+#: common/models.py:1739
 msgid "Optional explicit URL associated with this notification"
 msgstr ""
 
-#: common/models.py:1775
+#: common/models.py:1779
 msgid "Id"
 msgstr "Код"
 
-#: common/models.py:1777 common/models.py:3338
+#: common/models.py:1781 common/models.py:3356
 msgid "Title"
 msgstr "Заголовок"
 
-#: common/models.py:1779 common/models.py:2114 company/models.py:188
+#: common/models.py:1783 common/models.py:2118 company/models.py:188
 #: company/models.py:483 company/models.py:554 company/models.py:810
 #: order/models.py:523 order/models.py:2179 order/models.py:2754
 #: part/models.py:1193
@@ -1856,478 +1864,478 @@ msgstr "Заголовок"
 msgid "Link"
 msgstr "Ссылка"
 
-#: common/models.py:1781
+#: common/models.py:1785
 msgid "Published"
 msgstr "Опубликовано"
 
-#: common/models.py:1783
+#: common/models.py:1787
 msgid "Author"
 msgstr "Автор"
 
-#: common/models.py:1785
+#: common/models.py:1789
 msgid "Summary"
 msgstr "Итого"
 
-#: common/models.py:1788 common/models.py:3623
+#: common/models.py:1792 common/models.py:3641
 msgid "Read"
 msgstr "Читать"
 
-#: common/models.py:1788
+#: common/models.py:1792
 msgid "Was this news item read?"
 msgstr "Эта новость была прочитана?"
 
-#: common/models.py:1807
+#: common/models.py:1811
 msgid "Custom Unit"
 msgstr "Пользовательская единица измерения"
 
-#: common/models.py:1825
+#: common/models.py:1829
 msgid "Unit symbol must be unique"
 msgstr "Символ единицы должен быть уникальным"
 
-#: common/models.py:1840
+#: common/models.py:1844
 msgid "Unit name must be a valid identifier"
 msgstr "Имя единицы должно быть действительным идентификатором"
 
-#: common/models.py:1859
+#: common/models.py:1863
 msgid "Unit name"
 msgstr "Название единицы"
 
-#: common/models.py:1866
+#: common/models.py:1870
 msgid "Symbol"
 msgstr "Символ"
 
-#: common/models.py:1867
+#: common/models.py:1871
 msgid "Optional unit symbol"
 msgstr "Обозначение единицы измерения (необязательно)"
 
-#: common/models.py:1873
+#: common/models.py:1877
 msgid "Definition"
 msgstr "Определение"
 
-#: common/models.py:1874
+#: common/models.py:1878
 msgid "Unit definition"
 msgstr "Определение единицы измерения"
 
-#: common/models.py:1942 common/models.py:2097 stock/models.py:3906
+#: common/models.py:1946 common/models.py:2101 stock/models.py:3906
 #: stock/serializers.py:263
 msgid "Attachment"
 msgstr "Вложения"
 
-#: common/models.py:1988
+#: common/models.py:1992
 msgid "Missing file"
 msgstr "Файл не найден"
 
-#: common/models.py:1989
+#: common/models.py:1993
 msgid "Missing external link"
 msgstr "Отсутствует внешняя ссылка"
 
-#: common/models.py:2037
+#: common/models.py:2041
 msgid "No file attached to rename"
 msgstr "Нет прикреплённого файла для переименования"
 
-#: common/models.py:2040
+#: common/models.py:2044
 msgid "Filename cannot be empty"
 msgstr "Имя файла не может быть пустым"
 
-#: common/models.py:2045 common/models.py:2065
+#: common/models.py:2049 common/models.py:2069
 msgid "Invalid filename"
 msgstr "Недопустимое имя файла"
 
-#: common/models.py:2051
+#: common/models.py:2055
 msgid "Cannot change file extension"
 msgstr "Нельзя изменить расширение файла"
 
-#: common/models.py:2070
+#: common/models.py:2074
 msgid "A file with this name already exists"
 msgstr "Файл с таким именем уже существует"
 
-#: common/models.py:2077
+#: common/models.py:2081
 msgid "Failed to save renamed file"
 msgstr "Не удалось сохранить переименованный файл"
 
-#: common/models.py:2089 common/models.py:2723
+#: common/models.py:2093 common/models.py:2727
 msgid "Model type"
 msgstr "Тип модели"
 
-#: common/models.py:2090
+#: common/models.py:2094
 msgid "Target model type for image"
 msgstr "Тип целевой модели для изображения"
 
-#: common/models.py:2099
+#: common/models.py:2103
 msgid "Select file to attach"
 msgstr "Выберите файл для вложения"
 
-#: common/models.py:2105
+#: common/models.py:2109
 msgid "Thumbnail"
 msgstr "Миниатюра"
 
-#: common/models.py:2106
+#: common/models.py:2110
 msgid "Thumbnail image for this attachment"
 msgstr "Миниатюра для этого вложения"
 
-#: common/models.py:2122
+#: common/models.py:2126
 msgid "Comment"
 msgstr "Комментарий"
 
-#: common/models.py:2123
+#: common/models.py:2127
 msgid "Attachment comment"
 msgstr "Описание вложения"
 
-#: common/models.py:2139
+#: common/models.py:2143
 msgid "Upload date"
 msgstr "Дата загрузки"
 
-#: common/models.py:2140
+#: common/models.py:2144
 msgid "Date the file was uploaded"
 msgstr "Дата загрузки файла"
 
-#: common/models.py:2145
+#: common/models.py:2149
 msgid "Is image"
 msgstr "Является изображением"
 
-#: common/models.py:2146
+#: common/models.py:2150
 msgid "True if this attachment is a valid image file"
 msgstr "Истинно, если это вложение является допустимым файлом изображения"
 
-#: common/models.py:2150
+#: common/models.py:2154
 msgid "File size"
 msgstr "Размер файла"
 
-#: common/models.py:2150
+#: common/models.py:2154
 msgid "File size in bytes"
 msgstr "Размер файла в байтах"
 
-#: common/models.py:2186 common/serializers.py:845
+#: common/models.py:2190 common/serializers.py:845
 msgid "Invalid model type specified for attachment"
 msgstr "Указан недопустимый тип модели для вложения"
 
-#: common/models.py:2270
+#: common/models.py:2274
 msgid "Custom State"
 msgstr "Пользовательское состояние"
 
-#: common/models.py:2271
+#: common/models.py:2275
 msgid "Custom States"
 msgstr "Пользовательские состояния"
 
-#: common/models.py:2276
+#: common/models.py:2280
 msgid "Reference Status Set"
 msgstr "Группа статусов"
 
-#: common/models.py:2277
+#: common/models.py:2281
 msgid "Status set that is extended with this custom state"
 msgstr "Группа статусов, которая будет дополнена пользовательским состоянием"
 
-#: common/models.py:2281 generic/states/serializers.py:18
+#: common/models.py:2285 generic/states/serializers.py:18
 msgid "Logical Key"
 msgstr "Логическое состояние"
 
-#: common/models.py:2283
+#: common/models.py:2287
 msgid "State logical key that is equal to this custom state in business logic"
 msgstr "Логическое состояние, соответствующее пользовательскому состоянию в бизнес-логике"
 
-#: common/models.py:2288 common/models.py:2555 machine/serializers.py:27
+#: common/models.py:2292 common/models.py:2559 machine/serializers.py:27
 #: report/templates/report/inventree_test_report.html:104 stock/models.py:3898
 msgid "Value"
 msgstr "Значение"
 
-#: common/models.py:2289
+#: common/models.py:2293
 msgid "Numerical value that will be saved in the models database"
 msgstr "Числовое значение, которое будет сохранено в базе данных"
 
-#: common/models.py:2295
+#: common/models.py:2299
 msgid "Name of the state"
 msgstr "Название состояния"
 
-#: common/models.py:2304 common/models.py:2561 generic/states/serializers.py:22
+#: common/models.py:2308 common/models.py:2565 generic/states/serializers.py:22
 msgid "Label"
 msgstr "Метка"
 
-#: common/models.py:2305
+#: common/models.py:2309
 msgid "Label that will be displayed in the frontend"
 msgstr "Метка, которая будет отображаться на фронтенде"
 
-#: common/models.py:2312 generic/states/serializers.py:24
+#: common/models.py:2316 generic/states/serializers.py:24
 msgid "Color"
 msgstr "Цвет"
 
-#: common/models.py:2313
+#: common/models.py:2317
 msgid "Color that will be displayed in the frontend"
 msgstr "Цвет отображения в интерфейсе"
 
-#: common/models.py:2321
+#: common/models.py:2325
 msgid "Model"
 msgstr "Модель"
 
-#: common/models.py:2322
+#: common/models.py:2326
 msgid "Model this state is associated with"
 msgstr "Модель, с которой связано это состояние"
 
-#: common/models.py:2337
+#: common/models.py:2341
 msgid "Model must be selected"
 msgstr "Необходимо выбрать модель"
 
-#: common/models.py:2340
+#: common/models.py:2344
 msgid "Key must be selected"
 msgstr "Необходимо выбрать ключ"
 
-#: common/models.py:2343
+#: common/models.py:2347
 msgid "Logical key must be selected"
 msgstr "Логическое состояние должно быть выбрано"
 
-#: common/models.py:2347
+#: common/models.py:2351
 msgid "Key must be different from logical key"
 msgstr "Ключ должен отличаться от логического ключа"
 
-#: common/models.py:2354
+#: common/models.py:2358
 msgid "Valid reference status class must be provided"
 msgstr "Должен быть указан корректный класс ссылочного статуса"
 
-#: common/models.py:2360
+#: common/models.py:2364
 msgid "Key must be different from the logical keys of the reference status"
 msgstr "Состояние должно отличаться от других логических состояний выбранного статуса"
 
-#: common/models.py:2367
+#: common/models.py:2371
 msgid "Logical key must be in the logical keys of the reference status"
 msgstr "Логическое состояние должно быть из множества логических состояний выбранного статуса"
 
-#: common/models.py:2374
+#: common/models.py:2378
 msgid "Name must be different from the names of the reference status"
 msgstr "Имя должно отличаться от имен эталонного статуса"
 
-#: common/models.py:2414 common/models.py:2549 common/models.py:2768
+#: common/models.py:2418 common/models.py:2553 common/models.py:2772
 msgid "Selection List"
 msgstr "Список выбора"
 
-#: common/models.py:2415
+#: common/models.py:2419
 msgid "Selection Lists"
 msgstr "Списки выбора"
 
-#: common/models.py:2420
+#: common/models.py:2424
 msgid "Name of the selection list"
 msgstr "Название списка выбора"
 
-#: common/models.py:2427
+#: common/models.py:2431
 msgid "Description of the selection list"
 msgstr "Описание списка выбора"
 
-#: common/models.py:2433 part/models.py:1315
+#: common/models.py:2437 part/models.py:1315
 msgid "Locked"
 msgstr "Заблокирована"
 
-#: common/models.py:2434
+#: common/models.py:2438
 msgid "Is this selection list locked?"
 msgstr "Этот список выбора заблокирован?"
 
-#: common/models.py:2440
+#: common/models.py:2444
 msgid "Can this selection list be used?"
 msgstr "Можно ли использовать этот список выбора?"
 
-#: common/models.py:2448
+#: common/models.py:2452
 msgid "Source Plugin"
 msgstr "Исходный плагин"
 
-#: common/models.py:2449
+#: common/models.py:2453
 msgid "Plugin which provides the selection list"
 msgstr "Плагин, который предоставляет список выбора"
 
-#: common/models.py:2454
+#: common/models.py:2458
 msgid "Source String"
 msgstr "Исходная строка"
 
-#: common/models.py:2455
+#: common/models.py:2459
 msgid "Optional string identifying the source used for this list"
 msgstr "Необязательная строка, определяющая источник, используемый для этого списка"
 
-#: common/models.py:2464
+#: common/models.py:2468
 msgid "Default Entry"
 msgstr "Запись по умолчанию"
 
-#: common/models.py:2465
+#: common/models.py:2469
 msgid "Default entry for this selection list"
 msgstr "Вариант по умолчанию для этого списка выбора"
 
-#: common/models.py:2470 common/models.py:3766
+#: common/models.py:2474 common/models.py:3784
 msgid "Created"
 msgstr "Создано"
 
-#: common/models.py:2471
+#: common/models.py:2475
 msgid "Date and time that the selection list was created"
 msgstr "Дата и время создания списка выбора"
 
-#: common/models.py:2476
+#: common/models.py:2480
 msgid "Last Updated"
 msgstr "Последнее обновление"
 
-#: common/models.py:2477
+#: common/models.py:2481
 msgid "Date and time that the selection list was last updated"
 msgstr "Дата и время последнего обновления списка выбора"
 
-#: common/models.py:2539
+#: common/models.py:2543
 msgid "Selection List Entry"
 msgstr "Вариант списка выбора"
 
-#: common/models.py:2540
+#: common/models.py:2544
 msgid "Selection List Entries"
 msgstr "Варианты списка выбора"
 
-#: common/models.py:2550
+#: common/models.py:2554
 msgid "Selection list to which this entry belongs"
 msgstr "Список выбора, к которому относится данный вариант"
 
-#: common/models.py:2556
+#: common/models.py:2560
 msgid "Value of the selection list entry"
 msgstr "Значение варианта списка выбора"
 
-#: common/models.py:2562
+#: common/models.py:2566
 msgid "Label for the selection list entry"
 msgstr "Метка для элемента списка выбора"
 
-#: common/models.py:2568
+#: common/models.py:2572
 msgid "Description of the selection list entry"
 msgstr "Описание варианта списка выбора"
 
-#: common/models.py:2575
+#: common/models.py:2579
 msgid "Is this selection list entry active?"
 msgstr "Активен ли варианта списка выбора?"
 
-#: common/models.py:2609
+#: common/models.py:2613
 msgid "Parameter Template"
 msgstr "Шаблон параметра"
 
-#: common/models.py:2610
+#: common/models.py:2614
 msgid "Parameter Templates"
 msgstr "Шаблоны параметров"
 
-#: common/models.py:2631
+#: common/models.py:2635
 msgid "No uniqueness required"
 msgstr ""
 
-#: common/models.py:2632
+#: common/models.py:2636
 msgid "Unique for model type"
 msgstr ""
 
-#: common/models.py:2633
+#: common/models.py:2637
 msgid "Globally unique"
 msgstr ""
 
-#: common/models.py:2660
+#: common/models.py:2664
 msgid "Checkbox parameters cannot have units"
 msgstr "У параметров-переключателей не может быть единицы измерения"
 
-#: common/models.py:2665
+#: common/models.py:2669
 msgid "Checkbox parameters cannot have choices"
 msgstr "У параметров-переключателей не может быть вариантов"
 
-#: common/models.py:2685 part/models.py:3576
+#: common/models.py:2689 part/models.py:3576
 msgid "Choices must be unique"
 msgstr "Варианты должны быть уникальными"
 
-#: common/models.py:2702
+#: common/models.py:2706
 msgid "Parameter template name must be unique"
 msgstr "Имя шаблона параметров должно быть уникальным"
 
-#: common/models.py:2724
+#: common/models.py:2728
 msgid "Target model type for this parameter template"
 msgstr "Тип целевой модели для этого шаблона параметра"
 
-#: common/models.py:2730
+#: common/models.py:2734
 msgid "Parameter Name"
 msgstr "Название параметра"
 
-#: common/models.py:2736 part/models.py:1268
+#: common/models.py:2740 part/models.py:1268
 msgid "Units"
 msgstr "Единица измерения"
 
-#: common/models.py:2737
+#: common/models.py:2741
 msgid "Physical units for this parameter"
 msgstr "Физическая единица этого параметра"
 
-#: common/models.py:2745
+#: common/models.py:2749
 msgid "Parameter description"
 msgstr "Описание параметра"
 
-#: common/models.py:2751
+#: common/models.py:2755
 msgid "Checkbox"
 msgstr "Переключатель"
 
-#: common/models.py:2752
+#: common/models.py:2756
 msgid "Is this parameter a checkbox?"
 msgstr "Этот параметр является переключателем?"
 
-#: common/models.py:2757 part/models.py:3663
+#: common/models.py:2761 part/models.py:3663
 msgid "Choices"
 msgstr "Варианты"
 
-#: common/models.py:2758
+#: common/models.py:2762
 msgid "Valid choices for this parameter (comma-separated)"
 msgstr "Возможные варианты этого параметра (разделить запятой)"
 
-#: common/models.py:2769
+#: common/models.py:2773
 msgid "Selection list for this parameter"
 msgstr "Список выбора для этого параметра"
 
-#: common/models.py:2774 part/models.py:3638 report/models.py:297
+#: common/models.py:2778 part/models.py:3638 report/models.py:297
 #: scim/models.py:31
 msgid "Enabled"
 msgstr "Включено"
 
-#: common/models.py:2775
+#: common/models.py:2779
 msgid "Is this parameter template enabled?"
 msgstr "Включен ли этот шаблон параметра?"
 
-#: common/models.py:2781
+#: common/models.py:2785
 msgid "Uniqueness"
 msgstr ""
 
-#: common/models.py:2783
+#: common/models.py:2787
 msgid "Enforce uniqueness of linked parameter values against this template"
 msgstr ""
 
-#: common/models.py:2825
+#: common/models.py:2829
 msgid "Parameter"
 msgstr "Параметр"
 
-#: common/models.py:2826
+#: common/models.py:2830
 msgid "Parameters"
 msgstr "Параметры"
 
-#: common/models.py:2872
+#: common/models.py:2876
 msgid "Invalid choice for parameter value"
 msgstr "Недопустимое значение параметра"
 
-#: common/models.py:2976
+#: common/models.py:2980
 msgid "Parameter value must be unique"
 msgstr ""
 
-#: common/models.py:2985 common/serializers.py:1070
+#: common/models.py:2989 common/serializers.py:1070
 msgid "Invalid model type specified for parameter"
 msgstr "Указан неверный тип модели для параметра"
 
-#: common/models.py:3018
+#: common/models.py:3022
 msgid "ID of the target model for this parameter"
 msgstr "ID целевой модели для этого параметра"
 
-#: common/models.py:3027 common/models.py:3310 common/setting/system.py:470
+#: common/models.py:3031 common/models.py:3328 common/setting/system.py:470
 #: report/models.py:383 report/models.py:717 report/serializers.py:115
 #: report/serializers.py:166 stock/serializers.py:250
 msgid "Template"
 msgstr "Шаблон"
 
-#: common/models.py:3028
+#: common/models.py:3032
 msgid "Parameter template"
 msgstr "Шаблон параметра"
 
-#: common/models.py:3033 common/models.py:3408 importer/models.py:684
+#: common/models.py:3037 common/models.py:3426 importer/models.py:684
 msgid "Data"
 msgstr "Данные"
 
-#: common/models.py:3034
+#: common/models.py:3038
 msgid "Parameter Value"
 msgstr "Значение параметра"
 
-#: common/models.py:3043 common/models.py:3083 company/models.py:827
+#: common/models.py:3047 common/models.py:3087 company/models.py:827
 #: order/serializers.py:916 order/serializers.py:2301 part/models.py:4041
-#: part/models.py:4427
+#: part/models.py:4432
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:38
 #: report/templates/report/inventree_return_order_report.html:26
@@ -2338,226 +2346,226 @@ msgstr "Значение параметра"
 msgid "Note"
 msgstr "Заметка"
 
-#: common/models.py:3044 stock/serializers.py:778 stock/serializers.py:1139
+#: common/models.py:3048 stock/serializers.py:778 stock/serializers.py:1139
 msgid "Optional note field"
 msgstr "Опциональное поле записей"
 
-#: common/models.py:3187 common/models.py:3189 common/serializers.py:943
+#: common/models.py:3191 common/models.py:3193 common/serializers.py:943
 #: common/serializers.py:947
 msgid "This field is required."
 msgstr ""
 
-#: common/models.py:3312
+#: common/models.py:3330
 msgid "Is this note a template (not linked to a specific model instance)?"
 msgstr ""
 
-#: common/models.py:3322
+#: common/models.py:3340
 msgid "Target model type for this note"
 msgstr ""
 
-#: common/models.py:3326
+#: common/models.py:3344
 msgid "Target model instance ID for this note"
 msgstr ""
 
-#: common/models.py:3333 company/models.py:793
+#: common/models.py:3351 company/models.py:793
 msgid "Primary"
 msgstr "Основной"
 
-#: common/models.py:3334
+#: common/models.py:3352
 msgid "Is this the primary note for the associated model?"
 msgstr ""
 
-#: common/models.py:3338
+#: common/models.py:3356
 msgid "Note title"
 msgstr ""
 
-#: common/models.py:3345
+#: common/models.py:3363
 msgid "Optional description field"
 msgstr ""
 
-#: common/models.py:3350
+#: common/models.py:3368
 msgid "Content"
 msgstr ""
 
-#: common/models.py:3351
+#: common/models.py:3369
 msgid "Note content"
 msgstr ""
 
-#: common/models.py:3369
+#: common/models.py:3387
 msgid "Image file"
 msgstr "Файл изображения"
 
-#: common/models.py:3404
+#: common/models.py:3422
 msgid "Barcode Scan"
 msgstr "Сканирование штрихкодов"
 
-#: common/models.py:3409
+#: common/models.py:3427
 msgid "Barcode data"
 msgstr "Данные штрихкода"
 
-#: common/models.py:3420
+#: common/models.py:3438
 msgid "User who scanned the barcode"
 msgstr "Пользователь, который сканировал штрих-код"
 
-#: common/models.py:3425 importer/models.py:72
+#: common/models.py:3443 importer/models.py:72
 msgid "Timestamp"
 msgstr "Метка времени"
 
-#: common/models.py:3426
+#: common/models.py:3444
 msgid "Date and time of the barcode scan"
 msgstr "Дата и время сканирования штрих-кода"
 
-#: common/models.py:3432
+#: common/models.py:3450
 msgid "URL endpoint which processed the barcode"
 msgstr "URL-адрес, обработавший штрихкод"
 
-#: common/models.py:3439 order/models.py:2225 plugin/serializers.py:93
+#: common/models.py:3457 order/models.py:2225 plugin/serializers.py:93
 msgid "Context"
 msgstr "Контекст"
 
-#: common/models.py:3440
+#: common/models.py:3458
 msgid "Context data for the barcode scan"
 msgstr "Контекстные данные для сканирования штрих-кода"
 
-#: common/models.py:3447
+#: common/models.py:3465
 msgid "Response"
 msgstr "Ответ"
 
-#: common/models.py:3448
+#: common/models.py:3466
 msgid "Response data from the barcode scan"
 msgstr "Данные ответа от сканирования штрихкода"
 
-#: common/models.py:3454 report/templates/report/inventree_test_report.html:103
+#: common/models.py:3472 report/templates/report/inventree_test_report.html:103
 #: stock/models.py:3892
 msgid "Result"
 msgstr "Результат"
 
-#: common/models.py:3455
+#: common/models.py:3473
 msgid "Was the barcode scan successful?"
 msgstr "Сканирование штрихкода было успешным?"
 
-#: common/models.py:3537
+#: common/models.py:3555
 msgid "An error occurred"
 msgstr "Произошла ошибка"
 
-#: common/models.py:3558
+#: common/models.py:3576
 msgid "INVE-E8: Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion."
 msgstr "INVE-E8: Удаление журнала электронной почты защищено. Установите INVENTREE_PROTECT_EMAIL_LOG в False, чтобы разрешить удаление."
 
-#: common/models.py:3605
+#: common/models.py:3623
 msgid "Email Message"
 msgstr "Сообщение электронной почты"
 
-#: common/models.py:3606
+#: common/models.py:3624
 msgid "Email Messages"
 msgstr "Сообщения электронной почты"
 
-#: common/models.py:3613
+#: common/models.py:3631
 msgid "Announced"
 msgstr "Объявлено"
 
-#: common/models.py:3615
+#: common/models.py:3633
 msgid "Sent"
 msgstr "Отправлено"
 
-#: common/models.py:3616
+#: common/models.py:3634
 msgid "Failed"
 msgstr "Неудача"
 
-#: common/models.py:3619
+#: common/models.py:3637
 msgid "Delivered"
 msgstr "Доставлено"
 
-#: common/models.py:3627
+#: common/models.py:3645
 msgid "Confirmed"
 msgstr "Подтверждено"
 
-#: common/models.py:3633
+#: common/models.py:3651
 msgid "Inbound"
 msgstr "Входящее"
 
-#: common/models.py:3634
+#: common/models.py:3652
 msgid "Outbound"
 msgstr "Исходящее"
 
-#: common/models.py:3639
+#: common/models.py:3657
 msgid "No Reply"
 msgstr "Без ответа"
 
-#: common/models.py:3640
+#: common/models.py:3658
 msgid "Track Delivery"
 msgstr "Отслеживать доставку"
 
-#: common/models.py:3641
+#: common/models.py:3659
 msgid "Track Read"
 msgstr "Отслеживать прочтение"
 
-#: common/models.py:3642
+#: common/models.py:3660
 msgid "Track Click"
 msgstr "Отслеживать клики"
 
-#: common/models.py:3645 common/models.py:3753
+#: common/models.py:3663 common/models.py:3771
 msgid "Global ID"
 msgstr "Глобальный идентификатор"
 
-#: common/models.py:3658
+#: common/models.py:3676
 msgid "Identifier for this message (might be supplied by external system)"
 msgstr "Идентификатор этого сообщения (может быть предоставлен внешней системой)"
 
-#: common/models.py:3665
+#: common/models.py:3683
 msgid "Thread ID"
 msgstr "ID цепочки"
 
-#: common/models.py:3667
+#: common/models.py:3685
 msgid "Identifier for this message thread (might be supplied by external system)"
 msgstr "Идентификатор темы этого сообщения (может быть предоставлен внешней системой)"
 
-#: common/models.py:3676
+#: common/models.py:3694
 msgid "Thread"
 msgstr "Цепочка"
 
-#: common/models.py:3677
+#: common/models.py:3695
 msgid "Linked thread for this message"
 msgstr "Связанная цепочка для этого сообщения"
 
-#: common/models.py:3693
+#: common/models.py:3711
 msgid "Priority"
 msgstr "Приоритет"
 
-#: common/models.py:3735
+#: common/models.py:3753
 msgid "Email Thread"
 msgstr "Цепочка электронной почты"
 
-#: common/models.py:3736
+#: common/models.py:3754
 msgid "Email Threads"
 msgstr "Цепочки электронной почты"
 
-#: common/models.py:3747 generic/states/serializers.py:16
+#: common/models.py:3765 generic/states/serializers.py:16
 #: machine/serializers.py:24 plugin/models.py:46 users/models.py:111
 msgid "Key"
 msgstr "Ключ"
 
-#: common/models.py:3750
+#: common/models.py:3768
 msgid "Unique key for this thread (used to identify the thread)"
 msgstr "Уникальный ключ для этой цепочки (используется для идентификации цепочки)"
 
-#: common/models.py:3754
+#: common/models.py:3772
 msgid "Unique identifier for this thread"
 msgstr "Уникальный идентификатор этой цепочки"
 
-#: common/models.py:3761
+#: common/models.py:3779
 msgid "Started Internal"
 msgstr "Запущено внутренне"
 
-#: common/models.py:3762
+#: common/models.py:3780
 msgid "Was this thread started internally?"
 msgstr "Эта цепочка была начата внутри?"
 
-#: common/models.py:3767
+#: common/models.py:3785
 msgid "Date and time that the thread was created"
 msgstr "Дата и время создания цепочки"
 
-#: common/models.py:3772
+#: common/models.py:3790
 msgid "Date and time that the thread was last updated"
 msgstr "Дата и время последнего обновления цепочки"
 
@@ -2579,7 +2587,7 @@ msgstr "{verbose_name} отменен"
 msgid "A order that is assigned to you was canceled"
 msgstr "Заказ, назначенный вам, был отменён"
 
-#: common/notifications.py:73 common/notifications.py:80 order/api.py:659
+#: common/notifications.py:73 common/notifications.py:80 order/api.py:660
 msgid "Items Received"
 msgstr "Полученные элементы"
 
@@ -4415,41 +4423,41 @@ msgstr "Значение должно быть в верхнем регистр�
 msgid "Value must be a valid variable identifier"
 msgstr "Значение должно быть допустимым идентификатором переменной"
 
-#: company/api.py:148
+#: company/api.py:158
 msgid "Part is Active"
 msgstr "Деталь активна"
 
-#: company/api.py:152
+#: company/api.py:162
 msgid "Manufacturer is Active"
 msgstr "Производитель активен"
 
-#: company/api.py:261
+#: company/api.py:271
 msgid "Supplier Part is Active"
 msgstr "Поставляемая деталь активна"
 
-#: company/api.py:263
+#: company/api.py:273
 msgid "Primary Supplier Part"
 msgstr "Основная деталь поставщика"
 
-#: company/api.py:267
+#: company/api.py:277
 msgid "Internal Part is Active"
 msgstr "Внутренняя деталь активна"
 
-#: company/api.py:272
+#: company/api.py:282
 msgid "Supplier is Active"
 msgstr "Поставщик активен"
 
-#: company/api.py:284 company/models.py:540 company/serializers.py:501
+#: company/api.py:294 company/models.py:540 company/serializers.py:501
 #: part/serializers.py:468
 msgid "Manufacturer"
 msgstr "Производитель"
 
-#: company/api.py:291 company/models.py:124 company/models.py:408
+#: company/api.py:301 company/models.py:124 company/models.py:408
 #: stock/api.py:955
 msgid "Company"
 msgstr "Компания"
 
-#: company/api.py:301
+#: company/api.py:311
 msgid "Has Stock"
 msgstr "Есть запас"
 
@@ -4486,7 +4494,7 @@ msgid "Contact email address"
 msgstr "Электронная почта контакта"
 
 #: company/models.py:181 company/models.py:315 order/models.py:586
-#: users/models.py:557
+#: users/models.py:566
 msgid "Contact"
 msgstr "Контакт"
 
@@ -5083,7 +5091,7 @@ msgstr "Количество копий для печати каждой эти�
 msgid "Connected"
 msgstr "Подключен"
 
-#: machine/machine_types/label_printer.py:236 order/api.py:2567
+#: machine/machine_types/label_printer.py:236 order/api.py:2601
 msgid "Unknown"
 msgstr "Неизвестно"
 
@@ -5211,133 +5219,133 @@ msgstr "Максимальный прогресс"
 msgid "Maximum value for progress type, required if type=progress"
 msgstr "Максимальное значение для типа прогресса, требуется, если тип=progress"
 
-#: order/api.py:142
+#: order/api.py:143
 msgid "Order Reference"
 msgstr "Ссылка на заказ"
 
-#: order/api.py:170 order/api.py:1362 order/api.py:2201
+#: order/api.py:171 order/api.py:1363 order/api.py:2204
 msgid "Outstanding"
 msgstr "Невыполненный"
 
-#: order/api.py:186
+#: order/api.py:187
 msgid "Has Project Code"
 msgstr "Есть код проекта"
 
-#: order/api.py:200 order/models.py:554
+#: order/api.py:201 order/models.py:554
 msgid "Created By"
 msgstr "Создал"
 
-#: order/api.py:204
+#: order/api.py:205
 msgid "Created Before"
 msgstr "Создано до"
 
-#: order/api.py:208
+#: order/api.py:209
 msgid "Created After"
 msgstr "Создано после"
 
-#: order/api.py:212
+#: order/api.py:213
 msgid "Has Start Date"
 msgstr "Есть дата начала"
 
-#: order/api.py:220
+#: order/api.py:221
 msgid "Start Date Before"
 msgstr "Дата начала до"
 
-#: order/api.py:224
+#: order/api.py:225
 msgid "Start Date After"
 msgstr "Дата начала после"
 
-#: order/api.py:228
+#: order/api.py:229
 msgid "Has Target Date"
 msgstr "Есть целевая дата"
 
-#: order/api.py:236
+#: order/api.py:237
 msgid "Target Date Before"
 msgstr "Целевая дата до"
 
-#: order/api.py:240
+#: order/api.py:241
 msgid "Target Date After"
 msgstr "Целевая дата после"
 
-#: order/api.py:244
+#: order/api.py:245
 msgid "Updated Before"
 msgstr "Обновлено до"
 
-#: order/api.py:248
+#: order/api.py:249
 msgid "Updated After"
 msgstr "Обновлено после"
 
-#: order/api.py:301
+#: order/api.py:302
 msgid "Has Pricing"
 msgstr "Имеет цену"
 
-#: order/api.py:354 order/api.py:894 order/api.py:1682 order/api.py:1999
+#: order/api.py:355 order/api.py:895 order/api.py:1685 order/api.py:2002
 msgid "Completed Before"
 msgstr "Завершено до"
 
-#: order/api.py:358 order/api.py:898 order/api.py:1686 order/api.py:2003
+#: order/api.py:359 order/api.py:899 order/api.py:1689 order/api.py:2006
 msgid "Completed After"
 msgstr "Завершено после"
 
-#: order/api.py:364 order/api.py:368
+#: order/api.py:365 order/api.py:369
 msgid "External Build Order"
 msgstr "Сторонний заказ на сборку"
 
-#: order/api.py:459
+#: order/api.py:460
 msgid "Purchase order not found"
 msgstr ""
 
-#: order/api.py:591 order/api.py:994 order/api.py:1325 order/api.py:2164
-#: order/api.py:2323 order/models.py:2331 order/models.py:2457
+#: order/api.py:592 order/api.py:995 order/api.py:1326 order/api.py:2167
+#: order/api.py:2327 order/models.py:2331 order/models.py:2457
 #: order/models.py:2509 order/models.py:2690 order/models.py:3079
 #: order/models.py:3597 order/models.py:3663 order/models.py:4030
 msgid "Order"
 msgstr "Заказ"
 
-#: order/api.py:595 order/api.py:1062 order/api.py:2391
+#: order/api.py:596 order/api.py:1063 order/api.py:2395
 msgid "Order Complete"
 msgstr "Заказ выполнен"
 
-#: order/api.py:627 order/api.py:631 order/serializers.py:774
+#: order/api.py:628 order/api.py:632 order/serializers.py:774
 msgid "Internal Part"
 msgstr "Внутренняя деталь"
 
-#: order/api.py:649
+#: order/api.py:650
 msgid "Order Pending"
 msgstr "Заказ в ожидании"
 
-#: order/api.py:1047 order/api.py:2376
+#: order/api.py:1048 order/api.py:2380
 msgid "Completed"
 msgstr "Завершённые"
 
-#: order/api.py:1196
+#: order/api.py:1197
 msgid "Sales order not found"
 msgstr ""
 
-#: order/api.py:1378
+#: order/api.py:1379
 msgid "Has Shipment"
 msgstr "Есть отгрузка"
 
-#: order/api.py:1597
+#: order/api.py:1600
 msgid "Shipment not found"
 msgstr "Отгрузка не найдена"
 
-#: order/api.py:1775
+#: order/api.py:1778
 msgid "Return order not found"
 msgstr ""
 
-#: order/api.py:2078
+#: order/api.py:2081
 msgid "Transfer order not found"
 msgstr ""
 
-#: order/api.py:2559 order/models.py:656 order/models.py:2332
+#: order/api.py:2593 order/models.py:656 order/models.py:2332
 #: order/models.py:2458
 #: report/templates/report/inventree_purchase_order_report.html:13
 #: stock/serializers.py:134 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
 msgstr "Заказ на закупку"
 
-#: order/api.py:2561 order/models.py:1396 order/models.py:2510
+#: order/api.py:2595 order/models.py:1396 order/models.py:2510
 #: order/models.py:2691 order/models.py:3080
 #: report/templates/report/inventree_build_order_report.html:134
 #: report/templates/report/inventree_sales_order_report.html:13
@@ -5346,14 +5354,14 @@ msgstr "Заказ на закупку"
 msgid "Sales Order"
 msgstr "Заказ на продажу"
 
-#: order/api.py:2563 order/models.py:3246 order/models.py:3598
+#: order/api.py:2597 order/models.py:3246 order/models.py:3598
 #: order/models.py:3664
 #: report/templates/report/inventree_return_order_report.html:12
 #: templates/email/overdue_return_order.html:15
 msgid "Return Order"
 msgstr "Заказ на возврат"
 
-#: order/api.py:2565 order/models.py:3686 order/models.py:4031
+#: order/api.py:2599 order/models.py:3686 order/models.py:4031
 #: report/templates/report/inventree_transfer_order_report.html:11
 msgid "Transfer Order"
 msgstr "Заказ на перемещение"
@@ -5450,7 +5458,7 @@ msgid "Order reference"
 msgstr "Ссылка на заказ"
 
 #: order/models.py:731 order/models.py:1484 order/models.py:3337
-#: order/models.py:3763 stock/serializers.py:1000 users/models.py:538
+#: order/models.py:3763 stock/serializers.py:1000 users/models.py:547
 msgid "Status"
 msgstr "Статус"
 
@@ -7102,51 +7110,51 @@ msgstr "Позиция спецификации наследуется разн�
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "Эту позицию можно заменять деталями, которые находятся на складе"
 
-#: part/models.py:4204 stock/models.py:1064
+#: part/models.py:4209 stock/models.py:1064
 msgid "Quantity must be integer value for trackable parts"
 msgstr "Для отслеживаемых деталей количество должно быть целым числом"
 
-#: part/models.py:4214 part/models.py:4216
+#: part/models.py:4219 part/models.py:4221
 msgid "Sub part must be specified"
 msgstr "Необходимо указать поддеталь"
 
-#: part/models.py:4354
+#: part/models.py:4359
 msgid "BOM Item Substitute"
 msgstr "Замена пункта спецификации"
 
-#: part/models.py:4375
+#: part/models.py:4380
 msgid "Substitute part cannot be the same as the master part"
 msgstr "Деталь для замены не может быть такой же, как основная деталь"
 
-#: part/models.py:4388
+#: part/models.py:4393
 msgid "Parent BOM item"
 msgstr "Позиция BOM-родителя"
 
-#: part/models.py:4396
+#: part/models.py:4401
 msgid "Substitute part"
 msgstr "Замена детали"
 
-#: part/models.py:4412
+#: part/models.py:4417
 msgid "Part 1"
 msgstr "Деталь 1"
 
-#: part/models.py:4420
+#: part/models.py:4425
 msgid "Part 2"
 msgstr "Деталь 2"
 
-#: part/models.py:4421
+#: part/models.py:4426
 msgid "Select Related Part"
 msgstr "Выберите связанную деталь"
 
-#: part/models.py:4428
+#: part/models.py:4433
 msgid "Note for this relationship"
 msgstr "Заметка для данной связи"
 
-#: part/models.py:4447
+#: part/models.py:4452
 msgid "Part relationship cannot be created between a part and itself"
 msgstr "Нельзя создать отношение детали с самой собой"
 
-#: part/models.py:4452
+#: part/models.py:4457
 msgid "Duplicate relationship already exists"
 msgstr "Дублирующее отношение уже существует"
 
@@ -8470,17 +8478,17 @@ msgstr "Плагин"
 msgid "No author found"
 msgstr "Автор не найден"
 
-#: plugin/registry.py:826
+#: plugin/registry.py:831
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "Плагин '{p}' несовместим с текущей версией InvenTree {v}"
 
-#: plugin/registry.py:829
+#: plugin/registry.py:834
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "Плагин требует как минимум версию {v}"
 
-#: plugin/registry.py:831
+#: plugin/registry.py:836
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "Плагин требует не более версии {v}"
@@ -10399,83 +10407,83 @@ msgstr "Внутренний"
 msgid "Guest"
 msgstr "Гость"
 
-#: users/models.py:503
+#: users/models.py:512
 msgid "Language"
 msgstr "Язык"
 
-#: users/models.py:504
+#: users/models.py:513
 msgid "Preferred language for the user"
 msgstr "Предпочтительный язык пользователя"
 
-#: users/models.py:509
+#: users/models.py:518
 msgid "Theme"
 msgstr "Тема"
 
-#: users/models.py:510
+#: users/models.py:519
 msgid "Settings for the web UI as JSON - do not edit manually!"
 msgstr "Настройки веб-интерфейса в формате JSON — не редактировать вручную!"
 
-#: users/models.py:515
+#: users/models.py:524
 msgid "Widgets"
 msgstr "Виджеты"
 
-#: users/models.py:517
+#: users/models.py:526
 msgid "Settings for the dashboard widgets as JSON - do not edit manually!"
 msgstr "Настройки виджетов панели в формате JSON — не редактировать вручную!"
 
-#: users/models.py:524
+#: users/models.py:533
 msgid "Display Name"
 msgstr "Отображаемое имя"
 
-#: users/models.py:525
+#: users/models.py:534
 msgid "Chosen display name for the user"
 msgstr "Отображаемое имя пользователя"
 
-#: users/models.py:531
+#: users/models.py:540
 msgid "Position"
 msgstr "Положение"
 
-#: users/models.py:532
+#: users/models.py:541
 msgid "Main job title or position"
 msgstr "Основное место работы или должность"
 
-#: users/models.py:539
+#: users/models.py:548
 msgid "User status message"
 msgstr "Статусное сообщение пользователя"
 
-#: users/models.py:546
+#: users/models.py:555
 msgid "User location information"
 msgstr "Информация о местоположении пользователя"
 
-#: users/models.py:551
+#: users/models.py:560
 msgid "User is actively using the system"
 msgstr "Пользователь активно использует систему"
 
-#: users/models.py:558
+#: users/models.py:567
 msgid "Preferred contact information for the user"
 msgstr "Предпочтительная контактная информация пользователя"
 
-#: users/models.py:564
+#: users/models.py:573
 msgid "User Type"
 msgstr "Тип пользователя"
 
-#: users/models.py:565
+#: users/models.py:574
 msgid "Which type of user is this?"
 msgstr "Какого типа этот пользователь?"
 
-#: users/models.py:571
+#: users/models.py:580
 msgid "Organisation"
 msgstr "Организация"
 
-#: users/models.py:572
+#: users/models.py:581
 msgid "Users primary organisation/affiliation"
 msgstr "Основная организация/принадлежность пользователя"
 
-#: users/models.py:580
+#: users/models.py:589
 msgid "Primary Group"
 msgstr "Основная группа"
 
-#: users/models.py:581
+#: users/models.py:590
 msgid "Primary group for the user"
 msgstr "Основная группа для пользователя"
 
