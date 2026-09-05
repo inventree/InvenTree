@@ -9,10 +9,17 @@ from django.core.serializers import base as serializers_base
 from django.db import DatabaseError, IntegrityError, connections, router
 
 import structlog
+from tqdm import tqdm
 
 logger = structlog.get_logger('inventree')
 
 DEFAULT_BATCH_SIZE = 500
+
+# Number of records to process between progress bar updates. Calling tqdm's
+# update() for every single record adds measurable overhead of its own (well
+# beyond just the display refresh) once there are a million or more of them -
+# so update it in batches instead.
+PROGRESS_UPDATE_INTERVAL = 100
 
 
 class Command(LoadDataCommand):
@@ -57,6 +64,7 @@ class Command(LoadDataCommand):
         self.batch_size = options['batch_size']
         self.ignore_conflicts = options['ignore_conflicts']
         self.pending_objs = {}
+        self.pending_progress = 0
 
         connection = connections[options['database']]
         self.query_count = 0
@@ -68,8 +76,13 @@ class Command(LoadDataCommand):
 
         start_time = time.monotonic()
 
-        with connection.execute_wrapper(count_queries), self._cached_natural_keys():
+        with (
+            connection.execute_wrapper(count_queries),
+            self._cached_natural_keys(),
+            tqdm(desc='Importing', unit=' records') as self.progress,
+        ):
             super().handle(*fixture_labels, **options)
+            self.progress.update(self.pending_progress)
 
         elapsed = time.monotonic() - start_time
 
@@ -132,6 +145,11 @@ class Command(LoadDataCommand):
 
     def save_obj(self, obj):
         """Buffer an object for bulk insertion, instead of saving it immediately."""
+        self.pending_progress += 1
+        if self.pending_progress >= PROGRESS_UPDATE_INTERVAL:
+            self.progress.update(self.pending_progress)
+            self.pending_progress = 0
+
         if (
             obj.object._meta.app_config in self.excluded_apps
             or type(obj.object) in self.excluded_models
