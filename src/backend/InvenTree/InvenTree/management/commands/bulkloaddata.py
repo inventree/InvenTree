@@ -1,8 +1,10 @@
 """Custom management command to load fixtures faster using bulk_create()."""
 
+import time
+
 from django.core.management.base import CommandError
 from django.core.management.commands.loaddata import Command as LoadDataCommand
-from django.db import DatabaseError, IntegrityError, router
+from django.db import DatabaseError, IntegrityError, connections, router
 
 import structlog
 
@@ -48,7 +50,26 @@ class Command(LoadDataCommand):
         self.batch_size = options['batch_size']
         self.ignore_conflicts = options['ignore_conflicts']
         self.pending_objs = {}
-        super().handle(*fixture_labels, **options)
+
+        connection = connections[options['database']]
+        self.query_count = 0
+
+        def count_queries(execute, sql, params, many, context):
+            """Count every query executed against this connection, without the overhead of recording each query's SQL text (unlike e.g. CaptureQueriesContext)."""
+            self.query_count += 1
+            return execute(sql, params, many, context)
+
+        start_time = time.monotonic()
+
+        with connection.execute_wrapper(count_queries):
+            super().handle(*fixture_labels, **options)
+
+        elapsed = time.monotonic() - start_time
+
+        if self.verbosity >= 1:
+            self.stdout.write(
+                f'Executed {self.query_count} database queries in {elapsed:.2f}s'
+            )
 
     def save_obj(self, obj):
         """Buffer an object for bulk insertion, instead of saving it immediately."""
@@ -62,10 +83,20 @@ class Command(LoadDataCommand):
             return False
 
         self.models.add(obj.object.__class__)
-        self.pending_objs.setdefault(obj.object.__class__, []).append(obj)
 
         if obj.deferred_fields:
+            # This object has an unresolved forward reference (e.g. a natural-key
+            # FK to an object that has not been saved yet - 'export_records' uses
+            # --natural-foreign, and e.g. auth.User defines a natural_key(), so
+            # this does occur in practice). It cannot be bulk_create()'d as-is, since
+            # the deferred field would be written as blank/null. The base loaddata()
+            # command already resolves and saves objects like this individually,
+            # via save_deferred_fields(), once every fixture file has been buffered
+            # (see 'handle' -> 'loaddata') - so just hand it off for that, rather
+            # than also bulk-inserting it here with the field left unresolved.
             self.objs_with_deferred_fields.append(obj)
+        else:
+            self.pending_objs.setdefault(obj.object.__class__, []).append(obj)
 
         return True
 
