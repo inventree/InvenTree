@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-03 12:15\n"
+"PO-Revision-Date: 2026-09-05 09:58\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -126,12 +126,14 @@ msgstr "失敗"
 #: lib/components/YesNoButton.tsx:43
 #: src/components/tables/Filter.tsx:41
 #: src/components/tables/Filter.tsx:77
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:419
 msgid "Yes"
 msgstr "はい"
 
 #: lib/components/YesNoButton.tsx:44
 #: src/components/tables/Filter.tsx:41
 #: src/components/tables/Filter.tsx:78
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:419
 msgid "No"
 msgstr "いいえ"
 
@@ -2185,6 +2187,8 @@ msgstr "ホスト"
 #: src/components/forms/HostOptionsForm.tsx:70
 #: src/components/forms/InstanceOptions.tsx:125
 #: src/components/plugins/PluginDrawer.tsx:85
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:314
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:385
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
 #: src/pages/part/PartCategoryDetailsPanel.tsx:22
 #: src/pages/part/PartDetailsPanel.tsx:79
@@ -2275,7 +2279,7 @@ msgid "Plugins"
 msgstr "プラグイン"
 
 #: src/components/forms/InstanceOptions.tsx:144
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:126
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:104
 #: src/tables/general/ParameterTemplateTable.tsx:148
 #: src/tables/general/ParameterTemplateTable.tsx:183
 #: src/tables/part/PartTestTemplateTable.tsx:121
@@ -2286,7 +2290,7 @@ msgid "Enabled"
 msgstr "有効"
 
 #: src/components/forms/InstanceOptions.tsx:144
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:130
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:108
 msgid "Disabled"
 msgstr "無効"
 
@@ -2476,7 +2480,7 @@ msgstr "加工データ"
 #: src/components/importer/ImporterColumnSelector.tsx:56
 #: src/components/importer/ImporterColumnSelector.tsx:299
 #: src/components/items/ErrorItem.tsx:12
-#: src/functions/api.tsx:60
+#: src/functions/api.tsx:63
 #: src/functions/auth.tsx:418
 msgid "An error occurred"
 msgstr "エラーが発生しました"
@@ -2663,7 +2667,7 @@ msgid "Read More"
 msgstr "続きを読む"
 
 #: src/components/items/ErrorItem.tsx:8
-#: src/functions/api.tsx:51
+#: src/functions/api.tsx:54
 #: src/tables/settings/PendingTasksTable.tsx:80
 msgid "Unknown error"
 msgstr "不明なエラー"
@@ -4347,7 +4351,7 @@ msgstr "部品のバリエーションの結果を含めてください"
 #: src/forms/StockForms.tsx:689
 #: src/forms/StockForms.tsx:1427
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:121
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:101
 #: src/pages/build/BuildOrderDetailsPanel.tsx:67
 #: src/pages/core/UserDetail.tsx:148
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:71
@@ -4476,6 +4480,7 @@ msgstr "フィルタを削除"
 #: src/components/tables/FilterSelectDrawer.tsx:249
 #: src/components/tables/FilterSelectDrawer.tsx:276
 #: src/components/tables/FilterSelectDrawer.tsx:290
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:268
 #: src/pages/part/PartStockHistoryDetail.tsx:67
 #: src/tables/part/PartTestResultTable.tsx:210
 #: src/tables/stock/StockItemTestResultTable.tsx:205
@@ -6554,27 +6559,27 @@ msgstr "サーバーからの応答が無効です"
 #~ msgid "Label"
 #~ msgstr "Label"
 
-#: src/functions/api.tsx:33
+#: src/functions/api.tsx:36
 msgid "Bad request"
 msgstr "間違ったリクエスト"
 
-#: src/functions/api.tsx:36
+#: src/functions/api.tsx:39
 msgid "Unauthorized"
 msgstr "無許可"
 
-#: src/functions/api.tsx:39
+#: src/functions/api.tsx:42
 msgid "Forbidden"
 msgstr "禁じられた"
 
-#: src/functions/api.tsx:42
+#: src/functions/api.tsx:45
 msgid "Not found"
 msgstr "みつかりません"
 
-#: src/functions/api.tsx:45
+#: src/functions/api.tsx:48
 msgid "Method not allowed"
 msgstr "不可の方法"
 
-#: src/functions/api.tsx:48
+#: src/functions/api.tsx:51
 msgid "Internal server error"
 msgstr "内部サーバーエラー"
 
@@ -8043,29 +8048,230 @@ msgstr "メールメッセージ"
 #~ msgid "Inactive Alerts"
 #~ msgstr "Inactive Alerts"
 
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:36
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:35
 msgid "System Status"
 msgstr "システム状態"
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:47
-msgid "Admin Center Information"
-msgstr "管理センター情報"
+#~ msgid "Admin Center Information"
+#~ msgstr "Admin Center Information"
 
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:53
-msgid "The home panel (and the whole Admin Center) is a new feature starting with the new UI and was previously (before 1.0) not available."
-msgstr "ホームパネル（および管理センター全体）は、新しいUIから導入された新機能であり、以前のバージョン（1.0以前）では利用できません"
-
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:60
-msgid "The admin center provides a centralized location for all administration functionality and is meant to replace all interaction with the (django) backend admin interface."
-msgstr "管理センターは、すべての管理機能を集中管理する場所を提供し、(Django) バックエンド管理インターフェースとのすべてのやり取りに取って代わることを目的としています"
-
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:67
-msgid "Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom."
-msgstr "このUIで不足している既存のバックエンド管理機能については、トラッカーを確認の上、機能リクエストを開設してください。バックエンド管理インターフェースは慎重に利用し、使用頻度は最小限に留めるべきです。"
-
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:85
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:51
 msgid "Quick Actions"
 msgstr "クイックアクション"
+
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:53
+#~ msgid "The home panel (and the whole Admin Center) is a new feature starting with the new UI and was previously (before 1.0) not available."
+#~ msgstr "The home panel (and the whole Admin Center) is a new feature starting with the new UI and was previously (before 1.0) not available."
+
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:60
+#~ msgid "The admin center provides a centralized location for all administration functionality and is meant to replace all interaction with the (django) backend admin interface."
+#~ msgstr "The admin center provides a centralized location for all administration functionality and is meant to replace all interaction with the (django) backend admin interface."
+
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:67
+#~ msgid "Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom."
+#~ msgstr "Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom."
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:72
+msgid "SCIM enabled"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:72
+msgid "SCIM secret rotated"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:73
+msgid "The new bearer secret is only shown once"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:78
+msgid "Error generating SCIM secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:88
+msgid "SCIM disabled"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:89
+msgid "The SCIM provisioning endpoint has been disabled and its secret revoked"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:94
+msgid "Error disabling SCIM"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:113
+msgid "Base URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:119
+msgid "Secret Generated"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:120
+msgid "Last Used"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:134
+msgid "SCIM Bearer Secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:139
+msgid "This secret is only shown once - copy it now and store it in your Identity Provider's SCIM configuration. It cannot be retrieved again, only rotated."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:156
+msgid "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:173
+msgid "Rotate Secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:175
+msgid "Enable SCIM"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:185
+msgid "Disable SCIM"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:191
+msgid "Rotating the secret immediately invalidates the previous one - update your Identity Provider's configuration straight away."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:207
+#: src/pages/Index/Settings/SystemSettings.tsx:95
+msgid "Single Sign-On (SSO) Settings"
+msgstr "シングルサインオン（SSO）設定"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:215
+msgid "More settings can be found in the <0>system settings</0>."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:260
+msgid "Copy these values now. The client secret is only shown once."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:268
+msgid "Field"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:272
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:391
+msgid "Client ID"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:281
+msgid "Client Secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:306
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:345
+msgid "OAuth application created"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:310
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:449
+msgid "Add OAuth Application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:315
+msgid "A human-readable name for the OAuth application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:318
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:397
+msgid "Client Type"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:319
+msgid "The type of OAuth client (confidential or public - prefer public for browser-based applications)"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:323
+msgid "Authorization Grant Type"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:324
+msgid "The type of OAuth2 grant schema to use - authorization code is recommended for most applications"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:331
+msgid "Skip Authorization"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:332
+msgid "If enabled, users will not be prompted to authorize this application when logging in - use with caution!"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:335
+msgid "Sign Algorithm"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:336
+msgid "The algorithm used to sign the OAuth2 tokens - required for OIDC"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:358
+msgid "OAuth application secret regenerated"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:361
+msgid "OAuth secret rotated"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:362
+msgid "The new client secret is only shown once"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:369
+msgid "Error regenerating OAuth client secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:377
+msgid "Delete OAuth Application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:403
+msgid "Grant Type"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:409
+msgid "Redirect URIs"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:416
+msgid "Built-in"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:428
+msgid "Regenerate Secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:494
+msgid "InvenTree can be integrated with external Identity Providers and act as one."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:495
+msgid "External Identities can be pushed to InvenTree via Single Sign-On (SSO) and SCIM."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:496
+msgid "InvenTree can act as an Identity Provider for external applications via the built-in oAuth2 provider."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:514
+msgid "SCIM Provisioning"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:522
+msgid "Single Sign-On (SSO)"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:530
+msgid "oAuth2 Provider"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:107
 #~ msgid "User Management"
@@ -8146,8 +8352,12 @@ msgid "Location Types"
 msgstr "ロケーションタイプ"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:283
-msgid "Identity"
+msgid "Identity Federation"
 msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:283
+#~ msgid "Identity"
+#~ msgstr "Identity"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:295
 msgid "Operations"
@@ -8276,73 +8486,9 @@ msgstr "ページサイズ"
 #~ msgid "Generated Reports"
 #~ msgstr "Generated Reports"
 
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:52
-msgid "SCIM enabled"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:52
-msgid "SCIM secret rotated"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:53
-msgid "The new bearer secret is only shown once"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:58
-msgid "Error generating SCIM secret"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:68
-msgid "SCIM disabled"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:69
-msgid "The SCIM provisioning endpoint has been disabled and its secret revoked"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:74
-msgid "Error disabling SCIM"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:87
-msgid "SCIM Bearer Secret"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:92
-msgid "This secret is only shown once - copy it now and store it in your Identity Provider's SCIM configuration. It cannot be retrieved again, only rotated."
-msgstr ""
-
 #: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:109
-msgid "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups. Single Sign-On (interactive login) is configured separately, under Single Sign On."
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:137
-msgid "Base URL"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:148
-msgid "Secret Generated"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:154
-msgid "Last Used"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:169
-msgid "Rotate Secret"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:171
-msgid "Enable SCIM"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:181
-msgid "Disable SCIM"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:187
-msgid "Rotating the secret immediately invalidates the previous one - update your Identity Provider's configuration straight away."
-msgstr ""
+#~ msgid "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups. Single Sign-On (interactive login) is configured separately, under Single Sign On."
+#~ msgstr "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups. Single Sign-On (interactive login) is configured separately, under Single Sign On."
 
 #: src/pages/Index/Settings/AdminCenter/StocktakePanel.tsx:25
 #~ msgid "Stocktake Reports"
@@ -8447,10 +8593,6 @@ msgstr "サーバーの設定"
 #: src/pages/Index/Settings/SystemSettings.tsx:80
 msgid "Authentication"
 msgstr "認証"
-
-#: src/pages/Index/Settings/SystemSettings.tsx:95
-msgid "Single Sign-On (SSO) Settings"
-msgstr "シングルサインオン（SSO）設定"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:113
 msgid "Barcodes"
