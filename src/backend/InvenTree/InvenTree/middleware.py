@@ -110,7 +110,9 @@ def csrf_failure(request, reason=''):
     """Custom CSRF failure handler.
 
     Returns a JSON response for API/headless requests so the frontend can
-    provide a meaningful error message to the user
+    provide a meaningful error message to the user.
+
+    This Includes Django's own message (e.g. "CSRF cookie not set.") alongside the generic hint.
     """
     from django.views.csrf import csrf_failure as django_default
 
@@ -120,14 +122,14 @@ def csrf_failure(request, reason=''):
         or 'application/json' in request.headers.get('Accept', '')
         or 'application/json' in request.headers.get('Content-Type', '')
     ):
-        return JsonResponse(
-            {
-                'detail': _(
-                    'CSRF verification failed. Ensure INVENTREE_SITE_URL and INVENTREE_TRUSTED_ORIGINS are configured correctly.'
-                )
-            },
-            status=403,
+        detail = _(
+            'CSRF verification failed. Ensure INVENTREE_SITE_URL and INVENTREE_TRUSTED_ORIGINS are configured correctly.'
         )
+
+        if reason:
+            detail = f'{detail} ({reason})'
+
+        return JsonResponse({'detail': detail}, status=403)
 
     return django_default(request, reason=reason)
 
