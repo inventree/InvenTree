@@ -9,6 +9,7 @@ from django.db import models, transaction
 from django.db.models import (
     BooleanField,
     Case,
+    DecimalField,
     ExpressionWrapper,
     F,
     FloatField,
@@ -55,7 +56,14 @@ from stock.serializers import (
 from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer, UserSerializer
 
-from .models import Build, BuildItem, BuildLine
+from .models import (
+    Build,
+    BuildItem,
+    BuildLine,
+    RepairOrder,
+    RepairOrderAllocation,
+    RepairOrderLineItem,
+)
 from .status_codes import BuildStatus
 from .validators import check_build_output
 
@@ -1833,3 +1841,256 @@ class BuildConsumeSerializer(serializers.Serializer):
             raise ValidationError(_('At least one item or line must be provided'))
 
         return data
+
+
+class RepairOrderSerializer(
+    InvenTreeCustomStatusSerializerMixin,
+    FilterableSerializerMixin,
+    InvenTreeTaggitSerializer,
+    InvenTreeModelSerializer,
+):
+    """Serializer for a RepairOrder object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = RepairOrder
+        fields = [
+            'pk',
+            'reference',
+            'customer',
+            'customer_detail',
+            'part',
+            'part_detail',
+            'description',
+            'symptoms',
+            'status',
+            'creation_date',
+            'start_date',
+            'target_date',
+            'completion_date',
+            'responsible',
+            'responsible_detail',
+            'issued_by',
+            'issued_by_detail',
+            'link',
+            'line_items',
+            'tags',
+        ]
+        read_only_fields = ['creation_date', 'completion_date', 'status']
+
+    tags = common.filters.enable_tags_filter()
+
+    customer_detail = OptionalField(
+        serializer_class=company.serializers.CompanyBriefSerializer,
+        serializer_kwargs={
+            'source': 'customer',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        prefetch_fields=['customer'],
+    )
+
+    part_detail = OptionalField(
+        serializer_class=part_serializers.PartBriefSerializer,
+        serializer_kwargs={
+            'source': 'part',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['part', 'part__category', 'part__pricing_data'],
+    )
+
+    issued_by_detail = OptionalField(
+        serializer_class=UserSerializer,
+        serializer_kwargs={'source': 'issued_by', 'read_only': True},
+        default_include=True,
+        filter_name='user_detail',
+        prefetch_fields=['issued_by'],
+    )
+
+    responsible_detail = OptionalField(
+        serializer_class=OwnerSerializer,
+        serializer_kwargs={
+            'source': 'responsible',
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        filter_name='user_detail',
+        prefetch_fields=['responsible'],
+    )
+
+    line_items = serializers.PrimaryKeyRelatedField(
+        source='lines', many=True, read_only=True
+    )
+
+
+class RepairOrderLineItemSerializer(
+    FilterableSerializerMixin, InvenTreeModelSerializer
+):
+    """Serializer for a RepairOrderLineItem object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = RepairOrderLineItem
+        fields = ['pk', 'order', 'part', 'part_detail', 'quantity', 'allocated']
+
+    part_detail = OptionalField(
+        serializer_class=part_serializers.PartBriefSerializer,
+        serializer_kwargs={
+            'source': 'part',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['part', 'part__category', 'part__pricing_data'],
+    )
+
+    allocated = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        read_only=True,
+        default=0,
+        label=_('Allocated Quantity'),
+    )
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate the queryset with the total allocated quantity for each line item."""
+        return queryset.annotate(
+            allocated=Coalesce(
+                Sum('allocations__quantity'), 0, output_field=DecimalField()
+            )
+        )
+
+
+class RepairOrderAllocationSerializer(
+    FilterableSerializerMixin, InvenTreeModelSerializer
+):
+    """Serializer for a RepairOrderAllocation object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = RepairOrderAllocation
+        fields = ['pk', 'line', 'item', 'item_detail', 'quantity']
+
+    item_detail = OptionalField(
+        serializer_class=StockItemSerializer,
+        serializer_kwargs={
+            'source': 'item',
+            'read_only': True,
+            'allow_null': True,
+            'label': _('Stock Item'),
+            'part_detail': False,
+            'location_detail': True,
+            'supplier_part_detail': False,
+            'path_detail': False,
+        },
+        default_include=True,
+        prefetch_fields=['item', 'item__part', 'item__location'],
+    )
+
+
+class RepairOrderAdjustSerializer(serializers.Serializer):
+    """Generic serializer class for adjusting the status of a RepairOrder."""
+
+    class Meta:
+        """Metaclass options.
+
+        By default, there are no fields required for this serializer type.
+        """
+
+        fields = []
+
+    @property
+    def order(self):
+        """Return the order object associated with this serializer.
+
+        Note: It is passed in via the serializer context data.
+        """
+        return self.context['order']
+
+
+class RepairOrderIssueSerializer(RepairOrderAdjustSerializer):
+    """Serializer for issuing a RepairOrder."""
+
+    def save(self):
+        """Save the serializer to 'issue' the repair order."""
+        self.order.issue_repair()
+
+
+class RepairOrderHoldSerializer(RepairOrderAdjustSerializer):
+    """Serializer for placing a RepairOrder on hold."""
+
+    def save(self):
+        """Save the serializer to 'hold' the repair order."""
+        self.order.hold_repair()
+
+
+class RepairOrderCompleteSerializer(RepairOrderAdjustSerializer):
+    """Serializer for completing a RepairOrder."""
+
+    def save(self):
+        """Save the serializer to 'complete' the repair order."""
+        self.order.complete_repair()
+
+
+class RepairOrderCancelSerializer(RepairOrderAdjustSerializer):
+    """Serializer for cancelling a RepairOrder."""
+
+    def save(self):
+        """Save the serializer to 'cancel' the repair order."""
+        self.order.cancel_repair()
+
+
+class RepairOrderAutoAllocateSerializer(RepairOrderAdjustSerializer):
+    """Serializer for auto-allocating stock against a RepairOrder."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['location', 'exclude_location', 'stock_sort_by']
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Source Location'),
+        help_text=_(
+            'Stock location where parts are to be sourced (leave blank to take from any location)'
+        ),
+    )
+
+    exclude_location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Exclude Location'),
+        help_text=_('Exclude stock items from this selected location'),
+    )
+
+    stock_sort_by = serializers.ChoiceField(
+        default=stock_models.STOCK_SORT_DEFAULT,
+        choices=stock_models.STOCK_SORT_CHOICES,
+        label=_('Stock Priority'),
+        help_text=_('Preferred order in which matching stock items are consumed'),
+    )
+
+    def save(self):
+        """Save the serializer to auto-allocate stock against the repair order."""
+        data = self.validated_data
+
+        self.order.auto_allocate_stock(
+            location=data.get('location'),
+            exclude_location=data.get('exclude_location'),
+            stock_sort_by=data.get('stock_sort_by', stock_models.STOCK_SORT_DEFAULT),
+        )

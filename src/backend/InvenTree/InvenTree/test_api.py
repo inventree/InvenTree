@@ -400,6 +400,37 @@ class SearchTests(InvenTreeAPITestCase):
         self.assertNotIn('stockitem', response.data)
         self.assertNotIn('build', response.data)
 
+    def test_repairorder_results(self):
+        """Test that RepairOrder results are included in the global search."""
+        from build.models import RepairOrder
+        from part.models import Part
+
+        RepairOrder.objects.create(
+            reference='RO-9999',
+            description='Global search test repair order',
+            part=Part.objects.filter(assembly=True).first(),
+        )
+
+        # No role assigned - should return a permission error
+        response = self.post(
+            reverse('api-search'),
+            {'search': 'RO-9999', 'limit': 10, 'repairorder': {}},
+            expected_code=200,
+        )
+        self.assertEqual(
+            response.data['repairorder'],
+            {'error': 'User does not have permission to view this model'},
+        )
+
+        # Add permission and try again
+        self.assignRole('repair_order.view')
+        response = self.post(
+            reverse('api-search'),
+            {'search': 'RO-9999', 'limit': 10, 'repairorder': {}},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['repairorder']['count'], 1)
+
     def test_search_filters(self):
         """Test that the regex, whole word, and notes filters are handled correctly."""
         from build.models import Build

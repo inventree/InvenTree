@@ -88,6 +88,10 @@ export const ReturnOrderDetail = Loadable(
   lazy(() => import('./pages/sales/ReturnOrderDetail'))
 );
 
+export const RepairOrderDetail = Loadable(
+  lazy(() => import('./pages/sales/RepairOrderDetail'))
+);
+
 export const TransferOrderDetail = Loadable(
   lazy(() => import('./pages/stock/TransferOrderDetail'))
 );
@@ -192,6 +196,7 @@ export const routes = (
         <Route index element={<Navigate to='index/' />} />
         <Route path='index/*' element={<BuildIndex />} />
         <Route path='build-order/:id/*' element={<BuildDetail />} />
+        <Route path='repair-order/:id/*' element={<RepairOrderDetail />} />
       </Route>
       <Route path='purchasing/'>
         <Route index element={<Navigate to='index/' />} />

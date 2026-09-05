@@ -4,6 +4,7 @@ import {
   IconCalendar,
   IconListDetails,
   IconTable,
+  IconTool,
   IconTools
 } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
@@ -25,6 +26,9 @@ import { useUserState } from '../../states/UserState';
 import BuildOrderFilters from '../../tables/build/BuildOrderFilters';
 import BuildOrderParametricTable from '../../tables/build/BuildOrderParametricTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+import RepairOrderFilters from '../../tables/sales/RepairOrderFilters';
+import RepairOrderParametricTable from '../../tables/sales/RepairOrderParametricTable';
+import { RepairOrderTable } from '../../tables/sales/RepairOrderTable';
 
 function BuildOrderCalendar() {
   const globalSettings = useGlobalSettingsState();
@@ -69,14 +73,45 @@ function BuildOrderCalendar() {
   );
 }
 
+function RepairOrderCalendar() {
+  const calendarFilters: TableFilter[] = useMemo(() => {
+    return RepairOrderFilters({ includeDateFilters: false });
+  }, []);
+
+  const renderTooltip = useCallback((event: EventContentArg) => {
+    return OrderCalendarToolTip({
+      event: event,
+      modelType: ModelType.part,
+      instanceLookup: 'part_detail'
+    });
+  }, []);
+
+  return (
+    <OrderCalendar
+      model={ModelType.repairorder}
+      role={UserRoles.repair_order}
+      params={{ part_detail: true }}
+      filters={calendarFilters}
+      initialFilters={[{ name: 'outstanding', value: 'true' }]}
+      tooltip={renderTooltip}
+    />
+  );
+}
+
 /**
  * Build Order index page
  */
 export default function BuildIndex() {
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
 
   const [buildOrderView, setBuildOrderView] = useLocalStorage<string>({
     key: 'build-order-view',
+    defaultValue: 'table'
+  });
+
+  const [repairOrderView, setRepairOrderView] = useLocalStorage<string>({
+    key: 'repair-order-view',
     defaultValue: 'table'
   });
 
@@ -108,11 +143,48 @@ export default function BuildIndex() {
             content: <BuildOrderParametricTable />
           }
         ]
+      }),
+      SegmentedControlPanel({
+        name: 'repairorders',
+        label: t`Repair Orders`,
+        icon: <IconTool />,
+        hidden:
+          !globalSettings.isSet('REPAIRORDER_ENABLED') ||
+          !user.hasViewRole(UserRoles.repair_order),
+        selection: repairOrderView,
+        onChange: setRepairOrderView,
+        options: [
+          {
+            value: 'table',
+            label: t`Table View`,
+            icon: <IconTable />,
+            content: <RepairOrderTable />
+          },
+          {
+            value: 'calendar',
+            label: t`Calendar View`,
+            icon: <IconCalendar />,
+            content: <RepairOrderCalendar />
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: <RepairOrderParametricTable />
+          }
+        ]
       })
     ];
-  }, [user, buildOrderView]);
+  }, [user, globalSettings, buildOrderView, repairOrderView]);
 
-  if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.build)) {
+  if (
+    !user.isLoggedIn() ||
+    (!user.hasViewRole(UserRoles.build) &&
+      !(
+        globalSettings.isSet('REPAIRORDER_ENABLED') &&
+        user.hasViewRole(UserRoles.repair_order)
+      ))
+  ) {
     return <PermissionDenied />;
   }
 

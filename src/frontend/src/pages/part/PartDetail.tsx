@@ -29,6 +29,7 @@ import {
   IconShoppingCart,
   IconStack2,
   IconTestPipe,
+  IconTool,
   IconTools,
   IconTransfer,
   IconTruckDelivery,
@@ -95,6 +96,7 @@ import PartTestResultTable from '../../tables/part/PartTestResultTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
 import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
+import { RepairOrderTable } from '../../tables/sales/RepairOrderTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TransferOrderTable } from '../../tables/stock/TransferOrderTable';
@@ -419,6 +421,16 @@ export default function PartDetail() {
           !user.hasViewRole(UserRoles.return_order) ||
           !globalSettings.isSet('RETURNORDER_ENABLED'),
         content: part.pk ? <ReturnOrderTable partId={part.pk} /> : <Skeleton />
+      },
+      {
+        name: 'repair_orders',
+        label: t`Repair Orders`,
+        icon: <IconTool />,
+        hidden:
+          !part.assembly ||
+          !user.hasViewRole(UserRoles.repair_order) ||
+          !globalSettings.isSet('REPAIRORDER_ENABLED'),
+        content: part.pk ? <RepairOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'builds',

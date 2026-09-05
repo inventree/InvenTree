@@ -204,6 +204,21 @@ function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       modelType: ModelType.returnorder,
       params: { assigned_to_me: true, outstanding: true },
       icon: 'responsible'
+    }),
+    QueryCountDashboardWidget({
+      title: t`Active Repair Orders`,
+      label: 'act-rpr',
+      description: t`Show the number of repair orders which are currently active`,
+      modelType: ModelType.repairorder,
+      params: { outstanding: true }
+    }),
+    QueryCountDashboardWidget({
+      title: t`Overdue Repair Orders`,
+      label: 'ovr-rpr',
+      description: t`Show the number of repair orders which are overdue`,
+      modelType: ModelType.repairorder,
+      params: { overdue: true },
+      icon: 'overdue'
     })
   ];
 
