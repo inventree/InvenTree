@@ -562,6 +562,178 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         finally:
             registry.plugins = original_plugins
 
+    def test_lease_survives_database_not_ready(self):
+        """Test that the lease functions degrade gracefully if the database is not ready."""
+        from django.db.utils import ProgrammingError
+
+        from common.models import InvenTreeSetting
+        from plugin.lease import release_lease, try_acquire_lease
+
+        with mock.patch.object(
+            InvenTreeSetting.objects,
+            'get_or_create',
+            side_effect=ProgrammingError('relation does not exist'),
+        ):
+            self.assertFalse(try_acquire_lease('_test_lease_db_not_ready'))
+
+        with mock.patch.object(
+            InvenTreeSetting.objects,
+            'select_for_update',
+            side_effect=ProgrammingError('relation does not exist'),
+        ):
+            # Must not raise
+            release_lease('_test_lease_db_not_ready')
+
+    def test_lease_acquire_release(self):
+        """Test that try_acquire_lease / release_lease provide mutual exclusion."""
+        from plugin.lease import release_lease, try_acquire_lease
+
+        key = '_test_lease_acquire_release'
+
+        # First attempt succeeds
+        self.assertTrue(try_acquire_lease(key))
+
+        # A second attempt while the lease is held must fail
+        self.assertFalse(try_acquire_lease(key))
+
+        # Once released, it can be acquired again
+        release_lease(key)
+        self.assertTrue(try_acquire_lease(key))
+
+        release_lease(key)
+
+    def test_lease_expires_after_grace_period(self):
+        """Test that an abandoned lease (e.g. a crashed holder) can be reclaimed."""
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        from common.settings import set_global_setting
+        from plugin.lease import CLAIM_LEASE, release_lease, try_acquire_lease
+
+        key = '_test_lease_expiry'
+
+        self.assertTrue(try_acquire_lease(key))
+
+        # A fresh claim cannot be immediately re-acquired by someone else
+        self.assertFalse(try_acquire_lease(key))
+
+        # Simulate a crash: back-date the claim beyond the grace period
+        stale_claim = timezone.now() - CLAIM_LEASE - timedelta(seconds=1)
+        set_global_setting(f'{key}_CLAIMED_AT', stale_claim.isoformat())
+
+        # The stale claim is now treated as abandoned, and can be re-acquired
+        self.assertTrue(try_acquire_lease(key))
+
+        release_lease(key)
+
+    def test_acquire_lease_blocking_times_out(self):
+        """Test that acquire_lease_blocking gives up after its timeout, rather than hanging."""
+        import time
+
+        from plugin.lease import (
+            acquire_lease_blocking,
+            release_lease,
+            try_acquire_lease,
+        )
+
+        key = '_test_lease_blocking_timeout'
+
+        self.assertTrue(try_acquire_lease(key))
+
+        start = time.monotonic()
+        acquired = acquire_lease_blocking(key, timeout=0.3, poll_interval=0.05)
+        elapsed = time.monotonic() - start
+
+        self.assertFalse(acquired)
+        self.assertGreaterEqual(elapsed, 0.3)
+        self.assertLess(elapsed, 5)
+
+        release_lease(key)
+
+        # Once free, a blocking acquire succeeds without waiting for the timeout
+        self.assertTrue(acquire_lease_blocking(key, timeout=0.3, poll_interval=0.05))
+        release_lease(key)
+
+    def test_install_plugin_file_persists_hash_only_after_success(self):
+        """Test that install_plugin_file() only persists the hash once installed.
+
+        Regression test for a bug found in PR review (inventree/InvenTree#12776):
+        the hash must not be visible as "up to date" until the install has actually
+        finished. Otherwise a process killed outright (not a Python exception - an
+        OOM kill, a container stopped mid-install) between claiming the lease and
+        finishing would leave the hash pointing at content that was never
+        installed, and no future check would ever retry it.
+        """
+        from common.settings import get_global_setting
+        from plugin.registry import registry
+
+        hash_during_install = 'unset'
+
+        def fake_install_plugins_file():
+            """Read the persisted hash *while the install is still in progress*.
+
+            This is exactly what a hard kill at this instant would leave behind.
+            """
+            nonlocal hash_during_install
+            hash_during_install = get_global_setting(
+                '_PLUGIN_FILE_HASH', '', create=False, cache=False
+            )
+            return True
+
+        with mock.patch(
+            'plugin.installer.plugins_file_hash', return_value='test-hash-1'
+        ):
+            with mock.patch(
+                'plugin.installer.install_plugins_file',
+                side_effect=fake_install_plugins_file,
+            ):
+                registry.install_plugin_file()
+
+        # While the install was in progress, the hash must not yet reflect the
+        # new (not-yet-installed) value
+        self.assertEqual(hash_during_install, '')
+
+        # After a successful install, the hash is updated
+        self.assertEqual(
+            get_global_setting('_PLUGIN_FILE_HASH', '', create=False), 'test-hash-1'
+        )
+
+    def test_install_plugin_file_failure_does_not_persist_hash(self):
+        """Test that a failed install leaves the hash unset, so it is retried next time."""
+        from common.settings import get_global_setting, set_global_setting
+        from plugin.registry import registry
+
+        set_global_setting('_PLUGIN_FILE_HASH', '')
+
+        with mock.patch(
+            'plugin.installer.plugins_file_hash', return_value='test-hash-2'
+        ):
+            with mock.patch(
+                'plugin.installer.install_plugins_file', return_value=False
+            ):
+                registry.install_plugin_file()
+
+        self.assertEqual(get_global_setting('_PLUGIN_FILE_HASH', '', create=False), '')
+
+    def test_install_plugin_file_skips_if_already_current(self):
+        """Test that install_plugin_file() is a no-op once the hash already matches."""
+        from plugin.registry import registry
+
+        with mock.patch(
+            'plugin.installer.plugins_file_hash', return_value='test-hash-3'
+        ):
+            with mock.patch(
+                'plugin.installer.install_plugins_file', return_value=True
+            ) as mock_install:
+                registry.install_plugin_file()
+                mock_install.assert_called_once()
+
+                # A second call with the same (already-installed) hash must not
+                # install again
+                registry.install_plugin_file()
+                mock_install.assert_called_once()
+
     def test_builtin_mandatory_plugins(self):
         """Test that mandatory builtin plugins are always loaded."""
         from plugin.models import PluginConfig

@@ -246,9 +246,6 @@ PLUGIN_RETRY = get_setting(
     'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
 )  # How often should plugin loading be tried?
 
-# Hash of the plugin file (will be updated on each change)
-PLUGIN_FILE_HASH = ''
-
 STATICFILES_DIRS = []
 
 # Append directory for compiled react files if debug server is running
