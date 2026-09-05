@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 543
 
 INVENTREE_API_TEXT = """
 
-v543 -> 2026-09-04 : https://github.com/inventree/InvenTree/pull/12762
+v543 -> 2026-09-05 : https://github.com/inventree/InvenTree/pull/12762
     - Adds admin APIs for managing SSO applications
 
 v542 -> 2026-09-03 : https://github.com/inventree/InvenTree/pull/12731
