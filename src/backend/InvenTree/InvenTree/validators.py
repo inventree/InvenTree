@@ -1,6 +1,8 @@
 """Custom field validators for InvenTree."""
 
+import ipaddress
 import tokenize
+from urllib.parse import urlsplit
 
 from django.conf import settings
 from django.core import validators
@@ -86,6 +88,39 @@ class AllowedURLValidator(validators.URLValidator):
                 value = 'http://' + value
 
         super().__call__(value)
+
+
+def invalid_site_url_hint(site_url: str) -> str:
+    """Return an extra hint for *why* a SITE_URL value failed validation.
+
+    Django's URLValidator rejects any hostname that isn't 'localhost', an IP
+    address, or a fully qualified (dotted) name - so a bare LAN hostname like
+    'warehouse' fails with no indication of what's actually wrong. Returns an
+    empty string when nothing more specific than "invalid URL" applies.
+    """
+    hostname = urlsplit(site_url).hostname
+
+    if hostname is None and '//' not in site_url:
+        # No scheme was given at all, e.g. SITE_URL=warehouse
+        hostname = urlsplit(f'//{site_url}').hostname
+
+    if not hostname or hostname == 'localhost':
+        return ''
+
+    try:
+        ipaddress.ip_address(hostname)
+        return ''
+    except ValueError:
+        pass
+
+    if '.' not in hostname:
+        return (
+            f" '{hostname}' has no top-level domain. InvenTree requires a fully "
+            "qualified hostname (e.g. 'warehouse.local'), an IP address, or "
+            "'localhost' - a bare hostname is rejected by Django's URL validator."
+        )
+
+    return ''
 
 
 def validate_purchase_order_reference(value):
