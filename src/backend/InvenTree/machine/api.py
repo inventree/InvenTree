@@ -40,7 +40,7 @@ class MachineList(ListCreateAPI):
 
     ordering = ['-active', 'machine_type']
 
-    search_fields = ['name']
+    search_fields = ['name', 'machine_type', 'driver']
 
 
 class MachineDetail(RetrieveUpdateDestroyAPI):

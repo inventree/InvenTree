@@ -189,6 +189,10 @@ class DataImportColumnMappingList(DataImportSessionChildMixin, ListAPI):
 
     filterset_fields = ['session']
 
+    ordering_fields = ['column_label', 'field_name', 'session']
+
+    search_fields = ['column_label', 'field_name']
+
 
 class DataImportColumnMappingDetail(DataImportSessionChildMixin, RetrieveUpdateAPI):
     """Detail endpoint for a single DataImportColumnMap object."""
