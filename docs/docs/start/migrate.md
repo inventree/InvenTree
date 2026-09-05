@@ -31,6 +31,9 @@ This will create JSON file at the specified location which contains all database
 !!! info "Specifying filename"
     The filename of the exported file can be specified using the `-f` option. To see all available options, run `invoke export-records --help`
 
+!!! info "File Size"
+    By default the exported file is written as compact JSON, to keep its size down. Add the `-p` / `--prettify` option to pretty-print the output with indentation, which is easier to read manually but can roughly double the file size for a large database.
+
 ```
 {{ invoke_commands('export-records --help') }}
 ```
@@ -66,6 +69,16 @@ invoke import-records -c -f data.json
 
 !!! warning "Character Encoding"
 	If the character encoding of the data file does not exactly match the target database, the import operation may not succeed. In this case, some manual editing of the database JSON file may be required.
+
+!!! tip "Faster Imports"
+    For very large datasets, add the `-b` / `--bulk` option to use a faster import path (the `bulkloaddata` management command) which inserts records in large batches and skips per-record signal processing, rather than saving each record individually:
+
+    ```
+    invoke import-records -c -b -f data.json
+    ```
+
+!!! tip "Strict Metadata Validation"
+    By default, a mismatch between the source and target InvenTree versions (see the "Database Versions" warning above) only produces a warning, and the import continues. Add the `-s` / `--strict` option to fail immediately instead, if you want to guarantee the versions match exactly before any data is written.
 
 ```
 {{ invoke_commands('import-records --help') }}
@@ -219,6 +232,9 @@ When running the `import-records` command, the import process will also attempt 
 1. The plugin *code* must be present in the new InvenTree installation. Any plugins *not* installed will not have their tables created, and thus the import process will fail for those records.
 2. The plugin *version* must be the same in both installations. If the plugin version is different, then the database schema may be different, and thus the import process may fail.
 3. The InvenTree software version must be the same in both installations. If the InvenTree version is different, then the database schema may be different, and thus the import process may fail.
+
+!!! tip "Skipping Missing Data"
+    If the import file references a plugin (or any other model) that cannot be matched to the current installation - for example, condition 1 above is not met - add the `-i` / `--ignore-nonexistent` option to skip those records instead of failing the entire import.
 
 If all of the above conditions are met, then the plugin data *should* be imported correctly into the new database. To achieve this reliably, the following process steps are implemented in the `import-records` command:
 
