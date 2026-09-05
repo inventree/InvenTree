@@ -1,9 +1,11 @@
 """Custom management command to load fixtures faster using bulk_create()."""
 
 import time
+from contextlib import contextmanager
 
 from django.core.management.base import CommandError
 from django.core.management.commands.loaddata import Command as LoadDataCommand
+from django.core.serializers import base as serializers_base
 from django.db import DatabaseError, IntegrityError, connections, router
 
 import structlog
@@ -21,10 +23,15 @@ class Command(LoadDataCommand):
 
     - pre_save / post_save signals are not sent, and Model.save() / full_clean()
       are bypassed entirely (this is a Django bulk_create() limitation).
-    - Natural-key-based foreign key / many-to-many resolution and multi-table
-      inheritance are not supported. Neither is currently used by any InvenTree
-      fixture/model, but a fixture or model that requires either will fail
-      loudly with a bulk_create() error rather than being silently mishandled.
+    - Multi-table inheritance is not supported by bulk_create() and will fail
+      loudly rather than being silently mishandled. Natural-key foreign key /
+      many-to-many resolution *is* supported (falling back to an individual,
+      non-bulk save for any row that needs it - see save_obj()) and is further
+      sped up by caching each resolved natural key for the life of the command
+      (see _cached_natural_keys()), since 'export_records' uses
+      --natural-foreign and a large fixture can have many rows referencing the
+      same handful of natural-keyed objects (e.g. stock.StockItemTracking.user
+      -> auth.User) - without caching, each one costs a separate DB query.
 
     Based on the django forum thread:
     - https://forum.djangoproject.com/t/feature-proposal-faster-fixture-loading-via-loaddata-command/36972/21
@@ -61,7 +68,7 @@ class Command(LoadDataCommand):
 
         start_time = time.monotonic()
 
-        with connection.execute_wrapper(count_queries):
+        with connection.execute_wrapper(count_queries), self._cached_natural_keys():
             super().handle(*fixture_labels, **options)
 
         elapsed = time.monotonic() - start_time
@@ -70,6 +77,58 @@ class Command(LoadDataCommand):
             self.stdout.write(
                 f'Executed {self.query_count} database queries in {elapsed:.2f}s'
             )
+
+    @contextmanager
+    def _cached_natural_keys(self):
+        """Cache natural-key foreign key resolutions for the duration of this block.
+
+        Django's deserializer (deserialize_fk_value) issues a fresh DB query
+        every time it resolves a natural-key FK reference, with no caching of
+        its own. A fixture with many rows referencing the same handful of
+        natural-keyed objects (e.g. thousands of stock.StockItemTracking rows
+        all pointing at a few auth.User accounts) would otherwise cost one
+        query per row instead of one query per distinct value.
+        """
+        cache = {}
+        original = serializers_base.deserialize_fk_value
+
+        def cached_deserialize_fk_value(
+            field, field_value, using, handle_forward_references
+        ):
+            default_manager = field.remote_field.model._default_manager
+
+            is_natural_key = (
+                field_value is not None
+                and hasattr(default_manager, 'get_by_natural_key')
+                and hasattr(field_value, '__iter__')
+                and not isinstance(field_value, str)
+            )
+
+            if not is_natural_key:
+                # Plain (non natural-key) FK values never reach a DB query in
+                # the first place - nothing to cache, delegate as normal
+                return original(field, field_value, using, handle_forward_references)
+
+            cache_key = (field.remote_field.model, using, tuple(field_value))
+
+            if cache_key in cache:
+                return cache[cache_key]
+
+            value = original(field, field_value, using, handle_forward_references)
+
+            # Only cache a fully-resolved value - a deferred lookup (the
+            # referenced object doesn't exist yet) may well succeed on a later
+            # call, once that object has actually been saved.
+            if value is not serializers_base.DEFER_FIELD:
+                cache[cache_key] = value
+
+            return value
+
+        serializers_base.deserialize_fk_value = cached_deserialize_fk_value
+        try:
+            yield
+        finally:
+            serializers_base.deserialize_fk_value = original
 
     def save_obj(self, obj):
         """Buffer an object for bulk insertion, instead of saving it immediately."""
