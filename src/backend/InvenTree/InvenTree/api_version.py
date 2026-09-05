@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 542
+INVENTREE_API_VERSION = 543
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v542 -> 2026-09-03 : https://github.com/inventree/InvenTree/pull/12737
+v543 -> 2026-09-05 : https://github.com/inventree/InvenTree/pull/12737
     - Adds search and ordering fields across remaining API endpoints (machine, stock, importer, report)
+
+v542 -> 2026-09-03 : https://github.com/inventree/InvenTree/pull/12731
+    - Adds management APIs for oAuth2 provider applications
 
 v541 -> 2026-09-03 : https://github.com/inventree/InvenTree/pull/12770
     - Prevent DELETE operation against the /api/user/me/ endpoint
@@ -26,7 +29,7 @@ v537 -> 2026-08-31 : https://github.com/inventree/InvenTree/pull/11971
     - Adds a generic "Note" model which can be attached to any model type via a generic foreign key relationship
     - Allow multiple notes to be attached to a single object, and for notes to be created / edited / deleted via the API
 
-v536 -> 2026-08-30 : https://github.com/inventree/InvenTree/pull/xxxx
+v536 -> 2026-08-30 : https://github.com/inventree/InvenTree/pull/12713
     - Adds SCIM 2 provisioning support
 
 v535 -> 2026-08-29 : https://github.com/inventree/InvenTree/pull/12739

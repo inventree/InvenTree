@@ -57,11 +57,13 @@ class DataImporterModelList(APIView):
             model = serializer.Meta.model
             url = model.get_api_url() if hasattr(model, 'get_api_url') else None
 
-            models.append({
-                'serializer': str(serializer.__name__),
-                'model_type': model.__name__.lower(),
-                'api_url': url,
-            })
+            models.append(
+                {
+                    'serializer': str(serializer.__name__),
+                    'model_type': model.__name__.lower(),
+                    'api_url': url,
+                }
+            )
 
         return Response(models)
 
@@ -96,12 +98,6 @@ class DataImportSessionList(BulkDeleteMixin, DataImportSessionMixin, ListCreateA
     filter_backends = SEARCH_ORDER_FILTER
     filterset_fields = ['model_type', 'status', 'user']
     ordering_fields = ['timestamp', 'status', 'model_type']
-    search_fields = [
-        'model_type',
-        'user__username',
-        'user__first_name',
-        'user__last_name',
-    ]
 
 
 class DataImportSessionDetail(DataImportSessionMixin, RetrieveUpdateDestroyAPI):
@@ -233,54 +229,66 @@ importer_api_urls = [
     path('models/', DataImporterModelList.as_view(), name='api-importer-model-list'),
     path(
         'session/',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    path(
-                        'accept_fields/',
-                        DataImportSessionAcceptFields.as_view(),
-                        name='api-import-session-accept-fields',
+        include(
+            [
+                path(
+                    '<int:pk>/',
+                    include(
+                        [
+                            path(
+                                'accept_fields/',
+                                DataImportSessionAcceptFields.as_view(),
+                                name='api-import-session-accept-fields',
+                            ),
+                            path(
+                                'accept_rows/',
+                                DataImportSessionAcceptRows.as_view(),
+                                name='api-import-session-accept-rows',
+                            ),
+                            path(
+                                '',
+                                DataImportSessionDetail.as_view(),
+                                name='api-import-session-detail',
+                            ),
+                        ]
                     ),
-                    path(
-                        'accept_rows/',
-                        DataImportSessionAcceptRows.as_view(),
-                        name='api-import-session-accept-rows',
-                    ),
-                    path(
-                        '',
-                        DataImportSessionDetail.as_view(),
-                        name='api-import-session-detail',
-                    ),
-                ]),
-            ),
-            path('', DataImportSessionList.as_view(), name='api-importer-session-list'),
-        ]),
+                ),
+                path(
+                    '',
+                    DataImportSessionList.as_view(),
+                    name='api-importer-session-list',
+                ),
+            ]
+        ),
     ),
     path(
         'column-mapping/',
-        include([
-            path(
-                '<int:pk>/',
-                DataImportColumnMappingDetail.as_view(),
-                name='api-importer-mapping-detail',
-            ),
-            path(
-                '',
-                DataImportColumnMappingList.as_view(),
-                name='api-importer-mapping-list',
-            ),
-        ]),
+        include(
+            [
+                path(
+                    '<int:pk>/',
+                    DataImportColumnMappingDetail.as_view(),
+                    name='api-importer-mapping-detail',
+                ),
+                path(
+                    '',
+                    DataImportColumnMappingList.as_view(),
+                    name='api-importer-mapping-list',
+                ),
+            ]
+        ),
     ),
     path(
         'row/',
-        include([
-            path(
-                '<int:pk>/',
-                DataImportRowDetail.as_view(),
-                name='api-importer-row-detail',
-            ),
-            path('', DataImportRowList.as_view(), name='api-importer-row-list'),
-        ]),
+        include(
+            [
+                path(
+                    '<int:pk>/',
+                    DataImportRowDetail.as_view(),
+                    name='api-importer-row-detail',
+                ),
+                path('', DataImportRowList.as_view(), name='api-importer-row-list'),
+            ]
+        ),
     ),
 ]
