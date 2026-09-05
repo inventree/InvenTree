@@ -1360,9 +1360,11 @@ def validate_import_metadata(
         'verbose': 'Print verbose output from management commands',
         'bulk': 'Use the faster bulkloaddata command instead of loaddata (default = False)',
         'ignore_conflicts': 'Skip records that violate a unique constraint, instead of raising an error (requires --bulk, default = False)',
+        'rebuild_models': 'Rebuild database models after import (default = True)',
+        'rebuild_thumbnails': 'Rebuild image thumbnails after import (default = True)',
     },
     pre=[wait],
-    post=[rebuild_models, rebuild_thumbnails],
+    post=[],
 )
 def import_records(
     c,
@@ -1375,6 +1377,8 @@ def import_records(
     verbose: bool = False,
     bulk: bool = False,
     ignore_conflicts: bool = False,
+    rebuild_models: bool = True,
+    rebuild_thumbnails: bool = True,
 ):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
@@ -1512,6 +1516,12 @@ def import_records(
     validate_import_metadata(c, metadata, strict=strict, apps=True)
 
     load_data('remaining', all_data, excludes=content_excludes(allow_auth=False))
+
+    if rebuild_models:
+        rebuild_models(c)
+
+    if rebuild_thumbnails:
+        rebuild_thumbnails(c)
 
     success('Data import completed')
 
