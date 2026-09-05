@@ -237,6 +237,9 @@ class MeUserDetail(RetrieveUpdateAPI, UserDetail):
 
     rolemap = {'POST': 'view', 'PUT': 'view', 'PATCH': 'view'}
 
+    # Prevent 'delete' operations on this endpoint
+    http_method_names = ['get', 'put', 'patch', 'head', 'options', 'trace']
+
     def get_object(self):
         """Always return the current user object."""
         return self.request.user
