@@ -6,9 +6,9 @@ asgiref==3.12.1 \
     # via
     #   -c src/backend/requirements.txt
     #   django
-django==5.2.16 \
-    --hash=sha256:04f354bf9d807a86ad1a8392fe3808d362358a8eafc322848e0e43e59b24371d \
-    --hash=sha256:59ea02020c3136fce14bef0bbece21a10a4febef5eed1c51c22ae468efa22200
+django==5.2.17 \
+    --hash=sha256:9d4d93be539a18ab80d058eb515900e10951e04c537c5a6b394fc49528d3251f \
+    --hash=sha256:f04fb3b36ee119e1af4fa1d397d5fd6cf12700f49321e84d4f4c642c5b1973db
     # via
     #   -c src/backend/requirements.txt
     #   -r contrib/container/requirements.in
@@ -17,9 +17,9 @@ django-auth-ldap==5.3.0 \
     --hash=sha256:743d8107b146240b46f7e97207dc06cb11facc0cd70dce490b7ca09dd5643d19 \
     --hash=sha256:aa880415983149b072f876d976ef8ec755a438090e176817998263a6ed9e1038
     # via -r contrib/container/requirements.in
-gunicorn==26.0.0 \
-    --hash=sha256:40233d26a5f0d1872916188c276e21641155111c2853f0c2cd55260aec0d24fc \
-    --hash=sha256:ca9346f85e3a4aeeb64d491045c16b9a35647abd37ea15efe53080eb8b090baf
+gunicorn==26.2.0 \
+    --hash=sha256:62b864895d9ebff0b2f9867ba04fe811c93121596540830c9c916d0769668447 \
+    --hash=sha256:bd249d0b3f7972f7432f0a6b6ff3b3ee2d129f70cd1ff6c09a9dd9e29a2b88e3
     # via
     #   -c src/backend/requirements.txt
     #   -r contrib/container/requirements.in
@@ -58,7 +58,6 @@ packaging==26.3 \
     --hash=sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c
     # via
     #   -c src/backend/requirements.txt
-    #   gunicorn
     #   mariadb
     #   wheel
 psycopg[binary, pool]==3.3.4 \
@@ -218,9 +217,9 @@ pyyaml==6.0.3 \
     # via
     #   -c src/backend/requirements.txt
     #   -r contrib/container/requirements.in
-setuptools==83.0.0 \
-    --hash=sha256:025bccbbf0fa05b6192bc64ae1e7b16e001fd6d6d4d5de03c97b1c1ade523bef \
-    --hash=sha256:29b23c360f22f414dc7336bb39178cc7bcbf6021ed2733cde173f09dba19abb3
+setuptools==84.0.0 \
+    --hash=sha256:51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670 \
+    --hash=sha256:f4695c21257f0d9b537ec2692c941d02ee143b7cc1276941349a546573b2ef73
     # via
     #   -c src/backend/requirements.txt
     #   -r contrib/container/requirements.in
@@ -257,7 +256,7 @@ uv==0.11.29 \
     --hash=sha256:eec03a8b63d55915694db3af4e91324b39ced49e2aeac7af37851c7eb3f470ea \
     --hash=sha256:f7e4c709397468264764f571003fd278cbd384321f5c497370c28352bdb8b6a9
     # via -r contrib/container/requirements.in
-wheel==0.47.0 \
-    --hash=sha256:212281cab4dff978f6cedd499cd893e1f620791ca6ff7107cf270781e587eced \
-    --hash=sha256:cc72bd1009ba0cf63922e28f94d9d83b920aa2bb28f798a31d0691b02fa3c9b3
+wheel==0.48.0 \
+    --hash=sha256:3217dcc807155e45db462d7ef2431f5ddda0d7273b700d05a67b271ceb1287ab \
+    --hash=sha256:94800765601e9171bf5d58d066e640662842bcedcbab982b2c90787a2c987322
     # via -r contrib/container/requirements.in

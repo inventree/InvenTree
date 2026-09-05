@@ -8,7 +8,6 @@
     reference: "BO-0001"
     title: 'Building 7 parts'
     quantity: 7
-    notes: 'Some simple notes'
     status: 10  # PENDING
     creation_date: '2019-03-16'
     link: http://www.google.com
@@ -26,7 +25,6 @@
     batch: 'B2'
     status: 40  # COMPLETE
     quantity: 21
-    notes: 'Some more simple notes'
     creation_date: '2019-03-16'
     tree_id: 2
     level: 0
@@ -42,7 +40,6 @@
     batch: 'B2'
     status: 40  # COMPLETE
     quantity: 21
-    notes: 'Some even more simple notes'
     creation_date: '2019-03-16'
     tree_id: 4
     level: 0
@@ -58,7 +55,6 @@
     batch: 'B4'
     status: 40  # COMPLETE
     quantity: 21
-    notes: 'Some even even more simple notes'
     creation_date: '2019-03-16'
     tree_id: 5
     level: 0
@@ -75,7 +71,6 @@
     status: 40 # Complete
     quantity: 10
     creation_date: '2019-03-16'
-    notes: "A thing"
     tree_id: 3
     level: 0
     lft: 1

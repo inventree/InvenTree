@@ -50,6 +50,7 @@ python-dotenv                           # Environment variable management
 pyyaml                                  # YAML parsing
 qrcode[pil]                             # QR code generator
 rapidfuzz                               # Fuzzy string matching
+scim2-models                            # SCIM 2.0 schema / protocol models, used for the SCIM provisioning endpoint
 sentry-sdk                              # Error reporting (optional)
 setuptools                              # Standard dependency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats

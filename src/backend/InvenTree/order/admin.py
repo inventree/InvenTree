@@ -110,6 +110,8 @@ class PurchaseOrderLineItemAdmin(admin.ModelAdmin):
 class PurchaseOrderExtraLineAdmin(GeneralExtraLineAdmin, admin.ModelAdmin):
     """Admin class for the PurchaseOrderExtraLine model."""
 
+    search_fields = ['order__reference', 'order__supplier__name', 'reference']
+
 
 @admin.register(models.SalesOrderLineItem)
 class SalesOrderLineItemAdmin(admin.ModelAdmin):

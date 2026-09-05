@@ -203,6 +203,62 @@ You can also "follow" the logs in real time, using the `-f` flag:
 docker compose logs -f
 ```
 
+## Container Health Checks
+
+The production [docker-compose.yml]({{ sourcefile("contrib/container/docker-compose.yml", raw=True) }}) file defines health checks for each service. These checks allow Docker (and external monitoring tools) to detect when a container is running but not functioning correctly — for example, when the background worker process has stalled while the container remains up.
+
+Health checks also control service startup order. Dependent services wait until upstream containers report a healthy status before starting.
+
+### Service Checks
+
+| Container | Health Check | Startup Dependency |
+| --- | --- | --- |
+| `inventree-db` | PostgreSQL `pg_isready` | None |
+| `inventree-cache` | `redis-cli ping` | None |
+| `inventree-server` | `invoke server-health` against `http://localhost:${INVENTREE_WEB_PORT:-8000}` | Database and cache must be healthy |
+| `inventree-worker` | `invoke worker-health` | Web server must be healthy |
+| `inventree-proxy` | `wget --spider` to `http://127.0.0.1:9090/api/system/health/` | Web server and worker must be healthy |
+
+!!! info "Health Endpoint"
+    The web server exposes a lightweight, unauthenticated health endpoint at `/api/system/health/`. The reverse-proxy health check probes this endpoint through Caddy on port `9090`. External monitoring systems can use the same path.
+
+### View Container Health
+
+To inspect the health status of running containers:
+
+```bash
+docker compose ps
+```
+
+Healthy containers display `(healthy)` in the status column. For detailed health check history, inspect the container directly:
+
+```bash
+docker inspect inventree-server
+```
+
+Look for the `Health` section in the output.
+
+### Manual Health Checks
+
+The InvenTree invoke tool provides commands for manually checking service health inside a running container. These commands match the Docker health checks for the web server and background worker.
+
+Check the web server:
+
+```bash
+docker compose exec inventree-server invoke server-health --address "http://localhost:8000"
+```
+
+Check the background worker:
+
+```bash
+docker compose exec inventree-worker invoke worker-health
+```
+
+Both commands exit with status code `0` when healthy, or `1` when unhealthy. Refer to the [invoke tool documentation](./invoke.md) for additional options (such as custom timeout values).
+
+!!! tip "Stalled Worker Detection"
+    The worker health check reads a heartbeat timestamp file written every minute by the background worker process. If the worker stalls (for example, due to a backlog of pending tasks), the health check will fail even though the container process is still running.
+
 ## Further Configuration
 
 ### Check your security posture

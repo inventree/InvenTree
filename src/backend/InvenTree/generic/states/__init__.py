@@ -11,9 +11,15 @@ from django_fsm import RETURN_VALUE, can_proceed
 from . import fields
 from .deprecations import Deprecations, deprecated
 from .states import ColorEnum, StatusCode, StatusCodeMixin
-from .transition import StateTransitionMixin, TransitionMethod, inventree_transition
+from .transition import (
+    DEFERRABLE,
+    StateTransitionMixin,
+    TransitionMethod,
+    inventree_transition,
+)
 
 __all__ = [
+    'DEFERRABLE',
     'RETURN_VALUE',  # django_fsm import
     'ColorEnum',
     'Deprecations',

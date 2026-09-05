@@ -61,6 +61,8 @@ class SupplierPriceBreakAdmin(admin.ModelAdmin):
 
     list_display = ('part', 'quantity', 'price')
 
+    search_fields = ['part__SKU', 'part__part__name', 'part__supplier__name']
+
     autocomplete_fields = ('part',)
 
 

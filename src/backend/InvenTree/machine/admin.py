@@ -22,6 +22,7 @@ class MachineConfigAdmin(admin.ModelAdmin):
     """Custom admin with restricted id fields."""
 
     list_filter = ['active']
+    search_fields = ['name', 'machine_type', 'driver']
     list_display = [
         'name',
         'machine_type',

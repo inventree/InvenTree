@@ -139,7 +139,8 @@ export function useBuildOrderFields({
       duplicate: DuplicateField({
         originalId: duplicateBuildId,
         extraFields: {
-          copy_parameters: {}
+          copy_parameters: {},
+          copy_notes: {}
         }
       })
     };

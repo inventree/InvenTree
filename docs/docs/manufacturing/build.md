@@ -71,25 +71,7 @@ Read more about build outputs [here](./output.md).
 
 Each *Build Order* has an associated *Status* flag, which indicates the state of the build:
 
-| Status | Description |
-| ----------- | ----------- |
-| `Pending` | Build order has been created, but is not yet in production |
-| `Production` | Build order is currently in production |
-| `On Hold` | Build order has been placed on hold, but is still active |
-| `Cancelled` | Build order has been cancelled |
-| `Completed` | Build order has been completed |
-
-**Source Code**
-
-Refer to the source code for the Build Order status codes:
-
-::: build.status_codes.BuildStatus
-    options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
+{{ statuscodes("BuildStatus") }}
 
 ### Stock Allocations
 
@@ -211,9 +193,9 @@ Files attachments can be uploaded against the build order, and displayed in the 
 
 ### Notes
 
-Build order notes (which support markdown formatting) are displayed in the *Notes* tab:
+One or more rich-text notes can be attached to a build order, and are displayed in the *Notes* tab.
 
-{{ image("build/build_notes.png", title="Notes") }}
+[Read about notes](../concepts/notes.md).
 
 ## External Build Orders
 

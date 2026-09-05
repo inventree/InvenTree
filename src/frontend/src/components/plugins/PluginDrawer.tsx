@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Accordion, Alert, Card, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { StylishText } from '@lib/components/StylishText';
@@ -17,16 +17,25 @@ import PluginSettingsPanel from './PluginSettingsPanel';
  */
 export default function PluginDrawer({
   pluginKey,
-  pluginInstance
+  onPluginLoaded
 }: Readonly<{
-  pluginKey?: string;
-  pluginInstance: PluginInterface;
+  pluginKey: string;
+  onPluginLoaded?: (plugin: PluginInterface) => void;
 }>) {
   const { id } = useParams();
 
   const pluginPrimaryKey: string = useMemo(() => {
     return pluginKey || id || '';
   }, [pluginKey, id]);
+
+  const {
+    instance: plugin,
+    instanceQuery: { isFetching, error }
+  } = useInstance<PluginInterface>({
+    endpoint: ApiEndpoints.plugin_list,
+    hasPrimaryKey: true,
+    pk: pluginPrimaryKey
+  });
 
   const { instance: pluginAdmin } = useInstance({
     endpoint: ApiEndpoints.plugin_admin,
@@ -36,11 +45,21 @@ export default function PluginDrawer({
     refetchOnMount: true
   });
 
-  const hasSettings: boolean = useMemo(() => {
-    return !!pluginInstance?.mixins?.settings;
-  }, [pluginInstance]);
+  useEffect(() => {
+    if (plugin) {
+      onPluginLoaded?.(plugin);
+    }
+  }, [plugin, onPluginLoaded]);
 
-  if (!pluginInstance.active) {
+  const hasSettings: boolean = useMemo(() => {
+    return !!plugin?.mixins?.settings;
+  }, [plugin]);
+
+  if (isFetching || !plugin) {
+    return null;
+  }
+
+  if (!plugin.active) {
     return (
       <Alert
         color='red'
@@ -63,42 +82,38 @@ export default function PluginDrawer({
             <Card withBorder>
               <Stack gap='md'>
                 <Stack pos='relative' gap='xs'>
-                  <InfoItem
-                    type='text'
-                    name={t`Name`}
-                    value={pluginInstance?.name}
-                  />
+                  <InfoItem type='text' name={t`Name`} value={plugin?.name} />
                   <InfoItem
                     type='text'
                     name={t`Description`}
-                    value={pluginInstance?.meta.description}
+                    value={plugin?.meta.description}
                   />
                   <InfoItem
                     type='text'
                     name={t`Author`}
-                    value={pluginInstance?.meta.author}
+                    value={plugin?.meta.author}
                   />
                   <InfoItem
                     type='text'
                     name={t`Date`}
-                    value={pluginInstance?.meta.pub_date}
+                    value={plugin?.meta.pub_date}
                   />
                   <InfoItem
                     type='text'
                     name={t`Version`}
-                    value={pluginInstance?.meta.version}
+                    value={plugin?.meta.version}
                   />
                   <InfoItem
                     type='boolean'
                     name={t`Active`}
-                    value={pluginInstance?.active}
+                    value={plugin?.active}
                   />
-                  {pluginInstance?.meta.website && (
+                  {plugin?.meta.website && (
                     <InfoItem
                       type='text'
                       name={t`Website`}
-                      value={pluginInstance?.meta.website}
-                      link={pluginInstance?.meta.website}
+                      value={plugin?.meta.website}
+                      link={plugin?.meta.website}
                     />
                   )}
                 </Stack>
@@ -107,27 +122,27 @@ export default function PluginDrawer({
             <Card withBorder>
               <Stack gap='md'>
                 <Stack pos='relative' gap='xs'>
-                  {pluginInstance?.is_package && (
+                  {plugin?.is_package && (
                     <InfoItem
                       type='text'
                       name={t`Package Name`}
-                      value={pluginInstance?.package_name}
+                      value={plugin?.package_name}
                     />
                   )}
                   <InfoItem
                     type='text'
                     name={t`Installation Path`}
-                    value={pluginInstance?.meta.package_path}
+                    value={plugin?.meta.package_path}
                   />
                   <InfoItem
                     type='boolean'
                     name={t`Builtin`}
-                    value={pluginInstance?.is_builtin}
+                    value={plugin?.is_builtin}
                   />
                   <InfoItem
                     type='boolean'
                     name={t`Package`}
-                    value={pluginInstance?.is_package}
+                    value={plugin?.is_package}
                   />
                 </Stack>
               </Stack>

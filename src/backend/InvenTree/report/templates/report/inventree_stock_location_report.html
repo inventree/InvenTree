@@ -115,7 +115,7 @@ table td.expand {
             </td>
             <td>{{ line.part.IPN }}</td>
             <td>{% decimal line.quantity %}</td>
-            <td>{{ line.notes }}</td>
+            <td>{% note line %}</td>
         </tr>
         {% endfor %}
     </tbody>

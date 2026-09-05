@@ -71,6 +71,7 @@ from order.status_codes import (
 )
 from part.models import Part
 from users.models import Owner
+from users.permissions import check_user_permission
 
 order_router = InvenTreeApiRouter()
 
@@ -286,7 +287,7 @@ class OrderFilter(FilterSet):
 
         return queryset.filter(q1 | q2 | q3 | q4).distinct()
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class LineItemFilter(FilterSet):
@@ -374,8 +375,6 @@ class PurchaseOrderFilter(OrderFilter):
         """
         return queryset.filter(lines__build_order=build).distinct()
 
-    tags = common.filters.TagsFilter(is_viewset=True)
-
 
 class PurchaseOrderOutputOptions(OutputConfiguration):
     """Output options for the PurchaseOrder endpoint."""
@@ -444,16 +443,33 @@ class PurchaseOrderViewSet(
         queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
         return queryset
 
+    def get_order(self):
+        """Return the PurchaseOrder object associated with this API endpoint.
+
+        Note: deliberately a raw lookup rather than self.get_object() - the latter
+        routes through ParameterListMixin.filter_queryset(), which assumes
+        self.serializer_class.Meta.model exists. That's true for the default
+        PurchaseOrderSerializer, but not for the plain-Serializer action classes
+        (PurchaseOrderHoldSerializer etc.) used by hold/cancel/complete/issue/receive
+        below, so calling get_object() from those actions raises an unrelated
+        AttributeError instead of the intended 404.
+        """
+        try:
+            return models.PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except (ValueError, models.PurchaseOrder.DoesNotExist):
+            raise NotFound(_('Purchase order not found'))
+
     def get_serializer_context(self):
         """Add the PurchaseOrder object to the serializer context."""
         context = super().get_serializer_context()
 
         # Pass the purchase order through to the serializer for validation
         try:
-            context['order'] = models.PurchaseOrder.objects.get(
-                pk=self.kwargs.get('pk', None)
-            )
-        except Exception:
+            context['order'] = self.get_order()
+        except NotFound:
+            # Swallowed here (e.g. schema generation may call this without a
+            # resolvable pk) - each action method below is what actually enforces
+            # a 404 for a real request against a non-existent order.
             pass
 
         context['request'] = self.request
@@ -470,6 +486,12 @@ class PurchaseOrderViewSet(
     )
     def hold(self, request, pk=None):
         """API endpoint to place a PurchaseOrder on hold."""
+        # Ensure the target order actually exists (raises NotFound -> 404 otherwise) -
+        # without this, a non-existent pk would fall through to the serializer's
+        # save(), which unconditionally reads self.context['order'], raising an
+        # unhandled KeyError (HTTP 500) instead of a clean 404.
+        self.get_order()
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -488,6 +510,8 @@ class PurchaseOrderViewSet(
 
         The purchase order must be in a state which can be cancelled
         """
+        self.get_order()
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -503,6 +527,8 @@ class PurchaseOrderViewSet(
     )
     def complete(self, request, pk=None):
         """API endpoint to 'complete' a purchase order."""
+        self.get_order()
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -518,6 +544,8 @@ class PurchaseOrderViewSet(
     )
     def issue(self, request, pk=None):
         """API endpoint to 'issue' (place) a PurchaseOrder."""
+        self.get_order()
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -534,6 +562,8 @@ class PurchaseOrderViewSet(
     )
     def receive(self, request, pk=None):
         """API endpoint to receive stock items against a PurchaseOrder."""
+        self.get_order()
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         items = serializer.save()
@@ -1159,6 +1189,13 @@ class SalesOrderContextMixin:
 
     queryset = models.SalesOrder.objects.all()
 
+    def get_order(self):
+        """Return the SalesOrder object associated with this API endpoint."""
+        try:
+            return models.SalesOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except (ValueError, models.SalesOrder.DoesNotExist):
+            raise NotFound(_('Sales order not found'))
+
     def get_serializer_context(self):
         """Add the 'order' reference to the serializer context for any classes which inherit this mixin."""
         ctx = super().get_serializer_context()
@@ -1166,11 +1203,26 @@ class SalesOrderContextMixin:
         ctx['request'] = self.request
 
         try:
-            ctx['order'] = models.SalesOrder.objects.get(pk=self.kwargs.get('pk', None))
-        except Exception:
+            ctx['order'] = self.get_order()
+        except NotFound:
+            # Swallowed here (e.g. schema generation may call this without a
+            # resolvable pk) - create() below is what actually enforces a 404
+            # for a real request against a non-existent order.
             pass
 
         return ctx
+
+    def create(self, request, *args, **kwargs):
+        """Ensure the target SalesOrder actually exists before attempting the action.
+
+        Without this, a POST against a non-existent pk would fall through to the
+        action serializer's save(), which unconditionally reads
+        self.context['order'] - raising an unhandled KeyError (HTTP 500) instead of
+        the intended 404.
+        """
+        self.get_order()
+
+        return super().create(request, *args, **kwargs)
 
 
 class SalesOrderHold(SalesOrderContextMixin, CreateAPI):
@@ -1427,12 +1479,14 @@ class SalesOrderAllocationList(
         'shipment_date': 'shipment__shipment_date',
     }
 
-    search_fields = {
+    search_fields = [
         'item__part__name',
         'item__part__IPN',
         'item__serial',
         'item__batch',
-    }
+        'line__order__reference',
+        'line__order__customer__name',
+    ]
 
 
 class SalesOrderAllocationDetail(SalesOrderAllocationMixin, RetrieveUpdateDestroyAPI):
@@ -1493,7 +1547,7 @@ class SalesOrderShipmentFilter(FilterSet):
 
         return queryset.filter(q1 | q2).distinct()
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class SalesOrderShipmentMixin:
@@ -1716,21 +1770,41 @@ class ReturnOrderContextMixin:
 
     queryset = models.ReturnOrder.objects.all()
 
+    def get_order(self):
+        """Return the ReturnOrder object associated with this API endpoint."""
+        try:
+            return models.ReturnOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except (ValueError, models.ReturnOrder.DoesNotExist):
+            raise NotFound(_('Return order not found'))
+
     def get_serializer_context(self):
-        """Add the PurchaseOrder object to the serializer context."""
+        """Add the ReturnOrder object to the serializer context."""
         context = super().get_serializer_context()
 
         # Pass the ReturnOrder instance through to the serializer for validation
         try:
-            context['order'] = models.ReturnOrder.objects.get(
-                pk=self.kwargs.get('pk', None)
-            )
-        except Exception:
+            context['order'] = self.get_order()
+        except NotFound:
+            # Swallowed here (e.g. schema generation may call this without a
+            # resolvable pk) - create() below is what actually enforces a 404
+            # for a real request against a non-existent order.
             pass
 
         context['request'] = self.request
 
         return context
+
+    def create(self, request, *args, **kwargs):
+        """Ensure the target ReturnOrder actually exists before attempting the action.
+
+        Without this, a POST against a non-existent pk would fall through to the
+        action serializer's save(), which unconditionally reads
+        self.context['order'] - raising an unhandled KeyError (HTTP 500) instead of
+        the intended 404.
+        """
+        self.get_order()
+
+        return super().create(request, *args, **kwargs)
 
 
 class ReturnOrderCancel(ReturnOrderContextMixin, CreateAPI):
@@ -1999,21 +2073,41 @@ class TransferOrderContextMixin:
 
     queryset = models.TransferOrder.objects.all()
 
+    def get_order(self):
+        """Return the TransferOrder object associated with this API endpoint."""
+        try:
+            return models.TransferOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except (ValueError, models.TransferOrder.DoesNotExist):
+            raise NotFound(_('Transfer order not found'))
+
     def get_serializer_context(self):
         """Add the TransferOrder object to the serializer context."""
         context = super().get_serializer_context()
 
         # Pass the Transfer instance through to the serializer for validation
         try:
-            context['order'] = models.TransferOrder.objects.get(
-                pk=self.kwargs.get('pk', None)
-            )
-        except Exception:
+            context['order'] = self.get_order()
+        except NotFound:
+            # Swallowed here (e.g. schema generation may call this without a
+            # resolvable pk) - create() below is what actually enforces a 404
+            # for a real request against a non-existent order.
             pass
 
         context['request'] = self.request
 
         return context
+
+    def create(self, request, *args, **kwargs):
+        """Ensure the target TransferOrder actually exists before attempting the action.
+
+        Without this, a POST against a non-existent pk would fall through to the
+        action serializer's save(), which unconditionally reads
+        self.context['order'] - raising an unhandled KeyError (HTTP 500) instead of
+        the intended 404.
+        """
+        self.get_order()
+
+        return super().create(request, *args, **kwargs)
 
 
 class TransferOrderCancel(TransferOrderContextMixin, CreateAPI):
@@ -2203,12 +2297,13 @@ class TransferOrderAllocationList(
         'order': 'line__order__reference',
     }
 
-    search_fields = {
+    search_fields = [
         'item__part__name',
         'item__part__IPN',
         'item__serial',
         'item__batch',
-    }
+        'line__order__reference',
+    ]
 
 
 class TransferOrderAllocationDetail(
@@ -2406,6 +2501,32 @@ class OrderCalendarExport(ICalFeed):
     timezone = settings.TIME_ZONE
     file_name = 'calendar.ics'
 
+    # Map the URL 'ordertype' kwarg to the corresponding order model,
+    # so that access can be checked against the matching RuleSet
+    ORDER_MODELS = {
+        'purchase-order': models.PurchaseOrder,
+        'sales-order': models.SalesOrder,
+        'return-order': models.ReturnOrder,
+        'transfer-order': models.TransferOrder,
+    }
+
+    def check_permission(self, request, **kwargs):
+        """Check that the requesting user has 'view' permission for the requested order type.
+
+        Returns a 403 JsonResponse if the user lacks the required RuleSet permission,
+        or None if access is permitted.
+        """
+        model = self.ORDER_MODELS.get(kwargs.get('ordertype'))
+
+        if model is not None and not check_user_permission(request.user, model, 'view'):
+            response = JsonResponse({
+                'detail': 'You do not have permission to view this resource.'
+            })
+            response.status_code = 403
+            return response
+
+        return None
+
     def __call__(self, request, *args, **kwargs):
         """Overload call in order to check for authentication.
 
@@ -2422,6 +2543,8 @@ class OrderCalendarExport(ICalFeed):
 
         if request.user.is_authenticated:
             # Authenticated on first try - maybe normal browser call?
+            if forbidden := self.check_permission(request, **kwargs):
+                return forbidden
             return super().__call__(request, *args, **kwargs)
 
         # No login yet - check in headers
@@ -2440,6 +2563,8 @@ class OrderCalendarExport(ICalFeed):
         # Check again
         if request.user.is_authenticated:
             # Authenticated after second try
+            if forbidden := self.check_permission(request, **kwargs):
+                return forbidden
             return super().__call__(request, *args, **kwargs)
 
         # Still nothing - return Unauth. header with info on how to authenticate

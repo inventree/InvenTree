@@ -936,7 +936,7 @@ class PartFilter(FilterSet):
 
     consumable = rest_filters.BooleanFilter()
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
     # Created date filters
     created_before = InvenTreeDateFilter(

@@ -146,6 +146,9 @@ export const Logout = Loadable(lazy(() => import('./pages/Auth/Logout')));
 export const Register = Loadable(lazy(() => import('./pages/Auth/Register')));
 export const Mfa = Loadable(lazy(() => import('./pages/Auth/MFA')));
 export const MfaSetup = Loadable(lazy(() => import('./pages/Auth/MFASetup')));
+export const ProviderSignup = Loadable(
+  lazy(() => import('./pages/Auth/ProviderSignup'))
+);
 export const ChangePassword = Loadable(
   lazy(() => import('./pages/Auth/ChangePassword'))
 );
@@ -229,6 +232,7 @@ export const routes = (
       <Route path='/register' element={<Register />} />,
       <Route path='/mfa' element={<Mfa />} />,
       <Route path='/mfa-setup' element={<MfaSetup />} />,
+      <Route path='/provider-signup' element={<ProviderSignup />} />,
       <Route path='/change-password' element={<ChangePassword />} />
       <Route path='/reset-password' element={<Reset />} />
       <Route path='/set-password' element={<ResetPassword />} />

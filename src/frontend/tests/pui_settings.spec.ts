@@ -428,8 +428,6 @@ test('Settings - Admin - Barcode History', async ({ browser }) => {
   for (const barcode of barcodes) {
     await checkBarcode(barcode);
   }
-
-  await page.waitForTimeout(2500);
 });
 
 test('Settings - Admin - Parameter', async ({ browser }) => {

@@ -7,6 +7,7 @@ import { apiUrl } from '@lib/functions/Api';
 import type { UserProps, UserStateProps } from '@lib/types/User';
 import { api, setApiDefaults } from '../App';
 import { clearCsrfCookie } from '../functions/auth';
+import { useServerApiState } from './ServerApiState';
 
 /**
  * Global user information state, using Zustand manager
@@ -57,7 +58,12 @@ export const useUserState = create<UserStateProps>((set, get) => ({
           get().setAuthenticated(false);
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        // Capture any pending auth flow (e.g. a pending SSO provider signup)
+        // reported alongside the failure, so callers can act on it.
+        if (err?.response?.data?.data) {
+          useServerApiState.getState().setAuthContext(err.response.data.data);
+        }
         get().setAuthenticated(false);
       });
   },

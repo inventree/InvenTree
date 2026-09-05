@@ -84,6 +84,7 @@ class PluginMixinEnum(StringEnum):
     URLS = 'urls'
     USER_INTERFACE = 'ui'
     VALIDATION = 'validation'
+    WELLKNOWN = 'well-known'
 
 
 class MetaBase:

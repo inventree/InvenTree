@@ -113,6 +113,9 @@ email:
 sentry_enabled: False
 #sentry_sample_rate: 0.1
 #sentry_dsn: https://custom@custom.ingest.sentry.io/custom
+# Set sentry_send_pii to True to include PII (e.g. user id/email, IP address, request data)
+# in reported events - disabled by default, especially relevant if using the default DSN
+#sentry_send_pii: False
 
 # OpenTelemetry tracing/metrics - disabled by default - refer to the documentation for full list of options
 # This can be used to send tracing data, logs and metrics to OpenTelemetry compatible backends

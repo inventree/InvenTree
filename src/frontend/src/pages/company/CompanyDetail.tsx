@@ -41,6 +41,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useUserState } from '../../states/UserState';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
@@ -78,6 +79,11 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       tags: true
     },
     refetchOnMount: true
+  });
+
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.company,
+    modelId: company?.pk
   });
 
   const detailsPanel = instanceQuery.isFetching ? (
@@ -184,19 +190,21 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       },
       ParametersPanel({
         model_type: ModelType.company,
-        model_id: company?.pk
+        model_id: company?.pk,
+        parameter_count: instanceInfo.parameter_count
       }),
       AttachmentPanel({
         model_type: ModelType.company,
-        model_id: company.pk
+        model_id: company.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.company,
         model_id: company.pk,
-        has_note: !!company.notes
+        note_count: instanceInfo.note_count
       })
     ];
-  }, [id, company, user]);
+  }, [id, company, user, instanceInfo]);
 
   const editCompany = useEditApiFormModal({
     url: ApiEndpoints.company_list,

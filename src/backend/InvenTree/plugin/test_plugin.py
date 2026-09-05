@@ -571,7 +571,7 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         PluginConfig.objects.all().delete()
 
         # Change this value whenever a new mandatory plugin is added
-        N_MANDATORY_PLUGINS = 10
+        N_MANDATORY_PLUGINS = 11
 
         registry.reload_plugins(full_reload=True, collect=True)
         mandatory = registry.MANDATORY_PLUGINS

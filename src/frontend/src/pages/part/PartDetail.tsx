@@ -78,6 +78,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import {
   useGlobalSettingsState,
@@ -180,6 +181,11 @@ export default function PartDetail() {
       tags: true
     },
     refetchOnMount: true
+  });
+
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.part,
+    modelId: part?.pk
   });
 
   const { instance: partRequirements, instanceQuery: partRequirementsQuery } =
@@ -487,6 +493,7 @@ export default function PartDetail() {
         name: 'parameters',
         label: t`Parameters`,
         icon: <IconListDetails />,
+        notification_dot: instanceInfo.parameter_count ? 'info' : null,
         content: (
           <>
             {lockingEnabled && part.locked && (
@@ -509,12 +516,13 @@ export default function PartDetail() {
       },
       AttachmentPanel({
         model_type: ModelType.part,
-        model_id: part?.pk
+        model_id: part?.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.part,
         model_id: part?.pk,
-        has_note: !!part?.notes
+        note_count: instanceInfo.note_count
       })
     ];
   }, [
@@ -525,7 +533,8 @@ export default function PartDetail() {
     userSettings,
     bomInformation,
     revisionSelector,
-    refreshInstance
+    refreshInstance,
+    instanceInfo
   ]);
 
   const breadcrumbs = useMemo(() => {

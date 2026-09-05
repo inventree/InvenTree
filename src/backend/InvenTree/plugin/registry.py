@@ -100,6 +100,7 @@ class PluginsRegistry:
         'inventreelabel',
         'inventreelabelmachine',
         'parameter-exporter',
+        'inventree-well-known',
     ]
 
     ready: bool
@@ -625,9 +626,14 @@ class PluginsRegistry:
 
             # Gather Modules
             if parent_path:
-                raw_module = SourceFileLoader(
+                loader = SourceFileLoader(
                     plugin_dir, str(parent_obj.joinpath('__init__.py'))
-                ).load_module()
+                )
+                spec = importlib.util.spec_from_loader(plugin_dir, loader)
+                if spec is None:
+                    continue
+                raw_module = importlib.util.module_from_spec(spec)
+                loader.exec_module(raw_module)
             else:
                 raw_module = importlib.import_module(plugin_dir)
 
@@ -997,7 +1003,7 @@ class PluginsRegistry:
         as any custom AppMixin plugins require admin integration
         """
         from InvenTree.urls import urlpatterns
-        from plugin.urls import get_plugin_urls
+        from plugin.urls import get_plugin_urls, get_wellknown_urls
 
         for index, url in enumerate(urlpatterns):
             app_name = getattr(url, 'app_name', None)
@@ -1011,6 +1017,9 @@ class PluginsRegistry:
 
             if app_name == 'plugin':
                 urlpatterns[index] = get_plugin_urls()
+
+            if app_name == 'well-known':
+                urlpatterns[index] = get_wellknown_urls()
 
         # Refresh the URL cache
         clear_url_caches()

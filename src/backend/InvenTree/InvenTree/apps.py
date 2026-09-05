@@ -23,6 +23,9 @@ from InvenTree.ready import ignore_ready_warning
 logger = structlog.get_logger('inventree')
 MIGRATIONS_CHECK_DONE = False
 
+OIDC_CLIENT_CHECKED = False
+DEFAULT_OIDC_APP_ID = 'zDFnsiRheJIOKNx6aCQ0quBxECg1QBHtVFDPloJ6'
+
 
 class InvenTreeConfig(AppConfig):
     """AppConfig for inventree app."""
@@ -89,6 +92,7 @@ class InvenTreeConfig(AppConfig):
         if InvenTree.ready.canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()
             self.add_user_from_file()
+            self.add_oidc_default_application()
 
         # register event receiver and connect signal for SSO group sync. The connected signal is
         # used for account updates whereas the receiver is used for the initial account creation.
@@ -100,11 +104,11 @@ class InvenTreeConfig(AppConfig):
     def remove_obsolete_tasks(self):
         """Delete any obsolete scheduled tasks in the database."""
         obsolete = [
+            'data_exporter.tasks.cleanup_old_export_outputs',
             'InvenTree.tasks.delete_expired_sessions',
-            'stock.tasks.delete_old_stock_items',
             'label.tasks.cleanup_old_label_outputs',
             'report.tasks.cleanup_old_report_outputs',
-            'data_exporter.tasks.cleanup_old_export_outputs',
+            'stock.tasks.delete_old_stock_items',
         ]
 
         try:
@@ -334,6 +338,37 @@ class InvenTreeConfig(AppConfig):
 
         # do not try again
         settings.USER_ADDED_FILE = True
+
+    @ignore_ready_warning
+    def add_oidc_default_application(self):
+        """Add the default OIDC application for InvenTree clients."""
+        global OIDC_CLIENT_CHECKED
+        if OIDC_CLIENT_CHECKED:
+            return
+
+        from oauth2_provider.models import Application
+
+        if Application.objects.filter(
+            client_id=DEFAULT_OIDC_APP_ID
+        ).exists():  # pragma: no cover
+            logger.info('Default OIDC client already exists - skipping creation')
+            OIDC_CLIENT_CHECKED = True
+            return
+
+        # Create the default OIDC client
+        client = Application.objects.create(
+            name='InvenTree default client',
+            client_id=DEFAULT_OIDC_APP_ID,
+            post_logout_redirect_uris=[f'{settings.SITE_URL}/'],
+            client_type=Application.CLIENT_PUBLIC,
+            authorization_grant_type=Application.GRANT_AUTHORIZATION_CODE,
+            redirect_uris=[f'{settings.SITE_URL}/oidc/callback/', 'http://localhost'],
+            # scopes='openid profile email g:read',
+            algorithm=Application.RS256_ALGORITHM,
+            skip_authorization=True,
+        )
+        logger.info('Default OIDC client created: %s', client)
+        OIDC_CLIENT_CHECKED = True
 
     def ensure_migrations_done(self=None):
         """Ensures there are no open migrations, stop if inconsistent state."""

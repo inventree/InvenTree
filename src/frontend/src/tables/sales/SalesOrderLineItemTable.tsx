@@ -13,7 +13,6 @@ import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
-import { AddItemButton } from '@lib/components/AddItemButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
 import {
   type RowAction,
@@ -44,12 +43,14 @@ import {
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 
+import { LineItemCreationMenu } from '../../components/items/LineItemCreationMenu';
 import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
 import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency, formatDecimal } from '../../defaults/formatters';
 import { useBuildOrderFields } from '../../forms/BuildForms';
+import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   useAllocateToSalesOrderForm,
   useSalesOrderAllocateSerialsFields,
@@ -62,6 +63,7 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { useImporterState } from '../../states/ImporterState';
 import { useUserState } from '../../states/UserState';
 import SalesOrderAllocationTable from './SalesOrderAllocationTable';
 
@@ -81,6 +83,34 @@ export default function SalesOrderLineItemTable({
   const navigate = useNavigate();
   const user = useUserState();
   const table = useTable('sales-order-line-item');
+  const openImporter = useImporterState((state) => state.openImporter);
+
+  const importSessionFields = useMemo(() => {
+    const fields = dataImporterSessionFields({
+      modelType: 'salesorderlineitem'
+    });
+
+    fields.field_overrides.value = {
+      order: orderId
+    };
+
+    fields.field_defaults.value = {
+      sale_price_currency: currency
+    };
+
+    return fields;
+  }, [orderId, currency]);
+
+  const importLineItems = useCreateApiFormModal({
+    url: ApiEndpoints.import_session_list,
+    title: t`Import Line Items`,
+    fields: importSessionFields,
+    onFormSuccess: (response: any) => {
+      openImporter(response.pk, {
+        onClose: table.refreshTable
+      });
+    }
+  });
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -408,16 +438,19 @@ export default function SalesOrderLineItemTable({
 
   const tableActions = useMemo(() => {
     return [
-      <AddItemButton
-        key='add-line-item'
+      <LineItemCreationMenu
+        key='add-line-item-actions'
         tooltip={t`Add Line Item`}
-        onClick={() => {
+        addLabel={t`Add Line Item`}
+        importLabel={t`Import Line Items`}
+        hidden={!editable || !user.hasAddRole(UserRoles.sales_order)}
+        onAdd={() => {
           setInitialData({
             order: orderId
           });
           newLine.open();
         }}
-        hidden={!editable || !user.hasAddRole(UserRoles.sales_order)}
+        onImport={() => importLineItems.open()}
       />,
       <ActionButton
         key='order-parts'
@@ -463,7 +496,8 @@ export default function SalesOrderLineItemTable({
     user,
     orderId,
     table.hasSelectedRecords,
-    table.selectedRecords
+    table.selectedRecords,
+    importLineItems
   ]);
 
   const rowActions = useCallback(
@@ -603,6 +637,7 @@ export default function SalesOrderLineItemTable({
       {editLine.modal}
       {deleteLine.modal}
       {newLine.modal}
+      {importLineItems.modal}
       {newBuildOrder.modal}
       {allocateBySerials.modal}
       {allocateStock.modal}

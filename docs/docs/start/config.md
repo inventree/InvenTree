@@ -483,9 +483,13 @@ The InvenTree server can be integrated with the [sentry.io](https://sentry.io) m
 {{ configsetting("INVENTREE_SENTRY_ENABLED") }} Enable sentry.io integration |
 {{ configsetting("INVENTREE_SENTRY_DSN", default="Defaults to InvenTree developer key") }} Sentry DSN (data source name) key |
 {{ configsetting("INVENTREE_SENTRY_SAMPLE_RATE") }} How often to send data samples (seconds) |
+{{ configsetting("INVENTREE_SENTRY_SEND_PII") }} Include personally-identifiable information (e.g. user id/email, IP address, request data) in reported events |
 
 !!! info "Default DSN"
     If enabled with the default DSN, server errors will be logged to a sentry.io account monitored by the InvenTree developers.
+
+!!! warning "Personally-Identifiable Information"
+    `INVENTREE_SENTRY_SEND_PII` is `False` by default. Enabling it attaches the reporting user's id/email, IP address, and request data to every event sent to Sentry - consider your organization's data-handling policy before enabling this, particularly if using the default DSN, which sends data to a sentry.io account outside your control.
 
 ## Customization Options
 

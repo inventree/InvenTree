@@ -459,8 +459,27 @@ class SalesOrderTest(InvenTreeAPITestCase):
         # completion must be skipped based on the database state
         self.assertEqual(order_b.status, status.SalesOrderStatus.SHIPPED)
 
-        with self.assertRaises(ValidationError):
-            self.assertFalse(order_b.complete_order(None))
+        with self.assertRaises(ValidationError) as err:
+            order_b.complete_order(None)
+
+        # complete_order() targets RETURN_VALUE(SHIPPED, COMPLETE), a State proxy with
+        # no single fixed value - unlike a plain-target transition (e.g.
+        # Build.cancel_build), inventree_transition cannot resolve a friendly "is
+        # already Complete" message for it, so it falls back to the generic
+        # "invalid transition" message instead. Assert on that message explicitly, so
+        # a regression here (e.g. this falling back to some other error entirely) is
+        # actually caught rather than passing on any ValidationError whatsoever.
+        expected_source = (
+            status.SalesOrderStatus.PENDING,
+            status.SalesOrderStatus.IN_PROGRESS,
+            status.SalesOrderStatus.ON_HOLD,
+            status.SalesOrderStatus.SHIPPED,
+        )
+        self.assertIn(
+            f'Invalid transition on Sales Order.status (source value should be'
+            f' {list(expected_source)}, is {status.SalesOrderStatus.COMPLETE.value})',
+            str(err.exception),
+        )
 
         self.order.refresh_from_db()
         self.assertEqual(self.order.status, status.SalesOrderStatus.COMPLETE)

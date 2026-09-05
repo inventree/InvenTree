@@ -1,10 +1,39 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 533
+INVENTREE_API_VERSION = 542
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v542 -> 2026-09-03 : https://github.com/inventree/InvenTree/pull/12731
+    - Adds management APIs for oAuth2 provider applications
+
+v541 -> 2026-09-03 : https://github.com/inventree/InvenTree/pull/12770
+    - Prevent DELETE operation against the /api/user/me/ endpoint
+
+v540 -> 2026-09-04 : https://github.com/inventree/InvenTree/pull/12773
+    - Adds a "system_state" field to the info endpoint for non-critical general system state information
+
+v539 -> 2026-09-02 : https://github.com/inventree/InvenTree/pull/12723
+    - Adds search fields to AddressList, ContactList, UserList, GroupList, RuleSetList, and TokenListView API endpoints
+
+v538 -> 2026-09-02 : https://github.com/inventree/InvenTree/pull/12763
+    - Fix API permissions for the SelectionList endpoints
+
+v537 -> 2026-08-31 : https://github.com/inventree/InvenTree/pull/11971
+    - Removes direct "notes" field from any models which previously supported markdown notes
+    - Adds a generic "Note" model which can be attached to any model type via a generic foreign key relationship
+    - Allow multiple notes to be attached to a single object, and for notes to be created / edited / deleted via the API
+
+v536 -> 2026-08-30 : https://github.com/inventree/InvenTree/pull/12713
+    - Adds SCIM 2 provisioning support
+
+v535 -> 2026-08-29 : https://github.com/inventree/InvenTree/pull/12739
+    - Adds SSO registration API endpoint for creating new users via SSO
+
+v534 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/12672
+    - rename 'tags' filter to 'tag_name' to avoid name clash with the 'tags' field on various API endpoints
 
 v533 -> 2026-08-18 : https://github.com/inventree/InvenTree/pull/12317
     - Refactors the PurchaseOrder, PurchaseOrderLineItem and PurchaseOrderExtraLine API endpoints to use DRF viewsets
@@ -52,7 +81,7 @@ v520 -> 2026-07-11 : https://github.com/inventree/InvenTree/pull/12310
     - Adds new "disassemble" API endpoint for stock items
     - Allows a stock item to be broken down into component parts, based on its Bill of Materials
 
-v519 -> 2026-07-09 : https://github.com/inventree/InvenTree/pull/TODO
+v519 -> 2026-07-09 : https://github.com/inventree/InvenTree/pull/12334
     - Adds optional "roles" and "permissions" fields to the /user/me/ API endpoint, via the "?roles=true" query parameter
 
 v518 -> 2026-07-09 : https://github.com/inventree/InvenTree/pull/12341

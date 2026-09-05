@@ -325,7 +325,8 @@ export function usePurchaseOrderFields({
           },
           copy_lines: {},
           copy_extra_lines: {},
-          copy_parameters: {}
+          copy_parameters: {},
+          copy_notes: {}
         }
       };
     }
@@ -375,13 +376,12 @@ function LineItemFormRow({
   }, [record.destination]);
 
   // Batch code generator
+  // Note: the generated value is offered as a placeholder (accepted via the
+  // "accept suggested value" button) rather than written into the field
+  // directly - otherwise, a manually-entered batch code can be silently
+  // overwritten if the (debounced, async) generator resolves afterwards
   const batchCodeGenerator = useBatchCodeGenerator({
-    isEnabled: () => batchOpen,
-    onGenerate: (value: any) => {
-      if (value) {
-        props.changeFn(props.rowId, 'batch_code', value);
-      }
-    }
+    isEnabled: () => batchOpen
   });
 
   // Serial number generator
@@ -776,7 +776,10 @@ function LineItemFormRow({
           field_type: 'string',
           label: t`Batch Code`,
           description: t`Enter batch code for received items`,
-          value: props.item.batch_code
+          value: props.item.batch_code,
+          placeholderAutofill: true,
+          placeholder:
+            batchCodeGenerator.result && `${batchCodeGenerator.result}`
         }}
         error={props.rowErrors?.batch_code?.message}
       />
@@ -898,8 +901,14 @@ export function useReceiveLineItems(props: LineItemsForm) {
           return {
             id: elem.pk,
             line_item: elem.pk,
-            location: elem.destination ?? elem.destination_detail?.pk ?? null,
-            quantity: elem.quantity - elem.received,
+            // Leave unset if this line has no destination of its own, so a
+            // manually-selected location (or the order's own destination
+            // fallback) is actually applied — `destination_detail` already
+            // resolves through that fallback chain, so baking its value in
+            // here would make the backend treat this line as if the user
+            // had explicitly chosen the PO's default, blocking any override.
+            location: elem.destination ?? null,
+            quantity: Math.max(0, elem.quantity - elem.received),
             expiry_date: null,
             batch_code: '',
             serial_numbers: '',
@@ -938,7 +947,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
         }
       }
     };
-  }, [filteredItems, records, props, stockStatusCodes]);
+  }, [filteredItems, records, props.orderPk, stockStatusCodes]);
 
   return useCreateApiFormModal({
     ...props.formProps,
