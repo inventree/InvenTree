@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-04 03:18+0000\n"
-"PO-Revision-Date: 2026-09-04 03:20\n"
+"POT-Creation-Date: 2026-09-05 09:56+0000\n"
+"PO-Revision-Date: 2026-09-05 09:58\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
@@ -93,7 +93,7 @@ msgstr "تعذّر تحويل {original} إلى {unit}"
 
 #: InvenTree/conversion.py:289 InvenTree/conversion.py:303
 #: InvenTree/helpers.py:621 order/models.py:822 order/models.py:1120
-#: part/models.py:3847 stock/models.py:2114
+#: part/models.py:3895 stock/models.py:2114
 msgid "Invalid quantity provided"
 msgstr "الكمية المقدمة غير صحيحة"
 
@@ -229,7 +229,7 @@ msgstr "البريد الإلكتروني"
 msgid "CSRF verification failed. Ensure INVENTREE_SITE_URL and INVENTREE_TRUSTED_ORIGINS are configured correctly."
 msgstr "CSRF verification فشل. Ensure INVENTREE_SITE_URL و INVENTREE_TRUSTED_ORIGINS هي مهيأ correctly."
 
-#: InvenTree/middleware.py:221
+#: InvenTree/middleware.py:223
 msgid "You must enable two-factor authentication before doing anything else."
 msgstr "أنت يجب تفعيل two-factor مصادقة قبل doing anything else."
 
@@ -279,7 +279,7 @@ msgstr "غير صالح choice"
 
 #: InvenTree/models.py:1251 common/models.py:1462 common/models.py:1862
 #: common/models.py:2298 common/models.py:2423 common/models.py:2733
-#: common/serializers.py:681 generic/states/serializers.py:20
+#: common/serializers.py:684 generic/states/serializers.py:20
 #: machine/models.py:28 part/models.py:1119 plugin/models.py:54
 #: report/models.py:222 stock/models.py:89
 msgid "Name"
@@ -346,7 +346,7 @@ msgstr "الصورة"
 msgid "Must be a valid number"
 msgstr "يجب يكون صالح رقم"
 
-#: InvenTree/serializers.py:595 company/models.py:217 part/models.py:3215
+#: InvenTree/serializers.py:595 company/models.py:217 part/models.py:3263
 msgid "Currency"
 msgstr "العملة"
 
@@ -612,9 +612,9 @@ msgstr "تضمين متغيرات"
 #: order/api.py:1346 order/api.py:2184 order/api.py:2187 order/api.py:2342
 #: order/models.py:2350 order/models.py:2518 order/models.py:2519
 #: order/models.py:4039 order/models.py:4040 part/api.py:1179 part/api.py:1182
-#: part/api.py:1399 part/models.py:530 part/models.py:3226 part/models.py:3369
-#: part/models.py:3427 part/models.py:3449 part/models.py:3471
-#: part/models.py:3612 part/models.py:3941 part/models.py:4400
+#: part/api.py:1399 part/models.py:530 part/models.py:3274 part/models.py:3417
+#: part/models.py:3475 part/models.py:3497 part/models.py:3519
+#: part/models.py:3660 part/models.py:3989 part/models.py:4460
 #: part/serializers.py:1333 part/serializers.py:2010
 #: report/templates/report/inventree_bill_of_materials_report.html:110
 #: report/templates/report/inventree_bill_of_materials_report.html:137
@@ -637,7 +637,7 @@ msgid "Part"
 msgstr "الصنف"
 
 #: build/api.py:123 build/api.py:126 build/serializers.py:1486 part/api.py:1012
-#: part/api.py:1410 part/models.py:414 part/models.py:1160 part/models.py:3499
+#: part/api.py:1410 part/models.py:414 part/models.py:1160 part/models.py:3547
 #: part/serializers.py:1343 part/serializers.py:1781 stock/api.py:924
 msgid "Category"
 msgstr "الفئة"
@@ -711,11 +711,11 @@ msgid "Build must be cancelled before it can be deleted"
 msgstr "يجب أن يكون إنتاج ملغى قبل هو يمكن يكون تم الحذف"
 
 #: build/api.py:460 build/serializers.py:1413 part/models.py:1327
-#: part/models.py:3983
+#: part/models.py:4031
 msgid "Consumable"
 msgstr "قابل للاستهلاك"
 
-#: build/api.py:476 build/serializers.py:1416 part/models.py:3977
+#: build/api.py:476 build/serializers.py:1416 part/models.py:4025
 msgid "Optional"
 msgstr "اختياري"
 
@@ -830,7 +830,7 @@ msgstr "أمر الإنتاج مرجع"
 
 #: build/models.py:268 build/serializers.py:1410 order/models.py:721
 #: order/models.py:1459 order/models.py:2166 order/models.py:3312
-#: order/models.py:3754 part/models.py:4033
+#: order/models.py:3754 part/models.py:4081
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_purchase_order_report.html:34
 #: report/templates/report/inventree_return_order_report.html:25
@@ -1022,7 +1022,7 @@ msgstr ""
 #: build/models.py:1337 build/models.py:1438 build/serializers.py:324
 #: build/serializers.py:378 build/serializers.py:921 build/serializers.py:1726
 #: order/models.py:819 order/serializers.py:642 order/serializers.py:877
-#: part/models.py:3831 stock/models.py:1079 stock/models.py:1504
+#: part/models.py:3879 stock/models.py:1079 stock/models.py:1504
 #: stock/models.py:1588 stock/models.py:1906 stock/models.py:2117
 #: stock/models.py:2440 stock/serializers.py:748 stock/serializers.py:1054
 #: stock/serializers.py:1116 stock/serializers.py:1933
@@ -1069,7 +1069,7 @@ msgstr "إنتاج كائن"
 #: build/serializers.py:363 build/serializers.py:1431 common/models.py:1386
 #: order/models.py:2129 order/models.py:3203 order/models.py:4193
 #: order/serializers.py:1886 order/serializers.py:2390
-#: order/serializers.py:2978 part/models.py:3383 part/models.py:3971
+#: order/serializers.py:2978 part/models.py:3431 part/models.py:4019
 #: report/templates/report/inventree_bill_of_materials_report.html:138
 #: report/templates/report/inventree_build_order_report.html:112
 #: report/templates/report/inventree_purchase_order_report.html:35
@@ -1481,12 +1481,12 @@ msgstr "قابل للتتبع"
 msgid "Inherited"
 msgstr "موروث"
 
-#: build/serializers.py:1428 part/models.py:4066
+#: build/serializers.py:1428 part/models.py:4114
 msgid "Allow Variants"
 msgstr "السماح متغيرات"
 
-#: build/serializers.py:1434 build/serializers.py:1440 part/models.py:3705
-#: part/models.py:4392 stock/api.py:937 stock/serializers.py:1038
+#: build/serializers.py:1434 build/serializers.py:1440 part/models.py:3753
+#: part/models.py:4452 stock/api.py:937 stock/serializers.py:1038
 msgid "BOM Item"
 msgstr "عنصر قائمة المواد"
 
@@ -1597,57 +1597,65 @@ msgstr "متأخر أمر الإنتاج"
 msgid "Build order {bo} is now overdue"
 msgstr "أمر الإنتاج {bo} هو الآن متأخر"
 
-#: common/api.py:480 common/models.py:3021
+#: common/api.py:485 common/models.py:3021
 msgid "Model ID"
 msgstr "نموذج ID"
 
-#: common/api.py:815
+#: common/api.py:820
 msgid "Has Thumbnail"
 msgstr "لديه Thumbnail"
 
-#: common/api.py:824
+#: common/api.py:829
 msgid "Is Link"
 msgstr "هو رابط"
 
-#: common/api.py:832
+#: common/api.py:837
 msgid "Is File"
 msgstr "هو ملف"
 
-#: common/api.py:907
+#: common/api.py:912
 msgid "User does not have permission to delete these attachments"
 msgstr "مستخدم يقوم غير لديه صلاحية إلى حذف هذه مرفقات"
 
-#: common/api.py:920
+#: common/api.py:925
 msgid "User does not have permission to view this attachment"
 msgstr ""
 
-#: common/api.py:931
+#: common/api.py:936
 msgid "User does not have permission to edit this attachment"
 msgstr "مستخدم يقوم غير لديه صلاحية إلى تعديل هذا مرفق"
 
-#: common/api.py:957
+#: common/api.py:962
 msgid "User does not have permission to delete this attachment"
 msgstr "مستخدم يقوم غير لديه صلاحية إلى حذف هذا مرفق"
 
-#: common/api.py:1424
+#: common/api.py:1429
 msgid "User does not have permission to delete these parameters"
 msgstr ""
 
-#: common/api.py:1441
+#: common/api.py:1446
 msgid "User does not have permission to delete this parameter"
 msgstr ""
 
-#: common/api.py:1480 common/api.py:1481
+#: common/api.py:1485 common/api.py:1486
 msgid "This field is required"
 msgstr ""
 
-#: common/api.py:1487
+#: common/api.py:1492
 msgid "Invalid model ID"
 msgstr ""
 
-#: common/api.py:1572 common/serializers.py:1141 common/serializers.py:1189
+#: common/api.py:1577 common/serializers.py:1144 common/serializers.py:1192
 msgid "Selection list is locked"
 msgstr "اختيار قائمة هو مقفل"
+
+#: common/api.py:1783
+msgid "The built-in default OIDC client cannot be deleted."
+msgstr ""
+
+#: common/api.py:1796
+msgid "The built-in default OIDC client secret cannot be regenerated."
+msgstr ""
 
 #: common/currency.py:135
 msgid "Invalid currency code"
@@ -1748,7 +1756,7 @@ msgstr "يجب أن يكون مفتاح نص فريد"
 #: common/models.py:1364 common/models.py:1365 common/models.py:1475
 #: common/models.py:1476 common/models.py:1723 common/models.py:1724
 #: common/models.py:2135 common/models.py:2136 common/models.py:3437
-#: importer/models.py:105 part/models.py:3478 part/models.py:3506
+#: importer/models.py:105 part/models.py:3526 part/models.py:3554
 #: plugin/models.py:392 plugin/models.py:393
 #: report/templates/report/inventree_test_report.html:105 users/models.py:122
 #: users/models.py:497
@@ -2005,7 +2013,7 @@ msgstr "ملف حجم"
 msgid "File size in bytes"
 msgstr "ملف حجم في bytes"
 
-#: common/models.py:2190 common/serializers.py:845
+#: common/models.py:2190 common/serializers.py:848
 msgid "Invalid model type specified for attachment"
 msgstr "غير صالح نموذج نوع محدد لـ مرفق"
 
@@ -2226,7 +2234,7 @@ msgstr "مربع اختيار معلمات لا يمكن لديه وحدات"
 msgid "Checkbox parameters cannot have choices"
 msgstr "مربع اختيار معلمات لا يمكن لديه خيارات"
 
-#: common/models.py:2689 part/models.py:3576
+#: common/models.py:2689 part/models.py:3624
 msgid "Choices must be unique"
 msgstr "يجب أن يكون خيارات فريد"
 
@@ -2262,7 +2270,7 @@ msgstr "مربع اختيار"
 msgid "Is this parameter a checkbox?"
 msgstr "هو هذا معلمة مربع اختيار؟"
 
-#: common/models.py:2761 part/models.py:3663
+#: common/models.py:2761 part/models.py:3711
 msgid "Choices"
 msgstr "خيارات"
 
@@ -2274,7 +2282,7 @@ msgstr "صالح خيارات لـ هذا معلمة (comma-separated)"
 msgid "Selection list for this parameter"
 msgstr "اختيار قائمة لـ هذا معلمة"
 
-#: common/models.py:2778 part/models.py:3638 report/models.py:297
+#: common/models.py:2778 part/models.py:3686 report/models.py:297
 #: scim/models.py:31
 msgid "Enabled"
 msgstr "مفعّل"
@@ -2307,7 +2315,7 @@ msgstr "غير صالح choice لـ معلمة قيمة"
 msgid "Parameter value must be unique"
 msgstr ""
 
-#: common/models.py:2989 common/serializers.py:1070
+#: common/models.py:2989 common/serializers.py:1073
 msgid "Invalid model type specified for parameter"
 msgstr "غير صالح نموذج نوع محدد لـ معلمة"
 
@@ -2334,8 +2342,8 @@ msgid "Parameter Value"
 msgstr "معلمة قيمة"
 
 #: common/models.py:3047 common/models.py:3087 company/models.py:827
-#: order/serializers.py:916 order/serializers.py:2301 part/models.py:4041
-#: part/models.py:4432
+#: order/serializers.py:916 order/serializers.py:2301 part/models.py:4089
+#: part/models.py:4492
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:38
 #: report/templates/report/inventree_return_order_report.html:26
@@ -2350,8 +2358,8 @@ msgstr "ملاحظة"
 msgid "Optional note field"
 msgstr "اختياري ملاحظة حقل"
 
-#: common/models.py:3191 common/models.py:3193 common/serializers.py:943
-#: common/serializers.py:947
+#: common/models.py:3191 common/models.py:3193 common/serializers.py:946
+#: common/serializers.py:950
 msgid "This field is required."
 msgstr ""
 
@@ -2599,133 +2607,133 @@ msgstr "عناصر لديه تم مستلم مقابل طلب الشراء"
 msgid "Items have been received against a return order"
 msgstr "عناصر لديه تم مستلم مقابل طلب الإرجاع"
 
-#: common/serializers.py:127
+#: common/serializers.py:130
 msgid "Indicates if changing this setting requires confirmation"
 msgstr "يشير إذا changing هذا إعداد يتطلب confirmation"
 
-#: common/serializers.py:141
+#: common/serializers.py:144
 msgid "This setting requires confirmation before changing. Please confirm the change."
 msgstr "هذا إعداد يتطلب confirmation قبل changing. يرجى تأكيد ال تغيير."
 
-#: common/serializers.py:174
+#: common/serializers.py:177
 msgid "Indicates if the setting is overridden by an environment variable"
 msgstr "يشير إذا ال إعداد هو overridden حسب environment variable"
 
-#: common/serializers.py:176 plugin/serializers.py:293
+#: common/serializers.py:179 plugin/serializers.py:293
 msgid "Override"
 msgstr "تجاوز"
 
-#: common/serializers.py:644
+#: common/serializers.py:647
 msgid "Is Running"
 msgstr "هو قيد التشغيل"
 
-#: common/serializers.py:650
+#: common/serializers.py:653
 msgid "Pending Tasks"
 msgstr "قيد الانتظار مهام"
 
-#: common/serializers.py:656
+#: common/serializers.py:659
 msgid "Scheduled Tasks"
 msgstr "مجدول مهام"
 
-#: common/serializers.py:662
+#: common/serializers.py:665
 msgid "Failed Tasks"
 msgstr "فشل مهام"
 
-#: common/serializers.py:677
+#: common/serializers.py:680
 msgid "Task ID"
 msgstr "مهمة ID"
 
-#: common/serializers.py:677
+#: common/serializers.py:680
 msgid "Unique task ID"
 msgstr "فريد مهمة ID"
 
-#: common/serializers.py:679
+#: common/serializers.py:682
 msgid "Lock"
 msgstr ""
 
-#: common/serializers.py:679
+#: common/serializers.py:682
 msgid "Lock time"
 msgstr "Lock وقت"
 
-#: common/serializers.py:681
+#: common/serializers.py:684
 msgid "Task name"
 msgstr "مهمة اسم"
 
-#: common/serializers.py:683
+#: common/serializers.py:686
 msgid "Function"
 msgstr "دالة"
 
-#: common/serializers.py:683
+#: common/serializers.py:686
 msgid "Function name"
 msgstr "دالة اسم"
 
-#: common/serializers.py:685
+#: common/serializers.py:688
 msgid "Arguments"
 msgstr "وسائط"
 
-#: common/serializers.py:685
+#: common/serializers.py:688
 msgid "Task arguments"
 msgstr "مهمة وسائط"
 
-#: common/serializers.py:688
+#: common/serializers.py:691
 msgid "Keyword Arguments"
 msgstr "Keyword وسائط"
 
-#: common/serializers.py:688
+#: common/serializers.py:691
 msgid "Task keyword arguments"
 msgstr "مهمة keyword وسائط"
 
-#: common/serializers.py:811
+#: common/serializers.py:814
 msgid "Filename"
 msgstr "اسم الملف"
 
-#: common/serializers.py:818 common/serializers.py:970
-#: common/serializers.py:1016 common/serializers.py:1084 importer/models.py:94
+#: common/serializers.py:821 common/serializers.py:973
+#: common/serializers.py:1019 common/serializers.py:1087 importer/models.py:94
 #: report/api.py:42 report/models.py:303 report/serializers.py:69
 msgid "Model Type"
 msgstr "نموذج نوع"
 
-#: common/serializers.py:847
+#: common/serializers.py:850
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr "مستخدم يقوم غير لديه صلاحية إلى إنشاء أو تعديل مرفقات لـ هذا نموذج"
 
-#: common/serializers.py:892
+#: common/serializers.py:895
 msgid "Only staff users can create or edit note templates"
 msgstr ""
 
-#: common/serializers.py:902
+#: common/serializers.py:905
 msgid "Invalid model type specified for note"
 msgstr ""
 
-#: common/serializers.py:903
+#: common/serializers.py:906
 msgid "User does not have permission to create or edit notes for this model"
 msgstr ""
 
-#: common/serializers.py:1072
+#: common/serializers.py:1075
 msgid "User does not have permission to create or edit parameters for this model"
 msgstr "مستخدم يقوم غير لديه صلاحية إلى إنشاء أو تعديل معلمات لـ هذا نموذج"
 
-#: common/serializers.py:1271
+#: common/serializers.py:1274
 msgid "Attachment Count"
 msgstr ""
 
-#: common/serializers.py:1272
+#: common/serializers.py:1275
 msgid "Number of attachments associated with this instance"
 msgstr ""
 
-#: common/serializers.py:1277
+#: common/serializers.py:1280
 msgid "Note Count"
 msgstr ""
 
-#: common/serializers.py:1278
+#: common/serializers.py:1281
 msgid "Number of notes associated with this instance"
 msgstr ""
 
-#: common/serializers.py:1283
+#: common/serializers.py:1286
 msgid "Parameter Count"
 msgstr ""
 
-#: common/serializers.py:1284
+#: common/serializers.py:1287
 msgid "Number of parameters associated with this instance"
 msgstr ""
 
@@ -4721,11 +4729,11 @@ msgstr "URL لـ خارجي صنف المورد رابط"
 msgid "Supplier part description"
 msgstr "صنف المورد وصف"
 
-#: company/models.py:836 part/models.py:2239
+#: company/models.py:836 part/models.py:2249
 msgid "base cost"
 msgstr "أساس تكلفة"
 
-#: company/models.py:837 part/models.py:2240
+#: company/models.py:837 part/models.py:2250
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "أدنى charge (e.g. stocking fee)"
 
@@ -4746,7 +4754,7 @@ msgstr "كمية حزمة"
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
 msgstr "إجمالي كمية مورد في مفرد حزمة. ترك فارغ لـ مفرد عناصر."
 
-#: company/models.py:871 part/models.py:2246
+#: company/models.py:871 part/models.py:2256
 msgid "multiple"
 msgstr "متعدد"
 
@@ -6729,432 +6737,432 @@ msgstr "إنشاء مستخدم"
 msgid "Owner responsible for this part"
 msgstr "مالك مسؤول لـ هذا صنف"
 
-#: part/models.py:2247
+#: part/models.py:2257
 msgid "Sell multiple"
 msgstr "Sell متعدد"
 
-#: part/models.py:3216
+#: part/models.py:3264
 msgid "Currency used to cache pricing calculations"
 msgstr "عملة مستخدم إلى ذاكرة مؤقتة التسعير حسابات"
 
-#: part/models.py:3232
+#: part/models.py:3280
 msgid "Minimum BOM Cost"
 msgstr "أدنى BOM تكلفة"
 
-#: part/models.py:3233
+#: part/models.py:3281
 msgid "Minimum cost of component parts"
 msgstr "أدنى تكلفة لـ مكوّن أصناف"
 
-#: part/models.py:3239
+#: part/models.py:3287
 msgid "Maximum BOM Cost"
 msgstr "أقصى BOM تكلفة"
 
-#: part/models.py:3240
+#: part/models.py:3288
 msgid "Maximum cost of component parts"
 msgstr "أقصى تكلفة لـ مكوّن أصناف"
 
-#: part/models.py:3246
+#: part/models.py:3294
 msgid "Minimum Purchase Cost"
 msgstr "أدنى شراء تكلفة"
 
-#: part/models.py:3247
+#: part/models.py:3295
 msgid "Minimum historical purchase cost"
 msgstr "أدنى تاريخي شراء تكلفة"
 
-#: part/models.py:3253
+#: part/models.py:3301
 msgid "Maximum Purchase Cost"
 msgstr "أقصى شراء تكلفة"
 
-#: part/models.py:3254
+#: part/models.py:3302
 msgid "Maximum historical purchase cost"
 msgstr "أقصى تاريخي شراء تكلفة"
 
-#: part/models.py:3260
+#: part/models.py:3308
 msgid "Minimum Internal Price"
 msgstr "أدنى داخلي سعر"
 
-#: part/models.py:3261
+#: part/models.py:3309
 msgid "Minimum cost based on internal price breaks"
 msgstr "أدنى تكلفة استنادًا إلى على داخلي سعر فواصل"
 
-#: part/models.py:3267
+#: part/models.py:3315
 msgid "Maximum Internal Price"
 msgstr "أقصى داخلي سعر"
 
-#: part/models.py:3268
+#: part/models.py:3316
 msgid "Maximum cost based on internal price breaks"
 msgstr "أقصى تكلفة استنادًا إلى على داخلي سعر فواصل"
 
-#: part/models.py:3274
+#: part/models.py:3322
 msgid "Minimum Supplier Price"
 msgstr "أدنى مورد سعر"
 
-#: part/models.py:3275
+#: part/models.py:3323
 msgid "Minimum price of part from external suppliers"
 msgstr "أدنى سعر لـ صنف من خارجي موردون"
 
-#: part/models.py:3281
+#: part/models.py:3329
 msgid "Maximum Supplier Price"
 msgstr "أقصى مورد سعر"
 
-#: part/models.py:3282
+#: part/models.py:3330
 msgid "Maximum price of part from external suppliers"
 msgstr "أقصى سعر لـ صنف من خارجي موردون"
 
-#: part/models.py:3288
+#: part/models.py:3336
 msgid "Minimum Variant Cost"
 msgstr "أدنى متغير تكلفة"
 
-#: part/models.py:3289
+#: part/models.py:3337
 msgid "Calculated minimum cost of variant parts"
 msgstr "محسوب أدنى تكلفة لـ متغير أصناف"
 
-#: part/models.py:3295
+#: part/models.py:3343
 msgid "Maximum Variant Cost"
 msgstr "أقصى متغير تكلفة"
 
-#: part/models.py:3296
+#: part/models.py:3344
 msgid "Calculated maximum cost of variant parts"
 msgstr "محسوب أقصى تكلفة لـ متغير أصناف"
 
-#: part/models.py:3302 part/models.py:3316
+#: part/models.py:3350 part/models.py:3364
 msgid "Minimum Cost"
 msgstr "أدنى تكلفة"
 
-#: part/models.py:3303
+#: part/models.py:3351
 msgid "Override minimum cost"
 msgstr "تجاوز أدنى تكلفة"
 
-#: part/models.py:3309 part/models.py:3323
+#: part/models.py:3357 part/models.py:3371
 msgid "Maximum Cost"
 msgstr "أقصى تكلفة"
 
-#: part/models.py:3310
+#: part/models.py:3358
 msgid "Override maximum cost"
 msgstr "تجاوز أقصى تكلفة"
 
-#: part/models.py:3317
+#: part/models.py:3365
 msgid "Calculated overall minimum cost"
 msgstr "محسوب إجمالي أدنى تكلفة"
 
-#: part/models.py:3324
+#: part/models.py:3372
 msgid "Calculated overall maximum cost"
 msgstr "محسوب إجمالي أقصى تكلفة"
 
-#: part/models.py:3330
+#: part/models.py:3378
 msgid "Minimum Sale Price"
 msgstr "أدنى سعر البيع"
 
-#: part/models.py:3331
+#: part/models.py:3379
 msgid "Minimum sale price based on price breaks"
 msgstr "أدنى سعر البيع استنادًا إلى على سعر فواصل"
 
-#: part/models.py:3337
+#: part/models.py:3385
 msgid "Maximum Sale Price"
 msgstr "أقصى سعر البيع"
 
-#: part/models.py:3338
+#: part/models.py:3386
 msgid "Maximum sale price based on price breaks"
 msgstr "أقصى سعر البيع استنادًا إلى على سعر فواصل"
 
-#: part/models.py:3344
+#: part/models.py:3392
 msgid "Minimum Sale Cost"
 msgstr "أدنى بيع تكلفة"
 
-#: part/models.py:3345
+#: part/models.py:3393
 msgid "Minimum historical sale price"
 msgstr "أدنى تاريخي سعر البيع"
 
-#: part/models.py:3351
+#: part/models.py:3399
 msgid "Maximum Sale Cost"
 msgstr "أقصى بيع تكلفة"
 
-#: part/models.py:3352
+#: part/models.py:3400
 msgid "Maximum historical sale price"
 msgstr "أقصى تاريخي سعر البيع"
 
-#: part/models.py:3370
+#: part/models.py:3418
 msgid "Part for stocktake"
 msgstr "صنف لـ جرد المخزون"
 
-#: part/models.py:3375
+#: part/models.py:3423
 msgid "Item Count"
 msgstr "عنصر عد"
 
-#: part/models.py:3376
+#: part/models.py:3424
 msgid "Number of individual stock entries at time of stocktake"
 msgstr "عدد individual مخزون سجلات عند وقت لـ جرد المخزون"
 
-#: part/models.py:3384
+#: part/models.py:3432
 msgid "Total available stock at time of stocktake"
 msgstr "إجمالي متاح مخزون عند وقت لـ جرد المخزون"
 
-#: part/models.py:3388 report/templates/report/inventree_test_report.html:106
+#: part/models.py:3436 report/templates/report/inventree_test_report.html:106
 #: stock/models.py:3938
 msgid "Date"
 msgstr "التاريخ"
 
-#: part/models.py:3389
+#: part/models.py:3437
 msgid "Date stocktake was performed"
 msgstr "تاريخ جرد المخزون كان performed"
 
-#: part/models.py:3396
+#: part/models.py:3444
 msgid "Minimum Stock Cost"
 msgstr "أدنى مخزون تكلفة"
 
-#: part/models.py:3397
+#: part/models.py:3445
 msgid "Estimated minimum cost of stock on hand"
 msgstr "Estimated أدنى تكلفة لـ مخزون على hand"
 
-#: part/models.py:3403
+#: part/models.py:3451
 msgid "Maximum Stock Cost"
 msgstr "أقصى مخزون تكلفة"
 
-#: part/models.py:3404
+#: part/models.py:3452
 msgid "Estimated maximum cost of stock on hand"
 msgstr "Estimated أقصى تكلفة لـ مخزون على hand"
 
-#: part/models.py:3414
+#: part/models.py:3462
 msgid "Part Sale Price Break"
 msgstr "صنف سعر البيع فاصل"
 
-#: part/models.py:3438
+#: part/models.py:3486
 msgid "Part Internal Price Break"
 msgstr ""
 
-#: part/models.py:3529
+#: part/models.py:3577
 msgid "Part Test Template"
 msgstr "صنف اختبار قالب"
 
-#: part/models.py:3555
+#: part/models.py:3603
 msgid "Invalid template name - must include at least one alphanumeric character"
 msgstr "غير صالح قالب اسم - يجب تضمين عند أقل واحد alphanumeric character"
 
-#: part/models.py:3587
+#: part/models.py:3635
 msgid "Test templates can only be created for testable parts"
 msgstr "اختبار قوالب يمكن فقط يكون تم الإنشاء لـ قابل للاختبار أصناف"
 
-#: part/models.py:3601
+#: part/models.py:3649
 msgid "Test template with the same key already exists for part"
 msgstr "اختبار قالب مع ال نفس مفتاح بالفعل موجود لـ صنف"
 
-#: part/models.py:3618
+#: part/models.py:3666
 msgid "Test Name"
 msgstr "اختبار اسم"
 
-#: part/models.py:3619
+#: part/models.py:3667
 msgid "Enter a name for the test"
 msgstr "إدخال اسم لـ ال اختبار"
 
-#: part/models.py:3625
+#: part/models.py:3673
 msgid "Test Key"
 msgstr "اختبار مفتاح"
 
-#: part/models.py:3626
+#: part/models.py:3674
 msgid "Simplified key for the test"
 msgstr "Simplified مفتاح لـ ال اختبار"
 
-#: part/models.py:3633
+#: part/models.py:3681
 msgid "Test Description"
 msgstr "اختبار وصف"
 
-#: part/models.py:3634
+#: part/models.py:3682
 msgid "Enter description for this test"
 msgstr "إدخال وصف لـ هذا اختبار"
 
-#: part/models.py:3638
+#: part/models.py:3686
 msgid "Is this test enabled?"
 msgstr "هو هذا اختبار مفعّل؟"
 
-#: part/models.py:3643
+#: part/models.py:3691
 msgid "Required"
 msgstr "مطلوب"
 
-#: part/models.py:3644
+#: part/models.py:3692
 msgid "Is this test required to pass?"
 msgstr "هو هذا اختبار مطلوب إلى نجاح؟"
 
-#: part/models.py:3649
+#: part/models.py:3697
 msgid "Requires Value"
 msgstr "يتطلب قيمة"
 
-#: part/models.py:3650
+#: part/models.py:3698
 msgid "Does this test require a value when adding a test result?"
 msgstr "يقوم هذا اختبار طلب قيمة عند إضافة نتيجة الاختبار؟"
 
-#: part/models.py:3655
+#: part/models.py:3703
 msgid "Requires Attachment"
 msgstr "يتطلب مرفق"
 
-#: part/models.py:3657
+#: part/models.py:3705
 msgid "Does this test require a file attachment when adding a test result?"
 msgstr "يقوم هذا اختبار طلب ملف مرفق عند إضافة نتيجة الاختبار؟"
 
-#: part/models.py:3664
+#: part/models.py:3712
 msgid "Valid choices for this test (comma-separated)"
 msgstr "صالح خيارات لـ هذا اختبار (comma-separated)"
 
-#: part/models.py:3815
+#: part/models.py:3863
 msgid "Invalid quantity - no units specified for part"
 msgstr "غير صالح كمية - لا وحدات محدد لـ صنف"
 
-#: part/models.py:3824
+#: part/models.py:3872
 msgid "Quantity must be greater than or equal to zero"
 msgstr "يجب أن يكون الكمية أكبر من أو equal إلى صفر"
 
-#: part/models.py:3925
+#: part/models.py:3973
 msgid "BOM item cannot be modified - assembly is locked"
 msgstr "BOM عنصر لا يمكن يكون modified - تجميع هو مقفل"
 
-#: part/models.py:3932
+#: part/models.py:3980
 msgid "BOM item cannot be modified - variant assembly is locked"
 msgstr "BOM عنصر لا يمكن يكون modified - متغير تجميع هو مقفل"
 
-#: part/models.py:3942
+#: part/models.py:3990
 msgid "Select parent part"
 msgstr "تحديد الأصل صنف"
 
-#: part/models.py:3952
+#: part/models.py:4000
 msgid "Sub part"
 msgstr "Sub صنف"
 
-#: part/models.py:3953
+#: part/models.py:4001
 msgid "Select part to be used in BOM"
 msgstr "تحديد صنف إلى يكون مستخدم في BOM"
 
-#: part/models.py:3959 part/serializers.py:1699
+#: part/models.py:4007 part/serializers.py:1699
 msgid "Amount"
 msgstr ""
 
-#: part/models.py:3960
+#: part/models.py:4008
 msgid "Amount of sub-part consumed to produce one part"
 msgstr "Amount لـ sub-part مستهلك إلى produce واحد صنف"
 
-#: part/models.py:3972
+#: part/models.py:4020
 msgid "BOM quantity for this BOM item"
 msgstr "BOM كمية لـ هذا BOM عنصر"
 
-#: part/models.py:3978
+#: part/models.py:4026
 msgid "This BOM item is optional"
 msgstr "هذا BOM عنصر هو اختياري"
 
-#: part/models.py:3984
+#: part/models.py:4032
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr "هذا BOM عنصر هو قابل للاستهلاك (هو هو غير متتبع في أوامر الإنتاج)"
 
-#: part/models.py:3992
+#: part/models.py:4040
 msgid "Setup Quantity"
 msgstr "كمية إعداد"
 
-#: part/models.py:3993
+#: part/models.py:4041
 msgid "Extra required quantity for a build, to account for setup losses"
 msgstr "إضافي مطلوب كمية لـ إنتاج، إلى حساب لـ إعداد losses"
 
-#: part/models.py:4001
+#: part/models.py:4049
 msgid "Attrition"
 msgstr ""
 
-#: part/models.py:4003
+#: part/models.py:4051
 msgid "Estimated attrition for a build, expressed as a percentage (0-100)"
 msgstr "Estimated attrition لـ إنتاج، expressed بصفته percentage (0-100)"
 
-#: part/models.py:4014
+#: part/models.py:4062
 msgid "Rounding Multiple"
 msgstr "Rounding متعدد"
 
-#: part/models.py:4016
+#: part/models.py:4064
 msgid "Round up required production quantity to nearest multiple of this value"
 msgstr "Round أعلى مطلوب الإنتاج كمية إلى nearest متعدد لـ هذا قيمة"
 
-#: part/models.py:4023 part/serializers.py:1717
+#: part/models.py:4071 part/serializers.py:1717
 msgid "Piece Count"
 msgstr ""
 
-#: part/models.py:4025 part/serializers.py:1719
+#: part/models.py:4073 part/serializers.py:1719
 msgid "Number of pieces required (for cut-to-length items). Total material = quantity x piece_count."
 msgstr ""
 
-#: part/models.py:4034
+#: part/models.py:4082
 msgid "BOM item reference"
 msgstr "BOM عنصر مرجع"
 
-#: part/models.py:4042
+#: part/models.py:4090
 msgid "BOM item notes"
 msgstr "BOM عنصر ملاحظات"
 
-#: part/models.py:4048
+#: part/models.py:4096
 msgid "Checksum"
 msgstr ""
 
-#: part/models.py:4049
+#: part/models.py:4097
 msgid "BOM line checksum"
 msgstr "BOM سطر checksum"
 
-#: part/models.py:4054
+#: part/models.py:4102
 msgid "Validated"
 msgstr "تم التحقق"
 
-#: part/models.py:4055
+#: part/models.py:4103
 msgid "This BOM item has been validated"
 msgstr "هذا BOM عنصر لديه تم تم التحقق"
 
-#: part/models.py:4060
+#: part/models.py:4108
 msgid "Gets inherited"
 msgstr "Gets موروث"
 
-#: part/models.py:4061
+#: part/models.py:4109
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "هذا BOM عنصر هو موروث حسب BOMs لـ متغير أصناف"
 
-#: part/models.py:4067
+#: part/models.py:4115
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "عناصر المخزون لـ متغير أصناف يمكن يكون مستخدم لـ هذا BOM عنصر"
 
-#: part/models.py:4209 stock/models.py:1064
+#: part/models.py:4269 stock/models.py:1064
 msgid "Quantity must be integer value for trackable parts"
 msgstr "يجب أن يكون الكمية عدد صحيح قيمة لـ قابل للتتبع أصناف"
 
-#: part/models.py:4219 part/models.py:4221
+#: part/models.py:4279 part/models.py:4281
 msgid "Sub part must be specified"
 msgstr "يجب أن يكون Sub صنف محدد"
 
-#: part/models.py:4359
+#: part/models.py:4419
 msgid "BOM Item Substitute"
 msgstr "BOM عنصر بديل"
 
-#: part/models.py:4380
+#: part/models.py:4440
 msgid "Substitute part cannot be the same as the master part"
 msgstr "بديل صنف لا يمكن يكون ال نفس بصفته ال master صنف"
 
-#: part/models.py:4393
+#: part/models.py:4453
 msgid "Parent BOM item"
 msgstr "الأصل BOM عنصر"
 
-#: part/models.py:4401
+#: part/models.py:4461
 msgid "Substitute part"
 msgstr "بديل صنف"
 
-#: part/models.py:4417
+#: part/models.py:4477
 msgid "Part 1"
 msgstr "صنف 1"
 
-#: part/models.py:4425
+#: part/models.py:4485
 msgid "Part 2"
 msgstr "صنف 2"
 
-#: part/models.py:4426
+#: part/models.py:4486
 msgid "Select Related Part"
 msgstr "تحديد مرتبط صنف"
 
-#: part/models.py:4433
+#: part/models.py:4493
 msgid "Note for this relationship"
 msgstr "ملاحظة لـ هذا relationship"
 
-#: part/models.py:4452
+#: part/models.py:4512
 msgid "Part relationship cannot be created between a part and itself"
 msgstr "صنف relationship لا يمكن يكون تم الإنشاء بين صنف و itself"
 
-#: part/models.py:4457
+#: part/models.py:4517
 msgid "Duplicate relationship already exists"
 msgstr "نسخ relationship بالفعل موجود"
 
@@ -7844,7 +7852,7 @@ msgstr "يوفر native الدعم لـ باركودات"
 #: plugin/builtin/integration/core_notifications.py:26
 #: plugin/builtin/integration/core_notifications.py:71
 #: plugin/builtin/integration/core_notifications.py:131
-#: plugin/builtin/integration/core_wellknown.py:20
+#: plugin/builtin/integration/core_wellknown.py:22
 #: plugin/builtin/integration/currency_exchange.py:21
 #: plugin/builtin/integration/machine_types.py:17
 #: plugin/builtin/integration/part_notifications.py:21
@@ -8161,11 +8169,11 @@ msgstr "URL ذلك هو مستخدم إلى إرسال messages إلى slack cha
 msgid "Open link"
 msgstr "فتح رابط"
 
-#: plugin/builtin/integration/core_wellknown.py:18
+#: plugin/builtin/integration/core_wellknown.py:20
 msgid "InvenTree Well-Known URLs"
 msgstr ""
 
-#: plugin/builtin/integration/core_wellknown.py:19
+#: plugin/builtin/integration/core_wellknown.py:21
 msgid "Built-in well-known URLs for InvenTree"
 msgstr ""
 
