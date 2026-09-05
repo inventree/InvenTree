@@ -10,6 +10,8 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from error_report.models import Error
 from flags.state import flag_state
+from oauth2_provider.generators import generate_client_secret
+from oauth2_provider.models import Application
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 from taggit.models import Tag
@@ -19,6 +21,7 @@ import common.models as common_models
 import common.validators
 import generic.states.custom
 from importer.registry import register_importer
+from InvenTree.apps import DEFAULT_OIDC_APP_ID
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.mixins import DataImportExportSerializerMixin
@@ -1284,3 +1287,55 @@ class InstanceInfoSerializer(serializers.Serializer):
         help_text=_('Number of parameters associated with this instance'),
         read_only=True,
     )
+
+
+class OAuth2ApplicationSerializer(serializers.ModelSerializer):
+    """Serializer for OAuth2 application records."""
+
+    class Meta:
+        """Meta options for OAuth2ApplicationSerializer."""
+
+        model = Application
+        fields = [
+            'id',
+            'client_id',
+            'client_secret',
+            'name',
+            'client_type',
+            'authorization_grant_type',
+            'redirect_uris',
+            'post_logout_redirect_uris',
+            'skip_authorization',
+            'algorithm',
+            'is_builtin',
+        ]
+        read_only_fields = ['id', 'client_id', 'client_secret', 'is_builtin']
+
+    is_builtin = serializers.SerializerMethodField()
+
+    @extend_schema_field(serializers.BooleanField())
+    def get_is_builtin(self, obj: Application) -> bool:
+        """Indicate whether this OAuth2 application is the built-in InvenTree client."""
+        return obj.client_id == DEFAULT_OIDC_APP_ID
+
+    def create(self, validated_data):
+        """Preserve the plaintext client secret for the create response before hashing."""
+        raw_secret = validated_data.get('client_secret', None)
+        if raw_secret is None:
+            raw_secret = generate_client_secret()
+            validated_data['client_secret'] = raw_secret
+
+        instance = Application(**validated_data)
+        instance._raw_client_secret = raw_secret
+        instance.save()
+        return instance
+
+    def to_representation(self, instance):
+        """Expose the plaintext secret only for a newly-created OAuth app instance."""
+        data = super().to_representation(instance)
+        raw_secret = getattr(instance, '_raw_client_secret', None)
+        if raw_secret is not None:
+            data['client_secret'] = raw_secret
+        else:
+            data.pop('client_secret', None)
+        return data
