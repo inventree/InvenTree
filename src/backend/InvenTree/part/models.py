@@ -2069,11 +2069,15 @@ class Part(
         """Return the number of part BOMs that this part appears in."""
         return len(self.get_used_in())
 
-    def get_bom_hash(self) -> str:
+    def get_bom_hash(self, include_part_names: bool = False) -> str:
         """Return a checksum hash for the BOM for this part.
 
         Used to determine if the BOM has changed (and needs to be signed off!)
         The hash is calculated by hashing each line item in the BOM. Returns a string representation of a hash object which can be compared with a stored value
+
+        Arguments:
+            include_part_names: If True, include the part names in the hash calculation (default = False, legacy support).
+
         """
         result_hash = hashlib.md5(str(self.id).encode())
 
@@ -2088,7 +2092,9 @@ class Part(
         )
 
         for item in bom_items:
-            result_hash.update(str(item.get_item_hash()).encode())
+            result_hash.update(
+                str(item.get_item_hash(include_part_names=include_part_names)).encode()
+            )
 
         return str(result_hash.digest())
 
@@ -2106,7 +2112,11 @@ class Part(
             # If there is no BOM checksum, then the BOM is not valid
             return False
 
-        return self.get_bom_hash() == self.bom_checksum
+        # Fallback to legacy BOM hash if the primary calculation does not match
+        return (
+            self.get_bom_hash() == self.bom_checksum
+            or self.get_bom_hash(include_part_names=True) == self.bom_checksum
+        )
 
     @transaction.atomic
     def validate_bom(self, user, valid: bool = True):
@@ -4089,12 +4099,20 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             'allow_variants',
         ]
 
-    def get_item_hash(self) -> str:
-        """Calculate the checksum hash of this BOM line item."""
+    def get_item_hash(self, include_part_names: bool = False) -> str:
+        """Calculate the checksum hash of this BOM line item.
+
+        Arguments:
+            include_part_names: If True, include the names of the parts in the hash calculation (default = False, legacy support)
+        """
         # Seed the hash with the ID of this BOM item
         result_hash = hashlib.md5(b'')
 
         for field in self.hash_fields():
+            # Skip the str representation of the parts unless explicitly requested
+            if not include_part_names and field in ['part', 'sub_part']:
+                continue
+
             # Get the value of the field
             value = getattr(self, field, None)
 
@@ -4150,7 +4168,11 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         if len(self.checksum) == 0:
             return False
 
-        return self.get_item_hash() == self.checksum
+        # Fallback to legacy item hash if the primary calculation does not match
+        return (
+            self.get_item_hash() == self.checksum
+            or self.get_item_hash(include_part_names=True) == self.checksum
+        )
 
     @property
     def is_consumable(self) -> bool:
