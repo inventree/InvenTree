@@ -1360,12 +1360,13 @@ def validate_import_metadata(
         'verbose': 'Print verbose output from management commands',
         'bulk': 'Use the faster bulkloaddata command instead of loaddata (default = False)',
         'ignore_conflicts': 'Skip records that violate a unique constraint, instead of raising an error (requires --bulk, default = False)',
-        'rebuild_models': 'Rebuild database models after import (default = True)',
-        'rebuild_thumbnails': 'Rebuild image thumbnails after import (default = True)',
+        'rebuild_trees': 'Rebuild MPTT tree structures after import (default = True)',
+        'rebuild_images': 'Rebuild image thumbnails after import (default = True)',
     },
     pre=[wait],
     post=[],
 )
+@state_logger
 def import_records(
     c,
     filename='data.json',
@@ -1377,8 +1378,8 @@ def import_records(
     verbose: bool = False,
     bulk: bool = False,
     ignore_conflicts: bool = False,
-    rebuild_models: bool = True,
-    rebuild_thumbnails: bool = True,
+    rebuild_trees: bool = True,
+    rebuild_images: bool = True,
 ):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
@@ -1479,9 +1480,7 @@ def import_records(
                 entry['fields']['user_permissions'] = []
 
             # Handle certain model types separately, to ensure they are loaded in the correct order
-            if model.startswith('auth.'):
-                auth_data.append(entry)
-            if model.startswith('users.'):
+            if model.startswith(('auth.', 'users.')):
                 auth_data.append(entry)
             elif model.startswith('common.'):
                 common_data.append(entry)
@@ -1517,10 +1516,10 @@ def import_records(
 
     load_data('remaining', all_data, excludes=content_excludes(allow_auth=False))
 
-    if rebuild_models:
+    if rebuild_trees:
         rebuild_models(c)
 
-    if rebuild_thumbnails:
+    if rebuild_images:
         rebuild_thumbnails(c)
 
     success('Data import completed')
