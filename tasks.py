@@ -1208,6 +1208,7 @@ def update(
         'verbose': 'Print verbose output from management commands',
     }
 )
+@state_logger
 def export_records(
     c,
     filename='data.json',
