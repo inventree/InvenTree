@@ -1205,6 +1205,7 @@ def update(
         'exclude_plugins': 'Exclude plugin data from the output file (default = False)',
         'include_sso': 'Include SSO token data in the output file (default = False)',
         'include_session': 'Include user session data in the output file (default = False)',
+        'prettify': 'Pretty-print the output file with indentation (default = False)',
         'verbose': 'Print verbose output from management commands',
     }
 )
@@ -1219,6 +1220,7 @@ def export_records(
     exclude_plugins: bool = False,
     include_sso: bool = False,
     include_session: bool = False,
+    prettify: bool = False,
     verbose: bool = False,
 ):
     """Export all database records to a file."""
@@ -1244,7 +1246,10 @@ def export_records(
     with tempfile.NamedTemporaryFile(
         suffix='.json', encoding='utf-8', mode='w+t', delete=True
     ) as tmpfile:
-        cmd = f"dumpdata --natural-foreign --indent 2 --output '{tmpfile.name}' {excludes}"
+        cmd = f"dumpdata --natural-foreign --output '{tmpfile.name}' {excludes}"
+
+        if prettify:
+            cmd += ' --indent 2'
 
         # Dump data to temporary file
         manage(c, cmd, pty=True, verbose=verbose)
@@ -1259,7 +1264,7 @@ def export_records(
             'metadata': True,
             'comment': 'This file contains a dump of the InvenTree database',
             'exported_at': datetime.datetime.now().isoformat(),
-            'exported_at_utc': datetime.datetime.utcnow().isoformat(),
+            'exported_at_utc': datetime.datetime.now(datetime.UTC).isoformat(),
             'source_version': get_inventree_version(),
             'api_version': get_inventree_api_version(),
             'django_version': get_django_version(),
@@ -1288,7 +1293,7 @@ def export_records(
 
     # Write the processed data to file
     with open(target, 'w', encoding='utf-8') as f_out:
-        f_out.write(json.dumps(data_out, indent=2))
+        f_out.write(json.dumps(data_out, indent=2 if prettify else None))
 
     success('Data export completed')
 
