@@ -205,6 +205,11 @@ function SSOManagementPanel() {
   const { getHost } = useLocalState();
   const table = useTable('sso-applications', { idAccessor: 'id' });
   const [oidcCallback, setOidcCallback] = useState<string | null>(null);
+  const [samlUrls, setSamlUrls] = useState<{
+    acs: string;
+    sls: string;
+    metadata: string;
+  } | null>(null);
   const [selectedSsoApplication, setSelectedSsoApplication] = useState<
     number | undefined
   >(undefined);
@@ -274,6 +279,116 @@ function SSOManagementPanel() {
           getHost()
         ).toString()
       );
+    }
+  });
+
+  const newSamlSsoApplication = useCreateApiFormModal({
+    url: ApiEndpoints.sso_list,
+    title: t`Add SAML SSO Application`,
+    table: table,
+    fields: {
+      provider: {
+        hidden: true,
+        value: 'saml'
+      },
+      name: {
+        label: t`Name`,
+        description: t`Display name for this SAML identity provider`
+      },
+      provider_id: {
+        required: true,
+        label: t`Provider ID`,
+        description: t`Unique provider identifier, normally the IdP entity ID`
+      },
+      client_id: {
+        required: true,
+        label: t`Organization Slug`,
+        description: t`URL-safe identifier used in SAML login and metadata URLs`
+      },
+      idp: {
+        field_type: 'nested object',
+        label: t`Identity Provider Settings`,
+        children: {
+          entity_id: {
+            field_type: 'string',
+            required: true,
+            label: t`IdP Entity ID`,
+            description: t`Entity ID of the SAML identity provider`
+          },
+          metadata_url: {
+            field_type: 'url',
+            label: t`IdP Metadata URL`,
+            description: t`Use this or provide the inline IdP settings below`
+          },
+          sso_url: {
+            field_type: 'url',
+            label: t`IdP SSO URL`,
+            description: t`Inline IdP single sign-on URL`
+          },
+          slo_url: {
+            field_type: 'url',
+            label: t`IdP SLO URL`,
+            description: t`Inline IdP single logout URL`
+          },
+          x509cert: {
+            field_type: 'string',
+            label: t`IdP X.509 Certificate`,
+            description: t`Inline IdP signing certificate`
+          }
+        }
+      },
+      sp: {
+        field_type: 'nested object',
+        label: t`Service Provider Settings`,
+        children: {
+          entity_id: {
+            field_type: 'string',
+            label: t`SP Entity ID`,
+            description: t`Optional service provider entity ID`
+          }
+        }
+      },
+      account: {
+        field_type: 'nested object',
+        label: t`Account Mapping`,
+        children: {
+          attribute_mapping: {
+            field_type: 'json',
+            label: t`Attribute Mapping`,
+            description: t`Map SAML attributes to uid, email, and email_verified`
+          },
+          use_nameid_for_email: {
+            field_type: 'boolean',
+            label: t`Use NameID for Email`,
+            description: t`Use the SAML NameID value as the user's email address`
+          }
+        }
+      }
+    },
+    processFormData: (data) => {
+      const { idp, sp, account, ...applicationData } = data;
+
+      return {
+        ...applicationData,
+        settings: {
+          ...account,
+          idp,
+          sp
+        }
+      };
+    },
+    onFormSuccess: (data) => {
+      const baseUrl = getHost();
+      const organization = data.client_id;
+
+      setSamlUrls({
+        acs: new URL(`/accounts/saml/${organization}/acs/`, baseUrl).toString(),
+        sls: new URL(`/accounts/saml/${organization}/sls/`, baseUrl).toString(),
+        metadata: new URL(
+          `/accounts/saml/${organization}/metadata/`,
+          baseUrl
+        ).toString()
+      });
     }
   });
 
@@ -362,9 +477,16 @@ function SSOManagementPanel() {
         onClick={() => newOidcSsoApplication.open()}
       >
         <Trans>Add OIDC App</Trans>
+      </Button>,
+      <Button
+        key={'add-saml-sso-application'}
+        leftSection={<IconPlus size={16} />}
+        onClick={() => newSamlSsoApplication.open()}
+      >
+        <Trans>Add SAML App</Trans>
       </Button>
     ],
-    [newGenericSsoApplication, newOidcSsoApplication]
+    [newGenericSsoApplication, newOidcSsoApplication, newSamlSsoApplication]
   );
 
   return (
@@ -398,7 +520,28 @@ function SSOManagementPanel() {
           </Group>
         </Stack>
       </Modal>
+      <Modal
+        opened={samlUrls !== null}
+        onClose={() => setSamlUrls(null)}
+        title={<StylishText size='xl'>{t`SAML Service URLs`}</StylishText>}
+        centered
+      >
+        <Stack gap='sm'>
+          <Text>{t`Register these URLs with your SAML identity provider.`}</Text>
+          <Table
+            data={{
+              head: [<Trans>Endpoint</Trans>, <Trans>URL</Trans>],
+              body: [
+                [<Trans>ACS</Trans>, samlUrls?.acs],
+                [<Trans>SLS</Trans>, samlUrls?.sls],
+                [<Trans>Metadata</Trans>, samlUrls?.metadata]
+              ]
+            }}
+          />
+        </Stack>
+      </Modal>
       {newOidcSsoApplication.modal}
+      {newSamlSsoApplication.modal}
       {editSsoApplication.modal}
       {deleteSsoApplication.modal}
       <InvenTreeTable

@@ -98,6 +98,59 @@ class SocialAppAPITests(InvenTreeAPITestCase):
         self.assertFalse(invalid.is_valid())
         self.assertIn('provider', invalid.errors)
 
+    def test_saml_idp_configuration(self):
+        """SAML apps require metadata or a complete inline IdP configuration."""
+        from common.api import SocialAppSerializer
+
+        common = {
+            'name': 'SAML App',
+            'provider': 'saml',
+            'provider_id': 'saml-provider',
+            'client_id': 'saml-org',
+        }
+
+        metadata = SocialAppSerializer(
+            data={
+                **common,
+                'settings': {
+                    'idp': {
+                        'entity_id': 'https://idp.example.com',
+                        'metadata_url': 'https://idp.example.com/metadata',
+                    }
+                },
+            }
+        )
+        self.assertTrue(metadata.is_valid(), metadata.errors)
+
+        inline = SocialAppSerializer(
+            data={
+                **common,
+                'settings': {
+                    'idp': {
+                        'entity_id': 'https://idp.example.com',
+                        'sso_url': 'https://idp.example.com/sso',
+                        'slo_url': 'https://idp.example.com/slo',
+                        'x509cert': 'certificate',
+                    }
+                },
+            }
+        )
+        self.assertTrue(inline.is_valid(), inline.errors)
+
+        incomplete = SocialAppSerializer(
+            data={
+                **common,
+                'settings': {
+                    'idp': {
+                        'entity_id': 'https://idp.example.com',
+                        'sso_url': 'https://idp.example.com/sso',
+                    }
+                },
+            }
+        )
+        self.assertFalse(incomplete.is_valid())
+        self.assertIn('settings', incomplete.errors)
+
 
 class ParameterAPITests(InvenTreeAPITestCase):
     """Tests for the Parameter API."""

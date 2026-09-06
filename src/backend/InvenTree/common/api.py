@@ -1824,6 +1824,22 @@ class SocialAppSerializer(serializers.ModelSerializer):
                 'provider': _('A SocialApp with this provider already exists')
             })
 
+        if provider == 'saml':
+            settings = data.get('settings') or {}
+            idp = settings.get('idp') or {}
+            has_metadata = bool(idp.get('metadata_url'))
+            has_inline_metadata = all(
+                idp.get(field) for field in ('sso_url', 'slo_url', 'x509cert')
+            )
+
+            if not has_metadata and not has_inline_metadata:
+                raise serializers.ValidationError({
+                    'settings': _(
+                        'Provide an IdP metadata URL, or configure the IdP '
+                        'SSO URL, SLO URL, and X.509 certificate.'
+                    )
+                })
+
         return data
 
 
