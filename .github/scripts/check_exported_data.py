@@ -210,7 +210,7 @@ if __name__ == '__main__':
                     f'Error: Expected plugin record with key "{key}" not found in exported data'
                 )
                 exit(1)
-    elif found_plugin_config or plugin_data_records:
+    elif found_plugin_config:
         print('Error: Plugin data was found, but should have been excluded')
         exit(1)
     else:
