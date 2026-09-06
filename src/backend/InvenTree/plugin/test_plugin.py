@@ -853,6 +853,56 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
         # Test for the 'base' mixin - we expect that this returns "all" plugins
         base = registry.with_mixin(PluginMixinEnum.BASE, active=None, builtin=None)
+
+        if len(base) != N_CONFIG:
+            # INSTRUMENTATION (temporary): pinpoint exactly which plugin(s) cause the
+            # mismatch, and whether it's a missing registry entry, a missing
+            # PluginConfig, or a loaded plugin that fails the mixin check.
+            db_keys = set(PluginConfig.objects.values_list('key', flat=True))
+            registry_keys = set(registry.plugins.keys())
+            matched_keys = {p.slug for p in base}
+
+            print(f'INSTRUMENTATION N_CONFIG={N_CONFIG} len(base)={len(base)}')
+            print(f'INSTRUMENTATION db_keys ({len(db_keys)}) = {sorted(db_keys)}')
+            print(
+                f'INSTRUMENTATION registry_keys ({len(registry_keys)}) = {sorted(registry_keys)}'
+            )
+            print(
+                f'INSTRUMENTATION matched_keys ({len(matched_keys)}) = {sorted(matched_keys)}'
+            )
+            print(
+                'INSTRUMENTATION db_keys - registry_keys (config exists, plugin not loaded) = '
+                f'{sorted(db_keys - registry_keys)}'
+            )
+            print(
+                'INSTRUMENTATION registry_keys - db_keys (plugin loaded, no config) = '
+                f'{sorted(registry_keys - db_keys)}'
+            )
+
+            loaded_but_unmatched = (db_keys & registry_keys) - matched_keys
+            print(
+                'INSTRUMENTATION loaded_but_unmatched (config + registry entry exist, '
+                f'excluded from base) = {sorted(loaded_but_unmatched)}'
+            )
+
+            for slug in loaded_but_unmatched:
+                plugin = registry.plugins.get(slug)
+                cfg = registry.get_plugin_config(slug)
+                try:
+                    mixin_result = f'mixin_enabled(base)={plugin.mixin_enabled("base")}'
+                except Exception as exc:
+                    mixin_result = f'mixin_enabled(base) raised {exc!r}'
+                print(
+                    f'INSTRUMENTATION slug={slug!r} plugin_class={type(plugin)!r} '
+                    f'is_package={getattr(plugin, "is_package", None)!r} '
+                    f'package_name={getattr(plugin, "package_name", None)!r} '
+                    f'cfg_active={cfg.active if cfg else None!r} '
+                    f'cfg_builtin={cfg.is_builtin() if cfg else None!r} '
+                    f'{mixin_result}'
+                )
+
+            print(f'INSTRUMENTATION registry.errors = {dict(registry.errors)!r}')
+
         self.assertEqual(len(base), N_CONFIG, 'Base mixin does not return all plugins')
 
         # Next, fetch only "active" plugins

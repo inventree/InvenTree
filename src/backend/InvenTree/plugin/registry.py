@@ -912,6 +912,21 @@ class PluginsRegistry:
                 except Exception as error:
                     # Handle the error, log it and try again
                     if attempts == 0:
+                        # INSTRUMENTATION (temporary): handle_error(..., do_raise=True)
+                        # below raises, and that exception is only caught much higher
+                        # up (in _load_plugins' `except IntegrationPluginError`) with
+                        # no further logging - so nothing normally indicates which
+                        # plugin failed, or that every plugin after it in
+                        # self.plugin_modules is silently skipped for this pass.
+                        logger.warning(
+                            'INSTRUMENTATION: plugin %r failed to initialize after '
+                            '%s attempt(s): %r - plugins after this one in '
+                            'self.plugin_modules will not be loaded this pass',
+                            plg,
+                            settings.PLUGIN_RETRY,
+                            error,
+                        )
+
                         handle_error(error, log_name='init_plugins', do_raise=True)
 
                         logger.exception(
