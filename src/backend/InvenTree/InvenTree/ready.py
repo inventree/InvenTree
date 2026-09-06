@@ -271,7 +271,6 @@ def canAppAccessDatabase(
         'compilemessages',
         'createsuperuser',
         'collectstatic',
-        'list_apps',
         'makemessages',
         'spectactular',
         'wait_for_db',
@@ -286,7 +285,7 @@ def canAppAccessDatabase(
         excluded_commands.append('test')
 
     if not allow_plugins:
-        excluded_commands.extend(['collectplugins'])
+        excluded_commands.extend(['collectplugins', 'list_apps'])
 
     return all(cmd not in sys.argv for cmd in excluded_commands)
 
