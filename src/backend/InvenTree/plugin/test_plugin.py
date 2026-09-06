@@ -282,6 +282,16 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
             self.assertEqual(plg.slug, 'simple')
             self.assertEqual(plg.human_name, 'SimplePlugin')
 
+        # Restore the registry to its normal state. self.plugin_modules was just
+        # collected with INVENTREE_PLUGIN_TEST_DIR pointing at `directory` - without
+        # this, every subsequent reload for the rest of the test run keeps trying to
+        # load 'simple' (and friends) from a directory that may since have been
+        # deleted (see test_folder_loading), silently dropping them from
+        # registry.plugins the next time anything reloads the registry - while their
+        # PluginConfig rows (created/activated above) linger on, since they aren't
+        # tied to this directory at all.
+        registry.reload_plugins(full_reload=True, collect=True)
+
     def test_custom_loading(self):
         """Test if data in custom dir is loaded correctly."""
         test_dir = Path('plugin_test_dir')
@@ -316,6 +326,14 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
     @override_settings(PLUGIN_TESTING_SETUP=True)
     def test_package_loading(self):
         """Test that package distributed plugins work."""
+        # Restore the registry to its normal state once this test finishes -
+        # otherwise self.plugin_modules keeps trying to load 'zapier' from entry
+        # points for the rest of the test run, well after PLUGIN_TESTING_SETUP
+        # has reverted to False, silently dropping it from registry.plugins the
+        # next time anything reloads the registry - while its PluginConfig row
+        # lingers on (see run_package_test for the same pattern).
+        self.addCleanup(registry.reload_plugins, full_reload=True, collect=True)
+
         # Install sample package
         subprocess.check_output(['pip', 'install', 'inventree-zapier'])
 
@@ -340,6 +358,11 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         with mock.patch.dict(os.environ, {'INVENTREE_PLUGIN_TEST_DIR': brokenDir}):
             # Reload to rediscover plugins
             registry.reload_plugins(full_reload=True, collect=True)
+
+        # Restore the registry to its normal state - otherwise self.plugin_modules
+        # keeps the (permanently broken) plugins from brokenDir for the rest of the
+        # test run, and every subsequent reload re-attempts (and fails) to load them.
+        registry.reload_plugins(full_reload=True, collect=True)
 
         self.assertEqual(len(registry.errors), 3)
 
