@@ -4287,6 +4287,9 @@ class TransferOrderAllocation(models.Model):
 
 def _touch_order_updated_at(instance):
     """Bump updated_at on the parent order without triggering a full save."""
+    if InvenTree.ready.isRunningMigrations() or InvenTree.ready.isImportingData():
+        # Do not touch the order during migrations or data import
+        return
     if not InvenTree.ready.canAppAccessDatabase(allow_test=True):
         return
     instance.order.__class__.objects.filter(pk=instance.order_id).update(
