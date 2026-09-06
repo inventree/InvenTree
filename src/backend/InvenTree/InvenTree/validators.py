@@ -115,7 +115,7 @@ def invalid_site_url_hint(site_url: str) -> str:
 
     if '.' not in hostname:
         return (
-            f" '{hostname}' has no top-level domain. InvenTree requires a fully "
+            f"INVE-E17: Top Level Domain Required.\ni'{hostname}' has no top-level domain. InvenTree requires a fully "
             "qualified hostname (e.g. 'warehouse.local'), an IP address, or "
             "'localhost' - a bare hostname is rejected by Django's URL validator."
         )
