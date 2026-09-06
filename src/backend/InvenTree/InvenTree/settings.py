@@ -28,6 +28,7 @@ from InvenTree.cache import get_cache_config, is_global_cache_enabled
 from InvenTree.config import get_boolean_setting, get_oidc_private_key, get_setting
 from InvenTree.ready import isInMainThread, isRunningBackup
 from InvenTree.sentry import default_sentry_dsn, init_sentry
+from InvenTree.validators import invalid_site_url_hint
 from InvenTree.version import checkMinPythonVersion, inventreeCommitHash
 from users.oauth2_scopes import oauth2_scopes
 
@@ -771,7 +772,7 @@ if SITE_URL:
         validator = URLValidator()
         validator(SITE_URL)
     except Exception:
-        msg = f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start."
+        msg = f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start.{invalid_site_url_hint(SITE_URL)}"
         logger.error(msg)
         print(msg)
         sys.exit(-1)
