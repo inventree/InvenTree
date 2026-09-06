@@ -1478,10 +1478,12 @@ def import_records(
 
         if model := entry.get('model', None):
             # Clear out any permissions specified for a group
+            # (these are regenerated after import)
             if model == 'auth.group':
                 entry['fields']['permissions'] = []
 
             # Clear out any permissions specified for a user
+            # (these are regenerated after import)
             if model == 'auth.user':
                 entry['fields']['user_permissions'] = []
 

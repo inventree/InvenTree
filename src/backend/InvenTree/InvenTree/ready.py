@@ -271,6 +271,7 @@ def canAppAccessDatabase(
         'compilemessages',
         'createsuperuser',
         'collectstatic',
+        'list_apps',
         'makemessages',
         'spectactular',
         'wait_for_db',
