@@ -123,5 +123,5 @@ jobs:
           # Ensure that the 'bulk' import process works as expected
           invoke import-records -c -f ${{ env.DATA_FILE }} --strict --bulk
           cd src/backend/InvenTree && python manage.py check_dummy_data
-          invoke export-records -o -f ${{ env.DATA_FILE }}
+          invoke export-records -o -f ${{ env.DATA_FILE }} --prettify
           python .github/scripts/check_exported_data.py ${{ env.DATA_FILE }}
