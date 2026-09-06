@@ -1465,7 +1465,7 @@ def import_records(
 
         # A set of content types to exclude from the import process
         if excludes:
-            cmd += f' -i {excludes}'
+            cmd += f' {excludes}'
 
         manage(c, cmd, pty=True, verbose=verbose)
 

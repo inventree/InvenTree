@@ -188,3 +188,89 @@ jobs:
           python .github/scripts/check_exported_data.py ${{ env.DATA_FILE }} --exclude-plugins \
             --check-email exclude --check-tokens exclude --check-sso exclude \
             --check-session exclude --check-permissions exclude
+
+  plugin-absent:
+    # Ensure that importing data referencing a plugin's own models degrades
+    # gracefully (skipping just those records) when that plugin isn't
+    # installed on the target - and fails loudly without --ignore-nonexistent.
+    # See docs/docs/start/migrate.md's "Importing Plugin Data" section,
+    # condition 1 ("the plugin code must be present in the new installation").
+    #
+    # Note: --strict is deliberately *not* used for the imports below,
+    # as the source metadata's installed_apps list includes the plugin.
+    runs-on: ubuntu-latest
+    needs: paths-filter
+    if: needs.paths-filter.outputs.server == 'true' || contains(github.event.pull_request.labels.*.name, 'full-run')
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: inventree
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          apt-dependency: gettext poppler-utils libpq-dev
+          pip-dependency: psycopg
+          update: true
+          static: false
+      - name: Setup Postgres Database
+        run: |
+          invoke migrate
+          invoke dev.setup-test -i
+      - name: Create Plugin Data
+        run: |
+          pip install -U inventree-dummy-app-plugin==0.1.0
+          invoke migrate
+          cd src/backend/InvenTree && python manage.py create_dummy_data
+      - name: Export Postgres Dataset (plugin installed)
+        run: |
+          invoke export-records -o -f ${{ env.DATA_FILE }}
+      - name: Uninstall Plugin
+        run: |
+          pip uninstall -y inventree-dummy-app-plugin
+      - name: Update Environment Variables for Sqlite
+        run: |
+          echo "INVENTREE_DB_ENGINE=sqlite" >> $GITHUB_ENV
+          echo "INVENTREE_DB_NAME=/home/runner/work/InvenTree/test_inventree_db.sqlite3" >> $GITHUB_ENV
+      - name: Setup Sqlite Database (plugin not installed)
+        run: |
+          invoke migrate
+          test -f /home/runner/work/InvenTree/test_inventree_db.sqlite3 || (echo "Sqlite database not created" && exit 1)
+      - name: Import Without --ignore-nonexistent Should Fail
+        run: |
+          if invoke import-records -c -f ${{ env.DATA_FILE }}; then
+            echo "ERROR: import-records succeeded without --ignore-nonexistent, but the plugin is not installed on this target - it should have failed"
+            exit 1
+          fi
+          echo "Confirmed: import correctly failed without --ignore-nonexistent"
+      - name: Import With --ignore-nonexistent Should Succeed
+        run: |
+          invoke import-records -c -f ${{ env.DATA_FILE }} --ignore-nonexistent
+          cd src/backend/InvenTree
+          python manage.py shell -c "
+          from part.models import Part
+          count = Part.objects.count()
+          assert count > 0, 'Expected core Part data to be imported'
+          print(f'Confirmed {count} Part record(s) imported despite the missing plugin')
+          "
+      - name: Bulk Import With --ignore-nonexistent Should Also Succeed
+        run: |
+          invoke import-records -c -f ${{ env.DATA_FILE }} --ignore-nonexistent --bulk
+          cd src/backend/InvenTree
+          python manage.py shell -c "
+          from part.models import Part
+          count = Part.objects.count()
+          assert count > 0, 'Expected core Part data to be imported'
+          print(f'Confirmed {count} Part record(s) imported despite the missing plugin (bulk)')
+          "
