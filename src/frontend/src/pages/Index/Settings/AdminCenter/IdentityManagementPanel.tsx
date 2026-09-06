@@ -554,6 +554,7 @@ function SSOManagementPanel() {
           enableSelection: false,
           enablePagination: true,
           enableRefresh: true,
+          tableActionsFullWidth: true,
           rowActions: rowActions,
           tableActions: tableActions
         }}
