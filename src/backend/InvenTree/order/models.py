@@ -899,7 +899,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         target=PurchaseOrderStatus.COMPLETE,
         event=PurchaseOrderEvents.COMPLETED,
     )
-    def complete_order(self):
+    def complete_order(self, **kwargs):
         """Transition this PurchaseOrder to COMPLETE status.
 
         The order must currently be PLACED.

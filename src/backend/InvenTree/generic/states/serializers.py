@@ -39,3 +39,14 @@ class GenericStateClassSerializer(serializers.Serializer):
     values = serializers.DictField(
         child=GenericStateValueSerializer(), label=_('Values'), required=True
     )
+
+
+class AvailableTransitionSerializer(serializers.Serializer):
+    """Listing of available transitions for a given object."""
+
+    name = serializers.CharField(read_only=True)
+    url_path = serializers.CharField(read_only=True)
+    target = serializers.CharField(read_only=True)
+    label = serializers.CharField(read_only=True)
+    blocked = serializers.BooleanField(read_only=True)
+    blocking_reason = serializers.CharField(read_only=True, allow_null=True)

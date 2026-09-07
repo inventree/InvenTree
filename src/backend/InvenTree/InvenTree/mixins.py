@@ -194,8 +194,15 @@ class OutputOptionsMixin:
     def get_serializer(self, *args, **kwargs):
         """Return serializer instance with output options applied."""
         request = getattr(self, 'request', None)
+        serializer_class = self.get_serializer_class()
 
-        if self.output_options and request:
+        # Only inject output-option flags into serializers that know how to consume them.
+        # Action-specific serializers (e.g. transition endpoints) may not accept these kwargs.
+        if (
+            self.output_options
+            and request
+            and issubclass(serializer_class, FilterableSerializerMixin)
+        ):
             params = self.request.query_params
             kwargs.update(self.output_options.format_params(params))
 
