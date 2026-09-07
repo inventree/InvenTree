@@ -1,211 +1,61 @@
-<div align="center">
-  <img src="assets/images/logo/inventree.png" alt="InvenTree logo" width="200" height="auto" />
-  <h1>InvenTree</h1>
-  <p>Open Source Inventory Management System </p>
+# 仓序 · Cangxu
 
-<!-- Badges -->
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/license/MIT)![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/inventree/inventree)[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/inventree)](https://artifacthub.io/packages/search?repo=inventree)
-![CI](https://github.com/inventree/inventree/actions/workflows/qc_checks.yaml/badge.svg)
-[![Documentation Status](https://readthedocs.org/projects/inventree/badge/?version=latest)](https://inventree.readthedocs.io/en/latest/?badge=latest)
-![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker.yaml/badge.svg)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/9bbb2101-0a4d-41e7-ad56-b63fb6053094/deploy-status)](https://app.netlify.com/sites/inventree/deploys)
+面向智算服务器制造的仓储、装配与追溯系统，基于 [InvenTree](https://github.com/inventree/InvenTree) 开发。
 
-[![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7179/badge)](https://bestpractices.coreinfrastructure.org/projects/7179)
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/inventree/InvenTree/badge)](https://securityscorecards.dev/viewer/?uri=github.com/inventree/InvenTree)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=inventree_InvenTree&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=inventree_InvenTree)
+[改造规划](docs/cangxu/ROADMAP.zh-CN.md) · [行业数据模型设计](docs/cangxu/DOMAIN-MODEL.zh-CN.md) · [上游 README](README.upstream.md) · [MIT 许可证](LICENSE)
 
-[![codecov](https://codecov.io/gh/inventree/InvenTree/graph/badge.svg?token=9DZRGUUV7B)](https://codecov.io/gh/inventree/InvenTree)
-[![Crowdin](https://badges.crowdin.net/inventree/localized.svg)](https://crowdin.com/project/inventree)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/inventree/inventree)
-[![Docker Pulls](https://img.shields.io/docker/pulls/inventree/inventree)](https://hub.docker.com/r/inventree/inventree)
+## 当前状态
 
-[![GitHub Org's stars](https://img.shields.io/github/stars/inventree?style=social)](https://github.com/inventree/InvenTree/)
-[![Twitter Follow](https://img.shields.io/twitter/follow/inventreedb?style=social)](https://twitter.com/inventreedb)
-[![Subreddit subscribers](https://img.shields.io/reddit/subreddit-subscribers/inventree?style=social)](https://www.reddit.com/r/InvenTree/)
-[![Mastdon](https://img.shields.io/badge/dynamic/json?label=Mastodon&query=followers_count&url=https%3A%2F%2Fchaos.social%2Fapi%2Fv1%2Faccounts%2Flookup%3Facct=InvenTree&logo=mastodon&style=social)](https://chaos.social/@InvenTree)
+仓序目前处于 fork 与设计阶段。本次新增中文项目说明和智算服务器行业改造规划，尚未实现行业扩展或 Pi 智能体，也未完成工厂生产验证。应用内名称和图标、包名及镜像仍沿用 InvenTree；本仓库暂无仓序专用安装包或镜像。
 
-<h4>
-    <a href="https://demo.inventree.org/">View Demo</a>
-  <span> · </span>
-    <a href="https://docs.inventree.org/en/latest/">Documentation</a>
-  <span> · </span>
-    <a href="https://github.com/inventree/InvenTree/issues/new?template=bug_report.md&title=[BUG]">Report Bug</a>
-  <span> · </span>
-    <a href="https://github.com/inventree/InvenTree/issues/new?template=feature_request.md&title=[FR]">Request Feature</a>
-  </h4>
-</div>
+已核对的上游基线：`9bc5054d8`（2026-09-07，`master`）。这是开发分支；生产试点前需要选择并验证稳定版本。
 
-<!-- About the Project -->
-## :star2: About the Project
+## 可复用的上游能力
 
-InvenTree is an open-source Inventory Management System which provides powerful low-level stock control and part tracking. The core of the InvenTree system is a Python/Django database backend which provides an admin interface (web-based) and a REST API for interaction with external interfaces and applications. A powerful plugin system provides support for custom applications and extensions.
+- 物料分类、规格参数、供应商、采购收货和库位管理。
+- 批次与序列号库存、BOM、装配工单、替代物料和单机配件关联。
+- 配件安装与拆回仓库，保留相关库存操作记录。
+- 单机测试结果、附件、测试站与测试时间；可配置必测项目通过后才能完工。
+- 盘点及库存调整、销售与退货相关功能。
+- React Web 界面、简体/繁体中文翻译、REST API 和插件机制。
 
-Check out [our website](https://inventree.org) for more details.
+上述能力是上游源码确认结果，现场工作流仍需验收。阻止未通过必测项目的成品完工、退货界面等功能需要检查并启用相应配置。
 
-<!-- Roadmap -->
-### :compass: Roadmap
+## 智算服务器改造范围（规划）
 
-Want to see what we are working on? Check out the [roadmap tag](https://github.com/inventree/InvenTree/issues?q=is%3Aopen+is%3Aissue+label%3Aroadmap) and [horizon milestone](https://github.com/inventree/InvenTree/milestone/42).
+| 领域 | 计划覆盖 |
+|---|---|
+| GPU 与整机 | GPU 型号/显存/形态、加速底板、单机 SN、GPU UUID、装机位置及配置版本 |
+| PCIe | CPU/Root Complex、PCIe Switch、Root/Upstream/Downstream Port、Riser、Retimer、插槽与链路 |
+| GPU 互联 | NVLink/NVSwitch 等互联类型、端口、拓扑和检测结果，按实际平台建模 |
+| 网络 | NIC/HCA/DPU、以太网/InfiniBand 交换机、端口、光模块及网络互联 |
+| 线缆 | GPU 供电线束、内部 PCIe 高速线、互联线、DAC/AOC/有源铜缆、光纤及 breakout 分支 |
+| 配套部件 | CPU、DIMM、NVMe/背板、PSU/PDB、风扇/散热器、液冷部件、机箱/机柜与附件 |
+| 生产质量 | 槽位和端点核验、工程批准的兼容规则、测试证据、换件复测、交付配置快照 |
+| 智能体 | Pi + 模型服务、知识检索、实时库存查询、缺料分析和业务草稿 |
 
-<!-- Integration -->
-### :hammer_and_wrench: Integration
+硬件型号、规格及兼容规则以实际供应商资料和工程签核为准。项目不绑定某一家 GPU 厂商，也不预设所有服务器采用同一种拓扑。
 
-InvenTree is designed to be **extensible**, and provides multiple options for **integration** with external applications or addition of custom plugins:
+## 实现方向
 
-* [InvenTree API](https://docs.inventree.org/en/latest/api/)
-* [Python module](https://docs.inventree.org/en/latest/api/python/)
-* [Plugin interface](https://docs.inventree.org/en/latest/plugins/)
-* [Third party tools](https://inventree.org/extend/integrate/)
+保留 InvenTree 的物料、库存和工单主数据，通过 Django 行业扩展补充槽位、端口、连接关系及配置版本。优先配置和复用原版页面，针对实际操作障碍增加界面。
 
-<!-- TechStack -->
-### :space_invader: Tech Stack
+Pi 通过受权限约束的业务工具访问系统；库存数量、预留和操作结果以业务数据库为准。向量检索用于手册、规范和故障案例，设计上优先评估 PostgreSQL + pgvector。
 
-<details>
-  <summary>Server</summary>
-  <ul>
-    <li><a href="https://www.python.org/">Python</a></li>
-    <li><a href="https://www.djangoproject.com/">Django</a></li>
-    <li><a href="https://www.django-rest-framework.org/">DRF</a></li>
-    <li><a href="https://django-q.readthedocs.io/">Django Q</a></li>
-    <li><a href="https://docs.allauth.org/">Django-Allauth</a></li>
-  </ul>
-</details>
+## 开发与试用
 
-<details>
-<summary>Database</summary>
-  <ul>
-    <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
-    <li><a href="https://www.mysql.com/">MySQL</a></li>
-    <li><a href="https://www.mariadb.org/">MariaDB</a></li>
-    <li><a href="https://www.sqlite.org/">SQLite</a></li>
-    <li><a href="https://redis.io/">Redis</a></li>
-  </ul>
-</details>
+当前源码的环境搭建、测试和贡献约定见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
-<details>
-  <summary>Client</summary>
-  <ul>
-    <li><a href="https://react.dev/">React</a></li>
-    <li><a href="https://lingui.dev/">Lingui</a></li>
-    <li><a href="https://reactrouter.com/">React Router</a></li>
-    <li><a href="https://tanstack.com/query/">TanStack Query</a></li>
-    <li><a href="https://github.com/pmndrs/zustand">Zustand</a></li>
-    <li><a href="https://mantine.dev/">Mantine</a></li>
-    <li><a href="https://icflorescu.github.io/mantine-datatable/">Mantine Data Table</a></li>
-    <li><a href="https://codemirror.net/">CodeMirror</a></li>
-  </ul>
-</details>
+- [上游安装文档](https://docs.inventree.org/en/stable/start/)
+- [上游公开演示](https://demo.inventree.org/)：演示 InvenTree 原版能力，不包含仓序规划功能。
+- [上游 API 文档](https://docs.inventree.org/en/stable/api/)
 
-<details>
-<summary>DevOps</summary>
-  <ul>
-    <li><a href="https://hub.docker.com/r/inventree/inventree">Docker</a></li>
-    <li><a href="https://crowdin.com/project/inventree">Crowdin</a></li>
-    <li><a href="https://app.codecov.io/gh/inventree/InvenTree">Codecov</a></li>
-    <li><a href="https://sonarcloud.io/project/overview?id=inventree_InvenTree">SonarCloud</a></li>
-    <li><a href="https://packager.io/gh/inventree/InvenTree">Packager.io</a></li>
-  </ul>
-</details>
+正式试点前需要准备实际 BOM、标签、扫码与打印设备、测试报告样例，并验证备份恢复、权限和并发库存操作。
 
-<!-- Getting Started -->
-## 	:toolbox: Deployment / Getting Started
+## 来源与许可
 
-There are several options to deploy InvenTree.
+仓序是 InvenTree 的独立衍生项目。感谢 InvenTree 开发者与贡献者提供的基础能力。
 
-<div align="center"><h4>
-    <a href="https://docs.inventree.org/en/latest/start/docker/">Docker</a>
-    <span> · </span>
-    <a href="https://inventree.org/digitalocean"><img src="https://www.deploytodo.com/do-btn-blue-ghost.svg" alt="Deploy to DO" width="auto" height="40" /></a>
-    <span> · </span>
-    <a href="https://docs.inventree.org/en/latest/start/install/">Bare Metal</a>
-</h4></div>
+本项目保留上游 Git 历史、原始 README 和 MIT 许可证，包括 `Copyright (c) 2017 - InvenTree Developers`。新增文档同样采用 MIT 许可证。上游名称、商标和第三方组件的权利仍归各自权利人；本项目不表示获得上游或硬件厂商背书。
 
-Single line install - read [the docs](https://docs.inventree.org/en/latest/start/installer/) for supported distros and details about the function:
-```bash
-wget -qO install.sh https://get.inventree.org && bash install.sh
-```
-
-Refer to the [getting started guide](https://docs.inventree.org/en/latest/start/install/) for a full set of installation and setup instructions.
-
-<!-- Mobile App -->
-## 	:iphone: Mobile App
-
-InvenTree is supported by a [companion mobile app](https://docs.inventree.org/en/latest/app/) which allows users access to stock control information and functionality.
-
-<div align="center"><h4>
-    <a href="https://play.google.com/store/apps/details?id=inventree.inventree_app">Android Play Store</a>
-     <span> · </span>
-    <a href="https://apps.apple.com/au/app/inventree/id1581731101#?platform=iphone">Apple App Store</a>
-</h4></div>
-
-<!-- Security -->
-## :lock: Code of Conduct & Security Policy
-
-The InvenTree project team is committed to providing a safe and welcoming environment for all users. Please read our [Code of Conduct](CODE_OF_CONDUCT.md) for more information.
-
-InvenTree is following industry best practices for security. Our security policy is included [in this repo](SECURITY.md). We provide dedicated security pages on [our documentation site](https://docs.inventree.org/en/latest/security/).
-
-<!-- Contributing -->
-## :wave: Contributing
-
-Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](https://docs.inventree.org/en/latest/develop/contributing/).
-
-<!-- Translation -->
-## :scroll: Translation
-
-Native language translation of the InvenTree web application is [community contributed via crowdin](https://crowdin.com/project/inventree). **Contributions are welcomed and encouraged**.
-
-<!-- Sponsor -->
-## :money_with_wings: Sponsor
-
-If you use InvenTree and find it to be useful, please consider [sponsoring the project](https://github.com/sponsors/inventree).
-
-<!-- Acknowledgments -->
-## :gem: Acknowledgements
-
-We want to acknowledge [PartKeepr](https://github.com/partkeepr/PartKeepr) as a valuable predecessor and inspiration.
-Find a full list of used third-party libraries in the license information dialog of your instance.
-
-## :heart: Support
-
-<p>This project is supported by the following sponsors:</p>
-
-<p align="center">
-<a href="https://github.com/MartinLoeper"><img src="https://github.com/MartinLoeper.png" width="60px" alt="Martin Löper" /></a>
-<a href="https://github.com/lippoliv"><img src="https://github.com/lippoliv.png" width="60px" alt="Oliver Lippert" /></a>
-<a href="https://github.com/lfg-seth"><img src="https://github.com/lfg-seth.png" width="60px" alt="Seth Smith" /></a>
-<a href="https://github.com/snorkrat"><img src="https://github.com/snorkrat.png" width="60px" alt="" /></a>
-<a href="https://github.com/spacequest-ltd"><img src="https://github.com/spacequest-ltd.png" width="60px" alt="SpaceQuest Ltd" /></a>
-<a href="https://github.com/appwrite"><img src="https://github.com/appwrite.png" width="60px" alt="Appwrite" /></a>
-<a href="https://github.com/PricelessToolkit"><img src="https://github.com/PricelessToolkit.png" width="60px" alt="" /></a>
-<a href="https://github.com/cabottech"><img src="https://github.com/cabottech.png" width="60px" alt="Cabot Technologies" /></a>
-<a href="https://github.com/markus-k"><img src="https://github.com/markus-k.png" width="60px" alt="Markus Kasten" /></a>
-<a href="https://github.com/jefffhaynes"><img src="https://github.com/jefffhaynes.png" width="60px" alt="Jeff Haynes" /></a>
-<a href="https://github.com/dnviti"><img src="https://github.com/dnviti.png" width="60px" alt="Daniele Viti" /></a>
-<a href="https://github.com/Islendur"><img src="https://github.com/Islendur.png" width="60px" alt="Islendur" /></a>
-<a href="https://github.com/Gibeon-NL"><img src="https://github.com/Gibeon-NL.png" width="60px" alt="Gibeon-NL" /></a>
-<a href="https://github.com/Motrac-Research-Engineering"><img src="https://github.com/Motrac-Research-Engineering.png" width="60px" alt="Motrac Research" /></a>
-<a href="https://github.com/trytuna"><img src="https://github.com/trytuna.png" width="60px" alt="Timo Scrappe" /></a>
-<a href="https://github.com/ATLAS2246"><img src="https://github.com/ATLAS2246.png" width="60px" alt="ATLAS2246" /></a>
-<a href="https://github.com/Kedarius"><img src="https://github.com/Kedarius.png" width="60px" alt="Radek Hladik" /></a>
-
-</p>
-
-<p>With ongoing resources provided by:</p>
-
-<p align="center">
-  <a href="https://depot.dev?utm_source=inventree"><img src="https://depot.dev/badges/built-with-depot.svg" alt="Built with Depot" /></a>
-  <a href="https://inventree.org/digitalocean">
-    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_horizontal_blue.svg" width="201px" alt="Servers by Digital Ocean">
-  </a>
-  <a href="https://www.netlify.com"> <img src="https://www.netlify.com/v3/img/components/netlify-color-bg.svg" alt="Deploys by Netlify" /> </a>
-  <a href="https://crowdin.com"> <img src="https://crowdin.com/images/crowdin-logo.svg" alt="Translation by Crowdin" /> </a> <br>
-  <a href="https://codspeed.io/inventree/InvenTree?utm_source=badge"><img src="https://img.shields.io/endpoint?url=https://codspeed.io/badge.json" alt="CodSpeed Badge"/></a>
-  <a href="https://flakiness.io/InvenTree/InvenTree"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fflakiness.io%2Fapi%2Fbadge%3Finput%3D%257B%2522badgeToken%2522%253A%2522badge-35mqq5Ht4uL3vGF8lR9P2D%2522%257D" alt="Flakiness Badge"/></a>
-</p>
-
-
-<!-- License -->
-## :warning: License
-
-Distributed under the [MIT](https://choosealicense.com/licenses/mit/) License. See [LICENSE.txt](https://github.com/inventree/InvenTree/blob/master/LICENSE) for more information.
+行业改造计划由本 fork 维护。向上游贡献时遵守其 [AGENTS.md](AGENTS.md) 和 [贡献规范](CONTRIBUTING.md)。
