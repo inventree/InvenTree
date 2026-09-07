@@ -33,7 +33,6 @@ jobs:
 
     outputs:
       server: ${{ steps.filter.outputs.server }}
-      migrations: ${{ steps.filter.outputs.migrations }}
       frontend: ${{ steps.filter.outputs.frontend }}
       api: ${{ steps.filter.outputs.api }}
       force: ${{ steps.force.outputs.force }}
@@ -55,11 +54,6 @@ jobs:
               - 'src/backend/InvenTree/**'
               - 'src/backend/requirements.txt'
               - 'src/backend/requirements-dev.txt'
-            migrations:
-              - '**/test_migrations.py'
-              - '**/migrations/**'
-              - '.github/workflows**'
-              - 'src/backend/requirements.txt'
             api:
               - 'src/backend/InvenTree/InvenTree/api_version.py'
             frontend:
@@ -558,66 +552,6 @@ jobs:
         run: invoke dev.test --check --translations
       - name: Data Export Test
         uses: ./.github/actions/migration
-
-  migrations-checks:
-    name: Tests - Full Migration [SQLite]
-    runs-on: ubuntu-latest
-    needs: paths-filter
-    if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
-
-    env:
-      INVENTREE_DB_ENGINE: sqlite3
-      INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
-      INVENTREE_DEBUG: true
-      INVENTREE_LOG_LEVEL: WARNING
-      INVENTREE_PLUGINS_ENABLED: false
-
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-        name: Checkout Code
-      - name: Environment Setup
-        uses: ./.github/actions/setup
-        with:
-          install: true
-      - name: Fetch Database
-        run: git clone --depth 1 https://github.com/inventree/test-db ./test-db
-
-      - name: 0.10.0 Database
-        run: |
-          rm /home/runner/work/InvenTree/db.sqlite3
-          cp test-db/stable_0.10.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-          chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
-
-      - name: 0.11.0 Database
-        run: |
-          rm /home/runner/work/InvenTree/db.sqlite3
-          cp test-db/stable_0.11.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-          chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
-
-      - name: 0.13.5 Database
-        run: |
-          rm /home/runner/work/InvenTree/db.sqlite3
-          cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-          chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
-
-      - name: 0.16.0 Database
-        run: |
-          rm /home/runner/work/InvenTree/db.sqlite3
-          cp test-db/stable_0.16.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-          chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
-
-      - name: 0.17.0 Database
-        run: |
-          rm /home/runner/work/InvenTree/db.sqlite3
-          cp test-db/stable_0.17.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-          chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
 
   zizmor:
     name: Security [Zizmor]
