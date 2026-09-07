@@ -434,12 +434,13 @@ class TestCreationDateMigration(MigratorTestCase):
         """Create StockItem entries with varied data to exercise all backfill paths."""
         import datetime
 
+        from django.conf import settings
         from django.db import connection
 
         Part = self.old_state.apps.get_model('part', 'part')
         StockItemTracking = self.old_state.apps.get_model('stock', 'stockitemtracking')
 
-        utc = datetime.timezone.utc
+        utc = datetime.timezone.utc if settings.USE_TZ else None
 
         part = Part.objects.create(
             name='Migration Test Part', level=0, tree_id=1, lft=0, rght=0
