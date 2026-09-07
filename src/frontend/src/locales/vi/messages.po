@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-31 06:50\n"
+"PO-Revision-Date: 2026-09-03 12:15\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -676,7 +676,7 @@ msgstr ""
 #: src/components/modals/LicenseModal.tsx:85
 #: src/components/nav/NavigationTree.tsx:398
 #: src/components/nav/NotificationDrawer.tsx:235
-#: src/components/nav/SearchDrawer.tsx:600
+#: src/components/nav/SearchDrawer.tsx:609
 #: src/components/settings/SettingList.tsx:158
 #: src/components/tables/InvenTreeTableHeader.tsx:164
 #: src/components/wizards/ImportPartWizard.tsx:574
@@ -1701,14 +1701,14 @@ msgstr ""
 #~ msgstr "Edit Notes"
 
 #: src/components/editors/NotesEditor.tsx:317
-msgid "Add Note Template"
-msgstr ""
-
-#: src/components/editors/NotesEditor.tsx:317
 #: src/components/editors/NotesEditor.tsx:717
 #: src/forms/PurchaseOrderForms.tsx:655
 msgid "Add Note"
 msgstr "Thêm ghi chú"
+
+#: src/components/editors/NotesEditor.tsx:317
+msgid "Add Note Template"
+msgstr ""
 
 #: src/components/editors/NotesEditor.tsx:330
 msgid "Delete Note Template"
@@ -3058,7 +3058,15 @@ msgstr ""
 msgid "There are pending database migrations."
 msgstr ""
 
-#: src/components/nav/Alerts.tsx:165
+#: src/components/nav/Alerts.tsx:155
+msgid "CORS Settings"
+msgstr ""
+
+#: src/components/nav/Alerts.tsx:157
+msgid "CORS is set to allow all origins."
+msgstr ""
+
+#: src/components/nav/Alerts.tsx:172
 msgid "Learn more about {code}"
 msgstr ""
 
@@ -3287,27 +3295,27 @@ msgstr ""
 msgid "Primary Action"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:112
+#: src/components/nav/SearchDrawer.tsx:117
 msgid "No Overview Available"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:113
+#: src/components/nav/SearchDrawer.tsx:118
 msgid "No overview available for this model type"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:131
+#: src/components/nav/SearchDrawer.tsx:136
 msgid "View all results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:146
+#: src/components/nav/SearchDrawer.tsx:151
 msgid "results"
 msgstr "kết quả"
 
-#: src/components/nav/SearchDrawer.tsx:150
+#: src/components/nav/SearchDrawer.tsx:155
 msgid "Remove search group"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:305
+#: src/components/nav/SearchDrawer.tsx:310
 #: src/pages/company/ManufacturerPartDetail.tsx:97
 #: src/pages/part/PartDetail.tsx:379
 #: src/pages/part/PartSupplierDetail.tsx:15
@@ -3315,13 +3323,13 @@ msgstr ""
 msgid "Suppliers"
 msgstr "Nhà cung cấp"
 
-#: src/components/nav/SearchDrawer.tsx:315
+#: src/components/nav/SearchDrawer.tsx:320
 #: src/pages/part/PartSupplierDetail.tsx:23
 #: src/pages/purchasing/PurchasingIndex.tsx:173
 msgid "Manufacturers"
 msgstr "Nhà sản xuất"
 
-#: src/components/nav/SearchDrawer.tsx:325
+#: src/components/nav/SearchDrawer.tsx:330
 #: src/pages/sales/SalesIndex.tsx:175
 msgid "Customers"
 msgstr "Khách hàng"
@@ -3330,41 +3338,41 @@ msgstr "Khách hàng"
 #~ msgid "No results"
 #~ msgstr "No results"
 
-#: src/components/nav/SearchDrawer.tsx:505
+#: src/components/nav/SearchDrawer.tsx:514
 msgid "Enter search text"
 msgstr "Nhập văn bản tìm kiếm"
 
-#: src/components/nav/SearchDrawer.tsx:516
+#: src/components/nav/SearchDrawer.tsx:525
 msgid "Refresh search results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:527
-#: src/components/nav/SearchDrawer.tsx:534
+#: src/components/nav/SearchDrawer.tsx:536
+#: src/components/nav/SearchDrawer.tsx:543
 msgid "Search Options"
 msgstr "Tùy chọn tìm kiếm"
 
-#: src/components/nav/SearchDrawer.tsx:537
+#: src/components/nav/SearchDrawer.tsx:546
 msgid "Whole word search"
 msgstr "Tìm phù hợp toàn bộ từ"
 
-#: src/components/nav/SearchDrawer.tsx:546
+#: src/components/nav/SearchDrawer.tsx:555
 msgid "Regex search"
 msgstr "Tìm kiếm regex"
 
-#: src/components/nav/SearchDrawer.tsx:555
+#: src/components/nav/SearchDrawer.tsx:564
 msgid "Notes search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:603
+#: src/components/nav/SearchDrawer.tsx:612
 msgid "An error occurred during search query"
 msgstr "Lỗi trong quá trình truy vấn tìm kiếm"
 
-#: src/components/nav/SearchDrawer.tsx:614
+#: src/components/nav/SearchDrawer.tsx:623
 #: src/tables/part/PartTestTemplateTable.tsx:86
 msgid "No Results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:617
+#: src/components/nav/SearchDrawer.tsx:626
 msgid "No results available for search query"
 msgstr "Không có kết quả nào được tìm thấy với truy vấn tìm kiếm"
 

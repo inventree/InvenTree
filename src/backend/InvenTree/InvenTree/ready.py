@@ -49,7 +49,7 @@ def isWaitingForDatabase():
 
 def isImportingData():
     """Returns True if the database is currently importing (or exporting) data, e.g. 'loaddata' command is performed."""
-    return any(x in sys.argv for x in ['flush', 'loaddata', 'dumpdata'])
+    return any(x in sys.argv for x in ['flush', 'loaddata', 'bulkloaddata', 'dumpdata'])
 
 
 def isRunningMigrations():
@@ -285,7 +285,7 @@ def canAppAccessDatabase(
         excluded_commands.append('test')
 
     if not allow_plugins:
-        excluded_commands.extend(['collectplugins'])
+        excluded_commands.extend(['collectplugins', 'list_apps'])
 
     return all(cmd not in sys.argv for cmd in excluded_commands)
 

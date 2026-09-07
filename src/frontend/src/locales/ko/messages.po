@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-31 06:50\n"
+"PO-Revision-Date: 2026-09-03 12:15\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -672,7 +672,7 @@ msgstr "선택 항목"
 #: src/components/modals/LicenseModal.tsx:85
 #: src/components/nav/NavigationTree.tsx:398
 #: src/components/nav/NotificationDrawer.tsx:235
-#: src/components/nav/SearchDrawer.tsx:600
+#: src/components/nav/SearchDrawer.tsx:609
 #: src/components/settings/SettingList.tsx:158
 #: src/components/tables/InvenTreeTableHeader.tsx:164
 #: src/components/wizards/ImportPartWizard.tsx:574
@@ -1697,14 +1697,14 @@ msgstr ""
 #~ msgstr "Edit Notes"
 
 #: src/components/editors/NotesEditor.tsx:317
-msgid "Add Note Template"
-msgstr ""
-
-#: src/components/editors/NotesEditor.tsx:317
 #: src/components/editors/NotesEditor.tsx:717
 #: src/forms/PurchaseOrderForms.tsx:655
 msgid "Add Note"
 msgstr "메모 추가"
+
+#: src/components/editors/NotesEditor.tsx:317
+msgid "Add Note Template"
+msgstr ""
 
 #: src/components/editors/NotesEditor.tsx:330
 msgid "Delete Note Template"
@@ -3054,7 +3054,15 @@ msgstr "데이터베이스 마이그레이션"
 msgid "There are pending database migrations."
 msgstr "대기 중인 데이터베이스 마이그레이션이 있습니다"
 
-#: src/components/nav/Alerts.tsx:165
+#: src/components/nav/Alerts.tsx:155
+msgid "CORS Settings"
+msgstr ""
+
+#: src/components/nav/Alerts.tsx:157
+msgid "CORS is set to allow all origins."
+msgstr ""
+
+#: src/components/nav/Alerts.tsx:172
 msgid "Learn more about {code}"
 msgstr "{code}에 대해 더 알아보기"
 
@@ -3283,27 +3291,27 @@ msgstr "알림을 불러오는 중 오류가 발생했습니다"
 msgid "Primary Action"
 msgstr "기본 작업"
 
-#: src/components/nav/SearchDrawer.tsx:112
+#: src/components/nav/SearchDrawer.tsx:117
 msgid "No Overview Available"
 msgstr "사용 가능한 개요 없음"
 
-#: src/components/nav/SearchDrawer.tsx:113
+#: src/components/nav/SearchDrawer.tsx:118
 msgid "No overview available for this model type"
 msgstr "이 모델 유형에는 표시할 개요가 없습니다"
 
-#: src/components/nav/SearchDrawer.tsx:131
+#: src/components/nav/SearchDrawer.tsx:136
 msgid "View all results"
 msgstr "모든 결과 보기"
 
-#: src/components/nav/SearchDrawer.tsx:146
+#: src/components/nav/SearchDrawer.tsx:151
 msgid "results"
 msgstr "결과"
 
-#: src/components/nav/SearchDrawer.tsx:150
+#: src/components/nav/SearchDrawer.tsx:155
 msgid "Remove search group"
 msgstr "검색 그룹 제거"
 
-#: src/components/nav/SearchDrawer.tsx:305
+#: src/components/nav/SearchDrawer.tsx:310
 #: src/pages/company/ManufacturerPartDetail.tsx:97
 #: src/pages/part/PartDetail.tsx:379
 #: src/pages/part/PartSupplierDetail.tsx:15
@@ -3311,13 +3319,13 @@ msgstr "검색 그룹 제거"
 msgid "Suppliers"
 msgstr "공급자"
 
-#: src/components/nav/SearchDrawer.tsx:315
+#: src/components/nav/SearchDrawer.tsx:320
 #: src/pages/part/PartSupplierDetail.tsx:23
 #: src/pages/purchasing/PurchasingIndex.tsx:173
 msgid "Manufacturers"
 msgstr "제조사"
 
-#: src/components/nav/SearchDrawer.tsx:325
+#: src/components/nav/SearchDrawer.tsx:330
 #: src/pages/sales/SalesIndex.tsx:175
 msgid "Customers"
 msgstr "고객"
@@ -3326,41 +3334,41 @@ msgstr "고객"
 #~ msgid "No results"
 #~ msgstr "No results"
 
-#: src/components/nav/SearchDrawer.tsx:505
+#: src/components/nav/SearchDrawer.tsx:514
 msgid "Enter search text"
 msgstr "검색어를 입력하세요"
 
-#: src/components/nav/SearchDrawer.tsx:516
+#: src/components/nav/SearchDrawer.tsx:525
 msgid "Refresh search results"
 msgstr "검색 결과 새로 고침"
 
-#: src/components/nav/SearchDrawer.tsx:527
-#: src/components/nav/SearchDrawer.tsx:534
+#: src/components/nav/SearchDrawer.tsx:536
+#: src/components/nav/SearchDrawer.tsx:543
 msgid "Search Options"
 msgstr "검색 옵션"
 
-#: src/components/nav/SearchDrawer.tsx:537
+#: src/components/nav/SearchDrawer.tsx:546
 msgid "Whole word search"
 msgstr "단어 전체 검색"
 
-#: src/components/nav/SearchDrawer.tsx:546
+#: src/components/nav/SearchDrawer.tsx:555
 msgid "Regex search"
 msgstr "정규식 검색"
 
-#: src/components/nav/SearchDrawer.tsx:555
+#: src/components/nav/SearchDrawer.tsx:564
 msgid "Notes search"
 msgstr "메모 검색"
 
-#: src/components/nav/SearchDrawer.tsx:603
+#: src/components/nav/SearchDrawer.tsx:612
 msgid "An error occurred during search query"
 msgstr "검색 요청 중 오류가 발생했습니다"
 
-#: src/components/nav/SearchDrawer.tsx:614
+#: src/components/nav/SearchDrawer.tsx:623
 #: src/tables/part/PartTestTemplateTable.tsx:86
 msgid "No Results"
 msgstr "결과 없음"
 
-#: src/components/nav/SearchDrawer.tsx:617
+#: src/components/nav/SearchDrawer.tsx:626
 msgid "No results available for search query"
 msgstr "검색어에 대한 결과가 없습니다"
 

@@ -98,7 +98,7 @@ class ContactList(DataExportViewMixin, ListCreateDestroyAPIView):
 
     filterset_fields = ['company']
 
-    search_fields = ['company__name', 'name']
+    search_fields = ['company__name', 'name', 'email', 'phone', 'role']
 
     ordering_fields = ['name']
 
@@ -121,6 +121,16 @@ class AddressList(DataExportViewMixin, ListCreateDestroyAPIView):
     filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = ['company']
+
+    search_fields = [
+        'company__name',
+        'title',
+        'line1',
+        'line2',
+        'postal_city',
+        'postal_code',
+        'country',
+    ]
 
     ordering_fields = ['title']
 
@@ -491,7 +501,12 @@ class SupplierPriceBreakList(
     filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['quantity', 'supplier', 'SKU', 'price']
 
-    search_fields = ['part__SKU', 'part__supplier__name']
+    search_fields = [
+        'part__SKU',
+        'part__supplier__name',
+        'part__part__name',
+        'part__part__IPN',
+    ]
 
     ordering_field_aliases = {'supplier': 'part__supplier__name', 'SKU': 'part__SKU'}
 

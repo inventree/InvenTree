@@ -58,9 +58,10 @@ jobs:
             server:
               - .github/workflows/import_export.yaml
               - .github/scripts/check_exported_data.py
+              - .github/scripts/seed_content_excludes_data.py
               - 'src/backend/**'
               - 'tasks.py'
-  test:
+  import-export:
     runs-on: ubuntu-latest
     needs: paths-filter
     if: needs.paths-filter.outputs.server == 'true' || contains(github.event.pull_request.labels.*.name, 'full-run')
@@ -112,9 +113,227 @@ jobs:
           test -f /home/runner/work/InvenTree/test_inventree_db.sqlite3 || (echo "Sqlite database not created" && exit 1)
       - name: Import Sqlite Dataset
         run: |
+          # Run two imports back-to-back to ensure that the import process is idempotent
+          invoke import-records -c -f ${{ env.DATA_FILE }} --strict
           invoke import-records -c -f ${{ env.DATA_FILE }} --strict
           cd src/backend/InvenTree && python manage.py check_dummy_data
-      - name: Export Sqlite Dataset
+          invoke export-records -o -f ${{ env.DATA_FILE }}
+          python ../../../.github/scripts/check_exported_data.py ${{ env.DATA_FILE }}
+      - name: Bulk Import Sqlite Dataset
+        run: |
+          # Ensure that the 'bulk' import process works as expected
+          invoke import-records -c -f ${{ env.DATA_FILE }} --strict --bulk
+          cd src/backend/InvenTree && python manage.py check_dummy_data
+          invoke export-records -o -f ${{ env.DATA_FILE }} --prettify
+          python ../../../.github/scripts/check_exported_data.py ${{ env.DATA_FILE }}
+
+  content-excludes:
+    # Ensure that 'export-records' correctly includes / excludes each optional
+    # category of data (email logs, API tokens, SSO app/token data, user
+    # sessions, and group/user permissions) according to its --include-x /
+    # --exclude-x flags. Separate from the 'test' job above since it exercises
+    # a different axis of behaviour (export content, not the import/export
+    # round-trip) and doesn't need the Sqlite half at all.
+    runs-on: ubuntu-latest
+    needs: paths-filter
+    if: needs.paths-filter.outputs.server == 'true' || contains(github.event.pull_request.labels.*.name, 'full-run')
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: inventree
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          apt-dependency: gettext poppler-utils libpq-dev
+          pip-dependency: psycopg
+          update: true
+          static: false
+      - name: Setup Postgres Database
+        run: |
+          invoke migrate
+          invoke dev.setup-test -i
+      - name: Create Plugin Data
+        run: |
+          pip install -U inventree-dummy-app-plugin==0.1.0
+          invoke migrate
+          cd src/backend/InvenTree && python manage.py create_dummy_data
+      - name: Seed Content-Excludes Test Data
+        run: |
+          # Creates one row in each optional export category (email log, API
+          # token, SSO app/token, session, group permissions), so that toggling
+          # the corresponding flag below has real data to prove it actually works
+          cd src/backend/InvenTree
+          python ../../../.github/scripts/seed_content_excludes_data.py
+      - name: Export - All Optional Categories Included
+        run: |
+          invoke export-records -o -f ${{ env.DATA_FILE }} --include-email --include-permissions --include-tokens --include-sso --include-session
+          python .github/scripts/check_exported_data.py ${{ env.DATA_FILE }} \
+            --check-email include --check-tokens include --check-sso include \
+            --check-session include --check-permissions include
+      - name: Export - All Optional Categories Excluded
+        run: |
+          invoke export-records -o -f ${{ env.DATA_FILE }} --exclude-plugins
+          python .github/scripts/check_exported_data.py ${{ env.DATA_FILE }} --exclude-plugins \
+            --check-email exclude --check-tokens exclude --check-sso exclude \
+            --check-session exclude --check-permissions exclude
+
+  plugin-absent:
+    # Ensure that importing data referencing a plugin's own models degrades
+    # gracefully (skipping just those records) when that plugin isn't
+    # installed on the target - and fails loudly without --ignore-nonexistent.
+    # See docs/docs/start/migrate.md's "Importing Plugin Data" section,
+    # condition 1 ("the plugin code must be present in the new installation").
+    #
+    # Note: --strict is deliberately *not* used for the imports below,
+    # as the source metadata's installed_apps list includes the plugin.
+    runs-on: ubuntu-latest
+    needs: paths-filter
+    if: needs.paths-filter.outputs.server == 'true' || contains(github.event.pull_request.labels.*.name, 'full-run')
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: inventree
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          apt-dependency: gettext poppler-utils libpq-dev
+          pip-dependency: psycopg
+          update: true
+          static: false
+      - name: Setup Postgres Database
+        run: |
+          invoke migrate
+          invoke dev.setup-test -i
+      - name: Create Plugin Data
+        run: |
+          pip install -U inventree-dummy-app-plugin==0.1.0
+          invoke migrate
+          cd src/backend/InvenTree && python manage.py create_dummy_data
+      - name: Export Postgres Dataset (plugin installed)
         run: |
           invoke export-records -o -f ${{ env.DATA_FILE }}
-          python .github/scripts/check_exported_data.py ${{ env.DATA_FILE }}
+      - name: Uninstall Plugin
+        run: |
+          pip uninstall -y inventree-dummy-app-plugin
+      - name: Update Environment Variables for Sqlite
+        run: |
+          echo "INVENTREE_DB_ENGINE=sqlite" >> $GITHUB_ENV
+          echo "INVENTREE_DB_NAME=/home/runner/work/InvenTree/test_inventree_db.sqlite3" >> $GITHUB_ENV
+      - name: Setup Sqlite Database (plugin not installed)
+        run: |
+          invoke migrate
+          test -f /home/runner/work/InvenTree/test_inventree_db.sqlite3 || (echo "Sqlite database not created" && exit 1)
+      - name: Import Without --ignore-nonexistent Should Fail
+        run: |
+          if invoke import-records -c -f ${{ env.DATA_FILE }}; then
+            echo "ERROR: import-records succeeded without --ignore-nonexistent, but the plugin is not installed on this target - it should have failed"
+            exit 1
+          fi
+          echo "Confirmed: import correctly failed without --ignore-nonexistent"
+      - name: Import With --ignore-nonexistent Should Succeed
+        run: |
+          invoke import-records -c -f ${{ env.DATA_FILE }} --ignore-nonexistent
+          cd src/backend/InvenTree
+          python manage.py shell -c "
+          from part.models import Part
+          count = Part.objects.count()
+          assert count > 0, 'Expected core Part data to be imported'
+          print(f'Confirmed {count} Part record(s) imported despite the missing plugin')
+          "
+      - name: Bulk Import With --ignore-nonexistent Should Also Succeed
+        run: |
+          invoke import-records -c -f ${{ env.DATA_FILE }} --ignore-nonexistent --bulk
+          cd src/backend/InvenTree
+          python manage.py shell -c "
+          from part.models import Part
+          count = Part.objects.count()
+          assert count > 0, 'Expected core Part data to be imported'
+          print(f'Confirmed {count} Part record(s) imported despite the missing plugin (bulk)')
+          "
+
+  bulk-conflicts:
+    # Check for expected conflict behaviour when re-importing a dataset into a database that already contains that dataset.
+    runs-on: ubuntu-latest
+    needs: paths-filter
+    if: needs.paths-filter.outputs.server == 'true' || contains(github.event.pull_request.labels.*.name, 'full-run')
+
+    env:
+      INVENTREE_DB_ENGINE: sqlite
+      INVENTREE_DB_NAME: /home/runner/work/InvenTree/test_inventree_bulk_conflicts_db.sqlite3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          apt-dependency: gettext poppler-utils libpq-dev
+          pip-dependency: psycopg
+          update: true
+          static: false
+      - name: Setup Sqlite Database
+        run: |
+          invoke migrate
+          invoke dev.setup-test -i
+      - name: Export Dataset
+        run: |
+          invoke export-records -o -f ${{ env.DATA_FILE }}
+          cd src/backend/InvenTree
+          python manage.py shell -c "
+          from part.models import Part
+          print(Part.objects.count())
+          " | tail -n 1 > /home/runner/work/InvenTree/test_inventree_baseline_part_count.txt
+          echo "Baseline Part count: $(cat /home/runner/work/InvenTree/test_inventree_baseline_part_count.txt)"
+      - name: Bulk Re-Import Without --ignore-conflicts Should Fail
+        run: |
+          # Deliberately no -c/--clear - the database already contains this
+          # exact data, so every row bulk_create() tries to insert conflicts
+          # with one already there
+          if invoke import-records -f ${{ env.DATA_FILE }} --skip-migrations --strict --bulk; then
+            echo "ERROR: bulk import succeeded against a database with conflicting rows - it should have failed without --ignore-conflicts"
+            exit 1
+          fi
+          echo "Confirmed: bulk import correctly failed on conflicting rows without --ignore-conflicts"
+      - name: Bulk Re-Import With --ignore-conflicts Should Succeed
+        run: |
+          invoke import-records -f ${{ env.DATA_FILE }} --skip-migrations --strict --bulk --ignore-conflicts
+          cd src/backend/InvenTree
+          python manage.py shell -c "
+          from part.models import Part
+          print(Part.objects.count())
+          " | tail -n 1 > /home/runner/work/InvenTree/test_inventree_after_part_count.txt
+          BASELINE=$(cat /home/runner/work/InvenTree/test_inventree_baseline_part_count.txt)
+          AFTER=$(cat /home/runner/work/InvenTree/test_inventree_after_part_count.txt)
+          echo "Part count: baseline=$BASELINE, after --ignore-conflicts re-import=$AFTER"
+          if [ "$BASELINE" != "$AFTER" ]; then
+            echo "ERROR: Part count changed after --ignore-conflicts re-import (expected conflicting rows to be skipped, not duplicated or lost)"
+            exit 1
+          fi
+          echo "Confirmed: --ignore-conflicts skipped every conflicting row without duplicating or losing any data"

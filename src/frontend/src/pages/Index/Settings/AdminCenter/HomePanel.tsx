@@ -1,8 +1,8 @@
 import { StylishText } from '@lib/components/StylishText';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Accordion, Alert, SimpleGrid, Stack, Text } from '@mantine/core';
-import { type JSX, useMemo, useState } from 'react';
+import { Accordion, SimpleGrid, Stack } from '@mantine/core';
+import { type JSX, useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import {
   type ExtendedAlertInfo,
@@ -21,7 +21,6 @@ function rankAlert(alert: ExtendedAlertInfo): number {
 }
 
 export default function HomePanel(): JSX.Element {
-  const [dismissed, setDismissed] = useState<boolean>(false);
   const [server] = useServerApiState(useShallow((state) => [state.server]));
   const globalSettings = useGlobalSettingsState();
 
@@ -41,39 +40,6 @@ export default function HomePanel(): JSX.Element {
 
   return (
     <Stack gap='xs'>
-      {dismissed ? null : (
-        <Alert
-          color='blue'
-          title={t`Admin Center Information`}
-          withCloseButton
-          onClose={() => setDismissed(true)}
-        >
-          <Stack gap='xs'>
-            <Text>
-              <Trans>
-                The home panel (and the whole Admin Center) is a new feature
-                starting with the new UI and was previously (before 1.0) not
-                available.
-              </Trans>
-            </Text>
-            <Text>
-              <Trans>
-                The admin center provides a centralized location for all
-                administration functionality and is meant to replace all
-                interaction with the (django) backend admin interface.
-              </Trans>
-            </Text>
-            <Text>
-              <Trans>
-                Please open feature requests (after checking the tracker) for
-                any existing backend admin functionality you are missing in this
-                UI. The backend admin interface should be used carefully and
-                seldom.
-              </Trans>
-            </Text>
-          </Stack>
-        </Alert>
-      )}
       <Accordion
         multiple
         defaultValue={['quick-actions', 'system-status']}

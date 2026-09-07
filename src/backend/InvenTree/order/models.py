@@ -3124,7 +3124,7 @@ class SalesOrderAllocation(models.Model):
         try:
             if self.line.part != self.item.part:
                 variants = self.line.part.get_descendants(include_self=True)
-                if self.line.part not in variants:
+                if self.item.part not in variants:
                     errors['item'] = _(
                         'Cannot allocate stock item to a line with a different part'
                     )
@@ -4127,7 +4127,7 @@ class TransferOrderAllocation(models.Model):
         try:
             if self.line.part != self.item.part:
                 variants = self.line.part.get_descendants(include_self=True)
-                if self.line.part not in variants:
+                if self.item.part not in variants:
                     errors['item'] = _(
                         'Cannot allocate stock item to a line with a different part'
                     )
@@ -4287,6 +4287,9 @@ class TransferOrderAllocation(models.Model):
 
 def _touch_order_updated_at(instance):
     """Bump updated_at on the parent order without triggering a full save."""
+    if InvenTree.ready.isRunningMigrations() or InvenTree.ready.isImportingData():
+        # Do not touch the order during migrations or data import
+        return
     if not InvenTree.ready.canAppAccessDatabase(allow_test=True):
         return
     instance.order.__class__.objects.filter(pk=instance.order_id).update(
