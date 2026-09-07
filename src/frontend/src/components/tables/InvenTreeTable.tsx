@@ -301,11 +301,6 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         };
       }
 
-      // col.filter can be:
-      //   string   → single filter name to look up in tableFilters
-      //   string[] → multiple filter names; all matches shown in one popover
-      //   function → direct mantine-datatable render function (e.g. parametric columns)
-      //   undefined → no column filter
       const filterNames: string[] =
         typeof col.filter === 'string'
           ? [col.filter]
