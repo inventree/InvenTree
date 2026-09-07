@@ -1,18 +1,22 @@
 """Low level tests for the InvenTree API."""
 
+import hashlib
 from base64 import b64encode
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from urllib.parse import parse_qs, urlencode, urlsplit
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from oauth2_provider.models import Application
 from rest_framework import status
 
 from InvenTree.api import read_license_file
 from InvenTree.api_version import INVENTREE_API_VERSION
+from InvenTree.apps import DEFAULT_OIDC_APP_ID
 from InvenTree.exceptions import exception_handler
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
 from InvenTree.version import inventreeApiText, parse_version_text
@@ -88,6 +92,168 @@ class ExceptionHandlerTests(TestCase):
         self.assertEqual(response.status_code, 503)
         self.assertEqual(response.data['error'], 'AppRegistryNotReady')
         self.assertEqual(response['Retry-After'], '1')
+
+
+@override_settings(
+    SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+)
+class OAuth2ApplicationAPITests(InvenTreeAPITestCase):
+    """Tests for the built-in OIDC application metadata and deletion guard."""
+
+    superuser = True
+
+    def test_builtin_client_metadata_and_delete_block(self):
+        """The built-in default OIDC client should be flagged and protected from deletion."""
+        Application.objects.filter(client_id=DEFAULT_OIDC_APP_ID).delete()
+        built_in = Application.objects.create(
+            name='Built-In OIDC Client',
+            client_id=DEFAULT_OIDC_APP_ID,
+            client_secret='secret',
+            redirect_uris='https://example.com/callback',
+            client_type=Application.CLIENT_PUBLIC,
+            authorization_grant_type=Application.GRANT_AUTHORIZATION_CODE,
+            algorithm=Application.RS256_ALGORITHM,
+        )
+
+        response = self.get(reverse('api-oauth2-list'))
+        payload = response.json()
+        self.assertTrue(
+            any(
+                item['client_id'] == DEFAULT_OIDC_APP_ID and item['is_builtin']
+                for item in payload
+            )
+        )
+
+        # no delete
+        response = self.delete(
+            reverse('api-oauth2-detail', kwargs={'pk': built_in.pk}), expected_code=403
+        )
+        self.assertTrue(Application.objects.filter(pk=built_in.pk).exists())
+
+        # no secret regeneration
+        self.post(
+            reverse('api-oauth2-regenerate', kwargs={'pk': built_in.pk}),
+            expected_code=403,
+        )
+
+    def test_create_application(self):
+        """An admin should be able to create a custom OAuth2 application."""
+        payload = {
+            'name': 'Custom OAuth App',
+            'client_type': Application.CLIENT_PUBLIC,
+            'authorization_grant_type': Application.GRANT_AUTHORIZATION_CODE,
+            'redirect_uris': 'https://example.com/callback',
+            'post_logout_redirect_uris': 'https://example.com/logout',
+            'skip_authorization': False,
+            'algorithm': Application.RS256_ALGORITHM,
+        }
+        response = self.post(
+            reverse('api-oauth2-list'), payload, expected_code=201, format='json'
+        )
+
+        self.assertTrue(Application.objects.filter(name='Custom OAuth App').exists())
+        payload = response.json()
+        self.assertIn('client_id', payload)
+        secret_1 = payload['client_secret']
+        assert secret_1 is not None
+        self.assertNotEqual(secret_1, '')
+        self.assertFalse(secret_1.startswith('pbkdf2_sha256$'))
+
+        # repeated GET should not return the plaintext secret
+        response = self.get(reverse('api-oauth2-detail', kwargs={'pk': payload['id']}))
+        payload = response.json()
+        self.assertIn('client_id', payload)
+        self.assertNotIn('client_secret', payload)
+
+        # regenerating the secret should return a new plaintext secret
+        response = self.post(
+            reverse('api-oauth2-regenerate', kwargs={'pk': payload['id']}),
+            expected_code=200,
+        )
+        result = response.json()
+        secret_2 = result['client_secret']
+        assert secret_2 is not None
+        self.assertFalse(secret_2.startswith('pbkdf2_sha256$'))
+        self.assertNotEqual(secret_1, secret_2)
+
+    def test_oauth2_application_token_can_access_profile(self):
+        """A custom OAuth2 client should be able to use a valid token to read the current profile."""
+        payload = {
+            'name': 'Profile OAuth App',
+            'client_type': Application.CLIENT_CONFIDENTIAL,
+            'authorization_grant_type': Application.GRANT_AUTHORIZATION_CODE,
+            'redirect_uris': 'https://example.com/callback',
+            'post_logout_redirect_uris': 'https://example.com/logout',
+            'skip_authorization': False,
+            'algorithm': Application.RS256_ALGORITHM,
+        }
+        response = self.post(
+            reverse('api-oauth2-list'), payload, expected_code=201, format='json'
+        )
+
+        app = response.json()
+        client_id = app['client_id']
+        client_secret = app['client_secret']
+        challenge_verifier = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk'
+        code_challenge = (
+            __import__('base64')
+            .urlsafe_b64encode(
+                hashlib.sha256(challenge_verifier.encode('utf-8')).digest()
+            )
+            .rstrip(b'=')
+            .decode('ascii')
+        )
+        auth_params = {
+            'client_id': client_id,
+            'redirect_uri': 'https://example.com/callback',
+            'response_type': 'code',
+            'scope': 'openid g:read',
+            'state': 'abc123',
+            'code_challenge': code_challenge,
+            'code_challenge_method': 'S256',
+        }
+
+        self.logout()
+        response = self.get(reverse('api-user-profile'), expected_code=401)
+
+        self.login()
+        response = self.get(reverse('oauth2_provider:authorize'), auth_params)
+
+        response = self.post(
+            reverse('oauth2_provider:authorize'),
+            {**auth_params, 'allow': 'true'},
+            format=None,
+            expected_code=302,
+        )
+        self.assertIn('code=', response['Location'])
+        code = parse_qs(urlsplit(response['Location']).query)['code'][0]
+
+        response = self.post(
+            reverse('oauth2_provider:token'),
+            urlencode({
+                'grant_type': 'authorization_code',
+                'client_id': client_id,
+                'client_secret': client_secret,
+                'code': code,
+                'redirect_uri': 'https://example.com/callback',
+                'code_verifier': challenge_verifier,
+            }),
+            format=None,
+            content_type='application/x-www-form-urlencoded',
+            expected_code=200,
+        )
+        token_data = response.json()
+        self.assertIn('access_token', token_data)
+        access_token = token_data['access_token']
+
+        self.logout()
+        response = self.get(
+            reverse('api-user-profile'), HTTP_AUTHORIZATION=f'Bearer {access_token}'
+        )
+        profile = response.json()
+        self.assertIn('language', profile)
+        self.assertIn('theme', profile)
+        self.assertIn('widgets', profile)
 
 
 class ApiAccessTests(InvenTreeAPITestCase):

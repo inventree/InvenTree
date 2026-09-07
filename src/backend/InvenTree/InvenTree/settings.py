@@ -28,6 +28,7 @@ from InvenTree.cache import get_cache_config, is_global_cache_enabled
 from InvenTree.config import get_boolean_setting, get_oidc_private_key, get_setting
 from InvenTree.ready import isInMainThread, isRunningBackup
 from InvenTree.sentry import default_sentry_dsn, init_sentry
+from InvenTree.validators import invalid_site_url_hint
 from InvenTree.version import checkMinPythonVersion, inventreeCommitHash
 from users.oauth2_scopes import oauth2_scopes
 
@@ -245,9 +246,6 @@ PLUGIN_DEV_HOST = get_setting(
 PLUGIN_RETRY = get_setting(
     'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
 )  # How often should plugin loading be tried?
-
-# Hash of the plugin file (will be updated on each change)
-PLUGIN_FILE_HASH = ''
 
 STATICFILES_DIRS = []
 
@@ -771,7 +769,7 @@ if SITE_URL:
         validator = URLValidator()
         validator(SITE_URL)
     except Exception:
-        msg = f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start."
+        msg = f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start.{invalid_site_url_hint(SITE_URL)}"
         logger.error(msg)
         print(msg)
         sys.exit(-1)
@@ -1163,7 +1161,7 @@ FLAGS = {
     'NEXT_GEN': [
         {'condition': 'parameter', 'value': 'ngen='}
     ],  # Should next-gen features be turned on?
-    'OIDC': [{'condition': 'parameter', 'value': 'oidc='}],
+    'OIDC': [{'condition': 'boolean', 'value': True}],
 }
 
 # Get custom flags from environment/yaml
@@ -1191,7 +1189,7 @@ OAUTH2_PROVIDER = {
     # OIDC
     'OIDC_ENABLED': True,
     'OIDC_RSA_PRIVATE_KEY': get_oidc_private_key(),
-    'PKCE_REQUIRED': False,
+    'PKCE_REQUIRED': True,
 }
 OAUTH2_CHECK_EXCLUDED = [  # This setting mutes schema checks for these rule/method combinations
     '/api/email/generate/:post',
