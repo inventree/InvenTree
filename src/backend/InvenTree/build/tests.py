@@ -844,6 +844,38 @@ class RepairOrderAPITests(InvenTreeAPITestCase):
                 reference='RO-8888', description='No part assigned'
             ).full_clean()
 
+    def test_part_is_immutable(self):
+        """'part' cannot be changed after creation - both via the API and at the model level."""
+        other_part = Part.objects.filter(assembly=True).exclude(pk=self.part.pk).first()
+        assert other_part
+
+        url = reverse('api-repair-order-detail', kwargs={'pk': self.ro.pk})
+        self.patch(url, {'part': other_part.pk}, expected_code=400)
+        self.ro.refresh_from_db()
+        self.assertEqual(self.ro.part, self.part)
+
+        self.ro.part = other_part
+        with self.assertRaises(ValidationError):
+            self.ro.full_clean()
+
+    def test_tags(self):
+        """Tags should be writable via PATCH, and only included in GET responses when requested."""
+        url = reverse('api-repair-order-detail', kwargs={'pk': self.ro.pk})
+
+        response = self.patch(url, {'tags': ['tag1', 'tag2']}, expected_code=200)
+        self.assertEqual(sorted(response.data['tags']), ['tag1', 'tag2'])
+
+        self.ro.refresh_from_db()
+        self.assertEqual(self.ro.tags.count(), 2)
+        self.assertEqual(sorted(t.name for t in self.ro.tags.all()), ['tag1', 'tag2'])
+
+        # Without the 'tags' filter, a plain GET should not include tag data
+        response = self.get(url, expected_code=200)
+        self.assertNotIn('tags', response.data)
+
+        response = self.get(url, {'tags': True}, expected_code=200)
+        self.assertEqual(sorted(response.data['tags']), ['tag1', 'tag2'])
+
     def test_repair_order_part_functionality(self):
         """Verify the part FK and part_detail serializer field work end-to-end.
 

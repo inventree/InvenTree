@@ -43,10 +43,15 @@ The following parameters are available for each Repair Order, and can be edited 
 | Parameter | Description |
 | --- | --- |
 | Reference | Unique repair order reference e.g. 'RO-0001' |
+| Part | Link to the *Part* being repaired (must be an assembly) |
 | Description | Description of the repair order |
 | Customer | Link to the *Company* who owns the item being repaired (optional) |
 | Symptoms | Detailed description of the reported symptoms or issues |
 | Status | Current status of the repair order |
+| Start Date | The scheduled start date for the repair |
+| Target Date | Target date for repair completion |
+| Responsible | User (or group of users) who is responsible for the repair |
+| External Link | Link to external webpage |
 
 ### Repair Order Status
 

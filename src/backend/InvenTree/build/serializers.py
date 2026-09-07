@@ -1846,6 +1846,7 @@ class BuildConsumeSerializer(serializers.Serializer):
 class RepairOrderSerializer(
     InvenTreeCustomStatusSerializerMixin,
     FilterableSerializerMixin,
+    InvenTreeTaggitSerializer,
     InvenTreeModelSerializer,
 ):
     """Serializer for a RepairOrder object."""
@@ -1874,8 +1875,11 @@ class RepairOrderSerializer(
             'issued_by_detail',
             'link',
             'line_items',
+            'tags',
         ]
         read_only_fields = ['creation_date', 'completion_date', 'status']
+
+    tags = common.filters.enable_tags_filter()
 
     customer_detail = OptionalField(
         serializer_class=company.serializers.CompanyBriefSerializer,
