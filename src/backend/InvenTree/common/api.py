@@ -844,6 +844,10 @@ class AttachmentFilter(FilterSet):
 
     tag_name = common.filters.TagsFilter()
 
+    filename = rest_filters.CharFilter(
+        field_name='attachment', lookup_expr='icontains', label=_('Filename')
+    )
+
 
 def get_viewable_attachment_model_types(user) -> set:
     """Return the set of attachment 'model_type' labels the user has 'view' permission for.
@@ -880,7 +884,7 @@ class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
     filterset_class = AttachmentFilter
 
     ordering_fields = ['model_id', 'model_type', 'upload_date', 'file_size']
-    search_fields = ['comment', 'model_id', 'model_type']
+    search_fields = ['comment', 'model_id', 'model_type', 'attachment']
 
     def get_queryset(self):
         """Restrict the queryset to attachments linked to a model the user can view."""
