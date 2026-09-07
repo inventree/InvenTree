@@ -154,7 +154,7 @@ jobs:
         run: cd src/frontend && npx playwright install-deps
       - name: Install Sample Plugin
         run: |
-          pip install -U inventree-plugin-creator==${{ env.plugin_creator_version }}
+          pip install --only-binary :all: -U inventree-plugin-creator==${{ env.plugin_creator_version }}
           create-inventree-plugin --default
           cd MyCustomPlugin && pip install -e . && cd frontend && npm install && npm run translate && npm run build
       - name: Run Playwright tests
