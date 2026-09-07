@@ -389,6 +389,31 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
             'This is a dummy error', find_error('Test:init_plugin', 'broken_sample')
         )
 
+    def test_init_plugin_missing_config(self):
+        """Test that _init_plugin does not crash if PluginConfig cannot be looked up.
+
+        get_plugin_config() can legitimately return None - e.g. if the database
+        is not ready, or PluginConfig creation is disallowed in the current
+        context - leaving plugin.db as None. _init_plugin must still be able to
+        mark such a plugin as inactive without raising
+        AttributeError: 'NoneType' object has no attribute 'active'.
+        """
+
+        class MissingConfigPlugin(InvenTreePlugin):
+            NAME = 'MissingConfigPlugin'
+            SLUG = 'missingconfigplugin'
+
+        self.addCleanup(registry.reload_plugins, full_reload=True, collect=True)
+
+        # PLUGIN_TESTING=True would force-load the plugin regardless of its
+        # (missing) PluginConfig - disable it to hit the 'inactive' path below
+        with override_settings(PLUGIN_TESTING=False):
+            with mock.patch.object(registry, 'get_plugin_config', return_value=None):
+                registry._init_plugin(MissingConfigPlugin, {})
+
+        self.assertIn('missingconfigplugin', registry.plugins_full)
+        self.assertNotIn('missingconfigplugin', registry.plugins)
+
     def test_plugin_override_mandatory(self):
         """Test that a plugin cannot override the is_mandatory method."""
         with self.assertRaises(TypeError) as e:
