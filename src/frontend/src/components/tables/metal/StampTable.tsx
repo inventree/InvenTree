@@ -47,6 +47,21 @@ export default function StampTable() {
         switchable: false,
       },
       DescriptionColumn({}),
+      // {
+      //   accessor: "customers",
+      //   title: t`Customers`,
+      //   sortable: false,
+      //   switchable: false,
+      //   render: (record: any) => {
+      //     if (record.all_customers) {
+      //       return t`All Customers`;
+      //     }
+      //     const codes = (record.customers_detail ?? [])
+      //       .map((customer: any) => customer.code)
+      //       .filter(Boolean);
+      //     return codes.length > 0 ? codes.join(", ") : "-";
+      //   },
+      // },
       BooleanColumn({
         accessor: "active",
       }),
@@ -106,7 +121,7 @@ export default function StampTable() {
 
   const handleImageChange = useCallback((file: File | null) => {
     setPreviewImage((prev) => {
-      if (prev) URL.revokeObjectURL(prev); 
+      if (prev) URL.revokeObjectURL(prev);
       return file ? URL.createObjectURL(file) : undefined;
     });
   }, []);
@@ -126,6 +141,7 @@ export default function StampTable() {
         />
         {!changeImage && (
           <Button
+            type="button"
             variant="subtle"
             size="xs"
             onClick={() => setChangeImage(true)}

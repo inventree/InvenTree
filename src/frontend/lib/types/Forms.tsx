@@ -76,6 +76,7 @@ export type ApiFormFieldHeader = {
  * @param addRow : Callback function to add a new row to a table field
  * @param headers : Optional definitions of table headers (for table fields)
  * @param singleFetchFunction : Optional function to fetch a single value for this field (used for fetching the initial value when editing an existing object)
+ * @param disableWhen : Optional callback, given the current values of *all* fields in the form, returning whether this field should be force-disabled (e.g. disable a 'customers' field while a sibling 'all_customers' checkbox is set)
  */
 export type ApiFormFieldType = {
   label?: string;
@@ -139,6 +140,7 @@ export type ApiFormFieldType = {
   headers?: ApiFormFieldHeader[];
   depends_on?: string[];
   singleFetchFunction?: (value: any) => Promise<any> | null;
+  disableWhen?: (formValues: FieldValues) => boolean;
 };
 
 export type ApiFormFieldSet = Record<string, ApiFormFieldType>;

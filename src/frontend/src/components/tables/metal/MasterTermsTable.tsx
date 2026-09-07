@@ -14,7 +14,11 @@ import { apiUrl } from "@lib/functions/Api";
 import useTable from "@lib/hooks/UseTable";
 import type { TableFilter } from "@lib/index";
 import type { TableColumn } from "@lib/types/Tables";
-import { BooleanColumn, DecimalColumn, DescriptionColumn } from "../ColumnRenderers";
+import {
+  BooleanColumn,
+  DecimalColumn,
+  DescriptionColumn,
+} from "../ColumnRenderers";
 import { InvenTreeTable } from "../InvenTreeTable";
 import { masterTerms } from "../../forms/CommonForms";
 import {
@@ -45,6 +49,21 @@ export default function MasterTermsTable() {
         switchable: false,
       },
       DescriptionColumn({}),
+      // {
+      //   accessor: "vendors",
+      //   title: t`Vendors`,
+      //   sortable: false,
+      //   switchable: false,
+      //   render: (record: any) => {
+      //     if (record.all_vendors) {
+      //       return t`All Vendors`;
+      //     }
+      //     const codes = (record.vendors_detail ?? [])
+      //       .map((vendor: any) => vendor.code)
+      //       .filter(Boolean);
+      //     return codes.length > 0 ? codes.join(", ") : "-";
+      //   },
+      // },
       BooleanColumn({
         accessor: "active",
       }),
@@ -72,9 +91,9 @@ export default function MasterTermsTable() {
   });
 
   // --- Edit / Delete modals --------------------------------------------
-  const [selectedTerms, setSelectedTerms] = useState<
-    number | undefined
-  >(undefined);
+  const [selectedTerms, setSelectedTerms] = useState<number | undefined>(
+    undefined,
+  );
 
   const editMasterTerms = useEditApiFormModal({
     url: ApiEndpoints.master_terms,

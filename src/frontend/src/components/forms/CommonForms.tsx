@@ -78,6 +78,19 @@ export function masterTerms(): ApiFormFieldSet {
     days: {},
     description: {},
     active: {},
+    vendors: {
+      field_type: "related field",
+      model: ModelType.company,
+      multiple: true,
+      api_url: apiUrl(ApiEndpoints.company_list),
+      filters: { is_supplier: true },
+      disableWhen: (values: any) => !!values?.all_vendors,
+      modelRenderer: (arg: any) => {
+        const instance = arg?.instance ?? arg;
+        return instance?.code ?? "";
+      },
+    },
+    all_vendors: {},
   };
 }
 
@@ -371,7 +384,19 @@ export function colorStoneRateFields(): ApiFormFieldSet {
     pointer: {},
     rate: {},
     pc: {},
-    customer_id: {},
+    customers: {
+      field_type: "related field",
+      model: ModelType.company,
+      multiple: true,
+      api_url: apiUrl(ApiEndpoints.company_list),
+      filters: { is_customer: true },
+      disableWhen: (values: any) => !!values?.all_customers,
+      modelRenderer: (arg: any) => {
+        const instance = arg?.instance ?? arg;
+        return instance?.code ?? "";
+      },
+    },
+    all_customers: {},
     active: {},
   };
 }
@@ -383,6 +408,19 @@ export function stampFields(
   const fields: ApiFormFieldSet = {
     name: {},
     description: {},
+    customers: {
+      field_type: "related field",
+      model: ModelType.company,
+      multiple: true,
+      api_url: apiUrl(ApiEndpoints.company_list),
+      filters: { is_customer: true },
+      disableWhen: (values: any) => !!values?.all_customers,
+      modelRenderer: (arg: any) => {
+        const instance = arg?.instance ?? arg;
+        return instance?.code ?? "";
+      },
+    },
+    all_customers: {},
     active: {},
   };
 
@@ -408,11 +446,13 @@ export function costCardGeneralFields(): ApiFormFieldSet {
     cost_card_no: { read_only: true },
     our_style_no: {},
     vendor_style_no: {},
-    vendor: {api_url: `${apiUrl(ApiEndpoints.master_vendor_customer)}?active=true&is_supplier=true`,
+    vendor: {
+      api_url: `${apiUrl(ApiEndpoints.master_vendor_customer)}?active=true&is_supplier=true`,
       modelRenderer: (arg: any) => {
         const instance = arg?.instance ?? arg;
         return instance?.code ?? (instance?.code ? `#${instance.code}` : "");
-      },},
+      },
+    },
     customer: {
       api_url: `${apiUrl(ApiEndpoints.master_vendor_customer)}?active=true&is_customer=true`,
       modelRenderer: (arg: any) => {
@@ -733,6 +773,7 @@ export function diamondRateFields(): ApiFormFieldSet {
       multiple: true,
       api_url: apiUrl(ApiEndpoints.company_list),
       filters: { is_customer: true },
+      disableWhen: (values: any) => !!values?.all_customers,
       modelRenderer: (arg: any) => {
         const instance = arg?.instance ?? arg;
         return instance?.code ?? "";

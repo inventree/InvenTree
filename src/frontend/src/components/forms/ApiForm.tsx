@@ -443,8 +443,13 @@ export function ApiForm({
           break;
       }
 
-      // Stringify any JSON objects
-      if (typeof value === 'object') {
+      // Stringify any non-array JSON objects. Arrays (e.g. a multi-select
+      // relation field, or multiple selected files) are appended below as
+      // repeated FormData entries instead of a single JSON-encoded string -
+      // the backend expects multi-value fields as repeated form keys and
+      // reads them with QueryDict.getlist(), which a JSON string breaks
+      // (causing a 500 rather than saving the selected values).
+      if (typeof value === 'object' && !Array.isArray(value)) {
         switch (field_type) {
           case 'file upload':
             break;
@@ -459,6 +464,8 @@ export function ApiForm({
       if (exclude) {
         // Remove the field from the data
         delete jsonData[key];
+      } else if (Array.isArray(value)) {
+        value.forEach((item: any) => formData.append(key, item));
       } else if (value != undefined) {
         formData.append(key, value);
       }
