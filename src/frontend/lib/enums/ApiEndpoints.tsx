@@ -266,6 +266,7 @@ export enum ApiEndpoints {
   scim_generate = 'admin/scim/generate/',
   scim_disable = 'admin/scim/disable/',
   config_list = 'admin/config/',
+  sso_list = 'admin/sso/',
   parameter_list = 'parameter/',
   parameter_template_list = 'parameter/template/',
   tag_list = 'tag/',
