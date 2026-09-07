@@ -546,12 +546,18 @@ class TestCreationDateMigration(MigratorTestCase):
         """Verify creation_date is correctly backfilled for each scenario."""
         import datetime
 
+        from django.conf import settings
+
         StockItem = self.new_state.apps.get_model('stock', 'stockitem')
-        utc = datetime.timezone.utc
+        utc = datetime.timezone.utc if settings.USE_TZ else None
 
         def at_utc(dt):
             """Normalise to UTC and strip sub-second precision for comparison."""
-            return dt.astimezone(utc).replace(microsecond=0)
+            return (
+                dt.astimezone(utc).replace(microsecond=0)
+                if settings.USE_TZ
+                else dt.replace(microsecond=0)
+            )
 
         # Scenario 1: CREATED tracking entry → creation_date = entry date
         item = StockItem.objects.get(pk=self.pk_s1)
