@@ -27,6 +27,8 @@ from drf_spectacular.utils import (
     extend_schema_view,
 )
 from error_report.models import Error
+from oauth2_provider.generators import generate_client_secret
+from oauth2_provider.models import Application
 from opentelemetry import trace
 from pint._typing import UnitLike
 from rest_framework import serializers, viewsets
@@ -45,6 +47,7 @@ import InvenTree.conversion
 import InvenTree.models
 import InvenTree.ready
 from common.icons import get_icon_packs
+from common.serializers import OAuth2ApplicationSerializer
 from common.settings import get_global_setting
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import urlpattern as generic_states_api_urls
@@ -56,10 +59,12 @@ from InvenTree.api import (
     SimpleGenericMetadataView,
     meta_path,
 )
+from InvenTree.apps import DEFAULT_OIDC_APP_ID
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors, str2bool
 from InvenTree.helpers_api import (
+    CleanModelViewSet,
     InvenTreeApiRouter,
     RetrieveDestroyModelViewSet,
     RetrieveUpdateDestroyModelViewSet,
@@ -499,8 +504,37 @@ class NotesImageList(ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
 
+    def get_queryset(self):
+        """Filter notes images to those linked to a note the requesting user can view."""
+        import common.validators
+        from users.permissions import check_user_permission, prefetch_rule_sets
+
+        qs = super().get_queryset()
+        user = self.request.user
+
+        if user.is_superuser:
+            return qs
+
+        groups = prefetch_rule_sets(user)
+
+        allowed_ct_ids = [
+            ContentType.objects.get_for_model(model_class).pk
+            for model_class in common.validators.note_model_types()
+            if check_user_permission(user, model_class, 'view', groups=groups)
+        ]
+
+        return qs.filter(
+            Q(note__template=True) | Q(note__model_type__in=allowed_ct_ids)
+        )
+
     def perform_create(self, serializer):
         """Create (upload) a new notes image."""
+        note = serializer.validated_data['note']
+
+        common.serializers.check_note_change_permission(
+            self.request.user, template=note.template, model_type=note.model_type
+        )
+
         serializer.save(user=self.request.user)
 
 
@@ -1315,6 +1349,35 @@ class ParameterMixin:
     serializer_class = common.serializers.ParameterSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
+    def get_queryset(self):
+        """Filter parameters to those the requesting user has view permission for.
+
+        Parameter has no RuleSet permissions of its own (see
+        users.ruleset.get_ruleset_ignore()) - access is instead scoped by the
+        'view' permission of the model type the parameter is linked to.
+        """
+        import common.validators
+        from users.permissions import check_user_permission, prefetch_rule_sets
+
+        qs = super().get_queryset()
+        user = self.request.user
+
+        if user.is_superuser:
+            return qs
+
+        # Fetch the user's groups (with prefetched rule sets) once, and reuse it
+        # for every model type below - otherwise each check_user_permission()
+        # call re-fetches the same groups/rule-sets from scratch.
+        groups = prefetch_rule_sets(user)
+
+        allowed_ct_ids = [
+            ContentType.objects.get_for_model(model_class).pk
+            for model_class in common.validators.parameter_model_types()
+            if check_user_permission(user, model_class, 'view', groups=groups)
+        ]
+
+        return qs.filter(model_type__in=allowed_ct_ids)
+
 
 class ParameterList(
     OutputOptionsMixin,
@@ -1346,9 +1409,43 @@ class ParameterList(
 
     unique_create_fields = ['model_type', 'model_id', 'template']
 
+    def validate_delete(self, queryset, request) -> None:
+        """Ensure that the user has correct permissions for a bulk-delete.
+
+        - Extract all model types from the provided queryset
+        - Ensure that the user has correct 'delete' permissions for each linked model
+        """
+        from users.permissions import check_user_permission
+
+        content_type_ids = queryset.values_list('model_type', flat=True).distinct()
+
+        for content_type in ContentType.objects.filter(pk__in=content_type_ids):
+            model_class = content_type.model_class()
+
+            if not model_class or not check_user_permission(
+                request.user, model_class, 'delete'
+            ):
+                raise ValidationError(
+                    _('User does not have permission to delete these parameters')
+                )
+
 
 class ParameterDetail(ParameterMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for Parameter objects."""
+
+    def perform_destroy(self, instance):
+        """Enforce a delete permission check on the linked model before deleting.
+
+        DRF's default destroy() calls instance.delete() directly, bypassing
+        ParameterSerializer.save() (and the permission checks it performs)
+        entirely. Without this, get_queryset()'s 'view' permission gate is
+        all that stands between a user and deleting the parameter.
+        """
+        if not instance.check_permission('delete', self.request.user):
+            raise PermissionDenied(
+                _('User does not have permission to delete this parameter')
+            )
+        super().perform_destroy(instance)
 
 
 class InstanceInfoView(APIView):
@@ -1667,6 +1764,49 @@ class ObservabilityEnd(CreateAPI):
 
         return Response({'status': 'ok'})
 
+
+class ApplicationViewSet(CleanModelViewSet):
+    """Manage a oAuth2 (provider side) application."""
+
+    queryset = Application.objects.all()
+    serializer_class = OAuth2ApplicationSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete an OAuth2 application.
+
+        Deletion of the built-in default OIDC client is not allowed.
+        """
+        instance = self.get_object()
+
+        if instance.client_id == DEFAULT_OIDC_APP_ID:
+            raise PermissionDenied(
+                _('The built-in default OIDC client cannot be deleted.')
+            )
+
+        return super().destroy(request, *args, **kwargs)
+
+    @extend_schema(request=None, responses={200: OAuth2ApplicationSerializer()})
+    @action(detail=True, methods=['post'])
+    def regenerate(self, request, *args, **kwargs):
+        """Regenerate the client secret."""
+        instance = self.get_object()
+
+        if instance.client_id == DEFAULT_OIDC_APP_ID:
+            raise PermissionDenied(
+                _('The built-in default OIDC client secret cannot be regenerated.')
+            )
+
+        secret = generate_client_secret()
+        instance.client_secret = secret
+        instance._raw_client_secret = secret
+        instance.save()
+
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+
+# oAuth2 admin
+admin_router.register('oauth2', ApplicationViewSet, basename='api-oauth2')
 
 selection_urls = [
     path(

@@ -335,6 +335,15 @@ class UserAPITests(InvenTreeAPITestCase):
         # User cannot fetch their own details if they are not active
         response = self.get(url, expected_code=401)
 
+    def test_me_endpoint_delete_is_blocked(self):
+        """A user must not be able to delete their own account via '/api/user/me/'."""
+        url = reverse('api-user-me')
+        pk = self.user.pk
+
+        self.delete(url, expected_code=405)
+
+        self.assertTrue(User.objects.filter(pk=pk).exists())
+
 
 class SuperuserAPITests(InvenTreeAPITestCase):
     """Tests for user API endpoints that require superuser rights."""

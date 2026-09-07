@@ -110,6 +110,14 @@ While using [invoke](../start/invoke.md), this can be overridden with the `--res
 
 An error occurred while rendering a component in the frontend. Typically this is caused by a browser caching issue, and can be resolved by clearing the browser cache and refreshing the page. If the issue persists, check the browser console for more information about the error.
 
+#### INVE-E18
+
+**Top Level Domain Required**
+
+The InvenTree server failed to start, because the configured server URL does not include a top-level domain (TLD). A valid TLD is required for proper operation.
+
+## Warning Codes
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 
@@ -225,6 +233,15 @@ Use separate accounts for administrative tasks and regular usage to reduce risk.
 **Process interrupted by user - Backend**
 
 A process was interrupted by the user, likely by a keyboard interrupt. This might lead to issues with the process that was interrupted, as it might not have completed its task. This is especially relevant for processes that are not idempotent or that do not have a good rollback mechanism.
+
+#### INVE-W16
+**CORS is set to allow all origins - Backend**
+
+The CORS settings are set to allow all origins. This might lead to security issues, as it allows any website to make requests to the InvenTree server. It is recommended to restrict the CORS settings to only allow trusted origins.
+
+CORS settings only affect user browsers that respect them. Setting them correctly is not a replacement for proper network segmentation (via firewalls, VPNs, proxies, etc.) and should be used in addition to them.
+
+Use the INVENTREE_CORS_ORIGIN_ALLOW_ALL and INVENTREE_CORS_ORIGIN_WHITELIST settings - see the [Server Access settings](../start/config.md#server-access).
 
 
 ### INVE-I (InvenTree Information)

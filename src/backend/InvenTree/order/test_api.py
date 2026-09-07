@@ -5853,3 +5853,103 @@ class OrderActionMissingPkTest(InvenTreeAPITestCase):
         ]:
             url = reverse(url_name, kwargs={'pk': 999999})
             self.post(url, {}, expected_code=404)
+
+
+class OrderAllocationValidationTest(InvenTreeAPITestCase):
+    """Unit tests for SalesOrderAllocation and TransferOrderAllocation validation."""
+
+    fixtures = ['company', 'users', 'location']
+
+    roles = [
+        'sales_order.add',
+        'sales_order.change',
+        'transfer_order.add',
+        'transfer_order.change',
+    ]
+
+    @classmethod
+    def setUpTestData(cls):
+        """Set up test data with base parts, variant parts, and unrelated parts."""
+        super().setUpTestData()
+
+        cls.customer = models.Company.objects.create(
+            name='Alloc Customer', is_customer=True, description=''
+        )
+        cls.base_part = Part.objects.create(
+            name='Base Widget', salable=True, is_template=True, description=''
+        )
+        cls.variant_part = Part.objects.create(
+            name='Variant Widget A',
+            salable=True,
+            variant_of=cls.base_part,
+            description='',
+        )
+        cls.base_part.refresh_from_db()
+        cls.unrelated_part = Part.objects.create(
+            name='Unrelated Gadget', salable=True, description=''
+        )
+
+        cls.location = StockLocation.objects.first()
+
+    def test_sales_order_allocation_validation(self):
+        """Test validation when allocating stock to a SalesOrder."""
+        order = models.SalesOrder.objects.create(
+            customer=self.customer, reference='SO-ALLOC-TEST-1'
+        )
+        line = models.SalesOrderLineItem.objects.create(
+            order=order, part=self.base_part, quantity=10
+        )
+        shipment = models.SalesOrderShipment.objects.create(order=order, reference='1')
+
+        # Stock items
+        variant_stock = StockItem.objects.create(
+            part=self.variant_part, quantity=10, location=self.location
+        )
+        unrelated_stock = StockItem.objects.create(
+            part=self.unrelated_part, quantity=10, location=self.location
+        )
+
+        # Allocating valid variant should succeed
+        alloc_variant = models.SalesOrderAllocation(
+            line=line, item=variant_stock, quantity=5, shipment=shipment
+        )
+        alloc_variant.full_clean()
+        alloc_variant.save()
+
+        # Allocating unrelated part should raise ValidationError
+        alloc_invalid = models.SalesOrderAllocation(
+            line=line, item=unrelated_stock, quantity=5, shipment=shipment
+        )
+        with self.assertRaises(ValidationError):
+            alloc_invalid.full_clean()
+
+    def test_transfer_order_allocation_validation(self):
+        """Test validation when allocating stock to a TransferOrder."""
+        dest_loc = StockLocation.objects.create(name='Dest Location')
+        order = models.TransferOrder.objects.create(
+            destination=dest_loc, reference='TO-ALLOC-TEST-1'
+        )
+        line = models.TransferOrderLineItem.objects.create(
+            order=order, part=self.base_part, quantity=10
+        )
+
+        variant_stock = StockItem.objects.create(
+            part=self.variant_part, quantity=10, location=self.location
+        )
+        unrelated_stock = StockItem.objects.create(
+            part=self.unrelated_part, quantity=10, location=self.location
+        )
+
+        # Allocating valid variant should succeed
+        alloc_variant = models.TransferOrderAllocation(
+            line=line, item=variant_stock, quantity=5
+        )
+        alloc_variant.full_clean()
+        alloc_variant.save()
+
+        # Allocating unrelated part should raise ValidationError
+        alloc_invalid = models.TransferOrderAllocation(
+            line=line, item=unrelated_stock, quantity=5
+        )
+        with self.assertRaises(ValidationError):
+            alloc_invalid.full_clean()

@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-01 00:38\n"
+"PO-Revision-Date: 2026-09-03 12:15\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -672,7 +672,7 @@ msgstr "Itens de seleção"
 #: src/components/modals/LicenseModal.tsx:85
 #: src/components/nav/NavigationTree.tsx:398
 #: src/components/nav/NotificationDrawer.tsx:235
-#: src/components/nav/SearchDrawer.tsx:600
+#: src/components/nav/SearchDrawer.tsx:609
 #: src/components/settings/SettingList.tsx:158
 #: src/components/tables/InvenTreeTableHeader.tsx:164
 #: src/components/wizards/ImportPartWizard.tsx:574
@@ -1697,14 +1697,14 @@ msgstr "Atualizado por"
 #~ msgstr "Edit Notes"
 
 #: src/components/editors/NotesEditor.tsx:317
-msgid "Add Note Template"
-msgstr "Adicionar template de nota"
-
-#: src/components/editors/NotesEditor.tsx:317
 #: src/components/editors/NotesEditor.tsx:717
 #: src/forms/PurchaseOrderForms.tsx:655
 msgid "Add Note"
 msgstr "Adicionar observação"
+
+#: src/components/editors/NotesEditor.tsx:317
+msgid "Add Note Template"
+msgstr "Adicionar template de nota"
 
 #: src/components/editors/NotesEditor.tsx:330
 msgid "Delete Note Template"
@@ -3054,7 +3054,15 @@ msgstr "Migrações de banco de dados"
 msgid "There are pending database migrations."
 msgstr "Existem migrações pendentes no banco de dados."
 
-#: src/components/nav/Alerts.tsx:165
+#: src/components/nav/Alerts.tsx:155
+msgid "CORS Settings"
+msgstr ""
+
+#: src/components/nav/Alerts.tsx:157
+msgid "CORS is set to allow all origins."
+msgstr ""
+
+#: src/components/nav/Alerts.tsx:172
 msgid "Learn more about {code}"
 msgstr "Saiba mais sobre {code}"
 
@@ -3283,27 +3291,27 @@ msgstr "Erro ao carregar notificações."
 msgid "Primary Action"
 msgstr "Ação principal"
 
-#: src/components/nav/SearchDrawer.tsx:112
+#: src/components/nav/SearchDrawer.tsx:117
 msgid "No Overview Available"
 msgstr "Nenhuma visão geral disponível"
 
-#: src/components/nav/SearchDrawer.tsx:113
+#: src/components/nav/SearchDrawer.tsx:118
 msgid "No overview available for this model type"
 msgstr "Nenhuma visão geral disponível para este tipo de modelo"
 
-#: src/components/nav/SearchDrawer.tsx:131
+#: src/components/nav/SearchDrawer.tsx:136
 msgid "View all results"
 msgstr "Ver todos os resultados"
 
-#: src/components/nav/SearchDrawer.tsx:146
+#: src/components/nav/SearchDrawer.tsx:151
 msgid "results"
 msgstr "Resultados"
 
-#: src/components/nav/SearchDrawer.tsx:150
+#: src/components/nav/SearchDrawer.tsx:155
 msgid "Remove search group"
 msgstr "Remover grupo de busca"
 
-#: src/components/nav/SearchDrawer.tsx:305
+#: src/components/nav/SearchDrawer.tsx:310
 #: src/pages/company/ManufacturerPartDetail.tsx:97
 #: src/pages/part/PartDetail.tsx:379
 #: src/pages/part/PartSupplierDetail.tsx:15
@@ -3311,13 +3319,13 @@ msgstr "Remover grupo de busca"
 msgid "Suppliers"
 msgstr "Fornecedores"
 
-#: src/components/nav/SearchDrawer.tsx:315
+#: src/components/nav/SearchDrawer.tsx:320
 #: src/pages/part/PartSupplierDetail.tsx:23
 #: src/pages/purchasing/PurchasingIndex.tsx:173
 msgid "Manufacturers"
 msgstr "Fabricantes"
 
-#: src/components/nav/SearchDrawer.tsx:325
+#: src/components/nav/SearchDrawer.tsx:330
 #: src/pages/sales/SalesIndex.tsx:175
 msgid "Customers"
 msgstr "Clientes"
@@ -3326,41 +3334,41 @@ msgstr "Clientes"
 #~ msgid "No results"
 #~ msgstr "No results"
 
-#: src/components/nav/SearchDrawer.tsx:505
+#: src/components/nav/SearchDrawer.tsx:514
 msgid "Enter search text"
 msgstr "Digite o texto de pesquisa"
 
-#: src/components/nav/SearchDrawer.tsx:516
+#: src/components/nav/SearchDrawer.tsx:525
 msgid "Refresh search results"
 msgstr "Atualizar resultados da pesquisa"
 
-#: src/components/nav/SearchDrawer.tsx:527
-#: src/components/nav/SearchDrawer.tsx:534
+#: src/components/nav/SearchDrawer.tsx:536
+#: src/components/nav/SearchDrawer.tsx:543
 msgid "Search Options"
 msgstr "Opções de pesquisa"
 
-#: src/components/nav/SearchDrawer.tsx:537
+#: src/components/nav/SearchDrawer.tsx:546
 msgid "Whole word search"
 msgstr "Pesquisa de palavras inteira"
 
-#: src/components/nav/SearchDrawer.tsx:546
+#: src/components/nav/SearchDrawer.tsx:555
 msgid "Regex search"
 msgstr "Busca por regex"
 
-#: src/components/nav/SearchDrawer.tsx:555
+#: src/components/nav/SearchDrawer.tsx:564
 msgid "Notes search"
 msgstr "Pesquisar notas"
 
-#: src/components/nav/SearchDrawer.tsx:603
+#: src/components/nav/SearchDrawer.tsx:612
 msgid "An error occurred during search query"
 msgstr "Ocorreu um erro durante a pesquisa"
 
-#: src/components/nav/SearchDrawer.tsx:614
+#: src/components/nav/SearchDrawer.tsx:623
 #: src/tables/part/PartTestTemplateTable.tsx:86
 msgid "No Results"
 msgstr "Nenhum resultado"
 
-#: src/components/nav/SearchDrawer.tsx:617
+#: src/components/nav/SearchDrawer.tsx:626
 msgid "No results available for search query"
 msgstr "Não há resultados disponíveis para a pesquisa"
 

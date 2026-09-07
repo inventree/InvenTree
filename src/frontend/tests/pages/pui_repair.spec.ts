@@ -7,14 +7,18 @@ test('Repair Orders - Basic Navigation', async ({ browser }) => {
   // Enable the feature flag BEFORE opening the page
   await setSettingState({ setting: 'REPAIRORDER_ENABLED', value: true });
 
-  // Log in and navigate to the manufacturing index (not directly to repairorders)
+  // Log in and navigate directly to the repairorders sub-panel path
+  // This avoids the race condition where the tab may not be visible yet
   const page = await doCachedLogin(browser);
 
-  // Navigate to the manufacturing page — the fresh navigation ensures settings are loaded
-  await navigate(page, 'manufacturing/index/');
-  await page.waitForURL('**/manufacturing/index/**');
+  // Navigate directly to the repairorders panel URL
+  await navigate(page, 'manufacturing/index/repairorders');
 
-  // Verify the Repair Orders tab is visible and click it
+  // Reload to ensure the global settings state is fully hydrated in React
+  await page.reload();
+  await page.waitForLoadState('networkidle');
+
+  // Verify the Repair Orders tab is now visible and selected
   await page.getByRole('tab', { name: 'Repair Orders' }).waitFor();
   await page.getByRole('tab', { name: 'Repair Orders' }).click();
 });
@@ -23,13 +27,17 @@ test('Repair Orders - Create and Lifecycle', async ({ browser }) => {
   // Enable the feature flag BEFORE opening the page
   await setSettingState({ setting: 'REPAIRORDER_ENABLED', value: true });
 
-  // Log in and navigate to the manufacturing index
+  // Log in and navigate directly to the repairorders panel
   const page = await doCachedLogin(browser);
 
-  await navigate(page, 'manufacturing/index/');
-  await page.waitForURL('**/manufacturing/index/**');
+  await navigate(page, 'manufacturing/index/repairorders');
 
-  // Click the Repair Orders tab to switch to the repair orders view
+  // Reload to ensure settings are fully hydrated
+  await page.reload();
+  await page.waitForLoadState('networkidle');
+
+  // The Repair Orders tab should now be visible and active
+  await page.getByRole('tab', { name: 'Repair Orders' }).waitFor();
   await page.getByRole('tab', { name: 'Repair Orders' }).click();
 
   // Click the "Add Repair Order" button
