@@ -140,14 +140,6 @@ class ColorStoneQualitySerializer(DataExportSerializerMixin, InvenTreeModelSeria
         fields = ['pk', 'name', 'description', 'active', 'created_at', 'updated_at']
 
 
-class RateCustomerBriefSerializer(serializers.ModelSerializer):
-    """Minimal customer payload for rate dropdowns and nested detail."""
-
-    class Meta:
-        model = Company
-        fields = ['pk', 'name', 'code', 'active']
-
-
 class RateCustomerMixin(metaclass=serializers.SerializerMetaclass):
     """Shared customer multi-select fields for diamond / color-stone rates.
 
@@ -155,8 +147,8 @@ class RateCustomerMixin(metaclass=serializers.SerializerMetaclass):
     ``Model(**validated_data)``. M2M values cannot be passed there, so
     ``customers`` is stripped before validation/create and applied via .set().
 
-    SerializerMetaclass is required so ``customers`` / ``customers_detail``
-    are treated as declared serializer fields, not model fields.
+    SerializerMetaclass is required so ``customers`` is a declared serializer
+    field (PK list only — nested customer objects are not returned).
     """
 
     customers = serializers.PrimaryKeyRelatedField(
@@ -165,9 +157,6 @@ class RateCustomerMixin(metaclass=serializers.SerializerMetaclass):
         required=False,
         allow_empty=True,
         help_text='Company PKs (is_customer=True) this rate applies to.',
-    )
-    customers_detail = RateCustomerBriefSerializer(
-        source='customers', many=True, read_only=True
     )
 
     def skip_create_fields(self):
@@ -226,7 +215,7 @@ class DiamondStoneRateSerializer(
             'pk',
             'shape', 'mm_size', 'stone', 'color', 'cut', 'quality',
             'pointer', 'rate', 'pc',
-            'customers', 'customers_detail', 'all_customers',
+            'customers', 'all_customers',
             'active', 'created_at', 'updated_at',
             'shape_detail', 'mm_size_detail', 'stone_detail',
             'color_detail', 'cut_detail', 'quality_detail',
@@ -252,7 +241,7 @@ class ColorStoneRateSerializer(
             'pk',
             'shape', 'mm_size', 'stone', 'color', 'cut', 'quality',
             'pointer', 'rate', 'pc',
-            'customers', 'customers_detail', 'all_customers',
+            'customers', 'all_customers',
             'active', 'created_at', 'updated_at',
             'shape_detail', 'mm_size_detail', 'stone_detail',
             'color_detail', 'cut_detail', 'quality_detail',
