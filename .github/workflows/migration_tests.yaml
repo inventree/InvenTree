@@ -38,7 +38,7 @@ jobs:
           filters: |
             migrations:
               - '**/test_migrations.py'
-              - '**/*migrations.py',
+              - '**/*migrations.py'
               - '**/migrations/**'
               - '.github/workflows**'
               - 'src/backend/requirements.txt'
