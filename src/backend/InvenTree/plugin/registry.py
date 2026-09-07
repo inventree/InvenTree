@@ -741,7 +741,9 @@ class PluginsRegistry:
                 self.plugins[key] = plugin
             else:
                 # Deactivate plugin in db (if currently set as active)
-                if not settings.PLUGIN_TESTING and plugin.db.active:  # pragma: no cover
+                if (
+                    not settings.PLUGIN_TESTING and plugin.db and plugin.db.active
+                ):  # pragma: no cover
                     plugin.db.active = False
                     plugin.db.save(no_reload=True)
                 self.plugins_inactive[key] = plugin.db
@@ -831,7 +833,7 @@ class PluginsRegistry:
                 dt = time.time() - t_start
                 logger.debug('Loaded plugin `%s` in %.3fs', plg_name, dt)
 
-                if mandatory and not plg_db.active:  # pragma: no cover
+                if mandatory and plg_db and not plg_db.active:  # pragma: no cover
                     # If this is a mandatory plugin, ensure it is marked as active
                     logger.info(
                         'Plugin `%s` is a mandatory plugin - activating', plg_name

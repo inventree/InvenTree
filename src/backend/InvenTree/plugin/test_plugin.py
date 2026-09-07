@@ -389,6 +389,55 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
             'This is a dummy error', find_error('Test:init_plugin', 'broken_sample')
         )
 
+    def test_init_plugin_missing_config(self):
+        """Test that _init_plugin does not crash if PluginConfig cannot be looked up.
+
+        get_plugin_config() can legitimately return None - e.g. if the database
+        is not ready, or PluginConfig creation is disallowed in the current
+        context - leaving plugin.db as None. _init_plugin must still be able to
+        mark such a plugin as inactive without raising
+        AttributeError: 'NoneType' object has no attribute 'active'.
+        """
+
+        class MissingConfigPlugin(InvenTreePlugin):
+            NAME = 'MissingConfigPlugin'
+            SLUG = 'missingconfigplugin'
+
+        self.addCleanup(registry.reload_plugins, full_reload=True, collect=True)
+
+        # PLUGIN_TESTING=True would force-load the plugin regardless of its
+        # (missing) PluginConfig - disable it to hit the 'inactive' path below
+        with override_settings(PLUGIN_TESTING=False):
+            with mock.patch.object(registry, 'get_plugin_config', return_value=None):
+                registry._init_plugin(MissingConfigPlugin, {})
+
+        self.assertIn('missingconfigplugin', registry.plugins_full)
+        self.assertNotIn('missingconfigplugin', registry.plugins)
+
+    def test_init_plugin_missing_config_mandatory(self):
+        """Test that a mandatory plugin with no PluginConfig does not error out.
+
+        Same underlying gap as test_init_plugin_missing_config, but hit via the
+        'ensure mandatory plugin is active' branch instead of the 'deactivate'
+        branch - both dereferenced plg_db.active without checking plg_db was
+        actually found.
+        """
+
+        class MissingConfigMandatoryPlugin(InvenTreePlugin):
+            NAME = 'MissingConfigMandatoryPlugin'
+            SLUG = 'missingconfigmandatoryplugin'
+
+        self.addCleanup(registry.reload_plugins, full_reload=True, collect=True)
+        registry.errors.pop('MissingConfigMandatoryPlugin:init_plugin', None)
+
+        with override_settings(PLUGINS_MANDATORY=['missingconfigmandatoryplugin']):
+            with mock.patch.object(registry, 'get_plugin_config', return_value=None):
+                registry._init_plugin(MissingConfigMandatoryPlugin, {})
+
+        # No spurious 'plugin failed to load' error should have been recorded
+        self.assertNotIn('MissingConfigMandatoryPlugin:init_plugin', registry.errors)
+        self.assertIn('missingconfigmandatoryplugin', registry.plugins_full)
+
     def test_plugin_override_mandatory(self):
         """Test that a plugin cannot override the is_mandatory method."""
         with self.assertRaises(TypeError) as e:
