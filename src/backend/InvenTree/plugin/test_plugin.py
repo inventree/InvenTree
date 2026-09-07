@@ -414,6 +414,30 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         self.assertIn('missingconfigplugin', registry.plugins_full)
         self.assertNotIn('missingconfigplugin', registry.plugins)
 
+    def test_init_plugin_missing_config_mandatory(self):
+        """Test that a mandatory plugin with no PluginConfig does not error out.
+
+        Same underlying gap as test_init_plugin_missing_config, but hit via the
+        'ensure mandatory plugin is active' branch instead of the 'deactivate'
+        branch - both dereferenced plg_db.active without checking plg_db was
+        actually found.
+        """
+
+        class MissingConfigMandatoryPlugin(InvenTreePlugin):
+            NAME = 'MissingConfigMandatoryPlugin'
+            SLUG = 'missingconfigmandatoryplugin'
+
+        self.addCleanup(registry.reload_plugins, full_reload=True, collect=True)
+        registry.errors.pop('MissingConfigMandatoryPlugin:init_plugin', None)
+
+        with override_settings(PLUGINS_MANDATORY=['missingconfigmandatoryplugin']):
+            with mock.patch.object(registry, 'get_plugin_config', return_value=None):
+                registry._init_plugin(MissingConfigMandatoryPlugin, {})
+
+        # No spurious 'plugin failed to load' error should have been recorded
+        self.assertNotIn('MissingConfigMandatoryPlugin:init_plugin', registry.errors)
+        self.assertIn('missingconfigmandatoryplugin', registry.plugins_full)
+
     def test_plugin_override_mandatory(self):
         """Test that a plugin cannot override the is_mandatory method."""
         with self.assertRaises(TypeError) as e:
