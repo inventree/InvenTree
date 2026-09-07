@@ -747,7 +747,9 @@ class PluginsRegistry:
                 self.plugins[key] = plugin
             else:
                 # Deactivate plugin in db (if currently set as active)
-                if not settings.PLUGIN_TESTING and plugin.db.active:  # pragma: no cover
+                if (
+                    not settings.PLUGIN_TESTING and plugin.db and plugin.db.active
+                ):  # pragma: no cover
                     plugin.db.active = False
                     plugin.db.save(no_reload=True)
                 self.plugins_inactive[key] = plugin.db
