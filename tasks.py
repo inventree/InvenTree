@@ -1859,7 +1859,7 @@ def setup_test(
     use_ssh: bool = False,
     verbose: bool = False,
     path: str = 'inventree-demo-dataset',
-    branch='main',
+    branch='stable',
 ):
     """Setup a testing environment."""
     from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
