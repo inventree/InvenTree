@@ -8,8 +8,8 @@ The InvenTree installer automates the installation procedure for a production In
 
 The installer supports the following Linux distributions:
 
-- Debian 11, 12
-- Ubuntu 22.04 LTS, 24.04 LTS
+- Debian 13
+- Ubuntu 24.04 LTS, 26.04 LTS
 
 Support for other OS versions is not currently planned. If you are using a different distribution, you can still follow the [docker](./docker.md) or [bare metal](./install.md) installation instructions.
 
