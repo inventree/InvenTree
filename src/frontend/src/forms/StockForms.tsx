@@ -2188,6 +2188,9 @@ export function stockLocationFields(): ApiFormFieldSet {
     },
     name: {},
     description: {},
+    owner: {
+      icon: <IconUsersGroup />
+    },
     structural: {},
     external: {},
     custom_icon: {
