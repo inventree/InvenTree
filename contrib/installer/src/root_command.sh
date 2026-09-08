@@ -46,6 +46,7 @@ echo "### Installer for InvenTree - source: $publisher/$source_url"
 get_distribution
 echo "### Detected distribution: $OS $VER"
 SUPPORTED=true          # is this OS supported?
+OLD_VERSION=false       # is this an old OS that is no longer supported?
 
 DIST_OS=${OS,,}
 DIST_VER=$VER
@@ -54,21 +55,30 @@ case "$OS" in
     Ubuntu)
         if [[ $VER == "24.04" ]]; then
             SUPPORTED=true
-        elif [[ $VER == "22.04" ]]; then
+        elif [[ $VER == "26.04" ]]; then
             SUPPORTED=true
         elif [[ $VER == "20.04" ]]; then
-            SUPPORTED=true
+            SUPPORTED=false
+            OLD_VERSION=true
+        elif [[ $VER == "22.04" ]]; then
+            SUPPORTED=false
+            OLD_VERSION=true
         else
             SUPPORTED=false
         fi
         ;;
     "Debian GNU/Linux" | "debian gnu/linux" | Raspbian)
-        if [[ $VER == "12" ]]; then
+        if [[ $VER == "13" ]]; then
             SUPPORTED=true
+        elif [[ $VER == "12" ]]; then
+            SUPPORTED=false
+            OLD_VERSION=true
         elif [[ $VER == "11" ]]; then
-            SUPPORTED=true
+            SUPPORTED=false
+            OLD_VERSION=true
         elif [[ $VER == "10" ]]; then
-            SUPPORTED=true
+            SUPPORTED=false
+            OLD_VERSION=true
         else
             SUPPORTED=false
         fi
@@ -82,6 +92,11 @@ esac
 
 if [[ $SUPPORTED != "true" ]]; then
     echo "This OS is currently not supported."
+
+    if [[ $OLD_VERSION == "true" ]]; then
+        echo "The detected version ($OS $VER) is no longer supported but a newer version is."
+    fi
+
     echo "Please install manually using https://docs.inventree.org/en/stable/start/install/"
     echo "or check https://github.com/inventree/InvenTree/issues/3836 for packaging for your OS."
     echo "If you think this is a bug please file an issue at"
