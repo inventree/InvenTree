@@ -647,3 +647,26 @@ def validate_primary_group_on_group_change(sender, instance, action, **kwargs):
         if profile.primary_group and profile.primary_group not in instance.groups.all():
             profile.primary_group = None
             profile.save()
+
+
+# update allauth user mail
+@receiver(post_save, sender=User)
+def sync_user_email_address(sender, instance: User, created: bool, **kwargs):
+    """Keep the allauth EmailAddress in sync with User email field."""
+    if isImportingData() or isReadOnlyCommand():
+        return
+
+    if not instance.email:
+        return
+
+    primary_address = EmailAddress.objects.filter(user=instance, primary=True).first()
+
+    if primary_address:
+        if primary_address.email != instance.email:
+            primary_address.email = instance.email
+            primary_address.verified = False
+            primary_address.save()
+    elif not EmailAddress.objects.filter(user=instance, email=instance.email).exists():
+        EmailAddress.objects.create(
+            user=instance, email=instance.email, primary=True, verified=False
+        )
