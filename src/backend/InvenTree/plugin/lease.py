@@ -4,6 +4,7 @@ Used to serialize an potentially long-running operation,
 without holding a database transaction open for the duration.
 """
 
+import os
 import time
 from datetime import datetime, timedelta
 from typing import Optional
@@ -80,6 +81,10 @@ def acquire_lease_blocking(
     Returns True if the lease was acquired, or False if `timeout` elapsed first.
     """
     deadline = time.monotonic() + timeout
+
+    if os.environ.get('SETUP_INITIALIZING', '0') == '1':
+        logger.debug("Skipping lease acquisition for '%s' during initialization", key)
+        return True
 
     while True:
         if try_acquire_lease(key):
