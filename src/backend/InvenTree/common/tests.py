@@ -1936,6 +1936,32 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
         for name in invalid_name_values:
             self.patch(url, {'name': name}, expected_code=400)
 
+    def test_validation_circular(self):
+        """Test that circular / recursive unit definitions are rejected.
+
+        Ref: https://github.com/inventree/InvenTree/issues/12813
+        """
+        self.user.is_staff = True
+        self.user.save()
+
+        a = CustomUnit.objects.create(name='circular_a', definition='meter')
+        b = CustomUnit.objects.create(name='circular_b', definition='3 * circular_a')
+
+        # Editing 'a' to reference 'b' introduces a circular reference
+        response = self.patch(
+            reverse('api-custom-unit-detail', kwargs={'pk': a.pk}),
+            {'definition': '2 * circular_b'},
+            expected_code=400,
+        )
+
+        self.assertIn('non_field_errors', response.data)
+
+        # Ensure the original (non-circular) definition was not overwritten
+        a.refresh_from_db()
+        b.refresh_from_db()
+        self.assertEqual(a.definition, 'meter')
+        self.assertEqual(b.definition, '3 * circular_a')
+
     def test_api(self):
         """Test the CustomUnit API."""
         response = self.get(reverse('api-custom-unit-all'))
@@ -1943,6 +1969,36 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
         self.assertIn('available_systems', response.data)
         self.assertIn('available_units', response.data)
         self.assertEqual(len(response.data['available_units']) > 100, True)
+
+    def test_api_circular_unit(self):
+        """Test that a pre-existing circular unit definition does not break the 'all units' endpoint.
+
+        It is not possible to *create* a circular definition via the API (refer to
+        test_validation_circular), but this test guards against any other way such
+        a definition could end up in the database (e.g. a direct DB edit, or a bug
+        in some other validation path).
+
+        Ref: https://github.com/inventree/InvenTree/issues/12813
+        """
+        import InvenTree.conversion as conversion
+
+        a = CustomUnit.objects.create(name='circular_c', definition='meter')
+        b = CustomUnit.objects.create(name='circular_d', definition='3 * circular_c')
+
+        # Bypass model validation entirely, to simulate a pre-existing bad definition
+        CustomUnit.objects.filter(pk=a.pk).update(definition='2 * circular_d')
+        conversion.reload_unit_registry()
+
+        try:
+            response = self.get(reverse('api-custom-unit-all'), expected_code=200)
+
+            # The broken units are excluded, but the endpoint does not crash
+            self.assertNotIn('circular_c', response.data['available_units'])
+            self.assertNotIn('circular_d', response.data['available_units'])
+            self.assertGreater(len(response.data['available_units']), 100)
+        finally:
+            CustomUnit.objects.filter(pk__in=[a.pk, b.pk]).delete()
+            conversion.reload_unit_registry()
 
 
 class ContentTypeAPITest(InvenTreeAPITestCase):
