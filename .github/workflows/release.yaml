@@ -222,7 +222,7 @@ jobs:
           # remove the whole docs dir - we are not doing anything with them
           rm -rf docs
       - name: Package - current release channel
-        uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # main
+        uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # v1.0.2
         id: package
         with:
           name: inventree
@@ -241,7 +241,7 @@ jobs:
             INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
             APP_REPO=inventree/InvenTree
       - name: Publish to go.packager.io - current release channel
-        uses: pkgr/action/publish@c5666febcd31750da6428042193fc5b2fb765435 # main
+        uses: pkgr/action/publish@c5666febcd31750da6428042193fc5b2fb765435 # v1.0.2
         with:
           target: ${{ matrix.target }}
           token: ${{ secrets.PACKAGER_RELEASE_TOKEN }}
@@ -256,7 +256,7 @@ jobs:
           PACKAGE_NAME: ${{ matrix.target }}-${{ steps.setup.outputs.version }}.tar.gz
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Package - stable release channel
-        uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # main
+        uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # v1.0.2
         id: package-stable
         with:
           name: inventree
@@ -275,7 +275,7 @@ jobs:
             INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
             APP_REPO=inventree/InvenTree
       - name: Publish to go.packager.io - stable release channel
-        uses: pkgr/action/publish@c5666febcd31750da6428042193fc5b2fb765435 # main
+        uses: pkgr/action/publish@c5666febcd31750da6428042193fc5b2fb765435 # v1.0.2
         with:
           target: ${{ matrix.target }}
           token: ${{ secrets.PACKAGER_RELEASE_TOKEN }}
