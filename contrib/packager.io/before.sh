@@ -11,17 +11,17 @@ SHA=$(echo $APP_PKG_ITERATION | cut -d'.' -f2)
 
 # Download info
 echo "INFO collection | Getting info from github for commit $SHA"
-curl -L -s -f \
+curl -L -s -f --proto "=https" \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
   https://api.github.com/repos/$APP_REPO/commits/$SHA > commit.json
 echo "INFO collection | Got commit.json with size $(wc -c commit.json)"
-curl -L -s -f \
+curl -L -s -f --proto "=https" \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
   https://api.github.com/repos/$APP_REPO/commits/$SHA/branches-where-head > branches.json
 echo "INFO collection | Got branches.json with size $(wc -c branches.json)"
-curl -L -s -f \
+curl -L -s -f --proto "=https" \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
   https://api.github.com/repos/$APP_REPO/commits/$APP_PKG_VERSION > tag.json
