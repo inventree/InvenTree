@@ -74,7 +74,6 @@ class Migration(migrations.Migration):
     dependencies = [
         ('common', '0032_selectionlist_selectionlistentry_and_more'),
         ('part', '0060_merge_20201112_1722'),
-        ('part', '0061_auto_20210104_2331'),
         ('stock', '0055_auto_20201117_1453'),
         ('stock', '0058_stockitem_packaging'),
         ('taggit', '0005_auto_20220424_2025'),
@@ -103,6 +102,11 @@ class Migration(migrations.Migration):
             model_name='part',
             name='default_location',
             field=mptt.fields.TreeForeignKey(blank=True, help_text='Where is this item normally stored?', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='default_parts', to='stock.stocklocation', verbose_name='Default Location'),
+        ),
+        migrations.AddField(
+            model_name='part',
+            name='default_expiry',
+            field=models.PositiveIntegerField(default=0, help_text='Expiry time (in days) for stock items of this part', validators=[django.core.validators.MinValueValidator(0)], verbose_name='Default Expiry'),
         ),
         migrations.AlterField(
             model_name='part',
