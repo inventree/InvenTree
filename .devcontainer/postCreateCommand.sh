@@ -24,10 +24,10 @@ pip install --no-cache-dir --force-reinstall --ignore-installed cffi
 python3 -m pip install --upgrade pip
 
 # Ensure the correct invoke is available
-pip3 install --ignore-installed --upgrade invoke Pillow
+pip3 install --only-binary :all: --ignore-installed --upgrade invoke Pillow
 
 # install base level packages
-pip3 install -Ur contrib/container/requirements.txt --require-hashes
+pip3 install --only-binary :all: -Ur contrib/container/requirements.txt --require-hashes
 
 # Run initial InvenTree server setup
 invoke update -s
