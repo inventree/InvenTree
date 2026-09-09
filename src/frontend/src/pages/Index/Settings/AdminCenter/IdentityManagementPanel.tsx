@@ -1,6 +1,6 @@
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { CopyButton } from '@lib/components/CopyButton';
-import { RowDeleteAction } from '@lib/components/RowActions';
+import { RowDeleteAction, RowEditAction } from '@lib/components/RowActions';
 import type { RowAction } from '@lib/components/RowActions';
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -31,6 +31,7 @@ import { showNotification } from '@mantine/notifications';
 import {
   IconArrowBigLeft,
   IconArrowBigRight,
+  IconPlus,
   IconShieldLock,
   IconShieldOff
 } from '@tabler/icons-react';
@@ -43,8 +44,10 @@ import { InvenTreeTable } from '../../../../components/tables/InvenTreeTable';
 import { showApiErrorMessage } from '../../../../functions/notifications';
 import {
   useCreateApiFormModal,
-  useDeleteApiFormModal
+  useDeleteApiFormModal,
+  useEditApiFormModal
 } from '../../../../hooks/UseForm';
+import { useLocalState } from '../../../../states/LocalState';
 
 function ScimManagementPanel() {
   const [secret, setSecret] = useState<string>('');
@@ -199,10 +202,363 @@ function ScimManagementPanel() {
 
 function SSOManagementPanel() {
   const navigate = useNavigate();
+  const { getHost } = useLocalState();
+  const table = useTable('sso-applications', { idAccessor: 'id' });
+  const [oidcCallback, setOidcCallback] = useState<string | null>(null);
+  const [samlUrls, setSamlUrls] = useState<{
+    acs: string;
+    sls: string;
+    metadata: string;
+  } | null>(null);
+  const [selectedSsoApplication, setSelectedSsoApplication] = useState<
+    number | undefined
+  >(undefined);
+
+  const newGenericSsoApplication = useCreateApiFormModal({
+    url: ApiEndpoints.sso_list,
+    title: t`Add SSO Application`,
+    table: table,
+    fields: {
+      name: {},
+      provider: {},
+      provider_id: {},
+      client_id: {},
+      secret: {},
+      settings: {}
+    }
+  });
+
+  const newOidcSsoApplication = useCreateApiFormModal({
+    url: ApiEndpoints.sso_list,
+    title: t`Add OIDC SSO Application`,
+    table: table,
+    fields: {
+      provider: {
+        hidden: true,
+        value: 'openid_connect'
+      },
+      name: {},
+      provider_id: { required: true },
+      client_id: {},
+      secret: { required: true },
+      oauth_pkce_enabled: {
+        field_type: 'boolean',
+        label: t`OAuth PKCE Enabled`,
+        description: t`Use Proof Key for Code Exchange during OIDC login with this application`,
+        default: true
+      },
+      server_url: {
+        field_type: 'string',
+        label: t`OIDC Server URL`,
+        description: t`Base URL of the OIDC provider`
+      },
+      uid_field: {
+        field_type: 'string',
+        label: t`UID Field`,
+        description: t`OIDC claim used as the user's unique identifier`,
+        default: 'sub'
+      }
+    },
+    processFormData: (data) => {
+      const { oauth_pkce_enabled, server_url, uid_field, ...applicationData } =
+        data;
+
+      return {
+        ...applicationData,
+        settings: {
+          oauth_pkce_enabled,
+          server_url,
+          uid_field
+        }
+      };
+    },
+    onFormSuccess: (data) => {
+      setOidcCallback(
+        new URL(
+          `/accounts/oidc/${data.provider_id}/login/callback/`,
+          getHost()
+        ).toString()
+      );
+    }
+  });
+
+  const newSamlSsoApplication = useCreateApiFormModal({
+    url: ApiEndpoints.sso_list,
+    title: t`Add SAML SSO Application`,
+    table: table,
+    fields: {
+      provider: {
+        hidden: true,
+        value: 'saml'
+      },
+      name: {
+        label: t`Name`,
+        description: t`Display name for this SAML identity provider`
+      },
+      provider_id: {
+        required: true,
+        label: t`Provider ID`,
+        description: t`Unique provider identifier, normally the IdP entity ID`
+      },
+      client_id: {
+        required: true,
+        label: t`Organization Slug`,
+        description: t`URL-safe identifier used in SAML login and metadata URLs`
+      },
+      idp: {
+        field_type: 'nested object',
+        label: t`Identity Provider Settings`,
+        children: {
+          entity_id: {
+            field_type: 'string',
+            required: true,
+            label: t`IdP Entity ID`,
+            description: t`Entity ID of the SAML identity provider`
+          },
+          metadata_url: {
+            field_type: 'url',
+            label: t`IdP Metadata URL`,
+            description: t`Use this or provide the inline IdP settings below`
+          },
+          sso_url: {
+            field_type: 'url',
+            label: t`IdP SSO URL`,
+            description: t`Inline IdP single sign-on URL`
+          },
+          slo_url: {
+            field_type: 'url',
+            label: t`IdP SLO URL`,
+            description: t`Inline IdP single logout URL`
+          },
+          x509cert: {
+            field_type: 'string',
+            label: t`IdP X.509 Certificate`,
+            description: t`Inline IdP signing certificate`
+          }
+        }
+      },
+      sp: {
+        field_type: 'nested object',
+        label: t`Service Provider Settings`,
+        children: {
+          entity_id: {
+            field_type: 'string',
+            label: t`SP Entity ID`,
+            description: t`Optional service provider entity ID`
+          }
+        }
+      },
+      account: {
+        field_type: 'nested object',
+        label: t`Account Mapping`,
+        children: {
+          attribute_mapping: {
+            field_type: 'json',
+            label: t`Attribute Mapping`,
+            description: t`Map SAML attributes to uid, email, and email_verified`
+          },
+          use_nameid_for_email: {
+            field_type: 'boolean',
+            label: t`Use NameID for Email`,
+            description: t`Use the SAML NameID value as the user's email address`
+          }
+        }
+      }
+    },
+    processFormData: (data) => {
+      const { idp, sp, account, ...applicationData } = data;
+
+      return {
+        ...applicationData,
+        settings: {
+          ...account,
+          idp,
+          sp
+        }
+      };
+    },
+    onFormSuccess: (data) => {
+      const baseUrl = getHost();
+      const organization = data.client_id;
+
+      setSamlUrls({
+        acs: new URL(`/accounts/saml/${organization}/acs/`, baseUrl).toString(),
+        sls: new URL(`/accounts/saml/${organization}/sls/`, baseUrl).toString(),
+        metadata: new URL(
+          `/accounts/saml/${organization}/metadata/`,
+          baseUrl
+        ).toString()
+      });
+    }
+  });
+
+  const editSsoApplication = useEditApiFormModal({
+    url: ApiEndpoints.sso_list,
+    pk: selectedSsoApplication,
+    title: t`Edit SSO Application`,
+    table: table,
+    fields: {
+      name: {},
+      provider: {},
+      provider_id: {},
+      client_id: {},
+      secret: {},
+      settings: {}
+    }
+  });
+
+  const deleteSsoApplication = useDeleteApiFormModal({
+    url: ApiEndpoints.sso_list,
+    pk: selectedSsoApplication,
+    title: t`Delete SSO Application`,
+    table: table
+  });
+
+  const ssoColumns = useMemo(
+    () => [
+      {
+        accessor: 'name',
+        title: t`Name`,
+        sortable: true,
+        switchable: false
+      },
+      {
+        accessor: 'provider',
+        title: t`Provider`,
+        sortable: true,
+        switchable: true
+      },
+      {
+        accessor: 'provider_id',
+        title: t`Provider ID`,
+        sortable: true,
+        switchable: true
+      },
+      {
+        accessor: 'client_id',
+        title: t`Client ID`,
+        sortable: true,
+        switchable: true
+      }
+    ],
+    []
+  );
+
+  const rowActions = useCallback(
+    (record: any): RowAction[] => [
+      RowEditAction({
+        onClick: () => {
+          setSelectedSsoApplication(record.id);
+          editSsoApplication.open();
+        }
+      }),
+      RowDeleteAction({
+        onClick: () => {
+          setSelectedSsoApplication(record.id);
+          deleteSsoApplication.open();
+        }
+      })
+    ],
+    [deleteSsoApplication, editSsoApplication]
+  );
+
+  const tableActions = useMemo(
+    () => [
+      <Button
+        key={'add-generic-sso-application'}
+        leftSection={<IconPlus size={16} />}
+        onClick={() => newGenericSsoApplication.open()}
+      >
+        <Trans>Add Generic App</Trans>
+      </Button>,
+      <Button
+        key={'add-oidc-sso-application'}
+        leftSection={<IconPlus size={16} />}
+        onClick={() => newOidcSsoApplication.open()}
+      >
+        <Trans>Add OIDC App</Trans>
+      </Button>,
+      <Button
+        key={'add-saml-sso-application'}
+        leftSection={<IconPlus size={16} />}
+        onClick={() => newSamlSsoApplication.open()}
+      >
+        <Trans>Add SAML App</Trans>
+      </Button>
+    ],
+    [newGenericSsoApplication, newOidcSsoApplication, newSamlSsoApplication]
+  );
 
   return (
     <Stack gap='md'>
-      TBD
+      <Text>
+        <Trans>
+          Frontend Single Sign-On (SSO) is based on django-allauth. By default
+          generic OIDC (client) and SAML providers are enabled.
+          <br />
+          You can add more specific providers using the
+          `INVENTREE_SOCIAL_BACKENDS` config key. After a restart those
+          providers become available below.
+          <br />
+          The documentation goes more in depth on SSO setup steps.
+        </Trans>
+      </Text>
+      {newGenericSsoApplication.modal}
+      <Modal
+        opened={oidcCallback !== null}
+        onClose={() => setOidcCallback(null)}
+        title={<StylishText size='xl'>{t`OIDC Callback URL`}</StylishText>}
+        centered
+      >
+        <Stack gap='sm'>
+          <Text>{t`Add this callback URL to your OIDC provider.`}</Text>
+          <Group justify='space-between' wrap='nowrap'>
+            <Code style={{ wordBreak: 'break-all', whiteSpace: 'normal' }}>
+              {oidcCallback}
+            </Code>
+            <CopyButton value={oidcCallback ?? ''} />
+          </Group>
+        </Stack>
+      </Modal>
+      <Modal
+        opened={samlUrls !== null}
+        onClose={() => setSamlUrls(null)}
+        title={<StylishText size='xl'>{t`SAML Service URLs`}</StylishText>}
+        centered
+      >
+        <Stack gap='sm'>
+          <Text>{t`Register these URLs with your SAML identity provider.`}</Text>
+          <Table
+            data={{
+              head: [<Trans>Endpoint</Trans>, <Trans>URL</Trans>],
+              body: [
+                [<Trans>ACS</Trans>, samlUrls?.acs],
+                [<Trans>SLS</Trans>, samlUrls?.sls],
+                [<Trans>Metadata</Trans>, samlUrls?.metadata]
+              ]
+            }}
+          />
+        </Stack>
+      </Modal>
+      {newOidcSsoApplication.modal}
+      {newSamlSsoApplication.modal}
+      {editSsoApplication.modal}
+      {deleteSsoApplication.modal}
+      <InvenTreeTable
+        tableState={table}
+        url={apiUrl(ApiEndpoints.sso_list)}
+        columns={ssoColumns}
+        props={{
+          enableSearch: true,
+          enableColumnSwitching: true,
+          enableSelection: false,
+          enablePagination: true,
+          enableRefresh: true,
+          tableActionsFullWidth: true,
+          rowActions: rowActions,
+          tableActions: tableActions
+        }}
+      />
       <GlobalSettingList
         heading={t`Single Sign-On (SSO) Settings`}
         keys={[

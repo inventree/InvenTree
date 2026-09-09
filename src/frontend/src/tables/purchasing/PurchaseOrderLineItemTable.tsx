@@ -313,9 +313,9 @@ export function PurchaseOrderLineItemTable({
     title: t`Add Line Item`,
     fields: addPurchaseOrderFields,
     initialData: {
-      ...initialData,
       purchase_price: null,
-      purchase_price_currency: currency
+      purchase_price_currency: currency,
+      ...initialData
     },
     onFormSuccess: orderDetailRefresh,
     table: table

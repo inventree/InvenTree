@@ -90,6 +90,17 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
 
     user_detail = UserSerializer(source='user', read_only=True, many=False)
 
+    def validate_model_type(self, value):
+        """Prevent the target model type from being changed after creation."""
+        if self.instance is not None and self.instance.model_type != value:
+            raise ValidationError(
+                _(
+                    'Model type cannot be changed after the import session has been created'
+                )
+            )
+
+        return value
+
     def validate_field_defaults(self, defaults):
         """De-stringify the field defaults."""
         if defaults is None:
