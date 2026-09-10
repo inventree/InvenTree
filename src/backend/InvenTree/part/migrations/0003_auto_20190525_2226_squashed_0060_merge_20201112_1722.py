@@ -13,12 +13,6 @@ from django.conf import settings
 from django.db import migrations, models
 
 
-# Functions from the following migrations need manual copying.
-# Move them and any dependencies into this file, then update the
-# RunPython operations to refer to the local versions:
-# part.migrations.0034_auto_20200404_1238
-# part.migrations.0056_auto_20201110_1125
-
 class Migration(migrations.Migration):
 
     replaces = [('part', '0003_auto_20190525_2226'), ('part', '0004_auto_20190525_2356'), ('part', '0005_auto_20190526_1119'), ('part', '0006_auto_20190526_1215'), ('part', '0007_auto_20190602_1944'), ('part', '0008_auto_20190618_0042'), ('part', '0009_part_virtual'), ('part', '0010_auto_20190620_2135'), ('part', '0011_part_revision'), ('part', '0012_auto_20190627_2144'), ('part', '0013_auto_20190628_0951'), ('part', '0014_partparameter'), ('part', '0015_auto_20190820_0251'), ('part', '0016_auto_20190820_0257'), ('part', '0017_bomitem_checksum'), ('part', '0018_auto_20190907_0941'), ('part', '0019_auto_20190908_0404'), ('part', '0020_auto_20190908_0404'), ('part', '0021_auto_20190908_0916'), ('part', '0022_auto_20190908_0918'), ('part', '0023_auto_20190913_1401'), ('part', '0024_auto_20191118_2139'), ('part', '0025_auto_20191118_2316'), ('part', '0026_auto_20200131_1022'), ('part', '0027_auto_20200202_1024'), ('part', '0028_auto_20200203_1007'), ('part', '0029_auto_20200223_0901'), ('part', '0030_auto_20200318_1027'), ('part', '0031_auto_20200318_1044'), ('part', '0032_auto_20200322_0453'), ('part', '0033_auto_20200404_0445'), ('part', '0034_auto_20200404_1238'), ('part', '0035_auto_20200406_0045'), ('part', '0036_partattachment_user'), ('part', '0037_partattachment_upload_date'), ('part', '0038_auto_20200513_0016'), ('part', '0039_auto_20200515_1127'), ('part', '0040_parttesttemplate'), ('part', '0041_auto_20200517_0348'), ('part', '0042_auto_20200518_0900'), ('part', '0043_auto_20200527_0005'), ('part', '0044_auto_20200605_0931'), ('part', '0045_auto_20200605_0932'), ('part', '0046_auto_20200804_0107'), ('part', '0047_auto_20200808_0715'), ('part', '0048_auto_20200902_1404'), ('part', '0049_partsellpricebreak'), ('part', '0050_auto_20200917_2315'), ('part', '0051_bomitem_optional'), ('part', '0052_partrelated'), ('part', '0054_auto_20201109_1246'), ('part', '0055_auto_20201110_1001'), ('part', '0056_auto_20201110_1125'), ('part', '0057_remove_partsellpricebreak_currency'), ('part', '0058_remove_partsellpricebreak_cost'), ('part', '0059_auto_20201112_1112'), ('part', '0053_partcategoryparametertemplate'), ('part', '0060_merge_20201112_1722')]

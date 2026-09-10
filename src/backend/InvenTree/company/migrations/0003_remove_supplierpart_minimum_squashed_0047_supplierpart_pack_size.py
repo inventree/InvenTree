@@ -13,14 +13,6 @@ from django.conf import settings
 from django.db import migrations, models
 
 
-# Functions from the following migrations need manual copying.
-# Move them and any dependencies into this file, then update the
-# RunPython operations to refer to the local versions:
-# company.migrations.0019_auto_20200413_0642
-# company.migrations.0024_unique_name_email_constraint
-# company.migrations.0026_auto_20201110_1011
-# company.migrations.0036_supplierpart_update_2
-
 class Migration(migrations.Migration):
 
     replaces = [('company', '0003_remove_supplierpart_minimum'), ('company', '0004_auto_20190525_2354'), ('company', '0005_auto_20190525_2356'), ('company', '0006_supplierpricebreak_currency'), ('company', '0007_remove_supplierpart_lead_time'), ('company', '0008_auto_20190913_1407'), ('company', '0009_auto_20191118_2323'), ('company', '0010_auto_20200201_1231'), ('company', '0011_auto_20200318_1114'), ('company', '0012_auto_20200318_1114'), ('company', '0013_auto_20200406_0131'), ('company', '0014_auto_20200407_0116'), ('company', '0015_company_is_manufacturer'), ('company', '0016_auto_20200412_2330'), ('company', '0017_auto_20200413_0320'), ('company', '0018_supplierpart_manufacturer'), ('company', '0019_auto_20200413_0642'), ('company', '0020_auto_20200413_0839'), ('company', '0021_remove_supplierpart_manufacturer_name'), ('company', '0022_auto_20200613_1045'), ('company', '0023_auto_20200808_0715'), ('company', '0024_unique_name_email_constraint'), ('company', '0025_auto_20201110_1001'), ('company', '0026_auto_20201110_1011'), ('company', '0027_remove_supplierpricebreak_currency'), ('company', '0028_remove_supplierpricebreak_cost'), ('company', '0029_company_currency'), ('company', '0030_auto_20201112_1112'), ('company', '0031_auto_20210103_2215'), ('company', '0032_auto_20210403_1837'), ('company', '0033_auto_20210410_1528'), ('company', '0034_manufacturerpart'), ('company', '0035_supplierpart_update_1'), ('company', '0036_supplierpart_update_2'), ('company', '0037_supplierpart_update_3'), ('company', '0038_manufacturerpartparameter'), ('company', '0039_auto_20210701_0509'), ('company', '0040_alter_company_currency'), ('company', '0041_alter_company_options'), ('company', '0042_supplierpricebreak_updated'), ('company', '0043_manufacturerpartattachment'), ('company', '0044_auto_20220607_2204'), ('company', '0045_alter_company_notes'), ('company', '0046_alter_company_image'), ('company', '0047_supplierpart_pack_size')]
