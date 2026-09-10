@@ -207,9 +207,7 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     },
     'ROTATE_TABLE_HEADERS': {
         'name': _('Rotated Table Headers'),
-        'description': _(
-            'Display table column headers with rotated (vertical) text'
-        ),
+        'description': _('Display table column headers with rotated (vertical) text'),
         'default': False,
         'validator': bool,
     },
