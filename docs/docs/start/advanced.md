@@ -65,7 +65,7 @@ Next you can start configuring the connection. Either use the config file or set
 | `INVENTREE_LDAP_USER_ATTR_MAP` | `ldap.user_attr_map` | LDAP <-> InvenTree user attribute map, can be json if used as env, in yml directly specify the object. default: `{"first_name": "givenName", "last_name": "sn", "email": "mail"}` |
 | `INVENTREE_LDAP_ALWAYS_UPDATE_USER` | `ldap.always_update_user` | Always update the user on each login, default: `true` |
 | `INVENTREE_LDAP_CACHE_TIMEOUT` | `ldap.cache_timeout` | cache timeout to reduce traffic with LDAP server, default: `3600` (1h) |
-| `INVENTREE_LDAP_GROUP_SEARCH` | `ldap.group_search` | Base LDAP DN for group searching; required to enable group features |
+| `INVENTREE_LDAP_GROUP_SEARCH` | `ldap.group_search` | Base LDAP DN for group searching; required to enable group features. If not set, all group-based features are disabled gracefully |
 | `INVENTREE_LDAP_GROUP_OBJECT_CLASS` | `ldap.group_object_class` | The string to pass to the LDAP group search `(objectClass=<...>)`, default: `groupOfUniqueNames` |
 | `INVENTREE_LDAP_MIRROR_GROUPS` | `ldap.mirror_groups` | If `True`, mirror a user's LDAP group membership in the Django database, default: `False` |
 | `INVENTREE_LDAP_GROUP_TYPE_CLASS` | `ldap.group_type_class` | The group class to be imported from `django_auth_ldap.config` as a string, default: `'GroupOfUniqueNamesType'`|
@@ -74,6 +74,7 @@ Next you can start configuring the connection. Either use the config file or set
 | `INVENTREE_LDAP_REQUIRE_GROUP` | `ldap.require_group` | If set, users _must_ be in this group to log in to InvenTree |
 | `INVENTREE_LDAP_DENY_GROUP` | `ldap.deny_group` | If set, users _must not_ be in this group to log in to InvenTree |
 | `INVENTREE_LDAP_USER_FLAGS_BY_GROUP` | `ldap.user_flags_by_group` | LDAP group to InvenTree user flag map, can be json if used as env, in yml directly specify the object. See config template for example, default: `{}` |
+| `INVENTREE_LDAP_FIND_GROUP_PERMS` | `ldap.find_group_perms` | If `True`, look up LDAP group permissions during authentication. Automatically disabled when `ldap.group_search` is not set. default: `True` |
 
 ## Tracing support
 
