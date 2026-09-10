@@ -19,6 +19,7 @@ from typing import Optional
 import invoke
 from invoke import Collection, task
 from invoke.exceptions import Exit, UnexpectedExit
+from cli_error_handling import build_structured_error, format_structured_error
 
 
 def safe_value(fnc):
@@ -143,21 +144,14 @@ def task_exception_handler(t, v, tb):
     """Handle exceptions raised by tasks.
 
     The intent here is to provide more 'useful' error messages when tasks fail.
+    Errors are categorized and rendered in the standard
+    `[ERRO: CATEGORIA] mensagem` format (US01), with an optional corrective
+    action suggestion appended when one is known (US02).
     """
     sys.__excepthook__(t, v, tb)
 
-    if t is ModuleNotFoundError:
-        mod_name = str(v).split(' ')[-1].strip("'")
-
-        error(f'Error importing required module: {mod_name}')
-        warning('- Ensure the correct Python virtual environment is active')
-        warning(
-            '- Ensure that the invoke tool is installed in the active Python environment'
-        )
-        warning(
-            "- Ensure all required packages are installed by running 'invoke install'"
-        )
-
+    structured = build_structured_error(v)
+    error(format_structured_error(structured))
 
 sys.excepthook = task_exception_handler
 
