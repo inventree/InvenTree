@@ -20,12 +20,13 @@ class TestCreationDateMigration(MigratorTestCase):
         """Create StockItem entries with varied data to exercise all backfill paths."""
         import datetime
 
+        from django.conf import settings
         from django.db import connection
 
         Part = self.old_state.apps.get_model('part', 'part')
         StockItemTracking = self.old_state.apps.get_model('stock', 'stockitemtracking')
 
-        utc = datetime.timezone.utc
+        utc = datetime.timezone.utc if settings.USE_TZ else None
 
         part = Part.objects.create(
             name='Migration Test Part', level=0, tree_id=1, lft=0, rght=0
@@ -41,19 +42,23 @@ class TestCreationDateMigration(MigratorTestCase):
             Raw SQL also leaves updated=NULL (no DB-level default for auto_now), which
             makes Scenario 6 a clean "no date sources available" case.
             """
+            insert_sql = """
+                INSERT INTO stock_stockitem
+                    (part_id, quantity, level, tree_id, lft, rght,
+                     status, delete_on_deplete, review_needed, is_building,
+                     link, serial_int, barcode_data, barcode_hash)
+                VALUES (%s, 1, 0, 0, 0, 0, 10, false, false, false, '', 0, '', '')
+                """
             with connection.cursor() as cursor:
-                cursor.execute(
-                    """
-                    INSERT INTO stock_stockitem
-                        (part_id, quantity, level, tree_id, lft, rght,
-                         status, delete_on_deplete, review_needed, is_building,
-                         link, serial_int, barcode_data, barcode_hash)
-                    VALUES (%s, 1, 0, 0, 0, 0, 10, false, false, false, '', 0, '', '')
-                    RETURNING id
-                    """,
-                    [part.pk],
-                )
-                pk = cursor.fetchone()[0]
+                # MySQL has no RETURNING support at all (not even a syntax error
+                # workaround) - fall back to cursor.lastrowid there, and use
+                # RETURNING elsewhere since psycopg's cursor has no lastrowid.
+                if connection.features.can_return_rows_from_bulk_insert:
+                    cursor.execute(insert_sql + 'RETURNING id', [part.pk])
+                    pk = cursor.fetchone()[0]
+                else:
+                    cursor.execute(insert_sql, [part.pk])
+                    pk = cursor.lastrowid
                 if stocktake_date is not None:
                     cursor.execute(
                         'UPDATE stock_stockitem SET stocktake_date = %s WHERE id = %s',
@@ -131,12 +136,18 @@ class TestCreationDateMigration(MigratorTestCase):
         """Verify creation_date is correctly backfilled for each scenario."""
         import datetime
 
+        from django.conf import settings
+
         StockItem = self.new_state.apps.get_model('stock', 'stockitem')
-        utc = datetime.timezone.utc
+        utc = datetime.timezone.utc if settings.USE_TZ else None
 
         def at_utc(dt):
             """Normalise to UTC and strip sub-second precision for comparison."""
-            return dt.astimezone(utc).replace(microsecond=0)
+            return (
+                dt.astimezone(utc).replace(microsecond=0)
+                if settings.USE_TZ
+                else dt.replace(microsecond=0)
+            )
 
         # Scenario 1: CREATED tracking entry → creation_date = entry date
         item = StockItem.objects.get(pk=self.pk_s1)
@@ -196,19 +207,24 @@ class TestRemoveMpttFieldsMigration(MigratorTestCase):
 
         def make_item(quantity, parent_id=None):
             """Insert via raw SQL to avoid duplicate status_custom_key ORM bug."""
+            insert_sql = """
+                INSERT INTO stock_stockitem
+                    (part_id, quantity, level, tree_id, lft, rght,
+                     status, delete_on_deplete, is_building,
+                     link, serial_int, barcode_data, barcode_hash, parent_id)
+                VALUES (%s, %s, 0, 0, 0, 0, 10, false, false, '', 0, '', '', %s)
+                """
             with connection.cursor() as cursor:
-                cursor.execute(
-                    """
-                    INSERT INTO stock_stockitem
-                        (part_id, quantity, level, tree_id, lft, rght,
-                         status, delete_on_deplete, is_building,
-                         link, serial_int, barcode_data, barcode_hash, parent_id)
-                    VALUES (%s, %s, 0, 0, 0, 0, 10, false, false, '', 0, '', '', %s)
-                    RETURNING id
-                    """,
-                    [part.pk, quantity, parent_id],
-                )
-                return cursor.fetchone()[0]
+                # MySQL has no RETURNING support at all - fall back to
+                # cursor.lastrowid there, and use RETURNING elsewhere since
+                # psycopg's cursor has no lastrowid.
+                if connection.features.can_return_rows_from_bulk_insert:
+                    cursor.execute(
+                        insert_sql + 'RETURNING id', [part.pk, quantity, parent_id]
+                    )
+                    return cursor.fetchone()[0]
+                cursor.execute(insert_sql, [part.pk, quantity, parent_id])
+                return cursor.lastrowid
 
         # Root stock item, with no parent
         root_pk = make_item(100)

@@ -225,6 +225,7 @@ jobs:
         uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # main
         id: package
         with:
+          name: inventree
           target: ${{ matrix.target }}
           version: ${{ steps.setup.outputs.version }}
           debug: true
@@ -258,6 +259,7 @@ jobs:
         uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # main
         id: package-stable
         with:
+          name: inventree
           target: ${{ matrix.target }}
           version: ${{ steps.setup.outputs.version }}
           debug: true
