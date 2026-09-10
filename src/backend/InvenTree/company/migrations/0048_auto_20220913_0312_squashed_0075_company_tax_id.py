@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('common', '0004_inventreesetting'),
-        ('company', '0047_supplierpart_pack_size'),
+        ('company', '0003_remove_supplierpart_minimum_squashed_0047_supplierpart_pack_size'),
         ('part', '0111_auto_20230521_1350'),
         ('stock', '0094_auto_20230220_0025'),
         ('taggit', '0005_auto_20220424_2025'),

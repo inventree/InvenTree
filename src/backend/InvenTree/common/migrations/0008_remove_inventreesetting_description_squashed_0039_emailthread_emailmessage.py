@@ -71,7 +71,7 @@ class Migration(migrations.Migration):
     replaces = [('common', '0008_remove_inventreesetting_description'), ('common', '0009_delete_currency'), ('common', '0010_migrate_currency_setting'), ('common', '0011_auto_20210722_2114'), ('common', '0012_notificationentry'), ('common', '0013_webhookendpoint_webhookmessage'), ('common', '0014_notificationmessage'), ('common', '0015_newsfeedentry'), ('common', '0016_alter_notificationentry_updated'), ('common', '0017_notesimage'), ('common', '0018_projectcode'), ('common', '0019_projectcode_metadata'), ('common', '0020_customunit'), ('common', '0021_auto_20230805_1748'), ('common', '0022_projectcode_responsible'), ('common', '0023_auto_20240602_1332'), ('common', '0024_notesimage_model_id_notesimage_model_type'), ('common', '0025_attachment'), ('common', '0026_auto_20240608_1238'), ('common', '0027_alter_customunit_symbol'), ('common', '0028_colortheme_user_obj'), ('common', '0029_inventreecustomuserstatemodel'), ('common', '0030_barcodescanresult'), ('common', '0031_auto_20241026_0024'), ('common', '0032_selectionlist_selectionlistentry_and_more'), ('common', '0033_delete_colortheme'), ('common', '0034_alter_inventreecustomuserstatemodel_unique_together_and_more'), ('common', '0035_auto_20250221_1513'), ('common', '0036_alter_attachment_link'), ('common', '0037_dataoutput'), ('common', '0038_alter_attachment_model_type'), ('common', '0039_emailthread_emailmessage')]
 
     dependencies = [
-        ('common', '0007_colortheme'),
+        ('common', '0001_squashed_0007_colortheme'),
         ('company', '0027_remove_supplierpricebreak_currency'),
         ('contenttypes', '0002_remove_content_type_name'),
         ('part', '0057_remove_partsellpricebreak_currency'),

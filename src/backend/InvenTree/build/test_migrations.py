@@ -16,7 +16,13 @@ class TestForwardMigrations(MigratorTestCase):
         Part = self.old_state.apps.get_model('part', 'part')
 
         buildable_part = Part.objects.create(
-            name='Widget', description='Buildable Part', active=True
+            name='Widget',
+            description='Buildable Part',
+            active=True,
+            level=0,
+            tree_id=0,
+            lft=0,
+            rght=0,
         )
 
         Build = self.old_state.apps.get_model('build', 'build')
