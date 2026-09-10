@@ -929,6 +929,13 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
 
         read_only_fields = ['updated', 'updated_by']
 
+        # Disable DRF's auto-generated UniqueTogetherValidator for the
+        # 'unique_primary_note_per_model' constraint: it would run against
+        # pre-save DB state at validation time and reject legitimate
+        # primary-flag promotions that Note.save() handles correctly by
+        # demoting sibling notes first.
+        validators = []
+
     def validate(self, data):
         """Validate note data — templates need no model_id; regular notes require both."""
         data = super().validate(data)
