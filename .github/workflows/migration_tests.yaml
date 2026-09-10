@@ -205,37 +205,23 @@ jobs:
       - name: Fetch Database
         run: git clone --depth 1 https://github.com/inventree/test-db ./test-db
 
-      - name: 0.10.0 Database
+      - name: 1.0.0 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_1.0.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
+      - name: 1.5.0 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_1.5.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
+      - name: 0.10.0 Database (SHOULD FAIL)
         run: |
           rm /home/runner/work/InvenTree/db.sqlite3
           cp test-db/stable_0.10.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-          chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
-
-      - name: 0.11.0 Database
-        run: |
-          rm /home/runner/work/InvenTree/db.sqlite3
-          cp test-db/stable_0.11.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-          chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
-
-      - name: 0.13.5 Database
-        run: |
-          rm /home/runner/work/InvenTree/db.sqlite3
-          cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-          chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
-
-      - name: 0.16.0 Database
-        run: |
-          rm /home/runner/work/InvenTree/db.sqlite3
-          cp test-db/stable_0.16.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-          chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
-
-      - name: 0.17.0 Database
-        run: |
-          rm /home/runner/work/InvenTree/db.sqlite3
-          cp test-db/stable_0.17.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
