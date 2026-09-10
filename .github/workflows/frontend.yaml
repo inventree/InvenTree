@@ -133,7 +133,7 @@ jobs:
           install: true
           update: true
           apt-dependency: gettext postgresql-client libpq-dev
-          pip-dependency: psycopg2
+          pip-dependency: psycopg
       - name: Set up test data
         run: |
           invoke dev.setup-test -iv
@@ -215,7 +215,7 @@ jobs:
           install: true
           update: true
           apt-dependency: gettext postgresql-client libpq-dev
-          pip-dependency: psycopg2
+          pip-dependency: psycopg
       - name: Set up test data
         run: |
           invoke dev.setup-test -iv
