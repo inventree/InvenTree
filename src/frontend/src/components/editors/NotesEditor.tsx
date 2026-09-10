@@ -306,7 +306,7 @@ export default function NotesEditor({
     return notesQuery.data && notesQuery.data.length > 0;
   }, [notesQuery.data]);
 
-  const noteFields = useNoteFields({
+  const { fields: noteFields, resetFields: resetNoteFields } = useNoteFields({
     modelType: modelType!,
     modelId: modelId!
   });
@@ -711,7 +711,10 @@ export default function NotesEditor({
               <Button
                 color='green'
                 leftSection={<IconCirclePlus />}
-                onClick={createNote.open}
+                onClick={() => {
+                  resetNoteFields();
+                  createNote.open();
+                }}
                 disabled={isEditing}
               >
                 {t`Add Note`}
