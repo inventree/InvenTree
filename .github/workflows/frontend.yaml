@@ -77,7 +77,7 @@ jobs:
         with:
           npm: true
       - name: Install dependencies
-        run: cd src/frontend && yarn install
+        run: cd src/frontend && yarn install --ignore-scripts
       - name: Build frontend
         run: cd src/frontend && yarn run compile && yarn run lib && yarn run build
       - name: Write version file - SHA
@@ -148,10 +148,10 @@ jobs:
           key: ${{ runner.os }}-playwright-${{ hashFiles('src/frontend/yarn.lock') }}
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: cd src/frontend && npx playwright install --with-deps
+        run: cd src/frontend && npx --ignore-scripts playwright install --with-deps
       - name: Install Playwright OS dependencies
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: cd src/frontend && npx playwright install-deps
+        run: cd src/frontend && npx --ignore-scripts playwright install-deps
       - name: Install Sample Plugin
         run: |
           pip install -U inventree-plugin-creator==${{ env.plugin_creator_version }}
@@ -164,7 +164,7 @@ jobs:
           cp ./tests/fixtures/playwright_custom_logo.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_logo.png
           cp ./tests/fixtures/playwright_custom_splash.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
           invoke static
-          env INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" PLAYWRIGHT_BASE_URL=http://localhost:8000 npx playwright test --project=firefox --shard=${{ matrix.shard }}/2
+           env INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" PLAYWRIGHT_BASE_URL=http://localhost:8000 npx --ignore-scripts playwright test --project=firefox --shard=${{ matrix.shard }}/2
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
@@ -230,10 +230,10 @@ jobs:
           key: ${{ runner.os }}-playwright-${{ hashFiles('src/frontend/yarn.lock') }}
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: cd src/frontend && npx playwright install --with-deps
+        run: cd src/frontend && npx --ignore-scripts playwright install --with-deps
       - name: Install Playwright OS dependencies
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: cd src/frontend && npx playwright install-deps
+        run: cd src/frontend && npx --ignore-scripts playwright install-deps
       - name: Install Sample Plugin
         run: |
           pip install -U inventree-plugin-creator==${{ env.plugin_creator_version }}
@@ -243,7 +243,7 @@ jobs:
         id: tests
         run: |
           cd src/frontend
-          npx nyc playwright test --project=chromium --shard=${{ matrix.shard }}/4
+          npx --ignore-scripts nyc playwright test --project=chromium --shard=${{ matrix.shard }}/4
       - name: Playwright Report [${{ matrix.shard }} / 4]
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
@@ -295,8 +295,8 @@ jobs:
         run: |
           mkdir -p .nyc_output
           cp all-coverage/*.json .nyc_output/ 2>/dev/null || true
-          npx nyc merge .nyc_output merged-coverage.json
-          npx nyc report \
+          npx --ignore-scripts nyc merge .nyc_output merged-coverage.json
+          npx --ignore-scripts nyc report \
             --tempdir .nyc_output \
             --reporter=lcov \
             --reporter=text-summary \

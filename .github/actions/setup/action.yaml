@@ -73,7 +73,7 @@ runs:
       - name: Install Specific Python Dependencies
         if: ${{ inputs.pip-dependency }}
         shell: bash
-        run: "uv pip install --only-binary :all: ${PIP_DEPS}"
+        run: "uv pip install ${PIP_DEPS}" # TODO remove building once mysqlclient is available as a wheel
         env:
           PIP_DEPS: ${{ inputs.pip-dependency }}
 
