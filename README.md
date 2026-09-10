@@ -117,6 +117,8 @@ There are several options to deploy InvenTree.
     <span> · </span>
     <a href="https://inventree.org/digitalocean"><img src="https://www.deploytodo.com/do-btn-blue-ghost.svg" alt="Deploy to DO" width="auto" height="40" /></a>
     <span> · </span>
+    <a href="https://repocloud.io/details/InvenTree/"><img src="https://d16t0pc4846x52.cloudfront.net/deploylobe.svg" alt="Deploy on RepoCloud" width="auto" height="40" /></a>
+    <span> · </span>
     <a href="https://docs.inventree.org/en/latest/start/install/">Bare Metal</a>
 </h4></div>
 
