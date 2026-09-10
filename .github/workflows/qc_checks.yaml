@@ -114,7 +114,7 @@ jobs:
         uses: j178/prek-action@4e14d07f9231acabce116ccfca13b13dd9755ece # v3.0.0
       - name: Check Version
         run: |
-          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
+          pip install --require-hashes --only-binary :all: -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
 
   typecheck:
@@ -155,8 +155,8 @@ jobs:
           python-version: ${{ env.python_version }}
       - name: Check Config
         run: |
-          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
-          pip install --require-hashes -r docs/requirements.txt
+          pip install --require-hashes --only-binary :all: -r contrib/dev_reqs/requirements.txt
+          pip install --require-hashes --only-binary :all: -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
         uses: tcort/github-action-markdown-link-check@e047c5b37f24ab722bbef1a27b6fab7f96bc4068 # v1
@@ -204,7 +204,7 @@ jobs:
         env:
           API: ${{ needs.paths-filter.outputs.api }}
         run: |
-          pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
+          pip install --require-hashes --only-binary :all: -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
           version="$(python3 .github/scripts/version_check.py --show-api-version --decrement-api=${API} 2>&1)"
           echo "API Version: $version"
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
@@ -238,7 +238,7 @@ jobs:
         id: version
         if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
         run: |
-          pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
+          pip install --require-hashes --only-binary :all: -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
           version="$(python3 .github/scripts/version_check.py --show-api-version 2>&1)"
           echo "API Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
@@ -354,7 +354,7 @@ jobs:
         run: |
           pip uninstall pytest-django -y
           cd ${WRAPPER_NAME}
-          pip install .
+          pip install . --only-binary :all:
         if: needs.paths-filter.outputs.submit-performance == 'true'
       - name: Performance Reporting
         uses: CodSpeedHQ/action@373d6868929f444bc08d901fd0eb0ad52a8875ea # v5.2.1
