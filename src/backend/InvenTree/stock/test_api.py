@@ -114,6 +114,7 @@ class StockLocationTest(StockAPITestCase):
             self.list_url,
             {'items': [location.pk for location in locations], 'parent': parent_b.pk},
             expected_code=200,
+            max_query_time=3.5,
             max_query_count=60 * len(locations),
         )
 
