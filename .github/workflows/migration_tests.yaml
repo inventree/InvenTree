@@ -50,7 +50,7 @@ jobs:
           contains(github.event.pull_request.labels.*.name, 'full-run')
 
   sqlite:
-    name: Tests - Migrations [SQLite]
+    name: Migrations [SQLite]
     runs-on: ubuntu-latest
     needs: paths-filter
     if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
@@ -83,7 +83,7 @@ jobs:
           flags: migrations-sqlite
 
   mysql:
-    name: Tests - Migrations [MySQL]
+    name: Migrations [MySQL]
     runs-on: ubuntu-24.04
     needs: paths-filter
     if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
@@ -134,7 +134,7 @@ jobs:
           flags: migrations-mysql
 
   postgresql:
-    name: Tests - Migrations [PostgreSQL]
+    name: Migrations [PostgreSQL]
     runs-on: ubuntu-latest
     needs: paths-filter
     if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
@@ -181,7 +181,7 @@ jobs:
           flags: migrations-postgresql
 
   migrations-checks:
-    name: Tests - Database Migrations
+    name: Database Migrations
     runs-on: ubuntu-latest
     needs: paths-filter
     if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
@@ -224,4 +224,9 @@ jobs:
           rm /home/runner/work/InvenTree/db.sqlite3
           cp test-db/stable_0.10.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          invoke migrate
+          if invoke migrate; then
+            echo "::error::Migration succeeded for 0.10.0 database, but this is expected to fail (squashed migrations no longer support this old baseline)"
+            exit 1
+          else
+            echo "Migration failed as expected for 0.10.0 database"
+          fi
