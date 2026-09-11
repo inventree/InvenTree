@@ -55,7 +55,7 @@ Download these files to a directory on your local machine.
 The first step is to edit the environment variables, located in the `.env` file.
 
 !!! warning "External Volume"
-    You must define the `INVENTREE_EXT_VOLUME` variable - this must point to a directory *on your local machine* where persistent data is to be stored.
+    You must define the `INVENTREE_EXT_VOLUME` variable - this must point to a directory *on your local machine* where persistent data is to be stored. See [directory ownership](./docker.md#data-volume) for notes on how this directory's permissions are managed.
 
 !!! warning "Database Credentials"
     You must also define the database username (`INVENTREE_DB_USER`) and password (`INVENTREE_DB_PASSWORD`). You should ensure they are changed from the default values for added security
