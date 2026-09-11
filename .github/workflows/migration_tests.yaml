@@ -67,7 +67,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
           dev-install: true
@@ -117,7 +117,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libmysqlclient-dev
           pip-dependency: mysqlclient
@@ -164,7 +164,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libpq-dev
           pip-dependency: psycopg
@@ -199,7 +199,7 @@ jobs:
           persist-credentials: false
         name: Checkout Code
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           install: true
       - name: Fetch Database
