@@ -28,6 +28,7 @@ from InvenTree.cache import get_cache_config, is_global_cache_enabled
 from InvenTree.config import get_boolean_setting, get_oidc_private_key, get_setting
 from InvenTree.ready import isInMainThread, isRunningBackup
 from InvenTree.sentry import default_sentry_dsn, init_sentry
+from InvenTree.validators import invalid_site_url_hint
 from InvenTree.version import checkMinPythonVersion, inventreeCommitHash
 from users.oauth2_scopes import oauth2_scopes
 
@@ -245,9 +246,6 @@ PLUGIN_DEV_HOST = get_setting(
 PLUGIN_RETRY = get_setting(
     'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
 )  # How often should plugin loading be tried?
-
-# Hash of the plugin file (will be updated on each change)
-PLUGIN_FILE_HASH = ''
 
 STATICFILES_DIRS = []
 
@@ -771,7 +769,7 @@ if SITE_URL:
         validator = URLValidator()
         validator(SITE_URL)
     except Exception:
-        msg = f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start."
+        msg = f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start.{invalid_site_url_hint(SITE_URL)}"
         logger.error(msg)
         print(msg)
         sys.exit(-1)
@@ -787,11 +785,6 @@ SITE_MULTI = get_boolean_setting('INVENTREE_SITE_MULTI', 'site_multi', False)
 
 # If a SITE_ID is specified
 SITE_ID = get_setting('INVENTREE_SITE_ID', 'site_id', 1 if SITE_MULTI else None)
-
-# Load the allauth social backends
-SOCIAL_BACKENDS = get_setting(
-    'INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list
-)
 
 if not SITE_MULTI:
     INSTALLED_APPS.remove('django.contrib.sites')
@@ -988,8 +981,16 @@ else:
 FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
 FRONTEND_URL_BASE = FRONTEND_SETTINGS['base_url']
 
+# Load the allauth social backends
+SOCIAL_BACKENDS = get_setting(
+    'INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list
+)
+
+DEFAULT_SOCIAL = ['saml', 'openid_connect']
+_SOCIAL_BACKENDS = list(dict.fromkeys([*DEFAULT_SOCIAL, *SOCIAL_BACKENDS]))
+
 # region auth
-for app in SOCIAL_BACKENDS:  # pragma: no cover
+for app in _SOCIAL_BACKENDS:  # pragma: no cover
     # Ensure that the app starts with 'allauth.socialaccount.providers'
     social_prefix = 'allauth.socialaccount.providers.'
 
@@ -998,9 +999,12 @@ for app in SOCIAL_BACKENDS:  # pragma: no cover
 
     INSTALLED_APPS.append(app)
 
-SOCIALACCOUNT_PROVIDERS = get_setting(
+SOCIALACCOUNT_PROVIDERS = {a: {} for a in DEFAULT_SOCIAL}
+_PROVIDER_SETTINGS = get_setting(
     'INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None, typecast=dict
 )
+if _PROVIDER_SETTINGS and isinstance(_PROVIDER_SETTINGS, dict):
+    SOCIALACCOUNT_PROVIDERS.update(_PROVIDER_SETTINGS)
 
 SOCIALACCOUNT_STORE_TOKENS = True
 
@@ -1163,7 +1167,7 @@ FLAGS = {
     'NEXT_GEN': [
         {'condition': 'parameter', 'value': 'ngen='}
     ],  # Should next-gen features be turned on?
-    'OIDC': [{'condition': 'parameter', 'value': 'oidc='}],
+    'OIDC': [{'condition': 'boolean', 'value': True}],
 }
 
 # Get custom flags from environment/yaml
@@ -1191,7 +1195,7 @@ OAUTH2_PROVIDER = {
     # OIDC
     'OIDC_ENABLED': True,
     'OIDC_RSA_PRIVATE_KEY': get_oidc_private_key(),
-    'PKCE_REQUIRED': False,
+    'PKCE_REQUIRED': True,
 }
 OAUTH2_CHECK_EXCLUDED = [  # This setting mutes schema checks for these rule/method combinations
     '/api/email/generate/:post',

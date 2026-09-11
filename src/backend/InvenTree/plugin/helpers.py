@@ -1,5 +1,6 @@
 """Helpers for plugin app."""
 
+import importlib
 import inspect
 import os
 import pathlib
@@ -107,7 +108,17 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
 
 
 def get_entrypoints():
-    """Returns list for entrypoints for InvenTree plugins."""
+    """Returns list for entrypoints for InvenTree plugins.
+
+    A plugin package may have been installed or uninstalled (via pip) by this
+    same process since the last time entry points were scanned - e.g. when a
+    plugin is installed/uninstalled via the API, which triggers a registry
+    reload immediately afterwards. Without invalidating import caches first,
+    a just-removed package's entry point can still be reported (or a
+    just-added one missed), depending on what has already been cached for
+    that site-packages directory.
+    """
+    importlib.invalidate_caches()
     return entry_points(group='inventree_plugins')
 
 

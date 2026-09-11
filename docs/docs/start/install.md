@@ -289,6 +289,9 @@ Administrators wishing to update InvenTree to the latest version should follow t
 !!! info "Update Database"
 	It is advisable to [backup the InvenTree database](./backup.md) before performing these steps. The particular backup procedure may depend on your installation details.
 
+!!! danger "Updating from Pre 1.0.0"
+    If your installation is running a version of InvenTree older than `1.0.0`, you cannot update directly to the current release. See [Updating from Pre 1.0.0](./migrate.md#updating-from-pre-100) for the required intermediate step.
+
 ### Stop InvenTree Server
 
 Ensure the InvenTree server is stopped. This will depend on the particulars of your database installation.

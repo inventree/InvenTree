@@ -110,6 +110,19 @@ While using [invoke](../start/invoke.md), this can be overridden with the `--res
 
 An error occurred while rendering a component in the frontend. Typically this is caused by a browser caching issue, and can be resolved by clearing the browser cache and refreshing the page. If the issue persists, check the browser console for more information about the error.
 
+#### INVE-E18
+
+**Top Level Domain Required**
+
+The InvenTree server failed to start, because the configured server URL does not include a top-level domain (TLD). A valid TLD is required for proper operation.
+
+#### INVE-E19
+**Database stuck mid-way through pre-1.0.0 migration squash - Backend**
+
+If your installation is currently running a version of InvenTree older than `1.0.0`, you must first update to the `1.0.0` release before updating further. See [Updating from Pre 1.0.0](../start/migrate.md#updating-from-pre-100) for the full upgrade procedure.
+
+## Warning Codes
+
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
 

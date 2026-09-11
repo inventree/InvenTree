@@ -18,6 +18,9 @@ from django.views.decorators.csrf import csrf_exempt
 import django_filters.rest_framework.filters as rest_filters
 import django_q.models
 import django_q.tasks
+import structlog
+from allauth.socialaccount import providers
+from allauth.socialaccount.models import SocialApp
 from django_filters.rest_framework.filterset import FilterSet
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import (
@@ -27,6 +30,8 @@ from drf_spectacular.utils import (
     extend_schema_view,
 )
 from error_report.models import Error
+from oauth2_provider.generators import generate_client_secret
+from oauth2_provider.models import Application
 from opentelemetry import trace
 from pint._typing import UnitLike
 from rest_framework import serializers, viewsets
@@ -45,6 +50,7 @@ import InvenTree.conversion
 import InvenTree.models
 import InvenTree.ready
 from common.icons import get_icon_packs
+from common.serializers import OAuth2ApplicationSerializer
 from common.settings import get_global_setting
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import urlpattern as generic_states_api_urls
@@ -56,10 +62,12 @@ from InvenTree.api import (
     SimpleGenericMetadataView,
     meta_path,
 )
+from InvenTree.apps import DEFAULT_OIDC_APP_ID
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
 from InvenTree.helpers import inheritors, str2bool
 from InvenTree.helpers_api import (
+    CleanModelViewSet,
     InvenTreeApiRouter,
     RetrieveDestroyModelViewSet,
     RetrieveUpdateDestroyModelViewSet,
@@ -85,6 +93,8 @@ from InvenTree.permissions import (
 )
 from InvenTree.serializers import EmptySerializer
 from scim.admin_api import ScimConfigViewSet
+
+logger = structlog.get_logger('inventree')
 
 admin_router = InvenTreeApiRouter()
 common_router = InvenTreeApiRouter()
@@ -612,11 +622,22 @@ class CustomUnitViewset(DataExportViewMixin, viewsets.ModelViewSet):
     def all(self, request, *args, **kwargs):
         """Return a list of all available units."""
         reg = InvenTree.conversion.get_unit_registry()
-        all_units = {k: self.get_unit(reg, k) for k in reg}
+
+        all_units = {}
+
+        for k in reg:
+            try:
+                if unit := self.get_unit(reg, k):
+                    all_units[k] = unit
+            except Exception:
+                # A single bad unit definition (e.g. a circular reference between
+                # two custom units) should not take down the entire endpoint
+                logger.exception("Failed to process unit '%s' in unit registry", k)
+
         data = {
             'default_system': reg.default_system,
             'available_systems': dir(reg.sys),
-            'available_units': {k: v for k, v in all_units.items() if v},
+            'available_units': all_units,
         }
         return Response(data)
 
@@ -624,11 +645,24 @@ class CustomUnitViewset(DataExportViewMixin, viewsets.ModelViewSet):
         """Parse a unit from the registry."""
         if not hasattr(reg, k):
             return None
+
         unit: type[UnitLike] = getattr(reg, k)
+
+        try:
+            compatible_units = [
+                str(a)
+                for a in unit.compatible_units()  # ty:ignore[missing-argument]
+            ]
+        except Exception:
+            # Guard against e.g. a circular / recursive custom unit definition,
+            # which would otherwise raise an uncaught RecursionError here
+            logger.exception("Failed to determine compatible units for '%s'", k)
+            return None
+
         return {
             'name': k,
             'is_alias': reg.get_name(k) == k,
-            'compatible_units': [str(a) for a in unit.compatible_units()],  # ty:ignore[missing-argument]
+            'compatible_units': compatible_units,
             'isdimensionless': unit.dimensionless,
         }
 
@@ -839,6 +873,10 @@ class AttachmentFilter(FilterSet):
 
     tag_name = common.filters.TagsFilter()
 
+    filename = rest_filters.CharFilter(
+        field_name='attachment', lookup_expr='icontains', label=_('Filename')
+    )
+
 
 def get_viewable_attachment_model_types(user) -> set:
     """Return the set of attachment 'model_type' labels the user has 'view' permission for.
@@ -875,7 +913,7 @@ class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
     filterset_class = AttachmentFilter
 
     ordering_fields = ['model_id', 'model_type', 'upload_date', 'file_size']
-    search_fields = ['comment', 'model_id', 'model_type']
+    search_fields = ['comment', 'model_id', 'model_type', 'attachment']
 
     def get_queryset(self):
         """Restrict the queryset to attachments linked to a model the user can view."""
@@ -1759,6 +1797,135 @@ class ObservabilityEnd(CreateAPI):
 
         return Response({'status': 'ok'})
 
+
+class SocialAppSerializer(serializers.ModelSerializer):
+    """Serializer for SocialApp records."""
+
+    provider = serializers.ChoiceField(label=_('Provider'), choices=[])
+    name = serializers.CharField(
+        label=_('Name'),
+        help_text=_(
+            'Human friendly name for the application - will be displayed to users'
+        ),
+    )
+    provider_id = serializers.CharField(
+        label=_('Provider ID'),
+        help_text=_(
+            'Unique identifier - required for generic providers that can be configured multiple times such as SAML or OpenID Connect'
+        ),
+        required=False,
+        allow_blank=True,
+    )
+
+    class Meta:
+        """Meta options for SocialAppSerializer."""
+
+        model = SocialApp
+        fields = [
+            'id',
+            'name',
+            'provider',
+            'provider_id',
+            'client_id',
+            'secret',
+            'settings',
+        ]
+        read_only_fields = ['id']
+
+    def __init__(self, *args, **kwargs):
+        """Populate provider choices from the active allauth registry."""
+        super().__init__(*args, **kwargs)
+        self.fields['provider'].choices = providers.registry.as_choices()
+
+    def validate_provider(self, value):
+        """Ensure the selected provider is supported by the active allauth registry."""
+        if value not in [provider[0] for provider in providers.registry.as_choices()]:
+            raise serializers.ValidationError(_('Provider is not supported'))
+        return value
+
+    def validate(self, data):
+        """Ensure that the provider is unique across all SocialApp records."""
+        provider = data.get('provider', None)
+        if (
+            provider
+            and SocialApp.objects.filter(provider=provider).exists()
+            and provider not in ('saml', 'openid_connect')
+        ):
+            raise serializers.ValidationError({
+                'provider': _('A SocialApp with this provider already exists')
+            })
+
+        if provider == 'saml':
+            settings = data.get('settings') or {}
+            idp = settings.get('idp') or {}
+            has_metadata = bool(idp.get('metadata_url'))
+            has_inline_metadata = all(
+                idp.get(field) for field in ('sso_url', 'slo_url', 'x509cert')
+            )
+
+            if not has_metadata and not has_inline_metadata:
+                raise serializers.ValidationError({
+                    'settings': _(
+                        'Provide an IdP metadata URL, or configure the IdP '
+                        'SSO URL, SLO URL, and X.509 certificate.'
+                    )
+                })
+
+        return data
+
+
+class SocialAppViewSet(CleanModelViewSet):
+    """Manage a SocialApp (client side) application."""
+
+    queryset = SocialApp.objects.all()
+    serializer_class = SocialAppSerializer
+
+
+admin_router.register('sso', SocialAppViewSet, basename='api-sso')
+
+
+class ApplicationViewSet(CleanModelViewSet):
+    """Manage a oAuth2 (provider side) application."""
+
+    queryset = Application.objects.all()
+    serializer_class = OAuth2ApplicationSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete an OAuth2 application.
+
+        Deletion of the built-in default OIDC client is not allowed.
+        """
+        instance = self.get_object()
+
+        if instance.client_id == DEFAULT_OIDC_APP_ID:
+            raise PermissionDenied(
+                _('The built-in default OIDC client cannot be deleted.')
+            )
+
+        return super().destroy(request, *args, **kwargs)
+
+    @extend_schema(request=None, responses={200: OAuth2ApplicationSerializer()})
+    @action(detail=True, methods=['post'])
+    def regenerate(self, request, *args, **kwargs):
+        """Regenerate the client secret."""
+        instance = self.get_object()
+
+        if instance.client_id == DEFAULT_OIDC_APP_ID:
+            raise PermissionDenied(
+                _('The built-in default OIDC client secret cannot be regenerated.')
+            )
+
+        secret = generate_client_secret()
+        instance.client_secret = secret
+        instance._raw_client_secret = secret
+        instance.save()
+
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+
+# oAuth2 admin
+admin_router.register('oauth2', ApplicationViewSet, basename='api-oauth2')
 
 selection_urls = [
     path(

@@ -8,8 +8,8 @@ The InvenTree installer automates the installation procedure for a production In
 
 The installer supports the following Linux distributions:
 
-- Debian 11, 12
-- Ubuntu 22.04 LTS, 24.04 LTS
+- Debian 13
+- Ubuntu 24.04 LTS, 26.04 LTS
 
 Support for other OS versions is not currently planned. If you are using a different distribution, you can still follow the [docker](./docker.md) or [bare metal](./install.md) installation instructions.
 
@@ -139,6 +139,9 @@ To change the data storage location, link the new location to `/opt/inventree/da
 - Start up the services again
 
 ## Updating InvenTree
+
+!!! danger "Updating from Pre 1.0.0"
+    If your installation is running a version of InvenTree older than `1.0.0`, you cannot update directly to the current release. See [Updating from Pre 1.0.0](./migrate.md#updating-from-pre-100) for the required intermediate step.
 
 To update InvenTree run the following command, which updates the InvenTree package to the latest version:
 
