@@ -995,6 +995,78 @@ def get_migration_count():
     return executor.loader.applied_migrations
 
 
+# List of migrations to check for pre-1.0.0 history
+PRE_1_0_0_SQUASHED_MIGRATIONS = [
+    ('common', '0001_squashed_0007_colortheme'),
+    (
+        'common',
+        '0008_remove_inventreesetting_description_squashed_0039_emailthread_emailmessage',
+    ),
+    ('build', '0006_auto_20190913_1407_squashed_0015_auto_20200425_1350'),
+    ('build', '0017_auto_20200426_0612_squashed_0058_buildline_consumed'),
+    (
+        'company',
+        '0003_remove_supplierpart_minimum_squashed_0047_supplierpart_pack_size',
+    ),
+    ('company', '0048_auto_20220913_0312_squashed_0075_company_tax_id'),
+    ('order', '0001_squashed_0023_auto_20200420_2309'),
+    ('order', '0031_auto_20200426_0612_squashed_0112_alter_salesorderlineitem_part'),
+    ('stock', '0002_auto_20190525_2226_squashed_0030_auto_20200422_0015'),
+    ('stock', '0059_auto_20210404_2016_squashed_0116_alter_stockitem_link'),
+    ('part', '0003_auto_20190525_2226_squashed_0060_merge_20201112_1722'),
+    (
+        'part',
+        '0061_auto_20210103_2313_squashed_0142_remove_part_last_stocktake_remove_partstocktake_note_and_more',
+    ),
+    ('users', '0001_squashed_0015_alter_userprofile_type'),
+]
+
+
+def get_stuck_pre_1_0_0_apps() -> list:
+    """Detect apps stuck mid-way through the pre-1.0.0 migration squash.
+
+    A database which has applied *some* but not *all* of the individual
+    migrations one of PRE_1_0_0_SQUASHED_MIGRATIONS replaces is stuck between
+    the old, granular history and the squashed one - the squashed migration
+    would try to (re)create tables/columns that already exist, and fail with
+    a confusing raw database error rather than a clear one.
+    """
+    from django.db.migrations.loader import MigrationLoader
+    from django.db.migrations.recorder import MigrationRecorder
+
+    connection = connections[DEFAULT_DB_ALIAS]
+    recorder = MigrationRecorder(connection)
+
+    if not recorder.has_table():
+        # No migrations have ever been recorded - a genuinely fresh database
+        return []
+
+    applied = recorder.applied_migrations()
+
+    loader = MigrationLoader(None, ignore_no_migrations=True)
+
+    stuck_apps = set()
+
+    for app_label, name in PRE_1_0_0_SQUASHED_MIGRATIONS:
+        migration = loader.disk_migrations.get((app_label, name))
+
+        if migration is None:
+            # Squashed further since - no longer relevant to this check
+            continue
+
+        replaces = migration.replaces
+
+        if not replaces:
+            continue
+
+        replaced_applied = [target for target in replaces if target in applied]
+
+        if replaced_applied and len(replaced_applied) < len(replaces):
+            stuck_apps.add(app_label)
+
+    return sorted(stuck_apps)
+
+
 @tracer.start_as_current_span('check_for_migrations')
 @scheduled_task(ScheduledTask.DAILY)
 def check_for_migrations(force: bool = False, reload_registry: bool = True) -> bool:

@@ -224,9 +224,26 @@ jobs:
           rm /home/runner/work/InvenTree/db.sqlite3
           cp test-db/stable_0.10.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
-          if invoke migrate; then
+
+          set +e
+          output=$(invoke migrate 2>&1)
+          exit_code=$?
+          set -e
+
+          # Always show the actual output, so the reason for pass/fail is visible
+          # in the job log rather than just a generic summary line
+          echo "$output"
+
+          if [ "$exit_code" -eq 0 ]; then
             echo "::error::Migration succeeded for 0.10.0 database, but this is expected to fail (squashed migrations no longer support this old baseline)"
             exit 1
+          fi
+
+          # Confirm it failed for the *expected* reason (INVE-E19: stuck mid-way
+          # through the pre-1.0.0 migration squash), not some unrelated crash
+          if echo "$output" | grep -q "INVE-E19"; then
+            echo "Migration failed as expected for 0.10.0 database (INVE-E19)"
           else
-            echo "Migration failed as expected for 0.10.0 database"
+            echo "::error::Migration failed for 0.10.0 database, but not with the expected INVE-E19 error - this looks like an unrelated failure"
+            exit 1
           fi
