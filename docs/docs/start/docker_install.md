@@ -118,6 +118,9 @@ This command launches the following containers:
 
 To update your InvenTree installation to the latest version, follow these steps:
 
+!!! danger "Updating from Pre 1.0.0"
+    If your installation is running a version of InvenTree older than `1.0.0`, you cannot update directly to the current release. See [Updating from Pre 1.0.0](./migrate.md#updating-from-pre-100) for the required intermediate step.
+
 ### Stop Containers
 
 Stop all running containers as below:

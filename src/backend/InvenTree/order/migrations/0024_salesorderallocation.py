@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('stock', '0030_auto_20200422_0015'),
-        ('order', '0023_auto_20200420_2309'),
+        ('order', '0001_squashed_0023_auto_20200420_2309'),
     ]
 
     operations = [
