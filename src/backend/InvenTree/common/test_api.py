@@ -1471,6 +1471,25 @@ class NoteAPITests(InvenTreeAPITestCase):
         primary_pks = [n['pk'] for n in list_response.data if n['primary']]
         self.assertEqual(primary_pks, [third.data['pk']])
 
+    def test_creating_primary_note_demotes_existing_primary(self):
+        """Explicitly creating a new note with primary=True demotes the existing primary note.
+
+        Regression test: DRF auto-generates a UniqueTogetherValidator from the
+        'unique_primary_note_per_model' partial unique constraint, which used to
+        reject this at the serializer-validation stage (before Note.save()'s
+        demote-then-save logic ever ran), raising a spurious 'unique set' error.
+        """
+        first = self._create_note('First Note')
+        self.assertTrue(first.data['primary'])
+
+        second = self._create_note('Second Note', primary=True)
+        self.assertTrue(second.data['primary'])
+
+        from common.models import Note
+
+        self.assertFalse(Note.objects.get(pk=first.data['pk']).primary)
+        self.assertTrue(Note.objects.get(pk=second.data['pk']).primary)
+
     def test_primary_flag_isolated_per_model_instance(self):
         """Primary flag changes on one model instance do not affect notes on another."""
         from part.models import Part
