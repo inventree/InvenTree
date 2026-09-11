@@ -234,14 +234,14 @@ export function SettingItem({
         </Stack>
         <Boundary label={`setting-value-${setting.key}`}>
           <Group gap='xs' justify='right'>
-            {flagText && (
-              <Tooltip label={flagText}>
-                <IconInfoCircle color={flagColor} size={16} />
-              </Tooltip>
-            )}
             {setting.confirm && (
               <Tooltip label={t`This setting requires confirmation`}>
                 <IconEdit color={vars.colors.yellow[7]} size={16} />
+              </Tooltip>
+            )}
+            {flagText && (
+              <Tooltip label={flagText}>
+                <IconInfoCircle color={flagColor} size={16} />
               </Tooltip>
             )}
             <SettingValue
