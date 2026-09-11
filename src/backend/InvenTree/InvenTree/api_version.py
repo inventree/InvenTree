@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 546
 
 INVENTREE_API_TEXT = """
 
-v546 -> 2026-09-12 : https://github.com/inventree/InvenTree/pull/xxxx
+v546 -> 2026-09-12 : https://github.com/inventree/InvenTree/pull/12842/changes
     - Added setting flags to the settings APIs (read-only)
 
 v545 -> 2026-09-08 : https://github.com/inventree/InvenTree/pull/12808
