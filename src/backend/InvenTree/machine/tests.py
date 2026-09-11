@@ -1,6 +1,7 @@
 """Machine app tests."""
 
 from typing import cast
+from unittest import mock
 
 from django.apps import apps
 from django.test import TestCase
@@ -10,6 +11,7 @@ from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
 from machine.models import MachineConfig
 from machine.registry import registry
 from part.models import Part
+from plugin.base.label.mixins import LABEL_PRINT_TIMEOUT
 from plugin.models import PluginConfig
 from plugin.registry import registry as plg_registry
 from report.models import LabelTemplate
@@ -296,6 +298,59 @@ class TestLabelPrinterMachineType(InvenTreeAPITestCase):
         )
 
         self.assertIn('is not a valid choice', str(response.data['machine']))
+
+    def test_print_label_timeout(self):
+        """Test that machine printing tasks are offloaded with an extended timeout.
+
+        A background print task may legitimately run longer than the default
+        worker timeout; if it is killed by the worker timeout it may be
+        re-delivered, resulting in duplicate prints.
+        See https://github.com/inventree/InvenTree/issues/11650
+        """
+        plugin_ref = 'inventreelabelmachine'
+
+        machine = self.create_machine('test-label-printer-api')
+
+        # setup the label app
+        apps.get_app_config('report').create_default_labels()
+        plg_registry.reload_plugins()
+
+        config = cast(PluginConfig, plg_registry.get_plugin(plugin_ref).plugin_config())
+        config.active = True
+        config.save()
+
+        parts = Part.objects.all()[:1]
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template
+
+        url = reverse('api-label-print')
+
+        # Patch offload_task in the module the plugin class was loaded from -
+        # plugin classes are not imported from the regular package namespace
+        plugin_module = type(
+            plg_registry.get_plugin(plugin_ref, active=None)
+        ).print_labels.__globals__['__name__']
+
+        with mock.patch(
+            f'{plugin_module}.offload_task', return_value=None
+        ) as mock_offload:
+            self.post(
+                url,
+                {
+                    'plugin': config.key,
+                    'items': [a.pk for a in parts],
+                    'template': template.pk,
+                    'machine': str(machine.pk),
+                    'driver_options': {'copies': '3'},
+                },
+                expected_code=201,
+            )
+
+            # The print task must be offloaded with the extended timeout
+            mock_offload.assert_called_once()
+            self.assertEqual(
+                mock_offload.call_args.kwargs.get('timeout'), LABEL_PRINT_TIMEOUT
+            )
 
     def test_printing_options_serializer(self):
         """Test the printing options serializer."""

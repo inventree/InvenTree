@@ -15,6 +15,13 @@ from plugin.base.label import label as plugin_label
 from plugin.helpers import MixinNotImplementedError
 from report.models import LabelTemplate
 
+# Timeout (in seconds) for label printing tasks which are run in the background.
+# Printing (especially to remote networked printers) can take longer than the
+# default background worker timeout. If a print task is killed by the worker
+# timeout it may be re-delivered, resulting in duplicate prints.
+# See https://github.com/inventree/InvenTree/issues/11650
+LABEL_PRINT_TIMEOUT = 600
+
 
 class LabelPrintingMixin:
     """Mixin which enables direct printing of stock labels.
@@ -191,6 +198,7 @@ class LabelPrintingMixin:
                     plugin_label.print_label,
                     self.plugin_slug(),
                     group='plugin',
+                    timeout=LABEL_PRINT_TIMEOUT,
                     **print_args,
                 )
 

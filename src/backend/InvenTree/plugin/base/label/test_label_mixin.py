@@ -14,7 +14,7 @@ from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 from plugin import InvenTreePlugin, PluginMixinEnum, registry
-from plugin.base.label.mixins import LabelPrintingMixin
+from plugin.base.label.mixins import LABEL_PRINT_TIMEOUT, LabelPrintingMixin
 from plugin.helpers import MixinNotImplementedError
 from report.models import LabelTemplate
 from report.tests import PrintTestMixins
@@ -219,6 +219,48 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
 
         # And that it is a valid image file
         Image.open(f'{test_path}.png')
+
+    def test_async_printing_timeout(self):
+        """Test that non-blocking printing offloads tasks with an extended timeout.
+
+        A background print task may legitimately run longer than the default
+        worker timeout (e.g. when printing to a slow remote printer). If such a
+        task is killed by the worker timeout, it may be re-delivered, resulting
+        in duplicate prints.
+        See https://github.com/inventree/InvenTree/issues/11650
+        """
+        # Ensure the labels were created
+        apps.get_app_config('report').create_default_labels()
+
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template
+
+        part = Part.objects.all().first()
+
+        self.do_activate_plugin()
+        plugin = registry.get_plugin(self.plugin_ref)
+
+        # Force the non-blocking (background worker) code path; rendering is
+        # not under test here (covered by test_printing_process), so it is mocked
+        with (
+            mock.patch.object(plugin, 'BLOCKING_PRINT', False),
+            mock.patch.object(plugin, 'render_to_pdf', return_value=b'pdf-data'),
+            mock.patch.object(plugin, 'render_to_png', return_value=b'png-data'),
+            mock.patch(
+                'plugin.base.label.mixins.offload_task', return_value=True
+            ) as mock_offload,
+        ):
+            self.post(
+                self.printing_url,
+                {'template': template.pk, 'plugin': plugin.slug, 'items': [part.pk]},
+                expected_code=201,
+            )
+
+            # The print task must be offloaded with the extended timeout
+            mock_offload.assert_called_once()
+            self.assertEqual(
+                mock_offload.call_args.kwargs.get('timeout'), LABEL_PRINT_TIMEOUT
+            )
 
     def test_printing_options(self):
         """Test printing options."""

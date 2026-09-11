@@ -137,6 +137,55 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
         ):
             InvenTree.tasks.offload_task('InvenTree.test_tasks.eval', force_sync=True)
 
+    def test_offload_task_timeout(self):
+        """Test that a custom timeout can be applied to an offloaded task.
+
+        The timeout must reach the background worker (overriding the default
+        worker timeout for that task), without being passed through to the
+        task function itself.
+        See https://github.com/inventree/InvenTree/issues/11650
+        """
+        # force_async ensures the task is queued (rather than run synchronously),
+        # even though no background worker is running in the test environment
+        InvenTree.tasks.offload_task(
+            'InvenTree.test_tasks.get_result', force_async=True, timeout=600
+        )
+
+        queued = [
+            t
+            for t in OrmQ.objects.all()
+            if t.task.get('func') == 'InvenTree.test_tasks.get_result'
+        ]
+
+        self.assertEqual(len(queued), 1)
+
+        # The timeout is attached to the queued task itself...
+        self.assertEqual(queued[0].task.get('timeout'), 600)
+
+        # ...and not passed through to the task function
+        self.assertNotIn('timeout', queued[0].task.get('kwargs', {}))
+
+        # Without a custom timeout, no task-level timeout is set
+        InvenTree.tasks.offload_task(
+            'InvenTree.test_tasks.get_result', force_async=True, sample='abc'
+        )
+
+        queued = [
+            t
+            for t in OrmQ.objects.all()
+            if t.task.get('kwargs', {}).get('sample') == 'abc'
+        ]
+
+        self.assertEqual(len(queued), 1)
+        self.assertIsNone(queued[0].task.get('timeout'))
+
+        # A custom timeout is ignored when the task is run synchronously
+        self.assertTrue(
+            InvenTree.tasks.offload_task(
+                'InvenTree.test_tasks.get_result', force_sync=True, timeout=600
+            )
+        )
+
     def test_task_heartbeat(self):
         """Test the task heartbeat."""
         InvenTree.tasks.offload_task(InvenTree.tasks.heartbeat)

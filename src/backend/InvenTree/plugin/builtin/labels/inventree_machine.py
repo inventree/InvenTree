@@ -12,6 +12,7 @@ from InvenTree.serializers import DependentField
 from InvenTree.tasks import offload_task
 from machine.machine_types import LabelPrinterBaseDriver, LabelPrinterMachine
 from plugin import InvenTreePlugin
+from plugin.base.label.mixins import LABEL_PRINT_TIMEOUT
 from plugin.machine import call_machine_function, registry
 from plugin.mixins import LabelPrintingMixin
 from report.models import LabelTemplate
@@ -108,6 +109,7 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             output=output,
             force_sync=settings.TESTING or driver.USE_BACKGROUND_WORKER,
             group='plugin',
+            timeout=LABEL_PRINT_TIMEOUT,
             **print_kwargs,
         )
 
