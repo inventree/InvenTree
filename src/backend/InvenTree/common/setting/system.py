@@ -72,6 +72,9 @@ def update_instance_name(setting):
         return
 
     site_obj = Site.objects.all().order_by('id').first()
+    if site_obj is None:
+        return
+
     site_obj.name = setting.value
     site_obj.save()
 
@@ -88,13 +91,16 @@ def update_instance_url(setting):
         return
 
     site_obj = Site.objects.all().order_by('id').first()
+    if site_obj is None:
+        return
+
     site_obj.domain = setting.value
     site_obj.save()
 
 
 def settings_group_options():
     """Build up group tuple for settings based on your choices."""
-    return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
+    return [('', _('No group')), *[(str(a.pk), str(a)) for a in Group.objects.all()]]
 
 
 def reload_plugin_registry(setting):

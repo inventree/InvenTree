@@ -1,7 +1,14 @@
 """Types for settings."""
 
 from collections.abc import Callable
-from typing import Any, NotRequired, TypedDict
+
+# only import for type checking
+from typing import TYPE_CHECKING, Any, NotRequired, TypedDict
+
+if TYPE_CHECKING:
+    from django_stubs_ext import StrOrPromise
+else:
+    StrOrPromise = str
 
 
 class SettingsKeyType(TypedDict, total=False):
@@ -25,12 +32,16 @@ class SettingsKeyType(TypedDict, total=False):
         confirm_text: Text to display in the confirmation dialog (optional)
     """
 
-    name: str
-    description: str
-    units: str
+    name: StrOrPromise
+    description: StrOrPromise
+    units: StrOrPromise
     validator: Callable | list[Callable] | tuple[Callable]
     default: Callable | Any
-    choices: list[tuple[str, str]] | Callable[[], list[tuple[str, str]]]
+    choices: (
+        list[tuple[str, StrOrPromise]]
+        | Callable[[], list[tuple[str, StrOrPromise]] | None]
+        | None
+    )
     model_filters: dict[str, Any]
     hidden: bool
     before_save: Callable[..., None]
@@ -39,7 +50,7 @@ class SettingsKeyType(TypedDict, total=False):
     required: bool
     model: str
     confirm: bool
-    confirm_text: str
+    confirm_text: StrOrPromise
 
 
 class InvenTreeSettingsKeyType(SettingsKeyType):
