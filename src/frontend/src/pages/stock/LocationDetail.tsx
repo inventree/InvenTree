@@ -38,7 +38,7 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
-import { stockLocationFields } from '../../forms/StockForms';
+import { useStockLocationFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
   useDeleteApiFormModal,
@@ -224,7 +224,7 @@ export default function Stock() {
     url: ApiEndpoints.stock_location_list,
     pk: id,
     title: t`Edit Stock Location`,
-    fields: stockLocationFields(),
+    fields: useStockLocationFields(),
     onFormSuccess: refreshInstance
   });
 

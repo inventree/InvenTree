@@ -1,13 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 544
+INVENTREE_API_VERSION = 546
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v544 -> 2026-09-08 : https://github.com/inventree/InvenTree/pull/12072
+v546 -> 2026-09-11 : https://github.com/inventree/InvenTree/pull/12072
     - Adds API endpoints for RepairOrder, RepairOrderLineItem, and RepairOrderAllocation models
+
+v545 -> 2026-09-08 : https://github.com/inventree/InvenTree/pull/12808
+    - Ensure consistent ordering of SSO options in API documentation
+
+v544 -> 2026-09-07 : https://github.com/inventree/InvenTree/pull/12807
+    - Adds filtering by filename on the Attachment list API endpoint
 
 v543 -> 2026-09-05 : https://github.com/inventree/InvenTree/pull/12762
     - Adds admin APIs for managing SSO applications

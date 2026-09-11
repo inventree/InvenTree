@@ -1,0 +1,249 @@
+# Data migration unit tests, run against every supported database backend
+
+name: Migration Tests
+
+on:
+  push:
+    branches-ignore: ["l10*", "dependabot/**", "backport/**"]
+  pull_request:
+    branches-ignore: ["l10*"]
+
+env:
+  python_version: 3.12
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  INVENTREE_MEDIA_ROOT: /home/runner/work/InvenTree/test_inventree_media
+  INVENTREE_STATIC_ROOT: /home/runner/work/InvenTree/test_inventree_static
+  INVENTREE_BACKUP_DIR: /home/runner/work/InvenTree/test_inventree_backup
+  INVENTREE_SITE_URL: http://localhost:8000
+
+permissions:
+  contents: read
+
+jobs:
+  paths-filter:
+    name: Filter
+    runs-on: ubuntu-latest
+
+    outputs:
+      migrations: ${{ steps.filter.outputs.migrations }}
+      force: ${{ steps.force.outputs.force }}
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        id: filter
+        with:
+          filters: |
+            migrations:
+              - '**/test_migrations.py'
+              - '**/*migrations.py'
+              - '**/migrations/**'
+              - '.github/workflows**'
+              - 'src/backend/requirements.txt'
+      - name: Is CI being forced?
+        run: echo "force=true" >> $GITHUB_OUTPUT
+        id: force
+        if: |
+          contains(github.event.pull_request.labels.*.name, 'dependency') ||
+          contains(github.event.pull_request.labels.*.name, 'full-run')
+
+  sqlite:
+    name: Migrations [SQLite]
+    runs-on: ubuntu-latest
+    needs: paths-filter
+    if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
+
+    env:
+      INVENTREE_DB_ENGINE: sqlite3
+      INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: WARNING
+      INVENTREE_PLUGINS_ENABLED: false
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          apt-dependency: gettext poppler-utils
+          dev-install: true
+          update: true
+      - name: Run Tests
+        run: invoke dev.test --check --migrations --report --coverage --translations
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: inventree/InvenTree
+          flags: migrations-sqlite
+
+  mysql:
+    name: Migrations [MySQL]
+    runs-on: ubuntu-24.04
+    needs: paths-filter
+    if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
+
+    env:
+      INVENTREE_DB_ENGINE: django.db.backends.mysql
+      INVENTREE_DB_NAME: inventree
+      INVENTREE_DB_USER: root
+      INVENTREE_DB_PASSWORD: password
+      INVENTREE_DB_HOST: "127.0.0.1"
+      INVENTREE_DB_PORT: 3306
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: WARNING
+      INVENTREE_PLUGINS_ENABLED: false
+
+    services:
+      mysql:
+        image: mysql:9
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: inventree
+          MYSQL_USER: inventree
+          MYSQL_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: password
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+        ports:
+          - 3306:3306
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          apt-dependency: gettext poppler-utils libmysqlclient-dev
+          pip-dependency: mysqlclient
+          dev-install: true
+          update: true
+      - name: Run Tests
+        run: invoke dev.test --check --migrations --report --coverage --translations
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: inventree/InvenTree
+          flags: migrations-mysql
+
+  postgresql:
+    name: Migrations [PostgreSQL]
+    runs-on: ubuntu-latest
+    needs: paths-filter
+    if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
+
+    env:
+      INVENTREE_DB_ENGINE: django.db.backends.postgresql
+      INVENTREE_DB_NAME: inventree
+      INVENTREE_DB_USER: inventree
+      INVENTREE_DB_PASSWORD: password
+      INVENTREE_DB_HOST: "127.0.0.1"
+      INVENTREE_DB_PORT: 5432
+      INVENTREE_DEBUG: false
+      INVENTREE_LOG_LEVEL: WARNING
+      INVENTREE_PLUGINS_ENABLED: false
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: inventree
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          apt-dependency: gettext poppler-utils libpq-dev
+          pip-dependency: psycopg
+          dev-install: true
+          update: true
+      - name: Run Tests
+        run: invoke dev.test --check --migrations --report --coverage --translations
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: inventree/InvenTree
+          flags: migrations-postgresql
+
+  migrations-checks:
+    name: Database Migrations
+    runs-on: ubuntu-latest
+    needs: paths-filter
+    if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
+
+    env:
+      INVENTREE_DB_ENGINE: sqlite3
+      INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
+      INVENTREE_DEBUG: true
+      INVENTREE_LOG_LEVEL: WARNING
+      INVENTREE_PLUGINS_ENABLED: false
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+        name: Checkout Code
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          install: true
+      - name: Fetch Database
+        run: git clone --depth 1 https://github.com/inventree/test-db ./test-db
+
+      - name: 1.0.0 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_1.0.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
+      - name: 1.5.0 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_1.5.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
+      - name: 0.10.0 Database (SHOULD FAIL)
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.10.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+
+          set +e
+          output=$(invoke migrate 2>&1)
+          exit_code=$?
+          set -e
+
+          # Always show the actual output, so the reason for pass/fail is visible
+          # in the job log rather than just a generic summary line
+          echo "$output"
+
+          if [ "$exit_code" -eq 0 ]; then
+            echo "::error::Migration succeeded for 0.10.0 database, but this is expected to fail (squashed migrations no longer support this old baseline)"
+            exit 1
+          fi
+
+          # Confirm it failed for the *expected* reason (INVE-E19: stuck mid-way
+          # through the pre-1.0.0 migration squash), not some unrelated crash
+          if echo "$output" | grep -q "INVE-E19"; then
+            echo "Migration failed as expected for 0.10.0 database (INVE-E19)"
+          else
+            echo "::error::Migration failed for 0.10.0 database, but not with the expected INVE-E19 error - this looks like an unrelated failure"
+            exit 1
+          fi
