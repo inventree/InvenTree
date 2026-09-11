@@ -929,6 +929,10 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
 
         read_only_fields = ['updated', 'updated_by']
 
+    def get_unique_together_validators(self):
+        """Suppress the auto-generated validator for 'unique_primary_note_per_model'."""
+        return []
+
     def validate(self, data):
         """Validate note data — templates need no model_id; regular notes require both."""
         data = super().validate(data)
