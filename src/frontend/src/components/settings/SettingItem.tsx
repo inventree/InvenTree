@@ -10,14 +10,14 @@ import {
   Tooltip,
   useMantineColorScheme
 } from '@mantine/core';
-import { IconEdit } from '@tabler/icons-react';
+import { IconEdit, IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Boundary } from '@lib/components/Boundary';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import type { Setting } from '@lib/types/Settings';
+import { type Setting, SettingFlag } from '@lib/types/Settings';
 import { api } from '../../App';
 import { vars } from '../../theme';
 import { RenderInstance } from '../render/Instance';
@@ -205,6 +205,23 @@ export function SettingItem({
       colorScheme === 'light' ? vars.colors.gray[1] : vars.colors.gray[9];
   }
 
+  const [flagText, flagColor] = useMemo(() => {
+    if (!setting.flags || setting.flags.length === 0) {
+      return ['', ''];
+    }
+
+    if (setting.flags.includes(SettingFlag.SECURITY)) {
+      return [t`Security relevant setting`, vars.colors.red[7]];
+    }
+    if (setting.flags.includes(SettingFlag.TOGGLE)) {
+      return [
+        t`Function Toggle - effects system behavior and/or feature visibility`,
+        vars.colors.blue[7]
+      ];
+    }
+    return ['', ''];
+  }, [setting.flags]);
+
   return (
     <Paper style={style}>
       <Group justify='space-between' p='3'>
@@ -217,6 +234,11 @@ export function SettingItem({
         </Stack>
         <Boundary label={`setting-value-${setting.key}`}>
           <Group gap='xs' justify='right'>
+            {flagText && (
+              <Tooltip label={flagText}>
+                <IconInfoCircle color={flagColor} size={16} />
+              </Tooltip>
+            )}
             {setting.confirm && (
               <Tooltip label={t`This setting requires confirmation`}>
                 <IconEdit color={vars.colors.yellow[7]} size={16} />
