@@ -22,6 +22,7 @@ import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
 import ParametricCompanyTable from '../../tables/company/ParametricCompanyTable';
@@ -84,6 +85,7 @@ const ReturnOrderCalendar = () => {
 
 export default function SalesIndex() {
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
 
   const [customersView, setCustomersView] = useLocalStorage<string>({
     key: 'customer-view',
@@ -146,7 +148,9 @@ export default function SalesIndex() {
         name: 'returnorders',
         label: t`Return Orders`,
         icon: <IconTruckReturn />,
-        hidden: !user.hasViewRole(UserRoles.return_order),
+        hidden:
+          !globalSettings.isSet('RETURNORDER_ENABLED') ||
+          !user.hasViewRole(UserRoles.return_order),
         selection: returnOrderView,
         onChange: setReturnOrderView,
         options: [
