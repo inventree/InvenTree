@@ -62,6 +62,10 @@ function NotificationEntry({
     }
   }
 
+  const base = `/${getBaseUrl()}`;
+  const href =
+    link?.startsWith('/') && !link.startsWith(base) ? `${base}${link}` : link;
+
   return (
     <Paper p='xs' shadow='xs'>
       <Group justify='space-between' wrap='nowrap'>
@@ -72,7 +76,7 @@ function NotificationEntry({
         >
           <Stack gap={2}>
             <Anchor
-              href={link ? `/${getBaseUrl()}${link}` : '#'}
+              href={href || '#'}
               underline='hover'
               target='_blank'
               onClick={(event: any) => {
@@ -81,7 +85,7 @@ function NotificationEntry({
                   onRead();
                 }
 
-                if (link.startsWith('/')) {
+                if (link?.startsWith('/')) {
                   navigateToLink(link, navigate, event);
                 }
               }}
