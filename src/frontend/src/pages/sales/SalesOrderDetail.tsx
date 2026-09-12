@@ -220,7 +220,7 @@ export default function SalesOrderDetail() {
         name: 'build-orders',
         label: t`Build Orders`,
         icon: <IconTools />,
-        hidden: !user.hasViewRole(UserRoles.build),
+        hidden: !user.hasViewVisible(UserRoles.build),
         content: order?.pk ? (
           <BuildOrderTable salesOrderId={order.pk} />
         ) : (

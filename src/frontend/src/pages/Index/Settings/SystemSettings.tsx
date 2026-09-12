@@ -323,6 +323,7 @@ export default function SystemSettings() {
             <GlobalSettingList
               heading={t`Build Orders`}
               keys={[
+                'BUILDORDER_ENABLED',
                 'BUILDORDER_REFERENCE_PATTERN',
                 'BUILDORDER_REQUIRE_RESPONSIBLE',
                 'BUILDORDER_REQUIRE_ACTIVE_PART',
@@ -350,6 +351,7 @@ export default function SystemSettings() {
           <GlobalSettingList
             heading={t`Purchase Orders`}
             keys={[
+              'PURCHASEORDER_ENABLED',
               'PURCHASEORDER_REFERENCE_PATTERN',
               'PURCHASEORDER_REQUIRE_RESPONSIBLE',
               'PURCHASEORDER_CONVERT_CURRENCY',
@@ -368,6 +370,7 @@ export default function SystemSettings() {
             <GlobalSettingList
               heading={t`Sales Orders`}
               keys={[
+                'SALESORDER_ENABLED',
                 'SALESORDER_REFERENCE_PATTERN',
                 'SALESORDER_REQUIRE_RESPONSIBLE',
                 'SALESORDER_DEFAULT_SHIPMENT',

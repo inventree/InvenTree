@@ -300,7 +300,7 @@ export function SearchDrawer({
           part_detail: true
         },
         enabled:
-          user.hasViewRole(UserRoles.build) &&
+          user.hasViewVisible(UserRoles.build) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_BUILD_ORDERS')
       },
       {
@@ -310,7 +310,7 @@ export function SearchDrawer({
         title: t`Suppliers`,
         parameters: {},
         enabled:
-          user.hasViewRole(UserRoles.purchase_order) &&
+          user.hasViewVisible(UserRoles.purchase_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
       },
       {
@@ -320,7 +320,7 @@ export function SearchDrawer({
         title: t`Manufacturers`,
         parameters: {},
         enabled:
-          user.hasViewRole(UserRoles.purchase_order) &&
+          user.hasViewVisible(UserRoles.purchase_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
       },
       {
@@ -330,7 +330,7 @@ export function SearchDrawer({
         title: t`Customers`,
         parameters: {},
         enabled:
-          user.hasViewRole(UserRoles.sales_order) &&
+          user.hasViewVisible(UserRoles.sales_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
       },
       {
@@ -344,7 +344,7 @@ export function SearchDrawer({
             : undefined
         },
         enabled:
-          user.hasViewRole(UserRoles.purchase_order) &&
+          user.hasViewVisible(UserRoles.purchase_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS')
       },
       {
@@ -358,14 +358,14 @@ export function SearchDrawer({
             : undefined
         },
         enabled:
-          user.hasViewRole(UserRoles.sales_order) &&
+          user.hasViewVisible(UserRoles.sales_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_SALES_ORDERS')
       },
       {
         model: ModelType.salesordershipment,
         parameters: {},
         enabled:
-          user.hasViewRole(UserRoles.sales_order) &&
+          user.hasViewVisible(UserRoles.sales_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_SALES_ORDER_SHIPMENTS')
       },
       {
@@ -379,7 +379,7 @@ export function SearchDrawer({
             : undefined
         },
         enabled:
-          user.hasViewRole(UserRoles.return_order) &&
+          user.hasViewVisible(UserRoles.return_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_RETURN_ORDERS')
       }
     ];

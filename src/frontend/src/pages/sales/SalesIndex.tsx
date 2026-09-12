@@ -108,7 +108,7 @@ export default function SalesIndex() {
         name: 'salesorders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        hidden: !user.hasViewRole(UserRoles.sales_order),
+        hidden: !user.hasViewVisible(UserRoles.sales_order),
         selection: salesOrderView,
         onChange: setSalesOrderView,
         options: [
@@ -148,9 +148,7 @@ export default function SalesIndex() {
         name: 'returnorders',
         label: t`Return Orders`,
         icon: <IconTruckReturn />,
-        hidden:
-          !globalSettings.isSet('RETURNORDER_ENABLED') ||
-          !user.hasViewRole(UserRoles.return_order),
+        hidden: !user.hasViewVisible(UserRoles.return_order),
         selection: returnOrderView,
         onChange: setReturnOrderView,
         options: [
@@ -206,7 +204,7 @@ export default function SalesIndex() {
     ];
   }, [user, customersView, salesOrderView, returnOrderView]);
 
-  if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.sales_order)) {
+  if (!user.isLoggedIn() || !user.hasViewVisible(UserRoles.sales_order)) {
     return <PermissionDenied />;
   }
 

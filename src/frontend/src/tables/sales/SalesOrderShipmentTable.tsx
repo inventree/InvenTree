@@ -263,7 +263,7 @@ export default function SalesOrderShipmentTable({
           hidden:
             !record.order ||
             !showOrderInfo ||
-            !user.hasViewRole(UserRoles.sales_order),
+            !user.hasViewVisible(UserRoles.sales_order),
           navigate: navigate
         })
       ];
