@@ -151,6 +151,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': bool,
         'default': True,
     },
+    'SEARCH_PREVIEW_SHOW_REPAIR_ORDERS': {
+        'name': _('Search Repair Orders'),
+        'description': _('Display repair orders in search preview window'),
+        'default': True,
+        'validator': bool,
+    },
     'SEARCH_PREVIEW_RESULTS': {
         'name': _('Search Preview Results'),
         'description': _(

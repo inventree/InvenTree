@@ -69,6 +69,7 @@ Templates (whether for generating [reports](./report.md) or [labels](./labels.md
 | [company](#company) | A Company instance |
 | [build](#build-order) | A [Build Order](../manufacturing/build.md) instance |
 | [buildline](#build-line) | A [Build Order Line Item](../manufacturing/build.md) instance |
+| [repairorder](#repair-order) | A [Repair Order](../manufacturing/repair.md) instance |
 | [salesorder](#sales-order) | A [Sales Order](../sales/sales_order.md) instance |
 | [salesordershipment](#sales-order-shipment) | A [Sales Order Shipment](../sales/sales_order.md#sales-order-shipments) instance |
 | [returnorder](#return-order) | A [Return Order](../sales/return_order.md) instance |
@@ -103,6 +104,14 @@ When printing a report or label against a [BuildOrderLineItem](../manufacturing/
 {{ report_context("models", "buildline") }}
 
 For the fields and properties available on the underlying `BuildLine` instance, refer to the [Model Context](model_context.md#build-order-line-item) page.
+
+### Repair Order
+
+When printing a report or label against a [RepairOrder](../manufacturing/repair.md) object, the following context variables are available:
+
+{{ report_context("models", "repairorder") }}
+
+For the fields and properties available on the underlying `RepairOrder` instance, refer to the [Model Context](model_context.md#repair-order) page.
 
 ### Sales Order
 

@@ -31,15 +31,23 @@ import part.models
 import report.mixins
 import stock.models
 import users.models
-from build.events import BuildEvents
+from build.events import BuildEvents, RepairOrderEvents
 from build.filters import annotate_allocated_quantity, annotate_required_quantity
-from build.status_codes import BuildStatus, BuildStatusGroups
+from build.status_codes import (
+    BuildStatus,
+    BuildStatusGroups,
+    RepairOrderStatus,
+    RepairOrderStatusGroups,
+)
 from build.validators import (
     generate_next_build_reference,
+    generate_next_repair_order_reference,
     validate_build_order_reference,
+    validate_repair_order_reference,
 )
 from common.models import ProjectCode
 from common.settings import get_global_setting
+from company.models import Company
 from generic.enums import StringEnum
 from generic.states import (
     DEFERRABLE,
@@ -2507,3 +2515,594 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('Destination stock item'),
         limit_choices_to={'is_building': True},
     )
+
+
+class RepairOrderReportContext(report.mixins.BaseReportContext, TypedDict):
+    """Context for the RepairOrder model.
+
+    Attributes:
+        customer: The customer company associated with this repair order
+        description: The description field of the RepairOrder
+        lines: Query set of all RepairOrderLineItem objects associated with the RepairOrder
+        order: The RepairOrder instance itself
+        part: The Part object being repaired
+        reference: The reference field of the RepairOrder
+        symptoms: The reported symptoms / issues for this repair order
+        title: The title (string representation) of the RepairOrder
+    """
+
+    customer: Optional[Company]
+    description: str
+    lines: report.mixins.QuerySet['RepairOrderLineItem']
+    order: 'RepairOrder'
+    part: part.models.Part
+    reference: str
+    symptoms: str
+    title: str
+
+
+class RepairOrder(
+    StatusCodeMixin,
+    StateTransitionMixin,
+    InvenTree.models.InvenTreeParameterMixin,
+    InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNoteMixin,
+    InvenTree.models.InvenTreeTagsMixin,
+    report.mixins.InvenTreeReportMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.ReferenceIndexingMixin,
+    InvenTree.models.InvenTreeModel,
+):
+    """A RepairOrder represents a repair request from a customer.
+
+    Attributes:
+        reference: Unique repair order reference
+        customer: Reference to the customer company
+        description: Long form description of the repair
+        symptoms: Reported symptoms or issues
+        status: Repair order status code
+        creation_date: Date the order was created (auto)
+        target_date: Expected or desired completion date
+        completion_date: Date the order was completed
+        responsible: User (or group) responsible for the repair
+        issued_by: User who issued this repair order
+    """
+
+    STATUS_CLASS = RepairOrderStatus
+    REFERENCE_PATTERN_SETTING = 'REPAIRORDER_REFERENCE_PATTERN'
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Repair Order')
+
+    def __str__(self):
+        """String representation of a RepairOrder."""
+        return self.reference
+
+    def report_context(self) -> RepairOrderReportContext:
+        """Generate custom report context data."""
+        return {
+            'customer': self.customer,
+            'description': self.description,
+            'lines': self.lines.all(),
+            'order': self,
+            'part': self.part,
+            'reference': self.reference,
+            'symptoms': self.symptoms,
+            'title': str(self),
+        }
+
+    def save(self, *args, **kwargs):
+        """Custom save method for the RepairOrder model.
+
+        Enforces locking: completed/cancelled orders cannot be modified
+        (except for status transitions driven by the FSM).
+        """
+        self.reference_int = self.validate_reference_field(self.reference)
+
+        update = self.pk is not None
+
+        if update and self.check_locked(True):
+            # Allow status transitions through the FSM
+            if self.get_db_instance().status != self.status:
+                pass
+            else:
+                raise ValidationError({
+                    'reference': _('This order is locked and cannot be modified')
+                })
+
+        if not self.pk and not self.creation_date:
+            self.creation_date = InvenTree.helpers.current_date()
+
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        """Validate the RepairOrder model."""
+        super().clean()
+
+        # Prevent changing the repaired part after creation
+        if self.has_field_changed('part'):
+            raise ValidationError({'part': _('Repair order part cannot be changed')})
+
+        if self.start_date and self.target_date and self.start_date > self.target_date:
+            raise ValidationError({
+                'target_date': _('Target date must be after start date')
+            })
+
+    def check_locked(self, db: bool = False) -> bool:
+        """Check if this repair order is 'locked'.
+
+        A locked order cannot be modified after it has been completed or cancelled.
+
+        Arguments:
+            db: If True, check with the database. If False, check the instance.
+        """
+        return self.check_complete(db=db)
+
+    def check_complete(self, db: bool = False) -> bool:
+        """Check if this repair order is in a terminal state.
+
+        Arguments:
+            db: If True, check with the database. If False, check the instance.
+        """
+        status = self.get_db_instance().status if db else self.status
+        return status in (
+            RepairOrderStatusGroups.COMPLETE + RepairOrderStatusGroups.CANCELLED
+        )
+
+    @classmethod
+    def get_status_class(cls):
+        """Return the RepairOrderStatusGroups class."""
+        return RepairOrderStatusGroups
+
+    @classmethod
+    def overdue_filter(cls):
+        """A generic implementation of an 'overdue' filter for the RepairOrder model."""
+        today = InvenTree.helpers.current_date()
+        return (
+            Q(status__in=cls.get_status_class().OPEN)
+            & ~Q(target_date=None)
+            & Q(target_date__lt=today)
+        )
+
+    reference = models.CharField(
+        max_length=100,
+        unique=True,
+        blank=False,
+        null=False,
+        help_text=_('Repair Order Reference'),
+        verbose_name=_('Reference'),
+        default=generate_next_repair_order_reference,
+        validators=[validate_repair_order_reference],
+    )
+
+    customer = models.ForeignKey(
+        'company.Company',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='repair_orders',
+        limit_choices_to={'is_customer': True},
+        verbose_name=_('Customer'),
+        help_text=_('Customer reference'),
+    )
+
+    part = models.ForeignKey(
+        'part.Part',
+        on_delete=models.CASCADE,
+        related_name='repair_orders',
+        limit_choices_to={'assembly': True},
+        verbose_name=_('Part'),
+        help_text=_('Part associated with this repair order'),
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Repair order description'),
+    )
+
+    symptoms = models.TextField(
+        blank=True,
+        verbose_name=_('Symptoms'),
+        help_text=_('Reported symptoms or issues'),
+    )
+
+    status = generic.states.fields.InvenTreeCustomStatusModelField(
+        default=RepairOrderStatus.PENDING.value,
+        choices=RepairOrderStatus.items(),
+        status_class=RepairOrderStatus,
+        help_text=_('Repair order status'),
+        verbose_name=_('Status'),
+    )
+
+    creation_date = models.DateField(
+        auto_now_add=True, editable=False, verbose_name=_('Creation Date')
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_('Repair start date'),
+        help_text=_('Scheduled start date for this repair order'),
+    )
+
+    target_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_('Target completion date'),
+        help_text=_('Target date for repair completion'),
+    )
+
+    completion_date = models.DateField(
+        null=True, blank=True, verbose_name=_('Completion Date')
+    )
+
+    issued_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Issued by'),
+        help_text=_('User who issued this repair order'),
+        related_name='repairorders_issued',
+    )
+
+    responsible = models.ForeignKey(
+        users.models.Owner,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Responsible'),
+        help_text=_('User or group responsible for this repair order'),
+        related_name='repairorders_responsible',
+    )
+
+    link = InvenTree.fields.InvenTreeURLField(
+        verbose_name=_('External Link'),
+        blank=True,
+        help_text=_('Link to external URL'),
+        max_length=2000,
+    )
+
+    # region fsm
+    @inventree_transition(
+        field=status,
+        source=[RepairOrderStatus.PENDING, RepairOrderStatus.ON_HOLD],
+        target=RepairOrderStatus.IN_PROGRESS,
+        event=RepairOrderEvents.ISSUED,
+    )
+    def issue_repair(self):
+        """Transition this RepairOrder to IN_PROGRESS status.
+
+        The repair order must currently be PENDING or ON_HOLD.
+        """
+
+    @inventree_transition(
+        field=status,
+        source=[RepairOrderStatus.PENDING, RepairOrderStatus.IN_PROGRESS],
+        target=RepairOrderStatus.ON_HOLD,
+        event=RepairOrderEvents.HOLD,
+    )
+    def hold_repair(self):
+        """Transition this RepairOrder to ON_HOLD status.
+
+        The repair order must currently be PENDING or IN_PROGRESS.
+        """
+
+    @inventree_transition(
+        field=status,
+        source=[
+            RepairOrderStatus.PENDING,
+            RepairOrderStatus.IN_PROGRESS,
+            RepairOrderStatus.ON_HOLD,
+        ],
+        target=RepairOrderStatus.COMPLETE,
+        event=RepairOrderEvents.COMPLETED,
+    )
+    def complete_repair(self, user=None):
+        """Transition this RepairOrder to COMPLETE status.
+
+        The repair order must currently be PENDING, IN_PROGRESS, or ON_HOLD.
+        """
+        with transaction.atomic():
+            for allocation in RepairOrderAllocation.objects.filter(
+                line__order=self
+            ).select_related('item', 'line__part'):
+                allocation.full_clean()
+
+                if not allocation.item.take_stock(
+                    quantity=allocation.quantity,
+                    user=user,
+                    code=StockHistoryCode.STOCK_REMOVE,
+                    notes=_('Consumed by repair order'),
+                ):
+                    raise ValidationError({
+                        'allocations': _('Failed to consume repair order stock')
+                    })
+
+                allocation.delete()
+
+        self.completion_date = InvenTree.helpers.current_date()
+
+    @inventree_transition(
+        field=status,
+        source=[
+            RepairOrderStatus.PENDING,
+            RepairOrderStatus.IN_PROGRESS,
+            RepairOrderStatus.ON_HOLD,
+        ],
+        target=RepairOrderStatus.CANCELLED,
+        event=RepairOrderEvents.CANCELLED,
+    )
+    def cancel_repair(self):
+        """Transition this RepairOrder to CANCELLED status.
+
+        The repair order must currently be PENDING, IN_PROGRESS, or ON_HOLD.
+        """
+        with transaction.atomic():
+            for allocation in RepairOrderAllocation.objects.filter(line__order=self):
+                allocation.delete()
+
+    # endregion fsm
+
+    def auto_allocate_stock(
+        self,
+        location=None,
+        exclude_location=None,
+        stock_sort_by: str = stock.models.STOCK_SORT_DEFAULT,
+    ):
+        """Automatically allocate stock against every outstanding line item on this order.
+
+        Arguments:
+            location: If provided, only consider stock items located here (or in a
+                sub-location of this location)
+            exclude_location: If provided, exclude stock items located here (or in a
+                sub-location of this location)
+            stock_sort_by: A `stock.models.StockSortOrder` value controlling the
+                preferred order in which matching stock items are consumed
+
+        For each line item with an unallocated quantity remaining, greedily consumes
+        from whatever stock is currently available for that part (in the order given
+        by `stock_sort_by`), splitting across multiple stock items if a single one
+        isn't enough. Lines with no part set, or which are already fully allocated,
+        are skipped. Unlike BuildOrder's auto-allocation, this does not consider
+        variants/substitutes (a RepairOrderLineItem references a single concrete part
+        directly) and runs synchronously rather than as a background task, as repair
+        orders are expected to be small in scope.
+        """
+        with transaction.atomic():
+            for line in self.lines.all():
+                if not line.part:
+                    continue
+
+                outstanding = line.unallocated_quantity()
+
+                if outstanding <= 0:
+                    continue
+
+                available_stock = stock.models.StockItem.objects.filter(
+                    stock.models.StockItem.IN_STOCK_FILTER, part=line.part
+                )
+
+                if location:
+                    sublocations = location.get_descendants(include_self=True)
+                    available_stock = available_stock.filter(
+                        location__in=list(sublocations)
+                    )
+
+                if exclude_location:
+                    sublocations = exclude_location.get_descendants(include_self=True)
+                    available_stock = available_stock.exclude(
+                        location__in=list(sublocations)
+                    )
+
+                if stock_sort_by == stock.models.StockSortOrder.EXPIRY_SOONEST:
+                    available_stock = available_stock.order_by(
+                        F('expiry_date').asc(nulls_last=True)
+                    )
+                else:
+                    available_stock = available_stock.order_by(stock_sort_by)
+
+                for stock_item in available_stock:
+                    if outstanding <= 0:
+                        break
+
+                    available = stock_item.unallocated_quantity()
+
+                    if available <= 0:
+                        continue
+
+                    quantity = min(outstanding, available)
+
+                    allocation = RepairOrderAllocation(
+                        line=line, item=stock_item, quantity=quantity
+                    )
+                    allocation.full_clean()
+                    allocation.save()
+
+                    outstanding -= quantity
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the RepairOrder model."""
+        return reverse('api-repair-order-list')
+
+    @classmethod
+    def barcode_model_type_code(cls) -> str:
+        """Return the associated barcode model type code for this model."""
+        return 'RP'
+
+
+class RepairOrderLineItem(InvenTree.models.InvenTreeMetadataModel):
+    """Model for a repair order line item."""
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Repair Order Line Item')
+
+    def save(self, *args, **kwargs):
+        """Custom save — prevent modification when the parent order is locked."""
+        if self.order.check_locked():
+            raise ValidationError({
+                'order': _('This order is locked and cannot be modified')
+            })
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        """Validate the RepairOrderLineItem object."""
+        super().clean()
+
+        if self.quantity <= 0:
+            raise ValidationError({
+                'quantity': _('Line item quantity must be greater than zero')
+            })
+
+    def delete(self, *args, **kwargs):
+        """Custom delete — prevent deletion when the parent order is locked."""
+        if self.order.check_locked():
+            raise ValidationError({
+                'order': _('This order is locked and cannot be modified')
+            })
+        super().delete(*args, **kwargs)
+
+    order = models.ForeignKey(
+        RepairOrder,
+        on_delete=models.CASCADE,
+        related_name='lines',
+        verbose_name=_('Repair Order'),
+    )
+
+    part = models.ForeignKey(
+        'part.Part',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='repair_order_line_items',
+        verbose_name=_('Part'),
+        help_text=_('Part to be consumed for repair'),
+    )
+
+    quantity = models.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        default=1,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Quantity'),
+        help_text=_('Item quantity required for repair'),
+    )
+
+    def allocated_quantity(self):
+        """Return the total quantity of stock allocated against this line item."""
+        allocated = self.allocations.aggregate(
+            q=Coalesce(Sum('quantity'), 0, output_field=models.DecimalField())
+        )
+        return allocated['q']
+
+    def unallocated_quantity(self):
+        """Return the outstanding quantity still to be allocated for this line item."""
+        return max(self.quantity - self.allocated_quantity(), 0)
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the RepairOrderLineItem model."""
+        return reverse('api-repair-order-line-list')
+
+
+class RepairOrderAllocation(models.Model):
+    """Model linking RepairOrderLineItem to specific stock.StockItem quantities."""
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Repair Order Allocation')
+
+    def save(self, *args, **kwargs):
+        """Custom save — prevent modification when the parent order is locked."""
+        if self.line.order.check_locked():
+            raise ValidationError({
+                'line': _('This order is locked and cannot be modified')
+            })
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """Custom delete — prevent deletion when the parent order is locked."""
+        if self.line.order.check_locked():
+            raise ValidationError({
+                'line': _('This order is locked and cannot be modified')
+            })
+        super().delete(*args, **kwargs)
+
+    def clean(self):
+        """Validate the RepairOrderAllocation object."""
+        super().clean()
+
+        errors = {}
+
+        if self.quantity <= 0:
+            errors['quantity'] = _('Allocation quantity must be greater than zero')
+
+        try:
+            if not self.item:
+                raise ValidationError({'item': _('Stock item has not been assigned')})
+        except stock.models.StockItem.DoesNotExist:
+            raise ValidationError({'item': _('Stock item has not been assigned')})
+
+        try:
+            if self.line.part != self.item.part:
+                errors['item'] = _(
+                    'Cannot allocate stock item to a line with a different part'
+                )
+        except part.models.Part.DoesNotExist:
+            errors['line'] = _('Cannot allocate stock to a line without a part')
+
+        if 'quantity' not in errors and 'item' not in errors:
+            # Determine how much of this stock item is *actually* still available,
+            # accounting for every other allocation against it (build, sales,
+            # transfer, and other repair orders) - not just its raw quantity.
+            available = self.item.unallocated_quantity()
+
+            if self.pk:
+                # This allocation already exists - its own prior commitment
+                # shouldn't count against itself when checking for an increase.
+                previous = RepairOrderAllocation.objects.get(pk=self.pk)
+                available += previous.quantity
+
+            if self.quantity > available:
+                errors['quantity'] = _(
+                    'Allocation quantity cannot exceed available stock'
+                )
+
+        if len(errors) > 0:
+            raise ValidationError(errors)
+
+    line = models.ForeignKey(
+        RepairOrderLineItem,
+        on_delete=models.CASCADE,
+        related_name='allocations',
+        verbose_name=_('Line Item'),
+    )
+
+    item = models.ForeignKey(
+        'stock.StockItem',
+        on_delete=models.CASCADE,
+        related_name='repair_order_allocations',
+        verbose_name=_('Stock Item'),
+    )
+
+    quantity = models.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        default=1,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Quantity'),
+        help_text=_('Allocated stock quantity'),
+    )
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the RepairOrderAllocation model."""
+        return reverse('api-repair-order-allocation-list')
