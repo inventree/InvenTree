@@ -204,7 +204,7 @@ export default function SalesIndex() {
     ];
   }, [user, customersView, salesOrderView, returnOrderView]);
 
-  if (!user.isLoggedIn() || !user.hasViewVisible(UserRoles.sales_order)) {
+  if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.sales_order)) {
     return <PermissionDenied />;
   }
 
