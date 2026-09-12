@@ -1348,4 +1348,25 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': True,
         'validator': bool,
     },
+    'SALESORDER_ENABLED': {
+        'name': _('Enable Sales Orders'),
+        'description': _('Enable sales order functionality in the user interface'),
+        'validator': bool,
+        'default': True,
+        'flags': [SettingFlag.TOGGLE],
+    },
+    'PURCHASEORDER_ENABLED': {
+        'name': _('Enable Purchase Orders'),
+        'description': _('Enable purchase order functionality in the user interface'),
+        'validator': bool,
+        'default': True,
+        'flags': [SettingFlag.TOGGLE],
+    },
+    'BUILDORDER_ENABLED': {
+        'name': _('Enable Build Orders'),
+        'description': _('Enable build order functionality in the user interface'),
+        'validator': bool,
+        'default': True,
+        'flags': [SettingFlag.TOGGLE],
+    },
 }

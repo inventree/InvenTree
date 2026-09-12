@@ -206,6 +206,7 @@ The following [global settings](../settings/global.md) are available for purchas
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
+{{ globalsetting("PURCHASEORDER_ENABLED") }}
 {{ globalsetting("PURCHASEORDER_REFERENCE_PATTERN") }}
 {{ globalsetting("PURCHASEORDER_REQUIRE_RESPONSIBLE") }}
 {{ globalsetting("PURCHASEORDER_CONVERT_CURRENCY") }}
