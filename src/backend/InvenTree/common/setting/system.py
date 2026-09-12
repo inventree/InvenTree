@@ -60,42 +60,35 @@ def validate_part_name_format(value):
     return True
 
 
-def update_instance_name(setting):
-    """Update the first site objects name to instance name."""
+def _get_site_object():
+    """Return the first site object, or None if it doesn't exist."""
     if not django_settings.SITE_MULTI:
-        return
+        return  # pragma: no cover
 
     try:
         from django.contrib.sites.models import Site
     except (ImportError, RuntimeError):
         # Multi-site support not enabled
-        return
+        return  # pragma: no cover
 
     site_obj = Site.objects.all().order_by('id').first()
     if site_obj is None:
-        return
+        return  # pragma: no cover
+    return site_obj
 
-    site_obj.name = setting.value
-    site_obj.save()
+
+def update_instance_name(setting):
+    """Update the first site objects name to instance name."""
+    if site_obj := _get_site_object():
+        site_obj.name = setting.value
+        site_obj.save()
 
 
 def update_instance_url(setting):
     """Update the first site objects domain to url."""
-    if not django_settings.SITE_MULTI:
-        return
-
-    try:
-        from django.contrib.sites.models import Site
-    except (ImportError, RuntimeError):
-        # Multi-site support not enabled
-        return
-
-    site_obj = Site.objects.all().order_by('id').first()
-    if site_obj is None:
-        return
-
-    site_obj.domain = setting.value
-    site_obj.save()
+    if site_obj := _get_site_object():
+        site_obj.domain = setting.value
+        site_obj.save()
 
 
 def settings_group_options():

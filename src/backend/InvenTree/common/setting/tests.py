@@ -1,7 +1,7 @@
 """Tests for the various validators in the settings."""
 
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 import common.setting.system
 
@@ -48,3 +48,27 @@ class SettingsValidatorTests(TestCase):
     def test_update_instance_url_no_multi(self):
         """Test update_instance_url."""
         self.assertIsNone(common.setting.system.update_instance_url('abc.com'))
+
+    @override_settings(SITE_URL=None)
+    def test_base_url_validator(self):
+        """Test valid and invalid base URL values."""
+        validator = common.setting.system.BaseURLValidator()
+
+        for value in ['', 'http://localhost', 'https://inventree']:
+            self.assertIsNone(validator(value))
+
+        for value in ['inventree', 'ftp://inventree']:
+            with self.assertRaises(ValidationError):
+                validator(value)
+
+    @override_settings(SITE_URL='https://inventree.example')
+    def test_base_url_validator_locked_by_configuration(self):
+        """Test that a configured site URL cannot be changed."""
+        validator = common.setting.system.BaseURLValidator()
+
+        self.assertIsNone(validator('https://inventree.example'))
+
+        with self.assertRaisesMessage(
+            ValidationError, 'Site URL is locked by configuration'
+        ):
+            validator('https://other.example')
