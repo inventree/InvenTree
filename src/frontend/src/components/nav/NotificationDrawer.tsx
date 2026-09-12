@@ -64,7 +64,7 @@ function NotificationEntry({
 
   const base = `/${getBaseUrl()}`;
   const href =
-    link && link.startsWith('/') && !link.startsWith(base)
+    link?.startsWith('/') && !link.startsWith(base)
       ? `${base}${link}`
       : link;
 
