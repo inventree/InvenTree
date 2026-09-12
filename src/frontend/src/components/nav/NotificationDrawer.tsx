@@ -64,9 +64,7 @@ function NotificationEntry({
 
   const base = `/${getBaseUrl()}`;
   const href =
-    link?.startsWith('/') && !link.startsWith(base)
-      ? `${base}${link}`
-      : link;
+    link?.startsWith('/') && !link.startsWith(base) ? `${base}${link}` : link;
 
   return (
     <Paper p='xs' shadow='xs'>
