@@ -1101,10 +1101,10 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         ),
         'default': True,
         'validator': bool,
-        # 'confirm': True,
-        # 'confirm_text': _(
-        #     'Disabling this setting will stop cleaning up groups that external users no longer belong to. This might cause security issues.'
-        # ),
+        'confirm': True,
+        'confirm_text': _(
+            'Disabling this setting will stop cleaning up groups that external users no longer belong to. This might cause security issues.'
+        ),
         'flags': [SettingFlag.SECURITY],
     },
     'LOGIN_MAIL_REQUIRED': {
