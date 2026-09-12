@@ -372,6 +372,9 @@ class ReportAssetList(TemplatePermissionMixin, ListCreateAPI):
 
     queryset = report.models.ReportAsset.objects.all()
     serializer_class = report.serializers.ReportAssetSerializer
+    filter_backends = SEARCH_ORDER_FILTER
+    search_fields = ['description']
+    ordering_fields = ['description']
 
 
 class ReportAssetDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
