@@ -54,7 +54,7 @@ class SettingsValidatorTests(TestCase):
         """Test valid and invalid base URL values."""
         validator = common.setting.system.BaseURLValidator()
 
-        for value in ['', 'http://localhost', 'https://inventree']:
+        for value in ['', 'http://localhost', 'https://inventree.example']:
             self.assertIsNone(validator(value))
 
         for value in ['inventree', 'ftp://inventree']:
