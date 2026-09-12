@@ -395,7 +395,7 @@ jobs:
           update: true
           static: true
       - name: Data Export Test
-        uses: ./.github/actions/migration
+        uses: $/.github/actions/migration
       - name: Test Translations
         run: invoke dev.translate
       - name: Check Migration Files
@@ -502,7 +502,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --check --translations
       - name: Data Export Test
-        uses: ./.github/actions/migration
+        uses: $/.github/actions/migration
 
   mysql:
     name: Tests - DB [MySQL]
@@ -551,7 +551,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --check --translations
       - name: Data Export Test
-        uses: ./.github/actions/migration
+        uses: $/.github/actions/migration
 
   zizmor:
     name: Security [Zizmor]
