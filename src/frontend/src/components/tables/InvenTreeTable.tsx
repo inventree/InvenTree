@@ -120,6 +120,10 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     return userSettings.isSet('STICKY_TABLE_HEADER');
   }, [userSettings]);
 
+  const rotateTableHeaders = useMemo(() => {
+    return userSettings.isSet('ROTATE_TABLE_HEADERS');
+  }, [userSettings]);
+
   const tableSearchParams = useMemo(() => {
     return searchParams
       ? excludeDetailNavigationParams(searchParams)
@@ -1031,6 +1035,9 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         <Boundary label={`InvenTreeTable-${cacheKey}`}>
           <Box pos='relative'>
             <DataTable
+              className={
+                rotateTableHeaders ? 'rotate-table-headers' : undefined
+              }
               style={{
                 stickyHeader: stickyTableHeader ? 'top' : undefined
               }}
