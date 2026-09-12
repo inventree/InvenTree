@@ -149,6 +149,7 @@ class RegistrationMixin:
 
     def save_user(self, request, user, form, commit=True):
         """Check if a default group is set in settings."""
+        user._is_registering = True  # marker for email synchronization
         # Create the user
         user = super().save_user(request, user, form)
 

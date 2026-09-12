@@ -653,6 +653,10 @@ def validate_primary_group_on_group_change(sender, instance, action, **kwargs):
 @receiver(post_save, sender=User)
 def sync_user_email_address(sender, instance: User, created: bool, **kwargs):
     """Keep the allauth EmailAddress in sync with User email field."""
+    # Are we currently in the API path of user registration?
+    if getattr(instance, '_is_registering', False):
+        return
+
     if isImportingData() or isReadOnlyCommand():
         return
 
