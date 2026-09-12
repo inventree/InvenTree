@@ -136,6 +136,7 @@ export default function SalesIndex() {
         name: 'shipments',
         label: t`Pending Shipments`,
         icon: <IconCubeSend />,
+        hidden: !user.hasViewVisible(UserRoles.sales_order),
         content: (
           <SalesOrderShipmentTable
             tableName={'sales-order-pending-shipment'}
