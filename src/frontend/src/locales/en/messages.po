@@ -100,7 +100,7 @@ msgstr "Actions"
 #: src/components/nav/Header.tsx:191
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
-#: src/pages/Index/Settings/UserSettings.tsx:77
+#: src/pages/Index/Settings/UserSettings.tsx:78
 #: src/pages/part/PartDetail.tsx:767
 msgid "Search"
 msgstr "Search"
@@ -121,12 +121,14 @@ msgstr "Fail"
 #: lib/components/YesNoButton.tsx:43
 #: src/components/tables/Filter.tsx:41
 #: src/components/tables/Filter.tsx:77
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:775
 msgid "Yes"
 msgstr "Yes"
 
 #: lib/components/YesNoButton.tsx:44
 #: src/components/tables/Filter.tsx:41
 #: src/components/tables/Filter.tsx:78
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:775
 msgid "No"
 msgstr "No"
 
@@ -659,7 +661,7 @@ msgstr "Selection Entries"
 #: src/components/editors/NotesEditor.tsx:432
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:170
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:288
-#: src/components/forms/fields/ApiFormField.tsx:300
+#: src/components/forms/fields/ApiFormField.tsx:310
 #: src/components/forms/fields/TableField.tsx:63
 #: src/components/importer/ImportDataSelector.tsx:206
 #: src/components/importer/ImporterColumnSelector.tsx:330
@@ -667,7 +669,7 @@ msgstr "Selection Entries"
 #: src/components/modals/LicenseModal.tsx:85
 #: src/components/nav/NavigationTree.tsx:398
 #: src/components/nav/NotificationDrawer.tsx:235
-#: src/components/nav/SearchDrawer.tsx:609
+#: src/components/nav/SearchDrawer.tsx:616
 #: src/components/settings/SettingList.tsx:158
 #: src/components/tables/InvenTreeTableHeader.tsx:164
 #: src/components/wizards/ImportPartWizard.tsx:574
@@ -1076,7 +1078,7 @@ msgid "Refresh calendar"
 msgstr "Refresh calendar"
 
 #: src/components/calendar/Calendar.tsx:334
-#: src/components/tables/InvenTreeTableHeader.tsx:329
+#: src/components/tables/InvenTreeTableHeader.tsx:343
 msgid "Export data"
 msgstr "Export data"
 
@@ -1692,7 +1694,7 @@ msgstr "Updated by"
 #~ msgstr "Edit Notes"
 
 #: src/components/editors/NotesEditor.tsx:317
-#: src/components/editors/NotesEditor.tsx:717
+#: src/components/editors/NotesEditor.tsx:720
 #: src/forms/PurchaseOrderForms.tsx:655
 msgid "Add Note"
 msgstr "Add Note"
@@ -2180,6 +2182,10 @@ msgstr "Host"
 #: src/components/forms/HostOptionsForm.tsx:70
 #: src/components/forms/InstanceOptions.tsx:125
 #: src/components/plugins/PluginDrawer.tsx:85
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:295
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:421
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:670
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:741
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
 #: src/pages/part/PartCategoryDetailsPanel.tsx:22
 #: src/pages/part/PartDetailsPanel.tsx:79
@@ -2270,7 +2276,7 @@ msgid "Plugins"
 msgstr "Plugins"
 
 #: src/components/forms/InstanceOptions.tsx:144
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:126
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:107
 #: src/tables/general/ParameterTemplateTable.tsx:148
 #: src/tables/general/ParameterTemplateTable.tsx:183
 #: src/tables/part/PartTestTemplateTable.tsx:121
@@ -2281,7 +2287,7 @@ msgid "Enabled"
 msgstr "Enabled"
 
 #: src/components/forms/InstanceOptions.tsx:144
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:130
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:111
 msgid "Disabled"
 msgstr "Disabled"
 
@@ -2298,17 +2304,17 @@ msgstr "Stopped"
 msgid "Running"
 msgstr "Running"
 
-#: src/components/forms/fields/ApiFormField.tsx:148
+#: src/components/forms/fields/ApiFormField.tsx:149
 msgid "Select location"
 msgstr "Select location"
 
-#: src/components/forms/fields/ApiFormField.tsx:164
+#: src/components/forms/fields/ApiFormField.tsx:165
 #: src/components/forms/fields/IconField.tsx:235
 #: src/components/wizards/ImportPartWizard.tsx:304
 msgid "Select category"
 msgstr "Select category"
 
-#: src/components/forms/fields/ApiFormField.tsx:254
+#: src/components/forms/fields/ApiFormField.tsx:255
 msgid "Select file to upload"
 msgstr "Select file to upload"
 
@@ -2380,7 +2386,7 @@ msgstr "Add new row"
 #: src/components/forms/fields/TreeField.tsx:328
 #: src/components/render/Instance.tsx:145
 #: src/components/render/ModelHoverCard.tsx:73
-#: src/components/tables/InvenTreeTable.tsx:900
+#: src/components/tables/InvenTreeTable.tsx:904
 msgid "View details"
 msgstr "View details"
 
@@ -2471,7 +2477,7 @@ msgstr "Processing Data"
 #: src/components/importer/ImporterColumnSelector.tsx:56
 #: src/components/importer/ImporterColumnSelector.tsx:299
 #: src/components/items/ErrorItem.tsx:12
-#: src/functions/api.tsx:60
+#: src/functions/api.tsx:63
 #: src/functions/auth.tsx:418
 msgid "An error occurred"
 msgstr "An error occurred"
@@ -2602,8 +2608,8 @@ msgstr "Options"
 #~ msgstr "Link custom barcode"
 
 #: src/components/items/ActionDropdown.tsx:175
-#: src/components/tables/InvenTreeTableHeader.tsx:232
-#: src/components/tables/InvenTreeTableHeader.tsx:233
+#: src/components/tables/InvenTreeTableHeader.tsx:246
+#: src/components/tables/InvenTreeTableHeader.tsx:247
 msgid "Barcode Actions"
 msgstr "Barcode Actions"
 
@@ -2658,7 +2664,7 @@ msgid "Read More"
 msgstr "Read More"
 
 #: src/components/items/ErrorItem.tsx:8
-#: src/functions/api.tsx:51
+#: src/functions/api.tsx:54
 #: src/tables/settings/PendingTasksTable.tsx:80
 msgid "Unknown error"
 msgstr "Unknown error"
@@ -3088,7 +3094,7 @@ msgstr "Open search"
 #: src/components/nav/NavigationDrawer.tsx:134
 #: src/components/nav/NotificationDrawer.tsx:181
 #: src/pages/Index/Settings/SystemSettings.tsx:146
-#: src/pages/Index/Settings/UserSettings.tsx:110
+#: src/pages/Index/Settings/UserSettings.tsx:111
 #: src/pages/Notifications.tsx:45
 #: src/pages/Notifications.tsx:130
 msgid "Notifications"
@@ -3135,8 +3141,8 @@ msgstr "Settings"
 #: src/components/nav/NavigationDrawer.tsx:140
 #: src/components/nav/SettingsHeader.tsx:40
 #: src/defaults/actions.tsx:106
-#: src/pages/Index/Settings/UserSettings.tsx:147
-#: src/pages/Index/Settings/UserSettings.tsx:151
+#: src/pages/Index/Settings/UserSettings.tsx:148
+#: src/pages/Index/Settings/UserSettings.tsx:152
 msgid "User Settings"
 msgstr "User Settings"
 
@@ -3286,27 +3292,27 @@ msgstr "Error loading notifications."
 msgid "Primary Action"
 msgstr "Primary Action"
 
-#: src/components/nav/SearchDrawer.tsx:117
+#: src/components/nav/SearchDrawer.tsx:123
 msgid "No Overview Available"
 msgstr "No Overview Available"
 
-#: src/components/nav/SearchDrawer.tsx:118
+#: src/components/nav/SearchDrawer.tsx:124
 msgid "No overview available for this model type"
 msgstr "No overview available for this model type"
 
-#: src/components/nav/SearchDrawer.tsx:136
+#: src/components/nav/SearchDrawer.tsx:142
 msgid "View all results"
 msgstr "View all results"
 
-#: src/components/nav/SearchDrawer.tsx:151
+#: src/components/nav/SearchDrawer.tsx:157
 msgid "results"
 msgstr "results"
 
-#: src/components/nav/SearchDrawer.tsx:155
+#: src/components/nav/SearchDrawer.tsx:161
 msgid "Remove search group"
 msgstr "Remove search group"
 
-#: src/components/nav/SearchDrawer.tsx:310
+#: src/components/nav/SearchDrawer.tsx:316
 #: src/pages/company/ManufacturerPartDetail.tsx:97
 #: src/pages/part/PartDetail.tsx:379
 #: src/pages/part/PartSupplierDetail.tsx:15
@@ -3314,13 +3320,13 @@ msgstr "Remove search group"
 msgid "Suppliers"
 msgstr "Suppliers"
 
-#: src/components/nav/SearchDrawer.tsx:320
+#: src/components/nav/SearchDrawer.tsx:326
 #: src/pages/part/PartSupplierDetail.tsx:23
 #: src/pages/purchasing/PurchasingIndex.tsx:173
 msgid "Manufacturers"
 msgstr "Manufacturers"
 
-#: src/components/nav/SearchDrawer.tsx:330
+#: src/components/nav/SearchDrawer.tsx:336
 #: src/pages/sales/SalesIndex.tsx:175
 msgid "Customers"
 msgstr "Customers"
@@ -3329,41 +3335,41 @@ msgstr "Customers"
 #~ msgid "No results"
 #~ msgstr "No results"
 
-#: src/components/nav/SearchDrawer.tsx:514
+#: src/components/nav/SearchDrawer.tsx:520
 msgid "Enter search text"
 msgstr "Enter search text"
 
-#: src/components/nav/SearchDrawer.tsx:525
+#: src/components/nav/SearchDrawer.tsx:531
 msgid "Refresh search results"
 msgstr "Refresh search results"
 
-#: src/components/nav/SearchDrawer.tsx:536
-#: src/components/nav/SearchDrawer.tsx:543
+#: src/components/nav/SearchDrawer.tsx:542
+#: src/components/nav/SearchDrawer.tsx:549
 msgid "Search Options"
 msgstr "Search Options"
 
-#: src/components/nav/SearchDrawer.tsx:546
+#: src/components/nav/SearchDrawer.tsx:552
 msgid "Whole word search"
 msgstr "Whole word search"
 
-#: src/components/nav/SearchDrawer.tsx:555
+#: src/components/nav/SearchDrawer.tsx:561
 msgid "Regex search"
 msgstr "Regex search"
 
-#: src/components/nav/SearchDrawer.tsx:564
+#: src/components/nav/SearchDrawer.tsx:570
 msgid "Notes search"
 msgstr "Notes search"
 
-#: src/components/nav/SearchDrawer.tsx:612
+#: src/components/nav/SearchDrawer.tsx:619
 msgid "An error occurred during search query"
 msgstr "An error occurred during search query"
 
-#: src/components/nav/SearchDrawer.tsx:623
+#: src/components/nav/SearchDrawer.tsx:630
 #: src/tables/part/PartTestTemplateTable.tsx:86
 msgid "No Results"
 msgstr "No Results"
 
-#: src/components/nav/SearchDrawer.tsx:626
+#: src/components/nav/SearchDrawer.tsx:633
 msgid "No results available for search query"
 msgstr "No results available for search query"
 
@@ -3511,7 +3517,7 @@ msgstr "Package"
 #: src/components/plugins/PluginDrawer.tsx:156
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:67
 #: src/pages/Index/Settings/PluginSettingsGroup.tsx:119
-#: src/pages/Index/Settings/UserSettings.tsx:132
+#: src/pages/Index/Settings/UserSettings.tsx:133
 msgid "Plugin Settings"
 msgstr "Plugin Settings"
 
@@ -4342,7 +4348,7 @@ msgstr "Include results for part variants"
 #: src/forms/StockForms.tsx:689
 #: src/forms/StockForms.tsx:1427
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:121
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:104
 #: src/pages/build/BuildOrderDetailsPanel.tsx:67
 #: src/pages/core/UserDetail.tsx:148
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:71
@@ -4471,6 +4477,7 @@ msgstr "Remove filter"
 #: src/components/tables/FilterSelectDrawer.tsx:249
 #: src/components/tables/FilterSelectDrawer.tsx:276
 #: src/components/tables/FilterSelectDrawer.tsx:290
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:624
 #: src/pages/part/PartStockHistoryDetail.tsx:67
 #: src/tables/part/PartTestResultTable.tsx:210
 #: src/tables/stock/StockItemTestResultTable.tsx:205
@@ -4516,7 +4523,7 @@ msgid "Delete filter group"
 msgstr "Delete filter group"
 
 #: src/components/tables/FilterSelectDrawer.tsx:649
-#: src/components/tables/InvenTreeTableHeader.tsx:299
+#: src/components/tables/InvenTreeTableHeader.tsx:313
 msgid "Table Filters"
 msgstr "Table Filters"
 
@@ -4545,23 +4552,23 @@ msgstr "Save Filters"
 #~ msgstr "Select from the available filters"
 
 #: src/components/tables/InvenTreeTable.tsx:59
-#: src/components/tables/InvenTreeTable.tsx:652
+#: src/components/tables/InvenTreeTable.tsx:656
 msgid "No records found"
 msgstr "No records found"
 
-#: src/components/tables/InvenTreeTable.tsx:187
+#: src/components/tables/InvenTreeTable.tsx:191
 msgid "Error loading table options"
 msgstr "Error loading table options"
 
-#: src/components/tables/InvenTreeTable.tsx:697
+#: src/components/tables/InvenTreeTable.tsx:701
 msgid "Server returned incorrect data type"
 msgstr "Server returned incorrect data type"
 
-#: src/components/tables/InvenTreeTable.tsx:730
+#: src/components/tables/InvenTreeTable.tsx:734
 msgid "Error loading table data"
 msgstr "Error loading table data"
 
-#: src/components/tables/InvenTreeTable.tsx:903
+#: src/components/tables/InvenTreeTable.tsx:907
 msgid "View {model}"
 msgstr "View {model}"
 
@@ -4602,16 +4609,16 @@ msgstr "Failed to delete items"
 msgid "Custom table filters are active"
 msgstr "Custom table filters are active"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:242
+#: src/components/tables/InvenTreeTableHeader.tsx:256
 #: src/tables/general/BarcodeScanTable.tsx:95
 msgid "Delete selected records"
 msgstr "Delete selected records"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:262
+#: src/components/tables/InvenTreeTableHeader.tsx:276
 msgid "Refresh data"
 msgstr "Refresh data"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:311
+#: src/components/tables/InvenTreeTableHeader.tsx:325
 msgid "Active Filters"
 msgstr "Active Filters"
 
@@ -5989,11 +5996,11 @@ msgstr "Model Type"
 msgid "Limit this template to a specific model type, or leave blank for all models"
 msgstr "Limit this template to a specific model type, or leave blank for all models"
 
-#: src/forms/CommonForms.tsx:367
+#: src/forms/CommonForms.tsx:373
 msgid "From Template"
 msgstr "From Template"
 
-#: src/forms/CommonForms.tsx:368
+#: src/forms/CommonForms.tsx:374
 msgid "Optionally pre-fill this note from an existing template"
 msgstr "Optionally pre-fill this note from an existing template"
 
@@ -6517,23 +6524,23 @@ msgstr "Stock deleted"
 msgid "This operation will permanently delete the selected stock items."
 msgstr "This operation will permanently delete the selected stock items."
 
-#: src/forms/StockForms.tsx:2186
+#: src/forms/StockForms.tsx:2188
 msgid "Parent stock location"
 msgstr "Parent stock location"
 
-#: src/forms/StockForms.tsx:2313
+#: src/forms/StockForms.tsx:2324
 msgid "Find Serial Number"
 msgstr "Find Serial Number"
 
-#: src/forms/StockForms.tsx:2324
+#: src/forms/StockForms.tsx:2335
 msgid "No matching items"
 msgstr "No matching items"
 
-#: src/forms/StockForms.tsx:2330
+#: src/forms/StockForms.tsx:2341
 msgid "Multiple matching items"
 msgstr "Multiple matching items"
 
-#: src/forms/StockForms.tsx:2339
+#: src/forms/StockForms.tsx:2350
 msgid "Invalid response from server"
 msgstr "Invalid response from server"
 
@@ -6549,27 +6556,27 @@ msgstr "Invalid response from server"
 #~ msgid "Label"
 #~ msgstr "Label"
 
-#: src/functions/api.tsx:33
+#: src/functions/api.tsx:36
 msgid "Bad request"
 msgstr "Bad request"
 
-#: src/functions/api.tsx:36
+#: src/functions/api.tsx:39
 msgid "Unauthorized"
 msgstr "Unauthorized"
 
-#: src/functions/api.tsx:39
+#: src/functions/api.tsx:42
 msgid "Forbidden"
 msgstr "Forbidden"
 
-#: src/functions/api.tsx:42
+#: src/functions/api.tsx:45
 msgid "Not found"
 msgstr "Not found"
 
-#: src/functions/api.tsx:45
+#: src/functions/api.tsx:48
 msgid "Method not allowed"
 msgstr "Method not allowed"
 
-#: src/functions/api.tsx:48
+#: src/functions/api.tsx:51
 msgid "Internal server error"
 msgstr "Internal server error"
 
@@ -8038,29 +8045,429 @@ msgstr "Email Messages"
 #~ msgid "Inactive Alerts"
 #~ msgstr "Inactive Alerts"
 
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:36
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:35
 msgid "System Status"
 msgstr "System Status"
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:47
-msgid "Admin Center Information"
-msgstr "Admin Center Information"
+#~ msgid "Admin Center Information"
+#~ msgstr "Admin Center Information"
 
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:53
-msgid "The home panel (and the whole Admin Center) is a new feature starting with the new UI and was previously (before 1.0) not available."
-msgstr "The home panel (and the whole Admin Center) is a new feature starting with the new UI and was previously (before 1.0) not available."
-
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:60
-msgid "The admin center provides a centralized location for all administration functionality and is meant to replace all interaction with the (django) backend admin interface."
-msgstr "The admin center provides a centralized location for all administration functionality and is meant to replace all interaction with the (django) backend admin interface."
-
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:67
-msgid "Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom."
-msgstr "Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom."
-
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:85
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:51
 msgid "Quick Actions"
 msgstr "Quick Actions"
+
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:53
+#~ msgid "The home panel (and the whole Admin Center) is a new feature starting with the new UI and was previously (before 1.0) not available."
+#~ msgstr "The home panel (and the whole Admin Center) is a new feature starting with the new UI and was previously (before 1.0) not available."
+
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:60
+#~ msgid "The admin center provides a centralized location for all administration functionality and is meant to replace all interaction with the (django) backend admin interface."
+#~ msgstr "The admin center provides a centralized location for all administration functionality and is meant to replace all interaction with the (django) backend admin interface."
+
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:67
+#~ msgid "Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom."
+#~ msgstr "Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom."
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:75
+msgid "SCIM enabled"
+msgstr "SCIM enabled"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:75
+msgid "SCIM secret rotated"
+msgstr "SCIM secret rotated"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:76
+msgid "The new bearer secret is only shown once"
+msgstr "The new bearer secret is only shown once"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:81
+msgid "Error generating SCIM secret"
+msgstr "Error generating SCIM secret"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:91
+msgid "SCIM disabled"
+msgstr "SCIM disabled"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:92
+msgid "The SCIM provisioning endpoint has been disabled and its secret revoked"
+msgstr "The SCIM provisioning endpoint has been disabled and its secret revoked"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:97
+msgid "Error disabling SCIM"
+msgstr "Error disabling SCIM"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:116
+msgid "Base URL"
+msgstr "Base URL"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:122
+msgid "Secret Generated"
+msgstr "Secret Generated"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:123
+msgid "Last Used"
+msgstr "Last Used"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:137
+msgid "SCIM Bearer Secret"
+msgstr "SCIM Bearer Secret"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:142
+msgid "This secret is only shown once - copy it now and store it in your Identity Provider's SCIM configuration. It cannot be retrieved again, only rotated."
+msgstr "This secret is only shown once - copy it now and store it in your Identity Provider's SCIM configuration. It cannot be retrieved again, only rotated."
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:159
+msgid "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups."
+msgstr "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups."
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:176
+msgid "Rotate Secret"
+msgstr "Rotate Secret"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:178
+msgid "Enable SCIM"
+msgstr "Enable SCIM"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:188
+msgid "Disable SCIM"
+msgstr "Disable SCIM"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:194
+msgid "Rotating the secret immediately invalidates the previous one - update your Identity Provider's configuration straight away."
+msgstr "Rotating the secret immediately invalidates the previous one - update your Identity Provider's configuration straight away."
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:219
+msgid "Add SSO Application"
+msgstr "Add SSO Application"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:233
+msgid "Add OIDC SSO Application"
+msgstr "Add OIDC SSO Application"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:246
+msgid "OAuth PKCE Enabled"
+msgstr "OAuth PKCE Enabled"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:247
+msgid "Use Proof Key for Code Exchange during OIDC login with this application"
+msgstr "Use Proof Key for Code Exchange during OIDC login with this application"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:252
+msgid "OIDC Server URL"
+msgstr "OIDC Server URL"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:253
+msgid "Base URL of the OIDC provider"
+msgstr "Base URL of the OIDC provider"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:257
+msgid "UID Field"
+msgstr "UID Field"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:258
+msgid "OIDC claim used as the user's unique identifier"
+msgstr "OIDC claim used as the user's unique identifier"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:287
+msgid "Add SAML SSO Application"
+msgstr "Add SAML SSO Application"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:296
+msgid "Display name for this SAML identity provider"
+msgstr "Display name for this SAML identity provider"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:300
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:433
+msgid "Provider ID"
+msgstr "Provider ID"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:301
+msgid "Unique provider identifier, normally the IdP entity ID"
+msgstr "Unique provider identifier, normally the IdP entity ID"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:305
+msgid "Organization Slug"
+msgstr "Organization Slug"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:306
+msgid "URL-safe identifier used in SAML login and metadata URLs"
+msgstr "URL-safe identifier used in SAML login and metadata URLs"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:310
+msgid "Identity Provider Settings"
+msgstr "Identity Provider Settings"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:315
+msgid "IdP Entity ID"
+msgstr "IdP Entity ID"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:316
+msgid "Entity ID of the SAML identity provider"
+msgstr "Entity ID of the SAML identity provider"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:320
+msgid "IdP Metadata URL"
+msgstr "IdP Metadata URL"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:321
+msgid "Use this or provide the inline IdP settings below"
+msgstr "Use this or provide the inline IdP settings below"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:325
+msgid "IdP SSO URL"
+msgstr "IdP SSO URL"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:326
+msgid "Inline IdP single sign-on URL"
+msgstr "Inline IdP single sign-on URL"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:330
+msgid "IdP SLO URL"
+msgstr "IdP SLO URL"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:331
+msgid "Inline IdP single logout URL"
+msgstr "Inline IdP single logout URL"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:335
+msgid "IdP X.509 Certificate"
+msgstr "IdP X.509 Certificate"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:336
+msgid "Inline IdP signing certificate"
+msgstr "Inline IdP signing certificate"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:342
+msgid "Service Provider Settings"
+msgstr "Service Provider Settings"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:346
+msgid "SP Entity ID"
+msgstr "SP Entity ID"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:347
+msgid "Optional service provider entity ID"
+msgstr "Optional service provider entity ID"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:353
+msgid "Account Mapping"
+msgstr "Account Mapping"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:357
+msgid "Attribute Mapping"
+msgstr "Attribute Mapping"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:358
+msgid "Map SAML attributes to uid, email, and email_verified"
+msgstr "Map SAML attributes to uid, email, and email_verified"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:362
+msgid "Use NameID for Email"
+msgstr "Use NameID for Email"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:363
+msgid "Use the SAML NameID value as the user's email address"
+msgstr "Use the SAML NameID value as the user's email address"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:398
+msgid "Edit SSO Application"
+msgstr "Edit SSO Application"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:413
+msgid "Delete SSO Application"
+msgstr "Delete SSO Application"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:427
+msgid "Provider"
+msgstr "Provider"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:439
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:628
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:747
+msgid "Client ID"
+msgstr "Client ID"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:472
+msgid "Add Generic App"
+msgstr "Add Generic App"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:479
+msgid "Add OIDC App"
+msgstr "Add OIDC App"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:486
+msgid "Add SAML App"
+msgstr "Add SAML App"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:495
+msgid "Frontend Single Sign-On (SSO) is based on django-allauth. By default generic OIDC (client) and SAML providers are enabled.<0/>You can add more specific providers using the `INVENTREE_SOCIAL_BACKENDS` config key. After a restart those providers become available below.<1/>The documentation goes more in depth on SSO setup steps."
+msgstr "Frontend Single Sign-On (SSO) is based on django-allauth. By default generic OIDC (client) and SAML providers are enabled.<0/>You can add more specific providers using the `INVENTREE_SOCIAL_BACKENDS` config key. After a restart those providers become available below.<1/>The documentation goes more in depth on SSO setup steps."
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:510
+msgid "OIDC Callback URL"
+msgstr "OIDC Callback URL"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:514
+msgid "Add this callback URL to your OIDC provider."
+msgstr "Add this callback URL to your OIDC provider."
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:526
+msgid "SAML Service URLs"
+msgstr "SAML Service URLs"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:530
+msgid "Register these URLs with your SAML identity provider."
+msgstr "Register these URLs with your SAML identity provider."
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:533
+msgid "URL"
+msgstr "URL"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:533
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:85
+msgid "Endpoint"
+msgstr "Endpoint"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:535
+msgid "ACS"
+msgstr "ACS"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:536
+msgid "SLS"
+msgstr "SLS"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:537
+msgid "Metadata"
+msgstr "Metadata"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:563
+#: src/pages/Index/Settings/SystemSettings.tsx:95
+msgid "Single Sign-On (SSO) Settings"
+msgstr "Single Sign-On (SSO) Settings"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:571
+msgid "More settings can be found in the <0>system settings</0>."
+msgstr "More settings can be found in the <0>system settings</0>."
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:616
+msgid "Copy these values now. The client secret is only shown once."
+msgstr "Copy these values now. The client secret is only shown once."
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:624
+msgid "Field"
+msgstr "Field"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:637
+msgid "Client Secret"
+msgstr "Client Secret"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:662
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:701
+msgid "OAuth application created"
+msgstr "OAuth application created"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:666
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:805
+msgid "Add OAuth Application"
+msgstr "Add OAuth Application"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:671
+msgid "A human-readable name for the OAuth application"
+msgstr "A human-readable name for the OAuth application"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:674
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:753
+msgid "Client Type"
+msgstr "Client Type"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:675
+msgid "The type of OAuth client (confidential or public - prefer public for browser-based applications)"
+msgstr "The type of OAuth client (confidential or public - prefer public for browser-based applications)"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:679
+msgid "Authorization Grant Type"
+msgstr "Authorization Grant Type"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:680
+msgid "The type of OAuth2 grant schema to use - authorization code is recommended for most applications"
+msgstr "The type of OAuth2 grant schema to use - authorization code is recommended for most applications"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:687
+msgid "Skip Authorization"
+msgstr "Skip Authorization"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:688
+msgid "If enabled, users will not be prompted to authorize this application when logging in - use with caution!"
+msgstr "If enabled, users will not be prompted to authorize this application when logging in - use with caution!"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:691
+msgid "Sign Algorithm"
+msgstr "Sign Algorithm"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:692
+msgid "The algorithm used to sign the OAuth2 tokens - required for OIDC"
+msgstr "The algorithm used to sign the OAuth2 tokens - required for OIDC"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:714
+msgid "OAuth application secret regenerated"
+msgstr "OAuth application secret regenerated"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:717
+msgid "OAuth secret rotated"
+msgstr "OAuth secret rotated"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:718
+msgid "The new client secret is only shown once"
+msgstr "The new client secret is only shown once"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:725
+msgid "Error regenerating OAuth client secret"
+msgstr "Error regenerating OAuth client secret"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:733
+msgid "Delete OAuth Application"
+msgstr "Delete OAuth Application"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:759
+msgid "Grant Type"
+msgstr "Grant Type"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:765
+msgid "Redirect URIs"
+msgstr "Redirect URIs"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:772
+msgid "Built-in"
+msgstr "Built-in"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:784
+msgid "Regenerate Secret"
+msgstr "Regenerate Secret"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:850
+msgid "InvenTree can be integrated with external Identity Providers and act as one."
+msgstr "InvenTree can be integrated with external Identity Providers and act as one."
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:851
+msgid "External Identities can be pushed to InvenTree via Single Sign-On (SSO) and SCIM."
+msgstr "External Identities can be pushed to InvenTree via Single Sign-On (SSO) and SCIM."
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:852
+msgid "InvenTree can act as an Identity Provider for external applications via the built-in oAuth2 provider."
+msgstr "InvenTree can act as an Identity Provider for external applications via the built-in oAuth2 provider."
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:870
+msgid "SCIM Provisioning"
+msgstr "SCIM Provisioning"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:878
+msgid "Single Sign-On (SSO)"
+msgstr "Single Sign-On (SSO)"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:886
+msgid "oAuth2 Provider"
+msgstr "oAuth2 Provider"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:107
 #~ msgid "User Management"
@@ -8141,8 +8548,12 @@ msgid "Location Types"
 msgstr "Location Types"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:283
-msgid "Identity"
-msgstr "Identity"
+msgid "Identity Federation"
+msgstr "Identity Federation"
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:283
+#~ msgid "Identity"
+#~ msgstr "Identity"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:295
 msgid "Operations"
@@ -8154,7 +8565,7 @@ msgstr "Data Management"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:319
 #: src/pages/Index/Settings/SystemSettings.tsx:194
-#: src/pages/Index/Settings/UserSettings.tsx:122
+#: src/pages/Index/Settings/UserSettings.tsx:123
 msgid "Reporting"
 msgstr "Reporting"
 
@@ -8271,73 +8682,9 @@ msgstr "Page Size"
 #~ msgid "Generated Reports"
 #~ msgstr "Generated Reports"
 
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:52
-msgid "SCIM enabled"
-msgstr "SCIM enabled"
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:52
-msgid "SCIM secret rotated"
-msgstr "SCIM secret rotated"
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:53
-msgid "The new bearer secret is only shown once"
-msgstr "The new bearer secret is only shown once"
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:58
-msgid "Error generating SCIM secret"
-msgstr "Error generating SCIM secret"
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:68
-msgid "SCIM disabled"
-msgstr "SCIM disabled"
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:69
-msgid "The SCIM provisioning endpoint has been disabled and its secret revoked"
-msgstr "The SCIM provisioning endpoint has been disabled and its secret revoked"
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:74
-msgid "Error disabling SCIM"
-msgstr "Error disabling SCIM"
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:87
-msgid "SCIM Bearer Secret"
-msgstr "SCIM Bearer Secret"
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:92
-msgid "This secret is only shown once - copy it now and store it in your Identity Provider's SCIM configuration. It cannot be retrieved again, only rotated."
-msgstr "This secret is only shown once - copy it now and store it in your Identity Provider's SCIM configuration. It cannot be retrieved again, only rotated."
-
 #: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:109
-msgid "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups. Single Sign-On (interactive login) is configured separately, under Single Sign On."
-msgstr "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups. Single Sign-On (interactive login) is configured separately, under Single Sign On."
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:137
-msgid "Base URL"
-msgstr "Base URL"
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:148
-msgid "Secret Generated"
-msgstr "Secret Generated"
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:154
-msgid "Last Used"
-msgstr "Last Used"
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:169
-msgid "Rotate Secret"
-msgstr "Rotate Secret"
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:171
-msgid "Enable SCIM"
-msgstr "Enable SCIM"
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:181
-msgid "Disable SCIM"
-msgstr "Disable SCIM"
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:187
-msgid "Rotating the secret immediately invalidates the previous one - update your Identity Provider's configuration straight away."
-msgstr "Rotating the secret immediately invalidates the previous one - update your Identity Provider's configuration straight away."
+#~ msgid "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups. Single Sign-On (interactive login) is configured separately, under Single Sign On."
+#~ msgstr "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups. Single Sign-On (interactive login) is configured separately, under Single Sign On."
 
 #: src/pages/Index/Settings/AdminCenter/StocktakePanel.tsx:25
 #~ msgid "Stocktake Reports"
@@ -8443,10 +8790,6 @@ msgstr "Server Settings"
 msgid "Authentication"
 msgstr "Authentication"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:95
-msgid "Single Sign-On (SSO) Settings"
-msgstr "Single Sign-On (SSO) Settings"
-
 #: src/pages/Index/Settings/SystemSettings.tsx:113
 msgid "Barcodes"
 msgstr "Barcodes"
@@ -8468,7 +8811,7 @@ msgstr "Display"
 #~ msgstr "Exchange Rates"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:152
-#: src/pages/Index/Settings/UserSettings.tsx:116
+#: src/pages/Index/Settings/UserSettings.tsx:117
 msgid "The settings below are specific to each available notification method"
 msgstr "The settings below are specific to each available notification method"
 
@@ -13007,10 +13350,6 @@ msgstr "Assets are files (such as images) which can be used when rendering repor
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:60
 msgid "Barcode Information"
 msgstr "Barcode Information"
-
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:85
-msgid "Endpoint"
-msgstr "Endpoint"
 
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:89
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:208

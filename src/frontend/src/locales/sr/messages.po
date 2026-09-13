@@ -8,7 +8,7 @@ msgstr ""
 "Language: sr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-03 12:15\n"
+"PO-Revision-Date: 2026-09-13 03:58\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -105,7 +105,7 @@ msgstr "Akcije"
 #: src/components/nav/Header.tsx:191
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
-#: src/pages/Index/Settings/UserSettings.tsx:77
+#: src/pages/Index/Settings/UserSettings.tsx:78
 #: src/pages/part/PartDetail.tsx:767
 msgid "Search"
 msgstr "Pretraga"
@@ -126,12 +126,14 @@ msgstr "Neuspešno"
 #: lib/components/YesNoButton.tsx:43
 #: src/components/tables/Filter.tsx:41
 #: src/components/tables/Filter.tsx:77
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:775
 msgid "Yes"
 msgstr "Da"
 
 #: lib/components/YesNoButton.tsx:44
 #: src/components/tables/Filter.tsx:41
 #: src/components/tables/Filter.tsx:78
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:775
 msgid "No"
 msgstr "Ne"
 
@@ -664,7 +666,7 @@ msgstr ""
 #: src/components/editors/NotesEditor.tsx:432
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:170
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:288
-#: src/components/forms/fields/ApiFormField.tsx:300
+#: src/components/forms/fields/ApiFormField.tsx:310
 #: src/components/forms/fields/TableField.tsx:63
 #: src/components/importer/ImportDataSelector.tsx:206
 #: src/components/importer/ImporterColumnSelector.tsx:330
@@ -672,7 +674,7 @@ msgstr ""
 #: src/components/modals/LicenseModal.tsx:85
 #: src/components/nav/NavigationTree.tsx:398
 #: src/components/nav/NotificationDrawer.tsx:235
-#: src/components/nav/SearchDrawer.tsx:609
+#: src/components/nav/SearchDrawer.tsx:616
 #: src/components/settings/SettingList.tsx:158
 #: src/components/tables/InvenTreeTableHeader.tsx:164
 #: src/components/wizards/ImportPartWizard.tsx:574
@@ -1081,7 +1083,7 @@ msgid "Refresh calendar"
 msgstr ""
 
 #: src/components/calendar/Calendar.tsx:334
-#: src/components/tables/InvenTreeTableHeader.tsx:329
+#: src/components/tables/InvenTreeTableHeader.tsx:343
 msgid "Export data"
 msgstr ""
 
@@ -1697,7 +1699,7 @@ msgstr ""
 #~ msgstr "Edit Notes"
 
 #: src/components/editors/NotesEditor.tsx:317
-#: src/components/editors/NotesEditor.tsx:717
+#: src/components/editors/NotesEditor.tsx:720
 #: src/forms/PurchaseOrderForms.tsx:655
 msgid "Add Note"
 msgstr "Dodaj belešku"
@@ -2185,6 +2187,10 @@ msgstr "Host"
 #: src/components/forms/HostOptionsForm.tsx:70
 #: src/components/forms/InstanceOptions.tsx:125
 #: src/components/plugins/PluginDrawer.tsx:85
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:295
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:421
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:670
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:741
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
 #: src/pages/part/PartCategoryDetailsPanel.tsx:22
 #: src/pages/part/PartDetailsPanel.tsx:79
@@ -2275,7 +2281,7 @@ msgid "Plugins"
 msgstr "Ekstenzije"
 
 #: src/components/forms/InstanceOptions.tsx:144
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:126
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:107
 #: src/tables/general/ParameterTemplateTable.tsx:148
 #: src/tables/general/ParameterTemplateTable.tsx:183
 #: src/tables/part/PartTestTemplateTable.tsx:121
@@ -2286,7 +2292,7 @@ msgid "Enabled"
 msgstr "Omogućeno"
 
 #: src/components/forms/InstanceOptions.tsx:144
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:130
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:111
 msgid "Disabled"
 msgstr ""
 
@@ -2303,17 +2309,17 @@ msgstr "Zaustavljeno"
 msgid "Running"
 msgstr ""
 
-#: src/components/forms/fields/ApiFormField.tsx:148
+#: src/components/forms/fields/ApiFormField.tsx:149
 msgid "Select location"
 msgstr ""
 
-#: src/components/forms/fields/ApiFormField.tsx:164
+#: src/components/forms/fields/ApiFormField.tsx:165
 #: src/components/forms/fields/IconField.tsx:235
 #: src/components/wizards/ImportPartWizard.tsx:304
 msgid "Select category"
 msgstr "Izaberi kategoriju"
 
-#: src/components/forms/fields/ApiFormField.tsx:254
+#: src/components/forms/fields/ApiFormField.tsx:255
 msgid "Select file to upload"
 msgstr ""
 
@@ -2385,7 +2391,7 @@ msgstr "Dodaj novi red"
 #: src/components/forms/fields/TreeField.tsx:328
 #: src/components/render/Instance.tsx:145
 #: src/components/render/ModelHoverCard.tsx:73
-#: src/components/tables/InvenTreeTable.tsx:900
+#: src/components/tables/InvenTreeTable.tsx:904
 msgid "View details"
 msgstr ""
 
@@ -2476,7 +2482,7 @@ msgstr "Obrađivanje podataka"
 #: src/components/importer/ImporterColumnSelector.tsx:56
 #: src/components/importer/ImporterColumnSelector.tsx:299
 #: src/components/items/ErrorItem.tsx:12
-#: src/functions/api.tsx:60
+#: src/functions/api.tsx:63
 #: src/functions/auth.tsx:418
 msgid "An error occurred"
 msgstr "Desila se greška"
@@ -2607,8 +2613,8 @@ msgstr "Opcije"
 #~ msgstr "Link custom barcode"
 
 #: src/components/items/ActionDropdown.tsx:175
-#: src/components/tables/InvenTreeTableHeader.tsx:232
-#: src/components/tables/InvenTreeTableHeader.tsx:233
+#: src/components/tables/InvenTreeTableHeader.tsx:246
+#: src/components/tables/InvenTreeTableHeader.tsx:247
 msgid "Barcode Actions"
 msgstr "Akcije Barkoda"
 
@@ -2663,7 +2669,7 @@ msgid "Read More"
 msgstr "Saznaj više"
 
 #: src/components/items/ErrorItem.tsx:8
-#: src/functions/api.tsx:51
+#: src/functions/api.tsx:54
 #: src/tables/settings/PendingTasksTable.tsx:80
 msgid "Unknown error"
 msgstr "Nepoznata greška"
@@ -3093,7 +3099,7 @@ msgstr ""
 #: src/components/nav/NavigationDrawer.tsx:134
 #: src/components/nav/NotificationDrawer.tsx:181
 #: src/pages/Index/Settings/SystemSettings.tsx:146
-#: src/pages/Index/Settings/UserSettings.tsx:110
+#: src/pages/Index/Settings/UserSettings.tsx:111
 #: src/pages/Notifications.tsx:45
 #: src/pages/Notifications.tsx:130
 msgid "Notifications"
@@ -3140,8 +3146,8 @@ msgstr "Podešavanje"
 #: src/components/nav/NavigationDrawer.tsx:140
 #: src/components/nav/SettingsHeader.tsx:40
 #: src/defaults/actions.tsx:106
-#: src/pages/Index/Settings/UserSettings.tsx:147
-#: src/pages/Index/Settings/UserSettings.tsx:151
+#: src/pages/Index/Settings/UserSettings.tsx:148
+#: src/pages/Index/Settings/UserSettings.tsx:152
 msgid "User Settings"
 msgstr "Korisnička podešavanja"
 
@@ -3291,27 +3297,27 @@ msgstr ""
 msgid "Primary Action"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:117
+#: src/components/nav/SearchDrawer.tsx:123
 msgid "No Overview Available"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:118
+#: src/components/nav/SearchDrawer.tsx:124
 msgid "No overview available for this model type"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:136
+#: src/components/nav/SearchDrawer.tsx:142
 msgid "View all results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:151
+#: src/components/nav/SearchDrawer.tsx:157
 msgid "results"
 msgstr "Rezultati"
 
-#: src/components/nav/SearchDrawer.tsx:155
+#: src/components/nav/SearchDrawer.tsx:161
 msgid "Remove search group"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:310
+#: src/components/nav/SearchDrawer.tsx:316
 #: src/pages/company/ManufacturerPartDetail.tsx:97
 #: src/pages/part/PartDetail.tsx:379
 #: src/pages/part/PartSupplierDetail.tsx:15
@@ -3319,13 +3325,13 @@ msgstr ""
 msgid "Suppliers"
 msgstr "Dobavljači"
 
-#: src/components/nav/SearchDrawer.tsx:320
+#: src/components/nav/SearchDrawer.tsx:326
 #: src/pages/part/PartSupplierDetail.tsx:23
 #: src/pages/purchasing/PurchasingIndex.tsx:173
 msgid "Manufacturers"
 msgstr "Proizvođači"
 
-#: src/components/nav/SearchDrawer.tsx:330
+#: src/components/nav/SearchDrawer.tsx:336
 #: src/pages/sales/SalesIndex.tsx:175
 msgid "Customers"
 msgstr "Mušterije"
@@ -3334,41 +3340,41 @@ msgstr "Mušterije"
 #~ msgid "No results"
 #~ msgstr "No results"
 
-#: src/components/nav/SearchDrawer.tsx:514
+#: src/components/nav/SearchDrawer.tsx:520
 msgid "Enter search text"
 msgstr "Unesi tekst za pretragu"
 
-#: src/components/nav/SearchDrawer.tsx:525
+#: src/components/nav/SearchDrawer.tsx:531
 msgid "Refresh search results"
 msgstr "Osveži rezultate pretrage"
 
-#: src/components/nav/SearchDrawer.tsx:536
-#: src/components/nav/SearchDrawer.tsx:543
+#: src/components/nav/SearchDrawer.tsx:542
+#: src/components/nav/SearchDrawer.tsx:549
 msgid "Search Options"
 msgstr "Opcije pretraživanja"
 
-#: src/components/nav/SearchDrawer.tsx:546
+#: src/components/nav/SearchDrawer.tsx:552
 msgid "Whole word search"
 msgstr "Pretraga preko cele reči"
 
-#: src/components/nav/SearchDrawer.tsx:555
+#: src/components/nav/SearchDrawer.tsx:561
 msgid "Regex search"
 msgstr "Regex pretraga"
 
-#: src/components/nav/SearchDrawer.tsx:564
+#: src/components/nav/SearchDrawer.tsx:570
 msgid "Notes search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:612
+#: src/components/nav/SearchDrawer.tsx:619
 msgid "An error occurred during search query"
 msgstr "Desila se greška prilikom pretrage"
 
-#: src/components/nav/SearchDrawer.tsx:623
+#: src/components/nav/SearchDrawer.tsx:630
 #: src/tables/part/PartTestTemplateTable.tsx:86
 msgid "No Results"
 msgstr "Nema rezultata"
 
-#: src/components/nav/SearchDrawer.tsx:626
+#: src/components/nav/SearchDrawer.tsx:633
 msgid "No results available for search query"
 msgstr "Željena pretraga nema rezultata"
 
@@ -3516,7 +3522,7 @@ msgstr "Paket"
 #: src/components/plugins/PluginDrawer.tsx:156
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:67
 #: src/pages/Index/Settings/PluginSettingsGroup.tsx:119
-#: src/pages/Index/Settings/UserSettings.tsx:132
+#: src/pages/Index/Settings/UserSettings.tsx:133
 msgid "Plugin Settings"
 msgstr "Podešavanje ekstenzija"
 
@@ -4347,7 +4353,7 @@ msgstr ""
 #: src/forms/StockForms.tsx:689
 #: src/forms/StockForms.tsx:1427
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:121
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:104
 #: src/pages/build/BuildOrderDetailsPanel.tsx:67
 #: src/pages/core/UserDetail.tsx:148
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:71
@@ -4476,6 +4482,7 @@ msgstr "Ukloni filter"
 #: src/components/tables/FilterSelectDrawer.tsx:249
 #: src/components/tables/FilterSelectDrawer.tsx:276
 #: src/components/tables/FilterSelectDrawer.tsx:290
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:624
 #: src/pages/part/PartStockHistoryDetail.tsx:67
 #: src/tables/part/PartTestResultTable.tsx:210
 #: src/tables/stock/StockItemTestResultTable.tsx:205
@@ -4521,7 +4528,7 @@ msgid "Delete filter group"
 msgstr ""
 
 #: src/components/tables/FilterSelectDrawer.tsx:649
-#: src/components/tables/InvenTreeTableHeader.tsx:299
+#: src/components/tables/InvenTreeTableHeader.tsx:313
 msgid "Table Filters"
 msgstr "Filteri tabele"
 
@@ -4550,23 +4557,23 @@ msgstr ""
 #~ msgstr "Select from the available filters"
 
 #: src/components/tables/InvenTreeTable.tsx:59
-#: src/components/tables/InvenTreeTable.tsx:652
+#: src/components/tables/InvenTreeTable.tsx:656
 msgid "No records found"
 msgstr "Nema pronađenih zapisa"
 
-#: src/components/tables/InvenTreeTable.tsx:187
+#: src/components/tables/InvenTreeTable.tsx:191
 msgid "Error loading table options"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:697
+#: src/components/tables/InvenTreeTable.tsx:701
 msgid "Server returned incorrect data type"
 msgstr "Server je vratio neispravan tip podataka"
 
-#: src/components/tables/InvenTreeTable.tsx:730
+#: src/components/tables/InvenTreeTable.tsx:734
 msgid "Error loading table data"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:903
+#: src/components/tables/InvenTreeTable.tsx:907
 msgid "View {model}"
 msgstr ""
 
@@ -4607,16 +4614,16 @@ msgstr ""
 msgid "Custom table filters are active"
 msgstr "Prilagođeni filteri tabele su aktivni"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:242
+#: src/components/tables/InvenTreeTableHeader.tsx:256
 #: src/tables/general/BarcodeScanTable.tsx:95
 msgid "Delete selected records"
 msgstr "Obriši izabrane zapise"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:262
+#: src/components/tables/InvenTreeTableHeader.tsx:276
 msgid "Refresh data"
 msgstr "Osveži podatke"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:311
+#: src/components/tables/InvenTreeTableHeader.tsx:325
 msgid "Active Filters"
 msgstr ""
 
@@ -5994,11 +6001,11 @@ msgstr "Tip modela"
 msgid "Limit this template to a specific model type, or leave blank for all models"
 msgstr ""
 
-#: src/forms/CommonForms.tsx:367
+#: src/forms/CommonForms.tsx:373
 msgid "From Template"
 msgstr ""
 
-#: src/forms/CommonForms.tsx:368
+#: src/forms/CommonForms.tsx:374
 msgid "Optionally pre-fill this note from an existing template"
 msgstr ""
 
@@ -6522,23 +6529,23 @@ msgstr "Zaliha izbrisana"
 msgid "This operation will permanently delete the selected stock items."
 msgstr ""
 
-#: src/forms/StockForms.tsx:2186
+#: src/forms/StockForms.tsx:2188
 msgid "Parent stock location"
 msgstr "Lokacija roditeljske zalihe"
 
-#: src/forms/StockForms.tsx:2313
+#: src/forms/StockForms.tsx:2324
 msgid "Find Serial Number"
 msgstr ""
 
-#: src/forms/StockForms.tsx:2324
+#: src/forms/StockForms.tsx:2335
 msgid "No matching items"
 msgstr ""
 
-#: src/forms/StockForms.tsx:2330
+#: src/forms/StockForms.tsx:2341
 msgid "Multiple matching items"
 msgstr ""
 
-#: src/forms/StockForms.tsx:2339
+#: src/forms/StockForms.tsx:2350
 msgid "Invalid response from server"
 msgstr ""
 
@@ -6554,27 +6561,27 @@ msgstr ""
 #~ msgid "Label"
 #~ msgstr "Label"
 
-#: src/functions/api.tsx:33
+#: src/functions/api.tsx:36
 msgid "Bad request"
 msgstr "Loš zahtev"
 
-#: src/functions/api.tsx:36
+#: src/functions/api.tsx:39
 msgid "Unauthorized"
 msgstr "Neovlašćeno"
 
-#: src/functions/api.tsx:39
+#: src/functions/api.tsx:42
 msgid "Forbidden"
 msgstr "Zabranjeno"
 
-#: src/functions/api.tsx:42
+#: src/functions/api.tsx:45
 msgid "Not found"
 msgstr "Nije pronađeno"
 
-#: src/functions/api.tsx:45
+#: src/functions/api.tsx:48
 msgid "Method not allowed"
 msgstr "Metod nije dozvoljen"
 
-#: src/functions/api.tsx:48
+#: src/functions/api.tsx:51
 msgid "Internal server error"
 msgstr "Interna serverska greška"
 
@@ -8043,28 +8050,428 @@ msgstr ""
 #~ msgid "Inactive Alerts"
 #~ msgstr "Inactive Alerts"
 
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:36
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:35
 msgid "System Status"
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:47
-msgid "Admin Center Information"
+#~ msgid "Admin Center Information"
+#~ msgstr "Admin Center Information"
+
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:51
+msgid "Quick Actions"
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:53
-msgid "The home panel (and the whole Admin Center) is a new feature starting with the new UI and was previously (before 1.0) not available."
-msgstr ""
+#~ msgid "The home panel (and the whole Admin Center) is a new feature starting with the new UI and was previously (before 1.0) not available."
+#~ msgstr "The home panel (and the whole Admin Center) is a new feature starting with the new UI and was previously (before 1.0) not available."
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:60
-msgid "The admin center provides a centralized location for all administration functionality and is meant to replace all interaction with the (django) backend admin interface."
-msgstr ""
+#~ msgid "The admin center provides a centralized location for all administration functionality and is meant to replace all interaction with the (django) backend admin interface."
+#~ msgstr "The admin center provides a centralized location for all administration functionality and is meant to replace all interaction with the (django) backend admin interface."
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:67
-msgid "Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom."
+#~ msgid "Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom."
+#~ msgstr "Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom."
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:75
+msgid "SCIM enabled"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:85
-msgid "Quick Actions"
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:75
+msgid "SCIM secret rotated"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:76
+msgid "The new bearer secret is only shown once"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:81
+msgid "Error generating SCIM secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:91
+msgid "SCIM disabled"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:92
+msgid "The SCIM provisioning endpoint has been disabled and its secret revoked"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:97
+msgid "Error disabling SCIM"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:116
+msgid "Base URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:122
+msgid "Secret Generated"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:123
+msgid "Last Used"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:137
+msgid "SCIM Bearer Secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:142
+msgid "This secret is only shown once - copy it now and store it in your Identity Provider's SCIM configuration. It cannot be retrieved again, only rotated."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:159
+msgid "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:176
+msgid "Rotate Secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:178
+msgid "Enable SCIM"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:188
+msgid "Disable SCIM"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:194
+msgid "Rotating the secret immediately invalidates the previous one - update your Identity Provider's configuration straight away."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:219
+msgid "Add SSO Application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:233
+msgid "Add OIDC SSO Application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:246
+msgid "OAuth PKCE Enabled"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:247
+msgid "Use Proof Key for Code Exchange during OIDC login with this application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:252
+msgid "OIDC Server URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:253
+msgid "Base URL of the OIDC provider"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:257
+msgid "UID Field"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:258
+msgid "OIDC claim used as the user's unique identifier"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:287
+msgid "Add SAML SSO Application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:296
+msgid "Display name for this SAML identity provider"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:300
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:433
+msgid "Provider ID"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:301
+msgid "Unique provider identifier, normally the IdP entity ID"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:305
+msgid "Organization Slug"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:306
+msgid "URL-safe identifier used in SAML login and metadata URLs"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:310
+msgid "Identity Provider Settings"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:315
+msgid "IdP Entity ID"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:316
+msgid "Entity ID of the SAML identity provider"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:320
+msgid "IdP Metadata URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:321
+msgid "Use this or provide the inline IdP settings below"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:325
+msgid "IdP SSO URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:326
+msgid "Inline IdP single sign-on URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:330
+msgid "IdP SLO URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:331
+msgid "Inline IdP single logout URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:335
+msgid "IdP X.509 Certificate"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:336
+msgid "Inline IdP signing certificate"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:342
+msgid "Service Provider Settings"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:346
+msgid "SP Entity ID"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:347
+msgid "Optional service provider entity ID"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:353
+msgid "Account Mapping"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:357
+msgid "Attribute Mapping"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:358
+msgid "Map SAML attributes to uid, email, and email_verified"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:362
+msgid "Use NameID for Email"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:363
+msgid "Use the SAML NameID value as the user's email address"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:398
+msgid "Edit SSO Application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:413
+msgid "Delete SSO Application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:427
+msgid "Provider"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:439
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:628
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:747
+msgid "Client ID"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:472
+msgid "Add Generic App"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:479
+msgid "Add OIDC App"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:486
+msgid "Add SAML App"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:495
+msgid "Frontend Single Sign-On (SSO) is based on django-allauth. By default generic OIDC (client) and SAML providers are enabled.<0/>You can add more specific providers using the `INVENTREE_SOCIAL_BACKENDS` config key. After a restart those providers become available below.<1/>The documentation goes more in depth on SSO setup steps."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:510
+msgid "OIDC Callback URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:514
+msgid "Add this callback URL to your OIDC provider."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:526
+msgid "SAML Service URLs"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:530
+msgid "Register these URLs with your SAML identity provider."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:533
+msgid "URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:533
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:85
+msgid "Endpoint"
+msgstr "Krajnja tačka"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:535
+msgid "ACS"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:536
+msgid "SLS"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:537
+msgid "Metadata"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:563
+#: src/pages/Index/Settings/SystemSettings.tsx:95
+msgid "Single Sign-On (SSO) Settings"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:571
+msgid "More settings can be found in the <0>system settings</0>."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:616
+msgid "Copy these values now. The client secret is only shown once."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:624
+msgid "Field"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:637
+msgid "Client Secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:662
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:701
+msgid "OAuth application created"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:666
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:805
+msgid "Add OAuth Application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:671
+msgid "A human-readable name for the OAuth application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:674
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:753
+msgid "Client Type"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:675
+msgid "The type of OAuth client (confidential or public - prefer public for browser-based applications)"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:679
+msgid "Authorization Grant Type"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:680
+msgid "The type of OAuth2 grant schema to use - authorization code is recommended for most applications"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:687
+msgid "Skip Authorization"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:688
+msgid "If enabled, users will not be prompted to authorize this application when logging in - use with caution!"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:691
+msgid "Sign Algorithm"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:692
+msgid "The algorithm used to sign the OAuth2 tokens - required for OIDC"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:714
+msgid "OAuth application secret regenerated"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:717
+msgid "OAuth secret rotated"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:718
+msgid "The new client secret is only shown once"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:725
+msgid "Error regenerating OAuth client secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:733
+msgid "Delete OAuth Application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:759
+msgid "Grant Type"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:765
+msgid "Redirect URIs"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:772
+msgid "Built-in"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:784
+msgid "Regenerate Secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:850
+msgid "InvenTree can be integrated with external Identity Providers and act as one."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:851
+msgid "External Identities can be pushed to InvenTree via Single Sign-On (SSO) and SCIM."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:852
+msgid "InvenTree can act as an Identity Provider for external applications via the built-in oAuth2 provider."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:870
+msgid "SCIM Provisioning"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:878
+msgid "Single Sign-On (SSO)"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:886
+msgid "oAuth2 Provider"
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:107
@@ -8146,8 +8553,12 @@ msgid "Location Types"
 msgstr "Tipovi lokacija"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:283
-msgid "Identity"
+msgid "Identity Federation"
 msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:283
+#~ msgid "Identity"
+#~ msgstr "Identity"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:295
 msgid "Operations"
@@ -8159,7 +8570,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:319
 #: src/pages/Index/Settings/SystemSettings.tsx:194
-#: src/pages/Index/Settings/UserSettings.tsx:122
+#: src/pages/Index/Settings/UserSettings.tsx:123
 msgid "Reporting"
 msgstr "Izveštavanje"
 
@@ -8276,73 +8687,9 @@ msgstr "Veličina stranice"
 #~ msgid "Generated Reports"
 #~ msgstr "Generated Reports"
 
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:52
-msgid "SCIM enabled"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:52
-msgid "SCIM secret rotated"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:53
-msgid "The new bearer secret is only shown once"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:58
-msgid "Error generating SCIM secret"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:68
-msgid "SCIM disabled"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:69
-msgid "The SCIM provisioning endpoint has been disabled and its secret revoked"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:74
-msgid "Error disabling SCIM"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:87
-msgid "SCIM Bearer Secret"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:92
-msgid "This secret is only shown once - copy it now and store it in your Identity Provider's SCIM configuration. It cannot be retrieved again, only rotated."
-msgstr ""
-
 #: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:109
-msgid "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups. Single Sign-On (interactive login) is configured separately, under Single Sign On."
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:137
-msgid "Base URL"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:148
-msgid "Secret Generated"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:154
-msgid "Last Used"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:169
-msgid "Rotate Secret"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:171
-msgid "Enable SCIM"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:181
-msgid "Disable SCIM"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:187
-msgid "Rotating the secret immediately invalidates the previous one - update your Identity Provider's configuration straight away."
-msgstr ""
+#~ msgid "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups. Single Sign-On (interactive login) is configured separately, under Single Sign On."
+#~ msgstr "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups. Single Sign-On (interactive login) is configured separately, under Single Sign On."
 
 #: src/pages/Index/Settings/AdminCenter/StocktakePanel.tsx:25
 #~ msgid "Stocktake Reports"
@@ -8448,10 +8795,6 @@ msgstr ""
 msgid "Authentication"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:95
-msgid "Single Sign-On (SSO) Settings"
-msgstr ""
-
 #: src/pages/Index/Settings/SystemSettings.tsx:113
 msgid "Barcodes"
 msgstr "Barkodovi"
@@ -8473,7 +8816,7 @@ msgstr ""
 #~ msgstr "Exchange Rates"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:152
-#: src/pages/Index/Settings/UserSettings.tsx:116
+#: src/pages/Index/Settings/UserSettings.tsx:117
 msgid "The settings below are specific to each available notification method"
 msgstr ""
 
@@ -13012,10 +13355,6 @@ msgstr ""
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:60
 msgid "Barcode Information"
 msgstr "Informacije o barkodu"
-
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:85
-msgid "Endpoint"
-msgstr "Krajnja tačka"
 
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:89
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:208
