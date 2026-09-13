@@ -1,11 +1,17 @@
 import { IconUsers } from '@tabler/icons-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
+import { notifications } from '@mantine/notifications';
+import {
+  type NoteContentType,
+  NoteContentTypes,
+  noteContentHandler
+} from '../components/editors/NoteContent';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface
@@ -307,6 +313,9 @@ export function useParameterFields({
 }
 
 export function useNoteTemplateFields(): ApiFormFieldSet {
+  const [contentType, setContentType] = useState<NoteContentType>(
+    NoteContentTypes.html
+  );
   return useMemo(() => {
     return {
       template: {
@@ -319,9 +328,18 @@ export function useNoteTemplateFields(): ApiFormFieldSet {
         required: false
       },
       title: {},
-      description: {}
+      description: {},
+      content_type: {
+        required: true,
+        value: contentType,
+        onValueChange: (value: NoteContentType) => setContentType(value)
+      },
+      content: {
+        hidden: true,
+        value: noteContentHandler(contentType).initialContent
+      }
     };
-  }, []);
+  }, [contentType]);
 }
 
 export function useNoteFields({
@@ -336,26 +354,50 @@ export function useNoteFields({
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [content, setContent] = useState<string>('');
+  const [contentType, setContentType] = useState<NoteContentType>(
+    NoteContentTypes.html
+  );
+  const [templateSource, setTemplateSource] = useState<number | null>(null);
+
+  const templateRequest = useRef(0);
 
   const resetFields = useCallback(() => {
+    ++templateRequest.current;
     setTitle('');
     setDescription('');
     setContent('');
+    setContentType(NoteContentTypes.html);
+    setTemplateSource(null);
   }, []);
 
   const fetchTemplate = useCallback(
     (pk: number | null) => {
-      if (!pk) return;
+      const request = ++templateRequest.current;
+      setTemplateSource(pk);
+      if (!pk) {
+        setContent(noteContentHandler(contentType).initialContent);
+        return;
+      }
       api
         .get(apiUrl(ApiEndpoints.note_list, pk))
         .then((response) => {
+          if (request !== templateRequest.current) return;
           setTitle(response.data.title ?? '');
           setDescription(response.data.description ?? '');
           setContent(response.data.content ?? '');
+          setContentType(response.data.content_type);
         })
-        .catch(() => {});
+        .catch((error) => {
+          if (request !== templateRequest.current) return;
+          setTemplateSource(null);
+          notifications.show({
+            title: t`Error`,
+            message: t`Failed to load note template: ${error.message}`,
+            color: 'red'
+          });
+        });
     },
-    [api]
+    [api, contentType]
   );
 
   const fields = useMemo<ApiFormFieldSet>(() => {
@@ -381,7 +423,7 @@ export function useNoteFields({
         pk_field: 'pk',
         required: false,
         onValueChange: (value: any) => fetchTemplate(value),
-        value: null
+        value: templateSource
       },
       title: {
         value: title,
@@ -392,12 +434,32 @@ export function useNoteFields({
         onValueChange: (value: any) => setDescription(value)
       },
       primary: {},
+      content_type: {
+        required: true,
+        value: contentType,
+        disabled: templateSource !== null,
+        onValueChange: (value: NoteContentType) => {
+          setContentType(value);
+          if (templateSource === null) {
+            setContent(noteContentHandler(value).initialContent);
+          }
+        }
+      },
       content: {
         hidden: true,
         value: content
       }
     };
-  }, [modelType, modelId, title, description, content, fetchTemplate]);
+  }, [
+    modelType,
+    modelId,
+    title,
+    description,
+    content,
+    contentType,
+    templateSource,
+    fetchTemplate
+  ]);
 
   return { fields, resetFields };
 }
