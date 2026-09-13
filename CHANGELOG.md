@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Notes and note templates support HTML, JSON, and plain text content types. JSON and plain text retain their raw source text and display it literally in the interface and reports. Content type is set on creation and cannot be changed; existing notes remain HTML.
+
 - [#12713](https://github.com/inventree/InvenTree/pull/12713) adds SCIM 2 provisioning support, allowing InvenTree to be integrated with external identity providers for user management.
 - [#12731](https://github.com/inventree/InvenTree/pull/12731) adds OIDC provider settings to the Admin Center - making all Identity Federation settings now available in one place without the need to use the database admin interface.
 - [#12837](https://github.com/inventree/InvenTree/pull/12837) adds a user setting `ROTATE_TABLE_HEADERS` which rotates table headers by 90 degrees, improving readability for tables with long column titles.
