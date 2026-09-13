@@ -108,14 +108,18 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         name: 'supplied-parts',
         label: t`Supplied Parts`,
         icon: <IconPackageExport />,
-        hidden: !company?.is_supplier,
+        hidden:
+          !company?.is_supplier ||
+          !user?.hasViewVisible(UserRoles.purchase_order),
         content: company?.pk && <SupplierPartTable supplierId={company.pk} />
       },
       {
         name: 'manufactured-parts',
         label: t`Manufactured Parts`,
         icon: <IconBuildingWarehouse />,
-        hidden: !company?.is_manufacturer,
+        hidden:
+          !company?.is_manufacturer ||
+          !user?.hasViewVisible(UserRoles.purchase_order),
         content: company?.pk && (
           <ManufacturerPartTable manufacturerId={company.pk} />
         )
@@ -124,7 +128,9 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         name: 'purchase-orders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
-        hidden: !company?.is_supplier,
+        hidden:
+          !company?.is_supplier ||
+          !user?.hasViewVisible(UserRoles.purchase_order),
         content: company?.pk && <PurchaseOrderTable supplierId={company.pk} />
       },
       {
@@ -144,14 +150,17 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         name: 'sales-orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        hidden: !company?.is_customer,
+        hidden:
+          !company?.is_customer || !user?.hasViewVisible(UserRoles.sales_order),
         content: company?.pk && <SalesOrderTable customerId={company.pk} />
       },
       {
         name: 'return-orders',
         label: t`Return Orders`,
         icon: <IconTruckReturn />,
-        hidden: !company?.is_customer,
+        hidden:
+          !company?.is_customer ||
+          !user?.hasViewVisible(UserRoles.return_order),
         content: company.pk ? (
           <ReturnOrderTable customerId={company.pk} />
         ) : (

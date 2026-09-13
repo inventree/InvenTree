@@ -379,7 +379,7 @@ export default function PartDetail() {
         label: t`Suppliers`,
         icon: <IconBuilding />,
         hidden:
-          !part.purchaseable || !user.hasViewRole(UserRoles.purchase_order),
+          !part.purchaseable || !user.hasViewVisible(UserRoles.purchase_order),
 
         content: part.pk ? (
           <PartSupplierDetail partId={part.pk} />
@@ -392,7 +392,7 @@ export default function PartDetail() {
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
         hidden:
-          !part.purchaseable || !user.hasViewRole(UserRoles.purchase_order),
+          !part.purchaseable || !user.hasViewVisible(UserRoles.purchase_order),
         content: part.pk ? (
           <PartPurchaseOrdersTable partId={part.pk} />
         ) : (
@@ -403,7 +403,7 @@ export default function PartDetail() {
         name: 'sales_orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        hidden: !part.salable || !user.hasViewRole(UserRoles.sales_order),
+        hidden: !part.salable || !user.hasViewVisible(UserRoles.sales_order),
         content: part.pk ? (
           <PartSalesOrdersTable partId={part.pk} />
         ) : (
@@ -414,27 +414,21 @@ export default function PartDetail() {
         name: 'return_orders',
         label: t`Return Orders`,
         icon: <IconTruckReturn />,
-        hidden:
-          !part.salable ||
-          !user.hasViewRole(UserRoles.return_order) ||
-          !globalSettings.isSet('RETURNORDER_ENABLED'),
+        hidden: !part.salable || !user.hasViewVisible(UserRoles.return_order),
         content: part.pk ? <ReturnOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'builds',
         label: t`Build Orders`,
         icon: <IconTools />,
-        hidden: !part.assembly || !user.hasViewRole(UserRoles.build),
+        hidden: !part.assembly || !user.hasViewVisible(UserRoles.build),
         content: part.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'transfer_orders',
         label: t`Transfer Orders`,
         icon: <IconTransfer />,
-        hidden:
-          part.virtual ||
-          !globalSettings.isSet('TRANSFERORDER_ENABLED') ||
-          !user.hasViewRole(UserRoles.transfer_order),
+        hidden: part.virtual || !user.hasViewVisible(UserRoles.transfer_order),
         content: part.pk ? (
           <TransferOrderTable partId={part.pk} />
         ) : (

@@ -597,7 +597,7 @@ export default function SalesOrderLineItemTable({
           modelType: ModelType.part,
           modelId: record.part,
           navigate: navigate,
-          hidden: !user.hasViewRole(UserRoles.part)
+          hidden: !user.hasViewVisible(UserRoles.part)
         })
       ];
     },

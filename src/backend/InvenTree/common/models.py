@@ -1013,6 +1013,14 @@ class BaseInvenTreeSetting(models.Model):
 
         return setting.get('confirm_text', '')
 
+    def flags(self) -> list:
+        """Return the flags associated with this setting."""
+        setting = self.get_setting_definition(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return setting.get('flags', [])
+
     def model_filters(self) -> Optional[dict]:
         """Return the model filters associated with this setting."""
         setting = self.get_setting_definition(

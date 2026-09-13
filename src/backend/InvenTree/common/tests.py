@@ -459,6 +459,7 @@ class SettingsTest(InvenTreeTestCase):
             'before_save',
             'confirm',
             'confirm_text',
+            'flags',
         ]
 
         for k in setting:

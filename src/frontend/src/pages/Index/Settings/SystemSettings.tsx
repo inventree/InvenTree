@@ -14,7 +14,6 @@ import {
   IconQrcode,
   IconServerCog,
   IconShoppingCart,
-  IconTransfer,
   IconTruckDelivery
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -303,6 +302,15 @@ export default function SystemSettings() {
                 'STOCK_TRACKING_DELETE_DAYS'
               ]}
             />
+            <GlobalSettingList
+              heading={t`Transfer Orders`}
+              keys={[
+                'TRANSFERORDER_ENABLED',
+                'TRANSFERORDER_REFERENCE_PATTERN',
+                'TRANSFERORDER_REQUIRE_RESPONSIBLE',
+                'TRANSFERORDER_EDIT_COMPLETED_ORDERS'
+              ]}
+            />
           </Stack>
         )
       },
@@ -315,6 +323,7 @@ export default function SystemSettings() {
             <GlobalSettingList
               heading={t`Build Orders`}
               keys={[
+                'BUILDORDER_ENABLED',
                 'BUILDORDER_REFERENCE_PATTERN',
                 'BUILDORDER_REQUIRE_RESPONSIBLE',
                 'BUILDORDER_REQUIRE_ACTIVE_PART',
@@ -342,6 +351,7 @@ export default function SystemSettings() {
           <GlobalSettingList
             heading={t`Purchase Orders`}
             keys={[
+              'PURCHASEORDER_ENABLED',
               'PURCHASEORDER_REFERENCE_PATTERN',
               'PURCHASEORDER_REQUIRE_RESPONSIBLE',
               'PURCHASEORDER_CONVERT_CURRENCY',
@@ -360,6 +370,7 @@ export default function SystemSettings() {
             <GlobalSettingList
               heading={t`Sales Orders`}
               keys={[
+                'SALESORDER_ENABLED',
                 'SALESORDER_REFERENCE_PATTERN',
                 'SALESORDER_REQUIRE_RESPONSIBLE',
                 'SALESORDER_DEFAULT_SHIPMENT',
@@ -379,21 +390,6 @@ export default function SystemSettings() {
               ]}
             />
           </Stack>
-        )
-      },
-      {
-        name: 'transferorders',
-        label: t`Transfer Orders`,
-        icon: <IconTransfer />,
-        content: (
-          <GlobalSettingList
-            keys={[
-              'TRANSFERORDER_ENABLED',
-              'TRANSFERORDER_REFERENCE_PATTERN',
-              'TRANSFERORDER_REQUIRE_RESPONSIBLE',
-              'TRANSFERORDER_EDIT_COMPLETED_ORDERS'
-            ]}
-          />
         )
       },
       {
