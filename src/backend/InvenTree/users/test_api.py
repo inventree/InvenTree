@@ -6,6 +6,8 @@ from unittest import mock
 from django.contrib.auth.models import Group, User
 from django.urls import reverse
 
+from allauth.account.models import EmailAddress
+
 from InvenTree.unit_test import InvenTreeAPITestCase
 from users.models import ApiToken
 from users.ruleset import RULESET_NAMES, get_ruleset_models
@@ -360,6 +362,26 @@ class SuperuserAPITests(InvenTreeAPITestCase):
         # complex enough pwd
         resp = self.put(url, {'password': 'inventree'}, expected_code=200)
         self.assertEqual(resp.data, {})
+
+    def test_email_address_sync_signal(self):
+        """Test emailadress sync."""
+        user = User.objects.create(username='start', email='start@example.org')
+        self.assertTrue(
+            EmailAddress.objects.filter(
+                user=user, email='start@example.org', primary=True
+            ).exists()
+        )
+
+        # change should trigger emailaddress update
+        user.email = 'updated@example.org'
+        user.save()
+
+        self.assertFalse(
+            EmailAddress.objects.filter(user=user, email='start@example.org').exists()
+        )
+        updated = EmailAddress.objects.get(user=user, primary=True)
+        self.assertEqual(updated.email, 'updated@example.org')
+        self.assertFalse(updated.verified)
 
 
 class UserTokenTests(InvenTreeAPITestCase):
