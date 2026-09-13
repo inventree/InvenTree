@@ -46,28 +46,6 @@ User.add_to_class('__str__', user_model_str)  # Overriding User.__str__
 #  OVERRIDE END
 
 
-if settings.LDAP_AUTH:
-    from django_auth_ldap.backend import populate_user  # ty: ignore[unresolved-import]
-
-    @receiver(populate_user)
-    def create_email_address(user, **kwargs):
-        """If a django user is from LDAP and has an email attached to it, create an allauth email address for them automatically.
-
-        https://django-auth-ldap.readthedocs.io/en/latest/users.html#populating-users
-        https://django-auth-ldap.readthedocs.io/en/latest/reference.html#django_auth_ldap.backend.populate_user
-        """
-        # User must exist in the database before we can create their EmailAddress. By their recommendation,
-        # we can just call .save() now
-        user.save()
-
-        # if they got an email address from LDAP, create it now and make it the primary
-        if (
-            user.email
-            and not EmailAddress.objects.filter(user=user, email=user.email).exists()
-        ):
-            EmailAddress.objects.create(user=user, email=user.email, primary=True)
-
-
 def default_token():
     """Generate a default value for the token."""
     return ApiToken.generate_key()
@@ -647,3 +625,30 @@ def validate_primary_group_on_group_change(sender, instance, action, **kwargs):
         if profile.primary_group and profile.primary_group not in instance.groups.all():
             profile.primary_group = None
             profile.save()
+
+
+# update allauth user mail
+@receiver(post_save, sender=User)
+def sync_user_email_address(sender, instance: User, created: bool, **kwargs):
+    """Keep the allauth EmailAddress in sync with User email field."""
+    # Are we currently in the API path of user registration?
+    if getattr(instance, '_is_registering', False):
+        return
+
+    if isImportingData() or isReadOnlyCommand():
+        return
+
+    if not instance.email:
+        return
+
+    primary_address = EmailAddress.objects.filter(user=instance, primary=True).first()
+
+    if primary_address:
+        if primary_address.email != instance.email:
+            primary_address.email = instance.email
+            primary_address.verified = False
+            primary_address.save()
+    elif not EmailAddress.objects.filter(user=instance, email=instance.email).exists():
+        EmailAddress.objects.create(
+            user=instance, email=instance.email, primary=True, verified=False
+        )
