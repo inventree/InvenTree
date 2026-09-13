@@ -46,28 +46,6 @@ User.add_to_class('__str__', user_model_str)  # Overriding User.__str__
 #  OVERRIDE END
 
 
-if settings.LDAP_AUTH:
-    from django_auth_ldap.backend import populate_user  # ty: ignore[unresolved-import]
-
-    @receiver(populate_user)
-    def create_email_address(user, **kwargs):
-        """If a django user is from LDAP and has an email attached to it, create an allauth email address for them automatically.
-
-        https://django-auth-ldap.readthedocs.io/en/latest/users.html#populating-users
-        https://django-auth-ldap.readthedocs.io/en/latest/reference.html#django_auth_ldap.backend.populate_user
-        """
-        # User must exist in the database before we can create their EmailAddress. By their recommendation,
-        # we can just call .save() now
-        user.save()
-
-        # if they got an email address from LDAP, create it now and make it the primary
-        if (
-            user.email
-            and not EmailAddress.objects.filter(user=user, email=user.email).exists()
-        ):
-            EmailAddress.objects.create(user=user, email=user.email, primary=True)
-
-
 def default_token():
     """Generate a default value for the token."""
     return ApiToken.generate_key()
