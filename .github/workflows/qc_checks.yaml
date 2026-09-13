@@ -129,7 +129,7 @@ jobs:
           persist-credentials: false
       - name: Environment Setup
         id: setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
           dev-install: true
@@ -188,7 +188,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
           dev-install: true
@@ -330,7 +330,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
           dev-install: true
@@ -388,14 +388,14 @@ jobs:
         with:
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
           static: true
       - name: Data Export Test
-        uses: ./.github/actions/migration
+        uses: $/.github/actions/migration
       - name: Test Translations
         run: invoke dev.translate
       - name: Check Migration Files
@@ -441,7 +441,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
           dev-install: true
@@ -492,7 +492,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libpq-dev
           pip-dependency: psycopg django-redis>=5.0.0
@@ -502,7 +502,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --check --translations
       - name: Data Export Test
-        uses: ./.github/actions/migration
+        uses: $/.github/actions/migration
 
   mysql:
     name: Tests - DB [MySQL]
@@ -541,7 +541,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libmysqlclient-dev
           pip-dependency: mysqlclient
@@ -551,7 +551,7 @@ jobs:
       - name: Run Tests
         run: invoke dev.test --check --translations
       - name: Data Export Test
-        uses: ./.github/actions/migration
+        uses: $/.github/actions/migration
 
   zizmor:
     name: Security [Zizmor]

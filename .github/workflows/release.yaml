@@ -25,7 +25,7 @@ jobs:
           persist-credentials: false
       - name: Version Check
         run: |
-          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
+          pip install --require-hashes --only-binary :all: -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
       - name: Push to Stable Branch
         uses: ad-m/github-push-action@881a6320fdb16eb5318c5054f31c218aec2b324c # v1.3.0
@@ -49,7 +49,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           npm: true
       - name: Install dependencies
@@ -119,14 +119,14 @@ jobs:
         with:
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           install: true
           npm: true
       - name: Install dependencies
         run: |
-          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
-          pip install --require-hashes -r docs/requirements.txt
+          pip install --require-hashes --only-binary :all: -r contrib/dev_reqs/requirements.txt
+          pip install --require-hashes --only-binary :all: -r docs/requirements.txt
       - name: Build documentation
         run: |
           invoke build-docs --mkdocs
@@ -213,7 +213,7 @@ jobs:
           echo "#!/bin/bash" > contrib/packager.io/before.sh
 
           echo "calculate release channel"
-          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
+          pip install --require-hashes --only-binary :all: -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
       - name: cleanup
         run: |
@@ -222,7 +222,7 @@ jobs:
           # remove the whole docs dir - we are not doing anything with them
           rm -rf docs
       - name: Package - current release channel
-        uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # main
+        uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # v1.0.2
         id: package
         with:
           name: inventree
@@ -241,7 +241,7 @@ jobs:
             INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
             APP_REPO=inventree/InvenTree
       - name: Publish to go.packager.io - current release channel
-        uses: pkgr/action/publish@c5666febcd31750da6428042193fc5b2fb765435 # main
+        uses: pkgr/action/publish@c5666febcd31750da6428042193fc5b2fb765435 # v1.0.2
         with:
           target: ${{ matrix.target }}
           token: ${{ secrets.PACKAGER_RELEASE_TOKEN }}
@@ -256,7 +256,7 @@ jobs:
           PACKAGE_NAME: ${{ matrix.target }}-${{ steps.setup.outputs.version }}.tar.gz
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Package - stable release channel
-        uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # main
+        uses: pkgr/action/package@c5666febcd31750da6428042193fc5b2fb765435 # v1.0.2
         id: package-stable
         with:
           name: inventree
@@ -275,7 +275,7 @@ jobs:
             INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
             APP_REPO=inventree/InvenTree
       - name: Publish to go.packager.io - stable release channel
-        uses: pkgr/action/publish@c5666febcd31750da6428042193fc5b2fb765435 # main
+        uses: pkgr/action/publish@c5666febcd31750da6428042193fc5b2fb765435 # v1.0.2
         with:
           target: ${{ matrix.target }}
           token: ${{ secrets.PACKAGER_RELEASE_TOKEN }}
