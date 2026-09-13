@@ -1775,7 +1775,8 @@ class NotesImageTest(InvenTreeAPITestCase):
 
         # Remove the second image from the content and save
         note.content = f'<img src="{url1}">'
-        note.save()
+        with self.captureOnCommitCallbacks(execute=True):
+            note.save()
 
         # The removed image must be gone from both the DB and the file system
         self.assertFalse(NotesImage.objects.filter(pk=ni2.pk).exists())
@@ -1819,7 +1820,8 @@ class NotesImageTest(InvenTreeAPITestCase):
 
         # Delete the *part*, not the note or image directly - this cascades
         # Part -> InvenTreeNoteMixin.delete() -> Note -> NotesImage
-        part.delete()
+        with self.captureOnCommitCallbacks(execute=True):
+            part.delete()
 
         self.assertFalse(NotesImage.objects.filter(pk=ni.pk).exists())
         self.assertFalse(Note.objects.filter(pk=note.pk).exists())
@@ -1882,7 +1884,8 @@ class NotesImageTest(InvenTreeAPITestCase):
 
         # Deleting the source NotesImage must not remove the copied image
         # (files are independent; Django cascade does not call Python delete())
-        ni.delete()
+        with self.captureOnCommitCallbacks(execute=True):
+            ni.delete()
         self.assertFalse(default_storage.exists(old_name))
         self.assertTrue(default_storage.exists(new_img.image.name))
         self.assertTrue(NotesImage.objects.filter(pk=new_img.pk).exists())
