@@ -473,12 +473,15 @@ class TokenListView(TokenMixin, ListCreateAPI):
     filterset_fields = ['revoked', 'user']
     queryset = ApiToken.objects.none()
 
+    def perform_create(self, serializer):
+        """Save the new token and keep the secret (only available immediately after creation)."""
+        super().perform_create(serializer)
+        self._created_token = serializer.instance
+
     def create(self, request, *args, **kwargs):
         """Create token and show key to user."""
         resp = super().create(request, *args, **kwargs)
-        resp.data['token'] = self.serializer_class.Meta.model.objects.get(
-            id=resp.data['id']
-        ).key
+        resp.data['token'] = self._created_token.token
         return resp
 
     def get(self, request, *args, **kwargs):

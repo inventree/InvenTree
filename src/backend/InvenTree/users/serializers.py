@@ -222,7 +222,7 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
 
         request = self.context.get('request')
         rq_token = get_token_from_request(request)
-        return token.key == rq_token
+        return token.match(rq_token)
 
     class Meta:
         """Meta options for ApiTokenSerializer."""
