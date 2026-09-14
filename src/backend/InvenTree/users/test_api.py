@@ -421,20 +421,20 @@ class UserTokenTests(InvenTreeAPITestCase):
         # Request the token with the same name
         data = self.get(url, data={'name': 'cat'}, expected_code=200).data
 
-        self.assertEqual(data['token'], token.key)
+        token.refresh_from_db()
+        self.assertNotEqual(data['token'], token.key)
+        self.assertTrue(data['token'].startswith('inv-2-'))
+        self.assertTrue(token.revoked)
 
-        self.assertEqual(ApiToken.objects.count(), 3)
+        self.assertEqual(ApiToken.objects.count(), 4)
 
-        # Revoke the token, and then request again
-        token.revoked = True
-        token.save()
-
+        # Request again, which issues another replacement token
         data = self.get(url, data={'name': 'cat'}, expected_code=200).data
 
         self.assertNotEqual(data['token'], token.key)
 
         # A new token has been generated
-        self.assertEqual(ApiToken.objects.count(), 4)
+        self.assertEqual(ApiToken.objects.count(), 5)
 
         # Test with a really long name
         data = self.get(url, data={'name': 'cat' * 100}, expected_code=200).data

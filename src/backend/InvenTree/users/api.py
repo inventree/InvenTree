@@ -398,13 +398,17 @@ class GetAuthToken(GenericAPIView):
         name = ApiToken.sanitize_name(name)
 
         today = datetime.date.today()
+        reissue_token = request.resolver_match.url_name == 'api-token'
 
-        # Find existing token, which has not expired
         token = ApiToken.objects.filter(
             user=user, name=name, revoked=False, expiry__gte=today
         ).first()
 
-        if not token:
+        if token and reissue_token:
+            token.revoked = True
+            token.save(update_fields=['revoked'])
+
+        if not token or reissue_token:
             # User is authenticated, and requesting a token against the provided name.
             token = ApiToken.objects.create(user=request.user, name=name)
 
