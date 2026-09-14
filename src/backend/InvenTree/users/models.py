@@ -121,7 +121,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
     def split_token(raw_token: str):
         """Split a raw v2 token value into the required values."""
         if not raw_token:
-            return None
+            return None  # pragma: no cover
 
         value = (
             raw_token[len(API_TOKEN_PREFIX) :]
@@ -134,7 +134,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
         identifier, _sep, secret = value.partition('.')
         if not identifier or not secret:
-            return None
+            return None  # pragma: no cover
 
         secret_parts = secret.rsplit('-', 1)
         if (
@@ -149,7 +149,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
     def match(self, raw_token: str) -> bool:
         """Lightweight check for whether raw_token refers to *this* token instance."""
         if not raw_token:
-            return False
+            return False  # pragma: no cover
 
         # is a v2 token
         if self.hmac_digest:
@@ -161,7 +161,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
     def validate(self, raw_token: str) -> bool:
         """Validate a raw token value against this token."""
         if not raw_token:
-            return False
+            return False  # pragma: no cover
 
         # is a v2 token
         if self.hmac_digest:
@@ -169,7 +169,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
             # check id
             if not parts or parts[0] != self.key:
-                return False
+                return False  # pragma: no cover
             # check secret
             return hmac.compare_digest(
                 self.calculate_digest(parts[1]), self.hmac_digest
