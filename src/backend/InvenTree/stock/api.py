@@ -546,7 +546,7 @@ class StockLocationTypeList(ListCreateAPI):
 
     ordering = ['-location_count']
 
-    search_fields = ['name']
+    search_fields = ['name', 'description']
 
     def get_queryset(self):
         """Override the queryset method to include location count."""
