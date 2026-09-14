@@ -552,13 +552,17 @@ class UserTokenTests(InvenTreeAPITestCase):
         # Get token
         response = self.get(reverse('api-token'), expected_code=200)
         self.assertIn('token', response.data)
+        raw_token = response.data['token']
+
+        self.client.logout()
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {raw_token}')
 
         # Now there should be one token
         response = self.get(url, expected_code=200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['active'], True)
         self.assertEqual(response.data[0]['revoked'], False)
-        self.assertEqual(response.data[0]['in_use'], False)
+        self.assertEqual(response.data[0]['in_use'], True)
         expected_day = str(
             datetime.datetime.now().date() + datetime.timedelta(days=365)
         )
