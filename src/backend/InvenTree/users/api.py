@@ -416,6 +416,11 @@ class GetAuthToken(GenericAPIView):
                 "Created new API token for user '%s' (name='%s')", user.username, name
             )
 
+        if token.hmac_digest and not token._raw_secret:
+            raise exceptions.ValidationError(
+                'Token is not newly created.'
+            )  # pragma: no cover
+
         # Add some metadata about the request
         token.set_metadata('user_agent', request.headers.get('user-agent', ''))
         token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
