@@ -46,7 +46,7 @@ User.add_to_class('__str__', user_model_str)  # Overriding User.__str__
 #  OVERRIDE END
 
 
-if settings.LDAP_AUTH:
+if settings.LDAP_AUTH:  # pragma: no cover
     from django_auth_ldap.backend import populate_user  # ty: ignore[unresolved-import]
 
     @receiver(populate_user)
