@@ -1,4 +1,8 @@
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ModelType, StylishText, UserRoles } from '@lib/index';
 import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { openContextModal } from '@mantine/modals';
 import type { SpotlightActionData } from '@mantine/spotlight';
 import {
   IconBarcode,
@@ -13,13 +17,8 @@ import {
   IconUserCog,
   IconUsers
 } from '@tabler/icons-react';
-import type { NavigateFunction } from 'react-router-dom';
-
-import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import { ModelType, StylishText, UserRoles } from '@lib/index';
-import { Trans } from '@lingui/react/macro';
-import { openContextModal } from '@mantine/modals';
 import { useMemo } from 'react';
+import type { NavigateFunction } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { useLocalState } from '../states/LocalState';
 import { useGlobalSettingsState } from '../states/SettingsStates';
@@ -166,6 +165,17 @@ export function getActions(navigate: NavigateFunction) {
         description: t`Go to Return Orders`,
         onClick: () =>
           navigate(ModelInformationDict['returnorder'].url_overview!),
+        leftSection: <IconLink size='1.2rem' />
+      });
+
+    globalSettings.isSet('REPAIRORDER_ENABLED') &&
+      user?.hasViewRole(UserRoles.repair_order) &&
+      _actions.push({
+        id: 'repair-orders',
+        label: t`Repair Orders`,
+        description: t`Go to Repair Orders`,
+        onClick: () =>
+          navigate(ModelInformationDict['repairorder'].url_overview!),
         leftSection: <IconLink size='1.2rem' />
       });
 

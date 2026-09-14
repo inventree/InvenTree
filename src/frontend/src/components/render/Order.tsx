@@ -1,9 +1,9 @@
+import { ModelType } from '@lib/enums/ModelType';
+import { formatDecimal } from '@lib/functions/Formatting';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 import type { ReactNode } from 'react';
-
-import { ModelType } from '@lib/enums/ModelType';
-import { getDetailUrl } from '@lib/functions/Navigation';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 import { StatusRenderer } from './StatusRenderer';
 
@@ -76,6 +76,61 @@ export function RenderReturnOrderLineItem(
         status: instance.outcome,
         type: ModelType.returnorderlineitem
       })}
+    />
+  );
+}
+
+/**
+ * Inline rendering of a single RepairOrder instance
+ */
+export function RenderRepairOrder(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+  const customer = instance?.customer_detail || {};
+
+  return (
+    <RenderInlineModel
+      {...props}
+      primary={instance.reference}
+      secondary={instance.description}
+      suffix={StatusRenderer({
+        status: instance.status_custom_key,
+        type: ModelType.repairorder
+      })}
+      image={customer.thumbnail || customer.image}
+      url={
+        props.link
+          ? getDetailUrl(ModelType.repairorder, instance.pk)
+          : undefined
+      }
+    />
+  );
+}
+
+export function RenderRepairOrderLineItem(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+
+  return (
+    <RenderInlineModel
+      {...props}
+      primary={instance.part_detail?.full_name ?? instance.part}
+      suffix={<Text size='xs'>{formatDecimal(instance.quantity)}</Text>}
+    />
+  );
+}
+
+export function RenderRepairOrderAllocation({
+  instance
+}: Readonly<{
+  instance: any;
+}>): ReactNode {
+  return (
+    <RenderInlineModel
+      primary={instance.item_detail?.part_detail?.full_name ?? instance.item}
+      suffix={<Text size='xs'>{formatDecimal(instance.quantity)}</Text>}
     />
   );
 }
