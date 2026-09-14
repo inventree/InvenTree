@@ -101,7 +101,12 @@ for (const template of [false, true]) {
     await expect(
       page.getByRole('menuitem').filter({ hasText: 'Change format' })
     ).toHaveCount(0);
-    await page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
+    await page
+      .getByRole('menuitem', {
+        name: 'action-menu-note-actions-edit',
+        exact: true
+      })
+      .click();
     const dialog = page.getByRole('dialog');
     await expect(dialog.getByLabel('choice-field-content_type')).toHaveCount(0);
     await dialog

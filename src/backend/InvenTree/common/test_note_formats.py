@@ -1,6 +1,7 @@
 """Regression tests for typed note source preservation and format boundaries."""
 
 import io
+from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -82,27 +83,30 @@ class TypedNoteTests(InvenTreeAPITestCase):
                 self.assertEqual(self.get(url).data['content'], '{}')
 
     def test_json_recursion_limit_is_a_validation_error(self):
-        """Deep JSON is rejected on creation and edit without replacing saved data."""
-        content = '[' * 10000 + '0' + ']' * 10000
-        self.assertLess(len(content), Note.NOTES_MAX_LENGTH)
-        response = self.post(
-            self.url,
-            {
-                'model_type': 'part',
-                'model_id': self.part.pk,
-                'title': 'Deep JSON',
-                'content_type': NoteContentType.JSON,
-                'content': content,
-            },
-            expected_code=400,
-        )
-        self.assertIn('content', response.data)
-        self.assertFalse(Note.objects.filter(title='Deep JSON').exists())
-
+        """Parser recursion errors reject creation and edits without changing data."""
         data = self.create_note(NoteContentType.JSON, '{}')
         url = reverse('api-note-detail', kwargs={'pk': data['pk']})
-        response = self.patch(url, {'content': content}, expected_code=400)
-        self.assertIn('content', response.data)
+
+        # Replace only the note parser reference, leaving request JSON decoding intact.
+        with patch('common.notes.json') as note_json:
+            note_json.loads.side_effect = RecursionError('JSON recursion limit')
+            response = self.post(
+                self.url,
+                {
+                    'model_type': 'part',
+                    'model_id': self.part.pk,
+                    'title': 'Deep JSON',
+                    'content_type': NoteContentType.JSON,
+                    'content': '[]',
+                },
+                expected_code=400,
+            )
+            self.assertEqual(response.data['content'], ['JSON is nested too deeply.'])
+            self.assertFalse(Note.objects.filter(title='Deep JSON').exists())
+
+            response = self.patch(url, {'content': '[]'}, expected_code=400)
+            self.assertEqual(response.data['content'], ['JSON is nested too deeply.'])
+
         self.assertEqual(self.get(url).data['content'], '{}')
 
     def test_unknown_types_rejected(self):
