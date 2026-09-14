@@ -300,7 +300,10 @@ class OwnerModelTest(InvenTreeTestCase):
         self.client.login(username=self.username, password=self.password)
         # token get
         response = self.do_request(reverse('api-token'), {})
-        self.assertEqual(response['token'], token.first().key)
+        raw_token = response['token']
+        self.assertTrue(raw_token.startswith('inv-2-'))
+        token = ApiToken.get_from_string(raw_token)
+        self.assertTrue(token.validate(raw_token))
 
         # test user is associated with token
         response = self.do_request(
