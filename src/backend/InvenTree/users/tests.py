@@ -1,5 +1,7 @@
 """Unit tests for the 'users' app."""
 
+import datetime
+
 from django.apps import apps
 from django.contrib.auth.models import Group
 from django.test import TestCase
@@ -404,6 +406,12 @@ class AdminTest(AdminTestCase):
         my_token = self.helper(
             model=ApiToken, model_kwargs={'user': self.user, 'name': 'test-token'}
         )
+        self.assertTrue(
+            my_token.token.endswith(
+                f'-{datetime.datetime.now().date().isoformat().replace("-", "")}'
+            )
+        )
+        self.assertTrue(my_token.validate(my_token.token))
         # Additionally test str fnc
         self.assertEqual(str(my_token), my_token.token)
 

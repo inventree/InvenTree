@@ -50,7 +50,7 @@ User.add_to_class('__str__', user_model_str)  # Overriding User.__str__
 #  OVERRIDE END
 
 
-API_TOKEN_PREFIX = 'invt2-'
+API_TOKEN_PREFIX = 'inv-2-'
 API_TOKEN_IDENTIFIER_LENGTH = 20
 API_TOKEN_SECRET_LENGTH = 40
 
@@ -103,10 +103,11 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         """Generate new v2 token."""
         identifier = secrets.token_hex(API_TOKEN_IDENTIFIER_LENGTH // 2)
         secret = secrets.token_hex(API_TOKEN_SECRET_LENGTH // 2)
+        suffix = '-' + str(datetime.datetime.now().date().isoformat().replace('-', ''))
 
         self.key = identifier
         self.hmac_digest = self.calculate_digest(secret)
-        self._raw_secret = f'{API_TOKEN_PREFIX}{identifier}.{secret}'
+        self._raw_secret = f'{API_TOKEN_PREFIX}{identifier}.{secret}{suffix}'
 
     @staticmethod
     def calculate_digest(secret: str) -> str:
@@ -134,6 +135,15 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         identifier, _sep, secret = value.partition('.')
         if not identifier or not secret:
             return None
+
+        secret_parts = secret.rsplit('-', 1)
+        if (
+            len(secret_parts) == 2
+            and len(secret_parts[1]) == 8
+            and secret_parts[1].isdigit()
+        ):
+            secret = secret_parts[0]
+
         return identifier, secret
 
     def match(self, raw_token: str) -> bool:
@@ -189,7 +199,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
         return token
 
-    # in v1: token; in v2: public identifier
+    # in v1: private token; in v2: public identifier
     key = models.CharField(
         verbose_name=_('Key'),
         db_index=True,

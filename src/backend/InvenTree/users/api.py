@@ -412,7 +412,7 @@ class GetAuthToken(GenericAPIView):
                 "Created new API token for user '%s' (name='%s')", user.username, name
             )
 
-            # Add some metadata about the request
+        # Add some metadata about the request
         token.set_metadata('user_agent', request.headers.get('user-agent', ''))
         token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
         token.set_metadata('remote_host', request.META.get('REMOTE_HOST', ''))
@@ -420,7 +420,11 @@ class GetAuthToken(GenericAPIView):
         token.set_metadata('server_name', request.META.get('SERVER_NAME', ''))
         token.set_metadata('server_port', request.META.get('SERVER_PORT', ''))
 
-        data = {'token': token.key, 'name': token.name, 'expiry': token.expiry}
+        data = {
+            'token': token.token if token._raw_secret else token.key,
+            'name': token.name,
+            'expiry': token.expiry,
+        }
 
         # Ensure that the users session is logged in
         if not get_user(request).is_authenticated:

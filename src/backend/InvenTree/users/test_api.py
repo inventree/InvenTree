@@ -475,7 +475,7 @@ class UserTokenTests(InvenTreeAPITestCase):
         # Grab the token, and update
         token = ApiToken.objects.first()
         assert token
-        self.assertEqual(token.key, token_key)
+        self.assertEqual(token.key, ApiToken.split_token(token_key)[0])
         self.assertIsNotNone(token.last_seen)
 
         # Revoke the token
@@ -516,7 +516,7 @@ class UserTokenTests(InvenTreeAPITestCase):
             url=reverse('api-token'), data={'name': 'race'}, expected_code=200
         ).data['token']
 
-        token = ApiToken.objects.get(key=token_key)
+        token = ApiToken.objects.get(key=ApiToken.split_token(token_key)[0])
 
         # Force last_seen to be 'stale' so the auth backend attempts to update it
         ApiToken.objects.filter(pk=token.pk).update(
