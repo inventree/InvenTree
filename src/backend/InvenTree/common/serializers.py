@@ -923,11 +923,20 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
             'title',
             'description',
             'content',
+            'content_type',
             'updated',
             'updated_by',
         ]
 
         read_only_fields = ['updated', 'updated_by']
+
+    content = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        trim_whitespace=False,
+        max_length=common_models.Note.NOTES_MAX_LENGTH,
+        label=_('Content'),
+    )
 
     def get_unique_together_validators(self):
         """Suppress the auto-generated validator for 'unique_primary_note_per_model'."""
@@ -936,6 +945,15 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
     def validate(self, data):
         """Validate note data — templates need no model_id; regular notes require both."""
         data = super().validate(data)
+
+        if (
+            self.instance is not None
+            and 'content_type' in data
+            and data['content_type'] != self.instance.content_type
+        ):
+            raise serializers.ValidationError({
+                'content_type': _('Content type cannot be changed after creation.')
+            })
 
         is_template = data.get('template', getattr(self.instance, 'template', False))
 

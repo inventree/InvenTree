@@ -25,8 +25,53 @@ Each note has the following attributes:
 | --- | --- |
 | Title | A short title for the note (*required*) |
 | Description | An optional brief description of the note's purpose |
-| Content | The rich-text body of the note |
+| Content | The note source, in its selected format |
+| Content Type | HTML, JSON, or plain text |
 | Primary | Marks this note as the default note for the object |
+
+## Content Formats
+
+Each note and note template has a `content_type`, chosen when it is created:
+
+| Content type | Editing and display |
+| --- | --- |
+| `text/html` (default) | Rich-text editor with sanitized HTML and embedded images |
+| `application/json` | Raw text editor with JSON validation; displayed as literal source |
+| `text/plain` | Raw text editor; displayed literally without formatting |
+
+The content type is permanent after creation. To use a different format, create a new note.
+Templates and duplicated notes retain their content type. Embedded image uploads are only
+available for HTML notes.
+
+JSON and plain text preserve their source text, including whitespace, escapes, and number
+spelling. All formats retain the 50,000-character limit. JSON must be valid (including scalar
+values); blank JSON and nonstandard `NaN` / infinity constants are rejected. New JSON notes
+start with `{}` in the interface.
+
+The `/api/note/` list and detail responses include `content_type`. Creation requests may
+specify it; omitting it selects HTML. The `content` field remains a **string**, even for JSON:
+
+```json
+{
+  "model_type": "part",
+  "model_id": 123,
+  "title": "Inspection data",
+  "content_type": "application/json",
+  "content": "{\"passed\": true, \"measurement\": 1.200}"
+}
+```
+
+Updates that change `content_type` are rejected with HTTP 400 and a `content_type`
+field error, even if replacement content is supplied. Omitting the type or supplying
+the existing type allows ordinary content and metadata edits. Rejected updates preserve
+the saved type, content, and embedded images. This also applies to note templates.
+
+JSON and plain text also render as escaped source text in reports.
+
+Existing notes are assigned the HTML type without changing their contents. The earlier
+legacy-note migration still converts old Markdown fields to HTML: adding plain text support
+does not undo that conversion or automatically migrate JSON stored in legacy notes.
+Stock-item Test Results keep their separate notes field.
 
 ## Primary Note
 

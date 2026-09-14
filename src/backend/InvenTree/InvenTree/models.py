@@ -34,6 +34,7 @@ import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.sentry
 import report.mixins
+from common.notes import note_content_handler
 
 logger = structlog.get_logger('inventree')
 
@@ -755,8 +756,12 @@ class InvenTreeNoteMixin(InvenTreePermissionCheckMixin, models.Model):
                 title=source_note.title,
                 description=source_note.description,
                 content=source_note.content,
+                content_type=source_note.content_type,
             )
             new_note.save()
+
+            if not note_content_handler(source_note.content_type).supports_images:
+                continue
 
             # Read each source image's file data and write it to storage up front,
             # then bulk_create() all of this note's NotesImage rows in one INSERT

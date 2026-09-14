@@ -39,6 +39,7 @@ import common.models
 import InvenTree.helpers
 import InvenTree.helpers_model
 import report.helpers
+from common.notes import note_content_handler
 from common.settings import get_global_setting
 from company.models import Company
 from part.models import Part
@@ -557,6 +558,10 @@ def note(instance: Model, title: Optional[str] = None) -> str:
 
     if not note or not note.content:
         return ''
+
+    handler = note_content_handler(note.content_type)
+    if not handler.supports_images:
+        return handler.render(note.content)
 
     content = note.content
     media_prefix = settings.MEDIA_URL
