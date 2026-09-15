@@ -9,7 +9,7 @@ from django.urls import reverse
 from allauth.account.models import EmailAddress
 
 from InvenTree.unit_test import InvenTreeAPITestCase
-from users.models import ApiToken
+from users.models import ApiToken, default_token
 from users.ruleset import RULESET_NAMES, get_ruleset_models
 
 
@@ -594,6 +594,40 @@ class UserTokenTests(InvenTreeAPITestCase):
         self.assertIn('token', response.data)
 
         self.assertEqual(ApiToken.objects.count(), 1)
+
+    def test_token_v1(self):
+        """Test that v1 API tokens still work."""
+        # Create a v1 token via model - this is NOT recommended; use v2 tokens
+        token = ApiToken.objects.create(
+            user=self.user,
+            key=default_token(),
+            token_version=1,
+            expiry=datetime.datetime.now() + datetime.timedelta(days=365),
+        )
+        token_key = token.key
+        self.assertTrue(token_key.startswith('inv-'))
+
+        # Check match and validate functions
+        self.assertTrue(token.match(token_key))
+        self.assertTrue(token.validate(token_key))
+
+        # test api access with token
+        self.logout()
+        # false test - ensure that without the token, access is denied
+        self.get(reverse('api-user-me'), expected_code=401)
+
+        # valid test
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token_key}')
+        response = self.get(reverse('api-user-me'), expected_code=200)
+        self.assertEqual(response.data['username'], self.user.username)
+
+        # check if info view also works
+        response_data = self.get(
+            reverse('api-inventree-info'), expected_code=200
+        ).json()
+        # staff users are allowed to see the database field
+        self.assertIn('database', response_data)
+        self.assertIsNotNone(response_data.get('database'))
 
 
 class GroupDetailTests(InvenTreeAPITestCase):

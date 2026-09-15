@@ -80,7 +80,7 @@ API_TOKEN_SECRET_LENGTH = 40
 # legacy TODO @matmair remove in the next breaking
 def default_token():
     """Generate a default value for the token."""
-    return ApiToken.generate_key()  # pragma: no cover
+    return ApiToken.generate_key()
 
 
 def default_token_expiry():
@@ -227,7 +227,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
             return None
 
         if not token.validate(raw_token):
-            return None
+            return None  # pragma: no cover
 
         return token
 
@@ -340,6 +340,10 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
     def save(self, *args, **kwargs):
         """Patch in token generations."""
         if self._state.adding and not self.key and not self.hmac_digest:
+            if self.token_version != 2:
+                raise ValueError(
+                    'Unsupported token version and scenario'
+                )  # pragma: no cover
             self.generate_v2_token()
 
         super().save(*args, **kwargs)
