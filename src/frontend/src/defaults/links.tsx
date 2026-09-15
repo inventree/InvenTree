@@ -49,29 +49,27 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
       visible:
         user.hasViewRole(UserRoles.stock) ||
         user.hasViewRole(UserRoles.stock_location) ||
-        (globalSettings.isSet('TRANSFERORDER_ENABLED') &&
-          user.hasViewRole(UserRoles.transfer_order))
+        user.hasViewVisible(UserRoles.transfer_order)
     },
     {
       name: 'manufacturing',
       title: t`Manufacturing`,
       icon: <IconBuildingFactory2 />,
-      visible: user.hasViewRole(UserRoles.build)
+      visible: user.hasViewVisible(UserRoles.build)
     },
     {
       name: 'purchasing',
       title: t`Purchasing`,
       icon: <IconShoppingCart />,
-      visible: user.hasViewRole(UserRoles.purchase_order)
+      visible: user.hasViewVisible(UserRoles.purchase_order)
     },
     {
       name: 'sales',
       title: t`Sales`,
       icon: <IconTruckDelivery />,
       visible:
-        user.hasViewRole(UserRoles.sales_order) ||
-        (globalSettings.isSet('RETURNORDER_ENABLED') &&
-          user.hasViewRole(UserRoles.return_order))
+        user.hasViewVisible(UserRoles.sales_order) ||
+        user.hasViewVisible(UserRoles.return_order)
     }
   ];
 
