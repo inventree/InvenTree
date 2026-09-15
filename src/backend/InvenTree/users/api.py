@@ -411,7 +411,7 @@ class GetAuthToken(GenericAPIView):
             token.revocation_reason = (
                 're-issued due to new token request to API with same name'
             )
-            token.save(update_fields=['revoked'])
+            token.save(update_fields=['revoked', 'revoked_by', 'revocation_reason'])
 
         if not token or reissue_token:
             # User is authenticated, and requesting a token against the provided name.
