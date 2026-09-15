@@ -514,12 +514,20 @@ class UserCreateSerializer(ExtendedUserSerializer):
 
     def create(self, validated_data):
         """Send an e email to the user after creation."""
+        from allauth.account.models import EmailAddress
+
         from InvenTree.helpers_model import get_base_url
         from InvenTree.tasks import email_user, offload_task
 
         base_url = get_base_url()
 
         instance = super().create(validated_data)
+
+        # Create the EmailAddress entry for the user
+        if instance.email:
+            EmailAddress.objects.create(
+                user=instance, email=instance.email, primary=True, verified=False
+            )
 
         # Make sure the user cannot login until they have set a password
         instance.set_unusable_password()
