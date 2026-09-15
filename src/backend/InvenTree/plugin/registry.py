@@ -676,32 +676,31 @@ class PluginsRegistry:
     def install_plugin_file(self):
         """Make sure all plugins are installed in the current environment.
 
-        The hash is only persisted *after* a successful install, never before -
-        the lease alone is what stops two processes from installing at once (a
-        process that cannot acquire it simply skips, since another one is
-        already handling it). Writing the hash as soon as the lease is acquired
-        would be a narrower window with a worse failure mode: a process killed
-        outright (OOM, a container stopped mid-install) between that write and
-        actually finishing would leave the hash pointing at content that was
-        never installed, and - unlike a normal exception - a hard kill does not
-        run `finally`, so nothing would ever revert it. The next check would
-        then see the hash already matches and skip forever, until the plugins
-        file changes again. Persisting only on success means a kill at any
-        point simply leaves the previous hash in place, so the next check
-        retries normally.
+        - The hash is only persisted *after* a successful install
+        - Store the hash into the database
+        - Also store the hash as a local marker file in the current environment
+
         """
-        from plugin.installer import install_plugins_file, plugins_file_hash
+        from plugin.installer import (
+            get_env_plugin_hash,
+            install_plugins_file,
+            plugins_file_hash,
+            set_env_plugin_hash,
+        )
 
         file_hash = plugins_file_hash()
 
         if file_hash is None:
             return
 
-        current_hash = get_global_setting(
-            '_PLUGIN_FILE_HASH', '', create=False, cache=False
-        )
+        def already_satisfied() -> bool:
+            """True only if the database *and* this environment agree it's installed."""
+            current_hash = get_global_setting(
+                '_PLUGIN_FILE_HASH', '', create=False, cache=False
+            )
+            return current_hash == file_hash and get_env_plugin_hash() == file_hash
 
-        if current_hash == file_hash:
+        if already_satisfied():
             return
 
         if not try_acquire_lease('_PLUGIN_FILE_HASH'):
@@ -710,15 +709,12 @@ class PluginsRegistry:
         try:
             # Re-check under the lease: another process may have already
             # installed this exact change while we were waiting to acquire it
-            current_hash = get_global_setting(
-                '_PLUGIN_FILE_HASH', '', create=False, cache=False
-            )
-
-            if current_hash == file_hash:
+            if already_satisfied():
                 return
 
             if install_plugins_file() is not False:
                 set_global_setting('_PLUGIN_FILE_HASH', file_hash)
+                set_env_plugin_hash(file_hash)
         finally:
             release_lease('_PLUGIN_FILE_HASH')
 
