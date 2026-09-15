@@ -239,7 +239,7 @@ def update_plugins_file(package_reference: str, remove: bool = False):
 
     def compare_line(line: str):
         """Check if a line in the file matches the installname."""
-        return re.match(rf'^{package_reference}[\s=@]', line.strip())
+        return re.match(rf'^{re.escape(package_reference)}(?:[\s=@]|$)', line.strip())
 
     # First, read in existing plugin file
     try:
