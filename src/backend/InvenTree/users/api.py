@@ -421,7 +421,7 @@ class GetAuthToken(GenericAPIView):
                 "Created new API token for user '%s' (name='%s')", user.username, name
             )
 
-        if token.hmac_digest and not token._raw_secret:
+        if token.token_version == 2 and token.hmac_digest and not token._raw_secret:
             raise exceptions.ValidationError(
                 'Token is not newly created.'
             )  # pragma: no cover
@@ -435,7 +435,7 @@ class GetAuthToken(GenericAPIView):
         token.set_metadata('server_port', request.META.get('SERVER_PORT', ''))
 
         data = {
-            'token': token.token if token._raw_secret else token.key,
+            'token': token.token if token.token_version == 2 else token.key,
             'name': token.name,
             'expiry': token.expiry,
         }
