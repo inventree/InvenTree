@@ -24,6 +24,7 @@ import InvenTree.permissions
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
+    CleanBase,
     ListAPI,
     ListCreateAPI,
     OutputOptionsMixin,
@@ -389,11 +390,11 @@ class GetAuthToken(GenericAPIView):
         - Existing tokens are *never* exposed again via the API
         - Once the token is provided, it can be used for auth until it expires
         """
-        if not request.user.is_authenticated:
-            raise exceptions.NotAuthenticated()  # pragma: no cover
-
         user = request.user
         name = request.query_params.get('name', '')
+
+        if not user.is_authenticated:
+            raise exceptions.NotAuthenticated()  # pragma: no cover
 
         name = ApiToken.sanitize_name(name)
 
@@ -406,11 +407,13 @@ class GetAuthToken(GenericAPIView):
 
         if token and reissue_token:
             token.revoked = True
+            token.revoked_by = user
+            token.revocation_reason = 're-issued due to new token request to API'
             token.save(update_fields=['revoked'])
 
         if not token or reissue_token:
             # User is authenticated, and requesting a token against the provided name.
-            token = ApiToken.objects.create(user=request.user, name=name)
+            token = ApiToken.objects.create(user=user, name=name, issued_by=user)
 
             logger.info(
                 "Created new API token for user '%s' (name='%s')", user.username, name
@@ -481,14 +484,26 @@ class TokenListView(TokenMixin, ListCreateAPI):
         'user__first_name',
         'user__last_name',
         'user__email',
+        'revocation_reason',
     ]
-    ordering_fields = ['created', 'expiry', 'last_seen', 'user', 'name', 'revoked']
-    filterset_fields = ['revoked', 'user']
+    ordering_fields = [
+        'created',
+        'expiry',
+        'last_seen',
+        'user',
+        'name',
+        'revoked',
+        'revoked_by',
+        'issued_by',
+        'token_version',
+        'revocation_reason',
+    ]
+    filterset_fields = ['revoked', 'user', 'issued_by', 'revoked_by']
     queryset = ApiToken.objects.none()
 
     def perform_create(self, serializer):
         """Save the new token and keep the secret (only available immediately after creation)."""
-        super().perform_create(serializer)
+        serializer.save(issued_by=self.request.user)
         self._created_token = serializer.instance
 
     def create(self, request, *args, **kwargs):
@@ -502,13 +517,18 @@ class TokenListView(TokenMixin, ListCreateAPI):
         return super().get(request, *args, **kwargs)
 
 
-class TokenDetailView(TokenMixin, DestroyAPIView, RetrieveAPI):
+class TokenDetailView(CleanBase, TokenMixin, DestroyAPIView, RetrieveAPI):
     """Details for a user token."""
 
     def perform_destroy(self, instance):
         """Revoke token."""
         instance.revoked = True
-        instance.save()
+        instance.revoked_by = self.request.user
+        request_data = getattr(self.request, 'data', {})
+        instance.revocation_reason = self.clean_string(
+            'revocation_reason', str(request_data.get('revocation_reason', ''))
+        )
+        instance.save(update_fields=['revoked', 'revoked_by', 'revocation_reason'])
 
 
 class LoginRedirect(RedirectView):

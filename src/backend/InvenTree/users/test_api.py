@@ -548,16 +548,26 @@ class UserTokenTests(InvenTreeAPITestCase):
         self.assertEqual(response.data[0]['active'], True)
         self.assertEqual(response.data[0]['revoked'], False)
         self.assertEqual(response.data[0]['in_use'], True)
+        self.assertEqual(response.data[0]['issued_by'], self.user.pk)
+        self.assertIsNone(response.data[0]['revoked_by'])
+        self.assertIsNone(response.data[0]['revocation_reason'])
         expected_day = str(
             datetime.datetime.now().date() + datetime.timedelta(days=365)
         )
         self.assertEqual(response.data[0]['expiry'], expected_day)
 
         # Destroy token
+        token_id = response.data[0]['id']
         self.delete(
-            reverse('api-token-detail', kwargs={'pk': response.data[0]['id']}),
+            reverse('api-token-detail', kwargs={'pk': token_id}),
+            data={'revocation_reason': 'No longer needed'},
             expected_code=204,
         )
+
+        token = ApiToken.objects.get(pk=token_id)
+        self.assertTrue(token.revoked)
+        self.assertEqual(token.revoked_by, self.user)
+        self.assertEqual(token.revocation_reason, 'No longer needed')
 
         # Get token without auth (should fail)
         self.client.logout()

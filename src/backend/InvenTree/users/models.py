@@ -131,6 +131,10 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         self.hmac_digest = self.calculate_digest(secret)
         self._raw_secret = f'{API_TOKEN_PREFIX}{identifier}.{secret}{suffix}'
 
+        # metadata
+        self.token_version = 2
+        self.pepper_id = self.calculate_pepper_id()
+
     @staticmethod
     def calculate_digest(secret: str) -> str:
         """Calculate the HMAC digest of the provided secret."""
@@ -138,6 +142,12 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         return hmac.new(
             pepper.encode('utf-8'), secret.encode('utf-8'), hashlib.sha256
         ).hexdigest()
+
+    @classmethod
+    def calculate_pepper_id(cls, length=8) -> str:
+        """Calculate the first 8 characters of the current pepper hashed."""
+        pepper = InvenTree.helpers.get_api_token_pepper()
+        return hashlib.sha256(pepper.encode('utf-8')).hexdigest()[:length]
 
     @staticmethod
     def split_token(raw_token: str):
@@ -268,9 +278,51 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         default=False, verbose_name=_('Revoked'), help_text=_('Token has been revoked')
     )
 
+    revocation_reason = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Revocation Reason'),
+        help_text=_('As entered by the user or action during revocation'),
+    )
+
+    revoked_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Revoked By'),
+        help_text=_('User who revoked the token'),
+        related_name='revoked_api_tokens',
+    )
+
+    issued_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Issued By'),
+        help_text=_('User who issued the token'),
+        related_name='issued_api_tokens',
+    )
+
+    token_version = models.PositiveSmallIntegerField(
+        default=2,
+        verbose_name=_('Token Version'),
+        help_text=_('Version of the API token'),
+    )
+
+    pepper_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Pepper ID'),
+        help_text=_('Identifier for the pepper used in token hashing'),
+    )
+    """By default, the first 8 characters of the pepper hashed."""
+
     @staticmethod
     def sanitize_name(name: str) -> str:
-        """Sanitize the provide name value."""
+        """Sanitize the provided name value."""
         name = str(name).strip()
 
         # Remove any non-printable chars
