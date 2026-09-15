@@ -18,7 +18,7 @@ from django.test import TestCase, override_settings
 import plugin.templatetags.plugin_extras as plugin_tags
 from InvenTree.unit_test import PluginRegistryMixin, TestQueryMixin
 from plugin import InvenTreePlugin, PluginMixinEnum
-from plugin.installer import install_plugin
+from plugin.installer import install_plugin, update_plugins_file
 from plugin.registry import registry
 from plugin.samples.integration.another_sample import (
     NoIntegrationPlugin,
@@ -1146,3 +1146,70 @@ class InstallerTests(TestCase):
         self.assertIn(
             'Only superuser accounts can administer plugins', str(e.exception)
         )
+
+    def test_update_plugins_file_no_duplicates(self):
+        """Test that update_plugins_file() does not duplicate existing entries."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            pf = Path(tmpdir) / 'plugins.txt'
+            pf.write_text('')
+
+            with override_settings(PLUGIN_FILE=pf):
+                # Installing the same bare package name multiple times must
+                # only ever result in a single line for that package
+                for _ in range(3):
+                    update_plugins_file('inventree-brother-plugin')
+
+                lines = [line for line in pf.read_text().splitlines() if line.strip()]
+                self.assertEqual(lines, ['inventree-brother-plugin'])
+
+                # Removing the plugin removes its (bare) line
+                update_plugins_file('inventree-brother-plugin', remove=True)
+
+                lines = [line for line in pf.read_text().splitlines() if line.strip()]
+                self.assertEqual(lines, [])
+
+                # The same must hold for a version-pinned reference: repeat
+                # installs of the exact same reference must not duplicate it
+                for _ in range(3):
+                    update_plugins_file('inventree-brother-plugin==1.2.3')
+
+                lines = [line for line in pf.read_text().splitlines() if line.strip()]
+                self.assertEqual(lines, ['inventree-brother-plugin==1.2.3'])
+
+                # Removing the plugin removes its (version-pinned) line
+                update_plugins_file('inventree-brother-plugin==1.2.3', remove=True)
+
+                lines = [line for line in pf.read_text().splitlines() if line.strip()]
+                self.assertEqual(lines, [])
+
+    def test_update_plugins_file_regex_metacharacters(self):
+        """Test that package names containing regex metacharacters are handled safely.
+
+        Package/version specifiers may legitimately contain characters such
+        as '.', '+', '[' and ']' (e.g. extras, local version identifiers).
+        These must be treated literally, not as regex syntax.
+        """
+        with tempfile.TemporaryDirectory() as tmpdir:
+            pf = Path(tmpdir) / 'plugins.txt'
+            pf.write_text('some-other-package==1.0.0\n')
+
+            with override_settings(PLUGIN_FILE=pf):
+                # A package name containing an extras specifier must not raise
+                # (unbalanced/undesired regex syntax) and must not spuriously
+                # match an unrelated existing line
+                update_plugins_file('inventree-plugin[extra]==1.0.0')
+
+                lines = [line for line in pf.read_text().splitlines() if line.strip()]
+                self.assertEqual(
+                    lines,
+                    ['some-other-package==1.0.0', 'inventree-plugin[extra]==1.0.0'],
+                )
+
+                # Re-adding the same reference must not duplicate it
+                update_plugins_file('inventree-plugin[extra]==1.0.0')
+
+                lines = [line for line in pf.read_text().splitlines() if line.strip()]
+                self.assertEqual(
+                    lines,
+                    ['some-other-package==1.0.0', 'inventree-plugin[extra]==1.0.0'],
+                )
