@@ -50,7 +50,6 @@ User.add_to_class('__str__', user_model_str)  # Overriding User.__str__
 #  OVERRIDE END
 
 
-# legacy TOD @matmair remove in the newxt breaking
 if settings.LDAP_AUTH:  # pragma: no cover
     from django_auth_ldap.backend import populate_user  # ty: ignore[unresolved-import]
 
@@ -78,6 +77,7 @@ API_TOKEN_IDENTIFIER_LENGTH = 20
 API_TOKEN_SECRET_LENGTH = 40
 
 
+# legacy TODO @matmair remove in the next breaking
 def default_token():
     """Generate a default value for the token."""
     return ApiToken.generate_key()  # pragma: no cover
