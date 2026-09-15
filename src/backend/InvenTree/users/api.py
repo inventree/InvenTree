@@ -522,6 +522,20 @@ class TokenListView(TokenMixin, ListCreateAPI):
 class TokenDetailView(CleanBase, TokenMixin, DestroyAPIView, RetrieveAPI):
     """Details for a user token."""
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='revocation_reason',
+                type=str,
+                description='Reason for revoking the token.',
+                default='',
+            )
+        ]
+    )
+    def delete(self, request, *args, **kwargs):
+        """Revoke this specific user token."""
+        return super().delete(request, *args, **kwargs)
+
     def perform_destroy(self, instance):
         """Revoke token."""
         instance.revoked = True
