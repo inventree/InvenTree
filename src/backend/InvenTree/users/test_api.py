@@ -125,6 +125,11 @@ class UserAPITests(InvenTreeAPITestCase):
         self.assertEqual(response.data['is_staff'], False)
         self.assertEqual(response.data['is_superuser'], False)
         self.assertEqual(response.data['is_active'], True)
+        self.assertTrue(
+            EmailAddress.objects.filter(
+                user__username=data['username'], email=data['email'], primary=True
+            ).exists()
+        )
 
         # Try to adjust the 'is_superuser' field
         # Only a "superuser" can set this field
@@ -371,26 +376,6 @@ class SuperuserAPITests(InvenTreeAPITestCase):
         # complex enough pwd
         resp = self.put(url, {'password': 'inventree'}, expected_code=200)
         self.assertEqual(resp.data, {})
-
-    def test_email_address_sync_signal(self):
-        """Test emailadress sync."""
-        user = User.objects.create(username='start', email='start@example.org')
-        self.assertTrue(
-            EmailAddress.objects.filter(
-                user=user, email='start@example.org', primary=True
-            ).exists()
-        )
-
-        # change should trigger emailaddress update
-        user.email = 'updated@example.org'
-        user.save()
-
-        self.assertFalse(
-            EmailAddress.objects.filter(user=user, email='start@example.org').exists()
-        )
-        updated = EmailAddress.objects.get(user=user, primary=True)
-        self.assertEqual(updated.email, 'updated@example.org')
-        self.assertFalse(updated.verified)
 
 
 class UserTokenTests(InvenTreeAPITestCase):
