@@ -14037,29 +14037,3 @@ msgstr "Read the docs"
 #: src/views/MobileAppView.tsx:42
 msgid "Ignore and continue to Desktop view"
 msgstr "Ignore and continue to Desktop view"
-
-#: src/forms/CommonForms.tsx:386
-#, python-brace-format
-msgid "Failed to load note template: {0}"
-msgstr "Failed to load note template: {0}"
-
-#: src/components/editors/NotesEditor.tsx:427
-#, python-brace-format
-msgid "Failed to update note: {message}"
-msgstr "Failed to update note: {message}"
-
-#: src/components/editors/NoteContent.ts:15
-msgid "HTML"
-msgstr "HTML"
-
-#: src/components/editors/NoteContent.ts:17
-msgid "JSON"
-msgstr "JSON"
-
-#: src/components/editors/NoteContent.ts:22
-msgid "Plain text"
-msgstr "Plain text"
-
-#: src/components/editors/NotesEditor.tsx:578
-msgid "Note content"
-msgstr "Note content"
