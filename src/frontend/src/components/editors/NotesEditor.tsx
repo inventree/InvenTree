@@ -466,6 +466,187 @@ export default function NotesEditor({
     [editor, uploadFile]
   );
 
+  function renderNoteContent() {
+    if (!hasNotes) {
+      return (
+        <Alert title={t`Notes`} icon={<IconInfoCircle />}>
+          {t`There are no notes here yet.`}
+        </Alert>
+      );
+    }
+
+    if (contentHandler.raw && isEditing && canEdit) {
+      return (
+        <Textarea
+          aria-label={t`Note content`}
+          value={rawContent}
+          minRows={18}
+          autosize
+          styles={{ input: { fontFamily: 'monospace' } }}
+          onChange={(event) => {
+            setRawContent(event.currentTarget.value);
+            setIsDirty(true);
+            setSaveError(null);
+          }}
+        />
+      );
+    }
+
+    if (contentHandler.raw) {
+      return (
+        <Text
+          component='pre'
+          data-testid='raw-note-content'
+          style={{
+            whiteSpace: 'pre-wrap',
+            overflowWrap: 'anywhere',
+            fontFamily: 'monospace'
+          }}
+        >
+          {rawContent}
+        </Text>
+      );
+    }
+
+    return (
+      <RichTextEditor
+        variant='subtle'
+        editor={editor}
+        style={{ minHeight: '400px' }}
+        data-editing={isEditing || undefined}
+      >
+        {canEdit && isEditing && (
+          <RichTextEditor.Toolbar sticky>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Bold />
+              <RichTextEditor.Italic />
+              <RichTextEditor.Underline />
+              <RichTextEditor.Strikethrough />
+              <RichTextEditor.ClearFormatting />
+              <RichTextEditor.Code />
+              <RichTextEditor.CodeBlock />
+            </RichTextEditor.ControlsGroup>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.H1 />
+              <RichTextEditor.H2 />
+              <RichTextEditor.H3 />
+              <RichTextEditor.H4 />
+            </RichTextEditor.ControlsGroup>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Blockquote />
+              <RichTextEditor.Hr />
+              <RichTextEditor.BulletList />
+              <RichTextEditor.OrderedList />
+            </RichTextEditor.ControlsGroup>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Link />
+              <RichTextEditor.Unlink />
+            </RichTextEditor.ControlsGroup>
+            <RichTextEditor.ControlsGroup>
+              <FileButton onChange={handleImageUpload} accept='image/*'>
+                {(props) => (
+                  <Tooltip label={t`Upload Image`}>
+                    <ActionIcon variant='default' size='sm' {...props}>
+                      <IconPhoto size='0.9rem' />
+                    </ActionIcon>
+                  </Tooltip>
+                )}
+              </FileButton>
+            </RichTextEditor.ControlsGroup>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Control
+                onClick={() =>
+                  editor
+                    ?.chain()
+                    .focus()
+                    .insertTable({
+                      rows: 3,
+                      cols: 3,
+                      withHeaderRow: true
+                    })
+                    .run()
+                }
+                aria-label={t`Insert table`}
+                title={t`Insert table`}
+              >
+                <IconTablePlus size='0.9rem' />
+              </RichTextEditor.Control>
+              <RichTextEditor.Control
+                disabled={!isInTable}
+                onClick={() => editor?.chain().focus().addColumnBefore().run()}
+                aria-label={t`Add column before`}
+                title={t`Add column before`}
+              >
+                <IconColumnInsertLeft size='0.9rem' />
+              </RichTextEditor.Control>
+              <RichTextEditor.Control
+                disabled={!isInTable}
+                onClick={() => editor?.chain().focus().addColumnAfter().run()}
+                aria-label={t`Add column after`}
+                title={t`Add column after`}
+              >
+                <IconColumnInsertRight size='0.9rem' />
+              </RichTextEditor.Control>
+              <RichTextEditor.Control
+                disabled={!isInTable}
+                onClick={() => editor?.chain().focus().deleteColumn().run()}
+                aria-label={t`Delete column`}
+                title={t`Delete column`}
+              >
+                <IconColumnRemove size='0.9rem' />
+              </RichTextEditor.Control>
+              <RichTextEditor.Control
+                disabled={!isInTable}
+                onClick={() => editor?.chain().focus().addRowBefore().run()}
+                aria-label={t`Add row before`}
+                title={t`Add row before`}
+              >
+                <IconRowInsertTop size='0.9rem' />
+              </RichTextEditor.Control>
+              <RichTextEditor.Control
+                disabled={!isInTable}
+                onClick={() => editor?.chain().focus().addRowAfter().run()}
+                aria-label={t`Add row after`}
+                title={t`Add row after`}
+              >
+                <IconRowInsertBottom size='0.9rem' />
+              </RichTextEditor.Control>
+              <RichTextEditor.Control
+                disabled={!isInTable}
+                onClick={() => editor?.chain().focus().deleteRow().run()}
+                aria-label={t`Delete row`}
+                title={t`Delete row`}
+              >
+                <IconRowRemove size='0.9rem' />
+              </RichTextEditor.Control>
+              <RichTextEditor.Control
+                disabled={!isInTable}
+                onClick={() => editor?.chain().focus().toggleHeaderRow().run()}
+                aria-label={t`Toggle header row`}
+                title={t`Toggle header row`}
+              >
+                <IconTableRow size='0.9rem' />
+              </RichTextEditor.Control>
+              <RichTextEditor.Control
+                disabled={!isInTable}
+                onClick={() => editor?.chain().focus().deleteTable().run()}
+                aria-label={t`Delete table`}
+                title={t`Delete table`}
+              >
+                <IconTableOff size='0.9rem' />
+              </RichTextEditor.Control>
+            </RichTextEditor.ControlsGroup>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Undo />
+              <RichTextEditor.Redo />
+            </RichTextEditor.ControlsGroup>
+          </RichTextEditor.Toolbar>
+        )}
+        <RichTextEditor.Content />
+      </RichTextEditor>
+    );
+  }
+
   return (
     <>
       {createNote.modal}
@@ -571,199 +752,7 @@ export default function NotesEditor({
                   {saveError}
                 </Alert>
               )}
-              {hasNotes ? (
-                contentHandler.raw ? (
-                  isEditing && canEdit ? (
-                    <Textarea
-                      aria-label={t`Note content`}
-                      value={rawContent}
-                      minRows={18}
-                      autosize
-                      styles={{ input: { fontFamily: 'monospace' } }}
-                      onChange={(event) => {
-                        setRawContent(event.currentTarget.value);
-                        setIsDirty(true);
-                        setSaveError(null);
-                      }}
-                    />
-                  ) : (
-                    <Text
-                      component='pre'
-                      data-testid='raw-note-content'
-                      style={{
-                        whiteSpace: 'pre-wrap',
-                        overflowWrap: 'anywhere',
-                        fontFamily: 'monospace'
-                      }}
-                    >
-                      {rawContent}
-                    </Text>
-                  )
-                ) : (
-                  <RichTextEditor
-                    variant='subtle'
-                    editor={editor}
-                    style={{ minHeight: '400px' }}
-                    data-editing={isEditing || undefined}
-                  >
-                    {canEdit && isEditing && (
-                      <RichTextEditor.Toolbar sticky>
-                        <RichTextEditor.ControlsGroup>
-                          <RichTextEditor.Bold />
-                          <RichTextEditor.Italic />
-                          <RichTextEditor.Underline />
-                          <RichTextEditor.Strikethrough />
-                          <RichTextEditor.ClearFormatting />
-                          <RichTextEditor.Code />
-                          <RichTextEditor.CodeBlock />
-                        </RichTextEditor.ControlsGroup>
-                        <RichTextEditor.ControlsGroup>
-                          <RichTextEditor.H1 />
-                          <RichTextEditor.H2 />
-                          <RichTextEditor.H3 />
-                          <RichTextEditor.H4 />
-                        </RichTextEditor.ControlsGroup>
-                        <RichTextEditor.ControlsGroup>
-                          <RichTextEditor.Blockquote />
-                          <RichTextEditor.Hr />
-                          <RichTextEditor.BulletList />
-                          <RichTextEditor.OrderedList />
-                        </RichTextEditor.ControlsGroup>
-                        <RichTextEditor.ControlsGroup>
-                          <RichTextEditor.Link />
-                          <RichTextEditor.Unlink />
-                        </RichTextEditor.ControlsGroup>
-                        <RichTextEditor.ControlsGroup>
-                          <FileButton
-                            onChange={handleImageUpload}
-                            accept='image/*'
-                          >
-                            {(props) => (
-                              <Tooltip label={t`Upload Image`}>
-                                <ActionIcon
-                                  variant='default'
-                                  size='sm'
-                                  {...props}
-                                >
-                                  <IconPhoto size='0.9rem' />
-                                </ActionIcon>
-                              </Tooltip>
-                            )}
-                          </FileButton>
-                        </RichTextEditor.ControlsGroup>
-                        <RichTextEditor.ControlsGroup>
-                          <RichTextEditor.Control
-                            onClick={() =>
-                              editor
-                                ?.chain()
-                                .focus()
-                                .insertTable({
-                                  rows: 3,
-                                  cols: 3,
-                                  withHeaderRow: true
-                                })
-                                .run()
-                            }
-                            aria-label={t`Insert table`}
-                            title={t`Insert table`}
-                          >
-                            <IconTablePlus size='0.9rem' />
-                          </RichTextEditor.Control>
-                          <RichTextEditor.Control
-                            disabled={!isInTable}
-                            onClick={() =>
-                              editor?.chain().focus().addColumnBefore().run()
-                            }
-                            aria-label={t`Add column before`}
-                            title={t`Add column before`}
-                          >
-                            <IconColumnInsertLeft size='0.9rem' />
-                          </RichTextEditor.Control>
-                          <RichTextEditor.Control
-                            disabled={!isInTable}
-                            onClick={() =>
-                              editor?.chain().focus().addColumnAfter().run()
-                            }
-                            aria-label={t`Add column after`}
-                            title={t`Add column after`}
-                          >
-                            <IconColumnInsertRight size='0.9rem' />
-                          </RichTextEditor.Control>
-                          <RichTextEditor.Control
-                            disabled={!isInTable}
-                            onClick={() =>
-                              editor?.chain().focus().deleteColumn().run()
-                            }
-                            aria-label={t`Delete column`}
-                            title={t`Delete column`}
-                          >
-                            <IconColumnRemove size='0.9rem' />
-                          </RichTextEditor.Control>
-                          <RichTextEditor.Control
-                            disabled={!isInTable}
-                            onClick={() =>
-                              editor?.chain().focus().addRowBefore().run()
-                            }
-                            aria-label={t`Add row before`}
-                            title={t`Add row before`}
-                          >
-                            <IconRowInsertTop size='0.9rem' />
-                          </RichTextEditor.Control>
-                          <RichTextEditor.Control
-                            disabled={!isInTable}
-                            onClick={() =>
-                              editor?.chain().focus().addRowAfter().run()
-                            }
-                            aria-label={t`Add row after`}
-                            title={t`Add row after`}
-                          >
-                            <IconRowInsertBottom size='0.9rem' />
-                          </RichTextEditor.Control>
-                          <RichTextEditor.Control
-                            disabled={!isInTable}
-                            onClick={() =>
-                              editor?.chain().focus().deleteRow().run()
-                            }
-                            aria-label={t`Delete row`}
-                            title={t`Delete row`}
-                          >
-                            <IconRowRemove size='0.9rem' />
-                          </RichTextEditor.Control>
-                          <RichTextEditor.Control
-                            disabled={!isInTable}
-                            onClick={() =>
-                              editor?.chain().focus().toggleHeaderRow().run()
-                            }
-                            aria-label={t`Toggle header row`}
-                            title={t`Toggle header row`}
-                          >
-                            <IconTableRow size='0.9rem' />
-                          </RichTextEditor.Control>
-                          <RichTextEditor.Control
-                            disabled={!isInTable}
-                            onClick={() =>
-                              editor?.chain().focus().deleteTable().run()
-                            }
-                            aria-label={t`Delete table`}
-                            title={t`Delete table`}
-                          >
-                            <IconTableOff size='0.9rem' />
-                          </RichTextEditor.Control>
-                        </RichTextEditor.ControlsGroup>
-                        <RichTextEditor.ControlsGroup>
-                          <RichTextEditor.Undo />
-                          <RichTextEditor.Redo />
-                        </RichTextEditor.ControlsGroup>
-                      </RichTextEditor.Toolbar>
-                    )}
-                    <RichTextEditor.Content />
-                  </RichTextEditor>
-                )
-              ) : (
-                <Alert title={t`Notes`} icon={<IconInfoCircle />}>
-                  {t`There are no notes here yet.`}
-                </Alert>
-              )}
+              {renderNoteContent()}
             </Paper>
           </Stack>
         </Box>
