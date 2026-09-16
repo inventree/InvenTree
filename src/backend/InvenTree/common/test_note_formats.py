@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db import transaction
 from django.urls import reverse
 
 from PIL import Image
@@ -124,6 +125,19 @@ class TypedNoteTests(InvenTreeAPITestCase):
                 expected_code=400,
             )
             self.assertIn('content_type', response.data)
+
+    def test_model_rejects_unknown_format(self):
+        """Direct model creation rejects unsupported formats without saving a note."""
+        with self.assertRaises(ValidationError) as error:
+            Note.objects.create(
+                model_type=self.part.get_content_type(),
+                model_id=self.part.pk,
+                title='Unsupported format',
+                content_type='text/unknown',
+                content='<p>Source</p>',
+            )
+        self.assertIn('content_type', error.exception.message_dict)
+        self.assertFalse(self.part.notes_list.exists())
 
     def test_content_type_is_permanent(self):
         """Notes and templates reject every format transition, with or without content."""
@@ -251,6 +265,34 @@ class TypedNoteTests(InvenTreeAPITestCase):
             self.assertTrue(item.images.filter(pk=image.pk).exists())
             self.assertTrue(image.image.storage.exists(image.image.name))
 
+    def test_rolled_back_image_cleanup_preserves_files(self):
+        """Rolling back a note edit or deletion restores image rows and their files."""
+        item, image = self.create_html_note_with_image()
+        note_pk, image_pk = item.pk, image.pk
+        original = item.content
+        for delete_note in [False, True]:
+            with self.subTest(delete_note=delete_note):
+                with self.captureOnCommitCallbacks(execute=True):
+                    with self.assertRaisesMessage(ValueError, 'Abort transaction'):
+                        with transaction.atomic():
+                            if delete_note:
+                                item.delete()
+                            else:
+                                item.content = '<p>Image removed</p>'
+                                item.save()
+                            self.assertFalse(
+                                NotesImage.objects.filter(pk=image_pk).exists()
+                            )
+                            self.assertTrue(
+                                image.image.storage.exists(image.image.name)
+                            )
+                            raise ValueError('Abort transaction')
+
+                item = Note.objects.get(pk=note_pk)
+                self.assertEqual(item.content, original)
+                self.assertTrue(item.images.filter(pk=image_pk).exists())
+                self.assertTrue(image.image.storage.exists(image.image.name))
+
     def test_html_default_and_sanitization(self):
         """Notes default to HTML and sanitize submitted markup."""
         response = self.post(
@@ -282,9 +324,12 @@ class TypedNoteTests(InvenTreeAPITestCase):
         for content_type, content in [
             (
                 NoteContentType.JSON,
-                ' {"html":"<script>alert(1)</script>","n":9007199254740993}\n',
+                ' {"html":"</pre><img src=x onerror=alert(1)><script>alert(1)</script>","n":9007199254740993}\n',
             ),
-            (NoteContentType.PLAIN_TEXT, '# Heading\n<script>alert(1)</script>'),
+            (
+                NoteContentType.PLAIN_TEXT,
+                '# Heading\n</pre><img src=x onerror=alert(1)><script>alert(1)</script>',
+            ),
         ]:
             with self.subTest(content_type=content_type):
                 self.part = Part.objects.create(name=f'Source {content_type}')
@@ -293,6 +338,8 @@ class TypedNoteTests(InvenTreeAPITestCase):
                 self.assertIn('<pre ', html)
                 self.assertIn('&lt;script&gt;', html)
                 self.assertNotIn('<script>', html)
+                self.assertNotIn('<img ', html)
+                self.assertEqual(html.count('</pre>'), 1)
                 target = Part.objects.create(name=f'Copy {content_type}')
                 target.copy_notes_from(self.part)
                 copied = target.primary_note

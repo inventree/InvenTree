@@ -18,8 +18,8 @@ for (const format of ['JSON', 'Plain text']) {
 
     const content =
       format === 'JSON'
-        ? ' \n{"number":9007199254740993,"html":"<script>alert(1)</script>","escaped":"\\u010d"}\n'
-        : '\n# A heading\n\n<script>alert(1)</script>\n';
+        ? ' \n{"number":9007199254740993,"html":"</pre><img src=x onerror=alert(1)><svg onload=alert(1)></svg><script>alert(1)</script>","escaped":"\\u010d"}\n'
+        : '\n# A heading\n\n</pre><img src=x onerror=alert(1)><svg onload=alert(1)></svg><script>alert(1)</script>\n';
     await page.getByRole('button', { name: 'edit-note', exact: true }).click();
     const editor = page.getByRole('textbox', {
       name: 'Note content',
@@ -65,7 +65,7 @@ for (const format of ['JSON', 'Plain text']) {
       content
     );
     await expect(
-      page.getByTestId('raw-note-content').locator('script')
+      page.getByTestId('raw-note-content').locator('script, img, svg')
     ).toHaveCount(0);
     await page.close();
   });
