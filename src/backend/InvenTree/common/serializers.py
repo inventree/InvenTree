@@ -1237,6 +1237,8 @@ class ReferenceSerializer(InvenTreeModelSerializer):
             'value',
             'source',
             'target',
+            'target_content_type',
+            'target_object_id',
             'locked',
             'created',
             'last_updated',
@@ -1247,11 +1249,44 @@ class ReferenceSerializer(InvenTreeModelSerializer):
     source = serializers.PrimaryKeyRelatedField(
         queryset=common_models.ReferenceSource.objects.all(), many=False
     )
-    target = serializers.SerializerMethodField()  # read_only=True)
+
+    target_content_type = ContentTypeField(
+        label=_('Target Content Type'),
+        help_text=_('Content type of the target object'),
+        write_only=True,
+    )
+
+    target_object_id = serializers.IntegerField(
+        label=_('Target Object ID'),
+        help_text=_('ID of the target object'),
+        write_only=True,
+    )
+
+    target = serializers.SerializerMethodField(read_only=True)
 
     def get_target(self, obj) -> dict:
         """Function to resolve generic object reference to target."""
         return get_objectreference(obj, 'target_content_type', 'target_object_id')
+
+    def validate(self, data):
+        """Ensure the referenced target object actually exists."""
+        data = super().validate(data)
+
+        content_type = data.get('target_content_type') or getattr(
+            self.instance, 'target_content_type', None
+        )
+        object_id = data.get('target_object_id') or getattr(
+            self.instance, 'target_object_id', None
+        )
+
+        model_class = content_type.model_class() if content_type else None
+
+        if not model_class or not model_class.objects.filter(pk=object_id).exists():
+            raise serializers.ValidationError({
+                'target_object_id': _('Target object does not exist')
+            })
+
+        return data
 
 
 class DataOutputSerializer(InvenTreeModelSerializer):

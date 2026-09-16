@@ -2828,21 +2828,23 @@ class Reference(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel)
         """Return string representation of the reference."""
         return f'{self.source.name}|{self.target}: {self.value}'
 
-    def clean_value(self, *args, **kwargs):
+    def clean(self, *args, **kwargs):
         """Ensure that the reference is valid before saving."""
         reference = self.value
         source = self.source
 
         if source.max_length and len(reference) > source.max_length:
             raise ValidationError({
-                'value': _(f'Value longer than max_length of {source.max_length}')
+                'value': _(
+                    f'Ensure this field has no more than {source.max_length} characters.'
+                )
             })
 
         if source.validation_pattern:
             comp = re.compile(source.validation_pattern)
             if not comp.fullmatch(reference):
                 raise ValidationError({
-                    'value': _('Value does not match validation pattern')
+                    'value': _('Value does not match validation pattern.')
                 })
 
         if source.reference_is_link:
@@ -2850,11 +2852,13 @@ class Reference(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel)
             try:
                 validator(reference)
             except ValidationError:
-                raise ValidationError({'value': _('Value is not a valid URL')})
+                raise ValidationError({'value': _('Value is not a valid URL.')})
 
         if source.reference_is_unique_global:
             if Reference.objects.filter(source=source, value=reference).exists():
-                raise ValidationError({'value': _('Value is not unique globally')})
+                raise ValidationError({
+                    'value': _('Value and Source are not unique globally.')
+                })
 
         return super().clean(*args, **kwargs)
 
