@@ -359,3 +359,31 @@ def _run_plugin_transition_handlers(instance, source, target, default_action):
 def _noop_default_action(current_state, target_state, instance, **kwargs):
     """No-op default action for compatibility with transition handlers."""
     return None  # pragma: no cover
+
+
+def blocking_reason(reason):
+    """Provide general transition blocking reasoning."""
+
+    def decorate(func):
+        func.blocking_reason = reason
+        return func
+
+    return decorate
+
+
+def after_commit(fn: Callable, *args, **kwargs) -> None:
+    """Helper to ensure functions are only executed on successful transaction commit.
+
+    This helps sending notifications and similar things only after the encapsulated transaction has been successfully committed. Avoiding confusion
+
+    Args:
+        fn: Function to execute after commit
+    """
+
+    def run_after_commit():
+        try:
+            fn(*args, **kwargs)
+        except Exception as e:
+            logger.error(f'Error in post-commit callback: {e}', exc_info=True)
+
+    transaction.on_commit(run_after_commit)
