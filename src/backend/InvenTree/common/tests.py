@@ -2613,8 +2613,9 @@ class ReferenceStuffTest(InvenTreeAPITestCase):
             url,
             {
                 'source': self.source1.pk,
-                'target': self.source1,
                 'value': 'Test Reference',
+                'target_content_type': 'referencesource',
+                'target_object_id': self.source1.pk,
             },
             expected_code=201,
         )
@@ -2629,31 +2630,27 @@ class ReferenceStuffTest(InvenTreeAPITestCase):
     def test_Reference_validation(self):
         """Test the Reference validation."""
         url = reverse('api-reference-list')
+        # Default target, used for the remaining sub-tests
+        dflt_args = {
+            'source': self.source1.pk,
+            'target_content_type': 'referencesource',
+            'target_object_id': self.source1.pk,
+        }
 
         # Valid reference
         response = self.post(
-            url,
-            {
-                'source': self.source1.pk,
-                'target': self.source1.pk,
-                'value': 'Test Reference',
-            },
-            expected_code=201,
+            url, {'value': 'Test Reference', **dflt_args}, expected_code=201
         )
         self.assertEqual(response.data['value'], 'Test Reference')
 
         # No empty value
-        response = self.post(
-            url, {'source': self.source1.pk, 'value': ''}, expected_code=400
-        )
+        response = self.post(url, {'value': '', **dflt_args}, expected_code=400)
         self.assertIn('This field may not be blank.', response.data['value'])
 
         # Test max_length
         self.source1.max_length = 10
         self.source1.save()
-        response = self.post(
-            url, {'source': self.source1.pk, 'value': 'a' * 100}, expected_code=400
-        )
+        response = self.post(url, {'value': 'a' * 100, **dflt_args}, expected_code=400)
         self.assertIn(
             'Ensure this field has no more than 10 characters.', response.data['value']
         )
@@ -2662,24 +2659,20 @@ class ReferenceStuffTest(InvenTreeAPITestCase):
         # Test validation_pattern
         self.source1.validation_pattern = '[0-9]+'
         self.source1.save()
-        response = self.post(
-            url, {'source': self.source1.pk, 'value': 'abc'}, expected_code=400
+        response = self.post(url, {'value': 'abc', **dflt_args}, expected_code=400)
+        self.assertIn(
+            'Value does not match validation pattern.', response.data['value']
         )
-        self.assertIn('Enter a valid value.', response.data['value'])
-        self.source1.validation_pattern = None
+        self.source1.validation_pattern = ''
 
         # Test reference_is_link
         self.source1.reference_is_link = True
         self.source1.save()
-        response = self.post(
-            url, {'source': self.source1.pk, 'value': 'abc'}, expected_code=400
-        )
-        self.assertIn('This value must be a valid URL.', response.data['value'])
+        response = self.post(url, {'value': 'abc', **dflt_args}, expected_code=400)
+        self.assertIn('Value is not a valid URL.', response.data['value'])
         # Test valid URL
         response = self.post(
-            url,
-            {'source': self.source1.pk, 'value': 'https://www.example.com'},
-            expected_code=201,
+            url, {'value': 'https://www.example.com', **dflt_args}, expected_code=201
         )
         self.assertEqual(response.data['value'], 'https://www.example.com')
         self.source1.reference_is_link = False
@@ -2688,13 +2681,10 @@ class ReferenceStuffTest(InvenTreeAPITestCase):
         self.source1.reference_is_unique_global = True
         self.source1.save()
         response = self.post(
-            url,
-            {'source': self.source1.pk, 'value': 'Test Reference'},
-            expected_code=400,
+            url, {'value': 'Test Reference', **dflt_args}, expected_code=400
         )
         self.assertIn(
-            'Reference with this Source and Value already exists.',
-            response.data['non_field_errors'],
+            'Value and Source are not unique globally.', response.data['value']
         )
 
 
