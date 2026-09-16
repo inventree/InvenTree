@@ -1013,6 +1013,14 @@ class BaseInvenTreeSetting(models.Model):
 
         return setting.get('confirm_text', '')
 
+    def flags(self) -> list:
+        """Return the flags associated with this setting."""
+        setting = self.get_setting_definition(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return setting.get('flags', [])
+
     def model_filters(self) -> Optional[dict]:
         """Return the model filters associated with this setting."""
         setting = self.get_setting_definition(
@@ -1832,7 +1840,10 @@ class CustomUnit(models.Model):
         """Validate that the provided custom unit is indeed valid."""
         super().clean()
 
-        from InvenTree.conversion import get_unit_registry
+        from InvenTree.conversion import (
+            build_candidate_unit_registry,
+            get_unit_registry,
+        )
 
         registry = get_unit_registry()
 
@@ -1851,11 +1862,27 @@ class CustomUnit(models.Model):
         except Exception as exc:
             raise ValidationError({'definition': str(exc)})
 
-        # Finally, test that the entire custom unit definition is valid
+        # Test that the entire custom unit definition is valid
         try:
             registry.define(self.fmt_string())
         except Exception as exc:
             raise ValidationError(str(exc))
+
+        # Build a registry containing *every* custom unit (including this
+        # pending one), and try to resolve this unit's dimensionality.
+        # Useful for catching recursion errors.
+        try:
+            candidate_registry = build_candidate_unit_registry(
+                self.fmt_string(), exclude_pk=self.pk
+            )
+            getattr(candidate_registry, self.name).compatible_units()
+        except Exception as exc:
+            raise ValidationError(
+                _(
+                    'Unit definition results in a circular or invalid reference: %(error)s'
+                )
+                % {'error': str(exc)}
+            )
 
     name = models.CharField(
         max_length=50,

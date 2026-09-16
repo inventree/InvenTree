@@ -18,6 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 import django_filters.rest_framework.filters as rest_filters
 import django_q.models
 import django_q.tasks
+import structlog
 from allauth.socialaccount import providers
 from allauth.socialaccount.models import SocialApp
 from django_filters.rest_framework.filterset import FilterSet
@@ -92,6 +93,8 @@ from InvenTree.permissions import (
 )
 from InvenTree.serializers import EmptySerializer
 from scim.admin_api import ScimConfigViewSet
+
+logger = structlog.get_logger('inventree')
 
 admin_router = InvenTreeApiRouter()
 common_router = InvenTreeApiRouter()
@@ -619,11 +622,22 @@ class CustomUnitViewset(DataExportViewMixin, viewsets.ModelViewSet):
     def all(self, request, *args, **kwargs):
         """Return a list of all available units."""
         reg = InvenTree.conversion.get_unit_registry()
-        all_units = {k: self.get_unit(reg, k) for k in reg}
+
+        all_units = {}
+
+        for k in reg:
+            try:
+                if unit := self.get_unit(reg, k):
+                    all_units[k] = unit
+            except Exception:
+                # A single bad unit definition (e.g. a circular reference between
+                # two custom units) should not take down the entire endpoint
+                logger.exception("Failed to process unit '%s' in unit registry", k)
+
         data = {
             'default_system': reg.default_system,
             'available_systems': dir(reg.sys),
-            'available_units': {k: v for k, v in all_units.items() if v},
+            'available_units': all_units,
         }
         return Response(data)
 
@@ -631,11 +645,24 @@ class CustomUnitViewset(DataExportViewMixin, viewsets.ModelViewSet):
         """Parse a unit from the registry."""
         if not hasattr(reg, k):
             return None
+
         unit: type[UnitLike] = getattr(reg, k)
+
+        try:
+            compatible_units = [
+                str(a)
+                for a in unit.compatible_units()  # ty:ignore[missing-argument]
+            ]
+        except Exception:
+            # Guard against e.g. a circular / recursive custom unit definition,
+            # which would otherwise raise an uncaught RecursionError here
+            logger.exception("Failed to determine compatible units for '%s'", k)
+            return None
+
         return {
             'name': k,
             'is_alias': reg.get_name(k) == k,
-            'compatible_units': [str(a) for a in unit.compatible_units()],  # ty:ignore[missing-argument]
+            'compatible_units': compatible_units,
             'isdimensionless': unit.dimensionless,
         }
 
@@ -846,6 +873,10 @@ class AttachmentFilter(FilterSet):
 
     tag_name = common.filters.TagsFilter()
 
+    filename = rest_filters.CharFilter(
+        field_name='attachment', lookup_expr='icontains', label=_('Filename')
+    )
+
 
 def get_viewable_attachment_model_types(user) -> set:
     """Return the set of attachment 'model_type' labels the user has 'view' permission for.
@@ -882,7 +913,7 @@ class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
     filterset_class = AttachmentFilter
 
     ordering_fields = ['model_id', 'model_type', 'upload_date', 'file_size']
-    search_fields = ['comment', 'model_id', 'model_type']
+    search_fields = ['comment', 'model_id', 'model_type', 'attachment']
 
     def get_queryset(self):
         """Restrict the queryset to attachments linked to a model the user can view."""

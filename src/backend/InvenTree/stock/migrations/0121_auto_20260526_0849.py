@@ -3,7 +3,9 @@
 import datetime
 from tqdm import tqdm
 
+from django.conf import settings
 from django.db import migrations
+from django.utils import timezone
 
 
 def set_creation_date(apps, schema_editor):
@@ -74,7 +76,13 @@ def set_creation_date(apps, schema_editor):
             date_options = [make_aware(d) for d in raw_options if d is not None]
 
             if date_options:
-                item.creation_date = min(date_options)
+                creation_date = min(date_options)
+
+                # Check if timezone-awarae datetimes are being used in the project settings
+                if not settings.USE_TZ:
+                    creation_date = timezone.make_naive(creation_date, utc)
+
+                item.creation_date = creation_date
                 process_item(item)
 
             progress.update(1)

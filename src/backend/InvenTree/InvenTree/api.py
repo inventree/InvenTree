@@ -351,10 +351,9 @@ class InfoView(APIView):
         if token := get_token_from_request(request):
             # Does the provided token match a valid user?
             try:
-                token = ApiToken.objects.get(key=token)
-
+                token = ApiToken.get_from_string(token)
                 # Check if the token is active and the user is a staff member
-                if token.active and token.user and token.user.is_staff:
+                if token and token.active and token.user and token.user.is_staff:
                     return True
             except ApiToken.DoesNotExist:
                 pass

@@ -330,12 +330,18 @@ export function useNoteFields({
 }: {
   modelType: ModelType;
   modelId: number;
-}): ApiFormFieldSet {
+}): { fields: ApiFormFieldSet; resetFields: () => void } {
   const api = useApi();
 
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [content, setContent] = useState<string>('');
+
+  const resetFields = useCallback(() => {
+    setTitle('');
+    setDescription('');
+    setContent('');
+  }, []);
 
   const fetchTemplate = useCallback(
     (pk: number | null) => {
@@ -352,7 +358,7 @@ export function useNoteFields({
     [api]
   );
 
-  return useMemo(() => {
+  const fields = useMemo<ApiFormFieldSet>(() => {
     return {
       model_type: {
         hidden: true,
@@ -392,6 +398,8 @@ export function useNoteFields({
       }
     };
   }, [modelType, modelId, title, description, content, fetchTemplate]);
+
+  return { fields, resetFields };
 }
 
 export function selectionListFields(): ApiFormFieldSet {

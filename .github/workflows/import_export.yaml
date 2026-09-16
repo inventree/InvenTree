@@ -82,7 +82,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libpq-dev
           pip-dependency: psycopg
@@ -94,7 +94,7 @@ jobs:
           invoke dev.setup-test -i
       - name: Create Plugin Data
         run: |
-          pip install -U inventree-dummy-app-plugin==0.1.0
+          pip install --only-binary :all: -U inventree-dummy-app-plugin==0.1.0
           invoke migrate
           cd src/backend/InvenTree && python manage.py create_dummy_data
       - name: Export Postgres Dataset
@@ -154,7 +154,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libpq-dev
           pip-dependency: psycopg
@@ -166,7 +166,7 @@ jobs:
           invoke dev.setup-test -i
       - name: Create Plugin Data
         run: |
-          pip install -U inventree-dummy-app-plugin==0.1.0
+          pip install --only-binary :all: -U inventree-dummy-app-plugin==0.1.0
           invoke migrate
           cd src/backend/InvenTree && python manage.py create_dummy_data
       - name: Seed Content-Excludes Test Data
@@ -218,7 +218,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libpq-dev
           pip-dependency: psycopg
@@ -230,7 +230,7 @@ jobs:
           invoke dev.setup-test -i
       - name: Create Plugin Data
         run: |
-          pip install -U inventree-dummy-app-plugin==0.1.0
+          pip install --only-binary :all: -U inventree-dummy-app-plugin==0.1.0
           invoke migrate
           cd src/backend/InvenTree && python manage.py create_dummy_data
       - name: Export Postgres Dataset (plugin installed)
@@ -292,7 +292,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libpq-dev
           pip-dependency: psycopg
