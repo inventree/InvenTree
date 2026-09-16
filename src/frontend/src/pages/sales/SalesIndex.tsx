@@ -3,132 +3,207 @@ import { Stack } from '@mantine/core';
 import {
   IconBuildingStore,
   IconCalendar,
+  IconCubeSend,
+  IconListDetails,
   IconTable,
   IconTruckDelivery,
   IconTruckReturn
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
-import { ModelType } from '@lib/enums/ModelType';
+import type { EventContentArg } from '@fullcalendar/core';
+import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
+import type { TableFilter } from '@lib/index';
 import { useLocalStorage } from '@mantine/hooks';
-import SegmentedIconControl from '../../components/buttons/SegmentedIconControl';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
+import OrderCalendarToolTip from '../../components/calendar/OrderCalendarToolTip';
 import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
+import ParametricCompanyTable from '../../tables/company/ParametricCompanyTable';
+import ReturnOrderParametricTable from '../../tables/sales/ReturnOrderParametricTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
+import SalesOrderFilters from '../../tables/sales/SalesOrderFilters';
+import SalesOrderParametricTable from '../../tables/sales/SalesOrderParametricTable';
+import SalesOrderShipmentTable from '../../tables/sales/SalesOrderShipmentTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 
-function SalesOrderOverview({
-  view
-}: {
-  view: string;
-}) {
-  switch (view) {
-    case 'calendar':
-      return (
-        <OrderCalendar
-          model={ModelType.salesorder}
-          role={UserRoles.sales_order}
-          params={{ outstanding: true }}
-        />
-      );
-    case 'table':
-    default:
-      return <SalesOrderTable />;
-  }
+function SalesOrderCalendar() {
+  const calendarFilters: TableFilter[] = useMemo(() => {
+    return SalesOrderFilters({ includeDateFilters: false });
+  }, []);
+
+  const renderTooltip = useCallback((event: EventContentArg) => {
+    return OrderCalendarToolTip({
+      event: event,
+      modelType: ModelType.company,
+      instanceLookup: 'customer_detail'
+    });
+  }, []);
+
+  return (
+    <OrderCalendar
+      model={ModelType.salesorder}
+      role={UserRoles.sales_order}
+      params={{ customer_detail: true }}
+      filters={calendarFilters}
+      initialFilters={[{ name: 'outstanding', value: 'true' }]}
+      tooltip={renderTooltip}
+    />
+  );
 }
 
-function ReturnOrderOverview({
-  view
-}: {
-  view: string;
-}) {
-  switch (view) {
-    case 'calendar':
-      return (
-        <OrderCalendar
-          model={ModelType.returnorder}
-          role={UserRoles.return_order}
-          params={{ outstanding: true }}
-        />
-      );
-    case 'table':
-    default:
-      return <ReturnOrderTable />;
-  }
-}
+const ReturnOrderCalendar = () => {
+  const calendarFilters: TableFilter[] = useMemo(() => {
+    return SalesOrderFilters({ includeDateFilters: false });
+  }, []);
+
+  const renderTooltip = useCallback((event: EventContentArg) => {
+    return OrderCalendarToolTip({
+      event: event,
+      modelType: ModelType.company,
+      instanceLookup: 'customer_detail'
+    });
+  }, []);
+
+  return (
+    <OrderCalendar
+      model={ModelType.returnorder}
+      role={UserRoles.return_order}
+      params={{ customer_detail: true }}
+      filters={calendarFilters}
+      initialFilters={[{ name: 'outstanding', value: 'true' }]}
+      tooltip={renderTooltip}
+    />
+  );
+};
 
 export default function SalesIndex() {
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
+
+  const [customersView, setCustomersView] = useLocalStorage<string>({
+    key: 'customer-view',
+    defaultValue: 'table'
+  });
 
   const [salesOrderView, setSalesOrderView] = useLocalStorage<string>({
-    key: 'salesOrderView',
+    key: 'sales-order-view',
     defaultValue: 'table'
   });
 
   const [returnOrderView, setReturnOrderView] = useLocalStorage<string>({
-    key: 'returnOrderView',
+    key: 'return-order-view',
     defaultValue: 'table'
   });
 
   const panels = useMemo(() => {
     return [
-      {
+      SegmentedControlPanel({
         name: 'salesorders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        content: <SalesOrderOverview view={salesOrderView} />,
-        controls: (
-          <SegmentedIconControl
-            value={salesOrderView}
-            onChange={setSalesOrderView}
-            data={[
-              { value: 'table', label: t`Table View`, icon: <IconTable /> },
-              {
-                value: 'calendar',
-                label: t`Calendar View`,
-                icon: <IconCalendar />
-              }
-            ]}
-          />
-        ),
-        hidden: !user.hasViewRole(UserRoles.sales_order)
-      },
+        hidden: !user.hasViewVisible(UserRoles.sales_order),
+        selection: salesOrderView,
+        onChange: setSalesOrderView,
+        options: [
+          {
+            value: 'table',
+            label: t`Table View`,
+            icon: <IconTable />,
+            content: <SalesOrderTable />
+          },
+          {
+            value: 'calendar',
+            label: t`Calendar View`,
+            icon: <IconCalendar />,
+            content: <SalesOrderCalendar />
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: <SalesOrderParametricTable />
+          }
+        ]
+      }),
       {
+        name: 'shipments',
+        label: t`Pending Shipments`,
+        icon: <IconCubeSend />,
+        hidden: !user.hasViewVisible(UserRoles.sales_order),
+        content: (
+          <SalesOrderShipmentTable
+            tableName={'sales-order-pending-shipment'}
+            showOrderInfo
+            filters={{ shipped: false, order_outstanding: true }}
+          />
+        )
+      },
+      SegmentedControlPanel({
         name: 'returnorders',
         label: t`Return Orders`,
         icon: <IconTruckReturn />,
-        content: <ReturnOrderOverview view={returnOrderView} />,
-        controls: (
-          <SegmentedIconControl
-            value={returnOrderView}
-            onChange={setReturnOrderView}
-            data={[
-              { value: 'table', label: t`Table View`, icon: <IconTable /> },
-              {
-                value: 'calendar',
-                label: t`Calendar View`,
-                icon: <IconCalendar />
-              }
-            ]}
-          />
-        ),
-        hidden: !user.hasViewRole(UserRoles.return_order)
-      },
-      {
+        hidden: !user.hasViewVisible(UserRoles.return_order),
+        selection: returnOrderView,
+        onChange: setReturnOrderView,
+        options: [
+          {
+            value: 'table',
+            label: t`Table View`,
+            icon: <IconTable />,
+            content: <ReturnOrderTable />
+          },
+          {
+            value: 'calendar',
+            label: t`Calendar View`,
+            icon: <IconCalendar />,
+            content: <ReturnOrderCalendar />
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: <ReturnOrderParametricTable />
+          }
+        ]
+      }),
+      SegmentedControlPanel({
         name: 'customers',
         label: t`Customers`,
         icon: <IconBuildingStore />,
-        content: (
-          <CompanyTable path='sales/customer' params={{ is_customer: true }} />
-        )
-      }
+        selection: customersView,
+        onChange: setCustomersView,
+        options: [
+          {
+            value: 'table',
+            label: t`Table View`,
+            icon: <IconTable />,
+            content: (
+              <CompanyTable
+                companyType='customer'
+                path='sales/customer'
+                params={{ is_customer: true }}
+              />
+            )
+          },
+          {
+            value: 'parametric',
+            label: t`Parametric View`,
+            icon: <IconListDetails />,
+            content: (
+              <ParametricCompanyTable queryParams={{ is_customer: true }} />
+            )
+          }
+        ]
+      })
     ];
-  }, [user, salesOrderView, returnOrderView]);
+  }, [user, customersView, salesOrderView, returnOrderView]);
 
   if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.sales_order)) {
     return <PermissionDenied />;
@@ -140,8 +215,8 @@ export default function SalesIndex() {
       <PanelGroup
         pageKey='sales-index'
         panels={panels}
-        model={'sales'}
-        id={null}
+        pluginPanelWithoutId
+        pluginPanelKey={PluginPanelKey.sales}
       />
     </Stack>
   );

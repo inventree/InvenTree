@@ -6,7 +6,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import type { TableState } from '@lib/types/Tables';
 import type { TableColumn } from '@lib/types/Tables';
-import { InvenTreeTable } from '../InvenTreeTable';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 
 export function NotificationTable({
   params,

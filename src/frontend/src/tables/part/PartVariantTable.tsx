@@ -35,6 +35,7 @@ export function PartVariantTable({ part }: Readonly<{ part: any }>) {
 
   return (
     <PartListTable
+      enableImport={false}
       props={{
         enableDownload: false,
         tableFilters: tableFilters,
@@ -42,6 +43,8 @@ export function PartVariantTable({ part }: Readonly<{ part: any }>) {
           ancestor: part.pk
         }
       }}
+      tableName='part-variants'
+      basePartInstance={part}
       defaultPartData={{
         ...part,
         variant_of: part.pk,

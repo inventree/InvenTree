@@ -1,6 +1,7 @@
 """Custom fields used in InvenTree."""
 
 import sys
+import uuid
 from decimal import Decimal
 
 from django import forms
@@ -13,8 +14,11 @@ from djmoney.models.fields import MoneyField as ModelMoneyField
 from djmoney.models.validators import MinMoneyValidator
 from rest_framework.fields import URLField as RestURLField
 from rest_framework.fields import empty
+from rest_framework.relations import PrimaryKeyRelatedField
 
 import InvenTree.helpers
+import InvenTree.ready
+from common.currency import currency_code_default
 from common.settings import get_global_setting
 
 from .validators import AllowedURLValidator, allowable_url_schemes
@@ -45,6 +49,42 @@ class InvenTreeRestURLField(RestURLField):
         return super().run_validation(data=data)
 
 
+class PrefetchedPrimaryKeyRelatedField(PrimaryKeyRelatedField):
+    """A PrimaryKeyRelatedField which resolves against a pre-fetched {pk: instance} map.
+
+    PrimaryKeyRelatedField normally issues one .get() query per list entry when used
+    inside a many=True nested serializer - for large lists (hundreds of related objects)
+    that becomes an O(n) query cost just to validate the request. The parent serializer
+    should instead bulk-fetch all referenced objects in a single query and stash the
+    {pk: instance} map in self.context[cache_key] (typically from an overridden
+    to_internal_value()); this field then does an O(1) dict lookup instead of hitting
+    the database.
+
+    Falls back to the default per-item query if no cache has been populated (or the pk
+    is missing from it), so this field remains safe to use standalone - e.g. in tests
+    constructing the child serializer directly, or for a pk that's genuinely invalid.
+    """
+
+    def __init__(self, cache_key: str, **kwargs):
+        """Store the context key under which the parent serializer stashes its prefetch cache."""
+        self.cache_key = cache_key
+        super().__init__(**kwargs)
+
+    def to_internal_value(self, data):
+        """Resolve 'data' (a raw pk value) against the prefetch cache, if available."""
+        cache = self.context.get(self.cache_key)
+
+        try:
+            pk = int(data)
+        except (TypeError, ValueError):
+            pk = None
+
+        if not cache or pk not in cache:
+            return super().to_internal_value(data)
+
+        return cache[pk]
+
+
 class InvenTreeURLField(models.URLField):
     """Custom URL field which has custom scheme validators."""
 
@@ -57,9 +97,37 @@ class InvenTreeURLField(models.URLField):
         super().__init__(**kwargs)
 
 
+class InvenTreeUUIDField(models.UUIDField):
+    """UUIDField which is always stored as a char(32) column on MySQL / MariaDB.
+
+    On MariaDB 10.7+, Django maps UUIDField to the native 'uuid' column type,
+    and writes 36-character (hyphenated) values to match.
+    However, databases migrated under older Django / MariaDB versions retain
+    their original char(32) columns, into which a 36-character value does not fit.
+
+    To ensure consistent behavior across all supported database backends,
+    we force the legacy char(32) storage format on MySQL / MariaDB.
+
+    Ref: https://docs.djangoproject.com/en/5.2/releases/5.0/#migrating-existing-uuidfield-on-mariadb-10-7
+    """
+
+    def db_type(self, connection):
+        """Force a char(32) column type on MySQL / MariaDB backends."""
+        if connection.vendor == 'mysql':
+            return 'char(32)'
+        return super().db_type(connection)
+
+    def get_db_prep_value(self, value, connection, prepared=False):
+        """Store values in 32-character hex format on MySQL / MariaDB backends."""
+        value = super().get_db_prep_value(value, connection, prepared)
+        if connection.vendor == 'mysql' and isinstance(value, uuid.UUID):
+            value = value.hex
+        return value
+
+
 def money_kwargs(**kwargs):
     """Returns the database settings for MoneyFields."""
-    from common.currency import currency_code_default, currency_code_mappings
+    from common.currency import currency_code_mappings
 
     # Default values (if not specified)
     if 'max_digits' not in kwargs:
@@ -69,10 +137,18 @@ def money_kwargs(**kwargs):
         kwargs['decimal_places'] = 6
 
     if 'currency_choices' not in kwargs:
-        kwargs['currency_choices'] = currency_code_mappings()
+        # Pass the function itself (not the evaluated result) so that the
+        # available currency options are resolved dynamically.
+        kwargs['currency_choices'] = currency_code_mappings
 
-    if 'default_currency' not in kwargs:
-        kwargs['default_currency'] = currency_code_default()
+    if InvenTree.ready.isRunningMigrations():
+        # During migrations, avoid setting a default currency
+        # This prevents issues related to early evaluation of the default currency value
+        kwargs['default_currency'] = ''
+    else:
+        # Override default currency with a callable function
+        # This ensures that the default currency is always up-to-date
+        kwargs['default_currency'] = currency_code_default
 
     return kwargs
 
@@ -212,3 +288,64 @@ class InvenTreeNotesField(models.TextField):
         kwargs['null'] = True
 
         super().__init__(**kwargs)
+
+
+class InvenTreeOutputOption:
+    """Represents an available output option with description, flag name, and default value."""
+
+    DEFAULT_DESCRIPTIONS = {
+        'part_detail': 'Include detailed information about the related part in the response',
+        'item_detail': 'Include detailed information about the item in the response',
+        'order_detail': 'Include detailed information about the sales order in the response',
+        'location_detail': 'Include detailed information about the stock location in the response',
+        'customer_detail': 'Include detailed information about the customer in the response',
+        'supplier_detail': 'Include detailed information about the supplier in the response',
+    }
+
+    def __init__(self, flag: str, default=False, description: str = ''):
+        """Initialize the output option."""
+        self.flag = flag
+        self.default = default
+
+        if description is None or description == '':
+            self.description = self.DEFAULT_DESCRIPTIONS.get(flag, '')
+        else:
+            self.description = description
+
+
+class OutputConfiguration:
+    """Holds all available output options for a view.
+
+    This class is responsible for converting incoming query parameters from an API request
+    into a dictionary of boolean flags, which can then be applied to serializers.
+    """
+
+    OPTIONS: list[InvenTreeOutputOption] = []
+
+    def __init_subclass__(cls, **kwargs):
+        """Validates that subclass defines OPTIONS attribute with correct type."""
+        super().__init_subclass__(**kwargs)
+
+        options = cls.OPTIONS
+        # Type validation - ensure it's a list
+        if not isinstance(options, list):
+            raise TypeError(
+                f"Class {cls.__name__} 'OPTIONS' must be a list, got {type(options).__name__}"
+            )
+
+        # Type validation - Ensure list contains InvenTreeOutputOption instances
+        for i, option in enumerate(options):
+            if not isinstance(option, InvenTreeOutputOption):
+                raise TypeError(
+                    f"Class {cls.__name__} 'OPTIONS[{i}]' must be an instance of InvenTreeOutputOption, "
+                    f'got {type(option).__name__}'
+                )
+
+    @classmethod
+    def format_params(cls, params: dict) -> dict[str, bool]:
+        """Convert query parameters into a dictionary of output flags with boolean values."""
+        result = {}
+        for option in cls.OPTIONS:
+            value = params.get(option.flag, option.default)
+            result[option.flag] = InvenTree.helpers.str2bool(value)
+        return result

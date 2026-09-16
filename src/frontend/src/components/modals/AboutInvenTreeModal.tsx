@@ -8,23 +8,23 @@ import {
   Group,
   Space,
   Stack,
-  Table,
-  Text
+  Table
 } from '@mantine/core';
 import type { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 
+import { CopyButton } from '@lib/components/CopyButton';
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { useShallow } from 'zustand/react/shallow';
 import { api } from '../../App';
+import { docLinks } from '../../defaults/links';
 import { generateUrl } from '../../functions/urls';
 import { useServerApiState } from '../../states/ServerApiState';
-import { useUserState } from '../../states/UserState';
-import { CopyButton } from '../buttons/CopyButton';
-import { StylishText } from '../items/StylishText';
 
 import type { JSX } from 'react';
+import { OnlyStaff } from '../items/OnlyStaff';
 
 type AboutLookupRef = {
   ref: string;
@@ -42,15 +42,11 @@ export function AboutInvenTreeModal({
     modalBody: string;
   }>
 >) {
-  const [user] = useUserState(useShallow((state) => [state.user]));
-
-  if (!user?.is_staff)
-    return (
-      <Text>
-        <Trans>This information is only available for staff users</Trans>
-      </Text>
-    );
-  return <AboutContent context={context} id={id} innerProps={innerProps} />;
+  return (
+    <OnlyStaff>
+      <AboutContent context={context} id={id} innerProps={innerProps} />
+    </OnlyStaff>
+  );
 }
 
 const AboutContent = ({
@@ -68,27 +64,29 @@ const AboutContent = ({
   });
 
   function fillTable(lookup: AboutLookupRef[], data: any, alwaysLink = false) {
-    return lookup.map((map: AboutLookupRef, idx) => (
-      <Table.Tr key={idx}>
-        <Table.Td>{map.title}</Table.Td>
-        <Table.Td>
-          <Group justify='space-between' gap='xs'>
-            {alwaysLink ? (
-              <Anchor href={data[map.ref]} target='_blank'>
-                {data[map.ref]}
-              </Anchor>
-            ) : map.link ? (
-              <Anchor href={map.link} target='_blank'>
-                {data[map.ref]}
-              </Anchor>
-            ) : (
-              data[map.ref]
-            )}
-            {map.copy && <CopyButton value={data[map.ref]} />}
-          </Group>
-        </Table.Td>
-      </Table.Tr>
-    ));
+    return lookup
+      .filter((entry: AboutLookupRef) => !!data[entry.ref])
+      .map((entry: AboutLookupRef) => (
+        <Table.Tr key={entry.ref}>
+          <Table.Td>{entry.title}</Table.Td>
+          <Table.Td>
+            <Group justify='space-between' gap='xs'>
+              {alwaysLink ? (
+                <Anchor href={data[entry.ref]} target='_blank'>
+                  {data[entry.ref]}
+                </Anchor>
+              ) : entry.link ? (
+                <Anchor href={entry.link} target='_blank'>
+                  {data[entry.ref]}
+                </Anchor>
+              ) : (
+                data[entry.ref]
+              )}
+              {entry.copy && <CopyButton value={data[entry.ref]} />}
+            </Group>
+          </Table.Td>
+        </Table.Tr>
+      ));
   }
   /* renderer */
   if (isLoading) return <Trans>Loading</Trans>;
@@ -114,7 +112,7 @@ const AboutContent = ({
     {
       ref: 'server',
       title: <Trans>InvenTree Version</Trans>,
-      link: 'https://github.com/inventree/InvenTree/releases',
+      link: docLinks.releases,
       copy: true
     },
     {
@@ -156,7 +154,7 @@ const AboutContent = ({
   }
 
   return (
-    <Stack>
+    <Stack style={{ userSelect: 'none' }}>
       <Divider />
       <Group justify='space-between' wrap='nowrap'>
         <StylishText size='lg'>
@@ -180,14 +178,25 @@ const AboutContent = ({
               { ref: 'app', title: <Trans>Mobile App</Trans> },
               { ref: 'bug', title: <Trans>Submit Bug Report</Trans> }
             ],
-            data.links,
+            {
+              doc: docLinks.docs,
+              code: docLinks.github,
+              app: docLinks.app,
+              bug: docLinks.bug
+            },
             true
           )}
         </Table.Tbody>
       </Table>
       <Divider />
       <Group justify='space-between'>
-        <CopyButton value={copyval} label={t`Copy version information`} />
+        <div style={{ border: '1px solid orange', borderRadius: '8px' }}>
+          <CopyButton
+            value={copyval}
+            label={t`Copy version information`}
+            color='orange'
+          />
+        </div>
         <Space />
         <Button
           onClick={() => {

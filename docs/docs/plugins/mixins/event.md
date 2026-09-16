@@ -13,6 +13,9 @@ When a certain (server-side) event occurs, the background worker passes the even
 
 {{ image("plugin/enable_events.png", "Enable event integration") }}
 
+!!! info "Worker debugging"
+    As the events are offloaded to a background worker debugging the `process_event()` function need some extra consideration. Please see  the [Run background workers](../../develop/devcontainer.md#run-background-workers) section for further information.
+
 ## Events
 
 Events are passed through using a string identifier, e.g. `build.completed`

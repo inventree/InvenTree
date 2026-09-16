@@ -5,10 +5,10 @@ import hashlib
 import inspect
 import io
 import json
-import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
+from pathlib import Path
 from typing import Optional, TypeVar
 from wsgiref.util import FileWrapper
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -17,19 +17,18 @@ from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
 from django.core.files.storage import default_storage
+from django.db.models.fields.files import FieldFile, ImageFieldFile
 from django.http import StreamingHttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-import bleach
+import nh3
 import structlog
-from bleach import clean
 from djmoney.money import Money
 from PIL import Image
+from stdimage.models import StdImageField, StdImageFieldFile
 
 from common.currency import currency_code_default
-
-from .settings import MEDIA_URL, STATIC_URL
 
 logger = structlog.get_logger('inventree')
 
@@ -124,7 +123,7 @@ def extract_int(
     return ref_int
 
 
-def generateTestKey(test_name: str) -> str:
+def generateTestKey(test_name: str | None) -> str:
     """Generate a test 'key' for a given test name. This must not have illegal chars as it will be used for dict lookup in a template.
 
     Tests must be named such that they will have unique keys.
@@ -172,18 +171,67 @@ def constructPathString(path: list[str], max_chars: int = 250) -> str:
     return pathstring
 
 
-def getMediaUrl(filename):
+def getMediaUrl(
+    file: FieldFile | ImageFieldFile | StdImageFieldFile, name: str | None = None
+):
     """Return the qualified access path for the given file, under the media directory."""
-    return os.path.join(MEDIA_URL, str(filename))
+    if not isinstance(file, (FieldFile, ImageFieldFile, StdImageFieldFile)):
+        raise TypeError(
+            'file must be one of FileField, ImageFileField, StdImageFieldFile'
+        )
+    if name is not None:
+        file = regenerate_imagefile(file, name)
+
+    return default_storage.url(file.name)
+
+
+def regenerate_imagefile(_file, _name: str):
+    """Regenerate a file object for a given variation name.
+
+    Arguments:
+        _file: Original file object
+        _name: Name of the variation (e.g. 'thumbnail', 'preview')
+    """
+    name = _file.field.attr_class.get_variation_name(_file.name, _name)
+    return ImageFieldFile(_file.instance, _file, name)  # ty:ignore[too-many-positional-arguments]
+
+
+def image2name(img_obj: StdImageField, do_preview: bool, do_thumbnail: bool):
+    """Convert an image object to a filename string.
+
+    Arguments:
+        img_obj: Image object
+        do_preview: Return preview image name
+        do_thumbnail: Return thumbnail image name
+    """
+
+    def extract(ref: str):
+        return None if not hasattr(img_obj, ref) else getattr(img_obj, ref).name
+
+    if not img_obj:
+        return None
+    elif do_preview:
+        return extract('preview')
+    elif do_thumbnail:
+        return extract('thumbnail')
+    else:
+        return img_obj.name
 
 
 def getStaticUrl(filename):
     """Return the qualified access path for the given file, under the static media directory."""
-    return os.path.join(STATIC_URL, str(filename))
+    return StaticFilesStorage().url(filename)
 
 
-def TestIfImage(img):
-    """Test if an image file is indeed an image."""
+def TestIfImage(img) -> bool:
+    """Test if an image file is indeed an image.
+
+    Arguments:
+        img: A file-like object
+
+    Returns:
+        True if the file is a valid image, False otherwise
+    """
     try:
         Image.open(img).verify()
         return True
@@ -201,28 +249,49 @@ def getBlankThumbnail():
     return getStaticUrl('img/blank_image.thumbnail.png')
 
 
-def getLogoImage(as_file=False, custom=True):
-    """Return the InvenTree logo image, or a custom logo if available."""
-    """Return the path to the logo-file."""
+def checkStaticFile(*args) -> bool:
+    """Check if a file exists in the static storage."""
+    static_storage = StaticFilesStorage()
+    fn = Path(*args)
+    return static_storage.exists(str(fn))
+
+
+def getLogoImage(as_file: bool = False, custom: bool = True) -> str:
+    """Return the InvenTree logo image, or a custom logo if available.
+
+    Arguments:
+        as_file: If True, return a base64-encoded data URI of the image contents,
+                 suitable for embedding directly into a generated report (default = False)
+        custom: If True, return a custom logo if one has been provided (default = True)
+    """
+    # Note: Imported here to avoid circular imports, as the 'report' app also imports from this module
+    import report.helpers
+    from report.templatetags.report import (
+        get_media_file_contents,
+        get_static_file_contents,
+    )
+
     if custom and settings.CUSTOM_LOGO:
         static_storage = StaticFilesStorage()
 
         if static_storage.exists(settings.CUSTOM_LOGO):
-            storage = static_storage
-        elif default_storage.exists(settings.CUSTOM_LOGO):
-            storage = default_storage
-        else:
-            storage = None
-
-        if storage is not None:
             if as_file:
-                return f'file://{storage.path(settings.CUSTOM_LOGO)}'
-            return storage.url(settings.CUSTOM_LOGO)
+                return report.helpers.encode_file_base64(
+                    settings.CUSTOM_LOGO, get_static_file_contents(settings.CUSTOM_LOGO)
+                )
+            return static_storage.url(settings.CUSTOM_LOGO)
+        elif default_storage.exists(settings.CUSTOM_LOGO):
+            if as_file:
+                return report.helpers.encode_file_base64(
+                    settings.CUSTOM_LOGO, get_media_file_contents(settings.CUSTOM_LOGO)
+                )
+            return default_storage.url(settings.CUSTOM_LOGO)
 
     # If we have got to this point, return the default logo
     if as_file:
-        path = settings.STATIC_ROOT.joinpath('img/inventree.png')
-        return f'file://{path}'
+        return report.helpers.encode_file_base64(
+            'img/inventree.png', get_static_file_contents('img/inventree.png')
+        )
     return getStaticUrl('img/inventree.png')
 
 
@@ -265,7 +334,7 @@ def TestIfImageURL(url):
     ]
 
 
-def str2bool(text, test=True):
+def str2bool(text, test=True) -> bool:
     """Test if a string 'looks' like a boolean value.
 
     Args:
@@ -366,9 +435,7 @@ def increment(value):
     except ValueError:
         pass
 
-    number = number.zfill(width)
-
-    return prefix + number
+    return prefix + str(number).zfill(width)
 
 
 def decimal2string(d):
@@ -492,29 +559,31 @@ def increment_serial_number(serial, part=None):
         incremented value, or None if incrementing could not be performed.
     """
     from InvenTree.exceptions import log_error
+    from InvenTree.ready import isReadOnlyCommand
     from plugin import PluginMixinEnum, registry
 
     # Ensure we start with a string value
     if serial is not None:
         serial = str(serial).strip()
 
-    # First, let any plugins attempt to increment the serial number
-    for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
-        try:
-            if not hasattr(plugin, 'increment_serial_number'):
-                continue
+    if not isReadOnlyCommand():
+        # First, let any plugins attempt to increment the serial number
+        for plugin in registry.with_mixin(PluginMixinEnum.VALIDATION):
+            try:
+                if not hasattr(plugin, 'increment_serial_number'):
+                    continue
 
-            signature = inspect.signature(plugin.increment_serial_number)
+                signature = inspect.signature(plugin.increment_serial_number)
 
-            # Note: 2024-08-21 - The 'part' parameter has been added to the signature
-            if 'part' in signature.parameters:
-                result = plugin.increment_serial_number(serial, part=part)
-            else:
-                result = plugin.increment_serial_number(serial)
-            if result is not None:
-                return str(result)
-        except Exception:
-            log_error('increment_serial_number', plugin=plugin.slug)
+                # Note: 2024-08-21 - The 'part' parameter has been added to the signature
+                if 'part' in signature.parameters:
+                    result = plugin.increment_serial_number(serial, part=part)
+                else:
+                    result = plugin.increment_serial_number(serial)
+                if result is not None:
+                    return str(result)
+            except Exception:
+                log_error('increment_serial_number', plugin=plugin.slug)
 
     # If we get to here, no plugins were able to "increment" the provided serial value
     # Attempt to perform increment according to some basic rules
@@ -837,13 +906,13 @@ def clean_decimal(number):
 
 
 def strip_html_tags(value: str, raise_error=True, field_name=None):
-    """Strip HTML tags from an input string using the bleach library.
+    """Strip HTML tags from an input string using the nh3 library.
 
     If raise_error is True, a ValidationError will be thrown if HTML tags are detected
     """
     value = str(value).strip()
 
-    cleaned = clean(value, strip=True, tags=[], attributes=[])
+    cleaned = nh3.clean(value, tags=frozenset())
 
     # Add escaped characters back in
     replacements = {'&gt;': '>', '&lt;': '<', '&amp;': '&'}
@@ -879,65 +948,6 @@ def remove_non_printable_characters(value: str, remove_newline=True) -> str:
     return cleaned
 
 
-def clean_markdown(value: str) -> str:
-    """Clean a markdown string.
-
-    This function will remove javascript and other potentially harmful content from the markdown string.
-    """
-    import markdown
-
-    try:
-        markdownify_settings = settings.MARKDOWNIFY['default']
-    except (AttributeError, KeyError):
-        markdownify_settings = {}
-
-    extensions = markdownify_settings.get('MARKDOWN_EXTENSIONS', [])
-    extension_configs = markdownify_settings.get('MARKDOWN_EXTENSION_CONFIGS', {})
-
-    # Generate raw HTML from provided markdown (without sanitizing)
-    # Note: The 'html' output_format is required to generate self closing tags, e.g. <tag> instead of <tag />
-    html = markdown.markdown(
-        value or '',
-        extensions=extensions,
-        extension_configs=extension_configs,
-        output_format='html',
-    )
-
-    # Bleach settings
-    whitelist_tags = markdownify_settings.get(
-        'WHITELIST_TAGS', bleach.sanitizer.ALLOWED_TAGS
-    )
-    whitelist_attrs = markdownify_settings.get(
-        'WHITELIST_ATTRS', bleach.sanitizer.ALLOWED_ATTRIBUTES
-    )
-    whitelist_styles = markdownify_settings.get(
-        'WHITELIST_STYLES', bleach.css_sanitizer.ALLOWED_CSS_PROPERTIES
-    )
-    whitelist_protocols = markdownify_settings.get(
-        'WHITELIST_PROTOCOLS', bleach.sanitizer.ALLOWED_PROTOCOLS
-    )
-    strip = markdownify_settings.get('STRIP', True)
-
-    css_sanitizer = bleach.css_sanitizer.CSSSanitizer(
-        allowed_css_properties=whitelist_styles
-    )
-    cleaner = bleach.Cleaner(
-        tags=whitelist_tags,
-        attributes=whitelist_attrs,
-        css_sanitizer=css_sanitizer,
-        protocols=whitelist_protocols,
-        strip=strip,
-    )
-
-    # Clean the HTML content (for comparison). This must be the same as the original content
-    clean_html = cleaner.clean(html)
-
-    if html != clean_html:
-        raise ValidationError(_('Data contains prohibited markdown content'))
-
-    return value
-
-
 def hash_barcode(barcode_data: str) -> str:
     """Calculate a 'unique' hash for a barcode string.
 
@@ -966,7 +976,7 @@ def current_time(local=True):
     """
     if settings.USE_TZ:
         now = timezone.now()
-        now = to_local_time(now, target_tz=server_timezone() if local else 'UTC')
+        now = to_local_time(now, target_tz_str=server_timezone() if local else 'UTC')
         return now
     else:
         return datetime.datetime.now()
@@ -985,12 +995,12 @@ def server_timezone() -> str:
     return settings.TIME_ZONE
 
 
-def to_local_time(time, target_tz: Optional[str] = None):
+def to_local_time(time, target_tz_str: Optional[str] = None):
     """Convert the provided time object to the local timezone.
 
     Arguments:
         time: The time / date to convert
-        target_tz: The desired timezone (string) - defaults to server time
+        target_tz_str: The desired timezone (string) - defaults to server time
 
     Returns:
         A timezone aware datetime object, with the desired timezone
@@ -1014,11 +1024,11 @@ def to_local_time(time, target_tz: Optional[str] = None):
         # Default to UTC if not provided
         source_tz = ZoneInfo('UTC')
 
-    if not target_tz:
-        target_tz = server_timezone()
+    if not target_tz_str:
+        target_tz_str = server_timezone()
 
     try:
-        target_tz = ZoneInfo(str(target_tz))
+        target_tz = ZoneInfo(str(target_tz_str))
     except ZoneInfoNotFoundError:
         target_tz = ZoneInfo('UTC')
 
@@ -1125,3 +1135,23 @@ def plugins_info(*args, **kwargs):
     return [
         {'name': plg.name, 'slug': plg.slug, 'version': plg.version} for plg in plugins
     ]
+
+
+def sanitize_token(token_value: str, front=8, back=12) -> str:
+    """Sanitize a token by replacing the middle characters with asterisks.
+
+    Args:
+        token_value: The token string to sanitize
+        front: Number of characters to show at the start of the token (default = 8)
+        back: Number of characters to show at the end of the token (default = 12)
+
+    Returns:
+        The sanitized token string
+    """
+    middle = len(token_value) - (front + back)
+    return token_value[:front] + '*' * middle + token_value[-back:]
+
+
+def get_api_token_pepper() -> str:
+    """Return the secret 'pepper' used to compute v2 tokens."""
+    return settings.SECRET_KEY

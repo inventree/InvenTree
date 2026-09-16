@@ -18,7 +18,7 @@ class SampleApiCallerPlugin(APICallMixin, SettingsMixin, InvenTreePlugin):
         'API_URL': {
             'name': 'External URL',
             'description': 'Where is your API located?',
-            'default': 'reqres.in',
+            'default': 'api.example.com',
         },
     }
     API_URL_SETTING = 'API_URL'

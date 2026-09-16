@@ -8,6 +8,28 @@ export const getBaseUrl = (): string =>
   (window as any).INVENTREE_SETTINGS?.base_url || 'web';
 
 /**
+ * Returns the overview URL for a given model type.
+ * This is the UI URL, not the API URL.
+ */
+export function getOverviewUrl(model: ModelType, absolute?: boolean): string {
+  const modelInfo = ModelInformationDict[model];
+
+  if (modelInfo?.url_overview) {
+    const url = modelInfo.url_overview;
+    const base = getBaseUrl();
+
+    if (absolute && base) {
+      return `/${base}${url}`;
+    } else {
+      return url;
+    }
+  }
+
+  console.error(`No overview URL found for model ${model}`);
+  return '';
+}
+
+/**
  * Returns the detail view URL for a given model type.
  * This is the UI URL, not the API URL.
  */
@@ -33,7 +55,7 @@ export function getDetailUrl(
     }
   }
 
-  console.error(`No detail URL found for model ${model} <${pk}>`);
+  console.warn(`No detail URL found for model ${model} <${pk}>`);
   return '';
 }
 

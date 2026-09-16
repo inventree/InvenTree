@@ -3,34 +3,34 @@ import { Skeleton } from '@mantine/core';
 import { IconNotes } from '@tabler/icons-react';
 
 import type { ModelType } from '@lib/enums/ModelType';
-import { useUserState } from '../../states/UserState';
+import type { PanelType } from '@lib/types/Panel';
 import NotesEditor from '../editors/NotesEditor';
-import type { PanelType } from './Panel';
+
+// const NotesEditor = lazy(() => import('../editors/NotesEditor'));
 
 export default function NotesPanel({
   model_type,
   model_id,
-  editable
+  editable,
+  note_count
 }: {
   model_type: ModelType;
   model_id: number | undefined;
   editable?: boolean;
+  note_count?: number;
 }): PanelType {
-  const user = useUserState.getState();
-
   return {
     name: 'notes',
     label: t`Notes`,
     icon: <IconNotes />,
+    hotkey: 'mod+Shift+N',
+    notification_dot: note_count ? 'info' : null,
     content:
       model_type && model_id ? (
-        <NotesEditor
-          modelType={model_type}
-          modelId={model_id}
-          editable={editable ?? user.hasChangePermission(model_type)}
-        />
+        <NotesEditor modelType={model_type} modelId={model_id} />
       ) : (
         <Skeleton />
-      )
+      ),
+    supportsDirty: true
   };
 }

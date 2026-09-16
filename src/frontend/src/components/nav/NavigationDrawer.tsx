@@ -1,25 +1,18 @@
 import { t } from '@lingui/core/macro';
-import {
-  Container,
-  Drawer,
-  Flex,
-  Group,
-  ScrollArea,
-  Space
-} from '@mantine/core';
+import { Container, Drawer, Flex, Group, Space } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
-import { AboutLinks, DocumentationLinks } from '../../defaults/links';
+import { AboutLinks } from '../../defaults/links';
 import useInstanceName from '../../hooks/UseInstanceName';
 import * as classes from '../../main.css';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { type MenuLinkItem, MenuLinks } from '../items/MenuLinks';
-import { StylishText } from '../items/StylishText';
 
 // TODO @matmair #1: implement plugin loading and menu item generation see #5269
 const plugins: MenuLinkItem[] = [];
@@ -90,21 +83,21 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         id: 'build',
         title: t`Manufacturing`,
         link: '/manufacturing/',
-        hidden: !user.hasViewRole(UserRoles.build),
+        hidden: !user.hasViewVisible(UserRoles.build),
         icon: 'build'
       },
       {
         id: 'purchasing',
         title: t`Purchasing`,
         link: '/purchasing/',
-        hidden: !user.hasViewRole(UserRoles.purchase_order),
+        hidden: !user.hasViewVisible(UserRoles.purchase_order),
         icon: 'purchase_orders'
       },
       {
         id: 'sales',
         title: t`Sales`,
         link: '/sales/',
-        hidden: !user.hasViewRole(UserRoles.sales_order),
+        hidden: !user.hasViewVisible(UserRoles.sales_order),
         icon: 'sales_orders'
       },
       {
@@ -165,11 +158,6 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
     ];
   }, [user]);
 
-  const menuItemsDocumentation: MenuLinkItem[] = useMemo(
-    () => DocumentationLinks(),
-    []
-  );
-
   const menuItemsAbout: MenuLinkItem[] = useMemo(
     () => AboutLinks(globalSettings, user),
     []
@@ -183,41 +171,33 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
       </Group>
       <Space h='xs' />
       <Container className={classes.layoutContent} p={0}>
-        <ScrollArea h={scrollHeight} type='always' offsetScrollbars>
-          <MenuLinks
-            title={t`Navigation`}
-            links={menuItemsNavigate}
-            beforeClick={closeFunc}
-          />
-          <MenuLinks
-            title={t`Settings`}
-            links={menuItemsSettings}
-            beforeClick={closeFunc}
-          />
-          <MenuLinks
-            title={t`Actions`}
-            links={menuItemsAction}
-            beforeClick={closeFunc}
-          />
-          <Space h='md' />
-          {plugins.length > 0 ? (
-            <MenuLinks
-              title={t`Plugins`}
-              links={plugins}
-              beforeClick={closeFunc}
-            />
-          ) : (
-            <></>
-          )}
-        </ScrollArea>
-      </Container>
-      <div ref={ref}>
-        <Space h='md' />
         <MenuLinks
-          title={t`Documentation`}
-          links={menuItemsDocumentation}
+          title={t`Navigation`}
+          links={menuItemsNavigate}
           beforeClick={closeFunc}
         />
+        <MenuLinks
+          title={t`Settings`}
+          links={menuItemsSettings}
+          beforeClick={closeFunc}
+        />
+        <MenuLinks
+          title={t`Actions`}
+          links={menuItemsAction}
+          beforeClick={closeFunc}
+        />
+        <Space h='md' />
+        {plugins.length > 0 ? (
+          <MenuLinks
+            title={t`Plugins`}
+            links={plugins}
+            beforeClick={closeFunc}
+          />
+        ) : (
+          <></>
+        )}
+      </Container>
+      <div ref={ref}>
         <Space h='md' />
         <MenuLinks
           title={t`About`}

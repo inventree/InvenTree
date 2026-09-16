@@ -1,5 +1,6 @@
 """Core set of Notifications as a Plugin."""
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models import Model
 from django.template.loader import render_to_string
@@ -38,6 +39,10 @@ class InvenTreeUINotifications(NotificationMixin, InvenTreePlugin):
         if not users:
             return False
 
+        # Ensure that there is always target object - see https://github.com/inventree/InvenTree/issues/10435
+        if not target:
+            target = self.plugin_config()
+
         # Bulk create notification messages for all provided users
         for user in users:
             entries.append(
@@ -48,10 +53,11 @@ class InvenTreeUINotifications(NotificationMixin, InvenTreePlugin):
                     category=category,
                     name=ctx.get('name'),
                     message=ctx.get('message'),
+                    link=ctx.get('link'),
                 )
             )
 
-        NotificationMessage.objects.bulk_create(entries)
+        NotificationMessage.objects.bulk_create(entries, batch_size=250)
 
         return True
 
@@ -104,7 +110,11 @@ class InvenTreeEmailNotifications(NotificationMixin, SettingsMixin, InvenTreePlu
 
         if recipients:
             InvenTree.helpers_email.send_email(
-                subject, '', recipients, html_message=html_message
+                subject,
+                '',
+                recipients,
+                html_message=html_message,
+                force_async=not settings.TESTING,
             )
             return True
 
@@ -124,7 +134,7 @@ class InvenTreeSlackNotifications(NotificationMixin, SettingsMixin, InvenTreePlu
 
     SETTINGS = {
         'NOTIFICATION_SLACK_URL': {
-            'name': _('Slack incoming webhook url'),
+            'name': _('Slack incoming webhook URL'),
             'description': _('URL that is used to send messages to a slack channel'),
             'protected': True,
         }

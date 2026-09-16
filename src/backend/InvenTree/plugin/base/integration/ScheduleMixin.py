@@ -161,50 +161,64 @@ class ScheduleMixin:
         self.validate_scheduled_tasks()
 
         try:
+            from django.db import transaction
+
             from django_q.models import Schedule
 
-            for key, task in self.scheduled_tasks.items():
-                task_name = self.get_task_name(key)
+            from plugin.models import PluginConfig
 
-                obj = {
-                    'name': task_name,
-                    'schedule_type': task['schedule'],
-                    'minutes': task.get('minutes', None),
-                    'repeats': task.get('repeats', -1),
-                }
+            with transaction.atomic():
+                # Lock this plugin's PluginConfig row for the duration of task
+                # registration. django_q's Schedule.name has no DB-level unique
+                # constraint, so without this lock, concurrent activation (e.g.
+                # multiple worker processes starting up at the same time) can
+                # both pass the 'does this task already exist' check below and
+                # each create a duplicate Schedule row for the same task name.
+                if config := self.plugin_config():
+                    PluginConfig.objects.select_for_update().get(pk=config.pk)
 
-                func_name = task['func'].strip()
+                for key, task in self.scheduled_tasks.items():
+                    task_name = self.get_task_name(key)
 
-                if '.' in func_name:
-                    """Dotted notation indicates that we wish to run a globally defined function, from a specified Python module."""
-                    obj['func'] = func_name
-                else:
-                    """Non-dotted notation indicates that we wish to call a 'member function' of the calling plugin. This is managed by the plugin registry itself."""
-                    slug = self.plugin_slug()
-                    obj['func'] = 'plugin.registry.call_plugin_function'
-                    obj['args'] = f"'{slug}', '{func_name}'"
+                    obj = {
+                        'name': task_name,
+                        'schedule_type': task['schedule'],
+                        'minutes': task.get('minutes', None),
+                        'repeats': task.get('repeats', -1),
+                    }
 
-                tasks = Schedule.objects.filter(name=task_name)
+                    func_name = task['func'].strip()
 
-                if len(tasks) > 1:
-                    logger.info(
-                        "Found multiple tasks; Adding a new scheduled task '%s'",
-                        task_name,
-                    )
-                    tasks.delete()
-                    Schedule.objects.create(**obj)
-                elif len(tasks) == 1:
-                    # Scheduled task already exists - update it!
-                    logger.info("Updating scheduled task '%s'", task_name)
+                    if '.' in func_name:
+                        """Dotted notation indicates that we wish to run a globally defined function, from a specified Python module."""
+                        obj['func'] = func_name
+                    else:
+                        """Non-dotted notation indicates that we wish to call a 'member function' of the calling plugin. This is managed by the plugin registry itself."""
+                        slug = self.plugin_slug()
+                        obj['func'] = 'plugin.registry.call_plugin_function'
+                        obj['args'] = f"'{slug}', '{func_name}'"
 
-                    if instance := tasks.first():
-                        for item in obj:
-                            setattr(instance, item, obj[item])
-                        instance.save()
-                else:
-                    logger.info("Adding scheduled task '%s'", task_name)
-                    # Create a new scheduled task
-                    Schedule.objects.create(**obj)
+                    tasks = Schedule.objects.filter(name=task_name)
+
+                    if len(tasks) > 1:
+                        logger.info(
+                            "Found multiple tasks; Adding a new scheduled task '%s'",
+                            task_name,
+                        )
+                        tasks.delete()
+                        Schedule.objects.create(**obj)
+                    elif len(tasks) == 1:
+                        # Scheduled task already exists - update it!
+                        logger.info("Updating scheduled task '%s'", task_name)
+
+                        if instance := tasks.first():
+                            for item in obj:
+                                setattr(instance, item, obj[item])
+                            instance.save()
+                    else:
+                        logger.info("Adding scheduled task '%s'", task_name)
+                        # Create a new scheduled task
+                        Schedule.objects.create(**obj)
 
         except (ProgrammingError, OperationalError):  # pragma: no cover
             # Database might not yet be ready

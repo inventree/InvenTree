@@ -1,5 +1,7 @@
 """Overrides for allauth and adjacent packages to enforce InvenTree specific auth settings and restirctions."""
 
+from typing import Literal
+
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -12,14 +14,12 @@ import structlog
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
 from allauth.headless.adapter import DefaultHeadlessAdapter
-from allauth.headless.tokens.sessions import SessionTokenStrategy
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
-import InvenTree.sso
 from common.settings import get_global_setting
 from InvenTree.exceptions import log_error
-from users.models import ApiToken
 
+from .helpers import str2bool
 from .helpers_email import is_email_configured
 
 logger = structlog.get_logger('inventree')
@@ -87,12 +87,12 @@ class CustomSignupForm(SignupForm):
         return cleaned_data
 
 
-def registration_enabled():
+RegistrationKeys = Literal['LOGIN_ENABLE_REG', 'LOGIN_ENABLE_SSO_REG']
+
+
+def registration_enabled(setting_name: RegistrationKeys = 'LOGIN_ENABLE_REG'):
     """Determine whether user registration is enabled."""
-    if (
-        get_global_setting('LOGIN_ENABLE_REG')
-        or InvenTree.sso.sso_registration_enabled()
-    ):
+    if str2bool(get_global_setting(setting_name)):
         if is_email_configured():
             return True
         else:
@@ -105,13 +105,21 @@ def registration_enabled():
 class RegistrationMixin:
     """Mixin to check if registration should be enabled."""
 
+    REGISTRATION_SETTING: RegistrationKeys = 'LOGIN_ENABLE_REG'
+
     def is_open_for_signup(self, request, *args, **kwargs):
         """Check if signup is enabled in settings.
 
         Configure the class variable `REGISTRATION_SETTING` to set which setting should be used, default: `LOGIN_ENABLE_REG`.
         """
-        if registration_enabled():
-            return super().is_open_for_signup(request, *args, **kwargs)
+        if registration_enabled(self.REGISTRATION_SETTING):
+            return True
+        # Only warn when this is an actual signup submission, not when called as
+        # a feature-availability check during login or other auth flows.
+        if request and request.method == 'POST' and 'signup' in request.path:
+            logger.warning(
+                f'INVE-W12: Signup attempt blocked, because registration is disabled via setting {self.REGISTRATION_SETTING}.'
+            )
         return False
 
     def clean_email(self, email):
@@ -189,6 +197,18 @@ class CustomAccountAdapter(RegistrationMixin, DefaultAccountAdapter):
 class CustomSocialAccountAdapter(RegistrationMixin, DefaultSocialAccountAdapter):
     """Override of adapter to use dynamic settings."""
 
+    REGISTRATION_SETTING = 'LOGIN_ENABLE_SSO_REG'
+
+    def pre_social_login(self, request, sociallogin):
+        """Reject SSO logins outright while SSO is disabled via settings.
+
+        This runs for every social login attempt (new or existing account),
+        not just self-registration - LOGIN_ENABLE_SSO_REG only gates signup.
+        """
+        if not get_global_setting('LOGIN_ENABLE_SSO'):
+            raise PermissionDenied('SSO is disabled')
+        super().pre_social_login(request, sociallogin)
+
     def is_auto_signup_allowed(self, request, sociallogin):
         """Check if auto signup is enabled in settings."""
         if get_global_setting('LOGIN_SIGNUP_SSO_AUTO', True):
@@ -231,17 +251,8 @@ class CustomHeadlessAdapter(DefaultHeadlessAdapter):
         if urlname not in HEADLESS_FRONTEND_URLS:
             raise ValueError(
                 f'URL name "{urlname}" not found in HEADLESS_FRONTEND_URLS'
-            )
+            )  # pragma: no cover
 
         return self.request.build_absolute_uri(
             f'/{settings.FRONTEND_URL_BASE}/{HEADLESS_FRONTEND_URLS[urlname].format(**kwargs)}'
         )
-
-
-class DRFTokenStrategy(SessionTokenStrategy):
-    """Strategy that InvenTrees own included Token model."""
-
-    def create_access_token(self, request):
-        """Create a new access token for the user."""
-        token, _ = ApiToken.objects.get_or_create(user=request.user)
-        return token.key

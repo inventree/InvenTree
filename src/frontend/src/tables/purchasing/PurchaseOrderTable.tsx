@@ -6,12 +6,8 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
-import { formatCurrency } from '../../defaults/formatters';
-import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { useUserState } from '../../states/UserState';
 import {
   CompanyColumn,
   CompletionDateColumn,
@@ -19,34 +15,21 @@ import {
   CreationDateColumn,
   DescriptionColumn,
   LineItemsProgressColumn,
+  LinkColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
   StartDateColumn,
   StatusColumn,
-  TargetDateColumn
-} from '../ColumnRenderers';
-import {
-  AssignedToMeFilter,
-  CompletedAfterFilter,
-  CompletedBeforeFilter,
-  CreatedAfterFilter,
-  CreatedBeforeFilter,
-  CreatedByFilter,
-  HasProjectCodeFilter,
-  MaxDateFilter,
-  MinDateFilter,
-  OrderStatusFilter,
-  OutstandingFilter,
-  OverdueFilter,
-  ProjectCodeFilter,
-  ResponsibleFilter,
-  StartDateAfterFilter,
-  StartDateBeforeFilter,
-  TargetDateAfterFilter,
-  TargetDateBeforeFilter
-} from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+  TargetDateColumn,
+  UpdatedAtColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { formatCurrency } from '../../defaults/formatters';
+import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useUserState } from '../../states/UserState';
+import PurchaseOrderFilters from './PurchaseOrderFilters';
 
 /**
  * Display a table of purchase orders
@@ -60,42 +43,18 @@ export function PurchaseOrderTable({
   supplierPartId?: number;
   externalBuildId?: number;
 }>) {
-  const table = useTable('purchase-order');
+  const table = useTable('purchase-order', {
+    initialFilters: [
+      {
+        name: 'outstanding',
+        value: 'true'
+      }
+    ]
+  });
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
-      OrderStatusFilter({ model: ModelType.purchaseorder }),
-      OutstandingFilter(),
-      OverdueFilter(),
-      AssignedToMeFilter(),
-      MinDateFilter(),
-      MaxDateFilter(),
-      CreatedBeforeFilter(),
-      CreatedAfterFilter(),
-      TargetDateBeforeFilter(),
-      TargetDateAfterFilter(),
-      StartDateBeforeFilter(),
-      StartDateAfterFilter(),
-      {
-        name: 'has_target_date',
-        type: 'boolean',
-        label: t`Has Target Date`,
-        description: t`Show orders with a target date`
-      },
-      {
-        name: 'has_start_date',
-        type: 'boolean',
-        label: t`Has Start Date`,
-        description: t`Show orders with a start date`
-      },
-      CompletedBeforeFilter(),
-      CompletedAfterFilter(),
-      ProjectCodeFilter(),
-      HasProjectCodeFilter(),
-      ResponsibleFilter(),
-      CreatedByFilter()
-    ];
+    return PurchaseOrderFilters({ includeDateFilters: true });
   }, []);
 
   const tableColumns = useMemo(() => {
@@ -113,7 +72,8 @@ export function PurchaseOrderTable({
         )
       },
       {
-        accessor: 'supplier_reference'
+        accessor: 'supplier_reference',
+        copyable: true
       },
       LineItemsProgressColumn({}),
       StatusColumn({ model: ModelType.purchaseorder }),
@@ -133,6 +93,9 @@ export function PurchaseOrderTable({
       CompletionDateColumn({
         accessor: 'complete_date'
       }),
+      UpdatedAtColumn({
+        defaultVisible: false
+      }),
       {
         accessor: 'total_price',
         title: t`Total Price`,
@@ -143,7 +106,8 @@ export function PurchaseOrderTable({
           });
         }
       },
-      ResponsibleColumn({})
+      ResponsibleColumn({}),
+      LinkColumn({})
     ];
   }, []);
 
@@ -157,7 +121,8 @@ export function PurchaseOrderTable({
       supplier: supplierId
     },
     follow: true,
-    modelType: ModelType.purchaseorder
+    modelType: ModelType.purchaseorder,
+    keepOpenOption: true
   });
 
   const tableActions = useMemo(() => {
@@ -190,7 +155,8 @@ export function PurchaseOrderTable({
           modelType: ModelType.purchaseorder,
           enableSelection: true,
           enableDownload: true,
-          enableReports: true
+          enableReports: true,
+          enableLabels: true
         }}
       />
     </>

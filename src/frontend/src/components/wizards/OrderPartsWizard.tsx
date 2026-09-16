@@ -1,30 +1,174 @@
 import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
+import { CopyButton } from '@lib/components/CopyButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
-import { Alert, Group, Paper, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  Alert,
+  Divider,
+  Group,
+  HoverCard,
+  Loader,
+  Paper,
+  Stack,
+  Text,
+  Tooltip
+} from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { IconShoppingCart } from '@tabler/icons-react';
+import {
+  IconExclamationCircle,
+  IconInfoCircle,
+  IconShoppingCart
+} from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useInstance } from '../../hooks/UseInstance';
 import useWizard from '../../hooks/UseWizard';
-import { RenderPartColumn } from '../../tables/ColumnRenderers';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import RemoveRowButton from '../buttons/RemoveRowButton';
 import { StandaloneField } from '../forms/StandaloneField';
 import Expand from '../items/Expand';
+import { RenderPartColumn } from '../tables/ColumnRenderers';
+
+/**
+ * Render the "requirements" info for a part
+ * This fetches the information dynamically from the API
+ */
+function PartRequirementsInfo({
+  partId,
+  onQuantityChange
+}: {
+  partId: number | string;
+  onQuantityChange?: (quantity: number) => void;
+}) {
+  const [requiredQuantity, setRequiredQuantity] = useState<number>(0);
+
+  // Notify parent component of quantity change
+  useEffect(() => {
+    onQuantityChange?.(requiredQuantity);
+  }, [requiredQuantity]);
+
+  const requirements = useInstance({
+    endpoint: ApiEndpoints.part_requirements,
+    pk: partId,
+    hasPrimaryKey: true,
+    defaultValue: {}
+  });
+
+  const widget = useMemo(() => {
+    if (
+      requirements.instanceQuery.isFetching ||
+      requirements.instanceQuery.isLoading
+    ) {
+      return <Loader size='sm' />;
+    }
+
+    if (requirements.instanceQuery.isError) {
+      return (
+        <Tooltip label={t`Error fetching part requirements`}>
+          <ActionIcon variant='transparent' color='red'>
+            <IconExclamationCircle />
+          </ActionIcon>
+        </Tooltip>
+      );
+    }
+
+    // Calculate the total requirements
+    const buildRequirements =
+      requirements.instance?.required_for_build_orders || 0;
+    const salesRequirements =
+      requirements.instance?.required_for_sales_orders || 0;
+    const totalRequirements = buildRequirements + salesRequirements;
+
+    const building = requirements.instance?.building || 0;
+    const ordering = requirements.instance?.ordering || 0;
+    const incoming = building + ordering;
+
+    const inStock = requirements.instance?.total_stock || 0;
+
+    const required = Math.max(0, totalRequirements - inStock - incoming);
+
+    setRequiredQuantity(required);
+
+    return (
+      <HoverCard position='bottom-end'>
+        <HoverCard.Target>
+          <ActionIcon
+            variant='transparent'
+            color={required > 0 ? 'blue' : 'green'}
+            size='sm'
+          >
+            <IconInfoCircle />
+          </ActionIcon>
+        </HoverCard.Target>
+        <HoverCard.Dropdown>
+          <Stack gap='xs'>
+            <Text>{t`Requirements`}</Text>
+            <Divider />
+            {buildRequirements > 0 && (
+              <Group justify='space-between'>
+                <Text size='xs'>{t`Build Requirements`}</Text>
+                <Text size='xs'>{formatDecimal(buildRequirements)}</Text>
+              </Group>
+            )}
+            {salesRequirements > 0 && (
+              <Group justify='space-between'>
+                <Text size='xs'>{t`Sales Requirements`}</Text>
+                <Text size='xs'>{formatDecimal(salesRequirements)}</Text>
+              </Group>
+            )}
+            {inStock > 0 && (
+              <Group justify='space-between'>
+                <Text size='xs'>{t`In Stock`}</Text>
+                <Text size='xs'>{formatDecimal(inStock)}</Text>
+              </Group>
+            )}
+            {ordering > 0 && (
+              <Group justify='space-between'>
+                <Text size='xs'>{t`On Order`}</Text>
+                <Text size='xs'>{formatDecimal(ordering)}</Text>
+              </Group>
+            )}
+            {building > 0 && (
+              <Group justify='space-between'>
+                <Text size='xs'>{t`In Production`}</Text>
+                <Text size='xs'>{formatDecimal(building)}</Text>
+              </Group>
+            )}
+            <Group justify='space-between'>
+              <Text size='xs'>{t`Required Quantity`}</Text>
+              <Text size='xs'>{formatDecimal(required)}</Text>
+            </Group>
+          </Stack>
+        </HoverCard.Dropdown>
+      </HoverCard>
+    );
+  }, [
+    requirements.instanceQuery.isFetching,
+    requirements.instanceQuery.isLoading,
+    requirements.instanceQuery.isError,
+    requirements.instance,
+    setRequiredQuantity
+  ]);
+
+  return widget;
+}
 
 /**
  * Attributes for each selected part
  * - part: The part instance
  * - supplier_part: The selected supplier part instance
  * - purchase_order: The selected purchase order instance
- * - quantity: The quantity of the part to order
+ * - quantity: The quantity of the part to order (taking supplier pack size into account)
+ * - quantity_raw: The raw quantity entered by the user (before adjusting for supplier pack size)
  * - errors: Error messages for each attribute
  */
 interface PartOrderRecord {
@@ -32,6 +176,7 @@ interface PartOrderRecord {
   supplier_part: any;
   purchase_order: any;
   quantity: number;
+  quantity_raw?: number;
   errors: any;
 }
 
@@ -51,6 +196,7 @@ function SelectPartsStep({
   const [selectedRecord, setSelectedRecord] = useState<PartOrderRecord | null>(
     null
   );
+  const globalSettings = useGlobalSettingsState();
 
   const purchaseOrderFields = usePurchaseOrderFields({
     supplierId: selectedRecord?.supplier_part?.supplier
@@ -94,9 +240,13 @@ function SelectPartsStep({
       quantity: {
         // TODO: Auto-fill with the desired quantity
       },
-      merge_items: {}
+      purchase_price: {},
+      purchase_price_currency: {},
+      merge_items: {
+        default: globalSettings.isSet('PURCHASEORDER_MERGE_LINE_ITEMS', true)
+      }
     };
-  }, [selectedRecord]);
+  }, [selectedRecord, globalSettings]);
 
   const addToOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_line_list),
@@ -123,13 +273,17 @@ function SelectPartsStep({
         width: '1%',
         render: (record: PartOrderRecord) => (
           <Group gap='xs' wrap='nowrap' justify='left'>
-            <RemoveRowButton onClick={() => onRemovePart(record.part)} />
+            <RemoveRowButton
+              tooltipAlignment={'top-start'}
+              onClick={() => onRemovePart(record.part)}
+            />
           </Group>
         )
       },
       {
         accessor: 'part',
         title: t`Part`,
+        minWidth: 200,
         render: (record: PartOrderRecord) => (
           <Tooltip label={record.part?.description}>
             <Paper p='xs'>
@@ -155,21 +309,34 @@ function SelectPartsStep({
                   model: ModelType.supplierpart,
                   placeholder: t`Select supplier part`,
                   required: true,
+                  autoFill: true,
+                  autoFillFilters: {
+                    active: true,
+                    primary: true
+                  },
                   value: record.supplier_part?.pk,
                   onValueChange: (value, instance) => {
                     onSelectSupplierPart(record.part.pk, instance);
                   },
                   filters: {
                     part: record.part.pk,
+                    ordering: '-primary',
                     active: true,
+                    part_detail: true,
                     supplier_detail: true
                   }
                 }}
               />
             </Expand>
+            <CopyButton
+              disabled={!record.supplier_part?.pk}
+              value={record.supplier_part?.SKU}
+              tooltipPosition='top-end'
+              tooltip={t`Copy supplier part number`}
+            />
             <AddItemButton
               tooltip={t`New supplier part`}
-              tooltipAlignment='top'
+              tooltipAlignment='top-end'
               onClick={() => {
                 setSelectedRecord(record);
                 newSupplierPart.open();
@@ -207,7 +374,7 @@ function SelectPartsStep({
             </Expand>
             <AddItemButton
               tooltip={t`New purchase order`}
-              tooltipAlignment='top'
+              tooltipAlignment='top-end'
               disabled={!record.supplier_part?.pk}
               onClick={() => {
                 setSelectedRecord(record);
@@ -220,21 +387,29 @@ function SelectPartsStep({
       {
         accessor: 'quantity',
         title: t`Quantity`,
-        width: 125,
+        width: 175,
         render: (record: PartOrderRecord) => (
-          <StandaloneField
-            fieldName='quantity'
-            hideLabels={true}
-            error={record.errors?.quantity}
-            fieldDefinition={{
-              field_type: 'number',
-              required: true,
-              value: record.quantity,
-              onValueChange: (value) => {
-                onSelectQuantity(record.part.pk, value);
+          <Group gap='xs' wrap='nowrap'>
+            <StandaloneField
+              fieldName='quantity'
+              hideLabels={true}
+              error={record.errors?.quantity}
+              fieldDefinition={{
+                field_type: 'number',
+                required: true,
+                value: record.quantity,
+                onValueChange: (value) => {
+                  onSelectQuantity(record.part.pk, value);
+                }
+              }}
+            />
+            <PartRequirementsInfo
+              partId={record.part.pk}
+              onQuantityChange={(quantity: number) =>
+                onSelectQuantity(record.part.pk, quantity)
               }
-            }}
-          />
+            />
+          </Group>
         )
       },
       {
@@ -255,14 +430,19 @@ function SelectPartsStep({
               }
               icon={<IconShoppingCart />}
               tooltip={t`Add to selected purchase order`}
-              tooltipAlignment='top'
+              tooltipAlignment='top-end'
               color='blue'
             />
           </Group>
         )
       }
     ];
-  }, [onRemovePart]);
+  }, [
+    onSelectSupplierPart,
+    onSelectPurchaseOrder,
+    onSelectQuantity,
+    onRemovePart
+  ]);
 
   if (records.length === 0) {
     return (
@@ -320,6 +500,10 @@ export default function OrderPartsWizard({
       records.forEach((record: PartOrderRecord, index: number) => {
         if (record.part.pk === partId) {
           records[index].quantity = quantity;
+
+          if (records[index].quantity_raw === undefined) {
+            records[index].quantity_raw = quantity;
+          }
         }
       });
 
@@ -336,6 +520,21 @@ export default function OrderPartsWizard({
       records.forEach((record: PartOrderRecord, index: number) => {
         if (record.part.pk === partId) {
           records[index].supplier_part = supplierPart;
+
+          if (!records[index].quantity_raw && !!records[index].quantity) {
+            records[index].quantity_raw = records[index].quantity;
+          }
+
+          if (
+            supplierPart?.pack_quantity_native &&
+            records[index].quantity_raw
+          ) {
+            // Adjust the quantity based on the supplier pack size
+            records[index].quantity = Math.max(
+              0,
+              records[index].quantity_raw / supplierPart.pack_quantity_native
+            );
+          }
         }
       });
 
@@ -373,7 +572,13 @@ export default function OrderPartsWizard({
         />
       );
     },
-    [selectedParts]
+    [
+      selectedParts,
+      removePart,
+      selectQuantity,
+      selectSupplierPart,
+      selectPurchaseOrder
+    ]
   );
 
   const canStepForward = useCallback(
@@ -451,13 +656,17 @@ export default function OrderPartsWizard({
             const on_order = part.ordering ?? 0;
             const in_production = part.building ?? 0;
 
-            const to_order = required - on_hand - on_order - in_production;
+            const to_order = Math.max(
+              0,
+              required - on_hand - on_order - in_production
+            );
 
             records.push({
               part: part,
               supplier_part: undefined,
               purchase_order: undefined,
-              quantity: Math.max(to_order, 0),
+              quantity: to_order,
+              quantity_raw: undefined,
               errors: {}
             });
           }

@@ -1,10 +1,10 @@
-import test from '@playwright/test';
+import { test } from './baseFixtures';
+import { stevenuser } from './defaults';
 import { doCachedLogin } from './login';
 
 test('Importing - Admin Center', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'settings/admin/import'
   });
 
@@ -16,10 +16,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await fileInput.setInputFiles('./tests/fixtures/bom_data.csv');
 
   await page
-    .locator('label')
-    .filter({ hasText: 'Update Existing RecordsIf' })
-    .locator('div')
-    .first()
+    .getByRole('switch', { name: 'boolean-field-update_records' })
     .click();
 
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -29,7 +26,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await page.getByText('Errors exist for one or more').waitFor();
 
   await page
-    .getByRole('textbox', { name: 'choice-field-model_type' })
+    .getByRole('combobox', { name: 'choice-field-model_type' })
     .fill('bom');
   await page.getByRole('option', { name: 'BOM Item', exact: true }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -39,7 +36,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await page.getByText('Existing database identifier for the record').waitFor();
 
   await page
-    .getByRole('textbox', { name: 'import-column-map-reference' })
+    .getByRole('combobox', { name: 'import-column-map-reference' })
     .click();
   await page.getByRole('option', { name: 'Ignore this field' }).click();
 
@@ -66,7 +63,7 @@ test('Importing - Admin Center', async ({ browser }) => {
   await page.getByRole('cell', { name: '3 / 3' }).first().waitFor();
 
   // Manually delete records
-  await page.getByRole('checkbox', { name: 'Select all records' }).click();
+  await page.getByRole('checkbox', { name: 'Select all records' }).check();
   await page
     .getByRole('button', { name: 'action-button-delete-selected' })
     .click();
@@ -75,13 +72,23 @@ test('Importing - Admin Center', async ({ browser }) => {
 
 test('Importing - BOM', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'part/109/bom'
   });
 
+  // Enable BOM editing
+  await page.getByRole('button', { name: 'action-button-edit-bom' }).click();
   await page
-    .getByRole('button', { name: 'action-button-import-bom-data' })
+    .getByRole('button', { name: 'action-button-finish-editing-' })
+    .waitFor();
+
+  // Open the BOM importer wizard
+  await page.getByRole('button', { name: 'action-menu-add-bom-items' }).click();
+
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-add-bom-items-import-from-file'
+    })
     .click();
 
   // Select BOM file fixture for import
@@ -93,7 +100,7 @@ test('Importing - BOM', async ({ browser }) => {
   await page.getByRole('button', { name: 'Accept Column Mapping' }).click();
   await page.waitForTimeout(500);
 
-  await page.getByText('Importing Data').waitFor();
+  await page.getByText('Importing Data').first().waitFor();
   await page.getByText('0 / 3').waitFor();
 
   await page.getByText('Screw for fixing wood').first().waitFor();
@@ -111,9 +118,15 @@ test('Importing - BOM', async ({ browser }) => {
 
   // Delete selected rows
   await page
-    .getByRole('dialog', { name: 'Importing Data Upload File 2' })
+    .getByRole('dialog', { name: 'Importing Data Upload File' })
+    .getByLabel('action-button-delete-selected')
+    .waitFor();
+  await page.waitForTimeout(200);
+  await page
+    .getByRole('dialog', { name: 'Importing Data Upload File' })
     .getByLabel('action-button-delete-selected')
     .click();
+
   await page.getByRole('button', { name: 'Delete', exact: true }).click();
 
   await page.getByText('Success', { exact: true }).waitFor();
@@ -125,7 +138,7 @@ test('Importing - BOM', async ({ browser }) => {
     .getByLabel('row-action-menu-')
     .click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
-  await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('12');
+  await page.getByRole('textbox', { name: 'text-field-raw_amount' }).fill('12');
 
   await page.waitForTimeout(250);
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -145,19 +158,73 @@ test('Importing - BOM', async ({ browser }) => {
 
 test('Importing - Purchase Order', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff',
+    user: stevenuser,
     url: 'purchasing/purchase-order/15/line-items'
   });
 
+  await page.getByRole('button', { name: 'action-menu-add-line-item' }).click();
   await page
-    .getByRole('button', { name: 'action-button-import-line-' })
+    .getByRole('menuitem', {
+      name: 'action-menu-add-line-item-import-line-items'
+    })
     .click();
 
   const fileInput = await page.locator('input[type="file"]');
   await fileInput.setInputFiles('./tests/fixtures/po_data.csv');
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  await page.getByRole('cell', { name: 'Database Field' }).waitFor();
-  await page.getByRole('cell', { name: 'Field Description' }).waitFor();
+  await page.getByRole('columnheader', { name: 'Database Field' }).waitFor();
+  await page.getByRole('columnheader', { name: 'Field Description' }).waitFor();
+});
+
+test('Importing - Natural Keys', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'purchasing/purchase-order/15/line-items'
+  });
+
+  // Import line item data, but use natural keys as the import fields
+  await page.getByRole('button', { name: 'action-menu-add-line-item' }).click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-add-line-item-import-line-items'
+    })
+    .click();
+
+  const fileInput = await page.locator('input[type="file"]');
+  await fileInput.setInputFiles('./tests/fixtures/po_data_natural_keys.csv');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Attempt import with missing required fields
+  await page.getByRole('button', { name: 'Accept Column Mapping' }).click();
+  await page.getByText('Some required fields have not been mapped').waitFor();
+
+  // Select different columns for data import
+  // We will use the "SKU" field to map to the supplier part
+  await page.getByRole('combobox', { name: 'import-column-map-part' }).click();
+  await page.getByRole('option', { name: 'SKU' }).click();
+
+  // Other import fields will be left as default
+  await page.getByRole('button', { name: 'Accept Column Mapping' }).click();
+
+  // Check for expected values to be displayed
+  await page.getByText('PRO-ZEN').first().waitFor();
+  await page.getByText('Project Zenith').first().waitFor();
+  await page.getByText('my-custom-reference').first().waitFor();
+  await page.getByText('Factory/Mechanical Lab').first().waitFor();
+  await page.getByText('FUT-43861-DDU').first().waitFor();
+  await page.getByText('FUT-82092-CQB').first().waitFor();
+  await page.getByText('2026-01-30').first().waitFor();
+
+  // Let's import all the data
+  await page
+    .getByRole('row', { name: 'Select all records Row Not' })
+    .getByLabel('Select all records')
+    .click();
+  await page
+    .getByRole('button', { name: 'action-button-import-selected' })
+    .click();
+
+  await page.getByText('Data has been imported successfully').waitFor();
+  await page.getByRole('button', { name: 'Close' }).click();
 });

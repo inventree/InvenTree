@@ -15,11 +15,13 @@ logger = structlog.get_logger('inventree')
 
 # List of supported feature types
 FeatureType = Literal[
+    'spotlight_action',  # Custom actions for the spotlight search
     'dashboard',  # Custom dashboard items
     'panel',  # Custom panels
     'template_editor',  # Custom template editor
     'template_preview',  # Custom template preview
     'navigation',  # Custom navigation items
+    'primary_action',  # Custom primary action buttons
 ]
 
 
@@ -82,7 +84,7 @@ class UserInterfaceMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.add_mixin(PluginMixinEnum.USER_INTERFACE, True, __class__)  # type: ignore
+        self.add_mixin(PluginMixinEnum.USER_INTERFACE, True, __class__)
 
     def get_ui_features(
         self, feature_type: FeatureType, context: dict, request: Request, **kwargs
@@ -99,11 +101,13 @@ class UserInterfaceMixin:
 
         """
         feature_map = {
+            'spotlight_action': self.get_ui_spotlight_actions,
             'dashboard': self.get_ui_dashboard_items,
+            'navigation': self.get_ui_navigation_items,
             'panel': self.get_ui_panels,
             'template_editor': self.get_ui_template_editors,
             'template_preview': self.get_ui_template_previews,
-            'navigation': self.get_ui_navigation_items,
+            'primary_action': self.get_ui_primary_actions,
         }
 
         if feature_type in feature_map:
@@ -111,6 +115,21 @@ class UserInterfaceMixin:
         else:
             logger.warning(f'Invalid feature type: {feature_type}')
             return []
+
+    def get_ui_spotlight_actions(
+        self, request: Request, context: dict, **kwargs
+    ) -> list[UIFeature]:
+        """Return a list of custom actions to be injected into the UI spotlight.
+
+        Args:
+            request: HTTPRequest object (including user information)
+            context: Additional context data provided by the UI (query parameters)
+
+        Returns:
+            list: A list of custom actions to be injected into the UI spotlight.
+        """
+        # Default implementation returns an empty list
+        return []
 
     def get_ui_panels(
         self, request: Request, context: dict, **kwargs
@@ -184,5 +203,31 @@ class UserInterfaceMixin:
         Returns:
             list: A list of custom navigation items to be injected into the UI
         """
+        # Default implementation returns an empty list
+        return []
+
+    def get_ui_primary_actions(
+        self, request: Request, context: dict, **kwargs
+    ) -> list[UIFeature]:
+        """Return a list of custom primary action buttons to be injected into the UI.
+
+        Args:
+            request: HTTPRequest object (including user information)
+            context: Additional context data provided by the UI (query parameters)
+
+        Returns:
+            list: A list of custom primary action buttons to be injected into the UI
+        """
+        # Sample code to render conditional primary action button based on context
+        # items = []
+        # if self.my_assert_function(context):
+        #     items.append({
+        #         'key': 'sample-primary-action',
+        #         'title': 'Sample Primary Action',
+        #         'icon': 'ti:plus:outline',
+        #         'options': {'url': '/core/sample-primary-action/', 'color': 'orange'},
+        #     })
+        # return items
+
         # Default implementation returns an empty list
         return []

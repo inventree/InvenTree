@@ -1,14 +1,64 @@
 """Tests for custom InvenTree management commands."""
 
+import os
+import subprocess
 from pathlib import Path
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management import call_command
+from django.db import IntegrityError
 from django.test import TestCase
+
+from opentelemetry.instrumentation.sqlite3 import SQLite3Instrumentor
+
+from InvenTree.config import get_testfolder_dir
 
 
 class CommandTestCase(TestCase):
     """Test case for custom management commands."""
+
+    def test_makemigrations_currency_overrides_no_changes(self):
+        """Ensure currency list changes do not cause migration drift."""
+        currency_sets = ['USD,EUR,GBP', 'JPY,CNY,KRW']
+
+        for currency_codes in currency_sets:
+            with self.subTest(currency_codes=currency_codes):
+                old_value = os.environ.get('INVENTREE_CURRENCY_CODES')
+
+                try:
+                    os.environ['INVENTREE_CURRENCY_CODES'] = currency_codes
+                    project_dir = Path(__file__).resolve().parents[1]
+
+                    result = subprocess.run(
+                        [
+                            'python3',
+                            'manage.py',
+                            'makemigrations',
+                            '--check',
+                            '--dry-run',
+                            '--verbosity',
+                            '0',
+                        ],
+                        cwd=project_dir,
+                        env=os.environ.copy(),
+                        capture_output=True,
+                        text=True,
+                        check=False,
+                    )
+
+                    if result.returncode != 0:
+                        self.fail(
+                            'makemigrations reported schema changes '
+                            f'for INVENTREE_CURRENCY_CODES={currency_codes}\n'
+                            f'stdout:\n{result.stdout}\n'
+                            f'stderr:\n{result.stderr}'
+                        )
+                finally:
+                    if old_value is None:
+                        os.environ.pop('INVENTREE_CURRENCY_CODES', None)
+                    else:
+                        os.environ['INVENTREE_CURRENCY_CODES'] = old_value
 
     def test_schema(self):
         """Test the schema generation command."""
@@ -19,40 +69,235 @@ class CommandTestCase(TestCase):
 
     def test_remove_mfa(self):
         """Test the remove_mfa command."""
+
+        def get_dummyuser(uname='admin'):
+            admin = User.objects.create_user(
+                username=uname, email=f'{uname}@example.org'
+            )
+            admin.authenticator_set.create(type='TOTP', data={})
+            self.assertEqual(admin.authenticator_set.all().count(), 1)
+            return admin
+
         # missing arg
         with self.assertRaises(Exception) as cm:
             call_command('remove_mfa', verbosity=0)
         self.assertEqual(
-            'Error: the following arguments are required: mail', str(cm.exception)
+            'Error: one of the following arguments is required: mail, username',
+            str(cm.exception),
         )
 
         # no user
         with self.assertLogs('inventree') as cm:
             self.assertFalse(
-                call_command('remove_mfa', 'admin@example.org', verbosity=0)
+                call_command('remove_mfa', mail='admin@example.org', verbosity=0)
             )
         self.assertIn('No user with this mail associated', str(cm[1]))
 
         # correct removal
-        my_admin1 = User.objects.create_user(
-            username='admin', email='admin@example.org'
-        )
-        my_admin1.authenticator_set.create(type='TOTP', data={})
-        self.assertEqual(my_admin1.authenticator_set.all().count(), 1)
-        output = call_command('remove_mfa', 'admin@example.org', verbosity=0)
+        my_admin1 = get_dummyuser()
+        output = call_command('remove_mfa', mail=my_admin1.email, verbosity=0)
         self.assertEqual(output, 'done')
         self.assertEqual(my_admin1.authenticator_set.all().count(), 0)
 
         # two users with same email
-        my_admin2 = User.objects.create_user(
-            username='admin2', email='admin@example.org'
-        )
+        my_admin2 = User.objects.create_user(username='admin2', email=my_admin1.email)
         my_admin2.emailaddress_set.create(email='456')
         my_admin2.emailaddress_set.create(email='123')
         with self.assertLogs('inventree') as cm:
             self.assertFalse(
-                call_command('remove_mfa', 'admin@example.org', verbosity=0)
+                call_command('remove_mfa', mail=my_admin1.email, verbosity=0)
             )
         self.assertIn('Multiple users found with the provided email', str(cm[1]))
         self.assertIn('admin, admin2', str(cm[1]))
-        self.assertIn('123, 456, admin@example.org', str(cm[1]))
+        self.assertIn(f'123, 456, {my_admin1.email}', str(cm[1]))
+
+        # correct removal by username
+        my_admin3 = get_dummyuser('admin3')
+        output = call_command('remove_mfa', username=my_admin3.username, verbosity=0)
+        self.assertEqual(output, 'done')
+        self.assertEqual(my_admin3.authenticator_set.all().count(), 0)
+
+    def test_bulkloaddata(self):
+        """Test the bulkloaddata command."""
+        from django.contrib.contenttypes.models import ContentType
+        from django.core import serializers
+
+        # ContentType has no custom signals and a real unique_together constraint
+        # (app_label, model), making it a convenient, side-effect-free test model.
+        entries = [
+            ContentType.objects.create(app_label='bulkloaddata_test', model=f'model{i}')
+            for i in range(5)
+        ]
+        pks = [e.pk for e in entries]
+        data = serializers.serialize('json', entries)
+        ContentType.objects.filter(pk__in=pks).delete()
+
+        tmp_file = get_testfolder_dir().joinpath('bulkloaddata_test.json')
+        tmp_file.write_text(data, encoding='utf-8')
+
+        try:
+            # Basic load - all records should be recreated
+            call_command('bulkloaddata', str(tmp_file), verbosity=0)
+            self.assertEqual(ContentType.objects.filter(pk__in=pks).count(), 5)
+
+            # Re-loading without --ignore-conflicts should raise (unique app_label/model)
+            with self.assertRaises(IntegrityError):
+                call_command('bulkloaddata', str(tmp_file), verbosity=0)
+
+            # Re-loading with --ignore-conflicts should succeed, without duplicating rows
+            call_command(
+                'bulkloaddata', str(tmp_file), verbosity=0, ignore_conflicts=True
+            )
+            self.assertEqual(ContentType.objects.filter(pk__in=pks).count(), 5)
+
+            # A small batch size should still load every record correctly
+            ContentType.objects.filter(pk__in=pks).delete()
+            call_command('bulkloaddata', str(tmp_file), verbosity=0, batch_size=2)
+            models = set(
+                ContentType.objects.filter(pk__in=pks).values_list('model', flat=True)
+            )
+            self.assertEqual(models, {e.model for e in entries})
+        finally:
+            ContentType.objects.filter(pk__in=pks).delete()
+            tmp_file.unlink(missing_ok=True)
+
+    def test_backup_metadata(self):
+        """Test the backup metadata functions."""
+        from InvenTree.backup import (
+            _gather_environment_metadata,
+            _parse_environment_metadata,
+        )
+
+        metadata = _gather_environment_metadata()
+        self.assertIn('ivt_1_version', metadata)
+        self.assertIn('ivt_1_plugins_enabled', metadata)
+
+        parsed = _parse_environment_metadata(metadata)
+        self.assertIn('version', parsed)
+        self.assertIn('plugins_enabled', parsed)
+
+    def test_restore_validation(self):
+        """Test the restore validation functions."""
+        from InvenTree.backup import _gather_environment_metadata, validate_restore
+
+        metadata = _gather_environment_metadata()
+
+        self.assertTrue(validate_restore(metadata))
+
+        # Version
+        with self.assertLogs() as cm:
+            self.assertTrue(validate_restore({}))
+        self.assertIn(
+            'INVE-W13: Backup metadata does not contain version information', str(cm[1])
+        )
+        with self.assertLogs() as cm:
+            self.assertTrue(validate_restore({**metadata, 'ivt_1_version': '123xx'}))
+        self.assertIn(
+            'INVE-W13: Backup being restored was created with InvenTree version',
+            str(cm[1]),
+        )
+        with self.assertLogs() as cm:
+            self.assertFalse(
+                validate_restore({
+                    **metadata,
+                    'ivt_1_version': '9999',
+                    'ivt_1_version_api': '9999',
+                })
+            )
+        self.assertIn(
+            'INVE-E16: Backup being restored was created with a newer version',
+            str(cm[1]),
+        )
+        # not with allow flag
+        with self.settings(BACKUP_RESTORE_ALLOW_NEWER_VERSION=True):
+            with self.assertLogs() as cm:
+                self.assertTrue(
+                    validate_restore({
+                        **metadata,
+                        'ivt_1_version': '9999',
+                        'ivt_1_version_api': '9999',
+                    })
+                )
+            self.assertIn(
+                'INVE-W13: Backup restore is allowing a restore from a newer version of InvenTree',
+                str(cm[1]),
+            )
+
+        # Plugins enabled
+        with self.settings(PLUGINS_ENABLED=False):
+            with self.assertLogs() as cm:
+                self.assertTrue(validate_restore(metadata))
+        self.assertIn(
+            'INVE-W13: Backup being restored was created with plugins enabled',
+            str(cm[1]),
+        )
+
+        # Plugin hash
+        with self.assertLogs() as cm:
+            self.assertTrue(
+                validate_restore({**metadata, 'ivt_1_plugins_file_hash': '123xx'})
+            )
+        self.assertIn(
+            'INVE-W13: Backup being restored has a different plugins file hash',
+            str(cm[1]),
+        )
+
+        # installer
+        with self.assertLogs() as cm:
+            self.assertTrue(validate_restore({**metadata, 'ivt_1_installer': '123xx'}))
+        self.assertIn(
+            'INVE-W13: Backup being restored was created with installer', str(cm[1])
+        )
+
+        # Age
+        with self.assertLogs() as cm:
+            self.assertTrue(
+                validate_restore({
+                    **metadata,
+                    'ivt_1_backup_time': '2020-02-02T00:00:00',
+                })
+            )
+        self.assertIn(
+            'INVE-W13: Backup being restored is over 120 days old', str(cm[1])
+        )
+
+    def test_backup_command_e2e(self):
+        """Test the backup command."""
+        # we only test on sqlite, the environment in which we also run coverage
+        if settings.DB_ENGINE != 'django.db.backends.sqlite3':
+            self.skipTest('Backup command test only runs on sqlite database')
+
+        # disable tracing for now
+        if settings.TRACING_ENABLED:  # pragma: no cover
+            print('Disabling tracing for backup command test')
+            SQLite3Instrumentor().uninstrument()
+
+        output_path = get_testfolder_dir().joinpath('backup.zip').resolve()
+
+        # Backup
+        with self.assertLogs() as cm:
+            output = call_command(
+                'dbbackup', noinput=True, verbosity=2, output_path=str(output_path)
+            )
+            self.assertIsNone(output)
+        self.assertIn(f'Writing metadata file to {output_path}', str(cm[1]))
+
+        # Restore
+        with self.assertLogs() as cm:
+            output = call_command(
+                'dbrestore',
+                noinput=True,
+                interactive=False,
+                verbosity=2,
+                input_path=str(output_path),
+            )
+            self.assertIsNone(output)
+        self.assertIn('Using connector from metadata', str(cm[1]))
+
+        # Cleanup the generated backup file and metadata file
+        output_path.unlink()
+        Path(str(output_path) + '.metadata').unlink()
+
+        if settings.TRACING_ENABLED:  # pragma: no cover
+            print('Re-enabling tracing for backup command test')
+            SQLite3Instrumentor().instrument()

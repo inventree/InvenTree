@@ -1,11 +1,13 @@
 """Provides a JSON API for common components."""
 
 import json
+import json.decoder
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ValidationError
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db.models import Q
+from django.http import JsonResponse
 from django.http.response import HttpResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
@@ -13,37 +15,70 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 
+import django_filters.rest_framework.filters as rest_filters
 import django_q.models
-from django_filters import rest_framework as rest_filters
-from django_q.tasks import async_task
+import django_q.tasks
+import structlog
+from allauth.socialaccount import providers
+from allauth.socialaccount.models import SocialApp
+from django_filters.rest_framework.filterset import FilterSet
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
-from drf_spectacular.utils import OpenApiResponse, extend_schema
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    OpenApiResponse,
+    extend_schema,
+    extend_schema_view,
+)
 from error_report.models import Error
+from oauth2_provider.generators import generate_client_secret
+from oauth2_provider.models import Application
+from opentelemetry import trace
 from pint._typing import UnitLike
-from rest_framework import generics, serializers
+from rest_framework import serializers, viewsets
+from rest_framework.decorators import action
 from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from sql_util.utils import SubqueryCount
+from taggit.models import Tag
 
+import common.filters
 import common.models
 import common.serializers
 import InvenTree.conversion
+import InvenTree.models
+import InvenTree.ready
 from common.icons import get_icon_packs
+from common.serializers import OAuth2ApplicationSerializer
 from common.settings import get_global_setting
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import urlpattern as generic_states_api_urls
-from InvenTree.api import BulkDeleteMixin, MetadataView
+from InvenTree.api import (
+    BulkCreateMixin,
+    BulkDeleteMixin,
+    BulkDeleteViewsetMixin,
+    GenericMetadataView,
+    SimpleGenericMetadataView,
+    meta_path,
+)
+from InvenTree.apps import DEFAULT_OIDC_APP_ID
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
-from InvenTree.helpers import inheritors
+from InvenTree.helpers import inheritors, str2bool
+from InvenTree.helpers_api import (
+    CleanModelViewSet,
+    InvenTreeApiRouter,
+    RetrieveDestroyModelViewSet,
+    RetrieveUpdateDestroyModelViewSet,
+)
 from InvenTree.helpers_email import send_email
 from InvenTree.mixins import (
     CreateAPI,
     ListAPI,
     ListCreateAPI,
+    OutputOptionsMixin,
     RetrieveAPI,
-    RetrieveDestroyAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
@@ -56,6 +91,13 @@ from InvenTree.permissions import (
     IsSuperuserOrSuperScope,
     UserSettingsPermissionsOrScope,
 )
+from InvenTree.serializers import EmptySerializer
+from scim.admin_api import ScimConfigViewSet
+
+logger = structlog.get_logger('inventree')
+
+admin_router = InvenTreeApiRouter()
+common_router = InvenTreeApiRouter()
 
 
 class CsrfExemptMixin:
@@ -100,7 +142,7 @@ class WebhookView(CsrfExemptMixin, APIView):
         # process data
         message = self.webhook.save_data(payload, headers, request)
         if self.run_async:
-            async_task(self._process_payload, message.id)
+            django_q.tasks.async_task(self._process_payload, message.id)
         else:
             self._process_result(
                 self.webhook.process_payload(message, payload, headers), message
@@ -140,14 +182,18 @@ class WebhookView(CsrfExemptMixin, APIView):
             raise NotFound()
 
 
-class CurrencyExchangeView(APIView):
-    """API endpoint for displaying currency information."""
+class CurrencyViewSet(viewsets.GenericViewSet):
+    """Viewset for currency exchange information."""
 
     permission_classes = [IsAuthenticatedOrReadScope]
-    serializer_class = None
+    serializer_class = EmptySerializer
 
-    @extend_schema(responses={200: common.serializers.CurrencyExchangeSerializer})
-    def get(self, request, fmt=None):
+    @action(
+        detail=False,
+        methods=['get'],
+        serializer_class=common.serializers.CurrencyExchangeSerializer,
+    )
+    def exchange(self, request, fmt=None):
         """Return information on available currency conversions."""
         # Extract a list of all available rates
         try:
@@ -180,23 +226,21 @@ class CurrencyExchangeView(APIView):
 
         return Response(response)
 
-
-class CurrencyRefreshView(APIView):
-    """API endpoint for manually refreshing currency exchange rates.
-
-    User must be a 'staff' user to access this endpoint
-    """
-
-    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
-    serializer_class = None
-
-    def post(self, request, *args, **kwargs):
+    @action(
+        detail=False,
+        methods=['post'],
+        permission_classes=[IsAuthenticatedOrReadScope, IsAdminUser],
+    )
+    def refresh(self, request, *args, **kwargs):
         """Performing a POST request will update currency exchange rates."""
         from InvenTree.tasks import update_exchange_rates
 
         update_exchange_rates(force=True)
 
         return Response({'success': 'Exchange rates updated'})
+
+
+common_router.register('currency', CurrencyViewSet, basename='api-currency')
 
 
 class SettingsList(ListAPI):
@@ -310,12 +354,22 @@ class UserSettingsDetail(RetrieveUpdateAPI):
         )
 
 
-class NotificationMessageMixin:
-    """Generic mixin for NotificationMessage."""
+class NotificationMessageViewSet(
+    BulkDeleteViewsetMixin, RetrieveUpdateDestroyModelViewSet
+):
+    """Notifications for the current user.
+
+    - User can only view / delete their own notification objects
+    """
 
     queryset = common.models.NotificationMessage.objects.all()
     serializer_class = common.serializers.NotificationMessageSerializer
     permission_classes = [UserSettingsPermissionsOrScope]
+
+    filter_backends = SEARCH_ORDER_FILTER
+    ordering_fields = ['category', 'name', 'read', 'creation']
+    search_fields = ['name', 'message']
+    filterset_fields = ['category', 'read']
 
     def get_queryset(self):
         """Return prefetched queryset."""
@@ -332,20 +386,6 @@ class NotificationMessageMixin:
         )
 
         return queryset
-
-
-class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
-    """List view for all notifications of the current user."""
-
-    permission_classes = [IsAuthenticatedOrReadScope]
-
-    filter_backends = SEARCH_ORDER_FILTER
-
-    ordering_fields = ['category', 'name', 'read', 'creation']
-
-    search_fields = ['name', 'message']
-
-    filterset_fields = ['category', 'read']
 
     def filter_queryset(self, queryset):
         """Only list notifications which apply to the current user."""
@@ -367,18 +407,10 @@ class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
         queryset = queryset.filter(user=request.user)
         return queryset
 
-
-class NotificationDetail(NotificationMessageMixin, RetrieveUpdateDestroyAPI):
-    """Detail view for an individual notification object.
-
-    - User can only view / delete their own notification objects
-    """
-
-
-class NotificationReadAll(NotificationMessageMixin, RetrieveAPI):
-    """API endpoint to mark all notifications as read."""
-
-    def get(self, request, *args, **kwargs):
+    @action(
+        detail=False, methods=['post'], permission_classes=[IsAuthenticatedOrReadScope]
+    )
+    def readall(self, request, *args, **kwargs):
         """Set all messages for the current user as read."""
         try:
             self.queryset.filter(user=request.user, read=False).update(read=True)
@@ -389,46 +421,49 @@ class NotificationReadAll(NotificationMessageMixin, RetrieveAPI):
             )
 
 
-class NewsFeedMixin:
-    """Generic mixin for NewsFeedEntry."""
+common_router.register(
+    'notifications', NotificationMessageViewSet, basename='api-notifications'
+)
+
+
+class NewsFeedViewSet(BulkDeleteViewsetMixin, RetrieveUpdateDestroyModelViewSet):
+    """Newsfeed from the official inventree.org website."""
 
     queryset = common.models.NewsFeedEntry.objects.all()
     serializer_class = common.serializers.NewsFeedEntrySerializer
     permission_classes = [IsAdminOrAdminScope]
 
-
-class NewsFeedEntryList(NewsFeedMixin, BulkDeleteMixin, ListAPI):
-    """List view for all news items."""
-
     filter_backends = ORDER_FILTER
-
     ordering = '-published'
-
     ordering_fields = ['published', 'author', 'read']
-
     filterset_fields = ['read']
 
 
-class NewsFeedEntryDetail(NewsFeedMixin, RetrieveUpdateDestroyAPI):
-    """Detail view for an individual news feed object."""
+common_router.register('news', NewsFeedViewSet, basename='api-news')
 
 
-class ConfigList(ListAPI):
-    """List view for all accessed configurations."""
+@extend_schema_view(
+    retrieve=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='key',
+                description='Unique identifier for this configuration',
+                required=True,
+                location=OpenApiParameter.PATH,
+            )
+        ]
+    )
+)
+class ConfigViewSet(viewsets.ReadOnlyModelViewSet):
+    """All accessed/in-use configurations."""
 
     queryset = CONFIG_LOOKUPS
     serializer_class = common.serializers.ConfigSerializer
     permission_classes = [IsSuperuserOrSuperScope]
+    lookup_field = 'key'
 
     # Specifically disable pagination for this view
     pagination_class = None
-
-
-class ConfigDetail(RetrieveAPI):
-    """Detail view for an individual configuration."""
-
-    serializer_class = common.serializers.ConfigSerializer
-    permission_classes = [IsSuperuserOrSuperScope]
 
     def get_object(self):
         """Attempt to find a config object with the provided key."""
@@ -439,22 +474,73 @@ class ConfigDetail(RetrieveAPI):
         return {key: value}
 
 
+admin_router.register('config', ConfigViewSet, basename='api-config')
+
+
+class NotesImageFilter(FilterSet):
+    """Filterset for the NotesImage API endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = common.models.NotesImage
+        fields = ['user', 'note']
+
+    model_id = rest_filters.NumberFilter(
+        label=_('Model ID'), field_name='note__model_id'
+    )
+
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter queryset to include only Parameters of the given model type."""
+        return common.filters.filter_content_type(
+            queryset, 'note__model_type', value, allow_null=False
+        )
+
+
 class NotesImageList(ListCreateAPI):
     """List view for all notes images."""
 
     queryset = common.models.NotesImage.objects.all()
     serializer_class = common.serializers.NotesImageSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
+    filterset_class = NotesImageFilter
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    search_fields = ['user', 'model_type', 'model_id']
+    def get_queryset(self):
+        """Filter notes images to those linked to a note the requesting user can view."""
+        import common.validators
+        from users.permissions import check_user_permission, prefetch_rule_sets
+
+        qs = super().get_queryset()
+        user = self.request.user
+
+        if user.is_superuser:
+            return qs
+
+        groups = prefetch_rule_sets(user)
+
+        allowed_ct_ids = [
+            ContentType.objects.get_for_model(model_class).pk
+            for model_class in common.validators.note_model_types()
+            if check_user_permission(user, model_class, 'view', groups=groups)
+        ]
+
+        return qs.filter(
+            Q(note__template=True) | Q(note__model_type__in=allowed_ct_ids)
+        )
 
     def perform_create(self, serializer):
         """Create (upload) a new notes image."""
-        image = serializer.save()
-        image.user = self.request.user
-        image.save()
+        note = serializer.validated_data['note']
+
+        common.serializers.check_note_change_permission(
+            self.request.user, template=note.template, model_type=note.model_type
+        )
+
+        serializer.save(user=self.request.user)
 
 
 class ProjectCodeList(DataExportViewMixin, ListCreateAPI):
@@ -466,7 +552,7 @@ class ProjectCodeList(DataExportViewMixin, ListCreateAPI):
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = ['code']
-
+    filterset_fields = ['active']
     search_fields = ['code', 'description']
 
 
@@ -478,7 +564,49 @@ class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [IsStaffOrReadOnlyScope]
 
 
-class CustomUnitList(DataExportViewMixin, ListCreateAPI):
+class TagFilter(FilterSet):
+    """Custom filters for the TagList API endpoint."""
+
+    class Meta:
+        """Metaclass options for the filterset."""
+
+        model = Tag
+        fields = []
+
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter to tags which have been applied to the given model type."""
+        ct = common.filters.determine_content_type(value)
+
+        if ct is None:
+            raise ValidationError({'model_type': f'Invalid model type: {value}'})
+
+        return queryset.filter(taggit_taggeditem_items__content_type=ct).distinct()
+
+
+class TagMixin:
+    """Mixin class for Tag views."""
+
+    serializer_class = common.serializers.TagSerializer
+    queryset = Tag.objects.all()
+    permission_classes = [IsStaffOrReadOnlyScope]
+
+
+class TagList(TagMixin, ListCreateAPI):
+    """List view for all tags."""
+
+    filterset_class = TagFilter
+    filter_backends = SEARCH_ORDER_FILTER
+    ordering_fields = ['name']
+    search_fields = ['name']
+
+
+class TagDetail(TagMixin, RetrieveUpdateDestroyAPI):
+    """Detail view for a particular tag."""
+
+
+class CustomUnitViewset(DataExportViewMixin, viewsets.ModelViewSet):
     """List view for custom units."""
 
     queryset = common.models.CustomUnit.objects.all()
@@ -486,29 +614,30 @@ class CustomUnitList(DataExportViewMixin, ListCreateAPI):
     permission_classes = [IsStaffOrReadOnlyScope]
     filter_backends = SEARCH_ORDER_FILTER
 
-
-class CustomUnitDetail(RetrieveUpdateDestroyAPI):
-    """Detail view for a particular custom unit."""
-
-    queryset = common.models.CustomUnit.objects.all()
-    serializer_class = common.serializers.CustomUnitSerializer
-    permission_classes = [IsStaffOrReadOnlyScope]
-
-
-class AllUnitList(RetrieveAPI):
-    """List of all defined units."""
-
-    serializer_class = common.serializers.AllUnitListResponseSerializer
-    permission_classes = [IsStaffOrReadOnlyScope]
-
-    def get(self, request, *args, **kwargs):
+    @action(
+        detail=False,
+        methods=['get'],
+        serializer_class=common.serializers.AllUnitListResponseSerializer,
+    )
+    def all(self, request, *args, **kwargs):
         """Return a list of all available units."""
         reg = InvenTree.conversion.get_unit_registry()
-        all_units = {k: self.get_unit(reg, k) for k in reg}
+
+        all_units = {}
+
+        for k in reg:
+            try:
+                if unit := self.get_unit(reg, k):
+                    all_units[k] = unit
+            except Exception:
+                # A single bad unit definition (e.g. a circular reference between
+                # two custom units) should not take down the entire endpoint
+                logger.exception("Failed to process unit '%s' in unit registry", k)
+
         data = {
             'default_system': reg.default_system,
             'available_systems': dir(reg.sys),
-            'available_units': {k: v for k, v in all_units.items() if v},
+            'available_units': all_units,
         }
         return Response(data)
 
@@ -516,16 +645,32 @@ class AllUnitList(RetrieveAPI):
         """Parse a unit from the registry."""
         if not hasattr(reg, k):
             return None
+
         unit: type[UnitLike] = getattr(reg, k)
+
+        try:
+            compatible_units = [
+                str(a)
+                for a in unit.compatible_units()  # ty:ignore[missing-argument]
+            ]
+        except Exception:
+            # Guard against e.g. a circular / recursive custom unit definition,
+            # which would otherwise raise an uncaught RecursionError here
+            logger.exception("Failed to determine compatible units for '%s'", k)
+            return None
+
         return {
             'name': k,
             'is_alias': reg.get_name(k) == k,
-            'compatible_units': [str(a) for a in unit.compatible_units()],
+            'compatible_units': compatible_units,
             'isdimensionless': unit.dimensionless,
         }
 
 
-class ErrorMessageList(BulkDeleteMixin, ListAPI):
+common_router.register('units', CustomUnitViewset, basename='api-custom-unit')
+
+
+class ErrorMessageViewSet(BulkDeleteViewsetMixin, RetrieveUpdateDestroyModelViewSet):
     """List view for server error messages."""
 
     queryset = Error.objects.all()
@@ -541,12 +686,20 @@ class ErrorMessageList(BulkDeleteMixin, ListAPI):
     search_fields = ['info', 'data']
 
 
-class ErrorMessageDetail(RetrieveUpdateDestroyAPI):
-    """Detail view for a single error message."""
+common_router.register('error-report', ErrorMessageViewSet, basename='api-error')
 
-    queryset = Error.objects.all()
-    serializer_class = common.serializers.ErrorMessageSerializer
-    permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
+
+class BackgroundTaskDetail(APIView):
+    """Detail view for a single background task."""
+
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    @extend_schema(responses={200: common.serializers.TaskDetailSerializer})
+    def get(self, request, task_id, *args, **kwargs):
+        """Fetch information regarding a particular background task ID."""
+        response = common.serializers.TaskDetailSerializer.from_task(task_id).data
+
+        return Response(response, status=response['http_status'])
 
 
 class BackgroundTaskOverview(APIView):
@@ -555,6 +708,10 @@ class BackgroundTaskOverview(APIView):
     permission_classes = [IsAuthenticatedOrReadScope, IsAdminUser]
     serializer_class = None
 
+    @extend_schema(
+        operation_id='background_task_overview',
+        responses={200: common.serializers.TaskOverviewSerializer},
+    )
     def get(self, request, fmt=None):
         """Return information about the current status of the background task queue."""
         import django_q.models as q_models
@@ -592,7 +749,7 @@ class ScheduledTaskList(ListAPI):
 
     ordering_fields = ['pk', 'func', 'last_run', 'next_run']
 
-    search_fields = ['func']
+    search_fields = ['func', 'name']
 
     def get_queryset(self):
         """Return annotated queryset."""
@@ -621,6 +778,9 @@ class FlagList(ListAPI):
     queryset = settings.FLAGS
     serializer_class = common.serializers.FlagSerializer
     permission_classes = [AllowAnyOrReadScope]
+
+    # Specifically disable pagination for this view
+    pagination_class = None
 
 
 class FlagDetail(RetrieveAPI):
@@ -676,14 +836,24 @@ class ContentTypeModelDetail(ContentTypeDetail):
         return super().get(request, *args, **kwargs)
 
 
-class AttachmentFilter(rest_filters.FilterSet):
+class AttachmentFilter(FilterSet):
     """Filterset for the AttachmentList API endpoint."""
 
     class Meta:
         """Metaclass options."""
 
         model = common.models.Attachment
-        fields = ['model_type', 'model_id', 'upload_user']
+        fields = ['model_type', 'model_id', 'upload_user', 'is_image']
+
+    has_thumbnail = rest_filters.BooleanFilter(
+        label=_('Has Thumbnail'), method='filter_has_thumbnail'
+    )
+
+    def filter_has_thumbnail(self, queryset, name, value):
+        """Filter attachments based on whether they have a thumbnail or not."""
+        if value:
+            return queryset.exclude(thumbnail=None).exclude(thumbnail='')
+        return queryset.filter(Q(thumbnail=None) | Q(thumbnail='')).distinct()
 
     is_link = rest_filters.BooleanFilter(label=_('Is Link'), method='filter_is_link')
 
@@ -701,25 +871,61 @@ class AttachmentFilter(rest_filters.FilterSet):
             return queryset.exclude(attachment=None).exclude(attachment='')
         return queryset.filter(Q(attachment=None) | Q(attachment='')).distinct()
 
+    tag_name = common.filters.TagsFilter()
 
-class AttachmentList(BulkDeleteMixin, ListCreateAPI):
-    """List API endpoint for Attachment objects."""
+    filename = rest_filters.CharFilter(
+        field_name='attachment', lookup_expr='icontains', label=_('Filename')
+    )
+
+
+def get_viewable_attachment_model_types(user) -> set:
+    """Return the set of attachment 'model_type' labels the user has 'view' permission for.
+
+    Attachments are a generic table keyed by (model_type, model_id), with no RuleSet
+    mapping of their own - so read access is based on the *linked* model's own
+    RuleSet permission instead, mirroring how AttachmentDetail already checks
+    'change'/'delete' via Attachment.check_permission() for writes.
+    """
+    from common.validators import attachment_model_types
+    from users.permissions import check_user_permission, prefetch_rule_sets
+
+    groups = prefetch_rule_sets(user)
+
+    return {
+        model.__name__.lower()
+        for model in attachment_model_types()
+        if check_user_permission(user, model, 'view', groups=groups)
+    }
+
+
+class AttachmentMixin:
+    """Mixin class for Attachment views."""
 
     queryset = common.models.Attachment.objects.all()
     serializer_class = common.serializers.AttachmentSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
+
+class AttachmentList(AttachmentMixin, BulkDeleteMixin, ListCreateAPI):
+    """List API endpoint for Attachment objects."""
+
     filter_backends = SEARCH_ORDER_FILTER
     filterset_class = AttachmentFilter
 
     ordering_fields = ['model_id', 'model_type', 'upload_date', 'file_size']
-    search_fields = ['comment', 'model_id', 'model_type']
+    search_fields = ['comment', 'model_id', 'model_type', 'attachment']
+
+    def get_queryset(self):
+        """Restrict the queryset to attachments linked to a model the user can view."""
+        queryset = super().get_queryset()
+
+        allowed_types = get_viewable_attachment_model_types(self.request.user)
+
+        return queryset.filter(model_type__in=allowed_types)
 
     def perform_create(self, serializer):
         """Save the user information when a file is uploaded."""
-        attachment = serializer.save()
-        attachment.upload_user = self.request.user
-        attachment.save()
+        serializer.save(upload_user=self.request.user)
 
     def validate_delete(self, queryset, request) -> None:
         """Ensure that the user has correct permissions for a bulk-delete.
@@ -740,15 +946,48 @@ class AttachmentList(BulkDeleteMixin, ListCreateAPI):
                     )
 
 
-class AttachmentDetail(RetrieveUpdateDestroyAPI):
+class AttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for Attachment objects."""
 
-    queryset = common.models.Attachment.objects.all()
-    serializer_class = common.serializers.AttachmentSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
+    def retrieve(self, request, *args, **kwargs):
+        """Retrieve a single attachment object, if the user has view permission."""
+        attachment = self.get_object()
+
+        if not attachment.check_permission('view', request.user):
+            raise PermissionDenied(
+                _('User does not have permission to view this attachment')
+            )
+
+        return super().retrieve(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        """Update an existing attachment object."""
+        attachment = self.get_object()
+
+        if not attachment.check_permission('change', request.user):
+            raise PermissionDenied(
+                _('User does not have permission to edit this attachment')
+            )
+
+        partial = kwargs.pop('partial', False)
+        data = self.clean_data(request.data)
+
+        # Extract filename first
+        filename = data.pop('filename', None)
+
+        # Run other validation / updates first, before attempting to rename the file
+        serializer = self.get_serializer(attachment, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        # User is attempting to rename the file
+        if filename and attachment.basename and filename != attachment.basename:
+            attachment.rename(filename)
+
+        return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
-        """Check user permissions before deleting an attachment."""
+        """Delete an existing attachment object."""
         attachment = self.get_object()
 
         if not attachment.check_permission('delete', request.user):
@@ -757,6 +996,565 @@ class AttachmentDetail(RetrieveUpdateDestroyAPI):
             )
 
         return super().destroy(request, *args, **kwargs)
+
+
+class NoteFilter(FilterSet):
+    """Filterset class for the NoteList API endpoint."""
+
+    class Meta:
+        """Metaclass options for the filterset."""
+
+        model = common.models.Note
+        fields = ['model_type', 'model_id', 'updated_by', 'template']
+
+    template = rest_filters.BooleanFilter(label='Template')
+
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter queryset by model type, allowing null for global templates."""
+        return common.filters.filter_content_type(
+            queryset, 'model_type', value, allow_null=True
+        )
+
+
+class NoteMixin:
+    """Mixin class for the Note views."""
+
+    # Ignore default sanitizing of the 'content' field
+    # Note: This is handled explicitly in the 'save' method of the Note model
+    SAFE_FIELDS = ['content']
+
+    queryset = common.models.Note.objects.all()
+    serializer_class = common.serializers.NoteSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    def get_queryset(self):
+        """Filter notes to those the requesting user has view permission for.
+
+        Template notes (no attached model) are always visible.
+        Regular notes are only visible when the user has 'view' permission
+        for the model type the note is linked to.
+        """
+        import common.validators
+        from users.permissions import check_user_permission, prefetch_rule_sets
+
+        qs = super().get_queryset()
+        user = self.request.user
+
+        if user.is_superuser:
+            return qs
+
+        # Fetch the user's groups (with prefetched rule sets) once, and reuse it
+        # for every model type below - otherwise each check_user_permission()
+        # call re-fetches the same groups/rule-sets from scratch.
+        groups = prefetch_rule_sets(user)
+
+        allowed_ct_ids = [
+            ContentType.objects.get_for_model(model_class).pk
+            for model_class in common.validators.note_model_types()
+            if check_user_permission(user, model_class, 'view', groups=groups)
+        ]
+
+        return qs.filter(Q(template=True) | Q(model_type__in=allowed_ct_ids))
+
+
+class NoteList(NoteMixin, ListCreateAPI):
+    """List API endpoint for Note objects."""
+
+    filter_backends = SEARCH_ORDER_FILTER
+    filterset_class = NoteFilter
+
+    ordering = '-primary'
+    ordering_fields = [
+        'model_id',
+        'model_type',
+        'updated_by',
+        'updated',
+        'primary',
+        'template',
+        'title',
+    ]
+    search_fields = ['title', 'description', 'content']
+
+
+class NoteDetail(NoteMixin, RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for Note objects."""
+
+    def perform_destroy(self, instance):
+        """Enforce the same permission rules on delete as on create/update.
+
+        DRF's default destroy() calls instance.delete() directly, bypassing
+        NoteSerializer.save() (and the permission checks it performs) entirely.
+        Without this, get_queryset()'s 'view' permission gate is all that
+        stands between a user and deleting the note.
+        """
+        common.serializers.check_note_change_permission(
+            self.request.user,
+            template=instance.template,
+            model_type=instance.model_type,
+        )
+        super().perform_destroy(instance)
+
+
+class ParameterTemplateFilter(FilterSet):
+    """FilterSet class for the ParameterTemplateList API endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = common.models.ParameterTemplate
+        fields = ['name', 'units', 'checkbox', 'enabled', 'unique']
+
+    has_choices = rest_filters.BooleanFilter(
+        method='filter_has_choices', label='Has Choice'
+    )
+
+    def filter_has_choices(self, queryset, name, value):
+        """Filter queryset to include only PartParameterTemplates with choices."""
+        if str2bool(value):
+            return queryset.exclude(Q(choices=None) | Q(choices=''))
+
+        return queryset.filter(Q(choices=None) | Q(choices='')).distinct()
+
+    has_units = rest_filters.BooleanFilter(method='filter_has_units', label='Has Units')
+
+    def filter_has_units(self, queryset, name, value):
+        """Filter queryset to include only PartParameterTemplates with units."""
+        if str2bool(value):
+            return queryset.exclude(Q(units=None) | Q(units=''))
+
+        return queryset.filter(Q(units=None) | Q(units='')).distinct()
+
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates of the given model type."""
+        return common.filters.filter_content_type(
+            queryset, 'model_type', value, allow_null=False
+        )
+
+    for_model = rest_filters.CharFilter(method='filter_for_model', label='For Model')
+
+    def filter_for_model(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which apply to the given model.
+
+        Note that this varies from the 'model_type' filter, in that ParameterTemplates
+        with a blank 'model_type' are considered to apply to all models.
+        """
+        return common.filters.filter_content_type(
+            queryset, 'model_type', value, allow_null=True
+        )
+
+    exists_for_model = rest_filters.CharFilter(
+        method='filter_exists_for_model', label='Exists For Model'
+    )
+
+    def filter_exists_for_model(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which have at least one Parameter for the given model type."""
+        content_type = common.filters.determine_content_type(value)
+
+        if not content_type:
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
+        # If the 'filter_exists_for_model_id' filter is applied, defer to that
+        if self.request.query_params.get('exists_for_model_id', None):
+            return queryset
+
+        queryset = queryset.prefetch_related('parameters')
+
+        # Annotate the queryset to determine which ParameterTemplates have at least one Parameter for the given model type
+        queryset = queryset.annotate(
+            parameter_count=SubqueryCount(
+                'parameters', filter=Q(model_type=content_type)
+            )
+        )
+
+        # Return only those ParameterTemplates which have at least one Parameter for the given model type
+        return queryset.filter(parameter_count__gt=0)
+
+    exists_for_model_id = rest_filters.NumberFilter(
+        method='filter_exists_for_model_id', label='Exists For Model ID'
+    )
+
+    def filter_exists_for_model_id(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which have at least one Parameter for the given model type and model id.
+
+        Notes:
+            - This filter can only be applied if the 'exists_for_model' filter is also applied, as the model_id is only meaningful in the context of a particular model type.
+
+        Reference: https://github.com/inventree/InvenTree/issues/11381
+        """
+        exists_for_model = self.request.query_params.get('exists_for_model', None)
+
+        if not exists_for_model:
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
+        content_type = common.filters.determine_content_type(exists_for_model)
+
+        if not content_type:
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
+        model_class = content_type.model_class()
+
+        # Try to find the model instance
+        try:
+            instance = model_class.objects.get(pk=value)
+        except (model_class.DoesNotExist, ValueError):
+            # If the model instance does not exist, then we can return an empty queryset
+            raise ValidationError({
+                'exists_for_model_id': 'Invalid model id provided - no such instance for the given model type'
+            })
+
+        # If the provided model is a "tree" structure, then we should also include any child objects in the filter
+        if isinstance(instance, InvenTree.models.InvenTreeTree):
+            id_values = list(
+                instance.get_descendants(include_self=True).values_list('pk', flat=True)
+            )
+        else:
+            id_values = [instance.pk]
+
+        # Now, filter against model type and model id
+        queryset = queryset.prefetch_related('parameters')
+
+        filters = {'model_type': content_type, 'model_id__in': id_values}
+
+        # Annotate the queryset to determine which ParameterTemplates have at least one Parameter defined
+        queryset = queryset.annotate(
+            parameter_count=SubqueryCount('parameters', filter=Q(**filters))
+        )
+
+        return queryset.filter(parameter_count__gt=0)
+
+    exists_for_related_model = rest_filters.CharFilter(
+        method='filter_exists_for_related_model', label='Exists For Related Model'
+    )
+
+    def filter_exists_for_related_model(self, queryset, name, value):
+        """Filter applied to map parameter templates to a particular model relation against the target model.
+
+        For instance, specify 'category' to filter part parameters which exist for any part in that category.
+
+        Note:
+            - This filter has no effect on its own
+            - It requires the 'exists_for_model' filter to be applied (to specify the base model)
+            - It requires the 'exists_for_related_model_id' filter to be applied also (to specify the related model id)
+        """
+        return queryset
+
+    exists_for_related_model_id = rest_filters.NumberFilter(
+        method='filter_exists_for_related_model_id', label='Exists For Model ID'
+    )
+
+    def filter_exists_for_related_model_id(self, queryset, name, value):
+        """Filter queryset to include only ParameterTemplates which have at least one Parameter for the given related model type and model id.
+
+        Notes:
+            - This filter can only be applied if the 'exists_for_model' filter is also applied, as the model_id is only meaningful in the context of a base model
+            - This filter can only be applied if the 'exists_for_related_model' filter is also applied, as the related model id is only meaningful in the context of a particular model relation
+
+        Example: To filter part parameters which have at least one parameter defined for any part in category 5, you could apply the following filters:
+            - exists_for_model=part
+            - exists_for_related_model=category
+            - exists_for_related_model_id=5
+        """
+        model = self.request.query_params.get('exists_for_model', None)
+        related_model = self.request.query_params.get('exists_for_related_model', None)
+
+        if not model or not related_model:
+            raise ValidationError({
+                'exists_for_model': 'Invalid model type provided - unable to determine content type'
+            })
+
+        # Determine content type for the base model, to ensure they are valid
+        model_type = common.filters.determine_content_type(model)
+
+        if not model_type:
+            return queryset.none()
+
+        # Determine the model class for the 'related' model
+        try:
+            related_model_field = model_type.model_class()._meta.get_field(
+                related_model
+            )
+        except FieldDoesNotExist:
+            raise ValidationError({
+                'exists_for_related_model': 'Invalid related model - no such field on the base model'
+            })
+        if related_model_field := model_type.model_class()._meta.get_field(
+            related_model
+        ):
+            related_model_class = related_model_field.related_model
+        else:
+            # Return an empty queryset if the provided related model is invalid
+            return queryset.none()
+
+        # Find all instances of the related model which match the provided related model id
+        try:
+            related_instance = related_model_class.objects.get(pk=value)
+        except (related_model_class.DoesNotExist, ValueError):
+            return queryset.none()
+
+        # Account for potential tree structure in the related model
+        if isinstance(related_instance, InvenTree.models.InvenTreeTree):
+            related_instances = list(
+                related_instance.get_descendants(include_self=True).values_list(
+                    'pk', flat=True
+                )
+            )
+        else:
+            related_instances = [related_instance.pk]
+
+        # Next, find all instances of the base model which are related to the related model instances
+        model_instances = model_type.model_class().objects.filter(**{
+            f'{related_model}__in': related_instances
+        })
+        model_instance_ids = list(model_instances.values_list('pk', flat=True))
+
+        # Now, filter against model type and model id
+        queryset = queryset.prefetch_related('parameters')
+
+        filters = {'model_type': model_type, 'model_id__in': model_instance_ids}
+
+        # Annotate the queryset to determine which ParameterTemplates have at least one Parameter defined
+        queryset = queryset.annotate(
+            parameter_count=SubqueryCount('parameters', filter=Q(**filters))
+        )
+
+        return queryset.filter(parameter_count__gt=0)
+
+
+class ParameterTemplateMixin:
+    """Mixin class for ParameterTemplate views."""
+
+    queryset = common.models.ParameterTemplate.objects.all().prefetch_related(
+        'model_type'
+    )
+    serializer_class = common.serializers.ParameterTemplateSerializer
+    permission_classes = [IsStaffOrReadOnlyScope]
+
+
+class ParameterTemplateList(ParameterTemplateMixin, DataExportViewMixin, ListCreateAPI):
+    """List view for ParameterTemplate objects."""
+
+    filterset_class = ParameterTemplateFilter
+    filter_backends = SEARCH_ORDER_FILTER
+    search_fields = ['name', 'description']
+    ordering_fields = ['name', 'units', 'checkbox']
+
+
+class ParameterTemplateDetail(ParameterTemplateMixin, RetrieveUpdateDestroyAPI):
+    """Detail view for a ParameterTemplate object."""
+
+
+class ParameterFilter(FilterSet):
+    """Custom filters for the ParameterList API endpoint."""
+
+    class Meta:
+        """Metaclass options for the filterset."""
+
+        model = common.models.Parameter
+        fields = ['model_id', 'template', 'updated_by']
+
+    enabled = rest_filters.BooleanFilter(
+        label='Template Enabled', field_name='template__enabled'
+    )
+
+    model_type = rest_filters.CharFilter(method='filter_model_type', label='Model Type')
+
+    def filter_model_type(self, queryset, name, value):
+        """Filter queryset to include only Parameters of the given model type."""
+        return common.filters.filter_content_type(
+            queryset, 'model_type', value, allow_null=False
+        )
+
+
+class ParameterMixin:
+    """Mixin class for Parameter views."""
+
+    queryset = common.models.Parameter.objects.all().prefetch_related('model_type')
+    serializer_class = common.serializers.ParameterSerializer
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    def get_queryset(self):
+        """Filter parameters to those the requesting user has view permission for.
+
+        Parameter has no RuleSet permissions of its own (see
+        users.ruleset.get_ruleset_ignore()) - access is instead scoped by the
+        'view' permission of the model type the parameter is linked to.
+        """
+        import common.validators
+        from users.permissions import check_user_permission, prefetch_rule_sets
+
+        qs = super().get_queryset()
+        user = self.request.user
+
+        if user.is_superuser:
+            return qs
+
+        # Fetch the user's groups (with prefetched rule sets) once, and reuse it
+        # for every model type below - otherwise each check_user_permission()
+        # call re-fetches the same groups/rule-sets from scratch.
+        groups = prefetch_rule_sets(user)
+
+        allowed_ct_ids = [
+            ContentType.objects.get_for_model(model_class).pk
+            for model_class in common.validators.parameter_model_types()
+            if check_user_permission(user, model_class, 'view', groups=groups)
+        ]
+
+        return qs.filter(model_type__in=allowed_ct_ids)
+
+
+class ParameterList(
+    OutputOptionsMixin,
+    ParameterMixin,
+    BulkCreateMixin,
+    BulkDeleteMixin,
+    DataExportViewMixin,
+    ListCreateAPI,
+):
+    """List API endpoint for Parameter objects."""
+
+    filterset_class = ParameterFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['name', 'data', 'units', 'template', 'updated', 'updated_by']
+
+    ordering_field_aliases = {
+        'name': 'template__name',
+        'units': 'template__units',
+        'data': ['data_numeric', 'data'],
+    }
+
+    search_fields = [
+        'data',
+        'template__name',
+        'template__description',
+        'template__units',
+    ]
+
+    unique_create_fields = ['model_type', 'model_id', 'template']
+
+    def validate_delete(self, queryset, request) -> None:
+        """Ensure that the user has correct permissions for a bulk-delete.
+
+        - Extract all model types from the provided queryset
+        - Ensure that the user has correct 'delete' permissions for each linked model
+        """
+        from users.permissions import check_user_permission
+
+        content_type_ids = queryset.values_list('model_type', flat=True).distinct()
+
+        for content_type in ContentType.objects.filter(pk__in=content_type_ids):
+            model_class = content_type.model_class()
+
+            if not model_class or not check_user_permission(
+                request.user, model_class, 'delete'
+            ):
+                raise ValidationError(
+                    _('User does not have permission to delete these parameters')
+                )
+
+
+class ParameterDetail(ParameterMixin, RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for Parameter objects."""
+
+    def perform_destroy(self, instance):
+        """Enforce a delete permission check on the linked model before deleting.
+
+        DRF's default destroy() calls instance.delete() directly, bypassing
+        ParameterSerializer.save() (and the permission checks it performs)
+        entirely. Without this, get_queryset()'s 'view' permission gate is
+        all that stands between a user and deleting the parameter.
+        """
+        if not instance.check_permission('delete', self.request.user):
+            raise PermissionDenied(
+                _('User does not have permission to delete this parameter')
+            )
+        super().perform_destroy(instance)
+
+
+class InstanceInfoView(APIView):
+    """Return aggregated attachment/note/parameter counts for a single model instance.
+
+    A single generic lookup (given a model_type + model_id) for any detail page to
+    drive its Attachments/Notes/Parameters tab notification dots from one request,
+    instead of each tab independently querying its own list endpoint just to read
+    a count.
+
+    Each count reuses the filtering (and, for notes, the view-permission gating)
+    already implemented by the corresponding list endpoint.
+    """
+
+    permission_classes = [IsAuthenticatedOrReadScope]
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(name='model_type', type=str, required=True),
+            OpenApiParameter(name='model_id', type=int, required=True),
+        ],
+        responses={200: common.serializers.InstanceInfoSerializer},
+    )
+    def get(self, request, *args, **kwargs):
+        """Return counts of attachments, notes and parameters for the given instance."""
+        from InvenTree.models import (
+            InvenTreeAttachmentMixin,
+            InvenTreeNoteMixin,
+            InvenTreeParameterMixin,
+        )
+
+        model_type = request.query_params.get('model_type')
+        model_id = request.query_params.get('model_id')
+
+        if not model_type or not model_id:
+            raise ValidationError({
+                'model_type': _('This field is required'),
+                'model_id': _('This field is required'),
+            })
+
+        try:
+            model_id = int(model_id)
+        except (TypeError, ValueError):
+            raise ValidationError({'model_id': _('Invalid model ID')})
+
+        content_type = common.filters.determine_content_type(model_type)
+        model_class = content_type.model_class() if content_type else None
+
+        counts = {'attachment_count': 0, 'note_count': 0, 'parameter_count': 0}
+
+        if model_class:
+            if issubclass(model_class, InvenTreeAttachmentMixin):
+                counts['attachment_count'] = common.models.Attachment.objects.filter(
+                    model_type=model_class.__name__.lower(), model_id=model_id
+                ).count()
+
+            if issubclass(model_class, InvenTreeNoteMixin):
+                # Route through NoteList's own get_queryset() (rather than
+                # re-deriving the view-permission check here) so this count can
+                # never drift from what the Notes list endpoint actually shows.
+                note_list_view = NoteList()
+                note_list_view.request = request
+                counts['note_count'] = (
+                    note_list_view
+                    .get_queryset()
+                    .filter(model_type=content_type, model_id=model_id, template=False)
+                    .count()
+                )
+
+            if issubclass(model_class, InvenTreeParameterMixin):
+                counts['parameter_count'] = common.models.Parameter.objects.filter(
+                    model_type=content_type, model_id=model_id
+                ).count()
+
+        serializer = common.serializers.InstanceInfoSerializer(counts)
+        return Response(serializer.data)
 
 
 @method_decorator(cache_control(public=True, max_age=86400), name='dispatch')
@@ -771,24 +1569,24 @@ class IconList(ListAPI):
         return list(get_icon_packs().values())
 
 
-class SelectionListList(ListCreateAPI):
-    """List view for SelectionList objects."""
+class SelectionListMixin(OutputOptionsMixin):
+    """Mixin for SelectionList views."""
 
     queryset = common.models.SelectionList.objects.all()
     serializer_class = common.serializers.SelectionListSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
+    permission_classes = [IsStaffOrReadOnlyScope]
 
     def get_queryset(self):
         """Override the queryset method to include entry count."""
         return self.serializer_class.annotate_queryset(super().get_queryset())
 
 
-class SelectionListDetail(RetrieveUpdateDestroyAPI):
-    """Detail view for a SelectionList object."""
+class SelectionListList(SelectionListMixin, ListCreateAPI):
+    """List view for SelectionList objects."""
 
-    queryset = common.models.SelectionList.objects.all()
-    serializer_class = common.serializers.SelectionListSerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
+
+class SelectionListDetail(SelectionListMixin, RetrieveUpdateDestroyAPI):
+    """Detail view for a SelectionList object."""
 
 
 class EntryMixin:
@@ -796,7 +1594,7 @@ class EntryMixin:
 
     queryset = common.models.SelectionListEntry.objects.all()
     serializer_class = common.serializers.SelectionEntrySerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
+    permission_classes = [IsStaffOrReadOnlyScope]
     lookup_url_kwarg = 'entrypk'
 
     def get_queryset(self):
@@ -806,45 +1604,66 @@ class EntryMixin:
         queryset = queryset.prefetch_related('list')
         return queryset
 
+    def perform_destroy(self, instance):
+        """Prevent deletion of entries belonging to a locked selection list."""
+        if instance.list.locked:
+            raise PermissionDenied(_('Selection list is locked'))
+        super().perform_destroy(instance)
+
 
 class SelectionEntryList(EntryMixin, ListCreateAPI):
     """List view for SelectionEntry objects."""
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['list', 'label', 'active']
+
+    search_fields = ['label', 'description']
+
+    filterset_fields = ['active', 'value', 'list']
 
 
 class SelectionEntryDetail(EntryMixin, RetrieveUpdateDestroyAPI):
     """Detail view for a SelectionEntry object."""
 
 
-class DataOutputEndpointMixin:
+class DataOutputViewSet(BulkDeleteViewsetMixin, RetrieveDestroyModelViewSet):
     """Mixin class for DataOutput endpoints."""
 
     queryset = common.models.DataOutput.objects.all()
     serializer_class = common.serializers.DataOutputSerializer
     permission_classes = [IsAuthenticatedOrReadScope]
 
-
-class DataOutputList(DataOutputEndpointMixin, BulkDeleteMixin, ListAPI):
-    """List view for DataOutput objects."""
-
     filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['pk', 'user', 'plugin', 'output_type', 'created']
     filterset_fields = ['user']
 
+    def get_queryset(self):
+        """Return the set of DataOutput objects which the user has permission to view."""
+        queryset = super().get_queryset()
 
-class DataOutputDetail(DataOutputEndpointMixin, generics.DestroyAPIView, RetrieveAPI):
-    """Detail view for a DataOutput object."""
+        try:
+            user = self.request.user
+        except AttributeError:
+            raise PermissionDenied('User information is not available')
+
+        # Allow staff users access to all DataOutput objects
+        if user.is_staff:
+            return queryset
+
+        # All other users are limited to viewing their own DataOutput objects
+        return queryset.filter(user=user)
 
 
-class EmailMessageMixin:
-    """Mixin class for Email endpoints."""
+common_router.register('data-output', DataOutputViewSet, basename='api-data-output')
+
+
+class EmailViewSet(BulkDeleteViewsetMixin, RetrieveDestroyModelViewSet):
+    """Backend E-Mail management for administrative purposes."""
 
     queryset = common.models.EmailMessage.objects.all()
     serializer_class = common.serializers.EmailMessageSerializer
     permission_classes = [IsSuperuserOrSuperScope]
-
-
-class EmailMessageList(EmailMessageMixin, BulkDeleteMixin, ListAPI):
-    """List view for email objects."""
 
     filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = [
@@ -865,19 +1684,16 @@ class EmailMessageList(EmailMessageMixin, BulkDeleteMixin, ListAPI):
         'thread_id_key',
     ]
 
-
-class EmailMessageDetail(EmailMessageMixin, RetrieveDestroyAPI):
-    """Detail view for an email object."""
-
-
-class TestEmail(CreateAPI):
-    """Send a test email."""
-
-    serializer_class = common.serializers.TestEmailSerializer
-    permission_classes = [IsSuperuserOrSuperScope]
-
-    def perform_create(self, serializer):
+    @action(
+        detail=False,
+        methods=['post'],
+        serializer_class=common.serializers.TestEmailSerializer,
+    )
+    def test(self, request):
         """Send a test email."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         data = serializer.validated_data
 
         delivered, reason = send_email(
@@ -889,7 +1705,227 @@ class TestEmail(CreateAPI):
             raise serializers.ValidationError(
                 detail=f'Failed to send test email: "{reason}"'
             )  # pragma: no cover
+        return Response(serializer.data)
 
+
+admin_router.register('email', EmailViewSet, basename='api-email')
+
+
+class HealthCheckStatusSerializer(serializers.Serializer):
+    """Status of the overall system health."""
+
+    status = serializers.ChoiceField(
+        help_text='Health status of the InvenTree server',
+        choices=['ok', 'loading'],
+        read_only=True,
+        default='ok',
+    )
+
+
+class HealthCheckView(APIView):
+    """Simple JSON endpoint for InvenTree health check.
+
+    Intended to be used by external services to confirm that the InvenTree server is running.
+    """
+
+    permission_classes = [AllowAnyOrReadScope]
+
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=HealthCheckStatusSerializer,
+                description='InvenTree server health status',
+            )
+        }
+    )
+    def get(self, request, *args, **kwargs):
+        """Simple health check endpoint for monitoring purposes.
+
+        Use the root API endpoint for more detailed information (using an authenticated request).
+        """
+        status = (
+            InvenTree.ready.isPluginRegistryLoaded()
+            if settings.PLUGINS_ENABLED
+            else True
+        )
+        return JsonResponse(
+            {'status': 'ok' if status else 'loading'}, status=200 if status else 503
+        )
+
+
+class ObservabilityEndSerializer(serializers.Serializer):
+    """Serializer for observability end endpoint."""
+
+    traceid = serializers.CharField(
+        help_text='Trace ID to end', max_length=128, required=True
+    )
+    service = serializers.CharField(
+        help_text='Service name', max_length=128, required=True
+    )
+
+
+class ObservabilityEnd(CreateAPI):
+    """Endpoint for observability tools."""
+
+    # Note: This endpoint can be called anonymously, as it needs to function before the user is authenticated (e.g. during login)
+    permission_classes = [AllowAnyOrReadScope]
+    serializer_class = ObservabilityEndSerializer
+
+    def create(self, request, *args, **kwargs):
+        """End a trace in the observability system."""
+        if not settings.TRACING_ENABLED:
+            return Response({'status': 'ok'})
+
+        data = self.get_serializer(data=request.data)
+        data.is_valid(raise_exception=True)
+
+        traceid = data.validated_data['traceid']
+        # service = data.validated_data['service']  # This will become interesting with frontend observability
+
+        # End the foreign trend via the low level otel API
+        tracer = trace.get_tracer(__name__)
+        span_context = trace.SpanContext(
+            trace_id=int(traceid, 16),
+            span_id=0,
+            is_remote=True,
+            trace_flags=trace.TraceFlags(0x01),
+            trace_state=trace.TraceState(),
+        )
+        with tracer.start_span('Ending session') as span:
+            span.add_event('Ending external trace')
+            span.add_link(span_context)
+
+        return Response({'status': 'ok'})
+
+
+class SocialAppSerializer(serializers.ModelSerializer):
+    """Serializer for SocialApp records."""
+
+    provider = serializers.ChoiceField(label=_('Provider'), choices=[])
+    name = serializers.CharField(
+        label=_('Name'),
+        help_text=_(
+            'Human friendly name for the application - will be displayed to users'
+        ),
+    )
+    provider_id = serializers.CharField(
+        label=_('Provider ID'),
+        help_text=_(
+            'Unique identifier - required for generic providers that can be configured multiple times such as SAML or OpenID Connect'
+        ),
+        required=False,
+        allow_blank=True,
+    )
+
+    class Meta:
+        """Meta options for SocialAppSerializer."""
+
+        model = SocialApp
+        fields = [
+            'id',
+            'name',
+            'provider',
+            'provider_id',
+            'client_id',
+            'secret',
+            'settings',
+        ]
+        read_only_fields = ['id']
+
+    def __init__(self, *args, **kwargs):
+        """Populate provider choices from the active allauth registry."""
+        super().__init__(*args, **kwargs)
+        self.fields['provider'].choices = providers.registry.as_choices()
+
+    def validate_provider(self, value):
+        """Ensure the selected provider is supported by the active allauth registry."""
+        if value not in [provider[0] for provider in providers.registry.as_choices()]:
+            raise serializers.ValidationError(_('Provider is not supported'))
+        return value
+
+    def validate(self, data):
+        """Ensure that the provider is unique across all SocialApp records."""
+        provider = data.get('provider', None)
+        if (
+            provider
+            and SocialApp.objects.filter(provider=provider).exists()
+            and provider not in ('saml', 'openid_connect')
+        ):
+            raise serializers.ValidationError({
+                'provider': _('A SocialApp with this provider already exists')
+            })
+
+        if provider == 'saml':
+            settings = data.get('settings') or {}
+            idp = settings.get('idp') or {}
+            has_metadata = bool(idp.get('metadata_url'))
+            has_inline_metadata = all(
+                idp.get(field) for field in ('sso_url', 'slo_url', 'x509cert')
+            )
+
+            if not has_metadata and not has_inline_metadata:
+                raise serializers.ValidationError({
+                    'settings': _(
+                        'Provide an IdP metadata URL, or configure the IdP '
+                        'SSO URL, SLO URL, and X.509 certificate.'
+                    )
+                })
+
+        return data
+
+
+class SocialAppViewSet(CleanModelViewSet):
+    """Manage a SocialApp (client side) application."""
+
+    queryset = SocialApp.objects.all()
+    serializer_class = SocialAppSerializer
+
+
+admin_router.register('sso', SocialAppViewSet, basename='api-sso')
+
+
+class ApplicationViewSet(CleanModelViewSet):
+    """Manage a oAuth2 (provider side) application."""
+
+    queryset = Application.objects.all()
+    serializer_class = OAuth2ApplicationSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete an OAuth2 application.
+
+        Deletion of the built-in default OIDC client is not allowed.
+        """
+        instance = self.get_object()
+
+        if instance.client_id == DEFAULT_OIDC_APP_ID:
+            raise PermissionDenied(
+                _('The built-in default OIDC client cannot be deleted.')
+            )
+
+        return super().destroy(request, *args, **kwargs)
+
+    @extend_schema(request=None, responses={200: OAuth2ApplicationSerializer()})
+    @action(detail=True, methods=['post'])
+    def regenerate(self, request, *args, **kwargs):
+        """Regenerate the client secret."""
+        instance = self.get_object()
+
+        if instance.client_id == DEFAULT_OIDC_APP_ID:
+            raise PermissionDenied(
+                _('The built-in default OIDC client secret cannot be regenerated.')
+            )
+
+        secret = generate_client_secret()
+        instance.client_secret = secret
+        instance._raw_client_secret = secret
+        instance.save()
+
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+
+# oAuth2 admin
+admin_router.register('oauth2', ApplicationViewSet, basename='api-oauth2')
 
 selection_urls = [
     path(
@@ -1068,8 +2104,6 @@ settings_api_urls = [
 common_api_urls = [
     # Webhooks
     path('webhook/<slug:endpoint>/', WebhookView.as_view(), name='api-webhook'),
-    # Uploaded images for notes
-    path('notes-image-upload/', NotesImageList.as_view(), name='api-notes-image-list'),
     # Background task information
     path(
         'background-task/',
@@ -1081,6 +2115,9 @@ common_api_urls = [
                 name='api-scheduled-task-list',
             ),
             path('failed/', FailedTaskList.as_view(), name='api-failed-task-list'),
+            path(
+                '<str:task_id>/', BackgroundTaskDetail.as_view(), name='api-task-detail'
+            ),
             path('', BackgroundTaskOverview.as_view(), name='api-task-overview'),
         ]),
     ),
@@ -1091,22 +2128,80 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(model=common.models.Attachment),
-                        name='api-attachment-metadata',
-                    ),
+                    meta_path(common.models.Attachment),
                     path('', AttachmentDetail.as_view(), name='api-attachment-detail'),
                 ]),
             ),
             path('', AttachmentList.as_view(), name='api-attachment-list'),
         ]),
     ),
+    # Notes
     path(
-        'error-report/',
+        'note/',
         include([
-            path('<int:pk>/', ErrorMessageDetail.as_view(), name='api-error-detail'),
-            path('', ErrorMessageList.as_view(), name='api-error-list'),
+            # Uploaded images for notes
+            path('image/', NotesImageList.as_view(), name='api-notes-image-list'),
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(common.models.Note),
+                    path('', NoteDetail.as_view(), name='api-note-detail'),
+                ]),
+            ),
+            path('', NoteList.as_view(), name='api-note-list'),
+        ]),
+    ),
+    # Parameters and templates
+    path(
+        'parameter/',
+        include([
+            path(
+                'template/',
+                include([
+                    path(
+                        '<int:pk>/',
+                        include([
+                            meta_path(common.models.ParameterTemplate),
+                            path(
+                                '',
+                                ParameterTemplateDetail.as_view(),
+                                name='api-parameter-template-detail',
+                            ),
+                        ]),
+                    ),
+                    path(
+                        '',
+                        ParameterTemplateList.as_view(),
+                        name='api-parameter-template-list',
+                    ),
+                ]),
+            ),
+            path(
+                '<int:pk>/',
+                include([
+                    meta_path(common.models.Parameter),
+                    path('', ParameterDetail.as_view(), name='api-parameter-detail'),
+                ]),
+            ),
+            path('', ParameterList.as_view(), name='api-parameter-list'),
+        ]),
+    ),
+    # Aggregated per-instance counts (attachments / notes / parameters)
+    path('instance-info/', InstanceInfoView.as_view(), name='api-instance-info'),
+    # Metadata
+    path(
+        'metadata/',
+        include([
+            path(
+                '<str:model>/<str:lookup_field>/<str:lookup_value>/',
+                GenericMetadataView.as_view(),
+                name='api-generic-metadata',
+            ),
+            path(
+                '<str:model>/<int:pk>/',
+                SimpleGenericMetadataView.as_view(),
+                name='api-generic-metadata',
+            ),
         ]),
     ),
     # Project codes
@@ -1116,14 +2211,7 @@ common_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'metadata/',
-                        MetadataView.as_view(
-                            model=common.models.ProjectCode,
-                            permission_classes=[IsStaffOrReadOnlyScope],
-                        ),
-                        name='api-project-code-metadata',
-                    ),
+                    meta_path(common.models.ProjectCode),
                     path(
                         '', ProjectCodeDetail.as_view(), name='api-project-code-detail'
                     ),
@@ -1132,70 +2220,12 @@ common_api_urls = [
             path('', ProjectCodeList.as_view(), name='api-project-code-list'),
         ]),
     ),
-    # Custom physical units
+    # Tags (via django-taggit)
     path(
-        'units/',
+        'tag/',
         include([
-            path(
-                '<int:pk>/',
-                include([
-                    path('', CustomUnitDetail.as_view(), name='api-custom-unit-detail')
-                ]),
-            ),
-            path('all/', AllUnitList.as_view(), name='api-all-unit-list'),
-            path('', CustomUnitList.as_view(), name='api-custom-unit-list'),
-        ]),
-    ),
-    # Currencies
-    path(
-        'currency/',
-        include([
-            path(
-                'exchange/',
-                CurrencyExchangeView.as_view(),
-                name='api-currency-exchange',
-            ),
-            path(
-                'refresh/', CurrencyRefreshView.as_view(), name='api-currency-refresh'
-            ),
-        ]),
-    ),
-    # Notifications
-    path(
-        'notifications/',
-        include([
-            # Individual purchase order detail URLs
-            path(
-                '<int:pk>/',
-                include([
-                    path(
-                        '',
-                        NotificationDetail.as_view(),
-                        name='api-notifications-detail',
-                    )
-                ]),
-            ),
-            # Read all
-            path(
-                'readall/',
-                NotificationReadAll.as_view(),
-                name='api-notifications-readall',
-            ),
-            # Notification messages list
-            path('', NotificationList.as_view(), name='api-notifications-list'),
-        ]),
-    ),
-    # News
-    path(
-        'news/',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    path('', NewsFeedEntryDetail.as_view(), name='api-news-detail')
-                ]),
-            ),
-            path('', NewsFeedEntryList.as_view(), name='api-news-list'),
+            path('<int:pk>/', TagDetail.as_view(), name='api-tag-detail'),
+            path('', TagList.as_view(), name='api-tag-list'),
         ]),
     ),
     # Flags
@@ -1229,29 +2259,31 @@ common_api_urls = [
     path('selection/', include(selection_urls)),
     # References
     path('reference/', include(reference_urls)),
-    # Data output
+    # System APIs (related to basic system functions)
     path(
-        'data-output/',
+        'system/',
         include([
-            path(
-                '<int:pk>/', DataOutputDetail.as_view(), name='api-data-output-detail'
-            ),
-            path('', DataOutputList.as_view(), name='api-data-output-list'),
+            # Health check
+            path('health/', HealthCheckView.as_view(), name='api-system-health')
         ]),
     ),
+    # Internal System APIs - DO NOT USE
+    path(
+        'system-internal/',
+        include([
+            # Observability
+            path(
+                'observability/end',
+                ObservabilityEnd.as_view(),
+                name='api-system-observability',
+            )
+        ]),
+    ),
+    # Router
+    path('', include(common_router.urls)),
 ]
 
-admin_api_urls = [
-    # Admin
-    path('config/', ConfigList.as_view(), name='api-config-list'),
-    path('config/<str:key>/', ConfigDetail.as_view(), name='api-config-detail'),
-    # Email
-    path(
-        'email/',
-        include([
-            path('test/', TestEmail.as_view(), name='api-email-test'),
-            path('<str:pk>/', EmailMessageDetail.as_view(), name='api-email-detail'),
-            path('', EmailMessageList.as_view(), name='api-email-list'),
-        ]),
-    ),
-]
+# SCIM admin
+admin_router.register('scim', ScimConfigViewSet, basename='api-scim')
+
+admin_api_urls = admin_router.urls

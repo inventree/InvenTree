@@ -34,11 +34,14 @@ for key in [
     print(f' - {key}: {val}')
 
 # Cached settings dict values
+global CONFIG_SETTINGS
 global GLOBAL_SETTINGS
 global USER_SETTINGS
 global TAGS
 global FILTERS
 global REPORT_CONTEXT
+global STATUS_CODES
+global ROLES
 
 # Read in the InvenTree settings file
 here = Path(__file__).parent
@@ -59,11 +62,19 @@ with open(observed_settings_file, 'w', encoding='utf-8') as f:
     # This is used to track which settings we have observed during the build process
     f.write(json.dumps(data, indent=4))
 
+# File where we will *store* information on the status code classes we have observed
+observed_status_codes_file = gen_base.joinpath('observed_status_codes.json')
+
+# Overwrite the observed status codes file
+with open(observed_status_codes_file, 'w', encoding='utf-8') as f:
+    f.write(json.dumps({}, indent=4))
+
 with open(settings_file, encoding='utf-8') as sf:
     settings = json.load(sf)
 
     GLOBAL_SETTINGS = settings['global']
     USER_SETTINGS = settings['user']
+    CONFIG_SETTINGS = settings['config']
 
 # Tags
 with open(gen_base.joinpath('inventree_tags.yml'), encoding='utf-8') as f:
@@ -71,9 +82,15 @@ with open(gen_base.joinpath('inventree_tags.yml'), encoding='utf-8') as f:
 # Filters
 with open(gen_base.joinpath('inventree_filters.yml'), encoding='utf-8') as f:
     FILTERS = yaml.load(f, yaml.BaseLoader)
+# Status codes
+with open(gen_base.joinpath('inventree_status_codes.json'), encoding='utf-8') as f:
+    STATUS_CODES = json.load(f)
 # Report context
 with open(gen_base.joinpath('inventree_report_context.json'), encoding='utf-8') as f:
     REPORT_CONTEXT = json.load(f)
+# User permission roles
+with open(gen_base.joinpath('inventree_roles.json'), encoding='utf-8') as f:
+    ROLES = json.load(f)
 
 
 def get_repo_url(raw=False):
@@ -126,7 +143,7 @@ def check_link(url) -> bool:
     return False
 
 
-def get_build_environment() -> str:
+def get_build_environment() -> Optional[str]:
     """Returns the branch we are currently building on, based on the environment variables of the various CI platforms."""
     # Check if we are in ReadTheDocs
     if os.environ.get('READTHEDOCS') == 'True':
@@ -233,12 +250,12 @@ def define_env(env):
         return url
 
     @env.macro
-    def invoke_commands():
+    def invoke_commands(command: str = '--list'):
         """Provides an output of the available commands."""
         tasks = here.parent.joinpath('tasks.py')
         output = gen_base.joinpath('invoke-commands.txt')
 
-        command = f'invoke -f {tasks} --list > {output}'
+        command = f'invoke -f {tasks} {command} > {output}'
 
         assert subprocess.call(command, shell=True) == 0
 
@@ -295,6 +312,38 @@ def define_env(env):
 
         return includefile(fn, f'Template: {base}', fmt='html')
 
+    @env.macro
+    def statuscodes(class_name: str):
+        """Render a markdown table of status codes for the given StatusCode class.
+
+        Arguments:
+            class_name: The name of the `StatusCode` subclass to render (e.g. 'BuildStatus')
+
+        The table is built directly from `docs/generated/inventree_status_codes.json`
+        (produced by the `export_status_codes` management command), so it can never
+        drift out of sync with the status codes actually defined in the source code.
+        """
+        global STATUS_CODES
+
+        status_class = STATUS_CODES[class_name]
+
+        # Record that this status code class has been rendered somewhere in the docs
+        with open(observed_status_codes_file, encoding='utf-8') as f:
+            data = json.load(f)
+
+        data[class_name] = True
+
+        with open(observed_status_codes_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4)
+
+        ret_data = '| Status | Value | Description |\n| --- | --- | --- |\n'
+
+        for item in status_class['values']:
+            description = item['description'] or item['label']
+            ret_data += f'| {item["label"]} | {item["key"]} | {description} |\n'
+
+        return ret_data
+
     def observe_setting(key: str, group: str):
         """Record that a particular setting has been observed.
 
@@ -318,17 +367,20 @@ def define_env(env):
             json.dump(data, f, indent=4)
 
     @env.macro
-    def rendersetting(key: str, setting: dict, short: bool = False):
+    def rendersetting(
+        key: str, setting: dict, short: bool = False, default: Optional[str] = None
+    ):
         """Render a provided setting object into a table row.
 
         Arguments:
             key: The name of the setting to extract information for.
             setting: The setting object to render.
             short: If True, return a short version of the setting (default: False)
+            default: An optional default value to override the setting's default display value.
         """
         name = setting['name']
         description = setting['description']
-        default = setting.get('default')
+        default = default or setting.get('default')
         units = setting.get('units')
 
         default = f'`{default}`' if default else ''
@@ -340,12 +392,13 @@ def define_env(env):
         return f'| <div title="{key}"><strong>{name}</strong></div> | {description} | {default} | {units} |'
 
     @env.macro
-    def globalsetting(key: str, short: bool = False):
+    def globalsetting(key: str, short: bool = False, default: Optional[str] = None):
         """Extract information on a particular global setting.
 
         Arguments:
             key: The name of the global setting to extract information for.
             short: If True, return a short version of the setting (default: False)
+            default: An optional default value to override the setting's default display value.
         """
         global GLOBAL_SETTINGS
         setting = GLOBAL_SETTINGS[key]
@@ -354,7 +407,7 @@ def define_env(env):
         if not short:
             observe_setting(key, 'global')
 
-        return rendersetting(key, setting, short=short)
+        return rendersetting(key, setting, short=short, default=default)
 
     @env.macro
     def usersetting(key: str, short: bool = False):
@@ -372,6 +425,34 @@ def define_env(env):
             observe_setting(key, 'user')
 
         return rendersetting(key, setting, short=short)
+
+    @env.macro
+    def configtable():
+        """Generate a header for the configuration settings table."""
+        return '| Environment Variable | Configuration File | Default | Description |\n| --- | --- | --- | --- |'
+
+    @env.macro
+    def configsetting(key: str, default: Optional[str] = None):
+        """Extract information on a particular configuration setting.
+
+        Arguments:
+            key: The name of the configuration setting to extract information for.
+            default: An optional default value to override the setting's default display value.
+        """
+        global CONFIG_SETTINGS
+        setting = CONFIG_SETTINGS[key]
+
+        observe_setting(key, 'config')
+
+        cfg_key = setting.get('config_key', None)
+        cfg_key = f'`{cfg_key}`' if cfg_key else '-'
+
+        default = default or setting.get('default_value', None)
+
+        if default is None:
+            default = '*Not Specified*'
+
+        return f'| <span title="{key}" style="white-space: nowrap;"><code>{key}</code></span> | {cfg_key} | {default} |'
 
     @env.macro
     def tags_and_filters():
@@ -396,6 +477,25 @@ def define_env(env):
         return ret_data
 
     @env.macro
+    def roles():
+        """Render a markdown table of the available user permission roles.
+
+        The table is built directly from `docs/generated/inventree_roles.json`
+        (produced by the `export_roles` management command, sourced from
+        `users.ruleset.RULESET_CHOICES`), so it can never drift out of sync with
+        the roles actually defined in the source code.
+        """
+        global ROLES
+
+        ret_data = '| Role | Description |\n| --- | --- |\n'
+
+        for role in ROLES:
+            description = role['description'] or role['label']
+            ret_data += f'| **{role["label"]}** | {description} |\n'
+
+        return ret_data
+
+    @env.macro
     def report_context(type_: Literal['models', 'base'], model: str):
         """Extract information on a particular report context."""
         global REPORT_CONTEXT
@@ -405,6 +505,75 @@ def define_env(env):
         ret_data = '| Variable | Type | Description |\n| --- | --- | --- |\n'
         for k, v in context['context'].items():
             ret_data += f'| {k} | `{v["type"]}` | {v["description"]} |\n'
+
+        return ret_data
+
+    def render_attribute_table(attributes: dict, title: str) -> str:
+        """Render a table of field/property information, in a collapsible (collapsed by default) block.
+
+        Returns an empty string (including no block) if there is nothing to display.
+        """
+        if not attributes:
+            return ''
+
+        table = '| Variable | Type | Description |\n| --- | --- | --- |\n'
+
+        for k, v in sorted(attributes.items()):
+            description = ' '.join(v['description'].split())
+            table += f'| {k} | `{v["type"]}` | {description} |\n'
+
+        ret_data = f'??? note "{title}"\n\n'
+        ret_data += textwrap.indent(table, '    ')
+
+        # Trailing blank line, so consecutive macro calls (e.g. fields followed by
+        # properties) don't run together when the template places them on adjacent lines
+        return ret_data + '\n'
+
+    @env.macro
+    def reportable_model_context():
+        """Render the full 'reportable model types' section.
+
+        One heading plus fields/properties tables per model which templates can be
+        rendered against (e.g. `Part`, `SalesOrder`, `StockItem`). The list of models
+        comes directly from what `export_report_context` discovered via the
+        `InvenTreeReportMixin`, so there is no manually-maintained per-model heading
+        list to keep in sync here.
+        """
+        global REPORT_CONTEXT
+
+        models = REPORT_CONTEXT.get('models', {})
+
+        ret_data = ''
+
+        for info in sorted(models.values(), key=lambda item: item['name']):
+            ret_data += f'### {info["name"]}\n\n'
+            ret_data += render_attribute_table(info.get('fields', {}), 'Fields')
+            ret_data += render_attribute_table(info.get('properties', {}), 'Properties')
+
+        return ret_data
+
+    @env.macro
+    def related_model_context():
+        """Render the full 'related model types' section.
+
+        A "related" model is one which is not itself reportable, but which is
+        referenced by a field or `@report_attribute` property on a reportable model
+        (e.g. `PartCategory` via `Part.category`, `SupplierPart` via `Part.default_supplier`).
+
+        These are discovered automatically (one hop out from the reportable models) by
+        the `export_report_context` management command, so there is no manually-maintained
+        list of related models to keep in sync here.
+        """
+        global REPORT_CONTEXT
+
+        related = REPORT_CONTEXT.get('related_models', {})
+
+        ret_data = ''
+
+        for info in sorted(related.values(), key=lambda item: item['name']):
+            ret_data += f'### {info["name"]}\n\n'
+            ret_data += render_attribute_table(info.get('fields', {}), 'Fields')
+            ret_data += render_attribute_table(info.get('properties', {}), 'Properties')
 
         return ret_data
 

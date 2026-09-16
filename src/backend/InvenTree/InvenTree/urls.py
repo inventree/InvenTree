@@ -20,14 +20,16 @@ import build.api
 import common.api
 import company.api
 import importer.api
+import InvenTree.logging  # noqa: F401 - ensure logging handlers are registered
 import machine.api
 import order.api
 import part.api
 import plugin.api
 import report.api
+import scim.api
 import stock.api
 import users.api
-from plugin.urls import get_plugin_urls
+from plugin.urls import get_plugin_urls, get_wellknown_urls
 from web.urls import cui_compatibility_urls
 from web.urls import urlpatterns as platform_urls
 
@@ -130,19 +132,20 @@ backendpatterns = [
     path(
         'auth/', include('rest_framework.urls', namespace='rest_framework')
     ),  # Used for (DRF) browsable API auth
-    path('auth/', auth_request),  # Used for proxies to check if user is authenticated
+    path(
+        'auth/', auth_request, name='auth-check'
+    ),  # Used for proxies to check if user is authenticated
     path('accounts/', include('allauth.urls')),
     # OAuth2
     flagged_path('OIDC', 'o/', include(oauth2_urls)),
+    # SCIM 2 provisioning endpoint
+    path('scim/v2/', include(scim.api)),
     path(
         'accounts/login/',
         RedirectView.as_view(url=f'/{settings.FRONTEND_URL_BASE}', permanent=False),
         name='account_login',
     ),  # Add a redirect for login views
-    path('api/', include(apipatterns)),
-    path('api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
-    # Emails
-    path('anymail/', include('anymail.urls')),
+    path('anymail/', include('anymail.urls')),  # Emails
 ]
 
 urlpatterns = []
@@ -157,11 +160,18 @@ if settings.INVENTREE_ADMIN_ENABLED:
     ]
 
 urlpatterns += backendpatterns
+urlpatterns += [  # API URLs
+    path('api/', include(apipatterns)),
+    path('api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
+]
 urlpatterns += platform_urls
 
 # Append custom plugin URLs (if custom plugin support is enabled)
 if settings.PLUGINS_ENABLED:
     urlpatterns.append(get_plugin_urls())
+
+# Append well-known URLs
+urlpatterns.append(get_wellknown_urls())
 
 # Server running in "DEBUG" mode?
 if settings.DEBUG:
@@ -182,6 +192,9 @@ urlpatterns.append(
 # Compatibility layer for old (CUI) URLs
 if settings.FRONTEND_SETTINGS.get('url_compatibility'):
     urlpatterns += cui_compatibility_urls(settings.FRONTEND_URL_BASE)
+
+if settings.DJANGO_SILK_ENABLED:
+    urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
 
 # Send any unknown URLs to the index page
 urlpatterns += [

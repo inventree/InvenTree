@@ -4,12 +4,13 @@ import enum
 import logging
 import re
 from enum import Enum
+from typing import Optional
 
 logger = logging.getLogger('inventree')
 
 
-class BaseEnum(enum.IntEnum):  # noqa: PLW1641
-    """An `Enum` capabile of having its members have docstrings.
+class BaseEnum(enum.IntEnum):
+    """An `Enum` capable of having its members have docstrings.
 
     Based on https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums
     """
@@ -40,6 +41,14 @@ class BaseEnum(enum.IntEnum):  # noqa: PLW1641
             return self.value == obj.value
 
         return super().__eq__(obj)
+
+    def __hash__(self):
+        """Return integer hash so enum members are usable as dict keys and in sets.
+
+        Required because we define ``__eq__``: Python sets ``__hash__ = None``
+        when ``__eq__`` is overridden without a matching ``__hash__``.
+        """
+        return hash(self.value)
 
     def __ne__(self, obj):
         """Override inequality operator to allow comparison with int."""
@@ -261,7 +270,7 @@ class ColorEnum(Enum):
 class StatusCodeMixin:
     """Mixin class which handles custom 'status' fields.
 
-    - Implements a 'set_stutus' method which can be used to set the status of an object
+    - Implements a 'set_status' method which can be used to set the status of an object
     - Implements a 'get_status' method which can be used to retrieve the status of an object
 
     This mixin assumes that the implementing class has a 'status' field,
@@ -281,7 +290,11 @@ class StatusCodeMixin:
 
         - Ensure custom status code values are correctly updated
         """
-        if self.status_class:
+        # Only need to verify the custom key against the DB if one is actually set -
+        # the 'key' column on InvenTreeCustomUserStateModel is non-nullable, so a
+        # query for key=None (i.e. no custom status) can never match and would only
+        # ever result in a no-op (custom_key is already None in that case).
+        if self.status_class and self.get_custom_status() is not None:
             # Check that the current 'logical key' actually matches the current status code
             custom_values = self.status_class.custom_queryset().filter(
                 logical_key=self.get_status(), key=self.get_custom_status()
@@ -297,24 +310,54 @@ class StatusCodeMixin:
         """Return the status code for this object."""
         return getattr(self, self.STATUS_FIELD)
 
-    def get_custom_status(self) -> int:
+    def get_custom_status(self) -> Optional[int]:
         """Return the custom status code for this object."""
         return getattr(self, f'{self.STATUS_FIELD}_custom_key', None)
 
     def compare_status(self, status: int) -> bool:
-        """Determine if the current status matches the provided status code."""
+        """Determine if the current status matches the provided status code.
+
+        Arguments:
+            status: The status code to compare against
+
+        Returns:
+            True if the status matches, False otherwise.
+        """
+        try:
+            status = int(status)
+        except (ValueError, TypeError):
+            # Value cannot be converted to integer - so it cannot match
+            return False
+
         if status == self.get_status():
             return True
 
         return status is not None and status == self.get_custom_status()
 
-    def set_status(self, status: int) -> bool:
-        """Set the status code for this object."""
+    def set_status(self, status: int, custom_values=None) -> bool:
+        """Set the status code for this object.
+
+        Arguments:
+            status: The status code to set
+            custom_values: Optional list of custom values to consider (can be used to avoid DB queries)
+        """
         if not self.status_class:
             raise NotImplementedError('Status class not defined')
 
         base_values = self.status_class.values()
-        custom_value_set = self.status_class.custom_values()
+
+        custom_value_set = (
+            self.status_class.custom_values()
+            if custom_values is None
+            else custom_values
+        )
+
+        # The status must be an integer
+        try:
+            status = int(status)
+        except (ValueError, TypeError):
+            logger.warning(f'Invalid status value {status} for class {self.__class__}')
+            return False
 
         custom_field = f'{self.STATUS_FIELD}_custom_key'
 

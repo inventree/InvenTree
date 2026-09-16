@@ -16,7 +16,22 @@ InvenTree supports a [number of database backends]({% include "django.html" %}/r
 
 Refer to the [database configuration guide](./config.md#database-options) for more information on selecting and configuring the database backend.
 
-In running InvenTree via [docker compose](./docker_install.md), the database process is managed by the `inventree-db` service which provides a [Postgres docker container](https://hub.docker.com/_/postgres).
+If running InvenTree via [docker compose](./docker_install.md), the database process is managed by the `inventree-db` service which provides a [Postgres docker container](https://hub.docker.com/_/postgres).
+
+!!! tip "Postgres Recommended"
+    We recommend using Postgres as the database backend for InvenTree, as it is a robust and scalable database which is well-suited to production use.
+
+#### SQLite Limitations
+
+!!! warning "SQLite Performance"
+    SQLite is not recommended for production use, as it is not designed for high concurrency.
+
+While SQLite is supported, it is strongly *not* recommended for a production installation, especially where there may be multiple users accessing the system concurrently. SQLite is designed for low-concurrency applications, and can experience performance issues when multiple users are accessing the database at the same time.
+
+In addition to concurrency issues, there are other structural limitations which exist in SQLite that can prevent operations on large querysets.
+
+If you are using SQLite, you should be aware of these limitations. It is important to ensure that the database file is stored on a fast storage medium (such as an SSD), and that the database options are configured correctly to minimize locking issues. Refer to the [database configuration guide](./config.md#database-options) for more information on configuring SQLite options.
+
 
 ### Web Server
 
@@ -89,9 +104,17 @@ You may wish to extend the proxy configuration to include additional features, b
 
 #### Integrating with Existing Proxy
 
-You may wish to integrate the InvenTree web server with an existing reverse proxy server. This is possible, but requires careful configuration to ensure that the static and media files are served correctly.
+You may wish to integrate the InvenTree web server with an existing reverse proxy server - for example, a single NGINX, Traefik, or Caddy instance which already terminates SSL for other services on your network (common on NAS platforms such as TrueNAS, Unraid, or Synology). This is possible, but requires careful configuration to ensure that the static and media files are served correctly, and that InvenTree trusts requests forwarded from the upstream proxy.
 
-*Note: A custom configuration of the proxy server is outside the scope of this documentation!*
+*Note: Configuration of your external proxy server itself is outside the scope of this documentation - refer to the documentation for the specific software you are using.*
+
+The pattern below outlines the InvenTree-side configuration that this setup always requires, regardless of which proxy software sits in front of it:
+
+- Leave the bundled `inventree-proxy` (Caddy) container serving plain **HTTP** - do not enable [Automatic HTTPS](./docker.md#ssl-certificates), as Caddy will not be reachable directly for the ACME challenge. SSL termination is handled entirely by your existing external proxy instead.
+- Publish the `inventree-proxy` container's HTTP port (`INVENTREE_HTTP_PORT`, see [docker_install.md](./docker_install.md#proxy-external-port)) on an address/port that your external proxy can reach, and point the external proxy's upstream/backend at that address.
+- Set `INVENTREE_SITE_URL` to the externally-visible URL that users and the external proxy will actually use to reach InvenTree (e.g. `https://inventree.example.com`), even though InvenTree itself is only ever served over plain HTTP internally.
+- If the external proxy's public URL differs from `INVENTREE_SITE_URL` (for example, if `INVENTREE_SITE_URL` is set to an internal address rather than the public domain), explicitly add the public URL to [`INVENTREE_TRUSTED_ORIGINS`](./config.md#server-access) - otherwise, form submissions (including login) will fail CSRF validation.
+- The forwarded-header settings `INVENTREE_USE_X_FORWARDED_HOST`, `INVENTREE_USE_X_FORWARDED_PORT`, and `INVENTREE_USE_X_FORWARDED_PROTO` (see [Server Access](./config.md#server-access)) are enabled by default in the provided `.env` file, so that InvenTree correctly reports its own HTTPS URL even though it only ever receives plain HTTP traffic from your external proxy. Ensure your external proxy actually sets the corresponding `X-Forwarded-*` headers when forwarding requests.
 
 ### Background Worker
 
@@ -112,6 +135,8 @@ If the background worker process is not running, InvenTree will not be able to p
 
 If the [cache server](#cache-server) is not running, the background worker will be limited to running a single threaded worker. This is because the background worker uses the cache server to manage task locking, and without a global cache server to communicate between processes, concurrency issues can occur.
 
+Additionally, if you are running SQLite as the database backend, the background worker will be limited to a single thread, due to database locking issues which can occur with SQLite when multiple threads are accessing the database concurrently.
+
 ### Cache Server
 
 The InvenTree cache server is used to store temporary data which is shared between the InvenTree web server and the background worker processes. The cache server is also used to store task information, and to manage task locking between the background worker processes.
@@ -122,7 +147,11 @@ InvenTree uses the [Redis](https://redis.io/) cache server to manage cache data.
 
 !!! info "Redis on Docker"
     Docker adds an additional network layer - that might lead to lower performance than bare metal.
-    To optimize and configure your redis deployment follow the [official docker guide](https://redis.io/docs/getting-started/install-stack/docker/#configuration).
+    To optimize and configure your redis deployment follow the [official docker guide](https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/docker/).
 
 !!! tip "Enable Cache"
     While a redis container is provided in the default configuration, by default it is not enabled in the InvenTree server. You can enable redis cache support by following the [caching configuration guide](./config.md#caching)
+
+### Configuration
+
+Refer to the [background worker configuration options](./config.md#background-worker-options) for more information on configuring the background worker process.

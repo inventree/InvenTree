@@ -20,11 +20,11 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 
+import { StylishText } from '@lib/components/StylishText';
 import type { ModelType } from '@lib/enums/ModelType';
 import { identifierString } from '@lib/functions/Conversion';
 import { InvenTreeIcon } from '../../functions/icons';
 import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from '../barcodes/QRCode';
-import { StylishText } from './StylishText';
 
 export type ActionDropdownItem = {
   icon?: ReactNode;
@@ -34,6 +34,7 @@ export type ActionDropdownItem = {
   hidden?: boolean;
   onClick: (event?: any) => void;
   indicator?: Omit<IndicatorProps, 'children'>;
+  hotkey?: string;
 };
 
 /**
@@ -48,7 +49,8 @@ export function ActionDropdown({
   actions,
   disabled = false,
   hidden = false,
-  noindicator = false
+  noindicator = false,
+  position
 }: {
   icon: ReactNode;
   tooltip: string;
@@ -57,6 +59,7 @@ export function ActionDropdown({
   disabled?: boolean;
   hidden?: boolean;
   noindicator?: boolean;
+  position?: FloatingPosition;
 }): ReactNode {
   const hasActions = useMemo(() => {
     return actions.some((action) => !action.hidden);
@@ -71,7 +74,7 @@ export function ActionDropdown({
   }, [tooltip]);
 
   return !hidden && hasActions ? (
-    <Menu position='bottom-end' key={menuName}>
+    <Menu position={position ?? 'bottom-end'} key={menuName}>
       <Indicator disabled={!indicatorProps} {...indicatorProps?.indicator}>
         <Menu.Target>
           <Tooltip
@@ -131,16 +134,19 @@ export function ActionDropdown({
 export function OptionsActionDropdown({
   actions = [],
   tooltip = t`Options`,
+  tooltipPosition = 'bottom',
   hidden = false
 }: Readonly<{
   actions: ActionDropdownItem[];
   tooltip?: string;
+  tooltipPosition?: FloatingPosition;
   hidden?: boolean;
 }>) {
   return (
     <ActionDropdown
       icon={<IconDotsVertical />}
       tooltip={tooltip}
+      tooltipPosition={tooltipPosition}
       actions={actions}
       hidden={hidden}
       noindicator
@@ -182,7 +188,8 @@ export function BarcodeActionDropdown({
           title: t`Link Barcode`,
           icon: <IconLink />,
           tooltip: t`Link a custom barcode to this item`,
-          ChildItem: QRCodeLink
+          ChildItem: QRCodeLink,
+          hotkey: 'mod+L'
         }),
         GeneralBarcodeAction({
           hidden: hidden || !hash || !permission,
@@ -218,6 +225,7 @@ function GeneralBarcodeAction({
   icon: ReactNode;
   tooltip: string;
   ChildItem: any;
+  hotkey?: string;
 }): ActionDropdownItem {
   const onClick = () => {
     modals.open({
@@ -253,7 +261,8 @@ export function DeleteItemAction(
     ...props,
     icon: <IconTrash color='red' />,
     name: t`Delete`,
-    tooltip: props.tooltip ?? t`Delete item`
+    tooltip: props.tooltip ?? t`Delete item`,
+    hotkey: 'mod+X'
   };
 }
 
@@ -273,7 +282,8 @@ export function CancelItemAction(
     ...props,
     icon: <InvenTreeIcon icon='cancel' iconProps={{ color: 'red' }} />,
     name: t`Cancel`,
-    tooltip: props.tooltip ?? t`Cancel`
+    tooltip: props.tooltip ?? t`Cancel`,
+    hotkey: 'mod+X'
   };
 }
 
@@ -285,6 +295,7 @@ export function DuplicateItemAction(
     ...props,
     icon: <IconCopy color='green' />,
     name: t`Duplicate`,
-    tooltip: props.tooltip ?? t`Duplicate item`
+    tooltip: props.tooltip ?? t`Duplicate item`,
+    hotkey: 'mod+D'
   };
 }

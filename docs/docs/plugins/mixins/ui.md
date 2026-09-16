@@ -69,6 +69,20 @@ For example:
 
 The following user interface feature types are available:
 
+### Spotlight Actions
+
+Inject custom actions into the InvenTree "spotlight" search functionality by implementing the `get_ui_spotlight_actions` method:
+
+::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_spotlight_actions
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      extra:
+        show_source: True
+      summary: False
+      members: []
+
 ### Dashboard Items
 
 The InvenTree dashboard is a collection of "items" which are displayed on the main dashboard page. Custom dashboard items can be added to the dashboard by implementing the `get_ui_dashboard_items` method:
@@ -160,6 +174,20 @@ The `get_ui_template_editors` feature type can be used to provide custom templat
 The `get_ui_template_previews` feature type can be used to provide custom template previews:
 
 ::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_template_previews
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      extra:
+        show_source: True
+      summary: False
+      members: []
+
+### Primary Actions
+
+The `get_ui_primary_actions` method can be used to provide custom primary action, which are rendered in the header of the page, next to the title/name and any status indicators. These primary actions are typically used to provide quick access to common actions related to the current page.
+
+::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_primary_actions
     options:
       show_bases: False
       show_root_heading: False

@@ -1,7 +1,20 @@
 import { Paper, SimpleGrid } from '@mantine/core';
 import type React from 'react';
+import { useMemo } from 'react';
 
-export function ItemDetailsGrid(props: React.PropsWithChildren<{}>) {
+import { DetailsTable, type DetailsTableProps } from './Details';
+
+export type { DetailsTableProps };
+
+export function ItemDetailsGrid({
+  children,
+  tables
+}: React.PropsWithChildren<{ tables?: DetailsTableProps[] }>) {
+  const visibleTables = useMemo(
+    () => tables?.filter((t) => t.fields.some((f) => !f.hidden)) ?? [],
+    [tables]
+  );
+
   return (
     <Paper p='xs'>
       <SimpleGrid
@@ -10,7 +23,13 @@ export function ItemDetailsGrid(props: React.PropsWithChildren<{}>) {
         spacing='xs'
         verticalSpacing='xs'
       >
-        {props.children}
+        {children}
+        {visibleTables.map((props) => (
+          <DetailsTable
+            key={props.fields.map((field) => field.name).join(',')}
+            {...props}
+          />
+        ))}
       </SimpleGrid>
     </Paper>
   );

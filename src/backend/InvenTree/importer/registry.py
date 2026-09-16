@@ -19,14 +19,14 @@ class DataImportSerializerRegister:
     def register(self, serializer) -> None:
         """Register a new serializer with the importer registry."""
         if not issubclass(serializer, DataImportSerializerMixin):
-            logger.debug('Invalid serializer class: %s', type(serializer))
+            logger.debug('Invalid serializer class: %s', serializer.__name__)
             return
 
         if not issubclass(serializer, Serializer):
-            logger.debug('Invalid serializer class: %s', type(serializer))
+            logger.debug('Invalid serializer class: %s', serializer.__name__)
             return
 
-        logger.debug('Registering serializer class for import: %s', type(serializer))
+        logger.debug('Registering serializer class for import: %s', serializer.__name__)
 
         if serializer not in self.supported_serializers:
             self.supported_serializers.append(serializer)

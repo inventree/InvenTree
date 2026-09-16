@@ -26,7 +26,7 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
     NAME = 'InvenTreeBarcode'
     TITLE = _('InvenTree Barcodes')
     DESCRIPTION = _('Provides native support for barcodes')
-    VERSION = '2.1.0'
+    VERSION = '2.2.0'
     AUTHOR = _('InvenTree contributors')
 
     SETTINGS = {
@@ -37,7 +37,7 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
                 ('json', _('JSON barcodes (human readable)')),
                 ('short', _('Short barcodes (space optimized)')),
             ],
-            'default': 'json',
+            'default': 'short',
         },
         'SHORT_BARCODE_PREFIX': {
             'name': _('Short Barcode Prefix'),
@@ -48,11 +48,11 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
         },
     }
 
-    def format_matched_response(self, label, model, instance):
+    def format_matched_response(self, label, model, instance, user, **kwargs):
         """Format a response for the scanned data."""
-        return {label: instance.format_matched_response()}
+        return {label: instance.format_matched_response(user=user, **kwargs)}
 
-    def scan(self, barcode_data):
+    def scan(self, barcode_data, user, **kwargs):
         """Scan a barcode against this plugin.
 
         Here we are looking for a dict object which contains a reference to a particular InvenTree database object
@@ -79,7 +79,7 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
 
             try:
                 instance = model.objects.get(pk=int(pk))
-                return self.format_matched_response(label, model, instance)
+                return self.format_matched_response(label, model, instance, user=user)
             except (ValueError, model.DoesNotExist):
                 pass
 
@@ -111,7 +111,9 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
                         instance = model.objects.get(pk=pk)
 
                         return {
-                            **self.format_matched_response(label, model, instance),
+                            **self.format_matched_response(
+                                label, model, instance, user=user
+                            ),
                             'success': succcess_message,
                         }
                     except (ValueError, model.DoesNotExist):
@@ -129,7 +131,7 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
 
             if instance is not None:
                 return {
-                    **self.format_matched_response(label, model, instance),
+                    **self.format_matched_response(label, model, instance, user=user),
                     'success': succcess_message,
                 }
 

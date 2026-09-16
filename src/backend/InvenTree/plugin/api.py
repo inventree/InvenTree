@@ -6,17 +6,18 @@ from django.core.exceptions import ValidationError
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
-from django_filters import rest_framework as rest_filters
+import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import extend_schema
-from rest_framework import status
+from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import InvenTree.permissions
 import plugin.serializers as PluginSerializers
-from InvenTree.api import MetadataView
+from InvenTree.api import meta_path
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import (
@@ -30,13 +31,14 @@ from InvenTree.mixins import (
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
+from plugin.base.supplier.api import supplier_api_urls
 from plugin.base.ui.api import ui_plugins_api_urls
 from plugin.models import PluginConfig, PluginSetting, PluginUserSetting
 from plugin.plugin import InvenTreePlugin
 from plugin.registry import registry
 
 
-class PluginFilter(rest_filters.FilterSet):
+class PluginFilter(FilterSet):
     """Filter for the PluginConfig model.
 
     Provides custom filtering options for the FilterList API endpoint.
@@ -172,7 +174,10 @@ class PluginDetail(RetrieveDestroyAPI):
 
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginConfigSerializer
-    permission_classes = [InvenTree.permissions.IsSuperuserOrReadOnlyOrScope]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.IsSuperuserOrReadOnlyOrScope,
+    ]
     lookup_field = 'key'
     lookup_url_kwarg = 'plugin'
 
@@ -199,6 +204,7 @@ class PluginAdminDetail(RetrieveAPI):
 
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginAdminDetailSerializer
+    permission_classes = [InvenTree.permissions.IsAdminOrAdminScope]
     lookup_field = 'key'
     lookup_url_kwarg = 'plugin'
 
@@ -208,6 +214,7 @@ class PluginInstall(CreateAPI):
 
     queryset = PluginConfig.objects.none()
     serializer_class = PluginSerializers.PluginConfigInstallSerializer
+    permission_classes = [InvenTree.permissions.IsSuperuserOrSuperScope]
 
     def create(self, request, *args, **kwargs):
         """Install a plugin via the API."""
@@ -289,7 +296,10 @@ class PluginSettingList(ListAPI):
     queryset = PluginSetting.objects.all()
     serializer_class = PluginSerializers.PluginSettingSerializer
 
-    permission_classes = [InvenTree.permissions.GlobalSettingsPermissions]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.GlobalSettingsPermissions,
+    ]
 
     filter_backends = [DjangoFilterBackend]
 
@@ -314,13 +324,13 @@ def check_plugin(
         plugin_slug (str): Slug for plugin.
         plugin_pk (int): Primary key for plugin.
 
+    Returns:
+        InvenTreePlugin: The config object for the provided plugin.
+
     Raises:
         NotFound: If plugin is not installed
         NotFound: If plugin is not correctly registered
         NotFound: If plugin is not active
-
-    Returns:
-        InvenTreePlugin: The config object for the provided plugin.
     """
     # Make sure that a plugin reference is specified
     if plugin_slug is None and plugin_pk is None:
@@ -348,7 +358,10 @@ def check_plugin(
     if not plugin_cfg.active:
         raise NotFound(detail=f"Plugin '{ref}' is not active")
 
-    plugin = plugin_cfg.plugin
+    # Look up via the registry rather than `plugin_cfg.plugin`: the latter can be a
+    # stale, un-instantiated plugin class in this worker if the plugin was activated
+    # by a different process (registry.get_plugin() forces a reload check first).
+    plugin = registry.get_plugin(plugin_cfg.key)
 
     if not plugin:
         raise NotFound(detail=f"Plugin '{ref}' not installed")
@@ -362,7 +375,10 @@ class PluginAllSettingList(APIView):
     - GET: return all settings for a plugin config
     """
 
-    permission_classes = [InvenTree.permissions.GlobalSettingsPermissions]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.GlobalSettingsPermissions,
+    ]
 
     @extend_schema(
         responses={200: PluginSerializers.PluginSettingSerializer(many=True)}
@@ -390,6 +406,11 @@ class PluginSettingDetail(RetrieveUpdateAPI):
     queryset = PluginSetting.objects.all()
     serializer_class = PluginSerializers.PluginSettingSerializer
 
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.GlobalSettingsPermissions,
+    ]
+
     def get_object(self):
         """Lookup the plugin setting object, based on the URL.
 
@@ -411,9 +432,6 @@ class PluginSettingDetail(RetrieveUpdateAPI):
         return PluginSetting.get_setting_object(
             setting_key, plugin=plugin.plugin_config()
         )
-
-    # Staff permission required
-    permission_classes = [InvenTree.permissions.GlobalSettingsPermissions]
 
 
 class PluginUserSettingList(APIView):
@@ -507,11 +525,11 @@ class RegistryStatusView(APIView):
         return Response(result)
 
 
-class PluginMetadataView(MetadataView):
-    """Metadata API endpoint for the PluginConfig model."""
+# class PluginMetadataView(MetadataView):
+#     """Metadata API endpoint for the PluginConfig model."""
 
-    lookup_field = 'key'
-    lookup_url_kwarg = 'plugin'
+#     lookup_field = 'key'
+#     lookup_url_kwarg = 'plugin'
 
 
 plugin_api_urls = [
@@ -574,12 +592,8 @@ plugin_api_urls = [
                             ),
                         ]),
                     ),
-                    path(
-                        'metadata/',
-                        PluginMetadataView.as_view(
-                            model=PluginConfig, lookup_field='key'
-                        ),
-                        name='api-plugin-metadata',
+                    meta_path(
+                        PluginConfig, lookup_field='key', lookup_field_ref='plugin'
                     ),
                     path(
                         'activate/',
@@ -600,4 +614,5 @@ plugin_api_urls = [
             path('', PluginList.as_view(), name='api-plugin-list'),
         ]),
     ),
+    path('supplier/', include(supplier_api_urls)),
 ]

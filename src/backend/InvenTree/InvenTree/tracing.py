@@ -2,6 +2,7 @@
 
 import base64
 import logging
+import os
 from typing import Optional
 
 from opentelemetry import metrics, trace
@@ -26,11 +27,12 @@ from InvenTree.version import inventreeVersion
 
 TRACE_PROC = None
 TRACE_PROV = None
+TRACE_PID = None
 
 
 def setup_tracing(
-    endpoint: str,
-    headers: dict,
+    endpoint: Optional[str] = None,
+    headers: Optional[dict] = None,
     resources_input: Optional[dict] = None,
     console: bool = False,
     auth: Optional[dict] = None,
@@ -49,6 +51,21 @@ def setup_tracing(
         append_http: Whether to append '/v1/traces' to the endpoint.
     """
     if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
+        return
+
+    if endpoint is None or headers is None:
+        print(
+            'Tracing endpoint or headers not specified - skipping tracing setup'
+        )  # pragma: no cover
+        return  # pragma: no cover
+
+    # Check if trace is already set up in this process - if so, skip.
+    # Gunicorn's preload_app runs this once in the master before forking workers;
+    # each forked worker inherits TRACE_PROV but not the exporter's background
+    # thread (which does not survive fork), so re-setup must still happen once
+    # per worker PID - hence keying the guard on the PID, not just TRACE_PROV.
+    global TRACE_PROC, TRACE_PROV, TRACE_PID
+    if TRACE_PROV is not None and os.getpid() == TRACE_PID:
         return
 
     # Logger configuration
@@ -151,36 +168,41 @@ def setup_tracing(
     logger = logging.getLogger('inventree')
     logger.addHandler(handler)
 
-    global TRACE_PROC, TRACE_PROV
     TRACE_PROC = trace_processor
     TRACE_PROV = trace_provider
+    TRACE_PID = os.getpid()
 
 
 def setup_instruments(db_engine: str):  # pragma: no cover
     """Run auto-instrumentation for OpenTelemetry tracing."""
-    DjangoInstrumentor().instrument()
-    RedisInstrumentor().instrument()
-    RequestsInstrumentor().instrument()
-    SystemMetricsInstrumentor().instrument()
+    if not DjangoInstrumentor()._is_instrumented_by_opentelemetry:
+        DjangoInstrumentor().instrument()
+        RedisInstrumentor().instrument()
+        RequestsInstrumentor().instrument()
+        SystemMetricsInstrumentor().instrument()
 
     db_engine = str(db_engine).lower().strip()
 
     # DBs
     if 'sqlite' in db_engine:
-        SQLite3Instrumentor().instrument()
+        inst = SQLite3Instrumentor()
+        if not inst._is_instrumented_by_opentelemetry:
+            inst.instrument()
     elif 'postgresql' in db_engine:
         try:
             from opentelemetry.instrumentation.psycopg import PsycopgInstrumentor
 
-            PsycopgInstrumentor().instrument(
-                enable_commenter=False, commenter_options={}
-            )
+            inst = PsycopgInstrumentor()
+            if not inst._is_instrumented_by_opentelemetry:
+                inst.instrument(enable_commenter=False, commenter_options={})
         except ModuleNotFoundError:
             pass
     elif 'mysql' in db_engine:
         try:
             from opentelemetry.instrumentation.pymysql import PyMySQLInstrumentor
 
-            PyMySQLInstrumentor().instrument()
+            inst = PyMySQLInstrumentor()
+            if not inst._is_instrumented_by_opentelemetry:
+                inst.instrument()
         except ModuleNotFoundError:
             pass

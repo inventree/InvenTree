@@ -12,19 +12,31 @@ import type {
   SettingsLookup,
   SettingsStateProps
 } from '@lib/types/Settings';
-import { useEffect } from 'react';
 import { api } from '../App';
 import { useUserState } from './UserState';
+
+const createDefaultSettingsSetup = (get: () => SettingsStateProps) => ({
+  settings: [] as Setting[],
+  lookup: {} as SettingsLookup,
+  loaded: false,
+  isError: false,
+  getSetting: (key: string, default_value?: string) => {
+    return get().lookup[key] ?? default_value ?? '';
+  },
+  isSet: (key: string, default_value?: boolean) => {
+    const value = get().lookup[key] ?? default_value ?? 'false';
+    return isTrue(value);
+  },
+  getSettingLength: () => {
+    return Object.keys(get().lookup).length;
+  }
+});
 
 /**
  * State management for global (server side) settings
  */
 export const useGlobalSettingsState = create<SettingsStateProps>(
   (set, get) => ({
-    settings: [],
-    loaded: false,
-    isError: false,
-    lookup: {},
     endpoint: ApiEndpoints.settings_global_list,
     fetchSettings: async () => {
       let success = true;
@@ -60,13 +72,7 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
 
       return success;
     },
-    getSetting: (key: string, default_value?: string) => {
-      return get().lookup[key] ?? default_value ?? '';
-    },
-    isSet: (key: string, default_value?: boolean) => {
-      const value = get().lookup[key] ?? default_value ?? 'false';
-      return isTrue(value);
-    }
+    ...createDefaultSettingsSetup(get)
   })
 );
 
@@ -74,10 +80,6 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
  * State management for user (server side) settings
  */
 export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
-  settings: [],
-  lookup: {},
-  loaded: false,
-  isError: false,
   endpoint: ApiEndpoints.settings_user_list,
   fetchSettings: async () => {
     let success = true;
@@ -109,13 +111,7 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
 
     return success;
   },
-  getSetting: (key: string, default_value?: string) => {
-    return get().lookup[key] ?? default_value ?? '';
-  },
-  isSet: (key: string, default_value?: boolean) => {
-    const value = get().lookup[key] ?? default_value ?? 'false';
-    return isTrue(value);
-  }
+  ...createDefaultSettingsSetup(get)
 }));
 
 /**
@@ -132,12 +128,8 @@ export const createPluginSettingsState = ({
 }: CreatePluginSettingStateProps) => {
   const pathParams: PathParams = { plugin };
 
-  const store = createStore<SettingsStateProps>()((set, get) => ({
-    settings: [],
-    lookup: {},
-    loaded: false,
-    isError: false,
-    endpoint: endpoint,
+  return createStore<SettingsStateProps>()((set, get) => ({
+    endpoint,
     pathParams,
     fetchSettings: async () => {
       let success = true;
@@ -180,20 +172,8 @@ export const createPluginSettingsState = ({
 
       return success;
     },
-    getSetting: (key: string, default_value?: string) => {
-      return get().lookup[key] ?? default_value ?? '';
-    },
-    isSet: (key: string, default_value?: boolean) => {
-      const value = get().lookup[key] ?? default_value ?? 'false';
-      return isTrue(value);
-    }
+    ...createDefaultSettingsSetup(get)
   }));
-
-  useEffect(() => {
-    store.getState().fetchSettings();
-  }, [plugin]);
-
-  return store;
 };
 
 /**
@@ -210,11 +190,7 @@ export const createMachineSettingsState = ({
 }: CreateMachineSettingStateProps) => {
   const pathParams: PathParams = { machine, config_type: configType };
 
-  const store = createStore<SettingsStateProps>()((set, get) => ({
-    settings: [],
-    lookup: {},
-    loaded: false,
-    isError: false,
+  return createStore<SettingsStateProps>((set, get) => ({
     endpoint: ApiEndpoints.machine_setting_detail,
     pathParams,
     fetchSettings: async () => {
@@ -247,20 +223,8 @@ export const createMachineSettingsState = ({
 
       return success;
     },
-    getSetting: (key: string, default_value?: string) => {
-      return get().lookup[key] ?? default_value ?? '';
-    },
-    isSet: (key: string, default_value?: boolean) => {
-      const value = get().lookup[key] ?? default_value ?? 'false';
-      return isTrue(value);
-    }
+    ...createDefaultSettingsSetup(get)
   }));
-
-  useEffect(() => {
-    store.getState().fetchSettings();
-  }, [machine, configType]);
-
-  return store;
 };
 
 /*

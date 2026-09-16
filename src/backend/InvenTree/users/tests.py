@@ -1,11 +1,14 @@
 """Unit tests for the 'users' app."""
 
+import datetime
+
 from django.apps import apps
 from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.urls import reverse
 
 from common.settings import set_global_setting
+from InvenTree.helpers_mfa import get_codes
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase, InvenTreeTestCase
 from users.models import ApiToken, Owner
 from users.oauth2_scopes import _roles
@@ -297,7 +300,10 @@ class OwnerModelTest(InvenTreeTestCase):
         self.client.login(username=self.username, password=self.password)
         # token get
         response = self.do_request(reverse('api-token'), {})
-        self.assertEqual(response['token'], token.first().key)
+        raw_token = response['token']
+        self.assertTrue(raw_token.startswith('inv-2-'))
+        token = ApiToken.get_from_string(raw_token)
+        self.assertTrue(token.validate(raw_token))
 
         # test user is associated with token
         response = self.do_request(
@@ -332,47 +338,67 @@ class OwnerModelTest(InvenTreeTestCase):
 class MFALoginTest(InvenTreeAPITestCase):
     """Some simplistic tests to ensure that MFA is working."""
 
-    """
     def test_api(self):
-        ""Test that the API is working.""
+        """Test that the API is working."""
         auth_data = {'username': self.username, 'password': self.password}
-        login_url = reverse('api-login')
+        login_url = reverse('browser:account:login')
 
-        # Normal login
-        response = self.post(login_url, auth_data, expected_code=200)
-        self.assertIn('key', response.data)
+        # Double login is not allowed
+        self.post(login_url, auth_data, expected_code=409)
+
+        # Normal login - no mfa
         self.client.logout()
+        response = self.post(login_url, auth_data, expected_code=200)
+        self._helper_meta_val(response)
 
-        # Add MFA
-        totp_model = self.user.totpdevice_set.create()
+        # Add MFA - trying in a limited loop in case of timing issues
+        rc_code = get_codes(user=self.user)[1][0]
+
+        # There must be a TOTP device now - success
+        self.get(reverse('browser:mfa:manage_totp'), expected_code=200)
+        self.get(reverse('api-token'), expected_code=200)
 
         # Login with MFA enabled but not provided
-        response = self.post(login_url, auth_data, expected_code=403)
-        self.assertContains(response, 'MFA required for this user', status_code=403)
-
-        # Login with MFA enabled and provided - should redirect to MFA page
-        auth_data['mfa'] = 'anything'
-        response = self.post(login_url, auth_data, expected_code=302)
-        self.assertEqual(response.url, reverse('two-factor-authenticate'))
-        # MFA not finished - no access allowed
+        self.client.logout()
+        response = self.post(login_url, auth_data, expected_code=401)
+        self._helper_meta_val(response, val=False)
+        self.assertEqual(self._helper_get_flow(response)['is_pending'], True)
         self.get(reverse('api-token'), expected_code=401)
 
+        # Login with MFA enabled and provided - second api call an success
+        self.client.logout()
+        response = self.post(login_url, auth_data, expected_code=401)
+        # MFA not finished - no access allowed
+        self.get(reverse('api-token'), expected_code=401)
+        # Complete MFA (with recovery code to avoid timing issues)
+        self.post(
+            reverse('browser:mfa:authenticate'), {'code': rc_code}, expected_code=401
+        )
+        self.post(reverse('browser:mfa:trust'), {'trust': False}, expected_code=200)
+        # and run through trust
+        self.get(reverse('api-token'), expected_code=200)
+
         # Login with MFA enabled and provided - but incorrect pwd
+        self.client.logout()
         auth_data['password'] = 'wrong'
-        self.post(login_url, auth_data, expected_code=401)
+        response = self.post(login_url, auth_data, expected_code=400)
+        self.assertContains(
+            response,
+            'The username and/or password you specified are not correct',
+            status_code=400,
+        )
         auth_data['password'] = self.password
 
-        # Remove MFA
-        totp_model.delete()
+    def _helper_meta_val(
+        self, response, key: str = 'is_authenticated', val: bool = True
+    ):
+        """Helper to run a test on meta response."""
+        self.assertEqual(response.json()['meta'][key], val)
 
-        # Login with MFA disabled but correct credentials provided
-        response = self.post(login_url, auth_data, expected_code=200)
-        self.assertIn('key', response.data)
-
-        # Wrong login should not work
-        auth_data['password'] = 'wrong'
-        self.post(login_url, auth_data, expected_code=401)
-    """
+    def _helper_get_flow(self, response, flow_id: str = 'mfa_authenticate'):
+        """Helper to run a test on flow response."""
+        flows = response.json()['data']['flows']
+        return next(a for a in flows if a['id'] == flow_id)
 
 
 class AdminTest(AdminTestCase):
@@ -383,6 +409,12 @@ class AdminTest(AdminTestCase):
         my_token = self.helper(
             model=ApiToken, model_kwargs={'user': self.user, 'name': 'test-token'}
         )
+        self.assertTrue(
+            my_token.token.endswith(
+                f'-{datetime.datetime.now().date().isoformat().replace("-", "")}'
+            )
+        )
+        self.assertTrue(my_token.validate(my_token.token))
         # Additionally test str fnc
         self.assertEqual(str(my_token), my_token.token)
 
@@ -479,3 +511,34 @@ class UserProfileTest(InvenTreeAPITestCase):
         # Ensure primary_group is set to None
         profile.refresh_from_db()
         self.assertIsNone(profile.primary_group)
+
+
+class UserProfileMetadataPermissionTests(InvenTreeAPITestCase):
+    """Tests for the generic metadata endpoint against the UserProfile model."""
+
+    def setUp(self):
+        """Create a second user with their own profile."""
+        from django.contrib.auth import get_user_model
+
+        super().setUp()
+
+        self.other_user = get_user_model().objects.create_user(
+            username='other_metadata_user', password='password'
+        )
+
+    def _metadata_url(self, pk):
+        return reverse(
+            'api-generic-metadata', kwargs={'model': 'userprofile', 'pk': pk}
+        )
+
+    def test_own_profile_metadata_is_accessible(self):
+        """A user can read/write their own profile metadata via the generic endpoint."""
+        url = self._metadata_url(self.user.profile.pk)
+        self.get(url, expected_code=200)
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=200)
+
+    def test_other_users_profile_metadata_is_denied(self):
+        """A user cannot read/write another user's profile metadata via the generic endpoint."""
+        url = self._metadata_url(self.other_user.profile.pk)
+        self.get(url, expected_code=403)
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=403)

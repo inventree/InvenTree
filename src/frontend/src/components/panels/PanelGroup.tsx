@@ -1,17 +1,22 @@
 import {
   ActionIcon,
+  Alert,
   Box,
   Divider,
   Group,
+  Indicator,
   Loader,
+  type MantineColor,
   Paper,
   Stack,
   Tabs,
   Text,
+  Title,
   Tooltip,
   UnstyledButton
 } from '@mantine/core';
 import {
+  IconExclamationCircle,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse
 } from '@tabler/icons-react';
@@ -31,20 +36,31 @@ import {
   useParams
 } from 'react-router-dom';
 
-import type { ModelType } from '@lib/enums/ModelType';
+import { Boundary } from '@lib/components/Boundary';
+import { StylishText } from '@lib/components/StylishText';
+import type { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { identifierString } from '@lib/functions/Conversion';
-import { cancelEvent } from '@lib/functions/Events';
+import {
+  type InvenTreeHotkeyItem,
+  cancelEvent,
+  useInvenTreeHotkeys
+} from '@lib/functions/Events';
 import { eventModified, getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
+import type {
+  PanelGroupType,
+  PanelIndicatorType,
+  PanelType
+} from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
+import { useDocumentVisibility, useWindowEvent } from '@mantine/hooks';
+import { modals } from '@mantine/modals';
+import { useQuery } from '@tanstack/react-query';
 import { useShallow } from 'zustand/react/shallow';
 import { generateUrl } from '../../functions/urls';
 import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import { vars } from '../../theme';
-import { Boundary } from '../Boundary';
-import { StylishText } from '../items/StylishText';
-import type { PanelGroupType, PanelType } from '../panels/Panel';
 import * as classes from './PanelGroup.css';
 
 /**
@@ -59,6 +75,8 @@ import * as classes from './PanelGroup.css';
  * @param selectedPanel - The currently selected panel
  * @param onPanelChange - Callback when the active panel changes
  * @param collapsible - If true, the panel group can be collapsed (defaults to true)
+ * @param pluginPanelWithoutId - If true, the panel group will load plugin panels even with no id provided
+ * @param pluginPanelKey - The plugin panel key to use when loading plugin panels for this group from the backend
  */
 export type PanelProps = {
   pageKey: string;
@@ -66,12 +84,119 @@ export type PanelProps = {
   groups?: PanelGroupType[];
   instance?: any;
   reloadInstance?: () => void;
-  model?: ModelType | string;
+  model?: ModelType;
   id?: number | null;
   selectedPanel?: string;
+  defaultPanel?: string;
   onPanelChange?: (panel: string) => void;
   collapsible?: boolean;
+  pluginPanelWithoutId?: boolean;
+  pluginPanelKey?: PluginPanelKey;
 };
+
+/**
+ * Render a single panel tab within the side menu
+ */
+function PanelTabComponent({
+  expanded,
+  panel,
+  onClick
+}: {
+  expanded: boolean;
+  panel: PanelType;
+  onClick: (event: any) => void;
+}) {
+  const visibility = useDocumentVisibility();
+  const location = useLocation();
+
+  const isDynamicDot = typeof panel.notification_dot === 'function';
+
+  // Check if we should display an indicator dot for this panel.
+  // Only self-fetching (function) dots go through react-query, as they need
+  // caching around their own async call. Static dot values are derived from
+  // props the caller already re-renders on, so they are read directly below -
+  // routing them through a query keyed only on panel.name would freeze the
+  // first-seen value (e.g. `null` before data loads) and never update.
+  const notificationDot = useQuery({
+    enabled: isDynamicDot && visibility === 'visible',
+    queryKey: ['panel-notification', panel.name],
+    queryFn: async () => {
+      if (typeof panel.notification_dot === 'function') {
+        return await panel.notification_dot();
+      }
+      return null;
+    },
+    staleTime: 5 * 60 * 1000, // cache for 5 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false
+  });
+
+  const indicatorValue: PanelIndicatorType | undefined = isDynamicDot
+    ? notificationDot.data
+    : (panel.notification_dot as PanelIndicatorType | undefined);
+
+  const indicatorColor: MantineColor | undefined = useMemo(() => {
+    switch (indicatorValue) {
+      case 'info':
+        return 'blue';
+      case 'warning':
+        return 'yellow';
+      case 'danger':
+        return 'red';
+      default:
+        return undefined;
+    }
+  }, [indicatorValue]);
+
+  return (
+    <Tooltip
+      label={panel.label ?? panel.name}
+      key={panel.name}
+      disabled={expanded}
+      position='right'
+    >
+      <Tabs.Tab
+        p='xs'
+        key={`panel-label-${panel.name}`}
+        w={'100%'}
+        value={panel.name}
+        leftSection={
+          <Indicator
+            position='top-end'
+            disabled={!indicatorColor}
+            color={indicatorColor}
+            withBorder
+            size={14}
+          >
+            {panel.icon}
+          </Indicator>
+        }
+        hidden={panel.hidden}
+        disabled={panel.disabled}
+        style={{
+          cursor: panel.disabled ? 'unset' : 'pointer'
+        }}
+        onClick={(event: any) => onClick(event)}
+      >
+        <Group justify='left' gap='xs' wrap='nowrap'>
+          <UnstyledButton
+            component={'a'}
+            style={{
+              textAlign: 'left'
+            }}
+            href={generateUrl(
+              `/${getBaseUrl()}${location.pathname}/${panel.name}${
+                location.search
+              }`
+            )}
+          >
+            {expanded && panel.label}
+          </UnstyledButton>
+        </Group>
+      </Tabs.Tab>
+    </Tooltip>
+  );
+}
 
 function BasePanelGroup({
   pageKey,
@@ -83,7 +208,9 @@ function BasePanelGroup({
   instance,
   model,
   id,
-  collapsible = true
+  collapsible = true,
+  pluginPanelWithoutId = false,
+  pluginPanelKey
 }: Readonly<PanelProps>): ReactNode {
   const localState = useLocalState();
   const location = useLocation();
@@ -94,9 +221,17 @@ function BasePanelGroup({
   const [expanded, setExpanded] = useState<boolean>(true);
 
   // Hook to load plugins for this panel
+  const _pluginId = useMemo(() => {
+    if (id === undefined && pluginPanelWithoutId) return null;
+    return id;
+  }, [id, pluginPanelWithoutId]);
+  const _pluginKey = useMemo(() => {
+    if (model === undefined && pluginPanelWithoutId) return pluginPanelKey;
+    return model;
+  }, [model, pluginPanelWithoutId, pluginPanelKey]);
   const pluginPanelSet = usePluginPanels({
-    id: id,
-    model: model,
+    id: _pluginId,
+    model: _pluginKey,
     instance: instance,
     reloadFunc: reloadInstance
   });
@@ -168,25 +303,61 @@ function BasePanelGroup({
     [allPanels]
   );
 
-  // Callback when the active panel changes
-  const handlePanelChange = useCallback(
+  const [isDirty, setIsDirty] = useState(false);
+  useWindowEvent('beforeunload', (event) => {
+    if (isDirty) {
+      event.preventDefault();
+    }
+  });
+
+  const performPanelChange = useCallback(
     (targetPanel: string, event?: any) => {
-      cancelEvent(event);
       if (event && eventModified(event)) {
-        const url = `${location.pathname}/../${targetPanel}`;
+        const url = `${location.pathname}/../${targetPanel}${location.search}`;
         navigateToLink(url, navigate, event);
       } else {
-        navigate(`../${targetPanel}`);
+        navigate(`../${targetPanel}${location.search}`);
       }
 
       localState.setLastUsedPanel(pageKey)(targetPanel);
 
-      // Optionally call external callback hook
       if (targetPanel && onPanelChange) {
         onPanelChange(targetPanel);
       }
+
+      setIsDirty(false);
     },
-    [activePanels, navigate, location, onPanelChange]
+    [navigate, location, pageKey, onPanelChange]
+  );
+
+  // Callback when the active panel changes
+  const handlePanelChange = useCallback(
+    (targetPanel: string, event?: any) => {
+      cancelEvent(event);
+
+      if (isDirty) {
+        modals.openConfirmModal({
+          title: <Title order={4}>{t`Unsaved Changes`}</Title>,
+          children: (
+            <>
+              <Divider />
+              <Alert
+                color='red'
+                icon={<IconExclamationCircle />}
+                p='sm'
+              >{t`You have unsaved changes. Are you sure you want to leave this panel?`}</Alert>
+            </>
+          ),
+          labels: { confirm: t`Leave`, cancel: t`Stay` },
+          confirmProps: { color: 'red' },
+          onConfirm: () => performPanelChange(targetPanel, event)
+        });
+        return;
+      }
+
+      performPanelChange(targetPanel, event);
+    },
+    [isDirty, performPanelChange]
   );
 
   // if the selected panel state changes update the current panel
@@ -204,6 +375,22 @@ function BasePanelGroup({
       return panel ?? '';
     }
   }, [activePanels, panel]);
+
+  // hotkeys
+  const hotkeys = useMemo(() => {
+    const keys: InvenTreeHotkeyItem[] = [];
+    activePanels.forEach((panel) => {
+      if (panel.hotkey) {
+        keys.push([
+          panel.hotkey,
+          t`Navigate to panel ${panel.name}`,
+          () => handlePanelChange(panel.name)
+        ]);
+      }
+    });
+    return keys;
+  }, [activePanels]);
+  useInvenTreeHotkeys(hotkeys);
 
   return (
     <Boundary label={`PanelGroup-${pageKey}`}>
@@ -232,37 +419,14 @@ function BasePanelGroup({
                 {group.panels?.map(
                   (panel) =>
                     !panel.hidden && (
-                      <Tooltip
-                        label={panel.label ?? panel.name}
-                        key={panel.name}
-                        disabled={expanded}
-                        position='right'
-                      >
-                        <Tabs.Tab
-                          p='xs'
-                          key={`panel-label-${panel.name}`}
-                          w={'100%'}
-                          value={panel.name}
-                          leftSection={panel.icon}
-                          hidden={panel.hidden}
-                          disabled={panel.disabled}
-                          style={{
-                            cursor: panel.disabled ? 'unset' : 'pointer'
-                          }}
-                          onClick={(event: any) =>
-                            handlePanelChange(panel.name, event)
-                          }
-                        >
-                          <UnstyledButton
-                            component={'a'}
-                            href={generateUrl(
-                              `/${getBaseUrl()}${location.pathname}/${panel.name}`
-                            )}
-                          >
-                            {expanded && panel.label}
-                          </UnstyledButton>
-                        </Tabs.Tab>
-                      </Tooltip>
+                      <PanelTabComponent
+                        key={`panel-tab-${group.id}-${panel.name}`}
+                        expanded={expanded}
+                        panel={panel}
+                        onClick={(event: any) =>
+                          handlePanelChange(panel.name, event)
+                        }
+                      />
                     )
                 )}
               </Box>
@@ -323,7 +487,7 @@ function BasePanelGroup({
                       </>
                     )}
                     <Boundary label={`PanelContent-${panel.name}`}>
-                      {panel.content}
+                      {getPanelContent(panel.content, panel, setIsDirty)}
                     </Boundary>
                   </Stack>
                 </Tabs.Panel>
@@ -335,15 +499,53 @@ function BasePanelGroup({
   );
 }
 
+/*
+ * Helper function to inject the setIsDirty callback into panel content if supported
+ * This allows panels to mark themselves as dirty when changes are made, which will trigger a confirmation prompt when navigating away from the panel
+ */
+function getPanelContent(
+  content: ReactNode,
+  panel: PanelType,
+  setIsDirty?: (dirty: boolean) => void
+): ReactNode {
+  if (content === null) {
+    return null;
+  }
+
+  // pass setIsDirty callback to content if supported
+  if (
+    panel.supportsDirty &&
+    typeof content === 'object' &&
+    'props' in content &&
+    setIsDirty
+  ) {
+    return {
+      ...content,
+      props: {
+        ...(content.props || {}),
+        setDirtyCallback: setIsDirty
+      }
+    };
+  }
+
+  // normal content, just return as is
+  return content;
+}
+
 function IndexPanelComponent({
   pageKey,
   selectedPanel,
+  defaultPanel,
   panels
 }: Readonly<PanelProps>) {
+  const location = useLocation();
   const lastUsedPanel = useLocalState(
     useShallow((state) => {
       const panelName =
-        selectedPanel || state.lastUsedPanels[pageKey] || panels[0]?.name;
+        selectedPanel ||
+        defaultPanel ||
+        state.lastUsedPanels[pageKey] ||
+        panels[0]?.name;
 
       const panel = panels.findIndex(
         (p) => p.name === panelName && !p.disabled && !p.hidden
@@ -356,7 +558,7 @@ function IndexPanelComponent({
     })
   );
 
-  return <Navigate to={lastUsedPanel} replace />;
+  return <Navigate to={`${lastUsedPanel}${location.search}`} replace />;
 }
 
 /**

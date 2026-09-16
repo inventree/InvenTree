@@ -1,6 +1,7 @@
 """Mixin classes for the exporter app."""
 
 from collections import OrderedDict
+from typing import Any
 
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
@@ -15,6 +16,7 @@ from taggit.serializers import TagListSerializerField
 import data_exporter.serializers
 import data_exporter.tasks
 import InvenTree.exceptions
+import InvenTree.serializers
 from common.models import DataOutput
 from InvenTree.helpers import str2bool
 from InvenTree.tasks import offload_task
@@ -52,7 +54,7 @@ class DataExportSerializerMixin:
         Determine if the serializer is being used for data export,
         and if so, adjust the serializer fields accordingly.
         """
-        exporting = kwargs.pop('exporting', False)
+        self._exporting_data = exporting = kwargs.pop('exporting', False)
 
         super().__init__(*args, **kwargs)
 
@@ -62,6 +64,14 @@ class DataExportSerializerMixin:
         if exporting:
             # Exclude fields which are not required for data export
             for field in self.get_export_exclude_fields(**kwargs):
+                self.fields.pop(field, None)
+
+            # Duplication options are never used for data export
+            for field in [
+                name
+                for name, field in self.fields.items()
+                if isinstance(field, InvenTree.serializers.DuplicateOptionsSerializer)
+            ]:
                 self.fields.pop(field, None)
         else:
             # Exclude fields which are only used for data export
@@ -98,6 +108,10 @@ class DataExportSerializerMixin:
                 fields.update(self.get_child_fields(name, field))
                 continue
 
+            # Skip 'many' fields (e.g. nested serializers)
+            if getattr(field, 'many', False):
+                continue
+
             fields[name] = field
 
         return fields
@@ -127,7 +141,7 @@ class DataExportSerializerMixin:
         """
         return headers
 
-    def get_nested_value(self, row: dict, key: str) -> any:
+    def get_nested_value(self, row: dict, key: str) -> Any:
         """Get a nested value from a dictionary.
 
         This method allows for dot notation to access nested fields.
@@ -263,10 +277,8 @@ class DataExportViewMixin:
         exporting = kwargs.pop('exporting', None)
 
         if exporting is None:
-            exporting = (
-                self.request.method.lower() in ['options', 'get']
-                and self.is_exporting()
-            )
+            method = str(getattr(self.request, 'method', '')).lower()
+            exporting = method in ['options', 'get'] and self.is_exporting()
 
         if exporting:
             # Override kwargs when initializing the DataExportOptionsSerializer
@@ -305,7 +317,7 @@ class DataExportViewMixin:
         """Export the data in the specified format.
 
         Arguments:
-            export_plugin: The plugin instance to use for exporting the data
+            export_plugin: The plugin instance to use for exporting the data. If not provided, the default exporter is used
             export_format: The file format to export the data in
             export_context: Additional context data to pass to the plugin
             output: The DataOutput object to write to
@@ -313,6 +325,11 @@ class DataExportViewMixin:
         - By default, uses the provided serializer to generate the data, and return it as a file download.
         - If a plugin is specified, the plugin can be used to augment or replace the export functionality.
         """
+        if export_plugin is None:
+            from plugin.registry import registry
+
+            export_plugin = registry.get_plugin('inventree-exporter')
+
         # Get the base serializer class for the view
         serializer_class = self.get_serializer_class()
 
@@ -338,6 +355,12 @@ class DataExportViewMixin:
         # Update the output instance with the total number of items to export
         output.total = queryset.count()
         output.save()
+        request = context.get('request', None)
+
+        if request:
+            query_params = getattr(request, 'query_params', {})
+            context.update(**query_params)
+            context['request'] = request
 
         data = None
         serializer = serializer_class(context=context, exporting=True)
@@ -364,7 +387,12 @@ class DataExportViewMixin:
         # The returned data *must* be a list of dict objects
         try:
             data = export_plugin.export_data(
-                queryset, serializer_class, headers, export_context, output
+                queryset,
+                serializer_class,
+                headers,
+                export_context,
+                output,
+                serializer_context=context,
             )
 
         except Exception as e:
@@ -404,8 +432,8 @@ class DataExportViewMixin:
         # Update the output object with the exported data
         output.mark_complete(output=ContentFile(datafile, filename))
 
-    def get(self, request, *args, **kwargs):
-        """Override the GET method to determine export options."""
+    def list(self, request, *args, **kwargs):
+        """Override the list method to determine export options."""
         from common.serializers import DataOutputSerializer
 
         # If we are not exporting data, return the default response
@@ -476,4 +504,4 @@ class DataExportViewMixin:
             # Return a response to the frontend
             return Response(DataOutputSerializer(output).data, status=200)
 
-        return super().get(request, *args, **kwargs)
+        return super().list(request, *args, **kwargs)

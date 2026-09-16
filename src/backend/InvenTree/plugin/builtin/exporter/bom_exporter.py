@@ -9,6 +9,7 @@ import rest_framework.serializers as serializers
 
 from InvenTree.helpers import normalize
 from part.models import BomItem
+from part.serializers import BomItemSerializer
 from plugin import InvenTreePlugin
 from plugin.mixins import DataExportMixin
 
@@ -76,7 +77,10 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
 
     def supports_export(self, model_class: type, user, *args, **kwargs) -> bool:
         """This exported only supports the BomItem model."""
-        return model_class == BomItem
+        return (
+            model_class == BomItem
+            and kwargs.get('serializer_class') == BomItemSerializer
+        )
 
     def update_headers(self, headers, context, **kwargs):
         """Update headers for the BOM export."""
@@ -149,17 +153,23 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
             queryset = queryset.prefetch_related('substitutes')
 
         if self.export_supplier_data:
-            queryset = queryset.prefetch_related('sub_part__supplier_parts')
             queryset = queryset.prefetch_related(
-                'sub_part__supplier_parts__manufacturer_part'
+                'sub_part__supplier_parts',
+                'sub_part__supplier_parts__supplier',
+                'sub_part__supplier_parts__manufacturer_part',
+                'sub_part__supplier_parts__manufacturer_part__manufacturer',
             )
 
         if self.export_manufacturer_data:
-            queryset = queryset.prefetch_related('sub_part__manufacturer_parts')
+            queryset = queryset.prefetch_related(
+                'sub_part__manufacturer_parts',
+                'sub_part__manufacturer_parts__manufacturer',
+            )
 
         if self.export_parameter_data:
-            queryset = queryset.prefetch_related('sub_part__parameters')
-            queryset = queryset.prefetch_related('sub_part__parameters__template')
+            queryset = queryset.prefetch_related(
+                'sub_part__parameters_list', 'sub_part__parameters_list__template'
+            )
 
         return queryset
 
@@ -242,6 +252,7 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
         ):
             sub_items = bom_item.sub_part.get_bom_items()
             sub_items = self.prefetch_queryset(sub_items)
+            sub_items = BomItemSerializer.annotate_queryset(sub_items)
 
             for item in sub_items.all():
                 self.process_bom_row(

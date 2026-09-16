@@ -2,6 +2,7 @@
 
 import os
 from decimal import Decimal
+from typing import Optional, TypedDict
 
 from django.apps import apps
 from django.conf import settings
@@ -16,8 +17,6 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy as __
 
 from moneyed import CURRENCIES
-from stdimage.models import StdImageField
-from taggit.managers import TaggableManager
 
 import common.currency
 import common.models
@@ -54,7 +53,7 @@ def rename_company_image(instance, filename):
     return os.path.join(base, fn)
 
 
-class CompanyReportContext(report.mixins.BaseReportContext):
+class CompanyReportContext(report.mixins.BaseReportContext, TypedDict):
     """Report context for the Company model.
 
     Attributes:
@@ -78,8 +77,11 @@ class CompanyReportContext(report.mixins.BaseReportContext):
 
 class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
-    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeParameterMixin,
+    InvenTree.models.InvenTreeNoteMixin,
+    InvenTree.models.InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
+    InvenTree.models.InvenTreeImageMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
     """A Company object represents an external company.
@@ -108,6 +110,9 @@ class Company(
         currency_code: Specifies the default currency for the company
         tax_id: Tax ID for the company
     """
+
+    IMAGE_RENAME = rename_company_image
+    IMPORT_ID_FIELDS = ['name']
 
     class Meta:
         """Metaclass defines extra model options."""
@@ -185,15 +190,6 @@ class Company(
         max_length=2000,
     )
 
-    image = StdImageField(
-        upload_to=rename_company_image,
-        null=True,
-        blank=True,
-        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
-        delete_orphans=True,
-        verbose_name=_('Image'),
-    )
-
     active = models.BooleanField(
         default=True, verbose_name=_('Active'), help_text=_('Is this company active?')
     )
@@ -233,7 +229,8 @@ class Company(
     )
 
     @property
-    def address(self):
+    @report.mixins.report_attribute()
+    def address(self) -> Optional[str]:
         """Return the string representation for the primary address.
 
         This property exists for backwards compatibility
@@ -243,12 +240,24 @@ class Company(
         return str(addr) if addr is not None else None
 
     @property
-    def primary_address(self):
-        """Returns address object of primary address. Parsed by serializer."""
-        return Address.objects.filter(company=self.id).filter(primary=True).first()
+    @report.mixins.report_attribute()
+    def primary_address(self) -> Optional['Address']:
+        """Returns address object of primary address for this Company."""
+        # We may have a pre-fetched primary address list
+        if hasattr(self, 'primary_address_list'):
+            addresses = self.primary_address_list
+            return (
+                addresses[0]
+                if len(addresses) > 0 and isinstance(addresses, list)
+                else None
+            )
+
+        # Otherwise, query the database
+        return self.addresses.filter(primary=True).first()
 
     @property
-    def currency_code(self):
+    @report.mixins.report_attribute()
+    def currency_code(self) -> str:
         """Return the currency code associated with this company.
 
         - If the currency code is invalid, use the default currency
@@ -269,20 +278,9 @@ class Company(
         """Get the web URL for the detail view for this Company."""
         return InvenTree.helpers.pui_url(f'/purchasing/manufacturer/{self.id}')
 
-    def get_image_url(self):
-        """Return the URL of the image for this company."""
-        if self.image:
-            return InvenTree.helpers.getMediaUrl(self.image.url)
-        return InvenTree.helpers.getBlankImage()
-
-    def get_thumbnail_url(self):
-        """Return the URL for the thumbnail image for this Company."""
-        if self.image:
-            return InvenTree.helpers.getMediaUrl(self.image.thumbnail.url)
-        return InvenTree.helpers.getBlankThumbnail()
-
     @property
-    def parts(self):
+    @report.mixins.report_attribute()
+    def parts(self) -> report.mixins.QuerySet['SupplierPart']:
         """Return SupplierPart objects which are supplied or manufactured by this company."""
         return SupplierPart.objects.filter(
             Q(supplier=self.id) | Q(manufacturer_part__manufacturer=self.id)
@@ -309,6 +307,8 @@ class Contact(InvenTree.models.InvenTreeMetadataModel):
         role: position in company
     """
 
+    IMPORT_ID_FIELDS = ['name', 'email']
+
     class Meta:
         """Metaclass defines extra model options."""
 
@@ -316,7 +316,7 @@ class Contact(InvenTree.models.InvenTreeMetadataModel):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the Contcat model."""
+        """Return the API URL associated with the Contact model."""
         return reverse('api-contact-list')
 
     company = models.ForeignKey(
@@ -382,26 +382,23 @@ class Address(InvenTree.models.InvenTreeModel):
         Rules:
         - If this address is marked as "primary", ensure that all other addresses for this company are marked as non-primary
         """
-        others = list(
-            Address.objects.filter(company=self.company).exclude(pk=self.pk).all()
-        )
+        others = Address.objects.filter(company=self.company).exclude(pk=self.pk)
 
         # If this is the *only* address for this company, make it the primary one
-        if len(others) == 0:
+        if not others.exists():
             self.primary = True
 
         super().save(*args, **kwargs)
 
         # Once this address is saved, check others
         if self.primary:
-            for addr in others:
-                if addr.primary:
-                    addr.primary = False
-                    addr.save()
+            Address.objects.filter(company=self.company).exclude(pk=self.pk).filter(
+                primary=True
+            ).update(primary=False)
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the Contcat model."""
+        """Return the API URL associated with the Contact model."""
         return reverse('api-address-list')
 
     company = models.ForeignKey(
@@ -491,8 +488,10 @@ class Address(InvenTree.models.InvenTreeModel):
 
 class ManufacturerPart(
     InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeNoteMixin,
+    InvenTree.models.InvenTreeTagsMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
@@ -504,6 +503,8 @@ class ManufacturerPart(
         link: Link to external website for this manufacturer part
         description: Descriptive notes field
     """
+
+    IMPORT_ID_FIELDS = ['MPN']
 
     class Meta:
         """Metaclass defines extra model options."""
@@ -563,8 +564,6 @@ class ManufacturerPart(
         help_text=_('Manufacturer part description'),
     )
 
-    tags = TaggableManager(blank=True)
-
     @classmethod
     def create(cls, part, manufacturer, mpn, description, link=None):
         """Check if ManufacturerPart instance does not already exist then create it."""
@@ -602,76 +601,13 @@ class ManufacturerPart(
         return s
 
 
-class ManufacturerPartParameter(InvenTree.models.InvenTreeModel):
-    """A ManufacturerPartParameter represents a key:value parameter for a MnaufacturerPart.
-
-    This is used to represent parameters / properties for a particular manufacturer part.
-
-    Each parameter is a simple string (text) value.
-    """
-
-    class Meta:
-        """Metaclass defines extra model options."""
-
-        verbose_name = _('Manufacturer Part Parameter')
-        unique_together = ('manufacturer_part', 'name')
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the ManufacturerPartParameter model."""
-        return reverse('api-manufacturer-part-parameter-list')
-
-    manufacturer_part = models.ForeignKey(
-        ManufacturerPart,
-        on_delete=models.CASCADE,
-        related_name='parameters',
-        verbose_name=_('Manufacturer Part'),
-    )
-
-    name = models.CharField(
-        max_length=500,
-        blank=False,
-        verbose_name=_('Name'),
-        help_text=_('Parameter name'),
-    )
-
-    value = models.CharField(
-        max_length=500,
-        blank=False,
-        verbose_name=_('Value'),
-        help_text=_('Parameter value'),
-    )
-
-    units = models.CharField(
-        max_length=64,
-        blank=True,
-        null=True,
-        verbose_name=_('Units'),
-        help_text=_('Parameter units'),
-    )
-
-
-class SupplierPartManager(models.Manager):
-    """Define custom SupplierPart objects manager.
-
-    The main purpose of this manager is to improve database hit as the
-    SupplierPart model involves A LOT of foreign keys lookups
-    """
-
-    def get_queryset(self):
-        """Prefetch related fields when querying against the SupplierPart model."""
-        # Always prefetch related models
-        return (
-            super()
-            .get_queryset()
-            .prefetch_related('part', 'supplier', 'manufacturer_part__manufacturer')
-        )
-
-
 class SupplierPart(
+    InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeNoteMixin,
+    InvenTree.models.InvenTreeTagsMixin,
     common.models.MetaMixin,
     InvenTree.models.InvenTreeModel,
 ):
@@ -682,18 +618,20 @@ class SupplierPart(
         source_item: The sourcing item linked to this SupplierPart instance
         supplier: Company that supplies this SupplierPart object
         active: Boolean value, is this supplier part active
+        primary: Boolean value, is this the primary supplier part for the linked Part
         SKU: Stock keeping unit (supplier part number)
         link: Link to external website for this supplier part
         description: Descriptive notes field
         note: Longer form note field
         base_cost: Base charge added to order independent of quantity e.g. "Reeling Fee"
         multiple: Multiple that the part is provided in
-        lead_time: Supplier lead time
         packaging: packaging that the part is supplied in, e.g. "Reel"
         pack_quantity: Quantity of item supplied in a single pack (e.g. 30ml in a single tube)
         pack_quantity_native: Pack quantity, converted to "native" units of the referenced part
         updated: Date that the SupplierPart was last updated
     """
+
+    IMPORT_ID_FIELDS = ['SKU']
 
     class Meta:
         """Metaclass defines extra model options."""
@@ -704,10 +642,6 @@ class SupplierPart(
 
         # This model was moved from the 'Part' app
         db_table = 'part_supplierpart'
-
-    objects = SupplierPartManager()
-
-    tags = TaggableManager(blank=True)
 
     @staticmethod
     def get_api_url():
@@ -809,7 +743,20 @@ class SupplierPart(
         self.clean()
         self.validate_unique()
 
+        # Ensure that only one SupplierPart is marked as "primary" for a given Part
+        others = SupplierPart.objects.filter(part=self.part).exclude(pk=self.pk)
+
+        # If this is the *only* SupplierPart for this Part, make it the primary one
+        if not others.exists():
+            self.primary = True
+
         super().save(*args, **kwargs)
+
+        # Once this SupplierPart is saved, check others
+        if self.primary:
+            SupplierPart.objects.filter(part=self.part).exclude(pk=self.pk).filter(
+                primary=True
+            ).update(primary=False)
 
     part = models.ForeignKey(
         'part.Part',
@@ -839,6 +786,12 @@ class SupplierPart(
         default=True,
         verbose_name=_('Active'),
         help_text=_('Is this supplier part active?'),
+    )
+
+    primary = models.BooleanField(
+        default=False,
+        verbose_name=_('Primary'),
+        help_text=_('Is this the primary supplier part for the linked Part?'),
     )
 
     manufacturer_part = models.ForeignKey(
@@ -906,7 +859,7 @@ class SupplierPart(
     )
 
     def base_quantity(self, quantity=1) -> Decimal:
-        """Calculate the base unit quantiy for a given quantity."""
+        """Calculate the base unit quantity for a given quantity."""
         q = Decimal(quantity) * Decimal(self.pack_quantity_native)
         q = round(q, 10).normalize()
 
@@ -1086,20 +1039,71 @@ class SupplierPriceBreak(common.models.PriceBreak):
     )
 
 
+@receiver(post_save, sender=SupplierPart, dispatch_uid='post_save_supplier_part')
+def after_save_supplier_part(sender, instance, created, **kwargs):
+    """Callback function when a SupplierPart is created or updated.
+
+    Triggers a pricing update for the linked Part, so that changes to
+    pack_quantity are reflected in Part pricing and BOM cost rollups.
+    """
+    if (
+        InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
+        and not InvenTree.ready.isImportingData()
+        and instance.part
+    ):
+        instance.part.schedule_pricing_update(create=True)
+
+
+@receiver(post_delete, sender=SupplierPart, dispatch_uid='post_delete_supplier_part')
+def after_delete_supplier_part(sender, instance, **kwargs):
+    """Callback function when a SupplierPart is deleted.
+
+    Triggers a pricing update for the linked Part, so that removal of a
+    supplier part is reflected in Part pricing and BOM cost rollups.
+    """
+    from part.models import Part
+
+    if (
+        not InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
+        or InvenTree.ready.isImportingData()
+        or InvenTree.ready.isRunningMigrations()
+    ):
+        return
+
+    try:
+        if part := instance.part:
+            part.schedule_pricing_update(create=False)
+    except (Part.DoesNotExist, SupplierPart.DoesNotExist):
+        # The underlying SupplierPart instance has been deleted
+        return
+
+
 @receiver(
     post_save, sender=SupplierPriceBreak, dispatch_uid='post_save_supplier_price_break'
 )
 def after_save_supplier_price(sender, instance, created, **kwargs):
     """Callback function when a SupplierPriceBreak is created or updated."""
-    if (
-        (
-            InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
-            and not InvenTree.ready.isImportingData()
-        )
-        and instance.part
-        and instance.part.part
-    ):
-        instance.part.part.schedule_pricing_update(create=True)
+    from part.models import Part
+
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
+        return
+
+    if InvenTree.ready.isImportingData():
+        return
+
+    try:
+        supplier_part = instance.part
+    except SupplierPart.DoesNotExist:
+        # The underlying SupplierPart instance has been deleted
+        return
+
+    try:
+        base_part = supplier_part.part
+    except Part.DoesNotExist:
+        # The underlying Part instance has been deleted
+        return
+
+    base_part.schedule_pricing_update(create=True)
 
 
 @receiver(
@@ -1109,12 +1113,24 @@ def after_save_supplier_price(sender, instance, created, **kwargs):
 )
 def after_delete_supplier_price(sender, instance, **kwargs):
     """Callback function when a SupplierPriceBreak is deleted."""
-    if (
-        (
-            InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
-            and not InvenTree.ready.isImportingData()
-        )
-        and instance.part
-        and instance.part.part
-    ):
-        instance.part.part.schedule_pricing_update(create=False)
+    from part.models import Part
+
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
+        return
+
+    if InvenTree.ready.isImportingData():
+        return
+
+    try:
+        supplier_part = instance.part
+    except SupplierPart.DoesNotExist:
+        # The underlying SupplierPart instance has been deleted
+        return
+
+    try:
+        base_part = supplier_part.part
+    except Part.DoesNotExist:
+        # The underlying Part instance has been deleted
+        return
+
+    base_part.schedule_pricing_update(create=False)

@@ -1,5 +1,7 @@
 """Background tasks for the report app."""
 
+from django.contrib.auth import get_user_model
+
 import structlog
 from opentelemetry import trace
 
@@ -10,13 +12,16 @@ logger = structlog.get_logger('inventree')
 
 
 @tracer.start_as_current_span('print_reports')
-def print_reports(template_id: int, item_ids: list[int], output_id: int, **kwargs):
+def print_reports(
+    template_id: int, item_ids: list[int], output_id: int, user_id: int, **kwargs
+):
     """Print multiple reports against the provided template.
 
     Arguments:
         template_id: The ID of the ReportTemplate to use
         item_ids: List of item IDs to generate the report against
-        output_id: The ID of the DataOutput to use (if provided)
+        output_id: The ID of the DataOutput to use
+        user_id: The ID of the user to associate with the generated report
 
     This function is intended to be called by the background worker,
     and will continuously update the status of the DataOutput object.
@@ -27,9 +32,35 @@ def print_reports(template_id: int, item_ids: list[int], output_id: int, **kwarg
     try:
         template = ReportTemplate.objects.get(pk=template_id)
         output = DataOutput.objects.get(pk=output_id)
+    except DataOutput.DoesNotExist:
+        # The DataOutput may have already been consumed and deleted by the time
+        # this task runs (e.g. if the background worker redelivered the task)
+        logger.info(
+            'DataOutput %s no longer exists - skipping print_reports task', output_id
+        )
+        return
     except Exception:
         log_error('report.tasks.print_reports')
         return
+
+    if output.complete:
+        # This task has already been processed (e.g. a redelivered/duplicate task) - skip it
+        logger.info(
+            'DataOutput %s is already complete - skipping print_reports task', output_id
+        )
+        return
+
+    # Fetch user information
+    user = None
+
+    if user_id:
+        try:
+            user = get_user_model().objects.get(pk=user_id)
+        except Exception:
+            log_error('report.tasks.print_reports', user_id=user_id)
+
+    if not user:
+        user = getattr(output, 'user', None)
 
     # Fetch the items to be included in the report
     model = template.get_model()
@@ -38,20 +69,26 @@ def print_reports(template_id: int, item_ids: list[int], output_id: int, **kwarg
     # Ensure they are sorted by the order of the provided item IDs
     items = sorted(items, key=lambda item: item_ids.index(item.pk))
 
-    template.print(items, output=output)
+    template.print(items, output=output, user=user)
 
 
 @tracer.start_as_current_span('print_labels')
 def print_labels(
-    template_id: int, item_ids: list[int], output_id: int, plugin_slug: str, **kwargs
+    template_id: int,
+    item_ids: list[int],
+    output_id: int,
+    user_id: int,
+    plugin_slug: str,
+    **kwargs,
 ):
     """Print multiple labels against the provided template.
 
     Arguments:
         template_id: The ID of the LabelTemplate to use
         item_ids: List of item IDs to generate the labels against
-        output_id: The ID of the DataOutput to use (if provided)
-        plugin_slug: The ID of the LabelPlugin to use (if provided)
+        output_id: The ID of the DataOutput to use
+        user_id: The ID of the user to associate with the generated labels
+        plugin_slug: The ID of the LabelPlugin to use
 
     This function is intended to be called by the background worker,
     and will continuously update the status of the DataOutput object.
@@ -63,9 +100,35 @@ def print_labels(
     try:
         template = LabelTemplate.objects.get(pk=template_id)
         output = DataOutput.objects.get(pk=output_id)
+    except DataOutput.DoesNotExist:
+        # The DataOutput may have already been consumed and deleted by the time
+        # this task runs (e.g. if the background worker redelivered the task)
+        logger.info(
+            'DataOutput %s no longer exists - skipping print_labels task', output_id
+        )
+        return
     except Exception:
         log_error('report.tasks.print_labels')
         return
+
+    if output.complete:
+        # This task has already been processed (e.g. a redelivered/duplicate task) - skip it
+        logger.info(
+            'DataOutput %s is already complete - skipping print_labels task', output_id
+        )
+        return
+
+    # Fetch user information
+    user = None
+
+    if user_id:
+        try:
+            user = get_user_model().objects.get(pk=user_id)
+        except Exception:
+            log_error('report.tasks.print_labels', user_id=user_id)
+
+    if not user:
+        user = getattr(output, 'user', None)
 
     # Fetch the items to be included in the report
     model = template.get_model()
@@ -83,4 +146,4 @@ def print_labels(
     # Extract optional arguments for label printing
     options = kwargs.pop('options') or {}
 
-    template.print(items, plugin, output=output, options=options)
+    template.print(items, plugin, output=output, user=user, options=options)

@@ -12,12 +12,12 @@ Useful References:
 """
 
 from decimal import Decimal
+from typing import Optional
 
 from django.db import models
 from django.db.models import (
     Case,
     DecimalField,
-    Exists,
     ExpressionWrapper,
     F,
     FloatField,
@@ -34,15 +34,17 @@ from django.db.models.query import QuerySet
 
 from sql_util.utils import SubquerySum
 
-import InvenTree.conversion
-import InvenTree.helpers
 import part.models
 import stock.models
 from build.status_codes import BuildStatusGroups
-from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
+from order.status_codes import (
+    PurchaseOrderStatusGroups,
+    SalesOrderStatusGroups,
+    TransferOrderStatusGroups,
+)
 
 
-def annotate_in_production_quantity(reference=''):
+def annotate_in_production_quantity(reference: str = '') -> QuerySet:
     """Annotate the 'in production' quantity for each part in a queryset.
 
     - Sum the 'quantity' field for all stock items which are 'in production' for each part.
@@ -63,7 +65,7 @@ def annotate_in_production_quantity(reference=''):
     )
 
 
-def annotate_scheduled_to_build_quantity(reference: str = ''):
+def annotate_scheduled_to_build_quantity(reference: str = '') -> QuerySet:
     """Annotate the 'scheduled to build' quantity for each part in a queryset.
 
     - This is total scheduled quantity for all build orders which are 'active'
@@ -91,7 +93,7 @@ def annotate_scheduled_to_build_quantity(reference: str = ''):
     )
 
 
-def annotate_on_order_quantity(reference: str = ''):
+def annotate_on_order_quantity(reference: str = '') -> QuerySet:
     """Annotate the 'on order' quantity for each part in a queryset.
 
     Sum the 'remaining quantity' of each line item for any open purchase orders for each part:
@@ -137,7 +139,7 @@ def annotate_on_order_quantity(reference: str = ''):
     )
 
 
-def annotate_total_stock(reference: str = '', filter: Q = None):
+def annotate_total_stock(reference: str = '', filter: Optional[Q] = None) -> QuerySet:
     """Annotate 'total stock' quantity against a queryset.
 
     - This function calculates the 'total stock' for a given part
@@ -161,7 +163,7 @@ def annotate_total_stock(reference: str = '', filter: Q = None):
     )
 
 
-def annotate_build_order_requirements(reference: str = ''):
+def annotate_build_order_requirements(reference: str = '') -> QuerySet:
     """Annotate the total quantity of each part required for build orders.
 
     - Only interested in 'active' build orders
@@ -173,25 +175,42 @@ def annotate_build_order_requirements(reference: str = ''):
     build_filter = Q(build__status__in=BuildStatusGroups.ACTIVE_CODES)
 
     return Coalesce(
-        SubquerySum(f'{reference}used_in__build_lines__quantity', filter=build_filter),
+        SubquerySum(
+            ExpressionWrapper(
+                F(f'{reference}used_in__build_lines__quantity')
+                - F(f'{reference}used_in__build_lines__consumed'),
+                output_field=DecimalField(),
+            ),
+            filter=build_filter,
+        ),
         Decimal(0),
         output_field=models.DecimalField(),
     )
 
 
-def annotate_build_order_allocations(reference: str = ''):
+def annotate_build_order_allocations(reference: str = '', location=None) -> QuerySet:
     """Annotate the total quantity of each part allocated to build orders.
 
     - This function calculates the total part quantity allocated to open build orders
     - Finds all build order allocations for each part (using the provided filter)
     - Aggregates the 'allocated quantity' for each relevant build order allocation item
 
-    Args:
+    Arguments:
         reference: The relationship reference of the part from the current model
-        build_filter: Q object which defines how to filter the allocation items
+        location: If provided, only allocated stock items from this location are considered
     """
     # Build filter only returns 'active' build orders
     build_filter = Q(build_line__build__status__in=BuildStatusGroups.ACTIVE_CODES)
+
+    if location is not None:
+        # Filter by location (including any child locations)
+
+        build_filter &= Q(
+            stock_item__location__tree_id=location.tree_id,
+            stock_item__location__lft__gte=location.lft,
+            stock_item__location__rght__lte=location.rght,
+            stock_item__location__level__gte=location.level,
+        )
 
     return Coalesce(
         SubquerySum(
@@ -202,7 +221,7 @@ def annotate_build_order_allocations(reference: str = ''):
     )
 
 
-def annotate_sales_order_requirements(reference: str = ''):
+def annotate_sales_order_requirements(reference: str = '') -> QuerySet:
     """Annotate the total quantity of each part required for sales orders.
 
     - Only interested in 'active' sales orders
@@ -222,22 +241,32 @@ def annotate_sales_order_requirements(reference: str = ''):
     )
 
 
-def annotate_sales_order_allocations(reference: str = ''):
+def annotate_sales_order_allocations(reference: str = '', location=None) -> QuerySet:
     """Annotate the total quantity of each part allocated to sales orders.
 
     - This function calculates the total part quantity allocated to open sales orders"
     - Finds all sales order allocations for each part (using the provided filter)
     - Aggregates the 'allocated quantity' for each relevant sales order allocation item
 
-    Args:
+    Arguments:
         reference: The relationship reference of the part from the current model
-        order_filter: Q object which defines how to filter the allocation items
+        location: If provided, only allocated stock items from this location are considered
     """
     # Order filter only returns incomplete shipments for open orders
     order_filter = Q(
         line__order__status__in=SalesOrderStatusGroups.OPEN,
         shipment__shipment_date=None,
     )
+
+    if location is not None:
+        # Filter by location (including any child locations)
+
+        order_filter &= Q(
+            item__location__tree_id=location.tree_id,
+            item__location__lft__gte=location.lft,
+            item__location__rght__lte=location.rght,
+            item__location__level__gte=location.level,
+        )
 
     return Coalesce(
         SubquerySum(
@@ -249,7 +278,41 @@ def annotate_sales_order_allocations(reference: str = ''):
     )
 
 
-def variant_stock_query(reference: str = '', filter: Q = None):
+def annotate_transfer_order_allocations(reference: str = '', location=None) -> QuerySet:
+    """Annotate the total quantity of each part allocated to transfer orders.
+
+    - This function calculates the total part quantity allocated to open transfer orders"
+    - Finds all transfer order allocations for each part (using the provided filter)
+    - Aggregates the 'allocated quantity' for each relevant transfer order allocation item
+
+    Arguments:
+        reference: The relationship reference of the part from the current model
+        location: If provided, only allocated stock items from this location are considered
+    """
+    # Order filter only returns open orders
+    order_filter = Q(line__order__status__in=TransferOrderStatusGroups.OPEN)
+
+    if location is not None:
+        # Filter by location (including any child locations)
+
+        order_filter &= Q(
+            item__location__tree_id=location.tree_id,
+            item__location__lft__gte=location.lft,
+            item__location__rght__lte=location.rght,
+            item__location__level__gte=location.level,
+        )
+
+    return Coalesce(
+        SubquerySum(
+            f'{reference}stock_items__transfer_order_allocations__quantity',
+            filter=order_filter,
+        ),
+        Decimal(0),
+        output_field=models.DecimalField(),
+    )
+
+
+def variant_stock_query(reference: str = '', filter: Optional[Q] = None) -> QuerySet:
     """Create a queryset to retrieve all stock items for variant parts under the specified part.
 
     - Useful for annotating a queryset with aggregated information about variant parts
@@ -270,7 +333,7 @@ def variant_stock_query(reference: str = '', filter: Q = None):
     ).filter(stock_filter)
 
 
-def annotate_variant_quantity(subquery: Q, reference: str = 'quantity'):
+def annotate_variant_quantity(subquery: Q, reference: str = 'quantity') -> QuerySet:
     """Create a subquery annotation for all variant part stock items on the given parent query.
 
     Args:
@@ -279,7 +342,8 @@ def annotate_variant_quantity(subquery: Q, reference: str = 'quantity'):
     """
     return Coalesce(
         Subquery(
-            subquery.annotate(
+            subquery
+            .annotate(
                 total=Func(F(reference), function='SUM', output_field=FloatField())
             )
             .values('total')
@@ -290,7 +354,7 @@ def annotate_variant_quantity(subquery: Q, reference: str = 'quantity'):
     )
 
 
-def annotate_category_parts():
+def annotate_category_parts() -> QuerySet:
     """Construct a queryset annotation which returns the number of parts in a particular category.
 
     - Includes parts in subcategories also
@@ -306,7 +370,8 @@ def annotate_category_parts():
 
     return Coalesce(
         Subquery(
-            subquery.annotate(
+            subquery
+            .annotate(
                 total=Func(F('pk'), function='COUNT', output_field=IntegerField())
             )
             .values('total')
@@ -317,7 +382,7 @@ def annotate_category_parts():
     )
 
 
-def annotate_default_location(reference=''):
+def annotate_default_location(reference: str = '') -> QuerySet:
     """Construct a queryset that finds the closest default location in the part's category tree.
 
     If the part's category has its own default_location, this is returned.
@@ -340,7 +405,7 @@ def annotate_default_location(reference=''):
     )
 
 
-def annotate_sub_categories():
+def annotate_sub_categories() -> QuerySet:
     """Construct a queryset annotation which returns the number of subcategories for each provided category."""
     subquery = part.models.PartCategory.objects.filter(
         tree_id=OuterRef('tree_id'),
@@ -351,7 +416,8 @@ def annotate_sub_categories():
 
     return Coalesce(
         Subquery(
-            subquery.annotate(
+            subquery
+            .annotate(
                 total=Func(F('pk'), function='COUNT', output_field=IntegerField())
             )
             .values('total')
@@ -498,155 +564,3 @@ def annotate_bom_item_can_build(queryset: QuerySet, reference: str = '') -> Quer
     )
 
     return queryset
-
-
-"""A list of valid operators for filtering part parameters."""
-PARAMETER_FILTER_OPERATORS: list[str] = ['gt', 'gte', 'lt', 'lte', 'ne', 'icontains']
-
-
-def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
-    """Filter the given queryset by a given template parameter.
-
-    Parts which do not have a value for the given parameter are excluded.
-
-    Arguments:
-        queryset: A queryset of Part objects
-        template_id (int): The ID of the template parameter to filter by
-        value (str): The value of the parameter to filter by
-        func (str): The function to use for the filter (e.g. __gt, __lt, __contains)
-
-    Returns:
-        A queryset of Part objects filtered by the given parameter
-    """
-    if func and func not in PARAMETER_FILTER_OPERATORS:
-        raise ValueError(f'Invalid parameter filter function supplied: {func}.')
-
-    try:
-        template = part.models.PartParameterTemplate.objects.get(pk=template_id)
-    except (ValueError, part.models.PartParameterTemplate.DoesNotExist):
-        # Return queryset unchanged if the template does not exist
-        return queryset
-
-    # Construct a "numeric" value
-    try:
-        value_numeric = float(value)
-    except (ValueError, TypeError):
-        value_numeric = None
-
-    if template.checkbox:
-        # Account for 'boolean' parameter values
-        # Convert to "True" or "False" string in this case
-        bool_value = InvenTree.helpers.str2bool(value)
-        value_numeric = 1 if bool_value else 0
-        value = str(bool_value)
-
-        # Boolean filtering is limited to exact matches
-        func = ''
-
-    elif value_numeric is None and template.units:
-        # Convert the raw value to the units of the template parameter
-        try:
-            value_numeric = InvenTree.conversion.convert_physical_value(
-                value, template.units
-            )
-        except Exception:
-            # The value cannot be converted - return an empty queryset
-            return queryset.none()
-
-    # Special handling for the "not equal" operator
-    if func == 'ne':
-        invert = True
-        func = ''
-    else:
-        invert = False
-
-    # Some filters are only applicable to string values
-    text_only = any([func in ['icontains'], value_numeric is None])
-
-    # Ensure the function starts with a double underscore
-    if func and not func.startswith('__'):
-        func = f'__{func}'
-
-    # Query for 'numeric' value - this has priority over 'string' value
-    data_numeric = {
-        'parameters__template': template,
-        'parameters__data_numeric__isnull': False,
-        f'parameters__data_numeric{func}': value_numeric,
-    }
-
-    query_numeric = Q(**data_numeric)
-
-    # Query for 'string' value
-    data_text = {
-        'parameters__template': template,
-        f'parameters__data{func}': str(value),
-    }
-
-    if not text_only:
-        data_text['parameters__data_numeric__isnull'] = True
-
-    query_text = Q(**data_text)
-
-    # Combine the queries based on whether we are filtering by text or numeric value
-    q = query_text if text_only else query_text | query_numeric
-
-    # Special handling for the '__ne' (not equal) operator
-    # In this case, we want the *opposite* of the above queries
-    if invert:
-        return queryset.exclude(q).distinct()
-    else:
-        return queryset.filter(q).distinct()
-
-
-def order_by_parameter(queryset, template_id: int, ascending=True):
-    """Order the given queryset by a given template parameter.
-
-    Parts which do not have a value for the given parameter are ordered last.
-
-    Arguments:
-        queryset: A queryset of Part objects
-        template_id (int): The ID of the template parameter to order by
-        ascending (bool): Order by ascending or descending (default = True)
-
-    Returns:
-        A queryset of Part objects ordered by the given parameter
-    """
-    template_filter = part.models.PartParameter.objects.filter(
-        template__id=template_id, part_id=OuterRef('id')
-    )
-
-    # Annotate the queryset with the parameter value, and whether it exists
-    queryset = queryset.annotate(parameter_exists=Exists(template_filter))
-
-    # Annotate the text data value
-    queryset = queryset.annotate(
-        parameter_value=Case(
-            When(
-                parameter_exists=True,
-                then=Subquery(
-                    template_filter.values('data')[:1], output_field=models.CharField()
-                ),
-            ),
-            default=Value('', output_field=models.CharField()),
-        ),
-        parameter_value_numeric=Case(
-            When(
-                parameter_exists=True,
-                then=Subquery(
-                    template_filter.values('data_numeric')[:1],
-                    output_field=models.FloatField(),
-                ),
-            ),
-            default=Value(0, output_field=models.FloatField()),
-        ),
-    )
-
-    prefix = '' if ascending else '-'
-
-    # Return filtered queryset
-
-    return queryset.order_by(
-        '-parameter_exists',
-        f'{prefix}parameter_value_numeric',
-        f'{prefix}parameter_value',
-    )

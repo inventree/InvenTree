@@ -28,6 +28,9 @@ The InvenTree app can be downloaded from either the Android or Apple app stores,
 
 <span class='fab fa-android'></span> [Android Play Store](https://play.google.com/store/apps/details?id=inventree.inventree_app).
 
+!!! info "APK Download"
+    As an alternative to using the Android Play Store, the InvenTree app APK file can be downloaded directly via our [polar.sh](https://polar.sh/inventree/products/299bf0d5-af88-4e0f-becf-c007ad37ecf2) page.
+
 ### iOS
 
 <span class='fab fa-apple'></span> [Apple App Store](https://apps.apple.com/au/app/inventree/id1581731101#?platform=iphone)

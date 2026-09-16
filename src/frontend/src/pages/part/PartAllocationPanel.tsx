@@ -1,8 +1,8 @@
 import { t } from '@lingui/core/macro';
 import { Accordion } from '@mantine/core';
 
+import { StylishText } from '@lib/components/StylishText';
 import { UserRoles } from '@lib/enums/Roles';
-import { StylishText } from '../../components/items/StylishText';
 import { useUserState } from '../../states/UserState';
 import PartBuildAllocationsTable from '../../tables/part/PartBuildAllocationsTable';
 import PartSalesAllocationsTable from '../../tables/part/PartSalesAllocationsTable';
@@ -15,7 +15,7 @@ export default function PartAllocationPanel({ part }: Readonly<{ part: any }>) {
       multiple={true}
       defaultValue={['buildallocations', 'salesallocations']}
     >
-      {part.component && user.hasViewRole(UserRoles.build) && (
+      {part.component && user.hasViewVisible(UserRoles.build) && (
         <Accordion.Item value='buildallocations' key='buildallocations'>
           <Accordion.Control>
             <StylishText size='lg'>{t`Build Order Allocations`}</StylishText>
@@ -25,7 +25,7 @@ export default function PartAllocationPanel({ part }: Readonly<{ part: any }>) {
           </Accordion.Panel>
         </Accordion.Item>
       )}
-      {part.salable && user.hasViewRole(UserRoles.sales_order) && (
+      {part.salable && user.hasViewVisible(UserRoles.sales_order) && (
         <Accordion.Item value='salesallocations' key='salesallocations'>
           <Accordion.Control>
             <StylishText size='lg'>{t`Sales Order Allocations`}</StylishText>

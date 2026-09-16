@@ -1,4 +1,4 @@
-import { Progress, Stack, Text } from '@mantine/core';
+import { Group, Progress, Stack, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { formatDecimal } from '../functions/Formatting';
 
@@ -9,6 +9,7 @@ export type ProgressBarProps = {
   progressLabel?: boolean;
   animated?: boolean;
   size?: string;
+  units?: string;
 };
 
 /**
@@ -30,9 +31,12 @@ export function ProgressBar(props: Readonly<ProgressBarProps>) {
   return (
     <Stack gap={2} style={{ flexGrow: 1, minWidth: '100px' }}>
       {props.progressLabel && (
-        <Text ta='center' size='xs'>
-          {formatDecimal(props.value)} / {formatDecimal(props.maximum)}
-        </Text>
+        <Group gap='xs' justify='center'>
+          <Text ta='center' size='xs'>
+            {formatDecimal(props.value)} / {formatDecimal(props.maximum)}
+          </Text>
+          {props.units && <Text size='xs'>[{props.units}]</Text>}
+        </Group>
       )}
       <Progress
         value={progress}

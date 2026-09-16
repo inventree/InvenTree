@@ -12,18 +12,18 @@ import {
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { Thumbnail } from '../../components/images/Thumbnail';
+import { NoteColumn } from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { NoteColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Construct a table listing related parts for a given part
@@ -72,6 +72,7 @@ export function RelatedPartTable({
         accessor: 'ipn',
         title: t`IPN`,
         switchable: true,
+        copyable: true,
         render: (record: any) => {
           const part = getPart(record);
           return part.IPN;

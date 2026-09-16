@@ -12,6 +12,7 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
 import { generateUrl } from '../../functions/urls';
+import { Thumbnail } from '../images/Thumbnail';
 
 /**
  * Return an icon based on the provided filename
@@ -59,9 +60,11 @@ export function attachmentIcon(attachment: string): ReactNode {
  */
 export function AttachmentLink({
   attachment,
+  thumbnail,
   external
 }: Readonly<{
   attachment: string;
+  thumbnail?: string;
   external?: boolean;
 }>): ReactNode {
   const url = useMemo(() => {
@@ -82,7 +85,13 @@ export function AttachmentLink({
 
   return (
     <Group justify='left' gap='sm' wrap='nowrap'>
-      {external ? <IconLink /> : attachmentIcon(attachment)}
+      {thumbnail ? (
+        <Thumbnail src={thumbnail} hover size={16} />
+      ) : external ? (
+        <IconLink />
+      ) : (
+        attachmentIcon(attachment)
+      )}
       {!!attachment ? (
         <Anchor href={url} target='_blank' rel='noopener noreferrer'>
           {text}

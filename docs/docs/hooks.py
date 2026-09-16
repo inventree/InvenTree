@@ -4,10 +4,10 @@ import json
 import os
 import re
 from datetime import datetime
-from distutils.version import StrictVersion
 from pathlib import Path
 
 import requests
+from packaging.version import Version
 
 here = Path(__file__).parent
 
@@ -57,7 +57,7 @@ def fetch_rtd_versions():
         print('No RTD token found - skipping RTD version fetch')
 
     # Sort versions by version number
-    versions = sorted(versions, key=lambda x: StrictVersion(x['version']), reverse=True)
+    versions = sorted(versions, key=lambda x: Version(x['version']), reverse=True)
 
     # Add "latest" version first
     if not any(x['title'] == 'latest' for x in versions):
@@ -260,13 +260,74 @@ def on_config(config, *args, **kwargs):
     return config
 
 
+def check_status_codes_documented(gen_base):
+    """Check that every 'StatusCode' class is documented somewhere in the docs.
+
+    A class counts as documented if the `statuscodes()` macro has been called
+    for it from at least one markdown page (recorded in 'observed_status_codes.json').
+    """
+    expected_status_codes_file = gen_base.joinpath('inventree_status_codes.json')
+    observed_status_codes_file = gen_base.joinpath('observed_status_codes.json')
+
+    with open(observed_status_codes_file, encoding='utf-8') as f:
+        observed_status_codes = json.loads(f.read())
+
+    with open(expected_status_codes_file, encoding='utf-8') as f:
+        expected_status_codes = json.loads(f.read())
+
+    missing = [
+        name for name in expected_status_codes if name not in observed_status_codes
+    ]
+
+    if missing:
+        raise NotImplementedError(
+            'Missing Status Codes:\n'
+            + f'There are {len(missing)} status code classes not documented via the `statuscodes()` macro:\n- '
+            + '\n- '.join(missing)
+        )
+
+
+def check_status_code_values_documented(gen_base):
+    """Check that every value of every 'StatusCode' class has a description.
+
+    Descriptions are sourced from the class docstring's `Attributes:` block (see
+    `export_status_codes.py` / e.g. `build.status_codes.BuildStatus`) - a status
+    value with no matching `Attributes:` entry exports with an empty description,
+    which this check catches.
+    """
+    expected_status_codes_file = gen_base.joinpath('inventree_status_codes.json')
+
+    with open(expected_status_codes_file, encoding='utf-8') as f:
+        expected_status_codes = json.loads(f.read())
+
+    missing = [
+        f'{class_name}.{value["name"]}'
+        for class_name, info in expected_status_codes.items()
+        for value in info['values']
+        if not value['description']
+    ]
+
+    if missing:
+        raise NotImplementedError(
+            'Missing Status Code Descriptions:\n'
+            + f'There are {len(missing)} status code values with no description in their '
+            + "class docstring's `Attributes:` block:\n- "
+            + '\n- '.join(missing)
+        )
+
+
 def on_post_build(*args, **kwargs):
     """Run after the build is complete.
 
-    Here we check that all global settings and user settings are documented.
+    Here we check that all global settings and user settings are documented,
+    that every status code class is documented (via the `statuscodes` macro),
+    and that every individual status code value has a description.
     """
     here = Path(__file__).parent
     gen_base = here.parent.joinpath('generated')
+
+    check_status_codes_documented(gen_base)
+    check_status_code_values_documented(gen_base)
 
     expected_settings_file = gen_base.joinpath('inventree_settings.json')
     observed_settings_file = gen_base.joinpath('observed_settings.json')
@@ -280,9 +341,27 @@ def on_post_build(*args, **kwargs):
     ignored_settings = {
         'global': ['SERVER_RESTART_REQUIRED'],
         'user': ['LAST_USED_PRINTING_MACHINES'],
+        'config': [
+            'INVENTREE_DB_TCP_KEEPALIVES',
+            'INVENTREE_DB_TCP_KEEPALIVES_IDLE',
+            'INVENTREE_DB_TCP_KEEPALIVES_INTERVAL',
+            'INVENTREE_DB_TCP_KEEPALIVES_COUNT',
+            'INVENTREE_DB_ISOLATION_SERIALIZABLE',
+            'INVENTREE_DB_WAL_MODE',
+            'INVENTREE_PLUGIN_DIR',
+            'INVENTREE_DOCKER',
+            'INVENTREE_FLAGS',
+            'INVENTREE_REMOTE_LOGIN',
+            'INVENTREE_REMOTE_LOGIN_HEADER',
+            'TEST_TRANSLATIONS',
+            'INVENTREE_FRONTEND_URL_BASE',
+            'INVENTREE_FRONTEND_API_HOST',
+            'INVENTREE_FRONTEND_SETTINGS',
+            'INVENTREE_LOGOUT_REDIRECT_URL',
+        ],
     }
 
-    for group in ['global', 'user']:
+    for group in ['global', 'user', 'config']:
         expected = expected_settings.get(group, {})
         observed = observed_settings.get(group, {})
         ignored = ignored_settings.get(group, [])
@@ -304,6 +383,6 @@ def on_post_build(*args, **kwargs):
         if missing:
             raise NotImplementedError(
                 'Missing Settings:\n'
-                + f"There are {len(missing)} missing settings in the '{group}' group:\n"
+                + f"There are {len(missing)} missing settings in the '{group}' group:\n- "
                 + '\n- '.join(missing)
             )

@@ -12,12 +12,14 @@ import {
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import type {
   StatusCodeInterface,
   StatusCodeListInterface
 } from '../../components/render/StatusRenderer';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { statusColorMap } from '../../defaults/backendMappings';
 import { useCustomStateFields } from '../../forms/CommonForms';
 import {
@@ -25,10 +27,8 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useGlobalStatusState } from '../../states/GlobalStatusState';
 import { useUserState } from '../../states/UserState';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Table for displaying list of custom states

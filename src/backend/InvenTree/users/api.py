@@ -5,28 +5,36 @@ import datetime
 from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.password_validation import password_changed, validate_password
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.urls import include, path
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.base import RedirectView
 
+import django_filters.rest_framework.filters as rest_filters
 import structlog
+from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import exceptions
 from rest_framework.generics import DestroyAPIView, GenericAPIView
 from rest_framework.response import Response
 
-import InvenTree.helpers
 import InvenTree.permissions
+from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
+    CleanBase,
     ListAPI,
     ListCreateAPI,
+    OutputOptionsMixin,
     RetrieveAPI,
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
+    SerializerContextMixin,
     UpdateAPI,
 )
+from InvenTree.schema import exclude_from_schema
 from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import ApiToken, Owner, RuleSet, UserProfile
 from users.serializers import (
@@ -46,6 +54,53 @@ from users.serializers import (
 logger = structlog.get_logger('inventree')
 
 
+class OwnerFilter(FilterSet):
+    """filter set for OwnerList."""
+
+    is_active = rest_filters.BooleanFilter(method='filter_is_active')
+
+    class Meta:
+        """Meta class for owner filter."""
+
+        model = Owner
+        fields = ['is_active']
+
+    def filter_is_active(self, queryset, name, value):
+        """Filter by active status."""
+        if value is None:
+            return queryset
+
+        # Get ContentType for User model
+        user_content_type = ContentType.objects.get_for_model(User)
+
+        active_user_ids = list(
+            User.objects.filter(is_active=value).values_list('pk', flat=True)
+        )
+
+        # Filter based on owner type
+        q_filter = Q()
+
+        # If owner_type is not 'user', include all
+        q_filter |= ~Q(owner_type=user_content_type)
+
+        # If owner_type is 'user', only include active/inactive users
+        if active_user_ids:
+            q_filter |= Q(owner_type=user_content_type, owner_id__in=active_user_ids)
+        elif value is False:
+            # If value is False and we want inactive users
+            # Get all user IDs that are NOT in active_user_ids
+            all_user_ids = list(User.objects.values_list('pk', flat=True))
+            inactive_user_ids = [
+                uid for uid in all_user_ids if uid not in active_user_ids
+            ]
+            if inactive_user_ids:
+                q_filter |= Q(
+                    owner_type=user_content_type, owner_id__in=inactive_user_ids
+                )
+
+        return queryset.filter(q_filter)
+
+
 class OwnerList(ListAPI):
     """List API endpoint for Owner model.
 
@@ -55,6 +110,8 @@ class OwnerList(ListAPI):
     queryset = Owner.objects.all()
     serializer_class = OwnerSerializer
     permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+    filterset_class = OwnerFilter
+    filter_backends = SEARCH_ORDER_FILTER
 
     def filter_queryset(self, queryset):
         """Implement text search for the "owner" model.
@@ -69,18 +126,11 @@ class OwnerList(ListAPI):
         but until we determine a better way, this is what we have...
         """
         search_term = str(self.request.query_params.get('search', '')).lower()
-        is_active = self.request.query_params.get('is_active', None)
 
+        queryset = queryset.select_related('owner_type').prefetch_related('owner')
         queryset = super().filter_queryset(queryset)
 
         results = []
-
-        # Get a list of all matching users, depending on the *is_active* flag
-        if is_active is not None:
-            is_active = InvenTree.helpers.str2bool(is_active)
-            matching_user_ids = User.objects.filter(is_active=is_active).values_list(
-                'pk', flat=True
-            )
 
         for result in queryset.all():
             name = str(result.name()).lower().strip()
@@ -95,14 +145,6 @@ class OwnerList(ListAPI):
 
             if not search_match:
                 continue
-
-            if is_active is not None:
-                # Skip any users which do not match the required *is_active* value
-                if (
-                    result.owner_type.name == 'user'
-                    and result.owner_id not in matching_user_ids
-                ):
-                    continue
 
             # If we get here, there is no reason *not* to include this result
             results.append(result)
@@ -143,6 +185,14 @@ class UserDetail(RetrieveUpdateDestroyAPI):
     queryset = User.objects.all()
     serializer_class = ExtendedUserSerializer
     permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
+
+    def perform_destroy(self, instance):
+        """Override destroy method to ensure sessions are deleted first."""
+        # Remove all sessions for this user
+        if sessions := instance.usersession_set.all():
+            sessions.delete()
+        # Normally delete the user
+        return super().perform_destroy(instance)
 
 
 class UserDetailSetPassword(UpdateAPI):
@@ -188,6 +238,9 @@ class MeUserDetail(RetrieveUpdateAPI, UserDetail):
 
     rolemap = {'POST': 'view', 'PUT': 'view', 'PATCH': 'view'}
 
+    # Prevent 'delete' operations on this endpoint
+    http_method_names = ['get', 'put', 'patch', 'head', 'options', 'trace']
+
     def get_object(self):
         """Always return the current user object."""
         return self.request.user
@@ -199,6 +252,24 @@ class MeUserDetail(RetrieveUpdateAPI, UserDetail):
         """
         return None
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='roles',
+                type=bool,
+                location=OpenApiParameter.QUERY,
+                description='Include the roles and permissions associated with the current user in the response',
+            )
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        """Retrieve details for the current user.
+
+        Pass '?roles=true' to also include the user's roles and permissions
+        (previously only available via the separate '/user/me/roles/' endpoint).
+        """
+        return super().get(request, *args, **kwargs)
+
 
 class UserList(ListCreateAPI):
     """List endpoint for detail on all users.
@@ -208,7 +279,7 @@ class UserList(ListCreateAPI):
     - Otherwise authenticated users have read-only access
     """
 
-    queryset = User.objects.all()
+    queryset = User.objects.all().prefetch_related('groups')
     serializer_class = UserCreateSerializer
 
     # User must have the right role, AND be a staff user, else read-only
@@ -216,7 +287,7 @@ class UserList(ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    search_fields = ['first_name', 'last_name', 'username']
+    search_fields = ['first_name', 'last_name', 'username', 'email']
 
     ordering_fields = [
         'email',
@@ -231,7 +302,7 @@ class UserList(ListCreateAPI):
     filterset_fields = ['is_staff', 'is_active', 'is_superuser']
 
 
-class GroupMixin:
+class GroupMixin(SerializerContextMixin):
     """Mixin for Group API endpoints to add permissions filter.
 
     Permissions:
@@ -241,44 +312,33 @@ class GroupMixin:
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
-
-    def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint."""
-        # Do we wish to include extra detail?
-        params = self.request.query_params
-
-        kwargs['role_detail'] = InvenTree.helpers.str2bool(
-            params.get('role_detail', True)
-        )
-
-        kwargs['permission_detail'] = InvenTree.helpers.str2bool(
-            params.get('permission_detail', None)
-        )
-
-        kwargs['user_detail'] = InvenTree.helpers.str2bool(
-            params.get('user_detail', None)
-        )
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return super().get_serializer(*args, **kwargs)
-
-    def get_queryset(self):
-        """Return queryset for this endpoint.
-
-        Note that the queryset is filtered by the permissions of the current user.
-        """
-        return super().get_queryset().prefetch_related('rule_sets', 'user_set')
+    permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
 
 
-class GroupDetail(GroupMixin, RetrieveUpdateDestroyAPI):
+class GroupOutputOptions(OutputConfiguration):
+    """Holds all available output options for Group views."""
+
+    OPTIONS = [
+        InvenTreeOutputOption('user_detail', description='Include user details'),
+        InvenTreeOutputOption(
+            'permission_detail', description='Include permission details'
+        ),
+        InvenTreeOutputOption(
+            'role_detail', description='Include role details', default=True
+        ),
+    ]
+
+
+class GroupDetail(GroupMixin, OutputOptionsMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a particular auth group."""
 
+    output_options = GroupOutputOptions
 
-class GroupList(GroupMixin, ListCreateAPI):
+
+class GroupList(GroupMixin, OutputOptionsMixin, ListCreateAPI):
     """List endpoint for all auth groups."""
 
+    output_options = GroupOutputOptions
     filter_backends = SEARCH_ORDER_FILTER
     search_fields = ['name']
     ordering_fields = ['name']
@@ -289,7 +349,7 @@ class RuleSetMixin:
 
     queryset = RuleSet.objects.all()
     serializer_class = RuleSetSerializer
-    permission_classes = [InvenTree.permissions.IsStaffOrReadOnlyScope]
+    permission_classes = [InvenTree.permissions.StaffRolePermissionOrReadOnly]
 
 
 class RuleSetList(RuleSetMixin, ListAPI):
@@ -330,49 +390,61 @@ class GetAuthToken(GenericAPIView):
         - Existing tokens are *never* exposed again via the API
         - Once the token is provided, it can be used for auth until it expires
         """
-        if request.user.is_authenticated:
-            user = request.user
-            name = request.query_params.get('name', '')
+        user = request.user
+        name = request.query_params.get('name', '')
 
-            name = ApiToken.sanitize_name(name)
-
-            today = datetime.date.today()
-
-            # Find existing token, which has not expired
-            token = ApiToken.objects.filter(
-                user=user, name=name, revoked=False, expiry__gte=today
-            ).first()
-
-            if not token:
-                # User is authenticated, and requesting a token against the provided name.
-                token = ApiToken.objects.create(user=request.user, name=name)
-
-                logger.info(
-                    "Created new API token for user '%s' (name='%s')",
-                    user.username,
-                    name,
-                )
-
-            # Add some metadata about the request
-            token.set_metadata('user_agent', request.headers.get('user-agent', ''))
-            token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
-            token.set_metadata('remote_host', request.META.get('REMOTE_HOST', ''))
-            token.set_metadata('remote_user', request.META.get('REMOTE_USER', ''))
-            token.set_metadata('server_name', request.META.get('SERVER_NAME', ''))
-            token.set_metadata('server_port', request.META.get('SERVER_PORT', ''))
-
-            data = {'token': token.key, 'name': token.name, 'expiry': token.expiry}
-
-            # Ensure that the users session is logged in
-            if not get_user(request).is_authenticated:
-                login(
-                    request, user, backend='django.contrib.auth.backends.ModelBackend'
-                )
-
-            return Response(data)
-
-        else:
+        if not user.is_authenticated:
             raise exceptions.NotAuthenticated()  # pragma: no cover
+
+        name = ApiToken.sanitize_name(name)
+
+        today = datetime.date.today()
+        reissue_token = request.resolver_match.url_name == 'api-token'
+
+        token = ApiToken.objects.filter(
+            user=user, name=name, revoked=False, expiry__gte=today
+        ).first()
+
+        if token and reissue_token:
+            token.revoked = True
+            token.revoked_by = user
+            token.revocation_reason = (
+                're-issued due to new token request to API with same name'
+            )
+            token.save(update_fields=['revoked', 'revoked_by', 'revocation_reason'])
+
+        if not token or reissue_token:
+            # User is authenticated, and requesting a token against the provided name.
+            token = ApiToken.objects.create(user=user, name=name, issued_by=user)
+
+            logger.info(
+                "Created new API token for user '%s' (name='%s')", user.username, name
+            )
+
+        if token.token_version == 2 and token.hmac_digest and not token._raw_secret:
+            raise exceptions.ValidationError(
+                'Token is not newly created.'
+            )  # pragma: no cover
+
+        # Add some metadata about the request
+        token.set_metadata('user_agent', request.headers.get('user-agent', ''))
+        token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
+        token.set_metadata('remote_host', request.META.get('REMOTE_HOST', ''))
+        token.set_metadata('remote_user', request.META.get('REMOTE_USER', ''))
+        token.set_metadata('server_name', request.META.get('SERVER_NAME', ''))
+        token.set_metadata('server_port', request.META.get('SERVER_PORT', ''))
+
+        data = {
+            'token': token.token if token.token_version == 2 else token.key,
+            'name': token.name,
+            'expiry': token.expiry,
+        }
+
+        # Ensure that the users session is logged in
+        if not get_user(request).is_authenticated:
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+        return Response(data)
 
 
 class TokenMixin:
@@ -408,7 +480,14 @@ class TokenListView(TokenMixin, ListCreateAPI):
     """List of user tokens for current user."""
 
     filter_backends = SEARCH_ORDER_FILTER
-    search_fields = ['name', 'key']
+    search_fields = [
+        'name',
+        'user__username',
+        'user__first_name',
+        'user__last_name',
+        'user__email',
+        'revocation_reason',
+    ]
     ordering_fields = [
         'created',
         'expiry',
@@ -416,17 +495,23 @@ class TokenListView(TokenMixin, ListCreateAPI):
         'user',
         'name',
         'revoked',
-        'revoked',
+        'revoked_by',
+        'issued_by',
+        'token_version',
+        'revocation_reason',
     ]
-    filterset_fields = ['revoked', 'user']
+    filterset_fields = ['revoked', 'user', 'issued_by', 'revoked_by']
     queryset = ApiToken.objects.none()
+
+    def perform_create(self, serializer):
+        """Save the new token and keep the secret (only available immediately after creation)."""
+        serializer.save(issued_by=self.request.user)
+        self._created_token = serializer.instance
 
     def create(self, request, *args, **kwargs):
         """Create token and show key to user."""
         resp = super().create(request, *args, **kwargs)
-        resp.data['token'] = self.serializer_class.Meta.model.objects.get(
-            id=resp.data['id']
-        ).key
+        resp.data['token'] = self._created_token.token
         return resp
 
     def get(self, request, *args, **kwargs):
@@ -434,13 +519,32 @@ class TokenListView(TokenMixin, ListCreateAPI):
         return super().get(request, *args, **kwargs)
 
 
-class TokenDetailView(TokenMixin, DestroyAPIView, RetrieveAPI):
+class TokenDetailView(CleanBase, TokenMixin, DestroyAPIView, RetrieveAPI):
     """Details for a user token."""
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='revocation_reason',
+                type=str,
+                description='Reason for revoking the token.',
+                default='',
+            )
+        ]
+    )
+    def delete(self, request, *args, **kwargs):
+        """Revoke this specific user token."""
+        return super().delete(request, *args, **kwargs)
 
     def perform_destroy(self, instance):
         """Revoke token."""
         instance.revoked = True
-        instance.save()
+        instance.revoked_by = self.request.user
+        request_data = getattr(self.request, 'data', {})
+        instance.revocation_reason = self.clean_string(
+            'revocation_reason', str(request_data.get('revocation_reason', ''))
+        )
+        instance.save(update_fields=['revoked', 'revoked_by', 'revocation_reason'])
 
 
 class LoginRedirect(RedirectView):
@@ -469,8 +573,38 @@ class UserProfileDetail(RetrieveUpdateAPI):
 
 
 user_urls = [
-    path('roles/', RoleDetails.as_view(), name='api-user-roles'),
-    path('token/', ensure_csrf_cookie(GetAuthToken.as_view()), name='api-token'),
+    # Legacy endpoints (to avoid breaking existing API clients)
+    # TODO @matmair - remove these legacy endpoints in the next breaking release
+    path(
+        'roles/',
+        exclude_from_schema(RoleDetails, '/api/user/me/roles/').as_view(),
+        name='api-user-roles_legacy',
+    ),
+    path(
+        'token/',
+        ensure_csrf_cookie(
+            exclude_from_schema(GetAuthToken, '/api/user/me/token/').as_view()
+        ),
+        name='api-token_legacy',
+    ),
+    path(
+        'profile/',
+        exclude_from_schema(UserProfileDetail, '/api/user/me/profile/').as_view(),
+        name='api-user-profile_legacy',
+    ),
+    # Individual user endpoints
+    path(
+        'me/',
+        include([
+            path('profile/', UserProfileDetail.as_view(), name='api-user-profile'),
+            path('roles/', RoleDetails.as_view(), name='api-user-roles'),
+            path(
+                'token/', ensure_csrf_cookie(GetAuthToken.as_view()), name='api-token'
+            ),
+            path('', MeUserDetail.as_view(), name='api-user-me'),
+        ]),
+    ),
+    # User related endpoints
     path(
         'tokens/',
         include([
@@ -478,8 +612,6 @@ user_urls = [
             path('', TokenListView.as_view(), name='api-token-list'),
         ]),
     ),
-    path('me/', MeUserDetail.as_view(), name='api-user-me'),
-    path('profile/', UserProfileDetail.as_view(), name='api-user-profile'),
     path(
         'owner/',
         include([

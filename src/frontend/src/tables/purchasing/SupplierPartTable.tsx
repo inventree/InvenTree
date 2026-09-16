@@ -2,46 +2,89 @@ import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '@lib/components/ActionButton';
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
+  RowDuplicateAction,
   RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import { IconPackageImport } from '@tabler/icons-react';
+import {
+  BooleanColumn,
+  CompanyColumn,
+  DecimalColumn,
+  DescriptionColumn,
+  IPNColumn,
+  LinkColumn,
+  NoteColumn,
+  PartColumn
+} from '../../components/tables/ColumnRenderers';
+import { TagsFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
+import ImportPartWizard from '../../components/wizards/ImportPartWizard';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
+import { usePluginsWithMixin } from '../../hooks/UsePlugins';
 import { useUserState } from '../../states/UserState';
-import {
-  BooleanColumn,
-  CompanyColumn,
-  DecimalColumn,
-  DescriptionColumn,
-  LinkColumn,
-  NoteColumn,
-  PartColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 
 /*
  * Construct a table listing supplier parts
  */
 
 export function SupplierPartTable({
-  params
-}: Readonly<{ params: any }>): ReactNode {
-  const table = useTable('supplierparts');
+  manufacturerId,
+  manufacturerPartId,
+  partId,
+  supplierId
+}: Readonly<{
+  manufacturerId?: number;
+  manufacturerPartId?: number;
+  partId?: number;
+  supplierId?: number;
+}>): ReactNode {
+  const initialFilters = useMemo(() => {
+    const filters: TableFilter[] = [
+      {
+        name: 'active',
+        value: 'true'
+      },
+      TagsFilter({ modelType: ModelType.supplierpart })
+    ];
+
+    if (!supplierId) {
+      filters.push({
+        name: 'supplier_active',
+        value: 'true'
+      });
+    }
+
+    if (!partId) {
+      filters.push({
+        name: 'part_active',
+        value: 'true'
+      });
+    }
+
+    return filters;
+  }, [supplierId, partId]);
+
+  const table = useTable('supplierparts', {
+    initialFilters: initialFilters
+  });
 
   const user = useUserState();
 
@@ -49,11 +92,14 @@ export function SupplierPartTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       PartColumn({
-        switchable: 'part' in params,
-        part: 'part_detail'
+        switchable: !!partId,
+        part: 'part_detail',
+        filter: ['part_active']
       }),
+      IPNColumn({}),
       {
         accessor: 'supplier',
+        filter: 'supplier_active',
         sortable: true,
         render: (record: any) => (
           <CompanyColumn company={record?.supplier_detail} />
@@ -62,7 +108,8 @@ export function SupplierPartTable({
       {
         accessor: 'SKU',
         title: t`Supplier Part`,
-        sortable: true
+        sortable: true,
+        copyable: true
       },
       DescriptionColumn({}),
       {
@@ -75,11 +122,18 @@ export function SupplierPartTable({
       },
       {
         accessor: 'MPN',
-
         sortable: true,
         title: t`MPN`,
-        render: (record: any) => record?.manufacturer_part_detail?.MPN
+        render: (record: any) => record?.manufacturer_part_detail?.MPN,
+        copyable: true,
+        copyAccessor: 'manufacturer_part_detail.MPN'
       },
+      BooleanColumn({
+        accessor: 'primary',
+        sortable: true,
+        switchable: true,
+        defaultVisible: false
+      }),
       BooleanColumn({
         accessor: 'active',
         title: t`Active`,
@@ -99,7 +153,6 @@ export function SupplierPartTable({
       {
         accessor: 'pack_quantity',
         sortable: true,
-
         render: (record: any) => {
           const part = record?.part_detail ?? {};
 
@@ -107,7 +160,7 @@ export function SupplierPartTable({
 
           if (part.units) {
             extra.push(
-              <Text key='base'>
+              <Text key='base' size='sm'>
                 {t`Base units`} : {part.units}
               </Text>
             );
@@ -128,6 +181,7 @@ export function SupplierPartTable({
         accessor: 'available',
         sortable: true,
         defaultVisible: false,
+        filter: 'has_stock',
         render: (record: any) => {
           const extra = [];
 
@@ -143,10 +197,10 @@ export function SupplierPartTable({
         }
       }
     ];
-  }, [params]);
+  }, [partId]);
 
   const supplierPartFields = useSupplierPartFields({
-    partId: params?.part
+    partId: partId
   });
 
   const addSupplierPart = useCreateApiFormModal({
@@ -154,11 +208,20 @@ export function SupplierPartTable({
     title: t`Add Supplier Part`,
     fields: supplierPartFields,
     initialData: {
-      part: params?.part,
-      supplier: params?.supplier
+      part: partId,
+      supplier: supplierId,
+      manufacturer_part: manufacturerPartId
     },
-    table: table,
-    successMessage: t`Supplier part created`
+    onFormSuccess: (response: any) => {
+      table.refreshTable();
+    },
+    successMessage: t`Supplier part created`,
+    keepOpenOption: true
+  });
+
+  const supplierPlugins = usePluginsWithMixin('supplier');
+  const importPartWizard = ImportPartWizard({
+    partId: partId
   });
 
   const tableActions = useMemo(() => {
@@ -168,9 +231,21 @@ export function SupplierPartTable({
         tooltip={t`Add supplier part`}
         onClick={() => addSupplierPart.open()}
         hidden={!user.hasAddRole(UserRoles.purchase_order)}
+      />,
+      <ActionButton
+        key='import-part'
+        icon={<IconPackageImport />}
+        color='green'
+        tooltip={t`Import supplier part`}
+        onClick={() => importPartWizard.openWizard()}
+        hidden={
+          supplierPlugins.length === 0 ||
+          !user.hasAddRole(UserRoles.part) ||
+          !partId
+        }
       />
     ];
-  }, [user]);
+  }, [user, partId, supplierPlugins]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -178,6 +253,11 @@ export function SupplierPartTable({
         name: 'active',
         label: t`Active`,
         description: t`Show active supplier parts`
+      },
+      {
+        name: 'primary',
+        label: t`Primary`,
+        description: t`Show primary supplier parts`
       },
       {
         name: 'part_active',
@@ -199,19 +279,41 @@ export function SupplierPartTable({
 
   const editSupplierPartFields = useSupplierPartFields({});
 
-  const [selectedSupplierPart, setSelectedSupplierPart] = useState<number>(0);
+  const [selectedSupplierPart, setSelectedSupplierPart] =
+    useState<any>(undefined);
 
   const editSupplierPart = useEditApiFormModal({
     url: ApiEndpoints.supplier_part_list,
-    pk: selectedSupplierPart,
+    pk: selectedSupplierPart?.pk,
     title: t`Edit Supplier Part`,
-    fields: editSupplierPartFields,
-    table: table
+    fields: useMemo(() => editSupplierPartFields, [editSupplierPartFields]),
+    onFormSuccess: (response: any) => {
+      table.refreshTable();
+    }
+  });
+
+  const duplicateSupplierPartFields = useSupplierPartFields({
+    duplicateSupplierPartId: selectedSupplierPart?.pk
+  });
+
+  const duplicateSupplierPart = useCreateApiFormModal({
+    url: ApiEndpoints.supplier_part_list,
+    title: t`Add Supplier Part`,
+    fields: duplicateSupplierPartFields,
+    initialData: {
+      ...selectedSupplierPart,
+      primary: false,
+      active: true
+    },
+    onFormSuccess: (response: any) => {
+      table.refreshTable();
+    },
+    successMessage: t`Supplier part created`
   });
 
   const deleteSupplierPart = useDeleteApiFormModal({
     url: ApiEndpoints.supplier_part_list,
-    pk: selectedSupplierPart,
+    pk: selectedSupplierPart?.pk,
     title: t`Delete Supplier Part`,
     table: table
   });
@@ -223,14 +325,21 @@ export function SupplierPartTable({
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),
           onClick: () => {
-            setSelectedSupplierPart(record.pk);
+            setSelectedSupplierPart(record);
             editSupplierPart.open();
+          }
+        }),
+        RowDuplicateAction({
+          hidden: !user.hasAddRole(UserRoles.purchase_order),
+          onClick: () => {
+            setSelectedSupplierPart(record);
+            duplicateSupplierPart.open();
           }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.purchase_order),
           onClick: () => {
-            setSelectedSupplierPart(record.pk);
+            setSelectedSupplierPart(record);
             deleteSupplierPart.open();
           }
         })
@@ -243,17 +352,23 @@ export function SupplierPartTable({
     <>
       {addSupplierPart.modal}
       {editSupplierPart.modal}
+      {duplicateSupplierPart.modal}
       {deleteSupplierPart.modal}
+      {importPartWizard.wizard}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.supplier_part_list)}
         tableState={table}
         columns={tableColumns}
         props={{
           params: {
-            ...params,
+            manufacturer: manufacturerId,
+            manufacturer_part: manufacturerPartId,
+            supplier: supplierId,
+            part: partId,
             part_detail: true,
             supplier_detail: true,
-            manufacturer_detail: true
+            manufacturer_detail: true,
+            manufacturer_part_detail: true
           },
           rowActions: rowActions,
           enableDownload: true,

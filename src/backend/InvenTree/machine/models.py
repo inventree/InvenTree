@@ -1,7 +1,7 @@
 """Models for the machine app."""
 
 import uuid
-from typing import Literal
+from typing import Literal, Optional
 
 from django.contrib import admin
 from django.db import models
@@ -10,13 +10,17 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 import common.models
+import InvenTree.fields
 from machine import registry
+from machine.machine_type import BaseMachineType
 
 
 class MachineConfig(models.Model):
     """A Machine objects represents a physical machine."""
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = InvenTree.fields.InvenTreeUUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False
+    )
 
     name = models.CharField(
         unique=True,
@@ -83,7 +87,7 @@ class MachineConfig(models.Model):
         return machine
 
     @property
-    def machine(self):
+    def machine(self) -> Optional[BaseMachineType]:
         """Machine instance getter."""
         return registry.get_machine(self.pk)
 
@@ -192,7 +196,7 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
         If not provided, we'll look at the machine registry to see what settings this machine driver requires
         """
         if 'settings' not in kwargs:
-            machine_config: MachineConfig = kwargs.pop('machine_config', None)
+            machine_config: Optional[MachineConfig] = kwargs.pop('machine_config', None)
             if machine_config and machine_config.machine:
                 config_type = kwargs.get('config_type')
                 if config_type == cls.ConfigType.DRIVER:

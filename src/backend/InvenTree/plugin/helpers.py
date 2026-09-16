@@ -1,5 +1,6 @@
 """Helpers for plugin app."""
 
+import importlib
 import inspect
 import os
 import pathlib
@@ -51,7 +52,7 @@ class MixinNotImplementedError(NotImplementedError):
 
 def log_registry_error(error, reference: str = 'general'):
     """Log an plugin error."""
-    from plugin import registry
+    from plugin.registry import registry
 
     # make sure the registry is set up
     if reference not in registry.errors:
@@ -107,10 +108,17 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
 
 
 def get_entrypoints():
-    """Returns list for entrypoints for InvenTree plugins."""
-    # on python before 3.12, we need to use importlib_metadata
-    if sys.version_info < (3, 12):
-        return entry_points().get('inventree_plugins', [])
+    """Returns list for entrypoints for InvenTree plugins.
+
+    A plugin package may have been installed or uninstalled (via pip) by this
+    same process since the last time entry points were scanned - e.g. when a
+    plugin is installed/uninstalled via the API, which triggers a registry
+    reload immediately afterwards. Without invalidating import caches first,
+    a just-removed package's entry point can still be reported (or a
+    just-added one missed), depending on what has already been cached for
+    that site-packages directory.
+    """
+    importlib.invalidate_caches()
     return entry_points(group='inventree_plugins')
 
 
@@ -147,6 +155,7 @@ def get_git_log(path):
                 datetime.datetime.fromtimestamp(commit.author_time).isoformat(),
                 commit.message.decode().split('\n')[0],
             ]
+            repo.close()
         except KeyError:
             logger.debug('No HEAD tag found in git repo at path %s', path)
         except NotGitRepository:
@@ -189,13 +198,11 @@ def get_modules(pkg, path=None):
             continue
 
         try:
-            if sys.version_info < (3, 12):
-                module = finder.find_module(name).load_module(name)
-            else:
-                spec = finder.find_spec(name)
-                module = module_from_spec(spec)
-                sys.modules[name] = module
-                spec.loader.exec_module(module)
+            spec = finder.find_spec(name, path)
+            module = module_from_spec(spec)
+            sys.modules[name] = module
+            spec.loader.exec_module(module)
+
             pkg_names = getattr(module, '__all__', None)
             for k, v in vars(module).items():
                 if not k.startswith('_') and (pkg_names is None or k in pkg_names):

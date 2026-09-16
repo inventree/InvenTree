@@ -11,13 +11,15 @@ import {
   RowDeleteAction,
   RowEditAction
 } from '@lib/components/RowActions';
+import { DetailDrawer } from '@lib/components/nav/DetailDrawer';
 import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { identifierString } from '@lib/functions/Conversion';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
-import type { ApiFormFieldSet } from '@lib/types/Forms';
-import type { TableColumn } from '@lib/types/Tables';
+import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
+import type { TableColumn, TableColumnFilterType } from '@lib/types/Tables';
 import {
   CodeEditor,
   PdfPreview,
@@ -29,7 +31,6 @@ import type {
 } from '../../components/editors/TemplateEditor/TemplateEditor';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import {
   getPluginTemplateEditor,
   getPluginTemplatePreview
@@ -38,6 +39,14 @@ import type {
   TemplateEditorUIFeature,
   TemplatePreviewUIFeature
 } from '../../components/plugins/PluginUIFeatureTypes';
+import {
+  BooleanColumn,
+  DescriptionColumn,
+  UserColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
+import { formatDate } from '../../defaults/formatters';
 import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
@@ -46,10 +55,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export type TemplateI = {
   pk: number;
@@ -62,11 +68,21 @@ export type TemplateI = {
   template: string;
 };
 
+// Additional field props to control the column behaviour in the template table
+interface TemplateFormFieldType extends ApiFormFieldType {
+  sortable?: boolean;
+  switchable?: boolean;
+  filter?: TableColumnFilterType;
+}
+
+type TemplateFormFieldSet = Record<string, TemplateFormFieldType>;
+
 export interface TemplateProps {
   modelType: ModelType.labeltemplate | ModelType.reporttemplate;
   templateEndpoint: ApiEndpoints;
   printingEndpoint: ApiEndpoints;
-  additionalFormFields?: ApiFormFieldSet;
+  additionalFilters?: TableFilter[];
+  additionalFormFields?: TemplateFormFieldSet;
 }
 
 export function TemplateDrawer({
@@ -227,25 +243,54 @@ export function TemplateTable({
       },
       {
         accessor: 'model_type',
+        filter: 'model_type',
         sortable: true,
         switchable: false
       },
       {
         accessor: 'revision',
         sortable: false,
-        switchable: true
+        switchable: true,
+        render: (record: any) => {
+          return (
+            <Group gap='xs' justify='space-between'>
+              <Text size='sm'>{record.revision}</Text>
+              {record.updated && (
+                <TableHoverCard
+                  value=''
+                  title={t`Last Updated`}
+                  extra={<Text size='xs'>{formatDate(record.updated)}</Text>}
+                />
+              )}
+            </Group>
+          );
+        }
       },
+      UserColumn({
+        accessor: 'updated_by_detail',
+        sortable: false,
+        defaultVisible: false,
+        title: t`Updated By`
+      }),
       {
         accessor: 'filters',
         sortable: false,
-        switchable: true
+        switchable: true,
+        defaultVisible: false
+      },
+      {
+        accessor: 'filename_pattern',
+        title: t`Filename`,
+        sortable: false,
+        switchable: true,
+        defaultVisible: false
       },
       ...Object.entries(additionalFormFields || {}).map(([key, field]) => ({
         accessor: key,
-        ...field,
-        title: field.label,
         sortable: false,
         switchable: true,
+        title: field.label,
+        ...field,
         render: field.modelRenderer
       })),
       BooleanColumn({ accessor: 'enabled', title: t`Enabled` })
@@ -357,6 +402,7 @@ export function TemplateTable({
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
+      ...(templateProps.additionalFilters || []),
       {
         name: 'enabled',
         label: t`Enabled`,
@@ -370,7 +416,7 @@ export function TemplateTable({
         choices: modelTypeFilters.choices
       }
     ];
-  }, [modelTypeFilters.choices]);
+  }, [templateProps.additionalFilters, modelTypeFilters.choices]);
 
   return (
     <>

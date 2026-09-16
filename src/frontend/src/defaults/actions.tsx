@@ -1,18 +1,48 @@
 import { t } from '@lingui/core/macro';
 import type { SpotlightActionData } from '@mantine/spotlight';
-import { IconBarcode, IconLink, IconPointer } from '@tabler/icons-react';
+import {
+  IconBarcode,
+  IconDevicesPc,
+  IconLink,
+  IconPlug,
+  IconPointer,
+  IconReport,
+  IconSettings,
+  IconTags,
+  IconUserBolt,
+  IconUserCog,
+  IconUsers
+} from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
 
+import { ModelInformationDict } from '@lib/enums/ModelInformation';
+import { ModelType, StylishText, UserRoles } from '@lib/index';
+import { Trans } from '@lingui/react/macro';
 import { openContextModal } from '@mantine/modals';
+import { useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useLocalState } from '../states/LocalState';
+import { useGlobalSettingsState } from '../states/SettingsStates';
 import { useUserState } from '../states/UserState';
 import { aboutInvenTree, docLinks, licenseInfo, serverInfo } from './links';
 
-export function openQrModal(navigate: NavigateFunction) {
+function openQrModal(navigate: NavigateFunction) {
   return openContextModal({
     modal: 'qr',
     innerProps: { navigate: navigate }
+  });
+}
+
+function openHotkeys() {
+  return openContextModal({
+    modal: 'hotkey',
+    title: (
+      <StylishText size='xl'>
+        <Trans>Hotkeys</Trans>
+      </StylishText>
+    ),
+    size: 'xl',
+    innerProps: {}
   });
 }
 
@@ -20,71 +50,221 @@ export function getActions(navigate: NavigateFunction) {
   const setNavigationOpen = useLocalState(
     useShallow((state) => state.setNavigationOpen)
   );
-  const { user } = useUserState();
+  const globalSettings = useGlobalSettingsState();
+  const user = useUserState();
 
-  const actions: SpotlightActionData[] = [
-    {
-      id: 'dashboard',
-      label: t`Dashboard`,
-      description: t`Go to the InvenTree dashboard`,
-      onClick: () => {}, // navigate(menuItems.dashboard.link),
-      leftSection: <IconLink size='1.2rem' />
-    },
-    {
-      id: 'documentation',
-      label: t`Documentation`,
-      description: t`Visit the documentation to learn more about InvenTree`,
-      onClick: () => {
-        window.location.href = docLinks.faq;
+  const actions: SpotlightActionData[] = useMemo(() => {
+    const staff = user?.isStaff() ?? false;
+
+    const _actions: SpotlightActionData[] = [
+      {
+        id: 'dashboard',
+        label: t`Dashboard`,
+        description: t`Go to the InvenTree dashboard`,
+        onClick: () => navigate('/'),
+        leftSection: <IconLink size='1.2rem' />
       },
-      leftSection: <IconLink size='1.2rem' />
-    },
-    {
-      id: 'about',
-      label: t`About InvenTree`,
-      description: t`About the InvenTree org`,
-      onClick: () => aboutInvenTree(),
-      leftSection: <IconLink size='1.2rem' />
-    },
-    {
-      id: 'server-info',
-      label: t`Server Information`,
-      description: t`About this InvenTree instance`,
-      onClick: () => serverInfo(),
-      leftSection: <IconLink size='1.2rem' />
-    },
-    {
-      id: 'license-info',
-      label: t`License Information`,
-      description: t`Licenses for dependencies of the service`,
-      onClick: () => licenseInfo(),
-      leftSection: <IconLink size='1.2rem' />
-    },
-    {
-      id: 'navigation',
-      label: t`Open Navigation`,
-      description: t`Open the main navigation menu`,
-      onClick: () => setNavigationOpen(true),
-      leftSection: <IconPointer size='1.2rem' />
-    },
-    {
-      id: 'scan',
-      label: t`Scan`,
-      description: t`Scan a barcode or QR code`,
-      onClick: () => openQrModal(navigate),
-      leftSection: <IconBarcode size='1.2rem' />
-    }
-  ];
+      {
+        id: 'documentation',
+        label: t`Documentation`,
+        description: t`Visit the documentation to learn more about InvenTree`,
+        onClick: () => {
+          window.location.href = docLinks.faq;
+        },
+        leftSection: <IconLink size='1.2rem' />
+      },
+      {
+        id: 'about',
+        label: t`About InvenTree`,
+        description: t`About the InvenTree org`,
+        onClick: () => aboutInvenTree(),
+        leftSection: <IconLink size='1.2rem' />
+      },
+      {
+        id: 'server-info',
+        label: t`Server Information`,
+        description: t`About this InvenTree instance`,
+        onClick: () => serverInfo(),
+        leftSection: <IconLink size='1.2rem' />
+      },
+      {
+        id: 'license-info',
+        label: t`License Information`,
+        description: t`Licenses for dependencies of the service`,
+        onClick: () => licenseInfo(),
+        leftSection: <IconLink size='1.2rem' />
+      },
+      {
+        id: 'navigation',
+        label: t`Open Navigation`,
+        description: t`Open the main navigation menu`,
+        onClick: () => setNavigationOpen(true),
+        leftSection: <IconPointer size='1.2rem' />
+      },
+      {
+        id: 'user-settings',
+        label: t`User Settings`,
+        description: t`Go to your user settings`,
+        onClick: () => navigate('/settings/user'),
+        leftSection: <IconUserCog size='1.2rem' />
+      },
+      {
+        id: 'hotkeys',
+        label: t`Hotkeys`,
+        description: t`View a list of available hotkeys`,
+        onClick: () => openHotkeys(),
+        leftSection: <IconSettings size='1.2rem' />
+      }
+    ];
 
-  // Staff actions
-  user?.is_staff &&
-    actions.push({
-      id: 'admin-center',
-      label: t`Admin Center`,
-      description: t`Go to the Admin Center`,
-      onClick: () => {}, /// navigate(menuItems['settings-admin'].link),}
-      leftSection: <IconLink size='1.2rem' />
-    });
+    staff &&
+      _actions.push({
+        id: 'data-import',
+        label: t`Import Data`,
+        description: t`Import data from a file`,
+        onClick: () => navigate('/settings/admin/import'),
+        leftSection: <IconPlug size='1.2rem' />
+      });
 
-  return actions;
+    // Page Actions
+    user?.hasViewVisible(UserRoles.purchase_order) &&
+      _actions.push({
+        id: 'purchase-orders',
+        label: t`Purchase Orders`,
+        description: t`Go to Purchase Orders`,
+        onClick: () =>
+          navigate(ModelInformationDict['purchaseorder'].url_overview!),
+        leftSection: <IconLink size='1.2rem' />
+      });
+
+    user?.hasViewVisible(UserRoles.sales_order) &&
+      _actions.push({
+        id: 'sales-orders',
+        label: t`Sales Orders`,
+        description: t`Go to Sales Orders`,
+        onClick: () =>
+          navigate(ModelInformationDict['salesorder'].url_overview!),
+        leftSection: <IconLink size='1.2rem' />
+      });
+
+    user?.hasViewVisible(UserRoles.transfer_order) &&
+      _actions.push({
+        id: 'transfer-orders',
+        label: t`Transfer Orders`,
+        description: t`Go to Transfer Orders`,
+        onClick: () =>
+          navigate(ModelInformationDict['transferorder'].url_overview!),
+        leftSection: <IconLink size='1.2rem' />
+      });
+
+    user?.hasViewVisible(UserRoles.return_order) &&
+      _actions.push({
+        id: 'return-orders',
+        label: t`Return Orders`,
+        description: t`Go to Return Orders`,
+        onClick: () =>
+          navigate(ModelInformationDict['returnorder'].url_overview!),
+        leftSection: <IconLink size='1.2rem' />
+      });
+
+    globalSettings.isSet('BARCODE_ENABLE') &&
+      _actions.push({
+        id: 'scan',
+        label: t`Scan`,
+        description: t`Scan a barcode or QR code`,
+        onClick: () => openQrModal(navigate),
+        leftSection: <IconBarcode size='1.2rem' />
+      });
+
+    user?.hasViewVisible(UserRoles.build) &&
+      _actions.push({
+        id: 'builds',
+        label: t`Build Orders`,
+        description: t`Go to Build Orders`,
+        onClick: () => navigate(ModelInformationDict['build'].url_overview!),
+        leftSection: <IconLink size='1.2rem' />
+      });
+
+    staff &&
+      _actions.push({
+        id: 'system-settings',
+        label: t`System Settings`,
+        description: t`Go to System Settings`,
+        onClick: () => navigate('/settings/system'),
+        leftSection: <IconSettings size='1.2rem' />
+      });
+
+    staff &&
+      _actions.push({
+        id: 'admin-center',
+        label: t`Admin Center`,
+        description: t`Go to the Admin Center`,
+        onClick: () => navigate('/settings/admin'),
+        leftSection: <IconUserBolt size='1.2rem' />
+      });
+
+    staff &&
+      user?.hasViewPermission(ModelType.error) &&
+      _actions.push({
+        id: 'error-logs',
+        label: t`Error Logs`,
+        description: t`View error logs for this instance`,
+        onClick: () => navigate('/settings/admin/errors'),
+        leftSection: <IconReport size='1.2rem' />
+      });
+
+    staff &&
+      user?.hasViewPermission(ModelType.user) &&
+      _actions.push({
+        id: 'users',
+        label: t`Users`,
+        description: t`Manage user accounts`,
+        onClick: () => navigate('/settings/admin/user'),
+        leftSection: <IconUsers size='1.2rem' />
+      });
+
+    staff &&
+      user?.hasViewPermission(ModelType.pluginconfig) &&
+      _actions.push({
+        id: 'plugin-settings',
+        label: t`Plugins`,
+        description: t`Manage InvenTree plugins`,
+        onClick: () => navigate('/settings/admin/plugin'),
+        leftSection: <IconPlug size='1.2rem' />
+      });
+
+    staff &&
+      user?.hasViewPermission(ModelType.pluginconfig) &&
+      _actions.push({
+        id: 'machine-management',
+        label: t`Machines`,
+        description: t`Manage machines and machine types`,
+        onClick: () => navigate('/settings/admin/machine'),
+        leftSection: <IconDevicesPc size='1.2rem' />
+      });
+
+    staff &&
+      user?.hasViewPermission(ModelType.reporttemplate) &&
+      _actions.push({
+        id: 'report-templates',
+        label: t`Report Templates`,
+        description: t`Manage report templates`,
+        onClick: () => navigate('/settings/admin/reports'),
+        leftSection: <IconReport size='1.2rem' />
+      });
+
+    staff &&
+      user?.hasViewPermission(ModelType.labeltemplate) &&
+      _actions.push({
+        id: 'label-templates',
+        label: t`Label Templates`,
+        description: t`Manage label templates`,
+        onClick: () => navigate('/settings/admin/labels'),
+        leftSection: <IconTags size='1.2rem' />
+      });
+
+    return _actions;
+  }, [navigate, setNavigationOpen, globalSettings, user]);
+
+  return actions.sort((a, b) => (a.label ?? '').localeCompare(b.label ?? ''));
 }

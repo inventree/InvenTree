@@ -21,25 +21,30 @@ import { PassFailButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { RenderUser } from '../../components/render/User';
+import {
+  DateColumn,
+  DescriptionColumn,
+  NoteColumn,
+  UserColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { useTestResultFields } from '../../forms/StockForms';
+import { compareTestResults } from '../../functions/comparison';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import RowExpansionIcon from '../RowExpansionIcon';
 
 export default function StockItemTestResultTable({
   partId,
@@ -106,26 +111,22 @@ export default function StockItemTestResultTable({
       });
 
       // Iterate through the returned records
-      // Note that the results are sorted by oldest first,
-      // to ensure that the most recent result is displayed "on top"
-      records
-        .sort((a: any, b: any) => {
-          return a.pk > b.pk ? 1 : -1;
-        })
-        .forEach((record) => {
-          // Find matching template
-          const idx = results.findIndex(
-            (r: any) => r.templateId == record.template
-          );
-          if (idx >= 0) {
-            results[idx] = {
-              ...results[idx],
-              ...record
-            };
+      // Sort test results using the same priority as the backend:
+      // finished_datetime -> started_datetime -> date -> pk
+      records.toSorted(compareTestResults).forEach((record) => {
+        // Find matching template
+        const idx = results.findIndex(
+          (r: any) => r.templateId == record.template
+        );
+        if (idx >= 0) {
+          results[idx] = {
+            ...results[idx],
+            ...record
+          };
 
-            results[idx].results.push(record);
-          }
-        });
+          results[idx].results.push(record);
+        }
+      });
 
       return results;
     },
@@ -140,6 +141,7 @@ export default function StockItemTestResultTable({
           title: t`Test`,
           switchable: false,
           sortable: true,
+          filter: ['enabled', 'required'],
           render: (record: any) => {
             const enabled = record.enabled ?? record.template_detail?.enabled;
             const installed =
@@ -149,19 +151,21 @@ export default function StockItemTestResultTable({
 
             return (
               <Group justify='space-between' wrap='nowrap'>
-                {!child && (
-                  <RowExpansionIcon
-                    enabled={multipleResults}
-                    expanded={table.isRowExpanded(record.pk)}
-                  />
-                )}
-                <Text
-                  style={{ fontStyle: installed ? 'italic' : undefined }}
-                  c={enabled ? undefined : 'red'}
-                >
-                  {!record.templateId && '- '}
-                  {record.test_name ?? record.template_detail?.test_name}
-                </Text>
+                <Group gap='xs'>
+                  {!child && (
+                    <RowExpansionIcon
+                      enabled={multipleResults}
+                      expanded={table.isRowExpanded(record.pk)}
+                    />
+                  )}
+                  <Text
+                    style={{ fontStyle: installed ? 'italic' : undefined }}
+                    c={enabled ? undefined : 'red'}
+                  >
+                    {!record.templateId && '- '}
+                    {record.test_name ?? record.template_detail?.test_name}
+                  </Text>
+                </Group>
                 <Group justify='right'>
                   {record.results && record.results.length > 1 && (
                     <Tooltip label={t`Test Results`}>
@@ -211,13 +215,10 @@ export default function StockItemTestResultTable({
         },
         NoteColumn({}),
         DateColumn({}),
-        {
-          accessor: 'user',
-          title: t`User`,
-          sortable: false,
-          render: (record: any) =>
-            record.user_detail && <RenderUser instance={record.user_detail} />
-        },
+        UserColumn({
+          accessor: 'user_detail',
+          ordering: 'user'
+        }),
         {
           accessor: 'test_station',
           sortable: true,
@@ -302,7 +303,7 @@ export default function StockItemTestResultTable({
     pk: selectedTest,
     fields: useMemo(() => ({ ...editResultFields }), [editResultFields]),
     title: t`Edit Test Result`,
-    onFormSuccess: () => table.refreshTable,
+    table: table,
     successMessage: t`Test result updated`
   });
 
@@ -355,6 +356,7 @@ export default function StockItemTestResultTable({
           icon: <IconCircleCheck />,
           hidden:
             !record.templateId ||
+            !!record.choices ||
             record?.requires_attachment ||
             record?.requires_value ||
             record.result,

@@ -97,13 +97,29 @@ skip-magic-trailing-comma = true
 line-ending = "auto"
 
 [tool.uv.pip]
-python-version = "3.9.2"
+python-version = "3.12"
 no-strip-extras=true
 generate-hashes=true
+
+[tool.ty.environment]
+extra-paths = ["src/backend/InvenTree"]
+
+[tool.ty.rules]
+unresolved-attribute="ignore"  # 837 # need Plugin Mixin typing
+call-non-callable="ignore"  # 8 ##
+invalid-assignment="ignore"  # 40  # need to wait for better django field stubs
+invalid-method-override="ignore" # 103
+invalid-return-type="ignore"  # 44 ##
+invalid-argument-type="ignore"  # 49
+no-matching-overload="ignore"  # 10  # need to wait for betterdjango field stubs
+
+# warn about unused ignore comments
+unused-ignore-comment = "error"
 
 [tool.coverage.run]
 source = ["src/backend/InvenTree", "InvenTree"]
 dynamic_context = "test_function"
+omit = ["*/test_migrations.py"]
 
 [tool.coverage.html]
 show_contexts = true
@@ -119,3 +135,10 @@ sections=["FUTURE","STDLIB","DJANGO","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
 
 [tool.codespell]
 ignore-words-list = ["assertIn","SME","intoto","fitH"]
+
+[tool.pytest]
+django_find_project = false
+pythonpath = ["src/backend/InvenTree"]
+DJANGO_SETTINGS_MODULE = "InvenTree.settings"
+python_files = ["test*.py",]
+timeout = "120"

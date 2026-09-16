@@ -1,7 +1,7 @@
 """Schema processing functions for cleaning up generated schema."""
 
 from itertools import chain
-from typing import Optional
+from typing import Any, Optional
 
 from django.conf import settings
 
@@ -9,7 +9,14 @@ from drf_spectacular.contrib.django_oauth_toolkit import DjangoOAuthToolkitSchem
 from drf_spectacular.drainage import warn
 from drf_spectacular.openapi import AutoSchema
 from drf_spectacular.plumbing import ComponentRegistry
-from drf_spectacular.utils import _SchemaType
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    _SchemaType,
+    extend_schema,
+    extend_schema_view,
+)
+from rest_framework import serializers, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 
 from InvenTree.permissions import OASTokenMixin
@@ -40,6 +47,20 @@ class ExtendedOAuth2Scheme(DjangoOAuthToolkitScheme):
 class ExtendedAutoSchema(AutoSchema):
     """Extend drf-spectacular to allow customizing the schema to match the actual API behavior."""
 
+    def _map_serializer_field(self, field, direction, *args, **kwargs):
+        """Custom field mapping overrides, falling back to default behavior."""
+        schema = super()._map_serializer_field(field, direction, *args, **kwargs)
+
+        direction_value = getattr(direction, 'value', direction)
+
+        # File and image fields in request schemas must be represented as binary
+        # payloads. In response schemas they are still rendered as URLs.
+        if direction_value == 'request' and isinstance(field, serializers.FileField):
+            schema['type'] = 'string'
+            schema['format'] = 'binary'
+
+        return schema
+
     def is_bulk_action(self, ref: str) -> bool:
         """Check the class of the current view for the bulk mixins."""
         return ref in [c.__name__ for c in type(self.view).__mro__]
@@ -49,9 +70,17 @@ class ExtendedAutoSchema(AutoSchema):
         result_id = super().get_operation_id()
 
         # rename bulk actions to deconflict with single action operation_id
-        if (self.method == 'DELETE' and self.is_bulk_action('BulkDeleteMixin')) or (
-            (self.method == 'PUT' or self.method == 'PATCH')
-            and self.is_bulk_action('BulkUpdateMixin')
+        if (
+            (self.method == 'DELETE' and self.is_bulk_action('BulkDeleteMixin'))
+            or (
+                self.method == 'DELETE'
+                and self.is_bulk_action('BulkDeleteViewsetMixin')
+                and self.view.action == 'bulk_delete'
+            )
+            or (
+                (self.method == 'PUT' or self.method == 'PATCH')
+                and self.is_bulk_action('BulkUpdateMixin')
+            )
         ):
             action = self.method_mapping[self.method.lower()]
             result_id = result_id.replace(action, 'bulk_' + action)
@@ -75,7 +104,11 @@ class ExtendedAutoSchema(AutoSchema):
 
         # drf-spectacular doesn't support a body on DELETE endpoints because the semantics are not well-defined and
         # OpenAPI recommends against it. This allows us to generate a schema that follows existing behavior.
-        if self.method == 'DELETE' and self.is_bulk_action('BulkDeleteMixin'):
+        if (self.method == 'DELETE' and self.is_bulk_action('BulkDeleteMixin')) or (
+            self.method == 'DELETE'
+            and getattr(self.view, 'action', None) == 'bulk_delete'
+            and self.is_bulk_action('BulkDeleteViewsetMixin')
+        ):
             original_method = self.method
             self.method = 'PUT'
             request_body = self._get_request_body()
@@ -83,12 +116,13 @@ class ExtendedAutoSchema(AutoSchema):
             operation['requestBody'] = request_body
             self.method = original_method
 
+        parameters = operation.get('parameters', [])
+
         # If pagination limit is not set (default state) then all results will return unpaginated. This doesn't match
         # what the schema defines to be the expected result. This forces limit to be present, producing the expected
         # type.
         pagination_class = getattr(self.view, 'pagination_class', None)
         if pagination_class and pagination_class == LimitOffsetPagination:
-            parameters = operation.get('parameters', [])
             for parameter in parameters:
                 if parameter['name'] == 'limit':
                     parameter['required'] = True
@@ -96,12 +130,13 @@ class ExtendedAutoSchema(AutoSchema):
         # Add valid order selections to the ordering field description.
         ordering_fields = getattr(self.view, 'ordering_fields', None)
         if ordering_fields is not None:
-            parameters = operation.get('parameters', [])
             for parameter in parameters:
                 if parameter['name'] == 'ordering':
-                    parameter['description'] = (
-                        f'{parameter["description"]} Possible fields: {", ".join(ordering_fields)}.'
-                    )
+                    schema_order = []
+                    for field in ordering_fields:
+                        schema_order.append(field)
+                        schema_order.append('-' + field)
+                    parameter['schema']['enum'] = schema_order
 
         # Add valid search fields to the search description.
         search_fields = getattr(self.view, 'search_fields', None)
@@ -109,8 +144,6 @@ class ExtendedAutoSchema(AutoSchema):
         if search_fields is not None:
             # Ensure consistent ordering of search fields
             search_fields = sorted(search_fields)
-
-            parameters = operation.get('parameters', [])
             for parameter in parameters:
                 if parameter['name'] == 'search':
                     parameter['description'] = (
@@ -127,7 +160,99 @@ class ExtendedAutoSchema(AutoSchema):
             schema['items'] = {'$ref': schema['$ref']}
             del schema['$ref']
 
+        # Add vendor extensions for custom behavior
+        operation.update(self.get_inventree_extensions())
+
         return operation
+
+    def get_inventree_extensions(self):
+        """Add InvenTree specific extensions to the schema."""
+        from rest_framework.generics import RetrieveAPIView
+        from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin
+
+        from data_exporter.mixins import DataExportViewMixin
+        from InvenTree.api import BulkOperationMixin
+        from InvenTree.mixins import CleanMixin
+
+        lvl = settings.SCHEMA_VENDOREXTENSION_LEVEL
+        """Level of detail for InvenTree extensions."""
+
+        if lvl == 0:
+            return {}
+
+        mro = self.view.__class__.__mro__
+
+        data = {}
+        if lvl >= 1:
+            data['x-inventree-meta'] = {
+                'version': '1.0',
+                'is_detail': any(
+                    a in mro
+                    for a in [RetrieveModelMixin, UpdateModelMixin, RetrieveAPIView]
+                ),
+                'is_bulk': BulkOperationMixin in mro,
+                'is_cleaned': CleanMixin in mro,
+                'is_filtered': hasattr(self.view, 'output_options'),
+                'is_exported': DataExportViewMixin in mro,
+            }
+        if lvl >= 2:
+            data['x-inventree-components'] = [str(a) for a in mro]
+            try:
+                qs = self.view.get_queryset()
+                qs = qs.model if qs is not None and hasattr(qs, 'model') else None
+            except Exception:
+                qs = None
+
+            data['x-inventree-model'] = {
+                'scope': 'core',
+                'model': str(qs.__name__) if qs else None,
+                'app': str(qs._meta.app_label) if qs else None,
+            }
+
+        return data
+
+
+def postprocess_schema_enums(result, generator, **kwargs):
+    """Override call to drf-spectacular's enum postprocessor to filter out specific warnings."""
+    from drf_spectacular import drainage
+
+    # Monkey-patch the warn function temporarily
+    original_warn = drainage.warn
+
+    def custom_warn(msg: str, delayed: Any = None) -> None:
+        """Custom patch to ignore some drf-spectacular warnings.
+
+        - Some warnings are unavoidable due to the way that InvenTree implements generic relationships (via ContentType).
+        - Some warnings are unavoidable due to the way that InvenTree implements custom (database-editable) status codes:
+          multiple serializers legitimately expose a 'status' field backed by the same dynamic StockStatus choice set
+          (e.g. stock adjustment, receiving a purchase order line, disassembling a stock item), and drf-spectacular
+          cannot settle on a single stable name for the shared, runtime-dependent choice set.
+        - The cleanest way to handle this appears to be to override the 'warn' function from drf-spectacular.
+
+        Ref: https://github.com/inventree/InvenTree/pull/10699
+        """
+        ignore_patterns = [
+            'enum naming encountered a non-optimally resolvable collision for fields named "model_type"',
+            'enum naming encountered a non-optimally resolvable collision for fields named "status"',
+            'encountered multiple names for the same choice set (StatusCustomKeyEnum)',
+        ]
+
+        if any(pattern in msg for pattern in ignore_patterns):
+            return
+
+        original_warn(msg, delayed)
+
+    # Replace the warn function with our custom version
+    drainage.warn = custom_warn
+
+    import drf_spectacular.hooks
+
+    result = drf_spectacular.hooks.postprocess_schema_enums(result, generator, **kwargs)
+
+    # Restore the original warn function
+    drainage.warn = original_warn
+
+    return result
 
 
 def postprocess_required_nullable(result, generator, request, public):
@@ -178,7 +303,7 @@ def postprocess_print_stats(result, generator, request, public):
     scopes = {}
     for path, details in rlt_dict.items():
         if details['oauth']:
-            for scope in details['oauth']:
+            for scope in list(details['oauth']):
                 if scope not in scopes:
                     scopes[scope] = []
                 scopes[scope].append(path)
@@ -211,3 +336,52 @@ def postprocess_print_stats(result, generator, request, public):
         )
 
     return result
+
+
+def schema_for_view_output_options(view_class):
+    """A class decorator that automatically generates schema parameters for a view.
+
+    It works by introspecting the `output_options` attribute on the view itself.
+    This decorator reads the `output_options` attribute from the view class,
+    extracts the `OPTIONS` list from it, and creates an OpenApiParameter for each option.
+    """
+    output_config_class = view_class.output_options
+
+    parameters = []
+    for option in output_config_class.OPTIONS:
+        param = OpenApiParameter(
+            name=option.flag,
+            type=OpenApiTypes.BOOL,
+            location=OpenApiParameter.QUERY,
+            description=option.description,
+            default=option.default,
+        )
+        parameters.append(param)
+
+    # DRF viewsets dispatch GET requests to the 'list' action, rather than a 'get' method
+    operation = 'list' if issubclass(view_class, viewsets.ViewSetMixin) else 'get'
+    extended_view = extend_schema_view(**{
+        operation: extend_schema(parameters=parameters)
+    })(view_class)
+    return extended_view
+
+
+def exclude_from_schema(klass: type[Any], alternative_path: str) -> type[Any]:
+    """Decorator to exclude a view from the OpenAPI schema.
+
+    This is used to hide legacy endpoints from the schema, while still retaining them for backwards compatibility.
+    """
+
+    class LegacyView(klass):
+        """Dummy doc."""
+
+    LegacyView.__name__ = klass.__name__ + ' - Legacy'
+    LegacyView.__doc__ = f'This is a legacy endpoint, retained for backwards compatibility. Consider migrating to the new endpoint under {alternative_path}.'
+
+    # Exclude all default operations from the schema
+    for operation in ['get', 'post', 'put', 'patch', 'delete']:
+        if hasattr(klass, operation):
+            LegacyView = extend_schema_view(**{operation: extend_schema(exclude=True)})(
+                LegacyView
+            )
+    return LegacyView

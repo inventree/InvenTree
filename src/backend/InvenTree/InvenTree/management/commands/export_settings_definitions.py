@@ -24,8 +24,9 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         """Export settings information to a JSON file."""
         from common.models import InvenTreeSetting, InvenTreeUserSetting
+        from InvenTree.config import CONFIG_LOOKUPS
 
-        settings = {'global': {}, 'user': {}}
+        settings = {'global': {}, 'user': {}, 'config': {}}
 
         # Global settings
         for key, setting in InvenTreeSetting.SETTINGS.items():
@@ -43,6 +44,18 @@ class Command(BaseCommand):
                 'description': str(setting['description']),
                 'default': str(InvenTreeUserSetting.get_setting_default(key)),
                 'units': str(setting.get('units', '')),
+            }
+
+        # Configuration settings
+        for key, config in CONFIG_LOOKUPS.items():
+            default_value = config.get('default_value', None)
+            if default_value is not None:
+                default_value = str(default_value)
+
+            settings['config'][key] = {
+                'env_var': str(config.get('env_var', '')),
+                'config_key': str(config.get('config_key', '')),
+                'default_value': default_value,
             }
 
         filename = kwargs.get('filename', 'inventree_settings.json')

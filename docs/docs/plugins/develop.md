@@ -23,7 +23,7 @@ Consider the use-case for your plugin and define the exact function of the plugi
 - Do you need to run in the background ([ScheduleMixin](./mixins/schedule.md)) or when things in InvenTree change ([EventMixin](./mixins/event.md))?
 - Does the plugin need configuration that should be user changeable ([SettingsMixin](./mixins/settings.md)) or static (just use a yaml in the config dir)?
 - You want to receive webhooks? Do not code your own untested function, use the WebhookEndpoint model as a base and override the perform_action method.
-- Do you need the full power of Django with custom models and all the complexity that comes with that – welcome to the danger zone and [AppMixin](./mixins/app.md). The plugin will be treated as a app by django and can maybe rack the whole instance.
+- Do you need the full power of Django with custom models and all the complexity that comes with that - welcome to the danger zone and [AppMixin](./mixins/app.md). The plugin will be treated as a app by django and can maybe rack the whole instance.
 
 ### Define Metadata
 
@@ -41,7 +41,7 @@ If you want to make your life easier, try to follow these guidelines; break wher
 from plugin import InvenTreePlugin, registry
 from plugin.mixins import APICallMixin, SettingsMixin, ScheduleMixin, BarcodeMixin
 ```
-- Feliver as a package (see [below](#packaging))
+- Deliver as a package (see [below](#packaging))
 - If you need to use a private infrastructure, use the 'Releases' functions in GitHub or Gitlab. Point to the 'latest' release endpoint when installing to make sure the update function works
 - Tag your GitHub repo with `inventree` and `inventreeplugins` to make discovery easier. A discovery mechanism using these tags is on the roadmap.
 - Use GitHub actions to test your plugin regularly (you can [schedule actions](https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows#schedule)) against the 'latest' [docker-build](https://hub.docker.com/r/inventree/inventree) of InvenTree
@@ -113,10 +113,10 @@ Refer to the [sample plugins]({{ sourcedir("src/backend/InvenTree/plugin/samples
 
 A *PluginConfig* database entry will be created for each plugin "discovered" when the server launches. This configuration entry is used to determine if a particular plugin is enabled.
 
-The configuration entries must be enabled via the [InvenTree admin interface](../settings/admin.md).
+The configuration entries must be enabled via the [Admin Center](../settings/admin.md#admin-center).
 
 !!! warning "Disabled by Default"
-    Newly discovered plugins are disabled by default, and must be manually enabled (in the admin interface) by a user with staff privileges.
+    Newly discovered plugins are disabled by default, and must be manually enabled (in the Admin Center) by a user with staff privileges.
 
 ## Plugin Mixins
 
@@ -145,6 +145,7 @@ Supported mixin classes are:
 | [UserInterfaceMixin](./mixins/ui.md) | Add custom user interface features |
 | [UrlsMixin](./mixins/urls.md) | Respond to custom URL endpoints |
 | [ValidationMixin](./mixins/validation.md) | Provide custom validation of database models |
+| [WellKnownMixin](./mixins/wellknown.md) | Provide well-known endpoints on the root of an instance |
 
 ## Plugin Concepts
 

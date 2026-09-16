@@ -1,3 +1,6 @@
+import { PluginPanelKey } from '@lib/enums/ModelType';
+import { UserRoles } from '@lib/enums/Roles';
+import type { PanelGroupType, PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
@@ -5,40 +8,43 @@ import {
   IconCpu,
   IconDevicesPc,
   IconExclamationCircle,
+  IconFileCode,
   IconFileDownload,
   IconFileUpload,
+  IconHome,
   IconList,
   IconListDetails,
   IconMail,
+  IconNotes,
   IconPackages,
+  IconPhoto,
   IconPlugConnected,
   IconQrcode,
   IconReport,
   IconScale,
+  IconShieldLock,
   IconSitemap,
   IconTags,
   IconUsersGroup
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
-
-import { UserRoles } from '@lib/enums/Roles';
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import PageTitle from '../../../../components/nav/PageTitle';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
-import type {
-  PanelGroupType,
-  PanelType
-} from '../../../../components/panels/Panel';
 import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
+import ParameterTemplateTable from '../../../../tables/general/ParameterTemplateTable';
+import SelectionListTable from '../../../../tables/settings/SelectionListTable';
 
 const ReportTemplatePanel = Loadable(
   lazy(() => import('./ReportTemplatePanel'))
 );
 
 const LabelTemplatePanel = Loadable(lazy(() => import('./LabelTemplatePanel')));
+
+const HomePanel = Loadable(lazy(() => import('./HomePanel')));
 
 const UserManagementPanel = Loadable(
   lazy(() => import('./UserManagementPanel'))
@@ -68,7 +74,11 @@ const MachineManagementPanel = Loadable(
   lazy(() => import('./MachineManagementPanel'))
 );
 
-const PartParameterPanel = Loadable(lazy(() => import('./PartParameterPanel')));
+const NoteTemplatePanel = Loadable(lazy(() => import('./NoteTemplatePanel')));
+
+const IdentityManagementPanel = Loadable(
+  lazy(() => import('./IdentityManagementPanel'))
+);
 
 const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
@@ -102,11 +112,26 @@ const LocationTypesTable = Loadable(
   lazy(() => import('../../../../tables/stock/LocationTypesTable'))
 );
 
+const SnippetTable = Loadable(
+  lazy(() => import('../../../../tables/settings/SnippetTable'))
+);
+
+const AssetTable = Loadable(
+  lazy(() => import('../../../../tables/settings/AssetTable'))
+);
+
 export default function AdminCenter() {
   const user = useUserState();
 
   const adminCenterPanels: PanelType[] = useMemo(() => {
     return [
+      {
+        name: 'home',
+        label: t`Home`,
+        icon: <IconHome />,
+        content: <HomePanel />,
+        showHeadline: false
+      },
       {
         name: 'user',
         label: t`Users / Access`,
@@ -181,11 +206,25 @@ export default function AdminCenter() {
         content: <UnitManagementPanel />
       },
       {
-        name: 'part-parameters',
-        label: t`Part Parameters`,
+        name: 'parameters',
+        label: t`Parameters`,
         icon: <IconList />,
-        content: <PartParameterPanel />,
+        content: <ParameterTemplateTable />,
         hidden: !user.hasViewRole(UserRoles.part)
+      },
+      {
+        name: 'selection-lists',
+        label: t`Selection Lists`,
+        icon: <IconList />,
+        content: <SelectionListTable />,
+        hidden: !user.hasViewRole(UserRoles.part)
+      },
+      {
+        name: 'notes',
+        label: t`Note Templates`,
+        icon: <IconNotes />,
+        content: <NoteTemplatePanel />,
+        hidden: !user.isStaff()
       },
       {
         name: 'category-parameters',
@@ -207,6 +246,18 @@ export default function AdminCenter() {
         content: <ReportTemplatePanel />
       },
       {
+        name: 'snippets',
+        label: t`Report Snippets`,
+        icon: <IconFileCode />,
+        content: <SnippetTable />
+      },
+      {
+        name: 'assets',
+        label: t`Report Assets`,
+        icon: <IconPhoto />,
+        content: <AssetTable />
+      },
+      {
         name: 'location-types',
         label: t`Location Types`,
         icon: <IconPackages />,
@@ -226,16 +277,25 @@ export default function AdminCenter() {
         icon: <IconDevicesPc />,
         content: <MachineManagementPanel />,
         hidden: !user.hasViewRole(UserRoles.admin)
+      },
+      {
+        name: 'identity',
+        label: t`Identity Federation`,
+        icon: <IconShieldLock />,
+        content: <IdentityManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
       }
     ];
   }, [user]);
   const grouping: PanelGroupType[] = useMemo(() => {
     return [
+      { id: 'home', label: '', panelIDs: ['home'] },
       {
         id: 'ops',
         label: t`Operations`,
         panelIDs: [
           'user',
+          'identity',
           'barcode-history',
           'background',
           'errors',
@@ -257,14 +317,16 @@ export default function AdminCenter() {
       {
         id: 'reporting',
         label: t`Reporting`,
-        panelIDs: ['labels', 'reports']
+        panelIDs: ['labels', 'reports', 'snippets', 'assets']
       },
       {
         id: 'plm',
         label: t`PLM`,
         panelIDs: [
-          'part-parameters',
+          'selection-lists',
+          'parameters',
           'category-parameters',
+          'notes',
           'location-types',
           'stocktake'
         ]
@@ -292,8 +354,8 @@ export default function AdminCenter() {
             panels={adminCenterPanels}
             groups={grouping}
             collapsible={true}
-            model='admincenter'
-            id={null}
+            pluginPanelWithoutId
+            pluginPanelKey={PluginPanelKey.admincenter}
           />
         </Stack>
       ) : (

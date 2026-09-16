@@ -6,6 +6,7 @@ import json
 import os
 import re
 import time
+from collections.abc import Callable
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Optional
@@ -15,7 +16,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission, User
 from django.db import connections, models
 from django.http.response import StreamingHttpResponse
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.test.utils import CaptureQueriesContext, override_settings
 from django.urls import reverse
 
@@ -115,7 +116,7 @@ def getOldestMigrationFile(app, exclude_extension=True, ignore_initial=True):
             oldest_num = num
             oldest_file = f
 
-    if exclude_extension:
+    if exclude_extension and oldest_file:
         oldest_file = oldest_file.replace('.py', '')
 
     return oldest_file
@@ -379,13 +380,23 @@ class TestQueryMixin:
     ):
         """Context manager to check that the number of queries is less than a certain value.
 
+        Arguments:
+            value: The maximum number of queries allowed
+            using: The database connection to use (default = 'default')
+            verbose: If True, print the queries to the console (default = False)
+            url: Optional URL to print in the output (default = None)
+            log_to_file: If True, log the queries to a file (default = False)
+
+        Yields:
+            The CaptureQueriesContext object, which contains the captured queries
+
         Example:
         with self.assertNumQueriesLessThan(10):
             # Do some stuff
         Ref: https://stackoverflow.com/questions/1254170/django-is-there-a-way-to-count-sql-queries-from-an-unit-test/59089020#59089020
         """
         with CaptureQueriesContext(connections[using]) as context:
-            yield  # your test will be run here
+            yield context  # your test will be run here
 
         n = len(context.captured_queries)
 
@@ -452,7 +463,7 @@ class InvenTreeAPITestCase(
 ):
     """Base class for running InvenTree API tests."""
 
-    def check_response(self, url, response, expected_code=None):
+    def check_response(self, url, response, expected_code=None, msg=None):
         """Debug output for an unexpected response."""
         # Check that the response returned the expected status code
 
@@ -469,7 +480,7 @@ class InvenTreeAPITestCase(
                 if hasattr(response, 'content'):
                     print('content:', response.content)
 
-            self.assertEqual(response.status_code, expected_code)
+            self.assertEqual(response.status_code, expected_code, msg)
 
     def getActions(self, url):
         """Return a dict of the 'actions' available at a given endpoint.
@@ -490,18 +501,23 @@ class InvenTreeAPITestCase(
         kwargs['format'] = kwargs.get('format', 'json')
 
         expected_code = kwargs.pop('expected_code', None)
-        max_queries = kwargs.pop('max_query_count', self.MAX_QUERY_COUNT)
+        msg = kwargs.pop('msg', None)
+        max_query_count = kwargs.pop('max_query_count', self.MAX_QUERY_COUNT)
         max_query_time = kwargs.pop('max_query_time', self.MAX_QUERY_TIME)
+        benchmark = kwargs.pop('benchmark', False)
 
         t1 = time.time()
 
-        with self.assertNumQueriesLessThan(max_queries, url=url):
+        with (
+            self.assertNumQueriesLessThan(max_query_count, url=url) as context,
+            self.captureOnCommitCallbacks(execute=True),
+        ):
             response = method(url, data, **kwargs)
 
         t2 = time.time()
         dt = t2 - t1
 
-        self.check_response(url, response, expected_code=expected_code)
+        self.check_response(url, response, expected_code=expected_code, msg=msg)
 
         if dt > max_query_time:
             print(
@@ -509,6 +525,11 @@ class InvenTreeAPITestCase(
             )
 
         self.assertLessEqual(dt, max_query_time)
+
+        if benchmark:
+            print(
+                f"Benchmark @ '{url}': {len(context.captured_queries)} queries (of {max_query_count}) in {dt:.4f}s (of {max_query_time}s max)"
+            )
 
         return response
 
@@ -583,6 +604,10 @@ class InvenTreeAPITestCase(
         result = re.search(
             r'(attachment|inline); filename=[\'"]([\w\d\-.]+)[\'"]', disposition
         )
+        if not result:
+            raise ValueError(
+                'No filename match found in disposition'
+            )  # pragma: no cover
 
         fn = result.groups()[1]
 
@@ -649,7 +674,9 @@ class InvenTreeAPITestCase(
         # Append URL params
         url += '?' + '&'.join([f'{key}={value}' for key, value in params.items()])
 
-        response = self.client.get(url, data=None, format='json')
+        response = self.get(
+            url, data=None, format='json', expected_code=expected_code, **kwargs
+        )
         self.check_response(url, response, expected_code=expected_code)
 
         # Check that the response is of the correct type
@@ -723,6 +750,105 @@ class InvenTreeAPITestCase(
         """Assert that dictionary 'a' is a subset of dictionary 'b'."""
         self.assertEqual(b, b | a)
 
+    def run_ordering_test(
+        self, url: str, ordering_field: str, params: Optional[dict] = None
+    ):
+        """Run a test to check that the results are ordered correctly.
+
+        Arguments:
+            url: The URL to test
+            ordering_field: The field to order by (e.g. 'name')
+            params: Additional parameters to include in the request (e.g. filters)
+
+        Process:
+            - Run a GET request against the provided URL with the appropriate ordering parameter
+            - Run a separate GET request with the opposite ordering parameter (e.g. '-name')
+            - Check that the results are ordered differently in each case
+        """
+        query_params = {**(params or {})}
+
+        pk_values = set()
+
+        for ordering in [None, ordering_field, f'-{ordering_field}']:
+            response = self.get(
+                url,
+                data={**query_params, 'ordering': ordering}
+                if ordering
+                else query_params,
+                expected_code=200,
+            )
+
+            self.assertGreater(
+                len(response.data),
+                1,
+                f'No data returned from {url} with ordering={ordering}',
+            )
+
+            pk_values.add(response.data[0]['pk'])
+
+        self.assertGreater(
+            len(pk_values),
+            1,
+            f"Ordering by '{ordering_field}' does not change the order of results at {url}",
+        )
+
+    def run_output_test(
+        self,
+        url: str,
+        test_cases: list[tuple[str, str] | str],
+        additional_params: Optional[dict] = None,
+        assert_subset: bool = False,
+        assert_fnc: Optional[Callable] = None,
+    ):
+        """Run a series of tests against the provided URL.
+
+        Arguments:
+            url: The URL to test
+            test_cases: A list of tuples of the form (parameter_name, response_field_name)
+            additional_params: Additional request parameters to include in the request
+            assert_subset: If True, make the assertion against the first item in the response rather than the entire response
+            assert_fnc: If provided, call this function with the response data and make the assertion against the return value
+        """
+
+        def get_response(response):
+            if assert_subset:
+                return response.data[0]
+            if assert_fnc:
+                return assert_fnc(response)
+            return response.data
+
+        for case in test_cases:
+            if isinstance(case, str):
+                param = case
+                field = case
+            else:
+                param, field = case
+            # Test with parameter set to 'true'
+            response = self.get(
+                url,
+                {param: 'true', **(additional_params or {})},
+                expected_code=200,
+                msg=f'Testing {param}=true returns anything but 200',
+            )
+            self.assertIn(
+                field,
+                get_response(response),
+                f"Field '{field}' should be present when {param}=true",
+            )
+
+            # Test with parameter set to 'false'
+            response = self.get(
+                url,
+                {param: 'false', **(additional_params or {})},
+                expected_code=200,
+                msg=f'Testing {param}=false returns anything but 200',
+            )
+            self.assertNotIn(
+                field,
+                get_response(response),
+                f"Field '{field}' should NOT be present when {param}=false",
+            )
+
 
 @override_settings(
     SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
@@ -761,3 +887,11 @@ class AdminTestCase(InvenTreeAPITestCase):
 def in_env_context(envs):
     """Patch the env to include the given dict."""
     return mock.patch.dict(os.environ, envs)
+
+
+@tag('performance_test')
+class InvenTreeAPIPerformanceTestCase(InvenTreeAPITestCase):
+    """Base class for InvenTree API performance tests."""
+
+    MAX_QUERY_COUNT = 50
+    MAX_QUERY_TIME = 60

@@ -74,67 +74,57 @@ nav:
   - InvenTree:
     - InvenTree: index.md
     - FAQ: faq.md
+    - Troubleshooting: troubleshooting.md
     - Demo: demo.md
     - Release Notes: releases/release_notes.md
-    - Core Concepts:
-      - Terminology: concepts/terminology.md
-      - Threat Model: concepts/threat_model.md
-      - Physical Units: concepts/units.md
-      - Companies: concepts/company.md
-      - Custom States: concepts/custom_states.md
-      - Pricing: concepts/pricing.md
-      - Project Codes: concepts/project_codes.md
-      - Barcodes:
-        - Barcode Support: barcodes/index.md
-        - Internal Barcodes: barcodes/internal.md
-        - External Barcodes: barcodes/external.md
-        - Custom Barcodes: barcodes/custom.md
     - Development:
+      - InvenTree Development: develop/index.md
       - Contributing: develop/contributing.md
       - Architecture: develop/architecture.md
       - Roadmap: develop/roadmap.md
       - Devcontainer: develop/devcontainer.md
       - React Frontend: develop/react-frontend.md
-    - Mobile App:
-      - Mobile App: app/index.md
-      - Connect: app/connect.md
-      - Navigation: app/navigation.md
-      - Search: app/search.md
-      - Barcodes: app/barcode.md
-      - Parts: app/part.md
-      - Stock: app/stock.md
-      - Purchase Orders: app/po.md
-      - Sales Orders: app/so.md
-      - Settings: app/settings.md
-      - Privacy: app/privacy.md
-      - Translation: app/translation.md
-      - Suggestions: app/issues.md
-    - InvenTree API:
-      - Overview: api/index.md
-      - API Schema: api/schema.md
-      - Model Metadata: api/metadata.md
-      - Download Data: api/download.md
-      - Bulk Delete: api/bulk_delete.md
-      - Interactive API: api/browse.md
-    - Python Interface:
-      - Overview: api/python/index.md
-      - Currency Support: api/python/currency.md
-      - Examples: api/python/examples.md
     - Project Details:
       - Governance: project/governance.md
       - Project Security: security.md
-      - Resources: project/resources.md
+      - Sponsored Resources: project/sponsored_resources.md
       - Privacy: privacy.md
-  - Install:
+  - Concepts:
+    - Terminology: concepts/terminology.md
+    - User Interface:
+      - Overview: concepts/ui/index.md
+      - Tables: concepts/ui/tables.md
+      - Preview Panels: concepts/ui/preview_panels.md
+      - Forms: concepts/ui/forms.md
+      - Global Search: concepts/ui/global_search.md
+    - Threat Model: concepts/threat_model.md
+    - Physical Units: concepts/units.md
+    - Companies: concepts/company.md
+    - Custom States: concepts/custom_states.md
+    - Data Export: concepts/data_export.md
+    - Data Import: concepts/data_import.md
+    - Pricing: concepts/pricing.md
+    - Project Codes: concepts/project_codes.md
+    - Attachments: concepts/attachments.md
+    - Parameters: concepts/parameters.md
+    - Notes: concepts/notes.md
+    - Tags: concepts/tags.md
+    - Barcodes:
+      - Barcode Support: barcodes/index.md
+      - Internal Barcodes: barcodes/internal.md
+      - External Barcodes: barcodes/external.md
+      - Custom Barcodes: barcodes/custom.md
+  - Setup:
     - Introduction: start/index.md
     - Processes: start/processes.md
     - Configuration: start/config.md
     - Docker:
         - Introduction: start/docker.md
         - Installation: start/docker_install.md
+    - Installer:
+        - Installer: start/installer.md
     - Bare Metal:
         - Introduction: start/install.md
-        - Installer: start/installer.md
         - Production: start/bare_prod.md
         - Development: start/bare_dev.md
     - User Accounts: start/accounts.md
@@ -145,9 +135,10 @@ nav:
   - Parts:
     - Parts: part/index.md
     - Creating Parts: part/create.md
+    - Virtual Parts: part/virtual.md
+    - Consumable Parts: part/consumable.md
     - Part Views: part/views.md
     - Tracking: part/trackable.md
-    - Parameters: part/parameter.md
     - Revisions: part/revision.md
     - Templates: part/template.md
     - Tests: part/test.md
@@ -156,17 +147,22 @@ nav:
     - Notifications: part/notification.md
   - Stock:
     - Stock Items: stock/index.md
-    - Stock Status: stock/status.md
+    - Availability: stock/availability.md
+    - Traceability: stock/traceability.md
     - Stock Tracking: stock/tracking.md
+    - Stock Status: stock/status.md
     - Adjusting Stock: stock/adjust.md
+    - Stock Disassembly: stock/disassemble.md
     - Stock Expiry: stock/expiry.md
     - Stock Ownership: stock/owner.md
     - Test Results: stock/test.md
+    - Transfer Orders: stock/transfer_order.md
   - Manufacturing:
     - Manufacturing: manufacturing/index.md
     - Bill of Materials: manufacturing/bom.md
     - Build Orders: manufacturing/build.md
     - Build Outputs: manufacturing/output.md
+    - Required Quantity: manufacturing/required.md
     - Allocating Stock: manufacturing/allocate.md
     - External Manufacturing: manufacturing/external.md
     - Example Build Order: manufacturing/example.md
@@ -186,7 +182,10 @@ nav:
     - Template Editor: report/template_editor.md
     - Reports: report/report.md
     - Labels: report/labels.md
-    - Context Variables: report/context_variables.md
+    - Report Assets: report/assets.md
+    - Report Snippets: report/snippets.md
+    - Report Context: report/context_variables.md
+    - Model Context: report/model_context.md
     - Helper Functions: report/helpers.md
     - Barcodes: report/barcodes.md
     - Sample Templates: report/samples.md
@@ -194,15 +193,15 @@ nav:
     - Global Settings: settings/global.md
     - User Settings: settings/user.md
     - Reference Patterns: settings/reference.md
-    - Admin Interface: settings/admin.md
+    - Admin Center: settings/admin.md
+    - Database Admin Interface: settings/db_admin.md
     - Setup:
       - User Permissions: settings/permissions.md
       - Single Sign on: settings/SSO.md
       - Multi Factor Authentication: settings/MFA.md
-      - Email: settings/email.md
+      - SCIM Provisioning: settings/SCIM.md
+      - Email Settings: settings/email.md
       - Experimental Features: settings/experimental.md
-    - Export Data: settings/export.md
-    - Import Data: settings/import.md
     - Operations:
       - Background Tasks: settings/tasks.md
       - Error Logs: settings/logs.md
@@ -235,14 +234,16 @@ nav:
       - Report Mixin: plugins/mixins/report.md
       - Schedule Mixin: plugins/mixins/schedule.md
       - Settings Mixin: plugins/mixins/settings.md
+      - Supplier Mixin: plugins/mixins/supplier.md
       - Transition Mixin: plugins/mixins/transition.md
       - URL Mixin: plugins/mixins/urls.md
       - User Interface Mixin: plugins/mixins/ui.md
       - Validation Mixin: plugins/mixins/validation.md
+      - Well-Known Mixin: plugins/mixins/wellknown.md
     - Machines:
       - Overview: plugins/machines/overview.md
       - Label Printer: plugins/machines/label_printer.md
-    - Builtin Plugins:
+    - Builtin:
       - Builtin Plugins: plugins/builtin/index.md
       - Barcode Plugins:
         - Barcode Plugins: plugins/builtin/barcode_index.md
@@ -258,7 +259,7 @@ nav:
       - Export Plugins:
         - BOM Exporter: plugins/builtin/bom_exporter.md
         - InvenTree Exporter: plugins/builtin/inventree_exporter.md
-        - Parameter Exporter: plugins/builtin/part_parameter_exporter.md
+        - Parameter Exporter: plugins/builtin/parameter_exporter.md
         - Stocktake Exporter: plugins/builtin/stocktake_exporter.md
       - Label Printing:
         - Label Printer: plugins/builtin/inventree_label.md
@@ -269,6 +270,33 @@ nav:
         - Slack Notifications: plugins/builtin/slack_notification.md
         - UI Notifications: plugins/builtin/ui_notification.md
       - Currency Exchange: plugins/builtin/currency_exchange.md
+  - "Mobile App":
+    - Overview: app/index.md
+    - Connect: app/connect.md
+    - Navigation: app/navigation.md
+    - Search: app/search.md
+    - Barcodes: app/barcode.md
+    - Parts: app/part.md
+    - Stock: app/stock.md
+    - Purchase Orders: app/po.md
+    - Sales Orders: app/so.md
+    - Build Orders: app/build.md
+    - Settings: app/settings.md
+    - Privacy: app/privacy.md
+    - Translation: app/translation.md
+    - Suggestions: app/issues.md
+  - API:
+    - Overview: api/index.md
+    - API Schema: api/schema.md
+    - Model Metadata: api/metadata.md
+    - Download Data: api/download.md
+    - Bulk Delete: api/bulk_delete.md
+    - Interactive API: api/browse.md
+    - Python Interface:
+      - Overview: api/python/index.md
+      - Currency Support: api/python/currency.md
+      - Examples: api/python/examples.md
+
 
 # Plugins
 plugins:
@@ -352,10 +380,10 @@ extra:
   #  provider: google
   #  property: UA-143467500-1
 
-  min_python_version: 3.9
+  min_python_version: 3.12
   min_invoke_version: 2.0.0
-  django_version: 4.2
-  docker_postgres_version: 16
+  django_version: 5.2
+  docker_postgres_version: 17
 
   version:
     default: stable

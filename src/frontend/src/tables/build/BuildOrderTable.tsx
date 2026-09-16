@@ -7,48 +7,30 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
-import { RenderUser } from '../../components/render/User';
-import { useBuildOrderFields } from '../../forms/BuildForms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { useGlobalSettingsState } from '../../states/SettingsStates';
-import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
+  CompletionDateColumn,
   CreationDateColumn,
-  DateColumn,
+  DescriptionColumn,
+  IPNColumn,
+  LinkColumn,
   PartColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
   StartDateColumn,
   StatusColumn,
-  TargetDateColumn
-} from '../ColumnRenderers';
-import {
-  AssignedToMeFilter,
-  CompletedAfterFilter,
-  CompletedBeforeFilter,
-  CreatedAfterFilter,
-  CreatedBeforeFilter,
-  HasProjectCodeFilter,
-  IncludeVariantsFilter,
-  IssuedByFilter,
-  MaxDateFilter,
-  MinDateFilter,
-  OrderStatusFilter,
-  OutstandingFilter,
-  OverdueFilter,
-  PartCategoryFilter,
-  ProjectCodeFilter,
-  ResponsibleFilter,
-  StartDateAfterFilter,
-  StartDateBeforeFilter,
-  TargetDateAfterFilter,
-  TargetDateBeforeFilter
-} from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+  TargetDateColumn,
+  UserColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { useBuildOrderFields } from '../../forms/BuildForms';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
+import { useUserState } from '../../states/UserState';
+import BuildOrderFilters from './BuildOrderFilters';
 
 /*
  * Construct a table of build orders, according to the provided parameters
@@ -63,7 +45,14 @@ export function BuildOrderTable({
   salesOrderId?: number;
 }>) {
   const globalSettings = useGlobalSettingsState();
-  const table = useTable(!!partId ? 'buildorder-part' : 'buildorder-index');
+  const table = useTable(!!partId ? 'buildorder-part' : 'buildorder-index', {
+    initialFilters: [
+      {
+        name: 'outstanding',
+        value: 'true'
+      }
+    ]
+  });
 
   const tableColumns = useMemo(() => {
     return [
@@ -71,22 +60,17 @@ export function BuildOrderTable({
       PartColumn({
         switchable: false
       }),
-      {
-        accessor: 'part_detail.IPN',
-        sortable: true,
-        switchable: true,
-        title: t`IPN`
-      },
+      IPNColumn({}),
       {
         accessor: 'part_detail.revision',
         title: t`Revision`,
         sortable: true,
         defaultVisible: false
       },
-      {
+      DescriptionColumn({
         accessor: 'title',
         sortable: false
-      },
+      }),
       {
         accessor: 'completed',
         title: t`Completed`,
@@ -120,6 +104,7 @@ export function BuildOrderTable({
       BooleanColumn({
         accessor: 'external',
         title: t`External`,
+        filter: 'external',
         sortable: true,
         switchable: true,
         hidden: !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
@@ -131,69 +116,24 @@ export function BuildOrderTable({
         defaultVisible: false
       }),
       TargetDateColumn({}),
-      DateColumn({
-        accessor: 'completion_date',
-        title: t`Completion Date`,
-        sortable: true
+      CompletionDateColumn({}),
+      UserColumn({
+        accessor: 'issued_by_detail',
+        ordering: 'issued_by',
+        filter: 'issued_by',
+        title: t`Issued By`
       }),
-      {
-        accessor: 'issued_by',
-        sortable: true,
-        render: (record: any) => (
-          <RenderUser instance={record?.issued_by_detail} />
-        )
-      },
-      ResponsibleColumn({})
+      ResponsibleColumn({}),
+      LinkColumn({})
     ];
   }, [parentBuildId, globalSettings]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    const filters: TableFilter[] = [
-      OutstandingFilter(),
-      OrderStatusFilter({ model: ModelType.build }),
-      OverdueFilter(),
-      AssignedToMeFilter(),
-      MinDateFilter(),
-      MaxDateFilter(),
-      CreatedBeforeFilter(),
-      CreatedAfterFilter(),
-      TargetDateBeforeFilter(),
-      TargetDateAfterFilter(),
-      StartDateBeforeFilter(),
-      StartDateAfterFilter(),
-      {
-        name: 'has_target_date',
-        type: 'boolean',
-        label: t`Has Target Date`,
-        description: t`Show orders with a target date`
-      },
-      {
-        name: 'has_start_date',
-        type: 'boolean',
-        label: t`Has Start Date`,
-        description: t`Show orders with a start date`
-      },
-      CompletedBeforeFilter(),
-      CompletedAfterFilter(),
-      ProjectCodeFilter(),
-      HasProjectCodeFilter(),
-      IssuedByFilter(),
-      ResponsibleFilter(),
-      {
-        name: 'external',
-        label: t`External`,
-        description: t`Show external build orders`,
-        active: globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
-      },
-      PartCategoryFilter()
-    ];
-
-    // If we are filtering on a specific part, we can include the "include variants" filter
-    if (!!partId) {
-      filters.push(IncludeVariantsFilter());
-    }
-
-    return filters;
+    return BuildOrderFilters({
+      partId: partId,
+      includeDateFilters: true,
+      externalBuilds: globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
+    });
   }, [partId, globalSettings]);
 
   const user = useUserState();
@@ -214,7 +154,8 @@ export function BuildOrderTable({
       parent: parentBuildId
     },
     follow: true,
-    modelType: ModelType.build
+    modelType: ModelType.build,
+    keepOpenOption: true
   });
 
   const tableActions = useMemo(() => {
@@ -247,6 +188,7 @@ export function BuildOrderTable({
           modelType: ModelType.build,
           enableSelection: true,
           enableReports: true,
+          enableLabels: true,
           enableDownload: true
         }}
       />

@@ -3,8 +3,6 @@
 from datetime import timedelta
 from unittest.mock import patch
 
-from allauth.account.models import EmailAddress
-
 import part.models
 import part.tasks
 import stock.models
@@ -23,9 +21,6 @@ class StaleStockNotificationTests(InvenTreeTestCase):
     def setUpTestData(cls):
         """Create test data as part of initialization."""
         super().setUpTestData()
-
-        # Add email address for user
-        EmailAddress.objects.create(user=cls.user, email='test@testing.com')
 
         # Create test parts
         cls.part1 = part.models.Part.objects.create(
@@ -50,8 +45,8 @@ class StaleStockNotificationTests(InvenTreeTestCase):
         set_global_setting('STOCK_STALE_DAYS', 7, self.user)
 
         # Clear notifications
-        NotificationEntry.objects.all().delete()  # type: ignore[attr-defined]
-        NotificationMessage.objects.all().delete()  # type: ignore[attr-defined]
+        NotificationEntry.objects.all().delete()
+        NotificationMessage.objects.all().delete()
 
     def create_stock_items_with_expiry(self):
         """Create stock items with various expiry dates for testing."""
@@ -101,7 +96,7 @@ class StaleStockNotificationTests(InvenTreeTestCase):
         part.tasks.notify_stale_stock(self.user, [])
 
         # No notifications should be created
-        self.assertEqual(NotificationMessage.objects.count(), 0)  # type: ignore[attr-defined]
+        self.assertEqual(NotificationMessage.objects.count(), 0)
 
     def test_notify_stale_stock_single_item(self):
         """Test notify_stale_stock with a single stale item."""
@@ -174,8 +169,8 @@ class StaleStockNotificationTests(InvenTreeTestCase):
     def test_check_stale_stock_no_stale_items(self):
         """Test check_stale_stock when no stale items exist."""
         # Clear all existing stock items
+        stock.models.StockItem.objects.update(parent=None)
         stock.models.StockItem.objects.all().delete()
-
         # Create only future expiry items
         today = helpers.current_date()
         stock.models.StockItem.objects.create(
@@ -194,6 +189,7 @@ class StaleStockNotificationTests(InvenTreeTestCase):
     def test_check_stale_stock_with_stale_items(self, mock_offload):
         """Test check_stale_stock when stale items exist."""
         # Clear existing stock items
+        stock.models.StockItem.objects.update(parent=None)
         stock.models.StockItem.objects.all().delete()
 
         self.create_stock_items_with_expiry()
@@ -229,6 +225,7 @@ class StaleStockNotificationTests(InvenTreeTestCase):
     def test_check_stale_stock_filtering(self):
         """Test that check_stale_stock properly filters stock items."""
         # Clear all existing stock items first
+        stock.models.StockItem.objects.update(parent=None)
         stock.models.StockItem.objects.all().delete()
 
         today = helpers.current_date()

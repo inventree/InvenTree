@@ -1,10 +1,11 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Grid, Skeleton, Stack, Text } from '@mantine/core';
+import { Alert, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconChecklist,
   IconCircleCheck,
   IconClipboardCheck,
   IconClipboardList,
+  IconExclamationCircle,
   IconInfoCircle,
   IconList,
   IconListCheck,
@@ -21,16 +22,11 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
+import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import {
-  type DetailsField,
-  DetailsTable
-} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
-import { DetailsImage } from '../../components/details/DetailsImage';
-import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   BarcodeActionDropdown,
   CancelItemAction,
@@ -43,25 +39,28 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
+import { RenderStockLocation } from '../../components/render/Stock';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
-import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
+import PartTestResultTable from '../../tables/part/PartTestResultTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import { BuildOrderDetailsPanel } from './BuildOrderDetailsPanel';
 
 function NoItems() {
   return (
@@ -86,6 +85,20 @@ function BuildLinesPanel({
   isLoading: boolean;
   hasItems: boolean;
 }>) {
+  const bomInformation = useInstance({
+    endpoint: ApiEndpoints.bom_validate,
+    pk: build?.part,
+    hasPrimaryKey: true,
+    refetchOnMount: true
+  });
+
+  const buildLocation = useInstance({
+    endpoint: ApiEndpoints.stock_location_list,
+    pk: build?.take_from,
+    hasPrimaryKey: true,
+    defaultValue: {}
+  });
+
   if (isLoading || !build.pk) {
     return <Skeleton w={'100%'} h={400} animate />;
   }
@@ -94,7 +107,26 @@ function BuildLinesPanel({
     return <NoItems />;
   }
 
-  return <BuildLineTable build={build} />;
+  return (
+    <Stack gap='xs'>
+      {bomInformation?.isLoaded &&
+        bomInformation?.instance?.bom_validated == false && (
+          <Alert
+            color='orange'
+            icon={<IconExclamationCircle />}
+            title={t`BOM Not Validated`}
+          >
+            <Text>{t`The Bill of Materials for this assembly has not been validated.`}</Text>
+          </Alert>
+        )}
+      {buildLocation.instance.pk && (
+        <Alert color='blue' icon={<IconSitemap />} title={t`Source Location`}>
+          <RenderStockLocation instance={buildLocation.instance} />
+        </Alert>
+      )}
+      <BuildLineTable build={build} />
+    </Stack>
+  );
 }
 
 function BuildAllocationsPanel({
@@ -143,6 +175,45 @@ export default function BuildDetail() {
       defaultValue: {}
     });
 
+  // Fetch the number of assembled BOM items associated with the build order
+  // i.e. how many items are subassemblies?
+  const { instance: subassemblyLineData } = useInstance({
+    endpoint: ApiEndpoints.build_line_list,
+    params: {
+      build: id,
+      allocations: false,
+      part_detail: false,
+      build_detail: false,
+      bom_item_detail: false,
+      assembly: true,
+      limit: 1
+    },
+    disabled: !id,
+    hasPrimaryKey: false,
+    defaultValue: {}
+  });
+
+  // Fetch the number of child build orders associated with this build order
+  const { instance: childBuildData } = useInstance({
+    endpoint: ApiEndpoints.build_order_list,
+    params: {
+      parent: id,
+      limit: 1
+    },
+    disabled: !id,
+    hasPrimaryKey: false,
+    defaultValue: {}
+  });
+
+  /**
+   * Display the "Child Build Orders" panel if either:
+   * - There are any child build orders (childBuildData.count > 0)
+   * - There are any sub-assembly items (subassemblyLineData.count > 0)
+   */
+  const showChildBuilds = useMemo(() => {
+    return childBuildData?.count > 0 || subassemblyLineData?.count > 0;
+  }, [childBuildData, subassemblyLineData]);
+
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
   const {
@@ -153,249 +224,18 @@ export default function BuildDetail() {
     endpoint: ApiEndpoints.build_order_list,
     pk: id,
     params: {
-      part_detail: true
+      part_detail: true,
+      tags: true
     },
+    hasPrimaryKey: true,
+    defaultValue: {},
     refetchOnMount: true
   });
 
-  const { instance: partRequirements, instanceQuery: partRequirementsQuery } =
-    useInstance({
-      endpoint: ApiEndpoints.part_requirements,
-      pk: build?.part,
-      hasPrimaryKey: true,
-      defaultValue: {}
-    });
-
-  const detailsPanel = useMemo(() => {
-    if (instanceQuery.isFetching) {
-      return <Skeleton />;
-    }
-
-    const data = {
-      ...build,
-      can_build: partRequirements?.can_build ?? 0
-    };
-
-    const tl: DetailsField[] = [
-      {
-        type: 'link',
-        name: 'part',
-        label: t`Part`,
-        model: ModelType.part
-      },
-      {
-        type: 'text',
-        name: 'part_detail.IPN',
-        icon: 'part',
-        label: t`IPN`,
-        hidden: !build.part_detail?.IPN,
-        copy: true
-      },
-      {
-        type: 'string',
-        name: 'part_detail.revision',
-        icon: 'revision',
-        label: t`Revision`,
-        hidden: !build.part_detail?.revision,
-        copy: true
-      },
-      {
-        type: 'status',
-        name: 'status',
-        label: t`Status`,
-        model: ModelType.build
-      },
-      {
-        type: 'status',
-        name: 'status_custom_key',
-        label: t`Custom Status`,
-        model: ModelType.build,
-        icon: 'status',
-        hidden:
-          !build.status_custom_key || build.status_custom_key == build.status
-      },
-      {
-        type: 'boolean',
-        name: 'external',
-        label: t`External`,
-        icon: 'manufacturers',
-        hidden: !build.external
-      },
-      {
-        type: 'text',
-        name: 'purchase_order',
-        label: t`Purchase Order`,
-        icon: 'purchase_orders',
-        copy: true,
-        hidden: !build.external,
-        value_formatter: () => {
-          return 'TODO: external PO';
-        }
-      },
-      {
-        type: 'text',
-        name: 'reference',
-        label: t`Reference`,
-        copy: true
-      },
-      {
-        type: 'text',
-        name: 'title',
-        label: t`Description`,
-        icon: 'description',
-        copy: true
-      },
-      {
-        type: 'link',
-        name: 'parent',
-        icon: 'builds',
-        label: t`Parent Build`,
-        model_field: 'reference',
-        model: ModelType.build,
-        hidden: !build.parent
-      }
-    ];
-
-    const tr: DetailsField[] = [
-      {
-        type: 'number',
-        name: 'quantity',
-        label: t`Build Quantity`
-      },
-      {
-        type: 'number',
-        name: 'can_build',
-        unit: build.part_detail?.units,
-        label: t`Can Build`,
-        hidden: partRequirementsQuery.isFetching
-      },
-      {
-        type: 'progressbar',
-        name: 'completed',
-        icon: 'progress',
-        total: build.quantity,
-        progress: build.completed,
-        label: t`Completed Outputs`
-      },
-      {
-        type: 'link',
-        name: 'sales_order',
-        label: t`Sales Order`,
-        icon: 'sales_orders',
-        model: ModelType.salesorder,
-        model_field: 'reference',
-        hidden: !build.sales_order
-      }
-    ];
-
-    const bl: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'issued_by',
-        label: t`Issued By`,
-        icon: 'user',
-        badge: 'user',
-        hidden: !build.issued_by
-      },
-      {
-        type: 'text',
-        name: 'responsible',
-        label: t`Responsible`,
-        badge: 'owner',
-        hidden: !build.responsible
-      },
-      {
-        type: 'text',
-        name: 'project_code_label',
-        label: t`Project Code`,
-        icon: 'reference',
-        copy: true,
-        hidden: !build.project_code
-      },
-      {
-        type: 'link',
-        name: 'take_from',
-        icon: 'location',
-        model: ModelType.stocklocation,
-        label: t`Source Location`,
-        backup_value: t`Any location`
-      },
-      {
-        type: 'link',
-        name: 'destination',
-        icon: 'location',
-        model: ModelType.stocklocation,
-        label: t`Destination Location`,
-        hidden: !build.destination
-      },
-      {
-        type: 'text',
-        name: 'batch',
-        label: t`Batch Code`,
-        hidden: !build.batch,
-        copy: true
-      }
-    ];
-
-    const br: DetailsField[] = [
-      {
-        type: 'date',
-        name: 'creation_date',
-        label: t`Created`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !build.creation_date
-      },
-      {
-        type: 'date',
-        name: 'start_date',
-        label: t`Start Date`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !build.start_date
-      },
-      {
-        type: 'date',
-        name: 'target_date',
-        label: t`Target Date`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !build.target_date
-      },
-      {
-        type: 'date',
-        name: 'completion_date',
-        label: t`Completed`,
-        icon: 'calendar',
-        copy: true,
-        hidden: !build.completion_date
-      }
-    ];
-
-    return (
-      <ItemDetailsGrid>
-        <Grid grow>
-          <DetailsImage
-            appRole={UserRoles.part}
-            apiPath={ApiEndpoints.part_list}
-            src={build.part_detail?.image ?? build.part_detail?.thumbnail}
-            pk={build.part}
-          />
-          <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable fields={tl} item={data} />
-          </Grid.Col>
-        </Grid>
-        <DetailsTable fields={tr} item={data} />
-        <DetailsTable fields={bl} item={data} />
-        <DetailsTable fields={br} item={data} />
-      </ItemDetailsGrid>
-    );
-  }, [
-    build,
-    instanceQuery,
-    partRequirements,
-    partRequirementsQuery.isFetching
-  ]);
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.build,
+    modelId: build?.pk
+  });
 
   const buildPanels: PanelType[] = useMemo(() => {
     return [
@@ -403,7 +243,13 @@ export default function BuildDetail() {
         name: 'details',
         label: t`Build Details`,
         icon: <IconInfoCircle />,
-        content: detailsPanel
+        content: (
+          <BuildOrderDetailsPanel
+            instance={build}
+            allowImageEdit
+            refreshInstance={refreshInstance}
+          />
+        )
       },
       {
         name: 'line-items',
@@ -444,6 +290,7 @@ export default function BuildDetail() {
             tableName='build-consumed'
             showLocation={false}
             allowReturn
+            defaultInStock={null}
             params={{
               consumed_by: id
             }}
@@ -488,7 +335,7 @@ export default function BuildDetail() {
           <Skeleton />
         ),
         hidden:
-          !user.hasViewRole(UserRoles.purchase_order) ||
+          !user.hasViewVisible(UserRoles.purchase_order) ||
           !build.external ||
           !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
       },
@@ -496,6 +343,7 @@ export default function BuildDetail() {
         name: 'child-orders',
         label: t`Child Build Orders`,
         icon: <IconSitemap />,
+        hidden: !showChildBuilds,
         content: build.pk ? (
           <BuildOrderTable parentBuildId={build.pk} />
         ) : (
@@ -508,26 +356,36 @@ export default function BuildDetail() {
         icon: <IconChecklist />,
         hidden: !build.part_detail?.testable,
         content: build.pk ? (
-          <BuildOrderTestTable buildId={build.pk} partId={build.part} />
+          <PartTestResultTable buildId={build.pk} partId={build.part} />
         ) : (
           <Skeleton />
         )
       },
+      ParametersPanel({
+        model_type: ModelType.build,
+        model_id: build.pk,
+        parameter_count: instanceInfo.parameter_count
+      }),
       AttachmentPanel({
         model_type: ModelType.build,
-        model_id: build.pk
+        model_id: build.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.build,
-        model_id: build.pk
+        model_id: build.pk,
+        note_count: instanceInfo.note_count
       })
     ];
   }, [
     build,
     id,
     user,
+    instanceInfo,
+
     buildStatus,
     globalSettings,
+    showChildBuilds,
     buildLineQuery.isFetching,
     buildLineQuery.isLoading,
     buildLineData
@@ -544,6 +402,7 @@ export default function BuildDetail() {
     title: t`Edit Build Order`,
     modalId: 'edit-build-order',
     fields: editBuildOrderFields,
+    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
   });
 
@@ -558,6 +417,7 @@ export default function BuildDetail() {
 
   const duplicateBuildOrderFields = useBuildOrderFields({
     create: false,
+    duplicateBuildId: build.pk,
     modalId: 'duplicate-build-order'
   });
 
@@ -673,6 +533,7 @@ export default function BuildDetail() {
       <PrintingActions
         modelType={ModelType.build}
         items={[build.pk]}
+        enableLabels
         enableReports
       />,
       <OptionsActionDropdown
@@ -708,7 +569,7 @@ export default function BuildDetail() {
       ? []
       : [
           <StatusRenderer
-            status={build.status_custom_key}
+            status={build.status_custom_key || build.status}
             type={ModelType.build}
             options={{ size: 'lg' }}
           />,

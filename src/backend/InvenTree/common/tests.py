@@ -2,7 +2,9 @@
 
 import io
 import json
+import os
 import time
+import uuid
 from datetime import timedelta
 from http import HTTPStatus
 from unittest import mock
@@ -18,8 +20,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
+from django.utils import timezone
 
-import PIL
+from PIL import Image
 
 import common.validators
 from common.notifications import trigger_notification
@@ -32,7 +35,7 @@ from InvenTree.unit_test import (
     PluginMixin,
     addUserPermission,
 )
-from part.models import Part, PartParameterTemplate
+from part.models import Part
 from plugin import registry
 
 from .api import WebhookView
@@ -42,9 +45,11 @@ from .models import (
     InvenTreeCustomUserStateModel,
     InvenTreeSetting,
     InvenTreeUserSetting,
+    Note,
     NotesImage,
     NotificationEntry,
     NotificationMessage,
+    ParameterTemplate,
     ProjectCode,
     ReferenceSource,
     SelectionList,
@@ -52,6 +57,7 @@ from .models import (
     WebhookEndpoint,
     WebhookMessage,
 )
+from .tasks import delete_old_notes_images
 
 CONTENT_TYPE_JSON = 'application/json'
 
@@ -86,6 +92,11 @@ class AttachmentTest(InvenTreeAPITestCase):
         }
 
         for fn, expected in filenames.items():
+            expected_path = f'attachments/part/{part.pk}/{expected}'
+            # Remove the file if it already exists (i.e. from a previous test run)
+            if default_storage.exists(expected_path):
+                default_storage.delete(expected_path)
+
             attachment = Attachment.objects.create(
                 attachment=self.generate_file(fn),
                 comment=f'Testing filename: {fn}',
@@ -93,7 +104,6 @@ class AttachmentTest(InvenTreeAPITestCase):
                 model_id=part.pk,
             )
 
-            expected_path = f'attachments/part/{part.pk}/{expected}'
             self.assertEqual(attachment.attachment.name, expected_path)
             self.assertEqual(attachment.file_size, 15)
 
@@ -201,7 +211,62 @@ class AttachmentTest(InvenTreeAPITestCase):
 
         # Assign 'delete' permission to 'part' model
         self.assignRole('part.delete')
-        response = self.delete(url, expected_code=204)
+        self.delete(url, expected_code=204)
+
+    def test_fully_qualified_url(self):
+        """Test that the fully qualified URL is returned correctly."""
+        part = Part.objects.first()
+
+        attachment = Attachment.objects.create(
+            attachment=self.generate_file('test.txt'),
+            comment='Testing filename: test.txt',
+            model_type='part',
+            model_id=part.pk,
+        )
+
+        url = attachment.fully_qualified_url()
+        self.assertIs(type(url), str)
+        self.assertIn(f'/media/attachments/part/{part.pk}/test', url)
+
+    def test_str_representation(self):
+        """Test the __str__ method of the Attachment model.
+
+        - If a file is attached, the string representation should be the file basename.
+        - If only a link is provided (no file), the string representation should be the link.
+        - If neither is set, fall back to the default django representation.
+        """
+        part = Part.objects.first()
+
+        # Case 1: Attachment has an uploaded file - string is the file basename
+        attachment = Attachment.objects.create(
+            attachment=self.generate_file('test.txt'),
+            comment='File attachment',
+            model_type='part',
+            model_id=part.pk,
+        )
+
+        self.assertTrue(str(attachment).startswith('test'))
+        self.assertTrue(str(attachment).endswith('.txt'))
+        self.assertEqual(str(attachment), os.path.basename(attachment.attachment.name))
+
+        # Case 2: Attachment has only a link (no uploaded file) - string is the link
+        link = 'https://www.example.org'
+        attachment = Attachment.objects.create(
+            link=link, comment='Link attachment', model_type='part', model_id=part.pk
+        )
+
+        self.assertEqual(str(attachment), link)
+
+        # Case 3: Attachment has neither a file nor a link set
+        # (bypass 'save' to skip the validation which requires one of these fields)
+        attachment = Attachment(
+            comment='Empty attachment', model_type='part', model_id=part.pk
+        )
+
+        self.assertFalse(attachment.attachment)
+        self.assertFalse(attachment.link)
+        self.assertEqual(str(attachment), super(Attachment, attachment).__str__())
+        self.assertEqual(str(attachment), f'Attachment object ({attachment.pk})')
 
 
 class SettingsTest(InvenTreeTestCase):
@@ -393,6 +458,9 @@ class SettingsTest(InvenTreeTestCase):
             'requires_restart',
             'after_save',
             'before_save',
+            'confirm',
+            'confirm_text',
+            'flags',
         ]
 
         for k in setting:
@@ -626,6 +694,18 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
             setting.refresh_from_db()
             self.assertEqual(setting.value, val)
 
+    def test_mfa_change(self):
+        """Test that changes in LOGIN_ENFORCE_MFA are handled correctly."""
+        # Setup admin users
+        self.user.usersession_set.create(ip='192.168.1.1')
+        self.assertEqual(self.user.usersession_set.count(), 1)
+
+        # Enable enforced MFA
+        set_global_setting('LOGIN_ENFORCE_MFA', True)
+
+        # There should be no user sessions now
+        self.assertEqual(self.user.usersession_set.count(), 0)
+
     def test_api_detail(self):
         """Test that we can access the detail view for a setting based on the <key>."""
         # These keys are invalid, and should return 404
@@ -672,9 +752,9 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
 
         # Find the associated setting
         setting = next((s for s in response.data if s['key'] == key), None)
+        assert setting is not None
 
         # Check default value (should be False, not 'False')
-        self.assertIsNotNone(setting)
         self.assertFalse(setting['value'])
 
         # Check that we can manually set the value
@@ -852,9 +932,9 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
         # Find the associated setting
         setting = next((s for s in response.data if s['key'] == key), None)
+        assert setting is not None
 
         # Check default value (should be 10, not '10')
-        self.assertIsNotNone(setting)
         self.assertEqual(setting['value'], 10)
 
         # Check that writing an invalid value returns an error
@@ -1078,6 +1158,41 @@ class TaskListApiTests(InvenTreeAPITestCase):
         for task in response.data:
             self.assertEqual(task['name'], 'time.sleep')
 
+    def test_task_detail(self):
+        """Test the BackgroundTaskDetail API endpoint."""
+        from InvenTree.tasks import offload_task
+
+        # Force run a task
+        result = offload_task('fake_module.test_task', force_sync=True)
+        self.assertFalse(result)
+        self.assertEqual(type(result), bool)
+
+        # Schedule a dummy task - and ensure it offloads to the worker
+        task_id = offload_task('fake_module.test_task', force_async=True)
+        self.assertIsNotNone(task_id)
+        self.assertEqual(type(task_id), str)
+
+        url = reverse('api-task-detail', kwargs={'task_id': task_id})
+
+        data = self.get(url, expected_code=200).data
+
+        self.assertEqual(data['task_id'], task_id)
+        self.assertTrue(data['exists'])
+        self.assertTrue(data['pending'])
+        self.assertFalse(data['complete'])
+        self.assertFalse(data['success'])
+
+        # Perform a lookup for a non-existent task
+        url = reverse('api-task-detail', kwargs={'task_id': 'doesnotexist'})
+
+        data = self.get(url, expected_code=404).data
+
+        self.assertEqual(data['task_id'], 'doesnotexist')
+        self.assertFalse(data['exists'])
+        self.assertFalse(data['pending'])
+        self.assertFalse(data['complete'])
+        self.assertFalse(data['success'])
+
 
 class WebhookMessageTests(TestCase):
     """Tests for webhooks."""
@@ -1106,7 +1221,7 @@ class WebhookMessageTests(TestCase):
     def test_bad_token(self):
         """Test that a wrong token is not working."""
         response = self.client.post(
-            self.url, content_type=CONTENT_TYPE_JSON, HTTP_TOKEN='1234567fghj'
+            self.url, content_type=CONTENT_TYPE_JSON, headers={'token': '1234567fghj'}
         )
 
         assert response.status_code == HTTPStatus.FORBIDDEN
@@ -1129,7 +1244,7 @@ class WebhookMessageTests(TestCase):
             self.url,
             data="{'this': 123}",
             content_type=CONTENT_TYPE_JSON,
-            HTTP_TOKEN=str(self.endpoint_def.token),
+            headers={'token': str(self.endpoint_def.token)},
         )
 
         assert response.status_code == HTTPStatus.NOT_ACCEPTABLE
@@ -1177,7 +1292,7 @@ class WebhookMessageTests(TestCase):
         response = self.client.post(
             self.url,
             content_type=CONTENT_TYPE_JSON,
-            HTTP_TOKEN='68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I=',
+            headers={'token': '68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I='},
         )
 
         assert response.status_code == HTTPStatus.OK
@@ -1192,7 +1307,7 @@ class WebhookMessageTests(TestCase):
             self.url,
             data={'this': 'is a message'},
             content_type=CONTENT_TYPE_JSON,
-            HTTP_TOKEN=str(self.endpoint_def.token),
+            headers={'token': str(self.endpoint_def.token)},
         )
 
         assert response.status_code == HTTPStatus.OK
@@ -1224,6 +1339,18 @@ class NotificationTest(InvenTreeAPITestCase):
 
         self.assertTrue(NotificationEntry.check_recent('test.notification', 1, delta))
 
+    def test_uuid_notification_entry(self):
+        """Notification entries support objects with UUID primary keys."""
+        notification_uid = uuid.uuid4()
+
+        NotificationEntry.notify('test.uuid_notification', notification_uid)
+
+        self.assertTrue(
+            NotificationEntry.check_recent(
+                'test.uuid_notification', notification_uid, timedelta(days=1)
+            )
+        )
+
     def test_api_list(self):
         """Test list URL."""
         url = reverse('api-notifications-list')
@@ -1240,11 +1367,40 @@ class NotificationTest(InvenTreeAPITestCase):
 
         self.assertEqual(
             response.data['description'],
-            'List view for all notifications of the current user.',
+            'Notifications for the current user.\n\n- User can only view / delete their own notification objects',
         )
 
         # POST action should fail (not allowed)
         response = self.post(url, {}, expected_code=405)
+
+    def test_api_read(self):
+        """Test that NotificationMessage can be marked as read."""
+        # Create a notification message
+        NotificationMessage.objects.create(
+            user=self.user,
+            category='test',
+            message='This is a test notification',
+            target_object=self.user,
+        )
+        user2 = get_user_model().objects.get(pk=2)
+        NotificationMessage.objects.create(
+            user=user2,
+            category='test',
+            message='This is a second test notification',
+            target_object=user2,
+        )
+
+        url = reverse('api-notifications-list')
+        self.assertEqual(NotificationMessage.objects.filter(read=True).count(), 0)
+        self.assertEqual(len(self.get(url, expected_code=200).data), 1)
+
+        # Read with readall endpoint
+        self.post(reverse('api-notifications-readall'), {}, expected_code=200)
+
+        self.assertEqual(NotificationMessage.objects.filter(read=True).count(), 1)
+        self.assertEqual(len(self.get(url, expected_code=200).data), 1)
+        # filtered by read status should be 0
+        self.assertEqual(len(self.get(url, {'read': False}, expected_code=200).data), 0)
 
     def test_bulk_delete(self):
         """Tests for bulk deletion of user notifications."""
@@ -1288,12 +1444,18 @@ class NotificationTest(InvenTreeAPITestCase):
 
         # Now, let's bulk delete all 'unread' notifications via the API,
         # but only associated with the logged in user
-        response = self.delete(url, {'filters': {'read': False}}, expected_code=200)
+        read_notifications = NotificationMessage.objects.filter(read=True)
+        response = self.delete(
+            url, {'items': [ntf.pk for ntf in read_notifications]}, expected_code=200
+        )
 
-        # Only 7 notifications should have been deleted,
+        # Only 3 notifications should have been deleted,
         # as the notifications associated with other users must remain untouched
-        self.assertEqual(NotificationMessage.objects.count(), 13)
-        self.assertEqual(NotificationMessage.objects.filter(user=self.user).count(), 3)
+        self.assertEqual(NotificationMessage.objects.count(), 17)
+        self.assertEqual(NotificationMessage.objects.filter(user=self.user).count(), 7)
+        self.assertEqual(
+            NotificationMessage.objects.filter(user=self.user, read=True).count(), 0
+        )
 
     def test_simple(self):
         """Test that a simple notification can be created."""
@@ -1456,6 +1618,35 @@ class CommonTest(InvenTreeAPITestCase):
         self.user.is_superuser = False
         self.user.save()
 
+    def test_health_api(self):
+        """Test health check URL."""
+        from plugin import registry
+
+        # Fully started system - ok
+        response_data = self.get(reverse('api-system-health'), expected_code=200).json()
+        self.assertIn('status', response_data)
+        self.assertEqual(response_data['status'], 'ok')
+
+        # Simulate plugin reloading - Not ready
+        try:
+            registry.plugins_loaded = False
+            response_data = self.get(
+                reverse('api-system-health'), expected_code=503
+            ).json()
+            self.assertIn('status', response_data)
+            self.assertEqual(response_data['status'], 'loading')
+        finally:
+            registry.plugins_loaded = True
+
+        # No plugins enabled - still ok
+        with self.settings(PLUGINS_ENABLED=False):
+            self.assertEqual(
+                self.get(reverse('api-system-health'), expected_code=200).json()[
+                    'status'
+                ],
+                'ok',
+            )
+
 
 class CurrencyAPITests(InvenTreeAPITestCase):
     """Unit tests for the currency exchange API endpoints."""
@@ -1476,9 +1667,14 @@ class CurrencyAPITests(InvenTreeAPITestCase):
 
         # Updating via the external exchange may not work every time
         for _idx in range(5):
-            self.post(
-                reverse('api-currency-refresh'), expected_code=200, max_query_time=30
-            )
+            try:
+                self.post(
+                    reverse('api-currency-refresh'),
+                    expected_code=200,
+                    max_query_time=30,
+                )
+            except Exception:
+                continue
 
             # There should be some new exchange rate objects now
             if Rate.objects.all().exists():
@@ -1531,30 +1727,228 @@ class NotesImageTest(InvenTreeAPITestCase):
         # Check that no extra database entries have been created
         self.assertEqual(NotesImage.objects.count(), n)
 
-    def test_valid_image(self):
-        """Test upload of a valid image file."""
-        n = NotesImage.objects.count()
+    def test_image_cleanup(self):
+        """Images no longer referenced in note content are deleted when the note is saved.
 
-        # Construct a simple image file
-        image = PIL.Image.new('RGB', (100, 100), color='red')
+        Specifically:
+        - An image removed from the content is deleted (DB record and file on disk)
+        - An image still referenced in the content is preserved (DB record and file on disk)
+        """
+        part = Part.objects.create(
+            name='Note Cleanup Test Part', description='Part for image-cleanup test'
+        )
+        part_ct = ContentType.objects.get_for_model(Part)
 
-        with io.BytesIO() as output:
-            image.save(output, format='PNG')
-            contents = output.getvalue()
+        note = Note(
+            model_type=part_ct,
+            model_id=part.pk,
+            title='Image Cleanup Test Note',
+            content='initial',
+        )
+        note.save()
 
-        self.post(
-            reverse('api-notes-image-list'),
-            data={
-                'image': SimpleUploadedFile(
-                    'test.png', contents, content_type='image/png'
-                )
-            },
-            format='multipart',
-            expected_code=201,
+        # Build a minimal valid PNG in memory
+        img_obj = Image.new('RGB', (10, 10), color='blue')
+        with io.BytesIO() as buf:
+            img_obj.save(buf, format='PNG')
+            png_bytes = buf.getvalue()
+
+        # Attach two images to the note
+        ni1 = NotesImage(note=note)
+        ni1.image.save('cleanup_keep.png', ContentFile(png_bytes))
+
+        ni2 = NotesImage(note=note)
+        ni2.image.save('cleanup_remove.png', ContentFile(png_bytes))
+
+        url1, url2 = ni1.image.url, ni2.image.url
+        name1, name2 = ni1.image.name, ni2.image.name
+
+        # Both records and files exist before any content-driven cleanup
+        self.assertEqual(note.images.count(), 2)
+        self.assertTrue(default_storage.exists(name1))
+        self.assertTrue(default_storage.exists(name2))
+
+        # Save with content that references both images — nothing should be removed
+        note.content = f'<img src="{url1}"><img src="{url2}">'
+        note.save()
+        self.assertEqual(note.images.count(), 2)
+        self.assertTrue(default_storage.exists(name1))
+        self.assertTrue(default_storage.exists(name2))
+
+        # Remove the second image from the content and save
+        note.content = f'<img src="{url1}">'
+        note.save()
+
+        # The removed image must be gone from both the DB and the file system
+        self.assertFalse(NotesImage.objects.filter(pk=ni2.pk).exists())
+        self.assertFalse(default_storage.exists(name2))
+
+        # The retained image must still exist in both the DB and the file system
+        self.assertTrue(NotesImage.objects.filter(pk=ni1.pk).exists())
+        self.assertTrue(default_storage.exists(name1))
+
+    def test_image_cleanup_on_cascade_delete(self):
+        """Images are removed from storage when their note is deleted via a cascade.
+
+        InvenTreeNoteMixin.delete() (and Note.delete()'s own cascade to its images) delete
+        notes/images via Django's deletion Collector, not by calling NotesImage.delete() on
+        each instance directly - the collector never invokes an overridden Model.delete()
+        on cascaded objects, only its pre_delete/post_delete signals. This exercises that
+        path specifically, rather than test_image_cleanup's direct note.save()-driven cleanup.
+        """
+        part = Part.objects.create(
+            name='Cascade Delete Cleanup Test Part',
+            description='Part for cascade-delete image-cleanup test',
+            active=False,  # Part.delete() refuses to delete an active part
+        )
+        part_ct = ContentType.objects.get_for_model(Part)
+
+        note = Note(
+            model_type=part_ct, model_id=part.pk, title='Cascade Test Note', content=''
+        )
+        note.save()
+
+        img_obj = Image.new('RGB', (10, 10), color='red')
+        with io.BytesIO() as buf:
+            img_obj.save(buf, format='PNG')
+            png_bytes = buf.getvalue()
+
+        ni = NotesImage(note=note)
+        ni.image.save('cascade_cleanup.png', ContentFile(png_bytes))
+        image_name = ni.image.name
+
+        self.assertTrue(default_storage.exists(image_name))
+
+        # Delete the *part*, not the note or image directly - this cascades
+        # Part -> InvenTreeNoteMixin.delete() -> Note -> NotesImage
+        part.delete()
+
+        self.assertFalse(NotesImage.objects.filter(pk=ni.pk).exists())
+        self.assertFalse(Note.objects.filter(pk=note.pk).exists())
+        self.assertFalse(default_storage.exists(image_name))
+
+    def test_copy_notes_with_images(self):
+        """Images are duplicated (file + DB record) when copy_notes_from is called.
+
+        Specifically:
+        - New NotesImage records are created pointing to the new notes
+        - The image files are physically copied (independent from the source)
+        - The new note content references the new image URLs, not the old ones
+        - Deleting the source note does not affect the copied note's images
+        """
+        # Build a minimal valid PNG in memory
+        img_obj = Image.new('RGB', (10, 10), color='green')
+        with io.BytesIO() as buf:
+            img_obj.save(buf, format='PNG')
+            png_bytes = buf.getvalue()
+
+        part_ct = ContentType.objects.get_for_model(Part)
+
+        src_part = Part.objects.create(
+            name='Copy Notes Source Part',
+            description='Source part for copy_notes_from test',
+        )
+        dst_part = Part.objects.create(
+            name='Copy Notes Dest Part',
+            description='Destination part for copy_notes_from test',
         )
 
-        # Check that a new file has been created
-        self.assertEqual(NotesImage.objects.count(), n + 1)
+        src_note = Note(
+            model_type=part_ct, model_id=src_part.pk, title='Src Note', content=''
+        )
+        src_note.save()
+
+        ni = NotesImage(note=src_note)
+        ni.image.save('copy_test.png', ContentFile(png_bytes))
+        old_url = ni.image.url
+        old_name = ni.image.name
+
+        src_note.content = f'![img]({old_url})'
+        src_note.save()
+
+        dst_part.copy_notes_from(src_part)
+
+        dst_note = dst_part.notes_list.get(title='Src Note')
+
+        # A new NotesImage must exist for the destination note
+        self.assertEqual(dst_note.images.count(), 1)
+        new_img = dst_note.images.first()
+
+        # The file must be a distinct copy
+        self.assertNotEqual(new_img.image.name, old_name)
+        self.assertTrue(default_storage.exists(new_img.image.name))
+
+        # The new note content must reference the new URL, not the old one
+        self.assertIn(new_img.image.url, dst_note.content)
+        self.assertNotIn(old_url, dst_note.content)
+
+        # Deleting the source NotesImage must not remove the copied image
+        # (files are independent; Django cascade does not call Python delete())
+        ni.delete()
+        self.assertFalse(default_storage.exists(old_name))
+        self.assertTrue(default_storage.exists(new_img.image.name))
+        self.assertTrue(NotesImage.objects.filter(pk=new_img.pk).exists())
+
+
+class DeleteOldNotesImagesTaskTest(InvenTreeAPITestCase):
+    """Tests for the delete_old_notes_images scheduled task."""
+
+    def setUp(self):
+        """Create a Note to attach images to."""
+        super().setUp()
+
+        part = Part.objects.create(name='Notes Image Task Test Part', description='x')
+        part_ct = ContentType.objects.get_for_model(Part)
+        self.note = Note.objects.create(
+            model_type=part_ct, model_id=part.pk, title='N', content=''
+        )
+
+    def _generate_image_bytes(self) -> bytes:
+        buf = io.BytesIO()
+        Image.new('RGB', (16, 16), color='blue').save(buf, format='PNG')
+        return buf.getvalue()
+
+    def _create_image(
+        self, name: str, age_days: int = 0, referenced: bool = False
+    ) -> NotesImage:
+        image = NotesImage.objects.create(note=self.note)
+        image.image.save(name, ContentFile(self._generate_image_bytes()))
+
+        if referenced:
+            self.note.content = f'<img src="{image.image.url}">'
+            self.note.save()
+
+        if age_days:
+            NotesImage.objects.filter(pk=image.pk).update(
+                date=timezone.now() - timedelta(days=age_days)
+            )
+
+        return image
+
+    def test_old_unreferenced_image_is_removed(self):
+        """An old image no longer referenced by its note's content is removed."""
+        image = self._create_image('old_unreferenced.png', age_days=100)
+        delete_old_notes_images()
+        self.assertFalse(NotesImage.objects.filter(pk=image.pk).exists())
+
+    def test_old_referenced_image_is_kept(self):
+        """An old image still referenced by its note's content is kept."""
+        image = self._create_image('old_referenced.png', age_days=100, referenced=True)
+        delete_old_notes_images()
+        self.assertTrue(NotesImage.objects.filter(pk=image.pk).exists())
+
+    def test_recent_unreferenced_image_is_kept(self):
+        """A recently-uploaded, unreferenced image is kept - not yet old enough."""
+        image = self._create_image('recent_unreferenced.png')
+        delete_old_notes_images()
+        self.assertTrue(NotesImage.objects.filter(pk=image.pk).exists())
+
+    def test_missing_file_is_removed_regardless_of_age(self):
+        """An image whose file no longer exists in storage is removed, even if recent."""
+        image = self._create_image('missing_file.png')
+        default_storage.delete(image.image.name)
+        delete_old_notes_images()
+        self.assertFalse(NotesImage.objects.filter(pk=image.pk).exists())
 
 
 class ProjectCodesTest(InvenTreeAPITestCase):
@@ -1590,6 +1984,7 @@ class ProjectCodesTest(InvenTreeAPITestCase):
 
         # Get the first project code
         code = ProjectCode.objects.first()
+        assert code is not None and code.pk
 
         # Delete it
         self.delete(
@@ -1613,6 +2008,22 @@ class ProjectCodesTest(InvenTreeAPITestCase):
             'Project Code with this Project Code already exists',
             str(response.data['code']),
         )
+
+    def test_filter_active(self):
+        """Test that the 'active' field can be filtered via the API."""
+        # Mark one code as inactive
+        code = ProjectCode.objects.first()
+        code.active = False
+        code.save()
+
+        active_count = ProjectCode.objects.filter(active=True).count()
+        inactive_count = ProjectCode.objects.filter(active=False).count()
+
+        response = self.get(self.url, data={'active': True}, expected_code=200)
+        self.assertEqual(len(response.data), active_count)
+
+        response = self.get(self.url, data={'active': False}, expected_code=200)
+        self.assertEqual(len(response.data), inactive_count)
 
     def test_write_access(self):
         """Test that non-staff users have read-only access."""
@@ -1687,6 +2098,7 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
     def test_edit(self):
         """Test edit permissions for CustomUnit model."""
         unit = CustomUnit.objects.first()
+        assert unit is not None and unit.pk
 
         # Try to edit without permission
         self.user.is_staff = False
@@ -1714,6 +2126,7 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
     def test_validation(self):
         """Test that validation works as expected."""
         unit = CustomUnit.objects.first()
+        assert unit is not None and unit.pk
 
         self.user.is_staff = True
         self.user.save()
@@ -1726,13 +2139,69 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
         for name in invalid_name_values:
             self.patch(url, {'name': name}, expected_code=400)
 
+    def test_validation_circular(self):
+        """Test that circular / recursive unit definitions are rejected.
+
+        Ref: https://github.com/inventree/InvenTree/issues/12813
+        """
+        self.user.is_staff = True
+        self.user.save()
+
+        a = CustomUnit.objects.create(name='circular_a', definition='meter')
+        b = CustomUnit.objects.create(name='circular_b', definition='3 * circular_a')
+
+        # Editing 'a' to reference 'b' introduces a circular reference
+        response = self.patch(
+            reverse('api-custom-unit-detail', kwargs={'pk': a.pk}),
+            {'definition': '2 * circular_b'},
+            expected_code=400,
+        )
+
+        self.assertIn('non_field_errors', response.data)
+
+        # Ensure the original (non-circular) definition was not overwritten
+        a.refresh_from_db()
+        b.refresh_from_db()
+        self.assertEqual(a.definition, 'meter')
+        self.assertEqual(b.definition, '3 * circular_a')
+
     def test_api(self):
         """Test the CustomUnit API."""
-        response = self.get(reverse('api-all-unit-list'))
+        response = self.get(reverse('api-custom-unit-all'))
         self.assertIn('default_system', response.data)
         self.assertIn('available_systems', response.data)
         self.assertIn('available_units', response.data)
         self.assertEqual(len(response.data['available_units']) > 100, True)
+
+    def test_api_circular_unit(self):
+        """Test that a pre-existing circular unit definition does not break the 'all units' endpoint.
+
+        It is not possible to *create* a circular definition via the API (refer to
+        test_validation_circular), but this test guards against any other way such
+        a definition could end up in the database (e.g. a direct DB edit, or a bug
+        in some other validation path).
+
+        Ref: https://github.com/inventree/InvenTree/issues/12813
+        """
+        import InvenTree.conversion as conversion
+
+        a = CustomUnit.objects.create(name='circular_c', definition='meter')
+        b = CustomUnit.objects.create(name='circular_d', definition='3 * circular_c')
+
+        # Bypass model validation entirely, to simulate a pre-existing bad definition
+        CustomUnit.objects.filter(pk=a.pk).update(definition='2 * circular_d')
+        conversion.reload_unit_registry()
+
+        try:
+            response = self.get(reverse('api-custom-unit-all'), expected_code=200)
+
+            # The broken units are excluded, but the endpoint does not crash
+            self.assertNotIn('circular_c', response.data['available_units'])
+            self.assertNotIn('circular_d', response.data['available_units'])
+            self.assertGreater(len(response.data['available_units']), 100)
+        finally:
+            CustomUnit.objects.filter(pk__in=[a.pk, b.pk]).delete()
+            conversion.reload_unit_registry()
 
 
 class ContentTypeAPITest(InvenTreeAPITestCase):
@@ -1963,43 +2432,58 @@ class SelectionListTest(InvenTreeAPITestCase):
         # Test adding a new list via the API
         response = self.post(
             reverse('api-selectionlist-list'),
-            {
-                'name': 'New List',
-                'active': True,
-                'choices': [{'value': '1', 'label': 'Test Entry'}],
-            },
+            {'name': 'New List', 'active': True},
             expected_code=201,
         )
         list_pk = response.data['pk']
         self.assertEqual(response.data['name'], 'New List')
         self.assertTrue(response.data['active'])
+
+        entry_list_url = reverse('api-selectionlistentry-list', kwargs={'pk': list_pk})
+
+        # Add an entry via the entry API
+        response = self.post(
+            entry_list_url,
+            {'list': list_pk, 'value': '1', 'label': 'Test Entry'},
+            expected_code=201,
+        )
+        entry_pk = response.data['id']
+        self.assertEqual(response.data['value'], '1')
+        self.assertEqual(response.data['label'], 'Test Entry')
+
+        # Verify the entry appears in the list's choices
+        response = self.get(
+            reverse('api-selectionlist-detail', kwargs={'pk': list_pk}),
+            data={'choices': True},
+            expected_code=200,
+        )
         self.assertEqual(len(response.data['choices']), 1)
         self.assertEqual(response.data['choices'][0]['value'], '1')
 
-        # Test editing the list choices via the API (remove and add in same call)
-        response = self.patch(
-            reverse('api-selectionlist-detail', kwargs={'pk': list_pk}),
-            {'choices': [{'value': '2', 'label': 'New Label'}]},
-            expected_code=200,
+        # Edit the entry via the entry detail API
+        entry_url = reverse(
+            'api-selectionlistentry-detail', kwargs={'pk': list_pk, 'entrypk': entry_pk}
         )
-        self.assertEqual(response.data['name'], 'New List')
-        self.assertTrue(response.data['active'])
-        self.assertEqual(len(response.data['choices']), 1)
-        self.assertEqual(response.data['choices'][0]['value'], '2')
-        self.assertEqual(response.data['choices'][0]['label'], 'New Label')
-        entry_id = response.data['choices'][0]['id']
+        response = self.patch(entry_url, {'label': 'Updated Label'}, expected_code=200)
+        self.assertEqual(response.data['value'], '1')
+        self.assertEqual(response.data['label'], 'Updated Label')
 
-        # Test changing an entry via list API
-        response = self.patch(
+        # Add a second entry, then delete the first via the entry detail API
+        self.post(
+            entry_list_url,
+            {'list': list_pk, 'value': '2', 'label': 'Second Entry'},
+            expected_code=201,
+        )
+        self.delete(entry_url, expected_code=204)
+
+        # Verify only the second entry remains
+        response = self.get(
             reverse('api-selectionlist-detail', kwargs={'pk': list_pk}),
-            {'choices': [{'id': entry_id, 'value': '2', 'label': 'New Label Text'}]},
+            data={'choices': True},
             expected_code=200,
         )
-        self.assertEqual(response.data['name'], 'New List')
-        self.assertTrue(response.data['active'])
         self.assertEqual(len(response.data['choices']), 1)
         self.assertEqual(response.data['choices'][0]['value'], '2')
-        self.assertEqual(response.data['choices'][0]['label'], 'New Label Text')
 
     def test_api_locked(self):
         """Test editing with locked/unlocked list."""
@@ -2038,27 +2522,37 @@ class SelectionListTest(InvenTreeAPITestCase):
 
         # Add to parameter
         part = Part.objects.get(pk=1)
-        template = PartParameterTemplate.objects.create(
+        template = ParameterTemplate.objects.create(
             name='test_parameter', units='', selectionlist=self.list
         )
         rsp = self.get(
-            reverse('api-part-parameter-template-detail', kwargs={'pk': template.pk})
+            reverse('api-parameter-template-detail', kwargs={'pk': template.pk})
         )
         self.assertEqual(rsp.data['name'], 'test_parameter')
         self.assertEqual(rsp.data['choices'], '')
 
         # Add to part
-        url = reverse('api-part-parameter-list')
+        url = reverse('api-parameter-list')
         response = self.post(
             url,
-            {'part': part.pk, 'template': template.pk, 'data': 70},
+            {
+                'model_id': part.pk,
+                'model_type': 'part.part',
+                'template': template.pk,
+                'data': 70,
+            },
             expected_code=400,
         )
         self.assertIn('Invalid choice for parameter value', response.data['data'])
 
         response = self.post(
             url,
-            {'part': part.pk, 'template': template.pk, 'data': self.entry1.value},
+            {
+                'model_id': part.pk,
+                'model_type': 'part.part',
+                'template': template.pk,
+                'data': self.entry1.value,
+            },
             expected_code=201,
         )
         self.assertEqual(response.data['data'], self.entry1.value)

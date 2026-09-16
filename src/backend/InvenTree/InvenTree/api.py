@@ -1,34 +1,43 @@
 """Main JSON interface views."""
 
+import collections
 import json
 from pathlib import Path
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
-from django.http import JsonResponse
+from django.http import HttpRequest, JsonResponse
+from django.urls import path, reverse
 from django.utils.translation import gettext_lazy as _
+from django.views.generic.base import RedirectView
 
 import structlog
 from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
-from rest_framework import serializers
+from rest_framework import permissions, serializers, viewsets
 from rest_framework.generics import GenericAPIView
+from rest_framework.request import clone_request
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
 import InvenTree.config
+import InvenTree.filters
+import InvenTree.permissions
 import InvenTree.version
 from common.settings import get_global_setting
-from InvenTree import helpers
+from InvenTree import helpers, ready
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
-from InvenTree.sso import sso_registration_enabled
+from InvenTree.tasks import batch_offload_tasks
+from plugin.base.event.events import batch_events
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
-from users.permissions import check_user_permission
+from users.permissions import check_user_permission, prefetch_rule_sets
 
-from .helpers import plugins_info
+from .helpers import plugins_info, str2bool
 from .helpers_email import is_email_configured
 from .mixins import ListAPI, RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
@@ -51,7 +60,7 @@ def read_license_file(path: Path) -> list:
         return []
 
     try:
-        data = json.loads(path.read_text())
+        data = json.loads(path.read_text(encoding='utf-8'))
     except Exception as e:
         logger.exception("Failed to parse license file '%s': %s", path, e)
         return []
@@ -93,8 +102,8 @@ class LicenseView(APIView):
     @extend_schema(responses={200: OpenApiResponse(response=LicenseViewSerializer)})
     def get(self, request, *args, **kwargs):
         """Return information about the InvenTree server."""
-        backend = Path(__file__).parent.joinpath('licenses.txt')
-        frontend = Path(__file__).parent.parent.joinpath(
+        backend = InvenTree.config.get_base_dir().joinpath('InvenTree', 'licenses.txt')
+        frontend = InvenTree.config.get_base_dir().joinpath(
             'web/static/web/.vite/dependencies.json'
         )
         return JsonResponse({
@@ -221,6 +230,7 @@ class InfoApiSerializer(serializers.Serializer):
     class SettingsSerializer(serializers.Serializer):
         """Serializer for InfoApiSerializer."""
 
+        sso_enabled = serializers.BooleanField()
         sso_registration = serializers.BooleanField()
         registration_enabled = serializers.BooleanField()
         password_forgotten_enabled = serializers.BooleanField()
@@ -232,6 +242,7 @@ class InfoApiSerializer(serializers.Serializer):
         splash = serializers.CharField()
         login_message = serializers.CharField(allow_null=True)
         navbar_message = serializers.CharField(allow_null=True)
+        disable_theme_storage = serializers.BooleanField(default=False)
 
     server = serializers.CharField(read_only=True)
     id = serializers.CharField(read_only=True, allow_null=True)
@@ -256,6 +267,8 @@ class InfoApiSerializer(serializers.Serializer):
     target = serializers.CharField(read_only=True, allow_null=True)
     django_admin = serializers.CharField(read_only=True)
     settings = SettingsSerializer(read_only=True, many=False)
+    """System state details that are mainly for warning purposes and do not require a hard API contract."""
+    system_state = serializers.JSONField(read_only=True)
 
 
 class InfoView(APIView):
@@ -291,7 +304,7 @@ class InfoView(APIView):
             'instance': InvenTree.version.inventreeInstanceName(),
             'apiVersion': InvenTree.version.inventreeApiVersion(),
             'worker_running': is_worker_running(),
-            'worker_count': settings.BACKGROUND_WORKER_COUNT,
+            'worker_count': settings.Q_CLUSTER['workers'],
             'worker_pending_tasks': self.worker_pending_tasks(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
             'plugins_install_disabled': settings.PLUGINS_INSTALL_DISABLED,
@@ -304,9 +317,12 @@ class InfoView(APIView):
                 'splash': helpers.getSplashScreen(),
                 'login_message': helpers.getCustomOption('login_message'),
                 'navbar_message': helpers.getCustomOption('navbar_message'),
+                'disable_theme_storage': str2bool(
+                    helpers.getCustomOption('disable_theme_storage')
+                ),
             },
+            'active_plugins': plugins_info(),
             # Following fields are only available to staff users
-            'active_plugins': plugins_info() if is_staff else None,
             'system_health': check_system_health() if is_staff else None,
             'database': InvenTree.version.inventreeDatabase() if is_staff else None,
             'platform': InvenTree.version.inventreePlatform() if is_staff else None,
@@ -316,12 +332,14 @@ class InfoView(APIView):
             if (is_staff and settings.INVENTREE_ADMIN_ENABLED)
             else None,
             'settings': {
-                'sso_registration': sso_registration_enabled(),
-                'registration_enabled': registration_enabled(),
+                'sso_enabled': get_global_setting('LOGIN_ENABLE_SSO'),
+                'sso_registration': registration_enabled('LOGIN_ENABLE_SSO_REG'),
+                'registration_enabled': registration_enabled('LOGIN_ENABLE_REG'),
                 'password_forgotten_enabled': get_global_setting(
                     'LOGIN_ENABLE_PWD_FORGOT'
                 ),
             },
+            'system_state': {'cors_allow_all': settings.CORS_ALLOW_ALL_ORIGINS},
         }
 
         return JsonResponse(data)
@@ -333,10 +351,9 @@ class InfoView(APIView):
         if token := get_token_from_request(request):
             # Does the provided token match a valid user?
             try:
-                token = ApiToken.objects.get(key=token)
-
+                token = ApiToken.get_from_string(token)
                 # Check if the token is active and the user is a staff member
-                if token.active and token.user and token.user.is_staff:
+                if token and token.active and token.user and token.user.is_staff:
                     return True
             except ApiToken.DoesNotExist:
                 pass
@@ -347,7 +364,10 @@ class InfoView(APIView):
 class NotFoundView(APIView):
     """Simple JSON view when accessing an invalid API view."""
 
-    permission_classes = [InvenTree.permissions.AllowAnyOrReadScope]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.AllowAnyOrReadScope,
+    ]
 
     def not_found(self, request):
         """Return a 404 error."""
@@ -414,23 +434,19 @@ class BulkOperationMixin:
     def get_bulk_queryset(self, request):
         """Return a queryset based on the selection made in the request.
 
-        Selection can be made by providing either:
-
-        - items: A list of primary key values
-        - filters: A dictionary of filter values
+        Selection can be made by providing a list of primary key values,
+        which will be used to filter the queryset.
         """
-        model = self.serializer_class.Meta.model
-
         items = request.data.pop('items', None)
-        filters = request.data.pop('filters', None)
         all_filter = request.GET.get('all', None)
 
-        queryset = model.objects.all()
+        # Return the base queryset for this model
+        queryset = self.get_queryset()
 
-        if not items and not filters and all_filter is None:
+        if not items and all_filter is None:
             raise ValidationError({
                 'non_field_errors': _(
-                    'List of items or filters must be provided for bulk operation'
+                    'List of items must be provided for bulk operation'
                 )
             })
 
@@ -446,19 +462,6 @@ class BulkOperationMixin:
             except Exception:
                 raise ValidationError({
                     'non_field_errors': _('Invalid items list provided')
-                })
-
-        if filters:
-            if type(filters) is not dict:
-                raise ValidationError({
-                    'non_field_errors': _('Filters must be provided as a dict')
-                })
-
-            try:
-                queryset = queryset.filter(**filters)
-            except Exception:
-                raise ValidationError({
-                    'non_field_errors': _('Invalid filters provided')
                 })
 
         if all_filter and not helpers.str2bool(all_filter):
@@ -487,16 +490,46 @@ class BulkCreateMixin:
 
         if isinstance(data, list):
             created_items = []
+            errors = []
+            has_errors = False
 
             # If data is a list, we assume it is a bulk create request
             if len(data) == 0:
                 raise ValidationError({'non_field_errors': _('No data provided')})
 
-            for item in data:
-                serializer = self.get_serializer(data=item)
-                serializer.is_valid(raise_exception=True)
-                self.perform_create(serializer)
-                created_items.append(serializer.data)
+            # validate unique together fields
+            if unique_create_fields := getattr(self, 'unique_create_fields', None):
+                existing = collections.defaultdict(list)
+                for idx, item in enumerate(data):
+                    key = tuple(item[v] for v in list(unique_create_fields))
+                    existing[key].append(idx)
+
+                unique_errors = [[] for _ in range(len(data))]
+                has_unique_errors = False
+                for item in existing.values():
+                    if len(item) > 1:
+                        has_unique_errors = True
+                        error = {}
+                        for field_name in unique_create_fields:
+                            error[field_name] = [_('This field must be unique.')]
+                        for idx in item:
+                            unique_errors[idx] = error
+                if has_unique_errors:
+                    raise ValidationError(unique_errors)
+
+            with transaction.atomic(), batch_events(), batch_offload_tasks():
+                for item in data:
+                    serializer = self.get_serializer(data=item)
+                    if serializer.is_valid():
+                        self.perform_create(serializer)
+                        created_items.append(serializer.data)
+                        errors.append([])
+                    else:
+                        errors.append(serializer.errors)
+                        has_errors = True
+
+                if has_errors:
+                    raise ValidationError(errors)
 
             return Response(created_items, status=201)
 
@@ -508,7 +541,11 @@ class BulkUpdateMixin(BulkOperationMixin):
 
     Bulk update allows for multiple items to be updated in a single API query,
     rather than using multiple API calls to the various detail endpoints.
+
+    Each instance is validated and saved individually, so that any custom save methods are triggered.
     """
+
+    BULK_ID_FIELD: str = 'pk'
 
     def validate_update(self, queryset, request) -> None:
         """Perform validation right before updating.
@@ -553,27 +590,76 @@ class BulkUpdateMixin(BulkOperationMixin):
         # Perform the update operation
         data = request.data
 
-        n = queryset.count()
+        # Extract the primary key values up-front:
+        # Each instance is re-fetched from the database immediately before it is
+        # updated, as saving one instance may alter database state which other
+        # instances in the queryset depend on (e.g. MPTT tree structure fields).
+        # Saving a stale instance can result in database corruption (and it must
+        # be the *instance* that is fresh - refresh_from_db is not sufficient here,
+        # as MPTT caches original field values when the instance is loaded).
+        pk_values = sorted(queryset.values_list(self.BULK_ID_FIELD, flat=True))
 
-        with transaction.atomic():
+        instance_data = []
+
+        with transaction.atomic(), batch_events(), batch_offload_tasks():
             # Perform object update
             # Note that we do not perform a bulk-update operation here,
             # as we want to trigger any custom post_save methods on the model
-            for instance in queryset:
-                serializer = self.get_serializer(instance, data=data, partial=True)
 
+            # Run validation first
+            for pk in pk_values:
+                try:
+                    instance = queryset.select_for_update(of=('self',)).get(**{
+                        self.BULK_ID_FIELD: pk
+                    })
+                except ObjectDoesNotExist:
+                    raise ValidationError({
+                        'non_field_errors': _(
+                            'Item no longer matches the provided criteria'
+                        )
+                    })
+
+                serializer = self.get_serializer(instance, data=data, partial=True)
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
 
-        return Response({'success': f'Updated {n} items'}, status=200)
+                instance_data.append(serializer.data)
+
+        return Response(
+            {'success': 'Updated multiple items', 'items': instance_data}, status=200
+        )
 
 
-class BulkDeleteMixin(BulkOperationMixin):
-    """Mixin class for enabling 'bulk delete' operations for various models.
+class ParameterListMixin:
+    """Mixin class which supports filtering against parametric fields."""
 
-    Bulk delete allows for multiple items to be deleted in a single API query,
-    rather than using multiple API calls to the various detail endpoints.
-    """
+    def filter_queryset(self, queryset):
+        """Perform filtering against parametric fields."""
+        import common.filters
+
+        queryset = super().filter_queryset(queryset)
+
+        # Filter by parametric data
+        queryset = common.filters.filter_parametric_data(
+            queryset, self.request.query_params
+        )
+
+        serializer_class = (
+            getattr(self, 'serializer_class', None) or self.get_serializer_class()
+        )
+
+        model_class = serializer_class.Meta.model
+
+        # Apply ordering based on query parameter
+        queryset = common.filters.order_by_parameter(
+            queryset, model_class, self.request.query_params.get('ordering', None)
+        )
+
+        return queryset
+
+
+class CommonBulkDeleteMixin(BulkOperationMixin):
+    """Helper for creating bulk delete operation on classic cbv and viewsets."""
 
     def validate_delete(self, queryset, request) -> None:
         """Perform validation right before deletion.
@@ -598,7 +684,7 @@ class BulkDeleteMixin(BulkOperationMixin):
         return queryset
 
     @extend_schema(request=BulkRequestSerializer)
-    def delete(self, request, *args, **kwargs):
+    def _delete(self, request, *args, **kwargs):
         """Perform a DELETE operation against this list endpoint.
 
         Note that the typical DRF list endpoint does not support DELETE,
@@ -612,7 +698,7 @@ class BulkDeleteMixin(BulkOperationMixin):
         # Keep track of how many items we deleted
         n_deleted = queryset.count()
 
-        with transaction.atomic():
+        with transaction.atomic(), batch_events(), batch_offload_tasks():
             # Perform object deletion
             # Note that we do not perform a bulk-delete operation here,
             # as we want to trigger any custom post_delete methods on the model
@@ -620,6 +706,37 @@ class BulkDeleteMixin(BulkOperationMixin):
                 item.delete()
 
         return Response({'success': f'Deleted {n_deleted} items'}, status=200)
+
+
+class BulkDeleteMixin(CommonBulkDeleteMixin):
+    """Mixin class for enabling 'bulk delete' operations for various models.
+
+    Bulk delete allows for multiple items to be deleted in a single API query,
+    rather than using multiple API calls to the various detail endpoints.
+    """
+
+    @extend_schema(request=BulkRequestSerializer)
+    def delete(self, request, *args, **kwargs):
+        """Perform a DELETE operation against this list endpoint.
+
+        Note that the typical DRF list endpoint does not support DELETE,
+        so this method is provided as a custom implementation.
+        """
+        return self._delete(request, *args, **kwargs)
+
+
+class BulkDeleteViewsetMixin(CommonBulkDeleteMixin, viewsets.GenericViewSet):
+    """Mixin class for enabling 'bulk delete' operations for viewsets."""
+
+    @extend_schema(request=BulkRequestSerializer)
+    def bulk_delete(self, request, *args, **kwargs):
+        """Perform a bulk delete operation.
+
+        Provide either a list of ids (via `items`) or a filter (via `filters`) to select the items to be deleted.
+
+        This action is performed attomically, so either all items will be deleted, or none will be deleted.
+        """
+        return self._delete(request, *args, **kwargs)
 
 
 class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):
@@ -667,7 +784,7 @@ class APISearchView(GenericAPIView):
             'supplierpart': company.api.SupplierPartList,
             'part': part.api.PartList,
             'partcategory': part.api.CategoryList,
-            'purchaseorder': order.api.PurchaseOrderList,
+            'purchaseorder': order.api.PurchaseOrderViewSet,
             'returnorder': order.api.ReturnOrderList,
             'salesorder': order.api.SalesOrderList,
             'salesordershipment': order.api.SalesOrderShipmentList,
@@ -704,6 +821,13 @@ class APISearchView(GenericAPIView):
 
         search_filters = self.get_result_filters()
 
+        # Create a clone of the request object to modify
+        # Use GET method for the individual list views
+        cloned_request = clone_request(request, 'GET')
+
+        # Fetch and cache all groups associated with the current user
+        groups = prefetch_rule_sets(request.user)
+
         for key, cls in self.get_result_types().items():
             # Only return results which are specifically requested
             if key in data:
@@ -724,60 +848,223 @@ class APISearchView(GenericAPIView):
                 if type(params) is not dict:
                     continue
 
-                view = cls()
+                is_viewset = issubclass(cls, viewsets.GenericViewSet) or issubclass(
+                    cls, viewsets.ViewSetMixin
+                )
+                view = cls if is_viewset else cls()
 
                 # Override regular query params with specific ones for this search request
-                request._request.GET = params
-                view.request = request
+                cloned_request._request.GET = params
+                view.request = cloned_request
                 view.format_kwarg = 'format'
 
                 # Check permissions and update results dict with particular query
                 model = view.serializer_class.Meta.model
 
+                if not check_user_permission(
+                    request.user, model, 'view', groups=groups
+                ):
+                    results[key] = {
+                        'error': _('User does not have permission to view this model')
+                    }
+                    continue
+
                 try:
-                    if check_user_permission(request.user, model, 'view'):
-                        results[key] = view.list(request, *args, **kwargs).data
+                    if is_viewset:
+                        # use dummy request to call the list method of the viewset
+                        req = HttpRequest()
+                        req.method = 'GET'
+                        req.user = request.user
+                        req.GET = params
+
+                        # Copy META from the original request, so that host/scheme
+                        # information is available (e.g. for pagination links).
+                        # Strip content-length/type, as this is a synthetic GET
+                        # request with no body of its own to parse.
+                        req.META = request.META.copy()
+                        req.META.pop('CONTENT_LENGTH', None)
+                        req.META.pop('CONTENT_TYPE', None)
+
+                        list_method = cls.as_view({'get': 'list'})(req, *args, **kwargs)
                     else:
-                        results[key] = {
-                            'error': _(
-                                'User does not have permission to view this model'
-                            )
-                        }
+                        list_method = view.list(request, *args, **kwargs)
+                    results[key] = list_method.data
                 except Exception as exc:
                     results[key] = {'error': str(exc)}
 
         return Response(results)
 
 
-class MetadataView(RetrieveUpdateAPI):
-    """Generic API endpoint for reading and editing metadata for a model."""
+class GenericMetadataView(RetrieveUpdateAPI):
+    """Metadata for specific instance; see https://docs.inventree.org/en/stable/plugins/metadata/ for more detail on how metadata works. Most core models support metadata."""
 
     model = None  # Placeholder for the model class
+    serializer_class = MetadataSerializer
+    permission_classes = [InvenTree.permissions.ContentTypePermission]
 
-    @classmethod
-    def as_view(cls, model, lookup_field=None, **initkwargs):
-        """Override to ensure model specific rendering."""
-        if model is None:
-            raise ValidationError(
-                "MetadataView defined without 'model' arg"
-            )  # pragma: no cover
-        initkwargs['model'] = model
-
-        # Set custom lookup field (instead of default 'pk' value) if supplied
-        if lookup_field:
-            initkwargs['lookup_field'] = lookup_field
-
-        return super().as_view(**initkwargs)
+    # Enforce limited range of lookup fields to prevent arbitrary queryset filtering
+    ALLOWED_LOOKUP_FIELDS = {'pk', 'key'}
 
     def get_permission_model(self):
         """Return the 'permission' model associated with this view."""
-        return self.model
+        model_name = self.kwargs.get('model', None)
+
+        if model_name is None:
+            raise ValidationError(
+                "GenericMetadataView called without 'model' URL parameter"
+            )  # pragma: no cover
+
+        model = ContentType.objects.filter(model=model_name).first()
+
+        if model is None:
+            raise ValidationError(
+                f"GenericMetadataView called with invalid model '{model_name}'"
+            )  # pragma: no cover
+
+        return model.model_class()
 
     def get_queryset(self):
         """Return the queryset for this endpoint."""
-        return self.model.objects.all()
+        model = self.get_permission_model()
+        return model.objects.all()
 
     def get_serializer(self, *args, **kwargs):
         """Return MetadataSerializer instance."""
+        is_gen = ready.isGeneratingSchema()
         # Detect if we are currently generating the OpenAPI schema
+        if self.model is None and not is_gen:
+            self.model = self.get_permission_model()
+        if self.model is None and is_gen:
+            # Provide a default model for schema generation
+            import users.models
+
+            self.model = users.models.User
         return MetadataSerializer(self.model, *args, **kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        """Override dispatch to set lookup field dynamically."""
+        self.lookup_field = self.kwargs.get('lookup_field', 'pk')
+        self.lookup_url_kwarg = (
+            'lookup_value' if 'lookup_field' in self.kwargs else 'pk'
+        )
+        return super().dispatch(request, *args, **kwargs)
+
+    def initial(self, request, *args, **kwargs):
+        """Validate the lookup field before any queryset is touched.
+
+        This runs inside APIView's own exception handling (unlike dispatch(),
+        which runs before it), and *before* permission checks - so an invalid
+        lookup field is rejected without ever executing a query.
+        """
+        if self.lookup_field not in self.ALLOWED_LOOKUP_FIELDS:
+            raise ValidationError(f"Invalid lookup field '{self.lookup_field}'")
+        return super().initial(request, *args, **kwargs)
+
+
+class SimpleGenericMetadataView(GenericMetadataView):
+    """Simplified version of GenericMetadataView which always uses 'pk' as the lookup field."""
+
+    def dispatch(self, request, *args, **kwargs):
+        """Override dispatch to set lookup field to 'pk'."""
+        self.lookup_field = 'pk'
+        self.lookup_url_kwarg = None
+        return super().dispatch(request, *args, **kwargs)
+
+    @extend_schema(operation_id='metadata_pk_retrieve')
+    def get(self, request, *args, **kwargs):
+        """Perform a GET request to retrieve metadata for the given object."""
+        return super().get(request, *args, **kwargs)
+
+    @extend_schema(operation_id='metadata_pk_update')
+    def put(self, request, *args, **kwargs):
+        """Perform a PUT request to update metadata for the given object."""
+        return super().put(request, *args, **kwargs)
+
+    @extend_schema(operation_id='metadata_pk_partial_update')
+    def patch(self, request, *args, **kwargs):
+        """Perform a PATCH request to partially update metadata for the given object."""
+        return super().patch(request, *args, **kwargs)
+
+
+class MetadataRedirectView(RedirectView):
+    """Redirect to the generic metadata view for a given model."""
+
+    model_name = None  # Placeholder for the model class
+    lookup_field = 'pk'
+    lookup_field_ref = 'pk'
+    permanent = True
+
+    def get_redirect_url(self, *args, **kwargs) -> str | None:
+        """Return the redirect URL for this view."""
+        _kwargs = {
+            'model': self.model_name,
+            'lookup_value': self.kwargs.get(self.lookup_field_ref, None),
+            'lookup_field': self.lookup_field,
+        }
+        return reverse('api-generic-metadata', args=args, kwargs=_kwargs)
+
+
+def meta_path(model, lookup_field: str = 'pk', lookup_field_ref: str = 'pk'):
+    """Helper function for constructing metadata path for a given model.
+
+    Arguments:
+        model: The model class to use
+        lookup_field: The lookup field to use (if not 'pk')
+        lookup_field_ref: The reference name for the lookup field in the request(if not 'pk')
+
+    Returns:
+        A path to the generic metadata view for the given model
+    """
+    if model is None:
+        raise ValidationError(
+            "redirect_metadata_view called without 'model' arg"
+        )  # pragma: no cover
+
+    return path(
+        'metadata/',
+        MetadataRedirectView.as_view(
+            model_name=model._meta.model_name,
+            lookup_field=lookup_field,
+            lookup_field_ref=lookup_field_ref,
+        ),
+    )
+
+
+class TreeMixin:
+    """A mixin class for supporting tree-structured data in the API."""
+
+    # Any API view which inherits from this mixin must define a 'model_class' attribute
+    model_class = None
+
+    filter_backends = InvenTree.filters.SEARCH_ORDER_FILTER
+    search_fields = ['name', 'description']
+    ordering_fields = ['level', 'name', 'subcategories']
+    ordering_field_aliases = {'level': ['level', 'name'], 'name': ['name', 'level']}
+    ordering = ['level']
+
+    def filter_queryset(self, queryset):
+        """Filter the queryset, and provide extra support for tree-structured data."""
+        queryset = super().filter_queryset(queryset)
+
+        # If a search term is provided, include all ancestors of matched items in the results
+        if self.request.query_params.get('search', '').strip():
+            ancestors = self.model_class.objects.get_queryset_ancestors(
+                queryset, include_self=True
+            )
+            queryset = queryset | ancestors
+
+        # If a specific ID is provided to "expand_to", include all ancestors and siblings
+        if expand_to := self.request.query_params.get('expand_to'):
+            try:
+                target = self.model_class.objects.get(pk=int(expand_to))
+                target_ancestors = target.get_ancestors(include_self=True)
+                queryset = queryset | target_ancestors
+
+                # We also want to include the "sibling" nodes of the expanded item
+                siblings = target.get_siblings(include_self=True)
+                queryset = queryset | siblings
+
+            except (self.model_class.DoesNotExist, ValueError):
+                pass
+
+        return queryset.distinct()

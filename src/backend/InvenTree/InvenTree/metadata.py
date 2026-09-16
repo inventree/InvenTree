@@ -5,7 +5,7 @@ from django.http import Http404
 from django.urls import reverse
 
 import structlog
-from rest_framework import exceptions, serializers
+from rest_framework import exceptions, permissions, serializers
 from rest_framework.fields import empty
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.request import clone_request
@@ -15,7 +15,7 @@ import common.models
 import InvenTree.permissions
 from InvenTree.helpers import str2bool
 from InvenTree.serializers import DependentField
-from users.permissions import check_user_permission
+from users.permissions import check_user_permission, check_user_role
 
 logger = structlog.get_logger('inventree')
 
@@ -23,7 +23,7 @@ logger = structlog.get_logger('inventree')
 class InvenTreeMetadata(SimpleMetadata):
     """Custom metadata class for the DRF API.
 
-    This custom metadata class imits the available "actions",
+    This custom metadata class limits the available "actions",
     based on the user's role permissions.
 
     Thus when a client send an OPTIONS request to an API endpoint,
@@ -50,6 +50,10 @@ class InvenTreeMetadata(SimpleMetadata):
 
         for method in {'PUT', 'POST', 'GET'} & set(view.allowed_methods):
             view.request = clone_request(request, method)
+
+            # Mark this request, to prevent expensive prefetching
+            view.request._metadata_requested = True
+
             try:
                 # Test global permissions
                 if hasattr(view, 'check_permissions'):
@@ -122,18 +126,40 @@ class InvenTreeMetadata(SimpleMetadata):
             if hasattr(view, 'rolemap'):
                 rolemap.update(view.rolemap)
 
+            # The view may define a custom role requirement
+            role_required = getattr(view, 'role_required', None)
+
             # Remove any HTTP methods that the user does not have permission for
             for method, permission in rolemap.items():
-                result = check_user_permission(user, self.model, permission)
+                # general model / role permission
+                result = check_user_permission(user, self.model, permission) or (
+                    role_required and check_user_role(user, role_required, permission)
+                )
+
+                # check if simple IsAuthenticated permission class is used
+                if not result:
+                    result = (
+                        view.permission_classes
+                        and len(view.permission_classes) == 1
+                        and any(
+                            perm
+                            in [
+                                permissions.IsAuthenticated,
+                                InvenTree.permissions.IsAuthenticatedOrReadScope,
+                            ]
+                            for perm in view.permission_classes
+                        )
+                    )
 
                 if method in actions and not result:
                     del actions[method]
 
             # Add a 'DELETE' action if we are allowed to delete
-            if 'DELETE' in view.allowed_methods and check_user_permission(
-                user, self.model, 'delete'
-            ):
-                actions['DELETE'] = {}
+            if 'DELETE' in view.allowed_methods:
+                if check_user_permission(user, self.model, 'delete') or (
+                    role_required and check_user_role(user, role_required, 'delete')
+                ):
+                    actions['DELETE'] = {}
 
             metadata['actions'] = actions
 
@@ -193,8 +219,15 @@ class InvenTreeMetadata(SimpleMetadata):
 
         serializer_info = super().get_serializer_info(serializer)
 
-        # Look for any dynamic fields which were not available when the serializer was instantiated
-        if hasattr(serializer, 'Meta'):
+        # Look for any dynamic fields which were not available when the serializer was
+        # instantiated - this lets an OPTIONS/schema response document an OptionalField
+        # (e.g. `part_detail`) even when it wasn't included on this particular instance,
+        # by rehydrating it directly from the class attribute.
+        if (
+            hasattr(serializer, 'Meta')
+            and not getattr(serializer, '_is_importing', False)
+            and not getattr(serializer, '_exporting_data', False)
+        ):
             for field_name in serializer.Meta.fields:
                 if field_name in serializer_info:
                     # Already know about this one
@@ -254,14 +287,26 @@ class InvenTreeMetadata(SimpleMetadata):
                     elif name in model_default_values:
                         serializer_info[name]['default'] = model_default_values[name]
 
-                    for field_key, model_key in extra_attributes.items():
-                        field_value = getattr(serializer.fields[name], field_key, None)
-                        model_value = getattr(field, model_key, None)
+                    # Note: `name` may be present in `serializer_info` (above) without
+                    # being a live entry in `serializer.fields` - the 'dynamic fields'
+                    # lookup a few lines up adds metadata for OptionalFields that were
+                    # excluded from *this* serializer instance (e.g. no matching query
+                    # parameter was supplied), by rehydrating them directly from the
+                    # class attribute. A model field can coincidentally share its name
+                    # with such an OptionalField (e.g. `Group.permissions`, a real M2M
+                    # field, vs. `GroupSerializer.permissions`, a computed OptionalField)
+                    # - only touch `serializer.fields[name]` once we know it's real.
+                    if name in serializer.fields:
+                        for field_key, model_key in extra_attributes.items():
+                            field_value = getattr(
+                                serializer.fields[name], field_key, None
+                            )
+                            model_value = getattr(field, model_key, None)
 
-                        if value := self.override_value(
-                            name, field_key, field_value, model_value
-                        ):
-                            serializer_info[name][field_key] = value
+                            if value := self.override_value(
+                                name, field_key, field_value, model_value
+                            ):
+                                serializer_info[name][field_key] = value
 
             # Iterate through relations
             for name, relation in model_fields.relations.items():
@@ -285,14 +330,19 @@ class InvenTreeMetadata(SimpleMetadata):
                     relation.model_field.get_limit_choices_to()
                 )
 
-                for field_key, model_key in extra_attributes.items():
-                    field_value = getattr(serializer.fields[name], field_key, None)
-                    model_value = getattr(relation.model_field, model_key, None)
+                # See the comment above, in the 'simple fields' loop - `name` being in
+                # `serializer_info` doesn't guarantee it's a live `serializer.fields`
+                # entry (it may be a rehydrated, excluded OptionalField that happens to
+                # share its name with a real model relation).
+                if name in serializer.fields:
+                    for field_key, model_key in extra_attributes.items():
+                        field_value = getattr(serializer.fields[name], field_key, None)
+                        model_value = getattr(relation.model_field, model_key, None)
 
-                    if value := self.override_value(
-                        name, field_key, field_value, model_value
-                    ):
-                        serializer_info[name][field_key] = value
+                        if value := self.override_value(
+                            name, field_key, field_value, model_value
+                        ):
+                            serializer_info[name][field_key] = value
 
                 if name in model_default_values:
                     serializer_info[name]['default'] = model_default_values[name]
@@ -354,6 +404,15 @@ class InvenTreeMetadata(SimpleMetadata):
 
         We take the regular DRF metadata and add our own unique flavor
         """
+        from InvenTree.serializers import OptionalField
+
+        if isinstance(field, OptionalField) or issubclass(
+            field.__class__, OptionalField
+        ):
+            # Rehydrate the OptionalField for proper introspection
+            rehydrated_field = field.serializer_class(**(field.serializer_kwargs or {}))
+            return self.get_field_info(rehydrated_field)
+
         # Try to add the child property to the dependent field to be used by the super call
         if self.label_lookup[field] == 'dependent field':
             field.get_child(raise_exception=True)
@@ -414,6 +473,13 @@ class InvenTreeMetadata(SimpleMetadata):
         if field_info['type'] == 'dependent field':
             field_info['depends_on'] = field.depends_on
 
+        # Extends with extra attributes from the serializer
+        extra_field_attributes = ['allow_blank', 'allow_null']
+
+        for attr in extra_field_attributes:
+            if hasattr(field, attr):
+                field_info[attr] = getattr(field, attr)
+
         # Extend field info if the field has a get_field_info method
         if (
             not field_info.get('read_only')
@@ -426,3 +492,4 @@ class InvenTreeMetadata(SimpleMetadata):
 
 
 InvenTreeMetadata.label_lookup[DependentField] = 'dependent field'
+InvenTreeMetadata.label_lookup[serializers.JSONField] = 'json'

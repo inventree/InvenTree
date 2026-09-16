@@ -1,14 +1,69 @@
 """Functions to sanitize user input files."""
 
-from bleach import clean
-from bleach.css_sanitizer import CSSSanitizer
+import nh3
+
+# Allowed CSS properties for SVG sanitization (combines general CSS and SVG-specific properties)
+_SVG_ALLOWED_CSS_PROPERTIES = frozenset([
+    # General CSS (matching bleach's original ALLOWED_CSS_PROPERTIES)
+    'azimuth',
+    'background-color',
+    'border-bottom-color',
+    'border-collapse',
+    'border-color',
+    'border-left-color',
+    'border-right-color',
+    'border-top-color',
+    'clear',
+    'color',
+    'cursor',
+    'direction',
+    'display',
+    'elevation',
+    'float',
+    'font',
+    'font-family',
+    'font-size',
+    'font-style',
+    'font-variant',
+    'font-weight',
+    'height',
+    'letter-spacing',
+    'line-height',
+    'overflow',
+    'pause',
+    'pause-after',
+    'pause-before',
+    'pitch',
+    'pitch-range',
+    'richness',
+    'speak',
+    'speak-header',
+    'speak-numeral',
+    'speak-punctuation',
+    'speech-rate',
+    'stress',
+    'text-align',
+    'text-decoration',
+    'text-indent',
+    'unicode-bidi',
+    'vertical-align',
+    'voice-family',
+    'volume',
+    'white-space',
+    'width',
+    # SVG-specific CSS (matching bleach's ALLOWED_SVG_PROPERTIES)
+    'fill',
+    'fill-opacity',
+    'fill-rule',
+    'stroke',
+    'stroke-linecap',
+    'stroke-linejoin',
+    'stroke-opacity',
+    'stroke-width',
+])
 
 ALLOWED_ELEMENTS_SVG = [
     'a',
-    'animate',
-    'animateColor',
-    'animateMotion',
-    'animateTransform',
     'circle',
     'defs',
     'desc',
@@ -24,13 +79,11 @@ ALLOWED_ELEMENTS_SVG = [
     'marker',
     'metadata',
     'missing-glyph',
-    'mpath',
     'path',
     'polygon',
     'polyline',
     'radialGradient',
     'rect',
-    'set',
     'stop',
     'svg',
     'switch',
@@ -39,21 +92,20 @@ ALLOWED_ELEMENTS_SVG = [
     'tspan',
     'use',
 ]
+# SMIL animation elements ('animate', 'set', etc.) are intentionally excluded: nh3's
+# URL-scheme filtering (e.g. stripping `javascript:` from `href`/`xlink:href`) is only
+# applied to attributes it recognises as URL-bearing on the element that declares them.
+# It does not recognise the `to`/`from`/`values` attributes of animation elements as
+# URL-setting, so a `javascript:` URL placed there survives sanitization and is assigned
+# to a target element's `href` at render time, bypassing the URL sanitization entirely.
 
 ALLOWED_ATTRIBUTES_SVG = [
     'accent-height',
-    'accumulate',
-    'additive',
     'alphabetic',
     'arabic-form',
     'ascent',
-    'attributeName',
-    'attributeType',
     'baseProfile',
     'bbox',
-    'begin',
-    'by',
-    'calcMode',
     'cap-height',
     'class',
     'color',
@@ -66,8 +118,6 @@ ALLOWED_ATTRIBUTES_SVG = [
     'dy',
     'descent',
     'display',
-    'dur',
-    'end',
     'fill',
     'fill-opacity',
     'fill-rule',
@@ -77,7 +127,6 @@ ALLOWED_ATTRIBUTES_SVG = [
     'font-style',
     'font-variant',
     'font-weight',
-    'from',
     'fx',
     'fy',
     'g1',
@@ -91,9 +140,6 @@ ALLOWED_ATTRIBUTES_SVG = [
     'id',
     'ideographic',
     'k',
-    'keyPoints',
-    'keySplines',
-    'keyTimes',
     'lang',
     'marker-end',
     'marker-mid',
@@ -102,8 +148,6 @@ ALLOWED_ATTRIBUTES_SVG = [
     'markerUnits',
     'markerWidth',
     'mathematical',
-    'max',
-    'min',
     'name',
     'offset',
     'opacity',
@@ -119,11 +163,8 @@ ALLOWED_ATTRIBUTES_SVG = [
     'r',
     'refX',
     'refY',
-    'repeatCount',
-    'repeatDur',
     'requiredExtensions',
     'requiredFeatures',
-    'restart',
     'rotate',
     'rx',
     'ry',
@@ -145,7 +186,6 @@ ALLOWED_ATTRIBUTES_SVG = [
     'systemLanguage',
     'target',
     'text-anchor',
-    'to',
     'transform',
     'type',
     'u1',
@@ -155,7 +195,6 @@ ALLOWED_ATTRIBUTES_SVG = [
     'unicode',
     'unicode-range',
     'units-per-em',
-    'values',
     'version',
     'viewBox',
     'visibility',
@@ -184,12 +223,80 @@ ALLOWED_ATTRIBUTES_SVG = [
     'style',
 ]
 
+# Default allowlists (matching bleach's original defaults)
+# TODO: I do not see us needing a bunch of these but I do not want to introduce a breaking change; we might want to narrow this down with the next breaking change
+DEFAULT_TAGS = frozenset([
+    'a',
+    'abbr',
+    'acronym',
+    'b',
+    'blockquote',
+    'code',
+    'em',
+    'i',
+    'li',
+    'ol',
+    'strong',
+    'ul',
+])
+DEFAULT_ATTRS = {'a': {'href', 'title'}, 'abbr': {'title'}, 'acronym': {'title'}}
+DEFAULT_CSS = frozenset([
+    'azimuth',
+    'background-color',
+    'border-bottom-color',
+    'border-collapse',
+    'border-color',
+    'border-left-color',
+    'border-right-color',
+    'border-top-color',
+    'clear',
+    'color',
+    'cursor',
+    'direction',
+    'display',
+    'elevation',
+    'float',
+    'font',
+    'font-family',
+    'font-size',
+    'font-style',
+    'font-variant',
+    'font-weight',
+    'height',
+    'letter-spacing',
+    'line-height',
+    'overflow',
+    'pause',
+    'pause-after',
+    'pause-before',
+    'pitch',
+    'pitch-range',
+    'richness',
+    'speak',
+    'speak-header',
+    'speak-numeral',
+    'speak-punctuation',
+    'speech-rate',
+    'stress',
+    'text-align',
+    'text-decoration',
+    'text-indent',
+    'unicode-bidi',
+    'vertical-align',
+    'voice-family',
+    'volume',
+    'white-space',
+    'width',
+])
+# TODO: We might want to respect the setting EXTRA_URL_SCHEMES here but that would be breaking
+DEFAULT_PROTOCOLS = frozenset(['http', 'https', 'mailto'])
+
 
 def sanitize_svg(
     file_data,
     strip: bool = True,
-    elements: str = ALLOWED_ELEMENTS_SVG,
-    attributes: str = ALLOWED_ATTRIBUTES_SVG,
+    elements: list[str] = ALLOWED_ELEMENTS_SVG,
+    attributes: list[str] = ALLOWED_ATTRIBUTES_SVG,
 ) -> str:
     """Sanitize a SVG file.
 
@@ -206,13 +313,20 @@ def sanitize_svg(
     if isinstance(file_data, bytes):
         file_data = file_data.decode('utf-8')
 
-    cleaned = clean(
+    # nh3 requires attributes as dict[str, set[str]]; convert from list (allowed for all elements)
+    attrs_dict = {elem: set(attributes) for elem in elements}
+
+    cleaned = nh3.clean(
         file_data,
-        tags=elements,
-        attributes=attributes,
-        strip=strip,
+        tags=set(elements),
+        attributes=attrs_dict,
+        filter_style_properties=_SVG_ALLOWED_CSS_PROPERTIES,
         strip_comments=strip,
-        css_sanitizer=CSSSanitizer(),
+        link_rel=None,
     )
+
+    # Replace non-breaking spaces with regular spaces to prevent SVG rendering issues
+    for nbsp in ['&nbsp;', '&#160;']:
+        cleaned = cleaned.replace(nbsp, ' ')
 
     return cleaned

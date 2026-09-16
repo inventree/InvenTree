@@ -1,6 +1,6 @@
 """Code for managing email functionality in InvenTree."""
 
-from typing import Optional, Union
+from typing import Optional
 
 from django.conf import settings
 
@@ -8,7 +8,7 @@ import structlog
 from allauth.account.models import EmailAddress
 
 import InvenTree.ready
-import InvenTree.tasks
+import InvenTree.tasks as tasks
 from common.models import Priority, issue_mail
 
 logger = structlog.get_logger('inventree')
@@ -64,13 +64,26 @@ def is_email_configured() -> bool:
 def send_email(
     subject: str,
     body: str,
-    recipients: Union[str, list],
+    recipients: str | list,
     from_email: Optional[str] = None,
     html_message=None,
     prio: Priority = Priority.NORMAL,
     headers: Optional[dict] = None,
+    force_async: bool = False,
+    **kwargs,
 ) -> tuple[bool, Optional[str]]:
-    """Send an email with the specified subject and body, to the specified recipients list."""
+    """Send an email with the specified subject and body, to the specified recipients list.
+
+    Arguments:
+        subject: Subject of the email
+        body: Body of the email
+        recipients: List of recipients (or a single recipient)
+        from_email: Optional sender email address (if not specified, will use DEFAULT_FROM_EMAIL)
+        html_message: Optional HTML message to send
+        prio: Priority of the email (default is normal)
+        headers: Optional dictionary of headers to include in the email
+        force_async: If True, will force the email to be sent asynchronously
+    """
     if isinstance(recipients, str):
         recipients = [recipients]
 
@@ -99,7 +112,7 @@ def send_email(
                 )
                 return False, 'INVE-W7: no from_email or DEFAULT_FROM_EMAIL specified'
 
-    InvenTree.tasks.offload_task(
+    tasks.offload_task(
         issue_mail,
         subject=subject,
         body=body,
@@ -109,12 +122,13 @@ def send_email(
         html_message=html_message,
         prio=prio,
         headers=headers,
+        force_async=force_async,
         group='notification',
     )
     return True, None
 
 
-def get_email_for_user(user) -> str:
+def get_email_for_user(user) -> Optional[str]:
     """Find an email address for the specified user."""
     # First check if the user has an associated email address
     if user.email:
@@ -123,7 +137,8 @@ def get_email_for_user(user) -> str:
     # Otherwise, find first matching email
     # Priority is given to primary or verified email addresses
     if (
-        email := EmailAddress.objects.filter(user=user)
+        email := EmailAddress.objects
+        .filter(user=user)
         .order_by('-primary', '-verified')
         .first()
     ):

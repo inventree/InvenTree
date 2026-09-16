@@ -11,6 +11,7 @@ import structlog
 from moneyed import CURRENCIES
 
 import InvenTree.helpers
+import InvenTree.ready
 
 logger = structlog.get_logger('inventree')
 
@@ -18,16 +19,24 @@ logger = structlog.get_logger('inventree')
 def currency_code_default(create: bool = True):
     """Returns the default currency code (or USD if not specified)."""
     from common.settings import get_global_setting
+    from InvenTree.ready import isRunningBackup, isRunningMigrations
 
-    try:
-        code = get_global_setting(
-            'INVENTREE_DEFAULT_CURRENCY', create=create, cache=True
-        )
-    except Exception:  # pragma: no cover
-        # Database may not yet be ready, no need to throw an error here
-        code = ''
+    if isRunningMigrations() or isRunningBackup():
+        # Prevent database writes during migration or backup operations
+        create = False
 
-    if code not in CURRENCIES:
+    code = ''
+
+    if InvenTree.ready.isAppLoaded('common'):
+        try:
+            code = get_global_setting(
+                'INVENTREE_DEFAULT_CURRENCY', create=create, cache=True
+            )
+        except Exception:  # pragma: no cover
+            # Database may not yet be ready, no need to throw an error here
+            code = ''
+
+    if not code or code not in CURRENCIES:
         code = 'USD'  # pragma: no cover
 
     return code
@@ -47,9 +56,13 @@ def currency_codes() -> list:
     """Returns the current currency codes."""
     from common.settings import get_global_setting
 
-    codes = get_global_setting(
-        'CURRENCY_CODES', create=False, enviroment_key='INVENTREE_CURRENCY_CODES'
-    ).strip()
+    codes = None
+
+    # Ensure we do not hit the database until the common app is loaded
+    if InvenTree.ready.isAppLoaded('common'):
+        codes = get_global_setting(
+            'CURRENCY_CODES', create=False, environment_key='INVENTREE_CURRENCY_CODES'
+        ).strip()
 
     if not codes:
         codes = currency_codes_default_list()
@@ -149,18 +162,26 @@ def currency_exchange_plugins() -> Optional[list]:
 def get_price(
     instance,
     quantity,
-    moq=True,
-    multiples=True,
-    currency=None,
+    moq: bool = True,
+    multiples: bool = True,
+    currency: Optional[str] = None,
     break_name: str = 'price_breaks',
 ):
     """Calculate the price based on quantity price breaks.
+
+    Arguments:
+        instance: The model instance which contains the price break information
+        quantity: The quantity to calculate the price for
+        moq: If True, then minimum order quantity will be observed (CURRENTLY NOT IMPLEMENTED)
+        multiples: If True, then order multiples will be observed
+        currency: The currency code to use for the calculation (default is None)
+        break_name: The name of the price break field on the instance (default is 'price_breaks')
 
     - Don't forget to add in flat-fee cost (base_cost field)
     - If MOQ (minimum order quantity) is required, bump quantity
     - If order multiples are to be observed, then we need to calculate based on that, too
     """
-    from common.currency import currency_code_default
+    # from common.currency import currency_code_default
 
     if hasattr(instance, break_name):
         price_breaks = getattr(instance, break_name).all()
@@ -172,7 +193,7 @@ def get_price(
         return None
 
     # Check if quantity is fraction and disable multiples
-    multiples = quantity % 1 == 0
+    multiples = multiples and (quantity % 1 == 0)
 
     # Order multiples
     if multiples:
@@ -217,6 +238,6 @@ def get_price(
     quantity = decimal.Decimal(f'{quantity}')
 
     if pb_found:
-        cost = pb_cost * quantity
+        cost = decimal.Decimal(pb_cost) * quantity
         return InvenTree.helpers.normalize(cost + instance.base_cost)
     return None

@@ -11,15 +11,14 @@ from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
 from django.utils.translation import gettext_lazy as _
 
-from jinja2 import Template
+from jinja2.sandbox import SandboxedEnvironment
 
 import build.validators
 import common.currency
-import common.models
 import common.validators
 import order.validators
 import report.helpers
-from common.setting.type import InvenTreeSettingsKeyType
+from common.setting.type import InvenTreeSettingsKeyType, SettingFlag
 
 
 def validate_part_name_format(value):
@@ -50,51 +49,51 @@ def validate_part_name_format(value):
                 })
 
     # Attempt to render the template with a dummy Part instance
-    p = Part(name='test part', description='some test part')
+    # Use pk=1 to ensure conditional checks like {% if part.pk %} are evaluated
+    p = Part(pk=1, name='test part', description='some test part')
 
     try:
-        Template(value).render({'part': p})
+        SandboxedEnvironment().from_string(value).render({'part': p})
     except Exception as exc:
         raise ValidationError({'value': str(exc)})
 
     return True
 
 
-def update_instance_name(setting):
-    """Update the first site objects name to instance name."""
+def _get_site_object():
+    """Return the first site object, or None if it doesn't exist."""
     if not django_settings.SITE_MULTI:
-        return
+        return  # pragma: no cover
 
     try:
         from django.contrib.sites.models import Site
     except (ImportError, RuntimeError):
         # Multi-site support not enabled
-        return
+        return  # pragma: no cover
 
     site_obj = Site.objects.all().order_by('id').first()
-    site_obj.name = setting.value
-    site_obj.save()
+    if site_obj is None:
+        return  # pragma: no cover
+    return site_obj
+
+
+def update_instance_name(setting):
+    """Update the first site objects name to instance name."""
+    if site_obj := _get_site_object():
+        site_obj.name = setting.value
+        site_obj.save()
 
 
 def update_instance_url(setting):
     """Update the first site objects domain to url."""
-    if not django_settings.SITE_MULTI:
-        return
-
-    try:
-        from django.contrib.sites.models import Site
-    except (ImportError, RuntimeError):
-        # Multi-site support not enabled
-        return
-
-    site_obj = Site.objects.all().order_by('id').first()
-    site_obj.domain = setting.value
-    site_obj.save()
+    if site_obj := _get_site_object():
+        site_obj.domain = setting.value
+        site_obj.save()
 
 
 def settings_group_options():
     """Build up group tuple for settings based on your choices."""
-    return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
+    return [('', _('No group')), *[(str(a.pk), str(a)) for a in Group.objects.all()]]
 
 
 def reload_plugin_registry(setting):
@@ -105,6 +104,20 @@ def reload_plugin_registry(setting):
     logger.info("Reloading plugin registry due to change in setting '%s'", setting.key)
 
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+
+def enforce_mfa(setting):
+    """Enforce multifactor authentication for all users."""
+    from allauth.usersessions.models import UserSession
+
+    from common.models import logger
+
+    logger.info(
+        'Enforcing multifactor authentication for all users by signing out all sessions.'
+    )
+    for session in UserSession.objects.all():
+        session.end()
+    logger.info('All user sessions have been ended.')
 
 
 def barcode_plugins() -> list:
@@ -175,12 +188,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
         'hidden': True,
+        'flags': [SettingFlag.INTERNAL],
     },
     '_PENDING_MIGRATIONS': {
         'name': _('Pending migrations'),
         'description': _('Number of pending database migrations'),
         'default': 0,
         'validator': int,
+        'flags': [SettingFlag.INTERNAL],
     },
     SystemSetId.GLOBAL_WARNING: {
         'name': _('Active warning codes'),
@@ -188,6 +203,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'validator': json.loads,
         'default': '{}',
         'hidden': True,
+        'flags': [SettingFlag.INTERNAL],
     },
     'INVENTREE_INSTANCE_ID': {
         'name': _('Instance ID'),
@@ -218,6 +234,19 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
     'INVENTREE_RESTRICT_ABOUT': {
         'name': _('Restrict showing `about`'),
         'description': _('Show the `about` modal only to superusers'),
+        'validator': bool,
+        'default': False,
+    },
+    'INVENTREE_SHOW_SUPERUSER_BANNER': {
+        'name': _('Show superuser banner'),
+        'description': _('Show a warning banner in the UI when logged in as superuser'),
+        'validator': bool,
+        'default': True,
+        'flags': [SettingFlag.SECURITY],
+    },
+    'INVENTREE_SHOW_ADMIN_BANNER': {
+        'name': _('Show admin banner'),
+        'description': _('Show a warning banner in the UI when logged in as admin'),
         'validator': bool,
         'default': False,
     },
@@ -260,31 +289,20 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'choices': common.currency.currency_exchange_plugins,
         'default': 'inventreecurrencyexchange',
     },
-    'INVENTREE_DOWNLOAD_FROM_URL': {
-        'name': _('Download from URL'),
-        'description': _('Allow download of remote images and files from external URL'),
-        'validator': bool,
-        'default': False,
-    },
-    'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE': {
-        'name': _('Download Size Limit'),
-        'description': _('Maximum allowable download size for remote image'),
+    'INVENTREE_UPLOAD_MAX_SIZE': {
+        'name': _('Upload Size Limit'),
+        'description': _('Maximum allowable upload size for images and files'),
         'units': 'MB',
-        'default': 1,
-        'validator': [int, MinValueValidator(1), MaxValueValidator(25)],
-    },
-    'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT': {
-        'name': _('User-agent used to download from URL'),
-        'description': _(
-            'Allow to override the user-agent used to download images and files from external URL (leave blank for the default)'
-        ),
-        'default': '',
+        'default': 10,
+        'validator': [int, MinValueValidator(1)],
+        'flags': [SettingFlag.SECURITY],
     },
     'INVENTREE_STRICT_URLS': {
         'name': _('Strict URL Validation'),
         'description': _('Require schema specification when validating URLs'),
         'validator': bool,
         'default': True,
+        'flags': [SettingFlag.SECURITY],
     },
     'INVENTREE_UPDATE_CHECK_INTERVAL': {
         'name': _('Update Check Interval'),
@@ -351,12 +369,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Enable barcode scanner support in the web interface'),
         'default': True,
         'validator': bool,
+        'flags': [SettingFlag.TOGGLE],
     },
     'BARCODE_STORE_RESULTS': {
         'name': _('Store Barcode Results'),
         'description': _('Store barcode scan results in the database'),
         'default': False,
         'validator': bool,
+        'flags': [SettingFlag.TOGGLE],
     },
     'BARCODE_RESULTS_MAX_NUM': {
         'name': _('Barcode Scans Maximum Count'),
@@ -376,12 +396,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Allow barcode scanning via webcam in browser'),
         'default': True,
         'validator': bool,
+        'flags': [SettingFlag.TOGGLE],
     },
     'BARCODE_SHOW_TEXT': {
         'name': _('Barcode Show Data'),
         'description': _('Display barcode data in browser as text'),
         'default': False,
         'validator': bool,
+        'flags': [SettingFlag.TOGGLE],
     },
     'BARCODE_GENERATION_PLUGIN': {
         'name': _('Barcode Generation Plugin'),
@@ -389,11 +411,19 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'choices': barcode_plugins,
         'default': 'inventreebarcode',
     },
+    'PART_ENABLE_LOCKING': {
+        'name': _('Part Locking'),
+        'description': _('Enable locking of parts to prevent modification'),
+        'validator': bool,
+        'default': True,
+        'flags': [SettingFlag.TOGGLE],
+    },
     'PART_ENABLE_REVISION': {
         'name': _('Part Revisions'),
         'description': _('Enable revision field for Part'),
         'validator': bool,
         'default': True,
+        'flags': [SettingFlag.TOGGLE],
     },
     'PART_REVISION_ASSEMBLY_ONLY': {
         'name': _('Assembly Revision Only'),
@@ -522,14 +552,6 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': '',
         'validator': common.validators.validate_icon,
     },
-    'PART_PARAMETER_ENFORCE_UNITS': {
-        'name': _('Enforce Parameter Units'),
-        'description': _(
-            'If units are provided, parameter values must match the specified units'
-        ),
-        'default': True,
-        'validator': bool,
-    },
     'PRICING_DECIMAL_PLACES_MIN': {
         'name': _('Minimum Pricing Decimal Places'),
         'description': _(
@@ -632,11 +654,20 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'PART_BOM_ALLOW_ZERO_QUANTITY': {
+        'name': _('Allow BOM Zero Quantity'),
+        'description': _(
+            'Accept a zero quantity for BOM item for part. Enables using setup quantity to define a quantity required per build, independent of build quantity'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'LABEL_ENABLE': {
         'name': _('Enable label printing'),
         'description': _('Enable label printing from the web interface'),
         'default': True,
         'validator': bool,
+        'flags': [SettingFlag.TOGGLE],
     },
     'LABEL_DPI': {
         'name': _('Label Image DPI'),
@@ -651,24 +682,42 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Enable generation of reports'),
         'default': False,
         'validator': bool,
+        'flags': [SettingFlag.TOGGLE],
     },
     'REPORT_DEBUG_MODE': {
         'name': _('Debug Mode'),
         'description': _('Generate reports in debug mode (HTML output)'),
         'default': False,
         'validator': bool,
+        'flags': [SettingFlag.SECURITY],
+    },
+    'REPORT_FETCH_URLS': {
+        'name': _('Report URL Fetching'),
+        'description': _('Allow fetching of remote URLs when generating reports'),
+        'default': False,
+        'validator': bool,
+        'flags': [SettingFlag.SECURITY],
     },
     'REPORT_LOG_ERRORS': {
         'name': _('Log Report Errors'),
         'description': _('Log errors which occur when generating reports'),
         'default': False,
         'validator': bool,
+        'flags': [SettingFlag.SECURITY],
     },
     'REPORT_DEFAULT_PAGE_SIZE': {
         'name': _('Page Size'),
         'description': _('Default page size for PDF reports'),
         'default': 'A4',
         'choices': report.helpers.report_page_size_options,
+    },
+    'PARAMETER_ENFORCE_UNITS': {
+        'name': _('Enforce Parameter Units'),
+        'description': _(
+            'If units are provided, parameter values must match the specified units'
+        ),
+        'default': True,
+        'validator': bool,
     },
     'SERIAL_NUMBER_GLOBALLY_UNIQUE': {
         'name': _('Globally Unique Serials'),
@@ -682,6 +731,18 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': True,
         'validator': bool,
     },
+    'STOCK_ALLOW_EDIT_SERIAL': {
+        'name': _('Allow Edit Serial Number'),
+        'description': _('Allow editing of serial number for stock items'),
+        'default': True,
+        'validator': bool,
+    },
+    'STOCK_ALLOW_DELETE_SERIALIZED': {
+        'name': _('Delete Serialized Stock'),
+        'description': _('Allow deletion of stock items which have a serial number'),
+        'default': True,
+        'validator': bool,
+    },
     'STOCK_BATCH_CODE_TEMPLATE': {
         'name': _('Batch Code Template'),
         'description': _('Template for generating default batch codes for stock items'),
@@ -692,6 +753,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Enable stock expiry functionality'),
         'default': False,
         'validator': bool,
+        'flags': [SettingFlag.TOGGLE],
     },
     'STOCK_ALLOW_EXPIRED_SALE': {
         'name': _('Sell Expired Stock'),
@@ -719,6 +781,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Enable ownership control over stock locations and items'),
         'default': False,
         'validator': bool,
+        'flags': [SettingFlag.TOGGLE],
     },
     'STOCK_LOCATION_DEFAULT_ICON': {
         'name': _('Stock Location Default Icon'),
@@ -744,6 +807,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Allow Out of Stock Transfer'),
         'description': _(
             'Allow stock items which are not in stock to be transferred between stock locations'
+        ),
+        'default': False,
+        'validator': bool,
+    },
+    'STOCK_MERGE_ON_TRANSFER': {
+        'name': _('Merge stock with existing stock on transfer by default'),
+        'description': _(
+            'Default state for merge stock on transfer behaviour. (Can be changed per transfer if desired)'
         ),
         'default': False,
         'validator': bool,
@@ -792,6 +863,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'BUILDORDER_EXTERNAL_REQUIRED': {
+        'name': _('Require External Build Orders'),
+        'description': _(
+            'Require an external build order when ordering assembled parts from an external supplier'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
         'name': _('Block Until Tests Pass'),
         'description': _(
@@ -805,6 +884,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'description': _('Enable return order functionality in the user interface'),
         'validator': bool,
         'default': False,
+        'flags': [SettingFlag.TOGGLE],
     },
     'RETURNORDER_REFERENCE_PATTERN': {
         'name': _('Return Order Reference Pattern'),
@@ -854,10 +934,55 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'SALESORDER_SHIPMENT_REQUIRES_CHECK': {
+        'name': _('Shipment Requires Checking'),
+        'description': _(
+            'Prevent completion of shipments until items have been checked'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'SALESORDER_SHIP_COMPLETE': {
         'name': _('Mark Shipped Orders as Complete'),
         'description': _(
             'Sales orders marked as shipped will automatically be completed, bypassing the "shipped" status'
+        ),
+        'default': False,
+        'validator': bool,
+    },
+    'TRANSFERORDER_ENABLED': {
+        'name': _('Enable Transfer Orders'),
+        'description': _('Enable transfer order functionality in the user interface'),
+        'validator': bool,
+        'default': False,
+        'flags': [SettingFlag.TOGGLE],
+    },
+    'TRANSFERORDER_REFERENCE_PATTERN': {
+        'name': _('Transfer Order Reference Pattern'),
+        'description': _(
+            'Required pattern for generating Transfer Order reference field'
+        ),
+        'default': 'TO-{ref:04d}',
+        'validator': order.validators.validate_transfer_order_reference_pattern,
+    },
+    'TRANSFERORDER_REQUIRE_RESPONSIBLE': {
+        'name': _('Require Responsible Owner'),
+        'description': _('A responsible owner must be assigned to each order'),
+        'default': False,
+        'validator': bool,
+    },
+    'TRANSFERORDER_EDIT_COMPLETED_ORDERS': {
+        'name': _('Edit Completed Transfer Orders'),
+        'description': _(
+            'Allow editing of transfer orders after they have been completed'
+        ),
+        'default': False,
+        'validator': bool,
+    },
+    'SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS': {
+        'name': _('Block Incomplete Item Tests'),
+        'description': _(
+            'Prevent allocation of stock items to sales orders if required item tests are incomplete'
         ),
         'default': False,
         'validator': bool,
@@ -898,24 +1023,35 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': True,
         'validator': bool,
     },
+    'PURCHASEORDER_MERGE_LINE_ITEMS': {
+        'name': _('Merge Purchase Order Line Items'),
+        'description': _(
+            'Merge new purchase order line items with existing lines that share the same part, destination, and target date'
+        ),
+        'default': True,
+        'validator': bool,
+    },
     # login / SSO
     'LOGIN_ENABLE_PWD_FORGOT': {
         'name': _('Enable password forgot'),
         'description': _('Enable password forgot function on the login pages'),
         'default': True,
         'validator': bool,
+        'flags': [SettingFlag.SECURITY],
     },
     'LOGIN_ENABLE_REG': {
         'name': _('Enable registration'),
         'description': _('Enable self-registration for users on the login pages'),
         'default': False,
         'validator': bool,
+        'flags': [SettingFlag.SECURITY],
     },
     'LOGIN_ENABLE_SSO': {
         'name': _('Enable SSO'),
         'description': _('Enable SSO on the login pages'),
         'default': False,
         'validator': bool,
+        'flags': [SettingFlag.SECURITY],
     },
     'LOGIN_ENABLE_SSO_REG': {
         'name': _('Enable SSO registration'),
@@ -924,6 +1060,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         ),
         'default': False,
         'validator': bool,
+        'flags': [SettingFlag.SECURITY],
     },
     'LOGIN_ENABLE_SSO_GROUP_SYNC': {
         'name': _('Enable SSO group sync'),
@@ -932,12 +1069,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         ),
         'default': False,
         'validator': bool,
+        'flags': [SettingFlag.SECURITY],
     },
     'SSO_GROUP_KEY': {
         'name': _('SSO group key'),
         'description': _('The name of the groups claim attribute provided by the IdP'),
         'default': 'groups',
         'validator': str,
+        'flags': [SettingFlag.SECURITY],
     },
     'SSO_GROUP_MAP': {
         'name': _('SSO group map'),
@@ -945,6 +1084,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
             'A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created.'
         ),
         'validator': json.loads,
+        'flags': [SettingFlag.SECURITY],
         'default': '{}',
     },
     'SSO_REMOVE_GROUPS': {
@@ -954,6 +1094,11 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         ),
         'default': True,
         'validator': bool,
+        'confirm': True,
+        'confirm_text': _(
+            'Disabling this setting will stop cleaning up groups that external users no longer belong to. This might cause security issues.'
+        ),
+        'flags': [SettingFlag.SECURITY],
     },
     'LOGIN_MAIL_REQUIRED': {
         'name': _('Email required'),
@@ -986,6 +1131,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         ),
         'default': '',
         'before_save': common.validators.validate_email_domains,
+        'flags': [SettingFlag.SECURITY],
     },
     'SIGNUP_GROUP': {
         'name': _('Group on signup'),
@@ -994,12 +1140,19 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         ),
         'default': '',
         'choices': settings_group_options,
+        'flags': [SettingFlag.SECURITY],
     },
     'LOGIN_ENFORCE_MFA': {
         'name': _('Enforce MFA'),
         'description': _('Users must use multifactor security.'),
         'default': False,
         'validator': bool,
+        'confirm': True,
+        'confirm_text': _(
+            'Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately.'
+        ),
+        'flags': [SettingFlag.SECURITY],
+        'after_save': enforce_mfa,
     },
     'PLUGIN_ON_STARTUP': {
         'name': _('Check plugins on startup'),
@@ -1023,6 +1176,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
         'after_save': reload_plugin_registry,
+        'flags': [SettingFlag.TOGGLE],
     },
     'ENABLE_PLUGINS_NAVIGATION': {
         'name': _('Enable navigation integration'),
@@ -1030,6 +1184,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
         'after_save': reload_plugin_registry,
+        'flags': [SettingFlag.TOGGLE],
     },
     'ENABLE_PLUGINS_APP': {
         'name': _('Enable app integration'),
@@ -1037,6 +1192,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
         'after_save': reload_plugin_registry,
+        'flags': [SettingFlag.TOGGLE],
     },
     'ENABLE_PLUGINS_SCHEDULE': {
         'name': _('Enable schedule integration'),
@@ -1044,6 +1200,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
         'after_save': reload_plugin_registry,
+        'flags': [SettingFlag.TOGGLE],
     },
     'ENABLE_PLUGINS_EVENTS': {
         'name': _('Enable event integration'),
@@ -1051,6 +1208,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
         'after_save': reload_plugin_registry,
+        'flags': [SettingFlag.TOGGLE],
     },
     'ENABLE_PLUGINS_INTERFACE': {
         'name': _('Enable interface integration'),
@@ -1058,6 +1216,7 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
         'after_save': reload_plugin_registry,
+        'flags': [SettingFlag.TOGGLE],
     },
     'ENABLE_PLUGINS_MAILS': {
         'name': _('Enable mail integration'),
@@ -1065,48 +1224,68 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
         'after_save': reload_plugin_registry,
+        'flags': [SettingFlag.TOGGLE],
     },
     'PROJECT_CODES_ENABLED': {
         'name': _('Enable project codes'),
         'description': _('Enable project codes for tracking projects'),
         'default': False,
         'validator': bool,
+        'flags': [SettingFlag.TOGGLE],
     },
     'STOCKTAKE_ENABLE': {
-        'name': _('Enable Stock History'),
+        'name': _('Enable Stocktake'),
         'description': _(
             'Enable functionality for recording historical stock levels and value'
         ),
+        'flags': [SettingFlag.TOGGLE],
         'validator': bool,
         'default': False,
     },
     'STOCKTAKE_EXCLUDE_EXTERNAL': {
         'name': _('Exclude External Locations'),
         'description': _(
-            'Exclude stock items in external locations from stock history calculations'
+            'Exclude stock items in external locations from stocktake calculations'
         ),
         'validator': bool,
         'default': False,
     },
     'STOCKTAKE_AUTO_DAYS': {
         'name': _('Automatic Stocktake Period'),
-        'description': _('Number of days between automatic stock history recording'),
+        'description': _('Number of days between automatic stocktake recording'),
         'validator': [int, MinValueValidator(1)],
         'default': 7,
         'units': _('days'),
     },
     'STOCKTAKE_DELETE_OLD_ENTRIES': {
-        'name': _('Delete Old Stock History Entries'),
+        'name': _('Delete Old Stocktake Entries'),
         'description': _(
-            'Delete stock history entries older than the specified number of days'
+            'Delete stocktake entries older than the specified number of days'
         ),
         'default': False,
         'validator': bool,
     },
     'STOCKTAKE_DELETE_DAYS': {
-        'name': _('Stock History Deletion Interval'),
+        'name': _('Stocktake Deletion Interval'),
         'description': _(
-            'Stock history entries will be deleted after specified number of days'
+            'Stocktake entries will be deleted after specified number of days'
+        ),
+        'default': 365,
+        'units': _('days'),
+        'validator': [int, MinValueValidator(30)],
+    },
+    'STOCK_TRACKING_DELETE_OLD_ENTRIES': {
+        'name': _('Delete Old Stock Tracking Entries'),
+        'description': _(
+            'Delete stock tracking entries older than the specified number of days'
+        ),
+        'default': False,
+        'validator': bool,
+    },
+    'STOCK_TRACKING_DELETE_DAYS': {
+        'name': _('Stock Tracking Deletion Interval'),
+        'description': _(
+            'Stock tracking entries will be deleted after specified number of days'
         ),
         'default': 365,
         'units': _('days'),
@@ -1124,10 +1303,63 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': True,
         'validator': bool,
     },
+    'WEEK_STARTS_ON': {
+        'name': _('Week Starts On'),
+        'description': _('Starting day of the week, for display in calendar views'),
+        'default': '1',
+        'choices': [
+            ('0', _('Sunday')),
+            ('1', _('Monday')),
+            ('2', _('Tuesday')),
+            ('3', _('Wednesday')),
+            ('4', _('Thursday')),
+            ('5', _('Friday')),
+            ('6', _('Saturday')),
+        ],
+    },
+    'CALENDAR_HORIZON_MONTHS': {
+        'name': _('Calendar Horizon'),
+        'description': _(
+            'Number of months into the future to display in calendar views'
+        ),
+        'default': 12,
+        'validator': [int, MinValueValidator(1)],
+        'units': _('months'),
+    },
     'TEST_STATION_DATA': {
         'name': _('Enable Test Station Data'),
         'description': _('Enable test station data collection for test results'),
         'default': False,
         'validator': bool,
+        'flags': [SettingFlag.TOGGLE],
+    },
+    'MACHINE_PING_ENABLED': {
+        'name': _('Enable Machine Ping'),
+        'description': _(
+            'Enable periodic ping task of registered machines to check their status'
+        ),
+        'default': True,
+        'validator': bool,
+    },
+    'SALESORDER_ENABLED': {
+        'name': _('Enable Sales Orders'),
+        'description': _('Enable sales order functionality in the user interface'),
+        'validator': bool,
+        'default': True,
+        'flags': [SettingFlag.TOGGLE],
+    },
+    'PURCHASEORDER_ENABLED': {
+        'name': _('Enable Purchase Orders'),
+        'description': _('Enable purchase order functionality in the user interface'),
+        'validator': bool,
+        'default': True,
+        'flags': [SettingFlag.TOGGLE],
+    },
+    'BUILDORDER_ENABLED': {
+        'name': _('Enable Build Orders'),
+        'description': _('Enable build order functionality in the user interface'),
+        'validator': bool,
+        'default': True,
+        'flags': [SettingFlag.TOGGLE],
     },
 }

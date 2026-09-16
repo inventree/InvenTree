@@ -51,7 +51,9 @@ class AppMixin:
         """
         from common.settings import get_global_setting
 
-        if settings.PLUGIN_TESTING or get_global_setting('ENABLE_PLUGINS_APP'):
+        if settings.PLUGIN_TESTING or get_global_setting(
+            'ENABLE_PLUGINS_APP', create=False
+        ):
             logger.info('Registering IntegrationPlugin apps')
             apps_changed = False
 
@@ -113,9 +115,14 @@ class AppMixin:
                 break
 
             # unregister the models (yes, models are just kept in multilevel dicts)
+            # Note: Django registers models under the app_label (app_name),
+            # not the full dotted plugin_path. For plugins with nested module
+            # paths (e.g. "myplugin.myplugin"), plugin_path != app_name, so
+            # using plugin_path here would look up the wrong key in the
+            # defaultdict and raise KeyError on .pop().
             for model in models:
                 # remove model from general registry
-                apps.all_models[plugin_path].pop(model)
+                apps.all_models[app_name].pop(model, None)
 
             # clear the registry for that app
             # so that the import trick will work on reloading the same plugin

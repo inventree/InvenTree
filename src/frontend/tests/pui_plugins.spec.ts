@@ -1,5 +1,6 @@
-import test from 'playwright/test';
+import { test } from './baseFixtures';
 
+import { adminuser } from './defaults.js';
 import {
   clearTableFilters,
   clickOnRowMenu,
@@ -11,15 +12,13 @@ import { doCachedLogin } from './login.js';
 import { setPluginState, setSettingState } from './settings.js';
 
 // Unit test for plugin settings
-test('Plugins - Settings', async ({ browser, request }) => {
+test('Plugins - Settings', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+    user: adminuser
   });
 
   // Ensure that the SampleIntegration plugin is enabled
   await setPluginState({
-    request,
     plugin: 'sample',
     state: true
   });
@@ -63,12 +62,11 @@ test('Plugins - Settings', async ({ browser, request }) => {
   await page.getByText('Mouser Electronics').click();
 });
 
-test('Plugins - User Settings', async ({ browser, request }) => {
+test('Plugins - User Settings', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
   // Ensure that the SampleIntegration plugin is enabled
   await setPluginState({
-    request,
     plugin: 'sample',
     state: true
   });
@@ -77,8 +75,8 @@ test('Plugins - User Settings', async ({ browser, request }) => {
   await navigate(page, 'settings/user/');
   await loadTab(page, 'Plugin Settings');
 
-  // User settings for the "Sample Plugin" should be visible
-  await page.getByRole('button', { name: 'Sample Plugin' }).click();
+  // User settings for the "SampleIntegrationPlugin" should be visible
+  await page.getByRole('button', { name: 'SampleIntegrationPlugin' }).click();
 
   await page.getByText('User Setting 1').waitFor();
   await page.getByText('User Setting 2').waitFor();
@@ -108,8 +106,7 @@ test('Plugins - User Settings', async ({ browser, request }) => {
 test('Plugins - Functionality', async ({ browser }) => {
   // Navigate and select the plugin
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree',
+    user: adminuser,
     url: 'settings/admin/plugin/'
   });
 
@@ -149,22 +146,19 @@ test('Plugins - Functionality', async ({ browser }) => {
     .waitFor();
 });
 
-test('Plugins - Panels', async ({ browser, request }) => {
+test('Plugins - Panels', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+    user: adminuser
   });
 
   // Ensure that UI plugins are enabled
   await setSettingState({
-    request,
     setting: 'ENABLE_PLUGINS_INTERFACE',
     value: true
   });
 
   // Ensure that the SampleUI plugin is enabled
   await setPluginState({
-    request,
     plugin: 'sampleui',
     state: true
   });
@@ -180,7 +174,7 @@ test('Plugins - Panels', async ({ browser, request }) => {
 
   // Check out each of the plugin panels
   await loadTab(page, 'Broken Panel');
-  await page.getByText('Error occurred while loading plugin content').waitFor();
+  await page.getByText('Error Loading Plugin Content').waitFor();
   await loadTab(page, 'Dynamic Panel');
   await page.getByText('Instance ID: 69');
   await page
@@ -192,7 +186,6 @@ test('Plugins - Panels', async ({ browser, request }) => {
 
   // Disable the plugin, and ensure it is no longer visible
   await setPluginState({
-    request,
     plugin: 'sampleui',
     state: false
   });
@@ -201,15 +194,13 @@ test('Plugins - Panels', async ({ browser, request }) => {
 /**
  * Unit test for custom admin integration for plugins
  */
-test('Plugins - Custom Admin', async ({ browser, request }) => {
+test('Plugins - Custom Admin', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+    user: adminuser
   });
 
   // Ensure that the SampleUI plugin is enabled
   await setPluginState({
-    request,
     plugin: 'sampleui',
     state: true
   });
@@ -235,15 +226,13 @@ test('Plugins - Custom Admin', async ({ browser, request }) => {
   await page.getByText('hello: world').waitFor();
 });
 
-test('Plugins - Locate Item', async ({ browser, request }) => {
+test('Plugins - Locate Item', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+    user: adminuser
   });
 
   // Ensure that the sample location plugin is enabled
   await setPluginState({
-    request,
     plugin: 'samplelocate',
     state: true
   });
@@ -264,3 +253,60 @@ test('Plugins - Locate Item', async ({ browser, request }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item location requested').waitFor();
 });
+
+/**
+ * Perform a full run through of validating a UI plugin:
+ *
+ * - Activate the plugin
+ * - Check that a custom panel is added
+ * - Check that expected translated text is added
+ * - Check that expected UI elements can be operated
+ *
+ * Note: This tests assumes that:
+ *
+ * - The inventree-plugin-creator tool has been installed
+ * - The default plugin has been created, build and installed
+ */
+test('Plugins - Creator', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: adminuser
+  });
+
+  // Ensure that the SampleIntegration plugin is enabled
+  await setPluginState({
+    plugin: 'my-custom-plugin',
+    state: true
+  });
+
+  // Allow time for installation of plugin static files, etc
+  await page.waitForTimeout(2500);
+
+  await navigate(page, 'part/106/details/');
+  await loadTab(page, 'My Custom Plugin');
+
+  // Check for correctly translated code
+  await page.getByText('Translated text, provided by custom code!').waitFor();
+
+  // Check for incrementing counter value
+  for (let i = 0; i < 5; i++) {
+    await page.getByText(`Counter: ${i}`).waitFor();
+    await page.getByRole('button', { name: 'Increment Counter' }).click();
+  }
+
+  // Edit part form
+  await page.getByRole('button', { name: 'Edit Part' }).click();
+  await page
+    .getByText('This is a custom form launched from within a plugin!')
+    .waitFor();
+  await page
+    .getByRole('textbox', { name: 'text-field-name' })
+    .fill('New part name');
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // View a custom table
+  await page.getByRole('button', { name: 'Custom Table Example' }).click();
+  await page.getByRole('textbox', { name: 'table-search-input' }).fill('red');
+  await page.waitForLoadState('networkidle');
+  await page.getByRole('cell', { name: 'Red Square Table' }).first().waitFor();
+});
+// Ensure that the sample full run plugin is enabled

@@ -1,18 +1,22 @@
 """Functions for tasks and a few general async tasks."""
 
+import contextvars
 import json
 import os
 import re
 import warnings
+from collections import defaultdict
+from collections.abc import Callable
+from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Callable, Optional
+from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.management import call_command
-from django.db import DEFAULT_DB_ALIAS, connections
+from django.db import DEFAULT_DB_ALIAS, connections, transaction
 from django.db.migrations.executor import MigrationExecutor
 from django.db.utils import NotSupportedError, OperationalError, ProgrammingError
 from django.utils import timezone
@@ -28,7 +32,6 @@ from maintenance_mode.core import (
 from opentelemetry import trace
 
 from common.settings import get_global_setting, set_global_setting
-from InvenTree.config import get_setting
 from plugin import registry
 
 from .version import isInvenTreeUpToDate
@@ -158,20 +161,163 @@ def record_task_success(task_name: str):
     set_global_setting(f'_{task_name}_SUCCESS', datetime.now().isoformat(), None)
 
 
+def check_existing_task(taskname, group: str, *args, **kwargs) -> Optional[str]:
+    """Test if an identical task is already registered with the worker.
+
+    This will only return true if the task name, group, args and kwargs all match an existing task.
+
+    Arguments:
+        taskname: The name of the task to check for, in the format 'app.module.function'
+        group: The group that the task belongs to
+        *args: Positional arguments to match
+        **kwargs: Keyword arguments to match
+
+    Returns:
+        Optional[str]: The ID of the matching task, if found, otherwise None
+    """
+    from django_q.models import OrmQ
+
+    task_id = None
+
+    # Iterate through all available tasks, with the most recent first
+    for task in OrmQ.objects.all().order_by('-id'):
+        if task.func() != taskname and task.task.get('func') != taskname:
+            # Task does not match
+            continue
+
+        if task.group() != group:
+            # Group does not match
+            continue
+
+        if task.args() != args:
+            # Task args do not match
+            continue
+
+        if task.kwargs() != kwargs:
+            # Task kwargs do not match
+            continue
+
+        task_id = task.task_id()
+
+        break
+
+    return task_id
+
+
+# Context-local batch of pending offload_task() calls (see batch_offload_tasks())
+_task_batch: contextvars.ContextVar = contextvars.ContextVar('task_batch', default=None)
+
+
+class TaskBatch:
+    """Collects offload_task() calls made within a batch_offload_tasks() scope.
+
+    Entries are grouped by (taskname, group, force_async), so that each distinct
+    combination triggered within the batch is flushed via its own bulk_offload_task() call.
+    """
+
+    def __init__(self):
+        """Initialize an empty batch."""
+        self.entries: dict[tuple, list] = defaultdict(list)
+
+    def add(
+        self, taskname, group: str, force_async: bool, args: tuple, kwargs: dict
+    ) -> None:
+        """Record a single offload_task() call against this batch."""
+        self.entries[taskname, group, force_async].append((args, kwargs))
+
+    def flush(self) -> None:
+        """Fire a bulk_offload_task() call for each (taskname, group, force_async) group collected so far."""
+        entries, self.entries = self.entries, defaultdict(list)
+
+        for (taskname, group, force_async), task_entries in entries.items():
+            bulk_offload_task(
+                taskname, task_entries, group=group, force_async=force_async
+            )
+
+
+@contextmanager
+def batch_offload_tasks():
+    """Batch offload_task() calls made within this scope into bulk_offload_task() calls.
+
+    Any offload_task() call made (directly, or indirectly via a nested function call) while
+    this context is active is queued instead of immediately offloaded - *except* for calls
+    which pass force_sync=True, which always run immediately and synchronously as before.
+    Excluding these is necessary because a forced-sync call is relied upon to have completed,
+    with its side effects visible, by the time offload_task() returns control to the caller -
+    deferring it would silently break that contract.
+
+    The queued calls are flushed - grouped by (taskname, group, force_async), one
+    bulk_offload_task() call per group - when the current database transaction commits (or
+    immediately, if no transaction is active). If the transaction is instead rolled back, the
+    queued calls are discarded, rather than being fired for a write that never happened.
+
+    Note: bulk_offload_task() does not perform duplicate-task checking, unlike offload_task()'s
+    default (check_duplicates=True) behavior - queued calls are never deduplicated, regardless
+    of the check_duplicates value passed to offload_task().
+
+    A batched offload_task() call always returns True immediately, rather than a task ID -
+    the actual task ID is not known until the batch is flushed, possibly well after the
+    call returns. Callers which depend on the returned task ID should not use this context.
+
+    Nesting is not supported: a nested batch_offload_tasks() call reuses the outer batch,
+    and only the outermost call schedules a flush.
+
+    This mirrors plugin.base.event.events.batch_events() and stock.models.batch_tracking_entries()
+    - see batch_events()'s docstring for the reasoning behind the on-commit flush and the
+    context-local (rather than parameter-based) design.
+
+    Yields:
+        The current TaskBatch instance
+    """
+    if _task_batch.get() is not None:
+        # Already inside a batch - extend it, rather than creating a nested one
+        yield _task_batch.get()
+        return
+
+    batch = TaskBatch()
+    token = _task_batch.set(batch)
+
+    try:
+        yield batch
+    finally:
+        _task_batch.reset(token)
+        transaction.on_commit(batch.flush)
+
+
 def offload_task(
-    taskname, *args, force_async=False, force_sync=False, **kwargs
-) -> bool:
+    taskname,
+    *args,
+    force_async: bool = False,
+    force_sync: bool = False,
+    check_duplicates: bool = True,
+    **kwargs,
+) -> str | bool:
     """Create an AsyncTask if workers are running. This is different to a 'scheduled' task, in that it only runs once!
 
     If workers are not running or force_sync flag, is set then the task is ran synchronously.
 
-    Returns:
-        bool: True if the task was offloaded (or ran), False otherwise
-    """
-    from InvenTree.exceptions import log_error
+    Arguments:
+        taskname: The name of the task to be run, in the format 'app.module.function'
+        *args: Positional arguments to be passed to the task function
+        force_async: If True, force the task to be offloaded (even if workers are not running)
+        force_sync: If True, force the task to be run synchronously (even if workers are running)
+        check_duplicates: If True, check for existing identical tasks before offloading
+        **kwargs: Keyword arguments to be passed to the task function
 
+    Returns:
+        str | bool: Task ID if the task was offloaded, True if ran synchronously, False otherwise
+    """
     # Extract group information from kwargs
     group = kwargs.pop('group', 'inventree')
+
+    if not force_sync and (batch := _task_batch.get()) is not None:
+        # A batch_offload_tasks() context is active - queue this task rather than
+        # offloading it immediately (force_sync=True calls never reach this branch -
+        # see batch_offload_tasks() for why they are excluded from batching)
+        batch.add(taskname, group, force_async, args, kwargs)
+        return True
+
+    from InvenTree.exceptions import log_error
 
     try:
         import importlib
@@ -197,11 +343,23 @@ def offload_task(
             force_sync = True
 
     if force_async or (is_worker_running() and not force_sync):
+        # Before offloading, check if a duplicate task exists
+        if not force_sync and check_duplicates:
+            if task_id := check_existing_task(taskname, group, *args, **kwargs):
+                logger.debug(
+                    "Skipping duplicate task '%s' with ID '%s'", taskname, task_id
+                )
+
+                return task_id
+
         # Running as asynchronous task
         try:
             task = AsyncTask(taskname, *args, group=group, **kwargs)
             with tracer.start_as_current_span(f'async worker: {taskname}'):
                 task.run()
+
+                # Return the ID of the offloaded task, so that it can be tracked if needed
+                return task.id
         except ImportError:
             raise_warning(f"WARNING: '{taskname}' not offloaded - Function not found")
             return False
@@ -214,40 +372,31 @@ def offload_task(
             # function was passed - use that
             _func = taskname
         else:
-            # Split path
+            # Split on the last dot: everything before is the module path,
+            # everything after is the function name. rsplit handles any depth
+            # (e.g. 'app.module.func' or 'app.sub.module.func').
             try:
-                app, mod, func = taskname.split('.')
-                app_mod = app + '.' + mod
+                module_path, func_name = taskname.rsplit('.', 1)
             except ValueError:
                 raise_warning(
                     f"WARNING: '{taskname}' not started - Malformed function path"
                 )
                 return False
 
-            # Import module from app
             try:
-                _mod = importlib.import_module(app_mod)
+                _mod = importlib.import_module(module_path)
             except ModuleNotFoundError:
                 log_error('offload_task', scope='worker')
                 raise_warning(
-                    f"WARNING: '{taskname}' not started - No module named '{app_mod}'"
+                    f"WARNING: '{taskname}' not started - No module named '{module_path}'"
                 )
                 return False
 
-            # Retrieve function
-            try:
-                _func = getattr(_mod, func)
-            except AttributeError:  # pragma: no cover
-                # getattr does not work for local import
-                _func = None
-
-            try:
-                if not _func:
-                    _func = eval(func)  # pragma: no cover
-            except NameError:
+            _func = getattr(_mod, func_name, None)
+            if _func is None:
                 log_error('offload_task', scope='worker')
                 raise_warning(
-                    f"WARNING: '{taskname}' not started - No function named '{func}'"
+                    f"WARNING: '{taskname}' not started - No function named '{func_name}'"
                 )
                 return False
 
@@ -262,6 +411,130 @@ def offload_task(
 
     # Finally, task either completed successfully or was offloaded
     return True
+
+
+def bulk_offload_task(
+    taskname,
+    entries: list,
+    group: str = 'inventree',
+    force_sync: bool = False,
+    force_async: bool = False,
+) -> bool:
+    """Queue the same background task many times, in a single bulk database write.
+
+    Equivalent to calling offload_task() once per (args, kwargs) pair in 'entries', but
+    writes all of the queued tasks to the django-q2 ORM broker table (OrmQ) in a single
+    bulk_create() call, rather than one INSERT per task.
+
+    Note: InvenTree always configures django-q2 to use the ORM broker (see
+    InvenTree.setting.worker.get_worker_config), so this does not need to handle any
+    other broker backend.
+
+    Arguments:
+        taskname: The name of the task to be run, in the format 'app.module.function'
+        entries: List of (args, kwargs) tuples, one per task instance to queue
+        group: The task group to assign to each queued task
+        force_sync: If True, run all tasks synchronously (even if workers are running)
+        force_async: If True, force all tasks to be queued (even if workers are not running)
+
+    Returns:
+        bool: True if the tasks were queued (or run synchronously), False otherwise
+    """
+    if not entries:
+        return False
+
+    try:
+        from django_q.brokers import get_broker
+        from django_q.humanhash import uuid
+        from django_q.models import OrmQ
+        from django_q.signing import SignedPackage
+
+        from InvenTree.status import is_worker_running
+    except AppRegistryNotReady:  # pragma: no cover
+        logger.warning(
+            "Could not offload bulk task '%s' - app registry not ready", taskname
+        )
+        force_sync = True
+    except (OperationalError, ProgrammingError):  # pragma: no cover
+        raise_warning(f"Could not offload bulk task '{taskname}' - database not ready")
+        force_sync = True
+
+    if not force_async and (force_sync or not is_worker_running()):
+        # Workers are not available - fall back to running each task synchronously
+        for args, kwargs in entries:
+            offload_task(
+                taskname,
+                *args,
+                group=group,
+                force_sync=True,
+                check_duplicates=False,
+                **kwargs,
+            )
+
+        return True
+
+    broker = get_broker()
+
+    tasks = []
+
+    for args, kwargs in entries:
+        name, task_id = uuid()
+
+        task = {
+            'id': task_id,
+            'name': name,
+            'func': taskname,
+            'args': args,
+            'kwargs': kwargs,
+            'group': group,
+            'started': timezone.now(),
+        }
+
+        tasks.append(
+            OrmQ(
+                key=broker.list_key or 'inventree',
+                payload=SignedPackage.dumps(task),
+                lock=timezone.now(),
+            )
+        )
+
+    OrmQ.objects.bulk_create(tasks)
+
+    return True
+
+
+def get_queued_task(task_id: str):
+    """Find the task in the queue, if it exists.
+
+    Note that the OrmQ table does NOT keep the task ID as a database field,
+    it is instead stored in the payload data.
+    If there are a large number of pending tasks, this query may be inefficient,
+    but there is no other way to find a queued task by ID.
+    """
+    offset = 0
+    limit = 500
+
+    if not task_id:
+        # Return early if no task ID was provided
+        return None
+
+    task_id = str(task_id)
+
+    from django_q.models import OrmQ
+
+    while True:
+        queued_tasks = OrmQ.objects.all().order_by('id')[offset : offset + limit]
+        if not queued_tasks:
+            break
+
+        for task in queued_tasks:
+            if task.task_id() == task_id:
+                return task
+
+        offset += limit
+
+    # No matching task was discovered
+    return None
 
 
 @dataclass()
@@ -302,7 +575,9 @@ tasks = TaskRegister()
 
 
 def scheduled_task(
-    interval: str, minutes: Optional[int] = None, tasklist: TaskRegister = None
+    interval: str,
+    minutes: Optional[int] = None,
+    tasklist: Optional[TaskRegister] = None,
 ):
     """Register the given task as a scheduled task.
 
@@ -319,12 +594,12 @@ def scheduled_task(
         minutes (int, optional): The number of minutes between task runs. Defaults to None.
         tasklist (TaskRegister, optional): The list the tasks should be registered to. Defaults to None.
 
+    Returns:
+        _type_: _description_
+
     Raises:
         ValueError: If decorated object is not callable
         ValueError: If interval is not valid
-
-    Returns:
-        _type_: _description_
     """
 
     def _task_wrapper(admin_class):
@@ -342,22 +617,65 @@ def scheduled_task(
     return _task_wrapper
 
 
-@tracer.start_as_current_span('heartbeat')
-@scheduled_task(ScheduledTask.MINUTES, 5)
-def heartbeat():
-    """Simple task which runs at 5 minute intervals, so we can determine that the background worker is actually running.
+@tracer.start_as_current_span('rebuild_model_tree')
+def rebuild_model_tree(model: str, tree_id: int) -> None:
+    """Rebuild the tree structure (and pathstring values) for a tree model.
 
-    (There is probably a less "hacky" way of achieving this)?
+    This task is offloaded to the background worker whenever nodes are
+    restructured (e.g. re-parented), to avoid expensive tree rebuild
+    operations blocking the calling thread.
+
+    Arguments:
+        model: Label of the model class to rebuild, e.g. 'stock.stocklocation'
+        tree_id: ID of the tree to rebuild
     """
+    from django.apps import apps
+
+    import InvenTree.models
+
+    try:
+        model_class = apps.get_model(model)
+    except (LookupError, ValueError):
+        logger.warning("rebuild_model_tree: Model '%s' does not exist", model)
+        return
+
+    if not issubclass(model_class, InvenTree.models.InvenTreeTree):
+        logger.warning("rebuild_model_tree: Model '%s' is not a tree model", model)
+        return
+
+    # Rebuild the tree structure, based on the parent-child relationships
+    model_class.rebuild_trees([tree_id])
+
+    # Rebuild the 'pathstring' values for the entire tree (if applicable)
+    if issubclass(model_class, InvenTree.models.PathStringMixin):
+        model_class.rebuild_tree_pathstring_values([tree_id])
+
+
+@tracer.start_as_current_span('heartbeat')
+@scheduled_task(ScheduledTask.MINUTES, 1)
+def heartbeat():
+    """Simple task which runs at 1 minute intervals, so we can determine that the background worker is actually running."""
     try:
         from django_q.models import OrmQ, Success
     except AppRegistryNotReady:  # pragma: no cover
         logger.info('Could not perform heartbeat task - App registry not ready')
         return
 
-    threshold = timezone.now() - timedelta(minutes=30)
+    # Write a timestamp file so that health checks can verify worker liveness
+    # without needing to start a full Django process.
+    import tempfile
+    from pathlib import Path
 
-    # Delete heartbeat results more than half an hour old,
+    try:
+        Path(tempfile.gettempdir()).joinpath('inventree_worker_heartbeat').write_text(
+            str(timezone.now().timestamp())
+        )
+    except Exception:
+        pass
+
+    threshold = timezone.now() - timedelta(minutes=15)
+
+    # Delete heartbeat results more than 15 minutes old,
     # otherwise they just create extra noise
     heartbeats = Success.objects.filter(
         func='InvenTree.tasks.heartbeat', started__lte=threshold
@@ -538,13 +856,14 @@ def check_for_updates():
     data = json.loads(response.text)
 
     tag = data.get('tag_name', None)
+    release_url = data.get('html_url')
 
     if not tag:
         raise ValueError("'tag_name' missing from GitHub response")  # pragma: no cover
 
     match = re.match(r'^.*(\d+)\.(\d+)\.(\d+).*$', tag)
 
-    if len(match.groups()) != 3:  # pragma: no cover
+    if not match or len(match.groups()) != 3:  # pragma: no cover
         logger.warning("Version '%s' did not match expected pattern", tag)
         return
 
@@ -567,11 +886,13 @@ def check_for_updates():
         trigger_notification(
             None,
             'update_available',
+            notification_uid=0,
             targets=get_user_model().objects.filter(is_superuser=True),
             delivery_methods={InvenTreeUINotifications},
             context={
                 'name': _('Update Available'),
                 'message': _('An update for InvenTree is available'),
+                'link': release_url,
             },
         )
 
@@ -584,6 +905,15 @@ def update_exchange_rates(force: bool = False):
     Arguments:
         force: If True, force the update to run regardless of the last update time
     """
+    from InvenTree.ready import canAppAccessDatabase, isRunningMigrations
+
+    if isRunningMigrations():
+        return
+
+    # Do not update exchange rates if we cannot access the database
+    if not canAppAccessDatabase(allow_test=True, allow_shell=True):
+        return
+
     try:
         from djmoney.contrib.exchange.models import Rate
 
@@ -624,7 +954,7 @@ def update_exchange_rates(force: bool = False):
     except (AppRegistryNotReady, OperationalError, ProgrammingError):
         logger.warning('Could not update exchange rates - database not ready')
     except Exception as e:  # pragma: no cover
-        logger.exception('Error updating exchange rates: %s', str(type(e)))
+        logger.exception('Error updating exchange rates: %s', type(e))
 
 
 @tracer.start_as_current_span('run_backup')
@@ -659,6 +989,69 @@ def get_migration_plan():
     return plan
 
 
+def get_migration_count():
+    """Returns the number of all detected migrations."""
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+    return executor.loader.applied_migrations
+
+
+# The first and last individual migrations of each pre-1.0.0 squash range,
+# for every app squashed as part of the pre-1.0.0 migration-history cleanup.
+PRE_1_0_0_MIGRATION_BOUNDARIES = [
+    ('common', '0001_initial', '0007_colortheme'),
+    (
+        'common',
+        '0008_remove_inventreesetting_description',
+        '0039_emailthread_emailmessage',
+    ),
+    ('build', '0006_auto_20190913_1407', '0015_auto_20200425_1350'),
+    ('build', '0017_auto_20200426_0612', '0058_buildline_consumed'),
+    ('company', '0003_remove_supplierpart_minimum', '0047_supplierpart_pack_size'),
+    ('company', '0048_auto_20220913_0312', '0075_company_tax_id'),
+    ('order', '0001_initial', '0023_auto_20200420_2309'),
+    ('order', '0031_auto_20200426_0612', '0112_alter_salesorderlineitem_part'),
+    ('stock', '0002_auto_20190525_2226', '0030_auto_20200422_0015'),
+    ('stock', '0059_auto_20210404_2016', '0116_alter_stockitem_link'),
+    ('part', '0003_auto_20190525_2226', '0060_merge_20201112_1722'),
+    (
+        'part',
+        '0061_auto_20210103_2313',
+        '0142_remove_part_last_stocktake_remove_partstocktake_note_and_more',
+    ),
+    ('users', '0001_initial', '0015_alter_userprofile_type'),
+]
+
+
+def get_stuck_pre_1_0_0_apps() -> list:
+    """Detect apps stuck mid-way through the pre-1.0.0 migration squash.
+
+    A database which has applied the *first* migration of one of
+    PRE_1_0_0_MIGRATION_BOUNDARIES's ranges but not the *last* is stuck
+    between the old, granular history and the squashed one.
+
+    Returns a list of app labels which are in this "stuck" state. An empty
+    list means it is safe to proceed with migrations.
+    """
+    from django.db.migrations.recorder import MigrationRecorder
+
+    connection = connections[DEFAULT_DB_ALIAS]
+    recorder = MigrationRecorder(connection)
+
+    if not recorder.has_table():
+        # No migrations have ever been recorded - a genuinely fresh database
+        return []
+
+    applied = recorder.applied_migrations()
+
+    stuck_apps = set()
+
+    for app_label, first, last in PRE_1_0_0_MIGRATION_BOUNDARIES:
+        if (app_label, first) in applied and (app_label, last) not in applied:
+            stuck_apps.add(app_label)
+
+    return sorted(stuck_apps)
+
+
 @tracer.start_as_current_span('check_for_migrations')
 @scheduled_task(ScheduledTask.DAILY)
 def check_for_migrations(force: bool = False, reload_registry: bool = True) -> bool:
@@ -668,6 +1061,11 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
 
     Returns bool indicating if migrations are up to date
     """
+    from . import ready
+
+    if ready.isRunningMigrations() or ready.isRunningBackup():
+        # Migrations are already running!
+        return False
 
     def set_pending_migrations(n: int):
         """Helper function to inform the user about pending migrations."""
@@ -697,13 +1095,13 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
     set_pending_migrations(n)
 
     # Test if auto-updates are enabled
-    if not force and not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
+    if not force and not settings.AUTO_UPDATE:
         logger.info('Auto-update is disabled - skipping migrations')
         return False
 
     # Log open migrations
     for migration in plan:
-        logger.info('- %s', str(migration[0]))
+        logger.info('- %s', migration[0])
 
     # Set the application to maintenance mode - no access from now on.
     set_maintenance_mode(True)
@@ -717,6 +1115,8 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True) -> b
         except NotSupportedError as e:  # pragma: no cover
             if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':
                 raise e
+            logger.exception('Error during migrations: %s', e)
+        except Exception as e:  # pragma: no cover
             logger.exception('Error during migrations: %s', e)
         else:
             set_pending_migrations(0)

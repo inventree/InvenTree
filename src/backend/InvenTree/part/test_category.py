@@ -3,9 +3,9 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, Parameter, ParameterTemplate
 
-from .models import Part, PartCategory, PartParameter, PartParameterTemplate
+from .models import Part, PartCategory
 
 
 class CategoryTest(TestCase):
@@ -43,8 +43,8 @@ class CategoryTest(TestCase):
         self.assertTrue(self.electronics.has_children)
         self.assertTrue(self.mechanical.has_children)
 
-        self.assertEqual(len(self.electronics.children.all()), 3)
-        self.assertEqual(len(self.mechanical.children.all()), 1)
+        self.assertEqual(self.electronics.children.count(), 3)
+        self.assertEqual(self.mechanical.children.count(), 1)
 
     def test_unique_children(self):
         """Test the 'unique_children' functionality."""
@@ -157,15 +157,15 @@ class CategoryTest(TestCase):
     def test_parameters(self):
         """Test that the Category parameters are correctly fetched."""
         # Check number of SQL queries to iterate other parameters
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(3):
             # Prefetch: 3 queries (parts, parameters and parameters_template)
             fasteners = self.fasteners.prefetch_parts_parameters()
             # Iterate through all parts and parameters
             for fastener in fasteners:
                 self.assertIsInstance(fastener, Part)
-                for parameter in fastener.parameters.all():
-                    self.assertIsInstance(parameter, PartParameter)
-                    self.assertIsInstance(parameter.template, PartParameterTemplate)
+                for parameter in fastener.parameters_list.all():
+                    self.assertIsInstance(parameter, Parameter)
+                    self.assertIsInstance(parameter.template, ParameterTemplate)
 
             # Test number of unique parameters
             self.assertEqual(

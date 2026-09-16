@@ -1,28 +1,45 @@
 import { t } from '@lingui/core/macro';
 import { Text } from '@mantine/core';
-import { IconFileArrowLeft, IconSquareArrowRight } from '@tabler/icons-react';
+import { IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
-import { AddItemButton } from '@lib/components/AddItemButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
 import {
   type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
-  RowEditAction,
-  RowViewAction
+  RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { formatDecimal } from '@lib/functions/Formatting';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { useNavigate } from 'react-router-dom';
-import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { RenderInstance } from '../../components/render/Instance';
+import {
+  CurrencyColumn,
+  DescriptionColumn,
+  LineItemColumn,
+  LinkColumn,
+  LocationColumn,
+  NoteColumn,
+  PartColumn,
+  PercentageColumn,
+  ProjectCodeColumn,
+  ReferenceColumn,
+  TargetDateColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { LineItemCreationMenu } from '../../components/items/LineItemCreationMenu';
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
+import { formatCurrency } from '../../defaults/formatters';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   usePurchaseOrderLineItemFields,
@@ -34,20 +51,8 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
-import { useTable } from '../../hooks/UseTable';
+import { useImporterState } from '../../states/ImporterState';
 import { useUserState } from '../../states/UserState';
-import {
-  CurrencyColumn,
-  DescriptionColumn,
-  LinkColumn,
-  LocationColumn,
-  NoteColumn,
-  PartColumn,
-  ReferenceColumn,
-  TargetDateColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 
 /*
  * Display a table of purchase order line items, for a specific order
@@ -58,6 +63,7 @@ export function PurchaseOrderLineItemTable({
   orderId,
   currency,
   supplierId,
+  editable,
   params
 }: Readonly<{
   order: any;
@@ -65,18 +71,14 @@ export function PurchaseOrderLineItemTable({
   orderId: number;
   currency: string;
   supplierId?: number;
+  editable: boolean;
   params?: any;
 }>) {
   const table = useTable('purchase-order-line-item');
 
   const navigate = useNavigate();
   const user = useUserState();
-
-  // Data import
-  const [importOpened, setImportOpened] = useState<boolean>(false);
-  const [selectedSession, setSelectedSession] = useState<number | undefined>(
-    undefined
-  );
+  const openImporter = useImporterState((state) => state.openImporter);
 
   const importSessionFields = useMemo(() => {
     const fields = dataImporterSessionFields({
@@ -109,29 +111,41 @@ export function PurchaseOrderLineItemTable({
     title: t`Import Line Items`,
     fields: importSessionFields,
     onFormSuccess: (response: any) => {
-      setSelectedSession(response.pk);
-      setImportOpened(true);
+      openImporter(response.pk, {
+        onClose: table.refreshTable
+      });
     }
   });
 
   const [singleRecord, setSingleRecord] = useState(null);
 
+  // Keep a stable array reference for unchanged selections, so downstream
+  // memoization isn't defeated by a fresh array literal on every render
+  // (which was resetting in-progress edits in the "receive items" modal)
+  const receiveItems = useMemo(
+    () => (singleRecord ? [singleRecord] : table.selectedRecords),
+    [singleRecord, table.selectedRecords]
+  );
+
+  const onReceiveItemsClose = useCallback(() => {
+    table.clearSelectedRecords();
+    table.refreshTable();
+    // Timeout is a small hack to prevent function being called before re-render
+    setTimeout(() => setSingleRecord(null), 500);
+  }, [table]);
+
   const receiveLineItems = useReceiveLineItems({
-    items: singleRecord ? [singleRecord] : table.selectedRecords,
+    items: receiveItems,
     orderPk: orderId,
     destinationPk: order.destination,
     formProps: {
-      // Timeout is a small hack to prevent function being called before re-render
-      onClose: () => {
-        table.clearSelectedRecords();
-        table.refreshTable();
-        setTimeout(() => setSingleRecord(null), 500);
-      }
+      onClose: onReceiveItemsClose
     }
   });
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
+      LineItemColumn({}),
       PartColumn({
         part: 'part_detail',
         ordering: 'part_name'
@@ -145,6 +159,7 @@ export function PurchaseOrderLineItemTable({
         accessor: 'part_detail.description'
       }),
       ReferenceColumn({}),
+      ProjectCodeColumn({}),
       {
         accessor: 'build_order',
         title: t`Build Order`,
@@ -180,14 +195,14 @@ export function PurchaseOrderLineItemTable({
             const total = record.quantity * supplier_part.pack_quantity_native;
 
             extra.push(
-              <Text key='pack-quantity'>
+              <Text key='pack-quantity' size='sm'>
                 {t`Pack Quantity`}: {supplier_part.pack_quantity}
               </Text>
             );
 
             extra.push(
-              <Text key='total-quantity'>
-                {t`Total Quantity`}: {total} {part?.units}
+              <Text key='total-quantity' size='sm'>
+                {t`Total Quantity`}: {formatDecimal(total)} {part?.units}
               </Text>
             );
           }
@@ -204,8 +219,7 @@ export function PurchaseOrderLineItemTable({
       {
         accessor: 'received',
         title: t`Received`,
-        sortable: false,
-
+        sortable: true,
         render: (record: any) => (
           <ProgressBar
             progressLabel={true}
@@ -230,7 +244,8 @@ export function PurchaseOrderLineItemTable({
         title: t`Supplier Code`,
         switchable: false,
         sortable: true,
-        ordering: 'SKU'
+        ordering: 'SKU',
+        copyable: true
       },
       LinkColumn({
         accessor: 'supplier_part_detail.link',
@@ -243,17 +258,26 @@ export function PurchaseOrderLineItemTable({
         ordering: 'MPN',
         title: t`Manufacturer Code`,
         sortable: true,
-        defaultVisible: false
+        defaultVisible: false,
+        copyable: true
       },
       CurrencyColumn({
         accessor: 'purchase_price',
         title: t`Unit Price`
       }),
-      CurrencyColumn({
-        accessor: 'total_price',
-        currency_accessor: 'purchase_price_currency',
-        title: t`Total Price`
+      PercentageColumn({
+        accessor: 'discount',
+        title: t`Discount`,
+        defaultVisible: false
       }),
+      {
+        accessor: 'total_price',
+        title: t`Total Price`,
+        render: (record: any) =>
+          formatCurrency(record.total_price, {
+            currency: record.purchase_price_currency
+          })
+      },
       TargetDateColumn({}),
       LocationColumn({
         accessor: 'destination_detail',
@@ -278,7 +302,8 @@ export function PurchaseOrderLineItemTable({
   const addPurchaseOrderFields = usePurchaseOrderLineItemFields({
     create: true,
     orderId: orderId,
-    supplierId: supplierId
+    supplierId: supplierId,
+    currency: currency
   });
 
   const [initialData, setInitialData] = useState<any>({});
@@ -288,8 +313,9 @@ export function PurchaseOrderLineItemTable({
     title: t`Add Line Item`,
     fields: addPurchaseOrderFields,
     initialData: {
-      ...initialData,
-      purchase_price_currency: currency
+      purchase_price: null,
+      purchase_price_currency: currency,
+      ...initialData
     },
     onFormSuccess: orderDetailRefresh,
     table: table
@@ -300,7 +326,8 @@ export function PurchaseOrderLineItemTable({
   const editLineItemFields = usePurchaseOrderLineItemFields({
     create: false,
     orderId: orderId,
-    supplierId: supplierId
+    supplierId: supplierId,
+    currency: currency
   });
 
   const editLine = useEditApiFormModal({
@@ -322,14 +349,6 @@ export function PurchaseOrderLineItemTable({
 
   const poStatus = useStatusCodes({ modelType: ModelType.purchaseorder });
 
-  const orderOpen: boolean = useMemo(() => {
-    return (
-      order.status == poStatus.PENDING ||
-      order.status == poStatus.PLACED ||
-      order.status == poStatus.ON_HOLD
-    );
-  }, [order, poStatus]);
-
   const orderPlaced: boolean = useMemo(() => {
     return order.status == poStatus.PLACED;
   }, [order, poStatus]);
@@ -337,6 +356,9 @@ export function PurchaseOrderLineItemTable({
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       const received = (record?.received ?? 0) >= (record?.quantity ?? 0);
+
+      const canEdit: boolean =
+        editable && user.hasChangeRole(UserRoles.purchase_order);
 
       return [
         {
@@ -349,59 +371,55 @@ export function PurchaseOrderLineItemTable({
             receiveLineItems.open();
           }
         },
-        RowViewAction({
-          hidden: !record.build_order,
-          title: t`View Build Order`,
-          modelType: ModelType.build,
-          modelId: record.build_order,
-          navigate: navigate
-        }),
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.purchase_order),
+          hidden: !canEdit,
           onClick: () => {
             setSelectedLine(record.pk);
             editLine.open();
           }
         }),
         RowDuplicateAction({
-          hidden: !orderOpen || !user.hasAddRole(UserRoles.purchase_order),
+          hidden: !canEdit || !user.hasAddRole(UserRoles.purchase_order),
           onClick: () => {
             setInitialData({ ...record });
             newLine.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.purchase_order),
+          hidden: !canEdit || !user.hasDeleteRole(UserRoles.purchase_order),
           onClick: () => {
             setSelectedLine(record.pk);
             deleteLine.open();
           }
+        }),
+        AppRowViewAction({
+          hidden: !record.build_order,
+          title: t`View Build Order`,
+          modelType: ModelType.build,
+          modelId: record.build_order,
+          navigate: navigate
         })
       ];
     },
-    [orderId, user, orderOpen, orderPlaced]
+    [orderId, user, editable, orderPlaced]
   );
 
   // Custom table actions
   const tableActions = useMemo(() => {
     return [
-      <ActionButton
-        key='import-line-items'
-        hidden={!orderOpen || !user.hasAddRole(UserRoles.purchase_order)}
-        tooltip={t`Import Line Items`}
-        icon={<IconFileArrowLeft />}
-        onClick={() => importLineItems.open()}
-      />,
-      <AddItemButton
-        key='add-line-item'
+      <LineItemCreationMenu
+        key='add-line-item-actions'
         tooltip={t`Add Line Item`}
-        onClick={() => {
+        addLabel={t`Add Line Item`}
+        importLabel={t`Import Line Items`}
+        hidden={!editable || !user.hasAddRole(UserRoles.purchase_order)}
+        onAdd={() => {
           setInitialData({
             order: orderId
           });
           newLine.open();
         }}
-        hidden={!orderOpen || !user?.hasAddRole(UserRoles.purchase_order)}
+        onImport={() => importLineItems.open()}
       />,
       <ActionButton
         key='receive-items'
@@ -409,10 +427,10 @@ export function PurchaseOrderLineItemTable({
         icon={<IconSquareArrowRight />}
         onClick={() => receiveLineItems.open()}
         disabled={table.selectedRecords.length === 0}
-        hidden={!orderPlaced || !user.hasChangeRole(UserRoles.purchase_order)}
+        hidden={!orderPlaced || !user.hasAddRole(UserRoles.purchase_order)}
       />
     ];
-  }, [orderId, user, table, orderOpen, orderPlaced]);
+  }, [orderId, user, table, editable, orderPlaced]);
 
   return (
     <>
@@ -428,25 +446,21 @@ export function PurchaseOrderLineItemTable({
         props={{
           enableSelection: true,
           enableDownload: true,
+          enableBulkDelete:
+            editable && user.hasDeleteRole(UserRoles.purchase_order),
+          afterBulkDelete: orderDetailRefresh,
+          defaultSortColumn: 'line',
           params: {
             ...params,
             order: orderId,
-            part_detail: true
+            part_detail: true,
+            destination_detail: true
           },
           rowActions: rowActions,
           tableActions: tableActions,
           tableFilters: tableFilters,
           modelType: ModelType.supplierpart,
           modelField: 'part'
-        }}
-      />
-      <ImporterDrawer
-        sessionId={selectedSession ?? -1}
-        opened={selectedSession != undefined && importOpened}
-        onClose={() => {
-          setSelectedSession(undefined);
-          setImportOpened(false);
-          table.refreshTable();
         }}
       />
     </>

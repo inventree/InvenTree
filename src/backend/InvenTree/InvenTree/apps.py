@@ -18,9 +18,14 @@ import InvenTree.conversion
 import InvenTree.ready
 import InvenTree.tasks
 from InvenTree.config import get_setting
+from InvenTree.ready import ignore_ready_warning
 
 logger = structlog.get_logger('inventree')
 MIGRATIONS_CHECK_DONE = False
+PRE_1_0_0_CHECK_DONE = False
+
+OIDC_CLIENT_CHECKED = False
+DEFAULT_OIDC_APP_ID = 'zDFnsiRheJIOKNx6aCQ0quBxECg1QBHtVFDPloJ6'
 
 
 class InvenTreeConfig(AppConfig):
@@ -51,6 +56,13 @@ class InvenTreeConfig(AppConfig):
         ):
             return
 
+        # Check for a database stuck mid-way through the pre-1.0.0 migration squash.
+        if (
+            InvenTree.ready.canAppAccessDatabase(allow_plugins=True)
+            or settings.TESTING_ENV
+        ):
+            self.check_pre_1_0_0_upgrade()
+
         # Skip if running migrations
         if InvenTree.ready.isRunningMigrations():
             return
@@ -63,20 +75,32 @@ class InvenTreeConfig(AppConfig):
             self.collect_tasks()
             self.start_background_tasks()
 
-            if not InvenTree.ready.isInTestMode():  # pragma: no cover
-                # Update exchange rates
-                InvenTree.tasks.offload_task(InvenTree.tasks.update_exchange_rates)
+            if (
+                not InvenTree.ready.isInTestMode()
+                and not InvenTree.ready.isInWorkerThread()
+            ):  # pragma: no cover
                 # Let the background worker check for migrations
-                InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
+                # Don't offload task if we are already *in* the background worker, otherwise we might end up in a deadlock situation
+
+                try:
+                    InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
+                except Exception as exc:
+                    logger.exception(
+                        'Failed to offload check_for_migrations task: %s', exc
+                    )
+
+                # Update exchange rates
+                InvenTree.tasks.offload_task(
+                    InvenTree.tasks.update_exchange_rates, force_async=True
+                )
 
         self.update_site_url()
-
-        # Ensure the unit registry is loaded
-        InvenTree.conversion.get_unit_registry()
+        self.load_unit_registry()
 
         if InvenTree.ready.canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()
             self.add_user_from_file()
+            self.add_oidc_default_application()
 
         # register event receiver and connect signal for SSO group sync. The connected signal is
         # used for account updates whereas the receiver is used for the initial account creation.
@@ -84,14 +108,15 @@ class InvenTreeConfig(AppConfig):
 
         social_account_updated.connect(sso.ensure_sso_groups)
 
+    @ignore_ready_warning
     def remove_obsolete_tasks(self):
         """Delete any obsolete scheduled tasks in the database."""
         obsolete = [
+            'data_exporter.tasks.cleanup_old_export_outputs',
             'InvenTree.tasks.delete_expired_sessions',
-            'stock.tasks.delete_old_stock_items',
             'label.tasks.cleanup_old_label_outputs',
             'report.tasks.cleanup_old_report_outputs',
-            'data_exporter.tasks.cleanup_old_export_outputs',
+            'stock.tasks.delete_old_stock_items',
         ]
 
         try:
@@ -112,6 +137,7 @@ class InvenTreeConfig(AppConfig):
         except Exception:
             logger.exception('Failed to remove obsolete tasks - database not ready')
 
+    @ignore_ready_warning
     def start_background_tasks(self):
         """Start all background tests for InvenTree."""
         logger.info('Starting background tasks...')
@@ -131,6 +157,9 @@ class InvenTreeConfig(AppConfig):
         tasks = InvenTree.tasks.tasks.task_list
 
         for task in tasks:
+            if not task:
+                continue  # pragma: no cover
+
             ref_name = f'{task.func.__module__}.{task.func.__name__}'
 
             if ref_name in existing_tasks:
@@ -168,20 +197,19 @@ class InvenTreeConfig(AppConfig):
 
         logger.info('Started %s scheduled background tasks...', len(tasks))
 
+    @ignore_ready_warning
     def add_heartbeat(self):
         """Ensure there is at least one background task in the queue."""
-        import django_q.models
-
         try:
-            if django_q.models.OrmQ.objects.count() == 0:
-                InvenTree.tasks.offload_task(
-                    InvenTree.tasks.heartbeat, force_async=True, group='heartbeat'
-                )
+            InvenTree.tasks.offload_task(
+                InvenTree.tasks.heartbeat, force_async=True, group='heartbeat'
+            )
         except AppRegistryNotReady:  # pragma: no cover
             pass
         except Exception:
             pass
 
+    @ignore_ready_warning
     def collect_tasks(self):
         """Collect all background tasks."""
         for app_name, app in apps.app_configs.items():
@@ -194,6 +222,7 @@ class InvenTreeConfig(AppConfig):
                 except Exception as e:  # pragma: no cover
                     logger.exception('Error loading tasks for %s: %s', app_name, e)
 
+    @ignore_ready_warning
     def update_site_url(self):
         """Update the site URL setting.
 
@@ -220,6 +249,12 @@ class InvenTreeConfig(AppConfig):
             except Exception:
                 pass
 
+    @ignore_ready_warning
+    def load_unit_registry(self):
+        """Ensure the unit registry is loaded."""
+        InvenTree.conversion.get_unit_registry()
+
+    @ignore_ready_warning
     def add_user_on_startup(self):
         """Add a user on startup."""
         # stop if checks were already created
@@ -274,10 +309,11 @@ class InvenTreeConfig(AppConfig):
                     new_user = user.objects.create_superuser(
                         add_user, add_email, add_password
                     )
-                    logger.info('User %s was created!', str(new_user))
+                    logger.info('User %s was created!', new_user)
         except IntegrityError:
             logger.warning('The user "%s" could not be created', add_user)
 
+    @ignore_ready_warning
     def add_user_from_file(self):
         """Add the superuser from a file."""
         # stop if checks were already created
@@ -311,13 +347,86 @@ class InvenTreeConfig(AppConfig):
         # do not try again
         settings.USER_ADDED_FILE = True
 
+    @ignore_ready_warning
+    def add_oidc_default_application(self):
+        """Add the default OIDC application for InvenTree clients."""
+        global OIDC_CLIENT_CHECKED
+        if OIDC_CLIENT_CHECKED:
+            return
+
+        from oauth2_provider.models import Application
+
+        if Application.objects.filter(
+            client_id=DEFAULT_OIDC_APP_ID
+        ).exists():  # pragma: no cover
+            logger.info('Default OIDC client already exists - skipping creation')
+            OIDC_CLIENT_CHECKED = True
+            return
+
+        # Create the default OIDC client
+        client = Application.objects.create(
+            name='InvenTree default client',
+            client_id=DEFAULT_OIDC_APP_ID,
+            post_logout_redirect_uris=[f'{settings.SITE_URL}/'],
+            client_type=Application.CLIENT_PUBLIC,
+            authorization_grant_type=Application.GRANT_AUTHORIZATION_CODE,
+            redirect_uris=[f'{settings.SITE_URL}/oidc/callback/', 'http://localhost'],
+            # scopes='openid profile email g:read',
+            algorithm=Application.RS256_ALGORITHM,
+            skip_authorization=True,
+        )
+        logger.info('Default OIDC client created: %s', client)
+        OIDC_CLIENT_CHECKED = True
+
+    def check_pre_1_0_0_upgrade(self=None):
+        """Check for a database stuck mid-way through the pre-1.0.0 migration squash."""
+        global PRE_1_0_0_CHECK_DONE
+        if PRE_1_0_0_CHECK_DONE:
+            return
+
+        if not InvenTree.ready.canAppAccessDatabase(allow_plugins=True):
+            return
+
+        if stuck_apps := InvenTree.tasks.get_stuck_pre_1_0_0_apps():
+            docs = 'https://docs.inventree.org/en/stable/start/migrate/#updating-from-pre-100'
+            logger.error(
+                'INVE-E19: Database is only partially migrated through a pre-1.0.0 '
+                'install, for app(s): %s\n'
+                'This instance must first be fully upgraded to InvenTree 1.0.0 '
+                'before upgrading further.\n'
+                '- Refer to the InvenTree documentation for more information:\n'
+                '- %s',
+                ', '.join(stuck_apps),
+                docs,
+            )
+            sys.exit(1)
+
+        PRE_1_0_0_CHECK_DONE = True
+
     def ensure_migrations_done(self=None):
         """Ensures there are no open migrations, stop if inconsistent state."""
         global MIGRATIONS_CHECK_DONE
         if MIGRATIONS_CHECK_DONE:
             return
 
+        # Exit early if we are not in a state where we can access the database,
+        # otherwise we might end up in a deadlock situation
+        if not InvenTree.ready.canAppAccessDatabase():
+            return
+
         if not InvenTree.tasks.check_for_migrations():
-            logger.error('INVE-W8: Database Migrations required')
-            sys.exit(1)
+            # Detect if this an empty database - if so, start with a fresh migration
+            if (
+                settings.DOCKER
+                and not InvenTree.ready.isInTestMode()
+                and not InvenTree.ready.isRunningMigrations()
+                and InvenTree.tasks.get_migration_count() == 0
+            ):
+                logger.warning(
+                    'INVE-W8: Empty database detected - trying to run migrations'
+                )
+                InvenTree.tasks.check_for_migrations(force_run=True)
+            else:
+                logger.error('INVE-W8: Database Migrations required')
+                sys.exit(1)
         MIGRATIONS_CHECK_DONE = True

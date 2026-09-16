@@ -1,8 +1,14 @@
 import { t } from '@lingui/core/macro';
 import { IconCode } from '@tabler/icons-react';
 
+import { lazy } from 'react';
 import type { Editor } from '../TemplateEditor';
-import { CodeEditorComponent } from './CodeEditor';
+
+const CodeEditorComponent = lazy(() =>
+  import('./CodeEditor').then((module) => ({
+    default: module.CodeEditorComponent
+  }))
+);
 
 export const CodeEditor: Editor = {
   key: 'code',

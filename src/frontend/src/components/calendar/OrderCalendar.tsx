@@ -7,7 +7,11 @@ import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import type { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl, navigateToLink } from '@lib/functions/Navigation';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { ActionIcon, Group, Text } from '@mantine/core';
@@ -22,15 +26,17 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import useCalendar from '../../hooks/UseCalendar';
+import { openGlobalPreview } from '../../states/PreviewDrawerState';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
+import { StatusRenderer, getStatusColor } from '../render/StatusRenderer';
 import {
   AssignedToMeFilter,
   HasProjectCodeFilter,
   OrderStatusFilter,
   ProjectCodeFilter,
   ResponsibleFilter
-} from '../../tables/Filter';
-import { StatusRenderer } from '../render/StatusRenderer';
+} from '../tables/Filter';
 import Calendar from './Calendar';
 
 /**
@@ -46,15 +52,22 @@ export default function OrderCalendar({
   model,
   role,
   params,
-  filters
+  filters,
+  initialFilters,
+  tooltip
 }: {
   model: ModelType;
   role: UserRoles;
   params: Record<string, any>;
   filters?: TableFilter[];
+  initialFilters?: TableFilter[];
+  tooltip?: (event: EventContentArg) => React.ReactNode;
 }) {
   const navigate = useNavigate();
   const user = useUserState();
+  const previewPanelEnabled = useUserSettingsState((state) =>
+    state.isSet('ENABLE_PREVIEW_PANEL')
+  );
 
   // These filters apply to all order types
   const orderFilters: TableFilter[] = useMemo(() => {
@@ -69,7 +82,16 @@ export default function OrderCalendar({
 
   // Complete set of available filters
   const calendarFilters: TableFilter[] = useMemo(() => {
-    return [...orderFilters, ...(filters ?? [])];
+    const calendarFilters: TableFilter[] = [...(filters ?? [])];
+
+    // Add any "standard" filters - but do not override provided filters
+    orderFilters.forEach((orderFilter) => {
+      if (!calendarFilters.some((f) => f.name === orderFilter.name)) {
+        calendarFilters.push(orderFilter);
+      }
+    });
+
+    return calendarFilters;
   }, [orderFilters, filters]);
 
   const modelInfo = useMemo(() => {
@@ -83,7 +105,8 @@ export default function OrderCalendar({
   const calendarState = useCalendar({
     endpoint: modelInfo.api_endpoint,
     name: model.toString(),
-    queryParams: params
+    queryParams: params,
+    initialFilters: initialFilters
   });
 
   // Build the events
@@ -96,14 +119,19 @@ export default function OrderCalendar({
           order.start_date || order.issue_date || order.creation_date || today;
         const end: string = order.target_date || start;
 
+        const statusColor = getStatusColor(model, order.status);
+
         return {
+          order: order,
           id: order.pk,
           title: order.reference,
           description: order.description,
           start: start,
           end: end,
           startEditable: canEdit,
-          durationEditable: canEdit
+          durationEditable: canEdit,
+          backgroundColor: statusColor,
+          borderColor: statusColor
         };
       }) ?? []
     );
@@ -147,14 +175,16 @@ export default function OrderCalendar({
     }
   };
 
-  // Callback when PurchaseOrder is clicked
+  // Callback when an order is clicked - open preview drawer, or navigate on modifier click
   const onClickOrder = (info: EventClickArg) => {
-    if (!!info.event.id) {
-      navigateToLink(
-        getDetailUrl(model, info.event.id),
-        navigate,
-        info.jsEvent
-      );
+    if (!info.event.id) return;
+
+    const detailUrl = getDetailUrl(model, info.event.id);
+
+    if (eventModified(info.jsEvent as any) || !previewPanelEnabled) {
+      navigateToLink(detailUrl, navigate, info.jsEvent);
+    } else {
+      openGlobalPreview(model, Number.parseInt(info.event.id));
     }
   };
 
@@ -170,7 +200,7 @@ export default function OrderCalendar({
       }
 
       return (
-        <Group gap='xs' wrap='nowrap'>
+        <Group gap='xs' wrap='nowrap' style={{ paddingLeft: 5 }}>
           {order.overdue && (
             <ActionIcon
               color='orange-7'
@@ -195,11 +225,13 @@ export default function OrderCalendar({
     <Calendar
       enableDownload
       enableFilters
+      enableRefresh
       enableSearch
       events={events}
       state={calendarState}
       filters={calendarFilters}
       editable={true}
+      eventTooltipContent={tooltip}
       eventContent={renderOrder}
       eventClick={onClickOrder}
       eventChange={onEditOrder}

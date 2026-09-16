@@ -147,7 +147,7 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
 
     def test_machine_detail(self):
         """Test machine detail API endpoint."""
-        self.assertFalse(len(MachineConfig.objects.all()), 0)
+        self.assertFalse(MachineConfig.objects.count(), 0)
         self.get(
             reverse('api-machine-detail', kwargs={'pk': self.placeholder_uuid}),
             expected_code=404,
@@ -185,7 +185,7 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
         response = self.delete(
             reverse('api-machine-detail', kwargs={'pk': pk}), expected_code=204
         )
-        self.assertFalse(len(MachineConfig.objects.all()), 0)
+        self.assertFalse(MachineConfig.objects.count(), 0)
 
         # Create machine where the driver does not exist
         machine_data['driver'] = 'non-existent-driver'
@@ -287,14 +287,23 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
             active=True,
         )
 
+        restart_url = reverse('api-machine-restart', kwargs={'pk': machine.pk})
+
+        # Non-staff users must not be able to restart a machine
+        self.user.is_staff = False
+        self.user.save()
+        self.post(restart_url, expected_code=403)
+
+        # Restore staff access
+        self.user.is_staff = True
+        self.user.save()
+
         # verify machine status before restart
         response = self.get(reverse('api-machine-detail', kwargs={'pk': machine.pk}))
         self.assertEqual(response.data['status_text'], '')
 
         # restart the machine
-        response = self.post(
-            reverse('api-machine-restart', kwargs={'pk': machine.pk}), expected_code=200
-        )
+        self.post(restart_url, expected_code=200)
 
         # verify machine status after restart
         response = self.get(reverse('api-machine-detail', kwargs={'pk': machine.pk}))

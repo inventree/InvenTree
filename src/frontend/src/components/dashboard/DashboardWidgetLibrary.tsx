@@ -9,12 +9,14 @@ import GetStartedWidget from './widgets/GetStartedWidget';
 import LanguageSelectDashboardWidget from './widgets/LanguageSelectWidget';
 import NewsWidget from './widgets/NewsWidget';
 import QueryCountDashboardWidget from './widgets/QueryCountDashboardWidget';
+import QueryDashboardWidget from './widgets/QueryDashboardWidget';
+import StocktakeDashboardWidget from './widgets/StocktakeDashboardWidget';
 
 /**
  *
  * @returns A list of built-in dashboard widgets which display the number of results for a particular query
  */
-export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
+function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
   const user = useUserState.getState();
   const globalSettings = useGlobalSettingsState.getState();
 
@@ -24,34 +26,61 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       title: t`Subscribed Parts`,
       description: t`Show the number of parts which you have subscribed to`,
       modelType: ModelType.part,
-      params: { starred: true }
+      params: { starred: true, active: true }
     }),
     QueryCountDashboardWidget({
       label: 'sub-cat',
       title: t`Subscribed Categories`,
       description: t`Show the number of part categories which you have subscribed to`,
       modelType: ModelType.partcategory,
-      params: { starred: true }
+      params: {
+        starred: true,
+        top_level: 'none'
+      }
     }),
     QueryCountDashboardWidget({
       label: 'invalid-bom',
       title: t`Invalid BOMs`,
       description: t`Assemblies requiring bill of materials validation`,
       modelType: ModelType.part,
+      icon: 'exclamation',
       params: {
         active: true, // Only show active parts
         assembly: true, // Only show parts which are assemblies
         bom_valid: false // Only show parts with invalid BOMs
       }
     }),
-    // TODO: 'latest parts'
+    QueryDashboardWidget({
+      label: 'latest-parts',
+      title: t`Latest parts`,
+      description: t`Latest parts`,
+      modelType: ModelType.part,
+      params: {
+        ordering: '-id'
+      }
+    }),
     // TODO: 'recently updated stock'
     QueryCountDashboardWidget({
       title: t`Low Stock`,
       label: 'low-stk',
       description: t`Show the number of parts which are low on stock`,
       modelType: ModelType.part,
-      params: { low_stock: true, active: true }
+      params: {
+        active: true,
+        low_stock: true,
+        virtual: false
+      }
+    }),
+    QueryCountDashboardWidget({
+      title: t`High Stock`,
+      label: 'hgh-stk',
+      description: t`Show the number of parts which have excess stock`,
+      modelType: ModelType.part,
+      params: {
+        active: true,
+        high_stock: true,
+        virtual: false
+      }
     }),
     QueryCountDashboardWidget({
       title: t`Required for Build Orders`,
@@ -66,7 +95,8 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       description: t`Show the number of stock items which have expired`,
       modelType: ModelType.stockitem,
       params: { expired: true },
-      enabled: globalSettings.isSet('STOCK_ENABLE_EXPIRY')
+      enabled: globalSettings.isSet('STOCK_ENABLE_EXPIRY'),
+      icon: 'overdue'
     }),
     QueryCountDashboardWidget({
       title: t`Stale Stock Items`,
@@ -88,14 +118,16 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       label: 'ovr-bo',
       description: t`Show the number of build orders which are overdue`,
       modelType: ModelType.build,
-      params: { overdue: true }
+      params: { overdue: true },
+      icon: 'overdue'
     }),
     QueryCountDashboardWidget({
       title: t`Assigned Build Orders`,
       label: 'asn-bo',
       description: t`Show the number of build orders which are assigned to you`,
       modelType: ModelType.build,
-      params: { assigned_to_me: true, outstanding: true }
+      params: { assigned_to_me: true, outstanding: true },
+      icon: 'responsible'
     }),
     QueryCountDashboardWidget({
       title: t`Active Sales Orders`,
@@ -109,14 +141,23 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       label: 'ovr-so',
       description: t`Show the number of sales orders which are overdue`,
       modelType: ModelType.salesorder,
-      params: { overdue: true }
+      params: { overdue: true },
+      icon: 'overdue'
     }),
     QueryCountDashboardWidget({
       title: t`Assigned Sales Orders`,
       label: 'asn-so',
       description: t`Show the number of sales orders which are assigned to you`,
       modelType: ModelType.salesorder,
-      params: { assigned_to_me: true, outstanding: true }
+      params: { assigned_to_me: true, outstanding: true },
+      icon: 'responsible'
+    }),
+    QueryCountDashboardWidget({
+      title: t`Pending Shipments`,
+      label: 'pnd-shp',
+      description: t`Show the number of pending sales order shipments`,
+      modelType: ModelType.salesordershipment,
+      params: { order_outstanding: true, shipped: false }
     }),
     QueryCountDashboardWidget({
       title: t`Active Purchase Orders`,
@@ -130,14 +171,16 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       label: 'ovr-po',
       description: t`Show the number of purchase orders which are overdue`,
       modelType: ModelType.purchaseorder,
-      params: { overdue: true }
+      params: { overdue: true },
+      icon: 'overdue'
     }),
     QueryCountDashboardWidget({
       title: t`Assigned Purchase Orders`,
       label: 'asn-po',
       description: t`Show the number of purchase orders which are assigned to you`,
       modelType: ModelType.purchaseorder,
-      params: { assigned_to_me: true, outstanding: true }
+      params: { assigned_to_me: true, outstanding: true },
+      icon: 'responsible'
     }),
     QueryCountDashboardWidget({
       title: t`Active Return Orders`,
@@ -151,14 +194,16 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
       label: 'ovr-ro',
       description: t`Show the number of return orders which are overdue`,
       modelType: ModelType.returnorder,
-      params: { overdue: true }
+      params: { overdue: true },
+      icon: 'overdue'
     }),
     QueryCountDashboardWidget({
       title: t`Assigned Return Orders`,
       label: 'asn-ro',
       description: t`Show the number of return orders which are assigned to you`,
       modelType: ModelType.returnorder,
-      params: { assigned_to_me: true, outstanding: true }
+      params: { assigned_to_me: true, outstanding: true },
+      icon: 'responsible'
     })
   ];
 
@@ -172,7 +217,7 @@ export function BuiltinQueryCountWidgets(): DashboardWidgetProps[] {
   });
 }
 
-export function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {
+function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {
   return [
     {
       label: 'gstart',
@@ -180,6 +225,7 @@ export function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {
       description: t`Getting started with InvenTree`,
       minWidth: 5,
       minHeight: 4,
+      icon: 'info',
       render: () => <GetStartedWidget />
     },
     {
@@ -188,13 +234,18 @@ export function BuiltinGettingStartedWidgets(): DashboardWidgetProps[] {
       description: t`The latest news from InvenTree`,
       minWidth: 5,
       minHeight: 4,
+      icon: 'news',
       render: () => <NewsWidget />
     }
   ];
 }
 
-export function BuiltinSettingsWidgets(): DashboardWidgetProps[] {
+function BuiltinSettingsWidgets(): DashboardWidgetProps[] {
   return [ColorToggleDashboardWidget(), LanguageSelectDashboardWidget()];
+}
+
+function BuiltinActionWidgets(): DashboardWidgetProps[] {
+  return [StocktakeDashboardWidget()];
 }
 
 /**
@@ -205,6 +256,7 @@ export default function DashboardWidgetLibrary(): DashboardWidgetProps[] {
   return [
     ...BuiltinQueryCountWidgets(),
     ...BuiltinGettingStartedWidgets(),
-    ...BuiltinSettingsWidgets()
+    ...BuiltinSettingsWidgets(),
+    ...BuiltinActionWidgets()
   ];
 }

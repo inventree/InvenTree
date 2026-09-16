@@ -5,11 +5,11 @@ title: Suppliers
 
 ## Suppliers
 
-A supplier is an external **vendor** of parts and raw materials.
+A supplier is a [company](../concepts/company.md) which acts as an external vendor of parts and raw materials.
 
 To access the supplier page, click on the <span class="badge inventree nav main">{{ icon("shopping-cart") }} Buy</span> navigation tab and click on <span class="badge inventree nav main">{{ icon("building") }} Suppliers</span> option in the dropdown list.
 
-{{ image("order/supplier_list.png", "Supplier List") }}
+{{ image("purchasing/supplier_list.png", "Supplier List") }}
 
 !!! info
     **Viewing**, **adding**, **editing** and **deleting** suppliers require the corresponding [Purchase Orders user permissions](../settings/permissions.md)
@@ -54,11 +54,11 @@ Supplier parts can be individually disabled - for example, if a supplier part is
 
 The "active" status of a supplier part is clearly visible within the user interface:
 
-{{ image("order/disable_supplier_part.png", "Disable Supplier Part") }}
+{{ image("purchasing/disable_supplier_part.png", "Disable Supplier Part") }}
 
 To change the "active" status of a supplier part, simply edit the supplier part details and set the `active` attribute:
 
-{{ image("order/disable_supplier_part_edit.png", "Disable Supplier Part Edit") }}
+{{ image("purchasing/disable_supplier_part_edit.png", "Disable Supplier Part Edit") }}
 
 It is recommended to disable a supplier part rather than deleting it, as this will preserve the integrity of historical data.
 
@@ -76,11 +76,11 @@ A custom can periodically request availability information (via a supplier API),
 
 If provided, availability information is displayed on the Supplier Part detail page.
 
-{{ image("order/supplier_part_availability.png", "Supplier Part Availability") }}
+{{ image("purchasing/supplier_part_availability.png", "Supplier Part Availability") }}
 
 Availability information can be manually updated via the user interface:
 
-{{ image("order/update_availability.png", "Update Availability") }}
+{{ image("purchasing/update_availability.png", "Update Availability") }}
 
 ## Supplier Part Pack Size
 
@@ -89,3 +89,6 @@ Supplier parts can have a pack size defined. This value is defined when creating
 When buying parts, they are bought in packs. This is taken into account in Purchase Orders: if a supplier part with a pack size of 5 is bought in a quantity of 4, 20 parts will be added to stock when the parts are received.
 
 When adding stock manually, the supplier part can be added in packs or in individual parts. This is to allow the addition of items in opened packages. Set the flag "Use pack size" (`use_pack_size` in the API) to True in order to add parts in packs.
+
+!!! tip "Bundled Items"
+    A pack size only ever represents multiple units of the *same* part. If a supplier instead sells a kit or assortment of *different* components as a single purchasable item, refer to the [bundled items](./purchase_order.md#bundled-items) documentation instead.

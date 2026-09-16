@@ -24,6 +24,6 @@ The Django Q work must run separately to the web server. This is started as a se
 
 If the worker is not running, a warning indicator is displayed in the InvenTree menu bar.
 
-## Admin Interface
+## Admin Center
 
-Scheduled tasks can be viewed in the InvenTree admin interface.
+Scheduled, pending and failed tasks can be viewed in the [Admin Center](./admin.md#admin-center), under the *Background Tasks* section.

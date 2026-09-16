@@ -1,6 +1,10 @@
 """Database model definitions for the 'users' app."""
 
 import datetime
+import hashlib
+import hmac
+import secrets
+from typing import Optional
 
 from django.conf import settings
 from django.contrib import admin
@@ -24,7 +28,7 @@ from rest_framework.authtoken.models import Token as AuthToken
 import InvenTree.helpers
 import InvenTree.models
 from common.settings import get_global_setting
-from InvenTree.ready import isImportingData
+from InvenTree.ready import isImportingData, isReadOnlyCommand
 
 from .ruleset import RULESET_CHOICES, get_ruleset_models
 
@@ -46,8 +50,8 @@ User.add_to_class('__str__', user_model_str)  # Overriding User.__str__
 #  OVERRIDE END
 
 
-if settings.LDAP_AUTH:
-    from django_auth_ldap.backend import populate_user
+if settings.LDAP_AUTH:  # pragma: no cover
+    from django_auth_ldap.backend import populate_user  # ty: ignore[unresolved-import]
 
     @receiver(populate_user)
     def create_email_address(user, **kwargs):
@@ -61,10 +65,19 @@ if settings.LDAP_AUTH:
         user.save()
 
         # if they got an email address from LDAP, create it now and make it the primary
-        if user.email:
+        if (
+            user.email
+            and not EmailAddress.objects.filter(user=user, email=user.email).exists()
+        ):
             EmailAddress.objects.create(user=user, email=user.email, primary=True)
 
 
+API_TOKEN_PREFIX = 'inv-2-'
+API_TOKEN_IDENTIFIER_LENGTH = 20
+API_TOKEN_SECRET_LENGTH = 40
+
+
+# legacy TODO @matmair remove in the next breaking
 def default_token():
     """Generate a default value for the token."""
     return ApiToken.generate_key()
@@ -75,23 +88,16 @@ def default_token_expiry():
     return InvenTree.helpers.current_date() + datetime.timedelta(days=365)
 
 
-def default_create_token(token_model, user, serializer):
-    """Generate a default value for the token."""
-    token = token_model.objects.filter(user=user, name='', revoked=False)
-
-    if token.exists():
-        return token.first()
-
-    else:
-        return token_model.objects.create(user=user, name='')
-
-
 class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
     """Extends the default token model provided by djangorestframework.authtoken.
 
     Extensions:
     - Adds an 'expiry' date - tokens can be set to expire after a certain date
     - Adds a 'name' field - tokens can be given a custom name (in addition to the user information)
+
+    Token storage:
+    - Old v1 tokens store the raw plaintext token value directly in the 'key' field.
+    - Current v2 tokens only store a identifier in the 'key' field, and the secret is only persisted as hmac digest
     """
 
     class Meta:
@@ -101,27 +107,142 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         verbose_name_plural = _('API Tokens')
         abstract = False
 
+    _raw_secret = None  # Temp storage for secret
+
     def __str__(self):
         """String representation uses the redacted token."""
         return self.token
 
     @classmethod
     def generate_key(cls, prefix='inv-'):
-        """Generate a new token key - with custom prefix."""
+        """Generate a new old token key - with custom prefix."""
         # Suffix is the date of creation
         suffix = '-' + str(datetime.datetime.now().date().isoformat().replace('-', ''))
 
         return prefix + str(AuthToken.generate_key()) + suffix
 
-    # Override the 'key' field - force it to be unique
+    def generate_v2_token(self) -> None:
+        """Generate new v2 token."""
+        identifier = secrets.token_hex(API_TOKEN_IDENTIFIER_LENGTH // 2)
+        secret = secrets.token_hex(API_TOKEN_SECRET_LENGTH // 2)
+        suffix = '-' + str(datetime.datetime.now().date().isoformat().replace('-', ''))
+
+        self.key = identifier
+        self.hmac_digest = self.calculate_digest(secret)
+        self._raw_secret = f'{API_TOKEN_PREFIX}{identifier}.{secret}{suffix}'
+
+        # metadata
+        self.token_version = 2
+        self.pepper_id = self.calculate_pepper_id()
+
+    @staticmethod
+    def calculate_digest(secret: str) -> str:
+        """Calculate the HMAC digest of the provided secret."""
+        pepper = InvenTree.helpers.get_api_token_pepper()
+        return hmac.new(
+            pepper.encode('utf-8'), secret.encode('utf-8'), hashlib.sha256
+        ).hexdigest()
+
+    @classmethod
+    def calculate_pepper_id(cls, length=8) -> str:
+        """Calculate the first 8 characters of the current pepper hashed."""
+        pepper = InvenTree.helpers.get_api_token_pepper()
+        return hashlib.sha256(pepper.encode('utf-8')).hexdigest()[:length]
+
+    @staticmethod
+    def split_token(raw_token: str):
+        """Split a raw v2 token value into the required values."""
+        if not raw_token:
+            return None  # pragma: no cover
+
+        value = (
+            raw_token[len(API_TOKEN_PREFIX) :]
+            if raw_token.startswith(API_TOKEN_PREFIX)
+            else raw_token
+        )
+
+        if '.' not in value:
+            return None
+
+        identifier, _sep, secret = value.partition('.')
+        if not identifier or not secret:
+            return None  # pragma: no cover
+
+        secret_parts = secret.rsplit('-', 1)
+        if (
+            len(secret_parts) == 2
+            and len(secret_parts[1]) == 8
+            and secret_parts[1].isdigit()
+        ):
+            secret = secret_parts[0]
+
+        return identifier, secret
+
+    def match(self, raw_token: str) -> bool:
+        """Lightweight check for whether raw_token refers to *this* token instance."""
+        if not raw_token:
+            return False  # pragma: no cover
+
+        # is a v2 token
+        if self.hmac_digest:
+            parts = self.split_token(raw_token)
+            return bool(parts) and parts[0] == self.key
+
+        return raw_token == self.key
+
+    def validate(self, raw_token: str) -> bool:
+        """Validate a raw token value against this token."""
+        if not raw_token:
+            return False  # pragma: no cover
+
+        # is a v2 token
+        if self.hmac_digest:
+            parts = self.split_token(raw_token)
+
+            # check id
+            if not parts or parts[0] != self.key:
+                return False  # pragma: no cover
+            # check secret
+            return hmac.compare_digest(
+                self.calculate_digest(parts[1]), self.hmac_digest
+            )
+
+        # should be a v1 - compare directly
+        return raw_token == self.key
+
+    @classmethod
+    def lookup(cls, raw_token: str) -> 'ApiToken':
+        """Look up an ApiToken instance from a token string (v1 or v2). Not a full validation."""
+        parts = cls.split_token(raw_token)
+        return cls.objects.select_related('user').get(
+            key=parts[0] if parts else raw_token
+        )
+
+    @classmethod
+    def get_from_string(cls, raw_token: str) -> Optional['ApiToken']:
+        """Look up and fully validate an ApiToken from a raw token string."""
+        try:
+            token = cls.lookup(raw_token)
+        except cls.DoesNotExist:
+            return None
+
+        if not token.validate(raw_token):
+            return None  # pragma: no cover
+
+        return token
+
+    # in v1: private token; in v2: public identifier
     key = models.CharField(
-        default=default_token,
         verbose_name=_('Key'),
         db_index=True,
         unique=True,
         max_length=100,
-        validators=[MinLengthValidator(50)],
+        blank=True,
+        validators=[MinLengthValidator(8)],
     )
+
+    # in v2: HMAC digest of token; empty in v1
+    hmac_digest = models.CharField(max_length=200, blank=True, null=True)
 
     # Override the 'user' field, to allow multiple tokens per user
     user = models.ForeignKey(
@@ -157,9 +278,51 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         default=False, verbose_name=_('Revoked'), help_text=_('Token has been revoked')
     )
 
+    revocation_reason = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Revocation Reason'),
+        help_text=_('As entered by the user or action during revocation'),
+    )
+
+    revoked_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Revoked By'),
+        help_text=_('User who revoked the token'),
+        related_name='revoked_api_tokens',
+    )
+
+    issued_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Issued By'),
+        help_text=_('User who issued the token'),
+        related_name='issued_api_tokens',
+    )
+
+    token_version = models.PositiveSmallIntegerField(
+        default=2,
+        verbose_name=_('Token Version'),
+        help_text=_('Version of the API token'),
+    )
+
+    pepper_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('Pepper ID'),
+        help_text=_('Identifier for the pepper used in token hashing'),
+    )
+    """By default, the first 8 characters of the pepper hashed."""
+
     @staticmethod
     def sanitize_name(name: str) -> str:
-        """Sanitize the provide name value."""
+        """Sanitize the provided name value."""
         name = str(name).strip()
 
         # Remove any non-printable chars
@@ -174,6 +337,17 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
         return name
 
+    def save(self, *args, **kwargs):
+        """Patch in token generations."""
+        if self._state.adding and not self.key and not self.hmac_digest:
+            if self.token_version != 2:
+                raise ValueError(
+                    'Unsupported token version and scenario'
+                )  # pragma: no cover
+            self.generate_v2_token()
+
+        super().save(*args, **kwargs)
+
     @property
     @admin.display(description=_('Token'))
     def token(self) -> str:
@@ -181,13 +355,19 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
         The *raw* key value should never be displayed anywhere!
         """
-        # If the token has not yet been saved, return the raw key
+        # on generation: v2 token
+        if self._raw_secret:
+            return self._raw_secret
+
+        # on generation: v1
         if self.pk is None:
             return self.key  # pragma: no cover
 
-        M = len(self.key) - 20
+        # v2 default path
+        if self.hmac_digest:
+            return f'{API_TOKEN_PREFIX}{self.key}.{"*" * API_TOKEN_SECRET_LENGTH}'
 
-        return self.key[:8] + '*' * M + self.key[-12:]
+        return InvenTree.helpers.sanitize_token(self.key)
 
     @property
     @admin.display(boolean=True, description=_('Expired'))
@@ -469,7 +649,7 @@ class Owner(models.Model):
 def create_owner(sender, instance, **kwargs):
     """Callback function to create a new owner instance after either a new group or user instance is saved."""
     # Ignore during data import process to avoid data duplication
-    if not isImportingData():
+    if not isReadOnlyCommand() and not isImportingData():
         Owner.create(obj=instance)
 
 
@@ -506,6 +686,15 @@ class UserProfile(InvenTree.models.MetadataMixin):
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name='profile', verbose_name=_('User')
     )
+
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this profile.
+
+        UserProfile has no RuleSet permissions of its own,
+        so we manually check if the user is the owner of this profile.
+        """
+        return self.user_id == user.pk
+
     language = models.CharField(
         max_length=10,
         blank=True,
@@ -606,6 +795,10 @@ class UserProfile(InvenTree.models.MetadataMixin):
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     """Create or update user profile when user is saved."""
+    # Disable profile creation if importing data from file or running a read-only command
+    if isReadOnlyCommand() or isImportingData():
+        return
+
     if created:
         UserProfile.objects.create(user=instance)
     instance.profile.save()
@@ -635,6 +828,10 @@ def validate_primary_group_on_delete(sender, instance, **kwargs):
 @receiver(m2m_changed, sender=User.groups.through)
 def validate_primary_group_on_group_change(sender, instance, action, **kwargs):
     """Validate primary_group on user profiles when a group is added or removed."""
+    # Disable user profile validation if importing data from file
+    if isImportingData():
+        return
+
     if action in ['post_add', 'post_remove']:
         profile = instance.profile
         if profile.primary_group and profile.primary_group not in instance.groups.all():

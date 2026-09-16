@@ -1,9 +1,9 @@
 import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconInfoCircle,
-  IconList
+  IconPackages
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -11,15 +11,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
-import { apiUrl } from '@lib/functions/Api';
 import { getDetailUrl } from '@lib/functions/Navigation';
+import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
-import {
-  type DetailsField,
-  DetailsTable
-} from '../../components/details/Details';
-import { DetailsImage } from '../../components/details/DetailsImage';
-import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   DeleteItemAction,
   DuplicateItemAction,
@@ -30,8 +24,8 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -39,9 +33,11 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useUserState } from '../../states/UserState';
-import ManufacturerPartParameterTable from '../../tables/purchasing/ManufacturerPartParameterTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
+import { ManufacturerPartDetailsPanel } from './ManufacturerPartDetailsPanel';
 
 export default function ManufacturerPartDetail() {
   const { id } = useParams();
@@ -58,98 +54,15 @@ export default function ManufacturerPartDetail() {
     hasPrimaryKey: true,
     params: {
       part_detail: true,
-      manufacturer_detail: true
+      manufacturer_detail: true,
+      tags: true
     }
   });
 
-  const detailsPanel = useMemo(() => {
-    if (instanceQuery.isFetching) {
-      return <Skeleton />;
-    }
-
-    const data = manufacturerPart ?? {};
-
-    const tl: DetailsField[] = [
-      {
-        type: 'link',
-        name: 'part',
-        label: t`Internal Part`,
-        model: ModelType.part,
-        hidden: !manufacturerPart.part
-      },
-      {
-        type: 'string',
-        name: 'part_detail.IPN',
-        label: t`IPN`,
-        copy: true,
-        icon: 'serial',
-        hidden: !data.part_detail?.IPN
-      },
-      {
-        type: 'string',
-        name: 'part_detail.description',
-        label: t`Description`,
-        copy: true,
-        icon: 'info',
-        hidden: !manufacturerPart.description
-      }
-    ];
-
-    const tr: DetailsField[] = [
-      {
-        type: 'link',
-        name: 'manufacturer',
-        label: t`Manufacturer`,
-        icon: 'manufacturers',
-        model: ModelType.company,
-        hidden: !manufacturerPart.manufacturer
-      },
-      {
-        type: 'string',
-        name: 'MPN',
-        label: t`Manufacturer Part Number`,
-        copy: true,
-        hidden: !manufacturerPart.MPN,
-        icon: 'reference'
-      },
-      {
-        type: 'string',
-        name: 'description',
-        label: t`Description`,
-        copy: true,
-        hidden: !manufacturerPart.description,
-        icon: 'info'
-      },
-      {
-        type: 'link',
-        external: true,
-        name: 'link',
-        label: t`External Link`,
-        copy: true,
-        hidden: !manufacturerPart.link
-      }
-    ];
-
-    return (
-      <ItemDetailsGrid>
-        <Grid grow>
-          <DetailsImage
-            appRole={UserRoles.part}
-            src={manufacturerPart?.part_detail?.image}
-            apiPath={apiUrl(
-              ApiEndpoints.part_list,
-              manufacturerPart?.part_detail?.pk
-            )}
-            pk={manufacturerPart?.part_detail?.pk}
-          />
-          <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable title={t`Part Details`} fields={tl} item={data} />
-          </Grid.Col>
-        </Grid>
-        <DetailsTable title={t`Manufacturer Details`} fields={tr} item={data} />
-      </ItemDetailsGrid>
-    );
-  }, [manufacturerPart, instanceQuery]);
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.manufacturerpart,
+    modelId: manufacturerPart?.pk
+  });
 
   const panels: PanelType[] = useMemo(() => {
     return [
@@ -157,18 +70,26 @@ export default function ManufacturerPartDetail() {
         name: 'details',
         label: t`Manufacturer Part Details`,
         icon: <IconInfoCircle />,
-        content: detailsPanel
+        content: (
+          <ManufacturerPartDetailsPanel
+            instance={manufacturerPart}
+            allowImageEdit
+            refreshInstance={refreshInstance}
+          />
+        )
       },
       {
-        name: 'parameters',
-        label: t`Parameters`,
-        icon: <IconList />,
-        content: manufacturerPart?.pk ? (
-          <ManufacturerPartParameterTable
-            params={{ manufacturer_part: manufacturerPart.pk }}
+        name: 'stock',
+        label: t`Received Stock`,
+        hidden: !user.hasViewRole(UserRoles.stock),
+        icon: <IconPackages />,
+        content: (
+          <StockItemTable
+            tableName='manufacturer-part-stock'
+            params={{
+              manufacturer_part: id
+            }}
           />
-        ) : (
-          <Skeleton />
         )
       },
       {
@@ -177,24 +98,31 @@ export default function ManufacturerPartDetail() {
         icon: <IconBuildingWarehouse />,
         content: manufacturerPart?.pk ? (
           <SupplierPartTable
-            params={{
-              manufacturer_part: manufacturerPart.pk
-            }}
+            partId={manufacturerPart.part}
+            manufacturerId={manufacturerPart.manufacturer}
+            manufacturerPartId={manufacturerPart.pk}
           />
         ) : (
           <Skeleton />
         )
       },
+      ParametersPanel({
+        model_type: ModelType.manufacturerpart,
+        model_id: manufacturerPart?.pk,
+        parameter_count: instanceInfo.parameter_count
+      }),
       AttachmentPanel({
         model_type: ModelType.manufacturerpart,
-        model_id: manufacturerPart?.pk
+        model_id: manufacturerPart?.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.manufacturerpart,
-        model_id: manufacturerPart?.pk
+        model_id: manufacturerPart?.pk,
+        note_count: instanceInfo.note_count
       })
     ];
-  }, [manufacturerPart]);
+  }, [user, manufacturerPart, instanceInfo]);
 
   const editManufacturerPartFields = useManufacturerPartFields();
 
@@ -203,13 +131,18 @@ export default function ManufacturerPartDetail() {
     pk: manufacturerPart?.pk,
     title: t`Edit Manufacturer Part`,
     fields: editManufacturerPartFields,
+    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
+  });
+
+  const duplicateManufacturerPartFields = useManufacturerPartFields({
+    duplicateManufacturerPartId: manufacturerPart?.pk
   });
 
   const duplicateManufacturerPart = useCreateApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
     title: t`Add Manufacturer Part`,
-    fields: editManufacturerPartFields,
+    fields: duplicateManufacturerPartFields,
     initialData: {
       ...manufacturerPart
     },
@@ -278,7 +211,7 @@ export default function ManufacturerPartDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
-            title={t`ManufacturerPart`}
+            title={t`Manufacturer Part`}
             subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
             breadcrumbs={breadcrumbs}
             lastCrumb={[

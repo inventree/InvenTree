@@ -1,6 +1,7 @@
 """Background tasks for the 'order' app."""
 
 from datetime import datetime, timedelta
+from typing import Optional
 
 from django.contrib.auth.models import Group, User
 from django.db import transaction
@@ -13,8 +14,9 @@ from opentelemetry import trace
 import common.notifications
 import InvenTree.helpers_model
 import order.models
+import stock.models as stock_models
 from InvenTree.tasks import ScheduledTask, scheduled_task
-from order.events import PurchaseOrderEvents, SalesOrderEvents
+from order.events import PurchaseOrderEvents, ReturnOrderEvents, SalesOrderEvents
 from order.status_codes import (
     PurchaseOrderStatusGroups,
     ReturnOrderStatusGroups,
@@ -104,7 +106,7 @@ def check_overdue_purchase_orders():
 @tracer.start_as_current_span('notify_overdue_sales_order')
 def notify_overdue_sales_order(so: order.models.SalesOrder) -> None:
     """Notify appropriate users that a SalesOrder has just become 'overdue'."""
-    targets: list[User, Group, Owner] = []
+    targets: list[User | Group | Owner] = []
 
     if so.created_by:
         targets.append(so.created_by)
@@ -171,7 +173,7 @@ def check_overdue_sales_orders():
 @tracer.start_as_current_span('notify_overdue_return_order')
 def notify_overdue_return_order(ro: order.models.ReturnOrder) -> None:
     """Notify appropriate users that a ReturnOrder has just become 'overdue'."""
-    targets: list[User, Group, Owner] = []
+    targets: list[User | Group | Owner] = []
 
     if ro.created_by:
         targets.append(ro.created_by)
@@ -191,7 +193,7 @@ def notify_overdue_return_order(ro: order.models.ReturnOrder) -> None:
         'template': {'html': 'email/overdue_return_order.html', 'subject': name},
     }
 
-    event_name = SalesOrderEvents.OVERDUE
+    event_name = ReturnOrderEvents.OVERDUE
 
     # Send a notification to the appropriate users
     common.notifications.trigger_notification(
@@ -236,29 +238,87 @@ def check_overdue_return_orders():
 
 
 @tracer.start_as_current_span('complete_sales_order_shipment')
-def complete_sales_order_shipment(shipment_id: int, user_id: int) -> None:
+def complete_sales_order_shipment(
+    shipment_id: int,
+    user_id: int,
+    shipment_date: str,
+    delivery_date: Optional[str] = None,
+) -> None:
     """Complete allocations for a pending shipment against a SalesOrder.
+
+    Arguments:
+        shipment_id: The ID of the SalesOrderShipment object to complete
+        user_id: The ID of the user performing the completion action
+        shipment_date: The date that the shipment was completed (if None, then the current date is used)
+        delivery_date: The date that the shipment was delivered (optional)
 
     At this stage, the shipment is assumed to be complete,
     and we need to perform the required "processing" tasks.
     """
-    try:
-        shipment = order.models.SalesOrderShipment.objects.get(pk=shipment_id)
-    except Exception:
-        # Shipping object does not exist
-        logger.warning(
-            'Failed to complete shipment - no matching SalesOrderShipment for ID <%s>',
-            shipment_id,
-        )
-        return
+    user = User.objects.filter(pk=user_id).first() if user_id else None
 
-    try:
-        user = User.objects.get(pk=user_id)
-    except Exception:
-        user = None
-
-    logger.info('Completing SalesOrderShipment <%s>', shipment)
+    logger.info('Completing SalesOrderShipment <%s>', shipment_id)
 
     with transaction.atomic():
-        for allocation in shipment.allocations.all():
-            allocation.complete_allocation(user=user)
+        # Lock the shipment row for the duration of the update,
+        # and re-check that it has not already been completed.
+        # This guards against duplicate task execution - e.g. if the completion
+        # request was submitted multiple times before the first task ran.
+        # Do not handle any lookup errors here:
+        # If the shipment cannot be found, then we want the task to fail (and retry later)
+        shipment = order.models.SalesOrderShipment.objects.select_for_update().get(
+            pk=shipment_id
+        )
+
+        if shipment.is_complete():
+            logger.warning(
+                'SalesOrderShipment <%s> has already been completed - skipping',
+                shipment_id,
+            )
+            return
+
+        shipment.complete_allocations(shipment.allocations.all(), user=user)
+
+        # Once all allocations have been completed, we can mark the shipment as complete
+        shipment.shipment_date = shipment_date or datetime.now().date()
+        shipment.delivery_date = delivery_date
+        shipment.shipped_by = user
+        shipment.save()
+
+    # Trigger event signalling that the shipment has been completed
+    trigger_event(SalesOrderEvents.SHIPMENT_COMPLETE, id=shipment.pk)
+
+
+@tracer.start_as_current_span('auto_allocate_sales_order')
+def auto_allocate_sales_order(
+    order_id: int,
+    location_id: Optional[int] = None,
+    exclude_location_id: Optional[int] = None,
+    shipment_id: Optional[int] = None,
+    line_ids: Optional[list] = None,
+    **kwargs,
+):
+    """Run auto-allocation for a specified SalesOrder."""
+    sales_order = order.models.SalesOrder.objects.get(pk=order_id)
+
+    location = (
+        stock_models.StockLocation.objects.get(pk=location_id) if location_id else None
+    )
+    exclude_location = (
+        stock_models.StockLocation.objects.get(pk=exclude_location_id)
+        if exclude_location_id
+        else None
+    )
+    shipment = (
+        order.models.SalesOrderShipment.objects.get(pk=shipment_id)
+        if shipment_id
+        else None
+    )
+
+    sales_order.auto_allocate_stock(
+        location=location,
+        exclude_location=exclude_location,
+        shipment=shipment,
+        line_ids=line_ids or None,
+        **kwargs,
+    )

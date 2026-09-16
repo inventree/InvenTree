@@ -6,6 +6,10 @@ title: FAQ
 
 Below is a list of frequently asked questions. If you are having issues with InvenTree please consult this list first!
 
+Also, you can refer to our [GitHub page](https://github.com/inventree/inventree/issues) for known issues and bug reports - perhaps your issue has already been reported!
+
+If you cannot resolve the issue, please refer to the [troubleshooting guide](./troubleshooting.md) for further assistance.
+
 ## Installation Issues
 
 ### Installing on Windows
@@ -31,7 +35,7 @@ If the installed version of invoke is too old, users may see error messages duri
 Make sure you are running a stable or production release of InvenTree. The frontend panel is not included in development releases.
 More Information: [Error Codes - INVE-E1](./settings/error_codes.md#inve-e1)
 
-### No module named <xxx>
+### No module named xyz
 
 During the install or update process, you may be presented with an error like:
 
@@ -94,7 +98,7 @@ Sometimes, users may encounter unexpected error messages when updating their Inv
 
 The most common problem here is that the correct sequence of steps has not been followed:
 
-1. Ensure that the InvenTree web server and background worker processes are *halted*
+1. Ensure that the InvenTree [web server](./start/processes.md#web-server) and [background worker](./start/processes.md#background-worker) processes are *halted*
 1. Update the InvenTree software (e.g. using git or docker, depending on installation method)
 1. Run the `invoke update` command
 1. Restart the web server and background worker processes
@@ -103,9 +107,13 @@ For more information, refer to the installation guides:
 
 - [Docker Installation](./start/docker_install.md#updating-inventree)
 - [Bare Metal Installation](./start/install.md#updating-inventree)
+- [Package Installer](./start/installer.md#updating-inventree)
 
 !!! warning "Invoke Update"
     You must ensure that the `invoke update` command is performed *every time* you update InvenTree
+
+!!! danger "Updating from Pre 1.0.0"
+    If your installation is running a version of InvenTree older than `1.0.0`, you cannot update directly to the current release - see [Updating from Pre 1.0.0](./start/migrate.md#updating-from-pre-100) for the required intermediate step.
 
 ### Breaking Changes
 
@@ -146,7 +154,7 @@ or
 
 ### Background Worker "Not Running"
 
-The background worker process must be started separately to the web-server application.
+The [background worker process](./start/processes.md#background-worker) must be started separately to the web-server application.
 
 From the top-level source directory, run the following command from a separate terminal, while the server is already running:
 
@@ -191,3 +199,34 @@ This means that either:
 - The docker user does not have write permission to the specified directory
 
 In either case, ensure that the directory is available *on your local machine* and the user account has the required permissions.
+
+### Running on a Non-Standard Port / Behind an Existing Reverse Proxy
+
+If you want to serve InvenTree on a port other than 80/443 (for example, because those ports are already used by another service on your host), or you want to place InvenTree behind an existing reverse proxy which already handles SSL for other services, refer to:
+
+- [Proxy (external) port configuration](./start/docker_install.md#proxy-external-port) - the `INVENTREE_HTTP_PORT` / `INVENTREE_HTTPS_PORT` variables
+- [Integrating with an existing reverse proxy](./start/processes.md#integrating-with-existing-proxy) - a worked example, including the required `INVENTREE_TRUSTED_ORIGINS` setting
+
+!!! tip "Automatic HTTPS"
+    The bundled Caddy proxy's [Automatic HTTPS](./start/docker.md#ssl-certificates) only works if it is reachable on the standard ports 80/443, for the Let's Encrypt ACME challenge. If that is not the case for your setup, terminate SSL at your external proxy instead.
+
+
+## Error Rendering Component
+
+Sometimes, following a software update, you may find that certain components of the web interface are not rendering correctly, and presented with a message similar to the screenshot below:
+
+{{ image("faq/boundary.png", "Error Rendering Component") }}
+
+This is often due to a caching issue with your web browser. Try performing a hard refresh of the page to clear the cache, this should resolve the issue in most cases.
+
+If the problem persists, refer to the [troubleshooting guide](./troubleshooting.md) for further assistance.
+
+## Expression tree is too large
+
+If you are running a large InvenTree deployment on an SQLite database, you may encounter an error similar to:
+
+```
+Expression tree is too large (maximum depth 1000)
+```
+
+This is a [known limitation of SQLite](https://www.sqlite.org/limits.html) which can occur when performing complex queries on a large database. Due to [structural limitations](./start/processes.md#sqlite-limitations) of SQLite, it is recommended to use a more robust database backend such as PostgreSQL for larger deployments.

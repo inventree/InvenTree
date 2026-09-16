@@ -33,7 +33,7 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
         }
 
         let preview = await api.post(
-          printingUrl,
+          printingUrl!,
           {
             items: [previewItem],
             template: template.pk
@@ -68,9 +68,13 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
               api
                 .get(apiUrl(ApiEndpoints.data_output, preview.data.pk))
                 .then((response) => {
-                  if (response.data.error) {
+                  if (response.data.errors || response.data.error) {
                     clearInterval(interval);
-                    rej(response.data.error);
+                    rej(
+                      response.data.error ??
+                        response.data.errors?.error ??
+                        t`Process failed`
+                    );
                   }
 
                   if (response.data.complete) {
@@ -96,7 +100,7 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
         }
 
         const pdf = new Blob([preview.data], {
-          type: preview.headers['content-type']
+          type: preview.headers['content-type'] as string
         });
 
         const srcUrl = URL.createObjectURL(pdf);
@@ -112,9 +116,9 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
             style={{
               display: 'flex',
               justifyContent: 'center',
-              alignItems: 'center',
               height: '100%',
-              width: '100%'
+              width: '100%',
+              paddingTop: '50px'
             }}
           >
             <Trans>Preview not available, click "Reload Preview".</Trans>

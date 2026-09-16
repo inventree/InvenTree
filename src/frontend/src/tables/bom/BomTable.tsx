@@ -1,19 +1,19 @@
 import { t } from '@lingui/core/macro';
-import { ActionIcon, Alert, Group, Stack, Text, Tooltip } from '@mantine/core';
+import { Alert, Group, Stack, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
   IconCircleCheck,
-  IconExclamationCircle,
-  IconFileArrowLeft,
+  IconEdit,
+  IconFileUpload,
   IconLock,
+  IconPlus,
   IconSwitch3
 } from '@tabler/icons-react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '@lib/components/ActionButton';
-import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
@@ -25,11 +25,24 @@ import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { Thumbnail } from '../../components/images/Thumbnail';
-import ImporterDrawer from '../../components/importer/ImporterDrawer';
+import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { RenderPart } from '../../components/render/Part';
+import {
+  BooleanColumn,
+  CategoryColumn,
+  DescriptionColumn,
+  IPNColumn,
+  NoteColumn,
+  ReferenceColumn,
+  RenderPartColumn
+} from '../../components/tables/ColumnRenderers';
+import { PartCategoryFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { bomItemFields, useEditBomSubstitutesForm } from '../../forms/BomForms';
@@ -39,17 +52,13 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { useUserState } from '../../states/UserState';
+import { useImporterState } from '../../states/ImporterState';
 import {
-  BooleanColumn,
-  DescriptionColumn,
-  NoteColumn,
-  ReferenceColumn
-} from '../ColumnRenderers';
-import { PartCategoryFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsStates';
+import { useUserState } from '../../states/UserState';
+import { subassemblyRowExpansion } from './BomSubassemblyTable';
 
 // Calculate the total stock quantity available for a given BomItem
 function availableStockQuantity(record: any): number {
@@ -81,59 +90,85 @@ export function BomTable({
   const table = useTable('bom');
   const navigate = useNavigate();
 
-  const [importOpened, setImportOpened] = useState<boolean>(false);
+  const openImporter = useImporterState((state) => state.openImporter);
 
-  const [selectedSession, setSelectedSession] = useState<number | undefined>(
-    undefined
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  const globalSettings = useGlobalSettingsState();
+
+  const isLocked = useMemo(
+    () => globalSettings.isSet('PART_ENABLE_LOCKING') && (partLocked ?? false),
+    [globalSettings, partLocked]
   );
 
+  const userSettings = useUserSettingsState();
+
   const tableColumns: TableColumn[] = useMemo(() => {
+    const allowExpansion = userSettings.isSet('SHOW_BOM_SUBASSEMBLY_LEVELS');
+
     return [
       {
         accessor: 'sub_part',
         switchable: false,
         sortable: true,
+        minWidth: 250,
+        copyable: (record: any) => record.sub_part_detail?.name ?? '',
         render: (record: any) => {
           const part = record.sub_part_detail;
+
           const extra = [];
 
-          if (record.part != partId) {
+          if (partId && record.part != partId) {
             extra.push(
-              <Text key='different-parent'>{t`This BOM item is defined for a different parent`}</Text>
+              <Text
+                key='different-parent'
+                size='sm'
+              >{t`This BOM item is defined for a different parent`}</Text>
             );
           }
 
+          if (!record.validated) {
+            extra.push(
+              <Text key='not-validated' c='red' size='sm'>
+                {t`This BOM item has not been validated`}
+              </Text>
+            );
+          }
+
+          const assembly: boolean = record.sub_part_detail?.assembly ?? false;
+
           return (
             part && (
-              <Group gap='xs' justify='space-between' wrap='nowrap'>
-                <TableHoverCard
-                  value={
-                    <Thumbnail
-                      src={part.thumbnail || part.image}
-                      alt={part.description}
-                      text={part.full_name}
-                    />
-                  }
-                  extra={extra}
-                  title={t`Part Information`}
-                />
-                {!record.validated && (
-                  <Tooltip label={t`This BOM item has not been validated`}>
-                    <ActionIcon color='red' variant='transparent' size='sm'>
-                      <IconExclamationCircle />
-                    </ActionIcon>
-                  </Tooltip>
-                )}
-              </Group>
+              <TableHoverCard
+                value={
+                  <Group gap='xs' justify='left'>
+                    {assembly && !isEditing && allowExpansion && (
+                      <RowExpansionIcon
+                        enabled
+                        expanded={table.isRowExpanded(record.pk)}
+                      />
+                    )}
+                    <RenderPartColumn part={part} />
+                  </Group>
+                }
+                iconColor={record.validated ? undefined : 'red'}
+                extra={extra}
+                title={t`Part Information`}
+              />
             )
           );
         }
       },
-      {
-        accessor: 'sub_part_detail.IPN',
-        title: t`IPN`,
-        sortable: true
-      },
+      IPNColumn({
+        accessor: 'sub_part_detail.IPN'
+      }),
+      CategoryColumn({
+        accessor: 'category_detail',
+        defaultVisible: false,
+        switchable: true,
+        sortable: true,
+        ordering: 'category'
+      }),
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
       }),
@@ -217,6 +252,19 @@ export function BomTable({
         }
       },
       {
+        accessor: 'piece_count',
+        defaultVisible: false,
+        sortable: true,
+        render: (record: any) => {
+          const piece_count = record.piece_count;
+          if (piece_count == null || piece_count <= 1) {
+            return '-';
+          } else {
+            return <Text size='xs'>{piece_count}</Text>;
+          }
+        }
+      },
+      {
         accessor: 'substitutes',
         defaultVisible: false,
         render: (row: any) => {
@@ -235,6 +283,12 @@ export function BomTable({
           );
         }
       },
+      BooleanColumn({
+        accessor: 'sub_part_detail.virtual',
+        filter: 'sub_part_virtual',
+        defaultVisible: false,
+        title: t`Virtual Part`
+      }),
       BooleanColumn({
         accessor: 'optional',
         defaultVisible: false
@@ -280,9 +334,15 @@ export function BomTable({
         render: (record: any) => {
           const extra: ReactNode[] = [];
 
+          const part = record.sub_part_detail;
+
           const available_stock: number = availableStockQuantity(record);
           const on_order: number = record?.on_order ?? 0;
           const building: number = record?.building ?? 0;
+
+          if (part?.virtual) {
+            return <Text fs='italic'>{t`Virtual part`}</Text>;
+          }
 
           const text =
             available_stock <= 0 ? (
@@ -320,7 +380,7 @@ export function BomTable({
           if (on_order > 0) {
             extra.push(
               <Text key='on_order'>
-                {t`On order`}: {on_order}
+                {t`On order`}: {formatDecimal(on_order)}
               </Text>
             );
           }
@@ -328,7 +388,7 @@ export function BomTable({
           if (building > 0) {
             extra.push(
               <Text key='building'>
-                {t`Building`}: {building}
+                {t`Building`}: {formatDecimal(building)}
               </Text>
             );
           }
@@ -347,10 +407,17 @@ export function BomTable({
         title: t`Can Build`,
         sortable: true,
         render: (record: any) => {
+          // Virtual sub-part - the "can build" quantity does not make sense here
+          if (record.sub_part_detail?.virtual) {
+            return '-';
+          }
+
+          // No information available
           if (record.can_build === null || record.can_build === undefined) {
             return '-';
           }
 
+          // NaN or infinite values
           if (
             !Number.isFinite(record.can_build) ||
             Number.isNaN(record.can_build)
@@ -358,7 +425,8 @@ export function BomTable({
             return '-';
           }
 
-          const can_build = Math.trunc(record.can_build);
+          const can_build = Math.max(0, Math.trunc(record.can_build));
+
           const value = (
             <Text
               fs={record.consumable && 'italic'}
@@ -385,7 +453,7 @@ export function BomTable({
       },
       NoteColumn({})
     ];
-  }, [partId, params]);
+  }, [table.isRowExpanded, isEditing, partId, params, userSettings]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -400,9 +468,19 @@ export function BomTable({
         description: t`Show trackable items`
       },
       {
+        name: 'sub_part_active',
+        label: t`Active Part`,
+        description: t`Show active items`
+      },
+      {
         name: 'sub_part_assembly',
         label: t`Assembled Part`,
         description: t`Show assembled items`
+      },
+      {
+        name: 'sub_part_virtual',
+        label: t`Virtual Part`,
+        description: t`Show virtual items`
       },
       {
         name: 'available_stock',
@@ -467,15 +545,16 @@ export function BomTable({
     title: t`Import BOM Data`,
     fields: importSessionFields,
     onFormSuccess: (response: any) => {
-      setSelectedSession(response.pk);
-      setImportOpened(true);
+      openImporter(response.pk, {
+        onClose: table.refreshTable
+      });
     }
   });
 
   const newBomItem = useCreateApiFormModal({
     url: ApiEndpoints.bom_list,
     title: t`Add BOM Item`,
-    fields: bomItemFields(),
+    fields: bomItemFields({}),
     initialData: {
       part: partId
     },
@@ -487,7 +566,7 @@ export function BomTable({
     url: ApiEndpoints.bom_list,
     pk: selectedBomItem.pk,
     title: t`Edit BOM Item`,
-    fields: bomItemFields(),
+    fields: bomItemFields({}),
     successMessage: t`BOM item updated`,
     table: table
   });
@@ -500,7 +579,7 @@ export function BomTable({
     table: table
   });
 
-  const editSubstitues = useEditBomSubstitutesForm({
+  const editSubstitutes = useEditBomSubstitutesForm({
     bomItemId: selectedBomItem.pk,
     bomItem: selectedBomItem,
     onClose: () => {
@@ -551,16 +630,14 @@ export function BomTable({
           title: t`Validate BOM Line`,
           color: 'green',
           hidden:
-            partLocked ||
-            record.validated ||
-            !user.hasChangeRole(UserRoles.part),
+            isLocked || record.validated || !user.hasChangeRole(UserRoles.bom),
           icon: <IconCircleCheck />,
           onClick: () => {
             validateBomItem(record);
           }
         },
         RowEditAction({
-          hidden: partLocked || !user.hasChangeRole(UserRoles.part),
+          hidden: isLocked || !user.hasChangeRole(UserRoles.bom),
           onClick: () => {
             setSelectedBomItem(record);
             editBomItem.open();
@@ -569,15 +646,15 @@ export function BomTable({
         {
           title: t`Edit Substitutes`,
           color: 'blue',
-          hidden: partLocked || !user.hasAddRole(UserRoles.part),
+          hidden: isLocked || !user.hasAddRole(UserRoles.bom),
           icon: <IconSwitch3 />,
           onClick: () => {
             setSelectedBomItem(record);
-            editSubstitues.open();
+            editSubstitutes.open();
           }
         },
         RowDeleteAction({
-          hidden: partLocked || !user.hasDeleteRole(UserRoles.part),
+          hidden: isLocked || !user.hasDeleteRole(UserRoles.bom),
           onClick: () => {
             setSelectedBomItem(record);
             deleteBomItem.open();
@@ -585,26 +662,57 @@ export function BomTable({
         })
       ];
     },
-    [partId, partLocked, user]
+    [isEditing, partId, isLocked, user]
   );
 
   const tableActions = useMemo(() => {
     return [
-      <ActionButton
-        key='import-bom'
-        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
-        tooltip={t`Import BOM Data`}
-        icon={<IconFileArrowLeft />}
-        onClick={() => importBomItem.open()}
+      <ActionDropdown
+        key='add-bom-actions'
+        tooltip={t`Add BOM Items`}
+        position='bottom-start'
+        icon={<IconPlus />}
+        hidden={!isEditing || isLocked || !user.hasAddRole(UserRoles.bom)}
+        actions={[
+          {
+            name: t`Add BOM Item`,
+            icon: <IconPlus />,
+            tooltip: t`Add a single BOM item`,
+            onClick: () => newBomItem.open()
+          },
+          {
+            name: t`Import from File`,
+            icon: <IconFileUpload />,
+            tooltip: t`Import BOM items from a file`,
+            onClick: () => importBomItem.open()
+          }
+        ]}
       />,
-      <AddItemButton
-        key='add-bom-item'
-        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
-        tooltip={t`Add BOM Item`}
-        onClick={() => newBomItem.open()}
+      <ActionButton
+        key='edit-bom'
+        hidden={isLocked || !user.hasChangeRole(UserRoles.bom) || isEditing}
+        tooltip={t`Edit BOM`}
+        icon={<IconEdit />}
+        onClick={() => {
+          setIsEditing(true);
+        }}
+      />,
+      <ActionButton
+        key='finish-editing'
+        hidden={!isEditing}
+        color='green'
+        tooltip={t`Finish Editing BOM`}
+        icon={<IconCircleCheck />}
+        onClick={() => {
+          setIsEditing(false);
+          table.refreshTable();
+        }}
       />
     ];
-  }, [partLocked, user]);
+  }, [isEditing, isLocked, user]);
+
+  // Row expansion (for displaying subassemblies)
+  const rowExpansion = subassemblyRowExpansion({ table: table });
 
   return (
     <>
@@ -612,9 +720,9 @@ export function BomTable({
       {newBomItem.modal}
       {editBomItem.modal}
       {deleteBomItem.modal}
-      {editSubstitues.modal}
+      {editSubstitutes.modal}
       <Stack gap='xs'>
-        {partLocked && (
+        {isLocked && (
           <Alert
             title={t`Part is Locked`}
             color='orange'
@@ -629,32 +737,34 @@ export function BomTable({
           tableState={table}
           columns={tableColumns}
           props={{
+            minHeight: 400,
             params: {
               ...params,
               part: partId,
+              pricing: true,
+              substitutes: true,
               part_detail: true,
-              sub_part_detail: true
+              sub_part_detail: true,
+              category_detail: true
             },
             tableActions: tableActions,
             tableFilters: tableFilters,
             modelType: ModelType.part,
             modelField: 'sub_part',
-            rowActions: rowActions,
-            enableSelection: !partLocked,
-            enableBulkDelete: !partLocked && user.hasDeleteRole(UserRoles.part),
-            enableDownload: true
+            onCellClick: () => {},
+            rowActions: isEditing ? rowActions : undefined,
+            enableSelection: isEditing && !isLocked,
+            enableBulkDelete:
+              isEditing && !isLocked && user.hasDeleteRole(UserRoles.bom),
+            bulkDeleteFilter: (record: any) => {
+              // If the BOM item is defined for a different parent, then it cannot be deleted
+              return record.part === partId;
+            },
+            enableDownload: true,
+            rowExpansion: isEditing ? undefined : rowExpansion
           }}
         />
       </Stack>
-      <ImporterDrawer
-        sessionId={selectedSession ?? -1}
-        opened={selectedSession != undefined && importOpened}
-        onClose={() => {
-          setSelectedSession(undefined);
-          setImportOpened(false);
-          table.refreshTable();
-        }}
-      />
     </>
   );
 }

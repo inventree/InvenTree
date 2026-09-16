@@ -5,9 +5,9 @@ import type { ReactNode } from 'react';
 import { ModelType } from '@lib/enums/ModelType';
 import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
-import { shortenString } from '../../functions/tables';
-import { TableHoverCard } from '../../tables/TableHoverCard';
+import { shortenString } from '@lib/functions/String';
 import { ApiIcon } from '../items/ApiIcon';
+import { TableHoverCard } from '../tables/TableHoverCard';
 import { type InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
@@ -26,26 +26,68 @@ export function RenderPart(
   if (instance.active == false) {
     badgeColor = 'red';
     badgeText = t`Inactive`;
+  } else if (instance.virtual) {
+    badgeColor = 'blue';
+    badgeText = t`Virtual`;
   } else if (stock != null && stock <= 0) {
     badgeColor = 'orange';
     badgeText = t`No stock`;
   } else if (stock != null) {
     badgeText = `${t`Stock`}: ${formatDecimal(stock)}`;
     badgeColor = instance.minimum_stock > stock ? 'yellow' : 'green';
+
+    if (instance.maximum_stock > 0 && stock > instance.maximum_stock) {
+      badgeColor = 'teal';
+    }
   }
 
-  const badge = !!badgeText ? (
-    <Badge size='xs' color={badgeColor}>
-      {badgeText}
-    </Badge>
-  ) : null;
+  const extra: ReactNode[] = [];
+
+  // For active parts, we can display some extra information here
+  if (instance.active) {
+    if (instance.ordering) {
+      extra.push(
+        <Text size='xs'>
+          {t`On Order`}: {formatDecimal(instance.ordering)}{' '}
+        </Text>
+      );
+    }
+
+    if (instance.building) {
+      extra.push(
+        <Text size='xs'>
+          {t`In Production`}: {formatDecimal(instance.building)}{' '}
+        </Text>
+      );
+    }
+  }
+
+  const suffix: ReactNode = (
+    <Group gap='xs' wrap='nowrap'>
+      {badgeText && (
+        <Badge size='xs' color={badgeColor}>
+          {badgeText}
+        </Badge>
+      )}
+      {extra && (
+        <TableHoverCard
+          value=''
+          position='bottom-end'
+          zIndex={10000}
+          icon='info'
+          title={t`Details`}
+          extra={extra}
+        />
+      )}
+    </Group>
+  );
 
   return (
     <RenderInlineModel
       {...props}
       primary={instance.full_name ?? instance.name}
       secondary={instance.description}
-      suffix={badge}
+      suffix={suffix}
       image={instance.thumbnail || instance.image}
       url={props.link ? getDetailUrl(ModelType.part, instance.pk) : undefined}
     />
@@ -86,12 +128,7 @@ export function RenderPartCategory(
     <RenderInlineModel
       {...props}
       tooltip={instance.pathstring}
-      prefix={
-        <>
-          {instance.level > 0 && `${'- '.repeat(instance.level)}`}
-          {instance.icon && <ApiIcon name={instance.icon} />}
-        </>
-      }
+      prefix={instance.icon && <ApiIcon name={instance.icon} />}
       primary={category}
       suffix={suffix}
       url={
@@ -99,23 +136,6 @@ export function RenderPartCategory(
           ? getDetailUrl(ModelType.partcategory, instance.pk)
           : undefined
       }
-    />
-  );
-}
-
-/**
- * Inline rendering of a PartParameterTemplate instance
- */
-export function RenderPartParameterTemplate({
-  instance
-}: Readonly<{
-  instance: any;
-}>): ReactNode {
-  return (
-    <RenderInlineModel
-      primary={instance.name}
-      secondary={instance.description}
-      suffix={instance.units}
     />
   );
 }

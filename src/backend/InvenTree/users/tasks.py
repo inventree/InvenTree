@@ -1,5 +1,7 @@
 """Background tasks for the users app."""
 
+from typing import Any
+
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 
@@ -99,7 +101,7 @@ def update_group_roles(group: Group, debug: bool = False) -> None:
             permissions_to_delete.add(permission_string)
 
     # Pre-fetch all the RuleSet objects
-    rulesets = {
+    rulesets: dict[Any, RuleSet] = {
         r.name: r for r in RuleSet.objects.filter(group=group).prefetch_related('group')
     }
 

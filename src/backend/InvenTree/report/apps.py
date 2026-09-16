@@ -4,9 +4,10 @@ import logging
 import os
 
 from django.apps import AppConfig
-from django.core.exceptions import AppRegistryNotReady
+from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.db import transaction
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 import structlog
@@ -48,10 +49,15 @@ class ReportConfig(AppConfig):
         if not InvenTree.ready.canAppAccessDatabase(allow_test=False):
             return  # pragma: no cover
 
+        if InvenTree.ready.isReadOnlyCommand():
+            return  # pragma: no cover
+
         with maintenance_mode_on():
             try:
                 self.create_default_labels()
                 self.create_default_reports()
+            except ValidationError:
+                logger.warning('Validation error when creating default templates')
             except (
                 AppRegistryNotReady,
                 IntegrityError,
@@ -67,7 +73,9 @@ class ReportConfig(AppConfig):
     def cleanup(self):
         """Cleanup old label and report outputs."""
         try:
-            from report.tasks import cleanup_old_report_outputs
+            from report.tasks import (
+                cleanup_old_report_outputs,  # type: ignore[import]  # ty: ignore[unresolved-import]
+            )
 
             cleanup_old_report_outputs()
         except Exception:
@@ -88,7 +96,7 @@ class ReportConfig(AppConfig):
             raise FileNotFoundError(
                 'Template file %s does not exist in %s', file_name, file
             )
-        return ContentFile(file.open('r').read(), os.path.basename(file_name))
+        return ContentFile(file.read_bytes(), os.path.basename(file_name))
 
     def create_default_labels(self):
         """Create default label templates."""
@@ -158,10 +166,15 @@ class ReportConfig(AppConfig):
             # Otherwise, create a new entry
             try:
                 # Create a new entry
-                report.models.LabelTemplate.objects.create(
-                    **template, template=self.file_from_template('label', filename)
-                )
+                with transaction.atomic():
+                    report.models.LabelTemplate.objects.create(
+                        **template, template=self.file_from_template('label', filename)
+                    )
                 logger.info("Creating new label template: '%s'", template['name'])
+            except ValidationError:
+                logger.warning(
+                    "Could not create label template: '%s'", template['name']
+                )
             except Exception:
                 InvenTree.exceptions.log_error('create_default_labels', scope='init')
 
@@ -219,6 +232,13 @@ class ReportConfig(AppConfig):
                 'filename_pattern': 'ReturnOrder-{{ reference }}.pdf',
             },
             {
+                'file': 'inventree_transfer_order_report.html',
+                'name': 'InvenTree Transfer Order',
+                'description': 'Sample transfer order report',
+                'model_type': 'transferorder',
+                'filename_pattern': 'TransferOrder-{{ reference }}.pdf',
+            },
+            {
                 'file': 'inventree_test_report.html',
                 'name': 'InvenTree Test Report',
                 'description': 'Sample stock item test report',
@@ -261,5 +281,9 @@ class ReportConfig(AppConfig):
                     **template, template=self.file_from_template('report', filename)
                 )
                 logger.info("Created new report template: '%s'", template['name'])
+            except ValidationError:
+                logger.warning(
+                    "Could not create report template: '%s'", template['name']
+                )
             except Exception:
                 InvenTree.exceptions.log_error('create_default_reports', scope='init')

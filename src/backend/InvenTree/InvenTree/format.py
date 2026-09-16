@@ -2,15 +2,8 @@
 
 import re
 import string
-from typing import Optional
 
-from django.conf import settings
-from django.utils import translation
 from django.utils.translation import gettext_lazy as _
-
-from babel import Locale
-from babel.numbers import parse_pattern
-from djmoney.money import Money
 
 
 def parse_format_string(fmt_string: str) -> dict:
@@ -107,7 +100,7 @@ def construct_format_regex(fmt_string: str) -> str:
         # Add a named capture group for the format entry
         if name:
             # Check if integer values are required
-            c = '\\d' if _fmt.endswith('d') else '.'
+            c = '\\d' if _fmt and _fmt.endswith('d') else '.'
 
             # Specify width
             # TODO: Introspect required width
@@ -124,7 +117,7 @@ def construct_format_regex(fmt_string: str) -> str:
     return pattern
 
 
-def validate_string(value: str, fmt_string: str) -> str:
+def validate_string(value: str, fmt_string: str) -> bool:
     """Validate that the provided string matches the specified format.
 
     Args:
@@ -180,43 +173,3 @@ def extract_named_group(name: str, value: str, fmt_string: str) -> str:
     # And return the value we are interested in
     # Note: This will raise an IndexError if the named group was not matched
     return result.group(name)
-
-
-def format_money(
-    money: Money,
-    decimal_places: Optional[int] = None,
-    fmt: Optional[str] = None,
-    include_symbol: bool = True,
-) -> str:
-    """Format money object according to the currently set local.
-
-    Args:
-        money (Money): The money object to format
-        decimal_places (int): Number of decimal places to use
-        fmt (str): Format pattern according LDML / the babel format pattern syntax (https://babel.pocoo.org/en/latest/numbers.html)
-        include_symbol (bool): Whether to include the currency symbol in the formatted output
-
-    Returns:
-        str: The formatted string
-
-    Raises:
-        ValueError: format string is incorrectly specified
-    """
-    language = (None) or settings.LANGUAGE_CODE
-    locale = Locale.parse(translation.to_locale(language))
-    if fmt:
-        pattern = parse_pattern(fmt)
-    else:
-        pattern = locale.currency_formats['standard']
-        if decimal_places is not None:
-            pattern.frac_prec = (decimal_places, decimal_places)
-
-    result = pattern.apply(
-        money.amount,
-        locale,
-        currency=money.currency.code if include_symbol else '',
-        currency_digits=decimal_places is None,
-        decimal_quantization=decimal_places is not None,
-    )
-
-    return result

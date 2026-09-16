@@ -1,11 +1,17 @@
 import { msg } from '@lingui/core/macro';
 import { Trans } from '@lingui/react';
-import { MantineProvider, createTheme } from '@mantine/core';
+import {
+  MantineProvider,
+  type MantineThemeOverride,
+  createTheme
+} from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { ContextMenuProvider } from 'mantine-contextmenu';
+import type { JSX } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { AboutInvenTreeModal } from '../components/modals/AboutInvenTreeModal';
+import { HotkeyModal } from '../components/modals/HotkeyModal';
 import { LicenseModal } from '../components/modals/LicenseModal';
 import { QrModal } from '../components/modals/QrModal';
 import { ServerInfoModal } from '../components/modals/ServerInfoModal';
@@ -13,30 +19,36 @@ import { useLocalState } from '../states/LocalState';
 import { LanguageContext } from './LanguageContext';
 import { colorSchema } from './colorSchema';
 
-import type { JSX } from 'react';
-
 export function ThemeContext({
   children
 }: Readonly<{ children: JSX.Element }>) {
   const [userTheme] = useLocalState(useShallow((state) => [state.userTheme]));
 
+  let customUserTheme: MantineThemeOverride | undefined = undefined;
+
   // Theme
-  const myTheme = createTheme({
-    primaryColor: userTheme.primaryColor,
-    white: userTheme.whiteColor,
-    black: userTheme.blackColor,
-    defaultRadius: userTheme.radius,
-    breakpoints: {
-      xs: '30em',
-      sm: '48em',
-      md: '64em',
-      lg: '74em',
-      xl: '90em'
-    }
-  });
+  try {
+    customUserTheme = createTheme({
+      primaryColor: userTheme.primaryColor,
+      white: userTheme.whiteColor,
+      black: userTheme.blackColor,
+      defaultRadius: userTheme.radius,
+      breakpoints: {
+        xs: '30em',
+        sm: '48em',
+        md: '64em',
+        lg: '74em',
+        xl: '90em'
+      }
+    });
+  } catch (error) {
+    console.error('Error creating theme with user settings:', error);
+    // Fallback to default theme if there's an error
+    customUserTheme = undefined;
+  }
 
   return (
-    <MantineProvider theme={myTheme} colorSchemeManager={colorSchema}>
+    <MantineProvider theme={customUserTheme} colorSchemeManager={colorSchema}>
       <ContextMenuProvider>
         <LanguageContext>
           <ModalsProvider
@@ -48,7 +60,8 @@ export function ThemeContext({
               info: ServerInfoModal,
               about: AboutInvenTreeModal,
               license: LicenseModal,
-              qr: QrModal
+              qr: QrModal,
+              hotkey: HotkeyModal
             }}
           >
             <Notifications />

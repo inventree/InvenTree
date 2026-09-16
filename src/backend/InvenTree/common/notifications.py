@@ -84,15 +84,14 @@ class InvenTreeNotificationBodies:
     )
 
 
-def trigger_notification(
-    obj: Model, category: Optional[str] = None, obj_ref: str = 'pk', **kwargs
-):
+def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **kwargs):
     """Send out a notification.
 
     Args:
         obj: The object (model instance) that is triggering the notification
         category: The category (label) for the notification
         obj_ref: The reference to the object that should be used for the notification
+        notification_uid: Explicit deduplication identifier for notifications without a model instance
         kwargs: Additional arguments to pass to the notification method
     """
     # Check if data is importing currently
@@ -107,6 +106,7 @@ def trigger_notification(
     context = kwargs.get('context', {})
     delivery_methods = kwargs.get('delivery_methods')
     check_recent = kwargs.get('check_recent', True)
+    notification_uid = kwargs.get('notification_uid')
 
     # Resolve object reference
     refs = [obj_ref, 'pk', 'id', 'uid']
@@ -124,6 +124,8 @@ def trigger_notification(
             raise KeyError(
                 f"Could not resolve an object reference for '{obj!s}' with {','.join(set(refs))}"
             )
+    elif notification_uid is not None:
+        obj_ref_value = notification_uid
 
     # Check if we have notified recently...
     delta = timedelta(days=1)
@@ -134,7 +136,7 @@ def trigger_notification(
         logger.info(
             "Notification '%s' has recently been sent for '%s' - SKIPPING",
             category,
-            str(obj),
+            obj,
         )
         return
 
@@ -179,9 +181,9 @@ def trigger_notification(
     # Filter out any users who are inactive, or do not have the required model permissions
     valid_users = list(
         filter(
-            lambda u: u
-            and u.is_active
-            and (not obj or check_user_permission(u, obj, 'view')),
+            lambda u: (
+                u and u.is_active and (not obj or check_user_permission(u, obj, 'view'))
+            ),
             list(target_users),
         )
     )

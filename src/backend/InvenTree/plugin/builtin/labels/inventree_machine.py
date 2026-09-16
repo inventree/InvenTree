@@ -143,9 +143,11 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             last_used_printers = get_last_used_printers(user)[::-1]
             machines = sorted(
                 machines,
-                key=lambda m: last_used_printers.index(str(m.pk))
-                if str(m.pk) in last_used_printers
-                else -1,
+                key=lambda m: (
+                    last_used_printers.index(str(m.pk))
+                    if str(m.pk) in last_used_printers
+                    else -1
+                ),
                 reverse=True,
             )
 
@@ -179,16 +181,17 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             label=_('Options'),
             depends_on=['machine'],
             field_serializer='get_driver_options',
+            default={},
             required=False,
         )
 
         def get_driver_options(self, fields):
             """Returns the selected machines serializer."""
-            _, driver = get_machine_and_driver(fields['machine'])
+            machine, driver = get_machine_and_driver(fields['machine'])
 
             if driver is None:
                 return None
 
             return driver.get_printing_options_serializer(
-                self.context['request'], context=self.context
+                self.context['request'], context=self.context, machine=machine
             )

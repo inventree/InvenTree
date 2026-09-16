@@ -6,14 +6,21 @@ import { ProgressBar } from '@lib/components/ProgressBar';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { formatCurrency } from '../../defaults/formatters';
-import { useTable } from '../../hooks/UseTable';
-import { DateColumn, ReferenceColumn, StatusColumn } from '../ColumnRenderers';
-import { IncludeVariantsFilter, StatusFilterOptions } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
+import {
+  DateColumn,
+  ReferenceColumn,
+  StatusColumn
+} from '../../components/tables/ColumnRenderers';
+import {
+  IncludeVariantsFilter,
+  StatusFilterOptions
+} from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
+import { formatCurrency, formatDecimal } from '../../defaults/formatters';
 
 export default function PartPurchaseOrdersTable({
   partId
@@ -29,6 +36,7 @@ export default function PartPurchaseOrdersTable({
         ordering: 'order',
         sortable: true,
         switchable: false,
+        filter: ['pending', 'received'],
         title: t`Purchase Order`
       }),
       StatusColumn({
@@ -36,6 +44,7 @@ export default function PartPurchaseOrdersTable({
         sortable: true,
         ordering: 'status',
         title: t`Status`,
+        filter: 'order_status',
         model: ModelType.purchaseorder
       }),
       {
@@ -69,14 +78,14 @@ export default function PartPurchaseOrdersTable({
             const total = record.quantity * supplier_part.pack_quantity_native;
 
             extra.push(
-              <Text key='pack-quantity'>
+              <Text key='pack-quantity' size='sm'>
                 {t`Pack Quantity`}: {supplier_part.pack_quantity}
               </Text>
             );
 
             extra.push(
-              <Text key='total-quantity'>
-                {t`Total Quantity`}: {total} {part?.units}
+              <Text key='total-quantity' size='sm'>
+                {t`Total Quantity`}: {formatDecimal(total)} {part?.units}
               </Text>
             );
           }

@@ -2,9 +2,9 @@ import { Trans } from '@lingui/react/macro';
 import { Carousel } from '@mantine/carousel';
 import { Anchor, Button, Paper, Text } from '@mantine/core';
 
+import { StylishText } from '@lib/components/StylishText';
 import * as classes from './GettingStartedCarousel.css';
 import type { MenuLinkItem } from './MenuLinks';
-import { StylishText } from './StylishText';
 
 function StartedCard({ title, description, link }: Readonly<MenuLinkItem>) {
   return (
@@ -39,9 +39,10 @@ export function GettingStartedCarousel({
     <Carousel
       slideSize={{ base: '100%', sm: '50%', md: '33.333333%' }}
       slideGap={{ base: 0, sm: 'md' }}
-      slidesToScroll={3}
-      align='start'
-      loop
+      emblaOptions={{
+        loop: true,
+        slidesToScroll: 3
+      }}
     >
       {slides}
     </Carousel>

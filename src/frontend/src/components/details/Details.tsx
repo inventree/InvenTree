@@ -17,20 +17,20 @@ import { getValueAtPath } from 'mantine-datatable';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { CopyButton } from '@lib/components/CopyButton';
 import { ProgressBar } from '@lib/components/ProgressBar';
+import { StylishText } from '@lib/components/StylishText';
 import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
+import { getBaseUrl, getDetailUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import type { InvenTreeIconType } from '@lib/types/Icons';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate, formatDecimal } from '../../defaults/formatters';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
-import { CopyButton } from '../buttons/CopyButton';
-import { StylishText } from '../items/StylishText';
 import { getModelInfo } from '../render/ModelType';
 import { StatusRenderer } from '../render/StatusRenderer';
 
@@ -54,10 +54,16 @@ export type DetailsField = {
 type BadgeType = 'owner' | 'user' | 'group';
 type ValueFormatterReturn = string | number | null | React.ReactNode;
 
-type StringDetailField = {
-  type: 'string' | 'text' | 'date';
-  unit?: boolean;
-};
+type StringDetailField =
+  | {
+      type: 'string' | 'text';
+      unit?: boolean;
+    }
+  | {
+      type: 'date';
+      unit?: boolean;
+      showTime?: boolean;
+    };
 
 type NumberDetailField = {
   type: 'number';
@@ -109,7 +115,7 @@ function HoverNameBadge(data: any, type: BadgeType) {
         return [
           `${data.label}: ${data.name}`,
           data.name,
-          getDetailUrl(data.owner_model, data.pk, true),
+          getDetailUrl(data.owner_model, data.owner_id, true),
           undefined,
           undefined
         ];
@@ -121,7 +127,7 @@ function HoverNameBadge(data: any, type: BadgeType) {
           data?.image,
           <>
             {data.is_superuser && <Badge color='red'>{t`Superuser`}</Badge>}
-            {data.is_staff && <Badge color='blue'>{t`Staff`}</Badge>}
+            {data.is_staff && <Badge color='orange'>{t`Administrator`}</Badge>}
             {data.email && t`Email: ` + data.email}
           </>
         ];
@@ -260,7 +266,13 @@ function NameBadge({
 }
 
 function DateValue(props: Readonly<FieldProps>) {
-  return <Text size='sm'>{formatDate(props.field_value?.toString())}</Text>;
+  return (
+    <Text size='sm'>
+      {formatDate(props.field_value?.toString(), {
+        showTime: props.field_data?.showTime
+      })}
+    </Text>
+  );
 }
 
 // Return a formatted "number" value, with optional unit
@@ -268,7 +280,7 @@ function NumberValue(props: Readonly<FieldProps>) {
   const value = props?.field_value;
 
   // Convert to double
-  const numberValue = Number.parseFloat(value.toString());
+  const numberValue = Number.parseFloat(value?.toString() ?? '');
 
   if (value === null || value === undefined) {
     return <Text size='sm'>'---'</Text>;
@@ -369,6 +381,10 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
     [detailUrl]
   );
 
+  const absoluteUrl = useMemo(() => {
+    return `/${getBaseUrl()}${detailUrl}`;
+  }, [detailUrl]);
+
   if (!data || data.isLoading || data.isFetching) {
     return <Skeleton height={12} radius='md' />;
   }
@@ -412,7 +428,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
   return (
     <>
       {make_link ? (
-        <Anchor href='#' onClick={handleLinkClick}>
+        <Anchor href={absoluteUrl} onClick={handleLinkClick}>
           <Text>{value}</Text>
         </Anchor>
       ) : (
@@ -449,10 +465,12 @@ function CopyField({ value }: Readonly<{ value: string }>) {
 
 export function DetailsTableField({
   item,
-  field
+  field,
+  showIcons = true
 }: Readonly<{
   item: any;
   field: DetailsField;
+  showIcons?: boolean;
 }>) {
   function getFieldType(type: string) {
     switch (type) {
@@ -486,10 +504,12 @@ export function DetailsTableField({
     <Table.Tr style={{ verticalAlign: 'top' }}>
       <Table.Td style={{ minWidth: 75, lineBreak: 'auto', flex: 2 }}>
         <Group gap='xs' wrap='nowrap'>
-          <InvenTreeIcon
-            icon={field.icon ?? (field.name as keyof InvenTreeIconType)}
-          />
-          <Text style={{ paddingLeft: 10 }}>{field.label}</Text>
+          {showIcons && (
+            <InvenTreeIcon
+              icon={field.icon ?? (field.name as keyof InvenTreeIconType)}
+            />
+          )}
+          <Text style={{ paddingLeft: showIcons ? 10 : 0 }}>{field.label}</Text>
         </Group>
       </Table.Td>
       <Table.Td
@@ -509,15 +529,27 @@ export function DetailsTableField({
   );
 }
 
-export function DetailsTable({
-  item,
-  fields,
-  title
-}: Readonly<{
+export interface DetailsTableProps {
   item: any;
   fields: DetailsField[];
   title?: string;
-}>) {
+  showIcons?: boolean;
+}
+
+export function DetailsTable({
+  item,
+  fields,
+  title,
+  showIcons = true
+}: Readonly<DetailsTableProps>) {
+  const visibleFields = useMemo(() => {
+    return fields.filter((field) => !field.hidden);
+  }, [fields]);
+
+  if (!visibleFields?.length) {
+    return <div />;
+  }
+
   return (
     <Paper
       p='xs'
@@ -528,11 +560,14 @@ export function DetailsTable({
         {title && <StylishText size='lg'>{title}</StylishText>}
         <Table striped verticalSpacing={5} horizontalSpacing='sm'>
           <Table.Tbody>
-            {fields
-              .filter((field: DetailsField) => !field.hidden)
-              .map((field: DetailsField, index: number) => (
-                <DetailsTableField field={field} item={item} key={index} />
-              ))}
+            {visibleFields.map((field: DetailsField) => (
+              <DetailsTableField
+                field={field}
+                item={item}
+                showIcons={showIcons}
+                key={field.name}
+              />
+            ))}
           </Table.Tbody>
         </Table>
       </Stack>

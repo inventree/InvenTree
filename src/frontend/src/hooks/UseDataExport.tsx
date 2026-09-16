@@ -30,7 +30,7 @@ export default function useDataExport({
 
   const [exportId, setExportId] = useState<number | undefined>(undefined);
 
-  const progress = useDataOutput({
+  useDataOutput({
     title: t`Exporting Data`,
     id: exportId
   });
@@ -59,10 +59,12 @@ export default function useDataExport({
     return queryParams;
   }, [pluginKey, filters, searchTerm]);
 
+  const [exportDialogOpen, setExportDialogOpen] = useState<boolean>(false);
+
   // Fetch available export fields via OPTIONS request
   const extraExportFields = useQuery({
-    enabled: !!url && enabled,
-    queryKey: ['export-fields', pluginKey, url, exportParams],
+    enabled: !!url && enabled && exportDialogOpen,
+    queryKey: ['export-fields', pluginKey, url, exportParams, exportDialogOpen],
     gcTime: 500,
     queryFn: () =>
       api
@@ -112,6 +114,12 @@ export default function useDataExport({
     submitText: t`Export`,
     successMessage: null,
     timeout: 30 * 1000,
+    onOpen: () => {
+      setExportDialogOpen(true);
+    },
+    onClose: () => {
+      setExportDialogOpen(false);
+    },
     onFormSuccess: (response: any) => {
       setExportId(response.pk);
       setPluginKey('inventree-exporter');

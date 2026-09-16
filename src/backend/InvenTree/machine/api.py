@@ -3,6 +3,7 @@
 from django.urls import include, path, re_path
 
 from drf_spectacular.utils import extend_schema
+from rest_framework import permissions
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -58,11 +59,11 @@ class MachineDetail(RetrieveUpdateDestroyAPI):
 def get_machine(machine_pk):
     """Get machine by pk.
 
-    Raises:
-        NotFound: If machine is not found
-
     Returns:
         BaseMachineType: The machine instance in the registry
+
+    Raises:
+        NotFound: If machine is not found
     """
     machine = registry.get_machine(machine_pk)
 
@@ -98,7 +99,7 @@ class MachineSettingList(APIView):
             all_settings.extend(list(settings_dict.values()))
 
         results = MachineSerializers.MachineSettingSerializer(
-            all_settings, many=True
+            list(all_settings), many=True
         ).data
         return Response(results)
 
@@ -142,7 +143,10 @@ class MachineRestart(APIView):
     - POST: restart machine by pk
     """
 
-    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.IsStaffOrReadOnlyScope,
+    ]
 
     @extend_schema(
         request=None, responses={200: MachineSerializers.MachineRestartSerializer()}
@@ -166,7 +170,7 @@ class MachineTypesList(APIView):
 
     @extend_schema(responses={200: MachineSerializers.MachineTypeSerializer(many=True)})
     def get(self, request):
-        """List all machine types."""
+        """List of all machine types."""
         machine_types = list(registry.get_machine_types())
         results = MachineSerializers.MachineTypeSerializer(
             machine_types, many=True

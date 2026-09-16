@@ -9,7 +9,6 @@ from .models import (
     Company,
     Contact,
     ManufacturerPart,
-    ManufacturerPartParameter,
     SupplierPart,
     SupplierPriceBreak,
 )
@@ -56,22 +55,13 @@ class ManufacturerPartAdmin(admin.ModelAdmin):
     autocomplete_fields = ('part', 'manufacturer')
 
 
-@admin.register(ManufacturerPartParameter)
-class ManufacturerPartParameterAdmin(admin.ModelAdmin):
-    """Admin class for ManufacturerPartParameter model."""
-
-    list_display = ('manufacturer_part', 'name', 'value')
-
-    search_fields = ['manufacturer_part__manufacturer__name', 'name', 'value']
-
-    autocomplete_fields = ('manufacturer_part',)
-
-
 @admin.register(SupplierPriceBreak)
 class SupplierPriceBreakAdmin(admin.ModelAdmin):
     """Admin class for the SupplierPriceBreak model."""
 
     list_display = ('part', 'quantity', 'price')
+
+    search_fields = ['part__SKU', 'part__part__name', 'part__supplier__name']
 
     autocomplete_fields = ('part',)
 
@@ -82,7 +72,7 @@ class AddressAdmin(admin.ModelAdmin):
 
     list_display = ('company', 'line1', 'postal_code', 'country')
 
-    search_fields = ['company', 'country', 'postal_code']
+    search_fields = ['company__name', 'country', 'postal_code']
 
     autocomplete_fields = ['company']
 
@@ -93,6 +83,6 @@ class ContactAdmin(admin.ModelAdmin):
 
     list_display = ('company', 'name', 'role', 'email', 'phone')
 
-    search_fields = ['company', 'name', 'email']
+    search_fields = ['company__name', 'name', 'email']
 
     autocomplete_fields = ['company']

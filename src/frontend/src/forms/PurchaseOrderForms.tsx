@@ -1,9 +1,12 @@
 import { t } from '@lingui/core/macro';
 import {
+  ActionIcon,
+  Alert,
   Container,
   Flex,
   FocusTrap,
   Group,
+  HoverCard,
   Modal,
   Table,
   TextInput
@@ -15,8 +18,8 @@ import {
   IconCoins,
   IconCurrencyDollar,
   IconHash,
+  IconInfoCircle,
   IconLink,
-  IconList,
   IconNotes,
   IconSitemap,
   IconUser,
@@ -33,17 +36,19 @@ import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 
 import { ProgressBar } from '@lib/components/ProgressBar';
+import { StylishText } from '@lib/components/StylishText';
 import { apiUrl } from '@lib/functions/Api';
+import { toNumber } from '@lib/functions/Conversion';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
 } from '@lib/types/Forms';
 import {
   TableFieldExtraRow,
+  TableFieldQuantityInput,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
-import { StylishText } from '../components/items/StylishText';
 import { getStatusCodeOptions } from '../components/render/StatusRenderer';
 import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal } from '../hooks/UseForm';
@@ -52,35 +57,66 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { useGlobalSettingsState } from '../states/SettingsStates';
+import { ProjectCodeField, TagsField } from './CommonFields';
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
 export function usePurchaseOrderLineItemFields({
   supplierId,
   orderId,
+  currency,
   create
 }: {
   supplierId?: number;
   orderId?: number;
+  currency?: string;
   create?: boolean;
 }) {
   const globalSettings = useGlobalSettingsState();
 
   const [purchasePrice, setPurchasePrice] = useState<string>('');
-  const [autoPricing, setAutoPricing] = useState(true);
+  const [purchasePriceCurrency, setPurchasePriceCurrency] = useState<string>(
+    currency ?? ''
+  );
+
+  const [autoPricing, setAutoPricing] = useState(false);
+
+  const [quantity, setQuantity] = useState<string>('1');
 
   // Internal part information
   const [part, setPart] = useState<any>({});
+  const [priceBreaks, setPriceBreaks] = useState<any[]>([]);
+  const [suggestedPurchasePrice, setSuggestedPurchasePrice] = useState<
+    string | undefined
+  >(undefined);
 
+  // Update suggested purchase price when part, quantity, or price breaks change
   useEffect(() => {
-    if (autoPricing) {
-      setPurchasePrice('');
+    // Only attempt to set purchase price for new line items
+    if (!create) return;
+
+    const qty = toNumber(quantity, null);
+
+    if (qty == null || qty <= 0) {
+      setSuggestedPurchasePrice(undefined);
+      return;
     }
-  }, [autoPricing]);
 
-  useEffect(() => {
-    setAutoPricing(purchasePrice === '');
-  }, [purchasePrice]);
+    if (!part || !priceBreaks || priceBreaks.length === 0) {
+      setSuggestedPurchasePrice(undefined);
+      return;
+    }
+
+    const applicablePriceBreaks = priceBreaks
+      .filter((pb: any) => qty >= pb.quantity)
+      .sort((a: any, b: any) => b.quantity - a.quantity);
+
+    if (applicablePriceBreaks.length) {
+      setSuggestedPurchasePrice(applicablePriceBreaks[0].price);
+    } else {
+      setSuggestedPurchasePrice(undefined);
+    }
+  }, [create, part, quantity, priceBreaks]);
 
   const fields = useMemo(() => {
     const fields: ApiFormFieldSet = {
@@ -95,9 +131,11 @@ export function usePurchaseOrderLineItemFields({
           part_detail: true,
           supplier_detail: true,
           active: true,
-          part_active: true
+          part_active: true,
+          price_breaks: true
         },
         onValueChange: (value, record) => {
+          setPriceBreaks(record?.price_breaks ?? []);
           setPart(record?.part_detail ?? {});
         },
         adjustFilters: (adjust: ApiFormAdjustFilterType) => {
@@ -105,22 +143,56 @@ export function usePurchaseOrderLineItemFields({
             ...adjust.filters,
             supplier: supplierId
           };
+        },
+        addCreateFields: {
+          part: {
+            filters: {
+              active: true,
+              purchaseable: true
+            }
+          },
+          SKU: {},
+          manufacturer_part: {
+            filters: {
+              part_detail: true,
+              manufacturer_detail: true,
+              active: true
+            }
+          },
+          description: {},
+          supplier: {
+            hidden: true,
+            value: supplierId
+          }
         }
       },
-      quantity: {},
+      line: {},
       reference: {},
+      quantity: {
+        onValueChange: (value) => {
+          setQuantity(value);
+        }
+      },
       purchase_price: {
         icon: <IconCurrencyDollar />,
         value: purchasePrice,
+        disabled: autoPricing,
+        placeholder: suggestedPurchasePrice,
+        placeholderAutofill: true,
         onValueChange: setPurchasePrice
       },
       purchase_price_currency: {
-        icon: <IconCoins />
+        icon: <IconCoins />,
+        value: purchasePriceCurrency,
+        onValueChange: setPurchasePriceCurrency
       },
+      discount: {},
       auto_pricing: {
+        default: create !== false,
         value: autoPricing,
         onValueChange: setAutoPricing
       },
+      project_code: ProjectCodeField(),
       target_date: {
         icon: <IconCalendar />
       },
@@ -148,7 +220,9 @@ export function usePurchaseOrderLineItemFields({
     }
 
     if (create) {
-      fields['merge_items'] = {};
+      fields['merge_items'] = {
+        default: globalSettings.isSet('PURCHASEORDER_MERGE_LINE_ITEMS', true)
+      };
     }
 
     return fields;
@@ -159,7 +233,8 @@ export function usePurchaseOrderLineItemFields({
     globalSettings,
     supplierId,
     autoPricing,
-    purchasePrice
+    purchasePrice,
+    suggestedPurchasePrice
   ]);
 
   return fields;
@@ -189,12 +264,15 @@ export function usePurchaseOrderFields({
         filters: {
           is_supplier: true,
           active: true
+        },
+        addCreateFields: {
+          name: {},
+          description: {},
+          is_supplier: { value: true, hidden: true }
         }
       },
       supplier_reference: {},
-      project_code: {
-        icon: <IconList />
-      },
+      project_code: ProjectCodeField(),
       order_currency: {
         icon: <IconCoins />
       },
@@ -209,6 +287,7 @@ export function usePurchaseOrderFields({
           structural: false
         }
       },
+      tags: TagsField({}),
       link: {},
       contact: {
         icon: <IconUser />,
@@ -240,12 +319,14 @@ export function usePurchaseOrderFields({
     if (!!duplicateOrderId) {
       fields.duplicate = {
         children: {
-          order_id: {
+          original: {
             hidden: true,
             value: duplicateOrderId
           },
           copy_lines: {},
-          copy_extra_lines: {}
+          copy_extra_lines: {},
+          copy_parameters: {},
+          copy_notes: {}
         }
       };
     }
@@ -272,11 +353,11 @@ function LineItemFormRow({
 }>) {
   // Barcode Modal state
   const [opened, { open, close }] = useDisclosure(false, {
-    onClose: () => props.changeFn(props.idx, 'barcode', undefined)
+    onClose: () => props.changeFn(props.rowId, 'barcode', undefined)
   });
 
   const [locationOpen, locationHandlers] = useDisclosure(false, {
-    onClose: () => props.changeFn(props.idx, 'location', undefined)
+    onClose: () => props.changeFn(props.rowId, 'location', undefined)
   });
 
   // Is this a trackable part?
@@ -289,47 +370,40 @@ function LineItemFormRow({
 
   useEffect(() => {
     if (!!record.destination) {
-      props.changeFn(props.idx, 'location', record.destination);
+      props.changeFn(props.rowId, 'location', record.destination);
       locationHandlers.open();
     }
   }, [record.destination]);
 
   // Batch code generator
+  // Note: the generated value is offered as a placeholder (accepted via the
+  // "accept suggested value" button) rather than written into the field
+  // directly - otherwise, a manually-entered batch code can be silently
+  // overwritten if the (debounced, async) generator resolves afterwards
   const batchCodeGenerator = useBatchCodeGenerator({
-    isEnabled: () => batchOpen,
-    onGenerate: (value: any) => {
-      if (value) {
-        props.changeFn(props.idx, 'batch_code', value);
-      }
-    }
+    isEnabled: () => batchOpen
   });
 
   // Serial number generator
   const serialNumberGenerator = useSerialNumberGenerator({
-    isEnabled: () => batchOpen && trackable,
-    onGenerate: (value: any) => {
-      if (value) {
-        props.changeFn(props.idx, 'serial_numbers', value);
-      }
-    }
+    isEnabled: () => trackable
   });
 
   const [packagingOpen, packagingHandlers] = useDisclosure(false, {
     onClose: () => {
-      props.changeFn(props.idx, 'packaging', undefined);
+      props.changeFn(props.rowId, 'packaging', undefined);
     }
   });
 
   const [noteOpen, noteHandlers] = useDisclosure(false, {
     onClose: () => {
-      props.changeFn(props.idx, 'note', undefined);
+      props.changeFn(props.rowId, 'note', undefined);
     }
   });
 
   const [batchOpen, batchHandlers] = useDisclosure(false, {
     onClose: () => {
-      props.changeFn(props.idx, 'batch_code', undefined);
-      props.changeFn(props.idx, 'serial_numbers', undefined);
+      props.changeFn(props.rowId, 'batch_code', undefined);
     },
     onOpen: () => {
       // Generate a new batch code
@@ -337,6 +411,14 @@ function LineItemFormRow({
         part: record?.supplier_part_detail?.part,
         order: record?.order
       });
+    }
+  });
+
+  const [serialOpen, serialHandlers] = useDisclosure(false, {
+    onClose: () => {
+      props.changeFn(props.rowId, 'serial_numbers', undefined);
+    },
+    onOpen: () => {
       // Generate new serial numbers
       if (trackable) {
         serialNumberGenerator.update({
@@ -344,7 +426,7 @@ function LineItemFormRow({
           quantity: props.item.quantity
         });
       } else {
-        props.changeFn(props.idx, 'serial_numbers', undefined);
+        props.changeFn(props.rowId, 'serial_numbers', undefined);
       }
     }
   });
@@ -355,20 +437,20 @@ function LineItemFormRow({
       const defaultExpiry = record.part_detail?.default_expiry;
       if (defaultExpiry !== undefined && defaultExpiry > 0) {
         props.changeFn(
-          props.idx,
+          props.rowId,
           'expiry_date',
           dayjs().add(defaultExpiry, 'day').format('YYYY-MM-DD')
         );
       }
     },
     onClose: () => {
-      props.changeFn(props.idx, 'expiry_date', undefined);
+      props.changeFn(props.rowId, 'expiry_date', undefined);
     }
   });
 
   // Status value
   const [statusOpen, statusHandlers] = useDisclosure(false, {
-    onClose: () => props.changeFn(props.idx, 'status', undefined)
+    onClose: () => props.changeFn(props.rowId, 'status', undefined)
   });
 
   // Barcode value
@@ -377,16 +459,8 @@ function LineItemFormRow({
 
   // Change form value when state is altered
   useEffect(() => {
-    props.changeFn(props.idx, 'barcode', barcode);
+    props.changeFn(props.rowId, 'barcode', barcode);
   }, [barcode]);
-
-  const batchToolTip: string = useMemo(() => {
-    if (trackable) {
-      return t`Assign Batch Code and Serial Numbers`;
-    } else {
-      return t`Assign Batch Code`;
-    }
-  }, [trackable]);
 
   // Update location field description on state change
   useEffect(() => {
@@ -446,6 +520,12 @@ function LineItemFormRow({
     return text;
   }, [location]);
 
+  // Handle virtual parts
+  const virtual = useMemo(
+    () => record.part_detail?.virtual ?? false,
+    [record.part_detail]
+  );
+
   return (
     <>
       <Modal
@@ -464,14 +544,30 @@ function LineItemFormRow({
       </Modal>
       <Table.Tr>
         <Table.Td>
-          <Flex gap='sm' align='center'>
-            <Thumbnail
-              size={40}
-              src={record.part_detail.thumbnail}
-              align='center'
-            />
-            <div>{record.part_detail.name}</div>
-          </Flex>
+          <Group gap='xs' justify='space-between'>
+            <Group gap='xs' justify='left'>
+              <Thumbnail
+                size={40}
+                src={record.part_detail.thumbnail}
+                align='center'
+              />
+              <div>{record.part_detail.name}</div>
+            </Group>
+            {virtual && (
+              <HoverCard>
+                <HoverCard.Target>
+                  <ActionIcon color='blue' variant='transparent'>
+                    <IconInfoCircle />
+                  </ActionIcon>
+                </HoverCard.Target>
+                <HoverCard.Dropdown>
+                  <Alert color='blue' title={t`Virtual Part`}>
+                    {t`This part is virtual, no physical stock will be received.`}
+                  </Alert>
+                </HoverCard.Dropdown>
+              </HoverCard>
+            )}
+          </Group>
         </Table.Td>
         <Table.Td>{record.supplier_part_detail.SKU}</Table.Td>
         <Table.Td>
@@ -482,15 +578,14 @@ function LineItemFormRow({
           />
         </Table.Td>
         <Table.Td style={{ whiteSpace: 'nowrap' }}>
-          <StandaloneField
-            fieldName='quantity'
-            fieldDefinition={{
-              field_type: 'number',
-              value: props.item.quantity,
-              onValueChange: (value) => {
-                props.changeFn(props.idx, 'quantity', value);
-                serialNumberGenerator.update({ quantity: value });
-              }
+          <TableFieldQuantityInput
+            min={0}
+            value={props.item.quantity ?? ''}
+            onChange={(value) => {
+              props.changeFn(props.rowId, 'quantity', value);
+              serialNumberGenerator.update({
+                quantity: value === '' ? undefined : value
+              });
             }}
             error={props.rowErrors?.quantity?.message}
           />
@@ -503,16 +598,30 @@ function LineItemFormRow({
               icon={<InvenTreeIcon icon='location' />}
               tooltip={t`Set Location`}
               tooltipAlignment='top'
-              variant={locationOpen ? 'filled' : 'transparent'}
+              variant={locationOpen ? 'outline' : 'transparent'}
+              disabled={virtual}
             />
             <ActionButton
               size='sm'
               onClick={() => batchHandlers.toggle()}
               icon={<InvenTreeIcon icon='batch_code' />}
-              tooltip={batchToolTip}
+              tooltip={t`Assign Batch Code`}
               tooltipAlignment='top'
-              variant={batchOpen ? 'filled' : 'transparent'}
+              variant={batchOpen ? 'outline' : 'transparent'}
+              disabled={virtual}
             />
+            {trackable && (
+              <ActionButton
+                size='sm'
+                onClick={() => serialHandlers.toggle()}
+                icon={<InvenTreeIcon icon='serial' />}
+                tooltip={t`Assign Serial Numbers`}
+                tooltipAlignment='top'
+                variant={serialOpen ? 'outline' : 'transparent'}
+                disabled={virtual}
+              />
+            )}
+
             {settings.isSet('STOCK_ENABLE_EXPIRY') && (
               <ActionButton
                 size='sm'
@@ -520,7 +629,8 @@ function LineItemFormRow({
                 icon={<IconCalendarExclamation />}
                 tooltip={t`Set Expiry Date`}
                 tooltipAlignment='top'
-                variant={expiryDateOpen ? 'filled' : 'transparent'}
+                variant={expiryDateOpen ? 'outline' : 'transparent'}
+                disabled={virtual}
               />
             )}
             <ActionButton
@@ -529,21 +639,24 @@ function LineItemFormRow({
               tooltip={t`Adjust Packaging`}
               tooltipAlignment='top'
               onClick={() => packagingHandlers.toggle()}
-              variant={packagingOpen ? 'filled' : 'transparent'}
+              variant={packagingOpen ? 'outline' : 'transparent'}
+              disabled={virtual}
             />
             <ActionButton
               onClick={() => statusHandlers.toggle()}
               icon={<InvenTreeIcon icon='status' />}
               tooltip={t`Change Status`}
               tooltipAlignment='top'
-              variant={statusOpen ? 'filled' : 'transparent'}
+              variant={statusOpen ? 'outline' : 'transparent'}
+              disabled={virtual}
             />
             <ActionButton
               icon={<InvenTreeIcon icon='note' />}
               tooltip={t`Add Note`}
               tooltipAlignment='top'
-              variant={noteOpen ? 'filled' : 'transparent'}
+              variant={noteOpen ? 'outline' : 'transparent'}
               onClick={() => noteHandlers.toggle()}
+              disabled={virtual}
             />
             {barcode ? (
               <ActionButton
@@ -553,6 +666,7 @@ function LineItemFormRow({
                 variant='filled'
                 color='red'
                 onClick={() => setBarcode(undefined)}
+                disabled={virtual}
               />
             ) : (
               <ActionButton
@@ -561,12 +675,13 @@ function LineItemFormRow({
                 tooltipAlignment='top'
                 variant='transparent'
                 onClick={() => open()}
+                disabled={virtual}
               />
             )}
           </Flex>
         </Table.Td>
         <Table.Td>
-          <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+          <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
         </Table.Td>
       </Table.Tr>
       {locationOpen && (
@@ -585,7 +700,7 @@ function LineItemFormRow({
                     structural: false
                   },
                   onValueChange: (value) => {
-                    props.changeFn(props.idx, 'location', value);
+                    props.changeFn(props.rowId, 'location', value);
                   },
                   description: locationDescription,
                   value: props.item.location,
@@ -607,7 +722,7 @@ function LineItemFormRow({
                     tooltip={t`Store at default location`}
                     onClick={() =>
                       props.changeFn(
-                        props.idx,
+                        props.rowId,
                         'location',
                         record.part_detail?.default_location ??
                           record.part_detail?.category_default_location
@@ -621,7 +736,11 @@ function LineItemFormRow({
                     icon={<InvenTreeIcon icon='destination' />}
                     tooltip={t`Store at line item destination `}
                     onClick={() =>
-                      props.changeFn(props.idx, 'location', record.destination)
+                      props.changeFn(
+                        props.rowId,
+                        'location',
+                        record.destination
+                      )
                     }
                     tooltipAlignment='top'
                   />
@@ -634,7 +753,7 @@ function LineItemFormRow({
                       tooltip={t`Store with already received stock`}
                       onClick={() =>
                         props.changeFn(
-                          props.idx,
+                          props.rowId,
                           'location',
                           record.destination_detail.pk
                         )
@@ -650,28 +769,34 @@ function LineItemFormRow({
       <TableFieldExtraRow
         visible={batchOpen}
         onValueChange={(value) => {
-          props.changeFn(props.idx, 'batch_code', value);
+          props.changeFn(props.rowId, 'batch_code', value);
         }}
         fieldName='batch_code'
         fieldDefinition={{
           field_type: 'string',
           label: t`Batch Code`,
           description: t`Enter batch code for received items`,
-          value: props.item.batch_code
+          value: props.item.batch_code,
+          placeholderAutofill: true,
+          placeholder:
+            batchCodeGenerator.result && `${batchCodeGenerator.result}`
         }}
         error={props.rowErrors?.batch_code?.message}
       />
       <TableFieldExtraRow
-        visible={batchOpen && trackable}
+        visible={serialOpen}
         onValueChange={(value) =>
-          props.changeFn(props.idx, 'serial_numbers', value)
+          props.changeFn(props.rowId, 'serial_numbers', value)
         }
         fieldName='serial_numbers'
         fieldDefinition={{
           field_type: 'string',
           label: t`Serial Numbers`,
           description: t`Enter serial numbers for received items`,
-          value: props.item.serial_numbers
+          value: props.item.serial_numbers,
+          placeholderAutofill: true,
+          placeholder:
+            serialNumberGenerator.result && `${serialNumberGenerator.result}`
         }}
         error={props.rowErrors?.serial_numbers?.message}
       />
@@ -679,7 +804,7 @@ function LineItemFormRow({
         <TableFieldExtraRow
           visible={expiryDateOpen}
           onValueChange={(value) =>
-            props.changeFn(props.idx, 'expiry_date', value)
+            props.changeFn(props.rowId, 'expiry_date', value)
           }
           fieldName='expiry_date'
           fieldDefinition={{
@@ -693,7 +818,9 @@ function LineItemFormRow({
       )}
       <TableFieldExtraRow
         visible={packagingOpen}
-        onValueChange={(value) => props.changeFn(props.idx, 'packaging', value)}
+        onValueChange={(value) =>
+          props.changeFn(props.rowId, 'packaging', value)
+        }
         fieldName='packaging'
         fieldDefinition={{
           field_type: 'string',
@@ -706,7 +833,7 @@ function LineItemFormRow({
         visible={statusOpen}
         defaultValue={10}
         fieldName='status'
-        onValueChange={(value) => props.changeFn(props.idx, 'status', value)}
+        onValueChange={(value) => props.changeFn(props.rowId, 'status', value)}
         fieldDefinition={{
           field_type: 'choice',
           api_url: apiUrl(ApiEndpoints.stock_status),
@@ -718,7 +845,7 @@ function LineItemFormRow({
       <TableFieldExtraRow
         visible={noteOpen}
         fieldName='note'
-        onValueChange={(value) => props.changeFn(props.idx, 'note', value)}
+        onValueChange={(value) => props.changeFn(props.rowId, 'note', value)}
         fieldDefinition={{
           field_type: 'string',
           label: t`Note`
@@ -747,13 +874,20 @@ export function useReceiveLineItems(props: LineItemsForm) {
     []
   );
 
-  const records = Object.fromEntries(
-    props.items.map((item) => [item.pk, item])
-  );
+  const records = useMemo(() => {
+    return Object.fromEntries(props.items.map((item) => [item.pk, item]));
+  }, [props.items]);
 
-  const filteredItems = props.items.filter(
-    (elem) => elem.quantity !== elem.received
-  );
+  const filteredItems = useMemo(() => {
+    return props.items
+      .filter((elem) => elem.quantity !== elem.received)
+      .map((elem) => {
+        return {
+          id: elem.pk,
+          ...elem
+        };
+      });
+  }, [props.items]);
 
   const fields: ApiFormFieldSet = useMemo(() => {
     return {
@@ -763,11 +897,18 @@ export function useReceiveLineItems(props: LineItemsForm) {
       },
       items: {
         field_type: 'table',
-        value: filteredItems.map((elem, idx) => {
+        value: filteredItems.map((elem) => {
           return {
+            id: elem.pk,
             line_item: elem.pk,
-            location: elem.destination ?? elem.destination_detail?.pk ?? null,
-            quantity: elem.quantity - elem.received,
+            // Leave unset if this line has no destination of its own, so a
+            // manually-selected location (or the order's own destination
+            // fallback) is actually applied — `destination_detail` already
+            // resolves through that fallback chain, so baking its value in
+            // here would make the backend treat this line as if the user
+            // had explicitly chosen the PO's default, blocking any override.
+            location: elem.destination ?? null,
+            quantity: Math.max(0, elem.quantity - elem.received),
             expiry_date: null,
             batch_code: '',
             serial_numbers: '',
@@ -778,12 +919,16 @@ export function useReceiveLineItems(props: LineItemsForm) {
         modelRenderer: (row: TableFieldRowProps) => {
           const record = records[row.item.line_item];
 
+          if (!record) {
+            return null;
+          }
+
           return (
             <LineItemFormRow
               props={row}
               record={record}
               statuses={stockStatusCodes}
-              key={record.pk}
+              key={row.rowId}
             />
           );
         },
@@ -802,7 +947,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
         }
       }
     };
-  }, [filteredItems, props, stockStatusCodes]);
+  }, [filteredItems, records, props.orderPk, stockStatusCodes]);
 
   return useCreateApiFormModal({
     ...props.formProps,

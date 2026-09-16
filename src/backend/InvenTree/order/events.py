@@ -20,7 +20,7 @@ class SalesOrderEvents(BaseEventEnum):
     """Event enumeration for the SalesOrder models."""
 
     ISSUED = 'salesorder.issued'
-    HOLD = 'salesorder.onhold'
+    HOLD = 'salesorder.hold'
     COMPLETED = 'salesorder.completed'
     CANCELLED = 'salesorder.cancelled'
 
@@ -37,3 +37,14 @@ class ReturnOrderEvents(BaseEventEnum):
     COMPLETED = 'returnorder.completed'
     CANCELLED = 'returnorder.cancelled'
     HOLD = 'returnorder.hold'
+
+    OVERDUE = 'order.overdue_return_order'
+
+
+class TransferOrderEvents(BaseEventEnum):
+    """Event enumeration for the PurchaseOrder models."""
+
+    ISSUED = 'transferorder.placed'
+    COMPLETED = 'transferorder.completed'
+    CANCELLED = 'transferorder.cancelled'
+    HOLD = 'transferorder.hold'
