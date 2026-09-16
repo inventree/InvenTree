@@ -1959,12 +1959,12 @@ selection_urls = [
 ]
 
 
-class ReferenceSourceList(ListCreateAPI):
-    """List view for all reference sources."""
+class ReferenceSourceViewSet(CleanModelViewSet):
+    """Viewset for ReferenceSource objects."""
 
     queryset = common.models.ReferenceSource.objects.all()
     serializer_class = common.serializers.ReferenceSourceSerializer
-    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnlyScope]
+    permission_classes = [IsStaffOrReadOnlyScope]
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
@@ -1980,20 +1980,17 @@ class ReferenceSourceList(ListCreateAPI):
     search_fields = ['name', 'description', 'slug']
 
 
-class ReferenceSourceDetail(RetrieveUpdateDestroyAPI):
-    """Detail view for a particular reference source."""
-
-    queryset = common.models.ReferenceSource.objects.all()
-    serializer_class = common.serializers.ReferenceSourceSerializer
-    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnlyScope]
+common_router.register(
+    'reference/source', ReferenceSourceViewSet, basename='api-reference-source'
+)
 
 
-class ReferenceList(ListCreateAPI):
-    """List view for all references."""
+class ReferenceViewSet(CleanModelViewSet):
+    """Viewset for Reference objects."""
 
     queryset = common.models.Reference.objects.all()
     serializer_class = common.serializers.ReferenceSerializer
-    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnlyScope]
+    permission_classes = [IsStaffOrReadOnlyScope]
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
@@ -2009,65 +2006,14 @@ class ReferenceList(ListCreateAPI):
     search_fields = ['source', 'target', 'value']
 
     def get_queryset(self):
-        """Return prefetched queryset."""
-        queryset = (
-            super()
-            .get_queryset()
-            .prefetch_related('target_content_type', 'target_object_id')
-        )
-
-        return queryset
+        """Select related fields required to resolve the generic target."""
+        queryset = super().get_queryset()
+        return queryset.select_related('source', 'target_content_type')
 
 
-class ReferenceDetail(RetrieveUpdateDestroyAPI):
-    """Detail view for a particular reference."""
+# TODO add api endpoint to get all references for a target
+common_router.register('reference', ReferenceViewSet, basename='api-reference')
 
-    queryset = common.models.Reference.objects.all()
-    serializer_class = common.serializers.ReferenceSerializer
-    permission_classes = [IsAuthenticatedOrReadScope, IsStaffOrReadOnlyScope]
-
-    def get_queryset(self):
-        """Return prefetched queryset."""
-        queryset = (
-            super()
-            .get_queryset()
-            .prefetch_related('target_content_type', 'target_object_id')
-        )
-
-        return queryset
-
-
-reference_urls = [
-    path(
-        'source/',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    path(
-                        '',
-                        ReferenceSourceDetail.as_view(),
-                        name='api-reference-source-detail',
-                    )
-                ]),
-            ),
-            path('', ReferenceSourceList.as_view(), name='api-reference-source-list'),
-        ]),
-    ),
-    # TODO add api endpoint to get all references for a target
-    path(
-        '',
-        include([
-            path(
-                '<int:pk>/',
-                include([
-                    path('', ReferenceDetail.as_view(), name='api-reference-detail')
-                ]),
-            ),
-            path('', ReferenceList.as_view(), name='api-reference-list'),
-        ]),
-    ),
-]
 
 # API URL patterns
 settings_api_urls = [
@@ -2257,8 +2203,6 @@ common_api_urls = [
     path('icons/', IconList.as_view(), name='api-icon-list'),
     # Selection lists
     path('selection/', include(selection_urls)),
-    # References
-    path('reference/', include(reference_urls)),
     # System APIs (related to basic system functions)
     path(
         'system/',
