@@ -804,13 +804,17 @@ class PurchaseOrderTest(OrderTest):
         po = models.PurchaseOrder.objects.get(pk=2)
 
         url = reverse('api-po-issue', kwargs={'pk': po.pk})
+        transitions_url = reverse('api-po-transitions', kwargs={'pk': po.pk})
 
         # Try to issue the PO, without required permissions
+        self.clearRoles()
         self.post(url, {}, expected_code=403)
         # Check introspection endpoint too
-        # self.assert_available_transitions(po, available=['issue'], unavailable=['complete'])
+        self.get(transitions_url, expected_code=403)
 
+        self.assignRole('purchase_order.view')
         self.assignRole('purchase_order.add')
+        self.get(transitions_url, expected_code=200)
         self.assert_available_transitions(
             po, available=['issue'], unavailable=['complete']
         )

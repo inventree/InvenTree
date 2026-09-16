@@ -6,14 +6,17 @@ import inspect
 from typing import Any
 
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.utils.translation import gettext_lazy as _
 
 from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, status
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 from InvenTree.serializers import EmptySerializer
+from users.permissions import check_user_permission
 
 from .introspection import (
     TransitionInfo,
@@ -353,6 +356,16 @@ class FSMTransitionMixin:
         every entry something the client can POST to.
         """
         instance = self.get_object()
+        # permission check
+        model = instance._meta.model
+        if not (
+            check_user_permission(request.user, model, 'view')
+            or check_user_permission(request.user, model, 'change')
+        ):
+            raise PermissionDenied(
+                _('User does not have permission to edit this attachment')
+            )
+
         paths = self.transition_url_paths()
 
         available: list[TransitionInfo] = [
