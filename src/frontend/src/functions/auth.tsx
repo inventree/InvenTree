@@ -1,8 +1,3 @@
-import {
-  type CredentialRequestOptionsJSON,
-  get,
-  parseRequestOptionsFromJSON
-} from '@github/webauthn-json/browser-ponyfill';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { getBaseUrl } from '@lib/functions/Navigation';
@@ -798,11 +793,9 @@ export async function handleWebauthnLogin(
   }
 
   try {
-    const credential = await get(
-      parseRequestOptionsFromJSON(
-        webauthn_challenge as CredentialRequestOptionsJSON
-      )
-    );
+    const publicKey =
+      PublicKeyCredential.parseRequestOptionsFromJSON(webauthn_challenge);
+    const credential = await navigator.credentials.get({ publicKey });
     await api
       .post(apiUrl(ApiEndpoints.auth_webauthn_login), {
         credential: credential

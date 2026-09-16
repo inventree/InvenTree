@@ -64,9 +64,7 @@ runs:
         if: ${{ inputs.python == 'true' }}
         shell: bash
         run: |
-          python3 -m pip install -U pip
-          pip3 install --only-binary :all: -U invoke wheel
-          pip3 install --only-binary :all: 'uv>=0.9.6'
+          pip3 install --only-binary :all: --require-hashes -U -r contrib/dev_reqs/requirements.txt
       - name: Allow uv to use the system Python by default
         run: echo "UV_SYSTEM_PYTHON=1" >> $GITHUB_ENV
         shell: bash
