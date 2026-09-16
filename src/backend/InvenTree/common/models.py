@@ -51,6 +51,7 @@ from django_q.signals import post_spawn
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from opentelemetry import trace
+from PIL import Image
 from rest_framework.exceptions import PermissionDenied
 
 import common.validators
@@ -2222,7 +2223,70 @@ class Attachment(
         if not issubclass(model_class, InvenTreeAttachmentMixin):
             raise ValidationError(_('Invalid model type specified for attachment'))
 
-        return model_class.check_attachment_permission(permission, user)
+        return model_class.check_related_permission(permission, user)
+
+    def check_is_image(self) -> bool:
+        """Check if the attached file is an image.
+
+        We consider it a valid image if:
+
+        - The file exists in storage
+        - The file can be opened and verified by the PIL library
+
+        """
+        if not self.attachment:
+            return False
+
+        if not self.attachment.name:
+            return False
+
+        try:
+            if not default_storage.exists(self.attachment.name):
+                return False
+        except Exception:
+            return False
+
+        img_data = default_storage.open(self.attachment.name).read()
+
+        try:
+            Image.open(BytesIO(img_data)).verify()
+            return True
+        except Exception:
+            return False
+
+    def generate_thumbnail(self):
+        """Generate a thumbnail for the attached image."""
+        # Remove any existing thumbnail
+        if self.thumbnail:
+            self.thumbnail.delete(save=False)
+
+        if not self.attachment:
+            return
+
+        if not self.attachment.name or not default_storage.exists(self.attachment.name):
+            return
+
+        # TODO: Offload to plugins, for creating custom thumbnails for different file types
+        # TODO: If a plugin provides a thumbnail, return early
+
+        # Default action is to generate a thumbnail for image files
+        try:
+            img_data = default_storage.open(self.attachment.name).read()
+        except Exception:
+            # No file found, or file cannot be read - cannot generate thumbnail
+            return
+
+        try:
+            img = Image.open(BytesIO(img_data))
+            img.thumbnail((self.THUMBNAIL_SIZE, self.THUMBNAIL_SIZE))
+            thumb_io = BytesIO()
+            img.save(thumb_io, format='PNG')
+            thumb_io.seek(0)
+
+            thumb_name = f'thumb_{os.path.basename(self.attachment.name)}'
+            self.thumbnail.save(thumb_name, ContentFile(thumb_io.read()), save=False)
+        except Exception:
+            pass
 
 
 # endregion
