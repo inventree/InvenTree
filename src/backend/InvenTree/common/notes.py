@@ -47,7 +47,8 @@ class JsonNoteContent(RawNoteContent):
         """Reject invalid JSON, including nonstandard numeric constants."""
 
         def reject_constant(value):
-            raise ValueError(f'Invalid JSON constant: {value}')
+            """Reject numeric constants outside the JSON specification."""
+            raise ValueError(_('Invalid JSON constant: %(value)s') % {'value': value})
 
         try:
             json.loads(content, parse_constant=reject_constant)
