@@ -1,15 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 546
+INVENTREE_API_VERSION = 548
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v546 -> 2026-09-08 : Typed note content
+v548 -> 2026-09-16 : https://github.com/inventree/InvenTree/pull/12851
     - Adds content_type to notes and note templates (HTML, JSON, plain text)
     - JSON and plain text content is stored and returned as unmodified source text
     - Content type is set on creation and cannot be changed
+
+v547 -> 2026-09-12 : https://github.com/inventree/InvenTree/pull/12850
+    - Added more details to API token management
+
+v546 -> 2026-09-12 : https://github.com/inventree/InvenTree/pull/12842
+    - Added setting flags to the settings APIs (read-only)
 
 v545 -> 2026-09-08 : https://github.com/inventree/InvenTree/pull/12808
     - Ensure consistent ordering of SSO options in API documentation

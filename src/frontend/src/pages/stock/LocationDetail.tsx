@@ -170,9 +170,7 @@ export default function Stock() {
         name: 'transfer-orders',
         label: t`Transfer Orders`,
         icon: <IconTransfer />,
-        hidden:
-          !user.hasViewRole(UserRoles.transfer_order) ||
-          !globalSettings.isSet('TRANSFERORDER_ENABLED'),
+        hidden: !user.hasViewVisible(UserRoles.transfer_order),
         selection: transferOrderView,
         onChange: setTransferOrderView,
         options: [
