@@ -213,6 +213,10 @@ class BuildSerializer(
 
         super().__init__(*args, **kwargs)
 
+        if self.instance is not None:
+            # The 'part' field cannot be changed once a build order has been created
+            self.fields['part'].read_only = True
+
     @transaction.atomic
     def create(self, validated_data):
         """Create a new Build instance, optionally copying data from an existing build."""

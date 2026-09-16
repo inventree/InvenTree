@@ -177,14 +177,7 @@ export default function BuildIndex() {
     ];
   }, [user, globalSettings, buildOrderView, repairOrderView]);
 
-  if (
-    !user.isLoggedIn() ||
-    (!user.hasViewRole(UserRoles.build) &&
-      !(
-        globalSettings.isSet('REPAIRORDER_ENABLED') &&
-        user.hasViewRole(UserRoles.repair_order)
-      ))
-  ) {
+  if (!user.isLoggedIn() || !user.hasViewVisible(UserRoles.build)) {
     return <PermissionDenied />;
   }
 

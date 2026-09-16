@@ -18,7 +18,7 @@ from django.test import TestCase, override_settings
 import plugin.templatetags.plugin_extras as plugin_tags
 from InvenTree.unit_test import PluginRegistryMixin, TestQueryMixin
 from plugin import InvenTreePlugin, PluginMixinEnum
-from plugin.installer import install_plugin
+from plugin.installer import install_plugin, update_plugins_file
 from plugin.registry import registry
 from plugin.samples.integration.another_sample import (
     NoIntegrationPlugin,
@@ -753,14 +753,22 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
             )
             return True
 
-        with mock.patch(
-            'plugin.installer.plugins_file_hash', return_value='test-hash-1'
-        ):
-            with mock.patch(
+        with (
+            tempfile.TemporaryDirectory() as tmpdir,
+            mock.patch('plugin.installer._env_plugin_hash_cache', None),
+            mock.patch(
+                'plugin.installer.plugin_env_marker_path',
+                return_value=Path(tmpdir) / '.inventree_plugins_hash',
+            ),
+            mock.patch(
+                'plugin.installer.plugins_file_hash', return_value='test-hash-1'
+            ),
+            mock.patch(
                 'plugin.installer.install_plugins_file',
                 side_effect=fake_install_plugins_file,
-            ):
-                registry.install_plugin_file()
+            ),
+        ):
+            registry.install_plugin_file()
 
         # While the install was in progress, the hash must not yet reflect the
         # new (not-yet-installed) value
@@ -778,13 +786,19 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
 
         set_global_setting('_PLUGIN_FILE_HASH', '')
 
-        with mock.patch(
-            'plugin.installer.plugins_file_hash', return_value='test-hash-2'
+        with (
+            tempfile.TemporaryDirectory() as tmpdir,
+            mock.patch('plugin.installer._env_plugin_hash_cache', None),
+            mock.patch(
+                'plugin.installer.plugin_env_marker_path',
+                return_value=Path(tmpdir) / '.inventree_plugins_hash',
+            ),
+            mock.patch(
+                'plugin.installer.plugins_file_hash', return_value='test-hash-2'
+            ),
+            mock.patch('plugin.installer.install_plugins_file', return_value=False),
         ):
-            with mock.patch(
-                'plugin.installer.install_plugins_file', return_value=False
-            ):
-                registry.install_plugin_file()
+            registry.install_plugin_file()
 
         self.assertEqual(get_global_setting('_PLUGIN_FILE_HASH', '', create=False), '')
 
@@ -792,19 +806,104 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
         """Test that install_plugin_file() is a no-op once the hash already matches."""
         from plugin.registry import registry
 
-        with mock.patch(
-            'plugin.installer.plugins_file_hash', return_value='test-hash-3'
-        ):
-            with mock.patch(
+        with (
+            tempfile.TemporaryDirectory() as tmpdir,
+            mock.patch('plugin.installer._env_plugin_hash_cache', None),
+            mock.patch(
+                'plugin.installer.plugin_env_marker_path',
+                return_value=Path(tmpdir) / '.inventree_plugins_hash',
+            ),
+            mock.patch(
+                'plugin.installer.plugins_file_hash', return_value='test-hash-3'
+            ),
+            mock.patch(
                 'plugin.installer.install_plugins_file', return_value=True
-            ) as mock_install:
-                registry.install_plugin_file()
-                mock_install.assert_called_once()
+            ) as mock_install,
+        ):
+            registry.install_plugin_file()
+            mock_install.assert_called_once()
 
-                # A second call with the same (already-installed) hash must not
-                # install again
-                registry.install_plugin_file()
-                mock_install.assert_called_once()
+            # A second call with the same (already-installed) hash must not
+            # install again
+            registry.install_plugin_file()
+            mock_install.assert_called_once()
+
+    def test_install_plugin_file_reinstalls_in_fresh_environment(self):
+        """Test that a matching database hash alone does not skip installation.
+
+        Regression test for inventree/InvenTree#12848: a fresh python
+        environment (e.g. a container replaced without a persistent venv
+        volume) must reinstall even though the database still remembers a
+        previous environment's successful install of the exact same file.
+        """
+        from common.settings import set_global_setting
+        from plugin.registry import registry
+
+        # Simulate a database that already believes this hash is installed -
+        # as if a *previous* (now-replaced) environment installed it
+        set_global_setting('_PLUGIN_FILE_HASH', 'test-hash-4')
+
+        with (
+            tempfile.TemporaryDirectory() as tmpdir,
+            mock.patch('plugin.installer._env_plugin_hash_cache', None),
+            mock.patch(
+                'plugin.installer.plugin_env_marker_path',
+                # A fresh environment has no marker file at all
+                return_value=Path(tmpdir) / '.inventree_plugins_hash',
+            ),
+            mock.patch(
+                'plugin.installer.plugins_file_hash', return_value='test-hash-4'
+            ),
+            mock.patch(
+                'plugin.installer.install_plugins_file', return_value=True
+            ) as mock_install,
+        ):
+            registry.install_plugin_file()
+            mock_install.assert_called_once()
+
+            # Now that this environment has recorded the install, a second
+            # call is correctly skipped
+            registry.install_plugin_file()
+            mock_install.assert_called_once()
+
+    def test_install_plugin_file_falls_back_to_process_cache_when_marker_unwritable(
+        self,
+    ):
+        """Test that a non-writable marker location still settles within one process.
+
+        If sys.prefix is not writable (e.g. a read-only root filesystem),
+        set_env_plugin_hash() cannot persist the marker file to disk. Without
+        an in-process fallback, get_env_plugin_hash() would then return None
+        forever, and install_plugin_file() would re-attempt `pip install` on
+        every single call within the same process - not just once per
+        process start.
+        """
+        from common.settings import set_global_setting
+        from plugin.registry import registry
+
+        set_global_setting('_PLUGIN_FILE_HASH', '')
+
+        marker = mock.MagicMock()
+        marker.exists.return_value = False
+        marker.write_text.side_effect = OSError('Read-only file system')
+
+        with (
+            mock.patch('plugin.installer._env_plugin_hash_cache', None),
+            mock.patch('plugin.installer.plugin_env_marker_path', return_value=marker),
+            mock.patch(
+                'plugin.installer.plugins_file_hash', return_value='test-hash-5'
+            ),
+            mock.patch(
+                'plugin.installer.install_plugins_file', return_value=True
+            ) as mock_install,
+        ):
+            registry.install_plugin_file()
+            mock_install.assert_called_once()
+
+            # The marker file could not be written, but the in-memory cache
+            # still settles this process - a second call must not reinstall
+            registry.install_plugin_file()
+            mock_install.assert_called_once()
 
     def test_builtin_mandatory_plugins(self):
         """Test that mandatory builtin plugins are always loaded."""
@@ -1047,3 +1146,70 @@ class InstallerTests(TestCase):
         self.assertIn(
             'Only superuser accounts can administer plugins', str(e.exception)
         )
+
+    def test_update_plugins_file_no_duplicates(self):
+        """Test that update_plugins_file() does not duplicate existing entries."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            pf = Path(tmpdir) / 'plugins.txt'
+            pf.write_text('')
+
+            with override_settings(PLUGIN_FILE=pf):
+                # Installing the same bare package name multiple times must
+                # only ever result in a single line for that package
+                for _ in range(3):
+                    update_plugins_file('inventree-brother-plugin')
+
+                lines = [line for line in pf.read_text().splitlines() if line.strip()]
+                self.assertEqual(lines, ['inventree-brother-plugin'])
+
+                # Removing the plugin removes its (bare) line
+                update_plugins_file('inventree-brother-plugin', remove=True)
+
+                lines = [line for line in pf.read_text().splitlines() if line.strip()]
+                self.assertEqual(lines, [])
+
+                # The same must hold for a version-pinned reference: repeat
+                # installs of the exact same reference must not duplicate it
+                for _ in range(3):
+                    update_plugins_file('inventree-brother-plugin==1.2.3')
+
+                lines = [line for line in pf.read_text().splitlines() if line.strip()]
+                self.assertEqual(lines, ['inventree-brother-plugin==1.2.3'])
+
+                # Removing the plugin removes its (version-pinned) line
+                update_plugins_file('inventree-brother-plugin==1.2.3', remove=True)
+
+                lines = [line for line in pf.read_text().splitlines() if line.strip()]
+                self.assertEqual(lines, [])
+
+    def test_update_plugins_file_regex_metacharacters(self):
+        """Test that package names containing regex metacharacters are handled safely.
+
+        Package/version specifiers may legitimately contain characters such
+        as '.', '+', '[' and ']' (e.g. extras, local version identifiers).
+        These must be treated literally, not as regex syntax.
+        """
+        with tempfile.TemporaryDirectory() as tmpdir:
+            pf = Path(tmpdir) / 'plugins.txt'
+            pf.write_text('some-other-package==1.0.0\n')
+
+            with override_settings(PLUGIN_FILE=pf):
+                # A package name containing an extras specifier must not raise
+                # (unbalanced/undesired regex syntax) and must not spuriously
+                # match an unrelated existing line
+                update_plugins_file('inventree-plugin[extra]==1.0.0')
+
+                lines = [line for line in pf.read_text().splitlines() if line.strip()]
+                self.assertEqual(
+                    lines,
+                    ['some-other-package==1.0.0', 'inventree-plugin[extra]==1.0.0'],
+                )
+
+                # Re-adding the same reference must not duplicate it
+                update_plugins_file('inventree-plugin[extra]==1.0.0')
+
+                lines = [line for line in pf.read_text().splitlines() if line.strip()]
+                self.assertEqual(
+                    lines,
+                    ['some-other-package==1.0.0', 'inventree-plugin[extra]==1.0.0'],
+                )

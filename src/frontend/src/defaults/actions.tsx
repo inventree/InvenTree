@@ -126,7 +126,7 @@ export function getActions(navigate: NavigateFunction) {
       });
 
     // Page Actions
-    user?.hasViewRole(UserRoles.purchase_order) &&
+    user?.hasViewVisible(UserRoles.purchase_order) &&
       _actions.push({
         id: 'purchase-orders',
         label: t`Purchase Orders`,
@@ -136,7 +136,7 @@ export function getActions(navigate: NavigateFunction) {
         leftSection: <IconLink size='1.2rem' />
       });
 
-    user?.hasViewRole(UserRoles.sales_order) &&
+    user?.hasViewVisible(UserRoles.sales_order) &&
       _actions.push({
         id: 'sales-orders',
         label: t`Sales Orders`,
@@ -146,8 +146,7 @@ export function getActions(navigate: NavigateFunction) {
         leftSection: <IconLink size='1.2rem' />
       });
 
-    globalSettings.isSet('TRANSFERORDER_ENABLED') &&
-      user?.hasViewRole(UserRoles.transfer_order) &&
+    user?.hasViewVisible(UserRoles.transfer_order) &&
       _actions.push({
         id: 'transfer-orders',
         label: t`Transfer Orders`,
@@ -157,8 +156,7 @@ export function getActions(navigate: NavigateFunction) {
         leftSection: <IconLink size='1.2rem' />
       });
 
-    globalSettings.isSet('RETURNORDER_ENABLED') &&
-      user?.hasViewRole(UserRoles.return_order) &&
+    user?.hasViewVisible(UserRoles.return_order) &&
       _actions.push({
         id: 'return-orders',
         label: t`Return Orders`,
@@ -188,7 +186,7 @@ export function getActions(navigate: NavigateFunction) {
         leftSection: <IconBarcode size='1.2rem' />
       });
 
-    user?.hasViewRole(UserRoles.build) &&
+    user?.hasViewVisible(UserRoles.build) &&
       _actions.push({
         id: 'builds',
         label: t`Build Orders`,

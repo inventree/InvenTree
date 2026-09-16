@@ -3,6 +3,7 @@
 import re
 import subprocess
 import sys
+from pathlib import Path
 from typing import Optional
 
 from django.conf import settings
@@ -128,6 +129,67 @@ def plugins_file_hash():
         return None
 
 
+def plugin_env_marker_path() -> Path:
+    """Return the path to the plugin-install marker file for the *current* python environment.
+
+    This lives inside the running interpreter's environment (``sys.prefix``)
+    rather than in the database, so it disappears along with the rest of the
+    environment whenever a fresh virtual environment is created - e.g. a
+    container replaced without a persistent venv volume. A database-only hash
+    cannot tell such a fresh environment apart from one that already has the
+    packages installed (inventree/InvenTree#12848).
+    """
+    return Path(sys.prefix) / '.inventree_plugins_hash'
+
+
+# Process-local fallback for get_env_plugin_hash(), used when the marker file
+# itself cannot be written (e.g. a read-only sys.prefix).
+_env_plugin_hash_cache: Optional[str] = None
+
+
+def get_env_plugin_hash() -> Optional[str]:
+    """Return the plugin file hash last installed into the *current* python environment.
+
+    Returns None if no install has been recorded here (e.g. a fresh environment).
+    """
+    if _env_plugin_hash_cache is not None:
+        return _env_plugin_hash_cache
+
+    path = plugin_env_marker_path()
+
+    if not path.exists():
+        return None
+
+    try:
+        return path.read_text().strip()
+    except Exception:
+        log_error('get_env_plugin_hash', scope='plugins')
+        return None
+
+
+def set_env_plugin_hash(file_hash: str) -> None:
+    """Record that the current python environment has installed the given plugin file hash."""
+    global _env_plugin_hash_cache
+
+    _env_plugin_hash_cache = file_hash
+
+    try:
+        plugin_env_marker_path().write_text(file_hash)
+    except Exception:
+        # Not logged via log_error/the database error log: on a deployment
+        # where sys.prefix is not writable (by design, e.g. a read-only
+        # root filesystem) this would otherwise happen on every single
+        # process start forever, and it is an environment property rather
+        # than an application bug.
+        logger.warning(
+            "Could not persist plugin install marker to '%s' - this "
+            'environment will be re-verified on every process restart '
+            'instead of only when %s changes',
+            plugin_env_marker_path(),
+            settings.PLUGIN_FILE,
+        )
+
+
 def install_plugins_file():
     """Install plugins from the plugins file."""
     logger.info('Installing plugins from plugins file')
@@ -177,7 +239,7 @@ def update_plugins_file(package_reference: str, remove: bool = False):
 
     def compare_line(line: str):
         """Check if a line in the file matches the installname."""
-        return re.match(rf'^{package_reference}[\s=@]', line.strip())
+        return re.match(rf'^{re.escape(package_reference)}(?:[\s=@]|$)', line.strip())
 
     # First, read in existing plugin file
     try:

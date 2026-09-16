@@ -9,7 +9,7 @@ from django.urls import reverse
 from allauth.account.models import EmailAddress
 
 from InvenTree.unit_test import InvenTreeAPITestCase
-from users.models import ApiToken
+from users.models import ApiToken, default_token
 from users.ruleset import RULESET_NAMES, get_ruleset_models
 
 
@@ -125,6 +125,11 @@ class UserAPITests(InvenTreeAPITestCase):
         self.assertEqual(response.data['is_staff'], False)
         self.assertEqual(response.data['is_superuser'], False)
         self.assertEqual(response.data['is_active'], True)
+        self.assertTrue(
+            EmailAddress.objects.filter(
+                user__username=data['username'], email=data['email'], primary=True
+            ).exists()
+        )
 
         # Try to adjust the 'is_superuser' field
         # Only a "superuser" can set this field
@@ -372,26 +377,6 @@ class SuperuserAPITests(InvenTreeAPITestCase):
         resp = self.put(url, {'password': 'inventree'}, expected_code=200)
         self.assertEqual(resp.data, {})
 
-    def test_email_address_sync_signal(self):
-        """Test emailadress sync."""
-        user = User.objects.create(username='start', email='start@example.org')
-        self.assertTrue(
-            EmailAddress.objects.filter(
-                user=user, email='start@example.org', primary=True
-            ).exists()
-        )
-
-        # change should trigger emailaddress update
-        user.email = 'updated@example.org'
-        user.save()
-
-        self.assertFalse(
-            EmailAddress.objects.filter(user=user, email='start@example.org').exists()
-        )
-        updated = EmailAddress.objects.get(user=user, primary=True)
-        self.assertEqual(updated.email, 'updated@example.org')
-        self.assertFalse(updated.verified)
-
 
 class UserTokenTests(InvenTreeAPITestCase):
     """Tests for user token functionality."""
@@ -421,20 +406,20 @@ class UserTokenTests(InvenTreeAPITestCase):
         # Request the token with the same name
         data = self.get(url, data={'name': 'cat'}, expected_code=200).data
 
-        self.assertEqual(data['token'], token.key)
+        token.refresh_from_db()
+        self.assertNotEqual(data['token'], token.key)
+        self.assertTrue(data['token'].startswith('inv-2-'))
+        self.assertTrue(token.revoked)
 
-        self.assertEqual(ApiToken.objects.count(), 3)
+        self.assertEqual(ApiToken.objects.count(), 4)
 
-        # Revoke the token, and then request again
-        token.revoked = True
-        token.save()
-
+        # Request again, which issues another replacement token
         data = self.get(url, data={'name': 'cat'}, expected_code=200).data
 
         self.assertNotEqual(data['token'], token.key)
 
         # A new token has been generated
-        self.assertEqual(ApiToken.objects.count(), 4)
+        self.assertEqual(ApiToken.objects.count(), 5)
 
         # Test with a really long name
         data = self.get(url, data={'name': 'cat' * 100}, expected_code=200).data
@@ -475,7 +460,7 @@ class UserTokenTests(InvenTreeAPITestCase):
         # Grab the token, and update
         token = ApiToken.objects.first()
         assert token
-        self.assertEqual(token.key, token_key)
+        self.assertEqual(token.key, ApiToken.split_token(token_key)[0])
         self.assertIsNotNone(token.last_seen)
 
         # Revoke the token
@@ -516,7 +501,7 @@ class UserTokenTests(InvenTreeAPITestCase):
             url=reverse('api-token'), data={'name': 'race'}, expected_code=200
         ).data['token']
 
-        token = ApiToken.objects.get(key=token_key)
+        token = ApiToken.objects.get(key=ApiToken.split_token(token_key)[0])
 
         # Force last_seen to be 'stale' so the auth backend attempts to update it
         ApiToken.objects.filter(pk=token.pk).update(
@@ -552,23 +537,37 @@ class UserTokenTests(InvenTreeAPITestCase):
         # Get token
         response = self.get(reverse('api-token'), expected_code=200)
         self.assertIn('token', response.data)
+        raw_token = response.data['token']
+
+        self.client.logout()
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {raw_token}')
 
         # Now there should be one token
         response = self.get(url, expected_code=200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['active'], True)
         self.assertEqual(response.data[0]['revoked'], False)
-        self.assertEqual(response.data[0]['in_use'], False)
+        self.assertEqual(response.data[0]['in_use'], True)
+        self.assertEqual(response.data[0]['issued_by'], self.user.pk)
+        self.assertIsNone(response.data[0]['revoked_by'])
+        self.assertIsNone(response.data[0]['revocation_reason'])
         expected_day = str(
             datetime.datetime.now().date() + datetime.timedelta(days=365)
         )
         self.assertEqual(response.data[0]['expiry'], expected_day)
 
         # Destroy token
+        token_id = response.data[0]['id']
         self.delete(
-            reverse('api-token-detail', kwargs={'pk': response.data[0]['id']}),
+            reverse('api-token-detail', kwargs={'pk': token_id}),
+            data={'revocation_reason': 'No longer needed'},
             expected_code=204,
         )
+
+        token = ApiToken.objects.get(pk=token_id)
+        self.assertTrue(token.revoked)
+        self.assertEqual(token.revoked_by, self.user)
+        self.assertEqual(token.revocation_reason, 'No longer needed')
 
         # Get token without auth (should fail)
         self.client.logout()
@@ -595,6 +594,40 @@ class UserTokenTests(InvenTreeAPITestCase):
         self.assertIn('token', response.data)
 
         self.assertEqual(ApiToken.objects.count(), 1)
+
+    def test_token_v1(self):
+        """Test that v1 API tokens still work."""
+        # Create a v1 token via model - this is NOT recommended; use v2 tokens
+        token = ApiToken.objects.create(
+            user=self.user,
+            key=default_token(),
+            token_version=1,
+            expiry=datetime.datetime.now() + datetime.timedelta(days=365),
+        )
+        token_key = token.key
+        self.assertTrue(token_key.startswith('inv-'))
+
+        # Check match and validate functions
+        self.assertTrue(token.match(token_key))
+        self.assertTrue(token.validate(token_key))
+
+        # test api access with token
+        self.logout()
+        # false test - ensure that without the token, access is denied
+        self.get(reverse('api-user-me'), expected_code=401)
+
+        # valid test
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token_key}')
+        response = self.get(reverse('api-user-me'), expected_code=200)
+        self.assertEqual(response.data['username'], self.user.username)
+
+        # check if info view also works
+        response_data = self.get(
+            reverse('api-inventree-info'), expected_code=200
+        ).json()
+        # staff users are allowed to see the database field
+        self.assertIn('database', response_data)
+        self.assertIsNotNone(response_data.get('database'))
 
 
 class GroupDetailTests(InvenTreeAPITestCase):

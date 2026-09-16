@@ -202,6 +202,24 @@ class BuildTest(BuildAPITest):
             str(data['outputs'][0]['output']),
         )
 
+    def test_part_read_only_on_update(self):
+        """The 'part' field cannot be changed on an existing build order."""
+        self.assignRole('build.change')
+
+        url = reverse('api-build-detail', kwargs={'pk': self.build.pk})
+
+        other_part = (
+            Part.objects.filter(assembly=True).exclude(pk=self.build.part.pk).first()
+        )
+
+        self.assertIsNotNone(other_part)
+
+        # Attempting to change the 'part' field is silently ignored
+        self.patch(url, {'part': other_part.pk}, expected_code=200)
+
+        self.build.refresh_from_db()
+        self.assertNotEqual(self.build.part.pk, other_part.pk)
+
     def test_complete(self):
         """Test build order completion."""
         # Initially, build should not be able to be completed
