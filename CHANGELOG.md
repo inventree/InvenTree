@@ -13,12 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#11971](https://github.com/inventree/InvenTree/pull/11971) is a major refactor of how notes are handled. Notes are now stored in a separate database table (in line with how attachments are handled), and each model instance can have multiple notes associated with it. The `notes` field has been removed from the individual models (and their associated API endpoints), and notes are now accessed via the new `/api/note/` endpoint. Existing notes data (and any embedded images) are automatically migrated to the new notes table, with the markdown content converted to HTML. Any external client applications which read or write the `notes` field via the API will need to be updated to use the new endpoint.
 - [#12507](https://github.com/inventree/InvenTree/pull/12507) calling an invalid or repeated state transition now raises a ValidationError. Plugins implementing state transitions should evaluate the PR and adapt their usage of transitions to gain the new safeguards.
 - [#12672](https://github.com/inventree/InvenTree/pull/12672) renames the newly added `tags` filter from 1.4.0 (https://github.com/inventree/InvenTree/pull/12077) to `tag_name` to remove a nameclash.
+- [#12850](https://github.com/inventree/InvenTree/pull/12850) Tokens are now issued in the v2 format and might be longer. Old tokens continue to work but should be considered for rotation
 
 
 ### Added
 
 - [#12713](https://github.com/inventree/InvenTree/pull/12713) adds SCIM 2 provisioning support, allowing InvenTree to be integrated with external identity providers for user management.
 - [#12731](https://github.com/inventree/InvenTree/pull/12731) adds OIDC provider settings to the Admin Center - making all Identity Federation settings now available in one place without the need to use the database admin interface.
+- [#12837](https://github.com/inventree/InvenTree/pull/12837) adds a user setting `ROTATE_TABLE_HEADERS` which rotates table headers by 90 degrees, improving readability for tables with long column titles.
 
 ### Changed
 

@@ -1,4 +1,3 @@
-import { create } from '@github/webauthn-json/browser-ponyfill';
 import { CopyButton } from '@lib/components/CopyButton';
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -761,44 +760,46 @@ export default function MFASettings() {
 
   // Register a WebAuthn credential with the provided key
   const registerWebauthn = useCallback((key: any) => {
-    create({
-      publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(key)
-    }).then((credential) => {
-      const credentialString: string = JSON.stringify(credential);
+    navigator.credentials
+      .create({
+        publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(key)
+      })
+      .then((credential) => {
+        const credentialString: string = JSON.stringify(credential);
 
-      api
-        .post(
-          apiUrl(ApiEndpoints.auth_webauthn),
-          {
-            name: 'Master Key',
-            credential: credentialString
-          },
-          {
-            timeout: 30 * 1000
-          }
-        )
-        .then((response) => {
-          showNotification({
-            title: t`WebAuthn Registered`,
-            message: t`WebAuthn credential registered successfully`,
-            color: 'green',
-            icon: <IconCircleCheck />
+        api
+          .post(
+            apiUrl(ApiEndpoints.auth_webauthn),
+            {
+              name: 'Master Key',
+              credential: credentialString
+            },
+            {
+              timeout: 30 * 1000
+            }
+          )
+          .then((response) => {
+            showNotification({
+              title: t`WebAuthn Registered`,
+              message: t`WebAuthn credential registered successfully`,
+              color: 'green',
+              icon: <IconCircleCheck />
+            });
+            refetch();
+          })
+          .catch((error) => {
+            const errorMsg = extractErrorMessage(
+              error,
+              t`Error registering WebAuthn credential`
+            );
+            showNotification({
+              title: t`WebAuthn Registration Failed`,
+              message: `${t`Failed to register WebAuthn credential`}: ${errorMsg}`,
+              color: 'red',
+              icon: <IconExclamationCircle />
+            });
           });
-          refetch();
-        })
-        .catch((error) => {
-          const errorMsg = extractErrorMessage(
-            error,
-            t`Error registering WebAuthn credential`
-          );
-          showNotification({
-            title: t`WebAuthn Registration Failed`,
-            message: `${t`Failed to register WebAuthn credential`}: ${errorMsg}`,
-            color: 'red',
-            icon: <IconExclamationCircle />
-          });
-        });
-    });
+      });
   }, []);
 
   // Request a WebAuthn registration challenge from the server

@@ -4,9 +4,11 @@ import base64
 import os
 from datetime import datetime, timedelta
 from decimal import Decimal
+from importlib import import_module
 from io import BytesIO
 from pathlib import Path
 from unittest import mock
+from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
 import django.core.exceptions as django_exceptions
@@ -16,6 +18,7 @@ from django.core import mail
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.db.migrations.recorder import MigrationRecorder
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -39,6 +42,7 @@ import InvenTree.tasks
 from common.currency import currency_codes
 from common.models import CustomUnit, InvenTreeSetting
 from common.settings import get_global_setting
+from InvenTree import apps
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.unit_test import InvenTreeTestCase, in_env_context
@@ -1993,3 +1997,55 @@ class URLCompatibilityTest(InvenTreeTestCase):
             response = self.client.get(old_url)
             self.assertEqual(response.status_code, 302)
             self.assertEqual(response['Location'], new_url)
+
+
+class InvenTreeAppConfigTests(TestCase):
+    """Tests the app configuration setup stuff."""
+
+    def test_check_pre_migration(self):
+        """Test all startup checks for partially applied pre-1.0.0 migrations."""
+        apps.PRE_1_0_0_CHECK_DONE = True
+        self.config = apps.InvenTreeConfig('InvenTree', import_module('InvenTree'))
+
+        with self.subTest('already checked'):
+            with patch.object(
+                apps.InvenTree.ready, 'canAppAccessDatabase'
+            ) as can_access:
+                self.config.check_pre_1_0_0_upgrade()
+
+            can_access.assert_not_called()
+
+        apps.PRE_1_0_0_CHECK_DONE = False
+        with self.subTest('database unavailable'):
+            with patch.object(
+                apps.InvenTree.ready, 'canAppAccessDatabase', return_value=False
+            ) as can_access:
+                self.config.check_pre_1_0_0_upgrade()
+
+            can_access.assert_called_once_with(allow_plugins=True)
+
+        with self.subTest('no stuck apps'):
+            with patch.object(
+                apps.InvenTree.ready, 'canAppAccessDatabase', return_value=True
+            ):
+                self.config.check_pre_1_0_0_upgrade()
+
+            self.assertTrue(apps.PRE_1_0_0_CHECK_DONE)
+
+        apps.PRE_1_0_0_CHECK_DONE = False
+        with self.subTest('stuck apps'):
+            with (
+                patch.object(
+                    apps.InvenTree.ready, 'canAppAccessDatabase', return_value=True
+                ),
+                patch.object(
+                    MigrationRecorder,
+                    'applied_migrations',
+                    return_value={('part', '0003_auto_20190525_2226')},
+                ),
+            ):
+                with self.assertRaises(SystemExit) as raised:
+                    self.config.check_pre_1_0_0_upgrade()
+
+            self.assertEqual(raised.exception.code, 1)
+            self.assertFalse(apps.PRE_1_0_0_CHECK_DONE)

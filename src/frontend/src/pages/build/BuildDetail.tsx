@@ -335,7 +335,7 @@ export default function BuildDetail() {
           <Skeleton />
         ),
         hidden:
-          !user.hasViewRole(UserRoles.purchase_order) ||
+          !user.hasViewVisible(UserRoles.purchase_order) ||
           !build.external ||
           !globalSettings.isSet('BUILDORDER_EXTERNAL_BUILDS')
       },
