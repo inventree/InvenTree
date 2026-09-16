@@ -103,6 +103,7 @@ def transition_action(
     return_code: int = status.HTTP_200_OK,
     pass_user: bool = False,
     serializer_class: type[serializers.Serializer] | None = None,
+    reset_output_options: bool = False,
 ) -> Any:
     """Build a ``POST`` detail endpoint running one FSM transition method.
 
@@ -116,6 +117,9 @@ def transition_action(
         return_code: HTTP status code to return on success. Defaults to `200`.
         pass_user: Pass the requesting user to the transition as ``user=``.
         serializer_class: Serializer to use for the response body. Defaults to an empty serializer
+        reset_output_options: Force ``output_options=None`` for this action. Only valid when the
+            viewset actually mixes in ``OutputOptionsMixin`` - passing it to a plain ``as_view()``
+            that has no such attribute raises ``TypeError``.
 
     Returns:
         A DRF ``@action``-decorated method, ready to assign as a viewset class attribute.
@@ -125,14 +129,15 @@ def transition_action(
     # TODO @matmair move all transition actions under the common prefix
     # path = f'{TRANSITION_URL_PREFIX}/{segment}'
     path = f'{segment}'
+    input_serializer_class = serializer_class
 
     def endpoint(self, request: Request, pk: str | None = None) -> Response:
         instance = self.get_object()
         kwargs: dict[str, Any] = {}
         context = self.get_serializer_context()
 
-        if serializer_class is not None:
-            payload = serializer_class(data=request.data, context=context)
+        if input_serializer_class is not None:
+            payload = input_serializer_class(data=request.data, context=context)
             payload.is_valid(raise_exception=True)
             extract = getattr(payload, 'transition_kwargs', None)
             kwargs.update(extract() if extract else dict(payload.validated_data))
@@ -153,7 +158,11 @@ def transition_action(
 
         instance.refresh_from_db()
 
-        serial = serializer_class if serializer_class else self.get_serializer_class()
+        serial = (
+            input_serializer_class
+            if input_serializer_class
+            else self.get_serializer_class()
+        )
         serializer = serial(instance, context=self.get_serializer_context())
         return Response(serializer.data, status=return_code)
 
@@ -162,23 +171,29 @@ def transition_action(
     endpoint.__doc__ = f"API endpoint to '{method_name}' the current item."
     # Read back by FSMTransitionMixin.transition_url_paths().
     endpoint.transition_name = method_name
-    serializer_class = (
-        serializer_class if serializer_class is not None else EmptySerializer
-    )
 
-    ret = action(
-        detail=True,
-        methods=['post'],
-        url_path=path,
+    action_kwargs: dict[str, Any] = {
+        'detail': True,
+        'methods': ['post'],
+        'url_path': path,
         # TODO @matmair add option to rename the urlname
-        url_name=segment,
-        output_options=None,
-        serializer_class=serializer_class,
-    )(endpoint)
+        'url_name': segment,
+    }
+    if input_serializer_class is not None:
+        action_kwargs['serializer_class'] = input_serializer_class
+    if reset_output_options:
+        action_kwargs['output_options'] = None
+    ret = action(**action_kwargs)(endpoint)
 
     # add decorator if custom return_code is required
     if return_code != status.HTTP_200_OK:
-        ret = extend_schema(responses={return_code: serializer_class})(ret)
+        ret = extend_schema(
+            responses={
+                return_code: input_serializer_class
+                if input_serializer_class is not None
+                else EmptySerializer
+            }
+        )(ret)
 
     return ret
 
@@ -298,15 +313,16 @@ class FSMTransitionMixin:
             pass_user, required = transition_call_plan(getattr(model, method_name))
             options.setdefault('pass_user', pass_user)
 
-            if required and 'arg_serializer' not in options:
+            if required and 'serializer_class' not in options:
                 skipped[method_name] = (
-                    'takes arguments ({}) with no arg_serializer'.format(
+                    'takes arguments ({}) with no serializer_class'.format(
                         ', '.join(required)
                     )
                 )
                 cls._suppress_transition_action(attr_name, inherited)
                 continue
 
+            options.setdefault('reset_output_options', hasattr(cls, 'output_options'))
             setattr(cls, attr_name, transition_action(method_name, **options))
             generated[method_name] = attr_name
 

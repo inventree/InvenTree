@@ -70,12 +70,14 @@ def inventree_transition(
         @wraps(func)
         def wrapper(self, *args, **kwargs):
             """Ensure that transitions are handled correctly."""
+            field_name = field if isinstance(field, str) else field.name
+
             if refresh_field:
                 try:
                     # Update the field from the database to avoid race conditions
                     current_obj = type(self).objects.select_for_update().get(pk=self.pk)
-                    new_value = getattr(current_obj, field.name)
-                    setattr(self, field.name, new_value)
+                    new_value = getattr(current_obj, field_name)
+                    setattr(self, field_name, new_value)
                 except type(self).DoesNotExist:  # pragma: no cover
                     raise ValidationError(
                         f'{self._meta.verbose_name} with pk={self.pk} does not exist in the database'
@@ -84,7 +86,7 @@ def inventree_transition(
             # Run plugin transition handlers - if no step is taken the decorated method is called
             if result := _run_plugin_transition_handlers(
                 self,
-                getattr(self, field.name),
+                getattr(self, field_name),
                 target,
                 default_action=_noop_default_action,
             ):
@@ -106,7 +108,7 @@ def inventree_transition(
                 # back to the generic "invalid transition" message below, since
                 # there is no one value to compare against.
                 resolved_target = getattr(target, 'target', target)
-                if getattr(self, field.name) == resolved_target:
+                if getattr(self, field_name) == resolved_target:
                     target_val = (
                         resolved_target.label
                         if isinstance(resolved_target, Enum)
@@ -117,7 +119,7 @@ def inventree_transition(
                         f'{self._meta.verbose_name} is already {target_val}'
                     ) from exc
                 raise ValidationError(
-                    f'Invalid transition on {self._meta.verbose_name}.{field.name} (source value should be {source}, is {getattr(self, field.name)})'
+                    f'Invalid transition on {self._meta.verbose_name}.{field_name} (source value should be {source}, is {getattr(self, field_name)})'
                 ) from exc
             # Persist all changes (including the updated status field) to the DB.
             self.save()

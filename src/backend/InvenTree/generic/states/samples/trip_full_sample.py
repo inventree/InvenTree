@@ -1,6 +1,7 @@
 """Sample implementation of using transitions."""
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -93,7 +94,7 @@ class SampleTrip(StateTransitionMixin, models.Model):
     )
     def start_trip(self):
         """Transition the trip to 'In Progress'."""
-        # Note: this is named different then the other transition methods; this could cause confusion on the api
+        # Note: this is named differently than the other transition methods; this could cause confusion on the api
 
     @inventree_transition(
         source=[TripStatus.IN_PROGRESS],
@@ -104,24 +105,25 @@ class SampleTrip(StateTransitionMixin, models.Model):
     def complete(self):
         """Transition the trip to 'Completed'."""
 
-    @blocking_reason(_('Only the captain can perform this action'))
-    def only_captains_orders(self, user: User, logmessage: str):
-        """Check if the current user is the captain of the trip."""
-        if not self.captain:
-            return False
-        return self.captain == user
+    @blocking_reason(_('Trip must have a captain assigned before it can be failed'))
+    def has_captain(self):
+        """Check if the trip has a captain assigned."""
+        return self.captain_id is not None
 
     @inventree_transition(
         source=[TripStatus.IN_PROGRESS],
         target=TripStatus.FAILED,
         field='status',
         event=TripEvents.FAILED,
-        conditions=[only_captains_orders],
+        conditions=[has_captain],
     )
     def fail(self, user: User, logmessage: str):
         """Transition the trip to 'Failed'. Only the captain can mark a trip as failed."""
+        if not self.captain or self.captain != user:
+            raise ValidationError(_('Only the captain can perform this action'))
+
         if not logmessage:
-            raise ValueError('Log message is required to fail the trip.')
+            raise ValidationError(_('Log message is required to fail the trip.'))
 
         self.last_log = logmessage
 
@@ -175,6 +177,12 @@ class SampleTripSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class TripFailSerializer(serializers.Serializer):
+    """Serializer supplying the extra argument required by the 'fail' transition."""
+
+    logmessage = serializers.CharField(write_only=True)
+
+
 class SampleTripViewSet(FSMTransitionMixin, CleanModelViewSet):
     """ViewSet for the SampleTrip model."""
 
@@ -182,8 +190,11 @@ class SampleTripViewSet(FSMTransitionMixin, CleanModelViewSet):
     serializer_class = SampleTripSerializer
 
     transition_exclude = ('cancel',)
-    # start_trip should be exposes as start
-    transition_aliases = {'start': 'start_trip'}
+    transition_options = {
+        # start_trip is named differently to the rest of the transitions; expose it as 'start'
+        'start_trip': {'name': 'start'},
+        'fail': {'serializer_class': TripFailSerializer},
+    }
 
     @action(detail=True, methods=['get'])
     def postpone(self, *args, **kwargs):
