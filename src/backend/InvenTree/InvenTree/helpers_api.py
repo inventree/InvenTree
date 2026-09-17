@@ -18,8 +18,14 @@ class ViewSetCleanMixin:
             return {}
 
 
+# Restrict the router-generated 'pk' URL parameter to digits only.
+_INTEGER_PK_REGEX = r'\d+'
+
+
 class CleanModelViewSet(CleanMixin, ViewSetCleanMixin, viewsets.ModelViewSet):
     """Viewset which provides 'retrieve', 'create', 'update', 'destroy' and 'list' actions."""
+
+    lookup_value_regex = _INTEGER_PK_REGEX
 
 
 class RetrieveUpdateDestroyModelViewSet(
@@ -33,6 +39,8 @@ class RetrieveUpdateDestroyModelViewSet(
 ):
     """Viewset which provides 'retrieve', 'update', 'destroy' and 'list' actions."""
 
+    lookup_value_regex = _INTEGER_PK_REGEX
+
 
 class RetrieveDestroyModelViewSet(
     mixins.RetrieveModelMixin,
@@ -41,6 +49,8 @@ class RetrieveDestroyModelViewSet(
     viewsets.GenericViewSet,
 ):
     """Viewset which provides 'retrieve', 'destroy' and 'list' actions."""
+
+    lookup_value_regex = _INTEGER_PK_REGEX
 
 
 class InvenTreeApiRouter(routers.SimpleRouter):

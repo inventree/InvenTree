@@ -999,6 +999,29 @@ class PurchaseOrderTest(OrderTest):
                 self.assertIn('status_text', result)
                 self.assertIsNotNone(result['status_text'])
 
+    def test_status_codes_endpoint(self):
+        """The 'po/status/' endpoint must resolve to the status-codes view.
+
+        Regression test: the PurchaseOrderViewSet's detail route ('po/<pk>/') used
+        DRF's default permissive pk lookup regex, which happily matched the literal
+        segment 'status' as a pk. Because the ViewSet router was registered before
+        the 'po/status/' path in the urlconf, this endpoint was being swallowed by
+        PurchaseOrderViewSet.retrieve(pk='status') instead of reaching StatusView -
+        returning a 404 (no such PurchaseOrder) rather than the status code data.
+        Fixed by restricting 'lookup_value_regex' to digits on the shared viewset
+        base classes in InvenTree.helpers_api (see comment there).
+        """
+        url = reverse('api-po-status-codes')
+        response = self.get(url, expected_code=200)
+
+        # A genuine StatusView response - not a PurchaseOrder-detail-shaped 404
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('PENDING', response.data['values'])
+        self.assertEqual(
+            response.data['values']['PENDING']['key'], PurchaseOrderStatus.PENDING.value
+        )
+
 
 class PurchaseOrderLineItemTest(OrderTest):
     """Unit tests for PurchaseOrderLineItems."""
