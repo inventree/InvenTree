@@ -36,12 +36,13 @@ class LabelRenderingTests(SimpleTestCase):
 
     @mock.patch('plugin.base.label.mixins.log_error')
     def test_validation_errors(self, log_error):
-        """Preserve validation messages, codes, and parameters without logging."""
+        """Log validation errors while preserving messages, codes, and parameters."""
         for wrapper, renderer in [
             ('render_to_pdf', 'render'),
             ('render_to_html', 'render_as_string'),
         ]:
             with self.subTest(wrapper=wrapper):
+                log_error.reset_mock()
                 error = ValidationError(
                     {
                         'serial': ValidationError(
@@ -62,7 +63,7 @@ class LabelRenderingTests(SimpleTestCase):
                     raised.exception.message_dict,
                     {'serial': ['Missing serial number for Test part']},
                 )
-                log_error.assert_not_called()
+                log_error.assert_called_once_with(wrapper, plugin=self.plugin.slug)
 
     @mock.patch('plugin.base.label.mixins.log_error')
     def test_unexpected_errors(self, log_error):
