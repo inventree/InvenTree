@@ -3,12 +3,15 @@
 import base64
 import hashlib
 import io
+import re
 from decimal import Decimal
+from xml.etree import ElementTree
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.template import Context, Template
 from django.test import TestCase, override_settings
 from django.utils import timezone
 from django.utils.safestring import SafeString
@@ -998,3 +1001,118 @@ class BarcodeTagTest(TestCase):
             datamatrix,
             'data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAIAAADZrBkAAAAAlElEQVR4nJ1TQQ7AIAgri///cncw6wroEseBgEFbCgZJnNsFICKOPAAIjeSM5T11IznK5f5WRMgnkhP9JfCcTC/MxFZ5hxLOgqrn3o/z/OqtsNpdSL31Iu9W4Dq8Sulu+q5Nuqa3XYOdnuidlICPpXhZVBruyzAKSZehT+yNlzvZQcq6JiW7Ni592swf/43kdlDfdgMk1eOtR7kWpAAAAABJRU5ErkJggg==',
         )
+
+    def test_2d_barcode_svg_renderer(self):
+        """Test vector rendering of a two-dimensional barcode matrix."""
+        svg_data = barcode_tags._render_2d_barcode(
+            [[True, False], [False, True]],
+            fill_color='red',
+            back_color='blue',
+            scale=2,
+            border=1,
+            fmt='SVG',
+        )
+
+        prefix, payload = svg_data.split(',', 1)
+        self.assertEqual(prefix, 'data:image/svg+xml;charset=utf-8;base64')
+
+        root = ElementTree.fromstring(base64.b64decode(payload))
+        namespace = '{http://www.w3.org/2000/svg}'
+
+        self.assertEqual(root.attrib['width'], '8')
+        self.assertEqual(root.attrib['height'], '8')
+        self.assertEqual(root.attrib['viewBox'], '0 0 4 4')
+        self.assertEqual(root.attrib['shape-rendering'], 'crispEdges')
+
+        background = root.find(f'{namespace}rect')
+        path = root.find(f'{namespace}path')
+        self.assertIsNotNone(background)
+        self.assertIsNotNone(path)
+        self.assertEqual(background.attrib['fill'], '#0000ff')
+        self.assertEqual(path.attrib['fill'], '#ff0000')
+        self.assertEqual(path.attrib['d'], 'M1 1h1v1h-1z M2 2h1v1h-1z')
+
+    def test_datamatrix_svg(self):
+        """Test SVG output from the Data Matrix template tag."""
+        datamatrix = barcode_tags.datamatrix(
+            'hello world',
+            rectangular=True,
+            border='abc',
+            fill_color='aaaaaaa',
+            back_color='aaaaaaa',
+            fmt='svg',
+        )
+
+        prefix, payload = datamatrix.split(',', 1)
+        self.assertEqual(prefix, 'data:image/svg+xml;charset=utf-8;base64')
+
+        root = ElementTree.fromstring(base64.b64decode(payload))
+        namespace = '{http://www.w3.org/2000/svg}'
+        _, _, width, height = root.attrib['viewBox'].split()
+
+        self.assertNotEqual(width, height)
+
+        background = root.find(f'{namespace}rect')
+        path = root.find(f'{namespace}path')
+        self.assertIsNotNone(background)
+        self.assertIsNotNone(path)
+        self.assertEqual(background.attrib['fill'], '#ffffff')
+        self.assertEqual(path.attrib['fill'], '#000000')
+
+    def test_datamatrix_svg_geometry(self):
+        """SVG modules retain the encoded matrix geometry at different scales."""
+        from ppf.datamatrix.datamatrix import DataMatrix
+
+        namespace = '{http://www.w3.org/2000/svg}'
+        for rectangular, border, scale in [
+            (False, 0, 1),
+            (True, 3, 2.5),
+            (False, -2, 2),
+        ]:
+            with self.subTest(rectangular=rectangular, border=border, scale=scale):
+                matrix = DataMatrix('hello world', rect=rectangular).matrix
+                padding = max(0, border)
+                width = len(matrix[0]) + 2 * padding
+                height = len(matrix) + 2 * padding
+                data = barcode_tags.datamatrix(
+                    'hello world',
+                    rectangular=rectangular,
+                    border=border,
+                    scale=scale,
+                    fmt='SVG',
+                )
+                root = ElementTree.fromstring(base64.b64decode(data.split(',', 1)[1]))
+                self.assertEqual(root.attrib['viewBox'], f'0 0 {width} {height}')
+                self.assertEqual(root.attrib['width'], str(int(width * scale)))
+                self.assertEqual(root.attrib['height'], str(int(height * scale)))
+                background = root.find(f'{namespace}rect')
+                self.assertEqual(background.attrib['width'], str(width))
+                self.assertEqual(background.attrib['height'], str(height))
+
+                path = root.find(f'{namespace}path').attrib['d']
+                modules = re.findall(r'M(\d+) (\d+)h1v1h-1z', path)
+                self.assertEqual(len(modules), sum(map(sum, matrix)))
+                self.assertEqual(
+                    {(int(x), int(y)) for x, y in modules},
+                    {
+                        (x + padding, y + padding)
+                        for y, row in enumerate(matrix)
+                        for x, dark in enumerate(row)
+                        if dark
+                    },
+                )
+
+    def test_datamatrix_svg_template(self):
+        """The template tag produces embeddable SVG and rejects empty data."""
+        template = Template(
+            '{% load barcode %}<img src="{% datamatrix data fmt="SVG" %}"/>'
+        )
+        html = template.render(Context({'data': 'hello world'}))
+        image = ElementTree.fromstring(html)
+        self.assertEqual(
+            image.attrib['src'], barcode_tags.datamatrix('hello world', fmt='SVG')
+        )
+
+        for data in ['', '   ']:
+            with self.subTest(data=data), self.assertRaises(ValidationError):
+                template.render(Context({'data': data}))
