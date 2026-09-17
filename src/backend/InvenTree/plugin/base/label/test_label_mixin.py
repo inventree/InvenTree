@@ -43,15 +43,13 @@ class LabelRenderingTests(SimpleTestCase):
         ]:
             with self.subTest(wrapper=wrapper):
                 log_error.reset_mock()
-                error = ValidationError(
-                    {
-                        'serial': ValidationError(
-                            'Missing serial number for %(part)s',
-                            code='missing_serial',
-                            params={'part': 'Test part'},
-                        )
-                    }
-                )
+                error = ValidationError({
+                    'serial': ValidationError(
+                        'Missing serial number for %(part)s',
+                        code='missing_serial',
+                        params={'part': 'Test part'},
+                    )
+                })
                 label = mock.Mock(spec=LabelTemplate)
                 getattr(label, renderer).side_effect = error
 
