@@ -5,12 +5,13 @@ import socket
 import tempfile
 from io import StringIO
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.template.loader import render_to_string
@@ -30,6 +31,7 @@ from order.models import PurchaseOrder, ReturnOrder, SalesOrder
 from part.models import Part
 from plugin.registry import registry
 from report.models import LabelTemplate, ReportTemplate
+from report.tasks import print_labels
 from stock.models import StockItem, StockLocation
 
 
@@ -517,6 +519,178 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertIsNotNone(output.output)
         self.assertEqual(output.plugin, 'inventreelabel')
         self.assertTrue(output.output.name.endswith('.pdf'))
+
+    def test_print_failure(self):
+        """Printing failures retain their details and propagate to the caller."""
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        parts = list(Part.objects.all()[:1])
+
+        for worker in [False, True]:
+            for error in [
+                ValidationError(['Invalid label data', 'Missing part number']),
+                RuntimeError('printer unavailable'),
+            ]:
+                with self.subTest(worker=worker, error=type(error).__name__):
+                    plugin = Mock(spec=['slug', 'print_labels'], slug='failing-label')
+                    plugin.print_labels.side_effect = error
+                    output = report_models.DataOutput.objects.create(
+                        output_type=report_models.DataOutput.DataOutputTypes.LABEL,
+                        template_name=template.name,
+                        plugin=plugin.slug,
+                    )
+
+                    with (
+                        patch.object(registry, 'get_plugin', return_value=plugin),
+                        self.assertRaises(ValidationError) as raised,
+                    ):
+                        if worker:
+                            print_labels(
+                                template.pk,
+                                [part.pk for part in parts],
+                                output.pk,
+                                self.user.pk,
+                                plugin.slug,
+                                options={},
+                            )
+                        else:
+                            template.print(parts, plugin, output=output)
+
+                    plugin.print_labels.assert_called_once()
+                    output.refresh_from_db()
+                    self.assertFalse(output.complete)
+                    self.assertFalse(output.output)
+
+                    if isinstance(error, ValidationError):
+                        self.assertIs(raised.exception, error)
+                        self.assertEqual(
+                            output.errors['error'], ', '.join(error.messages)
+                        )
+                    else:
+                        self.assertEqual(
+                            raised.exception.messages,
+                            ['Error printing labels', 'printer unavailable'],
+                        )
+                        self.assertEqual(
+                            output.errors['error'],
+                            'Error printing labels: printer unavailable',
+                        )
+
+                    if worker:
+                        original = (
+                            report_models.DataOutput.objects
+                            .filter(pk=output.pk)
+                            .values()
+                            .get()
+                        )
+                        with patch.object(
+                            registry, 'get_plugin', return_value=plugin
+                        ) as get_plugin:
+                            print_labels(
+                                template.pk,
+                                [part.pk for part in parts],
+                                output.pk,
+                                self.user.pk,
+                                plugin.slug,
+                                options={},
+                            )
+
+                        get_plugin.assert_not_called()
+                        plugin.print_labels.assert_called_once()
+                        self.assertEqual(
+                            report_models.DataOutput.objects
+                            .filter(pk=output.pk)
+                            .values()
+                            .get(),
+                            original,
+                        )
+
+    def test_print_unavailable_plugin(self):
+        """An unavailable worker plugin records a failure instead of hanging."""
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        output = report_models.DataOutput.objects.create(
+            output_type=report_models.DataOutput.DataOutputTypes.LABEL,
+            template_name=template.name,
+            plugin='unavailable-label',
+        )
+
+        with (
+            patch.object(registry, 'get_plugin', return_value=None) as get_plugin,
+            patch.object(LabelTemplate, 'print') as print_template,
+        ):
+            print_labels(
+                template.pk, [], output.pk, self.user.pk, output.plugin, options={}
+            )
+
+        get_plugin.assert_called_once_with(output.plugin, active=True)
+        print_template.assert_not_called()
+        output.refresh_from_db()
+        self.assertFalse(output.complete)
+        self.assertFalse(output.output)
+        self.assertEqual(
+            output.errors,
+            {'error': "Label printing plugin 'unavailable-label' not found"},
+        )
+
+        original = report_models.DataOutput.objects.filter(pk=output.pk).values().get()
+        plugin = Mock(spec=['slug', 'print_labels'], slug=output.plugin)
+        with (
+            patch.object(registry, 'get_plugin', return_value=plugin) as get_plugin,
+            patch.object(LabelTemplate, 'print') as print_template,
+        ):
+            print_labels(
+                template.pk, [], output.pk, self.user.pk, output.plugin, options={}
+            )
+
+        get_plugin.assert_not_called()
+        print_template.assert_not_called()
+        self.assertEqual(
+            report_models.DataOutput.objects.filter(pk=output.pk).values().get(),
+            original,
+        )
+
+    def test_print_task_duplicate(self):
+        """Duplicate tasks skip completed or deleted outputs before plugin lookup."""
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+
+        for deleted in [False, True]:
+            with self.subTest(deleted=deleted):
+                output = report_models.DataOutput.objects.create(
+                    complete=True, progress=100, output='data_output/labels.pdf'
+                )
+                output_id = output.pk
+                original = (
+                    report_models.DataOutput.objects.filter(pk=output_id).values().get()
+                )
+                if deleted:
+                    output.delete()
+
+                with (
+                    patch.object(registry, 'get_plugin') as get_plugin,
+                    patch.object(LabelTemplate, 'print') as print_template,
+                ):
+                    print_labels(
+                        template.pk,
+                        [],
+                        output_id,
+                        self.user.pk,
+                        'inventreelabel',
+                        options={},
+                    )
+
+                get_plugin.assert_not_called()
+                print_template.assert_not_called()
+                if deleted:
+                    self.assertFalse(
+                        report_models.DataOutput.objects.filter(pk=output_id).exists()
+                    )
+                else:
+                    self.assertEqual(
+                        report_models.DataOutput.objects
+                        .filter(pk=output_id)
+                        .values()
+                        .get(),
+                        original,
+                    )
 
     def test_print_custom_template(self):
         """Test printing against a custom template file."""
