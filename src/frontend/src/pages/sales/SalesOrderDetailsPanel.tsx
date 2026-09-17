@@ -179,6 +179,13 @@ export function SalesOrderDetailsPanel({
       label: t`Responsible`,
       badge: 'owner',
       hidden: !instance?.responsible
+    },
+    {
+      type: 'text',
+      name: 'created_by.pk',
+      label: t`Created By`,
+      badge: 'user',
+      hidden: !instance?.created_by
     }
   ];
 
