@@ -1,5 +1,8 @@
 """Test for custom report tags."""
 
+import base64
+import hashlib
+import io
 from decimal import Decimal
 from zoneinfo import ZoneInfo
 
@@ -860,6 +863,65 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 
 class BarcodeTagTest(TestCase):
     """Unit tests for the barcode template tags."""
+
+    def test_datamatrix_raster_geometry(self):
+        """Raster output preserves modules, borders, colors, and scaling."""
+        # Pixel digests captured before extracting the raster renderer.
+        for rectangular, border, scale, fmt, size, digest in [
+            (
+                False,
+                0,
+                1,
+                'PNG',
+                (16, 16),
+                'df39de36e5926c66d156d7984876a5c6a1493211b2cc324548317da363589da2',
+            ),
+            (
+                True,
+                3,
+                2,
+                'PNG',
+                (76, 28),
+                'ae64b12a2a1e30aa886aeb5abfd61eec9499da6101eee9b8a0476de98cfd551c',
+            ),
+            (
+                False,
+                -2,
+                1,
+                'BMP',
+                (16, 16),
+                'df39de36e5926c66d156d7984876a5c6a1493211b2cc324548317da363589da2',
+            ),
+            (
+                True,
+                'abc',
+                2.5,
+                'PNG',
+                (85, 25),
+                '58006f73ca9b70eec4ed7090ed0f28455a5bb93507fdf60320d1e62a7f1e259b',
+            ),
+        ]:
+            with self.subTest(
+                rectangular=rectangular, border=border, scale=scale, fmt=fmt
+            ):
+                data = barcode_tags.datamatrix(
+                    'hello world',
+                    rectangular=rectangular,
+                    border=border,
+                    scale=scale,
+                    fill_color='red',
+                    back_color='blue',
+                    fmt=fmt,
+                )
+                prefix, payload = data.split(',', 1)
+                self.assertEqual(
+                    prefix, f'data:image/{fmt.lower()};charset=utf-8;base64'
+                )
+                with Image.open(io.BytesIO(base64.b64decode(payload))) as image:
+                    self.assertEqual(image.size, size)
+                    self.assertEqual(
+                        hashlib.sha256(image.tobytes()).hexdigest(), digest
+                    )
 
     def test_barcode(self):
         """Test the barcode generation tag."""

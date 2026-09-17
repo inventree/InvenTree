@@ -1,5 +1,7 @@
 """Template tags for rendering various barcodes."""
 
+from collections.abc import Sequence
+
 from django import template
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
@@ -28,6 +30,65 @@ def image_data(img, fmt='PNG') -> str:
     Returns a string ``data:image/FMT;base64,xxxxxxxxx`` which can be rendered to an <img> tag
     """
     return report.helpers.encode_image_base64(img, fmt)
+
+
+def _render_2d_barcode_raster(
+    matrix: Sequence[Sequence[bool]],
+    foreground: tuple[int, int, int],
+    background: tuple[int, int, int],
+    width: int,
+    height: int,
+    scale: float,
+    border: int,
+    fmt: str,
+) -> str:
+    """Render a two-dimensional barcode matrix as raster image data."""
+    img = Image.new('RGB', (width, height), color=background)
+
+    for y, row in enumerate(matrix):
+        for x, value in enumerate(row):
+            if value:
+                img.putpixel((x + border, y + border), foreground)
+
+    img = img.resize(
+        (int(width * scale), int(height * scale)), Image.Resampling.NEAREST
+    )
+
+    return image_data(img, fmt=fmt)
+
+
+def _render_2d_barcode(
+    matrix: Sequence[Sequence[bool]],
+    fill_color: str = 'black',
+    back_color: str = 'white',
+    scale: float = 1.0,
+    border: int = 1,
+    fmt: str = 'PNG',
+) -> str:
+    """Render a two-dimensional barcode matrix in the requested format."""
+    try:
+        border = int(border)
+    except Exception:
+        border = 1
+
+    border = max(0, border)
+
+    try:
+        foreground = ImageColor.getcolor(fill_color, 'RGB')
+    except Exception:
+        foreground = ImageColor.getcolor('black', 'RGB')
+
+    try:
+        background = ImageColor.getcolor(back_color, 'RGB')
+    except Exception:
+        background = ImageColor.getcolor('white', 'RGB')
+
+    height = len(matrix) + 2 * border
+    width = len(matrix[0]) + 2 * border
+
+    return _render_2d_barcode_raster(
+        matrix, foreground, background, width, height, scale, border, fmt
+    )
 
 
 @register.simple_tag()
@@ -170,36 +231,11 @@ def datamatrix(
 
     dm = DataMatrix(data, rect=rectangular)
 
-    try:
-        border = int(border)
-    except Exception:
-        border = 1
-
-    border = max(0, border)
-
-    try:
-        fg = ImageColor.getcolor(fill_color, 'RGB')
-    except Exception:
-        fg = ImageColor.getcolor('black', 'RGB')
-
-    try:
-        bg = ImageColor.getcolor(back_color, 'RGB')
-    except Exception:
-        bg = ImageColor.getcolor('white', 'RGB')
-
-    height = len(dm.matrix) + 2 * border
-    width = len(dm.matrix[0]) + 2 * border
-
-    # Generate raw image from the matrix
-    img = Image.new('RGB', (width, height), color=bg)
-
-    for y, row in enumerate(dm.matrix):
-        for x, value in enumerate(row):
-            if value:
-                img.putpixel((x + border, y + border), fg)
-
-    img = img.resize(
-        (int(width * scale), int(height * scale)), Image.Resampling.NEAREST
+    return _render_2d_barcode(
+        dm.matrix,
+        fill_color=fill_color,
+        back_color=back_color,
+        scale=scale,
+        border=border,
+        fmt=fmt,
     )
-
-    return image_data(img, fmt=fmt)
