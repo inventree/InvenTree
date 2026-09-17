@@ -199,7 +199,7 @@ class TripModelTransitionTests(InvenTreeTestCase):
         self.assertTrue(entries['fail'].blocked)
         self.assertEqual(
             entries['fail'].blocking_reason,
-            'Trip must have a captain assigned before it can fail',
+            'Trip must have a captain assigned before it can be failed',
         )
         # 'complete' has no conditions, so it is never blocked
         self.assertFalse(entries['complete'].blocked)
