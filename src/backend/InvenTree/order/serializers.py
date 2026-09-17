@@ -40,8 +40,8 @@ from InvenTree.serializers import (
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     InvenTreeTaggitSerializer,
-    NotesFieldMixin,
     OptionalField,
+    apply_duplicate_copy_options,
 )
 from InvenTree.tasks import batch_offload_tasks
 from order.status_codes import (
@@ -82,7 +82,6 @@ class AbstractOrderSerializer(
     """Abstract serializer class which provides fields common to all order types."""
 
     export_exclude_fields = ['notes']
-
     import_exclude_fields = ['notes']
 
     # Number of line items in this order
@@ -229,7 +228,6 @@ class AbstractOrderSerializer(
             'status',
             'status_text',
             'status_custom_key',
-            'notes',
             'barcode_hash',
             'overdue',
             'duplicate',
@@ -273,8 +271,9 @@ class AbstractOrderSerializer(
                     line.order = instance
                     line.save()
 
-            if duplicate.get('copy_parameters', False):
-                instance.copy_parameters_from(original)
+            apply_duplicate_copy_options(
+                instance, duplicate, original, copy_notes=False, copy_parameters=False
+            )
 
         return instance
 
@@ -382,7 +381,6 @@ class AbstractExtraLineMeta:
 
 @register_importer()
 class PurchaseOrderSerializer(
-    NotesFieldMixin,
     TotalPriceMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
@@ -427,6 +425,7 @@ class PurchaseOrderSerializer(
         copy_lines=True,
         copy_extra_lines=True,
         copy_parameters=True,
+        copy_notes=True,
     )
 
     @staticmethod
@@ -1112,7 +1111,6 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 
 @register_importer()
 class SalesOrderSerializer(
-    NotesFieldMixin,
     TotalPriceMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
@@ -1152,6 +1150,7 @@ class SalesOrderSerializer(
         copy_lines=True,
         copy_extra_lines=True,
         copy_parameters=True,
+        copy_notes=True,
     )
 
     @staticmethod
@@ -1427,7 +1426,6 @@ class SalesOrderShipmentSerializer(
     DataImportExportSerializerMixin,
     FilterableSerializerMixin,
     InvenTreeTaggitSerializer,
-    NotesFieldMixin,
     InvenTreeModelSerializer,
 ):
     """Serializer for the SalesOrderShipment class."""
@@ -1452,7 +1450,6 @@ class SalesOrderShipmentSerializer(
             'invoice_number',
             'barcode_hash',
             'link',
-            'notes',
             # Extra detail fields
             'parameters',
             'checked_by_detail',
@@ -1532,7 +1529,9 @@ class SalesOrderShipmentSerializer(
     tags = common.filters.enable_tags_filter()
 
     duplicate = DuplicateOptionsSerializer(
-        order.models.SalesOrderShipment.objects.all(), copy_parameters=True
+        order.models.SalesOrderShipment.objects.all(),
+        copy_parameters=True,
+        copy_notes=True,
     )
 
     @transaction.atomic
@@ -1543,10 +1542,13 @@ class SalesOrderShipmentSerializer(
         instance = super().create(validated_data)
 
         if duplicate:
-            original = duplicate['original']
-
-            if duplicate.get('copy_parameters', True):
-                instance.copy_parameters_from(original)
+            apply_duplicate_copy_options(
+                instance,
+                duplicate,
+                duplicate['original'],
+                copy_notes=True,
+                copy_parameters=True,
+            )
 
         return instance
 
@@ -1582,7 +1584,7 @@ class SalesOrderAllocationSerializer(
             'location_detail',
             'shipment_detail',
         ]
-        read_only_fields = ['line', '']
+        read_only_fields = ['line']
 
     part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
     order = serializers.PrimaryKeyRelatedField(
@@ -2141,7 +2143,6 @@ class SalesOrderExtraLineSerializer(
 
 @register_importer()
 class ReturnOrderSerializer(
-    NotesFieldMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
     TotalPriceMixin,
@@ -2176,6 +2177,7 @@ class ReturnOrderSerializer(
         order.models.ReturnOrder.objects.all(),
         copy_extra_lines=True,
         copy_parameters=True,
+        copy_notes=True,
     )
 
     @staticmethod
@@ -2438,7 +2440,6 @@ class ReturnOrderExtraLineSerializer(
 
 @register_importer()
 class TransferOrderSerializer(
-    NotesFieldMixin,
     InvenTreeCustomStatusSerializerMixin,
     AbstractOrderSerializer,
     InvenTreeModelSerializer,
@@ -2468,7 +2469,10 @@ class TransferOrderSerializer(
 
     # Note: TransferOrder does not have "extra" line items
     duplicate = DuplicateOptionsSerializer(
-        order.models.TransferOrder.objects.all(), copy_lines=True, copy_parameters=True
+        order.models.TransferOrder.objects.all(),
+        copy_lines=True,
+        copy_parameters=True,
+        copy_notes=True,
     )
 
     @staticmethod
@@ -2887,7 +2891,7 @@ class TransferOrderAllocationSerializer(
             'order_detail',
             'location_detail',
         ]
-        read_only_fields = ['line', '']
+        read_only_fields = ['line']
 
     part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
     order = serializers.PrimaryKeyRelatedField(

@@ -78,7 +78,7 @@ class CompanyReportContext(report.mixins.BaseReportContext, TypedDict):
 class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeImageMixin,
@@ -490,7 +490,7 @@ class ManufacturerPart(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeTagsMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
@@ -606,8 +606,8 @@ class SupplierPart(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeTagsMixin,
-    InvenTree.models.InvenTreeNotesMixin,
     common.models.MetaMixin,
     InvenTree.models.InvenTreeModel,
 ):
@@ -1061,12 +1061,21 @@ def after_delete_supplier_part(sender, instance, **kwargs):
     Triggers a pricing update for the linked Part, so that removal of a
     supplier part is reflected in Part pricing and BOM cost rollups.
     """
+    from part.models import Part
+
     if (
-        InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
-        and not InvenTree.ready.isImportingData()
-        and instance.part
+        not InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
+        or InvenTree.ready.isImportingData()
+        or InvenTree.ready.isRunningMigrations()
     ):
-        instance.part.schedule_pricing_update(create=False)
+        return
+
+    try:
+        if part := instance.part:
+            part.schedule_pricing_update(create=False)
+    except (Part.DoesNotExist, SupplierPart.DoesNotExist):
+        # The underlying SupplierPart instance has been deleted
+        return
 
 
 @receiver(

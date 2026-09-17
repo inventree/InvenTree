@@ -658,6 +658,64 @@ test('Stock - Disassembly', async ({ browser }) => {
 
   await page.getByRole('cell', { name: 'Thumbnail XT90-F' }).waitFor();
   await page.getByRole('cell', { name: 'Thumbnail XT90-M' }).waitFor();
+});
 
-  await page.waitForTimeout(2000);
+// Test that the "location" field is correctly pre-filled when creating new stock items
+test('Stock - Default Location', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'stock/location/12/stock-items'
+  });
+
+  // The stock item location is rendered via a "tree field" (backed by a real input)
+  const locationField = () =>
+    page.getByRole('textbox', { name: 'tree-field-location' });
+
+  // Scenario 1: Creating a new stock item from within a location should default to that location
+  await page
+    .getByRole('button', { name: 'action-button-add-stock-item' })
+    .click();
+  await expect(locationField()).toHaveValue('Location 0');
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Scenario 2: Duplicating a stock item should retain its original location
+  await navigate(page, 'stock/item/2/details');
+  await page
+    .getByRole('button', { name: 'action-menu-stock-item-actions' })
+    .click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-stock-item-actions-duplicate' })
+    .click();
+  await expect(locationField()).toHaveValue('Electronics Lab/Reel Storage');
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Scenario 3: Creating a new stock item for a part with a specified default location
+  // First, assign a default location to the part
+  await navigate(page, 'part/86/details');
+  await page.getByText('1553WDBK').first().waitFor();
+  await page.keyboard.press('Control+E');
+  await page.getByPlaceholder('Select location').fill('Mechanical Lab');
+  await page
+    .getByRole('listbox')
+    .getByText('Mechanical Lab', { exact: true })
+    .click();
+  await page.waitForTimeout(250);
+
+  // The "Submit" button is only enabled if the value actually changed - if a
+  // previous test run already left this part with the same default location,
+  // there is nothing to save, so just close the form instead
+  const submitButton = page.getByRole('button', { name: 'Submit' });
+  if (await submitButton.isEnabled()) {
+    await submitButton.click();
+    await page.waitForLoadState('networkidle');
+  } else {
+    await page.getByRole('button', { name: 'Cancel' }).click();
+  }
+
+  // Now, create a new stock item for this part, and check the location is pre-filled
+  await navigate(page, 'part/86/stock');
+  await page
+    .getByRole('button', { name: 'action-button-add-stock-item' })
+    .click();
+  await expect(locationField()).toHaveValue('Factory/Mechanical Lab');
+  await page.getByRole('button', { name: 'Cancel' }).click();
 });

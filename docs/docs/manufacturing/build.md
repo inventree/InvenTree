@@ -193,9 +193,9 @@ Files attachments can be uploaded against the build order, and displayed in the 
 
 ### Notes
 
-Build order notes (which support markdown formatting) are displayed in the *Notes* tab:
+One or more rich-text notes can be attached to a build order, and are displayed in the *Notes* tab.
 
-{{ image("build/build_notes.png", title="Notes") }}
+[Read about notes](../concepts/notes.md).
 
 ## External Build Orders
 
@@ -285,6 +285,7 @@ The following [global settings](../settings/global.md) are available for adjusti
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
+{{ globalsetting("BUILDORDER_ENABLED") }}
 {{ globalsetting("BUILDORDER_REFERENCE_PATTERN") }}
 {{ globalsetting("BUILDORDER_REQUIRE_RESPONSIBLE") }}
 {{ globalsetting("BUILDORDER_REQUIRE_ACTIVE_PART") }}

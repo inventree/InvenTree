@@ -310,7 +310,7 @@ class MiddlewareTests(InvenTreeTestCase):
                 request.META[f'HTTP_{key.upper().replace("-", "_")}'] = value
             return request
 
-        # API path -> JSON 403 with meaningful message
+        # API path -> JSON 403 with meaningful message, plus Django's own reason
         response = csrf_failure(
             make_request('/api/part/'), reason='origin check failed'
         )
@@ -318,9 +318,9 @@ class MiddlewareTests(InvenTreeTestCase):
         import json
 
         data = json.loads(response.content)
-        self.assertEqual(data['detail'], EXPECTED_DETAIL)
+        self.assertEqual(data['detail'], f'{EXPECTED_DETAIL} (origin check failed)')
 
-        # allauth headless path -> JSON 403
+        # allauth headless path -> JSON 403 (no reason supplied -> generic message only)
         response = csrf_failure(make_request('/_allauth/browser/v1/auth/login'))
         self.assertEqual(response.status_code, 403)
         data = json.loads(response.content)
@@ -333,16 +333,16 @@ class MiddlewareTests(InvenTreeTestCase):
         )
         self.assertEqual(response.status_code, 403)
         data = json.loads(response.content)
-        self.assertEqual(data['detail'], EXPECTED_DETAIL)
+        self.assertEqual(data['detail'], f'{EXPECTED_DETAIL} (origin check failed)')
 
         # Content-Type: application/json header -> JSON 403
         response = csrf_failure(
             make_request('/some/other/path/', {'Content-Type': 'application/json'}),
-            reason='origin check failed',
+            reason='CSRF cookie not set.',
         )
         self.assertEqual(response.status_code, 403)
         data = json.loads(response.content)
-        self.assertEqual(data['detail'], EXPECTED_DETAIL)
+        self.assertEqual(data['detail'], f'{EXPECTED_DETAIL} (CSRF cookie not set.)')
 
         # Plain browser request -> falls back to Django default CSRF page (403 HTML, not JSON)
         response = csrf_failure(make_request('/web/'), reason='origin check failed')

@@ -9,17 +9,20 @@ from unittest.mock import patch
 
 from django.apps import apps
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.template.loader import render_to_string
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.timezone import now
 
 from pypdf import PdfReader
 
 import report.models as report_models
 from build.models import Build
-from common.models import Attachment
+from common.models import Attachment, Note
 from common.settings import set_global_setting
 from InvenTree.config import get_base_dir
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
@@ -27,7 +30,7 @@ from order.models import PurchaseOrder, ReturnOrder, SalesOrder
 from part.models import Part
 from plugin.registry import registry
 from report.models import LabelTemplate, ReportTemplate
-from stock.models import StockItem
+from stock.models import StockItem, StockLocation
 
 
 class ReportTest(InvenTreeAPITestCase):
@@ -308,6 +311,74 @@ class ReportTest(InvenTreeAPITestCase):
         self.assertEqual(output.total, 5)
         self.assertIsNotNone(output.output)
         self.assertTrue(output.output.name.endswith('.pdf'))
+
+    def test_print_build_order(self):
+        """Test that the built-in Build Order report renders correctly.
+
+        Regression test: this report renders a build's notes via the '{% note %}'
+        tag - Build.notes is now a QuerySet (via InvenTreeNoteMixin), not text, so
+        the old '{{ build.notes|markdownify }}' would error out during rendering.
+        """
+        template = ReportTemplate.objects.filter(
+            enabled=True, model_type='build'
+        ).first()
+        assert template
+
+        build = Build.objects.first()
+        assert build
+
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(Build),
+            model_id=build.pk,
+            title='Build Note',
+            content='<p>Handle with <strong>care</strong></p>',
+        )
+
+        output = template.print([build])
+
+        self.assertTrue(output.complete)
+        self.assertIsNotNone(output.output)
+        self.assertTrue(output.output.name.endswith('.pdf'))
+
+    def test_print_stock_location(self):
+        """Test that the built-in Stock Location report renders each item's note.
+
+        Regression test: this report renders each contained StockItem's note
+        inline via the '{% note %}' tag - StockItem.notes is now a QuerySet
+        (via InvenTreeNoteMixin), not text, so the old '{{ line.notes }}' would
+        render a broken QuerySet repr instead of note content.
+
+        Renders the template directly (rather than going through
+        ReportTemplate.print(), as test_print_build_order does) because
+        StockLocation.report_context() unconditionally generates a barcode,
+        which depends on a barcode plugin being registered - unrelated to what
+        this test is actually checking, and not reliably available in every
+        test environment.
+        """
+        location = StockLocation.objects.create(name='Note Report Test Location')
+        item = StockItem.objects.create(
+            part=Part.objects.first(), quantity=5, location=location
+        )
+
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(StockItem),
+            model_id=item.pk,
+            title='Item Note',
+            content='<p>Fragile <strong>handle with care</strong></p>',
+        )
+
+        html = render_to_string(
+            'report/inventree_stock_location_report.html',
+            {
+                'stock_location': location,
+                'stock_items': StockItem.objects.filter(location=location),
+                'report_revision': 1,
+                'date': now(),
+            },
+        )
+
+        self.assertIn('Fragile', html)
+        self.assertIn('<strong>handle with care</strong>', html)
 
     def test_print_custom_template(self):
         """Create a new template, print it, and check the output."""

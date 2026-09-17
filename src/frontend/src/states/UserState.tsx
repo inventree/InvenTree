@@ -2,12 +2,17 @@ import { create } from 'zustand';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
-import { UserPermissions, type UserRoles } from '@lib/enums/Roles';
+import {
+  UserPermissions,
+  type UserRoles,
+  roleToViewSettingMap
+} from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { UserProps, UserStateProps } from '@lib/types/User';
 import { api, setApiDefaults } from '../App';
 import { clearCsrfCookie } from '../functions/auth';
 import { useServerApiState } from './ServerApiState';
+import { useGlobalSettingsState } from './SettingsStates';
 
 /**
  * Global user information state, using Zustand manager
@@ -153,6 +158,16 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   },
   hasViewRole: (role: UserRoles) => {
     return get().checkUserRole(role, UserPermissions.view);
+  },
+  hasViewVisible: (role: UserRoles) => {
+    if (!get().hasViewRole(role)) {
+      return false;
+    }
+
+    const viewSetting = roleToViewSettingMap[role];
+    return viewSetting
+      ? useGlobalSettingsState.getState().isSet(viewSetting)
+      : true;
   },
   checkUserPermission: (model: ModelType, permission: UserPermissions) => {
     // Check if the user has the specified permission for the specified model

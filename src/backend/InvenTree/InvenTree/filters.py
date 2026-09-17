@@ -37,6 +37,14 @@ class InvenTreeSearchFilter(filters.SearchFilter):
         - search_notes: If True, 'notes' is added to the search_fields if it isn't already present
         - search_regex: If True, search is performed on 'regex' comparison
         """
+        from InvenTree.models import InvenTreeNoteMixin
+
+        # Set (and read, in filter_queryset) on self rather than returned some other
+        # way, since get_search_fields() only returns the field list, not the
+        # queryset - and DRF instantiates a fresh filter backend per request, so
+        # this doesn't leak state across requests.
+        self._search_notes_fans_out = False
+
         search_notes = InvenTree.helpers.str2bool(
             request.query_params.get('search_notes', False)
         )
@@ -45,7 +53,23 @@ class InvenTreeSearchFilter(filters.SearchFilter):
 
         if search_notes and 'notes' not in search_fields:
             # don't modify existing list, create a new object so further queries aren't affected
-            search_fields = [*search_fields, 'notes']
+
+            model = view.get_serializer_class().Meta.model
+
+            notes_field: str = ''
+
+            if issubclass(model, InvenTreeNoteMixin):
+                notes_field = 'notes_list__content'
+            elif hasattr(model, 'notes'):
+                notes_field = 'notes'
+
+            if notes_field:
+                search_fields = [*search_fields, notes_field]
+                # notes_list__content traverses a reverse one-to-many relation (an
+                # instance can have multiple notes) - the queryset needs
+                # deduplicating afterwards, or an instance with 2+ matching notes
+                # is returned once per matching note instead of once overall.
+                self._search_notes_fans_out = notes_field == 'notes_list__content'
 
         regex = InvenTree.helpers.str2bool(
             request.query_params.get('search_regex', False)
@@ -61,6 +85,15 @@ class InvenTreeSearchFilter(filters.SearchFilter):
                 fields.append(field)
 
         return fields
+
+    def filter_queryset(self, request, queryset, view):
+        """Apply the search filter, then deduplicate if notes search fanned out the join."""
+        queryset = super().filter_queryset(request, queryset, view)
+
+        if getattr(self, '_search_notes_fans_out', False):
+            queryset = queryset.distinct()
+
+        return queryset
 
     def get_search_terms(self, request):
         """Return the search terms for this search request.

@@ -54,6 +54,7 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
     SerializerContextMixin,
 )
+from InvenTree.serializers import apply_duplicate_copy_options
 from order.models import PurchaseOrder, ReturnOrder, SalesOrder, TransferOrder
 from order.serializers import (
     PurchaseOrderSerializer,
@@ -1260,8 +1261,29 @@ class StockList(
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
 
+        # Extract 'duplicate' options (if provided) - these are not valid model fields
+        duplicate = serializer.validated_data.pop('duplicate', None)
+
         # Extract location information
         location = serializer.validated_data.get('location', None)
+
+        def apply_duplicate_options(item):
+            """Apply any provided 'duplicate' options to a newly created StockItem."""
+            if not duplicate:
+                return
+
+            original = duplicate['original']
+
+            # copy_history/copy_tests don't follow the copy_<x>_from() naming
+            # convention (copyHistoryFrom/copyTestResultsFrom), so still need
+            # handling here - only copy_notes can go through the shared helper
+            apply_duplicate_copy_options(item, duplicate, original, copy_notes=True)
+
+            if duplicate.get('copy_history', False):
+                item.copyHistoryFrom(original)
+
+            if duplicate.get('copy_tests', False):
+                item.copyTestResultsFrom(original)
 
         with transaction.atomic():
             if serials:
@@ -1277,6 +1299,8 @@ class StockList(
                     if status_value and not item.compare_status(status_value):
                         item.set_status(status_value)
                         item.save()
+
+                    apply_duplicate_options(item)
 
                     if entry := item.add_tracking_entry(
                         StockHistoryCode.CREATED,
@@ -1309,6 +1333,8 @@ class StockList(
 
                 item.save(user=user)
                 item.refresh_from_db()
+
+                apply_duplicate_options(item)
 
                 response_data = [
                     StockSerializers.StockItemSerializer(

@@ -217,8 +217,22 @@ export default function InvenTreeTableHeader({
           onClose={() => clearQueryFilters()}
         />
       )}
-      <Group justify='apart' grow wrap='nowrap'>
-        <Group justify='left' key='custom-actions' gap={5} wrap='nowrap'>
+      <Group
+        justify='apart'
+        grow={!tableProps.tableActionsFullWidth}
+        wrap='nowrap'
+      >
+        <Group
+          justify='left'
+          key='custom-actions'
+          gap={5}
+          wrap='nowrap'
+          style={
+            tableProps.tableActionsFullWidth
+              ? { flex: '1 1 auto', minWidth: 'max-content' }
+              : undefined
+          }
+        >
           <PrintingActions
             items={printingIdValues}
             modelType={tableProps.modelType}
@@ -249,7 +263,7 @@ export default function InvenTreeTableHeader({
             <Fragment key={idx}>{group}</Fragment>
           ))}
         </Group>
-        <Space />
+        {!tableProps.tableActionsFullWidth && <Space />}
         <Group justify='right' gap={5} wrap='nowrap'>
           {tableProps.enableSearch && (
             <SearchInput

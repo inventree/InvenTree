@@ -8,6 +8,8 @@
 # Installer functions
 .pkgr.yml               @matmair
 Procfile                @matmair
-runtime.txt             @matmair
 /contrib/installer      @matmair
 /contrib/packager.io    @matmair
+
+# Auth federation
+/src/backend/scim/                @matmair

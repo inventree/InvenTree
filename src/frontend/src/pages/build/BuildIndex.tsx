@@ -129,10 +129,7 @@ export default function BuildIndex() {
     ];
   }, [user, buildOrderView, ncrEnabled]);
 
-  if (
-    !user.isLoggedIn() ||
-    (!user.hasViewRole(UserRoles.build) && !ncrEnabled)
-  ) {
+  if (!user.isLoggedIn() || !user.hasViewVisible(UserRoles.build)) {
     return <PermissionDenied />;
   }
 

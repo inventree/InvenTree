@@ -46,11 +46,11 @@ export default function PartPricingPanel({ part }: Readonly<{ part: any }>) {
   }, [globalSettings]);
 
   const purchaseOrderPricing = useMemo(() => {
-    return user.hasViewRole(UserRoles.purchase_order) && part?.purchaseable;
+    return user.hasViewVisible(UserRoles.purchase_order) && part?.purchaseable;
   }, [user, part]);
 
   const salesOrderPricing = useMemo(() => {
-    return user.hasViewRole(UserRoles.sales_order) && part?.salable;
+    return user.hasViewVisible(UserRoles.sales_order) && part?.salable;
   }, [user, part]);
 
   const [value, setValue] = useState<string[]>([panelOptions.overview]);

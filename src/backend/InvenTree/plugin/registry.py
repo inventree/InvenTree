@@ -40,6 +40,7 @@ from .helpers import (
     handle_error,
     log_registry_error,
 )
+from .lease import release_lease, try_acquire_lease
 from .plugin import InvenTreePlugin
 
 logger = structlog.get_logger('inventree')
@@ -626,9 +627,14 @@ class PluginsRegistry:
 
             # Gather Modules
             if parent_path:
-                raw_module = SourceFileLoader(
+                loader = SourceFileLoader(
                     plugin_dir, str(parent_obj.joinpath('__init__.py'))
-                ).load_module()
+                )
+                spec = importlib.util.spec_from_loader(plugin_dir, loader)
+                if spec is None:
+                    continue
+                raw_module = importlib.util.module_from_spec(spec)
+                loader.exec_module(raw_module)
             else:
                 raw_module = importlib.import_module(plugin_dir)
 
@@ -674,14 +680,49 @@ class PluginsRegistry:
         self.mixin_modules = collected_mixins
 
     def install_plugin_file(self):
-        """Make sure all plugins are installed in the current environment."""
-        from plugin.installer import install_plugins_file, plugins_file_hash
+        """Make sure all plugins are installed in the current environment.
+
+        - The hash is only persisted *after* a successful install
+        - Store the hash into the database
+        - Also store the hash as a local marker file in the current environment
+
+        """
+        from plugin.installer import (
+            get_env_plugin_hash,
+            install_plugins_file,
+            plugins_file_hash,
+            set_env_plugin_hash,
+        )
 
         file_hash = plugins_file_hash()
 
-        if file_hash != settings.PLUGIN_FILE_HASH:
-            install_plugins_file()
-            settings.PLUGIN_FILE_HASH = file_hash
+        if file_hash is None:
+            return
+
+        def already_satisfied() -> bool:
+            """True only if the database *and* this environment agree it's installed."""
+            current_hash = get_global_setting(
+                '_PLUGIN_FILE_HASH', '', create=False, cache=False
+            )
+            return current_hash == file_hash and get_env_plugin_hash() == file_hash
+
+        if already_satisfied():
+            return
+
+        if not try_acquire_lease('_PLUGIN_FILE_HASH'):
+            return
+
+        try:
+            # Re-check under the lease: another process may have already
+            # installed this exact change while we were waiting to acquire it
+            if already_satisfied():
+                return
+
+            if install_plugins_file() is not False:
+                set_global_setting('_PLUGIN_FILE_HASH', file_hash)
+                set_env_plugin_hash(file_hash)
+        finally:
+            release_lease('_PLUGIN_FILE_HASH')
 
     # endregion
 
@@ -702,7 +743,9 @@ class PluginsRegistry:
                 self.plugins[key] = plugin
             else:
                 # Deactivate plugin in db (if currently set as active)
-                if not settings.PLUGIN_TESTING and plugin.db.active:  # pragma: no cover
+                if (
+                    not settings.PLUGIN_TESTING and plugin.db and plugin.db.active
+                ):  # pragma: no cover
                     plugin.db.active = False
                     plugin.db.save(no_reload=True)
                 self.plugins_inactive[key] = plugin.db
@@ -745,7 +788,7 @@ class PluginsRegistry:
                 plg_db.save()
 
         # Save the package_name attribute to the plugin
-        if plg_db.package_name != package_name:
+        if plg_db and plg_db.package_name != package_name:
             plg_db.package_name = package_name
             plg_db.save()
 
@@ -792,7 +835,7 @@ class PluginsRegistry:
                 dt = time.time() - t_start
                 logger.debug('Loaded plugin `%s` in %.3fs', plg_name, dt)
 
-                if mandatory and not plg_db.active:  # pragma: no cover
+                if mandatory and plg_db and not plg_db.active:  # pragma: no cover
                     # If this is a mandatory plugin, ensure it is marked as active
                     logger.info(
                         'Plugin `%s` is a mandatory plugin - activating', plg_name
@@ -867,7 +910,12 @@ class PluginsRegistry:
                 except Exception as error:
                     # Handle the error, log it and try again
                     if attempts == 0:
-                        handle_error(error, log_name='init_plugins', do_raise=True)
+                        # Record the error, but do not let it propagate - a single
+                        # broken plugin (e.g. the 'broken_sample' test fixture, or
+                        # any plugin that fails to initialize for real) must not
+                        # prevent every other plugin queued after it in
+                        # self.plugin_modules from being loaded
+                        handle_error(error, log_name='init_plugins', do_raise=False)
 
                         logger.exception(
                             '[PLUGIN] Encountered an error with %s:\n%s',
@@ -1132,11 +1180,28 @@ class PluginsRegistry:
             logger.exception('Failed to retrieve plugin registry hash: %s', exc)
             return False
 
-        if reg_hash and reg_hash != self.registry_hash:
+        if not reg_hash or reg_hash == self.registry_hash:
+            return False
+
+        # A mismatch was observed - acquire a short-lived lease before reloading
+        if not try_acquire_lease('_PLUGIN_REGISTRY_HASH'):
+            return False
+
+        try:
+            # Re-check under the lease: another process may have already reloaded
+            # and updated the hash while we were waiting to acquire it
+            reg_hash = get_global_setting(
+                '_PLUGIN_REGISTRY_HASH', '', create=False, cache=False
+            )
+
+            if not reg_hash or reg_hash == self.registry_hash:
+                return False
+
             logger.info('Plugin registry hash has changed - reloading')
             self.reload_plugins(full_reload=True, force_reload=True, collect=True)
             return True
-        return False
+        finally:
+            release_lease('_PLUGIN_REGISTRY_HASH')
 
     # endregion
 

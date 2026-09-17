@@ -83,26 +83,21 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         id: 'build',
         title: t`Manufacturing`,
         link: '/manufacturing/',
-        hidden:
-          !user.hasViewRole(UserRoles.build) &&
-          !(
-            globalSettings.isSet('NCR_ENABLED') &&
-            user.hasViewRole(UserRoles.ncr)
-          ),
+        hidden: !user.hasViewVisible(UserRoles.build),
         icon: 'build'
       },
       {
         id: 'purchasing',
         title: t`Purchasing`,
         link: '/purchasing/',
-        hidden: !user.hasViewRole(UserRoles.purchase_order),
+        hidden: !user.hasViewVisible(UserRoles.purchase_order),
         icon: 'purchase_orders'
       },
       {
         id: 'sales',
         title: t`Sales`,
         link: '/sales/',
-        hidden: !user.hasViewRole(UserRoles.sales_order),
+        hidden: !user.hasViewVisible(UserRoles.sales_order),
         icon: 'sales_orders'
       },
       {
