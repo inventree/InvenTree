@@ -170,6 +170,7 @@ export function PurchaseOrderDetailsPanel({
       type: 'text',
       name: 'created_by.pk',
       label: t`Created By`,
+      icon: 'user',
       badge: 'user',
       hidden: !instance?.created_by
     }
