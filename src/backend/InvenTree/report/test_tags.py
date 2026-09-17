@@ -1116,3 +1116,42 @@ class BarcodeTagTest(TestCase):
         for data in ['', '   ']:
             with self.subTest(data=data), self.assertRaises(ValidationError):
                 template.render(Context({'data': data}))
+
+    def test_datamatrix_svg_pdf(self):
+        """PDF output contains painted vector modules, not a missing image."""
+        from ppf.datamatrix.datamatrix import DataMatrix
+        from pypdf import PdfReader
+        from weasyprint import HTML
+
+        template = Template(
+            '{% load barcode %}'
+            '<img src="{% datamatrix data fmt="SVG" fill_color="red" %}">'
+        )
+        html = template.render(Context({'data': 'hello world'}))
+        with self.assertNoLogs('weasyprint', level='WARNING'):
+            pdf = HTML(string=html).write_pdf()
+
+        reader = PdfReader(io.BytesIO(pdf))
+        self.assertEqual(len(reader.pages), 1)
+        page = reader.pages[0]
+        self.assertEqual(len(page.images), 0)
+
+        # Count closed module outlines painted in the selected foreground color.
+        # A valid PDF header also occurs when WeasyPrint omits a broken image.
+        color = None
+        closed_paths = 0
+        painted_modules = 0
+        for operands, operator in page.get_contents().operations:
+            if operator == b'rg':
+                color = tuple(operands)
+            elif operator == b'h':
+                closed_paths += 1
+            elif operator in (b'f', b'f*'):
+                if color == (1, 0, 0):
+                    painted_modules += closed_paths
+                closed_paths = 0
+            elif operator == b'n':
+                closed_paths = 0
+
+        matrix = DataMatrix('hello world').matrix
+        self.assertEqual(painted_modules, sum(map(sum, matrix)))
