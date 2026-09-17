@@ -12,6 +12,7 @@ import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers, status
+from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.response import Response
 
@@ -47,6 +48,11 @@ from InvenTree.filters import (
     NumberOrNullFilter,
 )
 from InvenTree.helpers import str2bool
+from InvenTree.helpers_api import (
+    CleanModelViewSet,
+    InvenTreeApiRouter,
+    RetrieveUpdateDestroyModelViewSet,
+)
 from InvenTree.mixins import (
     CreateAPI,
     ListCreateAPI,
@@ -55,6 +61,8 @@ from InvenTree.mixins import (
     SerializerContextMixin,
 )
 from users.models import Owner
+
+build_router = InvenTreeApiRouter()
 
 
 class BuildFilter(FilterSet):
@@ -1130,25 +1138,59 @@ class NCRFilter(FilterSet):
         return queryset.exclude(NonConformance.get_overdue_filter())
 
 
-class NCRMixin:
-    """Mixin class for NonConformance (NCR) API endpoints."""
+class NCRStockItemFilter(FilterSet):
+    """Custom filterset for the NonConformanceStockItem list API endpoint."""
 
-    queryset = NonConformance.objects.all()
-    serializer_class = build.serializers.NonConformanceSerializer
+    class Meta:
+        """Metaclass options."""
+
+        model = NonConformanceStockItem
+        fields = ['ncr', 'stock_item', 'disposition']
+
+
+class NCRStockItemViewSet(CleanModelViewSet):
+    """API endpoint for accessing NonConformanceStockItem objects.
+
+    - GET: Return list of NonConformanceStockItem objects (with filters), or a single object
+    - POST: Create a new NonConformanceStockItem object (link a stock item to an NCR)
+    - PUT / PATCH: Update an existing NonConformanceStockItem object
+    - DELETE: Remove a NonConformanceStockItem object
+    """
+
+    queryset = NonConformanceStockItem.objects.all().prefetch_related('stock_item')
+    serializer_class = build.serializers.NonConformanceStockItemSerializer
+
+    filterset_class = NCRStockItemFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+
+# Registered before the 'non-conformance' viewset below, so that its more specific
+# routes (e.g. 'non-conformance/stock-item/') are matched before the parent
+# viewset's detail route ('non-conformance/<pk>/') would otherwise swallow them.
+build_router.register(
+    'non-conformance/stock-item', NCRStockItemViewSet, basename='api-ncr-stock-item'
+)
 
 
 class NCRListOutputOptions(OutputConfiguration):
-    """Output options for the NCRList endpoint."""
+    """Output options for the NCRViewSet endpoint."""
 
     OPTIONS = [InvenTreeOutputOption('part_detail', default=True)]
 
 
-class NCRList(NCRMixin, OutputOptionsMixin, ListCreateAPI):
-    """API endpoint for accessing a list of NonConformance (NCR) objects.
+class NCRViewSet(
+    SerializerContextMixin, OutputOptionsMixin, RetrieveUpdateDestroyModelViewSet
+):
+    """API endpoint for accessing NonConformance (NCR) objects.
 
-    - GET: Return list of objects (with filters)
+    - GET: Return list of NonConformance objects (with filters), or a single object
     - POST: Create a new NonConformance object
+    - PUT / PATCH: Update an existing NonConformance object
+    - DELETE: Remove a NonConformance object
     """
+
+    queryset = NonConformance.objects.all()
+    serializer_class = build.serializers.NonConformanceSerializer
 
     output_options = NCRListOutputOptions
     filterset_class = NCRFilter
@@ -1176,6 +1218,29 @@ class NCRList(NCRMixin, OutputOptionsMixin, ListCreateAPI):
         'part__description',
     ]
 
+    def get_ncr(self):
+        """Return the NonConformance object associated with this API endpoint."""
+        try:
+            return NonConformance.objects.get(pk=self.kwargs.get('pk', None))
+        except (ValueError, NonConformance.DoesNotExist):
+            raise NotFound(_('Non-conformance report not found'))
+
+    def get_serializer_context(self):
+        """Add the target NCR to the serializer context (used by the transition actions)."""
+        ctx = super().get_serializer_context()
+
+        ctx['request'] = self.request
+
+        try:
+            ctx['ncr'] = self.get_ncr()
+        except NotFound:
+            # Swallowed here (e.g. schema generation may call this without a
+            # resolvable pk) - each action method below is what actually enforces
+            # a 404 for a real request against a non-existent NCR.
+            pass
+
+        return ctx
+
     def create(self, request, *args, **kwargs):
         """Save user information on NCR creation."""
         serializer = self.get_serializer(data=self.clean_data(request.data))
@@ -1188,101 +1253,60 @@ class NCRList(NCRMixin, OutputOptionsMixin, ListCreateAPI):
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
-
-class NCRDetail(NCRMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a NonConformance (NCR) object."""
-
-
-class NCRContextMixin:
-    """Mixin class which adds the target NCR as serializer context variable."""
-
-    def get_ncr(self):
-        """Return the NonConformance object associated with this API endpoint."""
-        try:
-            return NonConformance.objects.get(pk=self.kwargs.get('pk', None))
-        except (ValueError, NonConformance.DoesNotExist):
-            raise NotFound(_('Non-conformance report not found'))
-
-    def get_serializer_context(self):
-        """Add extra context information to the endpoint serializer."""
-        ctx = super().get_serializer_context()
-
-        ctx['request'] = self.request
-
-        try:
-            ctx['ncr'] = self.get_ncr()
-        except NotFound:
-            # Swallowed here (e.g. schema generation may call this without a
-            # resolvable pk) - create() below is what actually enforces a 404
-            # for a real request against a non-existent NCR.
-            pass
-
-        return ctx
-
-    def create(self, request, *args, **kwargs):
-        """Ensure the target NCR actually exists before attempting the transition.
-
-        Without this, a POST against a non-existent pk would fall through to the
-        transition serializer's save(), which unconditionally reads
-        self.context['ncr'] - raising an unhandled KeyError (HTTP 500) instead of
-        the intended 404.
-        """
+    @extend_schema(responses={201: build.serializers.NCRInvestigateSerializer})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=build.serializers.NCRInvestigateSerializer,
+        output_options=None,
+    )
+    def investigate(self, request, pk=None):
+        """API endpoint for transitioning an NCR to the 'in progress' status."""
+        # Ensure the target NCR actually exists (raises NotFound -> 404 otherwise) -
+        # without this, a non-existent pk would fall through to the serializer's
+        # save(), which unconditionally reads self.context['ncr'], raising an
+        # unhandled KeyError (HTTP 500) instead of a clean 404.
         self.get_ncr()
 
-        return super().create(request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @extend_schema(responses={201: build.serializers.NCRCompleteSerializer})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=build.serializers.NCRCompleteSerializer,
+        output_options=None,
+    )
+    def complete(self, request, pk=None):
+        """API endpoint for completing an NCR."""
+        self.get_ncr()
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @extend_schema(responses={201: build.serializers.NCRCancelSerializer})
+    @action(
+        detail=True,
+        methods=['post'],
+        serializer_class=build.serializers.NCRCancelSerializer,
+        output_options=None,
+    )
+    def cancel(self, request, pk=None):
+        """API endpoint for cancelling an NCR."""
+        self.get_ncr()
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class NCRInvestigate(NCRContextMixin, CreateAPI):
-    """API endpoint for transitioning an NCR to the 'in progress' status."""
-
-    queryset = NonConformance.objects.all()
-    serializer_class = build.serializers.NCRInvestigateSerializer
-
-
-class NCRComplete(NCRContextMixin, CreateAPI):
-    """API endpoint for completing an NCR."""
-
-    queryset = NonConformance.objects.all()
-    serializer_class = build.serializers.NCRCompleteSerializer
-
-
-class NCRCancel(NCRContextMixin, CreateAPI):
-    """API endpoint for cancelling an NCR."""
-
-    queryset = NonConformance.objects.all()
-    serializer_class = build.serializers.NCRCancelSerializer
-
-
-class NCRStockItemMixin:
-    """Mixin class for NonConformanceStockItem API endpoints."""
-
-    queryset = NonConformanceStockItem.objects.all().prefetch_related('stock_item')
-    serializer_class = build.serializers.NonConformanceStockItemSerializer
-
-
-class NCRStockItemFilter(FilterSet):
-    """Custom filterset for the NonConformanceStockItem list API endpoint."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = NonConformanceStockItem
-        fields = ['ncr', 'stock_item', 'disposition']
-
-
-class NCRStockItemList(NCRStockItemMixin, ListCreateAPI):
-    """API endpoint for accessing a list of NonConformanceStockItem objects.
-
-    - GET: Return list of objects (with filters)
-    - POST: Create a new NonConformanceStockItem object (link a stock item to an NCR)
-    """
-
-    filterset_class = NCRStockItemFilter
-    filter_backends = SEARCH_ORDER_FILTER
-
-
-class NCRStockItemDetail(NCRStockItemMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a NonConformanceStockItem object."""
+build_router.register('non-conformance', NCRViewSet, basename='api-ncr')
 
 
 class BuildItemMixin:
@@ -1481,58 +1505,23 @@ build_api_urls = [
             path('', BuildItemList.as_view(), name='api-build-item-list'),
         ]),
     ),
-    # Non-Conformance Reports (NCR)
+    # Non-Conformance Reports (NCR) - list/detail/transition/stock-item endpoints via ViewSet router
+    # Note: these literal paths must come before the router include below - otherwise
+    # the NCR viewset's detail route ('non-conformance/<pk>/') would swallow them by
+    # matching e.g. 'status' or 'disposition' as the pk.
     path(
-        'non-conformance/',
-        include([
-            path(
-                'stock-item/',
-                include([
-                    path(
-                        '<int:pk>/',
-                        include([
-                            meta_path(NonConformanceStockItem),
-                            path(
-                                '',
-                                NCRStockItemDetail.as_view(),
-                                name='api-ncr-stock-item-detail',
-                            ),
-                        ]),
-                    ),
-                    path(
-                        '', NCRStockItemList.as_view(), name='api-ncr-stock-item-list'
-                    ),
-                ]),
-            ),
-            path(
-                'status/',
-                StatusView.as_view(),
-                {StatusView.MODEL_REF: NonConformanceStatus},
-                name='api-ncr-status-codes',
-            ),
-            path(
-                'disposition/',
-                StatusView.as_view(),
-                {StatusView.MODEL_REF: NonConformanceDisposition},
-                name='api-ncr-disposition-codes',
-            ),
-            path(
-                '<int:pk>/',
-                include([
-                    path(
-                        'investigate/',
-                        NCRInvestigate.as_view(),
-                        name='api-ncr-investigate',
-                    ),
-                    path('complete/', NCRComplete.as_view(), name='api-ncr-complete'),
-                    path('cancel/', NCRCancel.as_view(), name='api-ncr-cancel'),
-                    meta_path(NonConformance),
-                    path('', NCRDetail.as_view(), name='api-ncr-detail'),
-                ]),
-            ),
-            path('', NCRList.as_view(), name='api-ncr-list'),
-        ]),
+        'non-conformance/status/',
+        StatusView.as_view(),
+        {StatusView.MODEL_REF: NonConformanceStatus},
+        name='api-ncr-status-codes',
     ),
+    path(
+        'non-conformance/disposition/',
+        StatusView.as_view(),
+        {StatusView.MODEL_REF: NonConformanceDisposition},
+        name='api-ncr-disposition-codes',
+    ),
+    path('', include(build_router.urls)),
     # Build Detail
     path(
         '<int:pk>/',
