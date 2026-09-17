@@ -259,6 +259,11 @@ test('Purchase Orders - Table', async ({ browser }) => {
   // Expected values
   await page.getByText('2025-06-12').waitFor(); // Start Date
   await page.getByText('2025-07-17').waitFor(); // Target Date
+
+  // Creator of the order should be displayed
+  await expect(page.getByRole('row', { name: 'Created By' })).toContainText(
+    'steven'
+  );
 });
 
 test('Purchase Orders - Calendar', async ({ browser }) => {
