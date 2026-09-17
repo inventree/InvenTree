@@ -70,7 +70,6 @@ class SampleTrip(StateTransitionMixin, models.Model):
     name = models.CharField(max_length=100)
     start_date = models.DateField()
     end_date = models.DateField()
-    participants = models.ManyToManyField(User)
     captain = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='captained_trips'
     )
@@ -153,7 +152,7 @@ class SampleTrip(StateTransitionMixin, models.Model):
 def _notify_fail(trip_id):
     """Notify that a trip has failed."""
     trip = SampleTrip.objects.get(id=trip_id)
-    all_involved = [trip.captain, *list(trip.participants.all())]
+    all_involved = [trip.captain]
     context = {
         'name': _('Trip Failed'),
         'slug': 'trip.failed',
