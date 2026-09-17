@@ -1653,7 +1653,6 @@ class WebhookMessage(models.Model):
     )
 
 
-# region Notifications
 class NotificationEntry(MetaMixin):
     """A NotificationEntry records the last time a particular notification was sent out.
 
@@ -1770,9 +1769,6 @@ class NotificationMessage(models.Model):
     def age_human(self) -> str:
         """Humanized age."""
         return naturaltime(self.creation)
-
-
-# endregion
 
 
 class NewsFeedEntry(models.Model):
@@ -1919,9 +1915,6 @@ def after_custom_unit_updated(sender, instance, **kwargs):
     from InvenTree.conversion import reload_unit_registry
 
     reload_unit_registry()
-
-
-# region Files
 
 
 def rename_attachment(instance, filename: str):
@@ -2289,9 +2282,6 @@ class Attachment(
             pass
 
 
-# endregion
-
-
 class InvenTreeCustomUserStateModel(models.Model):
     """Custom model to extends any registered state with extra custom, user defined states.
 
@@ -2430,9 +2420,6 @@ class InvenTreeCustomUserStateModel(models.Model):
         for cls in inheritors(StatusCode):
             if cls.__name__ == self.reference_status:
                 return cls
-
-
-# region Linked data
 
 
 class SelectionList(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
@@ -2861,9 +2848,6 @@ class Reference(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel)
                 })
 
         return super().clean(*args, **kwargs)
-
-
-# endregion
 
 
 class ParameterTemplate(
