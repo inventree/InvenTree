@@ -51,6 +51,7 @@ from .models import (
     NotificationMessage,
     ParameterTemplate,
     ProjectCode,
+    Reference,
     ReferenceSource,
     SelectionList,
     SelectionListEntry,
@@ -2642,6 +2643,9 @@ class ReferenceStuffTest(InvenTreeAPITestCase):
             url, {'value': 'Test Reference', **dflt_args}, expected_code=201
         )
         self.assertEqual(response.data['value'], 'Test Reference')
+        ref = Reference.objects.get(pk=response.data['pk'])
+        self.assertEqual(ref.value, 'Test Reference')
+        self.assertTrue(str(ref))
 
         # No empty value
         response = self.post(url, {'value': '', **dflt_args}, expected_code=400)
@@ -2663,6 +2667,10 @@ class ReferenceStuffTest(InvenTreeAPITestCase):
         self.assertIn(
             'Value does not match validation pattern.', response.data['value']
         )
+        # Broken validation pattern
+        with self.assertRaises(ValidationError):
+            self.source1.validation_pattern = '['
+            self.source1.full_clean()
         self.source1.validation_pattern = ''
 
         # Test reference_is_link
@@ -2686,6 +2694,14 @@ class ReferenceStuffTest(InvenTreeAPITestCase):
         self.assertIn(
             'Value and Source are not unique globally.', response.data['value']
         )
+
+        # Wrong target reference
+        response = self.post(
+            url,
+            {'value': 'Test Reference', **dflt_args, 'target_object_id': 999999},
+            expected_code=400,
+        )
+        self.assertIn('Target object does not exist', response.data['target_object_id'])
 
 
 class AdminTest(AdminTestCase):
