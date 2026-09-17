@@ -5,6 +5,8 @@ import os
 from unittest import mock
 
 from django.apps import apps
+from django.core.exceptions import ValidationError
+from django.test import SimpleTestCase
 from django.urls import reverse
 
 from pdfminer.high_level import extract_text
@@ -19,6 +21,66 @@ from plugin.helpers import MixinNotImplementedError
 from report.models import LabelTemplate
 from report.tests import PrintTestMixins
 from stock.models import StockItem, StockLocation
+
+
+class LabelRenderingTests(SimpleTestCase):
+    """Test error handling in the label rendering wrappers."""
+
+    def setUp(self):
+        """Create a label plugin without loading the plugin registry."""
+
+        class TestLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
+            NAME = 'Test Label Printer'
+
+        self.plugin = TestLabelPlugin()
+
+    @mock.patch('plugin.base.label.mixins.log_error')
+    def test_validation_errors(self, log_error):
+        """Preserve validation messages, codes, and parameters without logging."""
+        for wrapper, renderer in [
+            ('render_to_pdf', 'render'),
+            ('render_to_html', 'render_as_string'),
+        ]:
+            with self.subTest(wrapper=wrapper):
+                error = ValidationError(
+                    {
+                        'serial': ValidationError(
+                            'Missing serial number for %(part)s',
+                            code='missing_serial',
+                            params={'part': 'Test part'},
+                        )
+                    }
+                )
+                label = mock.Mock(spec=LabelTemplate)
+                getattr(label, renderer).side_effect = error
+
+                with self.assertRaises(ValidationError) as raised:
+                    getattr(self.plugin, wrapper)(label, mock.sentinel.instance, None)
+
+                self.assertIs(raised.exception, error)
+                self.assertEqual(
+                    raised.exception.message_dict,
+                    {'serial': ['Missing serial number for Test part']},
+                )
+                log_error.assert_not_called()
+
+    @mock.patch('plugin.base.label.mixins.log_error')
+    def test_unexpected_errors(self, log_error):
+        """Log unexpected errors and return the existing generic messages."""
+        for wrapper, renderer, message in [
+            ('render_to_pdf', 'render', 'Error rendering label to PDF'),
+            ('render_to_html', 'render_as_string', 'Error rendering label to HTML'),
+        ]:
+            with self.subTest(wrapper=wrapper):
+                log_error.reset_mock()
+                label = mock.Mock(spec=LabelTemplate)
+                getattr(label, renderer).side_effect = RuntimeError('Rendering failed')
+
+                with self.assertRaises(ValidationError) as raised:
+                    getattr(self.plugin, wrapper)(label, mock.sentinel.instance, None)
+
+                self.assertEqual(raised.exception.messages, [message])
+                log_error.assert_called_once_with(wrapper, plugin=self.plugin.slug)
 
 
 class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
