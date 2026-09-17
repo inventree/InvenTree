@@ -9,9 +9,12 @@ from django.urls import reverse
 
 from pdfminer.high_level import extract_text
 from PIL import Image
+from rest_framework import serializers
 
 from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeAPITestCase
+from machine import registry as machine_registry
+from machine.models import MachineConfig
 from part.models import Part
 from plugin import InvenTreePlugin, PluginMixinEnum, registry
 from plugin.base.label.mixins import LabelPrintingMixin
@@ -268,6 +271,57 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
             self.assertEqual(
                 print_label.call_args.kwargs['printing_options'], {'amount': 13}
             )
+
+    def test_machine_driver_options_validate_before_print_task(self):
+        """Test that machine driver option validation runs before the print task."""
+        self.ensurePluginsLoaded()
+        apps.get_app_config('report').create_default_labels()
+        machine_registry.initialize()
+        registry.set_plugin_state('label-printer-test-plugin', True)
+
+        machine_config = MachineConfig.objects.create(
+            machine_type='label-printer',
+            driver='test-label-printer-api',
+            name='Test label printer',
+            active=True,
+        )
+        machine = machine_registry.get_machine(str(machine_config.pk))
+        self.assertIsNotNone(machine)
+
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template
+        part = Part.objects.first()
+        assert part
+
+        class RejectingOptionsSerializer(serializers.Serializer):
+            copies = serializers.IntegerField(required=False, default=1)
+
+            def validate(self, attrs):
+                raise serializers.ValidationError('preflight failed')
+
+        driver = machine.driver
+        with (
+            mock.patch('InvenTree.tasks.offload_task') as offload_task,
+            mock.patch.object(
+                driver,
+                'get_printing_options_serializer',
+                side_effect=lambda *args, **kwargs: RejectingOptionsSerializer(),
+            ),
+        ):
+            response = self.post(
+                self.printing_url,
+                {
+                    'plugin': 'inventreelabelmachine',
+                    'template': template.pk,
+                    'items': [part.pk],
+                    'machine': str(machine_config.pk),
+                    'driver_options': {'copies': 1},
+                },
+                expected_code=400,
+            )
+
+        offload_task.assert_not_called()
+        self.assertIn('preflight failed', str(response.data))
 
     def test_printing_endpoints(self):
         """Cover the endpoints not covered by `test_printing_process`."""
