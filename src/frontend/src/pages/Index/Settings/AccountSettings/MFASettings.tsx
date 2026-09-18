@@ -481,7 +481,6 @@ function RegisterTOTPModal({
                 error: error,
                 title: t`Error Fetching TOTP Registration`
               });
-              // showApiError(error);
 
               throw error;
           }
