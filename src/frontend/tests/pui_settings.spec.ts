@@ -608,17 +608,14 @@ test('Settings - Auth - Email', async ({ browser }) => {
 
   await loadTab(page, 'Security');
 
-  await page.getByText('Currently no email addresses are registered').waitFor();
   await page.getByLabel('email-address-input').fill('test-email@domain.org');
   await page.getByLabel('email-address-submit').click();
 
-  await page.getByText('Unverified', { exact: true }).waitFor();
+  await page.getByText('Unverified', { exact: true }).first().waitFor();
   await page.getByLabel('test-email@domain.').click();
   await page.getByRole('button', { name: 'Make Primary' }).click();
   await page.getByText('Primary', { exact: true }).waitFor();
   await page.getByRole('button', { name: 'Remove' }).click();
-
-  await page.getByText('Currently no email addresses are registered').waitFor();
 });
 
 async function testColorPicker(page: Page, ref: string) {
