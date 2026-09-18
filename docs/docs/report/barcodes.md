@@ -129,7 +129,12 @@ which produces the following output:
 !!! info "ppf.datamatrix"
     Data Matrix codes are generated using the [ppf.datamatrix](https://pypi.org/project/ppf-datamatrix/) library.
 
-[Data Matrix Codes](https://en.wikipedia.org/wiki/Data_Matrix) provide an alternative to QR codes for encoding data in a two-dimensional matrix. To render a Data Matrix code, use the `datamatrix` template tag:
+[Data Matrix Codes](https://en.wikipedia.org/wiki/Data_Matrix) provide an alternative to QR codes for encoding data in a two-dimensional matrix. To render a Data Matrix code, use the `datamatrix` template tag.
+
+Data Matrix codes are rendered as PNG images by default. Use `fmt="SVG"` to
+generate a vector image, avoiding intermediate raster scaling when a report
+is resized or converted to printer output. Final module alignment still depends
+on the printed dimensions and the printer's rasterization.
 
 ::: report.templatetags.barcode.datamatrix
     options:
@@ -161,7 +166,7 @@ which produces the following output:
 {% block content %}
 
 
-<img class='qr' src='{% datamatrix "Foo Bar" back_color="yellow" %}'>
+<img class='qr' src='{% datamatrix "Foo Bar" back_color="yellow" fmt="SVG" %}'>
 
 {% endblock content %}
 {% endraw %}
