@@ -46,6 +46,7 @@ export default function Set_Password() {
           label={t`Current Password`}
           description={t`Enter your current password`}
           {...simpleForm.getInputProps('current_password')}
+          autoComplete='current-password'
         />
         <PasswordInput
           required
@@ -53,6 +54,7 @@ export default function Set_Password() {
           label={t`New Password`}
           description={t`Enter your new password`}
           {...simpleForm.getInputProps('new_password1')}
+          autoComplete='new-password'
         />
         <PasswordInput
           required
