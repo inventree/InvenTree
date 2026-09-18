@@ -277,3 +277,5 @@ class ReadOnlyAdmin(admin.ModelAdmin):
 admin.site.register(common.models.WebhookMessage, ReadOnlyAdmin)
 admin.site.register(common.models.EmailMessage, ReadOnlyAdmin)
 admin.site.register(common.models.EmailThread, ReadOnlyAdmin)
+admin.site.register(common.models.Reference, ReadOnlyAdmin)
+admin.site.register(common.models.ReferenceSource, ReadOnlyAdmin)

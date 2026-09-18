@@ -34,7 +34,7 @@ from django.core.files.storage import default_storage
 from django.core.files.utils import validate_file_name
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.mail.utils import DNS_NAME
-from django.core.validators import MinLengthValidator, MinValueValidator
+from django.core.validators import MinLengthValidator, MinValueValidator, URLValidator
 from django.db import models, transaction
 from django.db.models import enums
 from django.db.models.signals import post_delete, post_save
@@ -2611,6 +2611,243 @@ class SelectionListEntry(models.Model):
         if not self.active:
             return f'{self.label} (Inactive)'
         return self.label
+
+
+class ReferenceSource(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+    """A source for references linking model instances to strings.
+
+    Attributes:
+    - name: The name of the reference source
+    - description: A description of the reference source
+    - slug: The slug of the reference source
+    - locked: Is this reference source locked (i.e. cannot be modified by the user)?
+    - active: Is this reference source active?
+    - source_plugin: The plugin which provides the reference source
+    - source_string: The string representation of the reference source - might be used by plugins to
+    provide extra information
+    - created: The date/time that the reference source was created
+    - last_updated: The date/time that the reference source was last updated
+
+    - validation_pattern: A regular expression pattern to validate a
+    - max_length: The maximum length of the reference string
+    reference (None if no regex validation is required)
+    - reference_is_unique_global: Are references unique globally?
+    - reference_is_link: Are references required to be valid URIs as per RFC 3986?
+    """
+
+    class Meta:
+        """Meta options for SelectionList."""
+
+        verbose_name = _('Reference Source')
+        verbose_name_plural = _('Reference Sources')
+
+    name = models.CharField(
+        max_length=100,
+        verbose_name=_('Name'),
+        help_text=_('Name of the reference source'),
+        unique=True,
+    )
+
+    description = models.CharField(
+        max_length=250,
+        verbose_name=_('Description'),
+        help_text=_('Description of the reference source'),
+        blank=True,
+    )
+
+    locked = models.BooleanField(
+        default=False,
+        verbose_name=_('Locked'),
+        help_text=_('Is this reference source locked?'),
+    )
+
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Can this reference source be used?'),
+    )
+
+    source_plugin = models.ForeignKey(
+        'plugin.PluginConfig',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Source Plugin'),
+        help_text=_('Plugin which provides the reference source'),
+    )
+
+    source_string = models.CharField(
+        max_length=1000,
+        verbose_name=_('Source String'),
+        help_text=_(
+            'Optional string identifying the source used for this reference source'
+        ),
+        blank=True,
+    )
+
+    created = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Created'),
+        help_text=_('Date and time that the reference source was created'),
+    )
+
+    last_updated = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Last Updated'),
+        help_text=_('Date and time that the reference source was last updated'),
+    )
+
+    validation_pattern = models.CharField(
+        max_length=250,
+        verbose_name=_('Validation Pattern'),
+        help_text=_('Regular expression pattern to validate a reference'),
+        blank=True,
+    )
+
+    max_length = models.PositiveIntegerField(
+        verbose_name=_('Max Length'),
+        help_text=_('Maximum length of the reference string'),
+        default=100,
+    )
+
+    reference_is_unique_global = models.BooleanField(
+        default=False,
+        verbose_name=_('Unique Globally'),
+        help_text=_('Are references unique globally?'),
+    )
+
+    reference_is_link = models.BooleanField(
+        default=False,
+        verbose_name=_('Reference is Link'),
+        help_text=_('Are references required to be valid URIs as per RFC 3986?'),
+    )
+
+    def __str__(self):
+        """Return string representation of the reference source."""
+        if not self.active:
+            return f'{self.name} (Inactive)'
+        return self.name
+
+    def clean(self):
+        """Ensure that the reference source is valid before saving."""
+        if self.validation_pattern:
+            try:
+                re.compile(self.validation_pattern)
+            except re.error as exc:
+                raise ValidationError({'validation_pattern': str(exc)})
+
+        return super().clean()
+
+
+class Reference(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+    """Reference to a specific model.
+
+    Attributes:
+    - source: ReferenceSource that defined this Reference
+    - target: GenericObject that links to the targeted object
+    - value: raw value
+    - locked: Is this reference locked?
+    - created: The date/time that the reference source was created
+    - last_updated: The date/time that the reference source was last updated
+    - checked: Was this reference checked to be valid?
+    - last_checked: The date/time that the reference was last checked
+    """
+
+    source = models.ForeignKey(
+        ReferenceSource,
+        on_delete=models.CASCADE,
+        verbose_name=_('Source'),
+        help_text=_('Reference source that defined this reference'),
+    )
+
+    target_content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        related_name='reference_target',
+        verbose_name=_('Target Content Type'),
+        help_text=_('Content type of the target object'),
+    )
+
+    target_object_id = models.PositiveIntegerField(
+        verbose_name=_('Target Object ID'), help_text=_('ID of the target object')
+    )
+
+    target = GenericForeignKey('target_content_type', 'target_object_id')
+
+    value = models.CharField(
+        max_length=255,
+        verbose_name=_('Value'),
+        help_text=_('Raw value of the reference'),
+    )
+
+    locked = models.BooleanField(
+        default=False,
+        verbose_name=_('Locked'),
+        help_text=_('Is this reference locked?'),
+    )
+
+    created = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Created'),
+        help_text=_('Date and time that the reference was created'),
+    )
+
+    last_updated = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Last Updated'),
+        help_text=_('Date and time that the reference was last updated'),
+    )
+
+    checked = models.BooleanField(
+        default=False,
+        verbose_name=_('Checked'),
+        help_text=_('Was this reference checked to be valid?'),
+    )
+
+    last_checked = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_('Last Checked'),
+        help_text=_('Date and time that the reference was last checked'),
+    )
+
+    def __str__(self):
+        """Return string representation of the reference."""
+        return f'{self.source.name}|{self.target}: {self.value}'
+
+    def clean(self, *args, **kwargs):
+        """Ensure that the reference is valid before saving."""
+        reference = self.value
+        source = self.source
+
+        if source.max_length and len(reference) > source.max_length:
+            raise ValidationError({
+                'value': _(
+                    f'Ensure this field has no more than {source.max_length} characters.'
+                )
+            })
+
+        if source.validation_pattern:
+            comp = re.compile(source.validation_pattern)
+            if not comp.fullmatch(reference):
+                raise ValidationError({
+                    'value': _('Value does not match validation pattern.')
+                })
+
+        if source.reference_is_link:
+            validator = URLValidator()
+            try:
+                validator(reference)
+            except ValidationError:
+                raise ValidationError({'value': _('Value is not a valid URL.')})
+
+        if source.reference_is_unique_global:
+            if Reference.objects.filter(source=source, value=reference).exists():
+                raise ValidationError({
+                    'value': _('Value and Source are not unique globally.')
+                })
+
+        return super().clean(*args, **kwargs)
 
 
 class ParameterTemplate(

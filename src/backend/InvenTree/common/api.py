@@ -1958,6 +1958,63 @@ selection_urls = [
     path('', SelectionListList.as_view(), name='api-selectionlist-list'),
 ]
 
+
+class ReferenceSourceViewSet(CleanModelViewSet):
+    """Viewset for ReferenceSource objects."""
+
+    queryset = common.models.ReferenceSource.objects.all()
+    serializer_class = common.serializers.ReferenceSourceSerializer
+    permission_classes = [IsStaffOrReadOnlyScope]
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = [
+        'name',
+        'description',
+        'slug',
+        'locked',
+        'active',
+        'source_plugin',
+        'created',
+        'last_updated',
+    ]
+    search_fields = ['name', 'description', 'slug']
+
+
+common_router.register(
+    'reference/source', ReferenceSourceViewSet, basename='api-reference-source'
+)
+
+
+class ReferenceViewSet(CleanModelViewSet):
+    """Viewset for Reference objects."""
+
+    queryset = common.models.Reference.objects.all()
+    serializer_class = common.serializers.ReferenceSerializer
+    permission_classes = [IsStaffOrReadOnlyScope]
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = [
+        'source',
+        'target',
+        'value',
+        'locked',
+        'created',
+        'last_updated',
+        'checked',
+        'last_checked',
+    ]
+    search_fields = ['source', 'target', 'value']
+
+    def get_queryset(self):
+        """Select related fields required to resolve the generic target."""
+        queryset = super().get_queryset()
+        return queryset.select_related('source', 'target_content_type')
+
+
+# TODO add api endpoint to get all references for a target
+common_router.register('reference', ReferenceViewSet, basename='api-reference')
+
+
 # API URL patterns
 settings_api_urls = [
     # User settings
