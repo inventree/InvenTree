@@ -234,6 +234,4 @@ def get_ruleset_ignore() -> list[str]:
         'importer_dataimportrow',
         # SCIM - superuser-only singleton configuration, managed via the Admin Center
         'scim_scimconfiguration',
-        # sample code
-        'generic_sampletrip',
     ]
