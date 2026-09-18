@@ -17,6 +17,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db import transaction
 from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
@@ -1691,6 +1692,52 @@ class CurrencyAPITests(InvenTreeAPITestCase):
 class NotesImageTest(InvenTreeAPITestCase):
     """Tests for uploading images to be used in markdown notes."""
 
+    def test_rollback_preserves_image_files(self):
+        """Rolled-back note edits and cascaded deletions preserve image files."""
+        for action in ['edit', 'delete_note', 'delete_part']:
+            with self.subTest(action=action):
+                part = Part.objects.create(name=f'Rollback {action}', active=False)
+                note = Note.objects.create(
+                    model_type=ContentType.objects.get_for_model(Part),
+                    model_id=part.pk,
+                    title='Rollback image cleanup',
+                )
+                with io.BytesIO() as buf:
+                    Image.new('RGB', (2, 2)).save(buf, format='PNG')
+                    image = NotesImage.objects.create(
+                        note=note,
+                        image=ContentFile(
+                            buf.getvalue(), name=f'rollback_{action}.png'
+                        ),
+                    )
+                note.content = f'<p>Image</p><img src="{image.image.url}">'
+                note.save()
+                part_pk, note_pk, image_pk = part.pk, note.pk, image.pk
+                original_content = note.content
+                image_name = image.image.name
+
+                with self.captureOnCommitCallbacks(execute=True):
+                    with self.assertRaisesMessage(ValueError, 'Abort transaction'):
+                        with transaction.atomic():
+                            if action == 'edit':
+                                note.content = '<p>Image removed</p>'
+                                note.save()
+                            elif action == 'delete_note':
+                                note.delete()
+                            else:
+                                part.delete()
+                            self.assertFalse(
+                                NotesImage.objects.filter(pk=image_pk).exists()
+                            )
+                            raise ValueError('Abort transaction')
+
+                self.assertTrue(Part.objects.filter(pk=part_pk).exists())
+                self.assertEqual(Note.objects.get(pk=note_pk).content, original_content)
+                self.assertEqual(
+                    NotesImage.objects.get(pk=image_pk).image.name, image_name
+                )
+                self.assertTrue(default_storage.exists(image_name))
+
     def test_invalid_files(self):
         """Test that invalid files are rejected."""
         n = NotesImage.objects.count()
@@ -1776,7 +1823,8 @@ class NotesImageTest(InvenTreeAPITestCase):
 
         # Remove the second image from the content and save
         note.content = f'<img src="{url1}">'
-        note.save()
+        with self.captureOnCommitCallbacks(execute=True):
+            note.save()
 
         # The removed image must be gone from both the DB and the file system
         self.assertFalse(NotesImage.objects.filter(pk=ni2.pk).exists())
@@ -1820,7 +1868,8 @@ class NotesImageTest(InvenTreeAPITestCase):
 
         # Delete the *part*, not the note or image directly - this cascades
         # Part -> InvenTreeNoteMixin.delete() -> Note -> NotesImage
-        part.delete()
+        with self.captureOnCommitCallbacks(execute=True):
+            part.delete()
 
         self.assertFalse(NotesImage.objects.filter(pk=ni.pk).exists())
         self.assertFalse(Note.objects.filter(pk=note.pk).exists())
@@ -1883,7 +1932,8 @@ class NotesImageTest(InvenTreeAPITestCase):
 
         # Deleting the source NotesImage must not remove the copied image
         # (files are independent; Django cascade does not call Python delete())
-        ni.delete()
+        with self.captureOnCommitCallbacks(execute=True):
+            ni.delete()
         self.assertFalse(default_storage.exists(old_name))
         self.assertTrue(default_storage.exists(new_img.image.name))
         self.assertTrue(NotesImage.objects.filter(pk=new_img.pk).exists())
