@@ -34,6 +34,7 @@ import { useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { api, queryClient } from '../../../../App';
 import { authApi, doLogout } from '../../../../functions/auth';
+import { showApiErrorMessage } from '../../../../functions/notifications';
 import { useServerApiState } from '../../../../states/ServerApiState';
 import { useGlobalSettingsState } from '../../../../states/SettingsStates';
 import { QrRegistrationForm } from './QrRegistrationForm';
@@ -476,12 +477,12 @@ function RegisterTOTPModal({
               setSecret(error.response?.data?.meta?.secret ?? '');
               break;
             default:
-              // Any other error is unexpected
-              showNotification({
-                title: t`Error Fetching TOTP Registration`,
-                message: t`An unexpected error occurred while fetching TOTP registration data.`,
-                color: 'red'
+              showApiErrorMessage({
+                error: error,
+                title: t`Error Fetching TOTP Registration`
               });
+              // showApiError(error);
+
               throw error;
           }
 
