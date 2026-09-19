@@ -518,6 +518,35 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertEqual(output.plugin, 'inventreelabel')
         self.assertTrue(output.output.name.endswith('.pdf'))
 
+        # Filename patterns without an extension must still produce PDF filenames.
+        template.filename_pattern = 'unit_test_label'
+        template.save()
+
+        output = template.print(items=parts[:1], plugin=plugin)
+
+        self.assertTrue(output.output.name.endswith('.pdf'))
+
+    def test_generated_file_filename(self):
+        """PDF filenames retain existing suffixes and default when empty."""
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        plugin = registry.get_plugin('inventreelabel')
+        plugin.before_printing()
+        plugin.outputs.append(
+            plugin.render_to_pdf(template, Part.objects.first(), None)
+        )
+
+        for kwargs, expected in [
+            ({'filename': 'unit_test_label'}, 'unit_test_label.pdf'),
+            ({'filename': 'unit_test_label.pdf'}, 'unit_test_label.pdf'),
+            ({'filename': 'unit_test_label.PDF'}, 'unit_test_label.PDF'),
+            ({'filename': ''}, 'labels.pdf'),
+            ({'filename': None}, 'labels.pdf'),
+            ({}, 'labels.pdf'),
+        ]:
+            with self.subTest(kwargs=kwargs):
+                output = plugin.get_generated_file(**kwargs)
+                self.assertEqual(output.name, expected)
+
     def test_print_custom_template(self):
         """Test printing against a custom template file."""
         template_string = """

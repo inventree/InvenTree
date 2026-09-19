@@ -444,6 +444,9 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   await page.getByRole('cell', { name: 'Animals', exact: true }).waitFor();
   await page.getByText('Various animals and descriptions thereof').waitFor();
 
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(250);
+
   // Clean old list data if exists
   await page
     .getByRole('cell', { name: 'some list' })
@@ -538,6 +541,7 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
     })
     .click();
 
+  await page.waitForLoadState('networkidle');
   await page.waitForTimeout(500);
 
   await page.getByText('Add Parameter').waitFor();

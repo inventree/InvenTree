@@ -161,6 +161,74 @@ class CommandTestCase(TestCase):
             ContentType.objects.filter(pk__in=pks).delete()
             tmp_file.unlink(missing_ok=True)
 
+    def test_bulkdumpdata_natural_key_caching(self):
+        """Test that bulkdumpdata caches natural-key FK resolution during serialization."""
+        from django.contrib.admin.models import ADDITION, LogEntry
+        from django.contrib.contenttypes.models import ContentType
+        from django.core import serializers
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+
+        from InvenTree.management.commands.bulkdumpdata import (
+            Command as BulkDumpDataCommand,
+        )
+
+        user = User.objects.create_user(username='bulkdumpdata_test_user')
+        content_type = ContentType.objects.create(
+            app_label='bulkdumpdata_test', model='dummymodel'
+        )
+
+        entries = [
+            LogEntry.objects.create(
+                user=user,
+                content_type=content_type,
+                object_id=str(i),
+                object_repr=f'Object {i}',
+                action_flag=ADDITION,
+                change_message='Created',
+            )
+            for i in range(20)
+        ]
+        pks = [e.pk for e in entries]
+
+        def make_queryset():
+            # A fresh queryset each time, so FK descriptor caching on the
+            # instances themselves can't mask whether *our* cache is doing
+            # the work
+            return LogEntry.objects.filter(pk__in=pks).order_by('pk')
+
+        try:
+            with CaptureQueriesContext(connection) as uncached:
+                uncached_data = serializers.serialize(
+                    'json', make_queryset(), use_natural_foreign_keys=True
+                )
+
+            with CaptureQueriesContext(connection) as cached:
+                with BulkDumpDataCommand()._cached_natural_keys():
+                    cached_data = serializers.serialize(
+                        'json', make_queryset(), use_natural_foreign_keys=True
+                    )
+
+            # Same output either way - caching must not change what gets exported
+            self.assertEqual(uncached_data, cached_data)
+
+            # Without caching: one extra query per row for each repeated
+            # natural-keyed FK (content_type and user are both natural-keyed
+            # here, so up to 2 extra queries per row -> 40, plus the main select)
+            self.assertGreaterEqual(len(uncached.captured_queries), 40)
+
+            # With caching: only the first reference to each distinct related
+            # object (one content_type, one user) issues a query - every other
+            # row is served from cache
+            self.assertLessEqual(len(cached.captured_queries), 4)
+            self.assertLess(
+                len(cached.captured_queries), len(uncached.captured_queries)
+            )
+        finally:
+            LogEntry.objects.filter(pk__in=pks).delete()
+            content_type.delete()
+            user.delete()
+
     def test_backup_metadata(self):
         """Test the backup metadata functions."""
         from InvenTree.backup import (

@@ -49,7 +49,10 @@ def isWaitingForDatabase():
 
 def isImportingData():
     """Returns True if the database is currently importing (or exporting) data, e.g. 'loaddata' command is performed."""
-    return any(x in sys.argv for x in ['flush', 'loaddata', 'bulkloaddata', 'dumpdata'])
+    return any(
+        x in sys.argv
+        for x in ['flush', 'loaddata', 'bulkloaddata', 'dumpdata', 'bulkdumpdata']
+    )
 
 
 def isRunningMigrations():
