@@ -340,6 +340,10 @@ export default function SystemSettings() {
                 'BUILDORDER_EXTERNAL_REQUIRED'
               ]}
             />
+            <GlobalSettingList
+              heading={t`Non-Conformance Reports`}
+              keys={['NCR_ENABLED', 'NCR_REFERENCE_PATTERN']}
+            />
           </>
         )
       },

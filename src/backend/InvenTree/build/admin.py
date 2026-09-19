@@ -2,7 +2,13 @@
 
 from django.contrib import admin
 
-from build.models import Build, BuildItem, BuildLine
+from build.models import (
+    Build,
+    BuildItem,
+    BuildLine,
+    NonConformance,
+    NonConformanceStockItem,
+)
 
 
 @admin.register(Build)
@@ -52,3 +58,33 @@ class BuildLineAdmin(admin.ModelAdmin):
     search_fields = ['build__title', 'build__reference', 'bom_item__sub_part__name']
 
     autocomplete_fields = ['bom_item', 'build']
+
+
+@admin.register(NonConformance)
+class NonConformanceAdmin(admin.ModelAdmin):
+    """Class for managing the NonConformance model via the admin interface."""
+
+    exclude = ['reference_int']
+
+    list_display = ('reference', 'description', 'part', 'status')
+
+    search_fields = ['reference', 'description', 'part__name', 'part__description']
+
+    autocomplete_fields = [
+        'part',
+        'build_order',
+        'sales_order',
+        'purchase_order',
+        'return_order',
+        'responsible',
+        'raised_by',
+    ]
+
+
+@admin.register(NonConformanceStockItem)
+class NonConformanceStockItemAdmin(admin.ModelAdmin):
+    """Class for managing the NonConformanceStockItem model via the admin interface."""
+
+    list_display = ('ncr', 'stock_item', 'quantity', 'disposition')
+
+    autocomplete_fields = ['ncr', 'stock_item']
