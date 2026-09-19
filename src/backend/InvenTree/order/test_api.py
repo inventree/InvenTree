@@ -999,6 +999,27 @@ class PurchaseOrderTest(OrderTest):
                 self.assertIn('status_text', result)
                 self.assertIsNotNone(result['status_text'])
 
+    def test_status_codes_endpoint(self):
+        """The 'po/status/' endpoint must resolve to the status-codes view.
+
+        Regression test: PurchaseOrder is served by a ViewSet router, whose
+        generated detail route ('po/<pk>/') uses DRF's default, permissive pk
+        lookup regex. That regex is happy to match the literal segment 'status'
+        as a pk, so if the router is registered ahead of the 'po/status/' path in
+        the urlconf, this endpoint gets swallowed by
+        PurchaseOrderViewSet.retrieve(pk='status') instead of reaching StatusView -
+        returning a 404 (no such PurchaseOrder) rather than the status code data.
+        """
+        response = self.get(reverse('api-po-status-codes'), expected_code=200)
+
+        # A genuine StatusView response - not a PurchaseOrder-detail-shaped 404
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('PENDING', response.data['values'])
+        self.assertEqual(
+            response.data['values']['PENDING']['key'], PurchaseOrderStatus.PENDING.value
+        )
+
 
 class PurchaseOrderLineItemTest(OrderTest):
     """Unit tests for PurchaseOrderLineItems."""
@@ -2489,6 +2510,25 @@ class SalesOrderTest(OrderTest):
                 self.assertIn('status_text', result)
                 self.assertIsNotNone(result['status_text'])
 
+    def test_status_codes_endpoint(self):
+        """The 'so/status/' endpoint must resolve to the status-codes view.
+
+        SalesOrder is not (yet) served by a ViewSet router - its detail route uses
+        Django's '<int:pk>' path converter, which is not vulnerable to the
+        router-based bug affecting PurchaseOrder (see PurchaseOrderTest for
+        details). This is a coverage test guarding against a future regression,
+        e.g. if SalesOrder is migrated to a router-based viewset without also
+        restricting the pk lookup pattern.
+        """
+        response = self.get(reverse('api-so-status-codes'), expected_code=200)
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('PENDING', response.data['values'])
+        self.assertEqual(
+            response.data['values']['PENDING']['key'], SalesOrderStatus.PENDING.value
+        )
+
 
 class SalesOrderLineItemTest(OrderTest):
     """Tests for the SalesOrderLineItem API."""
@@ -3888,6 +3928,23 @@ class ReturnOrderTests(InvenTreeAPITestCase):
             reverse('api-return-order-detail', kwargs={'pk': 1}), ['customer_detail']
         )
 
+    def test_status_codes_endpoint(self):
+        """The 'ro/status/' endpoint must resolve to the status-codes view.
+
+        ReturnOrder is not (yet) served by a ViewSet router - its detail route uses
+        Django's '<int:pk>' path converter, which is not vulnerable to the
+        router-based bug affecting PurchaseOrder (see PurchaseOrderTest for
+        details). This is a coverage test guarding against a future regression.
+        """
+        response = self.get(reverse('api-return-order-status-codes'), expected_code=200)
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('PENDING', response.data['values'])
+        self.assertEqual(
+            response.data['values']['PENDING']['key'], ReturnOrderStatus.PENDING.value
+        )
+
 
 class ReturnOrderLineItemTests(InvenTreeAPITestCase):
     """Unit tests for ReturnOrderLineItem API endpoints."""
@@ -4050,6 +4107,26 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         self.delete(url, {'items': items}, expected_code=200)
 
         self.assertEqual(models.ReturnOrderExtraLine.objects.count(), n - 2)
+
+    def test_status_codes_endpoint(self):
+        """The 'ro-line/status/' endpoint must resolve to the status-codes view.
+
+        ReturnOrderLineItem is not (yet) served by a ViewSet router - its detail
+        route uses Django's '<int:pk>' path converter, which is not vulnerable to
+        the router-based bug affecting PurchaseOrder (see PurchaseOrderTest for
+        details). This is a coverage test guarding against a future regression.
+        """
+        response = self.get(
+            reverse('api-return-order-line-status-codes'), expected_code=200
+        )
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('PENDING', response.data['values'])
+        self.assertEqual(
+            response.data['values']['PENDING']['key'],
+            ReturnOrderLineStatus.PENDING.value,
+        )
 
 
 class ExtraLineTotalPriceTest(InvenTreeAPITestCase):
