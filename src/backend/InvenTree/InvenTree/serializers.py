@@ -694,7 +694,7 @@ class DependentField(serializers.Field):
         """This method tries to convert the data to an internal representation based on the defined to_internal_value method on the child."""
         self.get_child()
         if self.child:
-            return self.child.to_internal_value(data)
+            return self.child.run_validation(data)
 
         return None
 
