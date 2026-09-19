@@ -493,7 +493,10 @@ test('Login - MFA - TOTP', async ({ page }) => {
 
   // Remove TOTP token
   await page.getByRole('button', { name: 'remove-totp' }).click();
-  await page.getByRole('button', { name: 'Remove', exact: true }).click();
+  await page
+    .getByLabel('Remove TOTP Token')
+    .getByRole('button', { name: 'Remove' })
+    .click();
 
   await page.getByText('TOTP token removed successfully').waitFor();
 
