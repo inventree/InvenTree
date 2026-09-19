@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-16 03:00\n"
+"PO-Revision-Date: 2026-09-19 06:32\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -79,9 +79,9 @@ msgstr "削除"
 #: src/components/tables/FilterSelectDrawer.tsx:731
 #: src/contexts/ThemeContext.tsx:57
 #: src/hooks/UseForm.tsx:39
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:147
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:322
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:413
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:148
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:323
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:414
 #: src/tables/build/BuildOutputTable.tsx:665
 #: src/tables/settings/ApiTokenTable.tsx:270
 msgid "Cancel"
@@ -683,8 +683,8 @@ msgstr "選択エントリ"
 #: src/forms/BomForms.tsx:87
 #: src/functions/auth.tsx:729
 #: src/pages/ErrorPage.tsx:11
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:316
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:407
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:408
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:638
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:831
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:194
@@ -1105,9 +1105,9 @@ msgstr "締め切り超過"
 #: src/components/calendar/OrderCalendarToolTip.tsx:58
 #: src/components/tables/ColumnRenderers.tsx:731
 #: src/pages/build/BuildOrderDetailsPanel.tsx:204
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:190
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:203
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:204
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:198
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:211
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:212
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:133
 msgid "Start Date"
 msgstr "開始日"
@@ -1115,9 +1115,9 @@ msgstr "開始日"
 #: src/components/calendar/OrderCalendarToolTip.tsx:64
 #: src/components/tables/ColumnRenderers.tsx:740
 #: src/pages/build/BuildOrderDetailsPanel.tsx:212
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:198
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:211
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:212
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:206
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:219
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:220
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:141
 #: src/tables/part/PartPurchaseOrdersTable.tsx:110
 #: src/tables/part/PartSalesOrdersTable.tsx:72
@@ -1517,8 +1517,8 @@ msgstr "このアイテムから関連画像を削除しますか？"
 
 #: src/components/details/DetailsImage.tsx:82
 #: src/forms/StockForms.tsx:1633
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:325
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:416
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:326
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:417
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:899
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:918
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:273
@@ -1575,7 +1575,7 @@ msgstr "クリア"
 #: src/components/details/DetailsImage.tsx:305
 #: src/components/forms/ApiForm.tsx:794
 #: src/contexts/ThemeContext.tsx:56
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:150
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:151
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:569
 msgid "Submit"
 msgstr "送信"
@@ -2082,7 +2082,7 @@ msgstr "ユーザー名"
 #: src/components/forms/AuthenticationForm.tsx:143
 #: src/components/forms/AuthenticationForm.tsx:311
 #: src/pages/Auth/ResetPassword.tsx:34
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:194
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:195
 msgid "Password"
 msgstr "パスワード"
 
@@ -2483,7 +2483,7 @@ msgstr "加工データ"
 #: src/components/importer/ImporterColumnSelector.tsx:56
 #: src/components/importer/ImporterColumnSelector.tsx:299
 #: src/components/items/ErrorItem.tsx:12
-#: src/functions/api.tsx:63
+#: src/functions/api.tsx:75
 #: src/functions/auth.tsx:413
 msgid "An error occurred"
 msgstr "エラーが発生しました"
@@ -2670,7 +2670,7 @@ msgid "Read More"
 msgstr "続きを読む"
 
 #: src/components/items/ErrorItem.tsx:8
-#: src/functions/api.tsx:54
+#: src/functions/api.tsx:66
 #: src/tables/settings/PendingTasksTable.tsx:80
 msgid "Unknown error"
 msgstr "不明なエラー"
@@ -4067,22 +4067,25 @@ msgstr "ユーザー情報"
 #: src/components/tables/ColumnRenderers.tsx:677
 #: src/components/tables/Filter.tsx:480
 #: src/pages/part/PartDetailsPanel.tsx:282
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:172
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:184
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:186
 msgid "Created By"
 msgstr "作成者"
 
 #: src/components/tables/ColumnRenderers.tsx:749
 #: src/pages/part/PartDetailsPanel.tsx:277
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:175
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:187
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:189
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:183
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:195
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:197
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:117
 msgid "Creation Date"
 msgstr "作成日時"
 
 #: src/components/tables/ColumnRenderers.tsx:758
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:207
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:219
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:219
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:215
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:227
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:227
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:149
 #: src/tables/part/PartPurchaseOrdersTable.tsx:115
 msgid "Completion Date"
@@ -6572,27 +6575,31 @@ msgstr "サーバーからの応答が無効です"
 #~ msgid "Label"
 #~ msgstr "Label"
 
-#: src/functions/api.tsx:36
+#: src/functions/api.tsx:45
 msgid "Bad request"
 msgstr "間違ったリクエスト"
 
-#: src/functions/api.tsx:39
+#: src/functions/api.tsx:48
 msgid "Unauthorized"
 msgstr "無許可"
 
-#: src/functions/api.tsx:42
+#: src/functions/api.tsx:51
 msgid "Forbidden"
 msgstr "禁じられた"
 
-#: src/functions/api.tsx:45
+#: src/functions/api.tsx:54
 msgid "Not found"
 msgstr "みつかりません"
 
-#: src/functions/api.tsx:48
+#: src/functions/api.tsx:57
 msgid "Method not allowed"
 msgstr "不可の方法"
 
-#: src/functions/api.tsx:51
+#: src/functions/api.tsx:60
+msgid "Conflict"
+msgstr ""
+
+#: src/functions/api.tsx:63
 msgid "Internal server error"
 msgstr "内部サーバーエラー"
 
@@ -6862,23 +6869,23 @@ msgstr "現在のパスワード"
 msgid "Enter your current password"
 msgstr "現在のパスワードを入力してください。"
 
-#: src/pages/Auth/ChangePassword.tsx:53
+#: src/pages/Auth/ChangePassword.tsx:54
 msgid "New Password"
 msgstr "新しいパスワード"
 
-#: src/pages/Auth/ChangePassword.tsx:54
+#: src/pages/Auth/ChangePassword.tsx:55
 msgid "Enter your new password"
 msgstr "新しいパスワードを入力してください"
 
-#: src/pages/Auth/ChangePassword.tsx:60
+#: src/pages/Auth/ChangePassword.tsx:62
 msgid "Confirm New Password"
 msgstr "確認のため新しいパスワードを再入力してください"
 
-#: src/pages/Auth/ChangePassword.tsx:61
+#: src/pages/Auth/ChangePassword.tsx:63
 msgid "Confirm your new password"
 msgstr "確認のため新しいパスワードを再入力してください"
 
-#: src/pages/Auth/ChangePassword.tsx:80
+#: src/pages/Auth/ChangePassword.tsx:82
 msgid "Confirm"
 msgstr "確認"
 
@@ -6961,7 +6968,7 @@ msgid "Multi-Factor Authentication"
 msgstr "多要素認証"
 
 #: src/pages/Auth/MFA.tsx:33
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:218
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:219
 msgid "TOTP Code"
 msgstr "TOTPコード"
 
@@ -7537,61 +7544,61 @@ msgstr "プロフィールを編集"
 msgid "{0}"
 msgstr "{0}"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:104
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:105
 msgid "Reauthentication Succeeded"
 msgstr "再認証が成功しました"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:105
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:106
 msgid "You have been reauthenticated successfully."
 msgstr "再認証が成功しました"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:113
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:114
 msgid "Error during reauthentication"
 msgstr "再認証中にエラーが発生しました"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:116
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:117
 msgid "Reauthentication Failed"
 msgstr "再認証に失敗しました"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:117
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:118
 msgid "Failed to reauthenticate"
 msgstr "再認証に失敗しました"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:132
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:172
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:133
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:173
 msgid "Reauthenticate"
 msgstr "認証"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:134
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:135
 msgid "Reauthentiction is required to continue."
 msgstr "続行するには再認証が必要です"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:196
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:197
 msgid "Enter your password"
 msgstr "パスワードを入力してください"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:220
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:221
 msgid "Enter one of your TOTP codes"
 msgstr "ワンタイムパスワードを入力してください"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:272
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:273
 msgid "WebAuthn Credential Removed"
 msgstr "WebAuthnの認証情報が削除されました"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:273
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:274
 msgid "WebAuthn credential removed successfully."
 msgstr "WebAuthnの認証情報が正常に削除されました"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:282
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:283
 msgid "Error removing WebAuthn credential"
 msgstr "WebAuthn認証情報の削除に失敗しました"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:303
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:304
 msgid "Remove WebAuthn Credential"
 msgstr "WebAuthnの認証情報を削除します"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:311
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:402
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:312
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:403
 #: src/tables/build/BuildAllocatedStockTable.tsx:186
 #: src/tables/build/BuildLineTable.tsx:729
 #: src/tables/sales/SalesOrderAllocationTable.tsx:225
@@ -7599,45 +7606,45 @@ msgstr "WebAuthnの認証情報を削除します"
 msgid "Confirm Removal"
 msgstr "削除を確認します"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:313
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:314
 msgid "Confirm removal of webauth credential"
 msgstr "Web認証情報の削除を確認してください"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:365
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:366
 msgid "TOTP Removed"
 msgstr "ワンタイムパスワードは削除されました"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:366
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:367
 msgid "TOTP token removed successfully."
 msgstr "ワンタイムパスワードトークンは正常に削除されました。"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:376
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:377
 msgid "Error removing TOTP token"
 msgstr "ワンタイムパスワードトークンの削除に失敗しました"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:395
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:396
 msgid "Remove TOTP Token"
 msgstr "ワンタイムパスワードトークンを削除します"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:404
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:405
 msgid "Confirm removal of TOTP code"
 msgstr "ワンタイムパスワードコードの削除を確認してください"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:464
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:465
 msgid "TOTP Already Registered"
 msgstr "ワンタイムパスワードは既に登録済みです"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:465
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:466
 msgid "A TOTP token is already registered for this account."
 msgstr "このアカウントには既にワンタイムパスワードトークンが登録されています"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:480
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:481
 msgid "Error Fetching TOTP Registration"
 msgstr "ワンタイムパスワード登録の取得中にエラーが発生しました"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:481
-msgid "An unexpected error occurred while fetching TOTP registration data."
-msgstr "ワンタイムパスワード登録データの取得中に予期せぬエラーが発生しました"
+#~ msgid "An unexpected error occurred while fetching TOTP registration data."
+#~ msgstr "An unexpected error occurred while fetching TOTP registration data."
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:523
 msgid "TOTP Registered"
@@ -8337,13 +8344,13 @@ msgid "Register these URLs with your SAML identity provider."
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:533
-msgid "URL"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:533
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:85
 msgid "Endpoint"
 msgstr "エンドポイント"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:533
+msgid "URL"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:535
 msgid "ACS"
@@ -10183,9 +10190,9 @@ msgid "Purchase Pricing"
 msgstr "購入価格"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:294
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:214
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:226
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:226
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:222
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:234
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:234
 #: src/pages/stock/StockDetailsPanel.tsx:364
 #: src/tables/general/ParameterTable.tsx:101
 #: src/tables/general/ParametricDataTable.tsx:101
@@ -10375,9 +10382,9 @@ msgstr "連絡先メールアドレス"
 msgid "Contact Phone"
 msgstr "連絡先電話番号"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:182
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:195
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:196
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:190
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:203
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:204
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:125
 msgid "Issue Date"
 msgstr "発行日"
