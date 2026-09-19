@@ -484,6 +484,11 @@ test('Stock - Return Items', async ({ browser }) => {
 
   // Location detail
   await navigate(page, 'stock/item/1253');
+
+  // Allow some settling time for this page
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(100);
+
   await page
     .getByRole('button', { name: 'action-menu-stock-operations' })
     .click();
