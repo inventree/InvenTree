@@ -57,7 +57,7 @@ ARGV_COMMANDS: dict[str, tuple[str, ...]] = {
     # More complex groups
     # #### #
     # Importing (or exporting) database records
-    'import_data': ('flush', 'loaddata', 'bulkloaddata', 'dumpdata'),
+    'import_data': ('flush', 'loaddata', 'bulkloaddata', 'dumpdata', 'bulkdumpdata'),
     # Running database migrations
     'migrations': ('migrate', 'makemigrations', 'showmigrations', 'runmigrations'),
     # Rebuilding database records
