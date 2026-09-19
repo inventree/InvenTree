@@ -4,13 +4,11 @@ These models are 'generic' and do not fit a particular business logic object.
 """
 
 import base64
-import copy
 import hashlib
 import hmac
 import json
 import math
 import os
-import re
 import uuid
 from collections import OrderedDict
 from datetime import timedelta, timezone
@@ -44,7 +42,6 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
-import nh3
 import structlog
 from anymail.signals import inbound, tracking
 from django_q.signals import post_spawn
@@ -64,6 +61,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import users.models
+from common.notes import NoteContentType, note_content_handler
 from common.setting.type import InvenTreeSettingsKeyType, SettingsKeyType
 from common.settings import get_global_setting, global_setting_overrides
 from generic.enums import StringEnum
@@ -3154,6 +3152,17 @@ class Note(
         """Perform custom save checks before saving a Note instance."""
         self.check_save()
 
+        if self.pk is not None and not self._state.adding:
+            original_type = (
+                type(self)
+                .objects.values_list('content_type', flat=True)
+                .get(pk=self.pk)
+            )
+            if self.content_type != original_type:
+                raise ValidationError({
+                    'content_type': _('Content type cannot be changed after creation.')
+                })
+
         if not self.template:
             is_create = self.pk is None
 
@@ -3207,7 +3216,8 @@ class Note(
             self.clean()
             super().save(*args, **kwargs)
 
-        self.cleanup_images()
+        if note_content_handler(self.content_type).supports_images:
+            self.cleanup_images()
 
     def clean(self):
         """Clean / validate the note before saving to the database."""
@@ -3225,78 +3235,8 @@ class Note(
             except ValidationError as e:
                 raise ValidationError({'model_type': e.message})
 
-        if self.content:
-            attrs = copy.deepcopy(nh3.ALLOWED_ATTRIBUTES)
-
-            for tag in (
-                'span',
-                'p',
-                'div',
-                'img',
-                'a',
-                'h1',
-                'h2',
-                'h3',
-                'h4',
-                'h5',
-                'h6',
-                'ul',
-                'ol',
-                'li',
-                'blockquote',
-                'pre',
-                'table',
-                'thead',
-                'tbody',
-                'tr',
-                'td',
-                'th',
-                'colgroup',
-                'col',
-            ):
-                attrs.setdefault(tag, set()).update({'style'})
-
-            # Allow class on structural tags used by the rich-text editor
-            for tag in ('div', 'span', 'img', 'table', 'td', 'th', 'col'):
-                attrs.setdefault(tag, set()).add('class')
-
-            # Allow image attributes used by tiptap-extension-resizable-image
-            attrs.setdefault('img', set()).update({'data-keep-ratio', 'colwidth'})
-
-            self.content = nh3.clean(
-                self.content.strip(),
-                attributes=attrs,
-                filter_style_properties={
-                    'color',
-                    'background-color',
-                    'font-size',
-                    'font-weight',
-                    'font-style',
-                    'font-family',
-                    'text-decoration',
-                    'text-align',
-                    'border',
-                    'border-color',
-                    'border-style',
-                    'border-width',
-                    'margin',
-                    'padding',
-                    'column-width',
-                    'column-height',
-                    'min-width',
-                    'max-width',
-                    'min-height',
-                    'max-height',
-                    'width',
-                    'height',
-                },
-            )
-
-            # nh3 does not recognise legacy IE-only CSS expression() calls as
-            # unsafe, so they survive style attribute filtering - strip them explicitly
-            self.content = re.sub(
-                r'expression\s*\(', '', self.content, flags=re.IGNORECASE
-            )
+        handler = note_content_handler(self.content_type)
+        self.content = handler.clean(self.content)
 
     def check_save(self):
         """Check if this note can be saved."""
@@ -3390,6 +3330,14 @@ class Note(
         help_text=_('Optional description field'),
     )
 
+    content_type = models.CharField(
+        max_length=32,
+        choices=NoteContentType.choices,
+        default=NoteContentType.HTML,
+        verbose_name=_('Content Type'),
+        help_text=_('Format of the note content; fixed when the note is created'),
+    )
+
     content = models.TextField(
         blank=True,
         verbose_name=_('Content'),
@@ -3405,10 +3353,23 @@ def rename_notes_image(instance, filename):
 
 
 class NotesImage(models.Model):
-    """Model for storing uploading images for the 'notes' fields of various models.
+    """Uploaded image attached to an HTML note."""
 
-    Simply stores the image file, for use in the 'notes' field (of any models which support markdown).
-    """
+    def clean(self):
+        """Reject images attached to notes whose format does not support them."""
+        super().clean()
+        if (
+            self.note_id
+            and not note_content_handler(self.note.content_type).supports_images
+        ):
+            raise ValidationError({
+                'note': _('Only HTML notes support embedded images.')
+            })
+
+    def save(self, *args, **kwargs):
+        """Validate the image target before storing it."""
+        self.clean()
+        return super().save(*args, **kwargs)
 
     image = models.ImageField(
         upload_to=rename_notes_image, verbose_name=_('Image'), help_text=_('Image file')
