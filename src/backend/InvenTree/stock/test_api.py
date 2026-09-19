@@ -2427,6 +2427,19 @@ class StockItemTest(StockAPITestCase):
             item.refresh_from_db()
             self.assertEqual(item.batch, 'NEW-BATCH-CODE')
 
+    def test_status_codes_endpoint(self):
+        """The 'stock/status/' endpoint must resolve to the status-codes view.
+
+        Regression test: ensures the literal 'status/' path is not shadowed by the
+        'stock/<pk>/' detail route it sits alongside in the same urlconf.
+        """
+        response = self.get(reverse('api-stock-status-codes'), expected_code=200)
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('OK', response.data['values'])
+        self.assertEqual(response.data['values']['OK']['key'], StockStatus.OK.value)
+
 
 class StockItemDisassembleTest(StockAPITestCase):
     """Series of API tests for the StockItem disassembly endpoint."""
@@ -4059,6 +4072,23 @@ class StockTrackingTest(StockAPITestCase):
             ['item_detail', 'user_detail'],
             additional_params={'limit': 2},
             assert_fnc=lambda x: x.data['results'][0],
+        )
+
+    def test_status_codes_endpoint(self):
+        """The 'track/status/' endpoint must resolve to the status-codes view.
+
+        Regression test: ensures the literal 'status/' path is not shadowed by the
+        'track/<pk>/' detail route it sits alongside in the same urlconf.
+        """
+        response = self.get(
+            reverse('api-stock-tracking-status-codes'), expected_code=200
+        )
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('CREATED', response.data['values'])
+        self.assertEqual(
+            response.data['values']['CREATED']['key'], StockHistoryCode.CREATED.value
         )
 
 

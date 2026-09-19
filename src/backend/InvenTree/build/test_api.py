@@ -1426,6 +1426,21 @@ class BuildListTest(BuildAPITest):
             assert_fnc=lambda x: x.data['results'][0],
         )
 
+    def test_status_codes_endpoint(self):
+        """The 'build/status/' endpoint must resolve to the status-codes view.
+
+        Regression test: ensures the literal 'status/' path is not shadowed by the
+        'build/<pk>/' detail route it sits alongside in the same urlconf.
+        """
+        response = self.get(reverse('api-build-status-codes'), expected_code=200)
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('PENDING', response.data['values'])
+        self.assertEqual(
+            response.data['values']['PENDING']['key'], BuildStatus.PENDING.value
+        )
+
 
 class BuildOutputCreateTest(BuildAPITest):
     """Unit test for creating build output via API."""
