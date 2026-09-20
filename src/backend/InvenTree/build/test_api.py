@@ -2255,7 +2255,7 @@ class BuildLineTests(BuildAPITest):
             self.assertNotIn(
                 'GROUP BY',
                 query['sql'].upper(),
-                'BuildLine count() query should not require a GROUP BY'
+                'BuildLine count() query should not require a GROUP BY',
             )
 
         # Confirm the 'allocated' value is still computed correctly
