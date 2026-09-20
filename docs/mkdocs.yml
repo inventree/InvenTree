@@ -384,6 +384,9 @@ extra:
   min_invoke_version: 2.0.0
   django_version: 5.2
   docker_postgres_version: 17
+  min_postgres_version: 14
+  min_mysql_version: 8.0.11
+  min_sqlite_version: 3.31.0
 
   version:
     default: stable
