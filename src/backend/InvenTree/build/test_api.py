@@ -1860,14 +1860,11 @@ class BuildLineTests(BuildAPITest):
         self.assertEqual(len(response.data), BuildLine.objects.count())
 
         # Filter by 'available' status
-        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
-        # TODO: This needs to be addressed in the future, as 25 seconds is an unacceptably long time for a query to take in testing
-        response = self.get(url, data={'available': True}, max_query_time=25)
+        response = self.get(url, data={'available': True}, max_query_time=10)
         n_t = len(response.data)
         self.assertGreater(n_t, 0)
 
-        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
-        response = self.get(url, data={'available': False}, max_query_time=25)
+        response = self.get(url, data={'available': False}, max_query_time=10)
         n_f = len(response.data)
         self.assertGreater(n_f, 0)
 
@@ -2191,19 +2188,15 @@ class BuildLineTests(BuildAPITest):
         for line in lines:
             StockItem.objects.create(part=line.bom_item.sub_part, quantity=60)
 
-        # TODO: 2025-10-02: Work out why this query takes so long with PostgreSQL (in CI)
-        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
         response = self.get(
-            url, {'build': build.pk, 'available': True}, max_query_time=30
+            url, {'build': build.pk, 'available': True}, max_query_time=10
         )
 
         # We expect 2 lines to have "available" stock
         self.assertEqual(len(response.data), 2)
 
-        # TODO: 2025-10-02: Work out why this query takes so long with PostgreSQL (in CI)
-        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
         response = self.get(
-            url, {'build': build.pk, 'available': False}, max_query_time=30
+            url, {'build': build.pk, 'available': False}, max_query_time=10
         )
 
         self.assertEqual(len(response.data), 1)
