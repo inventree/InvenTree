@@ -264,3 +264,42 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
         self.assertEqual(response.data[0]['plugin_name'], 'sampleui')
         self.assertEqual(response.data[0]['key'], 'sample-primary-action')
         self.assertEqual(response.data[0]['title'], 'Sample Primary Action')
+
+    def test_ui_routes(self):
+        """Test that the sample UI plugin provides custom routes."""
+        response = self.get(
+            reverse('api-plugin-ui-feature-list', kwargs={'feature': 'route'})
+        )
+
+        self.assertEqual(2, len(response.data))
+
+        routes = {route['key']: route for route in response.data}
+
+        self.assertIn('sample-route', routes)
+        self.assertIn('sample-route-arg', routes)
+
+        self.assertEqual(
+            routes['sample-route'],
+            {
+                'plugin_name': 'sampleui',
+                'feature_type': 'route',
+                'key': 'sample-route',
+                'title': 'Sample Route',
+                'options': {'path': 'sampleui/test'},
+                'context': None,
+                'source': '/static/plugins/sampleui/sample_route.js:getBasicPage',
+            },
+        )
+
+        self.assertEqual(
+            routes['sample-route-arg'],
+            {
+                'plugin_name': 'sampleui',
+                'feature_type': 'route',
+                'key': 'sample-route-arg',
+                'title': 'Sample Route Arg',
+                'options': {'path': 'sampleui/test/:arg1'},
+                'context': None,
+                'source': '/static/plugins/sampleui/sample_route.js:getArgPage',
+            },
+        )
