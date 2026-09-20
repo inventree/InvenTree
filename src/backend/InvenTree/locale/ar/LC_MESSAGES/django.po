@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-16 00:38+0000\n"
-"PO-Revision-Date: 2026-09-16 00:42\n"
+"POT-Creation-Date: 2026-09-19 08:01+0000\n"
+"PO-Revision-Date: 2026-09-19 08:06\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
@@ -299,7 +299,7 @@ msgstr "الوصف"
 msgid "Description (optional)"
 msgstr "وصف (اختياري)"
 
-#: InvenTree/models.py:1273 common/models.py:3476
+#: InvenTree/models.py:1273 common/models.py:3478
 msgid "Path"
 msgstr "مسار"
 
@@ -601,7 +601,7 @@ msgstr "الأصل إنتاج"
 
 #: build/api.py:87 build/api.py:1070 order/api.py:613 order/api.py:853
 #: order/api.py:1330 order/api.py:1644 order/api.py:1961 order/api.py:2171
-#: stock/api.py:633
+#: stock/api.py:646
 msgid "Include Variants"
 msgstr "تضمين متغيرات"
 
@@ -625,7 +625,7 @@ msgstr "تضمين متغيرات"
 #: report/templates/report/inventree_sales_order_shipment_report.html:27
 #: report/templates/report/inventree_stock_location_report.html:102
 #: report/templates/report/inventree_transfer_order_report.html:24
-#: stock/api.py:646 stock/api.py:1607 stock/serializers.py:125
+#: stock/api.py:659 stock/api.py:1620 stock/serializers.py:125
 #: stock/serializers.py:177 stock/serializers.py:430 stock/serializers.py:638
 #: stock/serializers.py:1222 templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
@@ -638,7 +638,7 @@ msgstr "الصنف"
 
 #: build/api.py:123 build/api.py:126 build/serializers.py:1490 part/api.py:1012
 #: part/api.py:1410 part/models.py:414 part/models.py:1160 part/models.py:3547
-#: part/serializers.py:1343 part/serializers.py:1781 stock/api.py:924
+#: part/serializers.py:1343 part/serializers.py:1781 stock/api.py:937
 msgid "Category"
 msgstr "الفئة"
 
@@ -654,11 +654,11 @@ msgstr "مسند إلى me"
 msgid "Assigned To"
 msgstr "مسند إلى"
 
-#: build/api.py:205 stock/api.py:967
+#: build/api.py:205 stock/api.py:980
 msgid "Created before"
 msgstr "تم الإنشاء قبل"
 
-#: build/api.py:209 stock/api.py:971
+#: build/api.py:209 stock/api.py:984
 msgid "Created after"
 msgstr "تم الإنشاء بعد"
 
@@ -721,7 +721,7 @@ msgstr "اختياري"
 
 #: build/api.py:479 build/serializers.py:1462 common/setting/system.py:487
 #: part/models.py:1275 part/serializers.py:1726 part/serializers.py:1752
-#: stock/api.py:699
+#: stock/api.py:712
 msgid "Assembly"
 msgstr "تجميع"
 
@@ -775,7 +775,7 @@ msgstr "أمر إنتاج"
 #: build/serializers.py:1263 order/api.py:1390 order/api.py:1395
 #: order/api.py:2223 order/api.py:2228 order/serializers.py:866
 #: order/serializers.py:1006 order/serializers.py:2296 part/serializers.py:1353
-#: stock/api.py:1039 stock/serializers.py:116 stock/serializers.py:650
+#: stock/api.py:1052 stock/serializers.py:116 stock/serializers.py:650
 #: stock/serializers.py:770 stock/serializers.py:954 stock/serializers.py:1063
 #: stock/serializers.py:1131 stock/serializers.py:1770
 #: stock/serializers.py:2043 stock/serializers.py:2171
@@ -1126,7 +1126,7 @@ msgstr "عنصر المخزون هو over-allocated"
 #: order/serializers.py:1714 order/serializers.py:1735
 #: order/serializers.py:2754 order/serializers.py:2775
 #: report/templates/report/inventree_sales_order_shipment_report.html:28
-#: stock/api.py:1498 stock/models.py:470 stock/serializers.py:107
+#: stock/api.py:1511 stock/models.py:470 stock/serializers.py:107
 #: stock/serializers.py:866 stock/serializers.py:1622 stock/serializers.py:1738
 msgid "Stock Item"
 msgstr "عنصر مخزون"
@@ -1208,7 +1208,7 @@ msgstr "تلقائي تخصيص الأرقام التسلسلية"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "تلقائيًا تخصيص مطلوب عناصر مع مطابق الأرقام التسلسلية"
 
-#: build/serializers.py:463 order/serializers.py:984 stock/api.py:1241
+#: build/serializers.py:463 order/serializers.py:984 stock/api.py:1254
 #: stock/models.py:730 stock/models.py:2467
 msgid "The following serial numbers already exist or are invalid"
 msgstr "ال التالي الأرقام التسلسلية بالفعل موجود أو هي غير صالح"
@@ -1486,7 +1486,7 @@ msgid "Allow Variants"
 msgstr "السماح متغيرات"
 
 #: build/serializers.py:1438 build/serializers.py:1444 part/models.py:3753
-#: part/models.py:4452 stock/api.py:937 stock/serializers.py:1038
+#: part/models.py:4452 stock/api.py:950 stock/serializers.py:1038
 msgid "BOM Item"
 msgstr "عنصر قائمة المواد"
 
@@ -1713,7 +1713,7 @@ msgstr "وسوم"
 msgid "Project Code Label"
 msgstr "مشروع رمز ملصق"
 
-#: common/models.py:111 common/models.py:136 common/models.py:3816
+#: common/models.py:111 common/models.py:136 common/models.py:3818
 msgid "Updated"
 msgstr "تم التحديث"
 
@@ -1740,7 +1740,7 @@ msgstr "مشروع وصف"
 #: common/models.py:193 common/models.py:1475 common/models.py:2470
 #: common/models.py:2605 company/models.py:194 company/models.py:787
 #: machine/models.py:43 part/models.py:1310 plugin/models.py:69
-#: stock/api.py:702 users/models.py:381 users/models.py:749
+#: stock/api.py:715 users/models.py:381 users/models.py:749
 #: users/serializers.py:357 users/serializers.py:478
 msgid "Active"
 msgstr "نشط"
@@ -1787,7 +1787,7 @@ msgstr "يجب أن يكون مفتاح نص فريد"
 
 #: common/models.py:1372 common/models.py:1373 common/models.py:1483
 #: common/models.py:1484 common/models.py:1731 common/models.py:1732
-#: common/models.py:2162 common/models.py:2163 common/models.py:3464
+#: common/models.py:2162 common/models.py:2163 common/models.py:3466
 #: importer/models.py:105 part/models.py:3526 part/models.py:3554
 #: plugin/models.py:392 plugin/models.py:393
 #: report/templates/report/inventree_test_report.html:105 users/models.py:251
@@ -1840,11 +1840,11 @@ msgstr ""
 msgid "Shared secret for HMAC"
 msgstr "Shared secret لـ HMAC"
 
-#: common/models.py:1609 common/models.py:3701
+#: common/models.py:1609 common/models.py:3703
 msgid "Message ID"
 msgstr "رسالة ID"
 
-#: common/models.py:1610 common/models.py:3691
+#: common/models.py:1610 common/models.py:3693
 msgid "Unique identifier for this message"
 msgstr "فريد معرف لـ هذا رسالة"
 
@@ -1916,7 +1916,7 @@ msgstr ""
 msgid "Summary"
 msgstr ""
 
-#: common/models.py:1800 common/models.py:3668
+#: common/models.py:1800 common/models.py:3670
 msgid "Read"
 msgstr "قراءة"
 
@@ -2199,7 +2199,7 @@ msgstr "افتراضي سجل"
 msgid "Default entry for this selection list"
 msgstr "افتراضي سجل لـ هذا اختيار قائمة"
 
-#: common/models.py:2501 common/models.py:3811
+#: common/models.py:2501 common/models.py:3813
 msgid "Created"
 msgstr "تم الإنشاء"
 
@@ -2370,7 +2370,7 @@ msgstr "قالب"
 msgid "Parameter template"
 msgstr "معلمة قالب"
 
-#: common/models.py:3064 common/models.py:3453 importer/models.py:684
+#: common/models.py:3064 common/models.py:3455 importer/models.py:684
 msgid "Data"
 msgstr "بيانات"
 
@@ -2440,177 +2440,177 @@ msgstr ""
 msgid "Image file"
 msgstr "صورة ملف"
 
-#: common/models.py:3449
+#: common/models.py:3451
 msgid "Barcode Scan"
 msgstr "مسح الباركود"
 
-#: common/models.py:3454
+#: common/models.py:3456
 msgid "Barcode data"
 msgstr "باركود بيانات"
 
-#: common/models.py:3465
+#: common/models.py:3467
 msgid "User who scanned the barcode"
 msgstr "مستخدم من تم المسح ال باركود"
 
-#: common/models.py:3470 importer/models.py:72
+#: common/models.py:3472 importer/models.py:72
 msgid "Timestamp"
 msgstr "طابع زمني"
 
-#: common/models.py:3471
+#: common/models.py:3473
 msgid "Date and time of the barcode scan"
 msgstr "تاريخ و وقت لـ ال مسح الباركود"
 
-#: common/models.py:3477
+#: common/models.py:3479
 msgid "URL endpoint which processed the barcode"
 msgstr "URL نقطة نهاية الذي processed ال باركود"
 
-#: common/models.py:3484 order/models.py:2225 plugin/serializers.py:93
+#: common/models.py:3486 order/models.py:2225 plugin/serializers.py:93
 msgid "Context"
 msgstr "سياق"
 
-#: common/models.py:3485
+#: common/models.py:3487
 msgid "Context data for the barcode scan"
 msgstr "سياق بيانات لـ ال مسح الباركود"
 
-#: common/models.py:3492
+#: common/models.py:3494
 msgid "Response"
 msgstr "استجابة"
 
-#: common/models.py:3493
+#: common/models.py:3495
 msgid "Response data from the barcode scan"
 msgstr "استجابة بيانات من ال مسح الباركود"
 
-#: common/models.py:3499 report/templates/report/inventree_test_report.html:103
+#: common/models.py:3501 report/templates/report/inventree_test_report.html:103
 #: stock/models.py:3892
 msgid "Result"
 msgstr "نتيجة"
 
-#: common/models.py:3500
+#: common/models.py:3502
 msgid "Was the barcode scan successful?"
 msgstr "كان ال مسح الباركود ناجح؟"
 
-#: common/models.py:3582
+#: common/models.py:3584
 msgid "An error occurred"
 msgstr "خطأ حدث"
 
-#: common/models.py:3603
+#: common/models.py:3605
 msgid "INVE-E8: Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion."
 msgstr "INVE-E8: بريد إلكتروني سجل الحذف هو protected. تعيين INVENTREE_PROTECT_EMAIL_LOG إلى خطأ إلى السماح الحذف."
 
-#: common/models.py:3650
+#: common/models.py:3652
 msgid "Email Message"
 msgstr "بريد إلكتروني رسالة"
 
-#: common/models.py:3651
+#: common/models.py:3653
 msgid "Email Messages"
 msgstr "بريد إلكتروني Messages"
 
-#: common/models.py:3658
+#: common/models.py:3660
 msgid "Announced"
 msgstr ""
 
-#: common/models.py:3660
+#: common/models.py:3662
 msgid "Sent"
 msgstr "تم الإرسال"
 
-#: common/models.py:3661
+#: common/models.py:3663
 msgid "Failed"
 msgstr "فشل"
 
-#: common/models.py:3664
+#: common/models.py:3666
 msgid "Delivered"
 msgstr ""
 
-#: common/models.py:3672
+#: common/models.py:3674
 msgid "Confirmed"
 msgstr ""
 
-#: common/models.py:3678
+#: common/models.py:3680
 msgid "Inbound"
 msgstr ""
 
-#: common/models.py:3679
+#: common/models.py:3681
 msgid "Outbound"
 msgstr ""
 
-#: common/models.py:3684
+#: common/models.py:3686
 msgid "No Reply"
 msgstr "لا Reply"
 
-#: common/models.py:3685
+#: common/models.py:3687
 msgid "Track Delivery"
 msgstr "تتبع تسليم"
 
-#: common/models.py:3686
+#: common/models.py:3688
 msgid "Track Read"
 msgstr "تتبع قراءة"
 
-#: common/models.py:3687
+#: common/models.py:3689
 msgid "Track Click"
 msgstr "تتبع انقر"
 
-#: common/models.py:3690 common/models.py:3798
+#: common/models.py:3692 common/models.py:3800
 msgid "Global ID"
 msgstr ""
 
-#: common/models.py:3703
+#: common/models.py:3705
 msgid "Identifier for this message (might be supplied by external system)"
 msgstr "معرف لـ هذا رسالة (might يكون مورد حسب خارجي نظام)"
 
-#: common/models.py:3710
+#: common/models.py:3712
 msgid "Thread ID"
 msgstr "سلسلة ID"
 
-#: common/models.py:3712
+#: common/models.py:3714
 msgid "Identifier for this message thread (might be supplied by external system)"
 msgstr "معرف لـ هذا رسالة سلسلة (might يكون مورد حسب خارجي نظام)"
 
-#: common/models.py:3721
+#: common/models.py:3723
 msgid "Thread"
 msgstr "سلسلة"
 
-#: common/models.py:3722
+#: common/models.py:3724
 msgid "Linked thread for this message"
 msgstr "مرتبط سلسلة لـ هذا رسالة"
 
-#: common/models.py:3738
+#: common/models.py:3740
 msgid "Priority"
 msgstr ""
 
-#: common/models.py:3780
+#: common/models.py:3782
 msgid "Email Thread"
 msgstr "بريد إلكتروني سلسلة"
 
-#: common/models.py:3781
+#: common/models.py:3783
 msgid "Email Threads"
 msgstr "بريد إلكتروني Threads"
 
-#: common/models.py:3792 generic/states/serializers.py:16
+#: common/models.py:3794 generic/states/serializers.py:16
 #: machine/serializers.py:24 plugin/models.py:46 users/models.py:236
 msgid "Key"
 msgstr "مفتاح"
 
-#: common/models.py:3795
+#: common/models.py:3797
 msgid "Unique key for this thread (used to identify the thread)"
 msgstr "فريد مفتاح لـ هذا سلسلة (مستخدم إلى identify ال سلسلة)"
 
-#: common/models.py:3799
+#: common/models.py:3801
 msgid "Unique identifier for this thread"
 msgstr "فريد معرف لـ هذا سلسلة"
 
-#: common/models.py:3806
+#: common/models.py:3808
 msgid "Started Internal"
 msgstr "بدأ داخلي"
 
-#: common/models.py:3807
+#: common/models.py:3809
 msgid "Was this thread started internally?"
 msgstr "كان هذا سلسلة بدأ internally؟"
 
-#: common/models.py:3812
+#: common/models.py:3814
 msgid "Date and time that the thread was created"
 msgstr "تاريخ و وقت ذلك ال سلسلة كان تم الإنشاء"
 
-#: common/models.py:3817
+#: common/models.py:3819
 msgid "Date and time that the thread was last updated"
 msgstr "تاريخ و وقت ذلك ال سلسلة كان آخر تم التحديث"
 
@@ -3169,7 +3169,7 @@ msgstr "قابل للشراء"
 msgid "Parts are purchaseable by default"
 msgstr "أصناف هي قابل للشراء حسب افتراضي"
 
-#: common/setting/system.py:505 part/models.py:1305 stock/api.py:703
+#: common/setting/system.py:505 part/models.py:1305 stock/api.py:716
 msgid "Salable"
 msgstr "قابل للبيع"
 
@@ -4534,7 +4534,7 @@ msgid "Manufacturer"
 msgstr "الشركة المصنعة"
 
 #: company/api.py:301 company/models.py:124 company/models.py:408
-#: stock/api.py:955
+#: stock/api.py:968
 msgid "Company"
 msgstr "الشركة"
 
@@ -4720,7 +4720,7 @@ msgid "Link to address information (external)"
 msgstr "رابط إلى عنوان معلومات (خارجي)"
 
 #: company/models.py:512 company/models.py:803 company/serializers.py:529
-#: stock/api.py:621
+#: stock/api.py:634
 msgid "Manufacturer Part"
 msgstr "صنف الشركة المصنعة"
 
@@ -4770,7 +4770,7 @@ msgstr "مرتبط صنف الشركة المصنعة يجب مرجع ال نف�
 #: order/models.py:741 part/serializers.py:452
 #: plugin/builtin/suppliers/digikey.py:26 plugin/builtin/suppliers/lcsc.py:27
 #: plugin/builtin/suppliers/mouser.py:25 plugin/builtin/suppliers/tme.py:27
-#: stock/api.py:627 templates/email/overdue_purchase_order.html:16
+#: stock/api.py:640 templates/email/overdue_purchase_order.html:16
 msgid "Supplier"
 msgstr "المورد"
 
@@ -5912,7 +5912,7 @@ msgstr "يجب أن يكون الكمية 1 لـ مسلسل عنصر المخز�
 msgid "Sales order does not match shipment"
 msgstr "طلب البيع يقوم غير مطابقة شحنة"
 
-#: order/models.py:3162 plugin/base/barcodes/api.py:721
+#: order/models.py:3162 plugin/base/barcodes/api.py:724
 msgid "Shipment does not match sales order"
 msgstr "شحنة يقوم غير مطابقة طلب البيع"
 
@@ -6396,7 +6396,7 @@ msgstr "مفضلة"
 msgid "Filter by starred categories"
 msgstr "تصفية حسب مفضلة فئات"
 
-#: part/api.py:109 stock/api.py:328
+#: part/api.py:109 stock/api.py:341
 msgid "Depth"
 msgstr ""
 
@@ -6404,7 +6404,7 @@ msgstr ""
 msgid "Filter by category depth"
 msgstr "تصفية حسب فئة depth"
 
-#: part/api.py:127 stock/api.py:346
+#: part/api.py:127 stock/api.py:359
 msgid "Top Level"
 msgstr "أعلى مستوى"
 
@@ -6412,7 +6412,7 @@ msgstr "أعلى مستوى"
 msgid "Filter by top-level categories"
 msgstr "تصفية حسب top-level فئات"
 
-#: part/api.py:142 stock/api.py:361
+#: part/api.py:142 stock/api.py:374
 msgid "Cascade"
 msgstr ""
 
@@ -6432,11 +6432,11 @@ msgstr "تصفية حسب الأصل فئة"
 msgid "Exclude sub-categories under the specified category"
 msgstr "استبعاد sub-categories under ال محدد فئة"
 
-#: part/api.py:298 stock/api.py:508
+#: part/api.py:298 stock/api.py:521
 msgid "Max Level"
 msgstr "Max مستوى"
 
-#: part/api.py:300 stock/api.py:510
+#: part/api.py:300 stock/api.py:523
 msgid "Limit the depth of the category tree"
 msgstr "حد ال depth لـ ال فئة tree"
 
@@ -7682,83 +7682,83 @@ msgstr "نموذج هو غير supported"
 msgid "Model instance not found"
 msgstr "نموذج نسخة غير تم العثور"
 
-#: plugin/base/barcodes/api.py:290
+#: plugin/base/barcodes/api.py:293
 msgid "Barcode matches existing item"
 msgstr "باركود matches موجود عنصر"
 
-#: plugin/base/barcodes/api.py:419
+#: plugin/base/barcodes/api.py:422
 msgid "No matching part data found"
 msgstr "لم يتم العثور على مطابق صنف بيانات"
 
-#: plugin/base/barcodes/api.py:435
+#: plugin/base/barcodes/api.py:438
 msgid "No matching supplier parts found"
 msgstr "لم يتم العثور على مطابق أصناف المورد"
 
-#: plugin/base/barcodes/api.py:438
+#: plugin/base/barcodes/api.py:441
 msgid "Multiple matching supplier parts found"
 msgstr "متعدد مطابق أصناف المورد تم العثور"
 
-#: plugin/base/barcodes/api.py:448 plugin/base/barcodes/api.py:508
+#: plugin/base/barcodes/api.py:451 plugin/base/barcodes/api.py:511
 msgid "You do not have the required permissions for purchase orders"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:458 plugin/base/barcodes/api.py:761
+#: plugin/base/barcodes/api.py:461 plugin/base/barcodes/api.py:764
 msgid "No matching plugin found for barcode data"
 msgstr "لا يوجد إضافة تم العثور لـ باركود بيانات مطابق"
 
-#: plugin/base/barcodes/api.py:468
+#: plugin/base/barcodes/api.py:471
 msgid "Matched supplier part"
 msgstr "Matched صنف المورد"
 
-#: plugin/base/barcodes/api.py:543
+#: plugin/base/barcodes/api.py:546
 msgid "Item has already been received"
 msgstr "عنصر لديه بالفعل تم مستلم"
 
-#: plugin/base/barcodes/api.py:611
+#: plugin/base/barcodes/api.py:614
 msgid "Purchase order Found\\rNo supplier Part Match"
 msgstr "طلب الشراء Found\\rNo صنف المورد مطابقة"
 
-#: plugin/base/barcodes/api.py:617
+#: plugin/base/barcodes/api.py:620
 msgid "Supplier Part Found\\rNo Purchase Order Match"
 msgstr "صنف المورد Found\\rNo طلب الشراء مطابقة"
 
-#: plugin/base/barcodes/api.py:653
+#: plugin/base/barcodes/api.py:656
 msgid "No plugin match for supplier barcode"
 msgstr "لا إضافة مطابقة لـ مورد باركود"
 
-#: plugin/base/barcodes/api.py:704
+#: plugin/base/barcodes/api.py:707
 msgid "Multiple matching line items found"
 msgstr "متعدد مطابق البنود تم العثور"
 
-#: plugin/base/barcodes/api.py:707 plugin/base/barcodes/mixins.py:393
+#: plugin/base/barcodes/api.py:710 plugin/base/barcodes/mixins.py:393
 msgid "No matching line item found"
 msgstr "لم يتم العثور على مطابق بند"
 
-#: plugin/base/barcodes/api.py:749
+#: plugin/base/barcodes/api.py:752
 msgid "You do not have the required permissions for sales orders"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:758
+#: plugin/base/barcodes/api.py:761
 msgid "No sales order provided"
 msgstr "لا طلب البيع مقدم"
 
-#: plugin/base/barcodes/api.py:767
+#: plugin/base/barcodes/api.py:770
 msgid "Barcode does not match an existing stock item"
 msgstr "باركود يقوم غير مطابقة موجود عنصر المخزون"
 
-#: plugin/base/barcodes/api.py:783
+#: plugin/base/barcodes/api.py:786
 msgid "Stock item does not match line item"
 msgstr "عنصر المخزون يقوم غير مطابقة بند"
 
-#: plugin/base/barcodes/api.py:813
+#: plugin/base/barcodes/api.py:816
 msgid "Insufficient stock available"
 msgstr "Insufficient مخزون متاح"
 
-#: plugin/base/barcodes/api.py:826
+#: plugin/base/barcodes/api.py:829
 msgid "Stock item allocated to sales order"
 msgstr "عنصر المخزون مخصص إلى طلب البيع"
 
-#: plugin/base/barcodes/api.py:829
+#: plugin/base/barcodes/api.py:832
 msgid "Not enough information"
 msgstr "غير enough معلومات"
 
@@ -7929,7 +7929,7 @@ msgstr "يوفر native الدعم لـ باركودات"
 #: plugin/builtin/integration/core_notifications.py:26
 #: plugin/builtin/integration/core_notifications.py:71
 #: plugin/builtin/integration/core_notifications.py:131
-#: plugin/builtin/integration/core_wellknown.py:22
+#: plugin/builtin/integration/core_wellknown.py:23
 #: plugin/builtin/integration/currency_exchange.py:21
 #: plugin/builtin/integration/machine_types.py:17
 #: plugin/builtin/integration/part_notifications.py:21
@@ -8246,11 +8246,11 @@ msgstr "URL ذلك هو مستخدم إلى إرسال messages إلى slack cha
 msgid "Open link"
 msgstr "فتح رابط"
 
-#: plugin/builtin/integration/core_wellknown.py:20
+#: plugin/builtin/integration/core_wellknown.py:21
 msgid "InvenTree Well-Known URLs"
 msgstr ""
 
-#: plugin/builtin/integration/core_wellknown.py:21
+#: plugin/builtin/integration/core_wellknown.py:22
 msgid "Built-in well-known URLs for InvenTree"
 msgstr ""
 
@@ -9192,168 +9192,168 @@ msgstr ""
 msgid "Last Used"
 msgstr ""
 
-#: stock/api.py:328
+#: stock/api.py:341
 msgid "Filter by location depth"
 msgstr "تصفية حسب موقع depth"
 
-#: stock/api.py:348
+#: stock/api.py:361
 msgid "Filter by top-level locations"
 msgstr "تصفية حسب top-level مواقع"
 
-#: stock/api.py:363
+#: stock/api.py:376
 msgid "Include sub-locations in filtered results"
 msgstr "تضمين sub-locations في filtered نتائج"
 
-#: stock/api.py:384 stock/serializers.py:1500
+#: stock/api.py:397 stock/serializers.py:1500
 msgid "Parent Location"
 msgstr "الأصل موقع"
 
-#: stock/api.py:385
+#: stock/api.py:398
 msgid "Filter by parent location"
 msgstr "تصفية حسب الأصل موقع"
 
-#: stock/api.py:665
+#: stock/api.py:678
 msgid "Part name (case insensitive)"
 msgstr "صنف اسم (case insensitive)"
 
-#: stock/api.py:671
+#: stock/api.py:684
 msgid "Part name contains (case insensitive)"
 msgstr "صنف اسم يحتوي (case insensitive)"
 
-#: stock/api.py:677
+#: stock/api.py:690
 msgid "Part name (regex)"
 msgstr "صنف اسم (تعبير نمطي)"
 
-#: stock/api.py:682
+#: stock/api.py:695
 msgid "Part IPN (case insensitive)"
 msgstr "صنف IPN (case insensitive)"
 
-#: stock/api.py:688
+#: stock/api.py:701
 msgid "Part IPN contains (case insensitive)"
 msgstr "صنف IPN يحتوي (case insensitive)"
 
-#: stock/api.py:694
+#: stock/api.py:707
 msgid "Part IPN (regex)"
 msgstr "صنف IPN (تعبير نمطي)"
 
-#: stock/api.py:706
+#: stock/api.py:719
 msgid "Minimum stock"
 msgstr "أدنى مخزون"
 
-#: stock/api.py:710
+#: stock/api.py:723
 msgid "Maximum stock"
 msgstr "أقصى مخزون"
 
-#: stock/api.py:713
+#: stock/api.py:726
 msgid "Status Code"
 msgstr "حالة رمز"
 
-#: stock/api.py:757
+#: stock/api.py:770
 msgid "External Location"
 msgstr "خارجي موقع"
 
-#: stock/api.py:856
+#: stock/api.py:869
 msgid "Consumed by Build Order"
 msgstr "مستهلك حسب أمر الإنتاج"
 
-#: stock/api.py:866
+#: stock/api.py:879
 msgid "Installed in other stock item"
 msgstr "مثبت في أخرى عنصر المخزون"
 
-#: stock/api.py:946
+#: stock/api.py:959
 msgid "Part Tree"
 msgstr "صنف Tree"
 
-#: stock/api.py:975
+#: stock/api.py:988
 msgid "Updated before"
 msgstr "تم التحديث قبل"
 
-#: stock/api.py:979
+#: stock/api.py:992
 msgid "Updated after"
 msgstr "تم التحديث بعد"
 
-#: stock/api.py:983
+#: stock/api.py:996
 msgid "Stocktake Before"
 msgstr "جرد المخزون قبل"
 
-#: stock/api.py:987
+#: stock/api.py:1000
 msgid "Stocktake After"
 msgstr "جرد المخزون بعد"
 
-#: stock/api.py:991
+#: stock/api.py:1004
 msgid "Has Stocktake Date"
 msgstr "تاريخ لديه جرد المخزون"
 
-#: stock/api.py:1002
+#: stock/api.py:1015
 msgid "Expiry date before"
 msgstr "انتهاء تاريخ قبل"
 
-#: stock/api.py:1006
+#: stock/api.py:1019
 msgid "Expiry date after"
 msgstr "انتهاء تاريخ بعد"
 
-#: stock/api.py:1009 stock/serializers.py:691
+#: stock/api.py:1022 stock/serializers.py:691
 msgid "Stale"
 msgstr "قديم"
 
-#: stock/api.py:1033
+#: stock/api.py:1046
 msgid "Cascade Locations"
 msgstr "Cascade مواقع"
 
-#: stock/api.py:1034
+#: stock/api.py:1047
 msgid "If true, include items in child locations of the given location"
 msgstr "إذا صحيح، تضمين عناصر في فرعي مواقع لـ ال معطى موقع"
 
-#: stock/api.py:1040
+#: stock/api.py:1053
 msgid "Filter by numeric Location ID or the literal 'null'"
 msgstr "تصفية حسب numeric موقع ID أو ال literal 'null'"
 
-#: stock/api.py:1142
+#: stock/api.py:1155
 msgid "Quantity is required"
 msgstr "الكمية مطلوب"
 
-#: stock/api.py:1147
+#: stock/api.py:1160
 msgid "Valid part must be supplied"
 msgstr "يجب أن يكون صالح صنف مورد"
 
-#: stock/api.py:1178
+#: stock/api.py:1191
 msgid "The given supplier part does not exist"
 msgstr "ال معطى صنف المورد يقوم غير موجود"
 
-#: stock/api.py:1188
+#: stock/api.py:1201
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr "ال صنف المورد لديه حزمة حجم محدد، but flag use_pack_size غير تعيين"
 
-#: stock/api.py:1220
+#: stock/api.py:1233
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "الأرقام التسلسلية لا يمكن يكون مورد لـ non-trackable صنف"
 
-#: stock/api.py:1490
+#: stock/api.py:1503
 msgid "Include Installed"
 msgstr "تضمين مثبت"
 
-#: stock/api.py:1492
+#: stock/api.py:1505
 msgid "If true, include test results for items installed underneath the given stock item"
 msgstr "إذا صحيح، تضمين اختبار نتائج لـ عناصر مثبت underneath ال معطى عنصر المخزون"
 
-#: stock/api.py:1499
+#: stock/api.py:1512
 msgid "Filter by numeric Stock Item ID"
 msgstr "تصفية حسب numeric عنصر المخزون ID"
 
-#: stock/api.py:1520
+#: stock/api.py:1533
 #, python-brace-format
 msgid "Stock item with ID {id} does not exist"
 msgstr "عنصر المخزون مع ID {id} يقوم غير موجود"
 
-#: stock/api.py:1594
+#: stock/api.py:1607
 msgid "Include Part Variants"
 msgstr "تضمين صنف متغيرات"
 
-#: stock/api.py:1624
+#: stock/api.py:1637
 msgid "Date after"
 msgstr "تاريخ بعد"
 
-#: stock/api.py:1628
+#: stock/api.py:1641
 msgid "Date before"
 msgstr "تاريخ قبل"
 
