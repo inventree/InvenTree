@@ -280,6 +280,10 @@ If running with a PostgreSQL database backend, the following additional options 
 | `INVENTREE_DB_TCP_KEEPALIVES_COUNT` | database.tcp_keepalives_count | 5 | TCP keepalive count |
 | `INVENTREE_DB_TCP_USER_TIMEOUT` | database.tcp_user_timeout | 2000 | TCP user timeout (ms) |
 | `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" |
+| `INVENTREE_DB_JIT_ENABLED` | database.jit_enabled | False | Enable JIT compilation for PostgreSQL queries |
+
+!!! info "JIT Compilation"
+    PostgreSQL supports [JIT compilation](https://www.postgresql.org/docs/current/jit.html) for queries. This is disabled by default, as it can cause performance issues for small queries.
 
 ### MySQL Settings
 
