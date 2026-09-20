@@ -2255,11 +2255,7 @@ class BuildLineTests(BuildAPITest):
             self.assertNotIn(
                 'GROUP BY',
                 query['sql'].upper(),
-                'BuildLine count() query should not require a GROUP BY - this means a '
-                'Sum()/Count()-style aggregate annotation has crept back into '
-                'BuildLineSerializer.annotate_queryset(), which defeats the '
-                'queryset.count() optimization for every other annotation on the same '
-                'queryset (see dev/todo/stock_annotate.md).',
+                'BuildLine count() query should not require a GROUP BY'
             )
 
         # Confirm the 'allocated' value is still computed correctly
