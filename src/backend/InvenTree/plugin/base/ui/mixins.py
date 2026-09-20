@@ -22,6 +22,7 @@ FeatureType = Literal[
     'template_preview',  # Custom template preview
     'navigation',  # Custom navigation items
     'primary_action',  # Custom primary action buttons
+    'route',  # Custom react route
 ]
 
 
@@ -108,6 +109,7 @@ class UserInterfaceMixin:
             'template_editor': self.get_ui_template_editors,
             'template_preview': self.get_ui_template_previews,
             'primary_action': self.get_ui_primary_actions,
+            'route': self.get_ui_routes,
         }
 
         if feature_type in feature_map:
@@ -230,4 +232,8 @@ class UserInterfaceMixin:
         # return items
 
         # Default implementation returns an empty list
+        return []
+
+    def get_ui_routes(self, request, context, **kwargs):
+        """Return a list of custom React routes."""
         return []
