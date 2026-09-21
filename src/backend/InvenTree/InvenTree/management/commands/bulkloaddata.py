@@ -22,6 +22,38 @@ DEFAULT_BATCH_SIZE = 500
 PROGRESS_UPDATE_INTERVAL = 100
 
 
+@contextmanager
+def _suspend_auto_now(model):
+    """Temporarily disable auto_now / auto_now_add on a model's fields.
+
+    Normal (non-bulk) fixture loading saves each object with raw=True, which
+    tells Field.pre_save() to leave auto_now/auto_now_add fields alone and
+    use the fixture's own value. bulk_create() has no equivalent of that
+    raw=True path - it always calls Field.pre_save(), which unconditionally
+    stamps such fields with timezone.now(), discarding whatever value the
+    fixture provided (e.g. stock.StockItemTracking.date). Clearing the flags
+    for the duration of the bulk_create() call restores the raw=True
+    behaviour for this model.
+    """
+    affected = [
+        field
+        for field in model._meta.local_fields
+        if getattr(field, 'auto_now', False) or getattr(field, 'auto_now_add', False)
+    ]
+    saved = [(field, field.auto_now, field.auto_now_add) for field in affected]
+
+    for field in affected:
+        field.auto_now = False
+        field.auto_now_add = False
+
+    try:
+        yield
+    finally:
+        for field, auto_now, auto_now_add in saved:
+            field.auto_now = auto_now
+            field.auto_now_add = auto_now_add
+
+
 class Command(LoadDataCommand):
     """Load fixtures using bulk_create() for improved performance.
 
@@ -30,6 +62,11 @@ class Command(LoadDataCommand):
 
     - pre_save / post_save signals are not sent, and Model.save() / full_clean()
       are bypassed entirely (this is a Django bulk_create() limitation).
+      auto_now / auto_now_add fields are a partial exception: they are
+      temporarily disabled around the bulk_create() call (see
+      _suspend_auto_now()) so that fixture-provided values for fields such as
+      stock.StockItemTracking.date survive the import, matching what a
+      normal, non-bulk fixture load does via raw=True.
     - Multi-table inheritance is not supported by bulk_create() and will fail
       loudly rather than being silently mishandled. Natural-key foreign key /
       many-to-many resolution *is* supported (falling back to an individual,
@@ -181,11 +218,12 @@ class Command(LoadDataCommand):
         """Bulk-create every object buffered so far, grouped by model."""
         for model, objs in self.pending_objs.items():
             try:
-                model._default_manager.db_manager(self.using).bulk_create(
-                    [obj.object for obj in objs],
-                    batch_size=self.batch_size,
-                    ignore_conflicts=self.ignore_conflicts,
-                )
+                with _suspend_auto_now(model):
+                    model._default_manager.db_manager(self.using).bulk_create(
+                        [obj.object for obj in objs],
+                        batch_size=self.batch_size,
+                        ignore_conflicts=self.ignore_conflicts,
+                    )
             except (DatabaseError, IntegrityError, ValueError) as e:
                 e.args = (
                     f'Could not bulk-create {len(objs)} object(s) of {model._meta.label}: {e}',
