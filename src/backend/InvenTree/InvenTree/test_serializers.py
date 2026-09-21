@@ -3,19 +3,108 @@
 import sys
 import threading
 from concurrent.futures import ThreadPoolExecutor
+from types import SimpleNamespace
 
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.test import SimpleTestCase
 from django.urls import path, reverse
 
+from rest_framework import serializers
 from rest_framework.serializers import SerializerMethodField
 
 import InvenTree.serializers
 from InvenTree.mixins import ListCreateAPI, OutputOptionsMixin
-from InvenTree.serializers import OptionalField
+from InvenTree.serializers import DependentField, OptionalField
 from InvenTree.unit_test import InvenTreeAPITestCase
 from InvenTree.urls import backendpatterns
 from part.models import Part
+
+
+class DependentFieldTests(SimpleTestCase):
+    """Test validation of dynamically selected child fields and serializers."""
+
+    def get_serializer(self, child, value):
+        """Bind a dependent child using the same data as the request."""
+
+        class ParentSerializer(serializers.Serializer):
+            kind = serializers.CharField()
+            options = DependentField(
+                depends_on=['kind'], field_serializer='get_options'
+            )
+
+            def get_options(self, fields):
+                return child
+
+        data = {'kind': 'test', 'options': value}
+        return ParentSerializer(
+            data=data, context={'request': SimpleNamespace(data=data)}
+        )
+
+    def test_child_field_validators(self):
+        """Run validators on the selected child field."""
+        serializer = self.get_serializer(serializers.IntegerField(min_value=1), '0')
+
+        self.assertFalse(serializer.is_valid())
+        self.assertEqual(serializer.errors['options'][0].code, 'min_value')
+
+    def test_child_serializer_validation(self):
+        """Propagate object-level validation errors under the dependent field."""
+
+        class OptionsSerializer(serializers.Serializer):
+            copies = serializers.IntegerField()
+
+            def validate(self, attrs):
+                raise serializers.ValidationError('Invalid options', code='options')
+
+        serializer = self.get_serializer(OptionsSerializer(), {'copies': 1})
+
+        with self.assertRaises(serializers.ValidationError) as error:
+            serializer.is_valid(raise_exception=True)
+
+        detail = error.exception.detail['options']['non_field_errors'][0]
+        self.assertEqual(detail, 'Invalid options')
+        self.assertEqual(detail.code, 'options')
+
+    def test_valid_child_field(self):
+        """Preserve conversion of valid child field input."""
+        serializer = self.get_serializer(serializers.IntegerField(min_value=1), '2')
+
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        self.assertEqual(serializer.validated_data['options'], 2)
+
+    def test_valid_child_serializer(self):
+        """Use the data returned by the child serializer's validate method."""
+
+        class OptionsSerializer(serializers.Serializer):
+            copies = serializers.IntegerField()
+
+            def validate(self, attrs):
+                attrs['copies'] *= 2
+                return attrs
+
+        serializer = self.get_serializer(OptionsSerializer(), {'copies': '2'})
+
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        self.assertEqual(serializer.validated_data['options'], {'copies': 4})
+
+    def test_child_conversion_error(self):
+        """Preserve ordinary child field conversion errors."""
+        serializer = self.get_serializer(serializers.IntegerField(), 'invalid')
+
+        self.assertFalse(serializer.is_valid())
+        self.assertEqual(serializer.errors['options'][0].code, 'invalid')
+
+    def test_child_serializer_field_error(self):
+        """Preserve nested field errors from a child serializer."""
+
+        class OptionsSerializer(serializers.Serializer):
+            copies = serializers.IntegerField()
+
+        serializer = self.get_serializer(OptionsSerializer(), {'copies': 'invalid'})
+
+        self.assertFalse(serializer.is_valid())
+        self.assertEqual(serializer.errors['options']['copies'][0].code, 'invalid')
 
 
 class SampleSerializer(

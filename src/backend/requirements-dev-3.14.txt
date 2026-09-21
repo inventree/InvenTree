@@ -8,9 +8,9 @@ annotated-types==0.8.0 \
     #   -c src/backend/requirements-dev.txt
     #   -c src/backend/requirements.txt
     #   pydantic
-anyio==4.15.0 \
-    --hash=sha256:7ecd9937369ffce8bba0b5ccb9b3a9507b101b0ed50256aecfbab27e6c2acb99 \
-    --hash=sha256:b5c620ed540725e2579c31b17bb995b3bf02c9281c9cace04c7d186380bab85e
+anyio==4.15.1 \
+    --hash=sha256:6152fdbbf9a77fdec97731721bebf7c4c44f7c29b424b0065826173efc7ed101 \
+    --hash=sha256:9f28306018cbd6d329e64a36d58256edff76dd996fe423bc957326e578b82a94
     # via
     #   -c src/backend/requirements-dev.txt
     #   httpx
@@ -22,9 +22,9 @@ asgiref==3.12.1 \
     #   -c src/backend/requirements-dev.txt
     #   -c src/backend/requirements.txt
     #   django
-build==1.6.0 \
-    --hash=sha256:bd2c8afc603e7a2e0ce70e2ea85f0a6d02043bafbd307f5bada0f98669eca5af \
-    --hash=sha256:f7aaf1ebbb79178a02ba248bb524f2176b256017e17e8e4bd4289c7b38cc2bad
+build==1.6.1 \
+    --hash=sha256:51cc11666391ab6f092070437ac747002ff46f3e4113a3622177ee6b488bfc53 \
+    --hash=sha256:ecd351a4be9d35a9eaaba244a7687143c9c7d4aea6ac964e7e7ddab20cbcf4e7
     # via
     #   -c src/backend/requirements-dev.txt
     #   pip-tools
@@ -1005,15 +1005,15 @@ ty==0.0.76 \
     # via
     #   -c src/backend/requirements-dev.txt
     #   -r src/backend/requirements-dev.in
-types-psycopg2==2.9.21.20260724 \
-    --hash=sha256:4f87890dd06cea99e3bb0536330ffc2a7320e69059dc1ee0e2c884ef2718f2b4 \
-    --hash=sha256:db31031c37de823a2b21c787cb84832174fdda2a99a8b1af648206f19cc32f8c
+types-psycopg2==2.9.21.20260911 \
+    --hash=sha256:429920488100aa22c220f40aaaac96270125ea64333cf159858e422daa7d8174 \
+    --hash=sha256:834373add0aaf2497401acc49c41c540c4adfdec9bcc265f0460bb0808826a7d
     # via
     #   -c src/backend/requirements-dev.txt
     #   django-types
-types-pyyaml==6.0.12.20260815 \
-    --hash=sha256:28764110c9cf35846e733da32d8d734df7473c5dde9ef67c3b7332ec0e819858 \
-    --hash=sha256:6f332212b7e191f3afd5016a713c510b6340593b7ebec573c7d5d20aa5386d3b
+types-pyyaml==6.0.12.20260906 \
+    --hash=sha256:bca893ff0d51df5c9053137d5d0e6ccd36e939a196356f1d5c16372422f5137b \
+    --hash=sha256:f59c1cc05010b833d2d72287bbaa72610106b28d42d89a907313117faba85212
     # via
     #   -c src/backend/requirements-dev.txt
     #   django-stubs

@@ -2276,7 +2276,11 @@ class Attachment(
             img.save(thumb_io, format='PNG')
             thumb_io.seek(0)
 
-            thumb_name = f'thumb_{os.path.basename(self.attachment.name)}'
+            # Save the thumbnail alongside the original attachment file
+            attachment_dir = os.path.dirname(self.attachment.name)
+            thumb_name = os.path.join(
+                attachment_dir, f'thumb_{os.path.basename(self.attachment.name)}'
+            )
             self.thumbnail.save(thumb_name, ContentFile(thumb_io.read()), save=False)
         except Exception:
             pass
@@ -3425,7 +3429,7 @@ class NotesImage(models.Model):
 
 @receiver(post_delete, sender=NotesImage, dispatch_uid='notesimage_post_delete')
 def after_notesimage_deleted(sender, instance, **kwargs):
-    """Remove the image file from storage once a NotesImage row is deleted.
+    """Remove the image file after the NotesImage deletion commits.
 
     A signal (rather than an overridden delete()) is required here: a NotesImage row is
     usually removed via a cascade - e.g. deleting its parent Note, or
@@ -3435,7 +3439,9 @@ def after_notesimage_deleted(sender, instance, **kwargs):
     started from a single instance.delete() or a bulk QuerySet.delete().
     """
     if instance.image:
-        instance.image.delete(save=False)
+        transaction.on_commit(
+            lambda: instance.image.delete(save=False), using=kwargs.get('using')
+        )
 
 
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):
