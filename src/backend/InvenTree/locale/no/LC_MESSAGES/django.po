@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-19 08:01+0000\n"
-"PO-Revision-Date: 2026-09-19 08:06\n"
+"POT-Creation-Date: 2026-09-21 06:41+0000\n"
+"PO-Revision-Date: 2026-09-21 06:46\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -114,7 +114,7 @@ msgid "Invalid decimal value"
 msgstr ""
 
 #: InvenTree/fields.py:286 build/serializers.py:537 build/serializers.py:598
-#: build/serializers.py:1779 common/models.py:3115 company/models.py:828
+#: build/serializers.py:1781 common/models.py:3119 company/models.py:828
 #: order/models.py:2173
 #: report/templates/report/inventree_build_order_report.html:171
 #: stock/models.py:3785 stock/models.py:3911 stock/serializers.py:777
@@ -278,18 +278,18 @@ msgid "Invalid choice"
 msgstr "Ugyldig valg"
 
 #: InvenTree/models.py:1251 common/api.py:1806 common/models.py:1470
-#: common/models.py:1889 common/models.py:2325 common/models.py:2450
-#: common/models.py:2760 common/serializers.py:693
+#: common/models.py:1889 common/models.py:2329 common/models.py:2454
+#: common/models.py:2764 common/serializers.py:693
 #: generic/states/serializers.py:20 machine/models.py:28 part/models.py:1119
-#: plugin/models.py:54 report/models.py:222 stock/models.py:89
+#: plugin/models.py:54 report/models.py:224 stock/models.py:89
 msgid "Name"
 msgstr "Navn"
 
 #: InvenTree/models.py:1257 build/models.py:274 common/models.py:187
-#: common/models.py:2457 common/models.py:2598 common/models.py:2775
-#: common/models.py:3389 company/models.py:563 company/models.py:819
+#: common/models.py:2461 common/models.py:2602 common/models.py:2779
+#: common/models.py:3393 company/models.py:563 company/models.py:819
 #: order/models.py:508 order/models.py:2218 part/models.py:1142
-#: report/models.py:228 report/models.py:872 report/models.py:898
+#: report/models.py:230 report/models.py:878 report/models.py:904
 #: report/templates/report/inventree_build_order_report.html:116
 #: stock/models.py:95
 msgid "Description"
@@ -299,7 +299,7 @@ msgstr "Beskrivelse"
 msgid "Description (optional)"
 msgstr "Beskrivelse (valgfritt)"
 
-#: InvenTree/models.py:1273 common/models.py:3478
+#: InvenTree/models.py:1273 common/models.py:3482
 msgid "Path"
 msgstr "Sti"
 
@@ -335,7 +335,7 @@ msgstr "Serverfeil"
 msgid "An error has been logged by the server."
 msgstr "En feil har blitt logget av serveren."
 
-#: InvenTree/models.py:1767 common/models.py:3414
+#: InvenTree/models.py:1767 common/models.py:3418
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:34
@@ -1020,7 +1020,7 @@ msgid "Build output has already been completed"
 msgstr ""
 
 #: build/models.py:1337 build/models.py:1438 build/serializers.py:328
-#: build/serializers.py:382 build/serializers.py:925 build/serializers.py:1730
+#: build/serializers.py:382 build/serializers.py:925 build/serializers.py:1732
 #: order/models.py:819 order/serializers.py:642 order/serializers.py:877
 #: part/models.py:3879 stock/models.py:1079 stock/models.py:1504
 #: stock/models.py:1588 stock/models.py:1906 stock/models.py:2117
@@ -1515,31 +1515,31 @@ msgstr "Tilgjengelige erstatningsvarer"
 msgid "Available Variant Stock"
 msgstr "Tilgjengelige variantvarer"
 
-#: build/serializers.py:1743
+#: build/serializers.py:1745
 msgid "Consumed quantity exceeds allocated quantity"
 msgstr ""
 
-#: build/serializers.py:1780
+#: build/serializers.py:1782
 msgid "Optional notes for the stock consumption"
 msgstr ""
 
-#: build/serializers.py:1797
+#: build/serializers.py:1799
 msgid "Build item must point to the correct build order"
 msgstr ""
 
-#: build/serializers.py:1802
+#: build/serializers.py:1804
 msgid "Duplicate build item allocation"
 msgstr ""
 
-#: build/serializers.py:1820
+#: build/serializers.py:1822
 msgid "Build line must point to the correct build order"
 msgstr ""
 
-#: build/serializers.py:1825
+#: build/serializers.py:1827
 msgid "Duplicate build line allocation"
 msgstr ""
 
-#: build/serializers.py:1837
+#: build/serializers.py:1839
 msgid "At least one item or line must be provided"
 msgstr ""
 
@@ -1597,7 +1597,7 @@ msgstr "Forfalt produksjonsordre"
 msgid "Build order {bo} is now overdue"
 msgstr "Produksjonsordre {bo} er nå forfalt"
 
-#: common/api.py:490 common/models.py:3048
+#: common/api.py:490 common/models.py:3052
 msgid "Model ID"
 msgstr ""
 
@@ -1713,7 +1713,7 @@ msgstr ""
 msgid "Project Code Label"
 msgstr "Etikett for prosjektkode"
 
-#: common/models.py:111 common/models.py:136 common/models.py:3818
+#: common/models.py:111 common/models.py:136 common/models.py:3822
 msgid "Updated"
 msgstr "Oppdatert"
 
@@ -1737,8 +1737,8 @@ msgstr "Unik prosjektkode"
 msgid "Project description"
 msgstr "Prosjektbeskrivelse"
 
-#: common/models.py:193 common/models.py:1475 common/models.py:2470
-#: common/models.py:2605 company/models.py:194 company/models.py:787
+#: common/models.py:193 common/models.py:1475 common/models.py:2474
+#: common/models.py:2609 company/models.py:194 company/models.py:787
 #: machine/models.py:43 part/models.py:1310 plugin/models.py:69
 #: stock/api.py:715 users/models.py:381 users/models.py:749
 #: users/serializers.py:357 users/serializers.py:478
@@ -1787,7 +1787,7 @@ msgstr "Nøkkelstreng må være unik"
 
 #: common/models.py:1372 common/models.py:1373 common/models.py:1483
 #: common/models.py:1484 common/models.py:1731 common/models.py:1732
-#: common/models.py:2162 common/models.py:2163 common/models.py:3466
+#: common/models.py:2162 common/models.py:2163 common/models.py:3470
 #: importer/models.py:105 part/models.py:3526 part/models.py:3554
 #: plugin/models.py:392 plugin/models.py:393
 #: report/templates/report/inventree_test_report.html:105 users/models.py:251
@@ -1840,11 +1840,11 @@ msgstr "Hemmelig"
 msgid "Shared secret for HMAC"
 msgstr "Delt hemmlighet for HMAC"
 
-#: common/models.py:1609 common/models.py:3703
+#: common/models.py:1609 common/models.py:3707
 msgid "Message ID"
 msgstr "Melding ID"
 
-#: common/models.py:1610 common/models.py:3693
+#: common/models.py:1610 common/models.py:3697
 msgid "Unique identifier for this message"
 msgstr "Unik Id for denne meldingen"
 
@@ -1892,7 +1892,7 @@ msgstr ""
 msgid "Id"
 msgstr ""
 
-#: common/models.py:1789 common/models.py:3383
+#: common/models.py:1789 common/models.py:3387
 msgid "Title"
 msgstr "Tittel"
 
@@ -1916,7 +1916,7 @@ msgstr "Forfatter"
 msgid "Summary"
 msgstr "Sammendrag"
 
-#: common/models.py:1800 common/models.py:3670
+#: common/models.py:1800 common/models.py:3674
 msgid "Read"
 msgstr "Les"
 
@@ -1998,7 +1998,7 @@ msgstr ""
 msgid "Failed to save renamed file"
 msgstr ""
 
-#: common/models.py:2120 common/models.py:2754
+#: common/models.py:2120 common/models.py:2758
 msgid "Model type"
 msgstr ""
 
@@ -2054,331 +2054,331 @@ msgstr "Filstørrelse i byte"
 msgid "Invalid model type specified for attachment"
 msgstr "Ugyldig modelltype spesifisert for vedlegg"
 
-#: common/models.py:2301
+#: common/models.py:2305
 msgid "Custom State"
 msgstr ""
 
-#: common/models.py:2302
+#: common/models.py:2306
 msgid "Custom States"
 msgstr ""
 
-#: common/models.py:2307
+#: common/models.py:2311
 msgid "Reference Status Set"
 msgstr ""
 
-#: common/models.py:2308
+#: common/models.py:2312
 msgid "Status set that is extended with this custom state"
 msgstr ""
 
-#: common/models.py:2312 generic/states/serializers.py:18
+#: common/models.py:2316 generic/states/serializers.py:18
 msgid "Logical Key"
 msgstr ""
 
-#: common/models.py:2314
+#: common/models.py:2318
 msgid "State logical key that is equal to this custom state in business logic"
 msgstr ""
 
-#: common/models.py:2319 common/models.py:2586 machine/serializers.py:27
+#: common/models.py:2323 common/models.py:2590 machine/serializers.py:27
 #: report/templates/report/inventree_test_report.html:104 stock/models.py:3898
 msgid "Value"
 msgstr "Verdi"
 
-#: common/models.py:2320
+#: common/models.py:2324
 msgid "Numerical value that will be saved in the models database"
 msgstr ""
 
-#: common/models.py:2326
+#: common/models.py:2330
 msgid "Name of the state"
 msgstr ""
 
-#: common/models.py:2335 common/models.py:2592 generic/states/serializers.py:22
+#: common/models.py:2339 common/models.py:2596 generic/states/serializers.py:22
 msgid "Label"
 msgstr ""
 
-#: common/models.py:2336
+#: common/models.py:2340
 msgid "Label that will be displayed in the frontend"
 msgstr ""
 
-#: common/models.py:2343 generic/states/serializers.py:24
+#: common/models.py:2347 generic/states/serializers.py:24
 msgid "Color"
 msgstr ""
 
-#: common/models.py:2344
+#: common/models.py:2348
 msgid "Color that will be displayed in the frontend"
 msgstr ""
 
-#: common/models.py:2352
+#: common/models.py:2356
 msgid "Model"
 msgstr ""
 
-#: common/models.py:2353
+#: common/models.py:2357
 msgid "Model this state is associated with"
 msgstr ""
 
-#: common/models.py:2368
+#: common/models.py:2372
 msgid "Model must be selected"
 msgstr ""
 
-#: common/models.py:2371
+#: common/models.py:2375
 msgid "Key must be selected"
 msgstr ""
 
-#: common/models.py:2374
+#: common/models.py:2378
 msgid "Logical key must be selected"
 msgstr ""
 
-#: common/models.py:2378
+#: common/models.py:2382
 msgid "Key must be different from logical key"
 msgstr ""
 
-#: common/models.py:2385
+#: common/models.py:2389
 msgid "Valid reference status class must be provided"
 msgstr ""
 
-#: common/models.py:2391
+#: common/models.py:2395
 msgid "Key must be different from the logical keys of the reference status"
 msgstr ""
 
-#: common/models.py:2398
+#: common/models.py:2402
 msgid "Logical key must be in the logical keys of the reference status"
 msgstr ""
 
-#: common/models.py:2405
+#: common/models.py:2409
 msgid "Name must be different from the names of the reference status"
 msgstr ""
 
-#: common/models.py:2445 common/models.py:2580 common/models.py:2799
+#: common/models.py:2449 common/models.py:2584 common/models.py:2803
 msgid "Selection List"
 msgstr ""
 
-#: common/models.py:2446
+#: common/models.py:2450
 msgid "Selection Lists"
 msgstr ""
 
-#: common/models.py:2451
+#: common/models.py:2455
 msgid "Name of the selection list"
 msgstr ""
 
-#: common/models.py:2458
+#: common/models.py:2462
 msgid "Description of the selection list"
 msgstr ""
 
-#: common/models.py:2464 part/models.py:1315
+#: common/models.py:2468 part/models.py:1315
 msgid "Locked"
 msgstr ""
 
-#: common/models.py:2465
+#: common/models.py:2469
 msgid "Is this selection list locked?"
 msgstr ""
 
-#: common/models.py:2471
+#: common/models.py:2475
 msgid "Can this selection list be used?"
 msgstr ""
 
-#: common/models.py:2479
+#: common/models.py:2483
 msgid "Source Plugin"
 msgstr ""
 
-#: common/models.py:2480
+#: common/models.py:2484
 msgid "Plugin which provides the selection list"
 msgstr ""
 
-#: common/models.py:2485
+#: common/models.py:2489
 msgid "Source String"
 msgstr ""
 
-#: common/models.py:2486
+#: common/models.py:2490
 msgid "Optional string identifying the source used for this list"
 msgstr ""
 
-#: common/models.py:2495
+#: common/models.py:2499
 msgid "Default Entry"
 msgstr ""
 
-#: common/models.py:2496
+#: common/models.py:2500
 msgid "Default entry for this selection list"
 msgstr ""
 
-#: common/models.py:2501 common/models.py:3813
+#: common/models.py:2505 common/models.py:3817
 msgid "Created"
 msgstr "Opprettet"
 
-#: common/models.py:2502
+#: common/models.py:2506
 msgid "Date and time that the selection list was created"
 msgstr ""
 
-#: common/models.py:2507
+#: common/models.py:2511
 msgid "Last Updated"
 msgstr "Sist oppdatert"
 
-#: common/models.py:2508
+#: common/models.py:2512
 msgid "Date and time that the selection list was last updated"
 msgstr ""
 
-#: common/models.py:2570
+#: common/models.py:2574
 msgid "Selection List Entry"
 msgstr ""
 
-#: common/models.py:2571
+#: common/models.py:2575
 msgid "Selection List Entries"
 msgstr ""
 
-#: common/models.py:2581
+#: common/models.py:2585
 msgid "Selection list to which this entry belongs"
 msgstr ""
 
-#: common/models.py:2587
+#: common/models.py:2591
 msgid "Value of the selection list entry"
 msgstr ""
 
-#: common/models.py:2593
+#: common/models.py:2597
 msgid "Label for the selection list entry"
 msgstr ""
 
-#: common/models.py:2599
+#: common/models.py:2603
 msgid "Description of the selection list entry"
 msgstr ""
 
-#: common/models.py:2606
+#: common/models.py:2610
 msgid "Is this selection list entry active?"
 msgstr ""
 
-#: common/models.py:2640
+#: common/models.py:2644
 msgid "Parameter Template"
 msgstr "Parametermal"
 
-#: common/models.py:2641
+#: common/models.py:2645
 msgid "Parameter Templates"
 msgstr ""
 
-#: common/models.py:2662
+#: common/models.py:2666
 msgid "No uniqueness required"
 msgstr ""
 
-#: common/models.py:2663
+#: common/models.py:2667
 msgid "Unique for model type"
 msgstr ""
 
-#: common/models.py:2664
+#: common/models.py:2668
 msgid "Globally unique"
 msgstr ""
 
-#: common/models.py:2691
+#: common/models.py:2695
 msgid "Checkbox parameters cannot have units"
 msgstr "Sjekkboksparameter kan ikke ha enheter"
 
-#: common/models.py:2696
+#: common/models.py:2700
 msgid "Checkbox parameters cannot have choices"
 msgstr "Sjekkboksparameter kan ikke ha valg"
 
-#: common/models.py:2716 part/models.py:3624
+#: common/models.py:2720 part/models.py:3624
 msgid "Choices must be unique"
 msgstr "Valg må være unike"
 
-#: common/models.py:2733
+#: common/models.py:2737
 msgid "Parameter template name must be unique"
 msgstr "Navn på parametermal må være unikt"
 
-#: common/models.py:2755
+#: common/models.py:2759
 msgid "Target model type for this parameter template"
 msgstr ""
 
-#: common/models.py:2761
+#: common/models.py:2765
 msgid "Parameter Name"
 msgstr "Parameternavn"
 
-#: common/models.py:2767 part/models.py:1268
+#: common/models.py:2771 part/models.py:1268
 msgid "Units"
 msgstr "Enheter"
 
-#: common/models.py:2768
+#: common/models.py:2772
 msgid "Physical units for this parameter"
 msgstr "Fysisk enheter for denne parameteren"
 
-#: common/models.py:2776
+#: common/models.py:2780
 msgid "Parameter description"
 msgstr "Parameterbeskrivelse"
 
-#: common/models.py:2782
+#: common/models.py:2786
 msgid "Checkbox"
 msgstr "Sjekkboks"
 
-#: common/models.py:2783
+#: common/models.py:2787
 msgid "Is this parameter a checkbox?"
 msgstr "Er dette parameteret en sjekkboks?"
 
-#: common/models.py:2788 part/models.py:3711
+#: common/models.py:2792 part/models.py:3711
 msgid "Choices"
 msgstr "Valg"
 
-#: common/models.py:2789
+#: common/models.py:2793
 msgid "Valid choices for this parameter (comma-separated)"
 msgstr "Gyldige valg for denne parameteren (kommaseparert)"
 
-#: common/models.py:2800
+#: common/models.py:2804
 msgid "Selection list for this parameter"
 msgstr ""
 
-#: common/models.py:2805 part/models.py:3686 report/models.py:297
+#: common/models.py:2809 part/models.py:3686 report/models.py:299
 #: scim/models.py:31
 msgid "Enabled"
 msgstr "Aktivert"
 
-#: common/models.py:2806
+#: common/models.py:2810
 msgid "Is this parameter template enabled?"
 msgstr ""
 
-#: common/models.py:2812
+#: common/models.py:2816
 msgid "Uniqueness"
 msgstr ""
 
-#: common/models.py:2814
+#: common/models.py:2818
 msgid "Enforce uniqueness of linked parameter values against this template"
 msgstr ""
 
-#: common/models.py:2856
+#: common/models.py:2860
 msgid "Parameter"
 msgstr ""
 
-#: common/models.py:2857
+#: common/models.py:2861
 msgid "Parameters"
 msgstr ""
 
-#: common/models.py:2903
+#: common/models.py:2907
 msgid "Invalid choice for parameter value"
 msgstr "Ugyldig valg for parameterverdi"
 
-#: common/models.py:3007
+#: common/models.py:3011
 msgid "Parameter value must be unique"
 msgstr ""
 
-#: common/models.py:3016 common/serializers.py:1086
+#: common/models.py:3020 common/serializers.py:1086
 msgid "Invalid model type specified for parameter"
 msgstr ""
 
-#: common/models.py:3049
+#: common/models.py:3053
 msgid "ID of the target model for this parameter"
 msgstr ""
 
-#: common/models.py:3058 common/models.py:3355 common/setting/system.py:481
-#: report/models.py:383 report/models.py:717 report/serializers.py:115
+#: common/models.py:3062 common/models.py:3359 common/setting/system.py:481
+#: report/models.py:389 report/models.py:723 report/serializers.py:115
 #: report/serializers.py:166 stock/serializers.py:250
 msgid "Template"
 msgstr "Mal"
 
-#: common/models.py:3059
+#: common/models.py:3063
 msgid "Parameter template"
 msgstr ""
 
-#: common/models.py:3064 common/models.py:3455 importer/models.py:684
+#: common/models.py:3068 common/models.py:3459 importer/models.py:684
 msgid "Data"
 msgstr ""
 
-#: common/models.py:3065
+#: common/models.py:3069
 msgid "Parameter Value"
 msgstr "Parameterverdi"
 
-#: common/models.py:3074 common/models.py:3114 company/models.py:827
+#: common/models.py:3078 common/models.py:3118 company/models.py:827
 #: order/serializers.py:916 order/serializers.py:2301 part/models.py:4089
 #: part/models.py:4492
 #: report/templates/report/inventree_bill_of_materials_report.html:140
@@ -2391,226 +2391,226 @@ msgstr "Parameterverdi"
 msgid "Note"
 msgstr "Notat"
 
-#: common/models.py:3075 stock/serializers.py:778 stock/serializers.py:1139
+#: common/models.py:3079 stock/serializers.py:778 stock/serializers.py:1139
 msgid "Optional note field"
 msgstr "Valgfritt notatfelt"
 
-#: common/models.py:3218 common/models.py:3220 common/serializers.py:959
+#: common/models.py:3222 common/models.py:3224 common/serializers.py:959
 #: common/serializers.py:963
 msgid "This field is required."
 msgstr ""
 
-#: common/models.py:3357
+#: common/models.py:3361
 msgid "Is this note a template (not linked to a specific model instance)?"
 msgstr ""
 
-#: common/models.py:3367
+#: common/models.py:3371
 msgid "Target model type for this note"
 msgstr ""
 
-#: common/models.py:3371
+#: common/models.py:3375
 msgid "Target model instance ID for this note"
 msgstr ""
 
-#: common/models.py:3378 company/models.py:793
+#: common/models.py:3382 company/models.py:793
 msgid "Primary"
 msgstr ""
 
-#: common/models.py:3379
+#: common/models.py:3383
 msgid "Is this the primary note for the associated model?"
 msgstr ""
 
-#: common/models.py:3383
+#: common/models.py:3387
 msgid "Note title"
 msgstr ""
 
-#: common/models.py:3390
+#: common/models.py:3394
 msgid "Optional description field"
 msgstr ""
 
-#: common/models.py:3395
+#: common/models.py:3399
 msgid "Content"
 msgstr ""
 
-#: common/models.py:3396
+#: common/models.py:3400
 msgid "Note content"
 msgstr ""
 
-#: common/models.py:3414
+#: common/models.py:3418
 msgid "Image file"
 msgstr "Bildefil"
 
-#: common/models.py:3451
+#: common/models.py:3455
 msgid "Barcode Scan"
 msgstr ""
 
-#: common/models.py:3456
+#: common/models.py:3460
 msgid "Barcode data"
 msgstr ""
 
-#: common/models.py:3467
+#: common/models.py:3471
 msgid "User who scanned the barcode"
 msgstr ""
 
-#: common/models.py:3472 importer/models.py:72
+#: common/models.py:3476 importer/models.py:72
 msgid "Timestamp"
 msgstr ""
 
-#: common/models.py:3473
+#: common/models.py:3477
 msgid "Date and time of the barcode scan"
 msgstr ""
 
-#: common/models.py:3479
+#: common/models.py:3483
 msgid "URL endpoint which processed the barcode"
 msgstr ""
 
-#: common/models.py:3486 order/models.py:2225 plugin/serializers.py:93
+#: common/models.py:3490 order/models.py:2225 plugin/serializers.py:93
 msgid "Context"
 msgstr "Kontekst"
 
-#: common/models.py:3487
+#: common/models.py:3491
 msgid "Context data for the barcode scan"
 msgstr ""
 
-#: common/models.py:3494
+#: common/models.py:3498
 msgid "Response"
 msgstr ""
 
-#: common/models.py:3495
+#: common/models.py:3499
 msgid "Response data from the barcode scan"
 msgstr ""
 
-#: common/models.py:3501 report/templates/report/inventree_test_report.html:103
+#: common/models.py:3505 report/templates/report/inventree_test_report.html:103
 #: stock/models.py:3892
 msgid "Result"
 msgstr "Resultat"
 
-#: common/models.py:3502
+#: common/models.py:3506
 msgid "Was the barcode scan successful?"
 msgstr ""
 
-#: common/models.py:3584
+#: common/models.py:3588
 msgid "An error occurred"
 msgstr ""
 
-#: common/models.py:3605
+#: common/models.py:3609
 msgid "INVE-E8: Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion."
 msgstr ""
 
-#: common/models.py:3652
+#: common/models.py:3656
 msgid "Email Message"
 msgstr ""
 
-#: common/models.py:3653
+#: common/models.py:3657
 msgid "Email Messages"
 msgstr ""
 
-#: common/models.py:3660
+#: common/models.py:3664
 msgid "Announced"
 msgstr ""
 
-#: common/models.py:3662
+#: common/models.py:3666
 msgid "Sent"
 msgstr ""
 
-#: common/models.py:3663
+#: common/models.py:3667
 msgid "Failed"
 msgstr ""
 
-#: common/models.py:3666
+#: common/models.py:3670
 msgid "Delivered"
 msgstr ""
 
-#: common/models.py:3674
+#: common/models.py:3678
 msgid "Confirmed"
 msgstr ""
 
-#: common/models.py:3680
+#: common/models.py:3684
 msgid "Inbound"
 msgstr ""
 
-#: common/models.py:3681
+#: common/models.py:3685
 msgid "Outbound"
 msgstr ""
 
-#: common/models.py:3686
+#: common/models.py:3690
 msgid "No Reply"
 msgstr ""
 
-#: common/models.py:3687
+#: common/models.py:3691
 msgid "Track Delivery"
 msgstr ""
 
-#: common/models.py:3688
+#: common/models.py:3692
 msgid "Track Read"
 msgstr ""
 
-#: common/models.py:3689
+#: common/models.py:3693
 msgid "Track Click"
 msgstr ""
 
-#: common/models.py:3692 common/models.py:3800
+#: common/models.py:3696 common/models.py:3804
 msgid "Global ID"
 msgstr ""
 
-#: common/models.py:3705
+#: common/models.py:3709
 msgid "Identifier for this message (might be supplied by external system)"
 msgstr ""
 
-#: common/models.py:3712
+#: common/models.py:3716
 msgid "Thread ID"
 msgstr ""
 
-#: common/models.py:3714
+#: common/models.py:3718
 msgid "Identifier for this message thread (might be supplied by external system)"
 msgstr ""
 
-#: common/models.py:3723
+#: common/models.py:3727
 msgid "Thread"
 msgstr ""
 
-#: common/models.py:3724
+#: common/models.py:3728
 msgid "Linked thread for this message"
 msgstr ""
 
-#: common/models.py:3740
+#: common/models.py:3744
 msgid "Priority"
 msgstr ""
 
-#: common/models.py:3782
+#: common/models.py:3786
 msgid "Email Thread"
 msgstr ""
 
-#: common/models.py:3783
+#: common/models.py:3787
 msgid "Email Threads"
 msgstr ""
 
-#: common/models.py:3794 generic/states/serializers.py:16
+#: common/models.py:3798 generic/states/serializers.py:16
 #: machine/serializers.py:24 plugin/models.py:46 users/models.py:236
 msgid "Key"
 msgstr "Nøkkel"
 
-#: common/models.py:3797
+#: common/models.py:3801
 msgid "Unique key for this thread (used to identify the thread)"
 msgstr ""
 
-#: common/models.py:3801
+#: common/models.py:3805
 msgid "Unique identifier for this thread"
 msgstr ""
 
-#: common/models.py:3808
+#: common/models.py:3812
 msgid "Started Internal"
 msgstr ""
 
-#: common/models.py:3809
+#: common/models.py:3813
 msgid "Was this thread started internally?"
 msgstr ""
 
-#: common/models.py:3814
+#: common/models.py:3818
 msgid "Date and time that the thread was created"
 msgstr ""
 
-#: common/models.py:3819
+#: common/models.py:3823
 msgid "Date and time that the thread was last updated"
 msgstr ""
 
@@ -2726,7 +2726,7 @@ msgstr "Nøkkelordargumenter for oppgave"
 
 #: common/serializers.py:830 common/serializers.py:986
 #: common/serializers.py:1032 common/serializers.py:1100 importer/models.py:94
-#: report/api.py:42 report/models.py:303 report/serializers.py:69
+#: report/api.py:42 report/models.py:305 report/serializers.py:69
 msgid "Model Type"
 msgstr "Modelltype"
 
@@ -3382,7 +3382,7 @@ msgid "Log errors which occur when generating reports"
 msgstr ""
 
 #: common/setting/system.py:709 plugin/builtin/labels/label_sheet.py:30
-#: report/models.py:391
+#: report/models.py:397
 msgid "Page Size"
 msgstr "Sidestørrelse"
 
@@ -6698,7 +6698,7 @@ msgstr ""
 msgid "Part revision or version number"
 msgstr "Delrevisjon eller versjonsnummer"
 
-#: part/models.py:1177 report/models.py:234
+#: part/models.py:1177 report/models.py:236
 msgid "Revision"
 msgstr "Revisjon"
 
@@ -8349,7 +8349,7 @@ msgstr "Kantlinjer"
 msgid "Print a border around each label"
 msgstr "Skriv ut en kant rundt hver etikett"
 
-#: plugin/builtin/labels/label_sheet.py:50 report/models.py:397
+#: plugin/builtin/labels/label_sheet.py:50 report/models.py:403
 msgid "Landscape"
 msgstr "Liggende"
 
@@ -8850,132 +8850,132 @@ msgstr ""
 msgid "Template file with this name already exists"
 msgstr ""
 
-#: report/models.py:223
+#: report/models.py:225
 msgid "Template name"
 msgstr "Malnavn"
 
-#: report/models.py:229
+#: report/models.py:231
 msgid "Template description"
 msgstr ""
 
-#: report/models.py:235
+#: report/models.py:237
 msgid "Revision number (auto-increments)"
 msgstr ""
 
-#: report/models.py:241
+#: report/models.py:243
 msgid "Attach to Model on Print"
 msgstr ""
 
-#: report/models.py:243
+#: report/models.py:245
 msgid "Save report output as an attachment against linked model instance when printing"
 msgstr ""
 
-#: report/models.py:291
+#: report/models.py:293
 msgid "Filename Pattern"
 msgstr "Filnavnmønster"
 
-#: report/models.py:292
+#: report/models.py:294
 msgid "Pattern for generating filenames"
 msgstr ""
 
-#: report/models.py:297
+#: report/models.py:299
 msgid "Template is enabled"
 msgstr ""
 
-#: report/models.py:304
+#: report/models.py:306
 msgid "Target model type for template"
 msgstr ""
 
-#: report/models.py:324
+#: report/models.py:326
 msgid "Filters"
 msgstr "Filtre"
 
-#: report/models.py:325
+#: report/models.py:327
 msgid "Template query filters (comma-separated list of key=value pairs)"
 msgstr ""
 
-#: report/models.py:384 report/models.py:718
+#: report/models.py:390 report/models.py:724
 msgid "Template file"
 msgstr ""
 
-#: report/models.py:392
+#: report/models.py:398
 msgid "Page size for PDF reports"
 msgstr "Sidestørrelse for PDF-rapporter"
 
-#: report/models.py:398
+#: report/models.py:404
 msgid "Render report in landscape orientation"
 msgstr "Generer rapport i landskapsorientering"
 
-#: report/models.py:403
+#: report/models.py:409
 msgid "Merge"
 msgstr ""
 
-#: report/models.py:404
+#: report/models.py:410
 msgid "Render a single report against selected items"
 msgstr ""
 
-#: report/models.py:471
+#: report/models.py:477
 #, python-brace-format
 msgid "Report generated from template {self.name}"
 msgstr ""
 
-#: report/models.py:581 report/models.py:620
+#: report/models.py:587 report/models.py:626
 msgid "Template syntax error"
 msgstr ""
 
-#: report/models.py:588 report/models.py:627
+#: report/models.py:594 report/models.py:633
 msgid "Error rendering report"
 msgstr ""
 
-#: report/models.py:655
+#: report/models.py:661
 msgid "Error generating report"
 msgstr ""
 
-#: report/models.py:686
+#: report/models.py:692
 msgid "Error merging report outputs"
 msgstr ""
 
-#: report/models.py:724
+#: report/models.py:730
 msgid "Width [mm]"
 msgstr "Bredde [mm]"
 
-#: report/models.py:725
+#: report/models.py:731
 msgid "Label width, specified in mm"
 msgstr "Etikettbredde, spesifisert i mm"
 
-#: report/models.py:731
+#: report/models.py:737
 msgid "Height [mm]"
 msgstr "Høyde [mm]"
 
-#: report/models.py:732
+#: report/models.py:738
 msgid "Label height, specified in mm"
 msgstr "Etiketthøyde, spesifisert i mm"
 
-#: report/models.py:846
+#: report/models.py:852
 msgid "Error printing labels"
 msgstr ""
 
-#: report/models.py:865
+#: report/models.py:871
 msgid "Snippet"
 msgstr "Snutt"
 
-#: report/models.py:866
+#: report/models.py:872
 msgid "Report snippet file"
 msgstr "Rapportsnuttfil"
 
-#: report/models.py:873
+#: report/models.py:879
 msgid "Snippet file description"
 msgstr "Filbeskrivelse for snutt"
 
-#: report/models.py:891
+#: report/models.py:897
 msgid "Asset"
 msgstr "Ressurs"
 
-#: report/models.py:892
+#: report/models.py:898
 msgid "Report asset file"
 msgstr "Rapportressursfil"
 
-#: report/models.py:899
+#: report/models.py:905
 msgid "Asset file description"
 msgstr "Ressursfilbeskrivelse"
 
@@ -9132,31 +9132,31 @@ msgstr "Ingen resultat"
 msgid "Transferred"
 msgstr ""
 
-#: report/templatetags/report.py:192
+#: report/templatetags/report.py:239
 msgid "Invalid media file path"
 msgstr ""
 
-#: report/templatetags/report.py:211
+#: report/templatetags/report.py:258
 msgid "Invalid static file path"
 msgstr ""
 
-#: report/templatetags/report.py:313
+#: report/templatetags/report.py:360
 msgid "Asset file not found"
 msgstr ""
 
-#: report/templatetags/report.py:374 report/templatetags/report.py:500
+#: report/templatetags/report.py:421 report/templatetags/report.py:547
 msgid "Image file not found"
 msgstr "Bildefil ikke funnet"
 
-#: report/templatetags/report.py:464
+#: report/templatetags/report.py:511
 msgid "No image file specified"
 msgstr ""
 
-#: report/templatetags/report.py:494
+#: report/templatetags/report.py:541
 msgid "part_image tag requires a Part instance"
 msgstr "part_image-taggen krever en Part-instans"
 
-#: report/templatetags/report.py:674
+#: report/templatetags/report.py:721
 msgid "company_image tag requires a Company instance"
 msgstr "company_image-taggen krever en Company-instans"
 
