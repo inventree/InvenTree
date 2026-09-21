@@ -22,7 +22,7 @@ FeatureType = Literal[
     'template_preview',  # Custom template preview
     'navigation',  # Custom navigation items
     'primary_action',  # Custom primary action buttons
-    'route',  # Custom react route
+    'route',  # Custom react router path
 ]
 
 

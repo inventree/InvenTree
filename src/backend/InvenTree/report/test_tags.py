@@ -61,6 +61,71 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
             None, report_tags.getkey('not a container', 'not-a-key', 'a value')
         )
 
+    def test_get_set_var(self):
+        """Tests for the 'get_var' and 'set_var' template tags."""
+        # Directly exercise the tag functions against a report-shaped context
+        context = Context({'report_vars': {}})
+
+        # Not yet set - should return the backup value
+        self.assertIsNone(report_tags.get_var(context, 'foo'))
+        self.assertEqual(report_tags.get_var(context, 'foo', 'backup'), 'backup')
+
+        # set_var renders no output, and stores the value for later retrieval
+        self.assertEqual(report_tags.set_var(context, 'foo', 'bar'), '')
+        self.assertEqual(report_tags.get_var(context, 'foo'), 'bar')
+
+        # Overwrite the value
+        report_tags.set_var(context, 'foo', 'baz')
+        self.assertEqual(report_tags.get_var(context, 'foo'), 'baz')
+
+        # A non-string name is rejected
+        report_tags.set_var(context, 123, 'nope')
+        self.assertNotIn(123, context['report_vars'])
+
+        # If the report context is missing (or malformed), fail safe rather than crash
+        broken_context = Context({'report_vars': 'not-a-dict'})
+        self.assertEqual(report_tags.set_var(broken_context, 'foo', 'bar'), '')
+        self.assertEqual(report_tags.get_var(broken_context, 'foo', 'backup'), 'backup')
+
+        missing_context = Context({})
+        report_tags.set_var(missing_context, 'foo', 'bar')
+        self.assertEqual(
+            report_tags.get_var(missing_context, 'foo', 'backup'), 'backup'
+        )
+
+        # set_var / get_var must not expose or mutate other context variables
+        full_context = Context({'report_vars': {}, 'user': 'sensitive-user-object'})
+        report_tags.set_var(full_context, 'user', 'hijacked')
+        self.assertEqual(full_context['user'], 'sensitive-user-object')
+        self.assertEqual(full_context['report_vars']['user'], 'hijacked')
+
+        # Exercise the tags via full template rendering, to confirm that a variable
+        # set inside a {% for %} loop remains visible outside of the loop
+        # (unlike Django's built-in scoping rules for block-local context changes),
+        # which is what makes these tags useful for accumulating totals.
+        template = Template(
+            '{% load report %}'
+            '{% set_var "total" 0 %}'
+            '{% for value in values %}'
+            '{% get_var "total" as total %}'
+            '{% add total value as running_total %}'
+            '{% set_var "total" running_total %}'
+            '{% endfor %}'
+            '{% get_var "total" as final_total %}'
+            'Total: {{ final_total }}'
+        )
+
+        rendered = template.render(Context({'values': [1, 2, 3, 4], 'report_vars': {}}))
+        self.assertIn('Total: 10', rendered)
+
+        # Two separate renders must not share state
+        context_a = Context({'report_vars': {}})
+        context_b = Context({'report_vars': {}})
+        report_tags.set_var(context_a, 'shared_name', 'value-a')
+        report_tags.set_var(context_b, 'shared_name', 'value-b')
+        self.assertEqual(report_tags.get_var(context_a, 'shared_name'), 'value-a')
+        self.assertEqual(report_tags.get_var(context_b, 'shared_name'), 'value-b')
+
     def test_asset(self):
         """Tests for asset files."""
         # Test that an error is raised if the file does not exist
