@@ -224,6 +224,54 @@ class AttachmentTest(InvenTreeAPITestCase):
         self.assertIs(type(url), str)
         self.assertIn(f'/media/attachments/part/{part.pk}/test', url)
 
+    def test_generate_thumbnail_location(self):
+        """Test that a generated thumbnail is stored alongside its attachment file.
+
+        Regression test: thumbnails were previously saved to the top-level media
+        root, rather than in the same directory as the attachment they belong to.
+        """
+        part = Part.objects.first()
+
+        # Build a minimal valid PNG in memory
+        img_obj = Image.new('RGB', (10, 10), color='blue')
+        with io.BytesIO() as buf:
+            img_obj.save(buf, format='PNG')
+            png_bytes = buf.getvalue()
+
+        attachment = Attachment.objects.create(
+            attachment=ContentFile(png_bytes, 'thumbnail_location.png'),
+            comment='Testing thumbnail location',
+            model_type='part',
+            model_id=part.pk,
+        )
+
+        # The 'create' call offloads a task which generates the thumbnail synchronously
+        # (as no worker is running in the test environment), on a *separate* model
+        # instance - refresh from the DB to pick up those changes
+        attachment.refresh_from_db()
+
+        self.assertTrue(attachment.is_image)
+        self.assertTrue(attachment.thumbnail)
+        self.assertTrue(default_storage.exists(attachment.thumbnail.name))
+
+        attachment_dir = os.path.dirname(attachment.attachment.name)
+        thumbnail_dir = os.path.dirname(attachment.thumbnail.name)
+
+        self.assertEqual(attachment_dir, thumbnail_dir)
+        self.assertEqual(
+            os.path.basename(attachment.thumbnail.name),
+            f'thumb_{os.path.basename(attachment.attachment.name)}',
+        )
+
+        # Cleanup uploaded files to prevent them sticking around
+        attachment_path = attachment.attachment.name
+        thumbnail_path = attachment.thumbnail.name
+        attachment.delete()
+
+        for path in (attachment_path, thumbnail_path):
+            if default_storage.exists(path):
+                default_storage.delete(path)
+
     def test_str_representation(self):
         """Test the __str__ method of the Attachment model.
 
