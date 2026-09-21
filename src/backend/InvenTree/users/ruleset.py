@@ -34,6 +34,7 @@ class RuleSetEnum(StringEnum):
     SALES_ORDER = 'sales_order'
     RETURN_ORDER = 'return_order'
     TRANSFER_ORDER = 'transfer_order'
+    REPAIR_ORDER = 'repair_order'
 
 
 # This is a list of all the ruleset choices available in the system.
@@ -50,6 +51,7 @@ RULESET_CHOICES = [
     (RuleSetEnum.SALES_ORDER, _('Sales Orders')),
     (RuleSetEnum.RETURN_ORDER, _('Return Orders')),
     (RuleSetEnum.TRANSFER_ORDER, _('Transfer Orders')),
+    (RuleSetEnum.REPAIR_ORDER, _('Repair Orders')),
 ]
 
 # Ruleset names available in the system.
@@ -181,6 +183,11 @@ def get_ruleset_models() -> dict:
             'order_transferorder',
             'order_transferorderallocation',
             'order_transferorderlineitem',
+        ],
+        RuleSetEnum.REPAIR_ORDER: [
+            'build_repairorder',
+            'build_repairorderlineitem',
+            'build_repairorderallocation',
         ],
     }
 
