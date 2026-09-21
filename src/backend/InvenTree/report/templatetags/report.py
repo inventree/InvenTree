@@ -185,9 +185,13 @@ def set_var(context: dict, name: str, value: Any) -> str:
     Returns:
         An empty string - this tag does not render any output
     """
+    if not isinstance(name, str):
+        logger.warning('set_var() called with non-string name')
+        return ''
+
     store = context.get('report_vars')
 
-    if store and isinstance(store, dict):
+    if isinstance(store, dict):
         store[name] = value
     else:
         logger.warning('set_var() called outside of a valid report context')
@@ -209,7 +213,7 @@ def get_var(context: dict, name: str, backup_value: Optional[Any] = None) -> Any
     """
     store = context.get('report_vars')
 
-    if not store or not isinstance(store, dict):
+    if not isinstance(store, dict):
         logger.warning('get_var() called outside of a valid report context')
         return backup_value
 
