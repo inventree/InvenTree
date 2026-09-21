@@ -197,6 +197,35 @@ The `get_ui_primary_actions` method can be used to provide custom primary action
       summary: False
       members: []
 
+### Routes
+
+The `get_ui_routes` method can be used to provide custom routes (and therefore pages) within the InvenTree web interface.
+
+::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_routes
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      summary: False
+      members: []
+      extra:
+        show_source: True
+
+A route is defined by returning a list of route definitions:
+
+```python
+def get_ui_routes(self, request, context, **kwargs):
+    return [
+        {
+            'key': 'my-plugin-page',
+            'title': 'My Plugin Page',
+            'source': self.plugin_static_file('my_page.js:getFeature'),
+            'options': {
+                'path': 'page/:pk',
+            },
+        },
+    ]
+
 ## Plugin Context
 
 When rendering certain content in the user interface, the rendering functions are passed a `context` object which contains information about the current page being rendered. The type of the `context` object is defined in the `PluginContext` file:
