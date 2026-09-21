@@ -245,14 +245,14 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 'key': 'sample-route',
                 'title': 'Sample Route',
                 'source': self.plugin_static_file('sample_route.js:getBasicPage'),
-                'options': {'path': 'sampleui/test'},
+                'options': {'path': 'test'},
             },
             {
                 # Adds a simple route, with an argument to /web/plugin/sampleui/test/:arg1 (e.g., /web/plugin/sampleui/test/1)
                 'key': 'sample-route-arg',
                 'title': 'Sample Route Arg',
                 'source': self.plugin_static_file('sample_route.js:getArgPage'),
-                'options': {'path': 'sampleui/test/:arg1'},
+                'options': {'path': 'test/:arg1'},
             },
         ]
 

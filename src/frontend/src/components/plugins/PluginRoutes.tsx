@@ -21,7 +21,7 @@ export function PluginRoutes() {
       {routes.map((route) => (
         <Route
           key={route.options.key}
-          path={route.options.options.path}
+          path={`${route.options.plugin_name}/${route.options.options.path}`}
           element={
             <RemoteComponent
               source={route.options.source}
