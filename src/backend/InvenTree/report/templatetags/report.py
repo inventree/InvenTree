@@ -174,7 +174,7 @@ def getkey(container: dict, key: str, backup_value: Optional[Any] = None) -> Any
 
 
 @register.simple_tag(takes_context=True)
-def set_var(context, name: str, value: Any) -> str:
+def set_var(context: dict, name: str, value: Any) -> str:
     """Store a named variable, for later retrieval with get_var.
 
     Arguments:
@@ -196,7 +196,7 @@ def set_var(context, name: str, value: Any) -> str:
 
 
 @register.simple_tag(takes_context=True)
-def get_var(context, name: str, backup_value: Optional[Any] = None) -> Any:
+def get_var(context: dict, name: str, backup_value: Optional[Any] = None) -> Any:
     """Retrieve a named variable previously stored with set_var.
 
     Arguments:
