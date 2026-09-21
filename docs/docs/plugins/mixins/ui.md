@@ -225,6 +225,11 @@ def get_ui_routes(self, request, context, **kwargs):
             },
         },
     ]
+```
+
+Routes are exposed below `/web/plugin/<plugin-name>/`. For example, the route above would be available at: `/web/plugin/my-plugin/page/<pk>`
+
+The path is relative to the plugin's own URL namespace and uses React Router path syntax, so parameters can be specified using :parameter notation.
 
 ## Plugin Context
 
