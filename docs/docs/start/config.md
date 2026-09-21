@@ -270,6 +270,8 @@ The following database options can be configured:
 
 ### PostgreSQL Settings
 
+InvenTree requires a minimum PostgreSQL version of {{ config.extra.min_postgres_version }}.
+
 If running with a PostgreSQL database backend, the following additional options are available:
 
 {{ configtable() }}
@@ -287,6 +289,8 @@ If running with a PostgreSQL database backend, the following additional options 
 
 ### MySQL Settings
 
+InvenTree requires a minimum MySQL version of {{ config.extra.min_mysql_version }}.
+
 If running with a MySQL database backend, the following additional options are available:
 
 {{ configtable() }}
@@ -294,6 +298,8 @@ If running with a MySQL database backend, the following additional options are a
 | `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" |
 
 ### SQLite Settings
+
+InvenTree requires a minimum SQLite version of {{ config.extra.min_sqlite_version }}.
 
 !!! warning "SQLite Performance"
     SQLite is not recommended for production use, and should only be used for testing or development purposes. If you are using SQLite in production, you may want to adjust the following settings to improve performance.

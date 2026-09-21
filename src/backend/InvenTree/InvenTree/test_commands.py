@@ -161,6 +161,101 @@ class CommandTestCase(TestCase):
             ContentType.objects.filter(pk__in=pks).delete()
             tmp_file.unlink(missing_ok=True)
 
+    def test_bulkloaddata_preserves_auto_now_add(self):
+        """bulk_create() must not overwrite fixture values for auto_now_add fields.
+
+        Covers both an auto_now_add DateTimeField (BarcodeScanResult.timestamp,
+        StockItem.creation_date, StockItemTracking.date) and an auto_now_add
+        DateField (Part.creation_date) - StockItem/StockItemTracking are also
+        the models the bug was originally reported against.
+        """
+        import datetime
+
+        from django.core import serializers
+        from django.utils import timezone
+
+        from common.models import BarcodeScanResult
+        from part.models import Part
+        from stock.models import StockItem, StockItemTracking
+        from stock.status_codes import StockHistoryCode
+
+        # JSON fixtures only round-trip datetimes to millisecond precision
+        # (DjangoJSONEncoder truncates microseconds) - use a value already at
+        # that precision so the round-trip comparisons below are exact.
+        original_timestamp = (timezone.now() - datetime.timedelta(days=30)).replace(
+            microsecond=123000
+        )
+        original_date = original_timestamp.date()
+
+        entry = BarcodeScanResult.objects.create(data='test-barcode')
+        entry.timestamp = original_timestamp
+        entry.save()
+        entry.refresh_from_db()
+        self.assertEqual(entry.timestamp, original_timestamp)
+
+        part = Part.objects.create(
+            name='Bulkload test part', description='Bulkload test part'
+        )
+        part.creation_date = original_date
+        part.save()
+        part.refresh_from_db()
+        self.assertEqual(part.creation_date, original_date)
+
+        item = StockItem.objects.create(part=part, quantity=10)
+        item.creation_date = original_timestamp
+        item.save()
+        item.refresh_from_db()
+        self.assertEqual(item.creation_date, original_timestamp)
+
+        tracking = StockItemTracking.objects.create(
+            item=item, tracking_type=StockHistoryCode.CREATED
+        )
+        tracking.date = original_timestamp
+        tracking.save()
+        tracking.refresh_from_db()
+        self.assertEqual(tracking.date, original_timestamp)
+
+        pks = {
+            'barcode': entry.pk,
+            'part': part.pk,
+            'item': item.pk,
+            'tracking': tracking.pk,
+        }
+
+        # Serialize parent-before-child, so bulkloaddata's per-model
+        # bulk_create() calls happen in an order that satisfies FK constraints.
+        data = serializers.serialize('json', [entry, part, item, tracking])
+
+        # Use queryset deletes - Part.delete() refuses to delete an active part
+        StockItemTracking.objects.filter(pk=tracking.pk).delete()
+        StockItem.objects.filter(pk=item.pk).delete()
+        Part.objects.filter(pk=part.pk).delete()
+        BarcodeScanResult.objects.filter(pk=entry.pk).delete()
+
+        tmp_file = get_testfolder_dir().joinpath('bulkloaddata_auto_now_test.json')
+        tmp_file.write_text(data, encoding='utf-8')
+
+        try:
+            call_command('bulkloaddata', str(tmp_file), verbosity=0)
+
+            reloaded_entry = BarcodeScanResult.objects.get(pk=pks['barcode'])
+            self.assertEqual(reloaded_entry.timestamp, original_timestamp)
+
+            reloaded_part = Part.objects.get(pk=pks['part'])
+            self.assertEqual(reloaded_part.creation_date, original_date)
+
+            reloaded_item = StockItem.objects.get(pk=pks['item'])
+            self.assertEqual(reloaded_item.creation_date, original_timestamp)
+
+            reloaded_tracking = StockItemTracking.objects.get(pk=pks['tracking'])
+            self.assertEqual(reloaded_tracking.date, original_timestamp)
+        finally:
+            StockItemTracking.objects.filter(pk=pks['tracking']).delete()
+            StockItem.objects.filter(pk=pks['item']).delete()
+            Part.objects.filter(pk=pks['part']).delete()
+            BarcodeScanResult.objects.filter(pk=pks['barcode']).delete()
+            tmp_file.unlink(missing_ok=True)
+
     def test_bulkdumpdata_natural_key_caching(self):
         """Test that bulkdumpdata caches natural-key FK resolution during serialization."""
         from django.contrib.admin.models import ADDITION, LogEntry
