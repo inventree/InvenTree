@@ -80,6 +80,52 @@ To return an element corresponding to a certain key in a container which support
 {% endraw %}
 ```
 
+## Session Variables
+
+Variables assigned with the `as` keyword (as described above) are only visible within the template block they were assigned in - for example, a variable assigned inside a `{% raw %}{% for %}{% endraw %}` loop is not visible once the loop ends. This makes it awkward to accumulate a value (such as a running total) across a loop.
+
+To get around this, the `set_var` and `get_var` functions can be used to store and retrieve a named variable which remains visible for the remainder of the current report or label render, regardless of which template block it was set within:
+
+### set_var
+
+Assign a value to a named variable within the current rendering context. This variable will remain accessible for the remainder of the report or label render, regardless of which template block it was set within.
+
+::: report.templatetags.report.set_var
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### get_var
+
+Retrieve the value of a named variable previously stored with `set_var`. If the variable has not been set, a backup value can be provided.
+
+::: report.templatetags.report.get_var
+    options:
+        show_docstring_description: false
+        show_source: False
+
+#### Example
+
+```html
+{% raw %}
+{% load report %}
+
+{% set_var "total" 0 %}
+
+{% for line in lines %}
+    {% get_var "total" as total %}
+    {% add total line.quantity as new_total %}
+    {% set_var "total" new_total %}
+{% endfor %}
+
+{% get_var "total" as final_total %}
+Total quantity: {{ final_total }}
+{% endraw %}
+```
+
+!!! info "Isolated per Render"
+    The variables stored with `set_var` are private to the report or label instance currently being rendered. They are reset for every instance, and are never shared between reports, requests, or users.
+
 ## Database Helpers
 
 A number of helper functions are available for accessing database objects:

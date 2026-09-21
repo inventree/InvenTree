@@ -81,6 +81,9 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
             data = pdf_file.getvalue()
             pdf_file.close()
 
-            filename = kwargs.get('filename', 'labels.pdf')
+            filename = kwargs.get('filename') or 'labels.pdf'
+
+            if not filename.lower().endswith('.pdf'):
+                filename = f'{filename}.pdf'
 
         return ContentFile(data, name=filename)

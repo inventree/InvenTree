@@ -140,6 +140,9 @@ As part of the initial setup, an empty database needs to be created. Follow the 
 
 ### PostgreSQL
 
+!!! info "Minimum Version"
+    InvenTree requires a minimum PostgreSQL version of {{ config.extra.min_postgres_version }}.
+
 #### Install PostgreSQL
 
 Install required system packages:
@@ -185,6 +188,9 @@ sudo apt-get install postgresql-client
 ```
 
 ### MySQL / MariaDB
+
+!!! info "Minimum Version"
+    InvenTree requires a minimum MySQL version of {{ config.extra.min_mysql_version }}.
 
 #### Install Backend
 
