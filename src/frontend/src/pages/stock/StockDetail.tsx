@@ -134,7 +134,7 @@ export default function StockDetail() {
   const showTransferAllocations: boolean = useMemo(() => {
     return (
       !stockitem?.part_detail?.virtual &&
-      globalSettings.isSet('TRANSFERORDER_ENABLED')
+      globalSettings.isSet('TRANSFERORDER_ENABLED') // todo check if role is available
     );
   }, [stockitem]);
 

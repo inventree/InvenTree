@@ -117,7 +117,16 @@ def create_notes_batch(Note, NotesImage, content_type, model, instances, unlinke
         batch_size=BATCH_SIZE,
     )
 
-    notes_by_model_id = {instance.pk: note for instance, note in zip(instances, notes)}
+    # bulk_create() only populates the pk on the returned objects on backends
+    # that support RETURNING on bulk insert.
+    # So we re-fetch the notes we just created rather than trusting the returned objects.
+    notes_by_model_id = {
+        note.model_id: note
+        for note in Note.objects.filter(
+            model_type=content_type,
+            model_id__in=[instance.pk for instance in instances],
+        )
+    }
 
     # Images directly linked to one of these instances
     direct_images = list(
@@ -131,7 +140,8 @@ def create_notes_batch(Note, NotesImage, content_type, model, instances, unlinke
     # Images not directly linked to any instance, but still referenced in the
     # markdown content itself
     embedded_images = []
-    for instance, note in zip(instances, notes):
+    for instance in instances:
+        note = notes_by_model_id[instance.pk]
         matched = [
             image for image in unlinked_images if image.image.url in instance.notes
         ]
@@ -172,7 +182,7 @@ def migrate_orphaned_images(Note, NotesImage, content_type, model):
 
     model_ids = sorted({image.model_id for image in orphaned_images})
 
-    notes = Note.objects.bulk_create(
+    Note.objects.bulk_create(
         [
             Note(
                 title="Note",
@@ -186,7 +196,15 @@ def migrate_orphaned_images(Note, NotesImage, content_type, model):
         batch_size=BATCH_SIZE,
     )
 
-    notes_by_model_id = dict(zip(model_ids, notes))
+    # See the matching comment in create_notes_batch() - bulk_create() doesn't
+    # reliably return populated pks across all backends, so re-fetch the notes
+    # we just created rather than trusting the returned objects.
+    notes_by_model_id = {
+        note.model_id: note
+        for note in Note.objects.filter(
+            model_type=content_type, model_id__in=model_ids
+        )
+    }
 
     for image in orphaned_images:
         image.note = notes_by_model_id[image.model_id]

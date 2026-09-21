@@ -132,6 +132,12 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     confirm_text = serializers.CharField(read_only=True)
 
+    flags = serializers.ListField(
+        child=serializers.CharField(),
+        read_only=True,
+        help_text=_('Indicating behavior or purpose of setting.'),
+    )
+
     def is_valid(self, *, raise_exception=False):
         """Validate the setting, including confirmation if required."""
         ret = super().is_valid(raise_exception=raise_exception)
@@ -169,6 +175,7 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'read_only',
             'confirm',
             'confirm_text',
+            'flags',
         ]
 
     read_only = serializers.SerializerMethodField(
@@ -214,6 +221,7 @@ class UserSettingsSerializer(SettingsSerializer):
             'typ',
             'confirm',
             'confirm_text',
+            'flags',
         ]
 
     user = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -264,6 +272,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
                 'required',
                 'confirm',
                 'confirm_text',
+                'flags',
             ]
 
         # set Meta class
@@ -928,6 +937,10 @@ class NoteSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
         ]
 
         read_only_fields = ['updated', 'updated_by']
+
+    def get_unique_together_validators(self):
+        """Suppress the auto-generated validator for 'unique_primary_note_per_model'."""
+        return []
 
     def validate(self, data):
         """Validate note data — templates need no model_id; regular notes require both."""

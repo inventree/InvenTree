@@ -1013,6 +1013,14 @@ class BaseInvenTreeSetting(models.Model):
 
         return setting.get('confirm_text', '')
 
+    def flags(self) -> list:
+        """Return the flags associated with this setting."""
+        setting = self.get_setting_definition(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return setting.get('flags', [])
+
     def model_filters(self) -> Optional[dict]:
         """Return the model filters associated with this setting."""
         setting = self.get_setting_definition(
@@ -1832,7 +1840,10 @@ class CustomUnit(models.Model):
         """Validate that the provided custom unit is indeed valid."""
         super().clean()
 
-        from InvenTree.conversion import get_unit_registry
+        from InvenTree.conversion import (
+            build_candidate_unit_registry,
+            get_unit_registry,
+        )
 
         registry = get_unit_registry()
 
@@ -1851,11 +1862,27 @@ class CustomUnit(models.Model):
         except Exception as exc:
             raise ValidationError({'definition': str(exc)})
 
-        # Finally, test that the entire custom unit definition is valid
+        # Test that the entire custom unit definition is valid
         try:
             registry.define(self.fmt_string())
         except Exception as exc:
             raise ValidationError(str(exc))
+
+        # Build a registry containing *every* custom unit (including this
+        # pending one), and try to resolve this unit's dimensionality.
+        # Useful for catching recursion errors.
+        try:
+            candidate_registry = build_candidate_unit_registry(
+                self.fmt_string(), exclude_pk=self.pk
+            )
+            getattr(candidate_registry, self.name).compatible_units()
+        except Exception as exc:
+            raise ValidationError(
+                _(
+                    'Unit definition results in a circular or invalid reference: %(error)s'
+                )
+                % {'error': str(exc)}
+            )
 
     name = models.CharField(
         max_length=50,
@@ -2249,7 +2276,11 @@ class Attachment(
             img.save(thumb_io, format='PNG')
             thumb_io.seek(0)
 
-            thumb_name = f'thumb_{os.path.basename(self.attachment.name)}'
+            # Save the thumbnail alongside the original attachment file
+            attachment_dir = os.path.dirname(self.attachment.name)
+            thumb_name = os.path.join(
+                attachment_dir, f'thumb_{os.path.basename(self.attachment.name)}'
+            )
             self.thumbnail.save(thumb_name, ContentFile(thumb_io.read()), save=False)
         except Exception:
             pass
@@ -3398,7 +3429,7 @@ class NotesImage(models.Model):
 
 @receiver(post_delete, sender=NotesImage, dispatch_uid='notesimage_post_delete')
 def after_notesimage_deleted(sender, instance, **kwargs):
-    """Remove the image file from storage once a NotesImage row is deleted.
+    """Remove the image file after the NotesImage deletion commits.
 
     A signal (rather than an overridden delete()) is required here: a NotesImage row is
     usually removed via a cascade - e.g. deleting its parent Note, or
@@ -3408,7 +3439,9 @@ def after_notesimage_deleted(sender, instance, **kwargs):
     started from a single instance.delete() or a bulk QuerySet.delete().
     """
     if instance.image:
-        instance.image.delete(save=False)
+        transaction.on_commit(
+            lambda: instance.image.delete(save=False), using=kwargs.get('using')
+        )
 
 
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):

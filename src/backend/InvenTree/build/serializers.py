@@ -13,7 +13,6 @@ from django.db.models import (
     F,
     FloatField,
     Q,
-    Sum,
     Value,
     When,
 )
@@ -22,6 +21,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
+from sql_util.utils import SubquerySum
 
 import common.filters
 import company.serializers
@@ -204,6 +204,10 @@ class BuildSerializer(
         kwargs.pop('create', False)
 
         super().__init__(*args, **kwargs)
+
+        if self.instance is not None:
+            # The 'part' field cannot be changed once a build order has been created
+            self.fields['part'].read_only = True
 
     @transaction.atomic
     def create(self, validated_data):
@@ -1570,7 +1574,9 @@ class BuildLineSerializer(
         # Annotate the "allocated" quantity
         queryset = queryset.annotate(
             allocated=Coalesce(
-                Sum('allocations__quantity'), 0, output_field=models.DecimalField()
+                SubquerySum('allocations__quantity'),
+                0,
+                output_field=models.DecimalField(),
             )
         )
 

@@ -181,6 +181,11 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         data = self.generateBarcode('stockitem', item.pk, expected_code=200).data
         self.assertEqual(data['barcode'], 'INV-SI522')
 
+        # A user without 'stock.view' cannot generate a barcode for a stock item
+        # they cannot otherwise access
+        self.clearRoles()
+        self.generateBarcode('stockitem', item.pk, expected_code=403)
+
     def test_barcode_generation_invalid(self):
         """Test barcode generation for invalid model/pk."""
         self.generateBarcode('invalidmodel', 1, expected_code=400)

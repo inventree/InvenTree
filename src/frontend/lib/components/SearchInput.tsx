@@ -33,6 +33,7 @@ export function SearchInput({
       leftSection={<IconSearch />}
       placeholder={placeholder ?? t`Search`}
       onChange={(event) => setValue(event.target.value)}
+      style={{ minWidth: '150px' }}
       rightSection={
         value.length > 0 ? (
           <CloseButton

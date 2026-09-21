@@ -1,11 +1,17 @@
 """Test for custom report tags."""
 
+import base64
+import hashlib
+import io
+import re
 from decimal import Decimal
+from xml.etree import ElementTree
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.template import Context, Template
 from django.test import TestCase, override_settings
 from django.utils import timezone
 from django.utils.safestring import SafeString
@@ -54,6 +60,71 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         self.assertEqual(
             None, report_tags.getkey('not a container', 'not-a-key', 'a value')
         )
+
+    def test_get_set_var(self):
+        """Tests for the 'get_var' and 'set_var' template tags."""
+        # Directly exercise the tag functions against a report-shaped context
+        context = Context({'report_vars': {}})
+
+        # Not yet set - should return the backup value
+        self.assertIsNone(report_tags.get_var(context, 'foo'))
+        self.assertEqual(report_tags.get_var(context, 'foo', 'backup'), 'backup')
+
+        # set_var renders no output, and stores the value for later retrieval
+        self.assertEqual(report_tags.set_var(context, 'foo', 'bar'), '')
+        self.assertEqual(report_tags.get_var(context, 'foo'), 'bar')
+
+        # Overwrite the value
+        report_tags.set_var(context, 'foo', 'baz')
+        self.assertEqual(report_tags.get_var(context, 'foo'), 'baz')
+
+        # A non-string name is rejected
+        report_tags.set_var(context, 123, 'nope')
+        self.assertNotIn(123, context['report_vars'])
+
+        # If the report context is missing (or malformed), fail safe rather than crash
+        broken_context = Context({'report_vars': 'not-a-dict'})
+        self.assertEqual(report_tags.set_var(broken_context, 'foo', 'bar'), '')
+        self.assertEqual(report_tags.get_var(broken_context, 'foo', 'backup'), 'backup')
+
+        missing_context = Context({})
+        report_tags.set_var(missing_context, 'foo', 'bar')
+        self.assertEqual(
+            report_tags.get_var(missing_context, 'foo', 'backup'), 'backup'
+        )
+
+        # set_var / get_var must not expose or mutate other context variables
+        full_context = Context({'report_vars': {}, 'user': 'sensitive-user-object'})
+        report_tags.set_var(full_context, 'user', 'hijacked')
+        self.assertEqual(full_context['user'], 'sensitive-user-object')
+        self.assertEqual(full_context['report_vars']['user'], 'hijacked')
+
+        # Exercise the tags via full template rendering, to confirm that a variable
+        # set inside a {% for %} loop remains visible outside of the loop
+        # (unlike Django's built-in scoping rules for block-local context changes),
+        # which is what makes these tags useful for accumulating totals.
+        template = Template(
+            '{% load report %}'
+            '{% set_var "total" 0 %}'
+            '{% for value in values %}'
+            '{% get_var "total" as total %}'
+            '{% add total value as running_total %}'
+            '{% set_var "total" running_total %}'
+            '{% endfor %}'
+            '{% get_var "total" as final_total %}'
+            'Total: {{ final_total }}'
+        )
+
+        rendered = template.render(Context({'values': [1, 2, 3, 4], 'report_vars': {}}))
+        self.assertIn('Total: 10', rendered)
+
+        # Two separate renders must not share state
+        context_a = Context({'report_vars': {}})
+        context_b = Context({'report_vars': {}})
+        report_tags.set_var(context_a, 'shared_name', 'value-a')
+        report_tags.set_var(context_b, 'shared_name', 'value-b')
+        self.assertEqual(report_tags.get_var(context_a, 'shared_name'), 'value-a')
+        self.assertEqual(report_tags.get_var(context_b, 'shared_name'), 'value-b')
 
     def test_asset(self):
         """Tests for asset files."""
@@ -861,6 +932,65 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
 class BarcodeTagTest(TestCase):
     """Unit tests for the barcode template tags."""
 
+    def test_datamatrix_raster_geometry(self):
+        """Raster output preserves modules, borders, colors, and scaling."""
+        # Pixel digests captured before extracting the raster renderer.
+        for rectangular, border, scale, fmt, size, digest in [
+            (
+                False,
+                0,
+                1,
+                'PNG',
+                (16, 16),
+                'df39de36e5926c66d156d7984876a5c6a1493211b2cc324548317da363589da2',
+            ),
+            (
+                True,
+                3,
+                2,
+                'PNG',
+                (76, 28),
+                'ae64b12a2a1e30aa886aeb5abfd61eec9499da6101eee9b8a0476de98cfd551c',
+            ),
+            (
+                False,
+                -2,
+                1,
+                'BMP',
+                (16, 16),
+                'df39de36e5926c66d156d7984876a5c6a1493211b2cc324548317da363589da2',
+            ),
+            (
+                True,
+                'abc',
+                2.5,
+                'PNG',
+                (85, 25),
+                '58006f73ca9b70eec4ed7090ed0f28455a5bb93507fdf60320d1e62a7f1e259b',
+            ),
+        ]:
+            with self.subTest(
+                rectangular=rectangular, border=border, scale=scale, fmt=fmt
+            ):
+                data = barcode_tags.datamatrix(
+                    'hello world',
+                    rectangular=rectangular,
+                    border=border,
+                    scale=scale,
+                    fill_color='red',
+                    back_color='blue',
+                    fmt=fmt,
+                )
+                prefix, payload = data.split(',', 1)
+                self.assertEqual(
+                    prefix, f'data:image/{fmt.lower()};charset=utf-8;base64'
+                )
+                with Image.open(io.BytesIO(base64.b64decode(payload))) as image:
+                    self.assertEqual(image.size, size)
+                    self.assertEqual(
+                        hashlib.sha256(image.tobytes()).hexdigest(), digest
+                    )
+
     def test_barcode(self):
         """Test the barcode generation tag."""
         barcode = barcode_tags.barcode('12345')
@@ -936,3 +1066,157 @@ class BarcodeTagTest(TestCase):
             datamatrix,
             'data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAIAAADZrBkAAAAAlElEQVR4nJ1TQQ7AIAgri///cncw6wroEseBgEFbCgZJnNsFICKOPAAIjeSM5T11IznK5f5WRMgnkhP9JfCcTC/MxFZ5hxLOgqrn3o/z/OqtsNpdSL31Iu9W4Dq8Sulu+q5Nuqa3XYOdnuidlICPpXhZVBruyzAKSZehT+yNlzvZQcq6JiW7Ni592swf/43kdlDfdgMk1eOtR7kWpAAAAABJRU5ErkJggg==',
         )
+
+    def test_2d_barcode_svg_renderer(self):
+        """Test vector rendering of a two-dimensional barcode matrix."""
+        svg_data = barcode_tags._render_2d_barcode(
+            [[True, False], [False, True]],
+            fill_color='red',
+            back_color='blue',
+            scale=2,
+            border=1,
+            fmt='SVG',
+        )
+
+        prefix, payload = svg_data.split(',', 1)
+        self.assertEqual(prefix, 'data:image/svg+xml;charset=utf-8;base64')
+
+        root = ElementTree.fromstring(base64.b64decode(payload))
+        namespace = '{http://www.w3.org/2000/svg}'
+
+        self.assertEqual(root.attrib['width'], '8')
+        self.assertEqual(root.attrib['height'], '8')
+        self.assertEqual(root.attrib['viewBox'], '0 0 4 4')
+        self.assertEqual(root.attrib['shape-rendering'], 'crispEdges')
+
+        background = root.find(f'{namespace}rect')
+        path = root.find(f'{namespace}path')
+        self.assertIsNotNone(background)
+        self.assertIsNotNone(path)
+        self.assertEqual(background.attrib['fill'], '#0000ff')
+        self.assertEqual(path.attrib['fill'], '#ff0000')
+        self.assertEqual(path.attrib['d'], 'M1 1h1v1h-1z M2 2h1v1h-1z')
+
+    def test_datamatrix_svg(self):
+        """Test SVG output from the Data Matrix template tag."""
+        datamatrix = barcode_tags.datamatrix(
+            'hello world',
+            rectangular=True,
+            border='abc',
+            fill_color='aaaaaaa',
+            back_color='aaaaaaa',
+            fmt='svg',
+        )
+
+        prefix, payload = datamatrix.split(',', 1)
+        self.assertEqual(prefix, 'data:image/svg+xml;charset=utf-8;base64')
+
+        root = ElementTree.fromstring(base64.b64decode(payload))
+        namespace = '{http://www.w3.org/2000/svg}'
+        _, _, width, height = root.attrib['viewBox'].split()
+
+        self.assertNotEqual(width, height)
+
+        background = root.find(f'{namespace}rect')
+        path = root.find(f'{namespace}path')
+        self.assertIsNotNone(background)
+        self.assertIsNotNone(path)
+        self.assertEqual(background.attrib['fill'], '#ffffff')
+        self.assertEqual(path.attrib['fill'], '#000000')
+
+    def test_datamatrix_svg_geometry(self):
+        """SVG modules retain the encoded matrix geometry at different scales."""
+        from ppf.datamatrix.datamatrix import DataMatrix
+
+        namespace = '{http://www.w3.org/2000/svg}'
+        for rectangular, border, scale in [
+            (False, 0, 1),
+            (True, 3, 2.5),
+            (False, -2, 2),
+        ]:
+            with self.subTest(rectangular=rectangular, border=border, scale=scale):
+                matrix = DataMatrix('hello world', rect=rectangular).matrix
+                padding = max(0, border)
+                width = len(matrix[0]) + 2 * padding
+                height = len(matrix) + 2 * padding
+                data = barcode_tags.datamatrix(
+                    'hello world',
+                    rectangular=rectangular,
+                    border=border,
+                    scale=scale,
+                    fmt='SVG',
+                )
+                root = ElementTree.fromstring(base64.b64decode(data.split(',', 1)[1]))
+                self.assertEqual(root.attrib['viewBox'], f'0 0 {width} {height}')
+                self.assertEqual(root.attrib['width'], str(int(width * scale)))
+                self.assertEqual(root.attrib['height'], str(int(height * scale)))
+                background = root.find(f'{namespace}rect')
+                self.assertEqual(background.attrib['width'], str(width))
+                self.assertEqual(background.attrib['height'], str(height))
+
+                path = root.find(f'{namespace}path').attrib['d']
+                modules = re.findall(r'M(\d+) (\d+)h1v1h-1z', path)
+                self.assertEqual(len(modules), sum(map(sum, matrix)))
+                self.assertEqual(
+                    {(int(x), int(y)) for x, y in modules},
+                    {
+                        (x + padding, y + padding)
+                        for y, row in enumerate(matrix)
+                        for x, dark in enumerate(row)
+                        if dark
+                    },
+                )
+
+    def test_datamatrix_svg_template(self):
+        """The template tag produces embeddable SVG and rejects empty data."""
+        template = Template(
+            '{% load barcode %}<img src="{% datamatrix data fmt="SVG" %}"/>'
+        )
+        html = template.render(Context({'data': 'hello world'}))
+        image = ElementTree.fromstring(html)
+        self.assertEqual(
+            image.attrib['src'], barcode_tags.datamatrix('hello world', fmt='SVG')
+        )
+
+        for data in ['', '   ']:
+            with self.subTest(data=data), self.assertRaises(ValidationError):
+                template.render(Context({'data': data}))
+
+    def test_datamatrix_svg_pdf(self):
+        """PDF output contains painted vector modules, not a missing image."""
+        from ppf.datamatrix.datamatrix import DataMatrix
+        from pypdf import PdfReader
+        from weasyprint import HTML
+
+        template = Template(
+            '{% load barcode %}'
+            '<img src="{% datamatrix data fmt="SVG" fill_color="red" %}">'
+        )
+        html = template.render(Context({'data': 'hello world'}))
+        with self.assertNoLogs('weasyprint', level='WARNING'):
+            pdf = HTML(string=html).write_pdf()
+
+        reader = PdfReader(io.BytesIO(pdf))
+        self.assertEqual(len(reader.pages), 1)
+        page = reader.pages[0]
+        self.assertEqual(len(page.images), 0)
+
+        # Count closed module outlines painted in the selected foreground color.
+        # A valid PDF header also occurs when WeasyPrint omits a broken image.
+        color = None
+        closed_paths = 0
+        painted_modules = 0
+        for operands, operator in page.get_contents().operations:
+            if operator == b'rg':
+                color = tuple(operands)
+            elif operator == b'h':
+                closed_paths += 1
+            elif operator in (b'f', b'f*'):
+                if color == (1, 0, 0):
+                    painted_modules += closed_paths
+                closed_paths = 0
+            elif operator == b'n':
+                closed_paths = 0
+
+        matrix = DataMatrix('hello world').matrix
+        self.assertEqual(painted_modules, sum(map(sum, matrix)))

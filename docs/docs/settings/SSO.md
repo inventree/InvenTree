@@ -14,21 +14,21 @@ InvenTree provides the possibility to use 3rd party services to authenticate use
 
 ## SSO Configuration
 
-The basic requirements for configuring SSO are outlined below:
+The basic steps for configuring SSO are:
 
-1. Enable backend for each required SSO provider(s) in the [config file or environment variables](../start/config.md#single-sign-on).
-1. Create an external *app* with your provider of choice
-1. Add the required client configurations as a *Social application* in the [Database Admin interface](./db_admin.md).
-1. Configure the *callback* URL for the external app.
-1. Enable SSO for the users in the [global settings](../settings/global.md).
-1. Configure [e-mail](../settings/email.md).
+1. Add the backend for the intended SSO provider(s) in the [config file](../start/config.md#configuration-file) or environment variables.
+2. Create an external *app* with the provider of choice
+3. Add the required client configurations as a *Social application* in the [Database Admin interface](./db_admin.md).
+4. Configure the *callback* URL for the external app.
+5. Enable SSO for the users in the [global settings](../settings/global.md).
+6. Configure [e-mail](../settings/email.md).
 
 !!! info "Two-step setup"
-    Provider modules are enabled in `config.yaml` (or environment variables). Client IDs, secrets, and site assignments are **not** configured there — they must be added as *Social applications* in the [Database Admin interface](./db_admin.md). SSO providers cannot be configured via the InvenTree API.
+    Provider modules are enabled in `config.yaml` (or environment variables). Client IDs, secrets, and site assignments are configured there or in the database via the Admin Center or the [Database Admin interface](./db_admin.md).
 
-### Enable Provider Backends
+### Add Provider Backends
 
-The first step is to ensure that the required provider modules are installed, via your installation [configuration file](../start/config.md#single-sign-on).
+The first step is to ensure that the required provider modules are installed, via the installations [configuration file](../start/config.md#single-sign-on).
 
 There are two variables in the configuration file which define the operation of SSO:
 
@@ -41,14 +41,10 @@ In the example below, SSO provider modules are activated for *google*, *github* 
 
 {{ image("settings/sso_config.png", "SSO Config") }}
 
-!!! info "Provider Module Format"
-    Note that the provider modules specified in `social_backends` must be prefixed with `allauth.socialaccounts.providers`
-
 !!! warning "Provider Documentation"
     We do not provide any specific documentation for each provider module. Please refer to the [django-allauth documentation](https://docs.allauth.org/en/latest/socialaccount/providers/index.html) for more information.
 
-!!! tip "Restart Server"
-    As the [configuration file](../start/config.md) is only read when the server is launched, ensure you restart the server after editing the file.
+As the [configuration file](../start/config.md) is only read when the server is launched, ensure you restart the server after editing the file.
 
 ### Create Provider App
 
@@ -64,40 +60,32 @@ In general, the external app will generate a *key* and *secret* pair - although 
 
 ### Add Client Configurations
 
-Once your external SSO app has been created, you need to create a new *Social application* entry in the [Database Admin interface](./db_admin.md) (under **Social accounts** → **Social applications** — not in the Admin Center).
+Once you have added the provider, you need to create a new *Social application* entry in the Admin Center (under Identity Federation / SSO ) or in the [Database Admin interface](./db_admin.md) (under **Social accounts** → **Social applications**).
 
-#### Create Social Application
+#### Admin Database Interface
 
-Select **Add social application** (top right of the social applications list). Social applications are listed under the **Social accounts** section of the Database Admin — not in the InvenTree Admin Center settings screens.
+1. Select **Add social application** (top right of the social applications list). Social applications are listed under the **Social accounts** section.
 
-{{ image("settings/social_account_add.png", "Database Admin — Social applications section") }}
+2. Configure the social application entry with the specifics provider details:
 
-#### Configure Social Application
-
-Configure the social application entry with the app details:
-
-{{ image("settings/social_application_configure.png", "Configure Social Application") }}
+{{ image("settings/social_application_configure.png", "Sample Social Application Configuration") }}
 
 - Select the *provider* type as required
-- Provide a *name* for the application (note that this should match the *name* used for any custom settings provided in the configuration file)
-- Add client and secret data for your external SSO app
+- Provide a *name* for the social application (note that this must match the *name* used for any custom settings provided in the configuration file)
+- Add client and secret data from your external SSO provider / application
 - Add the *site* which you want to provide access for this SSO app
-- Save the new application entry when configuration is finished
+- Save the new entry
 
 !!! warning "Site Selection"
     You *must* assign the new application to at least one available site domain
 
-!!! tip "Fix Your Mistakes"
-    You can always return to edit or adjust the social application details later
-
-!!! success "Multiple Applications"
-    To provide support for multiple SSO applications, simply repeat this process and create another social application entry
+Multiple SSO applications can be configured by repeating this process and creating multiple entries.
 
 ### Configure Callback URL
 
-The external SSO application must be provided with a *callback* URL - a URL by which it can communicate with the InvenTree server. The specific *name* that the external SSO application uses for this callback URL may vary, with some authentication applications referring to it with other names such as *reply* or *redirect*.
+Most external SSO providers must be provided with a *callback* URL - a URL by which it can communicate with the InvenTree server. The specific *name* that the external SSO application uses for this callback URL may vary, with some authentication applications referring to it with other names such as *reply* or *redirect*.
 
-In any case, the URL is is specific to your installation and the SSO provider. The general pattern for this URL is: `{% raw %}<hostname>/accounts/<provider>/login/callback/{% endraw %}`.
+In any case, the URL is is specific to your installation and the SSO provider. The general pattern for this URL is: `{% raw %}<hostname>/accounts/<provider>/login/callback/{% endraw %}` but can vary. Read the specific provider documentation by django-allauth for exact information.
 
 !!! success "Works for Local Installs"
     Your server does not need to be "public facing" for this to work. For example the URL `http://localhost:1234/accounts/github/login/callback/` would be perfectly valid!
@@ -114,7 +102,7 @@ Now that the social application is created, you need to enable SSO authenticatio
 
 In the [settings screen](./global.md), navigate to the *Login Settings* panel. Here you will see the required configuration options to enable SSO:
 
-{{ image("settings/sso_settings.png", "SSO Settings") }}
+{{ image("settings/social_account_add.png", "Database Admin — Social applications section") }}
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |

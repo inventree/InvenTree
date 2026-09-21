@@ -94,19 +94,8 @@ def get_unit_registry():
     return _unit_registry
 
 
-def reload_unit_registry():
-    """Reload the unit registry from the database.
-
-    This function is called at startup, and whenever the database is updated.
-    """
-    import time
-
-    t_start = time.time()
-
-    global _unit_registry
-
-    _unit_registry = None
-
+def new_base_registry() -> pint.UnitRegistry:
+    """Construct a new pint UnitRegistry, with InvenTree's default (non-custom) unit definitions."""
     reg = pint.UnitRegistry(autoconvert_offset_to_baseunit=True)
 
     # Aliases for temperature units
@@ -123,6 +112,24 @@ def reload_unit_registry():
     reg.define('dozen = 12 = dz')
     reg.define('hundred = 100')
     reg.define('thousand = 1000')
+
+    return reg
+
+
+def reload_unit_registry():
+    """Reload the unit registry from the database.
+
+    This function is called at startup, and whenever the database is updated.
+    """
+    import time
+
+    t_start = time.time()
+
+    global _unit_registry
+
+    _unit_registry = None
+
+    reg = new_base_registry()
 
     # Allow for custom units to be defined in the database
     # Calculate a hash of all custom units
@@ -154,6 +161,41 @@ def reload_unit_registry():
 
     dt = time.time() - t_start
     logger.debug('Loaded unit registry in %.3f s', dt)
+
+    return reg
+
+
+def build_candidate_unit_registry(
+    pending_fmt_string: str, exclude_pk: Optional[int] = None
+) -> pint.UnitRegistry:
+    """Build a throwaway unit registry, to validate a pending (not yet saved) custom unit definition.
+
+    This constructs the registry that *would* result from saving the pending custom unit,
+    without touching the shared, cached unit registry. This allows us to detect issues
+    (such as a circular reference between two custom units) which only appear once every
+    custom unit definition is loaded together.
+
+    Arguments:
+        pending_fmt_string: The pint format string for the (not yet saved) custom unit
+        exclude_pk: If provided, exclude the CustomUnit with this primary key from the
+            existing database records (used when validating an update to an existing unit)
+
+    Returns:
+        A new pint.UnitRegistry instance, with all custom units (including the pending one) loaded
+    """
+    from common.models import CustomUnit
+
+    reg = new_base_registry()
+
+    custom_units = CustomUnit.objects.all()
+
+    if exclude_pk is not None:
+        custom_units = custom_units.exclude(pk=exclude_pk)
+
+    for cu in custom_units:
+        reg.define(cu.fmt_string())
+
+    reg.define(pending_fmt_string)
 
     return reg
 

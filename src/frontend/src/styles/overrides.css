@@ -35,3 +35,15 @@
 .mantine-datatable-resize-locked {
   width: 100% !important;
 }
+
+/* Vertically rotated table column headers (user setting: ROTATE_TABLE_HEADERS) */
+.rotate-table-headers thead th {
+  vertical-align: bottom;
+  min-width: 2.5rem;
+}
+
+.rotate-table-headers thead th .mantine-datatable-header-cell-sortable-text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+}

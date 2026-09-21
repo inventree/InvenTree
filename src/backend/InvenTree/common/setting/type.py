@@ -1,7 +1,28 @@
 """Types for settings."""
 
 from collections.abc import Callable
-from typing import Any, NotRequired, TypedDict
+from enum import StrEnum
+
+# only import for type checking
+from typing import TYPE_CHECKING, Any, NotRequired, Optional, TypedDict
+
+if TYPE_CHECKING:
+    from django_stubs_ext import StrOrPromise
+else:
+    StrOrPromise = str
+
+
+# enum to mark what kind of behavior a setting might influence; these are not for enforcing a specific logic but mainly docs / warning messages
+# these are NOT a security boundary
+class SettingFlag(StrEnum):
+    """Flags to indicate the behavior or purpose of a setting."""
+
+    """Setting influences visibility or UI of major functionality."""
+    TOGGLE = 'org.inventree.settingsflag.function_toggle'
+    """Setting is for internal use only and should not be exposed to end users."""
+    INTERNAL = 'org.inventree.settingsflag.internal'
+    """Setting has security implications and should be handled with care."""
+    SECURITY = 'org.inventree.settingsflag.security'
 
 
 class SettingsKeyType(TypedDict, total=False):
@@ -23,14 +44,19 @@ class SettingsKeyType(TypedDict, total=False):
         model: Auto create a dropdown menu to select an associated model instance (e.g. 'company.company', 'auth.user' and 'auth.group' are possible too, optional)
         confirm: Require an explicit confirmation before changing the setting (optional, default: False)
         confirm_text: Text to display in the confirmation dialog (optional)
+        flags: List of SettingFlag indicating the behavior or purpose of the setting (optional)
     """
 
-    name: str
-    description: str
-    units: str
+    name: StrOrPromise
+    description: StrOrPromise
+    units: StrOrPromise
     validator: Callable | list[Callable] | tuple[Callable]
     default: Callable | Any
-    choices: list[tuple[str, str]] | Callable[[], list[tuple[str, str]]]
+    choices: (
+        list[tuple[str, StrOrPromise]]
+        | Callable[[], list[tuple[str, StrOrPromise]] | None]
+        | None
+    )
     model_filters: dict[str, Any]
     hidden: bool
     before_save: Callable[..., None]
@@ -39,7 +65,8 @@ class SettingsKeyType(TypedDict, total=False):
     required: bool
     model: str
     confirm: bool
-    confirm_text: str
+    confirm_text: StrOrPromise
+    flags: Optional[list[SettingFlag]]
 
 
 class InvenTreeSettingsKeyType(SettingsKeyType):
