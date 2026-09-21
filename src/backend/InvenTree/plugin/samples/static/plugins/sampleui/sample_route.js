@@ -3,7 +3,7 @@ export function getBasicPage(_context) {
         'div',
         { style: { padding: 24 } },
         React.createElement('h1', null, 'Sample Plugin Route'),
-        React.createElement('p', null, 'Plugin route is working.')
+        React.createElement('p', null, 'This page has been dynamically rendered by the plugin system.')
     );
 }
 
@@ -14,7 +14,7 @@ export function getArgPage(_context) {
         'div',
         { style: { padding: 24 } },
         React.createElement('h1', null, 'Sample Plugin Route'),
-        React.createElement('p', null, 'Plugin route is working.'),
+        React.createElement('p', null, 'This page has been dynamically rendered by the plugin system.'),
         React.createElement('p', null, `Arg 1: ${arg1}.`)
     );
 }
