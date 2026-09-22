@@ -245,10 +245,12 @@ export function usePurchaseOrderLineItemFields({
  */
 export function usePurchaseOrderFields({
   supplierId,
-  duplicateOrderId
+  duplicateOrderId,
+  create
 }: {
   supplierId?: number;
   duplicateOrderId?: number;
+  create?: boolean;
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
 
@@ -285,7 +287,15 @@ export function usePurchaseOrderFields({
       destination: {
         filters: {
           structural: false
-        }
+        },
+        default: create
+          ? toNumber(
+              globalSettings.getSetting(
+                'PURCHASEORDER_DEFAULT_RECEIVE_LOCATION'
+              ),
+              null
+            )
+          : undefined
       },
       tags: TagsField({}),
       link: {},
@@ -336,7 +346,7 @@ export function usePurchaseOrderFields({
     }
 
     return fields;
-  }, [duplicateOrderId, supplierId, globalSettings]);
+  }, [duplicateOrderId, supplierId, create, globalSettings]);
 }
 
 /**
