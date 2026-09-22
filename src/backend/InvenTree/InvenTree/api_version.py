@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 549
+INVENTREE_API_VERSION = 550
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v549 -> 2026-09-21 : https://github.com/inventree/InvenTree/pull/12737
+v550 -> 2026-09-22 : https://github.com/inventree/InvenTree/pull/12737
     - Adds search and ordering fields across remaining API endpoints (machine, stock, importer, report)
+
+v549 -> 2026-09-22 : https://github.com/inventree/InvenTree/pull/12908
+    - Adds filtering / ordering / searching options to the SelectionList API endpoint
 
 v548 -> 2026-09-19 : https://github.com/inventree/InvenTree/pull/12886
     - Fix API permissions for multiple endpoints

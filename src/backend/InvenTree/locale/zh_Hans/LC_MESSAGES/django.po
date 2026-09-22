@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-19 08:01+0000\n"
-"PO-Revision-Date: 2026-09-19 08:06\n"
+"POT-Creation-Date: 2026-09-21 06:41+0000\n"
+"PO-Revision-Date: 2026-09-21 06:46\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -114,7 +114,7 @@ msgid "Invalid decimal value"
 msgstr "无效的数值"
 
 #: InvenTree/fields.py:286 build/serializers.py:537 build/serializers.py:598
-#: build/serializers.py:1779 common/models.py:3115 company/models.py:828
+#: build/serializers.py:1781 common/models.py:3119 company/models.py:828
 #: order/models.py:2173
 #: report/templates/report/inventree_build_order_report.html:171
 #: stock/models.py:3785 stock/models.py:3911 stock/serializers.py:777
@@ -278,18 +278,18 @@ msgid "Invalid choice"
 msgstr "无效选项"
 
 #: InvenTree/models.py:1251 common/api.py:1806 common/models.py:1470
-#: common/models.py:1889 common/models.py:2325 common/models.py:2450
-#: common/models.py:2760 common/serializers.py:693
+#: common/models.py:1889 common/models.py:2329 common/models.py:2454
+#: common/models.py:2764 common/serializers.py:693
 #: generic/states/serializers.py:20 machine/models.py:28 part/models.py:1119
-#: plugin/models.py:54 report/models.py:222 stock/models.py:89
+#: plugin/models.py:54 report/models.py:224 stock/models.py:89
 msgid "Name"
 msgstr "名称"
 
 #: InvenTree/models.py:1257 build/models.py:274 common/models.py:187
-#: common/models.py:2457 common/models.py:2598 common/models.py:2775
-#: common/models.py:3389 company/models.py:563 company/models.py:819
+#: common/models.py:2461 common/models.py:2602 common/models.py:2779
+#: common/models.py:3393 company/models.py:563 company/models.py:819
 #: order/models.py:508 order/models.py:2218 part/models.py:1142
-#: report/models.py:228 report/models.py:872 report/models.py:898
+#: report/models.py:230 report/models.py:878 report/models.py:904
 #: report/templates/report/inventree_build_order_report.html:116
 #: stock/models.py:95
 msgid "Description"
@@ -299,7 +299,7 @@ msgstr "描述"
 msgid "Description (optional)"
 msgstr "描述（选填）"
 
-#: InvenTree/models.py:1273 common/models.py:3478
+#: InvenTree/models.py:1273 common/models.py:3482
 msgid "Path"
 msgstr "路径"
 
@@ -335,7 +335,7 @@ msgstr "服务器错误"
 msgid "An error has been logged by the server."
 msgstr "服务器记录了一个错误。"
 
-#: InvenTree/models.py:1767 common/models.py:3414
+#: InvenTree/models.py:1767 common/models.py:3418
 #: report/templates/report/inventree_bill_of_materials_report.html:126
 #: report/templates/report/inventree_bill_of_materials_report.html:148
 #: report/templates/report/inventree_return_order_report.html:34
@@ -1020,7 +1020,7 @@ msgid "Build output has already been completed"
 msgstr "构建输出已完成"
 
 #: build/models.py:1337 build/models.py:1438 build/serializers.py:328
-#: build/serializers.py:382 build/serializers.py:925 build/serializers.py:1730
+#: build/serializers.py:382 build/serializers.py:925 build/serializers.py:1732
 #: order/models.py:819 order/serializers.py:642 order/serializers.py:877
 #: part/models.py:3879 stock/models.py:1079 stock/models.py:1504
 #: stock/models.py:1588 stock/models.py:1906 stock/models.py:2117
@@ -1515,31 +1515,31 @@ msgstr "可用的替代品库存"
 msgid "Available Variant Stock"
 msgstr "可用的变体库存"
 
-#: build/serializers.py:1743
+#: build/serializers.py:1745
 msgid "Consumed quantity exceeds allocated quantity"
 msgstr "消耗数量超过分配数量"
 
-#: build/serializers.py:1780
+#: build/serializers.py:1782
 msgid "Optional notes for the stock consumption"
 msgstr "库存消耗可选备注"
 
-#: build/serializers.py:1797
+#: build/serializers.py:1799
 msgid "Build item must point to the correct build order"
 msgstr "生产物料项必须关联到正确的生产订单"
 
-#: build/serializers.py:1802
+#: build/serializers.py:1804
 msgid "Duplicate build item allocation"
 msgstr "重复的生产物料项分配"
 
-#: build/serializers.py:1820
+#: build/serializers.py:1822
 msgid "Build line must point to the correct build order"
 msgstr "订单行项目必须关联到正确的生产订单"
 
-#: build/serializers.py:1825
+#: build/serializers.py:1827
 msgid "Duplicate build line allocation"
 msgstr "重复的订单行项目分配"
 
-#: build/serializers.py:1837
+#: build/serializers.py:1839
 msgid "At least one item or line must be provided"
 msgstr "必须提供至少一个物料项或行项目"
 
@@ -1597,7 +1597,7 @@ msgstr "逾期的生产订单"
 msgid "Build order {bo} is now overdue"
 msgstr "生产订单 {bo} 现已逾期"
 
-#: common/api.py:490 common/models.py:3048
+#: common/api.py:490 common/models.py:3052
 msgid "Model ID"
 msgstr "型号ID"
 
@@ -1713,7 +1713,7 @@ msgstr "标签"
 msgid "Project Code Label"
 msgstr "项目编号标签"
 
-#: common/models.py:111 common/models.py:136 common/models.py:3818
+#: common/models.py:111 common/models.py:136 common/models.py:3822
 msgid "Updated"
 msgstr "已是最新"
 
@@ -1737,8 +1737,8 @@ msgstr "唯一项目编码"
 msgid "Project description"
 msgstr "项目描述"
 
-#: common/models.py:193 common/models.py:1475 common/models.py:2470
-#: common/models.py:2605 company/models.py:194 company/models.py:787
+#: common/models.py:193 common/models.py:1475 common/models.py:2474
+#: common/models.py:2609 company/models.py:194 company/models.py:787
 #: machine/models.py:43 part/models.py:1310 plugin/models.py:69
 #: stock/api.py:715 users/models.py:381 users/models.py:749
 #: users/serializers.py:357 users/serializers.py:478
@@ -1787,7 +1787,7 @@ msgstr "键字符串必须是唯一的"
 
 #: common/models.py:1372 common/models.py:1373 common/models.py:1483
 #: common/models.py:1484 common/models.py:1731 common/models.py:1732
-#: common/models.py:2162 common/models.py:2163 common/models.py:3466
+#: common/models.py:2162 common/models.py:2163 common/models.py:3470
 #: importer/models.py:105 part/models.py:3526 part/models.py:3554
 #: plugin/models.py:392 plugin/models.py:393
 #: report/templates/report/inventree_test_report.html:105 users/models.py:251
@@ -1840,11 +1840,11 @@ msgstr "密钥"
 msgid "Shared secret for HMAC"
 msgstr "HMAC共享密钥"
 
-#: common/models.py:1609 common/models.py:3703
+#: common/models.py:1609 common/models.py:3707
 msgid "Message ID"
 msgstr "消息ID"
 
-#: common/models.py:1610 common/models.py:3693
+#: common/models.py:1610 common/models.py:3697
 msgid "Unique identifier for this message"
 msgstr "此邮件的唯一标识符"
 
@@ -1892,7 +1892,7 @@ msgstr "与此通知关联的可选显式 URL"
 msgid "Id"
 msgstr "标识"
 
-#: common/models.py:1789 common/models.py:3383
+#: common/models.py:1789 common/models.py:3387
 msgid "Title"
 msgstr "标题"
 
@@ -1916,7 +1916,7 @@ msgstr "作者"
 msgid "Summary"
 msgstr "摘要"
 
-#: common/models.py:1800 common/models.py:3670
+#: common/models.py:1800 common/models.py:3674
 msgid "Read"
 msgstr "阅读"
 
@@ -1998,7 +1998,7 @@ msgstr "已存在同名文件"
 msgid "Failed to save renamed file"
 msgstr "重命名文件保存失败"
 
-#: common/models.py:2120 common/models.py:2754
+#: common/models.py:2120 common/models.py:2758
 msgid "Model type"
 msgstr "模型类型"
 
@@ -2054,331 +2054,331 @@ msgstr "文件大小，以字节为单位"
 msgid "Invalid model type specified for attachment"
 msgstr "为附件指定的模型类型无效"
 
-#: common/models.py:2301
+#: common/models.py:2305
 msgid "Custom State"
 msgstr "自定状态"
 
-#: common/models.py:2302
+#: common/models.py:2306
 msgid "Custom States"
 msgstr "定制状态"
 
-#: common/models.py:2307
+#: common/models.py:2311
 msgid "Reference Status Set"
 msgstr "参考状态设置"
 
-#: common/models.py:2308
+#: common/models.py:2312
 msgid "Status set that is extended with this custom state"
 msgstr "使用此自定义状态扩展状态的状态集"
 
-#: common/models.py:2312 generic/states/serializers.py:18
+#: common/models.py:2316 generic/states/serializers.py:18
 msgid "Logical Key"
 msgstr "逻辑密钥"
 
-#: common/models.py:2314
+#: common/models.py:2318
 msgid "State logical key that is equal to this custom state in business logic"
 msgstr "等同于商业逻辑中自定义状态的状态逻辑键"
 
-#: common/models.py:2319 common/models.py:2586 machine/serializers.py:27
+#: common/models.py:2323 common/models.py:2590 machine/serializers.py:27
 #: report/templates/report/inventree_test_report.html:104 stock/models.py:3898
 msgid "Value"
 msgstr "值"
 
-#: common/models.py:2320
+#: common/models.py:2324
 msgid "Numerical value that will be saved in the models database"
 msgstr "将保存至模型数据库的数值"
 
-#: common/models.py:2326
+#: common/models.py:2330
 msgid "Name of the state"
 msgstr "状态名"
 
-#: common/models.py:2335 common/models.py:2592 generic/states/serializers.py:22
+#: common/models.py:2339 common/models.py:2596 generic/states/serializers.py:22
 msgid "Label"
 msgstr "标签"
 
-#: common/models.py:2336
+#: common/models.py:2340
 msgid "Label that will be displayed in the frontend"
 msgstr "将在前端显示的标签"
 
-#: common/models.py:2343 generic/states/serializers.py:24
+#: common/models.py:2347 generic/states/serializers.py:24
 msgid "Color"
 msgstr "颜色"
 
-#: common/models.py:2344
+#: common/models.py:2348
 msgid "Color that will be displayed in the frontend"
 msgstr "将在前端显示颜色"
 
-#: common/models.py:2352
+#: common/models.py:2356
 msgid "Model"
 msgstr "型号"
 
-#: common/models.py:2353
+#: common/models.py:2357
 msgid "Model this state is associated with"
 msgstr "该状态关联的模型"
 
-#: common/models.py:2368
+#: common/models.py:2372
 msgid "Model must be selected"
 msgstr "必须选定模型"
 
-#: common/models.py:2371
+#: common/models.py:2375
 msgid "Key must be selected"
 msgstr "必须选取密钥"
 
-#: common/models.py:2374
+#: common/models.py:2378
 msgid "Logical key must be selected"
 msgstr "必须选中逻辑密钥"
 
-#: common/models.py:2378
+#: common/models.py:2382
 msgid "Key must be different from logical key"
 msgstr "密钥必须不同于逻辑密钥"
 
-#: common/models.py:2385
+#: common/models.py:2389
 msgid "Valid reference status class must be provided"
 msgstr "必须提供有效的参考状态类"
 
-#: common/models.py:2391
+#: common/models.py:2395
 msgid "Key must be different from the logical keys of the reference status"
 msgstr "密钥必须不同于参考状态的逻辑密钥"
 
-#: common/models.py:2398
+#: common/models.py:2402
 msgid "Logical key must be in the logical keys of the reference status"
 msgstr "逻辑密钥必须在参考状态的逻辑键中"
 
-#: common/models.py:2405
+#: common/models.py:2409
 msgid "Name must be different from the names of the reference status"
 msgstr "名称必须不同于参考状态的名称"
 
-#: common/models.py:2445 common/models.py:2580 common/models.py:2799
+#: common/models.py:2449 common/models.py:2584 common/models.py:2803
 msgid "Selection List"
 msgstr "选择列表"
 
-#: common/models.py:2446
+#: common/models.py:2450
 msgid "Selection Lists"
 msgstr "选择列表"
 
-#: common/models.py:2451
+#: common/models.py:2455
 msgid "Name of the selection list"
 msgstr "选择列表的名称"
 
-#: common/models.py:2458
+#: common/models.py:2462
 msgid "Description of the selection list"
 msgstr "选择列表的描述"
 
-#: common/models.py:2464 part/models.py:1315
+#: common/models.py:2468 part/models.py:1315
 msgid "Locked"
 msgstr "已锁定"
 
-#: common/models.py:2465
+#: common/models.py:2469
 msgid "Is this selection list locked?"
 msgstr "此选择列表是否已锁定？"
 
-#: common/models.py:2471
+#: common/models.py:2475
 msgid "Can this selection list be used?"
 msgstr "能否使用此选择列表？"
 
-#: common/models.py:2479
+#: common/models.py:2483
 msgid "Source Plugin"
 msgstr "源插件"
 
-#: common/models.py:2480
+#: common/models.py:2484
 msgid "Plugin which provides the selection list"
 msgstr "提供选择列表的插件"
 
-#: common/models.py:2485
+#: common/models.py:2489
 msgid "Source String"
 msgstr "源字符串"
 
-#: common/models.py:2486
+#: common/models.py:2490
 msgid "Optional string identifying the source used for this list"
 msgstr "可选字符串，用于标识本列表的数据来源"
 
-#: common/models.py:2495
+#: common/models.py:2499
 msgid "Default Entry"
 msgstr "缺省项"
 
-#: common/models.py:2496
+#: common/models.py:2500
 msgid "Default entry for this selection list"
 msgstr "本选择列表的默认选项"
 
-#: common/models.py:2501 common/models.py:3813
+#: common/models.py:2505 common/models.py:3817
 msgid "Created"
 msgstr "已创建"
 
-#: common/models.py:2502
+#: common/models.py:2506
 msgid "Date and time that the selection list was created"
 msgstr "选择列表的创建日期和时间"
 
-#: common/models.py:2507
+#: common/models.py:2511
 msgid "Last Updated"
 msgstr "最近更新"
 
-#: common/models.py:2508
+#: common/models.py:2512
 msgid "Date and time that the selection list was last updated"
 msgstr "选择列表的最后更新时间"
 
-#: common/models.py:2570
+#: common/models.py:2574
 msgid "Selection List Entry"
 msgstr "选择列表项"
 
-#: common/models.py:2571
+#: common/models.py:2575
 msgid "Selection List Entries"
 msgstr "选择列表项"
 
-#: common/models.py:2581
+#: common/models.py:2585
 msgid "Selection list to which this entry belongs"
 msgstr "此选项归属的选择列表"
 
-#: common/models.py:2587
+#: common/models.py:2591
 msgid "Value of the selection list entry"
 msgstr "选择列表项的值"
 
-#: common/models.py:2593
+#: common/models.py:2597
 msgid "Label for the selection list entry"
 msgstr "选择列表项的标签"
 
-#: common/models.py:2599
+#: common/models.py:2603
 msgid "Description of the selection list entry"
 msgstr "选择列表项的描述"
 
-#: common/models.py:2606
+#: common/models.py:2610
 msgid "Is this selection list entry active?"
 msgstr "该选择列表项是否处于激活状态？"
 
-#: common/models.py:2640
+#: common/models.py:2644
 msgid "Parameter Template"
 msgstr "参数模板"
 
-#: common/models.py:2641
+#: common/models.py:2645
 msgid "Parameter Templates"
 msgstr "参数模板"
 
-#: common/models.py:2662
+#: common/models.py:2666
 msgid "No uniqueness required"
 msgstr "不要求唯一"
 
-#: common/models.py:2663
+#: common/models.py:2667
 msgid "Unique for model type"
 msgstr "按模型类型唯一"
 
-#: common/models.py:2664
+#: common/models.py:2668
 msgid "Globally unique"
 msgstr "全局唯一"
 
-#: common/models.py:2691
+#: common/models.py:2695
 msgid "Checkbox parameters cannot have units"
 msgstr "勾选框参数不能有单位"
 
-#: common/models.py:2696
+#: common/models.py:2700
 msgid "Checkbox parameters cannot have choices"
 msgstr "复选框参数不能有选项"
 
-#: common/models.py:2716 part/models.py:3624
+#: common/models.py:2720 part/models.py:3624
 msgid "Choices must be unique"
 msgstr "选择必须是唯一的"
 
-#: common/models.py:2733
+#: common/models.py:2737
 msgid "Parameter template name must be unique"
 msgstr "参数模板名称必须是唯一的"
 
-#: common/models.py:2755
+#: common/models.py:2759
 msgid "Target model type for this parameter template"
 msgstr "此参数模板的目标模型类型"
 
-#: common/models.py:2761
+#: common/models.py:2765
 msgid "Parameter Name"
 msgstr "参数名称"
 
-#: common/models.py:2767 part/models.py:1268
+#: common/models.py:2771 part/models.py:1268
 msgid "Units"
 msgstr "单位"
 
-#: common/models.py:2768
+#: common/models.py:2772
 msgid "Physical units for this parameter"
 msgstr "此参数的物理单位"
 
-#: common/models.py:2776
+#: common/models.py:2780
 msgid "Parameter description"
 msgstr "参数说明"
 
-#: common/models.py:2782
+#: common/models.py:2786
 msgid "Checkbox"
 msgstr "勾选框"
 
-#: common/models.py:2783
+#: common/models.py:2787
 msgid "Is this parameter a checkbox?"
 msgstr "此参数是否为勾选框？"
 
-#: common/models.py:2788 part/models.py:3711
+#: common/models.py:2792 part/models.py:3711
 msgid "Choices"
 msgstr "选项"
 
-#: common/models.py:2789
+#: common/models.py:2793
 msgid "Valid choices for this parameter (comma-separated)"
 msgstr "此参数的有效选择 (逗号分隔)"
 
-#: common/models.py:2800
+#: common/models.py:2804
 msgid "Selection list for this parameter"
 msgstr "此参数的选择列表"
 
-#: common/models.py:2805 part/models.py:3686 report/models.py:297
+#: common/models.py:2809 part/models.py:3686 report/models.py:299
 #: scim/models.py:31
 msgid "Enabled"
 msgstr "已启用"
 
-#: common/models.py:2806
+#: common/models.py:2810
 msgid "Is this parameter template enabled?"
 msgstr "此参数模板是否启用？"
 
-#: common/models.py:2812
+#: common/models.py:2816
 msgid "Uniqueness"
 msgstr "唯一性"
 
-#: common/models.py:2814
+#: common/models.py:2818
 msgid "Enforce uniqueness of linked parameter values against this template"
 msgstr "强制此模板下关联参数值唯一"
 
-#: common/models.py:2856
+#: common/models.py:2860
 msgid "Parameter"
 msgstr "参数"
 
-#: common/models.py:2857
+#: common/models.py:2861
 msgid "Parameters"
 msgstr "参数"
 
-#: common/models.py:2903
+#: common/models.py:2907
 msgid "Invalid choice for parameter value"
 msgstr "无效的参数值选择"
 
-#: common/models.py:3007
+#: common/models.py:3011
 msgid "Parameter value must be unique"
 msgstr "参数值必须唯一"
 
-#: common/models.py:3016 common/serializers.py:1086
+#: common/models.py:3020 common/serializers.py:1086
 msgid "Invalid model type specified for parameter"
 msgstr "为附件指定的模型类型无效"
 
-#: common/models.py:3049
+#: common/models.py:3053
 msgid "ID of the target model for this parameter"
 msgstr "此参数的目标模型的 ID"
 
-#: common/models.py:3058 common/models.py:3355 common/setting/system.py:481
-#: report/models.py:383 report/models.py:717 report/serializers.py:115
+#: common/models.py:3062 common/models.py:3359 common/setting/system.py:481
+#: report/models.py:389 report/models.py:723 report/serializers.py:115
 #: report/serializers.py:166 stock/serializers.py:250
 msgid "Template"
 msgstr "模板"
 
-#: common/models.py:3059
+#: common/models.py:3063
 msgid "Parameter template"
 msgstr "参数模板"
 
-#: common/models.py:3064 common/models.py:3455 importer/models.py:684
+#: common/models.py:3068 common/models.py:3459 importer/models.py:684
 msgid "Data"
 msgstr "数据"
 
-#: common/models.py:3065
+#: common/models.py:3069
 msgid "Parameter Value"
 msgstr "参数值"
 
-#: common/models.py:3074 common/models.py:3114 company/models.py:827
+#: common/models.py:3078 common/models.py:3118 company/models.py:827
 #: order/serializers.py:916 order/serializers.py:2301 part/models.py:4089
 #: part/models.py:4492
 #: report/templates/report/inventree_bill_of_materials_report.html:140
@@ -2391,226 +2391,226 @@ msgstr "参数值"
 msgid "Note"
 msgstr "备注"
 
-#: common/models.py:3075 stock/serializers.py:778 stock/serializers.py:1139
+#: common/models.py:3079 stock/serializers.py:778 stock/serializers.py:1139
 msgid "Optional note field"
 msgstr "可选注释字段"
 
-#: common/models.py:3218 common/models.py:3220 common/serializers.py:959
+#: common/models.py:3222 common/models.py:3224 common/serializers.py:959
 #: common/serializers.py:963
 msgid "This field is required."
 msgstr ""
 
-#: common/models.py:3357
+#: common/models.py:3361
 msgid "Is this note a template (not linked to a specific model instance)?"
 msgstr ""
 
-#: common/models.py:3367
+#: common/models.py:3371
 msgid "Target model type for this note"
 msgstr ""
 
-#: common/models.py:3371
+#: common/models.py:3375
 msgid "Target model instance ID for this note"
 msgstr ""
 
-#: common/models.py:3378 company/models.py:793
+#: common/models.py:3382 company/models.py:793
 msgid "Primary"
 msgstr "主要的"
 
-#: common/models.py:3379
+#: common/models.py:3383
 msgid "Is this the primary note for the associated model?"
 msgstr ""
 
-#: common/models.py:3383
+#: common/models.py:3387
 msgid "Note title"
 msgstr ""
 
-#: common/models.py:3390
+#: common/models.py:3394
 msgid "Optional description field"
 msgstr ""
 
-#: common/models.py:3395
+#: common/models.py:3399
 msgid "Content"
 msgstr ""
 
-#: common/models.py:3396
+#: common/models.py:3400
 msgid "Note content"
 msgstr ""
 
-#: common/models.py:3414
+#: common/models.py:3418
 msgid "Image file"
 msgstr "图像文件"
 
-#: common/models.py:3451
+#: common/models.py:3455
 msgid "Barcode Scan"
 msgstr "扫描条码"
 
-#: common/models.py:3456
+#: common/models.py:3460
 msgid "Barcode data"
 msgstr "条码数据"
 
-#: common/models.py:3467
+#: common/models.py:3471
 msgid "User who scanned the barcode"
 msgstr "扫描条码的用户"
 
-#: common/models.py:3472 importer/models.py:72
+#: common/models.py:3476 importer/models.py:72
 msgid "Timestamp"
 msgstr "时间戳"
 
-#: common/models.py:3473
+#: common/models.py:3477
 msgid "Date and time of the barcode scan"
 msgstr "扫描条形码的日期和时间"
 
-#: common/models.py:3479
+#: common/models.py:3483
 msgid "URL endpoint which processed the barcode"
 msgstr "处理条码的 URL 端点"
 
-#: common/models.py:3486 order/models.py:2225 plugin/serializers.py:93
+#: common/models.py:3490 order/models.py:2225 plugin/serializers.py:93
 msgid "Context"
 msgstr "上下文"
 
-#: common/models.py:3487
+#: common/models.py:3491
 msgid "Context data for the barcode scan"
 msgstr "扫描条形码的上下文数据"
 
-#: common/models.py:3494
+#: common/models.py:3498
 msgid "Response"
 msgstr "响应"
 
-#: common/models.py:3495
+#: common/models.py:3499
 msgid "Response data from the barcode scan"
 msgstr "扫描条形码的响应数据"
 
-#: common/models.py:3501 report/templates/report/inventree_test_report.html:103
+#: common/models.py:3505 report/templates/report/inventree_test_report.html:103
 #: stock/models.py:3892
 msgid "Result"
 msgstr "结果"
 
-#: common/models.py:3502
+#: common/models.py:3506
 msgid "Was the barcode scan successful?"
 msgstr "条码扫描成功吗？"
 
-#: common/models.py:3584
+#: common/models.py:3588
 msgid "An error occurred"
 msgstr "发生错误"
 
-#: common/models.py:3605
+#: common/models.py:3609
 msgid "INVE-E8: Email log deletion is protected. Set INVENTREE_PROTECT_EMAIL_LOG to False to allow deletion."
 msgstr "INVE-E8：邮件日志删除受保护。需设置 INVENTREE_PROTECT_EMAIL_LOG 为 False 以允许删除。"
 
-#: common/models.py:3652
+#: common/models.py:3656
 msgid "Email Message"
 msgstr "电子邮件信息"
 
-#: common/models.py:3653
+#: common/models.py:3657
 msgid "Email Messages"
 msgstr "电子邮箱信息"
 
-#: common/models.py:3660
+#: common/models.py:3664
 msgid "Announced"
 msgstr "已发布"
 
-#: common/models.py:3662
+#: common/models.py:3666
 msgid "Sent"
 msgstr "已发送"
 
-#: common/models.py:3663
+#: common/models.py:3667
 msgid "Failed"
 msgstr "失败"
 
-#: common/models.py:3666
+#: common/models.py:3670
 msgid "Delivered"
 msgstr "已送达"
 
-#: common/models.py:3674
+#: common/models.py:3678
 msgid "Confirmed"
 msgstr "已确认"
 
-#: common/models.py:3680
+#: common/models.py:3684
 msgid "Inbound"
 msgstr "入站"
 
-#: common/models.py:3681
+#: common/models.py:3685
 msgid "Outbound"
 msgstr "出站"
 
-#: common/models.py:3686
+#: common/models.py:3690
 msgid "No Reply"
 msgstr "暂无回复消息"
 
-#: common/models.py:3687
+#: common/models.py:3691
 msgid "Track Delivery"
 msgstr "跟踪交付"
 
-#: common/models.py:3688
+#: common/models.py:3692
 msgid "Track Read"
 msgstr "已读追踪"
 
-#: common/models.py:3689
+#: common/models.py:3693
 msgid "Track Click"
 msgstr "点击追踪"
 
-#: common/models.py:3692 common/models.py:3800
+#: common/models.py:3696 common/models.py:3804
 msgid "Global ID"
 msgstr "全局ID"
 
-#: common/models.py:3705
+#: common/models.py:3709
 msgid "Identifier for this message (might be supplied by external system)"
 msgstr "此消息的标识符 (可能由外部系统提供)"
 
-#: common/models.py:3712
+#: common/models.py:3716
 msgid "Thread ID"
 msgstr "主题 ID"
 
-#: common/models.py:3714
+#: common/models.py:3718
 msgid "Identifier for this message thread (might be supplied by external system)"
 msgstr "此消息主题的标识符 (可能由外部系统提供)"
 
-#: common/models.py:3723
+#: common/models.py:3727
 msgid "Thread"
 msgstr "主题"
 
-#: common/models.py:3724
+#: common/models.py:3728
 msgid "Linked thread for this message"
 msgstr "链接到此消息的主题"
 
-#: common/models.py:3740
+#: common/models.py:3744
 msgid "Priority"
 msgstr "优先"
 
-#: common/models.py:3782
+#: common/models.py:3786
 msgid "Email Thread"
 msgstr "邮件主题"
 
-#: common/models.py:3783
+#: common/models.py:3787
 msgid "Email Threads"
 msgstr "邮件主题"
 
-#: common/models.py:3794 generic/states/serializers.py:16
+#: common/models.py:3798 generic/states/serializers.py:16
 #: machine/serializers.py:24 plugin/models.py:46 users/models.py:236
 msgid "Key"
 msgstr "键"
 
-#: common/models.py:3797
+#: common/models.py:3801
 msgid "Unique key for this thread (used to identify the thread)"
 msgstr "此主题的唯一密钥 (用于识别主题)"
 
-#: common/models.py:3801
+#: common/models.py:3805
 msgid "Unique identifier for this thread"
 msgstr "此主题的唯一标识符"
 
-#: common/models.py:3808
+#: common/models.py:3812
 msgid "Started Internal"
 msgstr "内部服务已启动"
 
-#: common/models.py:3809
+#: common/models.py:3813
 msgid "Was this thread started internally?"
 msgstr "该线程是否为内部启动的？"
 
-#: common/models.py:3814
+#: common/models.py:3818
 msgid "Date and time that the thread was created"
 msgstr "创建主题的日期和时间"
 
-#: common/models.py:3819
+#: common/models.py:3823
 msgid "Date and time that the thread was last updated"
 msgstr "主题最后更新的日期和时间"
 
@@ -2726,7 +2726,7 @@ msgstr "任务关键词参数"
 
 #: common/serializers.py:830 common/serializers.py:986
 #: common/serializers.py:1032 common/serializers.py:1100 importer/models.py:94
-#: report/api.py:42 report/models.py:303 report/serializers.py:69
+#: report/api.py:42 report/models.py:305 report/serializers.py:69
 msgid "Model Type"
 msgstr "模型类型"
 
@@ -3382,7 +3382,7 @@ msgid "Log errors which occur when generating reports"
 msgstr "记录生成报告时出现的错误"
 
 #: common/setting/system.py:709 plugin/builtin/labels/label_sheet.py:30
-#: report/models.py:391
+#: report/models.py:397
 msgid "Page Size"
 msgstr "页面大小"
 
@@ -6700,7 +6700,7 @@ msgstr "内部零件号 IPN"
 msgid "Part revision or version number"
 msgstr "零件修订版本或版本号"
 
-#: part/models.py:1177 report/models.py:234
+#: part/models.py:1177 report/models.py:236
 msgid "Revision"
 msgstr "版本"
 
@@ -8351,7 +8351,7 @@ msgstr "边框"
 msgid "Print a border around each label"
 msgstr "打印每个标签的边框"
 
-#: plugin/builtin/labels/label_sheet.py:50 report/models.py:397
+#: plugin/builtin/labels/label_sheet.py:50 report/models.py:403
 msgid "Landscape"
 msgstr "横屏模式"
 
@@ -8852,132 +8852,132 @@ msgstr "字母"
 msgid "Template file with this name already exists"
 msgstr "已存在具有此名称的模板"
 
-#: report/models.py:223
+#: report/models.py:225
 msgid "Template name"
 msgstr "模版名称"
 
-#: report/models.py:229
+#: report/models.py:231
 msgid "Template description"
 msgstr "模板说明"
 
-#: report/models.py:235
+#: report/models.py:237
 msgid "Revision number (auto-increments)"
 msgstr "修订编号 (自动增量)"
 
-#: report/models.py:241
+#: report/models.py:243
 msgid "Attach to Model on Print"
 msgstr "打印时附加到模型"
 
-#: report/models.py:243
+#: report/models.py:245
 msgid "Save report output as an attachment against linked model instance when printing"
 msgstr "打印时将报告输出保存为附件与链接模型实例"
 
-#: report/models.py:291
+#: report/models.py:293
 msgid "Filename Pattern"
 msgstr "文件名样式"
 
-#: report/models.py:292
+#: report/models.py:294
 msgid "Pattern for generating filenames"
 msgstr "生成文件名模式"
 
-#: report/models.py:297
+#: report/models.py:299
 msgid "Template is enabled"
 msgstr "模板已启用"
 
-#: report/models.py:304
+#: report/models.py:306
 msgid "Target model type for template"
 msgstr "模版的目标模型类型"
 
-#: report/models.py:324
+#: report/models.py:326
 msgid "Filters"
 msgstr "筛选器"
 
-#: report/models.py:325
+#: report/models.py:327
 msgid "Template query filters (comma-separated list of key=value pairs)"
 msgstr "模版查询筛选器 (逗号分隔的键值对列表)"
 
-#: report/models.py:384 report/models.py:718
+#: report/models.py:390 report/models.py:724
 msgid "Template file"
 msgstr "模板包文件"
 
-#: report/models.py:392
+#: report/models.py:398
 msgid "Page size for PDF reports"
 msgstr "PDF 报告的页面大小"
 
-#: report/models.py:398
+#: report/models.py:404
 msgid "Render report in landscape orientation"
 msgstr "横向渲染报告"
 
-#: report/models.py:403
+#: report/models.py:409
 msgid "Merge"
 msgstr "合并"
 
-#: report/models.py:404
+#: report/models.py:410
 msgid "Render a single report against selected items"
 msgstr "针对选定项目生成独立报"
 
-#: report/models.py:471
+#: report/models.py:477
 #, python-brace-format
 msgid "Report generated from template {self.name}"
 msgstr "基于模板 {self.name} 生成的报告"
 
-#: report/models.py:581 report/models.py:620
+#: report/models.py:587 report/models.py:626
 msgid "Template syntax error"
 msgstr "模板语法错误"
 
-#: report/models.py:588 report/models.py:627
+#: report/models.py:594 report/models.py:633
 msgid "Error rendering report"
 msgstr "报告渲染错误"
 
-#: report/models.py:655
+#: report/models.py:661
 msgid "Error generating report"
 msgstr "报告生成错误"
 
-#: report/models.py:686
+#: report/models.py:692
 msgid "Error merging report outputs"
 msgstr "报告合并输出错误"
 
-#: report/models.py:724
+#: report/models.py:730
 msgid "Width [mm]"
 msgstr "宽度 [mm]"
 
-#: report/models.py:725
+#: report/models.py:731
 msgid "Label width, specified in mm"
 msgstr "标签宽度，以毫米为单位。"
 
-#: report/models.py:731
+#: report/models.py:737
 msgid "Height [mm]"
 msgstr "高度 [mm]"
 
-#: report/models.py:732
+#: report/models.py:738
 msgid "Label height, specified in mm"
 msgstr "标签高度，以毫米为单位。"
 
-#: report/models.py:846
+#: report/models.py:852
 msgid "Error printing labels"
 msgstr "标签打印错误"
 
-#: report/models.py:865
+#: report/models.py:871
 msgid "Snippet"
 msgstr "代码片段"
 
-#: report/models.py:866
+#: report/models.py:872
 msgid "Report snippet file"
 msgstr "报告代码片段文件"
 
-#: report/models.py:873
+#: report/models.py:879
 msgid "Snippet file description"
 msgstr "代码片段文件描述"
 
-#: report/models.py:891
+#: report/models.py:897
 msgid "Asset"
 msgstr "资产"
 
-#: report/models.py:892
+#: report/models.py:898
 msgid "Report asset file"
 msgstr "报告资产文件"
 
-#: report/models.py:899
+#: report/models.py:905
 msgid "Asset file description"
 msgstr "资产文件描述"
 
@@ -9134,31 +9134,31 @@ msgstr "没有结果"
 msgid "Transferred"
 msgstr "已调拨"
 
-#: report/templatetags/report.py:192
+#: report/templatetags/report.py:239
 msgid "Invalid media file path"
 msgstr "无效的媒体文件路径"
 
-#: report/templatetags/report.py:211
+#: report/templatetags/report.py:258
 msgid "Invalid static file path"
 msgstr "无效的静态文件路径"
 
-#: report/templatetags/report.py:313
+#: report/templatetags/report.py:360
 msgid "Asset file not found"
 msgstr "未找到资源文件"
 
-#: report/templatetags/report.py:374 report/templatetags/report.py:500
+#: report/templatetags/report.py:421 report/templatetags/report.py:547
 msgid "Image file not found"
 msgstr "找不到图片文件"
 
-#: report/templatetags/report.py:464
+#: report/templatetags/report.py:511
 msgid "No image file specified"
 msgstr "未指定图片文件"
 
-#: report/templatetags/report.py:494
+#: report/templatetags/report.py:541
 msgid "part_image tag requires a Part instance"
 msgstr "parpart_image 标签需要一个零件实例"
 
-#: report/templatetags/report.py:674
+#: report/templatetags/report.py:721
 msgid "company_image tag requires a Company instance"
 msgstr "公司_图片标签需要一个公司实例"
 

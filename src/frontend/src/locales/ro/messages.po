@@ -8,7 +8,7 @@ msgstr ""
 "Language: ro\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-19 06:32\n"
+"PO-Revision-Date: 2026-09-21 05:10\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
@@ -8713,35 +8713,35 @@ msgstr ""
 #~ msgid "Stocktake Reports"
 #~ msgstr "Stocktake Reports"
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:32
-msgid "Background worker running"
-msgstr ""
-
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:35
 #~ msgid "Background Worker Not Running"
 #~ msgstr "Background Worker Not Running"
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:38
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:37
+msgid "Background worker running"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:43
 msgid "Background worker not running"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:42
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:47
 msgid "The background task manager service is not running. Contact your system administrator."
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:49
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:58
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:68
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:77
 msgid "Pending Tasks"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:50
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:66
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:69
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:85
 #: src/pages/Index/Settings/SystemSettings.tsx:62
 msgid "Scheduled Tasks"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:51
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:74
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:70
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:93
 msgid "Failed Tasks"
 msgstr ""
 
