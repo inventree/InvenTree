@@ -3,6 +3,7 @@
 import logging
 import os
 import queue
+import time
 from datetime import timedelta
 from multiprocessing import Value
 from unittest.mock import patch
@@ -75,6 +76,22 @@ def always_fails_task():
     """
     retry_regression_logger.info(RETRY_REGRESSION_LOG_MESSAGE)
     raise ValueError('always_fails_task: intentional failure for retry regression test')
+
+
+TIMEOUT_TASK_SLEEP_SECONDS = 5
+TIMEOUT_TASK_STARTED_LOG_MESSAGE = 'timeout regression task started'
+TIMEOUT_TASK_FINISHED_LOG_MESSAGE = 'timeout regression task finished sleeping'
+
+
+def slow_task_for_timeout_test():
+    """Demo function for the timeout regression test below.
+
+    Sleeps far longer than the per-task timeout under test. If a real timeout does not
+    interrupt it, FINISHED gets logged - so that message must never appear.
+    """
+    retry_regression_logger.info(TIMEOUT_TASK_STARTED_LOG_MESSAGE)
+    time.sleep(TIMEOUT_TASK_SLEEP_SECONDS)
+    retry_regression_logger.info(TIMEOUT_TASK_FINISHED_LOG_MESSAGE)
 
 
 class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
@@ -176,6 +193,83 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
         InvenTree.tasks.offload_task('dummy_module.dummy_function', force_async=True)
         task = OrmQ.objects.get()
         self.assertFalse(task.q_options().get('ack_failure'))
+
+    def test_offload_timeout(self):
+        """timeout=N must actually be enforced by the worker, not just recorded on the queue.
+
+        django-q2 supports 'timeout' as a native per-task option.
+        This offloads a task that sleeps far longer than the timeout,
+        and drives it through the real worker() pipeline,
+        to prove it gets killed at the timeout rather than left to run.
+        """
+        from django_q.brokers import get_broker
+
+        OrmQ.objects.all().delete()
+
+        InvenTree.tasks.offload_task(
+            'InvenTree.test_tasks.slow_task_for_timeout_test',
+            force_async=True,
+            timeout=1,
+        )
+
+        # The per-task override must have been recorded on the queued task
+        queued = OrmQ.objects.get()
+        self.assertEqual(queued.q_options().get('timeout'), 1)
+
+        # Without an explicit timeout, no per-task override is set - the cluster-wide
+        # default applies
+        OrmQ.objects.all().delete()
+        InvenTree.tasks.offload_task('dummy_module.dummy_function', force_async=True)
+        queued = OrmQ.objects.get()
+        self.assertNotIn('timeout', queued.q_options())
+
+        # Now offload the slow task for real, and drive it through the actual worker
+        OrmQ.objects.all().delete()
+        InvenTree.tasks.offload_task(
+            'InvenTree.test_tasks.slow_task_for_timeout_test',
+            force_async=True,
+            timeout=1,
+        )
+
+        broker = get_broker()
+
+        start = time.monotonic()
+        with self.assertLogs(retry_regression_logger, level='INFO') as captured:
+            executed = self.run_one_broker_cycle(broker)
+        elapsed = time.monotonic() - start
+
+        self.assertEqual(executed, 1)
+
+        # The task must have started, but the 1-second timeout must have killed it well
+        # before its 5-second sleep completes - it never gets to log that it finished
+        self.assertTrue(
+            any(TIMEOUT_TASK_STARTED_LOG_MESSAGE in line for line in captured.output)
+        )
+        self.assertFalse(
+            any(TIMEOUT_TASK_FINISHED_LOG_MESSAGE in line for line in captured.output)
+        )
+        self.assertLess(elapsed, TIMEOUT_TASK_SLEEP_SECONDS)
+
+        # The task must be recorded as failed, specifically due to the timeout
+        saved_task = Task.objects.get(
+            func='InvenTree.test_tasks.slow_task_for_timeout_test'
+        )
+        self.assertFalse(saved_task.success)
+        self.assertIn('exceeded maximum timeout value', saved_task.result)
+
+    def test_bulk_offload_timeout(self):
+        """bulk_offload_task() should forward timeout=N to every queued task."""
+        OrmQ.objects.all().delete()
+
+        entries = [((idx,), {}) for idx in range(5)]
+
+        InvenTree.tasks.bulk_offload_task(
+            'dummy_module.dummy_function', entries, force_async=True, timeout=15
+        )
+
+        self.assertEqual(OrmQ.objects.count(), 5)
+        for task in OrmQ.objects.all():
+            self.assertEqual(task.q_options().get('timeout'), 15)
 
     def run_one_broker_cycle(self, broker):
         """Drive a single dequeue/execute/save-or-acknowledge pass through django-q2.
@@ -727,6 +821,23 @@ class TaskBatchTests(TestCase):
             for task in OrmQ.objects.all()
         }
         self.assertEqual(ack_failure_by_arg, {1: True, 2: False})
+
+    def test_tasks_grouped_by_timeout(self):
+        """Tasks with different timeout values are flushed as separate bulk writes."""
+        with self.captureOnCommitCallbacks(execute=True):
+            with transaction.atomic(), InvenTree.tasks.batch_offload_tasks():
+                InvenTree.tasks.offload_task(
+                    'dummy_module.task_a', 1, force_async=True, timeout=5
+                )
+                InvenTree.tasks.offload_task('dummy_module.task_a', 2, force_async=True)
+
+        self.assertEqual(OrmQ.objects.count(), 2)
+
+        timeout_by_arg = {
+            task.args()[0]: task.q_options().get('timeout')
+            for task in OrmQ.objects.all()
+        }
+        self.assertEqual(timeout_by_arg, {1: 5, 2: None})
 
     def test_tasks_discarded_on_rollback(self):
         """Tasks queued in a batch are discarded, not fired, if the transaction rolls back."""
