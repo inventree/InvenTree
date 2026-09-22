@@ -61,6 +61,7 @@ class PluginMixinEnum(StringEnum):
     BASE = 'base'
 
     ACTION = 'action'
+    ALLOCATE = 'allocate'
     API_CALL = 'api_call'
     APP = 'app'
     BARCODE = 'barcode'
