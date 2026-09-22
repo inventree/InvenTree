@@ -2583,6 +2583,95 @@ class SelectionListStaffPermissionAPITests(InvenTreeAPITestCase):
         )
 
 
+class SelectionListFilterAPITests(InvenTreeAPITestCase):
+    """Tests for search / filter / ordering options on the SelectionList list endpoint."""
+
+    def setUp(self):
+        """Create a handful of SelectionList objects to filter/search/order over."""
+        super().setUp()
+
+        self.list_url = reverse('api-selectionlist-list')
+
+        self.list_a = SelectionList.objects.create(
+            name='Colors', description='A list of colors', active=True, locked=False
+        )
+        self.list_b = SelectionList.objects.create(
+            name='Shapes', description='A list of shapes', active=False, locked=False
+        )
+        self.list_c = SelectionList.objects.create(
+            name='Sizes', description='Locked list of sizes', active=True, locked=True
+        )
+
+    def test_list_all(self):
+        """With no filters applied, all SelectionList objects are returned."""
+        response = self.get(self.list_url, expected_code=200)
+        names = {item['name'] for item in response.data}
+        self.assertEqual(names, {'Colors', 'Shapes', 'Sizes'})
+
+    def test_filter_active(self):
+        """The 'active' filter restricts results to matching SelectionList objects."""
+        response = self.get(self.list_url, {'active': True}, expected_code=200)
+        names = {item['name'] for item in response.data}
+        self.assertEqual(names, {'Colors', 'Sizes'})
+
+        response = self.get(self.list_url, {'active': False}, expected_code=200)
+        names = {item['name'] for item in response.data}
+        self.assertEqual(names, {'Shapes'})
+
+    def test_filter_locked(self):
+        """The 'locked' filter restricts results to matching SelectionList objects."""
+        response = self.get(self.list_url, {'locked': True}, expected_code=200)
+        names = {item['name'] for item in response.data}
+        self.assertEqual(names, {'Sizes'})
+
+        response = self.get(self.list_url, {'locked': False}, expected_code=200)
+        names = {item['name'] for item in response.data}
+        self.assertEqual(names, {'Colors', 'Shapes'})
+
+    def test_filter_active_and_locked(self):
+        """Multiple filters can be combined."""
+        response = self.get(
+            self.list_url, {'active': True, 'locked': False}, expected_code=200
+        )
+        names = {item['name'] for item in response.data}
+        self.assertEqual(names, {'Colors'})
+
+    def test_search_name(self):
+        """Searching matches against the 'name' field."""
+        response = self.get(self.list_url, {'search': 'Shape'}, expected_code=200)
+        names = {item['name'] for item in response.data}
+        self.assertEqual(names, {'Shapes'})
+
+    def test_search_description(self):
+        """Searching matches against the 'description' field."""
+        response = self.get(self.list_url, {'search': 'Locked list'}, expected_code=200)
+        names = {item['name'] for item in response.data}
+        self.assertEqual(names, {'Sizes'})
+
+    def test_search_no_match(self):
+        """A search term which matches nothing returns an empty result set."""
+        response = self.get(self.list_url, {'search': 'nonexistent'}, expected_code=200)
+        self.assertEqual(len(response.data), 0)
+
+    def test_default_ordering(self):
+        """By default, results are ordered by name (ascending)."""
+        response = self.get(self.list_url, expected_code=200)
+        names = [item['name'] for item in response.data]
+        self.assertEqual(names, ['Colors', 'Shapes', 'Sizes'])
+
+    def test_ordering_name_descending(self):
+        """Results can be ordered by name in descending order."""
+        response = self.get(self.list_url, {'ordering': '-name'}, expected_code=200)
+        names = [item['name'] for item in response.data]
+        self.assertEqual(names, ['Sizes', 'Shapes', 'Colors'])
+
+    def test_ordering_active(self):
+        """Results can be ordered by the 'active' field."""
+        response = self.get(self.list_url, {'ordering': 'active'}, expected_code=200)
+        active_values = [item['active'] for item in response.data]
+        self.assertEqual(active_values, sorted(active_values))
+
+
 class NotePermissionAPITests(InvenTreeAPITestCase):
     """Tests for Note API permission enforcement.
 
