@@ -1,5 +1,7 @@
 """Plugin mixin class for AllocateMixin."""
 
+from django.db.models import Model
+
 from InvenTree.exceptions import log_error
 from plugin import PluginMixinEnum
 
@@ -27,7 +29,9 @@ class AllocateMixin:
         super().__init__()
         self.add_mixin(PluginMixinEnum.ALLOCATE, True, __class__)
 
-    def filter_build_allocation(self, build_line, stock_items: list, **kwargs) -> list:
+    def filter_build_allocation(
+        self, build_line: Model, stock_items: list, **kwargs
+    ) -> list:
         """Filter the stock items available for auto-allocation against a build order.
 
         Arguments:
@@ -45,7 +49,7 @@ class AllocateMixin:
         return stock_items
 
     def filter_sales_order_allocation(
-        self, order_line, stock_items: list, **kwargs
+        self, order_line: Model, stock_items: list, **kwargs
     ) -> list:
         """Filter the stock items available for auto-allocation against a sales order.
 
