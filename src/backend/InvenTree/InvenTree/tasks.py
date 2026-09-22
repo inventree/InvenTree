@@ -211,7 +211,7 @@ _task_batch: contextvars.ContextVar = contextvars.ContextVar('task_batch', defau
 class TaskBatch:
     """Collects offload_task() calls made within a batch_offload_tasks() scope.
 
-    Entries are grouped by (taskname, group, force_async, retry), so that each
+    Entries are grouped by (taskname, group, force_async, retry, timeout), so that each
     distinct combination triggered within the batch is flushed via its own
     bulk_offload_task() call.
     """
@@ -228,21 +228,32 @@ class TaskBatch:
         args: tuple,
         kwargs: dict,
         retry: bool = True,
+        timeout: Optional[int] = None,
     ) -> None:
         """Record a single offload_task() call against this batch."""
-        self.entries[taskname, group, force_async, retry].append((args, kwargs))
+        self.entries[taskname, group, force_async, retry, timeout].append((
+            args,
+            kwargs,
+        ))
 
     def flush(self) -> None:
-        """Fire a bulk_offload_task() call for each (taskname, group, force_async, retry) group collected so far."""
+        """Fire a bulk_offload_task() call for each (taskname, group, force_async, retry, timeout) group collected so far."""
         entries, self.entries = self.entries, defaultdict(list)
 
-        for (taskname, group, force_async, retry), task_entries in entries.items():
+        for (
+            taskname,
+            group,
+            force_async,
+            retry,
+            timeout,
+        ), task_entries in entries.items():
             bulk_offload_task(
                 taskname,
                 task_entries,
                 group=group,
                 force_async=force_async,
                 retry=retry,
+                timeout=timeout,
             )
 
 
@@ -302,6 +313,7 @@ def offload_task(
     force_sync: bool = False,
     check_duplicates: bool = True,
     retry: bool = True,
+    timeout: Optional[int] = None,
     **kwargs,
 ) -> str | bool:
     """Create an AsyncTask if workers are running. This is different to a 'scheduled' task, in that it only runs once!
@@ -316,6 +328,7 @@ def offload_task(
         check_duplicates: If True, check for existing identical tasks before offloading
         retry: If False, the task is attempted exactly once and is never retried if it
             fails (see note below)
+        timeout: Optional per-task override (in seconds) of the worker's task timeout
         **kwargs: Keyword arguments to be passed to the task function
 
     Note:
@@ -338,7 +351,7 @@ def offload_task(
         # A batch_offload_tasks() context is active - queue this task rather than
         # offloading it immediately (force_sync=True calls never reach this branch -
         # see batch_offload_tasks() for why they are excluded from batching)
-        batch.add(taskname, group, force_async, args, kwargs, retry)
+        batch.add(taskname, group, force_async, args, kwargs, retry, timeout)
         return True
 
     from InvenTree.exceptions import log_error
@@ -384,6 +397,8 @@ def offload_task(
                 # is its one native per-task option that acknowledges (and so drops)
                 # a task as soon as it fails, rather than leaving it to be redelivered
                 task_kwargs['ack_failure'] = True
+            if timeout is not None:
+                task_kwargs['timeout'] = timeout
 
             task = AsyncTask(taskname, *args, group=group, **task_kwargs)
             with tracer.start_as_current_span(f'async worker: {taskname}'):
@@ -451,6 +466,7 @@ def bulk_offload_task(
     force_sync: bool = False,
     force_async: bool = False,
     retry: bool = True,
+    timeout: Optional[int] = None,
 ) -> bool:
     """Queue the same background task many times, in a single bulk database write.
 
@@ -470,6 +486,8 @@ def bulk_offload_task(
         force_async: If True, force all tasks to be queued (even if workers are not running)
         retry: If False, every queued task is attempted exactly once and is never
             retried if it fails - see offload_task() for why
+        timeout: Optional per-task override (in seconds) of the worker's task timeout
+            for every queued task - see offload_task() for details
 
     Returns:
         bool: True if the tasks were queued (or run synchronously), False otherwise
@@ -503,6 +521,7 @@ def bulk_offload_task(
                 force_sync=True,
                 check_duplicates=False,
                 retry=retry,
+                timeout=timeout,
                 **kwargs,
             )
 
@@ -529,6 +548,9 @@ def bulk_offload_task(
             # See offload_task() - 'ack_failure' drops the task the moment it fails,
             # instead of leaving its queue entry to be redelivered
             task['ack_failure'] = True
+
+        if timeout is not None:
+            task['timeout'] = timeout
 
         tasks.append(
             OrmQ(
