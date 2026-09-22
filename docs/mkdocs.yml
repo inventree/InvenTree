@@ -218,6 +218,7 @@ nav:
     - Unit Test: plugins/test.md
     - Plugin Mixins:
       - Action Mixin: plugins/mixins/action.md
+      - Allocate Mixin: plugins/mixins/allocate.md
       - API Mixin: plugins/mixins/api.md
       - App Mixin: plugins/mixins/app.md
       - Barcode Mixin: plugins/mixins/barcode.md
