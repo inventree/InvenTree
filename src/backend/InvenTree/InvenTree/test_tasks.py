@@ -137,6 +137,28 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
         ):
             InvenTree.tasks.offload_task('InvenTree.test_tasks.eval', force_sync=True)
 
+    def test_offload_no_retry(self):
+        """retry=False should mark the queued task with ack_failure=True.
+
+        This is the bandaid for django-q2 having no per-task retry limit: 'ack_failure'
+        is its native per-task option that drops a task the moment it fails, instead of
+        leaving it to be redelivered indefinitely by the ORM broker.
+        """
+        OrmQ.objects.all().delete()
+
+        InvenTree.tasks.offload_task(
+            'dummy_module.dummy_function', force_async=True, retry=False
+        )
+
+        task = OrmQ.objects.get()
+        self.assertTrue(task.q_options().get('ack_failure'))
+
+        # By default (retry=True), the task is not marked for single-shot execution
+        OrmQ.objects.all().delete()
+        InvenTree.tasks.offload_task('dummy_module.dummy_function', force_async=True)
+        task = OrmQ.objects.get()
+        self.assertFalse(task.q_options().get('ack_failure'))
+
     def test_task_heartbeat(self):
         """Test the task heartbeat."""
         InvenTree.tasks.offload_task(InvenTree.tasks.heartbeat)
@@ -481,6 +503,20 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
             self.assertEqual(task.args(), args)
             self.assertEqual(task.kwargs(), kwargs)
 
+    def test_bulk_offload_no_retry(self):
+        """bulk_offload_task() should mark every queued task with ack_failure=True when retry=False."""
+        OrmQ.objects.all().delete()
+
+        entries = [((idx,), {}) for idx in range(5)]
+
+        InvenTree.tasks.bulk_offload_task(
+            'dummy_module.dummy_function', entries, force_async=True, retry=False
+        )
+
+        self.assertEqual(OrmQ.objects.count(), 5)
+        for task in OrmQ.objects.all():
+            self.assertTrue(task.q_options().get('ack_failure'))
+
 
 class TaskBatchTests(TestCase):
     """Unit tests for the batch_offload_tasks() context manager."""
@@ -545,6 +581,23 @@ class TaskBatchTests(TestCase):
             ),
             3,
         )
+
+    def test_tasks_grouped_by_retry(self):
+        """Tasks with different retry values are flushed as separate bulk writes."""
+        with self.captureOnCommitCallbacks(execute=True):
+            with transaction.atomic(), InvenTree.tasks.batch_offload_tasks():
+                InvenTree.tasks.offload_task(
+                    'dummy_module.task_a', 1, force_async=True, retry=False
+                )
+                InvenTree.tasks.offload_task('dummy_module.task_a', 2, force_async=True)
+
+        self.assertEqual(OrmQ.objects.count(), 2)
+
+        ack_failure_by_arg = {
+            task.args()[0]: bool(task.q_options().get('ack_failure'))
+            for task in OrmQ.objects.all()
+        }
+        self.assertEqual(ack_failure_by_arg, {1: True, 2: False})
 
     def test_tasks_discarded_on_rollback(self):
         """Tasks queued in a batch are discarded, not fired, if the transaction rolls back."""

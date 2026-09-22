@@ -211,8 +211,9 @@ _task_batch: contextvars.ContextVar = contextvars.ContextVar('task_batch', defau
 class TaskBatch:
     """Collects offload_task() calls made within a batch_offload_tasks() scope.
 
-    Entries are grouped by (taskname, group, force_async), so that each distinct
-    combination triggered within the batch is flushed via its own bulk_offload_task() call.
+    Entries are grouped by (taskname, group, force_async, retry), so that each
+    distinct combination triggered within the batch is flushed via its own
+    bulk_offload_task() call.
     """
 
     def __init__(self):
@@ -220,18 +221,28 @@ class TaskBatch:
         self.entries: dict[tuple, list] = defaultdict(list)
 
     def add(
-        self, taskname, group: str, force_async: bool, args: tuple, kwargs: dict
+        self,
+        taskname,
+        group: str,
+        force_async: bool,
+        args: tuple,
+        kwargs: dict,
+        retry: bool = True,
     ) -> None:
         """Record a single offload_task() call against this batch."""
-        self.entries[taskname, group, force_async].append((args, kwargs))
+        self.entries[taskname, group, force_async, retry].append((args, kwargs))
 
     def flush(self) -> None:
-        """Fire a bulk_offload_task() call for each (taskname, group, force_async) group collected so far."""
+        """Fire a bulk_offload_task() call for each (taskname, group, force_async, retry) group collected so far."""
         entries, self.entries = self.entries, defaultdict(list)
 
-        for (taskname, group, force_async), task_entries in entries.items():
+        for (taskname, group, force_async, retry), task_entries in entries.items():
             bulk_offload_task(
-                taskname, task_entries, group=group, force_async=force_async
+                taskname,
+                task_entries,
+                group=group,
+                force_async=force_async,
+                retry=retry,
             )
 
 
@@ -290,6 +301,7 @@ def offload_task(
     force_async: bool = False,
     force_sync: bool = False,
     check_duplicates: bool = True,
+    retry: bool = True,
     **kwargs,
 ) -> str | bool:
     """Create an AsyncTask if workers are running. This is different to a 'scheduled' task, in that it only runs once!
@@ -302,7 +314,19 @@ def offload_task(
         force_async: If True, force the task to be offloaded (even if workers are not running)
         force_sync: If True, force the task to be run synchronously (even if workers are running)
         check_duplicates: If True, check for existing identical tasks before offloading
+        retry: If False, the task is attempted exactly once and is never retried if it
+            fails (see note below)
         **kwargs: Keyword arguments to be passed to the task function
+
+    Note:
+        django-q2 has no concept of a per-task retry limit: the ORM broker (which
+        InvenTree always uses) simply leaves a failed task's queue entry in place, so it
+        gets redelivered indefinitely (governed by the cluster-wide 'retry' timeout)
+        until something acknowledges it. The one per-task escape hatch it does provide
+        is 'ack_failure', which acknowledges (and so permanently drops) a task the
+        moment it fails, regardless of the cluster's retry settings. retry=False is
+        implemented on top of that option - there is no equivalent for a finite
+        positive retry count.
 
     Returns:
         str | bool: Task ID if the task was offloaded, True if ran synchronously, False otherwise
@@ -314,7 +338,7 @@ def offload_task(
         # A batch_offload_tasks() context is active - queue this task rather than
         # offloading it immediately (force_sync=True calls never reach this branch -
         # see batch_offload_tasks() for why they are excluded from batching)
-        batch.add(taskname, group, force_async, args, kwargs)
+        batch.add(taskname, group, force_async, args, kwargs, retry)
         return True
 
     from InvenTree.exceptions import log_error
@@ -354,7 +378,14 @@ def offload_task(
 
         # Running as asynchronous task
         try:
-            task = AsyncTask(taskname, *args, group=group, **kwargs)
+            task_kwargs = dict(kwargs)
+            if not retry:
+                # Bandaid for django-q2 having no per-task retry limit: 'ack_failure'
+                # is its one native per-task option that acknowledges (and so drops)
+                # a task as soon as it fails, rather than leaving it to be redelivered
+                task_kwargs['ack_failure'] = True
+
+            task = AsyncTask(taskname, *args, group=group, **task_kwargs)
             with tracer.start_as_current_span(f'async worker: {taskname}'):
                 task.run()
 
@@ -419,6 +450,7 @@ def bulk_offload_task(
     group: str = 'inventree',
     force_sync: bool = False,
     force_async: bool = False,
+    retry: bool = True,
 ) -> bool:
     """Queue the same background task many times, in a single bulk database write.
 
@@ -436,6 +468,8 @@ def bulk_offload_task(
         group: The task group to assign to each queued task
         force_sync: If True, run all tasks synchronously (even if workers are running)
         force_async: If True, force all tasks to be queued (even if workers are not running)
+        retry: If False, every queued task is attempted exactly once and is never
+            retried if it fails - see offload_task() for why
 
     Returns:
         bool: True if the tasks were queued (or run synchronously), False otherwise
@@ -468,6 +502,7 @@ def bulk_offload_task(
                 group=group,
                 force_sync=True,
                 check_duplicates=False,
+                retry=retry,
                 **kwargs,
             )
 
@@ -489,6 +524,11 @@ def bulk_offload_task(
             'group': group,
             'started': timezone.now(),
         }
+
+        if not retry:
+            # See offload_task() - 'ack_failure' drops the task the moment it fails,
+            # instead of leaving its queue entry to be redelivered
+            task['ack_failure'] = True
 
         tasks.append(
             OrmQ(
