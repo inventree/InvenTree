@@ -369,6 +369,51 @@ test('Forms - Initial Stock Field', async ({ browser }) => {
   await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
 });
 
+test('Forms - Selecting default stock location automatically', async ({
+  browser
+}) => {
+  // Create a new part and select a the default stock location
+  await setSettingState({ setting: 'PART_CREATE_INITIAL', value: true });
+
+  const partName = `Initial Stock Part ${Date.now()}`;
+  await deletePart(partName);
+
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'part/category/index/parts'
+  });
+  await page.waitForURL('**/part/category/index/**');
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await page.getByLabel('text-field-name', { exact: true }).fill(partName);
+
+  await page.getByLabel('tree-field-default_location').fill('production');
+  await page.getByText('Electronics production facility').click();
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Item Created').waitFor();
+
+  // Check that the default location is selected when adding a stock item
+  await page
+    .getByLabel('panel-tabs-part')
+    .getByRole('tab', { name: 'Stock', exact: true })
+    .click();
+
+  await page.getByLabel('action-button-add-stock-item').click();
+
+  // The stock item location is rendered via a "tree field" (backed by a real input)
+  const locationField = () =>
+    page.getByRole('textbox', { name: 'tree-field-location' });
+  await expect(locationField()).toHaveValue('Electronics Lab');
+
+  await deletePart(partName);
+  await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
+});
+
 test('Forms - Initial Stock hidden when setting disabled', async ({
   browser
 }) => {
