@@ -1,7 +1,10 @@
 """Unit tests for task management."""
 
+import logging
 import os
+import queue
 from datetime import timedelta
+from multiprocessing import Value
 from unittest.mock import patch
 
 from django.conf import settings
@@ -57,6 +60,21 @@ class ScheduledTaskTests(TestCase):
 def get_result():
     """Demo function for test_offloading."""
     return 'abc'
+
+
+retry_regression_logger = logging.getLogger('InvenTree.test_tasks.retry_regression')
+
+RETRY_REGRESSION_LOG_MESSAGE = 'retry regression task executed'
+
+
+def always_fails_task():
+    """Demo function for the worker retry regression tests below.
+
+    Logs a fixed, greppable message and then always raises - so a test can count exactly
+    how many times a real django-q2 worker actually invoked it.
+    """
+    retry_regression_logger.info(RETRY_REGRESSION_LOG_MESSAGE)
+    raise ValueError('always_fails_task: intentional failure for retry regression test')
 
 
 class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
@@ -158,6 +176,117 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
         InvenTree.tasks.offload_task('dummy_module.dummy_function', force_async=True)
         task = OrmQ.objects.get()
         self.assertFalse(task.q_options().get('ack_failure'))
+
+    def run_one_broker_cycle(self, broker):
+        """Drive a single dequeue/execute/save-or-acknowledge pass through django-q2.
+
+        Uses the actual pusher/worker/monitor functions - exactly what a real qcluster
+        worker process does, just without the multiprocessing.
+
+        Returns the number of tasks that were dequeued and executed in this pass.
+        """
+        from django_q.monitor import monitor
+        from django_q.signing import SignedPackage
+        from django_q.worker import worker
+
+        dequeued = broker.dequeue()
+        if not dequeued:
+            return 0
+
+        task_queue = queue.Queue()
+        result_queue = queue.Queue()
+
+        for ack_id, payload in dequeued:
+            task = SignedPackage.loads(payload)
+            task['ack_id'] = ack_id
+            task_queue.put(task)
+        task_queue.put('STOP')
+
+        # worker()/monitor() normally run in their own dedicated process, so closing
+        # 'old' django database connections there is harmless. Here they run inline on
+        # the test's own connection (wrapped in TestCase's atomic transaction), so that
+        # same call would tear down the connection this test needs afterwards.
+        with (
+            patch('django_q.worker.close_old_django_connections'),
+            patch('django_q.monitor.close_old_django_connections'),
+        ):
+            worker(task_queue, result_queue, Value('i', -1))
+
+            result_queue.put('STOP')
+            monitor(result_queue, broker)
+
+        return len(dequeued)
+
+    def test_worker_does_not_retry_when_retry_false(self):
+        """Regression test: retry=False must stop a real worker from re-running a failing task.
+
+        Rather than just inspecting the queued payload, this drives the task through
+        django-q2's actual pusher/worker/monitor pipeline (the same functions a real
+        qcluster worker uses) to prove the task is genuinely never re-executed.
+        """
+        from django_q.brokers import get_broker
+
+        OrmQ.objects.all().delete()
+
+        InvenTree.tasks.offload_task(
+            'InvenTree.test_tasks.always_fails_task', force_async=True, retry=False
+        )
+
+        broker = get_broker()
+
+        with self.assertLogs(retry_regression_logger, level='INFO') as captured:
+            executed = self.run_one_broker_cycle(broker)
+
+        self.assertEqual(executed, 1)
+        self.assertEqual(
+            sum(RETRY_REGRESSION_LOG_MESSAGE in line for line in captured.output), 1
+        )
+
+        # The failed task must have been dropped, not left queued for redelivery
+        self.assertEqual(OrmQ.objects.count(), 0)
+
+        # Even simulating the redelivery timeout having elapsed, there is nothing left
+        # in the broker to redeliver - the task only ever ran once
+        self.assertEqual(self.run_one_broker_cycle(broker), 0)
+
+    def test_worker_retries_by_default(self):
+        """Contrast case for test_worker_does_not_retry_when_retry_false().
+
+        With the default retry=True, a failing task is left queued and gets picked up
+        and re-executed again once the broker's redelivery timeout has elapsed.
+        """
+        from django_q.brokers import get_broker
+
+        OrmQ.objects.all().delete()
+
+        InvenTree.tasks.offload_task(
+            'InvenTree.test_tasks.always_fails_task', force_async=True
+        )
+
+        broker = get_broker()
+
+        with self.assertLogs(retry_regression_logger, level='INFO') as captured:
+            executed = self.run_one_broker_cycle(broker)
+
+        self.assertEqual(executed, 1)
+        self.assertEqual(
+            sum(RETRY_REGRESSION_LOG_MESSAGE in line for line in captured.output), 1
+        )
+
+        # The failed task must still be queued, waiting to be redelivered
+        self.assertEqual(OrmQ.objects.count(), 1)
+
+        # Simulate the redelivery timeout having elapsed, then let the worker pick the
+        # same task up again
+        OrmQ.objects.update(lock=timezone.now() - timedelta(seconds=1))
+
+        with self.assertLogs(retry_regression_logger, level='INFO') as captured:
+            executed = self.run_one_broker_cycle(broker)
+
+        self.assertEqual(executed, 1)
+        self.assertEqual(
+            sum(RETRY_REGRESSION_LOG_MESSAGE in line for line in captured.output), 1
+        )
 
     def test_task_heartbeat(self):
         """Test the task heartbeat."""
