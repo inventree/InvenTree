@@ -447,13 +447,14 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(250);
 
+  const listname = 'some frontendtestlist';
   // Clean old list data if exists
   await page
-    .getByRole('cell', { name: 'some list' })
+    .getByRole('cell', { name: listname })
     .waitFor({ timeout: 500 })
     .then(async (cell) => {
       await page
-        .getByRole('cell', { name: 'some list' })
+        .getByRole('cell', { name: listname })
         .locator('..')
         .getByLabel('row-action-menu-')
         .click();
@@ -465,12 +466,12 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   // Add selection list
   await page.getByLabel('action-button-add-selection-').waitFor();
   await page.getByLabel('action-button-add-selection-').click();
-  await page.getByLabel('text-field-name').fill('some list');
+  await page.getByLabel('text-field-name').fill(listname);
   await page.getByLabel('text-field-description').fill('Listdescription');
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Select the new list to edit entries
-  await page.getByRole('cell', { name: 'some list' }).click();
+  await page.getByRole('cell', { name: listname }).click();
   await page.getByRole('button', { name: 'Selection List Entries' }).waitFor();
   await page.getByRole('button', { name: 'Selection List Details' }).click();
 
@@ -522,7 +523,7 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   await page
     .getByRole('combobox', { name: 'related-field-selectionlist' })
     .fill('some');
-  await page.getByRole('option', { name: 'some list' }).click();
+  await page.getByRole('option', { name: listname }).click();
 
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.waitForLoadState('networkidle');
