@@ -1532,6 +1532,39 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(item_1.batch, 'B-abc-123')
         self.assertEqual(item_2.batch, 'B-xyz-789')
 
+    def test_top_level_batch_code(self):
+        """Test the top-level 'batch_code' field.
+
+        - Applied to any line item which does not specify its own batch code
+        - A line item's own 'batch_code' value takes precedence
+        """
+        line_1 = models.PurchaseOrderLineItem.objects.get(pk=1)
+        line_2 = models.PurchaseOrderLineItem.objects.get(pk=2)
+
+        data = {
+            'items': [
+                {'line_item': 1, 'quantity': 10},
+                {'line_item': 2, 'quantity': 10, 'batch_code': 'B-xyz-789'},
+            ],
+            'location': 1,
+            'batch_code': 'B-top-level',
+        }
+
+        n = StockItem.objects.count()
+
+        self.post(self.url, data, expected_code=201)
+
+        self.assertEqual(n + 2, StockItem.objects.count())
+
+        item_1 = StockItem.objects.filter(supplier_part=line_1.part).first()
+        item_2 = StockItem.objects.filter(supplier_part=line_2.part).first()
+
+        # Line item 1 did not specify its own batch code - falls back to top-level value
+        self.assertEqual(item_1.batch, 'B-top-level')
+
+        # Line item 2 specified its own batch code - takes precedence
+        self.assertEqual(item_2.batch, 'B-xyz-789')
+
     def test_serial_numbers(self):
         """Test that we can supply a 'serial number' when receiving items."""
         line_1 = models.PurchaseOrderLineItem.objects.get(pk=1)
