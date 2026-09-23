@@ -127,6 +127,7 @@ Supported mixin classes are:
 | Mixin | Description |
 | --- | --- |
 | [ActionMixin](./mixins/action.md) | Run custom actions |
+| [AllocateMixin](./mixins/allocate.md) | Customize automatic stock allocation |
 | [APICallMixin](./mixins/api.md) | Perform calls to external APIs |
 | [AppMixin](./mixins/app.md) | Integrate additional database tables |
 | [BarcodeMixin](./mixins/barcode.md) | Support custom barcode actions |
