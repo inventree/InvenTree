@@ -172,6 +172,38 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
         ):
             InvenTree.tasks.offload_task('InvenTree.test_tasks.eval', force_sync=True)
 
+    def test_force_async_overrides_force_sync(self):
+        """force_async=True takes priority over force_sync=True - the task is queued, not run inline.
+
+        Regression test: offload_task()'s dispatch condition is
+        'force_async or (is_worker_running() and not force_sync)' - force_async short-circuits
+        the check, so passing both flags together silently queues the task rather than running
+        it synchronously as force_sync alone would.
+        """
+        OrmQ.objects.all().delete()
+
+        result = InvenTree.tasks.offload_task(
+            'dummy_module.dummy_function', force_async=True, force_sync=True
+        )
+
+        # A task ID was returned (queued), rather than resolving and running the task inline
+        # (which would fail, since 'dummy_module' does not exist)
+        self.assertIsInstance(result, str)
+        self.assertEqual(OrmQ.objects.count(), 1)
+
+    def test_offload_sync_reraises_exception(self):
+        """offload_task(..., force_sync=True) must propagate an exception raised by the task.
+
+        Regression test: the synchronous fallback logs the error and re-raises, rather than
+        swallowing it - nothing previously asserted the exception actually reaches the caller.
+        """
+
+        def broken_task():
+            raise ValueError('offload_task sync fallback regression test')
+
+        with self.assertRaises(ValueError):
+            InvenTree.tasks.offload_task(broken_task, force_sync=True)
+
     def test_offload_no_retry(self):
         """retry=False should mark the queued task with ack_failure=True.
 
@@ -256,6 +288,39 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
         )
         self.assertFalse(saved_task.success)
         self.assertIn('exceeded maximum timeout value', saved_task.result)
+
+    def test_offload_no_retry_and_timeout_together(self):
+        """retry=False and timeout=N together must both land on the same queued task.
+
+        Regression test: retry and timeout are covered independently elsewhere, but nothing
+        confirmed that a single offload_task() call applying both options actually sets both
+        'ack_failure' and 'timeout' on the same queued task, rather than one overriding the other.
+        """
+        OrmQ.objects.all().delete()
+
+        InvenTree.tasks.offload_task(
+            'dummy_module.dummy_function', force_async=True, retry=False, timeout=45
+        )
+
+        q_options = OrmQ.objects.get().q_options()
+        self.assertTrue(q_options.get('ack_failure'))
+        self.assertEqual(q_options.get('timeout'), 45)
+
+    def test_offload_custom_group(self):
+        """A custom group= kwarg on a direct (non-batched) offload_task() call must be honored.
+
+        Regression test: custom groups were previously only ever exercised through the
+        batch_offload_tasks() path (see TaskBatchTests.test_tasks_grouped_by_name_and_group) -
+        nothing confirmed the direct AsyncTask() dispatch path in offload_task() itself
+        applies a custom group.
+        """
+        OrmQ.objects.all().delete()
+
+        InvenTree.tasks.offload_task(
+            'dummy_module.dummy_function', force_async=True, group='custom_group'
+        )
+
+        self.assertEqual(OrmQ.objects.get().group(), 'custom_group')
 
     def test_bulk_offload_timeout(self):
         """bulk_offload_task() should forward timeout=N to every queued task."""
@@ -869,6 +934,31 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
         self.assertEqual(OrmQ.objects.count(), 5)
         for task in OrmQ.objects.all():
             self.assertTrue(task.q_options().get('ack_failure'))
+
+    def test_bulk_offload_falls_back_to_sync(self):
+        """bulk_offload_task() falls back to running every entry synchronously when async isn't available.
+
+        Regression test: every other bulk_offload_task() test passes force_async=True, so the
+        'not force_async and (force_sync or not is_worker_running())' fallback branch - which
+        calls offload_task(..., force_sync=True, ...) once per entry - was never exercised.
+        """
+        calls = []
+
+        def sync_target(value):
+            calls.append(value)
+
+        OrmQ.objects.all().delete()
+
+        entries = [((idx,), {}) for idx in range(3)]
+
+        result = InvenTree.tasks.bulk_offload_task(
+            sync_target, entries, force_sync=True
+        )
+
+        self.assertTrue(result)
+        # Every entry ran synchronously, immediately - nothing was queued
+        self.assertEqual(OrmQ.objects.count(), 0)
+        self.assertEqual(sorted(calls), [0, 1, 2])
 
 
 class TaskBatchTests(TestCase):

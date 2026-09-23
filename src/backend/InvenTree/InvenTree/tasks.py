@@ -397,8 +397,8 @@ def offload_task(
         **kwargs: Keyword arguments to be passed to the task function
 
     Note:
-        django-q2 has no concept of a per-task retry limit: the ORM broker (which
-        InvenTree always uses) simply leaves a failed task's queue entry in place, so it
+        django-q2 has no concept of a per-task retry limit:
+        the ORM broker simply leaves a failed task's queue entry in place, so it
         gets redelivered (governed by the cluster-wide 'retry' timeout) until something
         acknowledges it, up to the cluster-wide 'max_attempts' limit. The one per-task
         escape hatch it does provide is 'ack_failure', which acknowledges (and so
