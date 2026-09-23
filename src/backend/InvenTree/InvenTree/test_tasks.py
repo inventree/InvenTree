@@ -276,21 +276,21 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
 
         The broker redelivers a task once its lock (governed by the cluster-wide
         Q_CLUSTER['retry'] setting) expires, regardless of any per-task 'timeout'
-        override. If 'timeout' left less than 120s of headroom before that, the task
+        override. If 'timeout' left less than 30s of headroom before that, the task
         could be redelivered and executed again before the original attempt had even
         timed out - so offload_task()/bulk_offload_task() must clamp it down (and warn)
         rather than queuing it as requested.
         """
         retry = settings.Q_CLUSTER['retry']
-        max_timeout = retry - 120
+        max_timeout = retry - 30
 
         # A timeout comfortably below the retry interval is left untouched
         OrmQ.objects.all().delete()
         InvenTree.tasks.offload_task(
-            'dummy_module.dummy_function', force_async=True, timeout=retry - 200
+            'dummy_module.dummy_function', force_async=True, timeout=retry - 50
         )
         task = OrmQ.objects.get()
-        self.assertEqual(task.q_options().get('timeout'), retry - 200)
+        self.assertEqual(task.q_options().get('timeout'), retry - 50)
 
         # A timeout equal to the retry interval leaves no headroom at all - clamped
         # down to the maximum safe value, with a warning logged

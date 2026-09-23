@@ -391,7 +391,7 @@ def offload_task(
         retry: If False, the task is attempted exactly once and is never retried if it
             fails (see note below)
         timeout: Optional per-task override (in seconds) of the worker's task timeout.
-            Clamped down (with a warning) if it would leave less than 120s of headroom
+            Clamped down (with a warning) if it would leave less than 30s of headroom
             before the configured broker retry interval (settings.Q_CLUSTER['retry']) -
             see _clamp_task_timeout()
         **kwargs: Keyword arguments to be passed to the task function
