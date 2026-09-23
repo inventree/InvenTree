@@ -451,7 +451,9 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   await page.waitForTimeout(250);
 
   const listname = 'some frontendtestlist';
-  await page.getByRole('textbox', { name: 'table-search-input' }).fill(listname);
+  await page
+    .getByRole('textbox', { name: 'table-search-input' })
+    .fill(listname);
   await page.waitForTimeout(500);
   await page.waitForLoadState('networkidle');
 
