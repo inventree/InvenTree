@@ -161,15 +161,27 @@ def record_task_success(task_name: str):
     set_global_setting(f'_{task_name}_SUCCESS', datetime.now().isoformat(), None)
 
 
-def check_existing_task(taskname, group: str, *args, **kwargs) -> Optional[str]:
+def check_existing_task(
+    taskname,
+    group: str,
+    *args,
+    retry: bool = True,
+    timeout: Optional[int] = None,
+    **kwargs,
+) -> Optional[str]:
     """Test if an identical task is already registered with the worker.
 
-    This will only return true if the task name, group, args and kwargs all match an existing task.
+    This will only return true if the task name, group, args, kwargs, retry and timeout
+    all match an existing task - a queued task with a different retry/timeout policy is
+    a different request, even if it would otherwise look identical, so it is not treated
+    as a duplicate.
 
     Arguments:
         taskname: The name of the task to check for, in the format 'app.module.function'
         group: The group that the task belongs to
         *args: Positional arguments to match
+        retry: The 'retry' policy the new call is requesting - see offload_task()
+        timeout: The per-task 'timeout' override the new call is requesting - see offload_task()
         **kwargs: Keyword arguments to match
 
     Returns:
@@ -197,11 +209,61 @@ def check_existing_task(taskname, group: str, *args, **kwargs) -> Optional[str]:
             # Task kwargs do not match
             continue
 
+        q_options = task.q_options()
+
+        if bool(q_options.get('ack_failure', False)) != (not retry):
+            # Existing task has a different retry policy - not a true duplicate
+            continue
+
+        if q_options.get('timeout') != timeout:
+            # Existing task has a different per-task timeout override - not a true duplicate
+            continue
+
         task_id = task.task_id()
 
         break
 
     return task_id
+
+
+def _clamp_task_timeout(timeout: Optional[int]) -> Optional[int]:
+    """Clamp a per-task 'timeout' override to leave headroom before the cluster's redelivery interval.
+
+    The ORM broker redelivers a queued task once its lock expires, which is governed
+    by the cluster-wide Q_CLUSTER['retry'] setting - a per-task 'timeout' override has
+    no effect on that. If 'timeout' left less headroom than that, the task could be
+    redelivered and run again before the original attempt has even timed out, silently
+    duplicating work (and defeating retry=False for that task) - so it is clamped down
+    to the largest value that still leaves 120s of headroom (mirroring the margin
+    InvenTree.setting.worker.get_worker_config() applies to the cluster-wide timeout).
+
+    Arguments:
+        timeout: The requested per-task timeout override, if any
+
+    Returns:
+        Optional[int]: 'timeout', clamped down if necessary
+    """
+    if timeout is None:
+        return None
+
+    HEADROOM = 30
+
+    retry = settings.Q_CLUSTER.get('retry')
+    max_timeout = retry - HEADROOM if retry else timeout
+
+    if retry and timeout > max_timeout:
+        logger.warning(
+            'offload_task(): timeout (%ss) leaves less than %ss of headroom before '
+            'the configured broker retry interval (%ss) - clamping to %ss to avoid the '
+            'task being redelivered and executed again before it can time out',
+            timeout,
+            HEADROOM,
+            retry,
+            max_timeout,
+        )
+        return max_timeout
+
+    return timeout
 
 
 # Context-local batch of pending offload_task() calls (see batch_offload_tasks())
@@ -328,22 +390,27 @@ def offload_task(
         check_duplicates: If True, check for existing identical tasks before offloading
         retry: If False, the task is attempted exactly once and is never retried if it
             fails (see note below)
-        timeout: Optional per-task override (in seconds) of the worker's task timeout
+        timeout: Optional per-task override (in seconds) of the worker's task timeout.
+            Clamped down (with a warning) if it would leave less than 120s of headroom
+            before the configured broker retry interval (settings.Q_CLUSTER['retry']) -
+            see _clamp_task_timeout()
         **kwargs: Keyword arguments to be passed to the task function
 
     Note:
         django-q2 has no concept of a per-task retry limit: the ORM broker (which
         InvenTree always uses) simply leaves a failed task's queue entry in place, so it
-        gets redelivered indefinitely (governed by the cluster-wide 'retry' timeout)
-        until something acknowledges it. The one per-task escape hatch it does provide
-        is 'ack_failure', which acknowledges (and so permanently drops) a task the
-        moment it fails, regardless of the cluster's retry settings. retry=False is
-        implemented on top of that option - there is no equivalent for a finite
-        positive retry count.
+        gets redelivered (governed by the cluster-wide 'retry' timeout) until something
+        acknowledges it, up to the cluster-wide 'max_attempts' limit. The one per-task
+        escape hatch it does provide is 'ack_failure', which acknowledges (and so
+        permanently drops) a task the moment it fails, regardless of the cluster's
+        retry/max_attempts settings. retry=False is implemented on top of that option -
+        there is no equivalent for a finite positive retry count.
 
     Returns:
         str | bool: Task ID if the task was offloaded, True if ran synchronously, False otherwise
     """
+    timeout = _clamp_task_timeout(timeout)
+
     # Extract group information from kwargs
     group = kwargs.pop('group', 'inventree')
 
@@ -382,7 +449,9 @@ def offload_task(
     if force_async or (is_worker_running() and not force_sync):
         # Before offloading, check if a duplicate task exists
         if not force_sync and check_duplicates:
-            if task_id := check_existing_task(taskname, group, *args, **kwargs):
+            if task_id := check_existing_task(
+                taskname, group, *args, retry=retry, timeout=timeout, **kwargs
+            ):
                 logger.debug(
                     "Skipping duplicate task '%s' with ID '%s'", taskname, task_id
                 )
@@ -494,6 +563,8 @@ def bulk_offload_task(
     """
     if not entries:
         return False
+
+    timeout = _clamp_task_timeout(timeout)
 
     try:
         from django_q.brokers import get_broker
