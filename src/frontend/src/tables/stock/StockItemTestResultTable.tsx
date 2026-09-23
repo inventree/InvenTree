@@ -470,7 +470,7 @@ export default function StockItemTestResultTable({
           return null;
         }
 
-        const results = record?.results ?? [];
+        const results = record?.results?.toReversed() ?? [];
 
         return (
           <DataTable
@@ -478,7 +478,7 @@ export default function StockItemTestResultTable({
             idAccessor={'test'}
             noHeader
             columns={cols}
-            records={results.slice(0, -1)}
+            records={results}
           />
         );
       }
