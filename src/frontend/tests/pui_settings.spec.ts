@@ -441,11 +441,18 @@ test('Settings - Admin - Parameter', async ({ browser }) => {
   await loadTab(page, 'Selection Lists');
 
   // Check for expected entry
+  await page
+    .getByRole('textbox', { name: 'table-search-input' })
+    .fill('Animals');
   await page.getByRole('cell', { name: 'Animals', exact: true }).waitFor();
   await page.getByText('Various animals and descriptions thereof').waitFor();
 
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(250);
+
+  await page.getByRole('textbox', { name: 'table-search-input' }).fill('some');
+  await page.waitForTimeout(500);
+  await page.waitForLoadState('networkidle');
 
   // Clean old list data if exists
   await page
