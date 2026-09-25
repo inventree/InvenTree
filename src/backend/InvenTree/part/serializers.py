@@ -880,11 +880,11 @@ class PartSerializer(
         read_only=True, allow_null=True, label=_('Variant Stock')
     )
 
-    minimum_stock = serializers.FloatField(
+    minimum_stock = InvenTree.serializers.InvenTreeDecimalField(
         required=False, label=_('Minimum Stock'), default=0
     )
 
-    maximum_stock = serializers.FloatField(
+    maximum_stock = InvenTree.serializers.InvenTreeDecimalField(
         required=False, label=_('Maximum Stock'), default=0
     )
 
