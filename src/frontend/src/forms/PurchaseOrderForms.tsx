@@ -11,7 +11,7 @@ import {
   Table,
   TextInput
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useId } from '@mantine/hooks';
 import {
   IconAddressBook,
   IconCalendar,
@@ -345,11 +345,13 @@ export function usePurchaseOrderFields({
 function LineItemFormRow({
   props,
   record,
-  statuses
+  statuses,
+  topLevelBatchCode
 }: Readonly<{
   props: TableFieldRowProps;
   record: any;
   statuses: any;
+  topLevelBatchCode?: string;
 }>) {
   // Barcode Modal state
   const [opened, { open, close }] = useDisclosure(false, {
@@ -771,11 +773,13 @@ function LineItemFormRow({
         onValueChange={(value) => {
           props.changeFn(props.rowId, 'batch_code', value);
         }}
-        fieldName='batch_code'
+        fieldName='line_batch_code'
         fieldDefinition={{
           field_type: 'string',
           label: t`Batch Code`,
-          description: t`Enter batch code for received items`,
+          description: topLevelBatchCode
+            ? t`Overrides the top-level batch code ("${topLevelBatchCode}") for this line item`
+            : t`Enter batch code for received items`,
           value: props.item.batch_code,
           placeholderAutofill: true,
           placeholder:
@@ -869,6 +873,8 @@ type LineItemsForm = {
 };
 
 export function useReceiveLineItems(props: LineItemsForm) {
+  const modalId = useId();
+
   const stockStatusCodes = useMemo(
     () => getStatusCodeOptions(ModelType.stockitem),
     []
@@ -877,6 +883,14 @@ export function useReceiveLineItems(props: LineItemsForm) {
   const records = useMemo(() => {
     return Object.fromEntries(props.items.map((item) => [item.pk, item]));
   }, [props.items]);
+
+  // Top-level batch code, applied to any line item which does not specify its own
+  const [batchCode, setBatchCode] = useState<string>('');
+
+  const batchCodeGenerator = useBatchCodeGenerator({
+    modalId,
+    initialQuery: { order: props.orderPk }
+  });
 
   const filteredItems = useMemo(() => {
     return props.items
@@ -928,6 +942,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
               props={row}
               record={record}
               statuses={stockStatusCodes}
+              topLevelBatchCode={batchCode}
               key={row.rowId}
             />
           );
@@ -945,12 +960,27 @@ export function useReceiveLineItems(props: LineItemsForm) {
         filters: {
           structural: false
         }
+      },
+      batch_code: {
+        icon: <InvenTreeIcon icon='batch_code' />,
+        value: batchCode,
+        onValueChange: setBatchCode,
+        placeholderAutofill: true,
+        placeholder: batchCodeGenerator.result && `${batchCodeGenerator.result}`
       }
     };
-  }, [filteredItems, records, props.orderPk, stockStatusCodes]);
+  }, [
+    filteredItems,
+    records,
+    props.orderPk,
+    stockStatusCodes,
+    batchCode,
+    batchCodeGenerator.result
+  ]);
 
   return useCreateApiFormModal({
     ...props.formProps,
+    modalId,
     url: apiUrl(ApiEndpoints.purchase_order_receive, props.orderPk),
     title: t`Receive Line Items`,
     fields: fields,

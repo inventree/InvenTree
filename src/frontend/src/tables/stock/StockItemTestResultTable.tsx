@@ -113,20 +113,26 @@ export default function StockItemTestResultTable({
       // Iterate through the returned records
       // Sort test results using the same priority as the backend:
       // finished_datetime -> started_datetime -> date -> pk
-      records.toSorted(compareTestResults).forEach((record) => {
-        // Find matching template
-        const idx = results.findIndex(
-          (r: any) => r.templateId == record.template
-        );
-        if (idx >= 0) {
-          results[idx] = {
-            ...results[idx],
-            ...record
-          };
+      // Note: compareTestResults sorts newest-first, but we need to iterate
+      // oldest-first here, so that the most recent result is processed last
+      // and ends up displayed as the primary result for its template.
+      records
+        .toSorted(compareTestResults)
+        .toReversed()
+        .forEach((record) => {
+          // Find matching template
+          const idx = results.findIndex(
+            (r: any) => r.templateId == record.template
+          );
+          if (idx >= 0) {
+            results[idx] = {
+              ...results[idx],
+              ...record
+            };
 
-          results[idx].results.push(record);
-        }
-      });
+            results[idx].results.push(record);
+          }
+        });
 
       return results;
     },
@@ -464,7 +470,7 @@ export default function StockItemTestResultTable({
           return null;
         }
 
-        const results = record?.results ?? [];
+        const results = record?.results?.toReversed() ?? [];
 
         return (
           <DataTable
@@ -472,7 +478,7 @@ export default function StockItemTestResultTable({
             idAccessor={'test'}
             noHeader
             columns={cols}
-            records={results.slice(0, -1)}
+            records={results}
           />
         );
       }
