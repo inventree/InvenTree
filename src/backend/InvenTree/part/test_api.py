@@ -1997,6 +1997,30 @@ class PartDetailTests(PartImageTestMixin, PartAPITestBase):
         # Part count should have reduced
         self.assertEqual(Part.objects.count(), n)
 
+    def test_min_max_stock(self):
+        """Test that decimal values can be set for minimum_stock and maximum_stock.
+
+        Ref: https://github.com/inventree/InvenTree/issues/12925
+        """
+        part = Part.objects.get(pk=1)
+        url = reverse('api-part-detail', kwargs={'pk': part.pk})
+
+        for value in [0.1, 0.35, 1.6, 12.123456, '0.1', '7.25']:
+            response = self.patch(
+                url, {'minimum_stock': value, 'maximum_stock': value}, expected_code=200
+            )
+
+            self.assertAlmostEqual(response.data['minimum_stock'], float(value))
+            self.assertAlmostEqual(response.data['maximum_stock'], float(value))
+
+            part.refresh_from_db()
+            self.assertEqual(part.minimum_stock, Decimal(str(value)))
+            self.assertEqual(part.maximum_stock, Decimal(str(value)))
+
+        # Too many decimal places should still be rejected
+        response = self.patch(url, {'minimum_stock': '0.1234567'}, expected_code=400)
+        self.assertIn('minimum_stock', response.data)
+
     def test_duplicates(self):
         """Check that trying to create 'duplicate' parts results in errors."""
         # Create a part
