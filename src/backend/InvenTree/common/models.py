@@ -3015,7 +3015,10 @@ class Parameter(
 
         if self.template.units and self.data_numeric is not None:
             query = Parameter.objects.filter(
-                template=self.template, data_numeric=self.data_numeric
+                template=self.template,
+                data_numeric__range=InvenTree.conversion.numeric_range(
+                    self.data_numeric
+                ),
             )
         else:
             query = Parameter.objects.filter(
