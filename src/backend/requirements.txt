@@ -710,9 +710,9 @@ django-structlog==10.1.0 \
     --hash=sha256:450842bfb03887fc14469570769e515d22ea67d753848a25cdbd05405382c090 \
     --hash=sha256:812f61dea873e559511f42c0f3a7cdc36d4472f6cc15460565a97e5cbe06a76d
     # via -r src/backend/requirements.in
-django-stubs-ext==6.1.1 \
-    --hash=sha256:64aebb7ce2c327a4a2b75207d67034e879fd7edf027c93487be69da363dc79fa \
-    --hash=sha256:c35263135558d4c5d12b69e1f4c98632bf59bc3ab5118f7d4882d12800e3a7dd
+django-stubs-ext==6.1.0 \
+    --hash=sha256:57273506823274700a707c8f404dfb52a12c4554daf1468dfb2bff857bb22074 \
+    --hash=sha256:d5635a481f5bdf2e04d533a8b602d3b9a28f073deffc85b83048dd20032e4d20
     # via django-fsm-2
 django-taggit==6.1.0 \
     --hash=sha256:ab776264bbc76cb3d7e49e1bf9054962457831bd21c3a42db9138b41956e4cf0 \
