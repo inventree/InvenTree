@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-21 05:10\n"
+"PO-Revision-Date: 2026-09-26 06:29\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -89,7 +89,7 @@ msgstr "Vazgeç"
 
 #: lib/components/RowActions.tsx:146
 #: src/components/nav/NavigationDrawer.tsx:185
-#: src/forms/PurchaseOrderForms.tsx:940
+#: src/forms/PurchaseOrderForms.tsx:965
 #: src/forms/StockForms.tsx:950
 #: src/forms/StockForms.tsx:1517
 #: src/forms/StockForms.tsx:1565
@@ -148,15 +148,16 @@ msgstr "Hayır"
 #~ msgstr "Part Parameter Templates"
 
 #: lib/enums/ModelInformation.tsx:61
+#: src/components/details/LineItemOverviewTable.tsx:80
 #: src/components/tables/ColumnRenderers.tsx:93
-#: src/components/wizards/OrderPartsWizard.tsx:285
+#: src/components/wizards/OrderPartsWizard.tsx:286
 #: src/forms/BuildForms.tsx:382
 #: src/forms/BuildForms.tsx:465
 #: src/forms/BuildForms.tsx:541
 #: src/forms/BuildForms.tsx:703
 #: src/forms/BuildForms.tsx:867
 #: src/forms/BuildForms.tsx:971
-#: src/forms/PurchaseOrderForms.tsx:936
+#: src/forms/PurchaseOrderForms.tsx:961
 #: src/forms/ReturnOrderForms.tsx:242
 #: src/forms/SalesOrderForms.tsx:435
 #: src/forms/StockForms.tsx:432
@@ -228,7 +229,7 @@ msgstr "Parça Test Şablonları"
 
 #: lib/enums/ModelInformation.tsx:91
 #: src/components/previews/models/SupplierPartPreview.tsx:15
-#: src/components/wizards/OrderPartsWizard.tsx:297
+#: src/components/wizards/OrderPartsWizard.tsx:298
 #: src/pages/company/SupplierPartDetail.tsx:264
 #: src/pages/stock/StockDetailsPanel.tsx:228
 #: src/tables/build/BuildAllocatedStockTable.tsx:155
@@ -395,10 +396,10 @@ msgstr "Şirketler"
 #: src/components/tables/TableHoverCard.tsx:103
 #: src/forms/CommonFields.tsx:47
 #: src/pages/build/BuildOrderDetailsPanel.tsx:162
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:157
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:169
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:171
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:99
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:158
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:170
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:172
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:101
 msgid "Project Code"
 msgstr "Proje Kodu"
 
@@ -409,9 +410,9 @@ msgstr "Proje Kodları"
 
 #: lib/enums/ModelInformation.tsx:199
 #: src/components/previews/models/PurchaseOrderPreview.tsx:15
-#: src/components/wizards/OrderPartsWizard.tsx:350
+#: src/components/wizards/OrderPartsWizard.tsx:351
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:34
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:376
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:377
 #: src/pages/stock/StockDetailsPanel.tsx:288
 #: src/tables/part/PartPurchaseOrdersTable.tsx:40
 #: src/tables/stock/StockItemTable.tsx:104
@@ -457,7 +458,7 @@ msgstr "Satış Siparişi"
 #: lib/enums/ModelInformation.tsx:217
 #: lib/enums/Roles.tsx:47
 #: src/defaults/actions.tsx:143
-#: src/pages/Index/Settings/SystemSettings.tsx:371
+#: src/pages/Index/Settings/SystemSettings.tsx:372
 #: src/pages/company/CompanyDetail.tsx:151
 #: src/pages/part/PartDetail.tsx:404
 #: src/pages/sales/SalesIndex.tsx:109
@@ -483,7 +484,7 @@ msgstr "İade Emri"
 #: lib/enums/ModelInformation.tsx:239
 #: lib/enums/Roles.tsx:43
 #: src/defaults/actions.tsx:163
-#: src/pages/Index/Settings/SystemSettings.tsx:384
+#: src/pages/Index/Settings/SystemSettings.tsx:385
 #: src/pages/company/CompanyDetail.tsx:159
 #: src/pages/part/PartDetail.tsx:415
 #: src/pages/sales/SalesIndex.tsx:150
@@ -536,9 +537,9 @@ msgstr "Adresler"
 #: lib/enums/ModelInformation.tsx:278
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:89
 #: src/pages/core/UserDetail.tsx:132
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:133
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:145
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:147
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:134
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:146
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:148
 msgid "Contact"
 msgstr "Bağlantı"
 
@@ -693,7 +694,7 @@ msgstr "Seçim Kayıtları"
 #: src/states/IconState.tsx:76
 #: src/tables/bom/BomTable.tsx:606
 #: src/tables/settings/EmailTable.tsx:109
-#: src/tables/stock/StockItemTestResultTable.tsx:336
+#: src/tables/stock/StockItemTestResultTable.tsx:342
 msgid "Error"
 msgstr "Hata"
 
@@ -774,23 +775,42 @@ msgstr "İşlem başarı ile tamamlandı"
 #~ msgid "Title"
 #~ msgstr "Title"
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:103
+#: src/components/barcodes/BarcodeCameraInput.tsx:202
+#: src/components/barcodes/BarcodeCameraInput.tsx:304
 msgid "Error while scanning"
 msgstr "Tarama sırasında hata"
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:117
+#: src/components/barcodes/BarcodeCameraInput.tsx:267
+msgid "Flashlight"
+msgstr ""
+
+#: src/components/barcodes/BarcodeCameraInput.tsx:268
+msgid "Flashlight control is not supported on this device"
+msgstr ""
+
+#: src/components/barcodes/BarcodeCameraInput.tsx:319
 msgid "Error while stopping"
 msgstr "Durdurma sırasında hata"
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:159
+#: src/components/barcodes/BarcodeCameraInput.tsx:366
 msgid "Start scanning by selecting a camera and pressing the play button."
 msgstr "Bir kamera seçerek ve oynat düğmesine basarak taramayı başlatın."
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:180
+#: src/components/barcodes/BarcodeCameraInput.tsx:384
+#: src/components/barcodes/BarcodeCameraInput.tsx:391
+msgid "Turn off flashlight"
+msgstr ""
+
+#: src/components/barcodes/BarcodeCameraInput.tsx:384
+#: src/components/barcodes/BarcodeCameraInput.tsx:391
+msgid "Turn on flashlight"
+msgstr ""
+
+#: src/components/barcodes/BarcodeCameraInput.tsx:403
 msgid "Stop scanning"
 msgstr "Taramayı durdur"
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:190
+#: src/components/barcodes/BarcodeCameraInput.tsx:413
 msgid "Start scanning"
 msgstr "Taramayı başlat"
 
@@ -833,8 +853,8 @@ msgstr "Barkod verisi gir"
 #: src/components/barcodes/BarcodeScanDialog.tsx:56
 #: src/components/buttons/ScanButton.tsx:56
 #: src/components/nav/NavigationDrawer.tsx:122
-#: src/forms/PurchaseOrderForms.tsx:534
-#: src/forms/PurchaseOrderForms.tsx:674
+#: src/forms/PurchaseOrderForms.tsx:546
+#: src/forms/PurchaseOrderForms.tsx:686
 msgid "Scan Barcode"
 msgstr "Barkod Tara"
 
@@ -904,12 +924,12 @@ msgstr "Barkod bağlanamadı"
 
 #: src/components/barcodes/QRCode.tsx:179
 #: src/pages/part/PartDetailsPanel.tsx:148
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:126
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:126
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:128
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:127
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:127
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:129
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:75
 #: src/pages/stock/StockDetailsPanel.tsx:124
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:92
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:94
 msgid "Link"
 msgstr "Bağlantı"
 
@@ -919,7 +939,7 @@ msgstr "Bu, ilgili barkoda olan bağlantıyı kaldıracaktır"
 
 #: src/components/barcodes/QRCode.tsx:205
 #: src/components/items/ActionDropdown.tsx:197
-#: src/forms/PurchaseOrderForms.tsx:664
+#: src/forms/PurchaseOrderForms.tsx:676
 msgid "Unlink Barcode"
 msgstr "Barkodun Bağlantısını Kaldır"
 
@@ -1105,20 +1125,20 @@ msgstr "Gecikmiş"
 #: src/components/calendar/OrderCalendarToolTip.tsx:58
 #: src/components/tables/ColumnRenderers.tsx:731
 #: src/pages/build/BuildOrderDetailsPanel.tsx:204
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:198
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:211
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:212
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:133
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:199
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:212
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:213
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:135
 msgid "Start Date"
 msgstr "Başlangıç Tarihi"
 
 #: src/components/calendar/OrderCalendarToolTip.tsx:64
 #: src/components/tables/ColumnRenderers.tsx:740
 #: src/pages/build/BuildOrderDetailsPanel.tsx:212
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:206
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:219
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:220
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:141
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:207
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:220
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:221
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:143
 #: src/tables/part/PartPurchaseOrdersTable.tsx:110
 #: src/tables/part/PartSalesOrdersTable.tsx:72
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:206
@@ -1132,10 +1152,10 @@ msgstr "Hedef Tarih"
 #: src/components/tables/Filter.tsx:400
 #: src/pages/build/BuildOrderDetailsPanel.tsx:155
 #: src/pages/part/PartDetailsPanel.tsx:290
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:165
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:177
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:179
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:107
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:166
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:178
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:180
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:109
 msgid "Responsible"
 msgstr "Sorumlu"
 
@@ -1613,6 +1633,18 @@ msgstr "Görseli sil"
 #~ msgid "Image downloaded successfully"
 #~ msgstr "Image downloaded successfully"
 
+#: src/components/details/LineItemOverviewTable.tsx:87
+msgid "Progress"
+msgstr ""
+
+#: src/components/details/LineItemOverviewTable.tsx:113
+msgid "No line items"
+msgstr ""
+
+#: src/components/details/LineItemOverviewTable.tsx:118
+msgid "View all {count} line items"
+msgstr ""
+
 #: src/components/details/PartIcons.tsx:43
 #~ msgid "Part is a template part (variants can be made from this part)"
 #~ msgstr "Part is a template part (variants can be made from this part)"
@@ -1649,7 +1681,7 @@ msgstr "Görseli sil"
 #: src/components/items/RoleTable.tsx:118
 #: src/components/settings/ConfigValueList.tsx:42
 #: src/components/tables/ColumnRenderers.tsx:776
-#: src/pages/part/pricing/BomPricingPanel.tsx:158
+#: src/pages/part/pricing/BomPricingPanel.tsx:160
 #: src/pages/part/pricing/VariantPricingPanel.tsx:54
 #: src/tables/purchasing/SupplierPartTable.tsx:191
 msgid "Updated"
@@ -1701,7 +1733,7 @@ msgstr ""
 
 #: src/components/editors/NotesEditor.tsx:317
 #: src/components/editors/NotesEditor.tsx:720
-#: src/forms/PurchaseOrderForms.tsx:655
+#: src/forms/PurchaseOrderForms.tsx:667
 msgid "Add Note"
 msgstr "Note Ekle"
 
@@ -2277,7 +2309,7 @@ msgstr "API Sürümü"
 #: src/defaults/actions.tsx:230
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:269
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:397
+#: src/pages/Index/Settings/SystemSettings.tsx:398
 msgid "Plugins"
 msgstr "Eklentiler"
 
@@ -2288,7 +2320,7 @@ msgstr "Eklentiler"
 #: src/tables/part/PartTestTemplateTable.tsx:121
 #: src/tables/settings/TemplateTable.tsx:296
 #: src/tables/settings/TemplateTable.tsx:408
-#: src/tables/stock/StockItemTestResultTable.tsx:418
+#: src/tables/stock/StockItemTestResultTable.tsx:424
 msgid "Enabled"
 msgstr "Etkin"
 
@@ -2785,7 +2817,7 @@ msgstr "Değiştir"
 
 #: src/components/items/RoleTable.tsx:150
 #: src/forms/StockForms.tsx:1682
-#: src/tables/stock/StockItemTestResultTable.tsx:366
+#: src/tables/stock/StockItemTestResultTable.tsx:372
 msgid "Add"
 msgstr "Ekle"
 
@@ -3165,8 +3197,8 @@ msgstr "Kullanıcı Ayarları"
 #: src/components/nav/NavigationDrawer.tsx:146
 #: src/components/nav/SettingsHeader.tsx:41
 #: src/defaults/actions.tsx:191
-#: src/pages/Index/Settings/SystemSettings.tsx:416
-#: src/pages/Index/Settings/SystemSettings.tsx:421
+#: src/pages/Index/Settings/SystemSettings.tsx:417
+#: src/pages/Index/Settings/SystemSettings.tsx:422
 msgid "System Settings"
 msgstr "Sistem Ayarları"
 
@@ -3241,14 +3273,14 @@ msgstr "Üretim"
 #: src/pages/company/ManufacturerPartDetail.tsx:193
 #: src/pages/company/SupplierDetail.tsx:9
 #: src/pages/company/SupplierPartDetail.tsx:211
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:379
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:380
 #: src/pages/purchasing/PurchasingIndex.tsx:237
 msgid "Purchasing"
 msgstr "Satın Alma"
 
 #: src/components/nav/NavigationDrawer.tsx:98
 #: src/defaults/links.tsx:68
-#: src/pages/Index/Settings/SystemSettings.tsx:366
+#: src/pages/Index/Settings/SystemSettings.tsx:367
 #: src/pages/company/CustomerDetail.tsx:9
 #: src/pages/sales/ReturnOrderDetail.tsx:362
 #: src/pages/sales/SalesIndex.tsx:214
@@ -3446,11 +3478,11 @@ msgstr "Eklenti Bilgileri"
 #: src/pages/company/SupplierPartDetailsPanel.tsx:99
 #: src/pages/part/PartCategoryDetailsPanel.tsx:42
 #: src/pages/part/PartDetailsPanel.tsx:87
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:65
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:66
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:66
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:66
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:67
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:67
 #: src/pages/stock/StockLocationDetailsPanel.tsx:40
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:43
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:45
 #: src/tables/build/BuildAllocatedStockTable.tsx:94
 #: src/tables/machine/MachineTypeTable.tsx:162
 #: src/tables/machine/MachineTypeTable.tsx:258
@@ -3701,7 +3733,7 @@ msgstr "Kategori"
 #: src/components/tables/ColumnRenderers.tsx:394
 #: src/components/tables/Filter.tsx:507
 #: src/forms/BuildForms.tsx:869
-#: src/forms/PurchaseOrderForms.tsx:707
+#: src/forms/PurchaseOrderForms.tsx:719
 #: src/forms/StockForms.tsx:674
 #: src/forms/StockForms.tsx:712
 #: src/forms/StockForms.tsx:1513
@@ -3731,12 +3763,12 @@ msgid "Serial Number"
 msgstr "Seri Numarası"
 
 #: src/components/render/Stock.tsx:100
-#: src/components/wizards/OrderPartsWizard.tsx:389
+#: src/components/wizards/OrderPartsWizard.tsx:390
 #: src/forms/BomForms.tsx:42
 #: src/forms/BuildForms.tsx:284
 #: src/forms/BuildForms.tsx:707
 #: src/forms/BuildForms.tsx:871
-#: src/forms/PurchaseOrderForms.tsx:939
+#: src/forms/PurchaseOrderForms.tsx:964
 #: src/forms/ReturnOrderForms.tsx:243
 #: src/forms/SalesOrderForms.tsx:438
 #: src/forms/StockForms.tsx:724
@@ -3749,7 +3781,7 @@ msgstr "Seri Numarası"
 #: src/pages/part/PartStockHistoryDetail.tsx:268
 #: src/pages/part/bom/BomCompare.tsx:33
 #: src/pages/part/bom/BomCompare.tsx:204
-#: src/pages/part/pricing/BomPricingPanel.tsx:113
+#: src/pages/part/pricing/BomPricingPanel.tsx:115
 #: src/pages/part/pricing/PriceBreakPanel.tsx:89
 #: src/pages/part/pricing/PriceBreakPanel.tsx:173
 #: src/pages/stock/StockDetail.tsx:673
@@ -4039,17 +4071,17 @@ msgstr "Varsayılan Konum"
 #: src/components/tables/ColumnRenderers.tsx:541
 #: src/pages/build/BuildOrderDetailsPanel.tsx:90
 #: src/pages/part/bom/BomCompare.tsx:34
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:44
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:45
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:45
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:23
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:45
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:46
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:46
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:25
 #: src/tables/build/BuildAllocatedStockTable.tsx:113
 #: src/tables/build/BuildLineTable.tsx:370
 msgid "Reference"
 msgstr "Referans"
 
 #: src/components/tables/ColumnRenderers.tsx:553
-#: src/forms/PurchaseOrderForms.tsx:851
+#: src/forms/PurchaseOrderForms.tsx:865
 #: src/pages/company/SupplierPartDetailsPanel.tsx:74
 msgid "Note"
 msgstr "Not"
@@ -4067,26 +4099,26 @@ msgstr ""
 #: src/components/tables/ColumnRenderers.tsx:677
 #: src/components/tables/Filter.tsx:480
 #: src/pages/part/PartDetailsPanel.tsx:282
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:172
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:184
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:186
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:173
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:185
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:187
 msgid "Created By"
 msgstr "Oluşturan"
 
 #: src/components/tables/ColumnRenderers.tsx:749
 #: src/pages/part/PartDetailsPanel.tsx:277
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:183
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:195
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:197
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:117
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:184
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:196
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:198
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:119
 msgid "Creation Date"
 msgstr "Oluşturma Tarihi"
 
 #: src/components/tables/ColumnRenderers.tsx:758
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:215
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:227
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:227
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:149
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:216
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:228
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:228
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:151
 #: src/tables/part/PartPurchaseOrdersTable.tsx:115
 msgid "Completion Date"
 msgstr ""
@@ -4106,7 +4138,7 @@ msgstr "Para Birimi"
 
 #: src/components/tables/ColumnRenderers.tsx:813
 #: src/pages/part/pricing/BomPricingPanel.tsx:61
-#: src/pages/part/pricing/BomPricingPanel.tsx:142
+#: src/pages/part/pricing/BomPricingPanel.tsx:144
 #: src/tables/bom/BomTable.tsx:324
 #: src/tables/general/ExtraLineItemTable.tsx:86
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:275
@@ -4130,7 +4162,7 @@ msgid "Show items which have a batch code"
 msgstr "Parti kodu olan ögeleri göster"
 
 #: src/components/tables/Filter.tsx:125
-#: src/forms/PurchaseOrderForms.tsx:777
+#: src/forms/PurchaseOrderForms.tsx:789
 #: src/forms/StockForms.tsx:731
 #: src/pages/build/BuildOrderDetailsPanel.tsx:186
 #: src/pages/stock/StockDetail.tsx:689
@@ -4359,7 +4391,7 @@ msgstr ""
 #: src/forms/BuildForms.tsx:386
 #: src/forms/BuildForms.tsx:469
 #: src/forms/BuildForms.tsx:544
-#: src/forms/PurchaseOrderForms.tsx:841
+#: src/forms/PurchaseOrderForms.tsx:855
 #: src/forms/ReturnOrderForms.tsx:196
 #: src/forms/ReturnOrderForms.tsx:244
 #: src/forms/StockForms.tsx:689
@@ -4368,11 +4400,11 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:104
 #: src/pages/build/BuildOrderDetailsPanel.tsx:67
 #: src/pages/core/UserDetail.tsx:148
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:71
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:72
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:72
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:72
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:73
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:73
 #: src/pages/stock/StockDetailsPanel.tsx:108
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:49
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:51
 #: src/tables/build/BuildOutputTable.tsx:498
 #: src/tables/machine/MachineListTable.tsx:388
 #: src/tables/part/PartPurchaseOrdersTable.tsx:46
@@ -4439,7 +4471,7 @@ msgstr ""
 #: src/pages/company/SupplierPartDetail.tsx:215
 #: src/pages/company/SupplierPartDetailsPanel.tsx:84
 #: src/pages/company/SupplierPartDetailsPanel.tsx:183
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:59
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:60
 #: src/tables/company/CompanyTable.tsx:116
 #: src/tables/part/PartPurchaseOrdersTable.tsx:52
 #: src/tables/purchasing/PurchaseOrderParametricTable.tsx:27
@@ -4499,7 +4531,7 @@ msgstr "Filtreyi kaldır"
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:624
 #: src/pages/part/PartStockHistoryDetail.tsx:67
 #: src/tables/part/PartTestResultTable.tsx:210
-#: src/tables/stock/StockItemTestResultTable.tsx:205
+#: src/tables/stock/StockItemTestResultTable.tsx:211
 msgid "Value"
 msgstr "Değer"
 
@@ -4706,10 +4738,6 @@ msgstr ""
 #: src/components/tables/bom/UsedInTable.tsx:40
 #~ msgid "Required Part"
 #~ msgstr "Required Part"
-
-#: src/components/tables/build/BuildOrderTable.tsx:52
-#~ msgid "Progress"
-#~ msgstr "Progress"
 
 #: src/components/tables/build/BuildOrderTable.tsx:65
 #~ msgid "Priority"
@@ -5185,94 +5213,94 @@ msgstr "Satış Gereksinimleri"
 msgid "Required Quantity"
 msgstr "Gereken Miktar"
 
-#: src/components/wizards/OrderPartsWizard.tsx:207
+#: src/components/wizards/OrderPartsWizard.tsx:208
 msgid "New Purchase Order"
 msgstr "Yeni Satın Alma Siparişi"
 
-#: src/components/wizards/OrderPartsWizard.tsx:209
+#: src/components/wizards/OrderPartsWizard.tsx:210
 msgid "Purchase order created"
 msgstr "Satın alma siparişi oluşturuldu"
 
-#: src/components/wizards/OrderPartsWizard.tsx:221
+#: src/components/wizards/OrderPartsWizard.tsx:222
 msgid "New Supplier Part"
 msgstr "Yeni Tedarikçi Parçası"
 
-#: src/components/wizards/OrderPartsWizard.tsx:223
+#: src/components/wizards/OrderPartsWizard.tsx:224
 #: src/tables/purchasing/SupplierPartTable.tsx:218
 #: src/tables/purchasing/SupplierPartTable.tsx:311
 msgid "Supplier part created"
 msgstr "Tedarikçi parçası oluşturuldu"
 
-#: src/components/wizards/OrderPartsWizard.tsx:253
+#: src/components/wizards/OrderPartsWizard.tsx:254
 msgid "Add to Purchase Order"
 msgstr "Satın Alma Siparişine Ekle"
 
-#: src/components/wizards/OrderPartsWizard.tsx:265
+#: src/components/wizards/OrderPartsWizard.tsx:266
 msgid "Part added to purchase order"
 msgstr "Parça, satın alma siparişine eklendi"
 
-#: src/components/wizards/OrderPartsWizard.tsx:310
+#: src/components/wizards/OrderPartsWizard.tsx:311
 msgid "Select supplier part"
 msgstr "Tedarikçi parçası seç"
 
-#: src/components/wizards/OrderPartsWizard.tsx:335
+#: src/components/wizards/OrderPartsWizard.tsx:336
 msgid "Copy supplier part number"
 msgstr "Tedarikçi parça numarasını kopyala"
 
-#: src/components/wizards/OrderPartsWizard.tsx:338
+#: src/components/wizards/OrderPartsWizard.tsx:339
 msgid "New supplier part"
 msgstr "Yeni tedarikçi parçası"
 
-#: src/components/wizards/OrderPartsWizard.tsx:362
+#: src/components/wizards/OrderPartsWizard.tsx:363
 msgid "Select purchase order"
 msgstr "Satın alma siparişi seç"
 
-#: src/components/wizards/OrderPartsWizard.tsx:376
+#: src/components/wizards/OrderPartsWizard.tsx:377
 msgid "New purchase order"
 msgstr "Yeni satın alma siparişi"
 
-#: src/components/wizards/OrderPartsWizard.tsx:432
+#: src/components/wizards/OrderPartsWizard.tsx:433
 msgid "Add to selected purchase order"
 msgstr "Seçili satın alma siparişine ekle"
 
-#: src/components/wizards/OrderPartsWizard.tsx:449
-#: src/components/wizards/OrderPartsWizard.tsx:587
+#: src/components/wizards/OrderPartsWizard.tsx:450
+#: src/components/wizards/OrderPartsWizard.tsx:588
 msgid "No parts selected"
 msgstr "Hiç parça seçilmedi"
 
-#: src/components/wizards/OrderPartsWizard.tsx:450
+#: src/components/wizards/OrderPartsWizard.tsx:451
 msgid "No purchaseable parts selected"
 msgstr "Hiç satın alınabilir parça seçilmedi"
 
-#: src/components/wizards/OrderPartsWizard.tsx:486
+#: src/components/wizards/OrderPartsWizard.tsx:487
 msgid "Parts Added"
 msgstr "Parçalar Eklendi"
 
-#: src/components/wizards/OrderPartsWizard.tsx:487
+#: src/components/wizards/OrderPartsWizard.tsx:488
 msgid "All selected parts added to a purchase order"
 msgstr "Seçilen tüm parçalar bir satın alma siparişine eklendi"
 
-#: src/components/wizards/OrderPartsWizard.tsx:588
+#: src/components/wizards/OrderPartsWizard.tsx:589
 msgid "You must select at least one part to order"
 msgstr "Sipariş etmek için en az bir parça seçilmelidir"
 
-#: src/components/wizards/OrderPartsWizard.tsx:599
+#: src/components/wizards/OrderPartsWizard.tsx:600
 msgid "Supplier part is required"
 msgstr "Tedarikçi parçası gereklidir"
 
-#: src/components/wizards/OrderPartsWizard.tsx:603
+#: src/components/wizards/OrderPartsWizard.tsx:604
 msgid "Quantity is required"
 msgstr "Miktar gereklidir"
 
-#: src/components/wizards/OrderPartsWizard.tsx:616
+#: src/components/wizards/OrderPartsWizard.tsx:617
 msgid "Invalid part selection"
 msgstr "Geçersiz parça seçimi"
 
-#: src/components/wizards/OrderPartsWizard.tsx:618
+#: src/components/wizards/OrderPartsWizard.tsx:619
 msgid "Please correct the errors in the selected parts"
 msgstr "Lütfen seçilen parçalardaki hataları düzeltin"
 
-#: src/components/wizards/OrderPartsWizard.tsx:629
+#: src/components/wizards/OrderPartsWizard.tsx:630
 #: src/tables/build/BuildLineTable.tsx:913
 #: src/tables/part/PartTable.tsx:267
 #: src/tables/sales/SalesOrderLineItemTable.tsx:459
@@ -5923,8 +5951,8 @@ msgstr "Tahsis Edildi"
 #: src/forms/TransferOrderForms.tsx:229
 #: src/pages/build/BuildDetail.tsx:123
 #: src/pages/build/BuildOrderDetailsPanel.tsx:172
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:30
-#: src/tables/stock/TransferOrderTable.tsx:48
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:32
+#: src/tables/stock/TransferOrderTable.tsx:49
 msgid "Source Location"
 msgstr "Kaynak Konum"
 
@@ -5967,12 +5995,12 @@ msgstr "Stok kalemleri tahsis edildi"
 
 #: src/forms/BuildForms.tsx:890
 #: src/forms/BuildForms.tsx:992
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:69
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:71
 #: src/tables/build/BuildAllocatedStockTable.tsx:263
 #: src/tables/build/BuildAllocatedStockTable.tsx:299
 #: src/tables/build/BuildLineTable.tsx:831
 #: src/tables/build/BuildLineTable.tsx:962
-#: src/tables/stock/TransferOrderTable.tsx:56
+#: src/tables/stock/TransferOrderTable.tsx:57
 msgid "Consume Stock"
 msgstr "Stoku Tüket"
 
@@ -6069,114 +6097,118 @@ msgstr "Bu kategorinin bildirimlerine abone ol"
 #~ msgid "Remove item from list"
 #~ msgstr "Remove item from list"
 
-#: src/forms/PurchaseOrderForms.tsx:481
+#: src/forms/PurchaseOrderForms.tsx:493
 msgid "Choose Location"
 msgstr "Konum Seçiniz"
 
-#: src/forms/PurchaseOrderForms.tsx:489
+#: src/forms/PurchaseOrderForms.tsx:501
 msgid "Item Destination selected"
 msgstr "Kalemin Hedefi seçildi"
 
-#: src/forms/PurchaseOrderForms.tsx:499
+#: src/forms/PurchaseOrderForms.tsx:511
 msgid "Part category default location selected"
 msgstr "Parça kategorisi varsayılan konumu seçildi"
 
-#: src/forms/PurchaseOrderForms.tsx:509
+#: src/forms/PurchaseOrderForms.tsx:521
 msgid "Received stock location selected"
 msgstr "Varış konumu seçildi"
 
-#: src/forms/PurchaseOrderForms.tsx:517
+#: src/forms/PurchaseOrderForms.tsx:529
 msgid "Default location selected"
 msgstr "Varsayılan konum seçildi"
 
-#: src/forms/PurchaseOrderForms.tsx:564
+#: src/forms/PurchaseOrderForms.tsx:566
+#~ msgid "Serial numbers"
+#~ msgstr "Serial numbers"
+
+#: src/forms/PurchaseOrderForms.tsx:576
 #: src/pages/part/PartDetailsPanel.tsx:268
 #: src/tables/bom/BomTable.tsx:290
 #: src/tables/bom/BomTable.tsx:482
 msgid "Virtual Part"
 msgstr "Sanal Parça"
 
-#: src/forms/PurchaseOrderForms.tsx:565
+#: src/forms/PurchaseOrderForms.tsx:577
 msgid "This part is virtual, no physical stock will be received."
 msgstr "Bu parça sanaldır; fiziksel stok teslim alınmayacaktır."
-
-#: src/forms/PurchaseOrderForms.tsx:566
-#~ msgid "Serial numbers"
-#~ msgstr "Serial numbers"
 
 #: src/forms/PurchaseOrderForms.tsx:582
 #~ msgid "Store at line item destination"
 #~ msgstr "Store at line item destination"
 
-#: src/forms/PurchaseOrderForms.tsx:599
+#: src/forms/PurchaseOrderForms.tsx:611
 #: src/forms/StockForms.tsx:616
 msgid "Set Location"
 msgstr "Konum Ayarla"
 
-#: src/forms/PurchaseOrderForms.tsx:608
+#: src/forms/PurchaseOrderForms.tsx:620
 msgid "Assign Batch Code"
 msgstr "Parti Kodu Ata"
 
-#: src/forms/PurchaseOrderForms.tsx:618
+#: src/forms/PurchaseOrderForms.tsx:630
 msgid "Assign Serial Numbers"
 msgstr "Seri Numaraları Ata"
 
-#: src/forms/PurchaseOrderForms.tsx:630
+#: src/forms/PurchaseOrderForms.tsx:642
 msgid "Set Expiry Date"
 msgstr "Son Kullanma Tarihi Belirle"
 
-#: src/forms/PurchaseOrderForms.tsx:639
+#: src/forms/PurchaseOrderForms.tsx:651
 #: src/forms/StockForms.tsx:1397
 msgid "Adjust Packaging"
 msgstr "Paketlemeyi Ayarla"
 
-#: src/forms/PurchaseOrderForms.tsx:648
+#: src/forms/PurchaseOrderForms.tsx:658
+#~ msgid "Receive line items"
+#~ msgstr "Receive line items"
+
+#: src/forms/PurchaseOrderForms.tsx:660
 #: src/forms/StockForms.tsx:624
 #: src/forms/StockForms.tsx:1388
 #: src/hooks/UseStockAdjustActions.tsx:152
 msgid "Change Status"
 msgstr "Durumu Değiştir"
 
-#: src/forms/PurchaseOrderForms.tsx:658
-#~ msgid "Receive line items"
-#~ msgstr "Receive line items"
-
-#: src/forms/PurchaseOrderForms.tsx:722
+#: src/forms/PurchaseOrderForms.tsx:734
 msgid "Store at default location"
 msgstr "Varsayılan konumda depola"
 
-#: src/forms/PurchaseOrderForms.tsx:737
+#: src/forms/PurchaseOrderForms.tsx:749
 msgid "Store at line item destination "
 msgstr "Satırdaki hedefe depola "
 
-#: src/forms/PurchaseOrderForms.tsx:753
+#: src/forms/PurchaseOrderForms.tsx:765
 msgid "Store with already received stock"
 msgstr "Mevcut stokla birlikte depola"
 
-#: src/forms/PurchaseOrderForms.tsx:778
+#: src/forms/PurchaseOrderForms.tsx:791
+msgid "Overrides the top-level batch code (\"{topLevelBatchCode}\") for this line item"
+msgstr ""
+
+#: src/forms/PurchaseOrderForms.tsx:792
 msgid "Enter batch code for received items"
 msgstr "Teslim alınan ögeler için parti kodu gir"
 
-#: src/forms/PurchaseOrderForms.tsx:794
+#: src/forms/PurchaseOrderForms.tsx:808
 #: src/forms/StockForms.tsx:266
 msgid "Serial Numbers"
 msgstr "Seri Numaraları"
 
-#: src/forms/PurchaseOrderForms.tsx:795
+#: src/forms/PurchaseOrderForms.tsx:809
 msgid "Enter serial numbers for received items"
 msgstr "Teslim alınan ögeler için seri numaraları gir"
 
-#: src/forms/PurchaseOrderForms.tsx:812
+#: src/forms/PurchaseOrderForms.tsx:826
 #: src/pages/stock/StockDetailsPanel.tsx:316
 #: src/tables/stock/StockItemTable.tsx:171
 msgid "Expiry Date"
 msgstr "Son Kullanma Tarihi"
 
-#: src/forms/PurchaseOrderForms.tsx:813
+#: src/forms/PurchaseOrderForms.tsx:827
 msgid "Enter an expiry date for received items"
 msgstr "Teslim alınan ögeler için bir geçerlilik tarihi gir"
 
-#: src/forms/PurchaseOrderForms.tsx:827
+#: src/forms/PurchaseOrderForms.tsx:841
 #: src/forms/StockForms.tsx:1443
 #: src/pages/company/SupplierPartDetailsPanel.tsx:126
 #: src/pages/company/SupplierPartDetailsPanel.tsx:184
@@ -6185,13 +6217,15 @@ msgstr "Teslim alınan ögeler için bir geçerlilik tarihi gir"
 msgid "Packaging"
 msgstr "Paketleme"
 
-#: src/forms/PurchaseOrderForms.tsx:937
+#: src/forms/PurchaseOrderForms.tsx:962
 #: src/pages/company/SupplierPartDetailsPanel.tsx:92
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:49
 msgid "SKU"
 msgstr "SKU"
 
-#: src/forms/PurchaseOrderForms.tsx:938
+#: src/forms/PurchaseOrderForms.tsx:963
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:269
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:281
 #: src/tables/part/PartPurchaseOrdersTable.tsx:136
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:221
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:296
@@ -6199,11 +6233,11 @@ msgstr "SKU"
 msgid "Received"
 msgstr "Teslim Alındı"
 
-#: src/forms/PurchaseOrderForms.tsx:955
+#: src/forms/PurchaseOrderForms.tsx:995
 msgid "Receive Line Items"
 msgstr "Kalemleri Teslim Al"
 
-#: src/forms/PurchaseOrderForms.tsx:961
+#: src/forms/PurchaseOrderForms.tsx:1001
 msgid "Items received"
 msgstr "Ögeler teslim alındı"
 
@@ -6338,8 +6372,8 @@ msgid "The following items are installed within this stock item, but do not matc
 msgstr ""
 
 #: src/forms/StockForms.tsx:946
-#: src/pages/part/pricing/BomPricingPanel.tsx:81
-#: src/pages/part/pricing/BomPricingPanel.tsx:105
+#: src/pages/part/pricing/BomPricingPanel.tsx:83
+#: src/pages/part/pricing/BomPricingPanel.tsx:107
 #: src/tables/bom/UsedInTable.tsx:66
 #: src/tables/part/PartTableFilters.tsx:43
 msgid "Component"
@@ -6351,7 +6385,7 @@ msgid "Unit Quantity"
 msgstr "Birim Miktarı"
 
 #: src/forms/StockForms.tsx:949
-#: src/pages/part/pricing/BomPricingPanel.tsx:133
+#: src/pages/part/pricing/BomPricingPanel.tsx:135
 #: src/pages/part/pricing/PriceBreakPanel.tsx:174
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:72
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:129
@@ -9022,7 +9056,7 @@ msgstr "Alt Üretim Emirleri"
 #: src/pages/part/PartDetail.tsx:471
 #: src/pages/stock/StockDetail.tsx:281
 #: src/tables/build/BuildOutputTable.tsx:759
-#: src/tables/stock/StockItemTestResultTable.tsx:171
+#: src/tables/stock/StockItemTestResultTable.tsx:177
 msgid "Test Results"
 msgstr "Test Sonuçları"
 
@@ -9049,7 +9083,7 @@ msgid "Cancel Build Order"
 msgstr "Üretim Emrini İptal Et"
 
 #: src/pages/build/BuildDetail.tsx:438
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:242
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:243
 #: src/pages/sales/ReturnOrderDetail.tsx:235
 #: src/pages/sales/SalesOrderDetail.tsx:267
 #: src/pages/stock/TransferOrderDetail.tsx:259
@@ -9057,7 +9091,7 @@ msgid "Order cancelled"
 msgstr "Sipariş iptal edildi"
 
 #: src/pages/build/BuildDetail.tsx:439
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:241
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:242
 #: src/pages/sales/ReturnOrderDetail.tsx:234
 #: src/pages/sales/SalesOrderDetail.tsx:266
 #: src/pages/stock/TransferOrderDetail.tsx:258
@@ -9069,7 +9103,7 @@ msgid "Hold Build Order"
 msgstr "Üretimi Askıya Al"
 
 #: src/pages/build/BuildDetail.tsx:450
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:249
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:250
 #: src/pages/sales/ReturnOrderDetail.tsx:242
 #: src/pages/sales/SalesOrderDetail.tsx:274
 #: src/pages/stock/TransferOrderDetail.tsx:266
@@ -9077,7 +9111,7 @@ msgid "Place this order on hold"
 msgstr "Bu üretimi askıya al"
 
 #: src/pages/build/BuildDetail.tsx:451
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:250
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:251
 #: src/pages/sales/ReturnOrderDetail.tsx:243
 #: src/pages/sales/SalesOrderDetail.tsx:275
 #: src/pages/stock/TransferOrderDetail.tsx:267
@@ -9089,7 +9123,7 @@ msgid "Issue Build Order"
 msgstr "Üretim Emri Düzenle"
 
 #: src/pages/build/BuildDetail.tsx:458
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:233
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:234
 #: src/pages/sales/ReturnOrderDetail.tsx:226
 #: src/pages/sales/SalesOrderDetail.tsx:258
 #: src/pages/stock/TransferOrderDetail.tsx:250
@@ -9097,7 +9131,7 @@ msgid "Issue this order"
 msgstr "Bu siparişi düzenle"
 
 #: src/pages/build/BuildDetail.tsx:459
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:234
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:235
 #: src/pages/sales/ReturnOrderDetail.tsx:227
 #: src/pages/sales/SalesOrderDetail.tsx:259
 #: src/pages/stock/TransferOrderDetail.tsx:251
@@ -9109,7 +9143,7 @@ msgid "Complete Build Order"
 msgstr "Üretim Emrini Tamamla"
 
 #: src/pages/build/BuildDetail.tsx:484
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:262
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:263
 #: src/pages/sales/ReturnOrderDetail.tsx:250
 #: src/pages/sales/SalesOrderDetail.tsx:293
 #: src/pages/stock/TransferOrderDetail.tsx:274
@@ -9117,7 +9151,7 @@ msgid "Mark this order as complete"
 msgstr "Bu siparişi tamamlandı olarak imle"
 
 #: src/pages/build/BuildDetail.tsx:487
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:256
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:257
 #: src/pages/sales/ReturnOrderDetail.tsx:251
 #: src/pages/sales/SalesOrderDetail.tsx:294
 #: src/pages/stock/TransferOrderDetail.tsx:275
@@ -9125,7 +9159,7 @@ msgid "Order completed"
 msgstr "Sipariş tamamlandı"
 
 #: src/pages/build/BuildDetail.tsx:514
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:285
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:286
 #: src/pages/sales/ReturnOrderDetail.tsx:278
 #: src/pages/sales/SalesOrderDetail.tsx:329
 #: src/pages/stock/TransferOrderDetail.tsx:300
@@ -9133,7 +9167,7 @@ msgid "Issue Order"
 msgstr "Sipariş Düzenle"
 
 #: src/pages/build/BuildDetail.tsx:521
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:292
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:293
 #: src/pages/sales/ReturnOrderDetail.tsx:285
 #: src/pages/sales/SalesOrderDetail.tsx:343
 #: src/pages/stock/TransferOrderDetail.tsx:307
@@ -9145,7 +9179,7 @@ msgid "Build Order Actions"
 msgstr "Üretim Emri Eylemleri"
 
 #: src/pages/build/BuildDetail.tsx:545
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:315
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:316
 #: src/pages/sales/ReturnOrderDetail.tsx:308
 #: src/pages/sales/SalesOrderDetail.tsx:367
 #: src/pages/stock/TransferOrderDetail.tsx:330
@@ -9153,7 +9187,7 @@ msgid "Edit order"
 msgstr "Siparişi düzenle"
 
 #: src/pages/build/BuildDetail.tsx:549
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:323
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:324
 #: src/pages/sales/ReturnOrderDetail.tsx:314
 #: src/pages/sales/SalesOrderDetail.tsx:372
 #: src/pages/stock/TransferOrderDetail.tsx:336
@@ -9161,7 +9195,7 @@ msgid "Duplicate order"
 msgstr "Siparişi çoğalt"
 
 #: src/pages/build/BuildDetail.tsx:553
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:326
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:327
 #: src/pages/sales/ReturnOrderDetail.tsx:319
 #: src/pages/sales/SalesOrderDetail.tsx:375
 #: src/pages/stock/TransferOrderDetail.tsx:341
@@ -9169,7 +9203,7 @@ msgid "Hold order"
 msgstr "Siparişi beklet"
 
 #: src/pages/build/BuildDetail.tsx:558
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:331
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:332
 #: src/pages/sales/ReturnOrderDetail.tsx:324
 #: src/pages/sales/SalesOrderDetail.tsx:380
 #: src/pages/stock/TransferOrderDetail.tsx:346
@@ -9232,11 +9266,11 @@ msgid "Parametric View"
 msgstr ""
 
 #: src/pages/build/BuildOrderDetailsPanel.tsx:73
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:77
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:78
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:78
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:78
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:79
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:79
 #: src/pages/stock/StockDetailsPanel.tsx:114
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:55
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:57
 msgid "Custom Status"
 msgstr ""
 
@@ -9260,8 +9294,8 @@ msgid "Any location"
 msgstr "Herhangi bir konum"
 
 #: src/pages/build/BuildOrderDetailsPanel.tsx:180
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:37
-#: src/tables/stock/TransferOrderTable.tsx:52
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:39
+#: src/tables/stock/TransferOrderTable.tsx:53
 msgid "Destination Location"
 msgstr "Hedef Konum"
 
@@ -9341,8 +9375,8 @@ msgstr "Varsayılan Para Birimi"
 #: src/pages/company/CompanyDetailsPanel.tsx:84
 #: src/pages/company/CustomerDetail.tsx:8
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:32
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:60
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:60
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:61
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:61
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:66
 #: src/pages/stock/StockDetailsPanel.tsx:306
 #: src/tables/company/CompanyTable.tsx:126
@@ -9362,7 +9396,7 @@ msgstr "Üretici Parçası Ayrıntıları"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:83
 #: src/pages/company/SupplierPartDetail.tsx:91
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:194
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:195
 msgid "Received Stock"
 msgstr "Teslim Alınan Stok"
 
@@ -9657,7 +9691,7 @@ msgstr "Parça kilitli olduğundan bu parçanın parametreleri düzenlenemez"
 
 #: src/pages/part/PartDetail.tsx:599
 #: src/tables/part/PartTestTemplateTable.tsx:116
-#: src/tables/stock/StockItemTestResultTable.tsx:403
+#: src/tables/stock/StockItemTestResultTable.tsx:409
 msgid "Required"
 msgstr "Gerekli"
 
@@ -9822,7 +9856,7 @@ msgid "days"
 msgstr "günler"
 
 #: src/pages/part/PartDetailsPanel.tsx:308
-#: src/pages/part/pricing/BomPricingPanel.tsx:82
+#: src/pages/part/pricing/BomPricingPanel.tsx:84
 #: src/pages/part/pricing/VariantPricingPanel.tsx:98
 #: src/tables/part/PartTable.tsx:90
 msgid "Price Range"
@@ -10094,13 +10128,13 @@ msgstr ""
 msgid "Select an assembly to view Bill of Materials comparison"
 msgstr ""
 
-#: src/pages/part/pricing/BomPricingPanel.tsx:84
+#: src/pages/part/pricing/BomPricingPanel.tsx:86
 #: src/pages/part/pricing/VariantPricingPanel.tsx:38
 #: src/pages/part/pricing/VariantPricingPanel.tsx:100
 msgid "Minimum Price"
 msgstr "Minimum Fiyat"
 
-#: src/pages/part/pricing/BomPricingPanel.tsx:85
+#: src/pages/part/pricing/BomPricingPanel.tsx:87
 #: src/pages/part/pricing/VariantPricingPanel.tsx:46
 #: src/pages/part/pricing/VariantPricingPanel.tsx:101
 msgid "Maximum Price"
@@ -10114,11 +10148,11 @@ msgstr "Maximum Fiyat"
 #~ msgid "Maximum Total Price"
 #~ msgstr "Maximum Total Price"
 
-#: src/pages/part/pricing/BomPricingPanel.tsx:224
+#: src/pages/part/pricing/BomPricingPanel.tsx:226
 msgid "Pie Chart"
 msgstr "Pasta Grafiği"
 
-#: src/pages/part/pricing/BomPricingPanel.tsx:225
+#: src/pages/part/pricing/BomPricingPanel.tsx:227
 msgid "Bar Chart"
 msgstr "Çubuk Grafik"
 
@@ -10190,9 +10224,9 @@ msgid "Purchase Pricing"
 msgstr "Satın Alma Fiyatlandırması"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:294
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:222
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:234
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:234
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:223
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:235
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:235
 #: src/pages/stock/StockDetailsPanel.tsx:364
 #: src/tables/general/ParameterTable.tsx:101
 #: src/tables/general/ParametricDataTable.tsx:101
@@ -10272,32 +10306,36 @@ msgstr "Tedarikçi Fiyatı"
 msgid "Variant Part"
 msgstr "Varyant Parça"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:91
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:92
 msgid "Edit Purchase Order"
 msgstr "Satın Alma Siparişini Düzenle"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:128
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:129
 #: src/tables/purchasing/PurchaseOrderTable.tsx:118
 #: src/tables/purchasing/PurchaseOrderTable.tsx:132
 msgid "Add Purchase Order"
 msgstr "Satın Alma Siparişi Ekle"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:139
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:140
 #: src/pages/sales/ReturnOrderDetail.tsx:104
 #: src/pages/sales/SalesOrderDetail.tsx:142
 #: src/pages/stock/TransferOrderDetail.tsx:106
 msgid "Order Details"
 msgstr "Sipariş Ayrıntıları"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:151
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:160
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:152
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:161
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:266
 #: src/pages/sales/ReturnOrderDetail.tsx:116
 #: src/pages/sales/ReturnOrderDetail.tsx:125
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:91
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:92
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:278
 #: src/pages/sales/SalesOrderDetail.tsx:154
 #: src/pages/sales/SalesOrderDetail.tsx:163
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:278
 #: src/pages/stock/TransferOrderDetail.tsx:112
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:74
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:76
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:182
 msgid "Line Items"
 msgstr "Satırlar"
 
@@ -10307,7 +10345,7 @@ msgstr "Satırlar"
 #~ msgid "Order Currency,"
 #~ msgstr "Order Currency,"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:175
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:176
 #: src/pages/sales/ReturnOrderDetail.tsx:140
 #: src/pages/sales/SalesOrderDetail.tsx:177
 msgid "Extra Line Items"
@@ -10319,73 +10357,73 @@ msgstr "Ek Kalemler"
 #~ msgid "Created On"
 #~ msgstr "Created On"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:231
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:232
 msgid "Issue Purchase Order"
 msgstr "Satın Alma Siparişi Düzenle"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:239
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:240
 msgid "Cancel Purchase Order"
 msgstr "Satın Alma Siparişini İptal Et"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:247
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:248
 msgid "Hold Purchase Order"
 msgstr "Satın Alma Siparişini Beklet"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:255
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:256
 msgid "Complete Purchase Order"
 msgstr "Satın Alma Siparişini Tamamla"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:311
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:312
 #: src/pages/sales/ReturnOrderDetail.tsx:304
 #: src/pages/sales/SalesOrderDetail.tsx:362
 #: src/pages/stock/TransferOrderDetail.tsx:326
 msgid "Order Actions"
 msgstr "Sipariş Eylemleri"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:50
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:51
 msgid "Supplier Reference"
 msgstr "Tedarikçi Referansı"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:91
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:98
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:92
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:81
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:92
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:99
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:93
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:83
 msgid "Completed Line Items"
 msgstr "Tamamlanan Satırlar"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:100
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:101
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:285
 msgid "Destination"
 msgstr "Hedef"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:106
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:105
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:109
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:107
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:106
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:110
 msgid "Order Currency"
 msgstr "Sipariş Para Birimi"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:112
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:112
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:115
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:113
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:113
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:116
 msgid "Total Cost"
 msgstr "Toplam Tutar"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:141
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:153
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:155
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:142
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:154
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:156
 msgid "Contact Email"
 msgstr "İletişim E-postası"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:149
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:161
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:163
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:150
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:162
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:164
 msgid "Contact Phone"
 msgstr "İletişim Telefonu"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:190
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:203
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:204
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:125
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:191
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:204
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:205
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:127
 msgid "Issue Date"
 msgstr ""
 
@@ -10419,19 +10457,19 @@ msgstr "İade Emrini Tamamla"
 #~ msgid "Order canceled"
 #~ msgstr "Order canceled"
 
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:51
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:51
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:52
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:52
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:86
 #: src/tables/sales/SalesOrderTable.tsx:95
 msgid "Customer Reference"
 msgstr "Müşteri Referansı"
 
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:133
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:134
 msgid "Return Address"
 msgstr ""
 
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:139
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:141
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:140
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:142
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:125
 msgid "Not specified"
 msgstr ""
@@ -10483,14 +10521,21 @@ msgstr "Satış Siparişini Tamamla"
 msgid "Ship Order"
 msgstr "Siparişi Gönder"
 
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:101
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:102
 msgid "Completed Shipments"
 msgstr "Tamamlanan Gönderiler"
 
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:135
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:136
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:119
 msgid "Shipping Address"
 msgstr ""
+
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:281
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:188
+#: src/tables/sales/SalesOrderShipmentTable.tsx:170
+#: src/tables/sales/SalesOrderShipmentTable.tsx:301
+msgid "Shipped"
+msgstr "Gönderildi"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:81
 msgid "Shipment Details"
@@ -10522,12 +10567,6 @@ msgstr "Kontrol edildi"
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:182
 msgid "Not Checked"
 msgstr "Kontrol Edilmedi"
-
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:188
-#: src/tables/sales/SalesOrderShipmentTable.tsx:170
-#: src/tables/sales/SalesOrderShipmentTable.tsx:301
-msgid "Shipped"
-msgstr "Gönderildi"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:194
 #: src/tables/sales/SalesOrderShipmentTable.tsx:178
@@ -10926,8 +10965,8 @@ msgid "Edit Transfer Order"
 msgstr ""
 
 #: src/pages/stock/TransferOrderDetail.tsx:239
-#: src/tables/stock/TransferOrderTable.tsx:86
-#: src/tables/stock/TransferOrderTable.tsx:97
+#: src/tables/stock/TransferOrderTable.tsx:87
+#: src/tables/stock/TransferOrderTable.tsx:98
 msgid "Add Transfer Order"
 msgstr ""
 
@@ -10945,6 +10984,11 @@ msgstr ""
 
 #: src/pages/stock/TransferOrderDetail.tsx:272
 msgid "Complete Transfer Order"
+msgstr ""
+
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:185
+#: src/tables/stock/TransferOrderLineItemTable.tsx:197
+msgid "Transferred"
 msgstr ""
 
 #: src/states/IconState.tsx:47
@@ -12600,14 +12644,14 @@ msgstr "Kullanıcının takip ettiği parçalara göre süz"
 #: src/tables/part/PartTestResultTable.tsx:185
 #: src/tables/part/PartTestResultTable.tsx:339
 #: src/tables/part/PartTestResultTable.tsx:353
-#: src/tables/stock/StockItemTestResultTable.tsx:294
-#: src/tables/stock/StockItemTestResultTable.tsx:367
-#: src/tables/stock/StockItemTestResultTable.tsx:428
+#: src/tables/stock/StockItemTestResultTable.tsx:300
+#: src/tables/stock/StockItemTestResultTable.tsx:373
+#: src/tables/stock/StockItemTestResultTable.tsx:434
 msgid "Add Test Result"
 msgstr "Test Sonucu Ekle"
 
 #: src/tables/part/PartTestResultTable.tsx:114
-#: src/tables/stock/StockItemTestResultTable.tsx:296
+#: src/tables/stock/StockItemTestResultTable.tsx:302
 msgid "Test result added"
 msgstr "Test sonucu eklendi"
 
@@ -12620,7 +12664,7 @@ msgid "Test results added"
 msgstr ""
 
 #: src/tables/part/PartTestResultTable.tsx:184
-#: src/tables/stock/StockItemTestResultTable.tsx:195
+#: src/tables/stock/StockItemTestResultTable.tsx:201
 msgid "No Result"
 msgstr "Sonuç Yok"
 
@@ -13394,7 +13438,7 @@ msgstr ""
 
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:89
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:208
-#: src/tables/stock/StockItemTestResultTable.tsx:189
+#: src/tables/stock/StockItemTestResultTable.tsx:195
 msgid "Result"
 msgstr "Sonuç"
 
@@ -13587,7 +13631,7 @@ msgid "Task ID"
 msgstr "Görev ID"
 
 #: src/tables/settings/FailedTasksTable.tsx:42
-#: src/tables/stock/StockItemTestResultTable.tsx:231
+#: src/tables/stock/StockItemTestResultTable.tsx:237
 msgid "Started"
 msgstr "Başladı"
 
@@ -14242,81 +14286,81 @@ msgstr ""
 #~ msgid "Delete stock"
 #~ msgstr "Delete stock"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:141
+#: src/tables/stock/StockItemTestResultTable.tsx:147
 msgid "Test"
 msgstr "Test"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:178
+#: src/tables/stock/StockItemTestResultTable.tsx:184
 msgid "Test result for installed stock item"
 msgstr "Takılı stok kaleminin test sonucu"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:209
+#: src/tables/stock/StockItemTestResultTable.tsx:215
 msgid "Attachment"
 msgstr "Ek"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:225
+#: src/tables/stock/StockItemTestResultTable.tsx:231
 msgid "Test station"
 msgstr "Test istasyonu"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:247
+#: src/tables/stock/StockItemTestResultTable.tsx:253
 msgid "Finished"
 msgstr "Bitti"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:305
-#: src/tables/stock/StockItemTestResultTable.tsx:377
+#: src/tables/stock/StockItemTestResultTable.tsx:311
+#: src/tables/stock/StockItemTestResultTable.tsx:383
 msgid "Edit Test Result"
 msgstr "Test Sonucunu Düzenle"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:307
+#: src/tables/stock/StockItemTestResultTable.tsx:313
 msgid "Test result updated"
 msgstr "Test sonucu güncellendi"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:313
-#: src/tables/stock/StockItemTestResultTable.tsx:386
+#: src/tables/stock/StockItemTestResultTable.tsx:319
+#: src/tables/stock/StockItemTestResultTable.tsx:392
 msgid "Delete Test Result"
 msgstr "Test Sonucunu Sil"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:315
+#: src/tables/stock/StockItemTestResultTable.tsx:321
 msgid "Test result deleted"
 msgstr "Test sonucu silindi"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:329
+#: src/tables/stock/StockItemTestResultTable.tsx:335
 msgid "Test Passed"
 msgstr "Test Geçti"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:330
+#: src/tables/stock/StockItemTestResultTable.tsx:336
 msgid "Test result has been recorded"
 msgstr "Test sonucu kaydedildi"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:337
+#: src/tables/stock/StockItemTestResultTable.tsx:343
 msgid "Failed to record test result"
 msgstr "Test sonucunu kaydetme başarısız oldu"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:354
+#: src/tables/stock/StockItemTestResultTable.tsx:360
 msgid "Pass Test"
 msgstr "Testi Geçir"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:404
+#: src/tables/stock/StockItemTestResultTable.tsx:410
 msgid "Show results for required tests"
 msgstr "İstenen testler için sonuçları göster"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:408
+#: src/tables/stock/StockItemTestResultTable.tsx:414
 msgid "Include Installed"
 msgstr "Takılıyı Dahil Et"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:409
+#: src/tables/stock/StockItemTestResultTable.tsx:415
 msgid "Show results for installed stock items"
 msgstr "Takılı stok kalemleri için sonuçları göster"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:413
+#: src/tables/stock/StockItemTestResultTable.tsx:419
 msgid "Passed"
 msgstr "Geçti"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:414
+#: src/tables/stock/StockItemTestResultTable.tsx:420
 msgid "Show only passed tests"
 msgstr "Yalnızca geçen testleri göster"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:419
+#: src/tables/stock/StockItemTestResultTable.tsx:425
 msgid "Show results for enabled tests"
 msgstr ""
 
@@ -14392,10 +14436,6 @@ msgstr ""
 
 #: src/tables/stock/TransferOrderFilters.tsx:64
 msgid "Show orders with a start date"
-msgstr ""
-
-#: src/tables/stock/TransferOrderLineItemTable.tsx:197
-msgid "Transferred"
 msgstr ""
 
 #: src/views/MobileAppView.tsx:25
