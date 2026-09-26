@@ -540,6 +540,53 @@ class PurchaseOrderTest(OrderTest):
         # Revert the setting to previous value
         InvenTreeSetting.set_setting(setting, False)
 
+    def test_po_create_default_destination(self):
+        """Test that the PURCHASEORDER_DEFAULT_RECEIVE_LOCATION setting is applied on creation."""
+        self.assignRole('purchase_order.add')
+
+        url = reverse('api-po-list')
+        location = StockLocation.objects.first()
+        assert location
+
+        # By default, no destination is set on the setting - so the field is left blank
+        set_global_setting('PURCHASEORDER_DEFAULT_RECEIVE_LOCATION', '')
+
+        data = {
+            'reference': 'PO-99990001',
+            'supplier': 1,
+            'description': 'A test purchase order',
+        }
+
+        response = self.post(url, data, expected_code=201)
+        self.assertIsNone(response.data['destination'])
+
+        # Now, set the global default - newly created orders should inherit it
+        set_global_setting('PURCHASEORDER_DEFAULT_RECEIVE_LOCATION', location.pk)
+
+        # The OPTIONS metadata for the 'destination' field should reflect the default location
+        response = self.options(url, expected_code=200)
+        self.assertEqual(
+            response.data['actions']['POST']['destination']['default'], location.pk
+        )
+
+        data['reference'] = 'PO-99990002'
+
+        response = self.post(url, data, expected_code=201)
+        self.assertEqual(response.data['destination'], location.pk)
+
+        # An explicitly provided destination should always take priority
+        other_location = StockLocation.objects.exclude(pk=location.pk).first()
+        assert other_location
+
+        data['reference'] = 'PO-99990003'
+        data['destination'] = other_location.pk
+
+        response = self.post(url, data, expected_code=201)
+        self.assertEqual(response.data['destination'], other_location.pk)
+
+        # Revert the setting to its previous value
+        set_global_setting('PURCHASEORDER_DEFAULT_RECEIVE_LOCATION', '')
+
     def test_po_creation_date(self):
         """Test that we can create set the creation_date field of PurchaseOrder via the API."""
         self.assignRole('purchase_order.add')
@@ -1024,6 +1071,27 @@ class PurchaseOrderTest(OrderTest):
             for result in response.data['results']:
                 self.assertIn('status_text', result)
                 self.assertIsNotNone(result['status_text'])
+
+    def test_status_codes_endpoint(self):
+        """The 'po/status/' endpoint must resolve to the status-codes view.
+
+        Regression test: PurchaseOrder is served by a ViewSet router, whose
+        generated detail route ('po/<pk>/') uses DRF's default, permissive pk
+        lookup regex. That regex is happy to match the literal segment 'status'
+        as a pk, so if the router is registered ahead of the 'po/status/' path in
+        the urlconf, this endpoint gets swallowed by
+        PurchaseOrderViewSet.retrieve(pk='status') instead of reaching StatusView -
+        returning a 404 (no such PurchaseOrder) rather than the status code data.
+        """
+        response = self.get(reverse('api-po-status-codes'), expected_code=200)
+
+        # A genuine StatusView response - not a PurchaseOrder-detail-shaped 404
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('PENDING', response.data['values'])
+        self.assertEqual(
+            response.data['values']['PENDING']['key'], PurchaseOrderStatus.PENDING.value
+        )
 
 
 class PurchaseOrderLineItemTest(OrderTest):
@@ -1535,6 +1603,39 @@ class PurchaseOrderReceiveTest(OrderTest):
         item_2 = StockItem.objects.filter(supplier_part=line_2.part).first()
 
         self.assertEqual(item_1.batch, 'B-abc-123')
+        self.assertEqual(item_2.batch, 'B-xyz-789')
+
+    def test_top_level_batch_code(self):
+        """Test the top-level 'batch_code' field.
+
+        - Applied to any line item which does not specify its own batch code
+        - A line item's own 'batch_code' value takes precedence
+        """
+        line_1 = models.PurchaseOrderLineItem.objects.get(pk=1)
+        line_2 = models.PurchaseOrderLineItem.objects.get(pk=2)
+
+        data = {
+            'items': [
+                {'line_item': 1, 'quantity': 10},
+                {'line_item': 2, 'quantity': 10, 'batch_code': 'B-xyz-789'},
+            ],
+            'location': 1,
+            'batch_code': 'B-top-level',
+        }
+
+        n = StockItem.objects.count()
+
+        self.post(self.url, data, expected_code=201)
+
+        self.assertEqual(n + 2, StockItem.objects.count())
+
+        item_1 = StockItem.objects.filter(supplier_part=line_1.part).first()
+        item_2 = StockItem.objects.filter(supplier_part=line_2.part).first()
+
+        # Line item 1 did not specify its own batch code - falls back to top-level value
+        self.assertEqual(item_1.batch, 'B-top-level')
+
+        # Line item 2 specified its own batch code - takes precedence
         self.assertEqual(item_2.batch, 'B-xyz-789')
 
     def test_serial_numbers(self):
@@ -2514,6 +2615,25 @@ class SalesOrderTest(OrderTest):
             for result in response.data['results']:
                 self.assertIn('status_text', result)
                 self.assertIsNotNone(result['status_text'])
+
+    def test_status_codes_endpoint(self):
+        """The 'so/status/' endpoint must resolve to the status-codes view.
+
+        SalesOrder is not (yet) served by a ViewSet router - its detail route uses
+        Django's '<int:pk>' path converter, which is not vulnerable to the
+        router-based bug affecting PurchaseOrder (see PurchaseOrderTest for
+        details). This is a coverage test guarding against a future regression,
+        e.g. if SalesOrder is migrated to a router-based viewset without also
+        restricting the pk lookup pattern.
+        """
+        response = self.get(reverse('api-so-status-codes'), expected_code=200)
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('PENDING', response.data['values'])
+        self.assertEqual(
+            response.data['values']['PENDING']['key'], SalesOrderStatus.PENDING.value
+        )
 
 
 class SalesOrderLineItemTest(OrderTest):
@@ -3914,6 +4034,23 @@ class ReturnOrderTests(InvenTreeAPITestCase):
             reverse('api-return-order-detail', kwargs={'pk': 1}), ['customer_detail']
         )
 
+    def test_status_codes_endpoint(self):
+        """The 'ro/status/' endpoint must resolve to the status-codes view.
+
+        ReturnOrder is not (yet) served by a ViewSet router - its detail route uses
+        Django's '<int:pk>' path converter, which is not vulnerable to the
+        router-based bug affecting PurchaseOrder (see PurchaseOrderTest for
+        details). This is a coverage test guarding against a future regression.
+        """
+        response = self.get(reverse('api-return-order-status-codes'), expected_code=200)
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('PENDING', response.data['values'])
+        self.assertEqual(
+            response.data['values']['PENDING']['key'], ReturnOrderStatus.PENDING.value
+        )
+
 
 class ReturnOrderLineItemTests(InvenTreeAPITestCase):
     """Unit tests for ReturnOrderLineItem API endpoints."""
@@ -4076,6 +4213,26 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         self.delete(url, {'items': items}, expected_code=200)
 
         self.assertEqual(models.ReturnOrderExtraLine.objects.count(), n - 2)
+
+    def test_status_codes_endpoint(self):
+        """The 'ro-line/status/' endpoint must resolve to the status-codes view.
+
+        ReturnOrderLineItem is not (yet) served by a ViewSet router - its detail
+        route uses Django's '<int:pk>' path converter, which is not vulnerable to
+        the router-based bug affecting PurchaseOrder (see PurchaseOrderTest for
+        details). This is a coverage test guarding against a future regression.
+        """
+        response = self.get(
+            reverse('api-return-order-line-status-codes'), expected_code=200
+        )
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('PENDING', response.data['values'])
+        self.assertEqual(
+            response.data['values']['PENDING']['key'],
+            ReturnOrderLineStatus.PENDING.value,
+        )
 
 
 class ExtraLineTotalPriceTest(InvenTreeAPITestCase):

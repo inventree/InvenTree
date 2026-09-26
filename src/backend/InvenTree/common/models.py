@@ -2276,7 +2276,11 @@ class Attachment(
             img.save(thumb_io, format='PNG')
             thumb_io.seek(0)
 
-            thumb_name = f'thumb_{os.path.basename(self.attachment.name)}'
+            # Save the thumbnail alongside the original attachment file
+            attachment_dir = os.path.dirname(self.attachment.name)
+            thumb_name = os.path.join(
+                attachment_dir, f'thumb_{os.path.basename(self.attachment.name)}'
+            )
             self.thumbnail.save(thumb_name, ContentFile(thumb_io.read()), save=False)
         except Exception:
             pass
@@ -2990,7 +2994,10 @@ class Parameter(
 
         if self.template.units and self.data_numeric is not None:
             query = Parameter.objects.filter(
-                template=self.template, data_numeric=self.data_numeric
+                template=self.template,
+                data_numeric__range=InvenTree.conversion.numeric_range(
+                    self.data_numeric
+                ),
             )
         else:
             query = Parameter.objects.filter(

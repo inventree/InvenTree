@@ -161,15 +161,27 @@ def record_task_success(task_name: str):
     set_global_setting(f'_{task_name}_SUCCESS', datetime.now().isoformat(), None)
 
 
-def check_existing_task(taskname, group: str, *args, **kwargs) -> Optional[str]:
+def check_existing_task(
+    taskname,
+    group: str,
+    *args,
+    retry: bool = True,
+    timeout: Optional[int] = None,
+    **kwargs,
+) -> Optional[str]:
     """Test if an identical task is already registered with the worker.
 
-    This will only return true if the task name, group, args and kwargs all match an existing task.
+    This will only return true if the task name, group, args, kwargs, retry and timeout
+    all match an existing task - a queued task with a different retry/timeout policy is
+    a different request, even if it would otherwise look identical, so it is not treated
+    as a duplicate.
 
     Arguments:
         taskname: The name of the task to check for, in the format 'app.module.function'
         group: The group that the task belongs to
         *args: Positional arguments to match
+        retry: The 'retry' policy the new call is requesting - see offload_task()
+        timeout: The per-task 'timeout' override the new call is requesting - see offload_task()
         **kwargs: Keyword arguments to match
 
     Returns:
@@ -197,11 +209,61 @@ def check_existing_task(taskname, group: str, *args, **kwargs) -> Optional[str]:
             # Task kwargs do not match
             continue
 
+        q_options = task.q_options()
+
+        if bool(q_options.get('ack_failure', False)) != (not retry):
+            # Existing task has a different retry policy - not a true duplicate
+            continue
+
+        if q_options.get('timeout') != timeout:
+            # Existing task has a different per-task timeout override - not a true duplicate
+            continue
+
         task_id = task.task_id()
 
         break
 
     return task_id
+
+
+def _clamp_task_timeout(timeout: Optional[int]) -> Optional[int]:
+    """Clamp a per-task 'timeout' override to leave headroom before the cluster's redelivery interval.
+
+    The ORM broker redelivers a queued task once its lock expires, which is governed
+    by the cluster-wide Q_CLUSTER['retry'] setting - a per-task 'timeout' override has
+    no effect on that. If 'timeout' left less headroom than that, the task could be
+    redelivered and run again before the original attempt has even timed out, silently
+    duplicating work (and defeating retry=False for that task) - so it is clamped down
+    to the largest value that still leaves 120s of headroom (mirroring the margin
+    InvenTree.setting.worker.get_worker_config() applies to the cluster-wide timeout).
+
+    Arguments:
+        timeout: The requested per-task timeout override, if any
+
+    Returns:
+        Optional[int]: 'timeout', clamped down if necessary
+    """
+    if timeout is None:
+        return None
+
+    HEADROOM = 30
+
+    retry = settings.Q_CLUSTER.get('retry')
+    max_timeout = retry - HEADROOM if retry else timeout
+
+    if retry and timeout > max_timeout:
+        logger.warning(
+            'offload_task(): timeout (%ss) leaves less than %ss of headroom before '
+            'the configured broker retry interval (%ss) - clamping to %ss to avoid the '
+            'task being redelivered and executed again before it can time out',
+            timeout,
+            HEADROOM,
+            retry,
+            max_timeout,
+        )
+        return max_timeout
+
+    return timeout
 
 
 # Context-local batch of pending offload_task() calls (see batch_offload_tasks())
@@ -211,8 +273,9 @@ _task_batch: contextvars.ContextVar = contextvars.ContextVar('task_batch', defau
 class TaskBatch:
     """Collects offload_task() calls made within a batch_offload_tasks() scope.
 
-    Entries are grouped by (taskname, group, force_async), so that each distinct
-    combination triggered within the batch is flushed via its own bulk_offload_task() call.
+    Entries are grouped by (taskname, group, force_async, retry, timeout), so that each
+    distinct combination triggered within the batch is flushed via its own
+    bulk_offload_task() call.
     """
 
     def __init__(self):
@@ -220,18 +283,39 @@ class TaskBatch:
         self.entries: dict[tuple, list] = defaultdict(list)
 
     def add(
-        self, taskname, group: str, force_async: bool, args: tuple, kwargs: dict
+        self,
+        taskname,
+        group: str,
+        force_async: bool,
+        args: tuple,
+        kwargs: dict,
+        retry: bool = True,
+        timeout: Optional[int] = None,
     ) -> None:
         """Record a single offload_task() call against this batch."""
-        self.entries[taskname, group, force_async].append((args, kwargs))
+        self.entries[taskname, group, force_async, retry, timeout].append((
+            args,
+            kwargs,
+        ))
 
     def flush(self) -> None:
-        """Fire a bulk_offload_task() call for each (taskname, group, force_async) group collected so far."""
+        """Fire a bulk_offload_task() call for each (taskname, group, force_async, retry, timeout) group collected so far."""
         entries, self.entries = self.entries, defaultdict(list)
 
-        for (taskname, group, force_async), task_entries in entries.items():
+        for (
+            taskname,
+            group,
+            force_async,
+            retry,
+            timeout,
+        ), task_entries in entries.items():
             bulk_offload_task(
-                taskname, task_entries, group=group, force_async=force_async
+                taskname,
+                task_entries,
+                group=group,
+                force_async=force_async,
+                retry=retry,
+                timeout=timeout,
             )
 
 
@@ -290,6 +374,8 @@ def offload_task(
     force_async: bool = False,
     force_sync: bool = False,
     check_duplicates: bool = True,
+    retry: bool = True,
+    timeout: Optional[int] = None,
     **kwargs,
 ) -> str | bool:
     """Create an AsyncTask if workers are running. This is different to a 'scheduled' task, in that it only runs once!
@@ -302,11 +388,29 @@ def offload_task(
         force_async: If True, force the task to be offloaded (even if workers are not running)
         force_sync: If True, force the task to be run synchronously (even if workers are running)
         check_duplicates: If True, check for existing identical tasks before offloading
+        retry: If False, the task is attempted exactly once and is never retried if it
+            fails (see note below)
+        timeout: Optional per-task override (in seconds) of the worker's task timeout.
+            Clamped down (with a warning) if it would leave less than 30s of headroom
+            before the configured broker retry interval (settings.Q_CLUSTER['retry']) -
+            see _clamp_task_timeout()
         **kwargs: Keyword arguments to be passed to the task function
+
+    Note:
+        django-q2 has no concept of a per-task retry limit:
+        the ORM broker simply leaves a failed task's queue entry in place, so it
+        gets redelivered (governed by the cluster-wide 'retry' timeout) until something
+        acknowledges it, up to the cluster-wide 'max_attempts' limit. The one per-task
+        escape hatch it does provide is 'ack_failure', which acknowledges (and so
+        permanently drops) a task the moment it fails, regardless of the cluster's
+        retry/max_attempts settings. retry=False is implemented on top of that option -
+        there is no equivalent for a finite positive retry count.
 
     Returns:
         str | bool: Task ID if the task was offloaded, True if ran synchronously, False otherwise
     """
+    timeout = _clamp_task_timeout(timeout)
+
     # Extract group information from kwargs
     group = kwargs.pop('group', 'inventree')
 
@@ -314,7 +418,7 @@ def offload_task(
         # A batch_offload_tasks() context is active - queue this task rather than
         # offloading it immediately (force_sync=True calls never reach this branch -
         # see batch_offload_tasks() for why they are excluded from batching)
-        batch.add(taskname, group, force_async, args, kwargs)
+        batch.add(taskname, group, force_async, args, kwargs, retry, timeout)
         return True
 
     from InvenTree.exceptions import log_error
@@ -345,7 +449,9 @@ def offload_task(
     if force_async or (is_worker_running() and not force_sync):
         # Before offloading, check if a duplicate task exists
         if not force_sync and check_duplicates:
-            if task_id := check_existing_task(taskname, group, *args, **kwargs):
+            if task_id := check_existing_task(
+                taskname, group, *args, retry=retry, timeout=timeout, **kwargs
+            ):
                 logger.debug(
                     "Skipping duplicate task '%s' with ID '%s'", taskname, task_id
                 )
@@ -354,7 +460,16 @@ def offload_task(
 
         # Running as asynchronous task
         try:
-            task = AsyncTask(taskname, *args, group=group, **kwargs)
+            task_kwargs = dict(kwargs)
+            if not retry:
+                # Bandaid for django-q2 having no per-task retry limit: 'ack_failure'
+                # is its one native per-task option that acknowledges (and so drops)
+                # a task as soon as it fails, rather than leaving it to be redelivered
+                task_kwargs['ack_failure'] = True
+            if timeout is not None:
+                task_kwargs['timeout'] = timeout
+
+            task = AsyncTask(taskname, *args, group=group, **task_kwargs)
             with tracer.start_as_current_span(f'async worker: {taskname}'):
                 task.run()
 
@@ -419,6 +534,8 @@ def bulk_offload_task(
     group: str = 'inventree',
     force_sync: bool = False,
     force_async: bool = False,
+    retry: bool = True,
+    timeout: Optional[int] = None,
 ) -> bool:
     """Queue the same background task many times, in a single bulk database write.
 
@@ -436,12 +553,18 @@ def bulk_offload_task(
         group: The task group to assign to each queued task
         force_sync: If True, run all tasks synchronously (even if workers are running)
         force_async: If True, force all tasks to be queued (even if workers are not running)
+        retry: If False, every queued task is attempted exactly once and is never
+            retried if it fails - see offload_task() for why
+        timeout: Optional per-task override (in seconds) of the worker's task timeout
+            for every queued task - see offload_task() for details
 
     Returns:
         bool: True if the tasks were queued (or run synchronously), False otherwise
     """
     if not entries:
         return False
+
+    timeout = _clamp_task_timeout(timeout)
 
     try:
         from django_q.brokers import get_broker
@@ -468,6 +591,8 @@ def bulk_offload_task(
                 group=group,
                 force_sync=True,
                 check_duplicates=False,
+                retry=retry,
+                timeout=timeout,
                 **kwargs,
             )
 
@@ -489,6 +614,14 @@ def bulk_offload_task(
             'group': group,
             'started': timezone.now(),
         }
+
+        if not retry:
+            # See offload_task() - 'ack_failure' drops the task the moment it fails,
+            # instead of leaving its queue entry to be redelivered
+            task['ack_failure'] = True
+
+        if timeout is not None:
+            task['timeout'] = timeout
 
         tasks.append(
             OrmQ(

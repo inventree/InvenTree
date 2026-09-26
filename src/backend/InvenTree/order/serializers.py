@@ -420,6 +420,22 @@ class PurchaseOrderSerializer(
 
         return [*fields, 'duplicate']
 
+    def __init__(self, *args, **kwargs):
+        """Set a dynamic default for the 'destination' field, on creation only."""
+        super().__init__(*args, **kwargs)
+
+        if self.instance is None:
+            location_pk = get_global_setting(
+                'PURCHASEORDER_DEFAULT_RECEIVE_LOCATION', backup_value=None
+            )
+
+            if location_pk:
+                self.fields[
+                    'destination'
+                ].default = stock.models.StockLocation.objects.filter(
+                    pk=location_pk
+                ).first()
+
     duplicate = DuplicateOptionsSerializer(
         order.models.PurchaseOrder.objects.all(),
         copy_lines=True,
@@ -963,7 +979,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['items', 'location']
+        fields = ['items', 'location', 'batch_code']
 
     items = PurchaseOrderLineItemReceiveSerializer(many=True)
 
@@ -974,6 +990,16 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         allow_null=True,
         label=_('Location'),
         help_text=_('Select destination location for received items'),
+    )
+
+    batch_code = serializers.CharField(
+        label=_('Batch Code'),
+        help_text=_(
+            'Enter batch code for incoming stock items - applied to any line item which does not specify its own batch code'
+        ),
+        required=False,
+        default='',
+        allow_blank=True,
     )
 
     def validate(self, data):
@@ -988,6 +1014,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         items = data.get('items', [])
 
         location = data.get('location', order.destination)
+        batch_code = data.get('batch_code', '')
 
         if len(items) == 0:
             raise ValidationError(_('Line items must be provided'))
@@ -1018,6 +1045,10 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                 raise ValidationError({
                     'location': _('Destination location must be specified')
                 })
+
+            # If no batch code is specified for this line item, fall back to the top-level value
+            if not item.get('batch_code'):
+                item['batch_code'] = batch_code
 
             barcode = item.get('barcode', '')
 
