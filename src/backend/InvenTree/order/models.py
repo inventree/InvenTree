@@ -1308,7 +1308,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # Record a purchase cost entry for each newly received item that was
         # assigned a purchase price (this may be a large number of items, so
         # the bulk helper is used rather than creating entries one at a time)
-        pricing.models.StockItemCostEntry.objects.bulk_set_costs([
+        pricing.models.StockItemCostEntry.objects.bulk_create_costs([
             {
                 'stock_item': item,
                 'cost_type': CostType.PURCHASE.value,

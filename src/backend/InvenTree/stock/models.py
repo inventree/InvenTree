@@ -2237,7 +2237,7 @@ class StockItem(
 
         # Record a purchase cost entry for each newly created component that
         # was assigned a (possibly allocated) purchase price
-        pricing.models.StockItemCostEntry.objects.bulk_set_costs([
+        pricing.models.StockItemCostEntry.objects.bulk_create_costs([
             {
                 'stock_item': new_item,
                 'cost_type': CostType.PURCHASE.value,
@@ -2883,9 +2883,15 @@ class StockItem(
 
         self.save()
 
-        # Record a purchase cost entry reflecting the merged (weighted-average) price
+        # Record a purchase cost entry reflecting the merged (weighted-average) price.
+        # Cost entries are additive, so any existing PURCHASE entries on this item are
+        # removed first - the weighted average already accounts for them.
         if merged_unit_cost is not None:
-            pricing.models.StockItemCostEntry.objects.set_cost(
+            pricing.models.StockItemCostEntry.objects.filter(
+                stock_item=self, cost_type=CostType.PURCHASE.value
+            ).delete()
+
+            pricing.models.StockItemCostEntry.objects.create_cost(
                 self,
                 CostType.PURCHASE.value,
                 min_cost=merged_unit_cost,

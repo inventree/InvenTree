@@ -79,7 +79,7 @@ class BuildMaterialCostTest(BuildTestBase):
 
     def test_tracked_measured_cost(self):
         """A tracked allocation with a recorded cost produces a measured MATERIAL entry."""
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_3_1,
             CostType.PURCHASE.value,
             min_cost=Money(2, 'USD'),
@@ -136,7 +136,7 @@ class BuildMaterialCostTest(BuildTestBase):
 
     def test_pooled_cost_apportioned_across_outputs(self):
         """Untracked allocation cost is applied evenly, per-unit, to every completed output."""
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_1_2,
             CostType.PURCHASE.value,
             min_cost=Money(1, 'USD'),
@@ -161,13 +161,13 @@ class BuildMaterialCostTest(BuildTestBase):
 
     def test_pooled_cost_is_additive_to_tracked_cost(self):
         """The pooled (whole-build) pass adds to, rather than replaces, the per-output tracked cost."""
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_3_1,
             CostType.PURCHASE.value,
             min_cost=Money(2, 'USD'),
             max_cost=Money(2, 'USD'),
         )
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_1_2,
             CostType.PURCHASE.value,
             min_cost=Money(1, 'USD'),
@@ -198,7 +198,7 @@ class BuildMaterialCostTest(BuildTestBase):
         """Allocated stock cost in a non-default currency is converted before summing."""
         self.generate_exchange_rates()
 
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_3_1,
             CostType.PURCHASE.value,
             min_cost=Money(2, 'AUD'),
@@ -220,7 +220,7 @@ class BuildMaterialCostTest(BuildTestBase):
     def test_missing_exchange_rate_skips_contribution(self):
         """If no exchange rate is available, that contribution is skipped, not zeroed."""
         # Note: generate_exchange_rates() is deliberately not called here
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_3_1,
             CostType.PURCHASE.value,
             min_cost=Money(2, 'AUD'),
@@ -282,7 +282,7 @@ class BuildMaterialCostTest(BuildTestBase):
         stock_2_new = StockItem.objects.create(part=self.sub_part_2, quantity=1000)
 
         # Tracked, MEASURED: 3 AUD == 2 USD at the registered exchange rate
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_3_1,
             CostType.PURCHASE.value,
             min_cost=Money(3, 'AUD'),
@@ -293,7 +293,7 @@ class BuildMaterialCostTest(BuildTestBase):
         self.set_part_price_range(sub_part_4, Money(2, 'USD'), Money(4, 'USD'))
 
         # Pooled, MEASURED
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_1_2,
             CostType.PURCHASE.value,
             min_cost=Money(1, 'USD'),
@@ -366,7 +366,7 @@ class BuildSplitCostTest(BuildTestBase):
 
     def test_tracked_split_item_keeps_cost(self):
         """A trackable item installed into an output carries its cost across the split."""
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_3_1,
             CostType.PURCHASE.value,
             min_cost=Money(2, 'USD'),
@@ -411,7 +411,7 @@ class BuildSplitCostTest(BuildTestBase):
 
     def test_untracked_split_item_keeps_cost(self):
         """An untracked (pooled) allocation carries its cost across the split too."""
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_1_2,
             CostType.PURCHASE.value,
             min_cost=Money(5, 'USD'),

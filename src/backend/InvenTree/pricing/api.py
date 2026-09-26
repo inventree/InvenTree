@@ -3,8 +3,6 @@
 from django.urls import include, path
 
 from django_filters.rest_framework.filterset import FilterSet
-from rest_framework import status
-from rest_framework.response import Response
 
 from generic.states.api import StatusView
 from InvenTree.filters import SEARCH_ORDER_FILTER, InvenTreeDateFilter
@@ -53,11 +51,11 @@ class StockItemCostEntryList(StockItemCostEntryMixin, ListCreateAPI):
     """API endpoint for listing (and creating) StockItemCostEntry objects.
 
     - GET: Return list of StockItemCostEntry objects
-    - POST: Create (or update) a StockItemCostEntry object
+    - POST: Create a new StockItemCostEntry object
 
-    Only one entry is kept per (stock_item, cost_type) pair - posting again for a
-    pair that already has an entry updates that entry in place, rather than
-    creating a duplicate.
+    A stock item may have any number of cost entries, including several of the
+    same cost type - posting again always creates a new entry. To replace an
+    existing cost, update or delete that entry directly.
     """
 
     filterset_class = StockItemCostEntryFilter
@@ -67,29 +65,11 @@ class StockItemCostEntryList(StockItemCostEntryMixin, ListCreateAPI):
 
     ordering = '-date'
 
-    def create(self, request, *args, **kwargs):
-        """Create a new StockItemCostEntry, or update a matching existing one.
+    def perform_create(self, serializer):
+        """Record the user who created this cost entry."""
+        user = self.request.user
 
-        The existing (stock_item, cost_type) entry (if any) must be located before
-        validation, so that the serializer's model-level uniqueness check validates
-        against the correct instance rather than rejecting the request outright.
-        """
-        data = self.clean_data(request.data)
-
-        instance = StockItemCostEntry.objects.filter(
-            stock_item=data.get('stock_item'),
-            cost_type=data.get('cost_type', CostType.PURCHASE.value),
-        ).first()
-
-        serializer = self.get_serializer(instance, data=data)
-        serializer.is_valid(raise_exception=True)
-
-        user = request.user
         serializer.save(user=user if user and user.is_authenticated else None)
-
-        headers = self.get_success_headers(serializer.data)
-        response_status = status.HTTP_200_OK if instance else status.HTTP_201_CREATED
-        return Response(serializer.data, status=response_status, headers=headers)
 
 
 class StockItemCostEntryDetail(StockItemCostEntryMixin, RetrieveUpdateDestroyAPI):

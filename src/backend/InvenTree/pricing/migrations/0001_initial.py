@@ -134,12 +134,6 @@ class Migration(migrations.Migration):
                 "ordering": ["-date"],
             },
         ),
-        migrations.AddConstraint(
-            model_name="stockitemcostentry",
-            constraint=models.UniqueConstraint(
-                fields=("stock_item", "cost_type"), name="unique_stock_item_cost_type"
-            ),
-        ),
         migrations.CreateModel(
             name="StockItemCost",
             fields=[

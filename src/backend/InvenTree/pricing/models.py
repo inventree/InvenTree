@@ -2,7 +2,6 @@
 
 from django.contrib.auth import get_user_model
 from django.db import models, transaction
-from django.db.models import Q
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
@@ -49,49 +48,15 @@ class StockItemCostEntryManager(models.Manager):
 
     This is the common entry point that other apps (order, stock, build, ...)
     should use whenever a StockItem is assigned a cost - rather than each call
-    site hand-rolling its own StockItemCostEntry (+ StockItemCost summary)
-    construction. See `set_cost` for a single stock item, and `bulk_set_costs`
-    for many at once (e.g. receiving a large purchase order). See
-    `bulk_copy_costs` for propagating existing cost data onto stock items which
-    are split off from an existing one.
+    site hand-rolling its own StockItemCostEntry construction.
+
+    Cost entries are purely *additive*: a StockItem may carry any number of
+    entries, including several of the same cost type (e.g. freight and duty
+    both recorded as LANDED costs). The cached StockItemCost summary is simply
+    the sum of every entry - see that model.
     """
 
-    def _bulk_upsert(self, objs):
-        """Insert the provided cost entries, replacing any which already exist.
-
-        Django's bulk_create(update_conflicts=True, unique_fields=[...]) cannot be
-        used here: MySQL / MariaDB sets supports_update_conflicts_with_target=False,
-        so passing unique_fields raises NotSupportedError on that backend. Instead,
-        any conflicting (stock_item, cost_type) rows are deleted first, and the new
-        rows plainly inserted - which works identically on every supported backend.
-
-        Returns:
-            The list of created StockItemCostEntry objects.
-        """
-        if not objs:
-            return []
-
-        # Group the target stock items by cost type, so the conflicting rows can be
-        # removed with one OR'd clause per cost type (rather than one per entry)
-        items_by_type = {}
-
-        for obj in objs:
-            items_by_type.setdefault(obj.cost_type, set()).add(obj.stock_item_id)
-
-        query = Q()
-
-        for cost_type, stock_item_ids in items_by_type.items():
-            query |= Q(cost_type=cost_type, stock_item_id__in=stock_item_ids)
-
-        with transaction.atomic():
-            # Note: this fires the post_delete signal for any row actually removed,
-            # which recalculates that stock item's cached summary. Callers must
-            # therefore update the summaries *after* calling this method
-            self.filter(query).delete()
-
-            return self.bulk_create(objs, batch_size=500)
-
-    def set_cost(
+    def create_cost(
         self,
         stock_item,
         cost_type,
@@ -103,12 +68,10 @@ class StockItemCostEntryManager(models.Manager):
         notes='',
         source_data=None,
     ):
-        """Create or update the cost entry for a (stock_item, cost_type) pair.
+        """Create a new cost entry against the provided StockItem.
 
-        Uses update_or_create() under the hood, so the normal save()-triggered
-        signals fire either way - the cached StockItemCost summary is kept in
-        sync automatically, whether this creates a new entry or updates an
-        existing one.
+        The normal save()-triggered signal fires, so the cached StockItemCost
+        summary is kept in sync automatically.
         """
         if min_cost_currency is None and isinstance(min_cost, Money):
             min_cost_currency = min_cost.currency
@@ -116,108 +79,29 @@ class StockItemCostEntryManager(models.Manager):
         if max_cost_currency is None and isinstance(max_cost, Money):
             max_cost_currency = max_cost.currency
 
-        entry, _created = self.update_or_create(
+        return self.create(
             stock_item=stock_item,
             cost_type=cost_type,
-            defaults={
-                'min_cost': min_cost,
-                'min_cost_currency': min_cost_currency,
-                'max_cost': max_cost,
-                'max_cost_currency': max_cost_currency,
-                'user': user,
-                'notes': notes,
-                'source_data': source_data,
-            },
+            min_cost=min_cost,
+            min_cost_currency=min_cost_currency,
+            max_cost=max_cost,
+            max_cost_currency=max_cost_currency,
+            user=user,
+            notes=notes,
+            source_data=source_data,
         )
 
-        return entry
+    def bulk_create_costs(self, entries: list[dict]):
+        """Create cost entries for potentially many stock items at once.
 
-    def add_cost(
-        self, stock_item, cost_type, min_cost=None, max_cost=None, user=None, notes=''
-    ):
-        """Add to (rather than overwrite) the cost entry for a (stock_item, cost_type) pair.
+        Each dict in `entries` supports the same keys as `create_cost`
+        (stock_item is required, the rest are optional).
 
-        Unlike `set_cost`, this increments any existing min_cost/max_cost values
-        rather than replacing them - used where a cost contribution is computed
-        in more than one pass (e.g. build order manufacturing cost, where a
-        per-output pass and a later whole-build pooled-allocation pass both need
-        to contribute to the same entry). If no matching entry exists yet, one is
-        created from the given values, exactly as `set_cost` would.
-
-        min_cost / max_cost must be Money instances (or None) - unlike `set_cost`,
-        there is no separate `*_currency` argument, since an amount with no
-        currency cannot be added to anything.
-
-        If an existing entry's currency differs from the value being added, the
-        added value is converted into the entry's existing currency first. If no
-        exchange rate is available, that particular addition is skipped (logged
-        as a warning) rather than failing outright - consistent with
-        StockItemCost's own currency-conversion behaviour.
-        """
-
-        def _add(existing, delta):
-            if delta is None:
-                return existing
-
-            if existing is None:
-                return delta
-
-            if str(existing.currency) != str(delta.currency):
-                try:
-                    delta = convert_money(delta, existing.currency)
-                except MissingRate:
-                    logger.warning(
-                        'No currency conversion rate available for %s -> %s',
-                        delta.currency,
-                        existing.currency,
-                    )
-                    return existing
-
-            return existing + delta
-
-        with transaction.atomic():
-            entry = (
-                self
-                .select_for_update()
-                .filter(stock_item=stock_item, cost_type=cost_type)
-                .first()
-            )
-
-            if entry is None:
-                return self.set_cost(
-                    stock_item,
-                    cost_type,
-                    min_cost=min_cost,
-                    max_cost=max_cost,
-                    user=user,
-                    notes=notes,
-                )
-
-            entry.min_cost = _add(entry.min_cost, min_cost)
-            entry.max_cost = _add(entry.max_cost, max_cost)
-
-            if user is not None:
-                entry.user = user
-
-            if notes:
-                entry.notes = notes
-
-            entry.save()
-
-        return entry
-
-    def bulk_set_costs(self, entries: list[dict]):
-        """Create or update cost entries for potentially many stock items at once.
-
-        Each dict in `entries` supports the same keys as `set_cost` (stock_item
-        and cost_type are required, the rest are optional).
-
-        Every entry is upserted in bulk via `_bulk_upsert`, regardless of whether a
-        matching (stock_item, cost_type) entry already exists. As bulk_create() does
-        not call save() and therefore does not trigger the usual signals, the cached
-        StockItemCost summary for every affected stock item is recalculated
-        afterwards via an offloaded 'update_stock_item_cost' task (batched into
-        a single bulk task-queue write, rather than one per stock item).
+        As bulk_create() does not call save() and therefore does not trigger the
+        usual signals, the cached StockItemCost summary for every affected stock
+        item is recalculated afterwards via an offloaded 'update_stock_item_cost'
+        task (batched into a single bulk task-queue write, rather than one per
+        stock item).
         """
         if not entries:
             return []
@@ -254,17 +138,9 @@ class StockItemCostEntryManager(models.Manager):
 
             stock_items[stock_item.pk] = stock_item
 
-        created = self._bulk_upsert(objs)
+        created = self.bulk_create(objs, batch_size=500)
 
-        # Deferred imports to avoid a circular import (pricing.models <-> pricing.tasks)
-        import pricing.tasks
-        from InvenTree.tasks import batch_offload_tasks, offload_task
-
-        with batch_offload_tasks():
-            for stock_item in stock_items.values():
-                offload_task(
-                    pricing.tasks.update_stock_item_cost, stock_item, group='pricing'
-                )
+        self._schedule_summary_updates(stock_items.values())
 
         return created
 
@@ -282,6 +158,10 @@ class StockItemCostEntryManager(models.Manager):
         changes the quantity of an item, never its unit cost. Currency, user,
         notes and source_data are preserved too, so the provenance of the
         original cost survives onto the split-off item.
+
+        Targets are expected to be newly-created stock items with no cost data of
+        their own. Copied entries are *added* to any the target already has,
+        consistent with the additive behaviour of this model.
 
         Arguments:
             item_pairs: Iterable of (source, target) StockItem tuples. Both must
@@ -351,7 +231,7 @@ class StockItemCostEntryManager(models.Manager):
                 )
             else:
                 # The source has cost entries but no cached summary yet (e.g. a
-                # bulk_set_costs() recalculation is still queued) - there is nothing
+                # bulk_create_costs() recalculation is still queued) - there is nothing
                 # to copy, so the target's summary must be calculated as normal
                 recalculate.append(target)
 
@@ -359,39 +239,50 @@ class StockItemCostEntryManager(models.Manager):
             return []
 
         with transaction.atomic():
-            created = self._bulk_upsert(objs)
+            created = self.bulk_create(objs, batch_size=500)
 
             if summary_objs:
-                # Replace any summary the targets already had (including one just
-                # rebuilt by _bulk_upsert's post_delete signal) with the copied one
+                # StockItemCost is a one-to-one cache, so any summary the targets
+                # already had must be removed before the copied one is inserted
                 StockItemCost.objects.filter(
                     stock_item_id__in=[obj.stock_item_id for obj in summary_objs]
                 ).delete()
 
                 StockItemCost.objects.bulk_create(summary_objs, batch_size=500)
 
-        if recalculate:
-            # Deferred imports to avoid a circular import (pricing.models <-> pricing.tasks)
-            import pricing.tasks
-            from InvenTree.tasks import batch_offload_tasks, offload_task
-
-            with batch_offload_tasks():
-                for stock_item in recalculate:
-                    offload_task(
-                        pricing.tasks.update_stock_item_cost,
-                        stock_item,
-                        group='pricing',
-                    )
+        self._schedule_summary_updates(recalculate)
 
         return created
+
+    def _schedule_summary_updates(self, stock_items):
+        """Offload a cached-summary recalculation for each of the provided stock items.
+
+        Required after any bulk_create(), which does not fire the post_save signal
+        that normally keeps StockItemCost in sync.
+        """
+        stock_items = list(stock_items)
+
+        if not stock_items:
+            return
+
+        # Deferred imports to avoid a circular import (pricing.models <-> pricing.tasks)
+        import pricing.tasks
+        from InvenTree.tasks import batch_offload_tasks, offload_task
+
+        with batch_offload_tasks():
+            for stock_item in stock_items:
+                offload_task(
+                    pricing.tasks.update_stock_item_cost, stock_item, group='pricing'
+                )
 
 
 class StockItemCostEntry(models.Model):
     """Model representing a single cost contribution towards a StockItem.
 
-    Only the latest entry is kept per (stock_item, cost_type) pair - recalculating
-    a cost updates the existing entry in place, rather than appending a new one.
-    Historical cost tracking may be added later, but is out of scope for now.
+    A StockItem may carry any number of cost entries, including several of the
+    same cost type - e.g. freight and duty both recorded as separate LANDED
+    costs, or a build order's tracked and pooled material contributions both
+    recorded as MATERIAL. Entries are never merged or replaced implicitly.
 
     All cost entries for a given StockItem are summed to produce the cached
     total in StockItemCost - see that model for details.
@@ -412,11 +303,6 @@ class StockItemCostEntry(models.Model):
 
         verbose_name = _('Stock Item Cost Entry')
         ordering = ['-date']
-        constraints = [
-            models.UniqueConstraint(
-                fields=['stock_item', 'cost_type'], name='unique_stock_item_cost_type'
-            )
-        ]
 
     objects = StockItemCostEntryManager()
 

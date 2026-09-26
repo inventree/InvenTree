@@ -1036,7 +1036,7 @@ class StockItemListTest(StockAPITestCase):
 
         # Assign a calculated cost to a single stock item
         item = StockItem.objects.first()
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             item,
             CostType.PURCHASE.value,
             min_cost=Money(10, 'USD'),
@@ -2430,7 +2430,7 @@ class StockItemDisassembleTest(StockAPITestCase):
         self.item = StockItem.objects.create(
             part=self.assembly, quantity=10, location=StockLocation.objects.get(pk=1)
         )
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.item,
             CostType.PURCHASE.value,
             min_cost=Money(100, 'USD'),
@@ -2762,7 +2762,7 @@ class StockItemDisassembleTest(StockAPITestCase):
     def test_installed_items_full_coverage(self):
         """No new stock item is created for a line fully covered by installed items."""
         sub = self.install_item(1, 120)
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             sub,
             CostType.PURCHASE.value,
             min_cost=Money(3, 'USD'),

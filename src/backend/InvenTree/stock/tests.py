@@ -380,7 +380,7 @@ class StockTest(StockTestBase):
         """
         parent = StockItem.objects.get(id=1234)
 
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             parent,
             CostType.PURCHASE.value,
             min_cost=Money(3, 'USD'),
@@ -388,7 +388,7 @@ class StockTest(StockTestBase):
             notes='received',
         )
 
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             parent,
             CostType.MATERIAL.value,
             min_cost=Money(1, 'USD'),
@@ -441,7 +441,7 @@ class StockTest(StockTestBase):
         """Cost must propagate down a chain of splits, not just the first one."""
         grandparent = StockItem.objects.get(id=1234)
 
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             grandparent,
             CostType.PURCHASE.value,
             min_cost=Money(2, 'USD'),
@@ -462,7 +462,7 @@ class StockTest(StockTestBase):
         item.part.trackable = True
         item.part.save()
 
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             item,
             CostType.PURCHASE.value,
             min_cost=Money(6, 'USD'),
@@ -1215,7 +1215,7 @@ class StockTest(StockTestBase):
 
     def set_cost(self, item, cost):
         """Helper: assign a PURCHASE cost entry (and cached summary) to a stock item."""
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             item, CostType.PURCHASE.value, min_cost=cost, max_cost=cost
         )
 
@@ -1423,7 +1423,7 @@ class StockTest(StockTestBase):
         # here to convert from any other currency
         currency = currency_code_default()
 
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             item,
             CostType.PURCHASE.value,
             min_cost=Money(5, currency),

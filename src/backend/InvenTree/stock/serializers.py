@@ -551,32 +551,34 @@ class StockItemSerializer(
 
         instance = super().update(instance, validated_data=validated_data)
 
-        if purchase_price is not None:
-            if not purchase_price_currency:
+        if purchase_price is not None or 'purchase_price' in self.initial_data:
+            # Cost entries are additive (a stock item may carry several of the
+            # same type), so setting *the* purchase price means replacing any
+            # existing PURCHASE entries rather than updating one in place
+            existing = pricing_models.StockItemCostEntry.objects.filter(
+                stock_item=instance, cost_type=CostType.PURCHASE.value
+            )
+
+            if purchase_price is not None and not purchase_price_currency:
                 # No explicit currency provided - default to the currency of
-                # the existing cost entry (if any), else the global default
-                existing = pricing_models.StockItemCostEntry.objects.filter(
-                    stock_item=instance, cost_type=CostType.PURCHASE.value
-                ).first()
+                # an existing cost entry (if any), else the global default
+                first = existing.first()
                 purchase_price_currency = (
-                    existing.min_cost_currency if existing else currency_code_default()
+                    first.min_cost_currency if first else currency_code_default()
                 )
 
-            pricing_models.StockItemCostEntry.objects.set_cost(
-                instance,
-                CostType.PURCHASE.value,
-                min_cost=purchase_price,
-                max_cost=purchase_price,
-                min_cost_currency=purchase_price_currency,
-                max_cost_currency=purchase_price_currency,
-                user=instance._user,
-            )
-        elif 'purchase_price' in self.initial_data:
-            # Client explicitly sent 'purchase_price: null' - clear the matching
-            # cost entry, rather than leaving it untouched or creating a null one
-            pricing_models.StockItemCostEntry.objects.filter(
-                stock_item=instance, cost_type=CostType.PURCHASE.value
-            ).delete()
+            existing.delete()
+
+            if purchase_price is not None:
+                pricing_models.StockItemCostEntry.objects.create_cost(
+                    instance,
+                    CostType.PURCHASE.value,
+                    min_cost=purchase_price,
+                    max_cost=purchase_price,
+                    min_cost_currency=purchase_price_currency,
+                    max_cost_currency=purchase_price_currency,
+                    user=instance._user,
+                )
 
         return instance
 

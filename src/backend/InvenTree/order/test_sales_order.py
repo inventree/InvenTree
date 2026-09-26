@@ -512,7 +512,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
         copied onto the split-off item explicitly - see
         StockItemCostEntryManager.bulk_copy_costs.
         """
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.Sa,
             CostType.PURCHASE.value,
             min_cost=Money(7, 'USD'),

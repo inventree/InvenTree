@@ -1350,7 +1350,7 @@ class StockList(
                 import pricing.models
                 from pricing.status_codes import CostType
 
-                pricing.models.StockItemCostEntry.objects.bulk_set_costs([
+                pricing.models.StockItemCostEntry.objects.bulk_create_costs([
                     {
                         'stock_item': created_item,
                         'cost_type': CostType.PURCHASE.value,

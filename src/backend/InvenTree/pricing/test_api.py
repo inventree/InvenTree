@@ -1,6 +1,5 @@
 """Unit tests for the pricing API."""
 
-from django.db import IntegrityError, transaction
 from django.urls import reverse
 
 from djmoney.money import Money
@@ -82,8 +81,8 @@ class StockItemCostEntryListTest(PricingAPITestCase):
         self.assertEqual(entry.max_cost, Money('2.5', 'USD'))
         self.assertEqual(entry.notes, 'Some notes')
 
-    def test_create_updates_existing_entry(self):
-        """Posting again for the same (stock_item, cost_type) pair updates the existing entry."""
+    def test_create_appends_additional_entry(self):
+        """Posting again for the same (stock_item, cost_type) pair creates a second entry."""
         first = StockItemCostEntry.objects.create(
             stock_item=self.stock_item,
             cost_type=CostType.PURCHASE.value,
@@ -99,24 +98,29 @@ class StockItemCostEntryListTest(PricingAPITestCase):
             'min_cost_currency': 'USD',
             'max_cost': '4.000',
             'max_cost_currency': 'USD',
-            'notes': 'Updated',
+            'notes': 'Second',
         }
 
-        response = self.post(self.entry_list_url(), data, expected_code=200)
+        response = self.post(self.entry_list_url(), data, expected_code=201)
 
-        # No new entry should have been created - the existing one is updated
+        # A new entry is created - the existing one is left untouched
         self.assertEqual(
             StockItemCostEntry.objects.filter(
                 stock_item=self.stock_item, cost_type=CostType.PURCHASE.value
             ).count(),
-            1,
+            2,
         )
 
+        self.assertNotEqual(response.data['pk'], first.pk)
+
         first.refresh_from_db()
-        self.assertEqual(response.data['pk'], first.pk)
-        self.assertEqual(first.min_cost, Money('3', 'USD'))
-        self.assertEqual(first.max_cost, Money('4', 'USD'))
-        self.assertEqual(first.notes, 'Updated')
+        self.assertEqual(first.min_cost, Money('1', 'USD'))
+        self.assertEqual(first.notes, 'Original')
+
+        # The cached summary covers both entries
+        summary = StockItemCost.objects.get(stock_item=self.stock_item)
+        self.assertEqual(summary.min_cost, Money('4', 'USD'))
+        self.assertEqual(summary.max_cost, Money('6', 'USD'))
 
     def test_create_no_permission(self):
         """A user without 'pricing.add' permission cannot create a cost entry."""
@@ -251,22 +255,25 @@ class StockItemCostEntryDetailTest(PricingAPITestCase):
 class StockItemCostEntryModelTest(PricingAPITestCase):
     """Tests for the StockItemCostEntry model itself."""
 
-    def test_unique_stock_item_cost_type(self):
-        """Only one entry may exist per (stock_item, cost_type) pair."""
-        StockItemCostEntry.objects.create(
-            stock_item=self.stock_item,
-            cost_type=CostType.PURCHASE.value,
-            min_cost=Money(1, 'USD'),
-            max_cost=Money(2, 'USD'),
-        )
-
-        with self.assertRaises(IntegrityError), transaction.atomic():
+    def test_multiple_entries_per_cost_type(self):
+        """Any number of entries may exist per (stock_item, cost_type) pair."""
+        for amount in (1, 3, 5):
             StockItemCostEntry.objects.create(
                 stock_item=self.stock_item,
-                cost_type=CostType.PURCHASE.value,
-                min_cost=Money(3, 'USD'),
-                max_cost=Money(4, 'USD'),
+                cost_type=CostType.LANDED.value,
+                min_cost=Money(amount, 'USD'),
+                max_cost=Money(amount, 'USD'),
             )
+
+        self.assertEqual(
+            StockItemCostEntry.objects.filter(
+                stock_item=self.stock_item, cost_type=CostType.LANDED.value
+            ).count(),
+            3,
+        )
+
+        summary = StockItemCost.objects.get(stock_item=self.stock_item)
+        self.assertEqual(summary.min_cost, Money(9, 'USD'))
 
 
 class StockItemCostEntryStatusTest(PricingAPITestCase):

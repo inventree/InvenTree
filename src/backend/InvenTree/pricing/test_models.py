@@ -38,11 +38,11 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
         super().setUp()
         cache.clear()
 
-    def test_set_cost_creates_new_entry(self):
-        """set_cost() should create a new entry if none exists."""
+    def test_create_cost_creates_new_entry(self):
+        """create_cost() should create a new entry."""
         self.assertEqual(StockItemCostEntry.objects.count(), 0)
 
-        entry = StockItemCostEntry.objects.set_cost(
+        entry = StockItemCostEntry.objects.create_cost(
             self.stock_item,
             CostType.PURCHASE.value,
             min_cost=Money(1, 'USD'),
@@ -60,37 +60,38 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
         self.assertEqual(summary.min_cost, Money(1, 'USD'))
         self.assertEqual(summary.max_cost, Money(2, 'USD'))
 
-    def test_set_cost_updates_existing_entry(self):
-        """set_cost() should update the existing entry for a (stock_item, cost_type) pair."""
-        first = StockItemCostEntry.objects.set_cost(
+    def test_create_cost_appends_additional_entry(self):
+        """Cost entries are additive - a second entry of the same type is kept alongside the first."""
+        first = StockItemCostEntry.objects.create_cost(
             self.stock_item,
             CostType.PURCHASE.value,
             min_cost=Money(1, 'USD'),
             max_cost=Money(2, 'USD'),
         )
 
-        second = StockItemCostEntry.objects.set_cost(
+        second = StockItemCostEntry.objects.create_cost(
             self.stock_item,
             CostType.PURCHASE.value,
             min_cost=Money(5, 'USD'),
             max_cost=Money(6, 'USD'),
         )
 
-        # No new entry should have been created
-        self.assertEqual(StockItemCostEntry.objects.count(), 1)
-        self.assertEqual(first.pk, second.pk)
+        # Both entries exist - the first is neither replaced nor updated
+        self.assertEqual(StockItemCostEntry.objects.count(), 2)
+        self.assertNotEqual(first.pk, second.pk)
 
         first.refresh_from_db()
-        self.assertEqual(first.min_cost, Money(5, 'USD'))
-        self.assertEqual(first.max_cost, Money(6, 'USD'))
+        self.assertEqual(first.min_cost, Money(1, 'USD'))
+        self.assertEqual(first.max_cost, Money(2, 'USD'))
 
+        # The cached summary is the sum of both entries
         summary = StockItemCost.objects.get(stock_item=self.stock_item)
-        self.assertEqual(summary.min_cost, Money(5, 'USD'))
-        self.assertEqual(summary.max_cost, Money(6, 'USD'))
+        self.assertEqual(summary.min_cost, Money(6, 'USD'))
+        self.assertEqual(summary.max_cost, Money(8, 'USD'))
 
-    def test_set_cost_derives_currency_from_money(self):
+    def test_create_cost_derives_currency_from_money(self):
         """If no explicit currency is provided, it should be derived from the Money value."""
-        entry = StockItemCostEntry.objects.set_cost(
+        entry = StockItemCostEntry.objects.create_cost(
             self.stock_item,
             CostType.MANUAL.value,
             min_cost=Money(1, 'AUD'),
@@ -100,18 +101,18 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
         self.assertEqual(entry.min_cost_currency, 'AUD')
         self.assertEqual(entry.max_cost_currency, 'AUD')
 
-    def test_bulk_set_costs_empty(self):
-        """bulk_set_costs() should be a no-op for an empty list."""
-        result = StockItemCostEntry.objects.bulk_set_costs([])
+    def test_bulk_create_costs_empty(self):
+        """bulk_create_costs() should be a no-op for an empty list."""
+        result = StockItemCostEntry.objects.bulk_create_costs([])
         self.assertEqual(result, [])
         self.assertEqual(StockItemCostEntry.objects.count(), 0)
 
-    def test_bulk_set_costs_creates_across_multiple_items(self):
-        """bulk_set_costs() should create entries (and summaries) for multiple stock items in one call."""
+    def test_bulk_create_costs_creates_across_multiple_items(self):
+        """bulk_create_costs() should create entries (and summaries) for multiple stock items in one call."""
         # The summary recalculation is offloaded via batch_offload_tasks(), which
         # defers to the transaction's on_commit hook - capture (and run) it here
         with self.captureOnCommitCallbacks(execute=True):
-            StockItemCostEntry.objects.bulk_set_costs([
+            StockItemCostEntry.objects.bulk_create_costs([
                 {
                     'stock_item': self.stock_item,
                     'cost_type': CostType.PURCHASE.value,
@@ -136,8 +137,8 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
         self.assertEqual(summary_2.min_cost, Money(3, 'USD'))
         self.assertEqual(summary_2.max_cost, Money(4, 'USD'))
 
-    def test_bulk_set_costs_updates_existing_entries(self):
-        """bulk_set_costs() should update (not duplicate) entries that already exist."""
+    def test_bulk_create_costs_appends_to_existing_entries(self):
+        """bulk_create_costs() adds to whatever the stock item already has, rather than replacing it."""
         StockItemCostEntry.objects.create(
             stock_item=self.stock_item,
             cost_type=CostType.PURCHASE.value,
@@ -146,43 +147,12 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
         )
 
         with self.captureOnCommitCallbacks(execute=True):
-            StockItemCostEntry.objects.bulk_set_costs([
+            StockItemCostEntry.objects.bulk_create_costs([
                 {
                     'stock_item': self.stock_item,
                     'cost_type': CostType.PURCHASE.value,
                     'min_cost': Money(10, 'USD'),
                     'max_cost': Money(20, 'USD'),
-                }
-            ])
-
-        self.assertEqual(StockItemCostEntry.objects.count(), 1)
-
-        entry = StockItemCostEntry.objects.get(
-            stock_item=self.stock_item, cost_type=CostType.PURCHASE.value
-        )
-        self.assertEqual(entry.min_cost, Money(10, 'USD'))
-        self.assertEqual(entry.max_cost, Money(20, 'USD'))
-
-        summary = StockItemCost.objects.get(stock_item=self.stock_item)
-        self.assertEqual(summary.min_cost, Money(10, 'USD'))
-        self.assertEqual(summary.max_cost, Money(20, 'USD'))
-
-    def test_bulk_set_costs_mixed_create_and_update(self):
-        """A single bulk_set_costs() call can create some entries and update others at once."""
-        StockItemCostEntry.objects.create(
-            stock_item=self.stock_item,
-            cost_type=CostType.PURCHASE.value,
-            min_cost=Money(1, 'USD'),
-            max_cost=Money(2, 'USD'),
-        )
-
-        with self.captureOnCommitCallbacks(execute=True):
-            StockItemCostEntry.objects.bulk_set_costs([
-                {
-                    'stock_item': self.stock_item,
-                    'cost_type': CostType.PURCHASE.value,
-                    'min_cost': Money(9, 'USD'),
-                    'max_cost': Money(9, 'USD'),
                 },
                 {
                     'stock_item': self.other_item,
@@ -192,121 +162,62 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
                 },
             ])
 
-        self.assertEqual(StockItemCostEntry.objects.count(), 2)
-
-        updated = StockItemCostEntry.objects.get(
-            stock_item=self.stock_item, cost_type=CostType.PURCHASE.value
-        )
-        self.assertEqual(updated.min_cost, Money(9, 'USD'))
-
-        created = StockItemCostEntry.objects.get(
-            stock_item=self.other_item, cost_type=CostType.PURCHASE.value
-        )
-        self.assertEqual(created.min_cost, Money(3, 'USD'))
-
-        # Summaries should be recalculated for both affected stock items
-        summary_updated = StockItemCost.objects.get(stock_item=self.stock_item)
-        self.assertEqual(summary_updated.min_cost, Money(9, 'USD'))
-
-        summary_created = StockItemCost.objects.get(stock_item=self.other_item)
-        self.assertEqual(summary_created.min_cost, Money(3, 'USD'))
-
-    def test_add_cost_creates_new_entry(self):
-        """add_cost() should create a new entry if none exists, exactly like set_cost()."""
-        entry = StockItemCostEntry.objects.add_cost(
-            self.stock_item,
-            CostType.MATERIAL.value,
-            min_cost=Money(1, 'USD'),
-            max_cost=Money(2, 'USD'),
+        self.assertEqual(
+            StockItemCostEntry.objects.filter(stock_item=self.stock_item).count(), 2
         )
 
-        self.assertEqual(StockItemCostEntry.objects.count(), 1)
-        self.assertEqual(entry.min_cost, Money(1, 'USD'))
-        self.assertEqual(entry.max_cost, Money(2, 'USD'))
-
-    def test_add_cost_increments_existing_entry(self):
-        """add_cost() should add to (not replace) an existing entry's value."""
-        StockItemCostEntry.objects.set_cost(
-            self.stock_item,
-            CostType.MATERIAL.value,
-            min_cost=Money(1, 'USD'),
-            max_cost=Money(2, 'USD'),
-        )
-
-        entry = StockItemCostEntry.objects.add_cost(
-            self.stock_item,
-            CostType.MATERIAL.value,
-            min_cost=Money(5, 'USD'),
-            max_cost=Money(5, 'USD'),
-        )
-
-        self.assertEqual(StockItemCostEntry.objects.count(), 1)
-        self.assertEqual(entry.min_cost, Money(6, 'USD'))
-        self.assertEqual(entry.max_cost, Money(7, 'USD'))
-
-        # The cached summary reflects the incremented value
+        # The pre-existing entry is untouched, and the summary covers both
         summary = StockItemCost.objects.get(stock_item=self.stock_item)
-        self.assertEqual(summary.min_cost, Money(6, 'USD'))
-        self.assertEqual(summary.max_cost, Money(7, 'USD'))
+        self.assertEqual(summary.min_cost, Money(11, 'USD'))
+        self.assertEqual(summary.max_cost, Money(22, 'USD'))
 
-    def test_add_cost_handles_none_values(self):
-        """add_cost() should leave an existing value untouched if the added delta is None."""
-        StockItemCostEntry.objects.set_cost(
-            self.stock_item,
-            CostType.MATERIAL.value,
-            min_cost=Money(1, 'USD'),
-            max_cost=Money(2, 'USD'),
+        summary_other = StockItemCost.objects.get(stock_item=self.other_item)
+        self.assertEqual(summary_other.min_cost, Money(3, 'USD'))
+
+    def test_summary_sums_entries_across_cost_types(self):
+        """The cached summary is the sum of every entry, whatever its cost type."""
+        StockItemCostEntry.objects.create_cost(
+            self.stock_item, CostType.PURCHASE.value, min_cost=Money(10, 'USD')
+        )
+        StockItemCostEntry.objects.create_cost(
+            self.stock_item, CostType.LANDED.value, min_cost=Money(2, 'USD')
+        )
+        StockItemCostEntry.objects.create_cost(
+            self.stock_item, CostType.LANDED.value, min_cost=Money(3, 'USD')
         )
 
-        entry = StockItemCostEntry.objects.add_cost(
-            self.stock_item, CostType.MATERIAL.value, min_cost=Money(5, 'USD')
-        )
+        summary = StockItemCost.objects.get(stock_item=self.stock_item)
+        self.assertEqual(summary.min_cost, Money(15, 'USD'))
 
-        self.assertEqual(entry.min_cost, Money(6, 'USD'))
-        self.assertEqual(entry.max_cost, Money(2, 'USD'))
-
-    def test_add_cost_converts_mismatched_currency(self):
-        """add_cost() should convert an added value into the entry's existing currency."""
+    def test_summary_converts_mixed_currencies(self):
+        """Entries in different currencies are converted into the default currency before summing."""
         self.generate_exchange_rates()
 
-        StockItemCostEntry.objects.set_cost(
-            self.stock_item,
-            CostType.MATERIAL.value,
-            min_cost=Money(1, 'USD'),
-            max_cost=Money(1, 'USD'),
+        StockItemCostEntry.objects.create_cost(
+            self.stock_item, CostType.PURCHASE.value, min_cost=Money(1, 'USD')
         )
-
-        entry = StockItemCostEntry.objects.add_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_item,
-            CostType.MATERIAL.value,
+            CostType.LANDED.value,
             min_cost=Money(1.5, 'AUD'),  # 1.5 AUD == 1 USD
-            max_cost=Money(1.5, 'AUD'),
         )
 
-        self.assertEqual(str(entry.min_cost_currency), 'USD')
-        self.assertAlmostEqual(float(entry.min_cost.amount), 2.0, places=3)
-        self.assertAlmostEqual(float(entry.max_cost.amount), 2.0, places=3)
+        summary = StockItemCost.objects.get(stock_item=self.stock_item)
+        self.assertEqual(str(summary.min_cost_currency), 'USD')
+        self.assertAlmostEqual(float(summary.min_cost.amount), 2.0, places=3)
 
-    def test_add_cost_skips_on_missing_exchange_rate(self):
-        """If no exchange rate is available, the addition is skipped rather than failing."""
+    def test_summary_skips_entry_with_missing_exchange_rate(self):
+        """An entry which cannot be converted is skipped, rather than failing the whole summary."""
         # Note: generate_exchange_rates() is deliberately not called here
-        StockItemCostEntry.objects.set_cost(
-            self.stock_item,
-            CostType.MATERIAL.value,
-            min_cost=Money(1, 'USD'),
-            max_cost=Money(1, 'USD'),
+        StockItemCostEntry.objects.create_cost(
+            self.stock_item, CostType.PURCHASE.value, min_cost=Money(1, 'USD')
+        )
+        StockItemCostEntry.objects.create_cost(
+            self.stock_item, CostType.LANDED.value, min_cost=Money(2, 'AUD')
         )
 
-        entry = StockItemCostEntry.objects.add_cost(
-            self.stock_item,
-            CostType.MATERIAL.value,
-            min_cost=Money(2, 'AUD'),
-            max_cost=Money(2, 'AUD'),
-        )
-
-        # The existing value is left untouched, rather than raising or being replaced
-        self.assertEqual(entry.min_cost, Money(1, 'USD'))
-        self.assertEqual(entry.max_cost, Money(1, 'USD'))
+        summary = StockItemCost.objects.get(stock_item=self.stock_item)
+        self.assertEqual(summary.min_cost, Money(1, 'USD'))
 
     def test_bulk_copy_costs_empty(self):
         """bulk_copy_costs() should be a no-op for an empty input."""
@@ -322,7 +233,7 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
 
     def test_bulk_copy_costs_copies_all_entry_types(self):
         """Every cost entry on the source should be duplicated onto the target."""
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_item,
             CostType.PURCHASE.value,
             min_cost=Money(1, 'USD'),
@@ -332,7 +243,7 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
             source_data={'po': 123},
         )
 
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_item,
             CostType.MATERIAL.value,
             min_cost=Money(10, 'USD'),
@@ -363,14 +274,14 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
 
     def test_bulk_copy_costs_copies_cached_summary(self):
         """The cached StockItemCost summary should be copied across verbatim."""
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_item,
             CostType.PURCHASE.value,
             min_cost=Money(3, 'USD'),
             max_cost=Money(4, 'USD'),
         )
 
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_item,
             CostType.MATERIAL.value,
             min_cost=Money(1, 'USD'),
@@ -389,7 +300,7 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
 
     def test_bulk_copy_costs_preserves_currency(self):
         """A non-default entry currency should survive the copy unchanged."""
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_item,
             CostType.PURCHASE.value,
             min_cost=Money(7, 'AUD'),
@@ -413,7 +324,7 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
         )
         self.assertEqual(len(targets), 3)
 
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.stock_item,
             CostType.PURCHASE.value,
             min_cost=Money(2, 'USD'),
@@ -434,16 +345,20 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
             summary = StockItemCost.objects.get(stock_item=target)
             self.assertEqual(summary.min_cost, Money(2, 'USD'))
 
-    def test_bulk_copy_costs_overwrites_existing_target_entry(self):
-        """An existing entry of the same type on the target is replaced, not duplicated."""
-        StockItemCostEntry.objects.set_cost(
+    def test_bulk_copy_costs_appends_to_existing_target_entry(self):
+        """Copied entries are added alongside anything the target already has.
+
+        In practice a copy target is always a newly-created stock item with no cost
+        data of its own - this simply pins down the additive behaviour if it is not.
+        """
+        StockItemCostEntry.objects.create_cost(
             self.stock_item,
             CostType.PURCHASE.value,
             min_cost=Money(5, 'USD'),
             max_cost=Money(5, 'USD'),
         )
 
-        StockItemCostEntry.objects.set_cost(
+        StockItemCostEntry.objects.create_cost(
             self.other_item,
             CostType.PURCHASE.value,
             min_cost=Money(99, 'USD'),
@@ -453,8 +368,12 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
         StockItemCostEntry.objects.bulk_copy_costs([(self.stock_item, self.other_item)])
 
         entries = StockItemCostEntry.objects.filter(stock_item=self.other_item)
-        self.assertEqual(entries.count(), 1)
-        self.assertEqual(entries.first().min_cost, Money(5, 'USD'))
+        self.assertEqual(entries.count(), 2)
+        self.assertEqual(
+            sorted(str(entry.min_cost) for entry in entries), ['$5.00', '$99.00']
+        )
 
+        # The summary is copied verbatim from the source, as the target is
+        # expected to be a split-off copy of it
         summary = StockItemCost.objects.get(stock_item=self.other_item)
         self.assertEqual(summary.min_cost, Money(5, 'USD'))

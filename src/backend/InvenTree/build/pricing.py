@@ -146,7 +146,7 @@ def record_output_material_cost(output, allocated_items, user=None):
     )
 
     if measured_min is not None or measured_max is not None:
-        pricing.models.StockItemCostEntry.objects.set_cost(
+        pricing.models.StockItemCostEntry.objects.create_cost(
             output,
             CostType.MATERIAL.value,
             min_cost=measured_min / output.quantity if measured_min else None,
@@ -155,7 +155,7 @@ def record_output_material_cost(output, allocated_items, user=None):
         )
 
     if estimated_min is not None or estimated_max is not None:
-        pricing.models.StockItemCostEntry.objects.set_cost(
+        pricing.models.StockItemCostEntry.objects.create_cost(
             output,
             CostType.MATERIAL_ESTIMATED.value,
             min_cost=estimated_min / output.quantity if estimated_min else None,
@@ -169,9 +169,10 @@ def record_pooled_material_cost(build, untracked_items, user=None):
 
     Called from Build.complete_outstanding_allocations(), before the provided
     (untracked, order-level) BuildItem allocations are consumed and deleted.
-    This is always an ADDITION to any cost already recorded per-output by
-    `record_output_material_cost` for that same output's own tracked
-    allocations, not a replacement.
+    This is recorded as a *separate* cost entry per output, alongside any
+    already written by `record_output_material_cost` for that same output's own
+    tracked allocations - the two contributions are summed into the cached
+    StockItemCost total, and each remains individually attributable.
 
     Splitting a pooled total across outputs by quantity share, then dividing
     each output's share by its own quantity to get a per-unit rate, always
@@ -201,7 +202,7 @@ def record_pooled_material_cost(build, untracked_items, user=None):
 
     for output in outputs:
         if measured_min is not None or measured_max is not None:
-            pricing.models.StockItemCostEntry.objects.add_cost(
+            pricing.models.StockItemCostEntry.objects.create_cost(
                 output,
                 CostType.MATERIAL.value,
                 min_cost=measured_min / total_quantity if measured_min else None,
@@ -210,7 +211,7 @@ def record_pooled_material_cost(build, untracked_items, user=None):
             )
 
         if estimated_min is not None or estimated_max is not None:
-            pricing.models.StockItemCostEntry.objects.add_cost(
+            pricing.models.StockItemCostEntry.objects.create_cost(
                 output,
                 CostType.MATERIAL_ESTIMATED.value,
                 min_cost=estimated_min / total_quantity if estimated_min else None,

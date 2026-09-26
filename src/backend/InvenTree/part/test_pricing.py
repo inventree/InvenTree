@@ -258,7 +258,7 @@ class PartPricingTests(InvenTreeTestCase):
 
         for price, currency in prices:
             item = stock.models.StockItem.objects.create(part=p, quantity=10)
-            StockItemCostEntry.objects.set_cost(
+            StockItemCostEntry.objects.create_cost(
                 item,
                 CostType.PURCHASE.value,
                 min_cost=Money(price, currency),
@@ -518,7 +518,7 @@ class PartPricingTests(InvenTreeTestCase):
         # Create some stock items
         for _idx in range(3):
             item = stock.models.StockItem.objects.create(part=p, quantity=10)
-            StockItemCostEntry.objects.set_cost(
+            StockItemCostEntry.objects.create_cost(
                 item,
                 CostType.PURCHASE.value,
                 min_cost=Money(10, 'USD'),

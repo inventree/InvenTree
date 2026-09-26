@@ -11,7 +11,7 @@ def update_stock_item_cost(stock_item):
     """Recalculate the cached StockItemCost summary for the given StockItem.
 
     This is offloaded as a background task after StockItemCostEntry rows are
-    bulk-created/updated (see StockItemCostEntryManager.bulk_set_costs) - as
+    bulk-created (see StockItemCostEntryManager.bulk_create_costs) - as
     bulk_create() bypasses the post_save signal that would otherwise trigger
     this recalculation automatically.
     """

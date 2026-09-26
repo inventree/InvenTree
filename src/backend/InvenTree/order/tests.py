@@ -401,7 +401,7 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         loc = StockLocation.objects.get(id=1)
 
         # Receiving stock defers StockItemCost recalculation to an on_commit
-        # callback (see StockItemCostEntry.bulk_set_costs), which requires
+        # callback (see StockItemCostEntry.bulk_create_costs), which requires
         # this wrapper to fire outside of the API test client
         with self.captureOnCommitCallbacks(execute=True):
             # Receive 1x item against line_1
