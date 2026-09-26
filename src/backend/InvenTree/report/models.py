@@ -844,10 +844,10 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             if hasattr(plugin, 'after_printing'):
                 plugin.after_printing()
         except ValidationError as e:
-            output.delete()
+            output.mark_failure(error=', '.join(e.messages))
             raise e
         except Exception as e:
-            output.delete()
+            output.mark_failure(error=f'{_("Error printing labels")}: {e}')
             InvenTree.exceptions.log_error('print_labels', plugin=plugin.slug)
             raise ValidationError([_('Error printing labels'), str(e)])
 

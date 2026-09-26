@@ -688,6 +688,49 @@ class ParameterFilterTest(InvenTreeAPITestCase):
 
             self.assertEqual(len(response), 5)
 
+    def test_filter_si_prefix(self):
+        """Test filtering by values which differ only in SI prefix.
+
+        Unit conversion introduces floating point error (e.g. '100nF' != '0.1uF'),
+        so numeric comparisons must be tolerant of this.
+        """
+        template = ParameterTemplate.objects.create(
+            name='Capacitance', description='Capacitance of the part', units='F'
+        )
+
+        values = ['10nF', '100nF', '0.1uF', '1uF', '1000nF']
+        parts = list(Part.objects.all()[: len(values)])
+
+        for part, value in zip(parts, values, strict=True):
+            Parameter.objects.create(content_object=part, template=template, data=value)
+
+        filters = [
+            ('', '100n', 2),
+            ('', '100nF', 2),
+            ('', '0.1u', 2),
+            ('', '.1uF', 2),
+            ('', '100000pF', 2),
+            ('', '1uF', 2),
+            ('', '1000n', 2),
+            ('', '0.01u', 1),
+            ('', '101nF', 0),
+            ('_ne', '0.1uF', 48),
+            ('_gt', '0.1uF', 2),
+            ('_gte', '100nF', 4),
+            ('_lt', '100nF', 1),
+            ('_lte', '0.1uF', 3),
+            ('_gt', '1000nF', 0),
+            ('_gte', '1uF', 2),
+            ('_lt', '1uF', 3),
+            ('_lte', '1000nF', 5),
+        ]
+
+        for operator, value, expected_count in filters:
+            filter_name = f'parameter_{template.pk}' + operator
+            response = self.get(self.url, {filter_name: value}, expected_code=200).data
+
+            self.assertEqual(len(response), expected_count, f'{filter_name}={value}')
+
     def test_filter_multiple(self):
         """Test filtering by multiple parameters."""
         data = {f'parameter_{self.template_length.pk}_lt': '225'}
