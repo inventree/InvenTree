@@ -18,6 +18,9 @@ _UNIT_REG_CACHE_KEY = 'unit_registry_hash'
 _unit_registry = None
 _unit_registry_hash: str = ''
 
+# Relative tolerance used when comparing converted (floating point) numeric values
+NUMERIC_RELATIVE_TOLERANCE = 1e-9
+
 logger = structlog.get_logger('inventree')
 
 # Disable log output for Pint library
@@ -371,3 +374,19 @@ def is_dimensionless(value):
         return True
 
     return value.to_base_units().units == ureg.dimensionless
+
+
+def numeric_tolerance(value: float) -> float:
+    """Return the tolerance to use when comparing the provided numeric value.
+
+    Unit conversion (e.g. '100nF' vs '0.1uF') can produce floating point values which
+    differ in the last few bits, so an exact equality comparison is not reliable.
+    The tolerance scales with the magnitude of the value (a zero value is compared exactly).
+    """
+    return abs(value) * NUMERIC_RELATIVE_TOLERANCE
+
+
+def numeric_range(value: float) -> tuple[float, float]:
+    """Return the (min, max) range within which a numeric value is considered equal."""
+    epsilon = numeric_tolerance(value)
+    return (value - epsilon, value + epsilon)
