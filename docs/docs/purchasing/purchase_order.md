@@ -30,27 +30,7 @@ The following view modes are available:
 
 Each Purchase Order has a specific status code which indicates the current state of the order:
 
-| Status | Description |
-| --- | --- |
-| Pending | The purchase order has been created, but has not been submitted to the supplier |
-| In Progress | The purchase order has been issued to the supplier, and is in progress |
-| On Hold | The purchase order has been placed on hold, but is still active |
-| Complete | The purchase order has been completed, and is now closed |
-| Cancelled | The purchase order was cancelled, and is now closed |
-| Lost | The purchase order was lost, and is now closed |
-| Returned | The purchase order was returned, and is now closed |
-
-**Source Code**
-
-Refer to the source code for the Purchase Order status codes:
-
-::: order.status_codes.PurchaseOrderStatus
-    options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
+{{ statuscodes("PurchaseOrderStatus") }}
 
 Purchase Order Status supports [custom states](../concepts/custom_states.md).
 
@@ -129,7 +109,7 @@ There are two options to mark items as "received":
 
 When receiving items from a purchase order, the location of the items must be specified. There are multiple ways to specify the location:
 
-* **Order Destination**: The *destination* field of the purchase order can be set to a specific location. When receiving items, the location will default to the destination location.
+* **Order Destination**: The *destination* field of the purchase order can be set to a specific location. When receiving items, the location will default to the destination location. If the [Default Receive Location](#purchase-order-settings) setting is configured, the *destination* field will be pre-filled with this location when creating a new purchase order.
 
 * **Line Item Location**: Each line item can have a specific location set. When receiving items, the location will default to the line item location. *Note: A destination specified at the line item level will override the destination specified at the order level.*
 
@@ -138,6 +118,12 @@ When receiving items from a purchase order, the location of the items must be sp
 Each item marked as "received" is automatically converted into a stock item.
 
 To see the list of stock items created from the purchase order, click on the <span class="badge inventree nav side">{{ icon("arrow-right") }} Received Items</span> tab.
+
+### Serial Numbers
+
+If the part being received is [trackable](../part/trackable.md), serial numbers can optionally be entered at the point of receipt. If provided, an individual (serialized) stock item is created for each unit received.
+
+Serial numbers are *not* required to receive a trackable part - if left blank, a single (non-serialized) stock item is created for the received quantity. This is useful, for example, when receiving a batch of units against an [external build order](../manufacturing/external.md) which will be [serialized later](../part/trackable.md#build-outputs-without-serial-numbers) in the manufacturing process.
 
 ### Item Value Currency
 
@@ -220,8 +206,11 @@ The following [global settings](../settings/global.md) are available for purchas
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
+{{ globalsetting("PURCHASEORDER_ENABLED") }}
 {{ globalsetting("PURCHASEORDER_REFERENCE_PATTERN") }}
 {{ globalsetting("PURCHASEORDER_REQUIRE_RESPONSIBLE") }}
 {{ globalsetting("PURCHASEORDER_CONVERT_CURRENCY") }}
 {{ globalsetting("PURCHASEORDER_EDIT_COMPLETED_ORDERS") }}
 {{ globalsetting("PURCHASEORDER_AUTO_COMPLETE") }}
+{{ globalsetting("PURCHASEORDER_MERGE_LINE_ITEMS") }}
+{{ globalsetting("PURCHASEORDER_DEFAULT_RECEIVE_LOCATION") }}

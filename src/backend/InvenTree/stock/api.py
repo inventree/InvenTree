@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
-from django.db.models import F, Q
+from django.db.models import F, Model, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
@@ -14,6 +14,7 @@ from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
@@ -54,6 +55,7 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
     SerializerContextMixin,
 )
+from InvenTree.serializers import apply_duplicate_copy_options
 from order.models import PurchaseOrder, ReturnOrder, SalesOrder, TransferOrder
 from order.serializers import (
     PurchaseOrderSerializer,
@@ -72,6 +74,7 @@ from stock.models import (
     StockLocationType,
 )
 from stock.status_codes import StockHistoryCode, StockStatus
+from users.permissions import check_user_permission
 
 
 class GenerateBatchCode(GenericAPIView):
@@ -84,6 +87,12 @@ class GenerateBatchCode(GenericAPIView):
         """Generate a new batch code."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        for value in serializer.validated_data.values():
+            if isinstance(value, Model) and not check_user_permission(
+                request.user, value.__class__, 'view'
+            ):
+                raise PermissionDenied()
 
         data = {'batch_code': generate_batch_code(**serializer.validated_data)}
 
@@ -100,6 +109,11 @@ class GenerateSerialNumber(GenericAPIView):
         """Generate a new serial number."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        part = serializer.validated_data.get('part')
+
+        if part and not check_user_permission(request.user, part.__class__, 'view'):
+            raise PermissionDenied()
 
         data = {'serial_number': generate_serial_number(**serializer.validated_data)}
 
@@ -143,8 +157,16 @@ class StockItemSerialize(StockItemContextMixin, CreateAPI):
 
         queryset = StockSerializers.StockItemSerializer.annotate_queryset(items)
 
+        # Apply any additional prefetching required by optional fields which end up
+        # included in this response (e.g. 'tags', 'tests') - mirrors what
+        # OutputOptionsMixin.get_queryset() does for a normal list/retrieve request,
+        # which this manually-constructed response bypasses
+        context = self.get_serializer_context()
+        probe_serializer = StockSerializers.StockItemSerializer(context=context)
+        queryset = probe_serializer.prefetch_queryset(queryset)
+
         response = StockSerializers.StockItemSerializer(
-            queryset, many=True, context=self.get_serializer_context()
+            queryset, many=True, context=context
         )
 
         return Response(response.data, status=status.HTTP_201_CREATED)
@@ -404,7 +426,7 @@ class StockLocationFilter(FilterSet):
 
         return queryset
 
-    tags = common.filters.TagsFilter(label=_('Tags'))
+    tag_name = common.filters.TagsFilter()
 
 
 class StockLocationMixin(SerializerContextMixin):
@@ -1059,7 +1081,7 @@ class StockFilter(FilterSet):
         children = loc_obj.getUniqueChildren()
         return queryset.filter(location__in=children)
 
-    tags = common.filters.TagsFilter(label=_('Tags'))
+    tag_name = common.filters.TagsFilter()
 
 
 class StockApiMixin(SerializerContextMixin):
@@ -1252,8 +1274,29 @@ class StockList(
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
 
+        # Extract 'duplicate' options (if provided) - these are not valid model fields
+        duplicate = serializer.validated_data.pop('duplicate', None)
+
         # Extract location information
         location = serializer.validated_data.get('location', None)
+
+        def apply_duplicate_options(item):
+            """Apply any provided 'duplicate' options to a newly created StockItem."""
+            if not duplicate:
+                return
+
+            original = duplicate['original']
+
+            # copy_history/copy_tests don't follow the copy_<x>_from() naming
+            # convention (copyHistoryFrom/copyTestResultsFrom), so still need
+            # handling here - only copy_notes can go through the shared helper
+            apply_duplicate_copy_options(item, duplicate, original, copy_notes=True)
+
+            if duplicate.get('copy_history', False):
+                item.copyHistoryFrom(original)
+
+            if duplicate.get('copy_tests', False):
+                item.copyTestResultsFrom(original)
 
         with transaction.atomic():
             if serials:
@@ -1269,6 +1312,8 @@ class StockList(
                     if status_value and not item.compare_status(status_value):
                         item.set_status(status_value)
                         item.save()
+
+                    apply_duplicate_options(item)
 
                     if entry := item.add_tracking_entry(
                         StockHistoryCode.CREATED,
@@ -1301,6 +1346,8 @@ class StockList(
 
                 item.save(user=user)
                 item.refresh_from_db()
+
+                apply_duplicate_options(item)
 
                 response_data = [
                     StockSerializers.StockItemSerializer(

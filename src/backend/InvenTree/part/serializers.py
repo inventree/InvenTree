@@ -535,7 +535,6 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 class PartSerializer(
     InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
-    InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.InvenTreeTaggitSerializer,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -577,7 +576,6 @@ class PartSerializer(
             'minimum_stock',
             'maximum_stock',
             'name',
-            'notes',
             'parameters',
             'pk',
             'purchaseable',
@@ -880,11 +878,11 @@ class PartSerializer(
         read_only=True, allow_null=True, label=_('Variant Stock')
     )
 
-    minimum_stock = serializers.FloatField(
+    minimum_stock = InvenTree.serializers.InvenTreeDecimalField(
         required=False, label=_('Minimum Stock'), default=0
     )
 
-    maximum_stock = serializers.FloatField(
+    maximum_stock = InvenTree.serializers.InvenTreeDecimalField(
         required=False, label=_('Maximum Stock'), default=0
     )
 
@@ -1053,16 +1051,13 @@ class PartSerializer(
             if duplicate.get('copy_bom', False):
                 instance.copy_bom_from(original)
 
-            if duplicate.get('copy_notes', False):
-                instance.notes = original.notes
-                instance.save()
+            InvenTree.serializers.apply_duplicate_copy_options(
+                instance, duplicate, original, copy_notes=False, copy_parameters=False
+            )
 
             if duplicate.get('copy_image', False):
                 instance.image = original.image
                 instance.save()
-
-            if duplicate.get('copy_parameters', False):
-                instance.copy_parameters_from(original)
 
             if duplicate.get('copy_tests', False):
                 instance.copy_tests_from(original)
@@ -1273,7 +1268,7 @@ class PartStocktakeSerializer(
         if exclude_pk:
             self.fields.pop('pk', None)
 
-    quantity = serializers.FloatField()
+    quantity = InvenTree.serializers.InvenTreeDecimalField()
 
     cost_min = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
     cost_min_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
@@ -1666,6 +1661,7 @@ class BomItemSerializer(
             'reference',
             'raw_amount',
             'quantity',
+            'piece_count',
             'allow_variants',
             'inherited',
             'optional',
@@ -1713,6 +1709,16 @@ class BomItemSerializer(
 
     rounding_multiple = InvenTree.serializers.InvenTreeDecimalField(
         required=False, allow_null=True
+    )
+
+    piece_count = serializers.IntegerField(
+        required=False,
+        default=1,
+        label=_('Piece Count'),
+        help_text=_(
+            'Number of pieces required (for cut-to-length items). '
+            'Total material = quantity x piece_count.'
+        ),
     )
 
     part = serializers.PrimaryKeyRelatedField(

@@ -486,6 +486,11 @@ class ContentTypePermission(OASTokenMixin, permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         """Check if the user has permission to access the object."""
+        permission = 'view' if request.method in permissions.SAFE_METHODS else 'change'
+
+        if hasattr(obj, 'check_permission'):
+            return obj.check_permission(permission, request.user)
+
         if model_class := obj.__class__:
             return users.permissions.check_user_permission(
                 request.user, model_class, 'change'

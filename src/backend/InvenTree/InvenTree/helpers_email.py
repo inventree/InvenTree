@@ -69,8 +69,21 @@ def send_email(
     html_message=None,
     prio: Priority = Priority.NORMAL,
     headers: Optional[dict] = None,
+    force_async: bool = False,
+    **kwargs,
 ) -> tuple[bool, Optional[str]]:
-    """Send an email with the specified subject and body, to the specified recipients list."""
+    """Send an email with the specified subject and body, to the specified recipients list.
+
+    Arguments:
+        subject: Subject of the email
+        body: Body of the email
+        recipients: List of recipients (or a single recipient)
+        from_email: Optional sender email address (if not specified, will use DEFAULT_FROM_EMAIL)
+        html_message: Optional HTML message to send
+        prio: Priority of the email (default is normal)
+        headers: Optional dictionary of headers to include in the email
+        force_async: If True, will force the email to be sent asynchronously
+    """
     if isinstance(recipients, str):
         recipients = [recipients]
 
@@ -109,6 +122,7 @@ def send_email(
         html_message=html_message,
         prio=prio,
         headers=headers,
+        force_async=force_async,
         group='notification',
     )
     return True, None

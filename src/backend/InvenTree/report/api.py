@@ -356,6 +356,8 @@ class ReportSnippetList(TemplatePermissionMixin, ListCreateAPI):
 
     queryset = report.models.ReportSnippet.objects.all()
     serializer_class = report.serializers.ReportSnippetSerializer
+    filter_backends = SEARCH_ORDER_FILTER
+    search_fields = ['snippet', 'description']
 
 
 class ReportSnippetDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):

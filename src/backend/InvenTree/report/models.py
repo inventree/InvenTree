@@ -152,6 +152,7 @@ class BaseContextExtension(TypedDict):
         template_name: Name of the report template
         template_revision: Revision of the report template
         user: User who is creating the report (if available)
+        report_vars: Private dict for the {% get_var %} / {% set_var %} template tags
     """
 
     base_url: str
@@ -162,6 +163,7 @@ class BaseContextExtension(TypedDict):
     template_name: str
     template_revision: int
     user: Optional[AbstractUser]
+    report_vars: dict
 
 
 class LabelContextExtension(TypedDict):
@@ -341,6 +343,10 @@ class ReportTemplateBase(
             'template_name': self.name,
             'template_revision': self.revision,
             'user': kwargs.get('user'),
+            # A private, per-render dict for the {% get_var %} / {% set_var %} tags.
+            # This is discarded once rendering of *this* instance completes,
+            # and is never shared between instances, reports, or requests.
+            'report_vars': {},
         }
 
     def get_context(self, instance: models.Model, **kwargs):
@@ -838,10 +844,10 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             if hasattr(plugin, 'after_printing'):
                 plugin.after_printing()
         except ValidationError as e:
-            output.delete()
+            output.mark_failure(error=', '.join(e.messages))
             raise e
         except Exception as e:
-            output.delete()
+            output.mark_failure(error=f'{_("Error printing labels")}: {e}')
             InvenTree.exceptions.log_error('print_labels', plugin=plugin.slug)
             raise ValidationError([_('Error printing labels'), str(e)])
 

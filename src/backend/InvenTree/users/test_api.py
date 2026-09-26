@@ -1,12 +1,15 @@
 """API tests for various user / auth API endpoints."""
 
 import datetime
+from unittest import mock
 
 from django.contrib.auth.models import Group, User
 from django.urls import reverse
 
+from allauth.account.models import EmailAddress
+
 from InvenTree.unit_test import InvenTreeAPITestCase
-from users.models import ApiToken
+from users.models import ApiToken, default_token
 from users.ruleset import RULESET_NAMES, get_ruleset_models
 
 
@@ -122,6 +125,11 @@ class UserAPITests(InvenTreeAPITestCase):
         self.assertEqual(response.data['is_staff'], False)
         self.assertEqual(response.data['is_superuser'], False)
         self.assertEqual(response.data['is_active'], True)
+        self.assertTrue(
+            EmailAddress.objects.filter(
+                user__username=data['username'], email=data['email'], primary=True
+            ).exists()
+        )
 
         # Try to adjust the 'is_superuser' field
         # Only a "superuser" can set this field
@@ -334,6 +342,15 @@ class UserAPITests(InvenTreeAPITestCase):
         # User cannot fetch their own details if they are not active
         response = self.get(url, expected_code=401)
 
+    def test_me_endpoint_delete_is_blocked(self):
+        """A user must not be able to delete their own account via '/api/user/me/'."""
+        url = reverse('api-user-me')
+        pk = self.user.pk
+
+        self.delete(url, expected_code=405)
+
+        self.assertTrue(User.objects.filter(pk=pk).exists())
+
 
 class SuperuserAPITests(InvenTreeAPITestCase):
     """Tests for user API endpoints that require superuser rights."""
@@ -389,20 +406,20 @@ class UserTokenTests(InvenTreeAPITestCase):
         # Request the token with the same name
         data = self.get(url, data={'name': 'cat'}, expected_code=200).data
 
-        self.assertEqual(data['token'], token.key)
+        token.refresh_from_db()
+        self.assertNotEqual(data['token'], token.key)
+        self.assertTrue(data['token'].startswith('inv-2-'))
+        self.assertTrue(token.revoked)
 
-        self.assertEqual(ApiToken.objects.count(), 3)
+        self.assertEqual(ApiToken.objects.count(), 4)
 
-        # Revoke the token, and then request again
-        token.revoked = True
-        token.save()
-
+        # Request again, which issues another replacement token
         data = self.get(url, data={'name': 'cat'}, expected_code=200).data
 
         self.assertNotEqual(data['token'], token.key)
 
         # A new token has been generated
-        self.assertEqual(ApiToken.objects.count(), 4)
+        self.assertEqual(ApiToken.objects.count(), 5)
 
         # Test with a really long name
         data = self.get(url, data={'name': 'cat' * 100}, expected_code=200).data
@@ -443,7 +460,7 @@ class UserTokenTests(InvenTreeAPITestCase):
         # Grab the token, and update
         token = ApiToken.objects.first()
         assert token
-        self.assertEqual(token.key, token_key)
+        self.assertEqual(token.key, ApiToken.split_token(token_key)[0])
         self.assertIsNotNone(token.last_seen)
 
         # Revoke the token
@@ -473,6 +490,44 @@ class UserTokenTests(InvenTreeAPITestCase):
 
         self.client.get(me, expected_code=200)
 
+    def test_token_last_seen_no_clobber(self):
+        """Regression test: updating token.last_seen must overwrite other fields.
+
+        Simulates a revoke landing in the window between this request's token
+        lookup and its last_seen save, by revoking the token (directly against
+        the database) from inside a patched ApiToken.save().
+        """
+        token_key = self.get(
+            url=reverse('api-token'), data={'name': 'race'}, expected_code=200
+        ).data['token']
+
+        token = ApiToken.objects.get(key=ApiToken.split_token(token_key)[0])
+
+        # Force last_seen to be 'stale' so the auth backend attempts to update it
+        ApiToken.objects.filter(pk=token.pk).update(
+            last_seen=datetime.date.today() - datetime.timedelta(days=1)
+        )
+
+        original_save = ApiToken.save
+
+        def revoke_then_save(self, *args, **kwargs):
+            # Simulate a concurrent request revoking this token, via a direct
+            # DB write, right before this request's last_seen save lands
+            ApiToken.objects.filter(pk=self.pk).update(revoked=True)
+            return original_save(self, *args, **kwargs)
+
+        self.client.logout()
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token_key)
+
+        with mock.patch.object(ApiToken, 'save', revoke_then_save):
+            self.client.get(reverse('api-user-me'), expected_code=200)
+
+        token.refresh_from_db()
+        self.assertTrue(
+            token.revoked,
+            'Concurrent revoke must not be clobbered by the last_seen update',
+        )
+
     def test_token_api(self):
         """Test the token API."""
         url = reverse('api-token-list')
@@ -482,23 +537,37 @@ class UserTokenTests(InvenTreeAPITestCase):
         # Get token
         response = self.get(reverse('api-token'), expected_code=200)
         self.assertIn('token', response.data)
+        raw_token = response.data['token']
+
+        self.client.logout()
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {raw_token}')
 
         # Now there should be one token
         response = self.get(url, expected_code=200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['active'], True)
         self.assertEqual(response.data[0]['revoked'], False)
-        self.assertEqual(response.data[0]['in_use'], False)
+        self.assertEqual(response.data[0]['in_use'], True)
+        self.assertEqual(response.data[0]['issued_by'], self.user.pk)
+        self.assertIsNone(response.data[0]['revoked_by'])
+        self.assertIsNone(response.data[0]['revocation_reason'])
         expected_day = str(
             datetime.datetime.now().date() + datetime.timedelta(days=365)
         )
         self.assertEqual(response.data[0]['expiry'], expected_day)
 
         # Destroy token
+        token_id = response.data[0]['id']
         self.delete(
-            reverse('api-token-detail', kwargs={'pk': response.data[0]['id']}),
+            reverse('api-token-detail', kwargs={'pk': token_id}),
+            data={'revocation_reason': 'No longer needed'},
             expected_code=204,
         )
+
+        token = ApiToken.objects.get(pk=token_id)
+        self.assertTrue(token.revoked)
+        self.assertEqual(token.revoked_by, self.user)
+        self.assertEqual(token.revocation_reason, 'No longer needed')
 
         # Get token without auth (should fail)
         self.client.logout()
@@ -526,6 +595,40 @@ class UserTokenTests(InvenTreeAPITestCase):
 
         self.assertEqual(ApiToken.objects.count(), 1)
 
+    def test_token_v1(self):
+        """Test that v1 API tokens still work."""
+        # Create a v1 token via model - this is NOT recommended; use v2 tokens
+        token = ApiToken.objects.create(
+            user=self.user,
+            key=default_token(),
+            token_version=1,
+            expiry=datetime.datetime.now() + datetime.timedelta(days=365),
+        )
+        token_key = token.key
+        self.assertTrue(token_key.startswith('inv-'))
+
+        # Check match and validate functions
+        self.assertTrue(token.match(token_key))
+        self.assertTrue(token.validate(token_key))
+
+        # test api access with token
+        self.logout()
+        # false test - ensure that without the token, access is denied
+        self.get(reverse('api-user-me'), expected_code=401)
+
+        # valid test
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token_key}')
+        response = self.get(reverse('api-user-me'), expected_code=200)
+        self.assertEqual(response.data['username'], self.user.username)
+
+        # check if info view also works
+        response_data = self.get(
+            reverse('api-inventree-info'), expected_code=200
+        ).json()
+        # staff users are allowed to see the database field
+        self.assertIn('database', response_data)
+        self.assertIsNotNone(response_data.get('database'))
+
 
 class GroupDetailTests(InvenTreeAPITestCase):
     """Tests for the GroupDetail API endpoint."""
@@ -547,3 +650,82 @@ class GroupDetailTests(InvenTreeAPITestCase):
 
         response = self.get(url, {'permission_detail': 'false'}, expected_code=200)
         self.assertNotIn('permissions', response.data)
+
+
+class RuleSetPermissionTests(InvenTreeAPITestCase):
+    """Tests for permission enforcement on the Group / RuleSet API endpoints.
+
+    Regression tests for a privilege-escalation bug where a *staff* user
+    (without the 'admin' role) was able to write to these endpoints - in
+    particular, granting themselves 'admin' RuleSet permissions via the
+    RuleSet API, despite not holding the 'admin' role themselves.
+    """
+
+    def test_group_write_requires_admin_role(self):
+        """A staff-only user (without the 'admin' role) cannot write to the Group API."""
+        url = reverse('api-group-detail', kwargs={'pk': self.group.pk})
+
+        # Sanity check - the default test user is staff, but has no assigned roles
+        self.assertTrue(self.user.is_staff)
+
+        # Read access is still permitted
+        self.get(url, expected_code=200)
+
+        # Write access is rejected, as the user does not have the 'admin' role
+        self.patch(url, {'name': 'renamed-group'}, expected_code=403)
+
+        self.group.refresh_from_db()
+        self.assertNotEqual(self.group.name, 'renamed-group')
+
+        # Once the 'admin' role is granted, the write succeeds
+        self.assignRole('admin.change')
+        self.patch(url, {'name': 'renamed-group'}, expected_code=200)
+
+        self.group.refresh_from_db()
+        self.assertEqual(self.group.name, 'renamed-group')
+
+    def test_ruleset_write_requires_admin_role(self):
+        """A staff-only user cannot self-escalate permissions via the RuleSet API."""
+        admin_ruleset = self.group.rule_sets.get(name='admin')
+        url = reverse('api-ruleset-detail', kwargs={'pk': admin_ruleset.pk})
+
+        # Sanity check - the default test user is staff, but has no assigned roles
+        self.assertTrue(self.user.is_staff)
+        self.assertFalse(admin_ruleset.can_change)
+
+        # Read access is still permitted
+        self.get(url, expected_code=200)
+
+        # Attempt to self-escalate to full 'admin' ruleset permissions
+        self.patch(
+            url,
+            {'can_view': True, 'can_add': True, 'can_change': True, 'can_delete': True},
+            expected_code=403,
+        )
+
+        admin_ruleset.refresh_from_db()
+        self.assertFalse(admin_ruleset.can_change)
+
+        # Granting the 'admin' role directly (not via the API) allows the write
+        self.assignRole('admin.change')
+        self.patch(url, {'can_delete': True}, expected_code=200)
+
+        admin_ruleset.refresh_from_db()
+        self.assertTrue(admin_ruleset.can_delete)
+
+    def test_non_staff_user_read_only(self):
+        """A non-staff, non-admin authenticated user retains read-only access."""
+        self.user.is_staff = False
+        self.user.save()
+
+        group_url = reverse('api-group-detail', kwargs={'pk': self.group.pk})
+        ruleset_url = reverse(
+            'api-ruleset-detail',
+            kwargs={'pk': self.group.rule_sets.get(name='admin').pk},
+        )
+
+        self.get(group_url, expected_code=200)
+        self.get(ruleset_url, expected_code=200)
+
+        self.patch(group_url, {'name': 'renamed-group'}, expected_code=403)
+        self.patch(ruleset_url, {'can_change': True}, expected_code=403)

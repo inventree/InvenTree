@@ -627,6 +627,16 @@ test('Build Order - Consume Stock', async ({ browser }) => {
 
   await page.getByText('Fully consumed').first().waitFor();
   await page.getByText('15 / 15').first().waitFor();
+
+  // There should now not be any allocated stock remaining
+  await loadTab(page, 'Allocated Stock');
+  await page.getByText('No records found').first().waitFor();
+
+  await loadTab(page, 'Consumed Stock');
+  await page.getByRole('cell', { name: 'Thumbnail C_1uF_0805' }).waitFor();
+  await page.getByRole('cell', { name: 'Thumbnail M3x8 Torx' }).waitFor();
+  await page.getByRole('cell', { name: 'Thumbnail R_10K_0805_1%' }).waitFor();
+  await page.getByText('1 - 3 / 3').waitFor();
 });
 
 test('Build Order - Tracked Outputs', async ({ browser }) => {

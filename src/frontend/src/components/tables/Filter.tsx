@@ -408,7 +408,7 @@ export function TagsFilter({
   modelType?: ModelType;
 }): TableFilter {
   return {
-    name: 'tags',
+    name: 'tag_name',
     label: t`Tags`,
     description: t`Filter by tags`,
     placeholder: t`Select tags`,

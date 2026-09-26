@@ -3,7 +3,6 @@
 import base64
 import copy
 import logging
-import mimetypes
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from io import BytesIO
@@ -22,6 +21,7 @@ from django.utils import translation
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
+import lxml.html
 from babel import Locale
 from babel.core import UnknownLocaleError
 from babel.dates import format_date as babel_format_date
@@ -171,6 +171,53 @@ def getkey(container: dict, key: str, backup_value: Optional[Any] = None) -> Any
         return None
 
     return container.get(key, backup_value)
+
+
+@register.simple_tag(takes_context=True)
+def set_var(context: dict, name: str, value: Any) -> str:
+    """Store a named variable, for later retrieval with get_var.
+
+    Arguments:
+        context: The template context, which should contain a 'report_vars' dictionary.
+        name: The name to store the variable against (must be a string)
+        value: The value to store
+
+    Returns:
+        An empty string - this tag does not render any output
+    """
+    if not isinstance(name, str):
+        logger.warning('set_var() called with non-string name')
+        return ''
+
+    store = context.get('report_vars')
+
+    if isinstance(store, dict):
+        store[name] = value
+    else:
+        logger.warning('set_var() called outside of a valid report context')
+
+    return ''
+
+
+@register.simple_tag(takes_context=True)
+def get_var(context: dict, name: str, backup_value: Optional[Any] = None) -> Any:
+    """Retrieve a named variable previously stored with set_var.
+
+    Arguments:
+        context: The template context, which should contain a 'report_vars' dictionary.
+        name: The name of the variable to retrieve
+        backup_value: Value to return if the variable has not been set (default = None)
+
+    Returns:
+        The stored value, or backup_value if the variable has not been set
+    """
+    store = context.get('report_vars')
+
+    if not isinstance(store, dict):
+        logger.warning('get_var() called outside of a valid report context')
+        return backup_value
+
+    return store.get(name, backup_value)
 
 
 def media_file_exists(path: Path | str) -> bool:
@@ -323,12 +370,7 @@ def asset(filename: str, raise_error: bool = False) -> str | None:
     if not file_data:
         return None
 
-    mime_type, _encoding = mimetypes.guess_type(str(filename))
-    if not mime_type:
-        mime_type = 'application/octet-stream'
-
-    encoded = base64.b64encode(file_data).decode('ascii')
-    return f'data:{mime_type};base64,{encoded}'
+    return report.helpers.encode_file_base64(filename, file_data)
 
 
 @register.simple_tag()
@@ -451,8 +493,13 @@ def uploaded_image(
 
 
 @register.simple_tag()
-def encode_svg_image(filename: str) -> str:
-    """Return a base64-encoded svg image data string."""
+def encode_svg_image(filename: str, raise_error: bool = False) -> str:
+    """Return a base64-encoded svg image data string.
+
+    Arguments:
+        filename: The filename of the svg image relative to the media root directory
+        raise_error: If True, raise an error if the file cannot be found (default = False)
+    """
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
@@ -465,7 +512,12 @@ def encode_svg_image(filename: str) -> str:
 
     # Read out the file contents
     # Note: This will check if the file exists, and raise an error if it does not
-    data = get_media_file_contents(filename)
+    data = get_media_file_contents(filename, raise_error=raise_error)
+
+    # If the file is empty, return an empty string
+    # Note that if raise_error is True, the above function will raise a FileNotFoundError if the file does not exist
+    if not data:
+        return ''
 
     # Return the base64-encoded data
     return 'data:image/svg+xml;charset=utf-8;base64,' + base64.b64encode(data).decode(
@@ -497,6 +549,94 @@ def part_image(part: Part, preview: bool = False, thumbnail: bool = False, **kwa
     return uploaded_image(
         InvenTree.helpers.image2name(part.image, preview, thumbnail), **kwargs
     )
+
+
+@register.simple_tag()
+def note_instance(
+    instance: Model, title: Optional[str] = None
+) -> Optional[common.models.Note]:
+    """Return a Note object for the given instance and note name.
+
+    Arguments:
+        instance: A Model object
+        title: The title of the note to retrieve (case insensitive)
+
+    Returns:
+        A Note object, or None if not found
+
+    Note: If the 'title' argument is not provided, the first Note object associated with the instance will be returned (if any).
+    """
+    if not instance:
+        raise ValueError('notes tag requires a valid Model instance')
+
+    if not hasattr(instance, 'notes'):
+        raise TypeError("notes tag requires a Model with a 'notes' attribute")
+
+    notes = instance.notes
+
+    if title:
+        # First try with exact match
+        if note := notes.filter(title=title).first():
+            return note
+
+        # Next, try with case-insensitive match
+        if note := notes.filter(title__iexact=title).first():
+            return note
+
+    # If no title is provided, or if no matching note is found, return the first note (if any)
+    return notes.order_by('-primary').first()
+
+
+@register.simple_tag()
+def note(instance: Model, title: Optional[str] = None) -> str:
+    """Return the HTML content of a Note object for the given instance and note name.
+
+    Arguments:
+        instance: A Model object
+        title: The title of the note to retrieve (case insensitive)
+
+    Returns:
+        The HTML content of the Note, or an empty string if not found
+
+    Note: If the 'title' argument is not provided, the first Note object associated with the instance will be returned (if any).
+    """
+    note = note_instance(instance, title)
+
+    if not note or not note.content:
+        return ''
+
+    content = note.content
+    media_prefix = settings.MEDIA_URL
+
+    # Replace any embedded image references with the actual image data
+    root = lxml.html.fragment_fromstring(content, create_parent='div')
+
+    for img in root.iter('img'):
+        src = img.get('src')
+        if not src:
+            continue
+
+        if not src.startswith(media_prefix):
+            continue
+
+        img_src = src[len(media_prefix) :]
+
+        # Extract img size attributes
+        img_data = uploaded_image(
+            img_src,
+            replace_missing=True,
+            width=img.get('width', None),
+            height=img.get('height', None),
+        )
+
+        # Replace the <img> src attribute
+        img.set('src', img_data)
+
+    content = lxml.html.tostring(root, encoding='unicode')
+    # fragment_fromstring wraps in a <div> — strip it back off
+    content = content.removeprefix('<div>').removesuffix('</div>')
+
+    return mark_safe(content)
 
 
 @register.simple_tag()

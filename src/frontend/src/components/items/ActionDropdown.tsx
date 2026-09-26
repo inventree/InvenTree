@@ -134,16 +134,19 @@ export function ActionDropdown({
 export function OptionsActionDropdown({
   actions = [],
   tooltip = t`Options`,
+  tooltipPosition = 'bottom',
   hidden = false
 }: Readonly<{
   actions: ActionDropdownItem[];
   tooltip?: string;
+  tooltipPosition?: FloatingPosition;
   hidden?: boolean;
 }>) {
   return (
     <ActionDropdown
       icon={<IconDotsVertical />}
       tooltip={tooltip}
+      tooltipPosition={tooltipPosition}
       actions={actions}
       hidden={hidden}
       noindicator

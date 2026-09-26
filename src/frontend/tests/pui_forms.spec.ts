@@ -14,12 +14,7 @@ import { setSettingState } from './settings';
 
 // Test hover form action in related fields
 test('Forms - Hover', async ({ browser }) => {
-  const page = await doCachedLogin(browser, {
-    user: stevenuser,
-    url: 'purchasing/index/purchaseorders'
-  });
-
-  // Patch user settings to ensure we can see "extra model info" on hover
+  // Patch user settings to ensure we can see "extra model info" on hover; done before load to avoid flakiness
   const api = await createApi({
     username: stevenuser.username,
     password: stevenuser.testcred
@@ -32,6 +27,11 @@ test('Forms - Hover', async ({ browser }) => {
   });
 
   expect(response.status()).toBe(200);
+
+  const page = await doCachedLogin(browser, {
+    user: stevenuser,
+    url: 'purchasing/index/purchaseorders'
+  });
 
   await page
     .getByRole('button', { name: 'action-button-add-purchase-' })
@@ -89,6 +89,11 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
   // Create the stock item
   await page.getByLabel('number-field-quantity').fill('123');
   await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Add small delay to improve test stability
+  await page.getByText('BATCH-123', { exact: true }).first().waitFor();
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(250);
 
   // Edit the resulting stock item
   await openDetailAction(page, 'stock-item', 'edit');

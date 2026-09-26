@@ -15,7 +15,7 @@ on:
 env:
   python_version: 3.12
   node_version: 24
-  plugin_creator_version: 1.20.0
+  plugin_creator_version: 1.20.1
   # The OS version must be set per job
   server_start_sleep: 60
 
@@ -46,10 +46,10 @@ jobs:
       force: ${{ steps.force.outputs.force }}
 
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4.0.2
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         id: filter
         with:
           filters: |
@@ -69,15 +69,15 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           npm: true
       - name: Install dependencies
-        run: cd src/frontend && yarn install
+        run: cd src/frontend && yarn install --ignore-scripts
       - name: Build frontend
         run: cd src/frontend && yarn run compile && yarn run lib && yarn run build
       - name: Write version file - SHA
@@ -123,17 +123,17 @@ jobs:
       VITE_COVERAGE: false
 
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           npm: true
           install: true
           update: true
           apt-dependency: gettext postgresql-client libpq-dev
-          pip-dependency: psycopg2
+          pip-dependency: psycopg
       - name: Set up test data
         run: |
           invoke dev.setup-test -iv
@@ -148,10 +148,10 @@ jobs:
           key: ${{ runner.os }}-playwright-${{ hashFiles('src/frontend/yarn.lock') }}
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: cd src/frontend && npx playwright install --with-deps
+        run: cd src/frontend && npx --ignore-scripts playwright install --with-deps
       - name: Install Playwright OS dependencies
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: cd src/frontend && npx playwright install-deps
+        run: cd src/frontend && npx --ignore-scripts playwright install-deps
       - name: Install Sample Plugin
         run: |
           pip install -U inventree-plugin-creator==${{ env.plugin_creator_version }}
@@ -164,7 +164,7 @@ jobs:
           cp ./tests/fixtures/playwright_custom_logo.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_logo.png
           cp ./tests/fixtures/playwright_custom_splash.png ../backend/InvenTree/InvenTree/static/img/playwright_custom_splash.png
           invoke static
-          env INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" PLAYWRIGHT_BASE_URL=http://localhost:8000 npx playwright test --project=firefox --shard=${{ matrix.shard }}/2
+           env INVENTREE_CUSTOM_SPLASH="img/playwright_custom_splash.png" INVENTREE_CUSTOM_LOGO="img/playwright_custom_logo.png" PLAYWRIGHT_BASE_URL=http://localhost:8000 npx --ignore-scripts playwright test --project=firefox --shard=${{ matrix.shard }}/2
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
@@ -205,17 +205,17 @@ jobs:
       VITE_COVERAGE: true
 
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           npm: true
           install: true
           update: true
           apt-dependency: gettext postgresql-client libpq-dev
-          pip-dependency: psycopg2
+          pip-dependency: psycopg
       - name: Set up test data
         run: |
           invoke dev.setup-test -iv
@@ -230,10 +230,10 @@ jobs:
           key: ${{ runner.os }}-playwright-${{ hashFiles('src/frontend/yarn.lock') }}
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: cd src/frontend && npx playwright install --with-deps
+        run: cd src/frontend && npx --ignore-scripts playwright install --with-deps
       - name: Install Playwright OS dependencies
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: cd src/frontend && npx playwright install-deps
+        run: cd src/frontend && npx --ignore-scripts playwright install-deps
       - name: Install Sample Plugin
         run: |
           pip install -U inventree-plugin-creator==${{ env.plugin_creator_version }}
@@ -243,7 +243,7 @@ jobs:
         id: tests
         run: |
           cd src/frontend
-          npx nyc playwright test --project=chromium --shard=${{ matrix.shard }}/4
+          npx --ignore-scripts nyc playwright test --project=chromium --shard=${{ matrix.shard }}/4
       - name: Playwright Report [${{ matrix.shard }} / 4]
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
@@ -273,12 +273,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           npm: true
           install: false
@@ -295,8 +295,8 @@ jobs:
         run: |
           mkdir -p .nyc_output
           cp all-coverage/*.json .nyc_output/ 2>/dev/null || true
-          npx nyc merge .nyc_output merged-coverage.json
-          npx nyc report \
+          npx --ignore-scripts nyc merge .nyc_output merged-coverage.json
+          npx --ignore-scripts nyc report \
             --tempdir .nyc_output \
             --reporter=lcov \
             --reporter=text-summary \
@@ -304,7 +304,7 @@ jobs:
 
       - name: Upload coverage reports to Codecov
         if: ${{ !cancelled() && github.ref == 'refs/heads/master' }}
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        uses: codecov/codecov-action@0b35c9ecc4f0529d0eb674914510c22f85b196b4 # v7.1.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree

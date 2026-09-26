@@ -207,6 +207,10 @@ class LabelPrinterBaseDriver(BaseDriver):
             ```
         """
 
+        def __init__(self, machine=None, *args, **kwargs):
+            """Initialize the printing options serializer."""
+            super().__init__(*args, **kwargs)
+
         copies = serializers.IntegerField(
             default=1,
             label=_('Copies'),

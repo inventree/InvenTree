@@ -6,13 +6,21 @@ from generic.states import ColorEnum, StatusCode
 
 
 class BuildStatus(StatusCode):
-    """Build status codes."""
+    """Build status codes.
 
-    PENDING = 10, _('Pending'), ColorEnum.secondary  # Build is pending / active
-    PRODUCTION = 20, _('Production'), ColorEnum.primary  # Build is in production
-    ON_HOLD = 25, _('On Hold'), ColorEnum.warning  # Build is on hold
-    CANCELLED = 30, _('Cancelled'), ColorEnum.danger  # Build was cancelled
-    COMPLETE = 40, _('Complete'), ColorEnum.success  # Build is complete
+    Attributes:
+        PENDING: Build is pending / active
+        PRODUCTION: Build is in production
+        ON_HOLD: Build is on hold
+        CANCELLED: Build was cancelled
+        COMPLETE: Build is complete
+    """
+
+    PENDING = 10, _('Pending'), ColorEnum.secondary
+    PRODUCTION = 20, _('Production'), ColorEnum.primary
+    ON_HOLD = 25, _('On Hold'), ColorEnum.warning
+    CANCELLED = 30, _('Cancelled'), ColorEnum.danger
+    COMPLETE = 40, _('Complete'), ColorEnum.success
 
 
 class BuildStatusGroups:

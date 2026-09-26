@@ -1,5 +1,4 @@
 export interface AuthContext {
-  status: number;
   user?: {
     id: number;
     display: string;
@@ -11,8 +10,7 @@ export interface AuthContext {
     at: number;
     username: string;
   }[];
-  data: { flows: Flow[] };
-  meta: { is_authenticated: boolean };
+  flows?: Flow[];
 }
 
 export enum FlowEnum {
@@ -32,7 +30,8 @@ export enum FlowEnum {
 export interface Flow {
   id: FlowEnum;
   providers?: string[];
-  is_pending?: boolean[];
+  provider?: AuthProvider;
+  is_pending?: boolean;
 }
 
 export interface AuthProvider {

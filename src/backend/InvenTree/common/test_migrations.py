@@ -1,7 +1,8 @@
 """Data migration unit tests for the 'common' app."""
 
+import importlib
 import io
-import os
+from unittest import mock
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
@@ -10,205 +11,34 @@ from django_test_migrations.contrib.unittest_case import MigratorTestCase
 from PIL import Image
 
 
-def get_legacy_models():
-    """Return a set of legacy attachment models."""
-    # Legacy attachment types to convert:
-    # app_label, table name, target model, model ref
-    return [
-        ('build', 'BuildOrderAttachment', 'build', 'build'),
-        ('company', 'CompanyAttachment', 'company', 'company'),
-        (
-            'company',
-            'ManufacturerPartAttachment',
-            'manufacturerpart',
-            'manufacturer_part',
-        ),
-        ('order', 'PurchaseOrderAttachment', 'purchaseorder', 'order'),
-        ('order', 'SalesOrderAttachment', 'salesorder', 'order'),
-        ('order', 'ReturnOrderAttachment', 'returnorder', 'order'),
-        ('part', 'PartAttachment', 'part', 'part'),
-        ('stock', 'StockItemAttachment', 'stockitem', 'stock_item'),
-    ]
+def generate_note_image(name: str):
+    """Generate a dummy image file for upload."""
+    buf = io.BytesIO()
+    Image.new('RGB', (64, 64), color='red').save(buf, format='PNG')
+    return ContentFile(buf.getvalue(), name=name)
 
 
-def generate_attachment():
-    """Generate a file attachment object for test upload."""
-    file_object = io.StringIO('Some dummy data')
-    file_object.seek(0)
+def get_historical_model(state, app: str, model: str):
+    """Fetch a historical model, working around the duplicate-column ORM bug.
 
-    return ContentFile(file_object.getvalue(), 'test.txt')
+    Historical models with a custom status field enumerate 'status_custom_key' twice
+    (once from contribute_to_class on the status field, once from the explicit
+    AddField migration), so ORM-generated INSERTs fail with
+    'column specified more than once'. Remove the duplicated field entries here.
+    """
+    model_class = state.apps.get_model(app, model)
 
+    seen = set()
 
-class TestForwardMigrations(MigratorTestCase):
-    """Test entire schema migration sequence for the common app."""
+    for field in list(model_class._meta.local_fields):
+        if field.name in seen:
+            model_class._meta.local_fields.remove(field)
+        else:
+            seen.add(field.name)
 
-    migrate_from = ('common', '0024_notesimage_model_id_notesimage_model_type')
-    migrate_to = ('common', '0039_emailthread_emailmessage')
+    model_class._meta._expire_cache()
 
-    def prepare(self):
-        """Create initial data.
-
-        Legacy attachment model types are:
-        - BuildOrderAttachment
-        - CompanyAttachment
-        - ManufacturerPartAttachment
-        - PurchaseOrderAttachment
-        - SalesOrderAttachment
-        - ReturnOrderAttachment
-        - PartAttachment
-        - StockItemAttachment
-        """
-        # Dummy MPPT data
-        tree = {'tree_id': 0, 'level': 0, 'lft': 0, 'rght': 0}
-
-        # BuildOrderAttachment
-        Part = self.old_state.apps.get_model('part', 'Part')
-        Build = self.old_state.apps.get_model('build', 'Build')
-
-        part = Part.objects.create(
-            name='Test Part',
-            description='Test Part Description',
-            active=True,
-            assembly=True,
-            purchaseable=True,
-            **tree,
-        )
-
-        build = Build.objects.create(part=part, title='Test Build', quantity=10, **tree)
-
-        PartAttachment = self.old_state.apps.get_model('part', 'PartAttachment')
-        PartAttachment.objects.create(
-            part=part, attachment=generate_attachment(), comment='Test file attachment'
-        )
-        PartAttachment.objects.create(
-            part=part, link='http://example.com', comment='Test link attachment'
-        )
-        self.assertEqual(PartAttachment.objects.count(), 2)
-
-        BuildOrderAttachment = self.old_state.apps.get_model(
-            'build', 'BuildOrderAttachment'
-        )
-        BuildOrderAttachment.objects.create(
-            build=build, link='http://example.com', comment='Test comment'
-        )
-        BuildOrderAttachment.objects.create(
-            build=build, attachment=generate_attachment(), comment='a test file'
-        )
-        self.assertEqual(BuildOrderAttachment.objects.count(), 2)
-
-        StockItem = self.old_state.apps.get_model('stock', 'StockItem')
-        StockItemAttachment = self.old_state.apps.get_model(
-            'stock', 'StockItemAttachment'
-        )
-
-        item = StockItem.objects.create(part=part, quantity=10, **tree)
-
-        StockItemAttachment.objects.create(
-            stock_item=item,
-            attachment=generate_attachment(),
-            comment='Test file attachment',
-        )
-        StockItemAttachment.objects.create(
-            stock_item=item, link='http://example.com', comment='Test link attachment'
-        )
-        self.assertEqual(StockItemAttachment.objects.count(), 2)
-
-        Company = self.old_state.apps.get_model('company', 'Company')
-        CompanyAttachment = self.old_state.apps.get_model(
-            'company', 'CompanyAttachment'
-        )
-
-        company = Company.objects.create(
-            name='Test Company',
-            description='Test Company Description',
-            is_customer=True,
-            is_manufacturer=True,
-            is_supplier=True,
-        )
-
-        CompanyAttachment.objects.create(
-            company=company,
-            attachment=generate_attachment(),
-            comment='Test file attachment',
-        )
-        CompanyAttachment.objects.create(
-            company=company, link='http://example.com', comment='Test link attachment'
-        )
-        self.assertEqual(CompanyAttachment.objects.count(), 2)
-
-        PurchaseOrder = self.old_state.apps.get_model('order', 'PurchaseOrder')
-        PurchaseOrderAttachment = self.old_state.apps.get_model(
-            'order', 'PurchaseOrderAttachment'
-        )
-
-        po = PurchaseOrder.objects.create(
-            reference='PO-12345',
-            supplier=company,
-            description='Test Purchase Order Description',
-        )
-
-        PurchaseOrderAttachment.objects.create(
-            order=po, attachment=generate_attachment(), comment='Test file attachment'
-        )
-        PurchaseOrderAttachment.objects.create(
-            order=po, link='http://example.com', comment='Test link attachment'
-        )
-        self.assertEqual(PurchaseOrderAttachment.objects.count(), 2)
-
-        SalesOrder = self.old_state.apps.get_model('order', 'SalesOrder')
-        SalesOrderAttachment = self.old_state.apps.get_model(
-            'order', 'SalesOrderAttachment'
-        )
-
-        so = SalesOrder.objects.create(
-            reference='SO-12345',
-            customer=company,
-            description='Test Sales Order Description',
-        )
-
-        SalesOrderAttachment.objects.create(
-            order=so, attachment=generate_attachment(), comment='Test file attachment'
-        )
-        SalesOrderAttachment.objects.create(
-            order=so, link='http://example.com', comment='Test link attachment'
-        )
-        self.assertEqual(SalesOrderAttachment.objects.count(), 2)
-
-        ReturnOrder = self.old_state.apps.get_model('order', 'ReturnOrder')
-        ReturnOrderAttachment = self.old_state.apps.get_model(
-            'order', 'ReturnOrderAttachment'
-        )
-
-        ro = ReturnOrder.objects.create(
-            reference='RO-12345',
-            customer=company,
-            description='Test Return Order Description',
-        )
-
-        ReturnOrderAttachment.objects.create(
-            order=ro, attachment=generate_attachment(), comment='Test file attachment'
-        )
-        ReturnOrderAttachment.objects.create(
-            order=ro, link='http://example.com', comment='Test link attachment'
-        )
-        self.assertEqual(ReturnOrderAttachment.objects.count(), 2)
-
-    def test_items_exist(self):
-        """Test to ensure that the attachments are correctly migrated."""
-        Attachment = self.new_state.apps.get_model('common', 'Attachment')
-
-        self.assertEqual(Attachment.objects.count(), 14)
-
-        for model in [
-            'build',
-            'company',
-            'purchaseorder',
-            'returnorder',
-            'salesorder',
-            'part',
-            'stockitem',
-        ]:
-            self.assertEqual(Attachment.objects.filter(model_type=model).count(), 2)
+    return model_class
 
 
 class TestAttachmentThumbnailMigration(MigratorTestCase):
@@ -290,53 +120,365 @@ class TestAttachmentThumbnailMigration(MigratorTestCase):
         self.assertFalse(att.thumbnail)
 
 
-def prep_currency_migration(self, vals: str):
-    """Prepare the environment for the currency migration tests."""
-    # Set keys
-    os.environ['INVENTREE_CURRENCIES'] = vals
+class TestNoteMigrations(MigratorTestCase):
+    """Test data migration of legacy 'notes' fields to the new Note model.
 
-    # And setting
-    InvenTreeSetting = self.old_state.apps.get_model('common', 'InvenTreeSetting')
+    - Migration common.0050 copies existing 'notes' field data into the Note model,
+      converting the markdown content to HTML, and links any associated NotesImage objects.
+    - Migration common.0051 removes the legacy 'model_type' and 'model_id' fields from NotesImage.
+    """
 
-    setting = InvenTreeSetting(key='CURRENCY_CODES', value='123')
-    setting.save()
+    # Note: these targets must match the dependencies of the data migration (common.0050),
+    # to ensure that the migration plan is truncated *before* the data migration is applied
+    migrate_from = [
+        ('common', '0048_notificationmessage_link'),
+        ('build', '0059_build_tags'),
+        ('company', '0080_company_tags'),
+        ('order', '0121_add_line_item_discount'),
+        ('part', '0152_alter_partpricing_currency'),
+        ('stock', '0125_remove_mptt_fields'),
+    ]
 
-
-class TestCurrencyMigration(MigratorTestCase):
-    """Test currency migration."""
-
-    migrate_from = ('common', '0022_projectcode_responsible')
-    migrate_to = ('common', '0023_auto_20240602_1332')
-
-    def prepare(self):
-        """Prepare the environment for the migration test."""
-        prep_currency_migration(self, 'USD,EUR,GBP')
-
-    def test_currency_migration(self):
-        """Test that the currency migration works."""
-        InvenTreeSetting = self.old_state.apps.get_model('common', 'InvenTreeSetting')
-        setting = InvenTreeSetting.objects.filter(key='CURRENCY_CODES').first()
-
-        codes = str(setting.value).split(',')
-
-        self.assertEqual(len(codes), 3)
-
-        for code in ['USD', 'EUR', 'GBP']:
-            self.assertIn(code, codes)
-
-
-class TestCurrencyMigrationNo(MigratorTestCase):
-    """Test currency migration."""
-
-    migrate_from = ('common', '0022_projectcode_responsible')
-    migrate_to = ('common', '0023_auto_20240602_1332')
+    migrate_to = ('common', '0052_remove_notesimage_model_id_and_more')
 
     def prepare(self):
-        """Prepare the environment for the migration test."""
-        prep_currency_migration(self, 'YYY,ZZZ')
+        """Create instances of each model type which supports notes."""
+        # Dummy MPPT data
+        tree = {'tree_id': 0, 'level': 0, 'lft': 0, 'rght': 0}
 
-    def test_currency_migration(self):
-        """Test that no currency migration occurs if wrong currencies are set."""
-        InvenTreeSetting = self.old_state.apps.get_model('common', 'InvenTreeSetting')
-        setting = InvenTreeSetting.objects.filter(key='CURRENCY_CODES').first()
-        self.assertEqual(setting.value, '123')
+        NotesImage = get_historical_model(self.old_state, 'common', 'NotesImage')
+
+        Part = get_historical_model(self.old_state, 'part', 'Part')
+        Build = get_historical_model(self.old_state, 'build', 'Build')
+        StockItem = get_historical_model(self.old_state, 'stock', 'StockItem')
+        Company = get_historical_model(self.old_state, 'company', 'Company')
+        ManufacturerPart = get_historical_model(
+            self.old_state, 'company', 'ManufacturerPart'
+        )
+        SupplierPart = get_historical_model(self.old_state, 'company', 'SupplierPart')
+        PurchaseOrder = get_historical_model(self.old_state, 'order', 'PurchaseOrder')
+        SalesOrder = get_historical_model(self.old_state, 'order', 'SalesOrder')
+        ReturnOrder = get_historical_model(self.old_state, 'order', 'ReturnOrder')
+        SalesOrderShipment = get_historical_model(
+            self.old_state, 'order', 'SalesOrderShipment'
+        )
+        TransferOrder = get_historical_model(self.old_state, 'order', 'TransferOrder')
+
+        # An image which is not linked to any model, but is embedded in the notes markdown
+        embedded_image = NotesImage.objects.create(
+            image=generate_note_image('embedded.png')
+        )
+
+        # An image which is not linked to any model, and not referenced anywhere
+        NotesImage.objects.create(image=generate_note_image('orphan.png'))
+
+        part = Part.objects.create(
+            name='Test Part',
+            description='Test Part Description',
+            active=True,
+            assembly=True,
+            purchaseable=True,
+            notes=f'Some **bold** part notes\n\n![image]({embedded_image.image.url})',
+            **tree,
+        )
+
+        # Parts with empty notes and no directly-linked images should not
+        # generate a Note entry at all
+        empty_notes_part = Part.objects.create(
+            name='Part with empty notes', description='x', notes='', **tree
+        )
+        null_notes_part = Part.objects.create(
+            name='Part with null notes', description='x', notes=None, **tree
+        )
+
+        # An image which is directly linked to the part instance
+        NotesImage.objects.create(
+            image=generate_note_image('linked.png'), model_type='part', model_id=part.pk
+        )
+
+        # An image directly linked to a part whose notes field is blank - this
+        # must be preserved (migrated onto an empty placeholder note) rather
+        # than silently discarded, since it was legitimately attached
+        NotesImage.objects.create(
+            image=generate_note_image('blank_notes_linked.png'),
+            model_type='part',
+            model_id=empty_notes_part.pk,
+        )
+
+        company = Company.objects.create(
+            name='Test Company',
+            description='Test Company Description',
+            is_customer=True,
+            is_manufacturer=True,
+            is_supplier=True,
+            notes='Some **bold** company notes',
+        )
+
+        so = SalesOrder.objects.create(
+            reference='SO-12345',
+            customer=company,
+            description='Test Sales Order Description',
+            notes='Some **bold** sales order notes',
+        )
+
+        # A part whose legacy notes contain raw HTML that markdown passes through
+        # unchanged - this must be stripped during migration, not just the markdown
+        # conversion, since bulk_create() never runs Note.clean()'s sanitizer
+        malicious_notes_part = Part.objects.create(
+            name='Part with malicious notes',
+            description='x',
+            notes='Some notes\n\n<script>alert(1)</script>\n\n<img src=x onerror=alert(1)>',
+            **tree,
+        )
+
+        instances = [
+            ('part', part),
+            ('company', company),
+            ('salesorder', so),
+            (
+                'manufacturerpart',
+                ManufacturerPart.objects.create(
+                    part=part,
+                    manufacturer=company,
+                    MPN='MPN-123',
+                    notes='Some **bold** manufacturer part notes',
+                ),
+            ),
+            (
+                'supplierpart',
+                SupplierPart.objects.create(
+                    part=part,
+                    supplier=company,
+                    SKU='SKU-123',
+                    notes='Some **bold** supplier part notes',
+                ),
+            ),
+            (
+                'build',
+                Build.objects.create(
+                    part=part,
+                    reference='BO-0001',
+                    title='Test Build',
+                    quantity=10,
+                    notes='Some **bold** build notes',
+                    **tree,
+                ),
+            ),
+            (
+                'stockitem',
+                StockItem.objects.create(
+                    part=part, quantity=10, notes='Some **bold** stock item notes'
+                ),
+            ),
+            (
+                'purchaseorder',
+                PurchaseOrder.objects.create(
+                    reference='PO-12345',
+                    supplier=company,
+                    description='Test Purchase Order Description',
+                    notes='Some **bold** purchase order notes',
+                ),
+            ),
+            (
+                'returnorder',
+                ReturnOrder.objects.create(
+                    reference='RO-12345',
+                    customer=company,
+                    description='Test Return Order Description',
+                    notes='Some **bold** return order notes',
+                ),
+            ),
+            (
+                'salesordershipment',
+                SalesOrderShipment.objects.create(
+                    order=so, reference='SHIP-001', notes='Some **bold** shipment notes'
+                ),
+            ),
+            (
+                'transferorder',
+                TransferOrder.objects.create(
+                    reference='TO-12345',
+                    description='Test Transfer Order Description',
+                    notes='Some **bold** transfer order notes',
+                ),
+            ),
+        ]
+
+        # Record the expected (model_type, model_id) values for later comparison
+        self.expected_notes = [(model, instance.pk) for model, instance in instances]
+        self.part_pk = part.pk
+        self.empty_notes_part_pk = empty_notes_part.pk
+        self.null_notes_part_pk = null_notes_part.pk
+        self.malicious_notes_part_pk = malicious_notes_part.pk
+
+    def test_notes_migrated(self):
+        """Test that a Note object has been created for each legacy notes field."""
+        Note = self.new_state.apps.get_model('common', 'Note')
+        ContentType = self.new_state.apps.get_model('contenttypes', 'ContentType')
+
+        # One note per instance with non-empty notes, plus one empty
+        # placeholder note for the blank-notes part with a linked image, plus
+        # one note for the malicious-notes part (see test_malicious_notes_sanitized)
+        self.assertEqual(Note.objects.count(), len(self.expected_notes) + 2)
+
+        for model, pk in self.expected_notes:
+            content_type = ContentType.objects.get(model=model)
+            note = Note.objects.get(model_type=content_type, model_id=pk)
+
+            self.assertEqual(note.title, 'Note')
+            self.assertTrue(note.primary)
+            self.assertFalse(note.template)
+
+            # Markdown content has been converted to HTML
+            self.assertIn('<strong>bold</strong>', note.content)
+            self.assertNotIn('**', note.content)
+
+        part_content_type = ContentType.objects.get(model='part')
+
+        # The blank-notes part with a directly-linked image gets an empty
+        # placeholder note, so its image is preserved rather than discarded
+        placeholder_note = Note.objects.get(
+            model_type=part_content_type, model_id=self.empty_notes_part_pk
+        )
+        self.assertEqual(placeholder_note.content, '')
+        self.assertTrue(placeholder_note.primary)
+        self.assertFalse(placeholder_note.template)
+
+        # The blank-notes part with *no* linked image gets no note at all
+        self.assertFalse(
+            Note.objects.filter(
+                model_type=part_content_type, model_id=self.null_notes_part_pk
+            ).exists()
+        )
+
+    def test_malicious_notes_sanitized(self):
+        """Test that raw HTML in a legacy notes field is stripped during migration.
+
+        bulk_create() (used to migrate notes in bulk) never calls Note.save()/.clean(),
+        which is the only place the nh3 sanitizer normally runs - so this exercises the
+        migration's own sanitize_note_content() call instead.
+        """
+        Note = self.new_state.apps.get_model('common', 'Note')
+        ContentType = self.new_state.apps.get_model('contenttypes', 'ContentType')
+
+        part_content_type = ContentType.objects.get(model='part')
+        note = Note.objects.get(
+            model_type=part_content_type, model_id=self.malicious_notes_part_pk
+        )
+
+        self.assertNotIn('<script', note.content)
+        self.assertNotIn('onerror', note.content)
+        self.assertIn('Some notes', note.content)
+
+    def test_images_migrated(self):
+        """Test that NotesImage objects are correctly linked or removed."""
+        Note = self.new_state.apps.get_model('common', 'Note')
+        ContentType = self.new_state.apps.get_model('contenttypes', 'ContentType')
+        NotesImage = self.new_state.apps.get_model('common', 'NotesImage')
+
+        # The orphaned image has been removed; the other three (linked to the
+        # main part, embedded in its content, and directly linked to the
+        # blank-notes part) all survive
+        self.assertEqual(NotesImage.objects.count(), 3)
+
+        part_content_type = ContentType.objects.get(model='part')
+        placeholder_note = Note.objects.get(
+            model_type=part_content_type, model_id=self.empty_notes_part_pk
+        )
+        blank_notes_image = NotesImage.objects.get(
+            image__icontains='blank_notes_linked'
+        )
+        self.assertEqual(blank_notes_image.note.pk, placeholder_note.pk)
+
+        note = Note.objects.get(model_type=part_content_type, model_id=self.part_pk)
+
+        # Both the directly linked image and the embedded image point to the
+        # main part's note - excluding the blank-notes part's own image, which
+        # points to its own placeholder note instead (checked above)
+        for image in NotesImage.objects.exclude(pk=blank_notes_image.pk):
+            self.assertEqual(image.note.pk, note.pk)
+
+
+class TestNoteMigrationBatching(MigratorTestCase):
+    """Test that common.0051 correctly migrates notes which span multiple batches.
+
+    Note.bulk_create() batches are only flushed once BATCH_SIZE (500 in production)
+    instances have accumulated, plus a final trailing flush for whatever's left over.
+    A bug in that boundary handling - e.g. the trailing partial batch never being
+    flushed, or the per-batch zip(instances, notes) misaligning across separate
+    bulk_create() calls - would silently drop or cross-link notes, but every instance
+    in TestNoteMigrations fits in a single batch, so it can't catch that. BATCH_SIZE is
+    patched down here so a small, fast-to-create number of instances is enough to force
+    multiple batches, including a non-full trailing one.
+    """
+
+    migrate_from = [
+        ('common', '0048_notificationmessage_link'),
+        ('build', '0059_build_tags'),
+        ('company', '0080_company_tags'),
+        ('order', '0121_add_line_item_discount'),
+        ('part', '0152_alter_partpricing_currency'),
+        ('stock', '0125_remove_mptt_fields'),
+    ]
+
+    migrate_to = ('common', '0052_remove_notesimage_model_id_and_more')
+
+    # 7 instances over batches of 3 forces two full flushes plus a trailing partial one
+    BATCH_SIZE = 3
+    N_INSTANCES = 7
+
+    def setUp(self):
+        """Patch the migration's BATCH_SIZE down before it runs."""
+        migration_module = importlib.import_module(
+            'common.migrations.0051_auto_20260525_0956'
+        )
+        with mock.patch.object(migration_module, 'BATCH_SIZE', self.BATCH_SIZE):
+            super().setUp()
+
+    def prepare(self):
+        """Create more instances of one model than fit in a single migration batch."""
+        tree = {'tree_id': 0, 'level': 0, 'lft': 0, 'rght': 0}
+
+        NotesImage = get_historical_model(self.old_state, 'common', 'NotesImage')
+        Part = get_historical_model(self.old_state, 'part', 'Part')
+
+        self.parts = [
+            Part.objects.create(
+                name=f'Test Part {i}',
+                description=f'Description {i}',
+                notes=f'Notes for part {i}',
+                **tree,
+            )
+            for i in range(self.N_INSTANCES)
+        ]
+
+        # Directly linked to the part in the middle of one batch - if a batch
+        # boundary ever misaligned the notes/instances pairing, this would end up
+        # linked to the wrong neighbour's note instead
+        self.linked_image = NotesImage.objects.create(
+            image=generate_note_image('linked.png'),
+            model_type='part',
+            model_id=self.parts[4].pk,
+        )
+
+    def test_all_notes_migrated_across_batches(self):
+        """Every instance gets exactly one, correctly-matched note - batch boundaries aren't visible."""
+        Note = self.new_state.apps.get_model('common', 'Note')
+        NotesImage = self.new_state.apps.get_model('common', 'NotesImage')
+        ContentType = self.new_state.apps.get_model('contenttypes', 'ContentType')
+
+        content_type = ContentType.objects.get(model='part')
+
+        self.assertEqual(
+            Note.objects.filter(model_type=content_type).count(), self.N_INSTANCES
+        )
+
+        for i, part in enumerate(self.parts):
+            note = Note.objects.get(model_type=content_type, model_id=part.pk)
+            self.assertIn(f'Notes for part {i}', note.content)
+
+        expected_note = Note.objects.get(
+            model_type=content_type, model_id=self.parts[4].pk
+        )
+        image = NotesImage.objects.get(pk=self.linked_image.pk)
+        self.assertEqual(image.note.pk, expected_note.pk)

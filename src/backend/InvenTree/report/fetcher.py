@@ -22,8 +22,16 @@ class InvenTreeURLFetcher(URLFetcher):
         scheme = parsed.scheme.lower()
 
         if scheme in ('data', 'http', 'https'):
+            from InvenTree.helpers_model import ssrf_safe_context
+
             self._validate_http_url(url, parsed)
-            return super().fetch(url, headers)
+
+            # SSRF protection: guard the DNS resolution WeasyPrint performs internally
+            # when it actually opens the connection, not just the pre-check above - a
+            # hostname could otherwise pass validation with one IP and then be
+            # connected to via a different, private one moments later (DNS rebinding).
+            with ssrf_safe_context():
+                return super().fetch(url, headers)
 
         if scheme == 'file':
             logger.warning("InvenTreeURLFetcher: blocked file:// URL: '%s'", url)

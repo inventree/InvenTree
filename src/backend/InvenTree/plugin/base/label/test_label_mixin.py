@@ -5,13 +5,18 @@ import os
 from unittest import mock
 
 from django.apps import apps
+from django.core.exceptions import ValidationError
+from django.test import SimpleTestCase
 from django.urls import reverse
 
 from pdfminer.high_level import extract_text
 from PIL import Image
+from rest_framework import serializers
 
 from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import InvenTreeAPITestCase
+from machine import registry as machine_registry
+from machine.models import MachineConfig
 from part.models import Part
 from plugin import InvenTreePlugin, PluginMixinEnum, registry
 from plugin.base.label.mixins import LabelPrintingMixin
@@ -19,6 +24,65 @@ from plugin.helpers import MixinNotImplementedError
 from report.models import LabelTemplate
 from report.tests import PrintTestMixins
 from stock.models import StockItem, StockLocation
+
+
+class LabelRenderingTests(SimpleTestCase):
+    """Test error handling in the label rendering wrappers."""
+
+    def setUp(self):
+        """Create a label plugin without loading the plugin registry."""
+
+        class TestLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
+            NAME = 'Test Label Printer'
+
+        self.plugin = TestLabelPlugin()
+
+    @mock.patch('plugin.base.label.mixins.log_error')
+    def test_validation_errors(self, log_error):
+        """Log validation errors while preserving messages, codes, and parameters."""
+        for wrapper, renderer in [
+            ('render_to_pdf', 'render'),
+            ('render_to_html', 'render_as_string'),
+        ]:
+            with self.subTest(wrapper=wrapper):
+                log_error.reset_mock()
+                error = ValidationError({
+                    'serial': ValidationError(
+                        'Missing serial number for %(part)s',
+                        code='missing_serial',
+                        params={'part': 'Test part'},
+                    )
+                })
+                label = mock.Mock(spec=LabelTemplate)
+                getattr(label, renderer).side_effect = error
+
+                with self.assertRaises(ValidationError) as raised:
+                    getattr(self.plugin, wrapper)(label, mock.sentinel.instance, None)
+
+                self.assertIs(raised.exception, error)
+                self.assertEqual(
+                    raised.exception.message_dict,
+                    {'serial': ['Missing serial number for Test part']},
+                )
+                log_error.assert_called_once_with(wrapper, plugin=self.plugin.slug)
+
+    @mock.patch('plugin.base.label.mixins.log_error')
+    def test_unexpected_errors(self, log_error):
+        """Log unexpected errors and return the existing generic messages."""
+        for wrapper, renderer, message in [
+            ('render_to_pdf', 'render', 'Error rendering label to PDF'),
+            ('render_to_html', 'render_as_string', 'Error rendering label to HTML'),
+        ]:
+            with self.subTest(wrapper=wrapper):
+                log_error.reset_mock()
+                label = mock.Mock(spec=LabelTemplate)
+                getattr(label, renderer).side_effect = RuntimeError('Rendering failed')
+
+                with self.assertRaises(ValidationError) as raised:
+                    getattr(self.plugin, wrapper)(label, mock.sentinel.instance, None)
+
+                self.assertEqual(raised.exception.messages, [message])
+                log_error.assert_called_once_with(wrapper, plugin=self.plugin.slug)
 
 
 class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
@@ -268,6 +332,57 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
             self.assertEqual(
                 print_label.call_args.kwargs['printing_options'], {'amount': 13}
             )
+
+    def test_machine_driver_options_validate_before_print_task(self):
+        """Test that machine driver option validation runs before the print task."""
+        self.ensurePluginsLoaded()
+        apps.get_app_config('report').create_default_labels()
+        machine_registry.initialize()
+        registry.set_plugin_state('label-printer-test-plugin', True)
+
+        machine_config = MachineConfig.objects.create(
+            machine_type='label-printer',
+            driver='test-label-printer-api',
+            name='Test label printer',
+            active=True,
+        )
+        machine = machine_registry.get_machine(str(machine_config.pk))
+        self.assertIsNotNone(machine)
+
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        assert template
+        part = Part.objects.first()
+        assert part
+
+        class RejectingOptionsSerializer(serializers.Serializer):
+            copies = serializers.IntegerField(required=False, default=1)
+
+            def validate(self, attrs):
+                raise serializers.ValidationError('preflight failed')
+
+        driver = machine.driver
+        with (
+            mock.patch('InvenTree.tasks.offload_task') as offload_task,
+            mock.patch.object(
+                driver,
+                'get_printing_options_serializer',
+                side_effect=lambda *args, **kwargs: RejectingOptionsSerializer(),
+            ),
+        ):
+            response = self.post(
+                self.printing_url,
+                {
+                    'plugin': 'inventreelabelmachine',
+                    'template': template.pk,
+                    'items': [part.pk],
+                    'machine': str(machine_config.pk),
+                    'driver_options': {'copies': 1},
+                },
+                expected_code=400,
+            )
+
+        offload_task.assert_not_called()
+        self.assertIn('preflight failed', str(response.data))
 
     def test_printing_endpoints(self):
         """Cover the endpoints not covered by `test_printing_process`."""

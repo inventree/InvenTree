@@ -22,6 +22,7 @@ A BOM for a particular assembly is comprised of a number (zero or more) of BOM "
 | Quantity | The quantity of *Part* required for the assembly - this value is automatically calculated from the "raw amount" field, taking into account the units of measure associated with the underlying part. |
 | Attrition | Estimated attrition losses for a production run. Expressed as a percentage of the base quantity (e.g. 2%) |
 | Setup Quantity | An additional quantity of the part which is required to account for fixed setup losses during the production process. This is added to the base quantity of the BOM line item |
+| Piece Count | The number of individual pieces required per assembly (for cut-to-length items). Defaults to 1. Total material = quantity x piece_count. |
 | Rounding Multiple | A value which indicates that the required quantity should be rounded up to the nearest multiple of this value. |
 | Consumable | A boolean field which indicates whether this BOM Line Item is *consumable* |
 | Inherited | A boolean field which indicates whether this BOM Line Item will be "inherited" by BOMs for parts which are a variant (or sub-variant) of the part for which this BOM is defined. |
@@ -39,6 +40,45 @@ If the underlying part does not have a defined unit of measure, the `raw_amount`
 ### Fractional Representation
 
 The `raw_amount` field also allows for fractional representation of the required quantity. For example, if the required quantity is 0.5 kg, the user can specify this as `500 g`, `0.5 kg`, `1/2 kg`, etc. The `quantity` field will be automatically calculated as 0.5 kg, regardless of the specific representation used in the `raw_amount` field.
+
+### Piece Count (Cut-to-Length Parts)
+
+The `piece_count` field supports scenarios where a material is cut or divided into multiple identical pieces for each assembly. This is common for cables, wires, tubing, extrusions, and similar length-based materials.
+
+When `piece_count` is greater than 1, the `quantity` field represents the size or length of each individual piece, and `piece_count` indicates how many such pieces are needed per assembly. The total material required is calculated as:
+
+```
+Total material = quantity x piece_count x build_quantity
+```
+
+#### Example: Wire Harness Assembly
+
+Consider an assembly that requires 10 pieces of wire, each cut to 200mm length:
+
+| Field | Value | Description |
+| --- | --- | --- |
+| Quantity | 200 (mm) | Length of each individual wire piece |
+| Piece Count | 10 | Number of wire pieces per assembly |
+| Build Quantity | 5 | Number of assemblies to build |
+| **Total Required** | **10,000 mm (10m)** | 200 x 10 x 5 = 10,000 mm |
+
+#### Example: Tubing for Hydraulic System
+
+An assembly requires 4 pieces of tubing, each 500mm long, with 5% attrition:
+
+| Field | Value | Description |
+| --- | --- | --- |
+| Quantity | 500 (mm) | Length of each tube section |
+| Piece Count | 4 | Number of tube pieces per assembly |
+| Build Quantity | 3 | Number of assemblies to build |
+| Attrition | 5% | Account for cutting waste |
+| **Total Required** | **6,300 mm (6.3m)** | (500 x 4 x 3) x 1.05 = 6,300 mm |
+
+!!! note "Default Behavior"
+    When `piece_count` is left at its default value of 1, the BOM line item behaves exactly as it did before this feature was introduced. Existing BOMs are unaffected.
+
+!!! tip "When to Use Piece Count"
+    Use `piece_count` when you are cutting or dividing a material into multiple identical pieces. If each piece has a different length, create separate BOM line items instead.
 
 ### Consumable BOM Line Items
 
@@ -165,6 +205,7 @@ The following BOM item fields are used when calculating the BOM checksum:
 - *Attrition* - The attrition percentage of the BOM line item.
 - *Setup Quantity* - The setup quantity of the BOM line item.
 - *Rounding Multiple* - The rounding multiple of the BOM line item.
+- *Piece Count* - The number of pieces required per assembly (for cut-to-length items).
 - *Consumable* - Whether the BOM line item is consumable.
 - *Inherited* - Whether the BOM line item is inherited.
 - *Optional* - Whether the BOM line item is optional.

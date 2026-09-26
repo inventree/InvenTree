@@ -29,7 +29,7 @@ flag_management:
       carryforward: true
       statuses:
         - type: project
-          target: 45%
+          target: 75%
 
 component_management:
   default_rules:
@@ -58,7 +58,7 @@ component_management:
         - src/backend/InvenTree/web/**
       statuses:
         - type: project
-          target: 90%
+          target: 92%
     - component_id: backend-general
       name: Backend General
       paths:
@@ -76,7 +76,7 @@ component_management:
         - src/frontend/src/**
       statuses:
         - type: project
-          target: 68% # 90%
+          target: 75%
         - type: patch
           target: 80%
 comment:

@@ -28,6 +28,7 @@ export interface ServerAPIProps {
   default_locale: null | string;
   django_admin: null | string;
   settings: {
+    sso_enabled: null | boolean;
     sso_registration: null | boolean;
     registration_enabled: null | boolean;
     password_forgotten_enabled: null | boolean;
@@ -39,6 +40,9 @@ export interface ServerAPIProps {
     navbar_message: string;
     disable_theme_storage: boolean;
   };
+  system_state: {
+    cors_allow_all: null | boolean;
+  } | null;
 }
 
 let pendingGlobalStatesFetch: Promise<void> | null = null;

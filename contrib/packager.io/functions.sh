@@ -356,22 +356,22 @@ function set_env() {
   # Secret key file
   sed -i s=#secret_key_file:\ \'/etc/inventree/secret_key.txt\'=secret_key_file:\ \'${INVENTREE_SECRET_KEY_FILE}\'=g ${INVENTREE_CONFIG_FILE}
   # OIDC private key file
-  sed -i s=#oidc_private_key_file:\ \'/etc/inventree/oidc.pem\'=oidc_private_key_file:\ \'${INVENTREE_OIDC_PRIVATE_KEY_FILE}\'=g ${INVENTREE_CONFIG_FILE}
+  sed -i s=#oidc_private_key_file:\ \'/etc/inventree/oidc.key\'=oidc_private_key_file:\ \'${INVENTREE_OIDC_PRIVATE_KEY_FILE}\'=g ${INVENTREE_CONFIG_FILE}
   # Debug mode
   sed -i s=debug:\ True=debug:\ False=g ${INVENTREE_CONFIG_FILE}
 
   # Database engine
-  sed -i s=#\ ENGINE:\ Database\ engine.\ Selection\ from:=ENGINE:\ ${INVENTREE_DB_ENGINE}=g ${INVENTREE_CONFIG_FILE}
+  sed -i s=#\ engine:\ Database\ engine.\ Selection\ from:=engine:\ ${INVENTREE_DB_ENGINE}=g ${INVENTREE_CONFIG_FILE}
   # Database name
-  sed -i s=#\ NAME:\ Database\ name=NAME:\ \'${INVENTREE_DB_NAME}\'=g ${INVENTREE_CONFIG_FILE}
+  sed -i s=#\ name:\ Database\ name=name:\ \'${INVENTREE_DB_NAME}\'=g ${INVENTREE_CONFIG_FILE}
   # Database user
-  sed -i s=#\ USER:\ Database\ username\ \(if\ required\)=USER:\ ${INVENTREE_DB_USER}=g ${INVENTREE_CONFIG_FILE}
+  sed -i s=#\ user:\ Database\ username\ \(if\ required\)=user:\ ${INVENTREE_DB_USER}=g ${INVENTREE_CONFIG_FILE}
   # Database password
-  sed -i s=#\ PASSWORD:\ Database\ password\ \(if\ required\)=PASSWORD:\ ${INVENTREE_DB_PASSWORD}=g ${INVENTREE_CONFIG_FILE}
+  sed -i s=#\ password:\ Database\ password\ \(if\ required\)=password:\ ${INVENTREE_DB_PASSWORD}=g ${INVENTREE_CONFIG_FILE}
   # Database host
-  sed -i s=#\ HOST:\ Database\ host\ address\ \(if\ required\)=HOST:\ ${INVENTREE_DB_HOST}=g ${INVENTREE_CONFIG_FILE}
+  sed -i s=#\ host:\ Database\ host\ address\ \(if\ required\)=host:\ ${INVENTREE_DB_HOST}=g ${INVENTREE_CONFIG_FILE}
   # Database port
-  sed -i s=#\ PORT:\ Database\ host\ port\ \(if\ required\)=PORT:\ ${INVENTREE_DB_PORT}=g ${INVENTREE_CONFIG_FILE}
+  sed -i s=#\ port:\ Database\ host\ port\ \(if\ required\)=port:\ ${INVENTREE_DB_PORT}=g ${INVENTREE_CONFIG_FILE}
 
   # Fixing the permissions
   chown ${APP_USER}:${APP_GROUP} ${DATA_DIR} ${INVENTREE_CONFIG_FILE}

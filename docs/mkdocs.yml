@@ -107,6 +107,7 @@ nav:
     - Project Codes: concepts/project_codes.md
     - Attachments: concepts/attachments.md
     - Parameters: concepts/parameters.md
+    - Notes: concepts/notes.md
     - Tags: concepts/tags.md
     - Barcodes:
       - Barcode Support: barcodes/index.md
@@ -183,7 +184,8 @@ nav:
     - Labels: report/labels.md
     - Report Assets: report/assets.md
     - Report Snippets: report/snippets.md
-    - Context Variables: report/context_variables.md
+    - Report Context: report/context_variables.md
+    - Model Context: report/model_context.md
     - Helper Functions: report/helpers.md
     - Barcodes: report/barcodes.md
     - Sample Templates: report/samples.md
@@ -197,6 +199,7 @@ nav:
       - User Permissions: settings/permissions.md
       - Single Sign on: settings/SSO.md
       - Multi Factor Authentication: settings/MFA.md
+      - SCIM Provisioning: settings/SCIM.md
       - Email Settings: settings/email.md
       - Experimental Features: settings/experimental.md
     - Operations:
@@ -215,6 +218,7 @@ nav:
     - Unit Test: plugins/test.md
     - Plugin Mixins:
       - Action Mixin: plugins/mixins/action.md
+      - Allocate Mixin: plugins/mixins/allocate.md
       - API Mixin: plugins/mixins/api.md
       - App Mixin: plugins/mixins/app.md
       - Barcode Mixin: plugins/mixins/barcode.md
@@ -236,6 +240,7 @@ nav:
       - URL Mixin: plugins/mixins/urls.md
       - User Interface Mixin: plugins/mixins/ui.md
       - Validation Mixin: plugins/mixins/validation.md
+      - Well-Known Mixin: plugins/mixins/wellknown.md
     - Machines:
       - Overview: plugins/machines/overview.md
       - Label Printer: plugins/machines/label_printer.md
@@ -380,6 +385,9 @@ extra:
   min_invoke_version: 2.0.0
   django_version: 5.2
   docker_postgres_version: 17
+  min_postgres_version: 14
+  min_mysql_version: 8.0.11
+  min_sqlite_version: 3.31.0
 
   version:
     default: stable

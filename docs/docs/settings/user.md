@@ -21,6 +21,7 @@ The *Display Settings* screen shows general display configuration options:
 {{ usersetting("ICONS_IN_NAVBAR") }}
 {{ usersetting("STICKY_HEADER") }}
 {{ usersetting("STICKY_TABLE_HEADER") }}
+{{ usersetting("ROTATE_TABLE_HEADERS") }}
 {{ usersetting("SHOW_SPOTLIGHT") }}
 {{ usersetting("BARCODE_IN_FORM_FIELDS") }}
 {{ usersetting("DATE_DISPLAY_FORMAT") }}
@@ -33,6 +34,7 @@ The *Display Settings* screen shows general display configuration options:
 {{ usersetting("SHOW_EXTRA_MODEL_INFO") }}
 {{ usersetting("SHOW_FULL_LOCATION_IN_TABLES") }}
 {{ usersetting("DISPLAY_ITEMS_FINAL_LEVEL") }}
+{{ usersetting("USE_TABLE_NAVIGATION") }}
 
 ### Search Settings
 
@@ -43,6 +45,7 @@ Customize settings for search results:
 {{ usersetting("SEARCH_WHOLE") }}
 {{ usersetting("SEARCH_REGEX") }}
 {{ usersetting("SEARCH_NOTES") }}
+{{ usersetting("SEARCH_RESULTS_PREVIEW_PANEL") }}
 {{ usersetting("SEARCH_PREVIEW_RESULTS") }}
 {{ usersetting("SEARCH_PREVIEW_SHOW_PARTS") }}
 {{ usersetting("SEARCH_HIDE_INACTIVE_PARTS") }}

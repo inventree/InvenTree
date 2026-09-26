@@ -13,7 +13,6 @@ from django.db.models import (
     F,
     FloatField,
     Q,
-    Sum,
     Value,
     When,
 )
@@ -22,6 +21,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
+from sql_util.utils import SubquerySum
 
 import common.filters
 import company.serializers
@@ -31,16 +31,19 @@ import part.serializers as part_serializers
 import stock.models as stock_models
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
+from InvenTree.fields import PrefetchedPrimaryKeyRelatedField
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
+    BulkPrefetchSerializerMixin,
     CustomStatusSerializerMixin,
     DuplicateOptionsSerializer,
     FilterableSerializerMixin,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     InvenTreeTaggitSerializer,
-    NotesFieldMixin,
     OptionalField,
+    PrefetchSpec,
+    apply_duplicate_copy_options,
 )
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
@@ -60,7 +63,6 @@ from .validators import check_build_output
 class BuildSerializer(
     CustomStatusSerializerMixin,
     FilterableSerializerMixin,
-    NotesFieldMixin,
     InvenTreeTaggitSerializer,
     DataImportExportSerializerMixin,
     InvenTreeCustomStatusSerializerMixin,
@@ -102,7 +104,6 @@ class BuildSerializer(
             'status_custom_key',
             'target_date',
             'take_from',
-            'notes',
             'link',
             'issued_by',
             'issued_by_detail',
@@ -194,13 +195,19 @@ class BuildSerializer(
 
         return queryset
 
-    duplicate = DuplicateOptionsSerializer(Build.objects.all(), copy_parameters=True)
+    duplicate = DuplicateOptionsSerializer(
+        Build.objects.all(), copy_parameters=True, copy_notes=True
+    )
 
     def __init__(self, *args, **kwargs):
         """Determine if extra serializer fields are required."""
         kwargs.pop('create', False)
 
         super().__init__(*args, **kwargs)
+
+        if self.instance is not None:
+            # The 'part' field cannot be changed once a build order has been created
+            self.fields['part'].read_only = True
 
     @transaction.atomic
     def create(self, validated_data):
@@ -210,10 +217,13 @@ class BuildSerializer(
         instance = super().create(validated_data)
 
         if duplicate:
-            original = duplicate['original']
-
-            if duplicate.get('copy_parameters', True):
-                instance.copy_parameters_from(original)
+            apply_duplicate_copy_options(
+                instance,
+                duplicate,
+                duplicate['original'],
+                copy_notes=True,
+                copy_parameters=True,
+            )
 
         return instance
 
@@ -438,13 +448,6 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         quantity = data['quantity']
         serial_numbers = data.get('serial_numbers', '')
 
-        if part.trackable and not serial_numbers:
-            raise ValidationError({
-                'serial_numbers': _(
-                    'Serial numbers must be provided for trackable parts'
-                )
-            })
-
         if serial_numbers:
             try:
                 self.serials = InvenTree.helpers.extract_serial_numbers(
@@ -573,6 +576,15 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         label=_('Location'),
         help_text=_('Location for completed build outputs'),
     )
+
+    def validate_location(self, location):
+        """Validate the provided location."""
+        if location and location.structural:
+            raise ValidationError(
+                _('Structural locations cannot be assigned stock items')
+            )
+
+        return location
 
     status_custom_key = StockStatusCustomSerializer(default=StockStatus.OK.value)
 
@@ -858,7 +870,8 @@ class BuildAllocationItemSerializer(serializers.Serializer):
 
         fields = ['build_item', 'stock_item', 'quantity', 'output']
 
-    build_line = serializers.PrimaryKeyRelatedField(
+    build_line = PrefetchedPrimaryKeyRelatedField(
+        cache_key='_build_line',
         queryset=BuildLine.objects.all(),
         many=False,
         allow_null=False,
@@ -886,7 +899,8 @@ class BuildAllocationItemSerializer(serializers.Serializer):
 
         return build_line
 
-    stock_item = serializers.PrimaryKeyRelatedField(
+    stock_item = PrefetchedPrimaryKeyRelatedField(
+        cache_key='_stock_item',
         queryset=StockItem.objects.all(),
         many=False,
         allow_null=False,
@@ -912,7 +926,8 @@ class BuildAllocationItemSerializer(serializers.Serializer):
 
         return quantity
 
-    output = serializers.PrimaryKeyRelatedField(
+    output = PrefetchedPrimaryKeyRelatedField(
+        cache_key='_output',
         queryset=StockItem.objects.filter(is_building=True),
         many=False,
         allow_null=True,
@@ -931,11 +946,26 @@ class BuildAllocationItemSerializer(serializers.Serializer):
 
         # build = self.context['build']
 
-        # TODO: Check that the "stock item" is valid for the referenced "sub_part"
-        # Note: Because of allow_variants options, it may not be a direct match!
+        # Check that the "stock item" is valid for the referenced "sub_part"
+        # Fast path: direct part match, avoids querying substitutes / variants below
+        # (which would otherwise cost extra queries per line for bulk allocations)
+        if stock_item.part_id != build_line.bom_item.sub_part_id and (
+            not build_line.bom_item.is_stock_item_valid(stock_item)
+        ):
+            raise ValidationError({
+                'stock_item': _('Selected stock item does not match BOM line')
+            })
 
         # Check that the quantity does not exceed the available amount from the stock item
-        q = stock_item.unallocated_quantity()
+        allocated = self.context.get('_stock_item_allocated')
+
+        if allocated is not None:
+            q = max(
+                stock_item.quantity - allocated.get(stock_item.pk, Decimal(0)),
+                Decimal(0),
+            )
+        else:
+            q = stock_item.unallocated_quantity()
 
         if quantity > q:
             q = InvenTree.helpers.clean_decimal(q)
@@ -961,7 +991,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
         return data
 
 
-class BuildAllocationSerializer(serializers.Serializer):
+class BuildAllocationSerializer(BulkPrefetchSerializerMixin, serializers.Serializer):
     """Serializer for allocating stock items against a build order."""
 
     class Meta:
@@ -969,7 +999,32 @@ class BuildAllocationSerializer(serializers.Serializer):
 
         fields = ['items']
 
+    prefetch_fields = [
+        PrefetchSpec(
+            'items',
+            'build_line',
+            BuildLine.objects.select_related(
+                'build', 'bom_item__part', 'bom_item__sub_part'
+            ),
+            '_build_line',
+        ),
+        PrefetchSpec('items', 'stock_item', StockItem.objects.all(), '_stock_item'),
+        PrefetchSpec(
+            'items', 'output', StockItem.objects.filter(is_building=True), '_output'
+        ),
+    ]
+
     items = BuildAllocationItemSerializer(many=True)
+
+    def after_prefetch(self, data):
+        """Bulk-compute allocated quantities for every referenced stock item.
+
+        BuildAllocationItemSerializer.validate() checks each stock item's unallocated.
+        """
+        stock_items = self.context.get('_stock_item', {}).values()
+        self.context['_stock_item_allocated'] = StockItem.bulk_allocation_count(
+            stock_items
+        )
 
     def validate(self, data):
         """Validation."""
@@ -987,42 +1042,8 @@ class BuildAllocationSerializer(serializers.Serializer):
         data = self.validated_data
 
         items = data.get('items', [])
-
-        with transaction.atomic():
-            for item in items:
-                build_line = item['build_line']
-                stock_item = item['stock_item']
-                quantity = item['quantity']
-                output = item.get('output', None)
-
-                # Ignore allocation for consumable BOM items
-                if build_line.bom_item.is_consumable:
-                    continue
-
-                params = {
-                    'build_line': build_line,
-                    'stock_item': stock_item,
-                    'install_into': output,
-                }
-
-                try:
-                    # Lock the row, so concurrent allocations cannot both read
-                    # the same starting quantity (lost update)
-                    if build_item := (
-                        BuildItem.objects.select_for_update().filter(**params).first()
-                    ):
-                        # Find an existing BuildItem for this stock item
-                        # If it exists, increase the quantity
-                        build_item.quantity += quantity
-                        build_item.save()
-                    else:
-                        # Create a new BuildItem to allocate stock
-                        build_item = BuildItem.objects.create(
-                            quantity=quantity, **params
-                        )
-                except (ValidationError, DjangoValidationError) as exc:
-                    # Catch model errors and re-throw as DRF errors
-                    raise ValidationError(detail=serializers.as_serializer_error(exc))
+        build = self.context['build']
+        build.allocate_stock(items)
 
 
 class BuildAutoAllocationSerializer(serializers.Serializer):
@@ -1544,19 +1565,18 @@ class BuildLineSerializer(
         # Defer expensive fields which we do not need for this serializer
 
         queryset = queryset.defer(
-            'build__notes',
             'build__metadata',
             'bom_item__metadata',
-            'bom_item__part__notes',
             'bom_item__part__metadata',
-            'bom_item__sub_part__notes',
             'bom_item__sub_part__metadata',
         )
 
         # Annotate the "allocated" quantity
         queryset = queryset.annotate(
             allocated=Coalesce(
-                Sum('allocations__quantity'), 0, output_field=models.DecimalField()
+                SubquerySum('allocations__quantity'),
+                0,
+                output_field=models.DecimalField(),
             )
         )
 

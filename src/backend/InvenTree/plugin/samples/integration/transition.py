@@ -37,7 +37,7 @@ class SampleTransitionPlugin(TransitionMixin, InvenTreePlugin):
                 msg = 'Return order without responsible owner can not be completed!'
 
                 # Trigger whoever created the return order
-                instance.created_by
+
                 trigger_notification(
                     instance,
                     'sampel_123_456',
@@ -46,7 +46,12 @@ class SampleTransitionPlugin(TransitionMixin, InvenTreePlugin):
                 )
 
                 raise ValidationError(msg)
-
+            if (
+                instance.responsible
+                and instance.responsible.owner.username == 'testuser'
+            ):
+                # If the responsible user is "testuser", we will stop the transition
+                return '123#abc!'
             return False  # Do not act
 
     TRANSITION_HANDLERS = [ReturnChangeHandler()]

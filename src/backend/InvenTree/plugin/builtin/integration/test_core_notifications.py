@@ -44,8 +44,6 @@ class CoreNotificationTestTests(InvenTreeTestCase):
         # No email should be send
         self.assertEqual(len(mail.outbox), 0)
 
-        print('- get email plugin:')
-
         plugin = registry.get_plugin('inventree-email-notification')
         self.assertIsNotNone(plugin, 'Email notification plugin should be available')
 

@@ -9,12 +9,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- [#12830](https://github.com/inventree/InvenTree/pull/12830) squashes all database migrations prior to the 1.0.0 release. This means that any users who are updating from a version older than 1.0.0 must first update to the 1.0.0 release before updating to the current release.
+- [#11971](https://github.com/inventree/InvenTree/pull/11971) is a major refactor of how notes are handled. Notes are now stored in a separate database table (in line with how attachments are handled), and each model instance can have multiple notes associated with it. The `notes` field has been removed from the individual models (and their associated API endpoints), and notes are now accessed via the new `/api/note/` endpoint. Existing notes data (and any embedded images) are automatically migrated to the new notes table, with the markdown content converted to HTML. Any external client applications which read or write the `notes` field via the API will need to be updated to use the new endpoint.
+- [#12507](https://github.com/inventree/InvenTree/pull/12507) calling an invalid or repeated state transition now raises a ValidationError. Plugins implementing state transitions should evaluate the PR and adapt their usage of transitions to gain the new safeguards.
+- [#12672](https://github.com/inventree/InvenTree/pull/12672) renames the newly added `tags` filter from 1.4.0 (https://github.com/inventree/InvenTree/pull/12077) to `tag_name` to remove a nameclash.
+- [#12850](https://github.com/inventree/InvenTree/pull/12850) Tokens are now issued in the v2 format and might be longer. Old tokens continue to work but should be considered for rotation
+
+
+### Added
+
+- [#12713](https://github.com/inventree/InvenTree/pull/12713) adds SCIM 2 provisioning support, allowing InvenTree to be integrated with external identity providers for user management.
+- [#12731](https://github.com/inventree/InvenTree/pull/12731) adds OIDC provider settings to the Admin Center - making all Identity Federation settings now available in one place without the need to use the database admin interface.
+- [#12837](https://github.com/inventree/InvenTree/pull/12837) adds a user setting `ROTATE_TABLE_HEADERS` which rotates table headers by 90 degrees, improving readability for tables with long column titles.
+- [#12911](https://github.com/inventree/InvenTree/pull/12911) adds global setting for default receive location against purchase orders
+- [#12914](https://github.com/inventree/InvenTree/pull/12914) adds the AllocateMixin, allowing plugins to customize automatic stock allocation for build orders and sales orders.
+
+### Changed
+
+### Removed
+
+## 1.5.0 - 2026-08-11
+
+### Breaking Changes
+
+- [#12529](https://github.com/inventree/InvenTree/pull/12529) removes related detail fields on API endpoints for which the user does not have view permissions.
 - [#12360](https://github.com/inventree/InvenTree/pull/12360) removes the MPTT mixin from the StockItem model, and removes the self-referential tree structure from the database. This change was made to simplify the StockItem model and improve performance, as the MPTT tree structure was causing significant overhead in certain operations. Any external client applications which made use of the MPTT functionality will need to be updated to account for this change.
 - [#12320](https://github.com/inventree/InvenTree/pull/12320) changes the default behavior of the `invoke migrate` command. Now, it no longer generates new migrations by default. Instead, it will only apply existing migrations to the database. If you want to detect and generate new migrations, you must now explicitly use the `--detect` flag. This change was made to prevent accidental generation of migrations when running the command, which could lead to unexpected changes in the database schema. Additionally, `invoke update` will no longer result in new migrations being generated, and will only apply existing migrations to the database. This change was made to ensure that the update process is predictable and does not introduce unexpected changes to the database schema.
 - [#12223](https://github.com/inventree/InvenTree/pull/12223) removes support for python 3.11 and stops providing packages for Debian 11 and Ubuntu 20.04.
 
 ### Added
 
+- [#12422](https://github.com/inventree/InvenTree/pull/12422) adds a "piece_count" field to the BomItem model, for representing cut-to-length parts. The total material required is calculated as `quantity x piece_count`.
+- Adds configurable default for merging purchase order line items via the `PURCHASEORDER_MERGE_LINE_ITEMS` global setting
 - [#12393](https://github.com/inventree/InvenTree/pull/12393) adds "discount" attribute to order line items, allowing users to specify a discount for each line item on an order. The discount can be specified as either a percentage or a fixed amount, and is applied to the line item total when calculating the order total.
 - [#12391](https://github.com/inventree/InvenTree/pull/12391) adds facility for bulk deleting line items against orders
 - [#12388](https://github.com/inventree/InvenTree/pull/12388) adds uniqueness requirements options for the Parameter and ParameterTemplate models. This allows users to specify whether a parameter value should be unique for a given model type, or globally unique across all models.
@@ -38,6 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#12107](https://github.com/inventree/InvenTree/pull/12107) makes a breaking change to the `SalesOrderStatusGroups` enum, fixing a bug where the "shipped" status was not included in the "active" group. This change may affect any external client applications which make use of the `SalesOrderStatusGroups` enum, as the "shipped" status will now be included in the "active" group instead of the "complete" group. If you are using this enum in an external client application, you will need to update your application to account for this change.
 - [#9604](https://github.com/inventree/InvenTree/pull/9604) refactors user API endpoint to be less ambiguous
 - [#11893](https://github.com/inventree/InvenTree/pull/11893) bumps Node environment to version 24 LTS - this is only relevant if you build the frontend assets yourself
+- [#11951](https://github.com/inventree/InvenTree/pull/11951) adds API throtteling by default to make DoS attacks more difficult. This can be disabled by setting the `INVENTREE_THROTTLE_ANON` and `INVENTREE_THROTTLE_USER` settings to `None` (either via environment variable or config file). The default throttling rates are 20 requests per minute for anonymous users, and 20 requests per second for authenticated users.
 
 ### Added
 

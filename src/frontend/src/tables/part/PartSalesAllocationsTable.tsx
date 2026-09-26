@@ -42,6 +42,8 @@ export default function PartSalesAllocationsTable({
         accessor: 'order',
         title: t`Sales Order`,
         switchable: false,
+        sortable: true,
+        ordering: 'order',
         render: (record: any) => (
           <Group wrap='nowrap' gap='xs'>
             <RowExpansionIcon
@@ -89,7 +91,7 @@ export default function PartSalesAllocationsTable({
           title: t`View Sales Order`,
           modelType: ModelType.salesorder,
           modelId: record.order,
-          hidden: !user.hasViewRole(UserRoles.sales_order),
+          hidden: !user.hasViewVisible(UserRoles.sales_order),
           navigate: navigate
         })
       ];

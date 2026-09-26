@@ -1,30 +1,19 @@
 """Mixins for (API) views in the whole project."""
 
-from django.core.exceptions import FieldDoesNotExist
-
 from rest_framework import generics, mixins, status
 from rest_framework.response import Response
 
 import data_exporter.mixins
 import importer.mixins
-from InvenTree.fields import InvenTreeNotesField, OutputConfiguration
-from InvenTree.helpers import (
-    clean_markdown,
-    remove_non_printable_characters,
-    strip_html_tags,
-)
+from InvenTree.fields import OutputConfiguration
+from InvenTree.helpers import remove_non_printable_characters, strip_html_tags
 from InvenTree.schema import schema_for_view_output_options
 from InvenTree.serializers import FilterableSerializerMixin
 
 
-class CleanMixin:
-    """Model mixin class which cleans inputs using nh3."""
-
-    # Define a list of field names which will *not* be cleaned
-    SAFE_FIELDS = []
-
-    def create(self, request, *args, **kwargs):
-        """Override to clean data before processing it."""
+class CleanCreate:  # noqa: D101
+    def create(self, request, *args, **kwargs):  # noqa: D102
+        # Override to clean data before processing it
         serializer = self.get_serializer(data=self.clean_data(request.data))
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -33,8 +22,10 @@ class CleanMixin:
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
-    def update(self, request, *args, **kwargs):
-        """Override to clean data before processing it."""
+
+class CleanUpdate:  # noqa: D101
+    def update(self, request, *args, **kwargs):  # noqa: D102
+        # Override to clean data before processing it
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(
@@ -50,41 +41,20 @@ class CleanMixin:
 
         return Response(serializer.data)
 
+
+class CleanBase:
+    """Model mixin class which cleans inputs using nh3."""
+
+    # Define a list of field names which will *not* be cleaned
+    SAFE_FIELDS = []
+
     def clean_string(self, field: str, data: str) -> str:
         """Clean / sanitize a single input string."""
         cleaned = data
 
-        # By default, newline characters are removed
-        remove_newline = True
-        is_markdown = False
-
-        try:
-            if hasattr(self, 'serializer_class'):
-                model = self.serializer_class.Meta.model
-                field_base = model._meta.get_field(field)
-
-                # The following field types allow newline characters
-                allow_newline = [(InvenTreeNotesField, True)]
-
-                for field_type in allow_newline:
-                    if issubclass(type(field_base), field_type[0]):
-                        remove_newline = False
-                        is_markdown = field_type[1]
-                        break
-
-        except AttributeError:
-            pass
-        except FieldDoesNotExist:
-            pass
-
-        cleaned = remove_non_printable_characters(
-            cleaned, remove_newline=remove_newline
-        )
+        cleaned = remove_non_printable_characters(cleaned, remove_newline=True)
 
         cleaned = strip_html_tags(cleaned, field_name=field)
-
-        if is_markdown:
-            cleaned = clean_markdown(cleaned)
 
         return cleaned
 
@@ -117,6 +87,14 @@ class CleanMixin:
             clean_data[k] = ret
 
         return clean_data
+
+
+class CleanMixin(CleanCreate, CleanUpdate, CleanBase):
+    """Model mixin class which cleans inputs using nh3."""
+
+
+class CleanUpdateOnlyMixin(CleanUpdate, CleanBase):
+    """Model mixin class which cleans inputs using nh3."""
 
 
 class ListAPI(generics.ListAPIView):

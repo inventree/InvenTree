@@ -122,6 +122,9 @@ Depending on how your InvenTree installation is configured, you will need to pay
 !!! success "INVENTREE_SITE_URL"
     If you have specified the `INVENTREE_SITE_URL`, this will automatically be used as a trusted CSRF and CORS host (see below).
 
+!!! tip "Running Behind a Reverse Proxy"
+    If InvenTree is served behind an existing reverse proxy (e.g. NGINX, Traefik) with SSL termination happening upstream, refer to the [worked example](./processes.md#integrating-with-existing-proxy) for the combination of `INVENTREE_TRUSTED_ORIGINS` and `INVENTREE_USE_X_FORWARDED_*` settings that setup requires.
+
 {{ configtable() }}
 {{ configsetting("INVENTREE_ALLOWED_HOSTS") }} List of allowed hosts |
 {{ configsetting("INVENTREE_TRUSTED_ORIGINS", default="Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list.") }} List of trusted origins. Refer to the [django documentation]({% include "django.html" %}/ref/settings/#csrf-trusted-origins) |
@@ -136,7 +139,8 @@ Depending on how your InvenTree installation is configured, you will need to pay
 | `INVENTREE_X_FORWARDED_PROTO_NAME` | `x_forwarded_proto_name` | `HTTP_X_FORWARDED_PROTO` | Name of the header to use for forwarded protocol information |
 {{ configsetting("INVENTREE_SESSION_COOKIE_SECURE") }} Enforce secure session cookies |
 {{ configsetting("INVENTREE_COOKIE_SAMESITE") }} Session cookie mode. Must be one of `Strict | Lax | None | False`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) and the [django documentation]({% include "django.html" %}/ref/settings/#std-setting-SESSION_COOKIE_SAMESITE) for more information. |
-
+{{ configsetting("INVENTREE_THROTTLE_ANON") }} Throttle rate for anonymous users (e.g. '20/minute') |
+{{ configsetting("INVENTREE_THROTTLE_USER") }} Throttle rate for authenticated users (e.g. '5/second') |
 
 ### Debug Mode
 
@@ -266,6 +270,8 @@ The following database options can be configured:
 
 ### PostgreSQL Settings
 
+InvenTree requires a minimum PostgreSQL version of {{ config.extra.min_postgres_version }}.
+
 If running with a PostgreSQL database backend, the following additional options are available:
 
 {{ configtable() }}
@@ -276,8 +282,14 @@ If running with a PostgreSQL database backend, the following additional options 
 | `INVENTREE_DB_TCP_KEEPALIVES_COUNT` | database.tcp_keepalives_count | 5 | TCP keepalive count |
 | `INVENTREE_DB_TCP_USER_TIMEOUT` | database.tcp_user_timeout | 2000 | TCP user timeout (ms) |
 | `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" |
+| `INVENTREE_DB_JIT_ENABLED` | database.jit_enabled | False | Enable JIT compilation for PostgreSQL queries |
+
+!!! info "JIT Compilation"
+    PostgreSQL supports [JIT compilation](https://www.postgresql.org/docs/current/jit.html) for queries. This is disabled by default, as it can cause performance issues for small queries.
 
 ### MySQL Settings
+
+InvenTree requires a minimum MySQL version of {{ config.extra.min_mysql_version }}.
 
 If running with a MySQL database backend, the following additional options are available:
 
@@ -286,6 +298,8 @@ If running with a MySQL database backend, the following additional options are a
 | `INVENTREE_DB_ISOLATION_SERIALIZABLE` | database.serializable | False | Database isolation level configured to "serializable" |
 
 ### SQLite Settings
+
+InvenTree requires a minimum SQLite version of {{ config.extra.min_sqlite_version }}.
 
 !!! warning "SQLite Performance"
     SQLite is not recommended for production use, and should only be used for testing or development purposes. If you are using SQLite in production, you may want to adjust the following settings to improve performance.
@@ -479,9 +493,13 @@ The InvenTree server can be integrated with the [sentry.io](https://sentry.io) m
 {{ configsetting("INVENTREE_SENTRY_ENABLED") }} Enable sentry.io integration |
 {{ configsetting("INVENTREE_SENTRY_DSN", default="Defaults to InvenTree developer key") }} Sentry DSN (data source name) key |
 {{ configsetting("INVENTREE_SENTRY_SAMPLE_RATE") }} How often to send data samples (seconds) |
+{{ configsetting("INVENTREE_SENTRY_SEND_PII") }} Include personally-identifiable information (e.g. user id/email, IP address, request data) in reported events |
 
 !!! info "Default DSN"
     If enabled with the default DSN, server errors will be logged to a sentry.io account monitored by the InvenTree developers.
+
+!!! warning "Personally-Identifiable Information"
+    `INVENTREE_SENTRY_SEND_PII` is `False` by default. Enabling it attaches the reporting user's id/email, IP address, and request data to every event sent to Sentry - consider your organization's data-handling policy before enabling this, particularly if using the default DSN, which sends data to a sentry.io account outside your control.
 
 ## Customization Options
 

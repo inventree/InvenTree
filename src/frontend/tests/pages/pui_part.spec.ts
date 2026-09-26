@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from '../baseFixtures';
+import { readeruser } from '../defaults';
 import {
   clearTableFilters,
   clickOnParamFilter,
@@ -1057,23 +1058,61 @@ test('Parts - Test Results', async ({ browser }) => {
 });
 
 test('Parts - Notes', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'part/69/notes' });
+  const page = await doCachedLogin(browser, { url: 'part/71/details' });
 
-  // Enable editing
-  await page.getByLabel('Enable Editing').waitFor();
+  await loadTab(page, 'Notes');
 
-  // Use keyboard shortcut to "edit" the part
-  await page.keyboard.press('Control+E');
-  await page.getByLabel('text-field-name', { exact: true }).waitFor();
-  await page.getByLabel('text-field-description', { exact: true }).waitFor();
-  await page.getByLabel('tree-field-category').waitFor();
+  // Expect to see notes rendered for this part
+  await page.getByRole('cell', { name: 'Red Widget' }).waitFor();
+  await page.getByRole('cell', { name: 'Blue Widget' }).waitFor();
+  await page.getByRole('cell', { name: 'Green Widget' }).waitFor();
+  await page
+    .getByRole('link', { name: 'Read more in the documentation' })
+    .waitFor();
+
+  // Let's try to create a new note, but cancel before submitting
+  await page.getByRole('button', { name: 'Add Note' }).click();
+  await page.getByLabel('related-field-template').fill('instructions');
+  await page
+    .getByRole('option', { name: 'Manufacturing Instructions' })
+    .click();
+  await page.getByText('Manufacturing Instructions').waitFor();
+  await page.getByText('How to build this part').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
-  // Enable notes editing
-  await page.getByLabel('Enable Editing').click();
+  // Enable editing for this note
+  await page.getByRole('button', { name: 'edit-note' }).click();
 
-  await page.getByLabel('Save Notes').waitFor();
-  await page.getByLabel('Close Editor').waitFor();
+  await page.getByRole('button', { name: 'Bold' }).waitFor();
+  await page.getByRole('button', { name: 'Italic' }).waitFor();
+  await page.getByRole('button', { name: 'Underline' }).waitFor();
+  await page.getByRole('button', { name: 'Heading 1' }).waitFor();
+  await page.getByRole('button', { name: 'Heading 2' }).waitFor();
+  await page.getByRole('button', { name: 'Heading 3' }).waitFor();
+
+  await page.getByRole('button', { name: 'finish-editing-note' }).click();
+
+  // Duplicate this part - should show options for copying notes
+  await page.getByRole('button', { name: 'action-menu-part-actions' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-part-actions-duplicate' })
+    .click();
+  await page
+    .getByRole('switch', { name: 'boolean-field-duplicate.copy_notes' })
+    .waitFor();
+
+  // Generate random IPN for copying
+  const ipn = `IPN-${Math.floor(Math.random() * 100000)}`;
+  await page.getByRole('textbox', { name: 'text-field-IPN' }).fill(ipn);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForLoadState('networkidle');
+  await page.getByText(`Part: ${ipn}`).waitFor();
+
+  // Check that the notes have been duplicated to this new part
+  await loadTab(page, 'Notes');
+  await page
+    .getByRole('heading', { name: 'On Widgets (And Variants Thereof)' })
+    .waitFor();
 });
 
 test('Parts - 404', async ({ browser }) => {
@@ -1190,7 +1229,15 @@ test('Parts - Import supplier part', async ({ browser }) => {
   await page
     .getByRole('button', { name: 'action-button-import-part-BOLT-Steel-M5-5' })
     .click();
+
+  await page.waitForLoadState('networkidle');
   await page.waitForTimeout(250);
+
+  await page
+    .getByRole('textbox', { name: 'tree-field-field' })
+    .fill('electronics');
+  await page.getByText('ElectronicsElectronic').click();
+
   await page
     .getByRole('button', { name: 'action-button-import-part-now' })
     .click();
@@ -1208,4 +1255,76 @@ test('Parts - Import supplier part', async ({ browser }) => {
   // cleanup imported part if it exists
   await deletePart('BOLT-Steel-M5-5');
   await deletePart('BOLT-M5-5');
+});
+
+test('Parts - Add button visible in Parametric View (admin)', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, { url: 'part/category/4/parts' });
+
+  await showParametricView(page);
+
+  await expect(
+    page.getByRole('button', { name: 'action-menu-add-parts' })
+  ).toBeVisible();
+});
+
+test('Parts - Add button opens Create Part form in Parametric View', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, { url: 'part/category/4/parts' });
+
+  await showParametricView(page);
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await expect(page.getByText('Add Part', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
+test('Parts - Add button hidden in Parametric View (reader)', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/4/parts',
+    user: readeruser
+  });
+
+  await showParametricView(page);
+
+  await expect(
+    page.getByRole('button', { name: 'action-menu-add-parts' })
+  ).toHaveCount(0);
+});
+
+test('Parts - Create part via Parametric View submits to API', async ({
+  browser
+}) => {
+  const testPartName = 'TEST-PARAMETRIC-ADD-PART';
+
+  await deletePart(testPartName);
+
+  const page = await doCachedLogin(browser, { url: 'part/category/4/parts' });
+
+  await showParametricView(page);
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await page.getByLabel('text-field-name', { exact: true }).fill(testPartName);
+  await page
+    .getByLabel('text-field-description', { exact: true })
+    .fill('Created from Parametric View integration test');
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForLoadState('networkidle');
+
+  await page.getByText(testPartName).first().waitFor();
+
+  await deletePart(testPartName);
 });

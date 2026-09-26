@@ -17,6 +17,7 @@ import InvenTree.helpers_model
 from common.settings import get_global_setting
 from InvenTree.tasks import (
     ScheduledTask,
+    batch_offload_tasks,
     check_daily_holdoff,
     offload_task,
     record_task_success,
@@ -265,45 +266,51 @@ def check_missing_pricing(limit=250):
         # Task does not run if the interval is zero
         return
 
-    # Find parts for which pricing information has never been updated
-    results = PartPricing.objects.filter(updated=None)[:limit]
+    # Scheduling each part's pricing update calls offload_task(), which (outside of a batch)
+    # checks the entire task queue for duplicates on every call. Batching collapses all of
+    # this run's scheduling into a single bulk write instead, avoiding that per-call scan.
+    with batch_offload_tasks():
+        # Find parts for which pricing information has never been updated
+        results = PartPricing.objects.filter(updated=None)[:limit]
 
-    if results.count() > 0:
-        logger.info('Found %s parts with empty pricing', results.count())
+        if results.count() > 0:
+            logger.info('Found %s parts with empty pricing', results.count())
 
-        for pp in results:
-            pp.schedule_for_update()
+            for pp in results:
+                pp.schedule_for_update()
 
-    stale_date = datetime.now().date() - timedelta(days=days)
+        stale_date = datetime.now().date() - timedelta(days=days)
 
-    results = PartPricing.objects.filter(updated__lte=stale_date)[:limit]
+        results = PartPricing.objects.filter(updated__lte=stale_date)[:limit]
 
-    if results.count() > 0:
-        logger.info('Found %s stale pricing entries', results.count())
+        if results.count() > 0:
+            logger.info('Found %s stale pricing entries', results.count())
 
-        for pp in results:
-            pp.schedule_for_update()
+            for pp in results:
+                pp.schedule_for_update()
 
-    # Find any pricing data which is in the wrong currency
-    currency = common.currency.currency_code_default()
-    results = PartPricing.objects.exclude(currency=currency)
+        # Find any pricing data which is in the wrong currency
+        currency = common.currency.currency_code_default()
+        results = PartPricing.objects.exclude(currency=currency)[:limit]
 
-    if results.count() > 0:
-        logger.info('Found %s pricing entries in the wrong currency', results.count())
+        if results.count() > 0:
+            logger.info(
+                'Found %s pricing entries in the wrong currency', results.count()
+            )
 
-        for pp in results:
-            pp.schedule_for_update()
+            for pp in results:
+                pp.schedule_for_update()
 
-    # Find any parts which do not have pricing information
-    results = Part.objects.filter(pricing_data=None)[:limit]
+        # Find any parts which do not have pricing information
+        results = Part.objects.filter(pricing_data=None)[:limit]
 
-    if results.count() > 0:
-        logger.info('Found %s parts without pricing', results.count())
+        if results.count() > 0:
+            logger.info('Found %s parts without pricing', results.count())
 
-        for p in results:
-            pricing = p.pricing
-            pricing.save()
-            pricing.schedule_for_update()
+            for p in results:
+                pricing = p.pricing
+                pricing.save()
+                pricing.schedule_for_update()
 
 
 @tracer.start_as_current_span('scheduled_stocktake_reports')

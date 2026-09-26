@@ -1,29 +1,38 @@
 """Unit testing for the various report models."""
 
 import os
+import socket
+import tempfile
 from io import StringIO
-from unittest.mock import patch
+from pathlib import Path
+from unittest.mock import Mock, patch
 
 from django.apps import apps
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.template.loader import render_to_string
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.timezone import now
 
 from pypdf import PdfReader
 
 import report.models as report_models
 from build.models import Build
-from common.models import Attachment
+from common.models import Attachment, Note
 from common.settings import set_global_setting
+from InvenTree.config import get_base_dir
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
 from order.models import PurchaseOrder, ReturnOrder, SalesOrder
 from part.models import Part
 from plugin.registry import registry
 from report.models import LabelTemplate, ReportTemplate
-from stock.models import StockItem
+from report.tasks import print_labels
+from stock.models import StockItem, StockLocation
 
 
 class ReportTest(InvenTreeAPITestCase):
@@ -305,6 +314,74 @@ class ReportTest(InvenTreeAPITestCase):
         self.assertIsNotNone(output.output)
         self.assertTrue(output.output.name.endswith('.pdf'))
 
+    def test_print_build_order(self):
+        """Test that the built-in Build Order report renders correctly.
+
+        Regression test: this report renders a build's notes via the '{% note %}'
+        tag - Build.notes is now a QuerySet (via InvenTreeNoteMixin), not text, so
+        the old '{{ build.notes|markdownify }}' would error out during rendering.
+        """
+        template = ReportTemplate.objects.filter(
+            enabled=True, model_type='build'
+        ).first()
+        assert template
+
+        build = Build.objects.first()
+        assert build
+
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(Build),
+            model_id=build.pk,
+            title='Build Note',
+            content='<p>Handle with <strong>care</strong></p>',
+        )
+
+        output = template.print([build])
+
+        self.assertTrue(output.complete)
+        self.assertIsNotNone(output.output)
+        self.assertTrue(output.output.name.endswith('.pdf'))
+
+    def test_print_stock_location(self):
+        """Test that the built-in Stock Location report renders each item's note.
+
+        Regression test: this report renders each contained StockItem's note
+        inline via the '{% note %}' tag - StockItem.notes is now a QuerySet
+        (via InvenTreeNoteMixin), not text, so the old '{{ line.notes }}' would
+        render a broken QuerySet repr instead of note content.
+
+        Renders the template directly (rather than going through
+        ReportTemplate.print(), as test_print_build_order does) because
+        StockLocation.report_context() unconditionally generates a barcode,
+        which depends on a barcode plugin being registered - unrelated to what
+        this test is actually checking, and not reliably available in every
+        test environment.
+        """
+        location = StockLocation.objects.create(name='Note Report Test Location')
+        item = StockItem.objects.create(
+            part=Part.objects.first(), quantity=5, location=location
+        )
+
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(StockItem),
+            model_id=item.pk,
+            title='Item Note',
+            content='<p>Fragile <strong>handle with care</strong></p>',
+        )
+
+        html = render_to_string(
+            'report/inventree_stock_location_report.html',
+            {
+                'stock_location': location,
+                'stock_items': StockItem.objects.filter(location=location),
+                'report_revision': 1,
+                'date': now(),
+            },
+        )
+
+        self.assertIn('Fragile', html)
+        self.assertIn('<strong>handle with care</strong>', html)
+
     def test_print_custom_template(self):
         """Create a new template, print it, and check the output."""
         template_string = """
@@ -442,6 +519,207 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertIsNotNone(output.output)
         self.assertEqual(output.plugin, 'inventreelabel')
         self.assertTrue(output.output.name.endswith('.pdf'))
+
+        # Filename patterns without an extension must still produce PDF filenames.
+        template.filename_pattern = 'unit_test_label'
+        template.save()
+
+        output = template.print(items=parts[:1], plugin=plugin)
+
+        self.assertTrue(output.output.name.endswith('.pdf'))
+
+    def test_generated_file_filename(self):
+        """PDF filenames retain existing suffixes and default when empty."""
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        plugin = registry.get_plugin('inventreelabel')
+        plugin.before_printing()
+        plugin.outputs.append(
+            plugin.render_to_pdf(template, Part.objects.first(), None)
+        )
+
+        for kwargs, expected in [
+            ({'filename': 'unit_test_label'}, 'unit_test_label.pdf'),
+            ({'filename': 'unit_test_label.pdf'}, 'unit_test_label.pdf'),
+            ({'filename': 'unit_test_label.PDF'}, 'unit_test_label.PDF'),
+            ({'filename': ''}, 'labels.pdf'),
+            ({'filename': None}, 'labels.pdf'),
+            ({}, 'labels.pdf'),
+        ]:
+            with self.subTest(kwargs=kwargs):
+                output = plugin.get_generated_file(**kwargs)
+                self.assertEqual(output.name, expected)
+
+    def test_print_failure(self):
+        """Printing failures retain their details and propagate to the caller."""
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        parts = list(Part.objects.all()[:1])
+
+        for worker in [False, True]:
+            for error in [
+                ValidationError(['Invalid label data', 'Missing part number']),
+                RuntimeError('printer unavailable'),
+            ]:
+                with self.subTest(worker=worker, error=type(error).__name__):
+                    plugin = Mock(spec=['slug', 'print_labels'], slug='failing-label')
+                    plugin.print_labels.side_effect = error
+                    output = report_models.DataOutput.objects.create(
+                        output_type=report_models.DataOutput.DataOutputTypes.LABEL,
+                        template_name=template.name,
+                        plugin=plugin.slug,
+                    )
+
+                    with (
+                        patch.object(registry, 'get_plugin', return_value=plugin),
+                        self.assertRaises(ValidationError) as raised,
+                    ):
+                        if worker:
+                            print_labels(
+                                template.pk,
+                                [part.pk for part in parts],
+                                output.pk,
+                                self.user.pk,
+                                plugin.slug,
+                                options={},
+                            )
+                        else:
+                            template.print(parts, plugin, output=output)
+
+                    plugin.print_labels.assert_called_once()
+                    output.refresh_from_db()
+                    self.assertFalse(output.complete)
+                    self.assertFalse(output.output)
+
+                    if isinstance(error, ValidationError):
+                        self.assertIs(raised.exception, error)
+                        self.assertEqual(
+                            output.errors['error'], ', '.join(error.messages)
+                        )
+                    else:
+                        self.assertEqual(
+                            raised.exception.messages,
+                            ['Error printing labels', 'printer unavailable'],
+                        )
+                        self.assertEqual(
+                            output.errors['error'],
+                            'Error printing labels: printer unavailable',
+                        )
+
+                    if worker:
+                        original = (
+                            report_models.DataOutput.objects
+                            .filter(pk=output.pk)
+                            .values()
+                            .get()
+                        )
+                        with patch.object(
+                            registry, 'get_plugin', return_value=plugin
+                        ) as get_plugin:
+                            print_labels(
+                                template.pk,
+                                [part.pk for part in parts],
+                                output.pk,
+                                self.user.pk,
+                                plugin.slug,
+                                options={},
+                            )
+
+                        get_plugin.assert_not_called()
+                        plugin.print_labels.assert_called_once()
+                        self.assertEqual(
+                            report_models.DataOutput.objects
+                            .filter(pk=output.pk)
+                            .values()
+                            .get(),
+                            original,
+                        )
+
+    def test_print_unavailable_plugin(self):
+        """An unavailable worker plugin records a failure instead of hanging."""
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+        output = report_models.DataOutput.objects.create(
+            output_type=report_models.DataOutput.DataOutputTypes.LABEL,
+            template_name=template.name,
+            plugin='unavailable-label',
+        )
+
+        with (
+            patch.object(registry, 'get_plugin', return_value=None) as get_plugin,
+            patch.object(LabelTemplate, 'print') as print_template,
+        ):
+            print_labels(
+                template.pk, [], output.pk, self.user.pk, output.plugin, options={}
+            )
+
+        get_plugin.assert_called_once_with(output.plugin, active=True)
+        print_template.assert_not_called()
+        output.refresh_from_db()
+        self.assertFalse(output.complete)
+        self.assertFalse(output.output)
+        self.assertEqual(
+            output.errors,
+            {'error': "Label printing plugin 'unavailable-label' not found"},
+        )
+
+        original = report_models.DataOutput.objects.filter(pk=output.pk).values().get()
+        plugin = Mock(spec=['slug', 'print_labels'], slug=output.plugin)
+        with (
+            patch.object(registry, 'get_plugin', return_value=plugin) as get_plugin,
+            patch.object(LabelTemplate, 'print') as print_template,
+        ):
+            print_labels(
+                template.pk, [], output.pk, self.user.pk, output.plugin, options={}
+            )
+
+        get_plugin.assert_not_called()
+        print_template.assert_not_called()
+        self.assertEqual(
+            report_models.DataOutput.objects.filter(pk=output.pk).values().get(),
+            original,
+        )
+
+    def test_print_task_duplicate(self):
+        """Duplicate tasks skip completed or deleted outputs before plugin lookup."""
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
+
+        for deleted in [False, True]:
+            with self.subTest(deleted=deleted):
+                output = report_models.DataOutput.objects.create(
+                    complete=True, progress=100, output='data_output/labels.pdf'
+                )
+                output_id = output.pk
+                original = (
+                    report_models.DataOutput.objects.filter(pk=output_id).values().get()
+                )
+                if deleted:
+                    output.delete()
+
+                with (
+                    patch.object(registry, 'get_plugin') as get_plugin,
+                    patch.object(LabelTemplate, 'print') as print_template,
+                ):
+                    print_labels(
+                        template.pk,
+                        [],
+                        output_id,
+                        self.user.pk,
+                        'inventreelabel',
+                        options={},
+                    )
+
+                get_plugin.assert_not_called()
+                print_template.assert_not_called()
+                if deleted:
+                    self.assertFalse(
+                        report_models.DataOutput.objects.filter(pk=output_id).exists()
+                    )
+                else:
+                    self.assertEqual(
+                        report_models.DataOutput.objects
+                        .filter(pk=output_id)
+                        .values()
+                        .get(),
+                        original,
+                    )
 
     def test_print_custom_template(self):
         """Test printing against a custom template file."""
@@ -1073,3 +1351,109 @@ class URLFetcherTest(TestCase):
         with patch('weasyprint.urls.URLFetcher.fetch', return_value={}):
             self.fetcher.fetch('data:image/png;base64,abc123')
             self.fetcher.fetch('data:text/css;base64,abc123')
+
+    def test_dns_rebind_is_blocked_at_fetch_time(self):
+        """A hostname that resolves safely for validation but privately for the real fetch must be blocked.
+
+        Regression test: `validate_url_no_ssrf()` used to resolve the hostname once,
+        validate that result, and then discard it, so `InvenTreeURLFetcher.fetch()`
+        would delegate straight to WeasyPrint's own fetcher, which resolves the
+        hostname *again* independently. An attacker controlling DNS for their own
+        domain could answer the first ("check") lookup with a public IP and every
+        subsequent ("use") lookup with a private/internal one (DNS rebinding), so the
+        real request WeasyPrint made went somewhere the validator never saw.
+        """
+        set_global_setting('REPORT_FETCH_URLS', True, change_user=None)
+
+        public_addrinfo = [(2, 1, 6, '', ('93.184.216.34', 0))]
+        private_addrinfo = [(2, 1, 6, '', ('127.0.0.1', 0))]
+
+        calls = {'n': 0}
+
+        def rebinding_getaddrinfo(host, *args, **kwargs):
+            calls['n'] += 1
+            return public_addrinfo if calls['n'] == 1 else private_addrinfo
+
+        def fake_weasyprint_fetch(_self, url, headers=None):
+            # Simulate WeasyPrint's own fetch-time DNS resolution, performed
+            # independently of the validation InvenTreeURLFetcher already did.
+            socket.getaddrinfo('rebind.example.com', None)
+            return {'string': b'should never be reached'}
+
+        import InvenTree.helpers_model as helpers_model
+
+        with patch.object(
+            helpers_model, '_real_getaddrinfo', side_effect=rebinding_getaddrinfo
+        ):
+            with patch(
+                'weasyprint.urls.URLFetcher.fetch', side_effect=fake_weasyprint_fetch
+            ):
+                with self.assertRaises(socket.gaierror):
+                    self.fetcher.fetch('http://rebind.example.com/image.png')
+
+        # The validation-time lookup (safe) and the fetch-time lookup (private)
+        # must both have happened for this to be a meaningful regression test.
+        self.assertEqual(calls['n'], 2)
+
+
+class DefaultTemplateFileTest(TestCase):
+    """Unit tests for building the default report and label template files."""
+
+    def test_file_size_matches_bytes(self):
+        """file_from_template must size the ContentFile by byte length.
+
+        Reading the template in text mode makes the size a character count,
+        which is smaller than the byte length for multi-byte content and breaks
+        uploads to S3 backends that enforce Content-Length.
+        """
+        config = apps.get_app_config('report')
+        filename = 'inventree_transfer_order_report.html'
+        content_file = config.file_from_template('report', filename)
+        path = get_base_dir().joinpath('report', 'templates', 'report', filename)
+        self.assertEqual(content_file.size, path.stat().st_size)
+
+    def test_file_from_template_is_encoding_agnostic(self):
+        """file_from_template must preserve the exact bytes for any encoding.
+
+        A text-mode read sizes the ContentFile by character count and needs the
+        correct decoder, so non-English content is both mis-sized and at risk of
+        corruption. Reading the raw bytes keeps the file identical to what is on
+        disk, so the size always matches the Content-Length used for S3 uploads.
+        The samples below cover non-ASCII text in a few encodings, including
+        multi-byte content where a character count would not equal the byte
+        length.
+        """
+        config = apps.get_app_config('report')
+
+        # (encoding, text, whether the encoding uses multi-byte characters).
+        # The utf cases hold characters that span more than one byte, so a
+        # character count would not equal the byte length; latin-1 stays
+        # single-byte and is included to show the read is not utf-8 specific.
+        cases = [
+            ('utf-8', 'Système de café ≤ 你好 в наявності 📦', True),
+            ('utf-16', 'Système de café ≤ 你好 в наявності 📦', True),
+            ('latin-1', 'Système de café àéîõü', False),
+        ]
+
+        for encoding, text, multibyte in cases:
+            with self.subTest(encoding=encoding):
+                body = f'<html><body>{text}</body></html>'
+                raw = body.encode(encoding)
+
+                if multibyte:
+                    # A character count would differ from the byte length here
+                    self.assertNotEqual(len(raw), len(body))
+
+                with tempfile.TemporaryDirectory() as tmp:
+                    base = Path(tmp)
+                    template_dir = base.joinpath('report', 'templates', 'report')
+                    template_dir.mkdir(parents=True)
+                    filename = f'encoding_{encoding}.html'
+                    template_dir.joinpath(filename).write_bytes(raw)
+
+                    with patch('report.apps.get_base_dir', return_value=base):
+                        content_file = config.file_from_template('report', filename)
+
+                # Size and content must match the raw bytes exactly
+                self.assertEqual(content_file.size, len(raw))
+                self.assertEqual(content_file.read(), raw)

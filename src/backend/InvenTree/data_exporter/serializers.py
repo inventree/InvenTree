@@ -23,8 +23,18 @@ class DataExportOptionsSerializer(serializers.Serializer):
         - The exact nature of the available fields depends on which plugin is selected.
         - The selected plugin may 'extend' the fields available in the serializer.
         """
-        # Reset fields to a known state
-        self.Meta.fields = ['export_format', 'export_plugin']
+
+        # Give this instance its own 'Meta.fields' list, appended to below depending
+        # on which plugin is selected. `Meta` is otherwise a single class-level
+        # object shared by every instance of this serializer - mutating its 'fields'
+        # list in place would let concurrent requests selecting different plugins
+        # corrupt each other's field list.
+        class Meta(self.Meta):
+            """Per-instance metaclass options for this serializer."""
+
+            fields = ['export_format', 'export_plugin']
+
+        self.Meta = Meta
 
         # Generate a list of plugins to choose from
         # If a model type is provided, use this to filter the list of plugins

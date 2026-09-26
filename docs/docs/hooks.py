@@ -260,13 +260,74 @@ def on_config(config, *args, **kwargs):
     return config
 
 
+def check_status_codes_documented(gen_base):
+    """Check that every 'StatusCode' class is documented somewhere in the docs.
+
+    A class counts as documented if the `statuscodes()` macro has been called
+    for it from at least one markdown page (recorded in 'observed_status_codes.json').
+    """
+    expected_status_codes_file = gen_base.joinpath('inventree_status_codes.json')
+    observed_status_codes_file = gen_base.joinpath('observed_status_codes.json')
+
+    with open(observed_status_codes_file, encoding='utf-8') as f:
+        observed_status_codes = json.loads(f.read())
+
+    with open(expected_status_codes_file, encoding='utf-8') as f:
+        expected_status_codes = json.loads(f.read())
+
+    missing = [
+        name for name in expected_status_codes if name not in observed_status_codes
+    ]
+
+    if missing:
+        raise NotImplementedError(
+            'Missing Status Codes:\n'
+            + f'There are {len(missing)} status code classes not documented via the `statuscodes()` macro:\n- '
+            + '\n- '.join(missing)
+        )
+
+
+def check_status_code_values_documented(gen_base):
+    """Check that every value of every 'StatusCode' class has a description.
+
+    Descriptions are sourced from the class docstring's `Attributes:` block (see
+    `export_status_codes.py` / e.g. `build.status_codes.BuildStatus`) - a status
+    value with no matching `Attributes:` entry exports with an empty description,
+    which this check catches.
+    """
+    expected_status_codes_file = gen_base.joinpath('inventree_status_codes.json')
+
+    with open(expected_status_codes_file, encoding='utf-8') as f:
+        expected_status_codes = json.loads(f.read())
+
+    missing = [
+        f'{class_name}.{value["name"]}'
+        for class_name, info in expected_status_codes.items()
+        for value in info['values']
+        if not value['description']
+    ]
+
+    if missing:
+        raise NotImplementedError(
+            'Missing Status Code Descriptions:\n'
+            + f'There are {len(missing)} status code values with no description in their '
+            + "class docstring's `Attributes:` block:\n- "
+            + '\n- '.join(missing)
+        )
+
+
 def on_post_build(*args, **kwargs):
     """Run after the build is complete.
 
-    Here we check that all global settings and user settings are documented.
+    Here we check that all global settings and user settings are documented,
+    that every status code class is documented (via the `statuscodes` macro),
+    and that every individual status code value has a description.
     """
     here = Path(__file__).parent
     gen_base = here.parent.joinpath('generated')
+
+    check_status_codes_documented(gen_base)
+    check_status_code_values_documented(gen_base)
 
     expected_settings_file = gen_base.joinpath('inventree_settings.json')
     observed_settings_file = gen_base.joinpath('observed_settings.json')

@@ -1,5 +1,6 @@
 """Core set of Notifications as a Plugin."""
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models import Model
 from django.template.loader import render_to_string
@@ -109,7 +110,11 @@ class InvenTreeEmailNotifications(NotificationMixin, SettingsMixin, InvenTreePlu
 
         if recipients:
             InvenTree.helpers_email.send_email(
-                subject, '', recipients, html_message=html_message
+                subject,
+                '',
+                recipients,
+                html_message=html_message,
+                force_async=not settings.TESTING,
             )
             return True
 

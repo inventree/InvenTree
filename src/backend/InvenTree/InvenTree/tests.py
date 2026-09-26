@@ -1,11 +1,14 @@
 """Test general functions and helpers."""
 
+import base64
 import os
-import time
 from datetime import datetime, timedelta
 from decimal import Decimal
+from importlib import import_module
+from io import BytesIO
 from pathlib import Path
 from unittest import mock
+from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
 import django.core.exceptions as django_exceptions
@@ -13,15 +16,20 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from django.db.migrations.recorder import MigrationRecorder
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
 import pint.errors
+import requests_mock
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
+from PIL import Image
 from rest_framework import serializers
 from sesame.utils import get_user
 from stdimage.models import StdImageFieldFile
@@ -34,6 +42,7 @@ import InvenTree.tasks
 from common.currency import currency_codes
 from common.models import CustomUnit, InvenTreeSetting
 from common.settings import get_global_setting
+from InvenTree import apps
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.unit_test import InvenTreeTestCase, in_env_context
@@ -703,12 +712,59 @@ class TestHelpers(TestCase):
 
     def test_logo_image(self):
         """Test for retrieving logo image."""
-        # By default, there is no custom logo provided
+        # By default, there is no custom logo provided - return the default InvenTree logo
         logo = helpers.getLogoImage()
         self.assertEqual(logo, '/static/img/inventree.png')
 
+        # When requested 'as_file', the logo must be returned as an embeddable
+        # base64 data URI - file:// URIs are no longer permitted in reports
         logo = helpers.getLogoImage(as_file=True)
-        self.assertEqual(logo, f'file://{settings.STATIC_ROOT}/img/inventree.png')
+        self.assertNotIn('file://', logo)
+        self.assertTrue(logo.startswith('data:image/png;base64,'))
+
+        # Ensure the encoded data actually represents a valid image
+        decoded = base64.b64decode(logo.removeprefix('data:image/png;base64,'))
+        Image.open(BytesIO(decoded)).verify()
+
+    def test_logo_image_custom_static(self):
+        """Test retrieval of a custom logo which lives in the static storage backend."""
+        with override_settings(CUSTOM_LOGO='img/inventree.png'):
+            logo = helpers.getLogoImage()
+            self.assertEqual(logo, '/static/img/inventree.png')
+
+            logo = helpers.getLogoImage(as_file=True)
+            self.assertNotIn('file://', logo)
+            self.assertTrue(logo.startswith('data:image/png;base64,'))
+
+            # Disabling 'custom' must fall back to the default logo, even if set
+            logo = helpers.getLogoImage(custom=False)
+            self.assertEqual(logo, '/static/img/inventree.png')
+
+    def test_logo_image_custom_media(self):
+        """Test retrieval of a custom logo which lives in the media (uploaded) storage backend."""
+        custom_logo_path = 'custom/test_logo.png'
+
+        img = Image.new('RGB', (16, 16), color='blue')
+        buffer = BytesIO()
+        img.save(buffer, 'PNG')
+        image_data = buffer.getvalue()
+
+        default_storage.save(custom_logo_path, ContentFile(image_data))
+
+        try:
+            with override_settings(CUSTOM_LOGO=custom_logo_path):
+                logo = helpers.getLogoImage()
+                self.assertEqual(logo, default_storage.url(custom_logo_path))
+
+                logo = helpers.getLogoImage(as_file=True)
+                self.assertNotIn('file://', logo)
+                self.assertTrue(logo.startswith('data:image/png;base64,'))
+
+                # The decoded data must exactly match the uploaded image
+                decoded = base64.b64decode(logo.removeprefix('data:image/png;base64,'))
+                self.assertEqual(decoded, image_data)
+        finally:
+            default_storage.delete(custom_logo_path)
 
     def test_download_image(self):
         """Test function for downloading image from remote URL."""
@@ -723,6 +779,41 @@ class TestHelpers(TestCase):
         InvenTree.helpers_model.download_image_from_url(
             large_img, timeout=10, max_size=10 * 1024 * 1024
         )
+
+    def test_download_image_dns_rebind_blocked(self):
+        """A hostname that resolves safely for validation but privately for the real fetch must be blocked.
+
+        Regression test: `validate_url_no_ssrf()` used to resolve the hostname once,
+        validate that result, and then discard it - the actual `requests.get()` call
+        resolved the same hostname again independently. An attacker controlling DNS
+        for their own domain could answer the first ("check") lookup with a public IP
+        and every subsequent ("use") lookup with a private/internal one (DNS
+        rebinding), so the real connection went somewhere the validator never saw.
+        """
+        public_addrinfo = [(2, 1, 6, '', ('93.184.216.34', 0))]
+        private_addrinfo = [(2, 1, 6, '', ('127.0.0.1', 0))]
+
+        calls = {'n': 0}
+
+        def rebinding_getaddrinfo(host, *args, **kwargs):
+            calls['n'] += 1
+            return public_addrinfo if calls['n'] == 1 else private_addrinfo
+
+        with mock.patch.object(
+            InvenTree.helpers_model,
+            '_real_getaddrinfo',
+            side_effect=rebinding_getaddrinfo,
+        ):
+            # The pre-check sees the safe public IP and passes; the *actual*
+            # connection attempt made by requests.get() must be independently
+            # guarded and must fail once it resolves to the private IP.
+            with self.assertRaisesRegex(Exception, 'Connection error'):
+                InvenTree.helpers_model.download_image_from_url(
+                    'http://rebind.example.com/image.png'
+                )
+
+        # Both the validation-time and connection-time lookups must have happened.
+        self.assertEqual(calls['n'], 2)
 
     def test_model_mixin(self):
         """Test the getModelsWithMixin function."""
@@ -1084,8 +1175,26 @@ class TestVersionNumber(TestCase):
 class CurrencyTests(TestCase):
     """Unit tests for currency / exchange rate functionality."""
 
-    def test_rates(self):
+    RATES = {
+        'AUD': 1.5,
+        'CAD': 1.35,
+        'CNY': 7.2,
+        'EUR': 0.9,
+        'GBP': 0.8,
+        'JPY': 150.0,
+        'NZD': 1.65,
+        'USD': 1.0,
+    }
+
+    @requests_mock.Mocker()
+    def test_rates(self, requests_mocker):
         """Test exchange rate update."""
+        # Patch setting for remote url
+        response_rates = {code: self.RATES.get(code, 1.0) for code in currency_codes()}
+        requests_mocker.get(
+            'https://api.frankfurter.app/latest', json={'rates': response_rates}
+        )
+
         # Initially, there will not be any exchange rate information
         rates = Rate.objects.all()
 
@@ -1098,24 +1207,10 @@ class CurrencyTests(TestCase):
         with self.assertRaises(MissingRate):
             convert_money(Money(100, 'AUD'), 'USD')
 
-        update_successful = False
+        InvenTree.tasks.update_exchange_rates()
 
-        # Note: the update sometimes fails in CI, let's give it a few chances
-        for idx in range(10):
-            InvenTree.tasks.update_exchange_rates()
-
-            rates = Rate.objects.all()
-
-            if rates.count() == len(currency_codes()):
-                update_successful = True
-                break
-
-            else:  # pragma: no cover
-                print('Exchange rate update failed - retrying')
-                print(f'Expected {currency_codes()}, got {[a.currency for a in rates]}')
-                time.sleep(1 + idx)
-
-        self.assertTrue(update_successful)
+        rates = Rate.objects.all()
+        self.assertEqual(rates.count(), len(currency_codes()))
 
         # Now that we have some exchange rate information, we can perform conversions
 
@@ -1211,13 +1306,15 @@ class TestSettings(InvenTreeTestCase):
 
     def test_initial_install(self):
         """Test if install of plugins on startup works."""
-        from common.settings import set_global_setting
+        from common.settings import get_global_setting, set_global_setting
         from plugin import registry
 
         set_global_setting('PLUGIN_ON_STARTUP', True)
 
         registry.reload_plugins(full_reload=True, collect=True)
-        self.assertGreater(len(settings.PLUGIN_FILE_HASH), 0)
+        self.assertGreater(
+            len(get_global_setting('_PLUGIN_FILE_HASH', '', create=False)), 0
+        )
 
         set_global_setting('PLUGIN_ON_STARTUP', False)
 
@@ -1587,6 +1684,27 @@ class SanitizerTest(TestCase):
         # Test that invalid string is cleaned
         self.assertNotEqual(dangerous_string, sanitize_svg(dangerous_string))
 
+    def test_svg_sanitizer_smil_bypass(self):
+        """Test that SMIL animation elements cannot be used to smuggle a javascript: URL.
+
+        A <set>/<animate>/<animateTransform> element can assign a `javascript:` value to
+        another element's `href`/`xlink:href` at render time via its `to`/`from`/`values`
+        attribute. These attributes are not treated as URLs by the sanitizer, so simply
+        stripping `javascript:` from `href`-like attributes is not sufficient - the
+        elements themselves must not be permitted.
+        """
+        malicious_string = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <a xlink:href="https://example.com">
+        <set attributeName="xlink:href" to="javascript:alert(document.domain)" />
+        <text x="10" y="20">Click me</text>
+        </a>
+        </svg>"""
+
+        cleaned = sanitize_svg(malicious_string)
+
+        self.assertNotIn('javascript:', cleaned)
+        self.assertNotIn('<set', cleaned)
+
 
 class MagicLoginTest(InvenTreeTestCase):
     """Test magic login token generation."""
@@ -1620,6 +1738,18 @@ class MagicLoginTest(InvenTreeTestCase):
         self.assertEqual(resp.url, '/api/auth/login-redirect/')
         # And we should be logged in again
         self.assertEqual(resp.wsgi_request.user, self.user)
+
+    def test_duplicate_email(self):
+        """Test that duplicate email addresses do not raise a server error."""
+        User = get_user_model()
+        User.objects.create_user(
+            username='duplicate', email=self.user.email, password='password'
+        )
+
+        resp = self.client.post(reverse('sesame-generate'), {'email': self.user.email})
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.data, {'status': 'ok'})
+        self.assertEqual(len(mail.outbox), 0)
 
 
 class MaintenanceModeTest(InvenTreeTestCase):
@@ -1867,3 +1997,55 @@ class URLCompatibilityTest(InvenTreeTestCase):
             response = self.client.get(old_url)
             self.assertEqual(response.status_code, 302)
             self.assertEqual(response['Location'], new_url)
+
+
+class InvenTreeAppConfigTests(TestCase):
+    """Tests the app configuration setup stuff."""
+
+    def test_check_pre_migration(self):
+        """Test all startup checks for partially applied pre-1.0.0 migrations."""
+        apps.PRE_1_0_0_CHECK_DONE = True
+        self.config = apps.InvenTreeConfig('InvenTree', import_module('InvenTree'))
+
+        with self.subTest('already checked'):
+            with patch.object(
+                apps.InvenTree.ready, 'canAppAccessDatabase'
+            ) as can_access:
+                self.config.check_pre_1_0_0_upgrade()
+
+            can_access.assert_not_called()
+
+        apps.PRE_1_0_0_CHECK_DONE = False
+        with self.subTest('database unavailable'):
+            with patch.object(
+                apps.InvenTree.ready, 'canAppAccessDatabase', return_value=False
+            ) as can_access:
+                self.config.check_pre_1_0_0_upgrade()
+
+            can_access.assert_called_once_with(allow_plugins=True)
+
+        with self.subTest('no stuck apps'):
+            with patch.object(
+                apps.InvenTree.ready, 'canAppAccessDatabase', return_value=True
+            ):
+                self.config.check_pre_1_0_0_upgrade()
+
+            self.assertTrue(apps.PRE_1_0_0_CHECK_DONE)
+
+        apps.PRE_1_0_0_CHECK_DONE = False
+        with self.subTest('stuck apps'):
+            with (
+                patch.object(
+                    apps.InvenTree.ready, 'canAppAccessDatabase', return_value=True
+                ),
+                patch.object(
+                    MigrationRecorder,
+                    'applied_migrations',
+                    return_value={('part', '0003_auto_20190525_2226')},
+                ),
+            ):
+                with self.assertRaises(SystemExit) as raised:
+                    self.config.check_pre_1_0_0_upgrade()
+
+            self.assertEqual(raised.exception.code, 1)
+            self.assertFalse(apps.PRE_1_0_0_CHECK_DONE)

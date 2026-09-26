@@ -9,7 +9,7 @@ import os
 import re
 from datetime import timedelta
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
-from typing import TypedDict, cast
+from typing import Optional, TypedDict, cast
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -35,6 +35,7 @@ from mptt.models import TreeForeignKey
 
 import common.currency
 import common.models
+import company.models
 import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.helpers
@@ -51,6 +52,7 @@ from common.currency import currency_code_default
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from InvenTree import helpers, validators
+from InvenTree.cache import get_session_cache, set_session_cache
 from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize
@@ -465,8 +467,8 @@ class Part(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeTagsMixin,
-    InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeImageMixin,
     InvenTree.models.MetadataMixin,
@@ -1003,6 +1005,7 @@ class Part(
         return InvenTree.helpers.increment_serial_number(sn, self)
 
     @property
+    @report.mixins.report_attribute()
     def full_name(self) -> str:
         """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in InvenTree settings."""
         return part_helpers.render_part_full_name(self)
@@ -1050,11 +1053,20 @@ class Part(
             raise ValidationError(_('Duplicate part revision already exists.'))
 
         # Ensure unique across (Name, revision, IPN) (as specified)
-        if (self.revision or self.IPN) and (
-            Part.objects
-            .exclude(pk=self.pk)
-            .filter(name=self.name, revision=self.revision, IPN=self.IPN)
-            .exists()
+        # Note: the 'unique_part' database constraint only rejects a row when
+        # *all three* fields are non-null (Postgres treats NULL as distinct from
+        # NULL), so mirror that here rather than skipping whenever either field
+        # is merely blank - an empty string ('') still collides with another
+        # empty string at the database level, unlike None/NULL.
+        if (
+            self.IPN is not None
+            and self.revision is not None
+            and (
+                Part.objects
+                .exclude(pk=self.pk)
+                .filter(name=self.name, revision=self.revision, IPN=self.IPN)
+                .exists()
+            )
         ):
             raise ValidationError(
                 _('Part with this Name, IPN and Revision already exists.')
@@ -1214,7 +1226,8 @@ class Part(
         return None
 
     @property
-    def default_supplier(self):
+    @report.mixins.report_attribute()
+    def default_supplier(self) -> Optional[company.models.SupplierPart]:
         """Return the default (primary) SupplierPart for this Part.
 
         This function is included for backwards compatibility,
@@ -1369,14 +1382,15 @@ class Part(
     )
 
     @property
-    def category_path(self):
+    def category_path(self) -> str:
         """Return the category path of this Part instance."""
         if self.category:
             return self.category.pathstring
         return ''
 
     @property
-    def available_stock(self):
+    @report.mixins.report_attribute()
+    def available_stock(self) -> Decimal:
         """Return the total available stock.
 
         - This subtracts stock which is already allocated to builds
@@ -1614,7 +1628,8 @@ class Part(
             PartStar.objects.filter(part=self, user=user).delete()
 
     @property
-    def can_build(self):
+    @report.mixins.report_attribute()
+    def can_build(self) -> Decimal:
         """Return the number of units that can be build with available stock."""
         import part.filters
 
@@ -1646,7 +1661,7 @@ class Part(
         return int(max(can_build_quantity, 0))
 
     @property
-    def active_builds(self):
+    def active_builds(self) -> int:
         """Return a list of outstanding builds.
 
         Builds marked as 'complete' or 'cancelled' are ignored
@@ -1654,11 +1669,9 @@ class Part(
         return self.builds.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
 
     @property
-    def quantity_being_built(self, include_variants: bool = True):
+    @report.mixins.report_attribute()
+    def quantity_being_built(self) -> Decimal:
         """Return the current number of parts currently being built.
-
-        Arguments:
-            include_variants: If True, include variants of this part in the calculation
 
         Note: This is the total quantity of Build orders, *not* the number of build outputs.
               In this fashion, it is the "projected" quantity of builds
@@ -1667,12 +1680,8 @@ class Part(
             status__in=BuildStatusGroups.ACTIVE_CODES
         )
 
-        if include_variants:
-            # If we are including variants, get all parts in the variant tree
-            builds = builds.filter(part__in=self.get_descendants(include_self=True))
-        else:
-            # Only look at this part
-            builds = builds.filter(part=self)
+        # We are including variants, get all parts in the variant tree
+        builds = builds.filter(part__in=self.get_descendants(include_self=True))
 
         quantity = 0
 
@@ -1683,7 +1692,7 @@ class Part(
         return quantity
 
     @property
-    def quantity_in_production(self, include_variants: bool = True):
+    def quantity_in_production(self, include_variants: bool = True) -> Decimal:
         """Quantity of this part currently actively in production.
 
         Arguments:
@@ -1877,7 +1886,8 @@ class Part(
         return query['t']
 
     @property
-    def total_stock(self):
+    @report.mixins.report_attribute()
+    def total_stock(self) -> Decimal:
         """Return the total stock quantity for this part.
 
         - Part may be stored in multiple locations
@@ -2030,7 +2040,7 @@ class Part(
         return list(parts)
 
     @property
-    def has_bom(self):
+    def has_bom(self) -> bool:
         """Return True if this Part instance has any BOM items."""
         return self.get_bom_items().exists()
 
@@ -2042,7 +2052,7 @@ class Part(
         return queryset
 
     @property
-    def has_trackable_parts(self):
+    def has_trackable_parts(self) -> bool:
         """Return True if any parts linked in the Bill of Materials are trackable.
 
         This is important when building the part.
@@ -2050,28 +2060,41 @@ class Part(
         return self.get_trackable_parts().exists()
 
     @property
-    def bom_count(self):
+    def bom_count(self) -> int:
         """Return the number of items contained in the BOM for this part."""
         return self.get_bom_items().count()
 
     @property
-    def used_in_count(self):
+    def used_in_count(self) -> int:
         """Return the number of part BOMs that this part appears in."""
         return len(self.get_used_in())
 
-    def get_bom_hash(self):
+    def get_bom_hash(self, include_part_names: bool = False) -> str:
         """Return a checksum hash for the BOM for this part.
 
         Used to determine if the BOM has changed (and needs to be signed off!)
         The hash is calculated by hashing each line item in the BOM. Returns a string representation of a hash object which can be compared with a stored value
+
+        Arguments:
+            include_part_names: If True, include the part names in the hash calculation (default = False, legacy support).
+
         """
         result_hash = hashlib.md5(str(self.id).encode())
 
         # List *all* BOM items (including inherited ones!)
-        bom_items = self.get_bom_items().all().prefetch_related('part', 'sub_part')
+        # Note: We must order the BOM items in a consistent way, otherwise the hash will change if the order of the items changes
+        bom_items = (
+            self
+            .get_bom_items()
+            .all()
+            .prefetch_related('part', 'sub_part')
+            .order_by('pk')
+        )
 
         for item in bom_items:
-            result_hash.update(str(item.get_item_hash()).encode())
+            result_hash.update(
+                str(item.get_item_hash(include_part_names=include_part_names)).encode()
+            )
 
         return str(result_hash.digest())
 
@@ -2089,7 +2112,11 @@ class Part(
             # If there is no BOM checksum, then the BOM is not valid
             return False
 
-        return self.get_bom_hash() == self.bom_checksum
+        # Fallback to legacy BOM hash if the primary calculation does not match
+        return (
+            self.get_bom_hash() == self.bom_checksum
+            or self.get_bom_hash(include_part_names=True) == self.bom_checksum
+        )
 
     @transaction.atomic
     def validate_bom(self, user, valid: bool = True):
@@ -2141,7 +2168,7 @@ class Part(
         if parts is None:
             parts = set()
 
-        bom_items = self.get_bom_items()
+        bom_items = self.get_bom_items().prefetch_related('sub_part')
 
         for bom_item in bom_items:
             sub_part = bom_item.sub_part
@@ -2444,7 +2471,8 @@ class Part(
         return orders
 
     @property
-    def on_order(self):
+    @report.mixins.report_attribute()
+    def on_order(self) -> Decimal:
         """Return the total number of items on order for this part.
 
         Note that some supplier parts may have a different pack_quantity attribute,
@@ -2609,6 +2637,20 @@ class PartPricing(common.models.MetaMixin):
         """Return True if the cached pricing is valid."""
         return self.updated is not None
 
+    def get_part(self):
+        """Return the Part instance associated with this pricing object.
+
+        If the part does not exist (i.e. has been deleted), return None.
+        """
+        from part.models import Part
+
+        try:
+            part = self.part
+            part.refresh_from_db()
+            return part
+        except (Part.DoesNotExist, IntegrityError):
+            return None
+
     def convert(self, money):
         """Attempt to convert money value to default currency.
 
@@ -2637,7 +2679,26 @@ class PartPricing(common.models.MetaMixin):
         Arguments:
             counter: Recursion counter (used to prevent infinite recursion)
             refresh: If specified, the PartPricing object will be refreshed from the database
+
+        Note:
+            Within a single request, repeated calls for the same part are cheap: a request-scoped
+            cache (see InvenTree.cache) short-circuits everything below after the first call,
+            avoiding redundant refresh_from_db() / existence-check queries for a part whose pricing
+            has already been resolved (scheduled or not) earlier in the same request. This does not
+            change behavior outside of a request (e.g. background tasks), where the cache is a
+            no-op and every call runs in full.
         """
+        cache_key = f'part-pricing-scheduled-{self.part_id}'
+        if get_session_cache(cache_key):
+            return
+
+        try:
+            self._schedule_for_update(counter=counter, refresh=refresh)
+        finally:
+            set_session_cache(cache_key, True)
+
+    def _schedule_for_update(self, counter: int = 0, refresh: bool = True):
+        """Implementation of schedule_for_update(), without the request-scoped cache guard."""
         import InvenTree.ready
 
         # If importing data, skip pricing update
@@ -2648,11 +2709,9 @@ class PartPricing(common.models.MetaMixin):
         if InvenTree.ready.isRunningMigrations():
             return
 
-        if (
-            not self.part
-            or not self.part.pk
-            or not Part.objects.filter(pk=self.part.pk).exists()
-        ):
+        _part = self.get_part()
+
+        if not _part:
             logger.warning(
                 'Referenced part instance does not exist - skipping pricing update.'
             )
@@ -2663,31 +2722,30 @@ class PartPricing(common.models.MetaMixin):
                 self.refresh_from_db()
         except (PartPricing.DoesNotExist, IntegrityError):
             # Error thrown if this PartPricing instance has already been removed
-            logger.warning(
-                "Error refreshing PartPricing instance for part '%s'", self.part
-            )
+            logger.warning("Error refreshing PartPricing instance for part '%s'", _part)
             return
 
         # Ensure that the referenced part still exists in the database
         try:
-            p = self.part
             if True:  # refresh and p.pk:
-                p.refresh_from_db()
+                _part.refresh_from_db()
         except IntegrityError:
             logger.exception(
-                "Could not update PartPricing as Part '%s' does not exist", self.part
+                "Could not update PartPricing as Part '%s' does not exist", _part
             )
             return
 
         if self.scheduled_for_update:
             # Ignore if the pricing is already scheduled to be updated
-            logger.debug('Pricing for %s already scheduled for update - skipping', p)
+            logger.debug(
+                'Pricing for %s already scheduled for update - skipping', _part
+            )
             return
 
         if counter > self.MAX_PRICING_DEPTH:
             # Prevent infinite recursion / stack depth issues
             logger.debug(
-                counter, f'Skipping pricing update for {p} - maximum depth exceeded'
+                counter, f'Skipping pricing update for {_part} - maximum depth exceeded'
             )
             return
 
@@ -2697,7 +2755,7 @@ class PartPricing(common.models.MetaMixin):
         except IntegrityError:
             # An IntegrityError here likely indicates that the referenced part has already been deleted
             logger.exception(
-                "Could not save PartPricing for part '%s' to the database", self.part
+                "Could not save PartPricing for part '%s' to the database", _part
             )
             return
 
@@ -2745,7 +2803,9 @@ class PartPricing(common.models.MetaMixin):
             try:
                 self.refresh_from_db()
             except PartPricing.DoesNotExist:
-                pass
+                # The underlying Part (and this pricing entry) has been deleted
+                # since this update was scheduled - nothing to do
+                return
 
         self.update_bom_cost(save=False)
         self.update_purchase_cost(save=False)
@@ -2779,22 +2839,31 @@ class PartPricing(common.models.MetaMixin):
         """Schedule updates for any assemblies which use this part."""
         # If the linked Part is used in any assemblies, schedule a pricing update for those assemblies
 
-        used_in_parts = self.part.get_used_in()
+        if not (_part := self.get_part()):
+            return
+
+        used_in_parts = _part.get_used_in()
 
         for p in used_in_parts:
             p.pricing.schedule_for_update(counter=counter + 1)
 
     def update_templates(self, counter: int = 0):
         """Schedule updates for any template parts above this part."""
-        templates = self.part.get_ancestors(include_self=False)
+        if not (_part := self.get_part()):
+            return
+
+        templates = _part.get_ancestors(include_self=False)
 
         for p in templates:
-            p.pricing.schedule_for_update(counter + 1)
+            p.pricing.schedule_for_update(counter=counter + 1)
 
     def save(self, *args, **kwargs):
         """Whenever pricing model is saved, automatically update overall prices."""
         # Update the currency which was used to perform the calculation
         self.currency = currency_code_default()
+
+        if not (_part := self.get_part()):
+            return
 
         try:
             self.update_overall_cost()
@@ -2802,7 +2871,7 @@ class PartPricing(common.models.MetaMixin):
         except Exception:
             log_error('PartPricing.save')
             logger.error(
-                "Could not save PartPricing for part '%s' to the database", self.part
+                "Could not save PartPricing for part '%s' to the database", _part
             )
 
     def update_bom_cost(self, save=True):
@@ -2815,7 +2884,10 @@ class PartPricing(common.models.MetaMixin):
 
         Note: The cumulative costs are calculated based on the specified default currency
         """
-        if not self.part.assembly:
+        if not (_part := self.get_part()):
+            return
+
+        if not _part.assembly:
             # Not an assembly - no BOM pricing
             self.bom_cost_min = None
             self.bom_cost_max = None
@@ -2834,7 +2906,7 @@ class PartPricing(common.models.MetaMixin):
         any_min_elements = False
         any_max_elements = False
 
-        for bom_item in self.part.get_bom_items():
+        for bom_item in _part.get_bom_items():
             # Loop through each BOM item which is used to assemble this part
 
             bom_item_min = None
@@ -2890,11 +2962,14 @@ class PartPricing(common.models.MetaMixin):
 
         Purchase history only takes into account "completed" purchase orders.
         """
+        if not (_part := self.get_part()):
+            return
+
         # Find all line items for completed orders which reference this part
         line_items = OrderModels.PurchaseOrderLineItem.objects.filter(
             order__status=PurchaseOrderStatus.COMPLETE.value,
             received__gt=0,
-            part__part=self.part,
+            part__part=_part,
         )
 
         # Exclude line items which do not have an associated price
@@ -2953,12 +3028,15 @@ class PartPricing(common.models.MetaMixin):
 
     def update_internal_cost(self, save=True):
         """Recalculate internal cost for the referenced Part instance."""
+        if not (_part := self.get_part()):
+            return
+
         min_int_cost = None
         max_int_cost = None
 
         if get_global_setting('PART_INTERNAL_PRICE', False):
             # Only calculate internal pricing if internal pricing is enabled
-            for pb in self.part.internalpricebreaks.all():
+            for pb in _part.internalpricebreaks.all():
                 cost = self.convert(pb.price)
 
                 if cost is None:
@@ -2983,12 +3061,15 @@ class PartPricing(common.models.MetaMixin):
         - The limits are simply the lower and upper bounds of available SupplierPriceBreaks
         - We do not take "quantity" into account here
         """
+        if not (_part := self.get_part()):
+            return
+
         min_sup_cost = None
         max_sup_cost = None
 
-        if self.part.purchaseable:
+        if _part.purchaseable:
             # Iterate through each available SupplierPart instance
-            for sp in self.part.supplier_parts.all():
+            for sp in _part.supplier_parts.all():
                 # Iterate through each available SupplierPriceBreak instance
                 for pb in sp.pricebreaks.all():
                     if pb.price is None:
@@ -3017,13 +3098,16 @@ class PartPricing(common.models.MetaMixin):
 
         Here we track the min/max costs of any variant parts.
         """
+        if not (_part := self.get_part()):
+            return
+
         variant_min = None
         variant_max = None
 
         active_only = get_global_setting('PRICING_ACTIVE_VARIANTS', False)
 
-        if self.part.is_template:
-            variants = self.part.get_descendants(include_self=False)
+        if _part.is_template:
+            variants = _part.get_descendants(include_self=False)
 
             for v in variants:
                 if active_only and not v.active:
@@ -3118,11 +3202,14 @@ class PartPricing(common.models.MetaMixin):
 
     def update_sale_cost(self, save=True):
         """Recalculate sale cost data."""
+        if not (_part := self.get_part()):
+            return
+
         # Iterate through the sell price breaks
         min_sell_price = None
         max_sell_price = None
 
-        for pb in self.part.salepricebreaks.all():
+        for pb in _part.salepricebreaks.all():
             cost = self.convert(pb.price)
 
             if cost is None:
@@ -3651,6 +3738,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         setup_quantity: Extra required quantity for a build, to account for setup losses
         attrition: Estimated losses for a Build, expressed as a percentage (e.g. '2%')
         rounding_multiple: Rounding quantity when calculating the required quantity for a build
+        piece_count: Number of pieces required (for cut-to-length items like cables, tubing).
+            Total material = quantity x piece_count.
         note: Note field for this BOM item
         checksum: Validation checksum for the particular BOM line item
         validated: Boolean field indicating if this BOM item is valid (checksum matches)
@@ -3686,6 +3775,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         allow_variants: bool = True,
         allow_substitutes: bool = True,
         allow_inactive: bool = True,
+        variant_parts=None,
     ):
         """Return a list of valid parts which can be allocated against this BomItem.
 
@@ -3693,6 +3783,8 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             allow_variants: If True, include variants of the sub_part
             allow_substitutes: If True, include any directly specified substitute parts
             allow_inactive: If True, include inactive parts in the returned list
+            variant_parts: Optional pre-fetched iterable of sub_part's descendants,
+                to avoid re-querying the part tree when the caller already has it
 
         Includes:
         - The referenced sub_part
@@ -3706,7 +3798,9 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         # Variant parts (if allowed)
         if allow_variants and self.allow_variants:
-            for variant in self.sub_part.get_descendants(include_self=False):
+            if variant_parts is None:
+                variant_parts = self.sub_part.get_descendants(include_self=False)
+            for variant in variant_parts:
                 parts.add(variant)
 
         # Substitute parts
@@ -3971,6 +4065,16 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         ),
     )
 
+    piece_count = models.PositiveIntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        verbose_name=_('Piece Count'),
+        help_text=_(
+            'Number of pieces required (for cut-to-length items). '
+            'Total material = quantity x piece_count.'
+        ),
+    )
+
     reference = models.CharField(
         max_length=5000,
         blank=True,
@@ -4025,6 +4129,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             'setup_quantity',
             'attrition',
             'rounding_multiple',
+            'piece_count',
             'reference',
             'optional',
             'inherited',
@@ -4032,18 +4137,31 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             'allow_variants',
         ]
 
-    def get_item_hash(self) -> str:
-        """Calculate the checksum hash of this BOM line item."""
+    def get_item_hash(self, include_part_names: bool = False) -> str:
+        """Calculate the checksum hash of this BOM line item.
+
+        Arguments:
+            include_part_names: If True, include the names of the parts in the hash calculation (default = False, legacy support)
+        """
         # Seed the hash with the ID of this BOM item
         result_hash = hashlib.md5(b'')
 
         for field in self.hash_fields():
+            # Skip the str representation of the parts unless explicitly requested
+            if not include_part_names and field in ['part', 'sub_part']:
+                continue
+
             # Get the value of the field
             value = getattr(self, field, None)
 
             # If the value is None, use an empty string
             if value is None:
                 value = ''
+
+            if field == 'piece_count' and value == 1:
+                # Ignore the piece_count field if it is 1 (default value)
+                # This is to ensure backwards compatibility with BOM checksums calculated before this field was added
+                continue
 
             # Normalize decimal values to ensure consistent representation
             # These values are only included if they are non-zero
@@ -4088,7 +4206,11 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         if len(self.checksum) == 0:
             return False
 
-        return self.get_item_hash() == self.checksum
+        # Fallback to legacy item hash if the primary calculation does not match
+        return (
+            self.get_item_hash() == self.checksum
+            or self.get_item_hash(include_part_names=True) == self.checksum
+        )
 
     @property
     def is_consumable(self) -> bool:
@@ -4187,9 +4309,14 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         Returns:
             Production quantity required for this component
+
+        Note:
+            For cut-to-length parts, quantity represents the per-piece size/length
+            and piece_count indicates how many pieces are needed.
+            Total material = quantity x piece_count x build_quantity.
         """
-        # Base quantity requirement
-        required = self.quantity * build_quantity
+        # Base quantity requirement (quantity is per-piece, piece_count is number of pieces)
+        required = self.quantity * self.piece_count * build_quantity
 
         # Account for attrition
         if self.attrition > 0:
@@ -4269,8 +4396,13 @@ def update_pricing_after_delete(sender, instance, **kwargs):
         InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
         and not InvenTree.ready.isImportingData()
     ):
-        if instance.part:
-            instance.part.schedule_pricing_update(create=False)
+        try:
+            part = instance.part
+            part.schedule_pricing_update(create=False)
+        except Part.DoesNotExist:
+            # The part instance may have already been deleted,
+            # in which case we cannot update pricing
+            pass
 
 
 class BomItemSubstitute(InvenTree.models.InvenTreeMetadataModel):

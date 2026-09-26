@@ -80,6 +80,52 @@ To return an element corresponding to a certain key in a container which support
 {% endraw %}
 ```
 
+## Session Variables
+
+Variables assigned with the `as` keyword (as described above) are only visible within the template block they were assigned in - for example, a variable assigned inside a `{% raw %}{% for %}{% endraw %}` loop is not visible once the loop ends. This makes it awkward to accumulate a value (such as a running total) across a loop.
+
+To get around this, the `set_var` and `get_var` functions can be used to store and retrieve a named variable which remains visible for the remainder of the current report or label render, regardless of which template block it was set within:
+
+### set_var
+
+Assign a value to a named variable within the current rendering context. This variable will remain accessible for the remainder of the report or label render, regardless of which template block it was set within.
+
+::: report.templatetags.report.set_var
+    options:
+        show_docstring_description: false
+        show_source: False
+
+### get_var
+
+Retrieve the value of a named variable previously stored with `set_var`. If the variable has not been set, a backup value can be provided.
+
+::: report.templatetags.report.get_var
+    options:
+        show_docstring_description: false
+        show_source: False
+
+#### Example
+
+```html
+{% raw %}
+{% load report %}
+
+{% set_var "total" 0 %}
+
+{% for line in lines %}
+    {% get_var "total" as total %}
+    {% add total line.quantity as new_total %}
+    {% set_var "total" new_total %}
+{% endfor %}
+
+{% get_var "total" as final_total %}
+Total quantity: {{ final_total }}
+{% endraw %}
+```
+
+!!! info "Isolated per Render"
+    The variables stored with `set_var` are private to the report or label instance currently being rendered. They are reset for every instance, and are never shared between reports, requests, or users.
+
 ## Database Helpers
 
 A number of helper functions are available for accessing database objects:
@@ -979,9 +1025,98 @@ Length: {{ length_value }}
 {% endraw %}
 ```
 
+## Notes
+
+[Notes](../concepts/notes.md) are rich-text documents that can be attached to most InvenTree model instances. Two template tags are available for accessing note content in a report.
+
+### note
+
+The `note` tag returns the rendered HTML content of a note, ready to embed directly in a report. Any images embedded in the note are automatically resolved to their base64-encoded data so that they appear in the generated PDF.
+
+::: report.templatetags.report.note
+    options:
+        show_docstring_description: false
+        show_source: False
+
+If no `title` argument is given, the [primary note](../concepts/notes.md#primary-note) is returned. If a `title` is given, the note whose title matches (case-insensitively) is returned instead. An empty string is returned when no matching note exists.
+
+#### Example
+
+```html
+{% raw %}
+{% load report %}
+
+<!-- Render the primary note for the part -->
+{% note part as part_note %}
+<div>{{ part_note }}</div>
+
+<!-- Render a note by title -->
+{% note part "Assembly Instructions" as instructions %}
+<div>{{ instructions }}</div>
+{% endraw %}
+```
+
+!!! info "Safe HTML Output"
+    The `note` tag returns pre-sanitized HTML and is marked safe for direct template rendering. Do **not** additionally wrap it with `| safe` or `| markdownify` — the content has already been processed.
+
+### note_instance
+
+The `note_instance` tag returns the `Note` object itself, giving access to its individual fields. This is useful when you need to display the note title, description, or metadata alongside its content.
+
+::: report.templatetags.report.note_instance
+    options:
+        show_docstring_description: false
+        show_source: False
+
+A `Note` object exposes the following attributes:
+
+| Attribute | Description |
+| --- | --- |
+| `title` | The title of the note |
+| `description` | An optional short description of the note |
+| `content` | The raw HTML content of the note |
+| `primary` | `True` if this is the primary note for the model instance |
+| `updated` | Timestamp of the last modification |
+| `updated_by` | The user who last modified the note |
+
+#### Example
+
+```html
+{% raw %}
+{% load report %}
+
+{% note_instance part as primary_note %}
+{% if primary_note %}
+<h3>{{ primary_note.title }}</h3>
+{% if primary_note.description %}<p><em>{{ primary_note.description }}</em></p>{% endif %}
+{% note part as note_content %}
+<div>{{ note_content }}</div>
+{% endif %}
+{% endraw %}
+```
+
+### Iterating Over All Notes
+
+When a model has multiple notes and you want to render all of them, access the `notes` queryset directly:
+
+```html
+{% raw %}
+{% load report %}
+
+{% for n in part.notes.all %}
+<h3>{{ n.title }}</h3>
+{% note part n.title as note_content %}
+<div>{{ note_content }}</div>
+{% endfor %}
+{% endraw %}
+```
+
 ## Rendering Markdown
 
-Some data fields (such as the *Notes* field available on many internal database models) support [markdown formatting](https://en.wikipedia.org/wiki/Markdown). To render markdown content in a custom report, there are template filters made available through the [django-markdownify](https://github.com/erwinmatijsen/django-markdownify) library. This library provides functionality for converting markdown content to HTML representation, allowing it to be then rendered to PDF by the InvenTree report generation pipeline.
+Some data fields (such as those provided by custom plugin models) may support [markdown formatting](https://en.wikipedia.org/wiki/Markdown). To render markdown content in a custom report, there are template filters made available through the [django-markdownify](https://github.com/erwinmatijsen/django-markdownify) library. This library provides functionality for converting markdown content to HTML representation, allowing it to be then rendered to PDF by the InvenTree report generation pipeline.
+
+!!! info "Notes"
+    [Notes](../concepts/notes.md) content is rich-text (stored as HTML) rather than markdown, and is already sanitized. Use the [note](#note) tag to render it - do not pass it through `markdownify`.
 
 To render markdown content in a report, consider the following simplified example:
 
@@ -990,9 +1125,9 @@ To render markdown content in a report, consider the following simplified exampl
 
 {% load markdownify %}
 
-<h3>Part Notes</h3>
+<h3>Description</h3>
 <p>
-    {{ part.notes | markdownify }}
+    {{ some_markdown_field | markdownify }}
 </p>
 {% endraw %}
 ```

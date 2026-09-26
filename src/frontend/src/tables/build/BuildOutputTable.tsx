@@ -63,6 +63,7 @@ import {
   useStockFields,
   useStockItemSerializeFields
 } from '../../forms/StockForms';
+import { compareTestResults } from '../../functions/comparison';
 import { InvenTreeIcon } from '../../functions/icons';
 import useBackgroundTask from '../../hooks/UseBackgroundTask';
 import {
@@ -277,9 +278,7 @@ export default function BuildOutputTable({
           // Find the "newest" result for this template in the returned data
           const result = record.tests
             ?.filter((test: any) => test.template == template.pk)
-            .sort((a: any, b: any) => {
-              return a.pk < b.pk ? 1 : -1;
-            })
+            .sort(compareTestResults)
             .shift();
 
           if (template?.required && result?.result) {

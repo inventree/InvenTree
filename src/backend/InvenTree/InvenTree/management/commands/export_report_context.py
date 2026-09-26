@@ -7,13 +7,14 @@ This in turn allows report context to be documented in the InvenTree documentati
 without having to manually duplicate the information in multiple places.
 """
 
+import inspect
 import json
 from typing import get_args, get_origin, get_type_hints
 
 import django.db.models
 from django.core.management.base import BaseCommand, CommandError
 
-from report.mixins import QuerySet
+from report.mixins import REPORT_ATTRIBUTE_MARKER, QuerySet
 
 
 def get_type_str(type_obj):
@@ -38,6 +39,29 @@ def get_type_str(type_obj):
     return f'{type_obj.__module__}.{type_obj.__name__}'
 
 
+def find_related_models(type_obj) -> set:
+    """Recursively find any Django Model subclasses referenced by a type annotation.
+
+    Handles plain model classes, `Optional[Model]`, and `report.mixins.QuerySet[Model]`
+    (and any nesting thereof), so that models referenced from a field/property type
+    can be discovered for the "related model" documentation, without needing to be
+    manually curated.
+    """
+    found = set()
+
+    if type_obj is None or type_obj is type(None):
+        return found
+
+    if inspect.isclass(type_obj) and issubclass(type_obj, django.db.models.Model):
+        found.add(type_obj)
+        return found
+
+    for arg in get_args(type_obj):
+        found |= find_related_models(arg)
+
+    return found
+
+
 def parse_docstring(docstring: str):
     """Parse the docstring of a type object and return a dictionary of sections."""
     sections = {}
@@ -57,6 +81,92 @@ def parse_docstring(docstring: str):
             sections[current_section][name.strip()] = doc.strip()
 
     return sections
+
+
+def get_report_attributes(model):
+    """Find all properties/methods on a model marked with @report_attribute.
+
+    This walks the full MRO of the model class, so attributes contributed by
+    mixins (e.g. `InvenTreeBarcodeMixin.barcode`) are discovered too, regardless
+    of whether they are also explicitly included in `report_context()`.
+
+    Returns a tuple of:
+
+    - A dict of {name: {"description": ..., "type": ...}}, ordered so that
+      attributes redefined further down the MRO (i.e. on the model itself) take
+      precedence over the same name defined on a base/mixin class.
+    - A list of qualified names (e.g. "Part.default_supplier") for any
+      @report_attribute-marked property/method which is missing a return type
+      annotation.
+    - A set of any Django Model subclasses referenced by the return type of a
+      discovered property (e.g. `SupplierPart` for `Part.default_supplier`), used
+      to auto-discover "related" models which are not themselves reportable.
+    """
+    found = {}
+    errors = []
+    related_models = set()
+
+    for klass in reversed(model.__mro__):
+        for name, member in vars(klass).items():
+            target = member.fget if isinstance(member, property) else member
+            description = getattr(target, REPORT_ATTRIBUTE_MARKER, None)
+
+            if description is None:
+                continue
+
+            return_type = get_type_hints(target).get('return', None)
+
+            if return_type is None:
+                errors.append(f'{klass.__name__}.{name}')
+            else:
+                related_models |= find_related_models(return_type)
+
+            found[name] = {
+                'description': description,
+                'type': get_type_str(return_type) if return_type is not None else '',
+            }
+
+    return found, errors, related_models
+
+
+def get_model_field_attributes(model):
+    """Find all concrete database fields defined on a model.
+
+    This includes fields inherited from mixins/abstract base classes, so (for
+    example) `barcode_data` and `barcode_hash` are discovered for any model
+    which uses `InvenTreeBarcodeMixin`, without needing to be documented by hand.
+
+    Reverse relations (e.g. the 'lines' accessor on a linked order) are excluded,
+    as they are not actual fields on this model's table but related querysets -
+    these are documented (where relevant) via `report_context()` or `@report_attribute` instead.
+
+    Returns a tuple of:
+
+    - A dict of {name: {"description": ..., "type": ...}}.
+    - A set of any Django Model subclasses referenced by a relation field (e.g.
+      `PartCategory` for `Part.category`), used to auto-discover "related" models
+      which are not themselves reportable.
+    """
+    found = {}
+    related_models = set()
+
+    for field in model._meta.get_fields():
+        if not field.concrete:
+            continue
+
+        description = str(getattr(field, 'help_text', '') or '') or str(
+            getattr(field, 'verbose_name', field.name)
+        )
+
+        type_str = type(field).__name__
+
+        if field.is_relation and field.related_model is not None:
+            type_str = f'{type_str}[{get_type_str(field.related_model)}]'
+            related_models.add(field.related_model)
+
+        found[field.name] = {'description': description, 'type': type_str}
+
+    return found, related_models
 
 
 class Command(BaseCommand):
@@ -79,8 +189,10 @@ class Command(BaseCommand):
             ReportContextExtension,
         )
 
-        context = {'models': {}, 'base': {}}
+        context = {'models': {}, 'related_models': {}, 'base': {}}
         is_error = False
+        is_attribute_error = False
+        related_model_classes = set()
 
         # Base context models
         for key, model in [
@@ -111,10 +223,23 @@ class Command(BaseCommand):
                 is_error = True
                 continue
 
+            fields, field_related = get_model_field_attributes(model)
+            properties, property_errors, property_related = get_report_attributes(model)
+
+            related_model_classes |= field_related | property_related
+
+            for qualified_name in property_errors:
+                print(
+                    f'Error: {qualified_name} is marked with @report_attribute but does not have a return type annotation'
+                )
+                is_attribute_error = True
+
             context['models'][model_key] = {
                 'key': model_key,
                 'name': model_name,
                 'context': {},
+                'fields': fields,
+                'properties': properties,
             }
 
             attributes = parse_docstring(ctx_type.__doc__).get('Attributes', {})
@@ -127,6 +252,38 @@ class Command(BaseCommand):
         if is_error:
             raise CommandError(
                 'INVE-E4 - Some models associated with the `InvenTreeReportMixin` do not have a valid `report_context` return type annotation.'
+            )
+
+        # Related models: models which are not themselves reportable, but which are
+        # referenced by a field or @report_attribute property on a reportable model.
+        # Discovered automatically (one hop) from the fields/properties collected above,
+        # so no manual list of "related" models needs to be maintained.
+        reportable_models = set(report_model_types())
+
+        for model in sorted(
+            related_model_classes - reportable_models, key=lambda m: m.__name__
+        ):
+            model_key = model.__name__.lower()
+
+            fields, _ = get_model_field_attributes(model)
+            properties, property_errors, _ = get_report_attributes(model)
+
+            for qualified_name in property_errors:
+                print(
+                    f'Error: {qualified_name} is marked with @report_attribute but does not have a return type annotation'
+                )
+                is_attribute_error = True
+
+            context['related_models'][model_key] = {
+                'key': model_key,
+                'name': str(model._meta.verbose_name).title(),
+                'fields': fields,
+                'properties': properties,
+            }
+
+        if is_attribute_error:
+            raise CommandError(
+                'INVE-E5 - Some properties/methods marked with `@report_attribute` do not have a valid return type annotation.'
             )
 
         filename = kwargs.get('filename', 'inventree_report_context.json')

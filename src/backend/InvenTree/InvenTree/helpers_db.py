@@ -11,7 +11,7 @@ from django.db.models import QuerySet
 def bulk_create_and_fetch(
     model, items, id_field: str = 'pk', filters: Optional[dict] = None
 ) -> QuerySet:
-    """Bulk create items in the database, and return a queryset of the created items.
+    """Bulk create items in the database, and return a list of the created items.
 
     Arguments:
         model: The Django model class to create instances of.
@@ -20,7 +20,7 @@ def bulk_create_and_fetch(
         filters: Optional dictionary of filters to apply when fetching the created items.
 
     Returns:
-        A Django QuerySet containing the created items.
+        A QuerySet containing the created items.
 
     This helper method is required because the Django bulk_create() method
     does not guarantee that the ID values of the created items will be populated in the returned objects.
@@ -57,10 +57,16 @@ def bulk_create_and_fetch(
 
     instances = model.objects.filter(**lookup_filters)
 
-    pks = list(instances.values_list(id_field or 'pk', flat=True))
+    id_field = id_field or 'pk'
+
+    pks = list(instances.order_by(id_field).values_list(id_field, flat=True))
 
     # Override the metadata values to remove the temporary bulk_create_id
     instances.update(metadata=None)
 
     # Fetch the newly created items (by primary key, as the metadata filter no longer matches)
-    return model.objects.filter(**{f'{id_field or "pk"}__in': pks})
+    # Ordered by id_field: auto-increment values are assigned in insertion order on every
+    # backend, so this restores correspondence with the input 'items' list for callers that
+    # zip the result against it positionally. Without this, some backends (e.g. MySQL) may
+    # return 'pk__in' rows in a different order than they were inserted.
+    return model.objects.filter(**{f'{id_field}__in': pks}).order_by(id_field)

@@ -32,8 +32,22 @@ def print_reports(
     try:
         template = ReportTemplate.objects.get(pk=template_id)
         output = DataOutput.objects.get(pk=output_id)
+    except DataOutput.DoesNotExist:
+        # The DataOutput may have already been consumed and deleted by the time
+        # this task runs (e.g. if the background worker redelivered the task)
+        logger.info(
+            'DataOutput %s no longer exists - skipping print_reports task', output_id
+        )
+        return
     except Exception:
         log_error('report.tasks.print_reports')
+        return
+
+    if output.complete:
+        # This task has already been processed (e.g. a redelivered/duplicate task) - skip it
+        logger.info(
+            'DataOutput %s is already complete - skipping print_reports task', output_id
+        )
         return
 
     # Fetch user information
@@ -86,8 +100,29 @@ def print_labels(
     try:
         template = LabelTemplate.objects.get(pk=template_id)
         output = DataOutput.objects.get(pk=output_id)
+    except DataOutput.DoesNotExist:
+        # The DataOutput may have already been consumed and deleted by the time
+        # this task runs (e.g. if the background worker redelivered the task)
+        logger.info(
+            'DataOutput %s no longer exists - skipping print_labels task', output_id
+        )
+        return
     except Exception:
         log_error('report.tasks.print_labels')
+        return
+
+    if output.complete:
+        # This task has already been processed (e.g. a redelivered/duplicate task) - skip it
+        logger.info(
+            'DataOutput %s is already complete - skipping print_labels task', output_id
+        )
+        return
+
+    if output.errors:
+        # A failed job may have printed some labels already - do not print them again
+        logger.info(
+            'DataOutput %s has already failed - skipping print_labels task', output_id
+        )
         return
 
     # Fetch user information
@@ -113,6 +148,7 @@ def print_labels(
 
     if not plugin:
         logger.warning("Label printing plugin '%s' not found", plugin_slug)
+        output.mark_failure(error=f"Label printing plugin '{plugin_slug}' not found")
         return
 
     # Extract optional arguments for label printing

@@ -29,7 +29,7 @@ export function renderPartStockCell(record: any): ReactNode {
 
   if (min_stock > stock) {
     extra.push(
-      <Text key='min-stock' c='orange'>
+      <Text key='min-stock' c='orange' size='sm'>
         {`${t`Minimum stock`}: ${formatDecimal(min_stock)}`}
       </Text>
     );
@@ -39,7 +39,7 @@ export function renderPartStockCell(record: any): ReactNode {
 
   if (max_stock > 0 && stock > max_stock) {
     extra.push(
-      <Text key='max-stock' c='teal'>
+      <Text key='max-stock' c='teal' size='sm'>
         {`${t`Maximum stock`}: ${formatDecimal(max_stock)}`}
       </Text>
     );
@@ -47,19 +47,25 @@ export function renderPartStockCell(record: any): ReactNode {
 
   if (record.ordering > 0) {
     extra.push(
-      <Text key='on-order'>{`${t`On Order`}: ${formatDecimal(record.ordering)}`}</Text>
+      <Text
+        key='on-order'
+        size='sm'
+      >{`${t`On Order`}: ${formatDecimal(record.ordering)}`}</Text>
     );
   }
 
   if (record.building) {
     extra.push(
-      <Text key='building'>{`${t`Building`}: ${formatDecimal(record.building)}`}</Text>
+      <Text
+        key='building'
+        size='sm'
+      >{`${t`Building`}: ${formatDecimal(record.building)}`}</Text>
     );
   }
 
   if (record.allocated_to_build_orders > 0) {
     extra.push(
-      <Text key='bo-allocations'>
+      <Text key='bo-allocations' size='sm'>
         {`${t`Build Order Allocations`}: ${formatDecimal(record.allocated_to_build_orders)}`}
       </Text>
     );
@@ -67,7 +73,7 @@ export function renderPartStockCell(record: any): ReactNode {
 
   if (record.allocated_to_sales_orders > 0) {
     extra.push(
-      <Text key='so-allocations'>
+      <Text key='so-allocations' size='sm'>
         {`${t`Sales Order Allocations`}: ${formatDecimal(record.allocated_to_sales_orders)}`}
       </Text>
     );
@@ -75,7 +81,7 @@ export function renderPartStockCell(record: any): ReactNode {
 
   if (available != stock) {
     extra.push(
-      <Text key='available'>
+      <Text key='available' size='sm'>
         {t`Available`}: {formatDecimal(available)}
       </Text>
     );
@@ -83,7 +89,7 @@ export function renderPartStockCell(record: any): ReactNode {
 
   if (record.external_stock > 0) {
     extra.push(
-      <Text key='external'>
+      <Text key='external' size='sm'>
         {t`External stock`}: {formatDecimal(record.external_stock)}
       </Text>
     );
