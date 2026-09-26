@@ -199,7 +199,8 @@ function SelectPartsStep({
   const globalSettings = useGlobalSettingsState();
 
   const purchaseOrderFields = usePurchaseOrderFields({
-    supplierId: selectedRecord?.supplier_part?.supplier
+    supplierId: selectedRecord?.supplier_part?.supplier,
+    create: true
   });
 
   const newPurchaseOrder = useCreateApiFormModal({

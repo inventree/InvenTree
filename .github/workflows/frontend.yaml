@@ -15,7 +15,7 @@ on:
 env:
   python_version: 3.12
   node_version: 24
-  plugin_creator_version: 1.20.0
+  plugin_creator_version: 1.20.1
   # The OS version must be set per job
   server_start_sleep: 60
 
