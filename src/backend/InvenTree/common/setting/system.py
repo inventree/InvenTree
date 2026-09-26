@@ -1031,6 +1031,15 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': True,
         'validator': bool,
     },
+    'PURCHASEORDER_DEFAULT_RECEIVE_LOCATION': {
+        'name': _('Default Receive Location'),
+        'description': _(
+            'Default destination location for received goods on new purchase orders'
+        ),
+        'default': '',
+        'model': 'stock.stocklocation',
+        'model_filters': {'structural': False},
+    },
     # login / SSO
     'LOGIN_ENABLE_PWD_FORGOT': {
         'name': _('Enable password forgot'),
