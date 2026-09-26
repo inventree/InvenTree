@@ -77,6 +77,24 @@ class BuildMaterialCostTest(BuildTestBase):
         pricing.save()
         return part.pricing
 
+    def assert_material_cost(self, output, cost_type, min_cost, max_cost, entries=None):
+        """Assert the total min/max cost across every entry of the given type.
+
+        Cost entries are additive, so a build output may legitimately carry more
+        than one entry of a single type - e.g. a tracked (per-output) and a pooled
+        (whole-build) material contribution are recorded separately, and summed
+        into the cached StockItemCost total.
+        """
+        queryset = StockItemCostEntry.objects.filter(
+            stock_item=output, cost_type=cost_type
+        )
+
+        if entries is not None:
+            self.assertEqual(queryset.count(), entries)
+
+        self.assertEqual(sum(entry.min_cost for entry in queryset), min_cost)
+        self.assertEqual(sum(entry.max_cost for entry in queryset), max_cost)
+
     def test_tracked_measured_cost(self):
         """A tracked allocation with a recorded cost produces a measured MATERIAL entry."""
         StockItemCostEntry.objects.create_cost(
@@ -160,7 +178,7 @@ class BuildMaterialCostTest(BuildTestBase):
             self.assertEqual(entry.max_cost, Money(5, 'USD'))
 
     def test_pooled_cost_is_additive_to_tracked_cost(self):
-        """The pooled (whole-build) pass adds to, rather than replaces, the per-output tracked cost."""
+        """The pooled (whole-build) pass adds a second entry, rather than replacing the tracked one."""
         StockItemCostEntry.objects.create_cost(
             self.stock_3_1,
             CostType.PURCHASE.value,
@@ -187,12 +205,14 @@ class BuildMaterialCostTest(BuildTestBase):
         self.build.refresh_from_db()
 
         for output in (self.output_1, self.output_2):
-            entry = StockItemCostEntry.objects.get(
-                stock_item=output, cost_type=CostType.MATERIAL.value
+            # Recorded as two separate entries - 4 (tracked) + 5 (pooled) = 9 USD/unit
+            self.assert_material_cost(
+                output,
+                CostType.MATERIAL.value,
+                Money(9, 'USD'),
+                Money(9, 'USD'),
+                entries=2,
             )
-            # 4 (tracked) + 5 (pooled) = 9 USD/unit
-            self.assertEqual(entry.min_cost, Money(9, 'USD'))
-            self.assertEqual(entry.max_cost, Money(9, 'USD'))
 
     def test_currency_conversion(self):
         """Allocated stock cost in a non-default currency is converted before summing."""
@@ -328,17 +348,22 @@ class BuildMaterialCostTest(BuildTestBase):
         # ESTIMATED: tracked (1/unit x $2-$4 range = $2-$4/unit) + pooled
         # (33 units x $1-$3 range / 11 total = $3-$9/unit) = $5-$13/unit, uniform
         for output in outputs:
-            material = StockItemCostEntry.objects.get(
-                stock_item=output, cost_type=CostType.MATERIAL.value
+            # Each total is split across two entries - one tracked, one pooled
+            self.assert_material_cost(
+                output,
+                CostType.MATERIAL.value,
+                Money(6, 'USD'),
+                Money(6, 'USD'),
+                entries=2,
             )
-            self.assertEqual(material.min_cost, Money(6, 'USD'))
-            self.assertEqual(material.max_cost, Money(6, 'USD'))
 
-            estimated = StockItemCostEntry.objects.get(
-                stock_item=output, cost_type=CostType.MATERIAL_ESTIMATED.value
+            self.assert_material_cost(
+                output,
+                CostType.MATERIAL_ESTIMATED.value,
+                Money(5, 'USD'),
+                Money(13, 'USD'),
+                entries=2,
             )
-            self.assertEqual(estimated.min_cost, Money(5, 'USD'))
-            self.assertEqual(estimated.max_cost, Money(13, 'USD'))
 
             # Never a MANUFACTURING (process cost) entry - nothing populates that yet
             self.assertFalse(

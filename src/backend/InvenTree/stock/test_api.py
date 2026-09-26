@@ -2031,10 +2031,14 @@ class StockItemTest(StockAPITestCase):
         self.assertAlmostEqual(cost_entry.min_cost.amount, 123, places=3)
         self.assertEqual(str(cost_entry.min_cost_currency), 'AUD')
 
-        # Update just the amount - the existing currency should be preserved
+        # Update just the amount - the existing currency should be preserved.
+        # Cost entries are additive, so the serializer replaces the superseded
+        # entry rather than updating it in place: a new row, but still only one
         self.patch(url, {'purchase_price': 456}, expected_code=200)
 
-        cost_entry.refresh_from_db()
+        cost_entry = StockItemCostEntry.objects.get(
+            stock_item=item, cost_type=CostType.PURCHASE.value
+        )
         self.assertAlmostEqual(cost_entry.min_cost.amount, 456, places=3)
         self.assertEqual(str(cost_entry.min_cost_currency), 'AUD')
 
