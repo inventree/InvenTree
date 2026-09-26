@@ -346,3 +346,94 @@ class BuildMaterialCostTest(BuildTestBase):
                     stock_item=output, cost_type=CostType.MANUFACTURING.value
                 ).exists()
             )
+
+
+class BuildSplitCostTest(BuildTestBase):
+    """Cost entries must be copied onto stock items split off during build completion.
+
+    Build.complete_allocations() splits a partially-consumed StockItem in two,
+    consuming the split-off child and leaving the remainder as available stock.
+    Cost lives in a separate table keyed by stock item, so it has to be copied
+    onto that child explicitly - see StockItemCostEntryManager.bulk_copy_costs.
+    """
+
+    def setUp(self):
+        """Move the build into production, with a deterministic default currency."""
+        super().setUp()
+        set_global_setting('INVENTREE_DEFAULT_CURRENCY', 'USD')
+        self.build.issue_build()
+        cache.clear()
+
+    def test_tracked_split_item_keeps_cost(self):
+        """A trackable item installed into an output carries its cost across the split."""
+        StockItemCostEntry.objects.set_cost(
+            self.stock_3_1,
+            CostType.PURCHASE.value,
+            min_cost=Money(2, 'USD'),
+            max_cost=Money(3, 'USD'),
+        )
+
+        # Allocate 6 of 1000 units - completion splits off the consumed 6
+        line = BuildLine.objects.filter(
+            build=self.build, bom_item__sub_part=self.stock_3_1.part
+        ).first()
+
+        BuildItem.objects.create(
+            build_line=line,
+            stock_item=self.stock_3_1,
+            quantity=6,
+            install_into=self.output_1,
+        )
+
+        self.build.complete_build_output(self.output_1, self.user)
+
+        installed = StockItem.objects.get(
+            part=self.sub_part_3, belongs_to=self.output_1
+        )
+
+        # This is a genuinely new item, split off from the original
+        self.assertNotEqual(installed.pk, self.stock_3_1.pk)
+        self.assertEqual(installed.quantity, 6)
+
+        # ... and it carries the same per-unit cost as the item it came from
+        self.assertEqual(installed.cost_price, Money(2, 'USD'))
+
+        entry = StockItemCostEntry.objects.get(
+            stock_item=installed, cost_type=CostType.PURCHASE.value
+        )
+        self.assertEqual(entry.min_cost, Money(2, 'USD'))
+        self.assertEqual(entry.max_cost, Money(3, 'USD'))
+
+        # The remainder left in stock keeps its cost too
+        self.stock_3_1.refresh_from_db()
+        self.assertEqual(self.stock_3_1.quantity, 994)
+        self.assertEqual(self.stock_3_1.cost_price, Money(2, 'USD'))
+
+    def test_untracked_split_item_keeps_cost(self):
+        """An untracked (pooled) allocation carries its cost across the split too."""
+        StockItemCostEntry.objects.set_cost(
+            self.stock_1_2,
+            CostType.PURCHASE.value,
+            min_cost=Money(5, 'USD'),
+            max_cost=Money(5, 'USD'),
+        )
+
+        line = BuildLine.objects.filter(
+            build=self.build, bom_item__sub_part=self.stock_1_2.part
+        ).first()
+
+        # Allocate 50 of 100 units against the build (not a specific output)
+        BuildItem.objects.create(
+            build_line=line, stock_item=self.stock_1_2, quantity=50
+        )
+
+        self.build.complete_build_output(self.output_1, self.user)
+        self.build.complete_build_output(self.output_2, self.user)
+        self.build.complete_build(self.user)
+
+        consumed = StockItem.objects.get(
+            part=self.sub_part_1, consumed_by=self.build, quantity=50
+        )
+
+        self.assertNotEqual(consumed.pk, self.stock_1_2.pk)
+        self.assertEqual(consumed.cost_price, Money(5, 'USD'))

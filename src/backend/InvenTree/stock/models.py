@@ -2100,8 +2100,6 @@ class StockItem(
             are copied across, while any source build order is recorded
             in the stock tracking history of each component.
         """
-        # Deferred import to avoid a circular import at module load time
-        # (stock -> pricing -> stock)
         import pricing.models
         from pricing.status_codes import CostType
 
@@ -2558,6 +2556,14 @@ class StockItem(
 
         StockItemTracking.objects.bulk_create(history_items, batch_size=250)
 
+        # Copy any cost data onto each new item - cost is recorded per unit,
+        # so each serialized item carries the same unit cost as its parent.
+        import pricing.models
+
+        pricing.models.StockItemCostEntry.objects.bulk_copy_costs([
+            (self, item) for item in items
+        ])
+
         # Remove the equivalent number of items
         self.take_stock(
             quantity, user, code=StockHistoryCode.STOCK_SERIALIZED, notes=notes
@@ -2745,8 +2751,6 @@ class StockItem(
         - Tracking history for the *other* item is deleted
         - Any allocations (build order, sales order) are moved to this StockItem
         """
-        # Deferred import to avoid a circular import at module load time
-        # (stock -> pricing -> stock)
         import pricing.models
         from pricing.status_codes import CostType
 
@@ -3000,6 +3004,12 @@ class StockItem(
         # Copy the test results of this part to the new one
         if kwargs.get('copy_test_results', True):
             new_stock.copyTestResultsFrom(self)
+
+        # Copy any cost data onto the new item - cost is recorded per unit,
+        # so a split-off item carries the same unit cost as its parent.
+        import pricing.models
+
+        pricing.models.StockItemCostEntry.objects.bulk_copy_costs([(self, new_stock)])
 
         # Remove the specified quantity from THIS stock item
         self.take_stock(

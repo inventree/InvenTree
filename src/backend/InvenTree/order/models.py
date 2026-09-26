@@ -2941,6 +2941,14 @@ class SalesOrderShipment(
         for allocation in allocations_to_update:
             allocation.item = split_item_map[id(allocation.item)]
 
+        # Copy any cost data across onto the newly split-off items - cost is recorded
+        # per unit, so a split-off item carries the same unit cost as its parent.
+        import pricing.models
+
+        pricing.models.StockItemCostEntry.objects.bulk_copy_costs([
+            (source_item, new_item) for source_item, new_item, _quantity in split_items
+        ])
+
         tracking_entries = []
         split_events = []
         customer_events = []

@@ -307,3 +307,154 @@ class StockItemCostEntryManagerTest(ExchangeRateMixin, TestCase):
         # The existing value is left untouched, rather than raising or being replaced
         self.assertEqual(entry.min_cost, Money(1, 'USD'))
         self.assertEqual(entry.max_cost, Money(1, 'USD'))
+
+    def test_bulk_copy_costs_empty(self):
+        """bulk_copy_costs() should be a no-op for an empty input."""
+        self.assertEqual(StockItemCostEntry.objects.bulk_copy_costs([]), [])
+        self.assertEqual(StockItemCostEntry.objects.count(), 0)
+
+    def test_bulk_copy_costs_source_has_no_costs(self):
+        """Copying from a source with no cost data should not create anything."""
+        StockItemCostEntry.objects.bulk_copy_costs([(self.stock_item, self.other_item)])
+
+        self.assertEqual(StockItemCostEntry.objects.count(), 0)
+        self.assertEqual(StockItemCost.objects.count(), 0)
+
+    def test_bulk_copy_costs_copies_all_entry_types(self):
+        """Every cost entry on the source should be duplicated onto the target."""
+        StockItemCostEntry.objects.set_cost(
+            self.stock_item,
+            CostType.PURCHASE.value,
+            min_cost=Money(1, 'USD'),
+            max_cost=Money(2, 'USD'),
+            user=None,
+            notes='purchased',
+            source_data={'po': 123},
+        )
+
+        StockItemCostEntry.objects.set_cost(
+            self.stock_item,
+            CostType.MATERIAL.value,
+            min_cost=Money(10, 'USD'),
+            max_cost=Money(20, 'USD'),
+        )
+
+        StockItemCostEntry.objects.bulk_copy_costs([(self.stock_item, self.other_item)])
+
+        copied = StockItemCostEntry.objects.filter(stock_item=self.other_item)
+        self.assertEqual(copied.count(), 2)
+
+        purchase = copied.get(cost_type=CostType.PURCHASE.value)
+        self.assertEqual(purchase.min_cost, Money(1, 'USD'))
+        self.assertEqual(purchase.max_cost, Money(2, 'USD'))
+
+        # Provenance is carried across too, not just the values
+        self.assertEqual(purchase.notes, 'purchased')
+        self.assertEqual(purchase.source_data, {'po': 123})
+
+        material = copied.get(cost_type=CostType.MATERIAL.value)
+        self.assertEqual(material.min_cost, Money(10, 'USD'))
+        self.assertEqual(material.max_cost, Money(20, 'USD'))
+
+        # The source item is left entirely untouched
+        self.assertEqual(
+            StockItemCostEntry.objects.filter(stock_item=self.stock_item).count(), 2
+        )
+
+    def test_bulk_copy_costs_copies_cached_summary(self):
+        """The cached StockItemCost summary should be copied across verbatim."""
+        StockItemCostEntry.objects.set_cost(
+            self.stock_item,
+            CostType.PURCHASE.value,
+            min_cost=Money(3, 'USD'),
+            max_cost=Money(4, 'USD'),
+        )
+
+        StockItemCostEntry.objects.set_cost(
+            self.stock_item,
+            CostType.MATERIAL.value,
+            min_cost=Money(1, 'USD'),
+            max_cost=Money(1, 'USD'),
+        )
+
+        StockItemCostEntry.objects.bulk_copy_costs([(self.stock_item, self.other_item)])
+
+        source_summary = StockItemCost.objects.get(stock_item=self.stock_item)
+        target_summary = StockItemCost.objects.get(stock_item=self.other_item)
+
+        self.assertEqual(target_summary.min_cost, source_summary.min_cost)
+        self.assertEqual(target_summary.max_cost, source_summary.max_cost)
+        self.assertEqual(target_summary.min_cost, Money(4, 'USD'))
+        self.assertEqual(target_summary.max_cost, Money(5, 'USD'))
+
+    def test_bulk_copy_costs_preserves_currency(self):
+        """A non-default entry currency should survive the copy unchanged."""
+        StockItemCostEntry.objects.set_cost(
+            self.stock_item,
+            CostType.PURCHASE.value,
+            min_cost=Money(7, 'AUD'),
+            max_cost=Money(9, 'AUD'),
+        )
+
+        StockItemCostEntry.objects.bulk_copy_costs([(self.stock_item, self.other_item)])
+
+        copied = StockItemCostEntry.objects.get(
+            stock_item=self.other_item, cost_type=CostType.PURCHASE.value
+        )
+
+        self.assertEqual(str(copied.min_cost_currency), 'AUD')
+        self.assertEqual(copied.min_cost, Money(7, 'AUD'))
+        self.assertEqual(copied.max_cost, Money(9, 'AUD'))
+
+    def test_bulk_copy_costs_multiple_pairs(self):
+        """Many (source, target) pairs should be handled in a single call."""
+        targets = list(
+            StockItem.objects.exclude(pk=self.stock_item.pk).order_by('pk')[:3]
+        )
+        self.assertEqual(len(targets), 3)
+
+        StockItemCostEntry.objects.set_cost(
+            self.stock_item,
+            CostType.PURCHASE.value,
+            min_cost=Money(2, 'USD'),
+            max_cost=Money(3, 'USD'),
+        )
+
+        StockItemCostEntry.objects.bulk_copy_costs([
+            (self.stock_item, target) for target in targets
+        ])
+
+        for target in targets:
+            entry = StockItemCostEntry.objects.get(
+                stock_item=target, cost_type=CostType.PURCHASE.value
+            )
+            self.assertEqual(entry.min_cost, Money(2, 'USD'))
+            self.assertEqual(entry.max_cost, Money(3, 'USD'))
+
+            summary = StockItemCost.objects.get(stock_item=target)
+            self.assertEqual(summary.min_cost, Money(2, 'USD'))
+
+    def test_bulk_copy_costs_overwrites_existing_target_entry(self):
+        """An existing entry of the same type on the target is replaced, not duplicated."""
+        StockItemCostEntry.objects.set_cost(
+            self.stock_item,
+            CostType.PURCHASE.value,
+            min_cost=Money(5, 'USD'),
+            max_cost=Money(5, 'USD'),
+        )
+
+        StockItemCostEntry.objects.set_cost(
+            self.other_item,
+            CostType.PURCHASE.value,
+            min_cost=Money(99, 'USD'),
+            max_cost=Money(99, 'USD'),
+        )
+
+        StockItemCostEntry.objects.bulk_copy_costs([(self.stock_item, self.other_item)])
+
+        entries = StockItemCostEntry.objects.filter(stock_item=self.other_item)
+        self.assertEqual(entries.count(), 1)
+        self.assertEqual(entries.first().min_cost, Money(5, 'USD'))
+
+        summary = StockItemCost.objects.get(stock_item=self.other_item)
+        self.assertEqual(summary.min_cost, Money(5, 'USD'))

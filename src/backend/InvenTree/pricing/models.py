@@ -2,6 +2,7 @@
 
 from django.contrib.auth import get_user_model
 from django.db import models, transaction
+from django.db.models import Q
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
@@ -50,8 +51,45 @@ class StockItemCostEntryManager(models.Manager):
     should use whenever a StockItem is assigned a cost - rather than each call
     site hand-rolling its own StockItemCostEntry (+ StockItemCost summary)
     construction. See `set_cost` for a single stock item, and `bulk_set_costs`
-    for many at once (e.g. receiving a large purchase order).
+    for many at once (e.g. receiving a large purchase order). See
+    `bulk_copy_costs` for propagating existing cost data onto stock items which
+    are split off from an existing one.
     """
+
+    def _bulk_upsert(self, objs):
+        """Insert the provided cost entries, replacing any which already exist.
+
+        Django's bulk_create(update_conflicts=True, unique_fields=[...]) cannot be
+        used here: MySQL / MariaDB sets supports_update_conflicts_with_target=False,
+        so passing unique_fields raises NotSupportedError on that backend. Instead,
+        any conflicting (stock_item, cost_type) rows are deleted first, and the new
+        rows plainly inserted - which works identically on every supported backend.
+
+        Returns:
+            The list of created StockItemCostEntry objects.
+        """
+        if not objs:
+            return []
+
+        # Group the target stock items by cost type, so the conflicting rows can be
+        # removed with one OR'd clause per cost type (rather than one per entry)
+        items_by_type = {}
+
+        for obj in objs:
+            items_by_type.setdefault(obj.cost_type, set()).add(obj.stock_item_id)
+
+        query = Q()
+
+        for cost_type, stock_item_ids in items_by_type.items():
+            query |= Q(cost_type=cost_type, stock_item_id__in=stock_item_ids)
+
+        with transaction.atomic():
+            # Note: this fires the post_delete signal for any row actually removed,
+            # which recalculates that stock item's cached summary. Callers must
+            # therefore update the summaries *after* calling this method
+            self.filter(query).delete()
+
+            return self.bulk_create(objs, batch_size=500)
 
     def set_cost(
         self,
@@ -174,10 +212,9 @@ class StockItemCostEntryManager(models.Manager):
         Each dict in `entries` supports the same keys as `set_cost` (stock_item
         and cost_type are required, the rest are optional).
 
-        A single bulk_create(update_conflicts=True) call is used to upsert every
-        entry in one query, regardless of whether a matching (stock_item,
-        cost_type) entry already exists. As bulk_create() does not call
-        save() and therefore does not trigger the usual signals, the cached
+        Every entry is upserted in bulk via `_bulk_upsert`, regardless of whether a
+        matching (stock_item, cost_type) entry already exists. As bulk_create() does
+        not call save() and therefore does not trigger the usual signals, the cached
         StockItemCost summary for every affected stock item is recalculated
         afterwards via an offloaded 'update_stock_item_cost' task (batched into
         a single bulk task-queue write, rather than one per stock item).
@@ -217,21 +254,7 @@ class StockItemCostEntryManager(models.Manager):
 
             stock_items[stock_item.pk] = stock_item
 
-        created = self.bulk_create(
-            objs,
-            batch_size=500,
-            update_conflicts=True,
-            unique_fields=['stock_item', 'cost_type'],
-            update_fields=[
-                'min_cost',
-                'min_cost_currency',
-                'max_cost',
-                'max_cost_currency',
-                'user',
-                'notes',
-                'source_data',
-            ],
-        )
+        created = self._bulk_upsert(objs)
 
         # Deferred imports to avoid a circular import (pricing.models <-> pricing.tasks)
         import pricing.tasks
@@ -242,6 +265,123 @@ class StockItemCostEntryManager(models.Manager):
                 offload_task(
                     pricing.tasks.update_stock_item_cost, stock_item, group='pricing'
                 )
+
+        return created
+
+    def bulk_copy_costs(self, item_pairs):
+        """Copy every cost entry from a source StockItem onto a target StockItem.
+
+        Cost data lives in a separate table keyed by stock item, so (unlike a
+        plain model field) it is *not* carried across when a StockItem is
+        duplicated by nulling-out its primary key. Any operation which splits
+        one stock item into another must therefore copy the cost entries
+        across explicitly - see StockItem.splitStock(), StockItem.serializeStock(),
+        Build.complete_allocations() and SalesOrderShipment.complete_allocations().
+
+        Costs are recorded *per unit*, so a split copies them verbatim: splitting
+        changes the quantity of an item, never its unit cost. Currency, user,
+        notes and source_data are preserved too, so the provenance of the
+        original cost survives onto the split-off item.
+
+        Arguments:
+            item_pairs: Iterable of (source, target) StockItem tuples. Both must
+                already be saved to the database (i.e. have a primary key).
+
+        Returns:
+            The list of newly created StockItemCostEntry objects.
+        """
+        pairs = [(source, target) for source, target in item_pairs if source and target]
+
+        if not pairs:
+            return []
+
+        source_ids = {source.pk for source, _target in pairs}
+
+        # Fetch every cost entry for every source item in a single query
+        entries_by_source = {}
+
+        for entry in self.filter(stock_item_id__in=source_ids):
+            entries_by_source.setdefault(entry.stock_item_id, []).append(entry)
+
+        if not entries_by_source:
+            return []
+
+        # Existing cached summaries for the source items - a split-off item ends up
+        # with exactly the same totals as its parent, so these can be copied across
+        # verbatim rather than recalculated from scratch
+        summaries_by_source = {
+            summary.stock_item_id: summary
+            for summary in StockItemCost.objects.filter(stock_item_id__in=source_ids)
+        }
+
+        objs = []
+        summary_objs = []
+        recalculate = []
+
+        for source, target in pairs:
+            entries = entries_by_source.get(source.pk)
+
+            if not entries:
+                continue
+
+            for entry in entries:
+                objs.append(
+                    self.model(
+                        stock_item=target,
+                        cost_type=entry.cost_type,
+                        min_cost=entry.min_cost,
+                        min_cost_currency=entry.min_cost_currency,
+                        max_cost=entry.max_cost,
+                        max_cost_currency=entry.max_cost_currency,
+                        user=entry.user,
+                        notes=entry.notes,
+                        source_data=entry.source_data,
+                    )
+                )
+
+            if summary := summaries_by_source.get(source.pk):
+                summary_objs.append(
+                    StockItemCost(
+                        stock_item=target,
+                        min_cost=summary.min_cost,
+                        min_cost_currency=summary.min_cost_currency,
+                        max_cost=summary.max_cost,
+                        max_cost_currency=summary.max_cost_currency,
+                    )
+                )
+            else:
+                # The source has cost entries but no cached summary yet (e.g. a
+                # bulk_set_costs() recalculation is still queued) - there is nothing
+                # to copy, so the target's summary must be calculated as normal
+                recalculate.append(target)
+
+        if not objs:
+            return []
+
+        with transaction.atomic():
+            created = self._bulk_upsert(objs)
+
+            if summary_objs:
+                # Replace any summary the targets already had (including one just
+                # rebuilt by _bulk_upsert's post_delete signal) with the copied one
+                StockItemCost.objects.filter(
+                    stock_item_id__in=[obj.stock_item_id for obj in summary_objs]
+                ).delete()
+
+                StockItemCost.objects.bulk_create(summary_objs, batch_size=500)
+
+        if recalculate:
+            # Deferred imports to avoid a circular import (pricing.models <-> pricing.tasks)
+            import pricing.tasks
+            from InvenTree.tasks import batch_offload_tasks, offload_task
+
+            with batch_offload_tasks():
+                for stock_item in recalculate:
+                    offload_task(
+                        pricing.tasks.update_stock_item_cost,
+                        stock_item,
+                        group='pricing',
+                    )
 
         return created
 
