@@ -19,6 +19,7 @@ from InvenTree.helpers import inheritors
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from InvenTree.serializers import EmptySerializer
 
+from .api_helpers import FSMTransitionMixin  # noqa # pylint: disable=unused-import
 from .serializers import GenericStateClassSerializer
 from .states import StatusCode
 
