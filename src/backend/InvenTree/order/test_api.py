@@ -527,6 +527,53 @@ class PurchaseOrderTest(OrderTest):
         # Revert the setting to previous value
         InvenTreeSetting.set_setting(setting, False)
 
+    def test_po_create_default_destination(self):
+        """Test that the PURCHASEORDER_DEFAULT_RECEIVE_LOCATION setting is applied on creation."""
+        self.assignRole('purchase_order.add')
+
+        url = reverse('api-po-list')
+        location = StockLocation.objects.first()
+        assert location
+
+        # By default, no destination is set on the setting - so the field is left blank
+        set_global_setting('PURCHASEORDER_DEFAULT_RECEIVE_LOCATION', '')
+
+        data = {
+            'reference': 'PO-99990001',
+            'supplier': 1,
+            'description': 'A test purchase order',
+        }
+
+        response = self.post(url, data, expected_code=201)
+        self.assertIsNone(response.data['destination'])
+
+        # Now, set the global default - newly created orders should inherit it
+        set_global_setting('PURCHASEORDER_DEFAULT_RECEIVE_LOCATION', location.pk)
+
+        # The OPTIONS metadata for the 'destination' field should reflect the default location
+        response = self.options(url, expected_code=200)
+        self.assertEqual(
+            response.data['actions']['POST']['destination']['default'], location.pk
+        )
+
+        data['reference'] = 'PO-99990002'
+
+        response = self.post(url, data, expected_code=201)
+        self.assertEqual(response.data['destination'], location.pk)
+
+        # An explicitly provided destination should always take priority
+        other_location = StockLocation.objects.exclude(pk=location.pk).first()
+        assert other_location
+
+        data['reference'] = 'PO-99990003'
+        data['destination'] = other_location.pk
+
+        response = self.post(url, data, expected_code=201)
+        self.assertEqual(response.data['destination'], other_location.pk)
+
+        # Revert the setting to its previous value
+        set_global_setting('PURCHASEORDER_DEFAULT_RECEIVE_LOCATION', '')
+
     def test_po_creation_date(self):
         """Test that we can create set the creation_date field of PurchaseOrder via the API."""
         self.assignRole('purchase_order.add')
