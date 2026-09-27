@@ -49,6 +49,19 @@ register = template.Library()
 logger = logging.getLogger('inventree')
 
 
+@register.simple_tag()
+def raise_error(message: str):
+    """Stop rendering a report or label template with an error message.
+
+    Arguments:
+        message: The message to include in the validation error.
+
+    Raises:
+        ValidationError: Whenever this tag is evaluated.
+    """
+    raise ValidationError(message)
+
+
 def get_locale(locale: Optional[str] = None) -> Locale:
     """Resolve and return a babel Locale.
 
