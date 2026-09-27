@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("users", "0016_remove_legacy_user_sessions_table"),
+        ("users", "0017_apitoken_hmac_digest_apitoken_issued_by_and_more"),
     ]
 
     operations = [
