@@ -197,6 +197,7 @@ class LabelPrintingMixin:
                     plugin_label.print_label,
                     self.plugin_slug(),
                     group='plugin',
+                    retry=False,
                     **print_args,
                 )
 

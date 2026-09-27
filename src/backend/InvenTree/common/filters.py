@@ -192,18 +192,37 @@ def filter_parameters_by_value(
     # Some filters are only applicable to string values
     text_only = any([func in ['icontains'], value_numeric is None])
 
-    # Ensure the function starts with a double underscore
-    if func and not func.startswith('__'):
-        func = f'__{func}'
-
     # Query for 'numeric' value - this has priority over 'string' value
     data_numeric = {
         'parameters_list__template': template,
         'parameters_list__data_numeric__isnull': False,
-        f'parameters_list__data_numeric{func}': value_numeric,
     }
 
+    if not text_only:
+        # Numeric values may be the result of unit conversion,
+        # so comparisons must account for floating point error
+        value_min, value_max = InvenTree.conversion.numeric_range(value_numeric)
+
+        match func:
+            case 'gt':
+                data_numeric['parameters_list__data_numeric__gt'] = value_max
+            case 'gte':
+                data_numeric['parameters_list__data_numeric__gte'] = value_min
+            case 'lt':
+                data_numeric['parameters_list__data_numeric__lt'] = value_min
+            case 'lte':
+                data_numeric['parameters_list__data_numeric__lte'] = value_max
+            case _:
+                data_numeric['parameters_list__data_numeric__range'] = (
+                    value_min,
+                    value_max,
+                )
+
     query_numeric = Q(**data_numeric)
+
+    # Ensure the function starts with a double underscore
+    if func and not func.startswith('__'):
+        func = f'__{func}'
 
     # Query for 'string' value
     data_text = {

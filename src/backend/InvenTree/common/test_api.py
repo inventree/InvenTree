@@ -928,6 +928,32 @@ class ParameterAPITests(InvenTreeAPITestCase):
         param_b.full_clean()
         param_b.save()
 
+        # SI prefix conversion may introduce floating point error,
+        # but equivalent values must still be detected as duplicates
+        template_cap = common.models.ParameterTemplate.objects.create(
+            name='Capacitance',
+            units='F',
+            description='A globally unique capacitance parameter',
+            unique=common.models.ParameterTemplate.UniqueOptions.GLOBAL,
+        )
+
+        param_c = common.models.Parameter(
+            template=template_cap,
+            model_type=part_a.get_content_type(),
+            model_id=part_a.pk,
+            data='100nF',
+        )
+        param_c.full_clean()
+        param_c.save()
+
+        with self.assertRaises(ValidationError):
+            common.models.Parameter(
+                template=template_cap,
+                model_type=part_b.get_content_type(),
+                model_id=part_b.pk,
+                data='0.1uF',
+            ).full_clean()
+
     def test_copy_unique_parameters(self):
         """Test that 'unique' parameters are skipped when copying parameters between model instances."""
         from part.models import Part

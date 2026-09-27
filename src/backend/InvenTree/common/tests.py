@@ -503,6 +503,8 @@ class SettingsTest(InvenTreeTestCase):
             'hidden',
             'choices',
             'units',
+            'model',
+            'model_filters',
             'requires_restart',
             'after_save',
             'before_save',
