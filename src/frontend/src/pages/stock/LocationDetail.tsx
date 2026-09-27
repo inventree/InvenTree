@@ -38,13 +38,14 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
-import { stockLocationFields } from '../../forms/StockForms';
+import { useStockLocationFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
@@ -99,6 +100,11 @@ export default function Stock() {
     params: {
       path_detail: true
     }
+  });
+
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.stocklocation,
+    modelId: location?.pk
   });
 
   const detailsPanel =
@@ -164,9 +170,7 @@ export default function Stock() {
         name: 'transfer-orders',
         label: t`Transfer Orders`,
         icon: <IconTransfer />,
-        hidden:
-          !user.hasViewRole(UserRoles.transfer_order) ||
-          !globalSettings.isSet('TRANSFERORDER_ENABLED'),
+        hidden: !user.hasViewVisible(UserRoles.transfer_order),
         selection: transferOrderView,
         onChange: setTransferOrderView,
         options: [
@@ -208,16 +212,17 @@ export default function Stock() {
       ParametersPanel({
         model_type: ModelType.stocklocation,
         model_id: location.pk,
-        hidden: !location.pk
+        hidden: !location.pk,
+        parameter_count: instanceInfo.parameter_count
       })
     ];
-  }, [sublocationView, transferOrderView, location, id]);
+  }, [sublocationView, transferOrderView, location, id, instanceInfo]);
 
   const editLocation = useEditApiFormModal({
     url: ApiEndpoints.stock_location_list,
     pk: id,
     title: t`Edit Stock Location`,
-    fields: stockLocationFields(),
+    fields: useStockLocationFields(),
     onFormSuccess: refreshInstance
   });
 

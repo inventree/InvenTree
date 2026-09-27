@@ -90,6 +90,30 @@ This can be used to track usage and performance of the InvenTree backend and con
 {{ configsetting("INVENTREE_TRACING_CONSOLE") }} Print out all exports (additionally) to the console for debugging. Do not use in production |
 {{ configsetting("INVENTREE_TRACING_RESOURCES") }} Add additional resources to all exports. This can be used to add custom tags to the traces. Format as a dict. |
 
+!!! warning "An endpoint is required"
+    Setting `INVENTREE_TRACING_ENABLED` to `True` is not enough on its own. `INVENTREE_TRACING_ENDPOINT` must also be set to a reachable OpenTelemetry collector - without it, InvenTree logs a warning at startup and does not send any traces, logs, or metrics.
+
+Tracing is configured once when the InvenTree backend and worker processes start, so any change to these settings requires a full restart (not just a reload) to take effect.
+
+### Example: sending traces to a local collector
+
+The following environment variables send traces, logs and metrics via gRPC to an [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/) running alongside InvenTree, for example as an additional service in your `docker-compose.yml`:
+
+```bash
+INVENTREE_TRACING_ENABLED=True
+INVENTREE_TRACING_ENDPOINT=otel-collector:4317
+INVENTREE_TRACING_IS_HTTP=False
+```
+
+### Troubleshooting
+
+If traces don't seem to be reaching your collector:
+
+- Confirm `INVENTREE_TRACING_ENDPOINT` is set - tracing silently does nothing without it, even if `INVENTREE_TRACING_ENABLED` is `True`.
+- Set `INVENTREE_TRACING_CONSOLE=True` and check the InvenTree logs for exported spans. This confirms the OpenTelemetry SDK is generating and exporting data locally, independent of whether your collector endpoint is reachable.
+- Restart the InvenTree backend and worker processes after changing any tracing setting - it is only read at process startup.
+- Check that `INVENTREE_TRACING_IS_HTTP` matches the protocol your collector endpoint expects. It defaults to `True` (HTTP) - set it to `False` if your endpoint only accepts gRPC.
+
 ## Multi Site Support
 
 If your InvenTree instance is used in a multi-site environment, you can enable multi-site support. Note that supporting multiple sites is well outside the scope of most InvenTree installations. If you know what you are doing, and have a good reason to enable multi-site support, you can do so by setting the `INVENTREE_SITE_MULTI` environment variable to `True`.

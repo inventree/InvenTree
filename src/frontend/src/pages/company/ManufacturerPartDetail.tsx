@@ -33,6 +33,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useUserState } from '../../states/UserState';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -56,6 +57,11 @@ export default function ManufacturerPartDetail() {
       manufacturer_detail: true,
       tags: true
     }
+  });
+
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.manufacturerpart,
+    modelId: manufacturerPart?.pk
   });
 
   const panels: PanelType[] = useMemo(() => {
@@ -102,19 +108,21 @@ export default function ManufacturerPartDetail() {
       },
       ParametersPanel({
         model_type: ModelType.manufacturerpart,
-        model_id: manufacturerPart?.pk
+        model_id: manufacturerPart?.pk,
+        parameter_count: instanceInfo.parameter_count
       }),
       AttachmentPanel({
         model_type: ModelType.manufacturerpart,
-        model_id: manufacturerPart?.pk
+        model_id: manufacturerPart?.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.manufacturerpart,
         model_id: manufacturerPart?.pk,
-        has_note: !!manufacturerPart?.notes
+        note_count: instanceInfo.note_count
       })
     ];
-  }, [user, manufacturerPart]);
+  }, [user, manufacturerPart, instanceInfo]);
 
   const editManufacturerPartFields = useManufacturerPartFields();
 

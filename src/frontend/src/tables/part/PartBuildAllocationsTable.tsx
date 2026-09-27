@@ -125,7 +125,7 @@ export default function PartBuildAllocationsTable({
           title: t`View Build Order`,
           modelType: ModelType.build,
           modelId: record.build,
-          hidden: !user.hasViewRole(UserRoles.build),
+          hidden: !user.hasViewVisible(UserRoles.build),
           navigate: navigate
         })
       ];

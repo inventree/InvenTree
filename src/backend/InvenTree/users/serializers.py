@@ -222,7 +222,7 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
 
         request = self.context.get('request')
         rq_token = get_token_from_request(request)
-        return token.key == rq_token
+        return token.match(rq_token)
 
     class Meta:
         """Meta options for ApiTokenSerializer."""
@@ -240,6 +240,12 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
             'user',
             'user_detail',
             'in_use',
+            'revoked_by',
+            'revoked_by_detail',
+            'issued_by',
+            'issued_by_detail',
+            'token_version',
+            'revocation_reason',
         ]
 
     def validate(self, data):
@@ -262,6 +268,8 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
         return super().validate(data)
 
     user_detail = UserSerializer(source='user', read_only=True)
+    revoked_by_detail = UserSerializer(source='revoked_by', read_only=True)
+    issued_by_detail = UserSerializer(source='issued_by', read_only=True)
 
 
 class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
@@ -514,12 +522,20 @@ class UserCreateSerializer(ExtendedUserSerializer):
 
     def create(self, validated_data):
         """Send an e email to the user after creation."""
+        from allauth.account.models import EmailAddress
+
         from InvenTree.helpers_model import get_base_url
         from InvenTree.tasks import email_user, offload_task
 
         base_url = get_base_url()
 
         instance = super().create(validated_data)
+
+        # Create the EmailAddress entry for the user
+        if instance.email:
+            EmailAddress.objects.create(
+                user=instance, email=instance.email, primary=True, verified=False
+            )
 
         # Make sure the user cannot login until they have set a password
         instance.set_unusable_password()

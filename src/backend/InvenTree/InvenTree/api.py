@@ -230,6 +230,7 @@ class InfoApiSerializer(serializers.Serializer):
     class SettingsSerializer(serializers.Serializer):
         """Serializer for InfoApiSerializer."""
 
+        sso_enabled = serializers.BooleanField()
         sso_registration = serializers.BooleanField()
         registration_enabled = serializers.BooleanField()
         password_forgotten_enabled = serializers.BooleanField()
@@ -266,6 +267,8 @@ class InfoApiSerializer(serializers.Serializer):
     target = serializers.CharField(read_only=True, allow_null=True)
     django_admin = serializers.CharField(read_only=True)
     settings = SettingsSerializer(read_only=True, many=False)
+    """System state details that are mainly for warning purposes and do not require a hard API contract."""
+    system_state = serializers.JSONField(read_only=True)
 
 
 class InfoView(APIView):
@@ -329,12 +332,14 @@ class InfoView(APIView):
             if (is_staff and settings.INVENTREE_ADMIN_ENABLED)
             else None,
             'settings': {
+                'sso_enabled': get_global_setting('LOGIN_ENABLE_SSO'),
                 'sso_registration': registration_enabled('LOGIN_ENABLE_SSO_REG'),
                 'registration_enabled': registration_enabled('LOGIN_ENABLE_REG'),
                 'password_forgotten_enabled': get_global_setting(
                     'LOGIN_ENABLE_PWD_FORGOT'
                 ),
             },
+            'system_state': {'cors_allow_all': settings.CORS_ALLOW_ALL_ORIGINS},
         }
 
         return JsonResponse(data)
@@ -346,10 +351,9 @@ class InfoView(APIView):
         if token := get_token_from_request(request):
             # Does the provided token match a valid user?
             try:
-                token = ApiToken.objects.get(key=token)
-
+                token = ApiToken.get_from_string(token)
                 # Check if the token is active and the user is a staff member
-                if token.active and token.user and token.user.is_staff:
+                if token and token.active and token.user and token.user.is_staff:
                     return True
             except ApiToken.DoesNotExist:
                 pass
@@ -497,7 +501,7 @@ class BulkCreateMixin:
             if unique_create_fields := getattr(self, 'unique_create_fields', None):
                 existing = collections.defaultdict(list)
                 for idx, item in enumerate(data):
-                    key = tuple(item[v] for v in list(unique_create_fields))  # ty: ignore[not-subscriptable]
+                    key = tuple(item[v] for v in list(unique_create_fields))
                     existing[key].append(idx)
 
                 unique_errors = [[] for _ in range(len(data))]
@@ -873,6 +877,14 @@ class APISearchView(GenericAPIView):
                         req.user = request.user
                         req.GET = params
 
+                        # Copy META from the original request, so that host/scheme
+                        # information is available (e.g. for pagination links).
+                        # Strip content-length/type, as this is a synthetic GET
+                        # request with no body of its own to parse.
+                        req.META = request.META.copy()
+                        req.META.pop('CONTENT_LENGTH', None)
+                        req.META.pop('CONTENT_TYPE', None)
+
                         list_method = cls.as_view({'get': 'list'})(req, *args, **kwargs)
                     else:
                         list_method = view.list(request, *args, **kwargs)
@@ -889,6 +901,9 @@ class GenericMetadataView(RetrieveUpdateAPI):
     model = None  # Placeholder for the model class
     serializer_class = MetadataSerializer
     permission_classes = [InvenTree.permissions.ContentTypePermission]
+
+    # Enforce limited range of lookup fields to prevent arbitrary queryset filtering
+    ALLOWED_LOOKUP_FIELDS = {'pk', 'key'}
 
     def get_permission_model(self):
         """Return the 'permission' model associated with this view."""
@@ -933,6 +948,17 @@ class GenericMetadataView(RetrieveUpdateAPI):
             'lookup_value' if 'lookup_field' in self.kwargs else 'pk'
         )
         return super().dispatch(request, *args, **kwargs)
+
+    def initial(self, request, *args, **kwargs):
+        """Validate the lookup field before any queryset is touched.
+
+        This runs inside APIView's own exception handling (unlike dispatch(),
+        which runs before it), and *before* permission checks - so an invalid
+        lookup field is rejected without ever executing a query.
+        """
+        if self.lookup_field not in self.ALLOWED_LOOKUP_FIELDS:
+            raise ValidationError(f"Invalid lookup field '{self.lookup_field}'")
+        return super().initial(request, *args, **kwargs)
 
 
 class SimpleGenericMetadataView(GenericMetadataView):

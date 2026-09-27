@@ -33,6 +33,7 @@ import {
   IconCalendarExclamation,
   IconChevronDown,
   IconChevronUp,
+  IconCopy,
   IconLink,
   IconPackage,
   IconUsersGroup
@@ -82,23 +83,29 @@ import {
 } from '../hooks/UseGenerator';
 import useStatusCodes from '../hooks/UseStatusCodes';
 import { useGlobalSettingsState } from '../states/SettingsStates';
-import { TagsField } from './CommonFields';
+import { DuplicateField, TagsField } from './CommonFields';
 
 /**
  * Construct a set of fields for creating / editing a StockItem instance
  */
 export function useStockFields({
   partId,
+  locationId,
   stockItem,
   create = false,
   supplierPartId,
-  modalId
+  modalId,
+  pricing,
+  duplicateStockItem
 }: {
   partId?: number;
+  locationId?: number;
   stockItem?: any;
   modalId: string;
   create: boolean;
   supplierPartId?: number;
+  pricing?: { [priceBreak: number]: [number, string] };
+  duplicateStockItem?: any;
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
 
@@ -108,6 +115,9 @@ export function useStockFields({
   const [supplierPart, setSupplierPart] = useState<number | null>(
     supplierPartId ?? null
   );
+
+  // Keep track of the "location" for the new stock item
+  const [location, setLocation] = useState<number | null>(locationId ?? null);
 
   const [expiryDate, setExpiryDate] = useState<string | null>(null);
 
@@ -167,6 +177,15 @@ export function useStockFields({
               dayjs().add(expiry_days, 'days').format('YYYY-MM-DD')
             );
           }
+
+          // Fill out the default location for the part, if not already set
+          setLocation(
+            (current) =>
+              current ??
+              record?.default_location ??
+              record?.category_default_location ??
+              null
+          );
         }
       },
       supplier_part: {
@@ -196,7 +215,9 @@ export function useStockFields({
       location: {
         // Cannot adjust location for existing stock items
         hidden: !create,
+        value: location,
         onValueChange: (value) => {
+          setLocation(value);
           batchGenerator.update({ location: value });
         },
         filters: {
@@ -268,6 +289,24 @@ export function useStockFields({
       delete fields.serial_numbers;
     }
 
+    // Additional fields for stock item duplication
+    if (create && duplicateStockItem?.pk) {
+      fields.duplicate = {
+        icon: <IconCopy />,
+        ...DuplicateField({
+          originalId: duplicateStockItem.pk,
+          extraFields: {
+            copy_notes: { value: true },
+            copy_history: { value: false },
+            copy_tests: {
+              value: false,
+              hidden: !duplicateStockItem?.part_detail?.testable
+            }
+          }
+        })
+      };
+    }
+
     return fields;
   }, [
     stockItem,
@@ -276,10 +315,12 @@ export function useStockFields({
     partId,
     globalSettings,
     supplierPart,
+    location,
     create,
     supplierPartId,
     serialGenerator.result,
     batchGenerator.result,
+    duplicateStockItem,
     create
   ]);
 }
@@ -2092,7 +2133,9 @@ export function useDeleteStockItem(props: StockOperationProps) {
   });
 }
 
-export function stockLocationFields(): ApiFormFieldSet {
+export function useStockLocationFields(): ApiFormFieldSet {
+  const globalSettings = useGlobalSettingsState();
+
   const fields: ApiFormFieldSet = {
     parent: {
       description: t`Parent stock location`,
@@ -2100,6 +2143,9 @@ export function stockLocationFields(): ApiFormFieldSet {
     },
     name: {},
     description: {},
+    owner: {
+      icon: <IconUsersGroup />
+    },
     structural: {},
     external: {},
     custom_icon: {
@@ -2107,6 +2153,12 @@ export function stockLocationFields(): ApiFormFieldSet {
     },
     location_type: {}
   };
+
+  // Ownership of a stock location is only relevant if
+  // stock ownership control is enabled
+  if (!globalSettings.isSet('STOCK_OWNERSHIP_CONTROL')) {
+    delete fields.owner;
+  }
 
   return fields;
 }

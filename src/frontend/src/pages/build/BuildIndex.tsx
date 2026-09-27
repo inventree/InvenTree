@@ -112,7 +112,7 @@ export default function BuildIndex() {
     ];
   }, [user, buildOrderView]);
 
-  if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.build)) {
+  if (!user.isLoggedIn() || !user.hasViewVisible(UserRoles.build)) {
     return <PermissionDenied />;
   }
 

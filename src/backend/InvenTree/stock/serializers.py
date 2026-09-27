@@ -358,6 +358,8 @@ class StockItemSerializer(
 
     export_exclude_fields = ['tags', 'tracking_items']
 
+    SKIP_CREATE_FIELDS = ['duplicate']
+
     export_child_fields = [
         'part_detail.name',
         'part_detail.description',
@@ -393,7 +395,6 @@ class StockItemSerializer(
             'in_stock',
             'is_building',
             'link',
-            'notes',
             'owner',
             'packaging',
             'parent',
@@ -413,8 +414,7 @@ class StockItemSerializer(
             'updated',
             'use_pack_size',
             'serial_numbers',
-            'purchase_price',
-            'purchase_price_currency',
+            'duplicate',
             # Annotated fields
             'allocated',
             'expired',
@@ -501,23 +501,6 @@ class StockItemSerializer(
         required=False,
         allow_null=True,
         help_text=_('Enter serial numbers for new items'),
-    )
-
-    """
-    'purchase_price' is not a StockItem model field - it is accepted here as a
-    write-only convenience so a matching StockItemCostEntry can be created or
-    updated (see the custom update() method below, and pricing.models)
-    """
-    purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
-        write_only=True,
-        required=False,
-        allow_null=True,
-        label=_('Purchase Price'),
-        help_text=_('Unit purchase price, recorded as a StockItemCostEntry'),
-    )
-
-    purchase_price_currency = InvenTreeCurrencySerializer(
-        write_only=True, required=False, label=_('Purchase Currency')
     )
 
     def validate_part(self, part):

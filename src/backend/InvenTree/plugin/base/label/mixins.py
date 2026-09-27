@@ -51,6 +51,9 @@ class LabelPrintingMixin:
         """
         try:
             return label.render(instance, request=request, user=user)
+        except ValidationError:
+            log_error('render_to_pdf', plugin=self.slug)
+            raise
         except Exception:
             log_error('render_to_pdf', plugin=self.slug)
             raise ValidationError(_('Error rendering label to PDF'))
@@ -68,6 +71,9 @@ class LabelPrintingMixin:
         """
         try:
             return label.render_as_string(instance, request=request, user=user)
+        except ValidationError:
+            log_error('render_to_html', plugin=self.slug)
+            raise
         except Exception:
             log_error('render_to_html', plugin=self.slug)
             raise ValidationError(_('Error rendering label to HTML'))
@@ -191,6 +197,7 @@ class LabelPrintingMixin:
                     plugin_label.print_label,
                     self.plugin_slug(),
                     group='plugin',
+                    retry=False,
                     **print_args,
                 )
 

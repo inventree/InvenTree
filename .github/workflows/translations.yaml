@@ -36,7 +36,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           install: true
           apt-dependency: gettext
@@ -56,7 +56,7 @@ jobs:
           echo "Resetting to HEAD~"
           git reset HEAD~ || true
       - name: crowdin action
-        uses: crowdin/github-action@c7af9bc98b01694653031fef2a0dc6c7888ce9bc # v2
+        uses: crowdin/github-action@0d5670f539973aea2f01abce61a8989934df0025 # v3.0.2
         with:
           upload_sources: true
           upload_translations: false

@@ -149,4 +149,6 @@ The *Part Attachments* tab displays file attachments associated with the selecte
 
 ### Notes
 
-A part may have notes attached, which support markdown formatting.
+A part may have one or more rich-text notes attached.
+
+[Read about notes](../concepts/notes.md).

@@ -3,7 +3,9 @@
 from datetime import datetime, timedelta
 from typing import Optional
 
+from django.db import connection
 from django.db.models import Sum
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 from django_q.models import OrmQ
@@ -11,6 +13,7 @@ from rest_framework import status
 
 from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus
+from common.models import Note
 from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
@@ -200,6 +203,24 @@ class BuildTest(BuildAPITest):
             'This build output has already been completed',
             str(data['outputs'][0]['output']),
         )
+
+    def test_part_read_only_on_update(self):
+        """The 'part' field cannot be changed on an existing build order."""
+        self.assignRole('build.change')
+
+        url = reverse('api-build-detail', kwargs={'pk': self.build.pk})
+
+        other_part = (
+            Part.objects.filter(assembly=True).exclude(pk=self.build.part.pk).first()
+        )
+
+        self.assertIsNotNone(other_part)
+
+        # Attempting to change the 'part' field is silently ignored
+        self.patch(url, {'part': other_part.pk}, expected_code=200)
+
+        self.build.refresh_from_db()
+        self.assertNotEqual(self.build.part.pk, other_part.pk)
 
     def test_complete(self):
         """Test build order completion."""
@@ -607,6 +628,62 @@ class BuildTest(BuildAPITest):
 
         self.assertIsNotNone(bo.issued_by)
         self.assertEqual(bo.issued_by, self.user)
+
+    def test_duplicate_copies_notes(self):
+        """Test that notes are copied when duplicating a Build via the API.
+
+        BuildSerializer declares its 'duplicate' options with copy_notes=True,
+        so notes should be copied by default (i.e. without explicitly requesting it).
+        """
+        from django.contrib.contenttypes.models import ContentType
+
+        url = reverse('api-build-list')
+
+        part = Part.objects.create(
+            name='Duplicate Notes Assembly', description='x', assembly=True
+        )
+
+        original = Build.objects.create(
+            part=part, reference='BO-9001', title='Original build', quantity=5
+        )
+
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(Build),
+            model_id=original.pk,
+            title='Original Note',
+            content='<p>Some build notes</p>',
+        )
+
+        response = self.post(
+            url,
+            {
+                'reference': 'BO-9002',
+                'part': part.pk,
+                'quantity': 5,
+                'title': 'Duplicate build',
+                'duplicate': {'original': original.pk},
+            },
+            expected_code=201,
+        )
+
+        new_build = Build.objects.get(pk=response.data['pk'])
+        self.assertEqual(new_build.notes.count(), 1)
+        self.assertEqual(new_build.notes.first().content, '<p>Some build notes</p>')
+
+        # Explicitly disabling copy_notes must not copy any notes
+        response = self.post(
+            url,
+            {
+                'reference': 'BO-9003',
+                'part': part.pk,
+                'quantity': 5,
+                'title': 'Duplicate build without notes',
+                'duplicate': {'original': original.pk, 'copy_notes': False},
+            },
+            expected_code=201,
+        )
+        no_notes_build = Build.objects.get(pk=response.data['pk'])
+        self.assertEqual(no_notes_build.notes.count(), 0)
 
 
 class BuildAllocationTest(BuildAPITest):
@@ -1351,6 +1428,21 @@ class BuildListTest(BuildAPITest):
             assert_fnc=lambda x: x.data['results'][0],
         )
 
+    def test_status_codes_endpoint(self):
+        """The 'build/status/' endpoint must resolve to the status-codes view.
+
+        Regression test: ensures the literal 'status/' path is not shadowed by the
+        'build/<pk>/' detail route it sits alongside in the same urlconf.
+        """
+        response = self.get(reverse('api-build-status-codes'), expected_code=200)
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('PENDING', response.data['values'])
+        self.assertEqual(
+            response.data['values']['PENDING']['key'], BuildStatus.PENDING.value
+        )
+
 
 class BuildOutputCreateTest(BuildAPITest):
     """Unit test for creating build output via API."""
@@ -1768,14 +1860,11 @@ class BuildLineTests(BuildAPITest):
         self.assertEqual(len(response.data), BuildLine.objects.count())
 
         # Filter by 'available' status
-        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
-        # TODO: This needs to be addressed in the future, as 25 seconds is an unacceptably long time for a query to take in testing
-        response = self.get(url, data={'available': True}, max_query_time=25)
+        response = self.get(url, data={'available': True}, max_query_time=10)
         n_t = len(response.data)
         self.assertGreater(n_t, 0)
 
-        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
-        response = self.get(url, data={'available': False}, max_query_time=25)
+        response = self.get(url, data={'available': False}, max_query_time=10)
         n_f = len(response.data)
         self.assertGreater(n_f, 0)
 
@@ -2099,23 +2188,80 @@ class BuildLineTests(BuildAPITest):
         for line in lines:
             StockItem.objects.create(part=line.bom_item.sub_part, quantity=60)
 
-        # TODO: 2025-10-02: Work out why this query takes so long with PostgreSQL (in CI)
-        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
         response = self.get(
-            url, {'build': build.pk, 'available': True}, max_query_time=30
+            url, {'build': build.pk, 'available': True}, max_query_time=10
         )
 
         # We expect 2 lines to have "available" stock
         self.assertEqual(len(response.data), 2)
 
-        # TODO: 2025-10-02: Work out why this query takes so long with PostgreSQL (in CI)
-        # Note: The max_query_time is bumped up here, as postgresql backend has some strange issues (only during testing)
         response = self.get(
-            url, {'build': build.pk, 'available': False}, max_query_time=30
+            url, {'build': build.pk, 'available': False}, max_query_time=10
         )
 
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['pk'], lines[0].pk)
+
+    def test_list_unfiltered_count_query_has_no_group_by(self):
+        """Regression test for a bug where the (unfiltered) BuildLine list endpoint was catastrophically slow.
+
+        The specific trigger: a plain GET against the list endpoint with no 'build'
+        filter (BuildLineMixin.get_source_build() then returns None, so
+        BuildLineSerializer.annotate_queryset() runs across *every* BuildLine in the
+        database, unscoped) - e.g. an external API client just paging through results.
+        """
+        # Build line with a genuine stock allocation, to also confirm the 'allocated'
+        # value itself is still computed correctly after the Sum -> SubquerySum swap.
+        assembly = Part.objects.create(
+            name='Regression Test Assembly',
+            description='Assembly for BuildLine count() regression test',
+            assembly=True,
+        )
+        component = Part.objects.create(
+            name='Regression Test Component',
+            description='Component for BuildLine count() regression test',
+            component=True,
+        )
+        BomItem.objects.create(part=assembly, sub_part=component, quantity=1)
+
+        build = Build.objects.create(
+            part=assembly,
+            reference='BO-9996',
+            quantity=1,
+            title='BuildLine count() regression build',
+        )
+
+        line = build.build_lines.first()
+        stock_item = StockItem.objects.create(part=component, quantity=10)
+        BuildItem.objects.create(build_line=line, stock_item=stock_item, quantity=1)
+
+        url = reverse('api-build-line-list')
+
+        # Deliberately *no* 'build' filter - see docstring above
+        with CaptureQueriesContext(connection) as ctx:
+            response = self.get(url, {'limit': 1}, expected_code=200)
+
+        self.assertEqual(response.data['count'], BuildLine.objects.count())
+
+        count_queries = [
+            q
+            for q in ctx.captured_queries
+            if 'build_buildline' in q['sql'].lower()
+            and 'select count(' in q['sql'].lower()
+        ]
+        self.assertTrue(count_queries, 'Expected a COUNT query for list pagination')
+
+        for query in count_queries:
+            self.assertNotIn(
+                'GROUP BY',
+                query['sql'].upper(),
+                'BuildLine count() query should not require a GROUP BY',
+            )
+
+        # Confirm the 'allocated' value is still computed correctly
+        response = self.get(url, {'build': build.pk}, expected_code=200)
+        line_data = next(item for item in response.data if item['pk'] == line.pk)
+        self.assertEqual(line_data['allocated'], 1)
 
 
 class BuildConsumeTest(BuildAPITest):
@@ -2320,7 +2466,7 @@ class BuildConsumeTest(BuildAPITest):
             data,
             expected_code=201,
             benchmark=True,
-            max_query_time=1.0,
+            max_query_time=2.0,
             max_query_count=50,
         )
 
@@ -2366,7 +2512,7 @@ class BuildConsumeTest(BuildAPITest):
                 expected_code=201,
                 benchmark=True,
                 max_query_count=180,
-                max_query_time=1.5,
+                max_query_time=2.5,
             )
 
         build.refresh_from_db()

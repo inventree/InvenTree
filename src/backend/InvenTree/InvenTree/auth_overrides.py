@@ -199,6 +199,16 @@ class CustomSocialAccountAdapter(RegistrationMixin, DefaultSocialAccountAdapter)
 
     REGISTRATION_SETTING = 'LOGIN_ENABLE_SSO_REG'
 
+    def pre_social_login(self, request, sociallogin):
+        """Reject SSO logins outright while SSO is disabled via settings.
+
+        This runs for every social login attempt (new or existing account),
+        not just self-registration - LOGIN_ENABLE_SSO_REG only gates signup.
+        """
+        if not get_global_setting('LOGIN_ENABLE_SSO'):
+            raise PermissionDenied('SSO is disabled')
+        super().pre_social_login(request, sociallogin)
+
     def is_auto_signup_allowed(self, request, sociallogin):
         """Check if auto signup is enabled in settings."""
         if get_global_setting('LOGIN_SIGNUP_SSO_AUTO', True):

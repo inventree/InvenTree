@@ -151,7 +151,6 @@ export default function PluginListTable() {
     ];
   }, []);
 
-  const [selectedPlugin, setSelectedPlugin] = useState<any>({});
   const [selectedPluginKey, setSelectedPluginKey] = useState<string>('');
   const [activate, setActivate] = useState<boolean>(false);
 
@@ -266,6 +265,7 @@ export default function PluginListTable() {
   );
 
   const [pluginPackage, setPluginPackage] = useState<string>('');
+  const [pluginName, setPluginName] = useState('');
 
   const activatePluginModal = useEditApiFormModal({
     title: activate ? t`Activate Plugin` : t`Deactivate Plugin`,
@@ -358,6 +358,10 @@ export default function PluginListTable() {
       });
   }, []);
 
+  const handlePluginLoaded = useCallback((plugin: PluginInterface) => {
+    setPluginName(plugin.name);
+  }, []);
+
   // Custom table actions
   const tableActions = useMemo(() => {
     if (
@@ -397,14 +401,15 @@ export default function PluginListTable() {
       {deletePluginModal.modal}
       {activatePluginModal.modal}
       <DetailDrawer
-        title={`${t`Plugin Detail`} - ${selectedPlugin?.name}`}
+        title={`${t`Plugin Detail`} - ${pluginName}`}
         size={'65%'}
         renderContent={(pluginKey) => {
           if (!pluginKey) return;
+
           return (
             <PluginDrawer
               pluginKey={pluginKey}
-              pluginInstance={selectedPlugin}
+              onPluginLoaded={handlePluginLoaded}
             />
           );
         }}
@@ -417,7 +422,6 @@ export default function PluginListTable() {
           enableDownload: false,
           rowActions: rowActions,
           onRowClick: (plugin) => {
-            setSelectedPlugin(plugin);
             navigate(`${plugin.key}/`);
           },
           tableActions: tableActions,

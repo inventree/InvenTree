@@ -29,7 +29,7 @@ The Admin Center is the main interface for managing InvenTree. It provides a use
 - Users / Groups
 - Data import / export
 - Customisation (e.g. project codes, custom states, parameters and units)
-- Operational controls (e.g. background tasks, errors, currencies)
+- Operational controls (e.g. background tasks, errors, currencies, identity federation controls)
 - Integration with external services (via machines and plugins)
 - Reporting and statistics
 

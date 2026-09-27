@@ -92,3 +92,13 @@ export type PrimaryActionUIFeature = {
   featureContext: {};
   featureReturnType: undefined;
 };
+
+export type RouteUIFeature = BaseUIFeature & {
+  featureType: 'route';
+  requestContext: {};
+  responseOptions: {
+    path: string;
+  };
+  featureContext: {};
+  featureReturnType: any;
+};

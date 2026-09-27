@@ -335,6 +335,7 @@ def builtin_apps():
         'generic',
         'machine',
         'web',
+        'scim',
     ]
 
 
@@ -1205,9 +1206,12 @@ def update(
         'exclude_plugins': 'Exclude plugin data from the output file (default = False)',
         'include_sso': 'Include SSO token data in the output file (default = False)',
         'include_session': 'Include user session data in the output file (default = False)',
+        'prettify': 'Pretty-print the output file with indentation (default = False)',
+        'bulk': 'Use bulkdumpdata for improved performance on large datasets (default = False)',
         'verbose': 'Print verbose output from management commands',
     }
 )
+@state_logger
 def export_records(
     c,
     filename='data.json',
@@ -1218,6 +1222,8 @@ def export_records(
     exclude_plugins: bool = False,
     include_sso: bool = False,
     include_session: bool = False,
+    prettify: bool = False,
+    bulk: bool = False,
     verbose: bool = False,
 ):
     """Export all database records to a file."""
@@ -1243,7 +1249,10 @@ def export_records(
     with tempfile.NamedTemporaryFile(
         suffix='.json', encoding='utf-8', mode='w+t', delete=True
     ) as tmpfile:
-        cmd = f"dumpdata --natural-foreign --indent 2 --output '{tmpfile.name}' {excludes}"
+        cmd = f"{'bulkdumpdata' if bulk else 'dumpdata'} --natural-foreign --output '{tmpfile.name}' {excludes}"
+
+        if prettify:
+            cmd += ' --indent 2'
 
         # Dump data to temporary file
         manage(c, cmd, pty=True, verbose=verbose)
@@ -1253,41 +1262,60 @@ def export_records(
         tmpfile.seek(0)
         data = json.loads(tmpfile.read())
 
-    data_out = [
-        {
-            'metadata': True,
-            'comment': 'This file contains a dump of the InvenTree database',
-            'exported_at': datetime.datetime.now().isoformat(),
-            'exported_at_utc': datetime.datetime.utcnow().isoformat(),
-            'source_version': get_inventree_version(),
-            'api_version': get_inventree_api_version(),
-            'django_version': get_django_version(),
-            'python_version': python_version(),
-            'source_commit': get_commit_hash(),
-            'installed_apps': installed_apps(c),
-        }
-    ]
+    metadata_entry = {
+        'metadata': True,
+        'comment': 'This file contains a dump of the InvenTree database',
+        'exported_at': datetime.datetime.now().isoformat(),
+        'exported_at_utc': datetime.datetime.now(datetime.UTC).isoformat(),
+        'source_version': get_inventree_version(),
+        'api_version': get_inventree_api_version(),
+        'django_version': get_django_version(),
+        'python_version': python_version(),
+        'source_commit': get_commit_hash(),
+        'installed_apps': installed_apps(c),
+    }
 
-    for entry in data:
-        model_name = entry.get('model', None)
+    def entries_out():
+        """Filter and adjust entries as they are written, without ever materializing a second copy of the entire (potentially huge) dataset in memory.
 
-        # Ignore any temporary settings (start with underscore)
-        if model_name in ['common.inventreesetting', 'common.inventreeusersetting']:
-            if entry['fields'].get('key', '').startswith('_'):
-                continue
+        Yields:
+            dict: The next entry to write to the output file.
+        """
+        yield metadata_entry
 
-        if include_permissions is False:
-            if model_name == 'auth.group':
-                entry['fields']['permissions'] = []
+        for entry in data:
+            model_name = entry.get('model', None)
 
-            if model_name == 'auth.user':
-                entry['fields']['user_permissions'] = []
+            # Ignore any temporary settings (start with underscore)
+            if model_name in ['common.inventreesetting', 'common.inventreeusersetting']:
+                if entry['fields'].get('key', '').startswith('_'):
+                    continue
 
-        data_out.append(entry)
+            if include_permissions is False:
+                if model_name == 'auth.group':
+                    entry['fields']['permissions'] = []
 
-    # Write the processed data to file
+                if model_name == 'auth.user':
+                    entry['fields']['user_permissions'] = []
+
+            yield entry
+
+    indent = 2 if prettify else None
+
+    # Write the processed data to file, one entry at a time - avoids ever
+    # holding a second full copy of the (potentially huge) dataset in memory,
+    # and avoids a single json.dumps() call across the entire dataset at once
     with open(target, 'w', encoding='utf-8') as f_out:
-        f_out.write(json.dumps(data_out, indent=2))
+        f_out.write('[')
+        for i, entry in enumerate(entries_out()):
+            if i:
+                f_out.write(',')
+            if prettify:
+                f_out.write('\n')
+            f_out.write(json.dumps(entry, indent=indent))
+        if prettify:
+            f_out.write('\n')
+        f_out.write(']')
 
     success('Data export completed')
 
@@ -1358,10 +1386,15 @@ def validate_import_metadata(
         'exclude_plugins': 'Exclude plugin data from the import process (default = False)',
         'skip_migrations': 'Skip the migration step after clearing data (default = False)',
         'verbose': 'Print verbose output from management commands',
+        'bulk': 'Use the faster bulkloaddata command instead of loaddata (default = False)',
+        'ignore_conflicts': 'Skip records that violate a unique constraint, instead of raising an error (requires --bulk, default = False)',
+        'rebuild_trees': 'Rebuild MPTT tree structures after import (default = True)',
+        'rebuild_images': 'Rebuild image thumbnails after import (default = True)',
     },
     pre=[wait],
-    post=[rebuild_models, rebuild_thumbnails],
+    post=[],
 )
+@state_logger
 def import_records(
     c,
     filename='data.json',
@@ -1371,6 +1404,10 @@ def import_records(
     ignore_nonexistent: bool = False,
     skip_migrations: bool = False,
     verbose: bool = False,
+    bulk: bool = False,
+    ignore_conflicts: bool = False,
+    rebuild_trees: bool = True,
+    rebuild_images: bool = True,
 ):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
@@ -1382,6 +1419,10 @@ def import_records(
     if not target.exists():
         error(f"ERROR: File '{target}' does not exist")
         sys.exit(1)
+
+    if ignore_conflicts and not bulk:
+        warning('--ignore-conflicts has no effect without --bulk - ignoring')
+        ignore_conflicts = False
 
     if clear:
         delete_data(c, force=True, migrate=True, verbose=verbose)
@@ -1416,6 +1457,8 @@ def import_records(
         """Helper function to save data to a temporary file, and then load into the database."""
         nonlocal ignore_nonexistent
         nonlocal verbose
+        nonlocal bulk
+        nonlocal ignore_conflicts
         nonlocal c
 
         # Skip if there is no data to load
@@ -1429,7 +1472,9 @@ def import_records(
         ) as f_out:
             f_out.write(json.dumps(data, indent=2))
 
-        cmd = f'loaddata {f_out.name} -v 0 --force-color'
+        cmd = (
+            f'{"bulkloaddata" if bulk else "loaddata"} {f_out.name} -v 0 --force-color'
+        )
 
         if app:
             cmd += f' --app {app}'
@@ -1437,9 +1482,12 @@ def import_records(
         if ignore_nonexistent:
             cmd += ' --ignorenonexistent'
 
+        if bulk and ignore_conflicts:
+            cmd += ' --ignore-conflicts'
+
         # A set of content types to exclude from the import process
         if excludes:
-            cmd += f' -i {excludes}'
+            cmd += f' {excludes}'
 
         manage(c, cmd, pty=True, verbose=verbose)
 
@@ -1452,17 +1500,17 @@ def import_records(
 
         if model := entry.get('model', None):
             # Clear out any permissions specified for a group
+            # (these are regenerated after import)
             if model == 'auth.group':
                 entry['fields']['permissions'] = []
 
             # Clear out any permissions specified for a user
+            # (these are regenerated after import)
             if model == 'auth.user':
                 entry['fields']['user_permissions'] = []
 
             # Handle certain model types separately, to ensure they are loaded in the correct order
-            if model.startswith('auth.'):
-                auth_data.append(entry)
-            if model.startswith('users.'):
+            if model.startswith(('auth.', 'users.')):
                 auth_data.append(entry)
             elif model.startswith('common.'):
                 common_data.append(entry)
@@ -1497,6 +1545,12 @@ def import_records(
     validate_import_metadata(c, metadata, strict=strict, apps=True)
 
     load_data('remaining', all_data, excludes=content_excludes(allow_auth=False))
+
+    if rebuild_trees:
+        rebuild_models(c)
+
+    if rebuild_images:
+        rebuild_thumbnails(c)
 
     success('Data import completed')
 
@@ -1666,15 +1720,33 @@ def server_health(c, address: str = 'http://localhost:8000', timeout: int = 5):
     """Check if the web server is healthy by requesting /api/system/health/.
 
     Exits 0 on HTTP 200, 1 otherwise.
-    No Django startup required.
+    Django startup only required when when INVENTREE_SITE_URL is not set
+    and no docker/devcontainer/pkg-installer env vars are set. Django exceptions
+    caught and logged as warnings, but do not cause the health check to fail.
     """
     import urllib.error
+    import urllib.parse
     import urllib.request
 
+    from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
+        get_setting,
+    )
+
     url = f'{address.rstrip("/")}/api/system/health/'
+    site_url = None
 
     try:
-        with urllib.request.urlopen(url, timeout=timeout) as response:
+        site_url = get_setting('INVENTREE_SITE_URL', 'site_url', None)
+    except (Exception, SystemExit) as exc:
+        warning(f'Could not determine configured site URL: {exc}')
+
+    request = urllib.request.Request(url)
+
+    if site_url and (hostname := urllib.parse.urlparse(site_url).hostname):
+        request.add_header('Host', hostname)
+
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
             if response.status == 200:
                 success(f'Server is healthy ({url})')
                 return
@@ -1767,6 +1839,7 @@ def test_translations(c):
         'translations': 'Compile translations before running tests',
         'keepdb': 'Keep the test database after running tests (default = False)',
         'pytest': 'Use pytest to run tests',
+        'parallel': 'Set number of parallel test processes (default = off)',
         'verbosity': 'Verbosity level for test output (default = 1)',
     }
 )
@@ -1781,6 +1854,7 @@ def test(
     translations: bool = False,
     keepdb: bool = False,
     pytest: bool = False,
+    parallel: Optional[int] = None,
     verbosity: int = 1,
 ):
     """Run unit-tests for InvenTree codebase.
@@ -1830,6 +1904,9 @@ def test(
     cmd += ' --exclude-tag performance_test'
 
     cmd += f' --verbosity {verbosity}'
+
+    if parallel:
+        cmd += f' --parallel {parallel}'
 
     if coverage:
         # Run tests within coverage environment, and generate report

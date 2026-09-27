@@ -37,6 +37,7 @@ class LocationTypeAdmin(admin.ModelAdmin):
 
     list_display = ('name', 'description', 'icon', 'location_count')
     readonly_fields = ('location_count',)
+    search_fields = ('name', 'description')
 
     def get_queryset(self, request):
         """Annotate queryset to fetch location count."""

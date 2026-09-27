@@ -29,6 +29,7 @@ dist-ssr
 /playwright/.cache/
 /.nyc_output/
 /coverage/
+/flakiness-report/
 
 # Report generation
 stats.html

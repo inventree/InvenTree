@@ -1,5 +1,12 @@
 import { t } from '@lingui/core/macro';
-import { Accordion, Alert, Divider, Stack, Text } from '@mantine/core';
+import {
+  Accordion,
+  Alert,
+  Divider,
+  Skeleton,
+  Stack,
+  Text
+} from '@mantine/core';
 import { lazy } from 'react';
 
 import { StylishText } from '@lib/components/StylishText';
@@ -16,6 +23,33 @@ const ScheduledTasksTable = Loadable(
   lazy(() => import('../../../../tables/settings/ScheduledTasksTable'))
 );
 
+function BackgroundWorkerStatus({
+  isRunning
+}: {
+  isRunning?: boolean;
+}) {
+  if (isRunning === null || isRunning === undefined) {
+    return <Skeleton animate />;
+  }
+
+  return !!isRunning ? (
+    <Alert
+      title={t`Background worker running`}
+      color='green'
+      icon={<IconCircleCheck />}
+    />
+  ) : (
+    <Alert
+      title={t`Background worker not running`}
+      color='red'
+      icon={<IconExclamationCircle />}
+    >
+      <Text>{t`The background task manager service is not running. Contact your system administrator.`}</Text>
+      {errorCodeLink('INVE-W5')}
+    </Alert>
+  );
+}
+
 export default function TaskManagementPanel() {
   const { instance: taskInfo, refreshInstance: refreshTaskInfo } = useInstance({
     endpoint: ApiEndpoints.task_overview,
@@ -27,22 +61,7 @@ export default function TaskManagementPanel() {
 
   return (
     <>
-      {taskInfo?.is_running ? (
-        <Alert
-          title={t`Background worker running`}
-          color='green'
-          icon={<IconCircleCheck />}
-        />
-      ) : (
-        <Alert
-          title={t`Background worker not running`}
-          color='red'
-          icon={<IconExclamationCircle />}
-        >
-          <Text>{t`The background task manager service is not running. Contact your system administrator.`}</Text>
-          {errorCodeLink('INVE-W5')}
-        </Alert>
-      )}
+      <BackgroundWorkerStatus isRunning={taskInfo?.is_running} />
       <Stack gap='xs'>
         <FactCollection
           items={[

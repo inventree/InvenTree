@@ -74,6 +74,7 @@ from order.status_codes import (
     TransferOrderStatusGroups,
 )
 from part import models as PartModels
+from plugin.base.integration.AllocateMixin import apply_allocate_mixin
 from plugin.events import bulk_trigger_event, trigger_event
 from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
@@ -319,7 +320,7 @@ class Order(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
@@ -1032,7 +1033,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
             batch_code: Optional batch code for the item (optional)
             expiry_date: Optional expiry date for the item (optional)
             serials: Optional list of serial numbers (optional)
-            note: Optional notes for the item (optional)
+            note: Optional note for the item (optional) - recorded against the
+                item's RECEIVED_AGAINST_PURCHASE_ORDER tracking entry, not the
+                StockItem itself
         """
         # Deferred import to avoid a circular import at module load time
         # (order -> pricing -> stock -> order)
@@ -1052,12 +1055,22 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # see the StockItemCostEntry creation at the end of this method)
         stock_item_prices: list[tuple[stock.models.StockItem, object]] = []
 
+        # Per-item 'note' text, index-aligned with stock_items - StockItem no longer
+        # has its own 'notes' field, so this is threaded through to each item's
+        # RECEIVED_AGAINST_PURCHASE_ORDER tracking entry instead (see below)
+        stock_item_notes: list[str] = []
+
         # List of stock items to bulk create
         bulk_create_items: list[stock.models.StockItem] = []
 
         # Purchase price for each corresponding entry in 'bulk_create_items'
         # (same order - see the bulk_create_and_fetch() call below)
         bulk_create_prices: list = []
+
+        # Notes for bulk_create_items, appended in lockstep - bulk_create_and_fetch()
+        # re-fetches fresh instances from the database, so any note has to be tracked
+        # positionally here rather than stashed on the (discarded) unsaved instance
+        bulk_create_notes: list[str] = []
 
         # List of tracking entries to create
         tracking_entries: list[stock.models.StockItemTracking] = []
@@ -1110,6 +1123,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             quantity = item['quantity']
             barcode = item.get('barcode', '')
+            note = item.get('note') or item.get('notes') or ''
 
             try:
                 if quantity < 0:
@@ -1186,7 +1200,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 'quantity': 1 if serialize else stock_quantity,
                 'batch': item.get('batch_code', ''),
                 'expiry_date': item.get('expiry_date', None),
-                'notes': item.get('note', '') or item.get('notes', ''),
                 'packaging': item.get('packaging') or supplier_part.packaging,
             }
 
@@ -1245,9 +1258,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     )
                     # run validation for serialized items plugin.validate_batch_code
                     new_item.validate_batch_code()
+
                     # run validation for serialized items plugin.validate_model_instance
                     new_item.run_plugin_validation()
+
                     stock_items.append(new_item)
+                    stock_item_notes.append(note)
 
                     if purchase_price is not None:
                         stock_item_prices.append((new_item, purchase_price))
@@ -1261,7 +1277,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     new_item.assign_barcode(barcode_data=barcode, save=False)
 
                 bulk_create_items.append(new_item)
-                bulk_create_prices.append(purchase_price)
 
         # Bulk create new stock items
         if len(bulk_create_items) > 0:
@@ -1280,13 +1295,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
             )
 
             stock_items.extend(new_items)
+            stock_item_notes.extend(bulk_create_notes)
 
             for new_item, price in zip(new_items, bulk_create_prices, strict=True):
                 if price is not None:
                     stock_item_prices.append((new_item, price))
 
         # Generate a new tracking entry for each stock item
-        for item in stock_items:
+        for item, item_note in zip(stock_items, stock_item_notes, strict=True):
             tracking_entries.append(
                 item.add_tracking_entry(
                     StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
@@ -1296,6 +1312,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                         'purchaseorder': self.pk,
                         'quantity': float(item.quantity),
                     },
+                    notes=item_note,
                     commit=False,
                 )
             )
@@ -1367,7 +1384,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
         Keyword Arguments:
             batch_code: Optional batch code for the new StockItem
             serials: Optional list of serial numbers to assign to the new StockItem(s)
-            notes: Optional notes field for the StockItem
+            note: Optional note, recorded against the item's tracking entry (not the
+                StockItem itself)
             packaging: Optional packaging field for the StockItem
             barcode: Optional barcode field for the StockItem
             notify: If true, notify users of received items
@@ -1632,7 +1650,12 @@ class SalesOrder(TotalPriceMixin, Order):
             else:
                 available_stock = available_stock.order_by(stock_sort_by)
 
-            stock_count = available_stock.count()
+            # Allow plugins to filter / reorder the candidate stock items
+            available_stock = apply_allocate_mixin(
+                'filter_sales_order_allocation', line_item, available_stock, **kwargs
+            )
+
+            stock_count = len(available_stock)
 
             if stock_count == 0:
                 continue
@@ -2639,8 +2662,8 @@ class SalesOrderShipment(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeTagsMixin,
-    InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeModel,
@@ -2657,7 +2680,6 @@ class SalesOrderShipment(
         shipment_date: Date this shipment was "shipped" (or null)
         checked_by: User reference field indicating who checked this order
         reference: Custom reference text for this shipment (e.g. consignment number?)
-        notes: Custom notes field for this shipment
     """
 
     @classmethod
@@ -3154,7 +3176,7 @@ class SalesOrderAllocation(models.Model):
         try:
             if self.line.part != self.item.part:
                 variants = self.line.part.get_descendants(include_self=True)
-                if self.line.part not in variants:
+                if self.item.part not in variants:
                     errors['item'] = _(
                         'Cannot allocate stock item to a line with a different part'
                     )
@@ -4157,7 +4179,7 @@ class TransferOrderAllocation(models.Model):
         try:
             if self.line.part != self.item.part:
                 variants = self.line.part.get_descendants(include_self=True)
-                if self.line.part not in variants:
+                if self.item.part not in variants:
                     errors['item'] = _(
                         'Cannot allocate stock item to a line with a different part'
                     )
@@ -4317,6 +4339,9 @@ class TransferOrderAllocation(models.Model):
 
 def _touch_order_updated_at(instance):
     """Bump updated_at on the parent order without triggering a full save."""
+    if InvenTree.ready.isRunningMigrations() or InvenTree.ready.isImportingData():
+        # Do not touch the order during migrations or data import
+        return
     if not InvenTree.ready.canAppAccessDatabase(allow_test=True):
         return
     instance.order.__class__.objects.filter(pk=instance.order_id).update(

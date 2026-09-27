@@ -111,6 +111,10 @@ class PartSellPriceBreakAdmin(admin.ModelAdmin):
 
     list_display = ('part', 'quantity', 'price')
 
+    search_fields = ['part__name', 'part__IPN']
+
+    autocomplete_fields = ('part',)
+
 
 @admin.register(models.PartInternalPriceBreak)
 class PartInternalPriceBreakAdmin(admin.ModelAdmin):
@@ -122,5 +126,7 @@ class PartInternalPriceBreakAdmin(admin.ModelAdmin):
         model = models.PartInternalPriceBreak
 
     list_display = ('part', 'quantity', 'price')
+
+    search_fields = ['part__name', 'part__IPN']
 
     autocomplete_fields = ('part',)

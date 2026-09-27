@@ -3,8 +3,6 @@
 from datetime import timedelta
 from unittest.mock import patch
 
-from allauth.account.models import EmailAddress
-
 import part.models
 import part.tasks
 import stock.models
@@ -23,9 +21,6 @@ class StaleStockNotificationTests(InvenTreeTestCase):
     def setUpTestData(cls):
         """Create test data as part of initialization."""
         super().setUpTestData()
-
-        # Add email address for user
-        EmailAddress.objects.create(user=cls.user, email='test@testing.com')
 
         # Create test parts
         cls.part1 = part.models.Part.objects.create(

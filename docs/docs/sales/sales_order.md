@@ -287,6 +287,7 @@ The following [global settings](../settings/global.md) are available for sales o
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
+{{ globalsetting("SALESORDER_ENABLED") }}
 {{ globalsetting("SALESORDER_REFERENCE_PATTERN") }}
 {{ globalsetting("SALESORDER_REQUIRE_RESPONSIBLE") }}
 {{ globalsetting("SALESORDER_DEFAULT_SHIPMENT") }}
