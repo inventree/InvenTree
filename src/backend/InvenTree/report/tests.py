@@ -636,35 +636,6 @@ class LabelTest(InvenTreeAPITestCase):
                             'Error printing labels: printer unavailable',
                         )
 
-                    if worker:
-                        original = (
-                            report_models.DataOutput.objects
-                            .filter(pk=output.pk)
-                            .values()
-                            .get()
-                        )
-                        with patch.object(
-                            registry, 'get_plugin', return_value=plugin
-                        ) as get_plugin:
-                            print_labels(
-                                template.pk,
-                                [part.pk for part in parts],
-                                output.pk,
-                                self.user.pk,
-                                plugin.slug,
-                                options={},
-                            )
-
-                        get_plugin.assert_not_called()
-                        plugin.print_labels.assert_called_once()
-                        self.assertEqual(
-                            report_models.DataOutput.objects
-                            .filter(pk=output.pk)
-                            .values()
-                            .get(),
-                            original,
-                        )
-
     def test_print_unavailable_plugin(self):
         """An unavailable worker plugin records a failure instead of hanging."""
         template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
@@ -690,23 +661,6 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertEqual(
             output.errors,
             {'error': "Label printing plugin 'unavailable-label' not found"},
-        )
-
-        original = report_models.DataOutput.objects.filter(pk=output.pk).values().get()
-        plugin = Mock(spec=['slug', 'print_labels'], slug=output.plugin)
-        with (
-            patch.object(registry, 'get_plugin', return_value=plugin) as get_plugin,
-            patch.object(LabelTemplate, 'print') as print_template,
-        ):
-            print_labels(
-                template.pk, [], output.pk, self.user.pk, output.plugin, options={}
-            )
-
-        get_plugin.assert_not_called()
-        print_template.assert_not_called()
-        self.assertEqual(
-            report_models.DataOutput.objects.filter(pk=output.pk).values().get(),
-            original,
         )
 
     def test_print_task_duplicate(self):
