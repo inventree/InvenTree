@@ -111,7 +111,7 @@ export function PurchaseOrderTable({
     ];
   }, []);
 
-  const purchaseOrderFields = usePurchaseOrderFields({});
+  const purchaseOrderFields = usePurchaseOrderFields({ create: true });
 
   const newPurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,

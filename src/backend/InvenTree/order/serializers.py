@@ -420,6 +420,22 @@ class PurchaseOrderSerializer(
 
         return [*fields, 'duplicate']
 
+    def __init__(self, *args, **kwargs):
+        """Set a dynamic default for the 'destination' field, on creation only."""
+        super().__init__(*args, **kwargs)
+
+        if self.instance is None:
+            location_pk = get_global_setting(
+                'PURCHASEORDER_DEFAULT_RECEIVE_LOCATION', backup_value=None
+            )
+
+            if location_pk:
+                self.fields[
+                    'destination'
+                ].default = stock.models.StockLocation.objects.filter(
+                    pk=location_pk
+                ).first()
+
     duplicate = DuplicateOptionsSerializer(
         order.models.PurchaseOrder.objects.all(),
         copy_lines=True,

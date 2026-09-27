@@ -684,6 +684,10 @@ test('Stock - Default Location', async ({ browser }) => {
 
   // Scenario 2: Duplicating a stock item should retain its original location
   await navigate(page, 'stock/item/2/details');
+
+  await page.waitForTimeout(1000);
+  await page.waitForLoadState('networkidle');
+
   await page
     .getByRole('button', { name: 'action-menu-stock-item-actions' })
     .click();
