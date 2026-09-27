@@ -19,6 +19,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils.timezone import now
 
+from error_report.models import Error
 from pypdf import PdfReader
 
 import report.models as report_models
@@ -812,6 +813,105 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertEqual(result['status'], '3')
         self.assertEqual(result['id__in'], [4, 5, 6])
         self.assertEqual(result['part__active'], 'False')
+
+
+class LabelValidationTest(InvenTreeAPITestCase):
+    """Exercise template validation through label rendering and worker tasks."""
+
+    fixtures = ['category', 'part', 'location', 'stock']
+    superuser = True
+
+    def setUp(self):
+        """Create a label which requires a serial number."""
+        super().setUp()
+        cache.clear()
+        self.message = 'Serial number is required for this label'
+        self.template = LabelTemplate.objects.create(
+            name='Serial validation label',
+            model_type='stockitem',
+            template=ContentFile(
+                '{% load report %}'
+                '{% if not stock_item.serial %}'
+                '{% raise_error "' + self.message + '" %}'
+                '{% endif %}Serial: {{ stock_item.serial }}',
+                name='SerialValidationLabel.html',
+            ),
+        )
+        self.valid = StockItem.objects.get(pk=105)
+        self.invalid = StockItem.objects.get(pk=100)
+        self.later = StockItem.objects.get(pk=501)
+
+    def test_render_validation(self):
+        """Both wrappers log and preserve failures from an actual template."""
+        plugin = registry.get_plugin('inventreelabel')
+
+        for wrapper in ['render_to_pdf', 'render_to_html']:
+            with (
+                self.subTest(wrapper=wrapper),
+                patch('plugin.base.label.mixins.log_error') as log_error,
+                self.assertRaises(ValidationError) as raised,
+            ):
+                getattr(plugin, wrapper)(self.template, self.invalid, None)
+
+            self.assertEqual(raised.exception.messages, [self.message])
+            log_error.assert_called_once_with(wrapper, plugin=plugin.slug)
+
+    def test_worker_validation(self):
+        """Real template failures stop rendering and persist their diagnostics."""
+        plugin = registry.get_plugin('inventreelabel')
+        output = report_models.DataOutput.objects.create(
+            output_type=report_models.DataOutput.DataOutputTypes.LABEL,
+            template_name=self.template.name,
+            plugin=plugin.slug,
+            total=3,
+        )
+        diagnostics = Error.objects.filter(
+            path=f'plugin.{plugin.slug}.render_to_pdf', info__contains=self.message
+        )
+        error_count = diagnostics.count()
+        item_ids = [self.valid.pk, self.invalid.pk, self.later.pk]
+
+        with (
+            patch.object(
+                LabelTemplate,
+                'render_as_string',
+                side_effect=self.template.render_as_string,
+            ) as render,
+            self.assertRaises(ValidationError) as raised,
+        ):
+            print_labels(
+                self.template.pk,
+                item_ids,
+                output.pk,
+                self.user.pk,
+                plugin.slug,
+                options={},
+            )
+
+        self.assertEqual(raised.exception.messages, [self.message])
+        self.assertEqual(
+            [call.args[0].pk for call in render.call_args_list], item_ids[:2]
+        )
+        self.assertEqual(diagnostics.count(), error_count + 1)
+        output.refresh_from_db()
+        self.assertEqual(output.errors, {'error': self.message})
+        self.assertFalse(output.complete)
+        self.assertFalse(output.output)
+
+    def test_partial_batch(self):
+        """A later invalid label cannot undo an earlier print."""
+        plugin = registry.get_plugin('inventreelabel')
+
+        with (
+            patch.object(plugin, 'print_label') as print_label,
+            patch.object(plugin, 'get_generated_file') as get_generated_file,
+            self.assertRaises(ValidationError),
+        ):
+            self.template.print([self.valid, self.invalid, self.later], plugin)
+
+        print_label.assert_called_once()
+        self.assertEqual(print_label.call_args.kwargs['item_instance'], self.valid)
+        get_generated_file.assert_not_called()
 
 
 class PrintTestMixins:
