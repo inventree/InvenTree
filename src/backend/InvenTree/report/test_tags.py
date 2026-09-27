@@ -19,7 +19,7 @@ from django.utils.safestring import SafeString
 from djmoney.money import Money
 from PIL import Image
 
-from common.models import InvenTreeSetting, Parameter, ParameterTemplate
+from common.models import InvenTreeSetting, Note, Parameter, ParameterTemplate
 from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part
@@ -634,6 +634,105 @@ class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):
         # Test with an invalid model type
         with self.assertRaises(ValidationError):
             report_tags.parameter(parameter, 'name')
+
+    def test_note_instance(self):
+        """Test the note_instance template tag."""
+        part = Part.objects.create(name='test note part', description='test')
+        content_type = ContentType.objects.get_for_model(Part)
+
+        # No notes yet - returns None
+        self.assertIsNone(report_tags.note_instance(part))
+
+        note_a = Note.objects.create(
+            model_type=content_type,
+            model_id=part.pk,
+            title='Note A',
+            content='<p>A</p>',
+        )
+
+        # A single note is automatically promoted to 'primary', and is
+        # returned when no title is provided
+        self.assertEqual(report_tags.note_instance(part), note_a)
+
+        note_b = Note.objects.create(
+            model_type=content_type,
+            model_id=part.pk,
+            title='Note B',
+            content='<p>B</p>',
+        )
+
+        # Exact title match
+        self.assertEqual(report_tags.note_instance(part, 'Note A'), note_a)
+        self.assertEqual(report_tags.note_instance(part, 'Note B'), note_b)
+
+        # Case-insensitive title match
+        self.assertEqual(report_tags.note_instance(part, 'note a'), note_a)
+        self.assertEqual(report_tags.note_instance(part, 'NOTE B'), note_b)
+
+        # Unmatched title - falls back to the primary note
+        self.assertEqual(report_tags.note_instance(part, 'Does Not Exist'), note_a)
+
+        # Null instance
+        with self.assertRaises(ValueError):
+            report_tags.note_instance(None)
+
+        # Instance without a 'notes' attribute
+        with self.assertRaises(TypeError):
+            report_tags.note_instance(object())
+
+    def test_note(self):
+        """Test the note template tag."""
+        part = Part.objects.create(name='test note part 2', description='test')
+        content_type = ContentType.objects.get_for_model(Part)
+
+        # No notes yet - empty string
+        self.assertEqual(report_tags.note(part), '')
+
+        Note.objects.create(
+            model_type=content_type, model_id=part.pk, title='Empty Note', content=''
+        )
+
+        # Note exists, but has no content
+        self.assertEqual(report_tags.note(part, 'Empty Note'), '')
+
+        Note.objects.create(
+            model_type=content_type,
+            model_id=part.pk,
+            title='Rich Note',
+            content='<p>Handle with <strong>care</strong></p>',
+        )
+
+        html = report_tags.note(part, 'Rich Note')
+        self.assertIsInstance(html, SafeString)
+        self.assertIn('Handle with', html)
+        self.assertIn('<strong>care</strong>', html)
+
+        # An embedded image pointing at a media file should be inlined as
+        # base64 image data, even though the referenced file does not exist
+        # (falls back to the placeholder image, rather than erroring out)
+        media_prefix = settings.MEDIA_URL
+        Note.objects.create(
+            model_type=content_type,
+            model_id=part.pk,
+            title='Image Note',
+            content=f'<p><img src="{media_prefix}does_not_exist.png" width="16"></p>',
+        )
+
+        html = report_tags.note(part, 'Image Note')
+        self.assertNotIn(media_prefix, html)
+        self.assertIn('<img src="data:', html)
+
+        # An image reference which does not point to the media directory
+        # should be left untouched
+        Note.objects.create(
+            model_type=content_type,
+            model_id=part.pk,
+            title='External Image Note',
+            content='<p><img src="https://example.com/foo.png"></p>',
+        )
+
+        html = report_tags.note(part, 'External Image Note')
+        self.assertIn('src="https://example.com/foo.png"', html)
 
     def test_render_currency(self):
         """Test the render_currency template tag."""

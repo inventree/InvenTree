@@ -118,6 +118,13 @@ def print_labels(
         )
         return
 
+    if output.errors:
+        # A failed job may have printed some labels already - do not print them again
+        logger.info(
+            'DataOutput %s has already failed - skipping print_labels task', output_id
+        )
+        return
+
     # Fetch user information
     user = None
 
@@ -141,6 +148,7 @@ def print_labels(
 
     if not plugin:
         logger.warning("Label printing plugin '%s' not found", plugin_slug)
+        output.mark_failure(error=f"Label printing plugin '{plugin_slug}' not found")
         return
 
     # Extract optional arguments for label printing

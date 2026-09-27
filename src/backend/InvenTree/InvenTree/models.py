@@ -20,6 +20,7 @@ from django.utils.translation import gettext_lazy as _
 
 import structlog
 from django_q.models import Task
+from django_q.signals import post_execute
 from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
@@ -1672,32 +1673,68 @@ def notify_staff_users_of_error(instance, label: str, context: dict):
         logger.error(exc)
 
 
+def _notify_task_failure(func: str, task_id: str, attempt_count: int, result) -> None:
+    """Create a new Error object for a permanently-failed background task.
+
+    This will, in turn, trigger a notification to staff users via the Error post_save signal.
+    """
+    from InvenTree.exceptions import log_error
+
+    message = f"Task '{func} ({task_id})' failed after {attempt_count} attempt{'s' if attempt_count != 1 else ''}"
+
+    logger.error(message)
+
+    log_error(
+        'task_failure',
+        scope='worker',
+        error_name='Task Failure',
+        error_info=message,
+        error_data=str(result) if result else '',
+    )
+
+
 @receiver(post_save, sender=Task, dispatch_uid='failure_post_save_notification')
 def after_failed_task(sender, instance: Task, created: bool, **kwargs):
     """Callback when a new task failure log is generated."""
     from django.conf import settings
-
-    from InvenTree.exceptions import log_error
 
     max_attempts = int(settings.Q_CLUSTER.get('max_attempts', 5))
     n = instance.attempt_count
 
     # Only notify once the maximum number of attempts has been reached
     if not instance.success and n >= max_attempts:
-        # Create a new Error object associated with this failed task
-        # This will, in turn, trigger a notification to staff users via the Error post_save signal
+        _notify_task_failure(instance.func, instance.pk, n, instance.result)
 
-        message = f"Task '{instance.func} ({instance.pk})' failed after {n} attempts"
 
-        logger.error(message)
+@receiver(post_execute, dispatch_uid='failure_post_execute_notification')
+def after_single_shot_task_failure(sender, task: dict, **kwargs):
+    """Callback when a background task finishes executing.
 
-        log_error(
-            'task_failure',
-            scope='worker',
-            error_name='Task Failure',
-            error_info=message,
-            error_data=str(instance.result) if instance.result else '',
-        )
+    A task offloaded with offload_task(..., retry=False) is marked with the
+    'ack_failure' option, which causes the broker to drop it after a single failed
+    attempt (see InvenTree.tasks.offload_task) - its attempt_count will never reach
+    Q_CLUSTER['max_attempts'], so after_failed_task()'s post_save-based check would
+    otherwise never fire a notification for it. This uses django-q2's post_execute
+    signal instead, which (unlike the saved Task record) still carries the
+    'ack_failure' flag, to notify immediately on that task's one and only attempt.
+    """
+    from django.conf import settings
+
+    if task.get('success') or not task.get('ack_failure'):
+        return
+
+    max_attempts = int(settings.Q_CLUSTER.get('max_attempts', 5))
+
+    if max_attempts <= 1:
+        # after_failed_task() already handles this case via its own post_save signal -
+        # avoid notifying twice
+        return
+
+    from django_q.utils import get_func_repr
+
+    _notify_task_failure(
+        get_func_repr(task.get('func')), task.get('id'), 1, task.get('result')
+    )
 
 
 @receiver(post_save, sender=Error, dispatch_uid='error_post_save_notification')

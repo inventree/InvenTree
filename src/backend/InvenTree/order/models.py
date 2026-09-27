@@ -74,6 +74,7 @@ from order.status_codes import (
     TransferOrderStatusGroups,
 )
 from part import models as PartModels
+from plugin.base.integration.AllocateMixin import apply_allocate_mixin
 from plugin.events import bulk_trigger_event, trigger_event
 from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
@@ -1611,7 +1612,12 @@ class SalesOrder(TotalPriceMixin, Order):
             else:
                 available_stock = available_stock.order_by(stock_sort_by)
 
-            stock_count = available_stock.count()
+            # Allow plugins to filter / reorder the candidate stock items
+            available_stock = apply_allocate_mixin(
+                'filter_sales_order_allocation', line_item, available_stock, **kwargs
+            )
+
+            stock_count = len(available_stock)
 
             if stock_count == 0:
                 continue

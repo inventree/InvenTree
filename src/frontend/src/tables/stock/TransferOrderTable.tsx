@@ -11,6 +11,7 @@ import {
   CreatedByColumn,
   CreationDateColumn,
   DescriptionColumn,
+  LineItemsProgressColumn,
   LocationColumn,
   ProjectCodeColumn,
   ReferenceColumn,
@@ -57,7 +58,7 @@ export function TransferOrderTable({
         sortable: true,
         switchable: true
       }),
-      //   LineItemsProgressColumn({}),
+      LineItemsProgressColumn({}),
       StatusColumn({ model: ModelType.transferorder }),
       ProjectCodeColumn({
         defaultVisible: false
