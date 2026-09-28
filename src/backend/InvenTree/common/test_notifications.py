@@ -121,7 +121,7 @@ class NotificationLocaleTest(InvenTreeTestCase):
         subject_it, html_it = dispatched_by_recipient[self.user_it.email]
         self.assertIn('Elemento ricevuto', subject_it)
         self.assertIn(
-            'Gli elementi sono stati ricevuti a fronte di un ordine di acquisto',
+            'Gli elementi sono stati ricevuti a fronte di un ordine di acquisto',  # codespell:ignore
             html_it,
         )
         self.assertIn("Clicca il seguente link per visualizzare quest'ordine", html_it)
@@ -184,7 +184,7 @@ class NotificationLocaleTest(InvenTreeTestCase):
         self.assertEqual(msg_it.name, 'Elemento ricevuto')
         self.assertEqual(
             msg_it.message,
-            'Gli elementi sono stati ricevuti a fronte di un ordine di acquisto',
+            'Gli elementi sono stati ricevuti a fronte di un ordine di acquisto',  # codespell:ignore
         )
 
     def test_email_notifications_no_recipients(self):
