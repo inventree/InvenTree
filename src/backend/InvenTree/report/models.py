@@ -136,9 +136,9 @@ class TemplateUploadMixin:
         exists = self.__class__.objects.filter(**filters).exclude(pk=self.pk).exists()
 
         if exists and raise_error:
-            raise ValidationError(
-                {self.TEMPLATE_FIELD: _('Template file with this name already exists')}
-            )
+            raise ValidationError({
+                self.TEMPLATE_FIELD: _('Template file with this name already exists')
+            })
 
         return exists
 
@@ -742,9 +742,10 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
             # Raise a ValidationError with the error message
             # This will be caught by the caller and displayed to the user
-            raise ValidationError(
-                {'error': _('Error generating report'), 'detail': str(exc)}
-            )
+            raise ValidationError({
+                'error': _('Error generating report'),
+                'detail': str(exc),
+            })
 
         if not report_name:
             report_name = ''  # pragma: no cover

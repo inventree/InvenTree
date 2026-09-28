@@ -703,7 +703,8 @@ class LabelTest(InvenTreeAPITestCase):
                     )
                 else:
                     self.assertEqual(
-                        report_models.DataOutput.objects.filter(pk=output_id)
+                        report_models.DataOutput.objects
+                        .filter(pk=output_id)
                         .values()
                         .get(),
                         original,
