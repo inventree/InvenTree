@@ -8,7 +8,7 @@ msgstr ""
 "Language: fa\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-26 22:21\n"
+"PO-Revision-Date: 2026-09-27 21:10\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: lib/components/Boundary.tsx:16
 msgid "Error rendering component"
-msgstr ""
+msgstr "خطا در رندر کردن کامپوننت"
 
 #: lib/components/Boundary.tsx:18
 #~ msgid "An error occurred while rendering this component. Refer to the console for more information."
@@ -28,37 +28,37 @@ msgstr ""
 
 #: lib/components/Boundary.tsx:20
 msgid "An error occurred while rendering this component."
-msgstr ""
+msgstr "هنگام رندر این کامپوننت، خطایی رخ داد."
 
 #: lib/components/Boundary.tsx:23
 msgid "Try reloading the page, or contact your administrator if the problem persists."
-msgstr ""
+msgstr "لطفاً صفحه را دوباره بارگذاری کنید، یا اگر مشکل همچنان ادامه داشت، با مدیر سیستم خود تماس بگیرید."
 
 #: lib/components/Boundary.tsx:28
 #: src/tables/settings/ErrorTable.tsx:146
 #: src/tables/settings/FailedTasksTable.tsx:65
 msgid "Error Details"
-msgstr ""
+msgstr "جزئیات خطا"
 
 #: lib/components/CopyButton.tsx:49
 msgid "Copied"
-msgstr ""
+msgstr "کپی شد"
 
 #: lib/components/CopyButton.tsx:49
 msgid "Copy"
-msgstr ""
+msgstr "کپی"
 
 #: lib/components/RowActions.tsx:46
 #: src/components/items/ActionDropdown.tsx:297
 #: src/pages/Index/Scan.tsx:62
 msgid "Duplicate"
-msgstr ""
+msgstr "نسخه تکراری"
 
 #: lib/components/RowActions.tsx:56
 #: src/components/items/ActionDropdown.tsx:251
 #: src/components/nav/PageDetail.tsx:63
 msgid "Edit"
-msgstr ""
+msgstr "ویرایش"
 
 #: lib/components/RowActions.tsx:66
 #: src/components/forms/ApiForm.tsx:852
@@ -68,7 +68,7 @@ msgstr ""
 #: src/pages/Notifications.tsx:109
 #: src/tables/plugin/PluginListTable.tsx:253
 msgid "Delete"
-msgstr ""
+msgstr "حذف"
 
 #: lib/components/RowActions.tsx:76
 #: src/components/details/DetailsImage.tsx:82
@@ -85,7 +85,7 @@ msgstr ""
 #: src/tables/build/BuildOutputTable.tsx:665
 #: src/tables/settings/ApiTokenTable.tsx:270
 msgid "Cancel"
-msgstr ""
+msgstr "لغو"
 
 #: lib/components/RowActions.tsx:146
 #: src/components/nav/NavigationDrawer.tsx:185
@@ -99,7 +99,7 @@ msgstr ""
 #: src/forms/StockForms.tsx:1840
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:977
 msgid "Actions"
-msgstr ""
+msgstr "اقدامات"
 
 #: lib/components/SearchInput.tsx:34
 #: src/components/forms/fields/RelatedModelField.tsx:549
@@ -109,34 +109,34 @@ msgstr ""
 #: src/pages/Index/Settings/UserSettings.tsx:78
 #: src/pages/part/PartDetail.tsx:761
 msgid "Search"
-msgstr ""
+msgstr "جست و جو"
 
 #: lib/components/TableColumnSelect.tsx:16
 #: lib/components/TableColumnSelect.tsx:23
 msgid "Select Columns"
-msgstr ""
+msgstr "انتخاب ستون"
 
 #: lib/components/YesNoButton.tsx:20
 msgid "Pass"
-msgstr ""
+msgstr "رد شدن"
 
 #: lib/components/YesNoButton.tsx:21
 msgid "Fail"
-msgstr ""
+msgstr "عدم موفقیت"
 
 #: lib/components/YesNoButton.tsx:43
 #: src/components/tables/Filter.tsx:41
 #: src/components/tables/Filter.tsx:77
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:775
 msgid "Yes"
-msgstr ""
+msgstr "بله"
 
 #: lib/components/YesNoButton.tsx:44
 #: src/components/tables/Filter.tsx:41
 #: src/components/tables/Filter.tsx:78
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:775
 msgid "No"
-msgstr ""
+msgstr "خیر"
 
 #: lib/enums/ModelInformation.tsx:37
 #: src/pages/Index/Settings/AdminCenter/PartParameterPanel.tsx:13
