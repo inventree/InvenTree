@@ -379,7 +379,7 @@ class FSMTransitionMixin:
             or check_user_permission(request.user, model, 'change')
         ):
             raise PermissionDenied(
-                _('User does not have permission to edit this attachment')
+                _('User does not have permission to view or change this object')
             )
 
         paths = self.transition_url_paths()
