@@ -2553,7 +2553,6 @@ class RepairOrderReportContext(report.mixins.BaseReportContext, TypedDict):
 
 
 class RepairOrder(
-    InvenTree.models.PluginValidationMixin,
     StatusCodeMixin,
     StateTransitionMixin,
     InvenTree.models.InvenTreeParameterMixin,
