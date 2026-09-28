@@ -4,6 +4,8 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { EagerLoadable, Loadable } from './functions/loading';
 import { onLocaleReady } from './functions/localeReady';
 
+import { PluginRoutes } from './components/plugins/PluginRoutes';
+
 // Lazy loaded pages
 // These two are mutually exclusive and one of them is always needed
 // immediately on initial load, so they're loaded eagerly rather than via
@@ -220,6 +222,7 @@ export const routes = (
         <Route path='user/:id/*' element={<UserDetail />} />
         <Route path='group/:id/*' element={<GroupDetail />} />
       </Route>
+      <Route path='plugin/*' element={<PluginRoutes />} />
     </Route>
     <Route
       path='/'
