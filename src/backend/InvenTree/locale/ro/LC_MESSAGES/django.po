@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-26 07:21+0000\n"
-"PO-Revision-Date: 2026-09-26 07:26\n"
+"POT-Creation-Date: 2026-09-27 21:10+0000\n"
+"PO-Revision-Date: 2026-09-27 21:15\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Language: ro_RO\n"
@@ -8835,7 +8835,7 @@ msgstr ""
 msgid "Plugin does not support label printing"
 msgstr ""
 
-#: report/api.py:170 report/api.py:279
+#: report/api.py:170 report/api.py:280
 msgid "You do not have permission to view this model type"
 msgstr ""
 
@@ -8843,7 +8843,7 @@ msgstr ""
 msgid "Invalid label dimensions"
 msgstr ""
 
-#: report/api.py:192 report/api.py:290
+#: report/api.py:192 report/api.py:291
 msgid "No valid items provided to template"
 msgstr ""
 
@@ -9149,31 +9149,31 @@ msgstr ""
 msgid "Transferred"
 msgstr ""
 
-#: report/templatetags/report.py:239
+#: report/templatetags/report.py:252
 msgid "Invalid media file path"
 msgstr ""
 
-#: report/templatetags/report.py:258
+#: report/templatetags/report.py:271
 msgid "Invalid static file path"
 msgstr ""
 
-#: report/templatetags/report.py:360
+#: report/templatetags/report.py:373
 msgid "Asset file not found"
 msgstr ""
 
-#: report/templatetags/report.py:421 report/templatetags/report.py:547
+#: report/templatetags/report.py:434 report/templatetags/report.py:560
 msgid "Image file not found"
 msgstr ""
 
-#: report/templatetags/report.py:511
+#: report/templatetags/report.py:524
 msgid "No image file specified"
 msgstr ""
 
-#: report/templatetags/report.py:541
+#: report/templatetags/report.py:554
 msgid "part_image tag requires a Part instance"
 msgstr ""
 
-#: report/templatetags/report.py:721
+#: report/templatetags/report.py:734
 msgid "company_image tag requires a Company instance"
 msgstr ""
 

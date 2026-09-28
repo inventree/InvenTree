@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-26 07:21+0000\n"
-"PO-Revision-Date: 2026-09-26 07:26\n"
+"POT-Creation-Date: 2026-09-27 21:10+0000\n"
+"PO-Revision-Date: 2026-09-27 21:15\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -8835,7 +8835,7 @@ msgstr "Plugin nebyl nalezen"
 msgid "Plugin does not support label printing"
 msgstr "Plugin nepodporuje tisk štítků"
 
-#: report/api.py:170 report/api.py:279
+#: report/api.py:170 report/api.py:280
 msgid "You do not have permission to view this model type"
 msgstr "Nemáte oprávnění pro zobrazení modelu tohoto typu"
 
@@ -8843,7 +8843,7 @@ msgstr "Nemáte oprávnění pro zobrazení modelu tohoto typu"
 msgid "Invalid label dimensions"
 msgstr "Neplatné rozměry štítku"
 
-#: report/api.py:192 report/api.py:290
+#: report/api.py:192 report/api.py:291
 msgid "No valid items provided to template"
 msgstr "Žádné platné položky nebyly k šabloně poskytnuté"
 
@@ -9149,31 +9149,31 @@ msgstr "Žádný výsledek"
 msgid "Transferred"
 msgstr "Převedeno"
 
-#: report/templatetags/report.py:239
+#: report/templatetags/report.py:252
 msgid "Invalid media file path"
 msgstr "Neplatná cesta k media souboru"
 
-#: report/templatetags/report.py:258
+#: report/templatetags/report.py:271
 msgid "Invalid static file path"
 msgstr "Neplatná cesta ke statickému souboru"
 
-#: report/templatetags/report.py:360
+#: report/templatetags/report.py:373
 msgid "Asset file not found"
 msgstr "Soubor aktiva nebyl nalezen"
 
-#: report/templatetags/report.py:421 report/templatetags/report.py:547
+#: report/templatetags/report.py:434 report/templatetags/report.py:560
 msgid "Image file not found"
 msgstr "Soubor obrázku nebyl nalezen"
 
-#: report/templatetags/report.py:511
+#: report/templatetags/report.py:524
 msgid "No image file specified"
 msgstr "Nebyl zadán žádný obrázek"
 
-#: report/templatetags/report.py:541
+#: report/templatetags/report.py:554
 msgid "part_image tag requires a Part instance"
 msgstr "part_image tag vyžaduje instanci dílu"
 
-#: report/templatetags/report.py:721
+#: report/templatetags/report.py:734
 msgid "company_image tag requires a Company instance"
 msgstr "company_image tag vyžaduje intanci společnosti"
 
