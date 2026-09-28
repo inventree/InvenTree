@@ -2903,7 +2903,7 @@ class BuildAutoAllocateAPITest(InvenTreeAPITestCase):
 
     def _next_ref(self):
         """Return a valid Build reference using the system-generated next value."""
-        return Build.generate_batch_code()  # type: ignore[invalid-attribute-access]
+        return Build.generate_batch_code()  # ty: ignore[invalid-attribute-access]
 
     def _make_build(self, quantity=10):
         """Create a fresh Build with one untracked BOM line (component only)."""

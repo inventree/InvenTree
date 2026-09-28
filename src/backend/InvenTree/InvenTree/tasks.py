@@ -781,7 +781,7 @@ def rebuild_model_tree(model: str, tree_id: int) -> None:
 
     # Rebuild the 'pathstring' values for the entire tree (if applicable)
     if issubclass(model_class, InvenTree.models.PathStringMixin):
-        model_class.rebuild_tree_pathstring_values([tree_id])  # type: ignore[invalid-attribute-access]
+        model_class.rebuild_tree_pathstring_values([tree_id])  # ty: ignore[invalid-attribute-access]
 
 
 @tracer.start_as_current_span('heartbeat')
