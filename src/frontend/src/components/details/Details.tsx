@@ -190,6 +190,7 @@ function NameBadge({
 
   const { data } = useQuery({
     queryKey: ['badge', type, pk],
+    staleTime: 5 * 60 * 1000, // 5 minutes
     queryFn: async () => {
       let path = '';
 
