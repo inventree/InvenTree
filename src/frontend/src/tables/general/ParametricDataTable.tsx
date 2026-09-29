@@ -178,7 +178,13 @@ export default function ParametricDataTable({
 
   // Fetch all active parameter templates for the given model type
   const parameterTemplates = useQuery({
-    queryKey: ['parameter-templates', modelType],
+    queryKey: [
+      'parameter-templates',
+      modelType,
+      modelId,
+      relatedModel,
+      relatedModelId
+    ],
     staleTime: 5 * 60 * 1000, // 5 minutes
     queryFn: async () => {
       return api
