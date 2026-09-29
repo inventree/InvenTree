@@ -195,6 +195,7 @@ export type RowViewProps = RowAction & RowModelProps & RowViewBehaviorProps;
  * @param height: string | number - Height of the table (default = 'auto')
  * @param minHeight: number - Minimum height of the table (default 300px)
  * @param noHeader: boolean - Hide the table header
+ * @param nestedRows: InvenTreeTableNestedRowProps - Configuration for displaying nested (child) rows within the table
  */
 export type InvenTreeTableProps<T = any> = {
   params?: any;
@@ -232,6 +233,24 @@ export type InvenTreeTableProps<T = any> = {
   height?: string | number;
   minHeight?: number;
   noHeader?: boolean;
+  nestedRows?: InvenTreeTableNestedRowProps<T>;
+};
+
+/**
+ * Configuration for displaying nested (child) rows within a table.
+ *
+ * Child rows are fetched on demand from the same API endpoint as the table,
+ * and inserted directly below their parent row - sharing the same columns.
+ * Child rows are discarded whenever the top-level table data is reloaded.
+ *
+ * @param accessor - Column accessor used to display the expansion icon and indentation (defaults to the first column)
+ * @param expandable - Callback to determine if a given record can be expanded
+ * @param childParams - Callback which returns the query parameters used to fetch child rows for a given record
+ */
+export type InvenTreeTableNestedRowProps<T = any> = {
+  accessor?: string;
+  expandable: (record: T) => boolean;
+  childParams: (record: T) => Record<string, any>;
 };
 
 export type InvenTreeTableRenderProps<T extends Record<string, any>> = {

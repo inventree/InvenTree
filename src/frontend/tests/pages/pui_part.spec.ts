@@ -196,16 +196,34 @@ test('Parts - BOM', async ({ browser }) => {
   // Move the mouse away
   await page.getByRole('link', { name: 'Bill of Materials' }).hover();
 
-  // Test sub-assembly row expansion
-  await page.getByText('Widget Board (assembled)').click();
+  // Test sub-assembly row expansion (rows are inserted into the same table)
+  const assemblyRow = page
+    .getByRole('row')
+    .filter({ hasText: 'Widget Board (assembled)' });
+
+  await assemblyRow.getByRole('button', { name: 'nested-row-expand' }).click();
   await page.getByText('R_10R_0402_1%').waitFor();
   await page.getByText('MAX232IDR').waitFor();
 
-  // Enable BOM editing
+  // Collapse the sub-assembly rows
+  await assemblyRow
+    .getByRole('button', { name: 'nested-row-collapse' })
+    .click();
+  await expect(page.getByText('MAX232IDR')).toHaveCount(0);
+
+  // Re-expand (from cached data)
+  await assemblyRow.getByRole('button', { name: 'nested-row-expand' }).click();
+  await page.getByText('MAX232IDR').waitFor();
+
+  // Enable BOM editing - sub-assembly rows are removed
   await page.getByRole('button', { name: 'action-button-edit-bom' }).click();
   await page
     .getByRole('button', { name: 'action-button-finish-editing-' })
     .waitFor();
+  await expect(page.getByText('MAX232IDR')).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: 'nested-row-expand' })
+  ).toHaveCount(0);
 
   const cell = await page
     .getByRole('cell', { name: 'Thumbnail 1551ABK' })

@@ -27,7 +27,10 @@ import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
-import type { TableColumn } from '@lib/types/Tables';
+import type {
+  InvenTreeTableNestedRowProps,
+  TableColumn
+} from '@lib/types/Tables';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { RenderPart } from '../../components/render/Part';
 import {
@@ -41,7 +44,6 @@ import {
 } from '../../components/tables/ColumnRenderers';
 import { PartCategoryFilter } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
-import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
 import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
@@ -58,7 +60,6 @@ import {
   useUserSettingsState
 } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import { subassemblyRowExpansion } from './BomSubassemblyTable';
 
 // Calculate the total stock quantity available for a given BomItem
 function availableStockQuantity(record: any): number {
@@ -104,8 +105,6 @@ export function BomTable({
   const userSettings = useUserSettingsState();
 
   const tableColumns: TableColumn[] = useMemo(() => {
-    const allowExpansion = userSettings.isSet('SHOW_BOM_SUBASSEMBLY_LEVELS');
-
     return [
       {
         accessor: 'sub_part',
@@ -135,22 +134,10 @@ export function BomTable({
             );
           }
 
-          const assembly: boolean = record.sub_part_detail?.assembly ?? false;
-
           return (
             part && (
               <TableHoverCard
-                value={
-                  <Group gap='xs' justify='left'>
-                    {assembly && !isEditing && allowExpansion && (
-                      <RowExpansionIcon
-                        enabled
-                        expanded={table.isRowExpanded(record.pk)}
-                      />
-                    )}
-                    <RenderPartColumn part={part} />
-                  </Group>
-                }
+                value={<RenderPartColumn part={part} />}
                 iconColor={record.validated ? undefined : 'red'}
                 extra={extra}
                 title={t`Part Information`}
@@ -453,7 +440,7 @@ export function BomTable({
       },
       NoteColumn({})
     ];
-  }, [table.isRowExpanded, isEditing, partId, params, userSettings]);
+  }, [partId, params]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -711,8 +698,18 @@ export function BomTable({
     ];
   }, [isEditing, isLocked, user]);
 
-  // Row expansion (for displaying subassemblies)
-  const rowExpansion = subassemblyRowExpansion({ table: table });
+  // Nested rows (for displaying subassemblies) - not available while editing
+  const nestedRows: InvenTreeTableNestedRowProps | undefined = useMemo(() => {
+    if (isEditing || !userSettings.isSet('SHOW_BOM_SUBASSEMBLY_LEVELS')) {
+      return undefined;
+    }
+
+    return {
+      accessor: 'sub_part',
+      expandable: (record: any) => !!record.sub_part_detail?.assembly,
+      childParams: (record: any) => ({ part: record.sub_part })
+    };
+  }, [isEditing, userSettings]);
 
   return (
     <>
@@ -761,7 +758,7 @@ export function BomTable({
               return record.part === partId;
             },
             enableDownload: true,
-            rowExpansion: isEditing ? undefined : rowExpansion
+            nestedRows: nestedRows
           }}
         />
       </Stack>
