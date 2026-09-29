@@ -25,14 +25,14 @@ from pypdf import PdfReader
 import report.models as report_models
 from build.models import Build
 from common.models import Attachment, Note
-from common.settings import set_global_setting
+from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_base_dir
 from InvenTree.unit_test import AdminTestCase, InvenTreeAPITestCase
 from order.models import PurchaseOrder, ReturnOrder, SalesOrder
 from part.models import Part
 from plugin.registry import registry
 from report.models import LabelTemplate, ReportTemplate
-from report.tasks import print_labels
+from report.tasks import print_labels, print_reports
 from stock.models import StockItem, StockLocation
 
 
@@ -912,6 +912,141 @@ class LabelValidationTest(InvenTreeAPITestCase):
         print_label.assert_called_once()
         self.assertEqual(print_label.call_args.kwargs['item_instance'], self.valid)
         get_generated_file.assert_not_called()
+
+
+class TemplateWarningTest(InvenTreeAPITestCase):
+    """Collect template warnings through existing print result lifecycle paths."""
+
+    fixtures = ['category', 'part', 'location', 'stock']
+    superuser = True
+
+    def setUp(self):
+        """Create report and label templates with nonfatal warnings."""
+        super().setUp()
+        cache.clear()
+        body = (
+            '{% load report %}'
+            '{% raise_warning "Review item" %}'
+            '{% raise_warning "Check quantity" %}'
+            '<p>Rendered content</p>'
+        )
+        self.report_template = ReportTemplate.objects.create(
+            name='Warning report',
+            model_type='part',
+            template=ContentFile(body, name='WarningReport.html'),
+        )
+        self.label_template = LabelTemplate.objects.create(
+            name='Warning label',
+            model_type='stockitem',
+            template=ContentFile(body, name='WarningLabel.html'),
+        )
+        self.parts = list(Part.objects.all()[:2])
+        self.items = list(StockItem.objects.filter(pk__in=[100, 105]))
+
+    def check_output(self, output, debug):
+        """The saved result retains warnings without adding text to the document."""
+        output.refresh_from_db()
+        self.assertTrue(output.complete)
+        self.assertFalse(output.errors)
+        self.assertEqual(output.warnings, ['Review item', 'Check quantity'])
+        self.assertTrue(output.output)
+        with output.output.open('rb') as document:
+            if debug:
+                content = document.read().decode()
+            else:
+                content = ''.join(
+                    page.extract_text() for page in PdfReader(document).pages
+                )
+        self.assertIn('Rendered content', content)
+        self.assertNotIn('Review item', content)
+        self.assertNotIn('Check quantity', content)
+
+    def test_reports(self):
+        """Merged and individual reports collect warnings in HTML and PDF modes."""
+        original_debug = get_global_setting('REPORT_DEBUG_MODE')
+        self.addCleanup(set_global_setting, 'REPORT_DEBUG_MODE', original_debug)
+        for merge in [False, True]:
+            for debug in [False, True]:
+                with self.subTest(merge=merge, debug=debug):
+                    self.report_template.merge = merge
+                    set_global_setting('REPORT_DEBUG_MODE', debug)
+                    output = self.report_template.print(self.parts, user=self.user)
+                    self.check_output(output, debug)
+
+    def test_labels(self):
+        """PDF and sheet printers keep warnings while rendering every label."""
+        for slug in ['inventreelabel', 'inventreelabelsheet']:
+            plugin = registry.get_plugin(slug, active=None)
+            original_debug = plugin.get_setting('DEBUG')
+            self.addCleanup(plugin.set_setting, 'DEBUG', original_debug)
+            for debug in [False, True]:
+                with self.subTest(plugin=slug, debug=debug):
+                    plugin.set_setting('DEBUG', debug)
+                    output = self.label_template.print(
+                        self.items, plugin, user=self.user
+                    )
+                    self.check_output(output, debug)
+                    self.assertEqual(output.progress, len(self.items))
+
+    def test_api_and_worker(self):
+        """Both synchronous API results and queued tasks include warnings."""
+        from django_q.models import OrmQ
+
+        for endpoint, template, items, task_function in [
+            ('api-label-print', self.label_template, self.items, print_labels),
+            ('api-report-print', self.report_template, self.parts, print_reports),
+        ]:
+            for worker in [False, True]:
+                with self.subTest(endpoint=endpoint, worker=worker):
+                    OrmQ.objects.all().delete()
+                    with patch(
+                        'InvenTree.status.is_worker_running', return_value=worker
+                    ):
+                        response = self.post(
+                            reverse(endpoint),
+                            data={
+                                'template': template.pk,
+                                'items': [item.pk for item in items],
+                            },
+                            expected_code=201,
+                        )
+                    if worker:
+                        self.assertFalse(response.data['complete'])
+                        self.assertEqual(response.data['warnings'], [])
+                        task = OrmQ.objects.get()
+                        task_function(*task.args(), **task.kwargs())
+                    else:
+                        self.assertTrue(response.data['complete'])
+                        self.assertEqual(
+                            response.data['warnings'], ['Review item', 'Check quantity']
+                        )
+                    result = self.get(
+                        reverse(
+                            'api-data-output-detail', kwargs={'pk': response.data['pk']}
+                        )
+                    ).data
+                    self.assertTrue(result['complete'])
+                    self.assertEqual(
+                        result['warnings'], ['Review item', 'Check quantity']
+                    )
+                    self.assertFalse(result['errors'])
+
+    def test_warning_then_error(self):
+        """Warnings leave the normal validation failure behavior intact."""
+        plugin = registry.get_plugin('inventreelabel')
+        self.label_template.template.save(
+            'WarningThenError.html',
+            ContentFile(
+                '{% load report %}{% raise_warning "Check item" %}{% raise_error "Invalid item" %}'
+            ),
+        )
+        output = report_models.DataOutput.objects.create(user=self.user)
+        with self.assertRaises(ValidationError):
+            self.label_template.print(self.items, plugin, output=output)
+        output.refresh_from_db()
+        self.assertFalse(output.complete)
+        self.assertFalse(output.output)
+        self.assertEqual(output.errors, {'error': 'Invalid item'})
 
 
 class PrintTestMixins:

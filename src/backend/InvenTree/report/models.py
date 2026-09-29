@@ -28,6 +28,7 @@ import InvenTree.models
 import InvenTree.ready
 import report.helpers
 import report.validators
+from common.data_output import data_output_context
 from common.models import DataOutput, RenderChoices, UpdatedUserMixin
 from common.settings import get_global_setting
 from InvenTree.helpers_model import get_base_url
@@ -572,12 +573,13 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
                     report_name = self.generate_filename(contexts)
 
                 try:
-                    if debug_mode:
-                        report = self.render_as_string(
-                            instance, user=user, context=contexts
-                        )
-                    else:
-                        report = self.render(instance, user=user, context=contexts)
+                    with data_output_context(output):
+                        if debug_mode:
+                            report = self.render_as_string(
+                                instance, user=user, context=contexts
+                            )
+                        else:
+                            report = self.render(instance, user=user, context=contexts)
                 except TemplateDoesNotExist as e:
                     t_name = str(e) or self.template
                     msg = f'Template file {t_name} does not exist'
@@ -611,12 +613,13 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
 
                     # Render the report output
                     try:
-                        if debug_mode:
-                            report = self.render_as_string(
-                                instance, user=user, context=context
-                            )
-                        else:
-                            report = self.render(instance, user=user, context=None)
+                        with data_output_context(output):
+                            if debug_mode:
+                                report = self.render_as_string(
+                                    instance, user=user, context=context
+                                )
+                            else:
+                                report = self.render(instance, user=user, context=None)
                     except TemplateDoesNotExist as e:
                         t_name = str(e) or self.template
                         msg = f'Template file {t_name} does not exist'
@@ -837,9 +840,10 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
             if hasattr(plugin, 'before_printing'):
                 plugin.before_printing()
 
-            plugin.print_labels(
-                self, output, items, None, user=user, printing_options=options
-            )
+            with data_output_context(output):
+                plugin.print_labels(
+                    self, output, items, None, user=user, printing_options=options
+                )
 
             if hasattr(plugin, 'after_printing'):
                 plugin.after_printing()

@@ -4,6 +4,7 @@ import base64
 import hashlib
 import io
 import re
+from contextvars import Context as ExecutionContext
 from decimal import Decimal
 from xml.etree import ElementTree
 from zoneinfo import ZoneInfo
@@ -11,7 +12,7 @@ from zoneinfo import ZoneInfo
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.template import Context, Template
+from django.template import Context, Template, TemplateSyntaxError
 from django.test import SimpleTestCase, TestCase, override_settings
 from django.utils import timezone
 from django.utils.safestring import SafeString
@@ -19,7 +20,14 @@ from django.utils.safestring import SafeString
 from djmoney.money import Money
 from PIL import Image
 
-from common.models import InvenTreeSetting, Note, Parameter, ParameterTemplate
+from common.data_output import data_output_context, get_current_data_output
+from common.models import (
+    DataOutput,
+    InvenTreeSetting,
+    Note,
+    Parameter,
+    ParameterTemplate,
+)
 from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part
@@ -55,6 +63,70 @@ class RaiseErrorTagTest(SimpleTestCase):
         self.assertEqual(
             template.render(Context({'stock_item': {'serial': '123'}})), '123'
         )
+
+
+class RaiseWarningTagTest(SimpleTestCase):
+    """Warnings collect without database access or changes to rendered content."""
+
+    def test_messages(self):
+        """Collect literal and variable messages once, in emission order."""
+        output = DataOutput()
+        template = Template(
+            '{% load report %}Before'
+            '{% raise_warning "Missing serial" %}'
+            '{% raise_warning message %}'
+            '{% raise_warning "Missing serial" %}After'
+        )
+        with data_output_context(output):
+            self.assertEqual(
+                template.render(Context({'message': 'Check quantity'})), 'BeforeAfter'
+            )
+
+        self.assertEqual(output.warnings, ['Missing serial', 'Check quantity'])
+        self.assertIsNone(output.errors)
+        self.assertFalse(output.complete)
+        self.assertEqual(DataOutput().warnings, [])
+
+    def test_conditional_warning(self):
+        """Warnings in unevaluated branches are not collected."""
+        output = DataOutput()
+        template = Template(
+            '{% load report %}{% if missing %}{% raise_warning "Missing" %}{% endif %}OK'
+        )
+        with data_output_context(output):
+            self.assertEqual(template.render(Context({'missing': False})), 'OK')
+        self.assertEqual(output.warnings, [])
+
+    def test_message_required(self):
+        """The warning tag requires a message."""
+        with self.assertRaises(TemplateSyntaxError):
+            Template('{% load report %}{% raise_warning %}')
+
+    def test_scopes(self):
+        """Nested scopes restore their parent, including after an exception."""
+        outer, inner = DataOutput(), DataOutput()
+        self.assertIsNone(get_current_data_output())
+        with data_output_context(outer):
+            self.assertIs(get_current_data_output(), outer)
+            report_tags.raise_warning('First')
+            with self.assertRaises(ValidationError):
+                with data_output_context(inner):
+                    self.assertIs(get_current_data_output(), inner)
+                    report_tags.raise_warning('Inner')
+                    report_tags.raise_error('Stop')
+            self.assertIs(get_current_data_output(), outer)
+            report_tags.raise_warning('Last')
+            with self.assertLogs('inventree', level='WARNING') as logs:
+                ExecutionContext().run(report_tags.raise_warning, 'Separate context')
+            self.assertIn('Separate context', logs.output[0])
+
+        self.assertIsNone(get_current_data_output())
+        self.assertEqual(outer.warnings, ['First', 'Last'])
+        self.assertEqual(inner.warnings, ['Inner'])
+        with self.assertLogs('inventree', level='WARNING') as logs:
+            self.assertEqual(report_tags.raise_warning('Outside printing'), '')
+        self.assertIn('Outside printing', logs.output[0])
+        self.assertEqual(outer.warnings, ['First', 'Last'])
 
 
 class ReportTagTest(PartImageTestMixin, InvenTreeTestCase):

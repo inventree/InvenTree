@@ -39,6 +39,7 @@ import common.models
 import InvenTree.helpers
 import InvenTree.helpers_model
 import report.helpers
+from common.data_output import add_output_warning
 from common.settings import get_global_setting
 from company.models import Company
 from part.models import Part
@@ -60,6 +61,17 @@ def raise_error(message: str):
         ValidationError: Whenever this tag is evaluated.
     """
     raise ValidationError(message)
+
+
+@register.simple_tag()
+def raise_warning(message: str):
+    """Record a nonfatal warning while continuing to render the template.
+
+    Arguments:
+        message: The warning message to include in the print result.
+    """
+    add_output_warning(message)
+    return ''
 
 
 def get_locale(locale: Optional[str] = None) -> Locale:

@@ -34,6 +34,34 @@ Use `raise_error` to stop rendering a report or label template with an actionabl
 
 The tag raises a validation error. For labels, how this error affects printing depends on the printing plugin. See [label validation](./labels.md#validating-label-data) for sheet and batch behavior.
 
+## Template Warnings
+
+Use `raise_warning` to record a nonfatal message while continuing to render a report or label. The required message can be a quoted string or a template variable:
+
+```html
+{% raw %}
+{% load report %}
+{% if not stock_item.serial %}
+    {% raise_warning "This label has no serial number" %}
+{% endif %}
+{% endraw %}
+```
+
+::: report.templatetags.report.raise_warning
+    options:
+        show_docstring_description: false
+        show_source: False
+
+Warnings produce no text in the generated document. They are collected in the print result's `warnings` list, with identical messages included only once in first-seen order. Include item identifiers in the message when a warning needs to identify a particular item.
+
+Saved warnings appear beneath the progress bar while printing continues. A successful result with warnings displays a yellow notification until dismissed. The output still opens automatically and remains available through the notification's download link. If printing fails, the error takes precedence.
+
+Notifications show the first five warnings and a count of any remaining messages. Long warning lists scroll within a limited height. All warnings remain available in the print result's `warnings` list.
+
+Warnings are collected during the current report or label printing operation, including label sheets, and saved with the existing progress and completion updates. Rendering outside that operation, including work dispatched separately by a custom printer, logs warnings without attaching them to the original result. Warnings do not change the job's completion or retry behavior.
+
+Python plugins and drivers can use `common.data_output.add_output_warning(message)` to collect warnings on the current result, with the same logging fallback when no result is bound. Drivers holding a result can also call `output.add_warning(message)` directly. Neither helper saves the result; persistence remains explicit through `output.save()` or existing progress and completion updates.
+
 ## Assigning Variables
 
 When making use of helper functions within a template, it can be useful to store the result of the function to a variable, rather than immediately rendering the output.

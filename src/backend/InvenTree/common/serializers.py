@@ -1226,11 +1226,14 @@ class DataOutputSerializer(InvenTreeModelSerializer):
             'plugin',
             'output',
             'errors',
+            'warnings',
         ]
 
     user_detail = UserSerializer(source='user', read_only=True, many=False)
 
     output = InvenTreeAttachmentSerializerField(allow_null=True, read_only=True)
+
+    warnings = serializers.ListField(child=serializers.CharField(), read_only=True)
 
 
 class EmailMessageSerializer(InvenTreeModelSerializer):

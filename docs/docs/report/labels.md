@@ -137,6 +137,8 @@ When evaluated, the tag raises a validation error and stops rendering the curren
 
 The InvenTree Label Sheet Printer handles this like other rendering errors: it logs the error, inserts an error cell, and continues generating the sheet. The tag does not abort the entire sheet job.
 
+For a nonfatal message, use [raise_warning](./helpers.md#template-warnings). Rendering continues and the warning is attached to the print result, including when using the label sheet printer.
+
 !!! warning "Batch printing"
     Validation happens when each template is evaluated. Earlier labels may already have printed or been queued by the printing plugin. This does not validate the entire batch before printing or undo earlier printing. Custom plugins must propagate template validation errors for this behavior to apply.
 

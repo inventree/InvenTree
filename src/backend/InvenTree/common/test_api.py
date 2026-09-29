@@ -37,6 +37,49 @@ class DataOutputAPITests(InvenTreeAPITestCase):
                 complete=ii % 2 == 1,
             )
 
+    def test_warnings(self):
+        """Warnings use existing saves and are read-only in the result API."""
+        from common.data_output import add_output_warning, data_output_context
+        from common.models import DataOutput
+        from common.serializers import DataOutputSerializer
+
+        output = DataOutput.objects.filter(user=self.user).first()
+        url = reverse('api-data-output-detail', kwargs={'pk': output.pk})
+        self.assertEqual(self.get(url).data['warnings'], [])
+
+        with self.assertNumQueries(0):
+            with data_output_context(output):
+                add_output_warning('Missing serial')
+            output.add_warning('Missing serial')
+            output.add_warning('Check quantity')
+
+        self.assertEqual(DataOutput.objects.get(pk=output.pk).warnings, [])
+        output.progress = 1
+        output.save()
+        self.assertEqual(
+            self.get(url).data['warnings'], ['Missing serial', 'Check quantity']
+        )
+
+        output.add_warning('Final warning')
+        output.mark_complete()
+        result = self.get(url).data
+        self.assertTrue(result['complete'])
+        self.assertIsNone(result['errors'])
+        self.assertEqual(
+            result['warnings'], ['Missing serial', 'Check quantity', 'Final warning']
+        )
+
+        serializer = DataOutputSerializer(
+            output, data={'warnings': ['Injected']}, partial=True
+        )
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        self.assertNotIn('warnings', serializer.validated_data)
+
+        output.mark_failure('Printer failed')
+        result = self.get(url).data
+        self.assertFalse(result['complete'])
+        self.assertEqual(result['errors'], {'error': 'Printer failed'})
+
     def test_data_output_list(self):
         """Test the DataOutput API list endpoint."""
         url = reverse('api-data-output-list')
