@@ -347,6 +347,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
 
   const { data } = useQuery({
     queryKey: ['detail', props.field_data.model, props.field_value],
+    staleTime: 5 * 60 * 1000, // 5 minutes
     queryFn: async () => {
       if (!props.field_data?.model) {
         return {};

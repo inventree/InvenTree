@@ -162,6 +162,7 @@ export function RenderRemoteInstance({
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['model', model, pk],
+    staleTime: 5 * 60 * 1000, // 5 minutes
     queryFn: async () => {
       const url = modelUrl
         ? apiUrl(modelUrl, pk)
