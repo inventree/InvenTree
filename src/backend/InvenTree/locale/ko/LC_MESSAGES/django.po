@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-26 07:21+0000\n"
-"PO-Revision-Date: 2026-09-26 07:26\n"
+"POT-Creation-Date: 2026-09-27 21:10+0000\n"
+"PO-Revision-Date: 2026-09-27 21:15\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -8835,7 +8835,7 @@ msgstr "플러그인을 찾을 수 없습니다"
 msgid "Plugin does not support label printing"
 msgstr "플러그인이 라벨 인쇄를 지원하지 않습니다"
 
-#: report/api.py:170 report/api.py:279
+#: report/api.py:170 report/api.py:280
 msgid "You do not have permission to view this model type"
 msgstr "이 모델 유형을 볼 권한이 없습니다"
 
@@ -8843,7 +8843,7 @@ msgstr "이 모델 유형을 볼 권한이 없습니다"
 msgid "Invalid label dimensions"
 msgstr "잘못된 라벨 크기입니다"
 
-#: report/api.py:192 report/api.py:290
+#: report/api.py:192 report/api.py:291
 msgid "No valid items provided to template"
 msgstr "템플릿에 유효한 항목이 제공되지 않았습니다"
 
@@ -9149,31 +9149,31 @@ msgstr "결과 없음"
 msgid "Transferred"
 msgstr "이동됨"
 
-#: report/templatetags/report.py:239
+#: report/templatetags/report.py:252
 msgid "Invalid media file path"
 msgstr "잘못된 미디어 파일 경로"
 
-#: report/templatetags/report.py:258
+#: report/templatetags/report.py:271
 msgid "Invalid static file path"
 msgstr "잘못된 정적 파일 경로"
 
-#: report/templatetags/report.py:360
+#: report/templatetags/report.py:373
 msgid "Asset file not found"
 msgstr "자산 파일을 찾을 수 없습니다"
 
-#: report/templatetags/report.py:421 report/templatetags/report.py:547
+#: report/templatetags/report.py:434 report/templatetags/report.py:560
 msgid "Image file not found"
 msgstr "이미지 파일을 찾을 수 없습니다"
 
-#: report/templatetags/report.py:511
+#: report/templatetags/report.py:524
 msgid "No image file specified"
 msgstr "이미지 파일이 지정되지 않았습니다"
 
-#: report/templatetags/report.py:541
+#: report/templatetags/report.py:554
 msgid "part_image tag requires a Part instance"
 msgstr "part_image 태그에는 Part 인스턴스가 필요합니다"
 
-#: report/templatetags/report.py:721
+#: report/templatetags/report.py:734
 msgid "company_image tag requires a Company instance"
 msgstr "company_image 태그에는 Company 인스턴스가 필요합니다"
 

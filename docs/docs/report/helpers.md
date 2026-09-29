@@ -14,6 +14,26 @@ Some common functions are provided for use in custom report and label templates.
 !!! tip "Use the Source, Luke"
     To see the full range of available helper functions, refer to the source file [report.py]({{ sourcefile("src/backend/InvenTree/report/templatetags/report.py") }}) where these functions are defined!
 
+## Raising Template Errors
+
+Use `raise_error` to stop rendering a report or label template with an actionable error message. The message is required and can be a quoted string or a template variable.
+
+::: report.templatetags.report.raise_error
+    options:
+        show_docstring_description: false
+        show_source: False
+
+```html
+{% raw %}
+{% load report %}
+{% if not stock_item.serial %}
+    {% raise_error "Serial number is required for this label" %}
+{% endif %}
+{% endraw %}
+```
+
+The tag raises a validation error. For labels, how this error affects printing depends on the printing plugin. See [label validation](./labels.md#validating-label-data) for sheet and batch behavior.
+
 ## Assigning Variables
 
 When making use of helper functions within a template, it can be useful to store the result of the function to a variable, rather than immediately rendering the output.

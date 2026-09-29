@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-26 07:21+0000\n"
-"PO-Revision-Date: 2026-09-26 07:26\n"
+"POT-Creation-Date: 2026-09-27 21:10+0000\n"
+"PO-Revision-Date: 2026-09-27 21:15\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
@@ -8835,7 +8835,7 @@ msgstr "إضافة غير تم العثور"
 msgid "Plugin does not support label printing"
 msgstr "إضافة يقوم غير الدعم ملصق الطباعة"
 
-#: report/api.py:170 report/api.py:279
+#: report/api.py:170 report/api.py:280
 msgid "You do not have permission to view this model type"
 msgstr "أنت تنفيذ غير لديه صلاحية إلى عرض هذا نموذج نوع"
 
@@ -8843,7 +8843,7 @@ msgstr "أنت تنفيذ غير لديه صلاحية إلى عرض هذا نم
 msgid "Invalid label dimensions"
 msgstr "غير صالح ملصق dimensions"
 
-#: report/api.py:192 report/api.py:290
+#: report/api.py:192 report/api.py:291
 msgid "No valid items provided to template"
 msgstr "لا صالح عناصر مقدم إلى قالب"
 
@@ -9149,31 +9149,31 @@ msgstr "لا نتيجة"
 msgid "Transferred"
 msgstr "محوّل"
 
-#: report/templatetags/report.py:239
+#: report/templatetags/report.py:252
 msgid "Invalid media file path"
 msgstr "غير صالح media ملف مسار"
 
-#: report/templatetags/report.py:258
+#: report/templatetags/report.py:271
 msgid "Invalid static file path"
 msgstr "غير صالح static ملف مسار"
 
-#: report/templatetags/report.py:360
+#: report/templatetags/report.py:373
 msgid "Asset file not found"
 msgstr "أصل ملف غير تم العثور"
 
-#: report/templatetags/report.py:421 report/templatetags/report.py:547
+#: report/templatetags/report.py:434 report/templatetags/report.py:560
 msgid "Image file not found"
 msgstr "صورة ملف غير تم العثور"
 
-#: report/templatetags/report.py:511
+#: report/templatetags/report.py:524
 msgid "No image file specified"
 msgstr "لا صورة ملف محدد"
 
-#: report/templatetags/report.py:541
+#: report/templatetags/report.py:554
 msgid "part_image tag requires a Part instance"
 msgstr "part_image وسم يتطلب صنف نسخة"
 
-#: report/templatetags/report.py:721
+#: report/templatetags/report.py:734
 msgid "company_image tag requires a Company instance"
 msgstr "company_image وسم يتطلب شركة نسخة"
 

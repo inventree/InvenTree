@@ -1,15 +1,19 @@
 """Core set of Notifications as a Plugin."""
 
+from collections import defaultdict
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models import Model
 from django.template.loader import render_to_string
+from django.utils.translation import gettext, override
 from django.utils.translation import gettext_lazy as _
 
 import requests
 import structlog
 
 import InvenTree.helpers_email
+from common.notifications import get_user_language
 from common.settings import get_global_setting
 from plugin import InvenTreePlugin
 from plugin.mixins import NotificationMixin, SettingsMixin
@@ -43,16 +47,26 @@ class InvenTreeUINotifications(NotificationMixin, InvenTreePlugin):
         if not target:
             target = self.plugin_config()
 
-        # Bulk create notification messages for all provided users
+        # Bulk create notification messages for all provided users in their respective language context
         for user in users:
+            user_language = get_user_language(user)
+            with override(user_language):
+                name = ctx.get('name')
+                if name is not None:
+                    name = gettext(str(name))
+
+                message = ctx.get('message')
+                if message is not None:
+                    message = gettext(str(message))
+
             entries.append(
                 NotificationMessage(
                     target_object=target,
                     source_object=user,
                     user=user,
                     category=category,
-                    name=ctx.get('name'),
-                    message=ctx.get('message'),
+                    name=name,
+                    message=message,
                     link=ctx.get('link'),
                 )
             )
@@ -89,16 +103,8 @@ class InvenTreeEmailNotifications(NotificationMixin, SettingsMixin, InvenTreePlu
         if not context.get('template'):
             return False
 
-        html_message = render_to_string(context['template']['html'], context)
-
-        # Prefix the 'instance title' to the email subject
-        instance_title = get_global_setting('INVENTREE_INSTANCE')
-        subject = context['template'].get('subject', '')
-
-        if instance_title:
-            subject = f'[{instance_title}] {subject}'
-
-        recipients = []
+        # Group target users by their preferred language
+        language_groups: dict[str, list[str]] = defaultdict(list)
 
         for user in users:
             # Skip if the user does not want to receive email notifications
@@ -106,20 +112,43 @@ class InvenTreeEmailNotifications(NotificationMixin, SettingsMixin, InvenTreePlu
                 continue
 
             if email := InvenTree.helpers_email.get_email_for_user(user):
-                recipients.append(email)
+                user_language = get_user_language(user)
+                language_groups[user_language].append(email)
 
-        if recipients:
-            InvenTree.helpers_email.send_email(
-                subject,
-                '',
-                recipients,
-                html_message=html_message,
-                force_async=not settings.TESTING,
-            )
-            return True
+        if not language_groups:
+            # No recipients found, so we cannot send the email
+            return False
 
-        # No recipients found, so we cannot send the email
-        return False
+        instance_title = get_global_setting('INVENTREE_INSTANCE')
+        raw_subject = context['template'].get('subject', '')
+        template_name = context['template']['html']
+
+        for user_language, recipients in language_groups.items():
+            with override(user_language):
+                # Translate subject
+                subject = gettext(str(raw_subject))
+                if instance_title:
+                    subject = f'[{instance_title}] {subject}'
+
+                # Build localized context copy so template rendering evaluates strings in user locale
+                ctx = dict(context)
+                if 'name' in ctx and ctx['name'] is not None:
+                    ctx['name'] = gettext(str(ctx['name']))
+                if 'message' in ctx and ctx['message'] is not None:
+                    ctx['message'] = gettext(str(ctx['message']))
+
+                # Re-render html_message with translated strings and templates
+                html_message = render_to_string(template_name, ctx)
+
+                InvenTree.helpers_email.send_email(
+                    subject,
+                    '',
+                    recipients,
+                    html_message=html_message,
+                    force_async=not settings.TESTING,
+                )
+
+        return True
 
 
 class InvenTreeSlackNotifications(NotificationMixin, SettingsMixin, InvenTreePlugin):
