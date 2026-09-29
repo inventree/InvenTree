@@ -163,7 +163,7 @@ function HoverNameBadge(data: any, type: BadgeType) {
         </Stack>
       </Group>
 
-      <Text size='sm' mt='md'>
+      <Text size='sm' mt='md' component='div'>
         {line_data[4]}
       </Text>
     </HoverCard.Dropdown>
