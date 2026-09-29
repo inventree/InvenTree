@@ -609,35 +609,6 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         return data
 
 
-class BuildIssueSerializer(serializers.Serializer):
-    """DRF serializer for issuing a build order."""
-
-    class Meta:
-        """Serializer metaclass."""
-
-        fields = []
-
-    def save(self):
-        """Issue the specified build order."""
-        build = self.context['build']
-        build.issue_build()
-
-
-class BuildHoldSerializer(serializers.Serializer):
-    """DRF serializer for placing a BuildOrder on hold."""
-
-    class Meta:
-        """Serializer metaclass."""
-
-        fields = []
-
-    def save(self):
-        """Place the specified build on hold."""
-        build = self.context['build']
-
-        build.hold_build()
-
-
 class BuildCancelSerializer(serializers.Serializer):
     """Cancel an active BuildOrder."""
 
@@ -670,18 +641,14 @@ class BuildCancelSerializer(serializers.Serializer):
         default=False,
     )
 
-    def save(self):
-        """Cancel the specified build."""
-        build = self.context['build']
-        request = self.context.get('request')
-
+    def transition_kwargs(self) -> dict:
+        """Return the keyword arguments for the 'cancel_build' transition."""
         data = self.validated_data
 
-        build.cancel_build(
-            request.user if request else None,
-            remove_allocated_stock=data.get('remove_allocated_stock', False),
-            remove_incomplete_outputs=data.get('remove_incomplete_outputs', False),
-        )
+        return {
+            'remove_allocated_stock': data.get('remove_allocated_stock', False),
+            'remove_incomplete_outputs': data.get('remove_incomplete_outputs', False),
+        }
 
 
 class OverallocationChoice:
@@ -793,20 +760,14 @@ class BuildCompleteSerializer(serializers.Serializer):
 
         return data
 
-    def save(self):
-        """Complete the specified build output."""
-        request = self.context.get('request')
-        build = self.context['build']
-
-        data = self.validated_data
-
-        build.complete_build(
-            request.user if request else None,
-            trim_allocated_stock=data.get(
+    def transition_kwargs(self) -> dict:
+        """Return the keyword arguments for the 'complete_build' transition."""
+        return {
+            'trim_allocated_stock': self.validated_data.get(
                 'accept_overallocated', OverallocationChoice.REJECT
             )
-            == OverallocationChoice.TRIM,
-        )
+            == OverallocationChoice.TRIM
+        }
 
 
 class BuildUnallocationSerializer(serializers.Serializer):
