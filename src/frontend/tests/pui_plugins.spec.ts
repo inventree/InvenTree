@@ -237,6 +237,106 @@ test('Plugins - Custom Admin', async ({ browser }) => {
   await page.getByText('hello: world').waitFor();
 });
 
+test('Plugins - Table Actions', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { user: adminuser });
+
+  await setSettingState({ setting: 'ENABLE_PLUGINS_INTERFACE', value: true });
+  await setPluginState({ plugin: 'sampleui', state: true });
+
+  const stockItemsResponse = page.waitForResponse((response) => {
+    const url = new URL(response.url());
+    return (
+      response.request().method() === 'GET' &&
+      url.pathname === '/api/stock/' &&
+      url.searchParams.has('limit')
+    );
+  });
+  await navigate(page, 'stock/location/index/');
+  await loadTab(page, 'Stock Items');
+  // Selection checkbox labels identify row positions, not stock item IDs.
+  const {
+    results: [firstStockItem, secondStockItem]
+  } = await (await stockItemsResponse).json();
+
+  const table = page.getByLabel('Stock Items');
+  const action = table.getByLabel('action-button-sample-stock-table-action');
+  await expect(action).toBeDisabled();
+  await expect(table.getByLabel('action-menu-printing-actions')).toBeVisible();
+
+  await table.getByLabel('Select record 1', { exact: true }).click();
+  await expect(action).toBeEnabled();
+
+  const firstDialog = page.waitForEvent('dialog');
+  await Promise.all([
+    action.click(),
+    firstDialog.then(async (dialog) => {
+      expect(dialog.message()).toBe(
+        `Selected stock item IDs: ${firstStockItem.pk}`
+      );
+      await dialog.accept();
+    })
+  ]);
+
+  await table.getByLabel('Select record 2', { exact: true }).click();
+  const secondDialog = page.waitForEvent('dialog');
+  await Promise.all([
+    action.click(),
+    secondDialog.then(async (dialog) => {
+      expect(dialog.message()).toBe(
+        `Selected stock item IDs: ${firstStockItem.pk}, ${secondStockItem.pk}`
+      );
+      await dialog.accept();
+    })
+  ]);
+
+  await setPluginState({ plugin: 'sampleui', state: false });
+});
+
+test('Plugins - Table Actions Disabled', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { user: adminuser });
+
+  await setSettingState({ setting: 'ENABLE_PLUGINS_INTERFACE', value: true });
+  await setPluginState({ plugin: 'sampleui', state: true });
+
+  try {
+    await navigate(page, 'stock/location/index/');
+    await loadTab(page, 'Stock Items');
+    const stockUrl = page.url();
+    const action = page
+      .getByLabel('Stock Items')
+      .getByLabel('action-button-sample-stock-table-action');
+    await expect(action).toBeVisible();
+
+    // Stay in the SPA so the table-action query remains cached.
+    await page.getByRole('button', { name: 'navigation-menu' }).click();
+    await page
+      .getByRole('link', { name: 'Admin Center', exact: true })
+      .click();
+    await loadTab(page, 'Plugins', true);
+    await page
+      .getByRole('button', { name: 'Plugin Settings', exact: true })
+      .click();
+
+    const toggle = page.getByRole('switch', {
+      name: 'toggle-setting-ENABLE_PLUGINS_INTERFACE'
+    });
+    await page
+      .getByLabel('setting-ENABLE_PLUGINS_INTERFACE-wrapper')
+      .locator('span')
+      .nth(1)
+      .click();
+    await expect(toggle).not.toBeChecked();
+
+    await page.getByRole('tab', { name: 'Stock', exact: true }).click();
+    await loadTab(page, 'Stock Items');
+    await expect(page).toHaveURL(stockUrl);
+    await expect(action).toHaveCount(0);
+  } finally {
+    await setSettingState({ setting: 'ENABLE_PLUGINS_INTERFACE', value: true });
+    await setPluginState({ plugin: 'sampleui', state: false });
+  }
+});
+
 test('Plugins - Locate Item', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
     user: adminuser

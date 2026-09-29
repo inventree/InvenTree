@@ -239,6 +239,32 @@ Routes are exposed below `/web/plugin/<plugin-name>/`. For example, the route ab
 
 The path is relative to the plugin's own URL namespace and uses React Router path syntax, so parameters can be specified using :parameter notation.
 
+### Table Actions
+
+The `get_ui_table_actions` method can add additional actions to selectable table headers. The UI requests actions using the current `location` (pathname), `model_type`, `table_url`, and optional `table_id`. Use these fields to restrict which tables show your action. For tables without a model type, or to distinguish two tables with the same model and URL, the table should set a stable `pluginTableId` in its `InvenTreeTable` props (it is required when there is no model type). Do not use the table's changing refresh key as an identifier.
+
+::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_table_actions
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      extra:
+        show_source: True
+      summary: False
+      members: []
+
+Each action provides a `key`, `title`, optional `icon` and `options` (`color` and `requires_selection`, which defaults to `true`), and a `source` pointing to a JavaScript function. Unlike primary actions, table actions require a source function (default name: `getFeature`). The source is called **when clicked**, with the current selection:
+
+```js
+export async function getFeature({ featureContext, inventreeContext, serverContext }) {
+  const { selectedIds, modelType, tableId, tableUrl, refreshTable, clearSelectedRecords } = featureContext;
+  // selectedIds use the table's idAccessor, not row positions; values may be numbers or strings.
+  // Call your plugin API using inventreeContext.api, then optionally refreshTable().
+}
+```
+
+`selectedIds` are not sent to the feature-discovery API. Client-side visibility and disabled state are not security checks: any API called by the action must validate the current user's permissions and each requested item. See the [sample UI plugin](#sample-plugin) for a working example.
+
 ## Plugin Context
 
 When rendering certain content in the user interface, the rendering functions are passed a `context` object which contains information about the current page being rendered. The type of the `context` object is defined in the `PluginContext` file:
