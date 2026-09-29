@@ -185,6 +185,7 @@ export type RowViewProps = RowAction & RowModelProps & RowViewBehaviorProps;
  * @param tableFilters : TableFilter[] - List of custom filters
  * @param tableActions : any[] - List of custom action groups
  * @param tableActionsFullWidth : boolean - Allow custom table actions to use the available header width
+ * @param pluginTableId : string - Stable identifier for plugin actions (required for tables without a modelType)
  * @param isRecordSelectable : (record: any, index: number) => boolean - Callback function to determine if a row is selectable
  * @param detailAction: boolean - Enable detail action for each row (default = true)
  * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
@@ -220,6 +221,7 @@ export type InvenTreeTableProps<T = any> = {
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
   tableActionsFullWidth?: boolean;
+  pluginTableId?: string;
   isRecordSelectable?: (record: T, index: number) => boolean;
   rowExpansion?: DataTableRowExpansionProps<T>;
   dataFormatter?: (data: any) => any;

@@ -1,8 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
-
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { api } from '../App';
 import { useInvenTreeContext } from '../components/plugins/PluginContext';
 import { findExternalPluginFunction } from '../components/plugins/PluginSource';
@@ -69,6 +68,11 @@ export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
       func: PluginUIFuncWithoutInvenTreeContextType<UIFeatureT>;
     }[]
   >(() => {
+    // Disabling a query does not discard its cached features.
+    if (!pluginUiFeaturesEnabled || !enabled) {
+      return [];
+    }
+
     return (
       pluginData?.map((feature) => {
         return {
@@ -80,7 +84,14 @@ export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
               feature.source,
               'getFeature'
             );
-            if (!func) return;
+            if (!func) {
+              if (featureType === 'table_action') {
+                throw new Error(
+                  `Plugin table action handler not found: ${feature.source}`
+                );
+              }
+              return;
+            }
 
             return func({
               featureContext,
@@ -91,5 +102,11 @@ export function usePluginUIFeature<UIFeatureT extends BaseUIFeature>({
         };
       }) || []
     );
-  }, [pluginData, inventreeContext]);
+  }, [
+    pluginData,
+    inventreeContext,
+    featureType,
+    pluginUiFeaturesEnabled,
+    enabled
+  ]);
 }

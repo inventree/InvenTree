@@ -255,6 +255,37 @@ class UserInterfaceMixinTests(InvenTreeAPITestCase):
         self.assertEqual(response.data[0]['key'], 'sample-nav-item')
         self.assertEqual(response.data[0]['title'], 'Sample Nav Item')
 
+    def test_ui_table_actions(self):
+        """Table actions are returned for matching table context only."""
+        url = reverse('api-plugin-ui-feature-list', kwargs={'feature': 'table_action'})
+        context = {
+            'location': '/web/stock/location/index/',
+            'model_type': 'stockitem',
+            'table_url': '/api/stock/',
+        }
+
+        response = self.get(url, data=context)
+        self.assertEqual(len(response.data), 1)
+
+        action = response.data[0]
+        self.assertEqual(action['plugin_name'], 'sampleui')
+        self.assertEqual(action['feature_type'], 'table_action')
+        self.assertEqual(action['key'], 'sample-stock-table-action')
+        self.assertTrue(action['source'].endswith('/sample_table_action.js'))
+        self.assertEqual(action['options'], {'requires_selection': True})
+
+        response = self.get(url, data={**context, 'model_type': 'part'})
+        self.assertEqual(response.data, [])
+
+        InvenTreeSetting.set_setting(
+            'ENABLE_PLUGINS_INTERFACE', False, change_user=None
+        )
+
+        response = self.get(url, data=context)
+        self.assertEqual(response.data, [])
+
+        InvenTreeSetting.set_setting('ENABLE_PLUGINS_INTERFACE', True, change_user=None)
+
     def test_ui_primary_actions(self):
         """Test that the sample UI plugin provides custom primary actions."""
         response = self.get(
