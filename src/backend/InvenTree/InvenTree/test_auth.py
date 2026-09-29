@@ -1,8 +1,9 @@
 """Test the sso and auth module functionality."""
 
+from django.conf import settings as django_settings
 from django.contrib.auth.models import Group, User
-from django.core.exceptions import ValidationError
-from django.test import override_settings
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.test import RequestFactory, override_settings
 from django.test.testcases import TransactionTestCase
 from django.urls import reverse
 
@@ -10,7 +11,7 @@ from allauth.socialaccount.models import SocialAccount, SocialLogin
 
 from common.models import InvenTreeSetting
 from InvenTree import sso
-from InvenTree.auth_overrides import RegistrationMixin
+from InvenTree.auth_overrides import CustomSocialAccountAdapter, RegistrationMixin
 from InvenTree.unit_test import InvenTreeAPITestCase
 
 
@@ -122,6 +123,61 @@ class TestSsoGroupSync(TransactionTestCase):
         self.assertEqual(Group.objects.filter(name='inventree_group').count(), 0)
         sso.ensure_sso_groups(None, self.sociallogin)
         self.assertEqual(Group.objects.filter(name='inventree_group').count(), 1)
+
+
+class TestSocialAccountAdapter(TransactionTestCase):
+    """Tests for CustomSocialAccountAdapter, used for all SSO logins."""
+
+    def setUp(self):
+        """Construct a fresh adapter for each test."""
+        self.adapter = CustomSocialAccountAdapter()
+
+    def test_pre_social_login_blocked_when_sso_disabled(self):
+        """SSO logins (new or existing accounts) must be rejected outright when SSO is disabled."""
+        InvenTreeSetting.set_setting('LOGIN_ENABLE_SSO', False)
+        with self.assertRaises(PermissionDenied):
+            self.adapter.pre_social_login(None, None)
+
+    def test_pre_social_login_allowed_when_sso_enabled(self):
+        """A normal SSO login attempt should pass through untouched when SSO is enabled."""
+        InvenTreeSetting.set_setting('LOGIN_ENABLE_SSO', True)
+        # Should not raise - the default super() implementation is a no-op
+        self.adapter.pre_social_login(None, None)
+
+    def test_is_auto_signup_allowed(self):
+        """Auto-signup must be blockable independently of whether SSO registration is open."""
+        InvenTreeSetting.set_setting('LOGIN_SIGNUP_SSO_AUTO', False)
+        self.assertFalse(self.adapter.is_auto_signup_allowed(None, None))
+
+        # When enabled, defers to allauth's own default (SOCIALACCOUNT_AUTO_SIGNUP)
+        InvenTreeSetting.set_setting('LOGIN_SIGNUP_SSO_AUTO', True)
+        self.assertTrue(self.adapter.is_auto_signup_allowed(None, None))
+
+    def test_is_open_for_signup(self):
+        """SSO self-registration is gated by LOGIN_ENABLE_SSO_REG (and a configured mail backend)."""
+        InvenTreeSetting.set_setting('LOGIN_ENABLE_SSO_REG', False)
+        self.assertFalse(self.adapter.is_open_for_signup(None, None))
+
+        with self.settings(EMAIL_HOST='localhost', TESTING_BYPASS_MAILCHECK=True):
+            InvenTreeSetting.set_setting('LOGIN_ENABLE_SSO_REG', True)
+            self.assertTrue(self.adapter.is_open_for_signup(None, None))
+
+    def test_get_connect_redirect_url(self):
+        """Connecting an SSO account should redirect back to the frontend root."""
+        request = RequestFactory().get('/')
+        url = self.adapter.get_connect_redirect_url(request, None)
+        self.assertTrue(url.endswith(f'/{django_settings.FRONTEND_URL_BASE}/'))
+
+    def test_authentication_error_does_not_raise(self):
+        """A provider-side authentication error should be logged, not raised further."""
+        request = RequestFactory().get(
+            '/', data={'error': 'access_denied', 'error_description': 'Cancelled'}
+        )
+        # Should not raise, regardless of whether error/exception are passed explicitly
+        self.adapter.authentication_error(request, 'mock')
+        self.adapter.authentication_error(
+            request, 'mock', error='denied', exception='User cancelled'
+        )
 
 
 class EmailSettingsContext:
@@ -244,3 +300,15 @@ class TestAuth(InvenTreeAPITestCase):
         # Logged out user
         self.client.logout()
         self.get(url, expected_code=401)
+
+    def test_server_info_sso_enabled(self):
+        """The server info endpoint should reflect the LOGIN_ENABLE_SSO setting."""
+        url = reverse('api-inventree-info')
+
+        InvenTreeSetting.set_setting('LOGIN_ENABLE_SSO', True)
+        resp = self.get(url, expected_code=200)
+        self.assertTrue(resp.json()['settings']['sso_enabled'])
+
+        InvenTreeSetting.set_setting('LOGIN_ENABLE_SSO', False)
+        resp = self.get(url, expected_code=200)
+        self.assertFalse(resp.json()['settings']['sso_enabled'])

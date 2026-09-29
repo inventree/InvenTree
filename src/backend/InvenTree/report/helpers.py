@@ -4,11 +4,16 @@ import base64
 import io
 import logging
 import mimetypes
+from typing import TYPE_CHECKING
 
 from django.utils.translation import gettext_lazy as _
 
 from common.settings import get_global_setting
 
+if TYPE_CHECKING:
+    from django_stubs_ext import StrOrPromise
+else:
+    StrOrPromise = str
 logger = logging.getLogger('inventree')
 
 
@@ -38,7 +43,7 @@ def report_model_options():
     ]
 
 
-def report_page_size_options():
+def report_page_size_options() -> list[tuple[str, StrOrPromise]]:
     """Returns a list of page size options for PDF reports."""
     return [
         ('A4', _('A4')),

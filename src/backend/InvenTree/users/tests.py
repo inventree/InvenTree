@@ -1,5 +1,7 @@
 """Unit tests for the 'users' app."""
 
+import datetime
+
 from django.apps import apps
 from django.contrib.auth.models import Group
 from django.test import TestCase
@@ -298,7 +300,10 @@ class OwnerModelTest(InvenTreeTestCase):
         self.client.login(username=self.username, password=self.password)
         # token get
         response = self.do_request(reverse('api-token'), {})
-        self.assertEqual(response['token'], token.first().key)
+        raw_token = response['token']
+        self.assertTrue(raw_token.startswith('inv-2-'))
+        token = ApiToken.get_from_string(raw_token)
+        self.assertTrue(token.validate(raw_token))
 
         # test user is associated with token
         response = self.do_request(
@@ -404,6 +409,12 @@ class AdminTest(AdminTestCase):
         my_token = self.helper(
             model=ApiToken, model_kwargs={'user': self.user, 'name': 'test-token'}
         )
+        self.assertTrue(
+            my_token.token.endswith(
+                f'-{datetime.datetime.now().date().isoformat().replace("-", "")}'
+            )
+        )
+        self.assertTrue(my_token.validate(my_token.token))
         # Additionally test str fnc
         self.assertEqual(str(my_token), my_token.token)
 
@@ -500,3 +511,34 @@ class UserProfileTest(InvenTreeAPITestCase):
         # Ensure primary_group is set to None
         profile.refresh_from_db()
         self.assertIsNone(profile.primary_group)
+
+
+class UserProfileMetadataPermissionTests(InvenTreeAPITestCase):
+    """Tests for the generic metadata endpoint against the UserProfile model."""
+
+    def setUp(self):
+        """Create a second user with their own profile."""
+        from django.contrib.auth import get_user_model
+
+        super().setUp()
+
+        self.other_user = get_user_model().objects.create_user(
+            username='other_metadata_user', password='password'
+        )
+
+    def _metadata_url(self, pk):
+        return reverse(
+            'api-generic-metadata', kwargs={'model': 'userprofile', 'pk': pk}
+        )
+
+    def test_own_profile_metadata_is_accessible(self):
+        """A user can read/write their own profile metadata via the generic endpoint."""
+        url = self._metadata_url(self.user.profile.pk)
+        self.get(url, expected_code=200)
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=200)
+
+    def test_other_users_profile_metadata_is_denied(self):
+        """A user cannot read/write another user's profile metadata via the generic endpoint."""
+        url = self._metadata_url(self.other_user.profile.pk)
+        self.get(url, expected_code=403)
+        self.patch(url, {'metadata': {'x': 1}}, expected_code=403)

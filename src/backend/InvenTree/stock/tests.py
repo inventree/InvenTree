@@ -2353,3 +2353,104 @@ class StockItemSerialAPIConcurrencyTest(TransactionTestCase):
         self.assertEqual(
             StockItem.objects.filter(part=self.part, serial='SN-API-RACE').count(), 1
         )
+
+
+@skipUnlessDBFeature('has_select_for_update')
+class StockItemTakeStockConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test for StockItem.take_stock().
+
+    Uses two real threads (each with its own database connection) to reproduce
+    a reported race: take_stock() capped the requested removal quantity
+    against self.quantity *before* calling lock_quantity() (which locks the
+    row and refreshes self.quantity from the database). Two concurrent
+    full-quantity removal requests against the same StockItem, each starting
+    from its own (initially correct, but potentially stale by the time the
+    lock is acquired) in-memory copy, could both cap to the same amount - the
+    first to acquire the lock removes it all, and the second, upon acquiring
+    the lock, would find nothing left, but would still record a phantom
+    removal in StockItemTracking and report success.
+
+    take_stock() now performs the cap *after* lock_quantity() has refreshed
+    self.quantity, so the loser of the race is correctly capped to zero and
+    rejects the request instead of recording a phantom removal.
+    """
+
+    fixtures = ['users']
+
+    def setUp(self):
+        """Create a single StockItem with just enough quantity for one removal."""
+        super().setUp()
+
+        self.user = get_user_model().objects.get(pk=1)
+
+        self.part = Part.objects.create(
+            name='Take stock concurrency part',
+            description='Part for take_stock concurrency test',
+        )
+
+        self.item = StockItem.objects.create(
+            part=self.part, quantity=10, delete_on_deplete=False
+        )
+
+    def test_concurrent_take_stock_does_not_phantom_remove(self):
+        """Two concurrent full-quantity removals must not both report success."""
+        start_barrier = threading.Barrier(2, timeout=5)
+        errors = []
+        results = []
+        results_lock = threading.Lock()
+
+        # Wrap StockItem.lock_quantity() so both threads reach the (real,
+        # database-level) row lock at the same time - one wins the lock and
+        # proceeds, the other blocks until the winner's transaction completes.
+        original_lock_quantity = StockItem.lock_quantity
+
+        def synced_lock_quantity(self_item):
+            start_barrier.wait(timeout=5)
+            return original_lock_quantity(self_item)
+
+        def take_stock():
+            try:
+                # Each thread works from its own in-memory copy, fetched
+                # before either has removed anything - mirroring a real
+                # request handler that loads the item, then races another.
+                item = StockItem.objects.get(pk=self.item.pk)
+                result = item.take_stock(10, self.user)
+                with results_lock:
+                    results.append(result)
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                with results_lock:
+                    errors.append(exc)
+            finally:
+                connection.close()
+
+        thread_a = threading.Thread(target=take_stock)
+        thread_b = threading.Thread(target=take_stock)
+
+        with mock.patch.object(StockItem, 'lock_quantity', synced_lock_quantity):
+            thread_a.start()
+            thread_b.start()
+
+            thread_a.join(timeout=5)
+            thread_b.join(timeout=5)
+
+        self.assertFalse(thread_a.is_alive())
+        self.assertFalse(thread_b.is_alive())
+        self.assertEqual(errors, [])
+
+        # Exactly one removal must have succeeded; the other must have been
+        # rejected (nothing left to remove) rather than reporting a phantom
+        # success
+        self.assertEqual(sorted(results), [False, True])
+
+        self.item.refresh_from_db()
+        self.assertEqual(self.item.quantity, 0)
+
+        # No phantom removal may appear in the tracking history: the total
+        # recorded 'removed' amount must not exceed the quantity that
+        # actually existed
+        total_removed = sum(
+            entry.deltas.get('removed', 0)
+            for entry in self.item.tracking_info.all()
+            if entry.deltas
+        )
+        self.assertEqual(total_removed, 10)

@@ -76,7 +76,11 @@ async function collectCoverageFromContext(context: BrowserContext) {
   );
 }
 
-export const test = baseTest.extend<{}, {}>({
+type TestFixtures = {
+  closeTestPages: BrowserContext[];
+};
+
+export const test = baseTest.extend<TestFixtures, {}>({
   // Wrap browser.newPage so contexts created via doCachedLogin also get coverage
   browser: [
     async ({ browser }, use) => {
@@ -98,6 +102,36 @@ export const test = baseTest.extend<{}, {}>({
       }
     },
     { scope: 'worker' }
+  ],
+  // remove possibly leaky browser contexts after each test
+  closeTestPages: [
+    async ({ browser }, use) => {
+      const contexts: BrowserContext[] = [];
+      const newPage = browser.newPage.bind(browser);
+
+      (browser as any).newPage = async (
+        options?: Parameters<typeof browser.newPage>[0]
+      ) => {
+        const page = await newPage(options);
+
+        if (!contexts.includes(page.context())) {
+          contexts.push(page.context());
+        }
+
+        return page;
+      };
+
+      try {
+        await use(contexts);
+      } finally {
+        (browser as any).newPage = newPage;
+        for (const context of contexts) {
+          await collectCoverageFromContext(context);
+          await context.close().catch(() => {});
+        }
+      }
+    },
+    { auto: true }
   ],
 
   context: async ({ context }, use) => {
@@ -129,6 +163,7 @@ export const test = baseTest.extend<{}, {}>({
         !url.includes('/api/user/me/token/') &&
         !url.includes('/api/auth/v1/auth/login') &&
         !url.includes('/api/auth/v1/auth/session') &&
+        !url.includes('/api/auth/v1/auth/provider/signup') &&
         !url.includes('/api/auth/v1/account/authenticators/totp') &&
         !url.includes('/api/auth/v1/account/password/change') &&
         !url.includes('/api/barcode/') &&

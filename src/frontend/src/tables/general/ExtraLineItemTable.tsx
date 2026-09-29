@@ -1,18 +1,19 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction
 } from '@lib/components/RowActions';
-import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import type { ModelType } from '@lib/enums/ModelType';
 import type { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
+import { LineItemCreationMenu } from '../../components/items/LineItemCreationMenu';
 import {
   DecimalColumn,
   DescriptionColumn,
@@ -25,15 +26,18 @@ import {
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { formatCurrency } from '../../defaults/formatters';
 import { extraLineItemFields } from '../../forms/CommonForms';
+import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import { useImporterState } from '../../states/ImporterState';
 import { useUserState } from '../../states/UserState';
 
 export default function ExtraLineItemTable({
   endpoint,
+  importModelType,
   orderId,
   orderDetailRefresh,
   currency,
@@ -41,6 +45,7 @@ export default function ExtraLineItemTable({
   role
 }: Readonly<{
   endpoint: ApiEndpoints;
+  importModelType: ModelType | string;
   orderId: number;
   editable: boolean;
   orderDetailRefresh: () => void;
@@ -49,6 +54,7 @@ export default function ExtraLineItemTable({
 }>) {
   const table = useTable('extra-line-item');
   const user = useUserState();
+  const openImporter = useImporterState((state) => state.openImporter);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -126,6 +132,31 @@ export default function ExtraLineItemTable({
     table: table
   });
 
+  const importSessionFields = useMemo(() => {
+    const fields = dataImporterSessionFields({ modelType: importModelType });
+
+    fields.field_overrides.value = {
+      order: orderId
+    };
+
+    fields.field_defaults.value = {
+      price_currency: currency
+    };
+
+    return fields;
+  }, [orderId, currency, importModelType]);
+
+  const importLineItems = useCreateApiFormModal({
+    url: ApiEndpoints.import_session_list,
+    title: t`Import Line Items`,
+    fields: importSessionFields,
+    onFormSuccess: (response: any) => {
+      openImporter(response.pk, {
+        onClose: table.refreshTable
+      });
+    }
+  });
+
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       return [
@@ -157,25 +188,29 @@ export default function ExtraLineItemTable({
 
   const tableActions = useMemo(() => {
     return [
-      <AddItemButton
-        key='add-line-item'
+      <LineItemCreationMenu
+        key='add-line-item-actions'
         tooltip={t`Add Extra Line Item`}
+        addLabel={t`Add Extra Line Item`}
+        importLabel={t`Import Line Items`}
         hidden={!editable || !user.hasAddRole(role)}
-        onClick={() => {
+        onAdd={() => {
           setInitialData({
             order: orderId
           });
           newLineItem.open();
         }}
+        onImport={() => importLineItems.open()}
       />
     ];
-  }, [editable, user, role]);
+  }, [editable, user, role, orderId, importLineItems]);
 
   return (
     <>
       {newLineItem.modal}
       {editLineItem.modal}
       {deleteLineItem.modal}
+      {importLineItems.modal}
       <InvenTreeTable
         tableState={table}
         url={apiUrl(endpoint)}

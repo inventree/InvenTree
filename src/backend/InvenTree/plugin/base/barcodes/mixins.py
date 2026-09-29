@@ -64,7 +64,7 @@ class BarcodeMixin:
         except NotImplementedError:
             # If a NotImplementedError is raised, then barcode generation is not supported
             return False
-        except:
+        except Exception:
             pass
 
         return True

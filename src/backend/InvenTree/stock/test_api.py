@@ -17,7 +17,7 @@ import build.models
 import company.models
 import order.models
 import part.models
-from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
+from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting, Note
 from common.settings import set_global_setting
 from InvenTree.unit_test import (
     InvenTreeAPIPerformanceTestCase,
@@ -1294,6 +1294,11 @@ class StockItemListTest(StockAPITestCase):
         response = self.post(url, {'item': 1, 'quantity': 2})
         self.assertEqual(response.data['batch_code'], '1')
 
+        # A user without 'stock.view' cannot use this endpoint to read the batch template
+        # rendering of a stock item they cannot otherwise access
+        self.clearRoles()
+        self.post(url, {'item': 1}, expected_code=403)
+
     def test_serial_generate_api(self):
         """Test helper API for serial management."""
         url = reverse('api-generate-serial-number')
@@ -1316,6 +1321,11 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(
             response.data['quantity'], ['Quantity must be greater than zero']
         )
+
+        # A user without 'part.view' cannot use this endpoint to read serial numbers
+        # for a part they cannot otherwise access
+        self.clearRoles()
+        self.post(url, {'part': 1, 'quantity': 1}, expected_code=403)
 
     def test_child_items(self):
         """Test that the 'child_items' annotation works as expected."""
@@ -1633,6 +1643,50 @@ class StockItemTest(StockAPITestCase):
         )
 
         self.assertEqual(response.data[0]['location'], None)
+
+    def test_duplicate_copies_notes(self):
+        """Test that notes are copied when duplicating a StockItem via the API.
+
+        StockItemSerializer declares its 'duplicate' options with copy_notes=True,
+        so notes should be copied by default (i.e. without explicitly requesting it).
+        """
+        part = Part.objects.create(name='Duplicate Notes Part', description='x')
+
+        original = StockItem.objects.create(part=part, quantity=10)
+
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(StockItem),
+            model_id=original.pk,
+            title='Original Note',
+            content='<p>Some stock item notes</p>',
+        )
+
+        response = self.post(
+            self.list_url,
+            data={
+                'part': part.pk,
+                'quantity': 5,
+                'duplicate': {'original': original.pk},
+            },
+            expected_code=201,
+        )
+
+        new_item = StockItem.objects.get(pk=response.data[0]['pk'])
+        self.assertEqual(new_item.notes.count(), 1)
+        self.assertEqual(new_item.notes.first().content, '<p>Some stock item notes</p>')
+
+        # Explicitly disabling copy_notes must not copy any notes
+        response = self.post(
+            self.list_url,
+            data={
+                'part': part.pk,
+                'quantity': 5,
+                'duplicate': {'original': original.pk, 'copy_notes': False},
+            },
+            expected_code=201,
+        )
+        no_notes_item = StockItem.objects.get(pk=response.data[0]['pk'])
+        self.assertEqual(no_notes_item.notes.count(), 0)
 
     def test_stock_item_create(self):
         """Test creation of a StockItem via the API."""
@@ -2372,6 +2426,19 @@ class StockItemTest(StockAPITestCase):
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.batch, 'NEW-BATCH-CODE')
+
+    def test_status_codes_endpoint(self):
+        """The 'stock/status/' endpoint must resolve to the status-codes view.
+
+        Regression test: ensures the literal 'status/' path is not shadowed by the
+        'stock/<pk>/' detail route it sits alongside in the same urlconf.
+        """
+        response = self.get(reverse('api-stock-status-codes'), expected_code=200)
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('OK', response.data['values'])
+        self.assertEqual(response.data['values']['OK']['key'], StockStatus.OK.value)
 
 
 class StockItemDisassembleTest(StockAPITestCase):
@@ -4005,6 +4072,23 @@ class StockTrackingTest(StockAPITestCase):
             ['item_detail', 'user_detail'],
             additional_params={'limit': 2},
             assert_fnc=lambda x: x.data['results'][0],
+        )
+
+    def test_status_codes_endpoint(self):
+        """The 'track/status/' endpoint must resolve to the status-codes view.
+
+        Regression test: ensures the literal 'status/' path is not shadowed by the
+        'track/<pk>/' detail route it sits alongside in the same urlconf.
+        """
+        response = self.get(
+            reverse('api-stock-tracking-status-codes'), expected_code=200
+        )
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('CREATED', response.data['values'])
+        self.assertEqual(
+            response.data['values']['CREATED']['key'], StockHistoryCode.CREATED.value
         )
 
 

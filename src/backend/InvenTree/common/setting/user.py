@@ -205,6 +205,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'ROTATE_TABLE_HEADERS': {
+        'name': _('Rotated Table Headers'),
+        'description': _('Display table column headers with rotated (vertical) text'),
+        'default': False,
+        'validator': bool,
+    },
     'SHOW_SPOTLIGHT': {
         'name': _('Show Spotlight'),
         'description': _('Enable spotlight navigation functionality'),
@@ -294,6 +300,14 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
             'Automatically default to showing items/parts instead of sub-levels for locations or categories with no children'
         ),
         'default': False,
+        'validator': bool,
+    },
+    'USE_TABLE_NAVIGATION': {
+        'name': _('Enable Filtered Detail Navigation'),
+        'description': _(
+            'Enable persisting of filtered detail navigation parameters to the view url'
+        ),
+        'default': True,
         'validator': bool,
     },
 }

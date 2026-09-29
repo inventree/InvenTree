@@ -14,6 +14,7 @@ import {
 } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import { LineItemOverviewTable } from '../../components/details/LineItemOverviewTable';
 import { useParameterDetailsGrid } from '../../components/details/ParameterDetailsGrid';
 import { RenderAddress } from '../../components/render/Company';
 import { formatCurrency } from '../../defaults/formatters';
@@ -177,6 +178,14 @@ export function ReturnOrderDetailsPanel({
       label: t`Responsible`,
       badge: 'owner',
       hidden: !instance?.responsible
+    },
+    {
+      type: 'text',
+      name: 'created_by.pk',
+      label: t`Created By`,
+      icon: 'user',
+      badge: 'user',
+      hidden: !instance?.created_by
     }
   ];
 
@@ -265,6 +274,16 @@ export function ReturnOrderDetailsPanel({
         </Grid>
         <TagsList tags={instance?.tags} />
       </Stack>
+      <LineItemOverviewTable
+        title={t`Line Items`}
+        endpoint={ApiEndpoints.return_order_line_list}
+        params={{ order: instance?.pk, part_detail: true }}
+        progressLabel={t`Received`}
+        progress={(record: any) => ({
+          value: record.received_date ? 1 : 0,
+          maximum: 1
+        })}
+      />
     </ItemDetailsGrid>
   );
 }

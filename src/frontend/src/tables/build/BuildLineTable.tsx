@@ -889,8 +889,13 @@ export default function BuildLineTable({
       <ActionButton
         key='auto-allocate'
         icon={<IconWand />}
-        tooltip={t`Auto Allocate Stock`}
-        hidden={!visible || hasOutput}
+        tooltip={
+          production
+            ? t`Auto Allocate Stock`
+            : t`Build order must be issued before stock can be allocated`
+        }
+        hidden={!canEdit || !isActive || hasOutput}
+        disabled={!production}
         color='blue'
         onClick={() => {
           setAutoAllocateInitialData({
@@ -969,6 +974,7 @@ export default function BuildLineTable({
     build,
     buildStatus,
     hasOutput,
+    isActive,
     table.hasSelectedRecords,
     table.selectedRecords
   ]);

@@ -47,7 +47,7 @@ class CompanyFilter(FilterSet):
         model = Company
         fields = ['is_customer', 'is_manufacturer', 'is_supplier', 'name', 'active']
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class CompanyMixin(OutputOptionsMixin):
@@ -98,7 +98,7 @@ class ContactList(DataExportViewMixin, ListCreateDestroyAPIView):
 
     filterset_fields = ['company']
 
-    search_fields = ['company__name', 'name']
+    search_fields = ['company__name', 'name', 'email', 'phone', 'role']
 
     ordering_fields = ['name']
 
@@ -121,6 +121,16 @@ class AddressList(DataExportViewMixin, ListCreateDestroyAPIView):
     filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = ['company']
+
+    search_fields = [
+        'company__name',
+        'title',
+        'line1',
+        'line2',
+        'postal_city',
+        'postal_code',
+        'country',
+    ]
 
     ordering_fields = ['title']
 
@@ -152,7 +162,7 @@ class ManufacturerPartFilter(FilterSet):
         field_name='manufacturer__active', label=_('Manufacturer is Active')
     )
 
-    tags = common.filters.TagsFilter(label=_('Tags'))
+    tag_name = common.filters.TagsFilter()
 
 
 class ManufacturerOutputOptions(OutputConfiguration):
@@ -308,7 +318,7 @@ class SupplierPartFilter(FilterSet):
         else:
             return queryset.exclude(in_stock__gt=0)
 
-    tags = common.filters.TagsFilter(label=_('Tags'))
+    tag_name = common.filters.TagsFilter()
 
 
 class SupplierPartOutputOptions(OutputConfiguration):
@@ -491,7 +501,12 @@ class SupplierPriceBreakList(
     filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['quantity', 'supplier', 'SKU', 'price']
 
-    search_fields = ['part__SKU', 'part__supplier__name']
+    search_fields = [
+        'part__SKU',
+        'part__supplier__name',
+        'part__part__name',
+        'part__part__IPN',
+    ]
 
     ordering_field_aliases = {'supplier': 'part__supplier__name', 'SKU': 'part__SKU'}
 

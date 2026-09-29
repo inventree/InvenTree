@@ -25,7 +25,8 @@ def get_worker_config(
         get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)
     )
 
-    # Set the retry time for background workers to be slightly longer than the worker timeout, to ensure that workers have time to timeout before being retried
+    # Set the retry time for background workers to be slightly longer than the worker timeout,
+    # to ensure that workers have time to timeout before being retried
     BACKGROUND_WORKER_RETRY = max(
         int(get_setting('INVENTREE_BACKGROUND_RETRY', 'background.retry', 300)),
         BACKGROUND_WORKER_TIMEOUT + 120,

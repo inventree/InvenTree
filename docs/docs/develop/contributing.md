@@ -199,7 +199,7 @@ The InvenTree code base makes use of [GitHub actions](https://github.com/feature
 - Automated building and pushing of docker images
 - Generating translation files
 
-The various github actions can be found in the `./github/workflows` directory
+The various github actions can be found in the `.github/workflows` directory
 
 ### Run tests locally
 
@@ -244,7 +244,7 @@ Sometimes it is valuable to get insights how many tests cover a specific stateme
 coverage html -i
 ```
 
-The coverage database is also generated in the CI-pipeline and exposd for 14 days as a artifact named `coverage`.
+The coverage database is also generated in the CI-pipeline and exposed for 14 days as an artifact named `coverage`.
 
 ### Database Query Profiling
 
@@ -275,7 +275,7 @@ Frontend code (Javascript) is checked using [eslint](https://eslint.org/). While
 
 ### Running Checks Locally
 
-If you have followed the setup devtools procedure, then code style checking is performend automatically whenever you commit changes to the code.
+If you have followed the setup devtools procedure, then code style checking is performed automatically whenever you commit changes to the code.
 
 ### Django templates
 

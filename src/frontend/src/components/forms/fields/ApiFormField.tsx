@@ -16,6 +16,7 @@ import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
 import { DependentField } from './DependentField';
 import IconField from './IconField';
+import { JsonField } from './JsonField';
 import { NestedObjectField } from './NestedObjectField';
 import NumberField from './NumberField';
 import { RelatedModelField } from './RelatedModelField';
@@ -294,6 +295,15 @@ export function ApiFormField({
       case 'tags':
         return (
           <TagsField controller={controller} definition={fieldDefinition} />
+        );
+      case 'json':
+        return (
+          <JsonField
+            controller={controller}
+            definition={fieldDefinition}
+            fieldName={fieldName}
+            onChange={onChange}
+          />
         );
       default:
         return (

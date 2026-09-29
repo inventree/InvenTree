@@ -40,6 +40,8 @@ global USER_SETTINGS
 global TAGS
 global FILTERS
 global REPORT_CONTEXT
+global STATUS_CODES
+global ROLES
 
 # Read in the InvenTree settings file
 here = Path(__file__).parent
@@ -60,6 +62,13 @@ with open(observed_settings_file, 'w', encoding='utf-8') as f:
     # This is used to track which settings we have observed during the build process
     f.write(json.dumps(data, indent=4))
 
+# File where we will *store* information on the status code classes we have observed
+observed_status_codes_file = gen_base.joinpath('observed_status_codes.json')
+
+# Overwrite the observed status codes file
+with open(observed_status_codes_file, 'w', encoding='utf-8') as f:
+    f.write(json.dumps({}, indent=4))
+
 with open(settings_file, encoding='utf-8') as sf:
     settings = json.load(sf)
 
@@ -73,9 +82,15 @@ with open(gen_base.joinpath('inventree_tags.yml'), encoding='utf-8') as f:
 # Filters
 with open(gen_base.joinpath('inventree_filters.yml'), encoding='utf-8') as f:
     FILTERS = yaml.load(f, yaml.BaseLoader)
+# Status codes
+with open(gen_base.joinpath('inventree_status_codes.json'), encoding='utf-8') as f:
+    STATUS_CODES = json.load(f)
 # Report context
 with open(gen_base.joinpath('inventree_report_context.json'), encoding='utf-8') as f:
     REPORT_CONTEXT = json.load(f)
+# User permission roles
+with open(gen_base.joinpath('inventree_roles.json'), encoding='utf-8') as f:
+    ROLES = json.load(f)
 
 
 def get_repo_url(raw=False):
@@ -297,6 +312,38 @@ def define_env(env):
 
         return includefile(fn, f'Template: {base}', fmt='html')
 
+    @env.macro
+    def statuscodes(class_name: str):
+        """Render a markdown table of status codes for the given StatusCode class.
+
+        Arguments:
+            class_name: The name of the `StatusCode` subclass to render (e.g. 'BuildStatus')
+
+        The table is built directly from `docs/generated/inventree_status_codes.json`
+        (produced by the `export_status_codes` management command), so it can never
+        drift out of sync with the status codes actually defined in the source code.
+        """
+        global STATUS_CODES
+
+        status_class = STATUS_CODES[class_name]
+
+        # Record that this status code class has been rendered somewhere in the docs
+        with open(observed_status_codes_file, encoding='utf-8') as f:
+            data = json.load(f)
+
+        data[class_name] = True
+
+        with open(observed_status_codes_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4)
+
+        ret_data = '| Status | Value | Description |\n| --- | --- | --- |\n'
+
+        for item in status_class['values']:
+            description = item['description'] or item['label']
+            ret_data += f'| {item["label"]} | {item["key"]} | {description} |\n'
+
+        return ret_data
+
     def observe_setting(key: str, group: str):
         """Record that a particular setting has been observed.
 
@@ -426,6 +473,25 @@ def define_env(env):
                 ret_data += f'| {value["library"]} | {value["name"]} | {title} |\n'
             ret_data += '\n'
         ret_data += '\n'
+
+        return ret_data
+
+    @env.macro
+    def roles():
+        """Render a markdown table of the available user permission roles.
+
+        The table is built directly from `docs/generated/inventree_roles.json`
+        (produced by the `export_roles` management command, sourced from
+        `users.ruleset.RULESET_CHOICES`), so it can never drift out of sync with
+        the roles actually defined in the source code.
+        """
+        global ROLES
+
+        ret_data = '| Role | Description |\n| --- | --- |\n'
+
+        for role in ROLES:
+            description = role['description'] or role['label']
+            ret_data += f'| **{role["label"]}** | {description} |\n'
 
         return ret_data
 

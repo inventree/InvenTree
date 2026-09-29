@@ -176,6 +176,39 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertIsNone(pricing.supplier_price_max)
 
     @override_settings(TESTING_PRICING=True)
+    def test_supplier_part_pack_quantity_update(self):
+        """Test that changing pack_quantity on a SupplierPart triggers pricing recalculation."""
+        supplier = company.models.Company.objects.create(
+            name='Pack Test Supplier', is_supplier=True
+        )
+
+        sp = company.models.SupplierPart.objects.create(
+            supplier=supplier, part=self.part, SKU='PACK_TEST', pack_quantity='1'
+        )
+
+        company.models.SupplierPriceBreak.objects.create(
+            part=sp, quantity=1, price=50, price_currency='USD'
+        )
+
+        # Re-fetch pricing (the price break creation triggers the PartPricing row)
+        pricing = self.part.pricing
+        pricing.refresh_from_db()
+
+        # Price per unit should be $50 / 1 = $50
+        self.assertEqual(pricing.supplier_price_min, Money(50, 'USD'))
+
+        # Now update pack_quantity to 100 (i.e. 100 units per pack)
+        sp.pack_quantity = '100'
+        sp.save()
+
+        pricing = self.part.pricing
+        pricing.refresh_from_db()
+
+        # Price per unit should now be $50 / 100 = $0.50
+        self.assertEqual(pricing.supplier_price_min, Money('0.5', 'USD'))
+        self.assertEqual(pricing.supplier_price_max, Money('0.5', 'USD'))
+
+    @override_settings(TESTING_PRICING=True)
     def test_internal_pricing(self):
         """Tests for internal price breaks."""
         # Ensure internal pricing is enabled
@@ -499,6 +532,68 @@ class PartPricingTests(InvenTreeTestCase):
 
         # Try to update pricing (should fail gracefully as the Part has been deleted)
         p.schedule_pricing_update(create=False)
+        self.assertFalse(part.models.PartPricing.objects.filter(part_id=p.pk).exists())
+
+    @override_settings(TESTING_PRICING=True)
+    def test_get_part_deleted(self):
+        """Test that PartPricing.get_part() returns None if the linked Part has been deleted.
+
+        Regression test for a bug where a PartPricing instance which still held an
+        in-memory reference to its linked Part (e.g. as passed into the background
+        pricing update task) would raise Part.DoesNotExist when that Part had since
+        been deleted from the database, instead of failing gracefully.
+        """
+        p = part.models.Part.objects.create(
+            name='Deletable Part', description='A part which will be deleted'
+        )
+
+        # Accessing the 'pricing' property caches the (still in-memory) Part
+        # instance against the 'part' relation of the new PartPricing object
+        pricing = p.pricing
+        self.assertIsNone(pricing.pk)
+        self.assertEqual(pricing.get_part(), p)
+
+        # Remove the underlying part directly via a queryset delete
+        # (this bypasses Part.delete(), and cascades to remove any PartPricing row)
+        part.models.Part.objects.filter(pk=p.pk).delete()
+
+        # The 'pricing' object still holds a stale in-memory reference to the
+        # now-deleted part - get_part() must detect this and return None
+        self.assertIsNone(pricing.get_part())
+
+    @override_settings(TESTING_PRICING=True)
+    def test_pricing_methods_with_deleted_part(self):
+        """Test that PartPricing update methods handle a deleted underlying Part gracefully.
+
+        Regression test: none of these methods should raise Part.DoesNotExist
+        (or otherwise error) if the linked Part no longer exists in the database.
+        """
+        p = part.models.Part.objects.create(
+            name='Deletable Assembly',
+            description='A part which will be deleted',
+            assembly=True,
+        )
+
+        # Do not save this yet - simulate a pricing update which is still in-flight
+        # (e.g. queued as a background task) when the linked part is deleted
+        pricing = p.pricing
+
+        part.models.Part.objects.filter(pk=p.pk).delete()
+
+        # None of the following should raise an exception
+        pricing.update_bom_cost()
+        pricing.update_purchase_cost()
+        pricing.update_internal_cost()
+        pricing.update_supplier_cost()
+        pricing.update_variant_cost()
+        pricing.update_sale_cost()
+        pricing.update_assemblies()
+        pricing.update_templates()
+        pricing.schedule_for_update()
+        pricing.save()
+        pricing.update_pricing()
+
+        # As the part no longer exists, no PartPricing row should have been created
         self.assertFalse(part.models.PartPricing.objects.filter(part_id=p.pk).exists())
 
     @override_settings(TESTING_PRICING=True)

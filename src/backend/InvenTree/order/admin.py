@@ -110,6 +110,8 @@ class PurchaseOrderLineItemAdmin(admin.ModelAdmin):
 class PurchaseOrderExtraLineAdmin(GeneralExtraLineAdmin, admin.ModelAdmin):
     """Admin class for the PurchaseOrderExtraLine model."""
 
+    search_fields = ['order__reference', 'order__supplier__name', 'reference']
+
 
 @admin.register(models.SalesOrderLineItem)
 class SalesOrderLineItemAdmin(admin.ModelAdmin):
@@ -149,6 +151,15 @@ class SalesOrderAllocationAdmin(admin.ModelAdmin):
 
     list_display = ('line', 'item', 'quantity')
 
+    search_fields = [
+        'line__order__reference',
+        'line__order__customer__name',
+        'line__part__name',
+        'item__part__name',
+        'item__part__IPN',
+        'item__serial',
+    ]
+
     autocomplete_fields = ('line', 'shipment', 'item')
 
 
@@ -171,11 +182,19 @@ class ReturnOrderLineItemAdmin(admin.ModelAdmin):
 
     list_display = ['order', 'item', 'reference']
 
+    search_fields = [
+        'order__reference',
+        'order__customer__name',
+        'item__part__name',
+        'item__serial',
+        'reference',
+    ]
+
     autocomplete_fields = ['item', 'order']
 
 
 @admin.register(models.ReturnOrderExtraLine)
-class ReturnOrdeerExtraLineAdmin(GeneralExtraLineAdmin, admin.ModelAdmin):
+class ReturnOrderExtraLineAdmin(GeneralExtraLineAdmin, admin.ModelAdmin):
     """Admin class for the ReturnOrderExtraLine model."""
 
 

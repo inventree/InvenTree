@@ -11,52 +11,89 @@ import common.icons
 from common.settings import get_global_setting
 
 
+def models_with_mixin(mixin_class) -> list:
+    """Return a list of models which inherit from the given mixin class."""
+    import InvenTree.helpers_model
+
+    return list(InvenTree.helpers_model.getModelsWithMixin(mixin_class))
+
+
+def model_options_for_mixin(mixin_class) -> list:
+    """Return (name, verbose_name) choices for models which inherit from the given mixin class."""
+    return [
+        (model.__name__.lower(), model._meta.verbose_name)
+        for model in models_with_mixin(mixin_class)
+    ]
+
+
+def note_model_types():
+    """Return a list of valid note model choices."""
+    import InvenTree.models
+
+    return models_with_mixin(InvenTree.models.InvenTreeNoteMixin)
+
+
+def note_model_options():
+    """Return a list of options for models which support notes."""
+    import InvenTree.models
+
+    return model_options_for_mixin(InvenTree.models.InvenTreeNoteMixin)
+
+
+def validate_note_model_type(value):
+    """Ensure that the provided content type supports notes.
+
+    Accepts either a ContentType instance, or a raw primary key - Django calls
+    a ForeignKey's field-level validators with the raw attname value (the
+    related object's pk), while callers with an actual ContentType instance
+    in hand (e.g. Note.clean()) can pass it directly.
+    """
+    from django.contrib.contenttypes.models import ContentType
+
+    if not value:
+        return
+
+    if not isinstance(value, ContentType):
+        try:
+            value = ContentType.objects.get(pk=value)
+        except ContentType.DoesNotExist:
+            raise ValidationError(_('Invalid content type'))
+
+    if value.model_class() not in note_model_types():
+        raise ValidationError(_('Model type does not support notes'))
+
+
 def parameter_model_types():
     """Return a list of valid parameter model choices."""
     import InvenTree.models
 
-    return list(
-        InvenTree.helpers_model.getModelsWithMixin(
-            InvenTree.models.InvenTreeParameterMixin
-        )
-    )
+    return models_with_mixin(InvenTree.models.InvenTreeParameterMixin)
 
 
 def parameter_model_options():
     """Return a list of options for models which support parameters."""
-    return [
-        (model.__name__.lower(), model._meta.verbose_name)
-        for model in parameter_model_types()
-    ]
+    import InvenTree.models
+
+    return model_options_for_mixin(InvenTree.models.InvenTreeParameterMixin)
 
 
 def parameter_template_model_options():
     """Return a list of options for models which support parameter templates."""
-    options = [
-        (model.__name__.lower(), model._meta.verbose_name)
-        for model in parameter_model_types()
-    ]
-
-    return [(None, _('All models')), *options]
+    return [(None, _('All models')), *parameter_model_options()]
 
 
 def attachment_model_types():
     """Return a list of valid attachment model choices."""
     import InvenTree.models
 
-    return list(
-        InvenTree.helpers_model.getModelsWithMixin(
-            InvenTree.models.InvenTreeAttachmentMixin
-        )
-    )
+    return models_with_mixin(InvenTree.models.InvenTreeAttachmentMixin)
 
 
 def attachment_model_options():
     """Return a list of options for models which support attachments."""
-    return [
-        (model.__name__.lower(), model._meta.verbose_name)
-        for model in attachment_model_types()
-    ]
+    import InvenTree.models
+
+    return model_options_for_mixin(InvenTree.models.InvenTreeAttachmentMixin)
 
 
 def attachment_model_class_from_label(label: str):
@@ -91,28 +128,6 @@ def validate_attachment_file(attachment):
         default_storage.generate_filename(attachment.name)
     except SuspiciousFileOperation:  # pragma: no cover
         raise ValidationError(_('Invalid file name'))
-
-
-def validate_notes_model_type(value):
-    """Ensure that the provided model type is valid.
-
-    The provided value must map to a model which implements the 'InvenTreeNotesMixin'.
-    """
-    import InvenTree.helpers_model
-    import InvenTree.models
-
-    if not value:
-        # Empty values are allowed
-        return
-
-    model_types = list(
-        InvenTree.helpers_model.getModelsWithMixin(InvenTree.models.InvenTreeNotesMixin)
-    )
-
-    model_names = [model.__name__.lower() for model in model_types]
-
-    if value.lower() not in model_names:
-        raise ValidationError(f"Invalid model type '{value}'")
 
 
 def validate_decimal_places_min(value):

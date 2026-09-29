@@ -20,7 +20,19 @@ export function extractErrorMessage({
   let message = '';
 
   if (error_data) {
-    message = error_data[field ?? 'error'] ?? error_data['non_field_errors'];
+    message =
+      error_data[field ?? 'error'] ??
+      error_data['detail'] ??
+      error_data['non_field_errors'];
+  }
+
+  // Fallback to 'errors' array
+  if (
+    !message &&
+    Array.isArray(error_data?.errors) &&
+    error_data.errors.length > 0
+  ) {
+    message = error_data.errors[0].message ?? '';
   }
 
   // No message? Look at the response status codes
@@ -43,6 +55,9 @@ export function extractErrorMessage({
           break;
         case 405:
           message = t`Method not allowed`;
+          break;
+        case 409:
+          message = t`Conflict`;
           break;
         case 500:
           message = t`Internal server error`;

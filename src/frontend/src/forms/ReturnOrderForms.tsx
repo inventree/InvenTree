@@ -89,7 +89,8 @@ export function useReturnOrderFields({
             value: duplicateOrderId
           },
           copy_extra_lines: {},
-          copy_parameters: {}
+          copy_parameters: {},
+          copy_notes: {}
         }
       };
     }
