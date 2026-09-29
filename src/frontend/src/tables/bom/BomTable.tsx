@@ -90,6 +90,18 @@ function totalQuantity(record: any): number {
   return quantityChain(record).reduce((total, qty) => total * qty, 1);
 }
 
+// Multiplier applied by any upstream sub-assemblies (1 for top-level items)
+function upstreamMultiplier(record: any): number {
+  return quantityChain(record)
+    .slice(1)
+    .reduce((total, qty) => total * qty, 1);
+}
+
+// Scale a (nullable) price value by the upstream multiplier
+function scalePrice(value: any, multiplier: number): number | null {
+  return value == null ? null : Number(value) * multiplier;
+}
+
 export function BomTable({
   partId,
   partLocked,
@@ -351,8 +363,46 @@ export function BomTable({
         ordering: 'pricing_max_total',
         sortable: true,
         switchable: true,
-        render: (record: any) =>
-          formatPriceRange(record.pricing_min_total, record.pricing_max_total)
+        render: (record: any) => {
+          // Account for the quantity of any upstream sub-assemblies
+          const multiplier = upstreamMultiplier(record);
+
+          const price = formatPriceRange(
+            scalePrice(record.pricing_min_total, multiplier),
+            scalePrice(record.pricing_max_total, multiplier)
+          );
+
+          const hasPricing =
+            record.pricing_min_total != null ||
+            record.pricing_max_total != null;
+
+          if (!isNestedRecord(record) || !hasPricing) {
+            return price;
+          }
+
+          let basePrice = formatPriceRange(
+            record.pricing_min_total,
+            record.pricing_max_total
+          );
+
+          // Wrap price ranges in brackets, so the multiplication is unambiguous
+          if (
+            record.pricing_min_total != null &&
+            record.pricing_max_total != null &&
+            record.pricing_min_total != record.pricing_max_total
+          ) {
+            basePrice = `(${basePrice})`;
+          }
+
+          return (
+            <Stack gap={0}>
+              <Text inherit>{price}</Text>
+              <Text size='xs' c='dimmed'>
+                {`${formatDecimal(multiplier)} × ${basePrice}`}
+              </Text>
+            </Stack>
+          );
+        }
       },
       {
         accessor: 'available_stock',
