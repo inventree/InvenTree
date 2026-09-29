@@ -15,6 +15,8 @@ from .transition import (
     DEFERRABLE,
     StateTransitionMixin,
     TransitionMethod,
+    after_commit,
+    blocking_reason,
     inventree_transition,
 )
 
@@ -27,6 +29,8 @@ __all__ = [
     'StatusCode',
     'StatusCodeMixin',
     'TransitionMethod',
+    'after_commit',
+    'blocking_reason',
     'can_proceed',  # django_fsm import
     'deprecated',
     'fields',
