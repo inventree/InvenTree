@@ -1,13 +1,20 @@
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
+import { Anchor } from '@mantine/core';
 import { useDocumentVisibility } from '@mantine/hooks';
 import { notifications, showNotification } from '@mantine/notifications';
-import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
+import {
+  IconAlertTriangle,
+  IconCircleCheck,
+  IconExclamationCircle
+} from '@tabler/icons-react';
 import { type QueryClient, useQuery } from '@tanstack/react-query';
 import type { AxiosInstance } from 'axios';
 import { useEffect, useState } from 'react';
 import { ProgressBar } from '../components/ProgressBar';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl } from '../functions/Api';
+
+const MAX_DISPLAYED_WARNINGS = 5;
 
 export type MonitorDataOutputProps = {
   api: AxiosInstance;
@@ -49,6 +56,33 @@ export default function useMonitorDataOutput(props: MonitorDataOutputProps) {
           .get(apiUrl(ApiEndpoints.data_output, props.id))
           .then((response) => {
             const data = response?.data ?? {};
+            const warnings: string[] = data.warnings ?? [];
+            const remainingWarnings = warnings.length - MAX_DISPLAYED_WARNINGS;
+            const warningList = warnings.length > 0 && (
+              <>
+                <ul
+                  style={{
+                    maxHeight: 200,
+                    overflowY: 'auto',
+                    overflowWrap: 'anywhere'
+                  }}
+                >
+                  {warnings.slice(0, MAX_DISPLAYED_WARNINGS).map((warning) => (
+                    <li key={warning} style={{ whiteSpace: 'pre-wrap' }}>
+                      {warning}
+                    </li>
+                  ))}
+                </ul>
+                {remainingWarnings > 0 && (
+                  <div>
+                    {plural(remainingWarnings, {
+                      one: '# more warning',
+                      other: '# more warnings'
+                    })}
+                  </div>
+                )}
+              </>
+            );
 
             if (!!data.errors || !!data.error) {
               setLoading(false);
@@ -61,29 +95,55 @@ export default function useMonitorDataOutput(props: MonitorDataOutputProps) {
                 loading: false,
                 icon: <IconExclamationCircle />,
                 autoClose: 2500,
+                withCloseButton: true,
                 title: props.title,
                 message: error,
                 color: 'red'
               });
             } else if (data.complete) {
               setLoading(false);
+              const base = props.hostname ?? window.location.origin;
+              const downloadUrl = data.output
+                ? new URL(data.output, base).toString()
+                : undefined;
+
               notifications.update({
                 id: `data-output-${props.id}`,
                 loading: false,
-                autoClose: 2500,
+                autoClose: warnings.length > 0 ? false : 2500,
+                withCloseButton: true,
                 title: props.title,
-                message: t`Process completed successfully`,
-                color: 'green',
-                icon: <IconCircleCheck />
+                message: (
+                  <>
+                    {warnings.length > 0
+                      ? t`Process completed with warnings`
+                      : t`Process completed successfully`}
+                    {warningList}
+                    {downloadUrl && (
+                      <>
+                        <br />
+                        <Anchor
+                          href={downloadUrl}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                        >
+                          {t`Open output`}
+                        </Anchor>
+                      </>
+                    )}
+                  </>
+                ),
+                color: warnings.length > 0 ? 'yellow' : 'green',
+                icon:
+                  warnings.length > 0 ? (
+                    <IconAlertTriangle />
+                  ) : (
+                    <IconCircleCheck />
+                  )
               });
 
-              if (data.output) {
-                const url = data.output;
-                const base = props.hostname ?? window.location.origin;
-
-                const downloadUrl = new URL(url, base);
-
-                window.open(downloadUrl.toString(), '_blank');
+              if (downloadUrl) {
+                window.open(downloadUrl, '_blank');
               }
             } else {
               notifications.update({
@@ -92,13 +152,16 @@ export default function useMonitorDataOutput(props: MonitorDataOutputProps) {
                 autoClose: false,
                 withCloseButton: false,
                 message: (
-                  <ProgressBar
-                    size='lg'
-                    maximum={data.total}
-                    value={data.progress}
-                    progressLabel={data.total > 0}
-                    animated
-                  />
+                  <>
+                    <ProgressBar
+                      size='lg'
+                      maximum={data.total}
+                      value={data.progress}
+                      progressLabel={data.total > 0}
+                      animated
+                    />
+                    {warningList}
+                  </>
                 )
               });
             }
@@ -112,6 +175,7 @@ export default function useMonitorDataOutput(props: MonitorDataOutputProps) {
               id: `data-output-${props.id}`,
               loading: false,
               autoClose: 2500,
+              withCloseButton: true,
               title: props.title,
               message: error.message || t`Process failed`,
               color: 'red'

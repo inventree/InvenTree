@@ -3528,6 +3528,7 @@ class DataOutput(models.Model):
         plugin: Key for the plugin which generated the data output (if applicable)
         output: File field for storing the generated file
         errors: JSON field for storing any errors generated during the data output generation process
+        warnings: Nonfatal messages generated during the data output generation process
     """
 
     class DataOutputTypes(StringEnum):
@@ -3558,6 +3559,14 @@ class DataOutput(models.Model):
     output = models.FileField(upload_to='data_output', blank=True, null=True)
 
     errors = models.JSONField(blank=True, null=True)
+
+    warnings = models.JSONField(default=list, blank=True)
+
+    def add_warning(self, message: str):
+        """Add a unique warning in memory, persisted by the next output save."""
+        message = str(message)
+        if message not in self.warnings:
+            self.warnings.append(message)
 
     def mark_complete(self, progress: int = 100, output: Optional[ContentFile] = None):
         """Mark the data output generation process as complete.
