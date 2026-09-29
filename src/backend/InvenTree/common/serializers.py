@@ -1206,6 +1206,89 @@ class SelectionListSerializer(FilterableSerializerMixin, InvenTreeModelSerialize
         return ret
 
 
+class ReferenceSourceSerializer(InvenTreeModelSerializer):
+    """Serializer for the ReferenceSource model."""
+
+    class Meta:
+        """Meta options for ReferenceSourceSerializer."""
+
+        model = common_models.ReferenceSource
+        fields = '__all__'
+
+    def validate(self, attrs):
+        """Ensure that the reference source is not locked."""
+        ret = super().validate(attrs)
+        if self.instance and self.instance.locked:
+            raise serializers.ValidationError({
+                'locked': _('Reference source is locked')
+            })
+        return ret
+
+
+class ReferenceSerializer(InvenTreeModelSerializer):
+    """Serializer for the Reference model."""
+
+    class Meta:
+        """Meta options for ReferenceSerializer."""
+
+        model = common_models.Reference
+        fields = [
+            'pk',
+            'value',
+            'source',
+            'target',
+            'target_content_type',
+            'target_object_id',
+            'locked',
+            'created',
+            'last_updated',
+            'checked',
+            'last_checked',
+        ]
+
+    source = serializers.PrimaryKeyRelatedField(
+        queryset=common_models.ReferenceSource.objects.all(), many=False
+    )
+
+    target_content_type = ContentTypeField(
+        label=_('Target Content Type'),
+        help_text=_('Content type of the target object'),
+        write_only=True,
+    )
+
+    target_object_id = serializers.IntegerField(
+        label=_('Target Object ID'),
+        help_text=_('ID of the target object'),
+        write_only=True,
+    )
+
+    target = serializers.SerializerMethodField(read_only=True)
+
+    def get_target(self, obj) -> dict:
+        """Function to resolve generic object reference to target."""
+        return get_objectreference(obj, 'target_content_type', 'target_object_id')
+
+    def validate(self, data):
+        """Ensure the referenced target object actually exists."""
+        data = super().validate(data)
+
+        content_type = data.get('target_content_type') or getattr(
+            self.instance, 'target_content_type', None
+        )
+        object_id = data.get('target_object_id') or getattr(
+            self.instance, 'target_object_id', None
+        )
+
+        model_class = content_type.model_class() if content_type else None
+
+        if not model_class or not model_class.objects.filter(pk=object_id).exists():
+            raise serializers.ValidationError({
+                'target_object_id': _('Target object does not exist')
+            })
+
+        return data
+
+
 class DataOutputSerializer(InvenTreeModelSerializer):
     """Serializer for the DataOutput model."""
 
