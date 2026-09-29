@@ -241,16 +241,19 @@ export type InvenTreeTableProps<T = any> = {
  *
  * Child rows are fetched on demand from the same API endpoint as the table,
  * and inserted directly below their parent row - sharing the same columns.
- * Child rows are discarded whenever the top-level table data is reloaded.
+ * Child rows are discarded whenever the top-level table data is reloaded,
+ * or when this configuration object changes - so it should be memoized.
  *
  * @param accessor - Column accessor used to display the expansion icon and indentation (defaults to the first column)
  * @param expandable - Callback to determine if a given record can be expanded
  * @param childParams - Callback which returns the query parameters used to fetch child rows for a given record
+ * @param transformChild - Optional callback to modify each child row (e.g. based on values from the parent row)
  */
 export type InvenTreeTableNestedRowProps<T = any> = {
   accessor?: string;
   expandable: (record: T) => boolean;
   childParams: (record: T) => Record<string, any>;
+  transformChild?: (child: T, parent: T) => T;
 };
 
 export type InvenTreeTableRenderProps<T extends Record<string, any>> = {

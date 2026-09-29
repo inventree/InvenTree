@@ -80,6 +80,11 @@ function availableStockQuantity(record: any): number {
   return available;
 }
 
+// Quantity of a BomItem required for a single unit of the top-level assembly
+function totalQuantity(record: any): number {
+  return record.total_quantity ?? record.quantity;
+}
+
 export function BomTable({
   partId,
   partLocked,
@@ -106,6 +111,11 @@ export function BomTable({
   );
 
   const userSettings = useUserSettingsState();
+
+  const showSubassemblies: boolean = useMemo(
+    () => userSettings.isSet('SHOW_BOM_SUBASSEMBLY_LEVELS'),
+    [userSettings]
+  );
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -181,20 +191,28 @@ export function BomTable({
         switchable: false,
         sortable: true,
         render: (record: any) => {
-          const quantity = formatDecimal(record.quantity);
+          const nested: boolean = isNestedRecord(record);
+          const quantity = formatDecimal(totalQuantity(record));
           const units = record.sub_part_detail?.units;
 
           return (
-            <Group justify='space-between'>
-              <Group gap='xs'>
-                <Text>{quantity}</Text>
-                {record.setup_quantity && record.setup_quantity > 0 && (
-                  <Text size='xs'>{`(+${record.setup_quantity})`}</Text>
+            <Group justify='space-between' wrap='nowrap'>
+              <Stack gap={0}>
+                <Group gap='xs'>
+                  <Text>{quantity}</Text>
+                  {record.setup_quantity && record.setup_quantity > 0 && (
+                    <Text size='xs'>{`(+${record.setup_quantity})`}</Text>
+                  )}
+                  {record.attrition && record.attrition > 0 && (
+                    <Text size='xs'>{`(+${record.attrition}%)`}</Text>
+                  )}
+                </Group>
+                {nested && record.quantity_multiplier != null && (
+                  <Text size='xs' c='dimmed'>
+                    {`${formatDecimal(record.quantity)} × ${formatDecimal(record.quantity_multiplier)}`}
+                  </Text>
                 )}
-                {record.attrition && record.attrition > 0 && (
-                  <Text size='xs'>{`(+${record.attrition}%)`}</Text>
-                )}
-              </Group>
+              </Stack>
               {units && <Text size='xs'>[{units}]</Text>}
             </Group>
           );
@@ -714,16 +732,26 @@ export function BomTable({
 
   // Nested rows (for displaying subassemblies) - not available while editing
   const nestedRows: InvenTreeTableNestedRowProps | undefined = useMemo(() => {
-    if (isEditing || !userSettings.isSet('SHOW_BOM_SUBASSEMBLY_LEVELS')) {
+    if (isEditing || !showSubassemblies) {
       return undefined;
     }
 
     return {
       accessor: 'sub_part',
       expandable: (record: any) => !!record.sub_part_detail?.assembly,
-      childParams: (record: any) => ({ part: record.sub_part })
+      childParams: (record: any) => ({ part: record.sub_part }),
+      // Multiply quantities through each level of the BOM
+      transformChild: (child: any, parent: any) => {
+        const multiplier = Number(totalQuantity(parent));
+
+        return {
+          ...child,
+          quantity_multiplier: multiplier,
+          total_quantity: Number(child.quantity) * multiplier
+        };
+      }
     };
-  }, [isEditing, userSettings]);
+  }, [isEditing, showSubassemblies]);
 
   return (
     <>

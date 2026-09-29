@@ -868,12 +868,14 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     [tableProps.params]
   );
 
-  // Discard nested data whenever the top-level table data is reloaded
+  // Discard nested data whenever the top-level table data is reloaded,
+  // or the nesting configuration changes (as child rows depend on it)
   useEffect(() => {
     nestedGeneration.current += 1;
-    setNestedState({});
+    // Keep the existing (empty) state object to avoid a needless re-render
+    setNestedState((state) => (Object.keys(state).length > 0 ? {} : state));
   }, [
-    !!props.nestedRows,
+    props.nestedRows,
     url,
     paramsKey,
     pageSize,
@@ -948,7 +950,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         }
 
         const children: T[] = results.map((child: any) => ({
-          ...child,
+          ...(nestedRows.transformChild?.(child, record) ?? child),
           [NESTED_ROW_INFO]: {
             key: `${key}/${resolveItem(child, tableState.idAccessor ?? 'pk')}`,
             depth: depth
