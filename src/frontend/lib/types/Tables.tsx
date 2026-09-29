@@ -192,6 +192,7 @@ export type RowViewProps = RowAction & RowModelProps & RowViewBehaviorProps;
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
  * @param onCellClick : (event: any, record: any, index: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
  * @param modelType: ModelType - The model type for the table
+ * @param rowStyle: (record: any, index: number) => MantineStyleProp - Callback function to apply custom styling to each row
  * @param height: string | number - Height of the table (default = 'auto')
  * @param minHeight: number - Minimum height of the table (default 300px)
  * @param noHeader: boolean - Hide the table header

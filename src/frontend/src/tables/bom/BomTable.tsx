@@ -80,9 +80,14 @@ function availableStockQuantity(record: any): number {
   return available;
 }
 
+// Chain of quantities from a BomItem up to the top-level assembly (innermost first)
+function quantityChain(record: any): number[] {
+  return record.quantity_chain ?? [Number(record.quantity)];
+}
+
 // Quantity of a BomItem required for a single unit of the top-level assembly
 function totalQuantity(record: any): number {
-  return record.total_quantity ?? record.quantity;
+  return quantityChain(record).reduce((total, qty) => total * qty, 1);
 }
 
 export function BomTable({
@@ -207,9 +212,11 @@ export function BomTable({
                     <Text size='xs'>{`(+${record.attrition}%)`}</Text>
                   )}
                 </Group>
-                {nested && record.quantity_multiplier != null && (
+                {nested && (
                   <Text size='xs' c='dimmed'>
-                    {`${formatDecimal(record.quantity)} × ${formatDecimal(record.quantity_multiplier)}`}
+                    {quantityChain(record)
+                      .map((qty) => formatDecimal(qty))
+                      .join(' × ')}
                   </Text>
                 )}
               </Stack>
@@ -741,15 +748,10 @@ export function BomTable({
       expandable: (record: any) => !!record.sub_part_detail?.assembly,
       childParams: (record: any) => ({ part: record.sub_part }),
       // Multiply quantities through each level of the BOM
-      transformChild: (child: any, parent: any) => {
-        const multiplier = Number(totalQuantity(parent));
-
-        return {
-          ...child,
-          quantity_multiplier: multiplier,
-          total_quantity: Number(child.quantity) * multiplier
-        };
-      }
+      transformChild: (child: any, parent: any) => ({
+        ...child,
+        quantity_chain: [Number(child.quantity), ...quantityChain(parent)]
+      })
     };
   }, [isEditing, showSubassemblies]);
 
@@ -800,7 +802,9 @@ export function BomTable({
               return record.part === partId;
             },
             enableDownload: true,
-            nestedRows: nestedRows
+            nestedRows: nestedRows,
+            rowStyle: (record: any) =>
+              isNestedRecord(record) ? { fontStyle: 'italic' } : undefined
           }}
         />
       </Stack>
