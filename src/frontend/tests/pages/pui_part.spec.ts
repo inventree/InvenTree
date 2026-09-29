@@ -303,6 +303,117 @@ test('Parts - BOM', async ({ browser }) => {
 });
 
 /**
+ * Expand and collapse sub-assembly BOMs within the BOM table
+ */
+test('Parts - BOM Nesting', async ({ browser }) => {
+  // Assembly with multiple levels of sub-assemblies
+  const page = await doCachedLogin(browser, { url: 'part/113/bom' });
+
+  const row = (text: string) => page.getByRole('row').filter({ hasText: text });
+
+  // Return the cell for a given row and column title
+  const cell = async (rowText: string, column: string) => {
+    const index = await page
+      .locator('thead th')
+      .evaluateAll(
+        (headers, title) =>
+          headers.findIndex((th) => th.textContent?.trim().startsWith(title)),
+        column
+      );
+
+    expect(index).toBeGreaterThanOrEqual(0);
+
+    return row(rowText).first().locator('td').nth(index);
+  };
+
+  const doohickey = row('Doohickey').first();
+  await doohickey.waitFor();
+
+  // Sub-assembly rows are not loaded initially
+  await expect(page.getByText('M3x10 Torx')).toHaveCount(0);
+  await expect(row('Widget Board (assembled)')).toHaveCount(1);
+
+  // Expand the "Doohickey" sub-assembly (quantity 3)
+  await doohickey.getByRole('button', { name: 'nested-row-expand' }).click();
+  await page.getByText('M3x10 Torx').waitFor();
+  await page.getByText('1551ABK').waitFor();
+
+  // Nested "Widget Board (assembled)" row is inserted into the same table
+  await expect(row('Widget Board (assembled)')).toHaveCount(2);
+
+  // Pagination only counts the top-level rows
+  await page.getByText('1 - 10 / 10').waitFor();
+
+  // Quantity is multiplied by the parent quantity
+  const m3x8Quantity = await cell('M3x8 Torx', 'Quantity');
+  await expect(m3x8Quantity.getByText('12', { exact: true })).toBeVisible();
+  await expect(m3x8Quantity.getByText('4 × 3', { exact: true })).toBeVisible();
+
+  // Total price displays the multiplier and the base price
+  await expect(await cell('M3x8 Torx', 'Total Price')).toContainText(
+    /3 × \(\$[\d.,]+ - \$[\d.,]+\)/
+  );
+
+  // Can build is divided by the parent quantity
+  const m3x8Build = await cell('M3x8 Torx', 'Can Build');
+  const buildText = await m3x8Build.innerText();
+  const buildMatch = buildText.match(/^([\d,]+)\s+([\d,]+) ÷ 3$/);
+
+  expect(buildMatch).not.toBeNull();
+
+  const chained = Number(buildMatch![1].replaceAll(',', ''));
+  const unit = Number(buildMatch![2].replaceAll(',', ''));
+
+  expect(chained).toBe(Math.trunc(unit / 3));
+
+  // Expand the nested "Widget Board (assembled)" sub-assembly (quantity 1)
+  await row('Widget Board (assembled)')
+    .nth(1)
+    .getByRole('button', { name: 'nested-row-expand' })
+    .click();
+  await page.getByText('MAX232IDR').waitFor();
+
+  // Quantity is multiplied through each level
+  const capQuantity = await cell('C_1uF_0402', 'Quantity');
+  await expect(capQuantity.getByText('57', { exact: true })).toBeVisible();
+  await expect(
+    capQuantity.getByText('19 × 1 × 3', { exact: true })
+  ).toBeVisible();
+
+  // Widget Board (PCB) line item with quantity 3
+  const pcbQuantity = await cell('PCB3, PCB4, PCB5', 'Quantity');
+  await expect(pcbQuantity.getByText('9', { exact: true })).toBeVisible();
+  await expect(
+    pcbQuantity.getByText('3 × 1 × 3', { exact: true })
+  ).toBeVisible();
+
+  // Collapse the nested sub-assembly - its rows are removed
+  await row('Widget Board (assembled)')
+    .nth(1)
+    .getByRole('button', { name: 'nested-row-collapse' })
+    .click();
+  await expect(page.getByText('MAX232IDR')).toHaveCount(0);
+  await expect(page.getByText('M3x10 Torx')).toHaveCount(1);
+
+  // Collapse the top-level sub-assembly - all descendant rows are removed
+  await doohickey.getByRole('button', { name: 'nested-row-collapse' }).click();
+  await expect(page.getByText('M3x10 Torx')).toHaveCount(0);
+  await expect(row('Widget Board (assembled)')).toHaveCount(1);
+
+  // Re-expand - nested sub-assemblies remain collapsed
+  await doohickey.getByRole('button', { name: 'nested-row-expand' }).click();
+  await page.getByText('M3x10 Torx').waitFor();
+  await expect(page.getByText('MAX232IDR')).toHaveCount(0);
+
+  // Searching reloads the table, which discards sub-assembly rows
+  await page.getByLabel('table-search-input').fill('Doohickey');
+  await expect(page.getByText('M3x10 Torx')).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: 'nested-row-collapse' })
+  ).toHaveCount(0);
+});
+
+/**
  * Perform BOM validation process
  * Note that this is a "background task" which is monitored by the "useBackgroundTask" hook
  */
