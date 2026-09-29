@@ -501,7 +501,13 @@ export function BomTable({
             return '-';
           }
 
-          const can_build = Math.max(0, Math.trunc(record.can_build));
+          // Account for the quantity of any upstream sub-assemblies
+          const multiplier = upstreamMultiplier(record);
+
+          const can_build = Math.max(
+            0,
+            Math.trunc(record.can_build / multiplier)
+          );
 
           const value = (
             <Text
@@ -510,6 +516,18 @@ export function BomTable({
             >
               {formatDecimal(can_build)}
             </Text>
+          );
+
+          // Sub-assembly rows also display the "per sub-assembly" quantity
+          const display = isNestedRecord(record) ? (
+            <Stack gap={0}>
+              {value}
+              <Text size='xs' c='dimmed'>
+                {`${formatDecimal(Math.max(0, Math.trunc(record.can_build)))} ÷ ${formatDecimal(multiplier)}`}
+              </Text>
+            </Stack>
+          ) : (
+            value
           );
 
           const extra = [];
@@ -523,7 +541,11 @@ export function BomTable({
           }
 
           return (
-            <TableHoverCard value={value} extra={extra} title={t`Can Build`} />
+            <TableHoverCard
+              value={display}
+              extra={extra}
+              title={t`Can Build`}
+            />
           );
         }
       },
