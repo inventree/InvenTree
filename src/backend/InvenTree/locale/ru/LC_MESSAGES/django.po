@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-26 07:21+0000\n"
-"PO-Revision-Date: 2026-09-26 07:26\n"
+"POT-Creation-Date: 2026-09-27 21:10+0000\n"
+"PO-Revision-Date: 2026-09-27 21:15\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -8835,7 +8835,7 @@ msgstr "Плагин не найден"
 msgid "Plugin does not support label printing"
 msgstr "Плагин не поддерживает печать этикеток"
 
-#: report/api.py:170 report/api.py:279
+#: report/api.py:170 report/api.py:280
 msgid "You do not have permission to view this model type"
 msgstr "У вас нет разрешёния на просмотр этого типа модели"
 
@@ -8843,7 +8843,7 @@ msgstr "У вас нет разрешёния на просмотр этого �
 msgid "Invalid label dimensions"
 msgstr "Недопустимые размеры этикетки"
 
-#: report/api.py:192 report/api.py:290
+#: report/api.py:192 report/api.py:291
 msgid "No valid items provided to template"
 msgstr "Ни одного допустимого элемента не предоставлено для шаблона"
 
@@ -9149,31 +9149,31 @@ msgstr "Нет результата"
 msgid "Transferred"
 msgstr "Перемещено"
 
-#: report/templatetags/report.py:239
+#: report/templatetags/report.py:252
 msgid "Invalid media file path"
 msgstr "Недопустимый путь к медиафайлу"
 
-#: report/templatetags/report.py:258
+#: report/templatetags/report.py:271
 msgid "Invalid static file path"
 msgstr "Недопустимый путь к статическому файлу"
 
-#: report/templatetags/report.py:360
+#: report/templatetags/report.py:373
 msgid "Asset file not found"
 msgstr "Файл ресурса не найден"
 
-#: report/templatetags/report.py:421 report/templatetags/report.py:547
+#: report/templatetags/report.py:434 report/templatetags/report.py:560
 msgid "Image file not found"
 msgstr "Файл изображения не найден"
 
-#: report/templatetags/report.py:511
+#: report/templatetags/report.py:524
 msgid "No image file specified"
 msgstr "Файл изображения не указан"
 
-#: report/templatetags/report.py:541
+#: report/templatetags/report.py:554
 msgid "part_image tag requires a Part instance"
 msgstr "Тег part_image требует экземпляр детали"
 
-#: report/templatetags/report.py:721
+#: report/templatetags/report.py:734
 msgid "company_image tag requires a Company instance"
 msgstr "Тег company_image требует экземпляр компании"
 
