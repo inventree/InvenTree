@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Group, Stack, Text } from '@mantine/core';
+import { Alert, Box, Group, Stack, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
@@ -134,14 +134,24 @@ export function BomTable({
             );
           }
 
+          // Fill the available width, so that the hover icon is right-aligned,
+          // leaving space for the copy button (which overlays the right edge)
           return (
             part && (
-              <TableHoverCard
-                value={<RenderPartColumn part={part} />}
-                iconColor={record.validated ? undefined : 'red'}
-                extra={extra}
-                title={t`Part Information`}
-              />
+              <Box
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  paddingRight: window.isSecureContext ? 26 : 0
+                }}
+              >
+                <TableHoverCard
+                  value={<RenderPartColumn part={part} />}
+                  iconColor={record.validated ? undefined : 'red'}
+                  extra={extra}
+                  title={t`Part Information`}
+                />
+              </Box>
             )
           );
         }

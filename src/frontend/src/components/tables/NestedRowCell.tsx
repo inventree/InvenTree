@@ -1,5 +1,5 @@
 import { cancelEvent } from '@lib/functions/Events';
-import { Group, Loader } from '@mantine/core';
+import { Box, Group, Loader } from '@mantine/core';
 import { IconCornerDownRight } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 import RowExpansionIcon from './RowExpansionIcon';
@@ -57,7 +57,7 @@ export default function NestedRowCell({
             }}
           />
         ))}
-      {children}
+      <Box style={{ flex: 1, minWidth: 0 }}>{children}</Box>
     </Group>
   );
 }
