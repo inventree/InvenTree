@@ -29,7 +29,7 @@ For each line, the following values may be adjusted:
 | Quantity | The total quantity of the component part to generate. This is automatically scaled as the top-level *Quantity* field is changed, unless the user has manually edited it |
 | Location | An optional destination location for the generated stock item. If not specified, the component is placed in the same location as the disassembled item (or the default location specified at the top of the form) |
 | Status | An optional [stock status](./status.md) to apply to the generated stock item. If not specified, the component is created with the default *OK* status |
-| Unit Price | An optional purchase price to record against the generated stock item. If left blank, a price is calculated automatically (see below) |
+| Unit Price | An optional unit cost to record against the generated stock item, as a [purchase cost entry](./costs.md#cost-types). If left blank, a cost is calculated automatically (see below) |
 
 A line item can be removed from the form entirely if that particular component is not required to be split out - for example, if it is being scrapped rather than returned to stock. A line cannot be removed if it has installed items associated with it (see below).
 
@@ -44,7 +44,7 @@ The original stock item is never deleted as a result of disassembly - its quanti
 If the stock item being disassembled has other stock items [installed](../manufacturing/allocate.md#allocating-tracked-stock) within it (for example, tracked components that were installed during a build order), these installed items **must** be accounted for during disassembly:
 
 - Each installed item is matched against a BOM line item, based on the component part (including any [substitute](../manufacturing/bom.md#substitute-bom-line-items) or [variant](../part/index.md#assembly) parts allowed for that line)
-- Matched installed items are *uninstalled* directly, rather than being discarded and re-created - this preserves the original stock item, including its own tracking history, batch code, and purchase price
+- Matched installed items are *uninstalled* directly, rather than being discarded and re-created - this preserves the original stock item, including its own tracking history, batch code, and [recorded cost](./costs.md)
 - The quantity requested for the matching BOM line is reduced by the quantity already covered by the installed item(s). A new stock item is only created for any remaining quantity - if the installed items fully cover the required quantity, no new stock item is created for that line
 - Any installed item which does *not* match one of the selected BOM lines is still uninstalled (it cannot be left "installed" inside a smaller or non-existent parent), but its quantity is **not** subtracted from any line
 
@@ -54,12 +54,13 @@ The disassembly form displays a count of installed items against each matching B
 
 ### Automatic Cost Allocation
 
-If the original stock item has a recorded purchase price, and no explicit *Unit Price* has been entered for the generated lines, InvenTree attempts to automatically apportion that cost across the newly generated components:
+If the original stock item has a [recorded unit cost](./costs.md), and no explicit *Unit Price* has been entered for the generated lines, InvenTree attempts to automatically apportion that cost across the newly generated components:
 
-- The total cost (unit purchase price &times; disassembled quantity) is split across the lines, weighted by the existing [pricing](../part/pricing.md) data (average of minimum and maximum overall price) for each component part
+- The total cost (unit cost &times; disassembled quantity) is split across the lines, weighted by the existing [pricing](../part/pricing.md) data (average of minimum and maximum overall price) for each component part
 - If pricing data is not available for *every* line, the cost is instead split evenly on a per-unit basis across all generated units
-- Cost is only allocated across newly *created* stock items - any matched installed items retain their own existing purchase price, and are excluded from the cost split entirely
-- If any line has an explicit *Unit Price* provided by the user, automatic cost allocation is skipped entirely, and prices are only applied where explicitly set
+- Cost is only allocated across newly *created* stock items - any matched installed items retain their own existing recorded cost, and are excluded from the cost split entirely
+- If any line has an explicit *Unit Price* provided by the user, automatic cost allocation is skipped entirely, and costs are only applied where explicitly set
+- Each generated component receives its allocated (or explicitly provided) cost as a [purchase cost entry](./costs.md#cost-types)
 
 ### Traceability
 
@@ -72,7 +73,7 @@ Disassembling a stock item generates a full audit trail:
 
 ### Purchasing Bundled Items
 
-Some suppliers only sell a group of components as a single bundled or "kit" product, rather than as individual purchasable line items. Such a bundle can be modelled as an assembly part, purchased and received as a single stock item, and later disassembled into its individual components - with purchase price and traceability data automatically apportioned across the generated components, as described above.
+Some suppliers only sell a group of components as a single bundled or "kit" product, rather than as individual purchasable line items. Such a bundle can be modelled as an assembly part, purchased and received as a single stock item, and later disassembled into its individual components - with cost and traceability data automatically apportioned across the generated components, as described above.
 
 Refer to the [Bundled Items](../purchasing/purchase_order.md#bundled-items) documentation for a full description of how to set this up.
 

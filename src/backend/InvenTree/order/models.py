@@ -1037,6 +1037,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 item's RECEIVED_AGAINST_PURCHASE_ORDER tracking entry, not the
                 StockItem itself
         """
+        # Deferred import to avoid a circular import at module load time
+        # (order -> pricing -> stock -> order)
+        import pricing.models
+        from pricing.status_codes import CostType
+
         if self.status != PurchaseOrderStatus.PLACED:
             raise ValidationError(
                 "Lines can only be received against an order marked as 'PLACED'"
@@ -1045,6 +1050,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # List of stock items which have been created
         stock_items: list[stock.models.StockItem] = []
 
+        # List of (stock_item, purchase_price) pairs, for newly created items which
+        # were assigned a purchase price (purchase_price is not a StockItem field -
+        # see the StockItemCostEntry creation at the end of this method)
+        stock_item_prices: list[tuple[stock.models.StockItem, object]] = []
+
         # Per-item 'note' text, index-aligned with stock_items - StockItem no longer
         # has its own 'notes' field, so this is threaded through to each item's
         # RECEIVED_AGAINST_PURCHASE_ORDER tracking entry instead (see below)
@@ -1052,6 +1062,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         # List of stock items to bulk create
         bulk_create_items: list[stock.models.StockItem] = []
+
+        # Purchase price for each corresponding entry in 'bulk_create_items'
+        # (same order - see the bulk_create_and_fetch() call below)
+        bulk_create_prices: list = []
 
         # Notes for bulk_create_items, appended in lockstep - bulk_create_and_fetch()
         # re-fetches fresh instances from the database, so any note has to be tracked
@@ -1175,11 +1189,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 purchase_price = None
 
             # Construct dataset for creating a new StockItem instances
+            # Note: 'purchase_price' is *not* passed through here - it is not a
+            # StockItem model field, but is tracked separately (see stock_item_prices
+            # below) so a matching StockItemCostEntry can be created for each item
             stock_data = {
                 'part': supplier_part.part,
                 'supplier_part': supplier_part,
                 'purchase_order': self,
-                'purchase_price': purchase_price,
                 'location': stock_location,
                 'quantity': 1 if serialize else stock_quantity,
                 'batch': item.get('batch_code', ''),
@@ -1249,6 +1265,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     stock_items.append(new_item)
                     stock_item_notes.append(note)
 
+                    if purchase_price is not None:
+                        stock_item_prices.append((new_item, purchase_price))
+
             else:
                 new_item = stock.models.StockItem(**stock_data, serial='', parent=None)
 
@@ -1258,7 +1277,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     new_item.assign_barcode(barcode_data=barcode, save=False)
 
                 bulk_create_items.append(new_item)
-                bulk_create_notes.append(note)
 
         # Bulk create new stock items
         if len(bulk_create_items) > 0:
@@ -1270,12 +1288,18 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 item.run_plugin_validation()
 
             # Bulk create the stock items and fetch the newly created instances
+            # Note: bulk_create_and_fetch() returns items in the same order as the
+            # input list, so it is safe to zip against 'bulk_create_prices' here
             new_items = list(
                 bulk_create_and_fetch(stock.models.StockItem, bulk_create_items)
             )
 
             stock_items.extend(new_items)
             stock_item_notes.extend(bulk_create_notes)
+
+            for new_item, price in zip(new_items, bulk_create_prices, strict=True):
+                if price is not None:
+                    stock_item_prices.append((new_item, price))
 
         # Generate a new tracking entry for each stock item
         for item, item_note in zip(stock_items, stock_item_notes, strict=True):
@@ -1297,6 +1321,20 @@ class PurchaseOrder(TotalPriceMixin, Order):
         stock.models.StockItemTracking.objects.bulk_create(
             tracking_entries, batch_size=250
         )
+
+        # Record a purchase cost entry for each newly received item that was
+        # assigned a purchase price (this may be a large number of items, so
+        # the bulk helper is used rather than creating entries one at a time)
+        pricing.models.StockItemCostEntry.objects.bulk_create_costs([
+            {
+                'stock_item': item,
+                'cost_type': CostType.PURCHASE.value,
+                'min_cost': price,
+                'max_cost': price,
+                'user': user,
+            }
+            for item, price in stock_item_prices
+        ])
 
         # Update received quantity for each line item
         PurchaseOrderLineItem.objects.bulk_update(line_items_to_update, ['received'])
@@ -2924,6 +2962,14 @@ class SalesOrderShipment(
 
         for allocation in allocations_to_update:
             allocation.item = split_item_map[id(allocation.item)]
+
+        # Copy any cost data across onto the newly split-off items - cost is recorded
+        # per unit, so a split-off item carries the same unit cost as its parent.
+        import pricing.models
+
+        pricing.models.StockItemCostEntry.objects.bulk_copy_costs([
+            (source_item, new_item) for source_item, new_item, _quantity in split_items
+        ])
 
         tracking_entries = []
         split_events = []

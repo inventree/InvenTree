@@ -13,7 +13,7 @@ Pricing information can be determined from multiple sources:
 | --- | --- | ---|
 | Internal Price | How much a part costs to make | [Part](../part/index.md) |
 | Supplier Price | The price to theoretically purchase a part from a given supplier (with price-breaks) | [Supplier](../purchasing/supplier.md) |
-| Purchase Cost | Historical cost information for parts purchased | [Purchase Order](../purchasing/purchase_order.md) |
+| Purchase Cost | Historical cost information for parts purchased | [Purchase Order](../purchasing/purchase_order.md) / [Stock Item Costs](../stock/costs.md) |
 | BOM Price | Total price for an assembly (total price of all component items) | [Part](../part/index.md) |
 
 ### Override Pricing
@@ -71,7 +71,7 @@ If the **Internal Price Override** setting is enabled, then internal pricing dat
 
 ### Purchase History
 
-If the Part is designated as *purchaseable*, then historical purchase cost information is displayed (and used to calculate overall pricing). Purchase history data is collected from *completed* [purchase orders](../purchasing/purchase_order.md).
+If the Part is designated as *purchaseable*, then historical purchase cost information is displayed (and used to calculate overall pricing). Purchase history data is collected from *completed* [purchase orders](../purchasing/purchase_order.md), and reflects the calculated unit cost of each associated [stock item](../stock/costs.md).
 
 {{ image("part/pricing_purchase_history.png", "Purchase History") }}
 

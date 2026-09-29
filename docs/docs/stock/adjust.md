@@ -60,6 +60,9 @@ then the merge would not be possible.
 
 If the conditions are met, the process of merging will add up the stock quantity for all items involved in the merge and create a new stock item with the final calculated quantity.
 
+!!! info "Cost Merging"
+    If any of the merged items have a [recorded unit cost](./costs.md), the resulting stock item is assigned a new *purchase* [cost entry](./costs.md#cost-types), calculated as a quantity-weighted average of the cost of the merged items. If none of the merged items have recorded cost data, no cost entry is created.
+
 To merge stock items, check two or more items in a stock table and click on the {{ icon("packages", title="Stock Actions") }} icon above the table, then click on {{ icon("arrow-merge", title="Merge") }} menu option.
 
 In the Merge Stock Items form, user can decide to allow mismatched suppliers or status to be merged together (disabled by default).

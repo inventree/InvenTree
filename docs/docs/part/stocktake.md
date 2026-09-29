@@ -22,7 +22,7 @@ In particular, an individual *Stocktake* record tracks the following information
 
 ### Value Range of Stock on Hand
 
-The total value range of stock on hand is calculated based on the provided pricing data. For stock items which have a recorded *cost* (e.g. *purchase price*), this value is used. If no direct pricing information is available for a particular stock item, the price range of the part itself is used.
+The total value range of stock on hand is calculated based on the provided pricing data. For stock items which have a [recorded cost](../stock/costs.md), this value is used. If no direct cost information is available for a particular stock item, the price range of the part itself is used.
 
 !!! info "Value Range"
     Value data is provided as a *range* of values, accounting for any variability in available pricing data.

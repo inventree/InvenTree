@@ -13,6 +13,7 @@ from django.test import TransactionTestCase, skipUnlessDBFeature
 from django.urls import reverse
 
 from django_q.models import OrmQ
+from djmoney.money import Money
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
 import order.tasks
@@ -34,6 +35,8 @@ from order.models import (
 )
 from order.serializers import SalesOrderShipmentAllocationSerializer
 from part.models import Part
+from pricing.models import StockItemCostEntry
+from pricing.status_codes import CostType
 from stock.events import StockEvents
 from stock.models import StockItem, StockItemTracking, StockLocation
 from stock.status_codes import StockHistoryCode
@@ -520,6 +523,43 @@ class SalesOrderTest(InvenTreeAPITestCase):
         # No additional stock items or tracking entries have been created
         self.assertEqual(StockItem.objects.count(), n_items)
         self.assertEqual(StockItemTracking.objects.count(), n_tracking)
+
+    def test_shipment_split_copies_cost_entries(self):
+        """A stock item split off when shipping must inherit the unit cost of its parent.
+
+        Cost lives in a separate table keyed by stock item, so it has to be
+        copied onto the split-off item explicitly - see
+        StockItemCostEntryManager.bulk_copy_costs.
+        """
+        StockItemCostEntry.objects.create_cost(
+            self.Sa,
+            CostType.PURCHASE.value,
+            min_cost=Money(7, 'USD'),
+            max_cost=Money(9, 'USD'),
+        )
+
+        # Sa has 100 units, of which only 25 are allocated - shipping splits it
+        self.allocate_stock(True)
+        self.shipment.complete_shipment(None)
+
+        allocation = SalesOrderAllocation.objects.get(item__parent=self.Sa)
+        shipped = allocation.item
+
+        self.assertNotEqual(shipped.pk, self.Sa.pk)
+        self.assertEqual(shipped.quantity, 25)
+        self.assertEqual(shipped.customer, self.customer)
+
+        entry = StockItemCostEntry.objects.get(
+            stock_item=shipped, cost_type=CostType.PURCHASE.value
+        )
+        self.assertEqual(entry.min_cost, Money(7, 'USD'))
+        self.assertEqual(entry.max_cost, Money(9, 'USD'))
+        self.assertEqual(shipped.cost_price, Money(7, 'USD'))
+
+        # The remainder left in stock keeps its own cost
+        self.Sa.refresh_from_db()
+        self.assertEqual(self.Sa.quantity, 75)
+        self.assertEqual(self.Sa.cost_price, Money(7, 'USD'))
 
     def test_shipment_many_items(self):
         """Test completion of a shipment with many items.

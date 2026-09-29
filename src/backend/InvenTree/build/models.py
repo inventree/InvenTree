@@ -825,6 +825,14 @@ class Build(
         for i, (_stock_item, new_item, _quantity) in enumerate(split_items):
             new_item.pk = new_stock_items[i].pk
 
+        # Copy any cost data across onto the newly split-off items - cost is recorded
+        # per unit, so a split-off item carries the same unit cost as its parent.
+        import pricing.models
+
+        pricing.models.StockItemCostEntry.objects.bulk_copy_costs([
+            (source_item, new_item) for source_item, new_item, _quantity in split_items
+        ])
+
         tracking_entries = []
         split_events = []
         install_events = []
@@ -957,7 +965,20 @@ class Build(
         # Find all BuildItem objects which point to this build
         items = self.allocated_stock.filter(
             build_line__bom_item__sub_part__trackable=False
+        ).select_related(
+            'stock_item',
+            'stock_item__cost',
+            'build_line',
+            'build_line__bom_item',
+            'build_line__bom_item__sub_part',
         )
+
+        # Record pooled material cost across every completed output of this
+        # build, from these untracked (order-level) allocations - must run before
+        # they are consumed/deleted below
+        import build.pricing
+
+        build.pricing.record_pooled_material_cost(self, items, user)
 
         self.complete_allocations(build_items=items, user=user)
 
@@ -1480,8 +1501,19 @@ class Build(
             output = output.splitStock(quantity, user=user, allow_production=True)
 
         allocated_items = output.items_to_install.all().select_related(
-            'stock_item', 'stock_item__part'
+            'stock_item',
+            'stock_item__part',
+            'stock_item__cost',
+            'build_line',
+            'build_line__bom_item',
+            'build_line__bom_item__sub_part',
         )
+
+        # Record material cost against this output, from its own tracked
+        # allocations - must run before those allocations are consumed/deleted below
+        import build.pricing
+
+        build.pricing.record_output_material_cost(output, allocated_items, user)
 
         self.complete_allocations(build_items=allocated_items, user=user)
 

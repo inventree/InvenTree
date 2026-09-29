@@ -16,12 +16,15 @@ from djmoney.money import Money
 from rest_framework.test import APIClient
 
 from build.models import Build
+from common.currency import currency_code_default
 from common.models import InvenTreeSetting
 from company.models import Company
 from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase
 from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
 from plugin.base.event.events import batch_events
+from pricing.models import StockItemCost, StockItemCostEntry
+from pricing.status_codes import CostType
 from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
 
@@ -367,6 +370,123 @@ class StockTest(StockTestBase):
 
         self.assertIsNotNone(parent_entry)
         self.assertEqual(parent_entry.deltas.get('stockitem'), child.pk)
+
+    def test_split_stock_copies_cost_entries(self):
+        """A split-off item must inherit the unit cost of its parent.
+
+        Cost lives in a separate table keyed by stock item, so (unlike the old
+        purchase_price model field) it is not carried across automatically when
+        a StockItem is duplicated - see StockItemCostEntryManager.bulk_copy_costs.
+        """
+        parent = StockItem.objects.get(id=1234)
+
+        StockItemCostEntry.objects.create_cost(
+            parent,
+            CostType.PURCHASE.value,
+            min_cost=Money(3, 'USD'),
+            max_cost=Money(4, 'USD'),
+            notes='received',
+        )
+
+        StockItemCostEntry.objects.create_cost(
+            parent,
+            CostType.MATERIAL.value,
+            min_cost=Money(1, 'USD'),
+            max_cost=Money(1, 'USD'),
+        )
+
+        child = parent.splitStock(100, None, self.user)
+
+        self.assertIsNotNone(child)
+
+        # Every cost type is carried across, at the same per-unit value
+        entries = StockItemCostEntry.objects.filter(stock_item=child)
+        self.assertEqual(entries.count(), 2)
+
+        purchase = entries.get(cost_type=CostType.PURCHASE.value)
+        self.assertEqual(purchase.min_cost, Money(3, 'USD'))
+        self.assertEqual(purchase.max_cost, Money(4, 'USD'))
+        self.assertEqual(purchase.notes, 'received')
+
+        material = entries.get(cost_type=CostType.MATERIAL.value)
+        self.assertEqual(material.min_cost, Money(1, 'USD'))
+
+        # The cached summary is carried across too - splitting changes the
+        # quantity of an item, never its unit cost
+        parent.refresh_from_db()
+
+        self.assertEqual(child.cost_price, parent.cost_price)
+        self.assertEqual(child.cost_price, Money(4, 'USD'))
+        self.assertEqual(
+            StockItemCost.objects.get(stock_item=child).max_cost, Money(5, 'USD')
+        )
+
+        # The parent keeps its own cost data, unchanged
+        self.assertEqual(
+            StockItemCostEntry.objects.filter(stock_item=parent).count(), 2
+        )
+
+    def test_split_stock_without_cost_data(self):
+        """Splitting an item with no cost data must not create any cost records."""
+        parent = StockItem.objects.get(id=1234)
+        self.assertIsNone(parent.cost_price)
+
+        child = parent.splitStock(100, None, self.user)
+
+        self.assertEqual(StockItemCostEntry.objects.filter(stock_item=child).count(), 0)
+        self.assertEqual(StockItemCost.objects.filter(stock_item=child).count(), 0)
+        self.assertIsNone(child.cost_price)
+
+    def test_split_stock_cost_survives_repeated_splits(self):
+        """Cost must propagate down a chain of splits, not just the first one."""
+        grandparent = StockItem.objects.get(id=1234)
+
+        StockItemCostEntry.objects.create_cost(
+            grandparent,
+            CostType.PURCHASE.value,
+            min_cost=Money(2, 'USD'),
+            max_cost=Money(2, 'USD'),
+        )
+
+        parent = grandparent.splitStock(200, None, self.user)
+        child = parent.splitStock(50, None, self.user)
+
+        self.assertEqual(parent.cost_price, Money(2, 'USD'))
+        self.assertEqual(child.cost_price, Money(2, 'USD'))
+
+    def test_serialize_stock_copies_cost_entries(self):
+        """Each item created by serializing a bulk item inherits its unit cost."""
+        item = StockItem.objects.get(id=1234)
+
+        # The part must be trackable in order to serialize stock against it
+        item.part.trackable = True
+        item.part.save()
+
+        StockItemCostEntry.objects.create_cost(
+            item,
+            CostType.PURCHASE.value,
+            min_cost=Money(6, 'USD'),
+            max_cost=Money(8, 'USD'),
+        )
+
+        serials = ['sn-a', 'sn-b', 'sn-c']
+        items = item.serializeStock(3, serials, user=self.user)
+
+        self.assertEqual(len(items), 3)
+
+        for new_item in items:
+            entry = StockItemCostEntry.objects.get(
+                stock_item=new_item, cost_type=CostType.PURCHASE.value
+            )
+
+            # Cost is per-unit, so each single-unit serialized item carries the
+            # full unit cost of the bulk item it came from
+            self.assertEqual(entry.min_cost, Money(6, 'USD'))
+            self.assertEqual(entry.max_cost, Money(8, 'USD'))
+
+            self.assertEqual(
+                StockItemCost.objects.get(stock_item=new_item).min_cost, Money(6, 'USD')
+            )
 
     def test_delete_reparents_children(self):
         """Test that deleting an intermediate item re-links children to the grandparent."""
@@ -1093,10 +1213,14 @@ class StockTest(StockTestBase):
 
             self.assertEqual(len(p.metadata.keys()), 4)
 
+    def set_cost(self, item, cost):
+        """Helper: assign a PURCHASE cost entry (and cached summary) to a stock item."""
+        StockItemCostEntry.objects.create_cost(
+            item, CostType.PURCHASE.value, min_cost=cost, max_cost=cost
+        )
+
     def test_merge(self):
         """Test merging of multiple stock items."""
-        from djmoney.money import Money
-
         part = Part.objects.first()
         part.stock_items.all().delete()
 
@@ -1110,7 +1234,7 @@ class StockTest(StockTestBase):
         self.assertEqual(part.stock_items.count(), 1)
         s1.refresh_from_db()
         self.assertEqual(s1.quantity, 60)
-        self.assertIsNone(s1.purchase_price)
+        self.assertIsNone(s1.cost_price)
 
         merge_entry = s1.tracking_info.filter(
             tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
@@ -1122,10 +1246,9 @@ class StockTest(StockTestBase):
         part.stock_items.all().delete()
 
         # Create some stock items with pricing information
-        s1 = StockItem.objects.create(part=part, quantity=10, purchase_price=None)
-        s2 = StockItem.objects.create(
-            part=part, quantity=15, purchase_price=Money(10, 'USD')
-        )
+        s1 = StockItem.objects.create(part=part, quantity=10)
+        s2 = StockItem.objects.create(part=part, quantity=15)
+        self.set_cost(s2, Money(10, 'USD'))
         s3 = StockItem.objects.create(part=part, quantity=30)
 
         self.assertEqual(part.stock_items.count(), 3)
@@ -1133,28 +1256,65 @@ class StockTest(StockTestBase):
         self.assertEqual(part.stock_items.count(), 1)
         s1.refresh_from_db()
         self.assertEqual(s1.quantity, 55)
-        self.assertEqual(s1.purchase_price, Money(10, 'USD'))
+        self.assertEqual(s1.cost_price, Money(10, 'USD'))
 
         part.stock_items.all().delete()
 
-        s1 = StockItem.objects.create(
-            part=part, quantity=10, purchase_price=Money(5, 'USD')
-        )
-        s2 = StockItem.objects.create(
-            part=part, quantity=25, purchase_price=Money(10, 'USD')
-        )
-        s3 = StockItem.objects.create(
-            part=part, quantity=5, purchase_price=Money(75, 'USD')
-        )
+        s1 = StockItem.objects.create(part=part, quantity=10)
+        self.set_cost(s1, Money(5, 'USD'))
+        s2 = StockItem.objects.create(part=part, quantity=25)
+        self.set_cost(s2, Money(10, 'USD'))
+        s3 = StockItem.objects.create(part=part, quantity=5)
+        self.set_cost(s3, Money(75, 'USD'))
 
         self.assertEqual(part.stock_items.count(), 3)
+        s1.refresh_from_db()
         s1.merge_stock_items([s2, s3])
         self.assertEqual(part.stock_items.count(), 1)
         s1.refresh_from_db()
         self.assertEqual(s1.quantity, 40)
 
         # Final purchase price should be the weighted average
-        self.assertAlmostEqual(s1.purchase_price.amount, 16.875, places=3)
+        self.assertAlmostEqual(s1.cost_price.amount, 16.875, places=3)
+
+    def test_merge_creates_cost_entry(self):
+        """Merging stock items should record a StockItemCostEntry reflecting the merged price."""
+        part = Part.objects.first()
+        part.stock_items.all().delete()
+
+        # A merge with no pricing information should not create a cost entry
+        s1 = StockItem.objects.create(part=part, quantity=10)
+        s2 = StockItem.objects.create(part=part, quantity=20)
+
+        s1.merge_stock_items([s2])
+        s1.refresh_from_db()
+
+        self.assertFalse(StockItemCostEntry.objects.filter(stock_item=s1).exists())
+        self.assertFalse(StockItemCost.objects.filter(stock_item=s1).exists())
+
+        part.stock_items.all().delete()
+
+        # A merge with pricing information should create/update a matching cost entry
+        s1 = StockItem.objects.create(part=part, quantity=10)
+        self.set_cost(s1, Money(5, 'USD'))
+        s2 = StockItem.objects.create(part=part, quantity=30)
+        self.set_cost(s2, Money(10, 'USD'))
+
+        s1.refresh_from_db()
+        s1.merge_stock_items([s2])
+        s1.refresh_from_db()
+
+        # Weighted average: (10*5 + 30*10) / 40 = 8.75
+        self.assertAlmostEqual(s1.cost_price.amount, 8.75, places=3)
+
+        cost_entry = StockItemCostEntry.objects.get(stock_item=s1)
+        self.assertEqual(cost_entry.cost_type, CostType.PURCHASE.value)
+        self.assertEqual(cost_entry.min_cost, s1.cost_price)
+        self.assertEqual(cost_entry.max_cost, s1.cost_price)
+
+        summary = StockItemCost.objects.get(stock_item=s1)
+        self.assertEqual(summary.min_cost, s1.cost_price)
+        self.assertEqual(summary.max_cost, s1.cost_price)
 
     def test_merge_protected_items(self):
         """Stock items in a protected state cannot be absorbed by a merge.
@@ -1244,25 +1404,33 @@ class StockTest(StockTestBase):
         self.assertTrue(check_func())
 
     def test_purchase_price(self):
-        """Test purchase price field."""
-        from common.currency import currency_code_default
-        from common.settings import set_global_setting
+        """Test that a stock item's cost_price reflects its calculated StockItemCost.
 
+        Note: StockItem no longer has a 'purchase_price' field (or a default
+        currency for one) - a plain StockItem has no cost data at all until a
+        StockItemCostEntry is explicitly recorded against it (see pricing.models
+        and StockItemCostEntryManagerTest for currency-defaulting behavior).
+        """
         part = Part.objects.filter(virtual=False).first()
 
-        for currency in ['AUD', 'USD', 'JPY']:
-            set_global_setting('INVENTREE_DEFAULT_CURRENCY', currency)
-            self.assertEqual(currency_code_default(), currency)
+        # A freshly created stock item has no calculated cost
+        item = StockItem.objects.create(part=part, quantity=10)
+        self.assertIsNone(item.cost_price)
 
-            # Create stock item, do not specify currency - should get default
-            item = StockItem.objects.create(part=part, quantity=10)
-            self.assertEqual(item.purchase_price_currency, currency)
+        # Recording a cost entry makes it available via cost_price. Use the
+        # default currency directly, as StockItemCost.cost_price is always
+        # calculated in that currency, and no exchange rate is registered
+        # here to convert from any other currency
+        currency = currency_code_default()
 
-            # Create stock item, specify currency
-            item = StockItem.objects.create(
-                part=part, quantity=10, purchase_price=Money(5, 'GBP')
-            )
-            self.assertEqual(item.purchase_price_currency, 'GBP')
+        StockItemCostEntry.objects.create_cost(
+            item,
+            CostType.PURCHASE.value,
+            min_cost=Money(5, currency),
+            max_cost=Money(5, currency),
+        )
+        item.refresh_from_db()
+        self.assertEqual(item.cost_price, Money(5, currency))
 
 
 class TrackingEntryBatchTests(StockTestBase):

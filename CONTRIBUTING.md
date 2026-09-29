@@ -77,6 +77,7 @@ The following Django apps are defined in `src/backend/InvenTree/`:
 | `machine/` | Support for external machines and devices |
 | `order/` | Purchase orders and sales orders |
 | `part/` | Parts catalogue and categories |
+| `pricing/` | Pricing calculation and caching |
 | `stock/` | Stock items and locations |
 | `report/` | Report templates and generation |
 | `plugin/` | Plugin system |
