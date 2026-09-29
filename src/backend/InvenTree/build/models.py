@@ -51,6 +51,7 @@ from generic.states import (
     inventree_transition,
 )
 from InvenTree.helpers_db import bulk_create_and_fetch
+from plugin.base.integration.AllocateMixin import apply_allocate_mixin
 from plugin.events import bulk_trigger_event, trigger_event
 from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
@@ -1730,6 +1731,11 @@ class Build(
                 )
             )
 
+            # Allow plugins to filter / reorder the candidate stock items
+            available_items = apply_allocate_mixin(
+                'filter_build_allocation', line_item, available_items, **kwargs
+            )
+
             if len(available_items) == 1:
                 allocations.append(
                     BuildItem(
@@ -1901,6 +1907,11 @@ class Build(
             available_stock = sorted(
                 available_stock,
                 key=lambda item, b=bom_item, v=variant_parts: stock_sort(item, b, v),
+            )
+
+            # Allow plugins to filter / reorder the candidate stock items
+            available_stock = apply_allocate_mixin(
+                'filter_build_allocation', line_item, available_stock, **kwargs
             )
 
             if len(available_stock) != 1 and not interchangeable:

@@ -14,6 +14,8 @@ class SampleValidatorPluginTest(InvenTreeAPITestCase, InvenTreeTestCase):
 
     fixtures = ['part', 'category', 'location', 'build', 'stock']
 
+    roles = ['part.view', 'build.view']
+
     def setUp(self):
         """Set up the test environment."""
         super().setUp()

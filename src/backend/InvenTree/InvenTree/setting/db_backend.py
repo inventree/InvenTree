@@ -208,6 +208,19 @@ def set_postgres_options(db_options: dict):
             'inventree-worker' if isInWorkerThread() else 'inventree-server'
         )
 
+    extra_options = []
+
+    if 'options' in db_options:
+        extra_options.append(db_options['options'])
+
+    if not get_boolean_setting(
+        'INVENTREE_DB_JIT_ENABLED', 'database.jit_enabled', False
+    ):
+        extra_options.append('-c jit=off')
+
+    if extra_options:
+        db_options['options'] = ' '.join(extra_options)
+
 
 def set_mysql_options(db_options: dict):
     """Set database options specific to mysql backend."""

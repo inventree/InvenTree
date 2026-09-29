@@ -1206,6 +1206,7 @@ def update(
         'include_sso': 'Include SSO token data in the output file (default = False)',
         'include_session': 'Include user session data in the output file (default = False)',
         'prettify': 'Pretty-print the output file with indentation (default = False)',
+        'bulk': 'Use bulkdumpdata for improved performance on large datasets (default = False)',
         'verbose': 'Print verbose output from management commands',
     }
 )
@@ -1221,6 +1222,7 @@ def export_records(
     include_sso: bool = False,
     include_session: bool = False,
     prettify: bool = False,
+    bulk: bool = False,
     verbose: bool = False,
 ):
     """Export all database records to a file."""
@@ -1246,7 +1248,7 @@ def export_records(
     with tempfile.NamedTemporaryFile(
         suffix='.json', encoding='utf-8', mode='w+t', delete=True
     ) as tmpfile:
-        cmd = f"dumpdata --natural-foreign --output '{tmpfile.name}' {excludes}"
+        cmd = f"{'bulkdumpdata' if bulk else 'dumpdata'} --natural-foreign --output '{tmpfile.name}' {excludes}"
 
         if prettify:
             cmd += ' --indent 2'
@@ -1259,41 +1261,60 @@ def export_records(
         tmpfile.seek(0)
         data = json.loads(tmpfile.read())
 
-    data_out = [
-        {
-            'metadata': True,
-            'comment': 'This file contains a dump of the InvenTree database',
-            'exported_at': datetime.datetime.now().isoformat(),
-            'exported_at_utc': datetime.datetime.now(datetime.UTC).isoformat(),
-            'source_version': get_inventree_version(),
-            'api_version': get_inventree_api_version(),
-            'django_version': get_django_version(),
-            'python_version': python_version(),
-            'source_commit': get_commit_hash(),
-            'installed_apps': installed_apps(c),
-        }
-    ]
+    metadata_entry = {
+        'metadata': True,
+        'comment': 'This file contains a dump of the InvenTree database',
+        'exported_at': datetime.datetime.now().isoformat(),
+        'exported_at_utc': datetime.datetime.now(datetime.UTC).isoformat(),
+        'source_version': get_inventree_version(),
+        'api_version': get_inventree_api_version(),
+        'django_version': get_django_version(),
+        'python_version': python_version(),
+        'source_commit': get_commit_hash(),
+        'installed_apps': installed_apps(c),
+    }
 
-    for entry in data:
-        model_name = entry.get('model', None)
+    def entries_out():
+        """Filter and adjust entries as they are written, without ever materializing a second copy of the entire (potentially huge) dataset in memory.
 
-        # Ignore any temporary settings (start with underscore)
-        if model_name in ['common.inventreesetting', 'common.inventreeusersetting']:
-            if entry['fields'].get('key', '').startswith('_'):
-                continue
+        Yields:
+            dict: The next entry to write to the output file.
+        """
+        yield metadata_entry
 
-        if include_permissions is False:
-            if model_name == 'auth.group':
-                entry['fields']['permissions'] = []
+        for entry in data:
+            model_name = entry.get('model', None)
 
-            if model_name == 'auth.user':
-                entry['fields']['user_permissions'] = []
+            # Ignore any temporary settings (start with underscore)
+            if model_name in ['common.inventreesetting', 'common.inventreeusersetting']:
+                if entry['fields'].get('key', '').startswith('_'):
+                    continue
 
-        data_out.append(entry)
+            if include_permissions is False:
+                if model_name == 'auth.group':
+                    entry['fields']['permissions'] = []
 
-    # Write the processed data to file
+                if model_name == 'auth.user':
+                    entry['fields']['user_permissions'] = []
+
+            yield entry
+
+    indent = 2 if prettify else None
+
+    # Write the processed data to file, one entry at a time - avoids ever
+    # holding a second full copy of the (potentially huge) dataset in memory,
+    # and avoids a single json.dumps() call across the entire dataset at once
     with open(target, 'w', encoding='utf-8') as f_out:
-        f_out.write(json.dumps(data_out, indent=2 if prettify else None))
+        f_out.write('[')
+        for i, entry in enumerate(entries_out()):
+            if i:
+                f_out.write(',')
+            if prettify:
+                f_out.write('\n')
+            f_out.write(json.dumps(entry, indent=indent))
+        if prettify:
+            f_out.write('\n')
+        f_out.write(']')
 
     success('Data export completed')
 

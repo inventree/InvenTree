@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
-from django.db.models import F, Q
+from django.db.models import F, Model, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
@@ -14,6 +14,7 @@ from django_filters.rest_framework.filterset import FilterSet
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
@@ -73,6 +74,7 @@ from stock.models import (
     StockLocationType,
 )
 from stock.status_codes import StockHistoryCode, StockStatus
+from users.permissions import check_user_permission
 
 
 class GenerateBatchCode(GenericAPIView):
@@ -85,6 +87,12 @@ class GenerateBatchCode(GenericAPIView):
         """Generate a new batch code."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        for value in serializer.validated_data.values():
+            if isinstance(value, Model) and not check_user_permission(
+                request.user, value.__class__, 'view'
+            ):
+                raise PermissionDenied()
 
         data = {'batch_code': generate_batch_code(**serializer.validated_data)}
 
@@ -101,6 +109,11 @@ class GenerateSerialNumber(GenericAPIView):
         """Generate a new serial number."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        part = serializer.validated_data.get('part')
+
+        if part and not check_user_permission(request.user, part.__class__, 'view'):
+            raise PermissionDenied()
 
         data = {'serial_number': generate_serial_number(**serializer.validated_data)}
 

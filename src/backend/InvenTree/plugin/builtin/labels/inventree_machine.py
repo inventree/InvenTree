@@ -108,6 +108,7 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             output=output,
             force_sync=settings.TESTING or driver.USE_BACKGROUND_WORKER,
             group='plugin',
+            retry=False,
             **print_kwargs,
         )
 

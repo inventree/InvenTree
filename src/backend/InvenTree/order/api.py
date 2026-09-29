@@ -2695,8 +2695,6 @@ class OrderCalendarExport(ICalFeed):
 
 
 order_api_urls = [
-    # Purchase Order, Line Item, and Extra Line API endpoints via ViewSet router
-    path('', include(order_router.urls)),
     # Purchase order status code information (requires custom kwargs)
     path(
         'po/status/',
@@ -2704,6 +2702,8 @@ order_api_urls = [
         {StatusView.MODEL_REF: PurchaseOrderStatus},
         name='api-po-status-codes',
     ),
+    # Purchase Order, Line Item, and Extra Line API endpoints via ViewSet router
+    path('', include(order_router.urls)),
     # API endpoints for sales orders
     path(
         'so/',

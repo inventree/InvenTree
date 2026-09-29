@@ -484,6 +484,11 @@ test('Stock - Return Items', async ({ browser }) => {
 
   // Location detail
   await navigate(page, 'stock/item/1253');
+
+  // Allow some settling time for this page
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(100);
+
   await page
     .getByRole('button', { name: 'action-menu-stock-operations' })
     .click();
@@ -679,6 +684,10 @@ test('Stock - Default Location', async ({ browser }) => {
 
   // Scenario 2: Duplicating a stock item should retain its original location
   await navigate(page, 'stock/item/2/details');
+
+  await page.waitForTimeout(1000);
+  await page.waitForLoadState('networkidle');
+
   await page
     .getByRole('button', { name: 'action-menu-stock-item-actions' })
     .click();

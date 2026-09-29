@@ -1584,6 +1584,16 @@ class SelectionListMixin(OutputOptionsMixin):
 class SelectionListList(SelectionListMixin, ListCreateAPI):
     """List view for SelectionList objects."""
 
+    filter_backends = SEARCH_ORDER_FILTER
+
+    filterset_fields = ['active', 'locked']
+
+    search_fields = ['name', 'description']
+
+    ordering_fields = ['name', 'active', 'locked']
+
+    ordering = 'name'
+
 
 class SelectionListDetail(SelectionListMixin, RetrieveUpdateDestroyAPI):
     """Detail view for a SelectionList object."""

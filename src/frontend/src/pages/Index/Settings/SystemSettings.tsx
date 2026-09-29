@@ -356,7 +356,8 @@ export default function SystemSettings() {
               'PURCHASEORDER_REQUIRE_RESPONSIBLE',
               'PURCHASEORDER_CONVERT_CURRENCY',
               'PURCHASEORDER_EDIT_COMPLETED_ORDERS',
-              'PURCHASEORDER_AUTO_COMPLETE'
+              'PURCHASEORDER_AUTO_COMPLETE',
+              'PURCHASEORDER_DEFAULT_RECEIVE_LOCATION'
             ]}
           />
         )
