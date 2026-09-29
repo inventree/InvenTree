@@ -125,11 +125,18 @@ function HoverNameBadge(data: any, type: BadgeType) {
           data.username,
           getDetailUrl(ModelType.user, data.pk, true),
           data?.image,
-          <>
-            {data.is_superuser && <Badge color='red'>{t`Superuser`}</Badge>}
-            {data.is_staff && <Badge color='orange'>{t`Administrator`}</Badge>}
-            {data.email && t`Email: ` + data.email}
-          </>
+          <Stack gap='xs'>
+            {data.email}
+            <Group gap='xs'>
+              {data.is_superuser && <Badge color='red'>{t`Superuser`}</Badge>}
+              {data.is_staff && (
+                <Badge color='orange'>{t`Administrator`}</Badge>
+              )}
+              {data.is_active === false && (
+                <Badge color='gray'>{t`Inactive`}</Badge>
+              )}
+            </Group>
+          </Stack>
         ];
       case 'group':
         return [
