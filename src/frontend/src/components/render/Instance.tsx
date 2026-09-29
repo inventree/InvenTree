@@ -160,8 +160,9 @@ export function RenderRemoteInstance({
 }: Readonly<RemoteInstanceProps>): ReactNode {
   const api = useApi();
 
-  const { data, isLoading, isFetching } = useQuery({
-    queryKey: ['model', model, pk],
+  const { data, isLoading } = useQuery({
+    queryKey: ['model', model, pk, modelUrl],
+    enabled: !!pk,
     staleTime: 5 * 60 * 1000, // 5 minutes
     queryFn: async () => {
       const url = modelUrl
@@ -172,7 +173,7 @@ export function RenderRemoteInstance({
     }
   });
 
-  if (isLoading || isFetching) {
+  if (isLoading) {
     return <Skeleton />;
   }
 
