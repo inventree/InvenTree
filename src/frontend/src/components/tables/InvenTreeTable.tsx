@@ -61,6 +61,13 @@ type NestedRowInfo = {
   depth: number;
 };
 
+/**
+ * Determine if a record is a nested (child) row, inserted below a parent row
+ */
+export function isNestedRecord(record: any): boolean {
+  return !!record?.[NESTED_ROW_INFO];
+}
+
 // State of a single expanded (or expanding) parent row
 type NestedRowState<T> = {
   expanded: boolean;

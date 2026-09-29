@@ -43,7 +43,10 @@ import {
   RenderPartColumn
 } from '../../components/tables/ColumnRenderers';
 import { PartCategoryFilter } from '../../components/tables/Filter';
-import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import {
+  InvenTreeTable,
+  isNestedRecord
+} from '../../components/tables/InvenTreeTable';
 import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
@@ -117,7 +120,8 @@ export function BomTable({
 
           const extra = [];
 
-          if (partId && record.part != partId) {
+          // Sub-assembly rows are always defined for a different parent
+          if (partId && record.part != partId && !isNestedRecord(record)) {
             extra.push(
               <Text
                 key='different-parent'
