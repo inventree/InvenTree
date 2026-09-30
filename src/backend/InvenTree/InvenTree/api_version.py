@@ -1,13 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 551
+INVENTREE_API_VERSION = 552
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v551 -> 2026-09-26 : https://github.com/inventree/InvenTree/pull/12737
+v552 -> 2026-09-30 : https://github.com/inventree/InvenTree/pull/12737
     - Adds search and ordering fields across remaining API endpoints (machine, stock, importer, report)
+
+v551 -> 2026-09-21 : https://github.com/inventree/InvenTree/pull/12693
+    - Docstring updates for automated transition API documentation generation
+    - New transitions insights endpoints
 
 v550 -> 2026-09-22 : https://github.com/inventree/InvenTree/pull/12912
     - Adds a top-level 'batch_code' field to the PurchaseOrderReceive API endpoint

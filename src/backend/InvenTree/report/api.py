@@ -226,6 +226,7 @@ class LabelPrint(GenericAPIView):
             output.pk,
             user.pk if user else None,
             plugin.slug,
+            retry=False,
             options=(plugin_serializer.data if plugin_serializer else {}),
         )
 
