@@ -314,17 +314,17 @@ def main():
     envcheck_invoke_cmd()
 
 
-def get_python_bin():
+def get_python_bin(quoted: bool = True):
     """Return the python binary name for the current platform."""
     if sys.platform == 'win32':
-        return sys.executable
+        return f'"{sys.executable}"' if quoted else sys.executable
     return 'python3'
 
 
 def get_pip_bin():
     """Return the pip binary name for the current platform."""
     if sys.platform == 'win32':
-        return f'{sys.executable} -m pip'
+        return f'"{sys.executable}" -m pip'
     return 'pip3'
 
 
@@ -535,7 +535,7 @@ def manage_interactive(cmd: str, env=None, verbose: bool = False):
     Raises:
         Exit: If the subprocess returns a non-zero exit code.
     """
-    args = ['python3', 'manage.py', *shlex.split(cmd)]
+    args = [get_python_bin(quoted=False), 'manage.py', *shlex.split(cmd)]
 
     # Keep behavior aligned with `manage`: default to quiet output.
     if '-v' not in cmd and '--verbosity' not in cmd:
@@ -592,6 +592,9 @@ def run_install(
         pinned: Whether to use the --require-hashes option when installing packages. Default is True.
         verbose: Whether to print verbose output from pip install commands. Default is False.
     """
+    if sys.platform == 'win32':
+        pinned = False
+
     if version_check:
         # Test if there is a version specific requirements file
         sys_ver_s = python_version().split('.')
@@ -620,7 +623,7 @@ def run_install(
 
         run(
             c,
-            f'{pip_bin} install --no-cache-dir --disable-pip-version-check -U {"--require-hashes" if pinned else ""} -r {install_file} {"" if verbose else "--quiet"}',
+            f'{pip_bin} install --no-cache-dir --disable-pip-version-check -U {"--require-hashes" if pinned else ""} -r "{install_file}" {"" if verbose else "--quiet"}',
         )
     else:
         if run_preflight:
@@ -631,7 +634,7 @@ def run_install(
             info('Installed package manager')
         run(
             c,
-            f'uv pip install -U {"--require-hashes" if pinned else ""} -r {install_file} {"" if verbose else "--quiet"}',
+            f'uv pip install -U {"--require-hashes" if pinned else ""} -r "{install_file}" {"" if verbose else "--quiet"}',
         )
 
 
@@ -789,7 +792,7 @@ def install(
     lic_path = manage_py_dir().joinpath('InvenTree', 'licenses.txt')
     run(
         c,
-        f'pip-licenses --format=json --with-license-file --no-license-path > {lic_path}',
+        f'pip-licenses --format=json --with-license-file --no-license-path > "{lic_path}"',
     )
 
     if not lic_path.exists() or lic_path.stat().st_size == 0:
@@ -943,7 +946,7 @@ def backend_compilemessages(c, verbose: bool = False):
     """Compile backend Django translation files without loading InvenTree settings."""
     info('Compiling backend translations...')
 
-    cmd = 'python3 -m django compilemessages'
+    cmd = f'{get_python_bin()} -m django compilemessages'
 
     if verbose:
         cmd += ' -v 1'

@@ -86,8 +86,13 @@ def get_db_backend():
         db_config['ENGINE'] = DB_ENGINE
 
     if 'sqlite' in DB_ENGINE:
-        db_name = str(Path(db_config['NAME']).resolve())
-        db_config['NAME'] = db_name
+        db_path = Path(db_config['NAME'])
+        if not db_path.is_absolute():
+            from InvenTree.config import get_root_dir
+
+            db_path = get_root_dir().joinpath(db_path)
+        db_path.parent.mkdir(parents=True, exist_ok=True)
+        db_config['NAME'] = str(db_path.resolve())
 
     logger.info('DB_ENGINE: %s', DB_ENGINE)
     logger.info('DB_NAME: %s', db_config['NAME'])
