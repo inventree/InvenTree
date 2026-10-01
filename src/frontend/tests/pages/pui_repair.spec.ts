@@ -14,7 +14,11 @@ test('Repair Orders - Basic Navigation', async ({ browser }) => {
     url: 'manufacturing/index/'
   });
 
-  // Wait for the page to be fully settled before probing tabs.
+  // Hard reload: doCachedLogin restores a saved browser state where the React
+  // app's in-memory settings cache may still have REPAIRORDER_ENABLED: false.
+  // A reload forces a fresh settings fetch from the server, ensuring the
+  // 'Repair Orders' tab is rendered before we try to click it.
+  await page.reload();
   await page.waitForLoadState('networkidle');
 
   // Use the loadTab helper (queries by ARIA label 'panel-tabs-*') which is
@@ -31,6 +35,10 @@ test('Repair Orders - Create and Lifecycle', async ({ browser }) => {
     url: 'manufacturing/index/'
   });
 
+  // Hard reload: forces React to re-fetch settings from the server.
+  // doCachedLogin reuses a saved browser state where REPAIRORDER_ENABLED
+  // may still be false in the client's in-memory settings cache.
+  await page.reload();
   await page.waitForLoadState('networkidle');
 
   // Switch to the Repair Orders panel.

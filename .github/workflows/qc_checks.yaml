@@ -216,7 +216,7 @@ jobs:
           echo "Downloaded api.yaml"
       - name: Running OpenAPI Spec diff action
         id: breaking_changes
-        uses: oasdiff/oasdiff-action/diff@95200b7219229c6259caee5062c59e2f4506e5d9 # v0.1.16
+        uses: oasdiff/oasdiff-action/diff@5e81b5c380accc6b523f9d32a637ca630e33620b # v0.1.17
         with:
           base: "api.yaml"
           revision: "src/backend/InvenTree/schema.yml"
@@ -411,7 +411,7 @@ jobs:
           path: .coverage
           retention-days: 14
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@0b35c9ecc4f0529d0eb674914510c22f85b196b4 # v7.1.0
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
