@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 551
+INVENTREE_API_VERSION = 552
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v552 -> 2026-10-02 : https://github.com/inventree/InvenTree/pull/12965
+    - Fix user creation with 'group_ids' via the User API endpoint
 
 v551 -> 2026-09-21 : https://github.com/inventree/InvenTree/pull/12693
     - Docstring updates for automated transition API documentation generation
