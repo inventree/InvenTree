@@ -2,16 +2,18 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
   ActionIcon,
+  Button,
   Divider,
   Group,
   Select,
-  Table,
   Text,
   Tooltip
 } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import {
   IconApi,
+  IconArrowLeft,
+  IconCheck,
   IconCircleCheck,
   IconEdit,
   IconInfoCircle,
@@ -20,13 +22,14 @@ import {
   IconServerSpark
 } from '@tabler/icons-react';
 
-import { ActionButton } from '@lib/components/ActionButton';
 import type { HostList } from '@lib/types/Server';
 import { useShallow } from 'zustand/react/shallow';
 import { translateHostName } from '../../defaults/defaultHostList';
 import { Wrapper } from '../../pages/Auth/Layout';
 import { useLocalState } from '../../states/LocalState';
 import { useServerApiState } from '../../states/ServerApiState';
+import { ColorToggle } from '../items/ColorToggle';
+import { LanguageToggle } from '../items/LanguageToggle';
 import { HostOptionsForm } from './HostOptionsForm';
 
 export function InstanceOptions({
@@ -56,48 +59,86 @@ export function InstanceOptions({
   }
 
   return (
-    <Wrapper titleText={t`Select Server`} smallPadding>
-      <Group gap='xs' justify='space-between' wrap='nowrap'>
+    <Wrapper
+      titleText={t`Select Server`}
+      smallPadding
+      imageOverlay={
+        <Group gap={6} align='center' wrap='nowrap'>
+          <ColorToggle />
+          <LanguageToggle />
+        </Group>
+      }
+    >
+      <Text className='auth-welcome-subtitle' mb='sm'>
+        <Trans>Choose or configure your backend server connection</Trans>
+      </Text>
+
+      <Group gap='xs' justify='space-between' wrap='nowrap' mb='md'>
         <Select
-          style={{ width: '100%' }}
+          style={{ flex: 1 }}
           value={hostKey}
           onChange={ChangeHost}
           data={hostListData}
           disabled={hostListEdit}
+          comboboxProps={{ transitionProps: { transition: 'pop-top-left' } }}
         />
         <Group gap='xs' wrap='nowrap'>
           <Tooltip label={t`Edit host options`} position='top'>
-            <ActionButton
-              variant='transparent'
+            <ActionIcon
+              className='server-action-icon-btn'
               disabled={hostListEdit}
-              onClick={setHostListEdit}
-              icon={<IconEdit />}
-            />
+              onClick={() => setHostListEdit()}
+              size={46}
+              variant='subtle'
+              aria-label={t`Edit host options`}
+            >
+              <IconEdit size={20} />
+            </ActionIcon>
           </Tooltip>
           <Tooltip label={t`Save host selection`} position='top'>
-            <ActionButton
-              variant='transparent'
+            <ActionIcon
+              className='server-action-icon-btn server-action-icon-confirm'
               onClick={setHostEdit}
               disabled={hostListEdit}
-              icon={<IconCircleCheck />}
-              color='green'
-            />
+              size={46}
+              variant='subtle'
+              aria-label={t`Save host selection`}
+            >
+              <IconCircleCheck size={22} />
+            </ActionIcon>
           </Tooltip>
         </Group>
       </Group>
 
       {hostListEdit ? (
-        <>
-          <Divider my={'sm'} />
-          <Text>
-            <Trans>Edit host options</Trans>
-          </Text>
+        <div style={{ marginTop: 8 }}>
+          <Group justify='space-between' mb='sm'>
+            <Text fw={600} size='sm' c='#0f172a'>
+              <Trans>Edit host options</Trans>
+            </Text>
+            <Button
+              variant='subtle'
+              size='xs'
+              onClick={() => setHostListEdit()}
+              c='#475569'
+              leftSection={<IconArrowLeft size={14} />}
+            >
+              <Trans>Back</Trans>
+            </Button>
+          </Group>
           <HostOptionsForm data={hostList} saveOptions={SaveOptions} />
-        </>
+        </div>
       ) : (
         <>
-          <Divider my={'sm'} />
           <ServerInfo hostList={hostList} hostKey={hostKey} />
+          <Button
+            className='auth-submit-btn'
+            onClick={setHostEdit}
+            mt='lg'
+            leftSection={<IconCheck size={18} />}
+          >
+            <Trans>Confirm & Return to Login</Trans>
+          </Button>
         </>
       )}
     </Wrapper>
@@ -113,66 +154,75 @@ function ServerInfo({
 }>) {
   const [server] = useServerApiState(useShallow((state) => [state.server]));
 
-  const items: any[] = [
+  const items = [
     {
       key: 'server',
       label: t`Server`,
-      value: hostList[hostKey]?.host,
-      icon: <IconServer />
+      value: hostList[hostKey]?.host || '—',
+      icon: <IconServer size={18} />
     },
     {
       key: 'name',
       label: t`Name`,
-      value: server.instance,
-      icon: <IconInfoCircle />
+      value: server.instance || '—',
+      icon: <IconInfoCircle size={18} />
     },
     {
       key: 'version',
       label: t`Version`,
-      value: server.version,
-      icon: <IconInfoCircle />
+      value: server.version || '—',
+      icon: <IconInfoCircle size={18} />
     },
     {
       key: 'api',
       label: t`API Version`,
-      value: server.apiVersion,
-      icon: <IconApi />
+      value: server.apiVersion || '—',
+      icon: <IconApi size={18} />
     },
     {
       key: 'plugins',
       label: t`Plugins`,
       value: server.plugins_enabled ? t`Enabled` : t`Disabled`,
-      icon: <IconPlugConnected />,
-      color: server.plugins_enabled ? 'green' : 'red'
+      icon: <IconPlugConnected size={18} />,
+      isStatus: true,
+      status: !!server.plugins_enabled
     },
     {
       key: 'worker',
       label: t`Worker`,
       value: server.worker_running ? t`Running` : t`Stopped`,
-      icon: <IconServerSpark />,
-      color: server.worker_running ? 'green' : 'red'
+      icon: <IconServerSpark size={18} />,
+      isStatus: true,
+      status: !!server.worker_running
     }
   ];
 
   return (
-    <Table striped p='xs'>
-      <Table.Tbody>
-        {items.map((item) => (
-          <Table.Tr key={item.key} p={2}>
-            <Table.Td>
-              <ActionIcon size='xs' variant='transparent' color={item.color}>
-                {item.icon}
-              </ActionIcon>
-            </Table.Td>
-            <Table.Td>
-              <Text size='sm'>{item.label}</Text>
-            </Table.Td>
-            <Table.Td>
-              <Text size='sm'>{item.value}</Text>
-            </Table.Td>
-          </Table.Tr>
-        ))}
-      </Table.Tbody>
-    </Table>
+    <div className='server-info-card'>
+      {items.map((item) => (
+        <div key={item.key} className='server-info-row'>
+          <div className='server-info-left'>
+            <div className='server-info-icon-badge'>
+              {item.icon}
+            </div>
+            <span className='server-info-label'>{item.label}</span>
+          </div>
+          <div className='server-info-value'>
+            {item.isStatus ? (
+              <span
+                className={`server-pill-badge ${
+                  item.status ? 'badge-active' : 'badge-inactive'
+                }`}
+              >
+                <span className='status-dot' />
+                {item.value}
+              </span>
+            ) : (
+              <span>{item.value}</span>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }

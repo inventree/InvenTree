@@ -111,38 +111,42 @@ export default function Login() {
           setHostEdit={setHostEdit}
         />
       ) : (
-        <>
-          <Wrapper titleText={t`Login`} smallPadding>
-            {isLoggingIn ? (
-              <>
-                <Group justify='center'>
-                  <Loader />
-                </Group>
-                <Trans>Logging you in</Trans>
-              </>
-            ) : (
-              <>
-                <AuthenticationForm />
-                {any_reg_enabled && (
-                  <Text ta='center' size={'xs'} mt={'md'}>
-                    <Trans>Don&apos;t have an account?</Trans>{' '}
-                    <Anchor
-                      component='button'
-                      type='button'
-                      c='dimmed'
-                      size='xs'
-                      onClick={() => navigate('/register')}
-                    >
-                      <Trans>Register</Trans>
-                    </Anchor>
-                  </Text>
-                )}
-                {LoginMessage}{' '}
-              </>
-            )}
-          </Wrapper>
-          <AuthFormOptions hostname={hostname} toggleHostEdit={setHostEdit} />
-        </>
+        <Wrapper
+          titleText={t`Login`}
+          smallPadding
+          imageOverlay={
+            <AuthFormOptions hostname={hostname} toggleHostEdit={setHostEdit} />
+          }
+        >
+          {isLoggingIn ? (
+            <>
+              <Group justify='center'>
+                <Loader />
+              </Group>
+              <Trans>Logging you in</Trans>
+            </>
+          ) : (
+            <>
+              <AuthenticationForm />
+              {any_reg_enabled && (
+                <Text ta='center' size={'xs'} mt={'md'} c='#64748b'>
+                  <Trans>Don&apos;t have an account?</Trans>{' '}
+                  <Anchor
+                    component='button'
+                    type='button'
+                    c='#0284c7'
+                    fw={600}
+                    size='xs'
+                    onClick={() => navigate('/register')}
+                  >
+                    <Trans>Register</Trans>
+                  </Anchor>
+                </Text>
+              )}
+              {LoginMessage}{' '}
+            </>
+          )}
+        </Wrapper>
       )}
     </>
   );

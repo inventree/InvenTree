@@ -1,6 +1,7 @@
-import { ActionIcon, Center, Group, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
 import { IconServer } from '@tabler/icons-react';
 
+import { t } from '@lingui/core/macro';
 import { useShallow } from 'zustand/react/shallow';
 import { useServerApiState } from '../../states/ServerApiState';
 import { ColorToggle } from '../items/ColorToggle';
@@ -16,25 +17,28 @@ export function AuthFormOptions({
   const [server] = useServerApiState(useShallow((state) => [state.server]));
 
   return (
-    <Center mx={'md'}>
-      <Group>
-        <ColorToggle />
-        <LanguageToggle />
-        {window.INVENTREE_SETTINGS.show_server_selector && (
-          <Tooltip label={hostname}>
-            <ActionIcon
-              size='lg'
-              variant='transparent'
-              onClick={toggleHostEdit}
-            >
-              <IconServer />
-            </ActionIcon>
-          </Tooltip>
-        )}
-        <Text c={'dimmed'}>
-          {server.version} | {server.apiVersion}
+    <Group gap={6} align='center' wrap='nowrap'>
+      <ColorToggle />
+      <LanguageToggle />
+      {window.INVENTREE_SETTINGS.show_server_selector && (
+        <Tooltip label={hostname || t`Select Server`} position='top'>
+          <ActionIcon
+            size='lg'
+            variant='subtle'
+            onClick={toggleHostEdit}
+            aria-label={t`Server: ${hostname}`}
+          >
+            <IconServer size={20} />
+          </ActionIcon>
+        </Tooltip>
+      )}
+      {(server.version || server.apiVersion) ? (
+        <Text size='xs' className='auth-overlay-version-badge'>
+          {server.version ? `v${server.version}` : ''}
+          {server.version && server.apiVersion ? ' • ' : ''}
+          {server.apiVersion ? `API ${server.apiVersion}` : ''}
         </Text>
-      </Group>
-    </Center>
+      ) : null}
+    </Group>
   );
 }

@@ -109,9 +109,11 @@ if (window.INVENTREE_SETTINGS.sentry_dsn) {
     environment: window.INVENTREE_SETTINGS.environment || 'default'
   });
 }
-// Redirect to base url if on /
-if (window.location.pathname === '/') {
-  window.location.replace(`/${getBaseUrl()}`);
+// Redirect to base url if not already prefixed
+const baseUrl = getBaseUrl();
+if (baseUrl && !window.location.pathname.startsWith(`/${baseUrl}`)) {
+  const targetPath = window.location.pathname === '/' ? `/${baseUrl}` : `/${baseUrl}${window.location.pathname}`;
+  window.location.replace(`${targetPath}${window.location.search}${window.location.hash}`);
 }
 
 ReactDOMClient.createRoot(

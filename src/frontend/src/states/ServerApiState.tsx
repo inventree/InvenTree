@@ -92,7 +92,7 @@ export const useServerApiState = create<ServerApiStateProps>()(
         if (!get_server_setting(get().server?.settings?.sso_enabled)) {
           return false;
         }
-        const data = get().auth_config?.socialaccount.providers;
+        const data = get().auth_config?.socialaccount?.providers;
         return !(data === undefined || data.length == 0);
       },
       registration_enabled: () => {

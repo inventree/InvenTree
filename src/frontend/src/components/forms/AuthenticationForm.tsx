@@ -116,15 +116,15 @@ export function AuthenticationForm() {
       {sso_enabled() ? (
         <>
           <Group grow mb='md' mt='md'>
-            {auth_config?.socialaccount.providers.map((provider) => (
+            {auth_config?.socialaccount?.providers?.map((provider) => (
               <SsoButton provider={provider} key={provider.id} />
             ))}
           </Group>
 
           <Divider
-            label={t`Or continue with other methods`}
+            label={t`or`}
             labelPosition='center'
-            my='lg'
+            my='md'
           />
         </>
       ) : null}
@@ -152,22 +152,9 @@ export function AuthenticationForm() {
                 hidden={true}
               />
             </VisuallyHidden>
-            {password_forgotten_enabled() === true && (
-              <Group justify='space-between' mt='0'>
-                <Anchor
-                  component='button'
-                  type='button'
-                  c='dimmed'
-                  size='xs'
-                  onClick={() => navigate('/reset-password')}
-                >
-                  <Trans>Reset password</Trans>
-                </Anchor>
-              </Group>
-            )}
           </Stack>
         ) : (
-          <Stack>
+          <Stack gap={0}>
             <TextInput
               required
               label={t`Email`}
@@ -178,34 +165,57 @@ export function AuthenticationForm() {
           </Stack>
         )}
 
-        <Group justify='space-between' mt='xl'>
-          <Anchor
-            component='button'
-            type='button'
-            c='dimmed'
-            size='xs'
-            onClick={() => setMode.toggle()}
+        <Stack gap='xs' mt='md'>
+          <Button
+            type='submit'
+            fullWidth
+            disabled={isLoggingIn}
+            onClick={handleLogin}
+            className='auth-submit-btn'
           >
-            {classicLoginMode ? (
-              <Trans>Send me an email</Trans>
-            ) : (
-              <Trans>Use username and password</Trans>
-            )}
-          </Anchor>
-          <Button type='submit' disabled={isLoggingIn} onClick={handleLogin}>
             {isLoggingIn ? (
-              <Loader size='sm' />
+              <Loader size='sm' color='white' />
             ) : (
               <>
                 {classicLoginMode ? (
                   <Trans>Log In</Trans>
                 ) : (
-                  <Trans>Send Email</Trans>
+                  <Trans>Continue with email</Trans>
                 )}
               </>
             )}
           </Button>
-        </Group>
+
+          {password_forgotten_enabled() === true && (
+            <Group justify='center' mt='xs'>
+              <Anchor
+                component='button'
+                type='button'
+                size='xs'
+                className='auth-forgot-link'
+                onClick={() => navigate('/reset-password')}
+              >
+                <Trans>Forgot Password?</Trans>
+              </Anchor>
+            </Group>
+          )}
+
+          <Group justify='center' mt='2px'>
+            <Anchor
+              component='button'
+              type='button'
+              size='xs'
+              c='dimmed'
+              onClick={() => setMode.toggle()}
+            >
+              {classicLoginMode ? (
+                <Trans>Send me an email</Trans>
+              ) : (
+                <Trans>Use username and password</Trans>
+              )}
+            </Anchor>
+          </Group>
+        </Stack>
       </form>
     </>
   );

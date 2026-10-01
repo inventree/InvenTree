@@ -31,7 +31,7 @@ export function InvenTreeLogo(): ReactNode {
     useShallow((state) => [state.server, state.fetchServerApiState])
   );
 
-  if (server.server && server.customize?.logo) {
+  if (server?.server && server?.customize?.logo) {
     return (
       <img src={server.customize.logo} alt={t`InvenTree Logo`} height={28} />
     );
