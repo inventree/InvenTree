@@ -232,7 +232,7 @@ class ApiTests(InvenTreeAPITestCase):
         """Test the API endpoint for listing all status models."""
         response = self.get(reverse('api-status-all'))
 
-        # 11 built-in state classes, plus the added GeneralState class.
+        # 11+ built-in state classes, plus the added GeneralState class.
         self.assertGreaterEqual(len(response.data), 12)
 
         # Test the BuildStatus model

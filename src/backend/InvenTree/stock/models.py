@@ -1662,7 +1662,7 @@ class StockItem(
             item.save(add_note=False)
 
     def is_allocated(self):
-        """Return True if this StockItem is allocated to a SalesOrder, TransferOrder, or a Build."""
+        """Return True if this StockItem is allocated to a SalesOrder, TransferOrder, RepairOrder, or a Build."""
         return self.allocation_count() > 0
 
     def build_allocation_count(self, **kwargs):
@@ -1757,13 +1757,33 @@ class StockItem(
 
         return total
 
+    def repair_order_allocation_count(self, **kwargs):
+        """Return the total quantity allocated to RepairOrders, with optional filters."""
+        query = self.repair_order_allocations.all()
+
+        if filter_allocations := kwargs.get('filter_allocations'):
+            query = query.filter(**filter_allocations)
+
+        if exclude_allocations := kwargs.get('exclude_allocations'):
+            query = query.exclude(**exclude_allocations)
+
+        query = query.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
+
+        total = query['q']
+
+        if total is None:
+            total = Decimal(0)
+
+        return total
+
     def allocation_count(self):
         """Return the total quantity allocated to builds or orders."""
         bo = self.build_allocation_count()
         so = self.sales_order_allocation_count()
         to = self.transfer_order_allocation_count()
+        ro = self.repair_order_allocation_count()
 
-        return bo + so + to
+        return bo + so + to + ro
 
     def unallocated_quantity(self):
         """Return the quantity of this StockItem which is *not* allocated."""
@@ -1771,7 +1791,7 @@ class StockItem(
 
     @staticmethod
     def bulk_allocation_count(stock_items) -> dict:
-        """Bulk-compute the total allocated quantity (builds + sales orders + transfer orders) for a set of StockItem objects.
+        """Bulk-compute the total allocated quantity (builds + sales orders + transfer orders + repair orders) for a set of StockItem objects.
 
         Mirrors the per-instance calculation in `allocation_count()`, but resolves the whole
         set in 3 aggregate queries (one per allocation type) rather than one query per
@@ -1812,6 +1832,10 @@ class StockItem(
                 item__in=pks, line__order__status__in=TransferOrderStatusGroups.OPEN
             ),
             'item',
+        )
+
+        _accumulate(
+            build.models.RepairOrderAllocation.objects.filter(item__in=pks), 'item'
         )
 
         return totals

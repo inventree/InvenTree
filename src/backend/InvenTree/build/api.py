@@ -23,8 +23,20 @@ import common.serializers
 import part.models as part_models
 import stock.models as stock_models
 import stock.serializers
-from build.models import Build, BuildItem, BuildLine
-from build.status_codes import BuildStatus, BuildStatusGroups
+from build.models import (
+    Build,
+    BuildItem,
+    BuildLine,
+    RepairOrder,
+    RepairOrderAllocation,
+    RepairOrderLineItem,
+)
+from build.status_codes import (
+    BuildStatus,
+    BuildStatusGroups,
+    RepairOrderStatus,
+    RepairOrderStatusGroups,
+)
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import BulkDeleteMixin, ParameterListMixin, meta_path
@@ -1219,6 +1231,357 @@ class BuildItemList(
     ]
 
 
+class RepairOrderFilter(FilterSet):
+    """Custom filterset for the RepairOrderList API endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = RepairOrder
+        fields = ['customer']
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=part_models.Part.objects.all(),
+        field_name='part',
+        method='filter_part',
+        label=_('Part'),
+    )
+
+    def filter_part(self, queryset, name, part):
+        """Filter by 'part' which is being repaired.
+
+        Note:
+        - If "include_variants" is True, include all variants of the selected part.
+        - Otherwise, just filter by the selected part.
+        """
+        include_variants = str2bool(self.data.get('include_variants', False))
+
+        if include_variants:
+            return queryset.filter(part__in=part.get_descendants(include_self=True))
+        else:
+            return queryset.filter(part=part)
+
+    include_variants = rest_filters.BooleanFilter(
+        label=_('Include Variants'), method='filter_include_variants'
+    )
+
+    def filter_include_variants(self, queryset, name, value):
+        """Filter by whether or not to include variants of the selected part.
+
+        Note:
+        - This filter does nothing by itself, and requires the 'part' filter to be set.
+        - Refer to the 'filter_part' method for more information.
+        """
+        return queryset
+
+    status = rest_filters.NumberFilter(label=_('Order Status'), method='filter_status')
+
+    def filter_status(self, queryset, name, value):
+        """Filter by integer status code.
+
+        Note: Also account for the possibility of a custom status code
+        """
+        q1 = Q(status=value, status_custom_key__isnull=True)
+        q2 = Q(status_custom_key=value)
+
+        return queryset.filter(q1 | q2).distinct()
+
+    outstanding = rest_filters.BooleanFilter(
+        label=_('Outstanding'), method='filter_outstanding'
+    )
+
+    def filter_outstanding(self, queryset, name, value):
+        """Filter by whether the repair order is 'outstanding' (open)."""
+        if str2bool(value):
+            return queryset.filter(status__in=RepairOrderStatusGroups.OPEN)
+        return queryset.exclude(status__in=RepairOrderStatusGroups.OPEN)
+
+    overdue = rest_filters.BooleanFilter(label=_('Overdue'), method='filter_overdue')
+
+    def filter_overdue(self, queryset, name, value):
+        """Filter by whether the repair order is 'overdue'."""
+        if str2bool(value):
+            return queryset.filter(RepairOrder.overdue_filter())
+        return queryset.exclude(RepairOrder.overdue_filter())
+
+    # Exact match for reference
+    reference = rest_filters.CharFilter(
+        label=_('Order Reference'), field_name='reference', lookup_expr='iexact'
+    )
+
+    assigned_to = rest_filters.ModelChoiceFilter(
+        queryset=Owner.objects.all(), field_name='responsible', label=_('Responsible')
+    )
+
+    issued_by = rest_filters.ModelChoiceFilter(
+        queryset=User.objects.all(), field_name='issued_by', label=_('Issued By')
+    )
+
+    created_before = InvenTreeDateFilter(
+        label=_('Created Before'), field_name='creation_date', lookup_expr='lt'
+    )
+
+    created_after = InvenTreeDateFilter(
+        label=_('Created After'), field_name='creation_date', lookup_expr='gt'
+    )
+
+    has_start_date = rest_filters.BooleanFilter(
+        label=_('Has Start Date'), method='filter_has_start_date'
+    )
+
+    def filter_has_start_date(self, queryset, name, value):
+        """Filter by whether or not the repair order has a start date."""
+        return queryset.filter(start_date__isnull=not str2bool(value))
+
+    start_date_before = InvenTreeDateFilter(
+        label=_('Start Date Before'), field_name='start_date', lookup_expr='lt'
+    )
+
+    start_date_after = InvenTreeDateFilter(
+        label=_('Start Date After'), field_name='start_date', lookup_expr='gt'
+    )
+
+    has_target_date = rest_filters.BooleanFilter(
+        label=_('Has Target Date'), method='filter_has_target_date'
+    )
+
+    def filter_has_target_date(self, queryset, name, value):
+        """Filter by whether or not the repair order has a target date."""
+        return queryset.filter(target_date__isnull=not str2bool(value))
+
+    target_date_before = InvenTreeDateFilter(
+        label=_('Target Date Before'), field_name='target_date', lookup_expr='lt'
+    )
+
+    target_date_after = InvenTreeDateFilter(
+        label=_('Target Date After'), field_name='target_date', lookup_expr='gt'
+    )
+
+    completed_before = InvenTreeDateFilter(
+        label=_('Completed Before'), field_name='completion_date', lookup_expr='lt'
+    )
+
+    completed_after = InvenTreeDateFilter(
+        label=_('Completed After'), field_name='completion_date', lookup_expr='gt'
+    )
+
+    min_date = InvenTreeDateFilter(label=_('Min Date'), method='filter_min_date')
+
+    def filter_min_date(self, queryset, name, value):
+        """Filter the queryset to include repair orders *active after* a specified date.
+
+        Used in combination with filter_max_date to provide a queryset which
+        matches a particular range of dates (e.g. for the calendar view).
+        """
+        q1 = Q(creation_date__gte=value, start_date__isnull=True)
+        q2 = Q(start_date__gte=value)
+        q3 = Q(target_date__gte=value)
+
+        return queryset.filter(q1 | q2 | q3).distinct()
+
+    max_date = InvenTreeDateFilter(label=_('Max Date'), method='filter_max_date')
+
+    def filter_max_date(self, queryset, name, value):
+        """Filter the queryset to include repair orders *active before* a specified date.
+
+        Used in combination with filter_min_date to provide a queryset which
+        matches a particular range of dates (e.g. for the calendar view).
+        """
+        q1 = Q(creation_date__lte=value, start_date__isnull=True)
+        q2 = Q(start_date__lte=value)
+        q3 = Q(target_date__lte=value)
+
+        return queryset.filter(q1 | q2 | q3).distinct()
+
+
+class RepairOrderList(OutputOptionsMixin, ListCreateAPI):
+    """API endpoint for accessing a list of RepairOrder objects."""
+
+    queryset = RepairOrder.objects.all()
+    serializer_class = build.serializers.RepairOrderSerializer
+
+    filterset_class = RepairOrderFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = [
+        'reference',
+        'customer__name',
+        'part__name',
+        'status',
+        'creation_date',
+        'start_date',
+        'target_date',
+        'completion_date',
+        'responsible',
+        'issued_by',
+    ]
+
+    ordering = '-reference'
+
+    search_fields = [
+        'reference',
+        'description',
+        'symptoms',
+        'customer__name',
+        'part__name',
+    ]
+
+    def get_queryset(self):
+        """Prefetch line items, in addition to any requested optional detail fields."""
+        queryset = super().get_queryset()
+        return queryset.prefetch_related('lines')
+
+
+class RepairOrderDetail(OutputOptionsMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single RepairOrder object."""
+
+    queryset = RepairOrder.objects.all()
+    serializer_class = build.serializers.RepairOrderSerializer
+
+    def get_queryset(self):
+        """Prefetch line items, in addition to any requested optional detail fields."""
+        queryset = super().get_queryset()
+        return queryset.prefetch_related('lines')
+
+
+class RepairOrderContextMixin:
+    """Simple mixin class to add a RepairOrder to the serializer context."""
+
+    queryset = RepairOrder.objects.all()
+
+    def get_order(self):
+        """Return the RepairOrder object associated with this API endpoint."""
+        try:
+            return RepairOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except (ValueError, RepairOrder.DoesNotExist):
+            raise NotFound(_('Repair order not found'))
+
+    def get_serializer_context(self):
+        """Add the RepairOrder object to the serializer context."""
+        context = super().get_serializer_context()
+
+        # Pass the RepairOrder instance through to the serializer for validation
+        try:
+            context['order'] = self.get_order()
+        except NotFound:
+            # Swallowed here (e.g. schema generation may call this without a
+            # resolvable pk) - create() below is what actually enforces a 404
+            # for a real request against a non-existent order.
+            pass
+
+        context['request'] = self.request
+
+        return context
+
+    def create(self, request, *args, **kwargs):
+        """Ensure the target RepairOrder actually exists before attempting the action.
+
+        Without this, a POST against a non-existent pk would fall through to the
+        action serializer's save(), which unconditionally reads
+        self.context['order'] - raising an unhandled KeyError (HTTP 500) instead of
+        the intended 404.
+        """
+        self.get_order()
+
+        return super().create(request, *args, **kwargs)
+
+
+class RepairOrderIssue(RepairOrderContextMixin, CreateAPI):
+    """API endpoint to issue a RepairOrder."""
+
+    serializer_class = build.serializers.RepairOrderIssueSerializer
+
+
+class RepairOrderHold(RepairOrderContextMixin, CreateAPI):
+    """API endpoint to hold a RepairOrder."""
+
+    serializer_class = build.serializers.RepairOrderHoldSerializer
+
+
+class RepairOrderComplete(RepairOrderContextMixin, CreateAPI):
+    """API endpoint to complete a RepairOrder."""
+
+    serializer_class = build.serializers.RepairOrderCompleteSerializer
+
+
+class RepairOrderCancel(RepairOrderContextMixin, CreateAPI):
+    """API endpoint to cancel a RepairOrder."""
+
+    serializer_class = build.serializers.RepairOrderCancelSerializer
+
+
+class RepairOrderAutoAllocate(RepairOrderContextMixin, CreateAPI):
+    """API endpoint to auto-allocate stock against a RepairOrder."""
+
+    serializer_class = build.serializers.RepairOrderAutoAllocateSerializer
+
+
+class RepairOrderLineItemFilter(FilterSet):
+    """Custom filterset for the RepairOrderLineItemList API endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = RepairOrderLineItem
+        fields = ['order', 'part']
+
+
+class RepairOrderLineItemList(OutputOptionsMixin, ListCreateAPI):
+    """API endpoint for accessing a list of RepairOrderLineItem objects."""
+
+    queryset = RepairOrderLineItem.objects.all()
+    serializer_class = build.serializers.RepairOrderLineItemSerializer
+    filterset_class = RepairOrderLineItemFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+    def get_queryset(self):
+        """Annotate the queryset with the allocated quantity for each line item."""
+        queryset = super().get_queryset()
+        return build.serializers.RepairOrderLineItemSerializer.annotate_queryset(
+            queryset
+        )
+
+
+class RepairOrderLineItemDetail(OutputOptionsMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single RepairOrderLineItem object."""
+
+    queryset = RepairOrderLineItem.objects.all()
+    serializer_class = build.serializers.RepairOrderLineItemSerializer
+
+    def get_queryset(self):
+        """Annotate the queryset with the allocated quantity for this line item."""
+        queryset = super().get_queryset()
+        return build.serializers.RepairOrderLineItemSerializer.annotate_queryset(
+            queryset
+        )
+
+
+class RepairOrderAllocationFilter(FilterSet):
+    """Custom filterset for the RepairOrderAllocationList API endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = RepairOrderAllocation
+        fields = ['line', 'item']
+
+
+class RepairOrderAllocationList(BulkDeleteMixin, OutputOptionsMixin, ListCreateAPI):
+    """API endpoint for accessing a list of RepairOrderAllocation objects."""
+
+    queryset = RepairOrderAllocation.objects.all()
+    serializer_class = build.serializers.RepairOrderAllocationSerializer
+    filterset_class = RepairOrderAllocationFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+
+class RepairOrderAllocationDetail(OutputOptionsMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for detail view of a single RepairOrderAllocation object."""
+
+    queryset = RepairOrderAllocation.objects.all()
+    serializer_class = build.serializers.RepairOrderAllocationSerializer
+
+
 build_api_urls = [
     # Build lines
     path(
@@ -1291,4 +1654,90 @@ build_api_urls = [
     ),
     # Build List
     path('', BuildList.as_view(), name='api-build-list'),
+    # Repair Order endpoints
+    path(
+        'repair/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'issue/',
+                        RepairOrderIssue.as_view(),
+                        name='api-repair-order-issue',
+                    ),
+                    path(
+                        'hold/', RepairOrderHold.as_view(), name='api-repair-order-hold'
+                    ),
+                    path(
+                        'complete/',
+                        RepairOrderComplete.as_view(),
+                        name='api-repair-order-complete',
+                    ),
+                    path(
+                        'cancel/',
+                        RepairOrderCancel.as_view(),
+                        name='api-repair-order-cancel',
+                    ),
+                    path(
+                        'auto-allocate/',
+                        RepairOrderAutoAllocate.as_view(),
+                        name='api-repair-order-auto-allocate',
+                    ),
+                    meta_path(RepairOrder),
+                    path(
+                        '', RepairOrderDetail.as_view(), name='api-repair-order-detail'
+                    ),
+                ]),
+            ),
+            # Repair order status code information
+            path(
+                'status/',
+                StatusView.as_view(),
+                {StatusView.MODEL_REF: RepairOrderStatus},
+                name='api-repair-order-status-codes',
+            ),
+            path('', RepairOrderList.as_view(), name='api-repair-order-list'),
+        ]),
+    ),
+    # Repair Order line item endpoints
+    path(
+        'repair-line/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        '',
+                        RepairOrderLineItemDetail.as_view(),
+                        name='api-repair-order-line-detail',
+                    )
+                ]),
+            ),
+            path(
+                '', RepairOrderLineItemList.as_view(), name='api-repair-order-line-list'
+            ),
+        ]),
+    ),
+    # Repair Order allocation endpoints
+    path(
+        'repair-allocation/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        '',
+                        RepairOrderAllocationDetail.as_view(),
+                        name='api-repair-order-allocation-detail',
+                    )
+                ]),
+            ),
+            path(
+                '',
+                RepairOrderAllocationList.as_view(),
+                name='api-repair-order-allocation-list',
+            ),
+        ]),
+    ),
 ]

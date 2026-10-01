@@ -340,6 +340,10 @@ export default function SystemSettings() {
                 'BUILDORDER_EXTERNAL_REQUIRED'
               ]}
             />
+            <GlobalSettingList
+              heading={t`Repair Orders`}
+              keys={['REPAIRORDER_ENABLED', 'REPAIRORDER_REFERENCE_PATTERN']}
+            />
           </>
         )
       },

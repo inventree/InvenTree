@@ -2,7 +2,14 @@
 
 from django.contrib import admin
 
-from build.models import Build, BuildItem, BuildLine
+from build.models import (
+    Build,
+    BuildItem,
+    BuildLine,
+    RepairOrder,
+    RepairOrderAllocation,
+    RepairOrderLineItem,
+)
 
 
 @admin.register(Build)
@@ -52,3 +59,34 @@ class BuildLineAdmin(admin.ModelAdmin):
     search_fields = ['build__title', 'build__reference', 'bom_item__sub_part__name']
 
     autocomplete_fields = ['bom_item', 'build']
+
+
+@admin.register(RepairOrder)
+class RepairOrderAdmin(admin.ModelAdmin):
+    """Admin class for the RepairOrder model."""
+
+    list_display = ['reference', 'customer', 'part', 'status', 'description']
+
+    search_fields = ['reference', 'customer__name', 'part__name', 'description']
+
+    autocomplete_fields = ['customer', 'part']
+
+
+@admin.register(RepairOrderLineItem)
+class RepairOrderLineItemAdmin(admin.ModelAdmin):
+    """Admin class for RepairOrderLineItem model."""
+
+    list_display = ['order', 'part', 'quantity']
+
+    search_fields = ['order__reference', 'part__name', 'part__IPN']
+
+    autocomplete_fields = ['order', 'part']
+
+
+@admin.register(RepairOrderAllocation)
+class RepairOrderAllocationAdmin(admin.ModelAdmin):
+    """Admin class for RepairOrderAllocation model."""
+
+    list_display = ['line', 'item', 'quantity']
+
+    autocomplete_fields = ['line', 'item']
