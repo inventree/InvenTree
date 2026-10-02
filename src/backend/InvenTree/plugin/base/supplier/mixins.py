@@ -15,6 +15,7 @@ from plugin.base.supplier import helpers as supplier
 from plugin.mixins import SettingsMixin
 
 PartData = TypeVar('PartData')
+NOT_IMPLEMENTED_ERROR = 'This method needs to be overridden.'
 
 
 class SupplierMixin(SettingsMixin, Generic[PartData]):
@@ -50,25 +51,25 @@ class SupplierMixin(SettingsMixin, Generic[PartData]):
     # --- Methods to be overridden by plugins ---
     def get_suppliers(self) -> list[supplier.Supplier]:
         """Return a list of available suppliers."""
-        raise NotImplementedError('This method needs to be overridden.')
+        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
 
     def get_search_results(
         self, supplier_slug: str, term: str
     ) -> list[supplier.SearchResult]:
         """Return a list of search results for the given search term."""
-        raise NotImplementedError('This method needs to be overridden.')
+        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
 
     def get_import_data(self, supplier_slug: str, part_id: str) -> PartData:
         """Return the import data for the given part ID."""
-        raise NotImplementedError('This method needs to be overridden.')
+        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
 
     def get_pricing_data(self, data: PartData) -> dict[int, tuple[float, str]]:
         """Return a dictionary of pricing data for the given part data."""
-        raise NotImplementedError('This method needs to be overridden.')
+        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
 
     def get_parameters(self, data: PartData) -> list[supplier.ImportParameter]:
         """Return a list of parameters for the given part data."""
-        raise NotImplementedError('This method needs to be overridden.')
+        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
 
     def import_part(
         self,
@@ -86,7 +87,7 @@ class SupplierMixin(SettingsMixin, Generic[PartData]):
           - create related parts
           - add attachments to the part
         """
-        raise NotImplementedError('This method needs to be overridden.')
+        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
 
     def import_manufacturer_part(
         self, data: PartData, *, part: part_models.Part
@@ -101,7 +102,7 @@ class SupplierMixin(SettingsMixin, Generic[PartData]):
           - Adding parameters to the manufacturer part
           - Adding attachments to the manufacturer part
         """
-        raise NotImplementedError('This method needs to be overridden.')
+        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
 
     def import_supplier_part(
         self,
@@ -116,7 +117,7 @@ class SupplierMixin(SettingsMixin, Generic[PartData]):
           - Creating a new supplier part
           - Creating supplier price breaks
         """
-        raise NotImplementedError('This method needs to be overridden.')
+        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
 
     # --- Helper methods for importing parts ---
     def download_image(self, img_url: str):
