@@ -268,8 +268,12 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
         return super().validate(data)
 
     user_detail = UserSerializer(source='user', read_only=True)
-    revoked_by_detail = UserSerializer(source='revoked_by', read_only=True)
-    issued_by_detail = UserSerializer(source='issued_by', read_only=True)
+    revoked_by_detail = UserSerializer(
+        source='revoked_by', read_only=True, allow_null=True
+    )
+    issued_by_detail = UserSerializer(
+        source='issued_by', read_only=True, allow_null=True
+    )
 
 
 class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
