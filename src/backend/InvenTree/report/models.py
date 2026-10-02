@@ -39,14 +39,11 @@ try:
     from weasyprint import HTML
 
     from report.fetcher import InvenTreeURLFetcher
-except (ImportError, OSError) as err:  # pragma: no cover
-    HTML = None
-    InvenTreeURLFetcher = None
-    if not InvenTree.ready.isInTestMode():
-        print(f'OSError: {err}')
-        print("Unable to import 'weasyprint' module.")
-        print('You may require some further system packages to be installed.')
-        sys.exit(1)
+except OSError as err:  # pragma: no cover
+    print(f'OSError: {err}')
+    print("Unable to import 'weasyprint' module.")
+    print('You may require some further system packages to be installed.')
+    sys.exit(1)
 
 
 logger = structlog.getLogger('inventree')
@@ -363,10 +360,6 @@ class ReportTemplateBase(
             bytes: PDF data
         """
         html = self.render_as_string(instance, context=context, **kwargs)
-        if HTML is None:
-            raise ValidationError(
-                _("Unable to generate PDF: 'weasyprint' is not available")
-            )
         pdf = HTML(string=html, url_fetcher=InvenTreeURLFetcher()).write_pdf(
             pdf_forms=True
         )

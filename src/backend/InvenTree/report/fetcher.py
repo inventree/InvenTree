@@ -3,21 +3,7 @@
 from urllib.parse import urlparse
 
 import structlog
-
-try:
-    from weasyprint.urls import URLFetcher
-except (ImportError, OSError):  # pragma: no cover
-
-    class URLFetcher:
-        """Fallback base class when weasyprint is unavailable."""
-
-        def __init__(self, *args, **kwargs):
-            """Initialize the fallback URLFetcher."""
-
-        def fetch(self, url, headers=None):
-            """Fetch method stub for fallback URLFetcher."""
-            return {}
-
+from weasyprint.urls import URLFetcher
 
 logger = structlog.get_logger('inventree')
 
