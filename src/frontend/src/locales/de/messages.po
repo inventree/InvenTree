@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-26 22:21\n"
+"PO-Revision-Date: 2026-09-29 10:06\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1495,23 +1495,6 @@ msgstr "Neuen Inventurbericht erstellen"
 #~ msgid "Email:"
 #~ msgstr "Email:"
 
-#: src/components/details/Details.tsx:129
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:76
-#: src/pages/core/UserDetail.tsx:90
-#: src/pages/core/UserDetail.tsx:202
-#: src/tables/settings/UserTable.tsx:412
-msgid "Superuser"
-msgstr "Administrator"
-
-#: src/components/details/Details.tsx:130
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
-#: src/pages/core/UserDetail.tsx:84
-#: src/pages/core/UserDetail.tsx:199
-#: src/tables/settings/UserTable.tsx:286
-#: src/tables/settings/UserTable.tsx:407
-msgid "Administrator"
-msgstr "Administrator"
-
 #: src/components/details/Details.tsx:130
 #: src/pages/core/UserDetail.tsx:87
 #: src/pages/core/UserDetail.tsx:200
@@ -1520,10 +1503,39 @@ msgstr "Administrator"
 #~ msgstr "Staff"
 
 #: src/components/details/Details.tsx:131
-msgid "Email: "
-msgstr "Email:"
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:76
+#: src/pages/core/UserDetail.tsx:90
+#: src/pages/core/UserDetail.tsx:202
+#: src/tables/settings/UserTable.tsx:412
+msgid "Superuser"
+msgstr "Administrator"
 
-#: src/components/details/Details.tsx:423
+#: src/components/details/Details.tsx:131
+#~ msgid "Email: "
+#~ msgstr "Email: "
+
+#: src/components/details/Details.tsx:133
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
+#: src/pages/core/UserDetail.tsx:84
+#: src/pages/core/UserDetail.tsx:199
+#: src/tables/settings/UserTable.tsx:286
+#: src/tables/settings/UserTable.tsx:407
+msgid "Administrator"
+msgstr "Administrator"
+
+#: src/components/details/Details.tsx:136
+#: src/components/render/Part.tsx:28
+#: src/components/render/Plugin.tsx:17
+#: src/components/render/User.tsx:37
+#: src/components/tables/ColumnRenderers.tsx:652
+#: src/pages/company/CompanyDetail.tsx:279
+#: src/pages/company/SupplierPartDetail.tsx:224
+#: src/pages/core/UserDetail.tsx:210
+#: src/pages/part/PartDetail.tsx:623
+msgid "Inactive"
+msgstr "Inaktiv"
+
+#: src/components/details/Details.tsx:438
 msgid "No name defined"
 msgstr "Kein Name festgelegt"
 
@@ -1635,7 +1647,7 @@ msgstr "Bild löschen"
 
 #: src/components/details/LineItemOverviewTable.tsx:87
 msgid "Progress"
-msgstr ""
+msgstr "Fortschritt"
 
 #: src/components/details/LineItemOverviewTable.tsx:113
 msgid "No line items"
@@ -1798,37 +1810,37 @@ msgstr ""
 #: src/components/editors/NotesEditor.tsx:606
 #: src/components/editors/NotesEditor.tsx:607
 msgid "Insert table"
-msgstr ""
+msgstr "Tabelle einfügen"
 
 #: src/components/editors/NotesEditor.tsx:616
 #: src/components/editors/NotesEditor.tsx:617
 msgid "Add column before"
-msgstr ""
+msgstr "Spalte davor hinzufügen"
 
 #: src/components/editors/NotesEditor.tsx:626
 #: src/components/editors/NotesEditor.tsx:627
 msgid "Add column after"
-msgstr ""
+msgstr "Spalte danach hinzufügen"
 
 #: src/components/editors/NotesEditor.tsx:636
 #: src/components/editors/NotesEditor.tsx:637
 msgid "Delete column"
-msgstr ""
+msgstr "Spalte löschen"
 
 #: src/components/editors/NotesEditor.tsx:646
 #: src/components/editors/NotesEditor.tsx:647
 msgid "Add row before"
-msgstr ""
+msgstr "Zeile davor hinzufügen"
 
 #: src/components/editors/NotesEditor.tsx:656
 #: src/components/editors/NotesEditor.tsx:657
 msgid "Add row after"
-msgstr ""
+msgstr "Zeile danach hinzufügen"
 
 #: src/components/editors/NotesEditor.tsx:666
 #: src/components/editors/NotesEditor.tsx:667
 msgid "Delete row"
-msgstr ""
+msgstr "Zeile löschen"
 
 #: src/components/editors/NotesEditor.tsx:676
 #: src/components/editors/NotesEditor.tsx:677
@@ -1838,7 +1850,7 @@ msgstr ""
 #: src/components/editors/NotesEditor.tsx:686
 #: src/components/editors/NotesEditor.tsx:687
 msgid "Delete table"
-msgstr ""
+msgstr "Tabelle löschen"
 
 #: src/components/editors/NotesEditor.tsx:701
 #: src/components/panels/NotesPanel.tsx:24
@@ -1923,7 +1935,7 @@ msgstr "Bei der Erstellung der Vorschau ist ein unbekannter Fehler aufgetreten."
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:279
 msgid "Saved"
-msgstr ""
+msgstr "Gespeichert"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:280
 msgid "Template file has been updated"
@@ -2440,11 +2452,11 @@ msgstr "Lade..."
 
 #: src/components/forms/fields/TreeField.tsx:440
 msgid "Collapse"
-msgstr ""
+msgstr "Einklappen"
 
 #: src/components/forms/fields/TreeField.tsx:440
 msgid "Expand"
-msgstr ""
+msgstr "Ausklappen"
 
 #: src/components/images/DetailsImage.tsx:252
 #~ msgid "Select image"
@@ -2538,7 +2550,7 @@ msgstr "Spalte auswählen oder leer lassen, um dieses Feld zu ignorieren."
 
 #: src/components/importer/ImporterColumnSelector.tsx:202
 msgid "Auto"
-msgstr ""
+msgstr "Automatisch"
 
 #: src/components/importer/ImporterColumnSelector.tsx:305
 msgid "Ignore this field"
@@ -2754,11 +2766,11 @@ msgstr "Teil hinzufügen"
 
 #: src/components/items/PartCreationMenu.tsx:80
 msgid "Add Parts"
-msgstr ""
+msgstr "Teile hinzufügen"
 
 #: src/components/items/PartCreationMenu.tsx:86
 msgid "Create Part"
-msgstr ""
+msgstr "Teil erstellen"
 
 #: src/components/items/PartCreationMenu.tsx:88
 msgid "Create a new part"
@@ -3622,7 +3634,7 @@ msgstr ""
 
 #: src/components/previews/models/Fallback.tsx:24
 msgid "No preview available"
-msgstr ""
+msgstr "Keine Vorschau verfügbar"
 
 #: src/components/previews/models/Fallback.tsx:27
 msgid "No preview available for this model."
@@ -3643,7 +3655,7 @@ msgstr ""
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:275
+#: src/components/render/Instance.tsx:277
 msgid "Unknown model: {model_name}"
 msgstr "Unbekanntes Modell: {model_name}"
 
@@ -3662,17 +3674,6 @@ msgstr "Unbekanntes Modell: {model_name}"
 #: src/components/render/ModelType.tsx:337
 #~ msgid "Unknown Models"
 #~ msgstr "Unknown Models"
-
-#: src/components/render/Part.tsx:28
-#: src/components/render/Plugin.tsx:17
-#: src/components/render/User.tsx:37
-#: src/components/tables/ColumnRenderers.tsx:652
-#: src/pages/company/CompanyDetail.tsx:279
-#: src/pages/company/SupplierPartDetail.tsx:224
-#: src/pages/core/UserDetail.tsx:210
-#: src/pages/part/PartDetail.tsx:623
-msgid "Inactive"
-msgstr "Inaktiv"
 
 #: src/components/render/Part.tsx:31
 #: src/pages/part/PartDetail.tsx:629
@@ -4349,7 +4350,7 @@ msgstr "Vor diesem Datum erledigte Elemente anzeigen"
 
 #: src/components/tables/Filter.tsx:301
 msgid "Completed After"
-msgstr ""
+msgstr "Abgeschlossen nach"
 
 #: src/components/tables/Filter.tsx:302
 msgid "Show items completed after this date"
@@ -4357,7 +4358,7 @@ msgstr "Nach diesem Datum erledigte Elemente anzeigen"
 
 #: src/components/tables/Filter.tsx:310
 msgid "Updated After"
-msgstr ""
+msgstr "Aktualisiert nach"
 
 #: src/components/tables/Filter.tsx:311
 msgid "Show items updated after this date"
@@ -4365,7 +4366,7 @@ msgstr ""
 
 #: src/components/tables/Filter.tsx:319
 msgid "Updated Before"
-msgstr ""
+msgstr "Aktualisiert bevor"
 
 #: src/components/tables/Filter.tsx:320
 msgid "Show items updated before this date"
@@ -4588,11 +4589,11 @@ msgstr "Filter zurücksetzen"
 
 #: src/components/tables/FilterSelectDrawer.tsx:708
 msgid "Group name"
-msgstr ""
+msgstr "Gruppenname"
 
 #: src/components/tables/FilterSelectDrawer.tsx:749
 msgid "Save Filters"
-msgstr ""
+msgstr "Filter speichern"
 
 #: src/components/tables/FilterSelectModal.tsx:143
 #~ msgid "Add Table Filter"
@@ -5559,7 +5560,7 @@ msgstr "Zum Administrationsbereich"
 
 #: src/defaults/actions.tsx:210
 msgid "Error Logs"
-msgstr ""
+msgstr "Fehlerprotokolle"
 
 #: src/defaults/actions.tsx:211
 msgid "View error logs for this instance"
@@ -5634,11 +5635,11 @@ msgstr ""
 
 #: src/defaults/defaultHostList.tsx:10
 msgid "Local Server"
-msgstr ""
+msgstr "Lokaler Server"
 
 #: src/defaults/defaultHostList.tsx:12
 msgid "InvenTree Demo"
-msgstr ""
+msgstr "InvenTree-Demo"
 
 #: src/defaults/defaultHostList.tsx:14
 msgid "Current Server"
@@ -6341,7 +6342,7 @@ msgstr "Installierte Elemente"
 
 #: src/forms/StockForms.tsx:596
 msgid "Automatic"
-msgstr ""
+msgstr "Automatisch"
 
 #: src/forms/StockForms.tsx:636
 msgid "This row cannot be removed as it has installed items"
@@ -6631,7 +6632,7 @@ msgstr "Methode ist nicht erlaubt"
 
 #: src/functions/api.tsx:60
 msgid "Conflict"
-msgstr ""
+msgstr "Konflikt"
 
 #: src/functions/api.tsx:63
 msgid "Internal server error"
@@ -7638,7 +7639,7 @@ msgstr ""
 #: src/tables/sales/SalesOrderAllocationTable.tsx:225
 #: src/tables/stock/TransferOrderAllocationTable.tsx:179
 msgid "Confirm Removal"
-msgstr ""
+msgstr "Entfernung bestätigen"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:314
 msgid "Confirm removal of webauth credential"
@@ -7646,7 +7647,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:366
 msgid "TOTP Removed"
-msgstr ""
+msgstr "TOTP entfernt"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:367
 msgid "TOTP token removed successfully."
@@ -7658,7 +7659,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:396
 msgid "Remove TOTP Token"
-msgstr ""
+msgstr "TOTP-Token entfernen"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:405
 msgid "Confirm removal of TOTP code"
@@ -7682,7 +7683,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:523
 msgid "TOTP Registered"
-msgstr ""
+msgstr "TOTP registriert"
 
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:524
 msgid "TOTP token registered successfully."
@@ -8144,7 +8145,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:91
 msgid "SCIM disabled"
-msgstr ""
+msgstr "SCIM deaktiviert"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:92
 msgid "The SCIM provisioning endpoint has been disabled and its secret revoked"
@@ -8156,7 +8157,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:116
 msgid "Base URL"
-msgstr ""
+msgstr "Basis-URL"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:122
 msgid "Secret Generated"
@@ -8164,7 +8165,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:123
 msgid "Last Used"
-msgstr ""
+msgstr "Zuletzt verwendet"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:137
 msgid "SCIM Bearer Secret"
@@ -8184,11 +8185,11 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:178
 msgid "Enable SCIM"
-msgstr ""
+msgstr "SCIM aktivieren"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:188
 msgid "Disable SCIM"
-msgstr ""
+msgstr "SCIM deaktivieren"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:194
 msgid "Rotating the secret immediately invalidates the previous one - update your Identity Provider's configuration straight away."
@@ -8196,7 +8197,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:219
 msgid "Add SSO Application"
-msgstr ""
+msgstr "SSO-Anwendung hinzufügen"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:233
 msgid "Add OIDC SSO Application"
@@ -8220,7 +8221,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:257
 msgid "UID Field"
-msgstr ""
+msgstr "UID-Feld"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:258
 msgid "OIDC claim used as the user's unique identifier"
@@ -8329,11 +8330,11 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:398
 msgid "Edit SSO Application"
-msgstr ""
+msgstr "SSO-Anwendung bearbeiten"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:413
 msgid "Delete SSO Application"
-msgstr ""
+msgstr "SSO-Anwendung löschen"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:427
 msgid "Provider"
@@ -8384,7 +8385,7 @@ msgstr "Endpunkt"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:533
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:535
 msgid "ACS"
@@ -8413,7 +8414,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:624
 msgid "Field"
-msgstr ""
+msgstr "Feld"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:637
 msgid "Client Secret"
@@ -8516,7 +8517,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:870
 msgid "SCIM Provisioning"
-msgstr ""
+msgstr "SCIM-Bereitstellung"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:878
 msgid "Single Sign-On (SSO)"
@@ -8841,7 +8842,7 @@ msgstr "Die folgenden Einstellungen sind spezifisch für jedes verfügbare Plugi
 
 #: src/pages/Index/Settings/SystemSettings.tsx:46
 msgid "Server Settings"
-msgstr ""
+msgstr "Servereinstellungen"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:79
 msgid "Authentication"
@@ -9263,7 +9264,7 @@ msgstr "Kalenderansicht"
 #: src/pages/stock/LocationDetail.tsx:145
 #: src/pages/stock/LocationDetail.tsx:191
 msgid "Parametric View"
-msgstr ""
+msgstr "Parametrische Ansicht"
 
 #: src/pages/build/BuildOrderDetailsPanel.tsx:73
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:78
@@ -9545,7 +9546,7 @@ msgstr "Benutzerdetails"
 
 #: src/pages/core/UserDetail.tsx:205
 msgid "Normal user"
-msgstr ""
+msgstr "Normaler Benutzer"
 
 #: src/pages/core/UserDetail.tsx:206
 #~ msgid "Basic user"
@@ -9701,7 +9702,7 @@ msgstr "Erforderlich"
 
 #: src/pages/part/PartDetail.tsx:617
 msgid "Deficit"
-msgstr ""
+msgstr "Defizit"
 
 #: src/pages/part/PartDetail.tsx:635
 #: src/pages/part/bom/BomCompare.tsx:38
@@ -9745,11 +9746,11 @@ msgstr "Teile-Aktionen"
 
 #: src/pages/part/PartDetail.tsx:831
 msgid "Part locked"
-msgstr ""
+msgstr "Teil gesperrt"
 
 #: src/pages/part/PartDetail.tsx:831
 msgid "Part unlocked"
-msgstr ""
+msgstr "Teil entsperrt"
 
 #: src/pages/part/PartDetail.tsx:956
 #~ msgid "Count part stock"
@@ -10042,7 +10043,7 @@ msgstr "Validiert von"
 #: src/pages/part/bom/BomCompare.tsx:35
 #: src/tables/bom/BomTable.tsx:507
 msgid "Allow Variants"
-msgstr ""
+msgstr "Varianten zulassen"
 
 #: src/pages/part/bom/BomCompare.tsx:36
 #: src/tables/bom/BomTable.tsx:502
@@ -10074,7 +10075,7 @@ msgstr ""
 
 #: src/pages/part/bom/BomCompare.tsx:181
 msgid "No changes"
-msgstr ""
+msgstr "Keine Änderungen"
 
 #: src/pages/part/bom/BomCompare.tsx:183
 msgid "Part removed from BOM"
@@ -10086,7 +10087,7 @@ msgstr ""
 
 #: src/pages/part/bom/BomCompare.tsx:205
 msgid "Changes"
-msgstr ""
+msgstr "Änderungen"
 
 #: src/pages/part/bom/BomCompare.tsx:371
 msgid "Primary Assembly"
@@ -10106,7 +10107,7 @@ msgstr ""
 
 #: src/pages/part/bom/BomCompare.tsx:407
 msgid "Display Mode"
-msgstr ""
+msgstr "Anzeigemodus"
 
 #: src/pages/part/bom/BomCompare.tsx:409
 msgid "Select display mode for BOM comparison"
@@ -10114,7 +10115,7 @@ msgstr ""
 
 #: src/pages/part/bom/BomCompare.tsx:413
 msgid "Show all Parts"
-msgstr ""
+msgstr "Alle Teile anzeigen"
 
 #: src/pages/part/bom/BomCompare.tsx:414
 msgid "Show different Parts"
@@ -10840,7 +10841,7 @@ msgstr "Lagerartikel Aktionen"
 
 #: src/pages/stock/StockDetail.tsx:638
 msgid "Convert"
-msgstr ""
+msgstr "Konvertieren"
 
 #: src/pages/stock/StockDetail.tsx:639
 msgid "Convert this stock item to a different part"
@@ -11342,7 +11343,7 @@ msgstr ""
 
 #: src/tables/bom/UsedInTable.tsx:162
 msgid "Replace"
-msgstr ""
+msgstr "Ersetzen"
 
 #: src/tables/bom/UsedInTable.tsx:171
 msgid "This action cannot be easily undone, so please ensure you have selected the correct assemblies."
@@ -11893,7 +11894,7 @@ msgstr "Dateianhänge anzeigen"
 
 #: src/tables/general/AttachmentTable.tsx:311
 msgid "Is Image"
-msgstr ""
+msgstr "Ist Bild"
 
 #: src/tables/general/AttachmentTable.tsx:312
 msgid "Show image attachments"
@@ -11928,7 +11929,7 @@ msgstr "Element anzeigen"
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:201
 #: src/tables/sales/SalesOrderLineItemTable.tsx:157
 msgid "Discount"
-msgstr ""
+msgstr "Rabatt"
 
 #: src/tables/general/ExtraLineItemTable.tsx:108
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:313
@@ -12001,14 +12002,14 @@ msgid "Import Parameters"
 msgstr ""
 
 #: src/tables/general/ParameterTable.tsx:161
-#: src/tables/general/ParametricDataTable.tsx:324
-#: src/tables/general/ParametricDataTable.tsx:455
+#: src/tables/general/ParametricDataTable.tsx:331
+#: src/tables/general/ParametricDataTable.tsx:462
 msgid "Add Parameter"
 msgstr "Parameter hinzufügen"
 
 #: src/tables/general/ParameterTable.tsx:172
 #: src/tables/general/ParameterTable.tsx:219
-#: src/tables/general/ParametricDataTable.tsx:348
+#: src/tables/general/ParametricDataTable.tsx:355
 msgid "Edit Parameter"
 msgstr "Parameter bearbeiten"
 
@@ -12019,19 +12020,19 @@ msgstr "Parameter löschen"
 
 #: src/tables/general/ParameterTable.tsx:188
 msgid "Add Parameters"
-msgstr ""
+msgstr "Parameter hinzufügen"
 
 #: src/tables/general/ParameterTable.tsx:194
 msgid "Create Parameter"
-msgstr ""
+msgstr "Parameter erstellen"
 
 #: src/tables/general/ParameterTable.tsx:196
 msgid "Create a new parameter"
-msgstr ""
+msgstr "Neuen Parameter erstellen"
 
 #: src/tables/general/ParameterTable.tsx:205
 msgid "Import parameters from a file"
-msgstr ""
+msgstr "Parameter aus einer Datei importieren"
 
 #: src/tables/general/ParameterTemplateTable.tsx:43
 #: src/tables/general/ParameterTemplateTable.tsx:192
@@ -12040,7 +12041,7 @@ msgstr "Parametervorlage hinzufügen"
 
 #: src/tables/general/ParameterTemplateTable.tsx:59
 msgid "Duplicate Parameter Template"
-msgstr ""
+msgstr "Parametervorlage duplizieren"
 
 #: src/tables/general/ParameterTemplateTable.tsx:73
 msgid "Delete Parameter Template"
@@ -12077,11 +12078,11 @@ msgstr "Vorlagen mit Einheiten anzeigen"
 
 #: src/tables/general/ParameterTemplateTable.tsx:149
 msgid "Show enabled templates"
-msgstr ""
+msgstr "Aktivierte Vorlagen anzeigen"
 
 #: src/tables/general/ParameterTemplateTable.tsx:154
 msgid "Filter by model type"
-msgstr ""
+msgstr "Nach Modelltyp filtern"
 
 #: src/tables/general/ParametricDataTable.tsx:121
 msgid "Click to edit"
@@ -12168,7 +12169,7 @@ msgstr "manueller Neustart erforderlich"
 
 #: src/tables/machine/MachineListTable.tsx:344
 msgid "General"
-msgstr ""
+msgstr "Allgemein"
 
 #: src/tables/machine/MachineListTable.tsx:354
 #: src/tables/machine/MachineListTable.tsx:805
@@ -12235,7 +12236,7 @@ msgstr "Treiber"
 
 #: src/tables/machine/MachineTypeTable.tsx:75
 msgid "Driver Type"
-msgstr ""
+msgstr "Treibertyp"
 
 #: src/tables/machine/MachineTypeTable.tsx:79
 msgid "Builtin driver"
@@ -12278,7 +12279,7 @@ msgstr "Anbieterdatei"
 
 #: src/tables/machine/MachineTypeTable.tsx:195
 msgid "Available Drivers"
-msgstr ""
+msgstr "Verfügbare Treiber"
 
 #: src/tables/machine/MachineTypeTable.tsx:235
 msgid "Machine driver not found."
@@ -12755,7 +12756,7 @@ msgstr ""
 
 #: src/tables/part/PartThumbTable.tsx:123
 msgid "Image updated"
-msgstr ""
+msgstr "Bild aktualisiert"
 
 #: src/tables/part/PartThumbTable.tsx:124
 msgid "The image has been updated successfully"
@@ -13377,7 +13378,7 @@ msgstr "Ablauf"
 #: src/tables/settings/ApiTokenTable.tsx:124
 #: src/tables/settings/ApiTokenTable.tsx:171
 msgid "Revoked By"
-msgstr ""
+msgstr "Widerrufen von"
 
 #: src/tables/settings/ApiTokenTable.tsx:154
 msgid "Show revoked tokens"
@@ -13398,7 +13399,7 @@ msgstr "Token werden nur einmal angezeigt - vergewissern Sie sich, diese aufzusc
 
 #: src/tables/settings/ApiTokenTable.tsx:251
 msgid "Revoke Token"
-msgstr ""
+msgstr "Token widerrufen"
 
 #: src/tables/settings/ApiTokenTable.tsx:255
 msgid "Revocation Reason"
@@ -13884,7 +13885,7 @@ msgstr "Fehler beim Abrufen der Template-Details"
 
 #: src/tables/settings/TemplateTable.tsx:283
 msgid "Filename"
-msgstr ""
+msgstr "Dateiname"
 
 #: src/tables/settings/TemplateTable.tsx:307
 msgid "Modify template file"
@@ -13953,7 +13954,7 @@ msgstr "Bestimmt ob dieser Benutzer aktiv ist. Ein Benutzer sollte nie gelöscht
 
 #: src/tables/settings/UserTable.tsx:184
 msgid "Is Administrator"
-msgstr ""
+msgstr "Ist Administrator"
 
 #: src/tables/settings/UserTable.tsx:185
 msgid "Designates whether the user can log into the django admin site."
