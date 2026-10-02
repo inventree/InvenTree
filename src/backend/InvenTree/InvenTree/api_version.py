@@ -6,6 +6,9 @@ INVENTREE_API_VERSION = 551
 
 INVENTREE_API_TEXT = """
 
+v552 -> 2026-10-02 : https://github.com/inventree/InvenTree/pull/12967
+    - Fix transitions endpoint schema to indicate that it returns a list
+
 v551 -> 2026-09-21 : https://github.com/inventree/InvenTree/pull/12693
     - Docstring updates for automated transition API documentation generation
     - New transitions insights endpoints
