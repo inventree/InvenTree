@@ -39,11 +39,14 @@ try:
     from weasyprint import HTML
 
     from report.fetcher import InvenTreeURLFetcher
-except OSError as err:  # pragma: no cover
-    print(f'OSError: {err}')
-    print("Unable to import 'weasyprint' module.")
-    print('You may require some further system packages to be installed.')
-    sys.exit(1)
+except (ImportError, OSError) as err:  # pragma: no cover
+    HTML = None
+    InvenTreeURLFetcher = None
+    if not InvenTree.ready.isInTestMode():
+        print(f'OSError: {err}')
+        print("Unable to import 'weasyprint' module.")
+        print('You may require some further system packages to be installed.')
+        sys.exit(1)
 
 
 logger = structlog.getLogger('inventree')
@@ -102,13 +105,19 @@ class TemplateUploadMixin:
     @property
     def template_name(self):
         """Return the filename of the template associated with this model class."""
-        template = getattr(self, self.TEMPLATE_FIELD).name
+        template_file = getattr(self, self.TEMPLATE_FIELD, None)
+        if not template_file or not template_file.name:
+            return ''
+
+        template = template_file.name
         template = template.replace('/', os.path.sep)
         template = template.replace('\\', os.path.sep)
 
-        template = settings.MEDIA_ROOT.joinpath(template)
+        local_path = settings.MEDIA_ROOT.joinpath(template)
+        if local_path.exists():
+            return str(local_path)
 
-        return str(template)
+        return template_file.name
 
     @property
     def extension(self):
@@ -251,6 +260,70 @@ class ReportTemplateBase(
         template_string = Template(self.filename_pattern)
         return template_string.render(Context(context))
 
+    def get_template_content(self) -> str:
+        """Load template file content directly from storage backend.
+
+        Supports cloud/remote storage (e.g. S3, SFTP) and resolves potential
+        storage prefix mismatches.
+        """
+        template_file = getattr(self, self.TEMPLATE_FIELD, None)
+        if not template_file or not template_file.name:
+            raise TemplateDoesNotExist(getattr(self, 'name', 'template'))
+
+        storage = getattr(template_file, 'storage', default_storage)
+        name = template_file.name
+
+        # Candidates to resolve storage path prefix mismatches
+        candidates = [name]
+        norm_name = name.replace('\\', '/').lstrip('/')
+        if norm_name not in candidates:
+            candidates.append(norm_name)
+
+        location = getattr(storage, 'location', '') or ''
+        location = str(location).replace('\\', '/').strip('/')
+        if location:
+            if norm_name.startswith(f'{location}/'):
+                stripped = norm_name[len(location) + 1 :]
+                if stripped not in candidates:
+                    candidates.append(stripped)
+            else:
+                prefixed = f'{location}/{norm_name}'
+                if prefixed not in candidates:
+                    candidates.append(prefixed)
+
+        if hasattr(self, 'SUBDIR') and self.SUBDIR:
+            subdir_prefix = f'report/{self.SUBDIR}/'
+            if norm_name.startswith(subdir_prefix):
+                short_name = norm_name[len('report/') :]
+                if short_name not in candidates:
+                    candidates.append(short_name)
+
+        file_obj = None
+        for candidate in candidates:
+            try:
+                if storage.exists(candidate):
+                    file_obj = storage.open(candidate, 'r')
+                    break
+            except Exception:
+                pass
+
+        if file_obj is None:
+            try:
+                file_obj = template_file.open('r')
+            except Exception as exc:
+                raise TemplateDoesNotExist(
+                    f"Template '{name}' not found in storage"
+                ) from exc
+
+        try:
+            content = file_obj.read()
+            if isinstance(content, bytes):
+                content = content.decode('utf-8')
+            return content
+        finally:
+            if hasattr(file_obj, 'close'):
+                file_obj.close()
+
     def render_as_string(
         self, instance: models.Model, context: Optional[dict] = None, **kwargs
     ) -> str:
@@ -266,7 +339,15 @@ class ReportTemplateBase(
         if context is None:
             context = self.get_context(instance, **kwargs)
 
-        return render_to_string(self.template_name, context)
+        try:
+            return render_to_string(self.template_name, context)
+        except TemplateDoesNotExist:
+            content = self.get_template_content()
+            from django.template.loader import engines
+
+            engine = engines['django']
+            template = engine.from_string(content)
+            return template.render(context)
 
     def render(
         self, instance: models.Model, context: Optional[dict] = None, **kwargs
@@ -282,6 +363,10 @@ class ReportTemplateBase(
             bytes: PDF data
         """
         html = self.render_as_string(instance, context=context, **kwargs)
+        if HTML is None:
+            raise ValidationError(
+                _("Unable to generate PDF: 'weasyprint' is not available")
+            )
         pdf = HTML(string=html, url_fetcher=InvenTreeURLFetcher()).write_pdf(
             pdf_forms=True
         )
