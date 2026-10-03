@@ -448,7 +448,7 @@ class MeUserSerializer(FilterableSerializerMixin, ExtendedUserSerializer):
     # they were previously served as a single '/user/me/roles/' response.
     roles = OptionalField(
         serializer_class=serializers.SerializerMethodField,
-        serializer_kwargs={'read_only': True},
+        serializer_kwargs={'allow_null': True, 'read_only': True},
         filter_name='roles',
     )
 
