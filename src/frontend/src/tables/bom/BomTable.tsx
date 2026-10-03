@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Alert, Group, Stack, Text } from '@mantine/core';
+import { Alert, Box, Group, Stack, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
@@ -27,7 +27,10 @@ import { apiUrl } from '@lib/functions/Api';
 import { navigateToLink } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
-import type { TableColumn } from '@lib/types/Tables';
+import type {
+  InvenTreeTableNestedRowProps,
+  TableColumn
+} from '@lib/types/Tables';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { RenderPart } from '../../components/render/Part';
 import {
@@ -40,8 +43,10 @@ import {
   RenderPartColumn
 } from '../../components/tables/ColumnRenderers';
 import { PartCategoryFilter } from '../../components/tables/Filter';
-import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
-import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
+import {
+  InvenTreeTable,
+  isNestedRecord
+} from '../../components/tables/InvenTreeTable';
 import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
@@ -58,7 +63,6 @@ import {
   useUserSettingsState
 } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import { subassemblyRowExpansion } from './BomSubassemblyTable';
 
 // Calculate the total stock quantity available for a given BomItem
 function availableStockQuantity(record: any): number {
@@ -74,6 +78,28 @@ function availableStockQuantity(record: any): number {
   }
 
   return available;
+}
+
+// Chain of quantities from a BomItem up to the top-level assembly (innermost first)
+function quantityChain(record: any): number[] {
+  return record.quantity_chain ?? [Number(record.quantity)];
+}
+
+// Quantity of a BomItem required for a single unit of the top-level assembly
+function totalQuantity(record: any): number {
+  return quantityChain(record).reduce((total, qty) => total * qty, 1);
+}
+
+// Multiplier applied by any upstream sub-assemblies (1 for top-level items)
+function upstreamMultiplier(record: any): number {
+  return quantityChain(record)
+    .slice(1)
+    .reduce((total, qty) => total * qty, 1);
+}
+
+// Scale a (nullable) price value by the upstream multiplier
+function scalePrice(value: any, multiplier: number): number | null {
+  return value == null ? null : Number(value) * multiplier;
 }
 
 export function BomTable({
@@ -103,9 +129,12 @@ export function BomTable({
 
   const userSettings = useUserSettingsState();
 
-  const tableColumns: TableColumn[] = useMemo(() => {
-    const allowExpansion = userSettings.isSet('SHOW_BOM_SUBASSEMBLY_LEVELS');
+  const showSubassemblies: boolean = useMemo(
+    () => userSettings.isSet('SHOW_BOM_SUBASSEMBLY_LEVELS'),
+    [userSettings]
+  );
 
+  const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
         accessor: 'sub_part',
@@ -118,7 +147,8 @@ export function BomTable({
 
           const extra = [];
 
-          if (partId && record.part != partId) {
+          // Sub-assembly rows are always defined for a different parent
+          if (partId && record.part != partId && !isNestedRecord(record)) {
             extra.push(
               <Text
                 key='different-parent'
@@ -135,26 +165,24 @@ export function BomTable({
             );
           }
 
-          const assembly: boolean = record.sub_part_detail?.assembly ?? false;
-
+          // Fill the available width, so that the hover icon is right-aligned,
+          // leaving space for the copy button (which overlays the right edge)
           return (
             part && (
-              <TableHoverCard
-                value={
-                  <Group gap='xs' justify='left'>
-                    {assembly && !isEditing && allowExpansion && (
-                      <RowExpansionIcon
-                        enabled
-                        expanded={table.isRowExpanded(record.pk)}
-                      />
-                    )}
-                    <RenderPartColumn part={part} />
-                  </Group>
-                }
-                iconColor={record.validated ? undefined : 'red'}
-                extra={extra}
-                title={t`Part Information`}
-              />
+              <Box
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  paddingRight: window.isSecureContext ? 26 : 0
+                }}
+              >
+                <TableHoverCard
+                  value={<RenderPartColumn part={part} />}
+                  iconColor={record.validated ? undefined : 'red'}
+                  extra={extra}
+                  title={t`Part Information`}
+                />
+              </Box>
             )
           );
         }
@@ -180,20 +208,30 @@ export function BomTable({
         switchable: false,
         sortable: true,
         render: (record: any) => {
-          const quantity = formatDecimal(record.quantity);
+          const nested: boolean = isNestedRecord(record);
+          const quantity = formatDecimal(totalQuantity(record));
           const units = record.sub_part_detail?.units;
 
           return (
-            <Group justify='space-between'>
-              <Group gap='xs'>
-                <Text>{quantity}</Text>
-                {record.setup_quantity && record.setup_quantity > 0 && (
-                  <Text size='xs'>{`(+${record.setup_quantity})`}</Text>
+            <Group justify='space-between' wrap='nowrap'>
+              <Stack gap={0}>
+                <Group gap='xs'>
+                  <Text>{quantity}</Text>
+                  {record.setup_quantity && record.setup_quantity > 0 && (
+                    <Text size='xs'>{`(+${record.setup_quantity})`}</Text>
+                  )}
+                  {record.attrition && record.attrition > 0 && (
+                    <Text size='xs'>{`(+${record.attrition}%)`}</Text>
+                  )}
+                </Group>
+                {nested && (
+                  <Text size='xs' c='dimmed'>
+                    {quantityChain(record)
+                      .map((qty) => formatDecimal(qty))
+                      .join(' × ')}
+                  </Text>
                 )}
-                {record.attrition && record.attrition > 0 && (
-                  <Text size='xs'>{`(+${record.attrition}%)`}</Text>
-                )}
-              </Group>
+              </Stack>
               {units && <Text size='xs'>[{units}]</Text>}
             </Group>
           );
@@ -325,8 +363,46 @@ export function BomTable({
         ordering: 'pricing_max_total',
         sortable: true,
         switchable: true,
-        render: (record: any) =>
-          formatPriceRange(record.pricing_min_total, record.pricing_max_total)
+        render: (record: any) => {
+          // Account for the quantity of any upstream sub-assemblies
+          const multiplier = upstreamMultiplier(record);
+
+          const price = formatPriceRange(
+            scalePrice(record.pricing_min_total, multiplier),
+            scalePrice(record.pricing_max_total, multiplier)
+          );
+
+          const hasPricing =
+            record.pricing_min_total != null ||
+            record.pricing_max_total != null;
+
+          if (!isNestedRecord(record) || !hasPricing) {
+            return price;
+          }
+
+          let basePrice = formatPriceRange(
+            record.pricing_min_total,
+            record.pricing_max_total
+          );
+
+          // Wrap price ranges in brackets, so the multiplication is unambiguous
+          if (
+            record.pricing_min_total != null &&
+            record.pricing_max_total != null &&
+            record.pricing_min_total != record.pricing_max_total
+          ) {
+            basePrice = `(${basePrice})`;
+          }
+
+          return (
+            <Stack gap={0}>
+              <Text inherit>{price}</Text>
+              <Text size='xs' c='dimmed'>
+                {`${formatDecimal(multiplier)} × ${basePrice}`}
+              </Text>
+            </Stack>
+          );
+        }
       },
       {
         accessor: 'available_stock',
@@ -425,7 +501,13 @@ export function BomTable({
             return '-';
           }
 
-          const can_build = Math.max(0, Math.trunc(record.can_build));
+          // Account for the quantity of any upstream sub-assemblies
+          const multiplier = upstreamMultiplier(record);
+
+          const can_build = Math.max(
+            0,
+            Math.trunc(record.can_build / multiplier)
+          );
 
           const value = (
             <Text
@@ -434,6 +516,18 @@ export function BomTable({
             >
               {formatDecimal(can_build)}
             </Text>
+          );
+
+          // Sub-assembly rows also display the "per sub-assembly" quantity
+          const display = isNestedRecord(record) ? (
+            <Stack gap={0}>
+              {value}
+              <Text size='xs' c='dimmed'>
+                {`${formatDecimal(Math.max(0, Math.trunc(record.can_build)))} ÷ ${formatDecimal(multiplier)}`}
+              </Text>
+            </Stack>
+          ) : (
+            value
           );
 
           const extra = [];
@@ -447,13 +541,17 @@ export function BomTable({
           }
 
           return (
-            <TableHoverCard value={value} extra={extra} title={t`Can Build`} />
+            <TableHoverCard
+              value={display}
+              extra={extra}
+              title={t`Can Build`}
+            />
           );
         }
       },
       NoteColumn({})
     ];
-  }, [table.isRowExpanded, isEditing, partId, params, userSettings]);
+  }, [partId, params]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -711,8 +809,23 @@ export function BomTable({
     ];
   }, [isEditing, isLocked, user]);
 
-  // Row expansion (for displaying subassemblies)
-  const rowExpansion = subassemblyRowExpansion({ table: table });
+  // Nested rows (for displaying subassemblies) - not available while editing
+  const nestedRows: InvenTreeTableNestedRowProps | undefined = useMemo(() => {
+    if (isEditing || !showSubassemblies) {
+      return undefined;
+    }
+
+    return {
+      accessor: 'sub_part',
+      expandable: (record: any) => !!record.sub_part_detail?.assembly,
+      childParams: (record: any) => ({ part: record.sub_part }),
+      // Multiply quantities through each level of the BOM
+      transformChild: (child: any, parent: any) => ({
+        ...child,
+        quantity_chain: [Number(child.quantity), ...quantityChain(parent)]
+      })
+    };
+  }, [isEditing, showSubassemblies]);
 
   return (
     <>
@@ -761,7 +874,9 @@ export function BomTable({
               return record.part === partId;
             },
             enableDownload: true,
-            rowExpansion: isEditing ? undefined : rowExpansion
+            nestedRows: nestedRows,
+            rowStyle: (record: any) =>
+              isNestedRecord(record) ? { fontStyle: 'italic' } : undefined
           }}
         />
       </Stack>

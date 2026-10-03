@@ -31,7 +31,7 @@ import {
   useDataTableColumns
 } from 'mantine-datatable';
 import type React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useApi } from '../../contexts/ApiContext';
 import {
@@ -47,9 +47,33 @@ import { usePreviewDrawerState } from '../../states/PreviewDrawerState';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { ColumnFilterPopover } from './FilterSelectDrawer';
 import InvenTreeTableHeader from './InvenTreeTableHeader';
+import NestedRowCell from './NestedRowCell';
 
 const ACTIONS_COLUMN_ACCESSOR: string = '--actions--';
 const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
+
+// Key used to attach nesting information to child rows
+const NESTED_ROW_INFO: string = '__nested';
+
+// Nesting information attached to each child row
+type NestedRowInfo = {
+  key: string;
+  depth: number;
+};
+
+/**
+ * Determine if a record is a nested (child) row, inserted below a parent row
+ */
+export function isNestedRecord(record: any): boolean {
+  return !!record?.[NESTED_ROW_INFO];
+}
+
+// State of a single expanded (or expanding) parent row
+type NestedRowState<T> = {
+  expanded: boolean;
+  loading: boolean;
+  children?: T[];
+};
 
 /**
  * Default table properties (used if not specified)
@@ -283,6 +307,38 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     [tableState.setSelectedRecords]
   );
 
+  // Nested (child) row state, keyed by the unique row key of the parent row
+  const [nestedState, setNestedState] = useState<
+    Record<string, NestedRowState<T>>
+  >({});
+
+  // Incremented whenever nested data is discarded, to ignore stale responses
+  const nestedGeneration = useRef<number>(0);
+
+  // Callback to toggle a nested row (defined below, once sorting is available)
+  const toggleNestedRow = useRef<(record: T) => void>(() => {});
+
+  // Return the unique key for a row (accounting for nesting)
+  const getRowKey = useCallback(
+    (record: any): string => {
+      const info: NestedRowInfo | undefined = record?.[NESTED_ROW_INFO];
+
+      return (
+        info?.key ?? String(resolveItem(record, tableState.idAccessor ?? 'pk'))
+      );
+    },
+    [tableState.idAccessor]
+  );
+
+  // Column which displays the nesting indicators
+  const nestedAccessor: string | undefined = useMemo(() => {
+    if (!props.nestedRows) {
+      return undefined;
+    }
+
+    return props.nestedRows.accessor ?? columns[0]?.accessor;
+  }, [props.nestedRows, columns]);
+
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
     // Include all columns (even prop-hidden ones) so useDataTableColumns always
@@ -327,6 +383,32 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
           } else {
             return content;
           }
+        };
+      }
+
+      // Wrap the render function to display nesting indicators
+      if (props.nestedRows && col.accessor == nestedAccessor) {
+        const innerRender = wrappedRender;
+        const nestedRows = props.nestedRows;
+
+        wrappedRender = (record: any, index?: number) => {
+          const content =
+            innerRender?.(record, index) ?? resolveItem(record, col.accessor);
+
+          const info: NestedRowInfo | undefined = record?.[NESTED_ROW_INFO];
+          const state = nestedState[getRowKey(record)];
+
+          return (
+            <NestedRowCell
+              depth={info?.depth ?? 0}
+              expandable={nestedRows.expandable(record)}
+              expanded={state?.expanded ?? false}
+              loading={state?.loading ?? false}
+              onToggle={() => toggleNestedRow.current(record)}
+            >
+              {content}
+            </NestedRowCell>
+          );
         };
       }
 
@@ -422,6 +504,10 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     columns,
     filters,
     fieldNames,
+    props.nestedRows,
+    nestedAccessor,
+    nestedState,
+    getRowKey,
     tableProps.rowActions,
     tableState.hiddenColumns,
     tableState.selectedRecords,
@@ -776,6 +862,168 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
     tableState.setRecords(tableData ?? apiData ?? []);
   }, [tableData, apiData]);
 
+  // Serialized params, so that nested data is not discarded on every render
+  const paramsKey: string = useMemo(
+    () => JSON.stringify(tableProps.params ?? {}),
+    [tableProps.params]
+  );
+
+  // Discard nested data whenever the top-level table data is reloaded,
+  // or the nesting configuration changes (as child rows depend on it)
+  useEffect(() => {
+    nestedGeneration.current += 1;
+    // Keep the existing (empty) state object to avoid a needless re-render
+    setNestedState((state) => (Object.keys(state).length > 0 ? {} : state));
+  }, [
+    props.nestedRows,
+    url,
+    paramsKey,
+    pageSize,
+    sortStatus,
+    tableState.page,
+    tableState.searchTerm,
+    tableState.tableKey,
+    tableState.filterSet.activeFilters,
+    tableSearchParams
+  ]);
+
+  // Expand or collapse a nested row, fetching child rows if required
+  toggleNestedRow.current = (record: T) => {
+    const nestedRows = props.nestedRows;
+
+    if (!nestedRows || !url) {
+      return;
+    }
+
+    const key = getRowKey(record);
+    const current = nestedState[key];
+
+    if (current) {
+      // Ignore toggle requests while data is loading
+      if (!current.loading) {
+        setNestedState((state) => ({
+          ...state,
+          [key]: { ...state[key], expanded: !state[key]?.expanded }
+        }));
+      }
+      return;
+    }
+
+    const generation = nestedGeneration.current;
+    const depth = ((record as any)?.[NESTED_ROW_INFO]?.depth ?? 0) + 1;
+
+    // Child rows use the same ordering as the top-level table
+    const queryParams: Record<string, any> = {
+      ...tableProps.params,
+      ...nestedRows.childParams(record)
+    };
+
+    const ordering = getTableFilters(false).ordering;
+
+    if (ordering) {
+      queryParams.ordering = ordering;
+    }
+
+    setNestedState((state) => ({
+      ...state,
+      [key]: { expanded: true, loading: true }
+    }));
+
+    api
+      .get(url, {
+        params: queryParams,
+        timeout: 10 * 1000
+      })
+      .then((response) => {
+        if (generation != nestedGeneration.current) {
+          return;
+        }
+
+        let results = response.data?.results ?? response.data ?? [];
+
+        if (props.dataFormatter) {
+          results = props.dataFormatter(results);
+        }
+
+        if (!Array.isArray(results)) {
+          results = [];
+        }
+
+        const children: T[] = results.map((child: any) => ({
+          ...(nestedRows.transformChild?.(child, record) ?? child),
+          [NESTED_ROW_INFO]: {
+            key: `${key}/${resolveItem(child, tableState.idAccessor ?? 'pk')}`,
+            depth: depth
+          } as NestedRowInfo
+        }));
+
+        setNestedState((state) => ({
+          ...state,
+          [key]: { expanded: true, loading: false, children: children }
+        }));
+      })
+      .catch((error) => {
+        if (generation != nestedGeneration.current) {
+          return;
+        }
+
+        setNestedState((state) => {
+          const { [key]: _, ...rest } = state;
+          return rest;
+        });
+
+        showApiErrorMessage({
+          error: error,
+          title: t`Error loading table data`
+        });
+      });
+  };
+
+  // Records to display - with any expanded child rows inserted below their parent
+  const displayRecords: T[] = useMemo(() => {
+    if (!props.nestedRows || Object.keys(nestedState).length == 0) {
+      return tableState.records;
+    }
+
+    const result: T[] = [];
+
+    const insertRecords = (records: T[]) => {
+      for (const record of records) {
+        result.push(record);
+
+        const state = nestedState[getRowKey(record)];
+
+        if (state?.expanded && state.children) {
+          insertRecords(state.children);
+        }
+      }
+    };
+
+    insertRecords(tableState.records);
+
+    return result;
+  }, [props.nestedRows, nestedState, tableState.records, getRowKey]);
+
+  // Unique row identifier (child rows may duplicate the primary key of other rows)
+  const rowIdAccessor = useMemo(() => {
+    if (!props.nestedRows) {
+      return tableState.idAccessor ?? 'pk';
+    }
+
+    return (record: T) => getRowKey(record);
+  }, [props.nestedRows, tableState.idAccessor, getRowKey]);
+
+  // Child rows cannot be selected
+  const isRecordSelectable = useMemo(() => {
+    if (!props.nestedRows) {
+      return tableProps.isRecordSelectable;
+    }
+
+    return (record: T, index: number) =>
+      !(record as any)?.[NESTED_ROW_INFO] &&
+      (tableProps.isRecordSelectable?.(record, index) ?? true);
+  }, [props.nestedRows, tableProps.isRecordSelectable]);
+
   const previewDrawer = usePreviewDrawerState();
 
   // Callback to display "preview" view for a row (if available)
@@ -826,8 +1074,13 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         if (pk) {
           cancelEvent(event);
           // If a model type is provided and USE_TABLE_NAVIGATION is enabled, navigate to the detail view for that model
+          // Child rows are not part of the top-level query
+          const recordIndex = props.nestedRows
+            ? tableState.records.indexOf(record)
+            : index;
+
           const detailUrl = userSettings.isSet('USE_TABLE_NAVIGATION')
-            ? (getDetailNavigationUrl(record, index) ??
+            ? (getDetailNavigationUrl(record, recordIndex) ??
               getDetailUrl(tableProps.modelType, pk))
             : getDetailUrl(tableProps.modelType, pk);
 
@@ -843,6 +1096,8 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
       getDetailNavigationUrl,
       props.onCellClick,
       props.onRowClick,
+      props.nestedRows,
+      tableState.records,
       showPreviewPanel,
       showRowPreview,
       tableProps.modelType
@@ -986,12 +1241,28 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         recordsPerPageOptions: PAGE_SIZES,
         onRecordsPerPageChange: updatePageSize
       };
+
+      // Pagination text must exclude any nested (child) rows
+      if (props.nestedRows) {
+        _params.paginationText = ({
+          totalRecords
+        }: {
+          totalRecords: number;
+        }) => {
+          const from = (Math.max(1, tableState.page) - 1) * tablePageSize + 1;
+          const to = from + tableState.records.length - 1;
+
+          return `${from} - ${to} / ${totalRecords}`;
+        };
+      }
     }
 
     return _params;
   }, [
     tablePageSize,
     tableProps.enablePagination,
+    props.nestedRows,
+    tableState.records,
     tableState.recordCount,
     tableState.page,
     tableState.setPage,
@@ -1009,10 +1280,10 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   // When sticky headers are enabled, we adjust the maximum viewport height,
   // based on the number of records being displayed (up to a maximum of 80vh)
   const autoHeight = useMemo(() => {
-    const rows = Math.min(80, 6 * Math.max(tableState.records.length, 3));
+    const rows = Math.min(80, 6 * Math.max(displayRecords.length, 3));
 
     return `${rows}vh`;
-  }, [tableState.records]);
+  }, [displayRecords]);
 
   return (
     <>
@@ -1051,7 +1322,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
               highlightOnHover
               loaderType={userTheme.loader}
               pinLastColumn={tableProps.rowActions != undefined}
-              idAccessor={tableState.idAccessor ?? 'pk'}
+              idAccessor={rowIdAccessor}
               minHeight={tableProps.minHeight ?? 300}
               sortStatus={sortStatus}
               onSortStatusChange={handleSortStatusChange}
@@ -1061,11 +1332,12 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
               onSelectedRecordsChange={
                 enableSelection ? onSelectedRecordsChange : undefined
               }
-              isRecordSelectable={tableProps.isRecordSelectable}
+              isRecordSelectable={isRecordSelectable}
+              rowStyle={tableProps.rowStyle}
               rowExpansion={rowExpansion}
               fetching={isFetching}
               noRecordsText={missingRecordsText}
-              records={tableState.records}
+              records={displayRecords}
               storeColumnsKey={cacheKey}
               columns={tableColumns.effectiveColumns}
               onCellClick={supportsCellClick ? handleCellClick : undefined}
