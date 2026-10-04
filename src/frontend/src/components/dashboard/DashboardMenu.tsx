@@ -53,7 +53,7 @@ export default function DashboardMenu({
   }, [user, instanceName]);
 
   return (
-    <Paper p='sm' pr={0}>
+    <Paper p='xs' pr={0} mb='xs' style={{ background: 'transparent', border: 'none', boxShadow: 'none' }}>
       <Group justify='space-between' wrap='nowrap'>
         {title}
 

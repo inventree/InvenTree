@@ -1,4 +1,4 @@
-import { ActionIcon, Anchor, Group, RollingNumber } from '@mantine/core';
+import { ActionIcon, Box, Group, RollingNumber } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo } from 'react';
@@ -99,7 +99,14 @@ function QueryCountWidget({
   }, [query.isFetching, query.isError, query.data]);
 
   return (
-    <Anchor href='#' onClick={onFollowLink} underline='never'>
+    <Box
+      onClick={onFollowLink}
+      style={{
+        height: '100%',
+        cursor: 'pointer',
+        userSelect: 'none'
+      }}
+    >
       <Group
         gap='xs'
         wrap='nowrap'
@@ -117,7 +124,7 @@ function QueryCountWidget({
           </Group>
         </Group>
       </Group>
-    </Anchor>
+    </Box>
   );
 }
 

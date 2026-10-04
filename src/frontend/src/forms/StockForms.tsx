@@ -2198,7 +2198,15 @@ export function useStockLocationFields(): ApiFormFieldSet {
     custom_icon: {
       field_type: 'icon'
     },
-    location_type: {}
+    location_type: {
+      addCreateFields: {
+        name: {},
+        description: {},
+        icon: {
+          field_type: 'icon'
+        }
+      }
+    }
   };
 
   // Ownership of a stock location is only relevant if

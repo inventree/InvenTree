@@ -47,7 +47,43 @@ export default function DashboardWidget({
   }
 
   return (
-    <Paper withBorder key={item.label} shadow='sm' p='xs'>
+    <Paper
+      withBorder
+      key={item.label}
+      shadow='sm'
+      p='md'
+      radius='lg'
+      className='dashboard-widget-paper'
+      style={{
+        borderRadius: 20,
+        cursor: 'grab',
+        transition: 'box-shadow 0.2s ease, border-color 0.2s ease'
+      }}
+    >
+      <style>{`
+        .dashboard-widget-paper {
+          background-color: #ffffff !important;
+          border: 1.5px solid #e2e8f0 !important;
+          box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+          user-select: none;
+        }
+        [data-mantine-color-scheme='dark'] .dashboard-widget-paper {
+          background-color: #1e293b !important;
+          border: 1px solid rgba(255, 255, 255, 0.08) !important;
+          box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.35) !important;
+        }
+        .react-grid-item.react-draggable-dragging {
+          cursor: grabbing !important;
+          z-index: 100 !important;
+          box-shadow: 0 25px 40px -10px rgba(15, 23, 42, 0.25) !important;
+          opacity: 0.92 !important;
+          transition: none !important;
+        }
+        .react-grid-item.react-draggable-dragging * {
+          cursor: grabbing !important;
+          pointer-events: none !important;
+        }
+      `}</style>
       <Boundary label={`dashboard-widget-${item.label}`}>
         <Box
           key={`dashboard-widget-${item.label}`}

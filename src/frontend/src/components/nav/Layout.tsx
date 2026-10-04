@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Container, Flex, Space } from '@mantine/core';
+import { Box, Container, Flex, useMantineColorScheme } from '@mantine/core';
 import {
   Spotlight,
   type SpotlightActionData,
@@ -15,7 +15,6 @@ import { ApiEndpoints, apiUrl } from '@lib/index';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../App';
 import { getActions } from '../../defaults/actions';
-import * as classes from '../../main.css';
 import {
   useGlobalSettingsState,
   useUserSettingsState
@@ -30,8 +29,8 @@ import {
   PluginUIFeatureType
 } from '../plugins/PluginUIFeature';
 import GlobalPreviewDrawer from '../previews/GlobalPreviewDrawer';
-import { Footer } from './Footer';
-import { Header } from './Header';
+import { AppSidebar } from './AppSidebar';
+import { TopBar } from './TopBar';
 
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const location = useLocation();
@@ -63,6 +62,8 @@ export default function LayoutComponent() {
   const user = useUserState();
   const userSettings = useUserSettingsState();
   const globalSettings = useGlobalSettingsState();
+  const { colorScheme } = useMantineColorScheme();
+  const isDark = colorScheme === 'dark';
 
   const pluginsEnabled: boolean = useMemo(
     () => globalSettings.isSet('ENABLE_PLUGINS_INTERFACE'),
@@ -123,31 +124,61 @@ export default function LayoutComponent() {
   return (
     <ProtectedRoute>
       <>
-        <Flex direction='column' mih='100vh'>
-          <Header />
-          <Container className={classes.layoutContent} size='100%'>
-            <Boundary label={'layout'}>
-              <Outlet />
-            </Boundary>
-            {/* </ErrorBoundary> */}
-          </Container>
-          <Space h='xl' />
-          <Footer />
-          {userSettings.isSet('SHOW_SPOTLIGHT') && (
-            <Spotlight
-              actions={actions}
-              store={firstStore}
-              highlightQuery
-              scrollable
-              searchProps={{
-                leftSection: <IconSearch size='1.2rem' />,
-                placeholder: t`Search...`
+        {/* ── Root: sidebar on left, content on right ── */}
+        <Box
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            minHeight: '100vh',
+            width: '100%'
+          }}
+        >
+          {/* Left Sidebar */}
+          <AppSidebar />
+
+          {/* Right: topbar + page content */}
+          <Flex
+            direction='column'
+            style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}
+          >
+            {/* Top bar with search/icons/user */}
+            <TopBar />
+
+            {/* Page content */}
+            <Box
+              style={{
+                flex: 1,
+                overflow: 'auto',
+                padding: '20px 24px',
+                background: isDark
+                  ? '#090d16'
+                  : 'linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 50%, #eaeff5 100%)',
+                minHeight: 0
               }}
-              shortcut={[searchShortcutKey]}
-              nothingFound={t`Nothing found...`}
-            />
-          )}
-        </Flex>
+            >
+              <Boundary label={'layout'}>
+                <Outlet />
+              </Boundary>
+            </Box>
+          </Flex>
+        </Box>
+
+        {/* Spotlight search */}
+        {userSettings.isSet('SHOW_SPOTLIGHT') && (
+          <Spotlight
+            actions={actions}
+            store={firstStore}
+            highlightQuery
+            scrollable
+            searchProps={{
+              leftSection: <IconSearch size='1.2rem' />,
+              placeholder: t`Search...`
+            }}
+            shortcut={[searchShortcutKey]}
+            nothingFound={t`Nothing found...`}
+          />
+        )}
+
         <GlobalImporterDrawer />
         <GlobalPreviewDrawer />
       </>
