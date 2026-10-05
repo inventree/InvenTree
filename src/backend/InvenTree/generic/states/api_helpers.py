@@ -355,12 +355,15 @@ class FSMTransitionMixin:
             if getattr(handler, 'transition_name', None)
         }
 
+    @extend_schema(responses={200: AvailableTransitionSerializer(many=True)})
     @action(
         detail=True,
         methods=['get'],
         url_path=TRANSITION_URL_PREFIX,
         url_name='transitions',
         serializer_class=AvailableTransitionSerializer,
+        pagination_class=None,
+        filter_backends=[],
     )
     def transitions(self, request: Request, pk: str | None = None, *kwargs) -> Response:
         """List the FSM transitions reachable from this object's current state.
