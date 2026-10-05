@@ -140,6 +140,7 @@ function OutputAllocationDrawer({
       <Divider />
       <Paper p='md'>
         <BuildLineTable
+          key={output?.pk}
           build={build}
           output={output}
           params={{

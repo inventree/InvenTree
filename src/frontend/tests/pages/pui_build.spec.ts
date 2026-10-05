@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test';
+import { type Page, expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
 import {
   activateCalendarView,
@@ -924,4 +924,244 @@ test('Build Order - BOM Quantity', async ({ browser }) => {
   await clearTableFilters(page);
   await setTableChoiceFilter(page, 'Available', 'No');
   await page.getByText('1 - 4 / 4').waitFor();
+});
+
+test.describe('Build Order - Allocated part identity', () => {
+  const buildId = 991810;
+  const outputIds = [991811, 991812];
+  const partDiffersLabel = 'Allocated part differs from the BOM part';
+
+  function part(
+    pk: number,
+    name: string,
+    revision: string | null,
+    IPN: string | null,
+    fullName: string
+  ) {
+    return {
+      pk,
+      name,
+      full_name: fullName,
+      revision,
+      IPN,
+      description: `${name} description`,
+      active: true,
+      trackable: true,
+      assembly: false,
+      testable: false
+    };
+  }
+
+  function allocation(
+    pk: number,
+    actualPart: ReturnType<typeof part>,
+    outputId = outputIds[0]
+  ) {
+    return {
+      pk,
+      stock_item: pk,
+      part_detail: actualPart,
+      install_into: outputId,
+      quantity: 1,
+      stock_item_detail: {
+        pk,
+        part: actualPart.pk,
+        quantity: 1,
+        serial: `COMP-${pk}`,
+        batch: ''
+      },
+      location_detail: { pk: 991813, name: 'Allocation test location' }
+    };
+  }
+
+  function line(
+    requiredPart: ReturnType<typeof part>,
+    allocations: ReturnType<typeof allocation>[]
+  ) {
+    return {
+      pk: 991814,
+      build: buildId,
+      bom_item: 991815,
+      part: requiredPart.pk,
+      part_detail: requiredPart,
+      bom_item_detail: {
+        pk: 991815,
+        sub_part: requiredPart.pk,
+        quantity: 1,
+        reference: 'MB',
+        allow_variants: true
+      },
+      quantity: allocations.length,
+      allocated: allocations.length,
+      consumed: 0,
+      available_stock: 10,
+      available_substitute_stock: 0,
+      available_variant_stock: 0,
+      in_production: 0,
+      scheduled_to_build: 0,
+      on_order: 0,
+      trackable: true,
+      allocations
+    };
+  }
+
+  async function mockAllocations(
+    page: Page,
+    buildLine: ReturnType<typeof line>
+  ) {
+    const assembly = {
+      ...part(
+        991816,
+        'Allocation test assembly',
+        '',
+        'ALLOC-TEST',
+        'ALLOC-TEST | Allocation test assembly'
+      ),
+      assembly: true
+    };
+
+    await page.route(`**/api/part/${assembly.pk}/bom-validate/**`, (route) =>
+      route.fulfill({ json: { bom_validated: true } })
+    );
+    await page.route('**/api/build/**', async (route) => {
+      const url = new URL(route.request().url());
+      if (url.pathname === `/api/build/${buildId}/`) {
+        await route.fulfill({
+          json: {
+            pk: buildId,
+            reference: 'BO-ALLOCATION-TEST',
+            title: 'Allocated part identity',
+            part: assembly.pk,
+            part_detail: assembly,
+            quantity: 2,
+            completed: 0,
+            status: 20
+          }
+        });
+      } else if (
+        url.pathname === '/api/build/line/' &&
+        url.searchParams.get('build') === `${buildId}`
+      ) {
+        const lines = url.searchParams.has('assembly') ? [] : [buildLine];
+        await route.fulfill({
+          json: url.searchParams.has('limit')
+            ? {
+                count: lines.length,
+                next: null,
+                previous: null,
+                results: lines
+              }
+            : lines
+        });
+      } else if (
+        url.pathname === '/api/build/' &&
+        url.searchParams.get('parent') === `${buildId}`
+      ) {
+        await route.fulfill({
+          json: { count: 0, next: null, previous: null, results: [] }
+        });
+      } else {
+        await route.continue();
+      }
+    });
+    await page.route('**/api/stock/?*', async (route) => {
+      if (
+        new URL(route.request().url()).searchParams.get('build') !==
+        `${buildId}`
+      ) {
+        await route.continue();
+        return;
+      }
+      const outputs = outputIds.map((pk, index) => ({
+        pk,
+        part: assembly.pk,
+        part_detail: assembly,
+        build: buildId,
+        is_building: true,
+        quantity: 1,
+        serial: `OUTPUT-${index + 1}`,
+        status: 10
+      }));
+      await route.fulfill({
+        json: {
+          count: outputs.length,
+          next: null,
+          previous: null,
+          results: outputs
+        }
+      });
+    });
+  }
+
+  test('places difference icons and uses full names under marked parents', async ({
+    browser
+  }) => {
+    const page = await doCachedLogin(browser);
+    const required = part(
+      991820,
+      'ahr5e-mb',
+      'v1.1',
+      'AHR5E-MB-V1.1',
+      'AHR5E-MB-V1.1 | ahr5e-mb | v1.1'
+    );
+    const older = part(
+      991821,
+      'ahr5e-mb',
+      'v1.0',
+      'AHR5E-MB-V1.0',
+      'AHR5E-MB-V1.0 | ahr5e-mb | v1.0'
+    );
+    const allocations = [
+      allocation(991830, required, outputIds[0]),
+      allocation(991831, older, outputIds[1]),
+      allocation(991832, required, outputIds[1])
+    ];
+    await mockAllocations(page, line(required, allocations));
+    await navigate(
+      page,
+      `manufacturing/build-order/${buildId}/incomplete-outputs`
+    );
+
+    for (const [index, marked] of [false, true].entries()) {
+      await page
+        .getByRole('cell', { name: `# OUTPUT-${index + 1}`, exact: true })
+        .click();
+      const drawer = page.getByRole('dialog', {
+        name: /Build Output Stock Allocation/
+      });
+      const parent = await getRowFromCell(
+        drawer.getByRole('cell', { name: required.IPN!, exact: true })
+      );
+      const parentPart = parent
+        .getByText(required.name, { exact: true })
+        .locator('xpath=ancestor::td[1]');
+      await expect(parentPart).toHaveText(required.name);
+      await expect(
+        parentPart.getByRole('img', { name: partDiffersLabel, exact: true })
+      ).toHaveCount(marked ? 1 : 0);
+      await parentPart.getByText(required.name, { exact: true }).click();
+
+      for (const record of allocations.filter(
+        (item) => item.install_into === outputIds[index]
+      )) {
+        const row = drawer
+          .getByRole('cell', { name: `# COMP-${record.pk}`, exact: true })
+          .locator('xpath=ancestor::tr[1]');
+        const cell = row.getByRole('cell').first();
+        await expect(cell).toHaveText(
+          marked ? record.part_detail.full_name : record.part_detail.name
+        );
+        const icon = cell.getByRole('img', {
+          name: partDiffersLabel,
+          exact: true
+        });
+        if (record.part_detail.pk === required.pk) {
+          await expect(icon).toHaveCount(0);
+        } else {
+          await expect(icon).toBeVisible();
+        }
+      }
+      await drawer.getByLabel('close-allocation-drawer').click();
+    }
+  });
 });
