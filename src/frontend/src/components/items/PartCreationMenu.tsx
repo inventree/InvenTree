@@ -33,7 +33,10 @@ export function PartCreationMenu({
   const user = useUserState();
 
   const importSessionFields = useMemo(() => {
-    const fields = dataImporterSessionFields({ modelType: ModelType.part });
+    const fields = dataImporterSessionFields({
+      modelType: ModelType.part,
+      allowUpdate: true
+    });
     fields.field_defaults.value = initialData ?? { category: categoryId };
     return fields;
   }, [categoryId, initialData]);
@@ -64,7 +67,8 @@ export function PartCreationMenu({
     initialData: partInitialData,
     follow: true,
     modelType: ModelType.part,
-    keepOpenOption: true
+    keepOpenOption: true,
+    size: '95%'
   });
 
   const supplierPlugins = usePluginsWithMixin('supplier');

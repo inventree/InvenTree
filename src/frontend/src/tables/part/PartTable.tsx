@@ -205,7 +205,8 @@ export function PartListTable({
     },
     follow: false,
     modelType: ModelType.part,
-    onFormSuccess: table.refreshTable
+    onFormSuccess: table.refreshTable,
+    size: '95%'
   });
 
   const setCategory = useBulkEditApiFormModal({

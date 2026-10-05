@@ -675,7 +675,8 @@ export default function PartDetail() {
       locked: false
     },
     follow: true,
-    modelType: ModelType.part
+    modelType: ModelType.part,
+    size: '95%'
   });
 
   const deletePart = useDeleteApiFormModal({

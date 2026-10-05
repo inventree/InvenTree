@@ -334,7 +334,7 @@ export function ApiFormField({
   }
 
   return (
-    <Stack>
+    <Stack gap={0}>
       {definition.preFieldContent}
       {fieldInstance}
       {definition.postFieldContent}

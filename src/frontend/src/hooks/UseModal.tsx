@@ -22,6 +22,9 @@ export function useModal(props: UseModalProps): UseModalReturn {
     onClose
   });
 
+  const isWide =
+    props.size === '95%' || props.size === '90%' || props.size === '85%';
+
   return {
     open,
     close,
@@ -33,8 +36,61 @@ export function useModal(props: UseModalProps): UseModalReturn {
         closeOnEscape={userSettings.isSet('FORMS_CLOSE_USING_ESCAPE')}
         onClose={close}
         closeOnClickOutside={props.closeOnClickOutside}
-        size={props.size ?? 'xl'}
-        title={<StylishText size='xl'>{props.title}</StylishText>}
+        size={isWide ? '95%' : (props.size ?? 'xl')}
+        yOffset={isWide ? '2.5vh' : undefined}
+        xOffset={isWide ? '2.5vw' : undefined}
+        centered
+        className={isWide ? 'modal-95' : undefined}
+        styles={
+          isWide
+            ? {
+                root: {
+                  '--modal-size': '95vw',
+                  '--modal-y-offset': '2.5vh',
+                  '--modal-x-offset': '2.5vw',
+                  '--modal-inner-y-offset': '2.5vh',
+                  '--modal-inner-x-offset': '2.5vw'
+                } as any,
+                inner: {
+                  padding: '2.5vh 2.5vw',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100vh',
+                  maxHeight: '100vh',
+                  width: '100vw',
+                  maxWidth: '100vw'
+                },
+                content: {
+                  width: '95vw',
+                  minWidth: '95vw',
+                  maxWidth: '95vw',
+                  height: '95vh',
+                  minHeight: '95vh',
+                  maxHeight: '95vh',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'hidden',
+                  borderRadius: '8px'
+                },
+                header: {
+                  padding: '8px 16px',
+                  minHeight: '40px',
+                  flexShrink: 0,
+                  borderBottom: '1px solid var(--mantine-color-default-border)'
+                },
+                body: {
+                  flex: '1 1 0%',
+                  minHeight: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'hidden',
+                  padding: '8px 16px 10px 16px'
+                }
+              }
+            : undefined
+        }
+        title={<StylishText size='lg'>{props.title}</StylishText>}
       >
         {props.children}
       </Modal>

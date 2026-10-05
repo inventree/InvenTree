@@ -1,13 +1,17 @@
 import { t } from '@lingui/core/macro';
 import {
   Alert,
+  Badge,
   Button,
   Divider,
+  Grid,
   Group,
   LoadingOverlay,
   Paper,
+  SimpleGrid,
   Stack,
-  Text
+  Text,
+  Tooltip
 } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
@@ -682,33 +686,54 @@ export function ApiForm({
     []
   );
 
+  const visibleFields = useMemo(() => {
+    return Object.entries(fields).filter(([_, field]) => !field.hidden);
+  }, [fields]);
+
+  const booleanFields = useMemo(() => {
+    return visibleFields.filter(([_, field]) => field.field_type === 'boolean');
+  }, [visibleFields]);
+
+  const nestedFields = useMemo(() => {
+    return visibleFields.filter(([_, field]) => field.field_type === 'nested object');
+  }, [visibleFields]);
+
+  const regularFields = useMemo(() => {
+    return visibleFields.filter(
+      ([_, field]) => field.field_type !== 'boolean' && field.field_type !== 'nested object'
+    );
+  }, [visibleFields]);
+
   if (optionsLoading || initialDataQuery.isFetching) {
     return (
-      <Paper mah={'65vh'}>
+      <Paper mah={'88vh'}>
         <LoadingOverlay visible zIndex={1010} />
       </Paper>
     );
   }
   return (
-    <Stack>
+    <Stack style={{ flex: '1 1 0%', height: '100%', minHeight: 0, overflow: 'hidden' }} justify='space-between'>
       <Boundary label={`ApiForm-${id}`}>
         {/* Show loading overlay while fetching fields */}
         {/* zIndex used to force overlay on top of modal header bar */}
         <LoadingOverlay visible={isLoading} zIndex={1010} />
 
-        {/* Attempt at making fixed footer with scroll area */}
+        {/* Scrollable body with pinned footer */}
         <Paper
-          mah={'65vh'}
           style={{
+            flex: '1 1 0%',
+            minHeight: 0,
             overflowY: 'auto',
-            paddingRight: '15px',
-            paddingBottom: '10px',
-            paddingLeft: '5px'
+            overflowX: 'hidden',
+            paddingRight: '6px',
+            paddingBottom: '4px',
+            paddingLeft: '2px',
+            backgroundColor: 'transparent'
           }}
         >
-          <div>
+          <div style={{ fontSize: '12px' }}>
             {/* Form Fields */}
-            <Stack gap='sm'>
+            <Stack gap='xs'>
               {(!isValid || nonFieldErrors.length > 0) && (
                 <Alert radius='sm' color='red' title={t`Form Error`}>
                   {nonFieldErrors.length > 0 ? (
@@ -739,22 +764,141 @@ export function ApiForm({
               </Boundary>
               <Boundary label={`ApiForm-${id}-FormContent`}>
                 <FormProvider {...form}>
-                  <Stack gap='xs'>
-                    {Object.entries(fields).map(([fieldName, field]) => {
-                      return (
-                        <ApiFormField
-                          key={fieldName}
-                          fieldName={fieldName}
-                          definition={field}
-                          control={form.control}
-                          url={url}
-                          navigate={navigate}
-                          setFields={setFields}
-                          onKeyDown={onFieldKeyDown}
-                        />
-                      );
-                    })}
-                  </Stack>
+                  {booleanFields.length >= 3 ? (
+                    <Grid gap='md'>
+                      {/* Left Panel: Regular Inputs in 2-column layout */}
+                      <Grid.Col span={{ base: 12, md: 7 }}>
+                        <Grid gap='xs'>
+                          {regularFields.map(([fieldName, field]) => {
+                            const isFullWidth =
+                              field.field_type === 'table' ||
+                              field.field_type === 'dependent field' ||
+                              field.field_type === 'json';
+
+                            return (
+                              <Grid.Col
+                                key={fieldName}
+                                span={isFullWidth ? 12 : { base: 12, sm: 6 }}
+                              >
+                                <ApiFormField
+                                  fieldName={fieldName}
+                                  definition={field}
+                                  control={form.control}
+                                  url={url}
+                                  navigate={navigate}
+                                  setFields={setFields}
+                                  onKeyDown={onFieldKeyDown}
+                                />
+                              </Grid.Col>
+                            );
+                          })}
+                        </Grid>
+                      </Grid.Col>
+
+                      {/* Right Panel: Options & Flags in 2 columns + Accordions */}
+                      <Grid.Col span={{ base: 12, md: 5 }}>
+                        <Stack gap='xs'>
+                          <Paper
+                            withBorder
+                            p='xs'
+                            radius='sm'
+                            style={{ backgroundColor: 'var(--mantine-color-default)' }}
+                          >
+                            <Group justify='space-between' mb='xs'>
+                              <Text size='xs' fw={700} c='dimmed' tt='uppercase'>
+                                {t`Options & Settings`}
+                              </Text>
+                              <Badge size='xs' variant='light' color='blue'>
+                                {booleanFields.length}
+                              </Badge>
+                            </Group>
+                            <SimpleGrid cols={2} spacing='xs'>
+                              {booleanFields.map(([fieldName, field]) => (
+                                <Tooltip
+                                  key={fieldName}
+                                  label={field.description || field.label || fieldName}
+                                  disabled={!field.description}
+                                  multiline
+                                  w={260}
+                                  withArrow
+                                  position='top'
+                                  openDelay={150}
+                                >
+                                  <Paper
+                                    radius='sm'
+                                    withBorder
+                                    style={{
+                                      backgroundColor: 'var(--mantine-color-body)',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      minHeight: '28px',
+                                      padding: '2px 8px'
+                                    }}
+                                  >
+                                    <ApiFormField
+                                      fieldName={fieldName}
+                                      definition={{
+                                        ...field,
+                                        description: undefined
+                                      }}
+                                      control={form.control}
+                                      url={url}
+                                      navigate={navigate}
+                                      setFields={setFields}
+                                      onKeyDown={onFieldKeyDown}
+                                    />
+                                  </Paper>
+                                </Tooltip>
+                              ))}
+                            </SimpleGrid>
+                          </Paper>
+
+                          {nestedFields.map(([fieldName, field]) => (
+                            <ApiFormField
+                              key={fieldName}
+                              fieldName={fieldName}
+                              definition={field}
+                              control={form.control}
+                              url={url}
+                              navigate={navigate}
+                              setFields={setFields}
+                              onKeyDown={onFieldKeyDown}
+                            />
+                          ))}
+                        </Stack>
+                      </Grid.Col>
+                    </Grid>
+                  ) : (
+                    <Grid gap='xs'>
+                      {visibleFields.map(([fieldName, field]) => {
+                        const isFullWidth =
+                          fieldName === 'description' ||
+                          fieldName === 'notes' ||
+                          fieldName === 'comments' ||
+                          field.field_type === 'nested object' ||
+                          field.field_type === 'table' ||
+                          field.field_type === 'dependent field' ||
+                          field.field_type === 'json';
+
+                        return (
+                          <Grid.Col
+                            key={fieldName}
+                            span={isFullWidth ? 12 : { base: 12, sm: 6 }}
+                          >
+                            <ApiFormField
+                              fieldName={fieldName}
+                              definition={field}
+                              control={form.control}
+                              url={url}
+                              navigate={navigate}
+                              setFields={setFields}
+                              onKeyDown={onFieldKeyDown}
+                            />
+                          </Grid.Col>
+                        );
+                      })}
+                    </Grid>
+                  )}
                 </FormProvider>
               </Boundary>
               <Boundary label={`ApiForm-${id}-PostFormContent`}>
@@ -765,20 +909,21 @@ export function ApiForm({
         </Paper>
 
         {/* Footer with Action Buttons */}
-        <Divider />
-        <Group justify='space-between'>
+        <Divider style={{ flexShrink: 0, marginTop: '4px', marginBottom: '6px' }} />
+        <Group justify='space-between' style={{ flexShrink: 0, minHeight: '34px' }}>
           <Group justify='left'>
             {props.keepOpenOption && (
               <KeepFormOpenSwitch onChange={onKeepOpenChange} />
             )}
           </Group>
-          <Group justify='right'>
+          <Group justify='right' gap='xs'>
             {props.actions?.map((action, i) => (
               <Button
                 key={`${i}-${action.text}`}
                 onClick={action.onClick}
                 variant={action.variant ?? 'outline'}
                 radius='sm'
+                size='xs'
                 color={action.color}
               >
                 {action.text}
@@ -788,6 +933,7 @@ export function ApiForm({
               onClick={form.handleSubmit(submitForm, onFormError)}
               variant='filled'
               radius='sm'
+              size='xs'
               color={props.submitColor ?? 'green'}
               disabled={isLoading || (props.fetchInitialData && !isDirty)}
             >

@@ -50,7 +50,7 @@ function BooleanFieldComponent({
       id={fieldId}
       aria-label={`boolean-field-${fieldName}`}
       radius='lg'
-      size='sm'
+      size={(definition as any).size ?? 'xs'}
       error={definition.error ?? error?.message}
       onChange={handleChange}
     />

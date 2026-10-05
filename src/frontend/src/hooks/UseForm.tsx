@@ -76,10 +76,11 @@ export function useApiFormModal(props: ApiFormModalProps) {
       });
     },
     closeOnClickOutside: formProps.closeOnClickOutside,
-    size: props.size ?? 'xl',
+    size:
+      props.size ??
+      (Object.keys(props.fields ?? {}).length > 6 ? '95%' : 'xl'),
     children: (
-      <Stack gap={'xs'}>
-        <Divider />
+      <Stack gap={0} style={{ flex: '1 1 0%', minHeight: 0, height: '100%', overflow: 'hidden' }}>
         <OptionsApiForm props={formProps} id={modalId} opened={isOpen} />
       </Stack>
     )

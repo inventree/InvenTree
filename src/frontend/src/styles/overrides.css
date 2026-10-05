@@ -35,3 +35,136 @@
 .mantine-datatable-resize-locked {
   width: 100% !important;
 }
+
+/* ==========================================================================
+   95% Screen Width & Height Modal (Full-View, No-Scroll Density)
+   ========================================================================== */
+
+.modal-95 {
+  --modal-size: 95vw !important;
+  --modal-y-offset: 2.5vh !important;
+  --modal-x-offset: 2.5vw !important;
+  --modal-inner-y-offset: 2.5vh !important;
+  --modal-inner-x-offset: 2.5vw !important;
+}
+
+.modal-95 [class*="Modal-inner"],
+.modal-95 .mantine-Modal-inner {
+  padding: 2.5vh 2.5vw !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+}
+
+.modal-95 [class*="Modal-content"],
+.modal-95 .mantine-Modal-content,
+.modal-95 section[role="dialog"] {
+  width: 95vw !important;
+  min-width: 95vw !important;
+  max-width: 95vw !important;
+  height: 95vh !important;
+  min-height: 95vh !important;
+  max-height: 95vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  border-radius: 8px !important;
+}
+
+.modal-95 [class*="Modal-header"],
+.modal-95 .mantine-Modal-header {
+  padding: 8px 16px !important;
+  min-height: 40px !important;
+  height: 40px !important;
+  flex-shrink: 0 !important;
+  border-bottom: 1px solid var(--mantine-color-default-border) !important;
+}
+
+.modal-95 [class*="Modal-body"],
+.modal-95 .mantine-Modal-body {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding: 8px 16px 10px 16px !important;
+}
+
+/* Compact input typography and spacing in modal-95 */
+.modal-95 label,
+.modal-95 [class*="InputWrapper-label"] {
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  margin-bottom: 1px !important;
+  line-height: 1.2 !important;
+}
+
+.modal-95 [class*="InputWrapper-description"] {
+  font-size: 10px !important;
+  line-height: 1.15 !important;
+  margin-bottom: 2px !important;
+  color: var(--mantine-color-dimmed) !important;
+}
+
+.modal-95 input,
+.modal-95 select,
+.modal-95 textarea,
+.modal-95 [class*="Input-input"] {
+  min-height: 28px !important;
+  height: 28px !important;
+  font-size: 12px !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+.modal-95 [class*="TagsInput-pill"] {
+  height: 20px !important;
+  font-size: 11px !important;
+}
+
+.modal-95 [class*="Input-section"] {
+  width: 26px !important;
+}
+
+.modal-95 [class*="Accordion-control"] {
+  padding: 6px 12px !important;
+  min-height: 32px !important;
+}
+
+.modal-95 [class*="Accordion-label"] {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+.modal-95 [class*="Accordion-content"] {
+  padding: 8px 12px !important;
+}
+
+.modal-95 [class*="Switch-root"] {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.modal-95 [class*="Switch-label"] {
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  padding-left: 8px !important;
+  cursor: pointer !important;
+}
+
+.modal-95 [class*="Switch-track"] {
+  cursor: pointer !important;
+  min-width: 30px !important;
+  width: 30px !important;
+  height: 17px !important;
+}
+
+.modal-95 [class*="Switch-thumb"] {
+  width: 13px !important;
+  height: 13px !important;
+}
+
