@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { createApi } from '../api';
 import { test } from '../baseFixtures';
 import { adminuser } from '../defaults';
@@ -183,4 +183,43 @@ test('Barcode Scanning - Forms', async ({ browser }) => {
     .fill('INV-SL37');
   await page.getByRole('button', { name: 'Scan', exact: true }).click();
   await page.getByText('Offsite Storage').waitFor();
+});
+
+test('Barcode Scanning - Duplicate parts allowed', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'scan/' });
+  await page.evaluate(() => localStorage.removeItem('scan-history'));
+  await page.reload();
+
+  await scan(page, '{"part": 1}');
+  await scan(page, '{"part": 1}');
+
+  await expect(page.getByRole('cell', { name: 'part', exact: true })).toHaveCount(
+    2
+  );
+  await expect(page.getByText('Item already scanned')).toHaveCount(0);
+});
+
+test('Barcode Scanning - Create stock for selected parts', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, { url: 'scan/' });
+  await page.evaluate(() => localStorage.removeItem('scan-history'));
+  await page.reload();
+
+  await scan(page, '{"part": 1}');
+  await scan(page, '{"part": 1}');
+
+  await page.getByRole('checkbox', { name: 'Select all records' }).check();
+  await page.getByText('2 items selected').waitFor();
+
+  await page
+    .getByLabel('action-button-create-stock-items-for-selected-parts')
+    .click();
+
+  await page.getByRole('dialog').getByText('Create Stock Items').waitFor();
+  await page
+    .getByText(
+      'Creating stock items for 2 parts with the same quantity and location'
+    )
+    .waitFor();
 });
