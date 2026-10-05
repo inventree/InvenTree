@@ -5927,6 +5927,10 @@ msgstr ""
 msgid "Allocated"
 msgstr ""
 
+#: src/tables/build/BuildLineTable.tsx:83
+msgid "Allocated part differs from the BOM part"
+msgstr ""
+
 #: src/tables/build/BuildLineTable.tsx:44
 msgid "Show allocated lines"
 msgstr ""
