@@ -35,7 +35,7 @@ def load_data_file(data_file, file_format=None):
     if hasattr(file_object, 'open'):
         file_object.open(
             'rb'
-        ) # opens the file in binary mode so other storage backends work
+        )  # opens the file in binary mode so other storage backends work
 
     file_object.seek(0)
 
