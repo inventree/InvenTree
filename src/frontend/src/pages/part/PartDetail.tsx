@@ -797,83 +797,87 @@ export default function PartDetail() {
       {stockAdjustActions.modals.map((modal) => modal.modal)}
       <InstanceDetail query={instanceQuery} requiredRole={UserRoles.part}>
         <Stack gap='xs'>
-          {user.hasViewRole(UserRoles.part_category) && (
-            <NavigationTree
-              title={t`Part Categories`}
-              childIdentifier='subcategories'
-              modelType={ModelType.partcategory}
-              endpoint={ApiEndpoints.category_tree}
-              opened={treeOpen}
-              onClose={() => {
-                setTreeOpen(false);
-              }}
-              selectedId={part?.category}
-            />
-          )}
-          <PageDetail
-            title={`${t`Part`}: ${part.full_name}`}
-            icon={
-              lockingEnabled ? (
-                <ActionIcon
-                  aria-label='part-lock-icon'
-                  variant='transparent'
-                  disabled={!user.hasChangeRole(UserRoles.part)}
-                  onClick={() => {
-                    const locking = !part.locked;
-                    api
-                      .patch(apiUrl(ApiEndpoints.part_list, part.pk), {
-                        locked: locking
-                      })
-                      .then(() => {
-                        notifications.hide('part-lock');
-                        notifications.show({
-                          id: 'part-lock',
-                          message: locking ? t`Part locked` : t`Part unlocked`,
-                          color: 'green',
-                          icon: locking ? (
-                            <IconLock size='1rem' />
-                          ) : (
-                            <IconLockOpen size='1rem' />
-                          )
-                        });
-                        refreshInstance();
-                      });
-                  }}
-                >
-                  {part?.locked ? <IconLock /> : <IconLockOpen />}
-                </ActionIcon>
-              ) : undefined
-            }
-            subtitle={part.description}
-            imageUrl={part.image}
-            thumbnailUrl={part.thumbnail}
-            badges={badges}
-            breadcrumbs={
-              user.hasViewRole(UserRoles.part_category)
-                ? breadcrumbs
-                : undefined
-            }
-            lastCrumb={[
-              {
-                name: part.name,
-                url: `/part/${part.pk}/`
-              }
-            ]}
-            breadcrumbAction={() => {
-              setTreeOpen(true);
+          <NavigationTree
+            hidden={!user.hasViewRole(UserRoles.part_category)}
+            title={t`Part Categories`}
+            childIdentifier='subcategories'
+            modelType={ModelType.partcategory}
+            endpoint={ApiEndpoints.category_tree}
+            opened={treeOpen}
+            onClose={() => {
+              setTreeOpen(false);
             }}
-            editAction={editPart.open}
-            editEnabled={user.hasChangeRole(UserRoles.part)}
-            actions={partActions}
-          />
-          <PanelGroup
-            pageKey='part'
-            panels={partPanels}
-            instance={part}
-            reloadInstance={refreshInstance}
-            model={ModelType.part}
-            id={part.pk}
-          />
+            selectedId={part?.category}
+          >
+            <Stack gap='xs'>
+              <PageDetail
+                title={`${t`Part`}: ${part.full_name}`}
+                icon={
+                  lockingEnabled ? (
+                    <ActionIcon
+                      aria-label='part-lock-icon'
+                      variant='transparent'
+                      disabled={!user.hasChangeRole(UserRoles.part)}
+                      onClick={() => {
+                        const locking = !part.locked;
+                        api
+                          .patch(apiUrl(ApiEndpoints.part_list, part.pk), {
+                            locked: locking
+                          })
+                          .then(() => {
+                            notifications.hide('part-lock');
+                            notifications.show({
+                              id: 'part-lock',
+                              message: locking
+                                ? t`Part locked`
+                                : t`Part unlocked`,
+                              color: 'green',
+                              icon: locking ? (
+                                <IconLock size='1rem' />
+                              ) : (
+                                <IconLockOpen size='1rem' />
+                              )
+                            });
+                            refreshInstance();
+                          });
+                      }}
+                    >
+                      {part?.locked ? <IconLock /> : <IconLockOpen />}
+                    </ActionIcon>
+                  ) : undefined
+                }
+                subtitle={part.description}
+                imageUrl={part.image}
+                thumbnailUrl={part.thumbnail}
+                badges={badges}
+                breadcrumbs={
+                  user.hasViewRole(UserRoles.part_category)
+                    ? breadcrumbs
+                    : undefined
+                }
+                lastCrumb={[
+                  {
+                    name: part.name,
+                    url: `/part/${part.pk}/`
+                  }
+                ]}
+                breadcrumbAction={() => {
+                  setTreeOpen(true);
+                }}
+                editAction={editPart.open}
+                editEnabled={user.hasChangeRole(UserRoles.part)}
+                actions={partActions}
+              />
+              <PanelGroup
+                pageKey='part'
+                panels={partPanels}
+                instance={part}
+                reloadInstance={refreshInstance}
+                model={ModelType.part}
+                id={part.pk}
+              />
+            </Stack>
+          </NavigationTree>
         </Stack>
       </InstanceDetail>
     </>

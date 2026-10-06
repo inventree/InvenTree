@@ -318,30 +318,34 @@ export default function CategoryDetail() {
               setTreeOpen(false);
             }}
             selectedId={category?.pk}
-          />
-          <PageDetail
-            title={(category?.name ?? id) ? t`Part Category` : t`Parts`}
-            subtitle={category?.description}
-            icon={category?.icon && <ApiIcon name={category?.icon} />}
-            breadcrumbs={breadcrumbs}
-            breadcrumbAction={() => {
-              setTreeOpen(true);
-            }}
-            actions={categoryActions}
-            editAction={editCategory.open}
-            editEnabled={
-              !!category?.pk && user.hasChangePermission(ModelType.partcategory)
-            }
-          />
-          <PanelGroup
-            pageKey='partcategory'
-            panels={panels}
-            model={ModelType.partcategory}
-            instance={category}
-            reloadInstance={refreshInstance}
-            id={category.pk ?? null}
-            defaultPanel={defaultPanel}
-          />
+          >
+            <Stack gap='xs'>
+              <PageDetail
+                title={(category?.name ?? id) ? t`Part Category` : t`Parts`}
+                subtitle={category?.description}
+                icon={category?.icon && <ApiIcon name={category?.icon} />}
+                breadcrumbs={breadcrumbs}
+                breadcrumbAction={() => {
+                  setTreeOpen(true);
+                }}
+                actions={categoryActions}
+                editAction={editCategory.open}
+                editEnabled={
+                  !!category?.pk &&
+                  user.hasChangePermission(ModelType.partcategory)
+                }
+              />
+              <PanelGroup
+                pageKey='partcategory'
+                panels={panels}
+                model={ModelType.partcategory}
+                instance={category}
+                reloadInstance={refreshInstance}
+                id={category.pk ?? null}
+                defaultPanel={defaultPanel}
+              />
+            </Stack>
+          </NavigationTree>
         </Stack>
       </InstanceDetail>
     </>

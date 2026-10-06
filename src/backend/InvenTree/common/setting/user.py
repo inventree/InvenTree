@@ -255,6 +255,12 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'NAVIGATION_TREE_PINNED': {
+        'name': _('Pin Navigation Tree'),
+        'description': _('Display navigation tree permanently'),
+        'default': False,
+        'validator': bool,
+    },
     'SHOW_EXTRA_MODEL_INFO': {
         'name': _('Show Extra Model Information'),
         'description': _('Display extra information in model selection dropdowns'),
