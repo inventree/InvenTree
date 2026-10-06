@@ -416,7 +416,7 @@ export default function NavigationTree({
     <Stack gap='xs' pos='relative'>
       <TextInput
         aria-label='nav-tree-search'
-        placeholder={t`Search...`}
+        placeholder={t`Filter ${{ title }}...`}
         value={searchValue}
         onChange={(event) => setSearchValue(event.currentTarget.value)}
         leftSection={<IconSearch size={16} />}
