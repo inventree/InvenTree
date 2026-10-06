@@ -141,7 +141,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-pkgr:
-    # if: github.repository == 'inventree/InvenTree'
+    if: github.repository == 'inventree/InvenTree'
     name: ${{ matrix.target }}
     runs-on: ubuntu-latest
     needs: [build]
