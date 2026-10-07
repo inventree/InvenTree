@@ -44,6 +44,7 @@ import { useUserState } from '../../states/UserState';
 import { ScanButton } from '../buttons/ScanButton';
 import { SpotlightButton } from '../buttons/SpotlightButton';
 import { Alerts, errorCodeLink } from './Alerts';
+import { FirstUseTour } from './FirstUseTour';
 import { MainMenu } from './MainMenu';
 import { NavHoverMenu } from './NavHoverMenu';
 import { NavigationDrawer } from './NavigationDrawer';
@@ -180,9 +181,10 @@ export function Header() {
           closeNotificationDrawer();
         }}
       />
+      <FirstUseTour />
       <Container className={classes.layoutHeaderSection} size='100%'>
         <Group justify='space-between'>
-          <Group>
+          <Group id='tipp-ftu-nav1'>
             <NavHoverMenu openDrawer={openNavDrawer} />
             <NavTabs />
           </Group>
@@ -198,12 +200,15 @@ export function Header() {
                 onClick={openSearchDrawer}
                 variant='transparent'
                 aria-label='open-search'
+                id='tipp-ftu-search'
               >
                 <IconSearch />
               </ActionIcon>
             </Tooltip>
             {userSettings.isSet('SHOW_SPOTLIGHT') && <SpotlightButton hotkey />}
-            {globalSettings.isSet('BARCODE_ENABLE') && <ScanButton hotkey />}
+            {globalSettings.isSet('BARCODE_ENABLE') && (
+              <ScanButton hotkey id='tipp-ftu-barcode' />
+            )}
             <Indicator
               radius='lg'
               size='18'
@@ -217,6 +222,7 @@ export function Header() {
                   onClick={openNotificationDrawer}
                   variant='transparent'
                   aria-label='open-notifications'
+                  id='tipp-ftu-notif'
                 >
                   <IconBell />
                 </ActionIcon>
@@ -347,6 +353,7 @@ function NavTabs() {
       }}
       // Select either a static or dynamic tab to be highlighted.
       value={dynamicTabValue ?? tabValue}
+      id='tipp-ftu-nav3'
     >
       <Tabs.List>{tabs.map((tab) => tab)}</Tabs.List>
     </Tabs>

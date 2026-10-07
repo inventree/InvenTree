@@ -107,6 +107,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       username: response.data.username,
       groups: response.data.groups,
       profile: response.data.profile,
+      tipps: response.data.tipps,
       roles: response.data?.roles ?? {},
       permissions: response.data?.permissions ?? {},
       is_staff: response.data?.is_staff ?? false,
