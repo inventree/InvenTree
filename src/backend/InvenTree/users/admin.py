@@ -8,7 +8,8 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
-from users.models import ApiToken, Owner, RuleSet
+from common.admin import ReadOnlyAdmin
+from users.models import ApiToken, Owner, RuleSet, TippResult
 from users.ruleset import RULESET_CHOICES
 
 User = get_user_model()
@@ -168,3 +169,4 @@ class OwnerAdmin(admin.ModelAdmin):
 
 admin.site.unregister(User)
 admin.site.register(User, InvenTreeUserAdmin)
+admin.site.register(TippResult, ReadOnlyAdmin)
