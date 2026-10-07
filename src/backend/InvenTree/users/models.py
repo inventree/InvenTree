@@ -838,10 +838,10 @@ class TippResult(InvenTree.models.MetadataMixin):
     def __str__(self):
         """Return string representation of the tipp result."""
         if self.finished:
-            return f'{self.tipp_id} (Finished)'
+            return f'{self.user}: {self.tipp_id} (Finished)'
         if self.shown:
-            return f'{self.tipp_id} (Shown)'
-        return self.tipp_id
+            return f'{self.user}: {self.tipp_id} (Shown)'
+        return f'{self.user}: {self.tipp_id}'
 
     @classmethod
     def backfill(cls, user):
