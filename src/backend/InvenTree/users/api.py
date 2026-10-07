@@ -36,7 +36,7 @@ from InvenTree.mixins import (
 )
 from InvenTree.schema import exclude_from_schema
 from InvenTree.settings import FRONTEND_URL_BASE
-from users.models import ApiToken, Owner, RuleSet, UserProfile
+from users.models import ApiToken, Owner, RuleSet, TippResult, UserProfile
 from users.serializers import (
     ApiTokenSerializer,
     ExtendedUserSerializer,
@@ -46,6 +46,7 @@ from users.serializers import (
     OwnerSerializer,
     RoleSerializer,
     RuleSetSerializer,
+    TippResultSerializer,
     UserCreateSerializer,
     UserProfileSerializer,
     UserSetPasswordSerializer,
@@ -572,6 +573,19 @@ class UserProfileDetail(RetrieveUpdateAPI):
         return self.request.user.profile
 
 
+class TippResultDetail(RetrieveUpdateAPI):
+    """Detail endpoint for tipp result manipulation."""
+
+    queryset = TippResult.objects.all()
+    serializer_class = TippResultSerializer
+    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+
+    def get_queryset(self):
+        """Limit retrieval and updates to results owned by the current user."""
+        TippResult.backfill(self.request.user)
+        return super().get_queryset().filter(user=self.request.user)
+
+
 user_urls = [
     # Legacy endpoints (to avoid breaking existing API clients)
     # TODO @matmair - remove these legacy endpoints in the next breaking release
@@ -601,6 +615,7 @@ user_urls = [
             path(
                 'token/', ensure_csrf_cookie(GetAuthToken.as_view()), name='api-token'
             ),
+            path('tipps/', TippResultDetail.as_view(), name='api-user-tipp'),
             path('', MeUserDetail.as_view(), name='api-user-me'),
         ]),
     ),
