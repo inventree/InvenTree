@@ -547,9 +547,9 @@ django-stubs-ext==6.1.1 \
     #   -c src/backend/requirements-dev.txt
     #   -c src/backend/requirements.txt
     #   django-stubs
-django-test-migrations==1.6.0 \
-    --hash=sha256:a36e13d3f6cb139707896a8e5acefa0fbb24df0ee19e4f986e37faa8ef858819 \
-    --hash=sha256:ecff93a5aa8bbcba9862a057c658c4ca35d92848253ca5cb47bad372c81d528f
+django-test-migrations==1.7.0 \
+    --hash=sha256:409d5437f7a2a9a47c4c9384902c8fa6d072c142f73b1d75a6df310831f9edea \
+    --hash=sha256:9b199fa3817b28846455d8a13434eed44d15cd1bd89a5144902f8e5212bc1199
     # via
     #   -c src/backend/requirements-dev.txt
     #   -r src/backend/requirements-dev.in
@@ -1027,7 +1027,6 @@ typing-extensions==4.16.0 \
     #   anyio
     #   django-stubs
     #   django-stubs-ext
-    #   django-test-migrations
     #   pydantic
     #   pydantic-core
     #   typing-inspection
