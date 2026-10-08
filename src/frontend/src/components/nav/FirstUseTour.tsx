@@ -4,46 +4,18 @@ import { Tour } from '@mantine/core';
 import { Button, Group, Text, rem } from '@mantine/core';
 import { useWindowEvent } from '@mantine/hooks';
 import { type NotificationData, notifications } from '@mantine/notifications';
-import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-
-const ftusteps = [
-  {
-    target: 'tipp-ftu-search',
-    title: t`Search`,
-    description: t`Click the beacon to see this tooltip.`
-  },
-  {
-    target: 'tipp-ftu-cmd',
-    title: t`Command Palette`,
-    description: t`This is the second beacon tooltip.`
-  },
-  {
-    target: 'tipp-ftu-barcode',
-    title: t`Barcode Scanner`,
-    description: t`This is the second "a" beacon tooltip.`
-  },
-  {
-    target: 'tipp-ftu-notif',
-    title: t`Notifications`,
-    description: t`This is the third beacon tooltip.`
-  },
-  {
-    target: 'tipp-ftu-nav1',
-    title: t`Navigation Area`,
-    description: t`This is the fourth beacon tooltip.`
-  },
-  {
-    target: 'tipp-ftu-nav2',
-    title: t`Navigation Drawer`,
-    description: t`This is the fifth beacon tooltip.`
-  },
-  {
-    target: 'tipp-ftu-nav3',
-    title: t`Main Menu`,
-    description: t`This is the sixth beacon tooltip.`
-  }
-];
 
 export function FirstUseTour() {
   const { user, done_tipps } = useUserState();
@@ -51,7 +23,59 @@ export function FirstUseTour() {
     done_tipps?.includes('org.inventree.i.tipp.ftue') ?? false;
   const [active, setActive] = useState(false);
   const [notificationId, setNotificationId] = useState<string | null>(null);
+  const globalSettings = useGlobalSettingsState();
+  const userSettings = useUserSettingsState();
   const showNudge = !!user && !hasCompletedFtu;
+
+  const ftusteps = useMemo(() => {
+    const _steps = [
+      {
+        target: 'tipp-ftu-search',
+        title: t`Search`,
+        description: t`Click the beacon to see this tooltip.`
+      }
+    ];
+    if (userSettings.isSet('SHOW_SPOTLIGHT')) {
+      _steps.push({
+        target: 'tipp-ftu-cmd',
+        title: t`Command Palette`,
+        description: t`This is the second beacon tooltip.`
+      });
+    }
+
+    if (globalSettings.isSet('BARCODE_ENABLE')) {
+      _steps.push({
+        target: 'tipp-ftu-barcode',
+        title: t`Barcode Scanner`,
+        description: t`This is the second "a" beacon tooltip.`
+      });
+    }
+
+    _steps.push(
+      {
+        target: 'tipp-ftu-notif',
+        title: t`Notifications`,
+        description: t`This is the third beacon tooltip.`
+      },
+      {
+        target: 'tipp-ftu-nav1',
+        title: t`Navigation Area`,
+        description: t`This is the fourth beacon tooltip.`
+      },
+      {
+        target: 'tipp-ftu-nav2',
+        title: t`Navigation Drawer`,
+        description: t`This is the fifth beacon tooltip.`
+      },
+      {
+        target: 'tipp-ftu-nav3',
+        title: t`Main Menu`,
+        description: t`This is the sixth beacon tooltip.`
+      }
+    );
+
+    return _steps;
+  }, [userSettings, globalSettings]);
 
   const completeTour = () => {
     setActive(false);
