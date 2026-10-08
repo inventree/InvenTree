@@ -293,9 +293,9 @@ jsbeautifier==2.0.3 \
     --hash=sha256:9579d4e9dbaa00383f3efdff4c98c8140bb85ba319398e8b97cdaba27abd6ba3 \
     --hash=sha256:f0190e279a2cdb827556ada63f41c9c63c11f8116ee06e264b24aa50311cbee3
     # via mkdocs-mermaid2-plugin
-markdown==3.10.3 \
-    --hash=sha256:3589362618f743188b4d955b874402bc814f4f83f544dc207719f4baa7d9c45f \
-    --hash=sha256:fa6c92a00a4a3c98b22728c64a935ae1928250ae65058a6ded814d2cc29a4cea
+markdown==3.11 \
+    --hash=sha256:180224db6aed87ba9ce1f2781ebcd5826253de8ff637112090e24b84502bbf9f \
+    --hash=sha256:cd6c89e7eb308c8b332ed673215a52d208a43f8bacc030b1419376129408719e
     # via
     #   -c src/backend/requirements.txt
     #   mkdocs
@@ -507,9 +507,9 @@ pathspec==1.1.1 \
     #   mkdocs
     #   mkdocs-macros-plugin
     #   properdocs
-platformdirs==4.11.10 \
-    --hash=sha256:973c4c082b964958c71588448488d2b14fb253893dfbdb82325a14c84e540e8f \
-    --hash=sha256:9cd351c078ccf7dda1fdc5f8ccb9d8f5258984c63990e6df3627dde0b70b51d0
+platformdirs==4.11.14 \
+    --hash=sha256:0e706ec0a73a4ec023d11496153a4b6607a672f4b5027c23c3aefa9c9288c523 \
+    --hash=sha256:c1b1a1eab4f4d1b0eb81754593f1c38de88e84ebe6f93bf6714706a6759074b1
     # via
     #   -c src/backend/requirements.txt
     #   mkdocs-get-deps
