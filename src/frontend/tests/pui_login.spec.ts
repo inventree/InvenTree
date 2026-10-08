@@ -44,7 +44,7 @@ const loginAndMeasure = async (page: Page): Promise<number> => {
   const start = Date.now();
   await page.getByRole('button', { name: 'Log In' }).click();
 
-  // await page.getByRole('link', { name: 'Dashboard' }).waitFor();
+  await page.getByRole('link', { name: 'Dashboard' }).waitFor();
   await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
   await page.waitForURL(/\/web(\/home)?/);
   await page.waitForLoadState('networkidle');
