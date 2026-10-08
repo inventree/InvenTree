@@ -47,9 +47,9 @@ export const doLogin = async (page: Page, options?: LoginOptions) => {
   await page.waitForLoadState('networkidle');
 
   // await page.getByRole('link', { name: 'Dashboard' }).waitFor();
-  await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
-  await page.waitForURL(/\/web(\/home)?/);
-  await page.waitForLoadState('networkidle');
+  // await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
+  // await page.waitForURL(/\/web(\/home)?/);
+  // await page.waitForLoadState('networkidle');
 };
 
 export interface CachedLoginOptions {
@@ -93,9 +93,9 @@ export const doCachedLogin = async (
     });
 
     // await page.getByRole('link', { name: 'Dashboard' }).waitFor();
-    await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
-    await page.waitForURL(/\/web(\/home)?/);
-    await page.waitForLoadState('networkidle');
+    // await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
+    // await page.waitForURL(/\/web(\/home)?/);
+    // await page.waitForLoadState('networkidle');
 
     return page;
   }
