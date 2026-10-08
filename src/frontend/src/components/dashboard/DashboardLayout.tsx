@@ -34,6 +34,15 @@ const BREAKPOINT_COLS: Record<string, number> = {
   xxs: 2
 };
 
+const REMOVED_WIDGET_LABELS = new Set([
+  'dash-traffic-source',
+  'dash-access-logs',
+  'dash-profit-cat',
+  'dash-order-summary',
+  'dash-stock-level',
+  'dash-restock'
+]);
+
 function getDefaultWidgetWidth(
   widget: DashboardWidgetProps | undefined,
   cols: number
@@ -47,6 +56,7 @@ function getDefaultWidgetWidth(
   }
   // Standard metric / stat widgets: 4 per row on 12-col grid
   if (cols >= 12) return 3;
+  if (cols === 10) return 5;
   if (cols >= 6) return 3;
   if (cols >= 4) return 2;
   return cols;
@@ -96,15 +106,80 @@ function normalizeLayoutHorizontally(
     layout.filter((item) => item.x === 0 && (item.w ?? 1) <= 2).length >=
       layout.length - 1;
 
-  if (!isStackedBuggy) {
+  // Check if any metric/query widgets have mismatched height (< 2) or mismatched width compared to standard grid defaults
+  const hasMismatchedWidgets = layout.some((item) => {
+    if (item.i === 'dash-stats' || item.i === 'news' || item.i === 'gstart') {
+      return false;
+    }
+    const widget = widgetsList.find((w) => w.label === item.i);
+    const expectedW = getDefaultWidgetWidth(widget, cols);
+    const expectedH = getDefaultWidgetHeight(widget);
+    return (item.h ?? 1) < expectedH || (item.w ?? 1) !== expectedW;
+  });
+
+  // Check if standard widgets have diagonal staircasing or unnecessary vertical gaps
+  const isScatteredOrGapped = (() => {
+    const standardItems = layout.filter(
+      (item) => item.i !== 'dash-stats' && item.i !== 'news' && item.i !== 'gstart'
+    );
+    if (standardItems.length <= 1) return false;
+
+    const specialItems = layout.filter(
+      (item) => item.i === 'dash-stats' || item.i === 'news' || item.i === 'gstart'
+    );
+    const startY = specialItems.reduce(
+      (maxY, item) => Math.max(maxY, (item.y ?? 0) + (item.h ?? 2)),
+      0
+    );
+
+    const maxItemsPerRow = Math.max(1, Math.floor(cols / 3));
+    // If all standard widgets would fit on a single row (<= maxItemsPerRow), but any is placed below startY
+    if (
+      standardItems.length <= maxItemsPerRow &&
+      standardItems.some((item) => (item.y ?? 0) > startY)
+    ) {
+      return true;
+    }
+
+    // Check if any standard widget is on a lower row when preceding rows have empty room
+    return standardItems.some((item) => {
+      const iy = item.y ?? 0;
+      if (iy <= startY) return false;
+      const itemsInEarlierRows = standardItems.filter(
+        (other) => (other.y ?? 0) < iy
+      );
+      const widthUsed = itemsInEarlierRows.reduce(
+        (sum, other) => sum + (other.w ?? 3),
+        0
+      );
+      const availableWidthBefore = Math.floor((iy - startY) / 2) * cols;
+      return widthUsed < availableWidthBefore;
+    });
+  })();
+
+  if (!isStackedBuggy && !hasMismatchedWidgets && !isScatteredOrGapped) {
     return layout;
   }
 
+  // Sort layout items to preserve reading order: special widgets first, then top-to-bottom, left-to-right
+  const sortedLayout = [...layout].sort((a, b) => {
+    const isSpecialA =
+      a.i === 'dash-stats' || a.i === 'news' || a.i === 'gstart';
+    const isSpecialB =
+      b.i === 'dash-stats' || b.i === 'news' || b.i === 'gstart';
+    if (isSpecialA && !isSpecialB) return -1;
+    if (!isSpecialA && isSpecialB) return 1;
+    return (a.y ?? 0) - (b.y ?? 0) || (a.x ?? 0) - (b.x ?? 0);
+  });
+
   const newLayout: Layout[] = [];
-  layout.forEach((item) => {
+  sortedLayout.forEach((item) => {
     const widget = widgetsList.find((w) => w.label === item.i);
-    const w = getDefaultWidgetWidth(widget, cols);
-    const h = getDefaultWidgetHeight(widget);
+    const isSpecial =
+      item.i === 'dash-stats' || item.i === 'news' || item.i === 'gstart';
+
+    const w = isSpecial ? (item.w ?? cols) : getDefaultWidgetWidth(widget, cols);
+    const h = isSpecial ? (item.h ?? 2) : getDefaultWidgetHeight(widget);
     const { x, y } = findNextHorizontalSlot(newLayout, w, h, cols);
     newLayout.push({
       ...item,
@@ -113,7 +188,7 @@ function normalizeLayoutHorizontally(
       w,
       h,
       minW: widget?.minWidth ?? 1,
-      minH: widget?.minHeight ?? 1
+      minH: widget?.minHeight ?? 2
     });
   });
   return newLayout;
@@ -330,39 +405,22 @@ export default function DashboardLayout() {
   );
 
   const overviewWidgetLabels = useMemo(
-    () => [
-      'dash-stats',
-      'dash-traffic-source',
-      'dash-profit-cat',
-      'dash-order-summary',
-      'dash-stock-level',
-      'dash-restock',
-      'dash-access-logs'
-    ],
+    () => ['dash-stats'],
     []
   );
 
   const defaultLayouts: any = useMemo(() => {
     const lgLayouts: Layout[] = [
-      // Top row: Stats (x: 0, w: 9) + Traffic Source (x: 9, w: 3)
-      { w: 9, h: 2, x: 0, y: 0, i: 'dash-stats', minW: 6, minH: 2, moved: false, static: false },
-      { w: 3, h: 7, x: 9, y: 0, i: 'dash-traffic-source', minW: 3, minH: 4, moved: false, static: false },
-      // Middle row: Profit by Category (x: 0, w: 4) + Order Summary (x: 4, w: 5)
-      { w: 4, h: 6, x: 0, y: 2, i: 'dash-profit-cat', minW: 3, minH: 4, moved: false, static: false },
-      { w: 5, h: 6, x: 4, y: 2, i: 'dash-order-summary', minW: 4, minH: 4, moved: false, static: false },
-      // Bottom row: Stock Level (x: 0, w: 4) + Upcoming Restock (x: 4, w: 5)
-      { w: 4, h: 6, x: 0, y: 8, i: 'dash-stock-level', minW: 3, minH: 4, moved: false, static: false },
-      { w: 5, h: 6, x: 4, y: 8, i: 'dash-restock', minW: 4, minH: 4, moved: false, static: false },
-      // Right bottom: Recent Activity / Access Logs (x: 9, w: 3)
-      { w: 3, h: 7, x: 9, y: 7, i: 'dash-access-logs', minW: 3, minH: 4, moved: false, static: false }
+      // Top row: Stats (x: 0, w: 12)
+      { w: 12, h: 2, x: 0, y: 0, i: 'dash-stats', minW: 6, minH: 2, moved: false, static: false }
     ];
 
     if (user.isSuperuser()) {
       lgLayouts.push({
-        w: 6,
+        w: 12,
         h: 4,
         x: 0,
-        y: 14,
+        y: 2,
         i: 'news',
         minW: 4,
         minH: 3,
@@ -372,23 +430,11 @@ export default function DashboardLayout() {
     }
 
     const mdLayouts: Layout[] = [
-      { w: 7, h: 2, x: 0, y: 0, i: 'dash-stats', minW: 5, minH: 2, moved: false, static: false },
-      { w: 3, h: 7, x: 7, y: 0, i: 'dash-traffic-source', minW: 3, minH: 4, moved: false, static: false },
-      { w: 3, h: 6, x: 0, y: 2, i: 'dash-profit-cat', minW: 3, minH: 4, moved: false, static: false },
-      { w: 4, h: 6, x: 3, y: 2, i: 'dash-order-summary', minW: 3, minH: 4, moved: false, static: false },
-      { w: 3, h: 6, x: 0, y: 8, i: 'dash-stock-level', minW: 3, minH: 4, moved: false, static: false },
-      { w: 4, h: 6, x: 3, y: 8, i: 'dash-restock', minW: 3, minH: 4, moved: false, static: false },
-      { w: 3, h: 7, x: 7, y: 7, i: 'dash-access-logs', minW: 3, minH: 4, moved: false, static: false }
+      { w: 10, h: 2, x: 0, y: 0, i: 'dash-stats', minW: 5, minH: 2, moved: false, static: false }
     ];
 
     const smLayouts: Layout[] = [
-      { w: 6, h: 2, x: 0, y: 0, i: 'dash-stats', minW: 3, minH: 2, moved: false, static: false },
-      { w: 6, h: 6, x: 0, y: 2, i: 'dash-profit-cat', minW: 3, minH: 4, moved: false, static: false },
-      { w: 6, h: 6, x: 0, y: 8, i: 'dash-order-summary', minW: 3, minH: 4, moved: false, static: false },
-      { w: 6, h: 6, x: 0, y: 14, i: 'dash-traffic-source', minW: 3, minH: 4, moved: false, static: false },
-      { w: 6, h: 6, x: 0, y: 20, i: 'dash-stock-level', minW: 3, minH: 4, moved: false, static: false },
-      { w: 6, h: 6, x: 0, y: 26, i: 'dash-restock', minW: 3, minH: 4, moved: false, static: false },
-      { w: 6, h: 6, x: 0, y: 32, i: 'dash-access-logs', minW: 3, minH: 4, moved: false, static: false }
+      { w: 6, h: 2, x: 0, y: 0, i: 'dash-stats', minW: 3, minH: 2, moved: false, static: false }
     ];
 
     return {
@@ -417,7 +463,9 @@ export default function DashboardLayout() {
       // Gather active labels: ensure core overview widgets are always included alongside user widgets
       const targetLabels = new Set<string>();
       overviewWidgetLabels.forEach((l) => targetLabels.add(l));
-      remoteWidgets.forEach((l) => targetLabels.add(l));
+      remoteWidgets
+        .filter((l) => !REMOVED_WIDGET_LABELS.has(l))
+        .forEach((l) => targetLabels.add(l));
 
       const loadedWidgets = Array.from(targetLabels)
         .map((label) => availableWidgets.items.find((w) => w.label === label))
@@ -427,13 +475,25 @@ export default function DashboardLayout() {
 
       Object.keys(BREAKPOINT_COLS).forEach((bp) => {
         const bpDefault: Layout[] = defaultLayouts[bp] ?? [];
-        const bpRemote: Layout[] = (remoteLayouts as any)?.[bp] ?? [];
+        const bpRemoteRaw: Layout[] = (remoteLayouts as any)?.[bp] ?? [];
+        const bpRemote: Layout[] = bpRemoteRaw.filter(
+          (item: any) => !REMOVED_WIDGET_LABELS.has(item?.i)
+        );
+
+        const hasLegacyOverview = bpRemoteRaw.some(
+          (item: any) =>
+            REMOVED_WIDGET_LABELS.has(item?.i) ||
+            (bp === 'lg' && item?.i === 'dash-stats' && (item?.w ?? 0) < 12)
+        );
 
         const layoutMap = new Map<string, Layout>();
         bpDefault.forEach((item) => layoutMap.set(item.i, item));
         bpRemote.forEach((item) => {
           if (item && item.i) {
-            // Keep user-positioned widget if valid
+            // Keep user-positioned widget if valid, unless it's a legacy overview item needing updated geometry
+            if (hasLegacyOverview && overviewWidgetLabels.includes(item.i)) {
+              return;
+            }
             layoutMap.set(item.i, item);
           }
         });
@@ -469,6 +529,7 @@ export default function DashboardLayout() {
       setLayouts(fixedLayouts);
       setWidgets(loadedWidgets);
       setLoaded(true);
+      setRemoteLayouts(fixedLayouts);
     }
   }, [availableWidgets.loaded]);
 
@@ -585,7 +646,7 @@ function WidgetGrid(
       layouts={layouts}
       onLayoutChange={onLayoutChange}
       compactType={'vertical'}
-      isDraggable={!removing}
+      isDraggable={editing}
       isResizable={editing}
       draggableCancel='input, textarea, select, .mantine-ActionIcon-root, .mantine-Menu-dropdown'
       margin={[12, 12]}

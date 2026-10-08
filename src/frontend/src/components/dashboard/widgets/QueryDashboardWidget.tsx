@@ -1,4 +1,4 @@
-import { Anchor, Group } from '@mantine/core';
+import { Anchor, Box, Group, Tooltip } from '@mantine/core';
 import { type ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -29,24 +29,33 @@ function QueryWidget({
 
   const onFollowLink = useCallback(
     (event: any) => {
-      if (modelProperties.url_overview) {
+      if (modelProperties?.url_overview) {
         let url = modelProperties.url_overview;
 
-        if (params) {
-          url += '?';
+        if (params && Object.keys(params).length > 0) {
+          const searchParams = new URLSearchParams();
           for (const key in params) {
-            url += `${key}=${params[key]}&`;
+            searchParams.append(key, String(params[key]));
+          }
+          const qs = searchParams.toString();
+          if (qs) {
+            url += `?${qs}`;
           }
         }
 
         navigateToLink(url, navigate, event);
       }
     },
-    [modelProperties, params]
+    [modelProperties, params, navigate]
   );
 
   return (
-    <Anchor href='#' onClick={onFollowLink} underline='never'>
+    <Anchor
+      href='#'
+      onClick={onFollowLink}
+      underline='never'
+      style={{ display: 'block', height: '100%' }}
+    >
       <Group
         gap='xs'
         wrap='nowrap'
@@ -54,9 +63,35 @@ function QueryWidget({
         align='center'
         style={{ height: '100%' }}
       >
-        <Group gap='xs'>
-          <InvenTreeIcon icon={icon ?? modelProperties.icon} />
-          <StylishText size='md'>{title}</StylishText>
+        <Group
+          gap='xs'
+          wrap='nowrap'
+          style={{ minWidth: 0, flex: 1, overflow: 'hidden' }}
+        >
+          <Box
+            className='widget-icon-wrapper'
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: 8,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'rgba(2, 132, 199, 0.08)',
+              border: '1px solid rgba(2, 132, 199, 0.12)',
+              transition: 'all 0.25s ease',
+              flexShrink: 0
+            }}
+          >
+            <InvenTreeIcon icon={icon ?? modelProperties.icon} />
+          </Box>
+          <Tooltip label={title} position='top' withArrow disabled={title.length < 14}>
+            <Box style={{ minWidth: 0, overflow: 'hidden' }}>
+              <StylishText size='sm' truncate='end'>
+                {title}
+              </StylishText>
+            </Box>
+          </Tooltip>
         </Group>
       </Group>
     </Anchor>
@@ -88,7 +123,7 @@ export default function QueryDashboardWidget({
     enabled: enabled,
     modelType: modelType,
     minWidth: 2,
-    minHeight: 1,
+    minHeight: 2,
     render: () => (
       <QueryWidget modelType={modelType} title={title} params={params} />
     )

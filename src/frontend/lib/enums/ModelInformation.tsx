@@ -116,7 +116,7 @@ export const ModelInformationDict: ModelDict = {
   partcategory: {
     label: () => t`Part Category`,
     label_multiple: () => t`Part Categories`,
-    url_overview: '/part/category/parts/subcategories',
+    url_overview: '/part/category/index/subcategories',
     url_detail: '/part/category/:pk/',
     api_endpoint: ApiEndpoints.category_list,
     admin_url: '/part/partcategory/',
@@ -158,7 +158,7 @@ export const ModelInformationDict: ModelDict = {
   build: {
     label: () => t`Build Order`,
     label_multiple: () => t`Build Orders`,
-    url_overview: '/manufacturing/index/buildorders/',
+    url_overview: '/manufacturing/index/buildorder',
     url_detail: '/manufacturing/build-order/:pk/',
     api_endpoint: ApiEndpoints.build_order_list,
     admin_url: '/build/build/',

@@ -26,10 +26,14 @@ const useThematicGradient = () => {
 // A stylish text component that uses the primary color of the theme
 export function StylishText({
   children,
-  size
+  size,
+  truncate,
+  style
 }: Readonly<{
   children: JSX.Element | string;
   size?: MantineSize;
+  truncate?: 'end' | 'start' | boolean;
+  style?: React.CSSProperties;
 }>) {
   const { primary, secondary } = useThematicGradient();
 
@@ -39,6 +43,8 @@ export function StylishText({
       size={size ?? 'xl'}
       variant='gradient'
       gradient={{ from: primary.toString(), to: secondary.toString() }}
+      truncate={truncate}
+      style={{ whiteSpace: 'nowrap', ...style }}
     >
       {children}
     </Text>

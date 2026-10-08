@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Group, RollingNumber } from '@mantine/core';
+import { ActionIcon, Box, Group, RollingNumber, Tooltip } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useCallback, useMemo } from 'react';
@@ -64,24 +64,24 @@ function QueryCountWidget({
 
   const onFollowLink = useCallback(
     (event: any) => {
-      if (!query.isFetched) {
-        return;
-      }
-
-      if (modelProperties.url_overview) {
+      if (modelProperties?.url_overview) {
         let url = modelProperties.url_overview;
 
-        if (params) {
-          url += '?';
+        if (params && Object.keys(params).length > 0) {
+          const searchParams = new URLSearchParams();
           for (const key in params) {
-            url += `${key}=${params[key]}&`;
+            searchParams.append(key, String(params[key]));
+          }
+          const qs = searchParams.toString();
+          if (qs) {
+            url += `?${qs}`;
           }
         }
 
         navigateToLink(url, navigate, event);
       }
     },
-    [query.isFetched, modelProperties, params]
+    [modelProperties, params, navigate]
   );
 
   const result: ReactNode = useMemo(() => {
@@ -101,8 +101,16 @@ function QueryCountWidget({
   return (
     <Box
       onClick={onFollowLink}
+      role='button'
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          onFollowLink(e);
+        }
+      }}
       style={{
         height: '100%',
+        width: '100%',
         cursor: 'pointer',
         userSelect: 'none'
       }}
@@ -112,16 +120,40 @@ function QueryCountWidget({
         wrap='nowrap'
         justify='space-between'
         align='center'
-        style={{ height: '100%' }}
+        style={{ height: '100%', width: '100%' }}
       >
-        <Group gap='xs'>
-          <InvenTreeIcon icon={icon ?? modelProperties.icon} />
-          <StylishText size='md'>{title}</StylishText>
+        <Group
+          gap='xs'
+          wrap='nowrap'
+          style={{ minWidth: 0, flex: 1, overflow: 'hidden' }}
+        >
+          <Box
+            className='widget-icon-wrapper'
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: 8,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'rgba(2, 132, 199, 0.08)',
+              border: '1px solid rgba(2, 132, 199, 0.12)',
+              transition: 'all 0.25s ease',
+              flexShrink: 0
+            }}
+          >
+            <InvenTreeIcon icon={icon ?? modelProperties.icon} />
+          </Box>
+          <Tooltip label={title} position='top' withArrow disabled={title.length < 14}>
+            <Box style={{ minWidth: 0, overflow: 'hidden' }}>
+              <StylishText size='sm' truncate='end'>
+                {title}
+              </StylishText>
+            </Box>
+          </Tooltip>
         </Group>
-        <Group gap='xs' wrap='nowrap' justify='space-apart'>
-          <Group gap='xs' wrap='nowrap' justify='right'>
-            {result}
-          </Group>
+        <Group gap='xs' wrap='nowrap' justify='flex-end' style={{ flexShrink: 0 }}>
+          {result}
         </Group>
       </Group>
     </Box>
@@ -155,7 +187,7 @@ export default function QueryCountDashboardWidget({
     enabled: enabled,
     modelType: modelType,
     minWidth: 2,
-    minHeight: 1,
+    minHeight: 2,
     icon: icon,
     render: () => (
       <QueryCountWidget modelType={modelType} title={title} params={params} />

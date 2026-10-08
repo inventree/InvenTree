@@ -4,20 +4,14 @@ import { ModelType } from '@lib/enums/ModelType';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import type { DashboardWidgetProps } from './DashboardWidget';
-import AccessLogsWidget from './widgets/AccessLogsWidget';
 import ColorToggleDashboardWidget from './widgets/ColorToggleWidget';
 import GetStartedWidget from './widgets/GetStartedWidget';
 import LanguageSelectDashboardWidget from './widgets/LanguageSelectWidget';
 import NewsWidget from './widgets/NewsWidget';
-import OrderSummaryWidget from './widgets/OrderSummaryWidget';
-import ProfitByCategoryWidget from './widgets/ProfitByCategoryWidget';
 import QueryCountDashboardWidget from './widgets/QueryCountDashboardWidget';
 import QueryDashboardWidget from './widgets/QueryDashboardWidget';
 import StatsDashboardWidget from './widgets/StatsDashboardWidget';
-import StockLevelWidget from './widgets/StockLevelWidget';
 import StocktakeDashboardWidget from './widgets/StocktakeDashboardWidget';
-import TrafficSourceWidget from './widgets/TrafficSourceWidget';
-import UpcomingRestockWidget from './widgets/UpcomingRestockWidget';
 
 /**
  *
@@ -259,15 +253,7 @@ function BuiltinActionWidgets(): DashboardWidgetProps[] {
  * Built-in overview dashboard widgets (stats, charts, logs)
  */
 export function BuiltinOverviewWidgets(): DashboardWidgetProps[] {
-  return [
-    StatsDashboardWidget(),
-    ProfitByCategoryWidget(),
-    OrderSummaryWidget(),
-    StockLevelWidget(),
-    UpcomingRestockWidget(),
-    TrafficSourceWidget(),
-    AccessLogsWidget()
-  ];
+  return [StatsDashboardWidget()];
 }
 
 /**

@@ -18,6 +18,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import {
   IconBox,
+  IconBuildingBank,
   IconBuildingFactory2,
   IconBuildingStore,
   IconCategory,
@@ -30,7 +31,6 @@ import {
   IconFileAnalytics,
   IconHelpCircle,
   IconLayoutDashboard,
-  IconLogout,
   IconMoonStars,
   IconPackages,
   IconSettings,
@@ -44,12 +44,11 @@ import {
   IconUsers
 } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
-import { useMatch, useNavigate } from 'react-router-dom';
+import { useLocation, useMatch, useNavigate } from 'react-router-dom';
 
 import { UserRoles } from '@lib/enums/Roles';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { aboutInvenTree } from '../../defaults/links';
-import { doLogout } from '../../functions/auth';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 
@@ -97,6 +96,7 @@ function SidebarItem({
         }
       }}
       data-active={active ? 'true' : 'false'}
+      data-clickable={link || action ? 'true' : 'false'}
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -112,7 +112,7 @@ function SidebarItem({
         fontSize: 13,
         fontWeight: active ? 600 : 400,
         transition: 'all 0.18s ease',
-        cursor: 'pointer'
+        cursor: link || action ? 'pointer' : 'default'
       }}
       className='sidebar-nav-item'
     >
@@ -248,13 +248,92 @@ function SettingsSubMenu() {
           active={isActive('/settings/system')}
         />
       )}
-      <Divider my={3} color='rgba(255,255,255,0.06)' />
-      <SidebarItem
-        icon={<IconLogout size={15} style={{ color: '#fa5252' }} />}
-        label={t`Logout`}
-        action={() => doLogout(navigate)}
-      />
     </Stack>
+  );
+}
+
+function DarkModeToggleItem({
+  isDark,
+  onToggle
+}: Readonly<{
+  isDark: boolean;
+  onToggle: () => void;
+}>) {
+  return (
+    <UnstyledButton
+      onClick={onToggle}
+      aria-label={isDark ? t`Switch to Light Mode` : t`Switch to Dark Mode`}
+      data-clickable='true'
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        padding: '8px 12px',
+        borderRadius: 10,
+        color: SIDEBAR_ITEM_DEFAULT,
+        fontSize: 13,
+        fontWeight: 400,
+        transition: 'all 0.18s ease',
+        cursor: 'pointer',
+        userSelect: 'none'
+      }}
+      className='sidebar-nav-item'
+    >
+      <Group gap={10} wrap='nowrap'>
+        <Box
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            color: isDark ? '#74c0fc' : '#94a3b8',
+            transition: 'color 0.2s ease'
+          }}
+        >
+          <IconMoonStars size={16} style={{ color: isDark ? '#74c0fc' : '#94a3b8' }} />
+        </Box>
+        <Text size='sm' c={SIDEBAR_ITEM_DEFAULT} style={{ whiteSpace: 'nowrap' }}>
+          {t`Dark Mode`}
+        </Text>
+      </Group>
+
+      {/* Smooth Pill Switch without nested event conflicts */}
+      <Box
+        style={{
+          width: 38,
+          height: 22,
+          borderRadius: 22,
+          background: isDark
+            ? 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)'
+            : 'rgba(255, 255, 255, 0.14)',
+          border: isDark
+            ? '1.5px solid rgba(56, 189, 248, 0.5)'
+            : '1.5px solid rgba(255, 255, 255, 0.15)',
+          boxShadow: isDark
+            ? '0 0 10px rgba(2, 132, 199, 0.45)'
+            : 'inset 0 1px 3px rgba(0, 0, 0, 0.3)',
+          display: 'flex',
+          alignItems: 'center',
+          padding: 2,
+          transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+          pointerEvents: 'none',
+          flexShrink: 0
+        }}
+      >
+        <Box
+          style={{
+            width: 14,
+            height: 14,
+            borderRadius: '50%',
+            background: '#ffffff',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+            transform: isDark ? 'translateX(16px)' : 'translateX(0px)',
+            transition: 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)'
+          }}
+        />
+      </Box>
+    </UnstyledButton>
   );
 }
 
@@ -264,6 +343,8 @@ export function AppSidebar() {
   const userState = useUserState();
   const { user } = userState;
   const navigate = useNavigate();
+  const location = useLocation();
+  const pathname = location.pathname;
   const isStaff =
     userState.isStaff() ||
     user?.is_staff ||
@@ -292,17 +373,84 @@ export function AppSidebar() {
   }, []);
 
   const [settingsOpen, { toggle: toggleSettings }] = useDisclosure(
-    window.location.pathname.startsWith('/settings')
+    pathname.startsWith('/settings')
   );
 
-  const isActive = (path: string) => {
-    if (path === '/' || path === 'home') {
-      return tabValue === 'home' || tabValue === '';
+  const isCategoriesActive = useMemo(() => {
+    if (pathname.includes('/part/category/index/subcategories')) {
+      return true;
     }
-    return tabValue === path || window.location.pathname.startsWith(`/${path}`);
+    if (pathname.startsWith('/part/category') && !pathname.includes('/parts')) {
+      return true;
+    }
+    return false;
+  }, [pathname]);
+
+  const isProductsActive = useMemo(() => {
+    if (pathname.includes('/part/category/index/parts')) {
+      return true;
+    }
+    if (pathname.startsWith('/part/') && !pathname.startsWith('/part/category')) {
+      return true;
+    }
+    if (pathname.startsWith('/part/category') && pathname.includes('/parts')) {
+      return true;
+    }
+    if (pathname === '/part' || pathname === '/part/') {
+      return true;
+    }
+    return false;
+  }, [pathname]);
+
+  const isPurchasingActive = useMemo(() => {
+    if (
+      pathname.includes('/purchasing/index/purchaseorders') ||
+      pathname.startsWith('/purchasing/purchase-order')
+    ) {
+      return true;
+    }
+    if (
+      (pathname === '/purchasing' ||
+        pathname === '/purchasing/' ||
+        pathname === '/purchasing/index' ||
+        pathname === '/purchasing/index/') &&
+      !pathname.includes('supplier') &&
+      !pathname.includes('manufacturer')
+    ) {
+      return true;
+    }
+    return false;
+  }, [pathname]);
+
+  const isSuppliersActive = useMemo(() => {
+    if (
+      pathname.includes('/purchasing/index/suppliers') ||
+      pathname.includes('/purchasing/index/supplier-parts') ||
+      pathname.includes('/purchasing/index/manufacturer') ||
+      pathname.startsWith('/purchasing/supplier') ||
+      pathname.startsWith('/purchasing/manufacturer')
+    ) {
+      return true;
+    }
+    return false;
+  }, [pathname]);
+
+  const isDashboardActive = useMemo(() => {
+    return pathname === '/' || pathname === '/home' || pathname === '/home/';
+  }, [pathname]);
+
+  const isActive = (path: string) => {
+    if (!path) return false;
+    if (path === '/' || path === 'home') {
+      return pathname === '/' || pathname === '/home' || pathname === '/home/';
+    }
+    return tabValue === path || pathname.startsWith(`/${path}`);
   };
 
   const canViewParts = userState.hasViewRole(UserRoles.part);
+  const canViewCategories =
+    userState.hasViewRole(UserRoles.part_category) ||
+    userState.hasViewRole(UserRoles.part);
   const canViewStock = userState.hasViewRole(UserRoles.stock);
   const canViewBuild = userState.hasViewRole(UserRoles.build);
   const canViewPurchase = userState.hasViewRole(UserRoles.purchase_order);
@@ -314,14 +462,10 @@ export function AppSidebar() {
     <>
       {/* Sidebar hover & transition CSS */}
       <style>{`
-        .sidebar-nav-item:hover:not([data-active='true']) {
+        .sidebar-nav-item[data-clickable='true']:hover:not([data-active='true']) {
           background-color: ${SIDEBAR_ITEM_HOVER_BG} !important;
         }
-        .sidebar-nav-item:hover:not([data-active='true']) .mantine-Text-root {
-          color: #ffffff !important;
-        }
-        .sidebar-header-toggle:hover {
-          background-color: rgba(2, 132, 199, 0.2) !important;
+        .sidebar-nav-item[data-clickable='true']:hover:not([data-active='true']) .mantine-Text-root {
           color: #ffffff !important;
         }
         .sidebar-edge-toggle:hover {
@@ -423,7 +567,7 @@ export function AppSidebar() {
           </Box>
         ) : (
           <Group
-            justify='space-between'
+            align='center'
             wrap='nowrap'
             p='md'
             pb={12}
@@ -448,32 +592,10 @@ export function AppSidebar() {
               >
                 <IconCube size={20} color='white' />
               </Box>
-              <Stack gap={0}>
-                <Text fw={700} size='sm' c='white' lh={1.2}>
-                  InvenTree
-                </Text>
-                <Text size='xs' c='#38bdf8' fw={500} lh={1.2}>
-                  {t`Inventory`}
-                </Text>
-              </Stack>
+              <Text fw={700} size='sm' c='white' lh={1.2} style={{ whiteSpace: 'nowrap', letterSpacing: '0.2px' }}>
+                TPI Inventory
+              </Text>
             </Group>
-
-            {/* Slide In Button in Header */}
-            <Tooltip label={t`Slide in dock (shrink to 20%)`} position='bottom' withArrow>
-              <ActionIcon
-                variant='subtle'
-                size='md'
-                onClick={toggleCollapse}
-                className='sidebar-header-toggle'
-                style={{
-                  color: '#94a3b8',
-                  borderRadius: 8,
-                  transition: 'all 0.18s ease'
-                }}
-              >
-                <IconChevronLeft size={18} />
-              </ActionIcon>
-            </Tooltip>
           </Group>
         )}
 
@@ -491,7 +613,7 @@ export function AppSidebar() {
                 icon={<IconLayoutDashboard size={16} />}
                 label={t`Dashboard`}
                 link='/home'
-                active={isActive('home') || isActive('')}
+                active={isDashboardActive}
                 collapsed={isCollapsed}
               />
               <SidebarItem
@@ -499,6 +621,13 @@ export function AppSidebar() {
                 label={t`Stores`}
                 link='/stock'
                 active={isActive('stock')}
+                collapsed={isCollapsed}
+              />
+              <SidebarItem
+                icon={<IconBuildingBank size={16} style={{ color: '#2ca01c' }} />}
+                label={t`QuickBooks`}
+                link='/quickbooks'
+                active={isActive('quickbooks')}
                 collapsed={isCollapsed}
               />
             </SidebarGroup>
@@ -509,17 +638,17 @@ export function AppSidebar() {
                 <SidebarItem
                   icon={<IconBox size={16} />}
                   label={t`Products`}
-                  link='/part'
-                  active={isActive('part')}
+                  link='/part/category/index/parts'
+                  active={isProductsActive}
                   collapsed={isCollapsed}
                 />
               )}
-              {canViewParts && (
+              {canViewCategories && (
                 <SidebarItem
                   icon={<IconCategory size={16} />}
                   label={t`Categories`}
-                  link='/part'
-                  active={false}
+                  link='/part/category/index/subcategories'
+                  active={isCategoriesActive}
                   collapsed={isCollapsed}
                 />
               )}
@@ -527,8 +656,8 @@ export function AppSidebar() {
                 <SidebarItem
                   icon={<IconUsers size={16} />}
                   label={t`Suppliers`}
-                  link='/purchasing'
-                  active={isActive('purchasing')}
+                  link='/purchasing/index/suppliers'
+                  active={isSuppliersActive}
                   collapsed={isCollapsed}
                 />
               )}
@@ -545,8 +674,8 @@ export function AppSidebar() {
                 <SidebarItem
                   icon={<IconShoppingCart size={16} />}
                   label={t`Purchasing`}
-                  link='/purchasing'
-                  active={false}
+                  link='/purchasing/index/purchaseorders'
+                  active={isPurchasingActive}
                   collapsed={isCollapsed}
                 />
               )}
@@ -562,29 +691,21 @@ export function AppSidebar() {
               <SidebarItem
                 icon={<IconCreditCard size={16} />}
                 label={t`Billing`}
-                link='/purchasing'
-                active={false}
                 collapsed={isCollapsed}
               />
               <SidebarItem
                 icon={<IconClipboardList size={16} />}
                 label={t`Orders`}
-                link='/sales'
-                active={false}
                 collapsed={isCollapsed}
               />
               <SidebarItem
                 icon={<IconPackages size={16} />}
                 label={t`Delivery`}
-                link='/sales'
-                active={false}
                 collapsed={isCollapsed}
               />
               <SidebarItem
                 icon={<IconFileAnalytics size={16} />}
                 label={t`Reports`}
-                link='/core/index/reports'
-                active={isActive('core')}
                 collapsed={isCollapsed}
               />
             </SidebarGroup>
@@ -661,15 +782,6 @@ export function AppSidebar() {
                     {t`System Settings`}
                   </Menu.Item>
                 )}
-                <Menu.Divider style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }} />
-                <Menu.Item
-                  color='red'
-                  leftSection={<IconLogout size={15} />}
-                  onClick={() => doLogout(navigate)}
-                  style={{ fontSize: 13 }}
-                >
-                  {t`Logout`}
-                </Menu.Item>
               </Menu.Dropdown>
             </Menu>
 
@@ -794,26 +906,7 @@ export function AppSidebar() {
             </Collapse>
 
             {/* Dark Mode toggle item */}
-            <SidebarItem
-              icon={
-                isDark ? (
-                  <IconSun size={16} style={{ color: '#fcc419' }} />
-                ) : (
-                  <IconMoonStars size={16} style={{ color: '#74c0fc' }} />
-                )
-              }
-              label={isDark ? t`Light Mode` : t`Dark Mode`}
-              action={toggleColorScheme}
-              rightSection={
-                <Switch
-                  checked={isDark}
-                  onChange={toggleColorScheme}
-                  size='xs'
-                  color='blue'
-                  styles={{ track: { cursor: 'pointer' } }}
-                />
-              }
-            />
+            <DarkModeToggleItem isDark={isDark} onToggle={toggleColorScheme} />
 
             {/* Help item */}
             <SidebarItem
