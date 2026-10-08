@@ -191,6 +191,7 @@ class TippResultSerializer(InvenTreeModelSerializer):
 
         model = TippResult
         fields = ['pk', 'tipp_id', 'shown', 'finished', 'updated']
+        read_only_fields = ['pk', 'tipp_id', 'updated']
 
 
 class UserSerializer(InvenTreeModelSerializer):

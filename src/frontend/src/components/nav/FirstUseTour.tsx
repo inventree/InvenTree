@@ -1,10 +1,10 @@
 import { ApiEndpoints, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Tour } from '@mantine/core';
-import { Button, Group, Text, rem } from '@mantine/core';
+import { Button, Group, Text, Tour, rem } from '@mantine/core';
 import { useWindowEvent } from '@mantine/hooks';
 import { type NotificationData, notifications } from '@mantine/notifications';
+
 import {
   type Dispatch,
   type SetStateAction,
@@ -119,8 +119,7 @@ export function FirstUseTour() {
     window.dispatchEvent(new Event('inventree:close-main-menu'));
 
     if (!user) return;
-    const tipp_pk = user.tipps?.filter((tipp) => tipp.tipp_id === ftuKex)?.[0]
-      ?.pk;
+    const tipp_pk = user.tipps?.find((tipp) => tipp.tipp_id === ftuKex)?.pk;
     if (!tipp_pk) return;
     api
       .patch(apiUrl(ApiEndpoints.user_me_tipps, tipp_pk), { finished: true })

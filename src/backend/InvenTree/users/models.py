@@ -811,6 +811,8 @@ class TippResult(InvenTree.models.MetadataMixin):
     class Meta:
         """Meta options."""
 
+        verbose_name = _('Tipp Result')
+        verbose_name_plural = _('Tipp Results')
         unique_together = ('user', 'tipp_id')
 
     user = models.ForeignKey(
