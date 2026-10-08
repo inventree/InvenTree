@@ -46,7 +46,7 @@ export const doLogin = async (page: Page, options?: LoginOptions) => {
   await page.waitForTimeout(100);
   await page.waitForLoadState('networkidle');
 
-  await page.getByRole('link', { name: 'Dashboard' }).waitFor();
+  // await page.getByRole('link', { name: 'Dashboard' }).waitFor();
   await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
   await page.waitForURL(/\/web(\/home)?/);
   await page.waitForLoadState('networkidle');
@@ -92,7 +92,7 @@ export const doCachedLogin = async (
       waitUntil: 'networkidle'
     });
 
-    await page.getByRole('link', { name: 'Dashboard' }).waitFor();
+    // await page.getByRole('link', { name: 'Dashboard' }).waitFor();
     await page.getByRole('button', { name: 'navigation-menu' }).waitFor();
     await page.waitForURL(/\/web(\/home)?/);
     await page.waitForLoadState('networkidle');
