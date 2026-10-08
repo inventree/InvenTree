@@ -178,6 +178,8 @@ class TestSocialAccountAdapter(TransactionTestCase):
         self.adapter.authentication_error(
             request, 'mock', error='denied', exception='User cancelled'
         )
+        # new form
+        self.adapter.authentication_error(request, {'id': 'mock'})
 
 
 class EmailSettingsContext:
