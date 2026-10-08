@@ -615,7 +615,7 @@ user_urls = [
             path(
                 'token/', ensure_csrf_cookie(GetAuthToken.as_view()), name='api-token'
             ),
-            path('tipps/', TippResultDetail.as_view(), name='api-user-tipp'),
+            path('tipps/<int:pk>/', TippResultDetail.as_view(), name='api-user-tipp'),
             path('', MeUserDetail.as_view(), name='api-user-me'),
         ]),
     ),
