@@ -1,3 +1,4 @@
+import { ApiEndpoints, apiUrl } from '@lib/index';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Tour } from '@mantine/core';
@@ -11,6 +12,7 @@ import {
   useMemo,
   useState
 } from 'react';
+import { api } from '../../App';
 import { useServerApiState } from '../../states/ServerApiState';
 import {
   useGlobalSettingsState,
@@ -25,10 +27,11 @@ interface FtuStep {
   action_before?: () => void;
 }
 
+const ftuKex = 'org.inventree.i.tipp.ftue';
+
 export function FirstUseTour() {
-  const { user, done_tipps } = useUserState();
-  const hasCompletedFtu =
-    done_tipps?.includes('org.inventree.i.tipp.ftue') ?? false;
+  const { user, done_tipps, setTipps } = useUserState();
+  const hasCompletedFtu = done_tipps?.includes(ftuKex) ?? false;
   const [active, setActive] = useState(false);
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
@@ -116,7 +119,18 @@ export function FirstUseTour() {
     window.dispatchEvent(new Event('inventree:close-main-menu'));
 
     if (!user) return;
-    // todo probagate to backend
+    const tipp_pk = user.tipps?.filter((tipp) => tipp.tipp_id === ftuKex)?.[0]
+      ?.pk;
+    if (!tipp_pk) return;
+    api
+      .patch(apiUrl(ApiEndpoints.user_me_tipps, tipp_pk), { finished: true })
+      .then((result) => {
+        setTipps(
+          user.tipps?.map((tipp) =>
+            tipp.pk === tipp_pk ? result.data : tipp
+          ) ?? null
+        );
+      });
   };
 
   useWindowEvent('inventree:start-ftu', () => setActive(true));

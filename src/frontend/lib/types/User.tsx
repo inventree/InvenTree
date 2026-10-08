@@ -44,6 +44,7 @@ export interface UserStateProps {
   user: UserProps | undefined;
   is_authed: boolean;
   done_tipps: string[] | null;
+  setTipps: (tipps: UserTipps[] | null) => void;
   userId: () => number | undefined;
   username: () => string;
   setAuthenticated: (authed?: boolean) => void;

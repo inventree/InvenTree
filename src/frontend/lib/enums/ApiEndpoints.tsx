@@ -17,6 +17,7 @@ export enum ApiEndpoints {
   // Individual user endpoints
   user_me_profile = 'user/me/profile/',
   user_me_roles = 'user/me/roles/',
+  user_me_tipps = 'user/me/tipps/',
   user_me_token = 'user/me/token/',
   user_me = 'user/me/',
 

@@ -8,7 +8,7 @@ import {
   roleToViewSettingMap
 } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import type { UserProps, UserStateProps } from '@lib/types/User';
+import type { UserProps, UserStateProps, UserTipps } from '@lib/types/User';
 import { api, setApiDefaults } from '../App';
 import { clearCsrfCookie } from '../functions/auth';
 import { useServerApiState } from './ServerApiState';
@@ -21,6 +21,15 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   user: undefined,
   is_authed: false,
   done_tipps: null,
+  setTipps: (tipps: UserTipps[] | null) => {
+    const done_tipps =
+      tipps
+        ?.filter((tipp) => tipp.finished === true)
+        .map((tipp) => tipp.tipp_id) ?? null;
+    const user = get().user as UserProps;
+    user.tipps = tipps;
+    set({ done_tipps: done_tipps, user: user });
+  },
   setAuthenticated: (authed = true) => {
     set({ is_authed: authed });
     setApiDefaults();
