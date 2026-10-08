@@ -7,6 +7,7 @@ import {
   UnstyledButton,
   useMantineColorScheme
 } from '@mantine/core';
+import { useWindowEvent } from '@mantine/hooks';
 import {
   IconChevronDown,
   IconInfoCircle,
@@ -17,6 +18,7 @@ import {
   IconUserBolt,
   IconUserCog
 } from '@tabler/icons-react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { aboutInvenTree } from '../../defaults/links';
@@ -27,19 +29,40 @@ import { vars } from '../../theme';
 
 export function MainMenu() {
   const navigate = useNavigate();
+  const [opened, setOpened] = useState(false);
+  const [tourActive, setTourActive] = useState(false);
   const [user, username] = useUserState(
     useShallow((state) => [state.user, state.username])
   );
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
+  useWindowEvent('inventree:open-main-menu', () => {
+    setTourActive(true);
+    setOpened(true);
+  });
+  useWindowEvent('inventree:close-main-menu', () => {
+    setTourActive(false);
+    setOpened(false);
+  });
+
   return (
     <>
-      <Menu width={260} position='bottom-end'>
+      <Menu
+        width={260}
+        position='bottom-end'
+        opened={opened}
+        closeOnClickOutside={!tourActive}
+        closeOnEscape={!tourActive}
+        onChange={(event) => {
+          if (event || !tourActive) {
+            setOpened(event);
+          }
+        }}
+        zIndex={10001}
+        id='tipp-ftu-settings'
+      >
         <Menu.Target>
-          <UnstyledButton
-            className={classes.layoutHeaderUser}
-            id='tipp-ftu-settings'
-          >
+          <UnstyledButton className={classes.layoutHeaderUser}>
             <Group gap={7}>
               {username() ? (
                 <Text fw={500} size='sm' style={{ lineHeight: 1 }} mr={3}>

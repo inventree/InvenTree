@@ -18,6 +18,13 @@ import {
 } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 
+interface FtuStep {
+  target: string;
+  title: string;
+  description: string;
+  action_before?: () => void;
+}
+
 export function FirstUseTour() {
   const { user, done_tipps } = useUserState();
   const hasCompletedFtu =
@@ -29,7 +36,7 @@ export function FirstUseTour() {
   const showNudge = !!user && !hasCompletedFtu;
 
   const ftusteps = useMemo(() => {
-    const _steps = [
+    const _steps: FtuStep[] = [
       {
         target: 'tipp-ftu-search',
         title: t`Search`,
@@ -76,7 +83,10 @@ export function FirstUseTour() {
       {
         target: 'tipp-ftu-settings',
         title: t`Settings`,
-        description: t`The main menu allows you to access preferences and access system-wide settings. Options depend on your permissions.`
+        description: t`The main menu allows you to access preferences and access system-wide settings. Options depend on your permissions.`,
+        action_before: () => {
+          window.dispatchEvent(new Event('inventree:open-main-menu'));
+        }
       },
       {
         target: 'tipp-ftu-usersettings',
@@ -103,6 +113,7 @@ export function FirstUseTour() {
 
   const completeTour = () => {
     setActive(false);
+    window.dispatchEvent(new Event('inventree:close-main-menu'));
 
     if (!user) return;
     // todo probagate to backend
@@ -131,9 +142,14 @@ export function FirstUseTour() {
     return null;
   }
   return (
-    <Tour active={active} onClose={completeTour}>
+    <Tour active={active} onClose={completeTour} zIndex={10002}>
       {ftusteps.map((step, index) => (
-        <Tour.Step key={index} target={`#${step.target}`} title={step.title}>
+        <Tour.Step
+          key={index}
+          target={`#${step.target}`}
+          title={step.title}
+          onStepOpen={step.action_before}
+        >
           {step.description}
         </Tour.Step>
       ))}
