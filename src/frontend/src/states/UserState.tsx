@@ -20,6 +20,7 @@ import { useGlobalSettingsState } from './SettingsStates';
 export const useUserState = create<UserStateProps>((set, get) => ({
   user: undefined,
   is_authed: false,
+  done_tipps: null,
   setAuthenticated: (authed = true) => {
     set({ is_authed: authed });
     setApiDefaults();
@@ -37,7 +38,13 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       return user?.username ?? '';
     }
   },
-  setUser: (newUser: UserProps | undefined) => set({ user: newUser }),
+  setUser: (newUser: UserProps | undefined) => {
+    const done_tipps =
+      newUser?.tipps
+        ?.filter((tipp) => tipp.finished !== true)
+        .map((tipp) => tipp.tipp_id) ?? null;
+    set({ user: newUser, done_tipps: done_tipps });
+  },
   getUser: () => get().user,
   clearUserState: () => {
     set({ user: undefined, is_authed: false });

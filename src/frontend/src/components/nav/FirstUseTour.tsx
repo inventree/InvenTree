@@ -46,11 +46,19 @@ const ftusteps = [
 ];
 
 export function FirstUseTour() {
-  const { user } = useUserState();
-  const hasCompletedFtu = user?.profile?.widgets?.includes('ftue') ?? false;
+  const { user, done_tipps } = useUserState();
+  const hasCompletedFtu =
+    done_tipps?.includes('org.inventree.i.tipp.ftue') ?? false;
   const [active, setActive] = useState(false);
   const [notificationId, setNotificationId] = useState<string | null>(null);
   const showNudge = !!user && !hasCompletedFtu;
+
+  const completeTour = () => {
+    setActive(false);
+
+    if (!user) return;
+    // todo probagate to backend
+  };
 
   useWindowEvent('inventree:start-ftu', () => setActive(true));
 
@@ -60,7 +68,7 @@ export function FirstUseTour() {
       const id = notifications.show({
         autoClose: false,
         renderNotification: (notification) =>
-          ftuNotification(setActive, notification),
+          ftuNotification(setActive, completeTour, notification),
         message: ''
       });
       setNotificationId(id);
@@ -72,13 +80,7 @@ export function FirstUseTour() {
     return null;
   }
   return (
-    <Tour
-      active={active}
-      onClose={() => {
-        // TODO update backend
-        setActive(false);
-      }}
-    >
+    <Tour active={active} onClose={completeTour}>
       {ftusteps.map((step, index) => (
         <Tour.Step key={index} target={`#${step.target}`} title={step.title}>
           {step.description}
@@ -90,6 +92,7 @@ export function FirstUseTour() {
 
 function ftuNotification(
   setActive: Dispatch<SetStateAction<boolean>>,
+  completeTour: () => void,
   notification: NotificationData
 ): import('react').ReactNode {
   return (
@@ -118,7 +121,6 @@ function ftuNotification(
             size='compact-xs'
             variant='filled'
             onClick={() => {
-              // TODO update backend
               setActive(true);
               notifications.hide(notification.id!);
             }}
@@ -130,9 +132,10 @@ function ftuNotification(
             variant='default'
             c='red'
             onClick={() => {
-              // TODO update backend
               setActive(false);
               notifications.hide(notification.id!);
+
+              completeTour();
             }}
           >
             <Trans>Dismiss permanently</Trans>
