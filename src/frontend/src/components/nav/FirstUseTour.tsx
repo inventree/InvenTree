@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Tour } from '@mantine/core';
 import { Button, Group, Text, rem } from '@mantine/core';
+import { useWindowEvent } from '@mantine/hooks';
 import { type NotificationData, notifications } from '@mantine/notifications';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { useUserState } from '../../states/UserState';
@@ -51,6 +52,8 @@ export function FirstUseTour() {
   const [notificationId, setNotificationId] = useState<string | null>(null);
   const showNudge = !!user && !hasCompletedFtu;
 
+  useWindowEvent('inventree:start-ftu', () => setActive(true));
+
   // show notif to nudge the user to complete the First Use Tour
   useEffect(() => {
     if (showNudge && !active && !notificationId) {
@@ -65,7 +68,7 @@ export function FirstUseTour() {
   }, [showNudge]);
 
   // rendering
-  if (!showNudge) {
+  if (!user) {
     return null;
   }
   return (
