@@ -11,6 +11,7 @@ import {
   useMemo,
   useState
 } from 'react';
+import { useServerApiState } from '../../states/ServerApiState';
 import {
   useGlobalSettingsState,
   useUserSettingsState
@@ -22,9 +23,9 @@ export function FirstUseTour() {
   const hasCompletedFtu =
     done_tipps?.includes('org.inventree.i.tipp.ftue') ?? false;
   const [active, setActive] = useState(false);
-  const [notificationId, setNotificationId] = useState<string | null>(null);
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
+  const { ftuShown, setFtuShown } = useServerApiState();
   const showNudge = !!user && !hasCompletedFtu;
 
   const ftusteps = useMemo(() => {
@@ -88,14 +89,17 @@ export function FirstUseTour() {
 
   // show notif to nudge the user to complete the First Use Tour
   useEffect(() => {
-    if (showNudge && !active && !notificationId) {
-      const id = notifications.show({
+    if (showNudge && !active) {
+      // session deduplication
+      if (ftuShown) return;
+      setFtuShown(true);
+
+      notifications.show({
         autoClose: false,
         renderNotification: (notification) =>
           ftuNotification(setActive, completeTour, notification),
         message: ''
       });
-      setNotificationId(id);
     }
   }, [showNudge]);
 
