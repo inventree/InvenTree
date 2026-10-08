@@ -49,14 +49,11 @@ export function FirstUseTour() {
   const hasCompletedFtu = user?.profile?.widgets?.includes('ftue') ?? false;
   const [active, setActive] = useState(false);
   const [notificationId, setNotificationId] = useState<string | null>(null);
-
-  if (!user || hasCompletedFtu) {
-    return null;
-  }
+  const showNudge = !!user && !hasCompletedFtu;
 
   // show notif to nudge the user to complete the First Use Tour
   useEffect(() => {
-    if (!active && !notificationId) {
+    if (showNudge && !active && !notificationId) {
       const id = notifications.show({
         autoClose: false,
         renderNotification: (notification) =>
@@ -65,8 +62,12 @@ export function FirstUseTour() {
       });
       setNotificationId(id);
     }
-  }, []);
+  }, [showNudge]);
 
+  // rendering
+  if (!showNudge) {
+    return null;
+  }
   return (
     <Tour
       active={active}
