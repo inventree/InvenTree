@@ -38,6 +38,21 @@ export function FirstUseTour() {
   const ftusteps = useMemo(() => {
     const _steps: FtuStep[] = [
       {
+        target: 'tipp-ftu-nav1',
+        title: t`Navigation Area`,
+        description: t`The navigation area provides quick access to different sections of the application.`
+      },
+      {
+        target: 'tipp-ftu-nav2',
+        title: t`Navigation Drawer`,
+        description: t`Using the icon you can open and close the navigation drawer which contains most available pages accessible to you.`
+      },
+      {
+        target: 'tipp-ftu-nav3',
+        title: t`Main Menu`,
+        description: t`The main menu provides access to top level navigation targets. Plugins can extend the menu with additional options.`
+      },
+      {
         target: 'tipp-ftu-search',
         title: t`Search`,
         description: t`The global search allows you to quickly find items across all objects. You can configure which objects categories are included in the search and how terms are matched.`
@@ -66,21 +81,6 @@ export function FirstUseTour() {
         description: t`Depending on your instance and user settings notifications are delivered through various channels. This notification bar is annotated with a bell when there are unread user interface notifications.`
       },
       {
-        target: 'tipp-ftu-nav1',
-        title: t`Navigation Area`,
-        description: t`The navigation area provides quick access to different sections of the application.`
-      },
-      {
-        target: 'tipp-ftu-nav2',
-        title: t`Navigation Drawer`,
-        description: t`Using the icon you can open and close the navigation drawer which contains most available pages accessible to you.`
-      },
-      {
-        target: 'tipp-ftu-nav3',
-        title: t`Main Menu`,
-        description: t`The main menu provides access to top level navigation targets. Plugins can extend the menu with additional options.`
-      },
-      {
         target: 'tipp-ftu-settings',
         title: t`Settings`,
         description: t`The main menu allows you to access preferences and access system-wide settings. Options depend on your permissions.`,
@@ -92,11 +92,6 @@ export function FirstUseTour() {
         target: 'tipp-ftu-usersettings',
         title: t`User Settings`,
         description: t`The user settings menu allows you to configure your personal preferences and account settings. This also contains security and notification settings.`
-      },
-      {
-        target: 'tipp-ftu-about',
-        title: t`About InvenTree`,
-        description: t`Provides information about the InvenTree instance, including version details and relevant links. Important for bug reports.`
       }
     );
 
@@ -108,6 +103,11 @@ export function FirstUseTour() {
       });
     }
 
+    _steps.push({
+      target: 'tipp-ftu-about',
+      title: t`About InvenTree`,
+      description: t`Provides information about the InvenTree instance, including version details and relevant links. Important for bug reports.`
+    });
     return _steps;
   }, [userSettings, globalSettings]);
 
