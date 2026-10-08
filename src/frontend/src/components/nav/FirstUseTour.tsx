@@ -33,14 +33,14 @@ export function FirstUseTour() {
       {
         target: 'tipp-ftu-search',
         title: t`Search`,
-        description: t`Click the beacon to see this tooltip.`
+        description: t`The global search allows you to quickly find items across all objects. You can configure which objects categories are included in the search and how terms are matched.`
       }
     ];
     if (userSettings.isSet('SHOW_SPOTLIGHT')) {
       _steps.push({
         target: 'tipp-ftu-cmd',
         title: t`Command Palette`,
-        description: t`This is the second beacon tooltip.`
+        description: t`Quickly access commands and actions anywhere using the command palette. Available commands are dependent on your current context. Use cmd + k to open it anywhere.`
       });
     }
 
@@ -48,7 +48,7 @@ export function FirstUseTour() {
       _steps.push({
         target: 'tipp-ftu-barcode',
         title: t`Barcode Scanner`,
-        description: t`This is the second "a" beacon tooltip.`
+        description: t`Allows for quick scanning of barcodes with your device's camera or a handheld scanner.`
       });
     }
 
@@ -56,24 +56,47 @@ export function FirstUseTour() {
       {
         target: 'tipp-ftu-notif',
         title: t`Notifications`,
-        description: t`This is the third beacon tooltip.`
+        description: t`Depending on your instance and user settings notifications are delivered through various channels. This notification bar is annotated with a bell when there are unread user interface notifications.`
       },
       {
         target: 'tipp-ftu-nav1',
         title: t`Navigation Area`,
-        description: t`This is the fourth beacon tooltip.`
+        description: t`The navigation area provides quick access to different sections of the application.`
       },
       {
         target: 'tipp-ftu-nav2',
         title: t`Navigation Drawer`,
-        description: t`This is the fifth beacon tooltip.`
+        description: t`Using the icon you can open and close the navigation drawer which contains most available pages accessible to you.`
       },
       {
         target: 'tipp-ftu-nav3',
         title: t`Main Menu`,
-        description: t`This is the sixth beacon tooltip.`
+        description: t`The main menu provides access to top level navigation targets. Plugins can extend the menu with additional options.`
+      },
+      {
+        target: 'tipp-ftu-settings',
+        title: t`Settings`,
+        description: t`The main menu allows you to access preferences and access system-wide settings. Options depend on your permissions.`
+      },
+      {
+        target: 'tipp-ftu-usersettings',
+        title: t`User Settings`,
+        description: t`The user settings menu allows you to configure your personal preferences and account settings. This also contains security and notification settings.`
+      },
+      {
+        target: 'tipp-ftu-about',
+        title: t`About InvenTree`,
+        description: t`Provides information about the InvenTree instance, including version details and relevant links. Important for bug reports.`
       }
     );
+
+    if (user?.is_staff) {
+      _steps.push({
+        target: 'tipp-ftu-admincenter',
+        title: t`Admin Center`,
+        description: t`The admin center provides access to administrative functions and can be used to manage various functions required for operation of the instance like user management, templates, parameters, plugins.`
+      });
+    }
 
     return _steps;
   }, [userSettings, globalSettings]);

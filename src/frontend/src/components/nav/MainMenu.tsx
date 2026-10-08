@@ -36,7 +36,10 @@ export function MainMenu() {
     <>
       <Menu width={260} position='bottom-end'>
         <Menu.Target>
-          <UnstyledButton className={classes.layoutHeaderUser}>
+          <UnstyledButton
+            className={classes.layoutHeaderUser}
+            id='tipp-ftu-settings'
+          >
             <Group gap={7}>
               {username() ? (
                 <Text fw={500} size='sm' style={{ lineHeight: 1 }} mr={3}>
@@ -57,6 +60,7 @@ export function MainMenu() {
             leftSection={<IconUserCog />}
             component={Link}
             to='/settings/user'
+            id='tipp-ftu-usersettings'
           >
             <Trans>User Settings</Trans>
           </Menu.Item>
@@ -74,6 +78,7 @@ export function MainMenu() {
               leftSection={<IconUserBolt />}
               component={Link}
               to='/settings/admin'
+              id='tipp-ftu-admincenter'
             >
               <Trans>Admin Center</Trans>
             </Menu.Item>
@@ -95,6 +100,7 @@ export function MainMenu() {
           <Menu.Item
             onClick={() => aboutInvenTree()}
             leftSection={<IconInfoCircle />}
+            id='tipp-ftu-about'
           >
             <Trans>About InvenTree</Trans>
           </Menu.Item>
