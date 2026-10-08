@@ -44,7 +44,6 @@ import { useUserState } from '../../states/UserState';
 import { ScanButton } from '../buttons/ScanButton';
 import { SpotlightButton } from '../buttons/SpotlightButton';
 import { Alerts, errorCodeLink } from './Alerts';
-import { FirstUseTour } from './FirstUseTour';
 import { MainMenu } from './MainMenu';
 import { NavHoverMenu } from './NavHoverMenu';
 import { NavigationDrawer } from './NavigationDrawer';
@@ -181,7 +180,6 @@ export function Header() {
           closeNotificationDrawer();
         }}
       />
-      <FirstUseTour />
       <Container className={classes.layoutHeaderSection} size='100%'>
         <Group justify='space-between'>
           <Group id='tipp-ftu-nav1'>

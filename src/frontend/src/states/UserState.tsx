@@ -41,7 +41,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   setUser: (newUser: UserProps | undefined) => {
     const done_tipps =
       newUser?.tipps
-        ?.filter((tipp) => tipp.finished !== true)
+        ?.filter((tipp) => tipp.finished === true)
         .map((tipp) => tipp.tipp_id) ?? null;
     set({ user: newUser, done_tipps: done_tipps });
   },
