@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 
 import InvenTree.permissions
 import machine.serializers as MachineSerializers
+from common.api import TouchMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateAPI, RetrieveUpdateDestroyAPI
 from machine import registry
@@ -108,7 +109,7 @@ class MachineSettingList(APIView):
         return Response(results)
 
 
-class MachineSettingDetail(RetrieveUpdateAPI):
+class MachineSettingDetail(TouchMixin, RetrieveUpdateAPI):
     """Detail endpoint for a machine-specific setting.
 
     - GET: Get machine setting detail

@@ -806,6 +806,11 @@ class BaseInvenTreeSetting(models.Model):
         max_length=2000, blank=True, unique=False, help_text=_('Settings value')
     )
 
+    touched = models.BooleanField(
+        default=False,
+        help_text=_('Indicates whether the setting has been modified by the user'),
+    )
+
     @property
     def name(self):
         """Return name for setting."""
