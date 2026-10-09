@@ -1,7 +1,7 @@
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { IconBuildingStore, IconCopy, IconPackages } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useGlobalSettingsState } from '../states/SettingsStates';
 import { TagsField } from './CommonFields';
 
@@ -23,6 +23,10 @@ export function usePartFields({
   const [purchaseable, setPurchaseable] = useState<boolean | undefined>(
     undefined
   );
+  const [initialStockLocation, setInitialStockLocation] = useState<
+    number | null
+  >(null);
+  const initialStockLocationOverridden = useRef(false);
 
   // Set the initial state for the tracked fields based on the global settings
   useEffect(() => {
@@ -59,6 +63,13 @@ export function usePartFields({
       units: {},
       link: {},
       default_location: {
+        onValueChange: (value) => {
+          // Pre-fill the initial stock location, unless the user has already
+          // selected a different location.
+          if (!initialStockLocationOverridden.current) {
+            setInitialStockLocation(value ?? null);
+          }
+        },
         filters: {
           structural: false
         }
@@ -128,7 +139,13 @@ export function usePartFields({
             quantity: {
               value: 0
             },
-            location: {}
+            location: {
+              value: initialStockLocation,
+              onValueChange: (value) => {
+                initialStockLocationOverridden.current = true;
+                setInitialStockLocation(value);
+              }
+            }
           }
         };
       }
@@ -213,6 +230,7 @@ export function usePartFields({
     partId,
     virtual,
     purchaseable,
+    initialStockLocation,
     create,
     globalSettings,
     duplicatePartInstance
