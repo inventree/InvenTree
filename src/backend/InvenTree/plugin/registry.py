@@ -227,6 +227,10 @@ class PluginsRegistry:
             dict[str, PluginConfig]: Mapping of plugin slug to PluginConfig instance.
             None if the database is not ready to be queried.
         """
+        # skip if the setup is initializing
+        if settings.SETUP_INITIALIZING:
+            return None
+
         # As we have already checked the registry hash, this is a valid cache key
         cache_key = f'plugin_configs:{self.registry_hash}'
 
@@ -518,8 +522,10 @@ class PluginsRegistry:
             self.update_plugin_hash()
             logger.info('Plugin Registry: Loaded %s plugins', len(self.plugins))
 
-            # Ensure that each loaded plugin has a valid configuration object in the database
-            for plugin in self.plugins.values():
+            # Ensure that each loaded plugin has a valid configuration object in the database; skip if setup is initializing
+            for plugin in (
+                self.plugins.values() if not settings.SETUP_INITIALIZING else []
+            ):
                 if config := self.get_plugin_config(plugin.slug):
                     # Ensure mandatory plugins are marked as active
                     if config.is_mandatory() and not config.active:
