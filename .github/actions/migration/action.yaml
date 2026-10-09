@@ -4,8 +4,6 @@ author: 'InvenTree'
 
 runs:
     using: 'composite'
-    environment:
-        SETUP_INITIALIZING=1
     steps:
       - name: Data Import Export
         shell: bash
@@ -17,3 +15,5 @@ runs:
           invoke migrate
           invoke import-records -c -f data.json --strict
           invoke import-records -c -f data.json --strict
+        env:
+          SETUP_INITIALIZING=1
