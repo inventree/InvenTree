@@ -4,6 +4,8 @@ author: 'InvenTree'
 
 runs:
     using: 'composite'
+    environment:
+        SETUP_INITIALIZING=1
     steps:
       - name: Data Import Export
         shell: bash
