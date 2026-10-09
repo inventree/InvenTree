@@ -21,6 +21,7 @@ export const getSupportedLanguages = (): Record<string, string> => {
   return {
     ar: 'العربية',
     bg: 'Български',
+    ca: 'Català',
     cs: 'Čeština',
     da: 'Dansk',
     de: 'Deutsch',

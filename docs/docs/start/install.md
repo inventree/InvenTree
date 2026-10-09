@@ -140,6 +140,9 @@ As part of the initial setup, an empty database needs to be created. Follow the 
 
 ### PostgreSQL
 
+!!! info "Minimum Version"
+    InvenTree requires a minimum PostgreSQL version of {{ config.extra.min_postgres_version }}.
+
 #### Install PostgreSQL
 
 Install required system packages:
@@ -185,6 +188,9 @@ sudo apt-get install postgresql-client
 ```
 
 ### MySQL / MariaDB
+
+!!! info "Minimum Version"
+    InvenTree requires a minimum MySQL version of {{ config.extra.min_mysql_version }}.
 
 #### Install Backend
 
@@ -288,6 +294,9 @@ Administrators wishing to update InvenTree to the latest version should follow t
 
 !!! info "Update Database"
 	It is advisable to [backup the InvenTree database](./backup.md) before performing these steps. The particular backup procedure may depend on your installation details.
+
+!!! danger "Updating from Pre 1.0.0"
+    If your installation is running a version of InvenTree older than `1.0.0`, you cannot update directly to the current release. See [Updating from Pre 1.0.0](./migrate.md#updating-from-pre-100) for the required intermediate step.
 
 ### Stop InvenTree Server
 

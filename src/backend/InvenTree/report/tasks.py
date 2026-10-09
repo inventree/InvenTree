@@ -141,6 +141,7 @@ def print_labels(
 
     if not plugin:
         logger.warning("Label printing plugin '%s' not found", plugin_slug)
+        output.mark_failure(error=f"Label printing plugin '{plugin_slug}' not found")
         return
 
     # Extract optional arguments for label printing

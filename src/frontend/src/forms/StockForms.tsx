@@ -2180,7 +2180,9 @@ export function useDeleteStockItem(props: StockOperationProps) {
   });
 }
 
-export function stockLocationFields(): ApiFormFieldSet {
+export function useStockLocationFields(): ApiFormFieldSet {
+  const globalSettings = useGlobalSettingsState();
+
   const fields: ApiFormFieldSet = {
     parent: {
       description: t`Parent stock location`,
@@ -2188,6 +2190,9 @@ export function stockLocationFields(): ApiFormFieldSet {
     },
     name: {},
     description: {},
+    owner: {
+      icon: <IconUsersGroup />
+    },
     structural: {},
     external: {},
     custom_icon: {
@@ -2195,6 +2200,12 @@ export function stockLocationFields(): ApiFormFieldSet {
     },
     location_type: {}
   };
+
+  // Ownership of a stock location is only relevant if
+  // stock ownership control is enabled
+  if (!globalSettings.isSet('STOCK_OWNERSHIP_CONTROL')) {
+    delete fields.owner;
+  }
 
   return fields;
 }

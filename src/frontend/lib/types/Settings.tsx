@@ -16,6 +16,12 @@ export enum SettingType {
   Model = 'related field'
 }
 
+export enum SettingFlag {
+  TOGGLE = 'org.inventree.settingsflag.function_toggle',
+  INTERNAL = 'org.inventree.settingsflag.internal',
+  SECURITY = 'org.inventree.settingsflag.security'
+}
+
 // Type interface defining a single 'setting' object
 export interface Setting {
   pk: number;
@@ -36,6 +42,7 @@ export interface Setting {
   read_only?: boolean;
   confirm?: boolean;
   confirm_text?: string;
+  flags: SettingFlag[];
 }
 
 export interface SettingChoice {

@@ -259,6 +259,11 @@ test('Purchase Orders - Table', async ({ browser }) => {
   // Expected values
   await page.getByText('2025-06-12').waitFor(); // Start Date
   await page.getByText('2025-07-17').waitFor(); // Target Date
+
+  // Creator of the order should be displayed
+  await expect(page.getByRole('row', { name: 'Created By' })).toContainText(
+    'steven'
+  );
 });
 
 test('Purchase Orders - Calendar', async ({ browser }) => {
@@ -584,7 +589,7 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await page.getByLabel('action-button-add-note').click();
 
   await page
-    .getByLabel('text-field-batch_code', { exact: true })
+    .getByLabel('text-field-line_batch_code', { exact: true })
     .fill('my-batch-code');
   await page.getByLabel('text-field-packaging', { exact: true }).fill('bucket');
   await page
@@ -648,7 +653,7 @@ test('Purchase Orders - Custom Location', async ({ browser }) => {
 
   await page.getByLabel('action-button-assign-batch-').click();
   await page
-    .getByLabel('text-field-batch_code', { exact: true })
+    .getByLabel('text-field-line_batch_code', { exact: true })
     .fill('po-custom-location-test');
 
   // Short timeout to allow for debouncing

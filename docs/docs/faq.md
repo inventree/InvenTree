@@ -107,9 +107,13 @@ For more information, refer to the installation guides:
 
 - [Docker Installation](./start/docker_install.md#updating-inventree)
 - [Bare Metal Installation](./start/install.md#updating-inventree)
+- [Package Installer](./start/installer.md#updating-inventree)
 
 !!! warning "Invoke Update"
     You must ensure that the `invoke update` command is performed *every time* you update InvenTree
+
+!!! danger "Updating from Pre 1.0.0"
+    If your installation is running a version of InvenTree older than `1.0.0`, you cannot update directly to the current release - see [Updating from Pre 1.0.0](./start/migrate.md#updating-from-pre-100) for the required intermediate step.
 
 ### Breaking Changes
 

@@ -120,6 +120,26 @@ OUT OF STOCK
 {% endraw %}
 ```
 
+### Validating Label Data
+
+Use the [raise_error helper](./helpers.md#raising-template-errors) to reject data which cannot produce a valid label:
+
+```html
+{% raw %}
+{% load report %}
+{% if not stock_item.serial %}
+    {% raise_error "Serial number is required for this label" %}
+{% endif %}
+{% endraw %}
+```
+
+When evaluated, the tag raises a validation error and stops rendering the current label. With the InvenTree PDF label printer, this stops the print job and retains the supplied message in the failed print result. Correct the data and submit a new print job to print again.
+
+The InvenTree Label Sheet Printer handles this like other rendering errors: it logs the error, inserts an error cell, and continues generating the sheet. The tag does not abort the entire sheet job.
+
+!!! warning "Batch printing"
+    Validation happens when each template is evaluated. Earlier labels may already have printed or been queued by the printing plugin. This does not validate the entire batch before printing or undo earlier printing. Custom plugins must propagate template validation errors for this behavior to apply.
+
 ### Label Filters
 
 Each label template provides a set of programmable filters which can be used to determine the relevance of that particular label. It may be the case that a particular label template is only applicable if certain conditions are met.

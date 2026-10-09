@@ -2,6 +2,24 @@
 title: Migrating Data
 ---
 
+## Updating from Pre 1.0.0
+
+!!! danger "Required Stopover"
+    As part of the 1.0.0 release cycle, InvenTree's database migration history was *squashed* - many individual migration files were consolidated into a smaller number of squashed migrations, and the original (now-redundant) migration files were subsequently removed from the codebase.
+
+    As a result, InvenTree cannot migrate a database directly from a version **older than 1.0.0** to the current release. Attempting to do so will cause `invoke update` (or `invoke migrate`) to fail.
+
+If your installation is currently running a version of InvenTree older than `1.0.0`, you must first update to the `1.0.0` release, before updating to the current release.
+
+### How to Update
+
+1. Determine your current InvenTree version. If it is older than `1.0.0`, do not skip directly to the latest release.
+2. Follow the normal update procedure for your installation method - [Bare Metal](./install.md#updating-inventree), [Docker](./docker_install.md#updating-inventree), or [Package Installer](./installer.md#updating-inventree) - targeting a `1.0.0` release.
+3. Once the database has been successfully updated to `1.0.0`, repeat the update procedure again to bring the installation up to the current release.
+
+!!! danger "Skipping Directly to Latest"
+    Attempting to update directly from a pre-1.0.0 database to the current release, skipping the `1.0.0` stopover, is not supported and will fail.
+
 ## Migrating Data to a Different Database
 
 In the case that data needs to be migrated from one database installation to another, the following procedure can be used to export data, initialize the new database, and re-import the data. The following instructions apply to bare-metal and docker installations, although the particular commands required may vary slightly in each case.
@@ -99,6 +117,9 @@ Copy the entire directory tree from the original InvenTree installation to the n
 ## Migrating Data to Newer Version
 
 If you are updating from an older version of InvenTree to a newer version, the migration steps outlined above *do not apply*.
+
+!!! danger "Updating from Pre 1.0.0"
+    If your existing installation is running a version older than `1.0.0`, you cannot update directly to the current release. See [Updating from Pre 1.0.0](#updating-from-pre-100) above for the required intermediate step.
 
 An update from an old version to a new one requires not only that the database *schema* are updated, but the *data* held within the database must be updated in the correct sequence.
 

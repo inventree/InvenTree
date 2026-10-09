@@ -744,6 +744,72 @@ class ImportAPITest(ImporterMixin, InvenTreeAPITestCase):
         self.assignRole('purchase_order.change')
         self.post(url, expected_code=200)
 
+    def test_model_type_immutable(self):
+        """Test that a session's model_type cannot be changed after creation.
+
+        Regression test for a security report (dev/todo/import-retarget.md) where a
+        user could create a session against a model they have permission for, then
+        retarget it (via PATCH) to a different model they do not have permission for -
+        bypassing the permission checks which are resolved against the model type at
+        the time they run, rather than the model type the session was created against.
+        """
+        f = self.helper_file('companies.csv')
+
+        session = DataImportSession.objects.create(
+            data_file=f, model_type='company', user=self.user
+        )
+
+        # 'company' is part of the 'purchase_order' ruleset
+        self.assignRole('purchase_order.change')
+
+        url = reverse('api-import-session-detail', kwargs={'pk': session.pk})
+
+        # Attempting to retarget the session to a different model is rejected
+        response = self.patch(url, {'model_type': 'partcategory'}, expected_code=400)
+        self.assertIn('model_type', response.data)
+
+        session.refresh_from_db()
+        self.assertEqual(session.model_type, 'company')
+
+        # Re-submitting the *same* model_type value is not treated as a change
+        self.patch(url, {'model_type': 'company'}, expected_code=200)
+
+    def test_retarget_permission_bypass(self):
+        """Test that retargeting a session cannot be used to bypass model permissions.
+
+        Regression test for a security report (dev/todo/import-retarget.md):
+        a user with permission for one model (e.g. purchase orders) must not be able
+        to accept the field mapping for that model, then retarget the session to a
+        different model (e.g. part categories) for which they have no permission.
+        """
+        from part.models import PartCategory
+        from users.permissions import check_user_permission
+
+        f = self.helper_file('companies.csv')
+
+        session = DataImportSession.objects.create(
+            data_file=f, model_type='company', user=self.user
+        )
+
+        # Grant permission for 'company' (via the 'purchase_order' ruleset) only
+        self.assignRole('purchase_order.change')
+
+        # Sanity check: the user has no part_category permissions
+        self.assertFalse(check_user_permission(self.user, PartCategory, 'change'))
+
+        # The user is permitted to accept the field mapping for the model they have access to
+        accept_fields_url = reverse(
+            'api-import-session-accept-fields', kwargs={'pk': session.pk}
+        )
+        self.post(accept_fields_url, expected_code=200)
+
+        # Attempting to retarget the session to 'partcategory' must be rejected
+        detail_url = reverse('api-import-session-detail', kwargs={'pk': session.pk})
+        self.patch(detail_url, {'model_type': 'partcategory'}, expected_code=400)
+
+        session.refresh_from_db()
+        self.assertEqual(session.model_type, 'company')
+
     def test_accept_rows_ownership(self):
         """Test that accept_rows rejects requests for sessions owned by another user."""
         other_user = User.objects.create_user(

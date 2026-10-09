@@ -24,6 +24,7 @@ import InvenTree.permissions
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
+    CleanBase,
     ListAPI,
     ListCreateAPI,
     OutputOptionsMixin,
@@ -389,30 +390,43 @@ class GetAuthToken(GenericAPIView):
         - Existing tokens are *never* exposed again via the API
         - Once the token is provided, it can be used for auth until it expires
         """
-        if not request.user.is_authenticated:
-            raise exceptions.NotAuthenticated()  # pragma: no cover
-
         user = request.user
         name = request.query_params.get('name', '')
+
+        if not user.is_authenticated:
+            raise exceptions.NotAuthenticated()  # pragma: no cover
 
         name = ApiToken.sanitize_name(name)
 
         today = datetime.date.today()
+        reissue_token = request.resolver_match.url_name == 'api-token'
 
-        # Find existing token, which has not expired
         token = ApiToken.objects.filter(
             user=user, name=name, revoked=False, expiry__gte=today
         ).first()
 
-        if not token:
+        if token and reissue_token:
+            token.revoked = True
+            token.revoked_by = user
+            token.revocation_reason = (
+                're-issued due to new token request to API with same name'
+            )
+            token.save(update_fields=['revoked', 'revoked_by', 'revocation_reason'])
+
+        if not token or reissue_token:
             # User is authenticated, and requesting a token against the provided name.
-            token = ApiToken.objects.create(user=request.user, name=name)
+            token = ApiToken.objects.create(user=user, name=name, issued_by=user)
 
             logger.info(
                 "Created new API token for user '%s' (name='%s')", user.username, name
             )
 
-            # Add some metadata about the request
+        if token.token_version == 2 and token.hmac_digest and not token._raw_secret:
+            raise exceptions.ValidationError(
+                'Token is not newly created.'
+            )  # pragma: no cover
+
+        # Add some metadata about the request
         token.set_metadata('user_agent', request.headers.get('user-agent', ''))
         token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
         token.set_metadata('remote_host', request.META.get('REMOTE_HOST', ''))
@@ -420,7 +434,11 @@ class GetAuthToken(GenericAPIView):
         token.set_metadata('server_name', request.META.get('SERVER_NAME', ''))
         token.set_metadata('server_port', request.META.get('SERVER_PORT', ''))
 
-        data = {'token': token.key, 'name': token.name, 'expiry': token.expiry}
+        data = {
+            'token': token.token if token.token_version == 2 else token.key,
+            'name': token.name,
+            'expiry': token.expiry,
+        }
 
         # Ensure that the users session is logged in
         if not get_user(request).is_authenticated:
@@ -468,17 +486,32 @@ class TokenListView(TokenMixin, ListCreateAPI):
         'user__first_name',
         'user__last_name',
         'user__email',
+        'revocation_reason',
     ]
-    ordering_fields = ['created', 'expiry', 'last_seen', 'user', 'name', 'revoked']
-    filterset_fields = ['revoked', 'user']
+    ordering_fields = [
+        'created',
+        'expiry',
+        'last_seen',
+        'user',
+        'name',
+        'revoked',
+        'revoked_by',
+        'issued_by',
+        'token_version',
+        'revocation_reason',
+    ]
+    filterset_fields = ['revoked', 'user', 'issued_by', 'revoked_by']
     queryset = ApiToken.objects.none()
+
+    def perform_create(self, serializer):
+        """Save the new token and keep the secret (only available immediately after creation)."""
+        serializer.save(issued_by=self.request.user)
+        self._created_token = serializer.instance
 
     def create(self, request, *args, **kwargs):
         """Create token and show key to user."""
         resp = super().create(request, *args, **kwargs)
-        resp.data['token'] = self.serializer_class.Meta.model.objects.get(
-            id=resp.data['id']
-        ).key
+        resp.data['token'] = self._created_token.token
         return resp
 
     def get(self, request, *args, **kwargs):
@@ -486,13 +519,32 @@ class TokenListView(TokenMixin, ListCreateAPI):
         return super().get(request, *args, **kwargs)
 
 
-class TokenDetailView(TokenMixin, DestroyAPIView, RetrieveAPI):
+class TokenDetailView(CleanBase, TokenMixin, DestroyAPIView, RetrieveAPI):
     """Details for a user token."""
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='revocation_reason',
+                type=str,
+                description='Reason for revoking the token.',
+                default='',
+            )
+        ]
+    )
+    def delete(self, request, *args, **kwargs):
+        """Revoke this specific user token."""
+        return super().delete(request, *args, **kwargs)
 
     def perform_destroy(self, instance):
         """Revoke token."""
         instance.revoked = True
-        instance.save()
+        instance.revoked_by = self.request.user
+        request_data = getattr(self.request, 'data', {})
+        instance.revocation_reason = self.clean_string(
+            'revocation_reason', str(request_data.get('revocation_reason', ''))
+        )
+        instance.save(update_fields=['revoked', 'revoked_by', 'revocation_reason'])
 
 
 class LoginRedirect(RedirectView):

@@ -9,6 +9,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.utils import override_settings
 from django.urls import reverse
 
+from allauth.socialaccount import providers
 from PIL import Image
 from taggit.models import Tag
 
@@ -54,6 +55,101 @@ class DataOutputAPITests(InvenTreeAPITestCase):
         self.user.save()
         response = self.get(url)
         self.assertEqual(len(response.data), 5)
+
+
+class SocialAppAPITests(InvenTreeAPITestCase):
+    """Tests for the SocialApp API serializer."""
+
+    roles = 'all'
+
+    def test_provider_choices_and_validation(self):
+        """Provider choices should come from the allauth registry and reject invalid values."""
+        from common.api import SocialAppSerializer
+
+        available = [provider[0] for provider in providers.registry.as_choices()]
+
+        serializer = SocialAppSerializer()
+        provider_field = serializer.fields['provider']
+
+        self.assertDictEqual(
+            dict(provider_field.choices), dict(providers.registry.as_choices())
+        )
+        self.assertCountEqual(available, list(provider_field.choices.keys()))
+
+        url = reverse('api-sso-list')
+        options = self.options(url)
+        actions = options.data['actions']['GET']
+
+        self.assertIn('provider', actions)
+        self.assertCountEqual(
+            [choice['value'] for choice in actions['provider']['choices']], available
+        )
+        self.assertEqual(
+            {
+                choice['value']: choice['display_name']
+                for choice in actions['provider']['choices']
+            },
+            dict(providers.registry.as_choices()),
+        )
+
+        invalid = SocialAppSerializer(
+            data={'name': 'Bad Provider', 'provider': 'not-a-provider'}
+        )
+        self.assertFalse(invalid.is_valid())
+        self.assertIn('provider', invalid.errors)
+
+    def test_saml_idp_configuration(self):
+        """SAML apps require metadata or a complete inline IdP configuration."""
+        from common.api import SocialAppSerializer
+
+        common = {
+            'name': 'SAML App',
+            'provider': 'saml',
+            'provider_id': 'saml-provider',
+            'client_id': 'saml-org',
+        }
+
+        metadata = SocialAppSerializer(
+            data={
+                **common,
+                'settings': {
+                    'idp': {
+                        'entity_id': 'https://idp.example.com',
+                        'metadata_url': 'https://idp.example.com/metadata',
+                    }
+                },
+            }
+        )
+        self.assertTrue(metadata.is_valid(), metadata.errors)
+
+        inline = SocialAppSerializer(
+            data={
+                **common,
+                'settings': {
+                    'idp': {
+                        'entity_id': 'https://idp.example.com',
+                        'sso_url': 'https://idp.example.com/sso',
+                        'slo_url': 'https://idp.example.com/slo',
+                        'x509cert': 'certificate',
+                    }
+                },
+            }
+        )
+        self.assertTrue(inline.is_valid(), inline.errors)
+
+        incomplete = SocialAppSerializer(
+            data={
+                **common,
+                'settings': {
+                    'idp': {
+                        'entity_id': 'https://idp.example.com',
+                        'sso_url': 'https://idp.example.com/sso',
+                    }
+                },
+            }
+        )
+        self.assertFalse(incomplete.is_valid())
+        self.assertIn('settings', incomplete.errors)
 
 
 class ParameterAPITests(InvenTreeAPITestCase):
@@ -832,6 +928,32 @@ class ParameterAPITests(InvenTreeAPITestCase):
         param_b.full_clean()
         param_b.save()
 
+        # SI prefix conversion may introduce floating point error,
+        # but equivalent values must still be detected as duplicates
+        template_cap = common.models.ParameterTemplate.objects.create(
+            name='Capacitance',
+            units='F',
+            description='A globally unique capacitance parameter',
+            unique=common.models.ParameterTemplate.UniqueOptions.GLOBAL,
+        )
+
+        param_c = common.models.Parameter(
+            template=template_cap,
+            model_type=part_a.get_content_type(),
+            model_id=part_a.pk,
+            data='100nF',
+        )
+        param_c.full_clean()
+        param_c.save()
+
+        with self.assertRaises(ValidationError):
+            common.models.Parameter(
+                template=template_cap,
+                model_type=part_b.get_content_type(),
+                model_id=part_b.pk,
+                data='0.1uF',
+            ).full_clean()
+
     def test_copy_unique_parameters(self):
         """Test that 'unique' parameters are skipped when copying parameters between model instances."""
         from part.models import Part
@@ -1374,6 +1496,25 @@ class NoteAPITests(InvenTreeAPITestCase):
         )
         primary_pks = [n['pk'] for n in list_response.data if n['primary']]
         self.assertEqual(primary_pks, [third.data['pk']])
+
+    def test_creating_primary_note_demotes_existing_primary(self):
+        """Explicitly creating a new note with primary=True demotes the existing primary note.
+
+        Regression test: DRF auto-generates a UniqueTogetherValidator from the
+        'unique_primary_note_per_model' partial unique constraint, which used to
+        reject this at the serializer-validation stage (before Note.save()'s
+        demote-then-save logic ever ran), raising a spurious 'unique set' error.
+        """
+        first = self._create_note('First Note')
+        self.assertTrue(first.data['primary'])
+
+        second = self._create_note('Second Note', primary=True)
+        self.assertTrue(second.data['primary'])
+
+        from common.models import Note
+
+        self.assertFalse(Note.objects.get(pk=first.data['pk']).primary)
+        self.assertTrue(Note.objects.get(pk=second.data['pk']).primary)
 
     def test_primary_flag_isolated_per_model_instance(self):
         """Primary flag changes on one model instance do not affect notes on another."""
@@ -2466,6 +2607,95 @@ class SelectionListStaffPermissionAPITests(InvenTreeAPITestCase):
         self.delete(
             reverse('api-selectionlist-detail', kwargs={'pk': pk}), expected_code=204
         )
+
+
+class SelectionListFilterAPITests(InvenTreeAPITestCase):
+    """Tests for search / filter / ordering options on the SelectionList list endpoint."""
+
+    def setUp(self):
+        """Create a handful of SelectionList objects to filter/search/order over."""
+        super().setUp()
+
+        self.list_url = reverse('api-selectionlist-list')
+
+        self.list_a = SelectionList.objects.create(
+            name='Colors', description='A list of colors', active=True, locked=False
+        )
+        self.list_b = SelectionList.objects.create(
+            name='Shapes', description='A list of shapes', active=False, locked=False
+        )
+        self.list_c = SelectionList.objects.create(
+            name='Sizes', description='Locked list of sizes', active=True, locked=True
+        )
+
+    def test_list_all(self):
+        """With no filters applied, all SelectionList objects are returned."""
+        response = self.get(self.list_url, expected_code=200)
+        names = {item['name'] for item in response.data}
+        self.assertEqual(names, {'Colors', 'Shapes', 'Sizes'})
+
+    def test_filter_active(self):
+        """The 'active' filter restricts results to matching SelectionList objects."""
+        response = self.get(self.list_url, {'active': True}, expected_code=200)
+        names = {item['name'] for item in response.data}
+        self.assertEqual(names, {'Colors', 'Sizes'})
+
+        response = self.get(self.list_url, {'active': False}, expected_code=200)
+        names = {item['name'] for item in response.data}
+        self.assertEqual(names, {'Shapes'})
+
+    def test_filter_locked(self):
+        """The 'locked' filter restricts results to matching SelectionList objects."""
+        response = self.get(self.list_url, {'locked': True}, expected_code=200)
+        names = {item['name'] for item in response.data}
+        self.assertEqual(names, {'Sizes'})
+
+        response = self.get(self.list_url, {'locked': False}, expected_code=200)
+        names = {item['name'] for item in response.data}
+        self.assertEqual(names, {'Colors', 'Shapes'})
+
+    def test_filter_active_and_locked(self):
+        """Multiple filters can be combined."""
+        response = self.get(
+            self.list_url, {'active': True, 'locked': False}, expected_code=200
+        )
+        names = {item['name'] for item in response.data}
+        self.assertEqual(names, {'Colors'})
+
+    def test_search_name(self):
+        """Searching matches against the 'name' field."""
+        response = self.get(self.list_url, {'search': 'Shape'}, expected_code=200)
+        names = {item['name'] for item in response.data}
+        self.assertEqual(names, {'Shapes'})
+
+    def test_search_description(self):
+        """Searching matches against the 'description' field."""
+        response = self.get(self.list_url, {'search': 'Locked list'}, expected_code=200)
+        names = {item['name'] for item in response.data}
+        self.assertEqual(names, {'Sizes'})
+
+    def test_search_no_match(self):
+        """A search term which matches nothing returns an empty result set."""
+        response = self.get(self.list_url, {'search': 'nonexistent'}, expected_code=200)
+        self.assertEqual(len(response.data), 0)
+
+    def test_default_ordering(self):
+        """By default, results are ordered by name (ascending)."""
+        response = self.get(self.list_url, expected_code=200)
+        names = [item['name'] for item in response.data]
+        self.assertEqual(names, ['Colors', 'Shapes', 'Sizes'])
+
+    def test_ordering_name_descending(self):
+        """Results can be ordered by name in descending order."""
+        response = self.get(self.list_url, {'ordering': '-name'}, expected_code=200)
+        names = [item['name'] for item in response.data]
+        self.assertEqual(names, ['Sizes', 'Shapes', 'Colors'])
+
+    def test_ordering_active(self):
+        """Results can be ordered by the 'active' field."""
+        response = self.get(self.list_url, {'ordering': 'active'}, expected_code=200)
+        active_values = [item['active'] for item in response.data]
+        self.assertEqual(active_values, sorted(active_values))
 
 
 class NotePermissionAPITests(InvenTreeAPITestCase):

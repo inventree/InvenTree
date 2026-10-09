@@ -255,6 +255,11 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
             [(s['config_type'], s['key']) for s in response.data],
         )
 
+        # A user without 'admin.view' cannot read or write machine settings
+        self.clearRoles()
+        self.get(machine_setting_url, expected_code=403)
+        self.patch(machine_setting_url, {'value': 'x'}, expected_code=403)
+
     def test_machine_settings_list(self):
         """Test machine settings list API endpoint."""
         machine = MachineConfig.objects.create(
@@ -277,6 +282,10 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
         for item in response.data:
             for key in ['api_url', 'pk', 'typ', 'key']:
                 self.assertIn(key, item)
+
+        # A user without 'admin.view' cannot read machine settings
+        self.clearRoles()
+        self.get(url, expected_code=403)
 
     def test_machine_restart(self):
         """Test machine restart API endpoint."""

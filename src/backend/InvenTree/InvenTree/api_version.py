@@ -1,10 +1,44 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 542
+INVENTREE_API_VERSION = 553
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v553 -> 2026-10-04 : https://github.com/inventree/InvenTree/pull/12965
+    - Fix user creation with 'group_ids' via the User API endpoint
+
+v552 -> 2026-10-02 : https://github.com/inventree/InvenTree/pull/12967
+    - Fix transitions endpoint schema to indicate that it returns a list
+
+v551 -> 2026-09-21 : https://github.com/inventree/InvenTree/pull/12693
+    - Docstring updates for automated transition API documentation generation
+    - New transitions insights endpoints
+
+v550 -> 2026-09-22 : https://github.com/inventree/InvenTree/pull/12912
+    - Adds a top-level 'batch_code' field to the PurchaseOrderReceive API endpoint
+
+v549 -> 2026-09-22 : https://github.com/inventree/InvenTree/pull/12908
+    - Adds filtering / ordering / searching options to the SelectionList API endpoint
+
+v548 -> 2026-09-19 : https://github.com/inventree/InvenTree/pull/12886
+    - Fix API permissions for multiple endpoints
+
+v547 -> 2026-09-12 : https://github.com/inventree/InvenTree/pull/12850
+    - Added more details to API token management
+
+v546 -> 2026-09-12 : https://github.com/inventree/InvenTree/pull/12842
+    - Added setting flags to the settings APIs (read-only)
+
+v545 -> 2026-09-08 : https://github.com/inventree/InvenTree/pull/12808
+    - Ensure consistent ordering of SSO options in API documentation
+
+v544 -> 2026-09-07 : https://github.com/inventree/InvenTree/pull/12807
+    - Adds filtering by filename on the Attachment list API endpoint
+
+v543 -> 2026-09-05 : https://github.com/inventree/InvenTree/pull/12762
+    - Adds admin APIs for managing SSO applications
 
 v542 -> 2026-09-03 : https://github.com/inventree/InvenTree/pull/12731
     - Adds management APIs for oAuth2 provider applications

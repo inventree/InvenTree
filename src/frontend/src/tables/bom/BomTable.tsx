@@ -112,6 +112,7 @@ export function BomTable({
         switchable: false,
         sortable: true,
         minWidth: 250,
+        copyable: (record: any) => record.sub_part_detail?.name ?? '',
         render: (record: any) => {
           const part = record.sub_part_detail;
 

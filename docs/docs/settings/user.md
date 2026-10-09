@@ -21,6 +21,7 @@ The *Display Settings* screen shows general display configuration options:
 {{ usersetting("ICONS_IN_NAVBAR") }}
 {{ usersetting("STICKY_HEADER") }}
 {{ usersetting("STICKY_TABLE_HEADER") }}
+{{ usersetting("ROTATE_TABLE_HEADERS") }}
 {{ usersetting("SHOW_SPOTLIGHT") }}
 {{ usersetting("BARCODE_IN_FORM_FIELDS") }}
 {{ usersetting("DATE_DISPLAY_FORMAT") }}

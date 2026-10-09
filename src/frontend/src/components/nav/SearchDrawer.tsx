@@ -78,7 +78,8 @@ function QueryResultGroup({
   navigate,
   onClose,
   onRemove,
-  onResultClick
+  onResultClick,
+  searchNotes
 }: Readonly<{
   searchText: string;
   query: SearchQuery;
@@ -86,6 +87,7 @@ function QueryResultGroup({
   onClose: () => void;
   onRemove: (query: ModelType) => void;
   onResultClick: (query: ModelType, pk: number, event: any) => void;
+  searchNotes: boolean;
 }>) {
   const modelInfo = useMemo(() => getModelInfo(query.model), [query.model]);
 
@@ -104,7 +106,11 @@ function QueryResultGroup({
       cancelEvent(event);
 
       if (overviewUrl) {
-        const url = `${overviewUrl}?search=${searchText}`;
+        // Keep the notes-search context so results found via their notes
+        // are also present in the full results table view
+        const url = `${overviewUrl}?search=${searchText}${
+          searchNotes ? '&search_notes=true' : ''
+        }`;
 
         // Close drawer if opening in the same tab
         if (!eventModified(event)) {
@@ -121,7 +127,7 @@ function QueryResultGroup({
         });
       }
     },
-    [overviewUrl, searchText]
+    [overviewUrl, searchText, searchNotes]
   );
 
   if (query.results.count == 0) {
@@ -300,7 +306,7 @@ export function SearchDrawer({
           part_detail: true
         },
         enabled:
-          user.hasViewRole(UserRoles.build) &&
+          user.hasViewVisible(UserRoles.build) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_BUILD_ORDERS')
       },
       {
@@ -310,7 +316,7 @@ export function SearchDrawer({
         title: t`Suppliers`,
         parameters: {},
         enabled:
-          user.hasViewRole(UserRoles.purchase_order) &&
+          user.hasViewVisible(UserRoles.purchase_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
       },
       {
@@ -320,7 +326,7 @@ export function SearchDrawer({
         title: t`Manufacturers`,
         parameters: {},
         enabled:
-          user.hasViewRole(UserRoles.purchase_order) &&
+          user.hasViewVisible(UserRoles.purchase_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
       },
       {
@@ -330,7 +336,7 @@ export function SearchDrawer({
         title: t`Customers`,
         parameters: {},
         enabled:
-          user.hasViewRole(UserRoles.sales_order) &&
+          user.hasViewVisible(UserRoles.sales_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
       },
       {
@@ -344,7 +350,7 @@ export function SearchDrawer({
             : undefined
         },
         enabled:
-          user.hasViewRole(UserRoles.purchase_order) &&
+          user.hasViewVisible(UserRoles.purchase_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS')
       },
       {
@@ -358,14 +364,14 @@ export function SearchDrawer({
             : undefined
         },
         enabled:
-          user.hasViewRole(UserRoles.sales_order) &&
+          user.hasViewVisible(UserRoles.sales_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_SALES_ORDERS')
       },
       {
         model: ModelType.salesordershipment,
         parameters: {},
         enabled:
-          user.hasViewRole(UserRoles.sales_order) &&
+          user.hasViewVisible(UserRoles.sales_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_SALES_ORDER_SHIPMENTS')
       },
       {
@@ -379,7 +385,7 @@ export function SearchDrawer({
             : undefined
         },
         enabled:
-          user.hasViewRole(UserRoles.return_order) &&
+          user.hasViewVisible(UserRoles.return_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_RETURN_ORDERS')
       }
     ];
@@ -592,6 +598,7 @@ export function SearchDrawer({
                   query={query}
                   navigate={navigate}
                   onClose={closeDrawer}
+                  searchNotes={searchNotes}
                   onRemove={(query) => removeResults(query)}
                   onResultClick={(query, pk, event) =>
                     onResultClick(query, pk, event)
