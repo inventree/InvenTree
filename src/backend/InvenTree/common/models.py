@@ -622,7 +622,9 @@ class BaseInvenTreeSetting(models.Model):
 
         try:
             settings = cls.objects.all()
-            setting = settings.filter(**filters).first()
+            # ensure we do not crash on migrations
+            with transaction.atomic():
+                setting = settings.filter(**filters).first()
         except (ValueError, cls.DoesNotExist):
             setting = None
         except (IntegrityError, OperationalError, ProgrammingError):
@@ -682,8 +684,7 @@ class BaseInvenTreeSetting(models.Model):
         if backup_value is None:
             backup_value = cls.get_setting_default(key, **kwargs)
 
-        with transaction.atomic():
-            setting = cls.get_setting_object(key, **kwargs)
+        setting = cls.get_setting_object(key, **kwargs)
 
         if setting:
             value = setting.value
