@@ -614,7 +614,6 @@ class BaseInvenTreeSetting(models.Model):
                 access_global_cache = False
 
         # At this point, we need to query the database
-
         filters = {
             'key__iexact': key,
             # Optionally filter by other keys
@@ -683,7 +682,8 @@ class BaseInvenTreeSetting(models.Model):
         if backup_value is None:
             backup_value = cls.get_setting_default(key, **kwargs)
 
-        setting = cls.get_setting_object(key, **kwargs)
+        with transaction.atomic():
+            setting = cls.get_setting_object(key, **kwargs)
 
         if setting:
             value = setting.value

@@ -16,7 +16,7 @@ from moneyed import CURRENCIES
 def set_default_currency(apps, schema_editor):
     """Migrate the currency setting from config.yml to db."""
     from common.currency import currency_codes
-    InvenTreeSetting = apps.get_model('common', 'InvenTreeSetting')
+    from common.models import InvenTreeSetting
 
     base_currency = InvenTree.config.get_setting(
         'INVENTREE_BASE_CURRENCY', 'base_currency', 'USD'
