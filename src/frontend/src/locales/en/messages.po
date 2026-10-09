@@ -11436,6 +11436,10 @@ msgstr "Consume"
 msgid "Remove allocated stock"
 msgstr "Remove allocated stock"
 
+#: src/tables/build/BuildLineTable.tsx:83
+msgid "Allocated part differs from the BOM part"
+msgstr "Allocated part differs from the BOM part"
+
 #: src/tables/build/BuildLineTable.tsx:59
 #~ msgid "Show lines with available stock"
 #~ msgstr "Show lines with available stock"

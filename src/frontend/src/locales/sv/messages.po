@@ -11441,6 +11441,10 @@ msgstr "Konsumera"
 msgid "Remove allocated stock"
 msgstr ""
 
+#: src/tables/build/BuildLineTable.tsx:83
+msgid "Allocated part differs from the BOM part"
+msgstr ""
+
 #: src/tables/build/BuildLineTable.tsx:59
 #~ msgid "Show lines with available stock"
 #~ msgstr "Show lines with available stock"
