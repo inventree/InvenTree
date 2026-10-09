@@ -99,22 +99,22 @@ runs:
         shell: bash
         run: invoke install --dev
         env:
-          SETUP_INITIALIZING=1
+          SETUP_INITIALIZING: 1
       - name: Run invoke install
         if: ${{ inputs.install == 'true' }}
         shell: bash
         run: invoke install
         env:
-          SETUP_INITIALIZING=1
+          SETUP_INITIALIZING: 1
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
         run: invoke update --skip-backup --skip-static --no-frontend
         env:
-          SETUP_INITIALIZING=1
+          SETUP_INITIALIZING: 1
       - name: Collect static files
         if: ${{ inputs.static == 'true' }}
         shell: bash
         run: invoke static --skip-plugins
         env:
-          SETUP_INITIALIZING=1
+          SETUP_INITIALIZING: 1
