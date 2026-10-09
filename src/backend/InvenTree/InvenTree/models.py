@@ -332,7 +332,7 @@ class ReferenceIndexingMixin(models.Model):
             # No existing items
             return 1
 
-        reference = latest.reference.strip
+        reference = latest.reference.strip()
 
         try:
             reference = InvenTree.format.extract_named_group(
