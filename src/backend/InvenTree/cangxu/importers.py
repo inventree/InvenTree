@@ -153,6 +153,7 @@ def parse_workbook_rows(upload):
 def normalize_workbook_rows(rows, source_kind):
     """Add conservative, header-based field hints while preserving source cells."""
     by_sheet = {}
+    data_rows = []
     for row in rows:
         by_sheet.setdefault(row['source_sheet'], []).append(row)
 
@@ -199,18 +200,20 @@ def normalize_workbook_rows(rows, source_kind):
             if target_counts[target] == 1
         }
 
-        if len(column_targets) < 2:
+        if not column_targets:
             for row in sheet_rows:
                 row['normalized_values'] = {
+                    'row_type': 'data',
                     'mapping_status': 'unrecognized_header',
                     'mapping_profile': profile,
                 }
+                data_rows.append(row)
             continue
 
-        header_row['normalized_values'] = {
-            'row_type': 'header',
-            'mapping_status': 'recognized',
-            'mapping_profile': profile,
+        header_provenance = {
+            'source_row': header_row['source_row'],
+            'source_range': header_row['source_range'],
+            'source_values': header_row['source_values'],
             'column_targets': column_targets,
             'ambiguous_fields': ambiguous,
         }
@@ -233,6 +236,7 @@ def normalize_workbook_rows(rows, source_kind):
                         'part_number',
                         'oem_part_number',
                         'serial',
+                        'batch_code',
                         'external_reference',
                     }
                     and isinstance(value, (int, float))
@@ -258,9 +262,11 @@ def normalize_workbook_rows(rows, source_kind):
                 'unmapped_columns': unmapped_columns,
                 'ambiguous_fields': ambiguous,
                 'identifier_warnings': identifier_warnings,
+                'source_headers': header_provenance,
             }
+            data_rows.append(row)
 
-    return rows
+    return data_rows
 
 
 DATE_FIELDS = {'production_date', 'shipped_at', 'returned_at'}

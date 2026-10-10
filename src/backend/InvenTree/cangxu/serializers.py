@@ -719,6 +719,14 @@ class DataImportStageRowSerializer(serializers.Serializer):
         return value
 
 
+class OpeningStockMappingSerializer(serializers.Serializer):
+    """Require an explicit internal location for staged opening stock."""
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.filter(external=False)
+    )
+
+
 class StateTransitionSerializer(serializers.Serializer):
     """Accept an explicit workflow transition and optional explanation."""
 

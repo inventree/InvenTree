@@ -31,6 +31,7 @@ from .models import (
     DataImportBatch,
     DataImportRecord,
     ManufacturingLotStockItem,
+    PartCodeAlias,
     ServiceCase,
     ServiceCaseEvent,
     ShipmentManifest,
@@ -1035,7 +1036,8 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
             format='multipart',
         )
         self.assertEqual(response.data['worksheet_rows'], 9)
-        self.assertEqual(response.data['staged_rows'], 9)
+        self.assertEqual(response.data['data_rows'], 6)
+        self.assertEqual(response.data['staged_rows'], 6)
         batch_id = response.data['batch']['id']
         first_row = DataImportRecord.objects.get(
             batch_id=batch_id, source_sheet='Synthetic inventory', source_row=2
@@ -1043,6 +1045,13 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
         self.assertEqual(first_row.source_range, 'A2:E2')
         self.assertEqual(first_row.source_values['A']['value'], '00001234')
         self.assertEqual(first_row.source_values['B']['number_format'], '0.000')
+        self.assertEqual(first_row.normalized_values['source_headers']['source_row'], 1)
+        self.assertEqual(
+            first_row.normalized_values['source_headers']['source_values']['A'][
+                'value'
+            ],
+            'PN号',
+        )
         self.assertEqual(
             first_row.normalized_values['fields'],
             {
@@ -1105,13 +1114,13 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
         )
         self.assertEqual(repeated.data['batch']['id'], batch_id)
         self.assertEqual(repeated.data['staged_rows'], 0)
-        self.assertEqual(repeated.data['already_staged_rows'], 9)
+        self.assertEqual(repeated.data['already_staged_rows'], 6)
         validation = self.post(
             reverse('cangxu-import-batch-validate', kwargs={'pk': batch_id}),
             {},
             expected_code=200,
         )
-        self.assertEqual(validation.data['invalid'], 9)
+        self.assertEqual(validation.data['invalid'], 6)
         first_row.refresh_from_db()
         error_codes = {error['code'] for error in first_row.validation_errors}
         self.assertIn('date_missing_year', error_codes)
@@ -1133,6 +1142,12 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
         part = Part.objects.create(
             name='Synthetic imported tracked part', trackable=True, component=True
         )
+        PartCodeAlias.objects.create(
+            part=part,
+            namespace=PartCodeAlias.Namespace.LEGACY,
+            code='0001002',
+            source_system='CX-TEST',
+        )
         location = StockLocation.objects.get(pk=7)
         batch_response = self.create_opening_batch('a' * 64)
         batch_id = batch_response.data['id']
@@ -1144,7 +1159,14 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
                     'source_row': 2,
                     'source_range': 'A2:F2',
                     'source_values': {'legacy_code': '0001002', 'quantity': '1'},
-                    'normalized_values': {'legacy_code': '0001002'},
+                    'normalized_values': {
+                        'fields': {
+                            'part_number': '0001002',
+                            'quantity': '1',
+                            'serial': 'CX-TEST-IMPORT-0001',
+                            'batch_code': 'CX-TEST-OPENING-001',
+                        }
+                    },
                 }
             ],
             expected_code=201,
@@ -1158,7 +1180,14 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
                     'source_row': 2,
                     'source_range': 'A2:F2',
                     'source_values': {'legacy_code': '0001002', 'quantity': '1'},
-                    'normalized_values': {'legacy_code': '0001002'},
+                    'normalized_values': {
+                        'fields': {
+                            'part_number': '0001002',
+                            'quantity': '1',
+                            'serial': 'CX-TEST-IMPORT-0001',
+                            'batch_code': 'CX-TEST-OPENING-001',
+                        }
+                    },
                 }
             ],
             expected_code=201,
@@ -1166,12 +1195,18 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
         self.assertEqual(repeated_rows.data['created'], 0)
         self.assertEqual(repeated_rows.data['already_staged'], 1)
         record = DataImportRecord.objects.get(batch_id=batch_id)
-        record.mapped_part = part
-        record.location = location
-        record.quantity = 1
-        record.serial = 'CX-TEST-IMPORT-0001'
-        record.batch_code = 'CX-TEST-OPENING-001'
-        record.save()
+        mapped = self.post(
+            reverse('cangxu-import-batch-map-opening-stock', kwargs={'pk': batch_id}),
+            {'location': location.pk},
+            expected_code=200,
+        )
+        self.assertEqual(mapped.data['mapped'], 1)
+        record.refresh_from_db()
+        self.assertEqual(record.mapped_part_id, part.pk)
+        self.assertEqual(record.location_id, location.pk)
+        self.assertEqual(record.quantity, 1)
+        self.assertEqual(record.serial, 'CX-TEST-IMPORT-0001')
+        self.assertEqual(record.batch_code, 'CX-TEST-OPENING-001')
 
         before_count = StockItem.objects.filter(part=part).count()
         self.post(
@@ -1221,6 +1256,58 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
             expected_code=200,
         )
         self.assertEqual(duplicate.data['id'], batch_id)
+
+    def test_opening_mapping_holds_part_code_ambiguity(self):
+        """Do not select a part when the same external code has multiple targets."""
+        first_part = Part.objects.create(
+            name='Synthetic ambiguous part one', component=True
+        )
+        second_part = Part.objects.create(
+            name='Synthetic ambiguous part two', component=True
+        )
+        for part, namespace in [
+            (first_part, PartCodeAlias.Namespace.LEGACY),
+            (second_part, PartCodeAlias.Namespace.ERP),
+        ]:
+            PartCodeAlias.objects.create(
+                part=part,
+                namespace=namespace,
+                code='CX-TEST-AMBIGUOUS-001',
+                source_system='CX-TEST',
+            )
+        batch_id = self.create_opening_batch('d' * 64).data['id']
+        self.post(
+            reverse('cangxu-import-batch-stage-rows', kwargs={'pk': batch_id}),
+            [
+                {
+                    'source_sheet': 'Synthetic stock',
+                    'source_row': 2,
+                    'source_values': {'part_number': 'CX-TEST-AMBIGUOUS-001'},
+                    'normalized_values': {
+                        'fields': {
+                            'part_number': 'CX-TEST-AMBIGUOUS-001',
+                            'quantity': 1,
+                            'serial': 'CX-TEST-AMBIGUOUS-SN-001',
+                            'batch_code': 'CX-TEST-AMBIGUOUS-BATCH',
+                        }
+                    },
+                }
+            ],
+            expected_code=201,
+        )
+
+        response = self.post(
+            reverse('cangxu-import-batch-map-opening-stock', kwargs={'pk': batch_id}),
+            {'location': StockLocation.objects.get(pk=7).pk},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['mapped'], 0)
+        self.assertEqual(response.data['unresolved'], 1)
+        record = DataImportRecord.objects.get(batch_id=batch_id)
+        self.assertIsNone(record.mapped_part_id)
+        self.assertIn(
+            'ambiguous_part_code', [error['code'] for error in record.validation_errors]
+        )
 
     def test_invalid_serialized_quantity_cannot_be_approved_or_applied(self):
         """Hold serial/quantity conflicts in review without touching inventory."""

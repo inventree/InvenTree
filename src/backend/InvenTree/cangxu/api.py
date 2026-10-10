@@ -19,6 +19,7 @@ from rest_framework.routers import DefaultRouter
 
 import InvenTree.permissions
 from order.models import SalesOrderShipment
+from part.models import Part
 from plugin.base.event.events import batch_events
 from stock.models import StockItem, batch_tracking_entries
 from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
@@ -1559,7 +1560,7 @@ class DataImportBatchViewSet(CangxuModelViewSet):
         serializer.is_valid(raise_exception=True)
         values = serializer.validated_data
         try:
-            rows = parse_workbook_rows(upload)
+            source_rows = parse_workbook_rows(upload)
         except WorkbookImportError as exc:
             messages = {
                 'workbook_too_large': _('The workbook exceeds the 25 MiB limit.'),
@@ -1573,7 +1574,12 @@ class DataImportBatchViewSet(CangxuModelViewSet):
             raise ValidationError({
                 'source_file': messages.get(str(exc), _('Invalid workbook.'))
             }) from exc
-        rows = normalize_workbook_rows(rows, values['source_kind'])
+        worksheet_rows = len(source_rows)
+        rows = normalize_workbook_rows(source_rows, values['source_kind'])
+        if not rows:
+            raise ValidationError({
+                'source_file': _('The workbook contains headers but no data rows.')
+            })
 
         staged = 0
         with transaction.atomic():
@@ -1601,7 +1607,8 @@ class DataImportBatchViewSet(CangxuModelViewSet):
         return Response(
             {
                 'batch': self.get_serializer(batch).data,
-                'worksheet_rows': len(rows),
+                'worksheet_rows': worksheet_rows,
+                'data_rows': len(rows),
                 'staged_rows': staged,
                 'already_staged_rows': len(rows) - staged,
             },
@@ -1852,6 +1859,135 @@ class DataImportBatchViewSet(CangxuModelViewSet):
             },
             status=status.HTTP_201_CREATED,
         )
+
+    @action(detail=True, methods=['post'], url_path='map-opening-stock')
+    @transaction.atomic
+    def map_opening_stock(self, request, pk=None):
+        """Resolve staged part codes and defaults without creating stock records."""
+        batch = DataImportBatch.objects.select_for_update().get(pk=self.get_object().pk)
+        if batch.source_kind != DataImportBatch.Kind.OPENING_STOCK:
+            raise ValidationError(_('Only opening stock batches can use this mapping.'))
+        if batch.state != DataImportBatch.State.DRAFT:
+            raise ValidationError(_('Only draft batches can be mapped.'))
+
+        mapping = serializers.OpeningStockMappingSerializer(data=request.data)
+        mapping.is_valid(raise_exception=True)
+        location = mapping.validated_data['location']
+        mapped = 0
+        unresolved = 0
+        for record in batch.records.select_for_update().filter(
+            state__in=[DataImportRecord.State.STAGED, DataImportRecord.State.INVALID]
+        ):
+            normalized = record.normalized_values
+            if normalized.get('row_type') == 'header':
+                continue
+            fields = normalized.get('fields', {})
+            if not isinstance(fields, dict):
+                fields = {}
+
+            row_errors = []
+            codes = [fields.get('part_number'), fields.get('oem_part_number')]
+            codes = [
+                code.strip() for code in codes if isinstance(code, str) and code.strip()
+            ]
+            candidate_ids = set()
+            if codes:
+                part_query = Q()
+                for code in codes:
+                    part_query |= Q(IPN__iexact=code)
+                candidate_ids.update(
+                    Part.objects.filter(part_query).values_list('pk', flat=True)
+                )
+                candidate_ids.update(
+                    PartCodeAlias.objects
+                    .filter(normalized_code__in=[code.upper() for code in codes])
+                    .filter(Q(source_system=batch.source_system) | Q(source_system=''))
+                    .values_list('part_id', flat=True)
+                )
+
+            if len(candidate_ids) > 1:
+                row_errors.append({
+                    'field': 'part_number',
+                    'code': 'ambiguous_part_code',
+                })
+            elif candidate_ids:
+                candidate_id = candidate_ids.pop()
+                if record.mapped_part_id not in [None, candidate_id]:
+                    row_errors.append({
+                        'field': 'mapped_part',
+                        'code': 'manual_mapping_conflicts_with_part_code',
+                    })
+                else:
+                    record.mapped_part_id = candidate_id
+            elif not record.mapped_part_id:
+                row_errors.append({
+                    'field': 'part_number',
+                    'code': 'part_code_not_resolved' if codes else 'part_code_required',
+                })
+
+            if record.location_id not in [None, location.pk]:
+                row_errors.append({
+                    'field': 'location',
+                    'code': 'location_mapping_conflict',
+                })
+            else:
+                record.location = location
+
+            source_quantity = fields.get('quantity')
+            if source_quantity not in (None, ''):
+                try:
+                    quantity = Decimal(str(source_quantity))
+                    if quantity <= 0:
+                        raise ValueError
+                    if record.quantity not in [None, quantity]:
+                        row_errors.append({
+                            'field': 'quantity',
+                            'code': 'quantity_mapping_conflict',
+                        })
+                    else:
+                        record.quantity = quantity
+                except Exception:
+                    row_errors.append({'field': 'quantity', 'code': 'invalid_quantity'})
+
+            for field, source_field in [
+                ('serial', 'serial'),
+                ('batch_code', 'batch_code'),
+            ]:
+                source_value = fields.get(source_field)
+                if source_value in (None, ''):
+                    continue
+                if not isinstance(source_value, str):
+                    row_errors.append({'field': field, 'code': f'{field}_must_be_text'})
+                    continue
+                source_value = source_value.strip()
+                current_value = getattr(record, field)
+                if current_value and current_value != source_value:
+                    row_errors.append({
+                        'field': field,
+                        'code': f'{field}_mapping_conflict',
+                    })
+                else:
+                    setattr(record, field, source_value)
+
+            record.validation_errors = row_errors
+            record.apply_error = ''
+            record.state = (
+                DataImportRecord.State.INVALID
+                if row_errors
+                else DataImportRecord.State.STAGED
+            )
+            record.save()
+            if row_errors:
+                unresolved += 1
+            else:
+                mapped += 1
+
+        return Response({
+            'batch': batch.pk,
+            'mapped': mapped,
+            'unresolved': unresolved,
+            'rows': batch.records.count(),
+        })
 
     @action(detail=True, methods=['post'])
     @transaction.atomic
