@@ -24,7 +24,7 @@ from stock.models import StockItem, batch_tracking_entries
 from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 
 from . import serializers
-from .importers import WorkbookImportError, parse_workbook_rows
+from .importers import WorkbookImportError, normalize_workbook_rows, parse_workbook_rows
 from .models import (
     ComponentReplacement,
     ConfigurationItem,
@@ -1568,6 +1568,7 @@ class DataImportBatchViewSet(CangxuModelViewSet):
             raise ValidationError({
                 'source_file': messages.get(str(exc), _('Invalid workbook.'))
             }) from exc
+        rows = normalize_workbook_rows(rows, values['source_kind'])
 
         staged = 0
         with transaction.atomic():

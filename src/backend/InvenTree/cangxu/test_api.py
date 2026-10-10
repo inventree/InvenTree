@@ -965,11 +965,49 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
         workbook = Workbook()
         sheet = workbook.active
         sheet.title = 'Synthetic inventory'
-        sheet.append(['Legacy code', 'Quantity'])
+        sheet.append(['PN号', '数量'])
         sheet.append(['00001234', 3])
         sheet['B2'].number_format = '0.000'
+        shipment = workbook.create_sheet('Synthetic shipment')
+        shipment.append([
+            '流程编号',
+            '项目名称',
+            '出库产品',
+            '数量',
+            '状态',
+            '出库时间',
+        ])
+        shipment.append([
+            'CX-TEST-FLOW-0001',
+            'Synthetic project',
+            'Synthetic GPU board',
+            2,
+            '未出库',
+            '2026-10-01',
+        ])
+        service = workbook.create_sheet('Synthetic service')
+        service.append([
+            '料号',
+            '名称',
+            '数量',
+            'SN',
+            '故障原因具体描述',
+            '售后状态',
+            '售后出库',
+            '售后入库',
+        ])
+        service.append([
+            'CX-TEST-PART-001',
+            'Synthetic switch board',
+            1,
+            'CX-TEST-SN-0001',
+            'Synthetic inspection required',
+            '待检',
+            None,
+            None,
+        ])
         detail = workbook.create_sheet('Synthetic trace')
-        detail['B4'] = 'CX-TEST-SN-0001'
+        detail['B4'] = 'CX-TEST-SN-0002'
         content = BytesIO()
         workbook.save(content)
         stock_count = StockItem.objects.count()
@@ -993,8 +1031,8 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
             expected_code=201,
             format='multipart',
         )
-        self.assertEqual(response.data['worksheet_rows'], 3)
-        self.assertEqual(response.data['staged_rows'], 3)
+        self.assertEqual(response.data['worksheet_rows'], 7)
+        self.assertEqual(response.data['staged_rows'], 7)
         batch_id = response.data['batch']['id']
         first_row = DataImportRecord.objects.get(
             batch_id=batch_id, source_sheet='Synthetic inventory', source_row=2
@@ -1002,6 +1040,30 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
         self.assertEqual(first_row.source_range, 'A2:B2')
         self.assertEqual(first_row.source_values['A']['value'], '00001234')
         self.assertEqual(first_row.source_values['B']['number_format'], '0.000')
+        self.assertEqual(
+            first_row.normalized_values['fields'],
+            {'part_number': '00001234', 'quantity': 3},
+        )
+        shipment_row = DataImportRecord.objects.get(
+            batch_id=batch_id, source_sheet='Synthetic shipment', source_row=2
+        )
+        self.assertEqual(
+            shipment_row.normalized_values['mapping_profile'], 'shipment_history'
+        )
+        self.assertEqual(
+            shipment_row.normalized_values['fields']['external_reference'],
+            'CX-TEST-FLOW-0001',
+        )
+        service_row = DataImportRecord.objects.get(
+            batch_id=batch_id, source_sheet='Synthetic service', source_row=2
+        )
+        self.assertEqual(
+            service_row.normalized_values['mapping_profile'], 'service_history'
+        )
+        self.assertEqual(
+            service_row.normalized_values['fields']['fault_description'],
+            'Synthetic inspection required',
+        )
         detail_row = DataImportRecord.objects.get(
             batch_id=batch_id, source_sheet='Synthetic trace', source_row=4
         )
@@ -1019,13 +1081,13 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
         )
         self.assertEqual(repeated.data['batch']['id'], batch_id)
         self.assertEqual(repeated.data['staged_rows'], 0)
-        self.assertEqual(repeated.data['already_staged_rows'], 3)
+        self.assertEqual(repeated.data['already_staged_rows'], 7)
         validation = self.post(
             reverse('cangxu-import-batch-validate', kwargs={'pk': batch_id}),
             {},
             expected_code=200,
         )
-        self.assertEqual(validation.data['invalid'], 3)
+        self.assertEqual(validation.data['invalid'], 7)
         self.assertFalse(
             DataImportRecord.objects.filter(
                 batch_id=batch_id, state=DataImportRecord.State.VALID
