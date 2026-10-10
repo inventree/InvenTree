@@ -716,13 +716,13 @@ msgstr "标签"
 
 #: lib/enums/ModelInformation.tsx:373
 msgid "Note Template"
-msgstr ""
+msgstr "备注模板"
 
 #: lib/enums/ModelInformation.tsx:374
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:224
 #: src/pages/Index/Settings/AdminCenter/NoteTemplatePanel.tsx:9
 msgid "Note Templates"
-msgstr ""
+msgstr "备注模板"
 
 #: lib/enums/Roles.tsx:33
 msgid "Admin"
@@ -782,11 +782,11 @@ msgstr "扫描时出错"
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:267
 msgid "Flashlight"
-msgstr ""
+msgstr "手电筒"
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:268
 msgid "Flashlight control is not supported on this device"
-msgstr ""
+msgstr "此设备不支持手电筒控制"
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:319
 msgid "Error while stopping"
@@ -799,12 +799,12 @@ msgstr "选择相机并按播放按钮开始扫描。"
 #: src/components/barcodes/BarcodeCameraInput.tsx:384
 #: src/components/barcodes/BarcodeCameraInput.tsx:391
 msgid "Turn off flashlight"
-msgstr ""
+msgstr "关闭手电筒"
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:384
 #: src/components/barcodes/BarcodeCameraInput.tsx:391
 msgid "Turn on flashlight"
-msgstr ""
+msgstr "打开手电筒"
 
 #: src/components/barcodes/BarcodeCameraInput.tsx:403
 msgid "Stop scanning"
@@ -1635,15 +1635,15 @@ msgstr "删除图片"
 
 #: src/components/details/LineItemOverviewTable.tsx:87
 msgid "Progress"
-msgstr ""
+msgstr "进度"
 
 #: src/components/details/LineItemOverviewTable.tsx:113
 msgid "No line items"
-msgstr ""
+msgstr "没有明细行"
 
 #: src/components/details/LineItemOverviewTable.tsx:118
 msgid "View all {count} line items"
-msgstr ""
+msgstr "查看全部 {count} 条明细"
 
 #: src/components/details/PartIcons.tsx:43
 #~ msgid "Part is a template part (variants can be made from this part)"
@@ -1693,7 +1693,7 @@ msgstr "已更新"
 
 #: src/components/editors/NotesEditor.tsx:97
 msgid "Updated by"
-msgstr ""
+msgstr "更新人"
 
 #: src/components/editors/NotesEditor.tsx:126
 #~ msgid "Notes saved successfully"
@@ -1739,106 +1739,106 @@ msgstr "添加备注"
 
 #: src/components/editors/NotesEditor.tsx:317
 msgid "Add Note Template"
-msgstr ""
+msgstr "添加备注模板"
 
 #: src/components/editors/NotesEditor.tsx:330
 msgid "Delete Note Template"
-msgstr ""
+msgstr "删除备注模板"
 
 #: src/components/editors/NotesEditor.tsx:330
 msgid "Delete Note"
-msgstr ""
+msgstr "删除备注"
 
 #: src/components/editors/NotesEditor.tsx:344
 msgid "Edit Note Template"
-msgstr ""
+msgstr "编辑备注模板"
 
 #: src/components/editors/NotesEditor.tsx:344
 msgid "Edit Note"
-msgstr ""
+msgstr "编辑备注"
 
 #: src/components/editors/NotesEditor.tsx:393
 msgid "Note updated"
-msgstr ""
+msgstr "备注已更新"
 
 #. placeholder {0}: error.message
 #: src/components/editors/NotesEditor.tsx:402
 msgid "Failed to update note: {0}"
-msgstr ""
+msgstr "更新备注失败：{0}"
 
 #: src/components/editors/NotesEditor.tsx:433
 msgid "Failed to upload image"
-msgstr ""
+msgstr "图片上传失败"
 
 #: src/components/editors/NotesEditor.tsx:460
 msgid "Edit note"
-msgstr ""
+msgstr "编辑备注"
 
 #: src/components/editors/NotesEditor.tsx:471
 #: src/components/panels/PanelGroup.tsx:340
 msgid "Unsaved Changes"
-msgstr ""
+msgstr "有未保存的更改"
 
 #: src/components/editors/NotesEditor.tsx:474
 msgid "Save note"
-msgstr ""
+msgstr "保存备注"
 
 #: src/components/editors/NotesEditor.tsx:488
 msgid "Reset note content"
-msgstr ""
+msgstr "重置备注内容"
 
 #: src/components/editors/NotesEditor.tsx:502
 msgid "Finish editing"
-msgstr ""
+msgstr "完成编辑"
 
 #: src/components/editors/NotesEditor.tsx:515
 msgid "Note Actions"
-msgstr ""
+msgstr "备注操作"
 
 #: src/components/editors/NotesEditor.tsx:606
 #: src/components/editors/NotesEditor.tsx:607
 msgid "Insert table"
-msgstr ""
+msgstr "插入表格"
 
 #: src/components/editors/NotesEditor.tsx:616
 #: src/components/editors/NotesEditor.tsx:617
 msgid "Add column before"
-msgstr ""
+msgstr "在左侧插入列"
 
 #: src/components/editors/NotesEditor.tsx:626
 #: src/components/editors/NotesEditor.tsx:627
 msgid "Add column after"
-msgstr ""
+msgstr "在右侧插入列"
 
 #: src/components/editors/NotesEditor.tsx:636
 #: src/components/editors/NotesEditor.tsx:637
 msgid "Delete column"
-msgstr ""
+msgstr "删除列"
 
 #: src/components/editors/NotesEditor.tsx:646
 #: src/components/editors/NotesEditor.tsx:647
 msgid "Add row before"
-msgstr ""
+msgstr "在上方插入行"
 
 #: src/components/editors/NotesEditor.tsx:656
 #: src/components/editors/NotesEditor.tsx:657
 msgid "Add row after"
-msgstr ""
+msgstr "在下方插入行"
 
 #: src/components/editors/NotesEditor.tsx:666
 #: src/components/editors/NotesEditor.tsx:667
 msgid "Delete row"
-msgstr ""
+msgstr "删除行"
 
 #: src/components/editors/NotesEditor.tsx:676
 #: src/components/editors/NotesEditor.tsx:677
 msgid "Toggle header row"
-msgstr ""
+msgstr "切换表头行"
 
 #: src/components/editors/NotesEditor.tsx:686
 #: src/components/editors/NotesEditor.tsx:687
 msgid "Delete table"
-msgstr ""
+msgstr "删除表格"
 
 #: src/components/editors/NotesEditor.tsx:701
 #: src/components/panels/NotesPanel.tsx:24
@@ -1850,7 +1850,7 @@ msgstr "备注"
 
 #: src/components/editors/NotesEditor.tsx:702
 msgid "There are no notes here yet."
-msgstr ""
+msgstr "暂无备注。"
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:15
 msgid "Code"
@@ -3095,11 +3095,11 @@ msgstr "存在待处理的数据库迁移。"
 
 #: src/components/nav/Alerts.tsx:155
 msgid "CORS Settings"
-msgstr ""
+msgstr "CORS 设置"
 
 #: src/components/nav/Alerts.tsx:157
 msgid "CORS is set to allow all origins."
-msgstr ""
+msgstr "CORS 当前允许所有来源。"
 
 #: src/components/nav/Alerts.tsx:172
 msgid "Learn more about {code}"
@@ -3425,15 +3425,15 @@ msgstr "插件已提供"
 
 #: src/components/panels/PanelGroup.tsx:348
 msgid "You have unsaved changes. Are you sure you want to leave this panel?"
-msgstr ""
+msgstr "有未保存的更改，确定要离开此面板吗？"
 
 #: src/components/panels/PanelGroup.tsx:351
 msgid "Leave"
-msgstr ""
+msgstr "离开"
 
 #: src/components/panels/PanelGroup.tsx:351
 msgid "Stay"
-msgstr ""
+msgstr "留在此处"
 
 #. placeholder {0}: panel.name
 #: src/components/panels/PanelGroup.tsx:386
@@ -3906,11 +3906,11 @@ msgstr "您想继续更改此设置吗？"
 
 #: src/components/settings/SettingItem.tsx:214
 msgid "Security relevant setting"
-msgstr ""
+msgstr "安全相关设置"
 
 #: src/components/settings/SettingItem.tsx:218
 msgid "Function Toggle - effects system behavior and/or feature visibility"
-msgstr ""
+msgstr "功能开关 - 控制系统行为和/或功能可见性"
 
 #: src/components/settings/SettingItem.tsx:238
 msgid "This setting requires confirmation"
@@ -6041,15 +6041,15 @@ msgstr "型号类型"
 
 #: src/forms/CommonForms.tsx:318
 msgid "Limit this template to a specific model type, or leave blank for all models"
-msgstr ""
+msgstr "将此模板限制为特定模型类型；留空则适用于所有模型"
 
 #: src/forms/CommonForms.tsx:373
 msgid "From Template"
-msgstr ""
+msgstr "使用模板"
 
 #: src/forms/CommonForms.tsx:374
 msgid "Optionally pre-fill this note from an existing template"
-msgstr ""
+msgstr "可选择使用现有模板预填此备注"
 
 #: src/forms/CompanyForms.tsx:150
 #~ msgid "Company updated"
@@ -6183,7 +6183,7 @@ msgstr "存储已收到的库存"
 
 #: src/forms/PurchaseOrderForms.tsx:791
 msgid "Overrides the top-level batch code (\"{topLevelBatchCode}\") for this line item"
-msgstr ""
+msgstr "覆盖此明细行的顶级批次代码（\"{topLevelBatchCode}\"）"
 
 #: src/forms/PurchaseOrderForms.tsx:792
 msgid "Enter batch code for received items"
@@ -6631,7 +6631,7 @@ msgstr "不被允许的方法"
 
 #: src/functions/api.tsx:60
 msgid "Conflict"
-msgstr ""
+msgstr "冲突"
 
 #: src/functions/api.tsx:63
 msgid "Internal server error"
@@ -6929,31 +6929,31 @@ msgstr "注销登录"
 
 #: src/pages/Auth/LoggedIn.tsx:16
 msgid "Registration via SSO is currently disabled."
-msgstr ""
+msgstr "当前已禁用通过 SSO 注册。"
 
 #: src/pages/Auth/LoggedIn.tsx:18
 msgid "Login was cancelled."
-msgstr ""
+msgstr "登录已取消。"
 
 #: src/pages/Auth/LoggedIn.tsx:20
 msgid "Access was denied by the identity provider."
-msgstr ""
+msgstr "身份提供方拒绝了访问请求。"
 
 #: src/pages/Auth/LoggedIn.tsx:22
 msgid "You do not have permission to log in this way."
-msgstr ""
+msgstr "您无权通过此方式登录。"
 
 #: src/pages/Auth/LoggedIn.tsx:24
 msgid "You need to reauthenticate to continue."
-msgstr ""
+msgstr "请重新验证身份后继续。"
 
 #: src/pages/Auth/LoggedIn.tsx:26
 msgid "An error occurred during SSO login ({error})."
-msgstr ""
+msgstr "SSO 登录时发生错误（{error}）。"
 
 #: src/pages/Auth/LoggedIn.tsx:40
 msgid "SSO Login Failed"
-msgstr ""
+msgstr "SSO 登录失败"
 
 #: src/pages/Auth/LoggedIn.tsx:52
 msgid "Checking if you are already logged in"
@@ -7032,38 +7032,38 @@ msgstr "添加 TOTP"
 
 #: src/pages/Auth/ProviderSignup.tsx:44
 msgid "your provider"
-msgstr ""
+msgstr "您的身份提供方"
 
 #: src/pages/Auth/ProviderSignup.tsx:53
 #: src/pages/Auth/ProviderSignup.tsx:61
 #: src/pages/Auth/ProviderSignup.tsx:67
 msgid "Registration Failed"
-msgstr ""
+msgstr "注册失败"
 
 #: src/pages/Auth/ProviderSignup.tsx:54
 msgid "SSO registration is currently disabled."
-msgstr ""
+msgstr "当前已禁用 SSO 注册。"
 
 #: src/pages/Auth/ProviderSignup.tsx:62
 msgid "Your SSO sign-in session has expired. Please try logging in again."
-msgstr ""
+msgstr "SSO 登录会话已过期，请重新登录。"
 
 #: src/pages/Auth/ProviderSignup.tsx:68
 msgid "An error occurred while completing SSO registration. Please try logging in again."
-msgstr ""
+msgstr "完成 SSO 注册时发生错误，请重新登录。"
 
 #: src/pages/Auth/ProviderSignup.tsx:109
 #: src/pages/Auth/ProviderSignup.tsx:113
 msgid "Complete Your Registration"
-msgstr ""
+msgstr "完成注册"
 
 #: src/pages/Auth/ProviderSignup.tsx:117
 msgid "You have signed in with {providerName}, but no matching account exists yet. Confirm your details below to create one."
-msgstr ""
+msgstr "您已通过 {providerName} 登录，但尚无匹配账户。请确认下方信息以创建账户。"
 
 #: src/pages/Auth/ProviderSignup.tsx:143
 msgid "Complete Registration"
-msgstr ""
+msgstr "完成注册"
 
 #: src/pages/Auth/Register.tsx:23
 msgid "Go back to login"
@@ -8128,254 +8128,254 @@ msgstr "快捷方式"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:75
 msgid "SCIM enabled"
-msgstr ""
+msgstr "SCIM 已启用"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:75
 msgid "SCIM secret rotated"
-msgstr ""
+msgstr "SCIM 密钥已轮换"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:76
 msgid "The new bearer secret is only shown once"
-msgstr ""
+msgstr "新的 Bearer 密钥仅显示一次"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:81
 msgid "Error generating SCIM secret"
-msgstr ""
+msgstr "生成 SCIM 密钥时出错"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:91
 msgid "SCIM disabled"
-msgstr ""
+msgstr "SCIM 已禁用"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:92
 msgid "The SCIM provisioning endpoint has been disabled and its secret revoked"
-msgstr ""
+msgstr "SCIM 配置端点已停用，其密钥已撤销"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:97
 msgid "Error disabling SCIM"
-msgstr ""
+msgstr "停用 SCIM 时出错"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:116
 msgid "Base URL"
-msgstr ""
+msgstr "基础 URL"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:122
 msgid "Secret Generated"
-msgstr ""
+msgstr "密钥生成时间"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:123
 msgid "Last Used"
-msgstr ""
+msgstr "上次使用时间"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:137
 msgid "SCIM Bearer Secret"
-msgstr ""
+msgstr "SCIM Bearer 密钥"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:142
 msgid "This secret is only shown once - copy it now and store it in your Identity Provider's SCIM configuration. It cannot be retrieved again, only rotated."
-msgstr ""
+msgstr "此密钥仅显示一次 - 请立即复制并保存到身份提供方的 SCIM 配置中。之后无法再次查看，只能重新轮换。"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:159
 msgid "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups."
-msgstr ""
+msgstr "SCIM 可让外部身份提供方（如 Okta、Microsoft Entra ID、OneLogin）自动创建和停用用户及用户组。"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:176
 msgid "Rotate Secret"
-msgstr ""
+msgstr "轮换密钥"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:178
 msgid "Enable SCIM"
-msgstr ""
+msgstr "启用 SCIM"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:188
 msgid "Disable SCIM"
-msgstr ""
+msgstr "停用 SCIM"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:194
 msgid "Rotating the secret immediately invalidates the previous one - update your Identity Provider's configuration straight away."
-msgstr ""
+msgstr "轮换后旧密钥会立即失效 - 请及时更新身份提供方中的配置。"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:219
 msgid "Add SSO Application"
-msgstr ""
+msgstr "添加 SSO 应用"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:233
 msgid "Add OIDC SSO Application"
-msgstr ""
+msgstr "添加 OIDC SSO 应用"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:246
 msgid "OAuth PKCE Enabled"
-msgstr ""
+msgstr "启用 OAuth PKCE"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:247
 msgid "Use Proof Key for Code Exchange during OIDC login with this application"
-msgstr ""
+msgstr "使用此应用进行 OIDC 登录时启用 PKCE（代码交换证明密钥）"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:252
 msgid "OIDC Server URL"
-msgstr ""
+msgstr "OIDC 服务端 URL"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:253
 msgid "Base URL of the OIDC provider"
-msgstr ""
+msgstr "OIDC 身份提供方的基础 URL"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:257
 msgid "UID Field"
-msgstr ""
+msgstr "UID 字段"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:258
 msgid "OIDC claim used as the user's unique identifier"
-msgstr ""
+msgstr "用作用户唯一标识的 OIDC 声明字段"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:287
 msgid "Add SAML SSO Application"
-msgstr ""
+msgstr "添加 SAML SSO 应用"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:296
 msgid "Display name for this SAML identity provider"
-msgstr ""
+msgstr "此 SAML 身份提供方的显示名称"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:300
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:433
 msgid "Provider ID"
-msgstr ""
+msgstr "提供方 ID"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:301
 msgid "Unique provider identifier, normally the IdP entity ID"
-msgstr ""
+msgstr "唯一的提供方标识，通常为 IdP 实体 ID"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:305
 msgid "Organization Slug"
-msgstr ""
+msgstr "组织标识"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:306
 msgid "URL-safe identifier used in SAML login and metadata URLs"
-msgstr ""
+msgstr "用于 SAML 登录和元数据 URL 的安全标识"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:310
 msgid "Identity Provider Settings"
-msgstr ""
+msgstr "身份提供方设置"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:315
 msgid "IdP Entity ID"
-msgstr ""
+msgstr "IdP 实体 ID"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:316
 msgid "Entity ID of the SAML identity provider"
-msgstr ""
+msgstr "SAML 身份提供方的实体 ID"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:320
 msgid "IdP Metadata URL"
-msgstr ""
+msgstr "IdP 元数据 URL"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:321
 msgid "Use this or provide the inline IdP settings below"
-msgstr ""
+msgstr "填写此项，或在下方直接提供 IdP 设置"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:325
 msgid "IdP SSO URL"
-msgstr ""
+msgstr "IdP 单点登录 URL"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:326
 msgid "Inline IdP single sign-on URL"
-msgstr ""
+msgstr "直接填写的 IdP 单点登录 URL"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:330
 msgid "IdP SLO URL"
-msgstr ""
+msgstr "IdP 单点注销 URL"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:331
 msgid "Inline IdP single logout URL"
-msgstr ""
+msgstr "直接填写的 IdP 单点注销 URL"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:335
 msgid "IdP X.509 Certificate"
-msgstr ""
+msgstr "IdP X.509 证书"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:336
 msgid "Inline IdP signing certificate"
-msgstr ""
+msgstr "直接填写的 IdP 签名证书"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:342
 msgid "Service Provider Settings"
-msgstr ""
+msgstr "服务提供方设置"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:346
 msgid "SP Entity ID"
-msgstr ""
+msgstr "SP 实体 ID"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:347
 msgid "Optional service provider entity ID"
-msgstr ""
+msgstr "可选的服务提供方实体 ID"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:353
 msgid "Account Mapping"
-msgstr ""
+msgstr "账户映射"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:357
 msgid "Attribute Mapping"
-msgstr ""
+msgstr "属性映射"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:358
 msgid "Map SAML attributes to uid, email, and email_verified"
-msgstr ""
+msgstr "将 SAML 属性映射到 uid、email 和 email_verified"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:362
 msgid "Use NameID for Email"
-msgstr ""
+msgstr "使用 NameID 作为邮箱"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:363
 msgid "Use the SAML NameID value as the user's email address"
-msgstr ""
+msgstr "将 SAML NameID 值用作用户邮箱地址"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:398
 msgid "Edit SSO Application"
-msgstr ""
+msgstr "编辑 SSO 应用"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:413
 msgid "Delete SSO Application"
-msgstr ""
+msgstr "删除 SSO 应用"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:427
 msgid "Provider"
-msgstr ""
+msgstr "提供方"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:439
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:628
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:747
 msgid "Client ID"
-msgstr ""
+msgstr "客户端 ID"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:472
 msgid "Add Generic App"
-msgstr ""
+msgstr "添加通用应用"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:479
 msgid "Add OIDC App"
-msgstr ""
+msgstr "添加 OIDC 应用"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:486
 msgid "Add SAML App"
-msgstr ""
+msgstr "添加 SAML 应用"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:495
 msgid "Frontend Single Sign-On (SSO) is based on django-allauth. By default generic OIDC (client) and SAML providers are enabled.<0/>You can add more specific providers using the `INVENTREE_SOCIAL_BACKENDS` config key. After a restart those providers become available below.<1/>The documentation goes more in depth on SSO setup steps."
-msgstr ""
+msgstr "前端单点登录 (SSO) 基于 django-allauth。默认启用通用 OIDC（客户端）和 SAML 提供方。<0/>您可以通过 `INVENTREE_SOCIAL_BACKENDS` 配置项添加特定提供方。重启后，这些提供方会显示在下方。<1/>详细配置步骤请参阅文档。"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:510
 msgid "OIDC Callback URL"
-msgstr ""
+msgstr "OIDC 回调 URL"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:514
 msgid "Add this callback URL to your OIDC provider."
-msgstr ""
+msgstr "请将此回调 URL 添加到 OIDC 身份提供方。"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:526
 msgid "SAML Service URLs"
-msgstr ""
+msgstr "SAML 服务 URL"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:530
 msgid "Register these URLs with your SAML identity provider."
-msgstr ""
+msgstr "请在 SAML 身份提供方中登记这些 URL。"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:533
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:85
@@ -8384,19 +8384,19 @@ msgstr "端点"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:533
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:535
 msgid "ACS"
-msgstr ""
+msgstr "断言消费服务 (ACS)"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:536
 msgid "SLS"
-msgstr ""
+msgstr "单点注销服务 (SLS)"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:537
 msgid "Metadata"
-msgstr ""
+msgstr "元数据"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:563
 #: src/pages/Index/Settings/SystemSettings.tsx:94
@@ -8405,126 +8405,126 @@ msgstr "单点登录 (SSO) 设置"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:571
 msgid "More settings can be found in the <0>system settings</0>."
-msgstr ""
+msgstr "更多设置请查看<0>系统设置</0>。"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:616
 msgid "Copy these values now. The client secret is only shown once."
-msgstr ""
+msgstr "请立即复制这些值。客户端密钥仅显示一次。"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:624
 msgid "Field"
-msgstr ""
+msgstr "字段"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:637
 msgid "Client Secret"
-msgstr ""
+msgstr "客户端密钥"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:662
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:701
 msgid "OAuth application created"
-msgstr ""
+msgstr "OAuth 应用已创建"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:666
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:805
 msgid "Add OAuth Application"
-msgstr ""
+msgstr "添加 OAuth 应用"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:671
 msgid "A human-readable name for the OAuth application"
-msgstr ""
+msgstr "便于识别的 OAuth 应用名称"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:674
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:753
 msgid "Client Type"
-msgstr ""
+msgstr "客户端类型"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:675
 msgid "The type of OAuth client (confidential or public - prefer public for browser-based applications)"
-msgstr ""
+msgstr "OAuth 客户端类型（机密或公开 - 浏览器应用建议使用公开客户端）"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:679
 msgid "Authorization Grant Type"
-msgstr ""
+msgstr "授权许可类型"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:680
 msgid "The type of OAuth2 grant schema to use - authorization code is recommended for most applications"
-msgstr ""
+msgstr "要使用的 OAuth2 授权模式 - 大多数应用建议使用授权码模式"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:687
 msgid "Skip Authorization"
-msgstr ""
+msgstr "跳过授权确认"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:688
 msgid "If enabled, users will not be prompted to authorize this application when logging in - use with caution!"
-msgstr ""
+msgstr "启用后，用户登录时不会看到授权此应用的提示 - 请谨慎使用！"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:691
 msgid "Sign Algorithm"
-msgstr ""
+msgstr "签名算法"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:692
 msgid "The algorithm used to sign the OAuth2 tokens - required for OIDC"
-msgstr ""
+msgstr "用于签署 OAuth2 令牌的算法 - OIDC 必须配置此项"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:714
 msgid "OAuth application secret regenerated"
-msgstr ""
+msgstr "OAuth 应用密钥已重新生成"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:717
 msgid "OAuth secret rotated"
-msgstr ""
+msgstr "OAuth 密钥已轮换"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:718
 msgid "The new client secret is only shown once"
-msgstr ""
+msgstr "新的客户端密钥仅显示一次"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:725
 msgid "Error regenerating OAuth client secret"
-msgstr ""
+msgstr "重新生成 OAuth 客户端密钥时出错"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:733
 msgid "Delete OAuth Application"
-msgstr ""
+msgstr "删除 OAuth 应用"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:759
 msgid "Grant Type"
-msgstr ""
+msgstr "许可类型"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:765
 msgid "Redirect URIs"
-msgstr ""
+msgstr "重定向 URI"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:772
 msgid "Built-in"
-msgstr ""
+msgstr "内置"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:784
 msgid "Regenerate Secret"
-msgstr ""
+msgstr "重新生成密钥"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:850
 msgid "InvenTree can be integrated with external Identity Providers and act as one."
-msgstr ""
+msgstr "InvenTree 可以集成外部身份提供方，也可以自身充当身份提供方。"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:851
 msgid "External Identities can be pushed to InvenTree via Single Sign-On (SSO) and SCIM."
-msgstr ""
+msgstr "可通过单点登录 (SSO) 和 SCIM 将外部身份同步到 InvenTree。"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:852
 msgid "InvenTree can act as an Identity Provider for external applications via the built-in oAuth2 provider."
-msgstr ""
+msgstr "InvenTree 可通过内置 OAuth2 提供方向外部应用提供身份认证。"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:870
 msgid "SCIM Provisioning"
-msgstr ""
+msgstr "SCIM 配置"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:878
 msgid "Single Sign-On (SSO)"
-msgstr ""
+msgstr "单点登录 (SSO)"
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:886
 msgid "oAuth2 Provider"
-msgstr ""
+msgstr "OAuth2 提供方"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:107
 #~ msgid "User Management"
@@ -8606,7 +8606,7 @@ msgstr "位置类型"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:283
 msgid "Identity Federation"
-msgstr ""
+msgstr "身份联合"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:283
 #~ msgid "Identity"
@@ -8689,7 +8689,7 @@ msgstr "设备设置"
 
 #: src/pages/Index/Settings/AdminCenter/NoteTemplatePanel.tsx:10
 msgid "Note templates can be used to create pre-defined notes which can be easily added to any model instance."
-msgstr ""
+msgstr "备注模板可用于创建预设备注，并快速添加到任意模型记录。"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:33
 #~ msgid "Plugin Error Stack"
@@ -13377,7 +13377,7 @@ msgstr "到期"
 #: src/tables/settings/ApiTokenTable.tsx:124
 #: src/tables/settings/ApiTokenTable.tsx:171
 msgid "Revoked By"
-msgstr ""
+msgstr "撤销人"
 
 #: src/tables/settings/ApiTokenTable.tsx:154
 msgid "Show revoked tokens"
@@ -13398,15 +13398,15 @@ msgstr "令牌只显示一次 - 请务必记住它。"
 
 #: src/tables/settings/ApiTokenTable.tsx:251
 msgid "Revoke Token"
-msgstr ""
+msgstr "撤销令牌"
 
 #: src/tables/settings/ApiTokenTable.tsx:255
 msgid "Revocation Reason"
-msgstr ""
+msgstr "撤销原因"
 
 #: src/tables/settings/ApiTokenTable.tsx:256
 msgid "Enter a reason for revoking this token"
-msgstr ""
+msgstr "请填写撤销此令牌的原因"
 
 #: src/tables/settings/AssetTable.tsx:35
 msgid "Asset"
