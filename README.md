@@ -2,9 +2,11 @@
 
 面向智算服务器制造的仓储、装配与追溯系统，基于 [InvenTree](https://github.com/inventree/InvenTree) 开发。
 
-[改造规划](docs/cangxu/ROADMAP.zh-CN.md) · [行业数据模型设计](docs/cangxu/DOMAIN-MODEL.zh-CN.md) · [上游 README](README.upstream.md) · [MIT 许可证](LICENSE)
+[业务需求与验收](docs/cangxu/REQUIREMENTS.zh-CN.md) · [改造规划](docs/cangxu/ROADMAP.zh-CN.md) · [行业数据模型设计](docs/cangxu/DOMAIN-MODEL.zh-CN.md) · [上游 README](README.upstream.md) · [MIT 许可证](LICENSE)
 
 ## 当前状态
+
+2026-10-09 已依据实际生产、交付、售后和入库场景整理[业务需求基线](docs/cangxu/REQUIREMENTS.zh-CN.md)，明确可复用能力、待补功能、验收条件及待确认规则。当前优先完成业务闭环，再深化完整拓扑与智能体能力。
 
 仓序目前处于 fork 与设计阶段。本次新增中文项目说明和智算服务器行业改造规划，尚未实现行业扩展或 Pi 智能体，也未完成工厂生产验证。应用内名称和图标、包名及镜像仍沿用 InvenTree；本仓库暂无仓序专用安装包或镜像。
 
