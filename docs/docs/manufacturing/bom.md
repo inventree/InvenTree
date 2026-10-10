@@ -188,6 +188,47 @@ Select a part in the list and click on "Add Substitute" button to confirm.
 
 Multi-level (hierarchical) BOMs are natively supported by InvenTree. A Bill of Materials (BOM) can contain sub-assemblies which themselves have a defined BOM. This can continue for an unlimited number of levels.
 
+### Nested BOM View
+
+The BOM table can display the BOM for any sub-assembly directly within the parent BOM. Any line item which references an assembled part displays a {{ icon("chevron-right") }} icon next to the part name. Click on this icon to load the BOM for that sub-assembly, which is inserted into the table directly below the sub-assembly line item.
+
+Sub-assembly line items share the same columns as the top-level BOM, and are indicated by:
+
+- An indent and a {{ icon("corner-down-right") }} icon in the *Component* column, showing the depth of each line item within the BOM hierarchy
+- *Italic* text, to distinguish them from the line items defined for the top-level assembly
+
+Sub-assemblies within a sub-assembly can be expanded in the same way, for any number of levels. Click on the {{ icon("chevron-down") }} icon to collapse a sub-assembly again.
+
+{{ image("build/bom_nested.png", "Nested BOM View") }}
+
+#### Calculated Values
+
+For sub-assembly line items, some columns are calculated relative to a single unit of the *top-level* assembly, rather than a single unit of the sub-assembly. Each of these columns displays the calculation underneath the calculated value:
+
+| Column | Calculation | Example |
+| --- | --- | --- |
+| Quantity | The line item quantity, multiplied by the quantity of each upstream sub-assembly | `4 × 3` |
+| Total Price | The total price for the sub-assembly, multiplied by the quantity of each upstream sub-assembly | `3 × ($1.12 - $2.44)` |
+| Can Build | The number of sub-assemblies which can be built, divided by the quantity of each upstream sub-assembly | `120 ÷ 3` |
+
+In the example above, the *Doohickey* sub-assembly is required three times for each top-level assembly. Each *Doohickey* requires four *M3x8 Torx* screws, so twelve screws are required in total. Where there are multiple levels of sub-assemblies, the quantity of each level is included in the calculation (e.g. `19 × 1 × 3`).
+
+Other columns (such as *Available Stock*) display the same values as they would in the BOM for the sub-assembly itself.
+
+!!! info "Setup Quantity and Attrition"
+    The calculated quantity values are based on the line item quantities only. The [setup quantity](#bom-line-items) and [attrition](#bom-line-items) of any upstream sub-assemblies are not included in the calculation.
+
+#### Behavior
+
+- Sub-assembly line items are loaded using the same sort order as the top-level BOM.
+- Table filters are only applied to the top-level line items. When a sub-assembly is expanded, its entire BOM is displayed.
+- Any expanded sub-assemblies are collapsed when the table is reloaded - for example when changing the page, search term, sort order or table filters.
+- Sub-assemblies cannot be expanded while the BOM is in [editing mode](#editing-mode). To edit the line items of a sub-assembly, navigate to the sub-assembly part and edit its BOM directly.
+- Sub-assembly line items are not included when [exporting](../concepts/data_export.md) the table data. To export a complete multi-level BOM, use the [BOM Exporter](../plugins/builtin/bom_exporter.md) plugin.
+
+!!! tip "User Setting"
+    Display of sub-assemblies within the BOM table can be disabled via the [Show Subassemblies in BOM table](../settings/user.md#display-settings) user setting.
+
 ## BOM Validation
 
 InvenTree maintains a "validated" flag for each assembled part. When set, this flag indicates that the production requirements for this part have been validated, and that the BOM has not been changed since the last validation.
