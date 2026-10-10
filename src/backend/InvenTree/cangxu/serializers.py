@@ -1,5 +1,6 @@
 """REST serializers for the Cangxu industry models."""
 
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -8,6 +9,7 @@ from InvenTree.serializers import InvenTreeModelSerializer
 from stock.models import StockItem, StockLocation
 
 from .models import (
+    CableEndDefinition,
     ComponentReplacement,
     ConfigurationItem,
     ConfigurationTestEvidence,
@@ -15,6 +17,8 @@ from .models import (
     CountSession,
     DataImportBatch,
     DataImportRecord,
+    HardwarePortDefinition,
+    HardwareProfileRevision,
     ManufacturingLot,
     ManufacturingLotPartner,
     ManufacturingLotStockItem,
@@ -39,6 +43,80 @@ class PartCodeAliasSerializer(InvenTreeModelSerializer):
         model = PartCodeAlias
         fields = '__all__'
         read_only_fields = ['normalized_code', 'company_scope', 'created']
+
+
+class HardwareProfileRevisionSerializer(InvenTreeModelSerializer):
+    """Expose versioned hardware kind, protocol, and sourced specifications."""
+
+    class Meta:
+        """Configure profile revision fields and server-controlled approval state."""
+
+        model = HardwareProfileRevision
+        fields = '__all__'
+        read_only_fields = [
+            'state',
+            'created_by',
+            'approved_by',
+            'supersedes',
+            'created_at',
+            'approved_at',
+        ]
+
+    def validate_specifications(self, value):
+        """Require a JSON object so parameters can include explicit units."""
+        if not isinstance(value, dict):
+            raise serializers.ValidationError(
+                _('Specifications must be an object with values and units.')
+            )
+        return value
+
+
+class HardwarePortDefinitionSerializer(InvenTreeModelSerializer):
+    """Expose typed connector and lane definitions for a hardware revision."""
+
+    class Meta:
+        """Configure port definition fields."""
+
+        model = HardwarePortDefinition
+        fields = '__all__'
+
+    def validate(self, attrs):
+        """Apply model-level profile and protocol invariants to API writes."""
+        attrs = super().validate(attrs)
+        instance = self.instance or HardwarePortDefinition()
+        for key, value in attrs.items():
+            setattr(instance, key, value)
+        try:
+            instance.clean()
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(
+                exc.message_dict if hasattr(exc, 'message_dict') else exc.messages
+            ) from exc
+        return attrs
+
+
+class CableEndDefinitionSerializer(InvenTreeModelSerializer):
+    """Expose arbitrary cable ends, including breakout branches."""
+
+    class Meta:
+        """Configure cable end definition fields."""
+
+        model = CableEndDefinition
+        fields = '__all__'
+
+    def validate(self, attrs):
+        """Apply model-level cable-kind and protocol invariants to API writes."""
+        attrs = super().validate(attrs)
+        instance = self.instance or CableEndDefinition()
+        for key, value in attrs.items():
+            setattr(instance, key, value)
+        try:
+            instance.clean()
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(
+                exc.message_dict if hasattr(exc, 'message_dict') else exc.messages
+            ) from exc
+        return attrs
 
 
 class ManufacturingLotSerializer(InvenTreeModelSerializer):

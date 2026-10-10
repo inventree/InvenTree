@@ -32,6 +32,7 @@ from .importers import (
     validate_normalized_import_values,
 )
 from .models import (
+    CableEndDefinition,
     ComponentReplacement,
     ConfigurationItem,
     ConfigurationTestEvidence,
@@ -39,6 +40,8 @@ from .models import (
     CountSession,
     DataImportBatch,
     DataImportRecord,
+    HardwarePortDefinition,
+    HardwareProfileRevision,
     ManufacturingLot,
     ManufacturingLotPartner,
     ManufacturingLotStockItem,
@@ -70,6 +73,155 @@ class PartCodeAliasViewSet(CangxuModelViewSet):
     search_fields = ['code', 'normalized_code', 'source_system']
     ordering_fields = ['namespace', 'code', 'created']
     ordering = ['namespace', 'normalized_code']
+
+
+class HardwareProfileRevisionViewSet(CangxuModelViewSet):
+    """Manage engineering specifications independently from stock and vendors."""
+
+    role_required = 'part'
+    queryset = HardwareProfileRevision.objects.select_related(
+        'part', 'chip_vendor', 'board_manufacturer', 'created_by', 'approved_by'
+    ).prefetch_related('ports', 'cable_ends')
+    serializer_class = serializers.HardwareProfileRevisionSerializer
+    filterset_fields = ['part', 'kind', 'protocol', 'form_factor', 'state']
+    search_fields = ['part__name', 'part__IPN', 'revision', 'source_reference']
+    ordering_fields = ['part', 'revision', 'kind', 'protocol', 'created_at']
+    ordering = ['part', '-created_at']
+
+    def perform_create(self, serializer):
+        """Attribute a draft profile to the engineering user creating it."""
+        serializer.save(created_by=self.request.user)
+
+    def perform_update(self, serializer):
+        """Keep approved hardware revisions immutable."""
+        if serializer.instance.state != HardwareProfileRevision.State.DRAFT:
+            raise ValidationError(
+                _('Create a new revision to change an approved profile.')
+            )
+        serializer.save()
+
+    @action(detail=True, methods=['post'])
+    @transaction.atomic
+    def approve(self, request, pk=None):
+        """Approve sourced specifications and supersede the previous active revision."""
+        profile = HardwareProfileRevision.objects.select_for_update().get(
+            pk=self.get_object().pk
+        )
+        if profile.state != HardwareProfileRevision.State.DRAFT:
+            raise ValidationError(_('Only draft hardware profiles can be approved.'))
+        if not profile.source_reference.strip():
+            raise ValidationError({
+                'source_reference': _('Record the approved engineering source first.')
+            })
+
+        switch_kinds = {
+            HardwareProfileRevision.Kind.PCIE_SWITCH,
+            HardwareProfileRevision.Kind.NVLINK_SWITCH,
+            HardwareProfileRevision.Kind.ETHERNET_SWITCH,
+            HardwareProfileRevision.Kind.INFINIBAND_SWITCH,
+        }
+        if profile.kind in switch_kinds and not profile.ports.exists():
+            raise ValidationError(_('Add at least one typed port before approval.'))
+        if (
+            profile.kind
+            in {
+                HardwareProfileRevision.Kind.CABLE,
+                HardwareProfileRevision.Kind.POWER_HARNESS,
+            }
+            and profile.cable_ends.count() < 2
+        ):
+            raise ValidationError(_('Define at least two cable ends before approval.'))
+
+        previous = (
+            HardwareProfileRevision.objects
+            .select_for_update()
+            .filter(part=profile.part, state=HardwareProfileRevision.State.APPROVED)
+            .exclude(pk=profile.pk)
+            .first()
+        )
+        if previous:
+            previous.state = HardwareProfileRevision.State.SUPERSEDED
+            previous.save(update_fields=['state'])
+            profile.supersedes = previous
+
+        profile.state = HardwareProfileRevision.State.APPROVED
+        profile.approved_by = request.user
+        profile.approved_at = timezone.now()
+        profile.save(
+            update_fields=['state', 'approved_by', 'approved_at', 'supersedes']
+        )
+        return Response(self.get_serializer(profile).data)
+
+
+class HardwarePortDefinitionViewSet(CangxuModelViewSet):
+    """Manage protocol-specific ports on draft hardware profiles."""
+
+    role_required = 'part'
+    queryset = HardwarePortDefinition.objects.select_related('profile', 'profile__part')
+    serializer_class = serializers.HardwarePortDefinitionSerializer
+    filterset_fields = ['profile', 'protocol']
+    search_fields = ['path', 'connector', 'profile__part__IPN']
+    ordering_fields = ['profile', 'path', 'protocol']
+    ordering = ['profile', 'path']
+
+    def _require_draft_profile(self, profile):
+        """Prevent edits to ports after the engineering revision is approved."""
+        if profile.state != HardwareProfileRevision.State.DRAFT:
+            raise ValidationError(_('Ports can only change on a draft profile.'))
+
+    def perform_create(self, serializer):
+        """Create a port only beneath an editable revision."""
+        self._require_draft_profile(serializer.validated_data['profile'])
+        serializer.save()
+
+    def perform_update(self, serializer):
+        """Update a port only while its current parent revision is a draft."""
+        self._require_draft_profile(serializer.instance.profile)
+        profile = serializer.validated_data.get('profile', serializer.instance.profile)
+        self._require_draft_profile(profile)
+        serializer.save()
+
+
+class CableEndDefinitionViewSet(CangxuModelViewSet):
+    """Manage two-ended and multi-branch cable specifications."""
+
+    role_required = 'part'
+    queryset = CableEndDefinition.objects.select_related('profile', 'profile__part')
+    serializer_class = serializers.CableEndDefinitionSerializer
+    filterset_fields = ['profile', 'protocol', 'branch_group']
+    search_fields = ['label', 'connector', 'profile__part__IPN']
+    ordering_fields = ['profile', 'label', 'protocol']
+    ordering = ['profile', 'label']
+
+    def _validate_profile(self, profile, protocol):
+        """Ensure an end belongs to a cable profile and matches its declared protocol."""
+        if profile.state != HardwareProfileRevision.State.DRAFT:
+            raise ValidationError(_('Cable ends can only change on a draft profile.'))
+        if profile.kind not in {
+            HardwareProfileRevision.Kind.CABLE,
+            HardwareProfileRevision.Kind.POWER_HARNESS,
+        }:
+            raise ValidationError(
+                _('Cable ends require a cable or power harness profile.')
+            )
+        if profile.protocol != protocol:
+            raise ValidationError(_('Cable end protocol must match its profile.'))
+
+    def perform_create(self, serializer):
+        """Create an end only beneath a draft cable profile."""
+        self._validate_profile(
+            serializer.validated_data['profile'], serializer.validated_data['protocol']
+        )
+        serializer.save()
+
+    def perform_update(self, serializer):
+        """Update an end only while both old and new parent profiles are drafts."""
+        current = serializer.instance
+        profile = serializer.validated_data.get('profile', current.profile)
+        protocol = serializer.validated_data.get('protocol', current.protocol)
+        self._validate_profile(current.profile, current.protocol)
+        self._validate_profile(profile, protocol)
+        serializer.save()
 
 
 class ManufacturingLotViewSet(CangxuModelViewSet):
@@ -2138,6 +2290,15 @@ class DataImportRecordViewSet(CangxuModelViewSet):
 
 router = DefaultRouter()
 router.register('part-aliases', PartCodeAliasViewSet, basename='cangxu-part-alias')
+router.register(
+    'hardware-profiles',
+    HardwareProfileRevisionViewSet,
+    basename='cangxu-hardware-profile',
+)
+router.register(
+    'hardware-ports', HardwarePortDefinitionViewSet, basename='cangxu-hardware-port'
+)
+router.register('cable-ends', CableEndDefinitionViewSet, basename='cangxu-cable-end')
 router.register('lots', ManufacturingLotViewSet, basename='cangxu-lot')
 router.register(
     'lot-partners', ManufacturingLotPartnerViewSet, basename='cangxu-lot-partner'

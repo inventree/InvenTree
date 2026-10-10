@@ -30,6 +30,7 @@ from .models import (
     CountSession,
     DataImportBatch,
     DataImportRecord,
+    HardwareProfileRevision,
     ManufacturingLotStockItem,
     PartCodeAlias,
     ServiceCase,
@@ -65,6 +66,125 @@ class CangxuAPITestCase(InvenTreeAPITestCase):
         'stock.add',
         'stock.change',
     ]
+
+
+class CangxuHardwareProfileTest(CangxuAPITestCase):
+    """Exercise sourced multi-vendor hardware profiles and cable breakouts."""
+
+    def test_switch_profile_tracks_chip_vendor_board_maker_and_ports(self):
+        """Keep chipset vendor and board maker distinct and freeze approved data."""
+        part = Part.objects.get(pk=25)
+        chip_vendor = Company.objects.create(name='Synthetic Broadcom Chip Vendor')
+        board_maker = Company.objects.create(name='Synthetic Linkreal Board Maker')
+        profile = self.post(
+            reverse('cangxu-hardware-profile-list'),
+            {
+                'part': part.pk,
+                'revision': 'R1',
+                'kind': HardwareProfileRevision.Kind.PCIE_SWITCH,
+                'protocol': HardwareProfileRevision.Protocol.PCIE,
+                'form_factor': HardwareProfileRevision.FormFactor.SWITCH_BOARD,
+                'chip_vendor': chip_vendor.pk,
+                'board_manufacturer': board_maker.pk,
+                'specifications': {'generation': 'PCIe 5.0', 'lane_count': 64},
+                'source_reference': 'Synthetic engineering approval ENG-CX-001',
+            },
+            expected_code=201,
+        )
+        profile_id = profile.data['id']
+        port = self.post(
+            reverse('cangxu-hardware-port-list'),
+            {
+                'profile': profile_id,
+                'path': 'downstream-01',
+                'protocol': HardwareProfileRevision.Protocol.PCIE,
+                'connector': 'MCIO x8',
+                'lane_count': 8,
+                'max_rate': '32 GT/s per lane',
+                'supported_modes': ['PCIe 5.0'],
+            },
+            expected_code=201,
+        )
+        approved = self.post(
+            reverse('cangxu-hardware-profile-approve', kwargs={'pk': profile_id}),
+            {},
+            expected_code=200,
+        )
+        self.assertEqual(approved.data['state'], HardwareProfileRevision.State.APPROVED)
+        self.assertEqual(approved.data['chip_vendor'], chip_vendor.pk)
+        self.assertEqual(approved.data['board_manufacturer'], board_maker.pk)
+        self.assertEqual(port.data['profile'], profile_id)
+        self.patch(
+            reverse('cangxu-hardware-profile-detail', kwargs={'pk': profile_id}),
+            {'revision': 'R2'},
+            expected_code=400,
+        )
+
+    def test_multibranch_power_harness_and_non_pcie_accelerator(self):
+        """Allow harness breakouts and accelerator modules without PCIe assumptions."""
+        part = Part.objects.get(pk=25)
+        profile = self.post(
+            reverse('cangxu-hardware-profile-list'),
+            {
+                'part': part.pk,
+                'revision': 'A',
+                'kind': HardwareProfileRevision.Kind.POWER_HARNESS,
+                'protocol': HardwareProfileRevision.Protocol.GPU_POWER,
+                'form_factor': HardwareProfileRevision.FormFactor.CABLE,
+                'source_reference': 'Synthetic harness drawing DWG-CX-002',
+            },
+            expected_code=201,
+        )
+        for label in ['PSU-A', 'GPU-0A', 'GPU-0B']:
+            self.post(
+                reverse('cangxu-cable-end-list'),
+                {
+                    'profile': profile.data['id'],
+                    'label': label,
+                    'connector': 'High-current keyed connector',
+                    'protocol': HardwareProfileRevision.Protocol.GPU_POWER,
+                    'branch_group': 'GPU-0',
+                    'lane_map': {'wire_count': 8, 'sense': 'synthetic'},
+                },
+                expected_code=201,
+            )
+        approved = self.post(
+            reverse(
+                'cangxu-hardware-profile-approve', kwargs={'pk': profile.data['id']}
+            ),
+            {},
+            expected_code=200,
+        )
+        self.assertEqual(approved.data['state'], HardwareProfileRevision.State.APPROVED)
+
+        accelerator = self.post(
+            reverse('cangxu-hardware-profile-list'),
+            {
+                'part': Part.objects.get(pk=25).pk,
+                'revision': 'B0',
+                'kind': HardwareProfileRevision.Kind.GPU,
+                'protocol': HardwareProfileRevision.Protocol.UNSPECIFIED,
+                'form_factor': HardwareProfileRevision.FormFactor.MODULE,
+                'source_reference': 'Synthetic accelerator module specification',
+            },
+            expected_code=201,
+        )
+        self.assertEqual(accelerator.data['form_factor'], 'module')
+
+    def test_switch_protocol_mismatch_is_rejected(self):
+        """Reject a switch profile whose primary protocol conflicts with its kind."""
+        response = self.post(
+            reverse('cangxu-hardware-profile-list'),
+            {
+                'part': Part.objects.get(pk=25).pk,
+                'revision': 'R1',
+                'kind': HardwareProfileRevision.Kind.ETHERNET_SWITCH,
+                'protocol': HardwareProfileRevision.Protocol.PCIE,
+                'source_reference': 'Synthetic source',
+            },
+            expected_code=400,
+        )
+        self.assertIn('protocol', response.data)
 
     def test_received_lot_links_to_native_purchase_order_line(self):
         """Trace a partial serialized receipt through the native PO workflow."""

@@ -72,6 +72,240 @@ class PartCodeAlias(models.Model):
         return f'{self.namespace}: {self.code}'
 
 
+class HardwareProfileRevision(models.Model):
+    """Versioned, approved technical specification for an existing InvenTree Part."""
+
+    class Kind(models.TextChoices):
+        """Classify hardware without assuming a vendor or physical form."""
+
+        GPU = 'gpu', _('GPU / accelerator')
+        ACCELERATOR_BASEBOARD = 'accelerator_baseboard', _('Accelerator baseboard')
+        PCIE_SWITCH = 'pcie_switch', _('PCIe switch')
+        NVLINK_SWITCH = 'nvlink_switch', _('NVLink / NVSwitch component')
+        ETHERNET_SWITCH = 'ethernet_switch', _('Ethernet switch')
+        INFINIBAND_SWITCH = 'infiniband_switch', _('InfiniBand switch')
+        NIC_HCA_DPU = 'nic_hca_dpu', _('NIC / HCA / DPU')
+        RISER = 'riser', _('Riser / adapter board')
+        RETIMER = 'retimer', _('Retimer')
+        CABLE = 'cable', _('Data / interconnect cable')
+        POWER_HARNESS = 'power_harness', _('Power harness')
+        OPTICAL_MODULE = 'optical_module', _('Optical module')
+        OTHER = 'other', _('Other hardware')
+
+    class Protocol(models.TextChoices):
+        """Represent the primary interface or medium for this hardware profile."""
+
+        UNSPECIFIED = 'unspecified', _('Unspecified')
+        PCIE = 'pcie', _('PCI Express')
+        NVLINK = 'nvlink', _('NVLink')
+        ETHERNET = 'ethernet', _('Ethernet')
+        INFINIBAND = 'infiniband', _('InfiniBand')
+        MCIO = 'mcio', _('MCIO / internal high-speed')
+        GPU_POWER = 'gpu_power', _('GPU power')
+        OPTICAL = 'optical', _('Optical fiber')
+        MANAGEMENT = 'management', _('Management')
+        LIQUID_COOLING = 'liquid_cooling', _('Liquid cooling')
+
+    class FormFactor(models.TextChoices):
+        """Describe the physical form independently from protocol and function."""
+
+        UNSPECIFIED = 'unspecified', _('Unspecified')
+        PCIE_CARD = 'pcie_card', _('PCIe card')
+        MODULE = 'module', _('Module / tray')
+        BASEBOARD = 'baseboard', _('Baseboard')
+        SWITCH_BOARD = 'switch_board', _('Switch board')
+        CHIP = 'chip', _('Board-mounted chip')
+        CABLE = 'cable', _('Cable assembly')
+        EMBEDDED = 'embedded', _('Embedded component')
+        RACKMOUNT = 'rackmount', _('Rack-mount device')
+
+    class State(models.TextChoices):
+        """Separate editable drafts from signed, immutable engineering revisions."""
+
+        DRAFT = 'draft', _('Draft')
+        APPROVED = 'approved', _('Approved')
+        SUPERSEDED = 'superseded', _('Superseded')
+
+    part = models.ForeignKey(
+        'part.Part', on_delete=models.PROTECT, related_name='cangxu_hardware_profiles'
+    )
+    revision = models.CharField(max_length=40)
+    kind = models.CharField(max_length=32, choices=Kind.choices)
+    protocol = models.CharField(
+        max_length=24, choices=Protocol.choices, default=Protocol.UNSPECIFIED
+    )
+    form_factor = models.CharField(
+        max_length=24, choices=FormFactor.choices, default=FormFactor.UNSPECIFIED
+    )
+    chip_vendor = models.ForeignKey(
+        'company.Company',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='cangxu_chip_profiles',
+    )
+    board_manufacturer = models.ForeignKey(
+        'company.Company',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='cangxu_board_profiles',
+    )
+    specifications = models.JSONField(default=dict, blank=True)
+    source_reference = models.CharField(max_length=255)
+    state = models.CharField(max_length=20, choices=State.choices, default=State.DRAFT)
+    supersedes = models.ForeignKey(
+        'self',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='revisions',
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='cangxu_hardware_profiles_created',
+    )
+    approved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='cangxu_hardware_profiles_approved',
+    )
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+    approved_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        """Keep revision identity stable and only one engineering revision current."""
+
+        ordering = ['part', '-created_at', '-id']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['part', 'revision'], name='cangxu_hwprofile_part_rev_uniq'
+            ),
+            models.UniqueConstraint(
+                fields=['part'],
+                condition=models.Q(state='approved'),
+                name='cangxu_hwprofile_one_approved',
+            ),
+        ]
+        indexes = [models.Index(fields=['kind', 'protocol', 'state'])]
+        verbose_name = _('Hardware profile revision')
+        verbose_name_plural = _('Hardware profile revisions')
+
+    def clean(self):
+        """Keep switch type and primary protocol consistent."""
+        super().clean()
+        required_protocols = {
+            self.Kind.PCIE_SWITCH: self.Protocol.PCIE,
+            self.Kind.NVLINK_SWITCH: self.Protocol.NVLINK,
+            self.Kind.ETHERNET_SWITCH: self.Protocol.ETHERNET,
+            self.Kind.INFINIBAND_SWITCH: self.Protocol.INFINIBAND,
+            self.Kind.POWER_HARNESS: self.Protocol.GPU_POWER,
+        }
+        expected = required_protocols.get(self.kind)
+        if expected and self.protocol != expected:
+            raise ValidationError({
+                'protocol': _('This hardware kind requires protocol %(protocol)s.')
+                % {'protocol': expected}
+            })
+        if self.kind == self.Kind.CABLE and self.protocol == self.Protocol.UNSPECIFIED:
+            raise ValidationError({
+                'protocol': _('Select a cable protocol or medium before saving.')
+            })
+
+    def __str__(self):
+        """Return a concise part and revision label."""
+        return f'{self.part} / {self.revision}'
+
+
+class HardwarePortDefinition(models.Model):
+    """Describe a port on a specific hardware revision."""
+
+    profile = models.ForeignKey(
+        HardwareProfileRevision, on_delete=models.PROTECT, related_name='ports'
+    )
+    path = models.CharField(max_length=100)
+    protocol = models.CharField(
+        max_length=24, choices=HardwareProfileRevision.Protocol.choices
+    )
+    connector = models.CharField(max_length=80)
+    lane_count = models.PositiveSmallIntegerField(null=True, blank=True)
+    max_rate = models.CharField(max_length=40, blank=True)
+    supported_modes = models.JSONField(default=list, blank=True)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        """Make port paths unique within a profile revision."""
+
+        ordering = ['profile', 'path']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['profile', 'path'], name='cangxu_hwport_profile_path_uniq'
+            )
+        ]
+        verbose_name = _('Hardware port definition')
+        verbose_name_plural = _('Hardware port definitions')
+
+    def clean(self):
+        """Keep port definitions on non-cable hardware with matching protocols."""
+        super().clean()
+        if self.profile_id and self.profile.kind in {
+            HardwareProfileRevision.Kind.CABLE,
+            HardwareProfileRevision.Kind.POWER_HARNESS,
+        }:
+            raise ValidationError({
+                'profile': _('Use cable ends for cable assemblies.')
+            })
+
+
+class CableEndDefinition(models.Model):
+    """Define one end or branch of a cable assembly; breakouts may have many ends."""
+
+    profile = models.ForeignKey(
+        HardwareProfileRevision, on_delete=models.PROTECT, related_name='cable_ends'
+    )
+    label = models.CharField(max_length=40)
+    connector = models.CharField(max_length=80)
+    protocol = models.CharField(
+        max_length=24, choices=HardwareProfileRevision.Protocol.choices
+    )
+    branch_group = models.CharField(max_length=40, blank=True)
+    lane_map = models.JSONField(default=dict, blank=True)
+    pinout_reference = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        """Keep branch labels distinct within a cable profile revision."""
+
+        ordering = ['profile', 'label']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['profile', 'label'], name='cangxu_cableend_profile_label_uniq'
+            )
+        ]
+        verbose_name = _('Cable end definition')
+        verbose_name_plural = _('Cable end definitions')
+
+    def clean(self):
+        """Keep each end consistent with its parent cable profile."""
+        super().clean()
+        if self.profile_id:
+            if self.profile.kind not in {
+                HardwareProfileRevision.Kind.CABLE,
+                HardwareProfileRevision.Kind.POWER_HARNESS,
+            }:
+                raise ValidationError({
+                    'profile': _('Cable ends require a cable profile.')
+                })
+            if self.protocol != self.profile.protocol:
+                raise ValidationError({
+                    'protocol': _('Cable end protocol must match its profile.')
+                })
+
+
 class ManufacturingLot(models.Model):
     """A traceable production or supplier lot linked to an existing part."""
 
