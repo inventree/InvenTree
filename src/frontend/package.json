@@ -75,7 +75,7 @@
         "@mantine/utils": "^6.0.22",
         "@mantine/vanilla-extract": "^9.2.1",
         "@messageformat/date-skeleton": "^1.1.0",
-        "@sentry/react": "^10.57.0",
+        "@sentry/react": "^11.1.0",
         "@tabler/icons-react": "^3.44.0",
         "@tanstack/react-query": "^5.101.0",
         "@tiptap/core": "^3.23.6",
