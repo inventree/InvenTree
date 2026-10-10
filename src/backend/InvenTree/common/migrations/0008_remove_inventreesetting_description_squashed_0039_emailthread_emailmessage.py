@@ -22,8 +22,8 @@ def set_default_currency(apps, schema_editor):
         'INVENTREE_BASE_CURRENCY', 'base_currency', 'USD'
     )
 
-    if base_currency not in currency_codes():
-        base_currency = currency_codes()[0] if currency_codes() else 'USD'
+    if base_currency not in currency_codes(True):
+        base_currency = currency_codes(True)[0] if currency_codes(True) else 'USD'
 
     InvenTreeSetting.set_setting(
         'INVENTREE_DEFAULT_CURRENCY', base_currency, None, create=True

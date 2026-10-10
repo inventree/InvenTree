@@ -52,7 +52,7 @@ def currency_codes_default_list() -> str:
     return 'AUD,CAD,CNY,EUR,GBP,JPY,NZD,USD'
 
 
-def currency_codes() -> list:
+def currency_codes(migration_safe_query=False) -> list:
     """Returns the current currency codes."""
     from common.settings import get_global_setting
 
@@ -61,7 +61,10 @@ def currency_codes() -> list:
     # Ensure we do not hit the database until the common app is loaded
     if InvenTree.ready.isAppLoaded('common'):
         codes = get_global_setting(
-            'CURRENCY_CODES', create=False, environment_key='INVENTREE_CURRENCY_CODES'
+            'CURRENCY_CODES',
+            create=False,
+            environment_key='INVENTREE_CURRENCY_CODES',
+            migration_safe_query=migration_safe_query,
         ).strip()
 
     if not codes:
