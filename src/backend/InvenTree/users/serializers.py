@@ -268,8 +268,12 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
         return super().validate(data)
 
     user_detail = UserSerializer(source='user', read_only=True)
-    revoked_by_detail = UserSerializer(source='revoked_by', read_only=True)
-    issued_by_detail = UserSerializer(source='issued_by', read_only=True)
+    revoked_by_detail = UserSerializer(
+        source='revoked_by', read_only=True, allow_null=True
+    )
+    issued_by_detail = UserSerializer(
+        source='issued_by', read_only=True, allow_null=True
+    )
 
 
 class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
@@ -444,7 +448,7 @@ class MeUserSerializer(FilterableSerializerMixin, ExtendedUserSerializer):
     # they were previously served as a single '/user/me/roles/' response.
     roles = OptionalField(
         serializer_class=serializers.SerializerMethodField,
-        serializer_kwargs={'read_only': True},
+        serializer_kwargs={'allow_null': True, 'read_only': True},
         filter_name='roles',
     )
 
