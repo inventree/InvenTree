@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.db.models import F, Sum
 from django.utils import timezone
@@ -47,9 +47,25 @@ class Command(BaseCommand):
 
     help = 'Create fictional Cangxu server manufacturing demo records'
 
+    def add_arguments(self, parser):
+        """Allow synthetic fixture volume to grow deterministically."""
+        parser.add_argument(
+            '--scale-factor',
+            type=int,
+            default=1,
+            help=(
+                'Multiply demo unit counts, opening stock, and receipt quantities '
+                '(1-100). Existing records are retained when rerun at a larger scale.'
+            ),
+        )
+
     @transaction.atomic
     def handle(self, *args, **options):
         """Create repeatable demo master data, stock, configurations, and workflows."""
+        scale_factor = options['scale_factor']
+        if not 1 <= scale_factor <= 100:
+            raise CommandError('The demo scale factor must be between 1 and 100.')
+
         opening_batch = 'CX-DEMO-OPENING-202610'
         production_batch = 'CX-DEMO-PRODUCTION-202610'
         receipt_batch = 'CX-DEMO-RECEIPT-202610'
@@ -262,9 +278,9 @@ class Command(BaseCommand):
 
         units = []
         for ipn, count in (
-            ('CX-DEMO-SRV-001', 20),
-            ('CX-DEMO-BOX-001', 8),
-            ('CX-DEMO-WS-001', 8),
+            ('CX-DEMO-SRV-001', 20 * scale_factor),
+            ('CX-DEMO-BOX-001', 8 * scale_factor),
+            ('CX-DEMO-WS-001', 8 * scale_factor),
         ):
             part = parts[ipn]
             for index in range(1, count + 1):
@@ -305,7 +321,10 @@ class Command(BaseCommand):
             'CX-DEMO-PCIESW-LR-001',
             'CX-DEMO-PCIESW-OTHER-001',
         )
-        built_switch_part = built_switch_parts[(21 - 1) % len(built_switch_parts)]
+        first_article_index = 20 * scale_factor + 1
+        built_switch_part = built_switch_parts[
+            (first_article_index - 1) % len(built_switch_parts)
+        ]
         built_unit_specs = [
             (built_switch_part, position)
             if position == 'PCIE-SWITCH-01'
@@ -397,7 +416,7 @@ class Command(BaseCommand):
             )
 
         if not any(unit.pk == built_unit.pk for unit, _specs, _index in units):
-            units.append((built_unit, built_unit_specs, 21))
+            units.append((built_unit, built_unit_specs, first_article_index))
 
         for item_index, (unit, item_specs, unit_index) in enumerate(units, 1):
             configuration, _ = UnitConfiguration.objects.get_or_create(
@@ -476,15 +495,21 @@ class Command(BaseCommand):
             },
         )
         purchase_line, _ = PurchaseOrderLineItem.objects.get_or_create(
-            order=purchase_order, part=supplier_switch, defaults={'quantity': 4}
+            order=purchase_order,
+            part=supplier_switch,
+            defaults={'quantity': 4 * scale_factor},
         )
+        purchase_quantity = max(4 * scale_factor, int(purchase_line.received))
+        if purchase_line.quantity != purchase_quantity:
+            purchase_line.quantity = purchase_quantity
+            purchase_line.save(update_fields=['quantity'])
         if purchase_order.status in [
             PurchaseOrderStatus.PENDING,
             PurchaseOrderStatus.ON_HOLD,
         ]:
             purchase_order.place_order()
         purchase_line.refresh_from_db()
-        target_received_quantity = Decimal('2')
+        target_received_quantity = Decimal(2 * scale_factor)
         if purchase_line.received < target_received_quantity:
             purchase_order.receive_line_item(
                 purchase_line,
@@ -504,15 +529,21 @@ class Command(BaseCommand):
             },
         )
         expanded_line, _ = PurchaseOrderLineItem.objects.get_or_create(
-            order=expanded_order, part=supplier_switch, defaults={'quantity': 24}
+            order=expanded_order,
+            part=supplier_switch,
+            defaults={'quantity': 24 * scale_factor},
         )
+        expanded_quantity = max(24 * scale_factor, int(expanded_line.received))
+        if expanded_line.quantity != expanded_quantity:
+            expanded_line.quantity = expanded_quantity
+            expanded_line.save(update_fields=['quantity'])
         if expanded_order.status in [
             PurchaseOrderStatus.PENDING,
             PurchaseOrderStatus.ON_HOLD,
         ]:
             expanded_order.place_order()
         expanded_line.refresh_from_db()
-        expanded_target = Decimal('12')
+        expanded_target = Decimal(12 * scale_factor)
         if expanded_line.received < expanded_target:
             expanded_order.receive_line_item(
                 expanded_line,
@@ -555,6 +586,7 @@ class Command(BaseCommand):
         # parts receive one internal serial per item; bulk items use quantity.
         for ipn, _, _, trackable, target_quantity in catalog:
             part = parts[ipn]
+            target_quantity *= scale_factor
             current_quantity = (
                 StockItem.objects.filter(
                     part=part,
