@@ -9,7 +9,7 @@ import django.db.models.deletion
 import taggit.managers
 import uuid
 from django.conf import settings
-from django.db import migrations, models
+from django.db import migrations, models, transaction
 from moneyed import CURRENCIES
 
 
@@ -25,9 +25,10 @@ def set_default_currency(apps, schema_editor):
     if base_currency not in currency_codes(True):
         base_currency = currency_codes(True)[0] if currency_codes(True) else 'USD'
 
-    InvenTreeSetting.set_setting(
-        'INVENTREE_DEFAULT_CURRENCY', base_currency, None, create=True
-    )
+    with transaction.atomic():
+        InvenTreeSetting.set_setting(
+            'INVENTREE_DEFAULT_CURRENCY', base_currency, None, create=True
+        )
 
 
 def set_currencies(apps, schema_editor):
