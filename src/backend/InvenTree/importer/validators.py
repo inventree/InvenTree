@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 # Define maximum limits for imported file data
-IMPORTER_MAX_FILE_SIZE = 32 * 1024 * 1042
+IMPORTER_MAX_FILE_SIZE = 32 * 1024 * 1024
 IMPORTER_MAX_ROWS = 5000
 IMPORTER_MAX_COLS = 1000
 
@@ -46,8 +46,11 @@ def validate_field_defaults(value):
         return
 
     if type(value) is not dict:
-        # OK if we can parse it as JSON
+        # OK if we can parse it as JSON - but the result must be a dict
         try:
             value = json.loads(value)
-        except json.JSONDecodeError:
+        except (TypeError, json.JSONDecodeError):
+            raise ValidationError(_('Value must be a valid dictionary object'))
+
+        if type(value) is not dict:
             raise ValidationError(_('Value must be a valid dictionary object'))

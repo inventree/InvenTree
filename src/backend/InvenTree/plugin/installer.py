@@ -3,8 +3,11 @@
 import re
 import subprocess
 import sys
+from pathlib import Path
+from typing import Optional
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -17,7 +20,7 @@ from InvenTree.exceptions import log_error
 logger = structlog.get_logger('inventree')
 
 
-def pip_command(*args):
+def pip_command(*args) -> str:
     """Build and run a pip command using using the current python executable.
 
     Returns: The output of the pip command
@@ -35,9 +38,12 @@ def pip_command(*args):
 
     logger.info('Running pip command: %s', ' '.join(command))
 
-    return subprocess.check_output(
+    ret = subprocess.check_output(
         command, cwd=settings.BASE_DIR.parent, stderr=subprocess.STDOUT
-    )
+    ).decode('utf-8')
+    if 'No module named pip' in ret:
+        raise ValidationError(_('Pip is not installed in the current environment'))
+    return ret
 
 
 def handle_pip_error(error, path: str) -> list:
@@ -83,7 +89,7 @@ def get_install_info(packagename: str) -> dict:
     try:
         result = pip_command('show', packagename)
 
-        output = result.decode('utf-8').split('\n')
+        output = result.split('\n')
 
         for line in output:
             parts = line.split(':')
@@ -99,7 +105,7 @@ def get_install_info(packagename: str) -> dict:
 
         output = error.output.decode('utf-8')
         info['error'] = output
-        logger.exception('Plugin lookup failed: %s', str(output))
+        logger.exception('Plugin lookup failed: %s', output)
     except Exception:
         log_error('get_install_info', scope='pip')
 
@@ -117,11 +123,71 @@ def plugins_file_hash():
 
     try:
         with pf.open('rb') as f:
-            # Note: Once we support 3.11 as a minimum, we can use hashlib.file_digest
-            return hashlib.sha256(f.read()).hexdigest()
+            return hashlib.file_digest(f, 'sha256').hexdigest()
     except Exception:
         log_error('plugins_file_hash', scope='plugins')
         return None
+
+
+def plugin_env_marker_path() -> Path:
+    """Return the path to the plugin-install marker file for the *current* python environment.
+
+    This lives inside the running interpreter's environment (``sys.prefix``)
+    rather than in the database, so it disappears along with the rest of the
+    environment whenever a fresh virtual environment is created - e.g. a
+    container replaced without a persistent venv volume. A database-only hash
+    cannot tell such a fresh environment apart from one that already has the
+    packages installed (inventree/InvenTree#12848).
+    """
+    return Path(sys.prefix) / '.inventree_plugins_hash'
+
+
+# Process-local fallback for get_env_plugin_hash(), used when the marker file
+# itself cannot be written (e.g. a read-only sys.prefix).
+_env_plugin_hash_cache: Optional[str] = None
+
+
+def get_env_plugin_hash() -> Optional[str]:
+    """Return the plugin file hash last installed into the *current* python environment.
+
+    Returns None if no install has been recorded here (e.g. a fresh environment).
+    """
+    if _env_plugin_hash_cache is not None:
+        return _env_plugin_hash_cache
+
+    path = plugin_env_marker_path()
+
+    if not path.exists():
+        return None
+
+    try:
+        return path.read_text().strip()
+    except Exception:
+        log_error('get_env_plugin_hash', scope='plugins')
+        return None
+
+
+def set_env_plugin_hash(file_hash: str) -> None:
+    """Record that the current python environment has installed the given plugin file hash."""
+    global _env_plugin_hash_cache
+
+    _env_plugin_hash_cache = file_hash
+
+    try:
+        plugin_env_marker_path().write_text(file_hash)
+    except Exception:
+        # Not logged via log_error/the database error log: on a deployment
+        # where sys.prefix is not writable (by design, e.g. a read-only
+        # root filesystem) this would otherwise happen on every single
+        # process start forever, and it is an environment property rather
+        # than an application bug.
+        logger.warning(
+            "Could not persist plugin install marker to '%s' - this "
+            'environment will be re-verified on every process restart '
+            'instead of only when %s changes',
+            plugin_env_marker_path(),
+            settings.PLUGIN_FILE,
+        )
 
 
 def install_plugins_file():
@@ -131,7 +197,7 @@ def install_plugins_file():
     pf = settings.PLUGIN_FILE
 
     if not pf or not pf.exists():
-        logger.warning('Plugin file %s does not exist', str(pf))
+        logger.warning('Plugin file %s does not exist', pf)
         return
 
     cmd = ['install', '--disable-pip-version-check', '-U', '-r', str(pf)]
@@ -140,7 +206,7 @@ def install_plugins_file():
         pip_command(*cmd)
     except subprocess.CalledProcessError as error:
         output = error.output.decode('utf-8')
-        logger.exception('Plugin file installation failed: %s', str(output))
+        logger.exception('Plugin file installation failed: %s', output)
         log_error('install_plugins_file', scope='pip')
         return False
     except Exception as exc:
@@ -158,35 +224,29 @@ def install_plugins_file():
     return True
 
 
-def update_plugins_file(install_name, full_package=None, version=None, remove=False):
+def update_plugins_file(package_reference: str, remove: bool = False):
     """Add a plugin to the plugins file."""
     if remove:
-        logger.info('Removing plugin from plugins file: %s', install_name)
+        logger.info('Removing plugin from plugins file: %s', package_reference)
     else:
-        logger.info('Adding plugin to plugins file: %s', install_name)
-
-    # If a full package name is provided, use that instead
-    if full_package and full_package != install_name:
-        new_value = full_package
-    else:
-        new_value = f'{install_name}=={version}' if version else install_name
+        logger.info('Adding plugin to plugins file: %s', package_reference)
 
     pf = settings.PLUGIN_FILE
 
     if not pf or not pf.exists():
-        logger.warning('Plugin file %s does not exist', str(pf))
+        logger.warning('Plugin file %s does not exist', pf)
         return
 
     def compare_line(line: str):
         """Check if a line in the file matches the installname."""
-        return re.match(rf'^{install_name}[\s=@]', line.strip())
+        return re.match(rf'^{re.escape(package_reference)}(?:[\s=@]|$)', line.strip())
 
     # First, read in existing plugin file
     try:
         with pf.open(mode='r') as f:
             lines = f.readlines()
     except Exception as exc:
-        logger.exception('Failed to read plugins file: %s', str(exc))
+        logger.exception('Failed to read plugins file: %s', exc)
         log_error('update_plugins_file', scope='plugins')
         return
 
@@ -206,13 +266,13 @@ def update_plugins_file(install_name, full_package=None, version=None, remove=Fa
             found = True
             if not remove:
                 # Replace line with new install name
-                output.append(new_value)
+                output.append(package_reference)
         else:
             output.append(line)
 
     # Append plugin to file
     if not found and not remove:
-        output.append(new_value)
+        output.append(package_reference)
 
     # Write file back to disk
     try:
@@ -223,21 +283,26 @@ def update_plugins_file(install_name, full_package=None, version=None, remove=Fa
                 if not line.endswith('\n'):
                     f.write('\n')
     except Exception as exc:
-        logger.exception('Failed to add plugin to plugins file: %s', str(exc))
+        logger.exception('Failed to add plugin to plugins file: %s', exc)
         log_error('update_plugins_file', scope='plugins')
 
 
-def install_plugin(url=None, packagename=None, user=None, version=None):
+def install_plugin(
+    user: Optional[User] = None,
+    url: Optional[str] = None,
+    packagename: Optional[str] = None,
+    version: Optional[str] = None,
+):
     """Install a plugin into the python virtual environment.
 
     Args:
+        user: user performing the installation
         packagename: Optional package name to install
         url: Optional URL to install from
-        user: Optional user performing the installation
         version: Optional version specifier
     """
-    if user and not user.is_staff:
-        raise ValidationError(_('Only staff users can administer plugins'))
+    if user and not user.is_superuser:
+        raise ValidationError(_('Only superuser accounts can administer plugins'))
 
     if settings.PLUGINS_INSTALL_DISABLED:
         raise ValidationError(_('Plugin installation is disabled'))
@@ -245,40 +310,48 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
     logger.info('install_plugin: %s, %s', url, packagename)
 
     # build up the command
-    install_name = ['install', '-U', '--disable-pip-version-check']
-
-    full_pkg = ''
+    package_ref: Optional[str] = None
+    index_url = None
 
     if url:
-        # use custom registration / VCS
-        if True in [
-            identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn']
-        ]:
+        # VCS based install - this can just be a VCS reference
+        if url.startswith(('git+https://', 'hg+https://', 'svn+svn://')):
             # using a VCS provider
-            full_pkg = f'{packagename}@{url}' if packagename else url
-        elif url:
-            install_name.append('-i')
-            full_pkg = url
+            package_ref = f'{packagename}@{url}' if packagename else url
+        # http based index reference
+        elif url.startswith(('http://', 'https://')) and packagename:
+            package_ref = packagename
+            index_url = url
+        # Ignore url and just use default index
         elif packagename:
-            full_pkg = packagename
+            package_ref = packagename
+        else:
+            raise ValidationError(_('Invalid URL and no package name provided'))
 
     elif packagename:
-        # use pypi
-        full_pkg = packagename
+        # use default index - most often pypi
+        package_ref = packagename
 
         if version:
-            full_pkg = f'{full_pkg}=={version}'
+            package_ref = f'{packagename}=={version}'
+    else:
+        raise ValidationError(_('No package name or URL provided for installation'))
 
-    install_name.append(full_pkg)
-
-    ret = {}
+    # Sanitize the package name for installation
+    if any(c in package_ref for c in ';&|`$()'):
+        raise ValidationError(_('Invalid characters in package name or URL'))
 
     # Execute installation via pip
+    cmd: list[str] = ['install', '-U', '--disable-pip-version-check']
+    if index_url:
+        cmd += ['-i', index_url]
+
+    ret = {}
     try:
-        result = pip_command(*install_name)
+        result = pip_command(*cmd, package_ref)
 
         ret['result'] = ret['success'] = _('Installed plugin successfully')
-        ret['output'] = str(result, 'utf-8')
+        ret['output'] = result
 
         if packagename and (info := get_install_info(packagename)):
             if path := info.get('location'):
@@ -292,7 +365,7 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
 
     if version := ret.get('version'):
         # Save plugin to plugins file
-        update_plugins_file(packagename, full_package=full_pkg, version=version)
+        update_plugins_file(package_reference=package_ref)
 
         # Reload the plugin registry, to discover the new plugin
         from plugin.registry import registry
@@ -332,6 +405,9 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
         delete_config: If True, delete the plugin configuration from the database
     """
     from plugin.registry import registry
+
+    if user and not user.is_superuser:
+        raise ValidationError(_('Only superuser accounts can administer plugins'))
 
     if settings.PLUGINS_INSTALL_DISABLED:
         raise ValidationError(_('Plugin uninstalling is disabled'))
@@ -379,7 +455,7 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
         raise ValidationError(_('Plugin installation not found'))
 
     # Update the plugins file
-    update_plugins_file(package_name, remove=True)
+    update_plugins_file(package_reference=package_name, remove=True)
 
     if delete_config:
         logger.info('Deleting plugin configuration from database: %s', cfg.key)

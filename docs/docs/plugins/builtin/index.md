@@ -21,7 +21,7 @@ The following builtin plugins are available in InvenTree:
 | Barcodes | [TME](./barcode_tme.md) | TME barcode support | No |
 | Data Export | [BOM Exporter](./bom_exporter.md) | Custom [exporter](../mixins/export.md) for BOM data | Yes |
 | Data Export | [InvenTree Exporter](./inventree_exporter.md) | Custom [exporter](../mixins/export.md) for InvenTree data | Yes |
-| Data Export | [Parameter Exporter](./part_parameter_exporter.md) | Custom [exporter](../mixins/export.md) for part parameter data | Yes |
+| Data Export | [Parameter Exporter](./parameter_exporter.md) | Custom [exporter](../mixins/export.md) for parameter data | Yes |
 | Data Export | [Stocktake Exporter](./stocktake_exporter.md) | Custom [exporter](../mixins/export.md) for stocktake data | No |
 | Events | [Auto Create Child Builds](./auto_create_builds.md) | Automatically create child build orders for sub-assemblies | No |
 | Events | [Auto Issue Orders](./auto_issue.md) | Automatically issue pending orders when target date is reached | No |

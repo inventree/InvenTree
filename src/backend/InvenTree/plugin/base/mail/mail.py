@@ -1,6 +1,6 @@
 """Functions for processing emails."""
 
-from typing import Optional, Union
+from typing import Optional
 
 from django.core.mail.message import EmailMessage, EmailMultiAlternatives
 
@@ -12,7 +12,7 @@ from plugin.registry import registry
 
 
 def process_mail_out(
-    email_messages: list[Union[EmailMessage, EmailMultiAlternatives]],
+    email_messages: list[EmailMessage | EmailMultiAlternatives],
 ) -> bool:
     """Process email messages with plugins.
 

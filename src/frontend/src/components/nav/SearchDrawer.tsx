@@ -7,6 +7,7 @@ import {
   Anchor,
   Center,
   Checkbox,
+  Divider,
   Drawer,
   Group,
   Loader,
@@ -29,23 +30,33 @@ import {
   IconX
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { type NavigateFunction, useNavigate } from 'react-router-dom';
 
+import { Boundary } from '@lib/components/Boundary';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import { cancelEvent } from '@lib/functions/Events';
-import { eventModified, navigateToLink } from '@lib/functions/Navigation';
+import {
+  eventModified,
+  getDetailUrl,
+  navigateToLink
+} from '@lib/functions/Navigation';
 import { showNotification } from '@mantine/notifications';
 import { api } from '../../App';
+import { openGlobalPreview } from '../../states/PreviewDrawerState';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
 import { getModelInfo } from '../render/ModelType';
+
+// Minimum number of characters required before firing a (non-regex) search query.
+// Very short terms match broadly against every searched field across every model,
+// which is expensive to compute and rarely useful to the user.
+const MIN_SEARCH_LENGTH = 2;
 
 // Define type for handling individual search queries
 type SearchQuery = {
@@ -67,7 +78,8 @@ function QueryResultGroup({
   navigate,
   onClose,
   onRemove,
-  onResultClick
+  onResultClick,
+  searchNotes
 }: Readonly<{
   searchText: string;
   query: SearchQuery;
@@ -75,6 +87,7 @@ function QueryResultGroup({
   onClose: () => void;
   onRemove: (query: ModelType) => void;
   onResultClick: (query: ModelType, pk: number, event: any) => void;
+  searchNotes: boolean;
 }>) {
   const modelInfo = useMemo(() => getModelInfo(query.model), [query.model]);
 
@@ -93,7 +106,11 @@ function QueryResultGroup({
       cancelEvent(event);
 
       if (overviewUrl) {
-        const url = `${overviewUrl}?search=${searchText}`;
+        // Keep the notes-search context so results found via their notes
+        // are also present in the full results table view
+        const url = `${overviewUrl}?search=${searchText}${
+          searchNotes ? '&search_notes=true' : ''
+        }`;
 
         // Close drawer if opening in the same tab
         if (!eventModified(event)) {
@@ -110,7 +127,7 @@ function QueryResultGroup({
         });
       }
     },
-    [overviewUrl, searchText]
+    [overviewUrl, searchText, searchNotes]
   );
 
   if (query.results.count == 0) {
@@ -158,17 +175,28 @@ function QueryResultGroup({
         </Group>
       </Accordion.Control>
       <Accordion.Panel>
-        <Stack aria-label={`search-group-results-${query.model}`}>
-          {query.results.results.map((result: any) => (
-            <Anchor
-              underline='never'
-              onClick={(event: any) =>
-                onResultClick(query.model, result.pk, event)
-              }
-              key={`result-${query.model}-${result.pk}`}
-            >
-              <RenderInstance instance={result} model={query.model} />
-            </Anchor>
+        <Stack gap={'xs'} aria-label={`search-group-results-${query.model}`}>
+          {query.results.results.map((result: any, index: number) => (
+            <Fragment key={`result-group-${query.model}-${result.pk}`}>
+              <Anchor
+                underline='never'
+                href={getDetailUrl(query.model, result.pk, true)}
+                onClick={(event: any) =>
+                  onResultClick(query.model, result.pk, event)
+                }
+                key={`result-${query.model}-${result.pk}`}
+              >
+                <RenderInstance instance={result} model={query.model} />
+              </Anchor>
+              {index < query.results.results.length - 1 && (
+                <Divider
+                  p={0}
+                  m={0}
+                  variant='dashed'
+                  key={`divider-${query.model}-${result.pk}`}
+                />
+              )}
+            </Fragment>
           ))}
         </Stack>
       </Accordion.Panel>
@@ -278,7 +306,7 @@ export function SearchDrawer({
           part_detail: true
         },
         enabled:
-          user.hasViewRole(UserRoles.build) &&
+          user.hasViewVisible(UserRoles.build) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_BUILD_ORDERS')
       },
       {
@@ -288,7 +316,7 @@ export function SearchDrawer({
         title: t`Suppliers`,
         parameters: {},
         enabled:
-          user.hasViewRole(UserRoles.purchase_order) &&
+          user.hasViewVisible(UserRoles.purchase_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
       },
       {
@@ -298,7 +326,7 @@ export function SearchDrawer({
         title: t`Manufacturers`,
         parameters: {},
         enabled:
-          user.hasViewRole(UserRoles.purchase_order) &&
+          user.hasViewVisible(UserRoles.purchase_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
       },
       {
@@ -308,7 +336,7 @@ export function SearchDrawer({
         title: t`Customers`,
         parameters: {},
         enabled:
-          user.hasViewRole(UserRoles.sales_order) &&
+          user.hasViewVisible(UserRoles.sales_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
       },
       {
@@ -322,7 +350,7 @@ export function SearchDrawer({
             : undefined
         },
         enabled:
-          user.hasViewRole(UserRoles.purchase_order) &&
+          user.hasViewVisible(UserRoles.purchase_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS')
       },
       {
@@ -336,14 +364,14 @@ export function SearchDrawer({
             : undefined
         },
         enabled:
-          user.hasViewRole(UserRoles.sales_order) &&
+          user.hasViewVisible(UserRoles.sales_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_SALES_ORDERS')
       },
       {
         model: ModelType.salesordershipment,
         parameters: {},
         enabled:
-          user.hasViewRole(UserRoles.sales_order) &&
+          user.hasViewVisible(UserRoles.sales_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_SALES_ORDER_SHIPMENTS')
       },
       {
@@ -357,7 +385,7 @@ export function SearchDrawer({
             : undefined
         },
         enabled:
-          user.hasViewRole(UserRoles.return_order) &&
+          user.hasViewVisible(UserRoles.return_order) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_RETURN_ORDERS')
       }
     ];
@@ -374,9 +402,13 @@ export function SearchDrawer({
   }, [searchText]);
 
   // Function for performing the actual search query
-  const performSearch = async () => {
-    // Return empty result set if no search text
-    if (!searchText) {
+  const performSearch = async ({ signal }: { signal: AbortSignal }) => {
+    // Return empty result set if no search text, or too short to be worth searching on
+    // (a very short term matches broadly against every searched field, and is rarely useful)
+    if (
+      !searchText ||
+      (!searchRegex && searchText.length < MIN_SEARCH_LENGTH)
+    ) {
       return [];
     }
 
@@ -396,7 +428,7 @@ export function SearchDrawer({
     });
 
     return api
-      .post(apiUrl(ApiEndpoints.api_search), params)
+      .post(apiUrl(ApiEndpoints.api_search), params, { signal })
       .then((response) => response.data);
   };
 
@@ -449,6 +481,17 @@ export function SearchDrawer({
   function onResultClick(query: ModelType, pk: number, event: any) {
     const targetModel = ModelInformationDict[query];
     if (targetModel.url_detail == undefined) {
+      return;
+    }
+
+    const showPreviewPanel =
+      userSettings.isSet('ENABLE_PREVIEW_PANEL') &&
+      userSettings.isSet('SEARCH_RESULTS_PREVIEW_PANEL');
+
+    if (showPreviewPanel && !eventModified(event)) {
+      // Open the result in the preview panel, keeping the search drawer open
+      cancelEvent(event);
+      openGlobalPreview(query, pk);
       return;
     }
 
@@ -548,13 +591,14 @@ export function SearchDrawer({
               multiple
               defaultValue={searchQueries.map((q) => q.model)}
             >
-              {queryResults.map((query, idx) => (
+              {queryResults.map((query) => (
                 <QueryResultGroup
-                  key={idx}
+                  key={query.model}
                   searchText={searchText}
                   query={query}
                   navigate={navigate}
                   onClose={closeDrawer}
+                  searchNotes={searchNotes}
                   onRemove={(query) => removeResults(query)}
                   onResultClick={(query, pk, event) =>
                     onResultClick(query, pk, event)

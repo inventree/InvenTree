@@ -14,23 +14,23 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { CopyButton } from '@lib/components/CopyButton';
 import { RowDeleteAction } from '@lib/components/RowActions';
+import { StylishText } from '@lib/components/StylishText';
 import { PassFailButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { shortenString } from '@lib/functions/String';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { CopyButton } from '../../components/buttons/CopyButton';
-import { StylishText } from '../../components/items/StylishText';
 import { RenderUser } from '../../components/render/User';
-import { shortenString } from '../../functions/tables';
+import { UserFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import { UserFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /*
  * Render detail information for a particular barcode scan result.
@@ -258,23 +258,28 @@ export default function BarcodeScanHistoryTable() {
             icon={<IconExclamationCircle />}
             title={t`Logging Disabled`}
           >
-            <Text>{t`Barcode logging is not enabled`}</Text>
+            <Text>
+              {t`Barcode logging is not enabled.`}{' '}
+              {t`No barcode scan history will be recorded.`}
+            </Text>
           </Alert>
         )}
-        <InvenTreeTable
-          url={apiUrl(ApiEndpoints.barcode_history)}
-          tableState={table}
-          columns={tableColumns}
-          props={{
-            tableFilters: filters,
-            enableBulkDelete: canDelete,
-            rowActions: rowActions,
-            onRowClick: (row) => {
-              setSelectedResult(row);
-              open();
-            }
-          }}
-        />
+        {globalSettings.isSet('BARCODE_STORE_RESULTS') && (
+          <InvenTreeTable
+            url={apiUrl(ApiEndpoints.barcode_history)}
+            tableState={table}
+            columns={tableColumns}
+            props={{
+              tableFilters: filters,
+              enableBulkDelete: canDelete,
+              rowActions: rowActions,
+              onRowClick: (row) => {
+                setSelectedResult(row);
+                open();
+              }
+            }}
+          />
+        )}
       </Stack>
     </>
   );

@@ -37,7 +37,7 @@ class StocktakeExporterTest(InvenTreeAPITestCase):
                     'Minimum Unit Cost',
                     'Maximum Total Cost',
                 ],
-                excluded_cols=['Active', 'External Stock', 'Variant Stock'],
+                excluded_cols=['External Stock', 'Variant Stock'],
             )
 
         # Now, with additional parameters specific to the plugin
@@ -60,7 +60,6 @@ class StocktakeExporterTest(InvenTreeAPITestCase):
                     'External Stock',
                     'Variant Stock',
                 ],
-                excluded_cols=['Active'],
             )
 
         # Finally, exclude pricing data entirely

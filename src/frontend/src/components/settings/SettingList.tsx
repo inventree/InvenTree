@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Alert, Skeleton, Stack, Text } from '@mantine/core';
+import { Alert, Divider, Skeleton, Stack, Text, Title } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useStore } from 'zustand';
@@ -24,22 +24,37 @@ import { SettingItem } from './SettingItem';
  * Display a list of setting items, based on a list of provided keys
  */
 export function SettingList({
+  heading,
   settingsState,
   keys,
   onChange,
-  onLoaded
+  onLoaded,
+  doGet
 }: Readonly<{
+  heading?: string;
   settingsState: SettingsStateProps;
   keys?: string[];
   onChange?: () => void;
   onLoaded?: (settings: SettingsStateProps) => void;
+  doGet?: boolean;
 }>) {
   useEffect(() => {
-    if (settingsState.loaded) {
+    if (settingsState.loaded === true) {
       // Call the onLoaded callback if provided
       onLoaded?.(settingsState);
     }
   }, [settingsState.loaded, settingsState.settings]);
+
+  // get data if doGet is true to break memos leading to hidden group panels
+  useMemo(() => {
+    if (doGet && !settingsState.loaded) {
+      settingsState.fetchSettings().then((success) => {
+        if (success) {
+          onLoaded?.(settingsState);
+        }
+      });
+    }
+  }, [doGet, settingsState]);
 
   const api = useApi();
 
@@ -91,7 +106,7 @@ export function SettingList({
 
   // Callback for editing a single setting instance
   const onValueEdit = useCallback(
-    (setting: Setting) => {
+    (setting: Setting, confirmed: boolean) => {
       setSetting(setting);
       editSettingModal.open();
     },
@@ -100,13 +115,17 @@ export function SettingList({
 
   // Callback for toggling a single boolean setting instance
   const onValueToggle = useCallback(
-    (setting: Setting, value: boolean) => {
+    (setting: Setting, value: boolean, confirmed: boolean) => {
+      let data: any = {
+        value: value
+      };
+      if (confirmed) {
+        data = { ...data, manual_confirm: true };
+      }
       api
         .patch(
           apiUrl(settingsState.endpoint, setting.key, settingsState.pathParams),
-          {
-            value: value
-          }
+          data
         )
         .then(() => {
           notifications.hide('setting');
@@ -158,6 +177,8 @@ export function SettingList({
     <>
       {editSettingModal.modal}
       <Stack gap='xs'>
+        {heading && <Title order={4}>{heading}</Title>}
+        {heading && <Divider />}
         {(keys || allKeys)?.map((key, i) => {
           const setting = settingsState?.settings?.find(
             (s: any) => s.key === key
@@ -194,23 +215,35 @@ export function SettingList({
   );
 }
 
-export function UserSettingList({ keys }: Readonly<{ keys: string[] }>) {
+export function UserSettingList({
+  keys,
+  heading
+}: Readonly<{ keys: string[]; heading?: string }>) {
   const userSettings = useUserSettingsState();
 
-  return <SettingList settingsState={userSettings} keys={keys} />;
+  return (
+    <SettingList settingsState={userSettings} keys={keys} heading={heading} />
+  );
 }
 
-export function GlobalSettingList({ keys }: Readonly<{ keys: string[] }>) {
+export function GlobalSettingList({
+  keys,
+  heading
+}: Readonly<{ keys: string[]; heading?: string }>) {
   const globalSettings = useGlobalSettingsState();
 
-  return <SettingList settingsState={globalSettings} keys={keys} />;
+  return (
+    <SettingList settingsState={globalSettings} keys={keys} heading={heading} />
+  );
 }
 
 export function PluginSettingList({
   pluginKey,
+  doGet,
   onLoaded
 }: Readonly<{
   pluginKey: string;
+  doGet?: boolean;
   onLoaded?: (settings: SettingsStateProps) => void;
 }>) {
   const store = useMemo(
@@ -228,14 +261,22 @@ export function PluginSettingList({
     pluginSettings.fetchSettings();
   }, [pluginSettings.fetchSettings]);
 
-  return <SettingList settingsState={pluginSettings} onLoaded={onLoaded} />;
+  return (
+    <SettingList
+      settingsState={pluginSettings}
+      onLoaded={onLoaded}
+      doGet={doGet}
+    />
+  );
 }
 
 export function PluginUserSettingList({
   pluginKey,
+  doGet,
   onLoaded
 }: Readonly<{
   pluginKey: string;
+  doGet?: boolean;
   onLoaded?: (settings: SettingsStateProps) => void;
 }>) {
   const store = useMemo(
@@ -253,7 +294,13 @@ export function PluginUserSettingList({
     pluginUserSettings.fetchSettings();
   }, [pluginUserSettings.fetchSettings]);
 
-  return <SettingList settingsState={pluginUserSettings} onLoaded={onLoaded} />;
+  return (
+    <SettingList
+      settingsState={pluginUserSettings}
+      onLoaded={onLoaded}
+      doGet={doGet}
+    />
+  );
 }
 
 export function MachineSettingList({

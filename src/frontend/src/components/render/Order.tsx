@@ -22,7 +22,7 @@ export function RenderPurchaseOrder(
       primary={instance.reference}
       secondary={instance.description}
       suffix={StatusRenderer({
-        status: instance.status_custom_key,
+        status: instance.status_custom_key || instance.status,
         type: ModelType.purchaseorder
       })}
       image={supplier.thumbnail || supplier.image}
@@ -50,7 +50,7 @@ export function RenderReturnOrder(
       primary={instance.reference}
       secondary={instance.description}
       suffix={StatusRenderer({
-        status: instance.status_custom_key,
+        status: instance.status_custom_key || instance.status,
         type: ModelType.returnorder
       })}
       image={customer.thumbnail || customer.image}
@@ -95,7 +95,7 @@ export function RenderSalesOrder(
       primary={instance.reference}
       secondary={instance.description}
       suffix={StatusRenderer({
-        status: instance.status_custom_key,
+        status: instance.status_custom_key || instance.status,
         type: ModelType.salesorder
       })}
       image={customer.thumbnail || customer.image}
@@ -120,6 +120,49 @@ export function RenderSalesOrderShipment({
     <RenderInlineModel
       primary={order.reference}
       suffix={<Text size='xs'>{`${t`Shipment`} ${instance.reference}`}</Text>}
+    />
+  );
+}
+
+/**
+ * Inline rendering of a single TransferOrder instance
+ */
+export function RenderTransferOrder(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+
+  return (
+    <RenderInlineModel
+      {...props}
+      primary={instance.reference}
+      secondary={instance.description}
+      suffix={StatusRenderer({
+        status: instance.status_custom_key || instance.status,
+        type: ModelType.transferorder
+      })}
+      url={
+        props.link
+          ? getDetailUrl(ModelType.transferorder, instance.pk)
+          : undefined
+      }
+    />
+  );
+}
+
+export function RenderTransferOrderLineItem(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+
+  return (
+    <RenderInlineModel
+      {...props}
+      primary={instance.reference}
+      suffix={StatusRenderer({
+        status: instance.outcome,
+        type: ModelType.transferorderlineitem
+      })}
     />
   );
 }

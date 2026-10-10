@@ -108,6 +108,27 @@ The Python packages required by the InvenTree server must be installed into the 
 
 ```
 pip install --upgrade --ignore-installed invoke
+```
+
+#### Install Python Bindings
+
+Depending on your database the python bindings must also be installed (into your virtual environment).
+
+For PostgreSQL install:
+
+```
+pip3 install psycopg pgcli
+```
+
+For MySQL install:
+
+```
+pip3 install mysqlclient mariadb
+```
+
+If all packages have been installed run:
+
+```
 invoke install
 ```
 
@@ -118,6 +139,9 @@ This installs all required Python packages using pip package manager. It also cr
 As part of the initial setup, an empty database needs to be created. Follow the instructions below particular to your database engine of choice:
 
 ### PostgreSQL
+
+!!! info "Minimum Version"
+    InvenTree requires a minimum PostgreSQL version of {{ config.extra.min_postgres_version }}.
 
 #### Install PostgreSQL
 
@@ -155,14 +179,6 @@ grant all privileges on database inventree to myuser;
 !!! info "Username / Password"
     You should change the username and password from the values specified above. This username and password will also be for the InvenTree database connection configuration.
 
-#### Install Python Bindings
-
-The PostgreSQL python binding must also be installed (into your virtual environment):
-
-```
-pip3 install psycopg pgcli
-```
-
 #### Install Postgresql client
 
 If PostgreSQL and InvenTree are installed on separate servers / containers the PostgreSQL client has to be installed also where InvenTree is running.
@@ -173,6 +189,9 @@ sudo apt-get install postgresql-client
 
 ### MySQL / MariaDB
 
+!!! info "Minimum Version"
+    InvenTree requires a minimum MySQL version of {{ config.extra.min_mysql_version }}.
+
 #### Install Backend
 
 To run InvenTree with the MySQL or MariaDB backends, a number of extra packages need to be installed:
@@ -182,14 +201,6 @@ To run InvenTree with the MySQL or MariaDB backends, a number of extra packages 
 
 ```
 sudo apt-get install mysql-server libmysqlclient-dev
-```
-
-#### Install Python Bindings
-
-Install the python bindings for MySQL (into the python virtual environment).
-
-```
-pip3 install mysqlclient mariadb
 ```
 
 #### Create Database
@@ -283,6 +294,9 @@ Administrators wishing to update InvenTree to the latest version should follow t
 
 !!! info "Update Database"
 	It is advisable to [backup the InvenTree database](./backup.md) before performing these steps. The particular backup procedure may depend on your installation details.
+
+!!! danger "Updating from Pre 1.0.0"
+    If your installation is running a version of InvenTree older than `1.0.0`, you cannot update directly to the current release. See [Updating from Pre 1.0.0](./migrate.md#updating-from-pre-100) for the required intermediate step.
 
 ### Stop InvenTree Server
 

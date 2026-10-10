@@ -84,6 +84,39 @@ class InvenTreeNotificationBodies:
     )
 
 
+def get_user_language(user) -> str:
+    """Return the preferred language code for a user, or default system language."""
+    from django.conf import settings
+
+    if not user:
+        return getattr(settings, 'LANGUAGE_CODE', 'en-us')
+
+    # 1. Try user.profile.language (UserProfile model relation)
+    if profile := getattr(user, 'profile', None):
+        if lang := getattr(profile, 'language', None):
+            return lang
+
+    # 2. Try user.user_profile.language (alias if present)
+    if profile := getattr(user, 'user_profile', None):
+        if lang := getattr(profile, 'language', None):
+            return lang
+
+    # 3. Try InvenTreeUserSetting for 'LANGUAGE'
+    try:
+        from common.models import InvenTreeUserSetting
+
+        lang = InvenTreeUserSetting.get_setting(
+            'LANGUAGE', user=user, backup_value=None
+        )
+        if lang:
+            return lang
+    except Exception:
+        pass
+
+    # 4. Fallback to settings.LANGUAGE_CODE
+    return getattr(settings, 'LANGUAGE_CODE', 'en-us')
+
+
 def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **kwargs):
     """Send out a notification.
 
@@ -91,6 +124,7 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
         obj: The object (model instance) that is triggering the notification
         category: The category (label) for the notification
         obj_ref: The reference to the object that should be used for the notification
+        notification_uid: Explicit deduplication identifier for notifications without a model instance
         kwargs: Additional arguments to pass to the notification method
     """
     # Check if data is importing currently
@@ -105,6 +139,7 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
     context = kwargs.get('context', {})
     delivery_methods = kwargs.get('delivery_methods')
     check_recent = kwargs.get('check_recent', True)
+    notification_uid = kwargs.get('notification_uid')
 
     # Resolve object reference
     refs = [obj_ref, 'pk', 'id', 'uid']
@@ -122,6 +157,8 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
             raise KeyError(
                 f"Could not resolve an object reference for '{obj!s}' with {','.join(set(refs))}"
             )
+    elif notification_uid is not None:
+        obj_ref_value = notification_uid
 
     # Check if we have notified recently...
     delta = timedelta(days=1)
@@ -132,7 +169,7 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
         logger.info(
             "Notification '%s' has recently been sent for '%s' - SKIPPING",
             category,
-            str(obj),
+            obj,
         )
         return
 
@@ -177,9 +214,9 @@ def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **
     # Filter out any users who are inactive, or do not have the required model permissions
     valid_users = list(
         filter(
-            lambda u: u
-            and u.is_active
-            and (not obj or check_user_permission(u, obj, 'view')),
+            lambda u: (
+                u and u.is_active and (not obj or check_user_permission(u, obj, 'view'))
+            ),
             list(target_users),
         )
     )

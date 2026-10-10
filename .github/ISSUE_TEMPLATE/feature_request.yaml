@@ -2,6 +2,7 @@ name: Feature Request
 description: Suggest an idea for this project
 title: "[FR] title"
 labels: ["enhancement", "triage:not-checked"]
+type: enhancement
 body:
   - type: checkboxes
     id: no-duplicate-issues

@@ -6,7 +6,6 @@ export enum ModelType {
   supplierpart = 'supplierpart',
   manufacturerpart = 'manufacturerpart',
   partcategory = 'partcategory',
-  partparametertemplate = 'partparametertemplate',
   parttesttemplate = 'parttesttemplate',
   projectcode = 'projectcode',
   stockitem = 'stockitem',
@@ -17,12 +16,16 @@ export enum ModelType {
   buildline = 'buildline',
   builditem = 'builditem',
   company = 'company',
+  parameter = 'parameter',
+  parametertemplate = 'parametertemplate',
   purchaseorder = 'purchaseorder',
   purchaseorderlineitem = 'purchaseorderlineitem',
   salesorder = 'salesorder',
   salesordershipment = 'salesordershipment',
   returnorder = 'returnorder',
   returnorderlineitem = 'returnorderlineitem',
+  transferorder = 'transferorder',
+  transferorderlineitem = 'transferorderlineitem',
   importsession = 'importsession',
   address = 'address',
   contact = 'contact',
@@ -34,5 +37,21 @@ export enum ModelType {
   pluginconfig = 'pluginconfig',
   contenttype = 'contenttype',
   selectionlist = 'selectionlist',
-  error = 'error'
+  selectionentry = 'selectionentry',
+  error = 'error',
+  tag = 'tag',
+  notetemplate = 'notetemplate'
+}
+
+export enum PluginPanelKey {
+  // settings / admin
+  admincenter = 'admincenter',
+  systemsettings = 'systemsettings',
+  usersettings = 'usersettings',
+  // generic
+  core = 'core',
+  // landing pages
+  purchasing = 'purchasing',
+  sales = 'sales',
+  manufacturing = 'manufacturing'
 }

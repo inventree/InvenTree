@@ -1,6 +1,7 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import { t } from '@lingui/core/macro';
 import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
@@ -10,6 +11,7 @@ import { api } from '../../App';
 import { extractAvailableFields } from '../../functions/forms';
 import useDataOutput from '../../hooks/UseDataOutput';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useLocalState } from '../../states/LocalState';
 import {
   useGlobalSettingsState,
   useUserSettingsState
@@ -31,8 +33,40 @@ export function PrintingActions({
 }) {
   const userSettings = useUserSettingsState();
   const globalSettings = useGlobalSettingsState();
+  const localState = useLocalState();
+
+  const lastUsedPrinting = useMemo(() => {
+    return modelType ? localState.lastUsedPrinting[modelType] : undefined;
+  }, [localState.lastUsedPrinting, modelType]);
 
   const enabled = useMemo(() => items.length > 0, [items]);
+
+  useInvenTreeHotkeys([
+    [
+      'mod+P',
+      t`Open Print Report dialog`,
+      (event) => {
+        if (event.repeat) {
+          return;
+        }
+        if (enabled && !hidden) {
+          reportModal.open();
+        }
+      }
+    ],
+    [
+      'mod+L',
+      t`Open Print Label dialog`,
+      (event) => {
+        if (event.repeat) {
+          return;
+        }
+        if (enabled && !hidden) {
+          labelModal.open();
+        }
+      }
+    ]
+  ]);
 
   const defaultLabelPlugin = useMemo(
     () => userSettings.getSetting('LABEL_DEFAULT_PRINTER'),
@@ -52,22 +86,24 @@ export function PrintingActions({
   const [labelId, setLabelId] = useState<number | undefined>(undefined);
   const [reportId, setReportId] = useState<number | undefined>(undefined);
 
-  const labelProgress = useDataOutput({
+  useDataOutput({
     title: t`Printing Labels`,
     id: labelId
   });
 
-  const reportProgress = useDataOutput({
+  useDataOutput({
     title: t`Printing Reports`,
     id: reportId
   });
 
   const [itemIdList, setItemIdList] = useState<number[]>([]);
 
+  const [labelDialogOpen, setLabelDialogOpen] = useState<boolean>(false);
+
   // Fetch available printing fields via OPTIONS request
   const printingFields = useQuery({
-    enabled: labelPrintingEnabled,
-    queryKey: ['printingFields', modelType, pluginKey],
+    enabled: labelDialogOpen && !!modelType && !!labelPrintingEnabled,
+    queryKey: ['printingFields', modelType, pluginKey, labelDialogOpen],
     gcTime: 500,
     queryFn: () =>
       api
@@ -88,6 +124,7 @@ export function PrintingActions({
     fields.template = {
       ...fields.template,
       autoFill: true,
+      value: lastUsedPrinting?.template,
       filters: {
         enabled: true,
         model_type: modelType,
@@ -117,7 +154,14 @@ export function PrintingActions({
     };
 
     return fields;
-  }, [defaultLabelPlugin, pluginKey, printingFields.data, itemIdList]);
+  }, [
+    defaultLabelPlugin,
+    pluginKey,
+    printingFields.data,
+    itemIdList,
+    lastUsedPrinting,
+    modelType
+  ]);
 
   const labelModal = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.label_print),
@@ -126,15 +170,23 @@ export function PrintingActions({
     fields: labelFields,
     timeout: 5000,
     onOpen: () => {
+      setLabelDialogOpen(true);
       setItemIdList(items);
+      setPluginKey(lastUsedPrinting?.plugin ?? null);
     },
     onClose: () => {
-      setPluginKey('');
+      setLabelDialogOpen(false);
     },
     submitText: t`Print`,
     successMessage: null,
-    onFormSuccess: (response: any) => {
-      setPluginKey('');
+    onFormSuccess: (response: any, form: any) => {
+      if (modelType) {
+        const values = form?.getValues?.();
+        localState.setLastUsedPrinting(modelType, {
+          plugin: pluginKey || undefined,
+          template: values?.template ? Number(values.template) : undefined
+        });
+      }
       setLabelId(response.pk);
     }
   });
@@ -188,6 +240,7 @@ export function PrintingActions({
         <ActionDropdown
           tooltip={t`Printing Actions`}
           icon={<IconPrinter />}
+          position='bottom-start'
           disabled={!enabled}
           actions={[
             {

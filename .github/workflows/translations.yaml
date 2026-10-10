@@ -6,8 +6,8 @@ on:
       - master
 
 env:
-  python_version: 3.9
-  node_version: 20
+  python_version: 3.12
+  node_version: 24
 
 permissions:
   contents: read
@@ -32,11 +32,11 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          persist-credentials: true
+          persist-credentials: false
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           install: true
           apt-dependency: gettext
@@ -56,7 +56,7 @@ jobs:
           echo "Resetting to HEAD~"
           git reset HEAD~ || true
       - name: crowdin action
-        uses: crowdin/github-action@0749939f635900a2521aa6aac7a3766642b2dc71 # pin@v2
+        uses: crowdin/github-action@9c23991700c0ec5256fd41089b9d9d7d540e424e # v3.3.0
         with:
           upload_sources: true
           upload_translations: false

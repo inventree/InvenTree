@@ -23,7 +23,7 @@ def default_sentry_dsn():
     return 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
 
 
-def sentry_ignore_errors():
+def sentry_ignore_errors():  # pragma: no cover
     """Return a list of error types to ignore.
 
     These error types will *not* be reported to sentry.io.
@@ -36,11 +36,12 @@ def sentry_ignore_errors():
         rest_framework.exceptions.AuthenticationFailed,
         rest_framework.exceptions.NotAuthenticated,
         rest_framework.exceptions.PermissionDenied,
+        rest_framework.exceptions.MethodNotAllowed,
         rest_framework.exceptions.ValidationError,
     ]
 
 
-def init_sentry(dsn, sample_rate, tags):
+def init_sentry(dsn, sample_rate, tags, send_pii=False):  # pragma: no cover
     """Initialize sentry.io error reporting."""
     logger.info('Initializing sentry.io integration')
 
@@ -48,7 +49,7 @@ def init_sentry(dsn, sample_rate, tags):
         dsn=dsn,
         integrations=[DjangoIntegration()],
         traces_sample_rate=sample_rate,
-        send_default_pii=True,
+        send_default_pii=send_pii,
         ignore_errors=sentry_ignore_errors(),
         release=InvenTree.version.INVENTREE_SW_VERSION,
         environment='development'
@@ -66,7 +67,7 @@ def init_sentry(dsn, sample_rate, tags):
     sentry_sdk.set_tag('git_date', InvenTree.version.inventreeCommitDate())
 
 
-def report_exception(exc, scope: Optional[dict] = None):
+def report_exception(exc, scope: Optional[dict] = None):  # pragma: no cover
     """Report an exception to sentry.io."""
     assert settings.TESTING == False, (
         'report_exception should not be called in testing mode'
@@ -80,7 +81,7 @@ def report_exception(exc, scope: Optional[dict] = None):
     if any(isinstance(exc, e) for e in sentry_ignore_errors()):
         return
 
-    # Error may also be passed in from the loggingn context
+    # Error may also be passed in from the logging context
     if hasattr(exc, 'event'):
         event = getattr(exc, 'event', None)
 

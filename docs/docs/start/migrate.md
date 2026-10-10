@@ -2,6 +2,24 @@
 title: Migrating Data
 ---
 
+## Updating from Pre 1.0.0
+
+!!! danger "Required Stopover"
+    As part of the 1.0.0 release cycle, InvenTree's database migration history was *squashed* - many individual migration files were consolidated into a smaller number of squashed migrations, and the original (now-redundant) migration files were subsequently removed from the codebase.
+
+    As a result, InvenTree cannot migrate a database directly from a version **older than 1.0.0** to the current release. Attempting to do so will cause `invoke update` (or `invoke migrate`) to fail.
+
+If your installation is currently running a version of InvenTree older than `1.0.0`, you must first update to the `1.0.0` release, before updating to the current release.
+
+### How to Update
+
+1. Determine your current InvenTree version. If it is older than `1.0.0`, do not skip directly to the latest release.
+2. Follow the normal update procedure for your installation method - [Bare Metal](./install.md#updating-inventree), [Docker](./docker_install.md#updating-inventree), or [Package Installer](./installer.md#updating-inventree) - targeting a `1.0.0` release.
+3. Once the database has been successfully updated to `1.0.0`, repeat the update procedure again to bring the installation up to the current release.
+
+!!! danger "Skipping Directly to Latest"
+    Attempting to update directly from a pre-1.0.0 database to the current release, skipping the `1.0.0` stopover, is not supported and will fail.
+
 ## Migrating Data to a Different Database
 
 In the case that data needs to be migrated from one database installation to another, the following procedure can be used to export data, initialize the new database, and re-import the data. The following instructions apply to bare-metal and docker installations, although the particular commands required may vary slightly in each case.
@@ -30,6 +48,13 @@ This will create JSON file at the specified location which contains all database
 
 !!! info "Specifying filename"
     The filename of the exported file can be specified using the `-f` option. To see all available options, run `invoke export-records --help`
+
+!!! info "File Size"
+    By default the exported file is written as compact JSON, to keep its size down. Add the `-p` / `--prettify` option to pretty-print the output with indentation, which is easier to read manually but can roughly double the file size for a large database.
+
+```
+{{ invoke_commands('export-records --help') }}
+```
 
 ### Initialize New Database
 
@@ -63,6 +88,20 @@ invoke import-records -c -f data.json
 !!! warning "Character Encoding"
 	If the character encoding of the data file does not exactly match the target database, the import operation may not succeed. In this case, some manual editing of the database JSON file may be required.
 
+!!! tip "Faster Imports"
+    For very large datasets, add the `-b` / `--bulk` option to use a faster import path (the `bulkloaddata` management command) which inserts records in large batches and skips per-record signal processing, rather than saving each record individually:
+
+    ```
+    invoke import-records -c -b -f data.json
+    ```
+
+!!! tip "Strict Metadata Validation"
+    By default, a mismatch between the source and target InvenTree versions (see the "Database Versions" warning above) only produces a warning, and the import continues. Add the `-s` / `--strict` option to fail immediately instead, if you want to guarantee the versions match exactly before any data is written.
+
+```
+{{ invoke_commands('import-records --help') }}
+```
+
 ### Copy Media Files
 
 Any media files (images, documents, etc) that were stored in the original database must be copied to the new database. In a typical InvenTree installation, these files are stored in the `media` subdirectory of the InvenTree data location.
@@ -78,6 +117,9 @@ Copy the entire directory tree from the original InvenTree installation to the n
 ## Migrating Data to Newer Version
 
 If you are updating from an older version of InvenTree to a newer version, the migration steps outlined above *do not apply*.
+
+!!! danger "Updating from Pre 1.0.0"
+    If your existing installation is running a version older than `1.0.0`, you cannot update directly to the current release. See [Updating from Pre 1.0.0](#updating-from-pre-100) above for the required intermediate step.
 
 An update from an old version to a new one requires not only that the database *schema* are updated, but the *data* held within the database must be updated in the correct sequence.
 
@@ -110,3 +152,118 @@ Once the migration process completes, the database records are now updated! Rest
 
 !!! tip "Example: Docker"
     If running under docker, run `docker compose up -d`
+
+## Migrating Between Incompatible Database Versions
+
+There may be occasions when InvenTree data needs to be migrated between two database installations running *incompatible* versions of the database software. For example, InvenTree may be running on a Postgres database running on version 12, and the administrator wishes to migrate the data to a Postgres version {{ config.extra.docker_postgres_version }} database.
+
+!!! warning "Advanced Procedure"
+    The following procedure is *advanced*, and should only be attempted by experienced database administrators. Always ensure that database backups are made before attempting any migration procedure.
+
+Due to inherit incompatibilities between different major versions of database software, it is not always possible to directly migrate data between two different database versions. In such cases, the following procedure can be used as a workaround.
+
+!!! warning "InvenTree Version"
+    It is *crucial* that both InvenTree database installations are running the same version of InvenTree software! If this is not the case, data migration may fail, and there is a possibility that data corruption can occur. Ensure that the original database is up to date, by running `invoke update`.
+
+The following instructions assume that the source (old) database is Postgres version 15, and the target (new) database is Postgres version {{ config.extra.docker_postgres_version }}. Additionally, it assumes that the InvenTree installation is running under [docker / docker compose](./docker.md), for simplicity. Adjust commands as required for other InvenTree configurations or database software.
+
+The overall procedure is as follows:
+
+### Backup Old Database
+
+Run the following command to create a backup dump of the old database:
+
+```
+docker compose run --rm inventree-server invoke backup
+```
+
+This will create a database backup file in the InvenTree backup directory.
+
+!!! tip "Secondary Backup"
+    It may be prudent to create a secondary backup of the database, separate to the one created by InvenTree.
+
+### Shutdown Old Database
+
+Stop the old InvenTree installation, to ensure that the database is not being accessed during the migration process:
+
+```
+docker compose down
+```
+
+### Remove Old Database Files
+
+The raw database files are incompatible between different major versions of Postgres. Thus, the old database files must be removed before starting the new database. Rather than removing the database directory, we will move the database files to a temporary location, just in case we need to revert back to the old database.
+
+!!! warning "Data Loss"
+    Ensure that a complete backup of the old database has been made before proceeding! Removing the database files will result in data loss if a backup does not exist.
+
+```
+mv ./path/to/database ./path/to/database_backup
+```
+
+!!! info "Database Location"
+    The location of the database files depends on how InvenTree was configured.
+
+### Start New Database
+
+Update the InvenTree docker configuration to use the new version of Postgres (e.g. `postgres:{{ config.extra.docker_postgres_version }}`), and then start the InvenTree installation:
+
+```
+docker compose up -d
+```
+
+This will initialize a new, empty database using the new version of Postgres.
+
+### Run Database Migrations
+
+Run the database migration process to ensure that the new database schema is correctly initialized:
+
+```
+docker compose run --rm inventree-server invoke update
+```
+
+### Restore Database Backup
+
+Finally, restore the database backup created earlier into the new database:
+
+```
+docker compose run --rm inventree-server invoke restore
+```
+
+This will load the database records from the backup file into the new database.
+
+### Caveats
+
+The process described here is a *suggested* procedure for migrating between incompatible database versions. However, due to the complexity of database software, there may be unforeseen complications that arise during the process.
+
+## Migrating Plugin Data
+
+Custom plugins may define their own database models, and thus have their own data records stored in the database. If a plugin is being migrated from one InvenTree installation to another, then the plugin data must also be migrated.
+
+To account for this, the `export-records` and `import-records` commands have been designed to also export and import plugin data, in addition to the core InvenTree data.
+
+### Exporting Plugin Data
+
+When running the `export-records` command, any data records associated with plugins will also be exported, and included in the output JSON file.
+
+### Importing Plugin Data
+
+When running the `import-records` command, the import process will also attempt to import any plugin data records contained in the input JSON file. However, for the plugin data to be imported correctly, the following conditions must be met:
+
+1. The plugin *code* must be present in the new InvenTree installation. Any plugins *not* installed will not have their tables created, and thus the import process will fail for those records.
+2. The plugin *version* must be the same in both installations. If the plugin version is different, then the database schema may be different, and thus the import process may fail.
+3. The InvenTree software version must be the same in both installations. If the InvenTree version is different, then the database schema may be different, and thus the import process may fail.
+
+!!! tip "Skipping Missing Data"
+    If the import file references a plugin (or any other model) that cannot be matched to the current installation - for example, condition 1 above is not met - add the `-i` / `--ignore-nonexistent` option to skip those records instead of failing the entire import.
+
+If all of the above conditions are met, then the plugin data *should* be imported correctly into the new database. To achieve this reliably, the following process steps are implemented in the `import-records` command:
+
+1. The database is cleaned of all existing records (if the `-c` option is used).
+2. The core InvenTree database migrations are run to ensure that the core database schema is correct.
+3. User auth records are imported into the database
+4. Common configuration records (such as global settings) are imported into the database
+5. Plugin configuration records (defining which plugins are active) are imported into the database
+6. Database migrations are run once more, to ensure that any plugin database schema are correctly initialized
+7. The database is checked to ensure that all required apps are present (i.e. all plugins are installed and correctly activated)
+8. All remaining records (including plugin data) are imported into the database

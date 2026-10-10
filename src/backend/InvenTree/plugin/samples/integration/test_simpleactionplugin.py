@@ -27,7 +27,7 @@ class SimpleActionPluginTests(InvenTreeTestCase):
         self.set_plugin_state(False)
 
         response = self.client.post('/api/action/', data=data)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
         self.assertIn('error', response.data)
 
         # Now enable the plugin

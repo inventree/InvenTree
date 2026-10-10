@@ -6,22 +6,18 @@ from generic.states import ColorEnum, StatusCode
 
 
 class DataImportStatusCode(StatusCode):
-    """Defines a set of status codes for a DataImportSession."""
+    """Defines a set of status codes for a DataImportSession.
 
-    INITIAL = (
-        0,
-        _('Initializing'),
-        ColorEnum.secondary,
-    )  # Import session has been created
-    MAPPING = (
-        10,
-        _('Mapping Columns'),
-        ColorEnum.primary,
-    )  # Import fields are being mapped
-    IMPORTING = 20, _('Importing Data'), ColorEnum.primary  # Data is being imported
-    PROCESSING = (
-        30,
-        _('Processing Data'),
-        ColorEnum.primary,
-    )  # Data is being processed by the user
-    COMPLETE = 40, _('Complete'), ColorEnum.success  # Import has been completed
+    Attributes:
+        INITIAL: Import session has been created
+        MAPPING: Import fields are being mapped
+        IMPORTING: Data is being imported
+        PROCESSING: Data is being processed by the user
+        COMPLETE: Import has been completed
+    """
+
+    INITIAL = 0, _('Initializing'), ColorEnum.secondary
+    MAPPING = 10, _('Mapping Columns'), ColorEnum.primary
+    IMPORTING = 20, _('Importing Data'), ColorEnum.primary
+    PROCESSING = 30, _('Processing Data'), ColorEnum.primary
+    COMPLETE = 40, _('Complete'), ColorEnum.success

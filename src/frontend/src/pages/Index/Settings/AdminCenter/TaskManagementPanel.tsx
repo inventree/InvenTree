@@ -1,9 +1,17 @@
 import { t } from '@lingui/core/macro';
-import { Accordion, Alert, Divider, Stack, Text } from '@mantine/core';
+import {
+  Accordion,
+  Alert,
+  Divider,
+  Skeleton,
+  Stack,
+  Text
+} from '@mantine/core';
 import { lazy } from 'react';
 
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { StylishText } from '../../../../components/items/StylishText';
+import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
 import { errorCodeLink } from '../../../../components/nav/Alerts';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { Loadable } from '../../../../functions/loading';
@@ -14,6 +22,33 @@ import PendingTasksTable from '../../../../tables/settings/PendingTasksTable';
 const ScheduledTasksTable = Loadable(
   lazy(() => import('../../../../tables/settings/ScheduledTasksTable'))
 );
+
+function BackgroundWorkerStatus({
+  isRunning
+}: {
+  isRunning?: boolean;
+}) {
+  if (isRunning === null || isRunning === undefined) {
+    return <Skeleton animate />;
+  }
+
+  return !!isRunning ? (
+    <Alert
+      title={t`Background worker running`}
+      color='green'
+      icon={<IconCircleCheck />}
+    />
+  ) : (
+    <Alert
+      title={t`Background worker not running`}
+      color='red'
+      icon={<IconExclamationCircle />}
+    >
+      <Text>{t`The background task manager service is not running. Contact your system administrator.`}</Text>
+      {errorCodeLink('INVE-W5')}
+    </Alert>
+  );
+}
 
 export default function TaskManagementPanel() {
   const { instance: taskInfo, refreshInstance: refreshTaskInfo } = useInstance({
@@ -26,12 +61,7 @@ export default function TaskManagementPanel() {
 
   return (
     <>
-      {taskInfo?.is_running == false && (
-        <Alert title={t`Background worker not running`} color='red'>
-          <Text>{t`The background task manager service is not running. Contact your system administrator.`}</Text>
-          {errorCodeLink('INVE-W5')}
-        </Alert>
-      )}
+      <BackgroundWorkerStatus isRunning={taskInfo?.is_running} />
       <Stack gap='xs'>
         <FactCollection
           items={[

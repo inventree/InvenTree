@@ -26,7 +26,7 @@ invoke superuser
 Or, if you are running InvenTree in a Docker container:
 
 ```bash
-docker exec -rm -it inventree-server invoke superuser
+docker exec -it inventree-server invoke superuser
 ```
 
 ### User Management

@@ -23,7 +23,15 @@ class DataImportColumnMapSerializer(InvenTreeModelSerializer):
         """Meta class options for the serializer."""
 
         model = importer.models.DataImportColumnMap
-        fields = ['pk', 'session', 'column', 'field', 'label', 'description']
+        fields = [
+            'pk',
+            'session',
+            'column',
+            'field',
+            'label',
+            'description',
+            'lookup_field',
+        ]
         read_only_fields = ['field', 'session']
 
     label = serializers.CharField(read_only=True)
@@ -54,6 +62,8 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
             'field_filters',
             'row_count',
             'completed_row_count',
+            'completed_row_count_history',
+            'row_count_history',
         ]
         read_only_fields = ['pk', 'user', 'status', 'columns']
 
@@ -80,6 +90,17 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
 
     user_detail = UserSerializer(source='user', read_only=True, many=False)
 
+    def validate_model_type(self, value):
+        """Prevent the target model type from being changed after creation."""
+        if self.instance is not None and self.instance.model_type != value:
+            raise ValidationError(
+                _(
+                    'Model type cannot be changed after the import session has been created'
+                )
+            )
+
+        return value
+
     def validate_field_defaults(self, defaults):
         """De-stringify the field defaults."""
         if defaults is None:
@@ -88,7 +109,10 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
         if type(defaults) is not dict:
             try:
                 defaults = json.loads(str(defaults))
-            except:
+            except json.JSONDecodeError:
+                raise ValidationError(_('Invalid field defaults'))
+
+            if type(defaults) is not dict:
                 raise ValidationError(_('Invalid field defaults'))
 
         return defaults
@@ -101,7 +125,10 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
         if type(overrides) is not dict:
             try:
                 overrides = json.loads(str(overrides))
-            except:
+            except json.JSONDecodeError:
+                raise ValidationError(_('Invalid field overrides'))
+
+            if type(overrides) is not dict:
                 raise ValidationError(_('Invalid field overrides'))
 
         return overrides
@@ -114,7 +141,10 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
         if type(filters) is not dict:
             try:
                 filters = json.loads(str(filters))
-            except:
+            except json.JSONDecodeError:
+                raise ValidationError(_('Invalid field filters'))
+
+            if type(filters) is not dict:
                 raise ValidationError(_('Invalid field filters'))
 
         return filters
@@ -160,6 +190,28 @@ class DataImportRowSerializer(InvenTreeModelSerializer):
             'valid',
             'complete',
         ]
+
+    def update(self, instance, validated_data):
+        """Allow manual editing of extracted row data.
+
+        This is used by the importer UI when a user manually corrects a row,
+        for example by selecting a missing foreign-key target. In that case,
+        the edited ``data`` payload must become the source of truth for
+        subsequent validation, rather than being silently ignored in favor of
+        the original ``row_data`` extracted from the import file.
+        """
+        if 'data' in validated_data:
+            instance.data = validated_data['data']
+
+            # Clear stale validation state so the row is re-evaluated against
+            # the manually edited data on save()
+            instance.errors = None
+
+            # A manually edited row is not yet committed, even if it had
+            # previously reached a completed state
+            instance.complete = False
+
+        return super().update(instance, validated_data)
 
 
 class DataImportAcceptRowSerializer(serializers.Serializer):
@@ -212,6 +264,8 @@ class DataImportAcceptRowSerializer(serializers.Serializer):
             row.validate(commit=True, request=request)
 
         if session := self.context.get('session', None):
+            # ensure current state is available
+            session.refresh_from_db()
             session.check_complete()
 
         return rows

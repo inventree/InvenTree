@@ -95,6 +95,10 @@ For example, to find more information about the `update` task, run:
 invoke update --help
 ```
 
+```
+{{ invoke_commands('update --help') }}
+```
+
 ### Internal Tasks
 
 Tasks with the `int.` prefix are internal tasks, and are not intended for general use. These are called by other tasks, and should generally not be called directly.

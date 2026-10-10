@@ -58,7 +58,7 @@ export function MainMenu() {
             component={Link}
             to='/settings/user'
           >
-            <Trans>Account Settings</Trans>
+            <Trans>User Settings</Trans>
           </Menu.Item>
           {user?.is_staff && (
             <Menu.Item

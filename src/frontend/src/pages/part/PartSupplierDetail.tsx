@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Accordion } from '@mantine/core';
 
-import { StylishText } from '../../components/items/StylishText';
+import { StylishText } from '@lib/components/StylishText';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 
@@ -15,7 +15,7 @@ export default function PartSupplierDetail({
           <StylishText size='lg'>{t`Suppliers`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
-          <SupplierPartTable params={{ part: partId }} />
+          <SupplierPartTable partId={partId} />
         </Accordion.Panel>
       </Accordion.Item>
       <Accordion.Item value='part-manufacturers'>
@@ -23,7 +23,7 @@ export default function PartSupplierDetail({
           <StylishText size='lg'>{t`Manufacturers`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
-          <ManufacturerPartTable params={{ part: partId }} />
+          <ManufacturerPartTable partId={partId} />
         </Accordion.Panel>
       </Accordion.Item>
     </Accordion>

@@ -1,13 +1,14 @@
 import { UserRoles } from '@lib/index';
+import type { StockOperationProps } from '@lib/types/Forms';
 import type { UseModalReturn } from '@lib/types/Modals';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useMemo } from 'react';
 import type { ActionDropdownItem } from '../components/items/ActionDropdown';
 import { ActionDropdown } from '../components/items/ActionDropdown';
 import {
-  type StockOperationProps,
   useAddStockItem,
   useAssignStockItem,
+  useChangeStockBatchCode,
   useChangeStockStatus,
   useCountStockItem,
   useDeleteStockItem,
@@ -26,6 +27,7 @@ interface StockAdjustActionProps {
   assign?: boolean;
   count?: boolean;
   changeStatus?: boolean;
+  changeBatch?: boolean;
   delete?: boolean;
   merge?: boolean;
   remove?: boolean;
@@ -54,8 +56,9 @@ export function useStockAdjustActions(
   // The available modals for stock adjustment actions
   const addStock = useAddStockItem(props.formProps);
   const assignStock = useAssignStockItem(props.formProps);
-  const countStock = useCountStockItem(props.formProps);
   const changeStatus = useChangeStockStatus(props.formProps);
+  const changeBatch = useChangeStockBatchCode(props.formProps);
+  const countStock = useCountStockItem(props.formProps);
   const deleteStock = useDeleteStockItem(props.formProps);
   const mergeStock = useMergeStockItem(props.formProps);
   const removeStock = useRemoveStockItem(props.formProps);
@@ -74,6 +77,7 @@ export function useStockAdjustActions(
     props.assign != false && modals.push(assignStock);
     props.count != false && modals.push(countStock);
     props.changeStatus != false && modals.push(changeStatus);
+    props.changeBatch != false && modals.push(changeBatch);
     props.merge != false && modals.push(mergeStock);
     props.remove != false && modals.push(removeStock);
     props.transfer != false && modals.push(transferStock);
@@ -150,6 +154,16 @@ export function useStockAdjustActions(
         tooltip: t`Change status of selected stock items`,
         onClick: () => {
           changeStatus.open();
+        }
+      });
+
+    props.changeBatch != false &&
+      menuActions.push({
+        name: t`Change Batch Code`,
+        icon: <InvenTreeIcon icon='batch' iconProps={{ color: 'blue' }} />,
+        tooltip: t`Change batch code of selected stock items`,
+        onClick: () => {
+          changeBatch.open();
         }
       });
 

@@ -1,7 +1,9 @@
 """Unit testing for the company app API functions."""
 
+from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 
+from common.models import Note
 from company.models import (
     Address,
     Company,
@@ -13,6 +15,16 @@ from company.models import (
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 from users.permissions import check_user_permission
+
+
+def create_note(instance, content='<p>Some notes</p>'):
+    """Helper: attach a Note to a model instance for duplication tests."""
+    return Note.objects.create(
+        model_type=ContentType.objects.get_for_model(type(instance)),
+        model_id=instance.pk,
+        title='Original Note',
+        content=content,
+    )
 
 
 class CompanyTest(InvenTreeAPITestCase):
@@ -86,6 +98,43 @@ class CompanyTest(InvenTreeAPITestCase):
         data = {'search': 'cup'}
         response = self.get(url, data)
         self.assertEqual(len(response.data), 2)
+
+    def test_company_duplicate_copies_notes(self):
+        """Test that notes are copied when duplicating a Company via the API.
+
+        CompanySerializer declares its 'duplicate' options with copy_notes=True,
+        so notes should be copied by default (i.e. without explicitly requesting it).
+        """
+        url = reverse('api-company-list')
+
+        create_note(self.acme)
+
+        response = self.post(
+            url,
+            {
+                'name': 'ACME Duplicate',
+                'description': 'Duplicate of ACME',
+                'duplicate': {'original': self.acme.pk},
+            },
+            expected_code=201,
+        )
+
+        duplicate = Company.objects.get(pk=response.data['pk'])
+        self.assertEqual(duplicate.notes.count(), 1)
+        self.assertEqual(duplicate.notes.first().content, '<p>Some notes</p>')
+
+        # Explicitly disabling copy_notes must not copy any notes
+        response = self.post(
+            url,
+            {
+                'name': 'ACME Duplicate No Notes',
+                'description': 'Duplicate of ACME without notes',
+                'duplicate': {'original': self.acme.pk, 'copy_notes': False},
+            },
+            expected_code=201,
+        )
+        no_notes_duplicate = Company.objects.get(pk=response.data['pk'])
+        self.assertEqual(no_notes_duplicate.notes.count(), 0)
 
     def test_company_create(self):
         """Test that we can create a company via the API!"""
@@ -161,54 +210,33 @@ class CompanyTest(InvenTreeAPITestCase):
             len(self.get(url, data={'active': False}, expected_code=200).data), 1
         )
 
-    def test_company_notes(self):
-        """Test the markdown 'notes' field for the Company model."""
-        company = Company.objects.first()
-        assert company
-        pk = company.pk
+    def test_company_parameters(self):
+        """Test for annotation of 'parameters' field in Company API."""
+        url = reverse('api-company-list')
 
-        url = reverse('api-company-detail', kwargs={'pk': pk})
+        response = self.get(url, expected_code=200)
 
-        # Attempt to inject malicious markdown into the "notes" field
-        xss = [
-            '[Click me](javascript:alert(123))',
-            '![x](javascript:alert(123))',
-            '![Uh oh...]("onerror="alert(\'XSS\'))',
-        ]
+        self.assertGreater(len(response.data), 0)
 
-        for note in xss:
-            response = self.patch(url, {'notes': note}, expected_code=400)
+        # Default = not included
+        for result in response.data:
+            self.assertNotIn('parameters', result)
 
-            self.assertIn(
-                'Data contains prohibited markdown content', str(response.data)
-            )
+        # Exclude parameters
+        response = self.get(url, {'parameters': 'false'}, expected_code=200)
 
-        # Tests with disallowed tags
-        invalid_tags = [
-            '<iframe src="javascript:alert(123)"></iframe>',
-            '<canvas>A disallowed tag!</canvas>',
-        ]
+        self.assertGreater(len(response.data), 0)
 
-        for note in invalid_tags:
-            response = self.patch(url, {'notes': note}, expected_code=400)
+        for result in response.data:
+            self.assertNotIn('parameters', result)
 
-            self.assertIn('Remove HTML tags from this value', str(response.data))
+        # Include parameters
+        response = self.get(url, {'parameters': 'true'}, expected_code=200)
 
-        # The following markdown is safe, and should be accepted
-        good = [
-            'This is a **bold** statement',
-            'This is a *italic* statement',
-            'This is a [link](https://www.google.com)',
-            'This is an ![image](https://www.google.com/test.jpg)',
-            'This is a `code` block',
-            'This text has ~~strikethrough~~ formatting',
-            'This text has a raw link - https://www.google.com - and should still pass the test',
-        ]
+        self.assertGreater(len(response.data), 0)
 
-        for note in good:
-            response = self.patch(url, {'notes': note}, expected_code=200)
-
-            self.assertEqual(response.data['notes'], note)
+        for result in response.data:
+            self.assertIn('parameters', result)
 
 
 class ContactTest(InvenTreeAPITestCase):
@@ -450,7 +478,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
         'supplier_part',
     ]
 
-    roles = ['part.add', 'part.change']
+    roles = ['part.add', 'part.change', 'purchase_order.view']
 
     def test_manufacturer_part_list(self):
         """Test the ManufacturerPart API list functionality."""
@@ -477,7 +505,11 @@ class ManufacturerTest(InvenTreeAPITestCase):
 
     def test_manufacturer_part_detail(self):
         """Tests for the ManufacturerPart detail endpoint."""
-        url = reverse('api-manufacturer-part-detail', kwargs={'pk': 1})
+        mp = ManufacturerPart.objects.first()
+
+        self.assertIsNotNone(mp)
+
+        url = reverse('api-manufacturer-part-detail', kwargs={'pk': mp.pk})
 
         response = self.get(url)
         self.assertEqual(response.data['MPN'], 'MPN123')
@@ -494,6 +526,48 @@ class ManufacturerTest(InvenTreeAPITestCase):
         data = {'search': 'MPN'}
         response = self.get(url, data)
         self.assertEqual(len(response.data), 3)
+
+    def test_manufacturer_part_duplicate_copies_notes(self):
+        """Test that notes are copied when duplicating a ManufacturerPart via the API.
+
+        ManufacturerPartSerializer declares its 'duplicate' options with
+        copy_notes=True, so notes should be copied by default.
+        """
+        url = reverse('api-manufacturer-part-list')
+
+        original = ManufacturerPart.objects.first()
+        self.assertIsNotNone(original)
+
+        create_note(original)
+
+        response = self.post(
+            url,
+            {
+                'part': original.part.pk,
+                'manufacturer': original.manufacturer.pk,
+                'MPN': 'MPN_DUPLICATE',
+                'duplicate': {'original': original.pk},
+            },
+            expected_code=201,
+        )
+
+        duplicate = ManufacturerPart.objects.get(pk=response.data['pk'])
+        self.assertEqual(duplicate.notes.count(), 1)
+        self.assertEqual(duplicate.notes.first().content, '<p>Some notes</p>')
+
+        # Explicitly disabling copy_notes must not copy any notes
+        response = self.post(
+            url,
+            {
+                'part': original.part.pk,
+                'manufacturer': original.manufacturer.pk,
+                'MPN': 'MPN_DUPLICATE_NO_NOTES',
+                'duplicate': {'original': original.pk, 'copy_notes': False},
+            },
+            expected_code=201,
+        )
+        no_notes_duplicate = ManufacturerPart.objects.get(pk=response.data['pk'])
+        self.assertEqual(no_notes_duplicate.notes.count(), 0)
 
     def test_supplier_part_create(self):
         """Test a SupplierPart can be created via the API."""
@@ -538,31 +612,11 @@ class ManufacturerTest(InvenTreeAPITestCase):
 
     def test_output_options(self):
         """Test the output options for SupplierPart detail."""
-        url = reverse('api-manufacturer-part-list')
-
-        # Test cases: (parameter_name, response_field_name)
-        test_cases = [
-            ('part_detail', 'part_detail'),
-            ('manufacturer_detail', 'manufacturer_detail'),
-            ('pretty', 'pretty_name'),
-        ]
-
-        for param, field in test_cases:
-            # Test with parameter set to 'true'
-            response = self.get(url, {param: 'true', 'limit': 1}, expected_code=200)
-            self.assertIn(
-                field,
-                response.data['results'][0],
-                f"Field '{field}' should be present when {param}='true'",
-            )
-
-            # Test with parameter set to 'false'
-            response = self.get(url, {param: 'false', 'limit': 1}, expected_code=200)
-            self.assertNotIn(
-                field,
-                response.data['results'][0],
-                f"Field '{field}' should not be present when {param}='false'",
-            )
+        self.run_output_test(
+            reverse('api-manufacturer-part-list'),
+            ['part_detail', 'manufacturer_detail', ('pretty', 'pretty_name')],
+            assert_subset=True,
+        )
 
 
 class SupplierPartTest(InvenTreeAPITestCase):
@@ -600,35 +654,60 @@ class SupplierPartTest(InvenTreeAPITestCase):
             response = self.get(url, {'part': pk}, expected_code=200)
             self.assertEqual(len(response.data), n)
 
+    def test_supplier_part_duplicate_copies_notes(self):
+        """Test that notes are copied when duplicating a SupplierPart via the API.
+
+        SupplierPartSerializer declares its 'duplicate' options with
+        copy_notes=True, so notes should be copied by default.
+        """
+        url = reverse('api-supplier-part-list')
+
+        original = SupplierPart.objects.first()
+        self.assertIsNotNone(original)
+
+        create_note(original)
+
+        response = self.post(
+            url,
+            {
+                'part': original.part.pk,
+                'supplier': original.supplier.pk,
+                'SKU': 'SKU_DUPLICATE',
+                'duplicate': {'original': original.pk},
+            },
+            expected_code=201,
+        )
+
+        duplicate = SupplierPart.objects.get(pk=response.data['pk'])
+        self.assertEqual(duplicate.notes.count(), 1)
+        self.assertEqual(duplicate.notes.first().content, '<p>Some notes</p>')
+
+        # Explicitly disabling copy_notes must not copy any notes
+        response = self.post(
+            url,
+            {
+                'part': original.part.pk,
+                'supplier': original.supplier.pk,
+                'SKU': 'SKU_DUPLICATE_NO_NOTES',
+                'duplicate': {'original': original.pk, 'copy_notes': False},
+            },
+            expected_code=201,
+        )
+        no_notes_duplicate = SupplierPart.objects.get(pk=response.data['pk'])
+        self.assertEqual(no_notes_duplicate.notes.count(), 0)
+
     def test_output_options(self):
         """Test the output options for SupplierPart detail."""
         sp = SupplierPart.objects.all().first()
-        url = reverse('api-supplier-part-detail', kwargs={'pk': sp.pk})
-
-        # Test cases: (parameter_name, response_field_name)
-        test_cases = [
-            ('part_detail', 'part_detail'),
-            ('supplier_detail', 'supplier_detail'),
-            ('manufacturer_detail', 'manufacturer_detail'),
-            ('pretty', 'pretty_name'),
-        ]
-
-        for param, field in test_cases:
-            # Test with parameter set to 'true'
-            response = self.get(url, {param: 'true'}, expected_code=200)
-            self.assertIn(
-                field,
-                response.data,
-                f"Field '{field}' should be present when {param}='true'",
-            )
-
-            # Test with parameter set to 'false'
-            response = self.get(url, {param: 'false'}, expected_code=200)
-            self.assertNotIn(
-                field,
-                response.data,
-                f"Field '{field}' should not be present when {param}='false'",
-            )
+        self.run_output_test(
+            reverse('api-supplier-part-detail', kwargs={'pk': sp.pk}),
+            [
+                'part_detail',
+                'supplier_detail',
+                'manufacturer_detail',
+                ('pretty', 'pretty_name'),
+            ],
+        )
 
     def test_available(self):
         """Tests for updating the 'available' field."""
@@ -719,57 +798,67 @@ class SupplierPartTest(InvenTreeAPITestCase):
         for result in response.data:
             self.assertEqual(result['supplier'], company.pk)
 
+    def test_primary(self):
+        """Test for the 'primary' field in the SupplierPart model."""
+        for sp in SupplierPart.objects.filter(part=1):
+            self.patch(
+                reverse('api-supplier-part-detail', kwargs={'pk': sp.pk}),
+                {'primary': True},
+                expected_code=200,
+            )
 
-class CompanyMetadataAPITest(InvenTreeAPITestCase):
-    """Unit tests for the various metadata endpoints of API."""
+            # Only one supplier part should be primary for this part
+            self.assertEqual(
+                SupplierPart.objects.filter(part=1, primary=True).count(), 1
+            )
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'company',
-        'contact',
-        'manufacturer_part',
-        'supplier_part',
-    ]
+            # Filter via the API
+            response = self.get(
+                reverse('api-supplier-part-list'),
+                {'part': 1, 'primary': True},
+                expected_code=200,
+            )
 
-    roles = ['company.change', 'purchase_order.change', 'part.change']
+            self.assertEqual(len(response.data), 1)
 
-    def metatester(self, apikey, model):
-        """Generic tester."""
-        modeldata = model.objects.first()
+        self.assertEqual(SupplierPart.objects.filter(part=1).count(), 4)
+        self.assertEqual(SupplierPart.objects.filter(part=1, primary=False).count(), 3)
 
-        # Useless test unless a model object is found
-        self.assertIsNotNone(modeldata)
+    def test_filterable_fields(self):
+        """Test inclusion/exclusion of optional API fields."""
+        fields = {
+            'price_breaks': False,
+            'part_detail': False,
+            'supplier_detail': False,
+            'manufacturer_detail': False,
+            'manufacturer_part_detail': False,
+        }
 
-        url = reverse(apikey, kwargs={'pk': modeldata.pk})
+        url = reverse('api-supplier-part-list')
 
-        # Metadata is initially null
-        self.assertIsNone(modeldata.metadata)
+        for field, included in fields.items():
+            # Test default behavior
+            response = self.get(url, data={}, expected_code=200)
+            self.assertGreater(len(response.data), 0)
+            self.assertEqual(
+                included,
+                field in response.data[0],
+                f'Field: {field} failed default test',
+            )
 
-        numstr = f'12{len(apikey)}'
+            # Test explicit inclusion
+            response = self.get(url, data={field: 'true'}, expected_code=200)
+            self.assertGreater(len(response.data), 0)
+            self.assertIn(
+                field, response.data[0], f'Field: {field} failed inclusion test'
+            )
 
-        self.patch(
-            url,
-            {'metadata': {f'abc-{numstr}': f'xyz-{apikey}-{numstr}'}},
-            expected_code=200,
-        )
-
-        # Refresh
-        modeldata.refresh_from_db()
-        self.assertEqual(
-            modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}'
-        )
-
-    def test_metadata(self):
-        """Test all endpoints."""
-        for apikey, model in {
-            'api-manufacturer-part-metadata': ManufacturerPart,
-            'api-supplier-part-metadata': SupplierPart,
-            'api-company-metadata': Company,
-            'api-contact-metadata': Contact,
-        }.items():
-            self.metatester(apikey, model)
+            # Test explicit exclusion
+            response = self.get(url, data={field: 'false'}, expected_code=200)
+            self.assertGreater(len(response.data), 0)
+            self.assertNotIn(
+                field, response.data[0], f'Field: {field} failed exclusion test'
+            )
 
 
 class SupplierPriceBreakAPITest(InvenTreeAPITestCase):
@@ -789,28 +878,12 @@ class SupplierPriceBreakAPITest(InvenTreeAPITestCase):
 
     def test_output_options(self):
         """Test the output options for SupplierPart price break list."""
-        url = reverse('api-part-supplier-price-list')
-        test_cases = [
-            ('part_detail', 'part_detail'),
-            ('supplier_detail', 'supplier_detail'),
-        ]
-
-        for param, field in test_cases:
-            # Test with parameter set to 'true'
-            response = self.get(url, {param: 'true', 'limit': 1}, expected_code=200)
-            self.assertIn(
-                field,
-                response.data['results'][0],
-                f"Field '{field}' should be present when {param}='true'",
-            )
-
-            # Test with parameter set to 'false'
-            response = self.get(url, {param: 'false', 'limit': 1}, expected_code=200)
-            self.assertNotIn(
-                field,
-                response.data['results'][0],
-                f"Field '{field}' should not be present when {param}='false'",
-            )
+        self.run_output_test(
+            reverse('api-part-supplier-price-list'),
+            ['part_detail', 'supplier_detail'],
+            additional_params={'limit': 1},
+            assert_fnc=lambda x: x.data['results'][0],
+        )
 
     def test_supplier_price_break_list(self):
         """Test the SupplierPriceBreak API list functionality."""

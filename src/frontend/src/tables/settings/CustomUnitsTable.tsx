@@ -10,16 +10,16 @@ import {
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { customUnitsFields } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Table for displaying list of custom physical units

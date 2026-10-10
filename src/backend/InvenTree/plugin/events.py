@@ -1,7 +1,13 @@
 """Import helper for events."""
 
 from generic.events import BaseEventEnum
-from plugin.base.event.events import process_event, register_event, trigger_event
+from plugin.base.event.events import (
+    batch_events,
+    bulk_trigger_event,
+    process_event,
+    register_event,
+    trigger_event,
+)
 
 
 class PluginEvents(BaseEventEnum):
@@ -11,4 +17,11 @@ class PluginEvents(BaseEventEnum):
     PLUGIN_ACTIVATED = 'plugin_activated'
 
 
-__all__ = ['PluginEvents', 'process_event', 'register_event', 'trigger_event']
+__all__ = [
+    'PluginEvents',
+    'batch_events',
+    'bulk_trigger_event',
+    'process_event',
+    'register_event',
+    'trigger_event',
+]

@@ -9,9 +9,12 @@ Errors - These are critical errors which should be addressed as soon as possible
 #### INVE-E1
 **No frontend included - Backend/web**
 
-Only stable / production releases of InvenTree include the frontend panel. This is both a measure of resource-saving and attack surface reduction. If you want to use the frontend panel, you can either:″
+Only stable / production releases of InvenTree include the frontend panel. This is both a measure of resource-saving and attack surface reduction.
+
+If you want to use the frontend panel, you can either:
+
 - use a docker image that is version-tagged or the stable version
-- use a package version that is from the stable or version stream
+- use a package version that is from the stable or version stream - if you are and it is not working, run `sudo inventree run invoke update` to re-run the upgrade
 - install node and yarn on the server to build the frontend with the [invoke](../start/invoke.md) task `int.frontend-build`
 
 Raise an issue if none of these options work.
@@ -79,6 +82,46 @@ This is a security measure to prevent plugins from changing the core functionali
 **Plugin returned invalid machine type - Backend**
 
 An error occurred when discovering or initializing a machine type from a plugin. This likely indicates a faulty or incompatible plugin.
+
+#### INVE-E13
+**Error reading InvenTree configuration file**
+
+An error occurred while reading the InvenTree configuration file. This might be caused by a syntax error or invalid value in the configuration file.
+
+#### INVE-E14
+**Could not import Django**
+
+Django is not installed in the current Python environment. This means that the InvenTree backend is not running within the correct [python virtual environment](../start/index.md#virtual-environment) or that the required Python packages were not installed correctly.
+
+#### INVE-E15
+**Python version not supported**
+
+This error occurs attempting to run InvenTree on a version of Python which is older than the minimum required version. We [require Python {{ config.extra.min_python_version }} or newer](../start/index.md#python-requirements)
+
+#### INVE-E16
+**Restore was stopped due to critical issues with backup environment - Backend**
+
+A potentially critical mismatch between the backup environment and the current restore environment was detected during the restore process. The restore was stopped to prevent potential data loss or corruption. Check the logs for more information about the detected issues.
+
+While using [invoke](../start/invoke.md), this can be overridden with the `--restore-allow-newer-version` flag.
+
+#### INVE-E17
+**Error rendering component**
+
+An error occurred while rendering a component in the frontend. Typically this is caused by a browser caching issue, and can be resolved by clearing the browser cache and refreshing the page. If the issue persists, check the browser console for more information about the error.
+
+#### INVE-E18
+
+**Top Level Domain Required**
+
+The InvenTree server failed to start, because the configured server URL does not include a top-level domain (TLD). A valid TLD is required for proper operation.
+
+#### INVE-E19
+**Database stuck mid-way through pre-1.0.0 migration squash - Backend**
+
+If your installation is currently running a version of InvenTree older than `1.0.0`, you must first update to the `1.0.0` release before updating further. See [Updating from Pre 1.0.0](../start/migrate.md#updating-from-pre-100) for the full upgrade procedure.
+
+## Warning Codes
 
 ### INVE-W (InvenTree Warning)
 Warnings - These are non-critical errors which should be addressed when possible.
@@ -150,7 +193,7 @@ The warning text will show the recommended command for intended use.
 #### INVE-W10
 **Config not in recommended directory - Backend**
 
-A configuration file is not in the recommended directory. This might lead to issues with the deployment method you are using. It might also lead to confusinon.
+A configuration file is not in the recommended directory. This might lead to issues with the deployment method you are using. It might also lead to confusion.
 
 The warning text will show the recommended directory for your deployment method.
 
@@ -171,6 +214,41 @@ Therefore the registration user interface elements will not be shown.
 
 To enable registration, the email settings must be configured correctly. See  [email configuration](../start/config.md#email-settings).
 
+#### INVE-W12
+**Signup attempt blocked because registration is disabled - Backend**
+
+A user attempted to sign up but registration is currently disabled via the system settings. This is to prevent unauthorized or unwanted user registrations.
+
+To enable registration, adjust the relevant settings (for regular or SSO registration) to allow user signups.
+
+#### INVE-W13
+**Current environment inconsistent with backup environment - Backend**
+
+The environment in which the backup was taken does not match the current environment. This might lead to issues with restoring the backup, as the backup might contain data that is not compatible with the current environment. Plugins for example might be missing or are present in a different version - this can lead to issues with restoring the backup.
+
+This warning will not prevent you from restoring the backup but it is recommended to ensure the mentioned issues are resolved before restoring the backup to prevent issues with the restored instance.
+
+#### INVE-W14
+**Elevated privileges - Backend**
+
+A user is logged in with elevated privileges. This might be a superuser or a administrator user. These types of users have elevated permissions and should not be used for regular usage.
+Use separate accounts for administrative tasks and regular usage to reduce risk. Make sure to review the [permission documentation](../settings/permissions.md#dangerous-user-flags).
+
+#### INVE-W15
+**Process interrupted by user - Backend**
+
+A process was interrupted by the user, likely by a keyboard interrupt. This might lead to issues with the process that was interrupted, as it might not have completed its task. This is especially relevant for processes that are not idempotent or that do not have a good rollback mechanism.
+
+#### INVE-W16
+**CORS is set to allow all origins - Backend**
+
+The CORS settings are set to allow all origins. This might lead to security issues, as it allows any website to make requests to the InvenTree server. It is recommended to restrict the CORS settings to only allow trusted origins.
+
+CORS settings only affect user browsers that respect them. Setting them correctly is not a replacement for proper network segmentation (via firewalls, VPNs, proxies, etc.) and should be used in addition to them.
+
+Use the INVENTREE_CORS_ORIGIN_ALLOW_ALL and INVENTREE_CORS_ORIGIN_WHITELIST settings - see the [Server Access settings](../start/config.md#server-access).
+
+
 ### INVE-I (InvenTree Information)
 Information — These are not errors but information messages. They might point out potential issues or just provide information.
 
@@ -179,6 +257,17 @@ Information — These are not errors but information messages. They might point 
 Overriding a global setting with a different value than the current one.
 
 See [Override global settings](../settings/global.md#override-global-settings) for more information.
+
+#### INVE-I2
+**Issue with filtering serializer or decorator - Backend**
+
+An issue was detected with the application of a filtering serializer or decorator. This might lead to unexpected behaviour or performance issues. Therefore an issue is raised to make the developer aware of the possible issue. Look into the docstrings of enable_filter, FilterableSerializerField or FilterableSerializerMixin.
+
+This warning should only be raised during development and not in production, if you recently installed a plugin you might want to contact the plugin author.
+
+#### INVE-I3
+**Backup and restore information - Backend**
+Information about the metadata of a backup being restored or the environment in which a backup is being restored to. This information can be helpful to understand the backup and restore process and to identify potential issues with the backup or the restore process.
 
 ### INVE-M (InvenTree Miscellaneous)
 Miscellaneous — These are information messages that might be used to mark debug information or other messages helpful for the InvenTree team to understand behaviour.

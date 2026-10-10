@@ -1,14 +1,16 @@
-import { ApiEndpoints } from '@lib/index';
+import { ApiEndpoints, StylishText } from '@lib/index';
 import type { SettingsStateProps } from '@lib/types/Settings';
 import { t } from '@lingui/core/macro';
 import { Accordion, Alert, Group, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import {
+  GlobalSettingList,
   PluginSettingList,
   PluginUserSettingList
 } from '../../../components/settings/SettingList';
 import { useInstance } from '../../../hooks/UseInstance';
+import { PLUGIN_SETTINGS_KEYS } from './AdminCenter/PluginManagementPanel';
 
 function PluginSettingGroupItem({
   global,
@@ -23,11 +25,13 @@ function PluginSettingGroupItem({
 }) {
   // Hide the accordion item if there are no settings for this plugin
   const [count, setCount] = useState<number>(0);
+  const [doGet, setDoGet] = useState<boolean>(true);
 
   // Callback once the plugin settings have been loaded
   const onLoaded = useCallback(
     (settings: SettingsStateProps) => {
-      setCount(settings.settings?.length || 0);
+      setCount(settings.getSettingLength());
+      setDoGet(false);
     },
     [pluginKey]
   );
@@ -39,16 +43,29 @@ function PluginSettingGroupItem({
       hidden={count === 0}
     >
       <Accordion.Control>
-        <Group>
+        <Group justify='space-between'>
           <Text size='lg'>{pluginName}</Text>
-          {pluginDescription && <Text size='sm'>{pluginDescription}</Text>}
+          {pluginDescription && (
+            <Text size='sm' style={{ paddingRight: 25 }}>
+              {pluginDescription}
+            </Text>
+          )}
         </Group>
       </Accordion.Control>
+
       <Accordion.Panel>
         {global ? (
-          <PluginSettingList pluginKey={pluginKey} onLoaded={onLoaded} />
+          <PluginSettingList
+            pluginKey={pluginKey}
+            onLoaded={onLoaded}
+            doGet={doGet}
+          />
         ) : (
-          <PluginUserSettingList pluginKey={pluginKey} onLoaded={onLoaded} />
+          <PluginUserSettingList
+            pluginKey={pluginKey}
+            onLoaded={onLoaded}
+            doGet={doGet}
+          />
         )}
       </Accordion.Panel>
     </Accordion.Item>
@@ -64,10 +81,12 @@ function PluginSettingGroupItem({
 export default function PluginSettingsGroup({
   mixin,
   message,
+  includeBaseSettings,
   global
 }: {
   global: boolean;
   message?: string;
+  includeBaseSettings?: boolean;
   mixin?: string;
 }) {
   const mixins: string = useMemo(() => {
@@ -93,6 +112,18 @@ export default function PluginSettingsGroup({
 
   return (
     <Stack gap='xs'>
+      {includeBaseSettings == true && (
+        <Accordion defaultValue='plugin-settings'>
+          <Accordion.Item value='plugin-settings'>
+            <Accordion.Control>
+              <StylishText size='lg'>{t`Plugin Settings`}</StylishText>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <GlobalSettingList keys={PLUGIN_SETTINGS_KEYS} />
+            </Accordion.Panel>
+          </Accordion.Item>
+        </Accordion>
+      )}
       <Alert color='blue' icon={<IconInfoCircle />}>
         <Text>
           {message ??

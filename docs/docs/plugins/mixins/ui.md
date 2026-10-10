@@ -69,6 +69,20 @@ For example:
 
 The following user interface feature types are available:
 
+### Spotlight Actions
+
+Inject custom actions into the InvenTree "spotlight" search functionality by implementing the `get_ui_spotlight_actions` method:
+
+::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_spotlight_actions
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      extra:
+        show_source: True
+      summary: False
+      members: []
+
 ### Dashboard Items
 
 The InvenTree dashboard is a collection of "items" which are displayed on the main dashboard page. Custom dashboard items can be added to the dashboard by implementing the `get_ui_dashboard_items` method:
@@ -168,6 +182,54 @@ The `get_ui_template_previews` feature type can be used to provide custom templa
         show_source: True
       summary: False
       members: []
+
+### Primary Actions
+
+The `get_ui_primary_actions` method can be used to provide custom primary action, which are rendered in the header of the page, next to the title/name and any status indicators. These primary actions are typically used to provide quick access to common actions related to the current page.
+
+::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_primary_actions
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      extra:
+        show_source: True
+      summary: False
+      members: []
+
+### Routes
+
+The `get_ui_routes` method can be used to provide custom routes (and therefore pages) within the InvenTree web interface.
+
+::: plugin.base.ui.mixins.UserInterfaceMixin.get_ui_routes
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      summary: False
+      members: []
+      extra:
+        show_source: True
+
+A route is defined by returning a list of route definitions:
+
+```python
+def get_ui_routes(self, request, context, **kwargs):
+    return [
+        {
+            'key': 'my-plugin-page',
+            'title': 'My Plugin Page',
+            'source': self.plugin_static_file('my_page.js:getFeature'),
+            'options': {
+                'path': 'page/:pk',
+            },
+        },
+    ]
+```
+
+Routes are exposed below `/web/plugin/<plugin-name>/`. For example, the route above would be available at: `/web/plugin/my-plugin/page/<pk>`
+
+The path is relative to the plugin's own URL namespace and uses React Router path syntax, so parameters can be specified using :parameter notation.
 
 ## Plugin Context
 

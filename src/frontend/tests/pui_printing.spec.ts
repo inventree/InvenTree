@@ -1,7 +1,29 @@
+import type { Locator } from '@playwright/test';
 import { expect, test } from './baseFixtures.js';
-import { activateTableView, loadTab } from './helpers.js';
+import { adminuser } from './defaults.js';
+import { activateTableView, loadTab, navigate } from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState } from './settings.js';
+
+// Test for the label editing interface
+test('Printing - Label Editing', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'settings/admin/labels'
+  });
+
+  // Open a particular label template for editing
+  await page.getByRole('cell', { name: 'Sample build line label' }).click();
+
+  // Await expected entries
+  await page.getByRole('tab', { name: 'PDF Preview' }).waitFor();
+  await page.getByText('This is an example template').waitFor();
+  await page
+    .locator('div')
+    .filter({ hasText: /^BO\d+$/ })
+    .first()
+    .waitFor();
+});
 
 /*
  * Test for label printing.
@@ -43,7 +65,42 @@ test('Printing - Label Printing', async ({ browser }) => {
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
   await page.getByRole('button', { name: 'Print', exact: true }).click();
 
-  await page.getByText('Process completed successfully').first().waitFor();
+  const successMessage = page
+    .getByText('Process completed successfully')
+    .first();
+  await successMessage.waitFor();
+  await successMessage.waitFor({ state: 'hidden' });
+
+  // Re-open print dialog to verify persistence (issue #12129)
+  await page
+    .getByLabel('Stock Items')
+    .getByLabel('action-menu-printing-actions')
+    .click();
+  await page.getByLabel('action-menu-printing-actions-print-labels').click();
+
+  const labelDialog = page.getByRole('dialog', { name: 'Print Label' });
+
+  // Wait for the dialog to fully load
+  await labelDialog.getByLabel('related-field-template').waitFor();
+  await labelDialog.getByLabel('related-field-plugin').waitFor();
+
+  // Verify the last-used template is preselected
+  await expect(labelDialog).toContainText('InvenTree Stock Item Label');
+
+  // Verify the last-used plugin is preselected
+  await expect(labelDialog).toContainText('InvenTreeLabel');
+
+  // Submit again without re-selecting template or plugin
+  const printResponse = page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/label/print/') &&
+      response.request().method() === 'POST' &&
+      response.ok()
+  );
+  await labelDialog.getByRole('button', { name: 'Print', exact: true }).click();
+
+  await printResponse;
+
   await page.context().close();
 });
 
@@ -62,7 +119,7 @@ test('Printing - Report Printing', async ({ browser }) => {
   await loadTab(page, 'Purchase Orders');
   await activateTableView(page);
 
-  await page.getByRole('cell', { name: 'PO0009' }).click();
+  await page.getByRole('cell', { name: 'PO0013' }).click();
 
   // Select "print report"
   await page.getByLabel('action-menu-printing-actions').click();
@@ -77,15 +134,13 @@ test('Printing - Report Printing', async ({ browser }) => {
   await page.context().close();
 });
 
-test('Printing - Report Editing', async ({ browser, request }) => {
+test('Printing - Report Editing', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree'
+    user: adminuser
   });
 
   // activate the sample plugin for this test
   await setPluginState({
-    request,
     plugin: 'sampleui',
     state: true
   });
@@ -97,6 +152,14 @@ test('Printing - Report Editing', async ({ browser, request }) => {
   await page
     .getByRole('cell', { name: 'InvenTree Stock Item Label (' })
     .click();
+
+  // check that styles are applied correctly
+  await expect(page.getByText('{% block style %}')).toBeVisible();
+  const element: Locator = page.getByText('block').first();
+  const color = await element.evaluate((el) => {
+    return window.getComputedStyle(el).getPropertyValue('color');
+  });
+  expect(color).toBe('rgb(78, 201, 176)');
 
   // Generate preview
   await page.getByLabel('split-button-preview-options-action').click();
@@ -140,8 +203,58 @@ test('Printing - Report Editing', async ({ browser, request }) => {
 
   // deactivate the sample plugin again after the test
   await setPluginState({
-    request,
     plugin: 'sampleui',
     state: false
   });
+});
+
+// Test report printing with an intentionally broken template, to verify that errors are handled gracefully
+test('Printing - Broken Template', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'sales/sales-order/14/detail'
+  });
+
+  // Print report from the "sales order" detail page
+  await page
+    .getByRole('button', { name: 'action-menu-printing-actions' })
+    .click();
+  await page
+    .getByRole('menuitem', {
+      name: 'action-menu-printing-actions-print-reports'
+    })
+    .click();
+  await page
+    .getByRole('combobox', { name: 'related-field-template' })
+    .fill('broken');
+  await page.getByText('Broken Sales Order Report').click();
+  await page.getByRole('button', { name: 'Print', exact: true }).click();
+
+  // Expected error message
+  await page
+    .getByText('parameter tag requires a valid Model instance')
+    .waitFor();
+
+  // Next, check error message from the template editor preview
+  await navigate(page, 'settings/admin/reports');
+  await page
+    .getByRole('textbox', { name: 'table-search-input' })
+    .fill('broken');
+  await page.getByRole('cell', { name: 'Broken Sales Order Report' }).click();
+
+  await page.getByLabel('split-button-preview-options-action').click();
+
+  await page
+    .getByLabel('split-button-preview-options-item-preview-save', {
+      exact: true
+    })
+    .click();
+
+  await page.getByRole('button', { name: 'Save & Reload' }).click();
+
+  // Expected error messages
+  await page.getByText('Error rendering template').waitFor();
+  await page
+    .getByText('parameter tag requires a valid Model instance')
+    .waitFor();
 });

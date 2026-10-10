@@ -1,16 +1,17 @@
+
 ---
 title: Sales Orders
 ---
 
 ## Sales Orders
 
-Sales orders allow tracking of which stock items are sold to customers, therefore converting stock items / inventory into externally sold items.
+Sales orders allow tracking of which stock items are sold to [customers](./customer.md), therefore converting stock items / inventory into externally sold items.
 
 ### View Sales Orders
 
 To navigate to the Sales Order display, select *Sales* from the main navigation menu, and *Sales Orders* from the sidebar:
 
-{{ image("order/so_display.png", "Sales Order display") }}
+{{ image("sales/so_display.png", "Sales Order display") }}
 
 The following view modes are available:
 
@@ -18,46 +19,29 @@ The following view modes are available:
 
 *Table View* provides a list of Sales Orders, which can be filtered to display a subset of orders according to user supplied parameters.
 
-{{ image("order/so_list.png", "Sales Order list") }}
+{{ image("sales/so_list.png", "Sales Order list") }}
 
 #### Calendar View
 
 *Calendar View* shows a calendar display with outstanding sales orders.
 
-{{ image("order/so_calendar.png", "Sales Order calendar") }}
+{{ image("sales/so_calendar.png", "Sales Order calendar") }}
 
 ### Sales Order Status Codes
 
 Each Sales Order has a specific status code, which represents the state of the order:
 
-| Status | Description |
-| --- | --- |
-| Pending | The sales order has been created, but has not been finalized or submitted |
-| In Progress | The sales order has been issued, and is in progress |
-| On Hold | The sales order has been placed on hold, but is still active |
-| Shipped | The sales order has been shipped, but is not yet complete |
-| Complete | The sales order is fully completed, and is now closed |
-| Cancelled | The sales order was cancelled, and is now closed |
-| Lost | The sales order was lost, and is now closed |
-| Returned | The sales order was returned, and is now closed |
-
-**Source Code**
-
-Refer to the source code for the Sales Order status codes:
-
-::: order.status_codes.SalesOrderStatus
-    options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
+{{ statuscodes("SalesOrderStatus") }}
 
 Sales Order Status supports [custom states](../concepts/custom_states.md).
 
 ### Sales Order Currency
 
 The currency code can be specified for an individual sales order. If not specified, the default currency specified against the [customer](./customer.md) will be used.
+
+### Sales Order Address
+
+A sales order can have a specific shipping address assigned to it. The shipping address can be selected from the list of addresses assigned to the [customer](./customer.md) which is linked to the sales order.
 
 ## Create a Sales Order
 
@@ -85,6 +69,13 @@ Once the "Add Line Item" form opens, select a part in the list.
 
 Fill out the rest of the form then click on <span class="badge inventree confirm">Submit</span>
 
+!!! info "Discount"
+    An optional [discount](../concepts/pricing.md#line-item-discount) percentage can be applied to each line item.
+
+### Extra Line Items
+
+While [line items](#add-line-items) must reference a particular part, extra line items are available for any other itemized information that needs to be conveyed with the order - for example freight charges or service fees. Extra line items support an optional [discount](../concepts/pricing.md#line-item-discount) percentage, the same as regular line items.
+
 ## Shipments
 
 After all line items were added to the sales order, user needs to create one or more [shipments](#sales-order-shipments) in order to allocate stock for those parts.
@@ -104,6 +95,91 @@ After shipments were created, user can either:
 * Create a build order for that part to cover the quantity of the sales order (click on {{ icon("tools") }} button)
 
 During the allocation process, user is required to select the desired shipment that will contain the stock items.
+
+### Auto Allocate Stock
+
+To speed up the allocation process, use the *Auto Allocate Stock* button ({{ icon("wand") }}) available in the *Line Items* tab. This automatically finds available stock and creates the required allocations with minimal user interaction.
+
+!!! info "Background Task"
+    Auto-allocation runs as a background task. The UI will display a progress indicator while the task is running.
+
+#### Selecting Lines to Allocate
+
+By default, auto-allocation processes **all unallocated line items** on the order. To restrict allocation to a subset of lines, select the desired rows in the *Line Items* table before pressing the button — the dialog will indicate how many lines are selected.
+
+#### Auto Allocation Options
+
+The auto-allocation dialog provides the following options:
+
+**Source Location**
+
+Restrict stock to a specific location (and all of its sub-locations). Leave blank to consider stock from any location.
+
+**Exclude Location**
+
+Exclude stock from a specific location (and all of its sub-locations). Useful for reserving stock in a particular area.
+
+**Shipment**
+
+Optionally assign all new allocations to a specific pending shipment. Only shipments that have not yet been completed are shown.
+
+**Interchangeable Stock**
+
+When enabled (default), stock may be drawn from multiple stock items or locations to fulfil a single line item. When disabled, a line item is only allocated if a single stock item can cover the entire remaining quantity.
+
+!!! warning "Take Care"
+    Enabling *Interchangeable Stock* means the auto-allocation routine will combine stock from different batches or locations. Review the resulting allocations if traceability is important.
+
+**Stock Priority**
+
+Controls the order in which matching stock items are consumed:
+
+| Option | Description |
+| --- | --- |
+| Oldest stock first (FIFO) | Stock items updated least recently are consumed first *(default)* |
+| Newest stock first (LIFO) | Stock items updated most recently are consumed first |
+| Smallest quantity first | Stock items with the lowest available quantity are consumed first |
+| Largest quantity first | Stock items with the highest available quantity are consumed first |
+| Soonest expiry date first | Stock items expiring earliest are consumed first; items with no expiry date are used last |
+
+**Serialized Stock**
+
+Controls whether serialized stock items are included in the auto-allocation:
+
+| Option | Description |
+| --- | --- |
+| Allow any stock | Both serialized and unserialized stock items are considered *(default)* |
+| Serialized stock only | Only stock items that carry a serial number are allocated |
+| Unserialized stock only | Only stock items without a serial number are allocated |
+
+#### Allocation Behaviour
+
+The auto-allocation routine performs the following steps for each eligible line item:
+
+1. Skips line items for *virtual* parts.
+2. Skips line items that are already fully allocated.
+3. Queries available stock for the line's part, applying any location and serialized-stock filters.
+4. Sorts the candidates according to the chosen *Stock Priority*.
+5. Greedily allocates from each stock item in turn until the remaining quantity for the line is satisfied.
+
+#### Removing Allocations
+
+Individual or multiple allocations can be removed from the *Allocated Stock* tab. Select the allocations to remove and use the *Delete* action.
+
+!!! warning "Shipped Allocations Protected"
+    Allocations that belong to a completed (shipped) shipment cannot be deleted.
+
+### Check Shipment
+
+Shipments can be marked as "checked" to indicate that the items in the shipment has been verified. To mark a shipment as "checked", open the shipment actions menu, and select the "Check" action:
+
+{{ image("sales/so_shipment_check.png", "Check shipment") }}
+
+The shipment will be marked as checked by the current user.
+
+### Uncheck Shipment
+
+If the shipment requires further verification after being marked as "checked", it can be marked as "unchecked" in a similar manner.
 
 ### Complete Shipment
 
@@ -148,7 +224,6 @@ By default, completed orders are not exported. These can be included by appendin
 
 ## Sales Order Shipments
 
-
 Shipments are used to track sales items when they are shipped to customers. Multiple shipments can be created against a [Sales Order](./sales_order.md), allowing line items to be sent to customers in multiple deliveries.
 
 On the main Sales Order detail page, the order shipments are split into two categories, *Pending Shipments* and *Completed Shipments*:
@@ -161,7 +236,7 @@ The *Pending Shipments* panel displays the shipments which have not yet been sen
 - Pending sales order items can be allocated to these shipments
 - New shipments can be created if the order is still open
 
-{{ image("order/pending_shipments.png", "Pending shipments") }}
+{{ image("sales/pending_shipments.png", "Pending shipments") }}
 
 #### Creating a new Shipment
 
@@ -171,11 +246,11 @@ To create a new shipment for a sales order, press the *New Shipment* button abov
 
 To complete a shipment, press the *Complete Shipment* button associated with the particular shipment:
 
-{{ image("order/complete_shipment.png", "Complete shipment") }}
+{{ image("sales/complete_shipment.png", "Complete shipment") }}
 
 ### Completed Shipments
 
-{{ image("order/completed_shipments.png", "Completed shipments") }}
+{{ image("sales/completed_shipments.png", "Completed shipments") }}
 
 ### Shipment Data
 
@@ -184,6 +259,10 @@ Each shipment provides the following data fields:
 #### Reference
 
 A unique number for the shipment, used to identify each shipment within a sales order. By default, this value starts at `1` for the first shipment (for each order) and automatically increments for each new shipment.
+
+#### Shipment Address
+
+A shipping address can be optionally specified for an individual shipment. If not specified, the [shipping address assigned to the sales order](#sales-order-address) will be used.
 
 #### Tracking Number
 
@@ -197,9 +276,10 @@ An optional field used to store an invoice reference for the shipment.
 
 An optional URL field which can be used to provide a link to an external URL.
 
+
 All these fields can be edited by the user:
 
-{{ image("order/edit_shipment.png", "Edit shipment") }}
+{{ image("sales/edit_shipment.png", "Edit shipment") }}
 
 ## Sales Order Settings
 
@@ -207,8 +287,11 @@ The following [global settings](../settings/global.md) are available for sales o
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
+{{ globalsetting("SALESORDER_ENABLED") }}
 {{ globalsetting("SALESORDER_REFERENCE_PATTERN") }}
 {{ globalsetting("SALESORDER_REQUIRE_RESPONSIBLE") }}
 {{ globalsetting("SALESORDER_DEFAULT_SHIPMENT") }}
 {{ globalsetting("SALESORDER_EDIT_COMPLETED_ORDERS") }}
 {{ globalsetting("SALESORDER_SHIP_COMPLETE") }}
+{{ globalsetting("SALESORDER_SHIPMENT_REQUIRES_CHECK") }}
+{{ globalsetting("SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS")}}

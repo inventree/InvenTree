@@ -4,8 +4,7 @@ from inspect import signature
 from typing import Optional
 
 from django.core.exceptions import ValidationError
-
-from jinja2 import Template
+from django.template import Context, Template
 
 import common.models
 import InvenTree.exceptions
@@ -76,7 +75,7 @@ def generate_batch_code(**kwargs):
         'STOCK_BATCH_CODE_TEMPLATE', ''
     )
 
-    return Template(batch_template).render(context)
+    return Template(batch_template).render(Context(context))
 
 
 def generate_serial_number(part=None, quantity=1, **kwargs) -> Optional[str]:

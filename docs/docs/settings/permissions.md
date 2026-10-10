@@ -7,7 +7,7 @@ title: User Permissions
 InvenTree provides access control to various features and data, by assigning each *user* to one (or more) *groups* which have multiple *roles* assigned.
 
 !!! info "Superuser"
-    The superuser account is afforded *all* permissions across an InvenTree installation. This includes the admin interface, web interface, and API.
+    The superuser account is afforded *all* permissions across an InvenTree installation. This includes the [Database Admin interface](./db_admin.md), web interface, and API.
 
 ### User
 
@@ -25,15 +25,7 @@ A *role* is a set of distinct permissions linked to a given subset of InvenTree 
 
 InvenTree functionality is split into a number of distinct roles. A group will have a set of permissions assigned to each of the following roles:
 
-- **Admin** - The *admin* role is related to assigning user permissions.
-- **Part Category** - The *part category* role is related to accessing Part Category data
-- **Part** - The *part* role is related to accessing Part data
-- **Stock Location** - The *stock location* role is related to accessing Stock Location data
-- **Stock Item** - The *stock item* role is related to accessing Stock Item data
-- **Build** - The *build* role is related to accessing Build Order and Bill of Materials data
-- **Purchase Order** - The *purchase* role is related to accessing Purchase Order data
-- **Sales Order** - The *sales* role is related to accessing Sales Order data
-- **Return Order** - The *return* role is related to accessing Return Order data
+{{ roles() }}
 
 {{ image("admin/roles.png", "Roles") }}
 
@@ -41,16 +33,29 @@ InvenTree functionality is split into a number of distinct roles. A group will h
 
 Within each role, there are four levels of available permissions:
 
-- **View** - The *view* permission allows viewing of content related to the particular role
-- **Change** - The *change* permission allows the user to edit / alter / change data associated with the particular role
-- **Add** - The *add* permission allows the user to add / create database records associated with the particular role
-- **Delete** - The *delete* permission allows the user to delete / remove database records associated with the particular role
+| Permission | Description |
+| ---------- | ----------- |
+| **View** | The *view* permission allows viewing of content related to the particular role |
+| **Change** | The *change* permission allows the user to edit / alter / change data associated with the particular role |
+| **Add** | The *add* permission allows the user to add / create database records associated with the particular role |
+| **Delete** | The *delete* permission allows the user to delete / remove database records associated with the particular role |
 
-## Admin Interface Permissions
+## Dangerous User Flags
 
-If a user does not have the required permissions to perform a certain action in the admin interface, those options not be displayed.
+In addition to the above permissions, there are two special flags that can be assigned to a user:
+- **Staff** - A user with the *staff* flag is able to access the [Database Admin interface](./db_admin.md), and can trigger dangerous actions that might have a security impact such as changing parsable files on the server (templates / reports / plugins). Some of these actions require the *admin* role to be assigned as well.
+- **Superuser** - A user with the *superuser* flag is able to access and change all data and functions of InvenTree. A superuser can modify and access all data that the InvenTree installation / server has access to - including shell access on the server OS itself. This is a very powerful flag, and should be used with caution.
 
-If a user is expecting a certain option to be available in the admin interface, but it is not present, it is most likely the case that the user does not have those permissions assigned.
+It is strongly recommended to register any users with staff / superuser flags with strong MFA methods to reduce the risk of unauthorized access. These accounts should be used with caution, and should not be used for day-to-day operations.
+
+Practicing account tiering is strongly recommended.
+
+
+## Database Admin Permissions
+
+If a user does not have the required permissions to perform a certain action in the [Database Admin interface](./db_admin.md), those options will not be displayed.
+
+If a user is expecting a certain option to be available in the Database Admin interface, but it is not present, it is most likely the case that the user does not have those permissions assigned.
 
 ## Web Interface Permissions
 

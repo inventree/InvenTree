@@ -9,7 +9,8 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-FROM python:3.11-slim-trixie@sha256:1d6131b5d479888b43200645e03a78443c7157efbdb730e6b48129740727c312 AS inventree_base
+# Base image last bumped 2026-10-06
+FROM python:3.14.8-slim-trixie@sha256:f85c5697265c178cc6887276c55fe16cf3d14ca35c3df6a5eab3b360534a55d2 AS inventree_base
 
 # Build arguments for this image
 ARG commit_tag=""
@@ -17,6 +18,7 @@ ARG commit_hash=""
 ARG commit_date=""
 
 ARG data_dir="data"
+ARG NODE_VERSION=24
 
 ENV PYTHONUNBUFFERED=1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
@@ -117,15 +119,11 @@ RUN pip install --user --require-hashes -r base_requirements.txt --no-cache-dir 
     rm -rf /root/.cache/pip
 
 # Install frontend build dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    nodejs npm \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN npm install -g n yarn --ignore-scripts && \
-    yarn config set network-timeout 600000 -g
-RUN bash -c "n lts"
-RUN cd "${INVENTREE_HOME}" && invoke int.frontend-compile --extract
+# pinned to v0.40.5
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/1889911f0841e669de0be5bd02c737a3f1fd20fa/install.sh | bash && \
+    bash -c "export NVM_DIR="$HOME/.nvm" && source $HOME/.nvm/nvm.sh && \
+    nvm install $NODE_VERSION && corepack enable yarn && yarn config set network-timeout 600000 -g"
+RUN bash -c "source $HOME/.nvm/nvm.sh && cd '${INVENTREE_HOME}' && invoke int.frontend-compile --extract"
 
 # InvenTree production image:
 # - Copies required files from local directory
@@ -148,8 +146,15 @@ ENV PATH=/root/.local/bin:$PATH
 COPY --from=builder_stage ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web
 COPY --from=builder_stage /root/.local /root/.local
 
+# Compile Django backend translations during image build
+RUN bash -c "cd '${INVENTREE_HOME}' && invoke int.backend-compilemessages"
+
+# Generate license information for installed python packages
+RUN pip-licenses --format=json --with-license-file --no-license-path > "${INVENTREE_BACKEND_DIR}/InvenTree/InvenTree/licenses.txt" \
+    && test -s "${INVENTREE_BACKEND_DIR}/InvenTree/InvenTree/licenses.txt"
+
 # Launch the production server
-CMD ["sh", "-c", "exec gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ${INVENTREE_BACKEND_DIR}/InvenTree"]
+CMD ["sh", "-c", "exec gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} --chdir ${INVENTREE_BACKEND_DIR}/InvenTree"]
 
 FROM builder_stage AS dev
 

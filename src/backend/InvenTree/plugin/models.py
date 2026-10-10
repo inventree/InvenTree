@@ -24,7 +24,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
     Attributes:
         key: slug of the plugin (this must be unique across all installed plugins!)
-        name: PluginName of the plugin - serves for a manual double check  if the right plugin is used
+        name: Name of the plugin - serves for a manual double check  if the right plugin is used
         active: Should the plugin be loaded?
     """
 
@@ -52,7 +52,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         blank=True,
         max_length=255,
         verbose_name=_('Name'),
-        help_text=_('PluginName of the plugin'),
+        help_text=_('Name of the plugin'),
     )
 
     package_name = models.CharField(
@@ -301,6 +301,43 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
         verbose_name=_('Plugin'),
         on_delete=models.CASCADE,
     )
+
+    def save(self, *args, **kwargs):
+        """When saving a plugin setting, enforce any config-level overrides."""
+        from common.settings import plugin_setting_overrides
+
+        if self.plugin_id and self.plugin:
+            overrides = plugin_setting_overrides(self.plugin.key)
+            if self.key in overrides:
+                self.value = str(overrides[self.key])
+
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_setting_default(cls, key, **kwargs):
+        """Return the default value for a plugin setting, respecting config overrides."""
+        from common.settings import plugin_setting_overrides
+
+        plugin = kwargs.get('plugin')
+        if plugin:
+            overrides = plugin_setting_overrides(plugin.key)
+            if key in overrides:
+                return overrides[key]
+
+        return super().get_setting_default(key, **kwargs)
+
+    @classmethod
+    def get_setting(cls, key, backup_value=None, **kwargs):
+        """Get the value of a plugin setting, respecting config overrides."""
+        from common.settings import plugin_setting_overrides
+
+        plugin = kwargs.get('plugin')
+        if plugin:
+            overrides = plugin_setting_overrides(plugin.key)
+            if key in overrides:
+                return overrides[key]
+
+        return super().get_setting(key, backup_value=backup_value, **kwargs)
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):

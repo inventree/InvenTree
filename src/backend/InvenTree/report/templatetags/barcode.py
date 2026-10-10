@@ -1,6 +1,10 @@
 """Template tags for rendering various barcodes."""
 
+import base64
+from collections.abc import Sequence
+
 from django import template
+from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 
 import barcode as python_barcode
@@ -29,11 +33,109 @@ def image_data(img, fmt='PNG') -> str:
     return report.helpers.encode_image_base64(img, fmt)
 
 
+def _render_2d_barcode_svg(
+    matrix: Sequence[Sequence[bool]],
+    foreground: tuple[int, int, int],
+    background: tuple[int, int, int],
+    width: int,
+    height: int,
+    scale: float,
+    border: int,
+) -> str:
+    """Render a two-dimensional barcode matrix as SVG image data."""
+    foreground_hex = '#{:02x}{:02x}{:02x}'.format(*foreground)
+    background_hex = '#{:02x}{:02x}{:02x}'.format(*background)
+
+    path = ' '.join(
+        f'M{x + border} {y + border}h1v1h-1z'
+        for y, row in enumerate(matrix)
+        for x, value in enumerate(row)
+        if value
+    )
+
+    svg = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" '
+        f'width="{int(width * scale)}" height="{int(height * scale)}" '
+        f'viewBox="0 0 {width} {height}" shape-rendering="crispEdges">'
+        f'<rect width="{width}" height="{height}" fill="{background_hex}"/>'
+        f'<path d="{path}" fill="{foreground_hex}"/>'
+        '</svg>'
+    )
+
+    data = base64.b64encode(svg.encode()).decode()
+
+    return f'data:image/svg+xml;charset=utf-8;base64,{data}'
+
+
+def _render_2d_barcode_raster(
+    matrix: Sequence[Sequence[bool]],
+    foreground: tuple[int, int, int],
+    background: tuple[int, int, int],
+    width: int,
+    height: int,
+    scale: float,
+    border: int,
+    fmt: str,
+) -> str:
+    """Render a two-dimensional barcode matrix as raster image data."""
+    img = Image.new('RGB', (width, height), color=background)
+
+    for y, row in enumerate(matrix):
+        for x, value in enumerate(row):
+            if value:
+                img.putpixel((x + border, y + border), foreground)
+
+    img = img.resize(
+        (int(width * scale), int(height * scale)), Image.Resampling.NEAREST
+    )
+
+    return image_data(img, fmt=fmt)
+
+
+def _render_2d_barcode(
+    matrix: Sequence[Sequence[bool]],
+    fill_color: str = 'black',
+    back_color: str = 'white',
+    scale: float = 1.0,
+    border: int = 1,
+    fmt: str = 'PNG',
+) -> str:
+    """Render a two-dimensional barcode matrix in the requested format."""
+    try:
+        border = int(border)
+    except Exception:
+        border = 1
+
+    border = max(0, border)
+
+    try:
+        foreground = ImageColor.getcolor(fill_color, 'RGB')
+    except Exception:
+        foreground = ImageColor.getcolor('black', 'RGB')
+
+    try:
+        background = ImageColor.getcolor(back_color, 'RGB')
+    except Exception:
+        background = ImageColor.getcolor('white', 'RGB')
+
+    height = len(matrix) + 2 * border
+    width = len(matrix[0]) + 2 * border
+
+    if str(fmt).upper() == 'SVG':
+        return _render_2d_barcode_svg(
+            matrix, foreground, background, width, height, scale, border
+        )
+
+    return _render_2d_barcode_raster(
+        matrix, foreground, background, width, height, scale, border, fmt
+    )
+
+
 @register.simple_tag()
 def clean_barcode(data):
     """Return a 'cleaned' string for encoding into a barcode / qrcode.
 
-    - This function runs the data through bleach, and removes any malicious HTML content.
+    - This function sanitizes the data using nh3, and removes any malicious HTML content.
     - Used to render raw barcode data into the rendered HTML templates
     """
     from InvenTree.helpers import strip_html_tags
@@ -70,7 +172,7 @@ def qrcode(data: str, **kwargs) -> str:
     data = str(data).strip()
 
     if not data:
-        raise ValueError("No data provided to 'qrcode' template tag")
+        raise ValidationError("qrcode: No data provided to 'qrcode' template tag")
 
     # Extract other arguments from kwargs
     fill_color = kwargs.pop('fill_color', 'black')
@@ -115,7 +217,7 @@ def barcode(data: str, barcode_class='code128', **kwargs) -> str:
     data = str(data).strip()
 
     if not data:
-        raise ValueError("No data provided to 'barcode' template tag")
+        raise ValidationError("barcode: No data provided to 'barcode' template tag")
 
     constructor = python_barcode.get_barcode_class(barcode_class)
 
@@ -134,17 +236,26 @@ def barcode(data: str, barcode_class='code128', **kwargs) -> str:
 
 
 @register.simple_tag()
-def datamatrix(data: str, **kwargs) -> str:
+def datamatrix(
+    data: str,
+    rectangular: bool = False,
+    fill_color: str = 'black',
+    back_color: str = 'white',
+    scale: float = 1.0,
+    border: int = 1,
+    fmt: str = 'PNG',
+    **kwargs,
+) -> str:
     """Render a DataMatrix barcode.
 
     Arguments:
         data: Data to encode
-
-    Keyword Arguments:
-        fill_color (str): Foreground color (default = 'black')
-        back_color (str): Background color (default = 'white')
-        scale (float): Matrix scaling factor (default = 1)
-        border (int): Border width (default = 1)
+        rectangular: Whether to generate a rectangular DataMatrix (default = False)
+        fill_color: Foreground color (default = 'black')
+        back_color: Background color (default = 'white')
+        scale: Scaling factor (default = 1)
+        border: Border width (default = 1)
+        fmt: Generated image format (default = 'PNG'; use 'SVG' for vector output)
 
     Returns:
         image (str): base64 encoded image data
@@ -154,46 +265,17 @@ def datamatrix(data: str, **kwargs) -> str:
     data = str(data).strip()
 
     if not data:
-        raise ValueError("No data provided to 'datamatrix' template tag")
+        raise ValidationError(
+            "datamatrix: No data provided to 'datamatrix' template tag"
+        )
 
-    dm = DataMatrix(data)
+    dm = DataMatrix(data, rect=rectangular)
 
-    fill_color = kwargs.pop('fill_color', 'black')
-    back_color = kwargs.pop('back_color', 'white')
-
-    border = kwargs.pop('border', 1)
-
-    try:
-        border = int(border)
-    except Exception:
-        border = 1
-
-    border = max(0, border)
-
-    try:
-        fg = ImageColor.getcolor(fill_color, 'RGB')
-    except Exception:
-        fg = ImageColor.getcolor('black', 'RGB')
-
-    try:
-        bg = ImageColor.getcolor(back_color, 'RGB')
-    except Exception:
-        bg = ImageColor.getcolor('white', 'RGB')
-
-    scale = kwargs.pop('scale', 1)
-
-    height = len(dm.matrix) + 2 * border
-    width = len(dm.matrix[0]) + 2 * border
-
-    # Generate raw image from the matrix
-    img = Image.new('RGB', (width, height), color=bg)
-
-    for y, row in enumerate(dm.matrix):
-        for x, value in enumerate(row):
-            if value:
-                img.putpixel((x + border, y + border), fg)
-
-    if scale != 1:
-        img = img.resize((int(width * scale), int(height * scale)))
-
-    return image_data(img, fmt='PNG')
+    return _render_2d_barcode(
+        dm.matrix,
+        fill_color=fill_color,
+        back_color=back_color,
+        scale=scale,
+        border=border,
+        fmt=fmt,
+    )

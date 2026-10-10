@@ -1,10 +1,44 @@
 """Report mixin classes."""
 
-from typing import Generic, TypedDict, TypeVar
+from collections.abc import Callable
+from typing import Generic, Optional, TypedDict, TypeVar
 
 from django.db import models
 
 _Model = TypeVar('_Model', bound=models.Model, covariant=True)
+
+REPORT_ATTRIBUTE_MARKER = '_report_attribute_description'
+
+
+def report_attribute(description: Optional[str] = None) -> Callable:
+    """Mark a model property or method as discoverable for report documentation.
+
+    Unlike `InvenTreeReportMixin.report_context`, which only documents context data
+    explicitly assembled for a particular model, this decorator can be applied to any
+    property or method (including those defined on mixins shared by multiple models)
+    to make it show up in the generated report context documentation.
+
+    If no description is provided, the first line of the decorated function's
+    docstring is used instead.
+
+    When decorating a `@property`, this decorator must be applied to the underlying
+    function, i.e. *below* the `@property` decorator:
+
+    Example:
+    ```python
+    @property
+    @report_attribute(description="Format a minimal barcode string")
+    def barcode(self) -> str:
+        ...
+    ```
+    """
+
+    def decorator(func: Callable) -> Callable:
+        doc = (func.__doc__ or '').strip().splitlines()
+        setattr(func, REPORT_ATTRIBUTE_MARKER, description or (doc[0] if doc else ''))
+        return func
+
+    return decorator
 
 
 class QuerySet(Generic[_Model]):

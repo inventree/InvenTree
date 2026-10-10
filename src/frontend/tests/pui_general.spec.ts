@@ -1,4 +1,5 @@
 import { test } from './baseFixtures.js';
+import { adminuser, stevenuser } from './defaults.js';
 import { globalSearch } from './helpers.js';
 import { doCachedLogin } from './login.js';
 
@@ -7,8 +8,7 @@ import { doCachedLogin } from './login.js';
  */
 test('General - Admin Button', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'admin',
-    password: 'inventree',
+    user: adminuser,
     url: 'company/1/details'
   });
 
@@ -23,8 +23,7 @@ test('General - Admin Button', async ({ browser }) => {
 // Tests for the global search functionality
 test('General - Search', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
-    username: 'steven',
-    password: 'wizardstaff'
+    user: stevenuser
   });
 
   // Open the search drawer with a shortcut

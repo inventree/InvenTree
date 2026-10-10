@@ -13,25 +13,39 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         """Wait till the database is ready."""
-        self.stdout.write('Waiting for database...')
-
         connected = False
+        verbose = int(kwargs.get('verbosity', 0)) > 0
+        attempts = kwargs.get('attempts', 10)
 
-        while not connected:
-            time.sleep(2)
+        if verbose:
+            self.stdout.write('Waiting for database connection...')
+            self.stdout.flush()
+
+        while not connected and attempts > 0:
+            attempts -= 1
 
             try:
                 connection.ensure_connection()
 
                 connected = True
 
-            except OperationalError as e:
-                self.stdout.write(f'Could not connect to database: {e}')
-            except ImproperlyConfigured as e:
-                self.stdout.write(f'Improperly configured: {e}')
+            except (OperationalError, ImproperlyConfigured):
+                if verbose:
+                    self.stdout.write('Database connection failed, retrying ...')
+                    self.stdout.flush()
             else:
                 if not connection.is_usable():
-                    self.stdout.write('Database configuration is not usable')
+                    if verbose:
+                        self.stdout.write('Database configuration is not usable')
+                        self.stdout.flush()
 
             if connected:
-                self.stdout.write('Database connection successful!')
+                if verbose:
+                    self.stdout.write('Database connection successful!')
+                    self.stdout.flush()
+            else:
+                time.sleep(1)
+
+        if not connected:
+            self.stderr.write('Failed to connect to database after multiple attempts')
+            self.stderr.flush()

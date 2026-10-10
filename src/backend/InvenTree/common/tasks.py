@@ -1,10 +1,10 @@
 """Tasks (processes that get offloaded) for common app."""
 
-import os
 from datetime import timedelta
 
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
+from django.core.files.storage import default_storage
 from django.db.utils import IntegrityError, OperationalError
 from django.utils import timezone
 
@@ -15,8 +15,6 @@ from opentelemetry import trace
 
 import common.models
 import InvenTree.helpers
-from InvenTree.helpers_model import getModelsWithMixin
-from InvenTree.models import InvenTreeNotesMixin
 from InvenTree.tasks import ScheduledTask, scheduled_task
 
 tracer = trace.get_tracer(__name__)
@@ -113,9 +111,16 @@ def update_news_feed():
 @tracer.start_as_current_span('delete_old_notes_images')
 @scheduled_task(ScheduledTask.DAILY)
 def delete_old_notes_images():
-    """Remove old notes images from the database.
+    """Remove old, unreferenced notes images from the database.
 
-    Anything older than ~3 months is removed, unless it is linked to a note
+    Each NotesImage is linked to a specific Note via a required foreign key, so
+    (unlike the pre-refactor version of this task) we only need to check whether
+    the image is still referenced in *that one* note's content, rather than
+    searching every note-supporting model's table for a matching substring.
+
+    Anything older than ~3 months is removed, unless it is still referenced in
+    its associated note's content. Images whose file no longer exists in storage
+    are removed regardless of age, since there's nothing left to keep around.
     """
     try:
         from common.models import NotesImage
@@ -125,50 +130,75 @@ def delete_old_notes_images():
         )
         return
 
-    # Remove any notes which point to non-existent image files
-    for note in NotesImage.objects.all():
-        if not os.path.exists(note.image.path):
-            logger.info('Deleting note %s - image file does not exist', note.image.path)
-            note.delete()
+    # Remove any images whose file no longer exists in storage, regardless of
+    # age - there's nothing left to keep around
+    for image in NotesImage.objects.all():
+        if not image.image or not default_storage.exists(image.image.name):
+            logger.info(
+                'delete_old_notes_images: Deleting image %s - file does not exist',
+                image.pk,
+            )
+            image.delete()
 
-    note_classes = getModelsWithMixin(InvenTreeNotesMixin)
     before = InvenTree.helpers.current_date() - timedelta(days=90)
 
-    for note in NotesImage.objects.filter(date__lte=before):
-        # Find any images which are no longer referenced by a note
+    old_images = NotesImage.objects.filter(date__lte=before).select_related('note')
 
-        found = False
+    for image in old_images:
+        if image.image.url not in image.note.content:
+            logger.info(
+                'delete_old_notes_images: Deleting image %s - not referenced by note %s',
+                image.pk,
+                image.note.pk,
+            )
+            image.delete()
 
-        img = note.image.name
 
-        for model in note_classes:
-            if model.objects.filter(notes__icontains=img).exists():
-                found = True
-                break
+@tracer.start_as_current_span('rebuild_parameters')
+def rebuild_parameters(template_id):
+    """Rebuild all parameters for a given template.
 
-        if not found:
-            logger.info('Deleting note %s - image file not linked to a note', img)
-            note.delete()
-
-    # Finally, remove any images in the notes dir which are not linked to a note
-    notes_dir = os.path.join(settings.MEDIA_ROOT, 'notes')
+    This function is called when a base template is changed,
+    which may cause the base unit to be adjusted.
+    """
+    from common.models import Parameter, ParameterTemplate
 
     try:
-        images = os.listdir(notes_dir)
-    except FileNotFoundError:
-        # Thrown if the directory does not exist
-        images = []
+        template = ParameterTemplate.objects.get(pk=template_id)
+    except ParameterTemplate.DoesNotExist:
+        return
 
-    all_notes = NotesImage.objects.all()
+    parameters = Parameter.objects.filter(template=template)
 
-    for image in images:
-        found = False
-        for note in all_notes:
-            img_path = os.path.basename(note.image.path)
-            if img_path == image:
-                found = True
-                break
+    n = 0
 
-        if not found:
-            logger.info('Deleting note %s - image file not linked to a note', image)
-            os.remove(os.path.join(notes_dir, image))
+    for parameter in parameters:
+        # Update the parameter if the numeric value has changed
+        value_old = parameter.data_numeric
+        parameter.calculate_numeric_value()
+
+        if value_old != parameter.data_numeric:
+            parameter.full_clean()
+            parameter.save()
+            n += 1
+
+    if n > 0:
+        logger.info("Rebuilt %s parameters for template '%s'", n, template.name)
+
+
+@tracer.start_as_current_span('rebuild_attachment')
+def rebuild_attachment(attachment_id: int):
+    """Rebuild the given attachment, if possible.
+
+    This task is called whenever an attachment is saved, and perform the following tasks:
+
+    - Check if the attachment is an image file, and update the "is_image" field accordingly
+    - Attempt to generate a thumbnail for the attachment
+    """
+    from common.models import Attachment
+
+    attachment = Attachment.objects.get(pk=attachment_id)
+
+    attachment.is_image = attachment.check_is_image()
+    attachment.generate_thumbnail()
+    attachment.save(rebuild=False)

@@ -5,7 +5,7 @@ import os
 from django.conf import settings
 
 import structlog
-from jinja2 import Environment, select_autoescape
+from jinja2.sandbox import SandboxedEnvironment
 
 from common.settings import get_global_setting
 
@@ -37,11 +37,7 @@ def compile_full_name_template(*args, **kwargs):
     # Cache the template string
     _part_full_name_template_string = template_string
 
-    env = Environment(
-        autoescape=select_autoescape(default_for_string=False, default=False),
-        variable_start_string='{{',
-        variable_end_string='}}',
-    )
+    env = SandboxedEnvironment(variable_start_string='{{', variable_end_string='}}')
 
     # Compile the template
     try:

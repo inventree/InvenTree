@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Group, Text } from '@mantine/core';
+import { Alert, Group, Stack, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
@@ -11,29 +11,43 @@ import {
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
+import { IconInfoCircle } from '@tabler/icons-react';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { useDynamicParameterValueField } from '../../forms/CommonForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { InvenTreeTable } from '../InvenTreeTable';
 
-export default function PartCategoryTemplateTable() {
+export default function PartCategoryTemplateTable({
+  categoryId
+}: {
+  categoryId?: number;
+}) {
   const table = useTable('part-category-parameter-templates');
   const user = useUserState();
 
+  const { onTemplateValueChange, valueFieldConfig, reset } =
+    useDynamicParameterValueField(categoryId);
+
   const formFields: ApiFormFieldSet = useMemo(() => {
     return {
-      category: {},
-      parameter_template: {},
-      default_value: {}
+      category: {
+        value: categoryId,
+        disabled: categoryId !== undefined
+      },
+      template: {
+        onValueChange: onTemplateValueChange
+      },
+      default_value: valueFieldConfig
     };
-  }, []);
+  }, [categoryId, onTemplateValueChange, valueFieldConfig]);
 
   const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
 
@@ -41,6 +55,7 @@ export default function PartCategoryTemplateTable() {
     url: ApiEndpoints.category_parameter_list,
     title: t`Add Category Parameter`,
     fields: useMemo(() => ({ ...formFields }), [formFields]),
+    onOpen: reset,
     table: table
   });
 
@@ -49,6 +64,7 @@ export default function PartCategoryTemplateTable() {
     pk: selectedTemplate,
     title: t`Edit Category Parameter`,
     fields: useMemo(() => ({ ...formFields }), [formFields]),
+    onOpen: reset,
     table: table
   });
 
@@ -76,7 +92,7 @@ export default function PartCategoryTemplateTable() {
         accessor: 'category_detail.pathstring'
       },
       {
-        accessor: 'parameter_template_detail.name',
+        accessor: 'template_detail.name',
         title: t`Parameter Template`,
         sortable: true,
         switchable: false
@@ -92,8 +108,8 @@ export default function PartCategoryTemplateTable() {
 
           let units = '';
 
-          if (record?.parameter_template_detail?.units) {
-            units = `[${record.parameter_template_detail.units}]`;
+          if (record?.template_detail?.units) {
+            units = `[${record.template_detail.units}]`;
           }
 
           return (
@@ -145,6 +161,15 @@ export default function PartCategoryTemplateTable() {
       {newTemplate.modal}
       {editTemplate.modal}
       {deleteTemplate.modal}
+      <Alert
+        color='blue'
+        icon={<IconInfoCircle />}
+        title={t`Part Category Parameters Templates`}
+      >
+        <Stack gap='xs'>
+          <Text>{t`Parts which are created within this category will inherit the default values specified here.`}</Text>
+        </Stack>
+      </Alert>
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.category_parameter_list)}
         tableState={table}
@@ -153,7 +178,12 @@ export default function PartCategoryTemplateTable() {
           rowActions: rowActions,
           tableFilters: tableFilters,
           tableActions: tableActions,
-          enableDownload: true
+          enableDownload: true,
+          params: {
+            category: categoryId,
+            template_detail: true,
+            category_detail: true
+          }
         }}
       />
     </>

@@ -43,16 +43,6 @@ class Command(BaseCommand):
         except Exception:
             logger.info('Error rebuilding PartCategory objects')
 
-        # StockItem model
-        try:
-            logger.info('Rebuilding StockItem objects')
-
-            from stock.models import StockItem
-
-            StockItem.objects.rebuild()
-        except Exception:
-            logger.info('Error rebuilding StockItem objects')
-
         # StockLocation model
         try:
             logger.info('Rebuilding StockLocation objects')

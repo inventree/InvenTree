@@ -25,11 +25,14 @@ import type {
  * Enumeration for available plugin UI feature types.
  */
 export enum PluginUIFeatureType {
+  spotlight_action = 'spotlight_action',
   dashboard = 'dashboard',
   panel = 'panel',
   template_editor = 'template_editor',
   template_preview = 'template_preview',
-  navigation = 'navigation'
+  navigation = 'navigation',
+  primary_action = 'primary_action',
+  route = 'route'
 }
 
 /**

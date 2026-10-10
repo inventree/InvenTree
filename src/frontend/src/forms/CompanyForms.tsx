@@ -12,16 +12,25 @@ import {
   IconPackage,
   IconPhone
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { DuplicateField, TagsField } from './CommonFields';
 
 /**
  * Field set for SupplierPart instance
  */
 export function useSupplierPartFields({
-  partId
+  manufacturerId,
+  manufacturerPartId,
+  partId,
+  duplicateSupplierPartId
 }: {
+  manufacturerId?: number;
+  manufacturerPartId?: number;
   partId?: number;
+  duplicateSupplierPartId?: number | null;
 }) {
+  const [part, setPart] = useState<any>({});
+
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
@@ -31,10 +40,16 @@ export function useSupplierPartFields({
           part: partId,
           purchaseable: true,
           active: true
+        },
+        onValueChange: (value: any, record: any) => {
+          setPart(record);
         }
       },
       manufacturer_part: {
+        value: manufacturerPartId,
+        autoFill: true,
         filters: {
+          manufacturer: manufacturerId,
           part_detail: true,
           manufacturer_detail: true
         },
@@ -43,18 +58,34 @@ export function useSupplierPartFields({
             ...adjust.filters,
             part: adjust.data.part
           };
+        },
+        addCreateFields: {
+          part: {
+            value: part?.pk,
+            disabled: !!part?.pk
+          },
+          manufacturer: {},
+          MPN: {},
+          description: {},
+          link: {}
         }
       },
       supplier: {
         filters: {
           active: true,
           is_supplier: true
+        },
+        addCreateFields: {
+          name: {},
+          description: {},
+          is_supplier: { value: true, hidden: true }
         }
       },
       SKU: {
         icon: <IconHash />
       },
       description: {},
+      tags: TagsField({}),
       link: {
         icon: <IconLink />
       },
@@ -65,14 +96,36 @@ export function useSupplierPartFields({
       packaging: {
         icon: <IconPackage />
       },
-      active: {}
+      primary: {},
+      active: {},
+      duplicate: DuplicateField({
+        originalId: duplicateSupplierPartId,
+        extraFields: {
+          copy_parameters: {},
+          copy_notes: {}
+        }
+      })
     };
 
+    if (!duplicateSupplierPartId) {
+      delete fields.duplicate;
+    }
+
     return fields;
-  }, [partId]);
+  }, [
+    manufacturerId,
+    manufacturerPartId,
+    partId,
+    part,
+    duplicateSupplierPartId
+  ]);
 }
 
-export function useManufacturerPartFields() {
+export function useManufacturerPartFields({
+  duplicateManufacturerPartId
+}: {
+  duplicateManufacturerPartId?: number | null;
+} = {}) {
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {},
@@ -80,37 +133,43 @@ export function useManufacturerPartFields() {
         filters: {
           active: true,
           is_manufacturer: true
+        },
+        addCreateFields: {
+          name: {},
+          description: {},
+          is_manufacturer: { value: true, hidden: true }
         }
       },
       MPN: {},
       description: {},
-      link: {}
+      tags: TagsField({}),
+      link: {},
+      duplicate: DuplicateField({
+        originalId: duplicateManufacturerPartId,
+        extraFields: {
+          copy_parameters: {},
+          copy_notes: {}
+        }
+      })
     };
 
-    return fields;
-  }, []);
-}
-
-export function useManufacturerPartParameterFields() {
-  return useMemo(() => {
-    const fields: ApiFormFieldSet = {
-      manufacturer_part: {
-        disabled: true
-      },
-      name: {},
-      value: {},
-      units: {}
-    };
+    if (!duplicateManufacturerPartId) {
+      delete fields.duplicate;
+    }
 
     return fields;
-  }, []);
+  }, [duplicateManufacturerPartId]);
 }
 
 /**
  * Field set for editing a company instance
  */
-export function companyFields(): ApiFormFieldSet {
-  return {
+export function companyFields({
+  duplicateCompanyId
+}: {
+  duplicateCompanyId?: number | null;
+} = {}): ApiFormFieldSet {
+  const fields: ApiFormFieldSet = {
     name: {},
     description: {},
     website: {
@@ -125,10 +184,24 @@ export function companyFields(): ApiFormFieldSet {
     email: {
       icon: <IconAt />
     },
+    tags: TagsField({}),
     tax_id: {},
     is_supplier: {},
     is_manufacturer: {},
     is_customer: {},
-    active: {}
+    active: {},
+    duplicate: DuplicateField({
+      originalId: duplicateCompanyId,
+      extraFields: {
+        copy_parameters: {},
+        copy_notes: {}
+      }
+    })
   };
+
+  if (!duplicateCompanyId) {
+    delete fields.duplicate;
+  }
+
+  return fields;
 }

@@ -73,6 +73,16 @@ sudo npx playwright install-deps
 npx playwright install
 ```
 
+### Dataset
+
+The playwright tests assume that the [InvenTree test dataset](../demo.md#local-setup) is loaded into the InvenTree installation. This dataset provides a known set of data that the tests can run against.
+
+Before running the frontend tests, ensure that a clean copy of the test dataset is loaded into your InvenTree instance, by running the following command:
+
+```bash
+invoke dev.setup-test -i
+```
+
 ### Running Tests
 
 To run the tests locally, in an interactive editor, you can use the following command:

@@ -7,3 +7,8 @@ reason = "Effected codepath is not used in the project"
 # botocore < 2.5.0 - see https://github.com/boto/botocore/issues/3499
 id = "GHSA-pq67-6m6q-mj2v"
 reason = "Effected codepath is not used in the project"
+
+[[IgnoredVulns]]
+# paramiko supports SHA1 signatures - this is outside of scope for this project
+id = "GHSA-5h8x-9c6f-2j8m"
+reason = "Effected codepath is not used in the project"

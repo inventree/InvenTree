@@ -7,6 +7,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { formatDecimal } from '@lib/functions/Formatting';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { RenderBuildOrder } from '../../components/render/Build';
@@ -14,7 +15,8 @@ import { RenderCompany } from '../../components/render/Company';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
-  RenderSalesOrder
+  RenderSalesOrder,
+  RenderTransferOrder
 } from '../../components/render/Order';
 import { RenderPart } from '../../components/render/Part';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -23,10 +25,20 @@ import {
   RenderStockLocation
 } from '../../components/render/Stock';
 import { RenderUser } from '../../components/render/User';
-import { useTable } from '../../hooks/UseTable';
-import { DateColumn, DescriptionColumn } from '../ColumnRenderers';
-import { UserFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+import {
+  DateColumn,
+  DescriptionColumn,
+  IPNColumn,
+  PartColumn,
+  StockColumn
+} from '../../components/tables/ColumnRenderers';
+import {
+  IncludeVariantsFilter,
+  MaxDateFilter,
+  MinDateFilter,
+  UserFilter
+} from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 
 type StockTrackingEntry = {
   label: string;
@@ -34,9 +46,15 @@ type StockTrackingEntry = {
   details: ReactNode;
 };
 
-export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
+export function StockTrackingTable({
+  itemId,
+  partId
+}: Readonly<{
+  itemId?: number;
+  partId?: number;
+}>) {
   const navigate = useNavigate();
-  const table = useTable('stock_tracking');
+  const table = useTable(partId ? 'part_stock_tracking' : 'stock_tracking');
 
   // Render "details" for a stock tracking record
   const renderDetails = useCallback(
@@ -66,7 +84,22 @@ export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
           key: 'status',
           details:
             deltas.status &&
-            StatusRenderer({ status: deltas.status, type: ModelType.stockitem })
+            StatusRenderer({
+              status: deltas.status,
+              type: ModelType.stockitem,
+              fallbackStatus: deltas.status_logical
+            })
+        },
+        {
+          label: t`Old Status`,
+          key: 'old_status',
+          details:
+            deltas.old_status &&
+            StatusRenderer({
+              status: deltas.old_status,
+              type: ModelType.stockitem,
+              fallbackStatus: deltas.old_status_logical
+            })
         },
         {
           label: t`Quantity`,
@@ -150,6 +183,17 @@ export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
             })
         },
         {
+          label: t`Transfer Order`,
+          key: 'transferorder',
+          details:
+            deltas.transferorder_detail &&
+            RenderTransferOrder({
+              instance: deltas.transferorder_detail,
+              link: true,
+              navigate: navigate
+            })
+        },
+        {
           label: t`Customer`,
           key: 'customer',
           details:
@@ -185,6 +229,9 @@ export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
 
   const filters: TableFilter[] = useMemo(() => {
     return [
+      MinDateFilter(),
+      MaxDateFilter(),
+      IncludeVariantsFilter(),
       UserFilter({
         name: 'user',
         label: t`User`,
@@ -197,6 +244,26 @@ export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
     return [
       DateColumn({
         switchable: false
+      }),
+      PartColumn({
+        title: t`Part`,
+        part: 'part_detail',
+        switchable: true,
+        hidden: !partId
+      }),
+      IPNColumn({
+        defaultVisible: false,
+        hidden: !partId
+      }),
+      StockColumn({
+        title: t`Stock Item`,
+        accessor: 'item_detail',
+        nullMessage: (
+          <Text size='sm' c='red'>{t`Stock item no longer exists`}</Text>
+        ),
+        sortable: false,
+        switchable: false,
+        hidden: !partId
       }),
       DescriptionColumn({
         accessor: 'label'
@@ -235,10 +302,15 @@ export function StockTrackingTable({ itemId }: Readonly<{ itemId: number }>) {
       props={{
         params: {
           item: itemId,
+          part: partId,
+          part_detail: partId ? true : undefined,
+          item_detail: partId ? true : undefined,
           user_detail: true
         },
         enableDownload: true,
-        tableFilters: filters
+        tableFilters: filters,
+        modelType: partId ? ModelType.stockitem : undefined,
+        modelField: 'item'
       }}
     />
   );

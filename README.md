@@ -4,12 +4,11 @@
   <p>Open Source Inventory Management System </p>
 
 <!-- Badges -->
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/license/MIT)![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/inventree/inventree)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/license/MIT)![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/inventree/inventree)[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/inventree)](https://artifacthub.io/packages/search?repo=inventree)
 ![CI](https://github.com/inventree/inventree/actions/workflows/qc_checks.yaml/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/inventree/badge/?version=latest)](https://inventree.readthedocs.io/en/latest/?badge=latest)
 ![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker.yaml/badge.svg)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/9bbb2101-0a4d-41e7-ad56-b63fb6053094/deploy-status)](https://app.netlify.com/sites/inventree/deploys)
-[![Performance Testing](https://dev.azure.com/InvenTree/InvenTree%20test%20statistics/_apis/build/status%2Fmatmair.InvenTree?branchName=testing)](https://dev.azure.com/InvenTree/InvenTree%20test%20statistics/_build/latest?definitionId=3&branchName=testing)
 
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7179/badge)](https://bestpractices.coreinfrastructure.org/projects/7179)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/inventree/InvenTree/badge)](https://securityscorecards.dev/viewer/?uri=github.com/inventree/InvenTree)
@@ -56,7 +55,7 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
 * [InvenTree API](https://docs.inventree.org/en/latest/api/)
 * [Python module](https://docs.inventree.org/en/latest/api/python/)
 * [Plugin interface](https://docs.inventree.org/en/latest/plugins/)
-* [Third party tools](https://docs.inventree.org/en/latest/plugins/integrate/)
+* [Third party tools](https://inventree.org/extend/integrate/)
 
 <!-- TechStack -->
 ### :space_invader: Tech Stack
@@ -77,6 +76,7 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
   <ul>
     <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
     <li><a href="https://www.mysql.com/">MySQL</a></li>
+    <li><a href="https://www.mariadb.org/">MariaDB</a></li>
     <li><a href="https://www.sqlite.org/">SQLite</a></li>
     <li><a href="https://redis.io/">Redis</a></li>
   </ul>
@@ -200,6 +200,8 @@ Find a full list of used third-party libraries in the license information dialog
   </a>
   <a href="https://www.netlify.com"> <img src="https://www.netlify.com/v3/img/components/netlify-color-bg.svg" alt="Deploys by Netlify" /> </a>
   <a href="https://crowdin.com"> <img src="https://crowdin.com/images/crowdin-logo.svg" alt="Translation by Crowdin" /> </a> <br>
+  <a href="https://codspeed.io/inventree/InvenTree?utm_source=badge"><img src="https://img.shields.io/endpoint?url=https://codspeed.io/badge.json" alt="CodSpeed Badge"/></a>
+  <a href="https://flakiness.io/InvenTree/InvenTree"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fflakiness.io%2Fapi%2Fbadge%3Finput%3D%257B%2522badgeToken%2522%253A%2522badge-35mqq5Ht4uL3vGF8lR9P2D%2522%257D" alt="Flakiness Badge"/></a>
 </p>
 
 

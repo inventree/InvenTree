@@ -11,6 +11,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
     """Tests for the integrated InvenTreeBarcode barcode plugin."""
 
     fixtures = ['category', 'part', 'location', 'stock', 'company', 'supplier_part']
+    roles = ['stock.view', 'stock_location.view', 'part.view']
 
     def setUp(self):
         """Set up the test case."""
@@ -355,14 +356,16 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
     def test_generation_inventree_json(self):
         """Test JSON barcode generation."""
+        self.set_plugin_setting('INTERNAL_BARCODE_FORMAT', 'json')
         item = stock.models.StockLocation.objects.get(pk=5)
         data = self.generate('stocklocation', item.pk, expected_code=200).data
         self.assertEqual(data['barcode'], '{"stocklocation": 5}')
 
-    def test_generation_inventree_short(self):
-        """Test short barcode generation."""
+        # Revert to default setting
         self.set_plugin_setting('INTERNAL_BARCODE_FORMAT', 'short')
 
+    def test_generation_inventree_short(self):
+        """Test short barcode generation."""
         item = stock.models.StockLocation.objects.get(pk=5)
 
         # test with default prefix
@@ -376,4 +379,3 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             self.assertEqual(data['barcode'], f'{prefix}SL5')
 
         self.set_plugin_setting('SHORT_BARCODE_PREFIX', 'INV-')
-        self.set_plugin_setting('INTERNAL_BARCODE_FORMAT', 'json')

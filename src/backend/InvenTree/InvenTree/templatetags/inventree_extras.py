@@ -71,12 +71,6 @@ def str2bool(x, *args, **kwargs):
 
 
 @register.simple_tag()
-def add(x, y, *args, **kwargs):
-    """Add two numbers together."""
-    return x + y
-
-
-@register.simple_tag()
 def to_list(*args):
     """Return the input arguments as list."""
     return args

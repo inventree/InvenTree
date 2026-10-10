@@ -9,7 +9,7 @@ on:
       - l10
 
 env:
-  python_version: 3.9
+  python_version: 3.12
 
 permissions:
   contents: read
@@ -31,12 +31,12 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # pin@v5.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Environment Setup
-        uses: ./.github/actions/setup
+        uses: $/.github/actions/setup
         with:
           install: true
           apt-dependency: gettext
@@ -46,4 +46,6 @@ jobs:
         run: |
           python ./.github/scripts/check_source_strings.py --frontend --backend
       - name: Check Migration Files
-        run: python3 .github/scripts/check_migration_files.py
+        run: |
+          invoke migrate --detect
+          python3 .github/scripts/check_migration_files.py

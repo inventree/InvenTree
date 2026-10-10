@@ -49,6 +49,20 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         },
     }
 
+    def get_ui_spotlight_actions(self, request, context, **kwargs):
+        """Return a list of custom actions to be injected into the UI spotlight."""
+        return [
+            {
+                'key': 'sample-action',
+                'title': 'Sample Action',
+                'description': 'This is a sample action for the spotlight search',
+                'icon': 'ti:search:outline',
+                'source': self.plugin_static_file(
+                    'sample_action.js:performSampleAction'
+                ),
+            }
+        ]
+
     def get_ui_panels(self, request, context, **kwargs):
         """Return a list of custom panels to be injected into the UI."""
         panels = []
@@ -208,8 +222,38 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 'key': 'sample-nav-item',
                 'title': 'Sample Nav Item',
                 'icon': 'ti:menu',
-                'options': {'url': '/sample/page/'},
+                'options': {'url': 'plugin/sampleui/test'},
             }
+        ]
+
+    def get_ui_primary_actions(self, request, context, **kwargs):
+        """Return a list of custom primary action buttons."""
+        return [
+            {
+                'key': 'sample-primary-action',
+                'title': 'Sample Primary Action',
+                'icon': 'ti:plus:outline',
+                'options': {'url': '/core/sample-primary-action/', 'color': 'orange'},
+            }
+        ]
+
+    def get_ui_routes(self, request, context, **kwargs):
+        """Return a list of custom UI routes."""
+        return [
+            {
+                # Adds a simple route to /web/plugin/sampleui/test
+                'key': 'sample-route',
+                'title': 'Sample Route',
+                'source': self.plugin_static_file('sample_route.js:getBasicPage'),
+                'options': {'path': 'test'},
+            },
+            {
+                # Adds a simple route, with an argument to /web/plugin/sampleui/test/:arg1 (e.g., /web/plugin/sampleui/test/1)
+                'key': 'sample-route-arg',
+                'title': 'Sample Route Arg',
+                'source': self.plugin_static_file('sample_route.js:getArgPage'),
+                'options': {'path': 'test/:arg1'},
+            },
         ]
 
     def get_admin_context(self) -> dict:

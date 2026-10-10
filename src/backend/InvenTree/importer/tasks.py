@@ -16,8 +16,6 @@ def import_data(session_id: int):
     Attempt to load data from the provided file, and potentially handle any errors.
     """
     import importer.models
-    import importer.operations
-    import importer.status_codes
 
     try:
         session = importer.models.DataImportSession.objects.get(pk=session_id)

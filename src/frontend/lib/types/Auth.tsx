@@ -1,5 +1,4 @@
 export interface AuthContext {
-  status: number;
   user?: {
     id: number;
     display: string;
@@ -11,8 +10,7 @@ export interface AuthContext {
     at: number;
     username: string;
   }[];
-  data: { flows: Flow[] };
-  meta: { is_authenticated: boolean };
+  flows?: Flow[];
 }
 
 export enum FlowEnum {
@@ -25,13 +23,15 @@ export enum FlowEnum {
   MfaAuthenticate = 'mfa_authenticate',
   Reauthenticate = 'reauthenticate',
   MfaReauthenticate = 'mfa_reauthenticate',
-  MfaTrust = 'mfa_trust'
+  MfaTrust = 'mfa_trust',
+  MfaRegister = 'mfa_register'
 }
 
 export interface Flow {
   id: FlowEnum;
   providers?: string[];
-  is_pending?: boolean[];
+  provider?: AuthProvider;
+  is_pending?: boolean;
 }
 
 export interface AuthProvider {

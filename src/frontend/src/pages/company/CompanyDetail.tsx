@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconInfoCircle,
@@ -17,18 +17,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
-import { apiUrl } from '@lib/functions/Api';
+import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import {
-  type DetailsField,
-  DetailsTable
-} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
-import { DetailsImage } from '../../components/details/DetailsImage';
-import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   DeleteItemAction,
+  DuplicateItemAction,
   EditItemAction,
   OptionsActionDropdown
 } from '../../components/items/ActionDropdown';
@@ -37,14 +32,16 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
-import type { PanelType } from '../../components/panels/Panel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
+import ParametersPanel from '../../components/panels/ParametersPanel';
 import { companyFields } from '../../forms/CompanyForms';
 import {
+  useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useUserState } from '../../states/UserState';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
@@ -54,6 +51,7 @@ import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import { CompanyDetailsPanel } from './CompanyDetailsPanel';
 
 export type CompanyDetailProps = {
   title: string;
@@ -77,102 +75,26 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   } = useInstance({
     endpoint: ApiEndpoints.company_list,
     pk: id,
-    params: {},
+    params: {
+      tags: true
+    },
     refetchOnMount: true
   });
 
-  const detailsPanel = useMemo(() => {
-    if (instanceQuery.isFetching) {
-      return <Skeleton />;
-    }
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.company,
+    modelId: company?.pk
+  });
 
-    const tl: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'description',
-        label: t`Description`,
-        copy: true
-      },
-      {
-        type: 'link',
-        name: 'website',
-        label: t`Website`,
-        external: true,
-        copy: true,
-        hidden: !company.website
-      },
-      {
-        type: 'text',
-        name: 'phone',
-        label: t`Phone Number`,
-        copy: true,
-        hidden: !company.phone
-      },
-      {
-        type: 'text',
-        name: 'email',
-        label: t`Email Address`,
-        copy: true,
-        hidden: !company.email
-      },
-      {
-        type: 'text',
-        name: 'tax_id',
-        label: t`Tax ID`,
-        copy: true,
-        hidden: !company.tax_id
-      }
-    ];
-
-    const tr: DetailsField[] = [
-      {
-        type: 'string',
-        name: 'currency',
-        label: t`Default Currency`
-      },
-      {
-        type: 'boolean',
-        name: 'is_supplier',
-        label: t`Supplier`,
-        icon: 'suppliers'
-      },
-      {
-        type: 'boolean',
-        name: 'is_manufacturer',
-        label: t`Manufacturer`,
-        icon: 'manufacturers'
-      },
-      {
-        type: 'boolean',
-        name: 'is_customer',
-        label: t`Customer`,
-        icon: 'customers'
-      }
-    ];
-
-    return (
-      <ItemDetailsGrid>
-        <Grid grow>
-          <DetailsImage
-            appRole={UserRoles.purchase_order}
-            apiPath={apiUrl(ApiEndpoints.company_list, company.pk)}
-            src={company.image}
-            pk={company.pk}
-            refresh={refreshInstance}
-            imageActions={{
-              uploadFile: true,
-              downloadImage: true,
-              deleteFile: true
-            }}
-          />
-          <Grid.Col span={{ base: 12, sm: 8 }}>
-            <DetailsTable item={company} fields={tl} />
-          </Grid.Col>
-        </Grid>
-        <DetailsTable item={company} fields={tr} />
-      </ItemDetailsGrid>
-    );
-  }, [company, instanceQuery]);
+  const detailsPanel = instanceQuery.isFetching ? (
+    <Skeleton />
+  ) : (
+    <CompanyDetailsPanel
+      instance={company}
+      allowImageEdit
+      refreshInstance={refreshInstance}
+    />
+  );
 
   const companyPanels: PanelType[] = useMemo(() => {
     return [
@@ -186,25 +108,29 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         name: 'supplied-parts',
         label: t`Supplied Parts`,
         icon: <IconPackageExport />,
-        hidden: !company?.is_supplier,
-        content: company?.pk && (
-          <SupplierPartTable params={{ supplier: company.pk }} />
-        )
+        hidden:
+          !company?.is_supplier ||
+          !user?.hasViewVisible(UserRoles.purchase_order),
+        content: company?.pk && <SupplierPartTable supplierId={company.pk} />
       },
       {
         name: 'manufactured-parts',
         label: t`Manufactured Parts`,
         icon: <IconBuildingWarehouse />,
-        hidden: !company?.is_manufacturer,
+        hidden:
+          !company?.is_manufacturer ||
+          !user?.hasViewVisible(UserRoles.purchase_order),
         content: company?.pk && (
-          <ManufacturerPartTable params={{ manufacturer: company.pk }} />
+          <ManufacturerPartTable manufacturerId={company.pk} />
         )
       },
       {
         name: 'purchase-orders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
-        hidden: !company?.is_supplier,
+        hidden:
+          !company?.is_supplier ||
+          !user?.hasViewVisible(UserRoles.purchase_order),
         content: company?.pk && <PurchaseOrderTable supplierId={company.pk} />
       },
       {
@@ -224,14 +150,17 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         name: 'sales-orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        hidden: !company?.is_customer,
+        hidden:
+          !company?.is_customer || !user?.hasViewVisible(UserRoles.sales_order),
         content: company?.pk && <SalesOrderTable customerId={company.pk} />
       },
       {
         name: 'return-orders',
         label: t`Return Orders`,
         icon: <IconTruckReturn />,
-        hidden: !company?.is_customer,
+        hidden:
+          !company?.is_customer ||
+          !user?.hasViewVisible(UserRoles.return_order),
         content: company.pk ? (
           <ReturnOrderTable customerId={company.pk} />
         ) : (
@@ -249,6 +178,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             tableName='assigned-stock'
             showLocation={false}
             allowReturn
+            defaultInStock={null}
             params={{ customer: company.pk }}
           />
         ) : (
@@ -267,23 +197,43 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: <IconMap2 />,
         content: company?.pk && <AddressTable companyId={company.pk} />
       },
+      ParametersPanel({
+        model_type: ModelType.company,
+        model_id: company?.pk,
+        parameter_count: instanceInfo.parameter_count
+      }),
       AttachmentPanel({
         model_type: ModelType.company,
-        model_id: company.pk
+        model_id: company.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.company,
-        model_id: company.pk
+        model_id: company.pk,
+        note_count: instanceInfo.note_count
       })
     ];
-  }, [id, company, user]);
+  }, [id, company, user, instanceInfo]);
 
   const editCompany = useEditApiFormModal({
     url: ApiEndpoints.company_list,
     pk: company?.pk,
     title: t`Edit Company`,
-    fields: companyFields(),
+    fields: useMemo(() => companyFields({}), []),
+    queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
+  });
+
+  const duplicateCompany = useCreateApiFormModal({
+    url: ApiEndpoints.company_list,
+    title: t`Duplicate Company`,
+    initialData: useMemo(() => ({ ...company }), [company]),
+    fields: useMemo(
+      () => companyFields({ duplicateCompanyId: company?.pk }),
+      [company]
+    ),
+    follow: true,
+    modelType: ModelType.company
   });
 
   const deleteCompany = useDeleteApiFormModal({
@@ -310,6 +260,10 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             hidden: !user.hasChangeRole(UserRoles.purchase_order),
             onClick: () => editCompany.open()
           }),
+          DuplicateItemAction({
+            hidden: !user.hasAddRole(UserRoles.purchase_order),
+            onClick: () => duplicateCompany.open()
+          }),
           DeleteItemAction({
             hidden: !user.hasDeleteRole(UserRoles.purchase_order),
             onClick: () => deleteCompany.open()
@@ -333,6 +287,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     <>
       {editCompany.modal}
       {deleteCompany.modal}
+      {duplicateCompany.modal}
       <InstanceDetail
         query={instanceQuery}
         requiredPermission={ModelType.company}

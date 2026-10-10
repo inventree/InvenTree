@@ -5,12 +5,6 @@ from django.contrib import admin
 from part import models
 
 
-class PartParameterInline(admin.TabularInline):
-    """Inline for part parameter data."""
-
-    model = models.PartParameter
-
-
 @admin.register(models.Part)
 class PartAdmin(admin.ModelAdmin):
     """Admin class for the Part model."""
@@ -31,12 +25,11 @@ class PartAdmin(admin.ModelAdmin):
         'variant_of',
         'category',
         'default_location',
-        'default_supplier',
         'bom_checked_by',
         'creation_user',
     ]
 
-    inlines = [PartParameterInline]
+    inlines = []
 
 
 @admin.register(models.PartPricing)
@@ -44,6 +37,8 @@ class PartPricingAdmin(admin.ModelAdmin):
     """Admin class for PartPricing model."""
 
     list_display = ('part', 'overall_min', 'overall_max')
+
+    search_fields = ['part__name', 'part__IPN', 'part__description']
 
     autocomplete_fields = ['part']
 
@@ -53,6 +48,8 @@ class PartStocktakeAdmin(admin.ModelAdmin):
     """Admin class for PartStocktake model."""
 
     list_display = ['part', 'date', 'quantity']
+
+    search_fields = ['part__name', 'part__IPN']
 
 
 @admin.register(models.PartCategory)
@@ -70,6 +67,8 @@ class PartCategoryAdmin(admin.ModelAdmin):
 class PartRelatedAdmin(admin.ModelAdmin):
     """Class to manage PartRelated objects."""
 
+    search_fields = ['part_1__name', 'part_2__name']
+
     autocomplete_fields = ('part_1', 'part_2')
 
 
@@ -79,6 +78,8 @@ class PartTestTemplateAdmin(admin.ModelAdmin):
 
     list_display = ('part', 'test_name', 'required')
     readonly_fields = ['key']
+
+    search_fields = ['part__name', 'test_name', 'description']
 
     autocomplete_fields = ('part',)
 
@@ -99,33 +100,6 @@ class BomItemAdmin(admin.ModelAdmin):
     autocomplete_fields = ('part', 'sub_part')
 
 
-@admin.register(models.PartParameterTemplate)
-class ParameterTemplateAdmin(admin.ModelAdmin):
-    """Admin class for the PartParameterTemplate model."""
-
-    list_display = ('name', 'units')
-
-    search_fields = ('name', 'units')
-
-
-@admin.register(models.PartParameter)
-class ParameterAdmin(admin.ModelAdmin):
-    """Admin class for the PartParameter model."""
-
-    list_display = ('part', 'template', 'data')
-
-    readonly_fields = ('updated', 'updated_by')
-
-    autocomplete_fields = ('part', 'template')
-
-
-@admin.register(models.PartCategoryParameterTemplate)
-class PartCategoryParameterAdmin(admin.ModelAdmin):
-    """Admin class for the PartCategoryParameterTemplate model."""
-
-    autocomplete_fields = ('category', 'parameter_template')
-
-
 @admin.register(models.PartSellPriceBreak)
 class PartSellPriceBreakAdmin(admin.ModelAdmin):
     """Admin class for the PartSellPriceBreak model."""
@@ -136,6 +110,10 @@ class PartSellPriceBreakAdmin(admin.ModelAdmin):
         model = models.PartSellPriceBreak
 
     list_display = ('part', 'quantity', 'price')
+
+    search_fields = ['part__name', 'part__IPN']
+
+    autocomplete_fields = ('part',)
 
 
 @admin.register(models.PartInternalPriceBreak)
@@ -148,5 +126,7 @@ class PartInternalPriceBreakAdmin(admin.ModelAdmin):
         model = models.PartInternalPriceBreak
 
     list_display = ('part', 'quantity', 'price')
+
+    search_fields = ['part__name', 'part__IPN']
 
     autocomplete_fields = ('part',)

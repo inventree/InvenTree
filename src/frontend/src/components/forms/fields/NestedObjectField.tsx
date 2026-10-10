@@ -1,9 +1,10 @@
 import type { ApiFormFieldSet, ApiFormFieldType } from '@lib/types/Forms';
 import { Accordion, Divider, Stack, Text } from '@mantine/core';
+import { memo } from 'react';
 import type { Control, FieldValues } from 'react-hook-form';
 import { ApiFormField } from './ApiFormField';
 
-export function NestedObjectField({
+function NestedObjectFieldComponent({
   control,
   fieldName,
   definition,
@@ -43,3 +44,5 @@ export function NestedObjectField({
     </Accordion>
   );
 }
+
+export const NestedObjectField = memo(NestedObjectFieldComponent);

@@ -8,17 +8,21 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { formatDecimal } from '@lib/functions/Formatting';
+import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
+import {
+  IPNColumn,
+  PartColumn,
+  StatusColumn,
+  StockColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import {
   useStockItemInstallFields,
   useStockItemUninstallFields
 } from '../../forms/StockForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { PartColumn, StatusColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function InstalledItemsTable({
   stockItem
@@ -62,19 +66,12 @@ export default function InstalledItemsTable({
       PartColumn({
         part: 'part_detail'
       }),
-      {
-        accessor: 'quantity',
-        switchable: false,
-        render: (record: any) => {
-          let text = formatDecimal(record.quantity);
-
-          if (record.serial && record.quantity == 1) {
-            text = `# ${record.serial}`;
-          }
-
-          return text;
-        }
-      },
+      IPNColumn({}),
+      StockColumn({
+        accessor: '',
+        title: t`Stock Item`,
+        sortable: false
+      }),
       {
         accessor: 'batch',
         switchable: false

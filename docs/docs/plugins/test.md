@@ -9,11 +9,10 @@ For complicated plugins it makes sense to add unit tests the code to ensure that
 
 For plugin testing the following environment variables must be set to True:
 
-| Name | Function | Value |
-| ---- | -------- | ----- |
-| INVENTREE_PLUGINS_ENABLED | Enables the use of 3rd party plugins | True |
-| INVENTREE_PLUGIN_TESTING | Enables enables all plugins no matter of their active state in the db or built-in flag | True |
-| INVENTREE_PLUGIN_TESTING_SETUP | Enables the url mixin | True |
+{{ configtable() }}
+{{ configsetting("INVENTREE_PLUGINS_ENABLED") }} Enables the use of 3rd party plugins |
+{{ configsetting("INVENTREE_PLUGIN_TESTING") }} Enables enables all plugins no matter of their active state in the db or built-in flag |
+{{ configsetting("INVENTREE_PLUGIN_TESTING_SETUP") }} Enables the url mixin |
 
 ### Test Program
 
