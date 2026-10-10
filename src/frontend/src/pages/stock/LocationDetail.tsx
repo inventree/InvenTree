@@ -438,38 +438,41 @@ export default function Stock() {
             opened={treeOpen}
             onClose={() => setTreeOpen(false)}
             selectedId={location?.pk}
-          />
-          <PageDetail
-            title={(location?.name ?? id) ? t`Stock Location` : t`Stock`}
-            subtitle={location?.description}
-            icon={location?.icon && <ApiIcon name={location?.icon} />}
-            actions={location?.pk ? locationActions : undefined}
-            editAction={editLocation.open}
-            editEnabled={
-              !!location?.pk &&
-              user.hasChangePermission(ModelType.stocklocation)
-            }
-            breadcrumbs={breadcrumbs}
-            lastCrumb={[
-              {
-                name: location.name,
-                url: `/stock/location/${location.pk}/`
-              }
-            ]}
-            breadcrumbAction={() => {
-              setTreeOpen(true);
-            }}
-          />
-          <PanelGroup
-            pageKey='stocklocation'
-            panels={locationPanels}
-            model={ModelType.stocklocation}
-            reloadInstance={refreshInstance}
-            id={location?.pk}
-            instance={location}
-            pluginPanelWithoutId
-            defaultPanel={defaultPanel}
-          />
+          >
+            <Stack>
+              <PageDetail
+                title={(location?.name ?? id) ? t`Stock Location` : t`Stock`}
+                subtitle={location?.description}
+                icon={location?.icon && <ApiIcon name={location?.icon} />}
+                actions={location?.pk ? locationActions : undefined}
+                editAction={editLocation.open}
+                editEnabled={
+                  !!location?.pk &&
+                  user.hasChangePermission(ModelType.stocklocation)
+                }
+                breadcrumbs={breadcrumbs}
+                lastCrumb={[
+                  {
+                    name: location.name,
+                    url: `/stock/location/${location.pk}/`
+                  }
+                ]}
+                breadcrumbAction={() => {
+                  setTreeOpen(true);
+                }}
+              />
+              <PanelGroup
+                pageKey='stocklocation'
+                panels={locationPanels}
+                model={ModelType.stocklocation}
+                reloadInstance={refreshInstance}
+                id={location?.pk}
+                instance={location}
+                pluginPanelWithoutId
+                defaultPanel={defaultPanel}
+              />
+            </Stack>
+          </NavigationTree>
         </Stack>
         {stockAdjustActions.modals.map((modal) => modal.modal)}
       </InstanceDetail>

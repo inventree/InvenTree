@@ -31,6 +31,7 @@ The *Display Settings* screen shows general display configuration options:
 {{ usersetting("SHOW_FULL_CATEGORY_IN_TABLES")}}
 {{ usersetting("SHOW_BOM_SUBASSEMBLY_LEVELS")}}
 {{ usersetting("ENABLE_LAST_BREADCRUMB") }}
+{{ usersetting("NAVIGATION_TREE_PINNED") }}
 {{ usersetting("SHOW_EXTRA_MODEL_INFO") }}
 {{ usersetting("SHOW_FULL_LOCATION_IN_TABLES") }}
 {{ usersetting("DISPLAY_ITEMS_FINAL_LEVEL") }}
