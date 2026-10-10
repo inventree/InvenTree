@@ -3,6 +3,7 @@
 import hashlib
 import json
 from decimal import Decimal
+from pathlib import Path
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
@@ -23,6 +24,7 @@ from stock.models import StockItem, batch_tracking_entries
 from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 
 from . import serializers
+from .importers import WorkbookImportError, parse_workbook_rows
 from .models import (
     ComponentReplacement,
     ConfigurationItem,
@@ -1518,6 +1520,87 @@ class DataImportBatchViewSet(CangxuModelViewSet):
     search_fields = ['source_system', 'source_file_name', 'source_file_digest']
     ordering_fields = ['created_at', 'source_kind', 'state']
     ordering = ['-created_at']
+
+    @action(detail=False, methods=['post'], url_path='upload')
+    def upload(self, request):
+        """Parse an XLSX into traceable source rows without posting business data."""
+        upload = request.FILES.get('source_file')
+        if upload is None:
+            raise ValidationError({'source_file': _('An XLSX file is required.')})
+        if Path(upload.name).suffix.lower() != '.xlsx':
+            raise ValidationError({
+                'source_file': _('Only .xlsx workbooks are supported.')
+            })
+        if upload.size > 25 * 1024 * 1024:
+            raise ValidationError({
+                'source_file': _('The workbook exceeds the 25 MiB limit.')
+            })
+
+        digest = hashlib.sha256()
+        for chunk in upload.chunks():
+            digest.update(chunk)
+        upload.seek(0)
+        metadata = {
+            'source_system': request.data.get('source_system', ''),
+            'source_kind': request.data.get('source_kind', ''),
+            'source_file_name': Path(upload.name).name[:255],
+            'source_file_digest': digest.hexdigest(),
+            'inventory_as_of': request.data.get('inventory_as_of'),
+            'physical_count_confirmed': request.data.get(
+                'physical_count_confirmed', False
+            ),
+        }
+        serializer = self.get_serializer(data=metadata)
+        serializer.is_valid(raise_exception=True)
+        values = serializer.validated_data
+        try:
+            rows = parse_workbook_rows(upload)
+        except WorkbookImportError as exc:
+            messages = {
+                'workbook_too_large': _('The workbook exceeds the 25 MiB limit.'),
+                'workbook_too_many_cells': _('The workbook exceeds the cell limit.'),
+                'workbook_too_many_rows': _('The workbook exceeds the row limit.'),
+                'workbook_has_no_populated_rows': _(
+                    'The workbook contains no populated rows.'
+                ),
+                'invalid_xlsx': _('The uploaded file is not a readable XLSX workbook.'),
+            }
+            raise ValidationError({
+                'source_file': messages.get(str(exc), _('Invalid workbook.'))
+            }) from exc
+
+        staged = 0
+        with transaction.atomic():
+            batch, created = DataImportBatch.objects.get_or_create(
+                source_system=values['source_system'],
+                source_kind=values['source_kind'],
+                source_file_digest=values['source_file_digest'],
+                defaults={
+                    'source_file_name': values.get('source_file_name', ''),
+                    'inventory_as_of': values.get('inventory_as_of'),
+                    'physical_count_confirmed': values.get(
+                        'physical_count_confirmed', False
+                    ),
+                    'created_by': request.user,
+                },
+            )
+            if batch.state == DataImportBatch.State.DRAFT:
+                before = batch.records.count()
+                DataImportRecord.objects.bulk_create(
+                    [DataImportRecord(batch=batch, **row) for row in rows],
+                    ignore_conflicts=True,
+                )
+                staged = batch.records.count() - before
+
+        return Response(
+            {
+                'batch': self.get_serializer(batch).data,
+                'worksheet_rows': len(rows),
+                'staged_rows': staged,
+                'already_staged_rows': len(rows) - staged,
+            },
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+        )
 
     def create(self, request, *args, **kwargs):
         """Return the original batch when the same source file is uploaded again."""

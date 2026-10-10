@@ -1,8 +1,13 @@
 """Integration tests for Cangxu inventory workflows."""
 
+from io import BytesIO
+
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
 from django.urls import reverse
 from django.utils import timezone
+
+from openpyxl import Workbook
 
 from build.models import Build
 from build.validators import generate_next_build_reference
@@ -954,6 +959,68 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
             },
             expected_code=201,
         )
+
+    def test_xlsx_upload_stages_cell_provenance_idempotently(self):
+        """Parse a fictional workbook while preserving leading zeros and coordinates."""
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = 'Synthetic inventory'
+        sheet.append(['Legacy code', 'Quantity'])
+        sheet.append(['00001234', 3])
+        sheet['B2'].number_format = '0.000'
+        detail = workbook.create_sheet('Synthetic trace')
+        detail['B4'] = 'CX-TEST-SN-0001'
+        content = BytesIO()
+        workbook.save(content)
+        stock_count = StockItem.objects.count()
+
+        def upload_workbook():
+            return SimpleUploadedFile(
+                'synthetic.xlsx',
+                content.getvalue(),
+                content_type=(
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                ),
+            )
+
+        response = self.post(
+            reverse('cangxu-import-batch-upload'),
+            {
+                'source_system': 'CX-TEST',
+                'source_kind': DataImportBatch.Kind.PURCHASE_HISTORY,
+                'source_file': upload_workbook(),
+            },
+            expected_code=201,
+            format='multipart',
+        )
+        self.assertEqual(response.data['worksheet_rows'], 3)
+        self.assertEqual(response.data['staged_rows'], 3)
+        batch_id = response.data['batch']['id']
+        first_row = DataImportRecord.objects.get(
+            batch_id=batch_id, source_sheet='Synthetic inventory', source_row=2
+        )
+        self.assertEqual(first_row.source_range, 'A2:B2')
+        self.assertEqual(first_row.source_values['A']['value'], '00001234')
+        self.assertEqual(first_row.source_values['B']['number_format'], '0.000')
+        detail_row = DataImportRecord.objects.get(
+            batch_id=batch_id, source_sheet='Synthetic trace', source_row=4
+        )
+        self.assertEqual(detail_row.source_range, 'B4:B4')
+
+        repeated = self.post(
+            reverse('cangxu-import-batch-upload'),
+            {
+                'source_system': 'CX-TEST',
+                'source_kind': DataImportBatch.Kind.PURCHASE_HISTORY,
+                'source_file': upload_workbook(),
+            },
+            expected_code=200,
+            format='multipart',
+        )
+        self.assertEqual(repeated.data['batch']['id'], batch_id)
+        self.assertEqual(repeated.data['staged_rows'], 0)
+        self.assertEqual(repeated.data['already_staged_rows'], 3)
+        self.assertEqual(StockItem.objects.count(), stock_count)
 
     def test_opening_import_requires_review_and_applies_idempotently(self):
         """Preserve source cells, then write one native stock item after approval."""
