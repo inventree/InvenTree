@@ -401,6 +401,7 @@ class PurchaseOrderSerializer(
             'total_price',
             'order_currency',
             'destination',
+            'delivery_address',
             'updated_at',
         ])
         read_only_fields = [
