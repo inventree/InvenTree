@@ -1,6 +1,8 @@
 """Read-only workbook parsing helpers for staged Cangxu imports."""
 
+import re
 from datetime import date, datetime, time
+from decimal import Decimal
 
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
@@ -218,11 +220,34 @@ def normalize_workbook_rows(rows, source_kind):
                 for column, cell in row['source_values'].items()
                 if column not in column_targets and cell['value'] is not None
             )
-            fields = {
-                target: row['source_values'][column]['value']
-                for column, target in column_targets.items()
-                if row['source_values'][column]['value'] is not None
-            }
+            fields = {}
+            identifier_warnings = []
+            for column, target in column_targets.items():
+                cell = row['source_values'][column]
+                value = cell['value']
+                if value is None:
+                    continue
+                if (
+                    target
+                    in {
+                        'part_number',
+                        'oem_part_number',
+                        'serial',
+                        'external_reference',
+                    }
+                    and isinstance(value, (int, float))
+                    and not isinstance(value, bool)
+                ):
+                    number_format = cell.get('number_format', '')
+                    if isinstance(value, int) and re.fullmatch(r'0+', number_format):
+                        value = str(value).zfill(len(number_format))
+                    else:
+                        identifier_warnings.append({
+                            'field': target,
+                            'code': 'identifier_stored_as_number',
+                            'source_column': column,
+                        })
+                fields[target] = value
             row['normalized_values'] = {
                 'row_type': 'data',
                 'mapping_status': (
@@ -232,6 +257,93 @@ def normalize_workbook_rows(rows, source_kind):
                 'fields': fields,
                 'unmapped_columns': unmapped_columns,
                 'ambiguous_fields': ambiguous,
+                'identifier_warnings': identifier_warnings,
             }
 
     return rows
+
+
+DATE_FIELDS = {'production_date', 'shipped_at', 'returned_at'}
+YEAR_PATTERN = re.compile(r'(?<!\d)(?:19|20)\d{2}(?!\d)')
+PARTIAL_DATE_PATTERN = re.compile(r'^(?:\d{1,2}[./-]\d{1,2}|\d{1,2}月\d{1,2}日)$')
+SERIAL_RANGE_PATTERN = re.compile(
+    r'^(?P<start_prefix>[A-Za-z0-9_-]*?)(?P<start>\d+)\s*[-–~至]\s*'  # noqa: RUF001 - accept source range dashes
+    r'(?P<end_prefix>[A-Za-z0-9_-]*?)(?P<end>\d+)$'
+)
+
+
+def validate_normalized_import_values(normalized_values):
+    """Validate dates and serial ranges without guessing or expanding stock."""
+    if not isinstance(normalized_values, dict):
+        return []
+
+    fields = normalized_values.get('fields', {})
+    if not isinstance(fields, dict):
+        return []
+
+    errors = []
+    for warning in normalized_values.get('identifier_warnings', []):
+        if isinstance(warning, dict):
+            errors.append(warning)
+    for field in DATE_FIELDS:
+        value = fields.get(field)
+        if value in (None, ''):
+            continue
+        if not isinstance(value, str):
+            errors.append({'field': field, 'code': 'invalid_date'})
+            continue
+        value = value.strip()
+        if not YEAR_PATTERN.search(value):
+            code = (
+                'date_missing_year'
+                if PARTIAL_DATE_PATTERN.fullmatch(value)
+                else 'invalid_date'
+            )
+            errors.append({'field': field, 'code': code})
+            continue
+        if not _is_complete_date(value):
+            errors.append({'field': field, 'code': 'invalid_date'})
+
+    serial = fields.get('serial')
+    quantity = fields.get('quantity')
+    if isinstance(serial, str):
+        match = SERIAL_RANGE_PATTERN.fullmatch(serial.strip())
+        if match:
+            start = int(match.group('start'))
+            end = int(match.group('end'))
+            if match.group('start_prefix') != match.group('end_prefix') or end < start:
+                errors.append({'field': 'serial', 'code': 'invalid_serial_range'})
+            else:
+                expected_quantity = end - start + 1
+                try:
+                    quantity_matches = Decimal(str(quantity)) == expected_quantity
+                except Exception:
+                    quantity_matches = False
+                errors.append({
+                    'field': 'serial',
+                    'code': (
+                        'serial_range_quantity_mismatch'
+                        if not quantity_matches
+                        else 'serial_range_requires_manual_expansion'
+                    ),
+                    'expected_quantity': expected_quantity,
+                })
+
+    return errors
+
+
+def _is_complete_date(value):
+    """Accept explicit-year dates only, with a small stable format set."""
+    try:
+        datetime.fromisoformat(value.replace('Z', '+00:00'))
+        return True
+    except ValueError:
+        pass
+
+    for date_format in ('%Y/%m/%d', '%Y.%m.%d', '%Y年%m月%d日', '%Y%m%d'):
+        try:
+            datetime.strptime(value, date_format)
+            return True
+        except ValueError:
+            continue
+    return False

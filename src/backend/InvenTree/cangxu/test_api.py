@@ -965,9 +965,12 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
         workbook = Workbook()
         sheet = workbook.active
         sheet.title = 'Synthetic inventory'
-        sheet.append(['PN号', '数量'])
-        sheet.append(['00001234', 3])
+        sheet.append(['PN号', '数量', 'SN号', '生产日期', '本年度生产批次'])
+        sheet.append(['00001234', 3, 'SN0001-SN0004', '5.25', 'CX-TEST-LOT-001'])
         sheet['B2'].number_format = '0.000'
+        sheet.append([1234, 1, 'SN0005', '2026-10-01', 'CX-TEST-LOT-002'])
+        sheet['A3'].number_format = '000000'
+        sheet.append([9876, 1, 'SN0006', '2026-10-02', 'CX-TEST-LOT-003'])
         shipment = workbook.create_sheet('Synthetic shipment')
         shipment.append([
             '流程编号',
@@ -1031,18 +1034,39 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
             expected_code=201,
             format='multipart',
         )
-        self.assertEqual(response.data['worksheet_rows'], 7)
-        self.assertEqual(response.data['staged_rows'], 7)
+        self.assertEqual(response.data['worksheet_rows'], 9)
+        self.assertEqual(response.data['staged_rows'], 9)
         batch_id = response.data['batch']['id']
         first_row = DataImportRecord.objects.get(
             batch_id=batch_id, source_sheet='Synthetic inventory', source_row=2
         )
-        self.assertEqual(first_row.source_range, 'A2:B2')
+        self.assertEqual(first_row.source_range, 'A2:E2')
         self.assertEqual(first_row.source_values['A']['value'], '00001234')
         self.assertEqual(first_row.source_values['B']['number_format'], '0.000')
         self.assertEqual(
             first_row.normalized_values['fields'],
-            {'part_number': '00001234', 'quantity': 3},
+            {
+                'part_number': '00001234',
+                'quantity': 3,
+                'serial': 'SN0001-SN0004',
+                'production_date': '5.25',
+                'batch_code': 'CX-TEST-LOT-001',
+            },
+        )
+        numeric_identifier_row = DataImportRecord.objects.get(
+            batch_id=batch_id, source_sheet='Synthetic inventory', source_row=3
+        )
+        self.assertEqual(
+            numeric_identifier_row.normalized_values['fields']['part_number'], '001234'
+        )
+        unformatted_identifier_row = DataImportRecord.objects.get(
+            batch_id=batch_id, source_sheet='Synthetic inventory', source_row=4
+        )
+        self.assertEqual(
+            unformatted_identifier_row.normalized_values['identifier_warnings'][0][
+                'code'
+            ],
+            'identifier_stored_as_number',
         )
         shipment_row = DataImportRecord.objects.get(
             batch_id=batch_id, source_sheet='Synthetic shipment', source_row=2
@@ -1081,13 +1105,22 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
         )
         self.assertEqual(repeated.data['batch']['id'], batch_id)
         self.assertEqual(repeated.data['staged_rows'], 0)
-        self.assertEqual(repeated.data['already_staged_rows'], 7)
+        self.assertEqual(repeated.data['already_staged_rows'], 9)
         validation = self.post(
             reverse('cangxu-import-batch-validate', kwargs={'pk': batch_id}),
             {},
             expected_code=200,
         )
-        self.assertEqual(validation.data['invalid'], 7)
+        self.assertEqual(validation.data['invalid'], 9)
+        first_row.refresh_from_db()
+        error_codes = {error['code'] for error in first_row.validation_errors}
+        self.assertIn('date_missing_year', error_codes)
+        self.assertIn('serial_range_quantity_mismatch', error_codes)
+        unformatted_identifier_row.refresh_from_db()
+        self.assertIn(
+            'identifier_stored_as_number',
+            {error['code'] for error in unformatted_identifier_row.validation_errors},
+        )
         self.assertFalse(
             DataImportRecord.objects.filter(
                 batch_id=batch_id, state=DataImportRecord.State.VALID

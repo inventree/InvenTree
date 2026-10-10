@@ -24,7 +24,12 @@ from stock.models import StockItem, batch_tracking_entries
 from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 
 from . import serializers
-from .importers import WorkbookImportError, normalize_workbook_rows, parse_workbook_rows
+from .importers import (
+    WorkbookImportError,
+    normalize_workbook_rows,
+    parse_workbook_rows,
+    validate_normalized_import_values,
+)
 from .models import (
     ComponentReplacement,
     ConfigurationItem,
@@ -1662,6 +1667,7 @@ class DataImportBatchViewSet(CangxuModelViewSet):
             errors = []
             if not isinstance(record.source_values, dict) or not record.source_values:
                 errors.append({'field': 'source_values', 'code': 'invalid_object'})
+            errors.extend(validate_normalized_import_values(record.normalized_values))
 
             if batch.source_kind == DataImportBatch.Kind.OPENING_STOCK:
                 if not record.mapped_part_id:
