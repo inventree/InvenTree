@@ -8,7 +8,8 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
-from users.models import ApiToken, Owner, RuleSet
+from common.admin_shared import NoEditAdminMixin
+from users.models import ApiToken, Owner, RuleSet, TippResult
 from users.ruleset import RULESET_CHOICES
 
 User = get_user_model()
@@ -164,6 +165,11 @@ class OwnerAdmin(admin.ModelAdmin):
     """Custom admin interface for the Owner model."""
 
     search_fields = ['name']
+
+
+@admin.register(TippResult)
+class DataOutputAdmin(NoEditAdminMixin, admin.ModelAdmin):
+    """Custom admin interface for the TippResult model."""
 
 
 admin.site.unregister(User)

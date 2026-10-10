@@ -5,6 +5,7 @@ import {
   IconArrowMerge,
   IconBell,
   IconBinaryTree2,
+  IconBook,
   IconBookmarks,
   IconBox,
   IconBrandTelegram,
@@ -278,7 +279,8 @@ const icons: InvenTreeIconType = {
 
   chart_bar: IconChartBar,
   chart_line: IconChartLine,
-  news: IconNews
+  news: IconNews,
+  book: IconBook
 };
 
 /**

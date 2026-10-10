@@ -7,6 +7,7 @@ import {
   UnstyledButton,
   useMantineColorScheme
 } from '@mantine/core';
+import { useWindowEvent } from '@mantine/hooks';
 import {
   IconChevronDown,
   IconInfoCircle,
@@ -17,6 +18,7 @@ import {
   IconUserBolt,
   IconUserCog
 } from '@tabler/icons-react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { aboutInvenTree } from '../../defaults/links';
@@ -27,14 +29,38 @@ import { vars } from '../../theme';
 
 export function MainMenu() {
   const navigate = useNavigate();
+  const [opened, setOpened] = useState(false);
+  const [tourActive, setTourActive] = useState(false);
   const [user, username] = useUserState(
     useShallow((state) => [state.user, state.username])
   );
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
+  useWindowEvent('inventree:open-main-menu', () => {
+    setTourActive(true);
+    setOpened(true);
+  });
+  useWindowEvent('inventree:close-main-menu', () => {
+    setTourActive(false);
+    setOpened(false);
+  });
+
   return (
     <>
-      <Menu width={260} position='bottom-end'>
+      <Menu
+        width={260}
+        position='bottom-end'
+        opened={opened}
+        closeOnClickOutside={!tourActive}
+        closeOnEscape={!tourActive}
+        onChange={(event) => {
+          if (event || !tourActive) {
+            setOpened(event);
+          }
+        }}
+        zIndex={10001}
+        id='tipp-ftu-settings'
+      >
         <Menu.Target>
           <UnstyledButton className={classes.layoutHeaderUser}>
             <Group gap={7}>
@@ -57,6 +83,7 @@ export function MainMenu() {
             leftSection={<IconUserCog />}
             component={Link}
             to='/settings/user'
+            id='tipp-ftu-usersettings'
           >
             <Trans>User Settings</Trans>
           </Menu.Item>
@@ -74,6 +101,7 @@ export function MainMenu() {
               leftSection={<IconUserBolt />}
               component={Link}
               to='/settings/admin'
+              id='tipp-ftu-admincenter'
             >
               <Trans>Admin Center</Trans>
             </Menu.Item>
@@ -95,6 +123,7 @@ export function MainMenu() {
           <Menu.Item
             onClick={() => aboutInvenTree()}
             leftSection={<IconInfoCircle />}
+            id='tipp-ftu-about'
           >
             <Trans>About InvenTree</Trans>
           </Menu.Item>
