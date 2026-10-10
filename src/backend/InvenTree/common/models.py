@@ -561,7 +561,7 @@ class BaseInvenTreeSetting(models.Model):
         return choices
 
     @classmethod
-    def get_setting_object(cls, key, migration_safe_query=False, **kwargs):
+    def get_setting_object(cls, key, **kwargs):
         """Return an InvenTreeSetting object matching the given key.
 
         - Key is case-insensitive
@@ -622,12 +622,7 @@ class BaseInvenTreeSetting(models.Model):
 
         try:
             settings = cls.objects.all()
-            if migration_safe_query:
-                with transaction.atomic():
-                    # ensure we do not crash on migrations
-                    setting = settings.filter(**filters).first()
-            else:
-                setting = settings.filter(**filters).first()
+            setting = settings.filter(**filters).first()
         except (ValueError, cls.DoesNotExist):
             setting = None
         except (IntegrityError, OperationalError, ProgrammingError):
