@@ -204,6 +204,7 @@ class InvenTreeSlackNotifications(NotificationMixin, SettingsMixin, InvenTreePlu
                     },
                 ],
             },
+            timeout=10,
         )
 
         return ret.ok
