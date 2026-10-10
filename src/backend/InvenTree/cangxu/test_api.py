@@ -23,6 +23,9 @@ from stock.status_codes import StockHistoryCode, StockStatus
 from .models import (
     ConfigurationItem,
     CountSession,
+    DataImportBatch,
+    DataImportRecord,
+    ManufacturingLotStockItem,
     ServiceCase,
     ServiceCaseEvent,
     ShipmentManifest,
@@ -885,6 +888,9 @@ class CangxuDemoSeedTest(CangxuAPITestCase):
         initial_configurations = UnitConfiguration.objects.filter(
             unit__part__IPN__startswith='CX-DEMO-'
         ).count()
+        initial_service_cases = ServiceCase.objects.filter(
+            reference__startswith='CX-DEMO-RMA-'
+        ).count()
 
         call_command('seed_cangxu_demo', scale_factor=2)
         expanded_stock = StockItem.objects.filter(
@@ -893,9 +899,14 @@ class CangxuDemoSeedTest(CangxuAPITestCase):
         expanded_configurations = UnitConfiguration.objects.filter(
             unit__part__IPN__startswith='CX-DEMO-'
         ).count()
+        expanded_service_cases = ServiceCase.objects.filter(
+            reference__startswith='CX-DEMO-RMA-'
+        ).count()
 
         self.assertGreater(expanded_stock, initial_stock)
         self.assertGreater(expanded_configurations, initial_configurations)
+        self.assertGreater(expanded_service_cases, initial_service_cases)
+        self.assertEqual(expanded_service_cases, 32)
         self.assertEqual(
             PurchaseOrderLineItem.objects.get(
                 order__reference='CX-DEMO-PO-0001'
@@ -920,3 +931,175 @@ class CangxuDemoSeedTest(CangxuAPITestCase):
             ).count(),
             expanded_configurations,
         )
+        self.assertEqual(
+            ServiceCase.objects.filter(reference__startswith='CX-DEMO-RMA-').count(),
+            expanded_service_cases,
+        )
+
+
+class CangxuDataImportTestCase(CangxuAPITestCase):
+    """Exercise staged inventory imports without bypassing review or traceability."""
+
+    def create_opening_batch(self, digest):
+        """Create a fictional, physically verified opening-balance batch."""
+        return self.post(
+            reverse('cangxu-import-batch-list'),
+            {
+                'source_system': 'CX-TEST',
+                'source_kind': DataImportBatch.Kind.OPENING_STOCK,
+                'source_file_name': 'synthetic-opening-stock.xlsx',
+                'source_file_digest': digest,
+                'inventory_as_of': '2026-10-01',
+                'physical_count_confirmed': True,
+            },
+            expected_code=201,
+        )
+
+    def test_opening_import_requires_review_and_applies_idempotently(self):
+        """Preserve source cells, then write one native stock item after approval."""
+        part = Part.objects.create(
+            name='Synthetic imported tracked part', trackable=True, component=True
+        )
+        location = StockLocation.objects.get(pk=7)
+        batch_response = self.create_opening_batch('a' * 64)
+        batch_id = batch_response.data['id']
+        row_response = self.post(
+            reverse('cangxu-import-batch-stage-rows', kwargs={'pk': batch_id}),
+            [
+                {
+                    'source_sheet': 'Synthetic stock',
+                    'source_row': 2,
+                    'source_range': 'A2:F2',
+                    'source_values': {'legacy_code': '0001002', 'quantity': '1'},
+                    'normalized_values': {'legacy_code': '0001002'},
+                }
+            ],
+            expected_code=201,
+        )
+        self.assertEqual(row_response.data['created'], 1)
+        repeated_rows = self.post(
+            reverse('cangxu-import-batch-stage-rows', kwargs={'pk': batch_id}),
+            [
+                {
+                    'source_sheet': 'Synthetic stock',
+                    'source_row': 2,
+                    'source_range': 'A2:F2',
+                    'source_values': {'legacy_code': '0001002', 'quantity': '1'},
+                    'normalized_values': {'legacy_code': '0001002'},
+                }
+            ],
+            expected_code=201,
+        )
+        self.assertEqual(repeated_rows.data['created'], 0)
+        self.assertEqual(repeated_rows.data['already_staged'], 1)
+        record = DataImportRecord.objects.get(batch_id=batch_id)
+        record.mapped_part = part
+        record.location = location
+        record.quantity = 1
+        record.serial = 'CX-TEST-IMPORT-0001'
+        record.batch_code = 'CX-TEST-OPENING-001'
+        record.save()
+
+        before_count = StockItem.objects.filter(part=part).count()
+        self.post(
+            reverse('cangxu-import-batch-validate', kwargs={'pk': batch_id}),
+            {},
+            expected_code=200,
+        )
+        self.assertEqual(StockItem.objects.filter(part=part).count(), before_count)
+        record.refresh_from_db()
+        self.assertEqual(record.state, DataImportRecord.State.VALID)
+        self.assertEqual(record.source_values['legacy_code'], '0001002')
+
+        self.post(
+            reverse('cangxu-import-batch-approve', kwargs={'pk': batch_id}),
+            {},
+            expected_code=200,
+        )
+        applied = self.post(
+            reverse('cangxu-import-batch-apply', kwargs={'pk': batch_id}),
+            {},
+            expected_code=200,
+        )
+        self.assertEqual(applied.data['applied'], 1)
+        self.assertEqual(StockItem.objects.filter(part=part).count(), 1)
+        self.assertEqual(
+            ManufacturingLotStockItem.objects.filter(stock_item__part=part).count(), 1
+        )
+
+        repeated = self.post(
+            reverse('cangxu-import-batch-apply', kwargs={'pk': batch_id}),
+            {},
+            expected_code=200,
+        )
+        self.assertTrue(repeated.data['already_applied'])
+        self.assertEqual(StockItem.objects.filter(part=part).count(), 1)
+
+        duplicate = self.post(
+            reverse('cangxu-import-batch-list'),
+            {
+                'source_system': 'CX-TEST',
+                'source_kind': DataImportBatch.Kind.OPENING_STOCK,
+                'source_file_name': 'renamed-copy.xlsx',
+                'source_file_digest': 'A' * 64,
+                'inventory_as_of': '2026-10-01',
+                'physical_count_confirmed': True,
+            },
+            expected_code=200,
+        )
+        self.assertEqual(duplicate.data['id'], batch_id)
+
+    def test_invalid_serialized_quantity_cannot_be_approved_or_applied(self):
+        """Hold serial/quantity conflicts in review without touching inventory."""
+        part = Part.objects.create(
+            name='Synthetic invalid imported tracked part',
+            trackable=True,
+            component=True,
+        )
+        location = StockLocation.objects.get(pk=7)
+        batch_id = self.create_opening_batch('b' * 64).data['id']
+        self.post(
+            reverse('cangxu-import-batch-stage-rows', kwargs={'pk': batch_id}),
+            [
+                {
+                    'source_sheet': 'Synthetic stock',
+                    'source_row': 3,
+                    'source_values': {'legacy_code': '0001003', 'quantity': '2'},
+                }
+            ],
+            expected_code=201,
+        )
+        record = DataImportRecord.objects.get(batch_id=batch_id)
+        record.mapped_part = part
+        record.location = location
+        record.quantity = 2
+        record.serial = 'CX-TEST-IMPORT-0002'
+        record.batch_code = 'CX-TEST-OPENING-002'
+        record.save()
+
+        self.post(
+            reverse('cangxu-import-batch-validate', kwargs={'pk': batch_id}),
+            {},
+            expected_code=200,
+        )
+        record.refresh_from_db()
+        self.assertEqual(record.state, DataImportRecord.State.INVALID)
+        self.assertIn(
+            'serialized_quantity_must_be_one',
+            [error['code'] for error in record.validation_errors],
+        )
+        before_count = StockItem.objects.filter(part=part).count()
+        self.post(
+            reverse('cangxu-import-batch-approve', kwargs={'pk': batch_id}),
+            {},
+            expected_code=400,
+        )
+        self.assertEqual(StockItem.objects.filter(part=part).count(), before_count)
+        rejected = self.post(
+            reverse('cangxu-import-batch-reject', kwargs={'pk': batch_id}),
+            {'note': 'Synthetic test rejection.'},
+            expected_code=200,
+        )
+        self.assertEqual(rejected.data['state'], DataImportBatch.State.REJECTED)
+        record.refresh_from_db()
+        self.assertEqual(record.state, DataImportRecord.State.REJECTED)

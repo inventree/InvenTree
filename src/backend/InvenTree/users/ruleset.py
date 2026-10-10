@@ -157,6 +157,8 @@ def get_ruleset_models() -> dict:
             'stock_stockitem',
             'stock_stockitemtracking',
             'stock_stockitemtestresult',
+            'cangxu_dataimportbatch',
+            'cangxu_dataimportrecord',
             'cangxu_countsession',
             'cangxu_countline',
         ],

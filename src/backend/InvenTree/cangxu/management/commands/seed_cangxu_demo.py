@@ -54,8 +54,8 @@ class Command(BaseCommand):
             type=int,
             default=1,
             help=(
-                'Multiply demo unit counts, opening stock, and receipt quantities '
-                '(1-100). Existing records are retained when rerun at a larger scale.'
+                'Scale synthetic units, stock, receipts, and service backlog (1-100). '
+                'Existing records are retained when rerun at a larger scale.'
             ),
         )
 
@@ -133,6 +133,12 @@ class Command(BaseCommand):
             ('CX-DEMO-DIMM-001', '通用内存条(演示)', '整机', True, 8),
             ('CX-DEMO-GPU-001', 'GPU 加速卡(演示)', '计算板卡', True, 8),
             ('CX-DEMO-GPUBASE-001', 'GPU 底板(演示)', '计算板卡', True, 4),
+            ('CX-DEMO-X16-ADAPTER-001', 'PCIe x16 转接板(演示)', '计算板卡', True, 8),
+            ('CX-DEMO-BLINDMATE-001', '盲插连接板(演示)', '计算板卡', True, 8),
+            ('CX-DEMO-MIDPLANE-001', '中置板(演示)', '计算板卡', True, 6),
+            ('CX-DEMO-INFER-001', '推理加速板(演示)', '计算板卡', True, 8),
+            ('CX-DEMO-FANBOARD-001', '风扇控制板(演示)', '计算板卡', True, 6),
+            ('CX-DEMO-DISPLAY-001', '显示接口板(演示)', '计算板卡', True, 6),
             (
                 'CX-DEMO-PCIESW-001',
                 'PCIe Switch 板卡(协议待确认)',
@@ -649,6 +655,12 @@ class Command(BaseCommand):
 
         board_ipns = {
             'CX-DEMO-GPUBASE-001',
+            'CX-DEMO-X16-ADAPTER-001',
+            'CX-DEMO-BLINDMATE-001',
+            'CX-DEMO-MIDPLANE-001',
+            'CX-DEMO-INFER-001',
+            'CX-DEMO-FANBOARD-001',
+            'CX-DEMO-DISPLAY-001',
             'CX-DEMO-PCIESW-001',
             'CX-DEMO-PCIESW-BC-001',
             'CX-DEMO-PCIESW-LR-001',
@@ -818,27 +830,61 @@ class Command(BaseCommand):
                     )
                 shipment_count += 1
 
-        repair_item = StockItem.objects.filter(
-            part=supplier_part,
-            location=warehouse,
-            belongs_to__isnull=True,
-            batch=opening_batch,
-        ).first()
-        if repair_item:
-            repair_case, _ = ServiceCase.objects.get_or_create(
-                reference='CX-DEMO-RMA-0001',
+        service_item_ipns = [
+            'CX-DEMO-GPU-001',
+            'CX-DEMO-GPUBASE-001',
+            'CX-DEMO-INFER-001',
+            'CX-DEMO-PCIESW-BC-001',
+            'CX-DEMO-PCIESW-LR-001',
+            'CX-DEMO-PCIESW-OTHER-001',
+            'CX-DEMO-X16-ADAPTER-001',
+            'CX-DEMO-MIDPLANE-001',
+        ]
+        for case_index in range(1, 16 * scale_factor + 1):
+            repair = case_index % 2 == 1
+            case, _ = ServiceCase.objects.get_or_create(
+                reference=f'CX-DEMO-RMA-{case_index:04d}',
                 defaults={
-                    'kind': ServiceCase.Kind.SUPPLIER_REPAIR,
-                    'supplier': supplier,
-                    'description': 'Synthetic supplier repair case awaiting outbound inspection.',
+                    'kind': (
+                        ServiceCase.Kind.SUPPLIER_REPAIR
+                        if repair
+                        else ServiceCase.Kind.INTERNAL_FAILURE
+                    ),
+                    'supplier': supplier if repair else None,
+                    'description': (
+                        'Synthetic service backlog record; no real customer, '
+                        'supplier incident, or defect is represented.'
+                    ),
                 },
             )
+            if case.lines.exists():
+                continue
+            repair_item = (
+                StockItem.objects
+                .filter(
+                    part__IPN__in=service_item_ipns,
+                    location=warehouse,
+                    belongs_to__isnull=True,
+                    batch=opening_batch,
+                    quantity__gte=1,
+                    status=StockStatus.OK.value,
+                    sales_order__isnull=True,
+                    cangxu_service_lines__isnull=True,
+                )
+                .select_related('part')
+                .order_by('pk')
+                .first()
+            )
+            if repair_item is None:
+                break
             ServiceCaseLine.objects.get_or_create(
-                case=repair_case,
+                case=case,
                 stock_item=repair_item,
                 defaults={
                     'quantity': 1,
-                    'fault_description': 'Synthetic demonstration case; no real defect.',
+                    'fault_description': (
+                        'Synthetic service record; inspect and classify before action.'
+                    ),
                 },
             )
 
@@ -887,6 +933,7 @@ class Command(BaseCommand):
                 f'{StockItem.objects.filter(part__IPN__startswith="CX-DEMO-").count()} stock items, '
                 f'{len(units)} configured units, '
                 f'{ManufacturingLotStockItem.objects.filter(stock_item__part__IPN__startswith="CX-DEMO-").count()} lot links, '
-                f'{shipment_count} pending split shipments.'
+                f'{shipment_count} pending split shipments, '
+                f'{ServiceCase.objects.filter(reference__startswith="CX-DEMO-RMA-").count()} open service cases.'
             )
         )

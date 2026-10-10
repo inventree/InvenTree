@@ -10,7 +10,7 @@ from django.db.models import Max, Q, Sum
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -29,6 +29,8 @@ from .models import (
     ConfigurationTestEvidence,
     CountLine,
     CountSession,
+    DataImportBatch,
+    DataImportRecord,
     ManufacturingLot,
     ManufacturingLotPartner,
     ManufacturingLotStockItem,
@@ -1504,6 +1506,405 @@ class ShipmentManifestLineViewSet(CangxuModelViewSet):
         serializer.save()
 
 
+class DataImportBatchViewSet(CangxuModelViewSet):
+    """Stage source files and post only reviewed opening stock to InvenTree."""
+
+    role_required = 'stock'
+    queryset = DataImportBatch.objects.select_related(
+        'created_by', 'reviewed_by'
+    ).prefetch_related('records')
+    serializer_class = serializers.DataImportBatchSerializer
+    filterset_fields = ['source_system', 'source_kind', 'state']
+    search_fields = ['source_system', 'source_file_name', 'source_file_digest']
+    ordering_fields = ['created_at', 'source_kind', 'state']
+    ordering = ['-created_at']
+
+    def create(self, request, *args, **kwargs):
+        """Return the original batch when the same source file is uploaded again."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        values = serializer.validated_data
+        batch, created = DataImportBatch.objects.get_or_create(
+            source_system=values['source_system'],
+            source_kind=values['source_kind'],
+            source_file_digest=values['source_file_digest'],
+            defaults={
+                'source_file_name': values.get('source_file_name', ''),
+                'inventory_as_of': values.get('inventory_as_of'),
+                'physical_count_confirmed': values.get(
+                    'physical_count_confirmed', False
+                ),
+                'created_by': request.user,
+            },
+        )
+        output = self.get_serializer(batch)
+        return Response(
+            output.data,
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+        )
+
+    def perform_create(self, serializer):
+        """Record the operator who staged the source."""
+        serializer.save(created_by=self.request.user)
+
+    @action(detail=True, methods=['post'])
+    @transaction.atomic
+    def validate(self, request, pk=None):
+        """Validate source mappings without mutating native inventory."""
+        batch = DataImportBatch.objects.select_for_update().get(pk=self.get_object().pk)
+        if batch.state not in [
+            DataImportBatch.State.DRAFT,
+            DataImportBatch.State.REVIEW,
+            DataImportBatch.State.PARTIAL,
+        ]:
+            raise ValidationError(
+                _('This import batch cannot be validated in its current state.')
+            )
+
+        if not batch.records.exists():
+            raise ValidationError(_('Stage at least one source row before validation.'))
+
+        checked = 0
+        valid = 0
+        invalid = 0
+        for record in batch.records.select_related('mapped_part', 'location').filter(
+            state__in=[
+                DataImportRecord.State.STAGED,
+                DataImportRecord.State.INVALID,
+                DataImportRecord.State.FAILED,
+                DataImportRecord.State.VALID,
+            ]
+        ):
+            errors = []
+            if not isinstance(record.source_values, dict) or not record.source_values:
+                errors.append({'field': 'source_values', 'code': 'invalid_object'})
+
+            if batch.source_kind == DataImportBatch.Kind.OPENING_STOCK:
+                if not record.mapped_part_id:
+                    errors.append({'field': 'mapped_part', 'code': 'required'})
+                if not record.location_id or record.location.external:
+                    errors.append({
+                        'field': 'location',
+                        'code': 'internal_location_required',
+                    })
+                if record.quantity is None or record.quantity <= 0:
+                    errors.append({
+                        'field': 'quantity',
+                        'code': 'positive_quantity_required',
+                    })
+                if not record.batch_code.strip():
+                    errors.append({'field': 'batch_code', 'code': 'required'})
+
+                if record.mapped_part_id:
+                    if record.mapped_part.trackable:
+                        if not record.serial.strip():
+                            errors.append({
+                                'field': 'serial',
+                                'code': 'required_for_trackable_part',
+                            })
+                        if record.quantity is not None and record.quantity != 1:
+                            errors.append({
+                                'field': 'quantity',
+                                'code': 'serialized_quantity_must_be_one',
+                            })
+                    elif record.serial.strip():
+                        errors.append({'field': 'serial', 'code': 'not_trackable'})
+
+                    if (
+                        record.serial.strip()
+                        and StockItem.objects.filter(
+                            part=record.mapped_part,
+                            serial__iexact=record.serial.strip(),
+                        ).exists()
+                    ):
+                        errors.append({
+                            'field': 'serial',
+                            'code': 'already_exists_for_part',
+                        })
+
+            record.validation_errors = errors
+            record.state = (
+                DataImportRecord.State.INVALID
+                if errors
+                else DataImportRecord.State.VALID
+            )
+            record.apply_error = ''
+            record.save(update_fields=['validation_errors', 'state', 'apply_error'])
+            checked += 1
+            if errors:
+                invalid += 1
+            else:
+                valid += 1
+
+        batch.state = DataImportBatch.State.REVIEW
+        batch.save(update_fields=['state'])
+        return Response({
+            'batch': batch.pk,
+            'checked': checked,
+            'valid': valid,
+            'invalid': invalid,
+        })
+
+    @action(detail=True, methods=['post'])
+    @transaction.atomic
+    def approve(self, request, pk=None):
+        """Approve a fully valid batch after opening-balance prerequisites."""
+        batch = DataImportBatch.objects.select_for_update().get(pk=self.get_object().pk)
+        if batch.state not in [
+            DataImportBatch.State.REVIEW,
+            DataImportBatch.State.PARTIAL,
+        ]:
+            raise ValidationError(_('Validate this batch before approval.'))
+        if not batch.records.exists():
+            raise ValidationError(_('An empty batch cannot be approved.'))
+        if batch.records.exclude(
+            state__in=[
+                DataImportRecord.State.VALID,
+                DataImportRecord.State.APPLIED,
+                DataImportRecord.State.REJECTED,
+            ]
+        ).exists():
+            raise ValidationError(
+                _('Resolve every invalid or failed row before approval.')
+            )
+        if not batch.records.filter(
+            state__in=[DataImportRecord.State.VALID, DataImportRecord.State.APPLIED]
+        ).exists():
+            raise ValidationError(_('Approve at least one valid row.'))
+        if batch.source_kind == DataImportBatch.Kind.OPENING_STOCK and (
+            not batch.inventory_as_of or not batch.physical_count_confirmed
+        ):
+            raise ValidationError({
+                'inventory_as_of': _(
+                    'Confirm the opening-balance date and physical count before approval.'
+                )
+            })
+
+        batch.records.filter(state=DataImportRecord.State.VALID).update(
+            state=DataImportRecord.State.APPROVED
+        )
+        batch.state = DataImportBatch.State.APPROVED
+        batch.reviewed_by = request.user
+        batch.reviewed_at = timezone.now()
+        batch.save(update_fields=['state', 'reviewed_by', 'reviewed_at'])
+        return Response(self.get_serializer(batch).data)
+
+    @action(detail=True, methods=['post'])
+    @transaction.atomic
+    def reject(self, request, pk=None):
+        """Reject a batch before posting while retaining every source row."""
+        batch = DataImportBatch.objects.select_for_update().get(pk=self.get_object().pk)
+        if batch.records.filter(state=DataImportRecord.State.APPLIED).exists():
+            raise ValidationError(
+                _('A batch with applied inventory cannot be rejected.')
+            )
+        if batch.state in [
+            DataImportBatch.State.APPLIED,
+            DataImportBatch.State.REJECTED,
+        ]:
+            raise ValidationError(_('This import batch is already closed.'))
+        note = serializers.CountReviewSerializer(data=request.data)
+        note.is_valid(raise_exception=True)
+        reason = note.validated_data.get('note', '').strip()
+        if not reason:
+            raise ValidationError({
+                'note': _('Provide a reason for rejecting the batch.')
+            })
+
+        for record in batch.records.exclude(state=DataImportRecord.State.APPLIED):
+            record.state = DataImportRecord.State.REJECTED
+            record.validation_errors = [
+                {'field': 'review', 'code': 'batch_rejected', 'note': reason}
+            ]
+            record.save(update_fields=['state', 'validation_errors'])
+        batch.state = DataImportBatch.State.REJECTED
+        batch.reviewed_by = request.user
+        batch.reviewed_at = timezone.now()
+        batch.save(update_fields=['state', 'reviewed_by', 'reviewed_at'])
+        return Response(self.get_serializer(batch).data)
+
+    @action(detail=True, methods=['post'], url_path='stage-rows')
+    @transaction.atomic
+    def stage_rows(self, request, pk=None):
+        """Store spreadsheet rows in bulk without changing native business data."""
+        batch = DataImportBatch.objects.select_for_update().get(pk=self.get_object().pk)
+        if batch.state != DataImportBatch.State.DRAFT:
+            raise ValidationError(_('Rows can only be staged in a draft batch.'))
+        if not isinstance(request.data, list) or not request.data:
+            raise ValidationError(_('Provide a non-empty list of source rows.'))
+
+        row_serializer = serializers.DataImportStageRowSerializer(
+            data=request.data, many=True
+        )
+        row_serializer.is_valid(raise_exception=True)
+        values = row_serializer.validated_data
+        keys = [(row['source_sheet'], row['source_row']) for row in values]
+        if len(keys) != len(set(keys)):
+            raise ValidationError(
+                _('The request contains duplicate source row locations.')
+            )
+
+        existing_count = batch.records.count()
+        records = [DataImportRecord(batch=batch, **row) for row in values]
+        DataImportRecord.objects.bulk_create(records, ignore_conflicts=True)
+        created = batch.records.count() - existing_count
+        return Response(
+            {
+                'batch': batch.pk,
+                'submitted': len(records),
+                'created': created,
+                'already_staged': len(records) - created,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+    @action(detail=True, methods=['post'])
+    @transaction.atomic
+    def apply(self, request, pk=None):
+        """Create native StockItem and lot records for approved opening rows."""
+        batch = DataImportBatch.objects.select_for_update().get(pk=self.get_object().pk)
+        if batch.source_kind != DataImportBatch.Kind.OPENING_STOCK:
+            raise ValidationError(
+                _(
+                    'This source type is staged for review but has no native apply workflow yet.'
+                )
+            )
+        if batch.state == DataImportBatch.State.APPLIED:
+            return Response({
+                'batch': batch.pk,
+                'applied': 0,
+                'failed': 0,
+                'already_applied': True,
+            })
+        if batch.state not in [
+            DataImportBatch.State.APPROVED,
+            DataImportBatch.State.PARTIAL,
+        ]:
+            raise ValidationError(_('Approve this batch before applying it.'))
+
+        applied = 0
+        failed = 0
+        for candidate in batch.records.filter(state=DataImportRecord.State.APPROVED):
+            try:
+                with transaction.atomic():
+                    record = (
+                        DataImportRecord.objects
+                        .select_for_update()
+                        .select_related('mapped_part', 'location')
+                        .get(pk=candidate.pk)
+                    )
+                    item = StockItem.objects.create(
+                        part=record.mapped_part,
+                        location=record.location,
+                        quantity=record.quantity,
+                        serial=record.serial.strip() or None,
+                        batch=record.batch_code.strip(),
+                        status=StockStatus.OK.value,
+                    )
+                    lot, _lot_created = ManufacturingLot.objects.get_or_create(
+                        part=record.mapped_part,
+                        code=record.batch_code.strip(),
+                        defaults={
+                            'notes': (
+                                f'Opening balance imported from approved batch {batch.pk}; '
+                                'see source row for provenance.'
+                            )
+                        },
+                    )
+                    ManufacturingLotStockItem.objects.get_or_create(
+                        lot=lot, stock_item=item
+                    )
+                    record.stock_item = item
+                    record.state = DataImportRecord.State.APPLIED
+                    record.applied_at = timezone.now()
+                    record.apply_error = ''
+                    record.save(
+                        update_fields=[
+                            'stock_item',
+                            'state',
+                            'applied_at',
+                            'apply_error',
+                        ]
+                    )
+                applied += 1
+            except Exception as exc:
+                DataImportRecord.objects.filter(pk=candidate.pk).update(
+                    state=DataImportRecord.State.FAILED, apply_error=str(exc)[:500]
+                )
+                failed += 1
+
+        pending = batch.records.filter(state=DataImportRecord.State.APPROVED).exists()
+        batch.state = (
+            DataImportBatch.State.PARTIAL
+            if failed or pending
+            else DataImportBatch.State.APPLIED
+        )
+        if batch.state == DataImportBatch.State.APPLIED:
+            batch.applied_at = timezone.now()
+        batch.save(update_fields=['state', 'applied_at'])
+        return Response({'batch': batch.pk, 'applied': applied, 'failed': failed})
+
+
+class DataImportRecordViewSet(CangxuModelViewSet):
+    """Preview source rows and correct normalized mappings before approval."""
+
+    role_required = 'stock'
+    queryset = DataImportRecord.objects.select_related(
+        'batch', 'mapped_part', 'location', 'stock_item'
+    )
+    serializer_class = serializers.DataImportRecordSerializer
+    filterset_fields = ['batch', 'state', 'mapped_part', 'location']
+    search_fields = ['source_sheet', 'source_range', 'serial', 'batch_code']
+    ordering_fields = ['source_sheet', 'source_row', 'state', 'created_at']
+    ordering = ['batch', 'source_sheet', 'source_row']
+
+    def perform_create(self, serializer):
+        """Only append source rows while their batch is still a draft."""
+        batch = serializer.validated_data['batch']
+        if batch.state != DataImportBatch.State.DRAFT:
+            raise ValidationError(_('Rows can only be added to a draft batch.'))
+        serializer.save()
+
+    def perform_update(self, serializer):
+        """Reset validation after a corrected mapping is saved."""
+        record = self.get_object()
+        if record.state in [
+            DataImportRecord.State.APPROVED,
+            DataImportRecord.State.APPLIED,
+            DataImportRecord.State.REJECTED,
+        ]:
+            raise ValidationError(_('Approved or applied source rows are immutable.'))
+        serializer.save(
+            state=DataImportRecord.State.STAGED, validation_errors=[], apply_error=''
+        )
+
+    @action(detail=True, methods=['post'])
+    @transaction.atomic
+    def reject(self, request, pk=None):
+        """Reject one source row while retaining its original values for audit."""
+        record = DataImportRecord.objects.select_for_update().get(
+            pk=self.get_object().pk
+        )
+        if record.state in [
+            DataImportRecord.State.APPROVED,
+            DataImportRecord.State.APPLIED,
+            DataImportRecord.State.REJECTED,
+        ]:
+            raise ValidationError(_('This source row can no longer be rejected.'))
+        note = serializers.CountReviewSerializer(data=request.data)
+        note.is_valid(raise_exception=True)
+        record.state = DataImportRecord.State.REJECTED
+        record.validation_errors = [
+            {
+                'field': 'review',
+                'code': 'rejected',
+                'note': note.validated_data.get('note', ''),
+            }
+        ]
+        record.save(update_fields=['state', 'validation_errors'])
+        return Response(self.get_serializer(record).data)
+
+
 router = DefaultRouter()
 router.register('part-aliases', PartCodeAliasViewSet, basename='cangxu-part-alias')
 router.register('lots', ManufacturingLotViewSet, basename='cangxu-lot')
@@ -1547,6 +1948,12 @@ router.register(
 )
 router.register(
     'manifest-lines', ShipmentManifestLineViewSet, basename='cangxu-manifest-line'
+)
+router.register(
+    'import-batches', DataImportBatchViewSet, basename='cangxu-import-batch'
+)
+router.register(
+    'import-records', DataImportRecordViewSet, basename='cangxu-import-record'
 )
 
 urlpatterns = router.urls

@@ -13,6 +13,8 @@ from .models import (
     ConfigurationTestEvidence,
     CountLine,
     CountSession,
+    DataImportBatch,
+    DataImportRecord,
     ManufacturingLot,
     ManufacturingLotPartner,
     ManufacturingLotStockItem,
@@ -591,6 +593,130 @@ class CountReviewSerializer(serializers.Serializer):
     """Accept an explicit review for a count discrepancy."""
 
     note = serializers.CharField(required=False, allow_blank=True)
+
+
+class DataImportBatchSerializer(serializers.Serializer):
+    """Expose source identity and review metadata for import batches."""
+
+    id = serializers.IntegerField(read_only=True)
+    source_system = serializers.CharField(max_length=100)
+    source_kind = serializers.ChoiceField(choices=DataImportBatch.Kind.choices)
+    source_file_name = serializers.CharField(
+        max_length=255, required=False, allow_blank=True
+    )
+    source_file_digest = serializers.RegexField(regex=r'^[0-9a-fA-F]{64}$')
+    inventory_as_of = serializers.DateField(required=False, allow_null=True)
+    physical_count_confirmed = serializers.BooleanField(required=False, default=False)
+    state = serializers.CharField(read_only=True)
+    created_by = serializers.PrimaryKeyRelatedField(read_only=True)
+    reviewed_by = serializers.PrimaryKeyRelatedField(read_only=True)
+    created_at = serializers.DateTimeField(read_only=True)
+    reviewed_at = serializers.DateTimeField(read_only=True)
+    applied_at = serializers.DateTimeField(read_only=True)
+
+    def validate_source_file_digest(self, value):
+        """Normalize digest casing so exact-file retries find the same batch."""
+        return value.lower()
+
+    def validate(self, attrs):
+        """Keep source identity and review prerequisites fixed after staging."""
+        attrs = super().validate(attrs)
+        if (
+            self.instance
+            and attrs
+            and self.instance.state != DataImportBatch.State.DRAFT
+        ):
+            raise serializers.ValidationError(
+                _('Batch metadata cannot change after source rows are staged.')
+            )
+        return attrs
+
+    def create(self, validated_data):
+        """Create a batch when used outside the idempotent viewset action."""
+        return DataImportBatch.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        """Update editable metadata while the batch remains in draft."""
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
+        instance.save()
+        return instance
+
+
+class DataImportRecordSerializer(InvenTreeModelSerializer):
+    """Keep original source cells separate from editable normalized mappings."""
+
+    class Meta:
+        """Configure row provenance, mapping, and server-owned result fields."""
+
+        model = DataImportRecord
+        fields = '__all__'
+        read_only_fields = [
+            'state',
+            'validation_errors',
+            'apply_error',
+            'stock_item',
+            'created_at',
+            'applied_at',
+        ]
+
+    def get_fields(self):
+        """Keep source-row provenance immutable after its first save."""
+        fields = super().get_fields()
+        if self.instance:
+            for name in [
+                'batch',
+                'source_sheet',
+                'source_row',
+                'source_range',
+                'source_values',
+            ]:
+                fields[name].read_only = True
+        return fields
+
+    def validate(self, attrs):
+        """Allow corrections only before approval or application."""
+        attrs = super().validate(attrs)
+        batch = attrs.get('batch', getattr(self.instance, 'batch', None))
+        if self.instance and batch.state in [
+            DataImportBatch.State.APPROVED,
+            DataImportBatch.State.APPLIED,
+            DataImportBatch.State.REJECTED,
+        ]:
+            raise serializers.ValidationError(
+                _('Rows cannot be changed after batch approval.')
+            )
+        if 'source_values' in attrs and not isinstance(attrs['source_values'], dict):
+            raise serializers.ValidationError({
+                'source_values': _('Source values must be a JSON object.')
+            })
+        if 'normalized_values' in attrs and not isinstance(
+            attrs['normalized_values'], dict
+        ):
+            raise serializers.ValidationError({
+                'normalized_values': _('Normalized values must be a JSON object.')
+            })
+        return attrs
+
+
+class DataImportStageRowSerializer(serializers.Serializer):
+    """Accept source-only rows in one bounded staging request."""
+
+    source_sheet = serializers.CharField(max_length=100)
+    source_row = serializers.IntegerField(min_value=1)
+    source_range = serializers.CharField(
+        max_length=100, required=False, allow_blank=True
+    )
+    source_values = serializers.DictField()
+    normalized_values = serializers.DictField(required=False, default=dict)
+
+    def validate_source_values(self, value):
+        """Reject empty rows while preserving original spreadsheet cell values."""
+        if not value:
+            raise serializers.ValidationError(
+                _('A source row must contain at least one value.')
+            )
+        return value
 
 
 class StateTransitionSerializer(serializers.Serializer):

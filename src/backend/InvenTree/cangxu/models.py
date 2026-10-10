@@ -882,3 +882,138 @@ class ShipmentManifestLine(models.Model):
         ]
         verbose_name = _('Shipment manifest line')
         verbose_name_plural = _('Shipment manifest lines')
+
+
+class DataImportBatch(models.Model):
+    """Track a source file through staging, review, and native ledger posting."""
+
+    class Kind(models.TextChoices):
+        """Classify the historical source represented by a batch."""
+
+        OPENING_STOCK = 'opening_stock', _('Opening stock')
+        PURCHASE_HISTORY = 'purchase_history', _('Purchase history')
+        SHIPMENT_HISTORY = 'shipment_history', _('Shipment history')
+        SERVICE_HISTORY = 'service_history', _('Service history')
+        PART_CATALOG = 'part_catalog', _('Part catalog')
+
+    class State(models.TextChoices):
+        """Track review and apply progress without implying stock changes."""
+
+        DRAFT = 'draft', _('Draft')
+        REVIEW = 'review', _('Awaiting review')
+        APPROVED = 'approved', _('Approved')
+        PARTIAL = 'partial', _('Partially applied')
+        APPLIED = 'applied', _('Applied')
+        REJECTED = 'rejected', _('Rejected')
+
+    source_system = models.CharField(max_length=100)
+    source_kind = models.CharField(max_length=30, choices=Kind.choices)
+    source_file_name = models.CharField(max_length=255, blank=True)
+    source_file_digest = models.CharField(max_length=64)
+    inventory_as_of = models.DateField(null=True, blank=True)
+    physical_count_confirmed = models.BooleanField(default=False)
+    state = models.CharField(max_length=20, choices=State.choices, default=State.DRAFT)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='cangxu_import_batches_created',
+    )
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='cangxu_import_batches_reviewed',
+    )
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    applied_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        """Enforce repeat-upload idempotence and useful review ordering."""
+
+        ordering = ['-created_at', 'id']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['source_system', 'source_kind', 'source_file_digest'],
+                name='cangxu_import_source_digest_uniq',
+            )
+        ]
+        indexes = [models.Index(fields=['source_kind', 'state'])]
+        verbose_name = _('Data import batch')
+        verbose_name_plural = _('Data import batches')
+
+
+class DataImportRecord(models.Model):
+    """Keep one source row, its mapping, validation, and native stock result."""
+
+    class State(models.TextChoices):
+        """Represent each row's auditable import lifecycle."""
+
+        STAGED = 'staged', _('Staged')
+        VALID = 'valid', _('Valid')
+        INVALID = 'invalid', _('Needs correction')
+        APPROVED = 'approved', _('Approved')
+        REJECTED = 'rejected', _('Rejected')
+        APPLIED = 'applied', _('Applied')
+        FAILED = 'failed', _('Apply failed')
+
+    batch = models.ForeignKey(
+        DataImportBatch, on_delete=models.PROTECT, related_name='records'
+    )
+    source_sheet = models.CharField(max_length=100)
+    source_row = models.PositiveIntegerField()
+    source_range = models.CharField(max_length=100, blank=True)
+    source_values = models.JSONField(default=dict)
+    normalized_values = models.JSONField(default=dict, blank=True)
+    mapped_part = models.ForeignKey(
+        'part.Part',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='cangxu_import_records',
+    )
+    location = models.ForeignKey(
+        'stock.StockLocation',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='cangxu_import_records',
+    )
+    quantity = models.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(Decimal('0.00001'))],
+    )
+    serial = models.CharField(max_length=100, blank=True)
+    batch_code = models.CharField(max_length=100, blank=True)
+    state = models.CharField(max_length=20, choices=State.choices, default=State.STAGED)
+    validation_errors = models.JSONField(default=list, blank=True)
+    apply_error = models.TextField(blank=True)
+    stock_item = models.OneToOneField(
+        'stock.StockItem',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='cangxu_import_record',
+    )
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+    applied_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        """Prevent duplicate source rows within the same import batch."""
+
+        ordering = ['source_sheet', 'source_row', 'id']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['batch', 'source_sheet', 'source_row'],
+                name='cangxu_import_batch_row_uniq',
+            )
+        ]
+        indexes = [models.Index(fields=['batch', 'state'])]
+        verbose_name = _('Data import record')
+        verbose_name_plural = _('Data import records')
