@@ -243,6 +243,43 @@ class Command(BaseCommand):
                 },
             )
 
+        # Populate synthetic opening stock before native Build allocation uses
+        # it to consume components for the first-article workflow.
+        for ipn, _, _, trackable, target_quantity in catalog:
+            part = parts[ipn]
+            target_quantity *= scale_factor
+            current_quantity = (
+                StockItem.objects.filter(
+                    part=part,
+                    location=warehouse,
+                    belongs_to__isnull=True,
+                    batch=opening_batch,
+                ).aggregate(total=Sum('quantity'))['total']
+                or 0
+            )
+            missing = max(target_quantity - int(current_quantity), 0)
+            if not missing:
+                continue
+            if trackable:
+                for stock_index in range(1, missing + 1):
+                    StockItem.objects.get_or_create(
+                        part=part,
+                        serial=f'CX-DEMO-STOCK-{ipn}-{stock_index:04d}',
+                        defaults={
+                            'location': warehouse,
+                            'quantity': 1,
+                            'batch': opening_batch,
+                            'status': 10,
+                        },
+                    )
+            else:
+                StockItem.objects.get_or_create(
+                    part=part,
+                    batch=opening_batch,
+                    location=warehouse,
+                    defaults={'quantity': missing, 'status': 10},
+                )
+
         # Four synthetic configured units demonstrate distinct product types.
         assemblies = {
             'CX-DEMO-SRV-001': [
@@ -321,10 +358,23 @@ class Command(BaseCommand):
             'CX-DEMO-PCIESW-LR-001',
             'CX-DEMO-PCIESW-OTHER-001',
         )
+        # Keep this one workflow fixture stable across scale-factor changes;
+        # the synthetic configured-unit population covers all switch classes.
         first_article_index = 20 * scale_factor + 1
-        built_switch_part = built_switch_parts[
-            (first_article_index - 1) % len(built_switch_parts)
-        ]
+        existing_first_article = StockItem.objects.filter(
+            part=parts['CX-DEMO-SRV-001'], serial=built_unit_serial
+        ).first()
+        existing_switch = (
+            StockItem.objects
+            .filter(belongs_to=existing_first_article, part__IPN__in=built_switch_parts)
+            .select_related('part')
+            .first()
+            if existing_first_article
+            else None
+        )
+        built_switch_part = (
+            existing_switch.part.IPN if existing_switch else built_switch_parts[0]
+        )
         built_unit_specs = [
             (built_switch_part, position)
             if position == 'PCIE-SWITCH-01'
@@ -582,42 +632,6 @@ class Command(BaseCommand):
             lot__part=F('stock_item__part'), lot__code=F('stock_item__batch')
         ).delete()
 
-        # Populate on-hand balances using only synthetic records. Trackable
-        # parts receive one internal serial per item; bulk items use quantity.
-        for ipn, _, _, trackable, target_quantity in catalog:
-            part = parts[ipn]
-            target_quantity *= scale_factor
-            current_quantity = (
-                StockItem.objects.filter(
-                    part=part,
-                    location=warehouse,
-                    belongs_to__isnull=True,
-                    batch=opening_batch,
-                ).aggregate(total=Sum('quantity'))['total']
-                or 0
-            )
-            missing = max(target_quantity - int(current_quantity), 0)
-            if not missing:
-                continue
-            if trackable:
-                for stock_index in range(1, missing + 1):
-                    StockItem.objects.get_or_create(
-                        part=part,
-                        serial=f'CX-DEMO-STOCK-{ipn}-{stock_index:04d}',
-                        defaults={
-                            'location': warehouse,
-                            'quantity': 1,
-                            'batch': opening_batch,
-                            'status': 10,
-                        },
-                    )
-            else:
-                StockItem.objects.get_or_create(
-                    part=part,
-                    batch=opening_batch,
-                    location=warehouse,
-                    defaults={'quantity': missing, 'status': 10},
-                )
         for placeholder in vendor_placeholders.values():
             placeholder.description = (
                 'Synthetic demo placeholder; identity, product model, protocol, '
