@@ -205,6 +205,14 @@ class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
+class SettingsManager(models.Manager):
+    """Ensure that the 'touched' field is deferred in all queries."""
+
+    def get_queryset(self):
+        """Defer the write-only 'touched' field."""
+        return super().get_queryset().defer('touched')
+
+
 class BaseInvenTreeSetting(models.Model):
     """An base InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
@@ -216,6 +224,8 @@ class BaseInvenTreeSetting(models.Model):
     SETTINGS: dict[str, SettingsKeyType] = {}
 
     CHECK_SETTING_KEY = False
+
+    objects = SettingsManager()
 
     extra_unique_fields: list[str] = []
 
