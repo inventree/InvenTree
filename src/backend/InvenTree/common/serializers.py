@@ -1323,6 +1323,7 @@ class OAuth2ApplicationSerializer(serializers.ModelSerializer):
             'is_builtin',
         ]
         read_only_fields = ['id', 'client_id', 'client_secret', 'is_builtin']
+        extra_kwargs = {'client_secret': {'allow_null': True}}
 
     is_builtin = serializers.SerializerMethodField()
 
