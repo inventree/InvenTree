@@ -205,6 +205,14 @@ class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
+class SettingsManager(models.Manager):
+    """Ensure that the 'touched' field is deferred in all queries."""
+
+    def get_queryset(self):
+        """Defer the write-only 'touched' field."""
+        return super().get_queryset().defer('touched')
+
+
 class BaseInvenTreeSetting(models.Model):
     """An base InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
@@ -216,6 +224,8 @@ class BaseInvenTreeSetting(models.Model):
     SETTINGS: dict[str, SettingsKeyType] = {}
 
     CHECK_SETTING_KEY = False
+
+    objects = SettingsManager()
 
     extra_unique_fields: list[str] = []
 
@@ -614,7 +624,6 @@ class BaseInvenTreeSetting(models.Model):
                 access_global_cache = False
 
         # At this point, we need to query the database
-
         filters = {
             'key__iexact': key,
             # Optionally filter by other keys
@@ -804,6 +813,11 @@ class BaseInvenTreeSetting(models.Model):
 
     value = models.CharField(
         max_length=2000, blank=True, unique=False, help_text=_('Settings value')
+    )
+
+    touched = models.BooleanField(
+        default=False,
+        help_text=_('Indicates whether the setting has been modified by the user'),
     )
 
     @property
