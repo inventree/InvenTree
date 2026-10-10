@@ -1020,6 +1020,17 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
         self.assertEqual(repeated.data['batch']['id'], batch_id)
         self.assertEqual(repeated.data['staged_rows'], 0)
         self.assertEqual(repeated.data['already_staged_rows'], 3)
+        validation = self.post(
+            reverse('cangxu-import-batch-validate', kwargs={'pk': batch_id}),
+            {},
+            expected_code=200,
+        )
+        self.assertEqual(validation.data['invalid'], 3)
+        self.assertFalse(
+            DataImportRecord.objects.filter(
+                batch_id=batch_id, state=DataImportRecord.State.VALID
+            ).exists()
+        )
         self.assertEqual(StockItem.objects.count(), stock_count)
 
     def test_opening_import_requires_review_and_applies_idempotently(self):

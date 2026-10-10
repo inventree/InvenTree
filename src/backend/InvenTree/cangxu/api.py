@@ -1704,6 +1704,11 @@ class DataImportBatchViewSet(CangxuModelViewSet):
                             'field': 'serial',
                             'code': 'already_exists_for_part',
                         })
+            else:
+                errors.append({
+                    'field': 'source_kind',
+                    'code': 'type_specific_validation_not_implemented',
+                })
 
             record.validation_errors = errors
             record.state = (
