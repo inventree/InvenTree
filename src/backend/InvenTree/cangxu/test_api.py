@@ -1,5 +1,6 @@
 """Integration tests for Cangxu inventory workflows."""
 
+from django.core.management import call_command
 from django.urls import reverse
 from django.utils import timezone
 
@@ -870,3 +871,52 @@ class CangxuShipmentManifestTest(CangxuAPITestCase):
             shipment.refresh_from_db()
             self.assertIsNone(shipment.shipment_date)
         self.assertEqual(order.lines.get().shipped, 0)
+
+
+class CangxuDemoSeedTest(CangxuAPITestCase):
+    """Check deterministic demo expansion and rerun behavior."""
+
+    def test_demo_seed_scales_up_idempotently(self):
+        """A larger factor adds synthetic records; repeating it adds none."""
+        call_command('seed_cangxu_demo', scale_factor=1)
+        initial_stock = StockItem.objects.filter(
+            part__IPN__startswith='CX-DEMO-'
+        ).count()
+        initial_configurations = UnitConfiguration.objects.filter(
+            unit__part__IPN__startswith='CX-DEMO-'
+        ).count()
+
+        call_command('seed_cangxu_demo', scale_factor=2)
+        expanded_stock = StockItem.objects.filter(
+            part__IPN__startswith='CX-DEMO-'
+        ).count()
+        expanded_configurations = UnitConfiguration.objects.filter(
+            unit__part__IPN__startswith='CX-DEMO-'
+        ).count()
+
+        self.assertGreater(expanded_stock, initial_stock)
+        self.assertGreater(expanded_configurations, initial_configurations)
+        self.assertEqual(
+            PurchaseOrderLineItem.objects.get(
+                order__reference='CX-DEMO-PO-0001'
+            ).received,
+            4,
+        )
+        self.assertEqual(
+            PurchaseOrderLineItem.objects.get(
+                order__reference='CX-DEMO-PO-0002'
+            ).received,
+            24,
+        )
+
+        call_command('seed_cangxu_demo', scale_factor=2)
+        self.assertEqual(
+            StockItem.objects.filter(part__IPN__startswith='CX-DEMO-').count(),
+            expanded_stock,
+        )
+        self.assertEqual(
+            UnitConfiguration.objects.filter(
+                unit__part__IPN__startswith='CX-DEMO-'
+            ).count(),
+            expanded_configurations,
+        )
