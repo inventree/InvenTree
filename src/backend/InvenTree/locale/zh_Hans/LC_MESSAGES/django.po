@@ -12017,6 +12017,10 @@ msgstr "该工单物料行未将此部件分配给这台设备。"
 msgid "Select the exact work order line for this component."
 msgstr "请为此部件选择准确的工单物料行。"
 
+#: cangxu/api.py
+msgid "The rework task must be in progress for this unit and quality issue."
+msgstr "返工任务必须处于处理中，且关联此设备及其质量问题。"
+
 #: cangxu/serializers.py
 msgid "The work order line must belong to this unit and match the component part."
 msgstr "工单物料行必须属于此设备的工单，且物料必须与部件一致。"

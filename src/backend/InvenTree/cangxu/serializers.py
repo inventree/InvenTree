@@ -850,6 +850,9 @@ class ComponentReplacementRequestSerializer(serializers.Serializer):
         queryset=StockLocation.objects.all()
     )
     reason = serializers.CharField()
+    rework_task = serializers.PrimaryKeyRelatedField(
+        queryset=ReworkTask.objects.all(), required=False, allow_null=True
+    )
 
 
 class ComponentRemovalRequestSerializer(serializers.Serializer):

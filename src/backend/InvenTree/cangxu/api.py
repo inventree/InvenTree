@@ -484,6 +484,29 @@ class ConfigurationItemViewSet(CangxuModelViewSet):
         )
         destination = action_data.validated_data['destination_location']
         reason = action_data.validated_data['reason'].strip()
+        rework_task = action_data.validated_data.get('rework_task')
+
+        if rework_task:
+            rework_task = (
+                ReworkTask.objects
+                .select_for_update()
+                .select_related('issue')
+                .get(pk=rework_task.pk)
+            )
+            if (
+                rework_task.issue.unit_id != unit.pk
+                or (
+                    rework_task.issue.component_id
+                    and rework_task.issue.component_id != previous.pk
+                )
+                or rework_task.issue.state != QualityIssue.State.REWORK
+                or rework_task.state != ReworkTask.State.IN_PROGRESS
+            ):
+                raise ValidationError({
+                    'rework_task': _(
+                        'The rework task must be in progress for this unit and quality issue.'
+                    )
+                })
 
         if not reason:
             raise ValidationError({'reason': _('A replacement reason is required.')})
@@ -566,6 +589,7 @@ class ConfigurationItemViewSet(CangxuModelViewSet):
             position=item.position,
             reason=reason,
             changed_by=user,
+            rework_task=rework_task,
         )
         return Response({
             'removed': self.get_serializer(item).data,

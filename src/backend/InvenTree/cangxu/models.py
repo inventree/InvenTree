@@ -617,6 +617,13 @@ class ComponentReplacement(models.Model):
         on_delete=models.PROTECT,
         related_name='cangxu_replacements_received',
     )
+    rework_task = models.ForeignKey(
+        'cangxu.ReworkTask',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='component_replacements',
+    )
     position = models.CharField(max_length=100)
     reason = models.TextField()
     changed_by = models.ForeignKey(

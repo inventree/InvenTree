@@ -34,6 +34,8 @@ from .models import (
     HardwareProfileRevision,
     ManufacturingLotStockItem,
     PartCodeAlias,
+    QualityIssue,
+    ReworkTask,
     ServiceCase,
     ServiceCaseEvent,
     ShipmentManifest,
@@ -395,18 +397,63 @@ class CangxuConfigurationTest(CangxuAPITestCase):
         configuration_item = unit.cangxu_configurations.get(
             pk=configuration_id
         ).items.get(removed_at__isnull=True)
-        response = self.post(
-            reverse(
-                'cangxu-configuration-item-replace',
-                kwargs={'pk': configuration_item.pk},
-            ),
+        issue_response = self.post(
+            reverse('cangxu-quality-issue-list'),
             {
-                'replacement_item': replacement_source.pk,
-                'destination_location': 7,
-                'reason': 'Synthetic fixture replacement',
+                'reference': 'CX-REWORK-REPLACE-0001',
+                'unit': unit.pk,
+                'component': installed.pk,
+                'title': 'Synthetic component failure',
+                'severity': QualityIssue.Severity.HIGH,
             },
+            expected_code=201,
+        )
+        task_response = self.post(
+            reverse('cangxu-rework-task-list'),
+            {
+                'issue': issue_response.data['id'],
+                'title': 'Synthetic component replacement',
+            },
+            expected_code=201,
+        )
+        replacement_url = reverse(
+            'cangxu-configuration-item-replace', kwargs={'pk': configuration_item.pk}
+        )
+        replacement_data = {
+            'replacement_item': replacement_source.pk,
+            'destination_location': 7,
+            'reason': 'Synthetic fixture replacement',
+            'rework_task': task_response.data['id'],
+        }
+        self.post(replacement_url, replacement_data, expected_code=400)
+        installed.refresh_from_db()
+        replacement_source.refresh_from_db()
+        self.assertEqual(installed.belongs_to_id, unit.pk)
+        self.assertIsNone(replacement_source.belongs_to_id)
+        self.post(
+            reverse(
+                'cangxu-quality-issue-transition',
+                kwargs={'pk': issue_response.data['id']},
+            ),
+            {'state': QualityIssue.State.INVESTIGATING},
             expected_code=200,
         )
+        self.post(
+            reverse(
+                'cangxu-quality-issue-transition',
+                kwargs={'pk': issue_response.data['id']},
+            ),
+            {'state': QualityIssue.State.REWORK},
+            expected_code=200,
+        )
+        self.post(
+            reverse(
+                'cangxu-rework-task-transition', kwargs={'pk': task_response.data['id']}
+            ),
+            {'state': ReworkTask.State.IN_PROGRESS},
+            expected_code=200,
+        )
+        response = self.post(replacement_url, replacement_data, expected_code=200)
 
         self.assertEqual(response.status_code, 200)
         installed.refresh_from_db()
@@ -417,6 +464,9 @@ class CangxuConfigurationTest(CangxuAPITestCase):
         self.assertEqual(replacement.belongs_to_id, unit.pk)
         self.assertEqual(
             unit.cangxu_replacements.get().replacement_item_id, replacement.pk
+        )
+        self.assertEqual(
+            unit.cangxu_replacements.get().rework_task_id, task_response.data['id']
         )
 
 
