@@ -325,8 +325,50 @@ class CangxuConfigurationTest(CangxuAPITestCase):
             expected_code=201,
         )
         self.assertEqual(item_response.data['component'], component.pk)
+        self.assertEqual(item_response.data['source_build_line'], line.pk)
         component.refresh_from_db()
         self.assertEqual(component.belongs_to_id, output.pk)
+
+        removal_response = self.post(
+            reverse(
+                'cangxu-configuration-item-remove',
+                kwargs={'pk': item_response.data['id']},
+            ),
+            {
+                'location': location.pk,
+                'reason': 'Synthetic surplus component return',
+                'removal_kind': ConfigurationItem.RemovalKind.SURPLUS_RETURN,
+            },
+            expected_code=200,
+        )
+        self.assertEqual(removal_response.data['source_build_line'], line.pk)
+        self.assertEqual(
+            removal_response.data['removal_kind'],
+            ConfigurationItem.RemovalKind.SURPLUS_RETURN,
+        )
+        self.assertEqual(
+            removal_response.data['removal_reason'],
+            'Synthetic surplus component return',
+        )
+        component.refresh_from_db()
+        self.assertIsNone(component.belongs_to_id)
+        self.assertEqual(component.location_id, location.pk)
+        self.assertEqual(
+            component.tracking_info.order_by('-pk').first().notes,
+            'surplus_return: Synthetic surplus component return',
+        )
+        self.post(
+            reverse(
+                'cangxu-configuration-item-remove',
+                kwargs={'pk': item_response.data['id']},
+            ),
+            {
+                'location': location.pk,
+                'reason': 'Duplicate synthetic return',
+                'removal_kind': ConfigurationItem.RemovalKind.SURPLUS_RETURN,
+            },
+            expected_code=400,
+        )
 
     def test_component_replacement_preserves_stock_history(self):
         """Move the old component out and the replacement in as one operation."""

@@ -315,6 +315,7 @@ class UnitConfigurationViewSet(CangxuModelViewSet):
                     quantity=item.quantity,
                     installed_at=item.installed_at,
                     installed_by=item.installed_by,
+                    source_build_line=item.source_build_line,
                     source_build_item=item.source_build_item,
                 )
                 for item in previous.items.filter(
@@ -596,7 +597,36 @@ class ConfigurationItemViewSet(CangxuModelViewSet):
         if component.belongs_to_id == config.unit_id:
             # Native Build completion may already have installed this component.
             # In that case record its engineering position without moving stock again.
-            serializer.save(component=component, installed_by=self.request.user)
+            source_build_line = serializer.validated_data.get('source_build_line')
+            if (
+                component.consumed_by_id == config.unit.build_id
+                and component.consumed_by_id
+            ):
+                build_lines = config.unit.build.build_lines.filter(
+                    bom_item__sub_part_id=component.part_id
+                )
+                if source_build_line:
+                    if not build_lines.filter(pk=source_build_line.pk).exists():
+                        raise ValidationError({
+                            'source_build_line': _(
+                                'The work order line does not allocate this component to the unit.'
+                            )
+                        })
+                else:
+                    matching_lines = list(build_lines[:2])
+                    if len(matching_lines) > 1:
+                        raise ValidationError({
+                            'source_build_line': _(
+                                'Select the exact work order line for this component.'
+                            )
+                        })
+                    if matching_lines:
+                        source_build_line = matching_lines[0]
+            serializer.save(
+                component=component,
+                installed_by=self.request.user,
+                source_build_line=source_build_line,
+            )
             return
         quantity = Decimal(serializer.validated_data.get('quantity', 1))
         if component.belongs_to_id or component.sales_order_id is not None:
@@ -642,6 +672,7 @@ class ConfigurationItemViewSet(CangxuModelViewSet):
         config = UnitConfiguration.objects.select_for_update().get(
             pk=item.configuration_id
         )
+        item = ConfigurationItem.objects.select_for_update().get(pk=item.pk)
         if config.state != UnitConfiguration.State.DRAFT:
             raise ValidationError(
                 _('Create a new configuration revision before removing items.')
@@ -653,16 +684,25 @@ class ConfigurationItemViewSet(CangxuModelViewSet):
         if item.removed_at:
             raise ValidationError(_('This component has already been removed.'))
 
-        location_id = request.data.get('location')
-        reason = str(request.data.get('reason', '')).strip()
-        if not location_id or not reason:
+        removal = serializers.ComponentRemovalRequestSerializer(data=request.data)
+        removal.is_valid(raise_exception=True)
+        destination = removal.validated_data['location']
+        reason = removal.validated_data['reason']
+        removal_kind = removal.validated_data['removal_kind']
+        if destination.structural or destination.external:
             raise ValidationError({
-                'location': _('A destination location and reason are required.')
+                'location': _('Choose an internal, non-structural location.')
             })
 
         component = StockItem.objects.select_for_update().get(pk=item.component_id)
+        if component.belongs_to_id != config.unit_id:
+            raise ValidationError(
+                _('The component is no longer installed in this unit.')
+            )
         try:
-            component.uninstall_into_location(location_id, request.user, notes=reason)
+            component.uninstall_into_location(
+                destination, request.user, notes=f'{removal_kind}: {reason}'
+            )
         except DjangoValidationError as exc:
             raise ValidationError(
                 exc.message_dict if hasattr(exc, 'message_dict') else exc.messages
@@ -671,7 +711,10 @@ class ConfigurationItemViewSet(CangxuModelViewSet):
         item.removed_at = timezone.now()
         item.removed_by = request.user
         item.removal_reason = reason
-        item.save(update_fields=['removed_at', 'removed_by', 'removal_reason'])
+        item.removal_kind = removal_kind
+        item.save(
+            update_fields=['removed_at', 'removed_by', 'removal_reason', 'removal_kind']
+        )
         return Response(self.get_serializer(item).data)
 
 

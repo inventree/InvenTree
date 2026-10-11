@@ -241,6 +241,7 @@ class ConfigurationItemSerializer(InvenTreeModelSerializer):
             'installed_by',
             'removed_by',
             'removal_reason',
+            'removal_kind',
             'source_build_item',
         ]
 
@@ -288,6 +289,17 @@ class ConfigurationItemSerializer(InvenTreeModelSerializer):
             if component.serialized and quantity != 1:
                 raise serializers.ValidationError({
                     'quantity': _('Serialized components must have quantity one.')
+                })
+
+            source_build_line = attrs.get('source_build_line')
+            if source_build_line and (
+                config.unit.build_id != source_build_line.build_id
+                or source_build_line.bom_item.sub_part_id != component.part_id
+            ):
+                raise serializers.ValidationError({
+                    'source_build_line': _(
+                        'The work order line must belong to this unit and match the component part.'
+                    )
                 })
 
         return attrs
@@ -838,3 +850,13 @@ class ComponentReplacementRequestSerializer(serializers.Serializer):
         queryset=StockLocation.objects.all()
     )
     reason = serializers.CharField()
+
+
+class ComponentRemovalRequestSerializer(serializers.Serializer):
+    """Capture the destination, removal class, and operator reason."""
+
+    location = serializers.PrimaryKeyRelatedField(queryset=StockLocation.objects.all())
+    reason = serializers.CharField(trim_whitespace=True, allow_blank=False)
+    removal_kind = serializers.ChoiceField(
+        choices=ConfigurationItem.RemovalKind.choices
+    )

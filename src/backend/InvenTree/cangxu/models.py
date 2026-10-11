@@ -483,6 +483,14 @@ class UnitConfiguration(models.Model):
 class ConfigurationItem(models.Model):
     """Record a component and position in one configuration revision."""
 
+    class RemovalKind(models.TextChoices):
+        """Distinguish production return, failure take-down, and rework removal."""
+
+        SURPLUS_RETURN = 'surplus_return', _('Surplus return')
+        FAILURE_DISASSEMBLY = 'failure_disassembly', _('Failure disassembly')
+        REWORK_DISASSEMBLY = 'rework_disassembly', _('Rework disassembly')
+        OTHER = 'other', _('Other removal')
+
     configuration = models.ForeignKey(
         UnitConfiguration, on_delete=models.PROTECT, related_name='items'
     )
@@ -513,6 +521,16 @@ class ConfigurationItem(models.Model):
         related_name='cangxu_items_removed',
     )
     removal_reason = models.TextField(blank=True)
+    removal_kind = models.CharField(
+        max_length=24, choices=RemovalKind.choices, blank=True, default=''
+    )
+    source_build_line = models.ForeignKey(
+        'build.BuildLine',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='cangxu_configuration_items',
+    )
     source_build_item = models.ForeignKey(
         'build.BuildItem',
         on_delete=models.SET_NULL,

@@ -11988,3 +11988,35 @@ msgstr "线缆端点必须关联线缆规格。"
 #: cangxu/models.py
 msgid "Cable end protocol must match its profile."
 msgstr "线缆端点协议必须与所属规格一致。"
+
+#: cangxu/models.py
+msgid "Surplus return"
+msgstr "余料退库"
+
+#: cangxu/models.py
+msgid "Failure disassembly"
+msgstr "故障拆回"
+
+#: cangxu/models.py
+msgid "Rework disassembly"
+msgstr "返工拆回"
+
+#: cangxu/models.py
+msgid "Other removal"
+msgstr "其他拆回"
+
+#: cangxu/api.py
+msgid "The component is no longer installed in this unit."
+msgstr "该部件已不在此设备上，不能重复拆回。"
+
+#: cangxu/api.py
+msgid "The work order line does not allocate this component to the unit."
+msgstr "该工单物料行未将此部件分配给这台设备。"
+
+#: cangxu/api.py
+msgid "Select the exact work order line for this component."
+msgstr "请为此部件选择准确的工单物料行。"
+
+#: cangxu/serializers.py
+msgid "The work order line must belong to this unit and match the component part."
+msgstr "工单物料行必须属于此设备的工单，且物料必须与部件一致。"
