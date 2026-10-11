@@ -26,6 +26,7 @@ from stock.models import StockItem, StockItemTracking, StockLocation
 from stock.status_codes import StockHistoryCode, StockStatus
 
 from .models import (
+    CableEndDefinition,
     ConfigurationItem,
     CountSession,
     DataImportBatch,
@@ -1008,6 +1009,38 @@ class CangxuDemoSeedTest(CangxuAPITestCase):
     def test_demo_seed_scales_up_idempotently(self):
         """A larger factor adds synthetic records; repeating it adds none."""
         call_command('seed_cangxu_demo', scale_factor=1)
+        hardware_profiles = HardwareProfileRevision.objects.filter(
+            part__IPN__startswith='CX-DEMO-'
+        )
+        self.assertEqual(hardware_profiles.count(), 17)
+        self.assertTrue(
+            hardware_profiles.filter(state=HardwareProfileRevision.State.DRAFT).exists()
+        )
+        self.assertFalse(
+            hardware_profiles.filter(
+                state=HardwareProfileRevision.State.APPROVED
+            ).exists()
+        )
+        linkreal_profile = hardware_profiles.get(part__IPN='CX-DEMO-PCIESW-LR-001')
+        self.assertIn('联瑞', linkreal_profile.board_manufacturer.name)
+        self.assertIn('其他类别', linkreal_profile.chip_vendor.name)
+        self.assertEqual(
+            linkreal_profile.kind, HardwareProfileRevision.Kind.PCIE_SWITCH
+        )
+        ethernet_profile = hardware_profiles.get(part__IPN='CX-DEMO-ETHSW-001')
+        infiniband_profile = hardware_profiles.get(part__IPN='CX-DEMO-IBSW-001')
+        self.assertEqual(
+            ethernet_profile.kind, HardwareProfileRevision.Kind.ETHERNET_SWITCH
+        )
+        self.assertEqual(
+            infiniband_profile.kind, HardwareProfileRevision.Kind.INFINIBAND_SWITCH
+        )
+        branch_profile = hardware_profiles.get(part__IPN='CX-DEMO-BRANCH-001')
+        self.assertEqual(branch_profile.cable_ends.count(), 3)
+        self.assertFalse(linkreal_profile.cable_ends.exists())
+        self.assertTrue(
+            CableEndDefinition.objects.filter(profile=branch_profile).exists()
+        )
         initial_stock = StockItem.objects.filter(
             part__IPN__startswith='CX-DEMO-'
         ).count()
@@ -1032,6 +1065,12 @@ class CangxuDemoSeedTest(CangxuAPITestCase):
         self.assertGreater(expanded_stock, initial_stock)
         self.assertGreater(expanded_configurations, initial_configurations)
         self.assertGreater(expanded_service_cases, initial_service_cases)
+        self.assertEqual(
+            HardwareProfileRevision.objects.filter(
+                part__IPN__startswith='CX-DEMO-'
+            ).count(),
+            17,
+        )
         self.assertEqual(expanded_service_cases, 32)
         self.assertEqual(
             PurchaseOrderLineItem.objects.get(

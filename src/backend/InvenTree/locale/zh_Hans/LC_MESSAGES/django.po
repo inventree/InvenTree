@@ -11714,3 +11714,277 @@ msgstr "退回实物不属于此客户。"
 #: cangxu/api.py
 msgid "The returned stock did not reach quarantine status."
 msgstr "退回实物未能进入待检状态。"
+
+# Hardware profile, switch protocol, and multi-end cable vocabulary for Cangxu.
+# These messages are surfaced by Django REST Framework choice and field labels.
+#: cangxu/models.py
+msgid "Hardware profile revision"
+msgstr "硬件规格修订"
+
+#: cangxu/models.py
+msgid "Hardware profile revisions"
+msgstr "硬件规格修订"
+
+#: cangxu/models.py
+msgid "Hardware port definition"
+msgstr "硬件端口定义"
+
+#: cangxu/models.py
+msgid "Hardware port definitions"
+msgstr "硬件端口定义"
+
+#: cangxu/models.py
+msgid "Cable end definition"
+msgstr "线缆端点定义"
+
+#: cangxu/models.py
+msgid "Cable end definitions"
+msgstr "线缆端点定义"
+
+#: cangxu/models.py
+msgid "GPU / accelerator"
+msgstr "GPU / 加速器"
+
+#: cangxu/models.py
+msgid "Accelerator baseboard"
+msgstr "加速器底板"
+
+#: cangxu/models.py
+msgid "PCIe switch"
+msgstr "PCIe 交换部件"
+
+#: cangxu/models.py
+msgid "NVLink / NVSwitch component"
+msgstr "NVLink / NVSwitch 互联组件"
+
+#: cangxu/models.py
+msgid "Ethernet switch"
+msgstr "以太网交换机"
+
+#: cangxu/models.py
+msgid "InfiniBand switch"
+msgstr "InfiniBand 交换机"
+
+#: cangxu/models.py
+msgid "NIC / HCA / DPU"
+msgstr "网卡 / HCA / DPU"
+
+#: cangxu/models.py
+msgid "Riser / adapter board"
+msgstr "Riser / 转接板"
+
+#: cangxu/models.py
+msgid "Retimer"
+msgstr "重定时器"
+
+#: cangxu/models.py
+msgid "Data / interconnect cable"
+msgstr "数据线缆 / 互联线缆"
+
+#: cangxu/models.py
+msgid "Power harness"
+msgstr "供电线束"
+
+#: cangxu/models.py
+msgid "Optical module"
+msgstr "光模块"
+
+#: cangxu/models.py
+msgid "Other hardware"
+msgstr "其他硬件"
+
+#: cangxu/models.py
+msgid "Unspecified"
+msgstr "未指定"
+
+#: cangxu/models.py
+msgid "PCI Express"
+msgstr "PCI Express"
+
+#: cangxu/models.py
+msgid "NVLink"
+msgstr "NVLink"
+
+#: cangxu/models.py
+msgid "Ethernet"
+msgstr "以太网"
+
+#: cangxu/models.py
+msgid "InfiniBand"
+msgstr "InfiniBand"
+
+#: cangxu/models.py
+msgid "MCIO / internal high-speed"
+msgstr "MCIO / 内部高速互联"
+
+#: cangxu/models.py
+msgid "GPU power"
+msgstr "GPU 供电"
+
+#: cangxu/models.py
+msgid "Optical fiber"
+msgstr "光纤"
+
+#: cangxu/models.py
+msgid "Management"
+msgstr "管理接口"
+
+#: cangxu/models.py
+msgid "Liquid cooling"
+msgstr "液冷"
+
+#: cangxu/models.py
+msgid "PCIe card"
+msgstr "PCIe 插卡"
+
+#: cangxu/models.py
+msgid "Module / tray"
+msgstr "模组 / 托盘"
+
+#: cangxu/models.py
+msgid "Baseboard"
+msgstr "底板"
+
+#: cangxu/models.py
+msgid "Switch board"
+msgstr "交换板"
+
+#: cangxu/models.py
+msgid "Board-mounted chip"
+msgstr "板载芯片"
+
+#: cangxu/models.py
+msgid "Cable assembly"
+msgstr "线缆组件"
+
+#: cangxu/models.py
+msgid "Embedded component"
+msgstr "嵌入式部件"
+
+#: cangxu/models.py
+msgid "Rack-mount device"
+msgstr "机架式设备"
+
+#: cangxu/models.py
+msgid "Kind"
+msgstr "类别"
+
+#: cangxu/models.py
+msgid "Protocol"
+msgstr "协议"
+
+#: cangxu/models.py
+msgid "Form factor"
+msgstr "外形规格"
+
+#: cangxu/models.py
+msgid "Specifications"
+msgstr "规格参数"
+
+#: cangxu/models.py
+msgid "Source reference"
+msgstr "资料来源"
+
+#: cangxu/models.py
+msgid "State"
+msgstr "状态"
+
+#: cangxu/models.py
+msgid "Supersedes"
+msgstr "替代的上一修订"
+
+#: cangxu/models.py
+msgid "Created by"
+msgstr "创建人"
+
+#: cangxu/models.py
+msgid "Approved by"
+msgstr "批准人"
+
+#: cangxu/models.py
+msgid "Created at"
+msgstr "创建时间"
+
+#: cangxu/models.py
+msgid "Approved at"
+msgstr "批准时间"
+
+#: cangxu/models.py
+msgid "Profile"
+msgstr "规格版本"
+
+#: cangxu/models.py
+msgid "Connector"
+msgstr "连接器"
+
+#: cangxu/models.py
+msgid "Lane count"
+msgstr "通道数"
+
+#: cangxu/models.py
+msgid "Max rate"
+msgstr "最高速率"
+
+#: cangxu/models.py
+msgid "Supported modes"
+msgstr "支持模式"
+
+#: cangxu/models.py
+msgid "Branch group"
+msgstr "分支组"
+
+#: cangxu/models.py
+msgid "Lane map"
+msgstr "通道映射"
+
+#: cangxu/models.py
+msgid "Pinout reference"
+msgstr "针脚定义资料"
+
+#: cangxu/models.py
+msgid "This hardware kind requires protocol %(protocol)s."
+msgstr "此硬件类别要求使用 %(protocol)s 协议。"
+
+#: cangxu/models.py
+msgid "Select a cable protocol or medium before saving."
+msgstr "保存前请选择线缆协议或传输介质。"
+
+#: cangxu/serializers.py
+msgid "Specifications must be an object with values and units."
+msgstr "规格参数必须是包含数值和单位的对象。"
+
+#: cangxu/api.py
+msgid "Create a new revision to change an approved profile."
+msgstr "已批准的规格不可直接修改，请创建新修订。"
+
+#: cangxu/api.py
+msgid "Only draft hardware profiles can be approved."
+msgstr "只有草稿状态的硬件规格可以批准。"
+
+#: cangxu/api.py
+msgid "Record the approved engineering source first."
+msgstr "请先记录已批准的工程资料来源。"
+
+#: cangxu/api.py
+msgid "Add at least one typed port before approval."
+msgstr "批准前请至少添加一个类型明确的端口。"
+
+#: cangxu/api.py
+msgid "Define at least two cable ends before approval."
+msgstr "批准前请至少定义两个线缆端点。"
+
+#: cangxu/api.py
+msgid "Ports can only change on a draft profile."
+msgstr "只有草稿规格版本允许修改端口。"
+
+#: cangxu/models.py
+msgid "Use cable ends for cable assemblies."
+msgstr "线缆组件请使用线缆端点定义。"
+
+#: cangxu/models.py
+msgid "Cable ends require a cable profile."
+msgstr "线缆端点必须关联线缆规格。"
+
+#: cangxu/models.py
+msgid "Cable end protocol must match its profile."
+msgstr "线缆端点协议必须与所属规格一致。"

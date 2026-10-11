@@ -12,9 +12,12 @@ from build.status_codes import BuildStatus
 from build.tasks import complete_build
 from build.validators import generate_next_build_reference
 from cangxu.models import (
+    CableEndDefinition,
     ConfigurationItem,
     CountLine,
     CountSession,
+    HardwarePortDefinition,
+    HardwareProfileRevision,
     ManufacturingLot,
     ManufacturingLotPartner,
     ManufacturingLotStockItem,
@@ -127,6 +130,15 @@ class Command(BaseCommand):
                     'description': f'Fictional demo company; {role_description}, not a real supplier or approved source.'
                 },
             )
+        linkreal_board_role, _ = Company.objects.get_or_create(
+            name='CX Demo 虚构板卡制造商-联瑞类别',
+            defaults={
+                'description': (
+                    'Fictional demo role association only; no real Linkreal product, '
+                    'model, supply, or compatibility claim.'
+                )
+            },
+        )
 
         catalog = [
             ('CX-DEMO-CPU-001', '通用服务器 CPU(演示)', '整机', True, 5),
@@ -248,6 +260,230 @@ class Command(BaseCommand):
                     'notes': 'Synthetic demo code; not an enterprise code.',
                 },
             )
+
+        # Populate revisioned, explicitly unapproved engineering examples.
+        # Vendor-role links are fictional fixtures and never assert real products
+        # or compatibility. All numeric/product specifications remain pending.
+        hardware_profiles = [
+            (
+                'CX-DEMO-GPU-001',
+                HardwareProfileRevision.Kind.GPU,
+                HardwareProfileRevision.Protocol.UNSPECIFIED,
+                HardwareProfileRevision.FormFactor.PCIE_CARD,
+                None,
+                'board',
+                None,
+            ),
+            (
+                'CX-DEMO-GPUBASE-001',
+                HardwareProfileRevision.Kind.ACCELERATOR_BASEBOARD,
+                HardwareProfileRevision.Protocol.UNSPECIFIED,
+                HardwareProfileRevision.FormFactor.BASEBOARD,
+                None,
+                'board',
+                None,
+            ),
+            (
+                'CX-DEMO-PCIESW-001',
+                HardwareProfileRevision.Kind.PCIE_SWITCH,
+                HardwareProfileRevision.Protocol.PCIE,
+                HardwareProfileRevision.FormFactor.SWITCH_BOARD,
+                None,
+                'board',
+                'PCIe',
+            ),
+            (
+                'CX-DEMO-PCIESW-BC-001',
+                HardwareProfileRevision.Kind.PCIE_SWITCH,
+                HardwareProfileRevision.Protocol.PCIE,
+                HardwareProfileRevision.FormFactor.SWITCH_BOARD,
+                'CX Demo 虚构厂商-博通类别',
+                'board',
+                'PCIe',
+            ),
+            (
+                'CX-DEMO-PCIESW-LR-001',
+                HardwareProfileRevision.Kind.PCIE_SWITCH,
+                HardwareProfileRevision.Protocol.PCIE,
+                HardwareProfileRevision.FormFactor.SWITCH_BOARD,
+                'CX Demo 虚构厂商-其他类别',
+                'linkreal',
+                'PCIe',
+            ),
+            (
+                'CX-DEMO-PCIESW-OTHER-001',
+                HardwareProfileRevision.Kind.PCIE_SWITCH,
+                HardwareProfileRevision.Protocol.PCIE,
+                HardwareProfileRevision.FormFactor.SWITCH_BOARD,
+                'CX Demo 虚构厂商-其他类别',
+                'board',
+                'PCIe',
+            ),
+            (
+                'CX-DEMO-NVLINK-001',
+                HardwareProfileRevision.Kind.NVLINK_SWITCH,
+                HardwareProfileRevision.Protocol.NVLINK,
+                HardwareProfileRevision.FormFactor.SWITCH_BOARD,
+                None,
+                'board',
+                'NVLink',
+            ),
+            (
+                'CX-DEMO-ETHSW-001',
+                HardwareProfileRevision.Kind.ETHERNET_SWITCH,
+                HardwareProfileRevision.Protocol.ETHERNET,
+                HardwareProfileRevision.FormFactor.RACKMOUNT,
+                None,
+                None,
+                'Ethernet',
+            ),
+            (
+                'CX-DEMO-IBSW-001',
+                HardwareProfileRevision.Kind.INFINIBAND_SWITCH,
+                HardwareProfileRevision.Protocol.INFINIBAND,
+                HardwareProfileRevision.FormFactor.RACKMOUNT,
+                None,
+                None,
+                'InfiniBand',
+            ),
+            (
+                'CX-DEMO-RETIMER-001',
+                HardwareProfileRevision.Kind.RETIMER,
+                HardwareProfileRevision.Protocol.PCIE,
+                HardwareProfileRevision.FormFactor.CHIP,
+                None,
+                'board',
+                None,
+            ),
+            (
+                'CX-DEMO-MCIO-001',
+                HardwareProfileRevision.Kind.CABLE,
+                HardwareProfileRevision.Protocol.MCIO,
+                HardwareProfileRevision.FormFactor.CABLE,
+                None,
+                None,
+                'MCIO',
+            ),
+            (
+                'CX-DEMO-GPUPWR-001',
+                HardwareProfileRevision.Kind.POWER_HARNESS,
+                HardwareProfileRevision.Protocol.GPU_POWER,
+                HardwareProfileRevision.FormFactor.CABLE,
+                None,
+                None,
+                'GPU power',
+            ),
+            (
+                'CX-DEMO-DAC-001',
+                HardwareProfileRevision.Kind.CABLE,
+                HardwareProfileRevision.Protocol.ETHERNET,
+                HardwareProfileRevision.FormFactor.CABLE,
+                None,
+                None,
+                'DAC',
+            ),
+            (
+                'CX-DEMO-AOC-001',
+                HardwareProfileRevision.Kind.CABLE,
+                HardwareProfileRevision.Protocol.OPTICAL,
+                HardwareProfileRevision.FormFactor.CABLE,
+                None,
+                None,
+                'AOC',
+            ),
+            (
+                'CX-DEMO-FIBER-001',
+                HardwareProfileRevision.Kind.CABLE,
+                HardwareProfileRevision.Protocol.OPTICAL,
+                HardwareProfileRevision.FormFactor.CABLE,
+                None,
+                None,
+                'Fiber',
+            ),
+            (
+                'CX-DEMO-BRANCH-001',
+                HardwareProfileRevision.Kind.CABLE,
+                HardwareProfileRevision.Protocol.MCIO,
+                HardwareProfileRevision.FormFactor.CABLE,
+                None,
+                None,
+                'Breakout',
+            ),
+            (
+                'CX-DEMO-RJ45-001',
+                HardwareProfileRevision.Kind.CABLE,
+                HardwareProfileRevision.Protocol.MANAGEMENT,
+                HardwareProfileRevision.FormFactor.CABLE,
+                None,
+                None,
+                'RJ45',
+            ),
+        ]
+        for (
+            ipn,
+            kind,
+            protocol,
+            form_factor,
+            chip_vendor_name,
+            board_role,
+            connector_family,
+        ) in hardware_profiles:
+            profile, _ = HardwareProfileRevision.objects.get_or_create(
+                part=parts[ipn],
+                revision='DEMO-1',
+                defaults={
+                    'kind': kind,
+                    'protocol': protocol,
+                    'form_factor': form_factor,
+                    'chip_vendor': vendor_placeholders.get(chip_vendor_name),
+                    'board_manufacturer': (
+                        linkreal_board_role
+                        if board_role == 'linkreal'
+                        else process_partners.get(board_role)
+                    ),
+                    'specifications': {
+                        'demo_only': True,
+                        'engineering_status': '待工程资料确认',
+                        'parameters': {},
+                    },
+                    'source_reference': (
+                        'CX-DEMO fixture only; not an approved engineering source.'
+                    ),
+                },
+            )
+            if connector_family in {'PCIe', 'NVLink', 'Ethernet', 'InfiniBand'}:
+                HardwarePortDefinition.objects.get_or_create(
+                    profile=profile,
+                    path='DEMO-PORT-01',
+                    defaults={
+                        'protocol': protocol,
+                        'connector': 'DEMO-PLACEHOLDER; confirm from engineering drawing',
+                        'notes': 'Synthetic port placeholder; no electrical rating is asserted.',
+                    },
+                )
+            if profile.kind in {
+                HardwareProfileRevision.Kind.CABLE,
+                HardwareProfileRevision.Kind.POWER_HARNESS,
+            }:
+                end_count = 3 if connector_family in {'GPU power', 'Breakout'} else 2
+                for end_index in range(1, end_count + 1):
+                    CableEndDefinition.objects.get_or_create(
+                        profile=profile,
+                        label=f'DEMO-END-{end_index:02d}',
+                        defaults={
+                            'connector': 'DEMO-PLACEHOLDER; confirm from engineering drawing',
+                            'protocol': protocol,
+                            'branch_group': 'DEMO-BRANCH'
+                            if end_count > 2 and end_index > 1
+                            else '',
+                            'lane_map': {
+                                'demo_only': True,
+                                'status': '待图纸确认',
+                                'endpoint_index': end_index,
+                            },
+                            'pinout_reference': '待工程图纸确认',
+                        },
+                    )
 
         # Populate synthetic opening stock before native Build allocation uses
         # it to consume components for the first-article workflow.
