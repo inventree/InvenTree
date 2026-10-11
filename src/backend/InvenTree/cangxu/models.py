@@ -531,6 +531,13 @@ class ConfigurationItem(models.Model):
         blank=True,
         related_name='cangxu_configuration_items',
     )
+    rework_task = models.ForeignKey(
+        'cangxu.ReworkTask',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='configuration_items',
+    )
     source_build_item = models.ForeignKey(
         'build.BuildItem',
         on_delete=models.SET_NULL,

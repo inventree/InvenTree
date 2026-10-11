@@ -316,6 +316,7 @@ class UnitConfigurationViewSet(CangxuModelViewSet):
                     installed_at=item.installed_at,
                     installed_by=item.installed_by,
                     source_build_line=item.source_build_line,
+                    rework_task=item.rework_task,
                     source_build_item=item.source_build_item,
                 )
                 for item in previous.items.filter(
@@ -578,6 +579,7 @@ class ConfigurationItemViewSet(CangxuModelViewSet):
             position=item.position,
             quantity=item.quantity,
             installed_by=user,
+            rework_task=rework_task,
             source_build_item=item.source_build_item,
         )
         replacement_record = ComponentReplacement.objects.create(
@@ -611,6 +613,23 @@ class ConfigurationItemViewSet(CangxuModelViewSet):
             raise ValidationError(
                 _('Create a new configuration revision after recording test evidence.')
             )
+
+        rework_task = serializer.validated_data.get('rework_task')
+        if rework_task:
+            rework_task = ReworkTask.objects.select_for_update().get(pk=rework_task.pk)
+            issue = QualityIssue.objects.select_for_update().get(
+                pk=rework_task.issue_id
+            )
+            if (
+                issue.unit_id != config.unit_id
+                or issue.state != QualityIssue.State.REWORK
+                or rework_task.state != ReworkTask.State.IN_PROGRESS
+            ):
+                raise ValidationError({
+                    'rework_task': _(
+                        'The rework task must be in progress for this unit and quality issue.'
+                    )
+                })
 
         component = (
             StockItem.objects
@@ -650,6 +669,7 @@ class ConfigurationItemViewSet(CangxuModelViewSet):
                 component=component,
                 installed_by=self.request.user,
                 source_build_line=source_build_line,
+                rework_task=rework_task,
             )
             return
         quantity = Decimal(serializer.validated_data.get('quantity', 1))
@@ -686,7 +706,11 @@ class ConfigurationItemViewSet(CangxuModelViewSet):
                 exc.message_dict if hasattr(exc, 'message_dict') else exc.messages
             ) from exc
 
-        serializer.save(component=install_item, installed_by=self.request.user)
+        serializer.save(
+            component=install_item,
+            installed_by=self.request.user,
+            rework_task=rework_task,
+        )
 
     @action(detail=True, methods=['post'])
     @transaction.atomic

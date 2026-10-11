@@ -854,6 +854,87 @@ class CangxuServiceCaseTest(CangxuAPITestCase):
 class CangxuQualityReworkTest(CangxuAPITestCase):
     """Require corrective work and a separate verification before closure."""
 
+    def test_quantity_rework_material_is_installed_and_traced(self):
+        """Install quantity stock only for the matching active rework task."""
+        unit = StockItem.objects.get(pk=1000)
+        location = StockLocation.objects.get(pk=7)
+        material_part = Part.objects.create(
+            name='Cangxu synthetic non-serialized rework material',
+            component=True,
+            trackable=False,
+        )
+        material_stock = StockItem.objects.create(
+            part=material_part, location=location, quantity=5
+        )
+        issue_response = self.post(
+            reverse('cangxu-quality-issue-list'),
+            {
+                'reference': 'CX-QA-MAT-TEST-0001',
+                'unit': unit.pk,
+                'title': 'Synthetic rework material requirement',
+                'severity': QualityIssue.Severity.MEDIUM,
+            },
+            expected_code=201,
+        )
+        task_response = self.post(
+            reverse('cangxu-rework-task-list'),
+            {'issue': issue_response.data['id'], 'title': 'Install synthetic pad'},
+            expected_code=201,
+        )
+        config_response = self.post(
+            reverse('cangxu-configuration-list'),
+            {
+                'unit': unit.pk,
+                'kind': 'actual',
+                'change_summary': 'Synthetic rework material installation',
+            },
+            expected_code=201,
+        )
+        configuration_url = reverse('cangxu-configuration-item-list')
+        install_data = {
+            'configuration': config_response.data['id'],
+            'component': material_stock.pk,
+            'position': 'THERMAL-PAD-01',
+            'quantity': '2',
+            'rework_task': task_response.data['id'],
+        }
+        self.post(configuration_url, install_data, expected_code=400)
+        material_stock.refresh_from_db()
+        self.assertEqual(material_stock.quantity, 5)
+        self.assertIsNone(material_stock.belongs_to_id)
+
+        for state in [QualityIssue.State.INVESTIGATING, QualityIssue.State.REWORK]:
+            self.post(
+                reverse(
+                    'cangxu-quality-issue-transition',
+                    kwargs={'pk': issue_response.data['id']},
+                ),
+                {'state': state},
+                expected_code=200,
+            )
+        self.post(
+            reverse(
+                'cangxu-rework-task-transition', kwargs={'pk': task_response.data['id']}
+            ),
+            {'state': ReworkTask.State.IN_PROGRESS},
+            expected_code=200,
+        )
+        install_response = self.post(configuration_url, install_data, expected_code=201)
+
+        installed_material = StockItem.objects.get(
+            pk=install_response.data['component']
+        )
+        material_stock.refresh_from_db()
+        installed_material.refresh_from_db()
+        self.assertEqual(material_stock.quantity, 3)
+        self.assertEqual(installed_material.quantity, 2)
+        self.assertEqual(installed_material.belongs_to_id, unit.pk)
+        self.assertEqual(install_response.data['rework_task'], task_response.data['id'])
+        self.assertEqual(
+            installed_material.tracking_info.order_by('-pk').first().tracking_type,
+            StockHistoryCode.INSTALLED_INTO_ASSEMBLY.value,
+        )
+
     def test_quality_issue_cannot_close_before_rework_verification(self):
         """Block closure until work and independent verification are recorded."""
         unit = StockItem.objects.get(pk=1000)
