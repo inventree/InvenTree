@@ -10,6 +10,7 @@ import {
   IconBox,
   IconBuildingFactory2,
   IconDashboard,
+  IconDeviceDesktopAnalytics,
   IconPackages,
   IconShoppingCart,
   IconTruckDelivery
@@ -33,6 +34,16 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
       name: 'home',
       title: t`Dashboard`,
       icon: <IconDashboard />
+    },
+    {
+      name: 'cangxu',
+      title: t`Cangxu Workshop`,
+      icon: <IconDeviceDesktopAnalytics />,
+      visible:
+        user.hasViewVisible(UserRoles.build) ||
+        user.hasViewVisible(UserRoles.stock) ||
+        user.hasViewVisible(UserRoles.purchase_order) ||
+        user.hasViewVisible(UserRoles.sales_order)
     },
     {
       name: 'part',

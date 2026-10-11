@@ -14458,3 +14458,108 @@ msgstr "阅读文档"
 msgid "Ignore and continue to Desktop view"
 msgstr "忽略并继续到桌面视图"
 
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Receiving and purchasing"
+msgstr "采购与收货"
+
+#: src/pages/cangxu/CangxuHome.tsx
+#: src/defaults/links.tsx
+msgid "Cangxu Workshop"
+msgstr "仓序工作台"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Scan barcode"
+msgstr "扫码"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Review purchase orders, expected stock, and received items."
+msgstr "查看采购订单、待收物料和已收货记录。"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Production and assembly"
+msgstr "生产与装配"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Open build orders, allocate components, and record finished units."
+msgstr "查看生产工单、分配物料并登记完工整机。"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Warehouse and stock"
+msgstr "仓库与库存"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Find stock, locations, and internal transfer orders."
+msgstr "查询库存、库位和内部调拨单。"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Delivery and returns"
+msgstr "交付与退货"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Review sales shipments, packing, and customer returns."
+msgstr "查看销售发货、装箱和客户退货。"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "AI server production and warehousing"
+msgstr "智算服务器生产与仓储"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Start common receiving, production, stock, and delivery work here. Search a serial number or part code to open its InvenTree stock history."
+msgstr "从这里进入常用的收货、生产、库存和交付流程。也可搜索序列号或物料编码，查看 InvenTree 中的实物库存履历。"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Common workflows"
+msgstr "常用流程"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Open workflow"
+msgstr "进入流程"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Trace a part or unit"
+msgstr "追溯物料或整机"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Serial number or part code"
+msgstr "序列号或物料编码"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Enter a serial number, internal part code, or name"
+msgstr "输入序列号、内部物料编码或名称"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Search stock history"
+msgstr "查询实物履历"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Search failed"
+msgstr "查询失败"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "The stock search could not be completed. Check your access and try again."
+msgstr "无法完成库存查询。请检查访问权限后重试。"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "No matching stock items were found."
+msgstr "没有找到匹配的库存实物。"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "{0} matching stock items (up to 25)"
+msgstr "找到 {0} 件匹配实物（最多显示 25 件）"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Stock item {0}"
+msgstr "库存实物 {0}"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Part code"
+msgstr "物料编码"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Installed or unavailable"
+msgstr "已装机或当前不可用"
+
+#: src/pages/cangxu/CangxuHome.tsx
+msgid "Parent unit"
+msgstr "所属整机"
+
