@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 554
+INVENTREE_API_VERSION = 555
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v554 -> 2026-10-08 : https://github.com/inventree/InvenTree/pull/12978
+v555 -> 2026-10-13 : https://github.com/inventree/InvenTree/pull/12978
     - Adds tipps endpoints
+
+v554 -> 2026-10-09 : https://github.com/inventree/InvenTree/pull/12986
+    - Add missing nullable annotations for read_only fields
 
 v553 -> 2026-10-04 : https://github.com/inventree/InvenTree/pull/12965
     - Fix user creation with 'group_ids' via the User API endpoint
