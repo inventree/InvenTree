@@ -1293,6 +1293,141 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
             expected_code=201,
         )
 
+    def test_historical_shipment_and_service_rows_validate_without_posting(self):
+        """Validate mixed outbound/RMA history while keeping it off the stock ledger."""
+        batch = self.post(
+            reverse('cangxu-import-batch-list'),
+            {
+                'source_system': 'CX-TEST',
+                'source_kind': DataImportBatch.Kind.SHIPMENT_HISTORY,
+                'source_file_name': 'synthetic-delivery-service.xlsx',
+                'source_file_digest': 'e' * 64,
+            },
+            expected_code=201,
+        )
+        batch_id = batch.data['id']
+        self.post(
+            reverse('cangxu-import-batch-stage-rows', kwargs={'pk': batch_id}),
+            [
+                {
+                    'source_sheet': 'Synthetic shipments',
+                    'source_row': 2,
+                    'source_values': {'A': {'value': 'CX-TEST-FLOW-001'}},
+                    'normalized_values': {
+                        'row_type': 'data',
+                        'mapping_status': 'mapped',
+                        'mapping_profile': 'shipment_history',
+                        'fields': {
+                            'product_description': 'Synthetic GPU server',
+                            'quantity': 2,
+                            'shipment_status': '已出库',
+                            'shipped_at': '2026-10-01',
+                        },
+                    },
+                },
+                {
+                    'source_sheet': 'Synthetic service',
+                    'source_row': 2,
+                    'source_values': {'A': {'value': 'CX-TEST-RMA-001'}},
+                    'normalized_values': {
+                        'row_type': 'data',
+                        'mapping_status': 'mapped',
+                        'mapping_profile': 'service_history',
+                        'fields': {
+                            'part_number': 'CX-TEST-PART-001',
+                            'part_name': 'Synthetic switch board',
+                            'quantity': 1,
+                            'serial': 'CX-TEST-SN-001',
+                            'fault_description': 'Synthetic link fault',
+                            'service_status': '待检',
+                        },
+                    },
+                },
+            ],
+            expected_code=201,
+        )
+        before_stock = StockItem.objects.count()
+        validated = self.post(
+            reverse('cangxu-import-batch-validate', kwargs={'pk': batch_id}),
+            {},
+            expected_code=200,
+        )
+        self.assertEqual(validated.data['valid'], 2)
+        self.assertEqual(validated.data['invalid'], 0)
+        self.post(
+            reverse('cangxu-import-batch-approve', kwargs={'pk': batch_id}),
+            {},
+            expected_code=200,
+        )
+        self.post(
+            reverse('cangxu-import-batch-apply', kwargs={'pk': batch_id}),
+            {},
+            expected_code=400,
+        )
+        self.assertEqual(StockItem.objects.count(), before_stock)
+        self.assertFalse(
+            DataImportRecord.objects.filter(
+                batch_id=batch_id, state=DataImportRecord.State.APPLIED
+            ).exists()
+        )
+
+    def test_catalog_and_receipt_rows_validate_without_posting(self):
+        """Validate product and receiving history without inventing ledger entries."""
+        before_stock = StockItem.objects.count()
+        for index, source_kind, profile, fields in [
+            (
+                1,
+                DataImportBatch.Kind.PART_CATALOG,
+                'part_catalog',
+                {
+                    'part_number': 'CX-TEST-CATALOG-001',
+                    'part_name': 'Synthetic GPU board',
+                },
+            ),
+            (
+                2,
+                DataImportBatch.Kind.PURCHASE_HISTORY,
+                'purchase_history',
+                {'part_number': 'CX-TEST-RECEIPT-001', 'quantity': 3},
+            ),
+        ]:
+            batch = self.post(
+                reverse('cangxu-import-batch-list'),
+                {
+                    'source_system': 'CX-TEST',
+                    'source_kind': source_kind,
+                    'source_file_name': f'synthetic-history-{index}.xlsx',
+                    'source_file_digest': str(index) * 64,
+                },
+                expected_code=201,
+            )
+            batch_id = batch.data['id']
+            self.post(
+                reverse('cangxu-import-batch-stage-rows', kwargs={'pk': batch_id}),
+                [
+                    {
+                        'source_sheet': 'Synthetic source',
+                        'source_row': 2,
+                        'source_values': {'A': {'value': 'synthetic'}},
+                        'normalized_values': {
+                            'row_type': 'data',
+                            'mapping_status': 'mapped',
+                            'mapping_profile': profile,
+                            'fields': fields,
+                        },
+                    }
+                ],
+                expected_code=201,
+            )
+            result = self.post(
+                reverse('cangxu-import-batch-validate', kwargs={'pk': batch_id}),
+                {},
+                expected_code=200,
+            )
+            self.assertEqual(result.data['valid'], 1)
+            self.assertEqual(result.data['invalid'], 0)
+        self.assertEqual(StockItem.objects.count(), before_stock)
+
     def test_xlsx_upload_stages_cell_provenance_idempotently(self):
         """Parse a fictional workbook while preserving leading zeros and coordinates."""
         workbook = Workbook()
@@ -1452,7 +1587,8 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
             {},
             expected_code=200,
         )
-        self.assertEqual(validation.data['invalid'], 6)
+        self.assertEqual(validation.data['valid'], 1)
+        self.assertEqual(validation.data['invalid'], 5)
         first_row.refresh_from_db()
         error_codes = {error['code'] for error in first_row.validation_errors}
         self.assertIn('date_missing_year', error_codes)
@@ -1462,11 +1598,10 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
             'identifier_stored_as_number',
             {error['code'] for error in unformatted_identifier_row.validation_errors},
         )
-        self.assertFalse(
-            DataImportRecord.objects.filter(
-                batch_id=batch_id, state=DataImportRecord.State.VALID
-            ).exists()
+        valid_receipt_row = DataImportRecord.objects.get(
+            batch_id=batch_id, source_sheet='Synthetic inventory', source_row=3
         )
+        self.assertEqual(valid_receipt_row.state, DataImportRecord.State.VALID)
         self.assertEqual(StockItem.objects.count(), stock_count)
 
     def test_opening_import_requires_review_and_applies_idempotently(self):

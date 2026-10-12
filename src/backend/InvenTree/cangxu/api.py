@@ -1917,9 +1917,27 @@ class DataImportBatchViewSet(CangxuModelViewSet):
             errors = []
             if not isinstance(record.source_values, dict) or not record.source_values:
                 errors.append({'field': 'source_values', 'code': 'invalid_object'})
-            errors.extend(validate_normalized_import_values(record.normalized_values))
+            normalized = record.normalized_values
+            if not isinstance(normalized, dict):
+                normalized = {}
+                errors.append({'field': 'normalized_values', 'code': 'invalid_object'})
+            errors.extend(validate_normalized_import_values(normalized))
+            fields = normalized.get('fields', {})
+            if not isinstance(fields, dict):
+                fields = {}
+            profile = normalized.get('mapping_profile')
 
             if batch.source_kind == DataImportBatch.Kind.OPENING_STOCK:
+                if profile not in (None, 'opening_stock'):
+                    errors.append({
+                        'field': 'mapping_profile',
+                        'code': 'source_kind_profile_mismatch',
+                    })
+                if normalized.get('mapping_status') == 'unrecognized_header':
+                    errors.append({
+                        'field': 'mapping_status',
+                        'code': 'unrecognized_header',
+                    })
                 if not record.mapped_part_id:
                     errors.append({'field': 'mapped_part', 'code': 'required'})
                 if not record.location_id or record.location.external:
@@ -1962,10 +1980,61 @@ class DataImportBatchViewSet(CangxuModelViewSet):
                             'code': 'already_exists_for_part',
                         })
             else:
-                errors.append({
-                    'field': 'source_kind',
-                    'code': 'type_specific_validation_not_implemented',
-                })
+                allowed_profiles = {
+                    DataImportBatch.Kind.PART_CATALOG: {
+                        'part_catalog',
+                        'opening_stock',
+                    },
+                    DataImportBatch.Kind.PURCHASE_HISTORY: {
+                        'purchase_history',
+                        'part_catalog',
+                        'opening_stock',
+                    },
+                    DataImportBatch.Kind.SHIPMENT_HISTORY: {
+                        'shipment_history',
+                        'service_history',
+                    },
+                    DataImportBatch.Kind.SERVICE_HISTORY: {'service_history'},
+                }
+                if profile not in allowed_profiles.get(batch.source_kind, set()):
+                    errors.append({
+                        'field': 'mapping_profile',
+                        'code': 'source_kind_profile_mismatch',
+                    })
+                elif normalized.get('mapping_status') == 'unrecognized_header':
+                    errors.append({
+                        'field': 'mapping_status',
+                        'code': 'unrecognized_header',
+                    })
+                else:
+                    identity_fields = {
+                        'part_catalog': ('part_number', 'oem_part_number', 'part_name'),
+                        'purchase_history': ('part_number', 'part_name'),
+                        'shipment_history': ('product_description',),
+                        'service_history': ('part_number', 'part_name'),
+                    }.get(profile, ())
+                    if not any(
+                        isinstance(fields.get(name), str) and fields[name].strip()
+                        for name in identity_fields
+                    ):
+                        errors.append({
+                            'field': 'fields',
+                            'code': 'source_identity_required',
+                        })
+                    if profile in {
+                        'purchase_history',
+                        'shipment_history',
+                        'service_history',
+                    }:
+                        try:
+                            quantity = Decimal(str(fields.get('quantity')))
+                            if quantity <= 0:
+                                raise ValueError
+                        except Exception:
+                            errors.append({
+                                'field': 'quantity',
+                                'code': 'positive_quantity_required',
+                            })
 
             record.validation_errors = errors
             record.state = (
