@@ -44,6 +44,7 @@ from .models import (
     ServiceCase,
     ServiceCaseEvent,
     ShipmentManifest,
+    ShipmentManifestLine,
     ShipmentReceipt,
     ShipmentReceiptException,
     ShipmentReceiptLine,
@@ -1146,6 +1147,41 @@ class CangxuCountSessionTest(CangxuAPITestCase):
 
 class CangxuShipmentManifestTest(CangxuAPITestCase):
     """Exercise package verification across separate shipments of one order."""
+
+    def test_manifest_list_handles_large_prefetched_package_sets(self):
+        """List large manifests without expanding stock IDs into SQLite OR trees."""
+        customer = Company.objects.create(
+            name='Cangxu Synthetic Pagination Customer', is_customer=True
+        )
+        order = SalesOrder.objects.create(
+            customer=customer,
+            reference='CX-MANIFEST-PAGE-TEST',
+            description='Synthetic large manifest pagination test',
+        )
+        shipment = SalesOrderShipment.objects.create(
+            order=order, reference='CX-MANIFEST-PAGE-SHIP'
+        )
+        stock_items = list(StockItem.objects.order_by('pk')[:8])
+        manifests = ShipmentManifest.objects.bulk_create([
+            ShipmentManifest(shipment=shipment, package_code=f'CX-PAGE-PKG-{index:03d}')
+            for index in range(150)
+        ])
+        ShipmentManifestLine.objects.bulk_create([
+            ShipmentManifestLine(
+                manifest=manifest,
+                stock_item=stock_item,
+                item_role='synthetic pagination fixture',
+            )
+            for manifest in manifests
+            for stock_item in stock_items
+        ])
+
+        response = self.get(
+            reverse('cangxu-manifest-list'), data={'limit': 200}, expected_code=200
+        )
+
+        self.assertEqual(response.data['count'], 150)
+        self.assertEqual(len(response.data['results']), 150)
 
     def test_split_shipments_freeze_only_their_allocated_items(self):
         """Manifest snapshots follow each shipment allocation without shipping stock."""

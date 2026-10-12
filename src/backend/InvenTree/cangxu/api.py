@@ -1654,7 +1654,7 @@ class ShipmentManifestViewSet(CangxuModelViewSet):
 
     queryset = ShipmentManifest.objects.select_related(
         'shipment', 'shipment__order', 'configuration', 'checked_by'
-    ).prefetch_related('lines__stock_item__part')
+    )
     serializer_class = serializers.ShipmentManifestSerializer
     filterset_fields = ['shipment', 'configuration', 'package_code']
     search_fields = ['package_code', 'shipment__reference', 'shipment__tracking_number']
