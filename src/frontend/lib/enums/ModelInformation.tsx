@@ -212,6 +212,12 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.purchase_order_line_list,
     icon: 'purchase_orders'
   },
+  purchasereceipt: {
+    label: () => t`Purchase Receipt`,
+    label_multiple: () => t`Purchase Receipts`,
+    api_endpoint: ApiEndpoints.cangxu_purchase_receipt_list,
+    icon: 'purchase_orders'
+  },
   salesorder: {
     label: () => t`Sales Order`,
     label_multiple: () => t`Sales Orders`,

@@ -89,7 +89,7 @@ msgstr "取消"
 
 #: lib/components/RowActions.tsx:146
 #: src/components/nav/NavigationDrawer.tsx:196
-#: src/forms/PurchaseOrderForms.tsx:965
+#: src/forms/PurchaseOrderForms.tsx:971
 #: src/forms/StockForms.tsx:950
 #: src/forms/StockForms.tsx:1517
 #: src/forms/StockForms.tsx:1565
@@ -157,7 +157,7 @@ msgstr "否"
 #: src/forms/BuildForms.tsx:703
 #: src/forms/BuildForms.tsx:867
 #: src/forms/BuildForms.tsx:971
-#: src/forms/PurchaseOrderForms.tsx:961
+#: src/forms/PurchaseOrderForms.tsx:967
 #: src/forms/ReturnOrderForms.tsx:242
 #: src/forms/SalesOrderForms.tsx:435
 #: src/forms/StockForms.tsx:432
@@ -172,6 +172,7 @@ msgstr "否"
 #: src/forms/StockForms.tsx:1927
 #: src/forms/TransferOrderForms.tsx:239
 #: src/pages/build/BuildOrderDetailsPanel.tsx:45
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:248
 #: src/pages/part/PartDetail.tsx:814
 #: src/pages/part/bom/BomCompare.tsx:203
 #: src/tables/build/BuildOrderParametricTable.tsx:29
@@ -440,6 +441,14 @@ msgid "Purchase Order Lines"
 msgstr "采购明细"
 
 #: lib/enums/ModelInformation.tsx:216
+msgid "Purchase Receipt"
+msgstr ""
+
+#: lib/enums/ModelInformation.tsx:217
+msgid "Purchase Receipts"
+msgstr ""
+
+#: lib/enums/ModelInformation.tsx:222
 #: src/components/previews/models/SalesOrderPreview.tsx:15
 #: src/pages/build/BuildOrderDetailsPanel.tsx:135
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:25
@@ -455,7 +464,7 @@ msgstr "采购明细"
 msgid "Sales Order"
 msgstr "销售订单"
 
-#: lib/enums/ModelInformation.tsx:217
+#: lib/enums/ModelInformation.tsx:223
 #: lib/enums/Roles.tsx:47
 #: src/defaults/actions.tsx:143
 #: src/pages/Index/Settings/SystemSettings.tsx:372
@@ -465,23 +474,23 @@ msgstr "销售订单"
 msgid "Sales Orders"
 msgstr "销售订单"
 
-#: lib/enums/ModelInformation.tsx:227
+#: lib/enums/ModelInformation.tsx:233
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:287
 msgid "Sales Order Shipment"
 msgstr "销售发货单"
 
-#: lib/enums/ModelInformation.tsx:228
+#: lib/enums/ModelInformation.tsx:234
 msgid "Sales Order Shipments"
 msgstr "销售发货单"
 
-#: lib/enums/ModelInformation.tsx:238
+#: lib/enums/ModelInformation.tsx:244
 #: src/components/previews/models/ReturnOrderPreview.tsx:15
 #: src/pages/sales/ReturnOrderDetail.tsx:357
 #: src/tables/stock/StockTrackingTable.tsx:175
 msgid "Return Order"
 msgstr "退货订单"
 
-#: lib/enums/ModelInformation.tsx:239
+#: lib/enums/ModelInformation.tsx:245
 #: lib/enums/Roles.tsx:43
 #: src/defaults/actions.tsx:163
 #: src/pages/Index/Settings/SystemSettings.tsx:385
@@ -491,15 +500,15 @@ msgstr "退货订单"
 msgid "Return Orders"
 msgstr "退货订单"
 
-#: lib/enums/ModelInformation.tsx:249
+#: lib/enums/ModelInformation.tsx:255
 msgid "Return Order Line Item"
 msgstr "退货订单行项目"
 
-#: lib/enums/ModelInformation.tsx:250
+#: lib/enums/ModelInformation.tsx:256
 msgid "Return Order Line Items"
 msgstr "退货订单行项目"
 
-#: lib/enums/ModelInformation.tsx:255
+#: lib/enums/ModelInformation.tsx:261
 #: src/components/previews/models/TransferOrderPreview.tsx:15
 #: src/pages/stock/TransferOrderDetail.tsx:375
 #: src/tables/stock/StockTrackingTable.tsx:186
@@ -507,7 +516,7 @@ msgstr "退货订单行项目"
 msgid "Transfer Order"
 msgstr "调拨单"
 
-#: lib/enums/ModelInformation.tsx:256
+#: lib/enums/ModelInformation.tsx:262
 #: lib/enums/Roles.tsx:45
 #: src/defaults/actions.tsx:153
 #: src/pages/Index/Settings/SystemSettings.tsx:306
@@ -516,25 +525,25 @@ msgstr "调拨单"
 msgid "Transfer Orders"
 msgstr "调拨单"
 
-#: lib/enums/ModelInformation.tsx:265
+#: lib/enums/ModelInformation.tsx:271
 msgid "Transfer Order Line Item"
 msgstr "调拨单行明细"
 
-#: lib/enums/ModelInformation.tsx:266
+#: lib/enums/ModelInformation.tsx:272
 msgid "Transfer Order Line Items"
 msgstr "调拨单行明细"
 
-#: lib/enums/ModelInformation.tsx:271
+#: lib/enums/ModelInformation.tsx:277
 #: src/tables/company/AddressTable.tsx:52
 msgid "Address"
 msgstr "地址"
 
-#: lib/enums/ModelInformation.tsx:272
+#: lib/enums/ModelInformation.tsx:278
 #: src/pages/company/CompanyDetail.tsx:196
 msgid "Addresses"
 msgstr "地址"
 
-#: lib/enums/ModelInformation.tsx:278
+#: lib/enums/ModelInformation.tsx:284
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:89
 #: src/pages/core/UserDetail.tsx:132
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:134
@@ -543,22 +552,22 @@ msgstr "地址"
 msgid "Contact"
 msgstr "联系人"
 
-#: lib/enums/ModelInformation.tsx:279
+#: lib/enums/ModelInformation.tsx:285
 #: src/pages/company/CompanyDetail.tsx:190
 #: src/pages/core/CoreIndex.tsx:34
 msgid "Contacts"
 msgstr "联系人"
 
-#: lib/enums/ModelInformation.tsx:285
+#: lib/enums/ModelInformation.tsx:291
 #: src/components/tables/ColumnRenderers.tsx:687
 msgid "Owner"
 msgstr "所有者"
 
-#: lib/enums/ModelInformation.tsx:286
+#: lib/enums/ModelInformation.tsx:292
 msgid "Owners"
 msgstr "所有者"
 
-#: lib/enums/ModelInformation.tsx:292
+#: lib/enums/ModelInformation.tsx:298
 #: src/components/tables/ColumnRenderers.tsx:637
 #: src/components/tables/Filter.tsx:441
 #: src/pages/Auth/ChangePassword.tsx:36
@@ -573,7 +582,7 @@ msgstr "所有者"
 msgid "User"
 msgstr "用户"
 
-#: lib/enums/ModelInformation.tsx:293
+#: lib/enums/ModelInformation.tsx:299
 #: src/components/nav/NavigationDrawer.tsx:116
 #: src/defaults/actions.tsx:220
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:15
@@ -582,12 +591,12 @@ msgstr "用户"
 msgid "Users"
 msgstr "用户"
 
-#: lib/enums/ModelInformation.tsx:299
+#: lib/enums/ModelInformation.tsx:305
 #: src/pages/core/GroupDetail.tsx:76
 msgid "Group"
 msgstr "群组"
 
-#: lib/enums/ModelInformation.tsx:300
+#: lib/enums/ModelInformation.tsx:306
 #: src/components/nav/NavigationDrawer.tsx:122
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:23
 #: src/pages/core/CoreIndex.tsx:28
@@ -597,70 +606,70 @@ msgstr "群组"
 msgid "Groups"
 msgstr "群组"
 
-#: lib/enums/ModelInformation.tsx:307
+#: lib/enums/ModelInformation.tsx:313
 msgid "Import Session"
 msgstr "导入会话"
 
-#: lib/enums/ModelInformation.tsx:308
+#: lib/enums/ModelInformation.tsx:314
 msgid "Import Sessions"
 msgstr "导入会话"
 
-#: lib/enums/ModelInformation.tsx:315
+#: lib/enums/ModelInformation.tsx:321
 msgid "Label Template"
 msgstr "标签模板"
 
-#: lib/enums/ModelInformation.tsx:316
+#: lib/enums/ModelInformation.tsx:322
 #: src/defaults/actions.tsx:260
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:238
 msgid "Label Templates"
 msgstr "标签模板"
 
-#: lib/enums/ModelInformation.tsx:323
+#: lib/enums/ModelInformation.tsx:329
 msgid "Report Template"
 msgstr "报告模板"
 
-#: lib/enums/ModelInformation.tsx:324
+#: lib/enums/ModelInformation.tsx:330
 #: src/defaults/actions.tsx:250
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:244
 msgid "Report Templates"
 msgstr "报告模板"
 
-#: lib/enums/ModelInformation.tsx:331
+#: lib/enums/ModelInformation.tsx:337
 #: src/components/plugins/PluginDrawer.tsx:168
 msgid "Plugin Configuration"
 msgstr "插件配置"
 
-#: lib/enums/ModelInformation.tsx:332
+#: lib/enums/ModelInformation.tsx:338
 msgid "Plugin Configurations"
 msgstr "插件配置"
 
-#: lib/enums/ModelInformation.tsx:339
+#: lib/enums/ModelInformation.tsx:345
 msgid "Content Type"
 msgstr "内容类型"
 
-#: lib/enums/ModelInformation.tsx:340
+#: lib/enums/ModelInformation.tsx:346
 msgid "Content Types"
 msgstr "内容类型"
 
-#: lib/enums/ModelInformation.tsx:345
+#: lib/enums/ModelInformation.tsx:351
 #: src/tables/settings/SelectionListTable.tsx:122
 msgid "Selection List"
 msgstr "选择列表"
 
-#: lib/enums/ModelInformation.tsx:346
+#: lib/enums/ModelInformation.tsx:352
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:217
 msgid "Selection Lists"
 msgstr "选择列表"
 
-#: lib/enums/ModelInformation.tsx:352
+#: lib/enums/ModelInformation.tsx:358
 msgid "Selection Entry"
 msgstr "入选"
 
-#: lib/enums/ModelInformation.tsx:353
+#: lib/enums/ModelInformation.tsx:359
 msgid "Selection Entries"
 msgstr "入选"
 
-#: lib/enums/ModelInformation.tsx:359
+#: lib/enums/ModelInformation.tsx:365
 #: src/components/barcodes/BarcodeInput.tsx:114
 #: src/components/buttons/StarredToggleButton.tsx:46
 #: src/components/dashboard/DashboardLayout.tsx:297
@@ -698,27 +707,27 @@ msgstr "入选"
 msgid "Error"
 msgstr "错误"
 
-#: lib/enums/ModelInformation.tsx:360
+#: lib/enums/ModelInformation.tsx:366
 #: src/tables/machine/MachineListTable.tsx:403
 #: src/tables/machine/MachineTypeTable.tsx:300
 msgid "Errors"
 msgstr "错误"
 
-#: lib/enums/ModelInformation.tsx:367
+#: lib/enums/ModelInformation.tsx:373
 msgid "Tag"
 msgstr "标签"
 
-#: lib/enums/ModelInformation.tsx:368
+#: lib/enums/ModelInformation.tsx:374
 #: src/components/tables/Filter.tsx:412
 #: src/forms/CommonFields.tsx:36
 msgid "Tags"
 msgstr "标签"
 
-#: lib/enums/ModelInformation.tsx:373
+#: lib/enums/ModelInformation.tsx:379
 msgid "Note Template"
 msgstr "备注模板"
 
-#: lib/enums/ModelInformation.tsx:374
+#: lib/enums/ModelInformation.tsx:380
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:224
 #: src/pages/Index/Settings/AdminCenter/NoteTemplatePanel.tsx:9
 msgid "Note Templates"
@@ -1855,6 +1864,7 @@ msgstr "删除表格"
 #: src/components/editors/NotesEditor.tsx:701
 #: src/components/panels/NotesPanel.tsx:24
 #: src/forms/StockForms.tsx:1585
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:361
 #: src/pages/sales/ShipmentReceiptPanel.tsx:307
 #: src/tables/part/PartTestResultTable.tsx:218
 #: src/tables/stock/StockTrackingTable.tsx:279
@@ -2854,6 +2864,7 @@ msgstr "没有项目"
 #: src/components/render/Stock.tsx:98
 #: src/components/tables/ColumnRenderers.tsx:265
 #: src/components/tables/PartStockCell.tsx:85
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:266
 #: src/pages/part/PartDetail.tsx:578
 #: src/pages/stock/StockDetail.tsx:679
 #: src/pages/stock/StockDetailsPanel.tsx:204
@@ -3258,8 +3269,8 @@ msgstr "登出"
 
 #: src/components/nav/NavigationDrawer.tsx:70
 #: src/defaults/links.tsx:40
-#: src/pages/cangxu/CangxuHome.tsx:100
-#: src/pages/cangxu/CangxuHome.tsx:110
+#: src/pages/cangxu/CangxuHome.tsx:101
+#: src/pages/cangxu/CangxuHome.tsx:111
 msgid "Cangxu Workshop"
 msgstr "仓序工作台"
 
@@ -3289,6 +3300,7 @@ msgstr "生产"
 #: src/components/nav/NavigationDrawer.tsx:102
 #: src/defaults/links.tsx:73
 #: src/pages/Index/Settings/SystemSettings.tsx:348
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:444
 #: src/pages/company/ManufacturerDetail.tsx:9
 #: src/pages/company/ManufacturerPartDetail.tsx:193
 #: src/pages/company/SupplierDetail.tsx:9
@@ -3743,6 +3755,7 @@ msgstr "类别"
 #: src/components/tables/Filter.tsx:507
 #: src/forms/BuildForms.tsx:869
 #: src/forms/PurchaseOrderForms.tsx:719
+#: src/forms/PurchaseOrderForms.tsx:979
 #: src/forms/StockForms.tsx:674
 #: src/forms/StockForms.tsx:712
 #: src/forms/StockForms.tsx:1513
@@ -3777,7 +3790,7 @@ msgstr "序列号"
 #: src/forms/BuildForms.tsx:284
 #: src/forms/BuildForms.tsx:707
 #: src/forms/BuildForms.tsx:871
-#: src/forms/PurchaseOrderForms.tsx:964
+#: src/forms/PurchaseOrderForms.tsx:970
 #: src/forms/ReturnOrderForms.tsx:243
 #: src/forms/SalesOrderForms.tsx:438
 #: src/forms/StockForms.tsx:724
@@ -3785,7 +3798,9 @@ msgstr "序列号"
 #: src/forms/StockForms.tsx:1563
 #: src/forms/TransferOrderForms.tsx:242
 #: src/pages/build/BuildIndex.tsx:47
-#: src/pages/cangxu/MaterialIssuePanel.tsx:336
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:249
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:333
+#: src/pages/cangxu/MaterialIssuePanel.tsx:88
 #: src/pages/part/PartStockHistoryDetail.tsx:64
 #: src/pages/part/PartStockHistoryDetail.tsx:244
 #: src/pages/part/PartStockHistoryDetail.tsx:268
@@ -3819,6 +3834,7 @@ msgstr "数量"
 #: src/forms/StockForms.tsx:1838
 #: src/forms/StockForms.tsx:1885
 #: src/forms/StockForms.tsx:1929
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:250
 #: src/tables/build/BuildLineTable.tsx:109
 msgid "Batch"
 msgstr "批次"
@@ -4173,6 +4189,7 @@ msgstr "显示有批号的项目"
 
 #: src/components/tables/Filter.tsx:125
 #: src/forms/PurchaseOrderForms.tsx:789
+#: src/forms/PurchaseOrderForms.tsx:985
 #: src/forms/StockForms.tsx:731
 #: src/pages/build/BuildOrderDetailsPanel.tsx:186
 #: src/pages/stock/StockDetail.tsx:689
@@ -4220,7 +4237,7 @@ msgid "Show items which have a serial number"
 msgstr "显示带有序列号的项目"
 
 #: src/components/tables/Filter.tsx:150
-#: src/pages/cangxu/CangxuHome.tsx:227
+#: src/pages/cangxu/CangxuHome.tsx:235
 #: src/tables/build/BuildAllocatedStockTable.tsx:137
 msgid "Serial"
 msgstr "序列号"
@@ -6128,10 +6145,6 @@ msgstr "已选择接收库存位置"
 msgid "Default location selected"
 msgstr "已选择默认位置"
 
-#: src/forms/PurchaseOrderForms.tsx:566
-#~ msgid "Serial numbers"
-#~ msgstr "Serial numbers"
-
 #: src/forms/PurchaseOrderForms.tsx:576
 #: src/pages/part/PartDetailsPanel.tsx:268
 #: src/tables/bom/BomTable.tsx:290
@@ -6174,11 +6187,8 @@ msgstr "调整封包"
 #~ msgstr "Receive line items"
 
 #: src/forms/PurchaseOrderForms.tsx:660
-#: src/forms/StockForms.tsx:624
-#: src/forms/StockForms.tsx:1388
-#: src/hooks/UseStockAdjustActions.tsx:152
-msgid "Change Status"
-msgstr "更改状态"
+msgid "Choose available or quarantined stock"
+msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:734
 msgid "Store at default location"
@@ -6221,6 +6231,7 @@ msgstr "输入接收项目的到期日期"
 
 #: src/forms/PurchaseOrderForms.tsx:841
 #: src/forms/StockForms.tsx:1443
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:343
 #: src/pages/company/SupplierPartDetailsPanel.tsx:126
 #: src/pages/company/SupplierPartDetailsPanel.tsx:184
 #: src/pages/stock/StockDetailsPanel.tsx:350
@@ -6228,17 +6239,17 @@ msgstr "输入接收项目的到期日期"
 msgid "Packaging"
 msgstr "包装"
 
-#: src/forms/PurchaseOrderForms.tsx:962
+#: src/forms/PurchaseOrderForms.tsx:968
 #: src/pages/company/SupplierPartDetailsPanel.tsx:92
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:49
 msgid "SKU"
 msgstr "库存单位  (SKU)"
 
-#: src/forms/PurchaseOrderForms.tsx:963
+#: src/forms/PurchaseOrderForms.tsx:969
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:269
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:281
 #: src/pages/sales/ShipmentReceiptPanel.tsx:305
-#: src/pages/sales/ShipmentReceiptPanel.tsx:401
+#: src/pages/sales/ShipmentReceiptPanel.tsx:446
 #: src/tables/part/PartPurchaseOrdersTable.tsx:136
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:221
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:296
@@ -6246,11 +6257,11 @@ msgstr "库存单位  (SKU)"
 msgid "Received"
 msgstr "已接收"
 
-#: src/forms/PurchaseOrderForms.tsx:995
+#: src/forms/PurchaseOrderForms.tsx:1006
 msgid "Receive Line Items"
 msgstr "接收行项目"
 
-#: src/forms/PurchaseOrderForms.tsx:1001
+#: src/forms/PurchaseOrderForms.tsx:1060
 msgid "Items received"
 msgstr "物料已收货"
 
@@ -6355,6 +6366,12 @@ msgstr "已安装的项目"
 #: src/forms/StockForms.tsx:596
 msgid "Automatic"
 msgstr "自动"
+
+#: src/forms/StockForms.tsx:624
+#: src/forms/StockForms.tsx:1388
+#: src/hooks/UseStockAdjustActions.tsx:152
+msgid "Change Status"
+msgstr "更改状态"
 
 #: src/forms/StockForms.tsx:636
 msgid "This row cannot be removed as it has installed items"
@@ -8804,10 +8821,6 @@ msgstr "失败任务"
 #~ msgid "Reports"
 #~ msgstr "Reports"
 
-#: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:99
-#~ msgid "Purchase order"
-#~ msgstr "Purchase order"
-
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:108
 #~ msgid "Sales order"
 #~ msgstr "Sales order"
@@ -9328,311 +9341,544 @@ msgstr "已创建"
 msgid "Completed"
 msgstr "已完成"
 
-#: src/pages/cangxu/CangxuHome.tsx:51
+#: src/pages/cangxu/CangxuHome.tsx:52
 msgid "Receiving and purchasing"
 msgstr "采购与收货"
 
-#: src/pages/cangxu/CangxuHome.tsx:52
+#: src/pages/cangxu/CangxuHome.tsx:53
 msgid "Review purchase orders, expected stock, and received items."
 msgstr "查看采购订单、待收物料和已收货记录。"
 
-#: src/pages/cangxu/CangxuHome.tsx:57
+#: src/pages/cangxu/CangxuHome.tsx:58
 msgid "Production and assembly"
 msgstr "生产与装配"
 
-#: src/pages/cangxu/CangxuHome.tsx:58
+#: src/pages/cangxu/CangxuHome.tsx:59
 msgid "Open build orders, allocate components, and record finished units."
 msgstr "查看生产工单、分配物料并登记完工整机。"
 
-#: src/pages/cangxu/CangxuHome.tsx:63
+#: src/pages/cangxu/CangxuHome.tsx:64
 msgid "Warehouse and stock"
 msgstr "仓库与库存"
 
-#: src/pages/cangxu/CangxuHome.tsx:64
+#: src/pages/cangxu/CangxuHome.tsx:65
 msgid "Find stock, locations, and internal transfer orders."
 msgstr "查询库存、库位和内部调拨单。"
 
-#: src/pages/cangxu/CangxuHome.tsx:69
+#: src/pages/cangxu/CangxuHome.tsx:70
 msgid "Delivery and returns"
 msgstr "交付与退货"
 
-#: src/pages/cangxu/CangxuHome.tsx:70
+#: src/pages/cangxu/CangxuHome.tsx:71
 msgid "Review sales shipments, packing, and customer returns."
 msgstr "查看销售发货、装箱和客户退货。"
 
-#: src/pages/cangxu/CangxuHome.tsx:108
+#: src/pages/cangxu/CangxuHome.tsx:109
 msgid "AI server production and warehousing"
 msgstr "智算服务器生产与仓储"
 
-#: src/pages/cangxu/CangxuHome.tsx:112
+#: src/pages/cangxu/CangxuHome.tsx:113
 msgid "Start common receiving, production, stock, and delivery work here. Search a serial number or part code to open its InvenTree stock history."
 msgstr "从这里进入常用的收货、生产、库存和交付流程。也可搜索序列号或物料编码，查看 InvenTree 中的实物库存履历。"
 
-#: src/pages/cangxu/CangxuHome.tsx:120
+#: src/pages/cangxu/CangxuHome.tsx:121
 msgid "Scan barcode"
 msgstr "扫码"
 
-#: src/pages/cangxu/CangxuHome.tsx:127
+#: src/pages/cangxu/CangxuHome.tsx:128
+msgid "Incoming inspection and archive"
+msgstr ""
+
+#: src/pages/cangxu/CangxuHome.tsx:135
 msgid "Common workflows"
 msgstr "常用流程"
 
-#: src/pages/cangxu/CangxuHome.tsx:151
+#: src/pages/cangxu/CangxuHome.tsx:159
 msgid "Open workflow"
 msgstr "进入流程"
 
-#: src/pages/cangxu/CangxuHome.tsx:161
+#: src/pages/cangxu/CangxuHome.tsx:169
 msgid "Material issue and return"
 msgstr "耗材领料与退料"
 
-#: src/pages/cangxu/CangxuHome.tsx:168
+#: src/pages/cangxu/CangxuHome.tsx:176
 msgid "Trace a part or unit"
 msgstr "追溯物料或整机"
 
-#: src/pages/cangxu/CangxuHome.tsx:174
+#: src/pages/cangxu/CangxuHome.tsx:182
 msgid "Serial number or part code"
 msgstr "序列号或物料编码"
 
-#: src/pages/cangxu/CangxuHome.tsx:175
+#: src/pages/cangxu/CangxuHome.tsx:183
 msgid "Enter a serial number, internal part code, or name"
 msgstr "输入序列号、内部物料编码或名称"
 
-#: src/pages/cangxu/CangxuHome.tsx:186
+#: src/pages/cangxu/CangxuHome.tsx:194
 msgid "Search stock history"
 msgstr "查询实物履历"
 
-#: src/pages/cangxu/CangxuHome.tsx:193
+#: src/pages/cangxu/CangxuHome.tsx:201
 msgid "Search failed"
 msgstr "查询失败"
 
-#: src/pages/cangxu/CangxuHome.tsx:194
+#: src/pages/cangxu/CangxuHome.tsx:202
 msgid "The stock search could not be completed. Check your access and try again."
 msgstr "无法完成库存查询。请检查访问权限后重试。"
 
-#: src/pages/cangxu/CangxuHome.tsx:199
+#: src/pages/cangxu/CangxuHome.tsx:207
 msgid "No matching stock items were found."
 msgstr "没有找到匹配的库存实物。"
 
 #. placeholder {0}: stockQuery.data.length
-#: src/pages/cangxu/CangxuHome.tsx:205
+#: src/pages/cangxu/CangxuHome.tsx:213
 msgid "{0} matching stock items (up to 25)"
 msgstr "找到 {0} 件匹配实物（最多显示 25 件）"
 
 #. placeholder {0}: item.pk
 #. placeholder {0}: line.stock_item
-#: src/pages/cangxu/CangxuHome.tsx:221
-#: src/pages/cangxu/MaterialIssuePanel.tsx:336
+#: src/pages/cangxu/CangxuHome.tsx:229
+#: src/pages/cangxu/MaterialIssuePanel.tsx:88
 #: src/pages/sales/ShipmentReceiptPanel.tsx:321
 msgid "Stock item {0}"
 msgstr "库存实物 {0}"
 
-#: src/pages/cangxu/CangxuHome.tsx:225
+#: src/pages/cangxu/CangxuHome.tsx:233
 msgid "Part code"
 msgstr "物料编码"
 
-#: src/pages/cangxu/CangxuHome.tsx:233
+#: src/pages/cangxu/CangxuHome.tsx:241
 msgid "Installed or unavailable"
 msgstr "已装机或当前不可用"
 
-#: src/pages/cangxu/CangxuHome.tsx:242
+#: src/pages/cangxu/CangxuHome.tsx:250
 msgid "Parent unit"
 msgstr "所属整机"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:216
-msgid "Material issued"
-msgstr "领料已记录"
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:195
+msgid "The incoming receipt action failed. Check access and required fields."
+msgstr "入库操作失败，请检查权限和必填项。"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:217
-msgid "The build line and stock history have been updated."
-msgstr "工单用料记录和库存历史已更新。"
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:235
+msgid "Search by purchase order, part name, or part code"
+msgstr "按采购单号、物料名称或物料编码搜索"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:237
-msgid "Issue failed"
-msgstr "领料失败"
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:240
+msgid "Receipts could not be loaded."
+msgstr "收货记录加载失败。"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:238
-msgid "The stock was not issued. Review the selected build line and available stock, then retry."
-msgstr "未能发料。请检查所选工单用料和可用库存后重试。"
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:247
+msgid "Purchase order"
+msgstr "Purchase order"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:267
-msgid "Material returned"
-msgstr "物料已退回"
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:251
+msgid "Stock state"
+msgstr "库存状态"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:268
-msgid "The material is back in the selected internal location."
-msgstr "物料已退回所选内部库位。"
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:266
+msgid "Quarantined"
+msgstr "隔离待检"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:288
-msgid "Return failed"
-msgstr "退料失败"
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:274
+msgid "Inspect and archive"
+msgstr "检验与归档"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:289
-msgid "The return was not recorded. Check the quantity and destination location, then retry."
-msgstr "未能记录退料。请检查数量和目标库位后重试。"
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:291
+msgid "Received quantity"
+msgstr "实收数量"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:336
-#: src/pages/cangxu/MaterialIssuePanel.tsx:344
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:291
+msgid "Serial numbers"
+msgstr "Serial numbers"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:295
+msgid "Inspection record could not be loaded."
+msgstr "验收记录加载失败。"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:302
+msgid "Inspection method"
+msgstr "检验方式"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:304
+msgid "Full inspection"
+msgstr "全检"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:305
+msgid "Sample inspection"
+msgstr "抽检"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:311
+msgid "Inspected quantity"
+msgstr "抽检数量"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:318
+#: src/tables/general/BarcodeScanTable.tsx:52
+msgid "Model"
+msgstr "型号"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:320
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:335
+msgid "Matches"
+msgstr "相符"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:321
+msgid "Wrong model"
+msgstr "型号错误"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:324
+msgid "Other model missing"
+msgstr "型号或配件缺失"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:336
+msgid "Shortage"
+msgstr "短缺"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:337
+msgid "Excess"
+msgstr "超出"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:345
+msgid "Intact"
+msgstr "完好"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:346
+#: src/pages/sales/ShipmentReceiptPanel.tsx:350
+msgid "Damaged"
+msgstr "到货损坏"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:347
+msgid "Wet"
+msgstr "受潮"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:348
+msgid "Deformed"
+msgstr "变形"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:355
+msgid "Appearance findings"
+msgstr "外观异常"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:371
+msgid "Save inspection"
+msgstr "保存验收记录"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:386
+msgid "Warehouse signed"
+msgstr "仓管已签字"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:389
+msgid "Warehouse sign"
+msgstr "仓管签字"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:402
+msgid "Purchaser signed"
+msgstr "采购已签字"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:405
+msgid "Purchaser sign"
+msgstr "采购签字"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:418
+msgid "Inspection submitted"
+msgstr "验收已提交"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:421
+msgid "Submit inspection"
+msgstr "提交验收"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:441
+msgid "Send feedback to"
+msgstr "反馈给"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:443
+msgid "Technical support"
+msgstr "技术支持"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:450
+msgid "Feedback request"
+msgstr "反馈内容"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:469
+msgid "Feedback recorded"
+msgstr "反馈已记录"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:472
+msgid "Record feedback"
+msgstr "记录反馈"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:483
+msgid "Department response"
+msgstr "部门处理意见"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:504
+msgid "Feedback response recorded"
+msgstr "处理意见已记录"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:507
+msgid "Record response"
+msgstr "记录处理意见"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:514
+msgid "Disposition"
+msgstr "异常处置"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:516
+msgid "Normal receipt"
+msgstr "正常入库"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:517
+msgid "Concession receipt"
+msgstr "让步接收"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:518
+msgid "Return to supplier"
+msgstr "退回供应商"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:524
+msgid "Disposition notes"
+msgstr "处置说明"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:533
+msgid "External return location"
+msgstr "供应商退回库位"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:543
+msgid "Return shipment reference"
+msgstr "退货单号/物流单号"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:572
+msgid "Disposition submitted"
+msgstr "处置已提交"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:575
+msgid "Request disposition"
+msgstr "提交处置"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:582
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:180
+#: src/tables/part/PartPurchaseOrdersTable.tsx:131
+msgid "Pending"
+msgstr "待定"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:585
+msgid "Approval note"
+msgstr "审批意见"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:603
+msgid "Disposition approved"
+msgstr "处置已批准"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:606
+msgid "Approve"
+msgstr "批准"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:620
+msgid "Disposition rejected"
+msgstr "处置已驳回"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:623
+msgid "Reject"
+msgstr "驳回"
+
+#: src/pages/cangxu/IncomingReceiptPanel.tsx:629
+msgid "Incoming receipt photos and forms"
+msgstr "来料验收单与照片"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:88
+#: src/pages/cangxu/MaterialIssuePanel.tsx:358
 msgid "No part code"
 msgstr "无物料编码"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:340
-#: src/pages/cangxu/MaterialIssuePanel.tsx:373
+#: src/pages/cangxu/MaterialIssuePanel.tsx:226
+msgid "Material issued"
+msgstr "领料已记录"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:227
+msgid "The build line and stock history have been updated."
+msgstr "工单用料记录和库存历史已更新。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:248
+msgid "Issue failed"
+msgstr "领料失败"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:249
+msgid "The stock was not issued. Review the selected build line and available stock, then retry."
+msgstr "未能发料。请检查所选工单用料和可用库存后重试。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:278
+msgid "Material returned"
+msgstr "物料已退回"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:279
+msgid "The material is back in the selected internal location."
+msgstr "物料已退回所选内部库位。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:299
+msgid "Return failed"
+msgstr "退料失败"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:300
+msgid "The return was not recorded. Check the quantity and destination location, then retry."
+msgstr "未能记录退料。请检查数量和目标库位后重试。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:354
+#: src/pages/cangxu/MaterialIssuePanel.tsx:387
 msgid "Build order"
 msgstr "生产工单"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:344
+#: src/pages/cangxu/MaterialIssuePanel.tsx:358
 msgid "BOM material"
 msgstr "BOM物料"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:344
-#: src/pages/cangxu/MaterialIssuePanel.tsx:348
+#: src/pages/cangxu/MaterialIssuePanel.tsx:358
+#: src/pages/cangxu/MaterialIssuePanel.tsx:362
 msgid "Remaining"
 msgstr "剩余"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:359
+#: src/pages/cangxu/MaterialIssuePanel.tsx:373
 msgid "Consumable materials"
 msgstr "耗材领退料"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:361
+#: src/pages/cangxu/MaterialIssuePanel.tsx:375
 msgid "Issue material to a build order or return unused quantity to an internal stock location."
 msgstr "为生产工单登记领料，或将未使用的物料退回内部库位。"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:366
+#: src/pages/cangxu/MaterialIssuePanel.tsx:380
 msgid "Issue material"
 msgstr "领料"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:367
+#: src/pages/cangxu/MaterialIssuePanel.tsx:381
 msgid "Return unused material"
 msgstr "退回未用物料"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:374
+#: src/pages/cangxu/MaterialIssuePanel.tsx:388
 msgid "Select an active build order"
 msgstr "选择进行中的生产工单"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:384
+#: src/pages/cangxu/MaterialIssuePanel.tsx:402
 msgid "No active build orders were found."
 msgstr "没有找到进行中的生产工单。"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:388
+#: src/pages/cangxu/MaterialIssuePanel.tsx:406
 msgid "Build orders could not be loaded."
 msgstr "无法加载生产工单。"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:393
+#: src/pages/cangxu/MaterialIssuePanel.tsx:411
 msgid "Consumable BOM line"
 msgstr "耗材BOM行"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:394
+#: src/pages/cangxu/MaterialIssuePanel.tsx:412
 msgid "Select a material required by the build"
 msgstr "选择工单所需物料"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:403
+#: src/pages/cangxu/MaterialIssuePanel.tsx:425
 msgid "No untracked consumable lines remain on this build."
 msgstr "此工单没有剩余的未追踪耗材需求。"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:409
+#: src/pages/cangxu/MaterialIssuePanel.tsx:431
 msgid "Build materials could not be loaded."
 msgstr "无法加载工单物料。"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:415
+#: src/pages/cangxu/MaterialIssuePanel.tsx:437
 msgid "Remaining BOM requirement"
 msgstr "BOM剩余需求"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:421
+#: src/pages/cangxu/MaterialIssuePanel.tsx:443
 msgid "Available stock"
 msgstr "可用库存"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:422
+#: src/pages/cangxu/MaterialIssuePanel.tsx:444
 msgid "Search by part code, serial number, or name"
 msgstr "按物料编码、序列号或名称搜索"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:435
+#: src/pages/cangxu/MaterialIssuePanel.tsx:480
 msgid "Enter at least two characters to search stock."
 msgstr "至少输入两个字符以搜索库存。"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:436
+#: src/pages/cangxu/MaterialIssuePanel.tsx:481
 msgid "No available internal stock matched this search."
 msgstr "没有找到匹配的可用内部库存。"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:440
+#: src/pages/cangxu/MaterialIssuePanel.tsx:485
 msgid "Stock search failed."
 msgstr "库存搜索失败。"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:444
+#: src/pages/cangxu/MaterialIssuePanel.tsx:489
 msgid "Searching stock…"
 msgstr "正在搜索库存…"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:448
+#: src/pages/cangxu/MaterialIssuePanel.tsx:493
 msgid "Available quantity"
 msgstr "可用数量"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:453
+#: src/pages/cangxu/MaterialIssuePanel.tsx:498
 msgid "Issue quantity"
 msgstr "领料数量"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:474
+#: src/pages/cangxu/MaterialIssuePanel.tsx:519
 msgid "Reason or handoff note"
 msgstr "领料用途或交接备注"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:484
+#: src/pages/cangxu/MaterialIssuePanel.tsx:529
 msgid "Workflow unavailable"
 msgstr "流程暂不可用"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:485
+#: src/pages/cangxu/MaterialIssuePanel.tsx:530
 msgid "Build orders are unavailable. Check your access and refresh the page."
 msgstr "无法使用生产工单。请检查访问权限并刷新页面。"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:499
+#: src/pages/cangxu/MaterialIssuePanel.tsx:544
 msgid "Confirm issue"
 msgstr "确认领料"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:509
+#: src/pages/cangxu/MaterialIssuePanel.tsx:554
 msgid "Original material issue"
 msgstr "原发料记录"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:510
+#: src/pages/cangxu/MaterialIssuePanel.tsx:555
 msgid "Select an issue with quantity remaining"
 msgstr "选择仍有可退数量的发料记录"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:519
+#: src/pages/cangxu/MaterialIssuePanel.tsx:564
 msgid "No material issues are awaiting return."
 msgstr "没有待退回的物料。"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:523
+#: src/pages/cangxu/MaterialIssuePanel.tsx:568
 msgid "Material issue history could not be loaded."
 msgstr "无法加载发料记录。"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:529
+#: src/pages/cangxu/MaterialIssuePanel.tsx:574
 msgid "Issued"
 msgstr "已发料"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:530
+#: src/pages/cangxu/MaterialIssuePanel.tsx:575
 msgid "Already returned"
 msgstr "已退回"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:531
+#: src/pages/cangxu/MaterialIssuePanel.tsx:576
 msgid "Can return"
 msgstr "可退数量"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:536
+#: src/pages/cangxu/MaterialIssuePanel.tsx:581
 msgid "Return quantity"
 msgstr "退料数量"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:553
+#: src/pages/cangxu/MaterialIssuePanel.tsx:598
 msgid "Return to location"
 msgstr "退回库位"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:554
+#: src/pages/cangxu/MaterialIssuePanel.tsx:599
 msgid "Select an internal stock location"
 msgstr "选择内部库位"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:568
+#: src/pages/cangxu/MaterialIssuePanel.tsx:613
 msgid "Internal locations could not be loaded."
 msgstr "无法加载内部库位。"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:574
+#: src/pages/cangxu/MaterialIssuePanel.tsx:619
 msgid "Return condition or note"
 msgstr "退料状态或备注"
 
-#: src/pages/cangxu/MaterialIssuePanel.tsx:593
+#: src/pages/cangxu/MaterialIssuePanel.tsx:638
 msgid "Confirm return"
 msgstr "确认退料"
 
@@ -10878,11 +11124,6 @@ msgstr "编辑配送"
 msgid "Cancel Shipment"
 msgstr "取消发货"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:180
-#: src/tables/part/PartPurchaseOrdersTable.tsx:131
-msgid "Pending"
-msgstr "待定"
-
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:186
 #: src/tables/sales/SalesOrderShipmentTable.tsx:162
 #: src/tables/sales/SalesOrderShipmentTable.tsx:296
@@ -11064,10 +11305,6 @@ msgstr "与预期一致"
 msgid "Short"
 msgstr "短缺"
 
-#: src/pages/sales/ShipmentReceiptPanel.tsx:350
-msgid "Damaged"
-msgstr "到货损坏"
-
 #: src/pages/sales/ShipmentReceiptPanel.tsx:353
 msgid "Wrong item"
 msgstr "错件"
@@ -11082,60 +11319,60 @@ msgid "Required for a discrepancy"
 msgstr "有差异时必填"
 
 #: src/pages/sales/ShipmentReceiptPanel.tsx:387
-msgid "Open delivery differences"
-msgstr "待处理交付差异"
-
-#: src/pages/sales/ShipmentReceiptPanel.tsx:394
-msgid "Short received"
-msgstr "实收短缺"
-
-#: src/pages/sales/ShipmentReceiptPanel.tsx:396
-msgid "Damaged on arrival"
-msgstr "到货损坏"
-
-#: src/pages/sales/ShipmentReceiptPanel.tsx:397
-msgid "Unexpected item received"
-msgstr "收到错件"
-
-#: src/pages/sales/ShipmentReceiptPanel.tsx:400
-msgid "Expected"
-msgstr "应收"
-
-#: src/pages/sales/ShipmentReceiptPanel.tsx:410
-msgid "Resolution"
-msgstr "处理结果"
-
-#: src/pages/sales/ShipmentReceiptPanel.tsx:431
-msgid "Close difference"
-msgstr "关闭差异"
-
-#: src/pages/sales/ShipmentReceiptPanel.tsx:440
 msgid "Recipient"
 msgstr "签收人"
 
-#: src/pages/sales/ShipmentReceiptPanel.tsx:448
+#: src/pages/sales/ShipmentReceiptPanel.tsx:395
 msgid "Receipt stage"
 msgstr "签收阶段"
 
-#: src/pages/sales/ShipmentReceiptPanel.tsx:450
+#: src/pages/sales/ShipmentReceiptPanel.tsx:397
 msgid "Partial receipt"
 msgstr "部分签收"
 
-#: src/pages/sales/ShipmentReceiptPanel.tsx:451
+#: src/pages/sales/ShipmentReceiptPanel.tsx:398
 msgid "Final receipt"
 msgstr "最终签收"
 
-#: src/pages/sales/ShipmentReceiptPanel.tsx:461
+#: src/pages/sales/ShipmentReceiptPanel.tsx:408
 msgid "Receipt notes"
 msgstr "签收备注"
 
-#: src/pages/sales/ShipmentReceiptPanel.tsx:477
+#: src/pages/sales/ShipmentReceiptPanel.tsx:424
 msgid "Finalize receipt"
 msgstr "完成签收"
 
-#: src/pages/sales/ShipmentReceiptPanel.tsx:477
+#: src/pages/sales/ShipmentReceiptPanel.tsx:424
 msgid "Record partial receipt"
 msgstr "登记部分签收"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:432
+msgid "Open delivery differences"
+msgstr "待处理交付差异"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:439
+msgid "Short received"
+msgstr "实收短缺"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:441
+msgid "Damaged on arrival"
+msgstr "到货损坏"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:442
+msgid "Unexpected item received"
+msgstr "收到错件"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:445
+msgid "Expected"
+msgstr "应收"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:455
+msgid "Resolution"
+msgstr "处理结果"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:475
+msgid "Close difference"
+msgstr "关闭差异"
 
 #: src/pages/stock/LocationDetail.tsx:124
 msgid "Location Details"
@@ -12418,10 +12655,6 @@ msgstr "找不到附件。"
 #: src/tables/general/AttachmentTable.tsx:424
 msgid "Drag attachment file here to upload"
 msgstr "拖拽附件文件到此处上传"
-
-#: src/tables/general/BarcodeScanTable.tsx:52
-msgid "Model"
-msgstr "型号"
 
 #: src/tables/general/BarcodeScanTable.tsx:77
 msgid "View Item"

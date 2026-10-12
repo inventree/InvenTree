@@ -657,7 +657,7 @@ function LineItemFormRow({
             <ActionButton
               onClick={() => statusHandlers.toggle()}
               icon={<InvenTreeIcon icon='status' />}
-              tooltip={t`Change Status`}
+              tooltip={t`Choose available or quarantined stock`}
               tooltipAlignment='top'
               variant={statusOpen ? 'outline' : 'transparent'}
               disabled={virtual}
@@ -889,7 +889,10 @@ export function useReceiveLineItems(props: LineItemsForm) {
   const activeReceiptSignatures = useRef<string[]>([]);
 
   const stockStatusCodes = useMemo(
-    () => getStatusCodeOptions(ModelType.stockitem),
+    () =>
+      getStatusCodeOptions(ModelType.stockitem).filter((choice) =>
+        [10, 75].includes(Number(choice.value))
+      ),
     []
   );
 

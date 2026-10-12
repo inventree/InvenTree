@@ -1,6 +1,6 @@
 # 智算服务器行业数据模型设计
 
-日期：2026-09-07；实施状态更新：2026-10-10。状态：基础追溯模型与硬件规格修订/端口/线缆端定义已进入开发分支；完整硬件拓扑、兼容规则和工程放行仍是候选设计。配合 [改造规划](ROADMAP.zh-CN.md) 和[业务需求基线](REQUIREMENTS.zh-CN.md)阅读。
+日期：2026-09-07；实施状态更新：2026-10-12。状态：基础追溯模型与硬件规格修订/端口/线缆端定义已进入开发分支；新增来料验收记录、异常反馈和处置审批表；完整硬件拓扑、兼容规则和工程放行仍是候选设计。配合 [改造规划](ROADMAP.zh-CN.md) 和[业务需求基线](REQUIREMENTS.zh-CN.md)阅读。
 
 ## 1. 建模原则
 
@@ -17,6 +17,8 @@ PCIe、NVLink、Ethernet/InfiniBand、供电和液冷连接采用不同关系类
 `src/backend/InvenTree/cangxu/models.py` 与迁移实现了编码别名、制造批次及 PCB/SMT/板卡制造商/芯片厂商/供应商等伙伴角色、单机配置版本、配置实装项、配置测试证据、换件记录、质量问题与返工任务、服务单与保管事件、盘点会话及发货清单。批次关联原生采购单明细；客户退货可引用原生销售发货单。它们引用 InvenTree 的 Part、StockItem、Build、PurchaseOrderLineItem、SalesOrderShipment 和用户记录，不建立第二套库存余额。
 
 新增 `HardwareProfileRevision` 将技术类别、协议、物理形态、芯片厂商、板卡制造商和带单位来源规格关联到现有 Part，并以草稿/批准/被替代状态管理修订；`HardwarePortDefinition` 描述版本化端口，`CableEndDefinition` 支持多分支线缆端和映射。PCIe、NVLink、Ethernet、InfiniBand 交换部件使用不同类型；GPU 形态与协议独立。API 仅允许编辑草稿，批准时要求工程来源、switch 端口或线缆端定义。
+
+入库归档表包括 `PurchaseReceiptInspection`（检验方式、抽样数、型号/数量/包装/外观结论、检查人和双方签字）、`PurchaseReceiptFeedback`（技术支持/采购的反馈往返）和 `PurchaseReceiptDisposition`（正常/让步/退回及审批证据）。`PurchaseReceipt` 复用 InvenTree 附件混入能力，照片与验收单使用上游 Attachment 并能关联单次收货。收货库存状态可选隔离，默认可用；异常验收会转入隔离待处置，通过一次批准/驳回后完成正常/让步/退货。迁移已应用，pro6000D API 回归覆盖验收、异常反馈/处置、默认收货异常后的隔离、退货库存去向以及附件上传检索；Chromium 中文组件测试覆盖全检表单、签字和提交（API 使用虚构夹具）。真实 Django 页面/API 联调和现场验收仍待验证。报告号目前按收货记录 ID 生成 `IN-########`；抽样方案和附件保留期仍按需求基线待确认，技术/采购反馈不阻塞处置。
 
 以上不是完整拓扑：平台槽位、实装端口、连接/链路实例、版本化兼容规则、测试计划和正式放行记录尚未实现。演示中的交换厂商角色和示例规格不是实际产品或兼容性资料。
 
@@ -50,6 +52,9 @@ PCIe、NVLink、Ethernet/InfiniBand、供电和液冷连接采用不同关系类
 | 实体 | 关键字段 | 关系/用途 |
 |---|---|---|
 | `HardwareProfileRevision` | part、revision、kind、protocol、form_factor、chip_vendor、board_manufacturer、specifications、source_reference、state | 已实现模型/API；Part 1:N 草稿/批准修订，批准后不可变 |
+| `PurchaseReceiptInspection` | receipt、report_number、sampling_method、sampled_quantity、inspection_results、signatures、state | 已实现表结构；对单次收货记录检验与签字，不直接创建库存余额 |
+| `PurchaseReceiptFeedback` | inspection、department、message、response、created_by、responded_by | 已实现表结构；记录技术支持与采购的异常反馈往返 |
+| `PurchaseReceiptDisposition` | inspection、outcome、state、requested_by、approved_by、approval_notes | 表结构、API 和单步批准/驳回状态已实现；技术/采购反馈为可选记录，不阻塞处置 |
 | `PlatformRevision` | assembly_part、revision、status、approved_by | 定义机型与拓扑模板的工程版本 |
 | `SlotDefinition` | platform_revision、path、slot_kind、mechanical_spec、electrical_spec、capacity | 设计槽位，例如 GPU0、DIMM_A1；机械与电气能力分离 |
 | `HardwarePortDefinition` | profile_revision、path、protocol、connector、supported_modes、lane_count | 已实现模型/API；设计端口，形态不直接决定协议/速率 |

@@ -30,6 +30,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../App';
 import PageTitle from '../../components/nav/PageTitle';
+import IncomingReceiptPanel from './IncomingReceiptPanel';
 import MaterialIssuePanel from './MaterialIssuePanel';
 
 type StockSearchResult = {
@@ -121,6 +122,13 @@ export default function CangxuHome() {
           </Button>
         </Group>
       </Paper>
+
+      <section>
+        <Title order={4} mb='sm'>
+          {t`Incoming inspection and archive`}
+        </Title>
+        <IncomingReceiptPanel />
+      </section>
 
       <section>
         <Title order={4} mb='sm'>

@@ -1,5 +1,6 @@
 """Integration tests for Cangxu inventory workflows."""
 
+import uuid
 from datetime import date
 from io import BytesIO
 
@@ -40,6 +41,9 @@ from .models import (
     MaterialReturn,
     PartCodeAlias,
     PurchaseReceipt,
+    PurchaseReceiptDisposition,
+    PurchaseReceiptFeedback,
+    PurchaseReceiptInspection,
     QualityIssue,
     ReworkTask,
     ServiceCase,
@@ -83,6 +87,354 @@ class CangxuAPITestCase(InvenTreeAPITestCase):
 
 class CangxuPurchaseReceiptTest(CangxuAPITestCase):
     """Verify safe retries and lot traceability for native purchase receipts."""
+
+    def test_receipt_defaults_to_available_and_allows_explicit_quarantine(self):
+        """Make quarantine optional while retaining a deliberate hold option."""
+        part = Part.objects.filter(
+            trackable=False, virtual=False, assembly=False
+        ).first()
+        supplier = Company.objects.create(
+            name='Cangxu Optional Quarantine Supplier', is_supplier=True
+        )
+        supplier_part = SupplierPart.objects.create(
+            part=part, supplier=supplier, SKU='CX-OPTIONAL-QUARANTINE-001'
+        )
+        order = PurchaseOrder.objects.create(
+            supplier=supplier, reference='CX-OPTIONAL-QUARANTINE-PO-001'
+        )
+        lines = [
+            PurchaseOrderLineItem.objects.create(
+                order=order, part=supplier_part, quantity=1
+            )
+            for _ in range(2)
+        ]
+        order.place_order()
+        location = StockLocation.objects.get(pk=7)
+        url = reverse('cangxu-purchase-receipt-list')
+
+        available = self.post(
+            url,
+            {
+                'idempotency_key': '52e2c65c-88df-40fe-8412-2b05f14ec880',
+                'purchase_order_line': lines[0].pk,
+                'quantity': '1',
+                'location': location.pk,
+            },
+            expected_code=201,
+        )
+        quarantined = self.post(
+            url,
+            {
+                'idempotency_key': '7c1880f5-0dbc-4d2e-9c2d-84729179e274',
+                'purchase_order_line': lines[1].pk,
+                'quantity': '1',
+                'location': location.pk,
+                'status': StockStatus.QUARANTINED.value,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(
+            StockItem.objects.get(pk=available.data['stock_items'][0]).status,
+            StockStatus.OK.value,
+        )
+        self.assertEqual(
+            StockItem.objects.get(pk=quarantined.data['stock_items'][0]).status,
+            StockStatus.QUARANTINED.value,
+        )
+
+    def test_receipt_archive_is_searchable_and_accepts_attachments(self):
+        """Expose the purchase-order context and archive files on a receipt."""
+        part = Part.objects.filter(
+            trackable=False, virtual=False, assembly=False
+        ).first()
+        supplier = Company.objects.create(
+            name='Cangxu Archive Supplier', is_supplier=True
+        )
+        supplier_part = SupplierPart.objects.create(
+            part=part, supplier=supplier, SKU='CX-ARCHIVE-001'
+        )
+        order = PurchaseOrder.objects.create(
+            supplier=supplier, reference='CX-ARCHIVE-PO-001'
+        )
+        line = PurchaseOrderLineItem.objects.create(
+            order=order, part=supplier_part, quantity=1
+        )
+        order.place_order()
+        receipt = self.post(
+            reverse('cangxu-purchase-receipt-list'),
+            {
+                'idempotency_key': 'c91b5e87-153f-46ea-9c8c-481efb1e34a6',
+                'purchase_order_line': line.pk,
+                'quantity': '1',
+                'location': StockLocation.objects.get(pk=7).pk,
+            },
+            expected_code=201,
+        )
+        self.assertEqual(receipt.data['purchase_order_number'], order.reference)
+        self.assertEqual(receipt.data['part_name'], part.name)
+        self.assertEqual(receipt.data['part_code'], part.IPN)
+        self.assertIsNone(receipt.data['inspection_id'])
+
+        attachment = SimpleUploadedFile(
+            'synthetic-incoming-checklist.pdf',
+            b'%PDF-synthetic',
+            content_type='application/pdf',
+        )
+        uploaded = self.post(
+            reverse('api-attachment-list'),
+            {
+                'model_type': 'purchasereceipt',
+                'model_id': receipt.data['id'],
+                'comment': 'Synthetic incoming inspection form.',
+                'attachment': attachment,
+            },
+            format='multipart',
+            expected_code=201,
+        )
+        archived = self.get(
+            reverse('api-attachment-list'),
+            {'model_type': 'purchasereceipt', 'model_id': receipt.data['id']},
+            expected_code=200,
+        )
+        archived_rows = (
+            archived.data['results']
+            if isinstance(archived.data, dict)
+            else archived.data
+        )
+        self.assertTrue(
+            uploaded.data['filename'].startswith('synthetic-incoming-checklist')
+        )
+        self.assertEqual(len(archived_rows), 1)
+
+    def test_quarantined_receipt_releases_after_signed_passing_inspection(self):
+        """Require both receipt signatures before a passing inspection releases stock."""
+        part = Part.objects.filter(
+            trackable=False, virtual=False, assembly=False
+        ).first()
+        supplier = Company.objects.create(
+            name='Cangxu Inspection Supplier', is_supplier=True
+        )
+        supplier_part = SupplierPart.objects.create(
+            part=part, supplier=supplier, SKU='CX-INSPECTION-001'
+        )
+        order = PurchaseOrder.objects.create(
+            supplier=supplier, reference='CX-INSPECTION-PO-001'
+        )
+        line = PurchaseOrderLineItem.objects.create(
+            order=order, part=supplier_part, quantity=1
+        )
+        order.place_order()
+        receipt = self.post(
+            reverse('cangxu-purchase-receipt-list'),
+            {
+                'idempotency_key': 'ac085683-4c2f-48f1-8bf6-124523255f95',
+                'purchase_order_line': line.pk,
+                'quantity': '1',
+                'location': StockLocation.objects.get(pk=7).pk,
+            },
+            expected_code=201,
+        )
+        report_url = reverse('cangxu-receipt-inspection-list')
+        report = self.post(
+            report_url,
+            {
+                'receipt': receipt.data['id'],
+                'sampling_method': PurchaseReceiptInspection.SamplingMethod.FULL,
+                'sampled_quantity': '1',
+                'model_result': PurchaseReceiptInspection.MatchResult.MATCH,
+                'quantity_result': PurchaseReceiptInspection.QuantityResult.MATCH,
+                'packaging_condition': PurchaseReceiptInspection.PackagingCondition.INTACT,
+                'appearance_issues': [],
+            },
+            expected_code=201,
+        )
+        detail_url = reverse(
+            'cangxu-receipt-inspection-detail', args=[report.data['id']]
+        )
+        self.post(f'{detail_url}sign/', {'role': 'warehouse'}, expected_code=200)
+        self.post(f'{detail_url}sign/', {'role': 'purchaser'}, expected_code=200)
+        submitted = self.post(f'{detail_url}submit/', {}, expected_code=200)
+
+        self.assertEqual(submitted.data['state'], PurchaseReceiptInspection.State.PASS)
+        stock_item = StockItem.objects.get(pk=receipt.data['stock_items'][0])
+        self.assertEqual(stock_item.status, StockStatus.OK.value)
+
+    def test_exception_can_be_disposed_without_waiting_for_feedback(self):
+        """Allow one-step approval while preserving optional department feedback."""
+        part = Part.objects.filter(
+            trackable=False, virtual=False, assembly=False
+        ).first()
+        supplier = Company.objects.create(
+            name='Cangxu Exception Supplier', is_supplier=True
+        )
+        supplier_part = SupplierPart.objects.create(
+            part=part, supplier=supplier, SKU='CX-EXCEPTION-001'
+        )
+        order = PurchaseOrder.objects.create(
+            supplier=supplier, reference='CX-EXCEPTION-PO-001'
+        )
+        line = PurchaseOrderLineItem.objects.create(
+            order=order, part=supplier_part, quantity=1
+        )
+        order.place_order()
+        receipt = self.post(
+            reverse('cangxu-purchase-receipt-list'),
+            {
+                'idempotency_key': '8f34fda2-60ef-4a9d-aef5-5c92010f83d1',
+                'purchase_order_line': line.pk,
+                'quantity': '1',
+                'location': StockLocation.objects.get(pk=7).pk,
+            },
+            expected_code=201,
+        )
+        stock_item = StockItem.objects.get(pk=receipt.data['stock_items'][0])
+        self.assertEqual(stock_item.status, StockStatus.OK.value)
+        inspection = self.post(
+            reverse('cangxu-receipt-inspection-list'),
+            {
+                'receipt': receipt.data['id'],
+                'sampling_method': PurchaseReceiptInspection.SamplingMethod.FULL,
+                'sampled_quantity': '1',
+                'model_result': PurchaseReceiptInspection.MatchResult.WRONG,
+                'quantity_result': PurchaseReceiptInspection.QuantityResult.MATCH,
+                'packaging_condition': PurchaseReceiptInspection.PackagingCondition.INTACT,
+                'appearance_issues': [],
+                'other_notes': 'Synthetic wrong model finding.',
+            },
+            expected_code=201,
+        )
+        inspection_url = reverse(
+            'cangxu-receipt-inspection-detail', args=[inspection.data['id']]
+        )
+        self.post(f'{inspection_url}sign/', {'role': 'warehouse'}, expected_code=200)
+        self.post(f'{inspection_url}sign/', {'role': 'purchaser'}, expected_code=200)
+        submitted = self.post(f'{inspection_url}submit/', {}, expected_code=200)
+        self.assertEqual(
+            submitted.data['state'], PurchaseReceiptInspection.State.EXCEPTION
+        )
+        stock_item.refresh_from_db()
+        self.assertEqual(stock_item.status, StockStatus.QUARANTINED.value)
+
+        disposition_url = reverse('cangxu-receipt-disposition-list')
+        disposition_data = {
+            'inspection': inspection.data['id'],
+            'outcome': PurchaseReceiptDisposition.Outcome.CONCESSION,
+            'request_notes': 'Synthetic approved concession request.',
+        }
+        disposition = self.post(disposition_url, disposition_data, expected_code=201)
+        approval_url = reverse(
+            'cangxu-receipt-disposition-detail', args=[disposition.data['id']]
+        )
+        completed = self.post(
+            f'{approval_url}approve/', {'approved': True}, expected_code=200
+        )
+
+        self.assertEqual(
+            completed.data['state'], PurchaseReceiptDisposition.State.COMPLETED
+        )
+        stock_item.refresh_from_db()
+        self.assertEqual(stock_item.status, StockStatus.OK.value)
+        for department in (
+            PurchaseReceiptFeedback.Department.TECHNICAL,
+            PurchaseReceiptFeedback.Department.PURCHASING,
+        ):
+            feedback = self.post(
+                reverse('cangxu-receipt-feedback-list'),
+                {
+                    'inspection': inspection.data['id'],
+                    'department': department,
+                    'message': f'Synthetic feedback request for {department}.',
+                },
+                expected_code=201,
+            )
+            feedback_url = reverse(
+                'cangxu-receipt-feedback-detail', args=[feedback.data['id']]
+            )
+            self.post(
+                f'{feedback_url}respond/',
+                {'response': f'Synthetic response from {department}.'},
+                expected_code=200,
+            )
+
+    def test_exception_disposition_returns_stock_to_external_location(self):
+        """Return a quarantined exception through one approval action."""
+        part = Part.objects.filter(
+            trackable=False, virtual=False, assembly=False
+        ).first()
+        supplier = Company.objects.create(
+            name='Cangxu Return Supplier', is_supplier=True
+        )
+        supplier_part = SupplierPart.objects.create(
+            part=part, supplier=supplier, SKU='CX-RETURN-001'
+        )
+        order = PurchaseOrder.objects.create(
+            supplier=supplier, reference='CX-RETURN-PO-001'
+        )
+        line = PurchaseOrderLineItem.objects.create(
+            order=order, part=supplier_part, quantity=1
+        )
+        order.place_order()
+        receipt = self.post(
+            reverse('cangxu-purchase-receipt-list'),
+            {
+                'idempotency_key': 'e19e5462-3c27-4d9d-8be9-0fe011090ee5',
+                'purchase_order_line': line.pk,
+                'quantity': '1',
+                'location': StockLocation.objects.get(pk=7).pk,
+            },
+            expected_code=201,
+        )
+        stock_item = StockItem.objects.get(pk=receipt.data['stock_items'][0])
+        inspection = self.post(
+            reverse('cangxu-receipt-inspection-list'),
+            {
+                'receipt': receipt.data['id'],
+                'sampling_method': PurchaseReceiptInspection.SamplingMethod.FULL,
+                'sampled_quantity': '1',
+                'model_result': PurchaseReceiptInspection.MatchResult.WRONG,
+                'quantity_result': PurchaseReceiptInspection.QuantityResult.MATCH,
+                'packaging_condition': (
+                    PurchaseReceiptInspection.PackagingCondition.INTACT
+                ),
+                'appearance_issues': [],
+            },
+            expected_code=201,
+        )
+        inspection_url = reverse(
+            'cangxu-receipt-inspection-detail', args=[inspection.data['id']]
+        )
+        self.post(f'{inspection_url}sign/', {'role': 'warehouse'}, expected_code=200)
+        self.post(f'{inspection_url}sign/', {'role': 'purchaser'}, expected_code=200)
+        self.post(f'{inspection_url}submit/', {}, expected_code=200)
+
+        external_location = StockLocation.objects.create(
+            name='Cangxu supplier return', external=True
+        )
+        disposition = self.post(
+            reverse('cangxu-receipt-disposition-list'),
+            {
+                'inspection': inspection.data['id'],
+                'outcome': PurchaseReceiptDisposition.Outcome.RETURN,
+                'request_notes': 'Synthetic supplier return.',
+                'return_location': external_location.pk,
+                'return_shipment_reference': 'CX-RETURN-SHIPMENT-001',
+            },
+            expected_code=201,
+        )
+        disposition_url = reverse(
+            'cangxu-receipt-disposition-detail', args=[disposition.data['id']]
+        )
+        completed = self.post(
+            f'{disposition_url}approve/', {'approved': True}, expected_code=200
+        )
+
+        self.assertEqual(
+            completed.data['state'], PurchaseReceiptDisposition.State.COMPLETED
+        )
+        stock_item.refresh_from_db()
+        self.assertEqual(stock_item.location, external_location)
+        self.assertEqual(stock_item.status, StockStatus.REJECTED.value)
 
     def test_bulk_receipts_are_atomic_and_idempotent(self):
         """Post two selected lines together and replay without duplicate stock."""
@@ -862,6 +1214,7 @@ class CangxuServiceCaseTest(CangxuAPITestCase):
             reverse('cangxu-service-event-list'),
             {
                 'line': line_response.data['id'],
+                'idempotency_key': str(uuid.uuid4()),
                 'event_type': 'received',
                 'company': customer.pk,
                 'to_location': StockLocation.objects.get(pk=7).pk,
@@ -879,6 +1232,7 @@ class CangxuServiceCaseTest(CangxuAPITestCase):
             {
                 'line': line_response.data['id'],
                 'stock_item': unit.pk,
+                'idempotency_key': str(uuid.uuid4()),
                 'event_type': 'inspected',
                 'inspection_passed': True,
                 'quantity': 1,
@@ -951,25 +1305,40 @@ class CangxuServiceCaseTest(CangxuAPITestCase):
         line_id = response.data['id']
         event_url = reverse('cangxu-service-event-list')
 
-        response = self.post(
-            event_url,
-            {
-                'line': line_id,
-                'event_type': 'sent',
-                'company': supplier.pk,
-                'to_location': external.pk,
-                'notes': 'Synthetic outbound hand-off',
-            },
-        )
+        sent_payload = {
+            'line': line_id,
+            'idempotency_key': str(uuid.uuid4()),
+            'event_type': 'sent',
+            'company': supplier.pk,
+            'to_location': external.pk,
+            'notes': 'Synthetic outbound hand-off',
+        }
+        response = self.post(event_url, sent_payload)
         self.assertEqual(response.status_code, 201)
+        self.assertEqual(
+            response.data['idempotency_key'], sent_payload['idempotency_key']
+        )
+        event = ServiceCaseEvent.objects.get(pk=response.data['id'])
+        self.assertEqual(str(event.idempotency_key), sent_payload['idempotency_key'])
+        self.assertEqual(event.request_hash, response.data['request_hash'])
         stock.refresh_from_db()
         self.assertEqual(stock.location_id, external.pk)
+        replay = self.post(event_url, sent_payload, expected_code=200)
+        self.assertEqual(replay.data['id'], response.data['id'])
+        self.assertEqual(ServiceCaseEvent.objects.filter(line_id=line_id).count(), 1)
+        conflict = self.post(
+            event_url,
+            {**sent_payload, 'notes': 'Changed after timeout.'},
+            expected_code=400,
+        )
+        self.assertIn('idempotency_key', conflict.data)
 
         response = self.post(
             event_url,
             {
                 'line': line_id,
                 'stock_item': stock.pk,
+                'idempotency_key': str(uuid.uuid4()),
                 'event_type': 'external_received',
                 'company': supplier.pk,
                 'notes': 'Synthetic supplier receipt',
@@ -981,6 +1350,7 @@ class CangxuServiceCaseTest(CangxuAPITestCase):
             {
                 'line': line_id,
                 'stock_item': stock.pk,
+                'idempotency_key': str(uuid.uuid4()),
                 'event_type': 'returned',
                 'company': supplier.pk,
                 'to_location': internal.pk,
@@ -1005,6 +1375,7 @@ class CangxuServiceCaseTest(CangxuAPITestCase):
             {
                 'line': line_id,
                 'stock_item': stock.pk,
+                'idempotency_key': str(uuid.uuid4()),
                 'event_type': 'inspected',
                 'inspection_passed': True,
                 'notes': 'Synthetic inspection pass',
@@ -1076,6 +1447,7 @@ class CangxuServiceCaseTest(CangxuAPITestCase):
             event_url,
             {
                 'line': line_id,
+                'idempotency_key': str(uuid.uuid4()),
                 'event_type': 'sent',
                 'company': supplier.pk,
                 'to_location': external.pk,
@@ -1088,6 +1460,7 @@ class CangxuServiceCaseTest(CangxuAPITestCase):
             {
                 'line': line_id,
                 'stock_item': original.pk,
+                'idempotency_key': str(uuid.uuid4()),
                 'event_type': 'external_received',
                 'company': supplier.pk,
                 'quantity': '1',
@@ -1099,6 +1472,7 @@ class CangxuServiceCaseTest(CangxuAPITestCase):
             {
                 'line': line_id,
                 'stock_item': original.pk,
+                'idempotency_key': str(uuid.uuid4()),
                 'event_type': 'returned',
                 'company': supplier.pk,
                 'to_location': internal.pk,
@@ -1111,6 +1485,7 @@ class CangxuServiceCaseTest(CangxuAPITestCase):
             {
                 'line': line_id,
                 'stock_item': original.pk,
+                'idempotency_key': str(uuid.uuid4()),
                 'event_type': 'inspected',
                 'inspection_passed': True,
                 'quantity': '1',
@@ -1153,6 +1528,7 @@ class CangxuServiceCaseTest(CangxuAPITestCase):
             {
                 'line': line_id,
                 'stock_item': replacement.pk,
+                'idempotency_key': str(uuid.uuid4()),
                 'event_type': 'reinstalled',
                 'quantity': '1',
                 'notes': 'Synthetic new component installed into the original unit.',
@@ -1902,6 +2278,7 @@ class CangxuEndToEndManufacturingWorkflowTest(CangxuAPITestCase):
             reverse('cangxu-service-event-list'),
             {
                 'line': service_line.data['id'],
+                'idempotency_key': str(uuid.uuid4()),
                 'event_type': ServiceCaseEvent.EventType.RECEIVED,
                 'company': customer.pk,
                 'to_location': location.pk,
@@ -1915,6 +2292,7 @@ class CangxuEndToEndManufacturingWorkflowTest(CangxuAPITestCase):
             {
                 'line': service_line.data['id'],
                 'stock_item': unit.pk,
+                'idempotency_key': str(uuid.uuid4()),
                 'event_type': ServiceCaseEvent.EventType.INSPECTED,
                 'inspection_passed': True,
                 'quantity': 1,
@@ -1999,6 +2377,31 @@ class CangxuDemoSeedTest(CangxuAPITestCase):
         self.assertEqual(broadcom_profile.chip_vendor.name, 'Broadcom')
         self.assertEqual(broadcom_profile.specifications['lanes'], 48)
         self.assertEqual(broadcom_profile.state, HardwareProfileRevision.State.DRAFT)
+        demo_receipts = PurchaseReceipt.objects.filter(
+            purchase_order_line__order__reference__in=[
+                'CX-DEMO-PO-0001',
+                'CX-DEMO-PO-0002',
+            ]
+        )
+        self.assertEqual(demo_receipts.count(), 2)
+        self.assertEqual(
+            demo_receipts.get(
+                purchase_order_line__order__reference='CX-DEMO-PO-0001'
+            ).status,
+            StockStatus.QUARANTINED.value,
+        )
+        self.assertEqual(
+            demo_receipts.get(
+                purchase_order_line__order__reference='CX-DEMO-PO-0002'
+            ).status,
+            StockStatus.OK.value,
+        )
+        self.assertTrue(
+            PurchaseReceiptInspection.objects.filter(
+                receipt__purchase_order_line__order__reference='CX-DEMO-PO-0001',
+                state=PurchaseReceiptInspection.State.DRAFT,
+            ).exists()
+        )
         microchip_profile = hardware_profiles.get(part__IPN='CX-DEMO-PM50100B1-FEI-001')
         self.assertEqual(microchip_profile.chip_vendor.name, 'Microchip Technology')
         linkreal_product_profile = hardware_profiles.get(

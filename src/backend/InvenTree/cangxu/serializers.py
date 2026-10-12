@@ -13,6 +13,7 @@ from InvenTree.helpers import extract_serial_numbers
 from InvenTree.serializers import InvenTreeModelSerializer
 from order.models import PurchaseOrderLineItem
 from stock.models import StockItem, StockLocation
+from stock.status_codes import StockStatus
 
 from .models import (
     CableEndDefinition,
@@ -31,6 +32,9 @@ from .models import (
     MaterialIssue,
     PartCodeAlias,
     PurchaseReceipt,
+    PurchaseReceiptDisposition,
+    PurchaseReceiptFeedback,
+    PurchaseReceiptInspection,
     QualityIssue,
     ReworkTask,
     ServiceCase,
@@ -172,6 +176,23 @@ class PurchaseReceiptSerializer(InvenTreeModelSerializer):
     """Expose the immutable idempotency key and stock created by a receipt."""
 
     stock_items = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    purchase_order_number = serializers.CharField(
+        source='purchase_order_line.order.reference', read_only=True
+    )
+    part_name = serializers.CharField(
+        source='purchase_order_line.part.part.name', read_only=True
+    )
+    part_code = serializers.CharField(
+        source='purchase_order_line.part.part.IPN', read_only=True
+    )
+    inspection_id = serializers.SerializerMethodField()
+
+    def get_inspection_id(self, obj):
+        """Return the linked checklist ID without failing on uninspected receipts."""
+        try:
+            return obj.inspection.pk
+        except PurchaseReceiptInspection.DoesNotExist:
+            return None
 
     class Meta:
         """Keep receipt submissions read-only after native stock is posted."""
@@ -198,6 +219,126 @@ class PurchaseReceiptSerializer(InvenTreeModelSerializer):
         ]
 
 
+class PurchaseReceiptInspectionSerializer(InvenTreeModelSerializer):
+    """Capture the paper incoming-inspection checklist and signatures."""
+
+    appearance_issues = serializers.ListField(
+        child=serializers.ChoiceField(
+            choices=PurchaseReceiptInspection.AppearanceIssue.choices
+        ),
+        allow_empty=True,
+        required=False,
+    )
+
+    class Meta:
+        """Keep report identity, workflow state, and signatures server controlled."""
+
+        model = PurchaseReceiptInspection
+        fields = '__all__'
+        read_only_fields = [
+            'report_number',
+            'state',
+            'inspector',
+            'inspected_at',
+            'warehouse_signer',
+            'warehouse_signed_at',
+            'purchaser_signer',
+            'purchaser_signed_at',
+            'created_at',
+            'updated_at',
+        ]
+
+    def validate(self, attrs):
+        """Keep sample quantity within the linked native receipt quantity."""
+        attrs = super().validate(attrs)
+        instance = self.instance or PurchaseReceiptInspection()
+        for field, value in attrs.items():
+            setattr(instance, field, value)
+        receipt = attrs.get('receipt') or (
+            self.instance.receipt if self.instance else None
+        )
+        method = attrs.get('sampling_method', instance.sampling_method)
+        quantity = attrs.get('sampled_quantity', instance.sampled_quantity)
+        if receipt and method == PurchaseReceiptInspection.SamplingMethod.FULL:
+            if quantity is not None and quantity != receipt.quantity:
+                raise serializers.ValidationError({
+                    'sampled_quantity': _(
+                        'Full inspection quantity must equal the receipt quantity.'
+                    )
+                })
+        elif receipt and method == PurchaseReceiptInspection.SamplingMethod.SAMPLE:
+            if quantity is None or quantity <= 0 or quantity > receipt.quantity:
+                raise serializers.ValidationError({
+                    'sampled_quantity': _(
+                        'Sample quantity must be positive and no greater than the receipt quantity.'
+                    )
+                })
+        return attrs
+
+
+class PurchaseReceiptFeedbackSerializer(InvenTreeModelSerializer):
+    """Record a routed technical-support or purchasing feedback request."""
+
+    class Meta:
+        """Keep response identity and timestamps server controlled."""
+
+        model = PurchaseReceiptFeedback
+        fields = '__all__'
+        read_only_fields = [
+            'response',
+            'created_by',
+            'created_at',
+            'responded_by',
+            'responded_at',
+        ]
+
+    def validate(self, attrs):
+        """Supply the actor before InvenTree performs model-level validation."""
+        if self.instance is None:
+            attrs['created_by'] = self.context['request'].user
+        return super().validate(attrs)
+
+
+class PurchaseReceiptDispositionSerializer(InvenTreeModelSerializer):
+    """Request normal, concession, or supplier-return disposition."""
+
+    class Meta:
+        """Keep approval state and actors controlled by workflow actions."""
+
+        model = PurchaseReceiptDisposition
+        fields = '__all__'
+        read_only_fields = [
+            'state',
+            'requested_by',
+            'requested_at',
+            'approved_by',
+            'approved_at',
+            'approval_notes',
+            'completed_at',
+        ]
+
+    def validate(self, attrs):
+        """Supply the requester before InvenTree performs model validation."""
+        if self.instance is None:
+            attrs['requested_by'] = self.context['request'].user
+        return super().validate(attrs)
+
+
+class PurchaseReceiptApprovalSerializer(serializers.Serializer):
+    """Validate approval or rejection notes for an incoming exception."""
+
+    approved = serializers.BooleanField()
+    notes = serializers.CharField(
+        allow_blank=True, required=False, default='', max_length=4000
+    )
+
+
+class PurchaseReceiptFeedbackResponseSerializer(serializers.Serializer):
+    """Validate a one-time response from the routed department."""
+
+    response = serializers.CharField(allow_blank=False, max_length=4000)
+
+
 class PurchaseReceiptRequestSerializer(serializers.Serializer):
     """Validate one idempotent, possibly serialized purchase receipt."""
 
@@ -210,7 +351,11 @@ class PurchaseReceiptRequestSerializer(serializers.Serializer):
     )
     location = serializers.PrimaryKeyRelatedField(queryset=StockLocation.objects.all())
     status = serializers.ChoiceField(
-        choices=StockItem.STATUS_CLASS.items(custom=True), default=10
+        choices=[
+            (StockStatus.OK.value, _('Available')),
+            (StockStatus.QUARANTINED.value, _('Quarantined')),
+        ],
+        default=StockStatus.OK.value,
     )
     batch_code = serializers.CharField(max_length=100, required=False, allow_blank=True)
     expiry_date = serializers.DateField(required=False, allow_null=True)
@@ -654,7 +799,9 @@ class ServiceCaseEventSerializer(InvenTreeModelSerializer):
 
         model = ServiceCaseEvent
         fields = '__all__'
-        read_only_fields = ['created_by']
+        read_only_fields = ['created_by', 'request_hash']
+
+    idempotency_key = serializers.UUIDField(required=True, validators=[])
 
     def validate(self, attrs):
         """Validate related records and enforce workflow constraints."""

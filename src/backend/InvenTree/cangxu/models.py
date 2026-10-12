@@ -10,6 +10,9 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from InvenTree.models import InvenTreeAttachmentMixin
+from stock.status_codes import StockStatus
+
 
 class PartCodeAlias(models.Model):
     """Map an ERP, supplier, or OEM code to an existing InvenTree part."""
@@ -384,7 +387,7 @@ class ManufacturingLotStockItem(models.Model):
         verbose_name = _('Lot stock item')
 
 
-class PurchaseReceipt(models.Model):
+class PurchaseReceipt(InvenTreeAttachmentMixin, models.Model):
     """Make native purchase receipt submissions safe to retry after timeouts."""
 
     idempotency_key = models.UUIDField(unique=True)
@@ -402,7 +405,7 @@ class PurchaseReceipt(models.Model):
         decimal_places=5,
         validators=[MinValueValidator(Decimal('0.00001'))],
     )
-    status = models.PositiveSmallIntegerField(default=10)
+    status = models.PositiveSmallIntegerField(default=StockStatus.OK.value)
     batch_code = models.CharField(max_length=100, blank=True)
     expiry_date = models.DateField(null=True, blank=True)
     serial_numbers = models.JSONField(default=list, blank=True)
@@ -427,6 +430,234 @@ class PurchaseReceipt(models.Model):
         ordering = ['-received_at', '-pk']
         verbose_name = _('Purchase receipt request')
         verbose_name_plural = _('Purchase receipt requests')
+
+    @classmethod
+    def check_related_permission(cls, permission, user):
+        """Authorize receipt archives with the linked purchase-order role."""
+        from users.permissions import check_user_role
+
+        if permission not in {'view', 'add', 'change', 'delete'}:
+            return False
+        required_permission = 'view' if permission == 'view' else 'change'
+        return check_user_role(user, 'purchase_order', required_permission)
+
+
+class PurchaseReceiptInspection(models.Model):
+    """Store the signed inspection checklist for one native purchase receipt."""
+
+    class SamplingMethod(models.TextChoices):
+        """Record whether the receipt received a full or sampled inspection."""
+
+        FULL = 'full', _('Full inspection')
+        SAMPLE = 'sample', _('Sample inspection')
+
+    class MatchResult(models.TextChoices):
+        """Describe the part/model comparison against the purchase paperwork."""
+
+        MATCH = 'match', _('Matches')
+        WRONG = 'wrong', _('Wrong model')
+        OTHER_MISSING = 'other_missing', _('Other model missing')
+
+    class QuantityResult(models.TextChoices):
+        """Describe the received quantity comparison."""
+
+        MATCH = 'match', _('Matches')
+        SHORT = 'short', _('Shortage')
+        EXCESS = 'excess', _('Excess')
+
+    class PackagingCondition(models.TextChoices):
+        """Record visible incoming packaging condition."""
+
+        INTACT = 'intact', _('Intact')
+        DAMAGED = 'damaged', _('Damaged')
+        WET = 'wet', _('Wet')
+        DEFORMED = 'deformed', _('Deformed')
+
+    class State(models.TextChoices):
+        """Track checklist completion independently from stock availability."""
+
+        DRAFT = 'draft', _('Draft')
+        SUBMITTED = 'submitted', _('Submitted')
+        PASS = 'pass', _('Passed inspection')
+        EXCEPTION = 'exception', _('Exception found')
+
+    class AppearanceIssue(models.TextChoices):
+        """Known visual or component anomalies from the paper checklist."""
+
+        SCRATCH = 'scratch', _('Surface scratch')
+        STRUCTURE_DEFORMED = 'structure_deformed', _('Structure deformed')
+        GOLD_FINGER_SCRATCH = 'gold_finger_scratch', _('Gold finger scratched')
+        PART_MISSING = 'part_missing', _('Part missing')
+        LABEL_ABNORMAL = 'label_abnormal', _('Label abnormal')
+        PORT_DAMAGED = 'port_damaged', _('Port damaged')
+        STAIN = 'stain', _('Stain')
+        PIN_BENT = 'pin_bent', _('Bent pin')
+        COMPONENT_ABNORMAL = 'component_abnormal', _('Electronic component abnormal')
+        OTHER = 'other', _('Other appearance issue')
+
+    receipt = models.OneToOneField(
+        PurchaseReceipt, on_delete=models.PROTECT, related_name='inspection'
+    )
+    report_number = models.CharField(max_length=64, unique=True, blank=True)
+    sampling_method = models.CharField(
+        max_length=12, choices=SamplingMethod.choices, blank=True
+    )
+    sampled_quantity = models.DecimalField(
+        max_digits=15, decimal_places=5, null=True, blank=True
+    )
+    model_result = models.CharField(
+        max_length=20, choices=MatchResult.choices, blank=True
+    )
+    quantity_result = models.CharField(
+        max_length=12, choices=QuantityResult.choices, blank=True
+    )
+    packaging_condition = models.CharField(
+        max_length=12, choices=PackagingCondition.choices, blank=True
+    )
+    appearance_issues = models.JSONField(default=list, blank=True)
+    other_notes = models.TextField(blank=True)
+    state = models.CharField(max_length=16, choices=State.choices, default=State.DRAFT)
+    inspector = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='cangxu_receipt_inspections',
+    )
+    inspected_at = models.DateTimeField(null=True, blank=True)
+    warehouse_signer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='cangxu_receipt_warehouse_signatures',
+    )
+    warehouse_signed_at = models.DateTimeField(null=True, blank=True)
+    purchaser_signer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='cangxu_receipt_purchaser_signatures',
+    )
+    purchaser_signed_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        """Make inspection reports stable and easy to retrieve."""
+
+        ordering = ['-created_at', '-pk']
+        indexes = [models.Index(fields=['state', 'created_at'])]
+        verbose_name = _('Purchase receipt inspection')
+        verbose_name_plural = _('Purchase receipt inspections')
+
+    def save(self, *args, **kwargs):
+        """Assign a stable, human-readable report number from the receipt key."""
+        if not self.report_number and self.receipt_id:
+            self.report_number = f'IN-{self.receipt_id:08d}'
+        super().save(*args, **kwargs)
+
+
+class PurchaseReceiptFeedback(models.Model):
+    """Append technical and purchasing responses to an inspection exception."""
+
+    class Department(models.TextChoices):
+        """Identify the receiving team's requested feedback destination."""
+
+        TECHNICAL = 'technical', _('Technical support')
+        PURCHASING = 'purchasing', _('Purchasing')
+
+    inspection = models.ForeignKey(
+        PurchaseReceiptInspection,
+        on_delete=models.PROTECT,
+        related_name='feedback_entries',
+    )
+    department = models.CharField(max_length=16, choices=Department.choices)
+    message = models.TextField()
+    response = models.TextField(blank=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name='cangxu_receipt_feedback_created',
+    )
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+    responded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='cangxu_receipt_feedback_responses',
+    )
+    responded_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        """Keep feedback in chronological order for the exception audit."""
+
+        ordering = ['created_at', 'pk']
+        indexes = [models.Index(fields=['inspection', 'department', 'created_at'])]
+        verbose_name = _('Purchase receipt feedback')
+        verbose_name_plural = _('Purchase receipt feedback')
+
+
+class PurchaseReceiptDisposition(models.Model):
+    """Record and approve the outcome selected for an inspection exception."""
+
+    class Outcome(models.TextChoices):
+        """Represent the three receipt branches in the supplied workflow."""
+
+        NORMAL = 'normal', _('Normal receipt')
+        CONCESSION = 'concession', _('Concession receipt')
+        RETURN = 'return', _('Return to supplier')
+
+    class State(models.TextChoices):
+        """Track the approval boundary before changing stock availability."""
+
+        PENDING = 'pending', _('Pending approval')
+        APPROVED = 'approved', _('Approved')
+        REJECTED = 'rejected', _('Rejected')
+        COMPLETED = 'completed', _('Completed')
+
+    inspection = models.OneToOneField(
+        PurchaseReceiptInspection, on_delete=models.PROTECT, related_name='disposition'
+    )
+    outcome = models.CharField(max_length=16, choices=Outcome.choices)
+    state = models.CharField(
+        max_length=16, choices=State.choices, default=State.PENDING
+    )
+    request_notes = models.TextField()
+    return_location = models.ForeignKey(
+        'stock.StockLocation',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='cangxu_purchase_receipt_returns',
+    )
+    return_shipment_reference = models.CharField(max_length=100, blank=True)
+    requested_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name='cangxu_receipt_dispositions_requested',
+    )
+    requested_at = models.DateTimeField(default=timezone.now, editable=False)
+    approved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='cangxu_receipt_dispositions_approved',
+    )
+    approved_at = models.DateTimeField(null=True, blank=True)
+    approval_notes = models.TextField(blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        """Expose pending dispositions for approval queues."""
+
+        ordering = ['state', 'requested_at', 'pk']
+        indexes = [models.Index(fields=['state', 'requested_at'])]
+        verbose_name = _('Purchase receipt disposition')
+        verbose_name_plural = _('Purchase receipt dispositions')
 
 
 class ManufacturingLotPartner(models.Model):
@@ -1003,6 +1234,8 @@ class ServiceCaseEvent(models.Model):
         validators=[MinValueValidator(Decimal('0.00001'))],
     )
     inspection_passed = models.BooleanField(null=True, blank=True)
+    idempotency_key = models.UUIDField(null=True, blank=True, unique=True)
+    request_hash = models.CharField(max_length=64, blank=True, default='')
     tracking_reference = models.CharField(max_length=100, blank=True)
     occurred_at = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(

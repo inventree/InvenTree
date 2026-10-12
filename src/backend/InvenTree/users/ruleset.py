@@ -175,6 +175,7 @@ def get_ruleset_models() -> dict:
             'order_purchaseorder',
             'order_purchaseorderlineitem',
             'order_purchaseorderextraline',
+            'cangxu_purchasereceipt',
         ],
         RuleSetEnum.SALES_ORDER: [
             'company_company',

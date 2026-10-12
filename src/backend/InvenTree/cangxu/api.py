@@ -2,11 +2,12 @@
 
 import hashlib
 import json
+import uuid
 from decimal import Decimal
 from pathlib import Path
 
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import Max, Q, Sum
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -24,6 +25,7 @@ from order.models import PurchaseOrderLineItem, SalesOrderShipment
 from part.models import Part
 from plugin.base.event.events import batch_events
 from stock.models import StockItem, StockItemTracking, batch_tracking_entries
+from stock.serializers import StockChangeStatusSerializer
 from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 
 from . import serializers
@@ -51,6 +53,9 @@ from .models import (
     MaterialReturn,
     PartCodeAlias,
     PurchaseReceipt,
+    PurchaseReceiptDisposition,
+    PurchaseReceiptFeedback,
+    PurchaseReceiptInspection,
     QualityIssue,
     ReworkTask,
     ServiceCase,
@@ -1166,10 +1171,17 @@ class PurchaseReceiptViewSet(CangxuModelViewSet):
         'purchase_order_line__part__part',
         'location',
         'received_by',
+        'inspection',
     ).prefetch_related('stock_items')
     serializer_class = serializers.PurchaseReceiptSerializer
     http_method_names = ['get', 'post', 'head', 'options']
     filterset_fields = ['purchase_order_line', 'location', 'received_by']
+    search_fields = [
+        'purchase_order_line__order__reference',
+        'purchase_order_line__part__SKU',
+        'purchase_order_line__part__part__name',
+        'purchase_order_line__part__part__IPN',
+    ]
     ordering_fields = ['received_at', 'purchase_order_line']
     ordering = ['-received_at', '-pk']
 
@@ -1310,6 +1322,298 @@ class PurchaseReceiptViewSet(CangxuModelViewSet):
         return receipt, True
 
 
+class PurchaseReceiptInspectionViewSet(CangxuModelViewSet):
+    """Capture and sign incoming inspection before releasing native stock."""
+
+    role_required = 'stock'
+    queryset = PurchaseReceiptInspection.objects.select_related(
+        'receipt', 'inspector', 'warehouse_signer', 'purchaser_signer'
+    ).prefetch_related('receipt__stock_items')
+    serializer_class = serializers.PurchaseReceiptInspectionSerializer
+    filterset_fields = ['receipt', 'state', 'model_result', 'quantity_result']
+    ordering_fields = ['created_at', 'report_number', 'state']
+    ordering = ['-created_at', '-pk']
+
+    def get_permissions(self):
+        """Use purchase-order permissions for purchaser signatures."""
+        if (
+            getattr(self, 'action', None) == 'sign'
+            and self.request.data.get('role') == 'purchaser'
+        ):
+            self.role_required = 'purchase_order'
+        return super().get_permissions()
+
+    def perform_create(self, serializer):
+        """Create an inspection for the linked receipt."""
+        serializer.save()
+
+    def perform_update(self, serializer):
+        """Keep submitted inspection records immutable."""
+        if serializer.instance.state != PurchaseReceiptInspection.State.DRAFT:
+            raise ValidationError(_('Submitted inspection records are immutable.'))
+        serializer.save()
+
+    @action(detail=True, methods=['post'])
+    @transaction.atomic
+    def sign(self, request, pk=None):
+        """Capture the current warehouse or purchasing signer on the report."""
+        inspection = PurchaseReceiptInspection.objects.select_for_update().get(
+            pk=self.get_object().pk
+        )
+        if inspection.state != PurchaseReceiptInspection.State.DRAFT:
+            raise ValidationError(_('Only draft inspection records can be signed.'))
+        role = request.data.get('role')
+        now = timezone.now()
+        if role == 'warehouse':
+            self.role_required = 'stock'
+            inspection.warehouse_signer = request.user
+            inspection.warehouse_signed_at = now
+        elif role == 'purchaser':
+            self.role_required = 'purchase_order'
+            inspection.purchaser_signer = request.user
+            inspection.purchaser_signed_at = now
+        else:
+            raise ValidationError({'role': _('Role must be warehouse or purchaser.')})
+        inspection.save(
+            update_fields=[
+                'warehouse_signer',
+                'warehouse_signed_at',
+                'purchaser_signer',
+                'purchaser_signed_at',
+                'updated_at',
+            ]
+        )
+        return Response(self.get_serializer(inspection).data)
+
+    @action(detail=True, methods=['post'])
+    @transaction.atomic
+    def submit(self, request, pk=None):
+        """Finalize checklist and release stock only for a fully conforming lot."""
+        inspection = (
+            PurchaseReceiptInspection.objects
+            .select_for_update()
+            .select_related('receipt')
+            .prefetch_related('receipt__stock_items')
+            .get(pk=self.get_object().pk)
+        )
+        if inspection.state != PurchaseReceiptInspection.State.DRAFT:
+            raise ValidationError(_('Only draft inspection records can be submitted.'))
+        required = [
+            'sampling_method',
+            'model_result',
+            'quantity_result',
+            'packaging_condition',
+        ]
+        missing = [field for field in required if not getattr(inspection, field)]
+        if missing:
+            raise ValidationError({
+                field: _('This field is required.') for field in missing
+            })
+        if not inspection.warehouse_signer_id or not inspection.purchaser_signer_id:
+            raise ValidationError(
+                _('Warehouse and purchaser signatures are both required.')
+            )
+        if (
+            inspection.sampling_method
+            == PurchaseReceiptInspection.SamplingMethod.SAMPLE
+        ):
+            if not inspection.sampled_quantity:
+                raise ValidationError({
+                    'sampled_quantity': _('Sample quantity is required.')
+                })
+        elif (
+            inspection.sampling_method == PurchaseReceiptInspection.SamplingMethod.FULL
+        ):
+            if inspection.sampled_quantity != inspection.receipt.quantity:
+                raise ValidationError({
+                    'sampled_quantity': _(
+                        'Full inspection quantity must equal receipt quantity.'
+                    )
+                })
+        passed = (
+            inspection.model_result == PurchaseReceiptInspection.MatchResult.MATCH
+            and inspection.quantity_result
+            == PurchaseReceiptInspection.QuantityResult.MATCH
+            and inspection.packaging_condition
+            == PurchaseReceiptInspection.PackagingCondition.INTACT
+            and not inspection.appearance_issues
+        )
+        inspection.state = (
+            PurchaseReceiptInspection.State.PASS
+            if passed
+            else PurchaseReceiptInspection.State.EXCEPTION
+        )
+        inspection.inspector = request.user
+        inspection.inspected_at = timezone.now()
+        inspection.save(
+            update_fields=['state', 'inspector', 'inspected_at', 'updated_at']
+        )
+        if passed:
+            self._change_stock_status(
+                inspection.receipt,
+                StockStatus.OK.value,
+                request,
+                _('Incoming inspection passed.'),
+            )
+        else:
+            self._change_stock_status(
+                inspection.receipt,
+                StockStatus.QUARANTINED.value,
+                request,
+                _('Incoming inspection exception; stock held for disposition.'),
+            )
+        return Response(self.get_serializer(inspection).data)
+
+    @staticmethod
+    def _change_stock_status(receipt, target_status, request, note):
+        """Use InvenTree's serializer so native stock history is recorded."""
+        item_ids = list(receipt.stock_items.values_list('pk', flat=True))
+        serializer = StockChangeStatusSerializer(
+            data={'items': item_ids, 'status': target_status, 'note': str(note)},
+            context={'request': request},
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+
+class PurchaseReceiptFeedbackViewSet(CangxuModelViewSet):
+    """Route exception feedback to technical support and purchasing."""
+
+    role_required = 'stock'
+    queryset = PurchaseReceiptFeedback.objects.select_related(
+        'inspection', 'created_by', 'responded_by'
+    )
+    serializer_class = serializers.PurchaseReceiptFeedbackSerializer
+    filterset_fields = ['inspection', 'department']
+    ordering = ['created_at', 'pk']
+    http_method_names = ['get', 'post', 'head', 'options']
+
+    def get_permissions(self):
+        """Apply department permissions to feedback creation and responses."""
+        action = getattr(self, 'action', None)
+        if action == 'create':
+            self.role_required = (
+                'part'
+                if self.request.data.get('department') == 'technical'
+                else 'purchase_order'
+            )
+        elif action == 'respond':
+            feedback = self.get_queryset().filter(pk=self.kwargs.get('pk')).first()
+            if feedback:
+                self.role_required = (
+                    'part' if feedback.department == 'technical' else 'purchase_order'
+                )
+        return super().get_permissions()
+
+    def create(self, request, *args, **kwargs):
+        """Create feedback after standard serializer validation."""
+        return super().create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        """Require an exception and attribute the feedback request."""
+        inspection = serializer.validated_data['inspection']
+        if inspection.state != PurchaseReceiptInspection.State.EXCEPTION:
+            raise ValidationError(
+                _('Feedback can only be requested for an inspection exception.')
+            )
+        serializer.save(created_by=self.request.user)
+
+    @action(detail=True, methods=['post'])
+    def respond(self, request, pk=None):
+        """Record a one-time response from the responsible department."""
+        feedback = self.get_object()
+        data = serializers.PurchaseReceiptFeedbackResponseSerializer(data=request.data)
+        data.is_valid(raise_exception=True)
+        if feedback.response:
+            raise ValidationError(_('This feedback request already has a response.'))
+        feedback.response = data.validated_data['response']
+        feedback.responded_by = request.user
+        feedback.responded_at = timezone.now()
+        feedback.save(update_fields=['response', 'responded_by', 'responded_at'])
+        return Response(self.get_serializer(feedback).data)
+
+
+class PurchaseReceiptDispositionViewSet(CangxuModelViewSet):
+    """Approve exception disposition before changing or returning stock."""
+
+    role_required = 'stock'
+    queryset = PurchaseReceiptDisposition.objects.select_related(
+        'inspection__receipt', 'requested_by', 'approved_by', 'return_location'
+    )
+    serializer_class = serializers.PurchaseReceiptDispositionSerializer
+    filterset_fields = ['inspection', 'outcome', 'state']
+    ordering = ['state', 'requested_at', 'pk']
+
+    def perform_create(self, serializer):
+        """Allow a disposition request for an inspection exception."""
+        inspection = serializer.validated_data['inspection']
+        if inspection.state != PurchaseReceiptInspection.State.EXCEPTION:
+            raise ValidationError(_('Disposition requires an inspection exception.'))
+        serializer.save(requested_by=self.request.user)
+
+    @action(detail=True, methods=['post'])
+    @transaction.atomic
+    def approve(self, request, pk=None):
+        """Approve or reject a pending disposition and apply its stock outcome."""
+        disposition = (
+            PurchaseReceiptDisposition.objects
+            .select_for_update()
+            .select_related('inspection__receipt')
+            .get(pk=self.get_object().pk)
+        )
+        if disposition.state != PurchaseReceiptDisposition.State.PENDING:
+            raise ValidationError(_('Only pending dispositions can be decided.'))
+        data = serializers.PurchaseReceiptApprovalSerializer(data=request.data)
+        data.is_valid(raise_exception=True)
+        disposition.approved_by = request.user
+        disposition.approved_at = timezone.now()
+        disposition.approval_notes = data.validated_data['notes']
+        disposition.state = (
+            PurchaseReceiptDisposition.State.APPROVED
+            if data.validated_data['approved']
+            else PurchaseReceiptDisposition.State.REJECTED
+        )
+        disposition.save(
+            update_fields=['approved_by', 'approved_at', 'approval_notes', 'state']
+        )
+        if disposition.state == PurchaseReceiptDisposition.State.APPROVED:
+            self._complete(disposition, request)
+        return Response(self.get_serializer(disposition).data)
+
+    @staticmethod
+    def _complete(disposition, request):
+        receipt = disposition.inspection.receipt
+        if disposition.outcome in ('normal', 'concession'):
+            PurchaseReceiptInspectionViewSet._change_stock_status(
+                receipt,
+                StockStatus.OK.value,
+                request,
+                _('Approved incoming receipt disposition.'),
+            )
+        else:
+            location = disposition.return_location
+            if not location or not location.external:
+                raise ValidationError({
+                    'return_location': _('Return requires an external stock location.')
+                })
+            if not disposition.return_shipment_reference.strip():
+                raise ValidationError({
+                    'return_shipment_reference': _(
+                        'Record the return shipment reference.'
+                    )
+                })
+            for item in receipt.stock_items.select_for_update():
+                item.move(
+                    location,
+                    notes=disposition.return_shipment_reference,
+                    user=request.user,
+                    status=StockStatus.REJECTED.value,
+                )
+        disposition.state = PurchaseReceiptDisposition.State.COMPLETED
+        disposition.completed_at = timezone.now()
+        disposition.save(update_fields=['state', 'completed_at'])
+
+
 class ServiceCaseEventViewSet(CangxuModelViewSet):
     """Append and list custody events; events cannot be edited or deleted."""
 
@@ -1334,6 +1638,108 @@ class ServiceCaseEventViewSet(CangxuModelViewSet):
     ordering_fields = ['occurred_at']
     ordering = ['occurred_at', 'id']
     http_method_names = ['get', 'post', 'head', 'options']
+
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        """Make inventory-moving custody events safe to replay after a timeout."""
+        # Hash only fields the client actually sent. Model defaults such as
+        # occurred_at are regenerated while validating a replay and must not
+        # make an unchanged request appear different.
+        request_payload = request.data
+        request_hash = hashlib.sha256(
+            json.dumps(
+                request_payload, sort_keys=True, separators=(',', ':'), default=str
+            ).encode('utf-8')
+        ).hexdigest()
+
+        # Check replay before serializer validation: the model serializer runs
+        # model-level uniqueness validation, which would reject an existing
+        # idempotency key before this view can return its original event.
+        try:
+            key = uuid.UUID(str(request_payload.get('idempotency_key', '')))
+        except (ValueError, TypeError, AttributeError):
+            key = None
+        if key is not None:
+            existing = (
+                ServiceCaseEvent.objects
+                .select_for_update()
+                .filter(idempotency_key=key)
+                .first()
+            )
+            if existing:
+                if existing.request_hash != request_hash:
+                    raise ValidationError({
+                        'idempotency_key': _(
+                            'This key was used for a different service event.'
+                        )
+                    })
+                return Response(self.get_serializer(existing).data)
+
+        serializer = self.get_serializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError:
+            # A concurrent request can commit its unique key between the
+            # initial replay lookup and model-level serializer validation.
+            existing = (
+                ServiceCaseEvent.objects
+                .select_for_update()
+                .filter(idempotency_key=key)
+                .first()
+            )
+            if existing and existing.request_hash == request_hash:
+                return Response(self.get_serializer(existing).data)
+            if existing:
+                raise ValidationError({
+                    'idempotency_key': _(
+                        'This key was used for a different service event.'
+                    )
+                })
+            raise
+        values = serializer.validated_data
+        key = values['idempotency_key']
+
+        # Serialize all events for the same case before checking the key. A
+        # concurrent retry then observes the committed event and skips stock
+        # movement. Locking the case also coordinates with service-line closure.
+        ServiceCase.objects.select_for_update().get(pk=values['line'].case_id)
+        existing = (
+            ServiceCaseEvent.objects
+            .select_for_update()
+            .filter(idempotency_key=key)
+            .first()
+        )
+        if existing:
+            if existing.request_hash != request_hash:
+                raise ValidationError({
+                    'idempotency_key': _(
+                        'This key was used for a different service event.'
+                    )
+                })
+            return Response(self.get_serializer(existing).data)
+
+        serializer._request_hash = request_hash
+        try:
+            # The savepoint lets a globally duplicated key from another case
+            # roll back any stock changes before returning the first result.
+            with transaction.atomic():
+                self.perform_create(serializer)
+        except IntegrityError:
+            existing = ServiceCaseEvent.objects.filter(idempotency_key=key).first()
+            if existing is None:
+                raise
+            if existing.request_hash != request_hash:
+                raise ValidationError({
+                    'idempotency_key': _(
+                        'This key was used for a different service event.'
+                    )
+                })
+            return Response(self.get_serializer(existing).data)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     @transaction.atomic
     def perform_create(self, serializer):
@@ -1597,6 +2003,7 @@ class ServiceCaseEventViewSet(CangxuModelViewSet):
             from_location=from_location,
             to_location=to_location,
             company=company or expected_company,
+            request_hash=serializer._request_hash,
         )
         if event.event_type == ServiceCaseEvent.EventType.SENT:
             case.state = ServiceCase.State.WAITING
@@ -3100,6 +3507,21 @@ router.register(
 )
 router.register(
     'purchase-receipts', PurchaseReceiptViewSet, basename='cangxu-purchase-receipt'
+)
+router.register(
+    'receipt-inspections',
+    PurchaseReceiptInspectionViewSet,
+    basename='cangxu-receipt-inspection',
+)
+router.register(
+    'receipt-feedback',
+    PurchaseReceiptFeedbackViewSet,
+    basename='cangxu-receipt-feedback',
+)
+router.register(
+    'receipt-dispositions',
+    PurchaseReceiptDispositionViewSet,
+    basename='cangxu-receipt-disposition',
 )
 router.register(
     'configurations', UnitConfigurationViewSet, basename='cangxu-configuration'

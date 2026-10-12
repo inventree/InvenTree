@@ -27,6 +27,8 @@ from cangxu.models import (
     ManufacturingLotPartner,
     ManufacturingLotStockItem,
     PartCodeAlias,
+    PurchaseReceipt,
+    PurchaseReceiptInspection,
     QualityIssue,
     ReworkTask,
     ServiceCase,
@@ -1180,6 +1182,77 @@ class Command(BaseCommand):
                 batch_code=receipt_batch,
                 note='Synthetic expanded partial receipt awaiting inspection.',
             )
+
+        # Demonstrate both receipt choices using native status changes and a
+        # receipt archive record tied to each generated native StockItem set.
+        for item in StockItem.objects.filter(
+            purchase_order_id=expanded_order.pk, part=supplier_part
+        ).select_related('location'):
+            if item.status != StockStatus.OK.value:
+                item.move(
+                    item.location,
+                    notes='Synthetic demo receipt defaulted to available stock.',
+                    user=None,
+                    status=StockStatus.OK.value,
+                )
+
+        for line, batch_code, receipt_status, key_name in [
+            (
+                purchase_line,
+                legacy_receipt_batch,
+                StockStatus.QUARANTINED.value,
+                'CX-DEMO-INBOUND-0001',
+            ),
+            (
+                expanded_line,
+                receipt_batch,
+                StockStatus.OK.value,
+                'CX-DEMO-INBOUND-0002',
+            ),
+        ]:
+            items = list(
+                StockItem.objects.filter(
+                    purchase_order_id=line.order_id, part=supplier_part
+                ).order_by('pk')
+            )
+            quantity = sum((item.quantity for item in items), Decimal('0'))
+            serial_numbers = [item.serial for item in items if item.serial]
+            key = uuid.uuid5(uuid.NAMESPACE_URL, key_name)
+            request_payload = {
+                'purchase_order_line': line.pk,
+                'quantity': str(quantity),
+                'location': receiving.pk,
+                'status': receipt_status,
+                'batch_code': batch_code,
+                'serial_numbers': serial_numbers,
+            }
+            request_hash = hashlib.sha256(
+                json.dumps(
+                    request_payload, sort_keys=True, separators=(',', ':')
+                ).encode('utf-8')
+            ).hexdigest()
+            receipt, _ = PurchaseReceipt.objects.get_or_create(
+                idempotency_key=key,
+                defaults={
+                    'request_hash': request_hash,
+                    'purchase_order_line': line,
+                    'location': receiving,
+                    'quantity': quantity,
+                    'status': receipt_status,
+                    'batch_code': batch_code,
+                    'serial_numbers': serial_numbers,
+                    'note': 'Synthetic receipt archive for local workflow demonstration.',
+                },
+            )
+            receipt.stock_items.set(items)
+            if line == purchase_line:
+                PurchaseReceiptInspection.objects.get_or_create(
+                    receipt=receipt,
+                    defaults={
+                        'sampling_method': PurchaseReceiptInspection.SamplingMethod.FULL,
+                        'sampled_quantity': quantity,
+                    },
+                )
 
         # The command owns only CX-DEMO records. Keep purchase receipts,
         # opening stock, and finished demo units in distinct traceable lots.
