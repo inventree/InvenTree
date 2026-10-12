@@ -336,6 +336,9 @@ class ExtendedUserSerializer(UserSerializer):
 
         read_only_fields = [*UserSerializer.Meta.read_only_fields, 'groups']
 
+    # 'group_ids' is a write-only serializer field which does not exist on the model
+    SKIP_CREATE_FIELDS = ['group_ids']
+
     groups = GroupSerializer(many=True, read_only=True)
 
     # Write-only field, for updating the groups associated with the user
@@ -529,7 +532,13 @@ class UserCreateSerializer(ExtendedUserSerializer):
 
         base_url = get_base_url()
 
+        # Extract the groups to assign to the new user
+        groups = validated_data.pop('group_ids', None)
+
         instance = super().create(validated_data)
+
+        if groups is not None:
+            instance.groups.set(groups)
 
         # Create the EmailAddress entry for the user
         if instance.email:

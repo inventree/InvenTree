@@ -2,6 +2,7 @@
 
 from django.contrib import admin
 
+from common.admin_shared import NoAddAdminMixin
 from plugin import models
 from plugin.registry import registry as pl_registry
 
@@ -34,28 +35,20 @@ def plugin_deactivate(modeladmin, request, queryset):
     plugin_update(queryset, False)
 
 
-class PluginSettingInline(admin.TabularInline):
+class PluginSettingInline(NoAddAdminMixin, admin.TabularInline):
     """Inline admin class for PluginSetting."""
 
     model = models.PluginSetting
 
     readonly_fields = ['key']
 
-    def has_add_permission(self, request, obj):
-        """The plugin settings should not be meddled with manually."""
-        return False
 
-
-class PluginUserSettingInline(admin.TabularInline):
+class PluginUserSettingInline(NoAddAdminMixin, admin.TabularInline):
     """Inline admin class for PluginUserSetting."""
 
     model = models.PluginUserSetting
 
     readonly_fields = ['key']
-
-    def has_add_permission(self, request, obj):
-        """The plugin user settings should not be meddled with manually."""
-        return False
 
 
 class PluginConfigAdmin(admin.ModelAdmin):
