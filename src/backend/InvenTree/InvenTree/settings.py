@@ -235,6 +235,7 @@ PLUGIN_TESTING_SETUP = get_setting(
 PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
 PLUGIN_TESTING_EVENTS_ASYNC = False  # Flag if events are tested asynchronously
 PLUGIN_TESTING_RELOAD = False  # Flag if plugin reloading is in testing (check_reload)
+SETUP_INITIALIZING = os.environ.get('SETUP_INITIALIZING', '0') == '1'
 
 # Plugin development settings
 PLUGIN_DEV_SLUG = get_setting('INVENTREE_PLUGIN_DEV_SLUG', 'plugin_dev.slug')
@@ -843,7 +844,9 @@ if DEBUG:
         'http://localhost',
         'http://*.localhost',
         'http://*localhost:8000',
+        'http://localhost:4173',
         'http://*localhost:4173',
+        'http://localhost:5173',
         'http://*localhost:5173',
     ]:
         if origin not in CSRF_TRUSTED_ORIGINS:
