@@ -210,10 +210,10 @@ class SettingsManager(models.Manager):
 
     def get_queryset(self):
         """Defer the write-only 'touched' field."""
-        return super().get_queryset().defer('touched')
+        return super().get_queryset().defer('touched', 'updated_by', 'updated')
 
 
-class BaseInvenTreeSetting(models.Model):
+class BaseInvenTreeSetting(UpdatedUserMixin, models.Model):
     """An base InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
     Attributes:
