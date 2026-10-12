@@ -1724,6 +1724,110 @@ class CangxuDataImportTestCase(CangxuAPITestCase):
         )
         self.assertEqual(duplicate.data['id'], batch_id)
 
+    def test_opening_xlsx_runs_from_upload_through_native_stock_posting(self):
+        """Run a synthetic opening workbook through mapping, review, and posting."""
+        part = Part.objects.create(
+            name='Synthetic workbook imported tracked part',
+            IPN='CX-TEST-XLSX-OPEN-001',
+            trackable=True,
+            component=True,
+        )
+        location = StockLocation.objects.get(pk=7)
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = 'Synthetic opening stock'
+        sheet.append(['PN号', '数量', 'SN号', '本年度生产批次', '生产日期'])
+        sheet.append([
+            'CX-TEST-XLSX-OPEN-001',
+            1,
+            'CX-TEST-XLSX-SN-001',
+            'CX-TEST-XLSX-LOT-001',
+            '2026-10-01',
+        ])
+        workbook_content = BytesIO()
+        workbook.save(workbook_content)
+
+        def upload_workbook():
+            return SimpleUploadedFile(
+                'synthetic-opening-stock.xlsx',
+                workbook_content.getvalue(),
+                content_type=(
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                ),
+            )
+
+        before_stock = StockItem.objects.filter(part=part).count()
+        uploaded = self.post(
+            reverse('cangxu-import-batch-upload'),
+            {
+                'source_system': 'CX-TEST',
+                'source_kind': DataImportBatch.Kind.OPENING_STOCK,
+                'source_file': upload_workbook(),
+                'inventory_as_of': '2026-10-01',
+                'physical_count_confirmed': 'true',
+            },
+            expected_code=201,
+            format='multipart',
+        )
+        self.assertEqual(uploaded.data['staged_rows'], 1)
+        batch_id = uploaded.data['batch']['id']
+        row = DataImportRecord.objects.get(batch_id=batch_id)
+        self.assertEqual(row.source_sheet, 'Synthetic opening stock')
+        self.assertEqual(row.source_row, 2)
+        self.assertEqual(row.source_range, 'A2:E2')
+        self.assertEqual(StockItem.objects.filter(part=part).count(), before_stock)
+
+        mapped = self.post(
+            reverse('cangxu-import-batch-map-opening-stock', kwargs={'pk': batch_id}),
+            {'location': location.pk},
+            expected_code=200,
+        )
+        self.assertEqual(mapped.data['mapped'], 1)
+        row.refresh_from_db()
+        self.assertEqual(row.mapped_part_id, part.pk)
+        self.assertEqual(row.location_id, location.pk)
+
+        validated = self.post(
+            reverse('cangxu-import-batch-validate', kwargs={'pk': batch_id}),
+            {},
+            expected_code=200,
+        )
+        self.assertEqual(validated.data['valid'], 1)
+        self.assertEqual(validated.data['invalid'], 0)
+        self.post(
+            reverse('cangxu-import-batch-approve', kwargs={'pk': batch_id}),
+            {},
+            expected_code=200,
+        )
+        applied = self.post(
+            reverse('cangxu-import-batch-apply', kwargs={'pk': batch_id}),
+            {},
+            expected_code=200,
+        )
+        self.assertEqual(applied.data['applied'], 1)
+        self.assertEqual(StockItem.objects.filter(part=part).count(), before_stock + 1)
+        row.refresh_from_db()
+        self.assertEqual(row.stock_item.part_id, part.pk)
+        self.assertTrue(
+            ManufacturingLotStockItem.objects.filter(stock_item=row.stock_item).exists()
+        )
+
+        duplicate_upload = self.post(
+            reverse('cangxu-import-batch-upload'),
+            {
+                'source_system': 'CX-TEST',
+                'source_kind': DataImportBatch.Kind.OPENING_STOCK,
+                'source_file': upload_workbook(),
+                'inventory_as_of': '2026-10-01',
+                'physical_count_confirmed': 'true',
+            },
+            expected_code=200,
+            format='multipart',
+        )
+        self.assertEqual(duplicate_upload.data['batch']['id'], batch_id)
+        self.assertEqual(duplicate_upload.data['staged_rows'], 0)
+        self.assertEqual(StockItem.objects.filter(part=part).count(), before_stock + 1)
+
     def test_opening_mapping_holds_part_code_ambiguity(self):
         """Do not select a part when the same external code has multiple targets."""
         first_part = Part.objects.create(
