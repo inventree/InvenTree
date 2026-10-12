@@ -20,7 +20,7 @@ from rest_framework.routers import DefaultRouter
 import InvenTree.permissions
 from build.models import Build, BuildItem, BuildLine
 from InvenTree.filters import SEARCH_ORDER_FILTER
-from order.models import SalesOrderShipment
+from order.models import PurchaseOrderLineItem, SalesOrderShipment
 from part.models import Part
 from plugin.base.event.events import batch_events
 from stock.models import StockItem, StockItemTracking, batch_tracking_entries
@@ -50,6 +50,7 @@ from .models import (
     MaterialIssue,
     MaterialReturn,
     PartCodeAlias,
+    PurchaseReceipt,
     QualityIssue,
     ReworkTask,
     ServiceCase,
@@ -1154,6 +1155,126 @@ class ServiceCaseLineViewSet(CangxuModelViewSet):
         line.notes = action_data.validated_data.get('notes', '')
         line.save(update_fields=['outcome', 'replacement_item', 'notes'])
         return Response(self.get_serializer(line).data)
+
+
+class PurchaseReceiptViewSet(CangxuModelViewSet):
+    """Post native PO receipts with a retry-safe, auditable request key."""
+
+    role_required = 'purchase_order'
+    queryset = PurchaseReceipt.objects.select_related(
+        'purchase_order_line__order',
+        'purchase_order_line__part__part',
+        'location',
+        'received_by',
+    ).prefetch_related('stock_items')
+    serializer_class = serializers.PurchaseReceiptSerializer
+    http_method_names = ['get', 'post', 'head', 'options']
+    filterset_fields = ['purchase_order_line', 'location', 'received_by']
+    ordering_fields = ['received_at', 'purchase_order_line']
+    ordering = ['-received_at', '-pk']
+
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        """Receive once per idempotency key and return the original stock on replay."""
+        data = serializers.PurchaseReceiptRequestSerializer(data=request.data)
+        data.is_valid(raise_exception=True)
+        values = data.validated_data
+        line = values['purchase_order_line']
+        payload = {
+            'purchase_order_line': line.pk,
+            'quantity': str(values['quantity']),
+            'location': values['location'].pk,
+            'status': int(values['status']),
+            'batch_code': values.get('batch_code', ''),
+            'expiry_date': (
+                values['expiry_date'].isoformat() if values.get('expiry_date') else None
+            ),
+            'serial_numbers': values.get('serial_numbers', []),
+            'note': values.get('note', ''),
+        }
+        request_hash = hashlib.sha256(
+            json.dumps(payload, sort_keys=True, separators=(',', ':')).encode('utf-8')
+        ).hexdigest()
+        key = values['idempotency_key']
+        receipt, created = PurchaseReceipt.objects.get_or_create(
+            idempotency_key=key,
+            defaults={
+                'request_hash': request_hash,
+                'purchase_order_line': line,
+                'location': values['location'],
+                'quantity': values['quantity'],
+                'status': int(values['status']),
+                'batch_code': values.get('batch_code', ''),
+                'expiry_date': values.get('expiry_date'),
+                'serial_numbers': payload['serial_numbers'],
+                'note': payload['note'],
+                'received_by': request.user,
+            },
+        )
+        if not created:
+            receipt = PurchaseReceipt.objects.select_for_update().get(pk=receipt.pk)
+            if receipt.request_hash != request_hash:
+                raise ValidationError({
+                    'idempotency_key': _(
+                        'This key was used for a different purchase receipt.'
+                    )
+                })
+            return Response(self.get_serializer(receipt).data)
+
+        line = (
+            PurchaseOrderLineItem.objects
+            .select_for_update()
+            .select_related('order', 'part__part')
+            .get(pk=line.pk)
+        )
+        if line.received + values['quantity'] > line.quantity:
+            raise ValidationError({
+                'quantity': _(
+                    'Receipt quantity exceeds the outstanding order quantity.'
+                )
+            })
+
+        location = values['location']
+        native_receipts = line.order.receive_line_items(
+            location,
+            [
+                {
+                    'line_item': line,
+                    'quantity': values['quantity'],
+                    'location': location,
+                    'status': int(values['status']),
+                    'batch_code': values.get('batch_code', ''),
+                    'expiry_date': values.get('expiry_date'),
+                    'serials': payload['serial_numbers'],
+                    'note': payload['note'],
+                }
+            ],
+            request.user,
+        )
+        receipt.stock_items.set(native_receipts)
+
+        if payload['batch_code']:
+            part = line.part.part
+            lot = ManufacturingLot.objects.get_or_create(
+                part=part,
+                code=payload['batch_code'],
+                defaults={'purchase_order_line': line},
+            )[0]
+            if lot.purchase_order_line_id not in (None, line.pk):
+                raise ValidationError({
+                    'batch_code': _('This part batch is linked to another order line.')
+                })
+            if lot.purchase_order_line_id is None:
+                lot.purchase_order_line = line
+                lot.save(update_fields=['purchase_order_line'])
+            ManufacturingLotStockItem.objects.bulk_create([
+                ManufacturingLotStockItem(lot=lot, stock_item=item)
+                for item in native_receipts
+            ])
+
+        return Response(
+            self.get_serializer(receipt).data, status=status.HTTP_201_CREATED
+        )
 
 
 class ServiceCaseEventViewSet(CangxuModelViewSet):
@@ -2943,6 +3064,9 @@ router.register(
     'lot-stock-items',
     ManufacturingLotStockItemViewSet,
     basename='cangxu-lot-stock-item',
+)
+router.register(
+    'purchase-receipts', PurchaseReceiptViewSet, basename='cangxu-purchase-receipt'
 )
 router.register(
     'configurations', UnitConfigurationViewSet, basename='cangxu-configuration'

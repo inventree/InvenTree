@@ -384,6 +384,49 @@ class ManufacturingLotStockItem(models.Model):
         verbose_name = _('Lot stock item')
 
 
+class PurchaseReceipt(models.Model):
+    """Make native purchase receipt submissions safe to retry after timeouts."""
+
+    idempotency_key = models.UUIDField(unique=True)
+    request_hash = models.CharField(max_length=64)
+    purchase_order_line = models.ForeignKey(
+        'order.PurchaseOrderLineItem',
+        on_delete=models.PROTECT,
+        related_name='cangxu_receipt_requests',
+    )
+    location = models.ForeignKey(
+        'stock.StockLocation', on_delete=models.PROTECT, related_name='cangxu_receipts'
+    )
+    quantity = models.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(Decimal('0.00001'))],
+    )
+    status = models.PositiveSmallIntegerField(default=10)
+    batch_code = models.CharField(max_length=100, blank=True)
+    expiry_date = models.DateField(null=True, blank=True)
+    serial_numbers = models.JSONField(default=list, blank=True)
+    note = models.TextField(blank=True)
+    stock_items = models.ManyToManyField(
+        'stock.StockItem', related_name='cangxu_receipt_requests', blank=True
+    )
+    received_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='cangxu_purchase_receipts',
+    )
+    received_at = models.DateTimeField(default=timezone.now, editable=False)
+
+    class Meta:
+        """Order receipt attempts for an easy audit trail."""
+
+        ordering = ['-received_at', '-pk']
+        verbose_name = _('Purchase receipt request')
+        verbose_name_plural = _('Purchase receipt requests')
+
+
 class ManufacturingLotPartner(models.Model):
     """Record distinct manufacturing and supply roles for a lot."""
 

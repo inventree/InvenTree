@@ -9,7 +9,9 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from build.models import BuildLine
+from InvenTree.helpers import extract_serial_numbers
 from InvenTree.serializers import InvenTreeModelSerializer
+from order.models import PurchaseOrderLineItem
 from stock.models import StockItem, StockLocation
 
 from .models import (
@@ -28,6 +30,7 @@ from .models import (
     ManufacturingLotStockItem,
     MaterialIssue,
     PartCodeAlias,
+    PurchaseReceipt,
     QualityIssue,
     ReworkTask,
     ServiceCase,
@@ -163,6 +166,121 @@ class ManufacturingLotPartnerSerializer(InvenTreeModelSerializer):
 
         model = ManufacturingLotPartner
         fields = '__all__'
+
+
+class PurchaseReceiptSerializer(InvenTreeModelSerializer):
+    """Expose the immutable idempotency key and stock created by a receipt."""
+
+    stock_items = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        """Keep receipt submissions read-only after native stock is posted."""
+
+        model = PurchaseReceipt
+        fields = '__all__'
+        read_only_fields = [
+            'id',
+            'idempotency_key',
+            'request_hash',
+            'purchase_order_line',
+            'location',
+            'quantity',
+            'status',
+            'batch_code',
+            'expiry_date',
+            'serial_numbers',
+            'note',
+            'stock_items',
+            'received_by',
+            'received_at',
+        ]
+
+
+class PurchaseReceiptRequestSerializer(serializers.Serializer):
+    """Validate one idempotent, possibly serialized purchase receipt."""
+
+    idempotency_key = serializers.UUIDField()
+    purchase_order_line = serializers.PrimaryKeyRelatedField(
+        queryset=PurchaseOrderLineItem.objects.select_related('part__part', 'order')
+    )
+    quantity = serializers.DecimalField(
+        max_digits=15, decimal_places=5, min_value=Decimal('0.00001')
+    )
+    location = serializers.PrimaryKeyRelatedField(queryset=StockLocation.objects.all())
+    status = serializers.ChoiceField(
+        choices=StockItem.STATUS_CLASS.items(custom=True), default=10
+    )
+    batch_code = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    expiry_date = serializers.DateField(required=False, allow_null=True)
+    serial_numbers = serializers.JSONField(required=False, default=list)
+    note = serializers.CharField(required=False, allow_blank=True)
+
+    def validate(self, attrs):
+        """Require exact serial coverage for serialized supplier quantities."""
+        attrs = super().validate(attrs)
+        line = attrs['purchase_order_line']
+        serial_numbers = attrs['serial_numbers']
+        if isinstance(serial_numbers, str):
+            serial_text = serial_numbers.strip()
+            if serial_text:
+                part = line.part.part if line.part else None
+                try:
+                    serial_numbers = extract_serial_numbers(
+                        serial_text,
+                        line.part.base_quantity(attrs['quantity']),
+                        part.get_latest_serial_number() if part else None,
+                        part=part,
+                    )
+                except (DjangoValidationError, AttributeError) as exc:
+                    raise serializers.ValidationError({
+                        'serial_numbers': getattr(exc, 'messages', [str(exc)])
+                    }) from exc
+            else:
+                serial_numbers = []
+            attrs['serial_numbers'] = serial_numbers
+        if not isinstance(serial_numbers, list) or not all(
+            isinstance(serial, str) for serial in serial_numbers
+        ):
+            raise serializers.ValidationError({
+                'serial_numbers': _('Provide serial numbers as a list or range string.')
+            })
+        if len(serial_numbers) != len(set(serial_numbers)):
+            raise serializers.ValidationError({
+                'serial_numbers': _('Serial numbers must be unique in a receipt.')
+            })
+
+        if serial_numbers:
+            supplier_part = line.part
+            if not supplier_part or not supplier_part.part:
+                raise serializers.ValidationError({
+                    'purchase_order_line': _('The order line has no linked part.')
+                })
+            base_quantity = supplier_part.base_quantity(attrs['quantity'])
+            if base_quantity != base_quantity.to_integral_value():
+                raise serializers.ValidationError({
+                    'quantity': _('Serialized stock quantity must be a whole number.')
+                })
+            if len(serial_numbers) != int(base_quantity):
+                raise serializers.ValidationError({
+                    'serial_numbers': _(
+                        'Provide one serial number for each received stock item.'
+                    )
+                })
+            if any(len(serial) > 100 for serial in serial_numbers):
+                raise serializers.ValidationError({
+                    'serial_numbers': _('Serial numbers cannot exceed 100 characters.')
+                })
+            # InvenTree's native receive validates serial uniqueness and part
+            # rules when posting new stock. Keep this serializer structural so
+            # a legitimate idempotent replay can return already-created serials.
+        elif line.part and line.part.part and line.part.part.trackable:
+            raise serializers.ValidationError({
+                'serial_numbers': _(
+                    'Serial numbers are required for this trackable part.'
+                )
+            })
+
+        return attrs
 
 
 class ManufacturingLotStockItemSerializer(InvenTreeModelSerializer):

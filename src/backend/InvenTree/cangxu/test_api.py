@@ -39,6 +39,7 @@ from .models import (
     MaterialIssue,
     MaterialReturn,
     PartCodeAlias,
+    PurchaseReceipt,
     QualityIssue,
     ReworkTask,
     ServiceCase,
@@ -78,6 +79,78 @@ class CangxuAPITestCase(InvenTreeAPITestCase):
         'stock.add',
         'stock.change',
     ]
+
+
+class CangxuPurchaseReceiptTest(CangxuAPITestCase):
+    """Verify safe retries and lot traceability for native purchase receipts."""
+
+    def test_split_serialized_receipts_are_idempotent_and_link_to_one_lot(self):
+        """Receive one PO line in two calls and make a retry return the same stock."""
+        part = Part.objects.get(pk=25)
+        supplier = Company.objects.create(
+            name='Cangxu Idempotent Receipt Supplier', is_supplier=True
+        )
+        supplier_part = SupplierPart.objects.create(
+            part=part, supplier=supplier, SKU='CX-IDEMPOTENT-RECEIPT-001'
+        )
+        order = PurchaseOrder.objects.create(
+            supplier=supplier, reference='CX-IDEMPOTENT-PO-001'
+        )
+        line = PurchaseOrderLineItem.objects.create(
+            order=order, part=supplier_part, quantity=2
+        )
+        order.place_order()
+        location = StockLocation.objects.get(pk=7)
+        url = reverse('cangxu-purchase-receipt-list')
+        first_payload = {
+            'idempotency_key': '54010c2c-1cf2-4400-92e2-66c0a2fc1942',
+            'purchase_order_line': line.pk,
+            'quantity': '1',
+            'location': location.pk,
+            'status': StockStatus.QUARANTINED.value,
+            'batch_code': 'CX-IDEMPOTENT-LOT-001',
+            'serial_numbers': ['CX-IDEMPOTENT-SN-0001'],
+            'note': 'Synthetic first split receipt.',
+        }
+
+        first = self.post(url, first_payload, expected_code=201)
+        replay = self.post(url, first_payload, expected_code=200)
+        self.assertEqual(replay.data['id'], first.data['id'])
+        self.assertEqual(replay.data['stock_items'], first.data['stock_items'])
+        self.assertEqual(len(first.data['stock_items']), 1)
+        line.refresh_from_db()
+        self.assertEqual(line.received, 1)
+        self.assertEqual(
+            PurchaseReceipt.objects.filter(purchase_order_line=line).count(), 1
+        )
+        self.assertEqual(StockItem.objects.filter(purchase_order=order).count(), 1)
+
+        conflicting_replay = {**first_payload, 'note': 'Changed after timeout.'}
+        self.post(url, conflicting_replay, expected_code=400)
+        self.assertEqual(StockItem.objects.filter(purchase_order=order).count(), 1)
+
+        second_payload = {
+            **first_payload,
+            'idempotency_key': '8c02c9d4-e238-486a-8ca9-125c8d571953',
+            # The warehouse form submits the native serial entry string; the
+            # API expands it using InvenTree's serial-number rules.
+            'serial_numbers': 'CX-IDEMPOTENT-SN-0002',
+            'note': 'Synthetic second split receipt.',
+        }
+        second = self.post(url, second_payload, expected_code=201)
+        line.refresh_from_db()
+        lot = ManufacturingLot.objects.get(part=part, code=first_payload['batch_code'])
+        self.assertEqual(line.received, 2)
+        self.assertEqual(StockItem.objects.filter(purchase_order=order).count(), 2)
+        self.assertEqual(lot.stock_items.count(), 2)
+        self.assertEqual(len(second.data['stock_items']), 1)
+        excess_payload = {
+            **second_payload,
+            'idempotency_key': '972952af-e31a-4e98-932a-eccf81f2a7ce',
+            'serial_numbers': ['CX-IDEMPOTENT-SN-0003'],
+        }
+        self.post(url, excess_payload, expected_code=400)
+        self.assertEqual(StockItem.objects.filter(purchase_order=order).count(), 2)
 
 
 class CangxuHardwareProfileTest(CangxuAPITestCase):

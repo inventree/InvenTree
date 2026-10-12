@@ -25,7 +25,7 @@ import {
   IconUser,
   IconUsers
 } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -873,6 +873,7 @@ function LineItemFormRow({
 type LineFormHandlers = {
   onOpen?: () => void;
   onClose?: () => void;
+  onFormSuccess?: (data: any) => void;
 };
 
 type LineItemsForm = {
@@ -884,6 +885,8 @@ type LineItemsForm = {
 
 export function useReceiveLineItems(props: LineItemsForm) {
   const modalId = useId();
+  const receiptKeys = useRef(new Map<string, string>());
+  const activeReceiptSignature = useRef<string | null>(null);
 
   const stockStatusCodes = useMemo(
     () => getStatusCodeOptions(ModelType.stockitem),
@@ -991,11 +994,46 @@ export function useReceiveLineItems(props: LineItemsForm) {
   return useCreateApiFormModal({
     ...props.formProps,
     modalId,
-    url: apiUrl(ApiEndpoints.purchase_order_receive, props.orderPk),
+    url:
+      filteredItems.length === 1
+        ? apiUrl(ApiEndpoints.cangxu_purchase_receipt_list)
+        : apiUrl(ApiEndpoints.purchase_order_receive, props.orderPk),
     title: t`Receive Line Items`,
     fields: fields,
     initialData: {
       location: props.destinationPk
+    },
+    processFormData: (data) => {
+      // Single-line receipts use the Cangxu idempotent endpoint. Keep the
+      // standard native bulk receive endpoint for multi-line submissions.
+      if (filteredItems.length !== 1 || !Array.isArray(data.items)) {
+        return data;
+      }
+
+      const [item] = data.items;
+      const receipt = {
+        purchase_order_line: item.line_item,
+        quantity: item.quantity,
+        location: item.location ?? data.location ?? props.destinationPk,
+        status: item.status ?? 10,
+        batch_code: item.batch_code || data.batch_code || '',
+        expiry_date: item.expiry_date || null,
+        serial_numbers: item.serial_numbers ?? '',
+        note: item.note ?? ''
+      };
+      const signature = JSON.stringify(receipt);
+      const key = receiptKeys.current.get(signature) ?? crypto.randomUUID();
+      receiptKeys.current.set(signature, key);
+      activeReceiptSignature.current = signature;
+
+      return { ...receipt, idempotency_key: key };
+    },
+    onFormSuccess: (response) => {
+      if (activeReceiptSignature.current) {
+        receiptKeys.current.delete(activeReceiptSignature.current);
+        activeReceiptSignature.current = null;
+      }
+      props.formProps?.onFormSuccess?.(response);
     },
     size: '80%',
     successMessage: t`Items received`
