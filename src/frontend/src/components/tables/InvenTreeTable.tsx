@@ -877,6 +877,8 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
   }, [
     props.nestedRows,
     url,
+    tableData,
+    apiData,
     paramsKey,
     pageSize,
     sortStatus,
