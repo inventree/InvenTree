@@ -4,11 +4,11 @@ Used to serialize an potentially long-running operation,
 without holding a database transaction open for the duration.
 """
 
-import os
 import time
 from datetime import datetime, timedelta
 from typing import Optional
 
+from django.conf import settings
 from django.db import transaction
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from django.utils import timezone
@@ -82,7 +82,7 @@ def acquire_lease_blocking(
     """
     deadline = time.monotonic() + timeout
 
-    if os.environ.get('SETUP_INITIALIZING', '0') == '1':
+    if settings.SETUP_INITIALIZING:
         logger.debug("Skipping lease acquisition for '%s' during initialization", key)
         return True
 
