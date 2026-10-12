@@ -504,10 +504,9 @@ export function BomTable({
           // Account for the quantity of any upstream sub-assemblies
           const multiplier = upstreamMultiplier(record);
 
-          const can_build = Math.max(
-            0,
-            Math.trunc(record.can_build / multiplier)
-          );
+          const can_build = !record.can_build
+            ? 0
+            : Math.max(0, Math.trunc(record.can_build / multiplier));
 
           const value = (
             <Text
