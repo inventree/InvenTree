@@ -522,7 +522,7 @@ export function BomTable({
             <Stack gap={0}>
               {value}
               <Text size='xs' c='dimmed'>
-                {`${formatDecimal(Math.max(0, Math.trunc(record.can_build)))} ÷ ${formatDecimal(multiplier)}`}
+                {`${formatDecimal(Math.max(0, record.can_build))} ÷ ${formatDecimal(multiplier)}`}
               </Text>
             </Stack>
           ) : (
