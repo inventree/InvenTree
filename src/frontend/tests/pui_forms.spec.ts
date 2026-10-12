@@ -322,7 +322,10 @@ test('Forms - Nested Object Field', async ({ browser }) => {
   );
   await expect(supplierField).toBeVisible();
   await supplierField.fill('Mouser');
-  await page.getByText('Mouser Electronics').first().click();
+  await page
+    .getByRole('option', { name: /Mouser Electronics/ })
+    .first()
+    .click();
 
   const skuValue = `SKU-${new Date().getTime()}`;
   await page
