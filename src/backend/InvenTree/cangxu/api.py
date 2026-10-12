@@ -1190,6 +1190,8 @@ class PurchaseReceiptViewSet(CangxuModelViewSet):
                 values['expiry_date'].isoformat() if values.get('expiry_date') else None
             ),
             'serial_numbers': values.get('serial_numbers', []),
+            'packaging': values.get('packaging', ''),
+            'barcode': values.get('barcode', ''),
             'note': values.get('note', ''),
         }
         request_hash = hashlib.sha256(
@@ -1207,6 +1209,8 @@ class PurchaseReceiptViewSet(CangxuModelViewSet):
                 'batch_code': values.get('batch_code', ''),
                 'expiry_date': values.get('expiry_date'),
                 'serial_numbers': payload['serial_numbers'],
+                'packaging': payload['packaging'],
+                'barcode': payload['barcode'],
                 'note': payload['note'],
                 'received_by': request.user,
             },
@@ -1246,6 +1250,8 @@ class PurchaseReceiptViewSet(CangxuModelViewSet):
                     'batch_code': values.get('batch_code', ''),
                     'expiry_date': values.get('expiry_date'),
                     'serials': payload['serial_numbers'],
+                    'packaging': payload['packaging'],
+                    'barcode': payload['barcode'],
                     'note': payload['note'],
                 }
             ],

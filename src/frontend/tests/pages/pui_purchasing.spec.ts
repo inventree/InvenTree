@@ -604,6 +604,15 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Items received').waitFor();
 
+  const api = await createApi({});
+  const receivedItems = await api
+    .get('stock/', { params: { batch: 'my-batch-code' } })
+    .then((response) => response.json());
+  const latestReceivedItem = receivedItems.reduce((latest: any, item: any) =>
+    item.pk > latest.pk ? item : latest
+  );
+  expect(latestReceivedItem.packaging).toBe('bucket');
+
   await loadTab(page, 'Received Stock');
   await clearTableFilters(page);
 

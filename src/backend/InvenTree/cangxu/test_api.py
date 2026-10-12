@@ -84,6 +84,51 @@ class CangxuAPITestCase(InvenTreeAPITestCase):
 class CangxuPurchaseReceiptTest(CangxuAPITestCase):
     """Verify safe retries and lot traceability for native purchase receipts."""
 
+    def test_nonserialized_receipt_preserves_packaging_and_barcode_on_retry(self):
+        """Retain native receiving metadata when posting through the retry-safe API."""
+        part = Part.objects.filter(
+            trackable=False, virtual=False, assembly=False
+        ).first()
+        self.assertIsNotNone(part)
+        supplier = Company.objects.create(
+            name='Cangxu Packaging Receipt Supplier', is_supplier=True
+        )
+        supplier_part = SupplierPart.objects.create(
+            part=part, supplier=supplier, SKU='CX-PACKAGING-RECEIPT-001'
+        )
+        order = PurchaseOrder.objects.create(
+            supplier=supplier, reference='CX-PACKAGING-RECEIPT-PO-001'
+        )
+        line = PurchaseOrderLineItem.objects.create(
+            order=order, part=supplier_part, quantity=1
+        )
+        order.place_order()
+        payload = {
+            'idempotency_key': '9d936909-653a-4591-9c3a-9f54afed7c7c',
+            'purchase_order_line': line.pk,
+            'quantity': '1',
+            'location': StockLocation.objects.get(pk=7).pk,
+            'status': StockStatus.QUARANTINED.value,
+            'packaging': 'synthetic foam tray',
+            'barcode': 'CX-PACKAGING-BARCODE-001',
+        }
+        url = reverse('cangxu-purchase-receipt-list')
+
+        first = self.post(url, payload, expected_code=201)
+        replay = self.post(url, payload, expected_code=200)
+
+        self.assertEqual(replay.data['id'], first.data['id'])
+        self.assertEqual(replay.data['stock_items'], first.data['stock_items'])
+        receipt = PurchaseReceipt.objects.get(pk=first.data['id'])
+        self.assertEqual(receipt.packaging, payload['packaging'])
+        self.assertEqual(receipt.barcode, payload['barcode'])
+        item = StockItem.objects.get(pk=first.data['stock_items'][0])
+        self.assertEqual(item.packaging, payload['packaging'])
+        self.assertEqual(item.barcode_data, payload['barcode'])
+        line.refresh_from_db()
+        self.assertEqual(line.received, 1)
+        self.assertEqual(StockItem.objects.filter(purchase_order=order).count(), 1)
+
     def test_split_serialized_receipts_are_idempotent_and_link_to_one_lot(self):
         """Receive one PO line in two calls and make a retry return the same stock."""
         part = Part.objects.get(pk=25)

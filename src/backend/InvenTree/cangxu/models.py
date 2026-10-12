@@ -406,6 +406,8 @@ class PurchaseReceipt(models.Model):
     batch_code = models.CharField(max_length=100, blank=True)
     expiry_date = models.DateField(null=True, blank=True)
     serial_numbers = models.JSONField(default=list, blank=True)
+    packaging = models.CharField(max_length=50, blank=True)
+    barcode = models.CharField(max_length=500, blank=True)
     note = models.TextField(blank=True)
     stock_items = models.ManyToManyField(
         'stock.StockItem', related_name='cangxu_receipt_requests', blank=True

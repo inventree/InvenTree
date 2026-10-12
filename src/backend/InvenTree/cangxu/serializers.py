@@ -189,6 +189,8 @@ class PurchaseReceiptSerializer(InvenTreeModelSerializer):
             'batch_code',
             'expiry_date',
             'serial_numbers',
+            'packaging',
+            'barcode',
             'note',
             'stock_items',
             'received_by',
@@ -213,6 +215,8 @@ class PurchaseReceiptRequestSerializer(serializers.Serializer):
     batch_code = serializers.CharField(max_length=100, required=False, allow_blank=True)
     expiry_date = serializers.DateField(required=False, allow_null=True)
     serial_numbers = serializers.JSONField(required=False, default=list)
+    packaging = serializers.CharField(max_length=50, required=False, allow_blank=True)
+    barcode = serializers.CharField(max_length=500, required=False, allow_blank=True)
     note = serializers.CharField(required=False, allow_blank=True)
 
     def validate(self, attrs):

@@ -970,11 +970,16 @@ export function useReceiveLineItems(props: LineItemsForm) {
         ]
       },
       location: {
+        field_type: 'related field',
+        model: ModelType.stocklocation,
+        api_url: apiUrl(ApiEndpoints.stock_location_list),
+        label: t`Location`,
         filters: {
           structural: false
         }
       },
       batch_code: {
+        label: t`Batch Code`,
         icon: <InvenTreeIcon icon='batch_code' />,
         value: batchCode,
         onValueChange: setBatchCode,
@@ -1019,6 +1024,8 @@ export function useReceiveLineItems(props: LineItemsForm) {
         batch_code: item.batch_code || data.batch_code || '',
         expiry_date: item.expiry_date || null,
         serial_numbers: item.serial_numbers ?? '',
+        packaging: item.packaging ?? '',
+        barcode: item.barcode ?? '',
         note: item.note ?? ''
       };
       const signature = JSON.stringify(receipt);
