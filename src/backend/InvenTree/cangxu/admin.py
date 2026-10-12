@@ -11,6 +11,8 @@ from .models import (
     ManufacturingLot,
     ManufacturingLotPartner,
     ManufacturingLotStockItem,
+    MaterialIssue,
+    MaterialReturn,
     PartCodeAlias,
     QualityIssue,
     ReworkTask,
@@ -19,6 +21,9 @@ from .models import (
     ServiceCaseLine,
     ShipmentManifest,
     ShipmentManifestLine,
+    ShipmentReceipt,
+    ShipmentReceiptException,
+    ShipmentReceiptLine,
     UnitConfiguration,
 )
 
@@ -43,6 +48,8 @@ admin.site.register(PartCodeAlias, CangxuReadOnlyAdmin)
 admin.site.register(ManufacturingLot, CangxuReadOnlyAdmin)
 admin.site.register(ManufacturingLotPartner, CangxuReadOnlyAdmin)
 admin.site.register(ManufacturingLotStockItem, CangxuReadOnlyAdmin)
+admin.site.register(MaterialIssue, CangxuReadOnlyAdmin)
+admin.site.register(MaterialReturn, CangxuReadOnlyAdmin)
 admin.site.register(UnitConfiguration, CangxuReadOnlyAdmin)
 admin.site.register(ConfigurationItem, CangxuReadOnlyAdmin)
 admin.site.register(ConfigurationTestEvidence, CangxuReadOnlyAdmin)
@@ -56,3 +63,6 @@ admin.site.register(CountSession, CangxuReadOnlyAdmin)
 admin.site.register(CountLine, CangxuReadOnlyAdmin)
 admin.site.register(ShipmentManifest, CangxuReadOnlyAdmin)
 admin.site.register(ShipmentManifestLine, CangxuReadOnlyAdmin)
+admin.site.register(ShipmentReceipt, CangxuReadOnlyAdmin)
+admin.site.register(ShipmentReceiptLine, CangxuReadOnlyAdmin)
+admin.site.register(ShipmentReceiptException, CangxuReadOnlyAdmin)

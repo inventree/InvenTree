@@ -977,6 +977,63 @@ class ServiceCaseEvent(models.Model):
         verbose_name_plural = _('Service case events')
 
 
+class MaterialIssue(models.Model):
+    """Record a native-stock issue for an untracked consumable BOM line."""
+
+    build_line = models.ForeignKey(
+        'build.BuildLine',
+        on_delete=models.PROTECT,
+        related_name='cangxu_material_issues',
+    )
+    stock_item = models.ForeignKey(
+        'stock.StockItem',
+        on_delete=models.PROTECT,
+        related_name='cangxu_material_issues',
+    )
+    consumed_stock_item = models.ForeignKey(
+        'stock.StockItem',
+        on_delete=models.PROTECT,
+        related_name='cangxu_consumed_material_issues',
+    )
+    quantity = models.DecimalField(max_digits=15, decimal_places=5)
+    idempotency_key = models.UUIDField(unique=True)
+    notes = models.TextField(blank=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+
+    class Meta:
+        """Keep issues newest-first for build traceability."""
+
+        ordering = ['-created_at', '-pk']
+
+
+class MaterialReturn(models.Model):
+    """Record a partial or full return against a previous material issue."""
+
+    issue = models.ForeignKey(
+        MaterialIssue, on_delete=models.PROTECT, related_name='returns'
+    )
+    quantity = models.DecimalField(max_digits=15, decimal_places=5)
+    location = models.ForeignKey(
+        'stock.StockLocation',
+        on_delete=models.PROTECT,
+        related_name='cangxu_material_returns',
+    )
+    idempotency_key = models.UUIDField(unique=True)
+    notes = models.TextField(blank=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+
+    class Meta:
+        """Keep returns newest-first for audit history."""
+
+        ordering = ['-created_at', '-pk']
+
+
 class CountSession(models.Model):
     """A reviewable physical stock count anchored to a warehouse location."""
 
@@ -1103,6 +1160,13 @@ class ShipmentManifest(models.Model):
     )
     checked_at = models.DateTimeField(null=True, blank=True)
     signed_at = models.DateTimeField(null=True, blank=True)
+    signed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='cangxu_manifests_signed',
+    )
     receipt_notes = models.TextField(blank=True)
 
     class Meta:
@@ -1148,6 +1212,117 @@ class ShipmentManifestLine(models.Model):
         ]
         verbose_name = _('Shipment manifest line')
         verbose_name_plural = _('Shipment manifest lines')
+
+
+class ShipmentReceipt(models.Model):
+    """Record one partial or final consignee receipt for a shipped package."""
+
+    manifest = models.ForeignKey(
+        ShipmentManifest, on_delete=models.PROTECT, related_name='receipts'
+    )
+    idempotency_key = models.UUIDField(unique=True)
+    request_hash = models.CharField(max_length=64)
+    recipient_name = models.CharField(max_length=150, blank=True)
+    is_final = models.BooleanField(default=False)
+    notes = models.TextField(blank=True)
+    received_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='cangxu_receipts_recorded',
+    )
+    received_at = models.DateTimeField(default=timezone.now, editable=False)
+
+    class Meta:
+        """Order receipt events and allow a package to close only once."""
+
+        ordering = ['received_at', 'pk']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['manifest'],
+                condition=Q(is_final=True),
+                name='cangxu_receipt_manifest_final_uniq',
+            )
+        ]
+
+
+class ShipmentReceiptLine(models.Model):
+    """Record the received quantity and condition for one expected package item."""
+
+    class Condition(models.TextChoices):
+        """Describe whether the expected item arrived in usable condition."""
+
+        OK = 'ok', _('Received as expected')
+        SHORT = 'short', _('Not received in full')
+        DAMAGED = 'damaged', _('Damaged on arrival')
+        WRONG_ITEM = 'wrong_item', _('Unexpected item')
+
+    receipt = models.ForeignKey(
+        ShipmentReceipt, on_delete=models.PROTECT, related_name='lines'
+    )
+    manifest_line = models.ForeignKey(
+        ShipmentManifestLine, on_delete=models.PROTECT, related_name='receipt_lines'
+    )
+    quantity_received = models.DecimalField(
+        max_digits=15, decimal_places=5, validators=[MinValueValidator(Decimal('0'))]
+    )
+    condition = models.CharField(
+        max_length=20, choices=Condition.choices, default=Condition.OK
+    )
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        """Prevent duplicate reports for one expected item in a receipt event."""
+
+        ordering = ['manifest_line_id', 'pk']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['receipt', 'manifest_line'],
+                name='cangxu_receipt_line_item_uniq',
+            )
+        ]
+
+
+class ShipmentReceiptException(models.Model):
+    """Create a follow-up task when final package receipt has a discrepancy."""
+
+    class Kind(models.TextChoices):
+        """Classify the unresolved delivery discrepancy."""
+
+        SHORT = 'short', _('Short received')
+        DAMAGED = 'damaged', _('Damaged on arrival')
+        WRONG_ITEM = 'wrong_item', _('Unexpected item received')
+
+    class State(models.TextChoices):
+        """Track follow-up work for the delivery discrepancy."""
+
+        OPEN = 'open', _('Open')
+        RESOLVED = 'resolved', _('Resolved')
+
+    receipt_line = models.OneToOneField(
+        ShipmentReceiptLine, on_delete=models.PROTECT, related_name='exception'
+    )
+    kind = models.CharField(max_length=20, choices=Kind.choices)
+    expected_quantity = models.DecimalField(max_digits=15, decimal_places=5)
+    received_quantity = models.DecimalField(max_digits=15, decimal_places=5)
+    state = models.CharField(max_length=20, choices=State.choices, default=State.OPEN)
+    notes = models.TextField(blank=True)
+    resolution = models.TextField(blank=True)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+    resolved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='cangxu_receipt_exceptions_resolved',
+    )
+    resolved_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        """Keep open delivery follow-ups easy to find."""
+
+        ordering = ['state', 'created_at', 'pk']
 
 
 class DataImportBatch(models.Model):

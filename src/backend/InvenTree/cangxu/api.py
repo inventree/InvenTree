@@ -18,10 +18,12 @@ from rest_framework.response import Response
 from rest_framework.routers import DefaultRouter
 
 import InvenTree.permissions
+from build.models import Build, BuildItem, BuildLine
+from InvenTree.filters import SEARCH_ORDER_FILTER
 from order.models import SalesOrderShipment
 from part.models import Part
 from plugin.base.event.events import batch_events
-from stock.models import StockItem, batch_tracking_entries
+from stock.models import StockItem, StockItemTracking, batch_tracking_entries
 from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 
 from . import serializers
@@ -45,6 +47,8 @@ from .models import (
     ManufacturingLot,
     ManufacturingLotPartner,
     ManufacturingLotStockItem,
+    MaterialIssue,
+    MaterialReturn,
     PartCodeAlias,
     QualityIssue,
     ReworkTask,
@@ -53,6 +57,9 @@ from .models import (
     ServiceCaseLine,
     ShipmentManifest,
     ShipmentManifestLine,
+    ShipmentReceipt,
+    ShipmentReceiptException,
+    ShipmentReceiptLine,
     UnitConfiguration,
 )
 
@@ -61,6 +68,7 @@ class CangxuModelViewSet(viewsets.ModelViewSet):
     """Use the standard InvenTree role rules for every industry resource."""
 
     permission_classes = [InvenTree.permissions.RolePermissionOrReadOnly]
+    filter_backends = SEARCH_ORDER_FILTER
     http_method_names = ['get', 'post', 'patch', 'head', 'options']
 
 
@@ -480,7 +488,7 @@ class ConfigurationItemViewSet(CangxuModelViewSet):
         previous = (
             StockItem.objects
             .select_for_update()
-            .select_related('part')
+            .select_related('part', 'location')
             .get(pk=item.component_id)
         )
         destination = action_data.validated_data['destination_location']
@@ -1548,10 +1556,16 @@ class CountSessionViewSet(CangxuModelViewSet):
                 notes = f'Cangxu count {session.reference}: {line.discrepancy_reason}'
                 if item.serialized and quantity == 0:
                     item.stocktake(
-                        0, request.user, status=StockStatus.LOST, notes=notes
+                        0,
+                        request.user,
+                        status=StockStatus.LOST,
+                        notes=notes,
+                        quantity_locked=True,
                     )
                 else:
-                    item.stocktake(quantity, request.user, notes=notes)
+                    item.stocktake(
+                        quantity, request.user, notes=notes, quantity_locked=True
+                    )
 
         session.state = CountSession.State.CLOSED
         session.reviewed_by = request.user
@@ -1755,6 +1769,252 @@ class ShipmentManifestLineViewSet(CangxuModelViewSet):
         if manifest.checked_at or manifest.shipment.shipment_date:
             raise ValidationError(_('A checked or shipped package cannot be changed.'))
         serializer.save()
+
+
+class ShipmentReceiptViewSet(CangxuModelViewSet):
+    """Record consignee receipts without moving native stock a second time."""
+
+    role_required = 'sales_order'
+    queryset = ShipmentReceipt.objects.select_related(
+        'manifest__shipment', 'received_by'
+    ).prefetch_related('lines__manifest_line__stock_item__part', 'lines__exception')
+    serializer_class = serializers.ShipmentReceiptSerializer
+    http_method_names = ['get', 'post', 'head', 'options']
+    filterset_fields = ['manifest', 'manifest__shipment', 'is_final', 'received_by']
+    ordering_fields = ['received_at', 'manifest__package_code']
+    ordering = ['received_at', 'pk']
+
+    @staticmethod
+    def _request_hash(values):
+        """Fingerprint the normalized receipt payload for safe request replay."""
+        payload = {
+            'manifest': values['manifest'].pk,
+            'recipient_name': values.get('recipient_name', ''),
+            'is_final': values.get('is_final', False),
+            'notes': values.get('notes', ''),
+            'lines': sorted(
+                [
+                    {
+                        'manifest_line': line['manifest_line'].pk,
+                        'quantity_received': str(line['quantity_received']),
+                        'condition': line.get(
+                            'condition', ShipmentReceiptLine.Condition.OK
+                        ),
+                        'notes': line.get('notes', ''),
+                    }
+                    for line in values.get('lines', [])
+                ],
+                key=lambda line: line['manifest_line'],
+            ),
+        }
+        encoded = json.dumps(payload, sort_keys=True, separators=(',', ':'))
+        return hashlib.sha256(encoded.encode('utf-8')).hexdigest()
+
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        """Append one partial/final receipt and open follow-up for final variances."""
+        data = serializers.ShipmentReceiptRequestSerializer(data=request.data)
+        data.is_valid(raise_exception=True)
+        values = data.validated_data
+        key = values['idempotency_key']
+        request_hash = self._request_hash(values)
+        existing = ShipmentReceipt.objects.filter(idempotency_key=key).first()
+        if existing:
+            if existing.request_hash != request_hash:
+                raise ValidationError({
+                    'idempotency_key': _('This key was used for a different receipt.')
+                })
+            return Response(self.get_serializer(existing).data)
+
+        manifest = (
+            ShipmentManifest.objects
+            .select_for_update()
+            .select_related('shipment')
+            .get(pk=values['manifest'].pk)
+        )
+        existing = ShipmentReceipt.objects.filter(idempotency_key=key).first()
+        if existing:
+            if existing.request_hash != request_hash:
+                raise ValidationError({
+                    'idempotency_key': _('This key was used for a different receipt.')
+                })
+            return Response(self.get_serializer(existing).data)
+        if not manifest.checked_at:
+            raise ValidationError(
+                _('Verify the package contents before recording receipt.')
+            )
+        if not manifest.shipment.shipment_date:
+            raise ValidationError(
+                _('The native shipment must be completed before receipt.')
+            )
+        if manifest.signed_at:
+            raise ValidationError(_('This package receipt has already been finalized.'))
+
+        manifest_lines = list(
+            manifest.lines.select_for_update().select_related('stock_item__part')
+        )
+        by_id = {line.pk: line for line in manifest_lines}
+        received_totals = {
+            row['manifest_line_id']: row['total']
+            for row in ShipmentReceiptLine.objects
+            .filter(manifest_line_id__in=by_id)
+            .values('manifest_line_id')
+            .annotate(total=Sum('quantity_received'))
+        }
+        requested_lines = values.get('lines', [])
+        line_ids = [line['manifest_line'].pk for line in requested_lines]
+        if len(line_ids) != len(set(line_ids)):
+            raise ValidationError({'lines': _('Do not repeat a package item.')})
+        if not requested_lines and not values.get('is_final'):
+            raise ValidationError(
+                _('Record at least one received item for a partial receipt.')
+            )
+
+        for receipt_line in requested_lines:
+            manifest_line = by_id.get(receipt_line['manifest_line'].pk)
+            if manifest_line is None:
+                raise ValidationError({
+                    'lines': _('Every received item must belong to this package.')
+                })
+            condition = receipt_line.get('condition', ShipmentReceiptLine.Condition.OK)
+            if (
+                receipt_line['quantity_received'] == 0
+                and condition == ShipmentReceiptLine.Condition.OK
+            ):
+                raise ValidationError({
+                    'lines': _('A zero quantity must have a discrepancy condition.')
+                })
+            if (
+                condition != ShipmentReceiptLine.Condition.OK
+                and not receipt_line.get('notes', '').strip()
+            ):
+                raise ValidationError({
+                    'lines': _(
+                        'Add a note describing damaged, short, or unexpected items.'
+                    )
+                })
+            previous = received_totals.get(manifest_line.pk, Decimal('0'))
+            if receipt_line['quantity_received'] > manifest_line.quantity - previous:
+                raise ValidationError({
+                    'lines': _(
+                        'Received quantity exceeds the outstanding package quantity.'
+                    )
+                })
+
+        receipt = ShipmentReceipt.objects.create(
+            manifest=manifest,
+            idempotency_key=key,
+            request_hash=request_hash,
+            recipient_name=values.get('recipient_name', ''),
+            is_final=values.get('is_final', False),
+            notes=values.get('notes', ''),
+            received_by=request.user,
+        )
+        current = {}
+        for receipt_line in requested_lines:
+            current[receipt_line['manifest_line'].pk] = receipt_line
+        if receipt.is_final:
+            for manifest_line in manifest_lines:
+                previous = received_totals.get(manifest_line.pk, Decimal('0'))
+                if previous < manifest_line.quantity:
+                    current.setdefault(
+                        manifest_line.pk,
+                        {
+                            'manifest_line': manifest_line,
+                            'quantity_received': Decimal('0'),
+                            'condition': ShipmentReceiptLine.Condition.SHORT,
+                            'notes': '',
+                        },
+                    )
+
+        for line_id, values_for_line in current.items():
+            manifest_line = by_id[line_id]
+            receipt_line = ShipmentReceiptLine.objects.create(
+                receipt=receipt,
+                manifest_line=manifest_line,
+                quantity_received=values_for_line['quantity_received'],
+                condition=values_for_line.get(
+                    'condition', ShipmentReceiptLine.Condition.OK
+                ),
+                notes=values_for_line.get('notes', ''),
+            )
+            previous = received_totals.get(manifest_line.pk, Decimal('0'))
+            received_total = previous + receipt_line.quantity_received
+            condition = receipt_line.condition
+            if condition == ShipmentReceiptLine.Condition.DAMAGED:
+                kind = ShipmentReceiptException.Kind.DAMAGED
+            elif condition == ShipmentReceiptLine.Condition.WRONG_ITEM:
+                kind = ShipmentReceiptException.Kind.WRONG_ITEM
+            elif receipt.is_final and (
+                condition == ShipmentReceiptLine.Condition.SHORT
+                or received_total < manifest_line.quantity
+            ):
+                kind = ShipmentReceiptException.Kind.SHORT
+            else:
+                kind = None
+            if kind:
+                ShipmentReceiptException.objects.create(
+                    receipt_line=receipt_line,
+                    kind=kind,
+                    expected_quantity=manifest_line.quantity,
+                    received_quantity=received_total,
+                    notes=receipt_line.notes,
+                )
+
+        if receipt.is_final:
+            manifest.signed_at = timezone.now()
+            manifest.signed_by = request.user
+            manifest.receipt_notes = values.get('notes', '')
+            manifest.save(update_fields=['signed_at', 'signed_by', 'receipt_notes'])
+
+        return Response(
+            self.get_serializer(receipt).data, status=status.HTTP_201_CREATED
+        )
+
+
+class ShipmentReceiptExceptionViewSet(CangxuModelViewSet):
+    """Expose discrepancy follow-ups and allow explicit resolution only."""
+
+    role_required = 'sales_order'
+    queryset = ShipmentReceiptException.objects.select_related(
+        'receipt_line__receipt__manifest__shipment',
+        'receipt_line__manifest_line__stock_item__part',
+        'resolved_by',
+    )
+    serializer_class = serializers.ShipmentReceiptExceptionSerializer
+    http_method_names = ['get', 'post', 'head', 'options']
+    filterset_fields = [
+        'state',
+        'kind',
+        'receipt_line__receipt__manifest',
+        'receipt_line__receipt__manifest__shipment',
+    ]
+    ordering_fields = ['created_at', 'state', 'kind']
+    ordering = ['state', 'created_at']
+
+    def create(self, request, *args, **kwargs):
+        """Prevent callers from inventing delivery exceptions outside receipt."""
+        raise ValidationError(_('Exceptions are created when a final receipt differs.'))
+
+    @action(detail=True, methods=['post'])
+    @transaction.atomic
+    def resolve(self, request, pk=None):
+        """Close one delivery follow-up with an attributed resolution note."""
+        exception = ShipmentReceiptException.objects.select_for_update().get(
+            pk=self.get_object().pk
+        )
+        if exception.state != ShipmentReceiptException.State.OPEN:
+            raise ValidationError(_('This receipt exception is already resolved.'))
+        data = serializers.ShipmentReceiptExceptionResolveSerializer(data=request.data)
+        data.is_valid(raise_exception=True)
+        exception.state = ShipmentReceiptException.State.RESOLVED
+        exception.resolution = data.validated_data['resolution']
+        exception.resolved_by = request.user
+        exception.resolved_at = timezone.now()
+        exception.save(
+            update_fields=['state', 'resolution', 'resolved_by', 'resolved_at']
+        )
+        return Response(self.get_serializer(exception).data)
 
 
 class DataImportBatchViewSet(CangxuModelViewSet):
@@ -2448,7 +2708,223 @@ class DataImportRecordViewSet(CangxuModelViewSet):
         return Response(self.get_serializer(record).data)
 
 
+class MaterialIssueViewSet(CangxuModelViewSet):
+    """Issue and return untracked consumables through native build and stock records."""
+
+    role_required = 'build'
+    queryset = MaterialIssue.objects.select_related(
+        'build_line__build',
+        'build_line__bom_item',
+        'stock_item',
+        'consumed_stock_item',
+        'created_by',
+    ).prefetch_related('returns')
+    serializer_class = serializers.MaterialIssueSerializer
+    http_method_names = ['get', 'post', 'head', 'options']
+    filterset_fields = ['build_line', 'build_line__build', 'stock_item']
+
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        """Consume available stock against a consumable BOM line exactly once."""
+        data = serializers.MaterialIssueRequestSerializer(data=request.data)
+        data.is_valid(raise_exception=True)
+        values = data.validated_data
+        key = values['idempotency_key']
+        existing = MaterialIssue.objects.filter(idempotency_key=key).first()
+        if existing:
+            if (
+                existing.build_line_id != values['build_line'].pk
+                or existing.stock_item_id != values['stock_item'].pk
+                or existing.quantity != values['quantity']
+            ):
+                raise ValidationError({
+                    'idempotency_key': _('This key was used for a different issue.')
+                })
+            return Response(self.get_serializer(existing).data)
+
+        requested_line = BuildLine.objects.select_related(
+            'build', 'bom_item', 'bom_item__sub_part'
+        ).get(pk=values['build_line'].pk)
+        build = Build.objects.select_for_update().get(pk=requested_line.build_id)
+        line = (
+            BuildLine.objects
+            .select_for_update()
+            .select_related('build', 'bom_item', 'bom_item__sub_part')
+            .get(pk=requested_line.pk)
+        )
+        if not build.is_active:
+            raise ValidationError({
+                'build_line': _('Materials can only be issued to an active build.')
+            })
+        item = (
+            StockItem.objects
+            .select_for_update()
+            .select_related('part')
+            .get(pk=values['stock_item'].pk)
+        )
+        quantity = values['quantity']
+        if (
+            not line.bom_item.is_consumable
+            or line.bom_item.sub_part.trackable
+            or item.part.trackable
+        ):
+            raise ValidationError({
+                'build_line': _(
+                    'Only untracked consumable BOM lines can use this workflow.'
+                )
+            })
+        if not line.bom_item.is_stock_item_valid(item):
+            raise ValidationError({
+                'stock_item': _('The stock item does not match this BOM line.')
+            })
+        if (
+            item.status != StockStatus.OK
+            or item.location_id is None
+            or item.location.external
+            or item.consumed_by_id
+            or item.belongs_to_id
+            or item.customer_id
+            or item.sales_order_id
+        ):
+            raise ValidationError({
+                'stock_item': _('Select available stock in an internal location.')
+            })
+        if (
+            quantity
+            > item.quantity
+            - item.build_allocation_count()
+            - item.sales_order_allocation_count()
+        ):
+            raise ValidationError({
+                'quantity': _('Quantity exceeds unallocated stock.')
+            })
+        if quantity > line.quantity - line.consumed:
+            raise ValidationError({
+                'quantity': _('Quantity exceeds the remaining BOM requirement.')
+            })
+
+        from django.db.models import Max
+
+        previous_tracking_id = (
+            StockItemTracking.objects.aggregate(value=Max('pk'))['value'] or 0
+        )
+        allocation = BuildItem.objects.create(
+            build_line=line, stock_item=item, quantity=quantity
+        )
+        build.complete_allocations(
+            BuildItem.objects.filter(pk=allocation.pk),
+            notes=values.get('notes', ''),
+            user=request.user,
+        )
+        tracking = (
+            StockItemTracking.objects
+            .filter(
+                pk__gt=previous_tracking_id,
+                tracking_type=StockHistoryCode.BUILD_CONSUMED,
+                deltas__buildorder=build.pk,
+                deltas__quantity=float(quantity),
+            )
+            .order_by('-pk')
+            .first()
+        )
+        if tracking is None:
+            raise ValidationError(
+                _('Native build consumption did not produce a stock tracking record.')
+            )
+        issue = MaterialIssue.objects.create(
+            build_line=line,
+            stock_item=item,
+            consumed_stock_item_id=tracking.item_id,
+            quantity=quantity,
+            idempotency_key=key,
+            notes=values.get('notes', ''),
+            created_by=request.user,
+        )
+        return Response(self.get_serializer(issue).data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['post'])
+    @transaction.atomic
+    def return_stock(self, request, pk=None):
+        """Return unused material to an internal location and reverse line consumption."""
+        issue_reference = self.get_object()
+        Build.objects.select_for_update().get(pk=issue_reference.build_line.build_id)
+        issue = (
+            MaterialIssue.objects
+            .select_for_update()
+            .select_related('build_line__build', 'consumed_stock_item')
+            .get(pk=issue_reference.pk)
+        )
+        data = serializers.MaterialReturnRequestSerializer(data=request.data)
+        data.is_valid(raise_exception=True)
+        values = data.validated_data
+        key = values['idempotency_key']
+        existing = MaterialReturn.objects.filter(idempotency_key=key).first()
+        if existing:
+            if (
+                existing.issue_id != issue.pk
+                or existing.quantity != values['quantity']
+                or existing.location_id != values['location'].pk
+            ):
+                raise ValidationError({
+                    'idempotency_key': _('This key was used for a different return.')
+                })
+            return Response(self.get_serializer(issue).data)
+
+        line = BuildLine.objects.select_for_update().get(pk=issue.build_line_id)
+        item = StockItem.objects.select_for_update().get(
+            pk=issue.consumed_stock_item_id
+        )
+        quantity = values['quantity']
+        returned = issue.returns.aggregate(total=Sum('quantity'))['total'] or Decimal(
+            '0'
+        )
+        if quantity > issue.quantity - returned:
+            raise ValidationError({
+                'quantity': _('Return quantity exceeds the unreturned issue quantity.')
+            })
+        if item.consumed_by_id != line.build_id or quantity > item.quantity:
+            raise ValidationError({
+                'stock_item': _('The issued stock is no longer available for return.')
+            })
+        if quantity > line.consumed:
+            raise ValidationError({
+                'quantity': _(
+                    'Return quantity exceeds the build line consumed quantity.'
+                )
+            })
+
+        try:
+            item.return_to_stock(
+                values['location'],
+                request.user,
+                quantity=quantity,
+                merge=False,
+                notes=values.get('notes', ''),
+                tracking_code=StockHistoryCode.RETURNED_TO_STOCK,
+                status=StockStatus.OK,
+            )
+        except DjangoValidationError as exc:
+            raise ValidationError(
+                exc.message_dict if hasattr(exc, 'message_dict') else exc.messages
+            ) from exc
+        line.consumed -= quantity
+        line.save(update_fields=['consumed'])
+        MaterialReturn.objects.create(
+            issue=issue,
+            quantity=quantity,
+            location=values['location'],
+            idempotency_key=key,
+            notes=values.get('notes', ''),
+            created_by=request.user,
+        )
+        issue.refresh_from_db()
+        return Response(self.get_serializer(issue).data, status=status.HTTP_201_CREATED)
+
+
 router = DefaultRouter()
+router.register(
+    'material-issues', MaterialIssueViewSet, basename='cangxu-material-issue'
+)
 router.register('part-aliases', PartCodeAliasViewSet, basename='cangxu-part-alias')
 router.register(
     'hardware-profiles',
@@ -2500,6 +2976,14 @@ router.register(
 )
 router.register(
     'manifest-lines', ShipmentManifestLineViewSet, basename='cangxu-manifest-line'
+)
+router.register(
+    'shipment-receipts', ShipmentReceiptViewSet, basename='cangxu-shipment-receipt'
+)
+router.register(
+    'receipt-exceptions',
+    ShipmentReceiptExceptionViewSet,
+    basename='cangxu-receipt-exception',
 )
 router.register(
     'import-batches', DataImportBatchViewSet, basename='cangxu-import-batch'

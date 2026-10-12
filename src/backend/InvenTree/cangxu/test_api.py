@@ -1,5 +1,6 @@
 """Integration tests for Cangxu inventory workflows."""
 
+from datetime import date
 from io import BytesIO
 
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -32,13 +33,20 @@ from .models import (
     DataImportBatch,
     DataImportRecord,
     HardwareProfileRevision,
+    ManufacturingLot,
+    ManufacturingLotPartner,
     ManufacturingLotStockItem,
+    MaterialIssue,
+    MaterialReturn,
     PartCodeAlias,
     QualityIssue,
     ReworkTask,
     ServiceCase,
     ServiceCaseEvent,
     ShipmentManifest,
+    ShipmentReceipt,
+    ShipmentReceiptException,
+    ShipmentReceiptLine,
     UnitConfiguration,
 )
 
@@ -468,6 +476,86 @@ class CangxuConfigurationTest(CangxuAPITestCase):
         self.assertEqual(
             unit.cangxu_replacements.get().rework_task_id, task_response.data['id']
         )
+
+
+class CangxuMaterialIssueTest(CangxuAPITestCase):
+    """Exercise consumable issue, partial return, and idempotent replay."""
+
+    def test_issue_and_return_consumable_against_native_stock_and_build_line(self):
+        """Keep stock, line consumption, tracking, and request replay consistent."""
+        location = StockLocation.objects.get(pk=7)
+        assembly = Part.objects.get(pk=25)
+        material = Part.objects.get(pk=1)
+        bom = BomItem.objects.create(
+            part=assembly, sub_part=material, quantity=3, consumable=True
+        )
+        build = Build.objects.create(
+            part=assembly,
+            reference=generate_next_build_reference(),
+            quantity=2,
+            title='Synthetic consumable issue build',
+        )
+        line = build.build_lines.get(bom_item=bom)
+        stock = StockItem.objects.create(part=material, location=location, quantity=10)
+        issue_key = 'be5fa511-f1c8-4bb8-a440-74240f914501'
+        issue_url = reverse('cangxu-material-issue-list')
+        issue_data = {
+            'build_line': line.pk,
+            'stock_item': stock.pk,
+            'quantity': '3',
+            'idempotency_key': issue_key,
+            'notes': 'Synthetic consumable issue.',
+        }
+
+        issue = self.post(issue_url, issue_data, expected_code=201)
+        self.assertEqual(issue.data['quantity'], '3.00000')
+        issued_stock = StockItem.objects.get(pk=issue.data['consumed_stock_item'])
+        stock.refresh_from_db()
+        line.refresh_from_db()
+        self.assertEqual(stock.quantity, 7)
+        self.assertEqual(issued_stock.quantity, 3)
+        self.assertEqual(issued_stock.consumed_by_id, build.pk)
+        self.assertEqual(line.consumed, 3)
+        self.assertTrue(
+            StockItemTracking.objects.filter(
+                item=issued_stock, tracking_type=StockHistoryCode.BUILD_CONSUMED
+            ).exists()
+        )
+
+        replay = self.post(issue_url, issue_data, expected_code=200)
+        self.assertEqual(replay.data['id'], issue.data['id'])
+        self.assertEqual(MaterialIssue.objects.filter(build_line=line).count(), 1)
+        stock.refresh_from_db()
+        self.assertEqual(stock.quantity, 7)
+
+        return_data = {
+            'quantity': '1',
+            'location': location.pk,
+            'idempotency_key': '4d5346c1-3026-4f7b-88ec-d6b24f4f4b76',
+            'notes': 'Synthetic unused material return.',
+        }
+        return_url = reverse(
+            'cangxu-material-issue-return-stock', kwargs={'pk': issue.data['id']}
+        )
+        returned = self.post(return_url, return_data, expected_code=201)
+        line.refresh_from_db()
+        issued_stock.refresh_from_db()
+        self.assertEqual(line.consumed, 2)
+        self.assertEqual(issued_stock.quantity, 2)
+        self.assertEqual(issued_stock.consumed_by_id, build.pk)
+        returned_stock = StockItem.objects.get(parent=issued_stock)
+        self.assertEqual(returned_stock.quantity, 1)
+        self.assertEqual(returned_stock.location_id, location.pk)
+        self.assertIsNone(returned_stock.consumed_by_id)
+        self.assertEqual(float(returned.data['returned_quantity']), 1)
+
+        repeated_return = self.post(return_url, return_data, expected_code=200)
+        self.assertEqual(float(repeated_return.data['returned_quantity']), 1)
+        self.assertEqual(
+            MaterialReturn.objects.filter(issue_id=issue.data['id']).count(), 1
+        )
+        line.refresh_from_db()
+        self.assertEqual(line.consumed, 2)
 
 
 class CangxuServiceCaseTest(CangxuAPITestCase):
@@ -1175,6 +1263,423 @@ class CangxuShipmentManifestTest(CangxuAPITestCase):
             self.assertIsNone(shipment.shipment_date)
         self.assertEqual(order.lines.get().shipped, 0)
 
+        for shipment in shipments:
+            shipment.complete_allocations(shipment.allocations.all(), user=self.user)
+            shipment.shipment_date = date.today()
+            shipment.save(update_fields=['shipment_date'])
+
+        first_manifest_lines = {
+            row.stock_item_id: row for row in manifests[0].lines.all()
+        }
+        partial_data = {
+            'manifest': manifests[0].pk,
+            'idempotency_key': 'e62b57a2-b8e9-4cf5-8f12-645c43a3ee12',
+            'recipient_name': 'Synthetic receiving operator',
+            'is_final': False,
+            'notes': 'Synthetic first delivery portion.',
+            'lines': [
+                {
+                    'manifest_line': first_manifest_lines[units[0].pk].pk,
+                    'quantity_received': '1',
+                    'condition': ShipmentReceiptLine.Condition.DAMAGED,
+                    'notes': 'Synthetic item damage found at partial receipt.',
+                }
+            ],
+        }
+        partial = self.post(
+            reverse('cangxu-shipment-receipt-list'), partial_data, expected_code=201
+        )
+        replay = self.post(
+            reverse('cangxu-shipment-receipt-list'), partial_data, expected_code=200
+        )
+        self.assertEqual(partial.data['id'], replay.data['id'])
+        self.assertEqual(
+            partial.data['lines'][0]['exception']['kind'],
+            ShipmentReceiptException.Kind.DAMAGED,
+        )
+        self.assertEqual(
+            ShipmentReceipt.objects.filter(manifest=manifests[0]).count(), 1
+        )
+        self.assertIsNone(ShipmentManifest.objects.get(pk=manifests[0].pk).signed_at)
+
+        final_data = {
+            'manifest': manifests[0].pk,
+            'idempotency_key': 'e11a30e3-e6f7-419d-9dc2-17d6ddae3321',
+            'recipient_name': 'Synthetic receiving operator',
+            'is_final': True,
+            'notes': 'Synthetic package accepted.',
+            'lines': [
+                {
+                    'manifest_line': first_manifest_lines[configured_component.pk].pk,
+                    'quantity_received': '1',
+                }
+            ],
+        }
+        final = self.post(
+            reverse('cangxu-shipment-receipt-list'), final_data, expected_code=201
+        )
+        self.assertEqual(final.data['is_final'], True)
+        self.assertEqual(final.data['received_by'], self.user.pk)
+        self.assertEqual(len(final.data['lines']), 1)
+        first_manifest_exception = ShipmentReceiptException.objects.get(
+            receipt_line__receipt__manifest=manifests[0]
+        )
+        self.assertEqual(
+            first_manifest_exception.kind, ShipmentReceiptException.Kind.DAMAGED
+        )
+        signed_manifest = ShipmentManifest.objects.get(pk=manifests[0].pk)
+        self.assertIsNotNone(signed_manifest.signed_at)
+        self.assertEqual(signed_manifest.signed_by_id, self.user.pk)
+
+        short_final = self.post(
+            reverse('cangxu-shipment-receipt-list'),
+            {
+                'manifest': manifests[1].pk,
+                'idempotency_key': '0bd92f63-e674-49f5-9b83-cdd88cc67080',
+                'recipient_name': 'Synthetic receiving operator',
+                'is_final': True,
+                'notes': 'Synthetic package was not received.',
+                'lines': [],
+            },
+            expected_code=201,
+        )
+        self.assertEqual(len(short_final.data['lines']), 1)
+        self.assertEqual(
+            short_final.data['lines'][0]['exception']['kind'],
+            ShipmentReceiptException.Kind.SHORT,
+        )
+        exception_id = short_final.data['lines'][0]['exception']['id']
+        open_for_shipment = self.get(
+            reverse('cangxu-receipt-exception-list'),
+            data={
+                'receipt_line__receipt__manifest__shipment': shipments[1].pk,
+                'state': ShipmentReceiptException.State.OPEN,
+            },
+        )
+        self.assertEqual(len(open_for_shipment.data), 1)
+        self.assertEqual(open_for_shipment.data[0]['id'], exception_id)
+        resolved = self.post(
+            reverse('cangxu-receipt-exception-resolve', kwargs={'pk': exception_id}),
+            {'resolution': 'Synthetic replacement shipment scheduled.'},
+            expected_code=200,
+        )
+        self.assertEqual(
+            resolved.data['state'], ShipmentReceiptException.State.RESOLVED
+        )
+        self.assertEqual(resolved.data['resolved_by'], self.user.pk)
+        self.assertEqual(order.lines.get().shipped, 2)
+
+
+class CangxuEndToEndManufacturingWorkflowTest(CangxuAPITestCase):
+    """Verify that native purchasing, manufacturing, delivery, and RMA stay linked."""
+
+    def test_received_component_is_built_shipped_signed_and_returned(self):
+        """Trace one synthetic unit from a supplier receipt through customer return."""
+        location = StockLocation.objects.get(pk=7)
+        assembly = Part.objects.create(
+            name='Synthetic GPU server', assembly=True, trackable=True
+        )
+        supplier = Company.objects.create(
+            name='Cangxu Synthetic E2E Supplier', is_supplier=True
+        )
+        component_part = Part.objects.create(
+            name='Synthetic PCIe switch card', component=True, trackable=True
+        )
+        BomItem.objects.create(part=assembly, sub_part=component_part, quantity=1)
+        # Reuse the known untracked fixture part used by the dedicated
+        # consumable issue API test to avoid introducing another MPTT tree
+        # root into this workflow fixture.
+        consumable_part = Part.objects.get(pk=1)
+        consumable_bom = BomItem.objects.create(
+            part=assembly, sub_part=consumable_part, quantity=3, consumable=True
+        )
+        consumable_stock = StockItem.objects.create(
+            part=consumable_part, location=location, quantity=5
+        )
+        supplier_part = SupplierPart.objects.create(
+            part=component_part, supplier=supplier, SKU='CX-E2E-SUPPLIER-001'
+        )
+        purchase_order = PurchaseOrder.objects.create(
+            supplier=supplier, reference='CX-E2E-PO-0001'
+        )
+        purchase_line = PurchaseOrderLineItem.objects.create(
+            order=purchase_order, part=supplier_part, quantity=1
+        )
+        purchase_order.place_order()
+        purchase_order.receive_line_item(
+            purchase_line,
+            location,
+            1,
+            self.user,
+            status=StockStatus.OK.value,
+            batch_code='CX-E2E-LOT-0001',
+            serials=['CX-E2E-COMP-0001'],
+        )
+        component = StockItem.objects.get(
+            purchase_order=purchase_order, serial='CX-E2E-COMP-0001'
+        )
+
+        lot_response = self.post(
+            reverse('cangxu-lot-list'),
+            {
+                'part': component_part.pk,
+                'code': 'CX-E2E-LOT-0001',
+                'purchase_order_line': purchase_line.pk,
+            },
+            expected_code=201,
+        )
+        self.post(
+            reverse('cangxu-lot-stock-item-list'),
+            {'lot': lot_response.data['id'], 'stock_item': component.pk},
+            expected_code=201,
+        )
+
+        build = Build.objects.create(
+            part=assembly,
+            reference=generate_next_build_reference(),
+            quantity=1,
+            title='Synthetic Cangxu end-to-end build',
+        )
+        consumable_line = build.build_lines.get(bom_item=consumable_bom)
+        issue = self.post(
+            reverse('cangxu-material-issue-list'),
+            {
+                'build_line': consumable_line.pk,
+                'stock_item': consumable_stock.pk,
+                'quantity': '3',
+                'idempotency_key': '4b692f74-d3a3-49d9-90bf-e91e40e35f5f',
+                'notes': 'Synthetic consumable material issued to the build.',
+            },
+            expected_code=201,
+        )
+        issued_stock = StockItem.objects.get(pk=issue.data['consumed_stock_item'])
+        consumable_stock.refresh_from_db()
+        consumable_line.refresh_from_db()
+        self.assertEqual(consumable_stock.quantity, 2)
+        self.assertEqual(issued_stock.quantity, 3)
+        self.assertEqual(consumable_line.consumed, 3)
+
+        unit = build.create_build_output(
+            1, serials=['CX-E2E-UNIT-0001'], user=self.user, location=location
+        ).first()
+        build_line = build.build_lines.get(bom_item__sub_part=component_part)
+        self.post(
+            reverse('api-build-allocate', kwargs={'pk': build.pk}),
+            {
+                'items': [
+                    {
+                        'build_line': build_line.pk,
+                        'stock_item': component.pk,
+                        'quantity': 1,
+                        'output': unit.pk,
+                    }
+                ]
+            },
+            expected_code=201,
+        )
+        self.post(
+            reverse('api-build-output-complete', kwargs={'pk': build.pk}),
+            {
+                'outputs': [{'output': unit.pk}],
+                'location': location.pk,
+                'status': StockStatus.OK.value,
+            },
+            expected_code=200,
+        )
+        returned = self.post(
+            reverse(
+                'cangxu-material-issue-return-stock', kwargs={'pk': issue.data['id']}
+            ),
+            {
+                'quantity': '1',
+                'location': location.pk,
+                'idempotency_key': 'ab8f0c9a-723a-4ee5-a92b-b87c7adf9e6c',
+                'notes': 'Synthetic unused material returned to stock.',
+            },
+            expected_code=201,
+        )
+        consumable_line.refresh_from_db()
+        issued_stock.refresh_from_db()
+        returned_stock = StockItem.objects.get(parent=issued_stock)
+        consumable_stock.refresh_from_db()
+        self.assertEqual(returned.data['id'], issue.data['id'])
+        self.assertEqual(consumable_line.consumed, 2)
+        self.assertEqual(issued_stock.quantity, 2)
+        self.assertEqual(returned_stock.quantity, 1)
+        self.assertEqual(returned_stock.location_id, location.pk)
+        self.assertEqual(consumable_stock.quantity, 2)
+
+        config_response = self.post(
+            reverse('cangxu-configuration-list'),
+            {'unit': unit.pk, 'change_summary': 'Synthetic E2E assembly.'},
+            expected_code=201,
+        )
+        self.post(
+            reverse('cangxu-configuration-item-list'),
+            {
+                'configuration': config_response.data['id'],
+                'component': component.pk,
+                'position': 'PCIe switch slot 01',
+                'quantity': 1,
+            },
+            expected_code=201,
+        )
+        self.post(
+            reverse(
+                'cangxu-configuration-release',
+                kwargs={'pk': config_response.data['id']},
+            ),
+            {},
+            expected_code=200,
+        )
+
+        customer = Company.objects.create(
+            name='Cangxu Synthetic E2E Customer', is_customer=True
+        )
+        sales_order = SalesOrder.objects.create(
+            customer=customer, reference='CX-E2E-SO-0001'
+        )
+        sales_line = SalesOrderLineItem.objects.create(
+            order=sales_order, part=assembly, quantity=1
+        )
+        shipment = SalesOrderShipment.objects.create(
+            order=sales_order, reference='CX-E2E-SHIP-0001'
+        )
+        SalesOrderAllocation.objects.create(
+            line=sales_line, shipment=shipment, item=unit, quantity=1
+        )
+        manifest_response = self.post(
+            reverse('cangxu-manifest-list'),
+            {
+                'shipment': shipment.pk,
+                'package_code': 'CX-E2E-PACKAGE-0001',
+                'configuration': config_response.data['id'],
+            },
+            expected_code=201,
+        )
+        manifest_id = manifest_response.data['id']
+        unit_manifest_line = self.post(
+            reverse('cangxu-manifest-line-list'),
+            {'manifest': manifest_id, 'stock_item': unit.pk, 'item_role': 'server'},
+            expected_code=201,
+        )
+        component_manifest_line = self.post(
+            reverse('cangxu-manifest-line-list'),
+            {
+                'manifest': manifest_id,
+                'stock_item': component.pk,
+                'item_role': 'PCIe switch card',
+            },
+            expected_code=201,
+        )
+        self.post(
+            reverse('cangxu-manifest-verify', kwargs={'pk': manifest_id}),
+            {},
+            expected_code=200,
+        )
+        shipment.complete_allocations(shipment.allocations.all(), user=self.user)
+        shipment.shipment_date = date.today()
+        shipment.save(update_fields=['shipment_date'])
+        unit.refresh_from_db()
+        shipped_unit_state = (unit.location_id, unit.customer_id, unit.status)
+
+        receipt = self.post(
+            reverse('cangxu-shipment-receipt-list'),
+            {
+                'manifest': manifest_id,
+                'idempotency_key': '42484b3e-6ee8-4d77-b59b-89d67653ea10',
+                'recipient_name': 'Synthetic receiving operator',
+                'is_final': True,
+                'lines': [
+                    {
+                        'manifest_line': unit_manifest_line.data['id'],
+                        'quantity_received': '1',
+                    },
+                    {
+                        'manifest_line': component_manifest_line.data['id'],
+                        'quantity_received': '1',
+                    },
+                ],
+            },
+            expected_code=201,
+        )
+        unit.refresh_from_db()
+        self.assertEqual(
+            (unit.location_id, unit.customer_id, unit.status), shipped_unit_state
+        )
+        self.assertTrue(receipt.data['is_final'])
+
+        service_case = self.post(
+            reverse('cangxu-service-case-list'),
+            {
+                'reference': 'CX-E2E-RMA-0001',
+                'kind': ServiceCase.Kind.CUSTOMER_RETURN,
+                'customer': customer.pk,
+                'unit': unit.pk,
+                'source_shipment': shipment.pk,
+                'description': 'Synthetic post-delivery inspection return.',
+            },
+            expected_code=201,
+        )
+        service_line = self.post(
+            reverse('cangxu-service-line-list'),
+            {'case': service_case.data['id'], 'stock_item': unit.pk, 'quantity': 1},
+            expected_code=201,
+        )
+        self.post(
+            reverse('cangxu-service-event-list'),
+            {
+                'line': service_line.data['id'],
+                'event_type': ServiceCaseEvent.EventType.RECEIVED,
+                'company': customer.pk,
+                'to_location': location.pk,
+                'quantity': 1,
+                'notes': 'Synthetic returned unit received into quarantine.',
+            },
+            expected_code=201,
+        )
+        self.post(
+            reverse('cangxu-service-event-list'),
+            {
+                'line': service_line.data['id'],
+                'stock_item': unit.pk,
+                'event_type': ServiceCaseEvent.EventType.INSPECTED,
+                'inspection_passed': True,
+                'quantity': 1,
+            },
+            expected_code=201,
+        )
+        self.post(
+            reverse(
+                'cangxu-service-line-resolve', kwargs={'pk': service_line.data['id']}
+            ),
+            {'outcome': 'no_fault', 'notes': 'Synthetic inspection passed.'},
+            expected_code=200,
+        )
+        self.post(
+            reverse(
+                'cangxu-service-case-close', kwargs={'pk': service_case.data['id']}
+            ),
+            {},
+            expected_code=200,
+        )
+
+        component.refresh_from_db()
+        unit.refresh_from_db()
+        self.assertEqual(
+            component.cangxu_manufacturing_lots.get().code, 'CX-E2E-LOT-0001'
+        )
+        self.assertEqual(component.belongs_to_id, unit.pk)
+        self.assertEqual(
+            unit.cangxu_service_cases.get().source_shipment_id, shipment.pk
+        )
+        self.assertEqual(
+            unit.cangxu_service_cases.get().state, ServiceCase.State.CLOSED
+        )
+        self.assertEqual(
+            ShipmentReceipt.objects.filter(manifest_id=manifest_id).count(), 1
+        )
+
 
 class CangxuDemoSeedTest(CangxuAPITestCase):
     """Check deterministic demo expansion and rerun behavior."""
@@ -1185,7 +1690,7 @@ class CangxuDemoSeedTest(CangxuAPITestCase):
         hardware_profiles = HardwareProfileRevision.objects.filter(
             part__IPN__startswith='CX-DEMO-'
         )
-        self.assertEqual(hardware_profiles.count(), 17)
+        self.assertEqual(hardware_profiles.count(), 20)
         self.assertTrue(
             hardware_profiles.filter(state=HardwareProfileRevision.State.DRAFT).exists()
         )
@@ -1194,11 +1699,68 @@ class CangxuDemoSeedTest(CangxuAPITestCase):
                 state=HardwareProfileRevision.State.APPROVED
             ).exists()
         )
+        family_ipns = [
+            'CX-DEMO-SRV-K20-001',
+            'CX-DEMO-SRV-K10-001',
+            'CX-DEMO-WS-K2-001',
+            'CX-DEMO-WS-K4-001',
+        ]
+        self.assertEqual(
+            Part.objects.filter(IPN__in=family_ipns).count(), len(family_ipns)
+        )
+        self.assertEqual(
+            StockItem.objects.filter(part__IPN__in=family_ipns).count(),
+            len(family_ipns),
+        )
+        self.assertTrue(
+            UnitConfiguration.objects.filter(
+                unit__part__IPN__in=family_ipns, kind=UnitConfiguration.Kind.ACTUAL
+            ).exists()
+        )
         linkreal_profile = hardware_profiles.get(part__IPN='CX-DEMO-PCIESW-LR-001')
         self.assertIn('联瑞', linkreal_profile.board_manufacturer.name)
-        self.assertIn('其他类别', linkreal_profile.chip_vendor.name)
+        self.assertIsNone(linkreal_profile.chip_vendor)
         self.assertEqual(
             linkreal_profile.kind, HardwareProfileRevision.Kind.PCIE_SWITCH
+        )
+        broadcom_profile = hardware_profiles.get(part__IPN='CX-DEMO-PEX89048-001')
+        self.assertEqual(broadcom_profile.chip_vendor.name, 'Broadcom')
+        self.assertEqual(broadcom_profile.specifications['lanes'], 48)
+        self.assertEqual(broadcom_profile.state, HardwareProfileRevision.State.DRAFT)
+        microchip_profile = hardware_profiles.get(part__IPN='CX-DEMO-PM50100B1-FEI-001')
+        self.assertEqual(microchip_profile.chip_vendor.name, 'Microchip Technology')
+        linkreal_product_profile = hardware_profiles.get(
+            part__IPN='CX-DEMO-LRSV9500-4I-001'
+        )
+        self.assertEqual(linkreal_product_profile.chip_vendor.name, 'Broadcom')
+        self.assertIn('联瑞', linkreal_product_profile.board_manufacturer.name)
+        self.assertEqual(
+            linkreal_product_profile.specifications['controller'], 'Broadcom PEX89048'
+        )
+        linkreal_lot = ManufacturingLot.objects.get(
+            part__IPN='CX-DEMO-LRSV9500-4I-001', code='CX-DEMO-OPENING-202610'
+        )
+        for company_name, role in (
+            (
+                '深圳市联瑞电子有限公司 (LR-LINK / Linkreal)',
+                ManufacturingLotPartner.Role.BOARD_MANUFACTURER,
+            ),
+            ('LR-LINK', ManufacturingLotPartner.Role.BOARD_BRAND),
+            ('Broadcom', ManufacturingLotPartner.Role.CHIP_VENDOR),
+        ):
+            self.assertTrue(
+                ManufacturingLotPartner.objects.filter(
+                    lot=linkreal_lot, company__name=company_name, role=role
+                ).exists()
+            )
+        self.assertFalse(
+            StockItem.objects.filter(
+                part__IPN__in=[
+                    'CX-DEMO-PEX89048-001',
+                    'CX-DEMO-PM50100B1-FEI-001',
+                    'CX-DEMO-LRSV9500-4I-001',
+                ]
+            ).exists()
         )
         ethernet_profile = hardware_profiles.get(part__IPN='CX-DEMO-ETHSW-001')
         infiniband_profile = hardware_profiles.get(part__IPN='CX-DEMO-IBSW-001')
@@ -1223,6 +1785,42 @@ class CangxuDemoSeedTest(CangxuAPITestCase):
         initial_service_cases = ServiceCase.objects.filter(
             reference__startswith='CX-DEMO-RMA-'
         ).count()
+        initial_customer_returns = ServiceCase.objects.filter(
+            reference__startswith='CX-DEMO-CUST-RMA-'
+        ).count()
+        self.assertEqual(initial_customer_returns, 16)
+        initial_profile_issues = QualityIssue.objects.filter(
+            reference__startswith='CX-DEMO-QA-SRC-'
+        ).count()
+        self.assertEqual(initial_profile_issues, 33)
+        initial_receipts = ShipmentReceipt.objects.filter(
+            manifest__shipment__order__reference__startswith='CX-DEMO-'
+        ).count()
+        self.assertTrue(
+            SalesOrderShipment.objects.filter(
+                order__reference__startswith='CX-DEMO-',
+                shipment_date__isnull=False,
+                delivery_date__isnull=False,
+            ).exists()
+        )
+        self.assertTrue(
+            ShipmentReceipt.objects.filter(
+                manifest__shipment__order__reference__startswith='CX-DEMO-',
+                is_final=True,
+            ).exists()
+        )
+        self.assertTrue(
+            ShipmentReceiptException.objects.filter(
+                receipt_line__receipt__manifest__shipment__order__reference__startswith='CX-DEMO-'
+            ).exists()
+        )
+
+        migrated_unit = StockItem.objects.filter(
+            part__IPN='CX-DEMO-SRV-K20-001'
+        ).first()
+        expected_migrated_serial = migrated_unit.serial
+        migrated_unit.serial = 'CX-DEMO-001-0001'
+        migrated_unit.save(update_fields=['serial'])
 
         call_command('seed_cangxu_demo', scale_factor=2)
         expanded_stock = StockItem.objects.filter(
@@ -1234,6 +1832,15 @@ class CangxuDemoSeedTest(CangxuAPITestCase):
         expanded_service_cases = ServiceCase.objects.filter(
             reference__startswith='CX-DEMO-RMA-'
         ).count()
+        expanded_customer_returns = ServiceCase.objects.filter(
+            reference__startswith='CX-DEMO-CUST-RMA-'
+        ).count()
+        expanded_profile_issues = QualityIssue.objects.filter(
+            reference__startswith='CX-DEMO-QA-SRC-'
+        ).count()
+        expanded_receipts = ShipmentReceipt.objects.filter(
+            manifest__shipment__order__reference__startswith='CX-DEMO-'
+        ).count()
 
         self.assertGreater(expanded_stock, initial_stock)
         self.assertGreater(expanded_configurations, initial_configurations)
@@ -1242,9 +1849,14 @@ class CangxuDemoSeedTest(CangxuAPITestCase):
             HardwareProfileRevision.objects.filter(
                 part__IPN__startswith='CX-DEMO-'
             ).count(),
-            17,
+            20,
         )
         self.assertEqual(expanded_service_cases, 32)
+        self.assertEqual(expanded_customer_returns, 32)
+        self.assertEqual(expanded_profile_issues, 66)
+        self.assertGreater(expanded_receipts, initial_receipts)
+        migrated_unit.refresh_from_db()
+        self.assertEqual(migrated_unit.serial, expected_migrated_serial)
         self.assertEqual(
             PurchaseOrderLineItem.objects.get(
                 order__reference='CX-DEMO-PO-0001'
@@ -1272,6 +1884,24 @@ class CangxuDemoSeedTest(CangxuAPITestCase):
         self.assertEqual(
             ServiceCase.objects.filter(reference__startswith='CX-DEMO-RMA-').count(),
             expanded_service_cases,
+        )
+        self.assertEqual(
+            ServiceCase.objects.filter(
+                reference__startswith='CX-DEMO-CUST-RMA-'
+            ).count(),
+            expanded_customer_returns,
+        )
+        self.assertEqual(
+            QualityIssue.objects.filter(
+                reference__startswith='CX-DEMO-QA-SRC-'
+            ).count(),
+            expanded_profile_issues,
+        )
+        self.assertEqual(
+            ShipmentReceipt.objects.filter(
+                manifest__shipment__order__reference__startswith='CX-DEMO-'
+            ).count(),
+            expanded_receipts,
         )
 
 

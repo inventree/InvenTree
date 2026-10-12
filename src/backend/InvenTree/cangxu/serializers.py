@@ -1,10 +1,14 @@
 """REST serializers for the Cangxu industry models."""
 
+from decimal import Decimal
+
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db.models import Sum
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
+from build.models import BuildLine
 from InvenTree.serializers import InvenTreeModelSerializer
 from stock.models import StockItem, StockLocation
 
@@ -22,6 +26,7 @@ from .models import (
     ManufacturingLot,
     ManufacturingLotPartner,
     ManufacturingLotStockItem,
+    MaterialIssue,
     PartCodeAlias,
     QualityIssue,
     ReworkTask,
@@ -30,6 +35,9 @@ from .models import (
     ServiceCaseLine,
     ShipmentManifest,
     ShipmentManifestLine,
+    ShipmentReceipt,
+    ShipmentReceiptException,
+    ShipmentReceiptLine,
     UnitConfiguration,
 )
 
@@ -635,6 +643,8 @@ class ShipmentManifestSerializer(InvenTreeModelSerializer):
             'checked_by',
             'checked_at',
             'signed_at',
+            'signed_by',
+            'receipt_notes',
         ]
 
     def validate(self, attrs):
@@ -671,6 +681,110 @@ class ShipmentManifestLineSerializer(InvenTreeModelSerializer):
         model = ShipmentManifestLine
         fields = '__all__'
         read_only_fields = ['scanned_at']
+
+
+class ShipmentReceiptExceptionSerializer(InvenTreeModelSerializer):
+    """Expose a discrepancy follow-up and its resolution record."""
+
+    class Meta:
+        """Keep exception evidence read-only outside the resolve action."""
+
+        model = ShipmentReceiptException
+        fields = [
+            'id',
+            'receipt_line',
+            'kind',
+            'expected_quantity',
+            'received_quantity',
+            'state',
+            'notes',
+            'resolution',
+            'created_at',
+            'resolved_by',
+            'resolved_at',
+        ]
+        read_only_fields = fields
+
+
+class ShipmentReceiptLineSerializer(InvenTreeModelSerializer):
+    """Expose the immutable quantity and condition recorded at receipt."""
+
+    exception = ShipmentReceiptExceptionSerializer(read_only=True)
+
+    class Meta:
+        """Keep receipt lines immutable after the receipt event is recorded."""
+
+        model = ShipmentReceiptLine
+        fields = [
+            'id',
+            'receipt',
+            'manifest_line',
+            'quantity_received',
+            'condition',
+            'notes',
+            'exception',
+        ]
+        read_only_fields = fields
+
+
+class ShipmentReceiptSerializer(InvenTreeModelSerializer):
+    """Expose partial and final receipt events with line-level evidence."""
+
+    lines = ShipmentReceiptLineSerializer(many=True, read_only=True)
+
+    class Meta:
+        """Expose receipt events as immutable audit records."""
+
+        model = ShipmentReceipt
+        fields = [
+            'id',
+            'manifest',
+            'idempotency_key',
+            'recipient_name',
+            'is_final',
+            'notes',
+            'received_by',
+            'received_at',
+            'lines',
+        ]
+        read_only_fields = fields
+
+
+class ShipmentReceiptLineRequestSerializer(serializers.Serializer):
+    """Validate one received quantity against an expected manifest line."""
+
+    manifest_line = serializers.PrimaryKeyRelatedField(
+        queryset=ShipmentManifestLine.objects.all()
+    )
+    quantity_received = serializers.DecimalField(
+        max_digits=15, decimal_places=5, min_value=Decimal('0')
+    )
+    condition = serializers.ChoiceField(
+        choices=ShipmentReceiptLine.Condition.choices,
+        default=ShipmentReceiptLine.Condition.OK,
+    )
+    notes = serializers.CharField(required=False, allow_blank=True)
+
+
+class ShipmentReceiptRequestSerializer(serializers.Serializer):
+    """Validate an idempotent partial or final consignee receipt."""
+
+    manifest = serializers.PrimaryKeyRelatedField(
+        queryset=ShipmentManifest.objects.all()
+    )
+    idempotency_key = serializers.UUIDField()
+    recipient_name = serializers.CharField(
+        max_length=150, required=False, allow_blank=True
+    )
+    is_final = serializers.BooleanField(default=False)
+    notes = serializers.CharField(required=False, allow_blank=True)
+    lines = ShipmentReceiptLineRequestSerializer(many=True, required=False)
+
+
+class ShipmentReceiptExceptionResolveSerializer(serializers.Serializer):
+    """Require a human explanation when closing a delivery follow-up."""
+
+    resolution = serializers.CharField(trim_whitespace=True, allow_blank=False)
 
 
 class ManifestVerificationSerializer(serializers.Serializer):
@@ -863,3 +977,80 @@ class ComponentRemovalRequestSerializer(serializers.Serializer):
     removal_kind = serializers.ChoiceField(
         choices=ConfigurationItem.RemovalKind.choices
     )
+
+
+class MaterialIssueRequestSerializer(serializers.Serializer):
+    """Validate an idempotent issue from stock against a consumable BOM line."""
+
+    build_line = serializers.PrimaryKeyRelatedField(queryset=BuildLine.objects.all())
+    stock_item = serializers.PrimaryKeyRelatedField(queryset=StockItem.objects.all())
+    quantity = serializers.DecimalField(
+        max_digits=15, decimal_places=5, min_value=Decimal('0.00001')
+    )
+    idempotency_key = serializers.UUIDField()
+    notes = serializers.CharField(required=False, allow_blank=True)
+
+
+class MaterialReturnRequestSerializer(serializers.Serializer):
+    """Validate a partial return to an explicitly selected internal location."""
+
+    quantity = serializers.DecimalField(
+        max_digits=15, decimal_places=5, min_value=Decimal('0.00001')
+    )
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.filter(external=False, structural=False)
+    )
+    idempotency_key = serializers.UUIDField()
+    notes = serializers.CharField(required=False, allow_blank=True)
+
+
+class MaterialIssueSerializer(serializers.ModelSerializer):
+    """Expose issue and cumulative return quantities without duplicating stock."""
+
+    returned_quantity = serializers.SerializerMethodField()
+    remaining_quantity = serializers.SerializerMethodField()
+    build_reference = serializers.CharField(
+        source='build_line.build.reference', read_only=True
+    )
+    part_name = serializers.CharField(
+        source='build_line.bom_item.sub_part.name', read_only=True
+    )
+    part_code = serializers.CharField(
+        source='build_line.bom_item.sub_part.IPN', read_only=True, allow_null=True
+    )
+
+    class Meta:
+        """Expose immutable issue facts and the cumulative returned quantity."""
+
+        model = MaterialIssue
+        fields = [
+            'id',
+            'build_line',
+            'build_reference',
+            'part_name',
+            'part_code',
+            'stock_item',
+            'consumed_stock_item',
+            'quantity',
+            'returned_quantity',
+            'remaining_quantity',
+            'idempotency_key',
+            'notes',
+            'created_by',
+            'created_at',
+        ]
+        read_only_fields = fields
+
+    def get_returned_quantity(self, obj):
+        """Sum native return events associated with this material issue."""
+        return self._returned_quantity(obj)
+
+    def get_remaining_quantity(self, obj):
+        """Return the issue quantity that has not yet been put back into stock."""
+        return max(Decimal('0'), obj.quantity - self._returned_quantity(obj))
+
+    @staticmethod
+    def _returned_quantity(obj):
+        if 'returns' in getattr(obj, '_prefetched_objects_cache', {}):
+            return sum((event.quantity for event in obj.returns.all()), Decimal('0'))
+        return obj.returns.aggregate(total=Sum('quantity'))['total'] or Decimal('0')

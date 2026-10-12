@@ -88,7 +88,7 @@ msgid "Cancel"
 msgstr "取消"
 
 #: lib/components/RowActions.tsx:146
-#: src/components/nav/NavigationDrawer.tsx:185
+#: src/components/nav/NavigationDrawer.tsx:196
 #: src/forms/PurchaseOrderForms.tsx:965
 #: src/forms/StockForms.tsx:950
 #: src/forms/StockForms.tsx:1517
@@ -184,8 +184,8 @@ msgstr "物料"
 
 #: lib/enums/ModelInformation.tsx:62
 #: lib/enums/Roles.tsx:37
-#: src/components/nav/NavigationDrawer.tsx:70
-#: src/defaults/links.tsx:39
+#: src/components/nav/NavigationDrawer.tsx:81
+#: src/defaults/links.tsx:50
 #: src/pages/Index/Settings/SystemSettings.tsx:217
 #: src/pages/part/CategoryDetail.tsx:218
 #: src/pages/part/CategoryDetail.tsx:279
@@ -444,7 +444,7 @@ msgstr "采购明细"
 #: src/pages/build/BuildOrderDetailsPanel.tsx:135
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:25
 #: src/pages/sales/SalesOrderDetail.tsx:427
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:278
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:288
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:58
 #: src/pages/stock/StockDetailsPanel.tsx:297
 #: src/tables/part/PartSalesAllocationsTable.tsx:43
@@ -466,7 +466,7 @@ msgid "Sales Orders"
 msgstr "销售订单"
 
 #: lib/enums/ModelInformation.tsx:227
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:277
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:287
 msgid "Sales Order Shipment"
 msgstr "销售发货单"
 
@@ -574,7 +574,7 @@ msgid "User"
 msgstr "用户"
 
 #: lib/enums/ModelInformation.tsx:293
-#: src/components/nav/NavigationDrawer.tsx:105
+#: src/components/nav/NavigationDrawer.tsx:116
 #: src/defaults/actions.tsx:220
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:15
 #: src/pages/core/CoreIndex.tsx:22
@@ -588,7 +588,7 @@ msgid "Group"
 msgstr "群组"
 
 #: lib/enums/ModelInformation.tsx:300
-#: src/components/nav/NavigationDrawer.tsx:111
+#: src/components/nav/NavigationDrawer.tsx:122
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:23
 #: src/pages/core/CoreIndex.tsx:28
 #: src/pages/core/GroupDetail.tsx:80
@@ -852,7 +852,7 @@ msgstr "输入条形码数据"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:56
 #: src/components/buttons/ScanButton.tsx:56
-#: src/components/nav/NavigationDrawer.tsx:122
+#: src/components/nav/NavigationDrawer.tsx:133
 #: src/forms/PurchaseOrderForms.tsx:546
 #: src/forms/PurchaseOrderForms.tsx:686
 msgid "Scan Barcode"
@@ -1183,7 +1183,7 @@ msgstr "接受布局"
 #: src/components/dashboard/DashboardMenu.tsx:94
 #: src/components/nav/NavigationDrawer.tsx:64
 #: src/defaults/actions.tsx:62
-#: src/defaults/links.tsx:34
+#: src/defaults/links.tsx:35
 #: src/pages/Index/Home.tsx:8
 msgid "Dashboard"
 msgstr "仪表盘"
@@ -1402,12 +1402,12 @@ msgstr "显示分配给您的退货订单数量"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:224
 #: src/components/dashboard/widgets/GetStartedWidget.tsx:15
-#: src/defaults/links.tsx:98
+#: src/defaults/links.tsx:109
 msgid "Getting Started"
 msgstr "快速上手"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:225
-#: src/defaults/links.tsx:101
+#: src/defaults/links.tsx:112
 msgid "Getting started with InvenTree"
 msgstr "开始使用 InvenTree"
 
@@ -1495,23 +1495,6 @@ msgstr "生成新的盘点报告"
 #~ msgid "Email:"
 #~ msgstr "Email:"
 
-#: src/components/details/Details.tsx:129
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:76
-#: src/pages/core/UserDetail.tsx:90
-#: src/pages/core/UserDetail.tsx:202
-#: src/tables/settings/UserTable.tsx:412
-msgid "Superuser"
-msgstr "超级用户"
-
-#: src/components/details/Details.tsx:130
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
-#: src/pages/core/UserDetail.tsx:84
-#: src/pages/core/UserDetail.tsx:199
-#: src/tables/settings/UserTable.tsx:286
-#: src/tables/settings/UserTable.tsx:407
-msgid "Administrator"
-msgstr "管理员"
-
 #: src/components/details/Details.tsx:130
 #: src/pages/core/UserDetail.tsx:87
 #: src/pages/core/UserDetail.tsx:200
@@ -1520,10 +1503,39 @@ msgstr "管理员"
 #~ msgstr "Staff"
 
 #: src/components/details/Details.tsx:131
-msgid "Email: "
-msgstr "邮箱: "
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:76
+#: src/pages/core/UserDetail.tsx:90
+#: src/pages/core/UserDetail.tsx:202
+#: src/tables/settings/UserTable.tsx:412
+msgid "Superuser"
+msgstr "超级用户"
 
-#: src/components/details/Details.tsx:423
+#: src/components/details/Details.tsx:131
+#~ msgid "Email: "
+#~ msgstr "邮箱: "
+
+#: src/components/details/Details.tsx:133
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
+#: src/pages/core/UserDetail.tsx:84
+#: src/pages/core/UserDetail.tsx:199
+#: src/tables/settings/UserTable.tsx:286
+#: src/tables/settings/UserTable.tsx:407
+msgid "Administrator"
+msgstr "管理员"
+
+#: src/components/details/Details.tsx:136
+#: src/components/render/Part.tsx:28
+#: src/components/render/Plugin.tsx:17
+#: src/components/render/User.tsx:37
+#: src/components/tables/ColumnRenderers.tsx:652
+#: src/pages/company/CompanyDetail.tsx:279
+#: src/pages/company/SupplierPartDetail.tsx:224
+#: src/pages/core/UserDetail.tsx:210
+#: src/pages/part/PartDetail.tsx:623
+msgid "Inactive"
+msgstr "未激活"
+
+#: src/components/details/Details.tsx:438
 msgid "No name defined"
 msgstr "未定义名称"
 
@@ -1843,6 +1855,7 @@ msgstr "删除表格"
 #: src/components/editors/NotesEditor.tsx:701
 #: src/components/panels/NotesPanel.tsx:24
 #: src/forms/StockForms.tsx:1585
+#: src/pages/sales/ShipmentReceiptPanel.tsx:307
 #: src/tables/part/PartTestResultTable.tsx:218
 #: src/tables/stock/StockTrackingTable.tsx:279
 msgid "Notes"
@@ -2052,158 +2065,158 @@ msgstr "更新"
 #~ msgid "Mail delivery successfull"
 #~ msgstr "Mail delivery successfull"
 
-#: src/components/forms/AuthenticationForm.tsx:73
+#: src/components/forms/AuthenticationForm.tsx:74
 msgid "Login successful"
 msgstr "登录成功"
 
-#: src/components/forms/AuthenticationForm.tsx:74
+#: src/components/forms/AuthenticationForm.tsx:75
 msgid "Logged in successfully"
 msgstr "登录成功"
 
-#: src/components/forms/AuthenticationForm.tsx:81
-#: src/components/forms/AuthenticationForm.tsx:89
+#: src/components/forms/AuthenticationForm.tsx:82
+#: src/components/forms/AuthenticationForm.tsx:90
 #: src/functions/auth.tsx:144
 #: src/functions/auth.tsx:153
 msgid "Login failed"
 msgstr "登录失败"
 
-#: src/components/forms/AuthenticationForm.tsx:82
-#: src/components/forms/AuthenticationForm.tsx:90
-#: src/components/forms/AuthenticationForm.tsx:106
+#: src/components/forms/AuthenticationForm.tsx:83
+#: src/components/forms/AuthenticationForm.tsx:91
+#: src/components/forms/AuthenticationForm.tsx:107
 #: src/functions/auth.tsx:130
 #: src/functions/auth.tsx:366
 #: src/pages/Auth/ProviderSignup.tsx:103
 msgid "Check your input and try again."
 msgstr "请检查您的输入并重试。"
 
-#: src/components/forms/AuthenticationForm.tsx:100
+#: src/components/forms/AuthenticationForm.tsx:101
 #: src/functions/auth.tsx:357
 msgid "Mail delivery successful"
 msgstr "邮件发送成功"
 
-#: src/components/forms/AuthenticationForm.tsx:101
+#: src/components/forms/AuthenticationForm.tsx:102
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
 msgstr "请检查您的收件箱以查看登录链接。如果您有账户，您将收到登录链接。如未收到，请检查邮箱垃圾箱。"
 
-#: src/components/forms/AuthenticationForm.tsx:105
+#: src/components/forms/AuthenticationForm.tsx:106
 msgid "Mail delivery failed"
 msgstr "邮件发送失败"
 
-#: src/components/forms/AuthenticationForm.tsx:125
+#: src/components/forms/AuthenticationForm.tsx:126
 msgid "Or continue with other methods"
 msgstr "或继续使用其他方法"
 
 #: src/components/forms/AuthenticationForm.tsx:136
-#: src/components/forms/AuthenticationForm.tsx:296
+#~ msgid "I will use username and password"
+#~ msgstr "I will use username and password"
+
+#: src/components/forms/AuthenticationForm.tsx:137
+#: src/components/forms/AuthenticationForm.tsx:297
 #: src/pages/Auth/ProviderSignup.tsx:129
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:64
 #: src/pages/core/UserDetail.tsx:45
 msgid "Username"
 msgstr "用户名"
 
-#: src/components/forms/AuthenticationForm.tsx:136
-#~ msgid "I will use username and password"
-#~ msgstr "I will use username and password"
-
-#: src/components/forms/AuthenticationForm.tsx:138
-#: src/components/forms/AuthenticationForm.tsx:298
+#: src/components/forms/AuthenticationForm.tsx:139
+#: src/components/forms/AuthenticationForm.tsx:299
 #: src/pages/Auth/ProviderSignup.tsx:131
 msgid "Your username"
 msgstr "你的用户名"
 
-#: src/components/forms/AuthenticationForm.tsx:143
-#: src/components/forms/AuthenticationForm.tsx:311
+#: src/components/forms/AuthenticationForm.tsx:144
+#: src/components/forms/AuthenticationForm.tsx:312
 #: src/pages/Auth/ResetPassword.tsx:34
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:195
 msgid "Password"
 msgstr "密码"
 
-#: src/components/forms/AuthenticationForm.tsx:145
-#: src/components/forms/AuthenticationForm.tsx:313
+#: src/components/forms/AuthenticationForm.tsx:146
+#: src/components/forms/AuthenticationForm.tsx:314
 msgid "Your password"
 msgstr "您的密码"
 
-#: src/components/forms/AuthenticationForm.tsx:164
+#: src/components/forms/AuthenticationForm.tsx:165
 msgid "Reset password"
 msgstr "重置密码"
 
-#: src/components/forms/AuthenticationForm.tsx:173
-#: src/components/forms/AuthenticationForm.tsx:303
+#: src/components/forms/AuthenticationForm.tsx:174
+#: src/components/forms/AuthenticationForm.tsx:304
 #: src/pages/Auth/ProviderSignup.tsx:135
 #: src/pages/Auth/Reset.tsx:17
 #: src/pages/core/UserDetail.tsx:68
 msgid "Email"
 msgstr "邮箱"
 
-#: src/components/forms/AuthenticationForm.tsx:174
+#: src/components/forms/AuthenticationForm.tsx:175
 #: src/pages/Auth/Reset.tsx:18
 msgid "We will send you a link to login - if you are registered"
 msgstr "我们将向您发送登录链接 - 如果您已注册"
 
-#: src/components/forms/AuthenticationForm.tsx:190
+#: src/components/forms/AuthenticationForm.tsx:191
 msgid "Send me an email"
 msgstr "给我发一封电子邮件"
 
-#: src/components/forms/AuthenticationForm.tsx:192
+#: src/components/forms/AuthenticationForm.tsx:193
 msgid "Use username and password"
 msgstr "使用用户名和密码"
 
-#: src/components/forms/AuthenticationForm.tsx:201
+#: src/components/forms/AuthenticationForm.tsx:202
 msgid "Log In"
 msgstr "登录"
 
-#: src/components/forms/AuthenticationForm.tsx:203
+#: src/components/forms/AuthenticationForm.tsx:204
 #: src/pages/Auth/Reset.tsx:26
 msgid "Send Email"
 msgstr "发送电子邮件"
 
-#: src/components/forms/AuthenticationForm.tsx:239
+#: src/components/forms/AuthenticationForm.tsx:240
 msgid "Passwords do not match"
 msgstr "密码不匹配"
 
-#: src/components/forms/AuthenticationForm.tsx:256
+#: src/components/forms/AuthenticationForm.tsx:257
 msgid "Registration successful"
 msgstr "注册成功"
 
-#: src/components/forms/AuthenticationForm.tsx:257
+#: src/components/forms/AuthenticationForm.tsx:258
 msgid "Please confirm your email address to complete the registration"
 msgstr "请确认您的电子邮件地址以完成注册"
 
-#: src/components/forms/AuthenticationForm.tsx:280
+#: src/components/forms/AuthenticationForm.tsx:281
 msgid "Input error"
 msgstr "输入错误"
 
-#: src/components/forms/AuthenticationForm.tsx:281
+#: src/components/forms/AuthenticationForm.tsx:282
 msgid "Check your input and try again. "
 msgstr "请检查您的输入并重试 "
 
-#: src/components/forms/AuthenticationForm.tsx:305
+#: src/components/forms/AuthenticationForm.tsx:306
 msgid "This will be used for a confirmation"
 msgstr "此将用于确认"
 
-#: src/components/forms/AuthenticationForm.tsx:318
+#: src/components/forms/AuthenticationForm.tsx:319
 msgid "Password repeat"
 msgstr "密码重复"
 
-#: src/components/forms/AuthenticationForm.tsx:320
+#: src/components/forms/AuthenticationForm.tsx:321
 msgid "Repeat password"
 msgstr "再次输入密码"
 
-#: src/components/forms/AuthenticationForm.tsx:332
-#: src/pages/Auth/Login.tsx:136
+#: src/components/forms/AuthenticationForm.tsx:333
+#: src/pages/Auth/Login.tsx:137
 #: src/pages/Auth/Register.tsx:13
 msgid "Register"
 msgstr "注册"
 
-#: src/components/forms/AuthenticationForm.tsx:338
+#: src/components/forms/AuthenticationForm.tsx:339
 msgid "Or use SSO"
 msgstr "或使用 SSO"
 
-#: src/components/forms/AuthenticationForm.tsx:348
+#: src/components/forms/AuthenticationForm.tsx:349
 msgid "Registration not active"
 msgstr "注册未激活"
 
-#: src/components/forms/AuthenticationForm.tsx:349
+#: src/components/forms/AuthenticationForm.tsx:350
 msgid "This might be related to missing mail settings or could be a deliberate decision."
 msgstr "可能原因：邮件设置缺失或人为设定。"
 
@@ -2305,7 +2318,7 @@ msgid "API Version"
 msgstr "API 版本"
 
 #: src/components/forms/InstanceOptions.tsx:143
-#: src/components/nav/NavigationDrawer.tsx:192
+#: src/components/nav/NavigationDrawer.tsx:203
 #: src/defaults/actions.tsx:230
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:269
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:58
@@ -2904,7 +2917,7 @@ msgstr "链接"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:176
 #: src/defaults/actions.tsx:69
-#: src/defaults/links.tsx:180
+#: src/defaults/links.tsx:191
 msgid "Documentation"
 msgstr "文档"
 
@@ -3129,7 +3142,7 @@ msgid "Open search"
 msgstr "打开搜索框"
 
 #: src/components/nav/Header.tsx:215
-#: src/components/nav/NavigationDrawer.tsx:134
+#: src/components/nav/NavigationDrawer.tsx:145
 #: src/components/nav/NotificationDrawer.tsx:185
 #: src/pages/Index/Settings/SystemSettings.tsx:145
 #: src/pages/Index/Settings/UserSettings.tsx:111
@@ -3164,7 +3177,7 @@ msgstr "无结果..."
 #~ msgstr "Profile"
 
 #: src/components/nav/MainMenu.tsx:54
-#: src/components/nav/NavigationDrawer.tsx:180
+#: src/components/nav/NavigationDrawer.tsx:191
 #: src/pages/Index/Settings/AdminCenter/EmailManagementPanel.tsx:21
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:39
 msgid "Settings"
@@ -3176,7 +3189,7 @@ msgstr "设置"
 #~ msgstr "Account settings"
 
 #: src/components/nav/MainMenu.tsx:61
-#: src/components/nav/NavigationDrawer.tsx:140
+#: src/components/nav/NavigationDrawer.tsx:151
 #: src/components/nav/SettingsHeader.tsx:40
 #: src/defaults/actions.tsx:106
 #: src/pages/Index/Settings/UserSettings.tsx:148
@@ -3194,7 +3207,7 @@ msgstr "用户设置"
 #~ msgstr "Current language {locale}"
 
 #: src/components/nav/MainMenu.tsx:69
-#: src/components/nav/NavigationDrawer.tsx:146
+#: src/components/nav/NavigationDrawer.tsx:157
 #: src/components/nav/SettingsHeader.tsx:41
 #: src/defaults/actions.tsx:191
 #: src/pages/Index/Settings/SystemSettings.tsx:417
@@ -3207,7 +3220,7 @@ msgstr "系统设置"
 #~ msgstr "Switch to pseudo language"
 
 #: src/components/nav/MainMenu.tsx:78
-#: src/components/nav/NavigationDrawer.tsx:153
+#: src/components/nav/NavigationDrawer.tsx:164
 #: src/components/nav/SettingsHeader.tsx:42
 #: src/defaults/actions.tsx:200
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:344
@@ -3217,8 +3230,8 @@ msgstr "管理中心"
 
 #: src/components/nav/MainMenu.tsx:99
 #: src/defaults/actions.tsx:78
-#: src/defaults/links.tsx:152
-#: src/defaults/links.tsx:205
+#: src/defaults/links.tsx:163
+#: src/defaults/links.tsx:216
 msgid "About InvenTree"
 msgstr "关于 InvenTree"
 
@@ -3243,10 +3256,17 @@ msgstr "登出"
 #~ msgid "Pages"
 #~ msgstr "Pages"
 
-#: src/components/nav/NavigationDrawer.tsx:77
+#: src/components/nav/NavigationDrawer.tsx:70
+#: src/defaults/links.tsx:40
+#: src/pages/cangxu/CangxuHome.tsx:100
+#: src/pages/cangxu/CangxuHome.tsx:110
+msgid "Cangxu Workshop"
+msgstr "仓序工作台"
+
+#: src/components/nav/NavigationDrawer.tsx:88
 #: src/components/render/Part.tsx:36
 #: src/components/wizards/ImportPartWizard.tsx:808
-#: src/defaults/links.tsx:47
+#: src/defaults/links.tsx:58
 #: src/forms/StockForms.tsx:1515
 #: src/pages/Index/Settings/SystemSettings.tsx:259
 #: src/pages/part/PartDetail.tsx:304
@@ -3258,16 +3278,16 @@ msgstr "登出"
 msgid "Stock"
 msgstr "库存"
 
-#: src/components/nav/NavigationDrawer.tsx:84
-#: src/defaults/links.tsx:56
+#: src/components/nav/NavigationDrawer.tsx:95
+#: src/defaults/links.tsx:67
 #: src/pages/Index/Settings/SystemSettings.tsx:319
 #: src/pages/build/BuildDetail.tsx:602
 #: src/pages/build/BuildIndex.tsx:121
 msgid "Manufacturing"
 msgstr "生产"
 
-#: src/components/nav/NavigationDrawer.tsx:91
-#: src/defaults/links.tsx:62
+#: src/components/nav/NavigationDrawer.tsx:102
+#: src/defaults/links.tsx:73
 #: src/pages/Index/Settings/SystemSettings.tsx:348
 #: src/pages/company/ManufacturerDetail.tsx:9
 #: src/pages/company/ManufacturerPartDetail.tsx:193
@@ -3278,22 +3298,22 @@ msgstr "生产"
 msgid "Purchasing"
 msgstr "采购"
 
-#: src/components/nav/NavigationDrawer.tsx:98
-#: src/defaults/links.tsx:68
+#: src/components/nav/NavigationDrawer.tsx:109
+#: src/defaults/links.tsx:79
 #: src/pages/Index/Settings/SystemSettings.tsx:367
 #: src/pages/company/CustomerDetail.tsx:9
 #: src/pages/sales/ReturnOrderDetail.tsx:362
 #: src/pages/sales/SalesIndex.tsx:214
 #: src/pages/sales/SalesOrderDetail.tsx:432
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:280
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:290
 msgid "Sales"
 msgstr "销售"
 
-#: src/components/nav/NavigationDrawer.tsx:175
+#: src/components/nav/NavigationDrawer.tsx:186
 msgid "Navigation"
 msgstr "导航栏"
 
-#: src/components/nav/NavigationDrawer.tsx:203
+#: src/components/nav/NavigationDrawer.tsx:214
 msgid "About"
 msgstr "关于"
 
@@ -3643,7 +3663,7 @@ msgstr "编号"
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:275
+#: src/components/render/Instance.tsx:277
 msgid "Unknown model: {model_name}"
 msgstr "未知模型: {model_name}"
 
@@ -3662,17 +3682,6 @@ msgstr "未知模型: {model_name}"
 #: src/components/render/ModelType.tsx:337
 #~ msgid "Unknown Models"
 #~ msgstr "Unknown Models"
-
-#: src/components/render/Part.tsx:28
-#: src/components/render/Plugin.tsx:17
-#: src/components/render/User.tsx:37
-#: src/components/tables/ColumnRenderers.tsx:652
-#: src/pages/company/CompanyDetail.tsx:279
-#: src/pages/company/SupplierPartDetail.tsx:224
-#: src/pages/core/UserDetail.tsx:210
-#: src/pages/part/PartDetail.tsx:623
-msgid "Inactive"
-msgstr "未激活"
 
 #: src/components/render/Part.tsx:31
 #: src/pages/part/PartDetail.tsx:629
@@ -3776,6 +3785,7 @@ msgstr "序列号"
 #: src/forms/StockForms.tsx:1563
 #: src/forms/TransferOrderForms.tsx:242
 #: src/pages/build/BuildIndex.tsx:47
+#: src/pages/cangxu/MaterialIssuePanel.tsx:336
 #: src/pages/part/PartStockHistoryDetail.tsx:64
 #: src/pages/part/PartStockHistoryDetail.tsx:244
 #: src/pages/part/PartStockHistoryDetail.tsx:268
@@ -4210,6 +4220,7 @@ msgid "Show items which have a serial number"
 msgstr "显示带有序列号的项目"
 
 #: src/components/tables/Filter.tsx:150
+#: src/pages/cangxu/CangxuHome.tsx:227
 #: src/tables/build/BuildAllocatedStockTable.tsx:137
 msgid "Serial"
 msgstr "序列号"
@@ -5487,13 +5498,13 @@ msgid "Server Information"
 msgstr "服务器信息"
 
 #: src/defaults/actions.tsx:86
-#: src/defaults/links.tsx:188
+#: src/defaults/links.tsx:199
 msgid "About this InvenTree instance"
 msgstr "关于 InvenTree 实例"
 
 #: src/defaults/actions.tsx:92
-#: src/defaults/links.tsx:165
-#: src/defaults/links.tsx:194
+#: src/defaults/links.tsx:176
+#: src/defaults/links.tsx:205
 msgid "License Information"
 msgstr "许可信息"
 
@@ -5666,60 +5677,60 @@ msgstr "当前服务器"
 #~ msgid "InvenTree"
 #~ msgstr "InvenTree"
 
-#: src/defaults/links.tsx:105
+#: src/defaults/links.tsx:116
 msgid "API"
 msgstr "API"
-
-#: src/defaults/links.tsx:108
-msgid "InvenTree API documentation"
-msgstr "InvenTree API 文档"
-
-#: src/defaults/links.tsx:112
-msgid "Developer Manual"
-msgstr "开发者手册"
-
-#: src/defaults/links.tsx:115
-msgid "InvenTree developer manual"
-msgstr "InvenTree 开发者手册"
 
 #: src/defaults/links.tsx:117
 #~ msgid "Licenses for packages used by InvenTree"
 #~ msgstr "Licenses for packages used by InvenTree"
 
 #: src/defaults/links.tsx:119
+msgid "InvenTree API documentation"
+msgstr "InvenTree API 文档"
+
+#: src/defaults/links.tsx:123
+msgid "Developer Manual"
+msgstr "开发者手册"
+
+#: src/defaults/links.tsx:126
+msgid "InvenTree developer manual"
+msgstr "InvenTree 开发者手册"
+
+#: src/defaults/links.tsx:130
 msgid "FAQ"
 msgstr "FAQ"
 
-#: src/defaults/links.tsx:122
+#: src/defaults/links.tsx:133
 msgid "Frequently asked questions"
 msgstr "常见问题"
-
-#: src/defaults/links.tsx:126
-msgid "GitHub Repository"
-msgstr "GitHub 存储库"
-
-#: src/defaults/links.tsx:129
-msgid "InvenTree source code on GitHub"
-msgstr "GitHub 上的 InvenTree 源代码"
 
 #: src/defaults/links.tsx:134
 #~ msgid "Licenses"
 #~ msgstr "Licenses"
 
-#: src/defaults/links.tsx:139
-#: src/defaults/links.tsx:187
+#: src/defaults/links.tsx:137
+msgid "GitHub Repository"
+msgstr "GitHub 存储库"
+
+#: src/defaults/links.tsx:140
+msgid "InvenTree source code on GitHub"
+msgstr "GitHub 上的 InvenTree 源代码"
+
+#: src/defaults/links.tsx:150
+#: src/defaults/links.tsx:198
 msgid "System Information"
 msgstr "系统信息"
 
-#: src/defaults/links.tsx:181
+#: src/defaults/links.tsx:192
 msgid "InvenTree documentation"
 msgstr "InvenTree 文档"
 
-#: src/defaults/links.tsx:195
+#: src/defaults/links.tsx:206
 msgid "Licenses for dependencies of the InvenTree software"
 msgstr "InvenTree软件依赖许可"
 
-#: src/defaults/links.tsx:206
+#: src/defaults/links.tsx:217
 msgid "About the InvenTree Project"
 msgstr "关于InvenTree项目"
 
@@ -6226,6 +6237,8 @@ msgstr "库存单位  (SKU)"
 #: src/forms/PurchaseOrderForms.tsx:963
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:269
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:281
+#: src/pages/sales/ShipmentReceiptPanel.tsx:305
+#: src/pages/sales/ShipmentReceiptPanel.tsx:401
 #: src/tables/part/PartPurchaseOrdersTable.tsx:136
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:221
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:296
@@ -6959,7 +6972,7 @@ msgstr "SSO 登录失败"
 msgid "Checking if you are already logged in"
 msgstr "检查您是否已经登录"
 
-#: src/pages/Auth/Login.tsx:37
+#: src/pages/Auth/Login.tsx:38
 msgid "No selection"
 msgstr "未选择"
 
@@ -6971,15 +6984,15 @@ msgstr "未选择"
 #~ msgid "Register below"
 #~ msgstr "Register below"
 
-#: src/pages/Auth/Login.tsx:115
+#: src/pages/Auth/Login.tsx:116
 msgid "Login"
 msgstr "登录"
 
-#: src/pages/Auth/Login.tsx:121
+#: src/pages/Auth/Login.tsx:122
 msgid "Logging you in"
 msgstr "正在登录"
 
-#: src/pages/Auth/Login.tsx:128
+#: src/pages/Auth/Login.tsx:129
 msgid "Don't have an account?"
 msgstr "没有帐户？"
 
@@ -9020,7 +9033,7 @@ msgstr "所需物料"
 
 #: src/pages/build/BuildDetail.tsx:268
 #: src/pages/sales/SalesOrderDetail.tsx:207
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:92
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:94
 #: src/pages/stock/TransferOrderDetail.tsx:163
 #: src/tables/part/PartSalesAllocationsTable.tsx:74
 msgid "Allocated Stock"
@@ -9314,6 +9327,314 @@ msgstr "已创建"
 #: src/tables/stock/TransferOrderLineItemTable.tsx:498
 msgid "Completed"
 msgstr "已完成"
+
+#: src/pages/cangxu/CangxuHome.tsx:51
+msgid "Receiving and purchasing"
+msgstr "采购与收货"
+
+#: src/pages/cangxu/CangxuHome.tsx:52
+msgid "Review purchase orders, expected stock, and received items."
+msgstr "查看采购订单、待收物料和已收货记录。"
+
+#: src/pages/cangxu/CangxuHome.tsx:57
+msgid "Production and assembly"
+msgstr "生产与装配"
+
+#: src/pages/cangxu/CangxuHome.tsx:58
+msgid "Open build orders, allocate components, and record finished units."
+msgstr "查看生产工单、分配物料并登记完工整机。"
+
+#: src/pages/cangxu/CangxuHome.tsx:63
+msgid "Warehouse and stock"
+msgstr "仓库与库存"
+
+#: src/pages/cangxu/CangxuHome.tsx:64
+msgid "Find stock, locations, and internal transfer orders."
+msgstr "查询库存、库位和内部调拨单。"
+
+#: src/pages/cangxu/CangxuHome.tsx:69
+msgid "Delivery and returns"
+msgstr "交付与退货"
+
+#: src/pages/cangxu/CangxuHome.tsx:70
+msgid "Review sales shipments, packing, and customer returns."
+msgstr "查看销售发货、装箱和客户退货。"
+
+#: src/pages/cangxu/CangxuHome.tsx:108
+msgid "AI server production and warehousing"
+msgstr "智算服务器生产与仓储"
+
+#: src/pages/cangxu/CangxuHome.tsx:112
+msgid "Start common receiving, production, stock, and delivery work here. Search a serial number or part code to open its InvenTree stock history."
+msgstr "从这里进入常用的收货、生产、库存和交付流程。也可搜索序列号或物料编码，查看 InvenTree 中的实物库存履历。"
+
+#: src/pages/cangxu/CangxuHome.tsx:120
+msgid "Scan barcode"
+msgstr "扫码"
+
+#: src/pages/cangxu/CangxuHome.tsx:127
+msgid "Common workflows"
+msgstr "常用流程"
+
+#: src/pages/cangxu/CangxuHome.tsx:151
+msgid "Open workflow"
+msgstr "进入流程"
+
+#: src/pages/cangxu/CangxuHome.tsx:161
+msgid "Material issue and return"
+msgstr "耗材领料与退料"
+
+#: src/pages/cangxu/CangxuHome.tsx:168
+msgid "Trace a part or unit"
+msgstr "追溯物料或整机"
+
+#: src/pages/cangxu/CangxuHome.tsx:174
+msgid "Serial number or part code"
+msgstr "序列号或物料编码"
+
+#: src/pages/cangxu/CangxuHome.tsx:175
+msgid "Enter a serial number, internal part code, or name"
+msgstr "输入序列号、内部物料编码或名称"
+
+#: src/pages/cangxu/CangxuHome.tsx:186
+msgid "Search stock history"
+msgstr "查询实物履历"
+
+#: src/pages/cangxu/CangxuHome.tsx:193
+msgid "Search failed"
+msgstr "查询失败"
+
+#: src/pages/cangxu/CangxuHome.tsx:194
+msgid "The stock search could not be completed. Check your access and try again."
+msgstr "无法完成库存查询。请检查访问权限后重试。"
+
+#: src/pages/cangxu/CangxuHome.tsx:199
+msgid "No matching stock items were found."
+msgstr "没有找到匹配的库存实物。"
+
+#. placeholder {0}: stockQuery.data.length
+#: src/pages/cangxu/CangxuHome.tsx:205
+msgid "{0} matching stock items (up to 25)"
+msgstr "找到 {0} 件匹配实物（最多显示 25 件）"
+
+#. placeholder {0}: item.pk
+#. placeholder {0}: line.stock_item
+#: src/pages/cangxu/CangxuHome.tsx:221
+#: src/pages/cangxu/MaterialIssuePanel.tsx:336
+#: src/pages/sales/ShipmentReceiptPanel.tsx:321
+msgid "Stock item {0}"
+msgstr "库存实物 {0}"
+
+#: src/pages/cangxu/CangxuHome.tsx:225
+msgid "Part code"
+msgstr "物料编码"
+
+#: src/pages/cangxu/CangxuHome.tsx:233
+msgid "Installed or unavailable"
+msgstr "已装机或当前不可用"
+
+#: src/pages/cangxu/CangxuHome.tsx:242
+msgid "Parent unit"
+msgstr "所属整机"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:216
+msgid "Material issued"
+msgstr "领料已记录"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:217
+msgid "The build line and stock history have been updated."
+msgstr "工单用料记录和库存历史已更新。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:237
+msgid "Issue failed"
+msgstr "领料失败"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:238
+msgid "The stock was not issued. Review the selected build line and available stock, then retry."
+msgstr "未能发料。请检查所选工单用料和可用库存后重试。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:267
+msgid "Material returned"
+msgstr "物料已退回"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:268
+msgid "The material is back in the selected internal location."
+msgstr "物料已退回所选内部库位。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:288
+msgid "Return failed"
+msgstr "退料失败"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:289
+msgid "The return was not recorded. Check the quantity and destination location, then retry."
+msgstr "未能记录退料。请检查数量和目标库位后重试。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:336
+#: src/pages/cangxu/MaterialIssuePanel.tsx:344
+msgid "No part code"
+msgstr "无物料编码"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:340
+#: src/pages/cangxu/MaterialIssuePanel.tsx:373
+msgid "Build order"
+msgstr "生产工单"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:344
+msgid "BOM material"
+msgstr "BOM物料"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:344
+#: src/pages/cangxu/MaterialIssuePanel.tsx:348
+msgid "Remaining"
+msgstr "剩余"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:359
+msgid "Consumable materials"
+msgstr "耗材领退料"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:361
+msgid "Issue material to a build order or return unused quantity to an internal stock location."
+msgstr "为生产工单登记领料，或将未使用的物料退回内部库位。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:366
+msgid "Issue material"
+msgstr "领料"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:367
+msgid "Return unused material"
+msgstr "退回未用物料"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:374
+msgid "Select an active build order"
+msgstr "选择进行中的生产工单"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:384
+msgid "No active build orders were found."
+msgstr "没有找到进行中的生产工单。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:388
+msgid "Build orders could not be loaded."
+msgstr "无法加载生产工单。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:393
+msgid "Consumable BOM line"
+msgstr "耗材BOM行"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:394
+msgid "Select a material required by the build"
+msgstr "选择工单所需物料"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:403
+msgid "No untracked consumable lines remain on this build."
+msgstr "此工单没有剩余的未追踪耗材需求。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:409
+msgid "Build materials could not be loaded."
+msgstr "无法加载工单物料。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:415
+msgid "Remaining BOM requirement"
+msgstr "BOM剩余需求"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:421
+msgid "Available stock"
+msgstr "可用库存"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:422
+msgid "Search by part code, serial number, or name"
+msgstr "按物料编码、序列号或名称搜索"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:435
+msgid "Enter at least two characters to search stock."
+msgstr "至少输入两个字符以搜索库存。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:436
+msgid "No available internal stock matched this search."
+msgstr "没有找到匹配的可用内部库存。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:440
+msgid "Stock search failed."
+msgstr "库存搜索失败。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:444
+msgid "Searching stock…"
+msgstr "正在搜索库存…"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:448
+msgid "Available quantity"
+msgstr "可用数量"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:453
+msgid "Issue quantity"
+msgstr "领料数量"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:474
+msgid "Reason or handoff note"
+msgstr "领料用途或交接备注"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:484
+msgid "Workflow unavailable"
+msgstr "流程暂不可用"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:485
+msgid "Build orders are unavailable. Check your access and refresh the page."
+msgstr "无法使用生产工单。请检查访问权限并刷新页面。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:499
+msgid "Confirm issue"
+msgstr "确认领料"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:509
+msgid "Original material issue"
+msgstr "原发料记录"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:510
+msgid "Select an issue with quantity remaining"
+msgstr "选择仍有可退数量的发料记录"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:519
+msgid "No material issues are awaiting return."
+msgstr "没有待退回的物料。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:523
+msgid "Material issue history could not be loaded."
+msgstr "无法加载发料记录。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:529
+msgid "Issued"
+msgstr "已发料"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:530
+msgid "Already returned"
+msgstr "已退回"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:531
+msgid "Can return"
+msgstr "可退数量"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:536
+msgid "Return quantity"
+msgstr "退料数量"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:553
+msgid "Return to location"
+msgstr "退回库位"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:554
+msgid "Select an internal stock location"
+msgstr "选择内部库位"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:568
+msgid "Internal locations could not be loaded."
+msgstr "无法加载内部库位。"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:574
+msgid "Return condition or note"
+msgstr "退料状态或备注"
+
+#: src/pages/cangxu/MaterialIssuePanel.tsx:593
+msgid "Confirm return"
+msgstr "确认退料"
 
 #: src/pages/company/CompanyDetail.tsx:103
 msgid "Company Details"
@@ -10531,75 +10852,79 @@ msgid "Shipping Address"
 msgstr "收货地址"
 
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:281
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:188
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:198
 #: src/tables/sales/SalesOrderShipmentTable.tsx:170
 #: src/tables/sales/SalesOrderShipmentTable.tsx:301
 msgid "Shipped"
 msgstr "已配送"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:81
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:83
 msgid "Shipment Details"
 msgstr "发货详情"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:132
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:238
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:109
+msgid "Customer Receipt"
+msgstr "客户签收"
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:142
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:248
 #: src/tables/sales/SalesOrderShipmentTable.tsx:97
 msgid "Edit Shipment"
 msgstr "编辑配送"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:140
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:257
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:150
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:267
 #: src/tables/sales/SalesOrderShipmentTable.tsx:89
 msgid "Cancel Shipment"
 msgstr "取消发货"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:170
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:180
 #: src/tables/part/PartPurchaseOrdersTable.tsx:131
 msgid "Pending"
 msgstr "待定"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:176
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:186
 #: src/tables/sales/SalesOrderShipmentTable.tsx:162
 #: src/tables/sales/SalesOrderShipmentTable.tsx:296
 msgid "Checked"
 msgstr "已核对"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:182
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:192
 msgid "Not Checked"
 msgstr "未核对"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:194
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:204
 #: src/tables/sales/SalesOrderShipmentTable.tsx:178
 #: src/tables/sales/SalesOrderShipmentTable.tsx:306
 #: src/tables/settings/EmailTable.tsx:31
 msgid "Delivered"
 msgstr "已送达"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:209
-msgid "Send Shipment"
-msgstr "发送货物"
-
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:211
 #~ msgid "Assigned Items"
 #~ msgstr "Assigned Items"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:233
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:219
+msgid "Send Shipment"
+msgstr "发送货物"
+
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:243
 msgid "Shipment Actions"
 msgstr "货运操作"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:242
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:252
 msgid "Check"
 msgstr "已核对"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:243
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:253
 msgid "Mark shipment as checked"
 msgstr "标记为已核对"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:249
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:259
 msgid "Uncheck"
 msgstr "未核对"
 
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:250
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:260
 msgid "Mark shipment as unchecked"
 msgstr "标记为未核对"
 
@@ -10632,6 +10957,185 @@ msgstr "未审查"
 #: src/tables/sales/SalesOrderShipmentTable.tsx:190
 msgid "Delivery Date"
 msgstr "送达日期"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:154
+msgid "Delivery difference closed"
+msgstr "交付差异已关闭"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:155
+msgid "The follow-up resolution was recorded."
+msgstr "后续处理结果已记录。"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:164
+msgid "Could not close delivery difference"
+msgstr "无法关闭交付差异"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:165
+msgid "Enter a resolution and check your sales order permission."
+msgstr "请填写处理结果，并确认拥有销售订单权限。"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:204
+msgid "Receipt completed"
+msgstr "签收已完成"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:204
+msgid "Partial receipt recorded"
+msgstr "部分签收已记录"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:205
+msgid "The receipt and any delivery differences were recorded. Stock balances were not changed."
+msgstr "签收信息及交付差异已记录，库存余额未作调整。"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:226
+msgid "Receipt was not confirmed"
+msgstr "签收状态未确认"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:227
+msgid "Keep this form open and retry. The same request key will prevent a duplicate receipt."
+msgstr "请保留此表单并重试。相同请求键可避免重复登记。"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:255
+msgid "Customer receipt"
+msgstr "客户签收"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:257
+msgid "Receipt finalized"
+msgstr "签收已结单"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:261
+msgid "Could not load package manifests"
+msgstr "无法加载装箱清单"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:262
+msgid "Check your sales order access and reload this page."
+msgstr "请检查销售订单权限后重新加载页面。"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:267
+msgid "No verified package manifest is available for this shipment."
+msgstr "此发货单没有已核验的装箱清单。"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:272
+msgid "All verified packages have a final receipt."
+msgstr "所有已核验包装均已完成签收。"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:278
+msgid "Verified package"
+msgstr "已核验包装"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:279
+msgid "Select a package to record receipt"
+msgstr "选择要登记签收的包装"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:294
+msgid "Could not load package contents"
+msgstr "无法加载包装内容"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:295
+msgid "Reload the shipment page and try again."
+msgstr "请重新加载发货页面后重试。"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:303
+msgid "Expected item"
+msgstr "预期物料"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:304
+msgid "Packed"
+msgstr "装箱数量"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:306
+msgid "Condition"
+msgstr "状态"
+
+#. placeholder {0}: line.stock_item
+#: src/pages/sales/ShipmentReceiptPanel.tsx:333
+msgid "Received quantity for item {0}"
+msgstr "物料 {0} 的实收数量"
+
+#. placeholder {0}: line.stock_item
+#: src/pages/sales/ShipmentReceiptPanel.tsx:346
+msgid "Condition for item {0}"
+msgstr "物料 {0} 的收货状态"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:348
+msgid "As expected"
+msgstr "与预期一致"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:349
+msgid "Short"
+msgstr "短缺"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:350
+msgid "Damaged"
+msgstr "到货损坏"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:353
+msgid "Wrong item"
+msgstr "错件"
+
+#. placeholder {0}: line.stock_item
+#: src/pages/sales/ShipmentReceiptPanel.tsx:367
+msgid "Notes for item {0}"
+msgstr "物料 {0} 的差异说明"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:368
+msgid "Required for a discrepancy"
+msgstr "有差异时必填"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:387
+msgid "Open delivery differences"
+msgstr "待处理交付差异"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:394
+msgid "Short received"
+msgstr "实收短缺"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:396
+msgid "Damaged on arrival"
+msgstr "到货损坏"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:397
+msgid "Unexpected item received"
+msgstr "收到错件"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:400
+msgid "Expected"
+msgstr "应收"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:410
+msgid "Resolution"
+msgstr "处理结果"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:431
+msgid "Close difference"
+msgstr "关闭差异"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:440
+msgid "Recipient"
+msgstr "签收人"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:448
+msgid "Receipt stage"
+msgstr "签收阶段"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:450
+msgid "Partial receipt"
+msgstr "部分签收"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:451
+msgid "Final receipt"
+msgstr "最终签收"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:461
+msgid "Receipt notes"
+msgstr "签收备注"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:477
+msgid "Finalize receipt"
+msgstr "完成签收"
+
+#: src/pages/sales/ShipmentReceiptPanel.tsx:477
+msgid "Record partial receipt"
+msgstr "登记部分签收"
 
 #: src/pages/stock/LocationDetail.tsx:124
 msgid "Location Details"
@@ -12001,14 +12505,14 @@ msgid "Import Parameters"
 msgstr "导入参数"
 
 #: src/tables/general/ParameterTable.tsx:161
-#: src/tables/general/ParametricDataTable.tsx:324
-#: src/tables/general/ParametricDataTable.tsx:455
+#: src/tables/general/ParametricDataTable.tsx:331
+#: src/tables/general/ParametricDataTable.tsx:462
 msgid "Add Parameter"
 msgstr "添加参数"
 
 #: src/tables/general/ParameterTable.tsx:172
 #: src/tables/general/ParameterTable.tsx:219
-#: src/tables/general/ParametricDataTable.tsx:348
+#: src/tables/general/ParametricDataTable.tsx:355
 msgid "Edit Parameter"
 msgstr "编辑参数"
 
@@ -14457,109 +14961,3 @@ msgstr "阅读文档"
 #: src/views/MobileAppView.tsx:42
 msgid "Ignore and continue to Desktop view"
 msgstr "忽略并继续到桌面视图"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Receiving and purchasing"
-msgstr "采购与收货"
-
-#: src/pages/cangxu/CangxuHome.tsx
-#: src/defaults/links.tsx
-msgid "Cangxu Workshop"
-msgstr "仓序工作台"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Scan barcode"
-msgstr "扫码"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Review purchase orders, expected stock, and received items."
-msgstr "查看采购订单、待收物料和已收货记录。"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Production and assembly"
-msgstr "生产与装配"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Open build orders, allocate components, and record finished units."
-msgstr "查看生产工单、分配物料并登记完工整机。"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Warehouse and stock"
-msgstr "仓库与库存"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Find stock, locations, and internal transfer orders."
-msgstr "查询库存、库位和内部调拨单。"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Delivery and returns"
-msgstr "交付与退货"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Review sales shipments, packing, and customer returns."
-msgstr "查看销售发货、装箱和客户退货。"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "AI server production and warehousing"
-msgstr "智算服务器生产与仓储"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Start common receiving, production, stock, and delivery work here. Search a serial number or part code to open its InvenTree stock history."
-msgstr "从这里进入常用的收货、生产、库存和交付流程。也可搜索序列号或物料编码，查看 InvenTree 中的实物库存履历。"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Common workflows"
-msgstr "常用流程"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Open workflow"
-msgstr "进入流程"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Trace a part or unit"
-msgstr "追溯物料或整机"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Serial number or part code"
-msgstr "序列号或物料编码"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Enter a serial number, internal part code, or name"
-msgstr "输入序列号、内部物料编码或名称"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Search stock history"
-msgstr "查询实物履历"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Search failed"
-msgstr "查询失败"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "The stock search could not be completed. Check your access and try again."
-msgstr "无法完成库存查询。请检查访问权限后重试。"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "No matching stock items were found."
-msgstr "没有找到匹配的库存实物。"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "{0} matching stock items (up to 25)"
-msgstr "找到 {0} 件匹配实物（最多显示 25 件）"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Stock item {0}"
-msgstr "库存实物 {0}"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Part code"
-msgstr "物料编码"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Installed or unavailable"
-msgstr "已装机或当前不可用"
-
-#: src/pages/cangxu/CangxuHome.tsx
-msgid "Parent unit"
-msgstr "所属整机"
-

@@ -30,6 +30,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { api } from '../../App';
 import PageTitle from '../../components/nav/PageTitle';
+import MaterialIssuePanel from './MaterialIssuePanel';
 
 type StockSearchResult = {
   pk: number;
@@ -153,6 +154,13 @@ export default function CangxuHome() {
             </Card>
           ))}
         </SimpleGrid>
+      </section>
+
+      <section>
+        <Title order={4} mb='sm'>
+          {t`Material issue and return`}
+        </Title>
+        <MaterialIssuePanel />
       </section>
 
       <section>

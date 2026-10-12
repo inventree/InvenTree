@@ -1,7 +1,12 @@
 """Load clearly synthetic server manufacturing data for local demonstrations."""
 
+import hashlib
+import json
+import uuid
+from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 
+from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.db.models import F, Sum
@@ -28,6 +33,9 @@ from cangxu.models import (
     ServiceCaseLine,
     ShipmentManifest,
     ShipmentManifestLine,
+    ShipmentReceipt,
+    ShipmentReceiptException,
+    ShipmentReceiptLine,
     UnitConfiguration,
 )
 from company.models import Company, SupplierPart
@@ -40,15 +48,174 @@ from order.models import (
     SalesOrderShipment,
 )
 from order.status_codes import PurchaseOrderStatus
+from order.tasks import complete_sales_order_shipment
 from part.models import BomItem, Part, PartCategory
 from stock.models import StockItem, StockLocation
 from stock.status_codes import StockStatus
+
+# Profile values are aggregated from the supplied workbooks. Keep only the
+# row counts and coarse delivery ratio here; never load source labels, IDs,
+# people, customers, serials, descriptions, or transaction rows into the seed.
+DEMO_DELIVERY_CYCLE = 5
+DEMO_CUSTOMER_RETURN_ROWS = 16
+DEMO_PRODUCTION_ISSUE_ROWS = 33
 
 
 class Command(BaseCommand):
     """Create an idempotent, synthetic product catalog and traceability sample."""
 
     help = 'Create fictional Cangxu server manufacturing demo records'
+
+    @staticmethod
+    def verify_synthetic_manifest(manifest):
+        """Freeze the synthetic package contents before its native shipment."""
+        if manifest.checked_at:
+            return
+
+        # Demo configurations are deliberately unapproved. Preserve the scanned
+        # physical contents without claiming an engineering release.
+        manifest.configuration = None
+        lines = list(manifest.lines.select_related('stock_item', 'stock_item__part'))
+        snapshot = {
+            'shipment': manifest.shipment_id,
+            'package_code': manifest.package_code,
+            'configuration': None,
+            'lines': [
+                {
+                    'stock_item': line.stock_item_id,
+                    'part': line.stock_item.part_id,
+                    'part_name': line.stock_item.part.name,
+                    'serial': line.stock_item.serial,
+                    'batch': line.stock_item.batch,
+                    'quantity': str(line.quantity),
+                    'role': line.item_role,
+                }
+                for line in sorted(lines, key=lambda value: value.stock_item_id)
+            ],
+        }
+        encoded = json.dumps(
+            snapshot, ensure_ascii=False, sort_keys=True, separators=(',', ':')
+        )
+        manifest.contents_snapshot = snapshot
+        manifest.content_hash = hashlib.sha256(encoded.encode('utf-8')).hexdigest()
+        manifest.checked_at = timezone.now()
+        manifest.save(
+            update_fields=[
+                'configuration',
+                'contents_snapshot',
+                'content_hash',
+                'checked_at',
+            ]
+        )
+
+    @staticmethod
+    def record_synthetic_final_receipt(manifest, received_at, variation_index):
+        """Record a final fictional receipt and deterministic discrepancy sample."""
+        if manifest.signed_at:
+            return
+
+        manifest_lines = list(manifest.lines.order_by('pk'))
+        if not manifest_lines:
+            return
+
+        # The source workbook contains signed and incomplete delivery records.
+        # Add a small, clearly labeled variance sample for exception workflow QA.
+        discrepancy = (variation_index // 20) % 3 if variation_index % 20 == 0 else None
+        discrepancy_by_index = {
+            0: ShipmentReceiptLine.Condition.SHORT,
+            1: ShipmentReceiptLine.Condition.DAMAGED,
+            2: ShipmentReceiptLine.Condition.WRONG_ITEM,
+        }
+        changed_line = (
+            manifest_lines[0] if discrepancy in discrepancy_by_index else None
+        )
+        notes = 'Synthetic receipt fixture; not an enterprise delivery record.'
+        request_lines = []
+        for manifest_line in manifest_lines:
+            condition = (
+                discrepancy_by_index[discrepancy]
+                if manifest_line == changed_line
+                else ShipmentReceiptLine.Condition.OK
+            )
+            quantity = (
+                Decimal('0')
+                if condition == ShipmentReceiptLine.Condition.SHORT
+                else manifest_line.quantity
+            )
+            line_notes = (
+                'Synthetic workflow variance; investigate using the demo case.'
+                if condition != ShipmentReceiptLine.Condition.OK
+                else ''
+            )
+            request_lines.append({
+                'manifest_line': manifest_line.pk,
+                'quantity_received': str(quantity),
+                'condition': condition,
+                'notes': line_notes,
+            })
+
+        key = uuid.uuid5(uuid.NAMESPACE_URL, f'cangxu-demo-receipt:{manifest.pk}')
+        request_hash_payload = {
+            'manifest': manifest.pk,
+            'recipient_name': 'Synthetic recipient',
+            'is_final': True,
+            'notes': notes,
+            'lines': sorted(request_lines, key=lambda line: line['manifest_line']),
+        }
+        encoded = json.dumps(
+            request_hash_payload, sort_keys=True, separators=(',', ':')
+        )
+        receipt, created = ShipmentReceipt.objects.get_or_create(
+            idempotency_key=key,
+            defaults={
+                'manifest': manifest,
+                'request_hash': hashlib.sha256(encoded.encode('utf-8')).hexdigest(),
+                'recipient_name': 'Synthetic recipient',
+                'is_final': True,
+                'notes': notes,
+                'received_at': received_at,
+            },
+        )
+        expected_hash = hashlib.sha256(encoded.encode('utf-8')).hexdigest()
+        if not created and (
+            receipt.manifest_id != manifest.pk or receipt.request_hash != expected_hash
+        ):
+            raise ValueError(
+                'Synthetic receipt idempotency key does not match payload.'
+            )
+
+        for manifest_line, request_line in zip(
+            manifest_lines, request_lines, strict=True
+        ):
+            receipt_line, line_created = ShipmentReceiptLine.objects.get_or_create(
+                receipt=receipt,
+                manifest_line=manifest_line,
+                defaults={
+                    'quantity_received': request_line['quantity_received'],
+                    'condition': request_line['condition'],
+                    'notes': request_line['notes'],
+                },
+            )
+            condition = request_line['condition']
+            if line_created and condition != ShipmentReceiptLine.Condition.OK:
+                kind = {
+                    ShipmentReceiptLine.Condition.SHORT: ShipmentReceiptException.Kind.SHORT,
+                    ShipmentReceiptLine.Condition.DAMAGED: ShipmentReceiptException.Kind.DAMAGED,
+                    ShipmentReceiptLine.Condition.WRONG_ITEM: ShipmentReceiptException.Kind.WRONG_ITEM,
+                }[condition]
+                ShipmentReceiptException.objects.get_or_create(
+                    receipt_line=receipt_line,
+                    defaults={
+                        'kind': kind,
+                        'expected_quantity': manifest_line.quantity,
+                        'received_quantity': request_line['quantity_received'],
+                        'notes': request_line['notes'],
+                    },
+                )
+
+        manifest.signed_at = received_at
+        manifest.receipt_notes = notes
+        manifest.save(update_fields=['signed_at', 'receipt_notes'])
 
     def add_arguments(self, parser):
         """Allow synthetic fixture volume to grow deterministically."""
@@ -73,7 +240,15 @@ class Command(BaseCommand):
         production_batch = 'CX-DEMO-PRODUCTION-202610'
         receipt_batch = 'CX-DEMO-RECEIPT-202610'
         legacy_receipt_batch = 'CX-DEMO-LOT-202610'
-        unit_ipns = {'CX-DEMO-SRV-001', 'CX-DEMO-BOX-001', 'CX-DEMO-WS-001'}
+        unit_ipns = {
+            'CX-DEMO-SRV-001',
+            'CX-DEMO-BOX-001',
+            'CX-DEMO-WS-001',
+            'CX-DEMO-SRV-K20-001',
+            'CX-DEMO-SRV-K10-001',
+            'CX-DEMO-WS-K2-001',
+            'CX-DEMO-WS-K4-001',
+        }
         category, _ = PartCategory.objects.get_or_create(
             name='CX Demo 智算服务器', parent=None
         )
@@ -101,18 +276,14 @@ class Command(BaseCommand):
             defaults={'is_supplier': True, 'description': 'Synthetic demo supplier'},
         )
 
-        # These fictional companies demonstrate distinct chip-vendor roles.
-        # They do not claim real products, supply relationships, or compatibility.
+        # Public manufacturer identities exercise separate chip-vendor roles.
+        # They do not claim Cangxu ownership, supply, or compatibility.
         vendor_placeholders = {}
-        for name in (
-            'CX Demo 虚构厂商-博通类别',
-            'CX Demo 虚构厂商-联瑞类别',
-            'CX Demo 虚构厂商-其他类别',
-        ):
+        for name in ('Broadcom', 'Microchip Technology', 'Astera Labs'):
             vendor_placeholders[name], _ = Company.objects.get_or_create(
                 name=name,
                 defaults={
-                    'description': 'Fictional role fixture only; no real product, model, supply, protocol, or compatibility claim.'
+                    'description': 'Public manufacturer reference for synthetic demo profiles only; no Cangxu ownership, supply, or compatibility claim.'
                 },
             )
 
@@ -131,12 +302,18 @@ class Command(BaseCommand):
                 },
             )
         linkreal_board_role, _ = Company.objects.get_or_create(
-            name='CX Demo 虚构板卡制造商-联瑞类别',
+            name='深圳市联瑞电子有限公司 (LR-LINK / Linkreal)',
             defaults={
                 'description': (
-                    'Fictional demo role association only; no real Linkreal product, '
-                    'model, supply, or compatibility claim.'
+                    'Public manufacturer reference for synthetic demo profiles only; '
+                    'no Cangxu ownership, supply, or compatibility claim.'
                 )
+            },
+        )
+        linkreal_brand, _ = Company.objects.get_or_create(
+            name='LR-LINK',
+            defaults={
+                'description': 'Public brand reference used by synthetic demo profiles only.'
             },
         )
 
@@ -230,6 +407,31 @@ class Command(BaseCommand):
             ('CX-DEMO-BOX-001', 'GPU BOX 整机(演示)', '整机', True, 2),
             ('CX-DEMO-WS-001', 'GPU 工作站(演示)', '整机', True, 2),
             ('CX-DEMO-SRV-001', '智算服务器整机(演示)', '整机', True, 3),
+            ('CX-DEMO-SRV-K20-001', 'K20 服务器系列(虚构装机样例)', '整机', True, 0),
+            ('CX-DEMO-SRV-K10-001', 'K10 服务器系列(虚构装机样例)', '整机', True, 0),
+            ('CX-DEMO-WS-K2-001', 'K2 工作站系列(虚构装机样例)', '整机', True, 0),
+            ('CX-DEMO-WS-K4-001', 'K4 工作站系列(虚构装机样例)', '整机', True, 0),
+            (
+                'CX-DEMO-PEX89048-001',
+                'Broadcom PEX89048 PCIe Gen5 交换芯片(公开型号示例)',
+                '交换与网络',
+                False,
+                0,
+            ),
+            (
+                'CX-DEMO-PM50100B1-FEI-001',
+                'Microchip Switchtec PFX Gen5 PM50100B1-FEI(公开型号示例)',
+                '交换与网络',
+                False,
+                0,
+            ),
+            (
+                'CX-DEMO-LRSV9500-4I-001',
+                '联瑞 LRSV9500-4I PCIe Gen5 MCIO 扩展卡(公开型号示例)',
+                '交换与网络',
+                True,
+                0,
+            ),
         ]
 
         parts = {}
@@ -262,8 +464,9 @@ class Command(BaseCommand):
             )
 
         # Populate revisioned, explicitly unapproved engineering examples.
-        # Vendor-role links are fictional fixtures and never assert real products
-        # or compatibility. All numeric/product specifications remain pending.
+        # Public product references are sourced; Cangxu compatibility and
+        # purchasing/stock status remain unconfirmed. The new catalog entries
+        # are synthetic examples and have no demo stock.
         hardware_profiles = [
             (
                 'CX-DEMO-GPU-001',
@@ -297,7 +500,7 @@ class Command(BaseCommand):
                 HardwareProfileRevision.Kind.PCIE_SWITCH,
                 HardwareProfileRevision.Protocol.PCIE,
                 HardwareProfileRevision.FormFactor.SWITCH_BOARD,
-                'CX Demo 虚构厂商-博通类别',
+                'Broadcom',
                 'board',
                 'PCIe',
             ),
@@ -306,7 +509,7 @@ class Command(BaseCommand):
                 HardwareProfileRevision.Kind.PCIE_SWITCH,
                 HardwareProfileRevision.Protocol.PCIE,
                 HardwareProfileRevision.FormFactor.SWITCH_BOARD,
-                'CX Demo 虚构厂商-其他类别',
+                None,
                 'linkreal',
                 'PCIe',
             ),
@@ -315,9 +518,36 @@ class Command(BaseCommand):
                 HardwareProfileRevision.Kind.PCIE_SWITCH,
                 HardwareProfileRevision.Protocol.PCIE,
                 HardwareProfileRevision.FormFactor.SWITCH_BOARD,
-                'CX Demo 虚构厂商-其他类别',
+                'Microchip Technology',
                 'board',
                 'PCIe',
+            ),
+            (
+                'CX-DEMO-PEX89048-001',
+                HardwareProfileRevision.Kind.PCIE_SWITCH,
+                HardwareProfileRevision.Protocol.PCIE,
+                HardwareProfileRevision.FormFactor.CHIP,
+                'Broadcom',
+                None,
+                None,
+            ),
+            (
+                'CX-DEMO-PM50100B1-FEI-001',
+                HardwareProfileRevision.Kind.PCIE_SWITCH,
+                HardwareProfileRevision.Protocol.PCIE,
+                HardwareProfileRevision.FormFactor.CHIP,
+                'Microchip Technology',
+                None,
+                None,
+            ),
+            (
+                'CX-DEMO-LRSV9500-4I-001',
+                HardwareProfileRevision.Kind.PCIE_SWITCH,
+                HardwareProfileRevision.Protocol.PCIE,
+                HardwareProfileRevision.FormFactor.PCIE_CARD,
+                'Broadcom',
+                'linkreal',
+                'MCIO',
             ),
             (
                 'CX-DEMO-NVLINK-001',
@@ -447,10 +677,60 @@ class Command(BaseCommand):
                         'parameters': {},
                     },
                     'source_reference': (
-                        'CX-DEMO fixture only; not an approved engineering source.'
+                        {
+                            'CX-DEMO-PEX89048-001': 'https://www.broadcom.com/products/pcie-switches-retimers/expressfabric/gen5/pex89048',
+                            'CX-DEMO-PM50100B1-FEI-001': 'https://ww1.microchip.com/downloads/aemDocuments/documents/DCS/ProductDocuments/Brochures/00003776D.pdf',
+                            'CX-DEMO-LRSV9500-4I-001': 'https://www.lr-link.com.cn/productshow/LRSV9500-4I.html',
+                        }.get(
+                            ipn,
+                            'CX-DEMO fixture only; not an approved engineering source.',
+                        )
                     ),
                 },
             )
+            desired_chip_vendor = vendor_placeholders.get(chip_vendor_name)
+            desired_board_manufacturer = (
+                linkreal_board_role
+                if board_role == 'linkreal'
+                else process_partners.get(board_role)
+            )
+            if profile.chip_vendor_id != getattr(
+                desired_chip_vendor, 'pk', None
+            ) or profile.board_manufacturer_id != getattr(
+                desired_board_manufacturer, 'pk', None
+            ):
+                profile.chip_vendor = desired_chip_vendor
+                profile.board_manufacturer = desired_board_manufacturer
+                profile.save(update_fields=['chip_vendor', 'board_manufacturer'])
+            sourced_specs = {
+                'CX-DEMO-PEX89048-001': {
+                    'manufacturer_model': 'PEX89048',
+                    'generation': 'PCIe 5.0',
+                    'lanes': 48,
+                    'demo_only': True,
+                    'engineering_status': 'Public source reference; internal engineering review required',
+                },
+                'CX-DEMO-PM50100B1-FEI-001': {
+                    'manufacturer_model': 'PM50100B1-FEI',
+                    'family': 'Switchtec PFX 100xG5',
+                    'generation': 'PCIe 5.0',
+                    'lanes': 100,
+                    'demo_only': True,
+                    'engineering_status': 'Public source reference; internal engineering review required',
+                },
+                'CX-DEMO-LRSV9500-4I-001': {
+                    'manufacturer_model': 'LRSV9500-4I',
+                    'controller': 'Broadcom PEX89048',
+                    'generation': 'PCIe 5.0',
+                    'host_link': 'x16',
+                    'connectors': '4 x MCIO 8i',
+                    'demo_only': True,
+                    'engineering_status': 'Public source reference; internal engineering review required',
+                },
+            }.get(ipn)
+            if sourced_specs and profile.specifications != sourced_specs:
+                profile.specifications = sourced_specs
+                profile.save(update_fields=['specifications'])
             if connector_family in {'PCIe', 'NVLink', 'Ethernet', 'InfiniBand'}:
                 HardwarePortDefinition.objects.get_or_create(
                     profile=profile,
@@ -553,6 +833,44 @@ class Command(BaseCommand):
                 ('CX-DEMO-RJ45-001', 'MGMT-01'),
                 ('CX-DEMO-FIBER-001', 'OPTICAL-LINK-01'),
             ],
+            # These family labels were taken from workbook structure only.
+            # Their component lists are generic workflow fixtures, not BOMs.
+            'CX-DEMO-SRV-K20-001': [
+                ('CX-DEMO-CPU-001', 'CPU0'),
+                ('CX-DEMO-DIMM-001', 'DIMM-A1'),
+                ('CX-DEMO-GPU-001', 'GPU-BAY-01'),
+                ('CX-DEMO-PCIESW-BC-001', 'PCIE-SWITCH-01'),
+                ('CX-DEMO-MCIO-001', 'INTERNAL-LINK-01'),
+                ('CX-DEMO-GPUPWR-001', 'GPU-PWR-01'),
+                ('CX-DEMO-PSU-001', 'PSU-01'),
+            ],
+            'CX-DEMO-SRV-K10-001': [
+                ('CX-DEMO-CPU-001', 'CPU0'),
+                ('CX-DEMO-DIMM-001', 'DIMM-A1'),
+                ('CX-DEMO-GPU-001', 'GPU-BAY-01'),
+                ('CX-DEMO-PCIESW-LR-001', 'PCIE-SWITCH-01'),
+                ('CX-DEMO-NIC-001', 'NIC-01'),
+                ('CX-DEMO-GPUPWR-001', 'GPU-PWR-01'),
+                ('CX-DEMO-PSU-001', 'PSU-01'),
+            ],
+            'CX-DEMO-WS-K2-001': [
+                ('CX-DEMO-CPU-001', 'CPU0'),
+                ('CX-DEMO-DIMM-001', 'DIMM-A1'),
+                ('CX-DEMO-GPU-001', 'GPU-BAY-01'),
+                ('CX-DEMO-RETIMER-001', 'PCIE-RISER-01'),
+                ('CX-DEMO-NVME-001', 'NVME-01'),
+                ('CX-DEMO-GPUPWR-001', 'GPU-PWR-01'),
+                ('CX-DEMO-RJ45-001', 'MGMT-01'),
+            ],
+            'CX-DEMO-WS-K4-001': [
+                ('CX-DEMO-CPU-001', 'CPU0'),
+                ('CX-DEMO-DIMM-001', 'DIMM-A1'),
+                ('CX-DEMO-GPU-001', 'GPU-BAY-01'),
+                ('CX-DEMO-PCIESW-OTHER-001', 'PCIE-SWITCH-01'),
+                ('CX-DEMO-NVME-001', 'NVME-01'),
+                ('CX-DEMO-GPUPWR-001', 'GPU-PWR-01'),
+                ('CX-DEMO-FIBER-001', 'OPTICAL-LINK-01'),
+            ],
         }
 
         units = []
@@ -560,20 +878,36 @@ class Command(BaseCommand):
             ('CX-DEMO-SRV-001', 20 * scale_factor),
             ('CX-DEMO-BOX-001', 8 * scale_factor),
             ('CX-DEMO-WS-001', 8 * scale_factor),
+            ('CX-DEMO-SRV-K20-001', scale_factor),
+            ('CX-DEMO-SRV-K10-001', scale_factor),
+            ('CX-DEMO-WS-K2-001', scale_factor),
+            ('CX-DEMO-WS-K4-001', scale_factor),
         ):
             part = parts[ipn]
             for index in range(1, count + 1):
-                serial = f'CX-DEMO-{ipn.rsplit("-", 1)[-1]}-{index:04d}'
-                unit, _ = StockItem.objects.get_or_create(
-                    part=part,
-                    serial=serial,
-                    defaults={
-                        'location': warehouse,
-                        'quantity': 1,
-                        'batch': production_batch,
-                        'status': 10,
-                    },
-                )
+                serial = f'{ipn}-{index:04d}'
+                unit = StockItem.objects.filter(part=part, serial=serial).first()
+                if unit is None:
+                    legacy_serial = f'CX-DEMO-{ipn.rsplit("-", 1)[-1]}-{index:04d}'
+                    unit = StockItem.objects.filter(
+                        part=part, serial=legacy_serial
+                    ).first()
+                    if unit:
+                        # Earlier seeds shortened the unit IPN, which collides
+                        # across product families when serials are globally unique.
+                        unit.serial = serial
+                        unit.save(update_fields=['serial'])
+                if unit is None:
+                    unit, _ = StockItem.objects.get_or_create(
+                        part=part,
+                        serial=serial,
+                        defaults={
+                            'location': warehouse,
+                            'quantity': 1,
+                            'batch': production_batch,
+                            'status': 10,
+                        },
+                    )
                 item_specs = list(assemblies[ipn])
                 if ipn == 'CX-DEMO-SRV-001' and index > 2:
                     switch_parts = (
@@ -874,13 +1208,6 @@ class Command(BaseCommand):
             lot__part=F('stock_item__part'), lot__code=F('stock_item__batch')
         ).delete()
 
-        for placeholder in vendor_placeholders.values():
-            placeholder.description = (
-                'Synthetic demo placeholder; identity, product model, protocol, '
-                'and role must be confirmed from approved engineering records.'
-            )
-            placeholder.save(update_fields=['description'])
-
         # Retire the earlier single-lot demo shape and rebuild its links using
         # explicit source, opening-stock, and production batches.
         old_lots = ManufacturingLot.objects.filter(
@@ -901,15 +1228,32 @@ class Command(BaseCommand):
             'CX-DEMO-PCIESW-BC-001',
             'CX-DEMO-PCIESW-LR-001',
             'CX-DEMO-PCIESW-OTHER-001',
+            'CX-DEMO-LRSV9500-4I-001',
             'CX-DEMO-NVLINK-001',
             'CX-DEMO-RETIMER-001',
             'CX-DEMO-PDB-001',
         }
         chip_vendor_by_ipn = {
-            'CX-DEMO-PCIESW-BC-001': 'CX Demo 虚构厂商-博通类别',
-            'CX-DEMO-PCIESW-LR-001': 'CX Demo 虚构厂商-联瑞类别',
-            'CX-DEMO-PCIESW-OTHER-001': 'CX Demo 虚构厂商-其他类别',
+            'CX-DEMO-PCIESW-BC-001': 'Broadcom',
+            'CX-DEMO-PCIESW-OTHER-001': 'Microchip Technology',
+            'CX-DEMO-PEX89048-001': 'Broadcom',
+            'CX-DEMO-PM50100B1-FEI-001': 'Microchip Technology',
+            'CX-DEMO-LRSV9500-4I-001': 'Broadcom',
         }
+        ManufacturingLotPartner.objects.filter(
+            lot__part__IPN__startswith='CX-DEMO-',
+            role=ManufacturingLotPartner.Role.CHIP_VENDOR,
+            company__name__in=[
+                'CX Demo 虚构厂商-博通类别',
+                'CX Demo 虚构厂商-联瑞类别',
+                'CX Demo 虚构厂商-其他类别',
+            ],
+        ).delete()
+        ManufacturingLotPartner.objects.filter(
+            lot__part__IPN__startswith='CX-DEMO-',
+            role=ManufacturingLotPartner.Role.BOARD_MANUFACTURER,
+            company__name='CX Demo 虚构板卡制造商-联瑞类别',
+        ).delete()
         for ipn, part in parts.items():
             batch_codes = {opening_batch}
             if ipn in unit_ipns:
@@ -949,19 +1293,37 @@ class Command(BaseCommand):
                     for key, role in (
                         ('pcb', ManufacturingLotPartner.Role.PCB),
                         ('smt', ManufacturingLotPartner.Role.SMT),
-                        ('board', ManufacturingLotPartner.Role.BOARD_MANUFACTURER),
-                        ('brand', ManufacturingLotPartner.Role.BOARD_BRAND),
                     ):
                         ManufacturingLotPartner.objects.get_or_create(
                             lot=lot, company=process_partners[key], role=role
                         )
-                    chip_vendor_name = chip_vendor_by_ipn.get(ipn)
-                    if chip_vendor_name:
-                        ManufacturingLotPartner.objects.get_or_create(
-                            lot=lot,
-                            company=vendor_placeholders[chip_vendor_name],
-                            role=ManufacturingLotPartner.Role.CHIP_VENDOR,
-                        )
+                    board_manufacturer = (
+                        linkreal_board_role
+                        if ipn == 'CX-DEMO-LRSV9500-4I-001'
+                        else process_partners['board']
+                    )
+                    ManufacturingLotPartner.objects.get_or_create(
+                        lot=lot,
+                        company=board_manufacturer,
+                        role=ManufacturingLotPartner.Role.BOARD_MANUFACTURER,
+                    )
+                    board_brand = (
+                        linkreal_brand
+                        if ipn == 'CX-DEMO-LRSV9500-4I-001'
+                        else process_partners['brand']
+                    )
+                    ManufacturingLotPartner.objects.get_or_create(
+                        lot=lot,
+                        company=board_brand,
+                        role=ManufacturingLotPartner.Role.BOARD_BRAND,
+                    )
+                chip_vendor_name = chip_vendor_by_ipn.get(ipn)
+                if chip_vendor_name:
+                    ManufacturingLotPartner.objects.get_or_create(
+                        lot=lot,
+                        company=vendor_placeholders[chip_vendor_name],
+                        role=ManufacturingLotPartner.Role.CHIP_VENDOR,
+                    )
                 if ipn in unit_ipns:
                     ManufacturingLotPartner.objects.get_or_create(
                         lot=lot,
@@ -1004,6 +1366,26 @@ class Command(BaseCommand):
                 'CX-DEMO-SO-WS-0001',
                 'Synthetic workstation split shipments.',
             ),
+            (
+                'CX-DEMO-SRV-K20-001',
+                'CX-DEMO-SO-K20-0001',
+                'Synthetic K20-family server workflow sample; not an approved BOM.',
+            ),
+            (
+                'CX-DEMO-SRV-K10-001',
+                'CX-DEMO-SO-K10-0001',
+                'Synthetic K10-family server workflow sample; not an approved BOM.',
+            ),
+            (
+                'CX-DEMO-WS-K2-001',
+                'CX-DEMO-SO-K2-0001',
+                'Synthetic K2-family workstation workflow sample; not an approved BOM.',
+            ),
+            (
+                'CX-DEMO-WS-K4-001',
+                'CX-DEMO-SO-K4-0001',
+                'Synthetic K4-family workstation workflow sample; not an approved BOM.',
+            ),
         ):
             grouped_units = [
                 record[0] for record in units if record[0].part_id == parts[ipn].pk
@@ -1024,6 +1406,7 @@ class Command(BaseCommand):
             sales_groups.append((ipn, order, sales_line, grouped_units))
 
         shipment_count = 0
+        delivered_samples = []
         for ipn, order, sales_line, grouped_units in sales_groups:
             short_name = ipn.removeprefix('CX-DEMO-').split('-')[0]
             for shipment_index, unit in enumerate(grouped_units, 1):
@@ -1064,6 +1447,39 @@ class Command(BaseCommand):
                         stock_item=component,
                         defaults={'quantity': 1, 'item_role': '装机配件'},
                     )
+                # The workbook has a mix of shipped, pending, and unspecified
+                # delivery rows. Keep roughly four fifths as completed samples
+                # and retain pending allocations for the remaining workflow.
+                if shipment_index % DEMO_DELIVERY_CYCLE != 0:
+                    self.verify_synthetic_manifest(manifest)
+                    shipment.refresh_from_db()
+                    if not shipment.shipment_date and shipment.check_can_complete(
+                        raise_error=False
+                    ):
+                        shipped_date = date(2025, 1, 1) + timedelta(
+                            days=(shipment.pk * 29) % 580
+                        )
+                        delivered_date = shipped_date + timedelta(
+                            days=(shipment.pk % 6) + 1
+                        )
+                        complete_sales_order_shipment(
+                            shipment.pk,
+                            None,
+                            shipped_date.isoformat(),
+                            delivery_date=delivered_date.isoformat(),
+                        )
+                        shipment.refresh_from_db()
+                    if shipment.shipment_date:
+                        received_at = datetime.combine(
+                            shipment.delivery_date or shipment.shipment_date,
+                            time(hour=12),
+                        )
+                        if settings.USE_TZ:
+                            received_at = timezone.make_aware(received_at)
+                        self.record_synthetic_final_receipt(
+                            manifest, received_at, shipment_count
+                        )
+                        delivered_samples.append((unit, shipment))
                 shipment_count += 1
 
         service_item_ipns = [
@@ -1076,7 +1492,7 @@ class Command(BaseCommand):
             'CX-DEMO-X16-ADAPTER-001',
             'CX-DEMO-MIDPLANE-001',
         ]
-        for case_index in range(1, 16 * scale_factor + 1):
+        for case_index in range(1, DEMO_CUSTOMER_RETURN_ROWS * scale_factor + 1):
             repair = case_index % 2 == 1
             case, _ = ServiceCase.objects.get_or_create(
                 reference=f'CX-DEMO-RMA-{case_index:04d}',
@@ -1124,6 +1540,62 @@ class Command(BaseCommand):
                 },
             )
 
+        # The after-sales workbook has a separate row set from the open supplier
+        # repair/internal backlog. Expand that shape into customer-return cases
+        # linked to a shipped synthetic unit and its native source shipment.
+        customer_return_count = DEMO_CUSTOMER_RETURN_ROWS * scale_factor
+        if len(delivered_samples) < customer_return_count:
+            raise CommandError(
+                'Not enough completed synthetic shipments to seed customer returns.'
+            )
+        for case_index, (unit, shipment) in enumerate(
+            delivered_samples[:customer_return_count], 1
+        ):
+            case, _ = ServiceCase.objects.get_or_create(
+                reference=f'CX-DEMO-CUST-RMA-{case_index:05d}',
+                defaults={
+                    'kind': ServiceCase.Kind.CUSTOMER_RETURN,
+                    'customer': customer,
+                    'source_shipment': shipment,
+                    'unit': unit,
+                    'description': (
+                        'Synthetic customer-return record derived from workbook '
+                        'row shape; no real customer, SN, failure, or outcome.'
+                    ),
+                },
+            )
+            if (
+                case.kind != ServiceCase.Kind.CUSTOMER_RETURN
+                or case.customer_id != customer.pk
+                or case.source_shipment_id != shipment.pk
+                or case.unit_id != unit.pk
+            ):
+                case.kind = ServiceCase.Kind.CUSTOMER_RETURN
+                case.customer = customer
+                case.supplier = None
+                case.source_shipment = shipment
+                case.unit = unit
+                case.save(
+                    update_fields=[
+                        'kind',
+                        'customer',
+                        'supplier',
+                        'source_shipment',
+                        'unit',
+                    ]
+                )
+            ServiceCaseLine.objects.get_or_create(
+                case=case,
+                stock_item=unit,
+                defaults={
+                    'quantity': 1,
+                    'fault_description': (
+                        'Synthetic return intake pending; physical custody and '
+                        'inspection have not been recorded.'
+                    ),
+                },
+            )
+
         first_unit = units[0][0]
         issue, _ = QualityIssue.objects.get_or_create(
             reference='CX-DEMO-QA-0001',
@@ -1144,6 +1616,88 @@ class Command(BaseCommand):
             },
         )
 
+        # The production workbook contains a separate issue log. Expand its row
+        # shape into synthetic quality observations without copying descriptions,
+        # causes, operators, dates, or source references.
+        unit_ids = [unit.pk for unit, _specs, _index in units]
+        components_by_unit = {}
+        for component in (
+            StockItem.objects
+            .filter(belongs_to_id__in=unit_ids)
+            .select_related('part')
+            .order_by('pk')
+        ):
+            components_by_unit.setdefault(component.belongs_to_id, []).append(component)
+        issue_states = (
+            QualityIssue.State.OPEN,
+            QualityIssue.State.INVESTIGATING,
+            QualityIssue.State.REWORK,
+            QualityIssue.State.VERIFY,
+            QualityIssue.State.CLOSED,
+        )
+        issue_titles = (
+            'Synthetic visual inspection follow-up',
+            'Synthetic cable routing recheck',
+            'Synthetic functional test observation',
+            'Synthetic board fit review',
+        )
+        issue_count = DEMO_PRODUCTION_ISSUE_ROWS * scale_factor
+        now = timezone.now()
+        for issue_index in range(1, issue_count + 1):
+            unit = units[(issue_index - 1) % len(units)][0]
+            unit_components = components_by_unit.get(unit.pk, [])
+            component = (
+                unit_components[(issue_index - 1) % len(unit_components)]
+                if unit_components
+                else None
+            )
+            state = issue_states[(issue_index - 1) % len(issue_states)]
+            detected_at = now - timedelta(days=(issue_index * 7) % 365)
+            issue, _ = QualityIssue.objects.get_or_create(
+                reference=f'CX-DEMO-QA-SRC-{issue_index:05d}',
+                defaults={
+                    'unit': unit,
+                    'component': component,
+                    'title': issue_titles[(issue_index - 1) % len(issue_titles)],
+                    'description': (
+                        'Synthetic production issue profile; no source defect, '
+                        'employee, customer, or disposition is represented.'
+                    ),
+                    'severity': list(QualityIssue.Severity)[
+                        (issue_index - 1) % len(QualityIssue.Severity)
+                    ],
+                    'state': state,
+                    'containment': 'Synthetic demo containment; validate locally.',
+                    'detected_at': detected_at,
+                    'closed_at': (
+                        detected_at + timedelta(days=2)
+                        if state == QualityIssue.State.CLOSED
+                        else None
+                    ),
+                    'verification_notes': (
+                        'Synthetic verification sample.'
+                        if state == QualityIssue.State.CLOSED
+                        else ''
+                    ),
+                },
+            )
+            if state in {QualityIssue.State.REWORK, QualityIssue.State.VERIFY}:
+                ReworkTask.objects.get_or_create(
+                    issue=issue,
+                    title=f'Synthetic production correction {issue_index:05d}',
+                    defaults={
+                        'instructions': (
+                            'Synthetic workflow fixture; replace with approved '
+                            'work instructions before production use.'
+                        ),
+                        'state': (
+                            ReworkTask.State.VERIFY
+                            if state == QualityIssue.State.VERIFY
+                            else ReworkTask.State.IN_PROGRESS
+                        ),
+                    },
+                )
+
         count, _ = CountSession.objects.get_or_create(
             reference='CX-DEMO-COUNT-0001',
             defaults={
@@ -1163,13 +1717,28 @@ class Command(BaseCommand):
                 },
             )
 
+        demo_shipments = SalesOrderShipment.objects.filter(
+            order__reference__startswith='CX-DEMO-'
+        )
+        completed_shipment_count = demo_shipments.filter(
+            shipment_date__isnull=False
+        ).count()
+        pending_shipment_count = demo_shipments.filter(
+            shipment_date__isnull=True
+        ).count()
+
         self.stdout.write(
             self.style.SUCCESS(
                 f'Loaded synthetic Cangxu demo catalog: {len(parts)} parts, '
                 f'{StockItem.objects.filter(part__IPN__startswith="CX-DEMO-").count()} stock items, '
                 f'{len(units)} configured units, '
                 f'{ManufacturingLotStockItem.objects.filter(stock_item__part__IPN__startswith="CX-DEMO-").count()} lot links, '
-                f'{shipment_count} pending split shipments, '
-                f'{ServiceCase.objects.filter(reference__startswith="CX-DEMO-RMA-").count()} open service cases.'
+                f'{completed_shipment_count} completed / '
+                f'{pending_shipment_count} pending split shipments, '
+                f'{ShipmentReceipt.objects.filter(manifest__shipment__order__reference__startswith="CX-DEMO-").count()} final receipts, '
+                f'{ShipmentReceiptException.objects.filter(receipt_line__receipt__manifest__shipment__order__reference__startswith="CX-DEMO-").count()} receipt exceptions, '
+                f'{ServiceCase.objects.filter(reference__startswith="CX-DEMO-RMA-").count()} supplier/internal service cases, '
+                f'{ServiceCase.objects.filter(reference__startswith="CX-DEMO-CUST-RMA-").count()} customer-return cases, '
+                f'{QualityIssue.objects.filter(reference__startswith="CX-DEMO-QA-SRC-").count()} synthetic production issues.'
             )
         )

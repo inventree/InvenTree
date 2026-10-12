@@ -251,6 +251,13 @@ export enum ApiEndpoints {
   machine_setting_detail = 'machine/:machine/settings/:config_type/',
 
   // Miscellaneous API endpoints
+  cangxu_material_issue_list = 'cangxu/material-issues/',
+  cangxu_material_issue_return = 'cangxu/material-issues/:id/return_stock/',
+  cangxu_manifest_list = 'cangxu/shipment-manifests/',
+  cangxu_manifest_line_list = 'cangxu/manifest-lines/',
+  cangxu_shipment_receipt_list = 'cangxu/shipment-receipts/',
+  cangxu_receipt_exception_list = 'cangxu/receipt-exceptions/',
+  cangxu_receipt_exception_resolve = 'cangxu/receipt-exceptions/:id/resolve/',
   attachment_list = 'attachment/',
   instance_info = 'instance-info/',
   error_report_list = 'error-report/',
