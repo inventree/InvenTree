@@ -2423,9 +2423,7 @@ class OrderCalendarExport(ICalFeed):
         whether or not to show completed orders. Defaults to false
     """
 
-    instance_url = get_base_url()
-
-    instance_url = instance_url.replace('http://', '').replace('https://', '')
+    instance_url = get_base_url().replace('http://', '').replace('https://', '')
     timezone = settings.TIME_ZONE
     file_name = 'calendar.ics'
 
