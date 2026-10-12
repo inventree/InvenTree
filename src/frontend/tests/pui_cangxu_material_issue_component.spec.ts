@@ -8,7 +8,9 @@ test('Chinese material issue and partial return flow', async ({ page }) => {
   await page.getByRole('option', { name: /CX-BUILD-SYN-001/ }).click();
   await page.getByRole('combobox', { name: '耗材BOM行' }).click();
   await page.getByRole('option', { name: /CX-DEMO-CABLE-001/ }).click();
-  await page.getByRole('combobox', { name: '可用库存' }).fill('GPU');
+  await page
+    .getByRole('combobox', { name: '可用库存' })
+    .fill('CX-DEMO-LOT-001');
   await page.getByRole('option', { name: /CX-DEMO-CABLE-001/ }).click();
   await page.getByLabel('领料数量').fill('3');
   await page.getByRole('button', { name: '确认领料' }).click();

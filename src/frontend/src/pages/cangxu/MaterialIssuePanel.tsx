@@ -35,6 +35,7 @@ type BuildOrder = {
 type BuildLine = {
   pk: number;
   build: number;
+  part: number;
   consumable: boolean;
   trackable: boolean;
   quantity: number | string;
@@ -51,6 +52,7 @@ type StockLocation = {
 
 type StockItem = {
   pk: number;
+  part: number;
   part_detail?: { name?: string; IPN?: string };
   serial?: string | null;
   batch?: string | null;
@@ -82,6 +84,10 @@ function listResults<T>(payload: ApiList<T>): T[] {
   return Array.isArray(payload) ? payload : (payload.results ?? []);
 }
 
+function issueStockLabel(item: StockItem) {
+  return `${item.part_detail?.name ?? t`Stock item ${item.pk}`} · ${item.part_detail?.IPN ?? t`No part code`} · ${t`Quantity`}: ${item.quantity} · ${item.location_detail?.name ?? ''}`;
+}
+
 function requestKey() {
   return crypto.randomUUID();
 }
@@ -95,6 +101,8 @@ export default function MaterialIssuePanel() {
   const [lineId, setLineId] = useState<string | null>(null);
   const [stockSearch, setStockSearch] = useState('');
   const [stockItemId, setStockItemId] = useState<string | null>(null);
+  const [selectedStockSnapshot, setSelectedStockSnapshot] =
+    useState<StockItem | null>(null);
   const [issueQuantity, setIssueQuantity] = useState<number | string>('');
   const [issueNotes, setIssueNotes] = useState('');
   const [returnIssueId, setReturnIssueId] = useState<string | null>(null);
@@ -151,7 +159,7 @@ export default function MaterialIssuePanel() {
 
   const stockQuery = useQuery({
     queryKey: ['cangxu-material-stock-search', stockSearch],
-    enabled: stockSearch.trim().length >= 2,
+    enabled: !stockItemId && stockSearch.trim().length >= 2,
     queryFn: async () => {
       const response = await api.get(apiUrl(ApiEndpoints.stock_item_list), {
         params: {
@@ -164,8 +172,10 @@ export default function MaterialIssuePanel() {
       const internalLocations = new Set(
         (locationsQuery.data ?? []).map((location) => location.pk)
       );
+      const requiredPart = selectedLine?.part;
       return listResults(response.data as ApiList<StockItem>).filter(
         (item) =>
+          item.part === requiredPart &&
           item.status === 10 &&
           item.location != null &&
           internalLocations.has(item.location) &&
@@ -219,6 +229,7 @@ export default function MaterialIssuePanel() {
       });
       issueKey.current = undefined;
       setStockItemId(null);
+      setSelectedStockSnapshot(null);
       setStockSearch('');
       setIssueQuantity('');
       setIssueNotes('');
@@ -297,8 +308,11 @@ export default function MaterialIssuePanel() {
     [lineId, linesQuery.data]
   );
   const selectedStockItem = useMemo(
-    () => stockQuery.data?.find((item) => String(item.pk) === stockItemId),
-    [stockItemId, stockQuery.data]
+    () =>
+      selectedStockSnapshot?.pk === Number(stockItemId)
+        ? selectedStockSnapshot
+        : stockQuery.data?.find((item) => String(item.pk) === stockItemId),
+    [selectedStockSnapshot, stockItemId, stockQuery.data]
   );
   const selectedIssue = useMemo(
     () => issuesQuery.data?.find((issue) => String(issue.id) === returnIssueId),
@@ -333,7 +347,7 @@ export default function MaterialIssuePanel() {
 
   const issueStockOptions = (stockQuery.data ?? []).map((item) => ({
     value: String(item.pk),
-    label: `${item.part_detail?.name ?? t`Stock item ${item.pk}`} · ${item.part_detail?.IPN ?? t`No part code`} · ${t`Quantity`}: ${item.quantity} · ${item.location_detail?.name ?? ''}`
+    label: issueStockLabel(item)
   }));
   const buildOptions = (buildsQuery.data ?? []).map((build) => ({
     value: String(build.pk),
@@ -378,6 +392,10 @@ export default function MaterialIssuePanel() {
                     issueKey.current = undefined;
                     setBuildId(value);
                     setLineId(null);
+                    setStockItemId(null);
+                    setSelectedStockSnapshot(null);
+                    setStockSearch('');
+                    setIssueQuantity('');
                   }}
                   searchable
                   clearable
@@ -397,6 +415,10 @@ export default function MaterialIssuePanel() {
                   onChange={(value) => {
                     issueKey.current = undefined;
                     setLineId(value);
+                    setStockItemId(null);
+                    setSelectedStockSnapshot(null);
+                    setStockSearch('');
+                    setIssueQuantity('');
                   }}
                   searchable
                   clearable
@@ -423,11 +445,34 @@ export default function MaterialIssuePanel() {
                   data={issueStockOptions}
                   value={stockItemId}
                   searchValue={stockSearch}
-                  onSearchChange={setStockSearch}
+                  onSearchChange={(value) => {
+                    if (
+                      stockItemId &&
+                      selectedStockSnapshot &&
+                      value === issueStockLabel(selectedStockSnapshot)
+                    ) {
+                      setStockSearch(value);
+                      return;
+                    }
+                    setStockSearch(value);
+                    setStockItemId(null);
+                    setSelectedStockSnapshot(null);
+                    setIssueQuantity('');
+                  }}
                   onChange={(value) => {
                     issueKey.current = undefined;
                     setStockItemId(value);
+                    setSelectedStockSnapshot(
+                      value
+                        ? (stockQuery.data?.find(
+                            (item) => String(item.pk) === value
+                          ) ?? null)
+                        : null
+                    );
                   }}
+                  // Stock search runs on the server and can match batch/SN fields
+                  // that are intentionally absent from the visible option label.
+                  filter={({ options }) => options}
                   searchable
                   clearable
                   nothingFoundMessage={

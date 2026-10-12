@@ -27,6 +27,7 @@ const build = {
 const line = {
   pk: 17,
   build: 7,
+  part: 1,
   consumable: true,
   trackable: false,
   quantity: '5.00000',
@@ -41,6 +42,8 @@ const location = {
 };
 const stock = {
   pk: 42,
+  part: 1,
+  batch: 'CX-DEMO-LOT-001',
   part_detail: { name: 'GPU 供电线束', IPN: 'CX-DEMO-CABLE-001' },
   quantity: '8.00000',
   location: 9,
