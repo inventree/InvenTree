@@ -1,14 +1,12 @@
 """Tests for the 'scim' app."""
 
-import json
-
 from django.contrib.auth.models import Group, User
 from django.test import override_settings
+from django.test.client import ClientHandler
 from django.urls import reverse
 
-from rest_framework.test import APIClient
-from scim2_client.engines.httpx import SyncSCIMClient
-from scim2_tester import check_server
+from scim2_client.engines.wsgi import WSGISCIMClient
+from scim2_tester import Status, check_server
 
 from InvenTree.unit_test import InvenTreeAPITestCase
 from scim.models import ScimConfiguration
@@ -205,11 +203,11 @@ class ScimProtocolTests(InvenTreeAPITestCase):
     )
     def test_suite(self):
         """Run the SCIM 2.0 conformance test suite against the endpoint."""
-        cls = PatchedApiClient(base_url='http://testserver/scim/v2')
-        cls.logout()
-        cls.credentials(HTTP_AUTHORIZATION=f'Bearer {self.secret}')
-
-        scim_client = SyncSCIMClient(cls)
+        scim_client = WSGISCIMClient(
+            ScimWSGIApp(),
+            base_url='http://testserver/scim/v2',
+            headers={'Authorization': f'Bearer {self.secret}'},
+        )
         ignore_tags = {
             'crud:read:attributes',  # 1: we do not have this attribute
             'patch:add',  # 2: we do not map these attributes to the User model right now
@@ -219,7 +217,11 @@ class ScimProtocolTests(InvenTreeAPITestCase):
             'crud:delete',  # 3: there is no deleting users right now
         }
         results = check_server(scim_client)
-        failures = [result for result in results if result.status.value not in (1, 7)]
+        failures = [
+            result
+            for result in results
+            if result.status not in (Status.SUCCESS, Status.SKIPPED)
+        ]
 
         if failures:
             details = '\n'.join(
@@ -233,23 +235,20 @@ class ScimProtocolTests(InvenTreeAPITestCase):
                 )  # pragma: no cover
 
 
-class PatchedApiClient(APIClient):
-    """A DRF APIClient subclass that supports the SCIM media type."""
+class ScimWSGIApp:
+    """Handles WSGI requests to enable in-process SCIM testing."""
 
-    def __init__(self, base_url: str, *args, **kwargs):
-        """Initialize the client."""
-        self.base_url = base_url
-        super().__init__(*args, **kwargs)
+    def __init__(self):
+        """Init django test handler."""
+        self.handler = ClientHandler(enforce_csrf_checks=False)
 
-    def generic(self, method, path, data=None, format=None, content_type=None, **extra):
-        """Override the generic method to set the SCIM media type."""
-        if content_type is None:
-            content_type = 'application/scim+json'
-        path = self.base_url + path if not '/scim/v2/' in path else path
-
-        if json_data := extra.pop('json', None):
-            data = json.dumps(json_data)
-            format = 'json'  # noqa: A001
-        return super().generic(
-            method, path, data=data, format=format, content_type=content_type, **extra
+    def __call__(self, environ, start_response):
+        """Request handler."""
+        path = environ.get('PATH_INFO', '')
+        if path.startswith('/scim/v2/scim/v2/'):
+            environ['PATH_INFO'] = path[len('/scim/v2') :]
+        response = self.handler(environ)
+        start_response(
+            f'{response.status_code} {response.reason_phrase}', list(response.items())
         )
+        return [response.content]
