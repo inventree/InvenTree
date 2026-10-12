@@ -287,6 +287,26 @@ class PurchaseReceiptRequestSerializer(serializers.Serializer):
         return attrs
 
 
+class PurchaseReceiptBulkRequestSerializer(serializers.Serializer):
+    """Validate an all-or-nothing submission of independent PO receipts."""
+
+    receipts = PurchaseReceiptRequestSerializer(many=True, allow_empty=False)
+
+    def validate_receipts(self, receipts):
+        """Require each order line and idempotency key to appear only once."""
+        line_ids = [row['purchase_order_line'].pk for row in receipts]
+        keys = [row['idempotency_key'] for row in receipts]
+        if len(line_ids) != len(set(line_ids)):
+            raise serializers.ValidationError(
+                'Each purchase order line may appear once.'
+            )
+        if len(keys) != len(set(keys)):
+            raise serializers.ValidationError(
+                'Each receipt must use a unique idempotency key.'
+            )
+        return receipts
+
+
 class ManufacturingLotStockItemSerializer(InvenTreeModelSerializer):
     """Link an existing stock record to a manufacturing lot."""
 

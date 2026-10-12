@@ -1175,10 +1175,39 @@ class PurchaseReceiptViewSet(CangxuModelViewSet):
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
-        """Receive once per idempotency key and return the original stock on replay."""
+        """Receive one line or an all-or-nothing set of idempotent PO lines."""
+        if isinstance(request.data, dict) and 'receipts' in request.data:
+            data = serializers.PurchaseReceiptBulkRequestSerializer(data=request.data)
+            data.is_valid(raise_exception=True)
+            receipt_values = data.validated_data['receipts']
+            results = [None] * len(receipt_values)
+            # A stable line-lock order prevents overlapping bulk requests from
+            # deadlocking when the user selected their lines in another order.
+            for index, values in sorted(
+                enumerate(receipt_values),
+                key=lambda row: row[1]['purchase_order_line'].pk,
+            ):
+                results[index] = self._create_receipt(request, values)
+            status_code = (
+                status.HTTP_201_CREATED
+                if any(created for _, created in results)
+                else status.HTTP_200_OK
+            )
+            return Response(
+                [self.get_serializer(receipt).data for receipt, _ in results],
+                status=status_code,
+            )
+
         data = serializers.PurchaseReceiptRequestSerializer(data=request.data)
         data.is_valid(raise_exception=True)
-        values = data.validated_data
+        receipt, created = self._create_receipt(request, data.validated_data)
+        return Response(
+            self.get_serializer(receipt).data,
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+        )
+
+    def _create_receipt(self, request, values):
+        """Post one native receipt and return its immutable record plus create flag."""
         line = values['purchase_order_line']
         payload = {
             'purchase_order_line': line.pk,
@@ -1223,7 +1252,7 @@ class PurchaseReceiptViewSet(CangxuModelViewSet):
                         'This key was used for a different purchase receipt.'
                     )
                 })
-            return Response(self.get_serializer(receipt).data)
+            return receipt, False
 
         line = (
             PurchaseOrderLineItem.objects
@@ -1278,9 +1307,7 @@ class PurchaseReceiptViewSet(CangxuModelViewSet):
                 for item in native_receipts
             ])
 
-        return Response(
-            self.get_serializer(receipt).data, status=status.HTTP_201_CREATED
-        )
+        return receipt, True
 
 
 class ServiceCaseEventViewSet(CangxuModelViewSet):

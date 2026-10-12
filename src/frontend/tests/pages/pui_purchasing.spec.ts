@@ -549,7 +549,48 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await expect(quantityInputs.nth(0)).toHaveValue('11');
   await expect(quantityInputs.nth(1)).toHaveValue('22');
 
-  await page.getByRole('button', { name: 'Cancel' }).click();
+  const receiptRequests: any[] = [];
+  await page.route('**/api/cangxu/purchase-receipts/', async (route) => {
+    receiptRequests.push(route.request().postDataJSON());
+    if (receiptRequests.length === 1) {
+      await route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ detail: 'Synthetic temporary interruption' })
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 201,
+      contentType: 'application/json',
+      body: JSON.stringify([])
+    });
+  });
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/cangxu/purchase-receipts/') &&
+      response.status() === 503
+  );
+  await expect(page.getByRole('button', { name: 'Submit' })).toBeVisible();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/cangxu/purchase-receipts/') &&
+      response.status() === 201
+  );
+  await page.getByText('Items received').waitFor();
+
+  expect(receiptRequests).toHaveLength(2);
+  expect(receiptRequests[0]).toEqual(receiptRequests[1]);
+  expect(receiptRequests[0].receipts).toHaveLength(rowCount);
+  expect(
+    new Set(
+      receiptRequests[0].receipts.map((receipt: any) => receipt.idempotency_key)
+    ).size
+  ).toBe(rowCount);
 
   // Let's actually receive an item (with custom values)
   await navigate(page, 'purchasing/purchase-order/2/line-items');

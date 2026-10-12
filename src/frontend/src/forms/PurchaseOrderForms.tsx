@@ -886,7 +886,7 @@ type LineItemsForm = {
 export function useReceiveLineItems(props: LineItemsForm) {
   const modalId = useId();
   const receiptKeys = useRef(new Map<string, string>());
-  const activeReceiptSignature = useRef<string | null>(null);
+  const activeReceiptSignatures = useRef<string[]>([]);
 
   const stockStatusCodes = useMemo(
     () => getStatusCodeOptions(ModelType.stockitem),
@@ -999,47 +999,58 @@ export function useReceiveLineItems(props: LineItemsForm) {
   return useCreateApiFormModal({
     ...props.formProps,
     modalId,
-    url:
-      filteredItems.length === 1
-        ? apiUrl(ApiEndpoints.cangxu_purchase_receipt_list)
-        : apiUrl(ApiEndpoints.purchase_order_receive, props.orderPk),
+    url: apiUrl(ApiEndpoints.cangxu_purchase_receipt_list),
     title: t`Receive Line Items`,
     fields: fields,
     initialData: {
       location: props.destinationPk
     },
     processFormData: (data) => {
-      // Single-line receipts use the Cangxu idempotent endpoint. Keep the
-      // standard native bulk receive endpoint for multi-line submissions.
-      if (filteredItems.length !== 1 || !Array.isArray(data.items)) {
+      if (!Array.isArray(data.items)) {
         return data;
       }
 
-      const [item] = data.items;
-      const receipt = {
-        purchase_order_line: item.line_item,
-        quantity: item.quantity,
-        location: item.location ?? data.location ?? props.destinationPk,
-        status: item.status ?? 10,
-        batch_code: item.batch_code || data.batch_code || '',
-        expiry_date: item.expiry_date || null,
-        serial_numbers: item.serial_numbers ?? '',
-        packaging: item.packaging ?? '',
-        barcode: item.barcode ?? '',
-        note: item.note ?? ''
-      };
-      const signature = JSON.stringify(receipt);
-      const key = receiptKeys.current.get(signature) ?? crypto.randomUUID();
-      receiptKeys.current.set(signature, key);
-      activeReceiptSignature.current = signature;
+      const receipts: Array<{
+        signature: string;
+        payload: Record<string, any>;
+      }> = data.items.map((item: any) => {
+        const receipt = {
+          purchase_order_line: item.line_item,
+          quantity: item.quantity,
+          location: item.location ?? data.location ?? props.destinationPk,
+          status: item.status ?? 10,
+          batch_code: item.batch_code || data.batch_code || '',
+          expiry_date: item.expiry_date || null,
+          serial_numbers: item.serial_numbers ?? '',
+          packaging: item.packaging ?? '',
+          barcode: item.barcode ?? '',
+          note: item.note ?? ''
+        };
+        const signature = JSON.stringify(receipt);
+        const key = receiptKeys.current.get(signature) ?? crypto.randomUUID();
+        receiptKeys.current.set(signature, key);
+        return {
+          signature,
+          payload: { ...receipt, idempotency_key: key }
+        };
+      });
+      activeReceiptSignatures.current = receipts.map(
+        ({ signature }) => signature
+      );
 
-      return { ...receipt, idempotency_key: key };
+      if (receipts.length === 1) {
+        return receipts[0].payload;
+      }
+
+      return {
+        receipts: receipts.map(({ payload }) => payload)
+      };
     },
     onFormSuccess: (response) => {
-      if (activeReceiptSignature.current) {
-        receiptKeys.current.delete(activeReceiptSignature.current);
-        activeReceiptSignature.current = null;
-      }
+      activeReceiptSignatures.current.forEach((signature) =>
+        receiptKeys.current.delete(signature)
+      );
+      activeReceiptSignatures.current = [];
       props.formProps?.onFormSuccess?.(response);
     },
     size: '80%',

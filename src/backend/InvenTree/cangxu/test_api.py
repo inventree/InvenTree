@@ -84,6 +84,124 @@ class CangxuAPITestCase(InvenTreeAPITestCase):
 class CangxuPurchaseReceiptTest(CangxuAPITestCase):
     """Verify safe retries and lot traceability for native purchase receipts."""
 
+    def test_bulk_receipts_are_atomic_and_idempotent(self):
+        """Post two selected lines together and replay without duplicate stock."""
+        part = Part.objects.filter(
+            trackable=False, virtual=False, assembly=False
+        ).first()
+        self.assertIsNotNone(part)
+        supplier = Company.objects.create(
+            name='Cangxu Bulk Receipt Supplier', is_supplier=True
+        )
+        supplier_part = SupplierPart.objects.create(
+            part=part, supplier=supplier, SKU='CX-BULK-RECEIPT-001'
+        )
+        order = PurchaseOrder.objects.create(
+            supplier=supplier, reference='CX-BULK-RECEIPT-PO-001'
+        )
+        lines = [
+            PurchaseOrderLineItem.objects.create(
+                order=order, part=supplier_part, quantity=1
+            )
+            for _ in range(2)
+        ]
+        order.place_order()
+        location = StockLocation.objects.get(pk=7)
+        payload = {
+            'receipts': [
+                {
+                    'idempotency_key': key,
+                    'purchase_order_line': line.pk,
+                    'quantity': '1',
+                    'location': location.pk,
+                    'packaging': f'synthetic tray {index}',
+                }
+                for index, (line, key) in enumerate(
+                    zip(
+                        lines,
+                        [
+                            '284e9172-cdc7-4cbc-92e4-4d5dd5dc9da1',
+                            'c30a4145-3840-4b94-84a0-b212f5067fca',
+                        ],
+                        strict=True,
+                    ),
+                    start=1,
+                )
+            ]
+        }
+        url = reverse('cangxu-purchase-receipt-list')
+
+        first = self.post(url, payload, expected_code=201)
+        replay = self.post(url, payload, expected_code=200)
+
+        self.assertEqual(
+            [row['id'] for row in replay.data], [row['id'] for row in first.data]
+        )
+        self.assertEqual(
+            [row['stock_items'] for row in replay.data],
+            [row['stock_items'] for row in first.data],
+        )
+        self.assertEqual(
+            PurchaseReceipt.objects.filter(purchase_order_line__order=order).count(), 2
+        )
+        self.assertEqual(StockItem.objects.filter(purchase_order=order).count(), 2)
+        for line in lines:
+            line.refresh_from_db()
+            self.assertEqual(line.received, 1)
+
+    def test_bulk_receipt_failure_rolls_back_earlier_lines(self):
+        """Reject an over-receipt without leaving earlier bulk rows posted."""
+        part = Part.objects.filter(
+            trackable=False, virtual=False, assembly=False
+        ).first()
+        self.assertIsNotNone(part)
+        supplier = Company.objects.create(
+            name='Cangxu Bulk Rollback Supplier', is_supplier=True
+        )
+        supplier_part = SupplierPart.objects.create(
+            part=part, supplier=supplier, SKU='CX-BULK-ROLLBACK-001'
+        )
+        order = PurchaseOrder.objects.create(
+            supplier=supplier, reference='CX-BULK-ROLLBACK-PO-001'
+        )
+        lines = [
+            PurchaseOrderLineItem.objects.create(
+                order=order, part=supplier_part, quantity=1
+            )
+            for _ in range(2)
+        ]
+        order.place_order()
+        location = StockLocation.objects.get(pk=7)
+        payload = {
+            'receipts': [
+                {
+                    'idempotency_key': key,
+                    'purchase_order_line': line.pk,
+                    'quantity': quantity,
+                    'location': location.pk,
+                }
+                for line, key, quantity in zip(
+                    lines,
+                    [
+                        'd0440752-5890-43e3-aefd-e7c28500713f',
+                        'da467b38-9ce3-4650-a210-274b2b1b3486',
+                    ],
+                    ['1', '2'],
+                    strict=True,
+                )
+            ]
+        }
+
+        self.post(reverse('cangxu-purchase-receipt-list'), payload, expected_code=400)
+
+        self.assertEqual(
+            PurchaseReceipt.objects.filter(purchase_order_line__order=order).count(), 0
+        )
+        self.assertEqual(StockItem.objects.filter(purchase_order=order).count(), 0)
+        for line in lines:
+            line.refresh_from_db()
+            self.assertEqual(line.received, 0)
+
     def test_nonserialized_receipt_preserves_packaging_and_barcode_on_retry(self):
         """Retain native receiving metadata when posting through the retry-safe API."""
         part = Part.objects.filter(
