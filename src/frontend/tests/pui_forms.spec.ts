@@ -20,30 +20,38 @@ test('Forms - Hover', async ({ browser }) => {
     password: stevenuser.testcred
   });
 
-  const response = await api.patch('settings/user/SHOW_EXTRA_MODEL_INFO/', {
-    data: {
-      value: 'true'
-    }
-  });
+  function setHover(value: boolean) {
+    return api.patch('settings/user/SHOW_EXTRA_MODEL_INFO/', {
+      data: {
+        value: value ? 'true' : 'false'
+      }
+    });
+  }
 
+  const response = await setHover(true);
   expect(response.status()).toBe(200);
 
-  const page = await doCachedLogin(browser, {
-    user: stevenuser,
-    url: 'purchasing/index/purchaseorders'
-  });
+  try {
+    const page = await doCachedLogin(browser, {
+      user: stevenuser,
+      url: 'purchasing/index/purchaseorders'
+    });
 
-  await page
-    .getByRole('button', { name: 'action-button-add-purchase-' })
-    .click();
-  await page.getByLabel('related-field-supplier').fill('mou');
-  await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(250);
-  await page.getByText('Mouser Electronics').first().hover();
+    await page
+      .getByRole('button', { name: 'action-button-add-purchase-' })
+      .click();
+    await page.getByLabel('related-field-supplier').fill('mou');
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(250);
+    await page.getByText('Mouser Electronics').first().hover();
 
-  // Check for hover info
-  await page.getByText('Company[ID: 2]').waitFor();
-  await page.getByRole('link', { name: 'View details' }).waitFor();
+    // Check for hover info
+    await page.getByText('Company[ID: 2]').waitFor();
+    await page.getByRole('link', { name: 'View details' }).waitFor();
+  } finally {
+    const response = await setHover(false);
+    expect(response.status()).toBe(200);
+  }
 });
 
 test('Forms - Stock Item Validation', async ({ browser }) => {
