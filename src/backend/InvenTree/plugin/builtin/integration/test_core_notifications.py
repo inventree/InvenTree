@@ -1,5 +1,7 @@
 """Tests for core_notifications."""
 
+from unittest import mock
+
 from django.core import mail
 
 from common.models import NotificationEntry
@@ -61,3 +63,30 @@ class CoreNotificationTestTests(InvenTreeTestCase):
         self.notify()
 
         self.assertEqual(len(mail.outbox), 1)
+
+    def test_slack_timeout(self):
+        """Ensure that the slack webhook call cannot block indefinitely."""
+        slug = 'inventree-slack-notification'
+        registry.set_plugin_state(slug, True)
+
+        plugin = registry.get_plugin(slug)
+        self.assertIsNotNone(plugin, 'Slack notification plugin should be available')
+
+        plugin.set_setting('NOTIFICATION_SLACK_URL', 'https://hooks.slack.com/test')
+
+        with mock.patch(
+            'plugin.builtin.integration.core_notifications.requests.post'
+        ) as mock_post:
+            plugin.send_notification(
+                self.user,
+                'test_notification',
+                [self.user],
+                {
+                    'name': 'Test Slack Notification',
+                    'message': 'This is a test slack notification.',
+                    'link': 'http://localhost:8000/',
+                },
+            )
+
+        mock_post.assert_called_once()
+        self.assertEqual(mock_post.call_args.kwargs['timeout'], 10)

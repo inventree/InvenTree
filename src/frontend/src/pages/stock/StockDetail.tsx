@@ -728,47 +728,49 @@ export default function StockDetail() {
         requiredPermission={ModelType.stockitem}
       >
         <Stack>
-          {user.hasViewRole(UserRoles.stock_location) && (
-            <NavigationTree
-              title={t`Stock Locations`}
-              modelType={ModelType.stocklocation}
-              endpoint={ApiEndpoints.stock_location_tree}
-              childIdentifier='sublocations'
-              opened={treeOpen}
-              onClose={() => setTreeOpen(false)}
-              selectedId={stockitem?.location}
-            />
-          )}
-          <PageDetail
-            title={t`Stock Item`}
-            subtitle={stockitem.part_detail?.full_name}
-            imageUrl={stockitem.part_detail?.thumbnail}
-            editAction={editStockItem.open}
-            editEnabled={user.hasChangePermission(ModelType.stockitem)}
-            badges={stockBadges}
-            breadcrumbs={
-              user.hasViewRole(UserRoles.stock_location)
-                ? breadcrumbs
-                : undefined
-            }
-            lastCrumb={[
-              {
-                name: stockitem.name,
-                url: `/stock/item/${stockitem.pk}/`
-              }
-            ]}
-            breadcrumbAction={() => {
-              setTreeOpen(true);
-            }}
-            actions={stockActions}
-          />
-          <PanelGroup
-            pageKey='stockitem'
-            panels={stockPanels}
-            model={ModelType.stockitem}
-            id={stockitem.pk}
-            instance={stockitem}
-          />
+          <NavigationTree
+            hidden={!user.hasViewRole(UserRoles.stock_location)}
+            title={t`Stock Locations`}
+            modelType={ModelType.stocklocation}
+            endpoint={ApiEndpoints.stock_location_tree}
+            childIdentifier='sublocations'
+            opened={treeOpen}
+            onClose={() => setTreeOpen(false)}
+            selectedId={stockitem?.location}
+          >
+            <Stack>
+              <PageDetail
+                title={t`Stock Item`}
+                subtitle={stockitem.part_detail?.full_name}
+                imageUrl={stockitem.part_detail?.thumbnail}
+                editAction={editStockItem.open}
+                editEnabled={user.hasChangePermission(ModelType.stockitem)}
+                badges={stockBadges}
+                breadcrumbs={
+                  user.hasViewRole(UserRoles.stock_location)
+                    ? breadcrumbs
+                    : undefined
+                }
+                lastCrumb={[
+                  {
+                    name: stockitem.name,
+                    url: `/stock/item/${stockitem.pk}/`
+                  }
+                ]}
+                breadcrumbAction={() => {
+                  setTreeOpen(true);
+                }}
+                actions={stockActions}
+              />
+              <PanelGroup
+                pageKey='stockitem'
+                panels={stockPanels}
+                model={ModelType.stockitem}
+                id={stockitem.pk}
+                instance={stockitem}
+              />
+            </Stack>
+          </NavigationTree>
         </Stack>
       </InstanceDetail>
       {editStockItem.modal}
