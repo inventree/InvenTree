@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { mkdtemp, rm } from 'node:fs/promises';
+import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -9,12 +10,13 @@ const DEPLOYMENT = '11111111-1111-4111-8111-111111111111';
 const FIRST = '22222222-2222-4222-8222-222222222222';
 const SECOND = '33333333-3333-4333-8333-333333333333';
 const TOKEN = 'synthetic-internal-token-32-characters';
-async function fixture() {
+async function fixture(overrides: NodeJS.ProcessEnv = {}) {
   const dir = await mkdtemp(join(tmpdir(), 'cangxu-http-'));
   const env = {
     ASSISTANT_RUNTIME_TOKEN: TOKEN,
     ASSISTANT_DEPLOYMENT_ID: DEPLOYMENT,
-    ASSISTANT_STORAGE_DIR: dir
+    ASSISTANT_STORAGE_DIR: dir,
+    ...overrides
   };
   let service = await createRuntimeServer(env);
   let base = '';
@@ -191,5 +193,52 @@ test('startup resumes known partner event work without browser request', async (
     );
   } finally {
     await f.close();
+  }
+});
+
+test('model timeout becomes a visible persisted failure instead of silent idle', async () => {
+  const upstream = createServer(() => {});
+  await new Promise<void>((resolve) =>
+    upstream.listen(0, '127.0.0.1', resolve)
+  );
+  const address = upstream.address();
+  const f = await fixture({
+    ASSISTANT_MODEL_PROVIDER: 'openai-compatible',
+    ASSISTANT_MODEL_BASE_URL: `http://127.0.0.1:${typeof address === 'object' && address?.port}/v1`,
+    ASSISTANT_MODEL_ID: 'synthetic-slow-model',
+    ASSISTANT_MODEL_API_KEY: 'synthetic-key-must-not-appear',
+    ASSISTANT_MODEL_TIMEOUT_MS: '50'
+  });
+  try {
+    await f.call(`${FIRST}/messages`, {
+      request_id: 'slow-input',
+      text: 'Synthetic query'
+    });
+    let history: any;
+    for (let i = 0; i < 100; i++) {
+      history = (await f.call(`${FIRST}/messages`)).data;
+      if (
+        history.items.some((item: any) =>
+          item.text.includes('模型服务请求超时')
+        )
+      )
+        break;
+      await pause(20);
+    }
+    assert.equal(history.items.at(-1).role, 'assistant');
+    assert.match(history.items.at(-1).text, /模型服务请求超时/);
+    assert.doesNotMatch(
+      JSON.stringify(history),
+      /synthetic-key-must-not-appear/
+    );
+    await f.restart();
+    assert.match(
+      (await f.call(`${FIRST}/messages`)).data.items.at(-1).text,
+      /你的消息已保留/
+    );
+  } finally {
+    await f.close();
+    upstream.closeAllConnections();
+    await new Promise<void>((resolve) => upstream.close(() => resolve()));
   }
 });

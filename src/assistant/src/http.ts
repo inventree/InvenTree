@@ -287,13 +287,24 @@ export async function createRuntimeServer(env: NodeJS.ProcessEnv) {
             return (entry.model ?? []).flatMap((message) => {
               if (message.role !== 'user' && message.role !== 'assistant')
                 return [];
-              const text =
+              let text =
                 typeof message.content === 'string'
                   ? message.content
                   : message.content
                       .filter((block) => block.type === 'text')
                       .map((block) => block.text)
                       .join('');
+              if (
+                message.role === 'assistant' &&
+                message.stopReason === 'error'
+              ) {
+                const reason = /timed?\s*out|timeout/i.test(
+                  message.errorMessage ?? ''
+                )
+                  ? '模型服务请求超时'
+                  : '模型服务发生异常';
+                text = `${text ? `${text}\n\n` : ''}${reason}，本次回复未完成。你的消息已保留，可补充消息继续；已执行的业务结果请先核实。`;
+              }
               return text
                 ? [
                     {

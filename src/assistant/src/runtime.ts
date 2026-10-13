@@ -164,13 +164,22 @@ export async function openRuntime(
         tasks: [SyntheticCheck, ReceiptDuty]
       })
     );
+    const modelTimeoutMs = Number(env.ASSISTANT_MODEL_TIMEOUT_MS ?? 180000);
+    if (
+      !Number.isSafeInteger(modelTimeoutMs) ||
+      modelTimeoutMs < 1 ||
+      modelTimeoutMs > 900000
+    )
+      throw new Error(
+        'Model timeout must be an integer between 1 and 900000 ms'
+      );
     harness = await Harness.open(
       await openNodeSqliteStorage(file),
       {
         models,
         registry,
         settings: {
-          stream: { timeoutMs: 30000, maxRetries: 0 },
+          stream: { timeoutMs: modelTimeoutMs, maxRetries: 0 },
           retry: { enabled: false, maxRetries: 0, baseDelayMs: 1000 }
         }
       },
