@@ -1,6 +1,7 @@
 """Unit tests for the BomItem model."""
 
 import hashlib
+from decimal import Decimal
 from unittest import mock
 
 import django.core.exceptions as django_exceptions
@@ -112,6 +113,20 @@ class BomItemTest(TestCase):
         self.assertEqual(item.get_required_quantity(1), 8)  # 3 + 5 = 8
         self.assertEqual(item.get_required_quantity(10), 35)  # 30 + 5 = 35
 
+    def test_required_quantity_input_types(self):
+        """Test that get_required_quantity accepts int, float and Decimal inputs."""
+        item = BomItem.objects.get(pk=4)
+
+        for value, expected in [
+            (10, Decimal('30')),
+            (Decimal('2.5'), Decimal('7.5')),
+            (2.5, Decimal('7.5')),
+            (0.1, Decimal('0.3')),
+        ]:
+            result = item.get_required_quantity(value)
+            self.assertIsInstance(result, Decimal)
+            self.assertEqual(result, expected)
+
     def test_round_up(self):
         """Test the 'rounding_multiple' attribute."""
         item = BomItem.objects.get(pk=4)
@@ -142,6 +157,9 @@ class BomItemTest(TestCase):
         self.assertEqual(
             item.get_required_quantity(100), 306
         )  # 3 x 100 = 300, rounded up to nearest multiple of 17
+
+        # The rounded value must remain a Decimal (not a float)
+        self.assertIsInstance(item.get_required_quantity(10), Decimal)
 
         # Next, let's create a new Build order
         bo = build.models.Build.objects.create(
