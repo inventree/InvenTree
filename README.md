@@ -6,9 +6,9 @@
 
 ## 当前状态
 
-2026-10-09 已依据实际生产、交付、售后和入库场景整理[业务需求基线](docs/cangxu/REQUIREMENTS.zh-CN.md)，明确可复用能力、待补功能、验收条件及待确认规则。当前优先完成业务闭环，再深化完整拓扑与智能体能力。
+截至 2026-10-12，开发分支已实现首批行业数据模型、REST API、合成数据扩展，以及耗材领退料和发货签收/差异处理中文界面。演示目录包含 GPU、PCIe/NVLink、以太网/InfiniBand Switch、Retimer、GPU 供电线束、MCIO、DAC/AOC、多分支线缆等类型；另有 Broadcom PEX89048、Microchip Switchtec PM50100B1-FEI 与联瑞 LR-LINK LRSV9500-4I 的公开型号草稿。公开厂商资料只用于演示制造商、芯片和成品板卡的不同角色；仓序 IPN 为虚构值、这些新型号没有演示库存，规格草稿未经本公司工程核验，不代表实际采购、兼容或生产放行。
 
-仓序目前处于 fork 与设计阶段。本次新增中文项目说明和智算服务器行业改造规划，尚未实现行业扩展或 Pi 智能体，也未完成工厂生产验证。应用内名称和图标、包名及镜像仍沿用 InvenTree；本仓库暂无仓序专用安装包或镜像。
+当前功能仍处于开发和隔离开发库集成验证阶段，不代表生产验收。试点库存唯一业务账已确认由 InvenTree/仓序承担，ERP 不并行回写库存余额；源工作簿未上传或原样导入。完整 PCIe/GPU 拓扑、工程兼容规则、收货与售后专用表单、客户现场扫码和备份恢复验证仍未完成。签收界面通过生产构建及隔离组件浏览器测试，真实发货页面和后端联调仍待验收。应用内名称和图标、包名及镜像仍沿用 InvenTree；本仓库暂无仓序专用安装包或镜像。
 
 已核对的上游基线：`9bc5054d8`（2026-09-07，`master`）。这是开发分支；生产试点前需要选择并验证稳定版本。
 
@@ -37,6 +37,8 @@
 | 智能体 | Pi + 模型服务、知识检索、实时库存查询、缺料分析和业务草稿 |
 
 硬件型号、规格及兼容规则以实际供应商资料和工程签核为准。项目不绑定某一家 GPU 厂商，也不预设所有服务器采用同一种拓扑。
+
+型号样例的公开来源：[Broadcom PEX89048](https://www.broadcom.com/products/pcie-switches-retimers/expressfabric/gen5/pex89048)、[Microchip Switchtec PFX Gen5](https://ww1.microchip.com/downloads/aemDocuments/documents/DCS/ProductDocuments/Brochures/00003776D.pdf)、[LR-LINK LRSV9500-4I](https://www.lr-link.com.cn/productshow/LRSV9500-4I.html)。这些来源不证明该型号已进入本公司的采购或生产清单。
 
 ## 实现方向
 

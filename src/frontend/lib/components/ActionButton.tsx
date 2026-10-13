@@ -19,6 +19,7 @@ export type ActionButtonProps = {
   disabled?: boolean;
   onClick: (event?: any) => void;
   hidden?: boolean;
+  ariaLabel?: string;
   tooltipAlignment?: FloatingPosition;
 };
 
@@ -27,6 +28,13 @@ export type ActionButtonProps = {
  */
 export function ActionButton(props: ActionButtonProps) {
   const hidden = props.hidden ?? false;
+  const label = props.tooltip ?? props.text ?? '';
+  const labelId = identifierString(label);
+  const ariaLabel =
+    props.ariaLabel ??
+    (labelId.replaceAll('-', '').length > 0
+      ? `action-button-${labelId}`
+      : label || 'Action');
 
   return (
     !hidden && (
@@ -43,9 +51,7 @@ export function ActionButton(props: ActionButtonProps) {
           radius={props.radius ?? 'xs'}
           color={props.color}
           size={props.size}
-          aria-label={`action-button-${identifierString(
-            props.tooltip ?? props.text ?? ''
-          )}`}
+          aria-label={ariaLabel}
           onClick={(event: any) => {
             props.onClick(event);
           }}

@@ -160,6 +160,12 @@ class PluginValidationMixin(DiffMixin):
 
         Note: Each plugin may raise a ValidationError to prevent deletion.
         """
+        self.validate_plugin_deletion()
+
+        super().delete(*args, **kwargs)
+
+    def validate_plugin_deletion(self):
+        """Run plugin deletion validation without deleting this instance."""
         from InvenTree.exceptions import log_error
         from plugin import PluginMixinEnum, registry
 
@@ -173,8 +179,6 @@ class PluginValidationMixin(DiffMixin):
                 except Exception:
                     log_error('validate_model_deletion', plugin=plugin.slug)
                     continue
-
-        super().delete(*args, **kwargs)
 
 
 class MetadataMixin(models.Model):

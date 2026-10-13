@@ -3239,14 +3239,18 @@ class StockItem(
         if count < 0:
             return False
 
+        # Bulk callers may already hold a row lock from select_for_update().
+        # In that case the in-memory quantity was loaded after acquiring the
+        # lock, and the transaction keeps it locked until completion.
+        quantity_locked = kwargs.pop('quantity_locked', False)
+
         # Lock the database row, so concurrent adjustments are serialized
-        if not self.lock_quantity():
+        if not quantity_locked and not self.lock_quantity():
             return False
 
         tracking_info = {}
 
         location = kwargs.pop('location', None)
-
         if location and location != self.location:
             old_location = self.location
             self.location = location

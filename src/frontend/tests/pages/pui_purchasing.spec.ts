@@ -549,9 +549,70 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await expect(quantityInputs.nth(0)).toHaveValue('11');
   await expect(quantityInputs.nth(1)).toHaveValue('22');
 
-  await page.getByRole('button', { name: 'Cancel' }).click();
+  const receiptRequests: any[] = [];
+  await page.route('**/api/cangxu/purchase-receipts/', async (route) => {
+    receiptRequests.push(route.request().postDataJSON());
+    if (receiptRequests.length === 1) {
+      await route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ detail: 'Synthetic temporary interruption' })
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 201,
+      contentType: 'application/json',
+      body: JSON.stringify([])
+    });
+  });
+
+  const interruptedReceipt = page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/cangxu/purchase-receipts/') &&
+      response.status() === 503
+  );
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await interruptedReceipt;
+  await expect(page.getByRole('button', { name: 'Submit' })).toBeVisible();
+  const retriedReceipt = page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/cangxu/purchase-receipts/') &&
+      response.status() === 201
+  );
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await retriedReceipt;
+  await page.getByText('Items received').waitFor();
+
+  expect(receiptRequests).toHaveLength(2);
+  expect(receiptRequests[0]).toEqual(receiptRequests[1]);
+  expect(receiptRequests[0].receipts).toHaveLength(rowCount);
+  expect(
+    new Set(
+      receiptRequests[0].receipts.map((receipt: any) => receipt.idempotency_key)
+    ).size
+  ).toBe(rowCount);
 
   // Let's actually receive an item (with custom values)
+  const api = await createApi({});
+  const paintLines = await api
+    .get('order/po-line/', { params: { order: 2, part_detail: true } })
+    .then((response) => response.json());
+  const paintLine = paintLines.find(
+    (line: any) => line.part_detail?.name === 'Red Paint'
+  );
+  expect(paintLine).toBeTruthy();
+  // This test covers choosing a receipt location, so remove any fixture-level
+  // line destination which correctly locks the row to that destination.
+  const clearPaintDestination = await api.patch(
+    `order/po-line/${paintLine.pk}/`,
+    {
+      data: { destination: null }
+    }
+  );
+  expect(clearPaintDestination.ok()).toBeTruthy();
+
   await navigate(page, 'purchasing/purchase-order/2/line-items');
 
   const cell = await page.getByText('Red Paint', { exact: true });
@@ -604,6 +665,15 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Items received').waitFor();
 
+  const api = await createApi({});
+  const receivedItems = await api
+    .get('stock/', { params: { batch: 'my-batch-code' } })
+    .then((response) => response.json());
+  const latestReceivedItem = receivedItems.reduce((latest: any, item: any) =>
+    item.pk > latest.pk ? item : latest
+  );
+  expect(latestReceivedItem.packaging).toBe('bucket');
+
   await loadTab(page, 'Received Stock');
   await clearTableFilters(page);
 
@@ -615,6 +685,12 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
 
 test('Purchase Orders - Custom Location', async ({ browser }) => {
   const page = await doCachedLogin(browser);
+
+  const api = await createApi({});
+  const clearLineDestination = await api.patch('order/po-line/36/', {
+    data: { destination: null }
+  });
+  expect(clearLineDestination.ok()).toBeTruthy();
 
   await navigate(page, 'purchasing/purchase-order/14/line-items');
 
@@ -732,9 +808,6 @@ test('Purchase Orders - Receive Virtual Items', async ({ browser }) => {
   await page
     .getByRole('button', { name: 'action-button-receive-items' })
     .click();
-
-  await page.getByLabel('tree-field-location').fill('factory');
-  await page.getByText('Factory', { exact: true }).click();
 
   await page.getByRole('button', { name: 'Submit' }).click();
 

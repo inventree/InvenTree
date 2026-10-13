@@ -66,6 +66,17 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         icon: 'dashboard'
       },
       {
+        id: 'cangxu',
+        title: t`Cangxu Workshop`,
+        link: '/cangxu/',
+        hidden:
+          !user.hasViewVisible(UserRoles.build) &&
+          !user.hasViewVisible(UserRoles.stock) &&
+          !user.hasViewVisible(UserRoles.purchase_order) &&
+          !user.hasViewVisible(UserRoles.sales_order),
+        icon: 'build'
+      },
+      {
         id: 'parts',
         title: t`Parts`,
         hidden: !user.hasViewPermission(ModelType.part),

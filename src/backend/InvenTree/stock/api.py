@@ -1569,6 +1569,11 @@ class StockItemTestResultList(
 
     ordering = 'date'
 
+    # Cangxu configuration evidence protects linked results with a foreign key.
+    # Use one collector for a batch so that relation checks are not repeated for
+    # every test result. StockItemTestResult has no custom delete() behavior.
+    bulk_delete_with_collector = True
+
     def perform_create(self, serializer):
         """Create a new test result object.
 

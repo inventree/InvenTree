@@ -4,6 +4,7 @@ import {
   IconBookmark,
   IconCircleCheck,
   IconCircleX,
+  IconClipboardCheck,
   IconInfoCircle
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -45,6 +46,7 @@ import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useUserState } from '../../states/UserState';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import { SalesOrderShipmentDetailsPanel } from './SalesOrderShipmentDetailsPanel';
+import ShipmentReceiptPanel from './ShipmentReceiptPanel';
 
 export default function SalesOrderShipmentDetail() {
   const { id } = useParams();
@@ -100,6 +102,14 @@ export default function SalesOrderShipmentDetail() {
             modelField='item'
             modelTarget={ModelType.stockitem}
           />
+        )
+      },
+      {
+        name: 'receipt',
+        label: t`Customer Receipt`,
+        icon: <IconClipboardCheck />,
+        content: (
+          <ShipmentReceiptPanel shipmentId={shipment.pk} shipped={!isPending} />
         )
       },
       ParametersPanel({

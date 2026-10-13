@@ -25,7 +25,7 @@ import {
   IconUser,
   IconUsers
 } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -657,7 +657,7 @@ function LineItemFormRow({
             <ActionButton
               onClick={() => statusHandlers.toggle()}
               icon={<InvenTreeIcon icon='status' />}
-              tooltip={t`Change Status`}
+              tooltip={t`Choose available or quarantined stock`}
               tooltipAlignment='top'
               variant={statusOpen ? 'outline' : 'transparent'}
               disabled={virtual}
@@ -873,6 +873,7 @@ function LineItemFormRow({
 type LineFormHandlers = {
   onOpen?: () => void;
   onClose?: () => void;
+  onFormSuccess?: (data: any) => void;
 };
 
 type LineItemsForm = {
@@ -884,9 +885,14 @@ type LineItemsForm = {
 
 export function useReceiveLineItems(props: LineItemsForm) {
   const modalId = useId();
+  const receiptKeys = useRef(new Map<string, string>());
+  const activeReceiptSignatures = useRef<string[]>([]);
 
   const stockStatusCodes = useMemo(
-    () => getStatusCodeOptions(ModelType.stockitem),
+    () =>
+      getStatusCodeOptions(ModelType.stockitem).filter((choice) =>
+        [10, 75].includes(Number(choice.value))
+      ),
     []
   );
 
@@ -967,11 +973,16 @@ export function useReceiveLineItems(props: LineItemsForm) {
         ]
       },
       location: {
+        field_type: 'related field',
+        model: ModelType.stocklocation,
+        api_url: apiUrl(ApiEndpoints.stock_location_list),
+        label: t`Location`,
         filters: {
           structural: false
         }
       },
       batch_code: {
+        label: t`Batch Code`,
         icon: <InvenTreeIcon icon='batch_code' />,
         value: batchCode,
         onValueChange: setBatchCode,
@@ -991,11 +1002,59 @@ export function useReceiveLineItems(props: LineItemsForm) {
   return useCreateApiFormModal({
     ...props.formProps,
     modalId,
-    url: apiUrl(ApiEndpoints.purchase_order_receive, props.orderPk),
+    url: apiUrl(ApiEndpoints.cangxu_purchase_receipt_list),
     title: t`Receive Line Items`,
     fields: fields,
     initialData: {
       location: props.destinationPk
+    },
+    processFormData: (data) => {
+      if (!Array.isArray(data.items)) {
+        return data;
+      }
+
+      const receipts: Array<{
+        signature: string;
+        payload: Record<string, any>;
+      }> = data.items.map((item: any) => {
+        const receipt = {
+          purchase_order_line: item.line_item,
+          quantity: item.quantity,
+          location: item.location ?? data.location ?? props.destinationPk,
+          status: item.status ?? 10,
+          batch_code: item.batch_code || data.batch_code || '',
+          expiry_date: item.expiry_date || null,
+          serial_numbers: item.serial_numbers ?? '',
+          packaging: item.packaging ?? '',
+          barcode: item.barcode ?? '',
+          note: item.note ?? ''
+        };
+        const signature = JSON.stringify(receipt);
+        const key = receiptKeys.current.get(signature) ?? crypto.randomUUID();
+        receiptKeys.current.set(signature, key);
+        return {
+          signature,
+          payload: { ...receipt, idempotency_key: key }
+        };
+      });
+      activeReceiptSignatures.current = receipts.map(
+        ({ signature }) => signature
+      );
+
+      if (receipts.length === 1) {
+        return receipts[0].payload;
+      }
+
+      return {
+        receipts: receipts.map(({ payload }) => payload)
+      };
+    },
+    onFormSuccess: (response) => {
+      activeReceiptSignatures.current.forEach((signature) =>
+        receiptKeys.current.delete(signature)
+      );
+      activeReceiptSignatures.current = [];
+      props.formProps?.onFormSuccess?.(response);
     },
     size: '80%',
     successMessage: t`Items received`

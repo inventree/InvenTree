@@ -1,7 +1,7 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
+import { msg, t } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   Alert,
   Anchor,
@@ -35,6 +35,7 @@ import { SsoButton } from '../buttons/SSOButton';
 import { errorCodeLink } from '../nav/Alerts';
 
 export function AuthenticationForm() {
+  const { i18n } = useLingui();
   const classicForm = useForm({
     initialValues: { username: '', password: '', code: '' }
   });
@@ -133,16 +134,16 @@ export function AuthenticationForm() {
           <Stack gap={0}>
             <TextInput
               required
-              label={t`Username`}
+              label={i18n._(msg`Username`)}
               aria-label='login-username'
-              placeholder={t`Your username`}
+              placeholder={i18n._(msg`Your username`)}
               {...classicForm.getInputProps('username')}
             />
             <PasswordInput
               required
-              label={t`Password`}
+              label={i18n._(msg`Password`)}
               aria-label='login-password'
-              placeholder={t`Your password`}
+              placeholder={i18n._(msg`Your password`)}
               {...classicForm.getInputProps('password')}
             />
             <VisuallyHidden>

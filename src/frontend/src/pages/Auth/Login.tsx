@@ -1,5 +1,5 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
+import { msg, t } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Anchor, Divider, Group, Loader, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { useEffect, useMemo, useState } from 'react';
@@ -25,6 +25,7 @@ import { useUserState } from '../../states/UserState';
 import { Wrapper } from './Layout';
 
 export default function Login() {
+  const { i18n } = useLingui();
   const [hostKey, setHost, hostList] = useLocalState(
     useShallow((state) => [state.hostKey, state.setHost, state.hostList])
   );
@@ -112,7 +113,7 @@ export default function Login() {
         />
       ) : (
         <>
-          <Wrapper titleText={t`Login`} smallPadding>
+          <Wrapper titleText={i18n._(msg`Login`)} smallPadding>
             {isLoggingIn ? (
               <>
                 <Group justify='center'>

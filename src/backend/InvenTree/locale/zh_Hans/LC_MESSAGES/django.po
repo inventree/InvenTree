@@ -10756,3 +10756,1271 @@ msgstr "请使用密码重置功能登录"
 msgid "Welcome to InvenTree"
 msgstr "欢迎使用 InvenTree"
 
+
+
+#: cangxu/api.py:121
+#
+#| msgid "Test template does not exist"
+msgid "The stock item does not exist."
+msgstr "库存项不存在。"
+
+#: cangxu/api.py:134
+msgid "Finish or discard the existing draft before creating a revision."
+msgstr "请先完成或放弃现有草稿，再创建新版本。"
+
+#: cangxu/api.py:202
+msgid "Only a draft configuration can be released."
+msgstr "只有草稿配置可以发布。"
+
+#: cangxu/api.py:205
+#
+#| msgid "Build must be cancelled before it can be deleted"
+msgid "The unit build must be completed before release."
+msgstr "整机工单必须先完工，配置才能发布。"
+
+#: cangxu/api.py:213
+msgid "Open blocking quality issues prevent release."
+msgstr "存在未关闭的阻断质量问题，无法发布。"
+
+#: cangxu/api.py:220
+msgid "Required tests are missing or failed for this configuration."
+msgstr "此配置缺少必需测试或测试未通过。"
+
+#: cangxu/api.py:294
+msgid "Create a draft configuration before replacing components."
+msgstr "请先创建配置草稿，再执行部件替换。"
+
+#: cangxu/api.py:298 cangxu/api.py:483
+msgid "Create a new configuration revision after testing."
+msgstr "测试后请创建新的配置版本。"
+
+#: cangxu/api.py:302
+#
+#| msgid "This build output has already been completed"
+msgid "This configured component has already been removed."
+msgstr "此配置部件已拆除。"
+
+#: cangxu/api.py:325
+msgid "A replacement reason is required."
+msgstr "请填写替换原因。"
+
+#: cangxu/api.py:328
+msgid "The previous component is no longer installed in this unit."
+msgstr "原部件已不在此整机中。"
+
+#: cangxu/api.py:339
+#
+#| msgid "Cannot select a structural location"
+msgid "Choose an internal, non-structural location."
+msgstr "请选择内部的非结构库位。"
+
+#: cangxu/api.py:344
+#
+#| msgid "This is an external stock location"
+msgid "The replacement must be in an internal stock location."
+msgstr "替换件必须位于内部库存库位。"
+
+#: cangxu/api.py:351
+#
+#| msgid "No package name or URL provided for installation"
+msgid "The replacement item is not available for installation."
+msgstr "替换件当前不可用于安装。"
+
+#: cangxu/api.py:354 cangxu/api.py:442
+#
+#| msgid "Locked parts cannot be edited"
+msgid "Allocated stock cannot be installed."
+msgstr "已分配的库存不能安装。"
+
+#: cangxu/api.py:356
+msgid "Insufficient replacement quantity."
+msgstr "替换件库存数量不足。"
+
+#: cangxu/api.py:358
+msgid "Serialized replacement quantity must be one."
+msgstr "按序列号管理的替换件数量必须为 1。"
+
+#: cangxu/api.py:371
+msgid "The replacement stock could not be split."
+msgstr "无法拆分替换库存。"
+
+#: cangxu/api.py:421
+msgid "Only a draft configuration can be changed."
+msgstr "只有草稿配置可以修改。"
+
+#: cangxu/api.py:424 cangxu/serializers.py:128 cangxu/serializers.py:169
+msgid "Create a new configuration revision after recording test evidence."
+msgstr "记录测试证据后，请创建新的配置版本。"
+
+#: cangxu/api.py:437
+msgid "The component is already installed or assigned to an order."
+msgstr "此部件已安装或已分配给订单。"
+
+#: cangxu/api.py:445
+#
+#| msgid "Quantity exceeds available stock"
+msgid "Quantity exceeds available stock."
+msgstr "数量超过可用库存。"
+
+#: cangxu/api.py:452
+#
+#| msgid "Serialized stock items cannot be deleted"
+msgid "The stock item could not be split."
+msgstr "无法拆分库存项。"
+
+#: cangxu/api.py:479
+msgid "Create a new configuration revision before removing items."
+msgstr "拆除部件前请创建新的配置版本。"
+
+#: cangxu/api.py:486
+#
+#| msgid "Shipment has already been delivered"
+msgid "This component has already been removed."
+msgstr "此部件已拆除。"
+
+#: cangxu/api.py:492
+#
+#| msgid "Destination location must be specified"
+msgid "A destination location and reason are required."
+msgstr "请填写目标库位和原因。"
+
+#: cangxu/api.py:533
+#
+#| msgid "Test templates can only be created for testable parts"
+msgid "Test evidence can only be added to a draft."
+msgstr "只能向草稿配置添加测试证据。"
+
+#: cangxu/api.py:536
+msgid "Only a passing result can satisfy release evidence."
+msgstr "只有通过的测试结果才能作为发布依据。"
+
+#: cangxu/api.py:548
+#
+#| msgid "Line item does not belong to this order"
+msgid "The test result does not belong to this configuration."
+msgstr "此测试结果不属于当前配置。"
+
+#: cangxu/api.py:560
+msgid "The test result predates this configuration change."
+msgstr "此测试结果早于当前配置变更。"
+
+#: cangxu/api.py:614
+#
+#| msgid "An empty domain is not allowed."
+msgid "This quality issue transition is not allowed."
+msgstr "不允许此质量问题状态转换。"
+
+#: cangxu/api.py:627
+msgid "The issue must be awaiting verification before closure."
+msgstr "质量问题必须处于待验证状态才能关闭。"
+
+#: cangxu/api.py:631
+msgid "Verification evidence is required."
+msgstr "必须提供验证证据。"
+
+#: cangxu/api.py:634
+msgid "All related rework tasks must be verified first."
+msgstr "必须先验证所有相关返工任务。"
+
+#: cangxu/api.py:668
+#
+#| msgid "An empty domain is not allowed."
+msgid "This rework task transition is not allowed."
+msgstr "不允许此返工任务状态转换。"
+
+#: cangxu/api.py:672
+msgid "Work completion notes are required."
+msgstr "请填写完工说明。"
+
+#: cangxu/api.py:686
+msgid "The rework task is not awaiting verification."
+msgstr "此返工任务当前不处于待验证状态。"
+
+#: cangxu/api.py:688
+msgid "Verification notes are required."
+msgstr "请填写验证说明。"
+
+#: cangxu/api.py:722
+msgid "Resolve every service line before closing the case."
+msgstr "结案前必须处理完所有售后明细。"
+
+#: cangxu/api.py:758
+#, python-format
+msgid "Scrapped quantity exceeds the received quantity for line %(line)s."
+msgstr "明细 %(line)s 的报废数量超过已收回数量。"
+
+#: cangxu/api.py:767
+#, python-format
+msgid "A supplier return is still outstanding for line %(line)s."
+msgstr "明细 %(line)s 仍有送修物料未返还。"
+
+#: cangxu/api.py:773
+msgid "A line cannot be marked not returned unless it was sent externally."
+msgstr "明细未送往外部时，不能标记为未返还。"
+
+#: cangxu/api.py:782
+#, python-format
+msgid "Record the disposition of every scrapped quantity for line %(line)s."
+msgstr "请记录明细 %(line)s 全部报废数量的处置方式。"
+
+#: cangxu/api.py:788
+#, python-format
+msgid "Inspect every received quantity before closing line %(line)s."
+msgstr "关闭明细 %(line)s 前，必须检验全部收回数量。"
+
+#: cangxu/api.py:814 cangxu/api.py:832 cangxu/api.py:910
+#: cangxu/serializers.py:333
+msgid "The service case is closed."
+msgstr "此售后单已关闭。"
+
+#: cangxu/api.py:839
+#
+#| msgid "Quantity is required"
+msgid "A replacement item is required."
+msgstr "必须指定替换件。"
+
+#: cangxu/api.py:843
+#
+#| msgid "Quantity must be 1 for serialized stock item"
+msgid "The replacement must be a different stock item."
+msgstr "替换件必须是另一个库存项。"
+
+#: cangxu/api.py:847
+#
+#| msgid "Reference must match required pattern"
+msgid "The replacement must match the returned part."
+msgstr "替换件必须与退回件属于同一物料。"
+
+#: cangxu/api.py:863
+msgid "The replacement is not available in internal stock."
+msgstr "替换件不在可用的内部库存中。"
+
+#: cangxu/api.py:868
+#
+#| msgid "Only a superuser can adjust this field"
+msgid "Only replacements use this field."
+msgstr "此字段仅用于换件处置。"
+
+#: cangxu/api.py:924
+msgid "The item is not part of this service line."
+msgstr "此库存项不属于该售后明细。"
+
+#: cangxu/api.py:970
+#
+#| msgid "Enter the quantity of items to install"
+msgid "Enter a positive quantity in stock."
+msgstr "请输入大于零的库存数量。"
+
+#: cangxu/api.py:974
+msgid "Quantity exceeds the remaining service line quantity."
+msgstr "数量超过该售后明细的剩余数量。"
+
+#: cangxu/api.py:978 cangxu/serializers.py:354
+#
+#| msgid "Serialized stock item must be disassembled in its entirety"
+msgid "Serialized service items must have quantity one."
+msgstr "按序列号管理的售后物料数量必须为 1。"
+
+#: cangxu/api.py:993
+msgid "Select the external party for this hand-off."
+msgstr "请选择本次交接的外部单位。"
+
+#: cangxu/api.py:1001
+#
+#| msgid "Select item to return from customer"
+msgid "Select the customer returning this item."
+msgstr "请选择退回此物料的客户。"
+
+#: cangxu/api.py:1005
+#
+#| msgid "Supplier part does not match line item"
+msgid "The party does not match the service case."
+msgstr "所选单位与售后单不匹配。"
+
+#: cangxu/api.py:1012
+#
+#| msgid "This is an external stock location"
+msgid "The source must match the current stock location."
+msgstr "来源库位必须与当前库存库位一致。"
+
+#: cangxu/api.py:1025
+msgid "Move installed or unlocated stock to a location first."
+msgstr "请先将已装机或未定位的库存移至库位。"
+
+#: cangxu/api.py:1029
+#
+#| msgid "Select destination location for received items"
+msgid "Select the destination location."
+msgstr "请选择目标库位。"
+
+#: cangxu/api.py:1035
+msgid "The item is not in the expected internal or external location."
+msgstr "此物料当前所在的内部或外部库位不符合预期。"
+
+#: cangxu/api.py:1039
+msgid "Choose the correct internal or external destination."
+msgstr "请根据流转方向选择正确的内部或外部目标库位。"
+
+#: cangxu/api.py:1051
+msgid "External receipt requires stock at an external location."
+msgstr "记录外部签收前，物料必须位于外部库位。"
+
+#: cangxu/api.py:1056
+msgid "Inspect the item after it returns to an internal location."
+msgstr "物料返回内部库位后才能检验。"
+
+#: cangxu/api.py:1066
+msgid "External disposal must be recorded at an external location."
+msgstr "外部处置必须在外部库位记录。"
+
+#: cangxu/api.py:1073
+#
+#| msgid "This is an external stock location"
+msgid "Internal scrapping requires an internal stock location."
+msgstr "内部报废必须在内部库位记录。"
+
+#: cangxu/api.py:1080
+#
+#| msgid "Stock item is installed in another item"
+msgid "The item must be installed in the service case unit."
+msgstr "此物料必须已安装在售后单关联的整机中。"
+
+#: cangxu/api.py:1092
+msgid "The stock quantity could not be split."
+msgstr "无法拆分库存数量。"
+
+#: cangxu/api.py:1101
+#
+#| msgid "Serialized stock items cannot be deleted"
+msgid "The stock item could not be moved."
+msgstr "无法移动库存项。"
+
+#: cangxu/api.py:1109
+msgid "The stock status could not be updated."
+msgstr "无法更新库存状态。"
+
+#: cangxu/api.py:1114
+msgid "The stock status did not reach the requested state."
+msgstr "库存状态未能更新至目标状态。"
+
+#: cangxu/api.py:1158
+#
+#| msgid "Structural locations cannot be assigned stock items"
+msgid "A structural location cannot be counted."
+msgstr "不能对结构库位执行盘点。"
+
+#: cangxu/api.py:1183
+#
+#| msgid "Only an open order can be marked as complete"
+msgid "Only an open count can be submitted."
+msgstr "只有未结盘点任务可以提交。"
+
+#: cangxu/api.py:1188
+msgid "Count every line before submitting the session."
+msgstr "提交盘点任务前，请完成所有明细的实盘。"
+
+#: cangxu/api.py:1200
+msgid "The count session must be reviewed before closure."
+msgstr "盘点任务关闭前必须完成复核。"
+
+#: cangxu/api.py:1206
+msgid "Every counted line requires independent review."
+msgstr "每条已盘明细都必须经过独立复核。"
+
+#: cangxu/api.py:1223
+msgid "Stock moved during this count. Reconcile its location before closing."
+msgstr "盘点期间库存发生移动。关闭前请核对其库位。"
+
+#: cangxu/api.py:1229
+msgid "Stock changed after the count baseline. Recount the affected line."
+msgstr "盘点基准时点后库存发生变化。请重新盘点受影响的明细。"
+
+#: cangxu/api.py:1273
+msgid "Only open count lines can be counted."
+msgstr "只有未结盘点明细可以录入实盘数量。"
+
+#: cangxu/api.py:1276
+#
+#| msgid "Invalid physical unit"
+msgid "Enter the physical count."
+msgstr "请输入实盘数量。"
+
+#: cangxu/api.py:1284
+msgid "Explain the count difference."
+msgstr "请说明盘点差异。"
+
+#: cangxu/api.py:1300
+msgid "Submit the count session before reviewing a line."
+msgstr "提交盘点任务后才能复核明细。"
+
+#: cangxu/api.py:1303
+#
+#| msgid "Purchase order has not been placed"
+msgid "The line has not been counted."
+msgstr "此明细尚未完成实盘。"
+
+#: cangxu/api.py:1310
+msgid "A discrepancy review note is required."
+msgstr "差异复核必须填写说明。"
+
+#: cangxu/api.py:1344 cangxu/api.py:1360
+msgid "A manifest cannot be edited after shipment."
+msgstr "发货后不能修改装箱清单。"
+
+#: cangxu/api.py:1355
+#
+#| msgid "Shipment has already been shipped"
+msgid "This package manifest has already been checked."
+msgstr "此包装清单已核对。"
+
+#: cangxu/api.py:1363
+msgid "Scan the package contents before checking it."
+msgstr "核对前请先扫描包装内容。"
+
+#: cangxu/api.py:1379
+#, python-format
+#| msgid "Assign allocations to this shipment"
+msgid "These items are not allocated to this shipment: %(items)s"
+msgstr "以下物料未分配给本次发货：%(items)s"
+
+#: cangxu/api.py:1386
+msgid "Only a released configuration can be shipped."
+msgstr "只有已发布的配置可以发货。"
+
+#: cangxu/api.py:1396
+#, python-format
+msgid "The package is missing configured items: %(items)s"
+msgstr "包装缺少配置要求的物料：%(items)s"
+
+#: cangxu/api.py:1447
+#
+#| msgid "Build order part cannot be changed"
+msgid "A checked or shipped package cannot be changed."
+msgstr "已核对或已发货的包装不能修改。"
+
+#: cangxu/apps.py:12
+#
+#| msgid "Is manufacturer"
+msgid "Cangxu manufacturing"
+msgstr "仓序生产管理"
+
+#: cangxu/models.py:19
+msgid "ERP"
+msgstr "ERP"
+
+#: cangxu/models.py:20
+#
+#| msgid "Is customer"
+msgid "OEM / customer"
+msgstr "OEM / 客户"
+
+#: cangxu/models.py:22
+msgid "Legacy system"
+msgstr "旧系统"
+
+#: cangxu/models.py:59
+#
+#| msgid "Barcode Data"
+msgid "Part code alias"
+msgstr "物料编码别名"
+
+#: cangxu/models.py:60
+#
+#| msgid "Barcode Data"
+msgid "Part code aliases"
+msgstr "物料编码别名"
+
+#: cangxu/models.py:100
+#
+#| msgid "Manufacturer Part"
+msgid "Manufacturing lot"
+msgstr "制造批次"
+
+#: cangxu/models.py:101
+#
+#| msgid "Manufacturer Part"
+msgid "Manufacturing lots"
+msgstr "制造批次"
+
+#: cangxu/models.py:127
+#
+#| msgid "Parent stock item"
+msgid "Lot stock item"
+msgstr "批次库存项"
+
+#: cangxu/models.py:136
+#
+#| msgid "Is manufacturer"
+msgid "Board manufacturer"
+msgstr "板卡制造商"
+
+#: cangxu/models.py:137
+msgid "Board brand"
+msgstr "板卡品牌"
+
+#: cangxu/models.py:138
+msgid "Chip vendor"
+msgstr "芯片厂商"
+
+#: cangxu/models.py:139
+#
+#| msgid "Is manufacturer"
+msgid "PCB manufacturer"
+msgstr "PCB 制造商"
+
+#: cangxu/models.py:140
+msgid "SMT provider"
+msgstr "SMT 加工方"
+
+#: cangxu/models.py:142
+msgid "OEM"
+msgstr "OEM"
+
+#: cangxu/models.py:161
+msgid "Lot partner"
+msgstr "批次关联单位"
+
+#: cangxu/models.py:170
+msgid "Draft"
+msgstr "草稿"
+
+#: cangxu/models.py:171
+msgid "Released"
+msgstr "已发布"
+
+#: cangxu/models.py:172
+#
+#| msgid "Superuser"
+msgid "Superseded"
+msgstr "已被替代"
+
+#: cangxu/models.py:177
+#
+#| msgid "Delete configuration"
+msgid "Planned configuration"
+msgstr "计划配置"
+
+#: cangxu/models.py:178
+#
+#| msgid "Delete configuration"
+msgid "Actual configuration"
+msgstr "实际配置"
+
+#: cangxu/models.py:179
+#
+#| msgid "Delete configuration"
+msgid "Delivery configuration"
+msgstr "交付配置"
+
+#: cangxu/models.py:218
+#
+#| msgid "Delete configuration"
+msgid "Unit configuration"
+msgstr "整机配置"
+
+#: cangxu/models.py:219
+#
+#| msgid "Delete configuration"
+msgid "Unit configurations"
+msgstr "整机配置"
+
+#: cangxu/models.py:279
+#
+#| msgid "Configuration Error"
+msgid "Configuration item"
+msgstr "配置明细"
+
+#: cangxu/models.py:280
+#
+#| msgid "Configuration Error"
+msgid "Configuration items"
+msgstr "配置明细"
+
+#: cangxu/models.py:315 cangxu/models.py:316
+#
+#| msgid "Configuration Error"
+msgid "Configuration test evidence"
+msgstr "配置测试证据"
+
+#: cangxu/models.py:365
+#
+#| msgid "Component part is active"
+msgid "Component replacement"
+msgstr "部件替换记录"
+
+#: cangxu/models.py:366
+#
+#| msgid "Completed Shipments"
+msgid "Component replacements"
+msgstr "部件替换记录"
+
+#: cangxu/models.py:375
+msgid "Low"
+msgstr "低"
+
+#: cangxu/models.py:376
+msgid "Medium"
+msgstr "中"
+
+#: cangxu/models.py:377
+msgid "High"
+msgstr "高"
+
+#: cangxu/models.py:378
+#
+#| msgid "Part Locking"
+msgid "Blocking"
+msgstr "阻断"
+
+#: cangxu/models.py:383 cangxu/models.py:449 cangxu/models.py:500
+#: cangxu/models.py:689
+#
+#| msgid "Open link"
+msgid "Open"
+msgstr "待处理"
+
+#: cangxu/models.py:384
+#
+#| msgid "Destination"
+msgid "Investigating"
+msgstr "调查中"
+
+#: cangxu/models.py:385
+msgid "Rework"
+msgstr "返工中"
+
+#: cangxu/models.py:386 cangxu/models.py:451
+#
+#| msgid "Part Notifications"
+msgid "Awaiting verification"
+msgstr "待验证"
+
+#: cangxu/models.py:387 cangxu/models.py:504 cangxu/models.py:691
+msgid "Closed"
+msgstr "已关闭"
+
+#: cangxu/models.py:435
+#
+#| msgid "Quantity is required"
+msgid "Quality issue"
+msgstr "质量问题"
+
+#: cangxu/models.py:436
+#
+#| msgid "Quantity is required"
+msgid "Quality issues"
+msgstr "质量问题"
+
+#: cangxu/models.py:450 cangxu/models.py:501
+#
+#| msgid "In Progress"
+msgid "In progress"
+msgstr "处理中"
+
+#: cangxu/models.py:483
+msgid "Rework task"
+msgstr "返工任务"
+
+#: cangxu/models.py:484
+msgid "Rework tasks"
+msgstr "返工任务"
+
+#: cangxu/models.py:493
+#
+#| msgid "Customer Reference "
+msgid "Customer return"
+msgstr "客户退回"
+
+#: cangxu/models.py:494
+#
+#| msgid "Supplier part"
+msgid "Supplier repair"
+msgstr "供应商维修"
+
+#: cangxu/models.py:495
+#
+#| msgid "Internal Part"
+msgid "Internal failure"
+msgstr "内部故障"
+
+#: cangxu/models.py:502
+#
+#| msgid "Link to external page"
+msgid "Waiting for external party"
+msgstr "等待外部单位"
+
+#: cangxu/models.py:503
+msgid "Awaiting inspection"
+msgstr "待检验"
+
+#: cangxu/models.py:554
+msgid "Service case"
+msgstr "售后单"
+
+#: cangxu/models.py:555
+msgid "Service cases"
+msgstr "售后单"
+
+#: cangxu/models.py:569
+#
+#| msgid "Repair"
+msgid "Repaired"
+msgstr "已修复"
+
+#: cangxu/models.py:570
+#
+#| msgid "Replace"
+msgid "Replaced"
+msgstr "已更换"
+
+#: cangxu/models.py:571 cangxu/models.py:621
+#
+#| msgid "Shipped"
+msgid "Scrapped"
+msgstr "已报废"
+
+#: cangxu/models.py:572
+#
+#| msgid "Returned"
+msgid "Not returned"
+msgstr "未返还"
+
+#: cangxu/models.py:573
+#
+#| msgid "No author found"
+msgid "No fault found"
+msgstr "未发现故障"
+
+#: cangxu/models.py:604
+msgid "Service case line"
+msgstr "售后明细"
+
+#: cangxu/models.py:605
+#
+#| msgid "Search Purchase Orders"
+msgid "Service case lines"
+msgstr "售后明细"
+
+#: cangxu/models.py:615
+#
+#| msgid "Link to external page"
+msgid "Sent to external party"
+msgstr "已送出"
+
+#: cangxu/models.py:616
+msgid "Received by external party"
+msgstr "外部已签收"
+
+#: cangxu/models.py:617
+msgid "Returned by external party"
+msgstr "外部已返还"
+
+#: cangxu/models.py:618
+#
+#| msgid "Connected"
+msgid "Inspected"
+msgstr "已检验"
+
+#: cangxu/models.py:619
+#
+#| msgid "Installed"
+msgid "Reinstalled"
+msgstr "已重新装机"
+
+#: cangxu/models.py:620
+msgid "Disposed"
+msgstr "已处置"
+
+#: cangxu/models.py:679
+msgid "Service case event"
+msgstr "售后流转事件"
+
+#: cangxu/models.py:680
+msgid "Service case events"
+msgstr "售后流转事件"
+
+#: cangxu/models.py:690
+msgid "Awaiting review"
+msgstr "待复核"
+
+#: cangxu/models.py:720
+#
+#| msgid "Stock counted"
+msgid "Stock count session"
+msgstr "盘点任务"
+
+#: cangxu/models.py:721
+#
+#| msgid "Stock counted"
+msgid "Stock count sessions"
+msgstr "盘点任务"
+
+#: cangxu/models.py:778
+#
+#| msgid "Stock counted"
+msgid "Stock count line"
+msgstr "盘点明细"
+
+#: cangxu/models.py:779
+#
+#| msgid "Stock counted"
+msgid "Stock count lines"
+msgstr "盘点明细"
+
+#: cangxu/models.py:820
+#
+#| msgid "Shipment Date"
+msgid "Shipment manifest"
+msgstr "装箱清单"
+
+#: cangxu/models.py:821
+#
+#| msgid "Shipment Date"
+msgid "Shipment manifests"
+msgstr "装箱清单"
+
+#: cangxu/models.py:852
+#
+#| msgid "Shipment Date"
+msgid "Shipment manifest line"
+msgstr "装箱明细"
+
+#: cangxu/models.py:853
+#
+#| msgid "Shipment Date"
+msgid "Shipment manifest lines"
+msgstr "装箱明细"
+
+#: cangxu/serializers.py:81
+#
+#| msgid "Stock items must refer to the same part"
+msgid "The stock item must match the lot part."
+msgstr "库存项必须与批次物料一致。"
+
+#: cangxu/serializers.py:86
+msgid "The stock item batch must match the lot code."
+msgstr "库存项的批次号必须与批次记录一致。"
+
+#: cangxu/serializers.py:124 cangxu/serializers.py:165
+msgid "Only draft configurations can be changed."
+msgstr "只有草稿配置可以修改。"
+
+#: cangxu/serializers.py:156
+msgid "Configuration items are changed through install or remove operations."
+msgstr "配置明细必须通过安装或拆除操作变更。"
+
+#: cangxu/serializers.py:175
+#
+#| msgid "Item cannot belong to itself"
+msgid "A unit cannot be installed into itself."
+msgstr "整机不能安装到自身。"
+
+#: cangxu/serializers.py:187
+msgid "The position is already occupied in this configuration."
+msgstr "此配置位置已被占用。"
+
+#: cangxu/serializers.py:193
+msgid "Serialized components must have quantity one."
+msgstr "按序列号管理的部件数量必须为 1。"
+
+#: cangxu/serializers.py:281
+msgid "A customer is required for a customer return."
+msgstr "客户退回单必须指定客户。"
+
+#: cangxu/serializers.py:286
+#
+#| msgid "An external build order is required for assembly parts"
+msgid "A supplier is required for a supplier repair."
+msgstr "供应商维修单必须指定供应商。"
+
+#: cangxu/serializers.py:291
+msgid "A service case cannot be owned by both a customer and supplier."
+msgstr "同一售后单不能同时关联客户和供应商。"
+
+#: cangxu/serializers.py:307
+msgid "Service case identity cannot change after lines have been added."
+msgstr "添加明细后不能修改售后单的关联对象。"
+
+#: cangxu/serializers.py:348
+msgid "Case, stock identity, and quantity cannot change after custody events."
+msgstr "发生交接事件后，不能修改售后单、库存项和数量。"
+
+#: cangxu/serializers.py:358
+#
+#| msgid "Return quantity exceeds stock quantity"
+msgid "Service line quantity exceeds the stock item quantity."
+msgstr "售后明细数量超过库存项数量。"
+
+#: cangxu/serializers.py:388
+msgid "The item must be part of this service line history."
+msgstr "此物料必须属于该售后明细的流转记录。"
+
+#: cangxu/serializers.py:397
+msgid "Record whether the inspection passed."
+msgstr "请记录检验是否通过。"
+
+#: cangxu/serializers.py:405
+msgid "Inspection results are only valid for inspection events."
+msgstr "只有检验事件可以填写检验结果。"
+
+#: cangxu/serializers.py:466
+msgid "Only open count sessions can be changed."
+msgstr "只有未结盘点任务可以修改。"
+
+#: cangxu/serializers.py:471
+#
+#| msgid "Shipment address must match the customer"
+msgid "The part must match the stock item."
+msgstr "物料必须与库存项一致。"
+
+#: cangxu/serializers.py:479
+#
+#| msgid "Serialized stock item must be disassembled in its entirety"
+msgid "Serialized stock must be counted as zero or one."
+msgstr "按序列号管理的库存实盘数量只能为 0 或 1。"
+
+#: cangxu/serializers.py:521
+msgid "Shipment/package identity cannot change after scans or shipping."
+msgstr "扫描或发货后不能修改发货单和包装标识。"
+
+#: cangxu/models.py
+msgid "Native purchase order line associated with this received lot."
+msgstr "关联此收货批次的原生采购单明细。"
+
+#: cangxu/models.py cangxu/serializers.py
+msgid "The purchase order line part must match the manufacturing lot part."
+msgstr "采购单明细的物料必须与制造批次的物料一致。"
+
+#: cangxu/models.py
+msgid "Original InvenTree shipment associated with a customer return."
+msgstr "关联客户退货的 InvenTree 原始发货单。"
+
+#: cangxu/serializers.py
+msgid "The source shipment must belong to the service case customer."
+msgstr "原发货单必须属于售后单指定的客户。"
+
+#: cangxu/serializers.py
+msgid "A customer return must reference a completed shipment."
+msgstr "客户退货必须关联已完成的销售发货单。"
+
+#: cangxu/serializers.py
+msgid "The source shipment must contain the service case unit."
+msgstr "原发货单必须包含此售后单关联的整机。"
+
+#: cangxu/api.py
+msgid "The returned item is not assigned to this customer."
+msgstr "退回实物不属于此客户。"
+
+#: cangxu/api.py
+msgid "The returned stock did not reach quarantine status."
+msgstr "退回实物未能进入待检状态。"
+
+# Hardware profile, switch protocol, and multi-end cable vocabulary for Cangxu.
+# These messages are surfaced by Django REST Framework choice and field labels.
+#: cangxu/models.py
+msgid "Hardware profile revision"
+msgstr "硬件规格修订"
+
+#: cangxu/models.py
+msgid "Hardware profile revisions"
+msgstr "硬件规格修订"
+
+#: cangxu/models.py
+msgid "Hardware port definition"
+msgstr "硬件端口定义"
+
+#: cangxu/models.py
+msgid "Hardware port definitions"
+msgstr "硬件端口定义"
+
+#: cangxu/models.py
+msgid "Cable end definition"
+msgstr "线缆端点定义"
+
+#: cangxu/models.py
+msgid "Cable end definitions"
+msgstr "线缆端点定义"
+
+#: cangxu/models.py
+msgid "GPU / accelerator"
+msgstr "GPU / 加速器"
+
+#: cangxu/models.py
+msgid "Accelerator baseboard"
+msgstr "加速器底板"
+
+#: cangxu/models.py
+msgid "PCIe switch"
+msgstr "PCIe 交换部件"
+
+#: cangxu/models.py
+msgid "NVLink / NVSwitch component"
+msgstr "NVLink / NVSwitch 互联组件"
+
+#: cangxu/models.py
+msgid "Ethernet switch"
+msgstr "以太网交换机"
+
+#: cangxu/models.py
+msgid "InfiniBand switch"
+msgstr "InfiniBand 交换机"
+
+#: cangxu/models.py
+msgid "NIC / HCA / DPU"
+msgstr "网卡 / HCA / DPU"
+
+#: cangxu/models.py
+msgid "Riser / adapter board"
+msgstr "Riser / 转接板"
+
+#: cangxu/models.py
+msgid "Retimer"
+msgstr "重定时器"
+
+#: cangxu/models.py
+msgid "Data / interconnect cable"
+msgstr "数据线缆 / 互联线缆"
+
+#: cangxu/models.py
+msgid "Power harness"
+msgstr "供电线束"
+
+#: cangxu/models.py
+msgid "Optical module"
+msgstr "光模块"
+
+#: cangxu/models.py
+msgid "Other hardware"
+msgstr "其他硬件"
+
+#: cangxu/models.py
+msgid "Unspecified"
+msgstr "未指定"
+
+#: cangxu/models.py
+msgid "PCI Express"
+msgstr "PCI Express"
+
+#: cangxu/models.py
+msgid "NVLink"
+msgstr "NVLink"
+
+#: cangxu/models.py
+msgid "Ethernet"
+msgstr "以太网"
+
+#: cangxu/models.py
+msgid "InfiniBand"
+msgstr "InfiniBand"
+
+#: cangxu/models.py
+msgid "MCIO / internal high-speed"
+msgstr "MCIO / 内部高速互联"
+
+#: cangxu/models.py
+msgid "GPU power"
+msgstr "GPU 供电"
+
+#: cangxu/models.py
+msgid "Optical fiber"
+msgstr "光纤"
+
+#: cangxu/models.py
+msgid "Management"
+msgstr "管理接口"
+
+#: cangxu/models.py
+msgid "Liquid cooling"
+msgstr "液冷"
+
+#: cangxu/models.py
+msgid "PCIe card"
+msgstr "PCIe 插卡"
+
+#: cangxu/models.py
+msgid "Module / tray"
+msgstr "模组 / 托盘"
+
+#: cangxu/models.py
+msgid "Baseboard"
+msgstr "底板"
+
+#: cangxu/models.py
+msgid "Switch board"
+msgstr "交换板"
+
+#: cangxu/models.py
+msgid "Board-mounted chip"
+msgstr "板载芯片"
+
+#: cangxu/models.py
+msgid "Cable assembly"
+msgstr "线缆组件"
+
+#: cangxu/models.py
+msgid "Embedded component"
+msgstr "嵌入式部件"
+
+#: cangxu/models.py
+msgid "Rack-mount device"
+msgstr "机架式设备"
+
+#: cangxu/models.py
+msgid "Kind"
+msgstr "类别"
+
+#: cangxu/models.py
+msgid "Protocol"
+msgstr "协议"
+
+#: cangxu/models.py
+msgid "Form factor"
+msgstr "外形规格"
+
+#: cangxu/models.py
+msgid "Specifications"
+msgstr "规格参数"
+
+#: cangxu/models.py
+msgid "Source reference"
+msgstr "资料来源"
+
+#: cangxu/models.py
+msgid "State"
+msgstr "状态"
+
+#: cangxu/models.py
+msgid "Supersedes"
+msgstr "替代的上一修订"
+
+#: cangxu/models.py
+msgid "Created by"
+msgstr "创建人"
+
+#: cangxu/models.py
+msgid "Approved by"
+msgstr "批准人"
+
+#: cangxu/models.py
+msgid "Created at"
+msgstr "创建时间"
+
+#: cangxu/models.py
+msgid "Approved at"
+msgstr "批准时间"
+
+#: cangxu/models.py
+msgid "Profile"
+msgstr "规格版本"
+
+#: cangxu/models.py
+msgid "Connector"
+msgstr "连接器"
+
+#: cangxu/models.py
+msgid "Lane count"
+msgstr "通道数"
+
+#: cangxu/models.py
+msgid "Max rate"
+msgstr "最高速率"
+
+#: cangxu/models.py
+msgid "Supported modes"
+msgstr "支持模式"
+
+#: cangxu/models.py
+msgid "Branch group"
+msgstr "分支组"
+
+#: cangxu/models.py
+msgid "Lane map"
+msgstr "通道映射"
+
+#: cangxu/models.py
+msgid "Pinout reference"
+msgstr "针脚定义资料"
+
+#: cangxu/models.py
+msgid "This hardware kind requires protocol %(protocol)s."
+msgstr "此硬件类别要求使用 %(protocol)s 协议。"
+
+#: cangxu/models.py
+msgid "Select a cable protocol or medium before saving."
+msgstr "保存前请选择线缆协议或传输介质。"
+
+#: cangxu/serializers.py
+msgid "Specifications must be an object with values and units."
+msgstr "规格参数必须是包含数值和单位的对象。"
+
+#: cangxu/api.py
+msgid "Create a new revision to change an approved profile."
+msgstr "已批准的规格不可直接修改，请创建新修订。"
+
+#: cangxu/api.py
+msgid "Only draft hardware profiles can be approved."
+msgstr "只有草稿状态的硬件规格可以批准。"
+
+#: cangxu/api.py
+msgid "Record the approved engineering source first."
+msgstr "请先记录已批准的工程资料来源。"
+
+#: cangxu/api.py
+msgid "Add at least one typed port before approval."
+msgstr "批准前请至少添加一个类型明确的端口。"
+
+#: cangxu/api.py
+msgid "Define at least two cable ends before approval."
+msgstr "批准前请至少定义两个线缆端点。"
+
+#: cangxu/api.py
+msgid "Ports can only change on a draft profile."
+msgstr "只有草稿规格版本允许修改端口。"
+
+#: cangxu/models.py
+msgid "Use cable ends for cable assemblies."
+msgstr "线缆组件请使用线缆端点定义。"
+
+#: cangxu/models.py
+msgid "Cable ends require a cable profile."
+msgstr "线缆端点必须关联线缆规格。"
+
+#: cangxu/models.py
+msgid "Cable end protocol must match its profile."
+msgstr "线缆端点协议必须与所属规格一致。"
+
+#: cangxu/models.py
+msgid "Surplus return"
+msgstr "余料退库"
+
+#: cangxu/models.py
+msgid "Failure disassembly"
+msgstr "故障拆回"
+
+#: cangxu/models.py
+msgid "Rework disassembly"
+msgstr "返工拆回"
+
+#: cangxu/models.py
+msgid "Other removal"
+msgstr "其他拆回"
+
+#: cangxu/api.py
+msgid "The component is no longer installed in this unit."
+msgstr "该部件已不在此设备上，不能重复拆回。"
+
+#: cangxu/api.py
+msgid "The work order line does not allocate this component to the unit."
+msgstr "该工单物料行未将此部件分配给这台设备。"
+
+#: cangxu/api.py
+msgid "Select the exact work order line for this component."
+msgstr "请为此部件选择准确的工单物料行。"
+
+#: cangxu/api.py
+msgid "The rework task must be in progress for this unit and quality issue."
+msgstr "返工任务必须处于处理中，且关联此设备及其质量问题。"
+
+#: cangxu/serializers.py
+msgid "The work order line must belong to this unit and match the component part."
+msgstr "工单物料行必须属于此设备的工单，且物料必须与部件一致。"
