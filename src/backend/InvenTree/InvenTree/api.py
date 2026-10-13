@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
+from django.db.models.deletion import Collector
 from django.http import HttpRequest, JsonResponse
 from django.urls import path, reverse
 from django.utils.translation import gettext_lazy as _
@@ -688,6 +689,8 @@ class CommonBulkDeleteMixin(BulkOperationMixin):
         """
         return queryset
 
+    bulk_delete_with_collector = False
+
     @extend_schema(request=BulkRequestSerializer)
     def _delete(self, request, *args, **kwargs):
         """Perform a DELETE operation against this list endpoint.
@@ -704,11 +707,24 @@ class CommonBulkDeleteMixin(BulkOperationMixin):
         n_deleted = queryset.count()
 
         with transaction.atomic(), batch_events(), batch_offload_tasks():
-            # Perform object deletion
-            # Note that we do not perform a bulk-delete operation here,
-            # as we want to trigger any custom post_delete methods on the model
-            for item in queryset:
-                item.delete()
+            if self.bulk_delete_with_collector:
+                # This opt-in is for models without custom delete() behavior.
+                # A shared collector checks protected relations once for the
+                # whole batch while still emitting Django delete signals.
+                items = list(queryset)
+                for item in items:
+                    validate = getattr(item, 'validate_plugin_deletion', None)
+                    if validate:
+                        validate()
+
+                collector = Collector(using=queryset.db)
+                collector.collect(items)
+                collector.delete()
+            else:
+                # Perform object deletion individually to trigger custom
+                # model delete() behavior and plugin validation.
+                for item in queryset:
+                    item.delete()
 
         return Response({'success': f'Deleted {n_deleted} items'}, status=200)
 
