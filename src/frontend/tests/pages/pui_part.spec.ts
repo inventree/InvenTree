@@ -357,7 +357,7 @@ test('Parts - BOM Nesting', async ({ browser }) => {
   // Can build is divided by the parent quantity
   const m3x8Build = await cell('M3x8 Torx', 'Can Build');
   const buildText = await m3x8Build.innerText();
-  const buildMatch = buildText.match(/^([\d,]+)\s+([\d,]+) ÷ 3$/);
+  const buildMatch = buildText.match(/^([\d,]+)\s+([\d,.]+) ÷ 3$/);
 
   expect(buildMatch).not.toBeNull();
 
