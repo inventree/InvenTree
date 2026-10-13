@@ -1,12 +1,12 @@
 import { expect, test } from '@playwright/test';
-import { doCachedLogin } from './login.js';
 
 test('Chinese incoming receipt inspection and archive flow', async ({
-  browser
+  page
 }) => {
-  const page = await doCachedLogin(browser);
   page.setDefaultTimeout(5000);
-  await page.goto('/tests/fixtures/cangxu-incoming-receipt-smoke.html');
+  await page.goto(
+    'http://localhost:5173/tests/fixtures/cangxu-incoming-receipt-smoke.html'
+  );
   await expect(
     page.getByLabel('按采购单号、物料名称或物料编码搜索')
   ).toBeVisible();

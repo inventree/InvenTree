@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { doCachedLogin } from './login.js';
 
 test('Chinese shipment receipt and discrepancy resolution flow', async ({
-  browser
+  page
 }) => {
-  const page = await doCachedLogin(browser);
-  await page.goto('/tests/fixtures/cangxu-receipt-smoke.html');
+  await page.goto(
+    'http://localhost:5173/tests/fixtures/cangxu-receipt-smoke.html'
+  );
   await expect(page.getByText('客户签收')).toBeVisible();
   await page.getByRole('combobox', { name: '已核验包装' }).click();
   await page.getByRole('option', { name: 'SYN-BOX-01' }).click();
