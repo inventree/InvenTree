@@ -655,8 +655,14 @@ class PluginsRegistry:
             if (not settings.PLUGIN_TESTING) or (
                 settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP
             ):
+                entries = list(get_entrypoints())
+
+                # Discard any previously imported plugin code, so that the
+                # current on-disk version is imported below
+                self._purge_plugin_modules(entries)
+
                 # Collect plugins from setup entry points
-                for entry in get_entrypoints():
+                for entry in entries:
                     logger.debug(
                         "Loading plugin '%s' from module '%s'", entry.name, entry.module
                     )
@@ -675,6 +681,47 @@ class PluginsRegistry:
         logger.debug(', '.join([a.__module__ for a in collected_plugins]))
 
         return collected_plugins
+
+    def _purge_plugin_modules(self, entries) -> None:
+        """Remove the modules of package plugins from sys.modules.
+
+        When a plugin package is updated on disk (e.g. via pip), this process
+        still holds the previously imported modules. Reloading only the module
+        which defines the plugin class is not sufficient, as the rest of the
+        package (e.g. the parent __init__.py, or any sibling modules) would
+        remain stale. Instead, the entire top-level package is discarded,
+        so that the next import loads the current code from disk.
+
+        This must happen in every process (web and background worker) on
+        reload, otherwise processes report different plugin versions and
+        the registry hash never settles.
+
+        Args:
+            entries: Plugin entry points to purge the packages for
+        """
+        base_dir = Path(settings.BASE_DIR).resolve()
+        packages = set()
+
+        for entry in entries:
+            if package := entry.module.split('.')[0]:
+                packages.add(package)
+
+        for package in packages:
+            # Never purge InvenTree's own modules
+            module = sys.modules.get(package)
+            module_file = getattr(module, '__file__', None)
+
+            if module_file and Path(module_file).resolve().is_relative_to(base_dir):
+                continue
+
+            for name in [
+                name
+                for name in list(sys.modules)
+                if name == package or name.startswith(f'{package}.')
+            ]:
+                del sys.modules[name]
+
+        importlib.invalidate_caches()
 
     def discover_mixins(self):
         """Discover all mixins from plugins and register them."""
@@ -777,10 +824,6 @@ class PluginsRegistry:
 
         plugin.db = plg_db
 
-        # Check if this is a 'builtin' plugin
-        builtin = plg_db.is_builtin() if plg_db else plugin.check_is_builtin()
-        sample = plg_db.is_sample() if plg_db else plugin.check_is_sample()
-
         package_name = None
 
         # Extract plugin package name
@@ -811,29 +854,8 @@ class PluginsRegistry:
             # Initialize package - we can be sure that an admin has activated the plugin
             logger.debug('Loading plugin `%s`', plg_name)
 
-            # If this is a third-party plugin, reload the source module
-            # This is required to ensure that separate processes are using the same code
-            if not builtin and not sample:
-                plugin_name = plugin.__name__
-                module_name = plugin.__module__
-
-                if plugin_module := sys.modules.get(module_name):
-                    logger.debug('Reloading plugin `%s`', plg_name)
-                    # Reload the module
-                    try:
-                        importlib.reload(plugin_module)
-                        plugin = getattr(plugin_module, plugin_name)
-                    except ModuleNotFoundError:
-                        # No module found - try to import it directly
-                        try:
-                            raw_module = _load_source(
-                                module_name, plugin_module.__file__
-                            )
-                            plugin = getattr(raw_module, plugin_name)
-                        except Exception:
-                            pass
-                    except Exception:
-                        logger.exception('Failed to reload plugin `%s`', plg_name)
+            # Note: Package plugins are re-imported from disk when collected
+            # (see _purge_plugin_modules), so no module reload is required here
 
             try:
                 t_start = time.time()
@@ -1218,26 +1240,3 @@ registry: PluginsRegistry = PluginsRegistry()
 def call_plugin_function(plugin_name: str, function_name: str, *args, **kwargs):
     """Global helper function to call a specific member function of a plugin."""
     return registry.call_plugin_function(plugin_name, function_name, *args, **kwargs)
-
-
-def _load_source(modname, filename):
-    """Helper function to replace deprecated & removed imp.load_source.
-
-    See https://docs.python.org/3/whatsnew/3.12.html#imp
-    """
-    if modname in sys.modules:
-        del sys.modules[modname]
-
-    # loader = importlib.machinery.SourceFileLoader(modname, filename)
-    spec = importlib.util.spec_from_file_location(modname, filename)  # , loader=loader)
-    if spec is None:
-        raise ImportError(f"Cannot find module '{modname}'")  # pragma: no cover
-    module = importlib.util.module_from_spec(spec)
-
-    sys.modules[module.__name__] = module
-
-    loader = spec.loader
-    if loader is not None:
-        loader.exec_module(module)
-
-    return module
