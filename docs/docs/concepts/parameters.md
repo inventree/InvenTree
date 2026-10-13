@@ -30,12 +30,13 @@ Parameter templates are used to define the different types of parameters which a
 | Choices | A comma-separated list of valid choices for parameter values linked to this template. |
 | Checkbox | If set, parameters linked to this template can only be assigned values *true* or *false* |
 | Selection List | If set, parameters linked to this template can only be assigned values from the linked [selection list](#selection-lists) |
+| Unique | Enforce a [uniqueness requirement](#parameter-uniqueness) on parameter values linked to this template |
 
 {{ image("concepts/parameter-template.png", "Parameters Template") }}
 
 ### Create Template
 
-Parameter templates are created and edited via the [admin interface](../settings/admin.md).
+Parameter templates are created and edited via the [Admin Center](../settings/admin.md#admin-center).
 
 To create a template:
 
@@ -58,6 +59,45 @@ To add a parameter, navigate to a specific part detail page, click on the "Param
 {{ image("part/create_part_parameter.png", "Create Parameter Form") }}
 
 Select the parameter `Template` you would like to use for this parameter, fill-out the `Data` field (value of this specific parameter) and click the "Submit" button.
+
+### Parameter Uniqueness
+
+A parameter template can be configured to enforce a uniqueness requirement on the values of any parameters linked to it. This is useful for parameters which are expected to act as a unique identifier and prevents duplicate values from being entered by mistake.
+
+The `Unique` attribute on a parameter template supports the following options:
+
+| Option | Description |
+| --- | --- |
+| No uniqueness required | The default option - no restriction is placed on parameter values |
+| Unique for model type | A parameter value must be unique amongst all other parameters (linked to this template) which are assigned to the *same* model type. For example, a template with this option enabled could be used to enforce unique serial numbers across all `Part` instances, without preventing the same value from also being used against a `Company` instance |
+| Globally unique | A parameter value must be unique amongst *all* other parameters linked to this template, regardless of the model type to which they are assigned |
+
+!!! info "Case Insensitive"
+    Uniqueness checks are case-insensitive - for example, the values `ABC123` and `abc123` are considered to be duplicates of each other.
+
+If a parameter value is entered which does not satisfy the uniqueness requirement of its template, it will be rejected and an error message displayed.
+
+#### Validation Against Numeric Value
+
+If a parameter template defines a set of [units](#parameter-units), uniqueness is checked against the *normalized numeric value* of the parameter, rather than the raw text entered. This ensures that equivalent values expressed in different (but compatible) units are correctly detected as duplicates.
+
+For example, if a *Resistance* template (with base units of `ohm`) enforces uniqueness, then a value of `1k` would be rejected as a duplicate of an existing value of `1000`, as they both represent the same physical quantity.
+
+Templates which do not define a set of units are compared using a direct (case-insensitive) text comparison of the raw parameter value.
+
+#### Copying Caveats
+
+Some workflows in InvenTree allow parameters to be copied from one object to another - for example, when duplicating a part, build order, or other object which supports parameters.
+
+Any parameter which is linked to a template with a uniqueness requirement is *skipped* when copying parameters in this way. This prevents the copy operation from creating a duplicate (and therefore invalid) value on the new object. If this occurs, the new object simply will not have a parameter created against that particular template - it can be added manually (with a distinct value) afterwards.
+
+#### Category Parameter Caveats
+
+A parameter template can be linked to a part category, along with a default value which is automatically applied to any new parts created within that category (or a sub-category).
+
+This default value system is not compatible with a template which enforces a uniqueness requirement - applying the *same* default value to every part in a category would immediately conflict with the "unique" requirement, as soon as more than one part exists in that category.
+
+For this reason, a category-based default value is *not* applied for any parameter template which has a uniqueness requirement configured. If you need to assign values for such parameters, this must be done manually (or via the API) on a per-part basis.
 
 ## Parametric Tables
 

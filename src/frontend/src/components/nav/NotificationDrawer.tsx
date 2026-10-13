@@ -23,6 +23,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { Boundary } from '@lib/components/Boundary';
+import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
@@ -32,8 +34,6 @@ import { getBaseUrl } from '@lib/functions/Navigation';
 import { navigateToLink } from '@lib/functions/Navigation';
 import { api } from '../../App';
 import { useUserState } from '../../states/UserState';
-import { Boundary } from '../Boundary';
-import { StylishText } from '../items/StylishText';
 
 /**
  * Render a single notification entry in the drawer
@@ -52,8 +52,8 @@ function NotificationEntry({
   const model_type = notification.target?.model_type;
   const model_id = notification.target?.model_id;
 
-  // If a valid model type is provided, that overrides the specified link
-  if (model_type as ModelType) {
+  // If a valid model type is provided, and no explicit link, construct a link
+  if (!link && (model_type as ModelType)) {
     const model_info = ModelInformationDict[model_type as ModelType];
     if (model_info?.url_detail && model_id) {
       link = getDetailUrl(model_type as ModelType, model_id);
@@ -61,6 +61,10 @@ function NotificationEntry({
       link = model_info.url_overview;
     }
   }
+
+  const base = `/${getBaseUrl()}`;
+  const href =
+    link?.startsWith('/') && !link.startsWith(base) ? `${base}${link}` : link;
 
   return (
     <Paper p='xs' shadow='xs'>
@@ -72,7 +76,7 @@ function NotificationEntry({
         >
           <Stack gap={2}>
             <Anchor
-              href={link ? `/${getBaseUrl()}${link}` : '#'}
+              href={href || '#'}
               underline='hover'
               target='_blank'
               onClick={(event: any) => {
@@ -81,7 +85,7 @@ function NotificationEntry({
                   onRead();
                 }
 
-                if (link.startsWith('/')) {
+                if (link?.startsWith('/')) {
                   navigateToLink(link, navigate, event);
                 }
               }}
@@ -137,7 +141,7 @@ export function NotificationDrawer({
 
   const markAllAsRead = useCallback(() => {
     api
-      .get(apiUrl(ApiEndpoints.notifications_readall), {
+      .post(apiUrl(ApiEndpoints.notifications_readall), {
         params: {
           read: false
         }

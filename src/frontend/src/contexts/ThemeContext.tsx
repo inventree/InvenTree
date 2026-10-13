@@ -8,16 +8,16 @@ import {
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { ContextMenuProvider } from 'mantine-contextmenu';
+import type { JSX } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { AboutInvenTreeModal } from '../components/modals/AboutInvenTreeModal';
+import { HotkeyModal } from '../components/modals/HotkeyModal';
 import { LicenseModal } from '../components/modals/LicenseModal';
 import { QrModal } from '../components/modals/QrModal';
 import { ServerInfoModal } from '../components/modals/ServerInfoModal';
 import { useLocalState } from '../states/LocalState';
 import { LanguageContext } from './LanguageContext';
 import { colorSchema } from './colorSchema';
-
-import type { JSX } from 'react';
 
 export function ThemeContext({
   children
@@ -60,7 +60,8 @@ export function ThemeContext({
               info: ServerInfoModal,
               about: AboutInvenTreeModal,
               license: LicenseModal,
-              qr: QrModal
+              qr: QrModal,
+              hotkey: HotkeyModal
             }}
           >
             <Notifications />

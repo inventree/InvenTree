@@ -177,6 +177,7 @@ test('Barcode Scanning - Forms', async ({ browser }) => {
   await page
     .getByRole('button', { name: 'barcode-scan-button-stocklocation' })
     .click();
+
   await page
     .getByRole('textbox', { name: 'barcode-scan-keyboard-input' })
     .fill('INV-SL37');

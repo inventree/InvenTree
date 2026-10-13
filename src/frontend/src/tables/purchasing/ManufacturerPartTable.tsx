@@ -12,24 +12,25 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { useManufacturerPartFields } from '../../forms/CompanyForms';
-import {
-  useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
-} from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
-import { useUserState } from '../../states/UserState';
 import {
   CompanyColumn,
   DescriptionColumn,
   IPNColumn,
   LinkColumn,
   PartColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
+} from '../../components/tables/ColumnRenderers';
+import { TagsFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { useManufacturerPartFields } from '../../forms/CompanyForms';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
+import { useUserState } from '../../states/UserState';
 
 /*
  * Construct a table listing manufacturer parts
@@ -85,12 +86,14 @@ export function ManufacturerPartTable({
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       PartColumn({
-        switchable: !!partId
+        switchable: !!partId,
+        filter: 'part_active'
       }),
       IPNColumn({}),
       {
         accessor: 'manufacturer',
         sortable: true,
+        filter: 'manufacturer_active',
         render: (record: any) => (
           <CompanyColumn company={record?.manufacturer_detail} />
         )
@@ -130,10 +133,14 @@ export function ManufacturerPartTable({
     table: table
   });
 
+  const duplicateManufacturerPartFields = useManufacturerPartFields({
+    duplicateManufacturerPartId: selectedPart?.pk
+  });
+
   const duplicateManufacturerPart = useCreateApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
     title: t`Add Manufacturer Part`,
-    fields: useMemo(() => manufacturerPartFields, [manufacturerPartFields]),
+    fields: duplicateManufacturerPartFields,
     table: table,
     initialData: {
       ...selectedPart
@@ -161,7 +168,8 @@ export function ManufacturerPartTable({
         active: !manufacturerId,
         description: t`Show manufacturer parts for active manufacturers.`,
         type: 'boolean'
-      }
+      },
+      TagsFilter({ modelType: ModelType.manufacturerpart })
     ];
   }, [manufacturerId]);
 

@@ -115,6 +115,10 @@ class DataImportSessionAcceptFields(APIView):
         """Accept the field mapping for a DataImportSession."""
         session = get_object_or_404(importer.models.DataImportSession, pk=pk)
 
+        # Check session ownership
+        if not request.user.is_staff and session.user != request.user:
+            raise PermissionDenied()
+
         # Check that the user has permission to accept the field mapping
         if model_class := session.model_class:
             if not check_user_permission(request.user, model_class, 'change'):
@@ -137,17 +141,45 @@ class DataImportSessionAcceptRows(DataImporterPermissionMixin, CreateAPI):
         ctx = super().get_serializer_context()
 
         try:
-            ctx['session'] = importer.models.DataImportSession.objects.get(
+            session = importer.models.DataImportSession.objects.get(
                 pk=self.kwargs.get('pk', None)
             )
-        except Exception:
-            pass
+        except importer.models.DataImportSession.DoesNotExist:
+            session = None
+
+        if session:
+            user = self.request.user
+            if not user.is_staff and session.user != user:
+                raise PermissionDenied()
+            ctx['session'] = session
 
         ctx['request'] = self.request
         return ctx
 
 
-class DataImportColumnMappingList(DataImporterPermissionMixin, ListAPI):
+class DataImportSessionChildMixin(DataImporterPermissionMixin):
+    """Mixin for DataImportRow and DataImportColumnMap views.
+
+    Ensures users can only access objects that belong to an import session they own.
+    Staff users retain access to all objects.
+    """
+
+    def get_queryset(self):
+        """Return only objects whose session belongs to the requesting user."""
+        queryset = super().get_queryset()
+
+        try:
+            user = self.request.user
+        except AttributeError:
+            raise PermissionDenied('User information is not available')
+
+        if user.is_staff:
+            return queryset
+
+        return queryset.filter(session__user=user)
+
+
+class DataImportColumnMappingList(DataImportSessionChildMixin, ListAPI):
     """API endpoint for accessing a list of DataImportColumnMap objects."""
 
     queryset = importer.models.DataImportColumnMap.objects.all()
@@ -158,14 +190,14 @@ class DataImportColumnMappingList(DataImporterPermissionMixin, ListAPI):
     filterset_fields = ['session']
 
 
-class DataImportColumnMappingDetail(DataImporterPermissionMixin, RetrieveUpdateAPI):
+class DataImportColumnMappingDetail(DataImportSessionChildMixin, RetrieveUpdateAPI):
     """Detail endpoint for a single DataImportColumnMap object."""
 
     queryset = importer.models.DataImportColumnMap.objects.all()
     serializer_class = importer.serializers.DataImportColumnMapSerializer
 
 
-class DataImportRowList(DataImporterPermissionMixin, BulkDeleteMixin, ListAPI):
+class DataImportRowList(DataImportSessionChildMixin, BulkDeleteMixin, ListAPI):
     """API endpoint for accessing a list of DataImportRow objects."""
 
     queryset = importer.models.DataImportRow.objects.all()
@@ -180,7 +212,7 @@ class DataImportRowList(DataImporterPermissionMixin, BulkDeleteMixin, ListAPI):
     ordering = 'row_index'
 
 
-class DataImportRowDetail(DataImporterPermissionMixin, RetrieveUpdateDestroyAPI):
+class DataImportRowDetail(DataImportSessionChildMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single DataImportRow object."""
 
     queryset = importer.models.DataImportRow.objects.all()

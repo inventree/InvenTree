@@ -13,6 +13,7 @@ from InvenTree.unit_test import InvenTreeTestCase
 from plugin import InvenTreePlugin
 from plugin.helpers import MixinNotImplementedError
 from plugin.mixins import (
+    AllocateMixin,
     APICallMixin,
     AppMixin,
     NavigationMixin,
@@ -239,6 +240,33 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
                 NAVIGATION = ['aa', 'aa']
 
             NavigationCls()
+
+
+class AllocateMixinTest(BaseMixinDefinition, TestCase):
+    """Tests for AllocateMixin."""
+
+    MIXIN_HUMAN_NAME = 'Allocate'
+    MIXIN_NAME = 'allocate'
+    MIXIN_ENABLE_CHECK = 'has_allocate'
+
+    def setUp(self):
+        """Setup for all tests."""
+
+        class AllocateCls(AllocateMixin, InvenTreePlugin):
+            pass
+
+        self.mixin = AllocateCls()
+
+    def test_function(self):
+        """Test that the default hook implementations are pass-through."""
+        stock_items = ['a', 'b', 'c']
+
+        self.assertEqual(
+            self.mixin.filter_build_allocation(None, stock_items), stock_items
+        )
+        self.assertEqual(
+            self.mixin.filter_sales_order_allocation(None, stock_items), stock_items
+        )
 
 
 class APICallMixinTest(BaseMixinDefinition, TestCase):

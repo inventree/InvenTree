@@ -5,15 +5,20 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
 import { type RowAction, RowEditAction } from '@lib/components/RowActions';
-import { YesNoButton } from '@lib/components/YesNoButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
+import {
+  BooleanColumn,
+  DescriptionColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { partCategoryFields } from '../../forms/PartForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
@@ -21,10 +26,7 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import { DescriptionColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * PartCategoryTable - Displays a table of part categories
@@ -64,14 +66,11 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
         copyable: true,
         sortable: true
       },
-      {
+      BooleanColumn({
         accessor: 'structural',
         sortable: true,
-        defaultVisible: false,
-        render: (record: any) => {
-          return <YesNoButton value={record.structural} />;
-        }
-      },
+        defaultVisible: false
+      }),
       {
         accessor: 'part_count',
         sortable: true

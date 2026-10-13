@@ -9,6 +9,7 @@ from inventree.api import InvenTreeAPI
 server = os.environ.get('INVENTREE_PYTHON_TEST_SERVER', 'http://127.0.0.1:12345')
 user = os.environ.get('INVENTREE_PYTHON_TEST_USERNAME', 'testuser')
 pwd = os.environ.get('INVENTREE_PYTHON_TEST_PASSWORD', 'testpassword')
+
 api_client = InvenTreeAPI(
     server,
     username=user,
@@ -27,7 +28,7 @@ def test_api_auth_performance():
         username=user,
         password=pwd,
         timeout=30,
-        token_name='python-test',
+        token_name='python-test-auth_test',
         use_token_auth=True,
     )
     assert client
@@ -49,7 +50,7 @@ def test_api_auth_performance():
         '/api/order/so/shipment/',
         #'/api/order/po/',
         #'/api/order/po-line/',
-        '/api/user/roles/',
+        '/api/user/me/roles/',
         '/api/parameter/',
         '/api/parameter/template/',
     ],
@@ -76,7 +77,7 @@ def test_api_list_performance(url):
         '/api/order/so/shipment/',
         '/api/order/po/',
         '/api/order/po-line/',
-        '/api/user/roles/',
+        '/api/user/me/roles/',
         '/api/parameter/',
         '/api/parameter/template/',
     ],

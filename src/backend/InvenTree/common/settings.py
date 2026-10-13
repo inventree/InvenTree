@@ -13,6 +13,19 @@ import InvenTree.ready
 logger = structlog.get_logger('inventree')
 
 
+def plugin_setting_overrides(slug: str) -> dict:
+    """Return a dictionary of plugin setting overrides for the given plugin slug.
+
+    These values are set via environment variables or configuration file.
+    """
+    from django.conf import settings
+
+    if hasattr(settings, 'PLUGIN_SETTING_OVERRIDES'):
+        return settings.PLUGIN_SETTING_OVERRIDES.get(slug, {}) or {}
+
+    return {}
+
+
 def global_setting_overrides() -> dict:
     """Return a dictionary of global settings overrides.
 
@@ -81,11 +94,11 @@ def set_global_warning(key: str, options: Optional[dict] = None) -> bool:
         key (str): The key for the warning.
         options (dict or bool): Options for the warning, or True to set a default warning.
 
-    Raises:
-        ValueError: If the key is not provided.
-
     Returns:
         bool: True if the warning was checked / set successfully, False if no check was performed.
+
+    Raises:
+        ValueError: If the key is not provided.
     """
     if not key:
         raise ValueError('Key must be provided for global warning setting.')
@@ -129,12 +142,3 @@ def stock_expiry_enabled():
     from common.models import InvenTreeSetting
 
     return InvenTreeSetting.get_setting('STOCK_ENABLE_EXPIRY', False, create=False)
-
-
-def prevent_build_output_complete_on_incompleted_tests():
-    """Returns True if the completion of the build outputs is disabled until the required tests are passed."""
-    from common.models import InvenTreeSetting
-
-    return InvenTreeSetting.get_setting(
-        'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS', False, create=False
-    )

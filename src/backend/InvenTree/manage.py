@@ -22,4 +22,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('INVE-W15: Process interrupted by user.')
+        sys.exit(1)

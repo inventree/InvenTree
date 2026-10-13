@@ -9,27 +9,83 @@ import {
   IconTruckDelivery,
   IconTruckReturn
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
-import { ModelType } from '@lib/enums/ModelType';
+import type { EventContentArg } from '@fullcalendar/core';
+import { ModelType, PluginPanelKey } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
+import type { TableFilter } from '@lib/index';
 import { useLocalStorage } from '@mantine/hooks';
 import OrderCalendar from '../../components/calendar/OrderCalendar';
+import OrderCalendarToolTip from '../../components/calendar/OrderCalendarToolTip';
 import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
+import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
 import ParametricCompanyTable from '../../tables/company/ParametricCompanyTable';
 import ReturnOrderParametricTable from '../../tables/sales/ReturnOrderParametricTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
+import SalesOrderFilters from '../../tables/sales/SalesOrderFilters';
 import SalesOrderParametricTable from '../../tables/sales/SalesOrderParametricTable';
 import SalesOrderShipmentTable from '../../tables/sales/SalesOrderShipmentTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 
+function SalesOrderCalendar() {
+  const calendarFilters: TableFilter[] = useMemo(() => {
+    return SalesOrderFilters({ includeDateFilters: false });
+  }, []);
+
+  const renderTooltip = useCallback((event: EventContentArg) => {
+    return OrderCalendarToolTip({
+      event: event,
+      modelType: ModelType.company,
+      instanceLookup: 'customer_detail'
+    });
+  }, []);
+
+  return (
+    <OrderCalendar
+      model={ModelType.salesorder}
+      role={UserRoles.sales_order}
+      params={{ customer_detail: true }}
+      filters={calendarFilters}
+      initialFilters={[{ name: 'outstanding', value: 'true' }]}
+      tooltip={renderTooltip}
+    />
+  );
+}
+
+const ReturnOrderCalendar = () => {
+  const calendarFilters: TableFilter[] = useMemo(() => {
+    return SalesOrderFilters({ includeDateFilters: false });
+  }, []);
+
+  const renderTooltip = useCallback((event: EventContentArg) => {
+    return OrderCalendarToolTip({
+      event: event,
+      modelType: ModelType.company,
+      instanceLookup: 'customer_detail'
+    });
+  }, []);
+
+  return (
+    <OrderCalendar
+      model={ModelType.returnorder}
+      role={UserRoles.return_order}
+      params={{ customer_detail: true }}
+      filters={calendarFilters}
+      initialFilters={[{ name: 'outstanding', value: 'true' }]}
+      tooltip={renderTooltip}
+    />
+  );
+};
+
 export default function SalesIndex() {
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
 
   const [customersView, setCustomersView] = useLocalStorage<string>({
     key: 'customer-view',
@@ -52,7 +108,7 @@ export default function SalesIndex() {
         name: 'salesorders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        hidden: !user.hasViewRole(UserRoles.sales_order),
+        hidden: !user.hasViewVisible(UserRoles.sales_order),
         selection: salesOrderView,
         onChange: setSalesOrderView,
         options: [
@@ -66,13 +122,7 @@ export default function SalesIndex() {
             value: 'calendar',
             label: t`Calendar View`,
             icon: <IconCalendar />,
-            content: (
-              <OrderCalendar
-                model={ModelType.returnorder}
-                role={UserRoles.return_order}
-                params={{ outstanding: true }}
-              />
-            )
+            content: <SalesOrderCalendar />
           },
           {
             value: 'parametric',
@@ -86,6 +136,7 @@ export default function SalesIndex() {
         name: 'shipments',
         label: t`Pending Shipments`,
         icon: <IconCubeSend />,
+        hidden: !user.hasViewVisible(UserRoles.sales_order),
         content: (
           <SalesOrderShipmentTable
             tableName={'sales-order-pending-shipment'}
@@ -98,7 +149,7 @@ export default function SalesIndex() {
         name: 'returnorders',
         label: t`Return Orders`,
         icon: <IconTruckReturn />,
-        hidden: !user.hasViewRole(UserRoles.return_order),
+        hidden: !user.hasViewVisible(UserRoles.return_order),
         selection: returnOrderView,
         onChange: setReturnOrderView,
         options: [
@@ -112,13 +163,7 @@ export default function SalesIndex() {
             value: 'calendar',
             label: t`Calendar View`,
             icon: <IconCalendar />,
-            content: (
-              <OrderCalendar
-                model={ModelType.returnorder}
-                role={UserRoles.return_order}
-                params={{ outstanding: true }}
-              />
-            )
+            content: <ReturnOrderCalendar />
           },
           {
             value: 'parametric',
@@ -170,8 +215,8 @@ export default function SalesIndex() {
       <PanelGroup
         pageKey='sales-index'
         panels={panels}
-        model={'sales'}
-        id={null}
+        pluginPanelWithoutId
+        pluginPanelKey={PluginPanelKey.sales}
       />
     </Stack>
   );

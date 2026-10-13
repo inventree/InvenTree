@@ -35,84 +35,63 @@ def isAppLoaded(app_name: str) -> bool:
     return app_name in _loaded_apps
 
 
-def isInTestMode():
-    """Returns True if the database is in testing mode."""
-    return 'test' in sys.argv or sys.argv[0].endswith('pytest')
-
-
-def isWaitingForDatabase():
-    """Return True if we are currently waiting for the database to be ready."""
-    return 'wait_for_db' in sys.argv
-
-
-def isImportingData():
-    """Returns True if the database is currently importing (or exporting) data, e.g. 'loaddata' command is performed."""
-    return any(x in sys.argv for x in ['flush', 'loaddata', 'dumpdata'])
-
-
-def isRunningMigrations():
-    """Return True if the database is currently running migrations."""
-    return any(
-        x in sys.argv
-        for x in ['migrate', 'makemigrations', 'showmigrations', 'runmigrations']
-    )
-
-
-def isRebuildingData():
-    """Return true if any of the rebuilding commands are being executed."""
-    return any(
-        x in sys.argv
-        for x in [
-            'rebuild',
-            'rebuild_models',
-            'rebuild_thumbnails',
-            'remove_stale_contenttypes',
-        ]
-    )
-
-
-def isRunningBackup():
-    """Return true if any of the backup commands are being executed."""
-    return any(
-        x in sys.argv
-        for x in [
-            'backup',
-            'restore',
-            'dbbackup',
-            'dbrestore',
-            'mediabackup',
-            'mediarestore',
-        ]
-    )
-
-
-def isCollectingPlugins():
-    """Return True if the 'collectplugins' command is being executed."""
-    return 'collectplugins' in sys.argv
-
-
-def isGeneratingSchema():
-    """Return true if schema generation is being executed."""
-    if isInServerThread() or isInWorkerThread():
-        return False
-
-    if isRunningMigrations() or isRunningBackup() or isRebuildingData():
-        return False
-
-    if isImportingData():
-        return False
-
-    if isInTestMode():
-        return False
-
-    if isWaitingForDatabase():
-        return False
-
-    if isCollectingPlugins():
-        return False
-
-    # Additional set of commands which should not trigger schema generation
-    excluded_commands = [
+# Cached introspection of the command line arguments
+ARGV_COMMANDS: dict[str, tuple[str, ...]] = {
+    # Running in test mode
+    'test': ('test', 'pytest'),
+    # The 'test' management command - not pytest
+    'test_command': ('test',),
+    # Collecting the available plugins
+    'collect_plugins': ('collectplugins',),
+    # Listing the installed apps
+    'list_apps': ('list_apps',),
+    # Running an interactive shell session
+    'shell': ('shell',),
+    # Running as a background worker
+    'worker': ('qcluster',),
+    # Running the django development server
+    'runserver': ('runserver',),
+    # Waiting for the database to become available
+    'wait_for_db': ('wait_for_db',),
+    # #### #
+    # More complex groups
+    # #### #
+    # Importing (or exporting) database records
+    'import_data': ('flush', 'loaddata', 'bulkloaddata', 'dumpdata', 'bulkdumpdata'),
+    # Running database migrations
+    'migrations': ('migrate', 'makemigrations', 'showmigrations', 'runmigrations'),
+    # Rebuilding database records
+    'rebuild_data': (
+        'rebuild',
+        'rebuild_models',
+        'rebuild_thumbnails',
+        'remove_stale_contenttypes',
+    ),
+    # Running a backup / restore operation
+    'backup': (
+        'backup',
+        'restore',
+        'dbbackup',
+        'dbrestore',
+        'mediabackup',
+        'mediarestore',
+    ),
+    # Read-only commands, which should not trigger any database writes
+    'read_only': (
+        'help',
+        'check',
+        'shell',
+        'sqlflush',
+        'list_apps',
+        'wait_for_db',
+        'spectactular',
+        'makemessages',
+        'collectstatic',
+        'showmigrations',
+        'compilemessages',
+    ),
+    # Commands which should *not* trigger schema generation
+    'schema_excluded': (
         'compilemessages',
         'createsuperuser',
         'clean_settings',
@@ -126,12 +105,9 @@ def isGeneratingSchema():
         'check',
         'shell',
         'help',
-    ]
-
-    if any(cmd in sys.argv for cmd in excluded_commands):
-        return False
-
-    included_commands = [
+    ),
+    # Commands which *do* trigger schema generation
+    'schema_generation': (
         'schema',
         'spectactular',
         # schema adjacent calls
@@ -139,17 +115,128 @@ def isGeneratingSchema():
         'export_tags',
         'export_filters',
         'export_report_context',
-    ]
+    ),
+    # Commands which must not touch the database during the app 'ready' phase
+    'database_excluded': (
+        'compilemessages',
+        'createsuperuser',
+        'collectstatic',
+        'makemessages',
+        'spectactular',
+        'wait_for_db',
+        'check',
+    ),
+}
 
-    if any(cmd in sys.argv for cmd in included_commands):
-        return True
+
+def _introspectCommands(argv: list[str]):
+    """Introspect the provided command line arguments."""
+    args = set(argv)
+    entrypoint = argv[0] if argv else ''
+
+    _context = {
+        key: not args.isdisjoint(commands) for key, commands in ARGV_COMMANDS.items()
+    }
+
+    # The entrypoint itself can indicate the context
+    _context['pytest_entrypoint'] = (
+        entrypoint.endswith('pytest') or 'pytest' in entrypoint.lower()
+    )
+    _context['gunicorn_entrypoint'] = 'gunicorn' in entrypoint
+
+    # The development server is running without the auto-reloader
+    _context['noreload'] = '--noreload' in args
+
+    return _context
+
+
+cmd_context = _introspectCommands(sys.argv)
+
+
+def isInTestMode():
+    """Returns True if the database is in testing mode."""
+    return cmd_context['test'] or cmd_context['pytest_entrypoint']
+
+
+def isWaitingForDatabase():
+    """Return True if we are currently waiting for the database to be ready."""
+    return cmd_context['wait_for_db']
+
+
+def isImportingData():
+    """Returns True if the database is currently importing (or exporting) data, e.g. 'loaddata' command is performed."""
+    return cmd_context['import_data']
+
+
+def isRunningMigrations():
+    """Return True if the database is currently running migrations."""
+    return cmd_context['migrations']
+
+
+def isRebuildingData():
+    """Return true if any of the rebuilding commands are being executed."""
+    return cmd_context['rebuild_data']
+
+
+def isRunningBackup():
+    """Return true if any of the backup commands are being executed."""
+    return cmd_context['backup']
+
+
+def isCollectingPlugins():
+    """Return True if the 'collectplugins' command is being executed."""
+    return cmd_context['collect_plugins']
+
+
+# This variable is used to cache the result of the isGeneratingSchema function, to prevent multiple executions of the same checks
+_IS_GENERATING_SCHEMA: bool | None = None
+
+
+def _setGeneratingSchema(value: bool):
+    """Set the value of the isGeneratingSchema variable."""
+    global _IS_GENERATING_SCHEMA
+    _IS_GENERATING_SCHEMA = value
+    return value
+
+
+def isGeneratingSchema():
+    """Return true if schema generation is being executed."""
+    global _IS_GENERATING_SCHEMA
+
+    if _IS_GENERATING_SCHEMA is not None:
+        return _IS_GENERATING_SCHEMA
+
+    if isInServerThread() or isInWorkerThread():
+        return _setGeneratingSchema(False)
+
+    if isRunningMigrations() or isRunningBackup() or isRebuildingData():
+        return _setGeneratingSchema(False)
+
+    if isImportingData():
+        return _setGeneratingSchema(False)
+
+    if isInTestMode():
+        return _setGeneratingSchema(False)
+
+    if isWaitingForDatabase():
+        return _setGeneratingSchema(False)
+
+    if isCollectingPlugins():
+        return _setGeneratingSchema(False)
+
+    # Additional set of commands which should not trigger schema generation
+    if cmd_context['schema_excluded']:
+        return _setGeneratingSchema(False)
+
+    if cmd_context['schema_generation']:
+        return _setGeneratingSchema(True)
 
     # This is a very inefficient call - so we only use it as a last resort
     result = any('drf_spectacular' in frame.filename for frame in inspect.stack())
 
     if not result:
         # We should only get here if we *are* generating schema
-        # Raise a warning, so that deevlopers can add extra checks above
+        # Raise a warning, so that developers can add extra checks above
 
         if settings.DEBUG:
             logger.warning(
@@ -157,12 +244,12 @@ def isGeneratingSchema():
             )
             logger.warning('sys.argv: %s', sys.argv)
 
-    return result
+    return _setGeneratingSchema(result)
 
 
 def isInWorkerThread():
     """Returns True if the current thread is a background worker thread."""
-    return 'qcluster' in sys.argv
+    return cmd_context['worker']
 
 
 def isInServerThread():
@@ -170,10 +257,10 @@ def isInServerThread():
     if isInWorkerThread():
         return False
 
-    if 'runserver' in sys.argv:
+    if cmd_context['runserver']:
         return True
 
-    return 'gunicorn' in sys.argv[0]
+    return cmd_context['gunicorn_entrypoint']
 
 
 def isInMainThread():
@@ -182,27 +269,10 @@ def isInMainThread():
     - The RUN_MAIN env is set in that case. However if --noreload is applied, this variable
     is not set because there are no different threads.
     """
-    if 'runserver' in sys.argv and '--noreload' not in sys.argv:
+    if cmd_context['runserver'] and not cmd_context['noreload']:
         return os.environ.get('RUN_MAIN', None) == 'true'
 
     return not isInWorkerThread()
-
-
-def readOnlyCommands():
-    """Return a list of read-only management commands which should not trigger database writes."""
-    return [
-        'help',
-        'check',
-        'shell',
-        'sqlflush',
-        'list_apps',
-        'wait_for_db',
-        'spectactular',
-        'makemessages',
-        'collectstatic',
-        'showmigrations',
-        'compilemessages',
-    ]
 
 
 def isReadOnlyCommand():
@@ -215,7 +285,7 @@ def isReadOnlyCommand():
     ):
         return True
 
-    return any(cmd in sys.argv for cmd in readOnlyCommands())
+    return cmd_context['read_only']
 
 
 def canAppAccessDatabase(
@@ -249,27 +319,19 @@ def canAppAccessDatabase(
 
     # If any of the following management commands are being executed,
     # prevent custom "on load" code from running!
-    excluded_commands = [
-        'compilemessages',
-        'createsuperuser',
-        'collectstatic',
-        'makemessages',
-        'spectactular',
-        'wait_for_db',
-        'check',
-    ]
+    if cmd_context['database_excluded']:
+        return False
 
-    if not allow_shell:
-        excluded_commands.append('shell')
+    if not allow_shell and cmd_context['shell']:
+        return False
 
-    if not allow_test:
-        # Override for testing mode?
-        excluded_commands.append('test')
+    if not allow_plugins and (
+        cmd_context['collect_plugins'] or cmd_context['list_apps']
+    ):
+        return False
 
-    if not allow_plugins:
-        excluded_commands.extend(['collectplugins'])
-
-    return all(cmd not in sys.argv for cmd in excluded_commands)
+    # Override for testing mode?
+    return allow_test or not isInTestMode()
 
 
 def isPluginRegistryLoaded():

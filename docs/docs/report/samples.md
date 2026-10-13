@@ -22,6 +22,7 @@ The following report templates are provided "out of the box" and can be used as 
 | [Sales Order Shipment](#sales-order-shipment) | [SalesOrderShipment](../sales/sales_order.md) | Sales Order Shipment report |
 | [Stock Location](#stock-location) | [StockLocation](../stock/index.md#stock-location) | Stock Location report |
 | [Test Report](#test-report) | [StockItem](../stock/index.md#stock-item) | Test Report |
+| [Transfer Order](#transfer-order) | [TransferOrder](../stock/transfer_order.md) | Transfer Order report |
 | [Selected Stock Items Report](#selected-stock-items-report) | [StockItem](../stock/index.md#stock-item) | Selected Stock Items report |
 
 
@@ -57,6 +58,10 @@ The following report templates are provided "out of the box" and can be used as 
 
 {{ templatefile("report/inventree_test_report.html") }}
 
+### Transfer Order
+
+{{ templatefile("report/inventree_transfer_order_report.html") }}
+
 ### Selected Stock Items Report
 
 {{ templatefile("report/inventree_stock_report_merge.html") }}
@@ -68,15 +73,21 @@ The following label templates are provided "out of the box" and can be used as a
 | Template | Model Type | Description |
 | --- | --- | --- |
 | [Build Line](#build-line-label) | [Build line item](../manufacturing/build.md) | Build Line label |
-| [Part](#part-label) | [Part](../part/index.md) | Part label |
+| [Part](#part-label) | [Part](../part/index.md) | Part label (QR code and part name) |
+| [Part (Code128)](#part-label-code128) | [Part](../part/index.md) | Part label (Code128 barcode) |
 | [Stock Item](#stock-item-label) | [StockItem](../stock/index.md#stock-item) | Stock Item label |
-| [Stock Location](#stock-location-label) | [StockLocation](../stock/index.md#stock-location) | Stock Location label |
+| [Stock Location](#stock-location-label) | [StockLocation](../stock/index.md#stock-location) | Stock Location label (QR code) |
+| [Stock Location (with text)](#stock-location-label-with-text) | [StockLocation](../stock/index.md#stock-location) | Stock Location label (QR code and location details) |
 
 ### Build Line Label
 
 {{ templatefile("label/buildline_label.html") }}
 
 ### Part Label
+
+{{ templatefile("label/part_label.html") }}
+
+### Part Label (Code128)
 
 {{ templatefile("label/part_label_code128.html") }}
 
@@ -85,5 +96,9 @@ The following label templates are provided "out of the box" and can be used as a
 {{ templatefile("label/stockitem_qr.html") }}
 
 ### Stock Location Label
+
+{{ templatefile("label/stocklocation_qr.html") }}
+
+### Stock Location Label (with text)
 
 {{ templatefile("label/stocklocation_qr_and_text.html") }}

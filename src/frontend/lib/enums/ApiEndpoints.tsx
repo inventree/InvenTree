@@ -12,12 +12,13 @@ export enum ApiEndpoints {
   // User API endpoints
   user_list = 'user/',
   user_set_password = 'user/:id/set-password/',
-  user_me = 'user/me/',
-  user_profile = 'user/profile/',
-  user_roles = 'user/roles/',
-  user_token = 'user/token/',
   user_tokens = 'user/tokens/',
   user_simple_login = 'email/generate/',
+  // Individual user endpoints
+  user_me_profile = 'user/me/profile/',
+  user_me_roles = 'user/me/roles/',
+  user_me_token = 'user/me/token/',
+  user_me = 'user/me/',
 
   // User auth endpoints
   auth_base = '/auth/',
@@ -40,6 +41,7 @@ export enum ApiEndpoints {
   auth_email_verify = 'auth/v1/auth/email/verify',
   auth_providers = 'auth/v1/account/providers',
   auth_provider_redirect = 'auth/v1/auth/provider/redirect',
+  auth_provider_signup = 'auth/v1/auth/provider/signup',
   auth_config = 'auth/v1/config',
 
   // Generic API endpoints
@@ -153,6 +155,8 @@ export enum ApiEndpoints {
   stock_merge = 'stock/merge/',
   stock_assign = 'stock/assign/',
   stock_status = 'stock/status/',
+  stock_convert = 'stock/:id/convert/',
+  stock_disassemble = 'stock/:id/disassemble/',
   stock_install = 'stock/:id/install/',
   stock_uninstall = 'stock/:id/uninstall/',
   stock_serialize = 'stock/:id/serialize/',
@@ -180,6 +184,7 @@ export enum ApiEndpoints {
   sales_order_complete = 'order/so/:id/complete/',
   sales_order_allocate = 'order/so/:id/allocate/',
   sales_order_allocate_serials = 'order/so/:id/allocate-serials/',
+  sales_order_auto_allocate = 'order/so/:id/auto-allocate/',
 
   sales_order_line_list = 'order/so-line/',
   sales_order_extra_line_list = 'order/so-extra-line/',
@@ -196,6 +201,17 @@ export enum ApiEndpoints {
   return_order_receive = 'order/ro/:id/receive/',
   return_order_line_list = 'order/ro-line/',
   return_order_extra_line_list = 'order/ro-extra-line/',
+
+  transfer_order_list = 'order/transfer-order/',
+  transfer_order_issue = 'order/transfer-order/:id/issue/',
+  transfer_order_hold = 'order/transfer-order/:id/hold/',
+  transfer_order_cancel = 'order/transfer-order/:id/cancel/',
+  transfer_order_complete = 'order/transfer-order/:id/complete/',
+  transfer_order_allocate = 'order/transfer-order/:id/allocate/',
+  transfer_order_allocate_serials = 'order/transfer-order/:id/allocate-serials/',
+
+  transfer_order_line_list = 'order/transfer-order-line/',
+  transfer_order_allocation_list = 'order/transfer-order-allocation/',
 
   // Template API endpoints
   label_list = 'label/template/',
@@ -236,15 +252,24 @@ export enum ApiEndpoints {
 
   // Miscellaneous API endpoints
   attachment_list = 'attachment/',
+  instance_info = 'instance-info/',
   error_report_list = 'error-report/',
   project_code_list = 'project-code/',
   custom_unit_list = 'units/',
-  notes_image_upload = 'notes-image-upload/',
+  note_list = 'note/',
+  notes_image_list = 'note/image/',
   email_list = 'admin/email/',
   email_test = 'admin/email/test/',
+  admin_oauth = 'admin/oauth2/',
+  admin_oauth_regenerate = 'admin/oauth2/:id/regenerate/',
+  scim_config = 'admin/scim/',
+  scim_generate = 'admin/scim/generate/',
+  scim_disable = 'admin/scim/disable/',
   config_list = 'admin/config/',
+  sso_list = 'admin/sso/',
   parameter_list = 'parameter/',
   parameter_template_list = 'parameter/template/',
+  tag_list = 'tag/',
 
   // Internal system things
   system_internal_trace_end = 'system-internal/observability/end'

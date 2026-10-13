@@ -6,14 +6,21 @@ import { ProgressBar } from '@lib/components/ProgressBar';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
+import {
+  DateColumn,
+  ReferenceColumn,
+  StatusColumn
+} from '../../components/tables/ColumnRenderers';
+import {
+  IncludeVariantsFilter,
+  StatusFilterOptions
+} from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import { formatCurrency, formatDecimal } from '../../defaults/formatters';
-import { useTable } from '../../hooks/UseTable';
-import { DateColumn, ReferenceColumn, StatusColumn } from '../ColumnRenderers';
-import { IncludeVariantsFilter, StatusFilterOptions } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
 
 export default function PartPurchaseOrdersTable({
   partId
@@ -29,6 +36,7 @@ export default function PartPurchaseOrdersTable({
         ordering: 'order',
         sortable: true,
         switchable: false,
+        filter: ['pending', 'received'],
         title: t`Purchase Order`
       }),
       StatusColumn({
@@ -36,6 +44,7 @@ export default function PartPurchaseOrdersTable({
         sortable: true,
         ordering: 'status',
         title: t`Status`,
+        filter: 'order_status',
         model: ModelType.purchaseorder
       }),
       {

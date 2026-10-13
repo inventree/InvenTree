@@ -9,6 +9,7 @@ import { IconSearch } from '@tabler/icons-react';
 import { type JSX, useEffect, useMemo, useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
+import { Boundary } from '@lib/components/Boundary';
 import { identifierString } from '@lib/functions/Conversion';
 import { ApiEndpoints, apiUrl } from '@lib/index';
 import { useQuery } from '@tanstack/react-query';
@@ -20,7 +21,6 @@ import {
   useUserSettingsState
 } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import { Boundary } from '../Boundary';
 import GlobalImporterDrawer from '../importer/GlobalImporterDrawer';
 import { ApiIcon } from '../items/ApiIcon';
 import { useInvenTreeContext } from '../plugins/PluginContext';
@@ -29,6 +29,7 @@ import {
   type PluginUIFeature,
   PluginUIFeatureType
 } from '../plugins/PluginUIFeature';
+import GlobalPreviewDrawer from '../previews/GlobalPreviewDrawer';
 import { Footer } from './Footer';
 import { Header } from './Header';
 
@@ -53,6 +54,8 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 };
 
 export const [firstStore, firstSpotlight] = createSpotlight();
+
+export const searchShortcutKey = 'mod+K';
 
 export default function LayoutComponent() {
   const navigate = useNavigate();
@@ -140,12 +143,13 @@ export default function LayoutComponent() {
                 leftSection: <IconSearch size='1.2rem' />,
                 placeholder: t`Search...`
               }}
-              shortcut={['mod + K']}
+              shortcut={[searchShortcutKey]}
               nothingFound={t`Nothing found...`}
             />
           )}
         </Flex>
         <GlobalImporterDrawer />
+        <GlobalPreviewDrawer />
       </>
     </ProtectedRoute>
   );

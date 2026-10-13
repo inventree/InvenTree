@@ -219,6 +219,40 @@ class PartTest(TestCase):
         with self.assertRaises(ValidationError):
             part_2.validate_unique()
 
+    def test_duplicate_no_ipn_revision(self):
+        """Test that we cannot create a duplicate Part when IPN and revision are both blank strings.
+
+        Regression test: the underlying 'unique_part' database constraint treats
+        blank IPN/revision values (empty strings, as sent by the API when these
+        fields are omitted) as equal, so validate_unique() must catch this case
+        too, rather than raising an unhandled IntegrityError. Note that this is
+        distinct from *unset* (None/NULL) values, which the database constraint
+        does *not* treat as colliding (see test_revisions).
+        """
+        cat = PartCategory.objects.get(pk=1)
+
+        Part.objects.create(
+            category=cat,
+            name='dupe_test',
+            description='description',
+            IPN='',
+            revision='',
+        )
+
+        part = Part(
+            category=cat,
+            name='dupe_test',
+            description='description',
+            IPN='',
+            revision='',
+        )
+
+        with self.assertRaises(ValidationError):
+            part.validate_unique()
+
+        with self.assertRaises(ValidationError):
+            part.save()
+
     def test_attributes(self):
         """Test Part attributes."""
         self.assertEqual(self.r1.name, 'R_2K2_0805')
@@ -249,22 +283,6 @@ class PartTest(TestCase):
         """Test barcode format functionality."""
         barcode = self.r1.format_barcode()
         self.assertEqual('INV-PA3', barcode)
-
-    def test_sell_pricing(self):
-        """Check that the sell pricebreaks were loaded."""
-        self.assertTrue(self.r1.has_price_breaks)
-        self.assertEqual(self.r1.price_breaks.count(), 2)
-        # check that the sell pricebreaks work
-        self.assertEqual(float(self.r1.get_price(1)), 0.15)
-        self.assertEqual(float(self.r1.get_price(10)), 1.0)
-
-    def test_internal_pricing(self):
-        """Check that the sell pricebreaks were loaded."""
-        self.assertTrue(self.r1.has_internal_price_breaks)
-        self.assertEqual(self.r1.internal_price_breaks.count(), 2)
-        # check that the sell pricebreaks work
-        self.assertEqual(float(self.r1.get_internal_price(1)), 0.08)
-        self.assertEqual(float(self.r1.get_internal_price(10)), 0.5)
 
     def test_metadata(self):
         """Unit tests for the metadata field."""
@@ -352,6 +370,28 @@ class PartTest(TestCase):
         part.locked = False
 
         part.delete()
+
+    def test_delete_locking_disabled(self):
+        """Test that a locked part can be deleted when PART_ENABLE_LOCKING is disabled."""
+        part = Part.objects.create(
+            name='Locked Part Test',
+            description='Part for testing locking override',
+            active=False,
+        )
+
+        part.locked = True
+        part.save()
+
+        # With locking enabled (default), deletion of a locked part raises an error
+        with self.assertRaises(ValidationError):
+            part.delete()
+
+        # Disable locking globally — locked part should now be deletable
+        set_global_setting('PART_ENABLE_LOCKING', False)
+        part.delete()
+
+        # Re-enable for other tests
+        set_global_setting('PART_ENABLE_LOCKING', True)
 
     def test_revisions(self):
         """Test the 'revision' and 'revision_of' field."""

@@ -30,7 +30,7 @@ The *Line Items* tab shows the line items associated with this purchase order:
 
 {{ image("app/po_lines.png", "Purchase order line items") }}
 
-Long press on a particular line item to receive the item into stock.
+Select a particular line item to view the details for that line, and receive the line item into stock.
 
 ### Stock Items
 

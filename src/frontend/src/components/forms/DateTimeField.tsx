@@ -3,12 +3,12 @@ import { t } from '@lingui/core/macro';
 import { DateTimePicker } from '@mantine/dates';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { useCallback, useId, useMemo } from 'react';
+import { memo, useCallback, useId, useMemo } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 dayjs.extend(customParseFormat);
 
-export default function DateTimeField({
+function DateTimeField({
   controller,
   definition
 }: Readonly<{
@@ -73,3 +73,5 @@ export default function DateTimeField({
     />
   );
 }
+
+export default memo(DateTimeField);

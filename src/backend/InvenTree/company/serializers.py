@@ -1,8 +1,6 @@
 """JSON serializers for Company app."""
 
-import io
-
-from django.core.files.base import ContentFile
+from django.db import transaction
 from django.db.models import Prefetch
 from django.utils.translation import gettext_lazy as _
 
@@ -17,17 +15,16 @@ from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import (
-    FilterableCharField,
+    DuplicateOptionsSerializer,
     FilterableSerializerMixin,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
-    InvenTreeTagModelSerializer,
-    NotesFieldMixin,
-    RemoteImageMixin,
-    enable_filter,
+    InvenTreeTaggitSerializer,
+    OptionalField,
+    apply_duplicate_copy_options,
 )
 
 from .models import (
@@ -113,8 +110,7 @@ class AddressBriefSerializer(InvenTreeModelSerializer):
 class CompanySerializer(
     FilterableSerializerMixin,
     DataImportExportSerializerMixin,
-    NotesFieldMixin,
-    RemoteImageMixin,
+    InvenTreeTaggitSerializer,
     InvenTreeModelSerializer,
 ):
     """Serializer for Company object (full detail)."""
@@ -122,6 +118,8 @@ class CompanySerializer(
     export_exclude_fields = ['primary_address']
 
     import_exclude_fields = ['image']
+
+    SKIP_CREATE_FIELDS = ['duplicate']
 
     class Meta:
         """Metaclass options."""
@@ -137,19 +135,19 @@ class CompanySerializer(
             'email',
             'currency',
             'contact',
+            'duplicate',
             'link',
             'image',
             'active',
             'is_customer',
             'is_manufacturer',
             'is_supplier',
-            'notes',
             'parts_supplied',
             'parts_manufactured',
-            'remote_image',
             'primary_address',
             'tax_id',
             'parameters',
+            'tags',
         ]
 
     @staticmethod
@@ -164,9 +162,10 @@ class CompanySerializer(
 
         return queryset
 
-    primary_address = enable_filter(
-        AddressBriefSerializer(read_only=True, allow_null=True),
-        False,
+    primary_address = OptionalField(
+        serializer_class=AddressBriefSerializer,
+        serializer_kwargs={'read_only': True, 'many': False, 'allow_null': True},
+        default_include=False,
         filter_name='address_detail',
         prefetch_fields=[
             Prefetch(
@@ -191,28 +190,31 @@ class CompanySerializer(
         help_text=_('Default currency used for this supplier'), required=True
     )
 
+    tags = common.filters.enable_tags_filter()
+
     parameters = common.filters.enable_parameters_filter()
 
-    def save(self):
-        """Save the Company instance."""
-        super().save()
+    duplicate = DuplicateOptionsSerializer(
+        Company.objects.all(), copy_parameters=True, copy_notes=True
+    )
 
-        company = self.instance
+    @transaction.atomic
+    def create(self, validated_data):
+        """Create a new Company instance, optionally copying data from an existing company."""
+        duplicate = validated_data.pop('duplicate', None)
 
-        # Check if an image was downloaded from a remote URL
-        remote_img = getattr(self, 'remote_image_file', None)
+        instance = super().create(validated_data)
 
-        if remote_img and company:
-            fmt = remote_img.format or 'PNG'
-            buffer = io.BytesIO()
-            remote_img.save(buffer, format=fmt)
+        if duplicate:
+            apply_duplicate_copy_options(
+                instance,
+                duplicate,
+                duplicate['original'],
+                copy_notes=True,
+                copy_parameters=True,
+            )
 
-            # Construct a simplified name for the image
-            filename = f'company_{company.pk}_image.{fmt.lower()}'
-
-            company.image.save(filename, ContentFile(buffer.getvalue()))
-
-        return self.instance
+        return instance
 
 
 @register_importer()
@@ -234,10 +236,12 @@ class ContactSerializer(DataImportExportSerializerMixin, InvenTreeModelSerialize
 class ManufacturerPartSerializer(
     FilterableSerializerMixin,
     DataImportExportSerializerMixin,
-    InvenTreeTagModelSerializer,
-    NotesFieldMixin,
+    InvenTreeTaggitSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer for ManufacturerPart object."""
+
+    SKIP_CREATE_FIELDS = ['duplicate']
 
     class Meta:
         """Metaclass options."""
@@ -251,10 +255,10 @@ class ManufacturerPartSerializer(
             'manufacturer',
             'manufacturer_detail',
             'description',
+            'duplicate',
             'MPN',
             'link',
             'barcode_hash',
-            'notes',
             'tags',
             'parameters',
         ]
@@ -263,27 +267,59 @@ class ManufacturerPartSerializer(
 
     parameters = common.filters.enable_parameters_filter()
 
-    part_detail = enable_filter(
-        part_serializers.PartBriefSerializer(
-            source='part', many=False, read_only=True, allow_null=True
-        ),
-        True,
-        prefetch_fields=['part', 'part__pricing_data', 'part__category'],
+    duplicate = DuplicateOptionsSerializer(
+        ManufacturerPart.objects.all(), copy_parameters=True, copy_notes=True
     )
 
-    pretty_name = enable_filter(
-        FilterableCharField(read_only=True, allow_null=True), filter_name='pretty'
+    @transaction.atomic
+    def create(self, validated_data):
+        """Create a new ManufacturerPart instance, optionally copying data from an existing instance."""
+        duplicate = validated_data.pop('duplicate', None)
+
+        instance = super().create(validated_data)
+
+        if duplicate:
+            apply_duplicate_copy_options(
+                instance,
+                duplicate,
+                duplicate['original'],
+                copy_notes=True,
+                copy_parameters=True,
+            )
+
+        return instance
+
+    part_detail = OptionalField(
+        serializer_class=part_serializers.PartBriefSerializer,
+        serializer_kwargs={
+            'source': 'part',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['part__category'],
+    )
+
+    pretty_name = OptionalField(
+        serializer_class=serializers.CharField,
+        serializer_kwargs={'read_only': True, 'allow_null': True},
+        filter_name='pretty',
     )
 
     manufacturer = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.filter(is_manufacturer=True)
     )
 
-    manufacturer_detail = enable_filter(
-        CompanyBriefSerializer(
-            source='manufacturer', many=False, read_only=True, allow_null=True
-        ),
-        True,
+    manufacturer_detail = OptionalField(
+        serializer_class=CompanyBriefSerializer,
+        serializer_kwargs={
+            'source': 'manufacturer',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
         prefetch_fields=['manufacturer'],
     )
 
@@ -325,14 +361,16 @@ class SupplierPriceBreakBriefSerializer(
 class SupplierPartSerializer(
     FilterableSerializerMixin,
     DataImportExportSerializerMixin,
-    InvenTreeTagModelSerializer,
-    NotesFieldMixin,
+    InvenTreeTaggitSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer for SupplierPart object."""
 
     no_filters = True
 
     export_exclude_fields = ['tags']
+
+    SKIP_CREATE_FIELDS = ['duplicate']
 
     export_child_fields = [
         'part_detail.name',
@@ -350,6 +388,7 @@ class SupplierPartSerializer(
             'available',
             'availability_updated',
             'description',
+            'duplicate',
             'in_stock',
             'on_order',
             'link',
@@ -371,7 +410,6 @@ class SupplierPartSerializer(
             'supplier',
             'supplier_detail',
             'updated',
-            'notes',
             'part_detail',
             'tags',
             'price_breaks',
@@ -415,70 +453,86 @@ class SupplierPartSerializer(
 
     pack_quantity_native = serializers.FloatField(read_only=True)
 
-    price_breaks = enable_filter(
-        SupplierPriceBreakBriefSerializer(
-            source='pricebreaks',
-            many=True,
-            read_only=True,
-            allow_null=True,
-            label=_('Price Breaks'),
-        ),
-        False,
+    price_breaks = OptionalField(
+        serializer_class=SupplierPriceBreakBriefSerializer,
+        serializer_kwargs={
+            'source': 'pricebreaks',
+            'many': True,
+            'read_only': True,
+            'allow_null': True,
+            'label': _('Price Breaks'),
+        },
+        default_include=False,
         filter_name='price_breaks',
         prefetch_fields=['pricebreaks'],
     )
 
     parameters = common.filters.enable_parameters_filter()
 
-    part_detail = enable_filter(
-        part_serializers.PartBriefSerializer(
-            label=_('Part'), source='part', many=False, read_only=True, allow_null=True
-        ),
-        False,
+    part_detail = OptionalField(
+        serializer_class=part_serializers.PartBriefSerializer,
+        serializer_kwargs={
+            'label': _('Part'),
+            'source': 'part',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
         prefetch_fields=['part', 'part__pricing_data'],
     )
 
-    supplier_detail = enable_filter(
-        CompanyBriefSerializer(
-            label=_('Supplier'),
-            source='supplier',
-            many=False,
-            read_only=True,
-            allow_null=True,
-        ),
-        False,
+    supplier_detail = OptionalField(
+        serializer_class=CompanyBriefSerializer,
+        serializer_kwargs={
+            'label': _('Supplier'),
+            'source': 'supplier',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
         prefetch_fields=['supplier'],
     )
 
-    manufacturer_detail = enable_filter(
-        CompanyBriefSerializer(
-            label=_('Manufacturer'),
-            source='manufacturer_part.manufacturer',
-            many=False,
-            read_only=True,
-            allow_null=True,
-        ),
-        False,
+    manufacturer_detail = OptionalField(
+        serializer_class=CompanyBriefSerializer,
+        serializer_kwargs={
+            'label': _('Manufacturer'),
+            'source': 'manufacturer_part.manufacturer',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
         prefetch_fields=['manufacturer_part__manufacturer'],
     )
 
-    pretty_name = enable_filter(
-        FilterableCharField(read_only=True, allow_null=True), filter_name='pretty'
+    pretty_name = OptionalField(
+        serializer_class=serializers.CharField,
+        serializer_kwargs={
+            'read_only': True,
+            'allow_null': True,
+            'label': _('Pretty Name'),
+        },
+        default_include=False,
+        filter_name='pretty',
     )
 
     supplier = serializers.PrimaryKeyRelatedField(
         label=_('Supplier'), queryset=Company.objects.filter(is_supplier=True)
     )
 
-    manufacturer_part_detail = enable_filter(
-        ManufacturerPartSerializer(
-            label=_('Manufacturer Part'),
-            source='manufacturer_part',
-            part_detail=False,
-            read_only=True,
-            allow_null=True,
-        ),
-        False,
+    manufacturer_part_detail = OptionalField(
+        serializer_class=ManufacturerPartSerializer,
+        serializer_kwargs={
+            'label': _('Manufacturer Part'),
+            'source': 'manufacturer_part',
+            'part_detail': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
         prefetch_fields=['manufacturer_part'],
     )
 
@@ -488,6 +542,10 @@ class SupplierPartSerializer(
 
     # Date fields
     updated = serializers.DateTimeField(allow_null=True, read_only=True)
+
+    duplicate = DuplicateOptionsSerializer(
+        SupplierPart.objects.all(), copy_parameters=True, copy_notes=True
+    )
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -517,8 +575,11 @@ class SupplierPartSerializer(
 
         return response
 
+    @transaction.atomic
     def create(self, validated_data):
         """Extract manufacturer data and process ManufacturerPart."""
+        duplicate = validated_data.pop('duplicate', None)
+
         # Extract 'available' quantity from the serializer
         available = validated_data.pop('available', None)
 
@@ -535,6 +596,15 @@ class SupplierPartSerializer(
         if manufacturer and MPN:
             kwargs = {'manufacturer': manufacturer, 'MPN': MPN}
             supplier_part.save(**kwargs)
+
+        if duplicate:
+            apply_duplicate_copy_options(
+                supplier_part,
+                duplicate,
+                duplicate['original'],
+                copy_notes=True,
+                copy_parameters=True,
+            )
 
         return supplier_part
 
@@ -568,18 +638,27 @@ class SupplierPriceBreakSerializer(
 
         return queryset
 
-    supplier_detail = enable_filter(
-        CompanyBriefSerializer(
-            source='part.supplier', many=False, read_only=True, allow_null=True
-        ),
-        False,
+    supplier_detail = OptionalField(
+        serializer_class=CompanyBriefSerializer,
+        serializer_kwargs={
+            'source': 'part.supplier',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
         prefetch_fields=['part__supplier'],
     )
 
-    part_detail = enable_filter(
-        SupplierPartSerializer(
-            source='part', brief=True, many=False, read_only=True, allow_null=True
-        ),
-        False,
+    part_detail = OptionalField(
+        serializer_class=SupplierPartSerializer,
+        serializer_kwargs={
+            'source': 'part',
+            'brief': True,
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=False,
         prefetch_fields=['part', 'part__part', 'part__part__pricing_data'],
     )

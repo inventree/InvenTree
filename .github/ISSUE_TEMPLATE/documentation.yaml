@@ -13,3 +13,11 @@ body:
       description: Please provide one distinct thing to fix or a clearly defined enhancement
     validations:
       required: true
+  - type: checkboxes
+    id: report-check
+    attributes:
+      label: "I have reviewed this report for correctness and filled out all sections."
+      description: "Due to a rise in automatically filled AI reports that are now fully reviewed/true this needs to be answered."
+      options:
+        - label: "I have checked this report. I acknowledge that filing bugs via AI agents without review might lead to being blocked."
+          required: true

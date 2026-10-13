@@ -7,6 +7,7 @@ import traceback
 from typing import Optional
 
 from django.conf import settings
+from django.core.exceptions import AppRegistryNotReady
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -19,12 +20,13 @@ logger = structlog.get_logger('inventree')
 
 
 def log_error(
-    path,
-    error_name=None,
-    error_info=None,
-    error_data=None,
+    path: Optional[str] = None,
+    error_name: Optional[str] = None,
+    error_info: Optional[str] = None,
+    error_data: Optional[str] = None,
     scope: Optional[str] = None,
     plugin: Optional[str] = None,
+    user_id: Optional[int] = None,
 ):
     """Log an error to the database.
 
@@ -37,6 +39,7 @@ def log_error(
         error_data: The error data (optional, overrides 'data')
         scope: The scope of the error (optional)
         plugin: The plugin name associated with this error (optional)
+        user_id: The user ID associated with this error (optional)
     """
     import InvenTree.ready
 
@@ -70,6 +73,9 @@ def log_error(
             data = '\n'.join(formatted_exception)
         except AttributeError:
             data = 'No traceback information available'
+
+    if user_id:
+        data = f'User ID: {user_id}\n{data}'
 
     # Log error to stderr
     logger.error(info)
@@ -109,16 +115,35 @@ def exception_handler(exc, context):
 
     response = None
 
-    # Pass exception to sentry.io handler
-    try:
-        InvenTree.sentry.report_exception(exc)
-    except Exception:
-        # If sentry.io fails, we don't want to crash the server!
-        pass
+    # The Django app registry can be transiently un-ready while the plugin
+    # registry is reloading apps (see plugin.registry.PluginsRegistry._reload_apps).
+    # Any request handled by another thread/worker during that window can trip
+    # this - it is not a real server error, so ask the client to retry shortly
+    # rather than surfacing a 500.
+    if isinstance(exc, AppRegistryNotReady):
+        response = Response(
+            {
+                'error': 'AppRegistryNotReady',
+                'detail': _(
+                    'Server is temporarily reloading, please retry the request'
+                ),
+            },
+            status=503,
+        )
+        response['Retry-After'] = '1'
+        return response
 
     # Catch any django validation error, and re-throw a DRF validation error
-    if isinstance(exc, DjangoValidationError):
+    elif isinstance(exc, DjangoValidationError):
         exc = DRFValidationError(detail=serializers.as_serializer_error(exc))
+
+    else:
+        # Pass any other (unhandled) exception to sentry.io handler
+        try:
+            InvenTree.sentry.report_exception(exc)
+        except Exception:
+            # If sentry.io fails, we don't want to crash the server!
+            pass
 
     # Default to the built-in DRF exception handler
     response = drfviews.exception_handler(exc, context)

@@ -1,8 +1,8 @@
+import { CopyButton } from '@lib/components/CopyButton';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { Divider, Group, Paper, Stack, Text, TextInput } from '@mantine/core';
 import { QRCode } from '../../../../components/barcodes/QRCode';
-import { CopyButton } from '../../../../components/buttons/CopyButton';
 
 export function QrRegistrationForm({
   url,

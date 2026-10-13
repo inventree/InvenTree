@@ -2,11 +2,17 @@ import { create } from 'zustand';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
-import { UserPermissions, type UserRoles } from '@lib/enums/Roles';
+import {
+  UserPermissions,
+  type UserRoles,
+  roleToViewSettingMap
+} from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import type { UserProps, UserStateProps } from '@lib/types/User';
 import { api, setApiDefaults } from '../App';
 import { clearCsrfCookie } from '../functions/auth';
+import { useServerApiState } from './ServerApiState';
+import { useGlobalSettingsState } from './SettingsStates';
 
 /**
  * Global user information state, using Zustand manager
@@ -57,7 +63,12 @@ export const useUserState = create<UserStateProps>((set, get) => ({
           get().setAuthenticated(false);
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        // Capture any pending auth flow (e.g. a pending SSO provider signup)
+        // reported alongside the failure, so callers can act on it.
+        if (err?.response?.data?.data) {
+          useServerApiState.getState().setAuthContext(err.response.data.data);
+        }
         get().setAuthenticated(false);
       });
   },
@@ -72,59 +83,36 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       return;
     }
 
-    // Fetch user data
-    await api
+    // Fetch user data along with role/permission data in a single request -
+    // the '?roles=true' param asks the API to include the same role and
+    // permission data that used to require a separate request to
+    // user_me_roles.
+    const response = await api
       .get(apiUrl(ApiEndpoints.user_me), {
+        params: { roles: true },
         timeout: 2000
       })
-      .then((response) => {
-        if (response.status == 200) {
-          const user: UserProps = {
-            pk: response.data.pk,
-            first_name: response.data?.first_name ?? '',
-            last_name: response.data?.last_name ?? '',
-            email: response.data.email,
-            username: response.data.username,
-            groups: response.data.groups,
-            profile: response.data.profile
-          };
-          get().setUser(user);
-          // profile info
-        } else {
-          get().clearUserState();
-        }
-      })
-      .catch(() => {
-        get().clearUserState();
-      });
+      .catch(() => undefined);
 
-    if (!get().isLoggedIn()) {
+    if (response?.status !== 200) {
+      get().clearUserState();
       return;
     }
 
-    // Fetch role data
-    await api
-      .get(apiUrl(ApiEndpoints.user_roles))
-      .then((response) => {
-        if (response.status == 200) {
-          const user: UserProps = get().user as UserProps;
-
-          // Update user with role data
-          if (user) {
-            user.roles = response.data?.roles ?? {};
-            user.permissions = response.data?.permissions ?? {};
-            user.is_staff = response.data?.is_staff ?? false;
-            user.is_superuser = response.data?.is_superuser ?? false;
-            get().setUser(user);
-          }
-        } else {
-          get().clearUserState();
-        }
-      })
-      .catch((_error) => {
-        console.error('ERR: Error fetching user roles');
-        get().clearUserState();
-      });
+    const user: UserProps = {
+      pk: response.data.pk,
+      first_name: response.data?.first_name ?? '',
+      last_name: response.data?.last_name ?? '',
+      email: response.data.email,
+      username: response.data.username,
+      groups: response.data.groups,
+      profile: response.data.profile,
+      roles: response.data?.roles ?? {},
+      permissions: response.data?.permissions ?? {},
+      is_staff: response.data?.is_staff ?? false,
+      is_superuser: response.data?.is_superuser ?? false
+    };
+    get().setUser(user);
   },
   isAuthed: () => {
     return get().is_authed;
@@ -170,6 +158,16 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   },
   hasViewRole: (role: UserRoles) => {
     return get().checkUserRole(role, UserPermissions.view);
+  },
+  hasViewVisible: (role: UserRoles) => {
+    if (!get().hasViewRole(role)) {
+      return false;
+    }
+
+    const viewSetting = roleToViewSettingMap[role];
+    return viewSetting
+      ? useGlobalSettingsState.getState().isSet(viewSetting)
+      : true;
   },
   checkUserPermission: (model: ModelType, permission: UserPermissions) => {
     // Check if the user has the specified permission for the specified model

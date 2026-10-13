@@ -19,6 +19,10 @@ from django.db.models import (
 from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
 
+import django_filters.rest_framework.filters as rest_filters
+from rest_framework import serializers
+from taggit.serializers import TagListSerializerField
+
 import InvenTree.conversion
 import InvenTree.helpers
 import InvenTree.serializers
@@ -90,6 +94,36 @@ def filter_content_type(
     return queryset.filter(q)
 
 
+class TagsFilter(rest_filters.CharFilter):
+    """Filter which accepts a comma-separated list of tag names and returns only objects that have ALL of the specified tags.
+
+    Example usage in a FilterSet:
+        tags = TagsFilter()
+
+    Example query:
+        ?tags=apple,banana   → returns only items tagged with both 'apple' AND 'banana'
+    """
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the filter."""
+        if 'label' not in kwargs:
+            kwargs['label'] = _('Tags')
+
+        super().__init__(*args, **kwargs)
+
+    def filter(self, qs, value):
+        """Filter queryset to items matching all provided tag names."""
+        if not value:
+            return qs
+
+        tag_names = [t.strip() for t in value.split(',') if t.strip()]
+
+        for tag in tag_names:
+            qs = qs.filter(tags__name__iexact=tag)
+
+        return qs.distinct()
+
+
 """A list of valid operators for filtering part parameters."""
 PARAMETER_FILTER_OPERATORS: list[str] = ['gt', 'gte', 'lt', 'lte', 'ne', 'icontains']
 
@@ -158,18 +192,37 @@ def filter_parameters_by_value(
     # Some filters are only applicable to string values
     text_only = any([func in ['icontains'], value_numeric is None])
 
-    # Ensure the function starts with a double underscore
-    if func and not func.startswith('__'):
-        func = f'__{func}'
-
     # Query for 'numeric' value - this has priority over 'string' value
     data_numeric = {
         'parameters_list__template': template,
         'parameters_list__data_numeric__isnull': False,
-        f'parameters_list__data_numeric{func}': value_numeric,
     }
 
+    if not text_only:
+        # Numeric values may be the result of unit conversion,
+        # so comparisons must account for floating point error
+        value_min, value_max = InvenTree.conversion.numeric_range(value_numeric)
+
+        match func:
+            case 'gt':
+                data_numeric['parameters_list__data_numeric__gt'] = value_max
+            case 'gte':
+                data_numeric['parameters_list__data_numeric__gte'] = value_min
+            case 'lt':
+                data_numeric['parameters_list__data_numeric__lt'] = value_min
+            case 'lte':
+                data_numeric['parameters_list__data_numeric__lte'] = value_max
+            case _:
+                data_numeric['parameters_list__data_numeric__range'] = (
+                    value_min,
+                    value_max,
+                )
+
     query_numeric = Q(**data_numeric)
+
+    # Ensure the function starts with a double underscore
+    if func and not func.startswith('__'):
+        func = f'__{func}'
 
     # Query for 'string' value
     data_text = {
@@ -325,11 +378,15 @@ def enable_project_code_filter(default: bool = True):
     """
     from common.serializers import ProjectCodeSerializer
 
-    return InvenTree.serializers.enable_filter(
-        ProjectCodeSerializer(
-            source='project_code', many=False, read_only=True, allow_null=True
-        ),
-        default,
+    return InvenTree.serializers.OptionalField(
+        serializer_class=ProjectCodeSerializer,
+        serializer_kwargs={
+            'source': 'project_code',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=default,
         filter_name='project_code_detail',
         prefetch_fields=['project_code'],
     )
@@ -344,14 +401,15 @@ def enable_project_label_filter(default: bool = True):
 
     If applied, this field will automatically prefetch the 'project_code' relationship.
     """
-    return InvenTree.serializers.enable_filter(
-        InvenTree.serializers.FilterableCharField(
-            source='project_code.code',
-            read_only=True,
-            label=_('Project Code Label'),
-            allow_null=True,
-        ),
-        default,
+    return InvenTree.serializers.OptionalField(
+        serializer_class=serializers.CharField,
+        serializer_kwargs={
+            'source': 'project_code.code',
+            'read_only': True,
+            'label': _('Project Code Label'),
+            'allow_null': True,
+        },
+        default_include=default,
         filter_name='project_code_detail',
         prefetch_fields=['project_code'],
     )
@@ -369,9 +427,15 @@ def enable_parameters_filter():
     """
     from common.serializers import ParameterSerializer
 
-    return InvenTree.serializers.enable_filter(
-        ParameterSerializer(many=True, read_only=True, allow_null=True),
-        False,
+    return InvenTree.serializers.OptionalField(
+        serializer_class=ParameterSerializer,
+        serializer_kwargs={
+            'many': True,
+            'read_only': True,
+            'allow_null': True,
+            'required': False,
+        },
+        default_include=False,
         filter_name='parameters',
         prefetch_fields=[
             'parameters_list',
@@ -390,11 +454,10 @@ def enable_tags_filter(default: bool = False):
 
     If applied, this field will automatically prefetch the 'tags' relationship.
     """
-    from InvenTree.serializers import FilterableTagListField
-
-    return InvenTree.serializers.enable_filter(
-        FilterableTagListField(required=False),
-        default,
+    return InvenTree.serializers.OptionalField(
+        serializer_class=TagListSerializerField,
+        serializer_kwargs={'required': False},
+        default_include=default,
         filter_name='tags',
         prefetch_fields=['tags', 'tagged_items', 'tagged_items__tag'],
     )

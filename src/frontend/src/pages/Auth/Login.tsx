@@ -21,6 +21,7 @@ import {
 } from '../../functions/auth';
 import { useLocalState } from '../../states/LocalState';
 import { useServerApiState } from '../../states/ServerApiState';
+import { useUserState } from '../../states/UserState';
 import { Wrapper } from './Layout';
 
 export default function Login() {
@@ -45,6 +46,9 @@ export default function Login() {
       state.registration_enabled
     ])
   );
+  const [loginChecked] = useUserState(
+    useShallow((state) => [state.login_checked])
+  );
   const any_reg_enabled = registration_enabled() || sso_registration() || false;
 
   const LoginMessage = useMemo(() => {
@@ -64,22 +68,26 @@ export default function Login() {
   }, [server.customize]);
 
   // Data manipulation functions
-  function ChangeHost(newHost: string | null): void {
+  // `force` defaults to true since this is normally a genuine host change
+  function ChangeHost(newHost: string | null, force = true): void {
     if (newHost === null) return;
     setHost(hostList[newHost]?.host, newHost);
     setApiDefaults();
     const traceid = setTraceId();
-    fetchServerApiState();
+    fetchServerApiState(force);
     removeTraceId(traceid);
   }
 
   // Set default host to localhost if no host is selected
   useEffect(() => {
     if (hostKey === '') {
-      ChangeHost(defaultHostKey);
+      ChangeHost(defaultHostKey, false);
     }
 
-    checkLoginState(navigate, location?.state, true);
+    // Only check here if a check hasn't already happened this session
+    if (!loginChecked) {
+      checkLoginState(navigate, location?.state, true);
+    }
 
     // check if we got login params (login and password)
     if (searchParams.has('login') && searchParams.has('password')) {

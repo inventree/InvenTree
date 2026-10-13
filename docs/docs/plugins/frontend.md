@@ -10,6 +10,9 @@ Plugins can inherit from the [UserInterfaceMixin](./mixins/ui.md) class to provi
 
 Note that the [InvenTree plugin creator](./creator.md) can be used to scaffold a new plugin with the necessary structure for frontend integration. This will automatically set up the necessary files and configurations to get started with frontend development.
 
+!!! info "Simplified Development"
+    Using the plugin creator can significantly simplify the process of developing a frontend plugin, as it provides a ready-made template with the necessary configurations for building and integrating the frontend code. Rolling your own frontend plugin from scratch is possible, but it requires a good understanding of the InvenTree frontend architecture and build process.
+
 ## Frontend Architecture
 
 When designing a frontend plugin component, it is important to have at least a basic understanding of the InvenTree frontend architecture.
@@ -76,20 +79,28 @@ The following properties are available in the `context` object:
 | Property | Description |
 | -------- | ----------- |
 | `version` | An object containing the current InvenTree version information. |
+| `api` | The Axios instance configured to communicate with the InvenTree API. |
+| `queryClient` | The query client instance used for managing API calls in the frontend. |
 | `user` | An object containing information about the currently logged-in user. |
+| `userSettings` | An object containing user-specific settings. |
+| `globalSettings` | An object containing global settings for the InvenTree instance. |
+| `modelInformation` | An object containing information about the models available in the InvenTree instance. |
+| `renderInstance` | A function to render a model instance |
 | `host` | An object containing information about the current host (server) configuration. |
 | `i18n` | An object containing internationalization (i18n) functions for translating text. |
 | `locale` | The current locale being used for the user interface. |
-| `api` | The Axios instance configured to communicate with the InvenTree API. |
-| `queryClient` | The query client instance used for managing API calls in the frontend. |
 | `navigate` | A function to navigate to a different page in the InvenTree web interface. |
-| `globalSettings` | An object containing global settings for the InvenTree instance. |
-| `userSettings` | An object containing user-specific settings. |
-| `modelInformation` | An object containing information about the models available in the InvenTree instance. |
-| `renderInstance` | A function to render a model instance |
 | `theme` | The current Mantine theme being used in the InvenTree web interface. |
 | `colorScheme` | The current color scheme being used in the InvenTree web interface. |
 | `forms` | A set of functional components for rendering forms in the InvenTree web interface. |
+| `tables` | A set of functional components for rendering tables in the InvenTree web interface. |
+| `importer` | A set of functions for controlling the global importer drawer in the InvenTree web interface. |
+| `model` | The model type associated with the rendered component (if applicable). |
+| `id` | The ID (primary key) of the model instance being rendered (if applicable). |
+| `instance` | The model instance data (if available). |
+| `reloadContent` | A function which can be called to reload the plugin content. |
+| `reloadInstance` | A function which can be called to reload the model instance. |
+| `context` | Any additional context data which may be passed to the plugin. |
 
 This set of components is passed through at render time to the plugin function, allowing the plugin code to hook directly into the InvenTree web interface and access the necessary context for rendering.
 

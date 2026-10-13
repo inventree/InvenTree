@@ -84,3 +84,21 @@ export type NavigationUIFeature = {
   featureContext: {};
   featureReturnType: undefined;
 };
+
+export type PrimaryActionUIFeature = {
+  featureType: 'primary_action';
+  requestContext: {};
+  responseOptions: PluginUIFeature;
+  featureContext: {};
+  featureReturnType: undefined;
+};
+
+export type RouteUIFeature = BaseUIFeature & {
+  featureType: 'route';
+  requestContext: {};
+  responseOptions: {
+    path: string;
+  };
+  featureContext: {};
+  featureReturnType: any;
+};

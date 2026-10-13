@@ -24,6 +24,7 @@ def update_category_parameters(apps, schema_editor):
         PartCategoryParameterTemplate.objects.bulk_update(
             category_parameters_to_update,
             fields=["template"],
+            batch_size=250,
        )
 
 
@@ -47,6 +48,7 @@ def reverse_update_category_parameters(apps, schema_editor):
         PartCategoryParameterTemplate.objects.bulk_update(
             category_parameters_to_update,
             fields=["parameter_template"],
+            batch_size=250,
        )
 
 

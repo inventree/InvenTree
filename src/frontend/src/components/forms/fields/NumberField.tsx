@@ -1,5 +1,5 @@
 import { NumberInput } from '@mantine/core';
-import { useId, useMemo } from 'react';
+import { memo, useCallback, useId, useMemo } from 'react';
 import type { FieldValues, UseControllerReturn } from 'react-hook-form';
 import AutoFillRightSection, { AutoFillWarning } from './AutoFillRightSection';
 
@@ -7,7 +7,7 @@ import AutoFillRightSection, { AutoFillWarning } from './AutoFillRightSection';
  * Custom implementation of the mantine <NumberInput> component,
  * used for rendering numerical input fields in forms.
  */
-export default function NumberField({
+function NumberField({
   controller,
   fieldName,
   definition,
@@ -97,6 +97,17 @@ export default function NumberField({
     onChange
   ]);
 
+  const handleChange = useCallback(
+    (value: number | string | null) => {
+      if (value != null && value.toString().trim() === '') {
+        onChange(null);
+      } else {
+        onChange(value);
+      }
+    },
+    [onChange]
+  );
+
   return (
     <NumberInput
       {...definition}
@@ -108,14 +119,10 @@ export default function NumberField({
       value={numericalValue === null ? '' : numericalValue}
       decimalScale={definition.field_type == 'integer' ? 0 : 10}
       step={1}
-      onChange={(value: number | string | null) => {
-        if (value != null && value.toString().trim() === '') {
-          onChange(null);
-        } else {
-          onChange(value);
-        }
-      }}
+      onChange={handleChange}
       rightSection={rightSection}
     />
   );
 }
+
+export default memo(NumberField);

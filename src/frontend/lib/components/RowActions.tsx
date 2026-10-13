@@ -10,7 +10,7 @@ import {
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo, useState } from 'react';
 import { cancelEvent } from '../functions/Events';
-import { getDetailUrl } from '../functions/Navigation';
+import { eventModified, getDetailUrl } from '../functions/Navigation';
 import { navigateToLink } from '../functions/Navigation';
 import type { RowAction, RowViewProps } from '../types/Tables';
 
@@ -23,8 +23,18 @@ export function RowViewAction(props: RowViewProps): RowAction {
     color: undefined,
     icon: <IconArrowRight />,
     onClick: (event: any) => {
-      const url = getDetailUrl(props.modelType, props.modelId);
-      navigateToLink(url, props.navigate, event);
+      const showPreviewPanel = props.isPreviewEnabled?.() ?? false;
+
+      if (
+        !showPreviewPanel ||
+        eventModified(event as any) ||
+        !props.openPreview
+      ) {
+        const url = getDetailUrl(props.modelType, props.modelId);
+        navigateToLink(url, props.navigate, event);
+      } else {
+        props.openPreview(props.modelType, props.modelId);
+      }
     }
   };
 }
@@ -139,8 +149,8 @@ export function RowActions({
               aria-label={`row-action-menu-${index ?? ''}`}
               onClick={openMenu}
               disabled={disabled}
-              variant='subtle'
-              color='gray'
+              variant='transparent'
+              size='sm'
             >
               <IconDots />
             </ActionIcon>

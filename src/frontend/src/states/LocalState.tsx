@@ -33,11 +33,15 @@ interface LocalStateProps {
   setLayouts: (layouts: any, noPatch?: boolean) => void;
   showSampleDashboard: boolean;
   setShowSampleDashboard: (value: boolean) => void;
+  // printing
+  lastUsedPrinting: Record<string, { plugin?: string; template?: number }>;
+  setLastUsedPrinting: (
+    modelType: string,
+    values: { plugin?: string; template?: number }
+  ) => void;
   // panels
   lastUsedPanels: Record<string, string>;
   setLastUsedPanel: (panelKey: string) => (value: string) => void;
-  detailDrawerStack: number;
-  addDetailDrawer: (value: number | false) => void;
   navigationOpen: boolean;
   setNavigationOpen: (value: boolean) => void;
   allowMobile: boolean;
@@ -65,6 +69,23 @@ export const useLocalState = create<LocalStateProps>()(
         // If no host is provided, use the first host in the list
         if (!host && Object.keys(state.hostList).length) {
           host = Object.values(state.hostList)[0].host;
+        }
+
+        // hostList is only populated once DesktopAppView's mount effect has
+        // committed - callers that resolve the host earlier than that (e.g.
+        // SplashScreen's own mount-time fetchServerApiState() call) land
+        // here instead. Read the same underlying source directly, rather
+        // than falling back to window.location.origin, which is wrong
+        // whenever the frontend is served from a different origin than the
+        // backend (e.g. the vite dev server).
+        if (!host) {
+          const defaultKey = window.INVENTREE_SETTINGS?.default_server;
+          const settingsHost = defaultKey
+            ? window.INVENTREE_SETTINGS?.server_list?.[defaultKey]?.host
+            : undefined;
+          if (settingsHost) {
+            host = settingsHost;
+          }
         }
 
         // If no host is provided, fallback to using the current URL (default)
@@ -124,6 +145,25 @@ export const useLocalState = create<LocalStateProps>()(
       setShowSampleDashboard: (value) => {
         set({ showSampleDashboard: value });
       },
+      // printing
+      lastUsedPrinting: {},
+      setLastUsedPrinting: (modelType, values) => {
+        const current = get().lastUsedPrinting[modelType] || {};
+        if (
+          current.plugin !== values.plugin ||
+          current.template !== values.template
+        ) {
+          set({
+            lastUsedPrinting: {
+              ...get().lastUsedPrinting,
+              [modelType]: {
+                ...current,
+                ...values
+              }
+            }
+          });
+        }
+      },
       // panels
       lastUsedPanels: {},
       setLastUsedPanel: (panelKey) => (value) => {
@@ -133,15 +173,6 @@ export const useLocalState = create<LocalStateProps>()(
             lastUsedPanels: { ...get().lastUsedPanels, [panelKey]: value }
           });
         }
-      },
-
-      // detail drawers
-      detailDrawerStack: 0,
-      addDetailDrawer: (value) => {
-        set({
-          detailDrawerStack:
-            value === false ? 0 : get().detailDrawerStack + value
-        });
       },
       // navigation
       navigationOpen: false,
@@ -162,11 +193,11 @@ export const useLocalState = create<LocalStateProps>()(
 /*
 pushes changes in user profile to backend
 */
-function patchUser(key: 'language' | 'theme' | 'widgets', val: any) {
+export function patchUser(key: 'language' | 'theme' | 'widgets', val: any) {
   const uid = useUserState.getState().userId();
   if (uid) {
-    api.patch(apiUrl(ApiEndpoints.user_profile), { [key]: val });
+    api.patch(apiUrl(ApiEndpoints.user_me_profile), { [key]: val });
   } else {
-    console.log('user not logged in, not patching');
+    console.warn('user not logged in, not patching');
   }
 }

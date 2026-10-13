@@ -5,9 +5,9 @@ import { useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
-import { useTable } from '../../hooks/UseTable';
-import { InvenTreeTable } from '../InvenTreeTable';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 
 export default function ScheduledTasksTable() {
   const table = useTable('tasks-scheduled');

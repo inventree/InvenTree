@@ -8,14 +8,16 @@ import {
   Space,
   Text
 } from '@mantine/core';
-import { useDisclosure, useHotkeys } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
 import { IconExclamationCircle, IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type Layout, Responsive, WidthProvider } from 'react-grid-layout';
 
+import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { useShallow } from 'zustand/react/shallow';
 import { useDashboardItems } from '../../hooks/UseDashboardItems';
 import { useLocalState } from '../../states/LocalState';
+import { useUserState } from '../../states/UserState';
 import DashboardMenu from './DashboardMenu';
 import DashboardWidget, { type DashboardWidgetProps } from './DashboardWidget';
 import DashboardWidgetDrawer from './DashboardWidgetDrawer';
@@ -23,6 +25,8 @@ import DashboardWidgetDrawer from './DashboardWidgetDrawer';
 const ReactGridLayout = WidthProvider(Responsive);
 
 export default function DashboardLayout() {
+  const user = useUserState();
+
   // Dashboard layout definition
   const [layouts, setLayouts] = useState({});
   // Dashboard widget selection
@@ -58,9 +62,10 @@ export default function DashboardLayout() {
   const [loaded, setLoaded] = useState(false);
 
   // Keyboard shortcut for editing the dashboard layout
-  useHotkeys([
+  useInvenTreeHotkeys([
     [
       'mod+E',
+      t`Toggle dashboard edit mode`,
       () => {
         setEditing.toggle();
       }
@@ -97,11 +102,14 @@ export default function DashboardLayout() {
         setWidgets([...widgets, newWidget]);
       }
 
-      // Update the layouts to include the new widget (and enforce initial size)
+      // Update the layouts to include the new widget.
+      // Pass overrideSize=false so existing widgets keep their user-set
+      // dimensions; only the newly added widget will receive default sizing
+      // via react-grid-layout's auto-placement.
       const _layouts: any = { ...layouts };
 
       Object.keys(_layouts).forEach((key) => {
-        _layouts[key] = updateLayoutForWidget(_layouts[key], widgets, true);
+        _layouts[key] = updateLayoutForWidget(_layouts[key], widgets, false);
       });
 
       setLayouts(_layouts);
@@ -221,8 +229,8 @@ export default function DashboardLayout() {
     setLayouts({});
   }, []);
 
-  const defaultLayouts = {
-    lg: [
+  const defaultLayouts: any = useMemo(() => {
+    const layouts: any[] = [
       {
         w: 6,
         h: 4,
@@ -233,8 +241,12 @@ export default function DashboardLayout() {
         minH: 4,
         moved: false,
         static: false
-      },
-      {
+      }
+    ];
+
+    if (user.isSuperuser()) {
+      // Superuser can also view the "news" widget
+      layouts.push({
         w: 6,
         h: 4,
         x: 6,
@@ -244,9 +256,13 @@ export default function DashboardLayout() {
         minH: 4,
         moved: false,
         static: false
-      }
-    ]
-  };
+      });
+    }
+
+    return {
+      lg: layouts
+    };
+  }, [user]);
   const loadWigs = ['news', 'gstart'];
   const defaultWidgets = useMemo(() => {
     return loadWigs

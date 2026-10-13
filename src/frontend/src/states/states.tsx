@@ -28,6 +28,7 @@ export interface ServerAPIProps {
   default_locale: null | string;
   django_admin: null | string;
   settings: {
+    sso_enabled: null | boolean;
     sso_registration: null | boolean;
     registration_enabled: null | boolean;
     password_forgotten_enabled: null | boolean;
@@ -39,27 +40,67 @@ export interface ServerAPIProps {
     navbar_message: string;
     disable_theme_storage: boolean;
   };
+  system_state: {
+    cors_allow_all: null | boolean;
+  } | null;
 }
+
+let pendingGlobalStatesFetch: Promise<void> | null = null;
+let globalStatesFetched = false;
 
 /*
  * Refetch all global state information.
  * Necessary on login, or if locale is changed.
+ *
+ * Calls are deduplicated: a call made while a fetch is already in flight
+ * reuses that fetch instead of starting another, and once a fetch has
+ * completed successfully, later calls are skipped entirely unless `force`
+ * is set. Pass `force` when the caller already knows the data needs to be
+ * current (an actual login, or a genuine locale change) - other callers
+ * (e.g. a page-load auth check that may run after the locale has already
+ * triggered a fetch) can rely on the default to avoid redundant requests.
  */
-export async function fetchGlobalStates() {
+export async function fetchGlobalStates(force = false) {
   const { isLoggedIn } = useUserState.getState();
 
   if (!isLoggedIn()) {
     return;
   }
 
-  setApiDefaults();
-  const traceId = setTraceId();
-  await Promise.all([
-    useServerApiState.getState().fetchServerApiState(),
-    useUserSettingsState.getState().fetchSettings(),
-    useGlobalSettingsState.getState().fetchSettings(),
-    useGlobalStatusState.getState().fetchStatus(),
-    useIconState.getState().fetchIcons()
-  ]);
-  removeTraceId(traceId);
+  if (pendingGlobalStatesFetch) {
+    return pendingGlobalStatesFetch;
+  }
+
+  if (globalStatesFetched && !force) {
+    return;
+  }
+
+  pendingGlobalStatesFetch = (async () => {
+    setApiDefaults();
+    const traceId = setTraceId();
+    await Promise.all([
+      useServerApiState.getState().fetchServerApiState(),
+      useUserSettingsState.getState().fetchSettings(),
+      useGlobalSettingsState.getState().fetchSettings(),
+      useGlobalStatusState.getState().fetchStatus(),
+      useIconState.getState().fetchIcons()
+    ]);
+    removeTraceId(traceId);
+    globalStatesFetched = true;
+  })();
+
+  try {
+    await pendingGlobalStatesFetch;
+  } finally {
+    pendingGlobalStatesFetch = null;
+  }
+}
+
+/*
+ * Reset the "already fetched" guard on fetchGlobalStates, so that the next
+ * call performs a real fetch even without `force`. Call this on logout so a
+ * subsequent login within the same page session (no full reload) refetches.
+ */
+export function resetGlobalStatesFetched() {
+  globalStatesFetched = false;
 }

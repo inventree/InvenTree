@@ -51,7 +51,9 @@ class AppMixin:
         """
         from common.settings import get_global_setting
 
-        if settings.PLUGIN_TESTING or get_global_setting('ENABLE_PLUGINS_APP'):
+        if settings.PLUGIN_TESTING or get_global_setting(
+            'ENABLE_PLUGINS_APP', create=False
+        ):
             logger.info('Registering IntegrationPlugin apps')
             apps_changed = False
 

@@ -195,6 +195,11 @@ def check_user_permission(
 
     result = user.has_perm(permission_name)
 
+    # If the user does not have permissions (as determined above), check if the model class provides a custom permission check method
+    # This is required for non-standard models (i.e. defined via plugins), which do not have the required ruleset definitions
+    if not result and hasattr(model, 'check_user_permission'):  # pragma: no cover
+        result = model.check_user_permission(user, permission)
+
     # Save result to session-cache
     InvenTree.cache.set_session_cache(cache_key, result)
 

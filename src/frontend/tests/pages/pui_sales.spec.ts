@@ -68,6 +68,12 @@ test('Sales Orders - Tabs', async ({ browser }) => {
     .getByLabel('Order Details')
     .getByText('Selling some stuff')
     .waitFor();
+
+  // Creator of the order should be displayed
+  await expect(page.getByRole('row', { name: 'Created By' })).toContainText(
+    'admin'
+  );
+
   await loadTab(page, 'Line Items');
   await loadTab(page, 'Shipments');
   await loadTab(page, 'Build Orders');
@@ -82,6 +88,12 @@ test('Sales Orders - Tabs', async ({ browser }) => {
   await loadTab(page, 'Return Orders');
   await page.getByRole('cell', { name: 'RMA-' }).click();
   await page.getByText('RMA-0001', { exact: true }).waitFor();
+
+  // Creator of the order should be displayed
+  await expect(page.getByRole('row', { name: 'Created By' })).toContainText(
+    'admin'
+  );
+
   await loadTab(page, 'Line Items');
   await loadTab(page, 'Attachments');
   await loadTab(page, 'Notes');
@@ -126,6 +138,42 @@ test('Sales Orders - Basic Tests', async ({ browser }) => {
 
   await page.getByText('On Hold').first().waitFor();
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
+});
+
+test('Sales Orders - Auto Allocate', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'sales/sales-order/11/' });
+
+  // Duplicate the order
+  await page.getByRole('button', { name: 'action-menu-order-actions' }).click();
+  await page.getByRole('menuitem', { name: 'Duplicate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Pending').first().waitFor();
+
+  await loadTab(page, 'Line Items');
+  await page
+    .getByRole('button', { name: 'action-button-auto-allocate-' })
+    .click();
+  await page
+    .getByRole('combobox', { name: 'choice-field-stock_sort_by' })
+    .click();
+  await page.getByRole('option', { name: 'Newest stock' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('Stock allocation complete').first().waitFor();
+  await page.getByText('10 / 10').first().waitFor();
+
+  // Cancel the order (to free up the allocated stock)
+  await page.getByRole('button', { name: 'action-menu-order-actions' }).click();
+  await page.getByRole('menuitem', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Cancelled').first().waitFor();
+
+  // Check that the allocated stock has been released
+  await page
+    .getByRole('region', { name: 'Line Items', exact: true })
+    .getByLabel('table-refresh')
+    .click();
+  await page.getByText('0 / 10').first().waitFor();
 });
 
 test('Sales Orders - Shipments', async ({ browser }) => {
@@ -238,6 +286,29 @@ test('Sales Orders - Shipments', async ({ browser }) => {
     .getByText(/SO0025/)
     .first()
     .click();
+});
+
+// Filter Shipments by tag
+test('Sales Orders - Shipments - Tags', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'sales/index/shipments' });
+
+  // Filter by tag
+  await clearTableFilters(page);
+  await page.getByRole('button', { name: 'table-select-filters' }).click();
+  await page.getByRole('button', { name: 'Add Filter' }).click();
+  await page.getByRole('combobox', { name: 'Filter' }).fill('tag');
+  await page.getByRole('option', { name: 'Tags' }).click();
+  await page.getByRole('combobox', { name: 'Value' }).click();
+
+  // Apply the "Requires Payment" tag filter
+  await page.getByRole('option', { name: 'Requires Payment' }).click();
+  await page.getByRole('button', { name: 'apply-tags-filter' }).click();
+  await page.getByRole('button', { name: 'filter-drawer-close' }).click();
+
+  // Click through to one of the selected shipments
+  await page.getByRole('cell', { name: 'SO0007' }).click();
+  await page.getByText('Sales Order: SO0007').first().waitFor();
+  await page.getByText('Requires Payment', { exact: true }).first().waitFor();
 });
 
 // Complete a shipment against a sales order
@@ -376,9 +447,11 @@ test('Sales Orders - Price Breaks', async ({ browser }) => {
     url: 'sales/sales-order/14/line-items'
   });
 
+  await page.getByRole('button', { name: 'action-menu-add-line-item' }).click();
   await page
-    .getByRole('button', { name: 'action-button-add-line-item' })
+    .getByRole('menuitem', { name: 'action-menu-add-line-item-add' })
     .click();
+
   await page.getByLabel('related-field-part').fill('software');
   await page.getByRole('option', { name: 'Software License' }).click();
 

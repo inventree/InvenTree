@@ -2,21 +2,34 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
-import {
-  type RowAction,
-  RowEditAction,
-  RowViewAction
-} from '@lib/components/RowActions';
+import { type RowAction, RowEditAction } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { StockOperationProps } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { Alert } from '@mantine/core';
 import { IconCircleX, IconTruckDelivery } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
+import {
+  DescriptionColumn,
+  IPNColumn,
+  LocationColumn,
+  PartColumn,
+  ReferenceColumn,
+  RevisionColumn,
+  StatusColumn
+} from '../../components/tables/ColumnRenderers';
+import {
+  IncludeVariantsFilter,
+  StockLocationFilter
+} from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import { formatDate } from '../../defaults/formatters';
 import { useSalesOrderAllocationFields } from '../../forms/SalesOrderForms';
 import {
@@ -25,18 +38,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
-import { useTable } from '../../hooks/UseTable';
 import { useUserState } from '../../states/UserState';
-import {
-  DescriptionColumn,
-  IPNColumn,
-  LocationColumn,
-  PartColumn,
-  ReferenceColumn,
-  StatusColumn
-} from '../ColumnRenderers';
-import { IncludeVariantsFilter, StockLocationFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function SalesOrderAllocationTable({
   partId,
@@ -108,6 +110,7 @@ export default function SalesOrderAllocationTable({
     return [
       ReferenceColumn({
         accessor: 'order_detail.reference',
+        ordering: 'order',
         title: t`Sales Order`,
         switchable: false,
         sortable: true,
@@ -127,11 +130,14 @@ export default function SalesOrderAllocationTable({
         hidden: showPartInfo != true,
         part: 'part_detail'
       }),
-      DescriptionColumn({
-        accessor: 'part_detail.description',
+      IPNColumn({
         hidden: showPartInfo != true
       }),
-      IPNColumn({
+      RevisionColumn({
+        hidden: showPartInfo != true
+      }),
+      DescriptionColumn({
+        accessor: 'part_detail.description',
         hidden: showPartInfo != true
       }),
       {
@@ -256,7 +262,7 @@ export default function SalesOrderAllocationTable({
             deleteAllocation.open();
           }
         },
-        RowViewAction({
+        AppRowViewAction({
           tooltip: t`View Shipment`,
           title: t`View Shipment`,
           hidden: !record.shipment || !!shipmentId,
@@ -285,7 +291,6 @@ export default function SalesOrderAllocationTable({
 
     return {
       items: stockItems,
-      model: ModelType.stockitem,
       refresh: table.refreshTable
     };
   }, [table.selectedRecords, table.refreshTable]);
@@ -377,6 +382,10 @@ export default function SalesOrderAllocationTable({
           enableFilters: !isSubTable,
           enableDownload: !isSubTable,
           enableSelection: !isSubTable,
+          enableBulkDelete:
+            !isSubTable &&
+            allowEdit &&
+            user.hasDeleteRole(UserRoles.sales_order),
           minHeight: isSubTable ? 100 : undefined,
           rowActions: rowActions,
           tableActions: isSubTable ? undefined : tableActions,

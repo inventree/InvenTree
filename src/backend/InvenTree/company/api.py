@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 import django_filters.rest_framework.filters as rest_filters
 from django_filters.rest_framework.filterset import FilterSet
 
+import common.filters
 import part.models
 from data_exporter.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, ParameterListMixin, meta_path
@@ -37,6 +38,18 @@ from .serializers import (
 )
 
 
+class CompanyFilter(FilterSet):
+    """Custom API filters for the CompanyList endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = Company
+        fields = ['is_customer', 'is_manufacturer', 'is_supplier', 'name', 'active']
+
+    tag_name = common.filters.TagsFilter()
+
+
 class CompanyMixin(OutputOptionsMixin):
     """Mixin class for Company API endpoints."""
 
@@ -62,13 +75,7 @@ class CompanyList(CompanyMixin, ParameterListMixin, DataExportViewMixin, ListCre
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = [
-        'is_customer',
-        'is_manufacturer',
-        'is_supplier',
-        'name',
-        'active',
-    ]
+    filterset_class = CompanyFilter
 
     search_fields = ['name', 'description', 'website', 'tax_id']
 
@@ -91,7 +98,7 @@ class ContactList(DataExportViewMixin, ListCreateDestroyAPIView):
 
     filterset_fields = ['company']
 
-    search_fields = ['company__name', 'name']
+    search_fields = ['company__name', 'name', 'email', 'phone', 'role']
 
     ordering_fields = ['name']
 
@@ -114,6 +121,16 @@ class AddressList(DataExportViewMixin, ListCreateDestroyAPIView):
     filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = ['company']
+
+    search_fields = [
+        'company__name',
+        'title',
+        'line1',
+        'line2',
+        'postal_city',
+        'postal_code',
+        'country',
+    ]
 
     ordering_fields = ['title']
 
@@ -144,6 +161,8 @@ class ManufacturerPartFilter(FilterSet):
     manufacturer_active = rest_filters.BooleanFilter(
         field_name='manufacturer__active', label=_('Manufacturer is Active')
     )
+
+    tag_name = common.filters.TagsFilter()
 
 
 class ManufacturerOutputOptions(OutputConfiguration):
@@ -179,6 +198,7 @@ class ManufacturerPartMixin(SerializerContextMixin):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related('supplier_parts')
+        queryset = queryset.prefetch_related('part', 'part__pricing_data')
 
         return queryset
 
@@ -297,6 +317,8 @@ class SupplierPartFilter(FilterSet):
             return queryset.filter(in_stock__gt=0)
         else:
             return queryset.exclude(in_stock__gt=0)
+
+    tag_name = common.filters.TagsFilter()
 
 
 class SupplierPartOutputOptions(OutputConfiguration):
@@ -479,7 +501,12 @@ class SupplierPriceBreakList(
     filter_backends = SEARCH_ORDER_FILTER
     ordering_fields = ['quantity', 'supplier', 'SKU', 'price']
 
-    search_fields = ['part__SKU', 'part__supplier__name']
+    search_fields = [
+        'part__SKU',
+        'part__supplier__name',
+        'part__part__name',
+        'part__part__IPN',
+    ]
 
     ordering_field_aliases = {'supplier': 'part__supplier__name', 'SKU': 'part__SKU'}
 

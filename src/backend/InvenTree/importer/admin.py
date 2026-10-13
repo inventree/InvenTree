@@ -27,7 +27,7 @@ class DataImportColumnMapAdmin(admin.TabularInline):
                 session = queryset.first().session
                 db_field.choices = [(col, col) for col in session.columns]
 
-        return super().formfield_for_choice_field(db_field, request, **kwargs)
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 
 @admin.register(importer.models.DataImportSession)
@@ -37,6 +37,15 @@ class DataImportSessionAdmin(admin.ModelAdmin):
     list_display = ['id', 'data_file', 'status', 'user']
 
     list_filter = ['status']
+
+    search_fields = [
+        'user__username',
+        'user__first_name',
+        'user__last_name',
+        'model_type',
+    ]
+
+    autocomplete_fields = ['user']
 
     inlines = [DataImportColumnMapAdmin]
 
@@ -65,6 +74,8 @@ class DataImportRowAdmin(admin.ModelAdmin):
     """Admin interface for the DataImportRow model."""
 
     list_display = ['id', 'session', 'row_index']
+
+    autocomplete_fields = ['session']
 
     def get_readonly_fields(self, request, obj=None):
         """Return the readonly fields for the admin interface."""
