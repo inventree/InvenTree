@@ -335,7 +335,12 @@ def get_media_dir(create=True, error=True):
         else:
             return None
 
-    md = Path(md).resolve()
+    md = Path(md)
+
+    if not md.is_absolute():
+        md = get_root_dir().joinpath(md)
+
+    md = md.resolve()
 
     if create:
         md.mkdir(parents=True, exist_ok=True)
@@ -353,7 +358,12 @@ def get_static_dir(create=True, error=True):
         else:
             return None
 
-    sd = Path(sd).resolve()
+    sd = Path(sd)
+
+    if not sd.is_absolute():
+        sd = get_root_dir().joinpath(sd)
+
+    sd = sd.resolve()
 
     if create:
         sd.mkdir(parents=True, exist_ok=True)
@@ -371,12 +381,18 @@ def get_backup_dir(create=True, error=True):
         else:
             return None
 
-    bd = Path(bd).resolve()
+    bd = Path(bd)
+
+    if not bd.is_absolute():
+        bd = get_root_dir().joinpath(bd)
+
+    bd = bd.resolve()
 
     if create:
         bd.mkdir(parents=True, exist_ok=True)
 
     return bd
+
 
 
 def get_plugin_file() -> Path:
@@ -413,7 +429,18 @@ def get_plugin_file() -> Path:
 
 def get_plugin_dir():
     """Returns the path of the custom plugins directory."""
-    return get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
+    pd = get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
+
+    if not pd:
+        return None
+
+    pd = Path(pd)
+
+    if not pd.is_absolute():
+        pd = get_root_dir().joinpath(pd)
+
+    return pd.resolve()
+
 
 
 def get_secret_key(return_path: bool = False) -> str | Path:
