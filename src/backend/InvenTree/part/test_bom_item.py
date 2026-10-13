@@ -378,6 +378,59 @@ class BomItemTest(TestCase):
         with self.assertRaises(django_exceptions.ValidationError):
             BomItem.objects.create(part=part_v, sub_part=part_a, quantity=10)
 
+    def test_bom_unrelated_root_parts(self):
+        """Unrelated top-level parts created in succession can be added to each other's BOM.
+
+        Regression test: ordered (by name) insertion of a new root Part shifted the tree_id
+        of following trees in the database, leaving instances held in memory with a stale
+        tree_id - which could match the new part's tree_id, falsely flagging the BOM as recursive.
+        """
+        # Part 'Y' is inserted directly before Part 'Z' when ordered by name
+        part_z = Part.objects.create(
+            name='zzzz assembly', description='Z', assembly=True, component=True
+        )
+        part_y = Part.objects.create(
+            name='zzzy assembly', description='Y', assembly=True, component=True
+        )
+
+        # In-memory tree_id values match the database
+        self.assertEqual(part_z.tree_id, Part.objects.get(pk=part_z.pk).tree_id)
+        self.assertNotEqual(part_z.tree_id, part_y.tree_id)
+
+        # No refresh_from_db() required
+        BomItem.objects.create(part=part_y, sub_part=part_z, quantity=1)
+
+    def test_root_part_create_preserves_tree_ids(self):
+        """Creating a new top-level part does not modify the tree_id of any other part."""
+        tree_ids = dict(Part.objects.values_list('pk', 'tree_id'))
+
+        # Name sorts before every existing part
+        Part.objects.create(name='!!! first part', description='first')
+
+        self.assertEqual(
+            dict(Part.objects.filter(pk__in=tree_ids).values_list('pk', 'tree_id')),
+            tree_ids,
+        )
+
+    def test_check_add_to_bom_stale_tree_id(self):
+        """check_add_to_bom() uses database tree_id values, not stale in-memory values."""
+        part_a = Part.objects.create(
+            name='Stale A', description='A', assembly=True, is_template=True
+        )
+        part_b = Part.objects.create(name='Stale B', description='B', component=True)
+
+        # Simulate a stale in-memory tree_id which matches the other part
+        part_b.tree_id = part_a.tree_id
+
+        self.assertTrue(part_b.check_add_to_bom(part_a, raise_error=True))
+
+        # A genuine variant relationship is still detected
+        part_v = Part.objects.create(
+            name='Stale V', description='V', variant_of=part_a, component=True
+        )
+
+        self.assertFalse(part_v.check_add_to_bom(part_a))
+
     def test_locked_assembly(self):
         """Test that BomItem objects work correctly for a 'locked' assembly."""
         assembly = Part.objects.create(
