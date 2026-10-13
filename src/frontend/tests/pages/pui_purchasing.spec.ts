@@ -665,7 +665,6 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Items received').waitFor();
 
-  const api = await createApi({});
   const receivedItems = await api
     .get('stock/', { params: { batch: 'my-batch-code' } })
     .then((response) => response.json());
@@ -757,8 +756,6 @@ test('Purchase Orders - Custom Location', async ({ browser }) => {
 
   // Cross-check against the API, in case the displayed location text does
   // not reflect the stock item's actual location
-  const api = await createApi({});
-
   const locations = await api
     .get('stock/location/', { params: { search: 'Storage Room A' } })
     .then((res) => res.json());
