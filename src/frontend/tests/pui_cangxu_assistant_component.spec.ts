@@ -17,6 +17,16 @@ const attachment = {
     '/api/cangxu/assistant/attachments/55555555-5555-4555-8555-555555555555/preview/'
 };
 
+// The deployed LAN HTTP origin does not expose the secure-context UUID API.
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(globalThis.crypto, 'randomUUID', {
+      value: undefined,
+      configurable: true
+    });
+  });
+});
+
 test('assistant-ui image preview, reference and stable retry through HTTP', async ({
   page
 }) => {
@@ -359,4 +369,56 @@ test('removing a queued upload keeps the remaining upload queue usable', async (
   await expect(page.locator('.partner-file')).toHaveCount(2);
   expect(uploads).toBe(2);
   expect(maximumActive).toBe(1);
+});
+
+test('Enter on LAN HTTP immediately shows submission, then receives a reply', async ({
+  page
+}) => {
+  const requests: any[] = [];
+  const pageErrors: string[] = [];
+  let items: any[] = [];
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  page.on('pageerror', (error) => pageErrors.push(error.message));
+  await page.route('**/api/cangxu/assistant/**', async (route) => {
+    if (route.request().url().includes('/status/'))
+      return route.fulfill({
+        json: { reply_running: false, is_running: false }
+      });
+    if (route.request().method() === 'POST') {
+      const body = route.request().postDataJSON();
+      requests.push(body);
+      await held;
+      items = [
+        {
+          id: 1,
+          role: 'user',
+          text: body.text,
+          request_id: body.client_request_id
+        },
+        { id: 2, role: 'assistant', text: '已查询：虚构库存记录共 555 条。' }
+      ];
+      return route.fulfill({ status: 201, json: { status: 'pending' } });
+    }
+    return route.fulfill({
+      json: { items, pending: [], next_before: null, has_more: false }
+    });
+  });
+  await page.goto(entry);
+  const input = page.getByRole('textbox', { name: '消息内容' });
+  await input.fill('现在有多少库存？');
+  await input.press('Enter');
+  await expect(input).toHaveValue('');
+  await expect(
+    page.getByText('现在有多少库存？', { exact: true })
+  ).toBeVisible();
+  await expect.poll(() => requests.length).toBe(1);
+  expect(requests[0].client_request_id).toMatch(
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
+  );
+  release();
+  await expect(page.getByText('已查询：虚构库存记录共 555 条。')).toBeVisible();
+  expect(pageErrors).toEqual([]);
 });

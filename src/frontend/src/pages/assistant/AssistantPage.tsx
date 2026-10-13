@@ -56,6 +56,7 @@ import {
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import remarkGfm from 'remark-gfm';
 import { useApi } from '../../contexts/ApiContext';
+import { createRequestId } from '../../functions/requestId';
 import { useUserState } from '../../states/UserState';
 import {
   ASSISTANT_API,
@@ -605,7 +606,7 @@ export default function AssistantPage() {
     () => ({
       accept: ATTACHMENT_ACCEPT,
       async *add({ file }) {
-        const id = crypto.randomUUID();
+        const id = createRequestId();
         const base: PendingAttachment = {
           id,
           file,
@@ -753,7 +754,7 @@ export default function AssistantPage() {
   }
   async function onNew(message: AppendMessage) {
     const payload: Submission = {
-      client_request_id: crypto.randomUUID(),
+      client_request_id: createRequestId(),
       text: message.content
         .filter((part) => part.type === 'text')
         .map((part) => part.text)
@@ -808,7 +809,7 @@ export default function AssistantPage() {
   async function stop(scope: 'reply' | 'all-writes' | 'all-background') {
     try {
       await api.post(`${ASSISTANT_API}controls/`, {
-        client_request_id: crypto.randomUUID(),
+        client_request_id: createRequestId(),
         scope
       });
       await refresh();

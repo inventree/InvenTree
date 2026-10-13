@@ -16,6 +16,7 @@ import {
 import { notifications } from '@mantine/notifications';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
+import { createRequestId } from '../../functions/requestId';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
@@ -69,7 +70,7 @@ function recordId(value: { id?: number; pk?: number }) {
 }
 
 function idempotencyKey() {
-  return crypto.randomUUID();
+  return createRequestId();
 }
 
 export default function ShipmentReceiptPanel({

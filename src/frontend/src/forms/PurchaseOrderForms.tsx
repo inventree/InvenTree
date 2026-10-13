@@ -26,6 +26,7 @@ import {
   IconUsers
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createRequestId } from '../functions/requestId';
 
 import { ActionButton } from '@lib/components/ActionButton';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -1030,7 +1031,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
           note: item.note ?? ''
         };
         const signature = JSON.stringify(receipt);
-        const key = receiptKeys.current.get(signature) ?? crypto.randomUUID();
+        const key = receiptKeys.current.get(signature) ?? createRequestId();
         receiptKeys.current.set(signature, key);
         return {
           signature,
