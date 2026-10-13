@@ -726,10 +726,12 @@ class PurchaseOrderLineItemViewSet(
 
     @extend_schema(request=BulkRequestSerializer)
     def bulk_delete(self, request, *args, **kwargs):
-        """Perform the bulk delete in a single transaction.
+        """Perform a bulk delete operation.
 
-        This ensures that the row locks taken by validate_delete() are held
-        until the line items have actually been deleted.
+        Provide either a list of ids (via `items`) or a filter (via `filters`) to select the items to be deleted.
+
+        This action is performed attomically, so either all items will be deleted, or none will be deleted.
+
         """
         with transaction.atomic():
             return super().bulk_delete(request, *args, **kwargs)
