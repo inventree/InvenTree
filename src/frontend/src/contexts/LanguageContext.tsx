@@ -11,7 +11,7 @@ import { useLocalState } from '../states/LocalState';
 import { useServerApiState } from '../states/ServerApiState';
 import { fetchGlobalStates } from '../states/states';
 
-export const defaultLocale = 'en';
+export const defaultLocale = 'zh_Hans';
 
 /*
  * Function which returns a record of supported languages.
@@ -61,6 +61,19 @@ export const getSupportedLanguages = (): Record<string, string> => {
   };
 };
 
+/** Normalize backend Django locale codes to the frontend catalog identifiers. */
+export function normalizeLocale(locale: string | null | undefined): string {
+  if (!locale) return defaultLocale;
+
+  const normalized = locale.replaceAll('-', '_').toLowerCase();
+  const supported = Object.keys(getSupportedLanguages());
+  return (
+    supported.find((key) => key.toLowerCase() === normalized) ??
+    supported.find((key) => key.toLowerCase() === normalized.split('_')[0]) ??
+    defaultLocale
+  );
+}
+
 export function LanguageContext({
   children
 }: Readonly<{ children: JSX.Element }>) {
@@ -73,17 +86,9 @@ export function LanguageContext({
     // Update the locale based on prioritization:
     // 1. Locally selected locale
     // 2. Server default locale
-    // 3. English (fallback)
+    // 3. Simplified Chinese (fallback)
 
-    let locale: string | null = activeLocale;
-
-    if (!!language) {
-      locale = language;
-    } else if (!!server.default_locale) {
-      locale = server.default_locale;
-    } else {
-      locale = defaultLocale;
-    }
+    const locale = normalizeLocale(language || server.default_locale);
 
     if (locale != activeLocale) {
       setActiveLocale(locale);
@@ -99,12 +104,7 @@ export function LanguageContext({
   useEffect(() => {
     isMounted.current = true;
 
-    let lang: string = language || defaultLocale;
-
-    // Ensure that the selected language is supported
-    if (!Object.keys(getSupportedLanguages()).includes(lang)) {
-      lang = defaultLocale;
-    }
+    const lang = normalizeLocale(language || server.default_locale);
 
     activateLocale(lang)
       .then(() => {
@@ -114,7 +114,7 @@ export function LanguageContext({
          * Configure the default Accept-Language header for all requests.
          * - Locally selected locale
          * - Server default locale
-         * - en-us (backup)
+         * - en-us (backend compatibility fallback)
          */
         const locales: (string | undefined)[] = [];
 
@@ -160,7 +160,7 @@ export function LanguageContext({
     return () => {
       isMounted.current = false;
     };
-  }, [language]);
+  }, [language, server.default_locale]);
 
   if (loadedState === 'loading') {
     return <LoadingOverlay visible={true} />;
@@ -186,7 +186,7 @@ export function getPriorityLocale(): string {
   const serverDefault = useServerApiState.getState().server.default_locale;
   const userDefault = useLocalState.getState().language;
 
-  return userDefault || serverDefault || defaultLocale;
+  return normalizeLocale(userDefault || serverDefault);
 }
 
 export async function activateLocale(locale: string | null) {

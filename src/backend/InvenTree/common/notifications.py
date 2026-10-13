@@ -89,7 +89,7 @@ def get_user_language(user) -> str:
     from django.conf import settings
 
     if not user:
-        return getattr(settings, 'LANGUAGE_CODE', 'en-us')
+        return getattr(settings, 'LANGUAGE_CODE', 'zh-hans')
 
     # 1. Try user.profile.language (UserProfile model relation)
     if profile := getattr(user, 'profile', None):
@@ -114,7 +114,7 @@ def get_user_language(user) -> str:
         pass
 
     # 4. Fallback to settings.LANGUAGE_CODE
-    return getattr(settings, 'LANGUAGE_CODE', 'en-us')
+    return getattr(settings, 'LANGUAGE_CODE', 'zh-hans')
 
 
 def trigger_notification(obj: Model, category: str = '', obj_ref: str = 'pk', **kwargs):
