@@ -595,6 +595,24 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
   ).toBe(rowCount);
 
   // Let's actually receive an item (with custom values)
+  const api = await createApi({});
+  const paintLines = await api
+    .get('order/po-line/', { params: { order: 2, part_detail: true } })
+    .then((response) => response.json());
+  const paintLine = paintLines.find(
+    (line: any) => line.part_detail?.name === 'Red Paint'
+  );
+  expect(paintLine).toBeTruthy();
+  // This test covers choosing a receipt location, so remove any fixture-level
+  // line destination which correctly locks the row to that destination.
+  const clearPaintDestination = await api.patch(
+    `order/po-line/${paintLine.pk}/`,
+    {
+      data: { destination: null }
+    }
+  );
+  expect(clearPaintDestination.ok()).toBeTruthy();
+
   await navigate(page, 'purchasing/purchase-order/2/line-items');
 
   const cell = await page.getByText('Red Paint', { exact: true });
@@ -667,6 +685,12 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
 
 test('Purchase Orders - Custom Location', async ({ browser }) => {
   const page = await doCachedLogin(browser);
+
+  const api = await createApi({});
+  const clearLineDestination = await api.patch('order/po-line/36/', {
+    data: { destination: null }
+  });
+  expect(clearLineDestination.ok()).toBeTruthy();
 
   await navigate(page, 'purchasing/purchase-order/14/line-items');
 
@@ -784,9 +808,6 @@ test('Purchase Orders - Receive Virtual Items', async ({ browser }) => {
   await page
     .getByRole('button', { name: 'action-button-receive-items' })
     .click();
-
-  await page.getByLabel('tree-field-location').fill('factory');
-  await page.getByText('Factory', { exact: true }).click();
 
   await page.getByRole('button', { name: 'Submit' }).click();
 
