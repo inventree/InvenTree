@@ -3589,6 +3589,11 @@ router.register(
     'assistant', assistant_api.AssistantBindingViewSet, basename='cangxu-assistant'
 )
 router.register(
+    'assistant/partners',
+    assistant_api.AssistantPartnerViewSet,
+    basename='cangxu-assistant-partner',
+)
+router.register(
     'assistant/messages',
     assistant_api.AssistantMessageViewSet,
     basename='cangxu-assistant-message',

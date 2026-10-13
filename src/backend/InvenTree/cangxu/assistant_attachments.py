@@ -44,8 +44,14 @@ IMAGE_TYPES = {
 
 
 def attachment_metadata(item):
-    """Only authenticated application endpoints are exposed to the browser."""
+    """Only authenticated application endpoints are exposed to the browser.
+
+    URLs carry the owning partner selector so previews and draft restoration
+    keep working after switching partners; selector-less calls still resolve
+    the default partner for backward compatibility.
+    """
     route = f'/api/cangxu/assistant/attachments/{item.pk}'
+    selector = f'?partner_id={item.binding.partner_id}'
     return {
         'id': str(item.pk),
         'name': item.name,
@@ -54,8 +60,8 @@ def attachment_metadata(item):
         'kind': item.kind,
         'image_width': item.image_width,
         'image_height': item.image_height,
-        'download_url': f'{route}/download/',
-        'preview_url': f'{route}/preview/' if item.kind == 'image' else None,
+        'download_url': f'{route}/download/{selector}',
+        'preview_url': f'{route}/preview/{selector}' if item.kind == 'image' else None,
     }
 
 
@@ -201,7 +207,7 @@ def message_attachments(binding, identifiers):
         str(item.pk): item
         for item in AssistantChatAttachment.objects.filter(
             binding=binding, pk__in=identifiers
-        )
+        ).select_related('binding')
     }
     if len(found) != len(identifiers):
         raise ValidationError('One or more chat attachments are unavailable')

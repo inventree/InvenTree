@@ -6,6 +6,24 @@ import type {
 export const ASSISTANT_API = '/api/cangxu/assistant/';
 export const ATTACHMENT_ACCEPT =
   '.png,.jpg,.jpeg,.webp,.gif,.pdf,.docx,.xlsx,.csv,.tsv,.txt,.md,.json,.log';
+export type PartnerSummary = {
+  partner_id: string;
+  conversation_id: string;
+  display_name: string;
+  is_default: boolean;
+  enabled: boolean;
+  write_enabled: boolean;
+  created_at: string;
+  updated_at: string;
+  last_message?: string;
+  last_message_at?: string | null;
+};
+export type PartnerActivity = {
+  partner_id: string;
+  preview: string;
+  last_message_at?: string;
+  running: boolean;
+};
 export type BusinessReference = {
   object_type: string;
   object_id: string;
@@ -45,6 +63,7 @@ export type HistoryPage = {
     is_running: boolean;
     reply_running: boolean;
     live_message?: HistoryMessage | null;
+    live_tools?: { name: string; status: string }[];
     active_tasks?: { id: number; status: string }[];
   };
   pending?: {

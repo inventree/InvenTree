@@ -19,7 +19,7 @@ export const LoginLayoutComponent = EagerLoadable(
 
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
 export const AssistantPage = Loadable(
-  lazy(() => import('./pages/assistant/AssistantPage'))
+  lazy(() => import('./pages/assistant/AssistantWorkbench'))
 );
 export const CangxuHome = Loadable(
   lazy(() => import('./pages/cangxu/CangxuHome'))

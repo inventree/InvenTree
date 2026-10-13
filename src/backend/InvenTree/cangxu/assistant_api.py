@@ -6,12 +6,15 @@ first; a background worker performs the runtime transport so no request
 transaction blocks on the network.
 """
 
+import uuid
+
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 
 from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, viewsets
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
-from rest_framework.exceptions import APIException, PermissionDenied
+from rest_framework.exceptions import APIException, NotFound, PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -184,12 +187,49 @@ def _runtime_or_503():
     return config
 
 
-def _current_binding(user):
-    """Return the caller's binding for the configured deployment only."""
+def _selected_partner_id(request):
+    """Parse the optional ?partner_id selector; malformed values are rejected."""
+    raw = request.query_params.get('partner_id')
+    if raw is None:
+        return None
+    try:
+        return uuid.UUID(raw)
+    except (ValueError, AttributeError, TypeError) as exc:
+        raise serializers.ValidationError({
+            'partner_id': 'Provide a valid partner UUID.'
+        }) from exc
+
+
+def _current_binding(user, partner_id=None):
+    """Return the caller's binding for the configured deployment only.
+
+    Without a selector only the unique default binding qualifies. An explicit
+    partner identifier selects the caller's own binding in this deployment;
+    unknown or foreign identifiers are rejected, never provisioned.
+    """
     config = _runtime_or_503()
-    return PartnerBinding.objects.filter(
+    bindings = PartnerBinding.objects.filter(
         deployment_id=config.deployment_id, user=user
-    ).first()
+    )
+    if partner_id is None:
+        return bindings.filter(is_default=True).first()
+    try:
+        return bindings.get(partner_id=partner_id)
+    except PartnerBinding.DoesNotExist as exc:
+        raise NotFound('This partner is unavailable for the current account.') from exc
+
+
+def _selected_binding(request):
+    """Resolve an optional selector for read endpoints without provisioning."""
+    return _current_binding(request.user, _selected_partner_id(request))
+
+
+def _ensure_selected_binding(request):
+    """Provision the default partner or select an existing owned one."""
+    try:
+        return ensure_partner_binding(request.user, _selected_partner_id(request))
+    except PartnerBinding.DoesNotExist as exc:
+        raise NotFound('This partner is unavailable for the current account.') from exc
 
 
 def _offload_delivery(delivery_id):
@@ -224,9 +264,7 @@ class AssistantBindingViewSet(viewsets.ViewSet):
         config = runtime_config()
         data['runtime_configured'] = config is not None
         if config is not None:
-            binding = PartnerBinding.objects.filter(
-                deployment_id=config.deployment_id, user=request.user
-            ).first()
+            binding = _current_binding(request.user, _selected_partner_id(request))
             if binding is not None:
                 data.update(
                     bound=True,
@@ -267,7 +305,7 @@ class AssistantMessageViewSet(viewsets.ViewSet):
         data = serializer.validated_data
         _runtime_or_503()
         try:
-            binding = ensure_partner_binding(request.user)
+            binding = _ensure_selected_binding(request)
         except AssistantRuntimeNotConfiguredError as exc:
             raise AssistantServiceUnavailable() from exc
         if not binding.enabled or not request.user.is_active:
@@ -330,10 +368,15 @@ class AssistantMessageViewSet(viewsets.ViewSet):
     @extend_schema(parameters=[HistoryRequestSerializer], responses=dict)
     def list(self, request):
         """Proxy one bounded history page for the caller's own partner."""
-        serializer = HistoryRequestSerializer(data=request.query_params)
+        query = {
+            key: value
+            for key, value in request.query_params.items()
+            if key != 'partner_id'
+        }
+        serializer = HistoryRequestSerializer(data=query)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
-        binding = _current_binding(request.user)
+        binding = _selected_binding(request)
         if binding is None:
             return Response({'items': [], 'next_before': None, 'has_more': False})
         if not binding.enabled or not request.user.is_active:
@@ -405,7 +448,7 @@ class AssistantControlViewSet(viewsets.ViewSet):
         data = serializer.validated_data
         _runtime_or_503()
         try:
-            binding = ensure_partner_binding(request.user)
+            binding = _ensure_selected_binding(request)
         except AssistantRuntimeNotConfiguredError as exc:
             raise AssistantServiceUnavailable() from exc
         with transaction.atomic():
@@ -537,7 +580,7 @@ class AssistantReceiptFollowupViewSet(viewsets.ViewSet):
             raise serializers.ValidationError(
                 'Receipt or archive source is unavailable for this task'
             ) from exc
-        binding = ensure_partner_binding(request.user)
+        binding = _ensure_selected_binding(request)
         if not binding.enabled:
             raise PermissionDenied('This partner is disabled')
         with transaction.atomic():
@@ -603,7 +646,7 @@ class AssistantStatusViewSet(AssistantBindingViewSet):
     @extend_schema(responses=dict)
     def list(self, request):
         """Do not disguise runtime failure as idle or an accepted response."""
-        binding = _current_binding(request.user)
+        binding = _selected_binding(request)
         if binding is None:
             return Response({'status': 'unbound', 'is_running': False, 'pending': []})
         if not binding.enabled or not request.user.is_active:
@@ -618,3 +661,126 @@ class AssistantStatusViewSet(AssistantBindingViewSet):
         ):
             status = {'status': 'unavailable', 'is_running': False}
         return Response({**status, 'pending': _pending_messages(binding)})
+
+
+class PartnerRequestSerializer(StrictSerializer):
+    """The only client-writable partner metadata is its display name."""
+
+    display_name = serializers.CharField(max_length=80, trim_whitespace=True)
+
+    def validate_display_name(self, value):
+        """Reject blank names so the sidebar never renders an empty partner."""
+        if not value.strip():
+            raise serializers.ValidationError('Provide a nonempty display name.')
+        return value.strip()
+
+
+def _partner_summary(binding):
+    """Serialize sidebar metadata from the caller's own bindings only.
+
+    The preview is derived from this user's durable gateway queue; the payload
+    text of acknowledged deliveries is already cleared, so it may be absent.
+    """
+    last_message = getattr(binding, 'last_message_text', None)
+    if not isinstance(last_message, str) or not last_message:
+        last_message = None
+    return {
+        'partner_id': binding.partner_id,
+        'conversation_id': binding.conversation_id,
+        'display_name': binding.display_name,
+        'is_default': binding.is_default,
+        'enabled': binding.enabled,
+        'write_enabled': binding.write_enabled,
+        'created_at': binding.created_at,
+        'updated_at': binding.updated_at,
+        'last_message': last_message[:200] if last_message else None,
+        'last_message_at': getattr(binding, 'last_message_at', None),
+    }
+
+
+class AssistantPartnerViewSet(viewsets.ViewSet):
+    """List, create and rename the caller's partners within one deployment.
+
+    There is no delete, disable or reset endpoint: partners accumulate as
+    durable conversation identity and are retired by policy, not by clients.
+    """
+
+    # Browser sessions and existing native tokens retain normal user rights.
+    # OAuth delegation is not exposed until its scopes survive background execution.
+    authentication_classes = [
+        ApiTokenAuthentication,
+        BasicAuthentication,
+        SessionAuthentication,
+    ]
+    permission_classes = [IsAuthenticated]
+    lookup_value_regex = '[0-9a-f-]{36}'
+
+    def _owned(self, request, pk):
+        """Resolve one partner the caller owns in the configured deployment."""
+        config = _runtime_or_503()
+        try:
+            partner_id = uuid.UUID(str(pk))
+        except (ValueError, AttributeError, TypeError) as exc:
+            raise NotFound(
+                'This partner is unavailable for the current account.'
+            ) from exc
+        return get_object_or_404(
+            PartnerBinding,
+            deployment_id=config.deployment_id,
+            user=request.user,
+            partner_id=partner_id,
+        )
+
+    @extend_schema(responses=dict)
+    def list(self, request):
+        """Return the caller's partners, default first then most recent.
+
+        Opening the workbench provisions the default partner through the same
+        race-safe path as a first message; this authorized read side effect is
+        the one place a GET may create a binding.
+        """
+        from django.db.models import OuterRef, Subquery
+
+        config = _runtime_or_503()
+        try:
+            ensure_partner_binding(request.user)
+        except AssistantRuntimeNotConfiguredError as exc:
+            raise AssistantServiceUnavailable() from exc
+        latest = AssistantGatewayDelivery.objects.filter(
+            binding=OuterRef('pk'), kind=AssistantGatewayDelivery.Kind.MESSAGE
+        ).order_by('-created_at')
+        bindings = (
+            PartnerBinding.objects
+            .filter(deployment_id=config.deployment_id, user=request.user)
+            .annotate(
+                last_message_text=Subquery(latest.values('payload__text')[:1]),
+                last_message_at=Subquery(latest.values('created_at')[:1]),
+            )
+            .order_by('-is_default', '-updated_at')
+        )
+        return Response({'results': [_partner_summary(row) for row in bindings]})
+
+    @extend_schema(request=PartnerRequestSerializer, responses={201: dict})
+    def create(self, request):
+        """Create an enabled non-default partner with server-owned identifiers."""
+        config = _runtime_or_503()
+        serializer = PartnerRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        binding = PartnerBinding.objects.create(
+            deployment_id=config.deployment_id,
+            user=request.user,
+            display_name=serializer.validated_data['display_name'],
+            enabled=True,
+            write_enabled=True,
+        )
+        return Response(_partner_summary(binding), status=201)
+
+    @extend_schema(request=PartnerRequestSerializer, responses={200: dict})
+    def partial_update(self, request, pk=None):
+        """Rename one of the caller's own partners; other fields are read-only."""
+        serializer = PartnerRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        binding = self._owned(request, pk)
+        binding.display_name = serializer.validated_data['display_name']
+        binding.save(update_fields=['display_name', 'updated_at'])
+        return Response(_partner_summary(binding))

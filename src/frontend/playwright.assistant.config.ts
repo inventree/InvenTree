@@ -2,7 +2,10 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
-  testMatch: 'pui_cangxu_assistant_component.spec.ts',
+  testMatch: [
+    'pui_cangxu_assistant_component.spec.ts',
+    'pui_cangxu_assistant_workbench.spec.ts'
+  ],
   outputDir: './test-results/assistant',
   timeout: 30000,
   workers: 1,

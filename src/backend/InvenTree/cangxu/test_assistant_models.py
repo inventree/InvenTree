@@ -57,15 +57,25 @@ class AssistantModelTests(TestCase):
         fields.update(overrides)
         return AssistantCommand(**fields)
 
-    def test_binding_defaults_disabled_and_unique_per_deployment_user(self):
+    def test_binding_defaults_disabled_and_unique_default_per_deployment_user(self):
         """Creating records alone must not enable autonomous actions."""
         self.assertFalse(self.binding.enabled)
         self.assertFalse(self.binding.write_enabled)
+        self.assertFalse(self.binding.is_default)
+        self.assertEqual(self.binding.display_name, '工作伙伴')
+        extra = PartnerBinding.objects.create(
+            deployment_id='fictional-test', user=self.user, display_name='第二伙伴'
+        )
+        self.assertFalse(extra.is_default)
+        self.binding.is_default = True
+        self.binding.save()
         with self.assertRaises(ValidationError):
             PartnerBinding.objects.create(
-                deployment_id='fictional-test', user=self.user
+                deployment_id='fictional-test', user=self.user, is_default=True
             )
-        PartnerBinding.objects.create(deployment_id='other-deployment', user=self.user)
+        PartnerBinding.objects.create(
+            deployment_id='other-deployment', user=self.user, is_default=True
+        )
 
     def test_grants_require_explicit_scope_subject_and_lifetime(self):
         """Reject implicit or cross-user authority before storing it."""

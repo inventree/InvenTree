@@ -18,18 +18,20 @@ from rest_framework.views import APIView
 
 from users.authentication import ApiTokenAuthentication
 
-from .assistant_api import AssistantRequestConflict, _current_binding, _no_wildcard
+from .assistant_api import (
+    AssistantRequestConflict,
+    _current_binding,
+    _ensure_selected_binding,
+    _no_wildcard,
+    _selected_partner_id,
+)
 from .assistant_attachment_models import AssistantChatAttachment
 from .assistant_attachments import (
     attachment_metadata,
     create_upload,
     model_attachment_content,
 )
-from .assistant_gateway import (
-    DeliveryConflictError,
-    ensure_partner_binding,
-    runtime_config,
-)
+from .assistant_gateway import DeliveryConflictError, runtime_config
 from .assistant_models import PartnerBinding
 
 
@@ -60,7 +62,7 @@ class AssistantAttachmentViewSet(viewsets.ViewSet):
         from .assistant_api import _runtime_or_503
 
         _runtime_or_503()
-        binding = ensure_partner_binding(request.user)
+        binding = _ensure_selected_binding(request)
         if not binding.enabled or not request.user.is_active:
             raise PermissionDenied('This partner is disabled')
         try:
@@ -76,7 +78,7 @@ class AssistantAttachmentViewSet(viewsets.ViewSet):
         return Response(attachment_metadata(item), status=201 if created else 200)
 
     def _owned(self, request, pk):
-        binding = _current_binding(request.user)
+        binding = _current_binding(request.user, _selected_partner_id(request))
         if not binding or not binding.enabled or not request.user.is_active:
             raise PermissionDenied('This partner is unavailable')
         return get_object_or_404(AssistantChatAttachment, binding=binding, pk=pk)

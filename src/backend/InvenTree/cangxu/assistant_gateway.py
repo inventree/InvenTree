@@ -331,28 +331,44 @@ def submit_delivery(transport, delivery):
     raise RuntimeProtocolError('unknown_delivery_kind')
 
 
-def ensure_partner_binding(user):
+def ensure_partner_binding(user, partner_id=None):
     """Provision a binding with bounded SQLite contention retries."""
     from .assistant_database import sqlite_busy_retry
 
-    return sqlite_busy_retry(lambda: _ensure_partner_binding(user))
+    return sqlite_busy_retry(lambda: _ensure_partner_binding(user, partner_id))
 
 
-def _ensure_partner_binding(user):
+def _ensure_partner_binding(user, partner_id=None):
     """Return the user's binding for the configured deployment.
 
-    An explicit message provisions the partner with the enabled service default.
+    An explicit message provisions the default partner with the enabled service
+    default. A caller-chosen partner identifier only selects an existing binding
+    owned by the same user and deployment; it never provisions one.
     """
     config = runtime_config()
     if config is None:
         raise AssistantRuntimeNotConfiguredError(
             'The assistant runtime endpoint is not configured'
         )
-    binding, _ = PartnerBinding.objects.get_or_create(
-        deployment_id=config.deployment_id,
-        user=user,
-        defaults={'enabled': True, 'write_enabled': True},
-    )
+    if partner_id is not None:
+        return PartnerBinding.objects.get(
+            deployment_id=config.deployment_id, user=user, partner_id=partner_id
+        )
+    try:
+        binding, _ = PartnerBinding.objects.get_or_create(
+            deployment_id=config.deployment_id,
+            user=user,
+            is_default=True,
+            defaults={'enabled': True, 'write_enabled': True},
+        )
+    except ValidationError:
+        # Model.full_clean can observe a competing first-open insert before
+        # save(), so get_or_create's IntegrityError recovery is not sufficient.
+        binding = PartnerBinding.objects.filter(
+            deployment_id=config.deployment_id, user=user, is_default=True
+        ).first()
+        if binding is None:
+            raise
     return binding
 
 

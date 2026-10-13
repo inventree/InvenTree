@@ -121,6 +121,16 @@ export default function LayoutComponent() {
     setActions([...defaultActions, ...pluginActions]);
   }, [defaultActions.length, pluginActions.length, location]);
 
+  if (location.pathname.startsWith('/assistant')) {
+    return (
+      <ProtectedRoute>
+        <Boundary label='assistant-workbench'>
+          <Outlet />
+        </Boundary>
+      </ProtectedRoute>
+    );
+  }
+
   return (
     <ProtectedRoute>
       <>

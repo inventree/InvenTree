@@ -91,7 +91,11 @@ class ReceiptToolFixture:
         )
         self.attachment.save(rebuild=False)
         self.binding = PartnerBinding.objects.create(
-            deployment_id=DEPLOYMENT, user=self.user, enabled=True, write_enabled=True
+            deployment_id=DEPLOYMENT,
+            user=self.user,
+            enabled=True,
+            write_enabled=True,
+            is_default=True,
         )
         self.grant = AssistantGrant.objects.create(
             binding=self.binding,

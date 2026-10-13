@@ -32,15 +32,17 @@ import {
 } from '@mantine/core';
 import {
   IconArrowDown,
-  IconArrowLeft,
   IconArrowUp,
   IconCheck,
   IconCopy,
+  IconDeviceDesktop,
   IconDots,
   IconDownload,
   IconFile,
-  IconPaperclip,
+  IconLayoutSidebarLeftExpand,
+  IconPencil,
   IconPlayerStop,
+  IconPlus,
   IconRefresh,
   IconX
 } from '@tabler/icons-react';
@@ -56,8 +58,10 @@ import {
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import remarkGfm from 'remark-gfm';
 import { useApi } from '../../contexts/ApiContext';
+import { copyText } from '../../functions/copyText';
 import { createRequestId } from '../../functions/requestId';
 import { useUserState } from '../../states/UserState';
+import PartnerAvatar from './PartnerAvatar';
 import {
   ASSISTANT_API,
   ATTACHMENT_ACCEPT,
@@ -65,6 +69,8 @@ import {
   type BusinessReference,
   type HistoryMessage,
   type HistoryPage,
+  type PartnerActivity,
+  type PartnerSummary,
   type Submission,
   apiError,
   attachmentName,
@@ -181,6 +187,7 @@ function FileCard({ removable = false }: { removable?: boolean }) {
         </AttachmentPrimitive.Remove>
       )}
       <Modal
+        className='partner-dialog'
         opened={opened}
         onClose={() => setOpened(false)}
         title={attachment.name}
@@ -222,6 +229,7 @@ function SubmittedFile({ id }: { id: string }) {
       )}
       <Text size='sm'>{attachmentName(file)}</Text>
       <Modal
+        className='partner-dialog'
         opened={opened}
         onClose={() => setOpened(false)}
         title={file.name}
@@ -260,16 +268,19 @@ function ComposerFile() {
 }
 function CodeHeader({ language, code }: CodeHeaderProps) {
   const [copied, setCopied] = useState(false);
+  const copyError = useContext(FilesContext).error;
   return (
     <div className='partner-code-header'>
       <span>{language || '代码'}</span>
       <button
         type='button'
         onClick={() =>
-          navigator.clipboard.writeText(code).then(() => {
-            setCopied(true);
-            setTimeout(() => setCopied(false), 1800);
-          })
+          copyText(code)
+            .then(() => {
+              setCopied(true);
+              setTimeout(() => setCopied(false), 1800);
+            })
+            .catch(() => copyError('无法自动复制，请选中文字后复制。'))
         }
       >
         {copied ? '已复制' : '复制代码'}
@@ -298,6 +309,7 @@ function Markdown() {
 function ChatMessage() {
   const message = useAuiState((s) => s.message);
   const [copied, setCopied] = useState(false);
+  const copyError = useContext(FilesContext).error;
   const refs = (message.metadata.custom?.references ||
     []) as BusinessReference[];
   const text = message.content
@@ -310,16 +322,13 @@ function ChatMessage() {
       className={`partner-message partner-message-${message.role}`}
       aria-label={message.role === 'user' ? '你的消息' : '工作伙伴消息'}
     >
-      <Text size='xs' c='dimmed' mb={6}>
-        {message.role === 'user' ? '你' : '工作伙伴'}
+      <Text className='partner-message-meta' size='xs' c='dimmed' mb={6}>
         {message.createdAt && (
           <time
             dateTime={message.createdAt.toISOString()}
             style={{ marginLeft: 10 }}
           >
             {message.createdAt.toLocaleString('zh-CN', {
-              month: '2-digit',
-              day: '2-digit',
               hour: '2-digit',
               minute: '2-digit'
             })}
@@ -365,10 +374,12 @@ function ChatMessage() {
             size='sm'
             aria-label='复制消息'
             onClick={() =>
-              navigator.clipboard.writeText(text).then(() => {
-                setCopied(true);
-                setTimeout(() => setCopied(false), 1800);
-              })
+              copyText(text)
+                .then(() => {
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1800);
+                })
+                .catch(() => copyError('无法自动复制，请选中文字后复制。'))
             }
           >
             {copied ? <IconCheck size={14} /> : <IconCopy size={14} />}
@@ -419,10 +430,27 @@ function Draft({
   }, [draftKey, restored, attachments, files]);
   return null;
 }
-export default function AssistantPage() {
+export default function AssistantPage({
+  partner,
+  onOpenList,
+  onRename,
+  onActivity,
+  inheritReferences = true
+}: {
+  partner?: PartnerSummary;
+  onOpenList?: () => void;
+  onRename?: () => void;
+  onActivity?: (activity: PartnerActivity) => void;
+  inheritReferences?: boolean;
+} = {}) {
   const api = useApi();
   const location = useLocation();
   const navigate = useNavigate();
+  const endpoint = useCallback(
+    (path: string) =>
+      `${ASSISTANT_API}${path}${partner ? `?partner_id=${encodeURIComponent(partner.partner_id)}` : ''}`,
+    [partner?.partner_id]
+  );
   const userId = useUserState((state) => state.user?.pk);
   const [messages, setMessages] = useState<HistoryMessage[]>([]);
   const [page, setPage] = useState<HistoryPage>();
@@ -440,7 +468,7 @@ export default function AssistantPage() {
       error?: string;
     }[]
   >([]);
-  const draftKey = `cangxu-assistant-draft:${api.defaults.baseURL || window.location.origin}:${userId}`;
+  const draftKey = `cangxu-assistant-draft:${api.defaults.baseURL || window.location.origin}:${userId}${partner && !partner.is_default ? `:${partner.partner_id}` : ''}`;
   const referenceDraftKey = `${draftKey}:references:${location.key}`;
   const [references, setReferences] = useState<BusinessReference[]>(() => {
     try {
@@ -452,7 +480,7 @@ export default function AssistantPage() {
     } catch {
       // A malformed draft must not prevent opening the conversation.
     }
-    return location.state?.references || [];
+    return inheritReferences ? location.state?.references || [] : [];
   });
   useEffect(() => {
     sessionStorage.setItem(referenceDraftKey, JSON.stringify(references));
@@ -481,7 +509,7 @@ export default function AssistantPage() {
         if (typeof id !== 'string' || !/^[a-f0-9-]{36}$/.test(id)) return null;
         try {
           const { data } = await api.get<AttachmentInfo>(
-            `${ASSISTANT_API}attachments/${id}/`
+            endpoint(`attachments/${id}/`)
           );
           return data.id === id && typeof data.mime_type === 'string'
             ? data
@@ -514,7 +542,7 @@ export default function AssistantPage() {
     return () => {
       cancelled = true;
     };
-  }, [api, draftKey]);
+  }, [api, draftKey, endpoint]);
   const cancelUploads = useRef(new Map<string, AbortController>());
   const mounted = useRef(true);
   const historyLoaded = useRef(false);
@@ -523,12 +551,12 @@ export default function AssistantPage() {
     async (before?: number) => {
       try {
         const [history, status] = await Promise.all([
-          api.get<HistoryPage>(`${ASSISTANT_API}messages/`, {
+          api.get<HistoryPage>(endpoint('messages/'), {
             params: { limit: 50, ...(before ? { before } : {}) },
             timeout: 15000
           }),
           api.get<NonNullable<HistoryPage['runtime_status']>>(
-            `${ASSISTANT_API}status/`,
+            endpoint('status/'),
             { timeout: 15000 }
           )
         ]);
@@ -568,9 +596,15 @@ export default function AssistantPage() {
         const last = data.items.at(-1);
         if (last)
           sessionStorage.setItem(
-            `cangxu-assistant-read:${userId}`,
+            `cangxu-assistant-read:${userId}${partner && !partner.is_default ? `:${partner.partner_id}` : ''}`,
             String(last.id)
           );
+        onActivity?.({
+          partner_id: partner?.partner_id || 'default',
+          preview: data.runtime_status?.live_message?.text || last?.text || '',
+          last_message_at: last?.created_at,
+          running: !!data.runtime_status?.reply_running
+        });
         historyLoaded.current = true;
         setConnectionError('');
       } catch (err) {
@@ -579,7 +613,7 @@ export default function AssistantPage() {
         if (mounted.current) setLoading(false);
       }
     },
-    [api, userId]
+    [api, userId, endpoint, onActivity, partner?.partner_id]
   );
   useEffect(() => {
     mounted.current = true;
@@ -649,7 +683,7 @@ export default function AssistantPage() {
           form.append('client_upload_id', id);
           const upload = async () => {
             return await api.post<AttachmentInfo>(
-              `${ASSISTANT_API}attachments/`,
+              endpoint('attachments/'),
               form,
               {
                 timeout: 120000,
@@ -716,10 +750,10 @@ export default function AssistantPage() {
         cancelUploads.current.get(attachment.id)?.abort();
         uploadSizes.current.delete(attachment.id);
         const info = files.get(attachment.id);
-        if (info) await api.delete(`${ASSISTANT_API}attachments/${info.id}/`);
+        if (info) await api.delete(endpoint(`attachments/${info.id}/`));
       }
     }),
-    [api, files]
+    [api, files, endpoint]
   );
   async function submit(payload: Submission, retry = false) {
     setSubmissions((current) => [
@@ -730,7 +764,7 @@ export default function AssistantPage() {
     ]);
     try {
       await api.post(
-        `${ASSISTANT_API}messages/`,
+        endpoint('messages/'),
         { ...payload, ...(retry ? { retry: true } : {}) },
         { timeout: 15000 }
       );
@@ -808,7 +842,7 @@ export default function AssistantPage() {
   });
   async function stop(scope: 'reply' | 'all-writes' | 'all-background') {
     try {
-      await api.post(`${ASSISTANT_API}controls/`, {
+      await api.post(endpoint('controls/'), {
         client_request_id: createRequestId(),
         scope
       });
@@ -826,6 +860,7 @@ export default function AssistantPage() {
       <AssistantRuntimeProvider runtime={runtime}>
         <UploadErrors />
         <Modal
+          className='partner-dialog'
           opened={findOpen}
           onClose={() => setFindOpen(false)}
           title='查找历史'
@@ -871,55 +906,85 @@ export default function AssistantPage() {
         </Modal>
         <main className='partner-page' aria-label='工作伙伴对话'>
           <header className='partner-header'>
-            <Group gap='sm'>
-              <ActionIcon
-                variant='subtle'
-                aria-label='返回业务页面'
-                onClick={() => navigate(location.state?.returnTo || '/cangxu/')}
-              >
-                <IconArrowLeft size={20} />
-              </ActionIcon>
-              <div>
-                <Text fw={600}>工作伙伴</Text>
-                <Text size='xs' c='dimmed' component='output'>
+            <Group gap='sm' className='partner-title-group'>
+              {onOpenList && (
+                <ActionIcon
+                  className='partner-list-toggle'
+                  variant='subtle'
+                  aria-label='伙伴列表'
+                  onClick={onOpenList}
+                >
+                  <IconLayoutSidebarLeftExpand size={23} />
+                </ActionIcon>
+              )}
+              <PartnerAvatar id={partner?.partner_id || 'default'} size={34} />
+              <Text className='partner-title'>
+                {partner?.display_name || '工作伙伴'}
+              </Text>
+              {(!online ||
+                loading ||
+                connectionError ||
+                page?.runtime_status?.status === 'unavailable') && (
+                <Text
+                  size='xs'
+                  className='partner-connection'
+                  component='output'
+                >
                   {!online
-                    ? '离线 · 已交办的工作继续运行'
+                    ? '离线'
                     : loading
                       ? '正在连接…'
-                      : connectionError
-                        ? '连接暂时中断'
-                        : running
-                          ? '正在处理你的交办'
-                          : page?.runtime_status?.is_running
-                            ? '后台工作进行中'
-                            : '同一个伙伴，持续推进工作'}
+                      : page?.runtime_status?.status === 'unavailable'
+                        ? '后台暂不可用'
+                        : '连接中断'}
                 </Text>
-              </div>
+              )}
             </Group>
-            <Menu position='bottom-end'>
-              <Menu.Target>
-                <ActionIcon variant='subtle' aria-label='更多操作'>
-                  <IconDots />
-                </ActionIcon>
-              </Menu.Target>
-              <Menu.Dropdown>
-                <Menu.Item onClick={() => setFindOpen(true)}>
-                  查找历史
-                </Menu.Item>
-                <Menu.Item
-                  leftSection={<IconRefresh size={16} />}
-                  onClick={() => refresh()}
+            <Group gap={4}>
+              <Tooltip label='返回业务页面'>
+                <ActionIcon
+                  variant='subtle'
+                  aria-label='返回业务页面'
+                  onClick={() =>
+                    navigate(location.state?.returnTo || '/cangxu/')
+                  }
                 >
-                  刷新对话
-                </Menu.Item>
-                <Menu.Item onClick={() => stop('all-writes')}>
-                  暂停全部自主写入
-                </Menu.Item>
-                <Menu.Item onClick={() => stop('all-background')}>
-                  暂停全部后台工作
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
+                  <IconDeviceDesktop size={22} />
+                </ActionIcon>
+              </Tooltip>
+              <Menu position='bottom-end'>
+                <Menu.Target>
+                  <ActionIcon variant='subtle' aria-label='更多操作'>
+                    <IconDots />
+                  </ActionIcon>
+                </Menu.Target>
+                <Menu.Dropdown className='partner-menu'>
+                  {onRename && (
+                    <Menu.Item
+                      leftSection={<IconPencil size={16} />}
+                      onClick={onRename}
+                    >
+                      重命名伙伴
+                    </Menu.Item>
+                  )}
+                  <Menu.Item onClick={() => setFindOpen(true)}>
+                    查找历史
+                  </Menu.Item>
+                  <Menu.Item
+                    leftSection={<IconRefresh size={16} />}
+                    onClick={() => refresh()}
+                  >
+                    刷新对话
+                  </Menu.Item>
+                  <Menu.Item onClick={() => stop('all-writes')}>
+                    暂停此伙伴的自主写入
+                  </Menu.Item>
+                  <Menu.Item onClick={() => stop('all-background')}>
+                    暂停此伙伴的后台工作
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            </Group>
           </header>
           {(error || connectionError) && (
             <Alert
@@ -1063,8 +1128,12 @@ export default function AssistantPage() {
                   c='dimmed'
                   component='output'
                 >
-                  <Loader size={12} />
-                  正在查询和处理，结果会保留在这里。
+                  <span className='partner-thinking-dots' aria-hidden='true'>
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  正在思考…
                 </Text>
               )}
             </ThreadPrimitive.Viewport>
@@ -1110,45 +1179,41 @@ export default function AssistantPage() {
                       components={{ Attachment: ComposerFile }}
                     />
                   </div>
-                  <ComposerPrimitive.Input
-                    className='partner-input'
-                    placeholder='交办工作，或补充图片和资料…'
-                    aria-label='消息内容'
-                    rows={2}
-                    autoFocus={false}
-                    unstable_focusOnRunStart={false}
-                    unstable_focusOnScrollToBottom={false}
-                    unstable_focusOnThreadSwitched={false}
-                  />
-                  <Group justify='space-between'>
-                    <Group gap='xs'>
-                      <ComposerPrimitive.AddAttachment asChild>
+                  <div className='partner-compose-line'>
+                    <ComposerPrimitive.AddAttachment asChild>
+                      <ActionIcon
+                        className='partner-add-file'
+                        variant='subtle'
+                        size='lg'
+                        aria-label='添加图片或附件'
+                      >
+                        <IconPlus size={25} />
+                      </ActionIcon>
+                    </ComposerPrimitive.AddAttachment>
+                    <ComposerPrimitive.Input
+                      className='partner-input'
+                      placeholder={`发送给${partner?.display_name || '工作伙伴'}…`}
+                      aria-label='消息内容'
+                      rows={1}
+                      autoFocus={false}
+                      unstable_focusOnRunStart={false}
+                      unstable_focusOnScrollToBottom={false}
+                      unstable_focusOnThreadSwitched={false}
+                    />
+                    <Group gap='xs' wrap='nowrap'>
+                      {running && (
                         <ActionIcon
                           variant='subtle'
                           size='lg'
-                          aria-label='添加图片或附件'
-                        >
-                          <IconPaperclip size={21} />
-                        </ActionIcon>
-                      </ComposerPrimitive.AddAttachment>
-                      <Text size='xs' c='dimmed' className='partner-input-hint'>
-                        支持粘贴、拖放 · Enter 发送，Shift + Enter 换行
-                      </Text>
-                    </Group>
-                    <Group gap='xs'>
-                      {running && (
-                        <Button
-                          variant='light'
-                          color='gray'
-                          size='xs'
-                          leftSection={<IconPlayerStop size={14} />}
+                          aria-label='停止回复'
                           onClick={() => stop('reply')}
                         >
-                          停止回复
-                        </Button>
+                          <IconPlayerStop size={20} />
+                        </ActionIcon>
                       )}
                       <ComposerPrimitive.Send asChild>
                         <ActionIcon
+                          className='partner-send'
                           variant='filled'
                           radius='xl'
                           size='lg'
@@ -1158,12 +1223,9 @@ export default function AssistantPage() {
                         </ActionIcon>
                       </ComposerPrimitive.Send>
                     </Group>
-                  </Group>
+                  </div>
                 </ComposerPrimitive.Root>
               </ComposerPrimitive.AttachmentDropzone>
-              <Text size='xs' c='dimmed' ta='center' mt={6}>
-                业务数据以系统记录为准；检验、签字和审批仍按原流程办理。
-              </Text>
             </div>
           </ThreadPrimitive.Root>
         </main>

@@ -36,6 +36,8 @@ class PartnerBinding(ValidatedAssistantModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     partner_id = models.UUIDField(default=uuid.uuid4, editable=False)
     conversation_id = models.UUIDField(default=uuid.uuid4, editable=False)
+    display_name = models.CharField(max_length=80, default='工作伙伴')
+    is_default = models.BooleanField(default=False)
     dispatch_owner = models.UUIDField(null=True, blank=True, editable=False)
     dispatch_until = models.DateTimeField(null=True, blank=True, editable=False)
     enabled = models.BooleanField(default=False)
@@ -44,11 +46,13 @@ class PartnerBinding(ValidatedAssistantModel):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        """Prevent duplicate user, partner and conversation bindings."""
+        """One default partner per user; partner and conversation stay unique."""
 
         constraints = [
             models.UniqueConstraint(
-                fields=['deployment_id', 'user'], name='cx_partner_user_unique'
+                fields=['deployment_id', 'user'],
+                condition=Q(is_default=True),
+                name='cx_partner_default_unique',
             ),
             models.UniqueConstraint(
                 fields=['deployment_id', 'partner_id'], name='cx_partner_id_unique'
