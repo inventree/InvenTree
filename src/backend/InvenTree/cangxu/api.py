@@ -1192,7 +1192,7 @@ class PurchaseReceiptViewSet(CangxuModelViewSet):
             data = serializers.PurchaseReceiptBulkRequestSerializer(data=request.data)
             data.is_valid(raise_exception=True)
             receipt_values = data.validated_data['receipts']
-            results = [None] * len(receipt_values)
+            results: dict[int, tuple[PurchaseReceipt, bool]] = {}
             # A stable line-lock order prevents overlapping bulk requests from
             # deadlocking when the user selected their lines in another order.
             for index, values in sorted(
@@ -1202,11 +1202,14 @@ class PurchaseReceiptViewSet(CangxuModelViewSet):
                 results[index] = self._create_receipt(request, values)
             status_code = (
                 status.HTTP_201_CREATED
-                if any(created for _, created in results)
+                if any(created for _, created in results.values())
                 else status.HTTP_200_OK
             )
             return Response(
-                [self.get_serializer(receipt).data for receipt, _ in results],
+                [
+                    self.get_serializer(results[index][0]).data
+                    for index in range(len(receipt_values))
+                ],
                 status=status_code,
             )
 

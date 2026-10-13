@@ -129,6 +129,8 @@ def get_ruleset_models() -> dict:
             'cangxu_componentreplacement',
             'cangxu_qualityissue',
             'cangxu_reworktask',
+            'cangxu_materialissue',
+            'cangxu_materialreturn',
         ],
         RuleSetEnum.PART_CATEGORY: [
             'part_partcategory',
@@ -176,6 +178,9 @@ def get_ruleset_models() -> dict:
             'order_purchaseorderlineitem',
             'order_purchaseorderextraline',
             'cangxu_purchasereceipt',
+            'cangxu_purchasereceiptinspection',
+            'cangxu_purchasereceiptfeedback',
+            'cangxu_purchasereceiptdisposition',
         ],
         RuleSetEnum.SALES_ORDER: [
             'company_company',
@@ -188,6 +193,9 @@ def get_ruleset_models() -> dict:
             'order_salesordershipment',
             'cangxu_shipmentmanifest',
             'cangxu_shipmentmanifestline',
+            'cangxu_shipmentreceipt',
+            'cangxu_shipmentreceiptline',
+            'cangxu_shipmentreceiptexception',
         ],
         RuleSetEnum.RETURN_ORDER: [
             'company_company',

@@ -1,8 +1,10 @@
 import { expect, test } from '@playwright/test';
+import { doCachedLogin } from './login.js';
 
 test('Chinese incoming receipt inspection and archive flow', async ({
-  page
+  browser
 }) => {
+  const page = await doCachedLogin(browser);
   page.setDefaultTimeout(5000);
   await page.goto('/tests/fixtures/cangxu-incoming-receipt-smoke.html');
   await expect(

@@ -127,6 +127,10 @@ test('Cangxu - Issue and return consumable material', async ({ browser }) => {
     }
   });
 
+  // The panel loads its build list on mount; reload after installing the API
+  // routes so the test always exercises the synthetic response.
+  await page.reload();
+
   await expect(page.getByText('Consumable materials')).toBeVisible();
   await page.getByRole('combobox', { name: 'Build order' }).click();
   await page.getByRole('option', { name: /CX-BUILD-001/ }).click();

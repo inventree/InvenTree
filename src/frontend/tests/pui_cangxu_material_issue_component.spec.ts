@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
+import { doCachedLogin } from './login.js';
 
-test('Chinese material issue and partial return flow', async ({ page }) => {
+test('Chinese material issue and partial return flow', async ({ browser }) => {
+  const page = await doCachedLogin(browser);
   await page.goto('/tests/fixtures/cangxu-material-issue-smoke.html');
   await expect(page.getByText('耗材领退料')).toBeVisible();
 

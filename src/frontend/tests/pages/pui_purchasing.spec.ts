@@ -568,19 +568,21 @@ test('Purchase Orders - Receive Items', async ({ browser }) => {
     });
   });
 
-  await page.getByRole('button', { name: 'Submit' }).click();
-  await page.waitForResponse(
+  const interruptedReceipt = page.waitForResponse(
     (response) =>
       response.url().includes('/api/cangxu/purchase-receipts/') &&
       response.status() === 503
   );
-  await expect(page.getByRole('button', { name: 'Submit' })).toBeVisible();
   await page.getByRole('button', { name: 'Submit' }).click();
-  await page.waitForResponse(
+  await interruptedReceipt;
+  await expect(page.getByRole('button', { name: 'Submit' })).toBeVisible();
+  const retriedReceipt = page.waitForResponse(
     (response) =>
       response.url().includes('/api/cangxu/purchase-receipts/') &&
       response.status() === 201
   );
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await retriedReceipt;
   await page.getByText('Items received').waitFor();
 
   expect(receiptRequests).toHaveLength(2);

@@ -187,7 +187,7 @@ class PurchaseReceiptSerializer(InvenTreeModelSerializer):
     )
     inspection_id = serializers.SerializerMethodField()
 
-    def get_inspection_id(self, obj):
+    def get_inspection_id(self, obj) -> int | None:
         """Return the linked checklist ID without failing on uninspected receipts."""
         try:
             return obj.inspection.pk
@@ -1101,8 +1101,8 @@ class DataImportBatchSerializer(serializers.Serializer):
     inventory_as_of = serializers.DateField(required=False, allow_null=True)
     physical_count_confirmed = serializers.BooleanField(required=False, default=False)
     state = serializers.CharField(read_only=True)
-    created_by = serializers.PrimaryKeyRelatedField(read_only=True)
-    reviewed_by = serializers.PrimaryKeyRelatedField(read_only=True)
+    created_by = serializers.IntegerField(read_only=True, allow_null=True)
+    reviewed_by = serializers.IntegerField(read_only=True, allow_null=True)
     created_at = serializers.DateTimeField(read_only=True)
     reviewed_at = serializers.DateTimeField(read_only=True)
     applied_at = serializers.DateTimeField(read_only=True)
@@ -1330,11 +1330,11 @@ class MaterialIssueSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = fields
 
-    def get_returned_quantity(self, obj):
+    def get_returned_quantity(self, obj) -> Decimal:
         """Sum native return events associated with this material issue."""
         return self._returned_quantity(obj)
 
-    def get_remaining_quantity(self, obj):
+    def get_remaining_quantity(self, obj) -> Decimal:
         """Return the issue quantity that has not yet been put back into stock."""
         return max(Decimal('0'), obj.quantity - self._returned_quantity(obj))
 
