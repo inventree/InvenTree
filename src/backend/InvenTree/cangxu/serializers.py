@@ -186,6 +186,32 @@ class PurchaseReceiptSerializer(InvenTreeModelSerializer):
         source='purchase_order_line.part.part.IPN', read_only=True
     )
     inspection_id = serializers.SerializerMethodField()
+    archive_evidence = serializers.SerializerMethodField()
+
+    def get_archive_evidence(self, obj) -> list[dict]:
+        """Expose archive associations only while the original source is viewable."""
+        request = self.context.get('request')
+        if request is None:
+            return []
+        result = []
+        for evidence in obj.archive_evidence.select_related('attachment'):
+            try:
+                evidence.clean()
+                source = evidence.attachment
+                if not source.check_permission('view', request.user):
+                    continue
+            except DjangoValidationError:
+                continue
+            result.append({
+                'id': evidence.pk,
+                'attachment_id': source.pk,
+                'kind': evidence.kind,
+                'sha256': evidence.sha256,
+                'linked_by': evidence.linked_by_id,
+                'linked_at': evidence.linked_at,
+                'integrity': 'not_rechecked',
+            })
+        return result
 
     def get_inspection_id(self, obj) -> int | None:
         """Return the linked checklist ID without failing on uninspected receipts."""

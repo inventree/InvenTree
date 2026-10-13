@@ -18,6 +18,9 @@ export const LoginLayoutComponent = EagerLoadable(
 );
 
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
+export const AssistantPage = Loadable(
+  lazy(() => import('./pages/assistant/AssistantPage'))
+);
 export const CangxuHome = Loadable(
   lazy(() => import('./pages/cangxu/CangxuHome'))
 );
@@ -175,6 +178,7 @@ export const routes = (
       <Route index element={<Home />} />,
       <Route path='home/' element={<Home />} />,
       <Route path='cangxu/' element={<CangxuHome />} />,
+      <Route path='assistant/' element={<AssistantPage />} />,
       <Route path='notifications/*' element={<Notifications />} />,
       <Route path='scan/' element={<Scan />} />,
       <Route path='settings/'>

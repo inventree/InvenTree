@@ -36,6 +36,11 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
       icon: <IconDashboard />
     },
     {
+      name: 'assistant',
+      title: '工作伙伴',
+      icon: <IconDeviceDesktopAnalytics />
+    },
+    {
       name: 'cangxu',
       title: t`Cangxu Workshop`,
       icon: <IconDeviceDesktopAnalytics />,

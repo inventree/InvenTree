@@ -4,6 +4,8 @@
 
 [业务需求与验收](docs/cangxu/REQUIREMENTS.zh-CN.md) · [改造规划](docs/cangxu/ROADMAP.zh-CN.md) · [行业数据模型设计](docs/cangxu/DOMAIN-MODEL.zh-CN.md) · [上游 README](README.upstream.md) · [MIT 许可证](LICENSE)
 
+[工作伙伴产品规划](docs/cangxu/ASSISTANT-PRODUCT.zh-CN.md) · [工作伙伴技术规划与实施交接](docs/cangxu/ASSISTANT-TECHNICAL.zh-CN.md)（2026-10-13：规划已整理，功能待实现与验收）
+
 ## 当前状态
 
 截至 2026-10-12，开发分支已实现首批行业数据模型、REST API、合成数据扩展，以及耗材领退料和发货签收/差异处理中文界面。演示目录包含 GPU、PCIe/NVLink、以太网/InfiniBand Switch、Retimer、GPU 供电线束、MCIO、DAC/AOC、多分支线缆等类型；另有 Broadcom PEX89048、Microchip Switchtec PM50100B1-FEI 与联瑞 LR-LINK LRSV9500-4I 的公开型号草稿。公开厂商资料只用于演示制造商、芯片和成品板卡的不同角色；仓序 IPN 为虚构值、这些新型号没有演示库存，规格草稿未经本公司工程核验，不代表实际采购、兼容或生产放行。
@@ -34,7 +36,7 @@
 | 线缆 | GPU 供电线束、内部 PCIe 高速线、互联线、DAC/AOC/有源铜缆、光纤及 breakout 分支 |
 | 配套部件 | CPU、DIMM、NVMe/背板、PSU/PDB、风扇/散热器、液冷部件、机箱/机柜与附件 |
 | 生产质量 | 槽位和端点核验、工程批准的兼容规则、测试证据、换件复测、交付配置快照 |
-| 智能体 | Pi + 模型服务、知识检索、实时库存查询、缺料分析和业务草稿 |
+| 常驻工作伙伴 | Pi Durable + 简洁独立对话页、全流程知识、实时查询、事件/定时驱动与授权业务执行 |
 
 硬件型号、规格及兼容规则以实际供应商资料和工程签核为准。项目不绑定某一家 GPU 厂商，也不预设所有服务器采用同一种拓扑。
 
@@ -44,7 +46,7 @@
 
 保留 InvenTree 的物料、库存和工单主数据，通过 Django 行业扩展补充槽位、端口、连接关系及配置版本。优先配置和复用原版页面，针对实际操作障碍增加界面。
 
-Pi 通过受权限约束的业务工具访问系统；库存数量、预留和操作结果以业务数据库为准。向量检索用于手册、规范和故障案例，设计上优先评估 PostgreSQL + pgvector。
+Pi Durable 规划为独立常驻服务，关闭网页后仍能处理已授权的事件与定时工作；前台以简洁连续对话为中心，右下角提供轻量入口。它通过受权限约束的业务工具访问系统；库存数量、预留和操作结果以业务数据库为准，任务恢复不替代业务幂等。知识检索用于手册、规范和故障案例，候选 PostgreSQL + pgvector 只作可选索引。以上助手能力目前均待实现。
 
 ## 开发与试用
 

@@ -66,6 +66,12 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
         icon: 'dashboard'
       },
       {
+        id: 'assistant',
+        title: '工作伙伴',
+        link: '/assistant/',
+        icon: 'comment'
+      },
+      {
         id: 'cangxu',
         title: t`Cangxu Workshop`,
         link: '/cangxu/',

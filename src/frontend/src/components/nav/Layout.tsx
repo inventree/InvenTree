@@ -16,6 +16,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../../App';
 import { getActions } from '../../defaults/actions';
 import * as classes from '../../main.css';
+import AssistantLauncher from '../../pages/assistant/AssistantLauncher';
 import {
   useGlobalSettingsState,
   useUserSettingsState
@@ -148,6 +149,7 @@ export default function LayoutComponent() {
             />
           )}
         </Flex>
+        <AssistantLauncher />
         <GlobalImporterDrawer />
         <GlobalPreviewDrawer />
       </>

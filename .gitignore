@@ -120,3 +120,7 @@ InvenTree/web/static
 # test results and logs
 _tests*.txt
 .codspeed/
+
+# Assistant local provider credentials and runtime state
+src/assistant/.env.local
+src/assistant/.state/

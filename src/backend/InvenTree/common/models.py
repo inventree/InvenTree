@@ -13,7 +13,7 @@ import os
 import re
 import uuid
 from collections import OrderedDict
-from datetime import timedelta, timezone
+from datetime import UTC, timedelta
 from email.utils import make_msgid
 from enum import Enum
 from io import BytesIO
@@ -1760,7 +1760,7 @@ class NotificationMessage(models.Model):
         """Age of the message in seconds."""
         # Add timezone information if TZ is enabled (in production mode mostly)
         delta = now() - (
-            self.creation.replace(tzinfo=timezone.utc)
+            self.creation.replace(tzinfo=UTC)
             if django_settings.USE_TZ
             else self.creation
         )
@@ -2002,6 +2002,7 @@ class Attachment(
             except Exception:  # pragma: no cover
                 pass
 
+    @transaction.atomic
     def save(self, *args, **kwargs):
         """Custom 'save' method for the Attachment model.
 
@@ -2042,8 +2043,11 @@ class Attachment(
 
         # Offload a background task to update the thumbnail for this attachment
         if rebuild:
-            InvenTree.tasks.offload_task(
-                common.tasks.rebuild_attachment, self.pk, group='attachments'
+            transaction.on_commit(
+                lambda pk=self.pk: InvenTree.tasks.offload_task(
+                    common.tasks.rebuild_attachment, pk, group='attachments'
+                ),
+                using=self._state.db,
             )
 
     def clean_svg(self, field):

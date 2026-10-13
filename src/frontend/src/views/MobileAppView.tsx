@@ -1,6 +1,7 @@
 import { Trans } from '@lingui/react/macro';
 import { Anchor, Center, Container, Stack, Text, Title } from '@mantine/core';
 
+import { getBaseUrl } from '@lib/functions/Navigation';
 import { useShallow } from 'zustand/react/shallow';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { docLinks } from '../defaults/links';
@@ -33,6 +34,7 @@ export default function MobileAppView() {
             <Anchor href={docLinks.app}>
               <Trans>Read the docs</Trans>
             </Anchor>
+            <Anchor href={`/${getBaseUrl()}/assistant/`}>打开工作伙伴</Anchor>
             {(IS_DEV ||
               window.INVENTREE_SETTINGS.mobile_mode === 'allow-ignore') && (
               <Text

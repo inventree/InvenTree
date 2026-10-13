@@ -3574,4 +3574,63 @@ router.register(
     'import-records', DataImportRecordViewSet, basename='cangxu-import-record'
 )
 
-urlpatterns = router.urls
+# Mount the assistant gateway endpoints and the runtime-only tools dispatcher.
+from django.urls import path
+
+from . import assistant_api
+from .assistant_attachment_api import (
+    AssistantAttachmentViewSet,
+    AssistantInternalAttachmentView,
+)
+from .assistant_business_api import AssistantBusinessToolsView
+from .assistant_tool_api import AssistantInternalToolsView
+
+router.register(
+    'assistant', assistant_api.AssistantBindingViewSet, basename='cangxu-assistant'
+)
+router.register(
+    'assistant/messages',
+    assistant_api.AssistantMessageViewSet,
+    basename='cangxu-assistant-message',
+)
+router.register(
+    'assistant/controls',
+    assistant_api.AssistantControlViewSet,
+    basename='cangxu-assistant-control',
+)
+
+router.register(
+    'assistant/receipt-followups',
+    assistant_api.AssistantReceiptFollowupViewSet,
+    basename='cangxu-assistant-receipt-followup',
+)
+
+router.register(
+    'assistant/status',
+    assistant_api.AssistantStatusViewSet,
+    basename='cangxu-assistant-status',
+)
+router.register(
+    'assistant/attachments',
+    AssistantAttachmentViewSet,
+    basename='cangxu-assistant-attachment',
+)
+
+urlpatterns = [
+    *router.urls,
+    path(
+        'assistant/internal/attachments/<uuid:attachment_id>/',
+        AssistantInternalAttachmentView.as_view(),
+        name='cangxu-assistant-internal-attachment',
+    ),
+    path(
+        'assistant/internal/business-tools/',
+        AssistantBusinessToolsView.as_view(),
+        name='cangxu-assistant-business-tools',
+    ),
+    path(
+        'assistant/internal/tools/',
+        AssistantInternalToolsView.as_view(),
+        name='cangxu-assistant-internal-tools',
+    ),
+]

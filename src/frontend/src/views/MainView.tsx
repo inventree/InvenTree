@@ -1,16 +1,11 @@
 import '@mantine/core/styles.css';
+import { getBaseUrl } from '@lib/functions/Navigation';
 import { useViewportSize } from '@mantine/hooks';
 import { type ComponentType, useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { setApiDefaults } from '../App';
 import { useLocalState } from '../states/LocalState';
-
-function checkMobile() {
-  const { height, width } = useViewportSize();
-  if (width < 425 || height < 425) return true;
-  return false;
-}
 
 // Import both views eagerly (outside React.lazy/Suspense): a lazy component
 // always suspends on its first render, and React's Suspense commit-delay
@@ -27,6 +22,17 @@ export default function MainView() {
   );
   const [DesktopView, setDesktopView] = useState<ComponentType | null>(null);
   const [MobileView, setMobileView] = useState<ComponentType | null>(null);
+  const { height, width } = useViewportSize();
+  const [pathname, setPathname] = useState(window.location.pathname);
+  useEffect(() => {
+    const update = () => setPathname(window.location.pathname);
+    window.addEventListener('cangxu-route-change', update);
+    window.addEventListener('popstate', update);
+    return () => {
+      window.removeEventListener('cangxu-route-change', update);
+      window.removeEventListener('popstate', update);
+    };
+  }, []);
 
   // Set initial login status
   useEffect(() => {
@@ -44,10 +50,21 @@ export default function MainView() {
   }, []);
 
   // Check if mobile
+  const prefix = `/${getBaseUrl().replace(/^\/+|\/+$/g, '')}`;
+  const relativePath = pathname.startsWith(`${prefix}/`)
+    ? pathname.slice(prefix.length)
+    : pathname;
+  // The responsive partner and its login flow remain reachable on phones.
+  // Other business routes retain the site's existing mobile policy.
+  const responsiveRoute =
+    /^\/(assistant|login|logged-in|logout|register|mfa|mfa-setup|provider-signup|change-password|reset-password|set-password|verify-email)(\/|$)/.test(
+      relativePath
+    );
   const isMobile =
+    !responsiveRoute &&
     !allowMobile &&
     window.INVENTREE_SETTINGS.mobile_mode !== 'allow-always' &&
-    checkMobile();
+    (width < 425 || height < 425);
 
   const View = isMobile ? MobileView : DesktopView;
 

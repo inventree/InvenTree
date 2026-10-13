@@ -1,0 +1,82 @@
+name: Assistant
+
+on:
+  pull_request:
+    paths:
+      - 'src/assistant/**'
+      - 'src/backend/InvenTree/cangxu/**'
+      - 'src/backend/InvenTree/common/models.py'
+      - 'src/frontend/**'
+      - '.github/workflows/assistant.yaml'
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: assistant-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  runtime-and-business:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      INVENTREE_DB_ENGINE: sqlite3
+      INVENTREE_DB_NAME: /tmp/cangxu-assistant-ci.sqlite3
+      INVENTREE_MEDIA_ROOT: /tmp/cangxu-assistant-ci-media
+      INVENTREE_STATIC_ROOT: /tmp/cangxu-assistant-ci-static
+      INVENTREE_BACKUP_DIR: /tmp/cangxu-assistant-ci-backup
+      INVENTREE_SITE_URL: http://localhost:8000
+      INVENTREE_PLUGINS_ENABLED: 'false'
+      INVENTREE_THROTTLE_USER: none
+      INVENTREE_THROTTLE_ANON: none
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3.8.2
+        with:
+          node-version: 24
+      - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+        with:
+          python-version: '3.12'
+      - name: Install locked runtime dependencies
+        run: npm ci --prefix src/assistant
+      - name: Check and test Pi runtime
+        working-directory: src/assistant
+        run: |
+          npm run check
+          npm run lint
+          npm test
+      - name: Install backend dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext libpango-1.0-0 libpangoft2-1.0-0
+          pip install --require-hashes -r src/backend/requirements.txt -r src/backend/requirements-dev.txt
+      - name: Test assistant APIs, permissions, attachments and process recovery
+        run: python src/backend/InvenTree/manage.py test cangxu --pattern='test_assistant*.py' --noinput
+
+  conversation-ui:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3.8.2
+        with:
+          node-version: 24
+      - name: Install locked frontend dependencies
+        working-directory: src/frontend
+        run: yarn install --frozen-lockfile --ignore-scripts
+      - name: Build frontend
+        working-directory: src/frontend
+        run: yarn build
+      - name: Install Chromium
+        working-directory: src/frontend
+        run: yarn playwright install --with-deps chromium
+      - name: Test attachments, recovery, controls and mobile conversation
+        working-directory: src/frontend
+        run: yarn playwright test --config playwright.assistant.config.ts

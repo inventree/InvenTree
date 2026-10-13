@@ -5,7 +5,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -441,6 +441,11 @@ class PurchaseReceipt(InvenTreeAttachmentMixin, models.Model):
         required_permission = 'view' if permission == 'view' else 'change'
         return check_user_role(user, 'purchase_order', required_permission)
 
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        """Commit the business record and its assistant event together."""
+        return super().save(*args, **kwargs)
+
 
 class PurchaseReceiptInspection(models.Model):
     """Store the signed inspection checklist for one native purchase receipt."""
@@ -552,6 +557,7 @@ class PurchaseReceiptInspection(models.Model):
         verbose_name = _('Purchase receipt inspection')
         verbose_name_plural = _('Purchase receipt inspections')
 
+    @transaction.atomic
     def save(self, *args, **kwargs):
         """Assign a stable, human-readable report number from the receipt key."""
         if not self.report_number and self.receipt_id:
@@ -598,6 +604,11 @@ class PurchaseReceiptFeedback(models.Model):
         indexes = [models.Index(fields=['inspection', 'department', 'created_at'])]
         verbose_name = _('Purchase receipt feedback')
         verbose_name_plural = _('Purchase receipt feedback')
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        """Commit the business record and its assistant event together."""
+        return super().save(*args, **kwargs)
 
 
 class PurchaseReceiptDisposition(models.Model):
@@ -658,6 +669,11 @@ class PurchaseReceiptDisposition(models.Model):
         indexes = [models.Index(fields=['state', 'requested_at'])]
         verbose_name = _('Purchase receipt disposition')
         verbose_name_plural = _('Purchase receipt dispositions')
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        """Commit the business record and its assistant event together."""
+        return super().save(*args, **kwargs)
 
 
 class ManufacturingLotPartner(models.Model):
@@ -1736,3 +1752,22 @@ class DataImportRecord(models.Model):
         indexes = [models.Index(fields=['batch', 'state'])]
         verbose_name = _('Data import record')
         verbose_name_plural = _('Data import records')
+
+
+# Register assistant models with Django without mixing their persistence ownership.
+from .assistant_attachment_models import AssistantChatAttachment  # noqa: F401
+from .assistant_business_models import (  # noqa: F401
+    AssistantRunStop,
+    ReceiptArchiveEvidence,
+)
+from .assistant_delivery_models import (  # noqa: F401
+    AssistantDutySlot,
+    AssistantGatewayDelivery,
+)
+from .assistant_models import (  # noqa: F401
+    AssistantCommand,
+    AssistantDuty,
+    AssistantGrant,
+    AssistantOutboxEvent,
+    PartnerBinding,
+)
