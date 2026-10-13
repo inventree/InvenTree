@@ -412,7 +412,9 @@ def notify_users(
     }
 
     # Setup notification context
+    # Extra HTML context is included, but cannot override the standard keys
     context = {
+        **(html_context or {}),
         'instance': instance,
         'name': content.name.format(**content_context),
         'message': content.message.format(**content_context),
@@ -421,10 +423,7 @@ def notify_users(
     }
 
     if tmp := content.template:
-        html_context = html_context or {}
-        html_context.update(content_context)
-
-        context['template']['html'] = tmp.format(**html_context)
+        context['template']['html'] = tmp.format(**content_context)
 
     # Create notification
     trigger_notification(
