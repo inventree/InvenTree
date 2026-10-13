@@ -1,5 +1,8 @@
 """Existing business APIs as model tools: real queries, writes and role enforcement."""
 
+import json
+from unittest.mock import patch
+
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.test import TestCase, override_settings
 from django.urls import resolve
@@ -83,6 +86,29 @@ class ModelBusinessToolTests(ReceiptToolFixture, TestCase):
         )
         self.assertEqual(verify['data']['reference'], session.reference)
         self.assertEqual(AssistantGrant.objects.count(), 0)
+
+    def test_large_query_preserves_total_and_contiguous_next_page(self):
+        """Rich native rows fit the bridge without silently skipping stock items."""
+        rows = [{'pk': i, 'quantity': '2', 'notes': '虚构' * 1000} for i in range(100)]
+        with patch(
+            'cangxu.assistant_business_tools._original_api',
+            return_value={
+                'count': 555,
+                'results': rows,
+                'next': '/api/stock/?limit=100&offset=100',
+            },
+        ):
+            result = business_query(self.binding, {'resource': 'stock', 'limit': 100})
+        self.assertEqual(result['data']['count'], 555)
+        self.assertTrue(result['page_limited'])
+        self.assertGreater(len(result['data']['results']), 0)
+        self.assertLess(len(json.dumps(result, ensure_ascii=False).encode()), 32768)
+        self.assertEqual(result['next_offset'], len(result['data']['results']))
+        self.assertIn(f'offset={result["next_offset"]}', result['data']['next'])
+        self.assertEqual(
+            [row['pk'] for row in result['data']['results']],
+            list(range(result['next_offset'])),
+        )
 
     def test_lost_response_replay_and_changed_intent(self):
         """The same durable tool intent returns one receipt and one domain effect."""

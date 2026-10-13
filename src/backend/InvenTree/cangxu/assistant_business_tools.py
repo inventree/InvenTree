@@ -8,6 +8,7 @@ accepted. A command receipt deduplicates effects and is not an authorization lay
 import json
 import uuid
 from dataclasses import dataclass
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -264,12 +265,36 @@ def business_query(binding, arguments):
             raise ValidationError('Object ID must be a positive integer')
         path += f'{object_id}/'
     result = _original_api(_user(binding), 'GET', path, data)
+    # Native serializers include rich nested details. Fit a whole-record page
+    # inside the model bridge's 32 KiB envelope without losing the total count.
+    page_limited = False
+    if isinstance(result, dict) and isinstance(result.get('results'), list):
+        rows = result['results']
+        while rows and len(json.dumps(result, ensure_ascii=False).encode()) > 24000:
+            rows.pop()
+            page_limited = True
+        if page_limited:
+            if not rows:
+                raise ValidationError(
+                    'A single result exceeds the model query limit; use the business page'
+                )
+            next_url = result.get('next') or path
+            parsed = urlsplit(next_url)
+            query = dict(parse_qsl(parsed.query))
+            query.update({**data, 'offset': offset + len(rows)})
+            result['next'] = urlunsplit(parsed._replace(query=urlencode(query)))
+    if len(json.dumps(result, ensure_ascii=False).encode()) > 24000:
+        raise ValidationError(
+            'Query result exceeds the model query limit; use narrower filters or the business page'
+        )
     return {
         'status': 'ok',
         'resource': resource,
         'data': result,
         'queried_at': timezone.now().isoformat(),
         'record_url': path,
+        'page_limited': page_limited,
+        'next_offset': offset + len(result['results']) if page_limited else None,
     }
 
 
