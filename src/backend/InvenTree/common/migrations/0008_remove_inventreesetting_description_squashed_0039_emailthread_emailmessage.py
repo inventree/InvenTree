@@ -9,25 +9,25 @@ import django.db.models.deletion
 import taggit.managers
 import uuid
 from django.conf import settings
-from django.db import migrations, models
+from django.db import migrations, models, transaction
 from moneyed import CURRENCIES
 
 
 def set_default_currency(apps, schema_editor):
     """Migrate the currency setting from config.yml to db."""
-    from common.currency import currency_codes
-    from common.models import InvenTreeSetting
+    InvenTreeSetting = apps.get_model('common', 'InvenTreeSetting')
+    key = 'INVENTREE_DEFAULT_CURRENCY'
+    base_currency = InvenTree.config.get_setting('INVENTREE_BASE_CURRENCY', 'base_currency', 'USD')
 
-    base_currency = InvenTree.config.get_setting(
-        'INVENTREE_BASE_CURRENCY', 'base_currency', 'USD'
-    )
-
-    if base_currency not in currency_codes():
-        base_currency = currency_codes()[0] if currency_codes() else 'USD'
-
-    InvenTreeSetting.set_setting(
-        'INVENTREE_DEFAULT_CURRENCY', base_currency, None, create=True
-    )
+    if base_currency not in CURRENCIES:
+        base_currency = 'USD'
+    with transaction.atomic():
+        setting = InvenTreeSetting.objects.filter(key=key).first()
+        if setting:
+            setting.value = base_currency
+            setting.save()
+        else:
+            InvenTreeSetting(key=key, value=base_currency).save()
 
 
 def set_currencies(apps, schema_editor):
