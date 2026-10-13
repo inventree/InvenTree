@@ -340,7 +340,7 @@ class ReportTemplateBase(
             return render_to_string(self.template_name, context)
         except TemplateDoesNotExist:
             content = self.get_template_content()
-            from django.template.loader import engines
+            from django.template import engines
 
             engine = engines['django']
             template = engine.from_string(content)

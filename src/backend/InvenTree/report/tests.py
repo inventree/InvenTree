@@ -14,8 +14,8 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import Storage, default_storage
-from django.template import Context, TemplateDoesNotExist
-from django.template.loader import engines, render_to_string
+from django.template import Context, TemplateDoesNotExist, engines
+from django.template.loader import render_to_string
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.timezone import now
