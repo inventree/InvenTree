@@ -123,6 +123,41 @@ class GeneralStateTest(InvenTreeTestCase):
         # label
         self.assertEqual(GeneralStatus.label(10), 'Pending')
 
+    def test_int_payload(self):
+        """The underlying int payload of each member matches its value.
+
+        Regression test: members were previously constructed with a zero int payload,
+        so any operation using the raw int ('!=' between members of the same class,
+        ordering, bool(), arithmetic, json serialization) was silently wrong.
+        """
+        import json
+
+        from build.status_codes import BuildStatus
+
+        for cls in [GeneralStatus, BuildStatus]:
+            for member in cls.values():
+                self.assertEqual(int.__repr__(member), str(member.value))
+
+        pending, complete = GeneralStatus.PENDING, GeneralStatus.COMPLETE
+
+        # Comparison between members of the same class
+        self.assertNotEqual(pending, complete)
+        self.assertEqual(pending, GeneralStatus.PENDING)
+        self.assertNotEqual(BuildStatus.PENDING, BuildStatus.COMPLETE)
+        self.assertLess(pending, complete)
+        self.assertEqual(sorted([complete, pending]), [pending, complete])
+
+        # Comparison against raw integers
+        self.assertEqual(pending, 10)
+        self.assertNotEqual(pending, 20)
+        self.assertEqual(10, pending)
+        self.assertNotEqual(20, pending)
+
+        self.assertTrue(bool(pending))
+        self.assertEqual(pending + 1, 11)
+        self.assertEqual(f'{complete:d}', '30')
+        self.assertEqual(json.dumps({'status': complete}), '{"status": 30}')
+
     def test_color(self):
         """Test that the color enum validation works."""
         with self.assertRaises(ValueError) as e:
