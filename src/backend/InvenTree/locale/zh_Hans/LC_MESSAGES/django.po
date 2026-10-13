@@ -3737,11 +3737,11 @@ msgstr "将具有相同零件、目的地和目标日期的新采购订单行项
 
 #: common/setting/system.py:1035
 msgid "Default Receive Location"
-msgstr ""
+msgstr "默认收货库位"
 
 #: common/setting/system.py:1037
 msgid "Default destination location for received goods on new purchase orders"
-msgstr ""
+msgstr "新建采购订单的收货货物默认目标库位"
 
 #: common/setting/system.py:1045
 msgid "Enable password forgot"
@@ -3809,7 +3809,7 @@ msgstr "当用户组未被身份提供商(IdP)支持时，是否移除该用户�
 
 #: common/setting/system.py:1108
 msgid "Disabling this setting will stop cleaning up groups that external users no longer belong to. This might cause security issues."
-msgstr ""
+msgstr "禁用此设置后，将不再清理外部用户已不属于的用户组。这可能带来安全风险。"
 
 #: common/setting/system.py:1113
 msgid "Email required"
@@ -4089,27 +4089,27 @@ msgstr "启用定期 Ping 检测，确认注册设备的运行状态"
 
 #: common/setting/system.py:1354
 msgid "Enable Sales Orders"
-msgstr ""
+msgstr "启用销售订单"
 
 #: common/setting/system.py:1355
 msgid "Enable sales order functionality in the user interface"
-msgstr ""
+msgstr "在用户界面中启用销售订单功能"
 
 #: common/setting/system.py:1361
 msgid "Enable Purchase Orders"
-msgstr ""
+msgstr "启用采购订单"
 
 #: common/setting/system.py:1362
 msgid "Enable purchase order functionality in the user interface"
-msgstr ""
+msgstr "在用户界面中启用采购订单功能"
 
 #: common/setting/system.py:1368
 msgid "Enable Build Orders"
-msgstr ""
+msgstr "启用装配工单"
 
 #: common/setting/system.py:1369
 msgid "Enable build order functionality in the user interface"
-msgstr ""
+msgstr "在用户界面中启用装配工单功能"
 
 #: common/setting/user.py:23
 msgid "Inline label display"
@@ -4345,11 +4345,11 @@ msgstr "表格表头固定于表格顶部"
 
 #: common/setting/user.py:209
 msgid "Rotated Table Headers"
-msgstr ""
+msgstr "旋转表格标题"
 
 #: common/setting/user.py:210
 msgid "Display table column headers with rotated (vertical) text"
-msgstr ""
+msgstr "以垂直文本显示表格列标题"
 
 #: common/setting/user.py:215
 msgid "Show Spotlight"
