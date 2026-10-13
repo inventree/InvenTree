@@ -130,6 +130,14 @@ The following changes are *not* detected automatically. After making any of thes
 | Changes to plugins in a [local](#local-directory) or [custom](#custom-directory) plugin directory | Changes to plugin source files are not detected while the server is running |
 | Changes to plugin options in the [server configuration](../start/config.md#plugin-options) | Server configuration is only read at startup |
 
+### Plugin Registry Mismatch
+
+If a server process reloads its plugins, but still cannot reproduce the plugin registry state of the other processes (for example, because it has loaded a different version of a plugin), it reports a *Plugin Registry Mismatch* error ([INVE-E20](../settings/error_codes.md#inve-e20)). This error is recorded in the [error log](../settings/logs.md), and staff users are notified.
+
+The error data lists the plugins (and versions) which are loaded by the affected process. After reporting the error, the affected process stops reloading its plugins until the registry state changes again, which prevents an endless reload loop between processes.
+
+To resolve this error, restart all InvenTree server and background worker processes.
+
 !!! tip "Reload Plugins"
     The *Reload Plugins* button in the plugin settings view reloads the plugin registry for the web server process which handles the request. Other server processes only follow if the reload changes the plugin registry state (see above). If in doubt, restart the server.
 

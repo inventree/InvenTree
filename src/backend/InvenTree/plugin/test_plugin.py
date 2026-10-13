@@ -687,6 +687,55 @@ class RegistryTests(TestQueryMixin, PluginRegistryMixin, TestCase):
             registry.registry_hash = 'abc'
             self.assertTrue(registry.check_reload())
 
+    def test_check_reload_mismatch(self):
+        """Test that a persistent registry hash mismatch is reported, rather than looping.
+
+        Simulates another process publishing a registry hash which this process
+        cannot reproduce (e.g. it has loaded a different plugin version).
+        """
+        from error_report.models import Error
+
+        from common.settings import get_global_setting, set_global_setting
+
+        def published_hash():
+            return get_global_setting(
+                '_PLUGIN_REGISTRY_HASH', '', create=False, cache=False
+            )
+
+        with self.settings(TESTING=False, PLUGIN_TESTING_RELOAD=True):
+            registry.reload_plugins(full_reload=True, collect=True, force_reload=True)
+            local_hash = registry.registry_hash
+
+            set_global_setting('_PLUGIN_REGISTRY_HASH', 'other-process-hash')
+            errors = Error.objects.filter(kind='Plugin Registry Mismatch')
+            self.assertEqual(errors.count(), 0)
+
+            # First reload does not reproduce the hash - retried, not yet reported
+            self.assertTrue(registry.check_reload())
+            self.assertEqual(registry.mismatch_count, 1)
+            self.assertEqual(errors.count(), 0)
+
+            # The following process must not publish its own hash (which would
+            # trigger the other process to reload in turn)
+            self.assertEqual(published_hash(), 'other-process-hash')
+            self.assertEqual(registry.registry_hash, local_hash)
+
+            # Second reload still does not match - the error is reported
+            self.assertTrue(registry.check_reload())
+            self.assertEqual(errors.count(), 1)
+            self.assertIn(local_hash, errors.first().data)
+
+            # No further reloads (or errors) for the same hash
+            self.assertFalse(registry.check_reload())
+            self.assertEqual(errors.count(), 1)
+
+            # Once the registry state matches again, mismatch tracking is reset
+            registry.registry_hash = 'abc'
+            set_global_setting('_PLUGIN_REGISTRY_HASH', local_hash)
+            self.assertTrue(registry.check_reload())
+            self.assertIsNone(registry.mismatch_hash)
+            self.assertEqual(registry.mismatch_count, 0)
+
     def test_registry_hash_order_independence(self):
         """Test that the registry hash does not depend on plugin iteration order.
 

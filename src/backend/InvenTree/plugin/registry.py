@@ -87,6 +87,10 @@ class PluginsRegistry:
 
     DEFAULT_MIXIN_ORDER = [SettingsMixin, ScheduleMixin, AppMixin, UrlsMixin]
 
+    # Number of consecutive reloads which may fail to reproduce the same registry hash,
+    # before the mismatch is reported as an error (and reloading for that hash stops)
+    MAX_MISMATCH_RELOADS = 2
+
     # This list of plugins are *always* enabled, and are loaded by default
     # This is because they provide core functionality to the InvenTree system
     # Other 'builtin' plugins are automatically loaded, but can be disabled by the user
@@ -124,6 +128,11 @@ class PluginsRegistry:
 
         # Keep an internal hash of the plugin registry state
         self.registry_hash: Optional[str] = None
+
+        # Track a registry hash (published by another process) which this process
+        # could not reproduce on reload - used to detect a plugin reload loop
+        self.mismatch_hash: Optional[str] = None
+        self.mismatch_count: int = 0
 
         self.plugin_modules: list[InvenTreePlugin] = []  # Holds all discovered plugins
         self.mixin_modules: dict[str, Any] = {}  # Holds all discovered mixins
@@ -464,8 +473,9 @@ class PluginsRegistry:
         force_reload: bool = False,
         collect: bool = False,
         clear_errors: bool = False,
+        update_hash: bool = True,
         _internal: Optional[list] = None,
-    ):
+    ) -> bool:
         """Reload the plugin registry.
 
         This should be considered the single point of entry for loading plugins!
@@ -475,16 +485,20 @@ class PluginsRegistry:
             force_reload (bool, optional): Also reload base apps. Defaults to False.
             collect (bool, optional): Collect plugins before reloading. Defaults to False.
             clear_errors (bool, optional): Clear any previous loading errors. Defaults to False.
+            update_hash (bool, optional): Publish the resulting registry hash to the database. Defaults to True.
             _internal (list, optional): Internal apps to reload (used for testing). Defaults to None
+
+        Returns:
+            bool: True if the registry was reloaded, False if the reload was skipped or failed
         """
         # Do not reload when currently loading
         if self.is_loading:
             logger.debug('Skipping reload - plugin registry is currently loading')
-            return
+            return False
 
         if not self.loading_lock.acquire(blocking=False):
             logger.exception('Could not acquire lock for reload_plugins')
-            return
+            return False
 
         # Reset the loading error state
         if clear_errors:
@@ -519,7 +533,11 @@ class PluginsRegistry:
             self.plugins_loaded = True
             self._load_plugins(full_reload=full_reload, _internal=_internal)
 
-            self.update_plugin_hash()
+            if update_hash:
+                self.update_plugin_hash()
+            else:
+                self.registry_hash = self.calculate_plugin_hash()
+
             logger.info('Plugin Registry: Loaded %s plugins', len(self.plugins))
 
             # Ensure that each loaded plugin has a valid configuration object in the database; skip if setup is initializing
@@ -543,10 +561,13 @@ class PluginsRegistry:
         except Exception as e:
             logger.exception('Unexpected error during plugin reload: %s', e)
             log_error('reload_plugins', scope='plugins')
+            return False
 
         finally:
             # Ensure the lock is released always
             self.loading_lock.release()
+
+        return True
 
     def plugin_dirs(self) -> list[str]:
         """Construct a list of directories from where plugins can be loaded."""
@@ -1211,6 +1232,14 @@ class PluginsRegistry:
         if not reg_hash or reg_hash == self.registry_hash:
             return False
 
+        if (
+            reg_hash == self.mismatch_hash
+            and self.mismatch_count >= self.MAX_MISMATCH_RELOADS
+        ):
+            # This process has already failed to reproduce this registry state
+            # (and the error has been reported) - do not keep reloading
+            return False
+
         # A mismatch was observed - acquire a short-lived lease before reloading
         if not try_acquire_lease('_PLUGIN_REGISTRY_HASH'):
             return False
@@ -1226,10 +1255,88 @@ class PluginsRegistry:
                 return False
 
             logger.info('Plugin registry hash has changed - reloading')
-            self.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+            # Note: The hash is *not* published here - this process is following
+            # a change made elsewhere. If it published a different hash, other
+            # processes would reload again in turn, resulting in a reload loop.
+            if not self.reload_plugins(
+                full_reload=True, force_reload=True, collect=True, update_hash=False
+            ):
+                return False
+
+            # Re-read the hash, in case another process changed the registry state
+            # while this process was reloading
+            reg_hash = get_global_setting(
+                '_PLUGIN_REGISTRY_HASH', '', create=False, cache=False
+            )
+
+            self.check_registry_mismatch(reg_hash)
             return True
         finally:
             release_lease('_PLUGIN_REGISTRY_HASH')
+
+    def check_registry_mismatch(self, reg_hash: str) -> None:
+        """Check that this process reproduced the registry state published by another process.
+
+        If, after reloading, the local registry hash still does not match the hash
+        stored in the database, this process loaded a different set of plugins
+        (or plugin versions) to the process which published the hash.
+        Left unchecked, this results in an endless plugin reload loop.
+
+        A single mismatch can be caused by a concurrent change, so the reload is
+        retried. If the mismatch persists, the error is reported to the system
+        administrator, and this process stops reloading for that hash.
+
+        Args:
+            reg_hash: The registry hash currently stored in the database
+        """
+        if not reg_hash or reg_hash == self.registry_hash:
+            # Registry state matches - reset mismatch tracking
+            self.mismatch_hash = None
+            self.mismatch_count = 0
+            return
+
+        if reg_hash == self.mismatch_hash:
+            self.mismatch_count += 1
+        else:
+            self.mismatch_hash = reg_hash
+            self.mismatch_count = 1
+
+        logger.warning(
+            'Plugin registry hash mismatch after reload (attempt %s): expected %s, found %s',
+            self.mismatch_count,
+            reg_hash,
+            self.registry_hash,
+        )
+
+        if self.mismatch_count < self.MAX_MISMATCH_RELOADS:
+            return
+
+        process = (
+            'background worker' if InvenTree.ready.isInWorkerThread() else 'server'
+        )
+
+        plugins = '\n'.join(
+            f'- {slug}: {plugin.version}'
+            for slug, plugin in sorted(self.plugins.items(), key=lambda item: item[0])
+        )
+
+        log_error(
+            'check_reload',
+            scope='plugins',
+            error_name='Plugin Registry Mismatch',
+            error_info=(
+                f'INVE-E20: The plugin registry in this {process} process (pid {os.getpid()}) '
+                'does not match the plugin registry of other InvenTree processes. '
+                'Plugins may be out of sync between processes - '
+                'restart all InvenTree server and background worker processes.'
+            ),
+            error_data=(
+                f'Expected registry hash: {reg_hash}\n'
+                f'Local registry hash: {self.registry_hash}\n\n'
+                f'Loaded plugins:\n{plugins}'
+            ),
+        )
 
     # endregion
 
