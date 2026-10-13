@@ -668,6 +668,7 @@ class Build(
         quantities: Optional[dict] = None,
         notes: Optional[str] = None,
         user: Optional[User] = None,
+        expected_quantities: Optional[dict] = None,
     ):
         """Complete the allocation of stock for the given build lines.
 
@@ -676,6 +677,12 @@ class Build(
             quantities: Optional dict of quantities to allocate
             notes: Optional notes for the allocation
             user: The user completing the allocation
+            expected_quantities: Optional dict of {BuildItem pk: quantity}, a snapshot of
+                the allocated quantity of each build item at the time the request was made.
+                If provided, only build items in this dict whose current quantity still matches
+                the snapshot are processed - any other build item is skipped. This makes the
+                operation idempotent: a repeated (e.g. redelivered) request observes the
+                already-reduced quantities and does nothing.
 
         Notes:
             This unrolls what would otherwise be a per-BuildItem call, so that the underlying StockItem,
@@ -699,6 +706,29 @@ class Build(
                 'build_line', 'stock_item', 'stock_item__part', 'install_into'
             )
         )
+
+        if expected_quantities is not None:
+            # Discard any build item which has changed since the request was made.
+            # This check is performed under the build row lock (above), so the
+            # build item quantities read here are current
+            expected = {
+                int(pk): decimal.Decimal(str(qty))
+                for pk, qty in expected_quantities.items()
+            }
+
+            stale = [
+                item.pk
+                for item in build_items
+                if expected.get(item.pk) != item.quantity
+            ]
+
+            if stale:
+                logger.warning(
+                    'Skipping consumption of BuildItems for BuildOrder <%s> - allocated quantity changed since request: %s',
+                    self.pk,
+                    stale,
+                )
+                build_items = [item for item in build_items if item.pk not in stale]
 
         # Lock the distinct StockItem rows (in pk order, to avoid deadlocks) and
         # re-read their quantities, so the clamping arithmetic below operates on
