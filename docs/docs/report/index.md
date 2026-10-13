@@ -184,6 +184,12 @@ InvenTree provides report "snippets" - reusable template files which cannot be r
 
 Refer to the [report snippets](./snippets.md) documentation for further information.
 
+## Report Fonts
+
+Templates can only render text using fonts which are available to the PDF rendering engine. Custom fonts can be uploaded as asset files, loaded from a remote source, or installed on the server.
+
+Refer to the [report fonts](./fonts.md) documentation for further information.
+
 ## Security
 
 Report templates are powerful by design — they have access to the full Django template language and to model data across the InvenTree database. For this reason, **template upload is restricted to staff users only**.

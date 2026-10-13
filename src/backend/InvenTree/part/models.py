@@ -540,6 +540,12 @@ class Part(
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
         parent_attr = 'variant_of'
 
+        # Do not order the tree by name (overrides InvenTreeTree.MPTTMeta).
+        # Ordered insertion of a new root node shifts the tree_id of every following
+        # tree in the database, which is expensive (O(N) row updates per new Part),
+        # and leaves the tree_id of any Part instances held in memory stale.
+        order_insertion_by = []
+
     @staticmethod
     def get_api_url():
         """Return the list API endpoint URL associated with the Part model."""
@@ -686,7 +692,16 @@ class Part(
                     )
                 })
 
-            if self.tree_id == parent.tree_id:
+            # Read the tree_id values from the database, as in-memory values may be stale
+            tree_ids = dict(
+                Part.objects.filter(pk__in=[self.pk, parent.pk]).values_list(
+                    'pk', 'tree_id'
+                )
+            )
+
+            if tree_ids.get(self.pk, self.tree_id) == tree_ids.get(
+                parent.pk, parent.tree_id
+            ):
                 raise ValidationError({
                     'sub_part': _(
                         f"Part '{self}' cannot be used in BOM for '{parent}' (recursive)"
