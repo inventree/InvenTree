@@ -27,6 +27,7 @@ import InvenTree.ready
 import InvenTree.validators
 import report.mixins
 from common.currency import currency_code_default
+from common.settings import get_global_setting
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from order.status_codes import PurchaseOrderStatusGroups
 
@@ -91,6 +92,7 @@ class Company(
     - A supplier is a company from which parts can be purchased
     - A customer is a company to which parts can be sold
     - A manufacturer is a company which manufactures a raw good (they may or may not be a "supplier" also)
+    - An internal company represents your own organization (or one of its entities / sites)
 
 
     Attributes:
@@ -107,6 +109,7 @@ class Company(
         is_customer: boolean value, is this company a customer
         is_supplier: boolean value, is this company a supplier
         is_manufacturer: boolean value, is this company a manufacturer
+        is_internal: boolean value, does this company represent your own organization
         currency_code: Specifies the default currency for the company
         tax_id: Tax ID for the company
     """
@@ -128,6 +131,29 @@ class Company(
     def get_api_url():
         """Return the API URL associated with the Company model."""
         return reverse('api-company-list')
+
+    @classmethod
+    def get_default_internal(cls) -> Optional['Company']:
+        """Return the default internal company for this InvenTree instance.
+
+        - If the INVENTREE_DEFAULT_INTERNAL_COMPANY setting points to an internal company, return it
+        - Otherwise, if exactly one internal company exists, return it
+        - Otherwise, return None
+        """
+        internal = cls.objects.filter(is_internal=True)
+
+        if pk := get_global_setting(
+            'INVENTREE_DEFAULT_INTERNAL_COMPANY', backup_value=None
+        ):
+            try:
+                if company := internal.filter(pk=int(pk)).first():
+                    return company
+            except (TypeError, ValueError):
+                pass
+
+        companies = list(internal[:2])
+
+        return companies[0] if len(companies) == 1 else None
 
     def report_context(self) -> CompanyReportContext:
         """Generate a dict of context data to provide to the reporting framework."""
@@ -210,6 +236,12 @@ class Company(
         default=False,
         verbose_name=_('Is manufacturer'),
         help_text=_('Does this company manufacture parts?'),
+    )
+
+    is_internal = models.BooleanField(
+        default=False,
+        verbose_name=_('Is internal'),
+        help_text=_('Does this company represent your own organization?'),
     )
 
     currency = models.CharField(

@@ -34,10 +34,12 @@ import { useUserState } from '../../states/UserState';
 export function CompanyTable({
   companyType,
   params,
+  initialData,
   path
 }: Readonly<{
   companyType?: string;
   params?: any;
+  initialData?: any;
   path?: string;
 }>) {
   const table = useTable(`company-${companyType ?? 'index'}`, {
@@ -88,7 +90,7 @@ export function CompanyTable({
     url: ApiEndpoints.company_list,
     title: t`Add Company`,
     fields: companyFields(),
-    initialData: params,
+    initialData: initialData ?? params,
     follow: true,
     modelType: ModelType.company,
     keepOpenOption: true
@@ -125,6 +127,11 @@ export function CompanyTable({
         name: 'is_customer',
         label: t`Customer`,
         description: t`Show companies which are customers`
+      },
+      {
+        name: 'is_internal',
+        label: t`Internal`,
+        description: t`Show companies which represent your own organization`
       },
       TagsFilter({ modelType: ModelType.company })
     ];

@@ -142,6 +142,7 @@ class CompanySerializer(
             'is_customer',
             'is_manufacturer',
             'is_supplier',
+            'is_internal',
             'parts_supplied',
             'parts_manufactured',
             'primary_address',

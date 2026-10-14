@@ -45,7 +45,14 @@ class CompanyFilter(FilterSet):
         """Metaclass options."""
 
         model = Company
-        fields = ['is_customer', 'is_manufacturer', 'is_supplier', 'name', 'active']
+        fields = [
+            'is_customer',
+            'is_manufacturer',
+            'is_supplier',
+            'is_internal',
+            'name',
+            'active',
+        ]
 
     tag_name = common.filters.TagsFilter()
 
