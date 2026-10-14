@@ -29,7 +29,7 @@ export const dismissFtu = async ({
     const response = await api.get('user/me/');
     if (!response.ok()) return;
     const tipp = ((await response.json())?.tipps ?? []).find(
-      (t: any) => t.tipp_id === 'org.inventree.i.tipp.ftue'
+      (t: any) => t.tipp_id === 'org.inventree.i.tipp.ftug'
     );
     if (tipp && !tipp.finished) {
       await api.patch(`user/me/tipps/${tipp.pk}/`, {

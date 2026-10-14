@@ -27,7 +27,7 @@ interface FtuStep {
   action_before?: () => void;
 }
 
-const ftuKex = 'org.inventree.i.tipp.ftue';
+const ftuKex = 'org.inventree.i.tipp.ftug';
 
 export function FirstUseTour() {
   const { user, done_tipps, setTipps } = useUserState();

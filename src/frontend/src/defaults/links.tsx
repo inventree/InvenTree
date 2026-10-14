@@ -197,7 +197,7 @@ export function AboutLinks(
       action: licenseInfo
     },
     {
-      id: 'ftue',
+      id: 'ftug',
       title: t`First Use Tour`,
       description: t`Guided tour for first-time users`,
       icon: 'book',

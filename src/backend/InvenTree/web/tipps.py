@@ -6,7 +6,7 @@ This is a pretty simple system for now, could be enhanced in the future with plu
 COMMON_PREFIX = 'org.inventree.i.tipp'
 
 available_tipps: dict = {
-    COMMON_PREFIX + '.ftue': {}  # First-time user experience guide
+    COMMON_PREFIX + '.ftug': {}  # First-time user guide
     # COMMON_PREFIX + '.example': {},  # Example tip
 }
 
