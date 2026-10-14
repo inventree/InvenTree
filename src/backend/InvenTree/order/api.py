@@ -32,10 +32,11 @@ import company.models
 import stock.models as stock_models
 import stock.serializers as stock_serializers
 from data_exporter.mixins import DataExportViewMixin
-from generic.states.api import StatusView
+from generic.states.api import FSMTransitionMixin, StatusView
 from InvenTree.api import (
     BulkDeleteMixin,
     BulkDeleteViewsetMixin,
+    BulkRequestSerializer,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
     ParameterListMixin,
@@ -388,6 +389,7 @@ class PurchaseOrderViewSet(
     DataExportViewMixin,
     OutputOptionsMixin,
     ParameterListMixin,
+    FSMTransitionMixin,
     RetrieveUpdateDestroyModelViewSet,
 ):
     """API endpoint for accessing PurchaseOrder objects.
@@ -405,6 +407,17 @@ class PurchaseOrderViewSet(
         'supplier', 'created_by'
     )
     serializer_class = serializers.PurchaseOrderSerializer
+    # TODO @matmair remove legacy return codes
+    transition_options = {
+        'cancel_order': {'name': 'cancel', 'return_code': 201},
+        'complete_order': {
+            'name': 'complete',
+            'return_code': 201,
+            'serializer_class': serializers.PurchaseOrderCompleteSerializer,
+        },
+        'hold_order': {'name': 'hold', 'return_code': 201},
+        'place_order': {'name': 'issue', 'return_code': 201},
+    }
 
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
@@ -444,16 +457,7 @@ class PurchaseOrderViewSet(
         return queryset
 
     def get_order(self):
-        """Return the PurchaseOrder object associated with this API endpoint.
-
-        Note: deliberately a raw lookup rather than self.get_object() - the latter
-        routes through ParameterListMixin.filter_queryset(), which assumes
-        self.serializer_class.Meta.model exists. That's true for the default
-        PurchaseOrderSerializer, but not for the plain-Serializer action classes
-        (PurchaseOrderHoldSerializer etc.) used by hold/cancel/complete/issue/receive
-        below, so calling get_object() from those actions raises an unrelated
-        AttributeError instead of the intended 404.
-        """
+        """Return the PurchaseOrder object associated with this API endpoint."""
         try:
             return models.PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
         except (ValueError, models.PurchaseOrder.DoesNotExist):
@@ -475,81 +479,6 @@ class PurchaseOrderViewSet(
         context['request'] = self.request
 
         return context
-
-    # TODO @matmair remove legacy return codes
-    @extend_schema(responses={201: serializers.PurchaseOrderHoldSerializer})
-    @action(
-        detail=True,
-        methods=['post'],
-        serializer_class=serializers.PurchaseOrderHoldSerializer,
-        output_options=None,
-    )
-    def hold(self, request, pk=None):
-        """API endpoint to place a PurchaseOrder on hold."""
-        # Ensure the target order actually exists (raises NotFound -> 404 otherwise) -
-        # without this, a non-existent pk would fall through to the serializer's
-        # save(), which unconditionally reads self.context['order'], raising an
-        # unhandled KeyError (HTTP 500) instead of a clean 404.
-        self.get_order()
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    # TODO @matmair remove legacy return codes
-    @extend_schema(responses={201: serializers.PurchaseOrderCancelSerializer})
-    @action(
-        detail=True,
-        methods=['post'],
-        serializer_class=serializers.PurchaseOrderCancelSerializer,
-        output_options=None,
-    )
-    def cancel(self, request, pk=None):
-        """API endpoint to 'cancel' a purchase order.
-
-        The purchase order must be in a state which can be cancelled
-        """
-        self.get_order()
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    # TODO @matmair remove legacy return codes
-    @extend_schema(responses={201: serializers.PurchaseOrderCompleteSerializer})
-    @action(
-        detail=True,
-        methods=['post'],
-        serializer_class=serializers.PurchaseOrderCompleteSerializer,
-        output_options=None,
-    )
-    def complete(self, request, pk=None):
-        """API endpoint to 'complete' a purchase order."""
-        self.get_order()
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    # TODO @matmair remove legacy return codes
-    @extend_schema(responses={201: serializers.PurchaseOrderIssueSerializer})
-    @action(
-        detail=True,
-        methods=['post'],
-        serializer_class=serializers.PurchaseOrderIssueSerializer,
-        output_options=None,
-    )
-    def issue(self, request, pk=None):
-        """API endpoint to 'issue' (place) a PurchaseOrder."""
-        self.get_order()
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @extend_schema(responses={201: stock_serializers.StockItemSerializer(many=True)})
     @action(
@@ -757,6 +686,55 @@ class PurchaseOrderLineItemViewSet(
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
+
+    def check_received(self, queryset) -> None:
+        """Prevent deletion of line items against which stock has been received.
+
+        Deleting a received line item would erase the record of what was received
+        against the order. The line item rows are locked (in pk order, matching the
+        lock order used when receiving stock) so that a concurrent receipt cannot
+        succeed between this check and the deletion.
+
+        Raises:
+            ValidationError: If any line item has a received quantity
+        """
+        received = [
+            pk
+            for pk, qty in queryset
+            .select_for_update()
+            .order_by('pk')
+            .values_list('pk', 'received')
+            if qty > 0
+        ]
+
+        if received:
+            raise rest_framework.serializers.ValidationError(
+                _('Cannot delete line items which have received stock')
+            )
+
+    def perform_destroy(self, instance):
+        """Prevent deletion of a single line item which has received stock."""
+        with transaction.atomic():
+            self.check_received(
+                models.PurchaseOrderLineItem.objects.filter(pk=instance.pk)
+            )
+            instance.delete()
+
+    def validate_delete(self, queryset, request) -> None:
+        """Prevent bulk deletion of line items which have received stock."""
+        self.check_received(queryset)
+
+    @extend_schema(request=BulkRequestSerializer)
+    def bulk_delete(self, request, *args, **kwargs):
+        """Perform a bulk delete operation.
+
+        Provide either a list of ids (via `items`) or a filter (via `filters`) to select the items to be deleted.
+
+        This action is performed attomically, so either all items will be deleted, or none will be deleted.
+
+        """
+        with transaction.atomic():
+            return super().bulk_delete(request, *args, **kwargs)
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -2495,9 +2473,7 @@ class OrderCalendarExport(ICalFeed):
         whether or not to show completed orders. Defaults to false
     """
 
-    instance_url = get_base_url()
-
-    instance_url = instance_url.replace('http://', '').replace('https://', '')
+    instance_url = get_base_url().replace('http://', '').replace('https://', '')
     timezone = settings.TIME_ZONE
     file_name = 'calendar.ics'
 

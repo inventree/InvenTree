@@ -1,17 +1,30 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 551
+INVENTREE_API_VERSION = 555
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v551 -> 2026-08-21 : https://github.com/inventree/InvenTree/pull/12524
+v555 -> 2026-10-14 : https://github.com/inventree/InvenTree/pull/12524
     - Adds standalone API endpoints for StockItem pricing operations
     - Adds new "pricing" permissions role
     - Removes the "purchase_price" / "purchase_price_currency" fields from the StockItem model
     - Renames the StockItem "has_purchase_price" filter to "has_unit_cost"
     - Renames the StockItem "purchase_price" ordering key to "unit_cost"
+
+v554 -> 2026-10-09 : https://github.com/inventree/InvenTree/pull/12986
+    - Add missing nullable annotations for read_only fields
+
+v553 -> 2026-10-04 : https://github.com/inventree/InvenTree/pull/12965
+    - Fix user creation with 'group_ids' via the User API endpoint
+
+v552 -> 2026-10-02 : https://github.com/inventree/InvenTree/pull/12967
+    - Fix transitions endpoint schema to indicate that it returns a list
+
+v551 -> 2026-09-21 : https://github.com/inventree/InvenTree/pull/12693
+    - Docstring updates for automated transition API documentation generation
+    - New transitions insights endpoints
 
 v550 -> 2026-09-22 : https://github.com/inventree/InvenTree/pull/12912
     - Adds a top-level 'batch_code' field to the PurchaseOrderReceive API endpoint

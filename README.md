@@ -188,6 +188,7 @@ Find a full list of used third-party libraries in the license information dialog
 <a href="https://github.com/trytuna"><img src="https://github.com/trytuna.png" width="60px" alt="Timo Scrappe" /></a>
 <a href="https://github.com/ATLAS2246"><img src="https://github.com/ATLAS2246.png" width="60px" alt="ATLAS2246" /></a>
 <a href="https://github.com/Kedarius"><img src="https://github.com/Kedarius.png" width="60px" alt="Radek Hladik" /></a>
+<a href="https://github.com/CircuitHappy"><img src="https://github.com/CircuitHappy.png" width="60px" alt="CircuitHappy" /></a>
 
 </p>
 

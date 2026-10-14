@@ -306,6 +306,9 @@ test('Forms - Nested Object Field', async ({ browser }) => {
   const partName = `Test Part ${new Date().getTime()}`;
   await page.getByLabel('text-field-name', { exact: true }).fill(partName);
 
+  await page.waitForTimeout(100);
+  await page.waitForLoadState('networkidle');
+
   // The "Initial Supplier" nested-object field should be visible and expanded by default
   await page.getByText('Supplier Information').waitFor();
 
@@ -314,6 +317,8 @@ test('Forms - Nested Object Field', async ({ browser }) => {
   );
   await expect(supplierField).toBeVisible();
   await supplierField.fill('Mouser');
+  await page.waitForTimeout(100);
+  await page.waitForLoadState('networkidle');
   await page.getByText('Mouser Electronics').first().click();
 
   const skuValue = `SKU-${new Date().getTime()}`;

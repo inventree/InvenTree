@@ -139,7 +139,9 @@ def _introspectCommands(argv: list[str]):
     }
 
     # The entrypoint itself can indicate the context
-    _context['pytest_entrypoint'] = entrypoint.endswith('pytest')
+    _context['pytest_entrypoint'] = (
+        entrypoint.endswith('pytest') or 'pytest' in entrypoint.lower()
+    )
     _context['gunicorn_entrypoint'] = 'gunicorn' in entrypoint
 
     # The development server is running without the auto-reloader
@@ -329,7 +331,7 @@ def canAppAccessDatabase(
         return False
 
     # Override for testing mode?
-    return allow_test or not cmd_context['test_command']
+    return allow_test or not isInTestMode()
 
 
 def isPluginRegistryLoaded():

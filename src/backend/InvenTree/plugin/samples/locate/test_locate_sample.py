@@ -32,6 +32,11 @@ class SampleLocatePluginTests(InvenTreeAPITestCase):
         # Right plugin - no search item
         self.post(url, {'plugin': 'samplelocate'}, expected_code=400)
 
+        # No permissions
+        self.post(url, {'plugin': 'samplelocate', 'item': 1}, expected_code=403)
+
+        self.assignRole('stock.view')
+
         # Right plugin - wrong reference
         self.post(url, {'plugin': 'samplelocate', 'item': 999}, expected_code=404)
 
@@ -39,6 +44,8 @@ class SampleLocatePluginTests(InvenTreeAPITestCase):
         self.post(url, {'plugin': 'samplelocate', 'item': 1}, expected_code=200)
 
         # Right plugin - wrong reference
+        self.post(url, {'plugin': 'samplelocate', 'location': 999}, expected_code=403)
+        self.assignRole('stock_location.view')
         self.post(url, {'plugin': 'samplelocate', 'location': 999}, expected_code=404)
 
         # Right plugin - right reference

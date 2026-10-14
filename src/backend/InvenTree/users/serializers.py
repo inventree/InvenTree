@@ -268,8 +268,12 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
         return super().validate(data)
 
     user_detail = UserSerializer(source='user', read_only=True)
-    revoked_by_detail = UserSerializer(source='revoked_by', read_only=True)
-    issued_by_detail = UserSerializer(source='issued_by', read_only=True)
+    revoked_by_detail = UserSerializer(
+        source='revoked_by', read_only=True, allow_null=True
+    )
+    issued_by_detail = UserSerializer(
+        source='issued_by', read_only=True, allow_null=True
+    )
 
 
 class GroupSerializer(FilterableSerializerMixin, InvenTreeModelSerializer):
@@ -335,6 +339,9 @@ class ExtendedUserSerializer(UserSerializer):
         ]
 
         read_only_fields = [*UserSerializer.Meta.read_only_fields, 'groups']
+
+    # 'group_ids' is a write-only serializer field which does not exist on the model
+    SKIP_CREATE_FIELDS = ['group_ids']
 
     groups = GroupSerializer(many=True, read_only=True)
 
@@ -441,7 +448,7 @@ class MeUserSerializer(FilterableSerializerMixin, ExtendedUserSerializer):
     # they were previously served as a single '/user/me/roles/' response.
     roles = OptionalField(
         serializer_class=serializers.SerializerMethodField,
-        serializer_kwargs={'read_only': True},
+        serializer_kwargs={'allow_null': True, 'read_only': True},
         filter_name='roles',
     )
 
@@ -529,7 +536,13 @@ class UserCreateSerializer(ExtendedUserSerializer):
 
         base_url = get_base_url()
 
+        # Extract the groups to assign to the new user
+        groups = validated_data.pop('group_ids', None)
+
         instance = super().create(validated_data)
+
+        if groups is not None:
+            instance.groups.set(groups)
 
         # Create the EmailAddress entry for the user
         if instance.email:
