@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#12900](https://github.com/Inventree/InvenTree/pull/12900) adds a UI feature `route` to the `UIMixin`, giving plugins the ability to register custom pages.
 - [#12911](https://github.com/inventree/InvenTree/pull/12911) adds global setting for default receive location against purchase orders
 - [#12914](https://github.com/inventree/InvenTree/pull/12914) adds the AllocateMixin, allowing plugins to customize automatic stock allocation for build orders and sales orders.
+- [#xxxxx](https://github.com/inventree/InvenTree/pull/xxxxx) adds "internal" companies, which represent your own organization, along with a `INVENTREE_DEFAULT_INTERNAL_COMPANY` setting. The default internal company is available to all report templates as `internal_company`.
 
 ### Changed
 
