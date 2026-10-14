@@ -27,6 +27,13 @@ import { usePreviewDrawerState } from '../../states/PreviewDrawerState';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 
+type CompanyTableType =
+  | 'all'
+  | 'internal'
+  | 'supplier'
+  | 'manufacturer'
+  | 'customer';
+
 /**
  * A table which displays a list of company records,
  * based on the provided filter parameters
@@ -37,7 +44,7 @@ export function CompanyTable({
   initialData,
   path
 }: Readonly<{
-  companyType?: string;
+  companyType?: CompanyTableType;
   params?: any;
   initialData?: any;
   path?: string;
@@ -79,12 +86,48 @@ export function CompanyTable({
         sortable: true,
         switchable: true
       }),
+      BooleanColumn({
+        accessor: 'is_supplier',
+        filter: 'is_supplier',
+        title: t`Supplier`,
+        sortable: true,
+        switchable: true,
+        hidden: companyType === 'supplier',
+        defaultVisible: false
+      }),
+      BooleanColumn({
+        accessor: 'is_manufacturer',
+        filter: 'is_manufacturer',
+        title: t`Manufacturer`,
+        sortable: true,
+        switchable: true,
+        hidden: companyType === 'manufacturer',
+        defaultVisible: false
+      }),
+      BooleanColumn({
+        accessor: 'is_customer',
+        filter: 'is_customer',
+        title: t`Customer`,
+        sortable: true,
+        switchable: true,
+        hidden: companyType === 'customer',
+        defaultVisible: false
+      }),
+      BooleanColumn({
+        accessor: 'is_internal',
+        filter: 'is_internal',
+        title: t`Internal`,
+        sortable: true,
+        switchable: true,
+        hidden: companyType === 'internal',
+        defaultVisible: false
+      }),
       {
         accessor: 'website',
         sortable: false
       }
     ];
-  }, []);
+  }, [companyType]);
 
   const newCompany = useCreateApiFormModal({
     url: ApiEndpoints.company_list,
