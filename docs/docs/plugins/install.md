@@ -17,7 +17,7 @@ To enable custom plugins, plugin support must be activated in the [server config
 
 #### Restart Server
 
-Plugins are discovered and loaded only when the server is started. When new plugins are installed (and activated), both the web server and background worker must be restarted.
+Plugins installed, updated or removed via the web interface are reloaded automatically, by both the web server and background worker. However, some changes (such as installing plugins from the command line, or updating plugin dependencies) still require both the web server and background worker to be restarted. Refer to [reloading plugins](#reloading-plugins) for further details.
 
 #### Container Environments
 
@@ -95,3 +95,51 @@ To achieve this, set the `INVENTREE_PLUGIN_DIR` environment variable to the dire
 
 !!! info "Docker"
     When running InvenTree in docker, a *plugins* directory is automatically created in the mounted data volume. Any plugins can be placed there, and will be automatically loaded when the server is started.
+
+## Reloading Plugins
+
+When the plugin configuration is changed from within InvenTree, the plugin registry is reloaded automatically - there is no need to restart the server.
+
+The server process which performs the change reloads its plugin registry immediately, and records the new state of the registry in the database. Every other server process (e.g. additional web server workers, and the background worker) detects this change the next time it accesses the plugin registry, and reloads its own plugins to match. As part of this reload, the code of each installed plugin package is re-imported from disk, so that every process runs the same (updated) plugin version.
+
+### Automatic Reload
+
+The following changes are applied automatically, without restarting the server:
+
+| Change | Notes |
+| --- | --- |
+| Install a plugin package via the [web interface](#web-interface) (or API) | |
+| Update a plugin package to a new version via the web interface (or API) | The plugin's own package is reloaded - see [restart required](#restart-required) if the update also changes its dependencies |
+| Uninstall a plugin via the web interface (or API) | |
+| Activate or deactivate a plugin | |
+| Change a plugin integration setting (e.g. *Enable URL integration*) | |
+
+!!! info "Version Number"
+    Other server processes detect a change by comparing the plugin registry state - which includes the name, version and active status of each loaded plugin. If a plugin is updated *without* changing its version number (e.g. reinstalling from a git branch), other server processes may continue to run the previous code until they are restarted.
+
+### Restart Required
+
+The following changes are *not* detected automatically. After making any of these changes, restart both the web server and the background worker:
+
+| Change | Reason |
+| --- | --- |
+| Plugins installed, updated or removed from the command line (e.g. `pip install`, `invoke plugins`, or editing the [plugins file](#plugin-installation-file-pip)) | InvenTree is not notified of changes made outside of the server |
+| A plugin update which also installs or updates *other* packages (dependencies) | Only the plugin's own package is re-imported - any dependencies which were already loaded continue to run the old code |
+| Plugins which include compiled (binary) extension modules | Compiled modules cannot be re-imported by a running process |
+| Plugins which add or change database models (via the [AppMixin](./mixins/app.md)) | Database migrations are not run automatically - run `invoke migrate` first, then restart the server |
+| Changes to plugins in a [local](#local-directory) or [custom](#custom-directory) plugin directory | Changes to plugin source files are not detected while the server is running |
+| Changes to plugin options in the [server configuration](../start/config.md#plugin-options) | Server configuration is only read at startup |
+
+### Plugin Registry Mismatch
+
+If a server process reloads its plugins, but still cannot reproduce the plugin registry state of the other processes (for example, because it has loaded a different version of a plugin), it reports a *Plugin Registry Mismatch* error ([INVE-E20](../settings/error_codes.md#inve-e20)). This error is recorded in the [error log](../settings/logs.md), and staff users are notified.
+
+The error data lists the plugins (and versions) which are loaded by the affected process. After reporting the error, the affected process stops reloading its plugins until the registry state changes again, which prevents an endless reload loop between processes.
+
+To resolve this error, restart all InvenTree server and background worker processes.
+
+!!! tip "Reload Plugins"
+    The *Reload Plugins* button in the plugin settings view reloads the plugin registry for the web server process which handles the request. Other server processes only follow if the reload changes the plugin registry state (see above). If in doubt, restart the server.
+
+!!! info "Debug Mode"
+    When running the [development server](../develop/index.md) in debug mode, the server is automatically restarted whenever a loaded source file is changed - including installed plugin files. This does not apply to the background worker, or to production deployments.

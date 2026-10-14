@@ -8,7 +8,7 @@ PYTHON_FROM=11
 PYTHON_TO=15
 
 function detect_docker() {
-  if [ -n "$(grep docker </proc/1/cgroup)" ]; then
+  if [[ -n "$(grep docker </proc/1/cgroup)" ]]; then
     DOCKER="yes"
   else
     DOCKER="no"
@@ -17,9 +17,9 @@ function detect_docker() {
 }
 
 function detect_initcmd() {
-  if [ -n "$(which systemctl 2>/dev/null)" ]; then
+  if [[ -n "$(which systemctl 2>/dev/null)" ]]; then
     INIT_CMD="systemctl"
-  elif [ -n "$(which initctl 2>/dev/null)" ]; then
+  elif [[ -n "$(which initctl 2>/dev/null)" ]]; then
     INIT_CMD="initctl"
   else
     function sysvinit() {
@@ -28,7 +28,7 @@ function detect_initcmd() {
     INIT_CMD="sysvinit"
   fi
 
-  if [ "${DOCKER}" == "yes" ]; then
+  if [[ "${DOCKER}" == "yes" ]]; then
     INIT_CMD="initctl"
   fi
   echo "# POI05| Using init command: ${INIT_CMD}"
@@ -37,7 +37,7 @@ function detect_initcmd() {
 function detect_ip() {
   # Get the IP address of the server
 
-  if [ "${SETUP_NO_CALLS}" == "true" ]; then
+  if [[ "${SETUP_NO_CALLS}" == "true" ]]; then
     # Use local IP address
     echo "# POI06| Getting the IP address of the first local IP address"
     export INVENTREE_IP=$(hostname -I | awk '{print $1}')
@@ -52,7 +52,7 @@ function detect_ip() {
 
 function detect_python() {
   # Detect if there is already a python version installed in /opt/inventree/env/lib
-  if test -f "${APP_HOME}/env/bin/python"; then
+  if [[ -f "${APP_HOME}/env/bin/python" ]]; then
     echo "# POI07| Python environment already present"
     # Extract earliest python version initialised from /opt/inventree/env/lib
     SETUP_PYTHON=$(ls -1 ${APP_HOME}/env/bin/python* | sort | head -n 1)
@@ -62,11 +62,11 @@ function detect_python() {
   fi
 
   # Try to detect a python between lowest and highest supported in reverse order
-  if [ -z "$(which ${SETUP_PYTHON})" ]; then
+  if [[ -z "$(which ${SETUP_PYTHON})" ]]; then
     echo "# POI07| Trying to detecting python3.${PYTHON_FROM} to python3.${PYTHON_TO} - using newest version"
     for i in $(seq $PYTHON_TO -1 $PYTHON_FROM); do
       echo "# POI07| Checking for python3.${i}"
-      if [ -n "$(which python3.${i})" ]; then
+      if [[ -n "$(which python3.${i})" ]]; then
         SETUP_PYTHON="python3.${i}"
         echo "# POI07| Found python3.${i} installed - using for setup ${SETUP_PYTHON}"
         break
@@ -75,7 +75,7 @@ function detect_python() {
   fi
 
   # Ensure python can be executed - abort if not
-  if [ -z "$(which ${SETUP_PYTHON})" ]; then
+  if [[ -z "$(which ${SETUP_PYTHON})" ]]; then
     echo "${On_Red}"
     echo "# POI07| Python ${SETUP_PYTHON} not found - aborting!"
     echo "# POI07| Please ensure python can be executed with the command '$SETUP_PYTHON' by the current user '$USER'."
@@ -91,14 +91,14 @@ function get_env() {
   envname=$1
 
   pid=$$
-  while [ -z "${!envname}" -a $pid != 1 ]; do
+  while [[ -z "${!envname}" && $pid != 1 ]]; do
       ppid=`ps -oppid -p$pid|tail -1|awk '{print $1}'`
       env=`strings /proc/$ppid/environ`
       export $envname=`echo "$env"|awk -F= '$1 == "'$envname'" { print $2; }'`
       pid=$ppid
   done
 
-  if [ -n "${SETUP_DEBUG}" ]; then
+  if [[ -n "${SETUP_DEBUG}" ]]; then
     echo "# POI02| Done getting env $envname: ${!envname}"
   fi
 }
@@ -106,7 +106,7 @@ function get_env() {
 function detect_local_env() {
   # Get all possible envs for the install
 
-  if [ -n "${SETUP_DEBUG}" ]; then
+  if [[ -n "${SETUP_DEBUG}" ]]; then
     echo "# POI02| Printing local envs - before #++#"
     printenv
   fi
@@ -116,13 +116,13 @@ function detect_local_env() {
       get_env $i
   done
 
-  if [ -n "${SETUP_DEBUG}" ]; then
+  if [[ -n "${SETUP_DEBUG}" ]]; then
     echo "# POI02| Printing local envs - after #++#"
     printenv
   fi
 
   # Print branch and dir from VERSION file
-  if [ -f "${APP_HOME}/VERSION" ]; then
+  if [[ -f "${APP_HOME}/VERSION" ]]; then
     echo "# POI02| Loading environment variables from VERSION file"
     content=$(cat "${APP_HOME}/VERSION")
     # use grep to get the branch and target
@@ -141,7 +141,7 @@ function detect_envs() {
 
   export INVENTREE_CONFIG_FILE=${INVENTREE_CONFIG_FILE:-${CONF_DIR}/config.yaml}
 
-  if test -f "${INVENTREE_CONFIG_FILE}"; then
+  if [[ -f "${INVENTREE_CONFIG_FILE}" ]]; then
     echo "# POI03| Using existing config file: ${INVENTREE_CONFIG_FILE}"
 
     # Install parser
@@ -168,9 +168,9 @@ function detect_envs() {
     export INVENTREE_DB_PORT=$(jq -r '.[].database.PORT' <<< ${INVENTREE_CONF_DATA})
 
     # Parse site URL if not already set
-    if [ -z "${INVENTREE_SITE_URL}" ]; then
+    if [[ -z "${INVENTREE_SITE_URL}" ]]; then
       # Try to read out the app config
-      if [ -n "$(inventree config:get INVENTREE_SITE_URL)" ]; then
+      if [[ -n "$(inventree config:get INVENTREE_SITE_URL)" ]]; then
         echo "# POI03| Getting site URL from app config"
         export INVENTREE_SITE_URL=$(inventree config:get INVENTREE_SITE_URL)
       else
@@ -181,7 +181,7 @@ function detect_envs() {
   else
     echo "# POI03| No config file found: ${INVENTREE_CONFIG_FILE}, using envs or defaults"
 
-    if [ -n "${SETUP_DEBUG}" ]; then
+    if [[ -n "${SETUP_DEBUG}" ]]; then
       echo "# POI03| Print current envs"
       printenv | grep INVENTREE_
       printenv | grep SETUP_
@@ -218,7 +218,7 @@ function detect_envs() {
   echo "# POI03|    INVENTREE_DB_ENGINE=${INVENTREE_DB_ENGINE}"
   echo "# POI03|    INVENTREE_DB_NAME=${INVENTREE_DB_NAME}"
   echo "# POI03|    INVENTREE_DB_USER=${INVENTREE_DB_USER}"
-  if [ -n "${SETUP_DEBUG}" ]; then
+  if [[ -n "${SETUP_DEBUG}" ]]; then
     echo "# POI03|    INVENTREE_DB_PASSWORD=${INVENTREE_DB_PASSWORD}"
   fi
   echo "# POI03|    INVENTREE_DB_HOST=${INVENTREE_DB_HOST}"
@@ -229,7 +229,7 @@ function detect_envs() {
 function create_initscripts() {
 
   # Make sure python env exists
-  if test -f "${APP_HOME}/env"; then
+  if [[ -f "${APP_HOME}/env" ]]; then
     echo "# POI09| python environment already present - skipping"
   else
     echo "# POI09| Setting up python environment"
@@ -237,14 +237,14 @@ function create_initscripts() {
     sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && env/bin/pip install invoke wheel"
 
     # Check INSTALLER_EXTRA exists and load it
-    if test -f "${APP_HOME}/INSTALLER_EXTRA"; then
+    if [[ -f "${APP_HOME}/INSTALLER_EXTRA" ]]; then
       echo "# POI09| Loading extra packages from INSTALLER_EXTRA"
       source ${APP_HOME}/INSTALLER_EXTRA
     fi
 
-    if [ -n "${SETUP_EXTRA_PIP}" ]; then
+    if [[ -n "${SETUP_EXTRA_PIP}" ]]; then
       echo "# POI09| Installing extra pip packages"
-      if [ -n "${SETUP_DEBUG}" ]; then
+      if [[ -n "${SETUP_DEBUG}" ]]; then
         echo "# POI09| Extra pip packages: ${SETUP_EXTRA_PIP}"
       fi
       sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && env/bin/pip install ${SETUP_EXTRA_PIP}"
@@ -254,7 +254,7 @@ function create_initscripts() {
   fi
 
   # Unlink default config if it exists
-  if test -f "/etc/nginx/sites-enabled/default"; then
+  if [[ -f "/etc/nginx/sites-enabled/default" ]]; then
     echo "# POI09| Unlinking default nginx config\n# POI09| Old file still in /etc/nginx/sites-available/default"
     sudo unlink /etc/nginx/sites-enabled/default
     echo "# POI09| Unlinked default nginx config"
@@ -285,12 +285,12 @@ function create_initscripts() {
 
 function create_admin() {
   # Create data for admin users - stop with setting SETUP_ADMIN_NOCREATION to true
-  if [ "${SETUP_ADMIN_NOCREATION}" == "true" ]; then
+  if [[ "${SETUP_ADMIN_NOCREATION}" == "true" ]]; then
     echo "# POI10| Admin creation is disabled - skipping"
     return
   fi
 
-  if test -f "${SETUP_ADMIN_PASSWORD_FILE}"; then
+  if [[ -f "${SETUP_ADMIN_PASSWORD_FILE}" ]]; then
     echo "# POI10| Admin data already exists - skipping"
   else
     echo "# POI10| Creating admin user data"
@@ -300,7 +300,7 @@ function create_admin() {
     export INVENTREE_ADMIN_EMAIL=${INVENTREE_ADMIN_EMAIL:-admin@example.com}
 
     # Create password if not set
-    if [ -z "${INVENTREE_ADMIN_PASSWORD}" ]; then
+    if [[ -z "${INVENTREE_ADMIN_PASSWORD}" ]]; then
       openssl rand -base64 32 >${SETUP_ADMIN_PASSWORD_FILE}
       export INVENTREE_ADMIN_PASSWORD=$(cat ${SETUP_ADMIN_PASSWORD_FILE})
     fi
@@ -381,15 +381,15 @@ function set_env() {
 
 function set_site() {
   # Ensure IP is known
-  if [ -z "${INVENTREE_IP}" ]; then
+  if [[ -z "${INVENTREE_IP}" ]]; then
     echo "# POI14| No IP address found - skipping"
     return
   fi
 
   # Check if INVENTREE_SITE_URL in inventree config
-  if [ -z "$(inventree config:get INVENTREE_SITE_URL)" ]; then
+  if [[ -z "$(inventree config:get INVENTREE_SITE_URL)" ]]; then
     # Prefer current INVENTREE_SITE_URL if set
-    if [ -n "${INVENTREE_SITE_URL}" ]; then
+    if [[ -n "${INVENTREE_SITE_URL}" ]]; then
       inventree config:set INVENTREE_SITE_URL=${INVENTREE_SITE_URL}
     else
       echo "# POI14| Setting up InvenTree site URL"
@@ -407,7 +407,7 @@ function final_message() {
   echo -e "${SETUP_NGINX_FILE}"
   echo -e "Try opening InvenTree with any of \n${INVENTREE_SITE_URL} , http://localhost/ or http://${INVENTREE_IP}/ \n"
   # Print admin user data only if set
-  if [ -n "${INVENTREE_ADMIN_USER}" ]; then
+  if [[ -n "${INVENTREE_ADMIN_USER}" ]]; then
     echo -e "Admin user data:"
     echo -e "   Email: ${INVENTREE_ADMIN_EMAIL}"
     echo -e "   Username: ${INVENTREE_ADMIN_USER}"
@@ -434,10 +434,10 @@ function update_checks() {
     local name=$3
 
     local value=$(inventree config:get ${env_key})
-    if [ -z "${value}" ] || [ "$value" == "null" ]; then
+    if [[ -z "${value}" ]] || [[ "$value" == "null" ]]; then
       value=$(jq -r ".[].${config_key}" <<< ${INVENTREE_CONF_DATA})
     fi
-    if [ -z "${value}" ] || [ "$value" == "null" ]; then
+    if [[ -z "${value}" ]] || [[ "$value" == "null" ]]; then
       echo "# POI08| No setting for ${name} found - please set it manually either in ${INVENTREE_CONFIG_FILE} under '${config_key}' or with 'inventree config:set ${env_key}=value'"
       ABORT=true
     else
@@ -446,14 +446,14 @@ function update_checks() {
   }
 
   # Custom checks if old version is below 0.8.0
-  if [ "${old_version_rev}" -lt "9" ]; then
+  if [[ "${old_version_rev}" -lt "9" ]]; then
     echo "# POI08| Old version is below 0.9.0 - You might be missing some configs"
 
     # Check for BACKUP_DIR and SITE_URL in INVENTREE_CONF_DATA and config
     check_config_value "INVENTREE_SITE_URL" "site_url" "site URL"
     check_config_value "INVENTREE_BACKUP_DIR" "backup_dir" "backup dir"
 
-    if [ "${ABORT}" = true ]; then
+    if [[ "${ABORT}" = true ]]; then
       echo "# POI08| Aborting - please set the missing values and run the update again"
       exit 1
     fi

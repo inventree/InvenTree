@@ -121,6 +121,13 @@ The InvenTree server failed to start, because the configured server URL does not
 
 If your installation is currently running a version of InvenTree older than `1.0.0`, you must first update to the `1.0.0` release before updating further. See [Updating from Pre 1.0.0](../start/migrate.md#updating-from-pre-100) for the full upgrade procedure.
 
+#### INVE-E20
+**Plugin registry mismatch - Backend**
+
+An InvenTree process (web server or background worker) reloaded its plugins, but could not reproduce the plugin registry state published by another process. This typically means that the processes have loaded different plugins, or different versions of the same plugin - e.g. after a plugin (or one of its dependencies) was updated outside of InvenTree.
+
+The affected process stops reloading its plugins to prevent an endless reload loop. Restart all InvenTree server and background worker processes to resolve this error. See [reloading plugins](../plugins/install.md#reloading-plugins) for further information.
+
 ## Warning Codes
 
 ### INVE-W (InvenTree Warning)
