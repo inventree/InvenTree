@@ -37,6 +37,7 @@ inputs:
 
 runs:
     using: 'composite'
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -97,15 +98,23 @@ runs:
         if: ${{ inputs.dev-install == 'true' || inputs.install == 'true' }}
         shell: bash
         run: invoke install --dev
+        env:
+          SETUP_INITIALIZING: 1
       - name: Run invoke install
         if: ${{ inputs.install == 'true' }}
         shell: bash
         run: invoke install
+        env:
+          SETUP_INITIALIZING: 1
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
         run: invoke update --skip-backup --skip-static --no-frontend
+        env:
+          SETUP_INITIALIZING: 1
       - name: Collect static files
         if: ${{ inputs.static == 'true' }}
         shell: bash
         run: invoke static --skip-plugins
+        env:
+          SETUP_INITIALIZING: 1

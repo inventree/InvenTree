@@ -36,6 +36,7 @@ from generic.states.api import FSMTransitionMixin, StatusView
 from InvenTree.api import (
     BulkDeleteMixin,
     BulkDeleteViewsetMixin,
+    BulkRequestSerializer,
     BulkUpdateMixin,
     ListCreateDestroyAPIView,
     ParameterListMixin,
@@ -685,6 +686,55 @@ class PurchaseOrderLineItemViewSet(
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
+
+    def check_received(self, queryset) -> None:
+        """Prevent deletion of line items against which stock has been received.
+
+        Deleting a received line item would erase the record of what was received
+        against the order. The line item rows are locked (in pk order, matching the
+        lock order used when receiving stock) so that a concurrent receipt cannot
+        succeed between this check and the deletion.
+
+        Raises:
+            ValidationError: If any line item has a received quantity
+        """
+        received = [
+            pk
+            for pk, qty in queryset
+            .select_for_update()
+            .order_by('pk')
+            .values_list('pk', 'received')
+            if qty > 0
+        ]
+
+        if received:
+            raise rest_framework.serializers.ValidationError(
+                _('Cannot delete line items which have received stock')
+            )
+
+    def perform_destroy(self, instance):
+        """Prevent deletion of a single line item which has received stock."""
+        with transaction.atomic():
+            self.check_received(
+                models.PurchaseOrderLineItem.objects.filter(pk=instance.pk)
+            )
+            instance.delete()
+
+    def validate_delete(self, queryset, request) -> None:
+        """Prevent bulk deletion of line items which have received stock."""
+        self.check_received(queryset)
+
+    @extend_schema(request=BulkRequestSerializer)
+    def bulk_delete(self, request, *args, **kwargs):
+        """Perform a bulk delete operation.
+
+        Provide either a list of ids (via `items`) or a filter (via `filters`) to select the items to be deleted.
+
+        This action is performed attomically, so either all items will be deleted, or none will be deleted.
+
+        """
+        with transaction.atomic():
+            return super().bulk_delete(request, *args, **kwargs)
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -2423,9 +2473,7 @@ class OrderCalendarExport(ICalFeed):
         whether or not to show completed orders. Defaults to false
     """
 
-    instance_url = get_base_url()
-
-    instance_url = instance_url.replace('http://', '').replace('https://', '')
+    instance_url = get_base_url().replace('http://', '').replace('https://', '')
     timezone = settings.TIME_ZONE
     file_name = 'calendar.ics'
 

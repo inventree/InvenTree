@@ -6,6 +6,7 @@ from decimal import Decimal
 import django.core.exceptions as django_exceptions
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.core import mail
 from django.test import TestCase
 
 from djmoney.money import Money
@@ -22,6 +23,7 @@ from InvenTree.unit_test import (
 )
 from order.status_codes import PurchaseOrderStatus
 from part.models import Part
+from plugin import registry
 from stock.models import StockItem, StockLocation
 from users.models import Owner
 
@@ -555,6 +557,68 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
 
         # However *no* notification should have been generated for the creating user
         self.assertFalse(messages.filter(user__pk=3).exists())
+
+    def test_received_email_notification(self):
+        """Test the email notification sent when items are received against a PurchaseOrder.
+
+        - The responsible user should receive an email
+        - The email should list the received stock items
+        """
+        user = get_user_model().objects.get(pk=4)
+        user.email = 'sam@demo.inventree.org'
+        user.save()
+
+        # Enable email notifications for the responsible user
+        plugin = registry.get_plugin('inventree-email-notification')
+        self.assertIsNotNone(plugin)
+        plugin.set_user_setting('NOTIFY_BY_EMAIL', True, user)
+
+        po = PurchaseOrder.objects.get(pk=1)
+        po.responsible = Owner.create(obj=user)
+        po.save()
+        po.place_order()
+
+        # Ignore any emails sent when the order was placed
+        common.models.NotificationEntry.objects.all().delete()
+        mail.outbox.clear()
+
+        location = StockLocation.objects.get(pk=1)
+        line_1 = PurchaseOrderLineItem.objects.get(pk=1)
+        line_2 = PurchaseOrderLineItem.objects.get(pk=3)
+
+        stock_items = po.receive_line_items(
+            location,
+            [
+                {'line_item': line_1, 'quantity': 15},
+                {'line_item': line_2, 'quantity': 37},
+            ],
+            user=get_user_model().objects.get(pk=1),
+        )
+
+        self.assertEqual(stock_items.count(), 2)
+
+        # Exactly one email should have been sent, to the responsible user
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+
+        self.assertEqual(email.to, [user.email])
+        self.assertIn('Items Received', email.subject)
+
+        html = email.alternatives[0][0]
+
+        # Order information
+        self.assertIn('Items have been received against a purchase order', html)
+        self.assertIn(po.get_absolute_url(), html)
+
+        # Table of received items
+        self.assertIn('<th>Part</th>', html)
+        self.assertIn('<th>Quantity</th>', html)
+        self.assertIn('<th>Location</th>', html)
+
+        for item in stock_items:
+            self.assertIn(f'<td>{item.part.name}</td>', html)
+            self.assertIn(f'<td>{item.quantity}</td>', html)
+            self.assertIn(f'<td>{item.location.pathstring}</td>', html)
 
     def test_metadata(self):
         """Unit tests for the metadata field."""
