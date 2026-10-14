@@ -1322,6 +1322,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             PurchaseOrder,
             exclude=user,
             content=InvenTreeNotificationBodies.ItemsReceived,
+            html_context={'order': self, 'stock_items': stock_items},
             extra_users=notify_users,
         )
 
