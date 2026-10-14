@@ -80,6 +80,8 @@ class AddressSerializer(DataImportExportSerializerMixin, InvenTreeModelSerialize
             'postal_city',
             'province',
             'country',
+            'phone',
+            'email',
             'shipping_notes',
             'internal_shipping_notes',
             'link',
@@ -101,6 +103,8 @@ class AddressBriefSerializer(InvenTreeModelSerializer):
             'postal_city',
             'province',
             'country',
+            'phone',
+            'email',
             'shipping_notes',
             'internal_shipping_notes',
         ]
