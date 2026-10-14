@@ -3,6 +3,8 @@
 from django.contrib import admin
 from django.db.models import Count
 
+from common.admin_shared import ReadOnlyAdminMixin
+
 from .models import (
     StockItem,
     StockItemTestResult,
@@ -77,7 +79,7 @@ class StockItemAdmin(admin.ModelAdmin):
 
 
 @admin.register(StockItemTracking)
-class StockTrackingAdmin(admin.ModelAdmin):
+class StockTrackingAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     """Admin class for StockTracking - read-only to preserve audit trail integrity."""
 
     list_display = ('item', 'date', 'label')
@@ -85,18 +87,6 @@ class StockTrackingAdmin(admin.ModelAdmin):
     search_fields = ['item__part__name', 'item__serial', 'notes']
 
     autocomplete_fields = ['item']
-
-    def has_add_permission(self, request):
-        """Prevent addition of new tracking entries via the admin interface."""
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        """Prevent modification of tracking entries via the admin interface."""
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        """Prevent deletion of tracking entries via the admin interface."""
-        return False
 
 
 @admin.register(StockItemTestResult)

@@ -1,13 +1,20 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 554
+INVENTREE_API_VERSION = 556
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v554 -> 2026-10-05 : https://github.com/inventree/InvenTree/pull/12737
+v556 -> 2026-10-14 : https://github.com/inventree/InvenTree/pull/12737
     - Adds search and ordering fields across remaining API endpoints (machine, stock, importer, report)
+
+v555 -> 2026-10-14 : https://github.com/inventree/InvenTree/pull/13016
+    - Adds "contact" field to the SalesOrderShipment model and API endpoint
+    - Adds "phone" and "email" fields to the Address model and API endpoint
+
+v554 -> 2026-10-09 : https://github.com/inventree/InvenTree/pull/12986
+    - Add missing nullable annotations for read_only fields
 
 v553 -> 2026-10-04 : https://github.com/inventree/InvenTree/pull/12965
     - Fix user creation with 'group_ids' via the User API endpoint

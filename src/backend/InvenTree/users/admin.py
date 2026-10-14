@@ -6,6 +6,9 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
+from django.utils.text import smart_split
 from django.utils.translation import gettext_lazy as _
 
 from users.models import ApiToken, Owner, RuleSet
@@ -164,6 +167,44 @@ class OwnerAdmin(admin.ModelAdmin):
     """Custom admin interface for the Owner model."""
 
     search_fields = ['name']
+    ordering = ['owner_type', 'owner_id']
+
+    def get_search_results(self, request, queryset, search_term):
+        """Custom search implementation for Owner model.
+
+        An Owner is a generic foreign key to either a User or a Group instance.
+        Standard Django search_fields lookup fails because 'name' is a method,
+        not a database field, on the Owner model.
+        """
+        # Call super with empty search term to avoid looking up non-existent 'name' field
+        queryset, _ = super().get_search_results(request, queryset, '')
+
+        if not search_term:
+            return queryset, False
+
+        user_type = ContentType.objects.get_for_model(User)
+        group_type = ContentType.objects.get_for_model(Group)
+
+        for bit in smart_split(search_term):
+            if not bit:
+                continue
+            user_q = (
+                Q(username__icontains=bit)
+                | Q(first_name__icontains=bit)
+                | Q(last_name__icontains=bit)
+                | Q(email__icontains=bit)
+            )
+            matching_users = User.objects.filter(user_q).values_list('pk', flat=True)
+            matching_groups = Group.objects.filter(name__icontains=bit).values_list(
+                'pk', flat=True
+            )
+
+            bit_q = Q(owner_type=user_type, owner_id__in=matching_users) | Q(
+                owner_type=group_type, owner_id__in=matching_groups
+            )
+            queryset = queryset.filter(bit_q)
+
+        return queryset, True
 
 
 admin.site.unregister(User)

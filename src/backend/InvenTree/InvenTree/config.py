@@ -4,9 +4,7 @@ import datetime
 import json
 import logging
 import os
-import random
 import shutil
-import string
 import sys
 from pathlib import Path
 from typing import Any, Optional
@@ -199,7 +197,7 @@ def load_config_data(set_cache: bool = False) -> map | None:
         try:
             data = yaml.safe_load(cfg)
         except yaml.parser.ParserError as error:
-            logger.error(
+            logger.exception(
                 "INVE-E13: Error reading InvenTree configuration file '%s': %s",
                 cfg_file,
                 error,
@@ -448,9 +446,10 @@ def get_secret_key(return_path: bool = False) -> str | Path:
         logger.info("Generating random key file at '%s'", secret_key_file)
         ensure_dir(secret_key_file.parent)
 
-        # Create a random key file
-        options = string.digits + string.ascii_letters + string.punctuation
-        key = ''.join([random.choice(options) for _idx in range(100)])
+        # Create a random key file (using a cryptographically secure generator)
+        from django.core.management.utils import get_random_secret_key
+
+        key = get_random_secret_key()
         secret_key_file.write_text(key)
 
     if return_path:

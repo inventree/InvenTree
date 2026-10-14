@@ -5,6 +5,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
 import { t } from '@lingui/core/macro';
 import { api } from '../../../../App';
+import { fileNameFromUrl } from '../../../../functions/urls';
 import type { PreviewAreaComponent } from '../TemplateEditor';
 
 export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
@@ -22,7 +23,7 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
           const formData = new FormData();
 
           const filename =
-            template.template?.split('/').pop() ?? 'template.html';
+            fileNameFromUrl(template.template) || 'template.html';
 
           formData.append('template', new File([code], filename));
 
