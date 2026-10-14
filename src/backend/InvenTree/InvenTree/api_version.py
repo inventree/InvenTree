@@ -9,6 +9,7 @@ INVENTREE_API_TEXT = """
 v555 -> 2026-10-14 : https://github.com/inventree/InvenTree/pull/xxxxx
     - Adds 'is_internal' field (and filter) to the Company API endpoint
     - Adds 'INVENTREE_DEFAULT_INTERNAL_COMPANY' global setting
+    - Exposes 'model_filters' on the global and user settings API endpoints
 
 v554 -> 2026-10-09 : https://github.com/inventree/InvenTree/pull/12986
     - Add missing nullable annotations for read_only fields
