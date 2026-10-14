@@ -51,7 +51,7 @@ The list of contacts associated with a particular company is available in the <s
 
 {{ image("purchasing/contact_list.png", "Company Contacts") }}
 
-A *contact* can be assigned to orders, (such as [purchase orders](../purchasing/purchase_order.md) or [sales orders](../sales/sales_order.md)).
+A *contact* can be assigned to orders, (such as [purchase orders](../purchasing/purchase_order.md) or [sales orders](../sales/sales_order.md)), and to individual [sales order shipments](../sales/sales_order.md#shipment-contact).
 
 ### Addresses
 
@@ -68,6 +68,8 @@ Addresses are composed differently across the world, and InvenTree reflects this
 | City | The city/region tied to the postal code |
 | Province | The larger region the address is located in. Also known as State in some countries |
 | Country | Country the address is located in |
+| Phone | Phone number for this address (optional) |
+| Email | Email address for this address (optional) |
 
 Here are a couple of examples of how the address structure differs by country, but these components can construct a correctly formatted address for any given country.
 
