@@ -455,6 +455,8 @@ class AddressTest(InvenTreeAPITestCase):
             'postal_city',
             'province',
             'country',
+            'phone',
+            'email',
         ]:
             self.assertIn(key, response.data)
 
@@ -475,6 +477,44 @@ class AddressTest(InvenTreeAPITestCase):
         data = self.get(url, expected_code=200).data
 
         self.assertEqual(data['title'], 'World')
+
+    def test_phone_email(self):
+        """Test setting the phone and email fields for an Address."""
+        addr = Address.objects.first()
+        assert addr
+
+        url = reverse('api-address-detail', kwargs={'pk': addr.pk})
+
+        self.assignRole('purchase_order.change')
+
+        # Fields are optional, and blank by default
+        data = self.get(url, expected_code=200).data
+        self.assertEqual(data['phone'], '')
+        self.assertEqual(data['email'], '')
+
+        # Invalid email address is rejected
+        response = self.patch(url, {'email': 'not-an-email'}, expected_code=400)
+        self.assertIn('email', response.data)
+
+        data = self.patch(
+            url,
+            {'phone': '+61 2 1234 5678', 'email': 'shipping@example.com'},
+            expected_code=200,
+        ).data
+
+        self.assertEqual(data['phone'], '+61 2 1234 5678')
+        self.assertEqual(data['email'], 'shipping@example.com')
+
+        # Search by phone number and email address
+        for term in ['1234 5678', 'shipping@example']:
+            response = self.get(self.url, {'search': term}, expected_code=200)
+            self.assertEqual(len(response.data), 1)
+            self.assertEqual(response.data[0]['pk'], addr.pk)
+
+        # Fields can be cleared
+        data = self.patch(url, {'phone': '', 'email': ''}, expected_code=200).data
+        self.assertEqual(data['phone'], '')
+        self.assertEqual(data['email'], '')
 
     def test_delete(self):
         """Test deleting an object."""

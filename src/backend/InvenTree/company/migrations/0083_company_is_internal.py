@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("company", "0081_remove_company_notes_remove_manufacturerpart_notes_and_more"),
+        ("company", "0082_address_phone_email"),
     ]
 
     operations = [

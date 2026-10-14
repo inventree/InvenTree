@@ -137,6 +137,8 @@ class AddressList(DataExportViewMixin, ListCreateDestroyAPIView):
         'postal_city',
         'postal_code',
         'country',
+        'phone',
+        'email',
     ]
 
     ordering_fields = ['title']

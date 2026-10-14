@@ -375,6 +375,8 @@ class Address(InvenTree.models.InvenTreeModel):
         line2: Optional line two for address
         postal_code: Postal code, city and state
         country: Location country
+        phone: Phone number for this address
+        email: Email address for this address
         shipping_notes: Notes for couriers transporting shipments to this address
         internal_shipping_notes: Internal notes regarding shipping to this address
         link: External link to additional address information
@@ -493,6 +495,19 @@ class Address(InvenTree.models.InvenTreeModel):
         max_length=50,
         verbose_name=_('Country'),
         help_text=_('Address country'),
+        blank=True,
+    )
+
+    phone = models.CharField(
+        max_length=50,
+        verbose_name=_('Phone number'),
+        help_text=_('Phone number for this address'),
+        blank=True,
+    )
+
+    email = models.EmailField(
+        verbose_name=_('Email'),
+        help_text=_('Email address for this address'),
         blank=True,
     )
 
