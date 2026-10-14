@@ -23,7 +23,7 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from common.currency import currency_codes
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
-from company.models import Company, SupplierPart, SupplierPriceBreak
+from company.models import Company, Contact, SupplierPart, SupplierPriceBreak
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
 from order.models import SalesOrderAllocation, SalesOrderLineItem, SalesOrderShipment
@@ -3246,6 +3246,49 @@ class SalesOrderAllocateTest(OrderTest):
         # Shipment should now be marked as delivered
         self.assertTrue(self.shipment.is_delivered())
         self.assertEqual(self.shipment.delivery_date, datetime(2023, 5, 15).date())
+
+    def test_shipment_contact(self):
+        """Test setting the 'contact' field for a shipment via the API."""
+        url = reverse('api-so-shipment-detail', kwargs={'pk': self.shipment.pk})
+
+        customer = self.shipment.order.customer
+        other_company = Company.objects.exclude(pk=customer.pk).first()
+
+        contact = Contact.objects.create(company=customer, name='Shipment Contact')
+        other_contact = Contact.objects.create(
+            company=other_company, name='Other Contact'
+        )
+
+        # No contact set by default
+        response = self.get(url, expected_code=200)
+        self.assertIsNone(response.data['contact'])
+        self.assertIsNone(response.data['contact_detail'])
+
+        # A contact for a different company is rejected
+        response = self.patch(url, {'contact': other_contact.pk}, expected_code=400)
+        self.assertIn('Contact does not match the customer', str(response.data))
+
+        self.shipment.refresh_from_db()
+        self.assertIsNone(self.shipment.contact)
+
+        # A contact for the customer is accepted
+        response = self.patch(url, {'contact': contact.pk}, expected_code=200)
+        self.assertEqual(response.data['contact'], contact.pk)
+        self.assertEqual(response.data['contact_detail']['name'], contact.name)
+
+        self.shipment.refresh_from_db()
+        self.assertEqual(self.shipment.contact, contact)
+
+        # The contact can be cleared
+        response = self.patch(url, {'contact': None}, expected_code=200)
+        self.assertIsNone(response.data['contact'])
+
+        # Deleting the contact clears the reference
+        self.shipment.contact = contact
+        self.shipment.save()
+        contact.delete()
+        self.shipment.refresh_from_db()
+        self.assertIsNone(self.shipment.contact)
 
     def test_sales_order_shipment_list(self):
         """Test the SalesOrderShipment list API endpoint."""

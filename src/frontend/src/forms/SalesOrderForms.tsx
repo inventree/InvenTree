@@ -537,6 +537,12 @@ export function useSalesOrderShipmentFields({
           ordering: '-primary'
         }
       },
+      contact: {
+        icon: <IconUser />,
+        filters: {
+          company: customerId
+        }
+      },
       tracking_number: {},
       invoice_number: {},
       tags: TagsField({}),
