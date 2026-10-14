@@ -71,6 +71,35 @@ class CompanyTest(InvenTreeAPITestCase):
         response = self.get(url, data)
         self.assertEqual(len(response.data), 2)
 
+    def test_company_internal(self):
+        """Test the 'is_internal' field and filter."""
+        url = reverse('api-company-list')
+
+        self.assertEqual(len(self.get(url, {'is_internal': True}).data), 0)
+
+        response = self.post(
+            url,
+            {'name': 'Our Company', 'is_internal': True, 'is_supplier': False},
+            expected_code=201,
+        )
+        self.assertTrue(response.data['is_internal'])
+        pk = response.data['pk']
+
+        response = self.get(url, {'is_internal': True})
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['pk'], pk)
+
+        self.assertEqual(len(self.get(url, {'is_internal': False}).data), 3)
+
+        # Only an internal company can be selected as the default
+        setting_url = reverse(
+            'api-global-setting-detail',
+            kwargs={'key': 'INVENTREE_DEFAULT_INTERNAL_COMPANY'},
+        )
+
+        self.patch(setting_url, {'value': self.acme.pk}, expected_code=400)
+        self.patch(setting_url, {'value': pk}, expected_code=200)
+
     def test_company_detail(self):
         """Tests for the Company detail endpoint."""
         url = reverse('api-company-detail', kwargs={'pk': self.acme.pk})
