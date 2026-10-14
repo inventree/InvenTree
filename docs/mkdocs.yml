@@ -91,7 +91,12 @@ nav:
       - Privacy: privacy.md
   - Concepts:
     - Terminology: concepts/terminology.md
-    - User Interface: concepts/user_interface.md
+    - User Interface:
+      - Overview: concepts/ui/index.md
+      - Tables: concepts/ui/tables.md
+      - Preview Panels: concepts/ui/preview_panels.md
+      - Forms: concepts/ui/forms.md
+      - Global Search: concepts/ui/global_search.md
     - Threat Model: concepts/threat_model.md
     - Physical Units: concepts/units.md
     - Companies: concepts/company.md
@@ -102,6 +107,8 @@ nav:
     - Project Codes: concepts/project_codes.md
     - Attachments: concepts/attachments.md
     - Parameters: concepts/parameters.md
+    - Notes: concepts/notes.md
+    - Tags: concepts/tags.md
     - Barcodes:
       - Barcode Support: barcodes/index.md
       - Internal Barcodes: barcodes/internal.md
@@ -129,6 +136,7 @@ nav:
     - Parts: part/index.md
     - Creating Parts: part/create.md
     - Virtual Parts: part/virtual.md
+    - Consumable Parts: part/consumable.md
     - Part Views: part/views.md
     - Tracking: part/trackable.md
     - Revisions: part/revision.md
@@ -144,6 +152,7 @@ nav:
     - Stock Tracking: stock/tracking.md
     - Stock Status: stock/status.md
     - Adjusting Stock: stock/adjust.md
+    - Stock Disassembly: stock/disassemble.md
     - Stock Expiry: stock/expiry.md
     - Stock Ownership: stock/owner.md
     - Test Results: stock/test.md
@@ -173,7 +182,11 @@ nav:
     - Template Editor: report/template_editor.md
     - Reports: report/report.md
     - Labels: report/labels.md
-    - Context Variables: report/context_variables.md
+    - Report Assets: report/assets.md
+    - Report Fonts: report/fonts.md
+    - Report Snippets: report/snippets.md
+    - Report Context: report/context_variables.md
+    - Model Context: report/model_context.md
     - Helper Functions: report/helpers.md
     - Barcodes: report/barcodes.md
     - Sample Templates: report/samples.md
@@ -181,11 +194,13 @@ nav:
     - Global Settings: settings/global.md
     - User Settings: settings/user.md
     - Reference Patterns: settings/reference.md
-    - Admin Interface: settings/admin.md
+    - Admin Center: settings/admin.md
+    - Database Admin Interface: settings/db_admin.md
     - Setup:
       - User Permissions: settings/permissions.md
       - Single Sign on: settings/SSO.md
       - Multi Factor Authentication: settings/MFA.md
+      - SCIM Provisioning: settings/SCIM.md
       - Email Settings: settings/email.md
       - Experimental Features: settings/experimental.md
     - Operations:
@@ -204,6 +219,7 @@ nav:
     - Unit Test: plugins/test.md
     - Plugin Mixins:
       - Action Mixin: plugins/mixins/action.md
+      - Allocate Mixin: plugins/mixins/allocate.md
       - API Mixin: plugins/mixins/api.md
       - App Mixin: plugins/mixins/app.md
       - Barcode Mixin: plugins/mixins/barcode.md
@@ -225,6 +241,7 @@ nav:
       - URL Mixin: plugins/mixins/urls.md
       - User Interface Mixin: plugins/mixins/ui.md
       - Validation Mixin: plugins/mixins/validation.md
+      - Well-Known Mixin: plugins/mixins/wellknown.md
     - Machines:
       - Overview: plugins/machines/overview.md
       - Label Printer: plugins/machines/label_printer.md
@@ -365,10 +382,13 @@ extra:
   #  provider: google
   #  property: UA-143467500-1
 
-  min_python_version: 3.11
+  min_python_version: 3.12
   min_invoke_version: 2.0.0
   django_version: 5.2
   docker_postgres_version: 17
+  min_postgres_version: 14
+  min_mysql_version: 8.0.11
+  min_sqlite_version: 3.31.0
 
   version:
     default: stable

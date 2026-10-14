@@ -30,8 +30,8 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import type { ImportSessionState } from '../../hooks/UseImportSession';
-import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { RenderRemoteInstance } from '../render/Instance';
+import { InvenTreeTable } from '../tables/InvenTreeTable';
 
 function ImporterDataCell({
   session,
@@ -172,15 +172,6 @@ export default function ImporterDataSelector({
           description: fieldDef.help_text,
           filters: filters
         };
-
-        console.log('Defined Field:', field);
-        console.log({
-          ...fieldDef,
-          ...customField,
-          field_type: fieldDef.type,
-          description: fieldDef.help_text,
-          filters: filters
-        });
       }
     }
 

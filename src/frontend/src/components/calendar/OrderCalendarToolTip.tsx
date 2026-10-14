@@ -10,10 +10,13 @@ import { RenderOwner } from '../render/User';
 export default function OrderCalendarToolTip({
   event,
   instanceLookup,
+  extraEntries,
   modelType
 }: {
   event: EventContentArg;
+  prefix?: string | React.ReactNode;
   instanceLookup: string;
+  extraEntries?: { label: string; value: string | React.ReactNode }[];
   modelType: ModelType;
 }) {
   // Extract the order instance from the event
@@ -23,24 +26,41 @@ export default function OrderCalendarToolTip({
 
   if (!order) return null;
 
+  const entries = extraEntries || [];
+
+  if (order.project_code_detail?.code) {
+    entries.push({
+      label: t`Project Code`,
+      value: order.project_code_detail.code
+    });
+  }
+
   return (
-    <Stack gap='xs'>
+    <Stack gap='xs' style={{ minWidth: 250 }}>
       <RenderInstance model={modelType} instance={instance} />
       <Divider />
-      <Group gap='xs'>
+      <Group grow gap='xs' justify='space-between'>
         <Text size='sm' fw='bold'>
           {order.reference}
         </Text>
         <Text size='xs'>{order.description || order.title}</Text>
       </Group>
+      {entries.map((entry, index) => (
+        <Group key={index} grow gap='xs' justify='space-between'>
+          <Text size='sm' fw='bold'>
+            {entry.label}
+          </Text>
+          <Text size='xs'>{entry.value}</Text>
+        </Group>
+      ))}
       {order.start_date && (
-        <Group gap='xs'>
+        <Group grow gap='xs' justify='space-between'>
           <Text size='sm' fw='bold'>{t`Start Date`}</Text>
           <Text size='xs'>{formatDate(order.start_date)}</Text>
         </Group>
       )}
       {order.target_date && (
-        <Group gap='xs'>
+        <Group grow gap='xs' justify='space-between'>
           <Text size='sm' fw='bold'>{t`Target Date`}</Text>
           <Text size='xs'>{formatDate(order.target_date)}</Text>
           {order.overdue && (
@@ -51,7 +71,7 @@ export default function OrderCalendarToolTip({
         </Group>
       )}
       {order.responsible && (
-        <Group gap='xs'>
+        <Group grow gap='xs' justify='space-between'>
           <Text size='sm' fw='bold'>{t`Responsible`}</Text>
           <RenderOwner instance={order.responsible_detail} />
         </Group>

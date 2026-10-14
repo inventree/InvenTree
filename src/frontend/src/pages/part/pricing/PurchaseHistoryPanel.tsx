@@ -4,11 +4,12 @@ import { Group, SimpleGrid, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
+import { InvenTreeTable } from '../../../components/tables/InvenTreeTable';
 import { formatCurrency, formatDate } from '../../../defaults/formatters';
-import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 
 export default function PurchaseHistoryPanel({
@@ -115,7 +116,9 @@ export default function PurchaseHistoryPanel({
             order_detail: true,
             has_pricing: true,
             order_complete: true
-          }
+          },
+          modelType: ModelType.purchaseorder,
+          modelField: 'order'
         }}
       />
       {purchaseHistoryData.length > 0 ? (

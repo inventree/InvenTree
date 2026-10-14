@@ -41,6 +41,7 @@ export enum ApiEndpoints {
   auth_email_verify = 'auth/v1/auth/email/verify',
   auth_providers = 'auth/v1/account/providers',
   auth_provider_redirect = 'auth/v1/auth/provider/redirect',
+  auth_provider_signup = 'auth/v1/auth/provider/signup',
   auth_config = 'auth/v1/config',
 
   // Generic API endpoints
@@ -156,6 +157,7 @@ export enum ApiEndpoints {
   stock_assign = 'stock/assign/',
   stock_status = 'stock/status/',
   stock_convert = 'stock/:id/convert/',
+  stock_disassemble = 'stock/:id/disassemble/',
   stock_install = 'stock/:id/install/',
   stock_uninstall = 'stock/:id/uninstall/',
   stock_serialize = 'stock/:id/serialize/',
@@ -251,15 +253,24 @@ export enum ApiEndpoints {
 
   // Miscellaneous API endpoints
   attachment_list = 'attachment/',
+  instance_info = 'instance-info/',
   error_report_list = 'error-report/',
   project_code_list = 'project-code/',
   custom_unit_list = 'units/',
-  notes_image_upload = 'notes-image-upload/',
+  note_list = 'note/',
+  notes_image_list = 'note/image/',
   email_list = 'admin/email/',
   email_test = 'admin/email/test/',
+  admin_oauth = 'admin/oauth2/',
+  admin_oauth_regenerate = 'admin/oauth2/:id/regenerate/',
+  scim_config = 'admin/scim/',
+  scim_generate = 'admin/scim/generate/',
+  scim_disable = 'admin/scim/disable/',
   config_list = 'admin/config/',
+  sso_list = 'admin/sso/',
   parameter_list = 'parameter/',
   parameter_template_list = 'parameter/template/',
+  tag_list = 'tag/',
 
   // Internal system things
   system_internal_trace_end = 'system-internal/observability/end'

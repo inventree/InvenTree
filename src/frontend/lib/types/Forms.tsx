@@ -99,7 +99,9 @@ export type ApiFormFieldType = {
     | 'file upload'
     | 'nested object'
     | 'dependent field'
-    | 'table';
+    | 'table'
+    | 'tags'
+    | 'json';
   api_url?: string;
   pk_field?: string;
   model?: ModelType;
@@ -220,8 +222,6 @@ export interface BulkEditApiFormModalProps extends ApiFormModalProps {
 
 export type StockOperationProps = {
   items?: any[];
-  pk?: number;
   filters?: any;
-  model: ModelType.stockitem | 'location' | ModelType.part;
   refresh: () => void;
 };

@@ -10,13 +10,13 @@ import 'mantine-datatable/styles.css';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-import type * as LinguiCore from '@lingui/core';
-import type * as LinguiReact from '@lingui/react';
+import * as LinguiCore from '@lingui/core';
+import * as LinguiReact from '@lingui/react';
 // Global types to be exported for use in plugins
-import type * as MantineCore from '@mantine/core';
-import type * as MantineNotifications from '@mantine/notifications';
+import * as MantineCore from '@mantine/core';
+import * as MantineNotifications from '@mantine/notifications';
 import * as React from 'react';
-import type * as ReactDOM from 'react-dom';
+import * as ReactDOM from 'react-dom';
 import * as ReactDOMClient from 'react-dom/client';
 
 import './styles/overrides.css';
@@ -24,7 +24,6 @@ import './styles/overrides.css';
 import { getBaseUrl } from '@lib/functions/Navigation';
 import type { HostList } from '@lib/types/Server';
 import MainView from './views/MainView';
-import { loadWindowGlobals } from './window';
 
 // define settings
 declare global {
@@ -123,5 +122,11 @@ ReactDOMClient.createRoot(
   </React.StrictMode>
 );
 
-// Load globals onto the window object, so that they can be accessed by plugins without requiring direct imports
-loadWindowGlobals();
+// All window globals assigned here since these modules are already statically bundled
+window.React = React;
+window.ReactDOM = ReactDOM;
+window.ReactDOMClient = ReactDOMClient;
+window.MantineCore = MantineCore;
+window.MantineNotifications = MantineNotifications;
+window.LinguiCore = LinguiCore;
+window.LinguiReact = LinguiReact;

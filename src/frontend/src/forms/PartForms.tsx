@@ -3,6 +3,7 @@ import { t } from '@lingui/core/macro';
 import { IconBuildingStore, IconCopy, IconPackages } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useGlobalSettingsState } from '../states/SettingsStates';
+import { TagsField } from './CommonFields';
 
 /**
  * Construct a set of fields for creating / editing a Part instance
@@ -54,6 +55,7 @@ export function usePartFields({
         }
       },
       keywords: {},
+      tags: TagsField({}),
       units: {},
       link: {},
       default_location: {
@@ -101,6 +103,9 @@ export function usePartFields({
           setVirtual(value);
         }
       },
+      consumable: {
+        default: false
+      },
       locked: {},
       active: {},
       starred: {
@@ -116,7 +121,7 @@ export function usePartFields({
     if (create && !virtual) {
       fields.copy_category_parameters = {};
 
-      if (virtual != false) {
+      if (globalSettings.isSet('PART_CREATE_INITIAL')) {
         fields.initial_stock = {
           icon: <IconPackages />,
           children: {
@@ -154,7 +159,7 @@ export function usePartFields({
       fields.duplicate = {
         icon: <IconCopy />,
         children: {
-          part: {
+          original: {
             value: duplicatePartInstance?.pk,
             hidden: true
           },

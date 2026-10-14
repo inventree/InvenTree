@@ -38,6 +38,8 @@ class PartPricingAdmin(admin.ModelAdmin):
 
     list_display = ('part', 'overall_min', 'overall_max')
 
+    search_fields = ['part__name', 'part__IPN', 'part__description']
+
     autocomplete_fields = ['part']
 
 
@@ -46,6 +48,8 @@ class PartStocktakeAdmin(admin.ModelAdmin):
     """Admin class for PartStocktake model."""
 
     list_display = ['part', 'date', 'quantity']
+
+    search_fields = ['part__name', 'part__IPN']
 
 
 @admin.register(models.PartCategory)
@@ -62,6 +66,8 @@ class PartCategoryAdmin(admin.ModelAdmin):
 @admin.register(models.PartRelated)
 class PartRelatedAdmin(admin.ModelAdmin):
     """Class to manage PartRelated objects."""
+
+    search_fields = ['part_1__name', 'part_2__name']
 
     autocomplete_fields = ('part_1', 'part_2')
 
@@ -110,6 +116,10 @@ class PartSellPriceBreakAdmin(admin.ModelAdmin):
 
     list_display = ('part', 'quantity', 'price')
 
+    search_fields = ['part__name', 'part__IPN']
+
+    autocomplete_fields = ('part',)
+
 
 @admin.register(models.PartInternalPriceBreak)
 class PartInternalPriceBreakAdmin(admin.ModelAdmin):
@@ -121,5 +131,7 @@ class PartInternalPriceBreakAdmin(admin.ModelAdmin):
         model = models.PartInternalPriceBreak
 
     list_display = ('part', 'quantity', 'price')
+
+    search_fields = ['part__name', 'part__IPN']
 
     autocomplete_fields = ('part',)

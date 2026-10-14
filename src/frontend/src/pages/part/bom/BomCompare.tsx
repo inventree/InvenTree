@@ -26,7 +26,7 @@ import { useSearchParams } from 'react-router-dom';
 import { api } from '../../../App';
 import { StandaloneField } from '../../../components/forms/StandaloneField';
 import Expand from '../../../components/items/Expand';
-import { RenderPartColumn } from '../../../tables/ColumnRenderers';
+import { RenderPartColumn } from '../../../components/tables/ColumnRenderers';
 
 // Field to check for differences when comparing BOM items
 const DELTA_FIELDS = {
@@ -338,9 +338,9 @@ export function BomCompareDrawer({
         // Show only *common* parts
         rows = rows.filter((row) => row.match);
         break;
-      default:
       case 'all':
         break;
+      default:
     }
 
     // Return rows, sorted by part name

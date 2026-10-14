@@ -14,6 +14,8 @@ Individuals and companies can also support via [GitHub sponsors](https://github.
 - [Codecov](https://codecov.io) - Code coverage as a service, used to track the code coverage of the various components
 - [Netlify](https://www.netlify.com/) - Static site hosting provider, used to test deploy the frontend and website
 - [Depot](https://depot.dev/?utm_source=inventree) - Docker build accelerator, used to build the multi-arch images for the InvenTree docker image
+ - [CodSpeed](https://codspeed.io/) - Performance testing platform, used to track the performance of a few performance benchmarks
+- [Flakiness](https://flakiness.io/) - Frontend test flakiness detection, used to track the flakiness of the various test harnesses
 
 ## Past Supporters
 

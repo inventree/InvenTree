@@ -26,9 +26,18 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
+import {
+  DateColumn,
+  DescriptionColumn,
+  NoteColumn,
+  UserColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { useTestResultFields } from '../../forms/StockForms';
+import { compareTestResults } from '../../functions/comparison';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -36,14 +45,6 @@ import {
 } from '../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
-import {
-  DateColumn,
-  DescriptionColumn,
-  NoteColumn,
-  UserColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import RowExpansionIcon from '../RowExpansionIcon';
 
 export default function StockItemTestResultTable({
   partId,
@@ -110,12 +111,14 @@ export default function StockItemTestResultTable({
       });
 
       // Iterate through the returned records
-      // Note that the results are sorted by oldest first,
-      // to ensure that the most recent result is displayed "on top"
+      // Sort test results using the same priority as the backend:
+      // finished_datetime -> started_datetime -> date -> pk
+      // Note: compareTestResults sorts newest-first, but we need to iterate
+      // oldest-first here, so that the most recent result is processed last
+      // and ends up displayed as the primary result for its template.
       records
-        .sort((a: any, b: any) => {
-          return a.pk > b.pk ? 1 : -1;
-        })
+        .toSorted(compareTestResults)
+        .toReversed()
         .forEach((record) => {
           // Find matching template
           const idx = results.findIndex(
@@ -144,6 +147,7 @@ export default function StockItemTestResultTable({
           title: t`Test`,
           switchable: false,
           sortable: true,
+          filter: ['enabled', 'required'],
           render: (record: any) => {
             const enabled = record.enabled ?? record.template_detail?.enabled;
             const installed =
@@ -466,7 +470,7 @@ export default function StockItemTestResultTable({
           return null;
         }
 
-        const results = record?.results ?? [];
+        const results = record?.results?.toReversed() ?? [];
 
         return (
           <DataTable
@@ -474,7 +478,7 @@ export default function StockItemTestResultTable({
             idAccessor={'test'}
             noHeader
             columns={cols}
-            records={results.slice(0, -1)}
+            records={results}
           />
         );
       }

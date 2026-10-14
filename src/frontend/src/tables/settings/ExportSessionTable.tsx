@@ -8,10 +8,10 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
+import { DateColumn } from '../../components/tables/ColumnRenderers';
+import { UserFilter } from '../../components/tables/Filter';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
-import { DateColumn } from '../ColumnRenderers';
-import { UserFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ExportSessionTable() {
   const table = useTable('exportsession');

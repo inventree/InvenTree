@@ -19,7 +19,7 @@ if __name__ == '__main__':
         os.mkdir(STATIC_FOLDER)
 
     print('Downloading tabler icons...')
-    os.system(f'npm install --prefix {TMP_FOLDER} @tabler/icons @tabler/icons-webfont')
+    os.system(f'npm install --prefix {TMP_FOLDER} @tabler/icons @tabler/icons-webfont')  # ty:ignore[deprecated]
 
     print(f'Copying tabler icons to {STATIC_FOLDER}...')
 

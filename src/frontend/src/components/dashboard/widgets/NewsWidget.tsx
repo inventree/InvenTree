@@ -130,9 +130,13 @@ export default function NewsWidget() {
                   <NewsItem key={item.pk} item={item} onMarkRead={markRead} />
                 ))
               ) : (
-                <Alert color='green' title={t`No News`}>
-                  <Text>{t`There are no unread news items`}</Text>
-                </Alert>
+                <Table.Tr>
+                  <Table.Td colSpan={3}>
+                    <Alert color='green' title={t`No News`}>
+                      <Text>{t`There are no unread news items`}</Text>
+                    </Alert>
+                  </Table.Td>
+                </Table.Tr>
               )}
             </Table.Tbody>
           </Table>

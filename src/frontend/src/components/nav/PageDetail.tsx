@@ -1,17 +1,20 @@
 import { Group, Paper, Space, Stack, Text } from '@mantine/core';
-import { useHotkeys } from '@mantine/hooks';
 
 import { StylishText } from '@lib/components/StylishText';
+import { useInvenTreeHotkeys } from '@lib/functions/Events';
 import { shortenString } from '@lib/functions/String';
+import { t } from '@lingui/core/macro';
 import { Fragment, type ReactNode, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useDetailNavigation } from '../../hooks/UseDetailNavigation';
 import { usePluginUIFeature } from '../../hooks/UsePluginUIFeature';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import PrimaryActionButton from '../buttons/PrimaryActionButton';
 import { ApiImage } from '../images/ApiImage';
 import { ApiIcon } from '../items/ApiIcon';
 import type { PrimaryActionUIFeature } from '../plugins/PluginUIFeatureTypes';
-import { type Breadcrumb, BreadcrumbList } from './BreadcrumbList';
+import type { Breadcrumb } from './BreadcrumbList';
+import { PageDetailNavigationBar } from './PageDetailNavigationBar';
 import PageTitle from './PageTitle';
 
 interface PageDetailInterface {
@@ -52,9 +55,12 @@ export function PageDetail({
   const userSettings = useUserSettingsState();
   const navigate = useNavigate();
   const location = useLocation();
-  useHotkeys([
+  const detailNavigation = useDetailNavigation();
+
+  useInvenTreeHotkeys([
     [
       'mod+E',
+      t`Edit`,
       (event) => {
         if (event.repeat) {
           return;
@@ -65,6 +71,7 @@ export function PageDetail({
       }
     ]
   ]);
+  useActionHotkeys(actions);
 
   const pageTitleString = useMemo(
     () =>
@@ -130,12 +137,11 @@ export function PageDetail({
     <>
       <PageTitle title={pageTitleString} />
       <Stack gap='xs'>
-        {computedBreadcrumbs && computedBreadcrumbs.length > 0 && (
-          <BreadcrumbList
-            navCallback={breadcrumbAction}
-            breadcrumbs={computedBreadcrumbs}
-          />
-        )}
+        <PageDetailNavigationBar
+          breadcrumbAction={breadcrumbAction}
+          breadcrumbs={computedBreadcrumbs ?? []}
+          detailNavigation={detailNavigation}
+        />
         <Paper p='xs' radius='xs' shadow='xs'>
           <Group
             justify='space-between'
@@ -180,8 +186,8 @@ export function PageDetail({
                 </Group>
               )}
             </Group>
-            {computedActions && (
-              <Group gap={5} justify='right' wrap='nowrap' align='flex-start'>
+            {computedActions.length > 0 && (
+              <Group gap={5} justify='right' wrap='nowrap' align='center'>
                 {computedActions.map((action, idx) => (
                   <Fragment key={idx}>{action}</Fragment>
                 ))}
@@ -192,4 +198,75 @@ export function PageDetail({
       </Stack>
     </>
   );
+}
+
+function useActionHotkeys(actions: ReactNode[] = []) {
+  const hotkeys = useMemo(() => extractHotkeys(actions), [actions]);
+
+  useInvenTreeHotkeys(
+    hotkeys.map(({ hotkey, onClick, name }) => [
+      hotkey,
+      name,
+      (event) => {
+        if (event.repeat) {
+          return;
+        }
+        onClick();
+      }
+    ])
+  );
+}
+
+function extractHotkeys(actions: ReactNode[]) {
+  const calcActions = actions
+    .filter(
+      (action) =>
+        action &&
+        typeof action === 'object' &&
+        'hotkey' in action &&
+        action.hotkey
+    )
+    .map((action: any) => {
+      return {
+        hotkey: action?.hotkey,
+        name: action?.name,
+        onClick: action?.onClick
+      };
+    })
+    .filter((action) => action !== null);
+
+  let primaryActionHotkeyAdded = false;
+  // now iterate over the actions to extract more possible hotkeys
+  actions.forEach((action: any) => {
+    const typeName = action?.type?.name;
+
+    // dropdowns - nested actions
+    if (typeName === 'ActionDropdown' || typeName === 'OptionsActionDropdown') {
+      const dropdownActions = action?.props?.actions as any[];
+      dropdownActions.forEach((dropdownAction: any) => {
+        if (dropdownAction.hotkey) {
+          calcActions.push({
+            hotkey: dropdownAction.hotkey,
+            name: dropdownAction.name,
+            onClick: dropdownAction.onClick
+          });
+        }
+      });
+    }
+
+    // PrimaryActionButton - use the 'mod+A' hotkey if it is enabled
+    if (typeName === 'PrimaryActionButton' && action?.props?.hidden !== true) {
+      if (primaryActionHotkeyAdded) return;
+
+      const hotkey = action?.props?.hotkey ?? 'mod+A';
+      calcActions.push({
+        hotkey,
+        name:
+          action?.props?.tooltip ?? action?.props?.title ?? t`Primary Action`,
+        onClick: action?.props?.onClick
+      });
+      primaryActionHotkeyAdded = true;
+    }
+  });
+  return calcActions;
 }

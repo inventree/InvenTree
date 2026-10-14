@@ -15,7 +15,7 @@ export default function PartAllocationPanel({ part }: Readonly<{ part: any }>) {
       multiple={true}
       defaultValue={['buildallocations', 'salesallocations']}
     >
-      {part.component && user.hasViewRole(UserRoles.build) && (
+      {part.component && user.hasViewVisible(UserRoles.build) && (
         <Accordion.Item value='buildallocations' key='buildallocations'>
           <Accordion.Control>
             <StylishText size='lg'>{t`Build Order Allocations`}</StylishText>
@@ -25,7 +25,7 @@ export default function PartAllocationPanel({ part }: Readonly<{ part: any }>) {
           </Accordion.Panel>
         </Accordion.Item>
       )}
-      {part.salable && user.hasViewRole(UserRoles.sales_order) && (
+      {part.salable && user.hasViewVisible(UserRoles.sales_order) && (
         <Accordion.Item value='salesallocations' key='salesallocations'>
           <Accordion.Control>
             <StylishText size='lg'>{t`Sales Order Allocations`}</StylishText>

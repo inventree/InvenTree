@@ -255,6 +255,11 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
             [(s['config_type'], s['key']) for s in response.data],
         )
 
+        # A user without 'admin.view' cannot read or write machine settings
+        self.clearRoles()
+        self.get(machine_setting_url, expected_code=403)
+        self.patch(machine_setting_url, {'value': 'x'}, expected_code=403)
+
     def test_machine_settings_list(self):
         """Test machine settings list API endpoint."""
         machine = MachineConfig.objects.create(
@@ -278,6 +283,10 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
             for key in ['api_url', 'pk', 'typ', 'key']:
                 self.assertIn(key, item)
 
+        # A user without 'admin.view' cannot read machine settings
+        self.clearRoles()
+        self.get(url, expected_code=403)
+
     def test_machine_restart(self):
         """Test machine restart API endpoint."""
         machine = MachineConfig.objects.create(
@@ -287,14 +296,23 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
             active=True,
         )
 
+        restart_url = reverse('api-machine-restart', kwargs={'pk': machine.pk})
+
+        # Non-staff users must not be able to restart a machine
+        self.user.is_staff = False
+        self.user.save()
+        self.post(restart_url, expected_code=403)
+
+        # Restore staff access
+        self.user.is_staff = True
+        self.user.save()
+
         # verify machine status before restart
         response = self.get(reverse('api-machine-detail', kwargs={'pk': machine.pk}))
         self.assertEqual(response.data['status_text'], '')
 
         # restart the machine
-        response = self.post(
-            reverse('api-machine-restart', kwargs={'pk': machine.pk}), expected_code=200
-        )
+        self.post(restart_url, expected_code=200)
 
         # verify machine status after restart
         response = self.get(reverse('api-machine-detail', kwargs={'pk': machine.pk}))

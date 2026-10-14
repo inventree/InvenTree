@@ -5,6 +5,7 @@ import {
   IconBox,
   IconBuildingFactory2,
   IconCurrencyDollar,
+  IconDeviceDesktop,
   IconFileAnalytics,
   IconFingerprint,
   IconList,
@@ -13,7 +14,6 @@ import {
   IconQrcode,
   IconServerCog,
   IconShoppingCart,
-  IconTransfer,
   IconTruckDelivery
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -54,9 +54,6 @@ export default function SystemSettings() {
                 'INVENTREE_SHOW_SUPERUSER_BANNER',
                 'INVENTREE_SHOW_ADMIN_BANNER',
                 'INVENTREE_RESTRICT_ABOUT',
-                'DISPLAY_FULL_NAMES',
-                'DISPLAY_PROFILE_INFO',
-                'WEEK_STARTS_ON',
                 'INVENTREE_UPLOAD_MAX_SIZE',
                 'INVENTREE_STRICT_URLS'
               ]}
@@ -129,6 +126,21 @@ export default function SystemSettings() {
         )
       },
       {
+        name: 'display',
+        label: t`Display`,
+        icon: <IconDeviceDesktop />,
+        content: (
+          <GlobalSettingList
+            keys={[
+              'DISPLAY_FULL_NAMES',
+              'DISPLAY_PROFILE_INFO',
+              'WEEK_STARTS_ON',
+              'CALENDAR_HORIZON_MONTHS'
+            ]}
+          />
+        )
+      },
+      {
         name: 'notifications',
         label: t`Notifications`,
         icon: <IconBellCog />,
@@ -186,6 +198,7 @@ export default function SystemSettings() {
               'REPORT_ENABLE',
               'REPORT_DEFAULT_PAGE_SIZE',
               'REPORT_DEBUG_MODE',
+              'REPORT_FETCH_URLS',
               'REPORT_LOG_ERRORS',
               'LABEL_ENABLE',
               'LABEL_DPI'
@@ -259,6 +272,7 @@ export default function SystemSettings() {
                 'STOCK_SHOW_INSTALLED_ITEMS',
                 'STOCK_ENFORCE_BOM_INSTALLATION',
                 'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER',
+                'STOCK_MERGE_ON_TRANSFER',
                 'TEST_STATION_DATA'
               ]}
             />
@@ -288,6 +302,15 @@ export default function SystemSettings() {
                 'STOCK_TRACKING_DELETE_DAYS'
               ]}
             />
+            <GlobalSettingList
+              heading={t`Transfer Orders`}
+              keys={[
+                'TRANSFERORDER_ENABLED',
+                'TRANSFERORDER_REFERENCE_PATTERN',
+                'TRANSFERORDER_REQUIRE_RESPONSIBLE',
+                'TRANSFERORDER_EDIT_COMPLETED_ORDERS'
+              ]}
+            />
           </Stack>
         )
       },
@@ -300,6 +323,7 @@ export default function SystemSettings() {
             <GlobalSettingList
               heading={t`Build Orders`}
               keys={[
+                'BUILDORDER_ENABLED',
                 'BUILDORDER_REFERENCE_PATTERN',
                 'BUILDORDER_REQUIRE_RESPONSIBLE',
                 'BUILDORDER_REQUIRE_ACTIVE_PART',
@@ -327,11 +351,13 @@ export default function SystemSettings() {
           <GlobalSettingList
             heading={t`Purchase Orders`}
             keys={[
+              'PURCHASEORDER_ENABLED',
               'PURCHASEORDER_REFERENCE_PATTERN',
               'PURCHASEORDER_REQUIRE_RESPONSIBLE',
               'PURCHASEORDER_CONVERT_CURRENCY',
               'PURCHASEORDER_EDIT_COMPLETED_ORDERS',
-              'PURCHASEORDER_AUTO_COMPLETE'
+              'PURCHASEORDER_AUTO_COMPLETE',
+              'PURCHASEORDER_DEFAULT_RECEIVE_LOCATION'
             ]}
           />
         )
@@ -345,6 +371,7 @@ export default function SystemSettings() {
             <GlobalSettingList
               heading={t`Sales Orders`}
               keys={[
+                'SALESORDER_ENABLED',
                 'SALESORDER_REFERENCE_PATTERN',
                 'SALESORDER_REQUIRE_RESPONSIBLE',
                 'SALESORDER_DEFAULT_SHIPMENT',
@@ -364,20 +391,6 @@ export default function SystemSettings() {
               ]}
             />
           </Stack>
-        )
-      },
-      {
-        name: 'transferorders',
-        label: t`Transfer Orders`,
-        icon: <IconTransfer />,
-        content: (
-          <GlobalSettingList
-            keys={[
-              'TRANSFERORDER_ENABLED',
-              'TRANSFERORDER_REFERENCE_PATTERN',
-              'TRANSFERORDER_REQUIRE_RESPONSIBLE'
-            ]}
-          />
         )
       },
       {

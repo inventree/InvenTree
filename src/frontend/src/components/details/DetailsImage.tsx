@@ -406,6 +406,10 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
   const { hovered, ref } = useHover();
   const [img, setImg] = useState<string>(props.src ?? backup_image);
 
+  useEffect(() => {
+    setImg(props.src ?? backup_image);
+  }, [props.src]);
+
   // Sets a new image, and triggers upstream instance refresh
   const setAndRefresh = (image: string) => {
     setImg(image);

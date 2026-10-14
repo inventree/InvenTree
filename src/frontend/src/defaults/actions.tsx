@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import type { SpotlightActionData } from '@mantine/spotlight';
 import {
   IconBarcode,
+  IconDevicesPc,
   IconLink,
   IconPlug,
   IconPointer,
@@ -9,12 +10,14 @@ import {
   IconSettings,
   IconTags,
   IconUserBolt,
-  IconUserCog
+  IconUserCog,
+  IconUsers
 } from '@tabler/icons-react';
 import type { NavigateFunction } from 'react-router-dom';
 
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
-import { ModelType, UserRoles } from '@lib/index';
+import { ModelType, StylishText, UserRoles } from '@lib/index';
+import { Trans } from '@lingui/react/macro';
 import { openContextModal } from '@mantine/modals';
 import { useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
@@ -23,10 +26,23 @@ import { useGlobalSettingsState } from '../states/SettingsStates';
 import { useUserState } from '../states/UserState';
 import { aboutInvenTree, docLinks, licenseInfo, serverInfo } from './links';
 
-export function openQrModal(navigate: NavigateFunction) {
+function openQrModal(navigate: NavigateFunction) {
   return openContextModal({
     modal: 'qr',
     innerProps: { navigate: navigate }
+  });
+}
+
+function openHotkeys() {
+  return openContextModal({
+    modal: 'hotkey',
+    title: (
+      <StylishText size='xl'>
+        <Trans>Hotkeys</Trans>
+      </StylishText>
+    ),
+    size: 'xl',
+    innerProps: {}
   });
 }
 
@@ -91,6 +107,13 @@ export function getActions(navigate: NavigateFunction) {
         description: t`Go to your user settings`,
         onClick: () => navigate('/settings/user'),
         leftSection: <IconUserCog size='1.2rem' />
+      },
+      {
+        id: 'hotkeys',
+        label: t`Hotkeys`,
+        description: t`View a list of available hotkeys`,
+        onClick: () => openHotkeys(),
+        leftSection: <IconSettings size='1.2rem' />
       }
     ];
 
@@ -104,7 +127,7 @@ export function getActions(navigate: NavigateFunction) {
       });
 
     // Page Actions
-    user?.hasViewRole(UserRoles.purchase_order) &&
+    user?.hasViewVisible(UserRoles.purchase_order) &&
       _actions.push({
         id: 'purchase-orders',
         label: t`Purchase Orders`,
@@ -114,7 +137,7 @@ export function getActions(navigate: NavigateFunction) {
         leftSection: <IconLink size='1.2rem' />
       });
 
-    user?.hasViewRole(UserRoles.sales_order) &&
+    user?.hasViewVisible(UserRoles.sales_order) &&
       _actions.push({
         id: 'sales-orders',
         label: t`Sales Orders`,
@@ -124,8 +147,7 @@ export function getActions(navigate: NavigateFunction) {
         leftSection: <IconLink size='1.2rem' />
       });
 
-    globalSettings.isSet('TRANSFERORDER_ENABLED') &&
-      user?.hasViewRole(UserRoles.transfer_order) &&
+    user?.hasViewVisible(UserRoles.transfer_order) &&
       _actions.push({
         id: 'transfer-orders',
         label: t`Transfer Orders`,
@@ -135,8 +157,7 @@ export function getActions(navigate: NavigateFunction) {
         leftSection: <IconLink size='1.2rem' />
       });
 
-    globalSettings.isSet('RETURNORDER_ENABLED') &&
-      user?.hasViewRole(UserRoles.return_order) &&
+    user?.hasViewVisible(UserRoles.return_order) &&
       _actions.push({
         id: 'return-orders',
         label: t`Return Orders`,
@@ -155,7 +176,7 @@ export function getActions(navigate: NavigateFunction) {
         leftSection: <IconBarcode size='1.2rem' />
       });
 
-    user?.hasViewRole(UserRoles.build) &&
+    user?.hasViewVisible(UserRoles.build) &&
       _actions.push({
         id: 'builds',
         label: t`Build Orders`,
@@ -193,6 +214,16 @@ export function getActions(navigate: NavigateFunction) {
       });
 
     staff &&
+      user?.hasViewPermission(ModelType.user) &&
+      _actions.push({
+        id: 'users',
+        label: t`Users`,
+        description: t`Manage user accounts`,
+        onClick: () => navigate('/settings/admin/user'),
+        leftSection: <IconUsers size='1.2rem' />
+      });
+
+    staff &&
       user?.hasViewPermission(ModelType.pluginconfig) &&
       _actions.push({
         id: 'plugin-settings',
@@ -200,6 +231,16 @@ export function getActions(navigate: NavigateFunction) {
         description: t`Manage InvenTree plugins`,
         onClick: () => navigate('/settings/admin/plugin'),
         leftSection: <IconPlug size='1.2rem' />
+      });
+
+    staff &&
+      user?.hasViewPermission(ModelType.pluginconfig) &&
+      _actions.push({
+        id: 'machine-management',
+        label: t`Machines`,
+        description: t`Manage machines and machine types`,
+        onClick: () => navigate('/settings/admin/machine'),
+        leftSection: <IconDevicesPc size='1.2rem' />
       });
 
     staff &&

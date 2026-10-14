@@ -13,7 +13,12 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
-import { stockLocationFields } from '../../forms/StockForms';
+import {
+  BooleanColumn,
+  DescriptionColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { useStockLocationFields } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import {
   useBulkEditApiFormModal,
@@ -21,8 +26,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Stock location table
@@ -97,6 +100,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
       {
         accessor: 'location_type',
         sortable: false,
+        filter: ['has_location_type', 'location_type'],
         render: (record: any) => record.location_type_detail?.name
       }
     ];
@@ -105,7 +109,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
   const newLocation = useCreateApiFormModal({
     url: ApiEndpoints.stock_location_list,
     title: t`Add Stock Location`,
-    fields: stockLocationFields(),
+    fields: useStockLocationFields(),
     focus: 'name',
     initialData: {
       parent: parentId
@@ -122,7 +126,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
     url: ApiEndpoints.stock_location_list,
     pk: selectedLocation,
     title: t`Edit Stock Location`,
-    fields: stockLocationFields(),
+    fields: useStockLocationFields(),
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 

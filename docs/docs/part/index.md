@@ -53,6 +53,8 @@ A *Template* part is one which can have *variants* which exist underneath it. [R
 
 If a part is designated as an *Assembly* it can be created (or built) from other component parts. As an example, a circuit board assembly is made using multiple electronic components, which are tracked in the system. An *Assembly* Part has a Bill of Materials (BOM) which lists all the required sub-components. [Read further information about BOM management here](../manufacturing/bom.md).
 
+An assembled stock item can also be broken back down into its component parts, using the [disassembly](../stock/disassemble.md) process.
+
 ### Component
 
 If a part is designated as a *Component* it can be used as a sub-component of an *Assembly*. [Read further information about BOM management here](../manufacturing/bom.md)
@@ -87,6 +89,9 @@ A [Purchase Order](../purchasing/purchase_order.md) allows parts to be ordered f
 
 If a part is designated as *Salable* it can be sold to external customers. Setting this flag allows parts to be added to sales orders.
 
+### Consumable
+
+A *Consumable* part is one which is generally used up during a build or other process, rather than being tracked and allocated as a discrete item. Refer to the [consumable parts documentation](./consumable.md) for more information.
 
 ## Locked Parts
 

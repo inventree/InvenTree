@@ -1,4 +1,4 @@
-import test from 'playwright/test';
+import { test } from './baseFixtures';
 
 import { adminuser } from './defaults.js';
 import {
@@ -75,8 +75,8 @@ test('Plugins - User Settings', async ({ browser }) => {
   await navigate(page, 'settings/user/');
   await loadTab(page, 'Plugin Settings');
 
-  // User settings for the "Sample Plugin" should be visible
-  await page.getByRole('button', { name: 'Sample Plugin' }).click();
+  // User settings for the "SampleIntegrationPlugin" should be visible
+  await page.getByRole('button', { name: 'SampleIntegrationPlugin' }).click();
 
   await page.getByText('User Setting 1').waitFor();
   await page.getByText('User Setting 2').waitFor();
@@ -174,7 +174,7 @@ test('Plugins - Panels', async ({ browser }) => {
 
   // Check out each of the plugin panels
   await loadTab(page, 'Broken Panel');
-  await page.getByText('Error occurred while loading plugin content').waitFor();
+  await page.getByText('Error Loading Plugin Content').waitFor();
   await loadTab(page, 'Dynamic Panel');
   await page.getByText('Instance ID: 69');
   await page

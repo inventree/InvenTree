@@ -9,15 +9,32 @@ from typing import Optional
 logger = logging.getLogger('inventree')
 
 
-class BaseEnum(enum.IntEnum):  # noqa: PLW1641
-    """An `Enum` capabile of having its members have docstrings.
+def _new_int(cls, value):
+    """Construct a new int-based enum member with the provided value as its int payload.
+
+    Non-integer values (which are not valid status codes, and are ignored by
+    StatusCode._is_element) fall back to a zero payload.
+    """
+    if isinstance(value, int):
+        return int.__new__(cls, value)
+
+    return int.__new__(cls)
+
+
+class BaseEnum(enum.IntEnum):
+    """An `Enum` capable of having its members have docstrings.
 
     Based on https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums
     """
 
     def __new__(cls, *args):
-        """Assign values on creation."""
-        obj = object.__new__(cls)
+        """Assign values on creation.
+
+        Note: The underlying int payload must be set (via int.__new__) to match the value,
+        otherwise any operation which uses the raw int (e.g. '!=', '<', bool(), json.dumps)
+        would see 0 for every member.
+        """
+        obj = _new_int(cls, args[0])
         obj._value_ = args[0]
         return obj
 
@@ -42,11 +59,22 @@ class BaseEnum(enum.IntEnum):  # noqa: PLW1641
 
         return super().__eq__(obj)
 
+    def __hash__(self):
+        """Return integer hash so enum members are usable as dict keys and in sets.
+
+        Required because we define ``__eq__``: Python sets ``__hash__ = None``
+        when ``__eq__`` is overridden without a matching ``__hash__``.
+        """
+        return hash(self.value)
+
     def __ne__(self, obj):
-        """Override inequality operator to allow comparison with int."""
-        if type(self) is type(obj):
-            return super().__ne__(obj)
-        return self.value != obj
+        """Override inequality operator to remain consistent with __eq__."""
+        result = self.__eq__(obj)
+
+        if result is NotImplemented:
+            return result
+
+        return not result
 
 
 class StatusCode(BaseEnum):
@@ -64,7 +92,7 @@ class StatusCode(BaseEnum):
 
     def __new__(cls, *args):
         """Define object out of args."""
-        obj = int.__new__(cls)
+        obj = _new_int(cls, args[0])
         obj._value_ = args[0]
 
         # Normal item definition
@@ -262,7 +290,7 @@ class ColorEnum(Enum):
 class StatusCodeMixin:
     """Mixin class which handles custom 'status' fields.
 
-    - Implements a 'set_stutus' method which can be used to set the status of an object
+    - Implements a 'set_status' method which can be used to set the status of an object
     - Implements a 'get_status' method which can be used to retrieve the status of an object
 
     This mixin assumes that the implementing class has a 'status' field,
@@ -282,7 +310,11 @@ class StatusCodeMixin:
 
         - Ensure custom status code values are correctly updated
         """
-        if self.status_class:
+        # Only need to verify the custom key against the DB if one is actually set -
+        # the 'key' column on InvenTreeCustomUserStateModel is non-nullable, so a
+        # query for key=None (i.e. no custom status) can never match and would only
+        # ever result in a no-op (custom_key is already None in that case).
+        if self.status_class and self.get_custom_status() is not None:
             # Check that the current 'logical key' actually matches the current status code
             custom_values = self.status_class.custom_queryset().filter(
                 logical_key=self.get_status(), key=self.get_custom_status()

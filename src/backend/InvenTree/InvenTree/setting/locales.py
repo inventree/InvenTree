@@ -19,6 +19,7 @@ from django.utils.translation import gettext_lazy as _
 LOCALES = [
     ('ar', _('Arabic')),
     ('bg', _('Bulgarian')),
+    ('ca', _('Catalan')),
     ('cs', _('Czech')),
     ('da', _('Danish')),
     ('de', _('German')),

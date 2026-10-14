@@ -22,8 +22,9 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { getDetailUrl } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
-import { type ApiFormModalProps, getDetailUrl } from '@lib/index';
+import type { ApiFormModalProps } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn, TableState } from '@lib/types/Tables';
 import { showNotification } from '@mantine/notifications';
@@ -35,6 +36,8 @@ import {
   TransferList,
   type TransferListItem
 } from '../../components/items/TransferList';
+import { BooleanColumn } from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { showApiErrorMessage } from '../../functions/notifications';
 import {
   useApiFormModal,
@@ -43,8 +46,6 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
-import { BooleanColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 import type { GroupDetailI } from './GroupTable';
 
 export interface UserDetailI {

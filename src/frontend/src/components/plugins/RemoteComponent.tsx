@@ -1,17 +1,12 @@
 import { t } from '@lingui/core/macro';
-import { Alert, MantineProvider, Stack, Text } from '@mantine/core';
-import { IconExclamationCircle } from '@tabler/icons-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Alert, Stack, Text } from '@mantine/core';
+import { useRef } from 'react';
 
 import { Boundary } from '@lib/components/Boundary';
 import { identifierString } from '@lib/functions/Conversion';
 import type { InvenTreePluginContext } from '@lib/types/Plugins';
-import { type Root, createRoot } from 'react-dom/client';
-import { api, queryClient } from '../../App';
-import { ApiProvider } from '../../contexts/ApiContext';
-import { LanguageContext } from '../../contexts/LanguageContext';
-import { useLocalState } from '../../states/LocalState';
-import { findExternalPluginFunction } from './PluginSource';
+import { IconExclamationCircle } from '@tabler/icons-react';
+import { useRemotePlugin } from '../../hooks/UseRemotePlugin';
 
 /**
  * A remote component which can be used to display plugin content.
@@ -31,125 +26,39 @@ export default function RemoteComponent({
   defaultFunctionName: string;
   context: InvenTreePluginContext;
 }>) {
-  const componentRef = useRef<HTMLDivElement | null>(null);
-  const rootElement = useRef<Root | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    if (componentRef.current && rootElement.current === null) {
-      rootElement.current = createRoot(componentRef.current);
-    }
-  }, [rootElement]);
+  const { componentFn, errorMsg, exportName, pluginContext, remountKey } =
+    useRemotePlugin({
+      context,
+      source,
+      defaultFunctionName,
+      containerRef
+    });
 
-  const [renderingError, setRenderingError] = useState<string | undefined>(
-    undefined
+  const content = componentFn ? (
+    componentFn(pluginContext)
+  ) : (
+    <div ref={containerRef} />
   );
 
-  const func: string = useMemo(() => {
-    // Attempt to extract the function name from the source
-    const { getHost } = useLocalState.getState();
-    const url = new URL(source, getHost());
-
-    if (url.pathname.includes(':')) {
-      const parts = url.pathname.split(':');
-      return parts[1] || defaultFunctionName; // Use the second part as the function name, or fallback to default
-    } else {
-      return defaultFunctionName;
-    }
-  }, [source, defaultFunctionName]);
-
-  const reloadPluginContent = useCallback(() => {
-    if (!rootElement.current) {
-      return;
-    }
-
-    const ctx: InvenTreePluginContext = {
-      ...context,
-      reloadContent: reloadPluginContent
-    };
-
-    if (source && defaultFunctionName) {
-      findExternalPluginFunction(source, func)
-        .then((func) => {
-          if (!!func) {
-            try {
-              if (func.length > 1) {
-                // Support "legacy" plugin functions which call createRoot() internally
-                // Ref: https://github.com/inventree/InvenTree/pull/9439/
-                func(componentRef.current, ctx);
-              } else {
-                // Render the plugin component into the target element
-                // Note that we have to provide the right context(s) to the component
-                // This approach ensures that the component is rendered in the correct context tree
-                rootElement.current?.render(
-                  <ApiProvider client={queryClient} api={api}>
-                    <MantineProvider
-                      theme={ctx.theme}
-                      defaultColorScheme={ctx.colorScheme}
-                    >
-                      <LanguageContext>{func(ctx)}</LanguageContext>
-                    </MantineProvider>
-                  </ApiProvider>
-                );
-              }
-
-              setRenderingError('');
-            } catch (error) {
-              setRenderingError(`${error}`);
-              console.error(error);
-            }
-          } else {
-            setRenderingError(`${source} / ${func}`);
-          }
-        })
-        .catch((_error) => {
-          console.error(
-            `ERR: Failed to load remote plugin function: ${source} /${func}`
-          );
-        });
-    } else {
-      setRenderingError(
-        `${t`Invalid source or function name`} - ${source} /${func}`
-      );
-    }
-  }, [
-    componentRef.current,
-    rootElement.current,
-    source,
-    defaultFunctionName,
-    context
-  ]);
-
-  // Reload the plugin content dynamically
-  useEffect(() => {
-    reloadPluginContent();
-  }, [
-    func,
-    rootElement.current,
-    context.id,
-    context.model,
-    context.instance,
-    context.user,
-    context.colorScheme,
-    context.locale,
-    context.context
-  ]);
-
   return (
-    <Boundary label={identifierString(`RemoteComponent-${func}`)}>
-      <Stack gap='xs'>
-        {renderingError && (
-          <Alert
-            color='red'
-            title={t`Error Loading Content`}
-            icon={<IconExclamationCircle />}
-          >
-            <Text>
-              {t`Error occurred while loading plugin content`}: {renderingError}
-            </Text>
-          </Alert>
-        )}
-        {componentRef && <div ref={componentRef as any} />}
-      </Stack>
-    </Boundary>
+    <Stack>
+      {errorMsg && (
+        <Alert
+          color='red'
+          title={t`Error Loading Plugin Content`}
+          icon={<IconExclamationCircle />}
+        >
+          <Text>{errorMsg}</Text>
+        </Alert>
+      )}
+      <Boundary
+        key={remountKey}
+        label={identifierString(`RemoteComponent-${exportName}`)}
+      >
+        {content}
+      </Boundary>
+    </Stack>
   );
 }

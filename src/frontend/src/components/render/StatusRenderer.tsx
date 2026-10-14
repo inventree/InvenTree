@@ -203,6 +203,31 @@ export const StatusRenderer = ({
 };
 
 /*
+ * Return a CSS color string (Mantine CSS variable) for a given status code.
+ * Used to set event background colors in calendar views.
+ */
+export function getStatusColor(
+  type: ModelType | string,
+  status: string | number
+): string {
+  const statusCodes = getStatusCodes(type);
+  const fallback = `var(--mantine-color-${statusColorMap['default']}-6)`;
+
+  if (!statusCodes) return fallback;
+
+  for (const name in statusCodes.values) {
+    const entry: StatusCodeInterface = statusCodes.values[name];
+    if (entry?.key == status) {
+      const mantineColor =
+        statusColorMap[entry.color] ?? statusColorMap['default'];
+      return `var(--mantine-color-${mantineColor}-6)`;
+    }
+  }
+
+  return fallback;
+}
+
+/*
  * Render the status badge in a table
  */
 export function TableStatusRenderer(

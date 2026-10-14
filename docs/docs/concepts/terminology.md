@@ -9,7 +9,7 @@ There are different systems in the industry for the management of getting, stori
 **InvenTree** is mainly focused on [**IMS**](#inventory-management-system-ims) and [**PLM**](#part-library-management-plm) functionality.
 
 ### Inventory Management System *(IMS)*
-Evolves around manufacturing of parts out of other parts. It keeps track of stock, part origin, orders, shelf live and more.
+Evolves around manufacturing of parts out of other parts. It keeps track of stock, part origin, orders, shelf life and more.
 
 ### Part Library Management *(PLM)*
 Keeps track of BOMs, part variants, possible substitutions, versions, IPNs and further part parameters.

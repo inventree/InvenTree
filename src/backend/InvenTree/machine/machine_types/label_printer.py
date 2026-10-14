@@ -207,6 +207,10 @@ class LabelPrinterBaseDriver(BaseDriver):
             ```
         """
 
+        def __init__(self, machine=None, *args, **kwargs):
+            """Initialize the printing options serializer."""
+            super().__init__(*args, **kwargs)
+
         copies = serializers.IntegerField(
             default=1,
             label=_('Copies'),
@@ -267,4 +271,4 @@ class LabelPrinterMachine(BaseMachineType):
         if not location_pk:
             return None
 
-        return StockLocation.objects.get(pk=location_pk)
+        return StockLocation.objects.filter(pk=location_pk).first()

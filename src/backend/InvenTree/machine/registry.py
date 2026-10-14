@@ -432,7 +432,7 @@ class MachineRegistry(
             data.update(str(pk).encode())
             try:
                 data.update(str(machine.machine_config.active).encode())
-            except:
+            except Exception:
                 # machine does not exist anymore, hash will be different
                 pass
 

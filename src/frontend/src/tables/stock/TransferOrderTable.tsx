@@ -5,15 +5,13 @@ import { AddItemButton, UserRoles, useTable } from '@lib/index';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
-import { useTransferOrderFields } from '../../forms/TransferOrderForms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
 import {
   BooleanColumn,
   CompletionDateColumn,
   CreatedByColumn,
   CreationDateColumn,
   DescriptionColumn,
+  LineItemsProgressColumn,
   LocationColumn,
   ProjectCodeColumn,
   ReferenceColumn,
@@ -21,29 +19,12 @@ import {
   StartDateColumn,
   StatusColumn,
   TargetDateColumn
-} from '../ColumnRenderers';
-import {
-  AssignedToMeFilter,
-  CompletedAfterFilter,
-  CompletedBeforeFilter,
-  CreatedAfterFilter,
-  CreatedBeforeFilter,
-  CreatedByFilter,
-  HasProjectCodeFilter,
-  IncludeVariantsFilter,
-  MaxDateFilter,
-  MinDateFilter,
-  OrderStatusFilter,
-  OutstandingFilter,
-  OverdueFilter,
-  ProjectCodeFilter,
-  ResponsibleFilter,
-  StartDateAfterFilter,
-  StartDateBeforeFilter,
-  TargetDateAfterFilter,
-  TargetDateBeforeFilter
-} from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { useTransferOrderFields } from '../../forms/TransferOrderForms';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useUserState } from '../../states/UserState';
+import TransferOrderFilters from './TransferOrderFilters';
 
 export function TransferOrderTable({
   partId
@@ -56,45 +37,8 @@ export function TransferOrderTable({
   const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    const filters: TableFilter[] = [
-      OrderStatusFilter({ model: ModelType.transferorder }),
-      OutstandingFilter(),
-      OverdueFilter(),
-      AssignedToMeFilter(),
-      MinDateFilter(),
-      MaxDateFilter(),
-      CreatedBeforeFilter(),
-      CreatedAfterFilter(),
-      TargetDateBeforeFilter(),
-      TargetDateAfterFilter(),
-      StartDateBeforeFilter(),
-      StartDateAfterFilter(),
-      {
-        name: 'has_target_date',
-        type: 'boolean',
-        label: t`Has Target Date`,
-        description: t`Show orders with a target date`
-      },
-      {
-        name: 'has_start_date',
-        type: 'boolean',
-        label: t`Has Start Date`,
-        description: t`Show orders with a start date`
-      },
-      CompletedBeforeFilter(),
-      CompletedAfterFilter(),
-      HasProjectCodeFilter(),
-      ProjectCodeFilter(),
-      ResponsibleFilter(),
-      CreatedByFilter()
-    ];
-
-    if (!!partId) {
-      filters.push(IncludeVariantsFilter());
-    }
-
-    return filters;
-  }, [partId]);
+    return TransferOrderFilters({ includeDateFilters: true });
+  }, []);
 
   const tableColumns = useMemo(() => {
     return [
@@ -114,7 +58,7 @@ export function TransferOrderTable({
         sortable: true,
         switchable: true
       }),
-      //   LineItemsProgressColumn({}),
+      LineItemsProgressColumn({}),
       StatusColumn({ model: ModelType.transferorder }),
       ProjectCodeColumn({
         defaultVisible: false

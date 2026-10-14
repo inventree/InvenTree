@@ -114,9 +114,12 @@ class RegistrationMixin:
         """
         if registration_enabled(self.REGISTRATION_SETTING):
             return True
-        logger.warning(
-            f'INVE-W12: Signup attempt blocked, because registration is disabled via setting {self.REGISTRATION_SETTING}.'
-        )
+        # Only warn when this is an actual signup submission, not when called as
+        # a feature-availability check during login or other auth flows.
+        if request and request.method == 'POST' and 'signup' in request.path:
+            logger.warning(
+                f'INVE-W12: Signup attempt blocked, because registration is disabled via setting {self.REGISTRATION_SETTING}.'
+            )
         return False
 
     def clean_email(self, email):
@@ -196,6 +199,16 @@ class CustomSocialAccountAdapter(RegistrationMixin, DefaultSocialAccountAdapter)
 
     REGISTRATION_SETTING = 'LOGIN_ENABLE_SSO_REG'
 
+    def pre_social_login(self, request, sociallogin):
+        """Reject SSO logins outright while SSO is disabled via settings.
+
+        This runs for every social login attempt (new or existing account),
+        not just self-registration - LOGIN_ENABLE_SSO_REG only gates signup.
+        """
+        if not get_global_setting('LOGIN_ENABLE_SSO'):
+            raise PermissionDenied('SSO is disabled')
+        super().pre_social_login(request, sociallogin)
+
     def is_auto_signup_allowed(self, request, sociallogin):
         """Check if auto signup is enabled in settings."""
         if get_global_setting('LOGIN_SIGNUP_SSO_AUTO', True):
@@ -203,9 +216,10 @@ class CustomSocialAccountAdapter(RegistrationMixin, DefaultSocialAccountAdapter)
         return False
 
     def authentication_error(
-        self, request, provider_id, error=None, exception=None, extra_context=None
+        self, request, provider, error=None, exception=None, extra_context=None
     ):
         """Callback method for authentication errors."""
+        provider_id = getattr(provider, 'id', provider)
         if not error:
             error = request.GET.get('error', None)
 

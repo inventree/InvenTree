@@ -11,8 +11,8 @@ import useTable from '@lib/hooks/UseTable';
 import { api } from '../../../../App';
 import { FactCollection } from '../../../../components/settings/FactCollection';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
+import { InvenTreeTable } from '../../../../components/tables/InvenTreeTable';
 import { showApiErrorMessage } from '../../../../functions/notifications';
-import { InvenTreeTable } from '../../../../tables/InvenTreeTable';
 
 /*
  * Table for displaying available currencies

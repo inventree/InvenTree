@@ -3,11 +3,13 @@
 from collections.abc import Iterable
 from typing import Any, Optional
 
+from django.apps import apps as global_apps
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 
+from django_fsm import FSMFieldMixin
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
@@ -89,11 +91,19 @@ class ExtraCustomChoiceField(CustomChoiceField):
         return super().to_representation(value) or value
 
 
-class InvenTreeCustomStatusModelField(models.PositiveIntegerField):
+class InvenTreeCustomStatusModelField(FSMFieldMixin, models.PositiveIntegerField):
     """Custom model field for extendable status codes.
 
-    Adds a secondary *_custom_key field to the model which can be used to store additional status information.
-    Models using this model field must also include the InvenTreeCustomStatusSerializerMixin in all serializers that create or update the value.
+    Extends Django's PositiveIntegerField with FSM (Finite State Machine) support
+    via django-fsm-2, enabling use of the @transition decorator directly on model
+    methods that use this field.
+
+    Adds a secondary *_custom_key field to the model which can be used to store
+    additional status information.
+
+    Models using this model field must also include the
+    InvenTreeCustomStatusSerializerMixin in all serializers that create or update
+    the value.
     """
 
     def __init__(self, *args, **kwargs):
@@ -108,20 +118,38 @@ class InvenTreeCustomStatusModelField(models.PositiveIntegerField):
             validators.append(CustomStatusCodeValidator(status_class=self.status_class))
 
         kwargs['validators'] = validators
+        # FSM protection is disabled by default; direct status assignment is still allowed
+        kwargs.setdefault('protected', False)
         super().__init__(*args, **kwargs)
 
     def deconstruct(self):
-        """Deconstruct the field for migrations."""
-        name, path, args, kwargs = super().deconstruct()
+        """Deconstruct the field for migrations.
 
+        FSM-specific kwargs (protected) are excluded to avoid spurious migrations,
+        since they do not affect the database schema.
+        """
+        name, path, args, kwargs = super().deconstruct()
+        kwargs.pop('protected', None)
         return name, path, args, kwargs
 
     def contribute_to_class(self, cls, name):
-        """Add the _custom_key field to the model."""
+        """Add the _custom_key field to the model.
+
+        Only auto-add the companion field for the 'live' app registry. Any other
+        registry (migration state, or the throwaway model registries that some
+        backends - e.g. SQLite's table-rebuild routine - construct internally)
+        either already has the field explicitly declared, or will get it via a
+        separate migration operation. Auto-adding it there too would create a
+        duplicate field on the model.
+        """
         cls._meta.supports_custom_status = True
 
-        if not hasattr(self, '_custom_key_field') and not hasattr(
-            cls, f'{name}_custom_key'
+        is_live_model = cls._meta.apps is global_apps
+
+        if (
+            is_live_model
+            and not hasattr(self, '_custom_key_field')
+            and not hasattr(cls, f'{name}_custom_key')
         ):
             self.add_field(cls, name)
 
@@ -169,7 +197,7 @@ class InvenTreeCustomStatusModelField(models.PositiveIntegerField):
 
 
 class ExtraInvenTreeCustomStatusModelField(models.PositiveIntegerField):
-    """Custom field used to detect custom extenteded fields.
+    """Custom field used to detect custom extended fields.
 
     This is not intended to be used directly, if you want to support custom states in your model use InvenTreeCustomStatusModelField.
     """
@@ -189,6 +217,12 @@ class InvenTreeCustomStatusSerializerMixin:
     _custom_fields_leader: Optional[list] = None
     _custom_fields_follower: Optional[list] = None
     _is_gathering = False
+
+    # Maps leader field name -> a throwaway instance of that field, built by
+    # `build_standard_field` as it constructs each leader field. Used by a
+    # later 'follower' (*_custom_key) field, built later in the same pass,
+    # to inherit choices/read_only state - see `build_standard_field` below.
+    _custom_leader_fields: Optional[dict] = None
 
     def update(self, instance, validated_data):
         """Ensure the custom field is updated if the leader was changed."""
@@ -260,6 +294,31 @@ class InvenTreeCustomStatusSerializerMixin:
         """Use custom field for custom status model.
 
         This is required because of DRF overwriting all fields with choice sets.
+
+        Note: This method is called *while* the serializer's `fields` cached_property
+        is still being constructed (DRF builds fields one at a time, in `Meta.fields`
+        order). It must not access `self.fields` (or anything that does, like
+        `self.gather_custom_fields()`) - doing so would re-enter the `fields`
+        cached_property while it is already being computed, kicking off a second,
+        fully independent rebuild of the whole field set. Under concurrent access,
+        whichever of the two competing builds finishes last silently wins and gets
+        cached - intermittently dropping unrelated fields built earlier in the
+        original pass (e.g. an OptionalField like `tags`) if the second build
+        finishes without them.
+
+        Instead, a 'leader' field (e.g. `status`) records a throwaway instance of
+        itself on `self._custom_leader_fields` as it is built, so that its
+        'follower' field (`status_custom_key`), built later in the same pass, can
+        read its choices/read_only state directly - without touching `self.fields`.
+
+        That throwaway instance must be built the same way DRF's own `get_fields()`
+        builds the *real* one - which includes merging in `Meta.extra_kwargs` /
+        `Meta.read_only_fields` (e.g. `status` is typically listed as read-only
+        there). DRF applies that merge itself, in `get_fields()`, *after*
+        `build_field()` returns - a step this method is never otherwise party to.
+        Both `get_extra_kwargs()` and `include_extra_kwargs()` are pure functions
+        of `self.Meta` / plain dicts, so - unlike `self.fields` - they're safe to
+        call here.
         """
         field_cls, field_kwargs = super().build_standard_field(field_name, model_field)
         if issubclass(field_cls, ChoiceField) and isinstance(
@@ -268,6 +327,14 @@ class InvenTreeCustomStatusSerializerMixin:
             field_cls = CustomChoiceField
             field_kwargs['choice_mdl'] = model_field.model
             field_kwargs['choice_field'] = model_field.name
+
+            if self._custom_leader_fields is None:
+                self._custom_leader_fields = {}
+            leader_extra_kwargs = self.get_extra_kwargs().get(field_name, {})
+            leader_kwargs = self.include_extra_kwargs(
+                dict(field_kwargs), leader_extra_kwargs
+            )
+            self._custom_leader_fields[field_name] = field_cls(**leader_kwargs)
         elif isinstance(model_field, ExtraInvenTreeCustomStatusModelField):
             field_cls = ExtraCustomChoiceField
             field_kwargs['choice_mdl'] = model_field.model
@@ -275,10 +342,10 @@ class InvenTreeCustomStatusSerializerMixin:
             field_kwargs['is_custom'] = True
 
             # Inherit choices from leader
-            self.gather_custom_fields()
-            if self._custom_fields and field_name in self._custom_fields:
-                leader_field_name = field_name.replace('_custom_key', '')
-                leader_field = self.fields[leader_field_name]
+            leader_field_name = field_name.replace('_custom_key', '')
+            leader_field = (self._custom_leader_fields or {}).get(leader_field_name)
+
+            if leader_field is not None:
                 if hasattr(leader_field, 'choices'):
                     field_kwargs['choices'] = list(leader_field.choices.items())
                 elif hasattr(model_field.model, leader_field_name):

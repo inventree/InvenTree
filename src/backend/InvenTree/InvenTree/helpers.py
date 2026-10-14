@@ -29,12 +29,6 @@ from PIL import Image
 from stdimage.models import StdImageField, StdImageFieldFile
 
 from common.currency import currency_code_default
-from InvenTree.sanitizer import (
-    DEAFAULT_ATTRS,
-    DEFAULT_CSS,
-    DEFAULT_PROTOCOLS,
-    DEFAULT_TAGS,
-)
 
 logger = structlog.get_logger('inventree')
 
@@ -262,27 +256,42 @@ def checkStaticFile(*args) -> bool:
     return static_storage.exists(str(fn))
 
 
-def getLogoImage(as_file=False, custom=True):
-    """Return the InvenTree logo image, or a custom logo if available."""
+def getLogoImage(as_file: bool = False, custom: bool = True) -> str:
+    """Return the InvenTree logo image, or a custom logo if available.
+
+    Arguments:
+        as_file: If True, return a base64-encoded data URI of the image contents,
+                 suitable for embedding directly into a generated report (default = False)
+        custom: If True, return a custom logo if one has been provided (default = True)
+    """
+    # Note: Imported here to avoid circular imports, as the 'report' app also imports from this module
+    import report.helpers
+    from report.templatetags.report import (
+        get_media_file_contents,
+        get_static_file_contents,
+    )
+
     if custom and settings.CUSTOM_LOGO:
         static_storage = StaticFilesStorage()
 
         if static_storage.exists(settings.CUSTOM_LOGO):
-            storage = static_storage
-        elif default_storage.exists(settings.CUSTOM_LOGO):
-            storage = default_storage
-        else:
-            storage = None
-
-        if storage is not None:
             if as_file:
-                return f'file://{storage.path(settings.CUSTOM_LOGO)}'
-            return storage.url(settings.CUSTOM_LOGO)
+                return report.helpers.encode_file_base64(
+                    settings.CUSTOM_LOGO, get_static_file_contents(settings.CUSTOM_LOGO)
+                )
+            return static_storage.url(settings.CUSTOM_LOGO)
+        elif default_storage.exists(settings.CUSTOM_LOGO):
+            if as_file:
+                return report.helpers.encode_file_base64(
+                    settings.CUSTOM_LOGO, get_media_file_contents(settings.CUSTOM_LOGO)
+                )
+            return default_storage.url(settings.CUSTOM_LOGO)
 
     # If we have got to this point, return the default logo
     if as_file:
-        path = settings.STATIC_ROOT.joinpath('img/inventree.png')
-        return f'file://{path}'
+        return report.helpers.encode_file_base64(
+            'img/inventree.png', get_static_file_contents('img/inventree.png')
+        )
     return getStaticUrl('img/inventree.png')
 
 
@@ -939,63 +948,6 @@ def remove_non_printable_characters(value: str, remove_newline=True) -> str:
     return cleaned
 
 
-def clean_markdown(value: str) -> str:
-    """Clean a markdown string.
-
-    This function will remove javascript and other potentially harmful content from the markdown string.
-    """
-    import markdown
-
-    try:
-        markdownify_settings = settings.MARKDOWNIFY['default']
-    except (AttributeError, KeyError):
-        markdownify_settings = {}
-
-    extensions = markdownify_settings.get('MARKDOWN_EXTENSIONS', [])
-    extension_configs = markdownify_settings.get('MARKDOWN_EXTENSION_CONFIGS', {})
-
-    # Generate raw HTML from provided markdown (without sanitizing)
-    # Note: The 'html' output_format is required to generate self closing tags, e.g. <tag> instead of <tag />
-    html = markdown.markdown(
-        value or '',
-        extensions=extensions,
-        extension_configs=extension_configs,
-        output_format='html',
-    )
-
-    # nh3 sanitizer settings
-    whitelist_tags = markdownify_settings.get('WHITELIST_TAGS', DEFAULT_TAGS)
-    whitelist_attrs = markdownify_settings.get('WHITELIST_ATTRS', DEAFAULT_ATTRS)
-    whitelist_styles = markdownify_settings.get('WHITELIST_STYLES', DEFAULT_CSS)
-    whitelist_protocols = markdownify_settings.get(
-        'WHITELIST_PROTOCOLS', DEFAULT_PROTOCOLS
-    )
-
-    # Convert bleach-style attributes (list or dict) to nh3-compatible dict format
-    if isinstance(whitelist_attrs, (list, tuple, set, frozenset)):
-        attrs_dict = {'*': set(whitelist_attrs)}
-    elif isinstance(whitelist_attrs, dict):
-        attrs_dict = {tag: set(allowed) for tag, allowed in whitelist_attrs.items()}
-    else:
-        attrs_dict = None
-
-    # Clean the HTML content (for comparison). This must be the same as the original content
-    clean_html = nh3.clean(
-        html,
-        tags=set(whitelist_tags),
-        attributes=attrs_dict,
-        url_schemes=set(whitelist_protocols),
-        filter_style_properties=set(whitelist_styles),
-        link_rel=None,
-        strip_comments=True,
-    )
-
-    if html != clean_html:
-        raise ValidationError(_('Data contains prohibited markdown content'))
-
-    return value
-
-
 def hash_barcode(barcode_data: str) -> str:
     """Calculate a 'unique' hash for a barcode string.
 
@@ -1198,3 +1150,8 @@ def sanitize_token(token_value: str, front=8, back=12) -> str:
     """
     middle = len(token_value) - (front + back)
     return token_value[:front] + '*' * middle + token_value[-back:]
+
+
+def get_api_token_pepper() -> str:
+    """Return the secret 'pepper' used to compute v2 tokens."""
+    return settings.SECRET_KEY

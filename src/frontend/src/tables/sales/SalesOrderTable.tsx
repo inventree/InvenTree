@@ -9,10 +9,6 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
-import { formatCurrency } from '../../defaults/formatters';
-import { useSalesOrderFields } from '../../forms/SalesOrderForms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
-import { useUserState } from '../../states/UserState';
 import {
   AllocatedLinesProgressColumn,
   CompanyColumn,
@@ -29,8 +25,12 @@ import {
   StatusColumn,
   TargetDateColumn,
   UpdatedAtColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { formatCurrency } from '../../defaults/formatters';
+import { useSalesOrderFields } from '../../forms/SalesOrderForms';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useUserState } from '../../states/UserState';
 import SalesOrderFilters from './SalesOrderFilters';
 
 export function SalesOrderTable({

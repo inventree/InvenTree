@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test';
+import { type Page, expect } from '@playwright/test';
 import { test } from '../baseFixtures.ts';
 import {
   activateCalendarView,
@@ -7,6 +7,7 @@ import {
   getRowFromCell,
   loadTab,
   navigate,
+  openDetailAction,
   setTableChoiceFilter,
   showCalendarView,
   showParametricView,
@@ -40,7 +41,6 @@ test('Build Order - Basic Tests', async ({ browser }) => {
   // We have now loaded the "Build Order" table. Check for some expected texts
   await page.getByPlaceholder('Search').fill('7');
   await page.getByText('On Hold').first().waitFor();
-  await page.getByText('Pending').first().waitFor();
 
   // Load a particular build order
   await page.getByRole('cell', { name: 'BO0017' }).click();
@@ -120,6 +120,52 @@ test('Build Order - Basic Tests', async ({ browser }) => {
     .waitFor();
 });
 
+// Test tags filtering against Build Orders
+test('Build Order - Tags', async ({ browser }) => {
+  const page = await doCachedLogin(browser, {
+    url: 'manufacturing/index/buildorders'
+  });
+
+  // Filter by tag
+  await page
+    .getByRole('button', { name: 'segmented-icon-control-table' })
+    .click();
+  await clearTableFilters(page);
+  await page.getByRole('button', { name: 'table-select-filters' }).click();
+  await page.getByRole('button', { name: 'Add Filter' }).click();
+  await page.getByRole('combobox', { name: 'Filter' }).fill('tag');
+  await page.getByRole('option', { name: 'Tags' }).click();
+  await page.getByRole('combobox', { name: 'Value' }).click();
+
+  // Check for expected tags
+  await page.getByRole('option', { name: 'Furniture' }).waitFor();
+  await page.getByRole('option', { name: 'Electronics' }).click();
+  await page.getByRole('option', { name: 'PCB Assembly' }).click();
+
+  // Apply the "Furniture" tag filter
+  await page.getByRole('button', { name: 'apply-tags-filter' }).click();
+  await page.getByRole('button', { name: 'filter-drawer-close' }).click();
+
+  // Check for expected results
+  await page.getByRole('cell', { name: 'BO0026' }).click();
+  await page.getByText('Build Order: BO0026').first().waitFor();
+  await page.getByText('100 x 002.01-PCBA | Widget').waitFor();
+
+  // Check for tags displayed on BuildOrder detail page
+  await page.getByText('Electronics', { exact: true }).first().waitFor();
+  await page.getByText('PCB Assembly', { exact: true }).first().waitFor();
+
+  // Edit the build order
+  await page.keyboard.press('Control+E');
+
+  const tagsField = await page.getByRole('combobox', {
+    name: 'tags-field-tags'
+  });
+
+  await expect(tagsField).toBeVisible();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
 // Test that the build order reference field increments correctly
 test('Build Order - Reference', async ({ browser }) => {
   const page = await doCachedLogin(browser, {
@@ -182,8 +228,10 @@ test('Build Order - Calendar', async ({ browser }) => {
   await page
     .getByRole('option', { name: 'Part Category', exact: true })
     .click();
-  await page.getByLabel('related-field-filter-category').click();
-  await page.getByText('Part category, level 1').waitFor();
+  await page.getByLabel('tree-field-filter-category').click();
+  await page.getByText('Part category, level 1').click();
+  await page.getByText('Filter by part category').waitFor();
+  await page.getByText('Category 0').first().waitFor();
 
   // Required because we downloaded a file
   await page.context().close();
@@ -232,9 +280,10 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   await page.getByRole('cell', { name: 'BO0011' }).click();
   await loadTab(page, 'Incomplete Outputs');
   await page.getByRole('cell', { name: 'BX-123' }).waitFor();
+  await page.waitForLoadState('networkidle');
 
   // Check the "printing" actions for the selected outputs
-  await page.getByRole('checkbox', { name: 'Select all records' }).check();
+  await page.getByRole('checkbox', { name: 'Select all records' }).click();
   await page
     .getByRole('tabpanel', { name: 'Incomplete Outputs' })
     .getByLabel('action-menu-printing-actions')
@@ -279,9 +328,9 @@ test('Build Order - Build Outputs', async ({ browser }) => {
     .getByRole('img', { name: 'field-batch_code-accept-placeholder' })
     .click();
 
-  await page.getByLabel('related-field-location').click();
-  await page.getByLabel('related-field-location').fill('Reel');
-  await page.getByText('- Electronics Lab/Reel Storage').click();
+  await page.getByLabel('tree-field-location').click();
+  await page.getByLabel('tree-field-location').fill('Reel');
+  await page.getByText('Storage for component reels').click();
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Should be an error as the number of serial numbers doesn't match the quantity
@@ -316,9 +365,10 @@ test('Build Order - Build Outputs', async ({ browser }) => {
   const row2 = await getRowFromCell(cell2);
   await row2.getByLabel(/row-action-menu-/i).click();
   await page.getByRole('menuitem', { name: 'Complete' }).click();
-  await page.getByLabel('related-field-location').click();
+  await page.getByLabel('tree-field-location').click();
+  await page.getByLabel('tree-field-location').fill('Mechanical');
   await page.getByText('Mechanical Lab').click();
-  await page.waitForTimeout(250);
+  await page.waitForTimeout(100);
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Build outputs have been completed').waitFor();
 
@@ -334,6 +384,22 @@ test('Build Order - Build Outputs', async ({ browser }) => {
     )
     .waitFor();
   await page.getByRole('cell', { name: 'Quantity: 16' }).waitFor();
+
+  // Adjust the quantity field - we will only 'partially' scrap this output
+  await page.getByRole('textbox', { name: 'number-field-quantity' }).fill('10');
+
+  // Next, adjust the "location" field - and check that the "quantity" field does not change
+  // Ref: https://github.com/inventree/InvenTree/pull/12081
+  await page.getByLabel('tree-field-location').fill('mechanical');
+  await page.getByText('Mechanical Lab').click();
+  await page.waitForTimeout(250);
+
+  // Check the 'quantity' value again - it should not have changed
+  const quantityValue = await page
+    .getByRole('textbox', { name: 'number-field-quantity' })
+    .inputValue();
+  expect(quantityValue).toBe('10');
+
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
 });
 
@@ -354,6 +420,18 @@ test('Build Order - Allocation', async ({ browser }) => {
   const row = await getRowFromCell(cell);
 
   await row.getByText(/150 \/ 150/).waitFor();
+
+  // Open the allocation menu for the red widget
+  const mainRedWidget = await page.getByRole('cell', { name: 'Red Widget' });
+  const mainRedRow = await getRowFromCell(mainRedWidget);
+
+  await mainRedRow.getByLabel(/row-action-menu-/i).click();
+
+  await page
+    .getByRole('menuitem', { name: 'Allocate Stock', exact: true })
+    .waitFor();
+
+  await page.keyboard.press('Escape');
 
   // Expand this row
   await cell.click();
@@ -431,9 +509,13 @@ test('Build Order - Allocation', async ({ browser }) => {
   const redRow = await getRowFromCell(redWidget);
 
   await redRow.getByLabel(/row-action-menu-/i).click();
-  await page
-    .getByRole('menuitem', { name: 'Allocate Stock', exact: true })
-    .waitFor();
+
+  const allocateStockBtn = page.getByRole('menuitem', {
+    name: 'Allocate Stock',
+    exact: true
+  });
+  await expect(allocateStockBtn).toBeEnabled();
+
   await page
     .getByRole('menuitem', { name: 'Deallocate Stock', exact: true })
     .waitFor();
@@ -460,11 +542,7 @@ test('Build Order - Auto Allocate Tracked', async ({ browser }) => {
     .click();
 
   // Wait for auto-filled form field
-  await page
-    .locator('div')
-    .filter({ hasText: /^Factory$/ })
-    .first()
-    .waitFor();
+  await page.getByText('Factory').waitFor();
   await page.getByRole('button', { name: 'Submit' }).click();
 
   // Wait for one of the required parts to be allocated
@@ -494,7 +572,9 @@ test('Build Order - Consume Stock', async ({ browser }) => {
   // Issue the order
   await page.getByRole('button', { name: 'Issue Order' }).click();
   await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByText('Order issued').waitFor();
+
+  await page.getByText('Production').first().waitFor();
+  await page.getByRole('button', { name: 'Complete Order' }).waitFor();
 
   // Navigate to the "required parts" tab - and auto-allocate stock
   await loadTab(page, 'Required Parts');
@@ -547,6 +627,16 @@ test('Build Order - Consume Stock', async ({ browser }) => {
 
   await page.getByText('Fully consumed').first().waitFor();
   await page.getByText('15 / 15').first().waitFor();
+
+  // There should now not be any allocated stock remaining
+  await loadTab(page, 'Allocated Stock');
+  await page.getByText('No records found').first().waitFor();
+
+  await loadTab(page, 'Consumed Stock');
+  await page.getByRole('cell', { name: 'Thumbnail C_1uF_0805' }).waitFor();
+  await page.getByRole('cell', { name: 'Thumbnail M3x8 Torx' }).waitFor();
+  await page.getByRole('cell', { name: 'Thumbnail R_10K_0805_1%' }).waitFor();
+  await page.getByText('1 - 3 / 3').waitFor();
 });
 
 test('Build Order - Tracked Outputs', async ({ browser }) => {
@@ -691,8 +781,8 @@ test('Build Order - Duplicate', async ({ browser }) => {
   const page = await doCachedLogin(browser);
 
   await navigate(page, 'manufacturing/build-order/24/details');
-  await page.getByLabel('action-menu-build-order-').click();
-  await page.getByLabel('action-menu-build-order-actions-duplicate').click();
+
+  await openDetailAction(page, 'build-order', 'duplicate');
 
   // Ensure a new reference is suggested
   await expect(
@@ -822,4 +912,256 @@ test('Build Order - BOM Quantity', async ({ browser }) => {
     .locator('div');
   const row2 = await getRowFromCell(line);
   await row2.getByText('1,175').first().waitFor();
+
+  // Test table filtering against the "Required Parts" table
+  await clearTableFilters(page);
+  await page.getByText('1 - 7 / 7').waitFor();
+
+  // Filter by "available" stock
+  await setTableChoiceFilter(page, 'Available', 'Yes');
+  await page.getByText('1 - 3 / 3').waitFor();
+
+  await clearTableFilters(page);
+  await setTableChoiceFilter(page, 'Available', 'No');
+  await page.getByText('1 - 4 / 4').waitFor();
+});
+
+test.describe('Build Order - Allocated part identity', () => {
+  const buildId = 991810;
+  const outputIds = [991811, 991812];
+  const partDiffersLabel = 'Allocated part differs from the BOM part';
+
+  function part(
+    pk: number,
+    name: string,
+    revision: string | null,
+    IPN: string | null,
+    fullName: string
+  ) {
+    return {
+      pk,
+      name,
+      full_name: fullName,
+      revision,
+      IPN,
+      description: `${name} description`,
+      active: true,
+      trackable: true,
+      assembly: false,
+      testable: false
+    };
+  }
+
+  function allocation(
+    pk: number,
+    actualPart: ReturnType<typeof part>,
+    outputId = outputIds[0]
+  ) {
+    return {
+      pk,
+      stock_item: pk,
+      part_detail: actualPart,
+      install_into: outputId,
+      quantity: 1,
+      stock_item_detail: {
+        pk,
+        part: actualPart.pk,
+        quantity: 1,
+        serial: `COMP-${pk}`,
+        batch: ''
+      },
+      location_detail: { pk: 991813, name: 'Allocation test location' }
+    };
+  }
+
+  function line(
+    requiredPart: ReturnType<typeof part>,
+    allocations: ReturnType<typeof allocation>[]
+  ) {
+    return {
+      pk: 991814,
+      build: buildId,
+      bom_item: 991815,
+      part: requiredPart.pk,
+      part_detail: requiredPart,
+      bom_item_detail: {
+        pk: 991815,
+        sub_part: requiredPart.pk,
+        quantity: 1,
+        reference: 'MB',
+        allow_variants: true
+      },
+      quantity: allocations.length,
+      allocated: allocations.length,
+      consumed: 0,
+      available_stock: 10,
+      available_substitute_stock: 0,
+      available_variant_stock: 0,
+      in_production: 0,
+      scheduled_to_build: 0,
+      on_order: 0,
+      trackable: true,
+      allocations
+    };
+  }
+
+  async function mockAllocations(
+    page: Page,
+    buildLine: ReturnType<typeof line>
+  ) {
+    const assembly = {
+      ...part(
+        991816,
+        'Allocation test assembly',
+        '',
+        'ALLOC-TEST',
+        'ALLOC-TEST | Allocation test assembly'
+      ),
+      assembly: true
+    };
+
+    await page.route(`**/api/part/${assembly.pk}/bom-validate/**`, (route) =>
+      route.fulfill({ json: { bom_validated: true } })
+    );
+    await page.route('**/api/build/**', async (route) => {
+      const url = new URL(route.request().url());
+      if (url.pathname === `/api/build/${buildId}/`) {
+        await route.fulfill({
+          json: {
+            pk: buildId,
+            reference: 'BO-ALLOCATION-TEST',
+            title: 'Allocated part identity',
+            part: assembly.pk,
+            part_detail: assembly,
+            quantity: 2,
+            completed: 0,
+            status: 20
+          }
+        });
+      } else if (
+        url.pathname === '/api/build/line/' &&
+        url.searchParams.get('build') === `${buildId}`
+      ) {
+        const lines = url.searchParams.has('assembly') ? [] : [buildLine];
+        await route.fulfill({
+          json: url.searchParams.has('limit')
+            ? {
+                count: lines.length,
+                next: null,
+                previous: null,
+                results: lines
+              }
+            : lines
+        });
+      } else if (
+        url.pathname === '/api/build/' &&
+        url.searchParams.get('parent') === `${buildId}`
+      ) {
+        await route.fulfill({
+          json: { count: 0, next: null, previous: null, results: [] }
+        });
+      } else {
+        await route.continue();
+      }
+    });
+    await page.route('**/api/stock/?*', async (route) => {
+      if (
+        new URL(route.request().url()).searchParams.get('build') !==
+        `${buildId}`
+      ) {
+        await route.continue();
+        return;
+      }
+      const outputs = outputIds.map((pk, index) => ({
+        pk,
+        part: assembly.pk,
+        part_detail: assembly,
+        build: buildId,
+        is_building: true,
+        quantity: 1,
+        serial: `OUTPUT-${index + 1}`,
+        status: 10
+      }));
+      await route.fulfill({
+        json: {
+          count: outputs.length,
+          next: null,
+          previous: null,
+          results: outputs
+        }
+      });
+    });
+  }
+
+  test('places difference icons and uses full names under marked parents', async ({
+    browser
+  }) => {
+    const page = await doCachedLogin(browser);
+    const required = part(
+      991820,
+      'ahr5e-mb',
+      'v1.1',
+      'AHR5E-MB-V1.1',
+      'AHR5E-MB-V1.1 | ahr5e-mb | v1.1'
+    );
+    const older = part(
+      991821,
+      'ahr5e-mb',
+      'v1.0',
+      'AHR5E-MB-V1.0',
+      'AHR5E-MB-V1.0 | ahr5e-mb | v1.0'
+    );
+    const allocations = [
+      allocation(991830, required, outputIds[0]),
+      allocation(991831, older, outputIds[1]),
+      allocation(991832, required, outputIds[1])
+    ];
+    await mockAllocations(page, line(required, allocations));
+    await navigate(
+      page,
+      `manufacturing/build-order/${buildId}/incomplete-outputs`
+    );
+
+    for (const [index, marked] of [false, true].entries()) {
+      await page
+        .getByRole('cell', { name: `# OUTPUT-${index + 1}`, exact: true })
+        .click();
+      const drawer = page.getByRole('dialog', {
+        name: /Build Output Stock Allocation/
+      });
+      const parent = await getRowFromCell(
+        drawer.getByRole('cell', { name: required.IPN!, exact: true })
+      );
+      const parentPart = parent
+        .getByText(required.name, { exact: true })
+        .locator('xpath=ancestor::td[1]');
+      await expect(parentPart).toHaveText(required.name);
+      await expect(
+        parentPart.getByRole('img', { name: partDiffersLabel, exact: true })
+      ).toHaveCount(marked ? 1 : 0);
+      await parentPart.getByText(required.name, { exact: true }).click();
+
+      for (const record of allocations.filter(
+        (item) => item.install_into === outputIds[index]
+      )) {
+        const row = drawer
+          .getByRole('cell', { name: `# COMP-${record.pk}`, exact: true })
+          .locator('xpath=ancestor::tr[1]');
+        const cell = row.getByRole('cell').first();
+        await expect(cell).toHaveText(
+          marked ? record.part_detail.full_name : record.part_detail.name
+        );
+        const icon = cell.getByRole('img', {
+          name: partDiffersLabel,
+          exact: true
+        });
+        if (record.part_detail.pk === required.pk) {
+          await expect(icon).toHaveCount(0);
+        } else {
+          await expect(icon).toBeVisible();
+        }
+      }
+      await drawer.getByLabel('close-allocation-drawer').click();
+    }
+  });
 });

@@ -60,15 +60,17 @@ invoke dev.setup-dev
 InvenTree roughly follow the [GitLab flow](https://about.gitlab.com/topics/version-control/what-are-gitlab-flow-best-practices/) branching style, to allow simple management of multiple tagged releases, short-lived branches, and development on the main branch.
 
 There are nominally 5 active branches:
-- `master` - The main development branch
-- `stable` - The latest stable release
-- `next-breaking` - The next breaking release (e.g. 2.0, 3.0) with all deprecated features removed
-- `l10n` - Translation branch: Source to Crowdin
-- `l10_crowdin` - Translation branch: Source from Crowdin
-- `y.y.x` - Release branch for the currently supported version (e.g. `0.5.x`)
 
-All other branches are removed periodically by maintainers or core team members. This includes old release branches.
-Do not use them as base for feature development or forks as patches from them might not be accepted without rebasing.
+| Branch | Description |
+| --- | --- |
+| `master` | The main development branch |
+| `stable` | The latest stable release |
+| `next-breaking` | The next breaking release (e.g. 2.0, 3.0) with all deprecated features removed |
+| `l10n` | Translation branch: Source to Crowdin |
+| `l10_crowdin` | Translation branch: Source from Crowdin |
+| `y.y.x` | Release branch for the currently supported version (e.g. `0.5.x`) |
+
+All other branches are removed periodically by maintainers or core team members. This includes old release branches. Do not use them as base for feature development or forks as patches from them might not be accepted without rebasing.
 
 ### Version Numbering
 
@@ -182,7 +184,7 @@ django-upgrade --target-version {{ config.extra.django_version }} `find . -name 
 
 ## Migration Files
 
-Any required migration files **must** be included in the commit, or the pull-request will be rejected. If you change the underlying database schema, make sure you run `invoke migrate` and commit the migration files before submitting the PR.
+Any required migration files **must** be included in the commit, or the pull-request will be rejected. If you change the underlying database schema, make sure you run `invoke migrate --detect` and commit the migration files before submitting the PR.
 
 *Note: A github action checks for unstaged migration files and will reject the PR if it finds any!*
 
@@ -197,7 +199,7 @@ The InvenTree code base makes use of [GitHub actions](https://github.com/feature
 - Automated building and pushing of docker images
 - Generating translation files
 
-The various github actions can be found in the `./github/workflows` directory
+The various github actions can be found in the `.github/workflows` directory
 
 ### Run tests locally
 
@@ -242,7 +244,7 @@ Sometimes it is valuable to get insights how many tests cover a specific stateme
 coverage html -i
 ```
 
-The coverage database is also generated in the CI-pipeline and exposd for 14 days as a artifact named `coverage`.
+The coverage database is also generated in the CI-pipeline and exposed for 14 days as an artifact named `coverage`.
 
 ### Database Query Profiling
 
@@ -273,7 +275,7 @@ Frontend code (Javascript) is checked using [eslint](https://eslint.org/). While
 
 ### Running Checks Locally
 
-If you have followed the setup devtools procedure, then code style checking is performend automatically whenever you commit changes to the code.
+If you have followed the setup devtools procedure, then code style checking is performed automatically whenever you commit changes to the code.
 
 ### Django templates
 

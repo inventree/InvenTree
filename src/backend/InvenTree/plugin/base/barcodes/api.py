@@ -153,7 +153,9 @@ class BarcodeView(CreateAPIView):
 
         for current_plugin in plugins:
             try:
-                result = current_plugin.scan(barcode)
+                result = current_plugin.scan(barcode, user=request.user, **kwargs)
+            except PermissionDenied as exc:
+                raise exc
             except Exception:
                 log_error('BarcodeView.scan_barcode', plugin=current_plugin.slug)
                 continue
@@ -258,6 +260,9 @@ class BarcodeGenerate(CreateAPIView):
         except model_cls.DoesNotExist:
             raise ValidationError({'error': _('Model instance not found')})
 
+        if not check_user_permission(request.user, model_cls, 'view'):
+            raise PermissionDenied()
+
         barcode_data = plugin.base.barcodes.helper.generate_barcode(model_instance)
 
         return Response({'barcode': barcode_data}, status=status.HTTP_200_OK)
@@ -282,7 +287,7 @@ class BarcodeAssign(BarcodeView):
 
         # First check if the provided barcode matches an existing database entry
         if inventree_barcode_plugin:
-            result = inventree_barcode_plugin.scan(barcode)
+            result = inventree_barcode_plugin.scan(barcode, user=request.user, **kwargs)
 
             if result is not None:
                 result['error'] = _('Barcode matches existing item')
@@ -387,8 +392,6 @@ class BarcodePOAllocate(BarcodeView):
     - A SupplierPart object
     """
 
-    role_required = ['purchase_order.add']
-
     serializer_class = barcode_serializers.BarcodePOAllocateSerializer
 
     def get_supplier_part(
@@ -442,6 +445,13 @@ class BarcodePOAllocate(BarcodeView):
 
     def handle_barcode(self, barcode: str, request, **kwargs):
         """Scan the provided barcode data."""
+        if not check_user_permission(request.user, order.models.PurchaseOrder, 'add'):
+            raise PermissionDenied({
+                'error': _(
+                    'You do not have the required permissions for purchase orders'
+                )
+            })
+
         # The purchase order is provided as part of the request
         purchase_order = kwargs.get('purchase_order')
 
@@ -459,7 +469,9 @@ class BarcodePOAllocate(BarcodeView):
                     manufacturer_part=response.get('manufacturerpart', None),
                 )
                 response['success'] = _('Matched supplier part')
-                response['supplierpart'] = supplier_part.format_matched_response()
+                response['supplierpart'] = supplier_part.format_matched_response(
+                    user=request.user
+                )
             except ValidationError as e:
                 response['error'] = str(e)
 
@@ -489,12 +501,17 @@ class BarcodePOReceive(BarcodeView):
     - location: The destination location for the received item (optional)
     """
 
-    role_required = ['purchase_order.add']
-
     serializer_class = barcode_serializers.BarcodePOReceiveSerializer
 
     def handle_barcode(self, barcode: str, request, **kwargs):
         """Handle a barcode scan for a purchase order item."""
+        if not check_user_permission(request.user, order.models.PurchaseOrder, 'add'):
+            raise PermissionDenied({
+                'error': _(
+                    'You do not have the required permissions for purchase orders'
+                )
+            })
+
         logger.debug("BarcodePOReceive: scanned barcode - '%s'", barcode)
 
         # Extract optional fields from the dataset
@@ -524,7 +541,7 @@ class BarcodePOReceive(BarcodeView):
             filter(lambda plugin: plugin.name == 'InvenTreeBarcode', plugins)
         )
 
-        if result := internal_barcode_plugin.scan(barcode):
+        if result := internal_barcode_plugin.scan(barcode, user=request.user, **kwargs):
             if 'stockitem' in result:
                 response['error'] = _('Item has already been received')
                 self.log_scan(request, response, False)
@@ -663,8 +680,6 @@ class BarcodeSOAllocate(BarcodeView):
     - Quantity
     """
 
-    role_required = ['sales_order.add']
-
     serializer_class = barcode_serializers.BarcodeSOAllocateSerializer
 
     def get_line_item(self, stock_item, **kwargs):
@@ -732,6 +747,11 @@ class BarcodeSOAllocate(BarcodeView):
             line: SalesOrderLineItem ID value (optional)
             shipment: SalesOrderShipment ID value (optional)
         """
+        if not check_user_permission(request.user, order.models.SalesOrder, 'add'):
+            raise PermissionDenied({
+                'error': _('You do not have the required permissions for sales orders')
+            })
+
         logger.debug("BarcodeSOAllocate: scanned barcode - '%s'", barcode)
 
         response = self.scan_barcode(barcode, request, **kwargs)
@@ -830,6 +850,16 @@ class BarcodeScanResultMixin:
     def get_queryset(self):
         """Return the queryset for the BarcodeScan API."""
         queryset = super().get_queryset()
+
+        try:
+            user = self.request.user
+        except AttributeError:
+            raise PermissionDenied('User information is not available')
+
+        # Allow staff users access to all BarcodeScanResult objects
+        if not user.is_staff:
+            # All other users are limited to viewing their own barcode scan history
+            queryset = queryset.filter(user=user)
 
         # Pre-fetch user data
         queryset = queryset.prefetch_related('user')

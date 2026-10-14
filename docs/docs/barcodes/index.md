@@ -101,7 +101,7 @@ If enabled, InvenTree can retain logs of the most recent barcode scans. This can
 
 Refer to the [barcode settings](../settings/global.md#barcodes) to enable barcode history logging.
 
-The barcode history can be viewed via the admin panel in the web interface.
+The barcode history can be viewed in the [Admin Center](../settings/admin.md#admin-center) in the web interface.
 
 ## Barcode Settings
 

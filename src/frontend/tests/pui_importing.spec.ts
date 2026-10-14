@@ -1,4 +1,4 @@
-import test from '@playwright/test';
+import { test } from './baseFixtures';
 import { stevenuser } from './defaults';
 import { doCachedLogin } from './login';
 
@@ -162,8 +162,11 @@ test('Importing - Purchase Order', async ({ browser }) => {
     url: 'purchasing/purchase-order/15/line-items'
   });
 
+  await page.getByRole('button', { name: 'action-menu-add-line-item' }).click();
   await page
-    .getByRole('button', { name: 'action-button-import-line-' })
+    .getByRole('menuitem', {
+      name: 'action-menu-add-line-item-import-line-items'
+    })
     .click();
 
   const fileInput = await page.locator('input[type="file"]');
@@ -181,8 +184,11 @@ test('Importing - Natural Keys', async ({ browser }) => {
   });
 
   // Import line item data, but use natural keys as the import fields
+  await page.getByRole('button', { name: 'action-menu-add-line-item' }).click();
   await page
-    .getByRole('button', { name: 'action-button-import-line-' })
+    .getByRole('menuitem', {
+      name: 'action-menu-add-line-item-import-line-items'
+    })
     .click();
 
   const fileInput = await page.locator('input[type="file"]');

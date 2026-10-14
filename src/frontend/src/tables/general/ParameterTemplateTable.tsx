@@ -1,11 +1,13 @@
+import {
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '@lib/components/RowActions';
 import useTable from '@lib/hooks/UseTable';
 import {
   AddItemButton,
   ApiEndpoints,
   type ApiFormFieldSet,
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction,
   UserRoles,
   apiUrl
 } from '@lib/index';
@@ -13,6 +15,11 @@ import type { TableFilter } from '@lib/types/Filters';
 import type { RowAction, TableColumn } from '@lib/types/Tables';
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
+import {
+  BooleanColumn,
+  DescriptionColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { useParameterTemplateFields } from '../../forms/CommonForms';
 import { useFilters } from '../../hooks/UseFilter';
 import {
@@ -21,8 +28,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
  * Render a table of ParameterTemplate objects

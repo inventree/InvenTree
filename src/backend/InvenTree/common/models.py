@@ -4,11 +4,13 @@ These models are 'generic' and do not fit a particular business logic object.
 """
 
 import base64
+import copy
 import hashlib
 import hmac
 import json
 import math
 import os
+import re
 import uuid
 from collections import OrderedDict
 from datetime import timedelta, timezone
@@ -42,6 +44,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
+import nh3
 import structlog
 from anymail.signals import inbound, tracking
 from django_q.signals import post_spawn
@@ -50,7 +53,6 @@ from djmoney.contrib.exchange.models import convert_money
 from opentelemetry import trace
 from PIL import Image
 from rest_framework.exceptions import PermissionDenied
-from taggit.managers import TaggableManager
 
 import common.validators
 import InvenTree.conversion
@@ -168,6 +170,10 @@ class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
         """String representation of a ProjectCode."""
         return self.code
 
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this project code."""
+        return permission == 'view' or user.is_staff
+
     code = models.CharField(
         max_length=50,
         unique=True,
@@ -182,6 +188,12 @@ class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('Project description'),
     )
 
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Is this project code active?'),
+    )
+
     responsible = models.ForeignKey(
         users.models.Owner,
         on_delete=models.SET_NULL,
@@ -193,7 +205,15 @@ class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
-class BaseInvenTreeSetting(models.Model):
+class SettingsManager(models.Manager):
+    """Ensure that the 'touched' field is deferred in all queries."""
+
+    def get_queryset(self):
+        """Defer the write-only 'touched' field."""
+        return super().get_queryset().defer('touched', 'updated_by', 'updated')
+
+
+class BaseInvenTreeSetting(UpdatedUserMixin, models.Model):
     """An base InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
     Attributes:
@@ -204,6 +224,8 @@ class BaseInvenTreeSetting(models.Model):
     SETTINGS: dict[str, SettingsKeyType] = {}
 
     CHECK_SETTING_KEY = False
+
+    objects = SettingsManager()
 
     extra_unique_fields: list[str] = []
 
@@ -602,7 +624,6 @@ class BaseInvenTreeSetting(models.Model):
                 access_global_cache = False
 
         # At this point, we need to query the database
-
         filters = {
             'key__iexact': key,
             # Optionally filter by other keys
@@ -792,6 +813,11 @@ class BaseInvenTreeSetting(models.Model):
 
     value = models.CharField(
         max_length=2000, blank=True, unique=False, help_text=_('Settings value')
+    )
+
+    touched = models.BooleanField(
+        default=False,
+        help_text=_('Indicates whether the setting has been modified by the user'),
     )
 
     @property
@@ -1000,6 +1026,14 @@ class BaseInvenTreeSetting(models.Model):
         )
 
         return setting.get('confirm_text', '')
+
+    def flags(self) -> list:
+        """Return the flags associated with this setting."""
+        setting = self.get_setting_definition(
+            self.key, **self.get_filters_for_instance()
+        )
+
+        return setting.get('flags', [])
 
     def model_filters(self) -> Optional[dict]:
         """Return the model filters associated with this setting."""
@@ -1383,21 +1417,27 @@ class PriceBreak(MetaMixin):
         help_text=_('Unit price at specified quantity'),
     )
 
-    def convert_to(self, currency_code):
+    def convert_to(self, currency_code: str, raise_error: bool = False):
         """Convert the unit-price at this price break to the specified currency code.
 
-        Args:
+        Arguments:
             currency_code: The currency code to convert to (e.g "USD" or "AUD")
+            raise_error: If True, raise an error if the conversion fails. If False, return None.
         """
         try:
             converted = convert_money(self.price, currency_code)
-        except MissingRate:
+        except MissingRate:  # pragma: no cover
+            InvenTree.exceptions.log_error('PriceBreak.convert_to')
             logger.warning(
                 'No currency conversion rate available for %s -> %s',
                 self.price_currency,
                 currency_code,
             )
-            return self.price.amount
+
+            if raise_error:
+                raise
+
+            return None
 
         return converted.amount
 
@@ -1579,7 +1619,7 @@ class WebhookMessage(models.Model):
         worked_on: Was the work on this message finished?
     """
 
-    message_id = models.UUIDField(
+    message_id = InvenTree.fields.InvenTreeUUIDField(
         verbose_name=_('Message ID'),
         help_text=_('Unique identifier for this message'),
         primary_key=True,
@@ -1645,10 +1685,12 @@ class NotificationEntry(MetaMixin):
 
     key = models.CharField(max_length=250, blank=False)
 
-    uid = models.IntegerField()
+    # Notification references may point to models with UUID primary keys.
+    # Store the value as text so both integer and non-integer identifiers work.
+    uid = models.CharField(max_length=255)
 
     @classmethod
-    def check_recent(cls, key: str, uid: int, delta: timedelta):
+    def check_recent(cls, key: str, uid: str | int | uuid.UUID, delta: timedelta):
         """Test if a particular notification has been sent in the specified time period."""
         since = InvenTree.helpers.current_date() - delta
 
@@ -1657,7 +1699,7 @@ class NotificationEntry(MetaMixin):
         return entries.exists()
 
     @classmethod
-    def notify(cls, key: str, uid: int):
+    def notify(cls, key: str, uid: str | int | uuid.UUID):
         """Notify the database that a particular notification has been sent out."""
         entry, _ = cls.objects.get_or_create(key=key, uid=uid)
 
@@ -1679,7 +1721,7 @@ class NotificationMessage(models.Model):
         ContentType, on_delete=models.CASCADE, related_name='notification_target'
     )
 
-    target_object_id = models.PositiveIntegerField()
+    target_object_id = models.CharField(max_length=255)
 
     target_object = GenericForeignKey('target_content_type', 'target_object_id')
 
@@ -1692,7 +1734,7 @@ class NotificationMessage(models.Model):
         blank=True,
     )
 
-    source_object_id = models.PositiveIntegerField(null=True, blank=True)
+    source_object_id = models.CharField(max_length=255, null=True, blank=True)
 
     source_object = GenericForeignKey('source_content_type', 'source_object_id')
 
@@ -1711,6 +1753,13 @@ class NotificationMessage(models.Model):
     name = models.CharField(max_length=250, blank=False)
 
     message = models.CharField(max_length=250, blank=True, null=True)
+
+    link = models.URLField(
+        max_length=500,
+        blank=True,
+        null=True,
+        help_text=_('Optional explicit URL associated with this notification'),
+    )
 
     creation = models.DateTimeField(auto_now_add=True)
 
@@ -1766,42 +1815,6 @@ class NewsFeedEntry(models.Model):
     )
 
 
-def rename_notes_image(instance, filename):
-    """Function for renaming uploading image file. Will store in the 'notes' directory."""
-    fname = os.path.basename(filename)
-    return os.path.join('notes', fname)
-
-
-class NotesImage(models.Model):
-    """Model for storing uploading images for the 'notes' fields of various models.
-
-    Simply stores the image file, for use in the 'notes' field (of any models which support markdown).
-    """
-
-    image = models.ImageField(
-        upload_to=rename_notes_image, verbose_name=_('Image'), help_text=_('Image file')
-    )
-
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-
-    date = models.DateTimeField(auto_now_add=True)
-
-    model_type = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        validators=[common.validators.validate_notes_model_type],
-        help_text=_('Target model type for this image'),
-    )
-
-    model_id = models.IntegerField(
-        help_text=_('Target model ID for this image'),
-        blank=True,
-        null=True,
-        default=None,
-    )
-
-
 class CustomUnit(models.Model):
     """Model for storing custom physical unit definitions.
 
@@ -1841,7 +1854,10 @@ class CustomUnit(models.Model):
         """Validate that the provided custom unit is indeed valid."""
         super().clean()
 
-        from InvenTree.conversion import get_unit_registry
+        from InvenTree.conversion import (
+            build_candidate_unit_registry,
+            get_unit_registry,
+        )
 
         registry = get_unit_registry()
 
@@ -1860,11 +1876,27 @@ class CustomUnit(models.Model):
         except Exception as exc:
             raise ValidationError({'definition': str(exc)})
 
-        # Finally, test that the entire custom unit definition is valid
+        # Test that the entire custom unit definition is valid
         try:
             registry.define(self.fmt_string())
         except Exception as exc:
             raise ValidationError(str(exc))
+
+        # Build a registry containing *every* custom unit (including this
+        # pending one), and try to resolve this unit's dimensionality.
+        # Useful for catching recursion errors.
+        try:
+            candidate_registry = build_candidate_unit_registry(
+                self.fmt_string(), exclude_pk=self.pk
+            )
+            getattr(candidate_registry, self.name).compatible_units()
+        except Exception as exc:
+            raise ValidationError(
+                _(
+                    'Unit definition results in a circular or invalid reference: %(error)s'
+                )
+                % {'error': str(exc)}
+            )
 
     name = models.CharField(
         max_length=50,
@@ -1923,7 +1955,11 @@ def rename_attachment(instance, filename: str):
     )
 
 
-class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+class Attachment(
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeTagsMixin,
+    InvenTree.models.InvenTreeModel,
+):
     """Class which represents an uploaded file attachment.
 
     An attachment can be either an uploaded file, or an external URL.
@@ -2031,9 +2067,12 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
 
     def __str__(self):
         """Human name for attachment."""
-        if self.attachment is not None:
+        if self.attachment and self.attachment.name:
             return os.path.basename(self.attachment.name)
-        return str(self.link)
+        elif self.link:
+            return str(self.link)
+        else:
+            return super().__str__()
 
     def validate_rename(self, filename: str):
         """Validate that the provided filename is valid, for renaming an attachment."""
@@ -2156,8 +2195,6 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
         default=0, verbose_name=_('File size'), help_text=_('File size in bytes')
     )
 
-    tags = TaggableManager(blank=True)
-
     @property
     def basename(self):
         """Base name/path for attachment."""
@@ -2253,7 +2290,11 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
             img.save(thumb_io, format='PNG')
             thumb_io.seek(0)
 
-            thumb_name = f'thumb_{os.path.basename(self.attachment.name)}'
+            # Save the thumbnail alongside the original attachment file
+            attachment_dir = os.path.dirname(self.attachment.name)
+            thumb_name = os.path.join(
+                attachment_dir, f'thumb_{os.path.basename(self.attachment.name)}'
+            )
             self.thumbnail.save(thumb_name, ContentFile(thumb_io.read()), save=False)
         except Exception:
             pass
@@ -2627,6 +2668,19 @@ class ParameterTemplate(
 
         choice_fnc = common.validators.parameter_template_model_options
 
+    class UniqueOptions(models.IntegerChoices):
+        """Enumeration of uniqueness options for a ParameterTemplate.
+
+        Attributes:
+            NONE: No uniqueness requirement is enforced (default)
+            MODEL_TYPE: Linked parameter values must be unique for a given model type
+            GLOBAL: Linked parameter values must be unique across all model types
+        """
+
+        NONE = 0, _('No uniqueness required')
+        MODEL_TYPE = 1, _('Unique for model type')
+        GLOBAL = 2, _('Globally unique')
+
     @staticmethod
     def get_api_url() -> str:
         """Return the API URL associated with the ParameterTemplate model."""
@@ -2770,6 +2824,15 @@ class ParameterTemplate(
         help_text=_('Is this parameter template enabled?'),
     )
 
+    unique = models.PositiveIntegerField(
+        default=UniqueOptions.NONE,
+        choices=UniqueOptions.choices,
+        verbose_name=_('Uniqueness'),
+        help_text=_(
+            'Enforce uniqueness of linked parameter values against this template'
+        ),
+    )
+
 
 @receiver(
     post_save, sender=ParameterTemplate, dispatch_uid='post_save_parameter_template'
@@ -2875,6 +2938,9 @@ class Parameter(
             except ValidationError as e:
                 raise ValidationError({'data': e.message})
 
+        # Validate the parameter data against any uniqueness requirements imposed by the template
+        self.validate_uniqueness()
+
         if InvenTree.ready.isReadOnlyCommand():
             # Skip plugin validation checks during read-only management commands
             return
@@ -2922,6 +2988,45 @@ class Parameter(
             if math.isnan(self.data_numeric) or math.isinf(self.data_numeric):
                 self.data_numeric = None
 
+    def validate_uniqueness(self):
+        """Ensure that this Parameter satisfies any uniqueness requirements imposed by its template.
+
+        The ParameterTemplate.unique field determines the scope of the uniqueness check:
+
+        - NONE: No uniqueness check is performed
+        - MODEL_TYPE: The value must be unique amongst other parameters (for this template) linked to the same model type
+        - GLOBAL: The value must be unique amongst all other parameters linked to this template
+
+        Note: If the template defines a set of 'units', the comparison is performed against the
+        normalized 'data_numeric' value, so that equivalent values expressed in different
+        (but compatible) units are correctly detected as duplicates (e.g. '1k' and '1000' ohms).
+        """
+        uniqueness = self.template.unique
+
+        if uniqueness == ParameterTemplate.UniqueOptions.NONE:
+            return
+
+        if self.template.units and self.data_numeric is not None:
+            query = Parameter.objects.filter(
+                template=self.template,
+                data_numeric__range=InvenTree.conversion.numeric_range(
+                    self.data_numeric
+                ),
+            )
+        else:
+            query = Parameter.objects.filter(
+                template=self.template, data__iexact=self.data
+            )
+
+        if self.pk:
+            query = query.exclude(pk=self.pk)
+
+        if uniqueness == ParameterTemplate.UniqueOptions.MODEL_TYPE:
+            query = query.filter(model_type=self.model_type)
+
+        if query.exists():
+            raise ValidationError({'data': _('Parameter value must be unique')})
+
     def check_permission(self, permission, user):
         """Check if the user has the required permission for this parameter."""
         from InvenTree.models import InvenTreeParameterMixin
@@ -2941,10 +3046,10 @@ class Parameter(
         """
         from InvenTree.models import InvenTreeParameterMixin
 
-        try:
-            instance = self.content_object
-        except InvenTree.models.InvenTreeModel.DoesNotExist:
-            return
+        # content_object is None (rather than raising) if the target row is
+        # missing - GenericForeignKey.__get__ catches ObjectDoesNotExist
+        # internally, it never propagates it.
+        instance = self.content_object
 
         if instance and isinstance(instance, InvenTreeParameterMixin):
             instance.check_parameter_save(self)
@@ -2953,15 +3058,11 @@ class Parameter(
         """Check if this parameter can be deleted."""
         from InvenTree.models import InvenTreeParameterMixin
 
-        try:
-            instance = self.content_object
-        except InvenTree.models.InvenTreeModel.DoesNotExist:
-            return
+        instance = self.content_object
 
         if instance and isinstance(instance, InvenTreeParameterMixin):
             instance.check_parameter_delete(self)
 
-    # TODO: Reintroduce validator for model_type
     model_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
 
     model_id = models.PositiveIntegerField(
@@ -3009,6 +3110,355 @@ class Parameter(
     def description(self):
         """Return the description of the template."""
         return self.template.description
+
+
+class Note(
+    UpdatedUserMixin, InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
+):
+    """Class which represents a note assigned to a particular model instance.
+
+    Attributes:
+        model_type: The type of model to which this note is linked
+        model_id: The ID of the model to which this note is linked
+        user: The user who created the note
+        title: The title of the note
+        description: A description of the note (optional)
+        content: The content of the note
+        created: Date/time that the note was created
+    """
+
+    NOTES_MAX_LENGTH = 50000
+
+    class Meta:
+        """Meta options for Note model."""
+
+        verbose_name = _('Note')
+        verbose_name_plural = _('Notes')
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['model_type', 'model_id'],
+                condition=models.Q(primary=True, template=False),
+                name='unique_primary_note_per_model',
+            )
+        ]
+
+    @staticmethod
+    def get_api_url() -> str:
+        """Return the API URL associated with the Parameter model."""
+        return reverse('api-note-list')
+
+    def validate_constraints(self, exclude=None):
+        """Validate model constraints, skipping 'unique_primary_note_per_model'.
+
+        That constraint is actively maintained by save() (which demotes any
+        sibling primary note before saving self), so checking it here against
+        pre-save DB state would incorrectly reject legitimate primary-flag
+        promotions that save() would otherwise handle correctly.
+        """
+        constraints = [
+            c
+            for c in self._meta.constraints
+            if c.name != 'unique_primary_note_per_model'
+        ]
+        errors = {}
+        for constraint in constraints:
+            try:
+                constraint.validate(self.__class__, self, exclude=exclude)
+            except ValidationError as e:
+                errors = e.update_error_dict(errors)
+        if errors:
+            raise ValidationError(errors)
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        """Perform custom save checks before saving a Note instance."""
+        self.check_save()
+
+        if not self.template:
+            is_create = self.pk is None
+
+            # Lock sibling notes to serialize concurrent primary-flag updates.
+            # This only has rows to lock once at least one sibling already
+            # exists - it cannot lock a row that doesn't exist yet, so it does
+            # *not* by itself serialize the very first note being created for
+            # a given model instance (see the is_create handling below).
+            siblings = (
+                Note.objects
+                .select_for_update()
+                .filter(
+                    model_type=self.model_type, model_id=self.model_id, template=False
+                )
+                .exclude(pk=self.pk)
+            )
+
+            # If this is the *only* note for this model instance, set it as primary
+            if not siblings.exists():
+                self.primary = True
+
+            # Demote sibling notes *before* saving self, so that the partial unique
+            # constraint on (model_type, model_id, primary=True) is never briefly
+            # violated by two rows with primary=True existing at once
+            if self.primary:
+                siblings.update(primary=False)
+
+            self.clean()
+
+            if is_create and self.primary:
+                # Phantom-row race: two concurrent creates of the first note for
+                # the same model instance can both reach here believing they're
+                # the only (and thus primary) one, since select_for_update()
+                # above had no existing sibling row to lock either of them
+                # against. Let the DB's own unique_primary_note_per_model
+                # constraint arbitrate instead - retry as a non-primary note if
+                # we lost the race, rather than surfacing a raw IntegrityError.
+                # A savepoint is required so a failed attempt only rolls back
+                # this insert, not the whole (outer) atomic transaction.
+                try:
+                    with transaction.atomic():
+                        super().save(*args, **kwargs)
+                except IntegrityError:
+                    self.primary = False
+                    super().save(*args, **kwargs)
+            else:
+                super().save(*args, **kwargs)
+        else:
+            # Templates skip primary-flag logic entirely
+            self.primary = False
+            self.clean()
+            super().save(*args, **kwargs)
+
+        self.cleanup_images()
+
+    def clean(self):
+        """Clean / validate the note before saving to the database."""
+        from django.core.exceptions import ValidationError
+
+        if not self.template:
+            if not self.model_type:
+                raise ValidationError({'model_type': _('This field is required.')})
+            if self.model_id is None:
+                raise ValidationError({'model_id': _('This field is required.')})
+
+        if self.model_type:
+            try:
+                common.validators.validate_note_model_type(self.model_type)
+            except ValidationError as e:
+                raise ValidationError({'model_type': e.message})
+
+        if self.content:
+            attrs = copy.deepcopy(nh3.ALLOWED_ATTRIBUTES)
+
+            for tag in (
+                'span',
+                'p',
+                'div',
+                'img',
+                'a',
+                'h1',
+                'h2',
+                'h3',
+                'h4',
+                'h5',
+                'h6',
+                'ul',
+                'ol',
+                'li',
+                'blockquote',
+                'pre',
+                'table',
+                'thead',
+                'tbody',
+                'tr',
+                'td',
+                'th',
+                'colgroup',
+                'col',
+            ):
+                attrs.setdefault(tag, set()).update({'style'})
+
+            # Allow class on structural tags used by the rich-text editor
+            for tag in ('div', 'span', 'img', 'table', 'td', 'th', 'col'):
+                attrs.setdefault(tag, set()).add('class')
+
+            # Allow image attributes used by tiptap-extension-resizable-image
+            attrs.setdefault('img', set()).update({'data-keep-ratio', 'colwidth'})
+
+            self.content = nh3.clean(
+                self.content.strip(),
+                attributes=attrs,
+                filter_style_properties={
+                    'color',
+                    'background-color',
+                    'font-size',
+                    'font-weight',
+                    'font-style',
+                    'font-family',
+                    'text-decoration',
+                    'text-align',
+                    'border',
+                    'border-color',
+                    'border-style',
+                    'border-width',
+                    'margin',
+                    'padding',
+                    'column-width',
+                    'column-height',
+                    'min-width',
+                    'max-width',
+                    'min-height',
+                    'max-height',
+                    'width',
+                    'height',
+                },
+            )
+
+            # nh3 does not recognise legacy IE-only CSS expression() calls as
+            # unsafe, so they survive style attribute filtering - strip them explicitly
+            self.content = re.sub(
+                r'expression\s*\(', '', self.content, flags=re.IGNORECASE
+            )
+
+    def check_save(self):
+        """Check if this note can be saved."""
+        from InvenTree.models import InvenTreeNoteMixin
+
+        if self.template or not self.model_type:
+            return
+
+        # content_object is None (rather than raising) if the target row is
+        # missing - GenericForeignKey.__get__ catches ObjectDoesNotExist
+        # internally, it never propagates it.
+        instance = self.content_object
+
+        if instance and isinstance(instance, InvenTreeNoteMixin):
+            instance.check_note_save(self)
+
+    def check_delete(self):
+        """Check if this note can be deleted."""
+        from InvenTree.models import InvenTreeNoteMixin
+
+        if self.template or not self.model_type:
+            return
+
+        instance = self.content_object
+
+        if instance and isinstance(instance, InvenTreeNoteMixin):
+            instance.check_note_delete(self)
+
+    def delete(self, *args, **kwargs):
+        """Perform custom delete checks before deleting a Note instance."""
+        self.check_delete()
+        super().delete(*args, **kwargs)
+
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this note."""
+        from InvenTree.models import InvenTreeNoteMixin
+
+        if self.template:
+            return user.is_staff
+
+        model_class = self.model_type.model_class() if self.model_type else None
+
+        if not model_class or not issubclass(model_class, InvenTreeNoteMixin):
+            return False
+
+        return model_class.check_related_permission(permission, user)
+
+    def cleanup_images(self):
+        """Remove any images which are no longer referenced in the note content."""
+        for image in self.images.all():
+            if image.image and image.image.url not in self.content:
+                image.delete()
+
+    template = models.BooleanField(
+        default=False,
+        verbose_name=_('Template'),
+        help_text=_(
+            'Is this note a template (not linked to a specific model instance)?'
+        ),
+    )
+
+    model_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        validators=[common.validators.validate_note_model_type],
+        help_text=_('Target model type for this note'),
+    )
+
+    model_id = models.PositiveIntegerField(
+        null=True, blank=True, help_text=_('Target model instance ID for this note')
+    )
+
+    content_object = GenericForeignKey('model_type', 'model_id')
+
+    primary = models.BooleanField(
+        default=False,
+        verbose_name=_('Primary'),
+        help_text=_('Is this the primary note for the associated model?'),
+    )
+
+    title = models.CharField(
+        max_length=100, verbose_name=_('Title'), help_text=_('Note title')
+    )
+
+    description = models.CharField(
+        max_length=250,
+        blank=True,
+        verbose_name=_('Description'),
+        help_text=_('Optional description field'),
+    )
+
+    content = models.TextField(
+        blank=True,
+        verbose_name=_('Content'),
+        help_text=_('Note content'),
+        max_length=NOTES_MAX_LENGTH,
+    )
+
+
+def rename_notes_image(instance, filename):
+    """Function for renaming uploading image file. Will store in the 'notes' directory."""
+    fname = os.path.basename(filename)
+    return os.path.join('notes', fname)
+
+
+class NotesImage(models.Model):
+    """Model for storing uploading images for the 'notes' fields of various models.
+
+    Simply stores the image file, for use in the 'notes' field (of any models which support markdown).
+    """
+
+    image = models.ImageField(
+        upload_to=rename_notes_image, verbose_name=_('Image'), help_text=_('Image file')
+    )
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    date = models.DateTimeField(auto_now_add=True)
+
+    note = models.ForeignKey(
+        Note, on_delete=models.CASCADE, null=False, blank=False, related_name='images'
+    )
+
+
+@receiver(post_delete, sender=NotesImage, dispatch_uid='notesimage_post_delete')
+def after_notesimage_deleted(sender, instance, **kwargs):
+    """Remove the image file after the NotesImage deletion commits.
+
+    A signal (rather than an overridden delete()) is required here: a NotesImage row is
+    usually removed via a cascade - e.g. deleting its parent Note, or
+    InvenTreeNoteMixin.delete() bulk-deleting all notes for a model instance being deleted.
+    Django's deletion Collector never calls a cascaded object's Python-level delete()
+    override, only its pre_delete/post_delete signals - regardless of whether the cascade
+    started from a single instance.delete() or a bulk QuerySet.delete().
+    """
+    if instance.image:
+        transaction.on_commit(
+            lambda: instance.image.delete(save=False), using=kwargs.get('using')
+        )
 
 
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):
@@ -3259,7 +3709,7 @@ class EmailMessage(models.Model):
         TRACK_READ = 'track_read', _('Track Read')
         TRACK_CLICK = 'track_click', _('Track Click')
 
-    global_id = models.UUIDField(
+    global_id = InvenTree.fields.InvenTreeUUIDField(
         verbose_name=_('Global ID'),
         help_text=_('Unique identifier for this message'),
         primary_key=True,
@@ -3337,11 +3787,11 @@ class EmailMessage(models.Model):
 
     objects = NoDeleteManager()
 
-    def delete(self, *kwargs):
+    def delete(self, *args, **kwargs):
         """Delete entry - if not protected."""
         if get_global_setting('INVENTREE_PROTECT_EMAIL_LOG'):
             raise ValidationError(del_error_msg)
-        return super().delete(*kwargs)
+        return super().delete(*args, **kwargs)
 
 
 class EmailThread(InvenTree.models.InvenTreeMetadataModel):
@@ -3367,7 +3817,7 @@ class EmailThread(InvenTree.models.InvenTreeMetadataModel):
         blank=True,
         help_text=_('Unique key for this thread (used to identify the thread)'),
     )
-    global_id = models.UUIDField(
+    global_id = InvenTree.fields.InvenTreeUUIDField(
         verbose_name=_('Global ID'),
         help_text=_('Unique identifier for this thread'),
         primary_key=True,
