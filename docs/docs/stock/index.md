@@ -32,6 +32,8 @@ Each *Stock Item* is linked to the following information:
 
 **Batch Code** - If the part is tracked by batch code, the batch code of this stock item
 
+**Cost** - The calculated [unit cost](./costs.md) of this stock item, if available
+
 ## Stock Availability
 
 InvenTree has a number of different mechanisms to determine whether stock is available for use. See the [Stock Availability](./availability.md) page for more information.

@@ -165,9 +165,9 @@ def perform_stocktake(
                 (pricing.overall_max or pricing.overall_min) if pricing else None
             )
 
-            if item.purchase_price is not None:
-                entry_cost_min = item.purchase_price
-                entry_cost_max = item.purchase_price
+            if (item_cost := item.cost_price) is not None:
+                entry_cost_min = item_cost
+                entry_cost_max = item_cost
 
             try:
                 entry_cost_min = entry_cost_min * item.quantity

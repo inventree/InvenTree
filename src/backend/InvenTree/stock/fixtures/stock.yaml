@@ -8,8 +8,6 @@
     location: 3
     batch: 'B123'
     quantity: 4000
-    purchase_price: 123
-    purchase_price_currency: AUD
 
 # 5,000 screws in the bathroom
 - model: stock.stockitem

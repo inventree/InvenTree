@@ -96,9 +96,11 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
   await page.waitForTimeout(250);
 
   // Edit the resulting stock item
+  // Note: 'purchase_price' is no longer editable on this form - it is now
+  // recorded separately via the "Stock Item Cost" panel (StockItemCostEntry)
   await openDetailAction(page, 'stock-item', 'edit');
 
-  await page.getByLabel('number-field-purchase_price').fill('-1');
+  await page.getByLabel('number-field-quantity').fill('-1');
 
   await page.getByRole('button', { name: 'Submit' }).click();
 
@@ -114,14 +116,12 @@ test('Forms - Stock Item Validation', async ({ browser }) => {
     .getByText('Ensure this value is greater than or equal to 0')
     .waitFor();
 
-  // Correct the price
-  await page.getByLabel('number-field-purchase_price').fill('1.2345');
+  // Correct the quantity
+  await page.getByLabel('number-field-quantity').fill('123');
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByText('Item Updated').waitFor();
 
   // Ensure the stock item has been updated correctly
-  await page.getByText('$151.8435').waitFor();
-  await page.getByText('$151.8435').waitFor();
   await page.getByText('a box').waitFor();
   await page.getByRole('cell', { name: 'Electronics Lab' }).waitFor();
 });
