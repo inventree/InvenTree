@@ -179,7 +179,7 @@ Open the row actions menu for a specific build output, and select the *Add Test 
 
 #### Table Buttons
 
-Each available test is rendered in the table as a separate column. Any output which does not already have a result registered for that test will display a button in the table cell, labelled *Add Test Result*. Clicking on this button will open the *Add Test Result* dialog for that test.
+Each *required* (and *enabled*) test which applies to the part being built is rendered in the table as a separate column. This includes tests which are [inherited](../part/test.md#test-inheritance) from template parts and part categories. Any output which does not already have a result registered for that test will display a button in the table cell, labelled *Add Test Result*. Clicking on this button will open the *Add Test Result* dialog for that test.
 
 #### Bulk Add Test Results
 

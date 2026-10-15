@@ -675,6 +675,15 @@ class TestTemplateTest(TestCase):
         self.assertEqual(variant.getTestTemplates(enabled=True).count(), 5)
         self.assertEqual(variant.getTestTemplates(enabled=False).count(), 1)
 
+        # Templates are annotated with the flags of the applicable PartTest
+        templates = chair.getTestTemplateMap()
+        self.assertFalse(templates['recordweight'].required)
+        self.assertTrue(templates['applypaint'].required)
+        self.assertTrue(templates['applypaint'].enabled)
+
+        templates = variant.getTestTemplateMap()
+        self.assertFalse(templates['checkchairisgreen'].enabled)
+
     def test_part_test_inheritance(self):
         """Test that the most specific PartTest is used for a given template."""
         chair = Part.objects.get(pk=10000)

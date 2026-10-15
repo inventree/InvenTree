@@ -117,13 +117,13 @@ The *Transfer Orders* tab shows a list of the [transfer orders](../stock/transfe
 
 The *Stock History* tab provide historical stock level information. Refer to the [stock history documentation](./stocktake.md) for further information.
 
-### Test Templates
+### Tests
 
-If a part is marked as *testable*, the user can define tests which must be performed on any stock items which are instances of this part. [Read more about testing](./test.md).
+If a part is marked as *testable*, the *Tests* tab displays the tests which must be performed on any stock items which are instances of this part. This includes tests which are linked directly to the part, as well as tests which are [inherited](./test.md#test-inheritance) from template parts and part categories. Tests can be added, edited and [overridden](./test.md#overriding-inherited-tests) from this tab. [Read more about testing](./test.md).
 
 ### Test Results
 
-The *Test Results* tab displays [test result](../stock/test.md) data uploaded against *any* stock item of this part, aggregated into a single table. This differs from the *Test Templates* tab, which configures the tests themselves rather than displaying recorded results. This tab is only visible if the part is marked as *testable*.
+The *Test Results* tab displays [test result](../stock/test.md) data uploaded against *any* stock item of this part, aggregated into a single table. This differs from the *Tests* tab, which configures the tests themselves rather than displaying recorded results. This tab is only visible if the part is marked as *testable*.
 
 ### Related Parts
 

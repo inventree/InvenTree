@@ -17,7 +17,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
-from django.db.models import F, Q, QuerySet, Sum, UniqueConstraint
+from django.db.models import F, OuterRef, Q, QuerySet, Subquery, Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save
 from django.db.utils import IntegrityError
@@ -2527,12 +2527,24 @@ class Part(
 
         Returns:
             QuerySet: A queryset of matching test templates.
+
+        Notes:
+            - Each template is annotated with the 'required' and 'enabled' values
+              of the PartTest which applies to this part
+            - This allows (e.g.) report templates to access 'template.required'
         """
         tests = self.getPartTests(
             required=required, enabled=enabled, include_parent=include_parent
         )
 
-        return PartTestTemplate.objects.filter(pk__in=tests.values('template'))
+        test = tests.filter(template=OuterRef('pk'))
+
+        return PartTestTemplate.objects.filter(
+            pk__in=tests.values('template')
+        ).annotate(
+            required=Subquery(test.values('required')[:1]),
+            enabled=Subquery(test.values('enabled')[:1]),
+        )
 
     def getTestTemplateMap(self, **kwargs):
         """Return a map of all test templates associated with this Part."""
