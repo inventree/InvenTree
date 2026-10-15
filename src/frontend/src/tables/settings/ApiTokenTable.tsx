@@ -8,7 +8,17 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Badge, Code, Flex, Modal, Paper, Text } from '@mantine/core';
+import {
+  Badge,
+  Button,
+  Code,
+  Flex,
+  Group,
+  Modal,
+  Paper,
+  Text,
+  Textarea
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCircleX } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
@@ -27,6 +37,8 @@ export function ApiTokenTable({
 }: Readonly<{ only_myself: boolean }>) {
   const [token, setToken] = useState<string>('');
   const [opened, { open, close }] = useDisclosure(false);
+  const [revokeTokenId, setRevokeTokenId] = useState<string | null>(null);
+  const [revocationReason, setRevocationReason] = useState<string>('');
 
   const generateToken = useCreateApiFormModal({
     url: ApiEndpoints.user_me_token,
@@ -100,6 +112,26 @@ export function ApiTokenTable({
         accessor: 'created',
         title: t`Created`,
         sortable: true
+      },
+      UserColumn({
+        accessor: 'issued_by_detail',
+        title: t`Issued By`,
+        filtering: true,
+        sortable: true
+      }),
+      UserColumn({
+        accessor: 'revoked_by_detail',
+        title: t`Revoked By`,
+        filtering: true,
+        sortable: true
+      }),
+      {
+        accessor: 'token_version',
+        sortable: true
+      },
+      {
+        accessor: 'revocation_reason',
+        sortable: false
       }
     ];
     if (!only_myself) {
@@ -129,6 +161,14 @@ export function ApiTokenTable({
           name: 'user',
           label: t`User`,
           description: t`Filter by user`
+        }),
+        UserFilter({
+          name: 'issued_by',
+          label: t`Issued By`
+        }),
+        UserFilter({
+          name: 'revoked_by',
+          label: t`Revoked By`
         })
       );
     }
@@ -143,21 +183,25 @@ export function ApiTokenTable({
         hidden: !record.active || record.in_use,
         icon: <IconCircleX />,
         onClick: () => {
-          revokeToken(record.id);
+          setRevokeTokenId(record.id);
         }
       }
     ];
   }, []);
 
-  const revokeToken = async (id: string) => {
-    let targetUrl = apiUrl(ApiEndpoints.user_tokens, id);
+  const revokeToken = async () => {
+    if (!revokeTokenId) return;
+
+    let targetUrl = apiUrl(ApiEndpoints.user_tokens, revokeTokenId);
     if (!only_myself) {
       targetUrl += '?all_users=true';
     }
     api
-      .delete(targetUrl)
+      .delete(targetUrl, { data: { revocation_reason: revocationReason } })
       .then(() => {
         table.refreshTable();
+        setRevokeTokenId(null);
+        setRevocationReason('');
       })
       .catch((error) => {
         showApiErrorMessage({
@@ -198,6 +242,38 @@ export function ApiTokenTable({
           </Modal>
         </>
       )}
+      <Modal
+        opened={revokeTokenId !== null}
+        onClose={() => {
+          setRevokeTokenId(null);
+          setRevocationReason('');
+        }}
+        title={t`Revoke Token`}
+        centered
+      >
+        <Textarea
+          label={t`Revocation Reason`}
+          placeholder={t`Enter a reason for revoking this token`}
+          value={revocationReason}
+          onChange={(event) => setRevocationReason(event.currentTarget.value)}
+          autosize
+          minRows={3}
+        />
+        <Group justify='flex-end' mt='md'>
+          <Button
+            variant='default'
+            onClick={() => {
+              setRevokeTokenId(null);
+              setRevocationReason('');
+            }}
+          >
+            {t`Cancel`}
+          </Button>
+          <Button color='red' onClick={revokeToken}>
+            {t`Revoke`}
+          </Button>
+        </Group>
+      </Modal>
       <InvenTreeTable
         tableState={table}
         url={apiUrl(ApiEndpoints.user_tokens)}

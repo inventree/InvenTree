@@ -16,6 +16,9 @@ Templates are rendered using standard HTML / CSS - if you are familiar with web 
 HTML form elements (`input`, `select`, `textarea`, `button`) are converted into PDF form controls. Use CSS to limit which elements are converted; refer to the
 [WeasyPrint docs](https://doc.courtbouillon.org/weasyprint/stable/common_use_cases.html#include-pdf-forms) for further information.
 
+!!! info "Custom Fonts"
+    Text can only be rendered using fonts which are available to WeasyPrint. Refer to the [report fonts](./fonts.md) documentation for information on using custom fonts.
+
 ### Template Language
 
 Uploaded report template files are passed through the [django template rendering framework]({% include "django.html" %}/topics/templates/), and as such accept the same variable template strings as any other django template file. Different variables are passed to the report template (based on the context of the report) and can be used to customize the contents of the generated PDF.

@@ -8,30 +8,41 @@ import {
   HoverCard,
   Loader,
   LoadingOverlay,
+  Paper,
   type RenderTreeNodePayload,
   Space,
+  Splitter,
   Stack,
   Text,
   TextInput,
+  Tooltip,
   Tree,
   type TreeNodeData,
   useTree
 } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
+import { useDebouncedValue, useMediaQuery } from '@mantine/hooks';
 import {
   IconChevronDown,
   IconChevronRight,
   IconExclamationCircle,
+  IconPin,
+  IconPinnedOff,
   IconSearch,
   IconSitemap,
   IconX
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { StylishText } from '@lib/components/StylishText';
-import type { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
 import { resolveItem } from '@lib/functions/Conversion';
@@ -42,6 +53,7 @@ import {
 } from '@lib/functions/Navigation';
 import { t } from '@lingui/core/macro';
 import { useApi } from '../../contexts/ApiContext';
+import { useUserSettingsState } from '../../states/SettingsStates';
 import { ApiIcon } from '../items/ApiIcon';
 
 /*
@@ -54,7 +66,9 @@ export default function NavigationTree({
   selectedId,
   modelType,
   childIdentifier,
-  endpoint
+  endpoint,
+  hidden,
+  children
 }: Readonly<{
   title: string;
   opened: boolean;
@@ -63,10 +77,38 @@ export default function NavigationTree({
   modelType: ModelType;
   childIdentifier?: string;
   endpoint: ApiEndpoints;
+  hidden?: boolean;
+  children?: ReactNode;
 }>) {
   const api = useApi();
   const navigate = useNavigate();
   const treeState = useTree();
+
+  const userSettings = useUserSettingsState();
+  const canPin = useMediaQuery('(min-width: 350px)', true, {
+    getInitialValueInEffect: false
+  });
+  const pinned = canPin && userSettings.isSet('NAVIGATION_TREE_PINNED', false);
+  const visible = !hidden && (pinned || opened);
+
+  const setPinned = useCallback(
+    (value: boolean) => {
+      api
+        .patch(
+          apiUrl(ApiEndpoints.settings_user_list, 'NAVIGATION_TREE_PINNED'),
+          {
+            value: value
+          }
+        )
+        .then(() => {
+          if (value) onClose();
+        })
+        .finally(() => {
+          userSettings.fetchSettings();
+        });
+    },
+    [api, onClose, userSettings.fetchSettings]
+  );
 
   const [searchValue, setSearchValue] = useState('');
   const [debouncedSearch] = useDebouncedValue(searchValue, 300);
@@ -76,17 +118,17 @@ export default function NavigationTree({
   // PKs of nodes whose children are currently being fetched
   const [loadingNodes, setLoadingNodes] = useState<Set<number>>(new Set());
 
-  // Reset everything when the drawer opens or closes
+  // Reset everything when the tree is shown or hidden
   useEffect(() => {
     setSearchValue('');
     setAllNodes([]);
     setLoadingNodes(new Set());
-  }, [opened]);
+  }, [visible]);
 
   // Data query — browse mode loads root nodes only; search mode loads all matches + ancestors
   const query = useQuery({
-    enabled: opened,
-    queryKey: [modelType, 'tree', opened, debouncedSearch, selectedId],
+    enabled: visible,
+    queryKey: [modelType, 'tree', visible, debouncedSearch, selectedId],
     queryFn: async () =>
       api
         .get(apiUrl(endpoint), {
@@ -350,68 +392,122 @@ export default function NavigationTree({
     ]
   );
 
-  return (
-    <Drawer
-      opened={opened}
-      size='lg'
-      position='left'
-      onClose={onClose}
-      withCloseButton={true}
-      styles={{
-        header: {
-          width: '100%'
-        },
-        title: {
-          width: '100%'
+  const header = (
+    <Group justify='space-between' wrap='nowrap' w='100%'>
+      <Group justify='left' p='ms' gap='md' wrap='nowrap'>
+        <IconSitemap />
+        <StylishText size='lg'>{title}</StylishText>
+      </Group>
+      {canPin && (
+        <Tooltip label={pinned ? t`Unpin` : t`Pin`} position='bottom'>
+          <ActionIcon
+            variant='transparent'
+            aria-label={pinned ? 'nav-tree-unpin' : 'nav-tree-pin'}
+            onClick={() => setPinned(!pinned)}
+          >
+            {pinned ? <IconPinnedOff /> : <IconPin />}
+          </ActionIcon>
+        </Tooltip>
+      )}
+    </Group>
+  );
+
+  const content = (
+    <Stack gap='xs' pos='relative'>
+      <TextInput
+        aria-label='nav-tree-search'
+        placeholder={t`Filter ${{ title }}...`}
+        value={searchValue}
+        onChange={(event) => setSearchValue(event.currentTarget.value)}
+        leftSection={<IconSearch size={16} />}
+        rightSection={
+          searchValue ? (
+            <ActionIcon
+              size='sm'
+              variant='transparent'
+              onClick={() => setSearchValue('')}
+              aria-label={t`Clear search`}
+            >
+              <IconX size={14} />
+            </ActionIcon>
+          ) : null
         }
-      }}
-      title={
-        <Group justify='left' p='ms' gap='md' wrap='nowrap'>
-          <IconSitemap />
-          <StylishText size='lg'>{title}</StylishText>
-        </Group>
-      }
-    >
-      <Stack gap='xs'>
-        <TextInput
-          aria-label='nav-tree-search'
-          placeholder={t`Search...`}
-          value={searchValue}
-          onChange={(event) => setSearchValue(event.currentTarget.value)}
-          leftSection={<IconSearch size={16} />}
-          rightSection={
-            searchValue ? (
-              <ActionIcon
-                size='sm'
-                variant='transparent'
-                onClick={() => setSearchValue('')}
-                aria-label={t`Clear search`}
-              >
-                <IconX size={14} />
-              </ActionIcon>
-            ) : null
-          }
+      />
+      <Divider />
+      <LoadingOverlay visible={query.isFetching || query.isLoading} />
+      {query.isError ? (
+        <Alert color='red' title={t`Error`} icon={<IconExclamationCircle />}>
+          {t`Error loading navigation tree.`}
+        </Alert>
+      ) : !query.isFetching && !query.isLoading && data.length === 0 ? (
+        <Alert color='blue' icon={<IconSearch />}>
+          {t`No results found`}
+        </Alert>
+      ) : (
+        <Tree
+          data={data}
+          tree={treeState}
+          renderNode={renderNode}
+          withLines
+          levelOffset={25}
         />
-        <Divider />
-        <LoadingOverlay visible={query.isFetching || query.isLoading} />
-        {query.isError ? (
-          <Alert color='red' title={t`Error`} icon={<IconExclamationCircle />}>
-            {t`Error loading navigation tree.`}
-          </Alert>
-        ) : !query.isFetching && !query.isLoading && data.length === 0 ? (
-          <Alert color='blue' icon={<IconSearch />}>
-            {t`No results found`}
-          </Alert>
-        ) : (
-          <Tree
-            data={data}
-            tree={treeState}
-            renderNode={renderNode}
-            withLines
-            levelOffset={25}
-          />
-        )}
-      </Stack>
-    </Drawer>
+      )}
+    </Stack>
+  );
+
+  if (hidden) {
+    return <>{children}</>;
+  }
+
+  if (pinned) {
+    return (
+      <Splitter
+        onCollapseChange={(event) => {
+          console.log(event);
+          setPinned(!pinned);
+        }}
+      >
+        <Splitter.Pane defaultSize='350px' min={'200px'} collapsible>
+          <Paper
+            withBorder
+            p='xs'
+            aria-label='nav-tree-pinned'
+            style={{ flexShrink: 0 }}
+          >
+            <Stack gap='xs'>
+              {header}
+              {content}
+            </Stack>
+          </Paper>
+        </Splitter.Pane>
+        <Splitter.Pane defaultSize={50} min={20}>
+          {children}
+        </Splitter.Pane>
+      </Splitter>
+    );
+  }
+
+  return (
+    <>
+      <Drawer
+        opened={opened}
+        size='lg'
+        position='left'
+        onClose={onClose}
+        withCloseButton={true}
+        styles={{
+          header: {
+            width: '100%'
+          },
+          title: {
+            width: '100%'
+          }
+        }}
+        title={header}
+      >
+        {content}
+      </Drawer>
+      {children}
+    </>
   );
 }

@@ -91,7 +91,7 @@ export default function PartSalesAllocationsTable({
           title: t`View Sales Order`,
           modelType: ModelType.salesorder,
           modelId: record.order,
-          hidden: !user.hasViewRole(UserRoles.sales_order),
+          hidden: !user.hasViewVisible(UserRoles.sales_order),
           navigate: navigate
         })
       ];

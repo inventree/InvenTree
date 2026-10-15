@@ -351,10 +351,9 @@ class InfoView(APIView):
         if token := get_token_from_request(request):
             # Does the provided token match a valid user?
             try:
-                token = ApiToken.objects.get(key=token)
-
+                token = ApiToken.get_from_string(token)
                 # Check if the token is active and the user is a staff member
-                if token.active and token.user and token.user.is_staff:
+                if token and token.active and token.user and token.user.is_staff:
                     return True
             except ApiToken.DoesNotExist:
                 pass
@@ -648,13 +647,18 @@ class ParameterListMixin:
         serializer_class = (
             getattr(self, 'serializer_class', None) or self.get_serializer_class()
         )
-
-        model_class = serializer_class.Meta.model
+        model_class = getattr(getattr(serializer_class, 'Meta', None), 'model', None)
 
         # Apply ordering based on query parameter
-        queryset = common.filters.order_by_parameter(
-            queryset, model_class, self.request.query_params.get('ordering', None)
-        )
+        if model_class is not None:
+            ordering = (
+                self.request.query_params.get('ordering', None)
+                if hasattr(self, 'request')
+                else {}
+            )
+            queryset = common.filters.order_by_parameter(
+                queryset, model_class, ordering
+            )
 
         return queryset
 

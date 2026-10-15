@@ -22,6 +22,9 @@ interface ServerApiStateProps {
   registration_enabled: () => boolean;
   sso_registration_enabled: () => boolean;
   password_forgotten_enabled: () => boolean;
+  // ftu
+  ftuShown: boolean;
+  setFtuShown: (value: boolean) => void;
 }
 
 function get_server_setting(val: any) {
@@ -105,6 +108,10 @@ export const useServerApiState = create<ServerApiStateProps>()(
         return get_server_setting(
           get().server?.settings?.password_forgotten_enabled
         );
+      },
+      ftuShown: false,
+      setFtuShown: (value) => {
+        set({ ftuShown: value });
       }
     }),
     {

@@ -1,4 +1,3 @@
-import { create } from '@github/webauthn-json/browser-ponyfill';
 import { CopyButton } from '@lib/components/CopyButton';
 import { StylishText } from '@lib/components/StylishText';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -34,6 +33,7 @@ import { useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { api, queryClient } from '../../../../App';
 import { authApi, doLogout } from '../../../../functions/auth';
+import { showApiErrorMessage } from '../../../../functions/notifications';
 import { useServerApiState } from '../../../../states/ServerApiState';
 import { useGlobalSettingsState } from '../../../../states/SettingsStates';
 import { QrRegistrationForm } from './QrRegistrationForm';
@@ -476,12 +476,11 @@ function RegisterTOTPModal({
               setSecret(error.response?.data?.meta?.secret ?? '');
               break;
             default:
-              // Any other error is unexpected
-              showNotification({
-                title: t`Error Fetching TOTP Registration`,
-                message: t`An unexpected error occurred while fetching TOTP registration data.`,
-                color: 'red'
+              showApiErrorMessage({
+                error: error,
+                title: t`Error Fetching TOTP Registration`
               });
+
               throw error;
           }
 
@@ -761,44 +760,46 @@ export default function MFASettings() {
 
   // Register a WebAuthn credential with the provided key
   const registerWebauthn = useCallback((key: any) => {
-    create({
-      publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(key)
-    }).then((credential) => {
-      const credentialString: string = JSON.stringify(credential);
+    navigator.credentials
+      .create({
+        publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(key)
+      })
+      .then((credential) => {
+        const credentialString: string = JSON.stringify(credential);
 
-      api
-        .post(
-          apiUrl(ApiEndpoints.auth_webauthn),
-          {
-            name: 'Master Key',
-            credential: credentialString
-          },
-          {
-            timeout: 30 * 1000
-          }
-        )
-        .then((response) => {
-          showNotification({
-            title: t`WebAuthn Registered`,
-            message: t`WebAuthn credential registered successfully`,
-            color: 'green',
-            icon: <IconCircleCheck />
+        api
+          .post(
+            apiUrl(ApiEndpoints.auth_webauthn),
+            {
+              name: 'Master Key',
+              credential: credentialString
+            },
+            {
+              timeout: 30 * 1000
+            }
+          )
+          .then((response) => {
+            showNotification({
+              title: t`WebAuthn Registered`,
+              message: t`WebAuthn credential registered successfully`,
+              color: 'green',
+              icon: <IconCircleCheck />
+            });
+            refetch();
+          })
+          .catch((error) => {
+            const errorMsg = extractErrorMessage(
+              error,
+              t`Error registering WebAuthn credential`
+            );
+            showNotification({
+              title: t`WebAuthn Registration Failed`,
+              message: `${t`Failed to register WebAuthn credential`}: ${errorMsg}`,
+              color: 'red',
+              icon: <IconExclamationCircle />
+            });
           });
-          refetch();
-        })
-        .catch((error) => {
-          const errorMsg = extractErrorMessage(
-            error,
-            t`Error registering WebAuthn credential`
-          );
-          showNotification({
-            title: t`WebAuthn Registration Failed`,
-            message: `${t`Failed to register WebAuthn credential`}: ${errorMsg}`,
-            color: 'red',
-            icon: <IconExclamationCircle />
-          });
-        });
-    });
+      });
   }, []);
 
   // Request a WebAuthn registration challenge from the server

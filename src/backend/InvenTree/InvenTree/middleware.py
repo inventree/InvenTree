@@ -150,9 +150,9 @@ class AuthRequiredMiddleware:
             request.token = token
             # Does the provided token match a valid user?
             try:
-                token = ApiToken.objects.get(key=token)
+                token = ApiToken.get_from_string(token)
 
-                if token.active and token.user:
+                if token and token.active and token.user:
                     # Provide the user information to the request
                     request.user = token.user
                     return True

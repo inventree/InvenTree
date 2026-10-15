@@ -422,7 +422,14 @@ class InvenTreeMetadata(SimpleMetadata):
 
         # If a default value is specified for the serializer field, add it!
         if 'default' not in field_info and field.default != empty:
-            field_info['default'] = field.get_default()
+            default = field.get_default()
+
+            # Related fields resolve their default to a model instance,
+            # which is not JSON serializable - reduce it to its primitive representation
+            if isinstance(field, serializers.RelatedField) and default is not None:
+                default = field.to_representation(default)
+
+            field_info['default'] = default
 
         # Force non-nullable fields to read as "required"
         # (even if there is a default value!)

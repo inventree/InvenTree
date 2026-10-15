@@ -260,6 +260,9 @@ class BarcodeGenerate(CreateAPIView):
         except model_cls.DoesNotExist:
             raise ValidationError({'error': _('Model instance not found')})
 
+        if not check_user_permission(request.user, model_cls, 'view'):
+            raise PermissionDenied()
+
         barcode_data = plugin.base.barcodes.helper.generate_barcode(model_instance)
 
         return Response({'barcode': barcode_data}, status=status.HTTP_200_OK)

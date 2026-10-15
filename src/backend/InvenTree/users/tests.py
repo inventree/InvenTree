@@ -1,5 +1,7 @@
 """Unit tests for the 'users' app."""
 
+import datetime
+
 from django.apps import apps
 from django.contrib.auth.models import Group
 from django.test import TestCase
@@ -298,7 +300,10 @@ class OwnerModelTest(InvenTreeTestCase):
         self.client.login(username=self.username, password=self.password)
         # token get
         response = self.do_request(reverse('api-token'), {})
-        self.assertEqual(response['token'], token.first().key)
+        raw_token = response['token']
+        self.assertTrue(raw_token.startswith('inv-2-'))
+        token = ApiToken.get_from_string(raw_token)
+        self.assertTrue(token.validate(raw_token))
 
         # test user is associated with token
         response = self.do_request(
@@ -404,8 +409,104 @@ class AdminTest(AdminTestCase):
         my_token = self.helper(
             model=ApiToken, model_kwargs={'user': self.user, 'name': 'test-token'}
         )
+        self.assertTrue(
+            my_token.token.endswith(
+                f'-{datetime.datetime.now().date().isoformat().replace("-", "")}'
+            )
+        )
+        self.assertTrue(my_token.validate(my_token.token))
         # Additionally test str fnc
         self.assertEqual(str(my_token), my_token.token)
+
+    def test_owner_admin_search(self):
+        """Test search functionality in OwnerAdmin."""
+        from django.contrib.admin.sites import site
+        from django.contrib.auth import get_user_model
+        from django.test import RequestFactory
+
+        from users.admin import OwnerAdmin
+
+        owner_admin = OwnerAdmin(Owner, site)
+        request = RequestFactory().get('/admin/')
+        request.user = self.user
+
+        # Create distinct user and group
+        test_user = get_user_model().objects.create_user(
+            username='searchable_user',
+            first_name='Searchy',
+            last_name='Tester',
+            email='searchy@example.com',
+            password='password',
+        )
+        test_group = Group.objects.create(name='SearchableGroup')
+
+        user_owner = Owner.get_owner(test_user)
+        group_owner = Owner.get_owner(test_group)
+
+        # Empty search returns full queryset
+        qs, use_distinct = owner_admin.get_search_results(
+            request, Owner.objects.all(), ''
+        )
+        self.assertFalse(use_distinct)
+        self.assertIn(user_owner, qs)
+        self.assertIn(group_owner, qs)
+
+        # Search by username
+        qs, use_distinct = owner_admin.get_search_results(
+            request, Owner.objects.all(), 'searchable_user'
+        )
+        self.assertTrue(use_distinct)
+        self.assertIn(user_owner, qs)
+        self.assertNotIn(group_owner, qs)
+
+        # Search by first name
+        qs, _ = owner_admin.get_search_results(request, Owner.objects.all(), 'Searchy')
+        self.assertIn(user_owner, qs)
+        self.assertNotIn(group_owner, qs)
+
+        # Search by last name
+        qs, _ = owner_admin.get_search_results(request, Owner.objects.all(), 'Tester')
+        self.assertIn(user_owner, qs)
+        self.assertNotIn(group_owner, qs)
+
+        # Search by email
+        qs, _ = owner_admin.get_search_results(
+            request, Owner.objects.all(), 'searchy@example.com'
+        )
+        self.assertIn(user_owner, qs)
+        self.assertNotIn(group_owner, qs)
+
+        # Search by group name
+        qs, _ = owner_admin.get_search_results(
+            request, Owner.objects.all(), 'SearchableGroup'
+        )
+        self.assertIn(group_owner, qs)
+        self.assertNotIn(user_owner, qs)
+
+        # Search non-existent term
+        qs, _ = owner_admin.get_search_results(
+            request, Owner.objects.all(), 'nonexistentxyzterm'
+        )
+        self.assertEqual(qs.count(), 0)
+
+    def test_owner_admin_autocomplete(self):
+        """Test admin autocomplete endpoint for SalesOrder responsible field."""
+        url = reverse('admin:autocomplete')
+        response = self.get(
+            url,
+            data={
+                'term': self.user.username,
+                'app_label': 'order',
+                'model_name': 'salesorder',
+                'field_name': 'responsible',
+            },
+            expected_code=200,
+        )
+        data = response.json()
+        self.assertIn('results', data)
+        user_owner = Owner.get_owner(self.user)
+        owner_ids = [res['id'] for res in data['results']]
+        self.assertIn(str(user_owner.pk), owner_ids)
 
 
 class UserProfileTest(InvenTreeAPITestCase):

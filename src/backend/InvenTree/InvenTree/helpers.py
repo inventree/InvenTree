@@ -1150,3 +1150,8 @@ def sanitize_token(token_value: str, front=8, back=12) -> str:
     """
     middle = len(token_value) - (front + back)
     return token_value[:front] + '*' * middle + token_value[-back:]
+
+
+def get_api_token_pepper() -> str:
+    """Return the secret 'pepper' used to compute v2 tokens."""
+    return settings.SECRET_KEY

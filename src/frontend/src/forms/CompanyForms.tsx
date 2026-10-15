@@ -189,6 +189,7 @@ export function companyFields({
     is_supplier: {},
     is_manufacturer: {},
     is_customer: {},
+    is_internal: {},
     active: {},
     duplicate: DuplicateField({
       originalId: duplicateCompanyId,

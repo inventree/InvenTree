@@ -8,7 +8,7 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-03 12:15\n"
+"PO-Revision-Date: 2026-10-13 12:12\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -72,7 +72,7 @@ msgstr "حذف"
 
 #: lib/components/RowActions.tsx:76
 #: src/components/details/DetailsImage.tsx:82
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:200
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:201
 #: src/components/items/ActionDropdown.tsx:284
 #: src/components/items/ActionDropdown.tsx:285
 #: src/components/tables/FilterSelectDrawer.tsx:679
@@ -82,13 +82,14 @@ msgstr "حذف"
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:148
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:323
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:414
-#: src/tables/build/BuildOutputTable.tsx:665
+#: src/tables/build/BuildOutputTable.tsx:666
+#: src/tables/settings/ApiTokenTable.tsx:270
 msgid "Cancel"
 msgstr "إلغاء"
 
 #: lib/components/RowActions.tsx:146
 #: src/components/nav/NavigationDrawer.tsx:185
-#: src/forms/PurchaseOrderForms.tsx:940
+#: src/forms/PurchaseOrderForms.tsx:965
 #: src/forms/StockForms.tsx:950
 #: src/forms/StockForms.tsx:1517
 #: src/forms/StockForms.tsx:1565
@@ -96,17 +97,17 @@ msgstr "إلغاء"
 #: src/forms/StockForms.tsx:1683
 #: src/forms/StockForms.tsx:1722
 #: src/forms/StockForms.tsx:1840
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:976
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:977
 msgid "Actions"
 msgstr "الإجراءات"
 
 #: lib/components/SearchInput.tsx:34
 #: src/components/forms/fields/RelatedModelField.tsx:549
-#: src/components/nav/Header.tsx:191
+#: src/components/nav/Header.tsx:196
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
-#: src/pages/Index/Settings/UserSettings.tsx:77
-#: src/pages/part/PartDetail.tsx:767
+#: src/pages/Index/Settings/UserSettings.tsx:79
+#: src/pages/part/PartDetail.tsx:761
 msgid "Search"
 msgstr "بحث"
 
@@ -126,12 +127,14 @@ msgstr "فشل"
 #: lib/components/YesNoButton.tsx:43
 #: src/components/tables/Filter.tsx:41
 #: src/components/tables/Filter.tsx:77
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:775
 msgid "Yes"
 msgstr "نعم"
 
 #: lib/components/YesNoButton.tsx:44
 #: src/components/tables/Filter.tsx:41
 #: src/components/tables/Filter.tsx:78
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:775
 msgid "No"
 msgstr "لا"
 
@@ -145,15 +148,16 @@ msgstr "لا"
 #~ msgstr "Part Parameter Templates"
 
 #: lib/enums/ModelInformation.tsx:61
+#: src/components/details/LineItemOverviewTable.tsx:80
 #: src/components/tables/ColumnRenderers.tsx:93
-#: src/components/wizards/OrderPartsWizard.tsx:285
+#: src/components/wizards/OrderPartsWizard.tsx:286
 #: src/forms/BuildForms.tsx:382
 #: src/forms/BuildForms.tsx:465
 #: src/forms/BuildForms.tsx:541
 #: src/forms/BuildForms.tsx:703
 #: src/forms/BuildForms.tsx:867
 #: src/forms/BuildForms.tsx:971
-#: src/forms/PurchaseOrderForms.tsx:936
+#: src/forms/PurchaseOrderForms.tsx:961
 #: src/forms/ReturnOrderForms.tsx:242
 #: src/forms/SalesOrderForms.tsx:435
 #: src/forms/StockForms.tsx:432
@@ -168,7 +172,7 @@ msgstr "لا"
 #: src/forms/StockForms.tsx:1927
 #: src/forms/TransferOrderForms.tsx:239
 #: src/pages/build/BuildOrderDetailsPanel.tsx:45
-#: src/pages/part/PartDetail.tsx:820
+#: src/pages/part/PartDetail.tsx:814
 #: src/pages/part/bom/BomCompare.tsx:203
 #: src/tables/build/BuildOrderParametricTable.tsx:29
 #: src/tables/part/PartTestResultTable.tsx:251
@@ -182,12 +186,12 @@ msgstr "الصنف"
 #: lib/enums/Roles.tsx:37
 #: src/components/nav/NavigationDrawer.tsx:70
 #: src/defaults/links.tsx:39
-#: src/pages/Index/Settings/SystemSettings.tsx:218
+#: src/pages/Index/Settings/SystemSettings.tsx:217
 #: src/pages/part/CategoryDetail.tsx:218
 #: src/pages/part/CategoryDetail.tsx:279
-#: src/pages/part/CategoryDetail.tsx:323
+#: src/pages/part/CategoryDetail.tsx:324
 #: src/pages/part/PartCategoryDetailsPanel.tsx:69
-#: src/pages/part/PartDetail.tsx:542
+#: src/pages/part/PartDetail.tsx:536
 msgid "Parts"
 msgstr "الأصناف"
 
@@ -200,8 +204,8 @@ msgstr "معلمة"
 #: src/components/panels/ParametersPanel.tsx:23
 #: src/components/wizards/ImportPartWizard.tsx:807
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:210
-#: src/pages/Index/Settings/SystemSettings.tsx:212
-#: src/pages/part/PartDetail.tsx:494
+#: src/pages/Index/Settings/SystemSettings.tsx:211
+#: src/pages/part/PartDetail.tsx:488
 msgid "Parameters"
 msgstr "معلمات"
 
@@ -225,7 +229,7 @@ msgstr "صنف اختبار قوالب"
 
 #: lib/enums/ModelInformation.tsx:91
 #: src/components/previews/models/SupplierPartPreview.tsx:15
-#: src/components/wizards/OrderPartsWizard.tsx:297
+#: src/components/wizards/OrderPartsWizard.tsx:298
 #: src/pages/company/SupplierPartDetail.tsx:264
 #: src/pages/stock/StockDetailsPanel.tsx:228
 #: src/tables/build/BuildAllocatedStockTable.tsx:155
@@ -258,7 +262,7 @@ msgstr "أصناف الشركات المصنعة"
 #: lib/enums/ModelInformation.tsx:117
 #: src/components/previews/models/PartCategoryPreview.tsx:12
 #: src/components/tables/Filter.tsx:496
-#: src/pages/part/CategoryDetail.tsx:323
+#: src/pages/part/CategoryDetail.tsx:324
 msgid "Part Category"
 msgstr "فئة الأصناف"
 
@@ -266,7 +270,7 @@ msgstr "فئة الأصناف"
 #: lib/enums/Roles.tsx:39
 #: src/pages/part/CategoryDetail.tsx:212
 #: src/pages/part/CategoryDetail.tsx:313
-#: src/pages/part/PartDetail.tsx:808
+#: src/pages/part/PartDetail.tsx:802
 msgid "Part Categories"
 msgstr "فئات الأصناف"
 
@@ -296,7 +300,7 @@ msgstr "عنصر مخزون"
 
 #: lib/enums/ModelInformation.tsx:127
 #: lib/enums/Roles.tsx:49
-#: src/pages/company/CompanyDetail.tsx:132
+#: src/pages/company/CompanyDetail.tsx:138
 #: src/pages/part/CategoryDetail.tsx:247
 #: src/pages/part/PartStockHistoryDetail.tsx:120
 #: src/pages/stock/LocationDetail.tsx:157
@@ -307,13 +311,13 @@ msgstr "عناصر المخزون"
 #: lib/enums/ModelInformation.tsx:137
 #: lib/enums/Roles.tsx:51
 #: src/components/previews/models/StockLocationPreview.tsx:12
-#: src/pages/stock/LocationDetail.tsx:445
+#: src/pages/stock/LocationDetail.tsx:444
 msgid "Stock Location"
 msgstr "موقع مخزون"
 
 #: lib/enums/ModelInformation.tsx:138
 #: src/pages/stock/LocationDetail.tsx:131
-#: src/pages/stock/LocationDetail.tsx:436
+#: src/pages/stock/LocationDetail.tsx:434
 #: src/pages/stock/StockDetail.tsx:733
 msgid "Stock Locations"
 msgstr "مواقع المخزون"
@@ -327,7 +331,7 @@ msgid "Stock Location Types"
 msgstr "موقع المخزون أنواع"
 
 #: lib/enums/ModelInformation.tsx:153
-#: src/pages/part/PartDetail.tsx:446
+#: src/pages/part/PartDetail.tsx:440
 msgid "Stock History"
 msgstr "مخزون سجل"
 
@@ -348,10 +352,10 @@ msgstr "أمر إنتاج"
 
 #: lib/enums/ModelInformation.tsx:160
 #: lib/enums/Roles.tsx:35
-#: src/defaults/actions.tsx:184
-#: src/pages/Index/Settings/SystemSettings.tsx:316
+#: src/defaults/actions.tsx:182
+#: src/pages/Index/Settings/SystemSettings.tsx:324
 #: src/pages/build/BuildIndex.tsx:87
-#: src/pages/part/PartDetail.tsx:425
+#: src/pages/part/PartDetail.tsx:422
 #: src/pages/sales/SalesOrderDetail.tsx:221
 msgid "Build Orders"
 msgstr "أوامر الإنتاج"
@@ -374,7 +378,7 @@ msgstr "إنتاج عناصر"
 
 #: lib/enums/ModelInformation.tsx:184
 #: src/components/previews/models/CompanyPreview.tsx:15
-#: src/pages/company/CompanyDetail.tsx:288
+#: src/pages/company/CompanyDetail.tsx:297
 #: src/tables/company/CompanyTable.tsx:65
 #: src/tables/company/ContactTable.tsx:67
 #: src/tables/company/ParametricCompanyTable.tsx:32
@@ -392,10 +396,10 @@ msgstr "الشركات"
 #: src/components/tables/TableHoverCard.tsx:103
 #: src/forms/CommonFields.tsx:47
 #: src/pages/build/BuildOrderDetailsPanel.tsx:162
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:157
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:169
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:171
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:99
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:158
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:170
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:172
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:101
 msgid "Project Code"
 msgstr "مشروع رمز"
 
@@ -406,9 +410,9 @@ msgstr "مشروع رموز"
 
 #: lib/enums/ModelInformation.tsx:199
 #: src/components/previews/models/PurchaseOrderPreview.tsx:15
-#: src/components/wizards/OrderPartsWizard.tsx:350
+#: src/components/wizards/OrderPartsWizard.tsx:351
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:34
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:376
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:377
 #: src/pages/stock/StockDetailsPanel.tsx:288
 #: src/tables/part/PartPurchaseOrdersTable.tsx:40
 #: src/tables/stock/StockItemTable.tsx:104
@@ -419,8 +423,8 @@ msgstr "طلب شراء"
 #: lib/enums/ModelInformation.tsx:200
 #: lib/enums/Roles.tsx:41
 #: src/defaults/actions.tsx:133
-#: src/pages/Index/Settings/SystemSettings.tsx:343
-#: src/pages/company/CompanyDetail.tsx:125
+#: src/pages/Index/Settings/SystemSettings.tsx:352
+#: src/pages/company/CompanyDetail.tsx:129
 #: src/pages/company/SupplierPartDetail.tsx:105
 #: src/pages/part/PartDetail.tsx:392
 #: src/pages/purchasing/PurchasingIndex.tsx:95
@@ -454,10 +458,10 @@ msgstr "طلب بيع"
 #: lib/enums/ModelInformation.tsx:217
 #: lib/enums/Roles.tsx:47
 #: src/defaults/actions.tsx:143
-#: src/pages/Index/Settings/SystemSettings.tsx:361
-#: src/pages/company/CompanyDetail.tsx:145
+#: src/pages/Index/Settings/SystemSettings.tsx:372
+#: src/pages/company/CompanyDetail.tsx:151
 #: src/pages/part/PartDetail.tsx:404
-#: src/pages/sales/SalesIndex.tsx:107
+#: src/pages/sales/SalesIndex.tsx:109
 msgid "Sales Orders"
 msgstr "طلبات البيع"
 
@@ -479,11 +483,11 @@ msgstr "طلب إرجاع"
 
 #: lib/enums/ModelInformation.tsx:239
 #: lib/enums/Roles.tsx:43
-#: src/defaults/actions.tsx:165
-#: src/pages/Index/Settings/SystemSettings.tsx:373
-#: src/pages/company/CompanyDetail.tsx:152
+#: src/defaults/actions.tsx:163
+#: src/pages/Index/Settings/SystemSettings.tsx:385
+#: src/pages/company/CompanyDetail.tsx:159
 #: src/pages/part/PartDetail.tsx:415
-#: src/pages/sales/SalesIndex.tsx:147
+#: src/pages/sales/SalesIndex.tsx:150
 msgid "Return Orders"
 msgstr "طلبات الإرجاع"
 
@@ -505,9 +509,9 @@ msgstr "طلب تحويل"
 
 #: lib/enums/ModelInformation.tsx:256
 #: lib/enums/Roles.tsx:45
-#: src/defaults/actions.tsx:154
-#: src/pages/Index/Settings/SystemSettings.tsx:386
-#: src/pages/part/PartDetail.tsx:432
+#: src/defaults/actions.tsx:153
+#: src/pages/Index/Settings/SystemSettings.tsx:306
+#: src/pages/part/PartDetail.tsx:429
 #: src/pages/stock/LocationDetail.tsx:171
 msgid "Transfer Orders"
 msgstr "طلبات التحويل"
@@ -526,21 +530,21 @@ msgid "Address"
 msgstr "العنوان"
 
 #: lib/enums/ModelInformation.tsx:272
-#: src/pages/company/CompanyDetail.tsx:187
+#: src/pages/company/CompanyDetail.tsx:196
 msgid "Addresses"
 msgstr "عناوين"
 
 #: lib/enums/ModelInformation.tsx:278
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:89
 #: src/pages/core/UserDetail.tsx:132
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:133
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:145
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:147
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:134
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:146
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:148
 msgid "Contact"
 msgstr ""
 
 #: lib/enums/ModelInformation.tsx:279
-#: src/pages/company/CompanyDetail.tsx:181
+#: src/pages/company/CompanyDetail.tsx:190
 #: src/pages/core/CoreIndex.tsx:34
 msgid "Contacts"
 msgstr "جهات الاتصال"
@@ -559,8 +563,8 @@ msgstr "المالكون"
 #: src/components/tables/Filter.tsx:441
 #: src/pages/Auth/ChangePassword.tsx:36
 #: src/pages/core/UserDetail.tsx:219
-#: src/tables/settings/ApiTokenTable.tsx:110
-#: src/tables/settings/ApiTokenTable.tsx:130
+#: src/tables/settings/ApiTokenTable.tsx:142
+#: src/tables/settings/ApiTokenTable.tsx:162
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:79
 #: src/tables/settings/ExportSessionTable.tsx:44
 #: src/tables/settings/ImportSessionTable.tsx:88
@@ -571,7 +575,7 @@ msgstr "المستخدم"
 
 #: lib/enums/ModelInformation.tsx:293
 #: src/components/nav/NavigationDrawer.tsx:105
-#: src/defaults/actions.tsx:222
+#: src/defaults/actions.tsx:220
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:15
 #: src/pages/core/CoreIndex.tsx:22
 #: src/pages/core/UserDetail.tsx:225
@@ -606,7 +610,7 @@ msgid "Label Template"
 msgstr "ملصق قالب"
 
 #: lib/enums/ModelInformation.tsx:316
-#: src/defaults/actions.tsx:262
+#: src/defaults/actions.tsx:260
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:238
 msgid "Label Templates"
 msgstr "ملصق قوالب"
@@ -616,7 +620,7 @@ msgid "Report Template"
 msgstr "تقرير قالب"
 
 #: lib/enums/ModelInformation.tsx:324
-#: src/defaults/actions.tsx:252
+#: src/defaults/actions.tsx:250
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:244
 msgid "Report Templates"
 msgstr "تقرير قوالب"
@@ -662,35 +666,35 @@ msgstr "اختيار سجلات"
 #: src/components/dashboard/DashboardLayout.tsx:297
 #: src/components/editors/NotesEditor.tsx:401
 #: src/components/editors/NotesEditor.tsx:432
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:170
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:288
-#: src/components/forms/fields/ApiFormField.tsx:300
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:171
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:289
+#: src/components/forms/fields/ApiFormField.tsx:310
 #: src/components/forms/fields/TableField.tsx:63
 #: src/components/importer/ImportDataSelector.tsx:206
 #: src/components/importer/ImporterColumnSelector.tsx:330
 #: src/components/importer/ImporterDrawer.tsx:91
 #: src/components/modals/LicenseModal.tsx:85
-#: src/components/nav/NavigationTree.tsx:398
-#: src/components/nav/NotificationDrawer.tsx:235
-#: src/components/nav/SearchDrawer.tsx:609
+#: src/components/nav/NavigationTree.tsx:439
+#: src/components/nav/NotificationDrawer.tsx:239
+#: src/components/nav/SearchDrawer.tsx:616
 #: src/components/settings/SettingList.tsx:158
 #: src/components/tables/InvenTreeTableHeader.tsx:164
 #: src/components/wizards/ImportPartWizard.tsx:574
 #: src/components/wizards/ImportPartWizard.tsx:719
 #: src/forms/BomForms.tsx:87
-#: src/functions/auth.tsx:734
+#: src/functions/auth.tsx:729
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:317
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:408
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:639
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:830
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:638
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:831
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:194
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
-#: src/tables/bom/BomTable.tsx:605
+#: src/tables/bom/BomTable.tsx:703
 #: src/tables/settings/EmailTable.tsx:109
-#: src/tables/stock/StockItemTestResultTable.tsx:336
+#: src/tables/stock/StockItemTestResultTable.tsx:342
 msgid "Error"
 msgstr "خطأ"
 
@@ -759,7 +763,7 @@ msgstr "ال طلب timed خارج"
 
 #: lib/hooks/MonitorDataOutput.tsx:57
 #: lib/hooks/MonitorDataOutput.tsx:116
-#: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:76
+#: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:77
 msgid "Process failed"
 msgstr "عملية فشل"
 
@@ -771,23 +775,42 @@ msgstr "عملية مكتمل بنجاح"
 #~ msgid "Title"
 #~ msgstr "Title"
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:103
+#: src/components/barcodes/BarcodeCameraInput.tsx:202
+#: src/components/barcodes/BarcodeCameraInput.tsx:304
 msgid "Error while scanning"
 msgstr "خطأ في أثناء المسح"
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:117
+#: src/components/barcodes/BarcodeCameraInput.tsx:267
+msgid "Flashlight"
+msgstr ""
+
+#: src/components/barcodes/BarcodeCameraInput.tsx:268
+msgid "Flashlight control is not supported on this device"
+msgstr ""
+
+#: src/components/barcodes/BarcodeCameraInput.tsx:319
 msgid "Error while stopping"
 msgstr "خطأ في أثناء stopping"
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:159
+#: src/components/barcodes/BarcodeCameraInput.tsx:366
 msgid "Start scanning by selecting a camera and pressing the play button."
 msgstr "ابدأ المسح عن طريق اختيار الكاميرا و الضغط على زر التشغيل."
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:180
+#: src/components/barcodes/BarcodeCameraInput.tsx:384
+#: src/components/barcodes/BarcodeCameraInput.tsx:391
+msgid "Turn off flashlight"
+msgstr ""
+
+#: src/components/barcodes/BarcodeCameraInput.tsx:384
+#: src/components/barcodes/BarcodeCameraInput.tsx:391
+msgid "Turn on flashlight"
+msgstr ""
+
+#: src/components/barcodes/BarcodeCameraInput.tsx:403
 msgid "Stop scanning"
 msgstr "إيقاف المسح"
 
-#: src/components/barcodes/BarcodeCameraInput.tsx:190
+#: src/components/barcodes/BarcodeCameraInput.tsx:413
 msgid "Start scanning"
 msgstr "بدء المسح"
 
@@ -799,7 +822,7 @@ msgstr "الباركود"
 
 #: src/components/barcodes/BarcodeInput.tsx:35
 #: src/components/barcodes/BarcodeKeyboardInput.tsx:18
-#: src/defaults/actions.tsx:175
+#: src/defaults/actions.tsx:173
 msgid "Scan"
 msgstr "مسح"
 
@@ -830,8 +853,8 @@ msgstr "إدخال باركود بيانات"
 #: src/components/barcodes/BarcodeScanDialog.tsx:56
 #: src/components/buttons/ScanButton.tsx:56
 #: src/components/nav/NavigationDrawer.tsx:122
-#: src/forms/PurchaseOrderForms.tsx:534
-#: src/forms/PurchaseOrderForms.tsx:674
+#: src/forms/PurchaseOrderForms.tsx:546
+#: src/forms/PurchaseOrderForms.tsx:686
 msgid "Scan Barcode"
 msgstr "مسح الباركود"
 
@@ -849,7 +872,7 @@ msgstr "باركود يقوم غير مطابقة ال expected نموذج نو�
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
-#: src/tables/bom/BomTable.tsx:596
+#: src/tables/bom/BomTable.tsx:694
 #: src/tables/settings/PendingTasksTable.tsx:68
 msgid "Success"
 msgstr "نجاح"
@@ -901,12 +924,12 @@ msgstr "فشل في رابط باركود"
 
 #: src/components/barcodes/QRCode.tsx:179
 #: src/pages/part/PartDetailsPanel.tsx:148
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:126
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:126
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:128
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:127
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:127
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:129
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:75
 #: src/pages/stock/StockDetailsPanel.tsx:124
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:92
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:94
 msgid "Link"
 msgstr "رابط"
 
@@ -916,7 +939,7 @@ msgstr "هذا سوف إزالة ال رابط إلى ال مرتبط باركو
 
 #: src/components/barcodes/QRCode.tsx:205
 #: src/components/items/ActionDropdown.tsx:197
-#: src/forms/PurchaseOrderForms.tsx:664
+#: src/forms/PurchaseOrderForms.tsx:676
 msgid "Unlink Barcode"
 msgstr "Unlink باركود"
 
@@ -1081,7 +1104,7 @@ msgid "Refresh calendar"
 msgstr "تحديث تقويم"
 
 #: src/components/calendar/Calendar.tsx:334
-#: src/components/tables/InvenTreeTableHeader.tsx:329
+#: src/components/tables/InvenTreeTableHeader.tsx:343
 msgid "Export data"
 msgstr "تصدير بيانات"
 
@@ -1102,20 +1125,20 @@ msgstr "متأخر"
 #: src/components/calendar/OrderCalendarToolTip.tsx:58
 #: src/components/tables/ColumnRenderers.tsx:731
 #: src/pages/build/BuildOrderDetailsPanel.tsx:204
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:190
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:203
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:204
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:133
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:199
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:212
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:213
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:135
 msgid "Start Date"
 msgstr "تاريخ البدء"
 
 #: src/components/calendar/OrderCalendarToolTip.tsx:64
 #: src/components/tables/ColumnRenderers.tsx:740
 #: src/pages/build/BuildOrderDetailsPanel.tsx:212
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:198
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:211
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:212
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:141
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:207
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:220
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:221
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:143
 #: src/tables/part/PartPurchaseOrdersTable.tsx:110
 #: src/tables/part/PartSalesOrdersTable.tsx:72
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:206
@@ -1129,10 +1152,10 @@ msgstr "التاريخ المستهدف"
 #: src/components/tables/Filter.tsx:400
 #: src/pages/build/BuildOrderDetailsPanel.tsx:155
 #: src/pages/part/PartDetailsPanel.tsx:290
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:165
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:177
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:179
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:107
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:166
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:178
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:180
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:109
 msgid "Responsible"
 msgstr "مسؤول"
 
@@ -1321,7 +1344,7 @@ msgid "Show the number of sales orders which are assigned to you"
 msgstr "عرض ال رقم لـ طلبات البيع الذي هي مسند إلى أنت"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:156
-#: src/pages/sales/SalesIndex.tsx:135
+#: src/pages/sales/SalesIndex.tsx:137
 msgid "Pending Shipments"
 msgstr "قيد الانتظار شحنات"
 
@@ -1379,12 +1402,12 @@ msgstr "عرض ال رقم لـ طلبات الإرجاع الذي هي مسند
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:224
 #: src/components/dashboard/widgets/GetStartedWidget.tsx:15
-#: src/defaults/links.tsx:100
+#: src/defaults/links.tsx:98
 msgid "Getting Started"
 msgstr "Getting بدأ"
 
 #: src/components/dashboard/DashboardWidgetLibrary.tsx:225
-#: src/defaults/links.tsx:103
+#: src/defaults/links.tsx:101
 msgid "Getting started with InvenTree"
 msgstr "Getting بدأ مع InvenTree"
 
@@ -1415,7 +1438,7 @@ msgid "Change the language of the user interface"
 msgstr "تغيير ال لغة لـ ال مستخدم واجهة"
 
 #: src/components/dashboard/widgets/NewsWidget.tsx:60
-#: src/components/nav/NotificationDrawer.tsx:94
+#: src/components/nav/NotificationDrawer.tsx:98
 #: src/pages/Notifications.tsx:53
 msgid "Mark as read"
 msgstr "تعيين بصفته قراءة"
@@ -1472,23 +1495,6 @@ msgstr "إنشاء جديد جرد المخزون تقرير"
 #~ msgid "Email:"
 #~ msgstr "Email:"
 
-#: src/components/details/Details.tsx:129
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:76
-#: src/pages/core/UserDetail.tsx:90
-#: src/pages/core/UserDetail.tsx:202
-#: src/tables/settings/UserTable.tsx:412
-msgid "Superuser"
-msgstr "مستخدم فائق"
-
-#: src/components/details/Details.tsx:130
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
-#: src/pages/core/UserDetail.tsx:84
-#: src/pages/core/UserDetail.tsx:199
-#: src/tables/settings/UserTable.tsx:286
-#: src/tables/settings/UserTable.tsx:407
-msgid "Administrator"
-msgstr "مسؤول النظام"
-
 #: src/components/details/Details.tsx:130
 #: src/pages/core/UserDetail.tsx:87
 #: src/pages/core/UserDetail.tsx:200
@@ -1497,10 +1503,39 @@ msgstr "مسؤول النظام"
 #~ msgstr "Staff"
 
 #: src/components/details/Details.tsx:131
-msgid "Email: "
-msgstr "بريد إلكتروني:"
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:76
+#: src/pages/core/UserDetail.tsx:90
+#: src/pages/core/UserDetail.tsx:202
+#: src/tables/settings/UserTable.tsx:412
+msgid "Superuser"
+msgstr "مستخدم فائق"
 
-#: src/components/details/Details.tsx:423
+#: src/components/details/Details.tsx:131
+#~ msgid "Email: "
+#~ msgstr "Email: "
+
+#: src/components/details/Details.tsx:133
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:72
+#: src/pages/core/UserDetail.tsx:84
+#: src/pages/core/UserDetail.tsx:199
+#: src/tables/settings/UserTable.tsx:286
+#: src/tables/settings/UserTable.tsx:407
+msgid "Administrator"
+msgstr "مسؤول النظام"
+
+#: src/components/details/Details.tsx:136
+#: src/components/render/Part.tsx:28
+#: src/components/render/Plugin.tsx:17
+#: src/components/render/User.tsx:37
+#: src/components/tables/ColumnRenderers.tsx:652
+#: src/pages/company/CompanyDetail.tsx:279
+#: src/pages/company/SupplierPartDetail.tsx:224
+#: src/pages/core/UserDetail.tsx:210
+#: src/pages/part/PartDetail.tsx:623
+msgid "Inactive"
+msgstr "غير نشط"
+
+#: src/components/details/Details.tsx:438
 msgid "No name defined"
 msgstr "لا اسم محدد"
 
@@ -1516,13 +1551,13 @@ msgstr "إزالة ال مرتبط صورة من هذا عنصر؟"
 #: src/forms/StockForms.tsx:1633
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:326
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:417
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:898
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:917
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:899
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:918
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:273
 #: src/tables/build/BuildAllocatedStockTable.tsx:183
 #: src/tables/build/BuildAllocatedStockTable.tsx:278
-#: src/tables/build/BuildLineTable.tsx:129
-#: src/tables/build/BuildLineTable.tsx:726
+#: src/tables/build/BuildLineTable.tsx:173
+#: src/tables/build/BuildLineTable.tsx:774
 #: src/tables/sales/SalesOrderAllocationTable.tsx:229
 #: src/tables/sales/SalesOrderAllocationTable.tsx:252
 #: src/tables/stock/TransferOrderAllocationTable.tsx:183
@@ -1573,7 +1608,7 @@ msgstr "مسح"
 #: src/components/forms/ApiForm.tsx:794
 #: src/contexts/ThemeContext.tsx:56
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:151
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:570
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:569
 msgid "Submit"
 msgstr "إرسال"
 
@@ -1609,6 +1644,18 @@ msgstr "حذف صورة"
 #: src/components/details/DetailsImage.tsx:449
 #~ msgid "Image downloaded successfully"
 #~ msgstr "Image downloaded successfully"
+
+#: src/components/details/LineItemOverviewTable.tsx:87
+msgid "Progress"
+msgstr ""
+
+#: src/components/details/LineItemOverviewTable.tsx:113
+msgid "No line items"
+msgstr ""
+
+#: src/components/details/LineItemOverviewTable.tsx:118
+msgid "View all {count} line items"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:43
 #~ msgid "Part is a template part (variants can be made from this part)"
@@ -1646,7 +1693,7 @@ msgstr "حذف صورة"
 #: src/components/items/RoleTable.tsx:118
 #: src/components/settings/ConfigValueList.tsx:42
 #: src/components/tables/ColumnRenderers.tsx:776
-#: src/pages/part/pricing/BomPricingPanel.tsx:158
+#: src/pages/part/pricing/BomPricingPanel.tsx:160
 #: src/pages/part/pricing/VariantPricingPanel.tsx:54
 #: src/tables/purchasing/SupplierPartTable.tsx:191
 msgid "Updated"
@@ -1697,8 +1744,8 @@ msgstr ""
 #~ msgstr "Edit Notes"
 
 #: src/components/editors/NotesEditor.tsx:317
-#: src/components/editors/NotesEditor.tsx:717
-#: src/forms/PurchaseOrderForms.tsx:655
+#: src/components/editors/NotesEditor.tsx:720
+#: src/forms/PurchaseOrderForms.tsx:667
 msgid "Add Note"
 msgstr "إضافة ملاحظة"
 
@@ -1825,11 +1872,11 @@ msgstr "رمز"
 #~ msgid "Failed to parse error response from server."
 #~ msgstr "Failed to parse error response from server."
 
-#: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:50
+#: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:51
 msgid "Error rendering preview"
 msgstr "خطأ في عرض معاينة"
 
-#: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:124
+#: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:125
 msgid "Preview not available, click \"Reload Preview\"."
 msgstr "معاينة غير متاح، انقر \"Reload Preview\"."
 
@@ -1837,11 +1884,11 @@ msgstr "معاينة غير متاح، انقر \"Reload Preview\"."
 msgid "PDF Preview"
 msgstr "PDF معاينة"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:122
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:123
 msgid "Error loading template"
 msgstr "خطأ في جارٍ التحميل قالب"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:134
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:135
 msgid "Error saving template"
 msgstr "خطأ في saving قالب"
 
@@ -1849,36 +1896,36 @@ msgstr "خطأ في saving قالب"
 #~ msgid "Save & Reload preview?"
 #~ msgstr "Save & Reload preview?"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:171
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:172
 msgid "Could not load the template from the server."
 msgstr "يمكن غير تحميل ال قالب من ال خادم."
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:188
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:373
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:189
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:374
 msgid "Save & Reload Preview"
 msgstr "حفظ & إعادة تحميل معاينة"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:193
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:194
 msgid "Are you sure you want to Save & Reload the preview?"
 msgstr "هل أنت متأكد من رغبتك في حفظ & إعادة تحميل ال معاينة؟"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:195
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:196
 msgid "To render the preview the current template needs to be replaced on the server with your modifications which may break the label if it is under active use. Do you want to proceed?"
 msgstr "إلى render ال معاينة ال حالي قالب needs إلى يكون replaced على ال خادم مع الخاص بك modifications الذي قد فاصل ال ملصق إذا هو هو under نشط استخدام. تنفيذ أنت ترغب إلى proceed؟"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:199
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:200
 msgid "Save & Reload"
 msgstr "حفظ & إعادة تحميل"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:231
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:232
 msgid "Preview updated"
 msgstr "معاينة تم التحديث"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:232
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:233
 msgid "The preview has been updated successfully."
 msgstr "ال معاينة لديه تم تم التحديث بنجاح."
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:248
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:249
 msgid "An unknown error occurred while rendering the preview."
 msgstr "غير معروف خطأ حدث أثناء عرض ال معاينة."
 
@@ -1886,15 +1933,15 @@ msgstr "غير معروف خطأ حدث أثناء عرض ال معاينة."
 #~ msgid "Save & Reload preview"
 #~ msgstr "Save & Reload preview"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:279
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:280
 msgid "Saved"
 msgstr ""
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:280
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:281
 msgid "Template file has been updated"
 msgstr "قالب ملف لديه تم تم التحديث"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:289
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:290
 msgid "Could not save the template to the server."
 msgstr "يمكن غير حفظ ال قالب إلى ال خادم."
 
@@ -1902,19 +1949,19 @@ msgstr "يمكن غير حفظ ال قالب إلى ال خادم."
 #~ msgid "to preview"
 #~ msgstr "to preview"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:365
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:366
 msgid "Reload preview"
 msgstr "إعادة تحميل معاينة"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:366
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:367
 msgid "Use the currently stored template from the server"
 msgstr "استخدام ال حاليًا مخزن قالب من ال خادم"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:374
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:375
 msgid "Save the current template and reload the preview"
 msgstr "حفظ ال حالي قالب و إعادة تحميل ال معاينة"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:387
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:388
 #: src/components/forms/HostOptionsForm.tsx:90
 #: src/components/items/RoleTable.tsx:224
 #: src/components/items/TransferList.tsx:215
@@ -1923,11 +1970,11 @@ msgstr "حفظ ال حالي قالب و إعادة تحميل ال معاينة
 msgid "Save"
 msgstr "حفظ"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:444
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:445
 msgid "Select instance to preview"
 msgstr "تحديد نسخة إلى معاينة"
 
-#: src/components/editors/TemplateEditor/TemplateEditor.tsx:488
+#: src/components/editors/TemplateEditor/TemplateEditor.tsx:489
 msgid "Error rendering template"
 msgstr "خطأ في عرض قالب"
 
@@ -2027,22 +2074,22 @@ msgstr "مسجل في بنجاح"
 
 #: src/components/forms/AuthenticationForm.tsx:81
 #: src/components/forms/AuthenticationForm.tsx:89
-#: src/functions/auth.tsx:149
-#: src/functions/auth.tsx:158
+#: src/functions/auth.tsx:144
+#: src/functions/auth.tsx:153
 msgid "Login failed"
 msgstr "تسجيل الدخول فشل"
 
 #: src/components/forms/AuthenticationForm.tsx:82
 #: src/components/forms/AuthenticationForm.tsx:90
 #: src/components/forms/AuthenticationForm.tsx:106
-#: src/functions/auth.tsx:135
-#: src/functions/auth.tsx:371
+#: src/functions/auth.tsx:130
+#: src/functions/auth.tsx:366
 #: src/pages/Auth/ProviderSignup.tsx:103
 msgid "Check your input and try again."
 msgstr "فحص الخاص بك إدخال و try مرة أخرى."
 
 #: src/components/forms/AuthenticationForm.tsx:100
-#: src/functions/auth.tsx:362
+#: src/functions/auth.tsx:357
 msgid "Mail delivery successful"
 msgstr "بريد تسليم ناجح"
 
@@ -2185,6 +2232,10 @@ msgstr "مضيف"
 #: src/components/forms/HostOptionsForm.tsx:70
 #: src/components/forms/InstanceOptions.tsx:125
 #: src/components/plugins/PluginDrawer.tsx:85
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:295
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:421
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:670
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:741
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:19
 #: src/pages/part/PartCategoryDetailsPanel.tsx:22
 #: src/pages/part/PartDetailsPanel.tsx:79
@@ -2194,7 +2245,7 @@ msgstr "مضيف"
 #: src/tables/machine/MachineTypeTable.tsx:255
 #: src/tables/machine/MachineTypeTable.tsx:358
 #: src/tables/plugin/PluginErrorTable.tsx:35
-#: src/tables/settings/ApiTokenTable.tsx:61
+#: src/tables/settings/ApiTokenTable.tsx:73
 #: src/tables/settings/GroupTable.tsx:96
 #: src/tables/settings/GroupTable.tsx:149
 #: src/tables/settings/GroupTable.tsx:257
@@ -2249,7 +2300,7 @@ msgstr "حفظ مضيف اختيار"
 #~ msgstr "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 
 #: src/components/forms/InstanceOptions.tsx:119
-#: src/pages/Index/Settings/SystemSettings.tsx:42
+#: src/pages/Index/Settings/SystemSettings.tsx:41
 msgid "Server"
 msgstr "الخادم"
 
@@ -2267,26 +2318,26 @@ msgstr "واجهة API إصدار"
 
 #: src/components/forms/InstanceOptions.tsx:143
 #: src/components/nav/NavigationDrawer.tsx:192
-#: src/defaults/actions.tsx:232
+#: src/defaults/actions.tsx:230
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:269
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:401
+#: src/pages/Index/Settings/SystemSettings.tsx:398
 msgid "Plugins"
 msgstr "الإضافات"
 
 #: src/components/forms/InstanceOptions.tsx:144
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:126
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:107
 #: src/tables/general/ParameterTemplateTable.tsx:148
 #: src/tables/general/ParameterTemplateTable.tsx:183
 #: src/tables/part/PartTestTemplateTable.tsx:121
 #: src/tables/settings/TemplateTable.tsx:296
 #: src/tables/settings/TemplateTable.tsx:408
-#: src/tables/stock/StockItemTestResultTable.tsx:418
+#: src/tables/stock/StockItemTestResultTable.tsx:424
 msgid "Enabled"
 msgstr "مفعّل"
 
 #: src/components/forms/InstanceOptions.tsx:144
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:130
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:111
 msgid "Disabled"
 msgstr "معطّل"
 
@@ -2303,17 +2354,17 @@ msgstr ""
 msgid "Running"
 msgstr "قيد التشغيل"
 
-#: src/components/forms/fields/ApiFormField.tsx:148
+#: src/components/forms/fields/ApiFormField.tsx:149
 msgid "Select location"
 msgstr "تحديد موقع"
 
-#: src/components/forms/fields/ApiFormField.tsx:164
+#: src/components/forms/fields/ApiFormField.tsx:165
 #: src/components/forms/fields/IconField.tsx:235
 #: src/components/wizards/ImportPartWizard.tsx:304
 msgid "Select category"
 msgstr "تحديد فئة"
 
-#: src/components/forms/fields/ApiFormField.tsx:254
+#: src/components/forms/fields/ApiFormField.tsx:255
 msgid "Select file to upload"
 msgstr "تحديد ملف إلى رفع"
 
@@ -2335,7 +2386,6 @@ msgstr ""
 
 #: src/components/forms/fields/IconField.tsx:221
 #: src/components/nav/Layout.tsx:144
-#: src/components/nav/NavigationTree.tsx:378
 #: src/tables/part/PartThumbTable.tsx:209
 msgid "Search..."
 msgstr "بحث..."
@@ -2357,7 +2407,7 @@ msgstr "جارٍ التحميل"
 
 #: src/components/forms/fields/RelatedModelField.tsx:552
 #: src/components/forms/fields/TreeField.tsx:414
-#: src/components/nav/NavigationTree.tsx:403
+#: src/components/nav/NavigationTree.tsx:444
 msgid "No results found"
 msgstr "لم يتم العثور على نتائج"
 
@@ -2385,7 +2435,7 @@ msgstr "إضافة صف جديد"
 #: src/components/forms/fields/TreeField.tsx:328
 #: src/components/render/Instance.tsx:145
 #: src/components/render/ModelHoverCard.tsx:73
-#: src/components/tables/InvenTreeTable.tsx:900
+#: src/components/tables/InvenTreeTable.tsx:1161
 msgid "View details"
 msgstr "عرض تفاصيل"
 
@@ -2457,7 +2507,7 @@ msgstr "تصفية حسب حالة صف validation"
 
 #: src/components/importer/ImportDataSelector.tsx:396
 #: src/components/wizards/WizardDrawer.tsx:113
-#: src/tables/build/BuildOutputTable.tsx:637
+#: src/tables/build/BuildOutputTable.tsx:638
 msgid "Complete"
 msgstr "مكتمل"
 
@@ -2476,8 +2526,8 @@ msgstr "Processing بيانات"
 #: src/components/importer/ImporterColumnSelector.tsx:56
 #: src/components/importer/ImporterColumnSelector.tsx:299
 #: src/components/items/ErrorItem.tsx:12
-#: src/functions/api.tsx:60
-#: src/functions/auth.tsx:418
+#: src/functions/api.tsx:75
+#: src/functions/auth.tsx:413
 msgid "An error occurred"
 msgstr "خطأ حدث"
 
@@ -2574,7 +2624,7 @@ msgstr "بيانات لديه تم مستورد بنجاح"
 #: src/components/modals/ServerInfoModal.tsx:134
 #: src/components/wizards/ImportPartWizard.tsx:773
 #: src/forms/BomForms.tsx:150
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:687
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:686
 msgid "Close"
 msgstr "إغلاق"
 
@@ -2607,8 +2657,8 @@ msgstr "الخيارات"
 #~ msgstr "Link custom barcode"
 
 #: src/components/items/ActionDropdown.tsx:175
-#: src/components/tables/InvenTreeTableHeader.tsx:232
-#: src/components/tables/InvenTreeTableHeader.tsx:233
+#: src/components/tables/InvenTreeTableHeader.tsx:246
+#: src/components/tables/InvenTreeTableHeader.tsx:247
 msgid "Barcode Actions"
 msgstr "باركود إجراءات"
 
@@ -2663,7 +2713,7 @@ msgid "Read More"
 msgstr "قراءة المزيد"
 
 #: src/components/items/ErrorItem.tsx:8
-#: src/functions/api.tsx:51
+#: src/functions/api.tsx:66
 #: src/tables/settings/PendingTasksTable.tsx:80
 msgid "Unknown error"
 msgstr "غير معروف خطأ"
@@ -2708,7 +2758,7 @@ msgid "Import Parts"
 msgstr "استيراد أصناف"
 
 #: src/components/items/PartCreationMenu.tsx:62
-#: src/pages/part/PartDetail.tsx:670
+#: src/pages/part/PartDetail.tsx:664
 #: src/tables/part/PartTable.tsx:199
 msgid "Add Part"
 msgstr "إضافة الصنف"
@@ -2726,7 +2776,7 @@ msgid "Create a new part"
 msgstr "إنشاء جديد صنف"
 
 #: src/components/items/PartCreationMenu.tsx:92
-#: src/tables/bom/BomTable.tsx:683
+#: src/tables/bom/BomTable.tsx:781
 #: src/tables/general/ParameterTable.tsx:203
 msgid "Import from File"
 msgstr "استيراد من ملف"
@@ -2768,7 +2818,7 @@ msgid "Role"
 msgstr ""
 
 #: src/components/items/RoleTable.tsx:140
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:906
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:907
 msgid "View"
 msgstr "عرض"
 
@@ -2778,7 +2828,7 @@ msgstr "تغيير"
 
 #: src/components/items/RoleTable.tsx:150
 #: src/forms/StockForms.tsx:1682
-#: src/tables/stock/StockItemTestResultTable.tsx:366
+#: src/tables/stock/StockItemTestResultTable.tsx:372
 msgid "Add"
 msgstr "إضافة"
 
@@ -2802,11 +2852,11 @@ msgstr "لا عناصر"
 #: src/components/render/Stock.tsx:98
 #: src/components/tables/ColumnRenderers.tsx:265
 #: src/components/tables/PartStockCell.tsx:85
-#: src/pages/part/PartDetail.tsx:584
+#: src/pages/part/PartDetail.tsx:578
 #: src/pages/stock/StockDetail.tsx:679
 #: src/pages/stock/StockDetailsPanel.tsx:204
 #: src/tables/build/BuildAllocatedStockTable.tsx:128
-#: src/tables/build/BuildLineTable.tsx:211
+#: src/tables/build/BuildLineTable.tsx:255
 #: src/tables/stock/StockItemTable.tsx:218
 msgid "Available"
 msgstr "متاح"
@@ -2865,7 +2915,7 @@ msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:176
 #: src/defaults/actions.tsx:69
-#: src/defaults/links.tsx:182
+#: src/defaults/links.tsx:180
 msgid "Documentation"
 msgstr ""
 
@@ -3084,16 +3134,16 @@ msgstr ""
 msgid "{0} of {1}"
 msgstr ""
 
-#: src/components/nav/Header.tsx:63
-#: src/components/nav/Header.tsx:70
+#: src/components/nav/Header.tsx:68
+#: src/components/nav/Header.tsx:75
 msgid "Open search"
 msgstr "فتح بحث"
 
-#: src/components/nav/Header.tsx:210
+#: src/components/nav/Header.tsx:215
 #: src/components/nav/NavigationDrawer.tsx:134
-#: src/components/nav/NotificationDrawer.tsx:181
-#: src/pages/Index/Settings/SystemSettings.tsx:146
-#: src/pages/Index/Settings/UserSettings.tsx:110
+#: src/components/nav/NotificationDrawer.tsx:185
+#: src/pages/Index/Settings/SystemSettings.tsx:145
+#: src/pages/Index/Settings/UserSettings.tsx:112
 #: src/pages/Notifications.tsx:45
 #: src/pages/Notifications.tsx:130
 msgid "Notifications"
@@ -3103,15 +3153,15 @@ msgstr "إشعارات"
 #~ msgid "Administrator Mode"
 #~ msgstr "Administrator Mode"
 
-#: src/components/nav/Header.tsx:232
+#: src/components/nav/Header.tsx:237
 msgid "Superuser Mode"
 msgstr "مستخدم فائق وضع"
 
-#: src/components/nav/Header.tsx:232
+#: src/components/nav/Header.tsx:237
 msgid "Admin Mode"
 msgstr "مسؤول وضع"
 
-#: src/components/nav/Header.tsx:238
+#: src/components/nav/Header.tsx:243
 msgid "The current user has elevated privileges and should not be used for regular usage."
 msgstr "ال حالي مستخدم لديه elevated privileges و ينبغي غير يكون مستخدم لـ regular usage."
 
@@ -3140,8 +3190,8 @@ msgstr "الإعدادات"
 #: src/components/nav/NavigationDrawer.tsx:140
 #: src/components/nav/SettingsHeader.tsx:40
 #: src/defaults/actions.tsx:106
-#: src/pages/Index/Settings/UserSettings.tsx:147
-#: src/pages/Index/Settings/UserSettings.tsx:151
+#: src/pages/Index/Settings/UserSettings.tsx:149
+#: src/pages/Index/Settings/UserSettings.tsx:153
 msgid "User Settings"
 msgstr "إعدادات المستخدم"
 
@@ -3157,9 +3207,9 @@ msgstr "إعدادات المستخدم"
 #: src/components/nav/MainMenu.tsx:69
 #: src/components/nav/NavigationDrawer.tsx:146
 #: src/components/nav/SettingsHeader.tsx:41
-#: src/defaults/actions.tsx:193
-#: src/pages/Index/Settings/SystemSettings.tsx:420
-#: src/pages/Index/Settings/SystemSettings.tsx:425
+#: src/defaults/actions.tsx:191
+#: src/pages/Index/Settings/SystemSettings.tsx:417
+#: src/pages/Index/Settings/SystemSettings.tsx:422
 msgid "System Settings"
 msgstr "إعدادات نظام"
 
@@ -3170,7 +3220,7 @@ msgstr "إعدادات نظام"
 #: src/components/nav/MainMenu.tsx:78
 #: src/components/nav/NavigationDrawer.tsx:153
 #: src/components/nav/SettingsHeader.tsx:42
-#: src/defaults/actions.tsx:202
+#: src/defaults/actions.tsx:200
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:344
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:349
 msgid "Admin Center"
@@ -3178,8 +3228,8 @@ msgstr "مسؤول Center"
 
 #: src/components/nav/MainMenu.tsx:99
 #: src/defaults/actions.tsx:78
-#: src/defaults/links.tsx:154
-#: src/defaults/links.tsx:207
+#: src/defaults/links.tsx:152
+#: src/defaults/links.tsx:205
 msgid "About InvenTree"
 msgstr "حول InvenTree"
 
@@ -3209,10 +3259,10 @@ msgstr "تسجيل الخروج"
 #: src/components/wizards/ImportPartWizard.tsx:808
 #: src/defaults/links.tsx:47
 #: src/forms/StockForms.tsx:1515
-#: src/pages/Index/Settings/SystemSettings.tsx:260
+#: src/pages/Index/Settings/SystemSettings.tsx:259
 #: src/pages/part/PartDetail.tsx:304
-#: src/pages/stock/LocationDetail.tsx:403
-#: src/pages/stock/LocationDetail.tsx:445
+#: src/pages/stock/LocationDetail.tsx:401
+#: src/pages/stock/LocationDetail.tsx:444
 #: src/pages/stock/StockDetail.tsx:337
 #: src/pages/stock/TransferOrderDetail.tsx:381
 #: src/tables/stock/StockItemTable.tsx:79
@@ -3220,31 +3270,31 @@ msgid "Stock"
 msgstr "المخزون"
 
 #: src/components/nav/NavigationDrawer.tsx:84
-#: src/defaults/links.tsx:57
-#: src/pages/Index/Settings/SystemSettings.tsx:311
+#: src/defaults/links.tsx:56
+#: src/pages/Index/Settings/SystemSettings.tsx:319
 #: src/pages/build/BuildDetail.tsx:602
 #: src/pages/build/BuildIndex.tsx:121
 msgid "Manufacturing"
 msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:91
-#: src/defaults/links.tsx:63
-#: src/pages/Index/Settings/SystemSettings.tsx:339
+#: src/defaults/links.tsx:62
+#: src/pages/Index/Settings/SystemSettings.tsx:348
 #: src/pages/company/ManufacturerDetail.tsx:9
 #: src/pages/company/ManufacturerPartDetail.tsx:193
 #: src/pages/company/SupplierDetail.tsx:9
 #: src/pages/company/SupplierPartDetail.tsx:211
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:379
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:380
 #: src/pages/purchasing/PurchasingIndex.tsx:237
 msgid "Purchasing"
 msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:98
-#: src/defaults/links.tsx:69
-#: src/pages/Index/Settings/SystemSettings.tsx:356
+#: src/defaults/links.tsx:68
+#: src/pages/Index/Settings/SystemSettings.tsx:367
 #: src/pages/company/CustomerDetail.tsx:9
 #: src/pages/sales/ReturnOrderDetail.tsx:362
-#: src/pages/sales/SalesIndex.tsx:211
+#: src/pages/sales/SalesIndex.tsx:214
 #: src/pages/sales/SalesOrderDetail.tsx:432
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:280
 msgid "Sales"
@@ -3258,28 +3308,40 @@ msgstr "تنقل"
 msgid "About"
 msgstr "حول"
 
-#: src/components/nav/NavigationTree.tsx:388
+#: src/components/nav/NavigationTree.tsx:402
+msgid "Unpin"
+msgstr ""
+
+#: src/components/nav/NavigationTree.tsx:402
+msgid "Pin"
+msgstr ""
+
+#: src/components/nav/NavigationTree.tsx:419
+msgid "Filter {title}..."
+msgstr ""
+
+#: src/components/nav/NavigationTree.tsx:429
 msgid "Clear search"
 msgstr "مسح بحث"
 
-#: src/components/nav/NavigationTree.tsx:399
+#: src/components/nav/NavigationTree.tsx:440
 msgid "Error loading navigation tree."
 msgstr "خطأ في جارٍ التحميل تنقل tree."
 
-#: src/components/nav/NotificationDrawer.tsx:183
+#: src/components/nav/NotificationDrawer.tsx:187
 #: src/pages/Notifications.tsx:74
 msgid "Mark all as read"
 msgstr "تعيين الكل بصفته قراءة"
 
-#: src/components/nav/NotificationDrawer.tsx:193
+#: src/components/nav/NotificationDrawer.tsx:197
 msgid "View all notifications"
 msgstr "عرض الكل إشعارات"
 
-#: src/components/nav/NotificationDrawer.tsx:216
+#: src/components/nav/NotificationDrawer.tsx:220
 msgid "You have no unread notifications."
 msgstr "أنت لديه لا unread إشعارات."
 
-#: src/components/nav/NotificationDrawer.tsx:238
+#: src/components/nav/NotificationDrawer.tsx:242
 msgid "Error loading notifications."
 msgstr "خطأ في جارٍ التحميل إشعارات."
 
@@ -3291,27 +3353,27 @@ msgstr "خطأ في جارٍ التحميل إشعارات."
 msgid "Primary Action"
 msgstr "أساسي إجراء"
 
-#: src/components/nav/SearchDrawer.tsx:117
+#: src/components/nav/SearchDrawer.tsx:123
 msgid "No Overview Available"
 msgstr "لا Overview متاح"
 
-#: src/components/nav/SearchDrawer.tsx:118
+#: src/components/nav/SearchDrawer.tsx:124
 msgid "No overview available for this model type"
 msgstr "لا overview متاح لـ هذا نموذج نوع"
 
-#: src/components/nav/SearchDrawer.tsx:136
+#: src/components/nav/SearchDrawer.tsx:142
 msgid "View all results"
 msgstr "عرض الكل نتائج"
 
-#: src/components/nav/SearchDrawer.tsx:151
+#: src/components/nav/SearchDrawer.tsx:157
 msgid "results"
 msgstr "نتائج"
 
-#: src/components/nav/SearchDrawer.tsx:155
+#: src/components/nav/SearchDrawer.tsx:161
 msgid "Remove search group"
 msgstr "إزالة بحث مجموعة"
 
-#: src/components/nav/SearchDrawer.tsx:310
+#: src/components/nav/SearchDrawer.tsx:316
 #: src/pages/company/ManufacturerPartDetail.tsx:97
 #: src/pages/part/PartDetail.tsx:379
 #: src/pages/part/PartSupplierDetail.tsx:15
@@ -3319,14 +3381,14 @@ msgstr "إزالة بحث مجموعة"
 msgid "Suppliers"
 msgstr "الموردون"
 
-#: src/components/nav/SearchDrawer.tsx:320
+#: src/components/nav/SearchDrawer.tsx:326
 #: src/pages/part/PartSupplierDetail.tsx:23
 #: src/pages/purchasing/PurchasingIndex.tsx:173
 msgid "Manufacturers"
 msgstr "الشركات المصنعة"
 
-#: src/components/nav/SearchDrawer.tsx:330
-#: src/pages/sales/SalesIndex.tsx:175
+#: src/components/nav/SearchDrawer.tsx:336
+#: src/pages/sales/SalesIndex.tsx:178
 msgid "Customers"
 msgstr "العملاء"
 
@@ -3334,41 +3396,41 @@ msgstr "العملاء"
 #~ msgid "No results"
 #~ msgstr "No results"
 
-#: src/components/nav/SearchDrawer.tsx:514
+#: src/components/nav/SearchDrawer.tsx:520
 msgid "Enter search text"
 msgstr "إدخال بحث نص"
 
-#: src/components/nav/SearchDrawer.tsx:525
+#: src/components/nav/SearchDrawer.tsx:531
 msgid "Refresh search results"
 msgstr "تحديث بحث نتائج"
 
-#: src/components/nav/SearchDrawer.tsx:536
-#: src/components/nav/SearchDrawer.tsx:543
+#: src/components/nav/SearchDrawer.tsx:542
+#: src/components/nav/SearchDrawer.tsx:549
 msgid "Search Options"
 msgstr "بحث خيارات"
 
-#: src/components/nav/SearchDrawer.tsx:546
+#: src/components/nav/SearchDrawer.tsx:552
 msgid "Whole word search"
 msgstr "Whole word بحث"
 
-#: src/components/nav/SearchDrawer.tsx:555
+#: src/components/nav/SearchDrawer.tsx:561
 msgid "Regex search"
 msgstr "تعبير نمطي بحث"
 
-#: src/components/nav/SearchDrawer.tsx:564
+#: src/components/nav/SearchDrawer.tsx:570
 msgid "Notes search"
 msgstr "ملاحظات بحث"
 
-#: src/components/nav/SearchDrawer.tsx:612
+#: src/components/nav/SearchDrawer.tsx:619
 msgid "An error occurred during search query"
 msgstr "خطأ حدث during بحث استعلام"
 
-#: src/components/nav/SearchDrawer.tsx:623
+#: src/components/nav/SearchDrawer.tsx:630
 #: src/tables/part/PartTestTemplateTable.tsx:86
 msgid "No Results"
 msgstr "لا نتائج"
 
-#: src/components/nav/SearchDrawer.tsx:626
+#: src/components/nav/SearchDrawer.tsx:633
 msgid "No results available for search query"
 msgstr "لا نتائج متاح لـ بحث استعلام"
 
@@ -3439,11 +3501,11 @@ msgstr "إضافة معلومات"
 #: src/pages/company/SupplierPartDetailsPanel.tsx:99
 #: src/pages/part/PartCategoryDetailsPanel.tsx:42
 #: src/pages/part/PartDetailsPanel.tsx:87
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:65
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:66
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:66
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:66
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:67
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:67
 #: src/pages/stock/StockLocationDetailsPanel.tsx:40
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:43
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:45
 #: src/tables/build/BuildAllocatedStockTable.tsx:94
 #: src/tables/machine/MachineTypeTable.tsx:162
 #: src/tables/machine/MachineTypeTable.tsx:258
@@ -3480,7 +3542,7 @@ msgstr "التاريخ"
 #: src/tables/plugin/PluginListTable.tsx:431
 #: src/tables/purchasing/SupplierPartTable.tsx:139
 #: src/tables/purchasing/SupplierPartTable.tsx:254
-#: src/tables/settings/ApiTokenTable.tsx:66
+#: src/tables/settings/ApiTokenTable.tsx:78
 #: src/tables/settings/ProjectCodeTable.tsx:104
 #: src/tables/settings/UserTable.tsx:402
 #: src/tables/stock/StockItemTable.tsx:197
@@ -3516,7 +3578,7 @@ msgstr "طرد"
 #: src/components/plugins/PluginDrawer.tsx:156
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:67
 #: src/pages/Index/Settings/PluginSettingsGroup.tsx:119
-#: src/pages/Index/Settings/UserSettings.tsx:132
+#: src/pages/Index/Settings/UserSettings.tsx:134
 msgid "Plugin Settings"
 msgstr "إعدادات الإضافة"
 
@@ -3545,19 +3607,19 @@ msgstr "إعدادات الإضافة"
 #~ msgid "Plugin did not provide settings rendering function"
 #~ msgstr "Plugin did not provide settings rendering function"
 
-#: src/components/plugins/PluginUIFeature.tsx:104
+#: src/components/plugins/PluginUIFeature.tsx:105
 msgid "Error occurred while rendering the template editor."
 msgstr "خطأ في حدث أثناء عرض ال قالب editor."
 
-#: src/components/plugins/PluginUIFeature.tsx:121
+#: src/components/plugins/PluginUIFeature.tsx:122
 msgid "Error Loading Plugin Editor"
 msgstr "خطأ في جارٍ التحميل إضافة Editor"
 
-#: src/components/plugins/PluginUIFeature.tsx:159
+#: src/components/plugins/PluginUIFeature.tsx:160
 msgid "Error occurred while rendering the template preview."
 msgstr "خطأ في حدث أثناء عرض ال قالب معاينة."
 
-#: src/components/plugins/PluginUIFeature.tsx:170
+#: src/components/plugins/PluginUIFeature.tsx:171
 msgid "Error Loading Plugin Preview"
 msgstr "خطأ في جارٍ التحميل إضافة معاينة"
 
@@ -3604,7 +3666,7 @@ msgstr ""
 #~ msgid "Unknown model: {model}"
 #~ msgstr "Unknown model: {model}"
 
-#: src/components/render/Instance.tsx:275
+#: src/components/render/Instance.tsx:277
 msgid "Unknown model: {model_name}"
 msgstr "غير معروف نموذج: {model_name}"
 
@@ -3624,19 +3686,8 @@ msgstr "غير معروف نموذج: {model_name}"
 #~ msgid "Unknown Models"
 #~ msgstr "Unknown Models"
 
-#: src/components/render/Part.tsx:28
-#: src/components/render/Plugin.tsx:17
-#: src/components/render/User.tsx:37
-#: src/components/tables/ColumnRenderers.tsx:652
-#: src/pages/company/CompanyDetail.tsx:270
-#: src/pages/company/SupplierPartDetail.tsx:224
-#: src/pages/core/UserDetail.tsx:210
-#: src/pages/part/PartDetail.tsx:629
-msgid "Inactive"
-msgstr "غير نشط"
-
 #: src/components/render/Part.tsx:31
-#: src/pages/part/PartDetail.tsx:635
+#: src/pages/part/PartDetail.tsx:629
 #: src/tables/part/PartTableFilters.tsx:103
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
@@ -3644,7 +3695,7 @@ msgstr "افتراضي"
 
 #: src/components/render/Part.tsx:34
 #: src/components/tables/PartStockCell.tsx:113
-#: src/tables/bom/BomTable.tsx:348
+#: src/tables/bom/BomTable.tsx:425
 msgid "No stock"
 msgstr "لا مخزون"
 
@@ -3653,10 +3704,10 @@ msgstr "لا مخزون"
 #: src/components/wizards/OrderPartsWizard.tsx:136
 #: src/pages/company/SupplierPartDetail.tsx:245
 #: src/pages/company/SupplierPartDetailsPanel.tsx:151
-#: src/pages/part/PartDetail.tsx:611
+#: src/pages/part/PartDetail.tsx:605
 #: src/pages/part/PartDetailsPanel.tsx:174
-#: src/tables/bom/BomTable.tsx:491
-#: src/tables/build/BuildLineTable.tsx:241
+#: src/tables/bom/BomTable.tsx:589
+#: src/tables/build/BuildLineTable.tsx:285
 #: src/tables/part/PartTable.tsx:83
 #: src/tables/part/PartTableFilters.tsx:149
 msgid "On Order"
@@ -3664,7 +3715,7 @@ msgstr "قيد الطلب"
 
 #: src/components/render/Part.tsx:59
 #: src/components/wizards/OrderPartsWizard.tsx:142
-#: src/pages/part/PartDetail.tsx:617
+#: src/pages/part/PartDetail.tsx:611
 #: src/pages/part/PartDetailsPanel.tsx:213
 #: src/pages/stock/StockDetail.tsx:662
 #: src/tables/part/PartTestResultTable.tsx:316
@@ -3694,7 +3745,7 @@ msgstr "الفئة"
 #: src/components/tables/ColumnRenderers.tsx:394
 #: src/components/tables/Filter.tsx:507
 #: src/forms/BuildForms.tsx:869
-#: src/forms/PurchaseOrderForms.tsx:707
+#: src/forms/PurchaseOrderForms.tsx:719
 #: src/forms/StockForms.tsx:674
 #: src/forms/StockForms.tsx:712
 #: src/forms/StockForms.tsx:1513
@@ -3724,12 +3775,12 @@ msgid "Serial Number"
 msgstr "الرقم التسلسلي"
 
 #: src/components/render/Stock.tsx:100
-#: src/components/wizards/OrderPartsWizard.tsx:389
+#: src/components/wizards/OrderPartsWizard.tsx:390
 #: src/forms/BomForms.tsx:42
 #: src/forms/BuildForms.tsx:284
 #: src/forms/BuildForms.tsx:707
 #: src/forms/BuildForms.tsx:871
-#: src/forms/PurchaseOrderForms.tsx:939
+#: src/forms/PurchaseOrderForms.tsx:964
 #: src/forms/ReturnOrderForms.tsx:243
 #: src/forms/SalesOrderForms.tsx:438
 #: src/forms/StockForms.tsx:724
@@ -3742,12 +3793,12 @@ msgstr "الرقم التسلسلي"
 #: src/pages/part/PartStockHistoryDetail.tsx:268
 #: src/pages/part/bom/BomCompare.tsx:33
 #: src/pages/part/bom/BomCompare.tsx:204
-#: src/pages/part/pricing/BomPricingPanel.tsx:113
+#: src/pages/part/pricing/BomPricingPanel.tsx:115
 #: src/pages/part/pricing/PriceBreakPanel.tsx:89
 #: src/pages/part/pricing/PriceBreakPanel.tsx:173
 #: src/pages/stock/StockDetail.tsx:673
 #: src/pages/stock/StockDetailsPanel.tsx:197
-#: src/tables/build/BuildLineTable.tsx:99
+#: src/tables/build/BuildLineTable.tsx:143
 #: src/tables/part/PartPurchaseOrdersTable.tsx:103
 #: src/tables/part/PartTestResultTable.tsx:282
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:183
@@ -3770,7 +3821,7 @@ msgstr "الكمية"
 #: src/forms/StockForms.tsx:1838
 #: src/forms/StockForms.tsx:1885
 #: src/forms/StockForms.tsx:1929
-#: src/tables/build/BuildLineTable.tsx:109
+#: src/tables/build/BuildLineTable.tsx:153
 msgid "Batch"
 msgstr "دفعة"
 
@@ -3865,7 +3916,15 @@ msgstr "تنفيذ أنت ترغب إلى proceed إلى تغيير هذا إع�
 #~ msgid "{0} updated successfully"
 #~ msgstr "{0} updated successfully"
 
-#: src/components/settings/SettingItem.tsx:221
+#: src/components/settings/SettingItem.tsx:214
+msgid "Security relevant setting"
+msgstr ""
+
+#: src/components/settings/SettingItem.tsx:218
+msgid "Function Toggle - effects system behavior and/or feature visibility"
+msgstr ""
+
+#: src/components/settings/SettingItem.tsx:238
 msgid "This setting requires confirmation"
 msgstr "هذا إعداد يتطلب confirmation"
 
@@ -3911,8 +3970,8 @@ msgid "Part is not active"
 msgstr "صنف هو غير نشط"
 
 #: src/components/tables/ColumnRenderers.tsx:75
-#: src/pages/part/PartDetail.tsx:501
-#: src/tables/bom/BomTable.tsx:726
+#: src/pages/part/PartDetail.tsx:495
+#: src/tables/bom/BomTable.tsx:839
 #: src/tables/part/PartTestTemplateTable.tsx:262
 msgid "Part is Locked"
 msgstr "صنف هو مقفل"
@@ -3989,7 +4048,7 @@ msgid "This stock item is partially allocated"
 msgstr "هذا عنصر المخزون هو partially مخصص"
 
 #: src/components/tables/ColumnRenderers.tsx:274
-#: src/tables/build/BuildLineTable.tsx:322
+#: src/tables/build/BuildLineTable.tsx:366
 #: src/tables/sales/SalesOrderLineItemTable.tsx:198
 #: src/tables/stock/TransferOrderLineItemTable.tsx:143
 msgid "No stock available"
@@ -4001,7 +4060,7 @@ msgstr "هذا عنصر المخزون لديه تم نافد"
 
 #: src/components/tables/ColumnRenderers.tsx:301
 #: src/components/tables/PartStockCell.tsx:134
-#: src/tables/bom/BomTable.tsx:399
+#: src/tables/bom/BomTable.tsx:476
 #: src/tables/sales/SalesOrderLineItemTable.tsx:227
 #: src/tables/stock/TransferOrderLineItemTable.tsx:172
 msgid "Stock Information"
@@ -4024,23 +4083,23 @@ msgstr "افتراضي موقع"
 #: src/components/tables/ColumnRenderers.tsx:541
 #: src/pages/build/BuildOrderDetailsPanel.tsx:90
 #: src/pages/part/bom/BomCompare.tsx:34
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:44
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:45
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:45
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:23
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:45
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:46
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:46
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:25
 #: src/tables/build/BuildAllocatedStockTable.tsx:113
-#: src/tables/build/BuildLineTable.tsx:370
+#: src/tables/build/BuildLineTable.tsx:418
 msgid "Reference"
 msgstr "المرجع"
 
 #: src/components/tables/ColumnRenderers.tsx:553
-#: src/forms/PurchaseOrderForms.tsx:851
+#: src/forms/PurchaseOrderForms.tsx:865
 #: src/pages/company/SupplierPartDetailsPanel.tsx:74
 msgid "Note"
 msgstr "ملاحظة"
 
 #: src/components/tables/ColumnRenderers.tsx:581
-#: src/tables/build/BuildOutputTable.tsx:715
+#: src/tables/build/BuildOutputTable.tsx:716
 msgid "Allocated Lines"
 msgstr "مخصص سطور"
 
@@ -4052,23 +4111,26 @@ msgstr "مستخدم معلومات"
 #: src/components/tables/ColumnRenderers.tsx:677
 #: src/components/tables/Filter.tsx:480
 #: src/pages/part/PartDetailsPanel.tsx:282
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:173
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:185
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:187
 msgid "Created By"
 msgstr "تم الإنشاء حسب"
 
 #: src/components/tables/ColumnRenderers.tsx:749
 #: src/pages/part/PartDetailsPanel.tsx:277
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:175
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:187
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:189
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:117
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:184
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:196
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:198
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:119
 msgid "Creation Date"
 msgstr "تاريخ الإنشاء"
 
 #: src/components/tables/ColumnRenderers.tsx:758
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:207
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:219
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:219
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:149
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:216
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:228
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:228
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:151
 #: src/tables/part/PartPurchaseOrdersTable.tsx:115
 msgid "Completion Date"
 msgstr "تاريخ الإكمال"
@@ -4088,8 +4150,8 @@ msgstr "العملة"
 
 #: src/components/tables/ColumnRenderers.tsx:813
 #: src/pages/part/pricing/BomPricingPanel.tsx:61
-#: src/pages/part/pricing/BomPricingPanel.tsx:142
-#: src/tables/bom/BomTable.tsx:323
+#: src/pages/part/pricing/BomPricingPanel.tsx:144
+#: src/tables/bom/BomTable.tsx:362
 #: src/tables/general/ExtraLineItemTable.tsx:86
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:275
 #: src/tables/purchasing/PurchaseOrderTable.tsx:101
@@ -4112,7 +4174,7 @@ msgid "Show items which have a batch code"
 msgstr "عرض عناصر الذي لديه رمز الدفعة"
 
 #: src/components/tables/Filter.tsx:125
-#: src/forms/PurchaseOrderForms.tsx:777
+#: src/forms/PurchaseOrderForms.tsx:789
 #: src/forms/StockForms.tsx:731
 #: src/pages/build/BuildOrderDetailsPanel.tsx:186
 #: src/pages/stock/StockDetail.tsx:689
@@ -4141,7 +4203,7 @@ msgstr "تصفية عناصر حسب رمز الدفعة"
 #: src/forms/StockForms.tsx:1930
 #: src/pages/company/SupplierPartDetail.tsx:229
 #: src/pages/company/SupplierPartDetailsPanel.tsx:144
-#: src/pages/part/PartDetail.tsx:578
+#: src/pages/part/PartDetail.tsx:572
 #: src/pages/part/PartDetailsPanel.tsx:160
 #: src/tables/purchasing/SupplierPartTable.tsx:274
 msgid "In Stock"
@@ -4341,21 +4403,21 @@ msgstr "تضمين نتائج لـ صنف متغيرات"
 #: src/forms/BuildForms.tsx:386
 #: src/forms/BuildForms.tsx:469
 #: src/forms/BuildForms.tsx:544
-#: src/forms/PurchaseOrderForms.tsx:841
+#: src/forms/PurchaseOrderForms.tsx:855
 #: src/forms/ReturnOrderForms.tsx:196
 #: src/forms/ReturnOrderForms.tsx:244
 #: src/forms/StockForms.tsx:689
 #: src/forms/StockForms.tsx:1427
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:87
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:121
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:104
 #: src/pages/build/BuildOrderDetailsPanel.tsx:67
 #: src/pages/core/UserDetail.tsx:148
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:71
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:72
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:72
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:72
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:73
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:73
 #: src/pages/stock/StockDetailsPanel.tsx:108
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:49
-#: src/tables/build/BuildOutputTable.tsx:498
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:51
+#: src/tables/build/BuildOutputTable.tsx:499
 #: src/tables/machine/MachineListTable.tsx:388
 #: src/tables/part/PartPurchaseOrdersTable.tsx:46
 #: src/tables/part/PartSalesOrdersTable.tsx:45
@@ -4394,7 +4456,7 @@ msgid "Select tags"
 msgstr "تحديد وسوم"
 
 #: src/components/tables/Filter.tsx:442
-#: src/tables/settings/ApiTokenTable.tsx:131
+#: src/tables/settings/ApiTokenTable.tsx:163
 #: src/tables/stock/StockTrackingTable.tsx:238
 msgid "Filter by user"
 msgstr "تصفية حسب مستخدم"
@@ -4421,7 +4483,7 @@ msgstr "تصفية حسب شركة مصنعة"
 #: src/pages/company/SupplierPartDetail.tsx:215
 #: src/pages/company/SupplierPartDetailsPanel.tsx:84
 #: src/pages/company/SupplierPartDetailsPanel.tsx:183
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:59
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:60
 #: src/tables/company/CompanyTable.tsx:116
 #: src/tables/part/PartPurchaseOrdersTable.tsx:52
 #: src/tables/purchasing/PurchaseOrderParametricTable.tsx:27
@@ -4441,6 +4503,8 @@ msgstr "تصفية حسب مستخدم من تم الإنشاء ال طلب"
 #: src/components/tables/Filter.tsx:488
 #: src/pages/build/BuildOrderDetailsPanel.tsx:147
 #: src/tables/build/BuildOrderTable.tsx:124
+#: src/tables/settings/ApiTokenTable.tsx:118
+#: src/tables/settings/ApiTokenTable.tsx:167
 msgid "Issued By"
 msgstr "مصروف حسب"
 
@@ -4476,9 +4540,10 @@ msgstr "إزالة تصفية"
 #: src/components/tables/FilterSelectDrawer.tsx:249
 #: src/components/tables/FilterSelectDrawer.tsx:276
 #: src/components/tables/FilterSelectDrawer.tsx:290
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:624
 #: src/pages/part/PartStockHistoryDetail.tsx:67
 #: src/tables/part/PartTestResultTable.tsx:210
-#: src/tables/stock/StockItemTestResultTable.tsx:205
+#: src/tables/stock/StockItemTestResultTable.tsx:211
 msgid "Value"
 msgstr "القيمة"
 
@@ -4521,7 +4586,7 @@ msgid "Delete filter group"
 msgstr "حذف تصفية مجموعة"
 
 #: src/components/tables/FilterSelectDrawer.tsx:649
-#: src/components/tables/InvenTreeTableHeader.tsx:299
+#: src/components/tables/InvenTreeTableHeader.tsx:313
 msgid "Table Filters"
 msgstr "جدول مرشحات"
 
@@ -4549,24 +4614,25 @@ msgstr "حفظ مرشحات"
 #~ msgid "Select from the available filters"
 #~ msgstr "Select from the available filters"
 
-#: src/components/tables/InvenTreeTable.tsx:59
-#: src/components/tables/InvenTreeTable.tsx:652
+#: src/components/tables/InvenTreeTable.tsx:83
+#: src/components/tables/InvenTreeTable.tsx:742
 msgid "No records found"
 msgstr "لم يتم العثور على سجلات"
 
-#: src/components/tables/InvenTreeTable.tsx:187
+#: src/components/tables/InvenTreeTable.tsx:215
 msgid "Error loading table options"
 msgstr "خطأ في جارٍ التحميل جدول خيارات"
 
-#: src/components/tables/InvenTreeTable.tsx:697
+#: src/components/tables/InvenTreeTable.tsx:787
 msgid "Server returned incorrect data type"
 msgstr "خادم مرتجع incorrect بيانات نوع"
 
-#: src/components/tables/InvenTreeTable.tsx:730
+#: src/components/tables/InvenTreeTable.tsx:820
+#: src/components/tables/InvenTreeTable.tsx:979
 msgid "Error loading table data"
 msgstr "خطأ في جارٍ التحميل جدول بيانات"
 
-#: src/components/tables/InvenTreeTable.tsx:903
+#: src/components/tables/InvenTreeTable.tsx:1164
 msgid "View {model}"
 msgstr "عرض {model}"
 
@@ -4607,21 +4673,21 @@ msgstr "فشل في حذف عناصر"
 msgid "Custom table filters are active"
 msgstr "مخصص جدول مرشحات هي نشط"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:242
+#: src/components/tables/InvenTreeTableHeader.tsx:256
 #: src/tables/general/BarcodeScanTable.tsx:95
 msgid "Delete selected records"
 msgstr "حذف محدد سجلات"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:262
+#: src/components/tables/InvenTreeTableHeader.tsx:276
 msgid "Refresh data"
 msgstr "تحديث بيانات"
 
-#: src/components/tables/InvenTreeTableHeader.tsx:311
+#: src/components/tables/InvenTreeTableHeader.tsx:325
 msgid "Active Filters"
 msgstr "نشط مرشحات"
 
 #: src/components/tables/PartStockCell.tsx:11
-#: src/tables/bom/BomTable.tsx:343
+#: src/tables/bom/BomTable.tsx:420
 #: src/tables/sales/SalesOrderLineItemTable.tsx:179
 #: src/tables/sales/SalesOrderLineItemTable.tsx:237
 #: src/tables/sales/SalesOrderLineItemTable.tsx:254
@@ -4640,7 +4706,7 @@ msgid "Maximum stock"
 msgstr "أقصى مخزون"
 
 #: src/components/tables/PartStockCell.tsx:62
-#: src/tables/bom/BomTable.tsx:390
+#: src/tables/bom/BomTable.tsx:467
 msgid "Building"
 msgstr ""
 
@@ -4657,14 +4723,14 @@ msgid "Sales Order Allocations"
 msgstr "طلب البيع تخصيصات"
 
 #: src/components/tables/PartStockCell.tsx:93
-#: src/tables/bom/BomTable.tsx:356
-#: src/tables/build/BuildLineTable.tsx:295
+#: src/tables/bom/BomTable.tsx:433
+#: src/tables/build/BuildLineTable.tsx:339
 msgid "External stock"
 msgstr "خارجي مخزون"
 
 #: src/components/tables/PartStockCell.tsx:101
-#: src/tables/bom/BomTable.tsx:373
-#: src/tables/build/BuildLineTable.tsx:268
+#: src/tables/bom/BomTable.tsx:450
+#: src/tables/build/BuildLineTable.tsx:312
 #: src/tables/sales/SalesOrderLineItemTable.tsx:204
 #: src/tables/stock/TransferOrderLineItemTable.tsx:149
 msgid "Includes variant stock"
@@ -4685,10 +4751,6 @@ msgstr ""
 #: src/components/tables/bom/UsedInTable.tsx:40
 #~ msgid "Required Part"
 #~ msgstr "Required Part"
-
-#: src/components/tables/build/BuildOrderTable.tsx:52
-#~ msgid "Progress"
-#~ msgstr "Progress"
 
 #: src/components/tables/build/BuildOrderTable.tsx:65
 #~ msgid "Priority"
@@ -5076,7 +5138,7 @@ msgid "Next"
 msgstr "التالي"
 
 #: src/components/wizards/ImportPartWizard.tsx:540
-#: src/pages/part/PartDetail.tsx:657
+#: src/pages/part/PartDetail.tsx:651
 #: src/tables/part/PartTable.tsx:161
 msgid "Edit Part"
 msgstr "تعديل الصنف"
@@ -5160,99 +5222,99 @@ msgid "Sales Requirements"
 msgstr "بيع متطلبات"
 
 #: src/components/wizards/OrderPartsWizard.tsx:147
-#: src/tables/build/BuildLineTable.tsx:430
+#: src/tables/build/BuildLineTable.tsx:478
 msgid "Required Quantity"
 msgstr "كمية مطلوب"
 
-#: src/components/wizards/OrderPartsWizard.tsx:207
+#: src/components/wizards/OrderPartsWizard.tsx:208
 msgid "New Purchase Order"
 msgstr "طلب شراء جديد"
 
-#: src/components/wizards/OrderPartsWizard.tsx:209
+#: src/components/wizards/OrderPartsWizard.tsx:210
 msgid "Purchase order created"
 msgstr "طلب الشراء تم الإنشاء"
 
-#: src/components/wizards/OrderPartsWizard.tsx:221
+#: src/components/wizards/OrderPartsWizard.tsx:222
 msgid "New Supplier Part"
 msgstr "صنف المورد جديد"
 
-#: src/components/wizards/OrderPartsWizard.tsx:223
+#: src/components/wizards/OrderPartsWizard.tsx:224
 #: src/tables/purchasing/SupplierPartTable.tsx:218
 #: src/tables/purchasing/SupplierPartTable.tsx:311
 msgid "Supplier part created"
 msgstr "صنف المورد تم الإنشاء"
 
-#: src/components/wizards/OrderPartsWizard.tsx:253
+#: src/components/wizards/OrderPartsWizard.tsx:254
 msgid "Add to Purchase Order"
 msgstr "إضافة إلى طلب الشراء"
 
-#: src/components/wizards/OrderPartsWizard.tsx:265
+#: src/components/wizards/OrderPartsWizard.tsx:266
 msgid "Part added to purchase order"
 msgstr "صنف تمت الإضافة إلى طلب الشراء"
 
-#: src/components/wizards/OrderPartsWizard.tsx:310
+#: src/components/wizards/OrderPartsWizard.tsx:311
 msgid "Select supplier part"
 msgstr "تحديد صنف المورد"
 
-#: src/components/wizards/OrderPartsWizard.tsx:335
+#: src/components/wizards/OrderPartsWizard.tsx:336
 msgid "Copy supplier part number"
 msgstr "نسخ صنف المورد رقم"
 
-#: src/components/wizards/OrderPartsWizard.tsx:338
+#: src/components/wizards/OrderPartsWizard.tsx:339
 msgid "New supplier part"
 msgstr "صنف المورد جديد"
 
-#: src/components/wizards/OrderPartsWizard.tsx:362
+#: src/components/wizards/OrderPartsWizard.tsx:363
 msgid "Select purchase order"
 msgstr "تحديد طلب الشراء"
 
-#: src/components/wizards/OrderPartsWizard.tsx:376
+#: src/components/wizards/OrderPartsWizard.tsx:377
 msgid "New purchase order"
 msgstr "طلب الشراء جديد"
 
-#: src/components/wizards/OrderPartsWizard.tsx:432
+#: src/components/wizards/OrderPartsWizard.tsx:433
 msgid "Add to selected purchase order"
 msgstr "إضافة إلى محدد طلب الشراء"
 
-#: src/components/wizards/OrderPartsWizard.tsx:449
-#: src/components/wizards/OrderPartsWizard.tsx:587
+#: src/components/wizards/OrderPartsWizard.tsx:450
+#: src/components/wizards/OrderPartsWizard.tsx:588
 msgid "No parts selected"
 msgstr "لا أصناف محدد"
 
-#: src/components/wizards/OrderPartsWizard.tsx:450
+#: src/components/wizards/OrderPartsWizard.tsx:451
 msgid "No purchaseable parts selected"
 msgstr "لا قابل للشراء أصناف محدد"
 
-#: src/components/wizards/OrderPartsWizard.tsx:486
+#: src/components/wizards/OrderPartsWizard.tsx:487
 msgid "Parts Added"
 msgstr "أصناف تمت الإضافة"
 
-#: src/components/wizards/OrderPartsWizard.tsx:487
+#: src/components/wizards/OrderPartsWizard.tsx:488
 msgid "All selected parts added to a purchase order"
 msgstr "الكل محدد أصناف تمت الإضافة إلى طلب الشراء"
 
-#: src/components/wizards/OrderPartsWizard.tsx:588
+#: src/components/wizards/OrderPartsWizard.tsx:589
 msgid "You must select at least one part to order"
 msgstr "أنت يجب تحديد عند أقل واحد صنف إلى طلب"
 
-#: src/components/wizards/OrderPartsWizard.tsx:599
+#: src/components/wizards/OrderPartsWizard.tsx:600
 msgid "Supplier part is required"
 msgstr "صنف المورد مطلوب"
 
-#: src/components/wizards/OrderPartsWizard.tsx:603
+#: src/components/wizards/OrderPartsWizard.tsx:604
 msgid "Quantity is required"
 msgstr "الكمية مطلوب"
 
-#: src/components/wizards/OrderPartsWizard.tsx:616
+#: src/components/wizards/OrderPartsWizard.tsx:617
 msgid "Invalid part selection"
 msgstr "غير صالح صنف اختيار"
 
-#: src/components/wizards/OrderPartsWizard.tsx:618
+#: src/components/wizards/OrderPartsWizard.tsx:619
 msgid "Please correct the errors in the selected parts"
 msgstr "يرجى صحيح ال أخطاء في ال محدد أصناف"
 
-#: src/components/wizards/OrderPartsWizard.tsx:629
-#: src/tables/build/BuildLineTable.tsx:913
+#: src/components/wizards/OrderPartsWizard.tsx:630
+#: src/tables/build/BuildLineTable.tsx:961
 #: src/tables/part/PartTable.tsx:267
 #: src/tables/sales/SalesOrderLineItemTable.tsx:459
 #: src/tables/stock/TransferOrderLineItemTable.tsx:333
@@ -5438,13 +5500,13 @@ msgid "Server Information"
 msgstr "خادم معلومات"
 
 #: src/defaults/actions.tsx:86
-#: src/defaults/links.tsx:190
+#: src/defaults/links.tsx:188
 msgid "About this InvenTree instance"
 msgstr "حول هذا InvenTree نسخة"
 
 #: src/defaults/actions.tsx:92
-#: src/defaults/links.tsx:167
-#: src/defaults/links.tsx:196
+#: src/defaults/links.tsx:165
+#: src/defaults/links.tsx:194
 msgid "License Information"
 msgstr "License معلومات"
 
@@ -5484,62 +5546,62 @@ msgstr "الانتقال إلى طلبات الشراء"
 msgid "Go to Sales Orders"
 msgstr "الانتقال إلى طلبات البيع"
 
-#: src/defaults/actions.tsx:155
+#: src/defaults/actions.tsx:154
 msgid "Go to Transfer Orders"
 msgstr "الانتقال إلى طلبات التحويل"
 
-#: src/defaults/actions.tsx:166
+#: src/defaults/actions.tsx:164
 msgid "Go to Return Orders"
 msgstr "الانتقال إلى طلبات الإرجاع"
 
-#: src/defaults/actions.tsx:176
+#: src/defaults/actions.tsx:174
 msgid "Scan a barcode or QR code"
 msgstr "مسح باركود أو QR رمز"
 
-#: src/defaults/actions.tsx:185
+#: src/defaults/actions.tsx:183
 msgid "Go to Build Orders"
 msgstr "الانتقال إلى أوامر الإنتاج"
 
-#: src/defaults/actions.tsx:194
+#: src/defaults/actions.tsx:192
 msgid "Go to System Settings"
 msgstr "الانتقال إلى إعدادات نظام"
 
-#: src/defaults/actions.tsx:203
+#: src/defaults/actions.tsx:201
 msgid "Go to the Admin Center"
 msgstr "الانتقال إلى ال مسؤول Center"
 
-#: src/defaults/actions.tsx:212
+#: src/defaults/actions.tsx:210
 msgid "Error Logs"
 msgstr "خطأ في Logs"
 
-#: src/defaults/actions.tsx:213
+#: src/defaults/actions.tsx:211
 msgid "View error logs for this instance"
 msgstr "عرض خطأ في logs لـ هذا نسخة"
 
-#: src/defaults/actions.tsx:223
+#: src/defaults/actions.tsx:221
 msgid "Manage user accounts"
 msgstr "إدارة مستخدم accounts"
 
-#: src/defaults/actions.tsx:233
+#: src/defaults/actions.tsx:231
 msgid "Manage InvenTree plugins"
 msgstr "إدارة InvenTree إضافات"
 
-#: src/defaults/actions.tsx:242
+#: src/defaults/actions.tsx:240
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:276
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:52
 #: src/tables/machine/MachineTypeTable.tsx:326
 msgid "Machines"
 msgstr "آلات"
 
-#: src/defaults/actions.tsx:243
+#: src/defaults/actions.tsx:241
 msgid "Manage machines and machine types"
 msgstr "إدارة آلات و آلة أنواع"
 
-#: src/defaults/actions.tsx:253
+#: src/defaults/actions.tsx:251
 msgid "Manage report templates"
 msgstr "إدارة تقرير قوالب"
 
-#: src/defaults/actions.tsx:263
+#: src/defaults/actions.tsx:261
 msgid "Manage label templates"
 msgstr "إدارة ملصق قوالب"
 
@@ -5617,19 +5679,19 @@ msgstr "حالي خادم"
 #~ msgid "InvenTree"
 #~ msgstr "InvenTree"
 
-#: src/defaults/links.tsx:107
+#: src/defaults/links.tsx:105
 msgid "API"
 msgstr "واجهة API"
 
-#: src/defaults/links.tsx:110
+#: src/defaults/links.tsx:108
 msgid "InvenTree API documentation"
 msgstr "InvenTree واجهة API documentation"
 
-#: src/defaults/links.tsx:114
+#: src/defaults/links.tsx:112
 msgid "Developer Manual"
 msgstr "Developer يدوي"
 
-#: src/defaults/links.tsx:117
+#: src/defaults/links.tsx:115
 msgid "InvenTree developer manual"
 msgstr "InvenTree developer يدوي"
 
@@ -5637,19 +5699,19 @@ msgstr "InvenTree developer يدوي"
 #~ msgid "Licenses for packages used by InvenTree"
 #~ msgstr "Licenses for packages used by InvenTree"
 
-#: src/defaults/links.tsx:121
+#: src/defaults/links.tsx:119
 msgid "FAQ"
 msgstr ""
 
-#: src/defaults/links.tsx:124
+#: src/defaults/links.tsx:122
 msgid "Frequently asked questions"
 msgstr ""
 
-#: src/defaults/links.tsx:128
+#: src/defaults/links.tsx:126
 msgid "GitHub Repository"
 msgstr ""
 
-#: src/defaults/links.tsx:131
+#: src/defaults/links.tsx:129
 msgid "InvenTree source code on GitHub"
 msgstr "InvenTree المصدر رمز على GitHub"
 
@@ -5657,20 +5719,20 @@ msgstr "InvenTree المصدر رمز على GitHub"
 #~ msgid "Licenses"
 #~ msgstr "Licenses"
 
-#: src/defaults/links.tsx:141
-#: src/defaults/links.tsx:189
+#: src/defaults/links.tsx:139
+#: src/defaults/links.tsx:187
 msgid "System Information"
 msgstr "نظام معلومات"
 
-#: src/defaults/links.tsx:183
+#: src/defaults/links.tsx:181
 msgid "InvenTree documentation"
 msgstr ""
 
-#: src/defaults/links.tsx:197
+#: src/defaults/links.tsx:195
 msgid "Licenses for dependencies of the InvenTree software"
 msgstr "Licenses لـ dependencies لـ ال InvenTree software"
 
-#: src/defaults/links.tsx:208
+#: src/defaults/links.tsx:206
 msgid "About the InvenTree Project"
 msgstr "حول ال InvenTree مشروع"
 
@@ -5832,7 +5894,7 @@ msgstr "بديل تمت الإضافة"
 #: src/forms/BuildForms.tsx:466
 #: src/forms/BuildForms.tsx:758
 #: src/tables/build/BuildAllocatedStockTable.tsx:150
-#: src/tables/build/BuildOutputTable.tsx:687
+#: src/tables/build/BuildOutputTable.tsx:688
 #: src/tables/part/PartTestResultTable.tsx:285
 msgid "Build Output"
 msgstr "مخرجات الإنتاج"
@@ -5888,9 +5950,9 @@ msgstr "مخصص عناصر المخزون سوف يكون مرتجع إلى م�
 #: src/forms/BuildForms.tsx:972
 #: src/forms/SalesOrderForms.tsx:436
 #: src/forms/TransferOrderForms.tsx:240
-#: src/pages/part/PartDetail.tsx:599
+#: src/pages/part/PartDetail.tsx:593
 #: src/tables/build/BuildAllocatedStockTable.tsx:132
-#: src/tables/build/BuildLineTable.tsx:201
+#: src/tables/build/BuildLineTable.tsx:245
 #: src/tables/sales/SalesOrderLineItemTable.tsx:428
 #: src/tables/stock/StockItemTable.tsx:213
 #: src/tables/stock/TransferOrderLineItemTable.tsx:493
@@ -5902,8 +5964,8 @@ msgstr "مخصص"
 #: src/forms/TransferOrderForms.tsx:229
 #: src/pages/build/BuildDetail.tsx:123
 #: src/pages/build/BuildOrderDetailsPanel.tsx:172
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:30
-#: src/tables/stock/TransferOrderTable.tsx:48
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:32
+#: src/tables/stock/TransferOrderTable.tsx:49
 msgid "Source Location"
 msgstr "المصدر موقع"
 
@@ -5916,11 +5978,11 @@ msgstr "اختر موقع المصدر لتخصيص المخزون"
 #: src/forms/BuildForms.tsx:773
 #: src/forms/SalesOrderForms.tsx:467
 #: src/forms/TransferOrderForms.tsx:263
-#: src/tables/build/BuildLineTable.tsx:641
-#: src/tables/build/BuildLineTable.tsx:817
-#: src/tables/build/BuildLineTable.tsx:822
-#: src/tables/build/BuildLineTable.tsx:928
-#: src/tables/build/BuildOutputTable.tsx:239
+#: src/tables/build/BuildLineTable.tsx:689
+#: src/tables/build/BuildLineTable.tsx:865
+#: src/tables/build/BuildLineTable.tsx:870
+#: src/tables/build/BuildLineTable.tsx:976
+#: src/tables/build/BuildOutputTable.tsx:240
 #: src/tables/sales/SalesOrderLineItemTable.tsx:469
 #: src/tables/sales/SalesOrderLineItemTable.tsx:515
 #: src/tables/stock/TransferOrderLineItemTable.tsx:343
@@ -5946,23 +6008,23 @@ msgstr "تم تخصيص عناصر المخزون"
 
 #: src/forms/BuildForms.tsx:890
 #: src/forms/BuildForms.tsx:992
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:69
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:71
 #: src/tables/build/BuildAllocatedStockTable.tsx:263
 #: src/tables/build/BuildAllocatedStockTable.tsx:299
-#: src/tables/build/BuildLineTable.tsx:831
-#: src/tables/build/BuildLineTable.tsx:962
-#: src/tables/stock/TransferOrderTable.tsx:56
+#: src/tables/build/BuildLineTable.tsx:879
+#: src/tables/build/BuildLineTable.tsx:1010
+#: src/tables/stock/TransferOrderTable.tsx:57
 msgid "Consume Stock"
 msgstr "استهلاك مخزون"
 
 #: src/forms/BuildForms.tsx:928
-#: src/tables/build/BuildLineTable.tsx:545
+#: src/tables/build/BuildLineTable.tsx:593
 #: src/tables/part/PartBuildAllocationsTable.tsx:102
 msgid "Fully consumed"
 msgstr "بالكامل مستهلك"
 
 #: src/forms/BuildForms.tsx:973
-#: src/tables/build/BuildLineTable.tsx:206
+#: src/tables/build/BuildLineTable.tsx:250
 #: src/tables/stock/StockItemTable.tsx:242
 msgid "Consumed"
 msgstr "مستهلك"
@@ -5994,11 +6056,11 @@ msgstr "نموذج نوع"
 msgid "Limit this template to a specific model type, or leave blank for all models"
 msgstr ""
 
-#: src/forms/CommonForms.tsx:367
+#: src/forms/CommonForms.tsx:373
 msgid "From Template"
 msgstr ""
 
-#: src/forms/CommonForms.tsx:368
+#: src/forms/CommonForms.tsx:374
 msgid "Optionally pre-fill this note from an existing template"
 msgstr ""
 
@@ -6048,114 +6110,118 @@ msgstr "Subscribe إلى إشعارات لـ هذا فئة"
 #~ msgid "Remove item from list"
 #~ msgstr "Remove item from list"
 
-#: src/forms/PurchaseOrderForms.tsx:481
+#: src/forms/PurchaseOrderForms.tsx:493
 msgid "Choose Location"
 msgstr "اختيار موقع"
 
-#: src/forms/PurchaseOrderForms.tsx:489
+#: src/forms/PurchaseOrderForms.tsx:501
 msgid "Item Destination selected"
 msgstr "عنصر الوجهة محدد"
 
-#: src/forms/PurchaseOrderForms.tsx:499
+#: src/forms/PurchaseOrderForms.tsx:511
 msgid "Part category default location selected"
 msgstr "فئة الأصناف افتراضي موقع محدد"
 
-#: src/forms/PurchaseOrderForms.tsx:509
+#: src/forms/PurchaseOrderForms.tsx:521
 msgid "Received stock location selected"
 msgstr "مستلم موقع المخزون محدد"
 
-#: src/forms/PurchaseOrderForms.tsx:517
+#: src/forms/PurchaseOrderForms.tsx:529
 msgid "Default location selected"
 msgstr "افتراضي موقع محدد"
-
-#: src/forms/PurchaseOrderForms.tsx:564
-#: src/pages/part/PartDetailsPanel.tsx:268
-#: src/tables/bom/BomTable.tsx:289
-#: src/tables/bom/BomTable.tsx:481
-msgid "Virtual Part"
-msgstr "افتراضي صنف"
-
-#: src/forms/PurchaseOrderForms.tsx:565
-msgid "This part is virtual, no physical stock will be received."
-msgstr "هذا صنف هو افتراضي، لا physical مخزون سوف يكون مستلم."
 
 #: src/forms/PurchaseOrderForms.tsx:566
 #~ msgid "Serial numbers"
 #~ msgstr "Serial numbers"
 
+#: src/forms/PurchaseOrderForms.tsx:576
+#: src/pages/part/PartDetailsPanel.tsx:268
+#: src/tables/bom/BomTable.tsx:328
+#: src/tables/bom/BomTable.tsx:579
+msgid "Virtual Part"
+msgstr "افتراضي صنف"
+
+#: src/forms/PurchaseOrderForms.tsx:577
+msgid "This part is virtual, no physical stock will be received."
+msgstr "هذا صنف هو افتراضي، لا physical مخزون سوف يكون مستلم."
+
 #: src/forms/PurchaseOrderForms.tsx:582
 #~ msgid "Store at line item destination"
 #~ msgstr "Store at line item destination"
 
-#: src/forms/PurchaseOrderForms.tsx:599
+#: src/forms/PurchaseOrderForms.tsx:611
 #: src/forms/StockForms.tsx:616
 msgid "Set Location"
 msgstr "تعيين موقع"
 
-#: src/forms/PurchaseOrderForms.tsx:608
+#: src/forms/PurchaseOrderForms.tsx:620
 msgid "Assign Batch Code"
 msgstr "إسناد رمز الدفعة"
 
-#: src/forms/PurchaseOrderForms.tsx:618
+#: src/forms/PurchaseOrderForms.tsx:630
 msgid "Assign Serial Numbers"
 msgstr "إسناد الأرقام التسلسلية"
 
-#: src/forms/PurchaseOrderForms.tsx:630
+#: src/forms/PurchaseOrderForms.tsx:642
 msgid "Set Expiry Date"
 msgstr "تاريخ تعيين انتهاء"
 
-#: src/forms/PurchaseOrderForms.tsx:639
+#: src/forms/PurchaseOrderForms.tsx:651
 #: src/forms/StockForms.tsx:1397
 msgid "Adjust Packaging"
 msgstr "تسوية تعبئة"
 
-#: src/forms/PurchaseOrderForms.tsx:648
+#: src/forms/PurchaseOrderForms.tsx:658
+#~ msgid "Receive line items"
+#~ msgstr "Receive line items"
+
+#: src/forms/PurchaseOrderForms.tsx:660
 #: src/forms/StockForms.tsx:624
 #: src/forms/StockForms.tsx:1388
 #: src/hooks/UseStockAdjustActions.tsx:152
 msgid "Change Status"
 msgstr "حالة تغيير"
 
-#: src/forms/PurchaseOrderForms.tsx:658
-#~ msgid "Receive line items"
-#~ msgstr "Receive line items"
-
-#: src/forms/PurchaseOrderForms.tsx:722
+#: src/forms/PurchaseOrderForms.tsx:734
 msgid "Store at default location"
 msgstr "تخزين عند افتراضي موقع"
 
-#: src/forms/PurchaseOrderForms.tsx:737
+#: src/forms/PurchaseOrderForms.tsx:749
 msgid "Store at line item destination "
 msgstr "تخزين عند بند الوجهة"
 
-#: src/forms/PurchaseOrderForms.tsx:753
+#: src/forms/PurchaseOrderForms.tsx:765
 msgid "Store with already received stock"
 msgstr "تخزين مع بالفعل مستلم مخزون"
 
-#: src/forms/PurchaseOrderForms.tsx:778
+#: src/forms/PurchaseOrderForms.tsx:791
+msgid "Overrides the top-level batch code (\"{topLevelBatchCode}\") for this line item"
+msgstr ""
+
+#: src/forms/PurchaseOrderForms.tsx:792
 msgid "Enter batch code for received items"
 msgstr "إدخال رمز الدفعة لـ مستلم عناصر"
 
-#: src/forms/PurchaseOrderForms.tsx:794
+#: src/forms/PurchaseOrderForms.tsx:808
 #: src/forms/StockForms.tsx:266
 msgid "Serial Numbers"
 msgstr "الأرقام التسلسلية"
 
-#: src/forms/PurchaseOrderForms.tsx:795
+#: src/forms/PurchaseOrderForms.tsx:809
 msgid "Enter serial numbers for received items"
 msgstr "إدخال الأرقام التسلسلية لـ مستلم عناصر"
 
-#: src/forms/PurchaseOrderForms.tsx:812
+#: src/forms/PurchaseOrderForms.tsx:826
 #: src/pages/stock/StockDetailsPanel.tsx:316
 #: src/tables/stock/StockItemTable.tsx:171
 msgid "Expiry Date"
 msgstr "تاريخ الانتهاء"
 
-#: src/forms/PurchaseOrderForms.tsx:813
+#: src/forms/PurchaseOrderForms.tsx:827
 msgid "Enter an expiry date for received items"
 msgstr "إدخال انتهاء تاريخ لـ مستلم عناصر"
 
-#: src/forms/PurchaseOrderForms.tsx:827
+#: src/forms/PurchaseOrderForms.tsx:841
 #: src/forms/StockForms.tsx:1443
 #: src/pages/company/SupplierPartDetailsPanel.tsx:126
 #: src/pages/company/SupplierPartDetailsPanel.tsx:184
@@ -6164,13 +6230,15 @@ msgstr "إدخال انتهاء تاريخ لـ مستلم عناصر"
 msgid "Packaging"
 msgstr "تعبئة"
 
-#: src/forms/PurchaseOrderForms.tsx:937
+#: src/forms/PurchaseOrderForms.tsx:962
 #: src/pages/company/SupplierPartDetailsPanel.tsx:92
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:49
 msgid "SKU"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:938
+#: src/forms/PurchaseOrderForms.tsx:963
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:269
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:281
 #: src/tables/part/PartPurchaseOrdersTable.tsx:136
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:221
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:296
@@ -6178,11 +6246,11 @@ msgstr ""
 msgid "Received"
 msgstr "مستلم"
 
-#: src/forms/PurchaseOrderForms.tsx:955
+#: src/forms/PurchaseOrderForms.tsx:995
 msgid "Receive Line Items"
 msgstr "استلام البنود"
 
-#: src/forms/PurchaseOrderForms.tsx:961
+#: src/forms/PurchaseOrderForms.tsx:1001
 msgid "Items received"
 msgstr "عناصر مستلم"
 
@@ -6317,26 +6385,26 @@ msgid "The following items are installed within this stock item, but do not matc
 msgstr ""
 
 #: src/forms/StockForms.tsx:946
-#: src/pages/part/pricing/BomPricingPanel.tsx:81
-#: src/pages/part/pricing/BomPricingPanel.tsx:105
+#: src/pages/part/pricing/BomPricingPanel.tsx:83
+#: src/pages/part/pricing/BomPricingPanel.tsx:107
 #: src/tables/bom/UsedInTable.tsx:66
 #: src/tables/part/PartTableFilters.tsx:43
 msgid "Component"
 msgstr "مكوّن"
 
 #: src/forms/StockForms.tsx:947
-#: src/tables/build/BuildLineTable.tsx:414
+#: src/tables/build/BuildLineTable.tsx:462
 msgid "Unit Quantity"
 msgstr "كمية الوحدة"
 
 #: src/forms/StockForms.tsx:949
-#: src/pages/part/pricing/BomPricingPanel.tsx:133
+#: src/pages/part/pricing/BomPricingPanel.tsx:135
 #: src/pages/part/pricing/PriceBreakPanel.tsx:174
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:72
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:129
 #: src/pages/part/pricing/SupplierPricingPanel.tsx:67
 #: src/pages/stock/StockDetailsPanel.tsx:323
-#: src/tables/bom/BomTable.tsx:313
+#: src/tables/bom/BomTable.tsx:352
 #: src/tables/general/ExtraLineItemTable.tsx:73
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:266
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
@@ -6522,23 +6590,23 @@ msgstr "مخزون تم الحذف"
 msgid "This operation will permanently delete the selected stock items."
 msgstr "هذا operation سوف permanently حذف ال محدد عناصر المخزون."
 
-#: src/forms/StockForms.tsx:2186
+#: src/forms/StockForms.tsx:2188
 msgid "Parent stock location"
 msgstr "الأصل موقع المخزون"
 
-#: src/forms/StockForms.tsx:2313
+#: src/forms/StockForms.tsx:2324
 msgid "Find Serial Number"
 msgstr "Find الرقم التسلسلي"
 
-#: src/forms/StockForms.tsx:2324
+#: src/forms/StockForms.tsx:2335
 msgid "No matching items"
 msgstr "لا يوجد عناصر مطابق"
 
-#: src/forms/StockForms.tsx:2330
+#: src/forms/StockForms.tsx:2341
 msgid "Multiple matching items"
 msgstr "متعدد مطابق عناصر"
 
-#: src/forms/StockForms.tsx:2339
+#: src/forms/StockForms.tsx:2350
 msgid "Invalid response from server"
 msgstr "غير صالح استجابة من خادم"
 
@@ -6554,27 +6622,31 @@ msgstr "غير صالح استجابة من خادم"
 #~ msgid "Label"
 #~ msgstr "Label"
 
-#: src/functions/api.tsx:33
+#: src/functions/api.tsx:45
 msgid "Bad request"
 msgstr "Bad طلب"
 
-#: src/functions/api.tsx:36
+#: src/functions/api.tsx:48
 msgid "Unauthorized"
 msgstr ""
 
-#: src/functions/api.tsx:39
+#: src/functions/api.tsx:51
 msgid "Forbidden"
 msgstr ""
 
-#: src/functions/api.tsx:42
+#: src/functions/api.tsx:54
 msgid "Not found"
 msgstr "غير تم العثور"
 
-#: src/functions/api.tsx:45
+#: src/functions/api.tsx:57
 msgid "Method not allowed"
 msgstr "طريقة غير مسموح"
 
-#: src/functions/api.tsx:48
+#: src/functions/api.tsx:60
+msgid "Conflict"
+msgstr ""
+
+#: src/functions/api.tsx:63
 msgid "Internal server error"
 msgstr "داخلي خادم خطأ"
 
@@ -6598,12 +6670,12 @@ msgstr "داخلي خادم خطأ"
 #~ msgid "You have been logged out"
 #~ msgstr "You have been logged out"
 
-#: src/functions/auth.tsx:125
-#: src/functions/auth.tsx:236
+#: src/functions/auth.tsx:120
+#: src/functions/auth.tsx:231
 msgid "Logged Out"
 msgstr "مسجل خارج"
 
-#: src/functions/auth.tsx:126
+#: src/functions/auth.tsx:121
 msgid "There was a conflicting session for this browser, which has been logged out."
 msgstr "هناك كان conflicting جلسة لـ هذا متصفح، الذي لديه تم مسجل خارج."
 
@@ -6615,93 +6687,93 @@ msgstr "هناك كان conflicting جلسة لـ هذا متصفح، الذي �
 #~ msgid "Found an existing login - welcome back!"
 #~ msgstr "Found an existing login - welcome back!"
 
-#: src/functions/auth.tsx:159
+#: src/functions/auth.tsx:154
 msgid "No response from server."
 msgstr "لا استجابة من خادم."
 
-#: src/functions/auth.tsx:202
+#: src/functions/auth.tsx:197
 msgid "MFA Login successful"
 msgstr "MFA تسجيل الدخول ناجح"
 
-#: src/functions/auth.tsx:203
+#: src/functions/auth.tsx:198
 msgid "MFA details were automatically provided in the browser"
 msgstr "MFA تفاصيل كانت تلقائيًا مقدم في ال متصفح"
 
-#: src/functions/auth.tsx:237
+#: src/functions/auth.tsx:232
 msgid "Successfully logged out"
 msgstr "بنجاح مسجل خارج"
 
-#: src/functions/auth.tsx:305
+#: src/functions/auth.tsx:300
 msgid "Language changed"
 msgstr "لغة تم التغيير"
 
-#: src/functions/auth.tsx:306
+#: src/functions/auth.tsx:301
 msgid "Your active language has been changed to the one set in your profile"
 msgstr "الخاص بك نشط لغة لديه تم تم التغيير إلى ال واحد تعيين في الخاص بك ملف شخصي"
 
-#: src/functions/auth.tsx:327
+#: src/functions/auth.tsx:322
 msgid "Theme changed"
 msgstr "مظهر تم التغيير"
 
-#: src/functions/auth.tsx:328
+#: src/functions/auth.tsx:323
 msgid "Your active theme has been changed to the one set in your profile"
 msgstr "الخاص بك نشط مظهر لديه تم تم التغيير إلى ال واحد تعيين في الخاص بك ملف شخصي"
 
-#: src/functions/auth.tsx:363
+#: src/functions/auth.tsx:358
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "فحص الخاص بك inbox لـ إعادة تعيين رابط. هذا فقط works إذا أنت لديه حساب. فحص في spam أيضًا."
 
-#: src/functions/auth.tsx:370
-#: src/functions/auth.tsx:660
+#: src/functions/auth.tsx:365
+#: src/functions/auth.tsx:655
 msgid "Reset failed"
 msgstr "إعادة تعيين فشل"
 
-#: src/functions/auth.tsx:397
+#: src/functions/auth.tsx:392
 msgid "Already logged in"
 msgstr "بالفعل مسجل في"
 
-#: src/functions/auth.tsx:398
+#: src/functions/auth.tsx:393
 msgid "There is a conflicting session on the server for this browser. Please logout of that first."
 msgstr "هناك هو conflicting جلسة على ال خادم لـ هذا متصفح. يرجى تسجيل الخروج لـ ذلك أول."
 
-#: src/functions/auth.tsx:454
+#: src/functions/auth.tsx:449
 msgid "Logged In"
 msgstr "مسجل في"
 
-#: src/functions/auth.tsx:455
+#: src/functions/auth.tsx:450
 msgid "Successfully logged in"
 msgstr "بنجاح مسجل في"
 
-#: src/functions/auth.tsx:615
+#: src/functions/auth.tsx:610
 msgid "Failed to set up MFA"
 msgstr "فشل في تعيين أعلى MFA"
 
-#: src/functions/auth.tsx:634
+#: src/functions/auth.tsx:629
 msgid "MFA Setup successful"
 msgstr "MFA إعداد ناجح"
 
-#: src/functions/auth.tsx:635
+#: src/functions/auth.tsx:630
 msgid "MFA via TOTP has been set up successfully; you will need to login again."
 msgstr "MFA عبر TOTP لديه تم تعيين أعلى بنجاح; أنت سوف need إلى تسجيل الدخول مرة أخرى."
 
-#: src/functions/auth.tsx:650
+#: src/functions/auth.tsx:645
 msgid "Password set"
 msgstr "كلمة المرور تعيين"
 
-#: src/functions/auth.tsx:651
-#: src/functions/auth.tsx:760
+#: src/functions/auth.tsx:646
+#: src/functions/auth.tsx:755
 msgid "The password was set successfully. You can now login with your new password"
 msgstr "ال كلمة المرور كان تعيين بنجاح. أنت يمكن الآن تسجيل الدخول مع الخاص بك جديد كلمة المرور"
 
-#: src/functions/auth.tsx:725
+#: src/functions/auth.tsx:720
 msgid "Password could not be changed"
 msgstr "كلمة المرور يمكن غير يكون تم التغيير"
 
-#: src/functions/auth.tsx:743
+#: src/functions/auth.tsx:738
 msgid "The two password fields didn’t match"
 msgstr "ال two كلمة المرور حقول didn’t مطابقة"
 
-#: src/functions/auth.tsx:759
+#: src/functions/auth.tsx:754
 msgid "Password Changed"
 msgstr "كلمة المرور تم التغيير"
 
@@ -6827,7 +6899,7 @@ msgid "Delete selected stock items"
 msgstr "حذف محدد عناصر المخزون"
 
 #: src/hooks/UseStockAdjustActions.tsx:219
-#: src/pages/part/PartDetail.tsx:749
+#: src/pages/part/PartDetail.tsx:743
 msgid "Stock Actions"
 msgstr "مخزون إجراءات"
 
@@ -6844,23 +6916,23 @@ msgstr "حالي كلمة المرور"
 msgid "Enter your current password"
 msgstr "إدخال الخاص بك حالي كلمة المرور"
 
-#: src/pages/Auth/ChangePassword.tsx:53
+#: src/pages/Auth/ChangePassword.tsx:54
 msgid "New Password"
 msgstr "كلمة المرور جديد"
 
-#: src/pages/Auth/ChangePassword.tsx:54
+#: src/pages/Auth/ChangePassword.tsx:55
 msgid "Enter your new password"
 msgstr "إدخال الخاص بك جديد كلمة المرور"
 
-#: src/pages/Auth/ChangePassword.tsx:60
+#: src/pages/Auth/ChangePassword.tsx:62
 msgid "Confirm New Password"
 msgstr "تأكيد جديد كلمة المرور"
 
-#: src/pages/Auth/ChangePassword.tsx:61
+#: src/pages/Auth/ChangePassword.tsx:63
 msgid "Confirm your new password"
 msgstr "تأكيد الخاص بك جديد كلمة المرور"
 
-#: src/pages/Auth/ChangePassword.tsx:80
+#: src/pages/Auth/ChangePassword.tsx:82
 msgid "Confirm"
 msgstr "تأكيد"
 
@@ -7472,7 +7544,7 @@ msgid "Position"
 msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:90
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:967
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:968
 msgid "Type"
 msgstr "نوع"
 
@@ -7575,7 +7647,7 @@ msgstr "إزالة WebAuthn بيانات اعتماد"
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:312
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:403
 #: src/tables/build/BuildAllocatedStockTable.tsx:186
-#: src/tables/build/BuildLineTable.tsx:729
+#: src/tables/build/BuildLineTable.tsx:777
 #: src/tables/sales/SalesOrderAllocationTable.tsx:225
 #: src/tables/stock/TransferOrderAllocationTable.tsx:179
 msgid "Confirm Removal"
@@ -7617,123 +7689,123 @@ msgstr "TOTP رمز وصول هو بالفعل مسجل لـ هذا حساب."
 msgid "Error Fetching TOTP Registration"
 msgstr "خطأ في جارٍ الجلب TOTP تسجيل"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:482
-msgid "An unexpected error occurred while fetching TOTP registration data."
-msgstr "unexpected خطأ حدث أثناء جارٍ الجلب TOTP تسجيل بيانات."
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:481
+#~ msgid "An unexpected error occurred while fetching TOTP registration data."
+#~ msgstr "An unexpected error occurred while fetching TOTP registration data."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:524
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:523
 msgid "TOTP Registered"
 msgstr "TOTP مسجل"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:525
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:524
 msgid "TOTP token registered successfully."
 msgstr "TOTP رمز وصول مسجل بنجاح."
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:534
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:533
 msgid "Error registering TOTP token"
 msgstr "خطأ في registering TOTP رمز وصول"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:553
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:552
 msgid "Register TOTP Token"
 msgstr "Register TOTP رمز وصول"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:598
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:597
 msgid "Error fetching recovery codes"
 msgstr "خطأ في جارٍ الجلب استعادة رموز"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:634
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:650
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:866
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:633
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:649
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:867
 msgid "Recovery Codes"
 msgstr "استعادة رموز"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:652
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:651
 msgid "The following one time recovery codes are available for use"
 msgstr "ال التالي واحد وقت استعادة رموز هي متاح لـ استخدام"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:669
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:668
 msgid "Copy recovery codes to clipboard"
 msgstr "نسخ استعادة رموز إلى clipboard"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:679
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:678
 msgid "No Unused Codes"
 msgstr "لا Unused رموز"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:681
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:680
 msgid "There are no available recovery codes"
 msgstr "هناك هي لا متاح استعادة رموز"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:782
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:783
 msgid "WebAuthn Registered"
 msgstr "WebAuthn مسجل"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:783
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:784
 msgid "WebAuthn credential registered successfully"
 msgstr "WebAuthn بيانات اعتماد مسجل بنجاح"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:792
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:793
 msgid "Error registering WebAuthn credential"
 msgstr "خطأ في registering WebAuthn بيانات اعتماد"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:795
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:796
 msgid "WebAuthn Registration Failed"
 msgstr "WebAuthn تسجيل فشل"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:796
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:797
 msgid "Failed to register WebAuthn credential"
 msgstr "فشل في register WebAuthn بيانات اعتماد"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:819
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:820
 msgid "Error fetching WebAuthn registration"
 msgstr "خطأ في جارٍ الجلب WebAuthn تسجيل"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:859
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:860
 msgid "TOTP"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:860
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:861
 msgid "Time-based One-Time Password"
 msgstr "Time-based One-Time كلمة المرور"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:867
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:868
 msgid "One-Time pre-generated recovery codes"
 msgstr "One-Time pre-generated استعادة رموز"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:873
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:874
 msgid "WebAuthn"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:874
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:875
 msgid "Web Authentication (WebAuthn) is a web standard for secure authentication"
 msgstr "ويب مصادقة (WebAuthn) هو ويب standard لـ secure مصادقة"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:970
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:971
 msgid "Last used at"
 msgstr "آخر مستخدم عند"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:973
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:974
 msgid "Created at"
 msgstr "تم الإنشاء عند"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:984
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:985
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:209
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:367
 msgid "Not Configured"
 msgstr "غير مهيأ"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:988
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:989
 msgid "No multi-factor tokens configured for this account"
 msgstr "لا multi-factor رموز وصول مهيأ لـ هذا حساب"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:993
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:994
 msgid "Register Authentication Method"
 msgstr "Register مصادقة طريقة"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:1009
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:1010
 msgid "No MFA Methods Available"
 msgstr "لا MFA طرق متاح"
 
-#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:1013
+#: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:1014
 msgid "There are no MFA methods available for configuration"
 msgstr "هناك هي لا MFA طرق متاح لـ تهيئة"
 
@@ -8043,29 +8115,429 @@ msgstr "بريد إلكتروني Messages"
 #~ msgid "Inactive Alerts"
 #~ msgstr "Inactive Alerts"
 
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:36
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:35
 msgid "System Status"
 msgstr "حالة نظام"
 
 #: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:47
-msgid "Admin Center Information"
-msgstr "مسؤول Center معلومات"
+#~ msgid "Admin Center Information"
+#~ msgstr "Admin Center Information"
 
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:53
-msgid "The home panel (and the whole Admin Center) is a new feature starting with the new UI and was previously (before 1.0) not available."
-msgstr "ال home panel (و ال whole مسؤول Center) هو جديد ميزة starting مع ال جديد UI و كان previously (قبل 1.0) غير متاح."
-
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:60
-msgid "The admin center provides a centralized location for all administration functionality and is meant to replace all interaction with the (django) backend admin interface."
-msgstr "ال مسؤول center يوفر centralized موقع لـ الكل administration الوظيفة و هو meant إلى replace الكل interaction مع ال (django) backend مسؤول واجهة."
-
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:67
-msgid "Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom."
-msgstr "يرجى فتح ميزة requests (بعد checking ال tracker) لـ أي موجود backend مسؤول الوظيفة أنت هي مفقود في هذا UI. ال backend مسؤول واجهة ينبغي يكون مستخدم carefully و seldom."
-
-#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:85
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:51
 msgid "Quick Actions"
 msgstr "Quick إجراءات"
+
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:53
+#~ msgid "The home panel (and the whole Admin Center) is a new feature starting with the new UI and was previously (before 1.0) not available."
+#~ msgstr "The home panel (and the whole Admin Center) is a new feature starting with the new UI and was previously (before 1.0) not available."
+
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:60
+#~ msgid "The admin center provides a centralized location for all administration functionality and is meant to replace all interaction with the (django) backend admin interface."
+#~ msgstr "The admin center provides a centralized location for all administration functionality and is meant to replace all interaction with the (django) backend admin interface."
+
+#: src/pages/Index/Settings/AdminCenter/HomePanel.tsx:67
+#~ msgid "Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom."
+#~ msgstr "Please open feature requests (after checking the tracker) for any existing backend admin functionality you are missing in this UI. The backend admin interface should be used carefully and seldom."
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:75
+msgid "SCIM enabled"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:75
+msgid "SCIM secret rotated"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:76
+msgid "The new bearer secret is only shown once"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:81
+msgid "Error generating SCIM secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:91
+msgid "SCIM disabled"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:92
+msgid "The SCIM provisioning endpoint has been disabled and its secret revoked"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:97
+msgid "Error disabling SCIM"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:116
+msgid "Base URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:122
+msgid "Secret Generated"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:123
+msgid "Last Used"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:137
+msgid "SCIM Bearer Secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:142
+msgid "This secret is only shown once - copy it now and store it in your Identity Provider's SCIM configuration. It cannot be retrieved again, only rotated."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:159
+msgid "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:176
+msgid "Rotate Secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:178
+msgid "Enable SCIM"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:188
+msgid "Disable SCIM"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:194
+msgid "Rotating the secret immediately invalidates the previous one - update your Identity Provider's configuration straight away."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:219
+msgid "Add SSO Application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:233
+msgid "Add OIDC SSO Application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:246
+msgid "OAuth PKCE Enabled"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:247
+msgid "Use Proof Key for Code Exchange during OIDC login with this application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:252
+msgid "OIDC Server URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:253
+msgid "Base URL of the OIDC provider"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:257
+msgid "UID Field"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:258
+msgid "OIDC claim used as the user's unique identifier"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:287
+msgid "Add SAML SSO Application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:296
+msgid "Display name for this SAML identity provider"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:300
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:433
+msgid "Provider ID"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:301
+msgid "Unique provider identifier, normally the IdP entity ID"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:305
+msgid "Organization Slug"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:306
+msgid "URL-safe identifier used in SAML login and metadata URLs"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:310
+msgid "Identity Provider Settings"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:315
+msgid "IdP Entity ID"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:316
+msgid "Entity ID of the SAML identity provider"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:320
+msgid "IdP Metadata URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:321
+msgid "Use this or provide the inline IdP settings below"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:325
+msgid "IdP SSO URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:326
+msgid "Inline IdP single sign-on URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:330
+msgid "IdP SLO URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:331
+msgid "Inline IdP single logout URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:335
+msgid "IdP X.509 Certificate"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:336
+msgid "Inline IdP signing certificate"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:342
+msgid "Service Provider Settings"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:346
+msgid "SP Entity ID"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:347
+msgid "Optional service provider entity ID"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:353
+msgid "Account Mapping"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:357
+msgid "Attribute Mapping"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:358
+msgid "Map SAML attributes to uid, email, and email_verified"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:362
+msgid "Use NameID for Email"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:363
+msgid "Use the SAML NameID value as the user's email address"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:398
+msgid "Edit SSO Application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:413
+msgid "Delete SSO Application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:427
+msgid "Provider"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:439
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:628
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:747
+msgid "Client ID"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:472
+msgid "Add Generic App"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:479
+msgid "Add OIDC App"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:486
+msgid "Add SAML App"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:495
+msgid "Frontend Single Sign-On (SSO) is based on django-allauth. By default generic OIDC (client) and SAML providers are enabled.<0/>You can add more specific providers using the `INVENTREE_SOCIAL_BACKENDS` config key. After a restart those providers become available below.<1/>The documentation goes more in depth on SSO setup steps."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:510
+msgid "OIDC Callback URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:514
+msgid "Add this callback URL to your OIDC provider."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:526
+msgid "SAML Service URLs"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:530
+msgid "Register these URLs with your SAML identity provider."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:533
+#: src/tables/settings/BarcodeScanHistoryTable.tsx:85
+msgid "Endpoint"
+msgstr "نقطة نهاية"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:533
+msgid "URL"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:535
+msgid "ACS"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:536
+msgid "SLS"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:537
+msgid "Metadata"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:563
+#: src/pages/Index/Settings/SystemSettings.tsx:94
+msgid "Single Sign-On (SSO) Settings"
+msgstr "إعدادات مفرد Sign-On (SSO)"
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:571
+msgid "More settings can be found in the <0>system settings</0>."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:616
+msgid "Copy these values now. The client secret is only shown once."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:624
+msgid "Field"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:637
+msgid "Client Secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:662
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:701
+msgid "OAuth application created"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:666
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:805
+msgid "Add OAuth Application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:671
+msgid "A human-readable name for the OAuth application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:674
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:753
+msgid "Client Type"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:675
+msgid "The type of OAuth client (confidential or public - prefer public for browser-based applications)"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:679
+msgid "Authorization Grant Type"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:680
+msgid "The type of OAuth2 grant schema to use - authorization code is recommended for most applications"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:687
+msgid "Skip Authorization"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:688
+msgid "If enabled, users will not be prompted to authorize this application when logging in - use with caution!"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:691
+msgid "Sign Algorithm"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:692
+msgid "The algorithm used to sign the OAuth2 tokens - required for OIDC"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:714
+msgid "OAuth application secret regenerated"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:717
+msgid "OAuth secret rotated"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:718
+msgid "The new client secret is only shown once"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:725
+msgid "Error regenerating OAuth client secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:733
+msgid "Delete OAuth Application"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:759
+msgid "Grant Type"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:765
+msgid "Redirect URIs"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:772
+msgid "Built-in"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:784
+msgid "Regenerate Secret"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:850
+msgid "InvenTree can be integrated with external Identity Providers and act as one."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:851
+msgid "External Identities can be pushed to InvenTree via Single Sign-On (SSO) and SCIM."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:852
+msgid "InvenTree can act as an Identity Provider for external applications via the built-in oAuth2 provider."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:870
+msgid "SCIM Provisioning"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:878
+msgid "Single Sign-On (SSO)"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:886
+msgid "oAuth2 Provider"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:107
 #~ msgid "User Management"
@@ -8146,8 +8618,12 @@ msgid "Location Types"
 msgstr "موقع أنواع"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:283
-msgid "Identity"
+msgid "Identity Federation"
 msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:283
+#~ msgid "Identity"
+#~ msgstr "Identity"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:295
 msgid "Operations"
@@ -8158,8 +8634,8 @@ msgid "Data Management"
 msgstr "بيانات Management"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:319
-#: src/pages/Index/Settings/SystemSettings.tsx:194
-#: src/pages/Index/Settings/UserSettings.tsx:122
+#: src/pages/Index/Settings/SystemSettings.tsx:193
+#: src/pages/Index/Settings/UserSettings.tsx:124
 msgid "Reporting"
 msgstr ""
 
@@ -8276,107 +8752,43 @@ msgstr "حجم الصفحة"
 #~ msgid "Generated Reports"
 #~ msgstr "Generated Reports"
 
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:52
-msgid "SCIM enabled"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:52
-msgid "SCIM secret rotated"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:53
-msgid "The new bearer secret is only shown once"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:58
-msgid "Error generating SCIM secret"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:68
-msgid "SCIM disabled"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:69
-msgid "The SCIM provisioning endpoint has been disabled and its secret revoked"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:74
-msgid "Error disabling SCIM"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:87
-msgid "SCIM Bearer Secret"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:92
-msgid "This secret is only shown once - copy it now and store it in your Identity Provider's SCIM configuration. It cannot be retrieved again, only rotated."
-msgstr ""
-
 #: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:109
-msgid "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups. Single Sign-On (interactive login) is configured separately, under Single Sign On."
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:137
-msgid "Base URL"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:148
-msgid "Secret Generated"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:154
-msgid "Last Used"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:169
-msgid "Rotate Secret"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:171
-msgid "Enable SCIM"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:181
-msgid "Disable SCIM"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/ScimManagementPanel.tsx:187
-msgid "Rotating the secret immediately invalidates the previous one - update your Identity Provider's configuration straight away."
-msgstr ""
+#~ msgid "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups. Single Sign-On (interactive login) is configured separately, under Single Sign On."
+#~ msgstr "SCIM allows an external Identity Provider (e.g. Okta, Microsoft Entra ID, OneLogin) to automatically provision and deprovision Users and Groups. Single Sign-On (interactive login) is configured separately, under Single Sign On."
 
 #: src/pages/Index/Settings/AdminCenter/StocktakePanel.tsx:25
 #~ msgid "Stocktake Reports"
 #~ msgstr "Stocktake Reports"
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:32
-msgid "Background worker running"
-msgstr "خلفية عامل قيد التشغيل"
-
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:35
 #~ msgid "Background Worker Not Running"
 #~ msgstr "Background Worker Not Running"
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:38
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:37
+msgid "Background worker running"
+msgstr "خلفية عامل قيد التشغيل"
+
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:43
 msgid "Background worker not running"
 msgstr "خلفية عامل غير قيد التشغيل"
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:42
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:47
 msgid "The background task manager service is not running. Contact your system administrator."
 msgstr "ال خلفية مهمة manager service هو غير قيد التشغيل. جهة اتصال الخاص بك نظام مسؤول النظام."
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:49
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:58
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:68
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:77
 msgid "Pending Tasks"
 msgstr "قيد الانتظار مهام"
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:50
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:66
-#: src/pages/Index/Settings/SystemSettings.tsx:63
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:69
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:85
+#: src/pages/Index/Settings/SystemSettings.tsx:62
 msgid "Scheduled Tasks"
 msgstr "مجدول مهام"
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:51
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:74
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:70
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:93
 msgid "Failed Tasks"
 msgstr "فشل مهام"
 
@@ -8440,19 +8852,15 @@ msgstr "رموز وصول"
 msgid "The settings below are specific to each available plugin"
 msgstr "ال إعدادات below هي specific إلى كل متاح إضافة"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:47
+#: src/pages/Index/Settings/SystemSettings.tsx:46
 msgid "Server Settings"
 msgstr "إعدادات الخادم"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:80
+#: src/pages/Index/Settings/SystemSettings.tsx:79
 msgid "Authentication"
 msgstr "مصادقة"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:95
-msgid "Single Sign-On (SSO) Settings"
-msgstr "إعدادات مفرد Sign-On (SSO)"
-
-#: src/pages/Index/Settings/SystemSettings.tsx:113
+#: src/pages/Index/Settings/SystemSettings.tsx:112
 msgid "Barcodes"
 msgstr "الباركودات"
 
@@ -8464,7 +8872,7 @@ msgstr "الباركودات"
 #~ msgid "This panel is a placeholder."
 #~ msgstr "This panel is a placeholder."
 
-#: src/pages/Index/Settings/SystemSettings.tsx:131
+#: src/pages/Index/Settings/SystemSettings.tsx:130
 msgid "Display"
 msgstr "عرض"
 
@@ -8472,12 +8880,12 @@ msgstr "عرض"
 #~ msgid "Exchange Rates"
 #~ msgstr "Exchange Rates"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:152
-#: src/pages/Index/Settings/UserSettings.tsx:116
+#: src/pages/Index/Settings/SystemSettings.tsx:151
+#: src/pages/Index/Settings/UserSettings.tsx:118
 msgid "The settings below are specific to each available notification method"
 msgstr "ال إعدادات below هي specific إلى كل متاح إشعار طريقة"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:158
+#: src/pages/Index/Settings/SystemSettings.tsx:157
 msgid "Pricing"
 msgstr "التسعير"
 
@@ -8485,19 +8893,19 @@ msgstr "التسعير"
 #~ msgid "Labels"
 #~ msgstr "Labels"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:238
+#: src/pages/Index/Settings/SystemSettings.tsx:237
 msgid "Part Creation"
 msgstr "صنف إنشاء"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:281
+#: src/pages/Index/Settings/SystemSettings.tsx:280
 msgid "Stock Expiry"
 msgstr "مخزون انتهاء"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:290
+#: src/pages/Index/Settings/SystemSettings.tsx:289
 msgid "Part Stocktake"
 msgstr "صنف جرد المخزون"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:300
+#: src/pages/Index/Settings/SystemSettings.tsx:299
 #: src/pages/part/PartStockHistoryDetail.tsx:299
 #: src/pages/stock/StockDetail.tsx:202
 msgid "Stock Tracking"
@@ -8507,7 +8915,7 @@ msgstr "مخزون تتبع"
 #~ msgid "Switch to User Setting"
 #~ msgstr "Switch to User Setting"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:328
+#: src/pages/Index/Settings/SystemSettings.tsx:337
 msgid "External Build Orders"
 msgstr "خارجي أوامر الإنتاج"
 
@@ -8658,10 +9066,10 @@ msgstr "فرعي أوامر الإنتاج"
 #~ msgstr "Test Statistics"
 
 #: src/pages/build/BuildDetail.tsx:355
-#: src/pages/part/PartDetail.tsx:477
+#: src/pages/part/PartDetail.tsx:471
 #: src/pages/stock/StockDetail.tsx:281
-#: src/tables/build/BuildOutputTable.tsx:759
-#: src/tables/stock/StockItemTestResultTable.tsx:171
+#: src/tables/build/BuildOutputTable.tsx:760
+#: src/tables/stock/StockItemTestResultTable.tsx:177
 msgid "Test Results"
 msgstr "اختبار نتائج"
 
@@ -8688,7 +9096,7 @@ msgid "Cancel Build Order"
 msgstr "إلغاء أمر الإنتاج"
 
 #: src/pages/build/BuildDetail.tsx:438
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:242
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:243
 #: src/pages/sales/ReturnOrderDetail.tsx:235
 #: src/pages/sales/SalesOrderDetail.tsx:267
 #: src/pages/stock/TransferOrderDetail.tsx:259
@@ -8696,7 +9104,7 @@ msgid "Order cancelled"
 msgstr "طلب ملغى"
 
 #: src/pages/build/BuildDetail.tsx:439
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:241
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:242
 #: src/pages/sales/ReturnOrderDetail.tsx:234
 #: src/pages/sales/SalesOrderDetail.tsx:266
 #: src/pages/stock/TransferOrderDetail.tsx:258
@@ -8708,7 +9116,7 @@ msgid "Hold Build Order"
 msgstr "تعليق أمر الإنتاج"
 
 #: src/pages/build/BuildDetail.tsx:450
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:249
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:250
 #: src/pages/sales/ReturnOrderDetail.tsx:242
 #: src/pages/sales/SalesOrderDetail.tsx:274
 #: src/pages/stock/TransferOrderDetail.tsx:266
@@ -8716,7 +9124,7 @@ msgid "Place this order on hold"
 msgstr "Place هذا طلب على تعليق"
 
 #: src/pages/build/BuildDetail.tsx:451
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:250
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:251
 #: src/pages/sales/ReturnOrderDetail.tsx:243
 #: src/pages/sales/SalesOrderDetail.tsx:275
 #: src/pages/stock/TransferOrderDetail.tsx:267
@@ -8728,7 +9136,7 @@ msgid "Issue Build Order"
 msgstr "صرف أمر الإنتاج"
 
 #: src/pages/build/BuildDetail.tsx:458
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:233
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:234
 #: src/pages/sales/ReturnOrderDetail.tsx:226
 #: src/pages/sales/SalesOrderDetail.tsx:258
 #: src/pages/stock/TransferOrderDetail.tsx:250
@@ -8736,7 +9144,7 @@ msgid "Issue this order"
 msgstr "صرف هذا طلب"
 
 #: src/pages/build/BuildDetail.tsx:459
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:234
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:235
 #: src/pages/sales/ReturnOrderDetail.tsx:227
 #: src/pages/sales/SalesOrderDetail.tsx:259
 #: src/pages/stock/TransferOrderDetail.tsx:251
@@ -8748,7 +9156,7 @@ msgid "Complete Build Order"
 msgstr "مكتمل أمر الإنتاج"
 
 #: src/pages/build/BuildDetail.tsx:484
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:262
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:263
 #: src/pages/sales/ReturnOrderDetail.tsx:250
 #: src/pages/sales/SalesOrderDetail.tsx:293
 #: src/pages/stock/TransferOrderDetail.tsx:274
@@ -8756,7 +9164,7 @@ msgid "Mark this order as complete"
 msgstr "تعيين هذا طلب بصفته مكتمل"
 
 #: src/pages/build/BuildDetail.tsx:487
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:256
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:257
 #: src/pages/sales/ReturnOrderDetail.tsx:251
 #: src/pages/sales/SalesOrderDetail.tsx:294
 #: src/pages/stock/TransferOrderDetail.tsx:275
@@ -8764,7 +9172,7 @@ msgid "Order completed"
 msgstr "طلب مكتمل"
 
 #: src/pages/build/BuildDetail.tsx:514
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:285
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:286
 #: src/pages/sales/ReturnOrderDetail.tsx:278
 #: src/pages/sales/SalesOrderDetail.tsx:329
 #: src/pages/stock/TransferOrderDetail.tsx:300
@@ -8772,7 +9180,7 @@ msgid "Issue Order"
 msgstr "صرف طلب"
 
 #: src/pages/build/BuildDetail.tsx:521
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:292
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:293
 #: src/pages/sales/ReturnOrderDetail.tsx:285
 #: src/pages/sales/SalesOrderDetail.tsx:343
 #: src/pages/stock/TransferOrderDetail.tsx:307
@@ -8784,7 +9192,7 @@ msgid "Build Order Actions"
 msgstr "أمر الإنتاج إجراءات"
 
 #: src/pages/build/BuildDetail.tsx:545
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:315
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:316
 #: src/pages/sales/ReturnOrderDetail.tsx:308
 #: src/pages/sales/SalesOrderDetail.tsx:367
 #: src/pages/stock/TransferOrderDetail.tsx:330
@@ -8792,7 +9200,7 @@ msgid "Edit order"
 msgstr "تعديل طلب"
 
 #: src/pages/build/BuildDetail.tsx:549
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:323
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:324
 #: src/pages/sales/ReturnOrderDetail.tsx:314
 #: src/pages/sales/SalesOrderDetail.tsx:372
 #: src/pages/stock/TransferOrderDetail.tsx:336
@@ -8800,7 +9208,7 @@ msgid "Duplicate order"
 msgstr "نسخ طلب"
 
 #: src/pages/build/BuildDetail.tsx:553
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:326
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:327
 #: src/pages/sales/ReturnOrderDetail.tsx:319
 #: src/pages/sales/SalesOrderDetail.tsx:375
 #: src/pages/stock/TransferOrderDetail.tsx:341
@@ -8808,7 +9216,7 @@ msgid "Hold order"
 msgstr "تعليق طلب"
 
 #: src/pages/build/BuildDetail.tsx:558
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:331
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:332
 #: src/pages/sales/ReturnOrderDetail.tsx:324
 #: src/pages/sales/SalesOrderDetail.tsx:380
 #: src/pages/stock/TransferOrderDetail.tsx:346
@@ -8839,19 +9247,19 @@ msgstr "خارجي"
 #: src/pages/purchasing/PurchasingIndex.tsx:159
 #: src/pages/purchasing/PurchasingIndex.tsx:180
 #: src/pages/purchasing/PurchasingIndex.tsx:209
-#: src/pages/sales/SalesIndex.tsx:115
-#: src/pages/sales/SalesIndex.tsx:155
-#: src/pages/sales/SalesIndex.tsx:182
+#: src/pages/sales/SalesIndex.tsx:117
+#: src/pages/sales/SalesIndex.tsx:158
+#: src/pages/sales/SalesIndex.tsx:185
 #: src/pages/stock/LocationDetail.tsx:139
-#: src/pages/stock/LocationDetail.tsx:181
+#: src/pages/stock/LocationDetail.tsx:179
 msgid "Table View"
 msgstr "جدول عرض"
 
 #: src/pages/build/BuildIndex.tsx:100
 #: src/pages/purchasing/PurchasingIndex.tsx:109
-#: src/pages/sales/SalesIndex.tsx:121
-#: src/pages/sales/SalesIndex.tsx:161
-#: src/pages/stock/LocationDetail.tsx:187
+#: src/pages/sales/SalesIndex.tsx:123
+#: src/pages/sales/SalesIndex.tsx:164
+#: src/pages/stock/LocationDetail.tsx:185
 msgid "Calendar View"
 msgstr "تقويم عرض"
 
@@ -8862,20 +9270,20 @@ msgstr "تقويم عرض"
 #: src/pages/purchasing/PurchasingIndex.tsx:165
 #: src/pages/purchasing/PurchasingIndex.tsx:192
 #: src/pages/purchasing/PurchasingIndex.tsx:215
-#: src/pages/sales/SalesIndex.tsx:127
-#: src/pages/sales/SalesIndex.tsx:167
-#: src/pages/sales/SalesIndex.tsx:194
+#: src/pages/sales/SalesIndex.tsx:129
+#: src/pages/sales/SalesIndex.tsx:170
+#: src/pages/sales/SalesIndex.tsx:197
 #: src/pages/stock/LocationDetail.tsx:145
-#: src/pages/stock/LocationDetail.tsx:193
+#: src/pages/stock/LocationDetail.tsx:191
 msgid "Parametric View"
 msgstr "Parametric عرض"
 
 #: src/pages/build/BuildOrderDetailsPanel.tsx:73
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:77
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:78
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:78
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:78
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:79
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:79
 #: src/pages/stock/StockDetailsPanel.tsx:114
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:55
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:57
 msgid "Custom Status"
 msgstr "حالة مخصص"
 
@@ -8889,8 +9297,8 @@ msgstr "كمية إنتاج"
 
 #: src/pages/build/BuildOrderDetailsPanel.tsx:121
 #: src/pages/part/PartDetailsPanel.tsx:224
-#: src/tables/bom/BomTable.tsx:406
-#: src/tables/bom/BomTable.tsx:449
+#: src/tables/bom/BomTable.tsx:483
+#: src/tables/bom/BomTable.tsx:546
 msgid "Can Build"
 msgstr "قابل للإنتاج"
 
@@ -8899,14 +9307,14 @@ msgid "Any location"
 msgstr "أي موقع"
 
 #: src/pages/build/BuildOrderDetailsPanel.tsx:180
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:37
-#: src/tables/stock/TransferOrderTable.tsx:52
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:39
+#: src/tables/stock/TransferOrderTable.tsx:53
 msgid "Destination Location"
 msgstr "الوجهة موقع"
 
 #: src/pages/build/BuildOrderDetailsPanel.tsx:196
 #: src/pages/stock/StockDetailsPanel.tsx:357
-#: src/tables/settings/ApiTokenTable.tsx:101
+#: src/tables/settings/ApiTokenTable.tsx:113
 #: src/tables/settings/PendingTasksTable.tsx:41
 #: src/tables/stock/StockItemTable.tsx:160
 msgid "Created"
@@ -8928,11 +9336,11 @@ msgstr "تفاصيل الشركة"
 msgid "Supplied Parts"
 msgstr "مورد أصناف"
 
-#: src/pages/company/CompanyDetail.tsx:116
+#: src/pages/company/CompanyDetail.tsx:118
 msgid "Manufactured Parts"
 msgstr "Manufactured أصناف"
 
-#: src/pages/company/CompanyDetail.tsx:163
+#: src/pages/company/CompanyDetail.tsx:172
 msgid "Assigned Stock"
 msgstr "مسند مخزون"
 
@@ -8944,20 +9352,20 @@ msgstr "مسند مخزون"
 #~ msgid "Delete company"
 #~ msgstr "Delete company"
 
-#: src/pages/company/CompanyDetail.tsx:212
+#: src/pages/company/CompanyDetail.tsx:221
 #: src/tables/company/CompanyTable.tsx:102
 msgid "Edit Company"
 msgstr "تعديل الشركة"
 
-#: src/pages/company/CompanyDetail.tsx:220
+#: src/pages/company/CompanyDetail.tsx:229
 msgid "Duplicate Company"
 msgstr "نسخ شركة"
 
-#: src/pages/company/CompanyDetail.tsx:233
+#: src/pages/company/CompanyDetail.tsx:242
 msgid "Delete Company"
 msgstr "حذف الشركة"
 
-#: src/pages/company/CompanyDetail.tsx:248
+#: src/pages/company/CompanyDetail.tsx:257
 msgid "Company Actions"
 msgstr "شركة إجراءات"
 
@@ -8980,8 +9388,8 @@ msgstr "افتراضي عملة"
 #: src/pages/company/CompanyDetailsPanel.tsx:84
 #: src/pages/company/CustomerDetail.tsx:8
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:32
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:60
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:60
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:61
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:61
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:66
 #: src/pages/stock/StockDetailsPanel.tsx:306
 #: src/tables/company/CompanyTable.tsx:126
@@ -9001,7 +9409,7 @@ msgstr "تفاصيل صنف الشركة المصنعة"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:83
 #: src/pages/company/SupplierPartDetail.tsx:91
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:194
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:195
 msgid "Received Stock"
 msgstr "مستلم مخزون"
 
@@ -9085,7 +9493,7 @@ msgid "Add Supplier Part"
 msgstr "إضافة صنف المورد"
 
 #: src/pages/company/SupplierPartDetail.tsx:239
-#: src/pages/part/PartDetail.tsx:593
+#: src/pages/part/PartDetail.tsx:587
 msgid "No Stock"
 msgstr "لا مخزون"
 
@@ -9167,7 +9575,7 @@ msgid "Move items to parent category"
 msgstr "نقل عناصر إلى الأصل فئة"
 
 #: src/pages/part/CategoryDetail.tsx:127
-#: src/pages/stock/LocationDetail.tsx:239
+#: src/pages/stock/LocationDetail.tsx:237
 msgid "Delete items"
 msgstr "حذف عناصر"
 
@@ -9274,15 +9682,15 @@ msgstr "مستخدم في"
 msgid "Part Pricing"
 msgstr "صنف التسعير"
 
-#: src/pages/part/PartDetail.tsx:461
+#: src/pages/part/PartDetail.tsx:455
 msgid "Test Templates"
 msgstr "اختبار قوالب"
 
-#: src/pages/part/PartDetail.tsx:488
+#: src/pages/part/PartDetail.tsx:482
 msgid "Related Parts"
 msgstr "مرتبط أصناف"
 
-#: src/pages/part/PartDetail.tsx:506
+#: src/pages/part/PartDetail.tsx:500
 msgid "Part parameters cannot be edited, as the part is locked"
 msgstr "معلمات الصنف لا يمكن يكون تم التحرير، بصفته ال صنف هو مقفل"
 
@@ -9294,9 +9702,9 @@ msgstr "معلمات الصنف لا يمكن يكون تم التحرير، ب�
 #~ msgid "Consumable Part"
 #~ msgstr "Consumable Part"
 
-#: src/pages/part/PartDetail.tsx:605
+#: src/pages/part/PartDetail.tsx:599
 #: src/tables/part/PartTestTemplateTable.tsx:116
-#: src/tables/stock/StockItemTestResultTable.tsx:403
+#: src/tables/stock/StockItemTestResultTable.tsx:409
 msgid "Required"
 msgstr "مطلوب"
 
@@ -9304,23 +9712,23 @@ msgstr "مطلوب"
 #~ msgid "Scheduling"
 #~ msgstr "Scheduling"
 
-#: src/pages/part/PartDetail.tsx:623
+#: src/pages/part/PartDetail.tsx:617
 msgid "Deficit"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:641
+#: src/pages/part/PartDetail.tsx:635
 #: src/pages/part/bom/BomCompare.tsx:38
-#: src/tables/bom/BomTable.tsx:516
-#: src/tables/build/BuildLineTable.tsx:216
+#: src/tables/bom/BomTable.tsx:614
+#: src/tables/build/BuildLineTable.tsx:260
 #: src/tables/part/PartTableFilters.tsx:109
 msgid "Consumable"
 msgstr "قابل للاستهلاك"
 
-#: src/pages/part/PartDetail.tsx:684
+#: src/pages/part/PartDetail.tsx:678
 msgid "Delete Part"
 msgstr "حذف الصنف"
 
-#: src/pages/part/PartDetail.tsx:693
+#: src/pages/part/PartDetail.tsx:687
 msgid "Deleting this part cannot be reversed"
 msgstr "Deleting هذا صنف لا يمكن يكون reversed"
 
@@ -9328,31 +9736,31 @@ msgstr "Deleting هذا صنف لا يمكن يكون reversed"
 #~ msgid "Default Supplier"
 #~ msgstr "Default Supplier"
 
-#: src/pages/part/PartDetail.tsx:755
+#: src/pages/part/PartDetail.tsx:749
 #: src/pages/stock/StockDetail.tsx:613
 msgid "Order"
 msgstr "الطلب"
 
-#: src/pages/part/PartDetail.tsx:756
+#: src/pages/part/PartDetail.tsx:750
 #: src/pages/stock/StockDetail.tsx:614
-#: src/tables/build/BuildLineTable.tsx:851
+#: src/tables/build/BuildLineTable.tsx:899
 msgid "Order Stock"
 msgstr "طلب مخزون"
 
-#: src/pages/part/PartDetail.tsx:768
+#: src/pages/part/PartDetail.tsx:762
 msgid "Search by serial number"
 msgstr "بحث حسب الرقم التسلسلي"
 
-#: src/pages/part/PartDetail.tsx:776
+#: src/pages/part/PartDetail.tsx:770
 #: src/tables/part/PartTable.tsx:251
 msgid "Part Actions"
 msgstr "صنف إجراءات"
 
-#: src/pages/part/PartDetail.tsx:837
+#: src/pages/part/PartDetail.tsx:832
 msgid "Part locked"
 msgstr "صنف مقفل"
 
-#: src/pages/part/PartDetail.tsx:837
+#: src/pages/part/PartDetail.tsx:833
 msgid "Part unlocked"
 msgstr "صنف غير مقفل"
 
@@ -9386,8 +9794,8 @@ msgid "Keywords"
 msgstr ""
 
 #: src/pages/part/PartDetailsPanel.tsx:168
-#: src/tables/bom/BomTable.tsx:486
-#: src/tables/build/BuildLineTable.tsx:325
+#: src/tables/bom/BomTable.tsx:584
+#: src/tables/build/BuildLineTable.tsx:369
 #: src/tables/part/PartTableFilters.tsx:143
 #: src/tables/sales/SalesOrderLineItemTable.tsx:176
 #: src/tables/stock/TransferOrderLineItemTable.tsx:121
@@ -9426,7 +9834,7 @@ msgid "Template Part"
 msgstr "قالب صنف"
 
 #: src/pages/part/PartDetailsPanel.tsx:252
-#: src/tables/bom/BomTable.tsx:476
+#: src/tables/bom/BomTable.tsx:574
 msgid "Assembled Part"
 msgstr "مجمّع صنف"
 
@@ -9435,12 +9843,12 @@ msgid "Component Part"
 msgstr "مكوّن صنف"
 
 #: src/pages/part/PartDetailsPanel.tsx:257
-#: src/tables/bom/BomTable.tsx:461
+#: src/tables/bom/BomTable.tsx:559
 msgid "Testable Part"
 msgstr "قابل للاختبار صنف"
 
 #: src/pages/part/PartDetailsPanel.tsx:260
-#: src/tables/bom/BomTable.tsx:466
+#: src/tables/bom/BomTable.tsx:564
 msgid "Trackable Part"
 msgstr "قابل للتتبع صنف"
 
@@ -9461,7 +9869,7 @@ msgid "days"
 msgstr "أيام"
 
 #: src/pages/part/PartDetailsPanel.tsx:308
-#: src/pages/part/pricing/BomPricingPanel.tsx:82
+#: src/pages/part/pricing/BomPricingPanel.tsx:84
 #: src/pages/part/pricing/VariantPricingPanel.tsx:98
 #: src/tables/part/PartTable.tsx:90
 msgid "Price Range"
@@ -9645,35 +10053,35 @@ msgid "Validated By"
 msgstr "تم التحقق حسب"
 
 #: src/pages/part/bom/BomCompare.tsx:35
-#: src/tables/bom/BomTable.tsx:506
+#: src/tables/bom/BomTable.tsx:604
 msgid "Allow Variants"
 msgstr "السماح متغيرات"
 
 #: src/pages/part/bom/BomCompare.tsx:36
-#: src/tables/bom/BomTable.tsx:501
+#: src/tables/bom/BomTable.tsx:599
 #: src/tables/bom/UsedInTable.tsx:92
 msgid "Inherited"
 msgstr "موروث"
 
 #: src/pages/part/bom/BomCompare.tsx:37
-#: src/tables/bom/BomTable.tsx:511
+#: src/tables/bom/BomTable.tsx:609
 #: src/tables/bom/UsedInTable.tsx:102
-#: src/tables/build/BuildLineTable.tsx:221
+#: src/tables/build/BuildLineTable.tsx:265
 msgid "Optional"
 msgstr "اختياري"
 
 #: src/pages/part/bom/BomCompare.tsx:39
-#: src/tables/build/BuildLineTable.tsx:441
+#: src/tables/build/BuildLineTable.tsx:489
 msgid "Setup Quantity"
 msgstr "كمية إعداد"
 
 #: src/pages/part/bom/BomCompare.tsx:40
-#: src/tables/build/BuildLineTable.tsx:450
+#: src/tables/build/BuildLineTable.tsx:498
 msgid "Attrition"
 msgstr ""
 
 #: src/pages/part/bom/BomCompare.tsx:41
-#: src/tables/build/BuildLineTable.tsx:458
+#: src/tables/build/BuildLineTable.tsx:506
 msgid "Rounding Multiple"
 msgstr "Rounding متعدد"
 
@@ -9733,13 +10141,13 @@ msgstr "عرض common أصناف"
 msgid "Select an assembly to view Bill of Materials comparison"
 msgstr "تحديد تجميع إلى عرض قائمة المواد comparison"
 
-#: src/pages/part/pricing/BomPricingPanel.tsx:84
+#: src/pages/part/pricing/BomPricingPanel.tsx:86
 #: src/pages/part/pricing/VariantPricingPanel.tsx:38
 #: src/pages/part/pricing/VariantPricingPanel.tsx:100
 msgid "Minimum Price"
 msgstr "أدنى سعر"
 
-#: src/pages/part/pricing/BomPricingPanel.tsx:85
+#: src/pages/part/pricing/BomPricingPanel.tsx:87
 #: src/pages/part/pricing/VariantPricingPanel.tsx:46
 #: src/pages/part/pricing/VariantPricingPanel.tsx:101
 msgid "Maximum Price"
@@ -9753,11 +10161,11 @@ msgstr "أقصى سعر"
 #~ msgid "Maximum Total Price"
 #~ msgstr "Maximum Total Price"
 
-#: src/pages/part/pricing/BomPricingPanel.tsx:224
+#: src/pages/part/pricing/BomPricingPanel.tsx:226
 msgid "Pie Chart"
 msgstr ""
 
-#: src/pages/part/pricing/BomPricingPanel.tsx:225
+#: src/pages/part/pricing/BomPricingPanel.tsx:227
 msgid "Bar Chart"
 msgstr ""
 
@@ -9829,9 +10237,9 @@ msgid "Purchase Pricing"
 msgstr "شراء التسعير"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:294
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:214
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:226
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:226
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:223
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:235
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:235
 #: src/pages/stock/StockDetailsPanel.tsx:364
 #: src/tables/general/ParameterTable.tsx:101
 #: src/tables/general/ParametricDataTable.tsx:101
@@ -9911,32 +10319,36 @@ msgstr "مورد سعر"
 msgid "Variant Part"
 msgstr "متغير صنف"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:91
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:92
 msgid "Edit Purchase Order"
 msgstr "تعديل طلب شراء"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:128
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:129
 #: src/tables/purchasing/PurchaseOrderTable.tsx:118
 #: src/tables/purchasing/PurchaseOrderTable.tsx:132
 msgid "Add Purchase Order"
 msgstr "إضافة طلب شراء"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:139
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:140
 #: src/pages/sales/ReturnOrderDetail.tsx:104
 #: src/pages/sales/SalesOrderDetail.tsx:142
 #: src/pages/stock/TransferOrderDetail.tsx:106
 msgid "Order Details"
 msgstr "تفاصيل الطلب"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:151
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:160
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:152
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:161
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:266
 #: src/pages/sales/ReturnOrderDetail.tsx:116
 #: src/pages/sales/ReturnOrderDetail.tsx:125
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:91
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:92
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:278
 #: src/pages/sales/SalesOrderDetail.tsx:154
 #: src/pages/sales/SalesOrderDetail.tsx:163
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:278
 #: src/pages/stock/TransferOrderDetail.tsx:112
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:74
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:76
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:182
 msgid "Line Items"
 msgstr "بنود"
 
@@ -9946,7 +10358,7 @@ msgstr "بنود"
 #~ msgid "Order Currency,"
 #~ msgstr "Order Currency,"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:175
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:176
 #: src/pages/sales/ReturnOrderDetail.tsx:140
 #: src/pages/sales/SalesOrderDetail.tsx:177
 msgid "Extra Line Items"
@@ -9958,73 +10370,73 @@ msgstr "إضافي البنود"
 #~ msgid "Created On"
 #~ msgstr "Created On"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:231
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:232
 msgid "Issue Purchase Order"
 msgstr "صرف طلب الشراء"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:239
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:240
 msgid "Cancel Purchase Order"
 msgstr "إلغاء طلب الشراء"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:247
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:248
 msgid "Hold Purchase Order"
 msgstr "تعليق طلب الشراء"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:255
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:256
 msgid "Complete Purchase Order"
 msgstr "مكتمل طلب الشراء"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:311
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:312
 #: src/pages/sales/ReturnOrderDetail.tsx:304
 #: src/pages/sales/SalesOrderDetail.tsx:362
 #: src/pages/stock/TransferOrderDetail.tsx:326
 msgid "Order Actions"
 msgstr "طلب إجراءات"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:50
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:51
 msgid "Supplier Reference"
 msgstr "مورد مرجع"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:91
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:98
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:92
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:81
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:92
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:99
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:93
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:83
 msgid "Completed Line Items"
 msgstr "مكتمل البنود"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:100
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:101
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:285
 msgid "Destination"
 msgstr "الوجهة"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:106
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:105
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:109
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:107
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:106
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:110
 msgid "Order Currency"
 msgstr "طلب عملة"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:112
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:112
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:115
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:113
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:113
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:116
 msgid "Total Cost"
 msgstr "إجمالي تكلفة"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:141
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:153
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:155
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:142
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:154
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:156
 msgid "Contact Email"
 msgstr "جهة اتصال بريد إلكتروني"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:149
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:161
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:163
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:150
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:162
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:164
 msgid "Contact Phone"
 msgstr "جهة اتصال هاتف"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:182
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:195
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:196
-#: src/pages/stock/TransferOrderDetailsPanel.tsx:125
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:191
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:204
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:205
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:127
 msgid "Issue Date"
 msgstr "تاريخ صرف"
 
@@ -10058,19 +10470,19 @@ msgstr "مكتمل طلب الإرجاع"
 #~ msgid "Order canceled"
 #~ msgstr "Order canceled"
 
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:51
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:51
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:52
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:52
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:86
 #: src/tables/sales/SalesOrderTable.tsx:95
 msgid "Customer Reference"
 msgstr "عميل مرجع"
 
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:133
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:134
 msgid "Return Address"
 msgstr "إرجاع عنوان"
 
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:139
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:141
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:140
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:142
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:125
 msgid "Not specified"
 msgstr "غير محدد"
@@ -10122,14 +10534,21 @@ msgstr "مكتمل طلب البيع"
 msgid "Ship Order"
 msgstr "شحن طلب"
 
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:101
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:102
 msgid "Completed Shipments"
 msgstr "مكتمل شحنات"
 
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:135
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:136
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:119
 msgid "Shipping Address"
 msgstr "شحن عنوان"
+
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:281
+#: src/pages/sales/SalesOrderShipmentDetail.tsx:188
+#: src/tables/sales/SalesOrderShipmentTable.tsx:170
+#: src/tables/sales/SalesOrderShipmentTable.tsx:301
+msgid "Shipped"
+msgstr "مشحون"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:81
 msgid "Shipment Details"
@@ -10161,12 +10580,6 @@ msgstr "محدد"
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:182
 msgid "Not Checked"
 msgstr "غير محدد"
-
-#: src/pages/sales/SalesOrderShipmentDetail.tsx:188
-#: src/tables/sales/SalesOrderShipmentTable.tsx:170
-#: src/tables/sales/SalesOrderShipmentTable.tsx:301
-msgid "Shipped"
-msgstr "مشحون"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:194
 #: src/tables/sales/SalesOrderShipmentTable.tsx:178
@@ -10246,17 +10659,17 @@ msgstr "مواقع فرعية"
 #~ msgid "Top level stock location"
 #~ msgstr "Top level stock location"
 
-#: src/pages/stock/LocationDetail.tsx:201
+#: src/pages/stock/LocationDetail.tsx:199
 msgid "Default Parts"
 msgstr "افتراضي أصناف"
 
-#: src/pages/stock/LocationDetail.tsx:226
-#: src/pages/stock/LocationDetail.tsx:387
+#: src/pages/stock/LocationDetail.tsx:224
+#: src/pages/stock/LocationDetail.tsx:385
 #: src/tables/stock/StockLocationTable.tsx:128
 msgid "Edit Stock Location"
 msgstr "تعديل موقع مخزون"
 
-#: src/pages/stock/LocationDetail.tsx:235
+#: src/pages/stock/LocationDetail.tsx:233
 msgid "Move items to parent location"
 msgstr "نقل عناصر إلى الأصل موقع"
 
@@ -10264,26 +10677,26 @@ msgstr "نقل عناصر إلى الأصل موقع"
 #~ msgid "Child Locations Action"
 #~ msgstr "Child Locations Action"
 
-#: src/pages/stock/LocationDetail.tsx:247
-#: src/pages/stock/LocationDetail.tsx:392
+#: src/pages/stock/LocationDetail.tsx:245
+#: src/pages/stock/LocationDetail.tsx:390
 msgid "Delete Stock Location"
 msgstr "حذف موقع مخزون"
 
-#: src/pages/stock/LocationDetail.tsx:250
+#: src/pages/stock/LocationDetail.tsx:248
 msgid "Items Action"
 msgstr "عناصر إجراء"
 
-#: src/pages/stock/LocationDetail.tsx:252
+#: src/pages/stock/LocationDetail.tsx:250
 msgid "Action for stock items in this location"
 msgstr "إجراء لـ عناصر المخزون في هذا موقع"
 
-#: src/pages/stock/LocationDetail.tsx:257
-#: src/pages/stock/LocationDetail.tsx:383
+#: src/pages/stock/LocationDetail.tsx:255
+#: src/pages/stock/LocationDetail.tsx:381
 #: src/tables/stock/StockLocationTable.tsx:149
 msgid "Location Actions"
 msgstr "موقع إجراءات"
 
-#: src/pages/stock/LocationDetail.tsx:259
+#: src/pages/stock/LocationDetail.tsx:257
 msgid "Action for child locations in this location"
 msgstr "إجراء لـ فرعي مواقع في هذا موقع"
 
@@ -10291,45 +10704,45 @@ msgstr "إجراء لـ فرعي مواقع في هذا موقع"
 #~ msgid "Locations Action"
 #~ msgstr "Locations Action"
 
-#: src/pages/stock/LocationDetail.tsx:293
+#: src/pages/stock/LocationDetail.tsx:291
 msgid "Scan Stock Item"
 msgstr "مسح عنصر مخزون"
 
-#: src/pages/stock/LocationDetail.tsx:311
+#: src/pages/stock/LocationDetail.tsx:309
 #: src/pages/stock/StockDetail.tsx:537
 msgid "Scanned stock item into location"
 msgstr "تم المسح عنصر المخزون إلى موقع"
 
-#: src/pages/stock/LocationDetail.tsx:317
+#: src/pages/stock/LocationDetail.tsx:315
 #: src/pages/stock/StockDetail.tsx:543
 msgid "Error scanning stock item"
 msgstr "خطأ في المسح عنصر المخزون"
 
-#: src/pages/stock/LocationDetail.tsx:324
+#: src/pages/stock/LocationDetail.tsx:322
 msgid "Scan Stock Location"
 msgstr "مسح موقع مخزون"
 
-#: src/pages/stock/LocationDetail.tsx:336
+#: src/pages/stock/LocationDetail.tsx:334
 msgid "Scanned stock location into location"
 msgstr "تم المسح موقع المخزون إلى موقع"
 
-#: src/pages/stock/LocationDetail.tsx:342
+#: src/pages/stock/LocationDetail.tsx:340
 msgid "Error scanning stock location"
 msgstr "خطأ في المسح موقع المخزون"
 
-#: src/pages/stock/LocationDetail.tsx:360
+#: src/pages/stock/LocationDetail.tsx:358
 msgid "Scan in stock items"
 msgstr "مسح في عناصر المخزون"
 
-#: src/pages/stock/LocationDetail.tsx:362
+#: src/pages/stock/LocationDetail.tsx:360
 msgid "Scan item into this location"
 msgstr "مسح عنصر إلى هذا موقع"
 
-#: src/pages/stock/LocationDetail.tsx:366
+#: src/pages/stock/LocationDetail.tsx:364
 msgid "Scan in container"
 msgstr "مسح في container"
 
-#: src/pages/stock/LocationDetail.tsx:368
+#: src/pages/stock/LocationDetail.tsx:366
 msgid "Scan container into this location"
 msgstr "مسح container إلى هذا موقع"
 
@@ -10418,7 +10831,7 @@ msgid "Stock Operations"
 msgstr "مخزون Operations"
 
 #: src/pages/stock/StockDetail.tsx:589
-#: src/tables/build/BuildOutputTable.tsx:626
+#: src/tables/build/BuildOutputTable.tsx:627
 msgid "Serialize"
 msgstr "ترقيم تسلسلي"
 
@@ -10565,8 +10978,8 @@ msgid "Edit Transfer Order"
 msgstr "تعديل طلب تحويل"
 
 #: src/pages/stock/TransferOrderDetail.tsx:239
-#: src/tables/stock/TransferOrderTable.tsx:86
-#: src/tables/stock/TransferOrderTable.tsx:97
+#: src/tables/stock/TransferOrderTable.tsx:87
+#: src/tables/stock/TransferOrderTable.tsx:98
 msgid "Add Transfer Order"
 msgstr "إضافة طلب تحويل"
 
@@ -10585,6 +10998,11 @@ msgstr "تعليق طلب التحويل"
 #: src/pages/stock/TransferOrderDetail.tsx:272
 msgid "Complete Transfer Order"
 msgstr "مكتمل طلب التحويل"
+
+#: src/pages/stock/TransferOrderDetailsPanel.tsx:185
+#: src/tables/stock/TransferOrderLineItemTable.tsx:197
+msgid "Transferred"
+msgstr "محوّل"
 
 #: src/states/IconState.tsx:47
 #: src/states/IconState.tsx:77
@@ -10685,21 +11103,17 @@ msgstr "خطأ في جارٍ التحميل أيقونة طرد من خادم"
 #~ msgid "Upload Data"
 #~ msgstr "Upload Data"
 
-#: src/tables/bom/BomTable.tsx:125
+#: src/tables/bom/BomTable.tsx:156
 msgid "This BOM item is defined for a different parent"
 msgstr "هذا BOM عنصر هو محدد لـ مختلف الأصل"
 
-#: src/tables/bom/BomTable.tsx:132
+#: src/tables/bom/BomTable.tsx:163
 msgid "This BOM item has not been validated"
 msgstr "هذا BOM عنصر لديه غير تم تم التحقق"
 
-#: src/tables/bom/BomTable.tsx:155
+#: src/tables/bom/BomTable.tsx:183
 msgid "Part Information"
 msgstr "صنف معلومات"
-
-#: src/tables/bom/BomTable.tsx:275
-msgid "Substitutes"
-msgstr ""
 
 #: src/tables/bom/BomTable.tsx:301
 #~ msgid "Create BOM Item"
@@ -10708,6 +11122,10 @@ msgstr ""
 #: src/tables/bom/BomTable.tsx:310
 #~ msgid "Show asssmbled items"
 #~ msgstr "Show asssmbled items"
+
+#: src/tables/bom/BomTable.tsx:314
+msgid "Substitutes"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:331
 #~ msgid "Edit Bom Item"
@@ -10733,178 +11151,178 @@ msgstr ""
 #~ msgid "Validate BOM line"
 #~ msgstr "Validate BOM line"
 
-#: src/tables/bom/BomTable.tsx:364
-#: src/tables/build/BuildLineTable.tsx:258
+#: src/tables/bom/BomTable.tsx:441
+#: src/tables/build/BuildLineTable.tsx:302
 msgid "Includes substitute stock"
 msgstr "Includes بديل مخزون"
 
-#: src/tables/bom/BomTable.tsx:382
-#: src/tables/build/BuildLineTable.tsx:286
+#: src/tables/bom/BomTable.tsx:459
+#: src/tables/build/BuildLineTable.tsx:330
 #: src/tables/sales/SalesOrderLineItemTable.tsx:218
 #: src/tables/stock/TransferOrderLineItemTable.tsx:163
 msgid "On order"
 msgstr "على طلب"
 
-#: src/tables/bom/BomTable.tsx:441
-#: src/tables/build/BuildLineTable.tsx:527
-#: src/tables/build/BuildLineTable.tsx:572
+#: src/tables/bom/BomTable.tsx:535
+#: src/tables/build/BuildLineTable.tsx:575
+#: src/tables/build/BuildLineTable.tsx:620
 msgid "Consumable item"
 msgstr "قابل للاستهلاك عنصر"
 
-#: src/tables/bom/BomTable.tsx:444
+#: src/tables/bom/BomTable.tsx:538
 msgid "No available stock"
 msgstr "لا متاح مخزون"
 
-#: src/tables/bom/BomTable.tsx:462
-#: src/tables/build/BuildLineTable.tsx:232
+#: src/tables/bom/BomTable.tsx:560
+#: src/tables/build/BuildLineTable.tsx:276
 msgid "Show testable items"
 msgstr "عرض قابل للاختبار عناصر"
 
-#: src/tables/bom/BomTable.tsx:467
+#: src/tables/bom/BomTable.tsx:565
 msgid "Show trackable items"
 msgstr "عرض قابل للتتبع عناصر"
 
-#: src/tables/bom/BomTable.tsx:471
+#: src/tables/bom/BomTable.tsx:569
 #: src/tables/purchasing/ManufacturerPartParametricTable.tsx:46
 #: src/tables/purchasing/ManufacturerPartTable.tsx:161
 #: src/tables/purchasing/SupplierPartTable.tsx:264
 msgid "Active Part"
 msgstr "نشط صنف"
 
-#: src/tables/bom/BomTable.tsx:472
+#: src/tables/bom/BomTable.tsx:570
 #: src/tables/settings/ProjectCodeTable.tsx:105
 msgid "Show active items"
 msgstr "عرض نشط عناصر"
 
-#: src/tables/bom/BomTable.tsx:477
-#: src/tables/build/BuildLineTable.tsx:227
+#: src/tables/bom/BomTable.tsx:575
+#: src/tables/build/BuildLineTable.tsx:271
 msgid "Show assembled items"
 msgstr "عرض مجمّع عناصر"
 
-#: src/tables/bom/BomTable.tsx:482
+#: src/tables/bom/BomTable.tsx:580
 msgid "Show virtual items"
 msgstr "عرض افتراضي عناصر"
 
-#: src/tables/bom/BomTable.tsx:487
+#: src/tables/bom/BomTable.tsx:585
 msgid "Show items with available stock"
 msgstr "عرض عناصر مع متاح مخزون"
 
-#: src/tables/bom/BomTable.tsx:492
+#: src/tables/bom/BomTable.tsx:590
 msgid "Show items on order"
 msgstr "عرض عناصر على طلب"
 
-#: src/tables/bom/BomTable.tsx:496
+#: src/tables/bom/BomTable.tsx:594
 msgid "Validated"
 msgstr "تم التحقق"
 
-#: src/tables/bom/BomTable.tsx:497
+#: src/tables/bom/BomTable.tsx:595
 msgid "Show validated items"
 msgstr "عرض تم التحقق عناصر"
 
-#: src/tables/bom/BomTable.tsx:502
+#: src/tables/bom/BomTable.tsx:600
 #: src/tables/bom/UsedInTable.tsx:93
 msgid "Show inherited items"
 msgstr "عرض موروث عناصر"
 
-#: src/tables/bom/BomTable.tsx:507
+#: src/tables/bom/BomTable.tsx:605
 msgid "Show items which allow variant substitution"
 msgstr "عرض عناصر الذي السماح متغير substitution"
 
-#: src/tables/bom/BomTable.tsx:512
+#: src/tables/bom/BomTable.tsx:610
 #: src/tables/bom/UsedInTable.tsx:103
 msgid "Show optional items"
 msgstr "عرض اختياري عناصر"
 
-#: src/tables/bom/BomTable.tsx:517
+#: src/tables/bom/BomTable.tsx:615
 msgid "Show consumable items"
 msgstr "عرض قابل للاستهلاك عناصر"
 
-#: src/tables/bom/BomTable.tsx:521
+#: src/tables/bom/BomTable.tsx:619
 #: src/tables/part/PartTableFilters.tsx:137
 msgid "Has Pricing"
 msgstr "لديه التسعير"
 
-#: src/tables/bom/BomTable.tsx:522
+#: src/tables/bom/BomTable.tsx:620
 msgid "Show items with pricing"
 msgstr "عرض عناصر مع التسعير"
 
-#: src/tables/bom/BomTable.tsx:544
+#: src/tables/bom/BomTable.tsx:642
 msgid "Import BOM Data"
 msgstr "استيراد BOM بيانات"
 
-#: src/tables/bom/BomTable.tsx:555
-#: src/tables/bom/BomTable.tsx:677
+#: src/tables/bom/BomTable.tsx:653
+#: src/tables/bom/BomTable.tsx:775
 msgid "Add BOM Item"
 msgstr "إضافة عنصر قائمة المواد"
 
-#: src/tables/bom/BomTable.tsx:560
+#: src/tables/bom/BomTable.tsx:658
 msgid "BOM item created"
 msgstr "BOM عنصر تم الإنشاء"
 
-#: src/tables/bom/BomTable.tsx:567
+#: src/tables/bom/BomTable.tsx:665
 #: src/tables/bom/UsedInTable.tsx:123
 msgid "Edit BOM Item"
 msgstr "تعديل عنصر قائمة المواد"
 
-#: src/tables/bom/BomTable.tsx:569
+#: src/tables/bom/BomTable.tsx:667
 #: src/tables/bom/UsedInTable.tsx:127
 msgid "BOM item updated"
 msgstr "BOM عنصر تم التحديث"
 
-#: src/tables/bom/BomTable.tsx:576
+#: src/tables/bom/BomTable.tsx:674
 msgid "Delete BOM Item"
 msgstr "حذف عنصر قائمة المواد"
 
-#: src/tables/bom/BomTable.tsx:577
+#: src/tables/bom/BomTable.tsx:675
 msgid "BOM item deleted"
 msgstr "BOM عنصر تم الحذف"
 
-#: src/tables/bom/BomTable.tsx:597
+#: src/tables/bom/BomTable.tsx:695
 msgid "BOM item validated"
 msgstr "BOM عنصر تم التحقق"
 
-#: src/tables/bom/BomTable.tsx:606
+#: src/tables/bom/BomTable.tsx:704
 msgid "Failed to validate BOM item"
 msgstr "فشل في تحقق BOM عنصر"
 
-#: src/tables/bom/BomTable.tsx:618
+#: src/tables/bom/BomTable.tsx:716
 msgid "View BOM"
 msgstr "عرض BOM"
 
-#: src/tables/bom/BomTable.tsx:629
+#: src/tables/bom/BomTable.tsx:727
 msgid "Validate BOM Line"
 msgstr "تحقق BOM سطر"
 
-#: src/tables/bom/BomTable.tsx:646
+#: src/tables/bom/BomTable.tsx:744
 msgid "Edit Substitutes"
 msgstr "تعديل Substitutes"
 
-#: src/tables/bom/BomTable.tsx:671
+#: src/tables/bom/BomTable.tsx:769
 msgid "Add BOM Items"
 msgstr "إضافة عناصر قائمة المواد"
 
-#: src/tables/bom/BomTable.tsx:679
+#: src/tables/bom/BomTable.tsx:777
 msgid "Add a single BOM item"
 msgstr "إضافة مفرد BOM عنصر"
 
-#: src/tables/bom/BomTable.tsx:685
+#: src/tables/bom/BomTable.tsx:783
 msgid "Import BOM items from a file"
 msgstr "استيراد BOM عناصر من ملف"
 
-#: src/tables/bom/BomTable.tsx:693
+#: src/tables/bom/BomTable.tsx:791
 msgid "Edit BOM"
 msgstr "تعديل BOM"
 
-#: src/tables/bom/BomTable.tsx:703
+#: src/tables/bom/BomTable.tsx:801
 msgid "Finish Editing BOM"
 msgstr "Finish تحرير BOM"
 
-#: src/tables/bom/BomTable.tsx:731
+#: src/tables/bom/BomTable.tsx:844
 msgid "Bill of materials cannot be edited, as the part is locked"
 msgstr "قائمة المواد لا يمكن يكون تم التحرير، بصفته ال صنف هو مقفل"
 
 #: src/tables/bom/UsedInTable.tsx:47
-#: src/tables/build/BuildLineTable.tsx:226
+#: src/tables/build/BuildLineTable.tsx:270
 #: src/tables/part/PartBuildAllocationsTable.tsx:61
 #: src/tables/part/PartTableFilters.tsx:25
 #: src/tables/stock/StockItemTable.tsx:208
@@ -10988,7 +11406,7 @@ msgstr "حالة الطلب"
 #~ msgstr "Edit Build Item"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:169
-#: src/tables/build/BuildLineTable.tsx:712
+#: src/tables/build/BuildLineTable.tsx:760
 msgid "Edit Stock Allocation"
 msgstr "تعديل مخزون تخصيص"
 
@@ -11002,26 +11420,26 @@ msgstr "تعديل مخزون تخصيص"
 #~ msgstr "Delete Stock Allocation"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:182
-#: src/tables/build/BuildLineTable.tsx:725
+#: src/tables/build/BuildLineTable.tsx:773
 #: src/tables/sales/SalesOrderAllocationTable.tsx:223
 #: src/tables/stock/TransferOrderAllocationTable.tsx:177
 msgid "Remove Allocated Stock"
 msgstr "إزالة مخصص مخزون"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:187
-#: src/tables/build/BuildLineTable.tsx:730
+#: src/tables/build/BuildLineTable.tsx:778
 #: src/tables/sales/SalesOrderAllocationTable.tsx:226
 #: src/tables/stock/TransferOrderAllocationTable.tsx:180
 msgid "Are you sure you want to remove this allocated stock from the order?"
 msgstr "هل أنت متأكد من رغبتك في إزالة هذا مخصص مخزون من ال طلب؟"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:202
-#: src/tables/build/BuildLineTable.tsx:745
+#: src/tables/build/BuildLineTable.tsx:793
 msgid "Consuming allocated stock"
 msgstr "Consuming مخصص مخزون"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:203
-#: src/tables/build/BuildLineTable.tsx:746
+#: src/tables/build/BuildLineTable.tsx:794
 msgid "Stock consumed successfully"
 msgstr "مخزون مستهلك بنجاح"
 
@@ -11030,7 +11448,7 @@ msgid "Consume"
 msgstr "استهلاك"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:279
-#: src/tables/build/BuildLineTable.tsx:130
+#: src/tables/build/BuildLineTable.tsx:174
 #: src/tables/sales/SalesOrderAllocationTable.tsx:253
 #: src/tables/stock/TransferOrderAllocationTable.tsx:200
 msgid "Remove allocated stock"
@@ -11040,7 +11458,11 @@ msgstr "إزالة مخصص مخزون"
 #~ msgid "Show lines with available stock"
 #~ msgstr "Show lines with available stock"
 
-#: src/tables/build/BuildLineTable.tsx:139
+#: src/tables/build/BuildLineTable.tsx:83
+msgid "Allocated part differs from the BOM part"
+msgstr ""
+
+#: src/tables/build/BuildLineTable.tsx:183
 msgid "View Stock Item"
 msgstr "عرض عنصر مخزون"
 
@@ -11048,150 +11470,150 @@ msgstr "عرض عنصر مخزون"
 #~ msgid "Show allocated lines"
 #~ msgstr "Show allocated lines"
 
-#: src/tables/build/BuildLineTable.tsx:202
+#: src/tables/build/BuildLineTable.tsx:246
 msgid "Show fully allocated lines"
 msgstr "عرض بالكامل مخصص سطور"
 
-#: src/tables/build/BuildLineTable.tsx:207
+#: src/tables/build/BuildLineTable.tsx:251
 msgid "Show fully consumed lines"
 msgstr "عرض بالكامل مستهلك سطور"
 
-#: src/tables/build/BuildLineTable.tsx:212
+#: src/tables/build/BuildLineTable.tsx:256
 msgid "Show items with sufficient available stock"
 msgstr "عرض عناصر مع sufficient متاح مخزون"
 
-#: src/tables/build/BuildLineTable.tsx:217
+#: src/tables/build/BuildLineTable.tsx:261
 msgid "Show consumable lines"
 msgstr "عرض قابل للاستهلاك سطور"
 
-#: src/tables/build/BuildLineTable.tsx:222
+#: src/tables/build/BuildLineTable.tsx:266
 msgid "Show optional lines"
 msgstr "عرض اختياري سطور"
 
-#: src/tables/build/BuildLineTable.tsx:231
+#: src/tables/build/BuildLineTable.tsx:275
 #: src/tables/part/PartTableFilters.tsx:49
 msgid "Testable"
 msgstr "قابل للاختبار"
 
-#: src/tables/build/BuildLineTable.tsx:236
+#: src/tables/build/BuildLineTable.tsx:280
 #: src/tables/stock/StockItemTable.tsx:263
 msgid "Tracked"
 msgstr "متتبع"
 
-#: src/tables/build/BuildLineTable.tsx:237
+#: src/tables/build/BuildLineTable.tsx:281
 msgid "Show tracked lines"
 msgstr "عرض متتبع سطور"
 
-#: src/tables/build/BuildLineTable.tsx:242
+#: src/tables/build/BuildLineTable.tsx:286
 msgid "Show items with stock on order"
 msgstr "عرض عناصر مع مخزون على طلب"
 
-#: src/tables/build/BuildLineTable.tsx:277
+#: src/tables/build/BuildLineTable.tsx:321
 #: src/tables/sales/SalesOrderLineItemTable.tsx:210
 #: src/tables/stock/TransferOrderLineItemTable.tsx:155
 msgid "In production"
 msgstr "في الإنتاج"
 
-#: src/tables/build/BuildLineTable.tsx:305
+#: src/tables/build/BuildLineTable.tsx:349
 msgid "Insufficient stock"
 msgstr "Insufficient مخزون"
 
-#: src/tables/build/BuildLineTable.tsx:400
+#: src/tables/build/BuildLineTable.tsx:448
 msgid "Gets Inherited"
 msgstr "Gets موروث"
 
-#: src/tables/build/BuildLineTable.tsx:467
+#: src/tables/build/BuildLineTable.tsx:515
 msgid "BOM Information"
 msgstr "BOM معلومات"
-
-#: src/tables/build/BuildLineTable.tsx:546
-#: src/tables/part/PartBuildAllocationsTable.tsx:103
-msgid "Fully allocated"
-msgstr "بالكامل مخصص"
 
 #: src/tables/build/BuildLineTable.tsx:585
 #~ msgid "Auto allocation in progress"
 #~ msgstr "Auto allocation in progress"
 
-#: src/tables/build/BuildLineTable.tsx:598
-#: src/tables/sales/SalesOrderLineItemTable.tsx:351
-#: src/tables/stock/TransferOrderLineItemTable.tsx:251
-msgid "Create Build Order"
-msgstr "إنشاء أمر إنتاج"
+#: src/tables/build/BuildLineTable.tsx:594
+#: src/tables/part/PartBuildAllocationsTable.tsx:103
+msgid "Fully allocated"
+msgstr "بالكامل مخصص"
 
 #: src/tables/build/BuildLineTable.tsx:598
 #~ msgid "Automatically allocate stock to this build according to the selected options"
 #~ msgstr "Automatically allocate stock to this build according to the selected options"
 
-#: src/tables/build/BuildLineTable.tsx:613
-#: src/tables/build/BuildOutputTable.tsx:229
+#: src/tables/build/BuildLineTable.tsx:646
+#: src/tables/sales/SalesOrderLineItemTable.tsx:351
+#: src/tables/stock/TransferOrderLineItemTable.tsx:251
+msgid "Create Build Order"
+msgstr "إنشاء أمر إنتاج"
+
+#: src/tables/build/BuildLineTable.tsx:661
+#: src/tables/build/BuildOutputTable.tsx:230
 msgid "Allocating stock to build order"
 msgstr "Allocating مخزون إلى أمر الإنتاج"
 
-#: src/tables/build/BuildLineTable.tsx:614
-#: src/tables/build/BuildOutputTable.tsx:230
+#: src/tables/build/BuildLineTable.tsx:662
+#: src/tables/build/BuildOutputTable.tsx:231
 #: src/tables/sales/SalesOrderLineItemTable.tsx:377
 msgid "Stock allocation complete"
 msgstr "مخزون تخصيص مكتمل"
 
-#: src/tables/build/BuildLineTable.tsx:624
-#: src/tables/build/BuildLineTable.tsx:632
-#: src/tables/build/BuildLineTable.tsx:894
-#: src/tables/build/BuildOutputTable.tsx:253
-#: src/tables/build/BuildOutputTable.tsx:537
+#: src/tables/build/BuildLineTable.tsx:672
+#: src/tables/build/BuildLineTable.tsx:680
+#: src/tables/build/BuildLineTable.tsx:942
+#: src/tables/build/BuildOutputTable.tsx:254
+#: src/tables/build/BuildOutputTable.tsx:538
 #: src/tables/sales/SalesOrderLineItemTable.tsx:408
 #: src/tables/sales/SalesOrderLineItemTable.tsx:482
 msgid "Auto Allocate Stock"
 msgstr "تخصيص تلقائي للمخزون"
 
-#: src/tables/build/BuildLineTable.tsx:626
+#: src/tables/build/BuildLineTable.tsx:674
 msgid "Auto-allocating stock for"
 msgstr "Auto-allocating مخزون لـ"
 
-#: src/tables/build/BuildLineTable.tsx:626
+#: src/tables/build/BuildLineTable.tsx:674
 msgid "selected line item(s)"
 msgstr "محدد بند(s)"
 
-#: src/tables/build/BuildLineTable.tsx:633
+#: src/tables/build/BuildLineTable.tsx:681
 msgid "Automatically allocate untracked BOM items to this build according to the selected options"
 msgstr "تلقائيًا تخصيص untracked BOM عناصر إلى هذا إنتاج according إلى ال محدد خيارات"
 
-#: src/tables/build/BuildLineTable.tsx:678
-#: src/tables/build/BuildLineTable.tsx:692
-#: src/tables/build/BuildLineTable.tsx:841
-#: src/tables/build/BuildLineTable.tsx:950
-#: src/tables/build/BuildOutputTable.tsx:449
-#: src/tables/build/BuildOutputTable.tsx:454
+#: src/tables/build/BuildLineTable.tsx:726
+#: src/tables/build/BuildLineTable.tsx:740
+#: src/tables/build/BuildLineTable.tsx:889
+#: src/tables/build/BuildLineTable.tsx:998
+#: src/tables/build/BuildOutputTable.tsx:450
+#: src/tables/build/BuildOutputTable.tsx:455
 msgid "Deallocate Stock"
 msgstr "إلغاء تخصيص المخزون"
 
-#: src/tables/build/BuildLineTable.tsx:694
+#: src/tables/build/BuildLineTable.tsx:742
 msgid "Deallocate all untracked stock for this build order"
 msgstr "إلغاء تخصيص جميع المخزون الغير متابع لطلب البناء هذا"
 
-#: src/tables/build/BuildLineTable.tsx:696
+#: src/tables/build/BuildLineTable.tsx:744
 msgid "Deallocate stock from the selected line item"
 msgstr "إلغاء تخصيص المخزون من العنصر المحدد"
 
-#: src/tables/build/BuildLineTable.tsx:700
+#: src/tables/build/BuildLineTable.tsx:748
 msgid "Stock has been deallocated"
 msgstr "تم إلغاء تخصيص المخزون"
 
-#: src/tables/build/BuildLineTable.tsx:821
+#: src/tables/build/BuildLineTable.tsx:869
 msgid "Trackable parts must be allocated via the Build Outputs tab"
 msgstr "يجب أن يكون قابل للتتبع أصناف مخصص عبر ال إنتاج مخرجات tab"
 
-#: src/tables/build/BuildLineTable.tsx:861
+#: src/tables/build/BuildLineTable.tsx:909
 msgid "Build Stock"
 msgstr "إنتاج مخزون"
 
-#: src/tables/build/BuildLineTable.tsx:874
+#: src/tables/build/BuildLineTable.tsx:922
 #: src/tables/sales/SalesOrderLineItemTable.tsx:596
 #: src/tables/stock/TransferOrderLineItemTable.tsx:450
 msgid "View Part"
 msgstr "عرض الصنف"
 
-#: src/tables/build/BuildLineTable.tsx:895
+#: src/tables/build/BuildLineTable.tsx:943
 msgid "Build order must be issued before stock can be allocated"
 msgstr ""
 
@@ -11238,7 +11660,7 @@ msgstr "مخرجات الإنتاج مخزون تخصيص"
 #~ msgid "Auto-allocation in progress"
 #~ msgstr "Auto-allocation in progress"
 
-#: src/tables/build/BuildOutputTable.tsx:254
+#: src/tables/build/BuildOutputTable.tsx:255
 msgid "Automatically allocate tracked BOM items to this build according to the selected options"
 msgstr "تلقائيًا تخصيص متتبع BOM عناصر إلى هذا إنتاج according إلى ال محدد خيارات"
 
@@ -11246,49 +11668,49 @@ msgstr "تلقائيًا تخصيص متتبع BOM عناصر إلى هذا إن
 #~ msgid "Edit build output"
 #~ msgstr "Edit build output"
 
-#: src/tables/build/BuildOutputTable.tsx:334
-#: src/tables/build/BuildOutputTable.tsx:578
+#: src/tables/build/BuildOutputTable.tsx:335
+#: src/tables/build/BuildOutputTable.tsx:579
 msgid "Add Build Output"
 msgstr "إضافة مخرجات الإنتاج"
 
-#: src/tables/build/BuildOutputTable.tsx:337
+#: src/tables/build/BuildOutputTable.tsx:338
 msgid "Build output created"
 msgstr "مخرجات الإنتاج تم الإنشاء"
 
-#: src/tables/build/BuildOutputTable.tsx:359
+#: src/tables/build/BuildOutputTable.tsx:360
 msgid "Completing build outputs"
 msgstr "Completing إنتاج مخرجات"
 
-#: src/tables/build/BuildOutputTable.tsx:360
+#: src/tables/build/BuildOutputTable.tsx:361
 msgid "Build outputs have been completed"
 msgstr "إنتاج مخرجات لديه تم مكتمل"
 
-#: src/tables/build/BuildOutputTable.tsx:369
+#: src/tables/build/BuildOutputTable.tsx:370
 msgid "Scrapping build outputs"
 msgstr "Scrapping إنتاج مخرجات"
 
-#: src/tables/build/BuildOutputTable.tsx:370
+#: src/tables/build/BuildOutputTable.tsx:371
 msgid "Build outputs have been scrapped"
 msgstr "إنتاج مخرجات لديه تم scrapped"
 
-#: src/tables/build/BuildOutputTable.tsx:379
+#: src/tables/build/BuildOutputTable.tsx:380
 msgid "Cancelling build outputs"
 msgstr "Cancelling إنتاج مخرجات"
 
-#: src/tables/build/BuildOutputTable.tsx:380
+#: src/tables/build/BuildOutputTable.tsx:381
 msgid "Build outputs have been cancelled"
 msgstr "إنتاج مخرجات لديه تم ملغى"
 
-#: src/tables/build/BuildOutputTable.tsx:440
-#: src/tables/build/BuildOutputTable.tsx:648
+#: src/tables/build/BuildOutputTable.tsx:441
+#: src/tables/build/BuildOutputTable.tsx:649
 msgid "Edit Build Output"
 msgstr "تعديل مخرجات الإنتاج"
 
-#: src/tables/build/BuildOutputTable.tsx:456
+#: src/tables/build/BuildOutputTable.tsx:457
 msgid "This action will deallocate all stock from the selected build output"
 msgstr "هذا إجراء سوف deallocate الكل مخزون من ال محدد مخرجات الإنتاج"
 
-#: src/tables/build/BuildOutputTable.tsx:481
+#: src/tables/build/BuildOutputTable.tsx:482
 msgid "Serialize Build Output"
 msgstr "ترقيم تسلسلي مخرجات الإنتاج"
 
@@ -11296,69 +11718,69 @@ msgstr "ترقيم تسلسلي مخرجات الإنتاج"
 #~ msgid "View Build Output"
 #~ msgstr "View Build Output"
 
-#: src/tables/build/BuildOutputTable.tsx:499
+#: src/tables/build/BuildOutputTable.tsx:500
 #: src/tables/part/PartTestResultTable.tsx:329
 #: src/tables/stock/StockItemTable.tsx:203
 msgid "Filter by stock status"
 msgstr "تصفية حسب حالة مخزون"
 
-#: src/tables/build/BuildOutputTable.tsx:545
+#: src/tables/build/BuildOutputTable.tsx:546
 msgid "Complete selected outputs"
 msgstr "مكتمل محدد مخرجات"
 
-#: src/tables/build/BuildOutputTable.tsx:556
+#: src/tables/build/BuildOutputTable.tsx:557
 msgid "Scrap selected outputs"
 msgstr "Scrap محدد مخرجات"
 
-#: src/tables/build/BuildOutputTable.tsx:567
+#: src/tables/build/BuildOutputTable.tsx:568
 msgid "Cancel selected outputs"
 msgstr "إلغاء محدد مخرجات"
 
-#: src/tables/build/BuildOutputTable.tsx:598
+#: src/tables/build/BuildOutputTable.tsx:599
 msgid "Allocate"
 msgstr "تخصيص"
 
-#: src/tables/build/BuildOutputTable.tsx:599
+#: src/tables/build/BuildOutputTable.tsx:600
 msgid "Allocate stock to build output"
 msgstr "تخصيص مخزون إلى مخرجات الإنتاج"
 
-#: src/tables/build/BuildOutputTable.tsx:612
+#: src/tables/build/BuildOutputTable.tsx:613
 msgid "Deallocate"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:613
+#: src/tables/build/BuildOutputTable.tsx:614
 msgid "Deallocate stock from build output"
 msgstr "Deallocate مخزون من مخرجات الإنتاج"
 
-#: src/tables/build/BuildOutputTable.tsx:627
+#: src/tables/build/BuildOutputTable.tsx:628
 msgid "Serialize build output"
 msgstr "ترقيم تسلسلي مخرجات الإنتاج"
 
-#: src/tables/build/BuildOutputTable.tsx:638
+#: src/tables/build/BuildOutputTable.tsx:639
 msgid "Complete build output"
 msgstr "مكتمل مخرجات الإنتاج"
 
-#: src/tables/build/BuildOutputTable.tsx:655
+#: src/tables/build/BuildOutputTable.tsx:656
 msgid "Scrap"
 msgstr ""
 
-#: src/tables/build/BuildOutputTable.tsx:656
+#: src/tables/build/BuildOutputTable.tsx:657
 msgid "Scrap build output"
 msgstr "Scrap مخرجات الإنتاج"
 
-#: src/tables/build/BuildOutputTable.tsx:666
+#: src/tables/build/BuildOutputTable.tsx:667
 msgid "Cancel build output"
 msgstr "إلغاء مخرجات الإنتاج"
 
-#: src/tables/build/BuildOutputTable.tsx:730
+#: src/tables/build/BuildOutputTable.tsx:731
 msgid "Required Tests"
 msgstr "مطلوب اختبارات"
 
-#: src/tables/build/BuildOutputTable.tsx:806
+#: src/tables/build/BuildOutputTable.tsx:807
 msgid "External Build"
 msgstr "خارجي إنتاج"
 
-#: src/tables/build/BuildOutputTable.tsx:808
+#: src/tables/build/BuildOutputTable.tsx:809
 msgid "This build order is fulfilled by an external purchase order"
 msgstr "هذا أمر الإنتاج هو fulfilled حسب خارجي طلب الشراء"
 
@@ -11596,14 +12018,14 @@ msgid "Import Parameters"
 msgstr "استيراد معلمات"
 
 #: src/tables/general/ParameterTable.tsx:161
-#: src/tables/general/ParametricDataTable.tsx:324
-#: src/tables/general/ParametricDataTable.tsx:455
+#: src/tables/general/ParametricDataTable.tsx:331
+#: src/tables/general/ParametricDataTable.tsx:462
 msgid "Add Parameter"
 msgstr "إضافة معلمة"
 
 #: src/tables/general/ParameterTable.tsx:172
 #: src/tables/general/ParameterTable.tsx:219
-#: src/tables/general/ParametricDataTable.tsx:348
+#: src/tables/general/ParametricDataTable.tsx:355
 msgid "Edit Parameter"
 msgstr "تعديل معلمة"
 
@@ -12239,14 +12661,14 @@ msgstr "تصفية حسب أصناف إلى الذي ال مستخدم هو مش
 #: src/tables/part/PartTestResultTable.tsx:185
 #: src/tables/part/PartTestResultTable.tsx:339
 #: src/tables/part/PartTestResultTable.tsx:353
-#: src/tables/stock/StockItemTestResultTable.tsx:294
-#: src/tables/stock/StockItemTestResultTable.tsx:367
-#: src/tables/stock/StockItemTestResultTable.tsx:428
+#: src/tables/stock/StockItemTestResultTable.tsx:300
+#: src/tables/stock/StockItemTestResultTable.tsx:373
+#: src/tables/stock/StockItemTestResultTable.tsx:434
 msgid "Add Test Result"
 msgstr "إضافة نتيجة الاختبار"
 
 #: src/tables/part/PartTestResultTable.tsx:114
-#: src/tables/stock/StockItemTestResultTable.tsx:296
+#: src/tables/stock/StockItemTestResultTable.tsx:302
 msgid "Test result added"
 msgstr "نتيجة الاختبار تمت الإضافة"
 
@@ -12259,7 +12681,7 @@ msgid "Test results added"
 msgstr "اختبار نتائج تمت الإضافة"
 
 #: src/tables/part/PartTestResultTable.tsx:184
-#: src/tables/stock/StockItemTestResultTable.tsx:195
+#: src/tables/stock/StockItemTestResultTable.tsx:201
 msgid "No Result"
 msgstr "لا نتيجة"
 
@@ -12938,52 +13360,70 @@ msgstr "عرض شحنات الذي لديه تم مشحون"
 msgid "Show shipments which have been delivered"
 msgstr "عرض شحنات الذي لديه تم delivered"
 
-#: src/tables/settings/ApiTokenTable.tsx:34
-#: src/tables/settings/ApiTokenTable.tsx:48
+#: src/tables/settings/ApiTokenTable.tsx:46
+#: src/tables/settings/ApiTokenTable.tsx:60
 msgid "Generate Token"
 msgstr "إنشاء رمز وصول"
 
-#: src/tables/settings/ApiTokenTable.tsx:36
+#: src/tables/settings/ApiTokenTable.tsx:48
 msgid "Token generated"
 msgstr "رمز وصول تم الإنشاء"
 
-#: src/tables/settings/ApiTokenTable.tsx:71
-#: src/tables/settings/ApiTokenTable.tsx:121
+#: src/tables/settings/ApiTokenTable.tsx:83
+#: src/tables/settings/ApiTokenTable.tsx:153
 msgid "Revoked"
 msgstr ""
 
-#: src/tables/settings/ApiTokenTable.tsx:75
-#: src/tables/settings/ApiTokenTable.tsx:183
+#: src/tables/settings/ApiTokenTable.tsx:87
+#: src/tables/settings/ApiTokenTable.tsx:227
 msgid "Token"
 msgstr "رمز وصول"
 
-#: src/tables/settings/ApiTokenTable.tsx:82
+#: src/tables/settings/ApiTokenTable.tsx:94
 msgid "In Use"
 msgstr "في استخدام"
 
-#: src/tables/settings/ApiTokenTable.tsx:91
+#: src/tables/settings/ApiTokenTable.tsx:103
 msgid "Last Seen"
 msgstr "آخر Seen"
 
-#: src/tables/settings/ApiTokenTable.tsx:96
+#: src/tables/settings/ApiTokenTable.tsx:108
 msgid "Expiry"
 msgstr "انتهاء"
 
-#: src/tables/settings/ApiTokenTable.tsx:122
+#: src/tables/settings/ApiTokenTable.tsx:124
+#: src/tables/settings/ApiTokenTable.tsx:171
+msgid "Revoked By"
+msgstr ""
+
+#: src/tables/settings/ApiTokenTable.tsx:154
 msgid "Show revoked tokens"
 msgstr "عرض revoked رموز وصول"
 
-#: src/tables/settings/ApiTokenTable.tsx:141
+#: src/tables/settings/ApiTokenTable.tsx:181
+#: src/tables/settings/ApiTokenTable.tsx:273
 msgid "Revoke"
 msgstr ""
 
-#: src/tables/settings/ApiTokenTable.tsx:165
+#: src/tables/settings/ApiTokenTable.tsx:209
 msgid "Error revoking token"
 msgstr "خطأ في revoking رمز وصول"
 
-#: src/tables/settings/ApiTokenTable.tsx:188
+#: src/tables/settings/ApiTokenTable.tsx:232
 msgid "Tokens are only shown once - make sure to note it down."
 msgstr "رموز وصول هي فقط shown once - make متأكد إلى ملاحظة هو أسفل."
+
+#: src/tables/settings/ApiTokenTable.tsx:251
+msgid "Revoke Token"
+msgstr ""
+
+#: src/tables/settings/ApiTokenTable.tsx:255
+msgid "Revocation Reason"
+msgstr ""
+
+#: src/tables/settings/ApiTokenTable.tsx:256
+msgid "Enter a reason for revoking this token"
+msgstr ""
 
 #: src/tables/settings/AssetTable.tsx:35
 msgid "Asset"
@@ -13013,13 +13453,9 @@ msgstr "Assets هي ملفات (such بصفته صور) الذي يمكن يكو
 msgid "Barcode Information"
 msgstr "باركود معلومات"
 
-#: src/tables/settings/BarcodeScanHistoryTable.tsx:85
-msgid "Endpoint"
-msgstr "نقطة نهاية"
-
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:89
 #: src/tables/settings/BarcodeScanHistoryTable.tsx:208
-#: src/tables/stock/StockItemTestResultTable.tsx:189
+#: src/tables/stock/StockItemTestResultTable.tsx:195
 msgid "Result"
 msgstr "نتيجة"
 
@@ -13212,7 +13648,7 @@ msgid "Task ID"
 msgstr "مهمة ID"
 
 #: src/tables/settings/FailedTasksTable.tsx:42
-#: src/tables/stock/StockItemTestResultTable.tsx:231
+#: src/tables/stock/StockItemTestResultTable.tsx:237
 msgid "Started"
 msgstr "بدأ"
 
@@ -13377,49 +13813,49 @@ msgstr "إضافة اختيار قائمة"
 msgid "Delete Selection List"
 msgstr "حذف اختيار قائمة"
 
-#: src/tables/settings/SnippetTable.tsx:75
+#: src/tables/settings/SnippetTable.tsx:73
 msgid "Snippet not found"
 msgstr "مقتطف غير تم العثور"
 
-#: src/tables/settings/SnippetTable.tsx:77
+#: src/tables/settings/SnippetTable.tsx:75
 msgid "An error occurred while fetching snippet details"
 msgstr "تفاصيل خطأ حدث أثناء جارٍ الجلب مقتطف"
 
-#: src/tables/settings/SnippetTable.tsx:111
+#: src/tables/settings/SnippetTable.tsx:109
 msgid "Snippet"
 msgstr "مقتطف"
 
-#: src/tables/settings/SnippetTable.tsx:137
+#: src/tables/settings/SnippetTable.tsx:135
 #: src/tables/settings/TemplateTable.tsx:306
 msgid "Modify"
 msgstr ""
 
-#: src/tables/settings/SnippetTable.tsx:138
+#: src/tables/settings/SnippetTable.tsx:136
 msgid "Modify snippet file"
 msgstr "Modify مقتطف ملف"
 
-#: src/tables/settings/SnippetTable.tsx:178
-#: src/tables/settings/SnippetTable.tsx:217
+#: src/tables/settings/SnippetTable.tsx:176
+#: src/tables/settings/SnippetTable.tsx:215
 msgid "Edit Snippet"
 msgstr "تعديل مقتطف"
 
-#: src/tables/settings/SnippetTable.tsx:186
+#: src/tables/settings/SnippetTable.tsx:184
 msgid "Delete Snippet"
 msgstr "حذف مقتطف"
 
-#: src/tables/settings/SnippetTable.tsx:192
+#: src/tables/settings/SnippetTable.tsx:190
 msgid "Add Snippet"
 msgstr "إضافة مقتطف"
 
-#: src/tables/settings/SnippetTable.tsx:205
+#: src/tables/settings/SnippetTable.tsx:203
 msgid "Add snippet"
 msgstr "إضافة مقتطف"
 
-#: src/tables/settings/SnippetTable.tsx:224
+#: src/tables/settings/SnippetTable.tsx:222
 msgid "Snippets"
 msgstr ""
 
-#: src/tables/settings/SnippetTable.tsx:225
+#: src/tables/settings/SnippetTable.tsx:223
 msgid "Snippets are reusable pieces of HTML content that can be inserted into reports and labels."
 msgstr "Snippets هي reusable pieces لـ HTML محتوى ذلك يمكن يكون inserted إلى تقارير و ملصقات."
 
@@ -13867,81 +14303,81 @@ msgstr "طلب عناصر"
 #~ msgid "Delete stock"
 #~ msgstr "Delete stock"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:141
+#: src/tables/stock/StockItemTestResultTable.tsx:147
 msgid "Test"
 msgstr "اختبار"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:178
+#: src/tables/stock/StockItemTestResultTable.tsx:184
 msgid "Test result for installed stock item"
 msgstr "نتيجة الاختبار لـ مثبت عنصر المخزون"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:209
+#: src/tables/stock/StockItemTestResultTable.tsx:215
 msgid "Attachment"
 msgstr "المرفق"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:225
+#: src/tables/stock/StockItemTestResultTable.tsx:231
 msgid "Test station"
 msgstr "اختبار station"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:247
+#: src/tables/stock/StockItemTestResultTable.tsx:253
 msgid "Finished"
 msgstr ""
 
-#: src/tables/stock/StockItemTestResultTable.tsx:305
-#: src/tables/stock/StockItemTestResultTable.tsx:377
+#: src/tables/stock/StockItemTestResultTable.tsx:311
+#: src/tables/stock/StockItemTestResultTable.tsx:383
 msgid "Edit Test Result"
 msgstr "تعديل نتيجة الاختبار"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:307
+#: src/tables/stock/StockItemTestResultTable.tsx:313
 msgid "Test result updated"
 msgstr "نتيجة الاختبار تم التحديث"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:313
-#: src/tables/stock/StockItemTestResultTable.tsx:386
+#: src/tables/stock/StockItemTestResultTable.tsx:319
+#: src/tables/stock/StockItemTestResultTable.tsx:392
 msgid "Delete Test Result"
 msgstr "حذف نتيجة الاختبار"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:315
+#: src/tables/stock/StockItemTestResultTable.tsx:321
 msgid "Test result deleted"
 msgstr "نتيجة الاختبار تم الحذف"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:329
+#: src/tables/stock/StockItemTestResultTable.tsx:335
 msgid "Test Passed"
 msgstr "اختبار نجح"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:330
+#: src/tables/stock/StockItemTestResultTable.tsx:336
 msgid "Test result has been recorded"
 msgstr "نتيجة الاختبار لديه تم recorded"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:337
+#: src/tables/stock/StockItemTestResultTable.tsx:343
 msgid "Failed to record test result"
 msgstr "فشل في سجل نتيجة الاختبار"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:354
+#: src/tables/stock/StockItemTestResultTable.tsx:360
 msgid "Pass Test"
 msgstr "نجاح اختبار"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:404
+#: src/tables/stock/StockItemTestResultTable.tsx:410
 msgid "Show results for required tests"
 msgstr "عرض نتائج لـ مطلوب اختبارات"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:408
+#: src/tables/stock/StockItemTestResultTable.tsx:414
 msgid "Include Installed"
 msgstr "تضمين مثبت"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:409
+#: src/tables/stock/StockItemTestResultTable.tsx:415
 msgid "Show results for installed stock items"
 msgstr "عرض نتائج لـ مثبت عناصر المخزون"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:413
+#: src/tables/stock/StockItemTestResultTable.tsx:419
 msgid "Passed"
 msgstr "نجح"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:414
+#: src/tables/stock/StockItemTestResultTable.tsx:420
 msgid "Show only passed tests"
 msgstr "عرض فقط نجح اختبارات"
 
-#: src/tables/stock/StockItemTestResultTable.tsx:419
+#: src/tables/stock/StockItemTestResultTable.tsx:425
 msgid "Show results for enabled tests"
 msgstr "عرض نتائج لـ مفعّل اختبارات"
 
@@ -14018,10 +14454,6 @@ msgstr "عرض تاريخ طلبات مع هدف"
 #: src/tables/stock/TransferOrderFilters.tsx:64
 msgid "Show orders with a start date"
 msgstr "عرض تاريخ طلبات مع بدء"
-
-#: src/tables/stock/TransferOrderLineItemTable.tsx:197
-msgid "Transferred"
-msgstr "محوّل"
 
 #: src/views/MobileAppView.tsx:25
 msgid "Mobile viewport detected"

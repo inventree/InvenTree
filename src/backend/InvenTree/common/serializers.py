@@ -132,6 +132,12 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     confirm_text = serializers.CharField(read_only=True)
 
+    flags = serializers.ListField(
+        child=serializers.CharField(),
+        read_only=True,
+        help_text=_('Indicating behavior or purpose of setting.'),
+    )
+
     def is_valid(self, *, raise_exception=False):
         """Validate the setting, including confirmation if required."""
         ret = super().is_valid(raise_exception=raise_exception)
@@ -145,6 +151,15 @@ class SettingsSerializer(InvenTreeModelSerializer):
                     )
                 })
         return ret
+
+    def save(self, **kwargs):
+        """Save the setting, adding the updated_by field."""
+        request = self.context.get('request', None)
+        if request is not None and hasattr(request, 'user'):
+            kwargs['updated_by'] = request.user
+        elif 'updated_by' in kwargs:
+            kwargs.pop('updated_by')
+        return super().save(**kwargs)
 
 
 class GlobalSettingsSerializer(SettingsSerializer):
@@ -164,11 +179,13 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'units',
             'choices',
             'model_name',
+            'model_filters',
             'api_url',
             'typ',
             'read_only',
             'confirm',
             'confirm_text',
+            'flags',
         ]
 
     read_only = serializers.SerializerMethodField(
@@ -210,10 +227,12 @@ class UserSettingsSerializer(SettingsSerializer):
             'units',
             'choices',
             'model_name',
+            'model_filters',
             'api_url',
             'typ',
             'confirm',
             'confirm_text',
+            'flags',
         ]
 
     user = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -264,6 +283,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
                 'required',
                 'confirm',
                 'confirm_text',
+                'flags',
             ]
 
         # set Meta class
@@ -1314,6 +1334,7 @@ class OAuth2ApplicationSerializer(serializers.ModelSerializer):
             'is_builtin',
         ]
         read_only_fields = ['id', 'client_id', 'client_secret', 'is_builtin']
+        extra_kwargs = {'client_secret': {'allow_null': True}}
 
     is_builtin = serializers.SerializerMethodField()
 

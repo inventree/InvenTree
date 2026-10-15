@@ -25,7 +25,7 @@ if [[ ! -d "$INVENTREE_BACKUP_DIR" ]]; then
 fi
 
 # Check if "config.yaml" has been copied into the correct location
-if test -f "$INVENTREE_CONFIG_FILE"; then
+if [[ -f "$INVENTREE_CONFIG_FILE" ]]; then
     echo "Loading config file : $INVENTREE_CONFIG_FILE"
 else
     echo "Copying config file from $INVENTREE_BACKEND_DIR/InvenTree/config_template.yml to $INVENTREE_CONFIG_FILE"
@@ -37,7 +37,7 @@ fi
 # so that the installed modules persist!
 if [[ -n "$INVENTREE_PY_ENV" ]]; then
 
-    if test -d "$INVENTREE_PY_ENV"; then
+    if [[ -d "$INVENTREE_PY_ENV" ]]; then
         # venv already exists
         echo "Using Python virtual environment: ${INVENTREE_PY_ENV}"
         source ${INVENTREE_PY_ENV}/bin/activate

@@ -24,7 +24,13 @@ class ApiTokenAuthentication(TokenAuthentication):
     def authenticate_credentials(self, key):
         """Adds additional checks to the default token authentication method."""
         # If this runs without error, then the token is valid (so far)
-        (user, token) = super().authenticate_credentials(key)
+        token = self.model.get_from_string(key)
+        if token is None:
+            raise exceptions.AuthenticationFailed(_('Invalid token.'))
+
+        user = token.user
+        if not user.is_active:
+            raise exceptions.AuthenticationFailed(_('User inactive or deleted.'))
 
         if token.revoked:
             raise exceptions.AuthenticationFailed(_('Token has been revoked'))

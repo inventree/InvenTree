@@ -34,7 +34,13 @@ invoke dev.schema -help
 
 ## Authentication
 
-Users must be authenticated to gain access to the InvenTree API. The API accepts either basic username:password authentication, or token authentication. Token authentication is recommended as it provides much faster API access.
+Users must be authenticated to gain access to the InvenTree API. The API accepts either:
+
+- basic username:password authentication
+- bearer token authentication
+- OAuth2 authentication with scoped tokens
+
+Token authentication is recommended as it provides much faster API access and is persistent when users change authentication methods, multifactor setups or passwords.
 
 !!! warning "Permissions"
     API access is restricted based on the permissions assigned to the user or scope of the application.
@@ -42,6 +48,8 @@ Users must be authenticated to gain access to the InvenTree API. The API accepts
 ### Basic Auth
 
 Users can authenticate against the API using basic authentication - specifically a valid combination of `username` and `password` credentials.
+
+Basic authentication attempts might run into rate limits during authentication on busy instances, as this is a likely place of attacks. Prefer Token or OAuth2 authentication instead.
 
 ### Tokens
 
@@ -52,12 +60,17 @@ Each user is assigned an authentication token which can be used to access the AP
 
 #### Requesting a Token
 
-If a user does not know their access token, it can be requested via the API interface itself, using a basic authentication request.
+If a user does not already have an access token, they can request one via the user interface under the security user settings or the API interface, using a basic authentication request.
 
-To obtain a valid token, perform a GET request to `/api/user/me/token/`. No data are required, but a valid username / password combination must be supplied in the authentication headers.
+!!! warning "Tokens are only available once"
+    Regardless of the request path used to obtain the token, it will only be displayed or provided once. Ensure that you copy and store it securely when it is first issued. Requesting a token with the same name will re-issue a new token, invalidating all previous ones of the same name.
+
+There is a guided process to generate, view and revoke access tokens in the `Security` section of the user settings.
+
+Alternatively the API also issues tokens. Perform a GET request to `/api/user/me/token/`. No data are required, but a valid username / password combination must be supplied in the authentication headers. It is recommended to also send a name that identifies the token. The Name is also used for re-issuance of tokens when tokens are re-requested.
 
 !!! info "Credentials"
-	Ensure that a valid username:password combination are supplied as basic authorization headers.
+	Ensure that a valid username:password combination are supplied as a **basic authorization header**.
 
 Once a valid token is received from the server, subsequent API requests should be performed using that token.
 
@@ -96,8 +109,18 @@ data = { ... }
 headers = {
     'AUTHORIZATION': f'Token {token}'
 }
-response = request.get('http://localhost:8080/api/part/', data=data, headers=headers)
+response = requests.get('http://localhost:8080/api/part/', data=data, headers=headers)
 ```
+
+### Token generation / version
+
+Starting with InvenTree 1.6.0, API tokens are generated in the v2 format. While most mechanisms are the same as the previous version, storage and handling of tokens was hardened. This results in token secret values not being stored anymore anywhere. They are only available in a variable immediately after creation. Storage of tokens is using one-way HMAC hashing. To protect against rainbow table attacks in case of a database breach, hashing is done with the addition of a cryptographic pepper that is calculated based on the [SECRET_KEY](../start/config.md#secret-key-material).
+
+!!! warning "Secure your cryptographic keys"
+    To enable usage of tokens in case of a database recovery on a new instance, it is very important that you also restore the cryptographic keys, including the [SECRET_KEY](../start/config.md#secret-key-material). All v2 access tokens will need to be re-issued if the cryptographic keys are not restored as they can not be validated without the correct material.
+
+!!! warning "Rotating cryptographic material can have availability implications"
+    Rotating cryptographic keys, including the [SECRET_KEY](../start/config.md#secret-key-material), will render existing v2 tokens invalid. Ensure that you understand the impact on token-based authentication before performing key rotation.
 
 ### oAuth2 and OIDC
 

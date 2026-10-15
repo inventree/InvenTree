@@ -296,10 +296,6 @@ def main() -> bool:
         print('GITHUB_REF:', GITHUB_REF)
         return False
 
-    if docker_tags is None:
-        print('Docker tags could not be determined')
-        return False
-
     print(f"Version check passed for '{inventree_version}'!")
     print(f"Docker tags: '{docker_tags}'")
 

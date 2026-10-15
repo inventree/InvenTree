@@ -379,7 +379,7 @@ export default function PartDetail() {
         label: t`Suppliers`,
         icon: <IconBuilding />,
         hidden:
-          !part.purchaseable || !user.hasViewRole(UserRoles.purchase_order),
+          !part.purchaseable || !user.hasViewVisible(UserRoles.purchase_order),
 
         content: part.pk ? (
           <PartSupplierDetail partId={part.pk} />
@@ -392,7 +392,7 @@ export default function PartDetail() {
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
         hidden:
-          !part.purchaseable || !user.hasViewRole(UserRoles.purchase_order),
+          !part.purchaseable || !user.hasViewVisible(UserRoles.purchase_order),
         content: part.pk ? (
           <PartPurchaseOrdersTable partId={part.pk} />
         ) : (
@@ -403,7 +403,7 @@ export default function PartDetail() {
         name: 'sales_orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        hidden: !part.salable || !user.hasViewRole(UserRoles.sales_order),
+        hidden: !part.salable || !user.hasViewVisible(UserRoles.sales_order),
         content: part.pk ? (
           <PartSalesOrdersTable partId={part.pk} />
         ) : (
@@ -414,27 +414,21 @@ export default function PartDetail() {
         name: 'return_orders',
         label: t`Return Orders`,
         icon: <IconTruckReturn />,
-        hidden:
-          !part.salable ||
-          !user.hasViewRole(UserRoles.return_order) ||
-          !globalSettings.isSet('RETURNORDER_ENABLED'),
+        hidden: !part.salable || !user.hasViewVisible(UserRoles.return_order),
         content: part.pk ? <ReturnOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'builds',
         label: t`Build Orders`,
         icon: <IconTools />,
-        hidden: !part.assembly || !user.hasViewRole(UserRoles.build),
+        hidden: !part.assembly || !user.hasViewVisible(UserRoles.build),
         content: part.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'transfer_orders',
         label: t`Transfer Orders`,
         icon: <IconTransfer />,
-        hidden:
-          part.virtual ||
-          !globalSettings.isSet('TRANSFERORDER_ENABLED') ||
-          !user.hasViewRole(UserRoles.transfer_order),
+        hidden: part.virtual || !user.hasViewVisible(UserRoles.transfer_order),
         content: part.pk ? (
           <TransferOrderTable partId={part.pk} />
         ) : (
@@ -803,83 +797,87 @@ export default function PartDetail() {
       {stockAdjustActions.modals.map((modal) => modal.modal)}
       <InstanceDetail query={instanceQuery} requiredRole={UserRoles.part}>
         <Stack gap='xs'>
-          {user.hasViewRole(UserRoles.part_category) && (
-            <NavigationTree
-              title={t`Part Categories`}
-              childIdentifier='subcategories'
-              modelType={ModelType.partcategory}
-              endpoint={ApiEndpoints.category_tree}
-              opened={treeOpen}
-              onClose={() => {
-                setTreeOpen(false);
-              }}
-              selectedId={part?.category}
-            />
-          )}
-          <PageDetail
-            title={`${t`Part`}: ${part.full_name}`}
-            icon={
-              lockingEnabled ? (
-                <ActionIcon
-                  aria-label='part-lock-icon'
-                  variant='transparent'
-                  disabled={!user.hasChangeRole(UserRoles.part)}
-                  onClick={() => {
-                    const locking = !part.locked;
-                    api
-                      .patch(apiUrl(ApiEndpoints.part_list, part.pk), {
-                        locked: locking
-                      })
-                      .then(() => {
-                        notifications.hide('part-lock');
-                        notifications.show({
-                          id: 'part-lock',
-                          message: locking ? t`Part locked` : t`Part unlocked`,
-                          color: 'green',
-                          icon: locking ? (
-                            <IconLock size='1rem' />
-                          ) : (
-                            <IconLockOpen size='1rem' />
-                          )
-                        });
-                        refreshInstance();
-                      });
-                  }}
-                >
-                  {part?.locked ? <IconLock /> : <IconLockOpen />}
-                </ActionIcon>
-              ) : undefined
-            }
-            subtitle={part.description}
-            imageUrl={part.image}
-            thumbnailUrl={part.thumbnail}
-            badges={badges}
-            breadcrumbs={
-              user.hasViewRole(UserRoles.part_category)
-                ? breadcrumbs
-                : undefined
-            }
-            lastCrumb={[
-              {
-                name: part.name,
-                url: `/part/${part.pk}/`
-              }
-            ]}
-            breadcrumbAction={() => {
-              setTreeOpen(true);
+          <NavigationTree
+            hidden={!user.hasViewRole(UserRoles.part_category)}
+            title={t`Part Categories`}
+            childIdentifier='subcategories'
+            modelType={ModelType.partcategory}
+            endpoint={ApiEndpoints.category_tree}
+            opened={treeOpen}
+            onClose={() => {
+              setTreeOpen(false);
             }}
-            editAction={editPart.open}
-            editEnabled={user.hasChangeRole(UserRoles.part)}
-            actions={partActions}
-          />
-          <PanelGroup
-            pageKey='part'
-            panels={partPanels}
-            instance={part}
-            reloadInstance={refreshInstance}
-            model={ModelType.part}
-            id={part.pk}
-          />
+            selectedId={part?.category}
+          >
+            <Stack gap='xs'>
+              <PageDetail
+                title={`${t`Part`}: ${part.full_name}`}
+                icon={
+                  lockingEnabled ? (
+                    <ActionIcon
+                      aria-label='part-lock-icon'
+                      variant='transparent'
+                      disabled={!user.hasChangeRole(UserRoles.part)}
+                      onClick={() => {
+                        const locking = !part.locked;
+                        api
+                          .patch(apiUrl(ApiEndpoints.part_list, part.pk), {
+                            locked: locking
+                          })
+                          .then(() => {
+                            notifications.hide('part-lock');
+                            notifications.show({
+                              id: 'part-lock',
+                              message: locking
+                                ? t`Part locked`
+                                : t`Part unlocked`,
+                              color: 'green',
+                              icon: locking ? (
+                                <IconLock size='1rem' />
+                              ) : (
+                                <IconLockOpen size='1rem' />
+                              )
+                            });
+                            refreshInstance();
+                          });
+                      }}
+                    >
+                      {part?.locked ? <IconLock /> : <IconLockOpen />}
+                    </ActionIcon>
+                  ) : undefined
+                }
+                subtitle={part.description}
+                imageUrl={part.image}
+                thumbnailUrl={part.thumbnail}
+                badges={badges}
+                breadcrumbs={
+                  user.hasViewRole(UserRoles.part_category)
+                    ? breadcrumbs
+                    : undefined
+                }
+                lastCrumb={[
+                  {
+                    name: part.name,
+                    url: `/part/${part.pk}/`
+                  }
+                ]}
+                breadcrumbAction={() => {
+                  setTreeOpen(true);
+                }}
+                editAction={editPart.open}
+                editEnabled={user.hasChangeRole(UserRoles.part)}
+                actions={partActions}
+              />
+              <PanelGroup
+                pageKey='part'
+                panels={partPanels}
+                instance={part}
+                reloadInstance={refreshInstance}
+                model={ModelType.part}
+                id={part.pk}
+              />
+            </Stack>
+          </NavigationTree>
         </Stack>
       </InstanceDetail>
     </>

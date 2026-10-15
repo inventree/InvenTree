@@ -28,7 +28,7 @@ def test_api_auth_performance():
         username=user,
         password=pwd,
         timeout=30,
-        token_name='python-test',
+        token_name='python-test-auth_test',
         use_token_auth=True,
     )
     assert client

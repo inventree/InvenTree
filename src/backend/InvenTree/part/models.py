@@ -540,6 +540,12 @@ class Part(
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
         parent_attr = 'variant_of'
 
+        # Do not order the tree by name (overrides InvenTreeTree.MPTTMeta).
+        # Ordered insertion of a new root node shifts the tree_id of every following
+        # tree in the database, which is expensive (O(N) row updates per new Part),
+        # and leaves the tree_id of any Part instances held in memory stale.
+        order_insertion_by = []
+
     @staticmethod
     def get_api_url():
         """Return the list API endpoint URL associated with the Part model."""
@@ -686,7 +692,16 @@ class Part(
                     )
                 })
 
-            if self.tree_id == parent.tree_id:
+            # Read the tree_id values from the database, as in-memory values may be stale
+            tree_ids = dict(
+                Part.objects.filter(pk__in=[self.pk, parent.pk]).values_list(
+                    'pk', 'tree_id'
+                )
+            )
+
+            if tree_ids.get(self.pk, self.tree_id) == tree_ids.get(
+                parent.pk, parent.tree_id
+            ):
                 raise ValidationError({
                     'sub_part': _(
                         f"Part '{self}' cannot be used in BOM for '{parent}' (recursive)"
@@ -4301,11 +4316,11 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
 
         return int(Decimal(available_stock) / n)
 
-    def get_required_quantity(self, build_quantity: float) -> float:
+    def get_required_quantity(self, build_quantity: Decimal | float | int) -> Decimal:
         """Calculate the required part quantity, based on the supplied build_quantity.
 
         Arguments:
-            build_quantity: Number of assemblies to build
+            build_quantity: Number of assemblies to build (converted to Decimal)
 
         Returns:
             Production quantity required for this component
@@ -4315,6 +4330,10 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             and piece_count indicates how many pieces are needed.
             Total material = quantity x piece_count x build_quantity.
         """
+        # Convert via str to avoid binary float artefacts (e.g. 0.1 -> 0.1000000000000000055...)
+        if not isinstance(build_quantity, Decimal):
+            build_quantity = Decimal(str(build_quantity))
+
         # Base quantity requirement (quantity is per-piece, piece_count is number of pieces)
         required = self.quantity * self.piece_count * build_quantity
 
@@ -4341,8 +4360,7 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
             try:
                 round_up = Decimal(self.rounding_multiple)
                 value = Decimal(required)
-                value = math.ceil(value / round_up) * round_up
-                required = float(value)
+                required = math.ceil(value / round_up) * round_up
             except InvalidOperation:
                 log_error('bom_item.get_required_quantity')
 
