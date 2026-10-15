@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { Badge } from '@mantine/core';
 import { useMemo, useState } from 'react';
 
 import { ActionButton } from '@lib/components/ActionButton';
@@ -123,15 +124,128 @@ function stockItemTableColumns({
     },
     {
       accessor: 'purchase_price',
-      title: t`Unit Price`,
+      title: t`Unit Cost`,
       sortable: true,
       switchable: true,
       hidden: !showPricing,
-      defaultVisible: false,
-      render: (record: any) =>
-        formatCurrency(record.purchase_price, {
-          currency: record.purchase_price_currency
-        })
+      defaultVisible: true,
+      render: (record: any) => {
+        const cost =
+          record.purchase_price ??
+          record.part_detail?.metadata?.cost ??
+          record.part_detail?.pricing_min ??
+          null;
+        const currency =
+          record.purchase_price_currency ??
+          record.part_detail?.metadata?.cost_currency ??
+          record.part_detail?.pricing_data?.currency;
+
+        return cost != null && cost !== ''
+          ? formatCurrency(cost, { currency })
+          : '-';
+      }
+    },
+    {
+      accessor: 'selling_price',
+      title: t`Selling Price`,
+      sortable: false,
+      switchable: true,
+      hidden: !showPricing,
+      defaultVisible: true,
+      render: (record: any) => {
+        const cost = Number(
+          record.purchase_price ??
+            record.part_detail?.metadata?.cost ??
+            record.part_detail?.pricing_min ??
+            0
+        );
+        const margin =
+          record.part_detail?.metadata?.desired_margin ??
+          record.part_detail?.desired_margin ??
+          null;
+
+        let price =
+          record.part_detail?.metadata?.selling_price ??
+          record.part_detail?.selling_price ??
+          null;
+
+        if (
+          (price == null || price === 0) &&
+          cost > 0 &&
+          margin != null &&
+          Number(margin) < 100
+        ) {
+          price = cost / (1 - Number(margin) / 100);
+        }
+
+        const currency =
+          record.purchase_price_currency ??
+          record.part_detail?.metadata?.selling_price_currency ??
+          record.part_detail?.selling_price_currency ??
+          record.part_detail?.pricing_data?.currency;
+
+        return price != null && Number(price) > 0
+          ? formatCurrency(price, { currency })
+          : '-';
+      }
+    },
+    {
+      accessor: 'margin',
+      title: t`Margin`,
+      sortable: false,
+      switchable: true,
+      hidden: !showPricing,
+      defaultVisible: true,
+      render: (record: any) => {
+        const cost = Number(
+          record.purchase_price ??
+            record.part_detail?.metadata?.cost ??
+            record.part_detail?.pricing_min ??
+            0
+        );
+        let margin =
+          record.part_detail?.metadata?.desired_margin ??
+          record.part_detail?.desired_margin ??
+          null;
+
+        let price =
+          record.part_detail?.metadata?.selling_price ??
+          record.part_detail?.selling_price ??
+          null;
+
+        if (
+          (price == null || price === 0) &&
+          cost > 0 &&
+          margin != null &&
+          Number(margin) < 100
+        ) {
+          price = cost / (1 - Number(margin) / 100);
+        }
+
+        if (margin == null && cost > 0 && price != null && Number(price) > 0) {
+          margin = ((Number(price) - cost) / Number(price)) * 100;
+        }
+
+        if (margin == null || isNaN(Number(margin))) {
+          return '-';
+        }
+
+        const marginVal = Number(margin);
+        const color =
+          marginVal >= 30
+            ? 'teal'
+            : marginVal >= 15
+            ? 'blue'
+            : marginVal > 0
+            ? 'yellow'
+            : 'red';
+
+        return (
+          <Badge color={color} variant='light' size='sm'>
+            {marginVal.toFixed(1)}%
+          </Badge>
+        );
+      }
     },
     {
       accessor: 'stock_value',

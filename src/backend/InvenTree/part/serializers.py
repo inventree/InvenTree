@@ -364,6 +364,7 @@ class PartBriefSerializer(
             'units',
             'pricing_min',
             'pricing_max',
+            'metadata',
         ]
         read_only_fields = ['barcode_hash']
 
@@ -408,6 +409,11 @@ class PartBriefSerializer(
         },
         default_include=True,
         filter_name='pricing',
+    )
+
+    metadata = serializers.JSONField(
+        read_only=True,
+        allow_null=True,
     )
 
 
@@ -596,6 +602,7 @@ class PartSerializer(
             'pricing_updated',
             'responsible',
             'price_breaks',
+            'metadata',
             # Annotated fields
             'allocated_to_build_orders',
             'allocated_to_sales_orders',
@@ -946,6 +953,11 @@ class PartSerializer(
         default_include=False,
         filter_name='price_breaks',
         prefetch_fields=['salepricebreaks'],
+    )
+
+    metadata = serializers.JSONField(
+        required=False,
+        allow_null=True,
     )
 
     # Extra fields used only for creation of a new Part instance

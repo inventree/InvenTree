@@ -38,6 +38,7 @@ import { InvenTreeIcon } from '../../../functions/icons';
 import { useEditApiFormModal } from '../../../hooks/UseForm';
 import { useGlobalSettingsState } from '../../../states/SettingsStates';
 import { panelOptions } from '../PartPricingPanel';
+import CostMarginCalculator from './CostMarginCalculator';
 
 interface PricingOverviewEntry {
   icon: ReactNode;
@@ -285,7 +286,12 @@ export default function PricingOverviewPanel({
   return (
     <>
       {editPricing.modal}
-      <Stack gap='xs'>
+      <Stack gap='sm'>
+        <CostMarginCalculator
+          part={part}
+          pricing={pricing}
+          pricingQuery={pricingQuery}
+        />
         <SimpleGrid cols={{ base: 1, md: 2 }}>
           <Stack gap='xs'>
             <Paper p='xs'>
