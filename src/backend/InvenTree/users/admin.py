@@ -12,7 +12,7 @@ from django.utils.text import smart_split
 from django.utils.translation import gettext_lazy as _
 
 from common.admin_shared import NoEditAdminMixin
-from users.models import ApiToken, Owner, RuleSet, TippResult
+from users.models import ApiToken, Owner, RuleSet, TipResult
 from users.ruleset import RULESET_CHOICES
 
 User = get_user_model()
@@ -208,9 +208,9 @@ class OwnerAdmin(admin.ModelAdmin):
         return queryset, True
 
 
-@admin.register(TippResult)
+@admin.register(TipResult)
 class DataOutputAdmin(NoEditAdminMixin, admin.ModelAdmin):
-    """Custom admin interface for the TippResult model."""
+    """Custom admin interface for the TipResult model."""
 
 
 admin.site.unregister(User)

@@ -182,7 +182,7 @@ export function Header() {
       />
       <Container className={classes.layoutHeaderSection} size='100%'>
         <Group justify='space-between'>
-          <Group id='tipp-ftu-nav1'>
+          <Group id='tip-ftu-nav1'>
             <NavHoverMenu openDrawer={openNavDrawer} />
             <NavTabs />
           </Group>
@@ -198,14 +198,14 @@ export function Header() {
                 onClick={openSearchDrawer}
                 variant='transparent'
                 aria-label='open-search'
-                id='tipp-ftu-search'
+                id='tip-ftu-search'
               >
                 <IconSearch />
               </ActionIcon>
             </Tooltip>
             {userSettings.isSet('SHOW_SPOTLIGHT') && <SpotlightButton hotkey />}
             {globalSettings.isSet('BARCODE_ENABLE') && (
-              <ScanButton hotkey id='tipp-ftu-barcode' />
+              <ScanButton hotkey id='tip-ftu-barcode' />
             )}
             <Indicator
               radius='lg'
@@ -220,7 +220,7 @@ export function Header() {
                   onClick={openNotificationDrawer}
                   variant='transparent'
                   aria-label='open-notifications'
-                  id='tipp-ftu-notif'
+                  id='tip-ftu-notif'
                 >
                   <IconBell />
                 </ActionIcon>
@@ -351,7 +351,7 @@ function NavTabs() {
       }}
       // Select either a static or dynamic tab to be highlighted.
       value={dynamicTabValue ?? tabValue}
-      id='tipp-ftu-nav3'
+      id='tip-ftu-nav3'
     >
       <Tabs.List>{tabs.map((tab) => tab)}</Tabs.List>
     </Tabs>

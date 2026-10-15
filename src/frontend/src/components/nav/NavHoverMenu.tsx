@@ -11,7 +11,7 @@ export function NavHoverMenu({
     <UnstyledButton
       onClick={() => openDrawer()}
       aria-label='navigation-menu'
-      id='tipp-ftu-nav2'
+      id='tip-ftu-nav2'
     >
       <InvenTreeLogo />
     </UnstyledButton>

@@ -27,11 +27,11 @@ interface FtuStep {
   action_before?: () => void;
 }
 
-const ftuKex = 'org.inventree.i.tipp.ftug';
+const ftuKex = 'org.inventree.i.tip.ftug';
 
 export function FirstUseTour() {
-  const { user, done_tipps, setTipps } = useUserState();
-  const hasCompletedFtu = done_tipps?.includes(ftuKex) ?? false;
+  const { user, done_tips, setTips } = useUserState();
+  const hasCompletedFtu = done_tips?.includes(ftuKex) ?? false;
   const [active, setActive] = useState(false);
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
@@ -41,29 +41,29 @@ export function FirstUseTour() {
   const ftusteps = useMemo(() => {
     const _steps: FtuStep[] = [
       {
-        target: 'tipp-ftu-nav1',
+        target: 'tip-ftu-nav1',
         title: t`Navigation Area`,
         description: t`The navigation area provides quick access to different sections of the application.`
       },
       {
-        target: 'tipp-ftu-nav2',
+        target: 'tip-ftu-nav2',
         title: t`Navigation Drawer`,
         description: t`Using the icon you can open and close the navigation drawer which contains most available pages accessible to you.`
       },
       {
-        target: 'tipp-ftu-nav3',
+        target: 'tip-ftu-nav3',
         title: t`Main Menu`,
         description: t`The main menu provides access to top level navigation targets. Plugins can extend the menu with additional options.`
       },
       {
-        target: 'tipp-ftu-search',
+        target: 'tip-ftu-search',
         title: t`Search`,
         description: t`The global search allows you to quickly find items across all objects. You can configure which objects categories are included in the search and how terms are matched.`
       }
     ];
     if (userSettings.isSet('SHOW_SPOTLIGHT')) {
       _steps.push({
-        target: 'tipp-ftu-cmd',
+        target: 'tip-ftu-cmd',
         title: t`Command Palette`,
         description: t`Quickly access commands and actions anywhere using the command palette. Available commands are dependent on your current context. Use cmd + k to open it anywhere.`
       });
@@ -71,7 +71,7 @@ export function FirstUseTour() {
 
     if (globalSettings.isSet('BARCODE_ENABLE')) {
       _steps.push({
-        target: 'tipp-ftu-barcode',
+        target: 'tip-ftu-barcode',
         title: t`Barcode Scanner`,
         description: t`Allows for quick scanning of barcodes with your device's camera or a handheld scanner.`
       });
@@ -79,12 +79,12 @@ export function FirstUseTour() {
 
     _steps.push(
       {
-        target: 'tipp-ftu-notif',
+        target: 'tip-ftu-notif',
         title: t`Notifications`,
         description: t`Depending on your instance and user settings notifications are delivered through various channels. This notification bar is annotated with a bell when there are unread user interface notifications.`
       },
       {
-        target: 'tipp-ftu-settings',
+        target: 'tip-ftu-settings',
         title: t`Settings`,
         description: t`The main menu allows you to access preferences and access system-wide settings. Options depend on your permissions.`,
         action_before: () => {
@@ -92,7 +92,7 @@ export function FirstUseTour() {
         }
       },
       {
-        target: 'tipp-ftu-usersettings',
+        target: 'tip-ftu-usersettings',
         title: t`User Settings`,
         description: t`The user settings menu allows you to configure your personal preferences and account settings. This also contains security and notification settings.`
       }
@@ -100,14 +100,14 @@ export function FirstUseTour() {
 
     if (user?.is_staff) {
       _steps.push({
-        target: 'tipp-ftu-admincenter',
+        target: 'tip-ftu-admincenter',
         title: t`Admin Center`,
         description: t`The admin center provides access to administrative functions and can be used to manage various functions required for operation of the instance like user management, templates, parameters, plugins.`
       });
     }
 
     _steps.push({
-      target: 'tipp-ftu-about',
+      target: 'tip-ftu-about',
       title: t`About InvenTree`,
       description: t`Provides information about the InvenTree instance, including version details and relevant links. Important for bug reports.`
     });
@@ -119,15 +119,14 @@ export function FirstUseTour() {
     window.dispatchEvent(new Event('inventree:close-main-menu'));
 
     if (!user) return;
-    const tipp_pk = user.tipps?.find((tipp) => tipp.tipp_id === ftuKex)?.pk;
-    if (!tipp_pk) return;
+    const tip_pk = user.tips?.find((tip) => tip.tip_id === ftuKex)?.pk;
+    if (!tip_pk) return;
     api
-      .patch(apiUrl(ApiEndpoints.user_me_tipps, tipp_pk), { finished: true })
+      .patch(apiUrl(ApiEndpoints.user_me_tips, tip_pk), { finished: true })
       .then((result) => {
-        setTipps(
-          user.tipps?.map((tipp) =>
-            tipp.pk === tipp_pk ? result.data : tipp
-          ) ?? null
+        setTips(
+          user.tips?.map((tip) => (tip.pk === tip_pk ? result.data : tip)) ??
+            null
         );
       });
   };

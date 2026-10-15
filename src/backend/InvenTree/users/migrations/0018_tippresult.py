@@ -14,20 +14,20 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='TippResult',
+            name='TipResult',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('metadata', models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata')),
-                ('tipp_id', models.CharField(max_length=255, verbose_name='Tipp ID/Name')),
-                ('shown', models.BooleanField(default=False, help_text='Was this tipp shown?', verbose_name='Shown')),
-                ('finished', models.BooleanField(default=False, help_text='Was this tipp finished?', verbose_name='Finished')),
-                ('updated', models.DateTimeField(auto_now=True, help_text='The last time this tipp result was updated', verbose_name='Updated')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tipp_results', to=settings.AUTH_USER_MODEL, verbose_name='User')),
+                ('tip_id', models.CharField(max_length=255, verbose_name='Tip ID/Name')),
+                ('shown', models.BooleanField(default=False, help_text='Was this tip shown?', verbose_name='Shown')),
+                ('finished', models.BooleanField(default=False, help_text='Was this tip finished?', verbose_name='Finished')),
+                ('updated', models.DateTimeField(auto_now=True, help_text='The last time this tip result was updated', verbose_name='Updated')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tip_results', to=settings.AUTH_USER_MODEL, verbose_name='User')),
             ],
             options={
-                'verbose_name': 'Tipp Result',
-                'verbose_name_plural': 'Tipp Results',
-                'unique_together': {('user', 'tipp_id')},
+                'verbose_name': 'Tip Result',
+                'verbose_name_plural': 'Tip Results',
+                'unique_together': {('user', 'tip_id')},
             },
         ),
     ]

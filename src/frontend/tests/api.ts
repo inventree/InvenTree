@@ -24,15 +24,15 @@ export const dismissFtu = async ({
 }) => {
   const api = await createApi({ username, password });
 
-  // find tipp and patch out ftu
+  // find tip and patch out ftu
   try {
     const response = await api.get('user/me/');
     if (!response.ok()) return;
-    const tipp = ((await response.json())?.tipps ?? []).find(
-      (t: any) => t.tipp_id === 'org.inventree.i.tipp.ftug'
+    const tip = ((await response.json())?.tips ?? []).find(
+      (t: any) => t.tip_id === 'org.inventree.i.tip.ftug'
     );
-    if (tipp && !tipp.finished) {
-      await api.patch(`user/me/tipps/${tipp.pk}/`, {
+    if (tip && !tip.finished) {
+      await api.patch(`user/me/tips/${tip.pk}/`, {
         data: { finished: true }
       });
     }

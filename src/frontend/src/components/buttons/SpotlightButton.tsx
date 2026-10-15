@@ -20,7 +20,7 @@ export function SpotlightButton({ hotkey = false }: { hotkey?: boolean }) {
         onClick={() => firstSpotlight.open()}
         variant='transparent'
         aria-label='open-spotlight'
-        id='tipp-ftu-cmd'
+        id='tip-ftu-cmd'
       >
         <IconCommand />
       </ActionIcon>

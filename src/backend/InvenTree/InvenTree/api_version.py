@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 556
 INVENTREE_API_TEXT = """
 
 v556 -> 2026-10-13 : https://github.com/inventree/InvenTree/pull/12978
-    - Adds tipps endpoints
+    - Adds tips endpoints
 
 v555 -> 2026-10-14 : https://github.com/inventree/InvenTree/pull/13016
     - Adds "contact" field to the SalesOrderShipment model and API endpoint
