@@ -15,8 +15,8 @@ from build.models import Build, BuildItem, BuildLine
 from build.status_codes import BuildStatus
 from common.models import Note
 from common.settings import set_global_setting
-from InvenTree.unit_test import InvenTreeAPITestCase
-from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
+from InvenTree.unit_test import InvenTreeAPITestCase, create_part_test
+from part.models import BomItem, BomItemSubstitute, Part
 from stock.events import StockEvents
 from stock.models import StockItem, StockItemTracking, StockLocation, StockSortOrder
 from stock.status_codes import StockHistoryCode, StockStatus
@@ -1717,9 +1717,7 @@ class BuildOutputScrapTest(BuildAPITest):
         build = Build.objects.get(pk=1)
         output = build.create_build_output(1).first()
 
-        template = PartTestTemplate.objects.create(
-            part=build.part, test_name='Required test', required=True
-        )
+        template = create_part_test(build.part, 'Required test', required=True)
 
         set_global_setting(
             'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS', True, change_user=None

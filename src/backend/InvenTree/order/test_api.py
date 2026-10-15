@@ -24,7 +24,7 @@ from common.currency import currency_codes
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
 from company.models import Company, Contact, SupplierPart, SupplierPriceBreak
-from InvenTree.unit_test import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase, create_part_test
 from order import models
 from order.models import SalesOrderAllocation, SalesOrderLineItem, SalesOrderShipment
 from order.serializers import TransferOrderSerialAllocationSerializer
@@ -3387,8 +3387,6 @@ class SalesOrderAllocateTest(OrderTest):
 
     def test_block_on_required_tests(self):
         """Test the SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS setting."""
-        from part.models import PartTestTemplate
-
         line = self.order.lines.first()
         part = line.part
 
@@ -3397,9 +3395,7 @@ class SalesOrderAllocateTest(OrderTest):
         part.save()
 
         # Create a required test
-        PartTestTemplate.objects.create(
-            part=part, test_name='A required test', required=True
-        )
+        create_part_test(part, 'A required test', required=True)
 
         data = {
             'items': [
@@ -3608,14 +3604,10 @@ class SalesOrderAllocateSerialsTest(OrderTest):
 
     def test_block_on_required_tests(self):
         """Test the SALESORDER_BLOCK_INCOMPLETE_ITEM_TESTS setting."""
-        from part.models import PartTestTemplate
-
         self.part.testable = True
         self.part.save()
 
-        PartTestTemplate.objects.create(
-            part=self.part, test_name='A required test', required=True
-        )
+        create_part_test(self.part, 'A required test', required=True)
 
         data = {'line_item': self.line.pk, 'quantity': 1, 'serial_numbers': '1'}
 

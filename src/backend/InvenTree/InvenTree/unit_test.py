@@ -210,6 +210,37 @@ def findOffloadedEvent(
     )
 
 
+def create_part_test(part, test_name: str, enabled=True, required=True, **kwargs):
+    """Create a test for the provided part.
+
+    - Reuses an existing PartTestTemplate with a matching key (if one exists)
+    - Links the template to the part via a new PartTest instance
+
+    Arguments:
+        part: The Part instance to link the test to
+        test_name: The name of the test template
+        enabled: Whether the test is enabled for this part
+        required: Whether the test is required for this part
+        kwargs: Additional fields for the PartTestTemplate (if created)
+
+    Returns:
+        The PartTestTemplate instance
+    """
+    from InvenTree.helpers import generateTestKey
+    from part.models import PartTest, PartTestTemplate
+
+    template = PartTestTemplate.objects.filter(key=generateTestKey(test_name)).first()
+
+    if template is None:
+        template = PartTestTemplate.objects.create(test_name=test_name, **kwargs)
+
+    PartTest.objects.create(
+        template=template, part=part, enabled=enabled, required=required
+    )
+
+    return template
+
+
 class UserMixin:
     """Mixin to setup a user and login for tests.
 

@@ -28,11 +28,12 @@ from InvenTree import status_codes as status
 from InvenTree.unit_test import (
     InvenTreeAPITestCase,
     InvenTreeTestCase,
+    create_part_test,
     findOffloadedEvent,
     findOffloadedTask,
 )
 from order.models import PurchaseOrder, PurchaseOrderLineItem
-from part.models import BomItem, BomItemSubstitute, Part, PartTestTemplate
+from part.models import BomItem, BomItemSubstitute, Part
 from stock.models import (
     StockItem,
     StockItemTestResult,
@@ -86,9 +87,9 @@ class BuildTestBase(InvenTreeTestCase):
             testable=True,
         )
 
-        cls.test_template_required = PartTestTemplate.objects.create(
-            part=cls.tested_part_with_required_test,
-            test_name='Required test',
+        cls.test_template_required = create_part_test(
+            cls.tested_part_with_required_test,
+            'Required test',
             description='Required test template description',
             required=True,
             requires_value=False,
@@ -122,9 +123,9 @@ class BuildTestBase(InvenTreeTestCase):
             testable=True,
         )
 
-        cls.test_template_non_required = PartTestTemplate.objects.create(
-            part=cls.tested_part_wo_required_test,
-            test_name='Required test template',
+        cls.test_template_non_required = create_part_test(
+            cls.tested_part_wo_required_test,
+            'Required test template',
             description='Required test template description',
             required=False,
             requires_value=False,

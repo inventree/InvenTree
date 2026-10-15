@@ -18,7 +18,7 @@ from rest_framework.test import APIClient
 from build.models import Build
 from common.models import InvenTreeSetting
 from company.models import Company
-from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase
+from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase, create_part_test
 from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
 from plugin.base.event.events import batch_events
@@ -1780,10 +1780,10 @@ class TestResultTest(StockTestBase):
         self.assertFalse(item.passedAllRequiredTests())
 
         # Generate a passing result for all required tests
-        for test in item.part.getRequiredTests():
+        for template in item.part.getRequiredTests():
             StockItemTestResult.objects.create(
                 stock_item=item,
-                template=test.template,
+                template=template,
                 result=True,
                 date=datetime.datetime(2025, 12, 12),
             )
@@ -1878,14 +1878,9 @@ class TestResultTest(StockTestBase):
 
         # Now, create some test results against the sub item
         # Ensure there is a matching PartTestTemplate
-        if template := PartTestTemplate.objects.filter(
-            part=item.part, key='firmwareversion'
-        ).first():
-            pass
-        else:
-            template = PartTestTemplate.objects.create(
-                part=item.part, test_name='Firmware Version', required=True
-            )
+        template = item.part.getTestTemplates().filter(
+            key='firmwareversion'
+        ).first() or create_part_test(item.part, 'Firmware Version')
 
         # First test is overshadowed by the same test for the parent part
         StockItemTestResult.objects.create(
@@ -1899,14 +1894,9 @@ class TestResultTest(StockTestBase):
         tests = item.testResultMap(include_installed=True)
         self.assertEqual(len(tests), 6)
 
-        if template := PartTestTemplate.objects.filter(
-            part=item.part, key='somenewtest'
-        ).first():
-            pass
-        else:
-            template = PartTestTemplate.objects.create(
-                part=item.part, test_name='Some New Test', required=True
-            )
+        template = item.part.getTestTemplates().filter(
+            key='somenewtest'
+        ).first() or create_part_test(item.part, 'Some New Test')
 
         # Now, add a *unique* test result for the sub item
         StockItemTestResult.objects.create(
