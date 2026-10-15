@@ -124,6 +124,7 @@ export function TestTemplateTable() {
     url: ApiEndpoints.part_test_template_list,
     pk: selectedTest,
     title: t`Edit Test Template`,
+    preFormWarning: t`Changes to this test template will affect all parts which use this template (including locked parts)`,
     table: table,
     fields: useMemo(
       () => ({ ...partTestTemplateFields }),
