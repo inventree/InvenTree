@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { Alert, Group, Stack, Text } from '@mantine/core';
-import { IconLock } from '@tabler/icons-react';
+import { IconInfoCircle, IconLock } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -281,6 +281,16 @@ export function PartTestTable({
       {editTest.modal}
       {deleteTest.modal}
       <Stack gap='xs'>
+        {categoryId && (
+          <Alert
+            title={t`Category Tests`}
+            color='blue'
+            icon={<IconInfoCircle />}
+            p='xs'
+          >
+            <Text>{t`Tests defined for this category apply to all parts in this category, and in any subcategories.`}</Text>
+          </Alert>
+        )}
         {partLocked && (
           <Alert
             title={t`Part is Locked`}
