@@ -253,6 +253,7 @@ v482 -> 2026-03-15 : https://github.com/inventree/InvenTree/pull/11540
     - Add id to the ordering fields of the Parts model
 
 v481 -> 2026-04-28 : https://github.com/inventree/InvenTree/pull/11825
+    - Adds new "bom" ruleset and associated permissions for BOM management, separate from the "part" ruleset which remains focused on part management
 
 v480 -> 2026-04-27 : https://github.com/inventree/InvenTree/pull/11816
     - The "issued_by" field on the Build API endpoint is now read-only, and is automatically set to the current user when a build is created

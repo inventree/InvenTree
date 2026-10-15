@@ -90,7 +90,6 @@ export const ModelInformationDict: ModelDict = {
   parttest: {
     label: () => t`Part Test`,
     label_multiple: () => t`Part Tests`,
-    url_detail: '/parttest/:pk/',
     api_endpoint: ApiEndpoints.part_test_list,
     icon: 'test'
   },

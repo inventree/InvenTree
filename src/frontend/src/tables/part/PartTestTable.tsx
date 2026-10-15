@@ -1,40 +1,43 @@
+import { t } from '@lingui/core/macro';
+import { Alert, Group, Stack, Text } from '@mantine/core';
+import { IconLock } from '@tabler/icons-react';
+import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { AddItemButton } from '@lib/components/AddItemButton';
 import {
-  AddItemButton,
-  ApiEndpoints,
-  type ApiFormFieldSet,
-  ModelType,
   type RowAction,
   RowDeleteAction,
-  RowEditAction,
-  RowViewAction,
-  apiUrl
-} from '@lib/index';
-import { t } from '@lingui/core/macro';
-import { useCallback, useMemo, useState } from 'react';
-import { useTable } from '../../hooks/UseTable';
-import { useUserState } from '../../states/UserState';
-
+  RowEditAction
+} from '@lib/components/RowActions';
+import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
+import { ModelType } from '@lib/enums/ModelType';
+import { apiUrl } from '@lib/functions/Api';
+import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
+import type { ApiFormFieldSet } from '@lib/types/Forms';
 import type { TableColumn } from '@lib/types/Tables';
-import { Group } from '@mantine/core';
-import { useNavigate } from 'react-router-dom';
+import { AppRowViewAction } from '../../components/tables/AppRowActions';
+import {
+  BooleanColumn,
+  DescriptionColumn,
+  PartColumn
+} from '../../components/tables/ColumnRenderers';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import {
-  BooleanColumn,
-  DescriptionColumn,
-  PartColumn
-} from '../ColumnRenderers';
-import { InvenTreeTable } from '../InvenTreeTable';
-import { TableHoverCard } from '../TableHoverCard';
+import { useUserState } from '../../states/UserState';
 
 export function PartTestTable({
-  partId
+  partId,
+  partLocked
 }: Readonly<{
   partId?: number;
+  partLocked?: boolean;
 }>) {
   const user = useUserState();
   const navigate = useNavigate();
@@ -50,7 +53,7 @@ export function PartTestTable({
         title: t`Test Template`,
         switchable: false,
         render: (record: any) => {
-          const extra = [];
+          const extra: string[] = [];
 
           if (record.part && partId && record.part != partId) {
             extra.push(t`Test defined for a higher level part`);
@@ -59,7 +62,7 @@ export function PartTestTable({
           return (
             <Group gap='xs' wrap='nowrap' justify='space-between'>
               {record.template_detail.test_name}
-              {extra && (
+              {extra.length > 0 && (
                 <TableHoverCard
                   value=''
                   position='bottom-end'
@@ -171,19 +174,20 @@ export function PartTestTable({
       <AddItemButton
         key='add-test'
         tooltip={t`Add Test`}
+        hidden={partLocked || !user.hasAddPermission(ModelType.parttest)}
         onClick={() => {
           newTest.open();
         }}
       />
     ];
-  }, []);
+  }, [user, partLocked]);
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       // This test is defined for a different part
       if (partId && record.part && record.part != partId) {
         return [
-          RowViewAction({
+          AppRowViewAction({
             title: t`View Part`,
             modelType: ModelType.part,
             modelId: record.part,
@@ -193,14 +197,14 @@ export function PartTestTable({
       }
       return [
         RowEditAction({
-          hidden: !user.hasChangePermission(ModelType.parttest),
+          hidden: partLocked || !user.hasChangePermission(ModelType.parttest),
           onClick: () => {
             setSelectedTestId(record.pk);
             editTest.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeletePermission(ModelType.parttest),
+          hidden: partLocked || !user.hasDeletePermission(ModelType.parttest),
           onClick: () => {
             setSelectedTestId(record.pk);
             deleteTest.open();
@@ -208,7 +212,7 @@ export function PartTestTable({
         })
       ];
     },
-    [partId, navigate, user]
+    [partId, partLocked, navigate, user]
   );
 
   return (
@@ -216,19 +220,31 @@ export function PartTestTable({
       {newTest.modal}
       {editTest.modal}
       {deleteTest.modal}
-      <InvenTreeTable
-        url={apiUrl(ApiEndpoints.part_test_list)}
-        tableState={table}
-        columns={tableColumns}
-        props={{
-          params: {
-            for_part: partId
-          },
-          rowActions: rowActions,
-          tableFilters: tableFilters,
-          tableActions: tableActions
-        }}
-      />
+      <Stack gap='xs'>
+        {partLocked && (
+          <Alert
+            title={t`Part is Locked`}
+            color='orange'
+            icon={<IconLock />}
+            p='xs'
+          >
+            <Text>{t`Part tests cannot be edited, as the part is locked`}</Text>
+          </Alert>
+        )}
+        <InvenTreeTable
+          url={apiUrl(ApiEndpoints.part_test_list)}
+          tableState={table}
+          columns={tableColumns}
+          props={{
+            params: {
+              for_part: partId
+            },
+            rowActions: rowActions,
+            tableFilters: tableFilters,
+            tableActions: tableActions
+          }}
+        />
+      </Stack>
     </>
   );
 }

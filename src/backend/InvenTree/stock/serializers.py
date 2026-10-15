@@ -282,12 +282,10 @@ class StockItemTestResultSerializer(
 
             test_key = InvenTree.helpers.generateTestKey(test_name)
 
-            ancestors = stock_item.part.get_ancestors(include_self=True)
-
             # Find a template based on name
-            if template := part_models.PartTestTemplate.objects.filter(
-                part__tree_id=stock_item.part.tree_id, part__in=ancestors, key=test_key
-            ).first():
+            if template := (
+                stock_item.part.getTestTemplates().filter(key=test_key).first()
+            ):
                 data['template'] = template
             else:
                 raise ValidationError({

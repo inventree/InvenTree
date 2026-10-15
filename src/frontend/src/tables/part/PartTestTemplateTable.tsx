@@ -101,11 +101,9 @@ export function TestTemplateTable() {
     return {
       test_name: {},
       description: {},
-      required: {},
       requires_value: {},
       requires_attachment: {},
-      choices: {},
-      enabled: {}
+      choices: {}
     };
   }, []);
 
@@ -197,10 +195,6 @@ export function TestTemplateTable() {
         tableState={table}
         columns={tableColumns}
         props={{
-          params: {
-            part_detail: true,
-            category_detail: true
-          },
           tableFilters: tableFilters,
           tableActions: tableActions,
           enableDownload: true,

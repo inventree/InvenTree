@@ -6,81 +6,78 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ("part", "0147_remove_part_default_supplier"),
-    ]
+    dependencies = [('part', '0154_remove_part_notes')]
 
     operations = [
         # Mark the 'part' field on the PartTestTemplate model as nullable
-        # Note that this field will be deleted in migration part.0150
+        # Note that this field will be deleted in migration part.0157
         migrations.AlterField(
-            model_name="parttesttemplate",
-            name="part",
+            model_name='parttesttemplate',
+            name='part',
             field=models.ForeignKey(
                 blank=True,
-                limit_choices_to={"testable": True},
+                limit_choices_to={'testable': True},
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
-                related_name="test_templates",
-                to="part.part",
-                verbose_name="Part",
+                related_name='test_templates',
+                to='part.part',
+                verbose_name='Part',
             ),
         ),
         migrations.CreateModel(
-            name="PartTest",
+            name='PartTest',
             fields=[
                 (
-                    "id",
+                    'id',
                     models.AutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        verbose_name="ID",
+                        verbose_name='ID',
                     ),
                 ),
                 (
-                    "part",
+                    'part',
                     models.ForeignKey(
                         blank=True,
-                        help_text="Part to which this test applies",
+                        help_text='Part to which this test applies',
                         null=True,
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="tests",
-                        to="part.part",
-                        verbose_name="Part",
+                        related_name='tests',
+                        to='part.part',
+                        verbose_name='Part',
                     ),
                 ),
                 (
-                    "template",
+                    'template',
                     models.ForeignKey(
-                        help_text="Part test template to apply",
+                        help_text='Part test template to apply',
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="tests",
-                        to="part.parttesttemplate",
-                        verbose_name="Test Template",
+                        related_name='tests',
+                        to='part.parttesttemplate',
+                        verbose_name='Test Template',
                     ),
                 ),
                 (
-                    "enabled",
+                    'enabled',
                     models.BooleanField(
                         default=True,
-                        help_text="Is this test enabled for the associated part?",
-                        verbose_name="Enabled",
+                        help_text='Is this test enabled for the associated part?',
+                        verbose_name='Enabled',
                     ),
                 ),
                 (
-                    "required",
+                    'required',
                     models.BooleanField(
                         default=True,
-                        help_text="Is this test required to pass?",
-                        verbose_name="Required",
+                        help_text='Is this test required to pass?',
+                        verbose_name='Required',
                     ),
-                )
+                ),
             ],
             options={
-                "verbose_name": "Part Test",
-                "unique_together": {("template", "part")},
+                'verbose_name': 'Part Test',
+                'unique_together': {('template', 'part')},
             },
             bases=(InvenTree.models.PluginValidationMixin, models.Model),
         ),

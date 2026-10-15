@@ -474,7 +474,16 @@ export default function PartDetail() {
             </HoverCard.Dropdown>
           </HoverCard>
         ),
-        content: part?.pk ? <PartTestTable partId={part?.pk} /> : <Skeleton />
+        content: part?.pk ? (
+          <PartTestTable
+            partId={part?.pk}
+            partLocked={
+              globalSettings.isSet('PART_ENABLE_LOCKING') && part?.locked
+            }
+          />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'test_results',

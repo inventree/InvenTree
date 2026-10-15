@@ -417,6 +417,26 @@ class PartTestTemplateFilter(FilterSet):
         model = PartTestTemplate
         fields = ['key', 'requires_attachment', 'requires_value']
 
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.filter(testable=True),
+        label=_('Part'),
+        method='filter_part',
+    )
+
+    def filter_part(self, queryset, name, part):
+        """Filter by templates which apply to the specified part.
+
+        Note: If the 'include_inherited' query parameter is set,
+        we also include any templates inherited from parent parts.
+        """
+        params = self.request.query_params
+
+        include_inherited = str2bool(params.get('include_inherited', True))
+
+        templates = part.getTestTemplates(include_parent=include_inherited)
+
+        return queryset.filter(pk__in=templates.values('pk'))
+
     has_results = rest_filters.BooleanFilter(
         label=_('Has Results'), method='filter_has_results'
     )
@@ -456,14 +476,7 @@ class PartTestTemplateList(PartTestTemplateMixin, DataExportViewMixin, ListCreat
 
     search_fields = ['test_name', 'description']
 
-    ordering_fields = [
-        'enabled',
-        'required',
-        'requires_value',
-        'requires_attachment',
-        'results',
-        'test_name',
-    ]
+    ordering_fields = ['requires_value', 'requires_attachment', 'results', 'test_name']
 
     ordering = 'test_name'
 
@@ -490,8 +503,15 @@ class PartTestFilter(FilterSet):
 
         Additionally, the results return at most one PartTest instance per PartTestTemplate,
         with the most specific match being returned.
+
+        Note: If the 'include_inherited' query parameter is set to False,
+        only tests linked directly to the part are returned.
         """
-        return part.getPartTests(queryset=queryset)
+        include_inherited = str2bool(
+            self.request.query_params.get('include_inherited', True)
+        )
+
+        return part.getPartTests(queryset=queryset, include_parent=include_inherited)
 
 
 class PartTestMixin:
@@ -503,7 +523,7 @@ class PartTestMixin:
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the PartTestDetail endpoints."""
         queryset = super().get_queryset(*args, **kwargs)
-        queryset = queryset.prefetch_related('template', 'part', 'part__pricing_data')
+        queryset = queryset.select_related('template', 'part', 'part__pricing_data')
         return queryset
 
 
