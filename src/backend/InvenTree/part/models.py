@@ -205,6 +205,42 @@ class PartCategory(
 
         return queryset
 
+    def getPartTests(
+        self,
+        required: Optional[bool] = None,
+        enabled: Optional[bool] = None,
+        include_parent: bool = True,
+        queryset: Optional[QuerySet[PartTest]] = None,
+    ) -> QuerySet[PartTest]:
+        """Return a queryset of all PartTest instances which apply to this category.
+
+        Arguments:
+            required: If set, filter by whether the test is required
+            enabled: If set, filter by whether the test is enabled
+            include_parent: If True, include tests inherited from parent categories
+            queryset: If set, use this queryset as the basis for filtering
+
+        Notes:
+            - At most, one test is returned for each PartTestTemplate (the closest category wins)
+        """
+        if include_parent:
+            categories = list(
+                self
+                .get_ancestors(include_self=True)
+                .order_by('-level')
+                .values_list('pk', flat=True)
+            )
+        else:
+            categories = [self.pk]
+
+        return resolve_part_tests(
+            parts=[],
+            categories=categories,
+            queryset=queryset,
+            required=required,
+            enabled=enabled,
+        )
+
     @property
     def item_count(self):
         """Return the number of parts contained in this PartCategory."""
@@ -2426,7 +2462,7 @@ class Part(
         Arguments:
             required: If set, filter by whether the test is required
             enabled: If set, filter by whether the test is enabled
-            include_parent: If True, include tests from parent parts
+            include_parent: If True, include tests inherited from parent parts and categories
             queryset: If set, use this queryset as the basis for filtering (instead of all tests for this part)
 
         Returns:
@@ -2434,45 +2470,45 @@ class Part(
 
         Notes:
             - Each PartTest instance maps this part to a PartTestTemplate, which defines the test to be performed.
-            - If include_parent is True, tests from parent parts will be included
+            - If include_parent is True, tests are inherited from:
+                - Parent (template) parts of this part
+                - The category of this part, and any parent categories
             - At most, one test will be returned for each PartTestTemplate
-            - The most "specific" PartTest will be returned:
-                - If a test exists for this part, it will be returned
-                - Else if a test exists for a parent part, the closest parent's test will be returned
+            - The most "specific" PartTest will be returned, in order of precedence:
+                - This part
+                - Parent parts (closest first)
+                - The category of this part
+                - Parent categories (closest first)
             - The required / enabled filters are applied *after* the most specific test is selected,
-              so a disabled test against this part overrides an enabled test against a parent part
+              so a disabled test against this part overrides an enabled test against a parent part or category
         """
-        if queryset is None:
-            queryset = PartTest.objects.all()
-
         if include_parent:
-            parts = self.get_ancestors(include_self=True)
+            parts = list(
+                self
+                .get_ancestors(include_self=True)
+                .order_by('-level')
+                .values_list('pk', flat=True)
+            )
         else:
-            parts = Part.objects.filter(pk=self.pk)
+            parts = [self.pk]
 
-        test_ids = []
-        template_ids = set()
+        if include_parent and self.category:
+            categories = list(
+                self.category
+                .get_ancestors(include_self=True)
+                .order_by('-level')
+                .values_list('pk', flat=True)
+            )
+        else:
+            categories = []
 
-        # Tests are ordered by part level (descending), so the closest part is found first
-        for test_id, template_id in (
-            PartTest.objects
-            .filter(part__in=parts)
-            .order_by('-part__level')
-            .values_list('pk', 'template_id')
-        ):
-            if template_id not in template_ids:
-                template_ids.add(template_id)
-                test_ids.append(test_id)
-
-        queryset = queryset.filter(pk__in=test_ids)
-
-        if required is not None:
-            queryset = queryset.filter(required=required)
-
-        if enabled is not None:
-            queryset = queryset.filter(enabled=enabled)
-
-        return queryset
+        return resolve_part_tests(
+            parts=parts,
+            categories=categories,
+            queryset=queryset,
+            required=required,
+            enabled=enabled,
+        )
 
     def getTestTemplates(
         self,
@@ -3775,19 +3811,23 @@ class PartTest(InvenTree.models.InvenTreeModel):
     This model allows a single PartTestTemplate to map to multiple part instances
 
     - This allows a test template to be "reused" across multiple parts
-    - It allows a test to be defined against a Part, which will apply to that specific part
+    - A test defined against a Part applies to that part (and any variants)
+    - A test defined against a PartCategory applies to all parts in that category (and any subcategories)
+    - A more specific test (e.g. against a part) overrides a less specific test for the same template
 
     Attributes:
         template: The PartTestTemplate to apply [ForeignKey]
         part: The Part to which this test applies [ForeignKey]
+        category: The PartCategory to which this test applies [ForeignKey]
         enabled: Boolean flag to indicate whether this test is enabled for the associated part [bool]
+        required: Boolean flag to indicate whether this test is required to pass [bool]
     """
 
     class Meta:
         """Metaclass options for the PartTest model."""
 
         verbose_name = _('Part Test')
-        unique_together = [('template', 'part')]
+        unique_together = [('template', 'part'), ('template', 'category')]
 
     def save(self, *args, **kwargs):
         """Enforce 'clean' operation when saving a PartTest instance."""
@@ -3803,15 +3843,21 @@ class PartTest(InvenTree.models.InvenTreeModel):
         """Validate the PartTest instance."""
         super().clean()
 
-        if self.part is None:
-            raise ValidationError({'part': _('A part must be specified')})
+        if self.part is None and self.category is None:
+            raise ValidationError(_('A part or category must be specified'))
 
-        if not self.part.testable:
-            raise ValidationError({
-                'part': _('Tests can only be created for testable parts')
-            })
+        if self.part is not None and self.category is not None:
+            raise ValidationError(
+                _('A test cannot be linked to both a part and a category')
+            )
 
-        self.check_part_lock(self.part)
+        if self.part is not None:
+            if not self.part.testable:
+                raise ValidationError({
+                    'part': _('Tests can only be created for testable parts')
+                })
+
+            self.check_part_lock(self.part)
 
         # If the part has been changed, the previous part must also be unlocked
         if self.pk and (previous := PartTest.objects.filter(pk=self.pk).first()):
@@ -3824,10 +3870,13 @@ class PartTest(InvenTree.models.InvenTreeModel):
         Raises:
             ValidationError: If part locking is enabled, and the part is locked
         """
+        if part is None:
+            return
+
         if not get_global_setting('PART_ENABLE_LOCKING'):
             return
 
-        if part is not None and part.locked:
+        if part.locked:
             raise ValidationError(_('Part test cannot be modified - part is locked'))
 
     template = models.ForeignKey(
@@ -3848,6 +3897,16 @@ class PartTest(InvenTree.models.InvenTreeModel):
         help_text=_('Part to which this test applies'),
     )
 
+    category = models.ForeignKey(
+        PartCategory,
+        on_delete=models.CASCADE,
+        related_name='tests',
+        blank=True,
+        null=True,
+        verbose_name=_('Category'),
+        help_text=_('Part category to which this test applies'),
+    )
+
     enabled = models.BooleanField(
         default=True,
         verbose_name=_('Enabled'),
@@ -3864,6 +3923,58 @@ class PartTest(InvenTree.models.InvenTreeModel):
     def test_name(self):
         """Return the name of the associated test template."""
         return self.template.test_name
+
+
+def resolve_part_tests(
+    parts: list[int],
+    categories: list[int],
+    queryset: Optional[QuerySet[PartTest]] = None,
+    required: Optional[bool] = None,
+    enabled: Optional[bool] = None,
+) -> QuerySet[PartTest]:
+    """Resolve the PartTest instances which apply to a hierarchy of parts and categories.
+
+    Arguments:
+        parts: List of Part IDs, ordered from most specific to least specific
+        categories: List of PartCategory IDs, ordered from most specific to least specific
+        queryset: If set, use this queryset as the basis for filtering
+        required: If set, filter by whether the test is required
+        enabled: If set, filter by whether the test is enabled
+
+    Returns:
+        A queryset containing at most one PartTest for each PartTestTemplate.
+        Parts take precedence over categories, and earlier entries take precedence over later ones.
+    """
+    if queryset is None:
+        queryset = PartTest.objects.all()
+
+    # Map each part / category to a precedence value (lower is more specific)
+    part_rank = {pk: idx for idx, pk in enumerate(parts)}
+    category_rank = {pk: len(parts) + idx for idx, pk in enumerate(categories)}
+
+    # Map of template_id -> (rank, test_id)
+    matches: dict[int, tuple[int, int]] = {}
+
+    for test_id, template_id, part_id, category_id in PartTest.objects.filter(
+        Q(part__in=parts) | Q(category__in=categories)
+    ).values_list('pk', 'template_id', 'part_id', 'category_id'):
+        if part_id in part_rank:
+            rank = part_rank[part_id]
+        else:
+            rank = category_rank[category_id]
+
+        if template_id not in matches or rank < matches[template_id][0]:
+            matches[template_id] = (rank, test_id)
+
+    queryset = queryset.filter(pk__in=[test_id for _rank, test_id in matches.values()])
+
+    if required is not None:
+        queryset = queryset.filter(required=required)
+
+    if enabled is not None:
+        queryset = queryset.filter(enabled=enabled)
+
+    return queryset
 
 
 def validate_template_name(name):

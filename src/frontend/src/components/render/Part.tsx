@@ -161,7 +161,11 @@ export function RenderPartTest({
   return (
     <RenderInlineModel
       primary={instance.template_detail?.test_name}
-      secondary={`${t`Part`}: ${instance.part_detail?.full_name || instance.part_detail?.name || instance.part}`}
+      secondary={
+        instance.category
+          ? `${t`Category`}: ${instance.category_detail?.pathstring || instance.category_detail?.name || instance.category}`
+          : `${t`Part`}: ${instance.part_detail?.full_name || instance.part_detail?.name || instance.part}`
+      }
       suffix={instance.template_detail?.description}
     />
   );

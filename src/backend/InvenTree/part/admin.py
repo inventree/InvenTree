@@ -85,8 +85,8 @@ class PartTestTemplateAdmin(admin.ModelAdmin):
 class PartTestAdmin(admin.ModelAdmin):
     """Admin class for the PartTest model."""
 
-    list_display = ('template', 'part', 'enabled', 'required')
-    autocomplete_fields = ('part', 'template')
+    list_display = ('template', 'part', 'category', 'enabled', 'required')
+    autocomplete_fields = ('part', 'category', 'template')
 
 
 @admin.register(models.BomItem)

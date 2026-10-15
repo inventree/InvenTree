@@ -21,7 +21,8 @@ import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import {
   BooleanColumn,
   DescriptionColumn,
-  PartColumn
+  PartColumn,
+  PathColumn
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import { TableHoverCard } from '../../components/tables/TableHoverCard';
@@ -32,42 +33,72 @@ import {
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
 
+/**
+ * Table for displaying the tests which apply to a Part or PartCategory.
+ *
+ * - Tests may be linked directly to the part (or category)
+ * - Tests may be inherited from a parent part, the part category, or a parent category
+ * - Only tests which are linked directly can be edited from this table
+ */
 export function PartTestTable({
   partId,
+  categoryId,
   partLocked
 }: Readonly<{
   partId?: number;
+  categoryId?: number;
   partLocked?: boolean;
 }>) {
   const user = useUserState();
   const navigate = useNavigate();
-  const table = useTable('part-test');
+  const table = useTable(categoryId ? 'category-test' : 'part-test');
+
+  // Is this test linked directly to the part (or category) being viewed?
+  const isDirect = useCallback(
+    (record: any): boolean => {
+      if (partId) {
+        return record.part == partId;
+      }
+
+      if (categoryId) {
+        return record.category == categoryId;
+      }
+
+      return true;
+    },
+    [partId, categoryId]
+  );
+
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      PartColumn({
-        accessor: 'part_detail',
-        switchable: true
-      }),
       {
         accessor: 'template_detail.test_name',
-        title: t`Test Template`,
+        title: t`Test`,
         switchable: false,
         render: (record: any) => {
           const extra: string[] = [];
 
-          if (record.part && partId && record.part != partId) {
-            extra.push(t`Test defined for a higher level part`);
+          if (!isDirect(record)) {
+            if (record.part) {
+              extra.push(t`Test defined for a higher level part`);
+            } else if (record.category) {
+              extra.push(
+                partId
+                  ? t`Test defined for the part category`
+                  : t`Test defined for a parent category`
+              );
+            }
           }
 
           return (
             <Group gap='xs' wrap='nowrap' justify='space-between'>
-              {record.template_detail.test_name}
+              {record.template_detail?.test_name}
               {extra.length > 0 && (
                 <TableHoverCard
                   value=''
                   position='bottom-end'
                   icon='info'
-                  title={t`Details`}
+                  title={t`Inherited Test`}
                   extra={extra}
                 />
               )}
@@ -75,6 +106,17 @@ export function PartTestTable({
           );
         }
       },
+      PartColumn({
+        accessor: 'part_detail',
+        title: t`Part`,
+        switchable: true,
+        hidden: !!categoryId
+      }),
+      PathColumn({
+        accessor: 'category_detail',
+        title: t`Category`,
+        switchable: true
+      }),
       DescriptionColumn({
         accessor: 'template_detail.description',
         switchable: true
@@ -106,16 +148,21 @@ export function PartTestTable({
         defaultVisible: false
       })
     ];
-  }, [partId]);
+  }, [partId, categoryId, isDirect]);
 
   const partTestFields: ApiFormFieldSet = useMemo(() => {
     return {
-      part: {},
+      part: {
+        hidden: !!categoryId
+      },
+      category: {
+        hidden: !!partId
+      },
       template: {},
       enabled: {},
       required: {}
     };
-  }, []);
+  }, [partId, categoryId]);
 
   const [selectedTestId, setSelectedTestId] = useState<number | undefined>(
     undefined
@@ -124,9 +171,10 @@ export function PartTestTable({
   const newTest = useCreateApiFormModal({
     url: ApiEndpoints.part_test_list,
     title: t`Add Test`,
-    fields: useMemo(() => ({ ...partTestFields }), [partTestFields]),
+    fields: partTestFields,
     initialData: {
-      part: partId
+      part: partId,
+      category: categoryId
     },
     focus: 'template',
     table: table
@@ -136,7 +184,7 @@ export function PartTestTable({
     url: ApiEndpoints.part_test_list,
     pk: selectedTestId,
     title: t`Edit Test`,
-    fields: useMemo(() => ({ ...partTestFields }), [partTestFields]),
+    fields: partTestFields,
     focus: 'template',
     table: table
   });
@@ -164,7 +212,7 @@ export function PartTestTable({
       {
         name: 'include_inherited',
         label: t`Include Inherited`,
-        description: t`Show tests from inherited templates`
+        description: t`Show tests inherited from parent parts or categories`
       }
     ];
   }, []);
@@ -184,17 +232,29 @@ export function PartTestTable({
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
-      // This test is defined for a different part
-      if (partId && record.part && record.part != partId) {
+      // Inherited tests can only be edited against the part or category they are defined for
+      if (!isDirect(record)) {
+        if (record.part) {
+          return [
+            AppRowViewAction({
+              title: t`View Part`,
+              modelType: ModelType.part,
+              modelId: record.part,
+              navigate: navigate
+            })
+          ];
+        }
+
         return [
           AppRowViewAction({
-            title: t`View Part`,
-            modelType: ModelType.part,
-            modelId: record.part,
+            title: t`View Category`,
+            modelType: ModelType.partcategory,
+            modelId: record.category,
             navigate: navigate
           })
         ];
       }
+
       return [
         RowEditAction({
           hidden: partLocked || !user.hasChangePermission(ModelType.parttest),
@@ -212,7 +272,7 @@ export function PartTestTable({
         })
       ];
     },
-    [partId, partLocked, navigate, user]
+    [isDirect, partLocked, navigate, user]
   );
 
   return (
@@ -237,7 +297,8 @@ export function PartTestTable({
           columns={tableColumns}
           props={{
             params: {
-              for_part: partId
+              for_part: partId,
+              for_category: categoryId
             },
             rowActions: rowActions,
             tableFilters: tableFilters,

@@ -488,7 +488,7 @@ class PartTestFilter(FilterSet):
         """Metaclass options for this filterset."""
 
         model = PartTest
-        fields = ['template', 'part', 'enabled', 'required']
+        fields = ['template', 'part', 'category', 'enabled', 'required']
 
     for_part = rest_filters.ModelChoiceFilter(
         queryset=Part.objects.all(), label=_('For Part'), method='filter_for_part'
@@ -513,6 +513,32 @@ class PartTestFilter(FilterSet):
 
         return part.getPartTests(queryset=queryset, include_parent=include_inherited)
 
+    for_category = rest_filters.ModelChoiceFilter(
+        queryset=PartCategory.objects.all(),
+        label=_('For Category'),
+        method='filter_for_category',
+    )
+
+    def filter_for_category(self, queryset, name, category):
+        """Filter 'PartTest' instances which apply to the provided 'PartCategory'.
+
+        Returns any PartTest instances which are linked to the provided category,
+        or inherited from a parent category.
+
+        At most one PartTest instance is returned per PartTestTemplate,
+        with the most specific match being returned.
+
+        Note: If the 'include_inherited' query parameter is set to False,
+        only tests linked directly to the category are returned.
+        """
+        include_inherited = str2bool(
+            self.request.query_params.get('include_inherited', True)
+        )
+
+        return category.getPartTests(
+            queryset=queryset, include_parent=include_inherited
+        )
+
 
 class PartTestMixin:
     """Mixin class for the PartTest API endpoints."""
@@ -523,7 +549,9 @@ class PartTestMixin:
     def get_queryset(self, *args, **kwargs):
         """Return an annotated queryset for the PartTestDetail endpoints."""
         queryset = super().get_queryset(*args, **kwargs)
-        queryset = queryset.select_related('template', 'part', 'part__pricing_data')
+        queryset = queryset.select_related(
+            'template', 'part', 'part__pricing_data', 'category'
+        )
         return queryset
 
 
@@ -535,7 +563,7 @@ class PartTestList(PartTestMixin, ListCreateAPI):
 
     search_fields = ['template__test_name', 'template__description']
 
-    ordering_fields = ['template', 'part', 'enabled', 'required']
+    ordering_fields = ['template', 'part', 'category', 'enabled', 'required']
 
 
 class PartTestDetail(PartTestMixin, RetrieveUpdateDestroyAPI):

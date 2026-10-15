@@ -709,6 +709,91 @@ class TestTemplateTest(TestCase):
         )
         self.assertFalse(variant.getRequiredTests().filter(pk=template.pk).exists())
 
+    def test_category_tests(self):
+        """Test that PartTest entries are inherited from part categories."""
+        chair = Part.objects.get(pk=10000)
+        variant = Part.objects.get(pk=10004)
+
+        mechanical = PartCategory.objects.get(pk=7)
+        fasteners = PartCategory.objects.get(pk=8)
+
+        self.assertEqual(variant.category, mechanical)
+        self.assertEqual(fasteners.parent, mechanical)
+
+        bolt = Part.objects.create(
+            name='Bolt', description='A bolt', category=fasteners, testable=True
+        )
+
+        template = PartTestTemplate.objects.create(test_name='Category test')
+        PartTest.objects.create(template=template, category=mechanical, required=True)
+
+        # Inherited by parts in the category (and subcategories)
+        self.assertTrue(variant.getRequiredTests().filter(pk=template.pk).exists())
+        self.assertTrue(bolt.getRequiredTests().filter(pk=template.pk).exists())
+        self.assertEqual(variant.getTestTemplates().count(), 7)
+
+        # But not by parts outside the category
+        resistor = Part.objects.create(
+            name='Resistor',
+            description='A resistor',
+            category=PartCategory.objects.get(pk=2),
+            testable=True,
+        )
+        self.assertFalse(resistor.getTestTemplates().filter(pk=template.pk).exists())
+
+        # Not included when inherited tests are excluded
+        self.assertFalse(
+            bolt.getTestTemplates(include_parent=False).filter(pk=template.pk).exists()
+        )
+
+        # Category-level tests
+        self.assertEqual(mechanical.getPartTests().count(), 1)
+        self.assertEqual(fasteners.getPartTests().count(), 1)
+        self.assertEqual(fasteners.getPartTests(include_parent=False).count(), 0)
+
+        # A subcategory overrides the parent category
+        PartTest.objects.create(template=template, category=fasteners, required=False)
+
+        self.assertFalse(bolt.getRequiredTests().filter(pk=template.pk).exists())
+        self.assertTrue(variant.getRequiredTests().filter(pk=template.pk).exists())
+        self.assertFalse(fasteners.getPartTests(required=True).exists())
+
+        # A part overrides the category
+        PartTest.objects.create(template=template, part=variant, enabled=False)
+
+        self.assertFalse(
+            variant.getTestTemplates(enabled=True).filter(pk=template.pk).exists()
+        )
+        self.assertEqual(variant.getPartTests().get(template=template).part, variant)
+
+        # Tests linked to a parent part take precedence over tests linked to a category
+        weight = PartTestTemplate.objects.get(key='recordweight')
+        PartTest.objects.create(template=weight, category=mechanical, required=True)
+
+        test = variant.getPartTests().get(template=weight)
+        self.assertEqual(test.part, chair)
+        self.assertFalse(test.required)
+
+    def test_category_test_validation(self):
+        """Test validation of category-level PartTest entries."""
+        chair = Part.objects.get(pk=10000)
+        mechanical = PartCategory.objects.get(pk=7)
+        template = PartTestTemplate.objects.create(test_name='Category test')
+
+        # Cannot link to both a part and a category
+        with self.assertRaises(ValidationError):
+            PartTest.objects.create(template=template, part=chair, category=mechanical)
+
+        # Category tests are not affected by part locking
+        set_global_setting('PART_ENABLE_LOCKING', True)
+
+        test = PartTest.objects.create(template=template, category=mechanical)
+        test.required = False
+        test.save()
+        test.delete()
+
+        set_global_setting('PART_ENABLE_LOCKING', False)
+
     def test_copy_tests(self):
         """Test copying tests from one part to another."""
         chair = Part.objects.get(pk=10000)

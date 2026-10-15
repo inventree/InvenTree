@@ -1242,16 +1242,34 @@ class PartTestSerializer(
             'pk',
             'template',
             'part',
+            'category',
             'enabled',
             'required',
             # Optional detail fields
             'part_detail',
+            'category_detail',
             'template_detail',
         ]
 
     part_detail = OptionalField(
         serializer_class=PartBriefSerializer,
-        serializer_kwargs={'source': 'part', 'many': False, 'read_only': True},
+        serializer_kwargs={
+            'source': 'part',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+    )
+
+    category_detail = OptionalField(
+        serializer_class=CategorySerializer,
+        serializer_kwargs={
+            'source': 'category',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
         default_include=True,
     )
 

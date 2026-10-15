@@ -3819,6 +3819,54 @@ class PartTestTemplateTest(PartAPITestBase):
         response = self.get(url, data={'for_part': 10004, 'enabled': True})
         self.assertEqual(len(response.data), 6)
 
+    def test_category_tests(self):
+        """Test the PartTest API with category-level tests."""
+        url = reverse('api-part-test-list')
+
+        template = PartTestTemplate.objects.create(
+            test_name='Category test', description='Applies to a category'
+        )
+
+        # Create a category-level test via the API
+        response = self.post(
+            url, data={'template': template.pk, 'category': 7}, expected_code=201
+        )
+
+        self.assertIsNone(response.data['part'])
+        self.assertEqual(response.data['category'], 7)
+        self.assertEqual(response.data['category_detail']['name'], 'Mechanical')
+
+        # Cannot link the same template to the same category twice
+        self.post(url, data={'template': template.pk, 'category': 7}, expected_code=400)
+
+        # Cannot link to both a part and a category
+        self.post(
+            url,
+            data={'template': template.pk, 'category': 8, 'part': 10004},
+            expected_code=400,
+        )
+
+        # Must link to either a part or a category
+        self.post(url, data={'template': template.pk}, expected_code=400)
+
+        # Direct filter by category
+        response = self.get(url, data={'category': 7})
+        self.assertEqual(len(response.data), 1)
+
+        # Tests which apply to a category (including parent categories)
+        response = self.get(url, data={'for_category': 8})
+        self.assertEqual(len(response.data), 1)
+
+        response = self.get(url, data={'for_category': 8, 'include_inherited': False})
+        self.assertEqual(len(response.data), 0)
+
+        # The category test is inherited by parts in the category
+        response = self.get(url, data={'for_part': 10004})
+        self.assertEqual(len(response.data), 7)
+
+        response = self.get(url, data={'for_part': 10004, 'include_inherited': False})
+        self.assertEqual(len(response.data), 0)
+
     def test_part_test_permissions(self):
         """Test that the PartTest API requires part permissions."""
         url = reverse('api-part-test-list')

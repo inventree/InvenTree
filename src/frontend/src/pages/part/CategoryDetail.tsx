@@ -7,7 +7,8 @@ import {
   IconListDetails,
   IconPackages,
   IconSitemap,
-  IconTable
+  IconTable,
+  IconTestPipe
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -47,6 +48,7 @@ import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
 import PartCategoryTemplateTable from '../../tables/part/PartCategoryTemplateTable';
 import { PartListTable } from '../../tables/part/PartTable';
+import { PartTestTable } from '../../tables/part/PartTestTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { PartCategoryDetailsPanel } from './PartCategoryDetailsPanel';
 
@@ -269,9 +271,17 @@ export default function CategoryDetail() {
         icon: <IconListCheck />,
         hidden: !id || !category.pk,
         content: <PartCategoryTemplateTable categoryId={category?.pk} />
+      },
+      {
+        name: 'tests',
+        label: t`Tests`,
+        icon: <IconTestPipe />,
+        hidden:
+          !id || !category.pk || !user.hasViewPermission(ModelType.parttest),
+        content: <PartTestTable categoryId={category?.pk} />
       }
     ],
-    [category, id, partsView, instanceInfo]
+    [category, id, partsView, instanceInfo, user]
   );
 
   const breadcrumbs = useMemo(

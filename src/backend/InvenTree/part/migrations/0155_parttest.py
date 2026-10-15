@@ -49,6 +49,18 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
+                    'category',
+                    models.ForeignKey(
+                        blank=True,
+                        help_text='Part category to which this test applies',
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='tests',
+                        to='part.partcategory',
+                        verbose_name='Category',
+                    ),
+                ),
+                (
                     'template',
                     models.ForeignKey(
                         help_text='Part test template to apply',
@@ -77,7 +89,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name': 'Part Test',
-                'unique_together': {('template', 'part')},
+                'unique_together': {('template', 'part'), ('template', 'category')},
             },
             bases=(InvenTree.models.PluginValidationMixin, models.Model),
         ),
