@@ -21,6 +21,24 @@ import report.helpers
 from common.setting.type import InvenTreeSettingsKeyType, SettingFlag
 
 
+def validate_internal_company(value):
+    """Validate that the provided value is empty, or references an internal company."""
+    from company.models import Company
+
+    if value in [None, '']:
+        return
+
+    try:
+        pk = int(value)
+    except (TypeError, ValueError):
+        raise ValidationError({'value': _('Invalid company')})
+
+    if not Company.objects.filter(pk=pk, is_internal=True).exists():
+        raise ValidationError({
+            'value': _('Selected company must be marked as an internal company')
+        })
+
+
 def validate_part_name_format(value):
     """Validate part name format.
 
@@ -254,6 +272,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'name': _('Company name'),
         'description': _('Internal company name'),
         'default': 'My company name',
+    },
+    'INVENTREE_DEFAULT_INTERNAL_COMPANY': {
+        'name': _('Default internal company'),
+        'description': _('Internal company which represents this organization'),
+        'default': '',
+        'model': 'company.company',
+        'model_filters': {'is_internal': True},
+        'validator': validate_internal_company,
     },
     'INVENTREE_BASE_URL': {
         'name': _('Base URL'),

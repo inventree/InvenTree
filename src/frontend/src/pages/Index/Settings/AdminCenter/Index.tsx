@@ -4,6 +4,7 @@ import type { PanelGroupType, PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
+  IconBuilding,
   IconClipboardCheck,
   IconCoins,
   IconCpu,
@@ -36,6 +37,7 @@ import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
+import { CompanyTable } from '../../../../tables/company/CompanyTable';
 import ParameterTemplateTable from '../../../../tables/general/ParameterTemplateTable';
 import SelectionListTable from '../../../../tables/settings/SelectionListTable';
 
@@ -180,6 +182,17 @@ export default function AdminCenter() {
         content: <ErrorReportTable />
       },
       {
+        name: 'companies',
+        label: t`Companies`,
+        icon: <IconBuilding />,
+        content: (
+          <Stack gap='xs'>
+            <GlobalSettingList keys={['INVENTREE_DEFAULT_INTERNAL_COMPANY']} />
+            <CompanyTable companyType='all' />
+          </Stack>
+        )
+      },
+      {
         name: 'currencies',
         label: t`Currencies`,
         icon: <IconCoins />,
@@ -309,6 +322,7 @@ export default function AdminCenter() {
           'barcode-history',
           'background',
           'errors',
+          'companies',
           'currencies',
           'email'
         ]
