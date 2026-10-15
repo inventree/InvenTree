@@ -23,7 +23,7 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from common.currency import currency_codes
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
-from company.models import Company, SupplierPart, SupplierPriceBreak
+from company.models import Company, Contact, SupplierPart, SupplierPriceBreak
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
 from order.models import SalesOrderAllocation, SalesOrderLineItem, SalesOrderShipment
@@ -1123,15 +1123,49 @@ class PurchaseOrderLineItemTest(OrderTest):
         url = reverse('api-po-line-list')
 
         # Deletion should fail without the correct role
-        self.delete(url, {'items': [1, 2]}, expected_code=403)
+        self.delete(url, {'items': [1, 3]}, expected_code=403)
 
         self.assignRole('purchase_order.delete')
 
         # Try to delete a set of line items via their IDs
-        self.delete(url, {'items': [1, 2]}, expected_code=200)
+        self.delete(url, {'items': [1, 3]}, expected_code=200)
 
         # We should have 2 less PurchaseOrderLineItems after deleting them
         self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 2)
+
+    def test_po_line_delete_received(self):
+        """Line items against which stock has been received cannot be deleted."""
+        self.assignRole('purchase_order.delete')
+
+        n = models.PurchaseOrderLineItem.objects.count()
+
+        # Line item 2 is partially received (fixture data)
+        self.assertGreater(models.PurchaseOrderLineItem.objects.get(pk=2).received, 0)
+
+        # Single delete
+        response = self.delete(
+            reverse('api-po-line-detail', kwargs={'pk': 2}), expected_code=400
+        )
+        self.assertIn(
+            'Cannot delete line items which have received stock', str(response.data)
+        )
+
+        # Bulk delete - received line item is mixed in with unreceived line items
+        url = reverse('api-po-line-list')
+        self.delete(url, {'items': [1, 2, 3]}, expected_code=400)
+
+        # Bulk delete by filter
+        self.delete(url, {'filters': {'order': 1}}, expected_code=400)
+
+        # Nothing has been deleted
+        self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n)
+
+        # Line items without received stock can still be deleted
+        self.delete(url, {'items': [1, 3]}, expected_code=200)
+        self.delete(reverse('api-po-line-detail', kwargs={'pk': 23}), expected_code=204)
+
+        self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 3)
+        self.assertTrue(models.PurchaseOrderLineItem.objects.filter(pk=2).exists())
 
     def test_po_extra_line_bulk_delete(self):
         """Test that we can bulk delete multiple PurchaseOrderExtraLine items via the API."""
@@ -3212,6 +3246,49 @@ class SalesOrderAllocateTest(OrderTest):
         # Shipment should now be marked as delivered
         self.assertTrue(self.shipment.is_delivered())
         self.assertEqual(self.shipment.delivery_date, datetime(2023, 5, 15).date())
+
+    def test_shipment_contact(self):
+        """Test setting the 'contact' field for a shipment via the API."""
+        url = reverse('api-so-shipment-detail', kwargs={'pk': self.shipment.pk})
+
+        customer = self.shipment.order.customer
+        other_company = Company.objects.exclude(pk=customer.pk).first()
+
+        contact = Contact.objects.create(company=customer, name='Shipment Contact')
+        other_contact = Contact.objects.create(
+            company=other_company, name='Other Contact'
+        )
+
+        # No contact set by default
+        response = self.get(url, expected_code=200)
+        self.assertIsNone(response.data['contact'])
+        self.assertIsNone(response.data['contact_detail'])
+
+        # A contact for a different company is rejected
+        response = self.patch(url, {'contact': other_contact.pk}, expected_code=400)
+        self.assertIn('Contact does not match the customer', str(response.data))
+
+        self.shipment.refresh_from_db()
+        self.assertIsNone(self.shipment.contact)
+
+        # A contact for the customer is accepted
+        response = self.patch(url, {'contact': contact.pk}, expected_code=200)
+        self.assertEqual(response.data['contact'], contact.pk)
+        self.assertEqual(response.data['contact_detail']['name'], contact.name)
+
+        self.shipment.refresh_from_db()
+        self.assertEqual(self.shipment.contact, contact)
+
+        # The contact can be cleared
+        response = self.patch(url, {'contact': None}, expected_code=200)
+        self.assertIsNone(response.data['contact'])
+
+        # Deleting the contact clears the reference
+        self.shipment.contact = contact
+        self.shipment.save()
+        contact.delete()
+        self.shipment.refresh_from_db()
+        self.assertIsNone(self.shipment.contact)
 
     def test_sales_order_shipment_list(self):
         """Test the SalesOrderShipment list API endpoint."""
