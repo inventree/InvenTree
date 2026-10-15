@@ -1,10 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 555
+INVENTREE_API_VERSION = 556
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v556 -> 2026-10-14 : https://github.com/inventree/InvenTree/pull/13017
+    - Adds 'is_internal' field (and filter) to the Company API endpoint
+    - Adds 'INVENTREE_DEFAULT_INTERNAL_COMPANY' global setting
+    - Exposes 'model_filters' on the global and user settings API endpoints
 
 v555 -> 2026-10-14 : https://github.com/inventree/InvenTree/pull/13016
     - Adds "contact" field to the SalesOrderShipment model and API endpoint

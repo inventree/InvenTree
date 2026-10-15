@@ -30,6 +30,7 @@ import report.helpers
 import report.validators
 from common.models import DataOutput, RenderChoices, UpdatedUserMixin
 from common.settings import get_global_setting
+from company.models import Company
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
 from plugin import InvenTreePlugin, PluginMixinEnum
@@ -158,6 +159,7 @@ class BaseContextExtension(TypedDict):
         template_name: Name of the report template
         template_revision: Revision of the report template
         user: User who is creating the report (if available)
+        internal_company: The default internal company (if defined) which represents this organization
         report_vars: Private dict for the {% get_var %} / {% set_var %} template tags
     """
 
@@ -169,6 +171,7 @@ class BaseContextExtension(TypedDict):
     template_name: str
     template_revision: int
     user: Optional[AbstractUser]
+    internal_company: Optional[Company]
     report_vars: dict
 
 
@@ -410,6 +413,13 @@ class ReportTemplateBase(
         """Return a filter dict which can be applied to the target model."""
         return report.validators.validate_filters(self.filters, model=self.get_model())
 
+    def get_internal_company(self) -> Optional[Company]:
+        """Return the default internal company, cached for the lifetime of this template instance."""
+        if not hasattr(self, '_internal_company'):
+            self._internal_company = Company.get_default_internal()
+
+        return self._internal_company
+
     def base_context(self, **kwargs) -> BaseContextExtension:
         """Return base context data (available to all templates)."""
         return {
@@ -421,6 +431,7 @@ class ReportTemplateBase(
             'template_name': self.name,
             'template_revision': self.revision,
             'user': kwargs.get('user'),
+            'internal_company': self.get_internal_company(),
             # A private, per-render dict for the {% get_var %} / {% set_var %} tags.
             # This is discarded once rendering of *this* instance completes,
             # and is never shared between instances, reports, or requests.

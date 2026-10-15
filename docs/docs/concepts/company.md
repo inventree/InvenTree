@@ -14,6 +14,31 @@ External companies are represented by the *Company* database model. Each company
 !!! tip "Multi Purpose"
     A company may be allocated to multiple categories, for example, a company may be both a supplier and a customer.
 
+### Internal Companies
+
+A company can also be marked as *internal*, meaning that it represents your own organization rather than an external business. Internal companies can have their own [contacts](#contacts) and [addresses](#addresses), just like any other company.
+
+More than one internal company can be defined - for example, if your organization operates as multiple legal entities, or from multiple sites.
+
+Internal companies are managed from the *Internal Companies* panel in the [Admin Center](../settings/admin.md). To mark an existing company as internal, edit the company and set the `is_internal` attribute to `True`.
+
+#### Default Internal Company
+
+The `INVENTREE_DEFAULT_INTERNAL_COMPANY` [global setting](../settings/global.md#server-settings) selects which internal company represents your organization by default. Only companies marked as internal can be selected.
+
+If this setting is not specified, and exactly one internal company exists, that company is used as the default.
+
+The default internal company is available to all [report and label templates](../report/context_variables.md) as the `internal_company` context variable. For example, to render your organization's name and primary address in a report header:
+
+```html
+{% raw %}
+{% if internal_company %}
+<h3>{{ internal_company.name }}</h3>
+<p>{{ internal_company.primary_address }}</p>
+{% endif %}
+{% endraw %}
+```
+
 ### Edit Company
 
 To edit a company, click on the {{ icon("edit", color="blue", title="Edit Company") }} icon in the actions menu. Edit the company information, and then click on <span class='badge inventree confirm'>Submit</span>.
