@@ -3744,7 +3744,14 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         super().clean()
 
     def validate_unique(self, exclude=None):
-        """Test that this test template is 'unique'."""
+        """Test that this test template is 'unique'.
+
+        Note: If 'test_name' is excluded (e.g. it has already failed validation), the check is skipped,
+        to prevent duplicate error messages when called via full_clean()
+        """
+        if exclude and 'test_name' in exclude:
+            return super().validate_unique(exclude)
+
         tests = PartTestTemplate.objects.filter(key=self.key).exclude(pk=self.pk)
 
         if tests.exists():

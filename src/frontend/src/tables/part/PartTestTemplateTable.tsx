@@ -7,6 +7,7 @@ import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
+  RowDuplicateAction,
   RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
@@ -120,6 +121,21 @@ export function TestTemplateTable() {
 
   const [selectedTest, setSelectedTest] = useState<number>(-1);
 
+  // Initial data for a duplicated test template
+  const [duplicateData, setDuplicateData] = useState<any>({});
+
+  const duplicateTestTemplate = useCreateApiFormModal({
+    url: ApiEndpoints.part_test_template_list,
+    title: t`Duplicate Test Template`,
+    preFormWarning: t`Test template names must be unique - enter a new name for the duplicated template`,
+    fields: useMemo(
+      () => ({ ...partTestTemplateFields }),
+      [partTestTemplateFields]
+    ),
+    initialData: duplicateData,
+    table: table
+  });
+
   const editTestTemplate = useEditApiFormModal({
     url: ApiEndpoints.part_test_template_list,
     pk: selectedTest,
@@ -150,6 +166,7 @@ export function TestTemplateTable() {
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
+      const can_add = user.hasAddRole(UserRoles.part);
       const can_edit = user.hasChangeRole(UserRoles.part);
       const can_delete = user.hasDeleteRole(UserRoles.part);
 
@@ -159,6 +176,19 @@ export function TestTemplateTable() {
           onClick: () => {
             setSelectedTest(record.pk);
             editTestTemplate.open();
+          }
+        }),
+        RowDuplicateAction({
+          hidden: !can_add,
+          onClick: () => {
+            setDuplicateData({
+              test_name: record.test_name,
+              description: record.description,
+              requires_value: record.requires_value,
+              requires_attachment: record.requires_attachment,
+              choices: record.choices
+            });
+            duplicateTestTemplate.open();
           }
         }),
         RowDeleteAction({
@@ -190,6 +220,7 @@ export function TestTemplateTable() {
     <>
       {newTestTemplate.modal}
       {editTestTemplate.modal}
+      {duplicateTestTemplate.modal}
       {deleteTestTemplate.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.part_test_template_list)}

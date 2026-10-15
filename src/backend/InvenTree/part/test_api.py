@@ -3745,6 +3745,12 @@ class PartTestTemplateTest(PartAPITestBase):
             expected_code=400,
         )
 
+        # The error message should only be reported once
+        self.assertEqual(
+            response.data['test_name'],
+            ['Test template with the same key already exists'],
+        )
+
         # Legacy fields are no longer supported for ordering
         self.get(url, data={'ordering': 'test_name'}, expected_code=200)
 
