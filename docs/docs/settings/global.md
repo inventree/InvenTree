@@ -23,6 +23,7 @@ Configuration of basic server settings:
 | ---- | ----------- | ------- | ----- |
 {{ globalsetting("INVENTREE_BASE_URL") }}
 {{ globalsetting("INVENTREE_COMPANY_NAME") }}
+{{ globalsetting("INVENTREE_DEFAULT_INTERNAL_COMPANY") }}
 {{ globalsetting("INVENTREE_INSTANCE") }}
 {{ globalsetting("INVENTREE_INSTANCE_TITLE") }}
 {{ globalsetting("INVENTREE_INSTANCE_ID", default="Randomly generated value") }}

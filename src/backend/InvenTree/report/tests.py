@@ -67,6 +67,23 @@ class ReportTest(InvenTreeAPITestCase):
 
         return super().setUp()
 
+    def test_internal_company_context(self):
+        """Test that the default internal company is available in the base context."""
+        from company.models import Company
+
+        template = ReportTemplate.objects.first()
+        self.assertIsNone(template.base_context()['internal_company'])
+
+        company = Company.objects.create(
+            name='Our Company', is_supplier=False, is_internal=True
+        )
+
+        # Value is cached against the template instance
+        self.assertIsNone(template.base_context()['internal_company'])
+
+        template = ReportTemplate.objects.get(pk=template.pk)
+        self.assertEqual(template.base_context()['internal_company'], company)
+
     def test_list_endpoint(self):
         """Test that the LIST endpoint works for each report."""
         url = reverse('api-report-template-list')
