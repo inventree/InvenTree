@@ -23,7 +23,7 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from common.currency import currency_codes
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
-from company.models import Company, Contact, SupplierPart, SupplierPriceBreak
+from company.models import Address, Company, Contact, SupplierPart, SupplierPriceBreak
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
 from order.models import SalesOrderAllocation, SalesOrderLineItem, SalesOrderShipment
@@ -586,6 +586,135 @@ class PurchaseOrderTest(OrderTest):
 
         # Revert the setting to its previous value
         set_global_setting('PURCHASEORDER_DEFAULT_RECEIVE_LOCATION', '')
+
+    def test_po_receiving_company(self):
+        """Test the default and validation of the 'receiving_company' field."""
+        self.assignRole('purchase_order.add')
+        self.assignRole('purchase_order.change')
+
+        url = reverse('api-po-list')
+
+        data = {
+            'reference': 'PO-99991001',
+            'supplier': 1,
+            'description': 'A test purchase order',
+        }
+
+        # No internal companies exist - no default is assigned
+        self.assertFalse(Company.objects.filter(is_internal=True).exists())
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', '')
+
+        response = self.options(url, expected_code=200)
+        self.assertNotIn(
+            'default', response.data['actions']['POST']['receiving_company']
+        )
+        self.assertEqual(
+            response.data['actions']['POST']['receiving_company']['filters'],
+            {'is_internal': True},
+        )
+
+        response = self.post(url, data, expected_code=201)
+        self.assertIsNone(response.data['receiving_company'])
+
+        # A single internal company is auto-selected
+        alpha = Company.objects.create(name='Alpha Internal', is_internal=True)
+
+        response = self.options(url, expected_code=200)
+        self.assertEqual(
+            response.data['actions']['POST']['receiving_company']['default'], alpha.pk
+        )
+
+        data['reference'] = 'PO-99991002'
+        response = self.post(url, data, expected_code=201)
+        self.assertEqual(response.data['receiving_company'], alpha.pk)
+
+        # Multiple internal companies, with no system default - no default is assigned
+        beta = Company.objects.create(name='Beta Internal', is_internal=True)
+
+        response = self.options(url, expected_code=200)
+        self.assertNotIn(
+            'default', response.data['actions']['POST']['receiving_company']
+        )
+
+        data['reference'] = 'PO-99991003'
+        response = self.post(url, data, expected_code=201)
+        self.assertIsNone(response.data['receiving_company'])
+
+        # The system default internal company is used
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', beta.pk)
+
+        response = self.options(url, expected_code=200)
+        self.assertEqual(
+            response.data['actions']['POST']['receiving_company']['default'], beta.pk
+        )
+
+        data['reference'] = 'PO-99991004'
+        response = self.post(url, data, expected_code=201)
+        self.assertEqual(response.data['receiving_company'], beta.pk)
+
+        # An explicitly provided receiving company takes priority
+        data['reference'] = 'PO-99991005'
+        data['receiving_company'] = alpha.pk
+        response = self.post(url, data, expected_code=201)
+        self.assertEqual(response.data['receiving_company'], alpha.pk)
+
+        po_url = reverse('api-po-detail', kwargs={'pk': response.data['pk']})
+
+        # An explicit null value is respected
+        data['reference'] = 'PO-99991006'
+        data['receiving_company'] = None
+        response = self.post(url, data, expected_code=201)
+        self.assertIsNone(response.data['receiving_company'])
+
+        # The callable default is also applied when creating an order directly
+        po = models.PurchaseOrder.objects.create(
+            reference='PO-99991007', supplier=Company.objects.get(pk=1)
+        )
+        self.assertEqual(po.receiving_company, beta)
+
+        # A non-internal company cannot be selected
+        supplier = Company.objects.get(pk=1)
+        self.assertFalse(supplier.is_internal)
+        self.patch(po_url, {'receiving_company': supplier.pk}, expected_code=400)
+
+        # The delivery address must match the receiving company
+        alpha_address = Address.objects.create(company=alpha, title='Alpha HQ')
+        beta_address = Address.objects.create(company=beta, title='Beta HQ')
+
+        response = self.patch(
+            po_url, {'delivery_address': beta_address.pk}, expected_code=400
+        )
+        self.assertIn(
+            'Delivery address does not match selected receiving company',
+            str(response.data),
+        )
+
+        response = self.patch(
+            po_url, {'delivery_address': alpha_address.pk}, expected_code=200
+        )
+        self.assertEqual(response.data['delivery_address'], alpha_address.pk)
+        self.assertEqual(
+            response.data['delivery_address_detail']['pk'], alpha_address.pk
+        )
+
+        # Changing the company without changing the address is rejected
+        self.patch(po_url, {'receiving_company': beta.pk}, expected_code=400)
+
+        response = self.patch(
+            po_url,
+            {'receiving_company': beta.pk, 'delivery_address': beta_address.pk},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['receiving_company'], beta.pk)
+
+        # A delivery address cannot be specified without a receiving company
+        response = self.patch(po_url, {'receiving_company': None}, expected_code=400)
+        self.assertIn(
+            'Receiving company must be specified when a delivery address is provided',
+            str(response.data),
+        )
+
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', '')
 
     def test_po_creation_date(self):
         """Test that we can create set the creation_date field of PurchaseOrder via the API."""

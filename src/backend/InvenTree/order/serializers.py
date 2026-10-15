@@ -401,7 +401,10 @@ class PurchaseOrderSerializer(
             'total_price',
             'order_currency',
             'destination',
+            'receiving_company',
+            'receiving_company_detail',
             'delivery_address',
+            'delivery_address_detail',
             'updated_at',
         ])
         read_only_fields = [
@@ -487,6 +490,29 @@ class PurchaseOrderSerializer(
             'allow_null': True,
         },
         prefetch_fields=['supplier'],
+    )
+
+    receiving_company_detail = OptionalField(
+        serializer_class=CompanyBriefSerializer,
+        serializer_kwargs={
+            'source': 'receiving_company',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        prefetch_fields=['receiving_company'],
+    )
+
+    delivery_address_detail = OptionalField(
+        serializer_class=AddressBriefSerializer,
+        serializer_kwargs={
+            'source': 'delivery_address',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['delivery_address'],
     )
 
 

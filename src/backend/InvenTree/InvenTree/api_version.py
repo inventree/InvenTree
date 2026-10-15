@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 557
 INVENTREE_API_TEXT = """
 
 v557 -> 2026-10-15 : https://github.com/inventree/InvenTree/pull/9768
-    - Adds "delivery_company" and "delivery_address" fields to the PurchaseOrder API endpoint
+    - Adds "receiving_company" and "delivery_address" fields to the PurchaseOrder API endpoint
 
 v556 -> 2026-10-14 : https://github.com/inventree/InvenTree/pull/13017
     - Adds 'is_internal' field (and filter) to the Company API endpoint

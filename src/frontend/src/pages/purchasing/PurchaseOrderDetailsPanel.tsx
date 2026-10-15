@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack, Text } from '@mantine/core';
 import { useMemo } from 'react';
 
 import TagsList from '@lib/components/TagsList';
@@ -16,6 +16,7 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { LineItemOverviewTable } from '../../components/details/LineItemOverviewTable';
 import { useParameterDetailsGrid } from '../../components/details/ParameterDetailsGrid';
+import { RenderAddress } from '../../components/render/Company';
 import { formatCurrency } from '../../defaults/formatters';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 
@@ -100,6 +101,27 @@ export function PurchaseOrderDetailsPanel({
       name: 'destination',
       label: t`Destination`,
       hidden: !instance?.destination
+    },
+    {
+      type: 'link',
+      model: ModelType.company,
+      name: 'receiving_company',
+      label: t`Receiving Company`,
+      icon: 'internal_company',
+      hidden: !instance?.receiving_company
+    },
+    {
+      type: 'text',
+      name: 'delivery_address',
+      label: t`Delivery Address`,
+      icon: 'address',
+      hidden: !instance?.receiving_company && !instance?.delivery_address,
+      value_formatter: () =>
+        instance?.delivery_address_detail ? (
+          <RenderAddress instance={instance.delivery_address_detail} />
+        ) : (
+          <Text size='sm' c='red'>{t`Not specified`}</Text>
+        )
     },
     {
       type: 'text',

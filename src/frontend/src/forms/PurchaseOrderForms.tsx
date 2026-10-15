@@ -14,6 +14,7 @@ import {
 import { useDisclosure, useId } from '@mantine/hooks';
 import {
   IconAddressBook,
+  IconBuildingSkyscraper,
   IconCalendar,
   IconCoins,
   IconCurrencyDollar,
@@ -254,6 +255,8 @@ export function usePurchaseOrderFields({
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
 
+  const [receivingCompany, setReceivingCompany] = useState<number | null>(null);
+
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       reference: {
@@ -317,8 +320,25 @@ export function usePurchaseOrderFields({
           };
         }
       },
+      receiving_company: {
+        icon: <IconBuildingSkyscraper />,
+        filters: {
+          is_internal: true,
+          active: true
+        },
+        onValueChange: (value: any) => {
+          setReceivingCompany(value || null);
+        }
+      },
       delivery_address: {
-        icon: <IconAddressBook />
+        icon: <IconAddressBook />,
+        disabled: !receivingCompany,
+        adjustFilters: (value: ApiFormAdjustFilterType) => {
+          return {
+            ...value.filters,
+            company: value.data.receiving_company
+          };
+        }
       },
       responsible: {
         filters: {
@@ -349,7 +369,7 @@ export function usePurchaseOrderFields({
     }
 
     return fields;
-  }, [duplicateOrderId, supplierId, create, globalSettings]);
+  }, [duplicateOrderId, supplierId, create, globalSettings, receivingCompany]);
 }
 
 /**
