@@ -10,6 +10,7 @@ import {
   type SetStateAction,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react';
 import { api } from '../../App';
@@ -33,6 +34,7 @@ export function FirstUseTour() {
   const { user, done_tips, setTips } = useUserState();
   const hasCompletedFtu = done_tips?.includes(ftuKex) ?? false;
   const [active, setActive] = useState(false);
+  const nudgeShown = useRef(false);
   const globalSettings = useGlobalSettingsState();
   const userSettings = useUserSettingsState();
   const { ftuShown, setFtuShown } = useServerApiState();
@@ -137,7 +139,8 @@ export function FirstUseTour() {
   useEffect(() => {
     if (showNudge && !active) {
       // session deduplication
-      if (ftuShown) return;
+      if (nudgeShown.current || ftuShown) return;
+      nudgeShown.current = true;
       setFtuShown(true);
 
       notifications.show({
