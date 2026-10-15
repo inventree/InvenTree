@@ -18,7 +18,7 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 import order.tasks
 from common.models import InvenTreeSetting, NotificationMessage
 from common.settings import set_global_setting
-from company.models import Address, Company
+from company.models import Address, Company, Contact
 from InvenTree import status_codes as status
 from InvenTree.unit_test import (
     InvenTreeAPITestCase,
@@ -859,6 +859,36 @@ class SalesOrderTest(InvenTreeAPITestCase):
         self.assertIn(
             'Shipment address must match the customer', err.exception.messages
         )
+
+    def test_shipment_contact(self):
+        """Unit tests for SalesOrderShipment contact field."""
+        shipment = SalesOrderShipment.objects.first()
+        self.assertIsNotNone(shipment)
+        self.assertIsNone(shipment.contact)
+
+        contact = Contact.objects.create(
+            company=shipment.order.customer, name='Shipment Contact'
+        )
+
+        shipment.contact = contact
+        shipment.clean()
+        shipment.save()
+
+        shipment.refresh_from_db()
+        self.assertEqual(shipment.contact, contact)
+
+        # Contact must belong to the order customer
+        other_company = Company.objects.exclude(pk=shipment.order.customer.pk).first()
+        self.assertIsNotNone(other_company)
+
+        shipment.contact = Contact.objects.create(
+            company=other_company, name='Other Contact'
+        )
+
+        with self.assertRaises(ValidationError) as err:
+            shipment.clean()
+
+        self.assertIn('Contact does not match the customer', err.exception.messages)
 
     def test_overdue_notification(self):
         """Test overdue sales order notification."""

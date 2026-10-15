@@ -1443,6 +1443,7 @@ class SalesOrderShipmentSerializer(
             'allocated_items',
             'shipment_date',
             'shipment_address',
+            'contact',
             'delivery_date',
             'checked_by',
             'duplicate',
@@ -1454,6 +1455,7 @@ class SalesOrderShipmentSerializer(
             # Extra detail fields
             'parameters',
             'checked_by_detail',
+            'contact_detail',
             'customer_detail',
             'order_detail',
             'shipment_address_detail',
@@ -1523,6 +1525,18 @@ class SalesOrderShipmentSerializer(
         },
         default_include=True,
         prefetch_fields=['shipment_address'],
+    )
+
+    contact_detail = OptionalField(
+        serializer_class=ContactSerializer,
+        serializer_kwargs={
+            'source': 'contact',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['contact'],
     )
 
     parameters = common.filters.enable_parameters_filter()

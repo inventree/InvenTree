@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-13 12:12\n"
+"PO-Revision-Date: 2026-10-13 23:06\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -3310,15 +3310,15 @@ msgstr "Sobre"
 
 #: src/components/nav/NavigationTree.tsx:402
 msgid "Unpin"
-msgstr ""
+msgstr "Desafixar"
 
 #: src/components/nav/NavigationTree.tsx:402
 msgid "Pin"
-msgstr ""
+msgstr "Fixar"
 
 #: src/components/nav/NavigationTree.tsx:419
 msgid "Filter {title}..."
-msgstr ""
+msgstr "Filtrar {title}..."
 
 #: src/components/nav/NavigationTree.tsx:429
 msgid "Clear search"
@@ -11460,7 +11460,7 @@ msgstr "Remover estoque alocado"
 
 #: src/tables/build/BuildLineTable.tsx:83
 msgid "Allocated part differs from the BOM part"
-msgstr ""
+msgstr "A peça alocada difere da peça da BOM"
 
 #: src/tables/build/BuildLineTable.tsx:183
 msgid "View Stock Item"

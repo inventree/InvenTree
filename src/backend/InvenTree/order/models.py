@@ -2650,6 +2650,7 @@ class SalesOrderShipment(
     Attributes:
         order: SalesOrder reference
         shipment_address: Shipping address for this shipment (optional)
+        contact: Point of contact for this shipment (optional)
         shipment_date: Date this shipment was "shipped" (or null)
         checked_by: User reference field indicating who checked this order
         reference: Custom reference text for this shipment (e.g. consignment number?)
@@ -2671,7 +2672,7 @@ class SalesOrderShipment(
         """Custom clean method for the SalesOrderShipment class.
 
         Raises:
-            ValidationError: If the shipment address does not match the customer
+            ValidationError: If the shipment address or contact does not match the customer
         """
         super().clean()
 
@@ -2679,6 +2680,12 @@ class SalesOrderShipment(
             if self.shipment_address.company != self.order.customer:
                 raise ValidationError({
                     'shipment_address': _('Shipment address must match the customer')
+                })
+
+        if self.order and self.contact:
+            if self.contact.company != self.order.customer:
+                raise ValidationError({
+                    'contact': _('Contact does not match the customer')
                 })
 
     @staticmethod
@@ -2715,6 +2722,16 @@ class SalesOrderShipment(
         null=True,
         verbose_name=_('Address'),
         help_text=_('Shipping address for this shipment'),
+        related_name='+',
+    )
+
+    contact = models.ForeignKey(
+        Contact,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Contact'),
+        help_text=_('Point of contact for this shipment'),
         related_name='+',
     )
 
