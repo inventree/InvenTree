@@ -255,6 +255,7 @@ export function usePurchaseOrderFields({
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
 
+  const [supplier, setSupplier] = useState<number | null>(supplierId ?? null);
   const [receivingCompany, setReceivingCompany] = useState<number | null>(null);
 
   return useMemo(() => {
@@ -269,6 +270,9 @@ export function usePurchaseOrderFields({
         filters: {
           is_supplier: true,
           active: true
+        },
+        onValueChange: (value: any) => {
+          setSupplier(value || null);
         },
         addCreateFields: {
           name: {},
@@ -304,6 +308,7 @@ export function usePurchaseOrderFields({
       link: {},
       contact: {
         icon: <IconUser />,
+        disabled: !supplier,
         adjustFilters: (value: ApiFormAdjustFilterType) => {
           return {
             ...value.filters,
@@ -313,6 +318,7 @@ export function usePurchaseOrderFields({
       },
       address: {
         icon: <IconAddressBook />,
+        disabled: !supplier,
         adjustFilters: (value: ApiFormAdjustFilterType) => {
           return {
             ...value.filters,
@@ -369,7 +375,14 @@ export function usePurchaseOrderFields({
     }
 
     return fields;
-  }, [duplicateOrderId, supplierId, create, globalSettings, receivingCompany]);
+  }, [
+    duplicateOrderId,
+    supplierId,
+    create,
+    globalSettings,
+    supplier,
+    receivingCompany
+  ]);
 }
 
 /**

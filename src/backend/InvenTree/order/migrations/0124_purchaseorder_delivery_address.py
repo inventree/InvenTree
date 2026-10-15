@@ -31,4 +31,9 @@ class Migration(migrations.Migration):
             name='receiving_company',
             field=models.ForeignKey(blank=True, default=company.models.default_internal_company, help_text='Internal company which is receiving the items', limit_choices_to={'is_internal': True}, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='receiving_purchase_orders', to='company.company', verbose_name='Receiving Company'),
         ),
+        migrations.AlterField(
+            model_name='purchaseorder',
+            name='address',
+            field=models.ForeignKey(blank=True, help_text='Supplier address for this order', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='company.address', verbose_name='Supplier Address'),
+        ),
     ]

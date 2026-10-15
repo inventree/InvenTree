@@ -783,6 +783,16 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Accessor helper for Order base class."""
         return self.supplier
 
+    address = models.ForeignKey(
+        Address,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Supplier Address'),
+        help_text=_('Supplier address for this order'),
+        related_name='+',
+    )
+
     supplier_reference = models.CharField(
         max_length=64,
         blank=True,

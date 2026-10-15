@@ -114,6 +114,17 @@ class PurchaseOrderTest(OrderTest):
                 self.assertIn(k, field_data)
                 self.assertEqual(field_data[k], v)
 
+        # Checks for the 'address' field
+        check_options(
+            post,
+            'address',
+            {
+                'type': 'related field',
+                'label': 'Supplier Address',
+                'help_text': 'Supplier address for this order',
+            },
+        )
+
         # Checks for the 'order_currency' field
         check_options(
             post,
