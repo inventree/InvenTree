@@ -16,7 +16,7 @@ from InvenTree.serializers import (
     OptionalField,
 )
 
-from .models import ApiToken, Owner, RuleSet, UserProfile
+from .models import ApiToken, Owner, RuleSet, TipResult, UserProfile
 from .permissions import check_user_role, prefetch_rule_sets
 from .ruleset import RULESET_CHOICES, RULESET_PERMISSIONS, RuleSetEnum
 
@@ -183,6 +183,17 @@ class UserProfileSerializer(BriefUserProfileSerializer):
         ]
 
 
+class TipResultSerializer(InvenTreeModelSerializer):
+    """Serializer for the TipResult model."""
+
+    class Meta:
+        """Meta options for TipResultSerializer."""
+
+        model = TipResult
+        fields = ['pk', 'tip_id', 'shown', 'finished', 'updated']
+        read_only_fields = ['pk', 'tip_id', 'updated']
+
+
 class UserSerializer(InvenTreeModelSerializer):
     """Serializer for a User."""
 
@@ -336,9 +347,10 @@ class ExtendedUserSerializer(UserSerializer):
             'is_superuser',
             'is_active',
             'profile',
+            'tips',
         ]
 
-        read_only_fields = [*UserSerializer.Meta.read_only_fields, 'groups']
+        read_only_fields = [*UserSerializer.Meta.read_only_fields, 'groups', 'tips']
 
     # 'group_ids' is a write-only serializer field which does not exist on the model
     SKIP_CREATE_FIELDS = ['group_ids']
@@ -365,6 +377,15 @@ class ExtendedUserSerializer(UserSerializer):
     )
 
     profile = BriefUserProfileSerializer(many=False, read_only=True)
+
+    tips = serializers.SerializerMethodField()
+
+    def get_tips(self, user: User) -> list[dict]:
+        """Return the user's known tip results, creating missing records first."""
+        TipResult.backfill(user)
+        return TipResultSerializer(
+            user.tip_results.all(), many=True, context=self.context
+        ).data
 
     def validate_is_superuser(self, value):
         """Only a superuser account can adjust this value!"""
@@ -430,6 +451,7 @@ class MeUserSerializer(FilterableSerializerMixin, ExtendedUserSerializer):
             *(f for f in ExtendedUserSerializer.Meta.fields if f != 'group_ids'),
             'roles',
             'permissions',
+            'tips',
         ]
 
         read_only_fields = [
