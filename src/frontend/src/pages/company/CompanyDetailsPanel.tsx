@@ -83,6 +83,13 @@ export function CompanyDetailsPanel({
       name: 'is_customer',
       label: t`Customer`,
       icon: 'customers'
+    },
+    {
+      type: 'boolean',
+      name: 'is_internal',
+      label: t`Internal`,
+      icon: 'internal_company',
+      hidden: !instance?.is_internal
     }
   ];
 
