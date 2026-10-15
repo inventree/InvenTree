@@ -76,12 +76,17 @@ class PartRelatedAdmin(admin.ModelAdmin):
 class PartTestTemplateAdmin(admin.ModelAdmin):
     """Admin class for the PartTestTemplate model."""
 
-    list_display = ('part', 'test_name', 'required')
+    list_display = ['test_name']
     readonly_fields = ['key']
+    search_fields = ['test_name']
 
-    search_fields = ['part__name', 'test_name', 'description']
 
-    autocomplete_fields = ('part',)
+@admin.register(models.PartTest)
+class PartTestAdmin(admin.ModelAdmin):
+    """Admin class for the PartTest model."""
+
+    list_display = ('template', 'part', 'category', 'enabled', 'required')
+    autocomplete_fields = ('part', 'category', 'template')
 
 
 @admin.register(models.BomItem)

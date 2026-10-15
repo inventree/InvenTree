@@ -26,6 +26,7 @@ from InvenTree.config import get_testfolder_dir
 from InvenTree.unit_test import (
     InvenTreeAPIPerformanceTestCase,
     InvenTreeAPITestCase,
+    create_part_test,
     findOffloadedEvent,
     findOffloadedTask,
 )
@@ -1790,9 +1791,9 @@ class PartCreationTests(PartAPITestBase):
 
         # Create some test templates against this part
         for key in ['A', 'B', 'C']:
-            PartTestTemplate.objects.create(
-                part=base_part,
-                test_name=f'Test {key}',
+            create_part_test(
+                base_part,
+                f'Test {key}',
                 description=f'Test template {key} for duplication',
             )
 
@@ -1831,7 +1832,7 @@ class PartCreationTests(PartAPITestBase):
             self.assertEqual(part.bom_items.count(), 4 if do_copy else 0)
             self.assertEqual(part.notes.count(), 1 if do_copy else 0)
             self.assertEqual(part.parameters.count(), 2 if do_copy else 0)
-            self.assertEqual(part.test_templates.count(), 3 if do_copy else 0)
+            self.assertEqual(part.tests.count(), 3 if do_copy else 0)
 
     def test_category_parameters(self):
         """Test that category parameters are correctly applied."""
@@ -3715,42 +3716,174 @@ class PartTestTemplateTest(PartAPITestBase):
         response = self.get(url)
         self.assertEqual(len(response.data), 9)
 
-        # Request for a particular part
+        # Request for a particular part (includes inherited templates)
         response = self.get(url, data={'part': 10000})
         self.assertEqual(len(response.data), 5)
 
         response = self.get(url, data={'part': 10004})
         self.assertEqual(len(response.data), 6)
 
+        response = self.get(url, data={'part': 10004, 'include_inherited': False})
+        self.assertEqual(len(response.data), 0)
+
         # Try to post a new object (missing description)
         response = self.post(
-            url,
-            data={'part': 10000, 'test_name': 'My very first test', 'required': False},
-            expected_code=400,
+            url, data={'test_name': 'My very first test'}, expected_code=400
         )
 
         # Try to post a new object (should succeed)
         response = self.post(
             url,
-            data={
-                'part': 10000,
-                'test_name': 'New Test',
-                'required': True,
-                'description': 'a test description',
-            },
+            data={'test_name': 'New Test', 'description': 'a test description'},
+            expected_code=201,
         )
 
-        # Try to post a new test with the same name (should fail)
+        # Try to post a new test with the same key (should fail)
         response = self.post(
             url,
-            data={'part': 10004, 'test_name': '   newtest', 'description': 'dafsdf'},
+            data={'test_name': '   newtest', 'description': 'dafsdf'},
             expected_code=400,
         )
 
-        # Try to post a new test against a non-testable part (should fail)
-        response = self.post(
-            url, data={'part': 1, 'test_name': 'A simple test'}, expected_code=400
+        # The error message should only be reported once
+        self.assertEqual(
+            response.data['test_name'],
+            ['Test template with the same key already exists'],
         )
+
+        # Legacy fields are no longer supported for ordering
+        self.get(url, data={'ordering': 'test_name'}, expected_code=200)
+
+    def test_part_tests(self):
+        """Test the PartTest API."""
+        url = reverse('api-part-test-list')
+
+        # List ALL items
+        response = self.get(url)
+        self.assertEqual(len(response.data), 9)
+
+        for key in ['pk', 'template', 'part', 'enabled', 'required']:
+            self.assertIn(key, response.data[0])
+
+        self.assertIn('test_name', response.data[0]['template_detail'])
+        self.assertIn('name', response.data[0]['part_detail'])
+
+        # Direct filter by part
+        response = self.get(url, data={'part': 10004})
+        self.assertEqual(len(response.data), 0)
+
+        # Filter by tests which apply to a part (including inherited tests)
+        response = self.get(url, data={'for_part': 10004})
+        self.assertEqual(len(response.data), 6)
+
+        response = self.get(url, data={'for_part': 10004, 'required': True})
+        self.assertEqual(len(response.data), 5)
+
+        response = self.get(url, data={'for_part': 10003, 'include_inherited': False})
+        self.assertEqual(len(response.data), 1)
+
+        # Override an inherited test for the variant part
+        template = PartTestTemplate.objects.get(key='applypaint')
+
+        response = self.post(
+            url,
+            data={'template': template.pk, 'part': 10004, 'enabled': False},
+            expected_code=201,
+        )
+
+        test_id = response.data['pk']
+
+        # Only the most specific test is returned for each template
+        response = self.get(url, data={'for_part': 10004})
+        self.assertEqual(len(response.data), 6)
+
+        response = self.get(url, data={'for_part': 10004, 'enabled': True})
+        self.assertEqual(len(response.data), 5)
+
+        # The parent part is unaffected
+        response = self.get(url, data={'for_part': 10000, 'enabled': True})
+        self.assertEqual(len(response.data), 5)
+
+        # Cannot link the same template to the same part twice
+        self.post(url, data={'template': template.pk, 'part': 10004}, expected_code=400)
+
+        # Cannot create a test for a non-testable part
+        part = Part.objects.get(pk=1)
+        part.testable = False
+        part.save()
+
+        self.post(url, data={'template': template.pk, 'part': 1}, expected_code=400)
+
+        # Edit and delete the test
+        detail_url = reverse('api-part-test-detail', kwargs={'pk': test_id})
+
+        response = self.patch(detail_url, data={'required': False}, expected_code=200)
+        self.assertFalse(response.data['required'])
+
+        self.delete(detail_url, expected_code=204)
+
+        response = self.get(url, data={'for_part': 10004, 'enabled': True})
+        self.assertEqual(len(response.data), 6)
+
+    def test_category_tests(self):
+        """Test the PartTest API with category-level tests."""
+        url = reverse('api-part-test-list')
+
+        template = PartTestTemplate.objects.create(
+            test_name='Category test', description='Applies to a category'
+        )
+
+        # Create a category-level test via the API
+        response = self.post(
+            url, data={'template': template.pk, 'category': 7}, expected_code=201
+        )
+
+        self.assertIsNone(response.data['part'])
+        self.assertEqual(response.data['category'], 7)
+        self.assertEqual(response.data['category_detail']['name'], 'Mechanical')
+
+        # Cannot link the same template to the same category twice
+        self.post(url, data={'template': template.pk, 'category': 7}, expected_code=400)
+
+        # Cannot link to both a part and a category
+        self.post(
+            url,
+            data={'template': template.pk, 'category': 8, 'part': 10004},
+            expected_code=400,
+        )
+
+        # Must link to either a part or a category
+        self.post(url, data={'template': template.pk}, expected_code=400)
+
+        # Direct filter by category
+        response = self.get(url, data={'category': 7})
+        self.assertEqual(len(response.data), 1)
+
+        # Tests which apply to a category (including parent categories)
+        response = self.get(url, data={'for_category': 8})
+        self.assertEqual(len(response.data), 1)
+
+        response = self.get(url, data={'for_category': 8, 'include_inherited': False})
+        self.assertEqual(len(response.data), 0)
+
+        # The category test is inherited by parts in the category
+        response = self.get(url, data={'for_part': 10004})
+        self.assertEqual(len(response.data), 7)
+
+        response = self.get(url, data={'for_part': 10004, 'include_inherited': False})
+        self.assertEqual(len(response.data), 0)
+
+    def test_part_test_permissions(self):
+        """Test that the PartTest API requires part permissions."""
+        url = reverse('api-part-test-list')
+
+        template = PartTestTemplate.objects.get(key='applypaint')
+
+        self.clearRoles()
+        self.assignRole('part.view')
+
+        self.get(url, expected_code=200)
+        self.post(url, data={'template': template.pk, 'part': 10004}, expected_code=403)
 
     def test_choices(self):
         """Test the 'choices' field for the PartTestTemplate model."""
@@ -3765,7 +3898,6 @@ class PartTestTemplateTest(PartAPITestBase):
 
         self.assertTrue(options['pk']['read_only'])
         self.assertFalse(options['pk']['required'])
-        self.assertEqual(options['part']['api_url'], '/api/part/')
         self.assertTrue(options['test_name']['required'])
         self.assertFalse(options['test_name']['read_only'])
         self.assertFalse(options['choices']['required'])
@@ -3779,17 +3911,7 @@ class PartTestTemplateTest(PartAPITestBase):
         response = self.get(url)
         data = response.data
 
-        for key in [
-            'pk',
-            'key',
-            'part',
-            'test_name',
-            'description',
-            'enabled',
-            'required',
-            'results',
-            'choices',
-        ]:
+        for key in ['pk', 'key', 'test_name', 'description', 'results', 'choices']:
             self.assertIn(key, data)
 
         # Patch with invalid choices

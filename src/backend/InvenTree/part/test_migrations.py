@@ -156,3 +156,174 @@ class TestPartParameterDeletion(MigratorTestCase):
             self.assertEqual(new_template.name, old_template.name)
             self.assertEqual(new_template.description, old_template.description)
             self.assertTrue(new_template.enabled)
+
+
+class TestPartTestMigration(MigratorTestCase):
+    """Test migration of PartTestTemplate entries to the PartTest model.
+
+    - Each PartTestTemplate is linked to a Part via a new PartTest entry
+    - Templates which share a key are merged into a single template
+    - Test results are re-pointed to the merged template
+    """
+
+    migrate_from = ('part', '0154_remove_part_notes')
+    migrate_to = ('part', '0157_remove_parttesttemplate_part')
+
+    def prepare(self):
+        """Create initial test templates and results."""
+        Part = self.old_state.apps.get_model('part', 'part')
+        PartTestTemplate = self.old_state.apps.get_model('part', 'parttesttemplate')
+        StockItem = self.old_state.apps.get_model('stock', 'stockitem')
+        StockItemTestResult = self.old_state.apps.get_model(
+            'stock', 'stockitemtestresult'
+        )
+
+        tree = {'tree_id': 0, 'level': 0, 'lft': 0, 'rght': 0}
+
+        a = Part.objects.create(name='A', testable=True, is_template=True, **tree)
+        b = Part.objects.create(name='B', testable=True, **tree)
+        v = Part.objects.create(name='V', testable=True, variant_of=a, **tree)
+
+        def template(part, test_name, key, **kwargs):
+            return PartTestTemplate.objects.create(
+                part=part, test_name=test_name, key=key, **kwargs
+            )
+
+        # Duplicate key 'paint' - differing flags
+        t1 = template(a, 'Paint', 'paint', required=True)
+        t2 = template(
+            b,
+            'Paint',
+            'paint',
+            required=False,
+            enabled=False,
+            requires_value=True,
+            choices='Red, Blue',
+        )
+
+        # Duplicate key 'weight' - differing choices
+        t3 = template(a, 'Weight', 'weight', choices='Light, Heavy')
+        t4 = template(
+            b, 'weight', 'weight', choices='Heavy,Medium', requires_attachment=True
+        )
+
+        # Unique template
+        t5 = template(v, 'Unique', 'unique', description='A unique test')
+
+        self.template_ids = [t.pk for t in [t1, t2, t3, t4, t5]]
+        self.part_ids = {'a': a.pk, 'b': b.pk, 'v': v.pk}
+
+        item_a = StockItem.objects.create(part=a, quantity=1)
+        item_b = StockItem.objects.create(part=b, quantity=1)
+
+        for item, tmp in [(item_a, t1), (item_b, t2), (item_a, t3), (item_b, t4)]:
+            StockItemTestResult.objects.create(
+                stock_item=item, template=tmp, result=True
+            )
+
+        self.assertEqual(PartTestTemplate.objects.count(), 5)
+        self.assertEqual(StockItemTestResult.objects.count(), 4)
+
+    def test_migration(self):
+        """Test that templates were merged and PartTest entries created."""
+        PartTestTemplate = self.new_state.apps.get_model('part', 'parttesttemplate')
+        PartTest = self.new_state.apps.get_model('part', 'parttest')
+        StockItemTestResult = self.new_state.apps.get_model(
+            'stock', 'stockitemtestresult'
+        )
+
+        t1, t2, t3, t4, t5 = self.template_ids
+        a, b, v = self.part_ids['a'], self.part_ids['b'], self.part_ids['v']
+
+        # Duplicates have been removed
+        self.assertEqual(PartTestTemplate.objects.count(), 3)
+        self.assertFalse(PartTestTemplate.objects.filter(pk__in=[t2, t4]).exists())
+
+        # No results have been lost, and all point to the kept templates
+        self.assertEqual(StockItemTestResult.objects.count(), 4)
+        self.assertEqual(StockItemTestResult.objects.filter(template=t1).count(), 2)
+        self.assertEqual(StockItemTestResult.objects.filter(template=t3).count(), 2)
+
+        # 'paint' - flags are merged, t1 was unrestricted so choices remain empty
+        paint = PartTestTemplate.objects.get(pk=t1)
+        self.assertTrue(paint.requires_value)
+        self.assertFalse(paint.requires_attachment)
+        self.assertEqual(paint.choices, '')
+
+        # 'weight' - choices are the ordered union, name from the kept template
+        weight = PartTestTemplate.objects.get(pk=t3)
+        self.assertEqual(weight.test_name, 'Weight')
+        self.assertEqual(weight.choices, 'Light, Heavy, Medium')
+        self.assertTrue(weight.requires_attachment)
+
+        unique = PartTestTemplate.objects.get(pk=t5)
+        self.assertEqual(unique.description, 'A unique test')
+
+        # One PartTest per original template, with the original flags
+        self.assertEqual(PartTest.objects.count(), 5)
+
+        test = PartTest.objects.get(template=t1, part=a)
+        self.assertTrue(test.enabled)
+        self.assertTrue(test.required)
+
+        test = PartTest.objects.get(template=t1, part=b)
+        self.assertFalse(test.enabled)
+        self.assertFalse(test.required)
+
+        self.assertTrue(PartTest.objects.filter(template=t3, part=a).exists())
+        self.assertTrue(PartTest.objects.filter(template=t3, part=b).exists())
+        self.assertTrue(PartTest.objects.filter(template=t5, part=v).exists())
+
+
+class TestPartTestReverseMigration(MigratorTestCase):
+    """Test reverse migration of PartTest entries back to PartTestTemplate."""
+
+    migrate_from = ('part', '0157_remove_parttesttemplate_part')
+    migrate_to = ('part', '0155_parttest')
+
+    def prepare(self):
+        """Create templates which are linked to multiple parts."""
+        Part = self.old_state.apps.get_model('part', 'part')
+        PartTestTemplate = self.old_state.apps.get_model('part', 'parttesttemplate')
+        PartTest = self.old_state.apps.get_model('part', 'parttest')
+
+        tree = {'tree_id': 0, 'level': 0, 'lft': 0, 'rght': 0}
+
+        a = Part.objects.create(name='A', testable=True, **tree)
+        b = Part.objects.create(name='B', testable=True, **tree)
+
+        shared = PartTestTemplate.objects.create(test_name='Shared', key='shared')
+        single = PartTestTemplate.objects.create(test_name='Single', key='single')
+
+        # Orphan template (no results) should be removed
+        PartTestTemplate.objects.create(test_name='Orphan', key='orphan')
+
+        PartTest.objects.create(template=shared, part=a, required=True)
+        PartTest.objects.create(template=shared, part=b, required=False, enabled=False)
+        PartTest.objects.create(template=single, part=b)
+
+        self.part_ids = {'a': a.pk, 'b': b.pk}
+
+    def test_reverse_migration(self):
+        """Each PartTest is converted back to a part-linked template."""
+        PartTestTemplate = self.new_state.apps.get_model('part', 'parttesttemplate')
+        PartTest = self.new_state.apps.get_model('part', 'parttest')
+
+        a, b = self.part_ids['a'], self.part_ids['b']
+
+        # PartTest entries have been transferred back to the templates
+        self.assertEqual(PartTest.objects.count(), 0)
+
+        self.assertEqual(PartTestTemplate.objects.count(), 3)
+        self.assertFalse(PartTestTemplate.objects.filter(key='orphan').exists())
+        self.assertFalse(PartTestTemplate.objects.filter(part__isnull=True).exists())
+
+        template = PartTestTemplate.objects.get(key='shared', part=a)
+        self.assertTrue(template.enabled)
+        self.assertTrue(template.required)
+
+        template = PartTestTemplate.objects.get(key='shared', part=b)
+        self.assertFalse(template.enabled)
+        self.assertFalse(template.required)
+
+        self.assertTrue(PartTestTemplate.objects.filter(key='single', part=b).exists())

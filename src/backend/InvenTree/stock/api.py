@@ -1476,13 +1476,35 @@ class StockItemTestResultFilter(FilterSet):
         label='Part', queryset=Part.objects.all(), field_name='stock_item__part'
     )
 
-    required = rest_filters.BooleanFilter(
-        label='Required', field_name='template__required'
-    )
+    required = rest_filters.BooleanFilter(label='Required', method='filter_required')
 
-    enabled = rest_filters.BooleanFilter(
-        label='Enabled', field_name='template__enabled'
-    )
+    def filter_required(self, queryset, name, value):
+        """Filter by whether the test is required for the stock item's part."""
+        return self.filter_part_tests(queryset, required=True, value=value)
+
+    enabled = rest_filters.BooleanFilter(label='Enabled', method='filter_enabled')
+
+    def filter_enabled(self, queryset, name, value):
+        """Filter by whether the test is enabled for the stock item's part."""
+        return self.filter_part_tests(queryset, enabled=True, value=value)
+
+    def filter_part_tests(self, queryset, value: bool, **kwargs):
+        """Filter test results against the PartTest entries for each stock item's part.
+
+        As PartTest entries are inherited (and may be overridden) through the part tree,
+        the matching templates are resolved for each distinct part in the queryset.
+        """
+        match = Q(pk__in=[])
+
+        part_ids = queryset.values_list('stock_item__part', flat=True).distinct()
+
+        for part in Part.objects.filter(pk__in=part_ids):
+            templates = part.getTestTemplates(**kwargs)
+            match |= Q(stock_item__part=part, template__in=templates)
+
+        if str2bool(value):
+            return queryset.filter(match)
+        return queryset.exclude(match)
 
     test = rest_filters.CharFilter(
         label='Test name (case insensitive)', method='filter_test_name'

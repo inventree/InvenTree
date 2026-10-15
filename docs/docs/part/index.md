@@ -61,7 +61,7 @@ If a part is designated as a *Component* it can be used as a sub-component of an
 
 ### Testable
 
-Testable parts can have test templates defined against the part, allowing test results to be recorded against any stock items for that part. For more information on testing, refer to the [testing documentation](./test.md).
+Testable parts can have tests linked to them (either directly, or inherited from a template part or part category), allowing test results to be recorded against any stock items for that part. For more information on testing, refer to the [testing documentation](./test.md).
 
 ### Trackable
 
@@ -100,6 +100,7 @@ Parts can be locked to prevent them from being modified. This is useful for part
 - Locked parts cannot be deleted
 - BOM items cannot be created, edited, or deleted when they are part of a locked assembly
 - Parameters linked to a locked part cannot be created, edited or deleted
+- [Tests](./test.md#locked-parts) linked directly to a locked part cannot be created, edited or deleted
 
 The part locking functionality can be enabled or disabled globally via the [Part Locking](../settings/global.md#parts) system setting (`PART_ENABLE_LOCKING`). When disabled, the locked state of a part is ignored and all operations are permitted.
 

@@ -29,7 +29,12 @@ import {
   RenderTransferOrder,
   RenderTransferOrderLineItem
 } from './Order';
-import { RenderPart, RenderPartCategory, RenderPartTestTemplate } from './Part';
+import {
+  RenderPart,
+  RenderPartCategory,
+  RenderPartTest,
+  RenderPartTestTemplate
+} from './Part';
 import { RenderPlugin } from './Plugin';
 import { RenderLabelTemplate, RenderReportTemplate } from './Report';
 import {
@@ -53,6 +58,7 @@ registerModelRenderers({
   [ModelType.owner]: RenderOwner,
   [ModelType.part]: RenderPart,
   [ModelType.partcategory]: RenderPartCategory,
+  [ModelType.parttest]: RenderPartTest,
   [ModelType.parttesttemplate]: RenderPartTestTemplate,
   [ModelType.projectcode]: RenderProjectCode,
   [ModelType.purchaseorder]: RenderPurchaseOrder,

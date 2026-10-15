@@ -1,21 +1,18 @@
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { Alert, Badge, Stack, Text } from '@mantine/core';
-import { IconLock } from '@tabler/icons-react';
+import { Alert, Badge, Text } from '@mantine/core';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
 import {
   type RowAction,
   RowDeleteAction,
+  RowDuplicateAction,
   RowEditAction
 } from '@lib/components/RowActions';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
-import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import { getDetailUrl } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
@@ -25,8 +22,6 @@ import {
   DescriptionColumn
 } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
-
-import { AppRowViewAction } from '../../components/tables/AppRowActions';
 import { TableHoverCard } from '../../components/tables/TableHoverCard';
 import {
   useCreateApiFormModal,
@@ -35,16 +30,9 @@ import {
 } from '../../hooks/UseForm';
 import { useUserState } from '../../states/UserState';
 
-export default function PartTestTemplateTable({
-  partId,
-  partLocked
-}: Readonly<{
-  partId: number;
-  partLocked?: boolean;
-}>) {
+export function TestTemplateTable() {
   const table = useTable('part-test-template');
   const user = useUserState();
-  const navigate = useNavigate();
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -55,22 +43,9 @@ export default function PartTestTemplateTable({
         render: (record: any) => {
           const extra: ReactNode[] = [];
 
-          if (record.part != partId) {
-            extra.push(
-              <Text size='sm'>{t`Test is defined for a parent template part`}</Text>
-            );
-          }
-
           return (
             <TableHoverCard
-              value={
-                <Text
-                  fw={record.required && 700}
-                  c={record.enabled ? undefined : 'red'}
-                >
-                  {record.test_name}
-                </Text>
-              }
+              value={<Text>{record.test_name}</Text>}
               title={t`Template Details`}
               extra={extra}
             />
@@ -89,17 +64,11 @@ export default function PartTestTemplateTable({
       DescriptionColumn({
         switchable: false
       }),
-      BooleanColumn({
-        accessor: 'enabled'
-      }),
       {
         accessor: 'choices',
         sortable: false,
         switchable: true
       },
-      BooleanColumn({
-        accessor: 'required'
-      }),
       BooleanColumn({
         accessor: 'requires_value'
       }),
@@ -107,20 +76,10 @@ export default function PartTestTemplateTable({
         accessor: 'requires_attachment'
       })
     ];
-  }, [partId]);
+  }, []);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
-      {
-        name: 'required',
-        label: t`Required`,
-        description: t`Show required tests`
-      },
-      {
-        name: 'enabled',
-        label: t`Enabled`,
-        description: t`Show enabled tests`
-      },
       {
         name: 'requires_value',
         label: t`Requires Value`,
@@ -132,11 +91,6 @@ export default function PartTestTemplateTable({
         description: t`Show tests that require an attachment`
       },
       {
-        name: 'include_inherited',
-        label: t`Include Inherited`,
-        description: t`Show tests from inherited templates`
-      },
-      {
         name: 'has_results',
         label: t`Has Results`,
         description: t`Show tests which have recorded results`
@@ -146,18 +100,13 @@ export default function PartTestTemplateTable({
 
   const partTestTemplateFields: ApiFormFieldSet = useMemo(() => {
     return {
-      part: {
-        hidden: !user.isStaff()
-      },
       test_name: {},
       description: {},
-      required: {},
       requires_value: {},
       requires_attachment: {},
-      choices: {},
-      enabled: {}
+      choices: {}
     };
-  }, [user]);
+  }, []);
 
   const newTestTemplate = useCreateApiFormModal({
     url: ApiEndpoints.part_test_template_list,
@@ -166,18 +115,32 @@ export default function PartTestTemplateTable({
       () => ({ ...partTestTemplateFields }),
       [partTestTemplateFields]
     ),
-    initialData: {
-      part: partId
-    },
+    initialData: {},
     table: table
   });
 
   const [selectedTest, setSelectedTest] = useState<number>(-1);
 
+  // Initial data for a duplicated test template
+  const [duplicateData, setDuplicateData] = useState<any>({});
+
+  const duplicateTestTemplate = useCreateApiFormModal({
+    url: ApiEndpoints.part_test_template_list,
+    title: t`Duplicate Test Template`,
+    preFormWarning: t`Test template names must be unique - enter a new name for the duplicated template`,
+    fields: useMemo(
+      () => ({ ...partTestTemplateFields }),
+      [partTestTemplateFields]
+    ),
+    initialData: duplicateData,
+    table: table
+  });
+
   const editTestTemplate = useEditApiFormModal({
     url: ApiEndpoints.part_test_template_list,
     pk: selectedTest,
     title: t`Edit Test Template`,
+    preFormWarning: t`Changes to this test template will affect all parts which use this template (including locked parts)`,
     table: table,
     fields: useMemo(
       () => ({ ...partTestTemplateFields }),
@@ -203,31 +166,33 @@ export default function PartTestTemplateTable({
 
   const rowActions = useCallback(
     (record: any): RowAction[] => {
+      const can_add = user.hasAddRole(UserRoles.part);
       const can_edit = user.hasChangeRole(UserRoles.part);
       const can_delete = user.hasDeleteRole(UserRoles.part);
 
-      if (record.part != partId) {
-        // This test is defined for a parent part
-        return [
-          AppRowViewAction({
-            title: t`View Parent Part`,
-            modelType: ModelType.part,
-            modelId: record.part,
-            navigate: navigate
-          })
-        ];
-      }
-
       return [
         RowEditAction({
-          hidden: partLocked || !can_edit,
+          hidden: !can_edit,
           onClick: () => {
             setSelectedTest(record.pk);
             editTestTemplate.open();
           }
         }),
+        RowDuplicateAction({
+          hidden: !can_add,
+          onClick: () => {
+            setDuplicateData({
+              test_name: record.test_name,
+              description: record.description,
+              requires_value: record.requires_value,
+              requires_attachment: record.requires_attachment,
+              choices: record.choices
+            });
+            duplicateTestTemplate.open();
+          }
+        }),
         RowDeleteAction({
-          hidden: partLocked || !can_delete,
+          hidden: !can_delete,
           onClick: () => {
             setSelectedTest(record.pk);
             deleteTestTemplate.open();
@@ -235,7 +200,7 @@ export default function PartTestTemplateTable({
         })
       ];
     },
-    [user, partId, partLocked]
+    [user]
   );
 
   const tableActions = useMemo(() => {
@@ -246,49 +211,28 @@ export default function PartTestTemplateTable({
         key='add-test-template'
         tooltip={t`Add Test Template`}
         onClick={() => newTestTemplate.open()}
-        hidden={partLocked || !can_add}
+        hidden={!can_add}
       />
     ];
-  }, [user, partLocked]);
+  }, [user]);
 
   return (
     <>
       {newTestTemplate.modal}
       {editTestTemplate.modal}
+      {duplicateTestTemplate.modal}
       {deleteTestTemplate.modal}
-      <Stack gap='xs'>
-        {partLocked && (
-          <Alert
-            title={t`Part is Locked`}
-            color='orange'
-            icon={<IconLock />}
-            p='xs'
-          >
-            <Text>{t`Part templates cannot be edited, as the part is locked`}</Text>
-          </Alert>
-        )}
-        <InvenTreeTable
-          url={apiUrl(ApiEndpoints.part_test_template_list)}
-          tableState={table}
-          columns={tableColumns}
-          props={{
-            params: {
-              part: partId,
-              part_detail: true
-            },
-            tableFilters: tableFilters,
-            tableActions: tableActions,
-            enableDownload: true,
-            rowActions: rowActions,
-            onRowClick: (row) => {
-              if (row.part && row.part != partId) {
-                // This test is defined for a different part
-                navigate(getDetailUrl(ModelType.part, row.part));
-              }
-            }
-          }}
-        />
-      </Stack>
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.part_test_template_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          tableFilters: tableFilters,
+          tableActions: tableActions,
+          enableDownload: true,
+          rowActions: rowActions
+        }}
+      />
     </>
   );
 }

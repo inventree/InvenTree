@@ -22,9 +22,10 @@ from common.settings import set_global_setting
 from InvenTree.unit_test import (
     InvenTreeAPIPerformanceTestCase,
     InvenTreeAPITestCase,
+    create_part_test,
     findOffloadedEvent,
 )
-from part.models import Part, PartTestTemplate
+from part.models import Part, PartTest, PartTestTemplate
 from stock.models import (
     StockItem,
     StockItemTestResult,
@@ -3695,6 +3696,30 @@ class StockTestResultTest(StockAPITestCase):
         response_with_flag = self.client.get(url, data={'include_installed': True})
         self.assertEqual(len(response_all.data), len(response_with_flag.data))
 
+    def test_post_template_applies(self):
+        """Test that a result can only be recorded against a test which applies to the item."""
+        url = self.get_url()
+
+        item = StockItem.objects.get(pk=105)
+        part = item.part
+        part.testable = True
+        part.save()
+
+        # A template which is not linked to this part
+        template = PartTestTemplate.objects.create(
+            test_name='Unrelated test', description='Not linked to the part'
+        )
+
+        data = {'stock_item': item.pk, 'template': template.pk, 'result': True}
+
+        response = self.post(url, data, expected_code=400)
+        self.assertIn('does not apply to this stock item', str(response.data))
+
+        # Link the template to the part - the result can now be recorded
+        PartTest.objects.create(template=template, part=part)
+
+        self.post(url, data, expected_code=201)
+
     def test_post_fail(self):
         """Test failing posts."""
         # Attempt to post a new test result without specifying required data
@@ -3718,9 +3743,9 @@ class StockTestResultTest(StockAPITestCase):
         part = item.part
 
         # Create a new test template for this part
-        test_template = PartTestTemplate.objects.create(
-            part=part,
-            test_name='Checked Steam Valve',
+        test_template = create_part_test(
+            part,
+            'Checked Steam Valve',
             description='Test to check the steam valve pressure',
         )
 
@@ -3765,7 +3790,7 @@ class StockTestResultTest(StockAPITestCase):
         url = self.get_url()
 
         test_template = PartTestTemplate.objects.get(pk=9)
-        part = test_template.part
+        part = test_template.tests.first().part
 
         N = test_template.test_results.count()
 
@@ -3853,8 +3878,8 @@ class StockTestResultTest(StockAPITestCase):
         p.save()
 
         # Create a test template to record test results against
-        test_template = PartTestTemplate.objects.create(
-            part=p, test_name='Test Template', description='A test template for testing'
+        test_template = create_part_test(
+            p, 'Test Template', description='A test template for testing'
         )
 
         # Create some objects (via the API)
@@ -3919,7 +3944,9 @@ class StockTestResultTest(StockAPITestCase):
         test_template.save()
 
         stock_item = StockItem.objects.create(
-            part=test_template.part, quantity=1, location=StockLocation.objects.first()
+            part=test_template.tests.first().part,
+            quantity=1,
+            location=StockLocation.objects.first(),
         )
 
         # Create result with invalid choice

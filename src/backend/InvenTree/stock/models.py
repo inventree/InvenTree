@@ -2590,16 +2590,22 @@ class StockItem(
         if template is None and test_name is not None:
             # Attempt to find a matching template
 
-            ancestors = self.part.get_ancestors(include_self=True)
-
-            template = PartModels.PartTestTemplate.objects.filter(
-                part__tree_id=self.part.tree_id, part__in=ancestors, key=test_key
-            ).first()
+            template = self.part.getTestTemplates().filter(key=test_key).first()
 
             if template is None:
                 if create_template:
-                    template = PartModels.PartTestTemplate.objects.create(
-                        part=self.part, test_name=test_name
+                    # Reuse an existing template with a matching key (if available)
+                    template = PartModels.PartTestTemplate.objects.filter(
+                        key=test_key
+                    ).first()
+
+                    if template is None:
+                        template = PartModels.PartTestTemplate.objects.create(
+                            test_name=test_name
+                        )
+
+                    PartModels.PartTest.objects.create(
+                        template=template, part=self.part
                     )
                 else:
                     raise ValidationError({
@@ -3566,7 +3572,7 @@ class StockItem(
         failed = 0
 
         for test in required_tests:
-            key = InvenTree.helpers.generateTestKey(test.test_name)
+            key = test.key
 
             if key in results:
                 result = results[key]
@@ -3590,7 +3596,6 @@ class StockItem(
     def passedAllRequiredTests(self, required_tests=None):
         """Returns True if this StockItem has passed all required tests."""
         status = self.requiredTestStatus(required_tests=required_tests)
-
         return status['passed'] >= status['total']
 
 
@@ -3854,6 +3859,15 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
 
         if not template:
             raise ValidationError({'template': _('Test template does not exist')})
+
+        # New test results must be recorded against a test which applies to the stock item
+        if self.pk is None and self.stock_item_id:
+            part = self.stock_item.part
+
+            if not part.getTestTemplates().filter(pk=template.pk).exists():
+                raise ValidationError({
+                    'template': _('Test template does not apply to this stock item')
+                })
 
         if template.requires_value and not self.value:
             raise ValidationError({'value': _('Value must be provided for this test')})

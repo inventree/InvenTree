@@ -20,6 +20,7 @@ from .models import (
     PartCategoryStar,
     PartRelated,
     PartStar,
+    PartTest,
     PartTestTemplate,
     rename_part_image,
 )
@@ -140,7 +141,7 @@ class TemplateTagTest(InvenTreeTestCase):
         )
 
 
-class PartTest(TestCase):
+class SimplePartTests(TestCase):
     """Tests for the Part model."""
 
     fixtures = ['category', 'part', 'location', 'part_pricebreaks']
@@ -641,7 +642,7 @@ class VariantTreeTest(TestCase):
 
 
 class TestTemplateTest(TestCase):
-    """Unit test for the TestTemplate class."""
+    """Unit test for the PartTestTemplate and PartTest classes."""
 
     fixtures = ['category', 'part', 'location', 'test_templates']
 
@@ -650,7 +651,7 @@ class TestTemplateTest(TestCase):
         chair = Part.objects.get(pk=10000)
 
         # Tests for the top-level chair object (nothing above it!)
-        self.assertEqual(chair.test_templates.count(), 5)
+        self.assertEqual(chair.tests.count(), 5)
         self.assertEqual(chair.getTestTemplates().count(), 5)
         self.assertEqual(chair.getTestTemplates(required=True).count(), 4)
         self.assertEqual(chair.getTestTemplates(required=False).count(), 1)
@@ -661,59 +662,255 @@ class TestTemplateTest(TestCase):
         self.assertEqual(variant.getTestTemplates().count(), 6)
         self.assertEqual(variant.getTestTemplates(include_parent=False).count(), 0)
         self.assertEqual(variant.getTestTemplates(required=True).count(), 5)
+        self.assertEqual(variant.getRequiredTests().count(), 5)
 
         # Test the 'enabled' status check
         self.assertEqual(variant.getTestTemplates(enabled=True).count(), 6)
         self.assertEqual(variant.getTestTemplates(enabled=False).count(), 0)
 
-        template = variant.getTestTemplates().first()
-        template.enabled = False
-        template.save()
+        test = PartTest.objects.get(part=10003)
+        test.enabled = False
+        test.save()
 
         self.assertEqual(variant.getTestTemplates(enabled=True).count(), 5)
         self.assertEqual(variant.getTestTemplates(enabled=False).count(), 1)
 
-    def test_uniqueness(self):
-        """Test names must be unique for this part and also parts above."""
+        # Templates are annotated with the flags of the applicable PartTest
+        templates = chair.getTestTemplateMap()
+        self.assertFalse(templates['recordweight'].required)
+        self.assertTrue(templates['applypaint'].required)
+        self.assertTrue(templates['applypaint'].enabled)
+
+        templates = variant.getTestTemplateMap()
+        self.assertFalse(templates['checkchairisgreen'].enabled)
+
+    def test_part_test_inheritance(self):
+        """Test that the most specific PartTest is used for a given template."""
+        chair = Part.objects.get(pk=10000)
         variant = Part.objects.get(pk=10004)
 
-        with self.assertRaises(ValidationError):
-            PartTestTemplate.objects.create(part=variant, test_name='Record weight')
+        template = PartTestTemplate.objects.get(key='recordweight')
 
-        # Test that error is raised if we try to create a duplicate test name
+        # Not required for the top-level chair, and inherited by the variant
+        self.assertFalse(chair.getRequiredTests().filter(pk=template.pk).exists())
+        self.assertFalse(variant.getRequiredTests().filter(pk=template.pk).exists())
+
+        # Override the test for the variant part
+        PartTest.objects.create(template=template, part=variant, required=True)
+
+        self.assertFalse(chair.getRequiredTests().filter(pk=template.pk).exists())
+        self.assertTrue(variant.getRequiredTests().filter(pk=template.pk).exists())
+
+        # Only a single PartTest is returned for each template
+        tests = variant.getPartTests()
+        self.assertEqual(tests.count(), 6)
+        self.assertEqual(tests.get(template=template).part, variant)
+
+        # Disable an inherited test for the variant part
+        template = PartTestTemplate.objects.get(key='applypaint')
+        PartTest.objects.create(template=template, part=variant, enabled=False)
+
+        self.assertTrue(
+            chair.getTestTemplates(enabled=True).filter(pk=template.pk).exists()
+        )
+        self.assertFalse(
+            variant.getTestTemplates(enabled=True).filter(pk=template.pk).exists()
+        )
+        self.assertFalse(variant.getRequiredTests().filter(pk=template.pk).exists())
+
+    def test_category_tests(self):
+        """Test that PartTest entries are inherited from part categories."""
+        chair = Part.objects.get(pk=10000)
+        variant = Part.objects.get(pk=10004)
+
+        mechanical = PartCategory.objects.get(pk=7)
+        fasteners = PartCategory.objects.get(pk=8)
+
+        self.assertEqual(variant.category, mechanical)
+        self.assertEqual(fasteners.parent, mechanical)
+
+        bolt = Part.objects.create(
+            name='Bolt', description='A bolt', category=fasteners, testable=True
+        )
+
+        template = PartTestTemplate.objects.create(test_name='Category test')
+        PartTest.objects.create(template=template, category=mechanical, required=True)
+
+        # Inherited by parts in the category (and subcategories)
+        self.assertTrue(variant.getRequiredTests().filter(pk=template.pk).exists())
+        self.assertTrue(bolt.getRequiredTests().filter(pk=template.pk).exists())
+        self.assertEqual(variant.getTestTemplates().count(), 7)
+
+        # But not by parts outside the category
+        resistor = Part.objects.create(
+            name='Resistor',
+            description='A resistor',
+            category=PartCategory.objects.get(pk=2),
+            testable=True,
+        )
+        self.assertFalse(resistor.getTestTemplates().filter(pk=template.pk).exists())
+
+        # Not included when inherited tests are excluded
+        self.assertFalse(
+            bolt.getTestTemplates(include_parent=False).filter(pk=template.pk).exists()
+        )
+
+        # Category-level tests
+        self.assertEqual(mechanical.getPartTests().count(), 1)
+        self.assertEqual(fasteners.getPartTests().count(), 1)
+        self.assertEqual(fasteners.getPartTests(include_parent=False).count(), 0)
+
+        # A subcategory overrides the parent category
+        PartTest.objects.create(template=template, category=fasteners, required=False)
+
+        self.assertFalse(bolt.getRequiredTests().filter(pk=template.pk).exists())
+        self.assertTrue(variant.getRequiredTests().filter(pk=template.pk).exists())
+        self.assertFalse(fasteners.getPartTests(required=True).exists())
+
+        # A part overrides the category
+        PartTest.objects.create(template=template, part=variant, enabled=False)
+
+        self.assertFalse(
+            variant.getTestTemplates(enabled=True).filter(pk=template.pk).exists()
+        )
+        self.assertEqual(variant.getPartTests().get(template=template).part, variant)
+
+        # Tests linked to a parent part take precedence over tests linked to a category
+        weight = PartTestTemplate.objects.get(key='recordweight')
+        PartTest.objects.create(template=weight, category=mechanical, required=True)
+
+        test = variant.getPartTests().get(template=weight)
+        self.assertEqual(test.part, chair)
+        self.assertFalse(test.required)
+
+    def test_category_test_validation(self):
+        """Test validation of category-level PartTest entries."""
+        chair = Part.objects.get(pk=10000)
+        mechanical = PartCategory.objects.get(pk=7)
+        template = PartTestTemplate.objects.create(test_name='Category test')
+
+        # Cannot link to both a part and a category
         with self.assertRaises(ValidationError):
-            PartTestTemplate.objects.create(
-                part=variant, test_name='Check chair is green'
+            PartTest.objects.create(template=template, part=chair, category=mechanical)
+
+        # Category tests are not affected by part locking
+        set_global_setting('PART_ENABLE_LOCKING', True)
+
+        test = PartTest.objects.create(template=template, category=mechanical)
+        test.required = False
+        test.save()
+        test.delete()
+
+        set_global_setting('PART_ENABLE_LOCKING', False)
+
+    def test_copy_tests(self):
+        """Test copying tests from one part to another."""
+        chair = Part.objects.get(pk=10000)
+
+        part = Part.objects.create(name='New chair', description='x', testable=True)
+        part.copy_tests_from(chair)
+
+        self.assertEqual(part.tests.count(), 5)
+        self.assertEqual(part.getRequiredTests().count(), 4)
+
+        # Copying again does not create duplicates
+        part.copy_tests_from(chair)
+        self.assertEqual(part.tests.count(), 5)
+
+        # Tests are not copied to a non-testable part
+        part = Part.objects.create(name='Untested', description='x', testable=False)
+        part.copy_tests_from(chair)
+        self.assertEqual(part.tests.count(), 0)
+
+    def test_part_test_validation(self):
+        """Test validation of the PartTest model."""
+        template = PartTestTemplate.objects.first()
+
+        part = Part.objects.create(name='Untested', description='x', testable=False)
+
+        # Tests can only be created for testable parts
+        with self.assertRaises(ValidationError):
+            PartTest.objects.create(template=template, part=part)
+
+        # A part must be specified
+        with self.assertRaises(ValidationError):
+            PartTest.objects.create(template=template)
+
+    def test_part_test_lock(self):
+        """Test that PartTest entries cannot be modified for a locked part."""
+        chair = Part.objects.get(pk=10000)
+        template = PartTestTemplate.objects.create(test_name='Lock test')
+
+        test = PartTest.objects.create(template=template, part=chair)
+
+        chair.locked = True
+        chair.save()
+
+        # Locking is disabled - changes are allowed
+        set_global_setting('PART_ENABLE_LOCKING', False)
+
+        test.required = False
+        test.save()
+
+        set_global_setting('PART_ENABLE_LOCKING', True)
+
+        # Cannot edit, delete or create tests against a locked part
+        with self.assertRaises(ValidationError):
+            test.required = True
+            test.save()
+
+        with self.assertRaises(ValidationError):
+            test.delete()
+
+        with self.assertRaises(ValidationError):
+            PartTest.objects.create(
+                template=PartTestTemplate.objects.create(test_name='Another test'),
+                part=chair,
             )
+
+        # Cannot move a test away from a locked part
+        test.refresh_from_db()
+        test.part = Part.objects.get(pk=10004)
+
+        with self.assertRaises(ValidationError):
+            test.save()
+
+        # Unlock the part - changes are allowed again
+        chair.locked = False
+        chair.save()
+
+        test.refresh_from_db()
+        test.required = True
+        test.save()
+        test.delete()
+
+        set_global_setting('PART_ENABLE_LOCKING', False)
+
+    def test_uniqueness(self):
+        """Test names must be globally unique."""
+        with self.assertRaises(ValidationError):
+            PartTestTemplate.objects.create(test_name='Record weight')
 
         # Also should fail if we attempt to create a test that would generate the same key
         with self.assertRaises(ValidationError):
-            template = PartTestTemplate.objects.create(
-                part=variant, test_name='ReCoRD       weiGHT  '
-            )
-
-            template.clean()
+            PartTestTemplate.objects.create(test_name='ReCoRD       weiGHT  ')
 
         # But we should be able to create a new one!
-        n = variant.getTestTemplates().count()
+        n = PartTestTemplate.objects.count()
 
-        template = PartTestTemplate.objects.create(
-            part=variant, test_name='A Sample Test'
-        )
+        template = PartTestTemplate.objects.create(test_name='A Sample Test')
 
         # Test key should have been saved
         self.assertEqual(template.key, 'asampletest')
 
-        self.assertEqual(variant.getTestTemplates().count(), n + 1)
+        self.assertEqual(PartTestTemplate.objects.count(), n + 1)
 
     def test_key_generation(self):
         """Test the key generation method."""
-        variant = Part.objects.get(pk=10004)
-
         invalid_names = ['', '+', '+++++++', '   ', '<>$&&&']
 
         for name in invalid_names:
-            template = PartTestTemplate(part=variant, test_name=name)
+            template = PartTestTemplate(test_name=name)
             with self.assertRaises(ValidationError):
                 template.clean()
 
@@ -726,7 +923,7 @@ class TestTemplateTest(TestCase):
         ]
 
         for name in valid_names:
-            template = PartTestTemplate(part=variant, test_name=name)
+            template = PartTestTemplate(test_name=name)
             template.clean()
 
 

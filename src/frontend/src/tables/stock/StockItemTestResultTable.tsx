@@ -71,14 +71,20 @@ export default function StockItemTestResultTable({
       }
 
       return api
-        .get(apiUrl(ApiEndpoints.part_test_template_list), {
+        .get(apiUrl(ApiEndpoints.part_test_list), {
           params: {
-            part: partId,
-            include_inherited: true,
+            for_part: partId,
             enabled: true
           }
         })
-        .then((response) => response.data);
+        .then((response) =>
+          // Flatten each PartTest into its template, with the part-specific flags
+          response.data.map((test: any) => ({
+            ...test.template_detail,
+            required: test.required,
+            enabled: test.enabled
+          }))
+        );
     }
   });
 

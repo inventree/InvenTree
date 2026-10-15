@@ -5,6 +5,7 @@ import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
   IconBuilding,
+  IconClipboardCheck,
   IconCoins,
   IconCpu,
   IconDevicesPc,
@@ -81,6 +82,8 @@ const NoteTemplatePanel = Loadable(lazy(() => import('./NoteTemplatePanel')));
 const IdentityManagementPanel = Loadable(
   lazy(() => import('./IdentityManagementPanel'))
 );
+
+const TestTemplatePanel = Loadable(lazy(() => import('./TestTemplatePanel')));
 
 const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
@@ -247,6 +250,13 @@ export default function AdminCenter() {
         hidden: !user.hasViewRole(UserRoles.part_category)
       },
       {
+        name: 'test-templates',
+        label: t`Test Templates`,
+        icon: <IconClipboardCheck />,
+        content: <TestTemplatePanel />,
+        hidden: !user.hasViewRole(UserRoles.part)
+      },
+      {
         name: 'labels',
         label: t`Label Templates`,
         icon: <IconTags />,
@@ -340,6 +350,7 @@ export default function AdminCenter() {
           'selection-lists',
           'parameters',
           'category-parameters',
+          'test-templates',
           'notes',
           'location-types',
           'stocktake'

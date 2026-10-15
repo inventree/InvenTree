@@ -87,6 +87,12 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.part_test_template_list,
     icon: 'test'
   },
+  parttest: {
+    label: () => t`Part Test`,
+    label_multiple: () => t`Part Tests`,
+    api_endpoint: ApiEndpoints.part_test_list,
+    icon: 'test'
+  },
   supplierpart: {
     label: () => t`Supplier Part`,
     label_multiple: () => t`Supplier Parts`,
