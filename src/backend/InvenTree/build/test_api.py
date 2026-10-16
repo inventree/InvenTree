@@ -361,7 +361,7 @@ class BuildTest(BuildAPITest):
         """Test that an overly long batch code is rejected with a validation error."""
         url = reverse('api-build-output-create', kwargs={'pk': 1})
 
-        max_length = StockItem._meta.get_field('batch').max_length
+        max_length = int(StockItem._meta.get_field('batch').max_length)
 
         response = self.post(
             url,
