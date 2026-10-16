@@ -12,6 +12,7 @@ export function NavHoverMenu({
       onClick={() => openDrawer()}
       aria-label='navigation-menu'
       id='tip-ftu-nav2'
+      style={{ display: 'flex', alignItems: 'center', height: 38 }}
     >
       <InvenTreeLogo />
     </UnstyledButton>
