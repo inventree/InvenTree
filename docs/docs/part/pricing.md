@@ -125,7 +125,7 @@ Pricing calculations (and conversions) can be expensive to perform. This can mak
 
 For this reason, all information displayed in the [pricing overview](#pricing-overview) section is pre-calculated and *cached* in the database. This ensures that when it needs to be retrieved (e.g. viewing pricing for an entire BOM) it can be accessed immediately.
 
-Pricing data is cached in the [default currency](../concepts/pricing.md/#default-currency), which ensures that pricing can be compared across multiple parts in a consistent format.
+Pricing data is cached in the [default currency](../concepts/pricing.md#default-currency), which ensures that pricing can be compared across multiple parts in a consistent format.
 
 ## Pricing Updates
 
