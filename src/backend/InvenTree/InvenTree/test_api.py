@@ -930,7 +930,8 @@ class GeneralApiTests(InvenTreeAPITestCase):
         self.assertNotIn('link', self.client.get(url).json())
 
         set_global_setting('INVENTREE_LINK_PROOF', False)
-        self.assertNotIn('link', self.client.get(url, {'link_nonce': 'abc'}).json())
+        response_data = self.client.get(url, {'link_nonce': 'abc'}).json()
+        self.assertIsNone(response_data['link'])
 
     def test_link_proof(self):
         """Test the link proof helper."""
