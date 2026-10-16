@@ -38,7 +38,7 @@ from order.status_codes import (
     TransferOrderStatusGroups,
 )
 from part.models import Part
-from stock.models import StockItem, StockLocation, StockSortOrder
+from stock.models import StockItem, StockItemTracking, StockLocation, StockSortOrder
 from stock.status_codes import StockHistoryCode, StockStatus
 from users.models import Owner
 
@@ -1638,6 +1638,48 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         self.assertEqual(item_1.batch, 'B-abc-123')
         self.assertEqual(item_2.batch, 'B-xyz-789')
+
+    def test_field_max_length(self):
+        """Test that overly long values are rejected with a validation error."""
+
+        def stock_field(name):
+            return StockItem._meta.get_field(name).max_length
+
+        limits = {
+            'batch_code': stock_field('batch'),
+            'packaging': stock_field('packaging'),
+            'barcode': stock_field('barcode_data'),
+            'note': StockItemTracking.NOTES_MAX_LENGTH,
+        }
+
+        line_data = {'line_item': 1, 'quantity': 10}
+
+        for field, max_length in limits.items():
+            line_data[field] = 'x' * (max_length + 1)
+
+        data = {
+            'items': [line_data],
+            'location': 1,
+            'batch_code': 'x' * (limits['batch_code'] + 1),
+        }
+
+        n = StockItem.objects.count()
+
+        response = self.post(self.url, data, expected_code=400)
+
+        expected = 'Ensure this field has no more than {} characters'
+
+        self.assertIn(
+            expected.format(limits['batch_code']), str(response.data['batch_code'])
+        )
+
+        for field, max_length in limits.items():
+            self.assertIn(
+                expected.format(max_length), str(response.data['items'][0][field])
+            )
+
+        # No stock items should have been created
+        self.assertEqual(n, StockItem.objects.count())
 
     def test_top_level_batch_code(self):
         """Test the top-level 'batch_code' field.
@@ -3644,6 +3686,26 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         'stock',
     ]
     roles = ['return_order.view']
+
+    def test_receive_note_max_length(self):
+        """Test that an overly long 'note' value is rejected with a validation error."""
+        self.assignRole('return_order.add')
+
+        rma = models.ReturnOrder.objects.first()
+        url = reverse('api-return-order-receive', kwargs={'pk': rma.pk})
+
+        max_length = StockItemTracking.NOTES_MAX_LENGTH
+
+        response = self.post(
+            url,
+            {'items': [], 'location': 1, 'note': 'x' * (max_length + 1)},
+            expected_code=400,
+        )
+
+        self.assertIn(
+            f'Ensure this field has no more than {max_length} characters',
+            str(response.data['note']),
+        )
 
     def test_options(self):
         """Test the OPTIONS endpoint."""

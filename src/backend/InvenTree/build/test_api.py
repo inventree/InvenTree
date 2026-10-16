@@ -357,6 +357,23 @@ class BuildTest(BuildAPITest):
         with self.assertRaises(Build.DoesNotExist):
             Build.objects.get(pk=1)
 
+    def test_create_output_batch_code_max_length(self):
+        """Test that an overly long batch code is rejected with a validation error."""
+        url = reverse('api-build-output-create', kwargs={'pk': 1})
+
+        max_length = StockItem._meta.get_field('batch').max_length
+
+        response = self.post(
+            url,
+            {'quantity': 1, 'batch_code': 'x' * (max_length + 1)},
+            expected_code=400,
+        )
+
+        self.assertIn(
+            f'Ensure this field has no more than {max_length} characters',
+            str(response.data['batch_code']),
+        )
+
     def test_create_delete_output(self):
         """Test that we can create and delete build outputs via the API."""
         bo = Build.objects.get(pk=1)
