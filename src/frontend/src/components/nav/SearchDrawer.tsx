@@ -396,11 +396,6 @@ export function SearchDrawer({
     return searchQueryList.filter((q) => q.enabled);
   }, [searchQueryList]);
 
-  // Re-fetch data whenever the search term is updated
-  useEffect(() => {
-    searchQuery.refetch();
-  }, [searchText]);
-
   // Function for performing the actual search query
   const performSearch = async ({ signal }: { signal: AbortSignal }) => {
     // Return empty result set if no search text, or too short to be worth searching on

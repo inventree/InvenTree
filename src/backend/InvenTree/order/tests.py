@@ -14,7 +14,7 @@ from djmoney.money import Money
 import common.models
 import order.tasks
 from common.settings import get_global_setting, set_global_setting
-from company.models import Company, Contact, SupplierPart
+from company.models import Address, Company, Contact, SupplierPart
 from InvenTree.helpers import current_date
 from InvenTree.unit_test import (
     ExchangeRateMixin,
@@ -110,6 +110,101 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         order.contact = contact
         order.clean()  # Should not raise
         order.save()
+
+    def test_default_receiving_company(self):
+        """Test that the default internal company is assigned to a new PurchaseOrder."""
+        supplier = Company.objects.get(pk=1)
+
+        # No internal companies exist - no default
+        po = PurchaseOrder.objects.create(reference='PO-77770001', supplier=supplier)
+        self.assertIsNone(po.receiving_company)
+
+        # Single internal company is used as the default
+        alpha = Company.objects.create(name='Alpha Internal', is_internal=True)
+        po = PurchaseOrder.objects.create(reference='PO-77770002', supplier=supplier)
+        self.assertEqual(po.receiving_company, alpha)
+
+        # Multiple internal companies, with the default specified by the setting
+        beta = Company.objects.create(name='Beta Internal', is_internal=True)
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', beta.pk)
+
+        po = PurchaseOrder.objects.create(reference='PO-77770003', supplier=supplier)
+        self.assertEqual(po.receiving_company, beta)
+
+        # Explicitly specified company is not overridden
+        po = PurchaseOrder.objects.create(
+            reference='PO-77770004', supplier=supplier, receiving_company=alpha
+        )
+        self.assertEqual(po.receiving_company, alpha)
+
+        # Existing orders are not modified when the default changes
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', alpha.pk)
+        po = PurchaseOrder.objects.get(reference='PO-77770003')
+        self.assertEqual(po.receiving_company, beta)
+
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', '')
+
+    def test_validate_delivery_address(self):
+        """Regression test for validation of the delivery address against the receiving company."""
+        order = PurchaseOrder.objects.first()
+
+        alpha = Company.objects.create(name='Alpha Internal', is_internal=True)
+        beta = Company.objects.create(name='Beta Internal', is_internal=True)
+
+        alpha_address = Address.objects.create(company=alpha, title='Alpha HQ')
+        beta_address = Address.objects.create(company=beta, title='Beta HQ')
+        supplier_address = Address.objects.create(
+            company=order.supplier, title='Supplier HQ'
+        )
+
+        # Delivery address belongs to a different company
+        order.receiving_company = alpha
+
+        for address in [beta_address, supplier_address]:
+            order.delivery_address = address
+
+            with self.assertRaises(django_exceptions.ValidationError) as err:
+                order.clean()
+
+            self.assertIn(
+                'Delivery address does not match selected receiving company',
+                str(err.exception.message_dict['delivery_address']),
+            )
+
+        # Delivery address without a receiving company
+        order.receiving_company = None
+        order.delivery_address = alpha_address
+
+        with self.assertRaises(django_exceptions.ValidationError) as err:
+            order.clean()
+
+        self.assertIn(
+            'Receiving company must be specified when a delivery address is provided',
+            str(err.exception.message_dict['receiving_company']),
+        )
+
+        # Receiving company which is not an internal company
+        order.receiving_company = order.supplier
+        order.delivery_address = None
+
+        with self.assertRaises(django_exceptions.ValidationError) as err:
+            order.clean()
+
+        self.assertIn('receiving_company', err.exception.message_dict)
+
+        # Valid combinations
+        order.receiving_company = alpha
+        order.delivery_address = alpha_address
+        order.clean()
+        order.save()
+
+        order.receiving_company = alpha
+        order.delivery_address = None
+        order.clean()
+
+        order.receiving_company = None
+        order.delivery_address = None
+        order.clean()
 
     def test_rebuild_reference(self):
         """Test that the reference_int field is correctly updated when the model is saved."""

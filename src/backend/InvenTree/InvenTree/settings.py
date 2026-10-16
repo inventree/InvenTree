@@ -270,6 +270,9 @@ DBBACKUP_DATE_FORMAT = InvenTree.backup.backup_date_format()
 DBBACKUP_FILENAME_TEMPLATE = InvenTree.backup.backup_filename_template()
 DBBACKUP_MEDIA_FILENAME_TEMPLATE = InvenTree.backup.backup_media_filename_template()
 
+# How many backup files to keep
+DBBACKUP_CLEANUP_KEEP = InvenTree.backup.backup_keep_count()
+
 DBBACKUP_GPG_RECIPIENT = InvenTree.backup.backup_gpg_recipient()
 
 DBBACKUP_SEND_EMAIL = InvenTree.backup.backup_email_on_error()
