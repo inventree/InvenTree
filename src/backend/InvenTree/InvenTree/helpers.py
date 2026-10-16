@@ -639,7 +639,7 @@ def extract_serial_numbers(
 
     from stock.models import StockItem
 
-    serial_max_length = StockItem._meta.get_field('serial').max_length
+    serial_max_length = int(StockItem._meta.get_field('serial').max_length)
 
     # Split input string by whitespace or comma (,) characters
     groups = re.split(r'[\s,]+', input_string)
