@@ -16,14 +16,14 @@ export function LanguageToggle() {
         margin: open === true ? 2 : 12,
         padding: open === true ? 8 : 0
       }}
-      aria-label='Open language options'
+      aria-label={t`Open language options`}
     >
       <Tooltip label={t`Select language`}>
         <ActionIcon
           onClick={() => toggle.toggle()}
           size='lg'
           variant='transparent'
-          aria-label='Language toggle'
+          aria-label={t`Language toggle`}
         >
           <IconLanguage />
         </ActionIcon>

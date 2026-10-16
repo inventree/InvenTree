@@ -1328,6 +1328,7 @@ class StockItem(
     )
 
     status = InvenTreeCustomStatusModelField(
+        verbose_name=_('Status'),
         default=StockStatus.OK.value,
         status_class=StockStatus,
         choices=StockStatus.items(),

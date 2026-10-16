@@ -125,7 +125,12 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
           </div>
         )}
         {pdfUrl && (
-          <iframe src={pdfUrl} width='100%' height='100%' title='PDF Preview' />
+          <iframe
+            src={pdfUrl}
+            width='100%'
+            height='100%'
+            title={t`PDF Preview`}
+          />
         )}
       </>
     );

@@ -984,6 +984,7 @@ export function InvenTreeTableInternal<T extends Record<string, any>>({
         page: Math.max(1, tableState.page),
         onPageChange: tableState.setPage,
         recordsPerPageOptions: PAGE_SIZES,
+        recordsPerPageLabel: t`Records per page`,
         onRecordsPerPageChange: updatePageSize
       };
     }

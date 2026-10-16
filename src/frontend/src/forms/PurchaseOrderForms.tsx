@@ -548,7 +548,7 @@ function LineItemFormRow({
       >
         <FocusTrap>
           <TextInput
-            label='Barcode data'
+            label={t`Barcode data`}
             data-autofocus
             value={barcodeInput}
             onChange={(e) => setBarcodeInput(e.target.value)}

@@ -33,6 +33,20 @@ const LOOKUP = Object.assign(
   ...Object.keys(DEFAULT_THEME.colors).map((clr) => getLkp(clr))
 );
 
+// Display-only labels for the border radius slider. The stored value must remain
+// the mantine radius keyword (xs/sm/md/lg/xl), see getRadiusFromValue below.
+const RADIUS_MARKS = [
+  { value: 0, label: t`Extra small` },
+  { value: 25, label: t`Small` },
+  { value: 50, label: t`Medium` },
+  { value: 75, label: t`Large` },
+  { value: 100, label: t`Extra large` }
+];
+
+function getRadiusLabel(value: number) {
+  return RADIUS_MARKS.find((mark) => mark.value === value)?.label ?? t`Small`;
+}
+
 export function UserTheme({ height }: Readonly<{ height: number }>) {
   const theme = useMantineTheme();
   const [userTheme, setTheme, setLanguage] = useLocalState(
@@ -117,7 +131,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             </Table.Td>
             <Table.Td>
               <ColorInput
-                aria-label='Color Picker White'
+                aria-label={t`Color Picker White`}
                 value={userTheme.whiteColor}
                 onChange={(v) => setTheme([{ key: 'whiteColor', value: v }])}
               />
@@ -125,7 +139,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             <Table.Td>
               <ActionIcon
                 variant='default'
-                aria-label='Reset White Color'
+                aria-label={t`Reset White Color`}
                 onClick={() =>
                   setTheme([{ key: 'whiteColor', value: '#FFFFFF' }])
                 }
@@ -140,7 +154,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             </Table.Td>
             <Table.Td>
               <ColorInput
-                aria-label='Color Picker Black'
+                aria-label={t`Color Picker Black`}
                 value={userTheme.blackColor}
                 onChange={(v) => setTheme([{ key: 'blackColor', value: v }])}
               />
@@ -148,7 +162,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             <Table.Td>
               <ActionIcon
                 variant='default'
-                aria-label='Reset Black Color'
+                aria-label={t`Reset Black Color`}
                 onClick={() =>
                   setTheme([{ key: 'blackColor', value: '#000000' }])
                 }
@@ -163,10 +177,10 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             </Table.Td>
             <Table.Td>
               <Slider
-                label={(val) => getRadiusFromValue(val)}
+                label={(val) => getRadiusLabel(val)}
                 defaultValue={50}
                 step={25}
-                marks={SizeMarks}
+                marks={RADIUS_MARKS}
                 value={radius}
                 onChange={changeRadius}
                 mb={18}
@@ -180,7 +194,7 @@ export function UserTheme({ height }: Readonly<{ height: number }>) {
             <Table.Td>
               <Group justify='left'>
                 <Select
-                  aria-label='Loader Type Selector'
+                  aria-label={t`Loader Type Selector`}
                   data={[
                     { value: 'bars', label: t`Bars` },
                     { value: 'oval', label: t`Oval` },

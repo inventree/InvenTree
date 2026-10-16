@@ -196,7 +196,7 @@ const SearchStep = ({
           <TextInput
             aria-label='textbox-search-for-part'
             flex={1}
-            placeholder='Search for a part'
+            placeholder={t`Search for a part`}
             label={t`Search`}
             value={searchValue}
             onChange={(event) => setSearchValue(event.currentTarget.value)}

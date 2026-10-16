@@ -16,7 +16,7 @@ import {
 import { useDebouncedValue } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
@@ -70,19 +70,6 @@ function rows<T>(payload: ListResponse<T>): T[] {
   return Array.isArray(payload) ? payload : (payload.results ?? []);
 }
 
-const appearanceChoices = [
-  ['scratch', 'Surface scratch'],
-  ['structure_deformed', 'Structure deformed'],
-  ['gold_finger_scratch', 'Gold finger scratched'],
-  ['part_missing', 'Part missing'],
-  ['label_abnormal', 'Label abnormal'],
-  ['port_damaged', 'Port damaged'],
-  ['stain', 'Stain'],
-  ['pin_bent', 'Bent pin'],
-  ['component_abnormal', 'Electronic component abnormal'],
-  ['other', 'Other appearance issue']
-].map(([value, label]) => ({ value, label }));
-
 export default function IncomingReceiptPanel() {
   const api = useApi();
   const queryClient = useQueryClient();
@@ -102,6 +89,24 @@ export default function IncomingReceiptPanel() {
   const [returnLocation, setReturnLocation] = useState<number | string>('');
   const [returnReference, setReturnReference] = useState('');
   const [approvalNotes, setApprovalNotes] = useState('');
+
+  const appearanceChoices = useMemo(
+    () =>
+      [
+        ['scratch', t`Surface scratch`],
+        ['structure_deformed', t`Structure deformed`],
+        ['gold_finger_scratch', t`Gold finger scratched`],
+        ['part_missing', t`Part missing`],
+        ['label_abnormal', t`Label abnormal`],
+        ['port_damaged', t`Port damaged`],
+        ['stain', t`Stain`],
+        ['pin_bent', t`Bent pin`],
+        ['component_abnormal', t`Electronic component abnormal`],
+        ['other', t`Other appearance issue`]
+      ].map(([value, label]) => ({ value, label })),
+    []
+  );
+
   const locationsQuery = useQuery({
     queryKey: ['cangxu-external-return-locations'],
     queryFn: async () => {

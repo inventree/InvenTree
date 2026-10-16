@@ -1127,8 +1127,12 @@ class DataImportBatchSerializer(serializers.Serializer):
     inventory_as_of = serializers.DateField(required=False, allow_null=True)
     physical_count_confirmed = serializers.BooleanField(required=False, default=False)
     state = serializers.CharField(read_only=True)
-    created_by = serializers.IntegerField(read_only=True, allow_null=True)
-    reviewed_by = serializers.IntegerField(read_only=True, allow_null=True)
+    created_by = serializers.IntegerField(
+        read_only=True, allow_null=True, source='created_by_id'
+    )
+    reviewed_by = serializers.IntegerField(
+        read_only=True, allow_null=True, source='reviewed_by_id'
+    )
     created_at = serializers.DateTimeField(read_only=True)
     reviewed_at = serializers.DateTimeField(read_only=True)
     applied_at = serializers.DateTimeField(read_only=True)
