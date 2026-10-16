@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-13 12:12\n"
+"PO-Revision-Date: 2026-10-15 08:52\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -103,6 +103,7 @@ msgstr "Действия"
 
 #: lib/components/SearchInput.tsx:34
 #: src/components/forms/fields/RelatedModelField.tsx:549
+#: src/components/nav/FirstUseTour.tsx:62
 #: src/components/nav/Header.tsx:196
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
@@ -186,7 +187,7 @@ msgstr "Деталь"
 #: lib/enums/Roles.tsx:37
 #: src/components/nav/NavigationDrawer.tsx:70
 #: src/defaults/links.tsx:39
-#: src/pages/Index/Settings/SystemSettings.tsx:217
+#: src/pages/Index/Settings/SystemSettings.tsx:218
 #: src/pages/part/CategoryDetail.tsx:218
 #: src/pages/part/CategoryDetail.tsx:279
 #: src/pages/part/CategoryDetail.tsx:324
@@ -203,8 +204,8 @@ msgstr "Параметр"
 #: src/components/details/ParameterDetailsGrid.tsx:49
 #: src/components/panels/ParametersPanel.tsx:23
 #: src/components/wizards/ImportPartWizard.tsx:807
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:210
-#: src/pages/Index/Settings/SystemSettings.tsx:211
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:223
+#: src/pages/Index/Settings/SystemSettings.tsx:212
 #: src/pages/part/PartDetail.tsx:488
 msgid "Parameters"
 msgstr "Параметры"
@@ -353,7 +354,7 @@ msgstr "Заказ на сборку"
 #: lib/enums/ModelInformation.tsx:160
 #: lib/enums/Roles.tsx:35
 #: src/defaults/actions.tsx:182
-#: src/pages/Index/Settings/SystemSettings.tsx:324
+#: src/pages/Index/Settings/SystemSettings.tsx:325
 #: src/pages/build/BuildIndex.tsx:87
 #: src/pages/part/PartDetail.tsx:422
 #: src/pages/sales/SalesOrderDetail.tsx:221
@@ -379,13 +380,14 @@ msgstr "Товары производства"
 #: lib/enums/ModelInformation.tsx:184
 #: src/components/previews/models/CompanyPreview.tsx:15
 #: src/pages/company/CompanyDetail.tsx:297
-#: src/tables/company/CompanyTable.tsx:65
+#: src/tables/company/CompanyTable.tsx:74
 #: src/tables/company/ContactTable.tsx:67
 #: src/tables/company/ParametricCompanyTable.tsx:32
 msgid "Company"
 msgstr "Компания"
 
 #: lib/enums/ModelInformation.tsx:185
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:183
 msgid "Companies"
 msgstr "Компании"
 
@@ -404,7 +406,7 @@ msgid "Project Code"
 msgstr "Код проекта"
 
 #: lib/enums/ModelInformation.tsx:193
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:187
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:200
 msgid "Project Codes"
 msgstr "Коды проекта"
 
@@ -423,7 +425,7 @@ msgstr "Заказ на закупку"
 #: lib/enums/ModelInformation.tsx:200
 #: lib/enums/Roles.tsx:41
 #: src/defaults/actions.tsx:133
-#: src/pages/Index/Settings/SystemSettings.tsx:352
+#: src/pages/Index/Settings/SystemSettings.tsx:353
 #: src/pages/company/CompanyDetail.tsx:129
 #: src/pages/company/SupplierPartDetail.tsx:105
 #: src/pages/part/PartDetail.tsx:392
@@ -458,7 +460,7 @@ msgstr "Заказ на продажу"
 #: lib/enums/ModelInformation.tsx:217
 #: lib/enums/Roles.tsx:47
 #: src/defaults/actions.tsx:143
-#: src/pages/Index/Settings/SystemSettings.tsx:372
+#: src/pages/Index/Settings/SystemSettings.tsx:373
 #: src/pages/company/CompanyDetail.tsx:151
 #: src/pages/part/PartDetail.tsx:404
 #: src/pages/sales/SalesIndex.tsx:109
@@ -484,7 +486,7 @@ msgstr "Заказ на возврат"
 #: lib/enums/ModelInformation.tsx:239
 #: lib/enums/Roles.tsx:43
 #: src/defaults/actions.tsx:163
-#: src/pages/Index/Settings/SystemSettings.tsx:385
+#: src/pages/Index/Settings/SystemSettings.tsx:386
 #: src/pages/company/CompanyDetail.tsx:159
 #: src/pages/part/PartDetail.tsx:415
 #: src/pages/sales/SalesIndex.tsx:150
@@ -510,7 +512,7 @@ msgstr "Заказ на перемещение"
 #: lib/enums/ModelInformation.tsx:256
 #: lib/enums/Roles.tsx:45
 #: src/defaults/actions.tsx:153
-#: src/pages/Index/Settings/SystemSettings.tsx:306
+#: src/pages/Index/Settings/SystemSettings.tsx:307
 #: src/pages/part/PartDetail.tsx:429
 #: src/pages/stock/LocationDetail.tsx:171
 msgid "Transfer Orders"
@@ -540,6 +542,8 @@ msgstr "Адреса"
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:134
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:146
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:148
+#: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:131
+#: src/tables/sales/SalesOrderShipmentTable.tsx:162
 msgid "Contact"
 msgstr "Контакт"
 
@@ -611,7 +615,7 @@ msgstr "Шаблон этикетки"
 
 #: lib/enums/ModelInformation.tsx:316
 #: src/defaults/actions.tsx:260
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:238
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:251
 msgid "Label Templates"
 msgstr "Шаблоны этикеток"
 
@@ -621,7 +625,7 @@ msgstr "Шаблон отчёта"
 
 #: lib/enums/ModelInformation.tsx:324
 #: src/defaults/actions.tsx:250
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:244
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:257
 msgid "Report Templates"
 msgstr "Шаблоны отчётов"
 
@@ -648,7 +652,7 @@ msgid "Selection List"
 msgstr "Список выбора"
 
 #: lib/enums/ModelInformation.tsx:346
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:217
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:230
 msgid "Selection Lists"
 msgstr "Списки выбора"
 
@@ -719,7 +723,7 @@ msgid "Note Template"
 msgstr ""
 
 #: lib/enums/ModelInformation.tsx:374
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:224
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:237
 #: src/pages/Index/Settings/AdminCenter/NoteTemplatePanel.tsx:9
 msgid "Note Templates"
 msgstr ""
@@ -851,7 +855,7 @@ msgid "Enter barcode data"
 msgstr "Введите данные штрихкода"
 
 #: src/components/barcodes/BarcodeScanDialog.tsx:56
-#: src/components/buttons/ScanButton.tsx:56
+#: src/components/buttons/ScanButton.tsx:58
 #: src/components/nav/NavigationDrawer.tsx:122
 #: src/forms/PurchaseOrderForms.tsx:546
 #: src/forms/PurchaseOrderForms.tsx:686
@@ -1044,7 +1048,7 @@ msgstr "Вы будете перенаправлены на сайт поста�
 #~ msgid "Open Barcode Scanner"
 #~ msgstr "Open Barcode Scanner"
 
-#: src/components/buttons/ScanButton.tsx:46
+#: src/components/buttons/ScanButton.tsx:48
 msgid "Open barcode scanner"
 msgstr "Открыть сканер штрихкодов"
 
@@ -1421,7 +1425,7 @@ msgid "The latest news from InvenTree"
 msgstr "Свежие новости от InvenTree"
 
 #: src/components/dashboard/widgets/ColorToggleWidget.tsx:18
-#: src/components/nav/MainMenu.tsx:93
+#: src/components/nav/MainMenu.tsx:121
 msgid "Change Color Mode"
 msgstr "Изменить цветовой режим"
 
@@ -2319,9 +2323,9 @@ msgstr "Версия API"
 #: src/components/forms/InstanceOptions.tsx:143
 #: src/components/nav/NavigationDrawer.tsx:192
 #: src/defaults/actions.tsx:230
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:269
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:282
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:398
+#: src/pages/Index/Settings/SystemSettings.tsx:399
 msgid "Plugins"
 msgstr "Плагины"
 
@@ -2385,7 +2389,7 @@ msgid "Uncategorized"
 msgstr "Без категории"
 
 #: src/components/forms/fields/IconField.tsx:221
-#: src/components/nav/Layout.tsx:144
+#: src/components/nav/Layout.tsx:146
 #: src/tables/part/PartThumbTable.tsx:209
 msgid "Search..."
 msgstr "Поиск..."
@@ -3055,7 +3059,7 @@ msgstr "Фоновый рабочий процесс не запущен"
 #~ msgstr "The Background worker process is not running."
 
 #: src/components/modals/ServerInfoModal.tsx:115
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:144
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:146
 msgid "Email Settings"
 msgstr "Настройки Email"
 
@@ -3134,38 +3138,155 @@ msgstr ""
 msgid "{0} of {1}"
 msgstr ""
 
-#: src/components/nav/Header.tsx:68
-#: src/components/nav/Header.tsx:75
-msgid "Open search"
-msgstr "Открыть поиск"
+#: src/components/nav/FirstUseTour.tsx:47
+msgid "Navigation Area"
+msgstr ""
 
-#: src/components/nav/Header.tsx:215
+#: src/components/nav/FirstUseTour.tsx:48
+msgid "The navigation area provides quick access to different sections of the application."
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:52
+msgid "Navigation Drawer"
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:53
+msgid "Using the icon you can open and close the navigation drawer which contains most available pages accessible to you."
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:57
+msgid "Main Menu"
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:58
+msgid "The main menu provides access to top level navigation targets. Plugins can extend the menu with additional options."
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:63
+msgid "The global search allows you to quickly find items across all objects. You can configure which objects categories are included in the search and how terms are matched."
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:69
+msgid "Command Palette"
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:70
+msgid "Quickly access commands and actions anywhere using the command palette. Available commands are dependent on your current context. Use cmd + k to open it anywhere."
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:77
+msgid "Barcode Scanner"
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:78
+msgid "Allows for quick scanning of barcodes with your device's camera or a handheld scanner."
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:85
+#: src/components/nav/Header.tsx:218
 #: src/components/nav/NavigationDrawer.tsx:134
 #: src/components/nav/NotificationDrawer.tsx:185
-#: src/pages/Index/Settings/SystemSettings.tsx:145
+#: src/pages/Index/Settings/SystemSettings.tsx:146
 #: src/pages/Index/Settings/UserSettings.tsx:112
 #: src/pages/Notifications.tsx:45
 #: src/pages/Notifications.tsx:130
 msgid "Notifications"
 msgstr "Уведомления"
 
+#: src/components/nav/FirstUseTour.tsx:86
+msgid "Depending on your instance and user settings notifications are delivered through various channels. This notification bar is annotated with a bell when there are unread user interface notifications."
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:90
+#: src/components/nav/MainMenu.tsx:80
+#: src/components/nav/NavigationDrawer.tsx:180
+#: src/pages/Index/Settings/AdminCenter/EmailManagementPanel.tsx:21
+#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:39
+msgid "Settings"
+msgstr "Настройки"
+
+#: src/components/nav/FirstUseTour.tsx:91
+msgid "The main menu allows you to access preferences and access system-wide settings. Options depend on your permissions."
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:98
+#: src/components/nav/MainMenu.tsx:88
+#: src/components/nav/NavigationDrawer.tsx:140
+#: src/components/nav/SettingsHeader.tsx:40
+#: src/defaults/actions.tsx:106
+#: src/pages/Index/Settings/UserSettings.tsx:149
+#: src/pages/Index/Settings/UserSettings.tsx:153
+msgid "User Settings"
+msgstr "Пользовательские настройки"
+
+#: src/components/nav/FirstUseTour.tsx:99
+msgid "The user settings menu allows you to configure your personal preferences and account settings. This also contains security and notification settings."
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:106
+#: src/components/nav/MainMenu.tsx:106
+#: src/components/nav/NavigationDrawer.tsx:153
+#: src/components/nav/SettingsHeader.tsx:42
+#: src/defaults/actions.tsx:200
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:358
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:363
+msgid "Admin Center"
+msgstr "Админ центр"
+
+#: src/components/nav/FirstUseTour.tsx:107
+msgid "The admin center provides access to administrative functions and can be used to manage various functions required for operation of the instance like user management, templates, parameters, plugins."
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:113
+#: src/components/nav/MainMenu.tsx:128
+#: src/defaults/actions.tsx:78
+#: src/defaults/links.tsx:152
+#: src/defaults/links.tsx:214
+msgid "About InvenTree"
+msgstr "О программе InvenTree"
+
+#: src/components/nav/FirstUseTour.tsx:114
+msgid "Provides information about the InvenTree instance, including version details and relevant links. Important for bug reports."
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:194
+msgid "First Use Tour available"
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:197
+msgid "It looks like you did not complete the First Use Tour yet."
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:210
+msgid "Start Tour"
+msgstr ""
+
+#: src/components/nav/FirstUseTour.tsx:223
+msgid "Dismiss permanently"
+msgstr ""
+
+#: src/components/nav/Header.tsx:68
+#: src/components/nav/Header.tsx:75
+msgid "Open search"
+msgstr "Открыть поиск"
+
 #: src/components/nav/Header.tsx:216
 #~ msgid "Administrator Mode"
 #~ msgstr "Administrator Mode"
 
-#: src/components/nav/Header.tsx:237
+#: src/components/nav/Header.tsx:241
 msgid "Superuser Mode"
 msgstr "Режим Суперпользователя"
 
-#: src/components/nav/Header.tsx:237
+#: src/components/nav/Header.tsx:241
 msgid "Admin Mode"
 msgstr "Режим Администратора"
 
-#: src/components/nav/Header.tsx:243
+#: src/components/nav/Header.tsx:247
 msgid "The current user has elevated privileges and should not be used for regular usage."
 msgstr "Текущий пользователь имеет повышенные привилегии и не должен использоваться для регулярного использования."
 
-#: src/components/nav/Layout.tsx:147
+#: src/components/nav/Layout.tsx:149
 msgid "Nothing found..."
 msgstr "Ничего не найдено..."
 
@@ -3174,26 +3295,10 @@ msgstr "Ничего не найдено..."
 #~ msgid "Profile"
 #~ msgstr "Profile"
 
-#: src/components/nav/MainMenu.tsx:54
-#: src/components/nav/NavigationDrawer.tsx:180
-#: src/pages/Index/Settings/AdminCenter/EmailManagementPanel.tsx:21
-#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:39
-msgid "Settings"
-msgstr "Настройки"
-
 #: src/components/nav/MainMenu.tsx:59
 #: src/defaults/menuItems.tsx:15
 #~ msgid "Account settings"
 #~ msgstr "Account settings"
-
-#: src/components/nav/MainMenu.tsx:61
-#: src/components/nav/NavigationDrawer.tsx:140
-#: src/components/nav/SettingsHeader.tsx:40
-#: src/defaults/actions.tsx:106
-#: src/pages/Index/Settings/UserSettings.tsx:149
-#: src/pages/Index/Settings/UserSettings.tsx:153
-msgid "User Settings"
-msgstr "Пользовательские настройки"
 
 #: src/components/nav/MainMenu.tsx:61
 #: src/pages/Index/Settings/UserSettings.tsx:145
@@ -3204,36 +3309,20 @@ msgstr "Пользовательские настройки"
 #~ msgid "Current language {locale}"
 #~ msgstr "Current language {locale}"
 
-#: src/components/nav/MainMenu.tsx:69
-#: src/components/nav/NavigationDrawer.tsx:146
-#: src/components/nav/SettingsHeader.tsx:41
-#: src/defaults/actions.tsx:191
-#: src/pages/Index/Settings/SystemSettings.tsx:417
-#: src/pages/Index/Settings/SystemSettings.tsx:422
-msgid "System Settings"
-msgstr "Системные настройки"
-
 #: src/components/nav/MainMenu.tsx:71
 #~ msgid "Switch to pseudo language"
 #~ msgstr "Switch to pseudo language"
 
-#: src/components/nav/MainMenu.tsx:78
-#: src/components/nav/NavigationDrawer.tsx:153
-#: src/components/nav/SettingsHeader.tsx:42
-#: src/defaults/actions.tsx:200
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:344
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:349
-msgid "Admin Center"
-msgstr "Админ центр"
+#: src/components/nav/MainMenu.tsx:96
+#: src/components/nav/NavigationDrawer.tsx:146
+#: src/components/nav/SettingsHeader.tsx:41
+#: src/defaults/actions.tsx:191
+#: src/pages/Index/Settings/SystemSettings.tsx:418
+#: src/pages/Index/Settings/SystemSettings.tsx:423
+msgid "System Settings"
+msgstr "Системные настройки"
 
-#: src/components/nav/MainMenu.tsx:99
-#: src/defaults/actions.tsx:78
-#: src/defaults/links.tsx:152
-#: src/defaults/links.tsx:205
-msgid "About InvenTree"
-msgstr "О программе InvenTree"
-
-#: src/components/nav/MainMenu.tsx:108
+#: src/components/nav/MainMenu.tsx:137
 msgid "Logout"
 msgstr "Выход"
 
@@ -3259,7 +3348,7 @@ msgstr "Выход"
 #: src/components/wizards/ImportPartWizard.tsx:808
 #: src/defaults/links.tsx:47
 #: src/forms/StockForms.tsx:1515
-#: src/pages/Index/Settings/SystemSettings.tsx:259
+#: src/pages/Index/Settings/SystemSettings.tsx:260
 #: src/pages/part/PartDetail.tsx:304
 #: src/pages/stock/LocationDetail.tsx:401
 #: src/pages/stock/LocationDetail.tsx:444
@@ -3271,7 +3360,7 @@ msgstr "Склад"
 
 #: src/components/nav/NavigationDrawer.tsx:84
 #: src/defaults/links.tsx:56
-#: src/pages/Index/Settings/SystemSettings.tsx:319
+#: src/pages/Index/Settings/SystemSettings.tsx:320
 #: src/pages/build/BuildDetail.tsx:602
 #: src/pages/build/BuildIndex.tsx:121
 msgid "Manufacturing"
@@ -3279,7 +3368,7 @@ msgstr "Производство"
 
 #: src/components/nav/NavigationDrawer.tsx:91
 #: src/defaults/links.tsx:62
-#: src/pages/Index/Settings/SystemSettings.tsx:348
+#: src/pages/Index/Settings/SystemSettings.tsx:349
 #: src/pages/company/ManufacturerDetail.tsx:9
 #: src/pages/company/ManufacturerPartDetail.tsx:193
 #: src/pages/company/SupplierDetail.tsx:9
@@ -3291,7 +3380,7 @@ msgstr "Закупки"
 
 #: src/components/nav/NavigationDrawer.tsx:98
 #: src/defaults/links.tsx:68
-#: src/pages/Index/Settings/SystemSettings.tsx:367
+#: src/pages/Index/Settings/SystemSettings.tsx:368
 #: src/pages/company/CustomerDetail.tsx:9
 #: src/pages/sales/ReturnOrderDetail.tsx:362
 #: src/pages/sales/SalesIndex.tsx:214
@@ -3531,8 +3620,8 @@ msgstr "Дата"
 #: src/pages/core/UserDetail.tsx:208
 #: src/pages/part/PartDetailsPanel.tsx:244
 #: src/tables/bom/UsedInTable.tsx:107
-#: src/tables/company/CompanyTable.tsx:76
-#: src/tables/company/CompanyTable.tsx:111
+#: src/tables/company/CompanyTable.tsx:85
+#: src/tables/company/CompanyTable.tsx:156
 #: src/tables/company/ParametricCompanyTable.tsx:22
 #: src/tables/machine/MachineListTable.tsx:385
 #: src/tables/machine/MachineListTable.tsx:800
@@ -4136,10 +4225,10 @@ msgid "Completion Date"
 msgstr "Дата завершения"
 
 #: src/components/tables/ColumnRenderers.tsx:767
-#: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:152
+#: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:160
 #: src/tables/part/PartSalesOrdersTable.tsx:77
 #: src/tables/sales/SalesOrderAllocationTable.tsx:187
-#: src/tables/sales/SalesOrderShipmentTable.tsx:186
+#: src/tables/sales/SalesOrderShipmentTable.tsx:192
 msgid "Shipment Date"
 msgstr "Дата отгрузки"
 
@@ -4467,7 +4556,8 @@ msgstr "Фильтр по пользователю"
 #: src/pages/company/ManufacturerPartDetail.tsx:197
 #: src/pages/company/ManufacturerPartDetailsPanel.tsx:57
 #: src/pages/company/SupplierPartDetailsPanel.tsx:106
-#: src/tables/company/CompanyTable.tsx:121
+#: src/tables/company/CompanyTable.tsx:101
+#: src/tables/company/CompanyTable.tsx:166
 #: src/tables/purchasing/SupplierPartTable.tsx:117
 msgid "Manufacturer"
 msgstr "Производитель"
@@ -4484,7 +4574,8 @@ msgstr "Фильтр по производителю"
 #: src/pages/company/SupplierPartDetailsPanel.tsx:84
 #: src/pages/company/SupplierPartDetailsPanel.tsx:183
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:60
-#: src/tables/company/CompanyTable.tsx:116
+#: src/tables/company/CompanyTable.tsx:92
+#: src/tables/company/CompanyTable.tsx:161
 #: src/tables/part/PartPurchaseOrdersTable.tsx:52
 #: src/tables/purchasing/PurchaseOrderParametricTable.tsx:27
 #: src/tables/purchasing/PurchaseOrderTable.tsx:68
@@ -5587,7 +5678,7 @@ msgid "Manage InvenTree plugins"
 msgstr "Управление плагинами InvenTree"
 
 #: src/defaults/actions.tsx:240
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:276
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:289
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:52
 #: src/tables/machine/MachineTypeTable.tsx:326
 msgid "Machines"
@@ -5732,7 +5823,15 @@ msgstr "Документация InvenTree"
 msgid "Licenses for dependencies of the InvenTree software"
 msgstr "Лицензии зависимостей программы InvenTree"
 
-#: src/defaults/links.tsx:206
+#: src/defaults/links.tsx:201
+msgid "First Use Tour"
+msgstr ""
+
+#: src/defaults/links.tsx:202
+msgid "Guided tour for first-time users"
+msgstr ""
+
+#: src/defaults/links.tsx:215
 msgid "About the InvenTree Project"
 msgstr "О проекте InvenTree"
 
@@ -6269,7 +6368,7 @@ msgstr "Цена на основе детали и количества отли
 
 #: src/forms/SalesOrderForms.tsx:224
 #: src/forms/SalesOrderForms.tsx:226
-#: src/tables/sales/SalesOrderShipmentTable.tsx:212
+#: src/tables/sales/SalesOrderShipmentTable.tsx:218
 msgid "Check Shipment"
 msgstr "Проверить отправку"
 
@@ -6283,7 +6382,7 @@ msgstr "Отправление отмечено как проверенное"
 
 #: src/forms/SalesOrderForms.tsx:252
 #: src/forms/SalesOrderForms.tsx:254
-#: src/tables/sales/SalesOrderShipmentTable.tsx:225
+#: src/tables/sales/SalesOrderShipmentTable.tsx:231
 msgid "Uncheck Shipment"
 msgstr "Снять отметку проверки с отправки"
 
@@ -6304,11 +6403,11 @@ msgid "Shipment completed successfully"
 msgstr "Отгрузка успешно завершена"
 
 #: src/forms/SalesOrderForms.tsx:291
-#: src/tables/sales/SalesOrderShipmentTable.tsx:235
+#: src/tables/sales/SalesOrderShipmentTable.tsx:241
 msgid "Complete Shipment"
 msgstr "Завершить отправку"
 
-#: src/forms/SalesOrderForms.tsx:534
+#: src/forms/SalesOrderForms.tsx:550
 msgid "Leave blank to use the order address"
 msgstr "Оставьте поле пустым, чтобы использовать адрес заказа"
 
@@ -8412,7 +8511,7 @@ msgid "Metadata"
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:563
-#: src/pages/Index/Settings/SystemSettings.tsx:94
+#: src/pages/Index/Settings/SystemSettings.tsx:95
 msgid "Single Sign-On (SSO) Settings"
 msgstr "Настройки единого входа (SSO)"
 
@@ -8547,39 +8646,39 @@ msgstr ""
 #~ msgid "Templates"
 #~ msgstr "Templates"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:130
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:132
 msgid "Home"
 msgstr "Главная"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:137
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:139
 msgid "Users / Access"
 msgstr "Пользователи / доступ"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:151
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:153
 msgid "Data Import"
 msgstr "Импорт данных"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:157
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:159
 msgid "Data Export"
 msgstr "Экспорт данных"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:163
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:165
 msgid "Barcode Scans"
 msgstr "Сканирование штрихкодов"
-
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:169
-msgid "Background Tasks"
-msgstr "Фоновые задачи"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:170
 #~ msgid "Location types"
 #~ msgstr "Location types"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:175
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:171
+msgid "Background Tasks"
+msgstr "Фоновые задачи"
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:177
 msgid "Error Reports"
 msgstr "Отчёты об ошибках"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:181
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:194
 msgid "Currencies"
 msgstr "Курсы валют"
 
@@ -8588,11 +8687,11 @@ msgstr "Курсы валют"
 #~ msgid "Part Parameters"
 #~ msgstr "Part Parameters"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:198
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:211
 msgid "Custom States"
 msgstr "Пользовательские состояния"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:204
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:217
 #: src/pages/Index/Settings/AdminCenter/UnitManagementPanel.tsx:57
 msgid "Custom Units"
 msgstr "Единицы измерения"
@@ -8601,53 +8700,53 @@ msgstr "Единицы измерения"
 #~ msgid "Add a new user"
 #~ msgstr "Add a new user"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:231
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:244
 msgid "Category Parameters"
 msgstr "Параметры категории"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:250
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:263
 msgid "Report Snippets"
 msgstr "Фрагменты отчётов"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:256
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:269
 msgid "Report Assets"
 msgstr "Ресурсы отчётов"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:262
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:275
 msgid "Location Types"
 msgstr "Типы мест хранения"
-
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:283
-msgid "Identity Federation"
-msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:283
 #~ msgid "Identity"
 #~ msgstr "Identity"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:295
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:296
+msgid "Identity Federation"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:308
 msgid "Operations"
 msgstr "Действия"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:308
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:322
 msgid "Data Management"
 msgstr "Управление данными"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:319
-#: src/pages/Index/Settings/SystemSettings.tsx:193
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:333
+#: src/pages/Index/Settings/SystemSettings.tsx:194
 #: src/pages/Index/Settings/UserSettings.tsx:124
 msgid "Reporting"
 msgstr "Отчёты"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:324
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:338
 msgid "PLM"
 msgstr "PLM"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:336
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:350
 msgid "Extend / Integrate"
 msgstr "Расширения / интеграции"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:350
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:364
 msgid "Advanced Options"
 msgstr "Расширенные настройки"
 
@@ -8783,7 +8882,7 @@ msgstr "Ожидающие задачи"
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:69
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:85
-#: src/pages/Index/Settings/SystemSettings.tsx:62
+#: src/pages/Index/Settings/SystemSettings.tsx:63
 msgid "Scheduled Tasks"
 msgstr "Запланированные задачи"
 
@@ -8856,11 +8955,11 @@ msgstr "Настройки ниже специфичны для каждого �
 msgid "Server Settings"
 msgstr "Настройки сервера"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:79
+#: src/pages/Index/Settings/SystemSettings.tsx:80
 msgid "Authentication"
 msgstr "Аутентификация"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:112
+#: src/pages/Index/Settings/SystemSettings.tsx:113
 msgid "Barcodes"
 msgstr "Штрих-коды"
 
@@ -8872,7 +8971,7 @@ msgstr "Штрих-коды"
 #~ msgid "This panel is a placeholder."
 #~ msgstr "This panel is a placeholder."
 
-#: src/pages/Index/Settings/SystemSettings.tsx:130
+#: src/pages/Index/Settings/SystemSettings.tsx:131
 msgid "Display"
 msgstr "Отображение"
 
@@ -8880,12 +8979,12 @@ msgstr "Отображение"
 #~ msgid "Exchange Rates"
 #~ msgstr "Exchange Rates"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:151
+#: src/pages/Index/Settings/SystemSettings.tsx:152
 #: src/pages/Index/Settings/UserSettings.tsx:118
 msgid "The settings below are specific to each available notification method"
 msgstr "Настройки ниже специфичны для каждого доступного метода уведомлений"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:157
+#: src/pages/Index/Settings/SystemSettings.tsx:158
 msgid "Pricing"
 msgstr "Цены"
 
@@ -8893,19 +8992,19 @@ msgstr "Цены"
 #~ msgid "Labels"
 #~ msgstr "Labels"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:237
+#: src/pages/Index/Settings/SystemSettings.tsx:238
 msgid "Part Creation"
 msgstr "Создание детали"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:280
+#: src/pages/Index/Settings/SystemSettings.tsx:281
 msgid "Stock Expiry"
 msgstr "Срок хранения"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:289
+#: src/pages/Index/Settings/SystemSettings.tsx:290
 msgid "Part Stocktake"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:299
+#: src/pages/Index/Settings/SystemSettings.tsx:300
 #: src/pages/part/PartStockHistoryDetail.tsx:299
 #: src/pages/stock/StockDetail.tsx:202
 msgid "Stock Tracking"
@@ -8915,7 +9014,7 @@ msgstr "Движение остатков"
 #~ msgid "Switch to User Setting"
 #~ msgstr "Switch to User Setting"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:337
+#: src/pages/Index/Settings/SystemSettings.tsx:338
 msgid "External Build Orders"
 msgstr "Внешние производственные заказы"
 
@@ -9353,7 +9452,7 @@ msgstr "Назначенный запас"
 #~ msgstr "Delete company"
 
 #: src/pages/company/CompanyDetail.tsx:221
-#: src/tables/company/CompanyTable.tsx:102
+#: src/tables/company/CompanyTable.tsx:147
 msgid "Edit Company"
 msgstr "Редактирование компании"
 
@@ -9392,7 +9491,8 @@ msgstr "Валюта по умолчанию"
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:61
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:66
 #: src/pages/stock/StockDetailsPanel.tsx:306
-#: src/tables/company/CompanyTable.tsx:126
+#: src/tables/company/CompanyTable.tsx:110
+#: src/tables/company/CompanyTable.tsx:171
 #: src/tables/part/PartSalesOrdersTable.tsx:51
 #: src/tables/sales/ReturnOrderParametricTable.tsx:25
 #: src/tables/sales/ReturnOrderTable.tsx:64
@@ -9402,6 +9502,12 @@ msgstr "Валюта по умолчанию"
 #: src/tables/stock/StockTrackingTable.tsx:197
 msgid "Customer"
 msgstr "Покупатель"
+
+#: src/pages/company/CompanyDetailsPanel.tsx:90
+#: src/tables/company/CompanyTable.tsx:119
+#: src/tables/company/CompanyTable.tsx:176
+msgid "Internal"
+msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:71
 msgid "Manufacturer Part Details"
@@ -10545,8 +10651,8 @@ msgstr "Адрес доставки"
 
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:281
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:188
-#: src/tables/sales/SalesOrderShipmentTable.tsx:170
-#: src/tables/sales/SalesOrderShipmentTable.tsx:301
+#: src/tables/sales/SalesOrderShipmentTable.tsx:176
+#: src/tables/sales/SalesOrderShipmentTable.tsx:307
 msgid "Shipped"
 msgstr "Отгружено"
 
@@ -10572,8 +10678,8 @@ msgid "Pending"
 msgstr "В обработке"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:176
-#: src/tables/sales/SalesOrderShipmentTable.tsx:162
-#: src/tables/sales/SalesOrderShipmentTable.tsx:296
+#: src/tables/sales/SalesOrderShipmentTable.tsx:168
+#: src/tables/sales/SalesOrderShipmentTable.tsx:302
 msgid "Checked"
 msgstr "Проверено"
 
@@ -10582,8 +10688,8 @@ msgid "Not Checked"
 msgstr "Не проверено"
 
 #: src/pages/sales/SalesOrderShipmentDetail.tsx:194
-#: src/tables/sales/SalesOrderShipmentTable.tsx:178
-#: src/tables/sales/SalesOrderShipmentTable.tsx:306
+#: src/tables/sales/SalesOrderShipmentTable.tsx:184
+#: src/tables/sales/SalesOrderShipmentTable.tsx:312
 #: src/tables/settings/EmailTable.tsx:31
 msgid "Delivered"
 msgstr "Доставлено"
@@ -10629,20 +10735,20 @@ msgstr "Номер отслеживания"
 msgid "Invoice Number"
 msgstr "Номер счета"
 
-#: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:135
+#: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:143
 msgid "Allocated Items"
 msgstr "Выбранные запасы"
 
-#: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:140
+#: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:148
 msgid "Checked By"
 msgstr "Проверил"
 
-#: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:146
+#: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:154
 msgid "Not checked"
 msgstr "Не проверено"
 
-#: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:160
-#: src/tables/sales/SalesOrderShipmentTable.tsx:190
+#: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:168
+#: src/tables/sales/SalesOrderShipmentTable.tsx:196
 msgid "Delivery Date"
 msgstr "Дата доставки"
 
@@ -11784,24 +11890,24 @@ msgstr "Сторонняя сборка"
 msgid "This build order is fulfilled by an external purchase order"
 msgstr "Этот заказ на сборку выполнен внешними заказами на закупку"
 
-#: src/tables/company/AddressTable.tsx:122
-#: src/tables/company/AddressTable.tsx:187
+#: src/tables/company/AddressTable.tsx:136
+#: src/tables/company/AddressTable.tsx:201
 msgid "Add Address"
 msgstr "Добавить адрес"
 
-#: src/tables/company/AddressTable.tsx:127
+#: src/tables/company/AddressTable.tsx:141
 msgid "Address created"
 msgstr "Адрес создан"
 
-#: src/tables/company/AddressTable.tsx:136
+#: src/tables/company/AddressTable.tsx:150
 msgid "Edit Address"
 msgstr "Редактировать адрес"
 
-#: src/tables/company/AddressTable.tsx:144
+#: src/tables/company/AddressTable.tsx:158
 msgid "Delete Address"
 msgstr "Удалить адрес"
 
-#: src/tables/company/AddressTable.tsx:145
+#: src/tables/company/AddressTable.tsx:159
 msgid "Are you sure you want to delete this address?"
 msgstr "Вы уверены, что хотите удалить этот адрес?"
 
@@ -11809,27 +11915,31 @@ msgstr "Вы уверены, что хотите удалить этот адр�
 #~ msgid "New Company"
 #~ msgstr "New Company"
 
-#: src/tables/company/CompanyTable.tsx:89
-#: src/tables/company/CompanyTable.tsx:141
+#: src/tables/company/CompanyTable.tsx:134
+#: src/tables/company/CompanyTable.tsx:191
 msgid "Add Company"
 msgstr "Создать компанию"
 
-#: src/tables/company/CompanyTable.tsx:112
+#: src/tables/company/CompanyTable.tsx:157
 #: src/tables/company/ParametricCompanyTable.tsx:23
 msgid "Show active companies"
 msgstr "Показать активные компании"
 
-#: src/tables/company/CompanyTable.tsx:117
+#: src/tables/company/CompanyTable.tsx:162
 msgid "Show companies which are suppliers"
 msgstr "Показать компании, которые являются поставщиками"
 
-#: src/tables/company/CompanyTable.tsx:122
+#: src/tables/company/CompanyTable.tsx:167
 msgid "Show companies which are manufacturers"
 msgstr "Показать компании, которые являются производителями"
 
-#: src/tables/company/CompanyTable.tsx:127
+#: src/tables/company/CompanyTable.tsx:172
 msgid "Show companies which are customers"
 msgstr "Показать компании, которые являются клиентами"
+
+#: src/tables/company/CompanyTable.tsx:177
+msgid "Show companies which represent your own organization"
+msgstr ""
 
 #: src/tables/company/ContactTable.tsx:99
 msgid "Edit Contact"
@@ -12484,7 +12594,7 @@ msgid "Show received items"
 msgstr "Показать полученные элементы"
 
 #: src/tables/part/PartSalesAllocationsTable.tsx:91
-#: src/tables/sales/SalesOrderShipmentTable.tsx:260
+#: src/tables/sales/SalesOrderShipmentTable.tsx:266
 msgid "View Sales Order"
 msgstr "Показать заказ на продажу"
 
@@ -13336,27 +13446,27 @@ msgstr "Отгрузка создана"
 msgid "Items"
 msgstr "Элементы"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:245
+#: src/tables/sales/SalesOrderShipmentTable.tsx:251
 msgid "Edit shipment"
 msgstr "Редактировать отправку"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:253
+#: src/tables/sales/SalesOrderShipmentTable.tsx:259
 msgid "Cancel shipment"
 msgstr "Отменить отправку"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:283
+#: src/tables/sales/SalesOrderShipmentTable.tsx:289
 msgid "Add shipment"
 msgstr "Создать доставку"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:297
+#: src/tables/sales/SalesOrderShipmentTable.tsx:303
 msgid "Show shipments which have been checked"
 msgstr "Показать отправки, которые были проверены"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:302
+#: src/tables/sales/SalesOrderShipmentTable.tsx:308
 msgid "Show shipments which have been shipped"
 msgstr "Показать отправки, которые были отправлены"
 
-#: src/tables/sales/SalesOrderShipmentTable.tsx:307
+#: src/tables/sales/SalesOrderShipmentTable.tsx:313
 msgid "Show shipments which have been delivered"
 msgstr "Показать отправки, которые были доставлены"
 
