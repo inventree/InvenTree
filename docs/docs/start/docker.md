@@ -115,6 +115,9 @@ InvenTree stores any persistent data (e.g. uploaded media files, database data, 
 !!! info "Data Directory"
     Make sure you change the path to the local directory where you want persistent data to be stored.
 
+!!! info "Directory Ownership"
+    The `inventree-server` and `inventree-worker` containers run application code as a non-root user (`uid=1000`, `gid=1000`), rather than as `root`. On startup, each container automatically takes ownership of the directory mapped to `INVENTREE_EXT_VOLUME` (equivalent to `chown -R 1000:1000`) before dropping root privileges - no manual setup of this directory is required.
+
 ### Database Connection
 
 The `inventree-db` container is configured to use the `postgres:{{ config.extra.docker_postgres_version }}` docker image.

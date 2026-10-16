@@ -55,5 +55,14 @@ fi
 
 cd ${INVENTREE_HOME}
 
+# If requested (production image only), drop root privileges before launching the CMD.
+# This lets the external data volume be bind-mounted with any host ownership -
+# we fix it up here rather than requiring the operator to chown it in advance.
+if [[ "$(id -u)" = "0" && -n "$INVENTREE_RUN_AS_USER" ]]; then
+    echo "Setting ownership of ${INVENTREE_DATA_DIR} to '${INVENTREE_RUN_AS_USER}'"
+    chown -R "${INVENTREE_RUN_AS_USER}:${INVENTREE_RUN_AS_USER}" "${INVENTREE_DATA_DIR}"
+    exec gosu "${INVENTREE_RUN_AS_USER}" "$@"
+fi
+
 # Launch the CMD *after* the ENTRYPOINT completes
 exec "$@"
