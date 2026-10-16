@@ -21,8 +21,8 @@ export default function SupplierPricingPanel({
   const table = useTable('pricingsupplier');
 
   const columns: TableColumn[] = useMemo(() => {
-    return SupplierPriceBreakColumns();
-  }, []);
+    return SupplierPriceBreakColumns({ units: part?.units });
+  }, [part?.units]);
 
   const currency: string = useMemo(() => {
     if (table.records.length === 0) {

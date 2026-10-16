@@ -20,7 +20,7 @@ The following configuration options are available for backup:
 {{ configtable() }}
 {{ configsetting("INVENTREE_BACKUP_STORAGE") }} Backup storage backend. Refer to the [storage backend documentation](#storage-backend). |
 {{ configsetting("INVENTREE_BACKUP_DIR") }} Backup storage directory. |
-{{ configsetting("INVENTREE_BACKUP_OPTIONS") }} Specific options for the selected storage backend (dict) |
+{{ configsetting("INVENTREE_BACKUP_OPTIONS", default="{}") }} Specific options for the selected storage backend (dict) |
 {{ configsetting("INVENTREE_BACKUP_CONNECTOR_OPTIONS") }} Specific options for the database connector (dict). Refer to the [database connector options](#database-connector) |
 {{ configsetting("INVENTREE_BACKUP_SEND_EMAIL") }} If True, an email is sent to the site admin when an error occurs during a backup or restore procedure. |
 {{ configsetting("INVENTREE_BACKUP_EMAIL_PREFIX") }} Prefix for the subject line of backup-related emails. |
