@@ -420,6 +420,22 @@ class PurchaseOrderSerializer(
 
         return [*fields, 'duplicate']
 
+    def __init__(self, *args, **kwargs):
+        """Set a dynamic default for the 'destination' field, on creation only."""
+        super().__init__(*args, **kwargs)
+
+        if self.instance is None:
+            location_pk = get_global_setting(
+                'PURCHASEORDER_DEFAULT_RECEIVE_LOCATION', backup_value=None
+            )
+
+            if location_pk:
+                self.fields[
+                    'destination'
+                ].default = stock.models.StockLocation.objects.filter(
+                    pk=location_pk
+                ).first()
+
     duplicate = DuplicateOptionsSerializer(
         order.models.PurchaseOrder.objects.all(),
         copy_lines=True,
@@ -493,25 +509,6 @@ class OrderAdjustSerializer(serializers.Serializer):
         return self.context['order']
 
 
-class PurchaseOrderHoldSerializer(OrderAdjustSerializer):
-    """Serializer for placing a PurchaseOrder on hold."""
-
-    def save(self):
-        """Save the serializer to 'hold' the order."""
-        self.order.hold_order()
-
-
-class PurchaseOrderCancelSerializer(OrderAdjustSerializer):
-    """Serializer for cancelling a PurchaseOrder."""
-
-    def save(self):
-        """Save the serializer to 'cancel' the order."""
-        if not self.order.can_cancel:
-            raise ValidationError(_('Order cannot be cancelled'))
-
-        self.order.cancel_order()
-
-
 class PurchaseOrderCompleteSerializer(OrderAdjustSerializer):
     """Serializer for completing a purchase order."""
 
@@ -541,18 +538,6 @@ class PurchaseOrderCompleteSerializer(OrderAdjustSerializer):
         order = self.context['order']
 
         return {'is_complete': order.is_complete}
-
-    def save(self):
-        """Save the serializer to 'complete' the order."""
-        self.order.complete_order()
-
-
-class PurchaseOrderIssueSerializer(OrderAdjustSerializer):
-    """Serializer for issuing (sending) a purchase order."""
-
-    def save(self):
-        """Save the serializer to 'place' the order."""
-        self.order.place_order()
 
 
 @register_importer()
@@ -994,7 +979,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['items', 'location']
+        fields = ['items', 'location', 'batch_code']
 
     items = PurchaseOrderLineItemReceiveSerializer(many=True)
 
@@ -1005,6 +990,16 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         allow_null=True,
         label=_('Location'),
         help_text=_('Select destination location for received items'),
+    )
+
+    batch_code = serializers.CharField(
+        label=_('Batch Code'),
+        help_text=_(
+            'Enter batch code for incoming stock items - applied to any line item which does not specify its own batch code'
+        ),
+        required=False,
+        default='',
+        allow_blank=True,
     )
 
     def validate(self, data):
@@ -1019,6 +1014,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         items = data.get('items', [])
 
         location = data.get('location', order.destination)
+        batch_code = data.get('batch_code', '')
 
         if len(items) == 0:
             raise ValidationError(_('Line items must be provided'))
@@ -1049,6 +1045,10 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                 raise ValidationError({
                     'location': _('Destination location must be specified')
                 })
+
+            # If no batch code is specified for this line item, fall back to the top-level value
+            if not item.get('batch_code'):
+                item['batch_code'] = batch_code
 
             barcode = item.get('barcode', '')
 
@@ -1442,6 +1442,7 @@ class SalesOrderShipmentSerializer(
             'allocated_items',
             'shipment_date',
             'shipment_address',
+            'contact',
             'delivery_date',
             'checked_by',
             'duplicate',
@@ -1453,6 +1454,7 @@ class SalesOrderShipmentSerializer(
             # Extra detail fields
             'parameters',
             'checked_by_detail',
+            'contact_detail',
             'customer_detail',
             'order_detail',
             'shipment_address_detail',
@@ -1522,6 +1524,18 @@ class SalesOrderShipmentSerializer(
         },
         default_include=True,
         prefetch_fields=['shipment_address'],
+    )
+
+    contact_detail = OptionalField(
+        serializer_class=ContactSerializer,
+        serializer_kwargs={
+            'source': 'contact',
+            'many': False,
+            'read_only': True,
+            'allow_null': True,
+        },
+        default_include=True,
+        prefetch_fields=['contact'],
     )
 
     parameters = common.filters.enable_parameters_filter()

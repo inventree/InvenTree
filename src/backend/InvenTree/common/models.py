@@ -205,7 +205,15 @@ class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     )
 
 
-class BaseInvenTreeSetting(models.Model):
+class SettingsManager(models.Manager):
+    """Ensure that the 'touched' field is deferred in all queries."""
+
+    def get_queryset(self):
+        """Defer the write-only 'touched' field."""
+        return super().get_queryset().defer('touched', 'updated_by', 'updated')
+
+
+class BaseInvenTreeSetting(UpdatedUserMixin, models.Model):
     """An base InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
     Attributes:
@@ -216,6 +224,8 @@ class BaseInvenTreeSetting(models.Model):
     SETTINGS: dict[str, SettingsKeyType] = {}
 
     CHECK_SETTING_KEY = False
+
+    objects = SettingsManager()
 
     extra_unique_fields: list[str] = []
 
@@ -614,7 +624,6 @@ class BaseInvenTreeSetting(models.Model):
                 access_global_cache = False
 
         # At this point, we need to query the database
-
         filters = {
             'key__iexact': key,
             # Optionally filter by other keys
@@ -804,6 +813,11 @@ class BaseInvenTreeSetting(models.Model):
 
     value = models.CharField(
         max_length=2000, blank=True, unique=False, help_text=_('Settings value')
+    )
+
+    touched = models.BooleanField(
+        default=False,
+        help_text=_('Indicates whether the setting has been modified by the user'),
     )
 
     @property
@@ -2276,7 +2290,11 @@ class Attachment(
             img.save(thumb_io, format='PNG')
             thumb_io.seek(0)
 
-            thumb_name = f'thumb_{os.path.basename(self.attachment.name)}'
+            # Save the thumbnail alongside the original attachment file
+            attachment_dir = os.path.dirname(self.attachment.name)
+            thumb_name = os.path.join(
+                attachment_dir, f'thumb_{os.path.basename(self.attachment.name)}'
+            )
             self.thumbnail.save(thumb_name, ContentFile(thumb_io.read()), save=False)
         except Exception:
             pass
@@ -2990,7 +3008,10 @@ class Parameter(
 
         if self.template.units and self.data_numeric is not None:
             query = Parameter.objects.filter(
-                template=self.template, data_numeric=self.data_numeric
+                template=self.template,
+                data_numeric__range=InvenTree.conversion.numeric_range(
+                    self.data_numeric
+                ),
             )
         else:
             query = Parameter.objects.filter(
@@ -3425,7 +3446,7 @@ class NotesImage(models.Model):
 
 @receiver(post_delete, sender=NotesImage, dispatch_uid='notesimage_post_delete')
 def after_notesimage_deleted(sender, instance, **kwargs):
-    """Remove the image file from storage once a NotesImage row is deleted.
+    """Remove the image file after the NotesImage deletion commits.
 
     A signal (rather than an overridden delete()) is required here: a NotesImage row is
     usually removed via a cascade - e.g. deleting its parent Note, or
@@ -3435,7 +3456,9 @@ def after_notesimage_deleted(sender, instance, **kwargs):
     started from a single instance.delete() or a bulk QuerySet.delete().
     """
     if instance.image:
-        instance.image.delete(save=False)
+        transaction.on_commit(
+            lambda: instance.image.delete(save=False), using=kwargs.get('using')
+        )
 
 
 class BarcodeScanResult(InvenTree.models.InvenTreeModel):

@@ -4,6 +4,7 @@ from django.contrib import admin
 
 import common.models
 import common.validators
+from common.admin_shared import NoEditAdminMixin, ReadOnlyAdminMixin
 
 
 @admin.register(common.models.ParameterTemplate)
@@ -89,7 +90,7 @@ class AttachmentAdmin(admin.ModelAdmin):
 
 
 @admin.register(common.models.DataOutput)
-class DataOutputAdmin(admin.ModelAdmin):
+class DataOutputAdmin(NoEditAdminMixin, admin.ModelAdmin):
     """Admin interface for DataOutput objects - view and delete only."""
 
     list_display = ('user', 'created', 'output_type', 'output')
@@ -106,17 +107,9 @@ class DataOutputAdmin(admin.ModelAdmin):
 
     autocomplete_fields = ('user',)
 
-    def has_add_permission(self, request):
-        """Prevent addition of new DataOutput objects via the admin interface."""
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        """Prevent modification of DataOutput objects via the admin interface."""
-        return False
-
 
 @admin.register(common.models.BarcodeScanResult)
-class BarcodeScanResultAdmin(admin.ModelAdmin):
+class BarcodeScanResultAdmin(NoEditAdminMixin, admin.ModelAdmin):
     """Admin interface for BarcodeScanResult objects - read-only audit log."""
 
     list_display = ('data', 'timestamp', 'user', 'endpoint', 'result')
@@ -126,14 +119,6 @@ class BarcodeScanResultAdmin(admin.ModelAdmin):
     search_fields = ('data', 'endpoint', 'result', 'user__username')
 
     autocomplete_fields = ('user',)
-
-    def has_add_permission(self, request):
-        """Prevent addition of new BarcodeScanResult objects via the admin interface."""
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        """Prevent modification of BarcodeScanResult objects via the admin interface."""
-        return False
 
 
 @admin.register(common.models.ProjectCode)
@@ -196,24 +181,16 @@ class WebhookAdmin(admin.ModelAdmin):
 
 
 @admin.register(common.models.NotificationEntry)
-class NotificationEntryAdmin(admin.ModelAdmin):
+class NotificationEntryAdmin(NoEditAdminMixin, admin.ModelAdmin):
     """Admin settings for NotificationEntry - view and delete only."""
 
     list_display = ('key', 'uid', 'updated')
 
     search_fields = ('key', 'uid')
 
-    def has_add_permission(self, request):
-        """Prevent addition of new NotificationEntry objects via the admin interface."""
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        """Prevent modification of NotificationEntry objects via the admin interface."""
-        return False
-
 
 @admin.register(common.models.NotificationMessage)
-class NotificationMessageAdmin(admin.ModelAdmin):
+class NotificationMessageAdmin(NoEditAdminMixin, admin.ModelAdmin):
     """Admin settings for NotificationMessage - view and delete only."""
 
     list_display = (
@@ -232,46 +209,18 @@ class NotificationMessageAdmin(admin.ModelAdmin):
 
     autocomplete_fields = ('user',)
 
-    def has_add_permission(self, request):
-        """Prevent addition of new NotificationMessage objects via the admin interface."""
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        """Prevent modification of NotificationMessage objects via the admin interface."""
-        return False
-
 
 @admin.register(common.models.NewsFeedEntry)
-class NewsFeedEntryAdmin(admin.ModelAdmin):
+class NewsFeedEntryAdmin(NoEditAdminMixin, admin.ModelAdmin):
     """Admin settings for NewsFeedEntry - view and delete only."""
 
     list_display = ('title', 'author', 'published', 'summary')
 
     search_fields = ('title', 'author', 'summary')
 
-    def has_add_permission(self, request):
-        """Prevent addition of new NewsFeedEntry objects via the admin interface."""
-        return False
 
-    def has_change_permission(self, request, obj=None):
-        """Prevent modification of NewsFeedEntry objects via the admin interface."""
-        return False
-
-
-class ReadOnlyAdmin(admin.ModelAdmin):
-    """Base admin class that prevents all modifications."""
-
-    def has_add_permission(self, request):
-        """Prevent addition of new objects via the admin interface."""
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        """Prevent modification of objects via the admin interface."""
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        """Prevent deletion of objects via the admin interface."""
-        return False
+class ReadOnlyAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
+    """Admin class that makes the model read-only."""
 
 
 admin.site.register(common.models.WebhookMessage, ReadOnlyAdmin)

@@ -74,6 +74,7 @@ from order.status_codes import (
     TransferOrderStatusGroups,
 )
 from part import models as PartModels
+from plugin.base.integration.AllocateMixin import apply_allocate_mixin
 from plugin.events import bulk_trigger_event, trigger_event
 from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
@@ -899,7 +900,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         target=PurchaseOrderStatus.COMPLETE,
         event=PurchaseOrderEvents.COMPLETED,
     )
-    def complete_order(self):
+    def complete_order(self, **kwargs):
         """Transition this PurchaseOrder to COMPLETE status.
 
         The order must currently be PLACED.
@@ -1321,6 +1322,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             PurchaseOrder,
             exclude=user,
             content=InvenTreeNotificationBodies.ItemsReceived,
+            html_context={'order': self, 'stock_items': stock_items},
             extra_users=notify_users,
         )
 
@@ -1611,7 +1613,12 @@ class SalesOrder(TotalPriceMixin, Order):
             else:
                 available_stock = available_stock.order_by(stock_sort_by)
 
-            stock_count = available_stock.count()
+            # Allow plugins to filter / reorder the candidate stock items
+            available_stock = apply_allocate_mixin(
+                'filter_sales_order_allocation', line_item, available_stock, **kwargs
+            )
+
+            stock_count = len(available_stock)
 
             if stock_count == 0:
                 continue
@@ -2633,6 +2640,7 @@ class SalesOrderShipment(
     Attributes:
         order: SalesOrder reference
         shipment_address: Shipping address for this shipment (optional)
+        contact: Point of contact for this shipment (optional)
         shipment_date: Date this shipment was "shipped" (or null)
         checked_by: User reference field indicating who checked this order
         reference: Custom reference text for this shipment (e.g. consignment number?)
@@ -2654,7 +2662,7 @@ class SalesOrderShipment(
         """Custom clean method for the SalesOrderShipment class.
 
         Raises:
-            ValidationError: If the shipment address does not match the customer
+            ValidationError: If the shipment address or contact does not match the customer
         """
         super().clean()
 
@@ -2662,6 +2670,12 @@ class SalesOrderShipment(
             if self.shipment_address.company != self.order.customer:
                 raise ValidationError({
                     'shipment_address': _('Shipment address must match the customer')
+                })
+
+        if self.order and self.contact:
+            if self.contact.company != self.order.customer:
+                raise ValidationError({
+                    'contact': _('Contact does not match the customer')
                 })
 
     @staticmethod
@@ -2698,6 +2712,16 @@ class SalesOrderShipment(
         null=True,
         verbose_name=_('Address'),
         help_text=_('Shipping address for this shipment'),
+        related_name='+',
+    )
+
+    contact = models.ForeignKey(
+        Contact,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Contact'),
+        help_text=_('Point of contact for this shipment'),
         related_name='+',
     )
 

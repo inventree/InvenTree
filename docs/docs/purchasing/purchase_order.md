@@ -109,7 +109,7 @@ There are two options to mark items as "received":
 
 When receiving items from a purchase order, the location of the items must be specified. There are multiple ways to specify the location:
 
-* **Order Destination**: The *destination* field of the purchase order can be set to a specific location. When receiving items, the location will default to the destination location.
+* **Order Destination**: The *destination* field of the purchase order can be set to a specific location. When receiving items, the location will default to the destination location. If the [Default Receive Location](#purchase-order-settings) setting is configured, the *destination* field will be pre-filled with this location when creating a new purchase order.
 
 * **Line Item Location**: Each line item can have a specific location set. When receiving items, the location will default to the line item location. *Note: A destination specified at the line item level will override the destination specified at the order level.*
 
@@ -213,3 +213,4 @@ The following [global settings](../settings/global.md) are available for purchas
 {{ globalsetting("PURCHASEORDER_EDIT_COMPLETED_ORDERS") }}
 {{ globalsetting("PURCHASEORDER_AUTO_COMPLETE") }}
 {{ globalsetting("PURCHASEORDER_MERGE_LINE_ITEMS") }}
+{{ globalsetting("PURCHASEORDER_DEFAULT_RECEIVE_LOCATION") }}

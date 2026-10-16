@@ -87,6 +87,18 @@ export function AddressTable({
         switchable: true
       },
       {
+        accessor: 'phone',
+        sortable: false,
+        switchable: true,
+        defaultVisible: false
+      },
+      {
+        accessor: 'email',
+        sortable: false,
+        switchable: true,
+        defaultVisible: false
+      },
+      {
         accessor: 'shipping_notes',
         sortable: false,
         switchable: true
@@ -111,6 +123,8 @@ export function AddressTable({
       postal_city: {},
       province: {},
       country: {},
+      phone: {},
+      email: {},
       shipping_notes: {},
       internal_shipping_notes: {},
       link: {}

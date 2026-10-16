@@ -82,7 +82,8 @@ export default function PurchaseOrderDetail() {
   const purchaseOrderFields = usePurchaseOrderFields({});
 
   const duplicatePurchaseOrderFields = usePurchaseOrderFields({
-    duplicateOrderId: order.pk
+    duplicateOrderId: order.pk,
+    create: true
   });
 
   const editPurchaseOrder = useEditApiFormModal({

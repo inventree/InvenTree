@@ -18,10 +18,12 @@ from django.core.files.storage import default_storage
 from django.db.models import Model
 from django.db.models.query import QuerySet
 from django.utils import translation
+from django.utils.html import conditional_escape, format_html
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
 import lxml.html
+import nh3
 from babel import Locale
 from babel.core import UnknownLocaleError
 from babel.dates import format_date as babel_format_date
@@ -47,6 +49,19 @@ register = template.Library()
 
 
 logger = logging.getLogger('inventree')
+
+
+@register.simple_tag()
+def raise_error(message: str):
+    """Stop rendering a report or label template with an error message.
+
+    Arguments:
+        message: The message to include in the validation error.
+
+    Raises:
+        ValidationError: Whenever this tag is evaluated.
+    """
+    raise ValidationError(message)
 
 
 def get_locale(locale: Optional[str] = None) -> Locale:
@@ -171,6 +186,53 @@ def getkey(container: dict, key: str, backup_value: Optional[Any] = None) -> Any
         return None
 
     return container.get(key, backup_value)
+
+
+@register.simple_tag(takes_context=True)
+def set_var(context: dict, name: str, value: Any) -> str:
+    """Store a named variable, for later retrieval with get_var.
+
+    Arguments:
+        context: The template context, which should contain a 'report_vars' dictionary.
+        name: The name to store the variable against (must be a string)
+        value: The value to store
+
+    Returns:
+        An empty string - this tag does not render any output
+    """
+    if not isinstance(name, str):
+        logger.warning('set_var() called with non-string name')
+        return ''
+
+    store = context.get('report_vars')
+
+    if isinstance(store, dict):
+        store[name] = value
+    else:
+        logger.warning('set_var() called outside of a valid report context')
+
+    return ''
+
+
+@register.simple_tag(takes_context=True)
+def get_var(context: dict, name: str, backup_value: Optional[Any] = None) -> Any:
+    """Retrieve a named variable previously stored with set_var.
+
+    Arguments:
+        context: The template context, which should contain a 'report_vars' dictionary.
+        name: The name of the variable to retrieve
+        backup_value: Value to return if the variable has not been set (default = None)
+
+    Returns:
+        The stored value, or backup_value if the variable has not been set
+    """
+    store = context.get('report_vars')
+
+    if not isinstance(store, dict):
+        logger.warning('get_var() called outside of a valid report context')
+        return backup_value
+
+    return store.get(name, backup_value)
 
 
 def media_file_exists(path: Path | str) -> bool:
@@ -706,9 +768,9 @@ def internal_link(link, text) -> str:
     # If the base URL is not set, just return the text
     if not url:
         logger.warning('Failed to construct absolute URL for internal link')
-        return text
+        return conditional_escape(text)
 
-    return mark_safe(f'<a href="{url}">{text}</a>')
+    return format_html('<a href="{}">{}</a>', url, text)
 
 
 def make_decimal(value: Any) -> Any:
@@ -1056,6 +1118,7 @@ def render_html_text(text: str, **kwargs):
         bold: Boolean, whether bold (or not)
         italic: Boolean, whether italic (or not)
         heading: str, heading level e.g. 'h3'
+        sanitize: Boolean, whether to sanitize the provided text (default = True)
     """
     tags = []
 
@@ -1067,6 +1130,12 @@ def render_html_text(text: str, **kwargs):
 
     if heading := kwargs.get('heading', ''):
         tags.append(heading)
+
+    text = str(text)
+
+    if kwargs.get('sanitize', True):
+        # Remove any unsafe HTML content (e.g. script tags) from the provided text
+        text = nh3.clean(text)
 
     output = ''.join([f'<{tag}>' for tag in tags])
     output += text

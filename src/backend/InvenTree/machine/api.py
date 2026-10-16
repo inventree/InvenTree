@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 
 import InvenTree.permissions
 import machine.serializers as MachineSerializers
+from common.api import TouchMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateAPI, RetrieveUpdateDestroyAPI
 from machine import registry
@@ -79,7 +80,11 @@ class MachineSettingList(APIView):
     - GET: return all settings for a machine config
     """
 
-    permission_classes = [InvenTree.permissions.IsAuthenticatedOrReadScope]
+    permission_classes = [
+        InvenTree.permissions.IsAuthenticatedOrReadScope,
+        InvenTree.permissions.RolePermission,
+    ]
+    role_required = 'admin.view'
 
     @extend_schema(
         responses={200: MachineSerializers.MachineSettingSerializer(many=True)}
@@ -104,7 +109,7 @@ class MachineSettingList(APIView):
         return Response(results)
 
 
-class MachineSettingDetail(RetrieveUpdateAPI):
+class MachineSettingDetail(TouchMixin, RetrieveUpdateAPI):
     """Detail endpoint for a machine-specific setting.
 
     - GET: Get machine setting detail
@@ -117,6 +122,15 @@ class MachineSettingDetail(RetrieveUpdateAPI):
     lookup_field = 'key'
     queryset = MachineSetting.objects.all()
     serializer_class = MachineSerializers.MachineSettingSerializer
+
+    def get_permission_model(self):
+        """Return the model to check for role permissions.
+
+        Note: MachineSettingSerializer only assigns Meta.model on the
+        instance (not the class), so the default class-level lookup
+        cannot find it and RolePermission would otherwise fail open.
+        """
+        return MachineSetting
 
     def get_object(self):
         """Lookup machine setting object, based on the URL."""
