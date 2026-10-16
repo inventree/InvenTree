@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Anchor, Group, Text } from '@mantine/core';
+import { Alert, Anchor, Group, Stack, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
@@ -127,12 +127,42 @@ export default function SupplierPriceBreakTable({
     };
   }, []);
 
+  const priceBreakInfo = useMemo(() => {
+    const packQuantity = supplierPart?.pack_quantity;
+    const packQuantityNative = supplierPart?.pack_quantity_native ?? 1;
+    const units = supplierPart?.part_detail?.units;
+
+    if (packQuantityNative == 1) {
+      return undefined;
+    }
+
+    return (
+      <Alert color='blue' title={t`Supplier Pricing`}>
+        <Stack gap='xs'>
+          <Text size='sm'>
+            {t`The quantity is the number of supplier packs which must be purchased for this price break to apply.`}
+          </Text>
+          <Text size='sm'>
+            {t`The price is the cost of a single supplier pack, not the total cost for the specified quantity.`}
+          </Text>
+          {packQuantity && (
+            <Text size='sm'>
+              {t`Each supplier pack contains`}{' '}
+              <b>{units ? `${packQuantity} [${units}]` : packQuantity}</b>
+            </Text>
+          )}
+        </Stack>
+      </Alert>
+    );
+  }, [supplierPart]);
+
   const [selectedPriceBreak, setSelectedPriceBreak] = useState<number>(0);
 
   const newPriceBreak = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.supplier_part_pricing_list),
     title: t`Add Price Break`,
     fields: supplierPriceBreakFields,
+    preFormContent: priceBreakInfo,
     initialData: {
       part: supplierPart.pk,
       price_currency: supplierPart.supplier_detail.currency
@@ -145,6 +175,7 @@ export default function SupplierPriceBreakTable({
     pk: selectedPriceBreak,
     title: t`Edit Price Break`,
     fields: supplierPriceBreakFields,
+    preFormContent: priceBreakInfo,
     table: table
   });
 
