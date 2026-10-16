@@ -25,6 +25,7 @@ The following configuration options are available for backup:
 {{ configsetting("INVENTREE_BACKUP_SEND_EMAIL") }} If True, an email is sent to the site admin when an error occurs during a backup or restore procedure. |
 {{ configsetting("INVENTREE_BACKUP_EMAIL_PREFIX") }} Prefix for the subject line of backup-related emails. |
 {{ configsetting("INVENTREE_BACKUP_GPG_RECIPIENT") }} Specify GPG recipient if using encryption for backups. |
+{{ configsetting("INVENTREE_BACKUP_KEEP_COUNT") }} Number of historical backup files to keep (when using the `--clean` flag). |
 {{ configsetting("INVENTREE_BACKUP_DATE_FORMAT") }} Date format string used to format timestamps in backup filenames. |
 {{ configsetting("INVENTREE_BACKUP_DATABASE_FILENAME_TEMPLATE") }} Template string used to generate database backup filenames.
 {{ configsetting("INVENTREE_BACKUP_MEDIA_FILENAME_TEMPLATE") }} Template string used to generate media backup filenames. |
