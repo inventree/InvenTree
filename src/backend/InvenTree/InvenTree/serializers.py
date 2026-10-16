@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 from typing import Optional
 
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.files.storage import default_storage
@@ -20,7 +21,6 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
-from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.serializers import DecimalField, Serializer
 from rest_framework.utils import model_meta
@@ -49,6 +49,12 @@ class OptionalField:
 
     This allows for optimization of database queries based only on the requested data.
 
+    If the field embeds another model's data (e.g. a nested "detail" serializer), the
+    requesting user's view permission against that model is checked before the field is
+    included - this is inferred from `serializer_class.Meta.model` unless `model` is
+    explicitly provided. This prevents a user from seeing embedded data (e.g. a Part,
+    via a BuildOrder's `part_detail`) that they do not have direct permission to view.
+
     Example:
     class MySerializer(FilterableSerializerMixin, serializers.ModelSerializer):
         my_optional_field = OptionalField(
@@ -70,6 +76,7 @@ class OptionalField:
     filter_name: Optional[str] = None
     filter_by_query: bool = True
     prefetch_fields: Optional[list[str]] = None
+    model: Optional[type] = None
 
 
 class FilterableSerializerMixin:
@@ -120,20 +127,27 @@ class FilterableSerializerMixin:
 
         Order of operations:
 
-        - If we are generating the schema, always include the field
+        - If we are generating the schema, always include the field (unless the user does not have permission to view)
         - If this is a write request (POST, PUT, PATCH) and we are not exporting, always include the field
         - If this is a top-level serializer, check the request query parameters for the filter name
         - Check the kwargs provided to the serializer instance
         - Finally, fall back to the default_include value for the field itself
+
+        Whatever the outcome of the above, if the field embeds another model's data, the
+        result is then narrowed by the requesting user's view permission against that
+        model (see `check_field_permission`) - the field is never included for a user who
+        cannot view the embedded model, regardless of query parameters or defaults.
         """
         field_ref = field.filter_name or field_name
 
         # If we have already found a value for this filter, use it
         # This allows multiple optional fields to share the same filter value
+        # Note: fields sharing a filter_ref may still embed different models, so the
+        # permission gate is re-applied per-field even when the raw value is cached
         cached_value = self.optional_filters.get(field_ref, None)
 
         if cached_value is not None:
-            return cached_value
+            return self.check_field_permission(field, cached_value)
 
         # First, check kwargs provided to the serializer instance
         # We also pop the value to avoid issues with nested serializers
@@ -149,10 +163,12 @@ class FilterableSerializerMixin:
 
         field_kwargs = field.serializer_kwargs or {}
 
-        # Skip filtering for a write request - all fields should be present for data creation
+        # Skip filtering for a write request
+        # All fields should be present for data creation,
+        # excepting those for which the user does not have the required permissions
         if method := getattr(self.request, 'method', None):
             if method not in SAFE_METHODS and not self.is_exporting():
-                return True
+                return self.check_field_permission(field, True)
             else:
                 # Ignore write_only fields for read requests
                 if field_kwargs.get('write_only', False):
@@ -175,7 +191,68 @@ class FilterableSerializerMixin:
         if value is None:
             value = field.default_include
 
-        return value
+        return self.check_field_permission(field, value)
+
+    def check_field_permission(self, field: OptionalField, included: bool) -> bool:
+        """Narrow an inclusion decision by the requesting user's view permission.
+
+        An OptionalField which embeds another model's data (e.g. `part_detail` embedding
+        a Part) should not be included unless the requesting user actually has view
+        permission on that model - otherwise a user could see e.g. Part data via a
+        BuildOrder's `part_detail` field without having Part view permission themselves.
+
+        Arguments:
+            field: The OptionalField instance being resolved
+            included: The inclusion decision made so far
+
+        Returns:
+            False if the field embeds a model the requesting user cannot view, otherwise
+            the original `included` value unchanged.
+        """
+        if not included:
+            return included
+
+        model = field.model or getattr(
+            getattr(field.serializer_class, 'Meta', None), 'model', None
+        )
+
+        if model is None:
+            return included
+
+        # A handful of models describe *permission metadata itself* (who a user is,
+        # what a role can do) rather than embedded business data - gating these behind
+        # a role would hide a user's own account/role information from themselves and
+        # from almost every non-admin user, which is a different (and much broader)
+        # concern than embedding e.g. Part/Company records. Deliberately exempted here:
+        # - auth_user: username attribution fields (issued_by_detail, checked_by_detail, ...)
+        # - auth_group: group membership/attribution (ExtendedUserSerializer.groups, ...)
+        # - users_ruleset: role/permission listings (GroupSerializer.roles, ...)
+        # - users_owner: user/group "owner" wrapper (responsible_detail, ...) - already in
+        #   get_ruleset_ignore() so check_user_permission would return True anyway, but
+        #   exempted explicitly here to document intent and skip the call
+        from django.contrib.auth.models import Group
+
+        from users.models import Owner, RuleSet
+
+        if model in (get_user_model(), Group, Owner, RuleSet):
+            return included
+
+        user = getattr(self.request, 'user', None)
+
+        if user is None:
+            return included
+
+        cache = self.__dict__.setdefault('_field_permission_cache', {})
+        cache_key = (user.pk, model)
+
+        if cache_key in cache:
+            return cache[cache_key]
+
+        from users.permissions import check_user_permission
+
+        result = check_user_permission(user, model, 'view')
+        cache[cache_key] = result
+        return result
 
     def find_optional_fields(self):
         """Find all optional fields defined on this serializer."""
@@ -219,7 +296,16 @@ class FilterableSerializerMixin:
 
     def get_field_names(self, declared_fields, info):
         """Remove unused fields before returning field names."""
-        field_names = super().get_field_names(declared_fields, info)
+        # Note: when `Meta.fields` is a list/tuple, DRF's base `get_field_names`
+        # returns that *exact* list object rather than a copy - a single list
+        # shared by every instance of this serializer class, across every thread.
+        # Copy it before mutating below - otherwise concurrent requests that
+        # disagree on whether an OptionalField (e.g. `tags`) should be included
+        # append/remove it on each other's shared list. A request whose own
+        # append lands can still have the field silently removed again by a
+        # concurrent request's `.remove()` before its own field-building loop
+        # (in DRF's `get_fields()`, which iterates this same list) reaches it.
+        field_names = list(super().get_field_names(declared_fields, info))
 
         # Add any optional fields which are included
         for field_name in self.optional_fields:
@@ -607,7 +693,7 @@ class DependentField(serializers.Field):
         """This method tries to convert the data to an internal representation based on the defined to_internal_value method on the child."""
         self.get_child()
         if self.child:
-            return self.child.to_internal_value(data)
+            return self.child.run_validation(data)
 
         return None
 
@@ -914,30 +1000,6 @@ class CustomStatusSerializerMixin(serializers.Serializer):
         )
 
 
-class NotesFieldMixin:
-    """Serializer mixin for handling 'notes' fields.
-
-    The 'notes' field will be hidden in a LIST serializer,
-    but available in a DETAIL serializer.
-    """
-
-    def __init__(self, *args, **kwargs):
-        """Remove 'notes' field from list views."""
-        super().__init__(*args, **kwargs)
-
-        if hasattr(self, 'context'):
-            request = self.context.get('request', None)
-            method = getattr(request, 'method', None)
-
-            if view := self.context.get('view', None):
-                if (
-                    issubclass(view.__class__, ListModelMixin)
-                    and method in SAFE_METHODS
-                    and not InvenTree.ready.isGeneratingSchema()
-                ):
-                    self.fields.pop('notes', None)
-
-
 class ContentTypeField(serializers.ChoiceField):
     """Serializer field which represents a ContentType as 'app_label.model_name'.
 
@@ -1044,19 +1106,13 @@ class DuplicateOptionsSerializer(serializers.Serializer):
             'copy_parameters',
             _('Copy Parameters'),
             _('Copy parameters from the original item'),
-            False,
         ),
-        (
-            'copy_lines',
-            _('Copy Lines'),
-            _('Copy line items from the original order'),
-            False,
-        ),
+        ('copy_notes', _('Copy Notes'), _('Copy notes from the original item')),
+        ('copy_lines', _('Copy Lines'), _('Copy line items from the original order')),
         (
             'copy_extra_lines',
             _('Copy Extra Lines'),
             _('Copy extra line items from the original order'),
-            False,
         ),
     ]
 
@@ -1090,8 +1146,8 @@ class DuplicateOptionsSerializer(serializers.Serializer):
         copy_field_names = [spec['name'] for spec in copy_fields]
 
         # Apply "default" fields
-        for name, label, help_text, default_value in self.DEFAULT_FIELDS:
-            popped_value = kwargs.pop(name, default_value)
+        for name, label, help_text in self.DEFAULT_FIELDS:
+            popped_value = kwargs.pop(name, False)
 
             if name in copy_field_names:
                 # Manually supplied field, continue
@@ -1130,3 +1186,34 @@ class DuplicateOptionsSerializer(serializers.Serializer):
                 label=spec.get('label', spec['name']),
                 help_text=spec.get('help_text', ''),
             )
+
+
+def apply_duplicate_copy_options(
+    instance, duplicate: dict, original, **copy_defaults: bool
+) -> None:
+    """Apply the standard 'copy_<x>' duplicate-options onto a newly duplicated instance.
+
+    Many serializers which support duplication (Part/Company/ManufacturerPart/SupplierPart/
+    Build/PurchaseOrder/SalesOrder/ReturnOrder/TransferOrder/SalesOrderShipment) expose a set
+    of 'copy_<x>' boolean flags (e.g. copy_notes, copy_parameters) which each map onto an
+    identically-named `instance.copy_<x>_from(original)` method. This is the shared dispatch
+    for that convention, so adding a new flag - e.g. a future copy_attachments, once
+    InvenTreeAttachmentMixin grows a copy_attachments_from() method - is a one-line addition
+    at each call site rather than a new copy-pasted `if duplicate.get(...): instance.copy_..._
+    from(...)` block. Any duplicate flag whose target method doesn't follow the
+    copy_<x>_from() naming convention (e.g. Part's copy_bom/copy_image/copy_tests, or
+    StockItem's copy_history/copy_tests) must still be handled separately by the caller.
+
+    Arguments:
+        instance: The newly created instance to copy data onto
+        duplicate: The validated 'duplicate' options dict - callers are expected to have
+            already checked `if duplicate:` before calling this (and extracted `original`
+            from it), since they still need both to handle their own additional flags
+        original: The source instance to copy data from
+        **copy_defaults: One kwarg per 'copy_<x>' flag to apply, e.g.
+            `copy_notes=True, copy_parameters=True` - the kwarg's value is the default used
+            if that flag isn't present in `duplicate`
+    """
+    for flag, default in copy_defaults.items():
+        if duplicate.get(flag, default):
+            getattr(instance, f'{flag}_from')(original)

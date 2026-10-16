@@ -168,6 +168,7 @@ export type RowViewProps = RowAction & RowModelProps & RowViewBehaviorProps;
  * @param tableState : TableState - State manager for the table
  * @param defaultSortColumn : string - Default column to sort by
  * @param noRecordsText : string - Text to display when no records are found
+ * @param bulkDeleteFilter : (record: any) => boolean - Callback function to determine if a record is eligible for bulk deletion
  * @param enableBulkDelete : boolean - Enable bulk deletion of records
  * @param enableDownload : boolean - Enable download actions
  * @param enableFilters : boolean - Enable filter actions
@@ -183,6 +184,7 @@ export type RowViewProps = RowAction & RowModelProps & RowViewBehaviorProps;
  * @param barcodeActions : any[] - List of barcode actions
  * @param tableFilters : TableFilter[] - List of custom filters
  * @param tableActions : any[] - List of custom action groups
+ * @param tableActionsFullWidth : boolean - Allow custom table actions to use the available header width
  * @param isRecordSelectable : (record: any, index: number) => boolean - Callback function to determine if a row is selectable
  * @param detailAction: boolean - Enable detail action for each row (default = true)
  * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
@@ -190,14 +192,17 @@ export type RowViewProps = RowAction & RowModelProps & RowViewBehaviorProps;
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
  * @param onCellClick : (event: any, record: any, index: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
  * @param modelType: ModelType - The model type for the table
+ * @param rowStyle: (record: any, index: number) => MantineStyleProp - Callback function to apply custom styling to each row
  * @param height: string | number - Height of the table (default = 'auto')
  * @param minHeight: number - Minimum height of the table (default 300px)
  * @param noHeader: boolean - Hide the table header
+ * @param nestedRows: InvenTreeTableNestedRowProps - Configuration for displaying nested (child) rows within the table
  */
 export type InvenTreeTableProps<T = any> = {
   params?: any;
   defaultSortColumn?: string;
   noRecordsText?: string;
+  bulkDeleteFilter?: (record: T) => boolean;
   enableBulkDelete?: boolean;
   enableDownload?: boolean;
   enableFilters?: boolean;
@@ -214,6 +219,7 @@ export type InvenTreeTableProps<T = any> = {
   barcodeActions?: React.ReactNode[];
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
+  tableActionsFullWidth?: boolean;
   isRecordSelectable?: (record: T, index: number) => boolean;
   rowExpansion?: DataTableRowExpansionProps<T>;
   dataFormatter?: (data: any) => any;
@@ -228,6 +234,27 @@ export type InvenTreeTableProps<T = any> = {
   height?: string | number;
   minHeight?: number;
   noHeader?: boolean;
+  nestedRows?: InvenTreeTableNestedRowProps<T>;
+};
+
+/**
+ * Configuration for displaying nested (child) rows within a table.
+ *
+ * Child rows are fetched on demand from the same API endpoint as the table,
+ * and inserted directly below their parent row - sharing the same columns.
+ * Child rows are discarded whenever the top-level table data is reloaded,
+ * or when this configuration object changes - so it should be memoized.
+ *
+ * @param accessor - Column accessor used to display the expansion icon and indentation (defaults to the first column)
+ * @param expandable - Callback to determine if a given record can be expanded
+ * @param childParams - Callback which returns the query parameters used to fetch child rows for a given record
+ * @param transformChild - Optional callback to modify each child row (e.g. based on values from the parent row)
+ */
+export type InvenTreeTableNestedRowProps<T = any> = {
+  accessor?: string;
+  expandable: (record: T) => boolean;
+  childParams: (record: T) => Record<string, any>;
+  transformChild?: (child: T, parent: T) => T;
 };
 
 export type InvenTreeTableRenderProps<T extends Record<string, any>> = {

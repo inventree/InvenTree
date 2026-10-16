@@ -15,6 +15,7 @@
     <th>{% trans "Part" %}</th>
     <th>{% trans "Total Stock" %}</th>
     <th>{% trans "Available" %}</th>
+    <th>{% trans "On Order" %}</th>
     <th>{% trans "Minimum Quantity" %}</th>
 </tr>
 
@@ -22,6 +23,7 @@
     <td style="text-align: center;">{{ part.full_name }}</td>
     <td style="text-align: center;">{% decimal part.total_stock %}</td>
     <td style="text-align: center;">{% decimal part.available_stock %}</td>
+    <td style="text-align: center;">{% decimal part.on_order %}</td>
     <td style="text-align: center;">{% decimal part.minimum_stock %}</td>
 </tr>
 {% endblock body %}

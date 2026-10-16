@@ -39,6 +39,12 @@ Some models allow for mapping based on other "natural key" fields (e.g. the `ref
 
 Importing data is a multi-step process, which is managed via an *import session*. An import session is created when the user initiates a data import, and is used to track the progress of the data import process.
 
+### Import Session Status
+
+Each import session has a specific status code, indicating where it is in the import process:
+
+{{ statuscodes("DataImportStatusCode") }}
+
 ### Import Session List
 
 The import session is managed by the InvenTree server, and all import session data is stored on the server. As the import process can be time-consuming, the user can navigate away from the import page and return later to check on the progress of the import.

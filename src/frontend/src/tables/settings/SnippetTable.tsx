@@ -30,6 +30,7 @@ import {
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { DescriptionColumn } from '../../components/tables/ColumnRenderers';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { fileNameFromUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -59,10 +60,7 @@ export function SnippetDrawer({
     pk: id
   });
 
-  const filename = useMemo(
-    () => snippet?.snippet?.split('/').pop() ?? '',
-    [snippet]
-  );
+  const filename = useMemo(() => fileNameFromUrl(snippet?.snippet), [snippet]);
 
   if (isFetching) {
     return <LoadingOverlay visible={true} />;
@@ -231,8 +229,6 @@ export default function SnippetTable() {
         props={{
           rowActions: rowActions,
           tableActions: tableActions,
-          enableSearch: false,
-          enableFilters: false,
           onRowClick: (record) => openDetailDrawer(record.pk)
         }}
       />

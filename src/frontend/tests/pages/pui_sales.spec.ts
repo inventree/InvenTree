@@ -68,6 +68,12 @@ test('Sales Orders - Tabs', async ({ browser }) => {
     .getByLabel('Order Details')
     .getByText('Selling some stuff')
     .waitFor();
+
+  // Creator of the order should be displayed
+  await expect(page.getByRole('row', { name: 'Created By' })).toContainText(
+    'admin'
+  );
+
   await loadTab(page, 'Line Items');
   await loadTab(page, 'Shipments');
   await loadTab(page, 'Build Orders');
@@ -82,6 +88,12 @@ test('Sales Orders - Tabs', async ({ browser }) => {
   await loadTab(page, 'Return Orders');
   await page.getByRole('cell', { name: 'RMA-' }).click();
   await page.getByText('RMA-0001', { exact: true }).waitFor();
+
+  // Creator of the order should be displayed
+  await expect(page.getByRole('row', { name: 'Created By' })).toContainText(
+    'admin'
+  );
+
   await loadTab(page, 'Line Items');
   await loadTab(page, 'Attachments');
   await loadTab(page, 'Notes');
@@ -435,9 +447,11 @@ test('Sales Orders - Price Breaks', async ({ browser }) => {
     url: 'sales/sales-order/14/line-items'
   });
 
+  await page.getByRole('button', { name: 'action-menu-add-line-item' }).click();
   await page
-    .getByRole('button', { name: 'action-button-add-line-item' })
+    .getByRole('menuitem', { name: 'action-menu-add-line-item-add' })
     .click();
+
   await page.getByLabel('related-field-part').fill('software');
   await page.getByRole('option', { name: 'Software License' }).click();
 

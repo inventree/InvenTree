@@ -11,7 +11,7 @@ import {
   IconPhoto
 } from '@tabler/icons-react';
 import { type ReactNode, useMemo } from 'react';
-import { generateUrl } from '../../functions/urls';
+import { fileNameFromUrl, generateUrl } from '../../functions/urls';
 import { Thumbnail } from '../images/Thumbnail';
 
 /**
@@ -24,7 +24,8 @@ export function attachmentIcon(attachment: string): ReactNode {
     return <IconFileUnknown size={sz} />;
   }
 
-  const suffix = attachment.split('.').pop()?.toLowerCase() ?? '';
+  const suffix =
+    fileNameFromUrl(attachment).split('.').pop()?.toLowerCase() ?? '';
   switch (suffix) {
     case 'pdf':
       return <IconFileTypePdf size={sz} />;
@@ -80,7 +81,7 @@ export function AttachmentLink({
       return '-';
     }
 
-    return external ? attachment : (attachment.split('/').pop() ?? '-');
+    return external ? attachment : fileNameFromUrl(attachment) || '-';
   }, [attachment, external]);
 
   return (

@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack, Text } from '@mantine/core';
 import { useMemo } from 'react';
 
 import TagsList from '@lib/components/TagsList';
@@ -14,7 +14,9 @@ import {
 } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import { LineItemOverviewTable } from '../../components/details/LineItemOverviewTable';
 import { useParameterDetailsGrid } from '../../components/details/ParameterDetailsGrid';
+import { RenderAddress } from '../../components/render/Company';
 import { formatCurrency } from '../../defaults/formatters';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 
@@ -101,6 +103,27 @@ export function PurchaseOrderDetailsPanel({
       hidden: !instance?.destination
     },
     {
+      type: 'link',
+      model: ModelType.company,
+      name: 'receiving_company',
+      label: t`Receiving Company`,
+      icon: 'internal_company',
+      hidden: !instance?.receiving_company
+    },
+    {
+      type: 'text',
+      name: 'delivery_address',
+      label: t`Delivery Address`,
+      icon: 'address',
+      hidden: !instance?.receiving_company && !instance?.delivery_address,
+      value_formatter: () =>
+        instance?.delivery_address_detail ? (
+          <RenderAddress instance={instance.delivery_address_detail} />
+        ) : (
+          <Text size='sm' c='red'>{t`Not specified`}</Text>
+        )
+    },
+    {
       type: 'text',
       name: 'currency',
       label: t`Order Currency`,
@@ -165,6 +188,14 @@ export function PurchaseOrderDetailsPanel({
       label: t`Responsible`,
       badge: 'owner',
       hidden: !instance?.responsible
+    },
+    {
+      type: 'text',
+      name: 'created_by.pk',
+      label: t`Created By`,
+      icon: 'user',
+      badge: 'user',
+      hidden: !instance?.created_by
     }
   ];
 
@@ -253,6 +284,16 @@ export function PurchaseOrderDetailsPanel({
         </Grid>
         <TagsList tags={instance?.tags} />
       </Stack>
+      <LineItemOverviewTable
+        title={t`Line Items`}
+        endpoint={ApiEndpoints.purchase_order_line_list}
+        params={{ order: instance?.pk, part_detail: true }}
+        progressLabel={t`Received`}
+        progress={(record: any) => ({
+          value: record.received,
+          maximum: record.quantity
+        })}
+      />
     </ItemDetailsGrid>
   );
 }

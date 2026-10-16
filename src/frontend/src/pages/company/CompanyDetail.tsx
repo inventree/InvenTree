@@ -41,6 +41,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useUserState } from '../../states/UserState';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
@@ -80,6 +81,11 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     refetchOnMount: true
   });
 
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.company,
+    modelId: company?.pk
+  });
+
   const detailsPanel = instanceQuery.isFetching ? (
     <Skeleton />
   ) : (
@@ -102,14 +108,18 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         name: 'supplied-parts',
         label: t`Supplied Parts`,
         icon: <IconPackageExport />,
-        hidden: !company?.is_supplier,
+        hidden:
+          !company?.is_supplier ||
+          !user?.hasViewVisible(UserRoles.purchase_order),
         content: company?.pk && <SupplierPartTable supplierId={company.pk} />
       },
       {
         name: 'manufactured-parts',
         label: t`Manufactured Parts`,
         icon: <IconBuildingWarehouse />,
-        hidden: !company?.is_manufacturer,
+        hidden:
+          !company?.is_manufacturer ||
+          !user?.hasViewVisible(UserRoles.purchase_order),
         content: company?.pk && (
           <ManufacturerPartTable manufacturerId={company.pk} />
         )
@@ -118,7 +128,9 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         name: 'purchase-orders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
-        hidden: !company?.is_supplier,
+        hidden:
+          !company?.is_supplier ||
+          !user?.hasViewVisible(UserRoles.purchase_order),
         content: company?.pk && <PurchaseOrderTable supplierId={company.pk} />
       },
       {
@@ -138,14 +150,17 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         name: 'sales-orders',
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
-        hidden: !company?.is_customer,
+        hidden:
+          !company?.is_customer || !user?.hasViewVisible(UserRoles.sales_order),
         content: company?.pk && <SalesOrderTable customerId={company.pk} />
       },
       {
         name: 'return-orders',
         label: t`Return Orders`,
         icon: <IconTruckReturn />,
-        hidden: !company?.is_customer,
+        hidden:
+          !company?.is_customer ||
+          !user?.hasViewVisible(UserRoles.return_order),
         content: company.pk ? (
           <ReturnOrderTable customerId={company.pk} />
         ) : (
@@ -184,19 +199,21 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       },
       ParametersPanel({
         model_type: ModelType.company,
-        model_id: company?.pk
+        model_id: company?.pk,
+        parameter_count: instanceInfo.parameter_count
       }),
       AttachmentPanel({
         model_type: ModelType.company,
-        model_id: company.pk
+        model_id: company.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.company,
         model_id: company.pk,
-        has_note: !!company.notes
+        note_count: instanceInfo.note_count
       })
     ];
-  }, [id, company, user]);
+  }, [id, company, user, instanceInfo]);
 
   const editCompany = useEditApiFormModal({
     url: ApiEndpoints.company_list,

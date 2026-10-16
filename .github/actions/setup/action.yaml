@@ -37,6 +37,7 @@ inputs:
 
 runs:
     using: 'composite'
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -64,16 +65,14 @@ runs:
         if: ${{ inputs.python == 'true' }}
         shell: bash
         run: |
-          python3 -m pip install -U pip
-          pip3 install -U invoke wheel
-          pip3 install 'uv>=0.9.6'
+          pip3 install --only-binary :all: --require-hashes -U -r contrib/dev_reqs/requirements.txt
       - name: Allow uv to use the system Python by default
         run: echo "UV_SYSTEM_PYTHON=1" >> $GITHUB_ENV
         shell: bash
       - name: Install Specific Python Dependencies
         if: ${{ inputs.pip-dependency }}
         shell: bash
-        run: uv pip install ${PIP_DEPS}
+        run: "uv pip install ${PIP_DEPS}" # TODO remove building once mysqlclient is available as a wheel
         env:
           PIP_DEPS: ${{ inputs.pip-dependency }}
 
@@ -99,15 +98,23 @@ runs:
         if: ${{ inputs.dev-install == 'true' || inputs.install == 'true' }}
         shell: bash
         run: invoke install --dev
+        env:
+          SETUP_INITIALIZING: 1
       - name: Run invoke install
         if: ${{ inputs.install == 'true' }}
         shell: bash
         run: invoke install
+        env:
+          SETUP_INITIALIZING: 1
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
         run: invoke update --skip-backup --skip-static --no-frontend
+        env:
+          SETUP_INITIALIZING: 1
       - name: Collect static files
         if: ${{ inputs.static == 'true' }}
         shell: bash
         run: invoke static --skip-plugins
+        env:
+          SETUP_INITIALIZING: 1

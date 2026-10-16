@@ -17,7 +17,7 @@ import build.models
 import company.models
 import order.models
 import part.models
-from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
+from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting, Note
 from common.settings import set_global_setting
 from InvenTree.unit_test import (
     InvenTreeAPIPerformanceTestCase,
@@ -57,6 +57,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
         'stock_location.add',
         'stock_location.delete',
         'stock.delete',
+        'part.view',
     ]
 
 
@@ -779,6 +780,49 @@ class StockItemListTest(StockAPITestCase):
         response = self.get_stock(part=10004)
         self.assertEqual(len(response), 3)
 
+    def test_filter_by_part_include_variants(self):
+        """Filter StockItem list by part, with / without including variants.
+
+        Regression test for https://github.com/inventree/InvenTree/issues/12232
+        - The 'Install Stock Item' form relies on 'include_variants=false' to avoid
+          surfacing variant stock which the BOM does not allow
+        """
+        category = part.models.PartCategory.objects.get(pk=3)
+
+        master_part = part.models.Part.objects.create(
+            name='Master Variant Part',
+            description='Master part which has variants',
+            category=category,
+            is_template=True,
+        )
+
+        variant_part = part.models.Part.objects.create(
+            name='Variant Part',
+            description='A variant of the master part',
+            category=category,
+            variant_of=master_part,
+        )
+
+        StockItem.objects.create(part=master_part, quantity=5)
+        StockItem.objects.create(part=variant_part, quantity=3)
+
+        # By default, 'include_variants' defaults to True - stock for both parts is returned
+        response = self.get_stock(part=master_part.pk)
+        self.assertEqual(len(response), 2)
+
+        response = self.get_stock(part=master_part.pk, include_variants=True)
+        self.assertEqual(len(response), 2)
+
+        # Exclude variants - only stock for the exact part is returned
+        response = self.get_stock(part=master_part.pk, include_variants=False)
+        self.assertEqual(len(response), 1)
+        self.assertEqual(response[0]['part'], master_part.pk)
+
+        # Filtering directly on the variant part is unaffected by 'include_variants'
+        response = self.get_stock(part=variant_part.pk, include_variants=False)
+        self.assertEqual(len(response), 1)
+        self.assertEqual(response[0]['part'], variant_part.pk)
+
     def test_filter_by_ipn(self):
         """Filter StockItem by IPN reference."""
         response = self.get_stock(IPN='R.CH')
@@ -1250,6 +1294,11 @@ class StockItemListTest(StockAPITestCase):
         response = self.post(url, {'item': 1, 'quantity': 2})
         self.assertEqual(response.data['batch_code'], '1')
 
+        # A user without 'stock.view' cannot use this endpoint to read the batch template
+        # rendering of a stock item they cannot otherwise access
+        self.clearRoles()
+        self.post(url, {'item': 1}, expected_code=403)
+
     def test_serial_generate_api(self):
         """Test helper API for serial management."""
         url = reverse('api-generate-serial-number')
@@ -1272,6 +1321,11 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(
             response.data['quantity'], ['Quantity must be greater than zero']
         )
+
+        # A user without 'part.view' cannot use this endpoint to read serial numbers
+        # for a part they cannot otherwise access
+        self.clearRoles()
+        self.post(url, {'part': 1, 'quantity': 1}, expected_code=403)
 
     def test_child_items(self):
         """Test that the 'child_items' annotation works as expected."""
@@ -1590,6 +1644,50 @@ class StockItemTest(StockAPITestCase):
 
         self.assertEqual(response.data[0]['location'], None)
 
+    def test_duplicate_copies_notes(self):
+        """Test that notes are copied when duplicating a StockItem via the API.
+
+        StockItemSerializer declares its 'duplicate' options with copy_notes=True,
+        so notes should be copied by default (i.e. without explicitly requesting it).
+        """
+        part = Part.objects.create(name='Duplicate Notes Part', description='x')
+
+        original = StockItem.objects.create(part=part, quantity=10)
+
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(StockItem),
+            model_id=original.pk,
+            title='Original Note',
+            content='<p>Some stock item notes</p>',
+        )
+
+        response = self.post(
+            self.list_url,
+            data={
+                'part': part.pk,
+                'quantity': 5,
+                'duplicate': {'original': original.pk},
+            },
+            expected_code=201,
+        )
+
+        new_item = StockItem.objects.get(pk=response.data[0]['pk'])
+        self.assertEqual(new_item.notes.count(), 1)
+        self.assertEqual(new_item.notes.first().content, '<p>Some stock item notes</p>')
+
+        # Explicitly disabling copy_notes must not copy any notes
+        response = self.post(
+            self.list_url,
+            data={
+                'part': part.pk,
+                'quantity': 5,
+                'duplicate': {'original': original.pk, 'copy_notes': False},
+            },
+            expected_code=201,
+        )
+        no_notes_item = StockItem.objects.get(pk=response.data[0]['pk'])
+        self.assertEqual(no_notes_item.notes.count(), 0)
+
     def test_stock_item_create(self):
         """Test creation of a StockItem via the API."""
         # POST with an empty part reference
@@ -1702,9 +1800,8 @@ class StockItemTest(StockAPITestCase):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            # TODO: 2026-07-12 : Refactor this API call
             response = self.post(
-                url, data, max_query_count=1300, benchmark=True, format='json'
+                url, data, max_query_count=150, benchmark=True, format='json'
             )
 
         self.assertEqual(response.status_code, 201)
@@ -1988,6 +2085,28 @@ class StockItemTest(StockAPITestCase):
                 'tests',
             ],
         )
+
+    def test_part_detail_permissions(self):
+        """Test that the part_detail output option is only available to users with permission."""
+        url = reverse('api-stock-detail', kwargs={'pk': 1})
+
+        # User has permission to view parts
+        response = self.get(url, {'part_detail': True}, expected_code=200)
+
+        self.assertIn('pk', response.data)
+        self.assertIn('part', response.data)
+        self.assertIn('part_detail', response.data)
+
+        # Remove 'part view' permission from user
+        self.clearRoles()
+        response = self.get(url, {'part_detail': True}, expected_code=403)
+
+        self.assignRole('stock.view')
+
+        response = self.get(url, {'part_detail': True}, expected_code=200)
+        self.assertIn('pk', response.data)
+        self.assertIn('part', response.data)
+        self.assertNotIn('part_detail', response.data)
 
     def test_install(self):
         """Test that stock item can be installed into another item, via the API."""
@@ -2307,6 +2426,19 @@ class StockItemTest(StockAPITestCase):
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.batch, 'NEW-BATCH-CODE')
+
+    def test_status_codes_endpoint(self):
+        """The 'stock/status/' endpoint must resolve to the status-codes view.
+
+        Regression test: ensures the literal 'status/' path is not shadowed by the
+        'stock/<pk>/' detail route it sits alongside in the same urlconf.
+        """
+        response = self.get(reverse('api-stock-status-codes'), expected_code=200)
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('OK', response.data['values'])
+        self.assertEqual(response.data['values']['OK']['key'], StockStatus.OK.value)
 
 
 class StockItemDisassembleTest(StockAPITestCase):
@@ -3092,9 +3224,8 @@ class StocktakeTest(StockAPITestCase):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            # TODO: 2026-07-12 : Refactor this API call
             response = self.post(
-                url, data, max_query_count=2250, benchmark=True, format='json'
+                url, data, max_query_count=950, benchmark=True, format='json'
             )
 
         self.assertEqual(response.status_code, 201)
@@ -3123,9 +3254,8 @@ class StocktakeTest(StockAPITestCase):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            # TODO: 2026-07-12 : Refactor this API call
             response = self.post(
-                url, data, max_query_count=2500, benchmark=True, format='json'
+                url, data, max_query_count=950, benchmark=True, format='json'
             )
 
         self.assertEqual(response.status_code, 201)
@@ -3154,9 +3284,8 @@ class StocktakeTest(StockAPITestCase):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            # TODO: 2026-07-12 : Refactor this API call
             response = self.post(
-                url, data, max_query_count=2250, benchmark=True, format='json'
+                url, data, max_query_count=950, benchmark=True, format='json'
             )
 
         self.assertEqual(response.status_code, 201)
@@ -3191,9 +3320,8 @@ class StocktakeTest(StockAPITestCase):
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
-            # TODO: 2026-07-12 : Refactor this API call
             response = self.post(
-                url, data, max_query_count=1250, benchmark=True, format='json'
+                url, data, max_query_count=850, benchmark=True, format='json'
             )
 
         self.assertEqual(response.status_code, 201)
@@ -3944,6 +4072,23 @@ class StockTrackingTest(StockAPITestCase):
             ['item_detail', 'user_detail'],
             additional_params={'limit': 2},
             assert_fnc=lambda x: x.data['results'][0],
+        )
+
+    def test_status_codes_endpoint(self):
+        """The 'track/status/' endpoint must resolve to the status-codes view.
+
+        Regression test: ensures the literal 'status/' path is not shadowed by the
+        'track/<pk>/' detail route it sits alongside in the same urlconf.
+        """
+        response = self.get(
+            reverse('api-stock-tracking-status-codes'), expected_code=200
+        )
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('CREATED', response.data['values'])
+        self.assertEqual(
+            response.data['values']['CREATED']['key'], StockHistoryCode.CREATED.value
         )
 
 

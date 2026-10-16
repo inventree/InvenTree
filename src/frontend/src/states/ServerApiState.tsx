@@ -22,6 +22,9 @@ interface ServerApiStateProps {
   registration_enabled: () => boolean;
   sso_registration_enabled: () => boolean;
   password_forgotten_enabled: () => boolean;
+  // ftu
+  ftuShown: boolean;
+  setFtuShown: (value: boolean) => void;
 }
 
 function get_server_setting(val: any) {
@@ -89,6 +92,9 @@ export const useServerApiState = create<ServerApiStateProps>()(
         set({ mfa_context });
       },
       sso_enabled: () => {
+        if (!get_server_setting(get().server?.settings?.sso_enabled)) {
+          return false;
+        }
         const data = get().auth_config?.socialaccount.providers;
         return !(data === undefined || data.length == 0);
       },
@@ -102,6 +108,10 @@ export const useServerApiState = create<ServerApiStateProps>()(
         return get_server_setting(
           get().server?.settings?.password_forgotten_enabled
         );
+      },
+      ftuShown: false,
+      setFtuShown: (value) => {
+        set({ ftuShown: value });
       }
     }),
     {

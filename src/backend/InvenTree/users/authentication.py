@@ -4,7 +4,7 @@ import datetime
 
 from django.utils.translation import gettext_lazy as _
 
-from oauth2_provider.contrib.rest_framework import OAuth2Authentication
+from oauth2_provider.contrib.rest_framework import OAuth2ProtectedResourceAuthentication
 from rest_framework import exceptions
 from rest_framework.authentication import TokenAuthentication
 
@@ -24,7 +24,13 @@ class ApiTokenAuthentication(TokenAuthentication):
     def authenticate_credentials(self, key):
         """Adds additional checks to the default token authentication method."""
         # If this runs without error, then the token is valid (so far)
-        (user, token) = super().authenticate_credentials(key)
+        token = self.model.get_from_string(key)
+        if token is None:
+            raise exceptions.AuthenticationFailed(_('Invalid token.'))
+
+        user = token.user
+        if not user.is_active:
+            raise exceptions.AuthenticationFailed(_('User inactive or deleted.'))
 
         if token.revoked:
             raise exceptions.AuthenticationFailed(_('Token has been revoked'))
@@ -34,11 +40,13 @@ class ApiTokenAuthentication(TokenAuthentication):
 
         if token.last_seen != datetime.date.today():
             # Update the last-seen date
+            # Note: Use update_fields to avoid clobbering concurrent changes to
+            # other fields on this token (e.g. a concurrent revocation)
             token.last_seen = datetime.date.today()
-            token.save()
+            token.save(update_fields=['last_seen'])
 
         return (user, token)
 
 
-class ExtendedOAuth2Authentication(OAuth2Authentication):
+class ExtendedOAuth2Authentication(OAuth2ProtectedResourceAuthentication):
     """Custom implementation of OAuth2Authentication class to support custom scope rendering."""

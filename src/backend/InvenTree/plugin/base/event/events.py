@@ -14,7 +14,7 @@ from opentelemetry import trace
 
 import InvenTree.exceptions
 from common.settings import get_global_setting
-from InvenTree.ready import canAppAccessDatabase, isImportingData
+from InvenTree.ready import canAppAccessDatabase, isImportingData, isRunningMigrations
 from InvenTree.tasks import bulk_offload_task, offload_task
 from plugin import PluginMixinEnum
 from plugin.registry import registry
@@ -227,6 +227,10 @@ def process_event(plugin_slug, event, *args, **kwargs):
     This function is run by the background worker process.
     This function may queue multiple functions to be handled by the background worker.
     """
+    if isRunningMigrations() or isImportingData():
+        # Do not trigger events during migrations or data import
+        return
+
     plugin = registry.get_plugin(plugin_slug, active=True)
 
     if plugin is None:  # pragma: no cover
@@ -293,6 +297,10 @@ def allow_table_event(table_name):
 @receiver(post_save)
 def after_save(sender, instance, created, **kwargs):
     """Trigger an event whenever a database entry is saved."""
+    if isRunningMigrations() or isImportingData():
+        # Do not trigger events during migrations or data import
+        return
+
     table = sender.objects.model._meta.db_table
 
     instance_id = getattr(instance, 'id', None)
@@ -312,6 +320,10 @@ def after_save(sender, instance, created, **kwargs):
 @receiver(post_delete)
 def after_delete(sender, instance, **kwargs):
     """Trigger an event whenever a database entry is deleted."""
+    if isRunningMigrations() or isImportingData():
+        # Do not trigger events during migrations or data import
+        return
+
     table = sender.objects.model._meta.db_table
 
     if not allow_table_event(table):

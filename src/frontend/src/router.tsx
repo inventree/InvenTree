@@ -4,6 +4,8 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { EagerLoadable, Loadable } from './functions/loading';
 import { onLocaleReady } from './functions/localeReady';
 
+import { PluginRoutes } from './components/plugins/PluginRoutes';
+
 // Lazy loaded pages
 // These two are mutually exclusive and one of them is always needed
 // immediately on initial load, so they're loaded eagerly rather than via
@@ -146,6 +148,9 @@ export const Logout = Loadable(lazy(() => import('./pages/Auth/Logout')));
 export const Register = Loadable(lazy(() => import('./pages/Auth/Register')));
 export const Mfa = Loadable(lazy(() => import('./pages/Auth/MFA')));
 export const MfaSetup = Loadable(lazy(() => import('./pages/Auth/MFASetup')));
+export const ProviderSignup = Loadable(
+  lazy(() => import('./pages/Auth/ProviderSignup'))
+);
 export const ChangePassword = Loadable(
   lazy(() => import('./pages/Auth/ChangePassword'))
 );
@@ -217,6 +222,7 @@ export const routes = (
         <Route path='user/:id/*' element={<UserDetail />} />
         <Route path='group/:id/*' element={<GroupDetail />} />
       </Route>
+      <Route path='plugin/*' element={<PluginRoutes />} />
     </Route>
     <Route
       path='/'
@@ -229,6 +235,7 @@ export const routes = (
       <Route path='/register' element={<Register />} />,
       <Route path='/mfa' element={<Mfa />} />,
       <Route path='/mfa-setup' element={<MfaSetup />} />,
+      <Route path='/provider-signup' element={<ProviderSignup />} />,
       <Route path='/change-password' element={<ChangePassword />} />
       <Route path='/reset-password' element={<Reset />} />
       <Route path='/set-password' element={<ResetPassword />} />

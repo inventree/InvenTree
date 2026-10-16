@@ -1,7 +1,11 @@
 """Unit tests for task management."""
 
+import logging
 import os
+import queue
+import time
 from datetime import timedelta
+from multiprocessing import Value
 from unittest.mock import patch
 
 from django.conf import settings
@@ -57,6 +61,37 @@ class ScheduledTaskTests(TestCase):
 def get_result():
     """Demo function for test_offloading."""
     return 'abc'
+
+
+retry_regression_logger = logging.getLogger('InvenTree.test_tasks.retry_regression')
+
+RETRY_REGRESSION_LOG_MESSAGE = 'retry regression task executed'
+
+
+def always_fails_task():
+    """Demo function for the worker retry regression tests below.
+
+    Logs a fixed, greppable message and then always raises - so a test can count exactly
+    how many times a real django-q2 worker actually invoked it.
+    """
+    retry_regression_logger.info(RETRY_REGRESSION_LOG_MESSAGE)
+    raise ValueError('always_fails_task: intentional failure for retry regression test')
+
+
+TIMEOUT_TASK_SLEEP_SECONDS = 5
+TIMEOUT_TASK_STARTED_LOG_MESSAGE = 'timeout regression task started'
+TIMEOUT_TASK_FINISHED_LOG_MESSAGE = 'timeout regression task finished sleeping'
+
+
+def slow_task_for_timeout_test():
+    """Demo function for the timeout regression test below.
+
+    Sleeps far longer than the per-task timeout under test. If a real timeout does not
+    interrupt it, FINISHED gets logged - so that message must never appear.
+    """
+    retry_regression_logger.info(TIMEOUT_TASK_STARTED_LOG_MESSAGE)
+    time.sleep(TIMEOUT_TASK_SLEEP_SECONDS)
+    retry_regression_logger.info(TIMEOUT_TASK_FINISHED_LOG_MESSAGE)
 
 
 class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
@@ -137,6 +172,411 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
         ):
             InvenTree.tasks.offload_task('InvenTree.test_tasks.eval', force_sync=True)
 
+    def test_force_async_overrides_force_sync(self):
+        """force_async=True takes priority over force_sync=True - the task is queued, not run inline.
+
+        Regression test: offload_task()'s dispatch condition is
+        'force_async or (is_worker_running() and not force_sync)' - force_async short-circuits
+        the check, so passing both flags together silently queues the task rather than running
+        it synchronously as force_sync alone would.
+        """
+        OrmQ.objects.all().delete()
+
+        result = InvenTree.tasks.offload_task(
+            'dummy_module.dummy_function', force_async=True, force_sync=True
+        )
+
+        # A task ID was returned (queued), rather than resolving and running the task inline
+        # (which would fail, since 'dummy_module' does not exist)
+        self.assertIsInstance(result, str)
+        self.assertEqual(OrmQ.objects.count(), 1)
+
+    def test_offload_sync_reraises_exception(self):
+        """offload_task(..., force_sync=True) must propagate an exception raised by the task.
+
+        Regression test: the synchronous fallback logs the error and re-raises, rather than
+        swallowing it - nothing previously asserted the exception actually reaches the caller.
+        """
+
+        def broken_task():
+            raise ValueError('offload_task sync fallback regression test')
+
+        with self.assertRaises(ValueError):
+            InvenTree.tasks.offload_task(broken_task, force_sync=True)
+
+    def test_offload_no_retry(self):
+        """retry=False should mark the queued task with ack_failure=True.
+
+        This is the bandaid for django-q2 having no per-task retry limit: 'ack_failure'
+        is its native per-task option that drops a task the moment it fails, instead of
+        leaving it to be redelivered indefinitely by the ORM broker.
+        """
+        OrmQ.objects.all().delete()
+
+        InvenTree.tasks.offload_task(
+            'dummy_module.dummy_function', force_async=True, retry=False
+        )
+
+        task = OrmQ.objects.get()
+        self.assertTrue(task.q_options().get('ack_failure'))
+
+        # By default (retry=True), the task is not marked for single-shot execution
+        OrmQ.objects.all().delete()
+        InvenTree.tasks.offload_task('dummy_module.dummy_function', force_async=True)
+        task = OrmQ.objects.get()
+        self.assertFalse(task.q_options().get('ack_failure'))
+
+    def test_offload_timeout(self):
+        """timeout=N must actually be enforced by the worker, not just recorded on the queue.
+
+        django-q2 supports 'timeout' as a native per-task option.
+        This offloads a task that sleeps far longer than the timeout,
+        and drives it through the real worker() pipeline,
+        to prove it gets killed at the timeout rather than left to run.
+        """
+        from django_q.brokers import get_broker
+
+        OrmQ.objects.all().delete()
+
+        InvenTree.tasks.offload_task(
+            'InvenTree.test_tasks.slow_task_for_timeout_test',
+            force_async=True,
+            timeout=1,
+        )
+
+        # The per-task override must have been recorded on the queued task
+        queued = OrmQ.objects.get()
+        self.assertEqual(queued.q_options().get('timeout'), 1)
+
+        # Without an explicit timeout, no per-task override is set - the cluster-wide
+        # default applies
+        OrmQ.objects.all().delete()
+        InvenTree.tasks.offload_task('dummy_module.dummy_function', force_async=True)
+        queued = OrmQ.objects.get()
+        self.assertNotIn('timeout', queued.q_options())
+
+        # Now offload the slow task for real, and drive it through the actual worker
+        OrmQ.objects.all().delete()
+        InvenTree.tasks.offload_task(
+            'InvenTree.test_tasks.slow_task_for_timeout_test',
+            force_async=True,
+            timeout=1,
+        )
+
+        broker = get_broker()
+
+        start = time.monotonic()
+        with self.assertLogs(retry_regression_logger, level='INFO') as captured:
+            executed = self.run_one_broker_cycle(broker)
+        elapsed = time.monotonic() - start
+
+        self.assertEqual(executed, 1)
+
+        # The task must have started, but the 1-second timeout must have killed it well
+        # before its 5-second sleep completes - it never gets to log that it finished
+        self.assertTrue(
+            any(TIMEOUT_TASK_STARTED_LOG_MESSAGE in line for line in captured.output)
+        )
+        self.assertFalse(
+            any(TIMEOUT_TASK_FINISHED_LOG_MESSAGE in line for line in captured.output)
+        )
+        self.assertLess(elapsed, TIMEOUT_TASK_SLEEP_SECONDS)
+
+        # The task must be recorded as failed, specifically due to the timeout
+        saved_task = Task.objects.get(
+            func='InvenTree.test_tasks.slow_task_for_timeout_test'
+        )
+        self.assertFalse(saved_task.success)
+        self.assertIn('exceeded maximum timeout value', saved_task.result)
+
+    def test_offload_no_retry_and_timeout_together(self):
+        """retry=False and timeout=N together must both land on the same queued task.
+
+        Regression test: retry and timeout are covered independently elsewhere, but nothing
+        confirmed that a single offload_task() call applying both options actually sets both
+        'ack_failure' and 'timeout' on the same queued task, rather than one overriding the other.
+        """
+        OrmQ.objects.all().delete()
+
+        InvenTree.tasks.offload_task(
+            'dummy_module.dummy_function', force_async=True, retry=False, timeout=45
+        )
+
+        q_options = OrmQ.objects.get().q_options()
+        self.assertTrue(q_options.get('ack_failure'))
+        self.assertEqual(q_options.get('timeout'), 45)
+
+    def test_offload_custom_group(self):
+        """A custom group= kwarg on a direct (non-batched) offload_task() call must be honored.
+
+        Regression test: custom groups were previously only ever exercised through the
+        batch_offload_tasks() path (see TaskBatchTests.test_tasks_grouped_by_name_and_group) -
+        nothing confirmed the direct AsyncTask() dispatch path in offload_task() itself
+        applies a custom group.
+        """
+        OrmQ.objects.all().delete()
+
+        InvenTree.tasks.offload_task(
+            'dummy_module.dummy_function', force_async=True, group='custom_group'
+        )
+
+        self.assertEqual(OrmQ.objects.get().group(), 'custom_group')
+
+    def test_bulk_offload_timeout(self):
+        """bulk_offload_task() should forward timeout=N to every queued task."""
+        OrmQ.objects.all().delete()
+
+        entries = [((idx,), {}) for idx in range(5)]
+
+        InvenTree.tasks.bulk_offload_task(
+            'dummy_module.dummy_function', entries, force_async=True, timeout=15
+        )
+
+        self.assertEqual(OrmQ.objects.count(), 5)
+        for task in OrmQ.objects.all():
+            self.assertEqual(task.q_options().get('timeout'), 15)
+
+    def test_offload_timeout_validation(self):
+        """A per-task timeout must be clamped to leave headroom before the broker's redelivery interval.
+
+        The broker redelivers a task once its lock (governed by the cluster-wide
+        Q_CLUSTER['retry'] setting) expires, regardless of any per-task 'timeout'
+        override. If 'timeout' left less than 30s of headroom before that, the task
+        could be redelivered and executed again before the original attempt had even
+        timed out - so offload_task()/bulk_offload_task() must clamp it down (and warn)
+        rather than queuing it as requested.
+        """
+        retry = settings.Q_CLUSTER['retry']
+        max_timeout = retry - 30
+
+        # A timeout comfortably below the retry interval is left untouched
+        OrmQ.objects.all().delete()
+        InvenTree.tasks.offload_task(
+            'dummy_module.dummy_function', force_async=True, timeout=retry - 50
+        )
+        task = OrmQ.objects.get()
+        self.assertEqual(task.q_options().get('timeout'), retry - 50)
+
+        # A timeout equal to the retry interval leaves no headroom at all - clamped
+        # down to the maximum safe value, with a warning logged
+        OrmQ.objects.all().delete()
+        with self.assertLogs('inventree', level='WARNING') as captured:
+            InvenTree.tasks.offload_task(
+                'dummy_module.dummy_function', force_async=True, timeout=retry
+            )
+        self.assertTrue(any('clamping' in line for line in captured.output))
+        task = OrmQ.objects.get()
+        self.assertEqual(task.q_options().get('timeout'), max_timeout)
+
+        # Also enforced directly by bulk_offload_task()
+        OrmQ.objects.all().delete()
+        with self.assertLogs('inventree', level='WARNING') as captured:
+            InvenTree.tasks.bulk_offload_task(
+                'dummy_module.dummy_function',
+                [((), {})],
+                force_async=True,
+                timeout=retry,
+            )
+        self.assertTrue(any('clamping' in line for line in captured.output))
+        task = OrmQ.objects.get()
+        self.assertEqual(task.q_options().get('timeout'), max_timeout)
+
+    def test_duplicate_check_respects_retry_and_timeout(self):
+        """check_existing_task() must not treat different retry/timeout policies as duplicates.
+
+        Regression test: previously, queuing the same (taskname, group, args, kwargs)
+        with a different 'retry' or 'timeout' would be silently swallowed as a
+        'duplicate' of whatever was already queued, discarding the newly requested
+        policy entirely.
+        """
+        OrmQ.objects.all().delete()
+
+        first_id = InvenTree.tasks.offload_task(
+            'dummy_module.dummy_function', force_async=True
+        )
+
+        # Same call, but requesting retry=False - must not be treated as a duplicate
+        second_id = InvenTree.tasks.offload_task(
+            'dummy_module.dummy_function', force_async=True, retry=False
+        )
+        self.assertNotEqual(first_id, second_id)
+        self.assertEqual(OrmQ.objects.count(), 2)
+
+        # Same call again, but with a different timeout - also not a duplicate
+        third_id = InvenTree.tasks.offload_task(
+            'dummy_module.dummy_function', force_async=True, retry=False, timeout=30
+        )
+        self.assertNotEqual(third_id, second_id)
+        self.assertEqual(OrmQ.objects.count(), 3)
+
+        # Only an exact match of retry AND timeout is deduplicated
+        fourth_id = InvenTree.tasks.offload_task(
+            'dummy_module.dummy_function', force_async=True, retry=False, timeout=30
+        )
+        self.assertEqual(fourth_id, third_id)
+        self.assertEqual(OrmQ.objects.count(), 3)
+
+    def run_one_broker_cycle(self, broker):
+        """Drive a single dequeue/execute/save-or-acknowledge pass through django-q2.
+
+        Uses the actual pusher/worker/monitor functions - exactly what a real qcluster
+        worker process does, just without the multiprocessing.
+
+        Returns the number of tasks that were dequeued and executed in this pass.
+        """
+        from django_q.monitor import monitor
+        from django_q.signing import SignedPackage
+        from django_q.worker import worker
+
+        dequeued = broker.dequeue()
+        if not dequeued:
+            return 0
+
+        task_queue = queue.Queue()
+        result_queue = queue.Queue()
+
+        for ack_id, payload in dequeued:
+            task = SignedPackage.loads(payload)
+            task['ack_id'] = ack_id
+            task_queue.put(task)
+        task_queue.put('STOP')
+
+        # worker()/monitor() normally run in their own dedicated process, so closing
+        # 'old' django database connections there is harmless. Here they run inline on
+        # the test's own connection (wrapped in TestCase's atomic transaction), so that
+        # same call would tear down the connection this test needs afterwards.
+        with (
+            patch('django_q.worker.close_old_django_connections'),
+            patch('django_q.monitor.close_old_django_connections'),
+        ):
+            worker(task_queue, result_queue, Value('i', -1))
+
+            result_queue.put('STOP')
+            monitor(result_queue, broker)
+
+        return len(dequeued)
+
+    def test_worker_does_not_retry_when_retry_false(self):
+        """Regression test: retry=False must stop a real worker from re-running a failing task.
+
+        Rather than just inspecting the queued payload, this drives the task through
+        django-q2's actual pusher/worker/monitor pipeline (the same functions a real
+        qcluster worker uses) to prove the task is genuinely never re-executed.
+        """
+        from django_q.brokers import get_broker
+
+        OrmQ.objects.all().delete()
+
+        InvenTree.tasks.offload_task(
+            'InvenTree.test_tasks.always_fails_task', force_async=True, retry=False
+        )
+
+        broker = get_broker()
+
+        with self.assertLogs(retry_regression_logger, level='INFO') as captured:
+            executed = self.run_one_broker_cycle(broker)
+
+        self.assertEqual(executed, 1)
+        self.assertEqual(
+            sum(RETRY_REGRESSION_LOG_MESSAGE in line for line in captured.output), 1
+        )
+
+        # The failed task must have been dropped, not left queued for redelivery
+        self.assertEqual(OrmQ.objects.count(), 0)
+
+        # Even simulating the redelivery timeout having elapsed, there is nothing left
+        # in the broker to redeliver - the task only ever ran once
+        self.assertEqual(self.run_one_broker_cycle(broker), 0)
+
+    def test_worker_retries_by_default(self):
+        """Contrast case for test_worker_does_not_retry_when_retry_false().
+
+        With the default retry=True, a failing task is left queued and gets picked up
+        and re-executed again once the broker's redelivery timeout has elapsed.
+        """
+        from django_q.brokers import get_broker
+
+        OrmQ.objects.all().delete()
+
+        InvenTree.tasks.offload_task(
+            'InvenTree.test_tasks.always_fails_task', force_async=True
+        )
+
+        broker = get_broker()
+
+        with self.assertLogs(retry_regression_logger, level='INFO') as captured:
+            executed = self.run_one_broker_cycle(broker)
+
+        self.assertEqual(executed, 1)
+        self.assertEqual(
+            sum(RETRY_REGRESSION_LOG_MESSAGE in line for line in captured.output), 1
+        )
+
+        # The failed task must still be queued, waiting to be redelivered
+        self.assertEqual(OrmQ.objects.count(), 1)
+
+        # Simulate the redelivery timeout having elapsed, then let the worker pick the
+        # same task up again
+        OrmQ.objects.update(lock=timezone.now() - timedelta(seconds=1))
+
+        with self.assertLogs(retry_regression_logger, level='INFO') as captured:
+            executed = self.run_one_broker_cycle(broker)
+
+        self.assertEqual(executed, 1)
+        self.assertEqual(
+            sum(RETRY_REGRESSION_LOG_MESSAGE in line for line in captured.output), 1
+        )
+
+    def test_single_shot_task_failure_notifies_immediately(self):
+        """retry=False task failures must raise the 'Task Failure' notification on their one attempt.
+
+        Regression test: after_failed_task() only notifies once a task's attempt_count
+        reaches Q_CLUSTER['max_attempts'] (5 by default). A retry=False task is dropped
+        by the broker after a single failed attempt (see test_worker_does_not_retry_when_retry_false),
+        so attempt_count never reaches that threshold and the notification would
+        otherwise never fire. InvenTree.models.after_single_shot_task_failure() (hooked
+        into django-q2's post_execute signal) must notify immediately instead.
+        """
+        from django_q.brokers import get_broker
+
+        OrmQ.objects.all().delete()
+        Error.objects.all().delete()
+
+        InvenTree.tasks.offload_task(
+            'InvenTree.test_tasks.always_fails_task', force_async=True, retry=False
+        )
+
+        broker = get_broker()
+
+        with self.assertLogs(retry_regression_logger, level='INFO'):
+            self.run_one_broker_cycle(broker)
+
+        self.assertTrue(Error.objects.filter(kind='Task Failure').exists())
+
+    def test_retryable_task_failure_does_not_notify_early(self):
+        """Contrast case for test_single_shot_task_failure_notifies_immediately().
+
+        A single failed attempt of a retry=True task must NOT raise the 'Task Failure'
+        notification - it is still eligible for redelivery, so the notification should
+        only fire once Q_CLUSTER['max_attempts'] is actually reached (covered by the
+        existing after_failed_task() post_save logic, not exercised by this test).
+        """
+        from django_q.brokers import get_broker
+
+        OrmQ.objects.all().delete()
+        Error.objects.all().delete()
+
+        InvenTree.tasks.offload_task(
+            'InvenTree.test_tasks.always_fails_task', force_async=True
+        )
+
+        broker = get_broker()
+
+        with self.assertLogs(retry_regression_logger, level='INFO'):
+            self.run_one_broker_cycle(broker)
+
+        self.assertFalse(Error.objects.filter(kind='Task Failure').exists())
+
     def test_task_heartbeat(self):
         """Test the task heartbeat."""
         InvenTree.tasks.offload_task(InvenTree.tasks.heartbeat)
@@ -211,7 +651,7 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
             entry = NotificationEntry.objects.get()
 
             self.assertEqual(message.link, release_url)
-            self.assertEqual(entry.uid, 0)
+            self.assertEqual(entry.uid, '0')
 
             serialized = NotificationMessageSerializer(message).data
             self.assertEqual(serialized['target']['link'], release_url)
@@ -481,6 +921,45 @@ class InvenTreeTaskTests(PluginRegistryMixin, TestCase):
             self.assertEqual(task.args(), args)
             self.assertEqual(task.kwargs(), kwargs)
 
+    def test_bulk_offload_no_retry(self):
+        """bulk_offload_task() should mark every queued task with ack_failure=True when retry=False."""
+        OrmQ.objects.all().delete()
+
+        entries = [((idx,), {}) for idx in range(5)]
+
+        InvenTree.tasks.bulk_offload_task(
+            'dummy_module.dummy_function', entries, force_async=True, retry=False
+        )
+
+        self.assertEqual(OrmQ.objects.count(), 5)
+        for task in OrmQ.objects.all():
+            self.assertTrue(task.q_options().get('ack_failure'))
+
+    def test_bulk_offload_falls_back_to_sync(self):
+        """bulk_offload_task() falls back to running every entry synchronously when async isn't available.
+
+        Regression test: every other bulk_offload_task() test passes force_async=True, so the
+        'not force_async and (force_sync or not is_worker_running())' fallback branch - which
+        calls offload_task(..., force_sync=True, ...) once per entry - was never exercised.
+        """
+        calls = []
+
+        def sync_target(value):
+            calls.append(value)
+
+        OrmQ.objects.all().delete()
+
+        entries = [((idx,), {}) for idx in range(3)]
+
+        result = InvenTree.tasks.bulk_offload_task(
+            sync_target, entries, force_sync=True
+        )
+
+        self.assertTrue(result)
+        # Every entry ran synchronously, immediately - nothing was queued
+        self.assertEqual(OrmQ.objects.count(), 0)
+        self.assertEqual(sorted(calls), [0, 1, 2])
+
 
 class TaskBatchTests(TestCase):
     """Unit tests for the batch_offload_tasks() context manager."""
@@ -545,6 +1024,40 @@ class TaskBatchTests(TestCase):
             ),
             3,
         )
+
+    def test_tasks_grouped_by_retry(self):
+        """Tasks with different retry values are flushed as separate bulk writes."""
+        with self.captureOnCommitCallbacks(execute=True):
+            with transaction.atomic(), InvenTree.tasks.batch_offload_tasks():
+                InvenTree.tasks.offload_task(
+                    'dummy_module.task_a', 1, force_async=True, retry=False
+                )
+                InvenTree.tasks.offload_task('dummy_module.task_a', 2, force_async=True)
+
+        self.assertEqual(OrmQ.objects.count(), 2)
+
+        ack_failure_by_arg = {
+            task.args()[0]: bool(task.q_options().get('ack_failure'))
+            for task in OrmQ.objects.all()
+        }
+        self.assertEqual(ack_failure_by_arg, {1: True, 2: False})
+
+    def test_tasks_grouped_by_timeout(self):
+        """Tasks with different timeout values are flushed as separate bulk writes."""
+        with self.captureOnCommitCallbacks(execute=True):
+            with transaction.atomic(), InvenTree.tasks.batch_offload_tasks():
+                InvenTree.tasks.offload_task(
+                    'dummy_module.task_a', 1, force_async=True, timeout=5
+                )
+                InvenTree.tasks.offload_task('dummy_module.task_a', 2, force_async=True)
+
+        self.assertEqual(OrmQ.objects.count(), 2)
+
+        timeout_by_arg = {
+            task.args()[0]: task.q_options().get('timeout')
+            for task in OrmQ.objects.all()
+        }
+        self.assertEqual(timeout_by_arg, {1: 5, 2: None})
 
     def test_tasks_discarded_on_rollback(self):
         """Tasks queued in a batch are discarded, not fired, if the transaction rolls back."""

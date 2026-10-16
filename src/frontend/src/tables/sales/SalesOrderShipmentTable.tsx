@@ -158,6 +158,12 @@ export default function SalesOrderShipmentTable({
         title: t`Items`
       },
       {
+        accessor: 'contact_detail.name',
+        title: t`Contact`,
+        switchable: true,
+        sortable: false
+      },
+      {
         accessor: 'checked',
         title: t`Checked`,
         filter: 'checked',
@@ -263,7 +269,7 @@ export default function SalesOrderShipmentTable({
           hidden:
             !record.order ||
             !showOrderInfo ||
-            !user.hasViewRole(UserRoles.sales_order),
+            !user.hasViewVisible(UserRoles.sales_order),
           navigate: navigate
         })
       ];

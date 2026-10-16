@@ -31,28 +31,7 @@ The following view modes are available:
 
 Each Sales Order has a specific status code, which represents the state of the order:
 
-| Status | Description |
-| --- | --- |
-| Pending | The sales order has been created, but has not been finalized or submitted |
-| In Progress | The sales order has been issued, and is in progress |
-| On Hold | The sales order has been placed on hold, but is still active |
-| Shipped | The sales order has been shipped, but is not yet complete |
-| Complete | The sales order is fully completed, and is now closed |
-| Cancelled | The sales order was cancelled, and is now closed |
-| Lost | The sales order was lost, and is now closed |
-| Returned | The sales order was returned, and is now closed |
-
-**Source Code**
-
-Refer to the source code for the Sales Order status codes:
-
-::: order.status_codes.SalesOrderStatus
-    options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
+{{ statuscodes("SalesOrderStatus") }}
 
 Sales Order Status supports [custom states](../concepts/custom_states.md).
 
@@ -285,6 +264,10 @@ A unique number for the shipment, used to identify each shipment within a sales 
 
 A shipping address can be optionally specified for an individual shipment. If not specified, the [shipping address assigned to the sales order](#sales-order-address) will be used.
 
+#### Shipment Contact
+
+An optional point of contact for the shipment (for example, the person receiving the delivery). The contact must be one of the [contacts](../concepts/company.md#contacts) assigned to the [customer](./customer.md) linked to the sales order.
+
 #### Tracking Number
 
 An optional field used to store tracking number information for the shipment.
@@ -308,6 +291,7 @@ The following [global settings](../settings/global.md) are available for sales o
 
 | Name | Description | Default | Units |
 | ---- | ----------- | ------- | ----- |
+{{ globalsetting("SALESORDER_ENABLED") }}
 {{ globalsetting("SALESORDER_REFERENCE_PATTERN") }}
 {{ globalsetting("SALESORDER_REQUIRE_RESPONSIBLE") }}
 {{ globalsetting("SALESORDER_DEFAULT_SHIPMENT") }}

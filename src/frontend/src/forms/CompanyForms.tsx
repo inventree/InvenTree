@@ -101,7 +101,8 @@ export function useSupplierPartFields({
       duplicate: DuplicateField({
         originalId: duplicateSupplierPartId,
         extraFields: {
-          copy_parameters: {}
+          copy_parameters: {},
+          copy_notes: {}
         }
       })
     };
@@ -146,7 +147,8 @@ export function useManufacturerPartFields({
       duplicate: DuplicateField({
         originalId: duplicateManufacturerPartId,
         extraFields: {
-          copy_parameters: {}
+          copy_parameters: {},
+          copy_notes: {}
         }
       })
     };
@@ -187,11 +189,13 @@ export function companyFields({
     is_supplier: {},
     is_manufacturer: {},
     is_customer: {},
+    is_internal: {},
     active: {},
     duplicate: DuplicateField({
       originalId: duplicateCompanyId,
       extraFields: {
-        copy_parameters: {}
+        copy_parameters: {},
+        copy_notes: {}
       }
     })
   };

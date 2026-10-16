@@ -4,6 +4,7 @@ import type { PanelGroupType, PanelType } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { Stack } from '@mantine/core';
 import {
+  IconBuilding,
   IconCoins,
   IconCpu,
   IconDevicesPc,
@@ -15,12 +16,14 @@ import {
   IconList,
   IconListDetails,
   IconMail,
+  IconNotes,
   IconPackages,
   IconPhoto,
   IconPlugConnected,
   IconQrcode,
   IconReport,
   IconScale,
+  IconShieldLock,
   IconSitemap,
   IconTags,
   IconUsersGroup
@@ -33,6 +36,7 @@ import { PanelGroup } from '../../../../components/panels/PanelGroup';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
+import { CompanyTable } from '../../../../tables/company/CompanyTable';
 import ParameterTemplateTable from '../../../../tables/general/ParameterTemplateTable';
 import SelectionListTable from '../../../../tables/settings/SelectionListTable';
 
@@ -70,6 +74,12 @@ const PluginManagementPanel = Loadable(
 
 const MachineManagementPanel = Loadable(
   lazy(() => import('./MachineManagementPanel'))
+);
+
+const NoteTemplatePanel = Loadable(lazy(() => import('./NoteTemplatePanel')));
+
+const IdentityManagementPanel = Loadable(
+  lazy(() => import('./IdentityManagementPanel'))
 );
 
 const ErrorReportTable = Loadable(
@@ -169,6 +179,17 @@ export default function AdminCenter() {
         content: <ErrorReportTable />
       },
       {
+        name: 'companies',
+        label: t`Companies`,
+        icon: <IconBuilding />,
+        content: (
+          <Stack gap='xs'>
+            <GlobalSettingList keys={['INVENTREE_DEFAULT_INTERNAL_COMPANY']} />
+            <CompanyTable companyType='all' />
+          </Stack>
+        )
+      },
+      {
         name: 'currencies',
         label: t`Currencies`,
         icon: <IconCoins />,
@@ -210,6 +231,13 @@ export default function AdminCenter() {
         icon: <IconList />,
         content: <SelectionListTable />,
         hidden: !user.hasViewRole(UserRoles.part)
+      },
+      {
+        name: 'notes',
+        label: t`Note Templates`,
+        icon: <IconNotes />,
+        content: <NoteTemplatePanel />,
+        hidden: !user.isStaff()
       },
       {
         name: 'category-parameters',
@@ -262,6 +290,13 @@ export default function AdminCenter() {
         icon: <IconDevicesPc />,
         content: <MachineManagementPanel />,
         hidden: !user.hasViewRole(UserRoles.admin)
+      },
+      {
+        name: 'identity',
+        label: t`Identity Federation`,
+        icon: <IconShieldLock />,
+        content: <IdentityManagementPanel />,
+        hidden: !user.hasViewRole(UserRoles.admin)
       }
     ];
   }, [user]);
@@ -273,9 +308,11 @@ export default function AdminCenter() {
         label: t`Operations`,
         panelIDs: [
           'user',
+          'identity',
           'barcode-history',
           'background',
           'errors',
+          'companies',
           'currencies',
           'email'
         ]
@@ -303,6 +340,7 @@ export default function AdminCenter() {
           'selection-lists',
           'parameters',
           'category-parameters',
+          'notes',
           'location-types',
           'stocktake'
         ]

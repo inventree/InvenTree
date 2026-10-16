@@ -40,6 +40,7 @@ def consume_build_stock(
     lines: Optional[list[int]] = None,
     items: Optional[dict] = None,
     user_id: int | None = None,
+    expected: Optional[dict] = None,
     **kwargs,
 ):
     """Consume stock for the specified BuildOrder.
@@ -49,6 +50,10 @@ def consume_build_stock(
         lines: Optional list of BuildLine IDs to consume
         items: Optional dict of BuildItem IDs (and quantities)to consume
         user_id: The ID of the user who initiated the stock consumption
+        expected: Optional dict of BuildItem IDs (and their allocated quantities) at the
+            time of the request. Build items which no longer match are skipped, so that a
+            redelivered task does not consume stock a second time.
+            If not provided (e.g. a task queued by an older version), no check is performed.
     """
     from build.models import Build, BuildItem
 
@@ -71,7 +76,13 @@ def consume_build_stock(
         .distinct()
     )
 
-    build.complete_allocations(build_items, quantities=items, notes=notes, user=user)
+    build.complete_allocations(
+        build_items,
+        quantities=items,
+        notes=notes,
+        user=user,
+        expected_quantities=expected,
+    )
 
 
 @tracer.start_as_current_span('complete_build_allocations')
@@ -266,16 +277,36 @@ def cancel_build(
 
     """
     from build.models import Build
+    from build.status_codes import BuildStatus
 
-    build = Build.objects.get(pk=build_id)
+    with transaction.atomic():
+        # Lock the build row: concurrent cancellation tasks (duplicate task
+        # delivery, or repeated cancellation requests) are serialized, and the
+        # status is re-checked below
+        build = Build.objects.select_for_update().get(pk=build_id)
 
-    if remove_allocated_stock:
-        complete_build_allocations(build_id, user_id)
-    else:
-        build.allocated_stock.all().delete()
+        if build.status == BuildStatus.CANCELLED.value:
+            logger.warning(
+                'Build order <%s> is already cancelled - skipping cancellation task',
+                build.pk,
+            )
+            return
 
-    if remove_incomplete_outputs:
-        build.build_outputs.filter(is_building=True).delete()
+        user = User.objects.filter(pk=user_id).first() if user_id else None
+
+        if remove_allocated_stock:
+            complete_build_allocations(build_id, user_id)
+        else:
+            build.allocated_stock.all().delete()
+
+        if remove_incomplete_outputs:
+            build.build_outputs.filter(is_building=True).delete()
+
+        # Mark the build as cancelled
+        build.completion_date = InvenTree.helpers.current_date()
+        build.completed_by = user
+        build.status = BuildStatus.CANCELLED.value
+        build.save()
 
     # Notify users that the order has been canceled
     InvenTree.helpers_model.notify_responsible(

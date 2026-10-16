@@ -358,7 +358,10 @@ def check_plugin(
     if not plugin_cfg.active:
         raise NotFound(detail=f"Plugin '{ref}' is not active")
 
-    plugin = plugin_cfg.plugin
+    # Look up via the registry rather than `plugin_cfg.plugin`: the latter can be a
+    # stale, un-instantiated plugin class in this worker if the plugin was activated
+    # by a different process (registry.get_plugin() forces a reload check first).
+    plugin = registry.get_plugin(plugin_cfg.key)
 
     if not plugin:
         raise NotFound(detail=f"Plugin '{ref}' not installed")

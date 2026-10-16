@@ -309,7 +309,7 @@ class BuildFilter(FilterSet):
 
         return queryset
 
-    tags = common.filters.TagsFilter()
+    tag_name = common.filters.TagsFilter()
 
 
 class BuildMixin:
@@ -742,9 +742,24 @@ class BuildOrderContextMixin:
         try:
             ctx['build'] = self.get_build()
         except NotFound:
+            # Swallowed here (e.g. schema generation may call this without a
+            # resolvable pk) - create() below is what actually enforces a 404
+            # for a real request against a non-existent build.
             pass
 
         return ctx
+
+    def create(self, request, *args, **kwargs):
+        """Ensure the target Build actually exists before attempting the action.
+
+        Without this, a POST against a non-existent pk would fall through to the
+        action serializer's save(), which unconditionally reads
+        self.context['build'] - raising an unhandled KeyError (HTTP 500) instead of
+        the intended 404.
+        """
+        self.get_build()
+
+        return super().create(request, *args, **kwargs)
 
 
 @extend_schema(responses={201: stock.serializers.StockItemSerializer(many=True)})
@@ -996,14 +1011,28 @@ class BuildConsume(BuildOrderContextMixin, CreateAPI):
         lines = data.get('lines', [])
         notes = data.get('notes', '')
 
+        line_ids = [line['build_line'].pk for line in lines]
+        item_ids = [item['build_item'].pk for item in items]
+
+        # Snapshot the current allocated quantity of every affected BuildItem.
+        # The task only consumes against build items which still match this snapshot,
+        # making it idempotent against task redelivery (and stale double-submission)
+        expected = dict(
+            BuildItem.objects
+            .filter(Q(build_line__pk__in=line_ids) | Q(pk__in=item_ids))
+            .filter(build_line__build=build)
+            .values_list('pk', 'quantity')
+        )
+
         # Offload the task to the background worker
         task_id = offload_task(
             consume_build_stock,
             build.pk,
-            lines=[line['build_line'].pk for line in lines],
+            lines=line_ids,
             items={item['build_item'].pk: item['quantity'] for item in items},
             user_id=self.request.user.pk,
             notes=notes,
+            expected=expected,
         )
 
         response = common.serializers.TaskDetailSerializer.from_task(task_id).data

@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Alert,
   Box,
   Divider,
   Group,
@@ -10,10 +11,12 @@ import {
   Stack,
   Tabs,
   Text,
+  Title,
   Tooltip,
   UnstyledButton
 } from '@mantine/core';
 import {
+  IconExclamationCircle,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse
 } from '@tabler/icons-react';
@@ -51,6 +54,7 @@ import type {
 } from '@lib/types/Panel';
 import { t } from '@lingui/core/macro';
 import { useDocumentVisibility, useWindowEvent } from '@mantine/hooks';
+import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 import { useShallow } from 'zustand/react/shallow';
 import { generateUrl } from '../../functions/urls';
@@ -103,27 +107,36 @@ function PanelTabComponent({
   onClick: (event: any) => void;
 }) {
   const visibility = useDocumentVisibility();
+  const location = useLocation();
 
-  // Check if we should display an indicator dot for this panel
+  const isDynamicDot = typeof panel.notification_dot === 'function';
+
+  // Check if we should display an indicator dot for this panel.
+  // Only self-fetching (function) dots go through react-query, as they need
+  // caching around their own async call. Static dot values are derived from
+  // props the caller already re-renders on, so they are read directly below -
+  // routing them through a query keyed only on panel.name would freeze the
+  // first-seen value (e.g. `null` before data loads) and never update.
   const notificationDot = useQuery({
-    enabled: panel.notification_dot !== undefined && visibility === 'visible',
+    enabled: isDynamicDot && visibility === 'visible',
     queryKey: ['panel-notification', panel.name],
     queryFn: async () => {
-      if (panel.notification_dot === undefined) {
-        return null;
-      } else if (typeof panel.notification_dot === 'function') {
+      if (typeof panel.notification_dot === 'function') {
         return await panel.notification_dot();
-      } else {
-        return panel.notification_dot as PanelIndicatorType;
       }
+      return null;
     },
     staleTime: 5 * 60 * 1000, // cache for 5 minutes
     refetchOnMount: false,
     refetchOnWindowFocus: false
   });
 
+  const indicatorValue: PanelIndicatorType | undefined = isDynamicDot
+    ? notificationDot.data
+    : (panel.notification_dot as PanelIndicatorType | undefined);
+
   const indicatorColor: MantineColor | undefined = useMemo(() => {
-    switch (notificationDot.data) {
+    switch (indicatorValue) {
       case 'info':
         return 'blue';
       case 'warning':
@@ -133,7 +146,7 @@ function PanelTabComponent({
       default:
         return undefined;
     }
-  }, [notificationDot.data]);
+  }, [indicatorValue]);
 
   return (
     <Tooltip
@@ -172,7 +185,9 @@ function PanelTabComponent({
               textAlign: 'left'
             }}
             href={generateUrl(
-              `/${getBaseUrl()}${location.pathname}/${panel.name}`
+              `/${getBaseUrl()}${location.pathname}/${panel.name}${
+                location.search
+              }`
             )}
           >
             {expanded && panel.label}
@@ -288,39 +303,61 @@ function BasePanelGroup({
     [allPanels]
   );
 
+  const [isDirty, setIsDirty] = useState(false);
+  useWindowEvent('beforeunload', (event) => {
+    if (isDirty) {
+      event.preventDefault();
+    }
+  });
+
+  const performPanelChange = useCallback(
+    (targetPanel: string, event?: any) => {
+      if (event && eventModified(event)) {
+        const url = `${location.pathname}/../${targetPanel}${location.search}`;
+        navigateToLink(url, navigate, event);
+      } else {
+        navigate(`../${targetPanel}${location.search}`);
+      }
+
+      localState.setLastUsedPanel(pageKey)(targetPanel);
+
+      if (targetPanel && onPanelChange) {
+        onPanelChange(targetPanel);
+      }
+
+      setIsDirty(false);
+    },
+    [navigate, location, pageKey, onPanelChange]
+  );
+
   // Callback when the active panel changes
   const handlePanelChange = useCallback(
     (targetPanel: string, event?: any) => {
       cancelEvent(event);
 
-      // check if we are currently on a dirty panel, if so prompt the user to confirm navigation
       if (isDirty) {
-        const confirm = globalThis.confirm(
-          t`You have unsaved changes, are you sure you want to navigate away from this panel?`
-        );
-        if (!confirm) {
-          return;
-        }
+        modals.openConfirmModal({
+          title: <Title order={4}>{t`Unsaved Changes`}</Title>,
+          children: (
+            <>
+              <Divider />
+              <Alert
+                color='red'
+                icon={<IconExclamationCircle />}
+                p='sm'
+              >{t`You have unsaved changes. Are you sure you want to leave this panel?`}</Alert>
+            </>
+          ),
+          labels: { confirm: t`Leave`, cancel: t`Stay` },
+          confirmProps: { color: 'red' },
+          onConfirm: () => performPanelChange(targetPanel, event)
+        });
+        return;
       }
 
-      if (event && eventModified(event)) {
-        const url = `${location.pathname}/../${targetPanel}`;
-        navigateToLink(url, navigate, event);
-      } else {
-        navigate(`../${targetPanel}`);
-      }
-
-      localState.setLastUsedPanel(pageKey)(targetPanel);
-
-      // Optionally call external callback hook
-      if (targetPanel && onPanelChange) {
-        onPanelChange(targetPanel);
-      }
-
-      // change dirty state
-      setIsDirty(false);
+      performPanelChange(targetPanel, event);
     },
-    [activePanels, navigate, location, onPanelChange]
+    [isDirty, performPanelChange]
   );
 
   // if the selected panel state changes update the current panel
@@ -354,13 +391,6 @@ function BasePanelGroup({
     return keys;
   }, [activePanels]);
   useInvenTreeHotkeys(hotkeys);
-
-  const [isDirty, setIsDirty] = useState(false);
-  useWindowEvent('beforeunload', (event) => {
-    if (isDirty) {
-      event.preventDefault();
-    }
-  });
 
   return (
     <Boundary label={`PanelGroup-${pageKey}`}>
@@ -508,6 +538,7 @@ function IndexPanelComponent({
   defaultPanel,
   panels
 }: Readonly<PanelProps>) {
+  const location = useLocation();
   const lastUsedPanel = useLocalState(
     useShallow((state) => {
       const panelName =
@@ -527,7 +558,7 @@ function IndexPanelComponent({
     })
   );
 
-  return <Navigate to={lastUsedPanel} replace />;
+  return <Navigate to={`${lastUsedPanel}${location.search}`} replace />;
 }
 
 /**

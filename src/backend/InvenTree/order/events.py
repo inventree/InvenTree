@@ -38,6 +38,8 @@ class ReturnOrderEvents(BaseEventEnum):
     CANCELLED = 'returnorder.cancelled'
     HOLD = 'returnorder.hold'
 
+    OVERDUE = 'order.overdue_return_order'
+
 
 class TransferOrderEvents(BaseEventEnum):
     """Event enumeration for the PurchaseOrder models."""

@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from '../baseFixtures';
+import { readeruser } from '../defaults';
 import {
   clearTableFilters,
   clickOnParamFilter,
@@ -195,16 +196,34 @@ test('Parts - BOM', async ({ browser }) => {
   // Move the mouse away
   await page.getByRole('link', { name: 'Bill of Materials' }).hover();
 
-  // Test sub-assembly row expansion
-  await page.getByText('Widget Board (assembled)').click();
+  // Test sub-assembly row expansion (rows are inserted into the same table)
+  const assemblyRow = page
+    .getByRole('row')
+    .filter({ hasText: 'Widget Board (assembled)' });
+
+  await assemblyRow.getByRole('button', { name: 'nested-row-expand' }).click();
   await page.getByText('R_10R_0402_1%').waitFor();
   await page.getByText('MAX232IDR').waitFor();
 
-  // Enable BOM editing
+  // Collapse the sub-assembly rows
+  await assemblyRow
+    .getByRole('button', { name: 'nested-row-collapse' })
+    .click();
+  await expect(page.getByText('MAX232IDR')).toHaveCount(0);
+
+  // Re-expand (from cached data)
+  await assemblyRow.getByRole('button', { name: 'nested-row-expand' }).click();
+  await page.getByText('MAX232IDR').waitFor();
+
+  // Enable BOM editing - sub-assembly rows are removed
   await page.getByRole('button', { name: 'action-button-edit-bom' }).click();
   await page
     .getByRole('button', { name: 'action-button-finish-editing-' })
     .waitFor();
+  await expect(page.getByText('MAX232IDR')).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: 'nested-row-expand' })
+  ).toHaveCount(0);
 
   const cell = await page
     .getByRole('cell', { name: 'Thumbnail 1551ABK' })
@@ -281,6 +300,117 @@ test('Parts - BOM', async ({ browser }) => {
     .getByRole('button', { name: 'action-button-finish-editing-' })
     .click();
   await page.getByRole('button', { name: 'action-button-edit-bom' }).waitFor();
+});
+
+/**
+ * Expand and collapse sub-assembly BOMs within the BOM table
+ */
+test('Parts - BOM Nesting', async ({ browser }) => {
+  // Assembly with multiple levels of sub-assemblies
+  const page = await doCachedLogin(browser, { url: 'part/113/bom' });
+
+  const row = (text: string) => page.getByRole('row').filter({ hasText: text });
+
+  // Return the cell for a given row and column title
+  const cell = async (rowText: string, column: string) => {
+    const index = await page
+      .locator('thead th')
+      .evaluateAll(
+        (headers, title) =>
+          headers.findIndex((th) => th.textContent?.trim().startsWith(title)),
+        column
+      );
+
+    expect(index).toBeGreaterThanOrEqual(0);
+
+    return row(rowText).first().locator('td').nth(index);
+  };
+
+  const doohickey = row('Doohickey').first();
+  await doohickey.waitFor();
+
+  // Sub-assembly rows are not loaded initially
+  await expect(page.getByText('M3x10 Torx')).toHaveCount(0);
+  await expect(row('Widget Board (assembled)')).toHaveCount(1);
+
+  // Expand the "Doohickey" sub-assembly (quantity 3)
+  await doohickey.getByRole('button', { name: 'nested-row-expand' }).click();
+  await page.getByText('M3x10 Torx').waitFor();
+  await page.getByText('1551ABK').waitFor();
+
+  // Nested "Widget Board (assembled)" row is inserted into the same table
+  await expect(row('Widget Board (assembled)')).toHaveCount(2);
+
+  // Pagination only counts the top-level rows
+  await page.getByText('1 - 10 / 10').waitFor();
+
+  // Quantity is multiplied by the parent quantity
+  const m3x8Quantity = await cell('M3x8 Torx', 'Quantity');
+  await expect(m3x8Quantity.getByText('12', { exact: true })).toBeVisible();
+  await expect(m3x8Quantity.getByText('4 × 3', { exact: true })).toBeVisible();
+
+  // Total price displays the multiplier and the base price
+  await expect(await cell('M3x8 Torx', 'Total Price')).toContainText(
+    /3 × \(\$[\d.,]+ - \$[\d.,]+\)/
+  );
+
+  // Can build is divided by the parent quantity
+  const m3x8Build = await cell('M3x8 Torx', 'Can Build');
+  const buildText = await m3x8Build.innerText();
+  const buildMatch = buildText.match(/^([\d,]+)\s+([\d,.]+) ÷ 3$/);
+
+  expect(buildMatch).not.toBeNull();
+
+  const chained = Number(buildMatch![1].replaceAll(',', ''));
+  const unit = Number(buildMatch![2].replaceAll(',', ''));
+
+  expect(chained).toBe(Math.trunc(unit / 3));
+
+  // Expand the nested "Widget Board (assembled)" sub-assembly (quantity 1)
+  await row('Widget Board (assembled)')
+    .nth(1)
+    .getByRole('button', { name: 'nested-row-expand' })
+    .click();
+  await page.getByText('MAX232IDR').waitFor();
+
+  // Quantity is multiplied through each level
+  const capQuantity = await cell('C_1uF_0402', 'Quantity');
+  await expect(capQuantity.getByText('57', { exact: true })).toBeVisible();
+  await expect(
+    capQuantity.getByText('19 × 1 × 3', { exact: true })
+  ).toBeVisible();
+
+  // Widget Board (PCB) line item with quantity 3
+  const pcbQuantity = await cell('PCB3, PCB4, PCB5', 'Quantity');
+  await expect(pcbQuantity.getByText('9', { exact: true })).toBeVisible();
+  await expect(
+    pcbQuantity.getByText('3 × 1 × 3', { exact: true })
+  ).toBeVisible();
+
+  // Collapse the nested sub-assembly - its rows are removed
+  await row('Widget Board (assembled)')
+    .nth(1)
+    .getByRole('button', { name: 'nested-row-collapse' })
+    .click();
+  await expect(page.getByText('MAX232IDR')).toHaveCount(0);
+  await expect(page.getByText('M3x10 Torx')).toHaveCount(1);
+
+  // Collapse the top-level sub-assembly - all descendant rows are removed
+  await doohickey.getByRole('button', { name: 'nested-row-collapse' }).click();
+  await expect(page.getByText('M3x10 Torx')).toHaveCount(0);
+  await expect(row('Widget Board (assembled)')).toHaveCount(1);
+
+  // Re-expand - nested sub-assemblies remain collapsed
+  await doohickey.getByRole('button', { name: 'nested-row-expand' }).click();
+  await page.getByText('M3x10 Torx').waitFor();
+  await expect(page.getByText('MAX232IDR')).toHaveCount(0);
+
+  // Searching reloads the table, which discards sub-assembly rows
+  await page.getByLabel('table-search-input').fill('Doohickey');
+  await expect(page.getByText('M3x10 Torx')).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: 'nested-row-collapse' })
+  ).toHaveCount(0);
 });
 
 /**
@@ -1057,23 +1187,61 @@ test('Parts - Test Results', async ({ browser }) => {
 });
 
 test('Parts - Notes', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'part/69/notes' });
+  const page = await doCachedLogin(browser, { url: 'part/71/details' });
 
-  // Enable editing
-  await page.getByLabel('Enable Editing').waitFor();
+  await loadTab(page, 'Notes');
 
-  // Use keyboard shortcut to "edit" the part
-  await page.keyboard.press('Control+E');
-  await page.getByLabel('text-field-name', { exact: true }).waitFor();
-  await page.getByLabel('text-field-description', { exact: true }).waitFor();
-  await page.getByLabel('tree-field-category').waitFor();
+  // Expect to see notes rendered for this part
+  await page.getByRole('cell', { name: 'Red Widget' }).waitFor();
+  await page.getByRole('cell', { name: 'Blue Widget' }).waitFor();
+  await page.getByRole('cell', { name: 'Green Widget' }).waitFor();
+  await page
+    .getByRole('link', { name: 'Read more in the documentation' })
+    .waitFor();
+
+  // Let's try to create a new note, but cancel before submitting
+  await page.getByRole('button', { name: 'Add Note' }).click();
+  await page.getByLabel('related-field-template').fill('instructions');
+  await page
+    .getByRole('option', { name: 'Manufacturing Instructions' })
+    .click();
+  await page.getByText('Manufacturing Instructions').waitFor();
+  await page.getByText('How to build this part').waitFor();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
-  // Enable notes editing
-  await page.getByLabel('Enable Editing').click();
+  // Enable editing for this note
+  await page.getByRole('button', { name: 'edit-note' }).click();
 
-  await page.getByLabel('Save Notes').waitFor();
-  await page.getByLabel('Close Editor').waitFor();
+  await page.getByRole('button', { name: 'Bold' }).waitFor();
+  await page.getByRole('button', { name: 'Italic' }).waitFor();
+  await page.getByRole('button', { name: 'Underline' }).waitFor();
+  await page.getByRole('button', { name: 'Heading 1' }).waitFor();
+  await page.getByRole('button', { name: 'Heading 2' }).waitFor();
+  await page.getByRole('button', { name: 'Heading 3' }).waitFor();
+
+  await page.getByRole('button', { name: 'finish-editing-note' }).click();
+
+  // Duplicate this part - should show options for copying notes
+  await page.getByRole('button', { name: 'action-menu-part-actions' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-part-actions-duplicate' })
+    .click();
+  await page
+    .getByRole('switch', { name: 'boolean-field-duplicate.copy_notes' })
+    .waitFor();
+
+  // Generate random IPN for copying
+  const ipn = `IPN-${Math.floor(Math.random() * 100000)}`;
+  await page.getByRole('textbox', { name: 'text-field-IPN' }).fill(ipn);
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForLoadState('networkidle');
+  await page.getByText(`Part: ${ipn}`).waitFor();
+
+  // Check that the notes have been duplicated to this new part
+  await loadTab(page, 'Notes');
+  await page
+    .getByRole('heading', { name: 'On Widgets (And Variants Thereof)' })
+    .waitFor();
 });
 
 test('Parts - 404', async ({ browser }) => {
@@ -1190,7 +1358,15 @@ test('Parts - Import supplier part', async ({ browser }) => {
   await page
     .getByRole('button', { name: 'action-button-import-part-BOLT-Steel-M5-5' })
     .click();
+
+  await page.waitForLoadState('networkidle');
   await page.waitForTimeout(250);
+
+  await page
+    .getByRole('textbox', { name: 'tree-field-field' })
+    .fill('electronics');
+  await page.getByText('ElectronicsElectronic').click();
+
   await page
     .getByRole('button', { name: 'action-button-import-part-now' })
     .click();
@@ -1208,4 +1384,76 @@ test('Parts - Import supplier part', async ({ browser }) => {
   // cleanup imported part if it exists
   await deletePart('BOLT-Steel-M5-5');
   await deletePart('BOLT-M5-5');
+});
+
+test('Parts - Add button visible in Parametric View (admin)', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, { url: 'part/category/4/parts' });
+
+  await showParametricView(page);
+
+  await expect(
+    page.getByRole('button', { name: 'action-menu-add-parts' })
+  ).toBeVisible();
+});
+
+test('Parts - Add button opens Create Part form in Parametric View', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, { url: 'part/category/4/parts' });
+
+  await showParametricView(page);
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await expect(page.getByText('Add Part', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
+test('Parts - Add button hidden in Parametric View (reader)', async ({
+  browser
+}) => {
+  const page = await doCachedLogin(browser, {
+    url: 'part/category/4/parts',
+    user: readeruser
+  });
+
+  await showParametricView(page);
+
+  await expect(
+    page.getByRole('button', { name: 'action-menu-add-parts' })
+  ).toHaveCount(0);
+});
+
+test('Parts - Create part via Parametric View submits to API', async ({
+  browser
+}) => {
+  const testPartName = 'TEST-PARAMETRIC-ADD-PART';
+
+  await deletePart(testPartName);
+
+  const page = await doCachedLogin(browser, { url: 'part/category/4/parts' });
+
+  await showParametricView(page);
+
+  await page.getByRole('button', { name: 'action-menu-add-parts' }).click();
+  await page
+    .getByRole('menuitem', { name: 'action-menu-add-parts-create-part' })
+    .click();
+
+  await page.getByLabel('text-field-name', { exact: true }).fill(testPartName);
+  await page
+    .getByLabel('text-field-description', { exact: true })
+    .fill('Created from Parametric View integration test');
+
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.waitForLoadState('networkidle');
+
+  await page.getByText(testPartName).first().waitFor();
+
+  await deletePart(testPartName);
 });

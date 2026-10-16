@@ -104,9 +104,17 @@ You may wish to extend the proxy configuration to include additional features, b
 
 #### Integrating with Existing Proxy
 
-You may wish to integrate the InvenTree web server with an existing reverse proxy server. This is possible, but requires careful configuration to ensure that the static and media files are served correctly.
+You may wish to integrate the InvenTree web server with an existing reverse proxy server - for example, a single NGINX, Traefik, or Caddy instance which already terminates SSL for other services on your network (common on NAS platforms such as TrueNAS, Unraid, or Synology). This is possible, but requires careful configuration to ensure that the static and media files are served correctly, and that InvenTree trusts requests forwarded from the upstream proxy.
 
-*Note: A custom configuration of the proxy server is outside the scope of this documentation!*
+*Note: Configuration of your external proxy server itself is outside the scope of this documentation - refer to the documentation for the specific software you are using.*
+
+The pattern below outlines the InvenTree-side configuration that this setup always requires, regardless of which proxy software sits in front of it:
+
+- Leave the bundled `inventree-proxy` (Caddy) container serving plain **HTTP** - do not enable [Automatic HTTPS](./docker.md#ssl-certificates), as Caddy will not be reachable directly for the ACME challenge. SSL termination is handled entirely by your existing external proxy instead.
+- Publish the `inventree-proxy` container's HTTP port (`INVENTREE_HTTP_PORT`, see [docker_install.md](./docker_install.md#proxy-external-port)) on an address/port that your external proxy can reach, and point the external proxy's upstream/backend at that address.
+- Set `INVENTREE_SITE_URL` to the externally-visible URL that users and the external proxy will actually use to reach InvenTree (e.g. `https://inventree.example.com`), even though InvenTree itself is only ever served over plain HTTP internally.
+- If the external proxy's public URL differs from `INVENTREE_SITE_URL` (for example, if `INVENTREE_SITE_URL` is set to an internal address rather than the public domain), explicitly add the public URL to [`INVENTREE_TRUSTED_ORIGINS`](./config.md#server-access) - otherwise, form submissions (including login) will fail CSRF validation.
+- The forwarded-header settings `INVENTREE_USE_X_FORWARDED_HOST`, `INVENTREE_USE_X_FORWARDED_PORT`, and `INVENTREE_USE_X_FORWARDED_PROTO` (see [Server Access](./config.md#server-access)) are enabled by default in the provided `.env` file, so that InvenTree correctly reports its own HTTPS URL even though it only ever receives plain HTTP traffic from your external proxy. Ensure your external proxy actually sets the corresponding `X-Forwarded-*` headers when forwarding requests.
 
 ### Background Worker
 

@@ -37,6 +37,7 @@ import RowExpansionIcon from '../../components/tables/RowExpansionIcon';
 import { useApi } from '../../contexts/ApiContext';
 import { formatDate } from '../../defaults/formatters';
 import { useTestResultFields } from '../../forms/StockForms';
+import { compareTestResults } from '../../functions/comparison';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -110,12 +111,14 @@ export default function StockItemTestResultTable({
       });
 
       // Iterate through the returned records
-      // Note that the results are sorted by oldest first,
-      // to ensure that the most recent result is displayed "on top"
+      // Sort test results using the same priority as the backend:
+      // finished_datetime -> started_datetime -> date -> pk
+      // Note: compareTestResults sorts newest-first, but we need to iterate
+      // oldest-first here, so that the most recent result is processed last
+      // and ends up displayed as the primary result for its template.
       records
-        .sort((a: any, b: any) => {
-          return a.pk > b.pk ? 1 : -1;
-        })
+        .toSorted(compareTestResults)
+        .toReversed()
         .forEach((record) => {
           // Find matching template
           const idx = results.findIndex(
@@ -467,7 +470,7 @@ export default function StockItemTestResultTable({
           return null;
         }
 
-        const results = record?.results ?? [];
+        const results = record?.results?.toReversed() ?? [];
 
         return (
           <DataTable
@@ -475,7 +478,7 @@ export default function StockItemTestResultTable({
             idAccessor={'test'}
             noHeader
             columns={cols}
-            records={results.slice(0, -1)}
+            records={results}
           />
         );
       }

@@ -59,7 +59,8 @@ export function useTransferOrderFields({
             value: duplicateOrderId
           },
           copy_lines: {},
-          copy_parameters: {}
+          copy_parameters: {},
+          copy_notes: {}
         }
       };
     }

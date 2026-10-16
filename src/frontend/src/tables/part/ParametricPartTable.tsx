@@ -2,7 +2,8 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import type { TableFilter } from '@lib/types/Filters';
 import type { TableColumn } from '@lib/types/Tables';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
+import { PartCreationMenu } from '../../components/items/PartCreationMenu';
 import {
   DescriptionColumn,
   PartColumn
@@ -12,10 +13,14 @@ import ParametricDataTable from '../general/ParametricDataTable';
 import { PartTableFilters } from './PartTableFilters';
 
 export default function ParametricPartTable({
-  categoryId
+  categoryId,
+  enableImport = true
 }: Readonly<{
   categoryId?: any;
+  enableImport?: boolean;
 }>) {
+  const tableRefreshRef = useRef<() => void>(null!);
+
   const customFilters: TableFilter[] = useMemo(() => PartTableFilters(), []);
 
   const customColumns: TableColumn[] = useMemo(() => {
@@ -40,6 +45,18 @@ export default function ParametricPartTable({
     ];
   }, []);
 
+  const tableActions = useMemo(
+    () => [
+      <PartCreationMenu
+        key='part-creation-menu'
+        categoryId={categoryId}
+        enableImport={enableImport}
+        refreshRef={tableRefreshRef}
+      />
+    ],
+    [categoryId, enableImport]
+  );
+
   return (
     <ParametricDataTable
       modelType={ModelType.part}
@@ -48,6 +65,8 @@ export default function ParametricPartTable({
       endpoint={ApiEndpoints.part_list}
       customColumns={customColumns}
       customFilters={customFilters}
+      customActions={tableActions}
+      refreshRef={tableRefreshRef}
       queryParams={{
         category: categoryId,
         cascade: true,

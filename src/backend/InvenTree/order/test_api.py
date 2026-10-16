@@ -3,6 +3,7 @@
 import base64
 import io
 import json
+import threading
 from datetime import date, datetime, timedelta
 from typing import Optional
 from unittest import mock
@@ -10,20 +11,23 @@ from unittest import mock
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import connection
+from django.test import TransactionTestCase, skipUnlessDBFeature
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 from djmoney.money import Money
 from icalendar import Calendar
 from rest_framework import status
+from rest_framework.exceptions import ValidationError as DRFValidationError
 
 from common.currency import currency_codes
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
-from company.models import Company, SupplierPart, SupplierPriceBreak
+from company.models import Address, Company, Contact, SupplierPart, SupplierPriceBreak
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
 from order.models import SalesOrderAllocation, SalesOrderLineItem, SalesOrderShipment
+from order.serializers import TransferOrderSerialAllocationSerializer
 from order.status_codes import (
     PurchaseOrderStatus,
     ReturnOrderLineStatus,
@@ -54,7 +58,14 @@ class OrderTest(InvenTreeAPITestCase):
         'transfer_order',
     ]
 
-    roles = ['purchase_order.change', 'sales_order.change', 'transfer_order.change']
+    roles = [
+        'purchase_order.change',
+        'sales_order.change',
+        'transfer_order.change',
+        'part.view',
+        'stock.view',
+        'stock_location.view',
+    ]
 
     def filter(self, filters, count):
         """Test API filters."""
@@ -70,6 +81,19 @@ class PurchaseOrderTest(OrderTest):
     """Tests for the PurchaseOrder API."""
 
     LIST_URL = reverse('api-po-list')
+
+    def assert_available_transitions(self, po, available, unavailable):
+        """Assert which transitions are available for a purchase order."""
+        response = self.get(
+            reverse('api-po-transitions', kwargs={'pk': po.pk}), expected_code=200
+        )
+        transitions = {transition['url_path'] for transition in response.json()}
+
+        for transition in available:
+            self.assertIn(transition, transitions)
+
+        for transition in unavailable:
+            self.assertNotIn(transition, transitions)
 
     def test_options(self):
         """Test the PurchaseOrder OPTIONS endpoint."""
@@ -89,6 +113,17 @@ class PurchaseOrderTest(OrderTest):
             for k, v in spec.items():
                 self.assertIn(k, field_data)
                 self.assertEqual(field_data[k], v)
+
+        # Checks for the 'address' field
+        check_options(
+            post,
+            'address',
+            {
+                'type': 'related field',
+                'label': 'Supplier Address',
+                'help_text': 'Supplier address for this order',
+            },
+        )
 
         # Checks for the 'order_currency' field
         check_options(
@@ -159,6 +194,9 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'supplier_part': 1}, 1)
         self.filter({'supplier_part': 3}, 2)
         self.filter({'supplier_part': 4}, 0)
+
+        # Filter by "tags"
+        self.filter({'tags': True}, 7)
 
     def test_total_price(self):
         """Unit tests for the 'total_price' field."""
@@ -513,6 +551,53 @@ class PurchaseOrderTest(OrderTest):
         # Revert the setting to previous value
         InvenTreeSetting.set_setting(setting, False)
 
+    def test_po_create_default_destination(self):
+        """Test that the PURCHASEORDER_DEFAULT_RECEIVE_LOCATION setting is applied on creation."""
+        self.assignRole('purchase_order.add')
+
+        url = reverse('api-po-list')
+        location = StockLocation.objects.first()
+        assert location
+
+        # By default, no destination is set on the setting - so the field is left blank
+        set_global_setting('PURCHASEORDER_DEFAULT_RECEIVE_LOCATION', '')
+
+        data = {
+            'reference': 'PO-99990001',
+            'supplier': 1,
+            'description': 'A test purchase order',
+        }
+
+        response = self.post(url, data, expected_code=201)
+        self.assertIsNone(response.data['destination'])
+
+        # Now, set the global default - newly created orders should inherit it
+        set_global_setting('PURCHASEORDER_DEFAULT_RECEIVE_LOCATION', location.pk)
+
+        # The OPTIONS metadata for the 'destination' field should reflect the default location
+        response = self.options(url, expected_code=200)
+        self.assertEqual(
+            response.data['actions']['POST']['destination']['default'], location.pk
+        )
+
+        data['reference'] = 'PO-99990002'
+
+        response = self.post(url, data, expected_code=201)
+        self.assertEqual(response.data['destination'], location.pk)
+
+        # An explicitly provided destination should always take priority
+        other_location = StockLocation.objects.exclude(pk=location.pk).first()
+        assert other_location
+
+        data['reference'] = 'PO-99990003'
+        data['destination'] = other_location.pk
+
+        response = self.post(url, data, expected_code=201)
+        self.assertEqual(response.data['destination'], other_location.pk)
+
+        # Revert the setting to its previous value
+        set_global_setting('PURCHASEORDER_DEFAULT_RECEIVE_LOCATION', '')
+
     def test_po_creation_date(self):
         """Test that we can create set the creation_date field of PurchaseOrder via the API."""
         self.assignRole('purchase_order.add')
@@ -618,6 +703,58 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(po_dup.extra_lines.count(), po.extra_lines.count())
         self.assertEqual(po_dup.lines.count(), 0)
 
+    def test_po_duplicate_copies_notes(self):
+        """Test that notes are copied when duplicating a PurchaseOrder via the API.
+
+        PurchaseOrderSerializer declares its 'duplicate' options with
+        copy_notes=True, so notes should be copied by default (i.e. without
+        explicitly requesting it).
+        """
+        from common.models import Note
+
+        self.assignRole('purchase_order.add')
+
+        po = models.PurchaseOrder.objects.get(pk=1)
+
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(models.PurchaseOrder),
+            model_id=po.pk,
+            title='Original Note',
+            content='<p>Some purchase order notes</p>',
+        )
+
+        response = self.post(
+            reverse('api-po-list'),
+            {
+                'supplier': po.supplier.pk,
+                'reference': 'PO-9997',
+                'description': po.description,
+                'duplicate': {'original': po.pk},
+            },
+            expected_code=201,
+        )
+
+        po_dup = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(po_dup.notes.count(), 1)
+        self.assertEqual(
+            po_dup.notes.first().content, '<p>Some purchase order notes</p>'
+        )
+
+        # Explicitly disabling copy_notes must not copy any notes
+        response = self.post(
+            reverse('api-po-list'),
+            {
+                'supplier': po.supplier.pk,
+                'reference': 'PO-9996',
+                'description': po.description,
+                'duplicate': {'original': po.pk, 'copy_notes': False},
+            },
+            expected_code=201,
+        )
+
+        po_no_notes = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(po_no_notes.notes.count(), 0)
+
     def test_po_cancel(self):
         """Test the PurchaseOrderCancel API endpoint."""
         po = models.PurchaseOrder.objects.get(pk=1)
@@ -700,25 +837,51 @@ class PurchaseOrderTest(OrderTest):
         # completion must be skipped based on the database state
         self.assertEqual(po_b.status, PurchaseOrderStatus.PLACED)
 
-        with mock.patch('order.models.trigger_event') as trigger:
+        with self.assertRaises(ValidationError) as err:
             po_b.complete_order()
-            trigger.assert_not_called()
+
+        self.assertIn('Purchase Order is already Complete', str(err.exception))
 
         po.refresh_from_db()
         self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
+
+    def test_po_hold(self):
+        """Test the PurchaseOrderHold API endpoint."""
+        po = models.PurchaseOrder.objects.get(pk=1)
+        url = reverse('api-po-hold', kwargs={'pk': po.pk})
+
+        # Try to hold the PO, without required permissions
+        self.post(url, {}, expected_code=403)
+        self.assignRole('purchase_order.add')
+        self.post(url, {}, expected_code=201)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.ON_HOLD)
 
     def test_po_issue(self):
         """Test the PurchaseOrderIssue API endpoint."""
         po = models.PurchaseOrder.objects.get(pk=2)
 
         url = reverse('api-po-issue', kwargs={'pk': po.pk})
+        transitions_url = reverse('api-po-transitions', kwargs={'pk': po.pk})
 
         # Try to issue the PO, without required permissions
+        self.clearRoles()
         self.post(url, {}, expected_code=403)
+        # Check introspection endpoint too
+        self.get(transitions_url, expected_code=403)
 
+        self.assignRole('purchase_order.view')
         self.assignRole('purchase_order.add')
+        self.get(transitions_url, expected_code=200)
+        self.assert_available_transitions(
+            po, available=['issue'], unavailable=['complete']
+        )
 
         self.post(url, {}, expected_code=201)
+
+        self.assert_available_transitions(
+            po, available=['complete'], unavailable=['issue']
+        )
 
         po.refresh_from_db()
 
@@ -842,6 +1005,21 @@ class PurchaseOrderTest(OrderTest):
         )
         self.assertEqual(response.status_code, 200)
 
+    def test_po_calendar_no_permission(self):
+        """Test that an authenticated user without purchase_order view permission is denied."""
+        self.clearRoles()
+
+        response = self.get(
+            reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}),
+            expected_code=403,
+            format=None,
+        )
+
+        resp_dict = response.json()
+        self.assertEqual(
+            resp_dict['detail'], 'You do not have permission to view this resource.'
+        )
+
     def test_po_custom_status_query_count(self):
         """Test that listing PurchaseOrders with custom statuses does not cause N+1 queries.
 
@@ -905,6 +1083,290 @@ class PurchaseOrderTest(OrderTest):
                 self.assertIn('status_text', result)
                 self.assertIsNotNone(result['status_text'])
 
+    def test_status_codes_endpoint(self):
+        """The 'po/status/' endpoint must resolve to the status-codes view.
+
+        Regression test: PurchaseOrder is served by a ViewSet router, whose
+        generated detail route ('po/<pk>/') uses DRF's default, permissive pk
+        lookup regex. That regex is happy to match the literal segment 'status'
+        as a pk, so if the router is registered ahead of the 'po/status/' path in
+        the urlconf, this endpoint gets swallowed by
+        PurchaseOrderViewSet.retrieve(pk='status') instead of reaching StatusView -
+        returning a 404 (no such PurchaseOrder) rather than the status code data.
+        """
+        response = self.get(reverse('api-po-status-codes'), expected_code=200)
+
+        # A genuine StatusView response - not a PurchaseOrder-detail-shaped 404
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('PENDING', response.data['values'])
+        self.assertEqual(
+            response.data['values']['PENDING']['key'], PurchaseOrderStatus.PENDING.value
+        )
+
+
+class PurchaseOrderReceivingCompanyTest(OrderTest):
+    """Unit tests for the 'receiving_company' and 'delivery_address' fields of the PurchaseOrder API."""
+
+    LIST_URL = reverse('api-po-list')
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create internal companies and addresses for testing."""
+        super().setUpTestData()
+
+        cls.supplier = Company.objects.get(pk=1)
+
+        cls.alpha = Company.objects.create(name='Alpha Internal', is_internal=True)
+        cls.beta = Company.objects.create(name='Beta Internal', is_internal=True)
+
+        cls.alpha_address = Address.objects.create(company=cls.alpha, title='Alpha HQ')
+        cls.beta_address = Address.objects.create(company=cls.beta, title='Beta HQ')
+        cls.supplier_address = Address.objects.create(
+            company=cls.supplier, title='Supplier HQ'
+        )
+
+    def setUp(self):
+        """Ensure the default internal company setting is configured for each test."""
+        super().setUp()
+
+        self.assignRole('purchase_order.add')
+        self.assignRole('purchase_order.change')
+
+        # Unless otherwise specified, 'beta' is the default internal company
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', self.beta.pk)
+
+        self.reference_idx = 0
+
+    def tearDown(self):
+        """Reset the default internal company setting."""
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', '')
+        super().tearDown()
+
+    def order_data(self, **kwargs) -> dict:
+        """Construct data for creating a new PurchaseOrder via the API."""
+        self.reference_idx += 1
+
+        return {
+            'reference': f'PO-9999{self.reference_idx:04d}',
+            'supplier': self.supplier.pk,
+            'description': 'A test purchase order',
+            **kwargs,
+        }
+
+    def create_order(self, **kwargs) -> models.PurchaseOrder:
+        """Create a new PurchaseOrder (with the specified receiving company and address)."""
+        self.reference_idx += 1
+
+        return models.PurchaseOrder.objects.create(
+            reference=f'PO-8888{self.reference_idx:04d}',
+            supplier=self.supplier,
+            **kwargs,
+        )
+
+    def options_default(self):
+        """Return the default value for 'receiving_company' from an OPTIONS request."""
+        response = self.options(self.LIST_URL, expected_code=200)
+        field = response.data['actions']['POST']['receiving_company']
+
+        # Only internal companies can be selected
+        self.assertEqual(field['filters'], {'is_internal': True})
+
+        return field.get('default')
+
+    def test_options_default(self):
+        """The default internal company is presented as the default in an OPTIONS request."""
+        self.assertEqual(self.options_default(), self.beta.pk)
+
+        # Changing the setting changes the presented default
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', self.alpha.pk)
+        self.assertEqual(self.options_default(), self.alpha.pk)
+
+    def test_options_default_single_company(self):
+        """A single internal company is presented as the default, even without the setting."""
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', '')
+
+        # Multiple internal companies, and no setting - no default
+        self.assertIsNone(self.options_default())
+
+        # Only a single internal company - it is the default
+        self.beta.is_internal = False
+        self.beta.save()
+
+        self.assertEqual(self.options_default(), self.alpha.pk)
+
+        # No internal companies - no default
+        self.alpha.is_internal = False
+        self.alpha.save()
+
+        self.assertIsNone(self.options_default())
+
+    def test_create_default(self):
+        """The default internal company is used when no receiving company is specified."""
+        response = self.post(self.LIST_URL, self.order_data(), expected_code=201)
+        self.assertEqual(response.data['receiving_company'], self.beta.pk)
+
+        po = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(po.receiving_company, self.beta)
+
+        # Without a default internal company, the field is left blank
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', '')
+
+        response = self.post(self.LIST_URL, self.order_data(), expected_code=201)
+        self.assertIsNone(response.data['receiving_company'])
+
+    def test_create_explicit(self):
+        """A specified receiving company takes priority over the default."""
+        response = self.post(
+            self.LIST_URL,
+            self.order_data(receiving_company=self.alpha.pk),
+            expected_code=201,
+        )
+        self.assertEqual(response.data['receiving_company'], self.alpha.pk)
+
+        po = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(po.receiving_company, self.alpha)
+
+        # An explicit null value is also respected
+        response = self.post(
+            self.LIST_URL, self.order_data(receiving_company=None), expected_code=201
+        )
+        self.assertIsNone(response.data['receiving_company'])
+
+    def test_create_non_internal(self):
+        """A non-internal company cannot be specified as the receiving company."""
+        self.assertFalse(self.supplier.is_internal)
+
+        response = self.post(
+            self.LIST_URL,
+            self.order_data(receiving_company=self.supplier.pk),
+            expected_code=400,
+        )
+        self.assertIn('receiving_company', response.data)
+
+    def test_create_delivery_address(self):
+        """Regression test: the delivery address must match the receiving company on creation."""
+        # Matching address (with the default receiving company)
+        response = self.post(
+            self.LIST_URL,
+            self.order_data(delivery_address=self.beta_address.pk),
+            expected_code=201,
+        )
+        self.assertEqual(response.data['receiving_company'], self.beta.pk)
+        self.assertEqual(response.data['delivery_address'], self.beta_address.pk)
+        self.assertEqual(
+            response.data['delivery_address_detail']['pk'], self.beta_address.pk
+        )
+
+        # Matching address (with an explicit receiving company)
+        response = self.post(
+            self.LIST_URL,
+            self.order_data(
+                receiving_company=self.alpha.pk, delivery_address=self.alpha_address.pk
+            ),
+            expected_code=201,
+        )
+        self.assertEqual(response.data['delivery_address'], self.alpha_address.pk)
+
+        # Address belongs to a different internal company
+        n = models.PurchaseOrder.objects.count()
+
+        for company, address in [
+            (self.alpha, self.beta_address),
+            (self.beta, self.alpha_address),
+            (self.beta, self.supplier_address),
+        ]:
+            response = self.post(
+                self.LIST_URL,
+                self.order_data(
+                    receiving_company=company.pk, delivery_address=address.pk
+                ),
+                expected_code=400,
+            )
+            self.assertIn(
+                'Delivery address does not match selected receiving company',
+                str(response.data['delivery_address']),
+            )
+
+        # Address specified without a receiving company
+        response = self.post(
+            self.LIST_URL,
+            self.order_data(
+                receiving_company=None, delivery_address=self.beta_address.pk
+            ),
+            expected_code=400,
+        )
+        self.assertIn(
+            'Receiving company must be specified when a delivery address is provided',
+            str(response.data['receiving_company']),
+        )
+
+        # No orders were created by the invalid requests
+        self.assertEqual(models.PurchaseOrder.objects.count(), n)
+
+    def test_update_delivery_address(self):
+        """Regression test: the delivery address must match the receiving company on update."""
+        po = self.create_order(receiving_company=self.alpha)
+        url = reverse('api-po-detail', kwargs={'pk': po.pk})
+
+        # Address belongs to a different company
+        for address in [self.beta_address, self.supplier_address]:
+            response = self.patch(
+                url, {'delivery_address': address.pk}, expected_code=400
+            )
+            self.assertIn(
+                'Delivery address does not match selected receiving company',
+                str(response.data['delivery_address']),
+            )
+
+        # Matching address
+        response = self.patch(
+            url, {'delivery_address': self.alpha_address.pk}, expected_code=200
+        )
+        self.assertEqual(response.data['delivery_address'], self.alpha_address.pk)
+
+        # Changing the receiving company without changing the address is rejected
+        response = self.patch(
+            url, {'receiving_company': self.beta.pk}, expected_code=400
+        )
+        self.assertIn(
+            'Delivery address does not match selected receiving company',
+            str(response.data['delivery_address']),
+        )
+
+        # Clearing the receiving company while an address is set is rejected
+        response = self.patch(url, {'receiving_company': None}, expected_code=400)
+        self.assertIn(
+            'Receiving company must be specified when a delivery address is provided',
+            str(response.data['receiving_company']),
+        )
+
+        # The order is unchanged by the rejected requests
+        po.refresh_from_db()
+        self.assertEqual(po.receiving_company, self.alpha)
+        self.assertEqual(po.delivery_address, self.alpha_address)
+
+        # Changing both the company and the address together is accepted
+        response = self.patch(
+            url,
+            {
+                'receiving_company': self.beta.pk,
+                'delivery_address': self.beta_address.pk,
+            },
+            expected_code=200,
+        )
+        self.assertEqual(response.data['receiving_company'], self.beta.pk)
+        self.assertEqual(response.data['delivery_address'], self.beta_address.pk)
+
+        # Clearing both the company and the address together is accepted
+        response = self.patch(
+            url,
+            {'receiving_company': None, 'delivery_address': None},
+            expected_code=200,
+        )
+        self.assertIsNone(response.data['receiving_company'])
+        self.assertIsNone(response.data['delivery_address'])
+
 
 class PurchaseOrderLineItemTest(OrderTest):
     """Unit tests for PurchaseOrderLineItems."""
@@ -935,15 +1397,49 @@ class PurchaseOrderLineItemTest(OrderTest):
         url = reverse('api-po-line-list')
 
         # Deletion should fail without the correct role
-        self.delete(url, {'items': [1, 2]}, expected_code=403)
+        self.delete(url, {'items': [1, 3]}, expected_code=403)
 
         self.assignRole('purchase_order.delete')
 
         # Try to delete a set of line items via their IDs
-        self.delete(url, {'items': [1, 2]}, expected_code=200)
+        self.delete(url, {'items': [1, 3]}, expected_code=200)
 
         # We should have 2 less PurchaseOrderLineItems after deleting them
         self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 2)
+
+    def test_po_line_delete_received(self):
+        """Line items against which stock has been received cannot be deleted."""
+        self.assignRole('purchase_order.delete')
+
+        n = models.PurchaseOrderLineItem.objects.count()
+
+        # Line item 2 is partially received (fixture data)
+        self.assertGreater(models.PurchaseOrderLineItem.objects.get(pk=2).received, 0)
+
+        # Single delete
+        response = self.delete(
+            reverse('api-po-line-detail', kwargs={'pk': 2}), expected_code=400
+        )
+        self.assertIn(
+            'Cannot delete line items which have received stock', str(response.data)
+        )
+
+        # Bulk delete - received line item is mixed in with unreceived line items
+        url = reverse('api-po-line-list')
+        self.delete(url, {'items': [1, 2, 3]}, expected_code=400)
+
+        # Bulk delete by filter
+        self.delete(url, {'filters': {'order': 1}}, expected_code=400)
+
+        # Nothing has been deleted
+        self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n)
+
+        # Line items without received stock can still be deleted
+        self.delete(url, {'items': [1, 3]}, expected_code=200)
+        self.delete(reverse('api-po-line-detail', kwargs={'pk': 23}), expected_code=204)
+
+        self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 3)
+        self.assertTrue(models.PurchaseOrderLineItem.objects.filter(pk=2).exists())
 
     def test_po_extra_line_bulk_delete(self):
         """Test that we can bulk delete multiple PurchaseOrderExtraLine items via the API."""
@@ -1059,6 +1555,42 @@ class PurchaseOrderLineItemTest(OrderTest):
             expected_code=200,
         ).json()
         self.assertEqual(float(li5['purchase_price']), 1)
+
+    def test_po_line_merge_default_setting(self):
+        """Test that merge_items defaults to the global setting value."""
+        self.assignRole('purchase_order.add')
+
+        su = Company.objects.get(pk=1)
+        sp = SupplierPart.objects.get(pk=1)
+        po = models.PurchaseOrder.objects.create(
+            supplier=su, reference='PO-MERGE-DEFAULT'
+        )
+
+        set_global_setting('PURCHASEORDER_MERGE_LINE_ITEMS', False)
+
+        li1 = self.post(
+            reverse('api-po-line-list'),
+            {'order': po.pk, 'part': sp.pk, 'quantity': 1},
+            expected_code=201,
+        ).json()
+
+        li2 = self.post(
+            reverse('api-po-line-list'),
+            {'order': po.pk, 'part': sp.pk, 'quantity': 2},
+            expected_code=201,
+        ).json()
+
+        self.assertNotEqual(li1['pk'], li2['pk'])
+
+        set_global_setting('PURCHASEORDER_MERGE_LINE_ITEMS', True)
+
+        li3 = self.post(
+            reverse('api-po-line-list'),
+            {'order': po.pk, 'part': sp.pk, 'quantity': 3},
+            expected_code=201,
+        ).json()
+
+        self.assertEqual(li1['pk'], li3['pk'])
 
     def test_output_options(self):
         """Test PurchaseOrderLineItem output option endpoint."""
@@ -1381,6 +1913,39 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(item_1.batch, 'B-abc-123')
         self.assertEqual(item_2.batch, 'B-xyz-789')
 
+    def test_top_level_batch_code(self):
+        """Test the top-level 'batch_code' field.
+
+        - Applied to any line item which does not specify its own batch code
+        - A line item's own 'batch_code' value takes precedence
+        """
+        line_1 = models.PurchaseOrderLineItem.objects.get(pk=1)
+        line_2 = models.PurchaseOrderLineItem.objects.get(pk=2)
+
+        data = {
+            'items': [
+                {'line_item': 1, 'quantity': 10},
+                {'line_item': 2, 'quantity': 10, 'batch_code': 'B-xyz-789'},
+            ],
+            'location': 1,
+            'batch_code': 'B-top-level',
+        }
+
+        n = StockItem.objects.count()
+
+        self.post(self.url, data, expected_code=201)
+
+        self.assertEqual(n + 2, StockItem.objects.count())
+
+        item_1 = StockItem.objects.filter(supplier_part=line_1.part).first()
+        item_2 = StockItem.objects.filter(supplier_part=line_2.part).first()
+
+        # Line item 1 did not specify its own batch code - falls back to top-level value
+        self.assertEqual(item_1.batch, 'B-top-level')
+
+        # Line item 2 specified its own batch code - takes precedence
+        self.assertEqual(item_2.batch, 'B-xyz-789')
+
     def test_serial_numbers(self):
         """Test that we can supply a 'serial number' when receiving items."""
         line_1 = models.PurchaseOrderLineItem.objects.get(pk=1)
@@ -1541,6 +2106,66 @@ class PurchaseOrderReceiveTest(OrderTest):
         for line in lines:
             line.refresh_from_db()
             self.assertEqual(line.received, line.quantity)
+
+    def test_receive_note_recorded_on_tracking_entry(self):
+        """Test that a per-item 'note' is recorded on the tracking entry, not the StockItem.
+
+        StockItem no longer has its own 'notes' field - the note supplied when
+        receiving an item is expected to land on that item's
+        RECEIVED_AGAINST_PURCHASE_ORDER tracking entry instead.
+        """
+        response = self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 50,
+                        'note': 'Damaged box, 2 units short',
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201,
+        ).data
+
+        stock_item = StockItem.objects.get(pk=response[0]['pk'])
+
+        self.assertEqual(stock_item.tracking_info.count(), 1)
+        entry = stock_item.tracking_info.first()
+        self.assertEqual(
+            entry.tracking_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
+        )
+        self.assertEqual(entry.notes, 'Damaged box, 2 units short')
+
+    def test_receive_note_recorded_on_tracking_entry_serialized(self):
+        """Test that a per-item 'note' reaches the tracking entry for serialized items too.
+
+        Serialized items are created via a different code path to non-serialized
+        ones (StockItem._create_serial_numbers(), rather than a bulk_create()), so
+        this is tested separately.
+        """
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 3,
+                        'serial_numbers': '200+',
+                        'note': 'Received via serialized batch',
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201,
+        )
+
+        for i in range(200, 203):
+            item = StockItem.objects.get(serial_int=i)
+            self.assertEqual(item.tracking_info.count(), 1)
+            entry = item.tracking_info.first()
+            self.assertEqual(entry.notes, 'Received via serialized batch')
 
     def test_bulk_receive_query_benchmark(self):
         """Benchmark: measure the number of DB queries required to receive 100 line items at once."""
@@ -1973,6 +2598,58 @@ class SalesOrderTest(OrderTest):
         self.assertEqual(duplicate_so.customer, so.customer)
         self.assertEqual(duplicate_so.parameters.count(), 5)
 
+    def test_so_duplicate_copies_notes(self):
+        """Test that notes are copied when duplicating a SalesOrder via the API.
+
+        SalesOrderSerializer declares its 'duplicate' options with
+        copy_notes=True, so notes should be copied by default (i.e. without
+        explicitly requesting it).
+        """
+        from common.models import Note
+
+        url = reverse('api-so-list')
+
+        self.assignRole('sales_order.add')
+
+        so = models.SalesOrder.objects.get(pk=1)
+
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(models.SalesOrder),
+            model_id=so.pk,
+            title='Original Note',
+            content='<p>Some sales order notes</p>',
+        )
+
+        response = self.post(
+            url,
+            {
+                'reference': 'SO-12347',
+                'customer': so.customer.pk,
+                'duplicate': {'original': so.pk},
+            },
+            expected_code=201,
+        )
+
+        duplicate_so = models.SalesOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(duplicate_so.notes.count(), 1)
+        self.assertEqual(
+            duplicate_so.notes.first().content, '<p>Some sales order notes</p>'
+        )
+
+        # Explicitly disabling copy_notes must not copy any notes
+        response = self.post(
+            url,
+            {
+                'reference': 'SO-12348',
+                'customer': so.customer.pk,
+                'duplicate': {'original': so.pk, 'copy_notes': False},
+            },
+            expected_code=201,
+        )
+
+        no_notes_so = models.SalesOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(no_notes_so.notes.count(), 0)
+
     def test_so_cancel(self):
         """Test API endpoint for cancelling a SalesOrder."""
         so = models.SalesOrder.objects.get(pk=1)
@@ -2063,6 +2740,21 @@ class SalesOrderTest(OrderTest):
 
         self.assertGreaterEqual(n_events, 1)
         self.assertEqual(number_orders_incl_complete, n_events)
+
+    def test_so_calendar_no_permission(self):
+        """Test that an authenticated user without sales_order view permission is denied."""
+        self.clearRoles()
+
+        response = self.get(
+            reverse('api-po-so-calendar', kwargs={'ordertype': 'sales-order'}),
+            expected_code=403,
+            format=None,
+        )
+
+        resp_dict = response.json()
+        self.assertEqual(
+            resp_dict['detail'], 'You do not have permission to view this resource.'
+        )
 
     def test_export(self):
         """Test we can export the SalesOrder list."""
@@ -2232,6 +2924,25 @@ class SalesOrderTest(OrderTest):
                 self.assertIn('status_text', result)
                 self.assertIsNotNone(result['status_text'])
 
+    def test_status_codes_endpoint(self):
+        """The 'so/status/' endpoint must resolve to the status-codes view.
+
+        SalesOrder is not (yet) served by a ViewSet router - its detail route uses
+        Django's '<int:pk>' path converter, which is not vulnerable to the
+        router-based bug affecting PurchaseOrder (see PurchaseOrderTest for
+        details). This is a coverage test guarding against a future regression,
+        e.g. if SalesOrder is migrated to a router-based viewset without also
+        restricting the pk lookup pattern.
+        """
+        response = self.get(reverse('api-so-status-codes'), expected_code=200)
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('PENDING', response.data['values'])
+        self.assertEqual(
+            response.data['values']['PENDING']['key'], SalesOrderStatus.PENDING.value
+        )
+
 
 class SalesOrderLineItemTest(OrderTest):
     """Tests for the SalesOrderLineItem API."""
@@ -2306,6 +3017,60 @@ class SalesOrderLineItemTest(OrderTest):
         # Filter by 'allocated' status
         self.filter({'allocated': 'true'}, 1)
         self.filter({'allocated': 'false'}, n - 1)
+
+    def test_so_line_ordering(self):
+        """Test that the SalesOrderLineItem list can be ordered by order-related fields.
+
+        Regression test for aliased ordering fields ('status', 'shipment_date')
+        which are not present directly on the SalesOrderLineItem model,
+        but rather on the linked SalesOrder.
+        """
+        # Orders 1-3 are 'pending' (status=10), order 4 is 'shipped' (status=20),
+        # order 5 is 'returned' (status=60), order 6 is 'complete' (status=30)
+        # (refer to the 'sales_order' fixture data)
+
+        # Order by 'status' (aliased to 'order__status')
+        response = self.get(
+            self.url, {'ordering': 'status', 'order_detail': True}, expected_code=200
+        )
+
+        statuses = [item['order_detail']['status'] for item in response.data]
+        self.assertEqual(statuses, sorted(statuses))
+        self.assertEqual(statuses[0], SalesOrderStatus.PENDING.value)
+        self.assertEqual(statuses[-1], SalesOrderStatus.RETURNED.value)
+
+        # Reverse the ordering
+        response = self.get(
+            self.url, {'ordering': '-status', 'order_detail': True}, expected_code=200
+        )
+
+        statuses = [item['order_detail']['status'] for item in response.data]
+        self.assertEqual(statuses, sorted(statuses, reverse=True))
+        self.assertEqual(statuses[0], SalesOrderStatus.RETURNED.value)
+
+        # Order by 'shipment_date' (aliased to 'order__shipment_date')
+        order_a = models.SalesOrder.objects.get(pk=4)
+        order_b = models.SalesOrder.objects.get(pk=5)
+
+        order_a.shipment_date = date(2020, 1, 1)
+        order_a.save()
+
+        order_b.shipment_date = date(2024, 1, 1)
+        order_b.save()
+
+        response = self.get(self.url, {'ordering': 'shipment_date'}, expected_code=200)
+
+        order_ids = [item['order'] for item in response.data]
+
+        # Lines for 'order_a' (earlier shipment date) should sort before 'order_b'
+        self.assertLess(order_ids.index(order_a.pk), order_ids.index(order_b.pk))
+
+        # Reverse the ordering - 'order_b' should now come first
+        response = self.get(self.url, {'ordering': '-shipment_date'}, expected_code=200)
+
+        order_ids = [item['order'] for item in response.data]
+
+        self.assertLess(order_ids.index(order_b.pk), order_ids.index(order_a.pk))
 
     def test_so_line_bulk_delete(self):
         """Test that we can bulk delete multiple SalesOrderLineItems via the API."""
@@ -2756,6 +3521,49 @@ class SalesOrderAllocateTest(OrderTest):
         self.assertTrue(self.shipment.is_delivered())
         self.assertEqual(self.shipment.delivery_date, datetime(2023, 5, 15).date())
 
+    def test_shipment_contact(self):
+        """Test setting the 'contact' field for a shipment via the API."""
+        url = reverse('api-so-shipment-detail', kwargs={'pk': self.shipment.pk})
+
+        customer = self.shipment.order.customer
+        other_company = Company.objects.exclude(pk=customer.pk).first()
+
+        contact = Contact.objects.create(company=customer, name='Shipment Contact')
+        other_contact = Contact.objects.create(
+            company=other_company, name='Other Contact'
+        )
+
+        # No contact set by default
+        response = self.get(url, expected_code=200)
+        self.assertIsNone(response.data['contact'])
+        self.assertIsNone(response.data['contact_detail'])
+
+        # A contact for a different company is rejected
+        response = self.patch(url, {'contact': other_contact.pk}, expected_code=400)
+        self.assertIn('Contact does not match the customer', str(response.data))
+
+        self.shipment.refresh_from_db()
+        self.assertIsNone(self.shipment.contact)
+
+        # A contact for the customer is accepted
+        response = self.patch(url, {'contact': contact.pk}, expected_code=200)
+        self.assertEqual(response.data['contact'], contact.pk)
+        self.assertEqual(response.data['contact_detail']['name'], contact.name)
+
+        self.shipment.refresh_from_db()
+        self.assertEqual(self.shipment.contact, contact)
+
+        # The contact can be cleared
+        response = self.patch(url, {'contact': None}, expected_code=200)
+        self.assertIsNone(response.data['contact'])
+
+        # Deleting the contact clears the reference
+        self.shipment.contact = contact
+        self.shipment.save()
+        contact.delete()
+        self.shipment.refresh_from_db()
+        self.assertIsNone(self.shipment.contact)
+
     def test_sales_order_shipment_list(self):
         """Test the SalesOrderShipment list API endpoint."""
         url = reverse('api-so-shipment-list')
@@ -2788,6 +3596,54 @@ class SalesOrderAllocateTest(OrderTest):
         self.assertEqual(
             len(response.data), count_before + 3 * models.SalesOrder.objects.count()
         )
+
+    def test_shipment_duplicate_copies_notes(self):
+        """Test that notes are copied when duplicating a SalesOrderShipment via the API.
+
+        SalesOrderShipmentSerializer declares its 'duplicate' options with
+        copy_notes=True, so notes should be copied by default (i.e. without
+        explicitly requesting it).
+        """
+        from common.models import Note
+
+        url = reverse('api-so-shipment-list')
+
+        Note.objects.create(
+            model_type=ContentType.objects.get_for_model(models.SalesOrderShipment),
+            model_id=self.shipment.pk,
+            title='Original Note',
+            content='<p>Some shipment notes</p>',
+        )
+
+        response = self.post(
+            url,
+            {
+                'order': self.order.pk,
+                'reference': 'SH-DUP',
+                'duplicate': {'original': self.shipment.pk},
+            },
+            expected_code=201,
+        )
+
+        duplicate = models.SalesOrderShipment.objects.get(pk=response.data['pk'])
+        self.assertEqual(duplicate.notes.count(), 1)
+        self.assertEqual(duplicate.notes.first().content, '<p>Some shipment notes</p>')
+
+        # Explicitly disabling copy_notes must not copy any notes
+        response = self.post(
+            url,
+            {
+                'order': self.order.pk,
+                'reference': 'SH-DUP-NO-NOTES',
+                'duplicate': {'original': self.shipment.pk, 'copy_notes': False},
+            },
+            expected_code=201,
+        )
+
+        no_notes_duplicate = models.SalesOrderShipment.objects.get(
+            pk=response.data['pk']
+        )
+        self.assertEqual(no_notes_duplicate.notes.count(), 0)
 
     def test_output_options(self):
         """Test the various output options for the SalesOrderAllocation detail endpoint."""
@@ -3445,9 +4301,10 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         # completion must be skipped based on the database state
         self.assertEqual(order_b.status, ReturnOrderStatus.IN_PROGRESS.value)
 
-        with mock.patch('order.models.trigger_event') as trigger:
+        with self.assertRaises(ValidationError) as err:
             order_b.complete_order()
-            trigger.assert_not_called()
+
+        self.assertIn('Return Order is already Complete', str(err.exception))
 
         rma.refresh_from_db()
         self.assertEqual(rma.status, ReturnOrderStatus.COMPLETE.value)
@@ -3462,6 +4319,21 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         response = self.get(url, expected_code=200, format=None)
         calendar = Calendar.from_ical(response.content)
         self.assertIsInstance(calendar, Calendar)
+
+    def test_ro_calendar_no_permission(self):
+        """Test that an authenticated user without return_order view permission is denied."""
+        self.clearRoles()
+
+        response = self.get(
+            reverse('api-po-so-calendar', kwargs={'ordertype': 'return-order'}),
+            expected_code=403,
+            format=None,
+        )
+
+        resp_dict = response.json()
+        self.assertEqual(
+            resp_dict['detail'], 'You do not have permission to view this resource.'
+        )
 
     def test_export(self):
         """Test data export for the ReturnOrder API endpoints."""
@@ -3513,6 +4385,23 @@ class ReturnOrderTests(InvenTreeAPITestCase):
             reverse('api-return-order-detail', kwargs={'pk': 1}), ['customer_detail']
         )
 
+    def test_status_codes_endpoint(self):
+        """The 'ro/status/' endpoint must resolve to the status-codes view.
+
+        ReturnOrder is not (yet) served by a ViewSet router - its detail route uses
+        Django's '<int:pk>' path converter, which is not vulnerable to the
+        router-based bug affecting PurchaseOrder (see PurchaseOrderTest for
+        details). This is a coverage test guarding against a future regression.
+        """
+        response = self.get(reverse('api-return-order-status-codes'), expected_code=200)
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('PENDING', response.data['values'])
+        self.assertEqual(
+            response.data['values']['PENDING']['key'], ReturnOrderStatus.PENDING.value
+        )
+
 
 class ReturnOrderLineItemTests(InvenTreeAPITestCase):
     """Unit tests for ReturnOrderLineItem API endpoints."""
@@ -3526,7 +4415,7 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         'supplier_part',
         'stock',
     ]
-    roles = ['return_order.view']
+    roles = ['return_order.view', 'part.view', 'stock.view']
 
     def test_options(self):
         """Test the OPTIONS endpoint."""
@@ -3613,6 +4502,42 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
 
         self.assertEqual(models.ReturnOrderLineItem.objects.count(), n - 1)
 
+    def test_bulk_update(self):
+        """Test that we can bulk update the 'outcome' field for multiple ReturnOrderLineItems via the API."""
+        ro = models.ReturnOrder.objects.get(pk=6)
+
+        # Create some extra line items against the same order, so we have multiple to update
+        models.ReturnOrderLineItem.objects.bulk_create([
+            models.ReturnOrderLineItem(order=ro, item_id=1006, quantity=1),
+            models.ReturnOrderLineItem(order=ro, item_id=1007, quantity=1),
+        ])
+
+        items = list(
+            models.ReturnOrderLineItem.objects.filter(order=ro).values_list(
+                'pk', flat=True
+            )
+        )
+
+        self.assertEqual(len(items), 3)
+
+        for line in models.ReturnOrderLineItem.objects.filter(pk__in=items):
+            self.assertEqual(line.outcome, ReturnOrderLineStatus.PENDING)
+
+        url = reverse('api-return-order-line-list')
+
+        data = {'items': items, 'outcome': ReturnOrderLineStatus.REPAIR.value}
+
+        # Update should fail without the correct role
+        self.patch(url, data, expected_code=403)
+
+        self.assignRole('return_order.change')
+
+        response = self.patch(url, data, expected_code=200).data
+        self.assertEqual(len(response['items']), 3)
+
+        for line in models.ReturnOrderLineItem.objects.filter(pk__in=items):
+            self.assertEqual(line.outcome, ReturnOrderLineStatus.REPAIR.value)
+
     def test_extra_line_bulk_delete(self):
         """Test that we can bulk delete multiple ReturnOrderExtraLine items via the API."""
         ro = models.ReturnOrder.objects.first()
@@ -3639,6 +4564,26 @@ class ReturnOrderLineItemTests(InvenTreeAPITestCase):
         self.delete(url, {'items': items}, expected_code=200)
 
         self.assertEqual(models.ReturnOrderExtraLine.objects.count(), n - 2)
+
+    def test_status_codes_endpoint(self):
+        """The 'ro-line/status/' endpoint must resolve to the status-codes view.
+
+        ReturnOrderLineItem is not (yet) served by a ViewSet router - its detail
+        route uses Django's '<int:pk>' path converter, which is not vulnerable to
+        the router-based bug affecting PurchaseOrder (see PurchaseOrderTest for
+        details). This is a coverage test guarding against a future regression.
+        """
+        response = self.get(
+            reverse('api-return-order-line-status-codes'), expected_code=200
+        )
+
+        self.assertIn('status_class', response.data)
+        self.assertIn('values', response.data)
+        self.assertIn('PENDING', response.data['values'])
+        self.assertEqual(
+            response.data['values']['PENDING']['key'],
+            ReturnOrderLineStatus.PENDING.value,
+        )
 
 
 class ExtraLineTotalPriceTest(InvenTreeAPITestCase):
@@ -3916,7 +4861,8 @@ class TransferOrderTest(OrderTest):
         self.assertEqual(instance_b.status, TransferOrderStatus.PENDING)
 
         with mock.patch('order.models.trigger_event') as trigger:
-            instance_b.cancel_order()
+            with self.assertRaises(ValidationError):
+                instance_b.cancel_order()
             trigger.assert_not_called()
 
         to.refresh_from_db()
@@ -4012,6 +4958,21 @@ class TransferOrderTest(OrderTest):
 
         self.assertGreaterEqual(n_events, 1)
         self.assertEqual(number_orders_incl_complete, n_events)
+
+    def test_transfer_order_calendar_no_permission(self):
+        """Test that an authenticated user without transfer_order view permission is denied."""
+        self.clearRoles()
+
+        response = self.get(
+            reverse('api-po-so-calendar', kwargs={'ordertype': 'transfer-order'}),
+            expected_code=403,
+            format=None,
+        )
+
+        resp_dict = response.json()
+        self.assertEqual(
+            resp_dict['detail'], 'You do not have permission to view this resource.'
+        )
 
     def test_export(self):
         """Test we can export the TransferOrder list."""
@@ -4349,11 +5310,21 @@ class TransferOrderTest(OrderTest):
         with self.assertRaises(ValidationError) as err:
             instance_b.complete_order(None)
 
-        self.assertIn('Order is already complete', str(err.exception))
+        self.assertIn('Transfer Order is already Complete', str(err.exception))
 
         # The transferred quantity has not been double-counted
         line.refresh_from_db()
         self.assertEqual(line.transferred, 10)
+
+        # check that the wrong starting point also triggers an error
+        instance_b.status = TransferOrderStatus.CANCELLED.value
+        instance_b.save()
+        with self.assertRaises(ValidationError) as err:
+            instance_b.complete_order(None)
+        self.assertIn(
+            'Invalid transition on Transfer Order.status (source value should be 20, is 40)',
+            str(err.exception),
+        )
 
     def test_output_options(self):
         """Test the output options for the TransferOrder detail endpoint."""
@@ -4854,6 +5825,109 @@ class TransferOrderAllocateTest(OrderTest):
         )
 
 
+@skipUnlessDBFeature('has_select_for_update')
+class TransferOrderSerialAllocateConcurrencyTest(TransactionTestCase):
+    """Genuine cross-transaction regression test for serial-based transfer order allocation.
+
+    Uses two real threads (each with its own database connection) to reproduce
+    the reported race: two concurrent requests to allocate the *same* serial
+    number (against two different TransferOrder line items) could both resolve
+    and validate the serialized StockItem as available before either had
+    committed its bulk_create - allocating the same physical unit twice.
+
+    TransferOrderSerialAllocationSerializer.save() now locks each resolved
+    StockItem (select_for_update, via StockItem.lock_quantity()) and
+    re-validates its unallocated quantity under that lock before it is added
+    to the batch that gets created, so only one of two concurrent requests for
+    the same serial number may succeed.
+    """
+
+    fixtures = ['users']
+
+    def setUp(self):
+        """Create two TransferOrder lines which both request the same serial number."""
+        super().setUp()
+
+        self.part = Part.objects.create(
+            name='Concurrency trackable part',
+            description='Part for serial allocation concurrency test',
+            trackable=True,
+        )
+
+        self.order_a = models.TransferOrder.objects.create(reference='TO-CONC-A')
+        self.order_b = models.TransferOrder.objects.create(reference='TO-CONC-B')
+
+        self.line_a = models.TransferOrderLineItem.objects.create(
+            order=self.order_a, part=self.part, quantity=1
+        )
+        self.line_b = models.TransferOrderLineItem.objects.create(
+            order=self.order_b, part=self.part, quantity=1
+        )
+
+        # Only a single physical unit exists for this serial number
+        self.stock_item = StockItem.objects.create(
+            part=self.part, quantity=1, serial='1'
+        )
+
+    def test_concurrent_allocation_does_not_duplicate_serial(self):
+        """Two concurrent requests for the same serial number must not both succeed."""
+        start_barrier = threading.Barrier(2, timeout=5)
+        errors = []
+        results = []
+
+        # Wrap StockItem.lock_quantity() so both threads reach the (real,
+        # database-level) row lock at the same time - one wins the lock and
+        # proceeds, the other blocks until the winner's transaction completes.
+        original_lock_quantity = StockItem.lock_quantity
+
+        def synced_lock_quantity(self_item):
+            start_barrier.wait(timeout=5)
+            return original_lock_quantity(self_item)
+
+        def allocate(line_item):
+            try:
+                serializer = TransferOrderSerialAllocationSerializer(
+                    data={
+                        'line_item': line_item.pk,
+                        'quantity': 1,
+                        'serial_numbers': '1',
+                    },
+                    context={'order': line_item.order},
+                )
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                results.append('ok')
+            except (ValidationError, DRFValidationError):
+                results.append('rejected')
+            except Exception as exc:  # pragma: no cover - surfaced via errors list
+                errors.append(exc)
+            finally:
+                connection.close()
+
+        thread_a = threading.Thread(target=allocate, args=(self.line_a,))
+        thread_b = threading.Thread(target=allocate, args=(self.line_b,))
+
+        with mock.patch.object(StockItem, 'lock_quantity', synced_lock_quantity):
+            thread_a.start()
+            thread_b.start()
+
+            thread_a.join(timeout=5)
+            thread_b.join(timeout=5)
+
+        self.assertFalse(thread_a.is_alive())
+        self.assertFalse(thread_b.is_alive())
+        self.assertEqual(errors, [])
+
+        # Exactly one request must have been rejected as unavailable
+        self.assertEqual(sorted(results), ['ok', 'rejected'])
+
+        # The serial number must only have been allocated once
+        self.assertEqual(
+            models.TransferOrderAllocation.objects.filter(item=self.stock_item).count(),
+            1,
+        )
+
+
 class SalesOrderAutoAllocateAPITest(InvenTreeAPITestCase):
     """API integration tests for the SalesOrder auto-allocate endpoint."""
 
@@ -5226,3 +6300,190 @@ class SalesOrderAllocationBulkDeleteAPITest(InvenTreeAPITestCase):
         self.assertEqual(
             SalesOrderAllocation.objects.filter(pk__in=shipped_ids).count(), 2
         )
+
+
+class OrderActionMissingPkTest(InvenTreeAPITestCase):
+    """Regression tests for a class of bugs in the order-app action endpoints.
+
+    Each order type's *ContextMixin looks up the target order in
+    get_serializer_context(), but silently swallows a not-found result (needed so
+    schema/OPTIONS introspection doesn't break). Without an explicit check
+    elsewhere, a POST against a non-existent pk fell through to the action
+    serializer's save(), which unconditionally reads self.context['order'] - an
+    unhandled KeyError (HTTP 500) rather than a clean 404.
+
+    Fixed by SalesOrderContextMixin/ReturnOrderContextMixin/TransferOrderContextMixin
+    .create(), and (since PurchaseOrderViewSet's actions are plain ViewSet @action
+    methods rather than CreateAPI subclasses) an explicit check at the top of each
+    PurchaseOrderViewSet action method.
+    """
+
+    roles = [
+        'purchase_order.add',
+        'sales_order.add',
+        'return_order.add',
+        'transfer_order.add',
+    ]
+
+    def test_purchase_order_actions_404(self):
+        """Each PurchaseOrderViewSet action should 404, not 500, for a bad pk.
+
+        Note: PurchaseOrderViewSet.get_order() is a deliberate raw lookup rather
+        than self.get_object() - the latter routes through
+        ParameterListMixin.filter_queryset(), which assumes
+        self.serializer_class.Meta.model exists. That's true for the default
+        PurchaseOrderSerializer, but not for the plain-Serializer action classes
+        used here, so self.get_object() would raise an unrelated AttributeError.
+        """
+        for url_name in [
+            'api-po-hold',
+            'api-po-cancel',
+            'api-po-complete',
+            'api-po-issue',
+            'api-po-receive',
+        ]:
+            url = reverse(url_name, kwargs={'pk': 999999})
+            self.post(url, {}, expected_code=404)
+
+    def test_sales_order_actions_404(self):
+        """Each SalesOrderContextMixin-based action should 404, not 500, for a bad pk."""
+        for url_name in [
+            'api-so-hold',
+            'api-so-cancel',
+            'api-so-issue',
+            'api-so-complete',
+            'api-so-allocate',
+            'api-so-allocate-serials',
+        ]:
+            url = reverse(url_name, kwargs={'pk': 999999})
+            self.post(url, {}, expected_code=404)
+
+    def test_sales_order_auto_allocate_already_safe(self):
+        """SalesOrderAutoAllocate overrides post() and already calls get_object() itself."""
+        url = reverse('api-so-auto-allocate', kwargs={'pk': 999999})
+        self.post(url, {}, expected_code=404)
+
+    def test_return_order_actions_404(self):
+        """Each ReturnOrderContextMixin-based action should 404, not 500, for a bad pk."""
+        for url_name in [
+            'api-return-order-cancel',
+            'api-ro-hold',
+            'api-return-order-complete',
+            'api-return-order-issue',
+            'api-return-order-receive',
+        ]:
+            url = reverse(url_name, kwargs={'pk': 999999})
+            self.post(url, {}, expected_code=404)
+
+    def test_transfer_order_actions_404(self):
+        """Each TransferOrderContextMixin-based action should 404, not 500, for a bad pk."""
+        for url_name in [
+            'api-transfer-order-cancel',
+            'api-transfer-order-hold',
+            'api-transfer-order-complete',
+            'api-transfer-order-issue',
+            'api-transfer-order-allocate',
+            'api-transfer-order-allocate-serials',
+        ]:
+            url = reverse(url_name, kwargs={'pk': 999999})
+            self.post(url, {}, expected_code=404)
+
+
+class OrderAllocationValidationTest(InvenTreeAPITestCase):
+    """Unit tests for SalesOrderAllocation and TransferOrderAllocation validation."""
+
+    fixtures = ['company', 'users', 'location']
+
+    roles = [
+        'sales_order.add',
+        'sales_order.change',
+        'transfer_order.add',
+        'transfer_order.change',
+    ]
+
+    @classmethod
+    def setUpTestData(cls):
+        """Set up test data with base parts, variant parts, and unrelated parts."""
+        super().setUpTestData()
+
+        cls.customer = models.Company.objects.create(
+            name='Alloc Customer', is_customer=True, description=''
+        )
+        cls.base_part = Part.objects.create(
+            name='Base Widget', salable=True, is_template=True, description=''
+        )
+        cls.variant_part = Part.objects.create(
+            name='Variant Widget A',
+            salable=True,
+            variant_of=cls.base_part,
+            description='',
+        )
+        cls.base_part.refresh_from_db()
+        cls.unrelated_part = Part.objects.create(
+            name='Unrelated Gadget', salable=True, description=''
+        )
+
+        cls.location = StockLocation.objects.first()
+
+    def test_sales_order_allocation_validation(self):
+        """Test validation when allocating stock to a SalesOrder."""
+        order = models.SalesOrder.objects.create(
+            customer=self.customer, reference='SO-ALLOC-TEST-1'
+        )
+        line = models.SalesOrderLineItem.objects.create(
+            order=order, part=self.base_part, quantity=10
+        )
+        shipment = models.SalesOrderShipment.objects.create(order=order, reference='1')
+
+        # Stock items
+        variant_stock = StockItem.objects.create(
+            part=self.variant_part, quantity=10, location=self.location
+        )
+        unrelated_stock = StockItem.objects.create(
+            part=self.unrelated_part, quantity=10, location=self.location
+        )
+
+        # Allocating valid variant should succeed
+        alloc_variant = models.SalesOrderAllocation(
+            line=line, item=variant_stock, quantity=5, shipment=shipment
+        )
+        alloc_variant.full_clean()
+        alloc_variant.save()
+
+        # Allocating unrelated part should raise ValidationError
+        alloc_invalid = models.SalesOrderAllocation(
+            line=line, item=unrelated_stock, quantity=5, shipment=shipment
+        )
+        with self.assertRaises(ValidationError):
+            alloc_invalid.full_clean()
+
+    def test_transfer_order_allocation_validation(self):
+        """Test validation when allocating stock to a TransferOrder."""
+        dest_loc = StockLocation.objects.create(name='Dest Location')
+        order = models.TransferOrder.objects.create(
+            destination=dest_loc, reference='TO-ALLOC-TEST-1'
+        )
+        line = models.TransferOrderLineItem.objects.create(
+            order=order, part=self.base_part, quantity=10
+        )
+
+        variant_stock = StockItem.objects.create(
+            part=self.variant_part, quantity=10, location=self.location
+        )
+        unrelated_stock = StockItem.objects.create(
+            part=self.unrelated_part, quantity=10, location=self.location
+        )
+
+        # Allocating valid variant should succeed
+        alloc_variant = models.TransferOrderAllocation(
+            line=line, item=variant_stock, quantity=5
+        )
+        alloc_variant.full_clean()
+        alloc_variant.save()
+
+        # Allocating unrelated part should raise ValidationError
+        alloc_invalid = models.TransferOrderAllocation(
+            line=line, item=unrelated_stock, quantity=5
+        )
+        with self.assertRaises(ValidationError):
+            alloc_invalid.full_clean()

@@ -39,6 +39,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -78,6 +79,11 @@ export default function CategoryDetail() {
     params: {
       path_detail: true
     }
+  });
+
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.partcategory,
+    modelId: category?.pk
   });
 
   const stockOperationProps: StockOperationProps = useMemo(() => {
@@ -254,7 +260,8 @@ export default function CategoryDetail() {
       ParametersPanel({
         model_type: ModelType.partcategory,
         model_id: category?.pk,
-        hidden: !id || !category.pk
+        hidden: !id || !category.pk,
+        parameter_count: instanceInfo.parameter_count
       }),
       {
         name: 'category_parameters',
@@ -264,7 +271,7 @@ export default function CategoryDetail() {
         content: <PartCategoryTemplateTable categoryId={category?.pk} />
       }
     ],
-    [category, id, partsView]
+    [category, id, partsView, instanceInfo]
   );
 
   const breadcrumbs = useMemo(
@@ -311,30 +318,34 @@ export default function CategoryDetail() {
               setTreeOpen(false);
             }}
             selectedId={category?.pk}
-          />
-          <PageDetail
-            title={(category?.name ?? id) ? t`Part Category` : t`Parts`}
-            subtitle={category?.description}
-            icon={category?.icon && <ApiIcon name={category?.icon} />}
-            breadcrumbs={breadcrumbs}
-            breadcrumbAction={() => {
-              setTreeOpen(true);
-            }}
-            actions={categoryActions}
-            editAction={editCategory.open}
-            editEnabled={
-              !!category?.pk && user.hasChangePermission(ModelType.partcategory)
-            }
-          />
-          <PanelGroup
-            pageKey='partcategory'
-            panels={panels}
-            model={ModelType.partcategory}
-            instance={category}
-            reloadInstance={refreshInstance}
-            id={category.pk ?? null}
-            defaultPanel={defaultPanel}
-          />
+          >
+            <Stack gap='xs'>
+              <PageDetail
+                title={(category?.name ?? id) ? t`Part Category` : t`Parts`}
+                subtitle={category?.description}
+                icon={category?.icon && <ApiIcon name={category?.icon} />}
+                breadcrumbs={breadcrumbs}
+                breadcrumbAction={() => {
+                  setTreeOpen(true);
+                }}
+                actions={categoryActions}
+                editAction={editCategory.open}
+                editEnabled={
+                  !!category?.pk &&
+                  user.hasChangePermission(ModelType.partcategory)
+                }
+              />
+              <PanelGroup
+                pageKey='partcategory'
+                panels={panels}
+                model={ModelType.partcategory}
+                instance={category}
+                reloadInstance={refreshInstance}
+                id={category.pk ?? null}
+                defaultPanel={defaultPanel}
+              />
+            </Stack>
+          </NavigationTree>
         </Stack>
       </InstanceDetail>
     </>

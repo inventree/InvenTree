@@ -16,7 +16,7 @@ import InvenTree.helpers_model
 import order.models
 import stock.models as stock_models
 from InvenTree.tasks import ScheduledTask, scheduled_task
-from order.events import PurchaseOrderEvents, SalesOrderEvents
+from order.events import PurchaseOrderEvents, ReturnOrderEvents, SalesOrderEvents
 from order.status_codes import (
     PurchaseOrderStatusGroups,
     ReturnOrderStatusGroups,
@@ -193,7 +193,7 @@ def notify_overdue_return_order(ro: order.models.ReturnOrder) -> None:
         'template': {'html': 'email/overdue_return_order.html', 'subject': name},
     }
 
-    event_name = SalesOrderEvents.OVERDUE
+    event_name = ReturnOrderEvents.OVERDUE
 
     # Send a notification to the appropriate users
     common.notifications.trigger_notification(

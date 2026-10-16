@@ -71,6 +71,23 @@ export const useLocalState = create<LocalStateProps>()(
           host = Object.values(state.hostList)[0].host;
         }
 
+        // hostList is only populated once DesktopAppView's mount effect has
+        // committed - callers that resolve the host earlier than that (e.g.
+        // SplashScreen's own mount-time fetchServerApiState() call) land
+        // here instead. Read the same underlying source directly, rather
+        // than falling back to window.location.origin, which is wrong
+        // whenever the frontend is served from a different origin than the
+        // backend (e.g. the vite dev server).
+        if (!host) {
+          const defaultKey = window.INVENTREE_SETTINGS?.default_server;
+          const settingsHost = defaultKey
+            ? window.INVENTREE_SETTINGS?.server_list?.[defaultKey]?.host
+            : undefined;
+          if (settingsHost) {
+            host = settingsHost;
+          }
+        }
+
         // If no host is provided, fallback to using the current URL (default)
         if (!host) {
           host = window.location.origin;

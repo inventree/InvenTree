@@ -107,9 +107,13 @@ For more information, refer to the installation guides:
 
 - [Docker Installation](./start/docker_install.md#updating-inventree)
 - [Bare Metal Installation](./start/install.md#updating-inventree)
+- [Package Installer](./start/installer.md#updating-inventree)
 
 !!! warning "Invoke Update"
     You must ensure that the `invoke update` command is performed *every time* you update InvenTree
+
+!!! danger "Updating from Pre 1.0.0"
+    If your installation is running a version of InvenTree older than `1.0.0`, you cannot update directly to the current release - see [Updating from Pre 1.0.0](./start/migrate.md#updating-from-pre-100) for the required intermediate step.
 
 ### Breaking Changes
 
@@ -195,6 +199,16 @@ This means that either:
 - The docker user does not have write permission to the specified directory
 
 In either case, ensure that the directory is available *on your local machine* and the user account has the required permissions.
+
+### Running on a Non-Standard Port / Behind an Existing Reverse Proxy
+
+If you want to serve InvenTree on a port other than 80/443 (for example, because those ports are already used by another service on your host), or you want to place InvenTree behind an existing reverse proxy which already handles SSL for other services, refer to:
+
+- [Proxy (external) port configuration](./start/docker_install.md#proxy-external-port) - the `INVENTREE_HTTP_PORT` / `INVENTREE_HTTPS_PORT` variables
+- [Integrating with an existing reverse proxy](./start/processes.md#integrating-with-existing-proxy) - a worked example, including the required `INVENTREE_TRUSTED_ORIGINS` setting
+
+!!! tip "Automatic HTTPS"
+    The bundled Caddy proxy's [Automatic HTTPS](./start/docker.md#ssl-certificates) only works if it is reachable on the standard ports 80/443, for the Let's Encrypt ACME challenge. If that is not the case for your setup, terminate SSL at your external proxy instead.
 
 
 ## Error Rendering Component

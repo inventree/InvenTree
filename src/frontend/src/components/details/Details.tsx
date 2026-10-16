@@ -125,11 +125,18 @@ function HoverNameBadge(data: any, type: BadgeType) {
           data.username,
           getDetailUrl(ModelType.user, data.pk, true),
           data?.image,
-          <>
-            {data.is_superuser && <Badge color='red'>{t`Superuser`}</Badge>}
-            {data.is_staff && <Badge color='orange'>{t`Administrator`}</Badge>}
-            {data.email && t`Email: ` + data.email}
-          </>
+          <Stack gap='xs'>
+            {data.email}
+            <Group gap='xs'>
+              {data.is_superuser && <Badge color='red'>{t`Superuser`}</Badge>}
+              {data.is_staff && (
+                <Badge color='orange'>{t`Administrator`}</Badge>
+              )}
+              {data.is_active === false && (
+                <Badge color='gray'>{t`Inactive`}</Badge>
+              )}
+            </Group>
+          </Stack>
         ];
       case 'group':
         return [
@@ -163,7 +170,7 @@ function HoverNameBadge(data: any, type: BadgeType) {
         </Stack>
       </Group>
 
-      <Text size='sm' mt='md'>
+      <Text size='sm' mt='md' component='div'>
         {line_data[4]}
       </Text>
     </HoverCard.Dropdown>
@@ -181,8 +188,10 @@ function NameBadge({
 }: Readonly<{ pk: string | number; type: BadgeType }>) {
   const api = useApi();
 
-  const { data } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['badge', type, pk],
+    enabled: !!pk,
+    staleTime: 5 * 60 * 1000, // 5 minutes
     queryFn: async () => {
       let path = '';
 
@@ -202,14 +211,7 @@ function NameBadge({
 
       const url = apiUrl(path, pk);
 
-      return api.get(url).then((response) => {
-        switch (response.status) {
-          case 200:
-            return response.data;
-          default:
-            return {};
-        }
-      });
+      return api.get(url).then((response) => response.data);
     }
   });
 
@@ -219,8 +221,12 @@ function NameBadge({
     return HoverNameBadge(data, type);
   }, [data]);
 
-  if (!data || data.isLoading || data.isFetching) {
+  if (isLoading) {
     return <Skeleton height={12} radius='md' />;
+  }
+
+  if (!pk || isError || !data) {
+    return <Text size='sm'>'---'</Text>;
   }
 
   // Rendering a user's name for the badge
@@ -337,8 +343,20 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
   const api = useApi();
   const navigate = useNavigate();
 
-  const { data } = useQuery({
-    queryKey: ['detail', props.field_data.model, props.field_value],
+  const hasValue: boolean =
+    props.field_value !== null &&
+    props.field_value !== undefined &&
+    props.field_value !== '';
+
+  const { data, isLoading } = useQuery({
+    queryKey: [
+      'detail',
+      props.field_data.model,
+      props.field_value,
+      props.field_data.model_filters
+    ],
+    enabled: hasValue && !props.field_data.external,
+    staleTime: 5 * 60 * 1000, // 5 minutes
     queryFn: async () => {
       if (!props.field_data?.model) {
         return {};
@@ -356,14 +374,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
         .get(url, {
           params: props.field_data.model_filters ?? undefined
         })
-        .then((response) => {
-          switch (response.status) {
-            case 200:
-              return response.data;
-            default:
-              return {};
-          }
-        });
+        .then((response) => response.data);
     }
   });
 
@@ -385,7 +396,11 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
     return `/${getBaseUrl()}${detailUrl}`;
   }, [detailUrl]);
 
-  if (!data || data.isLoading || data.isFetching) {
+  if (!hasValue) {
+    return <Text size='sm'>'---'</Text>;
+  }
+
+  if (isLoading) {
     return <Skeleton height={12} radius='md' />;
   }
 
@@ -409,7 +424,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
   // Construct the "return value" for the fetched data
   let value = undefined;
 
-  if (props.field_data.model_formatter) {
+  if (data && props.field_data.model_formatter) {
     value = props.field_data.model_formatter(data) ?? value;
   } else if (props.field_data.model_field) {
     value = data?.[props.field_data.model_field] ?? value;
@@ -502,29 +517,20 @@ export function DetailsTableField({
 
   return (
     <Table.Tr style={{ verticalAlign: 'top' }}>
-      <Table.Td style={{ minWidth: 75, lineBreak: 'auto', flex: 2 }}>
-        <Group gap='xs' wrap='nowrap'>
+      <Table.Td>
+        <Group gap='xs' wrap='nowrap' align='flex-start'>
           {showIcons && (
             <InvenTreeIcon
               icon={field.icon ?? (field.name as keyof InvenTreeIconType)}
             />
           )}
-          <Text style={{ paddingLeft: showIcons ? 10 : 0 }}>{field.label}</Text>
+          <Text style={{ overflowWrap: 'anywhere' }}>{field.label}</Text>
         </Group>
       </Table.Td>
-      <Table.Td
-        style={{
-          lineBreak: 'anywhere',
-          minWidth: 100,
-          flex: 10,
-          display: 'inline-block'
-        }}
-      >
+      <Table.Td style={{ overflowWrap: 'anywhere' }}>
         <FieldType field_data={field} field_value={fieldValue} />
       </Table.Td>
-      <Table.Td style={{ width: '50' }}>
-        {field.copy && <CopyField value={fieldValue} />}
-      </Table.Td>
+      <Table.Td>{field.copy && <CopyField value={fieldValue} />}</Table.Td>
     </Table.Tr>
   );
 }
@@ -559,6 +565,11 @@ export function DetailsTable({
       <Stack gap='xs'>
         {title && <StylishText size='lg'>{title}</StylishText>}
         <Table striped verticalSpacing={5} horizontalSpacing='sm'>
+          <colgroup>
+            <col style={{ width: '40%' }} />
+            <col />
+            <col style={{ width: 30 }} />
+          </colgroup>
           <Table.Tbody>
             {visibleFields.map((field: DetailsField) => (
               <DetailsTableField

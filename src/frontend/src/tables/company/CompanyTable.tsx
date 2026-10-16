@@ -27,6 +27,13 @@ import { usePreviewDrawerState } from '../../states/PreviewDrawerState';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 
+type CompanyTableType =
+  | 'all'
+  | 'internal'
+  | 'supplier'
+  | 'manufacturer'
+  | 'customer';
+
 /**
  * A table which displays a list of company records,
  * based on the provided filter parameters
@@ -34,10 +41,12 @@ import { useUserState } from '../../states/UserState';
 export function CompanyTable({
   companyType,
   params,
+  initialData,
   path
 }: Readonly<{
-  companyType?: string;
+  companyType?: CompanyTableType;
   params?: any;
+  initialData?: any;
   path?: string;
 }>) {
   const table = useTable(`company-${companyType ?? 'index'}`, {
@@ -77,18 +86,54 @@ export function CompanyTable({
         sortable: true,
         switchable: true
       }),
+      BooleanColumn({
+        accessor: 'is_supplier',
+        filter: 'is_supplier',
+        title: t`Supplier`,
+        sortable: true,
+        switchable: true,
+        hidden: companyType === 'supplier',
+        defaultVisible: false
+      }),
+      BooleanColumn({
+        accessor: 'is_manufacturer',
+        filter: 'is_manufacturer',
+        title: t`Manufacturer`,
+        sortable: true,
+        switchable: true,
+        hidden: companyType === 'manufacturer',
+        defaultVisible: false
+      }),
+      BooleanColumn({
+        accessor: 'is_customer',
+        filter: 'is_customer',
+        title: t`Customer`,
+        sortable: true,
+        switchable: true,
+        hidden: companyType === 'customer',
+        defaultVisible: false
+      }),
+      BooleanColumn({
+        accessor: 'is_internal',
+        filter: 'is_internal',
+        title: t`Internal`,
+        sortable: true,
+        switchable: true,
+        hidden: companyType === 'internal',
+        defaultVisible: false
+      }),
       {
         accessor: 'website',
         sortable: false
       }
     ];
-  }, []);
+  }, [companyType]);
 
   const newCompany = useCreateApiFormModal({
     url: ApiEndpoints.company_list,
     title: t`Add Company`,
     fields: companyFields(),
-    initialData: params,
+    initialData: initialData ?? params,
     follow: true,
     modelType: ModelType.company,
     keepOpenOption: true
@@ -125,6 +170,11 @@ export function CompanyTable({
         name: 'is_customer',
         label: t`Customer`,
         description: t`Show companies which are customers`
+      },
+      {
+        name: 'is_internal',
+        label: t`Internal`,
+        description: t`Show companies which represent your own organization`
       },
       TagsFilter({ modelType: ModelType.company })
     ];

@@ -31,25 +31,7 @@ The following view modes are available:
 
 Each Transfer Order has a specific status code, which represents the state of the order:
 
-| Status | Description |
-| --- | --- |
-| Pending | The transfer order has been created, but has not been finalized or submitted |
-| Issued | The transfer order has been issued, and is in progress |
-| On Hold | The transfer order has been placed on hold, but is still active |
-| Complete | The transfer order is fully completed, and is now closed |
-| Cancelled | The transfer order was cancelled, and is now closed |
-
-**Source Code**
-
-Refer to the source code for the Transfer Order status codes:
-
-::: order.status_codes.TransferOrderStatus
-    options:
-        show_bases: False
-        show_root_heading: False
-        show_root_toc_entry: False
-        show_source: True
-        members: []
+{{ statuscodes("TransferOrderStatus") }}
 
 Transfer Order Status supports [custom states](../concepts/custom_states.md).
 

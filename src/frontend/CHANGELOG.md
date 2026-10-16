@@ -2,6 +2,10 @@
 
 This file contains historical changelog information for the InvenTree UI components library.
 
+### 1.5.0 - August 2026
+
+Updated UI components library to match 1.5.0 InvenTree release.
+
 ### 1.4.6 - June 2026
 
 Adds `useInvenTreeHotkeys` hook that mirrors mantine's `useHotkeys` hook, but adds visibility of the hotkeys to the user interface.

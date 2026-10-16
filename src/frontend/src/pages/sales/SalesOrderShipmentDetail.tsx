@@ -41,6 +41,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useUserState } from '../../states/UserState';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import { SalesOrderShipmentDetailsPanel } from './SalesOrderShipmentDetailsPanel';
@@ -63,6 +64,11 @@ export default function SalesOrderShipmentDetail() {
       order_detail: true,
       tags: true
     }
+  });
+
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.salesordershipment,
+    modelId: shipment?.pk
   });
 
   const isPending = useMemo(() => !shipment.shipment_date, [shipment]);
@@ -98,19 +104,21 @@ export default function SalesOrderShipmentDetail() {
       },
       ParametersPanel({
         model_type: ModelType.salesordershipment,
-        model_id: shipment.pk
+        model_id: shipment.pk,
+        parameter_count: instanceInfo.parameter_count
       }),
       AttachmentPanel({
         model_type: ModelType.salesordershipment,
-        model_id: shipment.pk
+        model_id: shipment.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.salesordershipment,
         model_id: shipment.pk,
-        has_note: !!shipment.notes
+        note_count: instanceInfo.note_count
       })
     ];
-  }, [isPending, shipment]);
+  }, [isPending, shipment, instanceInfo]);
 
   const editShipmentFields = useSalesOrderShipmentFields({
     pending: isPending,

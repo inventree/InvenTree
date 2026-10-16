@@ -53,3 +53,42 @@ export function isEquivalent(a: any, b: any): boolean {
 
   return false;
 }
+
+export function compareTestResults(a: any, b: any) {
+  const finishedA = a.finished_datetime
+    ? new Date(a.finished_datetime).getTime()
+    : null;
+  const finishedB = b.finished_datetime
+    ? new Date(b.finished_datetime).getTime()
+    : null;
+
+  if (finishedA !== finishedB) {
+    if (finishedA === null) return 1;
+    if (finishedB === null) return -1;
+    return finishedB - finishedA;
+  }
+
+  const startedA = a.started_datetime
+    ? new Date(a.started_datetime).getTime()
+    : null;
+  const startedB = b.started_datetime
+    ? new Date(b.started_datetime).getTime()
+    : null;
+
+  if (startedA !== startedB) {
+    if (startedA === null) return 1;
+    if (startedB === null) return -1;
+    return startedB - startedA;
+  }
+
+  const uploadTimeA = a.date ? new Date(a.date).getTime() : null;
+  const uploadTimeB = b.date ? new Date(b.date).getTime() : null;
+
+  if (uploadTimeA !== uploadTimeB) {
+    if (uploadTimeA === null) return 1;
+    if (uploadTimeB === null) return -1;
+    return uploadTimeB - uploadTimeA;
+  }
+
+  return b.pk - a.pk;
+}

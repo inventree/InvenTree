@@ -27,6 +27,7 @@ import InvenTree.ready
 import InvenTree.validators
 import report.mixins
 from common.currency import currency_code_default
+from common.settings import get_global_setting
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from order.status_codes import PurchaseOrderStatusGroups
 
@@ -75,10 +76,19 @@ class CompanyReportContext(report.mixins.BaseReportContext, TypedDict):
     address: str
 
 
+def default_internal_company() -> Optional[int]:
+    """Return the primary key of the default internal company (if available).
+
+    Used as a callable default for fields which reference an internal company.
+    """
+    company = Company.get_default_internal()
+    return company.pk if company else None
+
+
 class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeParameterMixin,
-    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeTagsMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeImageMixin,
@@ -91,6 +101,7 @@ class Company(
     - A supplier is a company from which parts can be purchased
     - A customer is a company to which parts can be sold
     - A manufacturer is a company which manufactures a raw good (they may or may not be a "supplier" also)
+    - An internal company represents your own organization (or one of its entities / sites)
 
 
     Attributes:
@@ -107,6 +118,7 @@ class Company(
         is_customer: boolean value, is this company a customer
         is_supplier: boolean value, is this company a supplier
         is_manufacturer: boolean value, is this company a manufacturer
+        is_internal: boolean value, does this company represent your own organization
         currency_code: Specifies the default currency for the company
         tax_id: Tax ID for the company
     """
@@ -128,6 +140,29 @@ class Company(
     def get_api_url():
         """Return the API URL associated with the Company model."""
         return reverse('api-company-list')
+
+    @classmethod
+    def get_default_internal(cls) -> Optional['Company']:
+        """Return the default internal company for this InvenTree instance.
+
+        - If the INVENTREE_DEFAULT_INTERNAL_COMPANY setting points to an internal company, return it
+        - Otherwise, if exactly one internal company exists, return it
+        - Otherwise, return None
+        """
+        internal = cls.objects.filter(is_internal=True)
+
+        if pk := get_global_setting(
+            'INVENTREE_DEFAULT_INTERNAL_COMPANY', backup_value=None
+        ):
+            try:
+                if company := internal.filter(pk=int(pk)).first():
+                    return company
+            except (TypeError, ValueError):
+                pass
+
+        companies = list(internal[:2])
+
+        return companies[0] if len(companies) == 1 else None
 
     def report_context(self) -> CompanyReportContext:
         """Generate a dict of context data to provide to the reporting framework."""
@@ -210,6 +245,12 @@ class Company(
         default=False,
         verbose_name=_('Is manufacturer'),
         help_text=_('Does this company manufacture parts?'),
+    )
+
+    is_internal = models.BooleanField(
+        default=False,
+        verbose_name=_('Is internal'),
+        help_text=_('Does this company represent your own organization?'),
     )
 
     currency = models.CharField(
@@ -343,6 +384,8 @@ class Address(InvenTree.models.InvenTreeModel):
         line2: Optional line two for address
         postal_code: Postal code, city and state
         country: Location country
+        phone: Phone number for this address
+        email: Email address for this address
         shipping_notes: Notes for couriers transporting shipments to this address
         internal_shipping_notes: Internal notes regarding shipping to this address
         link: External link to additional address information
@@ -464,6 +507,19 @@ class Address(InvenTree.models.InvenTreeModel):
         blank=True,
     )
 
+    phone = models.CharField(
+        max_length=50,
+        verbose_name=_('Phone number'),
+        help_text=_('Phone number for this address'),
+        blank=True,
+    )
+
+    email = models.EmailField(
+        verbose_name=_('Email'),
+        help_text=_('Email address for this address'),
+        blank=True,
+    )
+
     shipping_notes = models.CharField(
         max_length=100,
         verbose_name=_('Courier shipping notes'),
@@ -490,7 +546,7 @@ class ManufacturerPart(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeTagsMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
@@ -606,8 +662,8 @@ class SupplierPart(
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNoteMixin,
     InvenTree.models.InvenTreeTagsMixin,
-    InvenTree.models.InvenTreeNotesMixin,
     common.models.MetaMixin,
     InvenTree.models.InvenTreeModel,
 ):
@@ -1039,20 +1095,71 @@ class SupplierPriceBreak(common.models.PriceBreak):
     )
 
 
+@receiver(post_save, sender=SupplierPart, dispatch_uid='post_save_supplier_part')
+def after_save_supplier_part(sender, instance, created, **kwargs):
+    """Callback function when a SupplierPart is created or updated.
+
+    Triggers a pricing update for the linked Part, so that changes to
+    pack_quantity are reflected in Part pricing and BOM cost rollups.
+    """
+    if (
+        InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
+        and not InvenTree.ready.isImportingData()
+        and instance.part
+    ):
+        instance.part.schedule_pricing_update(create=True)
+
+
+@receiver(post_delete, sender=SupplierPart, dispatch_uid='post_delete_supplier_part')
+def after_delete_supplier_part(sender, instance, **kwargs):
+    """Callback function when a SupplierPart is deleted.
+
+    Triggers a pricing update for the linked Part, so that removal of a
+    supplier part is reflected in Part pricing and BOM cost rollups.
+    """
+    from part.models import Part
+
+    if (
+        not InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
+        or InvenTree.ready.isImportingData()
+        or InvenTree.ready.isRunningMigrations()
+    ):
+        return
+
+    try:
+        if part := instance.part:
+            part.schedule_pricing_update(create=False)
+    except (Part.DoesNotExist, SupplierPart.DoesNotExist):
+        # The underlying SupplierPart instance has been deleted
+        return
+
+
 @receiver(
     post_save, sender=SupplierPriceBreak, dispatch_uid='post_save_supplier_price_break'
 )
 def after_save_supplier_price(sender, instance, created, **kwargs):
     """Callback function when a SupplierPriceBreak is created or updated."""
-    if (
-        (
-            InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
-            and not InvenTree.ready.isImportingData()
-        )
-        and instance.part
-        and instance.part.part
-    ):
-        instance.part.part.schedule_pricing_update(create=True)
+    from part.models import Part
+
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
+        return
+
+    if InvenTree.ready.isImportingData():
+        return
+
+    try:
+        supplier_part = instance.part
+    except SupplierPart.DoesNotExist:
+        # The underlying SupplierPart instance has been deleted
+        return
+
+    try:
+        base_part = supplier_part.part
+    except Part.DoesNotExist:
+        # The underlying Part instance has been deleted
+        return
+
+    base_part.schedule_pricing_update(create=True)
 
 
 @receiver(
@@ -1062,12 +1169,24 @@ def after_save_supplier_price(sender, instance, created, **kwargs):
 )
 def after_delete_supplier_price(sender, instance, **kwargs):
     """Callback function when a SupplierPriceBreak is deleted."""
-    if (
-        (
-            InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING)
-            and not InvenTree.ready.isImportingData()
-        )
-        and instance.part
-        and instance.part.part
-    ):
-        instance.part.part.schedule_pricing_update(create=False)
+    from part.models import Part
+
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
+        return
+
+    if InvenTree.ready.isImportingData():
+        return
+
+    try:
+        supplier_part = instance.part
+    except SupplierPart.DoesNotExist:
+        # The underlying SupplierPart instance has been deleted
+        return
+
+    try:
+        base_part = supplier_part.part
+    except Part.DoesNotExist:
+        # The underlying Part instance has been deleted
+        return
+
+    base_part.schedule_pricing_update(create=False)

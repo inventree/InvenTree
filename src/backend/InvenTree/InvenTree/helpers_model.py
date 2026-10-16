@@ -1,5 +1,7 @@
 """Provides helper functions used throughout the InvenTree project that access the database."""
 
+import contextlib
+import contextvars
 import io
 import ipaddress
 import socket
@@ -85,6 +87,66 @@ def construct_absolute_url(*arg, base_url=None, request=None):
     return urljoin(base_url, relative_url)
 
 
+_ssrf_guard_active = contextvars.ContextVar('ssrf_guard_active', default=False)
+_real_getaddrinfo = socket.getaddrinfo
+
+
+def _is_unsafe_ip(host: str) -> bool:
+    """Return True if the given (already-resolved) address string is private/reserved."""
+    ip = ipaddress.ip_address(host)
+    return ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved
+
+
+def _guarded_getaddrinfo(host, *args, **kwargs):
+    """Drop-in replacement for socket.getaddrinfo which enforces SSRF checks while active.
+
+    DNS resolution is otherwise delegated to the OS resolver on every connection
+    attempt an HTTP client makes - including ones made well after an earlier,
+    now-discarded resolution was validated by `validate_url_no_ssrf()`. An attacker
+    controlling authoritative DNS for their own domain can answer a first ("check")
+    lookup with a public IP and a later ("use") lookup with a private/internal one
+    (DNS rebinding), bypassing a validation step that only inspects the first answer.
+
+    Patching this at the socket layer means the *actual* resolution used to open the
+    real connection - whichever call that turns out to be - is the one that gets
+    checked, so there is no window between "validated" and "connected" for the
+    answer to change. The guard is only enforced while `ssrf_safe_context()` is
+    active in the current context, so unrelated resolutions (e.g. other threads
+    talking to the database/cache) are never affected.
+    """
+    result = _real_getaddrinfo(host, *args, **kwargs)
+
+    if _ssrf_guard_active.get():
+        for _family, _type, _proto, _canonname, sockaddr in result:
+            if _is_unsafe_ip(sockaddr[0]):
+                raise socket.gaierror(
+                    f'Host {host!r} resolved to a private or reserved address'
+                )
+
+    return result
+
+
+socket.getaddrinfo = _guarded_getaddrinfo
+
+
+@contextlib.contextmanager
+def ssrf_safe_context():
+    """Enforce SSRF IP validation on every DNS resolution performed within this block.
+
+    Wrap any code which resolves a user/attacker-influenced hostname and then
+    connects to it (e.g. `requests.get()`, or a library like WeasyPrint doing its
+    own resolution internally) in this context manager so that the resolution
+    backing the *actual* connection is validated, not just an earlier, separate
+    lookup whose result is discarded. See `_guarded_getaddrinfo` for why this
+    closes the DNS-rebinding TOCTOU gap that a standalone pre-check cannot.
+    """
+    token = _ssrf_guard_active.set(True)
+    try:
+        yield
+    finally:
+        _ssrf_guard_active.reset(token)
+
+
 def validate_url_no_ssrf(url):
     """Validate that a URL does not point to a private/internal network address.
 
@@ -109,9 +171,7 @@ def validate_url_no_ssrf(url):
         raise ValueError(_('Invalid URL: hostname could not be resolved'))
 
     for _family, _type, _proto, _canonname, sockaddr in addrinfo:
-        ip = ipaddress.ip_address(sockaddr[0])
-
-        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved:
+        if _is_unsafe_ip(sockaddr[0]):
             raise ValueError(_('URL points to a private or reserved IP address'))
 
 
@@ -158,35 +218,39 @@ def download_image_from_url(
     headers = {'User-Agent': user_agent} if user_agent else None
 
     try:
-        response = requests.get(
-            remote_url,
-            timeout=timeout,
-            allow_redirects=False,
-            stream=True,
-            headers=headers,
-        )
-
-        # Handle redirects manually to validate each destination
-        max_redirects = 5
-        redirect_count = 0
-
-        while response.is_redirect and redirect_count < max_redirects:
-            redirect_url = response.headers.get('Location')
-            if not redirect_url:
-                break
-
-            # Validate the redirect destination against SSRF
-            validator(redirect_url)
-            validate_url_no_ssrf(redirect_url)
-
-            redirect_count += 1
+        # SSRF protection: guard every DNS resolution made while actually connecting
+        # (not just the pre-check above) so a hostname cannot pass validation with
+        # one IP and then be connected to via a different, private one (DNS rebinding).
+        with ssrf_safe_context():
             response = requests.get(
-                redirect_url,
+                remote_url,
                 timeout=timeout,
                 allow_redirects=False,
                 stream=True,
                 headers=headers,
             )
+
+            # Handle redirects manually to validate each destination
+            max_redirects = 5
+            redirect_count = 0
+
+            while response.is_redirect and redirect_count < max_redirects:
+                redirect_url = response.headers.get('Location')
+                if not redirect_url:
+                    break
+
+                # Validate the redirect destination against SSRF
+                validator(redirect_url)
+                validate_url_no_ssrf(redirect_url)
+
+                redirect_count += 1
+                response = requests.get(
+                    redirect_url,
+                    timeout=timeout,
+                    allow_redirects=False,
+                    stream=True,
+                    headers=headers,
+                )
 
         if redirect_count >= max_redirects:
             raise ValueError(_('Too many redirects'))
@@ -281,6 +345,7 @@ def notify_responsible(
     instance,
     sender,
     content: NotificationBody = InvenTreeNotificationBodies.NewOrder,
+    html_context: Optional[dict] = None,
     exclude=None,
     extra_users: Optional[list] = None,
 ):
@@ -293,6 +358,7 @@ def notify_responsible(
         instance: The newly created instance
         sender: Sender model reference
         content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
+        html_context: Optional HTML context to include in the notification. Defaults to None.
         exclude (User, optional): User instance that should be excluded. Defaults to None.
         extra_users (list, optional): List of extra users to notify. Defaults to None.
     """
@@ -306,7 +372,14 @@ def notify_responsible(
     if extra_users:
         users.extend(extra_users)
 
-    notify_users(users, instance, sender, content=content, exclude=exclude)
+    notify_users(
+        users,
+        instance,
+        sender,
+        content=content,
+        html_context=html_context,
+        exclude=exclude,
+    )
 
 
 def notify_users(
@@ -314,6 +387,7 @@ def notify_users(
     instance,
     sender,
     content: NotificationBody = InvenTreeNotificationBodies.NewOrder,
+    html_context: Optional[dict] = None,
     exclude=None,
 ):
     """Notify all passed users or groups.
@@ -326,6 +400,7 @@ def notify_users(
         instance: The newly created instance
         sender: Sender model reference
         content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
+        html_context (dict, optional): Optional HTML context to include in the notification. Defaults to None.
         exclude (User, optional): User instance that should be excluded. Defaults to None.
     """
     # Setup context for notification parsing
@@ -337,7 +412,9 @@ def notify_users(
     }
 
     # Setup notification context
+    # Extra HTML context is included, but cannot override the standard keys
     context = {
+        **(html_context or {}),
         'instance': instance,
         'name': content.name.format(**content_context),
         'message': content.message.format(**content_context),
@@ -345,8 +422,7 @@ def notify_users(
         'template': {'subject': content.name.format(**content_context)},
     }
 
-    tmp = content.template
-    if tmp:
+    if tmp := content.template:
         context['template']['html'] = tmp.format(**content_context)
 
     # Create notification

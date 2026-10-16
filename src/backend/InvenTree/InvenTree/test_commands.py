@@ -7,6 +7,7 @@ from pathlib import Path
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management import call_command
+from django.db import IntegrityError
 from django.test import TestCase
 
 from opentelemetry.instrumentation.sqlite3 import SQLite3Instrumentor
@@ -115,6 +116,213 @@ class CommandTestCase(TestCase):
         output = call_command('remove_mfa', username=my_admin3.username, verbosity=0)
         self.assertEqual(output, 'done')
         self.assertEqual(my_admin3.authenticator_set.all().count(), 0)
+
+    def test_bulkloaddata(self):
+        """Test the bulkloaddata command."""
+        from django.contrib.contenttypes.models import ContentType
+        from django.core import serializers
+
+        # ContentType has no custom signals and a real unique_together constraint
+        # (app_label, model), making it a convenient, side-effect-free test model.
+        entries = [
+            ContentType.objects.create(app_label='bulkloaddata_test', model=f'model{i}')
+            for i in range(5)
+        ]
+        pks = [e.pk for e in entries]
+        data = serializers.serialize('json', entries)
+        ContentType.objects.filter(pk__in=pks).delete()
+
+        tmp_file = get_testfolder_dir().joinpath('bulkloaddata_test.json')
+        tmp_file.write_text(data, encoding='utf-8')
+
+        try:
+            # Basic load - all records should be recreated
+            call_command('bulkloaddata', str(tmp_file), verbosity=0)
+            self.assertEqual(ContentType.objects.filter(pk__in=pks).count(), 5)
+
+            # Re-loading without --ignore-conflicts should raise (unique app_label/model)
+            with self.assertRaises(IntegrityError):
+                call_command('bulkloaddata', str(tmp_file), verbosity=0)
+
+            # Re-loading with --ignore-conflicts should succeed, without duplicating rows
+            call_command(
+                'bulkloaddata', str(tmp_file), verbosity=0, ignore_conflicts=True
+            )
+            self.assertEqual(ContentType.objects.filter(pk__in=pks).count(), 5)
+
+            # A small batch size should still load every record correctly
+            ContentType.objects.filter(pk__in=pks).delete()
+            call_command('bulkloaddata', str(tmp_file), verbosity=0, batch_size=2)
+            models = set(
+                ContentType.objects.filter(pk__in=pks).values_list('model', flat=True)
+            )
+            self.assertEqual(models, {e.model for e in entries})
+        finally:
+            ContentType.objects.filter(pk__in=pks).delete()
+            tmp_file.unlink(missing_ok=True)
+
+    def test_bulkloaddata_preserves_auto_now_add(self):
+        """bulk_create() must not overwrite fixture values for auto_now_add fields.
+
+        Covers both an auto_now_add DateTimeField (BarcodeScanResult.timestamp,
+        StockItem.creation_date, StockItemTracking.date) and an auto_now_add
+        DateField (Part.creation_date) - StockItem/StockItemTracking are also
+        the models the bug was originally reported against.
+        """
+        import datetime
+
+        from django.core import serializers
+        from django.utils import timezone
+
+        from common.models import BarcodeScanResult
+        from part.models import Part
+        from stock.models import StockItem, StockItemTracking
+        from stock.status_codes import StockHistoryCode
+
+        # JSON fixtures only round-trip datetimes to millisecond precision
+        # (DjangoJSONEncoder truncates microseconds) - use a value already at
+        # that precision so the round-trip comparisons below are exact.
+        original_timestamp = (timezone.now() - datetime.timedelta(days=30)).replace(
+            microsecond=123000
+        )
+        original_date = original_timestamp.date()
+
+        entry = BarcodeScanResult.objects.create(data='test-barcode')
+        entry.timestamp = original_timestamp
+        entry.save()
+        entry.refresh_from_db()
+        self.assertEqual(entry.timestamp, original_timestamp)
+
+        part = Part.objects.create(
+            name='Bulkload test part', description='Bulkload test part'
+        )
+        part.creation_date = original_date
+        part.save()
+        part.refresh_from_db()
+        self.assertEqual(part.creation_date, original_date)
+
+        item = StockItem.objects.create(part=part, quantity=10)
+        item.creation_date = original_timestamp
+        item.save()
+        item.refresh_from_db()
+        self.assertEqual(item.creation_date, original_timestamp)
+
+        tracking = StockItemTracking.objects.create(
+            item=item, tracking_type=StockHistoryCode.CREATED
+        )
+        tracking.date = original_timestamp
+        tracking.save()
+        tracking.refresh_from_db()
+        self.assertEqual(tracking.date, original_timestamp)
+
+        pks = {
+            'barcode': entry.pk,
+            'part': part.pk,
+            'item': item.pk,
+            'tracking': tracking.pk,
+        }
+
+        # Serialize parent-before-child, so bulkloaddata's per-model
+        # bulk_create() calls happen in an order that satisfies FK constraints.
+        data = serializers.serialize('json', [entry, part, item, tracking])
+
+        # Use queryset deletes - Part.delete() refuses to delete an active part
+        StockItemTracking.objects.filter(pk=tracking.pk).delete()
+        StockItem.objects.filter(pk=item.pk).delete()
+        Part.objects.filter(pk=part.pk).delete()
+        BarcodeScanResult.objects.filter(pk=entry.pk).delete()
+
+        tmp_file = get_testfolder_dir().joinpath('bulkloaddata_auto_now_test.json')
+        tmp_file.write_text(data, encoding='utf-8')
+
+        try:
+            call_command('bulkloaddata', str(tmp_file), verbosity=0)
+
+            reloaded_entry = BarcodeScanResult.objects.get(pk=pks['barcode'])
+            self.assertEqual(reloaded_entry.timestamp, original_timestamp)
+
+            reloaded_part = Part.objects.get(pk=pks['part'])
+            self.assertEqual(reloaded_part.creation_date, original_date)
+
+            reloaded_item = StockItem.objects.get(pk=pks['item'])
+            self.assertEqual(reloaded_item.creation_date, original_timestamp)
+
+            reloaded_tracking = StockItemTracking.objects.get(pk=pks['tracking'])
+            self.assertEqual(reloaded_tracking.date, original_timestamp)
+        finally:
+            StockItemTracking.objects.filter(pk=pks['tracking']).delete()
+            StockItem.objects.filter(pk=pks['item']).delete()
+            Part.objects.filter(pk=pks['part']).delete()
+            BarcodeScanResult.objects.filter(pk=pks['barcode']).delete()
+            tmp_file.unlink(missing_ok=True)
+
+    def test_bulkdumpdata_natural_key_caching(self):
+        """Test that bulkdumpdata caches natural-key FK resolution during serialization."""
+        from django.contrib.admin.models import ADDITION, LogEntry
+        from django.contrib.contenttypes.models import ContentType
+        from django.core import serializers
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+
+        from InvenTree.management.commands.bulkdumpdata import (
+            Command as BulkDumpDataCommand,
+        )
+
+        user = User.objects.create_user(username='bulkdumpdata_test_user')
+        content_type = ContentType.objects.create(
+            app_label='bulkdumpdata_test', model='dummymodel'
+        )
+
+        entries = [
+            LogEntry.objects.create(
+                user=user,
+                content_type=content_type,
+                object_id=str(i),
+                object_repr=f'Object {i}',
+                action_flag=ADDITION,
+                change_message='Created',
+            )
+            for i in range(20)
+        ]
+        pks = [e.pk for e in entries]
+
+        def make_queryset():
+            # A fresh queryset each time, so FK descriptor caching on the
+            # instances themselves can't mask whether *our* cache is doing
+            # the work
+            return LogEntry.objects.filter(pk__in=pks).order_by('pk')
+
+        try:
+            with CaptureQueriesContext(connection) as uncached:
+                uncached_data = serializers.serialize(
+                    'json', make_queryset(), use_natural_foreign_keys=True
+                )
+
+            with CaptureQueriesContext(connection) as cached:
+                with BulkDumpDataCommand()._cached_natural_keys():
+                    cached_data = serializers.serialize(
+                        'json', make_queryset(), use_natural_foreign_keys=True
+                    )
+
+            # Same output either way - caching must not change what gets exported
+            self.assertEqual(uncached_data, cached_data)
+
+            # Without caching: one extra query per row for each repeated
+            # natural-keyed FK (content_type and user are both natural-keyed
+            # here, so up to 2 extra queries per row -> 40, plus the main select)
+            self.assertGreaterEqual(len(uncached.captured_queries), 40)
+
+            # With caching: only the first reference to each distinct related
+            # object (one content_type, one user) issues a query - every other
+            # row is served from cache
+            self.assertLessEqual(len(cached.captured_queries), 4)
+            self.assertLess(
+                len(cached.captured_queries), len(uncached.captured_queries)
+            )
+        finally:
+            LogEntry.objects.filter(pk__in=pks).delete()
+            content_type.delete()
+            user.delete()
 
     def test_backup_metadata(self):
         """Test the backup metadata functions."""

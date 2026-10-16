@@ -31,7 +31,8 @@ export enum PluginUIFeatureType {
   template_editor = 'template_editor',
   template_preview = 'template_preview',
   navigation = 'navigation',
-  primary_action = 'primary_action'
+  primary_action = 'primary_action',
+  route = 'route'
 }
 
 /**

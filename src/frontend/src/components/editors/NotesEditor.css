@@ -1,0 +1,82 @@
+/* Table styles for the Tiptap notes editor */
+.ProseMirror table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+}
+
+.ProseMirror table td,
+.ProseMirror table th {
+  border: 1px solid var(--mantine-color-gray-4);
+  padding: 4px 8px;
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
+  min-width: 50px;
+}
+
+[data-mantine-color-scheme='dark'] .ProseMirror table td,
+[data-mantine-color-scheme='dark'] .ProseMirror table th {
+  border-color: var(--mantine-color-dark-4);
+}
+
+.ProseMirror table th {
+  background-color: var(--mantine-color-gray-1);
+  font-weight: bold;
+}
+
+[data-mantine-color-scheme='dark'] .ProseMirror table th {
+  background-color: var(--mantine-color-dark-6);
+}
+
+/* Selected cell highlight */
+.ProseMirror table .selectedCell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--mantine-color-blue-1);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+[data-mantine-color-scheme='dark'] .ProseMirror table .selectedCell::after {
+  background: var(--mantine-color-blue-9);
+}
+
+/* Column resize handle */
+.ProseMirror table .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: var(--mantine-color-blue-5);
+  pointer-events: none;
+  cursor: col-resize;
+}
+
+/* Scrollable wrapper for wide tables */
+.ProseMirror .tableWrapper {
+  overflow-x: auto;
+}
+
+/* Resize cursor while dragging */
+.ProseMirror.resize-cursor {
+  cursor: col-resize;
+}
+
+/* Disable image interaction when not in editing mode */
+.mantine-RichTextEditor-root:not([data-editing]) .ProseMirror img {
+  pointer-events: none;
+  user-select: none;
+}
+
+.mantine-RichTextEditor-root:not([data-editing]) .node-image.ProseMirror-selectednode .image-component {
+  outline: none;
+}
+
+.mantine-RichTextEditor-root:not([data-editing]) .node-image.ProseMirror-selectednode .image-resizer {
+  display: none;
+}

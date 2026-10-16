@@ -60,6 +60,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useGlobalSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -112,6 +113,11 @@ export default function StockDetail() {
     defaultValue: {}
   });
 
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.stockitem,
+    modelId: stockitem?.pk
+  });
+
   const showBuildAllocations: boolean = useMemo(() => {
     // Determine if "build allocations" should be shown for this stock item
     return (
@@ -128,7 +134,7 @@ export default function StockDetail() {
   const showTransferAllocations: boolean = useMemo(() => {
     return (
       !stockitem?.part_detail?.virtual &&
-      globalSettings.isSet('TRANSFERORDER_ENABLED')
+      globalSettings.isSet('TRANSFERORDER_ENABLED') // todo check if role is available
     );
   }, [stockitem]);
 
@@ -307,12 +313,13 @@ export default function StockDetail() {
       },
       AttachmentPanel({
         model_type: ModelType.stockitem,
-        model_id: stockitem.pk
+        model_id: stockitem.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.stockitem,
         model_id: stockitem.pk,
-        has_note: !!stockitem.notes
+        note_count: instanceInfo.note_count
       })
     ];
   }, [
@@ -321,7 +328,8 @@ export default function StockDetail() {
     showInstalledItems,
     stockitem,
     id,
-    user
+    user,
+    instanceInfo
   ]);
 
   const breadcrumbs = useMemo(
@@ -374,7 +382,9 @@ export default function StockDetail() {
 
   const duplicateStockItemFields = useStockFields({
     create: true,
-    modalId: 'duplicate-stock-item'
+    modalId: 'duplicate-stock-item',
+    duplicateStockItem: stockitem,
+    locationId: stockitem.location
   });
 
   const duplicateStockData = useMemo(() => {
@@ -718,47 +728,49 @@ export default function StockDetail() {
         requiredPermission={ModelType.stockitem}
       >
         <Stack>
-          {user.hasViewRole(UserRoles.stock_location) && (
-            <NavigationTree
-              title={t`Stock Locations`}
-              modelType={ModelType.stocklocation}
-              endpoint={ApiEndpoints.stock_location_tree}
-              childIdentifier='sublocations'
-              opened={treeOpen}
-              onClose={() => setTreeOpen(false)}
-              selectedId={stockitem?.location}
-            />
-          )}
-          <PageDetail
-            title={t`Stock Item`}
-            subtitle={stockitem.part_detail?.full_name}
-            imageUrl={stockitem.part_detail?.thumbnail}
-            editAction={editStockItem.open}
-            editEnabled={user.hasChangePermission(ModelType.stockitem)}
-            badges={stockBadges}
-            breadcrumbs={
-              user.hasViewRole(UserRoles.stock_location)
-                ? breadcrumbs
-                : undefined
-            }
-            lastCrumb={[
-              {
-                name: stockitem.name,
-                url: `/stock/item/${stockitem.pk}/`
-              }
-            ]}
-            breadcrumbAction={() => {
-              setTreeOpen(true);
-            }}
-            actions={stockActions}
-          />
-          <PanelGroup
-            pageKey='stockitem'
-            panels={stockPanels}
-            model={ModelType.stockitem}
-            id={stockitem.pk}
-            instance={stockitem}
-          />
+          <NavigationTree
+            hidden={!user.hasViewRole(UserRoles.stock_location)}
+            title={t`Stock Locations`}
+            modelType={ModelType.stocklocation}
+            endpoint={ApiEndpoints.stock_location_tree}
+            childIdentifier='sublocations'
+            opened={treeOpen}
+            onClose={() => setTreeOpen(false)}
+            selectedId={stockitem?.location}
+          >
+            <Stack>
+              <PageDetail
+                title={t`Stock Item`}
+                subtitle={stockitem.part_detail?.full_name}
+                imageUrl={stockitem.part_detail?.thumbnail}
+                editAction={editStockItem.open}
+                editEnabled={user.hasChangePermission(ModelType.stockitem)}
+                badges={stockBadges}
+                breadcrumbs={
+                  user.hasViewRole(UserRoles.stock_location)
+                    ? breadcrumbs
+                    : undefined
+                }
+                lastCrumb={[
+                  {
+                    name: stockitem.name,
+                    url: `/stock/item/${stockitem.pk}/`
+                  }
+                ]}
+                breadcrumbAction={() => {
+                  setTreeOpen(true);
+                }}
+                actions={stockActions}
+              />
+              <PanelGroup
+                pageKey='stockitem'
+                panels={stockPanels}
+                model={ModelType.stockitem}
+                id={stockitem.pk}
+                instance={stockitem}
+              />
+            </Stack>
+          </NavigationTree>
         </Stack>
       </InstanceDetail>
       {editStockItem.modal}

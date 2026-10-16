@@ -183,7 +183,7 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
     """Tests barcode scanning to receive a purchase order item."""
 
-    roles = ['stock.view', 'stock_location.view']
+    roles = ['stock.view', 'stock_location.view', 'purchase_order.add']
 
     def setUp(self):
         """Create supplier part and purchase_order."""
@@ -256,6 +256,21 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         registry.set_plugin_state('mouserplugin', True)
         mouser_plugin = registry.get_plugin('mouserplugin')
         mouser_plugin.set_setting('SUPPLIER_ID', mouser.pk)
+
+    def test_permission_denied(self):
+        """A user without the 'purchase_order.add' role cannot receive stock via barcode scan."""
+        url = reverse('api-barcode-po-receive')
+
+        self.clearRoles()
+
+        response = self.post(url, data={'barcode': DIGIKEY_BARCODE}, expected_code=403)
+
+        self.assertIn(
+            'do not have the required permissions', str(response.data['error'])
+        )
+
+        # No stock should have been received
+        self.assertFalse(StockItem.objects.filter(part__name='Test Part').exists())
 
     def test_receive(self):
         """Test receiving an item from a barcode."""

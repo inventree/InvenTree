@@ -9,6 +9,7 @@ import {
   Paper,
   Space,
   Stack,
+  Text,
   Tooltip
 } from '@mantine/core';
 import {
@@ -102,6 +103,38 @@ export default function InvenTreeTableHeader({
     searchTerm: tableState.searchTerm
   });
 
+  const bulkDeleteIds: number[] = useMemo(() => {
+    if (!tableProps.enableBulkDelete) {
+      return [];
+    }
+
+    const selectedRecords = tableState.selectedRecords ?? [];
+    const filterFn = tableProps.bulkDeleteFilter ?? (() => true);
+
+    return selectedRecords
+      .filter((record) => filterFn(record))
+      .map(
+        (record) => resolveItem(record, tableState.idAccessor || 'pk') as number
+      );
+  }, [
+    tableProps.enableBulkDelete,
+    tableProps.bulkDeleteFilter,
+    tableState.idAccessor,
+    tableState.selectedRecords
+  ]);
+
+  const deleteItemsText = useMemo(() => {
+    const N = bulkDeleteIds.length;
+
+    if (N === 0) {
+      return t`No items selected`;
+    } else if (N === 1) {
+      return t`1 selected item will be deleted`;
+    } else {
+      return t`${N} selected items will be deleted`;
+    }
+  }, [bulkDeleteIds]);
+
   const deleteRecords = useDeleteApiFormModal({
     url: tableUrl ?? '',
     title: t`Delete Selected Items`,
@@ -110,11 +143,14 @@ export default function InvenTreeTableHeader({
         color='red'
         title={t`Are you sure you want to delete the selected items?`}
       >
-        {t`This action cannot be undone`}
+        <Stack gap='xs'>
+          <Text size='sm'>{deleteItemsText}</Text>
+          <Text size='sm'>{t`This action cannot be undone`}</Text>
+        </Stack>
       </Alert>
     ),
     initialData: {
-      items: tableState.selectedIds
+      items: bulkDeleteIds
     },
     fields: {
       items: {
@@ -181,8 +217,22 @@ export default function InvenTreeTableHeader({
           onClose={() => clearQueryFilters()}
         />
       )}
-      <Group justify='apart' grow wrap='nowrap'>
-        <Group justify='left' key='custom-actions' gap={5} wrap='nowrap'>
+      <Group
+        justify='apart'
+        grow={!tableProps.tableActionsFullWidth}
+        wrap='nowrap'
+      >
+        <Group
+          justify='left'
+          key='custom-actions'
+          gap={5}
+          wrap='nowrap'
+          style={
+            tableProps.tableActionsFullWidth
+              ? { flex: '1 1 auto', minWidth: 'max-content' }
+              : undefined
+          }
+        >
           <PrintingActions
             items={printingIdValues}
             modelType={tableProps.modelType}
@@ -213,7 +263,7 @@ export default function InvenTreeTableHeader({
             <Fragment key={idx}>{group}</Fragment>
           ))}
         </Group>
-        <Space />
+        {!tableProps.tableActionsFullWidth && <Space />}
         <Group justify='right' gap={5} wrap='nowrap'>
           {tableProps.enableSearch && (
             <SearchInput
