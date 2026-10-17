@@ -822,6 +822,7 @@ class PartAPITestBase(InvenTreeAPITestCase):
         'part.delete',
         'part_category.change',
         'part_category.add',
+        'pricing.view',
         'stock_location.view',
     ]
 
@@ -1466,6 +1467,15 @@ class PartAPITest(PartAPITestBase):
                     self.assertIn(field, response.data)
                 else:
                     self.assertNotIn(field, response.data)
+
+        # Without the 'pricing' role, pricing fields are never included
+        self.clearRoles()
+        self.assignRole('part.view')
+
+        response = self.get(url, {'pricing': True}, expected_code=200)
+
+        for field in pricing_fields:
+            self.assertNotIn(field, response.data)
 
     def test_parameters_info(self):
         """Test annotation of 'parameters' detail against a Part instance."""
@@ -2485,7 +2495,7 @@ class PartPricingDetailTests(InvenTreeAPITestCase):
 
     fixtures = ['category', 'part', 'location']
 
-    roles = ['part.change']
+    roles = ['pricing.change']
 
     def url(self, pk):
         """Construct a pricing URL."""
@@ -2517,6 +2527,23 @@ class PartPricingDetailTests(InvenTreeAPITestCase):
         # Empty fields (no pricing by default)
         for field in expected_fields[2:]:
             self.assertIsNone(response.data[field])
+
+    def test_pricing_permissions(self):
+        """Test that the 'pricing' role (not the 'part' role) controls access."""
+        url = self.url(1)
+
+        self.clearRoles()
+        self.assignRole('part.change')
+
+        self.get(url, expected_code=403)
+        self.patch(url, {'update': True}, expected_code=403)
+
+        self.assignRole('pricing.view')
+        self.get(url, expected_code=200)
+        self.patch(url, {'update': True}, expected_code=403)
+
+        self.assignRole('pricing.change')
+        self.patch(url, {'update': True}, expected_code=200)
 
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):
@@ -3163,6 +3190,9 @@ class BomItemTest(InvenTreeAPITestCase):
         self.assignRole('bom.add')
         self.assignRole('bom.delete')
 
+        # Viewing cached pricing data requires the 'pricing' role
+        self.assignRole('pricing.view')
+
         self.run_output_test(
             reverse('api-bom-item-detail', kwargs={'pk': 3}),
             [
@@ -3663,7 +3693,30 @@ class PartInternalPriceBreakTest(InvenTreeAPITestCase):
         'part_category.change',
         'part_category.add',
         'part_category.delete',
+        'pricing.add',
+        'pricing.delete',
     ]
+
+    def test_price_break_permissions(self):
+        """Test that price breaks require the 'pricing' role."""
+        # Sale price breaks can only be created for salable parts
+        Part.objects.filter(pk=1).update(salable=True)
+
+        for url in [
+            reverse('api-part-internal-price-list'),
+            reverse('api-part-sale-price-list'),
+        ]:
+            self.clearRoles()
+            self.assignRole('part.change')
+            self.get(url, expected_code=403)
+            self.post(url, {'part': 1, 'quantity': 1, 'price': 1}, expected_code=403)
+
+            self.assignRole('pricing.view')
+            self.get(url, expected_code=200)
+            self.post(url, {'part': 1, 'quantity': 1, 'price': 1}, expected_code=403)
+
+            self.assignRole('pricing.add')
+            self.post(url, {'part': 1, 'quantity': 1, 'price': 1}, expected_code=201)
 
     def test_create_price_breaks(self):
         """Test we can create price breaks at various quantities."""

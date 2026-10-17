@@ -397,6 +397,7 @@ class PartBriefSerializer(
         },
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     pricing_max = OptionalField(
@@ -408,6 +409,7 @@ class PartBriefSerializer(
         },
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
 
@@ -907,6 +909,7 @@ class PartSerializer(
         },
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     pricing_max = OptionalField(
@@ -918,6 +921,7 @@ class PartSerializer(
         },
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     pricing_updated = OptionalField(
@@ -929,6 +933,7 @@ class PartSerializer(
         },
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     parameters = common.filters.enable_parameters_filter()
@@ -1814,6 +1819,7 @@ class BomItemSerializer(
         },
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     pricing_max = OptionalField(
@@ -1825,6 +1831,7 @@ class BomItemSerializer(
         },
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     pricing_min_total = OptionalField(
@@ -1832,6 +1839,7 @@ class BomItemSerializer(
         serializer_kwargs={'allow_null': True, 'read_only': True},
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     pricing_max_total = OptionalField(
@@ -1839,6 +1847,7 @@ class BomItemSerializer(
         serializer_kwargs={'allow_null': True, 'read_only': True},
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     pricing_updated = OptionalField(
@@ -1850,6 +1859,7 @@ class BomItemSerializer(
         },
         default_include=True,
         filter_name='pricing',
+        model=PartPricing,
     )
 
     # Annotated fields for available stock

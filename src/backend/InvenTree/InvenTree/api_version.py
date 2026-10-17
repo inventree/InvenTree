@@ -1,10 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 558
+INVENTREE_API_VERSION = 559
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v559 -> 2026-10-16 : https://github.com/inventree/InvenTree/pull/xxxxx
+    - Adds new "pricing" user role, covering the PartPricing, PartSellPriceBreak and PartInternalPriceBreak models
+    - The "part" role no longer grants access to part pricing data
+    - Cached pricing fields (pricing_min, pricing_max, etc) are omitted from Part and BomItem API responses for users without the "pricing" view permission
 
 v558 -> 2026-10-15 : https://github.com/inventree/InvenTree/pull/9768
     - Adds "receiving_company" and "delivery_address" fields to the PurchaseOrder API endpoint
