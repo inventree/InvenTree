@@ -53,6 +53,7 @@ export default function Scan() {
 
   const [selection, setSelection] = useState<string[]>([]);
 
+  // Fetch model instance based on scan item
   const fetchInstance = useCallback(
     (item: BarcodeScanItem) => {
       if (!item.model || !item.pk) {
@@ -92,9 +93,10 @@ export default function Scan() {
           });
         });
     },
-    [history]
+    [api, history]
   );
 
+  // Barcode scanning callback function
   const scanBarcode = useCallback(
     (barcode: string) => {
       api
@@ -119,6 +121,7 @@ export default function Scan() {
             }
           }
 
+          // If no match is found, add an empty result
           if (!match) {
             historyHandlers.append({
               id: randomId(),
@@ -141,15 +144,18 @@ export default function Scan() {
     [fetchInstance]
   );
 
+  // save history data to session storage
   useEffect(() => {
     if (history.length === 0) return;
     setHistoryStorage(history);
   }, [history]);
 
+  // load data from session storage on mount
   useEffect(() => {
     historyHandlers.setState(historyStorage);
   }, [historyStorage]);
 
+  // Items selected for action
   const selectedItems: BarcodeScanItem[] = useMemo(() => {
     return history.filter((item) => selection.includes(item.id));
   }, [selection, history]);
@@ -235,6 +241,7 @@ export default function Scan() {
     }
   });
 
+  // selected actions component
   const SelectedActions = useMemo(() => {
     const uniqueObjectTypes = new Set(selectedItems.map((item) => item.model));
 
@@ -245,9 +252,7 @@ export default function Scan() {
           <Trans>Selected elements are not known</Trans>
         </Group>
       );
-    }
-
-    if (uniqueObjectTypes.size > 1) {
+    } else if (uniqueObjectTypes.size > 1) {
       return (
         <Group gap={0}>
           <IconAlertCircle color='orange' />
