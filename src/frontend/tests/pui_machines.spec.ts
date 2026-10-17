@@ -1,4 +1,5 @@
-import { test } from './baseFixtures';
+import { createApi } from './api';
+import { expect, test } from './baseFixtures';
 import { adminuser } from './defaults';
 import { clickOnRowMenu, navigate } from './helpers';
 import { doCachedLogin } from './login';
@@ -25,10 +26,22 @@ test('Machines - Activation', async ({ browser }) => {
   });
 
   // Ensure that the sample machine plugin is enabled
+  const api = await createApi({});
   await setPluginState({
     plugin: 'sample-printer-machine-plugin',
     state: true
   });
+  // ensure machine driver for printer is online and active
+  await expect
+    .poll(
+      async () => {
+        const response = await api.get('machine/drivers/');
+        const drivers = await response.json();
+        return drivers.map((d: any) => d.slug);
+      },
+      { timeout: 30000 }
+    )
+    .toContain('sample-printer-driver');
 
   await page.reload();
   await page.waitForLoadState('networkidle');
