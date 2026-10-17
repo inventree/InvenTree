@@ -10,6 +10,11 @@ v559 -> 2026-10-16 : https://github.com/inventree/InvenTree/pull/xxxxx
     - Adds new "pricing" user role, covering the PartPricing, PartSellPriceBreak and PartInternalPriceBreak models
     - The "part" role no longer grants access to part pricing data
     - Cached pricing fields (pricing_min, pricing_max, etc) are omitted from Part and BomItem API responses for users without the "pricing" view permission
+    - Moves part pricing endpoints to the new /api/pricing/ namespace:
+        - /api/part/sale-price/ -> /api/pricing/sale-price/
+        - /api/part/internal-price/ -> /api/pricing/internal-price/
+        - /api/part/<id>/pricing/ -> /api/pricing/part/<id>/
+    - The legacy endpoints redirect (HTTP 308, preserving the request method and body) to the new endpoints
 
 v558 -> 2026-10-15 : https://github.com/inventree/InvenTree/pull/9768
     - Adds "receiving_company" and "delivery_address" fields to the PurchaseOrder API endpoint

@@ -1,7 +1,6 @@
 """Provides a JSON API for the Part app."""
 
 from django.db.models import Count, F, Q
-from django.shortcuts import get_object_or_404
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
@@ -24,6 +23,7 @@ from InvenTree.api import (
     ParameterListMixin,
     TreeMixin,
     meta_path,
+    moved_path,
 )
 from InvenTree.fields import InvenTreeOutputOption, OutputConfiguration
 from InvenTree.filters import (
@@ -48,7 +48,6 @@ from InvenTree.mixins import (
     UpdateAPI,
 )
 from InvenTree.tasks import offload_task
-from pricing.models import PartInternalPriceBreak, PartPricing, PartSellPriceBreak
 from stock.models import StockLocation
 
 from . import serializers as part_serializers
@@ -368,45 +367,6 @@ class CategoryParameterDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.CategoryParameterTemplateSerializer
 
 
-class PartSalePriceDetail(RetrieveUpdateDestroyAPI):
-    """Detail endpoint for PartSellPriceBreak model."""
-
-    queryset = PartSellPriceBreak.objects.all()
-    serializer_class = part_serializers.PartSalePriceSerializer
-
-
-class PartSalePriceList(DataExportViewMixin, ListCreateAPI):
-    """API endpoint for list view of PartSalePriceBreak model."""
-
-    queryset = PartSellPriceBreak.objects.all()
-    serializer_class = part_serializers.PartSalePriceSerializer
-
-    filter_backends = SEARCH_ORDER_FILTER
-    filterset_fields = ['part']
-    ordering_fields = ['quantity', 'price']
-    ordering = 'quantity'
-
-
-class PartInternalPriceDetail(RetrieveUpdateDestroyAPI):
-    """Detail endpoint for PartInternalPriceBreak model."""
-
-    queryset = PartInternalPriceBreak.objects.all()
-    serializer_class = part_serializers.PartInternalPriceSerializer
-
-
-class PartInternalPriceList(DataExportViewMixin, ListCreateAPI):
-    """API endpoint for list view of PartInternalPriceBreak model."""
-
-    queryset = PartInternalPriceBreak.objects.all()
-    serializer_class = part_serializers.PartInternalPriceSerializer
-    permission_required = 'roles.sales_order.show'
-
-    filter_backends = SEARCH_ORDER_FILTER
-    filterset_fields = ['part']
-    ordering_fields = ['quantity', 'price']
-    ordering = 'quantity'
-
-
 class PartTestTemplateFilter(FilterSet):
     """Custom filterset class for the PartTestTemplateList endpoint."""
 
@@ -566,31 +526,6 @@ class PartRequirements(RetrieveAPI):
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartRequirementsSerializer
-
-
-class PartPricingDetail(RetrieveUpdateAPI):
-    """API endpoint for viewing part pricing data.
-
-    Note: The URL 'pk' refers to the linked Part instance (not the PartPricing instance).
-    """
-
-    serializer_class = part_serializers.PartPricingSerializer
-
-    # The queryset model determines the required (model) permissions for this endpoint,
-    # so it must be PartPricing (rather than Part)
-    queryset = PartPricing.objects.all()
-
-    def get_object(self):
-        """Return the PartPricing object associated with the linked Part.
-
-        If no PartPricing instance exists for the Part, a new (unsaved) instance is returned.
-        """
-        part = get_object_or_404(Part, pk=self.kwargs.get('pk'))
-        pricing = part.pricing
-
-        self.check_object_permissions(self.request, pricing)
-
-        return pricing
 
 
 class PartSerialNumberDetail(RetrieveAPI):
@@ -1644,32 +1579,11 @@ part_api_urls = [
             ),
         ]),
     ),
-    # Base URL for part sale pricing
-    path(
-        'sale-price/',
-        include([
-            path(
-                '<int:pk>/',
-                PartSalePriceDetail.as_view(),
-                name='api-part-sale-price-detail',
-            ),
-            path('', PartSalePriceList.as_view(), name='api-part-sale-price-list'),
-        ]),
-    ),
-    # Base URL for part internal pricing
-    path(
-        'internal-price/',
-        include([
-            path(
-                '<int:pk>/',
-                PartInternalPriceDetail.as_view(),
-                name='api-part-internal-price-detail',
-            ),
-            path(
-                '', PartInternalPriceList.as_view(), name='api-part-internal-price-list'
-            ),
-        ]),
-    ),
+    # Legacy URLs for part pricing (moved to the 'pricing' app)
+    moved_path('sale-price/<int:pk>/', 'api-part-sale-price-detail'),
+    moved_path('sale-price/', 'api-part-sale-price-list'),
+    moved_path('internal-price/<int:pk>/', 'api-part-internal-price-detail'),
+    moved_path('internal-price/', 'api-part-internal-price-list'),
     # Base URL for PartRelated API endpoints
     path(
         'related/',
@@ -1735,7 +1649,8 @@ part_api_urls = [
             # Part metadata
             meta_path(Part),
             # Part pricing
-            path('pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
+            # Legacy URL for part pricing (moved to the 'pricing' app)
+            moved_path('pricing/', 'api-part-pricing'),
             # Part detail endpoint
             path('', PartDetail.as_view(), name='api-part-detail'),
         ]),
