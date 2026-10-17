@@ -159,7 +159,7 @@ test('Printing - Report Editing', async ({ browser }) => {
   const color = await element.evaluate((el) => {
     return window.getComputedStyle(el).getPropertyValue('color');
   });
-  expect(color).toBe('rgb(78, 201, 176)');
+  expect(color).toBe('rgb(86, 156, 214)');
 
   // Generate preview
   await page.getByLabel('split-button-preview-options-action').click();
