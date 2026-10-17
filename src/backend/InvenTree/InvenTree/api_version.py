@@ -1,11 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 559
-
+INVENTREE_API_VERSION = 560
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v560 -> 2026-10-17 : https://github.com/inventree/InvenTree/pull/12737
+    - Adds search and ordering fields across remaining API endpoints (machine, stock, importer, report)
 
 v559 -> 2026-10-17 : https://github.com/inventree/InvenTree/pull/13023
     - Enforce maximum length for "notes" field in stock-adjustment API endpoints
