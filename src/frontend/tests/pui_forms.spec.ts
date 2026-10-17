@@ -319,7 +319,10 @@ test('Forms - Nested Object Field', async ({ browser }) => {
   await supplierField.fill('Mouser');
   await page.waitForTimeout(100);
   await page.waitForLoadState('networkidle');
-  await page.getByText('Mouser Electronics').first().click();
+  await page
+    .getByRole('option', { name: /Mouser Electronics/ })
+    .first()
+    .click();
 
   const skuValue = `SKU-${new Date().getTime()}`;
   await page
