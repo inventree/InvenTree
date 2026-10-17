@@ -891,6 +891,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         return quantity
 
     batch_code = serializers.CharField(
+        max_length=stock.models.StockItem._meta.get_field('batch').max_length,
         label=_('Batch Code'),
         help_text=_('Enter batch code for incoming stock items'),
         required=False,
@@ -917,6 +918,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     status = stock.serializers.StockStatusCustomSerializer(default=StockStatus.OK.value)
 
     packaging = serializers.CharField(
+        max_length=stock.models.StockItem._meta.get_field('packaging').max_length,
         label=_('Packaging'),
         help_text=_('Override packaging information for incoming stock items'),
         required=False,
@@ -925,6 +927,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
+        max_length=stock.models.StockItemTracking.NOTES_MAX_LENGTH,
         label=_('Note'),
         help_text=_('Additional note for incoming stock items'),
         required=False,
@@ -933,6 +936,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     barcode = serializers.CharField(
+        max_length=stock.models.StockItem._meta.get_field('barcode_data').max_length,
         label=_('Barcode'),
         help_text=_('Scanned barcode'),
         default='',
@@ -1020,6 +1024,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
     )
 
     batch_code = serializers.CharField(
+        max_length=stock.models.StockItem._meta.get_field('batch').max_length,
         label=_('Batch Code'),
         help_text=_(
             'Enter batch code for incoming stock items - applied to any line item which does not specify its own batch code'
@@ -2339,6 +2344,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
+        max_length=stock.models.StockItemTracking.NOTES_MAX_LENGTH,
         label=_('Note'),
         help_text=_('Additional note for incoming stock items'),
         required=False,
