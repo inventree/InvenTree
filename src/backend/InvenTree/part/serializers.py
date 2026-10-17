@@ -270,7 +270,7 @@ class PartSalePriceSerializer(
     price = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
 
     price_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
-        help_text=_('Purchase currency of this stock item')
+        help_text=_('Currency for this price break')
     )
 
 
@@ -291,7 +291,7 @@ class PartInternalPriceSerializer(
     price = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
 
     price_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
-        help_text=_('Purchase currency of this stock item')
+        help_text=_('Currency for this price break')
     )
 
 
@@ -1540,8 +1540,14 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         super().validate(data)
 
         # Check that override_min is not greater than override_max
-        override_min = data.get('override_min', None)
-        override_max = data.get('override_max', None)
+        # For a partial update, compare against the existing value of any field not provided
+        def get_value(field):
+            if field in data:
+                return data[field]
+            return getattr(self.instance, field, None)
+
+        override_min = get_value('override_min')
+        override_max = get_value('override_max')
 
         default_currency = common.currency.currency_code_default()
 
@@ -1552,8 +1558,8 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             except MissingRate:
                 raise ValidationError(
                     _(
-                        f'Could not convert from provided currencies to {default_currency}'
-                    )
+                        'Could not convert from provided currencies to {currency}'
+                    ).format(currency=default_currency)
                 )
 
             if override_min > override_max:

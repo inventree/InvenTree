@@ -675,3 +675,22 @@ class PartPricingTests(InvenTreeTestCase):
 
         self.assertEqual(A1.pricing.overall_min, Money(a_min, 'USD'))
         self.assertEqual(A1.pricing.overall_max, Money(a_max, 'USD'))
+
+    def test_max_pricing_depth(self):
+        """Exceeding the maximum pricing depth must skip the update cleanly.
+
+        Regression test: the debug log message was previously passed with the
+        arguments in the wrong order, raising a TypeError when debug logging was enabled.
+        """
+        pricing = self.part.pricing
+        pricing.save()
+
+        with self.assertLogs('inventree', level='DEBUG') as logs:
+            pricing.schedule_for_update(counter=PartPricing.MAX_PRICING_DEPTH + 1)
+
+        self.assertTrue(
+            any('maximum depth exceeded' in message for message in logs.output)
+        )
+
+        pricing.refresh_from_db()
+        self.assertFalse(pricing.scheduled_for_update)

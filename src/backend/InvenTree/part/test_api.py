@@ -2538,12 +2538,59 @@ class PartPricingDetailTests(InvenTreeAPITestCase):
         self.get(url, expected_code=403)
         self.patch(url, {'update': True}, expected_code=403)
 
+        # The 'part' role is not required to view or edit pricing data
+        self.clearRoles()
         self.assignRole('pricing.view')
         self.get(url, expected_code=200)
         self.patch(url, {'update': True}, expected_code=403)
 
         self.assignRole('pricing.change')
         self.patch(url, {'update': True}, expected_code=200)
+
+    def test_override_validation(self):
+        """Override minimum price must not exceed override maximum price."""
+        url = self.url(1)
+
+        # Both values provided together
+        self.patch(
+            url,
+            {
+                'override_min': 100,
+                'override_min_currency': 'USD',
+                'override_max': 10,
+                'override_max_currency': 'USD',
+            },
+            expected_code=400,
+        )
+
+        self.patch(
+            url, {'override_max': 10, 'override_max_currency': 'USD'}, expected_code=200
+        )
+
+        # Partial update - compared against the existing override_max value
+        response = self.patch(
+            url,
+            {'override_min': 100, 'override_min_currency': 'USD'},
+            expected_code=400,
+        )
+        self.assertIn('override_min', response.data)
+
+        self.patch(
+            url, {'override_min': 5, 'override_min_currency': 'USD'}, expected_code=200
+        )
+
+        # Partial update of the maximum - compared against the existing override_min value
+        self.patch(
+            url, {'override_max': 1, 'override_max_currency': 'USD'}, expected_code=400
+        )
+
+        # Clearing a value removes the constraint
+        self.patch(url, {'override_max': None}, expected_code=200)
+        self.patch(
+            url,
+            {'override_min': 1000, 'override_min_currency': 'USD'},
+            expected_code=200,
+        )
 
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):

@@ -1,6 +1,7 @@
 """Provides a JSON API for the Part app."""
 
 from django.db.models import Count, F, Q
+from django.shortcuts import get_object_or_404
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
@@ -47,7 +48,7 @@ from InvenTree.mixins import (
     UpdateAPI,
 )
 from InvenTree.tasks import offload_task
-from pricing.models import PartInternalPriceBreak, PartSellPriceBreak
+from pricing.models import PartInternalPriceBreak, PartPricing, PartSellPriceBreak
 from stock.models import StockLocation
 
 from . import serializers as part_serializers
@@ -568,22 +569,28 @@ class PartRequirements(RetrieveAPI):
 
 
 class PartPricingDetail(RetrieveUpdateAPI):
-    """API endpoint for viewing part pricing data."""
+    """API endpoint for viewing part pricing data.
+
+    Note: The URL 'pk' refers to the linked Part instance (not the PartPricing instance).
+    """
 
     serializer_class = part_serializers.PartPricingSerializer
-    queryset = Part.objects.all().select_related('pricing_data')
+
+    # The queryset model determines the required (model) permissions for this endpoint,
+    # so it must be PartPricing (rather than Part)
+    queryset = PartPricing.objects.all()
 
     def get_object(self):
-        """Return the PartPricing object associated with the linked Part."""
-        part = super().get_object()
-        return part.pricing
+        """Return the PartPricing object associated with the linked Part.
 
-    def _get_serializer(self, *args, **kwargs):
-        """Return a part pricing serializer object."""
-        part = self.get_object()
-        kwargs['instance'] = part.pricing
+        If no PartPricing instance exists for the Part, a new (unsaved) instance is returned.
+        """
+        part = get_object_or_404(Part, pk=self.kwargs.get('pk'))
+        pricing = part.pricing
 
-        return self.serializer_class(**kwargs)
+        self.check_object_permissions(self.request, pricing)
+
+        return pricing
 
 
 class PartSerialNumberDetail(RetrieveAPI):

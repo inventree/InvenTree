@@ -20,6 +20,7 @@ import common.models
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.ready
+import InvenTree.tasks
 from common.currency import currency_code_default
 from common.settings import get_global_setting
 from InvenTree import validators
@@ -77,8 +78,6 @@ class PartPricing(common.models.MetaMixin):
 
         If the part does not exist (i.e. has been deleted), return None.
         """
-        from part.models import Part
-
         try:
             part = self.part
             part.refresh_from_db()
@@ -134,8 +133,6 @@ class PartPricing(common.models.MetaMixin):
 
     def _schedule_for_update(self, counter: int = 0, refresh: bool = True):
         """Implementation of schedule_for_update(), without the request-scoped cache guard."""
-        import InvenTree.ready
-
         # If importing data, skip pricing update
         if InvenTree.ready.isImportingData():
             return
@@ -162,8 +159,7 @@ class PartPricing(common.models.MetaMixin):
 
         # Ensure that the referenced part still exists in the database
         try:
-            if True:  # refresh and p.pk:
-                _part.refresh_from_db()
+            _part.refresh_from_db()
         except IntegrityError:
             logger.exception(
                 "Could not update PartPricing as Part '%s' does not exist", _part
@@ -180,7 +176,9 @@ class PartPricing(common.models.MetaMixin):
         if counter > self.MAX_PRICING_DEPTH:
             # Prevent infinite recursion / stack depth issues
             logger.debug(
-                counter, f'Skipping pricing update for {_part} - maximum depth exceeded'
+                'Skipping pricing update for %s - maximum depth exceeded (%s)',
+                _part,
+                counter,
             )
             return
 
