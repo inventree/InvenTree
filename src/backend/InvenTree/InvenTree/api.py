@@ -780,7 +780,7 @@ class APISearchView(GenericAPIView):
         import stock.api
 
         return {
-            'build': build.api.BuildList,
+            'build': build.api.BuildViewSet,
             'company': company.api.CompanyList,
             'supplier': company.api.CompanyList,
             'manufacturer': company.api.CompanyList,

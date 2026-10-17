@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 559
+INVENTREE_API_VERSION = 560
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v560 -> 2026-10-18 : https://github.com/inventree/InvenTree/pull/12955
+    - Refactors the build apis to viewsets; no functional changes to existing endpoints
 
 v559 -> 2026-10-17 : https://github.com/inventree/InvenTree/pull/13023
     - Enforce maximum length for "notes" field in stock-adjustment API endpoints
