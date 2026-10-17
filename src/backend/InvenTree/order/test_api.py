@@ -2995,15 +2995,13 @@ class SalesOrderLineItemTest(OrderTest):
         n_parts = Part.objects.filter(salable=True).count()
 
         # List by part
-        for part in Part.objects.filter(salable=True)[:3]:
+        for part in Part.objects.filter(salable=True).order_by('pk')[:3]:
             response = self.get(self.url, {'part': part.pk, 'limit': 10})
-
             self.assertEqual(response.data['count'], n_orders)
 
         # List by order
-        for order in models.SalesOrder.objects.all()[:3]:
+        for order in models.SalesOrder.objects.order_by('pk')[:3]:
             response = self.get(self.url, {'order': order.pk, 'limit': 10})
-
             self.assertEqual(response.data['count'], n_parts)
 
         # Filter by has_pricing status
