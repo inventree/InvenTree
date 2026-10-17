@@ -79,6 +79,13 @@ If the Part is designated as *purchaseable*, then historical purchase cost infor
 
 If supplier pricing information is available, this can be also used to determine price range data.
 
+Supplier price breaks are specified *per pack* of the supplier part. When calculating supplier pricing for a part, the price of each supplier price break is divided by the [pack quantity](../purchasing/supplier.md#supplier-part-pack-size) of the supplier part, so that the resulting price is expressed per unit of the base part. This allows pricing from supplier parts with different pack sizes to be compared directly.
+
+!!! info "Example"
+    If a supplier sells a part in packs of 100, at a price of $11.55 per pack, the supplier pricing for the part is $0.1155 per unit.
+
+Refer to the [supplier part pricing](../purchasing/supplier.md#supplier-part-pricing) documentation for more information.
+
 {{ image("part/pricing_supplier.png", "Supplier Pricing") }}
 
 ### BOM Pricing
@@ -118,7 +125,7 @@ Pricing calculations (and conversions) can be expensive to perform. This can mak
 
 For this reason, all information displayed in the [pricing overview](#pricing-overview) section is pre-calculated and *cached* in the database. This ensures that when it needs to be retrieved (e.g. viewing pricing for an entire BOM) it can be accessed immediately.
 
-Pricing data is cached in the [default currency](../concepts/pricing.md/#default-currency), which ensures that pricing can be compared across multiple parts in a consistent format.
+Pricing data is cached in the [default currency](../concepts/pricing.md#default-currency), which ensures that pricing can be compared across multiple parts in a consistent format.
 
 ## Pricing Updates
 

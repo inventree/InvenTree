@@ -3730,6 +3730,8 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
         The tracking data will be removed if the associated part is deleted, as the tracking information is not relevant without the part context.
     """
 
+    NOTES_MAX_LENGTH = 512
+
     class Meta:
         """Meta data for the StockItemTracking class."""
 
@@ -3781,7 +3783,7 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
     notes = models.CharField(
         blank=True,
         null=True,
-        max_length=512,
+        max_length=NOTES_MAX_LENGTH,
         verbose_name=_('Notes'),
         help_text=_('Entry notes'),
     )

@@ -399,7 +399,6 @@ class PartInternalPriceList(DataExportViewMixin, ListCreateAPI):
 
     queryset = PartInternalPriceBreak.objects.all()
     serializer_class = part_serializers.PartInternalPriceSerializer
-    permission_required = 'roles.sales_order.show'
 
     filter_backends = SEARCH_ORDER_FILTER
     filterset_fields = ['part']

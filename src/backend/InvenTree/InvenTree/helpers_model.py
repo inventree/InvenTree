@@ -345,6 +345,7 @@ def notify_responsible(
     instance,
     sender,
     content: NotificationBody = InvenTreeNotificationBodies.NewOrder,
+    html_context: Optional[dict] = None,
     exclude=None,
     extra_users: Optional[list] = None,
 ):
@@ -357,6 +358,7 @@ def notify_responsible(
         instance: The newly created instance
         sender: Sender model reference
         content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
+        html_context: Optional HTML context to include in the notification. Defaults to None.
         exclude (User, optional): User instance that should be excluded. Defaults to None.
         extra_users (list, optional): List of extra users to notify. Defaults to None.
     """
@@ -370,7 +372,14 @@ def notify_responsible(
     if extra_users:
         users.extend(extra_users)
 
-    notify_users(users, instance, sender, content=content, exclude=exclude)
+    notify_users(
+        users,
+        instance,
+        sender,
+        content=content,
+        html_context=html_context,
+        exclude=exclude,
+    )
 
 
 def notify_users(
@@ -378,6 +387,7 @@ def notify_users(
     instance,
     sender,
     content: NotificationBody = InvenTreeNotificationBodies.NewOrder,
+    html_context: Optional[dict] = None,
     exclude=None,
 ):
     """Notify all passed users or groups.
@@ -390,6 +400,7 @@ def notify_users(
         instance: The newly created instance
         sender: Sender model reference
         content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
+        html_context (dict, optional): Optional HTML context to include in the notification. Defaults to None.
         exclude (User, optional): User instance that should be excluded. Defaults to None.
     """
     # Setup context for notification parsing
@@ -401,7 +412,9 @@ def notify_users(
     }
 
     # Setup notification context
+    # Extra HTML context is included, but cannot override the standard keys
     context = {
+        **(html_context or {}),
         'instance': instance,
         'name': content.name.format(**content_context),
         'message': content.message.format(**content_context),
@@ -409,8 +422,7 @@ def notify_users(
         'template': {'subject': content.name.format(**content_context)},
     }
 
-    tmp = content.template
-    if tmp:
+    if tmp := content.template:
         context['template']['html'] = tmp.format(**content_context)
 
     # Create notification

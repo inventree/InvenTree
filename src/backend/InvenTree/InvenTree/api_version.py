@@ -1,13 +1,41 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 552
+INVENTREE_API_VERSION = 560
+
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v552 -> 2026-09-29 : https://github.com/inventree/InvenTree/pull/XXXXX
+v560 -> 2026-10-18 : https://github.com/inventree/InvenTree/pull/12955
     - Refactors the build apis to viewsets; no functional changes to existing endpoints
+
+v559 -> 2026-10-17 : https://github.com/inventree/InvenTree/pull/13023
+    - Enforce maximum length for "notes" field in stock-adjustment API endpoints
+
+v558 -> 2026-10-15 : https://github.com/inventree/InvenTree/pull/9768
+    - Adds "receiving_company" and "delivery_address" fields to the PurchaseOrder API endpoint
+
+v557 -> 2026-10-15 : https://github.com/inventree/InvenTree/pull/12978
+    - Adds tips endpoints
+
+v556 -> 2026-10-14 : https://github.com/inventree/InvenTree/pull/13017
+    - Adds 'is_internal' field (and filter) to the Company API endpoint
+    - Adds 'INVENTREE_DEFAULT_INTERNAL_COMPANY' global setting
+    - Exposes 'model_filters' on the global and user settings API endpoints
+
+v555 -> 2026-10-14 : https://github.com/inventree/InvenTree/pull/13016
+    - Adds "contact" field to the SalesOrderShipment model and API endpoint
+    - Adds "phone" and "email" fields to the Address model and API endpoint
+
+v554 -> 2026-10-09 : https://github.com/inventree/InvenTree/pull/12986
+    - Add missing nullable annotations for read_only fields
+
+v553 -> 2026-10-04 : https://github.com/inventree/InvenTree/pull/12965
+    - Fix user creation with 'group_ids' via the User API endpoint
+
+v552 -> 2026-10-02 : https://github.com/inventree/InvenTree/pull/12967
+    - Fix transitions endpoint schema to indicate that it returns a list
 
 v551 -> 2026-09-21 : https://github.com/inventree/InvenTree/pull/12693
     - Docstring updates for automated transition API documentation generation

@@ -152,6 +152,15 @@ class SettingsSerializer(InvenTreeModelSerializer):
                 })
         return ret
 
+    def save(self, **kwargs):
+        """Save the setting, adding the updated_by field."""
+        request = self.context.get('request', None)
+        if request is not None and hasattr(request, 'user'):
+            kwargs['updated_by'] = request.user
+        elif 'updated_by' in kwargs:
+            kwargs.pop('updated_by')
+        return super().save(**kwargs)
+
 
 class GlobalSettingsSerializer(SettingsSerializer):
     """Serializer for the InvenTreeSetting model."""
@@ -170,6 +179,7 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'units',
             'choices',
             'model_name',
+            'model_filters',
             'api_url',
             'typ',
             'read_only',
@@ -217,6 +227,7 @@ class UserSettingsSerializer(SettingsSerializer):
             'units',
             'choices',
             'model_name',
+            'model_filters',
             'api_url',
             'typ',
             'confirm',
@@ -1323,6 +1334,7 @@ class OAuth2ApplicationSerializer(serializers.ModelSerializer):
             'is_builtin',
         ]
         read_only_fields = ['id', 'client_id', 'client_secret', 'is_builtin']
+        extra_kwargs = {'client_secret': {'allow_null': True}}
 
     is_builtin = serializers.SerializerMethodField()
 

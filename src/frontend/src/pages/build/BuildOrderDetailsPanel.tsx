@@ -168,6 +168,7 @@ export function BuildOrderDetailsPanel({
       type: 'link',
       name: 'take_from',
       icon: 'location',
+      hidden: !instance?.take_from,
       model: ModelType.stocklocation,
       label: t`Source Location`,
       backup_value: t`Any location`
