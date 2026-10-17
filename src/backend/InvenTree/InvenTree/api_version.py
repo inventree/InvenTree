@@ -1,11 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 559
+INVENTREE_API_VERSION = 560
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v560 -> 2026-10-16 : https://github.com/inventree/InvenTree/pull/xxxxx
+    - Adds new "pricing" user role, covering the PartPricing, PartSellPriceBreak and PartInternalPriceBreak models
+    - The "part" role no longer grants access to part pricing data
+    - Cached pricing fields (pricing_min, pricing_max, etc) are omitted from Part and BomItem API responses for users without the "pricing" view permission
+    - Moves part pricing endpoints to the new /api/pricing/ namespace:
+        - /api/part/sale-price/ -> /api/pricing/sale-price/
+        - /api/part/internal-price/ -> /api/pricing/internal-price/
+        - /api/part/<id>/pricing/ -> /api/pricing/part/<id>/
+    - The legacy endpoints redirect (HTTP 308, preserving the request method and body) to the new endpoints
 
 v559 -> 2026-10-17 : https://github.com/inventree/InvenTree/pull/13023
     - Enforce maximum length for "notes" field in stock-adjustment API endpoints
