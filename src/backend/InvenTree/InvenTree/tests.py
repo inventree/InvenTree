@@ -1046,6 +1046,16 @@ class TestSerialNumberExtraction(TestCase):
         with self.assertRaises(ValidationError):
             e('1,2,3', 5, 1)
 
+        # Test serial number exceeding maximum length
+        with self.assertRaises(ValidationError) as exc:
+            e('1,' + 'x' * 101, 2, 1)
+
+        self.assertIn('Serial number exceeds maximum length', str(exc.exception))
+
+        # Generated serials are also checked
+        with self.assertRaises(ValidationError):
+            e('x' * 100 + '9+', 2, 1)
+
         # Test empty string
         with self.assertRaises(ValidationError):
             e(', , ,', 0, 1)

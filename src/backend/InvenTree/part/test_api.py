@@ -3045,12 +3045,8 @@ class BomItemTest(InvenTreeAPITestCase):
         from part.models import BomItemSubstitute
 
         # Viewing 'substitutes' requires the 'bom' role (BomItemSubstitute is not
-        # covered by the part->bomitem RULESET_CHANGE_INHERIT fallback). Grant both
-        # 'add' and 'delete' so the 'bom' RuleSet ends up fully matching the existing
-        # part-inherited bomitem permissions - granting only 'view' would otherwise
-        # cause update_group_roles() to wipe those already-inherited permissions.
-        self.assignRole('bom.add')
-        self.assignRole('bom.delete')
+        # covered by the part->bomitem RULESET_CHANGE_INHERIT fallback)
+        self.assignRole('bom.view')
 
         bom_item = BomItem.objects.get(pk=3)
 
@@ -3129,10 +3125,8 @@ class BomItemTest(InvenTreeAPITestCase):
 
     def test_output_options(self):
         """Test that various output options work as expected."""
-        # Viewing 'substitutes' requires the 'bom' role (see test_get_bom_detail for why
-        # both 'add' and 'delete' are granted together).
-        self.assignRole('bom.add')
-        self.assignRole('bom.delete')
+        # Viewing 'substitutes' requires the 'bom' role
+        self.assignRole('bom.view')
 
         # Viewing cached pricing data requires the 'pricing' role
         self.assignRole('pricing.view')
