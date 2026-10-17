@@ -34,6 +34,7 @@ from importer.registry import register_importer
 from InvenTree.mixins import DataImportExportSerializerMixin
 from InvenTree.ready import isGeneratingSchema
 from InvenTree.serializers import OptionalField, TreePathSerializer
+from pricing.models import PartInternalPriceBreak, PartPricing, PartSellPriceBreak
 from users.serializers import UserSerializer
 
 from .models import (
@@ -42,10 +43,7 @@ from .models import (
     Part,
     PartCategory,
     PartCategoryParameterTemplate,
-    PartInternalPriceBreak,
-    PartPricing,
     PartRelated,
-    PartSellPriceBreak,
     PartStar,
     PartStocktake,
     PartTestTemplate,

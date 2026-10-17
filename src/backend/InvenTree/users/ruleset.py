@@ -143,9 +143,9 @@ def get_ruleset_models() -> dict:
             'company_manufacturerpart',
         ],
         RuleSetEnum.PRICING: [
-            'part_partpricing',
-            'part_partsellpricebreak',
-            'part_partinternalpricebreak',
+            'pricing_partpricing',
+            'pricing_partsellpricebreak',
+            'pricing_partinternalpricebreak',
         ],
         RuleSetEnum.STOCK_LOCATION: ['stock_stocklocation', 'stock_stocklocationtype'],
         RuleSetEnum.STOCK: [

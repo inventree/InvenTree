@@ -16,6 +16,7 @@ import stock.models
 from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeTestCase
 from order.status_codes import PurchaseOrderStatus
+from pricing.models import PartInternalPriceBreak, PartPricing
 
 
 class PartPricingTests(InvenTreeTestCase):
@@ -224,7 +225,7 @@ class PartPricingTests(InvenTreeTestCase):
 
         for ii in range(5):
             # Let's add some internal price breaks
-            part.models.PartInternalPriceBreak.objects.create(
+            PartInternalPriceBreak.objects.create(
                 part=self.part, quantity=ii + 1, price=10 - ii, price_currency=currency
             )
 
@@ -423,7 +424,7 @@ class PartPricingTests(InvenTreeTestCase):
         self.part.delete()
 
         # Check that the pricing was removed also
-        with self.assertRaises(part.models.PartPricing.DoesNotExist):
+        with self.assertRaises(PartPricing.DoesNotExist):
             pricing.refresh_from_db()
 
     @override_settings(TESTING_PRICING=True)
@@ -459,12 +460,12 @@ class PartPricingTests(InvenTreeTestCase):
             )
 
         # Ensure there is no pricing data
-        part.models.PartPricing.objects.all().delete()
+        PartPricing.objects.all().delete()
 
         check_missing_pricing()
 
         # Check that PartPricing objects have been created
-        self.assertEqual(part.models.PartPricing.objects.count(), 101)
+        self.assertEqual(PartPricing.objects.count(), 101)
 
     def test_check_missing_pricing_batches_scheduling(self):
         """check_missing_pricing() must batch its scheduling calls, not scan the task queue per part.
@@ -486,7 +487,7 @@ class PartPricingTests(InvenTreeTestCase):
             )
 
         # Ensure there is no pricing data
-        part.models.PartPricing.objects.all().delete()
+        PartPricing.objects.all().delete()
 
         with self.captureOnCommitCallbacks(execute=True):
             with mock.patch('InvenTree.tasks.check_existing_task') as mock_check:
@@ -496,7 +497,7 @@ class PartPricingTests(InvenTreeTestCase):
         mock_check.assert_not_called()
 
         # PartPricing objects were still created and scheduled for a background update
-        self.assertEqual(part.models.PartPricing.objects.count(), 21)
+        self.assertEqual(PartPricing.objects.count(), 21)
 
     @override_settings(TESTING_PRICING=True)
     def test_delete_part_with_stock_items(self):
@@ -522,17 +523,17 @@ class PartPricingTests(InvenTreeTestCase):
         p.schedule_pricing_update(create=True)
 
         # Check that a PartPricing object exists
-        self.assertTrue(part.models.PartPricing.objects.filter(part=p).exists())
+        self.assertTrue(PartPricing.objects.filter(part=p).exists())
 
         # Delete the part
         p.delete()
 
         # Check that the PartPricing object has been deleted
-        self.assertFalse(part.models.PartPricing.objects.filter(part_id=p.pk).exists())
+        self.assertFalse(PartPricing.objects.filter(part_id=p.pk).exists())
 
         # Try to update pricing (should fail gracefully as the Part has been deleted)
         p.schedule_pricing_update(create=False)
-        self.assertFalse(part.models.PartPricing.objects.filter(part_id=p.pk).exists())
+        self.assertFalse(PartPricing.objects.filter(part_id=p.pk).exists())
 
     @override_settings(TESTING_PRICING=True)
     def test_get_part_deleted(self):
@@ -594,7 +595,7 @@ class PartPricingTests(InvenTreeTestCase):
         pricing.update_pricing()
 
         # As the part no longer exists, no PartPricing row should have been created
-        self.assertFalse(part.models.PartPricing.objects.filter(part_id=p.pk).exists())
+        self.assertFalse(PartPricing.objects.filter(part_id=p.pk).exists())
 
     @override_settings(TESTING_PRICING=True)
     def test_multi_level_bom(self):

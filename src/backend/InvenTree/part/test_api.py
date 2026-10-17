@@ -37,9 +37,9 @@ from part.models import (
     PartCategory,
     PartCategoryParameterTemplate,
     PartRelated,
-    PartSellPriceBreak,
     PartTestTemplate,
 )
+from pricing.models import PartSellPriceBreak
 from stock.models import StockItem, StockLocation
 from stock.status_codes import StockStatus
 

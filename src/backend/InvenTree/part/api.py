@@ -47,6 +47,7 @@ from InvenTree.mixins import (
     UpdateAPI,
 )
 from InvenTree.tasks import offload_task
+from pricing.models import PartInternalPriceBreak, PartSellPriceBreak
 from stock.models import StockLocation
 
 from . import serializers as part_serializers
@@ -56,9 +57,7 @@ from .models import (
     Part,
     PartCategory,
     PartCategoryParameterTemplate,
-    PartInternalPriceBreak,
     PartRelated,
-    PartSellPriceBreak,
     PartStocktake,
     PartTestTemplate,
 )
