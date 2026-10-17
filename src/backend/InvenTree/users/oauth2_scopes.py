@@ -17,6 +17,7 @@ _roles = {
     'stock': 'Role Stock Items',
     'bom': 'Role Bills of Material',
     'build': 'Role Build Orders',
+    'ncr': 'Role Non-Conformance Reports',
     'purchase_order': 'Role Purchase Orders',
     'sales_order': 'Role Sales Orders',
     'return_order': 'Role Return Orders',
