@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 04:48+0000\n"
-"PO-Revision-Date: 2026-10-16 04:53\n"
+"POT-Creation-Date: 2026-10-17 03:46+0000\n"
+"PO-Revision-Date: 2026-10-17 03:50\n"
 "Last-Translator: \n"
 "Language-Team: Catalan\n"
 "Language: ca_ES\n"
@@ -92,7 +92,7 @@ msgid "Could not convert {original} to {unit}"
 msgstr "No s'ha pogut convertir {original} a {unit}"
 
 #: InvenTree/conversion.py:334 InvenTree/conversion.py:348
-#: InvenTree/helpers.py:621 order/models.py:823 order/models.py:1121
+#: InvenTree/helpers.py:621 order/models.py:890 order/models.py:1188
 #: part/models.py:3910 stock/models.py:2114
 msgid "Invalid quantity provided"
 msgstr "La quantitat proporcionada no és vàlida"
@@ -113,14 +113,14 @@ msgstr "Introduïu la data"
 msgid "Invalid decimal value"
 msgstr "Valor decimal no vàlid"
 
-#: InvenTree/fields.py:286 build/serializers.py:537 build/serializers.py:598
-#: build/serializers.py:1781 common/models.py:3136 company/models.py:875
-#: order/models.py:2180
+#: InvenTree/fields.py:286 build/serializers.py:538 build/serializers.py:601
+#: build/serializers.py:1788 common/models.py:3136 company/models.py:884
+#: order/models.py:2247
 #: report/templates/report/inventree_build_order_report.html:171
-#: stock/models.py:3785 stock/models.py:3911 stock/serializers.py:777
-#: stock/serializers.py:959 stock/serializers.py:1138 stock/serializers.py:1304
-#: stock/serializers.py:1688 stock/serializers.py:1777
-#: stock/serializers.py:1986
+#: stock/models.py:3787 stock/models.py:3913 stock/serializers.py:778
+#: stock/serializers.py:962 stock/serializers.py:1142 stock/serializers.py:1309
+#: stock/serializers.py:1694 stock/serializers.py:1784
+#: stock/serializers.py:1994
 msgid "Notes"
 msgstr "Notes"
 
@@ -141,31 +141,35 @@ msgstr "No es poden serialitzar més de 1000 elements alhora"
 msgid "Empty serial number string"
 msgstr "La cadena del número de sèrie és buida"
 
-#: InvenTree/helpers.py:660
+#: InvenTree/helpers.py:665
+msgid "Serial number exceeds maximum length"
+msgstr ""
+
+#: InvenTree/helpers.py:669
 msgid "Duplicate serial"
 msgstr "Número de sèrie duplicat"
 
-#: InvenTree/helpers.py:692 InvenTree/helpers.py:735 InvenTree/helpers.py:753
-#: InvenTree/helpers.py:760 InvenTree/helpers.py:779
+#: InvenTree/helpers.py:701 InvenTree/helpers.py:744 InvenTree/helpers.py:762
+#: InvenTree/helpers.py:769 InvenTree/helpers.py:788
 #, python-brace-format
 msgid "Invalid group: {group}"
 msgstr "Grup no vàlid: {group}"
 
-#: InvenTree/helpers.py:723
+#: InvenTree/helpers.py:732
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
 msgstr "L'interval del grup {group} supera la quantitat permesa ({expected_quantity})"
 
-#: InvenTree/helpers.py:789
+#: InvenTree/helpers.py:798
 msgid "No serial numbers found"
 msgstr "No s'ha trobat cap número de sèrie"
 
-#: InvenTree/helpers.py:796
+#: InvenTree/helpers.py:805
 #, python-brace-format
 msgid "Number of unique serial numbers ({n}) must match quantity ({q})"
 msgstr "El nombre de números de sèrie únics ({n}) ha de coincidir amb la quantitat ({q})"
 
-#: InvenTree/helpers.py:926
+#: InvenTree/helpers.py:935
 msgid "Remove HTML tags from this value"
 msgstr "Elimineu les etiquetes HTML d'aquest valor"
 
@@ -221,7 +225,7 @@ msgstr "L'URL proporcionat no és un fitxer d'imatge vàlid"
 msgid "Log in to the app"
 msgstr "Inicia la sessió a l'aplicació"
 
-#: InvenTree/magic_login.py:41 company/models.py:201 company/models.py:509
+#: InvenTree/magic_login.py:41 company/models.py:210 company/models.py:518
 #: users/serializers.py:218
 msgid "Email"
 msgstr "Correu electrònic"
@@ -288,8 +292,8 @@ msgstr "Nom"
 
 #: InvenTree/models.py:1258 build/models.py:275 common/models.py:187
 #: common/models.py:2475 common/models.py:2616 common/models.py:2793
-#: common/models.py:3410 company/models.py:610 company/models.py:866
-#: order/models.py:509 order/models.py:2225 part/models.py:1157
+#: common/models.py:3410 company/models.py:619 company/models.py:875
+#: order/models.py:515 order/models.py:2292 part/models.py:1157
 #: report/models.py:239 report/models.py:967 report/models.py:993
 #: report/templates/report/inventree_build_order_report.html:116
 #: stock/models.py:95
@@ -347,7 +351,7 @@ msgstr "Imatge"
 msgid "Must be a valid number"
 msgstr "Ha de ser un nombre vàlid"
 
-#: InvenTree/serializers.py:595 company/models.py:249 part/models.py:3278
+#: InvenTree/serializers.py:595 company/models.py:258 part/models.py:3278
 msgid "Currency"
 msgstr "Moneda"
 
@@ -611,13 +615,13 @@ msgid "Include Variants"
 msgstr "Inclou les variants"
 
 #: build/api.py:103 build/api.py:490 build/api.py:1098 build/models.py:293
-#: build/serializers.py:1207 build/serializers.py:1383
-#: build/serializers.py:1476 company/models.py:1085 company/serializers.py:480
+#: build/serializers.py:1214 build/serializers.py:1390
+#: build/serializers.py:1483 company/models.py:1094 company/serializers.py:480
 #: order/api.py:327 order/api.py:331 order/api.py:988 order/api.py:1321
 #: order/api.py:1324 order/api.py:2162 order/api.py:2165 order/api.py:2320
-#: order/models.py:2357 order/models.py:2525 order/models.py:2526
-#: order/models.py:4063 order/models.py:4064 part/api.py:1179 part/api.py:1182
-#: part/api.py:1399 part/models.py:530 part/models.py:3289 part/models.py:3432
+#: order/models.py:2424 order/models.py:2592 order/models.py:2593
+#: order/models.py:4130 order/models.py:4131 part/api.py:1178 part/api.py:1181
+#: part/api.py:1398 part/models.py:530 part/models.py:3289 part/models.py:3432
 #: part/models.py:3490 part/models.py:3512 part/models.py:3534
 #: part/models.py:3675 part/models.py:4004 part/models.py:4478
 #: part/serializers.py:1333 part/serializers.py:2010
@@ -632,7 +636,7 @@ msgstr "Inclou les variants"
 #: report/templates/report/inventree_transfer_order_report.html:24
 #: stock/api.py:659 stock/api.py:1620 stock/serializers.py:125
 #: stock/serializers.py:177 stock/serializers.py:430 stock/serializers.py:638
-#: stock/serializers.py:1222 templates/email/build_order_completed.html:17
+#: stock/serializers.py:1226 templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:15
 #: templates/email/overdue_build_order.html:16
@@ -642,8 +646,8 @@ msgstr "Inclou les variants"
 msgid "Part"
 msgstr "Peça"
 
-#: build/api.py:123 build/api.py:126 build/serializers.py:1490 part/api.py:1012
-#: part/api.py:1410 part/models.py:414 part/models.py:1175 part/models.py:3562
+#: build/api.py:123 build/api.py:126 build/serializers.py:1497 part/api.py:1011
+#: part/api.py:1409 part/models.py:414 part/models.py:1175 part/models.py:3562
 #: part/serializers.py:1343 part/serializers.py:1781 stock/api.py:937
 msgid "Category"
 msgstr "Categoria"
@@ -716,16 +720,16 @@ msgstr "Exclou l'arbre"
 msgid "Build must be cancelled before it can be deleted"
 msgstr "L'ordre de producció s'ha de cancel·lar abans de poder-la suprimir"
 
-#: build/api.py:460 build/serializers.py:1417 part/models.py:1342
+#: build/api.py:460 build/serializers.py:1424 part/models.py:1342
 #: part/models.py:4046
 msgid "Consumable"
 msgstr "Consumible"
 
-#: build/api.py:476 build/serializers.py:1420 part/models.py:4040
+#: build/api.py:476 build/serializers.py:1427 part/models.py:4040
 msgid "Optional"
 msgstr "Opcional"
 
-#: build/api.py:479 build/serializers.py:1462 common/setting/system.py:513
+#: build/api.py:479 build/serializers.py:1469 common/setting/system.py:513
 #: part/models.py:1290 part/serializers.py:1726 part/serializers.py:1752
 #: stock/api.py:712
 msgid "Assembly"
@@ -735,7 +739,7 @@ msgstr "Conjunt"
 msgid "Tracked"
 msgstr "Rastrejat"
 
-#: build/api.py:485 build/serializers.py:1423 part/models.py:1308
+#: build/api.py:485 build/serializers.py:1430 part/models.py:1308
 msgid "Testable"
 msgstr "Comprovable"
 
@@ -743,24 +747,24 @@ msgstr "Comprovable"
 msgid "Order Outstanding"
 msgstr "Comanda pendent"
 
-#: build/api.py:505 build/serializers.py:1519 order/api.py:1011
+#: build/api.py:505 build/serializers.py:1526 order/api.py:1011
 #: order/api.py:2343
 msgid "Allocated"
 msgstr "Assignat"
 
-#: build/api.py:530 build/models.py:2266 build/serializers.py:1436
+#: build/api.py:530 build/models.py:2266 build/serializers.py:1443
 msgid "Consumed"
 msgstr "Consumit"
 
-#: build/api.py:539 company/models.py:930 company/serializers.py:457
+#: build/api.py:539 company/models.py:939 company/serializers.py:457
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
 #: templates/email/part_event_notification.html:18
 msgid "Available"
 msgstr "Disponible"
 
-#: build/api.py:580 build/serializers.py:1521 company/serializers.py:454
-#: order/serializers.py:1408 order/serializers.py:2745 part/serializers.py:842
+#: build/api.py:580 build/serializers.py:1528 company/serializers.py:454
+#: order/serializers.py:1440 order/serializers.py:2778 part/serializers.py:842
 #: part/serializers.py:1194 part/serializers.py:1790
 #: templates/email/low_stock_notification.html:18
 msgid "On Order"
@@ -770,23 +774,23 @@ msgstr "En comanda"
 msgid "Build not found"
 msgstr "No s'ha trobat l'ordre de producció"
 
-#: build/api.py:1121 build/models.py:130 order/models.py:2390
+#: build/api.py:1121 build/models.py:130 order/models.py:2457
 #: report/templates/report/inventree_build_order_report.html:104
 #: stock/serializers.py:98 templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
 msgid "Build Order"
 msgstr "Ordre de producció"
 
-#: build/api.py:1135 build/api.py:1139 build/serializers.py:419
-#: build/serializers.py:525 build/serializers.py:576 build/serializers.py:1257
-#: build/serializers.py:1263 order/api.py:1368 order/api.py:1373
-#: order/api.py:2201 order/api.py:2206 order/serializers.py:851
-#: order/serializers.py:991 order/serializers.py:2310 part/serializers.py:1353
+#: build/api.py:1135 build/api.py:1139 build/serializers.py:420
+#: build/serializers.py:526 build/serializers.py:578 build/serializers.py:1264
+#: build/serializers.py:1270 order/api.py:1368 order/api.py:1373
+#: order/api.py:2201 order/api.py:2206 order/serializers.py:878
+#: order/serializers.py:1022 order/serializers.py:2342 part/serializers.py:1353
 #: stock/api.py:1052 stock/serializers.py:116 stock/serializers.py:650
-#: stock/serializers.py:770 stock/serializers.py:954 stock/serializers.py:1063
-#: stock/serializers.py:1131 stock/serializers.py:1770
-#: stock/serializers.py:2043 stock/serializers.py:2171
-#: stock/serializers.py:2280 templates/email/purchase_order_received.html:17
+#: stock/serializers.py:770 stock/serializers.py:956 stock/serializers.py:1066
+#: stock/serializers.py:1134 stock/serializers.py:1776
+#: stock/serializers.py:2051 stock/serializers.py:2179
+#: stock/serializers.py:2288 templates/email/purchase_order_received.html:17
 #: templates/email/stale_stock_notification.html:18 users/models.py:745
 msgid "Location"
 msgstr "Ubicació"
@@ -819,7 +823,7 @@ msgstr "No es pot crear una ordre de producció per a una peça desbloquejada"
 msgid "Build orders can only be externally fulfilled for purchaseable parts"
 msgstr "Les ordres de producció només es poden satisfer externament per a peces comprables"
 
-#: build/models.py:230 order/models.py:423
+#: build/models.py:230 order/models.py:429
 msgid "Responsible user or group must be specified"
 msgstr "Cal especificar un usuari o grup responsable"
 
@@ -827,7 +831,7 @@ msgstr "Cal especificar un usuari o grup responsable"
 msgid "Build order part cannot be changed"
 msgstr "No es pot canviar la peça de l'ordre de producció"
 
-#: build/models.py:240 order/models.py:441
+#: build/models.py:240 order/models.py:447
 msgid "Target date must be after start date"
 msgstr "La data objectiu ha de ser posterior a la data d'inici"
 
@@ -835,9 +839,9 @@ msgstr "La data objectiu ha de ser posterior a la data d'inici"
 msgid "Build Order Reference"
 msgstr "Referència de l'ordre de producció"
 
-#: build/models.py:269 build/serializers.py:1414 order/models.py:722
-#: order/models.py:1461 order/models.py:2173 order/models.py:3336
-#: order/models.py:3778 part/models.py:4096
+#: build/models.py:269 build/serializers.py:1421 order/models.py:757
+#: order/models.py:1528 order/models.py:2240 order/models.py:3403
+#: order/models.py:3845 part/models.py:4096
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_purchase_order_report.html:34
 #: report/templates/report/inventree_return_order_report.html:25
@@ -866,8 +870,8 @@ msgstr "Referència de la comanda de venda"
 msgid "Sales Order to which this build is allocated"
 msgstr "Comanda de venda a la qual s'assigna aquesta producció"
 
-#: build/models.py:312 build/serializers.py:1068 order/models.py:3798
-#: order/serializers.py:2049
+#: build/models.py:312 build/serializers.py:1075 order/models.py:3865
+#: order/serializers.py:2081
 msgid "Source Location"
 msgstr "Ubicació d'origen"
 
@@ -883,7 +887,7 @@ msgstr "Producció externa"
 msgid "This build order is fulfilled externally"
 msgstr "Aquesta ordre de producció se satisfà externament"
 
-#: build/models.py:330 order/models.py:3808
+#: build/models.py:330 order/models.py:3875
 msgid "Destination Location"
 msgstr "Ubicació de destinació"
 
@@ -915,17 +919,17 @@ msgstr "Estat de la producció"
 msgid "Build status code"
 msgstr "Codi d'estat de la producció"
 
-#: build/models.py:366 build/serializers.py:406 order/serializers.py:867
-#: order/serializers.py:996 stock/models.py:1239 stock/serializers.py:90
-#: stock/serializers.py:1944
+#: build/models.py:366 build/serializers.py:407 order/serializers.py:895
+#: order/serializers.py:1028 stock/models.py:1239 stock/serializers.py:90
+#: stock/serializers.py:1951
 msgid "Batch Code"
 msgstr "Codi de lot"
 
-#: build/models.py:370 build/serializers.py:407
+#: build/models.py:370 build/serializers.py:408
 msgid "Batch code for this build output"
 msgstr "Codi de lot d'aquest resultat de producció"
 
-#: build/models.py:374 order/models.py:546 order/serializers.py:163
+#: build/models.py:374 order/models.py:552 order/serializers.py:163
 #: part/models.py:1377 stock/models.py:1320
 msgid "Creation Date"
 msgstr "Data de creació"
@@ -946,8 +950,8 @@ msgstr "Data objectiu de finalització"
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Data objectiu per a la finalització de la producció. La producció estarà vençuda després d'aquesta data."
 
-#: build/models.py:394 order/models.py:770 order/models.py:3375
-#: order/models.py:3827
+#: build/models.py:394 order/models.py:815 order/models.py:3442
+#: order/models.py:3894
 msgid "Completion Date"
 msgstr "Data de finalització"
 
@@ -964,7 +968,7 @@ msgid "User who issued this build order"
 msgstr "Usuari que ha emès aquesta ordre de producció"
 
 #: build/models.py:429 common/models.py:202 order/api.py:198
-#: order/models.py:578 part/models.py:1394
+#: order/models.py:584 part/models.py:1394
 #: report/templates/report/inventree_build_order_report.html:157
 msgid "Responsible"
 msgstr "Responsable"
@@ -991,7 +995,7 @@ msgid "Priority of this build order"
 msgstr "Prioritat d'aquesta ordre de producció"
 
 #: build/models.py:453 common/models.py:162 common/models.py:180
-#: order/api.py:184 order/models.py:518 order/models.py:2205
+#: order/api.py:184 order/models.py:524 order/models.py:2272
 msgid "Project Code"
 msgstr "Codi de projecte"
 
@@ -1028,12 +1032,12 @@ msgid "Build output has already been completed"
 msgstr "El resultat de producció ja s'ha completat"
 
 #: build/models.py:1368 build/models.py:1469 build/serializers.py:328
-#: build/serializers.py:382 build/serializers.py:925 build/serializers.py:1732
-#: order/models.py:820 order/serializers.py:627 order/serializers.py:862
+#: build/serializers.py:382 build/serializers.py:932 build/serializers.py:1739
+#: order/models.py:887 order/serializers.py:654 order/serializers.py:889
 #: part/models.py:3894 stock/models.py:1079 stock/models.py:1504
 #: stock/models.py:1588 stock/models.py:1906 stock/models.py:2117
-#: stock/models.py:2440 stock/serializers.py:748 stock/serializers.py:1054
-#: stock/serializers.py:1116 stock/serializers.py:1933
+#: stock/models.py:2440 stock/serializers.py:748 stock/serializers.py:1057
+#: stock/serializers.py:1119 stock/serializers.py:1940
 msgid "Quantity must be greater than zero"
 msgstr "La quantitat ha de ser més gran que zero"
 
@@ -1053,14 +1057,14 @@ msgstr "Els articles d'estoc assignats encara estan en producció"
 msgid "Cannot partially complete a build output with allocated items"
 msgstr "No es pot completar parcialment un resultat de producció amb elements assignats"
 
-#: build/models.py:1646 order/models.py:4250 order/serializers.py:2013
-#: order/serializers.py:2866 stock/models.py:1494 stock/models.py:1898
+#: build/models.py:1646 order/models.py:4317 order/serializers.py:2045
+#: order/serializers.py:2899 stock/models.py:1494 stock/models.py:1898
 #: stock/models.py:2121 stock/models.py:2444 stock/models.py:2738
 msgid "Stock item no longer exists"
 msgstr "L'article d'estoc ja no existeix"
 
-#: build/models.py:1664 build/serializers.py:973 order/serializers.py:1791
-#: order/serializers.py:2822
+#: build/models.py:1664 build/serializers.py:980 order/serializers.py:1823
+#: order/serializers.py:2855
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "S'ha superat la quantitat disponible ({q})"
@@ -1074,10 +1078,10 @@ msgid "Build object"
 msgstr "Objecte de producció"
 
 #: build/models.py:2257 build/models.py:2537 build/serializers.py:314
-#: build/serializers.py:367 build/serializers.py:1435 common/models.py:1408
-#: order/models.py:2136 order/models.py:3227 order/models.py:4217
-#: order/serializers.py:1900 order/serializers.py:2404
-#: order/serializers.py:2992 part/models.py:3446 part/models.py:4034
+#: build/serializers.py:367 build/serializers.py:1442 common/models.py:1408
+#: order/models.py:2203 order/models.py:3294 order/models.py:4284
+#: order/serializers.py:1932 order/serializers.py:2437
+#: order/serializers.py:3025 part/models.py:3446 part/models.py:4034
 #: report/templates/report/inventree_bill_of_materials_report.html:138
 #: report/templates/report/inventree_build_order_report.html:112
 #: report/templates/report/inventree_purchase_order_report.html:35
@@ -1091,7 +1095,7 @@ msgstr "Objecte de producció"
 #: report/templates/report/inventree_test_report.html:169
 #: report/templates/report/inventree_transfer_order_report.html:26
 #: stock/serializers.py:141 stock/serializers.py:185 stock/serializers.py:736
-#: stock/serializers.py:1047 stock/serializers.py:1104
+#: stock/serializers.py:1050 stock/serializers.py:1107
 #: templates/email/build_order_completed.html:18
 #: templates/email/purchase_order_received.html:16
 #: templates/email/stale_stock_notification.html:19
@@ -1110,7 +1114,7 @@ msgstr "Quantitat d'estoc consumit"
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "L'element de producció ha d'especificar un resultat de producció, ja que la peça principal està marcada com a rastrejable"
 
-#: build/models.py:2431 build/serializers.py:956
+#: build/models.py:2431 build/serializers.py:963
 msgid "Selected stock item does not match BOM line"
 msgstr "L'article d'estoc seleccionat no coincideix amb la línia de la BOM"
 
@@ -1127,16 +1131,16 @@ msgstr "La quantitat ha de ser 1 per a l'estoc serialitzat"
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "La quantitat assignada ({q}) no pot superar la quantitat d'estoc disponible ({a})"
 
-#: build/models.py:2483 order/models.py:3176 order/models.py:4181
+#: build/models.py:2483 order/models.py:3243 order/models.py:4248
 msgid "Stock item is over-allocated"
 msgstr "L'article d'estoc està sobreassignat"
 
-#: build/models.py:2527 build/serializers.py:908 build/serializers.py:1224
-#: order/serializers.py:1728 order/serializers.py:1749
-#: order/serializers.py:2768 order/serializers.py:2789
+#: build/models.py:2527 build/serializers.py:915 build/serializers.py:1231
+#: order/serializers.py:1760 order/serializers.py:1781
+#: order/serializers.py:2801 order/serializers.py:2822
 #: report/templates/report/inventree_sales_order_shipment_report.html:28
 #: stock/api.py:1511 stock/models.py:470 stock/serializers.py:107
-#: stock/serializers.py:866 stock/serializers.py:1622 stock/serializers.py:1738
+#: stock/serializers.py:867 stock/serializers.py:1627 stock/serializers.py:1744
 msgid "Stock Item"
 msgstr "Article d'estoc"
 
@@ -1164,7 +1168,7 @@ msgstr "Nivell de producció"
 msgid "Part Name"
 msgstr "Nom de la peça"
 
-#: build/serializers.py:254 build/serializers.py:935
+#: build/serializers.py:254 build/serializers.py:942
 msgid "Build Output"
 msgstr "Resultat de producció"
 
@@ -1196,359 +1200,359 @@ msgstr "Cal una quantitat entera per a les peces rastrejables"
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
 msgstr "Cal una quantitat entera, ja que la llista de materials conté peces rastrejables"
 
-#: build/serializers.py:413 order/serializers.py:883 order/serializers.py:1904
-#: order/serializers.py:2996 stock/serializers.py:759
+#: build/serializers.py:414 order/serializers.py:911 order/serializers.py:1936
+#: order/serializers.py:3029 stock/serializers.py:759
 msgid "Serial Numbers"
 msgstr "Números de sèrie"
 
-#: build/serializers.py:414
+#: build/serializers.py:415
 msgid "Enter serial numbers for build outputs"
 msgstr "Introduïu els números de sèrie dels resultats de producció"
 
-#: build/serializers.py:420
+#: build/serializers.py:421
 msgid "Stock location for build output"
 msgstr "Ubicació d'estoc del resultat de producció"
 
-#: build/serializers.py:435
+#: build/serializers.py:436
 msgid "Auto Allocate Serial Numbers"
 msgstr "Assigna automàticament els números de sèrie"
 
-#: build/serializers.py:437
+#: build/serializers.py:438
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Assigna automàticament els elements necessaris amb números de sèrie coincidents"
 
-#: build/serializers.py:463 order/serializers.py:969 stock/api.py:1254
+#: build/serializers.py:464 order/serializers.py:1000 stock/api.py:1254
 #: stock/models.py:730 stock/models.py:2467
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Els números de sèrie següents ja existeixen o no són vàlids"
 
-#: build/serializers.py:505 build/serializers.py:549 build/serializers.py:607
+#: build/serializers.py:506 build/serializers.py:551 build/serializers.py:614
 msgid "A list of build outputs must be provided"
 msgstr "Cal proporcionar una llista de resultats de producció"
 
-#: build/serializers.py:526
+#: build/serializers.py:527
 msgid "Stock location for scrapped outputs"
 msgstr "Ubicació d'estoc dels resultats rebutjats"
 
-#: build/serializers.py:532
+#: build/serializers.py:533
 msgid "Discard Allocations"
 msgstr "Descarta les assignacions"
 
-#: build/serializers.py:533
+#: build/serializers.py:534
 msgid "Discard any stock allocations for scrapped outputs"
 msgstr "Descarta totes les assignacions d'estoc dels resultats rebutjats"
 
-#: build/serializers.py:538
+#: build/serializers.py:540
 msgid "Reason for scrapping build output(s)"
 msgstr "Motiu del rebuig dels resultats de producció"
 
-#: build/serializers.py:577
+#: build/serializers.py:579
 msgid "Location for completed build outputs"
 msgstr "Ubicació dels resultats de producció completats"
 
-#: build/serializers.py:584 stock/serializers.py:969 stock/serializers.py:2051
-#: stock/serializers.py:2179 stock/serializers.py:2288
+#: build/serializers.py:586 stock/serializers.py:972 stock/serializers.py:2059
+#: stock/serializers.py:2187 stock/serializers.py:2296
 msgid "Structural locations cannot be assigned stock items"
 msgstr "No es poden assignar articles d'estoc a ubicacions estructurals"
 
-#: build/serializers.py:594 order/serializers.py:2579
+#: build/serializers.py:596 order/serializers.py:2612
 msgid "Accept Incomplete Allocation"
 msgstr "Accepta l'assignació incompleta"
 
-#: build/serializers.py:595
+#: build/serializers.py:597
 msgid "Complete outputs if stock has not been fully allocated"
 msgstr "Completa els resultats si l'estoc no s'ha assignat completament"
 
-#: build/serializers.py:660
+#: build/serializers.py:667
 msgid "Consume Allocated Stock"
 msgstr "Consumeix l'estoc assignat"
 
-#: build/serializers.py:661
+#: build/serializers.py:668
 msgid "Consume any stock which has already been allocated to this build"
 msgstr "Consumeix tot l'estoc que ja s'ha assignat a aquesta producció"
 
-#: build/serializers.py:667
+#: build/serializers.py:674
 msgid "Remove Incomplete Outputs"
 msgstr "Elimina els resultats incomplets"
 
-#: build/serializers.py:668
+#: build/serializers.py:675
 msgid "Delete any build outputs which have not been completed"
 msgstr "Suprimeix tots els resultats de producció que no s'han completat"
 
-#: build/serializers.py:695
+#: build/serializers.py:702
 msgid "Not permitted"
 msgstr "No permès"
 
-#: build/serializers.py:696
+#: build/serializers.py:703
 msgid "Accept as consumed by this build order"
 msgstr "Accepta com a consumit per aquesta ordre de producció"
 
-#: build/serializers.py:697
+#: build/serializers.py:704
 msgid "Deallocate before completing this build order"
 msgstr "Desassigna abans de completar aquesta ordre de producció"
 
-#: build/serializers.py:724
+#: build/serializers.py:731
 msgid "Overallocated Stock"
 msgstr "Estoc sobreassignat"
 
-#: build/serializers.py:727
+#: build/serializers.py:734
 msgid "How do you want to handle extra stock items assigned to the build order"
 msgstr "Com voleu gestionar els articles d'estoc addicionals assignats a l'ordre de producció"
 
-#: build/serializers.py:738
+#: build/serializers.py:745
 msgid "Some stock items have been overallocated"
 msgstr "Alguns articles d'estoc s'han sobreassignat"
 
-#: build/serializers.py:743
+#: build/serializers.py:750
 msgid "Accept Unallocated"
 msgstr "Accepta sense assignar"
 
-#: build/serializers.py:745
+#: build/serializers.py:752
 msgid "Accept that stock items have not been fully allocated to this build order"
 msgstr "Accepta que els articles d'estoc no s'han assignat completament a aquesta ordre de producció"
 
-#: build/serializers.py:756
+#: build/serializers.py:763
 msgid "Required stock has not been fully allocated"
 msgstr "L'estoc necessari no s'ha assignat completament"
 
-#: build/serializers.py:761 order/serializers.py:521 order/serializers.py:1805
+#: build/serializers.py:768 order/serializers.py:548 order/serializers.py:1837
 msgid "Accept Incomplete"
 msgstr "Accepta incomplet"
 
-#: build/serializers.py:763
+#: build/serializers.py:770
 msgid "Accept that the required number of build outputs have not been completed"
 msgstr "Accepta que no s'ha completat el nombre necessari de resultats de producció"
 
-#: build/serializers.py:774
+#: build/serializers.py:781
 msgid "Required build quantity has not been completed"
 msgstr "No s'ha completat la quantitat de producció necessària"
 
-#: build/serializers.py:786
+#: build/serializers.py:793
 msgid "Build order has open child build orders"
 msgstr "L'ordre de producció té ordres de producció filles obertes"
 
-#: build/serializers.py:789
+#: build/serializers.py:796
 msgid "Build order must be in production state"
 msgstr "L'ordre de producció ha d'estar en estat de producció"
 
-#: build/serializers.py:792
+#: build/serializers.py:799
 msgid "Build order has incomplete outputs"
 msgstr "L'ordre de producció té resultats incomplets"
 
-#: build/serializers.py:831
+#: build/serializers.py:838
 msgid "Build Line"
 msgstr "Línia de producció"
 
-#: build/serializers.py:839
+#: build/serializers.py:846
 msgid "Build output"
 msgstr "Resultat de producció"
 
-#: build/serializers.py:847
+#: build/serializers.py:854
 msgid "Build output must point to the same build"
 msgstr "El resultat de producció ha d'apuntar a la mateixa producció"
 
-#: build/serializers.py:879
+#: build/serializers.py:886
 msgid "Build Line Item"
 msgstr "Línia de producció"
 
-#: build/serializers.py:897
+#: build/serializers.py:904
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part ha d'apuntar a la mateixa peça que l'ordre de producció"
 
-#: build/serializers.py:914 stock/serializers.py:1635
+#: build/serializers.py:921 stock/serializers.py:1640
 msgid "Item must be in stock"
 msgstr "L'element ha d'estar en estoc"
 
-#: build/serializers.py:979
+#: build/serializers.py:986
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr "Cal especificar el resultat de producció per a l'assignació de peces rastrejades"
 
-#: build/serializers.py:987
+#: build/serializers.py:994
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr "No es pot especificar el resultat de producció per a l'assignació de peces no rastrejades"
 
-#: build/serializers.py:1036 order/serializers.py:1993
-#: order/serializers.py:2847
+#: build/serializers.py:1043 order/serializers.py:2025
+#: order/serializers.py:2880
 msgid "Allocation items must be provided"
 msgstr "Cal proporcionar els articles d'assignació"
 
-#: build/serializers.py:1070
+#: build/serializers.py:1077
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
 msgstr "Ubicació d'estoc d'on s'han d'obtenir les peces (deixeu-ho en blanc per a agafar-les de qualsevol ubicació)"
 
-#: build/serializers.py:1079 order/serializers.py:2060
+#: build/serializers.py:1086 order/serializers.py:2092
 msgid "Exclude Location"
 msgstr "Exclou la ubicació"
 
-#: build/serializers.py:1080
+#: build/serializers.py:1087
 msgid "Exclude stock items from this selected location"
 msgstr "Exclou els articles d'estoc d'aquesta ubicació seleccionada"
 
-#: build/serializers.py:1085 order/serializers.py:2075
+#: build/serializers.py:1092 order/serializers.py:2107
 msgid "Interchangeable Stock"
 msgstr "Estoc intercanviable"
 
-#: build/serializers.py:1086
+#: build/serializers.py:1093
 msgid "Stock items in multiple locations can be used interchangeably"
 msgstr "Els articles d'estoc de diverses ubicacions es poden utilitzar indistintament"
 
-#: build/serializers.py:1091
+#: build/serializers.py:1098
 msgid "Substitute Stock"
 msgstr "Estoc substitut"
 
-#: build/serializers.py:1092
+#: build/serializers.py:1099
 msgid "Allow allocation of substitute parts"
 msgstr "Permet l'assignació de peces substitutes"
 
-#: build/serializers.py:1097
+#: build/serializers.py:1104
 msgid "Optional Items"
 msgstr "Articles opcionals"
 
-#: build/serializers.py:1098
+#: build/serializers.py:1105
 msgid "Allocate optional BOM items to build order"
 msgstr "Assigna els articles opcionals de la BOM a l'ordre de producció"
 
-#: build/serializers.py:1104
+#: build/serializers.py:1111
 msgid "All Items"
 msgstr "Tots els articles"
 
-#: build/serializers.py:1105
+#: build/serializers.py:1112
 msgid "Untracked Items"
 msgstr "Articles no rastrejats"
 
-#: build/serializers.py:1106
+#: build/serializers.py:1113
 msgid "Tracked Items"
 msgstr "Articles rastrejats"
 
-#: build/serializers.py:1108
+#: build/serializers.py:1115
 msgid "Item Type"
 msgstr "Tipus d'article"
 
-#: build/serializers.py:1109
+#: build/serializers.py:1116
 msgid "Select item type to auto-allocate"
 msgstr "Seleccioneu el tipus d'article que s'ha d'assignar automàticament"
 
-#: build/serializers.py:1115 order/serializers.py:2084
+#: build/serializers.py:1122 order/serializers.py:2116
 msgid "Stock Priority"
 msgstr "Prioritat d'estoc"
 
-#: build/serializers.py:1116 order/serializers.py:2085
+#: build/serializers.py:1123 order/serializers.py:2117
 msgid "Preferred order in which matching stock items are consumed"
 msgstr "Ordre preferit en què es consumeixen els articles d'estoc coincidents"
 
-#: build/serializers.py:1124
+#: build/serializers.py:1131
 msgid "Build Lines"
 msgstr "Línies de producció"
 
-#: build/serializers.py:1126
+#: build/serializers.py:1133
 msgid "Limit allocation to these build lines (leave blank to allocate all lines)"
 msgstr "Limita l'assignació a aquestes línies de producció (deixeu-ho en blanc per a assignar totes les línies)"
 
-#: build/serializers.py:1181
+#: build/serializers.py:1188
 msgid "BOM Reference"
 msgstr "Referència de la BOM"
 
-#: build/serializers.py:1187
+#: build/serializers.py:1194
 msgid "BOM Part ID"
 msgstr "ID de la peça de la BOM"
 
-#: build/serializers.py:1194
+#: build/serializers.py:1201
 msgid "BOM Part Name"
 msgstr "Nom de la peça de la BOM"
 
-#: build/serializers.py:1246
+#: build/serializers.py:1253
 msgid "Install Into"
 msgstr "Instal·la a"
 
-#: build/serializers.py:1275 build/serializers.py:1504
+#: build/serializers.py:1282 build/serializers.py:1511
 msgid "Build"
 msgstr "Ordre de producció"
 
-#: build/serializers.py:1295 company/models.py:688 order/api.py:340
-#: order/api.py:345 order/api.py:538 order/serializers.py:619
+#: build/serializers.py:1302 company/models.py:697 order/api.py:340
+#: order/api.py:345 order/api.py:538 order/serializers.py:646
 #: stock/models.py:1175 stock/serializers.py:617
 msgid "Supplier Part"
 msgstr "Peça de proveïdor"
 
-#: build/serializers.py:1311 stock/serializers.py:680
+#: build/serializers.py:1318 stock/serializers.py:680
 msgid "Allocated Quantity"
 msgstr "Quantitat assignada"
 
-#: build/serializers.py:1378
+#: build/serializers.py:1385
 msgid "Build Reference"
 msgstr "Referència de l'ordre de producció"
 
-#: build/serializers.py:1388
+#: build/serializers.py:1395
 msgid "Part Category Name"
 msgstr "Nom de la categoria de peces"
 
-#: build/serializers.py:1426 common/setting/system.py:537 part/models.py:1302
+#: build/serializers.py:1433 common/setting/system.py:537 part/models.py:1302
 msgid "Trackable"
 msgstr "Rastrejable"
 
-#: build/serializers.py:1429
+#: build/serializers.py:1436
 msgid "Inherited"
 msgstr "Heretat"
 
-#: build/serializers.py:1432 part/models.py:4129
+#: build/serializers.py:1439 part/models.py:4129
 msgid "Allow Variants"
 msgstr "Permet variants"
 
-#: build/serializers.py:1438 build/serializers.py:1444 part/models.py:3768
-#: part/models.py:4470 stock/api.py:950 stock/serializers.py:1038
+#: build/serializers.py:1445 build/serializers.py:1451 part/models.py:3768
+#: part/models.py:4470 stock/api.py:950 stock/serializers.py:1041
 msgid "BOM Item"
 msgstr "Article de la BOM"
 
-#: build/serializers.py:1522 order/serializers.py:1409
-#: order/serializers.py:2746 part/serializers.py:1198 part/serializers.py:1794
+#: build/serializers.py:1529 order/serializers.py:1441
+#: order/serializers.py:2779 part/serializers.py:1198 part/serializers.py:1794
 msgid "In Production"
 msgstr "En producció"
 
-#: build/serializers.py:1524 part/serializers.py:833 part/serializers.py:1202
+#: build/serializers.py:1531 part/serializers.py:833 part/serializers.py:1202
 msgid "Scheduled to Build"
 msgstr "Programat per a produir"
 
-#: build/serializers.py:1527 part/serializers.py:866
+#: build/serializers.py:1534 part/serializers.py:866
 msgid "External Stock"
 msgstr "Estoc extern"
 
-#: build/serializers.py:1528 part/serializers.py:1188 part/serializers.py:1857
+#: build/serializers.py:1535 part/serializers.py:1188 part/serializers.py:1857
 msgid "Available Stock"
 msgstr "Estoc disponible"
 
-#: build/serializers.py:1530
+#: build/serializers.py:1537
 msgid "Available Substitute Stock"
 msgstr "Estoc substitut disponible"
 
-#: build/serializers.py:1533
+#: build/serializers.py:1540
 msgid "Available Variant Stock"
 msgstr "Estoc de variants disponible"
 
-#: build/serializers.py:1745
+#: build/serializers.py:1752
 msgid "Consumed quantity exceeds allocated quantity"
 msgstr "La quantitat consumida supera la quantitat assignada"
 
-#: build/serializers.py:1782
+#: build/serializers.py:1790
 msgid "Optional notes for the stock consumption"
 msgstr "Notes opcionals per al consum d'estoc"
 
-#: build/serializers.py:1799
+#: build/serializers.py:1807
 msgid "Build item must point to the correct build order"
 msgstr "L'article de producció ha d'apuntar a l'ordre de producció correcta"
 
-#: build/serializers.py:1804
+#: build/serializers.py:1812
 msgid "Duplicate build item allocation"
 msgstr "Assignació d'article de producció duplicada"
 
-#: build/serializers.py:1822
+#: build/serializers.py:1830
 msgid "Build line must point to the correct build order"
 msgstr "La línia de producció ha d'apuntar a l'ordre de producció correcta"
 
-#: build/serializers.py:1827
+#: build/serializers.py:1835
 msgid "Duplicate build line allocation"
 msgstr "Assignació de línia de producció duplicada"
 
-#: build/serializers.py:1839
+#: build/serializers.py:1847
 msgid "At least one item or line must be provided"
 msgstr "Cal proporcionar almenys un article o una línia"
 
@@ -1727,7 +1731,7 @@ msgstr "Etiqueta del codi de projecte"
 msgid "Updated"
 msgstr "Actualitzat"
 
-#: common/models.py:112 common/models.py:137 order/models.py:569
+#: common/models.py:112 common/models.py:137 order/models.py:575
 msgid "Timestamp of last update"
 msgstr "Marca de temps de l'última actualització"
 
@@ -1748,7 +1752,7 @@ msgid "Project description"
 msgstr "Descripció del projecte"
 
 #: common/models.py:193 common/models.py:1489 common/models.py:2488
-#: common/models.py:2623 company/models.py:220 company/models.py:834
+#: common/models.py:2623 company/models.py:229 company/models.py:843
 #: machine/models.py:43 part/models.py:1325 plugin/models.py:69
 #: stock/api.py:715 users/models.py:382 users/models.py:750
 #: users/serializers.py:376 users/serializers.py:507
@@ -1813,8 +1817,8 @@ msgstr "Usuari"
 msgid "Price break quantity"
 msgstr "Quantitat de l'escala de preus"
 
-#: common/models.py:1416 company/serializers.py:357 order/models.py:2242
-#: order/models.py:3665
+#: common/models.py:1416 company/serializers.py:357 order/models.py:2309
+#: order/models.py:3732
 msgid "Price"
 msgstr "Preu"
 
@@ -1910,9 +1914,9 @@ msgstr "Id"
 msgid "Title"
 msgstr "Títol"
 
-#: common/models.py:1805 common/models.py:2159 company/models.py:214
-#: company/models.py:530 company/models.py:601 company/models.py:857
-#: order/models.py:524 order/models.py:2186 order/models.py:2778
+#: common/models.py:1805 common/models.py:2159 company/models.py:223
+#: company/models.py:539 company/models.py:610 company/models.py:866
+#: order/models.py:530 order/models.py:2253 order/models.py:2845
 #: part/models.py:1208
 #: report/templates/report/inventree_build_order_report.html:163
 msgid "Link"
@@ -1975,7 +1979,7 @@ msgstr "Definició"
 msgid "Unit definition"
 msgstr "Definició de la unitat"
 
-#: common/models.py:1987 common/models.py:2142 stock/models.py:3906
+#: common/models.py:1987 common/models.py:2142 stock/models.py:3908
 #: stock/serializers.py:263
 msgid "Attachment"
 msgstr "Adjunt"
@@ -2093,7 +2097,7 @@ msgid "State logical key that is equal to this custom state in business logic"
 msgstr "Clau lògica de l'estat que equival a aquest estat personalitzat en la lògica de negoci"
 
 #: common/models.py:2337 common/models.py:2604 machine/serializers.py:27
-#: report/templates/report/inventree_test_report.html:104 stock/models.py:3898
+#: report/templates/report/inventree_test_report.html:104 stock/models.py:3900
 msgid "Value"
 msgstr "Valor"
 
@@ -2392,8 +2396,8 @@ msgstr "Dades"
 msgid "Parameter Value"
 msgstr "Valor del paràmetre"
 
-#: common/models.py:3095 common/models.py:3135 company/models.py:874
-#: order/serializers.py:901 order/serializers.py:2315 part/models.py:4104
+#: common/models.py:3095 common/models.py:3135 company/models.py:883
+#: order/serializers.py:931 order/serializers.py:2348 part/models.py:4104
 #: part/models.py:4510
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:38
@@ -2401,11 +2405,11 @@ msgstr "Valor del paràmetre"
 #: report/templates/report/inventree_sales_order_report.html:31
 #: report/templates/report/inventree_stock_location_report.html:105
 #: report/templates/report/inventree_transfer_order_report.html:28
-#: stock/serializers.py:879
+#: stock/serializers.py:881
 msgid "Note"
 msgstr "Nota"
 
-#: common/models.py:3096 stock/serializers.py:778 stock/serializers.py:1139
+#: common/models.py:3096 stock/serializers.py:779 stock/serializers.py:1143
 msgid "Optional note field"
 msgstr "Camp de nota opcional"
 
@@ -2426,7 +2430,7 @@ msgstr "Tipus de model de destinació d'aquesta nota"
 msgid "Target model instance ID for this note"
 msgstr "ID de la instància del model de destinació d'aquesta nota"
 
-#: common/models.py:3399 company/models.py:840
+#: common/models.py:3399 company/models.py:849
 msgid "Primary"
 msgstr "Principal"
 
@@ -2478,7 +2482,7 @@ msgstr "Data i hora de l'escaneig del codi de barres"
 msgid "URL endpoint which processed the barcode"
 msgstr "Punt final de l'URL que ha processat el codi de barres"
 
-#: common/models.py:3507 order/models.py:2232 plugin/serializers.py:93
+#: common/models.py:3507 order/models.py:2299 plugin/serializers.py:93
 msgid "Context"
 msgstr "Context"
 
@@ -2495,7 +2499,7 @@ msgid "Response data from the barcode scan"
 msgstr "Dades de resposta de l'escaneig del codi de barres"
 
 #: common/models.py:3522 report/templates/report/inventree_test_report.html:103
-#: stock/models.py:3892
+#: stock/models.py:3894
 msgid "Result"
 msgstr "Resultat"
 
@@ -2888,7 +2892,7 @@ msgstr "Mostra el bàner d'administrador"
 msgid "Show a warning banner in the UI when logged in as admin"
 msgstr "Mostra un bàner d'avís a la interfície quan s'ha iniciat la sessió com a administrador"
 
-#: common/setting/system.py:272 company/models.py:173 company/models.py:174
+#: common/setting/system.py:272 company/models.py:182 company/models.py:183
 msgid "Company name"
 msgstr "Nom de l'empresa"
 
@@ -4578,12 +4582,12 @@ msgstr "La peça interna està activa"
 msgid "Supplier is Active"
 msgstr "El proveïdor està actiu"
 
-#: company/api.py:303 company/models.py:587 company/serializers.py:506
+#: company/api.py:303 company/models.py:596 company/serializers.py:506
 #: part/serializers.py:468
 msgid "Manufacturer"
 msgstr "Fabricant"
 
-#: company/api.py:310 company/models.py:127 company/models.py:442
+#: company/api.py:310 company/models.py:136 company/models.py:451
 #: stock/api.py:968
 msgid "Company"
 msgstr "Empresa"
@@ -4592,328 +4596,328 @@ msgstr "Empresa"
 msgid "Has Stock"
 msgstr "Té estoc"
 
-#: company/models.py:128
+#: company/models.py:137
 msgid "Companies"
 msgstr "Empreses"
 
-#: company/models.py:179
+#: company/models.py:188
 msgid "Company description"
 msgstr "Descripció de l'empresa"
 
-#: company/models.py:180
+#: company/models.py:189
 msgid "Description of the company"
 msgstr "Descripció de l'empresa"
 
-#: company/models.py:186
+#: company/models.py:195
 msgid "Website"
 msgstr "Lloc web"
 
-#: company/models.py:187
+#: company/models.py:196
 msgid "Company website URL"
 msgstr "URL del lloc web de l'empresa"
 
-#: company/models.py:193 company/models.py:503
+#: company/models.py:202 company/models.py:512
 msgid "Phone number"
 msgstr "Número de telèfon"
 
-#: company/models.py:195
+#: company/models.py:204
 msgid "Contact phone number"
 msgstr "Número de telèfon de contacte"
 
-#: company/models.py:202
+#: company/models.py:211
 msgid "Contact email address"
 msgstr "Adreça de correu electrònic de contacte"
 
-#: company/models.py:207 company/models.py:347 order/models.py:587
-#: order/models.py:2723 users/models.py:757
+#: company/models.py:216 company/models.py:356 order/models.py:593
+#: order/models.py:2790 users/models.py:757
 msgid "Contact"
 msgstr "Contacte"
 
-#: company/models.py:209
+#: company/models.py:218
 msgid "Point of contact"
 msgstr "Persona de contacte"
 
-#: company/models.py:215
+#: company/models.py:224
 msgid "Link to external company information"
 msgstr "Enllaç a informació externa de l'empresa"
 
-#: company/models.py:220
+#: company/models.py:229
 msgid "Is this company active?"
 msgstr "Està activa aquesta empresa?"
 
-#: company/models.py:225
+#: company/models.py:234
 msgid "Is customer"
 msgstr "És client"
 
-#: company/models.py:226
+#: company/models.py:235
 msgid "Do you sell items to this company?"
 msgstr "Veneu articles a aquesta empresa?"
 
-#: company/models.py:231
+#: company/models.py:240
 msgid "Is supplier"
 msgstr "És proveïdor"
 
-#: company/models.py:232
+#: company/models.py:241
 msgid "Do you purchase items from this company?"
 msgstr "Compreu articles a aquesta empresa?"
 
-#: company/models.py:237
+#: company/models.py:246
 msgid "Is manufacturer"
 msgstr "És fabricant"
 
-#: company/models.py:238
+#: company/models.py:247
 msgid "Does this company manufacture parts?"
 msgstr "Aquesta empresa fabrica peces?"
 
-#: company/models.py:243
+#: company/models.py:252
 msgid "Is internal"
 msgstr ""
 
-#: company/models.py:244
+#: company/models.py:253
 msgid "Does this company represent your own organization?"
 msgstr ""
 
-#: company/models.py:252
+#: company/models.py:261
 msgid "Default currency used for this company"
 msgstr "Moneda predeterminada utilitzada per a aquesta empresa"
 
-#: company/models.py:259
+#: company/models.py:268
 msgid "Tax ID"
 msgstr "Identificació fiscal"
 
-#: company/models.py:260
+#: company/models.py:269
 msgid "Company Tax ID"
 msgstr "Identificació fiscal de l'empresa"
 
-#: company/models.py:388 order/models.py:597 order/models.py:2713
+#: company/models.py:397 order/models.py:603 order/models.py:2780
 msgid "Address"
 msgstr "Adreça"
 
-#: company/models.py:389
+#: company/models.py:398
 msgid "Addresses"
 msgstr "Adreces"
 
-#: company/models.py:443
+#: company/models.py:452
 msgid "Select company"
 msgstr "Seleccioneu una empresa"
 
-#: company/models.py:448
+#: company/models.py:457
 msgid "Address title"
 msgstr "Títol de l'adreça"
 
-#: company/models.py:449
+#: company/models.py:458
 msgid "Title describing the address entry"
 msgstr "Títol que descriu l'entrada d'adreça"
 
-#: company/models.py:455
+#: company/models.py:464
 msgid "Primary address"
 msgstr "Adreça principal"
 
-#: company/models.py:456
+#: company/models.py:465
 msgid "Set as primary address"
 msgstr "Estableix com a adreça principal"
 
-#: company/models.py:461
+#: company/models.py:470
 msgid "Line 1"
 msgstr "Línia 1"
 
-#: company/models.py:462
+#: company/models.py:471
 msgid "Address line 1"
 msgstr "Línia 1 de l'adreça"
 
-#: company/models.py:468
+#: company/models.py:477
 msgid "Line 2"
 msgstr "Línia 2"
 
-#: company/models.py:469
+#: company/models.py:478
 msgid "Address line 2"
 msgstr "Línia 2 de l'adreça"
 
-#: company/models.py:475 company/models.py:476
+#: company/models.py:484 company/models.py:485
 msgid "Postal code"
 msgstr "Codi postal"
 
-#: company/models.py:482
+#: company/models.py:491
 msgid "City/Region"
 msgstr "Ciutat/regió"
 
-#: company/models.py:483
+#: company/models.py:492
 msgid "Postal code city/region"
 msgstr "Ciutat/regió del codi postal"
 
-#: company/models.py:489
+#: company/models.py:498
 msgid "State/Province"
 msgstr "Estat/província"
 
-#: company/models.py:490
+#: company/models.py:499
 msgid "State or province"
 msgstr "Estat o província"
 
-#: company/models.py:496
+#: company/models.py:505
 msgid "Country"
 msgstr "País"
 
-#: company/models.py:497
+#: company/models.py:506
 msgid "Address country"
 msgstr "País de l'adreça"
 
-#: company/models.py:504
+#: company/models.py:513
 msgid "Phone number for this address"
 msgstr ""
 
-#: company/models.py:510
+#: company/models.py:519
 msgid "Email address for this address"
 msgstr ""
 
-#: company/models.py:516
+#: company/models.py:525
 msgid "Courier shipping notes"
 msgstr "Notes d'enviament per al missatger"
 
-#: company/models.py:517
+#: company/models.py:526
 msgid "Notes for shipping courier"
 msgstr "Notes per al servei de missatgeria"
 
-#: company/models.py:523
+#: company/models.py:532
 msgid "Internal shipping notes"
 msgstr "Notes d'enviament internes"
 
-#: company/models.py:524
+#: company/models.py:533
 msgid "Shipping notes for internal use"
 msgstr "Notes d'enviament per a ús intern"
 
-#: company/models.py:531
+#: company/models.py:540
 msgid "Link to address information (external)"
 msgstr "Enllaç a informació de l'adreça (externa)"
 
-#: company/models.py:559 company/models.py:850 company/serializers.py:534
+#: company/models.py:568 company/models.py:859 company/serializers.py:534
 #: stock/api.py:634
 msgid "Manufacturer Part"
 msgstr "Peça de fabricant"
 
-#: company/models.py:576 company/models.py:812 stock/models.py:1164
+#: company/models.py:585 company/models.py:821 stock/models.py:1164
 #: stock/serializers.py:429
 msgid "Base Part"
 msgstr "Peça base"
 
-#: company/models.py:578 company/models.py:814
+#: company/models.py:587 company/models.py:823
 msgid "Select part"
 msgstr "Seleccioneu una peça"
 
-#: company/models.py:588
+#: company/models.py:597
 msgid "Select manufacturer"
 msgstr "Seleccioneu un fabricant"
 
-#: company/models.py:594 company/serializers.py:545 order/serializers.py:748
+#: company/models.py:603 company/serializers.py:545 order/serializers.py:775
 #: part/serializers.py:478
 msgid "MPN"
 msgstr "MPN"
 
-#: company/models.py:595 stock/serializers.py:609
+#: company/models.py:604 stock/serializers.py:609
 msgid "Manufacturer Part Number"
 msgstr "Número de peça del fabricant"
 
-#: company/models.py:602
+#: company/models.py:611
 msgid "URL for external manufacturer part link"
 msgstr "URL de l'enllaç extern de la peça de fabricant"
 
-#: company/models.py:611
+#: company/models.py:620
 msgid "Manufacturer part description"
 msgstr "Descripció de la peça de fabricant"
 
-#: company/models.py:739
+#: company/models.py:748
 msgid "Pack units must be compatible with the base part units"
 msgstr "Les unitats de paquet han de ser compatibles amb les unitats de la peça base"
 
-#: company/models.py:746
+#: company/models.py:755
 msgid "Pack units must be greater than zero"
 msgstr "Les unitats de paquet han de ser més grans que zero"
 
-#: company/models.py:760
+#: company/models.py:769
 msgid "Linked manufacturer part must reference the same base part"
 msgstr "La peça de fabricant enllaçada ha de fer referència a la mateixa peça base"
 
-#: company/models.py:822 company/serializers.py:493 company/serializers.py:528
-#: order/models.py:742 part/serializers.py:452
+#: company/models.py:831 company/serializers.py:493 company/serializers.py:528
+#: order/models.py:777 part/serializers.py:452
 #: plugin/builtin/suppliers/digikey.py:26 plugin/builtin/suppliers/lcsc.py:27
 #: plugin/builtin/suppliers/mouser.py:25 plugin/builtin/suppliers/tme.py:27
 #: stock/api.py:640 templates/email/overdue_purchase_order.html:16
 msgid "Supplier"
 msgstr "Proveïdor"
 
-#: company/models.py:823
+#: company/models.py:832
 msgid "Select supplier"
 msgstr "Seleccioneu un proveïdor"
 
-#: company/models.py:829 part/serializers.py:463
+#: company/models.py:838 part/serializers.py:463
 msgid "Supplier stock keeping unit"
 msgstr "Unitat de manteniment d'estoc (SKU) del proveïdor"
 
-#: company/models.py:835
+#: company/models.py:844
 msgid "Is this supplier part active?"
 msgstr "Aquesta peça de proveïdor està activa?"
 
-#: company/models.py:841
+#: company/models.py:850
 msgid "Is this the primary supplier part for the linked Part?"
 msgstr "És aquesta la peça de proveïdor principal per a la peça enllaçada?"
 
-#: company/models.py:851
+#: company/models.py:860
 msgid "Select manufacturer part"
 msgstr "Seleccioneu una peça de fabricant"
 
-#: company/models.py:858
+#: company/models.py:867
 msgid "URL for external supplier part link"
 msgstr "URL de l'enllaç extern de la peça de proveïdor"
 
-#: company/models.py:867
+#: company/models.py:876
 msgid "Supplier part description"
 msgstr "Descripció de la peça de proveïdor"
 
-#: company/models.py:883 part/models.py:2264
+#: company/models.py:892 part/models.py:2264
 msgid "base cost"
 msgstr "cost base"
 
-#: company/models.py:884 part/models.py:2265
+#: company/models.py:893 part/models.py:2265
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "Càrrec mínim (p. ex., taxa d'emmagatzematge)"
 
-#: company/models.py:891 order/serializers.py:893 stock/models.py:1195
-#: stock/serializers.py:1959
+#: company/models.py:900 order/serializers.py:922 stock/models.py:1195
+#: stock/serializers.py:1966
 msgid "Packaging"
 msgstr "Embalatge"
 
-#: company/models.py:892
+#: company/models.py:901
 msgid "Part packaging"
 msgstr "Embalatge de la peça"
 
-#: company/models.py:897
+#: company/models.py:906
 msgid "Pack Quantity"
 msgstr "Quantitat per paquet"
 
-#: company/models.py:899
+#: company/models.py:908
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
 msgstr "Quantitat total subministrada en un sol paquet. Deixeu-ho buit per a articles individuals."
 
-#: company/models.py:918 part/models.py:2271
+#: company/models.py:927 part/models.py:2271
 msgid "multiple"
 msgstr "múltiple"
 
-#: company/models.py:919
+#: company/models.py:928
 msgid "Order multiple"
 msgstr "Múltiple de comanda"
 
-#: company/models.py:931
+#: company/models.py:940
 msgid "Quantity available from supplier"
 msgstr "Quantitat disponible del proveïdor"
 
-#: company/models.py:937
+#: company/models.py:946
 msgid "Availability Updated"
 msgstr "Disponibilitat actualitzada"
 
-#: company/models.py:938
+#: company/models.py:947
 msgid "Date of last update of availability data"
 msgstr "Data de l'última actualització de les dades de disponibilitat"
 
-#: company/models.py:1066
+#: company/models.py:1075
 msgid "Supplier Price Break"
 msgstr "Escala de preus del proveïdor"
 
@@ -5386,7 +5390,7 @@ msgstr "Pendent"
 msgid "Has Project Code"
 msgstr "Té codi de projecte"
 
-#: order/api.py:202 order/models.py:555
+#: order/api.py:202 order/models.py:561
 msgid "Created By"
 msgstr "Creat per"
 
@@ -5451,9 +5455,9 @@ msgid "Purchase order not found"
 msgstr "No s'ha trobat la comanda de compra"
 
 #: order/api.py:521 order/api.py:973 order/api.py:1304 order/api.py:2145
-#: order/api.py:2305 order/models.py:2338 order/models.py:2464
-#: order/models.py:2516 order/models.py:2704 order/models.py:3103
-#: order/models.py:3621 order/models.py:3687 order/models.py:4054
+#: order/api.py:2305 order/models.py:2405 order/models.py:2531
+#: order/models.py:2583 order/models.py:2771 order/models.py:3170
+#: order/models.py:3688 order/models.py:3754 order/models.py:4121
 msgid "Order"
 msgstr "Comanda"
 
@@ -5461,7 +5465,7 @@ msgstr "Comanda"
 msgid "Order Complete"
 msgstr "Comanda completada"
 
-#: order/api.py:557 order/api.py:561 order/serializers.py:759
+#: order/api.py:557 order/api.py:561 order/serializers.py:786
 msgid "Internal Part"
 msgstr "Peça interna"
 
@@ -5497,15 +5501,15 @@ msgstr "No s'ha trobat l'ordre de devolució"
 msgid "Transfer order not found"
 msgstr "No s'ha trobat l'ordre de transferència"
 
-#: order/api.py:2569 order/models.py:657 order/models.py:2339
-#: order/models.py:2465
+#: order/api.py:2569 order/models.py:665 order/models.py:2406
+#: order/models.py:2532
 #: report/templates/report/inventree_purchase_order_report.html:13
 #: stock/serializers.py:134 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
 msgstr "Comanda de compra"
 
-#: order/api.py:2571 order/models.py:1398 order/models.py:2517
-#: order/models.py:2705 order/models.py:3104
+#: order/api.py:2571 order/models.py:1465 order/models.py:2584
+#: order/models.py:2772 order/models.py:3171
 #: report/templates/report/inventree_build_order_report.html:134
 #: report/templates/report/inventree_sales_order_report.html:13
 #: report/templates/report/inventree_sales_order_shipment_report.html:14
@@ -5513,628 +5517,664 @@ msgstr "Comanda de compra"
 msgid "Sales Order"
 msgstr "Comanda de venda"
 
-#: order/api.py:2573 order/models.py:3270 order/models.py:3622
-#: order/models.py:3688
+#: order/api.py:2573 order/models.py:3337 order/models.py:3689
+#: order/models.py:3755
 #: report/templates/report/inventree_return_order_report.html:12
 #: templates/email/overdue_return_order.html:15
 msgid "Return Order"
 msgstr "Ordre de devolució"
 
-#: order/api.py:2575 order/models.py:3710 order/models.py:4055
+#: order/api.py:2575 order/models.py:3777 order/models.py:4122
 #: report/templates/report/inventree_transfer_order_report.html:11
 msgid "Transfer Order"
 msgstr "Ordre de transferència"
 
-#: order/models.py:110
+#: order/models.py:116
 #: report/templates/report/inventree_purchase_order_report.html:37
 #: report/templates/report/inventree_sales_order_report.html:30
 msgid "Total Price"
 msgstr "Preu total"
 
-#: order/models.py:111
+#: order/models.py:117
 msgid "Total price for this order"
 msgstr "Preu total d'aquesta comanda"
 
-#: order/models.py:116 order/serializers.py:70
+#: order/models.py:122 order/serializers.py:70
 msgid "Order Currency"
 msgstr "Moneda de la comanda"
 
-#: order/models.py:119 order/serializers.py:71
+#: order/models.py:125 order/serializers.py:71
 msgid "Currency for this order (leave blank to use company default)"
 msgstr "Moneda d'aquesta comanda (deixeu-ho en blanc per a utilitzar la predeterminada de l'empresa)"
 
-#: order/models.py:376
+#: order/models.py:382
 msgid "This order is locked and cannot be modified"
 msgstr "Aquesta comanda està bloquejada i no es pot modificar"
 
-#: order/models.py:435
+#: order/models.py:441
 msgid "Contact does not match selected company"
 msgstr "El contacte no coincideix amb l'empresa seleccionada"
 
-#: order/models.py:442
+#: order/models.py:448
 msgid "Start date must be before target date"
 msgstr "La data d'inici ha de ser anterior a la data objectiu"
 
-#: order/models.py:453
+#: order/models.py:459
 msgid "Address does not match selected company"
 msgstr "L'adreça no coincideix amb l'empresa seleccionada"
 
-#: order/models.py:510
+#: order/models.py:516
 msgid "Order description (optional)"
 msgstr "Descripció de la comanda (opcional)"
 
-#: order/models.py:519 order/models.py:2206
+#: order/models.py:525 order/models.py:2273
 msgid "Select project code for this order"
 msgstr "Seleccioneu el codi de projecte d'aquesta comanda"
 
-#: order/models.py:525 order/models.py:2187 order/models.py:2779
+#: order/models.py:531 order/models.py:2254 order/models.py:2846
 msgid "Link to external page"
 msgstr "Enllaç a una pàgina externa"
 
-#: order/models.py:532
+#: order/models.py:538
 msgid "Start date"
 msgstr "Data d'inici"
 
-#: order/models.py:533
+#: order/models.py:539
 msgid "Scheduled start date for this order"
 msgstr "Data d'inici programada d'aquesta comanda"
 
-#: order/models.py:539 order/models.py:2194 order/serializers.py:305
+#: order/models.py:545 order/models.py:2261 order/serializers.py:305
 #: report/templates/report/inventree_build_order_report.html:124
 msgid "Target Date"
 msgstr "Data objectiu"
 
-#: order/models.py:541
+#: order/models.py:547
 msgid "Expected date for order delivery. Order will be overdue after this date."
 msgstr "Data prevista de lliurament de la comanda. La comanda estarà vençuda a partir d'aquesta data."
 
-#: order/models.py:561
+#: order/models.py:567
 msgid "Issue Date"
 msgstr "Data d'emissió"
 
-#: order/models.py:562
+#: order/models.py:568
 msgid "Date order was issued"
 msgstr "Data en què es va emetre la comanda"
 
-#: order/models.py:568
+#: order/models.py:574
 msgid "Updated At"
 msgstr "Actualitzat el"
 
-#: order/models.py:577
+#: order/models.py:583
 msgid "User or group responsible for this order"
 msgstr "Usuari o grup responsable d'aquesta comanda"
 
-#: order/models.py:588
+#: order/models.py:594
 msgid "Point of contact for this order"
 msgstr "Punt de contacte d'aquesta comanda"
 
-#: order/models.py:598
+#: order/models.py:604
 msgid "Company address for this order"
 msgstr "Adreça de l'empresa per a aquesta comanda"
 
-#: order/models.py:723 order/models.py:1462
+#: order/models.py:673
+msgid "Receiving company must be an internal company"
+msgstr ""
+
+#: order/models.py:680
+msgid "Receiving company must be specified when a delivery address is provided"
+msgstr ""
+
+#: order/models.py:687
+msgid "Delivery address does not match selected receiving company"
+msgstr ""
+
+#: order/models.py:758 order/models.py:1529
 msgid "Order reference"
 msgstr "Referència de la comanda"
 
-#: order/models.py:732 order/models.py:1486 order/models.py:3361
-#: order/models.py:3787 stock/serializers.py:1000 users/models.py:738
+#: order/models.py:767 order/models.py:1553 order/models.py:3428
+#: order/models.py:3854 stock/serializers.py:1003 users/models.py:738
 msgid "Status"
 msgstr "Estat"
 
-#: order/models.py:733
+#: order/models.py:768
 msgid "Purchase order status"
 msgstr "Estat de la comanda de compra"
 
-#: order/models.py:743
+#: order/models.py:778
 msgid "Company from which the items are being ordered"
 msgstr "Empresa a la qual es demanen els articles"
 
-#: order/models.py:754
+#: order/models.py:791
+msgid "Supplier Address"
+msgstr ""
+
+#: order/models.py:792
+msgid "Supplier address for this order"
+msgstr ""
+
+#: order/models.py:799
 msgid "Supplier Reference"
 msgstr "Referència del proveïdor"
 
-#: order/models.py:755
+#: order/models.py:800
 msgid "Supplier order reference code"
 msgstr "Codi de referència de la comanda del proveïdor"
 
-#: order/models.py:764
+#: order/models.py:809
 msgid "received by"
 msgstr "rebut per"
 
-#: order/models.py:771 order/models.py:3376 order/models.py:3828
+#: order/models.py:816 order/models.py:3443 order/models.py:3895
 msgid "Date order was completed"
 msgstr "Data en què es va completar la comanda"
 
-#: order/models.py:780 order/models.py:2397
+#: order/models.py:825 order/models.py:2464
 msgid "Destination"
 msgstr "Destinació"
 
-#: order/models.py:781 order/models.py:2401
+#: order/models.py:826 order/models.py:2468
 msgid "Destination for received items"
 msgstr "Destinació dels articles rebuts"
 
-#: order/models.py:827
+#: order/models.py:837
+msgid "Receiving Company"
+msgstr ""
+
+#: order/models.py:838
+msgid "Internal company which is receiving the items"
+msgstr ""
+
+#: order/models.py:847
+msgid "Delivery Address"
+msgstr ""
+
+#: order/models.py:848
+msgid "Delivery address for this order"
+msgstr ""
+
+#: order/models.py:894
 msgid "Part supplier must match PO supplier"
 msgstr "El proveïdor de la peça ha de coincidir amb el proveïdor de la comanda de compra"
 
-#: order/models.py:1099
+#: order/models.py:1166
 msgid "Line item does not match purchase order"
 msgstr "La línia no coincideix amb la comanda de compra"
 
-#: order/models.py:1102
+#: order/models.py:1169
 msgid "Line item is missing a linked part"
 msgstr "A la línia li falta una peça enllaçada"
 
-#: order/models.py:1117
+#: order/models.py:1184
 msgid "Quantity must be a positive number"
 msgstr "La quantitat ha de ser un nombre positiu"
 
-#: order/models.py:1158
+#: order/models.py:1225
 msgid "Serial numbers cannot be assigned to virtual parts"
 msgstr "No es poden assignar números de sèrie a peces virtuals"
 
-#: order/models.py:1379
+#: order/models.py:1446
 msgid "Allow any stock (serialized or unserialized)"
 msgstr "Permet qualsevol estoc (serialitzat o no serialitzat)"
 
-#: order/models.py:1380
+#: order/models.py:1447
 msgid "Serialized stock only"
 msgstr "Només estoc serialitzat"
 
-#: order/models.py:1381
+#: order/models.py:1448
 msgid "Unserialized stock only"
 msgstr "Només estoc no serialitzat"
 
-#: order/models.py:1473 order/models.py:3348 stock/models.py:1217
-#: stock/models.py:1218 stock/serializers.py:1674
+#: order/models.py:1540 order/models.py:3415 stock/models.py:1217
+#: stock/models.py:1218 stock/serializers.py:1679
 #: templates/email/overdue_return_order.html:16
 #: templates/email/overdue_sales_order.html:16
 msgid "Customer"
 msgstr "Client"
 
-#: order/models.py:1474
+#: order/models.py:1541
 msgid "Company to which the items are being sold"
 msgstr "Empresa a la qual es venen els articles"
 
-#: order/models.py:1487
+#: order/models.py:1554
 msgid "Sales order status"
 msgstr "Estat de la comanda de venda"
 
-#: order/models.py:1493 order/models.py:3368
+#: order/models.py:1560 order/models.py:3435
 msgid "Customer Reference "
 msgstr "Referència del client "
 
-#: order/models.py:1494 order/models.py:3369
+#: order/models.py:1561 order/models.py:3436
 msgid "Customer order reference code"
 msgstr "Codi de referència de la comanda del client"
 
-#: order/models.py:1498 order/models.py:2731
+#: order/models.py:1565 order/models.py:2798
 msgid "Shipment Date"
 msgstr "Data d'enviament"
 
-#: order/models.py:1507
+#: order/models.py:1574
 msgid "shipped by"
 msgstr "enviat per"
 
-#: order/models.py:1686 order/serializers.py:1740 order/serializers.py:1895
-#: order/serializers.py:2780 order/serializers.py:2987
+#: order/models.py:1753 order/serializers.py:1772 order/serializers.py:1927
+#: order/serializers.py:2813 order/serializers.py:3020
 msgid "Line item is not associated with this order"
 msgstr "La línia no està associada a aquesta comanda"
 
-#: order/models.py:1743 order/serializers.py:3081
+#: order/models.py:1810 order/serializers.py:3114
 msgid "No match found for the following serial numbers"
 msgstr "No s'ha trobat cap coincidència per als números de sèrie següents"
 
-#: order/models.py:1750 order/serializers.py:3088
+#: order/models.py:1817 order/serializers.py:3121
 msgid "The following serial numbers are unavailable"
 msgstr "Els números de sèrie següents no estan disponibles"
 
-#: order/models.py:1790 order/models.py:3872
+#: order/models.py:1857 order/models.py:3939
 msgid "Order is already complete"
 msgstr "La comanda ja està completada"
 
-#: order/models.py:1793 order/models.py:3875
+#: order/models.py:1860 order/models.py:3942
 msgid "Order is already cancelled"
 msgstr "La comanda ja està cancel·lada"
 
-#: order/models.py:1797
+#: order/models.py:1864
 msgid "Only an open order can be marked as complete"
 msgstr "Només es pot marcar com a completada una comanda oberta"
 
-#: order/models.py:1801
+#: order/models.py:1868
 msgid "Order cannot be completed as there are incomplete shipments"
 msgstr "La comanda no es pot completar perquè hi ha enviaments incomplets"
 
-#: order/models.py:1806
+#: order/models.py:1873
 msgid "Order cannot be completed as there are incomplete allocations"
 msgstr "La comanda no es pot completar perquè hi ha assignacions incompletes"
 
-#: order/models.py:1815
+#: order/models.py:1882
 msgid "Order cannot be completed as there are incomplete line items"
 msgstr "La comanda no es pot completar perquè hi ha línies incompletes"
 
-#: order/models.py:2104 order/models.py:2129
+#: order/models.py:2171 order/models.py:2196
 msgid "The order is locked and cannot be modified"
 msgstr "La comanda està bloquejada i no es pot modificar"
 
-#: order/models.py:2137
+#: order/models.py:2204
 msgid "Item quantity"
 msgstr "Quantitat de l'article"
 
-#: order/models.py:2145
+#: order/models.py:2212
 msgid "Discount"
 msgstr "Descompte"
 
-#: order/models.py:2146
+#: order/models.py:2213
 msgid "Discount percentage applied to this line item (0-100)"
 msgstr "Percentatge de descompte aplicat a aquesta línia (0-100)"
 
-#: order/models.py:2164
+#: order/models.py:2231
 msgid "Line Number"
 msgstr "Número de línia"
 
-#: order/models.py:2165
+#: order/models.py:2232
 msgid "Line number for this item (optional)"
 msgstr "Número de línia d'aquest element (opcional)"
 
-#: order/models.py:2174
+#: order/models.py:2241
 msgid "Line item reference"
 msgstr "Referència de la línia"
 
-#: order/models.py:2181
+#: order/models.py:2248
 msgid "Line item notes"
 msgstr "Notes de la línia"
 
-#: order/models.py:2196
+#: order/models.py:2263
 msgid "Target date for this line item (leave blank to use the target date from the order)"
 msgstr "Data objectiu d'aquesta línia (deixeu-ho en blanc per a utilitzar la data objectiu de la comanda)"
 
-#: order/models.py:2226
+#: order/models.py:2293
 msgid "Line item description (optional)"
 msgstr "Descripció de la línia (opcional)"
 
-#: order/models.py:2233
+#: order/models.py:2300
 msgid "Additional context for this line"
 msgstr "Context addicional per a aquesta línia"
 
-#: order/models.py:2243
+#: order/models.py:2310
 msgid "Unit price"
 msgstr "Preu unitari"
 
-#: order/models.py:2262
+#: order/models.py:2329
 msgid "Purchase Order Line Item"
 msgstr "Línia de comanda de compra"
 
-#: order/models.py:2291
+#: order/models.py:2358
 msgid "Supplier part must match supplier"
 msgstr "La peça de proveïdor ha de coincidir amb el proveïdor"
 
-#: order/models.py:2299
+#: order/models.py:2366
 msgid "Build order must be marked as external"
 msgstr "L'ordre de producció ha d'estar marcada com a externa"
 
-#: order/models.py:2306
+#: order/models.py:2373
 msgid "Build orders can only be linked to assembly parts"
 msgstr "Les ordres de producció només es poden enllaçar a peces de conjunt"
 
-#: order/models.py:2312
+#: order/models.py:2379
 msgid "Build order part must match line item part"
 msgstr "La peça de l'ordre de producció ha de coincidir amb la peça de la línia"
 
-#: order/models.py:2322
+#: order/models.py:2389
 msgid "An external build order is required for assembly parts"
 msgstr "Cal una ordre de producció externa per a les peces de conjunt"
 
-#: order/models.py:2358
+#: order/models.py:2425
 msgid "Supplier part"
 msgstr "Peça de proveïdor"
 
-#: order/models.py:2365
+#: order/models.py:2432
 msgid "Received"
 msgstr "Rebut"
 
-#: order/models.py:2366
+#: order/models.py:2433
 msgid "Number of items received"
 msgstr "Nombre d'articles rebuts"
 
-#: order/models.py:2374 stock/models.py:1347 stock/serializers.py:697
-#: stock/serializers.py:1072
+#: order/models.py:2441 stock/models.py:1347 stock/serializers.py:697
+#: stock/serializers.py:1075
 msgid "Purchase Price"
 msgstr "Preu de compra"
 
-#: order/models.py:2375
+#: order/models.py:2442
 msgid "Unit purchase price"
 msgstr "Preu de compra unitari"
 
-#: order/models.py:2391
+#: order/models.py:2458
 msgid "External Build Order to be fulfilled by this line item"
 msgstr "Ordre de producció externa que s'ha de satisfer amb aquesta línia"
 
-#: order/models.py:2453
+#: order/models.py:2520
 msgid "Purchase Order Extra Line"
 msgstr "Línia addicional de comanda de compra"
 
-#: order/models.py:2482
+#: order/models.py:2549
 msgid "Sales Order Line Item"
 msgstr "Línia de comanda de venda"
 
-#: order/models.py:2509
+#: order/models.py:2576
 msgid "Only salable parts can be assigned to a sales order"
 msgstr "Només es poden assignar peces vendibles a una comanda de venda"
 
-#: order/models.py:2535
+#: order/models.py:2602
 msgid "Sale Price"
 msgstr "Preu de venda"
 
-#: order/models.py:2536
+#: order/models.py:2603
 msgid "Unit sale price"
 msgstr "Preu de venda unitari"
 
-#: order/models.py:2545 order/status_codes.py:66
+#: order/models.py:2612 order/status_codes.py:66
 msgid "Shipped"
 msgstr "Enviat"
 
-#: order/models.py:2546
+#: order/models.py:2613
 msgid "Shipped quantity"
 msgstr "Quantitat enviada"
 
-#: order/models.py:2659
+#: order/models.py:2726
 msgid "Sales Order Shipment"
 msgstr "Enviament de comanda de venda"
 
-#: order/models.py:2672
+#: order/models.py:2739
 msgid "Shipment address must match the customer"
 msgstr "L'adreça d'enviament ha de coincidir amb el client"
 
-#: order/models.py:2678
+#: order/models.py:2745
 msgid "Contact does not match the customer"
 msgstr ""
 
-#: order/models.py:2714
+#: order/models.py:2781
 msgid "Shipping address for this shipment"
 msgstr "Adreça de lliurament d'aquest enviament"
 
-#: order/models.py:2724
+#: order/models.py:2791
 msgid "Point of contact for this shipment"
 msgstr ""
 
-#: order/models.py:2732
+#: order/models.py:2799
 msgid "Date of shipment"
 msgstr "Data de l'enviament"
 
-#: order/models.py:2738
+#: order/models.py:2805
 msgid "Delivery Date"
 msgstr "Data de lliurament"
 
-#: order/models.py:2739
+#: order/models.py:2806
 msgid "Date of delivery of shipment"
 msgstr "Data de lliurament de l'enviament"
 
-#: order/models.py:2747
+#: order/models.py:2814
 msgid "Checked By"
 msgstr "Revisat per"
 
-#: order/models.py:2748
+#: order/models.py:2815
 msgid "User who checked this shipment"
 msgstr "Usuari que ha revisat aquest enviament"
 
-#: order/models.py:2755 order/models.py:3204 order/serializers.py:1915
-#: order/serializers.py:1968 order/serializers.py:2069
+#: order/models.py:2822 order/models.py:3271 order/serializers.py:1947
+#: order/serializers.py:2000 order/serializers.py:2101
 #: report/templates/report/inventree_sales_order_shipment_report.html:13
 msgid "Shipment"
 msgstr "Enviament"
 
-#: order/models.py:2756
+#: order/models.py:2823
 msgid "Shipment number"
 msgstr "Número d'enviament"
 
-#: order/models.py:2764
+#: order/models.py:2831
 msgid "Tracking Number"
 msgstr "Número de seguiment"
 
-#: order/models.py:2765
+#: order/models.py:2832
 msgid "Shipment tracking information"
 msgstr "Informació de seguiment de l'enviament"
 
-#: order/models.py:2772
+#: order/models.py:2839
 msgid "Invoice Number"
 msgstr "Número de factura"
 
-#: order/models.py:2773
+#: order/models.py:2840
 msgid "Reference number for associated invoice"
 msgstr "Número de referència de la factura associada"
 
-#: order/models.py:2819
+#: order/models.py:2886
 msgid "Shipment has already been sent"
 msgstr "L'enviament ja s'ha expedit"
 
-#: order/models.py:2822
+#: order/models.py:2889
 msgid "Shipment has no allocated stock items"
 msgstr "L'enviament no té articles d'estoc assignats"
 
-#: order/models.py:2829
+#: order/models.py:2896
 msgid "Shipment must be checked before it can be completed"
 msgstr "L'enviament s'ha de revisar abans de poder-lo completar"
 
-#: order/models.py:3092
+#: order/models.py:3159
 msgid "Sales Order Extra Line"
 msgstr "Línia addicional de comanda de venda"
 
-#: order/models.py:3121
+#: order/models.py:3188
 msgid "Sales Order Allocation"
 msgstr "Assignació de comanda de venda"
 
-#: order/models.py:3144 order/models.py:3146 order/models.py:4147
-#: order/models.py:4149
+#: order/models.py:3211 order/models.py:3213 order/models.py:4214
+#: order/models.py:4216
 msgid "Stock item has not been assigned"
 msgstr "No s'ha assignat l'article d'estoc"
 
-#: order/models.py:3153 order/models.py:4156
+#: order/models.py:3220 order/models.py:4223
 msgid "Cannot allocate stock item to a line with a different part"
 msgstr "No es pot assignar l'article d'estoc a una línia amb una peça diferent"
 
-#: order/models.py:3156 order/models.py:4159
+#: order/models.py:3223 order/models.py:4226
 msgid "Cannot allocate stock to a line without a part"
 msgstr "No es pot assignar estoc a una línia sense peça"
 
-#: order/models.py:3159 order/models.py:4162
+#: order/models.py:3226 order/models.py:4229
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr "La quantitat assignada no pot superar la quantitat d'estoc"
 
-#: order/models.py:3179 order/models.py:4184
+#: order/models.py:3246 order/models.py:4251
 msgid "Allocation quantity must be greater than zero"
 msgstr "La quantitat assignada ha de ser més gran que zero"
 
-#: order/models.py:3182 order/models.py:4187 order/serializers.py:1785
-#: order/serializers.py:2816
+#: order/models.py:3249 order/models.py:4254 order/serializers.py:1817
+#: order/serializers.py:2849
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "La quantitat ha de ser 1 per a un article d'estoc serialitzat"
 
-#: order/models.py:3185
+#: order/models.py:3252
 msgid "Sales order does not match shipment"
 msgstr "La comanda de venda no coincideix amb l'enviament"
 
-#: order/models.py:3186 plugin/base/barcodes/api.py:724
+#: order/models.py:3253 plugin/base/barcodes/api.py:724
 msgid "Shipment does not match sales order"
 msgstr "L'enviament no coincideix amb la comanda de venda"
 
-#: order/models.py:3194 order/models.py:4195
+#: order/models.py:3261 order/models.py:4262
 msgid "Line"
 msgstr "Línia"
 
-#: order/models.py:3205
+#: order/models.py:3272
 msgid "Sales order shipment reference"
 msgstr "Referència de l'enviament de la comanda de venda"
 
-#: order/models.py:3218 order/models.py:3629 order/models.py:4208
+#: order/models.py:3285 order/models.py:3696 order/models.py:4275
 msgid "Item"
 msgstr "Article"
 
-#: order/models.py:3219 order/models.py:4209
+#: order/models.py:3286 order/models.py:4276
 msgid "Select stock item to allocate"
 msgstr "Seleccioneu l'article d'estoc que s'ha d'assignar"
 
-#: order/models.py:3228 order/models.py:4218
+#: order/models.py:3295 order/models.py:4285
 msgid "Enter stock allocation quantity"
 msgstr "Introduïu la quantitat d'estoc que s'ha d'assignar"
 
-#: order/models.py:3337
+#: order/models.py:3404
 msgid "Return Order reference"
 msgstr "Referència de l'ordre de devolució"
 
-#: order/models.py:3349
+#: order/models.py:3416
 msgid "Company from which items are being returned"
 msgstr "Empresa des de la qual es retornen els articles"
 
-#: order/models.py:3362
+#: order/models.py:3429
 msgid "Return order status"
 msgstr "Estat de l'ordre de devolució"
 
-#: order/models.py:3587
+#: order/models.py:3654
 msgid "Return Order Line Item"
 msgstr "Línia d'ordre de devolució"
 
-#: order/models.py:3600
+#: order/models.py:3667
 msgid "Stock item must be specified"
 msgstr "Cal especificar l'article d'estoc"
 
-#: order/models.py:3604
+#: order/models.py:3671
 msgid "Return quantity exceeds stock quantity"
 msgstr "La quantitat retornada supera la quantitat d'estoc"
 
-#: order/models.py:3609
+#: order/models.py:3676
 msgid "Return quantity must be greater than zero"
 msgstr "La quantitat retornada ha de ser més gran que zero"
 
-#: order/models.py:3614
+#: order/models.py:3681
 msgid "Invalid quantity for serialized stock item"
 msgstr "Quantitat no vàlida per a un article d'estoc serialitzat"
 
-#: order/models.py:3630
+#: order/models.py:3697
 msgid "Select item to return from customer"
 msgstr "Seleccioneu l'article que el client retorna"
 
-#: order/models.py:3645
+#: order/models.py:3712
 msgid "Received Date"
 msgstr "Data de recepció"
 
-#: order/models.py:3646
+#: order/models.py:3713
 msgid "The date this return item was received"
 msgstr "Data en què es va rebre aquest article retornat"
 
-#: order/models.py:3658
+#: order/models.py:3725
 msgid "Outcome"
 msgstr "Resultat"
 
-#: order/models.py:3659
+#: order/models.py:3726
 msgid "Outcome for this line item"
 msgstr "Resultat d'aquesta línia"
 
-#: order/models.py:3666
+#: order/models.py:3733
 msgid "Cost associated with return or repair for this line item"
 msgstr "Cost associat a la devolució o reparació d'aquesta línia"
 
-#: order/models.py:3676
+#: order/models.py:3743
 msgid "Return Order Extra Line"
 msgstr "Línia addicional d'ordre de devolució"
 
-#: order/models.py:3777
+#: order/models.py:3844
 msgid "Transfer Order Reference"
 msgstr "Referència de l'ordre de transferència"
 
-#: order/models.py:3788
+#: order/models.py:3855
 msgid "Transfer order status"
 msgstr "Estat de l'ordre de transferència"
 
-#: order/models.py:3803
+#: order/models.py:3870
 msgid "Source for transferred items"
 msgstr "Origen dels articles transferits"
 
-#: order/models.py:3813
+#: order/models.py:3880
 msgid "Destination for transferred items"
 msgstr "Destinació dels articles transferits"
 
-#: order/models.py:3818
+#: order/models.py:3885
 msgid "Consume Stock"
 msgstr "Consumeix l'estoc"
 
-#: order/models.py:3820
+#: order/models.py:3887
 msgid "Rather than transfer the stock to the destination, \"consume\" it, by removing transferred quantity from the allocated stock item"
 msgstr "En lloc de transferir l'estoc a la destinació, el \"consumeix\" retirant la quantitat transferida de l'article d'estoc assignat"
 
-#: order/models.py:3879
+#: order/models.py:3946
 msgid "Order cannot be completed until a destination location is set"
 msgstr "L'ordre no es pot completar fins que no s'estableixi una ubicació de destinació"
 
-#: order/models.py:3884
+#: order/models.py:3951
 msgid "Order cannot be completed until it is fully allocated"
 msgstr "L'ordre no es pot completar fins que no estigui totalment assignada"
 
-#: order/models.py:4036
+#: order/models.py:4103
 msgid "Transfer Order Line Item"
 msgstr "Línia d'ordre de transferència"
 
-#: order/models.py:4069
+#: order/models.py:4136
 msgid "transferred"
 msgstr "transferit"
 
-#: order/models.py:4070
+#: order/models.py:4137
 msgid "transferred quantity"
 msgstr "quantitat transferida"
 
-#: order/models.py:4124
+#: order/models.py:4191
 msgid "Transfer Order Allocation"
 msgstr "Assignació d'ordre de transferència"
 
-#: order/models.py:4277
+#: order/models.py:4344
 msgid "Failed to consume stock item against transfer order"
 msgstr "No s'ha pogut consumir l'article d'estoc per a l'ordre de transferència"
 
-#: order/models.py:4289 order/models.py:4301
+#: order/models.py:4356 order/models.py:4368
 msgid "Failed to transfer stock item against transfer order"
 msgstr "No s'ha pogut transferir l'article d'estoc per a l'ordre de transferència"
 
-#: order/serializers.py:89 order/serializers.py:2102
+#: order/serializers.py:89 order/serializers.py:2134
 #: report/templates/report/inventree_purchase_order_report.html:28
 #: report/templates/report/inventree_return_order_report.html:18
 #: report/templates/report/inventree_sales_order_report.html:21
@@ -6166,247 +6206,247 @@ msgstr "Clau d'estat personalitzat no vàlida"
 msgid "Invalid custom status key for this order status"
 msgstr "Clau d'estat personalitzat no vàlida per a aquest estat de comanda"
 
-#: order/serializers.py:477
+#: order/serializers.py:481
 msgid "Supplier Name"
 msgstr "Nom del proveïdor"
 
-#: order/serializers.py:522 order/serializers.py:1806
+#: order/serializers.py:549 order/serializers.py:1838
 msgid "Allow order to be closed with incomplete line items"
 msgstr "Permet tancar la comanda amb línies incompletes"
 
-#: order/serializers.py:532 order/serializers.py:1816
+#: order/serializers.py:559 order/serializers.py:1848
 msgid "Order has incomplete line items"
 msgstr "La comanda té línies incompletes"
 
-#: order/serializers.py:634
+#: order/serializers.py:661
 msgid "Order is not open"
 msgstr "La comanda no està oberta"
 
-#: order/serializers.py:674
+#: order/serializers.py:701
 msgid "Auto Pricing"
 msgstr "Preu automàtic"
 
-#: order/serializers.py:676
+#: order/serializers.py:703
 msgid "Automatically calculate purchase price based on supplier part data"
 msgstr "Calcula automàticament el preu de compra a partir de les dades de la peça de proveïdor"
 
-#: order/serializers.py:693 stock/serializers.py:1082
+#: order/serializers.py:720 stock/serializers.py:1085
 msgid "Purchase price currency"
 msgstr "Moneda del preu de compra"
 
-#: order/serializers.py:724
+#: order/serializers.py:751
 msgid "Merge Items"
 msgstr "Fusiona els articles"
 
-#: order/serializers.py:726
+#: order/serializers.py:753
 msgid "Merge items with the same part, destination and target date into one line item"
 msgstr "Fusiona en una sola línia els articles amb la mateixa peça, destinació i data objectiu"
 
-#: order/serializers.py:741 part/serializers.py:462
+#: order/serializers.py:768 part/serializers.py:462
 msgid "SKU"
 msgstr "SKU"
 
-#: order/serializers.py:755 part/models.py:1184 part/serializers.py:382
+#: order/serializers.py:782 part/models.py:1184 part/serializers.py:382
 msgid "Internal Part Number"
 msgstr "Número de peça interna"
 
-#: order/serializers.py:763
+#: order/serializers.py:790
 msgid "Internal Part Name"
 msgstr "Nom de la peça interna"
 
-#: order/serializers.py:779
+#: order/serializers.py:806
 msgid "Supplier part must be specified"
 msgstr "Cal especificar la peça de proveïdor"
 
-#: order/serializers.py:782
+#: order/serializers.py:809
 msgid "Purchase order must be specified"
 msgstr "Cal especificar la comanda de compra"
 
-#: order/serializers.py:790
+#: order/serializers.py:817
 msgid "Supplier must match purchase order"
 msgstr "El proveïdor ha de coincidir amb la comanda de compra"
 
-#: order/serializers.py:791
+#: order/serializers.py:818
 msgid "Purchase order must match supplier"
 msgstr "La comanda de compra ha de coincidir amb el proveïdor"
 
-#: order/serializers.py:843 order/serializers.py:1886 order/serializers.py:2978
+#: order/serializers.py:870 order/serializers.py:1918 order/serializers.py:3011
 msgid "Line Item"
 msgstr "Línia"
 
-#: order/serializers.py:852 order/serializers.py:992 order/serializers.py:2311
+#: order/serializers.py:879 order/serializers.py:1023 order/serializers.py:2343
 msgid "Select destination location for received items"
 msgstr "Seleccioneu la ubicació de destinació dels articles rebuts"
 
-#: order/serializers.py:868
+#: order/serializers.py:896
 msgid "Enter batch code for incoming stock items"
 msgstr "Introduïu el codi de lot dels articles d'estoc entrants"
 
-#: order/serializers.py:875 stock/models.py:1299
+#: order/serializers.py:903 stock/models.py:1299
 #: templates/email/stale_stock_notification.html:22 users/models.py:265
 msgid "Expiry Date"
 msgstr "Data de caducitat"
 
-#: order/serializers.py:876
+#: order/serializers.py:904
 msgid "Enter expiry date for incoming stock items"
 msgstr "Introduïu la data de caducitat dels articles d'estoc entrants"
 
-#: order/serializers.py:884
+#: order/serializers.py:912
 msgid "Enter serial numbers for incoming stock items"
 msgstr "Introduïu els números de sèrie dels articles d'estoc entrants"
 
-#: order/serializers.py:894
+#: order/serializers.py:923
 msgid "Override packaging information for incoming stock items"
 msgstr "Sobreescriu la informació d'embalatge dels articles d'estoc entrants"
 
-#: order/serializers.py:902 order/serializers.py:2316
+#: order/serializers.py:932 order/serializers.py:2349
 msgid "Additional note for incoming stock items"
 msgstr "Nota addicional per als articles d'estoc entrants"
 
-#: order/serializers.py:909
+#: order/serializers.py:940
 msgid "Barcode"
 msgstr "Codi de barres"
 
-#: order/serializers.py:910
+#: order/serializers.py:941
 msgid "Scanned barcode"
 msgstr "Codi de barres escanejat"
 
-#: order/serializers.py:926
+#: order/serializers.py:957
 msgid "Barcode is already in use"
 msgstr "El codi de barres ja està en ús"
 
-#: order/serializers.py:998
+#: order/serializers.py:1030
 msgid "Enter batch code for incoming stock items - applied to any line item which does not specify its own batch code"
 msgstr "Introduïu el codi de lot dels articles d'estoc entrants; s'aplica a qualsevol línia que no especifiqui el seu propi codi de lot"
 
-#: order/serializers.py:1020 order/serializers.py:2335
-#: stock/serializers.py:1162
+#: order/serializers.py:1052 order/serializers.py:2368
+#: stock/serializers.py:1166
 msgid "Line items must be provided"
 msgstr "Cal proporcionar les línies"
 
-#: order/serializers.py:1046
+#: order/serializers.py:1078
 msgid "Destination location must be specified"
 msgstr "Cal especificar la ubicació de destinació"
 
-#: order/serializers.py:1057
+#: order/serializers.py:1089
 msgid "Supplied barcode values must be unique"
 msgstr "Els valors de codi de barres proporcionats han de ser únics"
 
-#: order/serializers.py:1074
+#: order/serializers.py:1106
 msgid "Supplied serial numbers must be unique"
 msgstr "Els números de sèrie proporcionats han de ser únics"
 
-#: order/serializers.py:1216
+#: order/serializers.py:1248
 msgid "Shipments"
 msgstr "Enviaments"
 
-#: order/serializers.py:1220
+#: order/serializers.py:1252
 msgid "Completed Shipments"
 msgstr "Enviaments completats"
 
-#: order/serializers.py:1224
+#: order/serializers.py:1256
 msgid "Allocated Lines"
 msgstr "Línies assignades"
 
-#: order/serializers.py:1420
+#: order/serializers.py:1452
 msgid "Sale price currency"
 msgstr "Moneda del preu de venda"
 
-#: order/serializers.py:1472
+#: order/serializers.py:1504
 msgid "Allocated Items"
 msgstr "Articles assignats"
 
-#: order/serializers.py:1708
+#: order/serializers.py:1740
 msgid "No shipment details provided"
 msgstr "No s'han proporcionat detalls de l'enviament"
 
-#: order/serializers.py:1759 order/serializers.py:2799
+#: order/serializers.py:1791 order/serializers.py:2832
 msgid "Quantity must be positive"
 msgstr "La quantitat ha de ser positiva"
 
-#: order/serializers.py:1780
+#: order/serializers.py:1812
 msgid "Stock item has not passed all required tests"
 msgstr "L'article d'estoc no ha superat totes les proves obligatòries"
 
-#: order/serializers.py:1905 order/serializers.py:2997
+#: order/serializers.py:1937 order/serializers.py:3030
 msgid "Enter serial numbers to allocate"
 msgstr "Introduïu els números de sèrie que s'han d'assignar"
 
-#: order/serializers.py:1927 order/serializers.py:1976
-#: order/serializers.py:2116
+#: order/serializers.py:1959 order/serializers.py:2008
+#: order/serializers.py:2148
 msgid "Shipment has already been shipped"
 msgstr "L'enviament ja s'ha expedit"
 
-#: order/serializers.py:1930 order/serializers.py:1979
-#: order/serializers.py:2119
+#: order/serializers.py:1962 order/serializers.py:2011
+#: order/serializers.py:2151
 msgid "Shipment is not associated with this order"
 msgstr "L'enviament no està associat a aquesta comanda"
 
-#: order/serializers.py:2051
+#: order/serializers.py:2083
 msgid "Stock location where items are sourced (leave blank to use any location)"
 msgstr "Ubicació d'estoc d'on s'obtenen els articles (deixeu-ho en blanc per a utilitzar qualsevol ubicació)"
 
-#: order/serializers.py:2061
+#: order/serializers.py:2093
 msgid "Exclude stock items from this location"
 msgstr "Exclou els articles d'estoc d'aquesta ubicació"
 
-#: order/serializers.py:2070
+#: order/serializers.py:2102
 msgid "Assign allocations to this shipment"
 msgstr "Vincula les assignacions a aquest enviament"
 
-#: order/serializers.py:2077
+#: order/serializers.py:2109
 msgid "Allow stock to be taken from multiple locations to fulfil a single line item"
 msgstr "Permet que l'estoc s'agafi de diverses ubicacions per a satisfer una sola línia"
 
-#: order/serializers.py:2091
+#: order/serializers.py:2123
 msgid "Serialized Stock"
 msgstr "Estoc serialitzat"
 
-#: order/serializers.py:2093
+#: order/serializers.py:2125
 msgid "Control whether serialized stock items are included in auto-allocation"
 msgstr "Controla si els articles d'estoc serialitzats s'inclouen en l'assignació automàtica"
 
-#: order/serializers.py:2104
+#: order/serializers.py:2136
 msgid "Limit allocation to these line items (leave blank to allocate all lines)"
 msgstr "Limita l'assignació a aquestes línies (deixeu-ho en blanc per a assignar totes les línies)"
 
-#: order/serializers.py:2130
+#: order/serializers.py:2162
 msgid "Line item does not belong to this order"
 msgstr "La línia no pertany a aquesta comanda"
 
-#: order/serializers.py:2277
+#: order/serializers.py:2309
 msgid "Return order line item"
 msgstr "Línia d'ordre de devolució"
 
-#: order/serializers.py:2287
+#: order/serializers.py:2319
 msgid "Line item does not match return order"
 msgstr "La línia no coincideix amb l'ordre de devolució"
 
-#: order/serializers.py:2290
+#: order/serializers.py:2322
 msgid "Line item has already been received"
 msgstr "La línia ja s'ha rebut"
 
-#: order/serializers.py:2327
+#: order/serializers.py:2360
 msgid "Items can only be received against orders which are in progress"
 msgstr "Els articles només es poden rebre per a comandes que estiguin en curs"
 
-#: order/serializers.py:2404
+#: order/serializers.py:2437
 msgid "Quantity to return"
 msgstr "Quantitat que cal retornar"
 
-#: order/serializers.py:2429
+#: order/serializers.py:2462
 msgid "Line price currency"
 msgstr "Moneda del preu de la línia"
 
-#: order/serializers.py:2565
+#: order/serializers.py:2598
 msgid "Order cannot be cancelled"
 msgstr "La comanda no es pot cancel·lar"
 
-#: order/serializers.py:2580
+#: order/serializers.py:2613
 msgid "Allow order to complete with incomplete allocations"
 msgstr "Permet completar la comanda amb assignacions incompletes"
 
-#: order/serializers.py:2590
+#: order/serializers.py:2623
 msgid "Order has incomplete allocations"
 msgstr "La comanda té assignacions incompletes"
 
@@ -6526,79 +6566,79 @@ msgstr "Nivell màxim"
 msgid "Limit the depth of the category tree"
 msgstr "Limita la profunditat de l'arbre de categories"
 
-#: part/api.py:442
+#: part/api.py:441
 msgid "Has Results"
 msgstr "Té resultats"
 
-#: part/api.py:672
+#: part/api.py:671
 msgid "Is Variant"
 msgstr "És variant"
 
-#: part/api.py:680
+#: part/api.py:679
 msgid "Is Revision"
 msgstr "És revisió"
 
-#: part/api.py:690
+#: part/api.py:689
 msgid "Has Revisions"
 msgstr "Té revisions"
 
-#: part/api.py:897
+#: part/api.py:896
 msgid "BOM Valid"
 msgstr "BOM vàlida"
 
-#: part/api.py:1006
+#: part/api.py:1005
 msgid "Cascade Categories"
 msgstr "Categories en cascada"
 
-#: part/api.py:1007
+#: part/api.py:1006
 msgid "If true, include items in child categories of the given category"
 msgstr "Si és cert, inclou els elements de les categories filles de la categoria indicada"
 
-#: part/api.py:1013
+#: part/api.py:1012
 msgid "Filter by numeric category ID or the literal 'null'"
 msgstr "Filtra per l'ID numèric de categoria o pel literal 'null'"
 
-#: part/api.py:1327
+#: part/api.py:1326
 msgid "Assembly part is active"
 msgstr "La peça de conjunt està activa"
 
-#: part/api.py:1331
+#: part/api.py:1330
 msgid "Assembly part is trackable"
 msgstr "La peça de conjunt és rastrejable"
 
-#: part/api.py:1335
+#: part/api.py:1334
 msgid "Assembly part is testable"
 msgstr "La peça de conjunt és comprovable"
 
-#: part/api.py:1339
+#: part/api.py:1338
 msgid "Assembly part is locked"
 msgstr "La peça de conjunt està bloquejada"
 
-#: part/api.py:1344
+#: part/api.py:1343
 msgid "Component part is active"
 msgstr "La peça component està activa"
 
-#: part/api.py:1348
+#: part/api.py:1347
 msgid "Component part is trackable"
 msgstr "La peça component és rastrejable"
 
-#: part/api.py:1352
+#: part/api.py:1351
 msgid "Component part is testable"
 msgstr "La peça component és comprovable"
 
-#: part/api.py:1356
+#: part/api.py:1355
 msgid "Component part is an assembly"
 msgstr "La peça component és un conjunt"
 
-#: part/api.py:1360
+#: part/api.py:1359
 msgid "Component part is virtual"
 msgstr "La peça component és virtual"
 
-#: part/api.py:1364
+#: part/api.py:1363
 msgid "Has available stock"
 msgstr "Té estoc disponible"
 
-#: part/api.py:1421
+#: part/api.py:1420
 msgid "Uses"
 msgstr "Utilitza"
 
@@ -7061,7 +7101,7 @@ msgid "Total available stock at time of stocktake"
 msgstr "Estoc total disponible en el moment del recompte d'inventari"
 
 #: part/models.py:3451 report/templates/report/inventree_test_report.html:106
-#: stock/models.py:3938
+#: stock/models.py:3940
 msgid "Date"
 msgstr "Data"
 
@@ -7433,7 +7473,7 @@ msgstr "Quantitat d'aquesta peça actualment en producció"
 msgid "Outstanding quantity of this part scheduled to be built"
 msgstr "Quantitat pendent d'aquesta peça programada per a produir"
 
-#: part/serializers.py:854 stock/serializers.py:1288 stock/serializers.py:1504
+#: part/serializers.py:854 stock/serializers.py:1292 stock/serializers.py:1509
 #: users/ruleset.py:47
 msgid "Stock Items"
 msgstr "Articles d'estoc"
@@ -9290,7 +9330,7 @@ msgstr "Filtra per ubicacions de nivell superior"
 msgid "Include sub-locations in filtered results"
 msgstr "Inclou les sububicacions als resultats filtrats"
 
-#: stock/api.py:397 stock/serializers.py:1500
+#: stock/api.py:397 stock/serializers.py:1505
 msgid "Parent Location"
 msgstr "Ubicació pare"
 
@@ -9581,7 +9621,7 @@ msgstr "Seleccioneu una peça de proveïdor corresponent per a aquest article d'
 msgid "Where is this stock item located?"
 msgstr "On es troba aquest article d'estoc?"
 
-#: stock/models.py:1196 stock/serializers.py:1960
+#: stock/models.py:1196 stock/serializers.py:1967
 msgid "Packaging this stock item is stored in"
 msgstr "Embalatge en què s'emmagatzema aquest article d'estoc"
 
@@ -9597,7 +9637,7 @@ msgstr "Aquest article està instal·lat en un altre article?"
 msgid "Serial number for this item"
 msgstr "Número de sèrie d'aquest article"
 
-#: stock/models.py:1243 stock/serializers.py:1945
+#: stock/models.py:1243 stock/serializers.py:1952
 msgid "Batch code for this stock item"
 msgstr "Codi de lot d'aquest article d'estoc"
 
@@ -9669,7 +9709,7 @@ msgstr "Valor de quantitat no vàlid"
 msgid "Cannot assign stock to structural location"
 msgstr "No es pot assignar estoc a una ubicació estructural"
 
-#: stock/models.py:2125 stock/serializers.py:1120
+#: stock/models.py:2125 stock/serializers.py:1123
 msgid "Quantity must not exceed available stock quantity"
 msgstr "La quantitat no pot superar la quantitat d'estoc disponible"
 
@@ -9706,7 +9746,7 @@ msgstr "Els números de sèrie s'han de proporcionar com a llista"
 msgid "Quantity does not match serial numbers"
 msgstr "La quantitat no coincideix amb els números de sèrie"
 
-#: stock/models.py:2606 stock/models.py:3856
+#: stock/models.py:2606 stock/models.py:3858
 msgid "Test template does not exist"
 msgstr "La plantilla de prova no existeix"
 
@@ -9734,7 +9774,7 @@ msgstr "L'article d'estoc està actualment en producció"
 msgid "Serialized stock cannot be merged"
 msgstr "L'estoc serialitzat no es pot fusionar"
 
-#: stock/models.py:2647 stock/serializers.py:1814
+#: stock/models.py:2647 stock/serializers.py:1821
 msgid "Duplicate stock items"
 msgstr "Articles d'estoc duplicats"
 
@@ -9754,67 +9794,67 @@ msgstr "Els codis d'estat de l'estoc han de coincidir"
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "L'article d'estoc no es pot moure perquè no està en estoc"
 
-#: stock/models.py:3736
+#: stock/models.py:3738
 msgid "Stock Item Tracking"
 msgstr "Seguiment de l'article d'estoc"
 
-#: stock/models.py:3786
+#: stock/models.py:3788
 msgid "Entry notes"
 msgstr "Notes de l'entrada"
 
-#: stock/models.py:3826
+#: stock/models.py:3828
 msgid "Stock Item Test Result"
 msgstr "Resultat de prova de l'article d'estoc"
 
-#: stock/models.py:3859
+#: stock/models.py:3861
 msgid "Value must be provided for this test"
 msgstr "Cal proporcionar un valor per a aquesta prova"
 
-#: stock/models.py:3863
+#: stock/models.py:3865
 msgid "Attachment must be uploaded for this test"
 msgstr "Cal pujar un adjunt per a aquesta prova"
 
-#: stock/models.py:3868
+#: stock/models.py:3870
 msgid "Invalid value for this test"
 msgstr "Valor no vàlid per a aquesta prova"
 
-#: stock/models.py:3892
+#: stock/models.py:3894
 msgid "Test result"
 msgstr "Resultat de la prova"
 
-#: stock/models.py:3899
+#: stock/models.py:3901
 msgid "Test output value"
 msgstr "Valor de sortida de la prova"
 
-#: stock/models.py:3907 stock/serializers.py:264
+#: stock/models.py:3909 stock/serializers.py:264
 msgid "Test result attachment"
 msgstr "Adjunt del resultat de la prova"
 
-#: stock/models.py:3911
+#: stock/models.py:3913
 msgid "Test notes"
 msgstr "Notes de la prova"
 
-#: stock/models.py:3919
+#: stock/models.py:3921
 msgid "Test station"
 msgstr "Estació de prova"
 
-#: stock/models.py:3920
+#: stock/models.py:3922
 msgid "The identifier of the test station where the test was performed"
 msgstr "L'identificador de l'estació de prova on s'ha realitzat la prova"
 
-#: stock/models.py:3926
+#: stock/models.py:3928
 msgid "Started"
 msgstr "Iniciada"
 
-#: stock/models.py:3927
+#: stock/models.py:3929
 msgid "The timestamp of the test start"
 msgstr "La marca de temps de l'inici de la prova"
 
-#: stock/models.py:3933 users/models.py:829
+#: stock/models.py:3935 users/models.py:829
 msgid "Finished"
 msgstr "Finalitzada"
 
-#: stock/models.py:3934
+#: stock/models.py:3936
 msgid "The timestamp of the test finish"
 msgstr "La marca de temps del final de la prova"
 
@@ -9942,8 +9982,8 @@ msgstr "Preu de compra d'aquest article d'estoc, per unitat o paquet"
 msgid "Enter number of stock items to serialize"
 msgstr "Introduïu el nombre d'articles d'estoc que es serialitzaran"
 
-#: stock/serializers.py:745 stock/serializers.py:788 stock/serializers.py:826
-#: stock/serializers.py:979 stock/serializers.py:1113 stock/serializers.py:1154
+#: stock/serializers.py:745 stock/serializers.py:789 stock/serializers.py:827
+#: stock/serializers.py:982 stock/serializers.py:1116 stock/serializers.py:1158
 msgid "No stock item provided"
 msgstr "No s'ha proporcionat cap article d'estoc"
 
@@ -9952,240 +9992,240 @@ msgstr "No s'ha proporcionat cap article d'estoc"
 msgid "Quantity must not exceed available stock quantity ({q})"
 msgstr "La quantitat no pot superar la quantitat d'estoc disponible ({q})"
 
-#: stock/serializers.py:771 stock/serializers.py:1771 stock/serializers.py:2172
-#: stock/serializers.py:2281
+#: stock/serializers.py:771 stock/serializers.py:1777 stock/serializers.py:2180
+#: stock/serializers.py:2289
 msgid "Destination stock location"
 msgstr "Ubicació d'estoc de destinació"
 
-#: stock/serializers.py:791
+#: stock/serializers.py:792
 msgid "Serial numbers cannot be assigned to this part"
 msgstr "No es poden assignar números de sèrie a aquesta peça"
 
-#: stock/serializers.py:811
+#: stock/serializers.py:812
 msgid "Serial numbers already exist"
 msgstr "Els números de sèrie ja existeixen"
 
-#: stock/serializers.py:867
+#: stock/serializers.py:868
 msgid "Select stock item to install"
 msgstr "Seleccioneu l'article d'estoc que s'instal·larà"
 
-#: stock/serializers.py:874
+#: stock/serializers.py:875
 msgid "Quantity to Install"
 msgstr "Quantitat per instal·lar"
 
-#: stock/serializers.py:875
+#: stock/serializers.py:876
 msgid "Enter the quantity of items to install"
 msgstr "Introduïu la quantitat d'articles que s'instal·laran"
 
-#: stock/serializers.py:880 stock/serializers.py:960 stock/serializers.py:1305
+#: stock/serializers.py:882 stock/serializers.py:963 stock/serializers.py:1310
 msgid "Add transaction note (optional)"
 msgstr "Afegeix una nota de transacció (opcional)"
 
-#: stock/serializers.py:888
+#: stock/serializers.py:890
 msgid "Quantity to install must be at least 1"
 msgstr "La quantitat per instal·lar ha de ser com a mínim 1"
 
-#: stock/serializers.py:896 stock/serializers.py:1157
+#: stock/serializers.py:898 stock/serializers.py:1161
 msgid "Stock item is unavailable"
 msgstr "L'article d'estoc no està disponible"
 
-#: stock/serializers.py:907
+#: stock/serializers.py:909
 msgid "Selected part is not in the Bill of Materials"
 msgstr "La peça seleccionada no és a la llista de materials"
 
-#: stock/serializers.py:920
+#: stock/serializers.py:922
 msgid "Quantity to install must not exceed available quantity"
 msgstr "La quantitat per instal·lar no pot superar la quantitat disponible"
 
-#: stock/serializers.py:955
+#: stock/serializers.py:957
 msgid "Destination location for uninstalled item"
 msgstr "Ubicació de destinació de l'article desinstal·lat"
 
-#: stock/serializers.py:1003
+#: stock/serializers.py:1006
 msgid "Stock item status code"
 msgstr "Codi d'estat de l'article d'estoc"
 
-#: stock/serializers.py:1039
+#: stock/serializers.py:1042
 msgid "BOM line which defines the component part to break out"
 msgstr "Línia de la BOM que defineix la peça component que s'extraurà"
 
-#: stock/serializers.py:1048
+#: stock/serializers.py:1051
 msgid "Quantity of the component part to create"
 msgstr "Quantitat de la peça component que es crearà"
 
-#: stock/serializers.py:1064
+#: stock/serializers.py:1067
 msgid "Destination location for the component items"
 msgstr "Ubicació de destinació dels articles components"
 
-#: stock/serializers.py:1068
+#: stock/serializers.py:1071
 msgid "Status code for the component items"
 msgstr "Codi d'estat dels articles components"
 
-#: stock/serializers.py:1077
+#: stock/serializers.py:1080
 msgid "Unit purchase price for the component items (leave blank for automatic cost allocation)"
 msgstr "Preu de compra unitari dels articles components (deixeu-ho en blanc per a l'assignació automàtica de costos)"
 
-#: stock/serializers.py:1105
+#: stock/serializers.py:1108
 msgid "Number of assemblies to disassemble"
 msgstr "Nombre de conjunts que es desmuntaran"
 
-#: stock/serializers.py:1132
+#: stock/serializers.py:1135
 msgid "Default destination location for the component items"
 msgstr "Ubicació de destinació predeterminada dels articles components"
 
-#: stock/serializers.py:1178
+#: stock/serializers.py:1182
 msgid "BOM item is not valid for the selected stock item"
 msgstr "L'element de la BOM no és vàlid per a l'article d'estoc seleccionat"
 
-#: stock/serializers.py:1182
+#: stock/serializers.py:1186
 msgid "Duplicate BOM items provided"
 msgstr "S'han proporcionat elements de BOM duplicats"
 
-#: stock/serializers.py:1223
+#: stock/serializers.py:1227
 msgid "Select part to convert stock item into"
 msgstr "Seleccioneu la peça en què s'ha de convertir l'article d'estoc"
 
-#: stock/serializers.py:1236
+#: stock/serializers.py:1240
 msgid "Selected part is not a valid option for conversion"
 msgstr "La peça seleccionada no és una opció vàlida per a la conversió"
 
-#: stock/serializers.py:1253
+#: stock/serializers.py:1257
 msgid "Cannot convert stock item with assigned SupplierPart"
 msgstr "No es pot convertir un article d'estoc amb una peça de proveïdor assignada"
 
-#: stock/serializers.py:1289
+#: stock/serializers.py:1293
 msgid "Select stock items to change status"
 msgstr "Seleccioneu els articles d'estoc dels quals voleu canviar l'estat"
 
-#: stock/serializers.py:1295
+#: stock/serializers.py:1299
 msgid "No stock items selected"
 msgstr "No s'ha seleccionat cap article d'estoc"
 
-#: stock/serializers.py:1413 stock/serializers.py:1506
+#: stock/serializers.py:1418 stock/serializers.py:1511
 msgid "Sublocations"
 msgstr "Sububicacions"
 
-#: stock/serializers.py:1431
+#: stock/serializers.py:1436
 msgid "Delete Stock Items"
 msgstr "Suprimeix els articles d'estoc"
 
-#: stock/serializers.py:1432
+#: stock/serializers.py:1437
 msgid "Delete all stock items contained within this location"
 msgstr "Suprimeix tots els articles d'estoc continguts en aquesta ubicació"
 
-#: stock/serializers.py:1437
+#: stock/serializers.py:1442
 msgid "Delete Sublocations"
 msgstr "Suprimeix les sububicacions"
 
-#: stock/serializers.py:1438
+#: stock/serializers.py:1443
 msgid "Delete all sub-locations contained within this location"
 msgstr "Suprimeix totes les sububicacions contingudes en aquesta ubicació"
 
-#: stock/serializers.py:1501
+#: stock/serializers.py:1506
 msgid "Parent stock location"
 msgstr "Ubicació d'estoc pare"
 
-#: stock/serializers.py:1639
+#: stock/serializers.py:1644
 msgid "Part must be salable"
 msgstr "La peça ha de ser vendible"
 
-#: stock/serializers.py:1643
+#: stock/serializers.py:1648
 msgid "Item is allocated to a sales order"
 msgstr "L'article està assignat a una comanda de venda"
 
-#: stock/serializers.py:1647
+#: stock/serializers.py:1652
 msgid "Item is allocated to a transfer order"
 msgstr "L'article està assignat a una ordre de transferència"
 
-#: stock/serializers.py:1651
+#: stock/serializers.py:1656
 msgid "Item is allocated to a build order"
 msgstr "L'article està assignat a una ordre de producció"
 
-#: stock/serializers.py:1675
+#: stock/serializers.py:1680
 msgid "Customer to assign stock items"
 msgstr "Client a qui assignar els articles d'estoc"
 
-#: stock/serializers.py:1681
+#: stock/serializers.py:1686
 msgid "Selected company is not a customer"
 msgstr "L'empresa seleccionada no és un client"
 
-#: stock/serializers.py:1689
+#: stock/serializers.py:1695
 msgid "Stock assignment notes"
 msgstr "Notes d'assignació d'estoc"
 
-#: stock/serializers.py:1699 stock/serializers.py:2021
+#: stock/serializers.py:1705 stock/serializers.py:2029
 msgid "A list of stock items must be provided"
 msgstr "Cal proporcionar una llista d'articles d'estoc"
 
-#: stock/serializers.py:1778
+#: stock/serializers.py:1785
 msgid "Stock merging notes"
 msgstr "Notes de fusió d'estoc"
 
-#: stock/serializers.py:1783
+#: stock/serializers.py:1790
 msgid "Allow mismatched suppliers"
 msgstr "Permet proveïdors no coincidents"
 
-#: stock/serializers.py:1784
+#: stock/serializers.py:1791
 msgid "Allow stock items with different supplier parts to be merged"
 msgstr "Permet fusionar articles d'estoc amb peces de proveïdor diferents"
 
-#: stock/serializers.py:1789
+#: stock/serializers.py:1796
 msgid "Allow mismatched status"
 msgstr "Permet estats no coincidents"
 
-#: stock/serializers.py:1790
+#: stock/serializers.py:1797
 msgid "Allow stock items with different status codes to be merged"
 msgstr "Permet fusionar articles d'estoc amb codis d'estat diferents"
 
-#: stock/serializers.py:1800
+#: stock/serializers.py:1807
 msgid "At least two stock items must be provided"
 msgstr "Cal proporcionar almenys dos articles d'estoc"
 
-#: stock/serializers.py:1867
+#: stock/serializers.py:1874
 msgid "No Change"
 msgstr "Sense canvis"
 
-#: stock/serializers.py:1906
+#: stock/serializers.py:1913
 msgid "StockItem primary key value"
 msgstr "Valor de la clau primària de StockItem"
 
-#: stock/serializers.py:1919
+#: stock/serializers.py:1926
 msgid "Stock item is not in stock"
 msgstr "L'article d'estoc no és en estoc"
 
-#: stock/serializers.py:1922
+#: stock/serializers.py:1929
 msgid "Stock item is already in stock"
 msgstr "L'article d'estoc ja és en estoc"
 
-#: stock/serializers.py:1936
+#: stock/serializers.py:1943
 msgid "Quantity must not be negative"
 msgstr "La quantitat no pot ser negativa"
 
-#: stock/serializers.py:1966 stock/serializers.py:2296
+#: stock/serializers.py:1973 stock/serializers.py:2304
 msgid "Merge into existing stock"
 msgstr "Fusiona amb l'estoc existent"
 
-#: stock/serializers.py:1968
+#: stock/serializers.py:1975
 msgid "Merge this item into existing stock at the destination if possible"
 msgstr "Fusiona aquest article amb l'estoc existent a la destinació si és possible"
 
-#: stock/serializers.py:1987
+#: stock/serializers.py:1995
 msgid "Stock transaction notes"
 msgstr "Notes de transacció d'estoc"
 
-#: stock/serializers.py:2044
+#: stock/serializers.py:2052
 msgid "Set stock location for counted items (optional)"
 msgstr "Estableix la ubicació d'estoc dels articles comptats (opcional)"
 
-#: stock/serializers.py:2297
+#: stock/serializers.py:2305
 msgid "Merge returned items into existing stock items if possible"
 msgstr "Fusiona els articles retornats amb els articles d'estoc existents si és possible"
 
-#: stock/serializers.py:2340
+#: stock/serializers.py:2348
 msgid "Next Serial Number"
 msgstr "Número de sèrie següent"
 
-#: stock/serializers.py:2346
+#: stock/serializers.py:2354
 msgid "Previous Serial Number"
 msgstr "Número de sèrie anterior"
 

@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-15 08:52\n"
+"PO-Revision-Date: 2026-10-16 22:16\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -91,7 +91,7 @@ msgstr "Hủy bỏ"
 
 #: lib/components/RowActions.tsx:146
 #: src/components/nav/NavigationDrawer.tsx:185
-#: src/forms/PurchaseOrderForms.tsx:965
+#: src/forms/PurchaseOrderForms.tsx:1001
 #: src/forms/StockForms.tsx:950
 #: src/forms/StockForms.tsx:1517
 #: src/forms/StockForms.tsx:1565
@@ -160,7 +160,7 @@ msgstr "Không"
 #: src/forms/BuildForms.tsx:703
 #: src/forms/BuildForms.tsx:867
 #: src/forms/BuildForms.tsx:971
-#: src/forms/PurchaseOrderForms.tsx:961
+#: src/forms/PurchaseOrderForms.tsx:997
 #: src/forms/ReturnOrderForms.tsx:242
 #: src/forms/SalesOrderForms.tsx:435
 #: src/forms/StockForms.tsx:432
@@ -400,7 +400,7 @@ msgstr "Doanh nghiệp"
 #: src/components/tables/TableHoverCard.tsx:103
 #: src/forms/CommonFields.tsx:47
 #: src/pages/build/BuildOrderDetailsPanel.tsx:162
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:158
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:180
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:170
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:172
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:101
@@ -543,7 +543,7 @@ msgstr "Địa chỉ"
 #: lib/enums/ModelInformation.tsx:278
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:89
 #: src/pages/core/UserDetail.tsx:132
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:134
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:156
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:146
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:148
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:131
@@ -684,7 +684,7 @@ msgstr ""
 #: src/components/modals/LicenseModal.tsx:85
 #: src/components/nav/NavigationTree.tsx:439
 #: src/components/nav/NotificationDrawer.tsx:239
-#: src/components/nav/SearchDrawer.tsx:616
+#: src/components/nav/SearchDrawer.tsx:611
 #: src/components/settings/SettingList.tsx:158
 #: src/components/tables/InvenTreeTableHeader.tsx:164
 #: src/components/wizards/ImportPartWizard.tsx:574
@@ -861,8 +861,8 @@ msgstr "Nhập dữ liệu mã vạch"
 #: src/components/barcodes/BarcodeScanDialog.tsx:56
 #: src/components/buttons/ScanButton.tsx:58
 #: src/components/nav/NavigationDrawer.tsx:122
-#: src/forms/PurchaseOrderForms.tsx:546
-#: src/forms/PurchaseOrderForms.tsx:686
+#: src/forms/PurchaseOrderForms.tsx:582
+#: src/forms/PurchaseOrderForms.tsx:722
 msgid "Scan Barcode"
 msgstr "Quét mã vạch"
 
@@ -932,7 +932,7 @@ msgstr "Liên kết với mã vạch thất bại"
 
 #: src/components/barcodes/QRCode.tsx:179
 #: src/pages/part/PartDetailsPanel.tsx:148
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:127
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:149
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:127
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:129
 #: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:75
@@ -947,7 +947,7 @@ msgstr "Thao tác này sẽ xóa liên kết đến mã vạch được liên k�
 
 #: src/components/barcodes/QRCode.tsx:205
 #: src/components/items/ActionDropdown.tsx:197
-#: src/forms/PurchaseOrderForms.tsx:676
+#: src/forms/PurchaseOrderForms.tsx:712
 msgid "Unlink Barcode"
 msgstr "Gỡ liên kết mã vạch"
 
@@ -1132,8 +1132,8 @@ msgstr "Quá hạn"
 
 #: src/components/calendar/OrderCalendarToolTip.tsx:58
 #: src/components/tables/ColumnRenderers.tsx:731
-#: src/pages/build/BuildOrderDetailsPanel.tsx:204
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:199
+#: src/pages/build/BuildOrderDetailsPanel.tsx:205
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:221
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:212
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:213
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:135
@@ -1142,8 +1142,8 @@ msgstr ""
 
 #: src/components/calendar/OrderCalendarToolTip.tsx:64
 #: src/components/tables/ColumnRenderers.tsx:740
-#: src/pages/build/BuildOrderDetailsPanel.tsx:212
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:207
+#: src/pages/build/BuildOrderDetailsPanel.tsx:213
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:229
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:220
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:221
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:143
@@ -1160,7 +1160,7 @@ msgstr "Ngày mục tiêu"
 #: src/components/tables/Filter.tsx:400
 #: src/pages/build/BuildOrderDetailsPanel.tsx:155
 #: src/pages/part/PartDetailsPanel.tsx:290
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:166
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:188
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:178
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:180
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:109
@@ -1753,7 +1753,7 @@ msgstr ""
 
 #: src/components/editors/NotesEditor.tsx:317
 #: src/components/editors/NotesEditor.tsx:720
-#: src/forms/PurchaseOrderForms.tsx:667
+#: src/forms/PurchaseOrderForms.tsx:703
 msgid "Add Note"
 msgstr "Thêm ghi chú"
 
@@ -3489,41 +3489,41 @@ msgstr "Khách hàng"
 #~ msgid "No results"
 #~ msgstr "No results"
 
-#: src/components/nav/SearchDrawer.tsx:520
+#: src/components/nav/SearchDrawer.tsx:515
 msgid "Enter search text"
 msgstr "Nhập văn bản tìm kiếm"
 
-#: src/components/nav/SearchDrawer.tsx:531
+#: src/components/nav/SearchDrawer.tsx:526
 msgid "Refresh search results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:542
-#: src/components/nav/SearchDrawer.tsx:549
+#: src/components/nav/SearchDrawer.tsx:537
+#: src/components/nav/SearchDrawer.tsx:544
 msgid "Search Options"
 msgstr "Tùy chọn tìm kiếm"
 
-#: src/components/nav/SearchDrawer.tsx:552
+#: src/components/nav/SearchDrawer.tsx:547
 msgid "Whole word search"
 msgstr "Tìm phù hợp toàn bộ từ"
 
-#: src/components/nav/SearchDrawer.tsx:561
+#: src/components/nav/SearchDrawer.tsx:556
 msgid "Regex search"
 msgstr "Tìm kiếm regex"
 
-#: src/components/nav/SearchDrawer.tsx:570
+#: src/components/nav/SearchDrawer.tsx:565
 msgid "Notes search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:619
+#: src/components/nav/SearchDrawer.tsx:614
 msgid "An error occurred during search query"
 msgstr "Lỗi trong quá trình truy vấn tìm kiếm"
 
-#: src/components/nav/SearchDrawer.tsx:630
+#: src/components/nav/SearchDrawer.tsx:625
 #: src/tables/part/PartTestTemplateTable.tsx:86
 msgid "No Results"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:633
+#: src/components/nav/SearchDrawer.tsx:628
 msgid "No results available for search query"
 msgstr "Không có kết quả nào được tìm thấy với truy vấn tìm kiếm"
 
@@ -3594,7 +3594,7 @@ msgstr ""
 #: src/pages/company/SupplierPartDetailsPanel.tsx:99
 #: src/pages/part/PartCategoryDetailsPanel.tsx:42
 #: src/pages/part/PartDetailsPanel.tsx:87
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:66
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:67
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:67
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:67
 #: src/pages/stock/StockLocationDetailsPanel.tsx:40
@@ -3838,7 +3838,7 @@ msgstr "Danh mục"
 #: src/components/tables/ColumnRenderers.tsx:394
 #: src/components/tables/Filter.tsx:507
 #: src/forms/BuildForms.tsx:869
-#: src/forms/PurchaseOrderForms.tsx:719
+#: src/forms/PurchaseOrderForms.tsx:755
 #: src/forms/StockForms.tsx:674
 #: src/forms/StockForms.tsx:712
 #: src/forms/StockForms.tsx:1513
@@ -3873,7 +3873,7 @@ msgstr "Số sê-ri"
 #: src/forms/BuildForms.tsx:284
 #: src/forms/BuildForms.tsx:707
 #: src/forms/BuildForms.tsx:871
-#: src/forms/PurchaseOrderForms.tsx:964
+#: src/forms/PurchaseOrderForms.tsx:1000
 #: src/forms/ReturnOrderForms.tsx:243
 #: src/forms/SalesOrderForms.tsx:438
 #: src/forms/StockForms.tsx:724
@@ -3896,7 +3896,7 @@ msgstr "Số sê-ri"
 #: src/tables/part/PartTestResultTable.tsx:282
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:183
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:214
-#: src/tables/purchasing/SupplierPriceBreakTable.tsx:69
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:78
 #: src/tables/stock/StockTrackingTable.tsx:105
 msgid "Quantity"
 msgstr "Số lượng"
@@ -4176,7 +4176,7 @@ msgstr "Vị trí mặc định"
 #: src/components/tables/ColumnRenderers.tsx:541
 #: src/pages/build/BuildOrderDetailsPanel.tsx:90
 #: src/pages/part/bom/BomCompare.tsx:34
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:45
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:46
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:46
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:46
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:25
@@ -4186,7 +4186,7 @@ msgid "Reference"
 msgstr "Tham chiếu"
 
 #: src/components/tables/ColumnRenderers.tsx:553
-#: src/forms/PurchaseOrderForms.tsx:865
+#: src/forms/PurchaseOrderForms.tsx:901
 #: src/pages/company/SupplierPartDetailsPanel.tsx:74
 msgid "Note"
 msgstr "Ghi chú"
@@ -4204,7 +4204,7 @@ msgstr ""
 #: src/components/tables/ColumnRenderers.tsx:677
 #: src/components/tables/Filter.tsx:480
 #: src/pages/part/PartDetailsPanel.tsx:282
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:173
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:195
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:185
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:187
 msgid "Created By"
@@ -4212,7 +4212,7 @@ msgstr "Tạo bởi"
 
 #: src/components/tables/ColumnRenderers.tsx:749
 #: src/pages/part/PartDetailsPanel.tsx:277
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:184
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:206
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:196
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:198
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:119
@@ -4220,7 +4220,7 @@ msgid "Creation Date"
 msgstr "Ngày tạo"
 
 #: src/components/tables/ColumnRenderers.tsx:758
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:216
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:238
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:228
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:228
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:151
@@ -4267,9 +4267,9 @@ msgid "Show items which have a batch code"
 msgstr ""
 
 #: src/components/tables/Filter.tsx:125
-#: src/forms/PurchaseOrderForms.tsx:789
+#: src/forms/PurchaseOrderForms.tsx:825
 #: src/forms/StockForms.tsx:731
-#: src/pages/build/BuildOrderDetailsPanel.tsx:186
+#: src/pages/build/BuildOrderDetailsPanel.tsx:187
 #: src/pages/stock/StockDetail.tsx:689
 #: src/pages/stock/StockDetailsPanel.tsx:220
 #: src/tables/build/BuildAllocatedStockTable.tsx:119
@@ -4496,7 +4496,7 @@ msgstr ""
 #: src/forms/BuildForms.tsx:386
 #: src/forms/BuildForms.tsx:469
 #: src/forms/BuildForms.tsx:544
-#: src/forms/PurchaseOrderForms.tsx:855
+#: src/forms/PurchaseOrderForms.tsx:891
 #: src/forms/ReturnOrderForms.tsx:196
 #: src/forms/ReturnOrderForms.tsx:244
 #: src/forms/StockForms.tsx:689
@@ -4505,7 +4505,7 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/IdentityManagementPanel.tsx:104
 #: src/pages/build/BuildOrderDetailsPanel.tsx:67
 #: src/pages/core/UserDetail.tsx:148
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:72
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:73
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:73
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:73
 #: src/pages/stock/StockDetailsPanel.tsx:108
@@ -4577,13 +4577,13 @@ msgstr ""
 #: src/pages/company/SupplierPartDetail.tsx:215
 #: src/pages/company/SupplierPartDetailsPanel.tsx:84
 #: src/pages/company/SupplierPartDetailsPanel.tsx:183
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:60
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:61
 #: src/tables/company/CompanyTable.tsx:92
 #: src/tables/company/CompanyTable.tsx:161
 #: src/tables/part/PartPurchaseOrdersTable.tsx:52
 #: src/tables/purchasing/PurchaseOrderParametricTable.tsx:27
 #: src/tables/purchasing/PurchaseOrderTable.tsx:68
-#: src/tables/purchasing/SupplierPriceBreakTable.tsx:40
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:49
 msgid "Supplier"
 msgstr "Nhà cung cấp"
 
@@ -6066,7 +6066,7 @@ msgstr ""
 #: src/forms/SalesOrderForms.tsx:425
 #: src/forms/TransferOrderForms.tsx:229
 #: src/pages/build/BuildDetail.tsx:123
-#: src/pages/build/BuildOrderDetailsPanel.tsx:172
+#: src/pages/build/BuildOrderDetailsPanel.tsx:173
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:32
 #: src/tables/stock/TransferOrderTable.tsx:49
 msgid "Source Location"
@@ -6213,23 +6213,23 @@ msgstr ""
 #~ msgid "Remove item from list"
 #~ msgstr "Remove item from list"
 
-#: src/forms/PurchaseOrderForms.tsx:493
+#: src/forms/PurchaseOrderForms.tsx:529
 msgid "Choose Location"
 msgstr "Chọn vị trí"
 
-#: src/forms/PurchaseOrderForms.tsx:501
+#: src/forms/PurchaseOrderForms.tsx:537
 msgid "Item Destination selected"
 msgstr "Đã chọn đích đến của mặt hàng"
 
-#: src/forms/PurchaseOrderForms.tsx:511
+#: src/forms/PurchaseOrderForms.tsx:547
 msgid "Part category default location selected"
 msgstr "Vị trí mặc định danh mục đã được chọn"
 
-#: src/forms/PurchaseOrderForms.tsx:521
+#: src/forms/PurchaseOrderForms.tsx:557
 msgid "Received stock location selected"
 msgstr "Vị trí kho hàng nhận đã được chọn"
 
-#: src/forms/PurchaseOrderForms.tsx:529
+#: src/forms/PurchaseOrderForms.tsx:565
 msgid "Default location selected"
 msgstr "Vị trí mặc định đã chọn"
 
@@ -6237,94 +6237,94 @@ msgstr "Vị trí mặc định đã chọn"
 #~ msgid "Serial numbers"
 #~ msgstr "Serial numbers"
 
-#: src/forms/PurchaseOrderForms.tsx:576
+#: src/forms/PurchaseOrderForms.tsx:582
+#~ msgid "Store at line item destination"
+#~ msgstr "Store at line item destination"
+
+#: src/forms/PurchaseOrderForms.tsx:612
 #: src/pages/part/PartDetailsPanel.tsx:268
 #: src/tables/bom/BomTable.tsx:328
 #: src/tables/bom/BomTable.tsx:579
 msgid "Virtual Part"
 msgstr "Nguyên liệu ảo"
 
-#: src/forms/PurchaseOrderForms.tsx:577
+#: src/forms/PurchaseOrderForms.tsx:613
 msgid "This part is virtual, no physical stock will be received."
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:582
-#~ msgid "Store at line item destination"
-#~ msgstr "Store at line item destination"
-
-#: src/forms/PurchaseOrderForms.tsx:611
+#: src/forms/PurchaseOrderForms.tsx:647
 #: src/forms/StockForms.tsx:616
 msgid "Set Location"
 msgstr "Cài đặt vị trí"
 
-#: src/forms/PurchaseOrderForms.tsx:620
+#: src/forms/PurchaseOrderForms.tsx:656
 msgid "Assign Batch Code"
 msgstr ""
-
-#: src/forms/PurchaseOrderForms.tsx:630
-msgid "Assign Serial Numbers"
-msgstr ""
-
-#: src/forms/PurchaseOrderForms.tsx:642
-msgid "Set Expiry Date"
-msgstr ""
-
-#: src/forms/PurchaseOrderForms.tsx:651
-#: src/forms/StockForms.tsx:1397
-msgid "Adjust Packaging"
-msgstr "Điều chỉnh bao bì"
 
 #: src/forms/PurchaseOrderForms.tsx:658
 #~ msgid "Receive line items"
 #~ msgstr "Receive line items"
 
-#: src/forms/PurchaseOrderForms.tsx:660
+#: src/forms/PurchaseOrderForms.tsx:666
+msgid "Assign Serial Numbers"
+msgstr ""
+
+#: src/forms/PurchaseOrderForms.tsx:678
+msgid "Set Expiry Date"
+msgstr ""
+
+#: src/forms/PurchaseOrderForms.tsx:687
+#: src/forms/StockForms.tsx:1397
+msgid "Adjust Packaging"
+msgstr "Điều chỉnh bao bì"
+
+#: src/forms/PurchaseOrderForms.tsx:696
 #: src/forms/StockForms.tsx:624
 #: src/forms/StockForms.tsx:1388
 #: src/hooks/UseStockAdjustActions.tsx:152
 msgid "Change Status"
 msgstr "Thay đổi trạng thái"
 
-#: src/forms/PurchaseOrderForms.tsx:734
+#: src/forms/PurchaseOrderForms.tsx:770
 msgid "Store at default location"
 msgstr "Cửa hàng ở vị trí mặc định"
 
-#: src/forms/PurchaseOrderForms.tsx:749
+#: src/forms/PurchaseOrderForms.tsx:785
 msgid "Store at line item destination "
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:765
+#: src/forms/PurchaseOrderForms.tsx:801
 msgid "Store with already received stock"
 msgstr "Cửa hàng đã nhận hàng"
 
-#: src/forms/PurchaseOrderForms.tsx:791
+#: src/forms/PurchaseOrderForms.tsx:827
 msgid "Overrides the top-level batch code (\"{topLevelBatchCode}\") for this line item"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:792
+#: src/forms/PurchaseOrderForms.tsx:828
 msgid "Enter batch code for received items"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:808
+#: src/forms/PurchaseOrderForms.tsx:844
 #: src/forms/StockForms.tsx:266
 msgid "Serial Numbers"
 msgstr "Số sê-ri"
 
-#: src/forms/PurchaseOrderForms.tsx:809
+#: src/forms/PurchaseOrderForms.tsx:845
 msgid "Enter serial numbers for received items"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:826
+#: src/forms/PurchaseOrderForms.tsx:862
 #: src/pages/stock/StockDetailsPanel.tsx:316
 #: src/tables/stock/StockItemTable.tsx:171
 msgid "Expiry Date"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:827
+#: src/forms/PurchaseOrderForms.tsx:863
 msgid "Enter an expiry date for received items"
 msgstr ""
 
-#: src/forms/PurchaseOrderForms.tsx:841
+#: src/forms/PurchaseOrderForms.tsx:877
 #: src/forms/StockForms.tsx:1443
 #: src/pages/company/SupplierPartDetailsPanel.tsx:126
 #: src/pages/company/SupplierPartDetailsPanel.tsx:184
@@ -6333,14 +6333,14 @@ msgstr ""
 msgid "Packaging"
 msgstr "Đóng gói"
 
-#: src/forms/PurchaseOrderForms.tsx:962
+#: src/forms/PurchaseOrderForms.tsx:998
 #: src/pages/company/SupplierPartDetailsPanel.tsx:92
-#: src/tables/purchasing/SupplierPriceBreakTable.tsx:49
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:58
 msgid "SKU"
 msgstr "SKU"
 
-#: src/forms/PurchaseOrderForms.tsx:963
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:269
+#: src/forms/PurchaseOrderForms.tsx:999
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:291
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:281
 #: src/tables/part/PartPurchaseOrdersTable.tsx:136
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:221
@@ -6349,11 +6349,11 @@ msgstr "SKU"
 msgid "Received"
 msgstr "Đã nhận"
 
-#: src/forms/PurchaseOrderForms.tsx:995
+#: src/forms/PurchaseOrderForms.tsx:1031
 msgid "Receive Line Items"
 msgstr "Nhận hạng mục"
 
-#: src/forms/PurchaseOrderForms.tsx:1001
+#: src/forms/PurchaseOrderForms.tsx:1037
 msgid "Items received"
 msgstr ""
 
@@ -6510,7 +6510,7 @@ msgstr ""
 #: src/tables/bom/BomTable.tsx:352
 #: src/tables/general/ExtraLineItemTable.tsx:73
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:266
-#: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:93
 #: src/tables/stock/StockItemTable.tsx:126
 msgid "Unit Price"
 msgstr "Đơn giá"
@@ -9382,7 +9382,7 @@ msgid "Parametric View"
 msgstr ""
 
 #: src/pages/build/BuildOrderDetailsPanel.tsx:73
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:78
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:79
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:79
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:79
 #: src/pages/stock/StockDetailsPanel.tsx:114
@@ -9405,17 +9405,17 @@ msgstr "Số lượng đơn vị"
 msgid "Can Build"
 msgstr "Có thể dựng"
 
-#: src/pages/build/BuildOrderDetailsPanel.tsx:173
+#: src/pages/build/BuildOrderDetailsPanel.tsx:174
 msgid "Any location"
 msgstr "Vị trí bất kỳ"
 
-#: src/pages/build/BuildOrderDetailsPanel.tsx:180
+#: src/pages/build/BuildOrderDetailsPanel.tsx:181
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:39
 #: src/tables/stock/TransferOrderTable.tsx:53
 msgid "Destination Location"
 msgstr "Địa điểm đích"
 
-#: src/pages/build/BuildOrderDetailsPanel.tsx:196
+#: src/pages/build/BuildOrderDetailsPanel.tsx:197
 #: src/pages/stock/StockDetailsPanel.tsx:357
 #: src/tables/settings/ApiTokenTable.tsx:113
 #: src/tables/settings/PendingTasksTable.tsx:41
@@ -9423,7 +9423,7 @@ msgstr "Địa điểm đích"
 msgid "Created"
 msgstr "Đã tạo"
 
-#: src/pages/build/BuildOrderDetailsPanel.tsx:220
+#: src/pages/build/BuildOrderDetailsPanel.tsx:221
 #: src/tables/build/BuildOrderTable.tsx:76
 #: src/tables/part/PartSalesOrdersTable.tsx:98
 #: src/tables/sales/SalesOrderLineItemTable.tsx:433
@@ -9579,6 +9579,7 @@ msgstr "Chi tiết"
 #: src/pages/company/SupplierPartDetail.tsx:118
 #: src/pages/part/PartPricingPanel.tsx:113
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:245
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:160
 msgid "Supplier Pricing"
 msgstr "Giá nhà cung cấp"
 
@@ -10281,18 +10282,18 @@ msgstr "Biểu đồ cột"
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:58
 #: src/pages/part/pricing/PriceBreakPanel.tsx:111
-#: src/tables/purchasing/SupplierPriceBreakTable.tsx:134
-#: src/tables/purchasing/SupplierPriceBreakTable.tsx:162
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:182
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:212
 msgid "Add Price Break"
 msgstr "Thêm giảm giá"
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:71
-#: src/tables/purchasing/SupplierPriceBreakTable.tsx:146
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:195
 msgid "Edit Price Break"
 msgstr "Sửa giảm giá"
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:81
-#: src/tables/purchasing/SupplierPriceBreakTable.tsx:154
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:204
 msgid "Delete Price Break"
 msgstr "Xoá giảm giá"
 
@@ -10347,7 +10348,7 @@ msgid "Purchase Pricing"
 msgstr "Giá mua"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:294
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:223
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:245
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:235
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:235
 #: src/pages/stock/StockDetailsPanel.tsx:364
@@ -10420,7 +10421,7 @@ msgid "Sale Price"
 msgstr "Giá sale"
 
 #: src/pages/part/pricing/SupplierPricingPanel.tsx:70
-#: src/tables/purchasing/SupplierPriceBreakTable.tsx:75
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:84
 msgid "Supplier Price"
 msgstr "Giá nhà cung cấp"
 
@@ -10448,7 +10449,7 @@ msgstr "Chi tiết đơn đặt"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:152
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:161
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:266
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:288
 #: src/pages/sales/ReturnOrderDetail.tsx:116
 #: src/pages/sales/ReturnOrderDetail.tsx:125
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:92
@@ -10503,47 +10504,62 @@ msgstr "Hoàn thành đơn hàng"
 msgid "Order Actions"
 msgstr "Chức năng đơn đặt"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:51
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:52
 msgid "Supplier Reference"
 msgstr "Tham chiếu nhà cung cấp"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:92
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:93
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:99
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:93
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:83
 msgid "Completed Line Items"
 msgstr "Những mục hoàn thành"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:101
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:102
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:285
 msgid "Destination"
 msgstr "Đích đến"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:107
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:109
+msgid "Receiving Company"
+msgstr ""
+
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:116
+msgid "Delivery Address"
+msgstr ""
+
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:123
+#: src/pages/sales/ReturnOrderDetailsPanel.tsx:140
+#: src/pages/sales/SalesOrderDetailsPanel.tsx:142
+#: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:125
+msgid "Not specified"
+msgstr ""
+
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:129
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:106
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:110
 msgid "Order Currency"
 msgstr "Tiền tệ đơn hàng"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:113
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:135
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:113
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:116
 msgid "Total Cost"
 msgstr "Tổng chi phí"
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:142
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:164
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:154
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:156
 msgid "Contact Email"
 msgstr ""
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:150
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:172
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:162
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:164
 msgid "Contact Phone"
 msgstr ""
 
-#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:191
+#: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:213
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:204
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:205
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:127
@@ -10589,12 +10605,6 @@ msgstr "Tham chiếu khách hàng"
 
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:134
 msgid "Return Address"
-msgstr ""
-
-#: src/pages/sales/ReturnOrderDetailsPanel.tsx:140
-#: src/pages/sales/SalesOrderDetailsPanel.tsx:142
-#: src/pages/sales/SalesOrderShipmentDetailsPanel.tsx:125
-msgid "Not specified"
 msgstr ""
 
 #: src/pages/sales/SalesOrderDetail.tsx:108
@@ -13289,6 +13299,18 @@ msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:275
 msgid "Show supplier parts with stock"
+msgstr ""
+
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:163
+msgid "The quantity is the number of supplier packs which must be purchased for this price break to apply."
+msgstr ""
+
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:166
+msgid "The price is the cost of a single supplier pack, not the total cost for the specified quantity."
+msgstr ""
+
+#: src/tables/purchasing/SupplierPriceBreakTable.tsx:170
+msgid "Each supplier pack contains"
 msgstr ""
 
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:148
