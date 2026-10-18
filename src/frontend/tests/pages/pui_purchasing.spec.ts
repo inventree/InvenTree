@@ -15,7 +15,8 @@ import {
   setTableChoiceFilter,
   showCalendarView,
   showParametricView,
-  showTableView
+  showTableView,
+  waitForDataOutput
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
 
@@ -166,8 +167,9 @@ test('Purchasing - Manufacturer Parts', async ({ browser }) => {
   await page
     .getByRole('combobox', { name: 'choice-field-export_plugin' })
     .fill('CSV');
-  await page.getByRole('button', { name: 'Export', exact: true }).click();
-  await page.getByText('Process completed successfully').waitFor();
+  await waitForDataOutput(page, () =>
+    page.getByRole('button', { name: 'Export', exact: true }).click()
+  );
 
   await loadTab(page, 'Manufacturers');
   await page.getByText('Murata Electronics').waitFor();
