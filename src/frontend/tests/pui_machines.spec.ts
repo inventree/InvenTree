@@ -1,7 +1,7 @@
 import { createApi } from './api';
 import { expect, test } from './baseFixtures';
 import { adminuser } from './defaults';
-import { clickOnRowMenu, navigate } from './helpers';
+import { clickOnRowMenu, navigate, waitForDataOutput } from './helpers';
 import { doCachedLogin } from './login';
 import { setPluginState } from './settings';
 
@@ -134,11 +134,9 @@ test('Machines - Activation', async ({ browser }) => {
     .fill('dummy');
   await page.getByRole('option', { name: 'my-dummy-machine' }).click();
 
-  await page
-    .getByRole('button', { name: 'Print', exact: true })
-    .first()
-    .click();
-  await page.getByText('Process completed successfully').waitFor();
+  await waitForDataOutput(page, () =>
+    page.getByRole('button', { name: 'Print', exact: true }).first().click()
+  );
 
   await navigate(page, 'settings/admin/machine/');
 
