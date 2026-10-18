@@ -230,3 +230,22 @@ export const openDetailAction = async (
     })
     .click();
 };
+
+export const waitForDataOutput = async (
+  page: Page,
+  trigger: () => Promise<unknown>
+) => {
+  const closePopup = async (popup: Page) => {
+    await popup.close();
+    await page.bringToFront();
+  };
+  page.on('popup', closePopup);
+
+  try {
+    await page.bringToFront();
+    await trigger();
+    await page.getByText('Process completed successfully').first().waitFor();
+  } finally {
+    page.off('popup', closePopup);
+  }
+};
