@@ -11,7 +11,8 @@ from django.db.models import Q
 from django.utils.text import smart_split
 from django.utils.translation import gettext_lazy as _
 
-from users.models import ApiToken, Owner, RuleSet
+from common.admin_shared import NoEditAdminMixin
+from users.models import ApiToken, Owner, RuleSet, TipResult
 from users.ruleset import RULESET_CHOICES
 
 User = get_user_model()
@@ -205,6 +206,11 @@ class OwnerAdmin(admin.ModelAdmin):
             queryset = queryset.filter(bit_q)
 
         return queryset, True
+
+
+@admin.register(TipResult)
+class DataOutputAdmin(NoEditAdminMixin, admin.ModelAdmin):
+    """Custom admin interface for the TipResult model."""
 
 
 admin.site.unregister(User)

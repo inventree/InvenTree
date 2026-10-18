@@ -76,6 +76,15 @@ class CompanyReportContext(report.mixins.BaseReportContext, TypedDict):
     address: str
 
 
+def default_internal_company() -> Optional[int]:
+    """Return the primary key of the default internal company (if available).
+
+    Used as a callable default for fields which reference an internal company.
+    """
+    company = Company.get_default_internal()
+    return company.pk if company else None
+
+
 class Company(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeParameterMixin,

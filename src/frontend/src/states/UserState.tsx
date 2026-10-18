@@ -8,7 +8,7 @@ import {
   roleToViewSettingMap
 } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
-import type { UserProps, UserStateProps } from '@lib/types/User';
+import type { UserProps, UserStateProps, UserTips } from '@lib/types/User';
 import { api, setApiDefaults } from '../App';
 import { clearCsrfCookie } from '../functions/auth';
 import { useServerApiState } from './ServerApiState';
@@ -20,6 +20,15 @@ import { useGlobalSettingsState } from './SettingsStates';
 export const useUserState = create<UserStateProps>((set, get) => ({
   user: undefined,
   is_authed: false,
+  done_tips: null,
+  setTips: (tips: UserTips[] | null) => {
+    const done_tips =
+      tips?.filter((tip) => tip.finished === true).map((tip) => tip.tip_id) ??
+      null;
+    const user = get().user as UserProps;
+    user.tips = tips;
+    set({ done_tips: done_tips, user: user });
+  },
   setAuthenticated: (authed = true) => {
     set({ is_authed: authed });
     setApiDefaults();
@@ -37,7 +46,13 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       return user?.username ?? '';
     }
   },
-  setUser: (newUser: UserProps | undefined) => set({ user: newUser }),
+  setUser: (newUser: UserProps | undefined) => {
+    const done_tips =
+      newUser?.tips
+        ?.filter((tip) => tip.finished === true)
+        .map((tip) => tip.tip_id) ?? null;
+    set({ user: newUser, done_tips: done_tips });
+  },
   getUser: () => get().user,
   clearUserState: () => {
     set({ user: undefined, is_authed: false });
@@ -107,6 +122,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       username: response.data.username,
       groups: response.data.groups,
       profile: response.data.profile,
+      tips: response.data.tips,
       roles: response.data?.roles ?? {},
       permissions: response.data?.permissions ?? {},
       is_staff: response.data?.is_staff ?? false,

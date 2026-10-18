@@ -24,12 +24,14 @@ export function ScanButton({
   modelType,
   callback,
   onScanSuccess,
-  hotkey = false
+  hotkey = false,
+  id
 }: {
   modelType?: ModelType;
   callback?: BarcodeScanCallback;
   onScanSuccess?: BarcodeScanSuccessCallback;
   hotkey?: boolean;
+  id?: string;
 }) {
   const [opened, { open, close }] = useDisclosure(false);
   const [everOpened, setEverOpened] = useState(false);
@@ -58,6 +60,7 @@ export function ScanButton({
           aria-label={`barcode-scan-button-${modelType ?? 'any'}`}
           onClick={handleOpen}
           variant='transparent'
+          id={id}
         >
           <IconQrcode />
         </ActionIcon>
