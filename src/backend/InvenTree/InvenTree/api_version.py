@@ -1,13 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 559
+INVENTREE_API_VERSION = 561
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v559 -> 2026-10-16 : https://github.com/inventree/InvenTree/pull/13030
+v561 -> 2026-10-18 : https://github.com/inventree/InvenTree/pull/13030
     - Adds optional 'link_nonce' mechanism to the API root
+
+v560 -> 2026-10-17 : https://github.com/inventree/InvenTree/pull/12737
+    - Adds search and ordering fields across remaining API endpoints (machine, stock, importer, report)
+
+v559 -> 2026-10-17 : https://github.com/inventree/InvenTree/pull/13023
+    - Enforce maximum length for "notes" field in stock-adjustment API endpoints
 
 v558 -> 2026-10-15 : https://github.com/inventree/InvenTree/pull/9768
     - Adds "receiving_company" and "delivery_address" fields to the PurchaseOrder API endpoint
