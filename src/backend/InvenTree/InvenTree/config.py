@@ -555,11 +555,9 @@ def get_social_backends(defaults: list[str], backends: list[str]) -> list[str]:
     """
     prefix = 'allauth.socialaccount.providers.'
 
-    return list(
-        dict.fromkeys(
-            app if app.startswith(prefix) else prefix + app
-            for app in [*defaults, *backends]
-        )
+    return set(
+        app if app.startswith(prefix) else prefix + app
+        for app in [*defaults, *backends]
     )
 
 
