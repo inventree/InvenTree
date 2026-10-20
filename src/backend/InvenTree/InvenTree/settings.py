@@ -368,6 +368,10 @@ INSTALLED_APPS = [
     'django_mailbox',  # For email import
     'anymail',  # For email sending/receiving via ESPs
     'storages',
+    'auditlog',  # Audit log / model change history (see 'audit' app)
+    # New InvenTree apps are appended here, so that existing ContentType IDs
+    # match between existing databases and freshly migrated (test) databases
+    'audit.apps.AuditConfig',
 ]
 
 MIDDLEWARE = CONFIG.get(
@@ -390,6 +394,7 @@ MIDDLEWARE = CONFIG.get(
         'InvenTree.middleware.AuthRequiredMiddleware',
         'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
         'oauth2_provider.middleware.OAuth2TokenMiddleware',  # oauth2_provider
+        'audit.middleware.InvenTreeAuditlogMiddleware',  # Audit log context (after authentication)
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
         'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
         'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
@@ -398,6 +403,20 @@ MIDDLEWARE = CONFIG.get(
         'InvenTree.middleware.InvenTreeVersionHeaderMiddleware',
     ],
 )
+
+# Audit log configuration (django-auditlog)
+# Ref: https://django-auditlog.readthedocs.io/en/latest/usage.html#settings
+# Note: AUDITLOG_LOGENTRY_MODEL is a swappable model, and must not be changed once migrations have been applied
+AUDITLOG_LOGENTRY_MODEL = 'audit.AuditLogEntry'
+AUDITLOG_STORE_JSON_CHANGES = True  # Store values as JSON types, rather than strings
+AUDITLOG_DISABLE_ON_RAW_SAVE = True  # Do not log fixture loading / raw saves
+AUDITLOG_CID_HEADER = None  # Never accept a client-supplied correlation ID
+AUDITLOG_CID_GETTER = 'audit.context.get_cid'  # Server-generated correlation ID
+
+# The upstream auditlog migrations only define the (swapped out) LogEntry model,
+# and do not mark it as swappable - so would create an unused 'auditlog_logentry' table.
+# Disable them entirely - the 'audit' app provides the migrations for AuditLogEntry.
+MIGRATION_MODULES = {'auditlog': None}
 
 # In DEBUG mode, add support for django-silk
 # Ref: https://silk.readthedocs.io/en/latest/

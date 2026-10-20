@@ -532,6 +532,46 @@ class InvenTreePermissionCheckMixin:
         return user.has_perm(perm)
 
 
+class InvenTreeAuditMixin:
+    """Opt a model in to the audit log (field-level change history).
+
+    Any concrete model which inherits from this mixin is registered with django-auditlog
+    when the 'audit' app is loaded (see audit.registry).
+
+    Attributes:
+        AUDIT_EXCLUDE_FIELDS: Fields which are never recorded (merged with a base set, see audit.registry)
+        AUDIT_MASK_FIELDS: Fields whose values are masked (the change is recorded, the value is not)
+        AUDIT_M2M_FIELDS: Many-to-many fields which are tracked
+        AUDIT_PARENT_FIELD: Name of the field which links to the "parent" object (e.g. 'order' for a line item)
+        AUDIT_VIEW_RESTRICTION: Restrict reading audit history to 'staff' or 'superuser' users (or None)
+    """
+
+    AUDIT_EXCLUDE_FIELDS: tuple[str, ...] = ()
+    AUDIT_MASK_FIELDS: tuple[str, ...] = ()
+    AUDIT_M2M_FIELDS: tuple[str, ...] = ()
+    AUDIT_PARENT_FIELD: Optional[str] = None
+    AUDIT_VIEW_RESTRICTION: Optional[str] = None
+
+    def get_audit_parent(self):
+        """Return the "parent" object for audit log entries against this instance.
+
+        Audit entries linked to a parent are included in the history of that parent
+        (e.g. changes to line items are shown against the order).
+        """
+        if self.AUDIT_PARENT_FIELD:
+            return getattr(self, self.AUDIT_PARENT_FIELD, None)
+
+        return None
+
+    def is_audit_masked(self) -> bool:
+        """Return True if *all* values recorded against this instance must be masked.
+
+        Used where sensitivity depends on the row rather than the field
+        (e.g. a 'protected' setting value).
+        """
+        return False
+
+
 class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
     """Provides an abstracted class for managing parameters.
 

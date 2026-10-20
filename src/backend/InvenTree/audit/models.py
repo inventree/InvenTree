@@ -1,0 +1,159 @@
+"""Database models for the audit app."""
+
+from django.contrib.contenttypes.models import ContentType
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+
+from auditlog.models import AbstractLogEntry, LogEntryManager
+
+import audit.context
+
+MASKED_VALUE = '***'
+
+
+def get_audit_parent(instance):
+    """Return the audit "parent" object for the provided instance (or None)."""
+    func = getattr(instance, 'get_audit_parent', None)
+
+    if callable(func):
+        return func()
+
+    return None
+
+
+def mask_changes(changes):
+    """Replace every recorded value in the provided changes dict."""
+    if not changes:
+        return changes
+
+    masked = {}
+
+    for field, value in changes.items():
+        if isinstance(value, dict) and value.get('type') == 'm2m':
+            masked[field] = {
+                **value,
+                'objects': [MASKED_VALUE for _obj in value.get('objects', [])],
+            }
+        else:
+            masked[field] = [MASKED_VALUE, MASKED_VALUE]
+
+    return masked
+
+
+class AuditLogEntryManager(LogEntryManager):
+    """Manager for the AuditLogEntry model.
+
+    Extends the upstream manager to attach InvenTree specific context to each entry:
+    - Parent object reference
+    - Actor (resolved lazily from the current request)
+    - Source (for changes made outside of a request)
+    - Row-level masking of sensitive values
+    """
+
+    def get_audit_kwargs(self, instance, kwargs: dict) -> dict:
+        """Update the provided LogEntry kwargs with InvenTree specific data."""
+        if parent := get_audit_parent(instance):
+            kwargs.setdefault(
+                'parent_content_type', ContentType.objects.get_for_model(parent)
+            )
+            kwargs.setdefault('parent_object_pk', str(parent.pk))
+
+        if 'actor' not in kwargs and (actor := audit.context.get_request_actor()):
+            kwargs['actor'] = actor
+            kwargs['actor_email'] = getattr(actor, 'email', None)
+
+        if source := audit.context.get_source():
+            get_additional_data = getattr(instance, 'get_additional_data', None)
+
+            additional_data = kwargs.get('additional_data')
+
+            if additional_data is None and callable(get_additional_data):
+                additional_data = get_additional_data()
+
+            kwargs['additional_data'] = {**(additional_data or {}), 'source': source}
+
+        is_masked = getattr(instance, 'is_audit_masked', None)
+
+        if callable(is_masked) and is_masked():
+            # Mask at write time - sensitive values must never reach the log table
+            kwargs['changes'] = mask_changes(kwargs.get('changes'))
+            kwargs['serialized_data'] = None
+
+        return kwargs
+
+    def log_create(self, instance, force_log: bool = False, **kwargs):
+        """Create a new log entry for the provided instance."""
+        kwargs = self.get_audit_kwargs(instance, kwargs)
+        return super().log_create(instance, force_log=force_log, **kwargs)
+
+    def log_m2m_changes(
+        self, changed_queryset, instance, operation, field_name, **kwargs
+    ):
+        """Create a new log entry for a many-to-many change."""
+        is_masked = getattr(instance, 'is_audit_masked', None)
+
+        if callable(is_masked) and is_masked() and changed_queryset:
+            # Upstream builds the 'changes' dict from str(obj) for each object,
+            # so substitute placeholders before anything is written
+            changed_queryset = [MASKED_VALUE] * len(changed_queryset)
+
+        kwargs = self.get_audit_kwargs(instance, kwargs)
+
+        return super().log_m2m_changes(
+            changed_queryset, instance, operation, field_name, **kwargs
+        )
+
+
+class AuditLogEntry(AbstractLogEntry):
+    """A single audit log entry, recording a change to a model instance.
+
+    Extends the upstream LogEntry with an (optional) reference to a "parent" object,
+    so that the history of a parent (e.g. a PurchaseOrder) can include changes
+    made to its children (e.g. line items) - even after the child has been deleted.
+
+    Entries are immutable via the API.
+    """
+
+    class Meta(AbstractLogEntry.Meta):
+        """Metaclass options for the AuditLogEntry model."""
+
+        verbose_name = _('Audit Log Entry')
+        verbose_name_plural = _('Audit Log Entries')
+
+        indexes = [
+            models.Index(
+                fields=['content_type', 'object_pk', '-timestamp'],
+                name='audit_object_idx',
+            ),
+            models.Index(
+                fields=['parent_content_type', 'parent_object_pk', '-timestamp'],
+                name='audit_parent_idx',
+            ),
+        ]
+
+    objects = AuditLogEntryManager()
+
+    parent_content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='+',
+        verbose_name=_('Parent Content Type'),
+    )
+
+    parent_object_pk = models.CharField(
+        max_length=255, null=True, blank=True, verbose_name=_('Parent Object PK')
+    )
+
+    @property
+    def model_type(self) -> str:
+        """Return the 'app_label.model' string for the audited model."""
+        return f'{self.content_type.app_label}.{self.content_type.model}'
+
+    @property
+    def parent_model_type(self):
+        """Return the 'app_label.model' string for the parent model (if any)."""
+        if ct := self.parent_content_type:
+            return f'{ct.app_label}.{ct.model}'
+        return None

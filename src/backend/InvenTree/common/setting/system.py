@@ -1326,6 +1326,29 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'units': _('days'),
         'validator': [int, MinValueValidator(30)],
     },
+    'AUDIT_LOG_ENABLED': {
+        'name': _('Enable Audit Log'),
+        'description': _('Record a history of changes made to supported models'),
+        'default': True,
+        'validator': bool,
+    },
+    'AUDIT_LOG_DELETE_OLD_ENTRIES': {
+        'name': _('Delete Old Audit Log Entries'),
+        'description': _(
+            'Delete audit log entries older than the specified number of days'
+        ),
+        'default': False,
+        'validator': bool,
+    },
+    'AUDIT_LOG_DELETE_DAYS': {
+        'name': _('Audit Log Deletion Interval'),
+        'description': _(
+            'Audit log entries will be deleted after specified number of days'
+        ),
+        'default': 365,
+        'units': _('days'),
+        'validator': [int, MinValueValidator(7)],
+    },
     'DISPLAY_FULL_NAMES': {
         'name': _('Display Users full names'),
         'description': _('Display Users full names instead of usernames'),

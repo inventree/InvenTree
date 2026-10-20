@@ -603,6 +603,7 @@ django==5.2.17 \
     #   -r src/backend/requirements.in
     #   django-allauth
     #   django-anymail
+    #   django-auditlog
     #   django-cors-headers
     #   django-dbbackup
     #   django-error-report-2
@@ -642,6 +643,12 @@ django-allauth[headless, mfa, openid, saml, socialaccount]==65.19.6 \
 django-anymail[amazon-ses, postal]==15.1 \
     --hash=sha256:299fb12a21ac4101e9706c2ade461d18deacbb6bc3750cfa6ca08aeea1fc9442 \
     --hash=sha256:cb482b0e2b0aea665c83d49e3f13bb0673210aa0de285b1748a3b5e6277fc826
+    # via
+    #   -c src/backend/requirements.txt
+    #   -r src/backend/requirements.in
+django-auditlog==3.4.1 \
+    --hash=sha256:29958ecacfee00144127214f3ccef3f0c203c3659bcb6dd404a0f3d5551a10a5 \
+    --hash=sha256:ad07b9db452d5fa8303822cccd78cd3fcb2c2863aeb6abe039ec45739b4d7e33
     # via
     #   -c src/backend/requirements.txt
     #   -r src/backend/requirements.in
@@ -2138,6 +2145,7 @@ python-dateutil==2.9.0.post0 \
     # via
     #   -c src/backend/requirements.txt
     #   botocore
+    #   django-auditlog
     #   django-recurrence
     #   icalendar
 python-dotenv==1.2.4 \
