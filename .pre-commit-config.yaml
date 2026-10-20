@@ -36,16 +36,16 @@ repos:
         args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev.txt, -c, src/backend/requirements.txt]
         files: src/backend/requirements-dev\.(in|txt)$
       - id: pip-compile
-        name: pip-compile requirements-dev.in 3.14
-        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev-3.14.txt, -c, src/backend/requirements-3.14.txt, --python-version=3.14, -c, src/backend/requirements.txt, -c, src/backend/requirements-dev.txt]
+        name: pip-compile requirements-dev.in 3.15
+        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev-3.15.txt, -c, src/backend/requirements-3.15.txt, --python-version=3.15, -c, src/backend/requirements.txt, -c, src/backend/requirements-dev.txt]
         files: src/backend/requirements-dev\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
         args: [src/backend/requirements.in, -o, src/backend/requirements.txt]
         files: src/backend/requirements\.(in|txt)$
       - id: pip-compile
-        name: pip-compile requirements.txt 3.14
-        args: [src/backend/requirements.in, -o, src/backend/requirements-3.14.txt, --python-version=3.14, -c, src/backend/requirements.txt]
+        name: pip-compile requirements.txt 3.15
+        args: [src/backend/requirements.in, -o, src/backend/requirements-3.15.txt, --python-version=3.15, -c, src/backend/requirements.txt]
         files: src/backend/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile contrib/dev_reqs/requirements.txt
@@ -57,7 +57,7 @@ repos:
         files: docs/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile contrib/container/requirements.txt
-        args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt, --python-version=3.14, -c, src/backend/requirements.txt]
+        args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt, --python-version=3.15, -c, src/backend/requirements.txt]
         files: contrib/container/requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.36.4
