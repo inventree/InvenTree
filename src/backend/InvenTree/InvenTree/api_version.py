@@ -11,6 +11,7 @@ v561 -> 2026-10-18 : https://github.com/inventree/InvenTree/pull/13034
     - Adds new "pricing" user role, covering the PartPricing, PartSellPriceBreak and PartInternalPriceBreak models
     - The "part" role no longer grants access to part pricing data
     - Cached pricing fields (pricing_min, pricing_max, etc) are omitted from Part and BomItem API responses for users without the "pricing" view permission
+    - This also applies to nested (embedded) part data, e.g. "part_detail" and "sub_part_detail" fields
     - Moves part pricing endpoints to the new /api/pricing/ namespace:
         - /api/part/sale-price/ -> /api/pricing/sale-price/
         - /api/part/internal-price/ -> /api/pricing/internal-price/

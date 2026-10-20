@@ -319,3 +319,44 @@ class PricingLegacyRedirectTests(InvenTreeAPITestCase):
         )
         self.assertEqual(response.status_code, 403)
         self.assertFalse(PartSellPriceBreak.objects.filter(quantity=5).exists())
+
+
+class NestedPricingPermissionTests(InvenTreeAPITestCase):
+    """Pricing data must not be exposed via nested (embedded) part data.
+
+    Regression test: nested serializers were constructed without the requesting user,
+    so permission checks for their optional fields were skipped entirely.
+    """
+
+    fixtures = ['category', 'part', 'location', 'bom', 'stock']
+
+    roles = ['part.view', 'bom.view', 'stock.view']
+
+    PRICING_FIELDS = ['pricing_min', 'pricing_max']
+
+    def nested_part_data(self) -> list[dict]:
+        """Return nested part data from a selection of API endpoints."""
+        bom_item = self.get(
+            reverse('api-bom-item-detail', kwargs={'pk': 3}),
+            {'sub_part_detail': True, 'pricing': True},
+        ).data
+
+        stock_item = self.get(
+            reverse('api-stock-list'), {'part_detail': True, 'limit': 1}
+        ).data['results'][0]
+
+        return [bom_item['sub_part_detail'], stock_item['part_detail']]
+
+    def test_nested_pricing(self):
+        """Nested pricing fields depend on the 'pricing' role of the requesting user."""
+        for data in self.nested_part_data():
+            self.assertIn('name', data)
+
+            for field in self.PRICING_FIELDS:
+                self.assertNotIn(field, data)
+
+        self.assignRole('pricing.view')
+
+        for data in self.nested_part_data():
+            for field in self.PRICING_FIELDS:
+                self.assertIn(field, data)
