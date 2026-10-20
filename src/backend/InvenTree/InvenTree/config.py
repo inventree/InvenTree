@@ -546,6 +546,23 @@ def get_custom_file(
     return value
 
 
+def get_social_backends(defaults: list[str], backends: list[str]) -> list[str]:
+    """Return a de-duplicated list of fully-qualified allauth social provider apps.
+
+    Backends may be specified either as the short provider name (e.g. 'openid_connect')
+    or the full module path (e.g. 'allauth.socialaccount.providers.openid_connect').
+    Names are normalized before de-duplication, so both forms map to the same app.
+    """
+    prefix = 'allauth.socialaccount.providers.'
+
+    return list(
+        dict.fromkeys(
+            app if app.startswith(prefix) else prefix + app
+            for app in [*defaults, *backends]
+        )
+    )
+
+
 def get_frontend_settings(debug=True):
     """Return a dictionary of settings for the frontend interface."""
     # New settings

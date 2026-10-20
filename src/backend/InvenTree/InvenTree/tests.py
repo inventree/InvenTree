@@ -1328,6 +1328,41 @@ class TestSettings(InvenTreeTestCase):
 
         set_global_setting('PLUGIN_ON_STARTUP', False)
 
+    def test_social_backends(self):
+        """Test that social backends are normalized and de-duplicated."""
+        prefix = 'allauth.socialaccount.providers.'
+        defaults = ['saml', 'openid_connect']
+
+        # Full module path for a default backend must not produce a duplicate
+        self.assertEqual(
+            config.get_social_backends(defaults, [f'{prefix}openid_connect']),
+            [f'{prefix}saml', f'{prefix}openid_connect'],
+        )
+
+        # Mixed short and full names, with duplicates, preserve first-seen order
+        self.assertEqual(
+            config.get_social_backends(
+                defaults, ['github', f'{prefix}github', 'saml', f'{prefix}google']
+            ),
+            [
+                f'{prefix}saml',
+                f'{prefix}openid_connect',
+                f'{prefix}github',
+                f'{prefix}google',
+            ],
+        )
+
+        # No extra backends
+        self.assertEqual(
+            config.get_social_backends(defaults, []),
+            [f'{prefix}saml', f'{prefix}openid_connect'],
+        )
+
+        # The running configuration must not contain duplicate apps
+        self.assertEqual(
+            len(settings.INSTALLED_APPS), len(set(settings.INSTALLED_APPS))
+        )
+
     def test_helpers_cfg_file(self):
         """Test get_config_file."""
         # normal run - not configured
