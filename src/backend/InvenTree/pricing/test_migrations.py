@@ -108,3 +108,118 @@ class TestMovePricingModels(MigratorTestCase):
                     content_type=ct, codename=f'view_{model}'
                 ).exists()
             )
+
+
+class TestMigrateQueuedTasks(MigratorTestCase):
+    """Test that queued tasks referencing the legacy model identities are migrated."""
+
+    migrate_from = ('pricing', '0001_initial')
+    migrate_to = ('pricing', '0002_migrate_queued_tasks')
+
+    def prepare(self):
+        """Queue tasks with legacy (pre-migration) pickled model instances."""
+        from django.db.models.base import model_unpickle
+        from django.utils import timezone
+
+        from django_q.conf import Conf
+        from django_q.signing import SignedPackage
+
+        from pricing.models import PartPricing, PartSellPriceBreak
+
+        OrmQ = self.old_state.apps.get_model('django_q', 'OrmQ')
+
+        def legacy(instance, model_name):
+            """Return an object which pickles exactly as a pre-migration model instance."""
+            state = instance.__reduce__()[2]
+
+            class Legacy:
+                def __reduce__(self):
+                    return (model_unpickle, (('part', model_name),), state)
+
+            return Legacy()
+
+        # Map of task name to OrmQ primary key
+        self.task_ids = {}
+
+        def enqueue(name, payload):
+            task = OrmQ.objects.create(
+                key=Conf.PREFIX, payload=payload, lock=timezone.now()
+            )
+            self.task_ids[name] = task.pk
+
+        # A queued pricing update, with a legacy PartPricing instance as an argument
+        enqueue(
+            'legacy-pricing',
+            SignedPackage.dumps({
+                'id': 'legacy-pricing',
+                'name': 'legacy-pricing',
+                'func': 'part.tasks.update_part_pricing',
+                'args': (legacy(PartPricing(pk=123, part_id=4), 'PartPricing'),),
+                'kwargs': {'counter': 2},
+                'group': 'pricing',
+            }),
+        )
+
+        # Before migration, the legacy payload cannot be loaded
+        with self.assertRaises(LookupError):
+            SignedPackage.loads(
+                OrmQ.objects.get(pk=self.task_ids['legacy-pricing']).payload
+            )
+
+        # A legacy price break nested within the task kwargs
+        enqueue(
+            'legacy-pricebreak',
+            SignedPackage.dumps({
+                'id': 'legacy-pricebreak',
+                'name': 'legacy-pricebreak',
+                'func': 'some.task',
+                'args': (),
+                'kwargs': {
+                    'items': [
+                        legacy(
+                            PartSellPriceBreak(pk=7, part_id=4), 'PartSellPriceBreak'
+                        )
+                    ]
+                },
+            }),
+        )
+
+        # An unrelated task, which should not be modified
+        self.unrelated = SignedPackage.dumps({
+            'id': 'unrelated',
+            'name': 'unrelated',
+            'func': 'some.other.task',
+            'args': (1, 'a'),
+            'kwargs': {},
+        })
+        enqueue('unrelated', self.unrelated)
+
+        # A payload which cannot be decoded at all, which should not be modified
+        enqueue('invalid', 'not-a-valid-payload')
+
+    def test_queued_tasks(self):
+        """Legacy payloads are rewritten, and other payloads are left untouched."""
+        from django_q.signing import SignedPackage
+
+        from pricing.models import PartPricing, PartSellPriceBreak
+
+        OrmQ = self.new_state.apps.get_model('django_q', 'OrmQ')
+        tasks = {name: OrmQ.objects.get(pk=pk) for name, pk in self.task_ids.items()}
+
+        self.assertEqual(len(tasks), 4)
+
+        data = SignedPackage.loads(tasks['legacy-pricing'].payload)
+        pricing = data['args'][0]
+        self.assertIsInstance(pricing, PartPricing)
+        self.assertEqual(pricing.pk, 123)
+        self.assertEqual(pricing.part_id, 4)
+        self.assertEqual(data['kwargs'], {'counter': 2})
+        self.assertEqual(data['func'], 'part.tasks.update_part_pricing')
+
+        data = SignedPackage.loads(tasks['legacy-pricebreak'].payload)
+        price_break = data['kwargs']['items'][0]
+        self.assertIsInstance(price_break, PartSellPriceBreak)
+        self.assertEqual(price_break.pk, 7)
+
+        self.assertEqual(tasks['unrelated'].payload, self.unrelated)
+        self.assertEqual(tasks['invalid'].payload, 'not-a-valid-payload')
