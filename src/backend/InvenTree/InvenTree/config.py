@@ -552,13 +552,14 @@ def get_social_backends(defaults: list[str], backends: list[str]) -> list[str]:
     Backends may be specified either as the short provider name (e.g. 'openid_connect')
     or the full module path (e.g. 'allauth.socialaccount.providers.openid_connect').
     Names are normalized before de-duplication, so both forms map to the same app.
+    The returned list is sorted alphabetically.
     """
     prefix = 'allauth.socialaccount.providers.'
 
-    return set(
+    return sorted({
         app if app.startswith(prefix) else prefix + app
         for app in [*defaults, *backends]
-    )
+    })
 
 
 def get_frontend_settings(debug=True):

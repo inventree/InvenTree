@@ -1336,26 +1336,26 @@ class TestSettings(InvenTreeTestCase):
         # Full module path for a default backend must not produce a duplicate
         self.assertEqual(
             config.get_social_backends(defaults, [f'{prefix}openid_connect']),
-            [f'{prefix}saml', f'{prefix}openid_connect'],
+            [f'{prefix}openid_connect', f'{prefix}saml'],
         )
 
-        # Mixed short and full names, with duplicates, preserve first-seen order
+        # Mixed short and full names, with duplicates, are sorted alphabetically
         self.assertEqual(
             config.get_social_backends(
                 defaults, ['github', f'{prefix}github', 'saml', f'{prefix}google']
             ),
             [
-                f'{prefix}saml',
-                f'{prefix}openid_connect',
                 f'{prefix}github',
                 f'{prefix}google',
+                f'{prefix}openid_connect',
+                f'{prefix}saml',
             ],
         )
 
         # No extra backends
         self.assertEqual(
             config.get_social_backends(defaults, []),
-            [f'{prefix}saml', f'{prefix}openid_connect'],
+            [f'{prefix}openid_connect', f'{prefix}saml'],
         )
 
         # The running configuration must not contain duplicate apps
