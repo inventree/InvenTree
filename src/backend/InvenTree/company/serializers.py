@@ -40,6 +40,8 @@ from .models import (
 class CompanyBriefSerializer(InvenTreeModelSerializer):
     """Serializer for Company object (limited detail)."""
 
+    SKIP_CREATE_FIELDS = ['is_taxable']
+
     class Meta:
         """Metaclass options."""
 
@@ -53,12 +55,22 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
             'thumbnail',
             'currency',
             'tax_id',
+            'is_taxable',
         ]
         read_only_fields = ['currency']
+
+    is_taxable = serializers.BooleanField(required=False, default=True)
 
     image = InvenTreeImageSerializerField(read_only=True)
 
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
+
+    def to_representation(self, instance):
+        """Include is_taxable boolean from metadata."""
+        data = super().to_representation(instance)
+        metadata = getattr(instance, 'metadata', None) or {}
+        data['is_taxable'] = metadata.get('is_taxable', True)
+        return data
 
 
 @register_importer()
@@ -119,7 +131,7 @@ class CompanySerializer(
 
     import_exclude_fields = ['image']
 
-    SKIP_CREATE_FIELDS = ['duplicate']
+    SKIP_CREATE_FIELDS = ['duplicate', 'is_taxable']
 
     class Meta:
         """Metaclass options."""
@@ -146,9 +158,24 @@ class CompanySerializer(
             'parts_manufactured',
             'primary_address',
             'tax_id',
+            'is_taxable',
             'parameters',
             'tags',
         ]
+
+    is_taxable = serializers.BooleanField(
+        required=False,
+        default=True,
+        label=_('Taxable'),
+        help_text=_('Is this company subject to sales tax?'),
+    )
+
+    def to_representation(self, instance):
+        """Include is_taxable boolean from metadata."""
+        data = super().to_representation(instance)
+        metadata = getattr(instance, 'metadata', None) or {}
+        data['is_taxable'] = metadata.get('is_taxable', True)
+        return data
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -202,8 +229,14 @@ class CompanySerializer(
     def create(self, validated_data):
         """Create a new Company instance, optionally copying data from an existing company."""
         duplicate = validated_data.pop('duplicate', None)
+        is_taxable = validated_data.pop('is_taxable', True)
 
         instance = super().create(validated_data)
+
+        if instance.metadata is None:
+            instance.metadata = {}
+        instance.metadata['is_taxable'] = is_taxable
+        instance.save(update_fields=['metadata'])
 
         if duplicate:
             apply_duplicate_copy_options(
@@ -213,6 +246,21 @@ class CompanySerializer(
                 copy_notes=True,
                 copy_parameters=True,
             )
+
+        return instance
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        """Update Company instance and persist is_taxable to metadata."""
+        is_taxable = validated_data.pop('is_taxable', None)
+
+        instance = super().update(instance, validated_data)
+
+        if is_taxable is not None:
+            if instance.metadata is None:
+                instance.metadata = {}
+            instance.metadata['is_taxable'] = is_taxable
+            instance.save(update_fields=['metadata'])
 
         return instance
 

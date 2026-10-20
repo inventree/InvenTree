@@ -77,6 +77,11 @@ export function CompanyTable({
         sortable: true,
         switchable: true
       }),
+      BooleanColumn({
+        accessor: 'is_taxable',
+        title: t`Taxable`,
+        switchable: true
+      }),
       {
         accessor: 'website',
         sortable: false

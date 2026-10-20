@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import type {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
@@ -189,6 +190,12 @@ export function companyFields({
     is_supplier: {},
     is_manufacturer: {},
     is_customer: {},
+    is_taxable: {
+      field_type: 'boolean',
+      label: t`Taxable`,
+      description: t`Is this company subject to sales tax?`,
+      value: true
+    },
     active: {},
     duplicate: DuplicateField({
       originalId: duplicateCompanyId,

@@ -83,6 +83,11 @@ export function CompanyDetailsPanel({
       name: 'is_customer',
       label: t`Customer`,
       icon: 'customers'
+    },
+    {
+      type: 'boolean',
+      name: 'is_taxable',
+      label: t`Taxable`
     }
   ];
 
