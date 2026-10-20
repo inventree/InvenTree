@@ -10,7 +10,9 @@ logger = structlog.get_logger('inventree')
 # Fields which are never recorded in the audit log, for any model
 BASE_EXCLUDE_FIELDS = (
     'metadata',
+    # Derived sorting fields
     'reference_int',
+    'line_int',
     # MPTT tree fields
     'lft',
     'rght',
@@ -18,6 +20,7 @@ BASE_EXCLUDE_FIELDS = (
     'level',
     # Automatically updated timestamps
     'updated',
+    'updated_at',
     'last_updated',
 )
 

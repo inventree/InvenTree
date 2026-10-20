@@ -9,6 +9,7 @@ from datetime import timedelta
 from unittest import mock
 
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -18,6 +19,7 @@ from auditlog.registry import auditlog
 import audit.context
 from audit.models import MASKED_VALUE, AuditLogEntry, mask_changes
 from audit.registry import BASE_EXCLUDE_FIELDS, audited_models, register_model
+from audit.serializers import AuditLogEntrySerializer
 from audit.tasks import delete_old_audit_entries
 from common.settings import set_global_setting
 from company.models import Company, SupplierPart
@@ -404,3 +406,130 @@ class AuditAPITest(AuditTestMixin, InvenTreeAPITestCase):
         get_user_model().objects.filter(pk=self.user.pk).update(is_superuser=True)
 
         self.assertGreater(len(self.po_history()), 0)
+
+    def get_change_rows(self, field_name: str) -> list:
+        """Return the 'changes_detail' rows for the given field, across the PO history."""
+        data = self.po_history(
+            changes_detail=True,
+            include_children=False,
+            action=AuditLogEntry.Action.UPDATE,
+        )
+
+        return [
+            row
+            for entry in data
+            for row in entry['changes_detail']
+            if row['field'] == field_name
+        ]
+
+    def test_changes_detail_fk(self):
+        """Foreign key changes are resolved for display, if the related model can be viewed."""
+        old_supplier = self.supplier
+        new_supplier = Company.objects.create(name='Other Supplier', is_supplier=True)
+
+        self.po.supplier = new_supplier
+        self.po.save()
+
+        [row] = self.get_change_rows('supplier')
+
+        self.assertEqual(row['type'], 'fk')
+        self.assertEqual(row['model_type'], 'company.company')
+        self.assertEqual(row['old'], old_supplier.pk)
+        self.assertEqual(row['new'], new_supplier.pk)
+        self.assertEqual(row['old_display'], str(old_supplier))
+        self.assertEqual(row['new_display'], str(new_supplier))
+
+        # Deleted related objects are marked as such
+        new_supplier.delete()
+        [row] = self.get_change_rows('supplier')
+        self.assertEqual(row['new_display'], 'Deleted')
+
+        # Without permission on the related model, only the PK is returned
+        with mock.patch.object(
+            AuditLogEntrySerializer,
+            'can_view_model',
+            lambda self, model: model is PurchaseOrder,
+        ):
+            [row] = self.get_change_rows('supplier')
+
+        self.assertEqual(row['old'], old_supplier.pk)
+        self.assertIsNone(row['old_display'])
+        self.assertIsNone(row['new_display'])
+
+    def test_changes_detail_value(self):
+        """Plain value changes include the field label."""
+        self.po.description = 'New description'
+        self.po.save()
+
+        [row] = self.get_change_rows('description')
+
+        self.assertEqual(row['type'], 'value')
+        self.assertEqual(row['label'], 'Description')
+
+        # Primary key and automatically updated fields are not shown
+        data = self.po_history(changes_detail=True, include_children=False)
+        fields = {row['field'] for entry in data for row in entry['changes_detail']}
+
+        self.assertNotIn('id', fields)
+        self.assertNotIn('updated_at', fields)
+        self.assertEqual(row['old'], 'Original')
+        self.assertEqual(row['new'], 'New description')
+
+    def test_m2m_objects_hidden(self):
+        """M2M object names are removed if the related model cannot be viewed."""
+        AuditLogEntry.objects.create(
+            content_type=self.po.get_content_type(),
+            object_pk=str(self.po.pk),
+            object_repr=str(self.po),
+            action=AuditLogEntry.Action.UPDATE,
+            changes={
+                'tags': {'type': 'm2m', 'operation': 'add', 'objects': ['hidden-tag']}
+            },
+        )
+
+        with mock.patch.object(
+            AuditLogEntrySerializer,
+            'can_view_model',
+            lambda self, model: model is PurchaseOrder,
+        ):
+            response = self.get(
+                self.list_url(),
+                {
+                    'model_type': 'order.purchaseorder',
+                    'model_id': self.po.pk,
+                    'changes_detail': True,
+                },
+            )
+
+        self.assertNotIn('hidden-tag', str(response.content))
+
+        with mock.patch.object(
+            AuditLogEntrySerializer, 'can_view_model', lambda self, model: True
+        ):
+            [row] = self.get_change_rows('tags')
+
+        self.assertEqual(row['type'], 'm2m')
+        self.assertEqual(row['operation'], 'add')
+        self.assertEqual(row['objects'], ['hidden-tag'])
+
+    def test_stale_model(self):
+        """Entries for models which no longer exist can still be serialized."""
+        get_user_model().objects.filter(pk=self.user.pk).update(is_superuser=True)
+
+        ct = ContentType.objects.create(app_label='removed_app', model='removedmodel')
+
+        AuditLogEntry.objects.create(
+            content_type=ct,
+            object_pk='1',
+            object_repr='Removed object',
+            action=AuditLogEntry.Action.UPDATE,
+            changes={'name': ['a', 'b']},
+        )
+
+        data = self.get(
+            self.list_url(), {'model_type': ct.pk, 'changes_detail': True}
+        ).data
+
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]['changes_detail'][0]['label'], 'Name')
+        self.assertEqual(data[0]['changes_detail'][0]['new'], 'b')

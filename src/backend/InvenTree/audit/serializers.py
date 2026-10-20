@@ -1,13 +1,45 @@
 """API serializers for the audit app."""
 
+from typing import Any, Optional
+
+from django.core.exceptions import (
+    FieldDoesNotExist,
+    ObjectDoesNotExist,
+    ValidationError,
+)
+from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 import InvenTree.serializers
-from audit.models import AuditLogEntry
+from audit.models import MASKED_VALUE, AuditLogEntry
 from InvenTree.serializers import OptionalField
 from users.serializers import UserSerializer
+
+
+class AuditChangeDetailSerializer(serializers.Serializer):
+    """Describes a single field change within an audit log entry."""
+
+    field = serializers.CharField(label=_('Field'))
+    label = serializers.CharField(label=_('Label'))
+    type = serializers.ChoiceField(
+        choices=['value', 'fk', 'm2m'], label=_('Change Type')
+    )
+    old = serializers.JSONField(allow_null=True, required=False)
+    new = serializers.JSONField(allow_null=True, required=False)
+    old_display = serializers.CharField(allow_null=True, required=False)
+    new_display = serializers.CharField(allow_null=True, required=False)
+    model_type = serializers.CharField(
+        allow_null=True, required=False, help_text=_('Related model (for FK fields)')
+    )
+    operation = serializers.CharField(
+        allow_null=True, required=False, help_text=_('M2M operation (add / delete)')
+    )
+    objects = serializers.ListField(
+        child=serializers.CharField(), allow_null=True, required=False
+    )
 
 
 class AuditLogEntrySerializer(
@@ -36,7 +68,7 @@ class AuditLogEntrySerializer(
             'parent_model_type',
             'parent_object_pk',
             'changes',
-            'changes_display',
+            'changes_detail',
             'cid',
             'additional_data',
             'remote_addr',
@@ -54,19 +86,156 @@ class AuditLogEntrySerializer(
         read_only=True, allow_null=True, label=_('Parent Model Type')
     )
 
-    changes = serializers.JSONField(
-        source='changes_dict', read_only=True, label=_('Changes')
-    )
+    changes = serializers.SerializerMethodField(label=_('Changes'))
 
-    changes_display = OptionalField(
-        serializer_class=serializers.JSONField,
-        serializer_kwargs={
-            'source': 'changes_display_dict',
-            'read_only': True,
-            'label': _('Changes (display)'),
-        },
+    changes_detail = OptionalField(
+        serializer_class=serializers.SerializerMethodField,
+        serializer_kwargs={'read_only': True, 'label': _('Change Details')},
         default_include=False,
     )
+
+    def can_view_model(self, model) -> bool:
+        """Return True if the requesting user may view the given model (cached)."""
+        from users.permissions import check_user_permission
+
+        if model is None:
+            return False
+
+        cache = self.__dict__.setdefault('_audit_perm_cache', {})
+
+        if model not in cache:
+            request = self.context.get('request')
+            user = getattr(request, 'user', None)
+            cache[model] = bool(user) and check_user_permission(user, model, 'view')
+
+        return cache[model]
+
+    def get_entry_fields(self, entry: AuditLogEntry) -> dict:
+        """Return a mapping of field name -> model field for the audited model."""
+        model = entry.content_type.model_class()
+        fields = {}
+
+        # The audited model may no longer exist (e.g. an uninstalled plugin)
+        if model is None:
+            return fields
+
+        for name in entry.changes_dict or {}:
+            try:
+                fields[name] = model._meta.get_field(name)
+            except FieldDoesNotExist:
+                continue
+
+        return fields
+
+    @extend_schema_field(serializers.JSONField())
+    def get_changes(self, entry: AuditLogEntry) -> dict:
+        """Return the raw changes recorded against this entry.
+
+        The string representation of related objects in M2M changes is
+        removed where the user cannot view the related model.
+        """
+        changes = dict(entry.changes_dict or {})
+        fields = self.get_entry_fields(entry)
+
+        for name, value in changes.items():
+            if isinstance(value, dict) and value.get('type') == 'm2m':
+                field = fields.get(name)
+                related = getattr(field, 'related_model', None)
+
+                if not self.can_view_model(related):
+                    changes[name] = {**value, 'objects': None}
+
+        return changes
+
+    def get_related_display(self, model, value) -> Optional[str]:
+        """Return the string representation of a related object (if it can be viewed)."""
+        if value in (None, '', 'None', MASKED_VALUE) or not self.can_view_model(model):
+            return None
+
+        cache = self.__dict__.setdefault('_audit_fk_cache', {})
+        key = (model, str(value))
+
+        if key not in cache:
+            try:
+                pk = model._meta.pk.to_python(value)
+                cache[key] = str(model._base_manager.get(pk=pk))
+            except ObjectDoesNotExist:
+                cache[key] = _('Deleted')
+            except (ValidationError, ValueError, TypeError):
+                cache[key] = None
+
+        return cache[key]
+
+    @extend_schema_field(AuditChangeDetailSerializer(many=True))
+    def get_changes_detail(self, entry: AuditLogEntry) -> list[dict[str, Any]]:
+        """Return a list of per-field changes, with display values.
+
+        - Field labels are resolved from the model (if it still exists)
+        - Choice values are translated to their labels
+        - Foreign key values are resolved to the related object, *only* if the
+          requesting user has permission to view the related model
+        """
+        fields = self.get_entry_fields(entry)
+        rows = []
+
+        for name, value in self.get_changes(entry).items():
+            field = fields.get(name)
+
+            # The primary key is recorded on creation, but is not useful to display
+            if getattr(field, 'primary_key', False):
+                continue
+
+            label = capfirst(str(getattr(field, 'verbose_name', name)))
+
+            row = {
+                'field': name,
+                'label': label,
+                'type': 'value',
+                'old': None,
+                'new': None,
+                'old_display': None,
+                'new_display': None,
+                'model_type': None,
+                'operation': None,
+                'objects': None,
+            }
+
+            if isinstance(value, dict) and value.get('type') == 'm2m':
+                row['type'] = 'm2m'
+                row['operation'] = value.get('operation')
+                row['objects'] = value.get('objects')
+                rows.append(row)
+                continue
+
+            if isinstance(value, (list, tuple)) and len(value) == 2:
+                row['old'], row['new'] = value
+            else:
+                row['new'] = value
+
+            related = getattr(field, 'related_model', None)
+
+            if (
+                field is not None
+                and related
+                and (field.many_to_one or field.one_to_one)
+            ):
+                row['type'] = 'fk'
+                row['model_type'] = (
+                    f'{related._meta.app_label}.{related._meta.model_name}'
+                )
+                row['old_display'] = self.get_related_display(related, row['old'])
+                row['new_display'] = self.get_related_display(related, row['new'])
+
+            elif field is not None and getattr(field, 'flatchoices', None):
+                choices = dict(field.flatchoices)
+
+                for key in ['old', 'new']:
+                    if row[key] in choices:
+                        row[f'{key}_display'] = str(choices[row[key]])
+
+            rows.append(row)
+
+        return rows
 
     actor_detail = OptionalField(
         serializer_class=UserSerializer,
