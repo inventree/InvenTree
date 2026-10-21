@@ -235,6 +235,16 @@ class AuditLogEntrySerializer(
 
             rows.append(row)
 
+        # Order by the model field definition order (unknown fields last)
+        model = entry.content_type.model_class()
+        order = (
+            {f.name: idx for idx, f in enumerate(model._meta.get_fields())}
+            if model
+            else {}
+        )
+
+        rows.sort(key=lambda row: order.get(row['field'], len(order)))
+
         return rows
 
     actor_detail = OptionalField(

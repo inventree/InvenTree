@@ -83,9 +83,15 @@ class AuditTestMixin:
 class AuditRegistryTest(TestCase):
     """Tests for model registration."""
 
-    def test_no_production_models(self):
-        """No production models opt in to the audit log yet (scaffolding only)."""
-        self.assertEqual(audited_models(), [])
+    def test_audited_models(self):
+        """Only the expected production models opt in to the audit log."""
+        self.assertEqual(
+            [model._meta.label_lower for model in audited_models()],
+            ['company.address', 'company.company', 'company.contact'],
+        )
+
+        for model in audited_models():
+            self.assertTrue(auditlog.contains(model))
 
         for model in TEST_MODELS:
             self.assertFalse(auditlog.contains(model))

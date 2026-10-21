@@ -1,6 +1,7 @@
 """Database models for the audit app."""
 
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -19,6 +20,16 @@ def get_audit_parent(instance):
         return func()
 
     return None
+
+
+def is_concrete_field(model, field_name: str) -> bool:
+    """Return True if field_name is a concrete field on the model (or is unknown)."""
+    try:
+        field = model._meta.get_field(field_name)
+    except FieldDoesNotExist:
+        return True
+
+    return getattr(field, 'concrete', False)
 
 
 def mask_changes(changes):
@@ -82,7 +93,39 @@ class AuditLogEntryManager(LogEntryManager):
         return kwargs
 
     def log_create(self, instance, force_log: bool = False, **kwargs):
-        """Create a new log entry for the provided instance."""
+        """Create a new log entry for the provided instance.
+
+        For updates, fields whose recorded old and new values are identical are dropped.
+        These occur when the in-memory value differs from the database value only in type
+        (e.g. an empty FieldFile vs. an empty string), and would otherwise add noise to every save.
+        """
+        changes = kwargs.get('changes')
+
+        if isinstance(changes, dict):
+            # Upstream includes reverse relations (e.g. 'company.contacts') in create / delete diffs,
+            # recording the string representation of the related manager - discard these
+            changes = {
+                field: value
+                for field, value in changes.items()
+                if is_concrete_field(type(instance), field)
+            }
+
+            if kwargs.get('action') == AuditLogEntry.Action.UPDATE:
+                changes = {
+                    field: value
+                    for field, value in changes.items()
+                    if not (
+                        isinstance(value, (list, tuple))
+                        and len(value) == 2
+                        and value[0] == value[1]
+                    )
+                }
+
+                if not changes and not force_log:
+                    return None
+
+            kwargs['changes'] = changes
+
         kwargs = self.get_audit_kwargs(instance, kwargs)
         return super().log_create(instance, force_log=force_log, **kwargs)
 
