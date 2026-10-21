@@ -8,8 +8,16 @@ from auditlog.context import disable_auditlog
 from audit.helpers import audited_update
 from audit.models import AuditLogEntry
 from common.settings import set_global_setting
-from company.models import Address, Company, Contact
+from company.models import (
+    Address,
+    Company,
+    Contact,
+    ManufacturerPart,
+    SupplierPart,
+    SupplierPriceBreak,
+)
 from InvenTree.unit_test import InvenTreeAPITestCase
+from part.models import Part
 
 ACTION = AuditLogEntry.Action
 
@@ -261,3 +269,191 @@ class AuditedUpdateTest(InvenTreeAPITestCase):
                 content_type=PartCategory.get_content_type()
             ).exists()
         )
+
+
+class SupplierPartAuditTest(InvenTreeAPITestCase):
+    """Tests for audit history of ManufacturerPart / SupplierPart / SupplierPriceBreak."""
+
+    roles = [
+        'part.view',
+        'purchase_order.view',
+        'purchase_order.add',
+        'purchase_order.change',
+        'purchase_order.delete',
+    ]
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create test data."""
+        super().setUpTestData()
+
+        cls.supplier = Company.objects.create(name='Supplier Co', is_supplier=True)
+        cls.manufacturer = Company.objects.create(name='Maker Co', is_manufacturer=True)
+        cls.part = Part.objects.create(
+            name='Widget', description='A widget', purchaseable=True
+        )
+        cls.supplier_part = SupplierPart.objects.create(
+            part=cls.part, supplier=cls.supplier, SKU='WID-001'
+        )
+
+    def entries(self, instance, **filters):
+        """Return audit entries recorded directly against an instance."""
+        return AuditLogEntry.objects.get_for_object(instance).filter(**filters)
+
+    def history(self, model_type, pk, **params):
+        """Return the audit history for an object (including children)."""
+        return self.get(
+            reverse('api-audit-log-list'),
+            {'model_type': model_type, 'model_id': pk, **params},
+        ).data
+
+    def test_supplier_part_edit(self):
+        """Supplier part edits are recorded, and shown in the supplier history."""
+        self.patch(
+            reverse('api-supplier-part-detail', kwargs={'pk': self.supplier_part.pk}),
+            {'note': 'Preferred source', 'pack_quantity': '10'},
+        )
+
+        entry = self.entries(self.supplier_part, action=ACTION.UPDATE).get()
+
+        self.assertEqual(entry.actor, self.user)
+        self.assertEqual(entry.parent_object_pk, str(self.supplier.pk))
+        self.assertEqual(entry.changes_dict['note'][1], 'Preferred source')
+        self.assertEqual(entry.changes_dict['pack_quantity'][1], '10')
+
+        # Derived field is not recorded
+        self.assertNotIn('pack_quantity_native', entry.changes_dict)
+
+        history = self.history('company.company', self.supplier.pk)
+        self.assertIn(
+            ('company.supplierpart', ACTION.UPDATE),
+            [(e['model_type'], e['action']) for e in history],
+        )
+
+    def test_availability_not_recorded(self):
+        """Supplier availability updates are not recorded."""
+        self.supplier_part.update_available_quantity(250)
+
+        self.assertFalse(
+            self.entries(self.supplier_part, action=ACTION.UPDATE).exists()
+        )
+
+        # Other changes in the same save are still recorded
+        self.supplier_part.note = 'Checked'
+        self.supplier_part.update_available_quantity(300)
+
+        entry = self.entries(self.supplier_part, action=ACTION.UPDATE).get()
+        self.assertEqual(list(entry.changes_dict.keys()), ['note'])
+
+    def test_primary_supplier_part(self):
+        """Demoting the previous primary supplier part (a bulk update) is recorded."""
+        self.assertTrue(self.supplier_part.primary)
+
+        SupplierPart.objects.create(
+            part=self.part, supplier=self.supplier, SKU='WID-002', primary=True
+        )
+
+        self.supplier_part.refresh_from_db()
+        self.assertFalse(self.supplier_part.primary)
+
+        entry = self.entries(self.supplier_part, action=ACTION.UPDATE).get()
+        self.assertEqual(entry.changes_dict, {'primary': [True, False]})
+        self.assertEqual(entry.parent_object_pk, str(self.supplier.pk))
+
+    def test_manufacturer_part(self):
+        """Manufacturer part changes are shown in the manufacturer history."""
+        response = self.post(
+            reverse('api-manufacturer-part-list'),
+            {'part': self.part.pk, 'manufacturer': self.manufacturer.pk, 'MPN': 'M-1'},
+        )
+
+        mp = ManufacturerPart.objects.get(pk=response.data['pk'])
+
+        self.patch(
+            reverse('api-manufacturer-part-detail', kwargs={'pk': mp.pk}),
+            {'description': 'Rev B'},
+        )
+
+        history = self.history('company.company', self.manufacturer.pk)
+        entries = [e for e in history if e['model_type'] == 'company.manufacturerpart']
+
+        self.assertEqual(
+            sorted(e['action'] for e in entries), [ACTION.CREATE, ACTION.UPDATE]
+        )
+
+        for entry in entries:
+            self.assertEqual(entry['parent_object_pk'], str(self.manufacturer.pk))
+            self.assertEqual(entry['actor'], self.user.pk)
+
+    def test_price_breaks(self):
+        """Price break changes are shown in the supplier part history."""
+        url = reverse('api-part-supplier-price-list')
+
+        response = self.post(
+            url,
+            {
+                'part': self.supplier_part.pk,
+                'quantity': 10,
+                'price': '1.50',
+                'price_currency': 'USD',
+            },
+        )
+
+        pb = SupplierPriceBreak.objects.get(pk=response.data['pk'])
+
+        self.patch(
+            reverse('api-part-supplier-price-detail', kwargs={'pk': pb.pk}),
+            {'price': '1.25'},
+        )
+
+        entry = self.entries(pb, action=ACTION.UPDATE).get()
+        self.assertIn('price', entry.changes_dict)
+        self.assertEqual(entry.parent_object_pk, str(self.supplier_part.pk))
+
+        history = self.history(
+            'company.supplierpart', self.supplier_part.pk, changes_detail=True
+        )
+        entries = [
+            e for e in history if e['model_type'] == 'company.supplierpricebreak'
+        ]
+
+        self.assertEqual(
+            sorted(e['action'] for e in entries), [ACTION.CREATE, ACTION.UPDATE]
+        )
+
+        # Price breaks are not included in the supplier (company) history
+        self.assertFalse(
+            any(
+                e['model_type'] == 'company.supplierpricebreak'
+                for e in self.history('company.company', self.supplier.pk)
+            )
+        )
+
+    def test_price_break_permission(self):
+        """Price break history requires permission on the price break model."""
+        SupplierPriceBreak.objects.create(part=self.supplier_part, quantity=1, price=2)
+
+        def price_entries():
+            return [
+                e
+                for e in self.history('company.supplierpart', self.supplier_part.pk)
+                if e['model_type'] == 'company.supplierpricebreak'
+            ]
+
+        self.assertEqual(len(price_entries()), 1)
+
+        # Supplier part is visible via the 'part' role, but companies / price breaks are not
+        self.clearRoles()
+        self.assignRole('part.view')
+
+        history = self.history('company.supplierpart', self.supplier_part.pk)
+        self.assertGreater(len(history), 0)
+        self.assertEqual(len(price_entries()), 0)
+
+        # Parent (supplier company) reference is hidden
+        for entry in history:
+            self.assertIsNone(entry['parent_model_type'])
+            self.assertIsNone(entry['parent_object_pk'])
+
+        # Supplier part entries cannot be retrieved via the supplier
+        self.assertEqual(self.history('company.company', self.supplier.pk), [])

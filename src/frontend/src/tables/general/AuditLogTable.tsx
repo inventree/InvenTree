@@ -428,7 +428,7 @@ export function AuditLogTable({
           const objectType = resolveModelType(record.model_type);
           const typeLabel = objectType
             ? ModelInformationDict[objectType].label()
-            : record.model_type;
+            : (record.model_label ?? record.model_type);
 
           // Deleted objects no longer have a detail page
           const url =

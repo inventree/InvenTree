@@ -63,6 +63,7 @@ class AuditLogEntrySerializer(
             'actor',
             'actor_detail',
             'model_type',
+            'model_label',
             'object_pk',
             'object_repr',
             'parent_model_type',
@@ -82,6 +83,15 @@ class AuditLogEntrySerializer(
 
     model_type = serializers.CharField(read_only=True, label=_('Model Type'))
 
+    model_label = serializers.SerializerMethodField(label=_('Model Label'))
+
+    def get_model_label(self, entry: AuditLogEntry) -> str:
+        """Return the human readable name of the audited model."""
+        if model := entry.content_type.model_class():
+            return capfirst(str(model._meta.verbose_name))
+
+        return entry.model_type
+
     parent_model_type = serializers.CharField(
         read_only=True, allow_null=True, label=_('Parent Model Type')
     )
@@ -94,9 +104,14 @@ class AuditLogEntrySerializer(
         default_include=False,
     )
 
+    def get_request_user(self):
+        """Return the requesting user (if any)."""
+        request = self.context.get('request')
+        return getattr(request, 'user', None)
+
     def can_view_model(self, model) -> bool:
         """Return True if the requesting user may view the given model (cached)."""
-        from users.permissions import check_user_permission
+        from audit.permissions import user_can_view_audit_model
 
         if model is None:
             return False
@@ -104,9 +119,7 @@ class AuditLogEntrySerializer(
         cache = self.__dict__.setdefault('_audit_perm_cache', {})
 
         if model not in cache:
-            request = self.context.get('request')
-            user = getattr(request, 'user', None)
-            cache[model] = bool(user) and check_user_permission(user, model, 'view')
+            cache[model] = user_can_view_audit_model(self.get_request_user(), model)
 
         return cache[model]
 
@@ -258,11 +271,16 @@ class AuditLogEntrySerializer(
         """Remove staff-only fields for non-staff users."""
         data = super().to_representation(instance)
 
-        request = self.context.get('request')
-        user = getattr(request, 'user', None)
+        user = self.get_request_user()
 
         if not (user and user.is_staff):
             for field in self.STAFF_ONLY_FIELDS:
                 data.pop(field, None)
+
+        # Only expose the parent reference if the user may view the parent model
+        if parent_ct := instance.parent_content_type:
+            if not self.can_view_model(parent_ct.model_class()):
+                data['parent_model_type'] = None
+                data['parent_object_pk'] = None
 
         return data

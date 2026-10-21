@@ -87,7 +87,14 @@ class AuditRegistryTest(TestCase):
         """Only the expected production models opt in to the audit log."""
         self.assertEqual(
             [model._meta.label_lower for model in audited_models()],
-            ['company.address', 'company.company', 'company.contact'],
+            [
+                'company.address',
+                'company.company',
+                'company.contact',
+                'company.manufacturerpart',
+                'company.supplierpart',
+                'company.supplierpricebreak',
+            ],
         )
 
         for model in audited_models():
@@ -282,6 +289,7 @@ class AuditAPITest(AuditTestMixin, InvenTreeAPITestCase):
         self.assertEqual(data[0]['actor'], self.user.pk)
         self.assertEqual(data[0]['actor_detail']['username'], self.user.username)
         self.assertEqual(data[0]['model_type'], 'order.purchaseorder')
+        self.assertEqual(data[0]['model_label'], 'Purchase Order')
         self.assertEqual(data[0]['changes']['description'][1], 'Session edit')
 
     def test_basic_auth_actor(self):
@@ -354,27 +362,52 @@ class AuditAPITest(AuditTestMixin, InvenTreeAPITestCase):
         self.assertEqual(len(self.get(self.list_url()).data), 0)
         self.get(detail_url, expected_code=404)
 
-    def test_child_requires_parent_permission(self):
-        """Child entries require 'view' permission on the parent model."""
+    def test_child_without_parent_permission(self):
+        """Child entries without 'view' permission on the parent model.
+
+        - The child entry itself is still visible (permission on the child model)
+        - It is *not* returned when querying the history of the parent
+        - The parent reference is removed from the response
+        """
         PurchaseOrderLineItem.objects.create(
             order=self.po, part=self.supplier_part, quantity=5
         )
 
-        def line_entries():
+        def line_entries(params=None):
             return [
                 e
-                for e in self.get(self.list_url()).data
+                for e in self.get(self.list_url(), params or {}).data
                 if e['model_type'] == 'order.purchaseorderlineitem'
             ]
 
-        self.assertEqual(len(line_entries()), 1)
+        [entry] = line_entries()
+        self.assertEqual(entry['parent_model_type'], 'order.purchaseorder')
+        self.assertEqual(entry['parent_object_pk'], str(self.po.pk))
+        self.assertEqual(len(line_entries({'model_type': 'purchaseorder'})), 1)
 
         # Line item visible, but parent (order) not
-        with mock.patch(
-            'audit.api.user_can_view_audit_model',
-            lambda user, model, groups=None: model is not PurchaseOrder,
+        def can_view(user, model, groups=None):
+            return model is not PurchaseOrder
+
+        with (
+            mock.patch('audit.api.user_can_view_audit_model', can_view),
+            mock.patch('audit.permissions.user_can_view_audit_model', can_view),
         ):
-            self.assertEqual(len(line_entries()), 0)
+            [entry] = line_entries()
+            self.assertIsNone(entry['parent_model_type'])
+            self.assertIsNone(entry['parent_object_pk'])
+
+            # Not available when querying through the parent
+            self.assertEqual(
+                line_entries({'model_type': 'purchaseorder', 'model_id': self.po.pk}),
+                [],
+            )
+            self.assertEqual(line_entries({'model_type': 'purchaseorder'}), [])
+
+            # Still available when querying the child model directly
+            self.assertEqual(
+                len(line_entries({'model_type': 'purchaseorderlineitem'})), 1
+            )
 
     def test_staff_only_fields(self):
         """Remote address is only exposed to staff users."""

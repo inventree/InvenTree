@@ -1,7 +1,5 @@
 """API endpoints for the audit app."""
 
-from typing import Optional
-
 from django.db.models import Q
 from django.urls import path
 from django.utils.translation import gettext_lazy as _
@@ -11,55 +9,14 @@ from rest_framework.exceptions import ValidationError
 
 import audit.serializers
 from audit.models import AuditLogEntry
-from audit.registry import get_view_restriction
+from audit.permissions import (
+    get_viewable_audit_content_types,
+    user_can_view_audit_model,
+)
 from common.filters import determine_content_type
-from InvenTree.cache import get_cached_content_types
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListAPI, RetrieveAPI
 from InvenTree.permissions import IsAuthenticatedOrReadScope
-
-
-def user_can_view_audit_model(user, model, groups=None) -> bool:
-    """Determine if the user may view audit history for the given model class."""
-    from users.permissions import check_user_permission
-
-    restriction = get_view_restriction(model)
-
-    if restriction == 'superuser' and not user.is_superuser:
-        return False
-
-    if restriction == 'staff' and not user.is_staff:
-        return False
-
-    return check_user_permission(user, model, 'view', groups=groups)
-
-
-def get_viewable_audit_content_types(user) -> Optional[list[int]]:
-    """Return the ContentType IDs for which the user may view audit history.
-
-    Audit history is visible if the user has 'view' permission on the audited model
-    (and, for child entries, on the parent model). Returns None if the user may view everything.
-    """
-    from users.permissions import prefetch_rule_sets
-
-    if user.is_superuser:
-        return None
-
-    groups = prefetch_rule_sets(user)
-
-    allowed = []
-
-    for ct in get_cached_content_types():
-        model = ct.model_class()
-
-        # Stale content types (model no longer installed) are never visible
-        if model is None:
-            continue
-
-        if user_can_view_audit_model(user, model, groups=groups):
-            allowed.append(ct.pk)
-
-    return allowed
 
 
 class AuditLogFilter(rest_filters.FilterSet):
@@ -130,7 +87,11 @@ class AuditLogFilter(rest_filters.FilterSet):
             own &= Q(object_pk=str(model_id))
             children &= Q(parent_object_pk=str(model_id))
 
-        if include_children:
+        # Querying *through* a parent requires permission to view the parent model,
+        # otherwise the parent linkage of child objects would be exposed
+        user = getattr(self.request, 'user', None)
+
+        if include_children and user_can_view_audit_model(user, ct.model_class()):
             return queryset.filter(own | children)
 
         return queryset.filter(own)
@@ -154,9 +115,8 @@ class AuditLogMixin:
         if allowed is None:
             return queryset
 
-        return queryset.filter(content_type__in=allowed).filter(
-            Q(parent_content_type__isnull=True) | Q(parent_content_type__in=allowed)
-        )
+        # Note: parent permissions are handled by the filter (and serializer)
+        return queryset.filter(content_type__in=allowed)
 
 
 class AuditLogList(AuditLogMixin, ListAPI):
