@@ -31,7 +31,9 @@ import type { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
-import HistoryPanel from '../../components/panels/HistoryPanel';
+import HistoryPanel, {
+  useShowHistoryPanel
+} from '../../components/panels/HistoryPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
@@ -96,6 +98,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       refreshInstance={refreshInstance}
     />
   );
+
+  const showHistory = useShowHistoryPanel();
 
   const companyPanels: PanelType[] = useMemo(() => {
     return [
@@ -215,10 +219,11 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       }),
       HistoryPanel({
         model_type: ModelType.company,
-        model_id: company.pk
+        model_id: company.pk,
+        visible: showHistory
       })
     ];
-  }, [id, company, user, instanceInfo]);
+  }, [id, company, user, instanceInfo, showHistory]);
 
   const editCompany = useEditApiFormModal({
     url: ApiEndpoints.company_list,
