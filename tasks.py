@@ -1580,8 +1580,14 @@ def delete_data(c, force: bool = False, migrate: bool = False, verbose: bool = F
     success('Existing data deleted')
 
 
-@task(post=[rebuild_models, rebuild_thumbnails])
-def import_fixtures(c):
+@task(
+    post=[rebuild_models, rebuild_thumbnails],
+    help={
+        'clear': 'Clear existing data before importing fixtures',
+        'verbose': 'Print verbose output from management commands',
+    },
+)
+def import_fixtures(c, clear: bool = False, verbose: bool = False):
     """Import fixture data into the database.
 
     This command imports all existing test fixture data into the database.
@@ -1591,6 +1597,9 @@ def import_fixtures(c):
         - Running this command may overwrite existing database data!!
         - Don't say you were not warned...
     """
+    if clear:
+        delete_data(c, force=True, verbose=verbose)
+
     fixtures = [
         # Build model
         'build',
@@ -1618,7 +1627,7 @@ def import_fixtures(c):
 
     command = 'loaddata ' + ' '.join(fixtures)
 
-    manage(c, command, pty=True)
+    manage(c, command, pty=True, verbose=verbose)
 
 
 # Execution tasks
