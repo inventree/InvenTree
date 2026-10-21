@@ -259,7 +259,7 @@ class AuditAPITest(AuditTestMixin, InvenTreeAPITestCase):
     """Tests for the audit log API endpoints."""
 
     roles = ['purchase_order.view', 'purchase_order.change']
-    is_staff = False
+    is_staff = True
 
     def list_url(self):
         """Return the list endpoint URL."""
@@ -409,30 +409,36 @@ class AuditAPITest(AuditTestMixin, InvenTreeAPITestCase):
                 len(line_entries({'model_type': 'purchaseorderlineitem'})), 1
             )
 
-    def test_staff_only_fields(self):
-        """Remote address is only exposed to staff users."""
+    def test_staff_required(self):
+        """The audit log API is only available to staff users."""
         self.patch_po('Edit')
 
-        data = self.po_history()
-        self.assertNotIn('remote_addr', data[0])
-        self.assertNotIn('remote_port', data[0])
+        entry = self.entries_for(self.po).first()
+        detail_url = reverse('api-audit-log-detail', kwargs={'pk': entry.pk})
 
-        self.user.is_staff = True
-        self.user.save()
-
+        # Staff users can see entries (including the remote address)
         data = self.po_history()
         self.assertEqual(data[0]['remote_addr'], '127.0.0.1')
+        self.get(detail_url)
+
+        # Non-staff users are denied - even with view permission on the audited model
+        self.user.is_staff = False
+        self.user.save()
+
+        self.get(self.list_url(), expected_code=403)
+        self.get(detail_url, expected_code=403)
 
     def test_view_restriction(self):
-        """Models with a view restriction are hidden from non-staff users."""
+        """Models with a view restriction are hidden from users without that status."""
         self.assertGreater(len(self.po_history()), 0)
 
         with mock.patch.object(
-            PurchaseOrder, 'AUDIT_VIEW_RESTRICTION', 'staff', create=True
+            PurchaseOrder, 'AUDIT_VIEW_RESTRICTION', 'superuser', create=True
         ):
+            # Staff, but not superuser
             self.assertEqual(len(self.po_history(include_children=False)), 0)
 
-            self.user.is_staff = True
+            self.user.is_superuser = True
             self.user.save()
 
             self.assertGreater(len(self.po_history(include_children=False)), 0)

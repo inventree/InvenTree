@@ -16,7 +16,7 @@ from audit.permissions import (
 from common.filters import determine_content_type
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListAPI, RetrieveAPI
-from InvenTree.permissions import IsAuthenticatedOrReadScope
+from InvenTree.permissions import IsAdminOrAdminScope
 
 
 class AuditLogFilter(rest_filters.FilterSet):
@@ -104,7 +104,10 @@ class AuditLogMixin:
         'content_type', 'parent_content_type'
     )
     serializer_class = audit.serializers.AuditLogEntrySerializer
-    permission_classes = [IsAuthenticatedOrReadScope]
+
+    # The audit log is only available to staff users.
+    # Entries are *additionally* filtered by the user's permissions on each audited model.
+    permission_classes = [IsAdminOrAdminScope]
 
     def get_queryset(self):
         """Restrict entries to those the requesting user is allowed to view."""
