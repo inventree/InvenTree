@@ -326,6 +326,7 @@ def builtin_apps():
         'machine',
         'order',
         'part',
+        'pricing',
         'report',
         'stock',
         'users',

@@ -324,6 +324,7 @@ INSTALLED_APPS = [
     'machine.apps.MachineConfig',
     'data_exporter.apps.DataExporterConfig',
     'importer.apps.ImporterConfig',
+    'pricing.apps.PricingConfig',
     'web',
     'generic',
     'InvenTree.apps.InvenTreeConfig',  # InvenTree app runs last
@@ -994,17 +995,9 @@ SOCIAL_BACKENDS = get_setting(
 )
 
 DEFAULT_SOCIAL = ['saml', 'openid_connect']
-_SOCIAL_BACKENDS = list(dict.fromkeys([*DEFAULT_SOCIAL, *SOCIAL_BACKENDS]))
 
 # region auth
-for app in _SOCIAL_BACKENDS:  # pragma: no cover
-    # Ensure that the app starts with 'allauth.socialaccount.providers'
-    social_prefix = 'allauth.socialaccount.providers.'
-
-    if not app.startswith(social_prefix):
-        app = social_prefix + app
-
-    INSTALLED_APPS.append(app)
+INSTALLED_APPS.extend(config.get_social_backends(DEFAULT_SOCIAL, SOCIAL_BACKENDS))
 
 SOCIALACCOUNT_PROVIDERS = {a: {} for a in DEFAULT_SOCIAL}
 _PROVIDER_SETTINGS = get_setting(

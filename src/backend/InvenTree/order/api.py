@@ -498,7 +498,9 @@ class PurchaseOrderViewSet(
         items = serializer.save()
         queryset = stock_serializers.StockItemSerializer.annotate_queryset(items)
 
-        response = stock_serializers.StockItemSerializer(queryset, many=True)
+        response = stock_serializers.StockItemSerializer(
+            queryset, many=True, permission_user=request.user
+        )
         return Response(response.data, status=status.HTTP_201_CREATED)
 
 
@@ -681,7 +683,9 @@ class PurchaseOrderLineItemViewSet(
         ):
             line_item.update_pricing()
 
-        serializer = serializers.PurchaseOrderLineItemSerializer(line_item)
+        serializer = serializers.PurchaseOrderLineItemSerializer(
+            line_item, permission_user=request.user
+        )
         headers = self.get_success_headers(serializer.data)
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
