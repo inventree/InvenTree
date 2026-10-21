@@ -66,6 +66,18 @@ export function usePartFields({
       default_expiry: {},
       minimum_stock: {},
       maximum_stock: {},
+      cost: {},
+      new_cost: {},
+      desired_margin: {},
+      selling_price: {},
+      minimum_price: {},
+      customer_part_number: {},
+      weight: {},
+      weight_unit: {},
+      volume: {},
+      volume_unit: {},
+      warranty: {},
+      is_taxable: {},
       responsible: {
         filters: {
           is_active: true

@@ -12,6 +12,9 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
 
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.money import Money
+
 import build.serializers
 import common.filters
 import company.models as company_models
@@ -1419,6 +1422,62 @@ class SalesOrderLineItemSerializer(
     sale_price_currency = InvenTreeCurrencySerializer(
         help_text=_('Sale price currency')
     )
+
+    def validate(self, data):
+        """Perform extra validation steps for SalesOrderLineItemSerializer."""
+        data = super().validate(data)
+
+        part = data.get('part', getattr(self.instance, 'part', None))
+        sale_price = data.get('sale_price', getattr(self.instance, 'sale_price', None))
+        discount = data.get('discount', getattr(self.instance, 'discount', Decimal(0)))
+
+        if part and getattr(part, 'minimum_price', None) is not None and sale_price is not None:
+            min_price = part.minimum_price
+            currency = (
+                data.get('sale_price_currency')
+                or getattr(self.instance, 'sale_price_currency', None)
+                or getattr(sale_price, 'currency', None)
+                or getattr(min_price, 'currency', None)
+            )
+
+            # Ensure Money object
+            if not isinstance(sale_price, Money):
+                amount = getattr(sale_price, 'amount', sale_price)
+                sale_price = Money(Decimal(str(amount)), currency)
+
+            if not isinstance(min_price, Money):
+                min_amount = getattr(min_price, 'amount', min_price)
+                min_price = Money(Decimal(str(min_amount)), currency)
+
+            discount_val = Decimal(str(discount or 0))
+            if discount_val > 0:
+                effective_price = sale_price * (Decimal(1) - discount_val / Decimal(100))
+            else:
+                effective_price = sale_price
+
+            threshold = min_price
+            if effective_price.currency != min_price.currency:
+                try:
+                    threshold = convert_money(min_price, effective_price.currency)
+                except Exception:
+                    threshold = None
+
+            if threshold is not None and effective_price < threshold:
+                if discount_val > 0:
+                    raise ValidationError({
+                        'sale_price': _(
+                            f'Effective unit sale price ({effective_price}) after {discount_val}% discount '
+                            f'cannot be lower than the part minimum price ({threshold})'
+                        )
+                    })
+                else:
+                    raise ValidationError({
+                        'sale_price': _(
+                            f'Unit sale price ({sale_price}) cannot be lower than the part minimum price ({threshold})'
+                        )
+                    })
+
+        return data
 
 
 @register_importer()

@@ -14,6 +14,7 @@ from django.utils.translation import gettext_lazy as _
 import structlog
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
+from djmoney.money import Money
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
@@ -364,6 +365,22 @@ class PartBriefSerializer(
             'units',
             'pricing_min',
             'pricing_max',
+            'cost',
+            'cost_currency',
+            'desired_margin',
+            'selling_price',
+            'selling_price_currency',
+            'minimum_price',
+            'minimum_price_currency',
+            'new_cost',
+            'new_cost_currency',
+            'weight',
+            'weight_unit',
+            'volume',
+            'volume_unit',
+            'customer_part_number',
+            'warranty',
+            'is_taxable',
             'metadata',
         ]
         read_only_fields = ['barcode_hash']
@@ -414,6 +431,31 @@ class PartBriefSerializer(
     metadata = serializers.JSONField(
         read_only=True,
         allow_null=True,
+    )
+
+    cost = InvenTree.serializers.InvenTreeMoneySerializer(
+        allow_null=True, required=False, read_only=True
+    )
+    cost_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
+        required=False, read_only=True
+    )
+    selling_price = InvenTree.serializers.InvenTreeMoneySerializer(
+        allow_null=True, required=False, read_only=True
+    )
+    selling_price_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
+        required=False, read_only=True
+    )
+    minimum_price = InvenTree.serializers.InvenTreeMoneySerializer(
+        allow_null=True, required=False, read_only=True
+    )
+    minimum_price_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
+        required=False, read_only=True
+    )
+    new_cost = InvenTree.serializers.InvenTreeMoneySerializer(
+        allow_null=True, required=False, read_only=True
+    )
+    new_cost_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
+        required=False, read_only=True
     )
 
 
@@ -600,6 +642,22 @@ class PartSerializer(
             'pricing_min',
             'pricing_max',
             'pricing_updated',
+            'cost',
+            'cost_currency',
+            'desired_margin',
+            'selling_price',
+            'selling_price_currency',
+            'minimum_price',
+            'minimum_price_currency',
+            'new_cost',
+            'new_cost_currency',
+            'weight',
+            'weight_unit',
+            'volume',
+            'volume_unit',
+            'customer_part_number',
+            'warranty',
+            'is_taxable',
             'responsible',
             'price_breaks',
             'metadata',
@@ -958,6 +1016,43 @@ class PartSerializer(
     metadata = serializers.JSONField(
         required=False,
         allow_null=True,
+    )
+
+    cost = InvenTree.serializers.InvenTreeMoneySerializer(
+        label=_('Cost'),
+        allow_null=True,
+        required=False,
+    )
+    cost_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
+        required=False,
+        help_text=_('Cost currency'),
+    )
+    selling_price = InvenTree.serializers.InvenTreeMoneySerializer(
+        label=_('Selling Price'),
+        allow_null=True,
+        required=False,
+    )
+    selling_price_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
+        required=False,
+        help_text=_('Selling price currency'),
+    )
+    minimum_price = InvenTree.serializers.InvenTreeMoneySerializer(
+        label=_('Minimum Price'),
+        allow_null=True,
+        required=False,
+    )
+    minimum_price_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
+        required=False,
+        help_text=_('Minimum price currency'),
+    )
+    new_cost = InvenTree.serializers.InvenTreeMoneySerializer(
+        label=_('New Cost'),
+        allow_null=True,
+        required=False,
+    )
+    new_cost_currency = InvenTree.serializers.InvenTreeCurrencySerializer(
+        required=False,
+        help_text=_('New cost currency'),
     )
 
     # Extra fields used only for creation of a new Part instance
@@ -1555,6 +1650,22 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         default_currency = common.currency.currency_code_default()
 
         if override_min is not None and override_max is not None:
+            if not isinstance(override_min, Money):
+                min_currency = (
+                    data.get('override_min_currency')
+                    or getattr(self.instance, 'override_min_currency', None)
+                    or default_currency
+                )
+                override_min = Money(override_min, min_currency)
+
+            if not isinstance(override_max, Money):
+                max_currency = (
+                    data.get('override_max_currency')
+                    or getattr(self.instance, 'override_max_currency', None)
+                    or default_currency
+                )
+                override_max = Money(override_max, max_currency)
+
             try:
                 override_min = convert_money(override_min, default_currency)
                 override_max = convert_money(override_max, default_currency)

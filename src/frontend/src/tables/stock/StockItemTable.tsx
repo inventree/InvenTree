@@ -132,11 +132,13 @@ function stockItemTableColumns({
       render: (record: any) => {
         const cost =
           record.purchase_price ??
+          record.part_detail?.cost ??
           record.part_detail?.metadata?.cost ??
           record.part_detail?.pricing_min ??
           null;
         const currency =
           record.purchase_price_currency ??
+          record.part_detail?.cost_currency ??
           record.part_detail?.metadata?.cost_currency ??
           record.part_detail?.pricing_data?.currency;
 
@@ -155,18 +157,19 @@ function stockItemTableColumns({
       render: (record: any) => {
         const cost = Number(
           record.purchase_price ??
+            record.part_detail?.cost ??
             record.part_detail?.metadata?.cost ??
             record.part_detail?.pricing_min ??
             0
         );
         const margin =
-          record.part_detail?.metadata?.desired_margin ??
           record.part_detail?.desired_margin ??
+          record.part_detail?.metadata?.desired_margin ??
           null;
 
         let price =
-          record.part_detail?.metadata?.selling_price ??
           record.part_detail?.selling_price ??
+          record.part_detail?.metadata?.selling_price ??
           null;
 
         if (
@@ -180,8 +183,8 @@ function stockItemTableColumns({
 
         const currency =
           record.purchase_price_currency ??
-          record.part_detail?.metadata?.selling_price_currency ??
           record.part_detail?.selling_price_currency ??
+          record.part_detail?.metadata?.selling_price_currency ??
           record.part_detail?.pricing_data?.currency;
 
         return price != null && Number(price) > 0
@@ -199,18 +202,19 @@ function stockItemTableColumns({
       render: (record: any) => {
         const cost = Number(
           record.purchase_price ??
+            record.part_detail?.cost ??
             record.part_detail?.metadata?.cost ??
             record.part_detail?.pricing_min ??
             0
         );
         let margin =
-          record.part_detail?.metadata?.desired_margin ??
           record.part_detail?.desired_margin ??
+          record.part_detail?.metadata?.desired_margin ??
           null;
 
         let price =
-          record.part_detail?.metadata?.selling_price ??
           record.part_detail?.selling_price ??
+          record.part_detail?.metadata?.selling_price ??
           null;
 
         if (

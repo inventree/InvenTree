@@ -103,12 +103,21 @@ export default function CostMarginCalculator({
     return '';
   }, [part, pricing]);
 
+  // Initial minimum price discovery
+  const initialMinimumPrice = useMemo(() => {
+    if (part?.minimum_price != null) return Number(part.minimum_price);
+    if (part?.metadata?.minimum_price != null)
+      return Number(part.metadata.minimum_price);
+    return '';
+  }, [part]);
+
   // State
   const [cost, setCost] = useState<number | string>(initialCost);
   const [margin, setMargin] = useState<number | string>(initialMargin);
   const [sellingPrice, setSellingPrice] = useState<number | string>(
     initialSellingPrice
   );
+  const [minPrice, setMinPrice] = useState<number | string>(initialMinimumPrice);
   const [saving, setSaving] = useState<boolean>(false);
   const [lastModified, setLastModified] = useState<
     'cost' | 'margin' | 'price' | null
@@ -126,6 +135,10 @@ export default function CostMarginCalculator({
   useEffect(() => {
     setSellingPrice(initialSellingPrice);
   }, [initialSellingPrice]);
+
+  useEffect(() => {
+    setMinPrice(initialMinimumPrice);
+  }, [initialMinimumPrice]);
 
   // 1. Reactive calculation when COST changes:
   // "If the cost changes while the margin remains the same, the selling price should automatically update."
@@ -212,10 +225,7 @@ export default function CostMarginCalculator({
     const grossMargin = numPrice > 0 ? (profit / numPrice) * 100 : 0;
     const markup = numCost > 0 ? (profit / numCost) * 100 : 0;
 
-    let marginColor: string = 'teal';
-    if (grossMargin < 0) marginColor = 'red';
-    else if (grossMargin < 15) marginColor = 'orange';
-    else if (grossMargin < 30) marginColor = 'blue';
+    const marginColor = grossMargin < 0 ? 'red' : 'blue';
 
     return {
       profit,
@@ -252,24 +262,46 @@ export default function CostMarginCalculator({
           : sellingPrice !== ''
           ? parseFloat(sellingPrice)
           : null;
+      const numMinPrice =
+        typeof minPrice === 'number'
+          ? minPrice
+          : minPrice !== ''
+          ? parseFloat(minPrice)
+          : null;
 
-      // 1. Persist to Part metadata (supported immediately by existing backend without DB migration)
+      // 1. Persist directly to Part model fields (and metadata for backward compatibility)
       const existingMetadata = part?.metadata || {};
       const newMetadata = {
         ...existingMetadata,
         cost: numCost,
         desired_margin: numMargin,
         selling_price: numPrice,
+        minimum_price: numMinPrice,
         cost_currency: currency,
-        selling_price_currency: currency
+        selling_price_currency: currency,
+        minimum_price_currency: currency
       };
 
       await api.patch(apiUrl(ApiEndpoints.part_list, part.pk), {
+        cost: numCost,
+        cost_currency: currency,
+        desired_margin: numMargin,
+        selling_price: numPrice,
+        selling_price_currency: currency,
+        minimum_price: numMinPrice,
+        minimum_price_currency: currency,
         metadata: newMetadata
       });
 
-      // Update local part metadata so current view reflects it immediately
+      // Update local part object so current view reflects it immediately
       if (part) {
+        part.cost = numCost;
+        part.cost_currency = currency;
+        part.desired_margin = numMargin;
+        part.selling_price = numPrice;
+        part.selling_price_currency = currency;
+        part.minimum_price = numMinPrice;
+        part.minimum_price_currency = currency;
         part.metadata = newMetadata;
       }
 
@@ -278,7 +310,9 @@ export default function CostMarginCalculator({
         try {
           await api.patch(apiUrl(ApiEndpoints.part_pricing, part.pk), {
             override_min: numCost,
-            override_max: numCost
+            override_min_currency: currency,
+            override_max: numCost,
+            override_max_currency: currency
           });
         } catch (overrideErr) {
           console.warn('Could not update pricing override:', overrideErr);
@@ -387,8 +421,8 @@ export default function CostMarginCalculator({
 
         <Divider />
 
-        {/* 3 Interactive Inputs */}
-        <SimpleGrid cols={{ base: 1, sm: 3 }} spacing='md'>
+        {/* Interactive Inputs */}
+        <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing='md'>
           {/* 1. Cost Input */}
           <Paper p='xs' withBorder radius='sm'>
             <Stack gap='4px'>
@@ -396,7 +430,7 @@ export default function CostMarginCalculator({
                 <Text size='xs' fw={600} c='dimmed'>
                   {t`Unit Cost`}
                 </Text>
-                <Badge size='xs' variant='light' color='gray'>
+                <Badge size='xs' variant='light' color='blue'>
                   {currency}
                 </Badge>
               </Group>
@@ -427,7 +461,7 @@ export default function CostMarginCalculator({
                 <Badge
                   size='xs'
                   variant='light'
-                  color={metrics?.marginColor ?? 'blue'}
+                  color='blue'
                 >
                   {t`Target`}
                 </Badge>
@@ -455,16 +489,16 @@ export default function CostMarginCalculator({
             withBorder
             radius='sm'
             style={{
-              borderColor: 'var(--mantine-color-teal-6)',
-              backgroundColor: 'rgba(32, 201, 151, 0.05)'
+              borderColor: 'var(--mantine-color-blue-4)',
+              backgroundColor: 'rgba(34, 139, 230, 0.04)'
             }}
           >
             <Stack gap='4px'>
               <Group justify='space-between'>
-                <Text size='xs' fw={700} c='teal'>
+                <Text size='xs' fw={700} c='blue'>
                   {t`Selling Price`}
                 </Text>
-                <Badge size='xs' variant='filled' color='teal'>
+                <Badge size='xs' variant='filled' color='blue'>
                   {currency}
                 </Badge>
               </Group>
@@ -479,7 +513,42 @@ export default function CostMarginCalculator({
                 aria-label='selling-price-input'
               />
               <Text size='10px' c='dimmed'>
-                {t`Final price charged to customers`}
+                {t`Standard selling price`}
+              </Text>
+            </Stack>
+          </Paper>
+
+          {/* 4. Minimum Price Floor Input */}
+          <Paper
+            p='xs'
+            withBorder
+            radius='sm'
+            style={{
+              borderColor: 'var(--mantine-color-blue-2)',
+              backgroundColor: 'rgba(34, 139, 230, 0.02)'
+            }}
+          >
+            <Stack gap='4px'>
+              <Group justify='space-between'>
+                <Text size='xs' fw={700} c='blue'>
+                  {t`Minimum Price`}
+                </Text>
+                <Badge size='xs' variant='light' color='blue'>
+                  {t`Floor`}
+                </Badge>
+              </Group>
+              <NumberInput
+                value={minPrice}
+                onChange={(val) => setMinPrice(val ?? '')}
+                placeholder={t`0.00`}
+                min={0}
+                step={0.5}
+                decimalScale={4}
+                leftSection={<IconCurrencyDollar size='1rem' />}
+                aria-label='minimum-price-input'
+              />
+              <Text size='10px' c='dimmed'>
+                {t`Sales orders cannot sell below this floor`}
               </Text>
             </Stack>
           </Paper>
@@ -495,7 +564,7 @@ export default function CostMarginCalculator({
               <Button
                 size='compact-xs'
                 variant='light'
-                color='cyan'
+                color='blue'
                 leftSection={<IconSparkles size='0.8rem' />}
                 onClick={() => handleCostChange(bomCost)}
               >
@@ -506,7 +575,7 @@ export default function CostMarginCalculator({
               <Button
                 size='compact-xs'
                 variant='light'
-                color='indigo'
+                color='blue'
                 leftSection={<IconRefresh size='0.8rem' />}
                 onClick={() => handleCostChange(purchaseCost)}
               >
@@ -518,7 +587,7 @@ export default function CostMarginCalculator({
               <Button
                 size='compact-xs'
                 variant='light'
-                color='teal'
+                color='blue'
                 leftSection={<IconTrendingUp size='0.8rem' />}
                 onClick={() => handleCostChange(supplierCost)}
               >
@@ -536,8 +605,8 @@ export default function CostMarginCalculator({
             radius='sm'
             withBorder
             style={{
-              backgroundColor: '#141517',
-              borderColor: '#2C2E33'
+              backgroundColor: 'rgba(34, 139, 230, 0.04)',
+              borderColor: 'var(--mantine-color-blue-2)'
             }}
           >
             <Group justify='space-around' wrap='wrap' gap='md'>
@@ -546,17 +615,17 @@ export default function CostMarginCalculator({
                 <ThemeIcon
                   size='sm'
                   radius='xl'
-                  color={metrics.profit >= 0 ? 'teal' : 'red'}
+                  color='blue'
                   variant='light'
                 >
                   <IconCoins size='0.85rem' />
                 </ThemeIcon>
-                <Text size='xs' fw={600} style={{ color: '#C1C2C5' }}>
+                <Text size='xs' fw={600} c='dimmed'>
                   {t`Unit Profit:`}
                 </Text>
                 <Badge
-                  color={metrics.profit >= 0 ? 'teal' : 'red'}
-                  variant='filled'
+                  color='blue'
+                  variant='light'
                   size='md'
                   fw={700}
                 >
@@ -564,24 +633,24 @@ export default function CostMarginCalculator({
                 </Badge>
               </Group>
 
-              <Divider orientation='vertical' style={{ borderColor: '#373A40' }} />
+              <Divider orientation='vertical' />
 
               {/* Gross Margin */}
               <Group gap='xs'>
                 <ThemeIcon
                   size='sm'
                   radius='xl'
-                  color={metrics.marginColor}
+                  color='blue'
                   variant='light'
                 >
                   <IconPercentage size='0.85rem' />
                 </ThemeIcon>
-                <Text size='xs' fw={600} style={{ color: '#C1C2C5' }}>
+                <Text size='xs' fw={600} c='dimmed'>
                   {t`Gross Margin:`}
                 </Text>
                 <Badge
-                  color={metrics.marginColor}
-                  variant='filled'
+                  color='blue'
+                  variant='light'
                   size='md'
                   fw={700}
                 >
@@ -589,24 +658,24 @@ export default function CostMarginCalculator({
                 </Badge>
               </Group>
 
-              <Divider orientation='vertical' style={{ borderColor: '#373A40' }} />
+              <Divider orientation='vertical' />
 
               {/* Cost Markup */}
               <Group gap='xs'>
                 <ThemeIcon
                   size='sm'
                   radius='xl'
-                  color='violet'
+                  color='blue'
                   variant='light'
                 >
                   <IconTrendingUp size='0.85rem' />
                 </ThemeIcon>
-                <Text size='xs' fw={600} style={{ color: '#C1C2C5' }}>
+                <Text size='xs' fw={600} c='dimmed'>
                   {t`Cost Markup:`}
                 </Text>
                 <Badge
-                  color='violet'
-                  variant='filled'
+                  color='blue'
+                  variant='light'
                   size='md'
                   fw={700}
                 >

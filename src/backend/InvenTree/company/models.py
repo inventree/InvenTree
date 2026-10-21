@@ -228,6 +228,12 @@ class Company(
         help_text=_('Company Tax ID'),
     )
 
+    is_taxable = models.BooleanField(
+        default=True,
+        verbose_name=_('Taxable'),
+        help_text=_('Is this company subject to sales tax?'),
+    )
+
     @property
     @report.mixins.report_attribute()
     def address(self) -> Optional[str]:

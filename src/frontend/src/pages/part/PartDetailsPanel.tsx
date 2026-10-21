@@ -237,6 +237,39 @@ export function PartDetailsPanel({
       unit: instance?.units,
       label: t`Maximum Stock`,
       hidden: instance?.maximum_stock <= 0
+    },
+    {
+      type: 'string',
+      name: 'customer_part_number',
+      label: t`Customer Part Number`,
+      hidden: !instance?.customer_part_number
+    },
+    {
+      type: 'string',
+      name: 'weight',
+      label: t`Weight`,
+      hidden: !instance?.weight,
+      value_formatter: () => `${instance?.weight} ${instance?.weight_unit || ''}`.trim()
+    },
+    {
+      type: 'string',
+      name: 'volume',
+      label: t`Volume`,
+      hidden: !instance?.volume,
+      value_formatter: () => `${instance?.volume} ${instance?.volume_unit || ''}`.trim()
+    },
+    {
+      type: 'string',
+      name: 'warranty',
+      label: t`Warranty`,
+      hidden: !instance?.warranty
+    },
+    {
+      type: 'string',
+      name: 'minimum_price',
+      label: t`Minimum Price`,
+      hidden: !instance?.minimum_price,
+      value_formatter: () => `${instance?.minimum_price} ${instance?.minimum_price_currency || ''}`.trim()
     }
   ];
 
@@ -266,6 +299,7 @@ export function PartDetailsPanel({
       label: t`Saleable Part`
     },
     { type: 'boolean', name: 'virtual', label: t`Virtual Part` },
+    { type: 'boolean', name: 'is_taxable', label: t`Taxable` },
     { type: 'boolean', name: 'starred', label: t`Subscribed`, icon: 'bell' }
   ];
 

@@ -2492,7 +2492,7 @@ class SalesOrderLineItem(OrderLineItem):
         """Perform extra validation steps for this SalesOrderLineItem instance.
 
         Raises:
-            ValidationError: If the linked part is not salable
+            ValidationError: If the linked part is not salable or sale_price violates part minimum price
         """
         super().clean()
 
@@ -2501,6 +2501,44 @@ class SalesOrderLineItem(OrderLineItem):
                 raise ValidationError({
                     'part': _('Only salable parts can be assigned to a sales order')
                 })
+
+            if getattr(self.part, 'minimum_price', None) is not None and self.sale_price is not None:
+                min_price = self.part.minimum_price
+                sale_price = self.sale_price
+
+                if not isinstance(sale_price, Money):
+                    currency = getattr(self, 'sale_price_currency', None) or min_price.currency
+                    sale_price = Money(Decimal(str(getattr(sale_price, 'amount', sale_price))), currency)
+                if not isinstance(min_price, Money):
+                    min_price = Money(Decimal(str(getattr(min_price, 'amount', min_price))), sale_price.currency)
+
+                discount_val = Decimal(str(self.discount or 0))
+                if discount_val > 0:
+                    effective_price = sale_price * (Decimal(1) - discount_val / Decimal(100))
+                else:
+                    effective_price = sale_price
+
+                threshold = min_price
+                if effective_price.currency != min_price.currency:
+                    try:
+                        threshold = convert_money(min_price, effective_price.currency)
+                    except Exception:
+                        threshold = None
+
+                if threshold is not None and effective_price < threshold:
+                    if discount_val > 0:
+                        raise ValidationError({
+                            'sale_price': _(
+                                f'Effective unit sale price ({effective_price}) after {discount_val}% discount '
+                                f'cannot be lower than the minimum price ({threshold})'
+                            )
+                        })
+                    else:
+                        raise ValidationError({
+                            'sale_price': _(
+                                f'Unit sale price ({sale_price}) cannot be lower than the minimum price ({threshold})'
+                            )
+                        })
 
     order = models.ForeignKey(
         SalesOrder,

@@ -94,13 +94,13 @@ function partTableColumns(): TableColumn[] {
       defaultVisible: true,
       render: (record: any) => {
         const cost =
-          record.metadata?.cost ??
           record.cost ??
+          record.metadata?.cost ??
           record.pricing_min ??
           null;
         const currency =
-          record.metadata?.cost_currency ??
           record.cost_currency ??
+          record.metadata?.cost_currency ??
           record.pricing_data?.currency;
         return cost != null && cost !== ''
           ? formatCurrency(cost, { currency })
@@ -114,20 +114,20 @@ function partTableColumns(): TableColumn[] {
       defaultVisible: true,
       render: (record: any) => {
         let margin =
-          record.metadata?.desired_margin ??
           record.desired_margin ??
+          record.metadata?.desired_margin ??
           null;
 
         const cost = Number(
-          record.metadata?.cost ??
-            record.cost ??
+          record.cost ??
+            record.metadata?.cost ??
             record.pricing_min ??
             0
         );
 
         let price =
-          record.metadata?.selling_price ??
           record.selling_price ??
+          record.metadata?.selling_price ??
           null;
 
         if (
@@ -172,19 +172,19 @@ function partTableColumns(): TableColumn[] {
       defaultVisible: true,
       render: (record: any) => {
         const cost = Number(
-          record.metadata?.cost ??
-            record.cost ??
+          record.cost ??
+            record.metadata?.cost ??
             record.pricing_min ??
             0
         );
         const margin =
-          record.metadata?.desired_margin ??
           record.desired_margin ??
+          record.metadata?.desired_margin ??
           null;
 
         let price =
-          record.metadata?.selling_price ??
           record.selling_price ??
+          record.metadata?.selling_price ??
           null;
 
         if (
@@ -197,8 +197,8 @@ function partTableColumns(): TableColumn[] {
         }
 
         const currency =
-          record.metadata?.selling_price_currency ??
           record.selling_price_currency ??
+          record.metadata?.selling_price_currency ??
           record.pricing_data?.currency;
 
         return price != null && Number(price) > 0
@@ -206,6 +206,72 @@ function partTableColumns(): TableColumn[] {
           : '-';
       }
     },
+    {
+      accessor: 'minimum_price',
+      title: t`Minimum Price`,
+      sortable: true,
+      defaultVisible: false,
+      render: (record: any) => {
+        const price = record.minimum_price ?? null;
+        const currency =
+          record.minimum_price_currency ??
+          record.pricing_data?.currency;
+        return price != null && Number(price) > 0
+          ? formatCurrency(price, { currency })
+          : '-';
+      }
+    },
+    {
+      accessor: 'new_cost',
+      title: t`New Cost`,
+      sortable: true,
+      defaultVisible: false,
+      render: (record: any) => {
+        const cost = record.new_cost ?? null;
+        const currency = record.new_cost_currency ?? record.pricing_data?.currency;
+        return cost != null && cost !== ''
+          ? formatCurrency(cost, { currency })
+          : '-';
+      }
+    },
+    {
+      accessor: 'customer_part_number',
+      title: t`Customer Part Number`,
+      sortable: true,
+      switchable: true,
+      defaultVisible: false
+    },
+    {
+      accessor: 'weight',
+      title: t`Weight`,
+      sortable: true,
+      switchable: true,
+      defaultVisible: false,
+      render: (record: any) =>
+        record.weight ? `${record.weight} ${record.weight_unit || ''}`.trim() : '-'
+    },
+    {
+      accessor: 'volume',
+      title: t`Volume`,
+      sortable: true,
+      switchable: true,
+      defaultVisible: false,
+      render: (record: any) =>
+        record.volume ? `${record.volume} ${record.volume_unit || ''}`.trim() : '-'
+    },
+    {
+      accessor: 'warranty',
+      title: t`Warranty`,
+      sortable: true,
+      switchable: true,
+      defaultVisible: false
+    },
+    BooleanColumn({
+      accessor: 'is_taxable',
+      title: t`Taxable`,
+      switchable: true,
+      defaultVisible: false
+    }),
     {
       accessor: 'price_range',
       title: t`Price Range`,

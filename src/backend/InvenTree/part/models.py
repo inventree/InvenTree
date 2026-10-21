@@ -1381,6 +1381,109 @@ class Part(
         related_name='parts_responsible',
     )
 
+    cost = InvenTree.fields.InvenTreeModelMoneyField(
+        max_digits=19,
+        decimal_places=6,
+        blank=True,
+        null=True,
+        verbose_name=_('Cost'),
+        help_text=_('Standard cost for this part'),
+    )
+
+    desired_margin = models.DecimalField(
+        max_digits=7,
+        decimal_places=3,
+        blank=True,
+        null=True,
+        verbose_name=_('Desired Margin'),
+        help_text=_('Target gross margin percentage'),
+    )
+
+    selling_price = InvenTree.fields.InvenTreeModelMoneyField(
+        max_digits=19,
+        decimal_places=6,
+        blank=True,
+        null=True,
+        verbose_name=_('Selling Price'),
+        help_text=_('Standard selling price for this part'),
+    )
+
+    minimum_price = InvenTree.fields.InvenTreeModelMoneyField(
+        max_digits=19,
+        decimal_places=6,
+        blank=True,
+        null=True,
+        verbose_name=_('Minimum Price'),
+        help_text=_('Minimum selling price threshold for sales orders'),
+    )
+
+    new_cost = InvenTree.fields.InvenTreeModelMoneyField(
+        max_digits=19,
+        decimal_places=6,
+        blank=True,
+        null=True,
+        verbose_name=_('New Cost'),
+        help_text=_('New cost for this part'),
+    )
+
+    weight = models.DecimalField(
+        max_digits=19,
+        decimal_places=6,
+        blank=True,
+        null=True,
+        default=0,
+        verbose_name=_('Weight'),
+        help_text=_('Part weight'),
+    )
+
+    weight_unit = models.CharField(
+        max_length=10,
+        blank=True,
+        default='lb',
+        verbose_name=_('Weight Unit'),
+        help_text=_('Unit of weight'),
+    )
+
+    volume = models.DecimalField(
+        max_digits=19,
+        decimal_places=6,
+        blank=True,
+        null=True,
+        default=0,
+        verbose_name=_('Volume'),
+        help_text=_('Part volume'),
+    )
+
+    volume_unit = models.CharField(
+        max_length=10,
+        blank=True,
+        default='cbm',
+        verbose_name=_('Volume Unit'),
+        help_text=_('Unit of volume'),
+    )
+
+    customer_part_number = models.CharField(
+        max_length=100,
+        blank=True,
+        default='',
+        verbose_name=_('Customer Part Number'),
+        help_text=_('Customer-specific part number'),
+    )
+
+    warranty = models.CharField(
+        max_length=100,
+        blank=True,
+        default='',
+        verbose_name=_('Warranty'),
+        help_text=_('Warranty details or duration'),
+    )
+
+    is_taxable = models.BooleanField(
+        default=True,
+        verbose_name=_('Taxable'),
+        help_text=_('Is this part subject to sales tax?'),
+    )
+
     @property
     def category_path(self) -> str:
         """Return the category path of this Part instance."""
@@ -2660,6 +2763,10 @@ class PartPricing(common.models.MetaMixin):
             return None
 
         target_currency = currency_code_default()
+
+        if not isinstance(money, Money):
+            curr = getattr(money, 'currency', None) or getattr(self, 'currency', None) or target_currency
+            money = Money(money, curr)
 
         try:
             result = convert_money(money, target_currency)
