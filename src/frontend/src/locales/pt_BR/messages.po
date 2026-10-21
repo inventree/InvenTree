@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-16 22:16\n"
+"PO-Revision-Date: 2026-10-21 04:06\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -108,7 +108,7 @@ msgstr "Ações"
 #: src/components/wizards/ImportPartWizard.tsx:200
 #: src/components/wizards/ImportPartWizard.tsx:233
 #: src/pages/Index/Settings/UserSettings.tsx:79
-#: src/pages/part/PartDetail.tsx:761
+#: src/pages/part/PartDetail.tsx:762
 msgid "Search"
 msgstr "Buscar"
 
@@ -173,7 +173,7 @@ msgstr "Não"
 #: src/forms/StockForms.tsx:1927
 #: src/forms/TransferOrderForms.tsx:239
 #: src/pages/build/BuildOrderDetailsPanel.tsx:45
-#: src/pages/part/PartDetail.tsx:814
+#: src/pages/part/PartDetail.tsx:815
 #: src/pages/part/bom/BomCompare.tsx:203
 #: src/tables/build/BuildOrderParametricTable.tsx:29
 #: src/tables/part/PartTestResultTable.tsx:251
@@ -184,7 +184,7 @@ msgid "Part"
 msgstr "Peça"
 
 #: lib/enums/ModelInformation.tsx:62
-#: lib/enums/Roles.tsx:37
+#: lib/enums/Roles.tsx:38
 #: src/components/nav/NavigationDrawer.tsx:70
 #: src/defaults/links.tsx:39
 #: src/pages/Index/Settings/SystemSettings.tsx:218
@@ -192,7 +192,7 @@ msgstr "Peça"
 #: src/pages/part/CategoryDetail.tsx:279
 #: src/pages/part/CategoryDetail.tsx:324
 #: src/pages/part/PartCategoryDetailsPanel.tsx:69
-#: src/pages/part/PartDetail.tsx:536
+#: src/pages/part/PartDetail.tsx:537
 msgid "Parts"
 msgstr "Peças"
 
@@ -206,7 +206,7 @@ msgstr "Parâmetro"
 #: src/components/wizards/ImportPartWizard.tsx:807
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:223
 #: src/pages/Index/Settings/SystemSettings.tsx:212
-#: src/pages/part/PartDetail.tsx:488
+#: src/pages/part/PartDetail.tsx:489
 msgid "Parameters"
 msgstr "Parâmetros"
 
@@ -268,10 +268,10 @@ msgid "Part Category"
 msgstr "Categoria da peça"
 
 #: lib/enums/ModelInformation.tsx:118
-#: lib/enums/Roles.tsx:39
+#: lib/enums/Roles.tsx:40
 #: src/pages/part/CategoryDetail.tsx:212
 #: src/pages/part/CategoryDetail.tsx:313
-#: src/pages/part/PartDetail.tsx:802
+#: src/pages/part/PartDetail.tsx:803
 msgid "Part Categories"
 msgstr "Categorias de peça"
 
@@ -300,7 +300,7 @@ msgid "Stock Item"
 msgstr "Item de estoque"
 
 #: lib/enums/ModelInformation.tsx:127
-#: lib/enums/Roles.tsx:49
+#: lib/enums/Roles.tsx:52
 #: src/pages/company/CompanyDetail.tsx:138
 #: src/pages/part/CategoryDetail.tsx:247
 #: src/pages/part/PartStockHistoryDetail.tsx:120
@@ -310,7 +310,7 @@ msgid "Stock Items"
 msgstr "Itens de estoque"
 
 #: lib/enums/ModelInformation.tsx:137
-#: lib/enums/Roles.tsx:51
+#: lib/enums/Roles.tsx:54
 #: src/components/previews/models/StockLocationPreview.tsx:12
 #: src/pages/stock/LocationDetail.tsx:444
 msgid "Stock Location"
@@ -332,7 +332,7 @@ msgid "Stock Location Types"
 msgstr "Categoria de localização de estoque"
 
 #: lib/enums/ModelInformation.tsx:153
-#: src/pages/part/PartDetail.tsx:440
+#: src/pages/part/PartDetail.tsx:441
 msgid "Stock History"
 msgstr "Histórico de estoque"
 
@@ -352,11 +352,11 @@ msgid "Build Order"
 msgstr "Pedido de produção"
 
 #: lib/enums/ModelInformation.tsx:160
-#: lib/enums/Roles.tsx:35
+#: lib/enums/Roles.tsx:36
 #: src/defaults/actions.tsx:182
 #: src/pages/Index/Settings/SystemSettings.tsx:325
 #: src/pages/build/BuildIndex.tsx:87
-#: src/pages/part/PartDetail.tsx:422
+#: src/pages/part/PartDetail.tsx:423
 #: src/pages/sales/SalesOrderDetail.tsx:221
 msgid "Build Orders"
 msgstr "Pedidos de produção"
@@ -423,12 +423,12 @@ msgid "Purchase Order"
 msgstr "Pedido de compra"
 
 #: lib/enums/ModelInformation.tsx:200
-#: lib/enums/Roles.tsx:41
+#: lib/enums/Roles.tsx:44
 #: src/defaults/actions.tsx:133
 #: src/pages/Index/Settings/SystemSettings.tsx:353
 #: src/pages/company/CompanyDetail.tsx:129
 #: src/pages/company/SupplierPartDetail.tsx:105
-#: src/pages/part/PartDetail.tsx:392
+#: src/pages/part/PartDetail.tsx:393
 #: src/pages/purchasing/PurchasingIndex.tsx:95
 msgid "Purchase Orders"
 msgstr "Pedidos de compra"
@@ -458,11 +458,11 @@ msgid "Sales Order"
 msgstr "Pedido de venda"
 
 #: lib/enums/ModelInformation.tsx:217
-#: lib/enums/Roles.tsx:47
+#: lib/enums/Roles.tsx:50
 #: src/defaults/actions.tsx:143
 #: src/pages/Index/Settings/SystemSettings.tsx:373
 #: src/pages/company/CompanyDetail.tsx:151
-#: src/pages/part/PartDetail.tsx:404
+#: src/pages/part/PartDetail.tsx:405
 #: src/pages/sales/SalesIndex.tsx:109
 msgid "Sales Orders"
 msgstr "Pedidos de vendas"
@@ -484,11 +484,11 @@ msgid "Return Order"
 msgstr "Pedido de devolução"
 
 #: lib/enums/ModelInformation.tsx:239
-#: lib/enums/Roles.tsx:43
+#: lib/enums/Roles.tsx:46
 #: src/defaults/actions.tsx:163
 #: src/pages/Index/Settings/SystemSettings.tsx:386
 #: src/pages/company/CompanyDetail.tsx:159
-#: src/pages/part/PartDetail.tsx:415
+#: src/pages/part/PartDetail.tsx:416
 #: src/pages/sales/SalesIndex.tsx:150
 msgid "Return Orders"
 msgstr "Pedidos de devolução"
@@ -510,10 +510,10 @@ msgid "Transfer Order"
 msgstr "Transferencia de estoque"
 
 #: lib/enums/ModelInformation.tsx:256
-#: lib/enums/Roles.tsx:45
+#: lib/enums/Roles.tsx:48
 #: src/defaults/actions.tsx:153
 #: src/pages/Index/Settings/SystemSettings.tsx:307
-#: src/pages/part/PartDetail.tsx:429
+#: src/pages/part/PartDetail.tsx:430
 #: src/pages/stock/LocationDetail.tsx:171
 msgid "Transfer Orders"
 msgstr "Pedidos de transferência"
@@ -728,9 +728,14 @@ msgstr "Template de nota"
 msgid "Note Templates"
 msgstr "Templates de nota"
 
-#: lib/enums/Roles.tsx:33
+#: lib/enums/Roles.tsx:34
 msgid "Admin"
 msgstr "Admin"
+
+#: lib/enums/Roles.tsx:42
+#: src/pages/Index/Settings/SystemSettings.tsx:158
+msgid "Pricing"
+msgstr "Preços"
 
 #: lib/functions/Notification.tsx:11
 msgid "Not implemented"
@@ -1535,7 +1540,7 @@ msgstr "Administrador"
 #: src/pages/company/CompanyDetail.tsx:279
 #: src/pages/company/SupplierPartDetail.tsx:224
 #: src/pages/core/UserDetail.tsx:210
-#: src/pages/part/PartDetail.tsx:623
+#: src/pages/part/PartDetail.tsx:624
 msgid "Inactive"
 msgstr "Inativo"
 
@@ -2762,7 +2767,7 @@ msgid "Import Parts"
 msgstr "Importar peças"
 
 #: src/components/items/PartCreationMenu.tsx:62
-#: src/pages/part/PartDetail.tsx:664
+#: src/pages/part/PartDetail.tsx:665
 #: src/tables/part/PartTable.tsx:199
 msgid "Add Part"
 msgstr "Adicionar peça"
@@ -2856,7 +2861,7 @@ msgstr "Nenhum item"
 #: src/components/render/Stock.tsx:98
 #: src/components/tables/ColumnRenderers.tsx:265
 #: src/components/tables/PartStockCell.tsx:85
-#: src/pages/part/PartDetail.tsx:578
+#: src/pages/part/PartDetail.tsx:579
 #: src/pages/stock/StockDetail.tsx:679
 #: src/pages/stock/StockDetailsPanel.tsx:204
 #: src/tables/build/BuildAllocatedStockTable.tsx:128
@@ -3140,47 +3145,47 @@ msgstr "{0} de {1}"
 
 #: src/components/nav/FirstUseTour.tsx:47
 msgid "Navigation Area"
-msgstr ""
+msgstr "Área de navegação"
 
 #: src/components/nav/FirstUseTour.tsx:48
 msgid "The navigation area provides quick access to different sections of the application."
-msgstr ""
+msgstr "A área de navegação oferece acesso rápido às diferentes seções do aplicativo."
 
 #: src/components/nav/FirstUseTour.tsx:52
 msgid "Navigation Drawer"
-msgstr ""
+msgstr "Painel de navegação"
 
 #: src/components/nav/FirstUseTour.tsx:53
 msgid "Using the icon you can open and close the navigation drawer which contains most available pages accessible to you."
-msgstr ""
+msgstr "Usando o ícone, você pode abrir e fechar o painel de navegação, que contém a maioria das páginas disponíveis para você."
 
 #: src/components/nav/FirstUseTour.tsx:57
 msgid "Main Menu"
-msgstr ""
+msgstr "Menu principal"
 
 #: src/components/nav/FirstUseTour.tsx:58
 msgid "The main menu provides access to top level navigation targets. Plugins can extend the menu with additional options."
-msgstr ""
+msgstr "O menu principal dá acesso aos destinos de navegação de nível superior. Plugins podem estender o menu com opções adicionais."
 
 #: src/components/nav/FirstUseTour.tsx:63
 msgid "The global search allows you to quickly find items across all objects. You can configure which objects categories are included in the search and how terms are matched."
-msgstr ""
+msgstr "A busca global permite encontrar rapidamente itens em todos os objetos. Você pode configurar quais categorias de objetos são incluídas na busca e como os termos são correspondidos."
 
 #: src/components/nav/FirstUseTour.tsx:69
 msgid "Command Palette"
-msgstr ""
+msgstr "Paleta de comandos"
 
 #: src/components/nav/FirstUseTour.tsx:70
 msgid "Quickly access commands and actions anywhere using the command palette. Available commands are dependent on your current context. Use cmd + k to open it anywhere."
-msgstr ""
+msgstr "Acesse rapidamente comandos e ações em qualquer lugar usando a paleta de comandos. Os comandos disponíveis dependem do seu contexto atual. Use cmd + k para abri-la em qualquer lugar."
 
 #: src/components/nav/FirstUseTour.tsx:77
 msgid "Barcode Scanner"
-msgstr ""
+msgstr "Leitor de código de barras"
 
 #: src/components/nav/FirstUseTour.tsx:78
 msgid "Allows for quick scanning of barcodes with your device's camera or a handheld scanner."
-msgstr ""
+msgstr "Permite a leitura rápida de códigos de barras com a câmera do seu dispositivo ou um leitor manual."
 
 #: src/components/nav/FirstUseTour.tsx:85
 #: src/components/nav/Header.tsx:218
@@ -3195,7 +3200,7 @@ msgstr "Notificações"
 
 #: src/components/nav/FirstUseTour.tsx:86
 msgid "Depending on your instance and user settings notifications are delivered through various channels. This notification bar is annotated with a bell when there are unread user interface notifications."
-msgstr ""
+msgstr "Dependendo da sua instância e das configurações do usuário, as notificações são entregues por vários canais. Esta barra de notificações é marcada com um sino quando há notificações da interface do usuário não lidas."
 
 #: src/components/nav/FirstUseTour.tsx:90
 #: src/components/nav/MainMenu.tsx:80
@@ -3207,7 +3212,7 @@ msgstr "Configurações"
 
 #: src/components/nav/FirstUseTour.tsx:91
 msgid "The main menu allows you to access preferences and access system-wide settings. Options depend on your permissions."
-msgstr ""
+msgstr "O menu principal permite acessar preferências e configurações de todo o sistema. As opções dependem das suas permissões."
 
 #: src/components/nav/FirstUseTour.tsx:98
 #: src/components/nav/MainMenu.tsx:88
@@ -3221,7 +3226,7 @@ msgstr "Configurações de usuário"
 
 #: src/components/nav/FirstUseTour.tsx:99
 msgid "The user settings menu allows you to configure your personal preferences and account settings. This also contains security and notification settings."
-msgstr ""
+msgstr "O menu de configurações do usuário permite configurar suas preferências pessoais e as configurações da conta. Ele também contém as configurações de segurança e de notificações."
 
 #: src/components/nav/FirstUseTour.tsx:106
 #: src/components/nav/MainMenu.tsx:106
@@ -3235,7 +3240,7 @@ msgstr "Centro de administração"
 
 #: src/components/nav/FirstUseTour.tsx:107
 msgid "The admin center provides access to administrative functions and can be used to manage various functions required for operation of the instance like user management, templates, parameters, plugins."
-msgstr ""
+msgstr "O centro de administração dá acesso às funções administrativas e pode ser usado para gerenciar diversas funções necessárias à operação da instância, como gerenciamento de usuários, templates, parâmetros e plugins."
 
 #: src/components/nav/FirstUseTour.tsx:113
 #: src/components/nav/MainMenu.tsx:128
@@ -3247,23 +3252,23 @@ msgstr "Sobre o InvenTree"
 
 #: src/components/nav/FirstUseTour.tsx:114
 msgid "Provides information about the InvenTree instance, including version details and relevant links. Important for bug reports."
-msgstr ""
+msgstr "Fornece informações sobre a instância do InvenTree, incluindo detalhes da versão e links relevantes. Importante para relatórios de erro."
 
 #: src/components/nav/FirstUseTour.tsx:194
 msgid "First Use Tour available"
-msgstr ""
+msgstr "Tour de primeiro uso disponível"
 
 #: src/components/nav/FirstUseTour.tsx:197
 msgid "It looks like you did not complete the First Use Tour yet."
-msgstr ""
+msgstr "Parece que você ainda não concluiu o Tour de primeiro uso."
 
 #: src/components/nav/FirstUseTour.tsx:210
 msgid "Start Tour"
-msgstr ""
+msgstr "Iniciar tour"
 
 #: src/components/nav/FirstUseTour.tsx:223
 msgid "Dismiss permanently"
-msgstr ""
+msgstr "Dispensar permanentemente"
 
 #: src/components/nav/Header.tsx:68
 #: src/components/nav/Header.tsx:75
@@ -3464,7 +3469,7 @@ msgstr "Remover grupo de busca"
 
 #: src/components/nav/SearchDrawer.tsx:316
 #: src/pages/company/ManufacturerPartDetail.tsx:97
-#: src/pages/part/PartDetail.tsx:379
+#: src/pages/part/PartDetail.tsx:380
 #: src/pages/part/PartSupplierDetail.tsx:15
 #: src/pages/purchasing/PurchasingIndex.tsx:123
 msgid "Suppliers"
@@ -3776,7 +3781,7 @@ msgstr "Modelo desconhecido: {model_name}"
 #~ msgstr "Unknown Models"
 
 #: src/components/render/Part.tsx:31
-#: src/pages/part/PartDetail.tsx:629
+#: src/pages/part/PartDetail.tsx:630
 #: src/tables/part/PartTableFilters.tsx:103
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
@@ -3793,7 +3798,7 @@ msgstr "Sem estoque"
 #: src/components/wizards/OrderPartsWizard.tsx:136
 #: src/pages/company/SupplierPartDetail.tsx:245
 #: src/pages/company/SupplierPartDetailsPanel.tsx:151
-#: src/pages/part/PartDetail.tsx:605
+#: src/pages/part/PartDetail.tsx:606
 #: src/pages/part/PartDetailsPanel.tsx:174
 #: src/tables/bom/BomTable.tsx:589
 #: src/tables/build/BuildLineTable.tsx:285
@@ -3804,7 +3809,7 @@ msgstr "No pedido"
 
 #: src/components/render/Part.tsx:59
 #: src/components/wizards/OrderPartsWizard.tsx:142
-#: src/pages/part/PartDetail.tsx:611
+#: src/pages/part/PartDetail.tsx:612
 #: src/pages/part/PartDetailsPanel.tsx:213
 #: src/pages/stock/StockDetail.tsx:662
 #: src/tables/part/PartTestResultTable.tsx:316
@@ -4059,7 +4064,7 @@ msgid "Part is not active"
 msgstr "Peça inativa"
 
 #: src/components/tables/ColumnRenderers.tsx:75
-#: src/pages/part/PartDetail.tsx:495
+#: src/pages/part/PartDetail.tsx:496
 #: src/tables/bom/BomTable.tsx:839
 #: src/tables/part/PartTestTemplateTable.tsx:262
 msgid "Part is Locked"
@@ -4292,7 +4297,7 @@ msgstr "Filtrar itens por código de lote"
 #: src/forms/StockForms.tsx:1930
 #: src/pages/company/SupplierPartDetail.tsx:229
 #: src/pages/company/SupplierPartDetailsPanel.tsx:144
-#: src/pages/part/PartDetail.tsx:572
+#: src/pages/part/PartDetail.tsx:573
 #: src/pages/part/PartDetailsPanel.tsx:160
 #: src/tables/purchasing/SupplierPartTable.tsx:274
 msgid "In Stock"
@@ -5229,7 +5234,7 @@ msgid "Next"
 msgstr "Próximo"
 
 #: src/components/wizards/ImportPartWizard.tsx:540
-#: src/pages/part/PartDetail.tsx:651
+#: src/pages/part/PartDetail.tsx:652
 #: src/tables/part/PartTable.tsx:161
 msgid "Edit Part"
 msgstr "Editar peça"
@@ -5825,11 +5830,11 @@ msgstr "Licenças para dependências do software InvenTree"
 
 #: src/defaults/links.tsx:201
 msgid "First Use Tour"
-msgstr ""
+msgstr "Tour de primeiro uso"
 
 #: src/defaults/links.tsx:202
 msgid "Guided tour for first-time users"
-msgstr ""
+msgstr "Tour guiado para novos usuários"
 
 #: src/defaults/links.tsx:215
 msgid "About the InvenTree Project"
@@ -6049,7 +6054,7 @@ msgstr "Os itens de estoque alocados serão devolvidos ao estoque"
 #: src/forms/BuildForms.tsx:972
 #: src/forms/SalesOrderForms.tsx:436
 #: src/forms/TransferOrderForms.tsx:240
-#: src/pages/part/PartDetail.tsx:593
+#: src/pages/part/PartDetail.tsx:594
 #: src/tables/build/BuildAllocatedStockTable.tsx:132
 #: src/tables/build/BuildLineTable.tsx:245
 #: src/tables/sales/SalesOrderLineItemTable.tsx:428
@@ -6998,7 +7003,7 @@ msgid "Delete selected stock items"
 msgstr "Excluir itens de estoque selecionados"
 
 #: src/hooks/UseStockAdjustActions.tsx:219
-#: src/pages/part/PartDetail.tsx:743
+#: src/pages/part/PartDetail.tsx:744
 msgid "Stock Actions"
 msgstr "Ações de estoque"
 
@@ -8984,10 +8989,6 @@ msgstr "Exibição"
 msgid "The settings below are specific to each available notification method"
 msgstr "As configurações abaixo são específicas de cada método de notificação disponível"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:158
-msgid "Pricing"
-msgstr "Preços"
-
 #: src/pages/Index/Settings/SystemSettings.tsx:172
 #~ msgid "Labels"
 #~ msgstr "Labels"
@@ -9165,7 +9166,7 @@ msgstr "Pedido de produção filhos"
 #~ msgstr "Test Statistics"
 
 #: src/pages/build/BuildDetail.tsx:355
-#: src/pages/part/PartDetail.tsx:471
+#: src/pages/part/PartDetail.tsx:472
 #: src/pages/stock/StockDetail.tsx:281
 #: src/tables/build/BuildOutputTable.tsx:760
 #: src/tables/stock/StockItemTestResultTable.tsx:177
@@ -9507,7 +9508,7 @@ msgstr "Cliente"
 #: src/tables/company/CompanyTable.tsx:119
 #: src/tables/company/CompanyTable.tsx:176
 msgid "Internal"
-msgstr ""
+msgstr "Interna"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:71
 msgid "Manufacturer Part Details"
@@ -9574,7 +9575,7 @@ msgstr "Detalhes de peça do fornecedor"
 
 #: src/pages/company/SupplierPartDetail.tsx:118
 #: src/pages/part/PartPricingPanel.tsx:113
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:245
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:248
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:160
 msgid "Supplier Pricing"
 msgstr "Preço do fornecedor"
@@ -9600,7 +9601,7 @@ msgid "Add Supplier Part"
 msgstr "Adicionar peça do fornecedor"
 
 #: src/pages/company/SupplierPartDetail.tsx:239
-#: src/pages/part/PartDetail.tsx:587
+#: src/pages/part/PartDetail.tsx:588
 msgid "No Stock"
 msgstr "Sem estoque"
 
@@ -9789,15 +9790,15 @@ msgstr "Usado em"
 msgid "Part Pricing"
 msgstr "Preço de peça"
 
-#: src/pages/part/PartDetail.tsx:455
+#: src/pages/part/PartDetail.tsx:456
 msgid "Test Templates"
 msgstr "Testar modelos"
 
-#: src/pages/part/PartDetail.tsx:482
+#: src/pages/part/PartDetail.tsx:483
 msgid "Related Parts"
 msgstr "Peças relacionadas"
 
-#: src/pages/part/PartDetail.tsx:500
+#: src/pages/part/PartDetail.tsx:501
 msgid "Part parameters cannot be edited, as the part is locked"
 msgstr "Os parâmetros da peça não podem ser editados, pois a peça está bloqueada"
 
@@ -9809,7 +9810,7 @@ msgstr "Os parâmetros da peça não podem ser editados, pois a peça está bloq
 #~ msgid "Consumable Part"
 #~ msgstr "Consumable Part"
 
-#: src/pages/part/PartDetail.tsx:599
+#: src/pages/part/PartDetail.tsx:600
 #: src/tables/part/PartTestTemplateTable.tsx:116
 #: src/tables/stock/StockItemTestResultTable.tsx:409
 msgid "Required"
@@ -9819,11 +9820,11 @@ msgstr "Obrigatório"
 #~ msgid "Scheduling"
 #~ msgstr "Scheduling"
 
-#: src/pages/part/PartDetail.tsx:617
+#: src/pages/part/PartDetail.tsx:618
 msgid "Deficit"
 msgstr "Déficit"
 
-#: src/pages/part/PartDetail.tsx:635
+#: src/pages/part/PartDetail.tsx:636
 #: src/pages/part/bom/BomCompare.tsx:38
 #: src/tables/bom/BomTable.tsx:614
 #: src/tables/build/BuildLineTable.tsx:260
@@ -9831,11 +9832,11 @@ msgstr "Déficit"
 msgid "Consumable"
 msgstr "Consumível"
 
-#: src/pages/part/PartDetail.tsx:678
+#: src/pages/part/PartDetail.tsx:679
 msgid "Delete Part"
 msgstr "Excluir peça"
 
-#: src/pages/part/PartDetail.tsx:687
+#: src/pages/part/PartDetail.tsx:688
 msgid "Deleting this part cannot be reversed"
 msgstr "Excluir esta peça não é reversível"
 
@@ -9843,31 +9844,31 @@ msgstr "Excluir esta peça não é reversível"
 #~ msgid "Default Supplier"
 #~ msgstr "Default Supplier"
 
-#: src/pages/part/PartDetail.tsx:749
+#: src/pages/part/PartDetail.tsx:750
 #: src/pages/stock/StockDetail.tsx:613
 msgid "Order"
 msgstr "Pedido"
 
-#: src/pages/part/PartDetail.tsx:750
+#: src/pages/part/PartDetail.tsx:751
 #: src/pages/stock/StockDetail.tsx:614
 #: src/tables/build/BuildLineTable.tsx:899
 msgid "Order Stock"
 msgstr "Pedir estoque"
 
-#: src/pages/part/PartDetail.tsx:762
+#: src/pages/part/PartDetail.tsx:763
 msgid "Search by serial number"
 msgstr "Buscar por número de série"
 
-#: src/pages/part/PartDetail.tsx:770
+#: src/pages/part/PartDetail.tsx:771
 #: src/tables/part/PartTable.tsx:251
 msgid "Part Actions"
 msgstr "Ações da peça"
 
-#: src/pages/part/PartDetail.tsx:832
+#: src/pages/part/PartDetail.tsx:833
 msgid "Part locked"
 msgstr "Peça bloqueada"
 
-#: src/pages/part/PartDetail.tsx:833
+#: src/pages/part/PartDetail.tsx:834
 msgid "Part unlocked"
 msgstr "Peça desbloqueada"
 
@@ -9995,7 +9996,7 @@ msgid "No pricing data found for this part."
 msgstr "Nenhum dado de preço foi encontrado para esta peça."
 
 #: src/pages/part/PartPricingPanel.tsx:87
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:338
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:343
 msgid "Pricing Overview"
 msgstr "Resumo de preços"
 
@@ -10004,27 +10005,27 @@ msgid "Purchase History"
 msgstr "Histórico de compras"
 
 #: src/pages/part/PartPricingPanel.tsx:107
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:217
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:220
 msgid "Internal Pricing"
 msgstr "Preço interno"
 
 #: src/pages/part/PartPricingPanel.tsx:122
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:227
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:230
 msgid "BOM Pricing"
 msgstr "Preço lista de materiais"
 
 #: src/pages/part/PartPricingPanel.tsx:129
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:255
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:258
 msgid "Variant Pricing"
 msgstr "Preço de variante"
 
 #: src/pages/part/PartPricingPanel.tsx:141
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:264
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:267
 msgid "Sale Pricing"
 msgstr "Preço de venda"
 
 #: src/pages/part/PartPricingPanel.tsx:147
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:273
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:276
 msgid "Sale History"
 msgstr "Histórico de vendas"
 
@@ -10089,12 +10090,12 @@ msgid "Generate Stocktake Entry"
 msgstr "Gerar registro de inventário"
 
 #: src/pages/part/PartStockHistoryDetail.tsx:274
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:340
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:345
 msgid "Minimum Value"
 msgstr "Valor mínimo"
 
 #: src/pages/part/PartStockHistoryDetail.tsx:280
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:341
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:346
 msgid "Maximum Value"
 msgstr "Valor máximo"
 
@@ -10298,52 +10299,52 @@ msgid "Price Break"
 msgstr "Quebra de preço"
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:172
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:358
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:363
 msgid "Price"
 msgstr "Preço"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:75
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:78
 msgid "Refreshing pricing data"
 msgstr "Atualizando dados de preço"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:95
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:98
 msgid "Pricing data updated"
 msgstr "Dados de preço atualizados"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:102
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:105
 msgid "Failed to update pricing data"
 msgstr "Falha ao atualizar dados de preço"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:130
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:133
 msgid "Edit Pricing"
 msgstr "Editar preços"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:142
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:357
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:145
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:362
 msgid "Pricing Category"
 msgstr "Categoria de precificação"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:161
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:164
 msgid "Minimum"
 msgstr "Mínimo"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:176
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:179
 msgid "Maximum"
 msgstr "Máximo"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:197
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:200
 msgid "Overall Pricing"
 msgstr "Precificação geral"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:205
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:208
 msgid "Override Pricing"
 msgstr "Sobrepor precificação"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:235
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:238
 msgid "Purchase Pricing"
 msgstr "Preço de compra"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:294
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:297
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:245
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:235
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:235
@@ -10355,35 +10356,35 @@ msgstr "Preço de compra"
 msgid "Last Updated"
 msgstr "Última atualização"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:298
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:301
 msgid "Pricing Not Set"
 msgstr "Preço não definido"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:299
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:302
 msgid "Pricing data has not been calculated for this part"
 msgstr "Os dados de preço não foram calculados para esta peça"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:303
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:306
 msgid "Pricing Actions"
 msgstr "Ações de preço"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:306
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:309
 msgid "Refresh"
 msgstr "Atualizar"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:307
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:310
 msgid "Refresh pricing data"
 msgstr "Atualizar dados de preço"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:322
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:327
 msgid "Edit pricing data"
 msgstr "Editar dados de preço"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:347
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:352
 msgid "Override Minimum"
 msgstr "Substituir mínimo"
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:353
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:358
 msgid "Override Maximum"
 msgstr "Substituir máximo"
 
@@ -10518,11 +10519,11 @@ msgstr "Destino"
 
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:109
 msgid "Receiving Company"
-msgstr ""
+msgstr "Empresa recebedora"
 
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:116
 msgid "Delivery Address"
-msgstr ""
+msgstr "Endereço de entrega"
 
 #: src/pages/purchasing/PurchaseOrderDetailsPanel.tsx:123
 #: src/pages/sales/ReturnOrderDetailsPanel.tsx:140
@@ -11949,7 +11950,7 @@ msgstr "Exibir empresas que são clientes"
 
 #: src/tables/company/CompanyTable.tsx:177
 msgid "Show companies which represent your own organization"
-msgstr ""
+msgstr "Mostrar empresas que representam a sua própria organização"
 
 #: src/tables/company/ContactTable.tsx:99
 msgid "Edit Contact"
@@ -13299,15 +13300,15 @@ msgstr "Exibir peças de fornecedor com estoque"
 
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:163
 msgid "The quantity is the number of supplier packs which must be purchased for this price break to apply."
-msgstr ""
+msgstr "A quantidade é o número de embalagens do fornecedor que devem ser compradas para que esta faixa de preço seja aplicada."
 
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:166
 msgid "The price is the cost of a single supplier pack, not the total cost for the specified quantity."
-msgstr ""
+msgstr "O preço é o custo de uma única embalagem do fornecedor, não o custo total para a quantidade especificada."
 
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:170
 msgid "Each supplier pack contains"
-msgstr ""
+msgstr "Cada embalagem do fornecedor contém"
 
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:148
 msgid "Set Outcome"
