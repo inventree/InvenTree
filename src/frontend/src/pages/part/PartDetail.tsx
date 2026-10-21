@@ -372,6 +372,7 @@ export default function PartDetail() {
         name: 'pricing',
         label: t`Part Pricing`,
         icon: <IconCurrencyDollar />,
+        hidden: !user.hasViewRole(UserRoles.pricing),
         content: part ? <PartPricingPanel part={part} /> : <Skeleton />
       },
       {
