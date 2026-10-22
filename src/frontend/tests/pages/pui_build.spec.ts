@@ -11,7 +11,8 @@ import {
   setTableChoiceFilter,
   showCalendarView,
   showParametricView,
-  showTableView
+  showTableView,
+  waitForDataOutput
 } from '../helpers.ts';
 import { doCachedLogin } from '../login.ts';
 
@@ -218,8 +219,9 @@ test('Build Order - Calendar', async ({ browser }) => {
 
   // Export calendar data
   await page.getByLabel('calendar-export-data').click();
-  await page.getByRole('button', { name: 'Export', exact: true }).click();
-  await page.getByText('Process completed successfully').waitFor();
+  await waitForDataOutput(page, () =>
+    page.getByRole('button', { name: 'Export', exact: true }).click()
+  );
 
   // Check "part category" filter
   await page.getByLabel('calendar-select-filters').click();

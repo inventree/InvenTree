@@ -1,6 +1,7 @@
-import { test } from './baseFixtures';
+import { createApi } from './api';
+import { expect, test } from './baseFixtures';
 import { adminuser } from './defaults';
-import { clickOnRowMenu, navigate } from './helpers';
+import { clickOnRowMenu, navigate, waitForDataOutput } from './helpers';
 import { doCachedLogin } from './login';
 import { setPluginState } from './settings';
 
@@ -25,10 +26,22 @@ test('Machines - Activation', async ({ browser }) => {
   });
 
   // Ensure that the sample machine plugin is enabled
+  const api = await createApi({});
   await setPluginState({
     plugin: 'sample-printer-machine-plugin',
     state: true
   });
+  // ensure machine driver for printer is online and active
+  await expect
+    .poll(
+      async () => {
+        const response = await api.get('machine/drivers/');
+        const drivers = await response.json();
+        return drivers.map((d: any) => d.slug);
+      },
+      { timeout: 30000 }
+    )
+    .toContain('sample-printer-driver');
 
   await page.reload();
   await page.waitForLoadState('networkidle');
@@ -121,11 +134,9 @@ test('Machines - Activation', async ({ browser }) => {
     .fill('dummy');
   await page.getByRole('option', { name: 'my-dummy-machine' }).click();
 
-  await page
-    .getByRole('button', { name: 'Print', exact: true })
-    .first()
-    .click();
-  await page.getByText('Process completed successfully').waitFor();
+  await waitForDataOutput(page, () =>
+    page.getByRole('button', { name: 'Print', exact: true }).first().click()
+  );
 
   await navigate(page, 'settings/admin/machine/');
 

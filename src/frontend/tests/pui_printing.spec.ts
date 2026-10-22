@@ -1,7 +1,12 @@
 import type { Locator } from '@playwright/test';
 import { expect, test } from './baseFixtures.js';
 import { adminuser } from './defaults.js';
-import { activateTableView, loadTab, navigate } from './helpers.js';
+import {
+  activateTableView,
+  loadTab,
+  navigate,
+  waitForDataOutput
+} from './helpers.js';
 import { doCachedLogin } from './login.js';
 import { setPluginState } from './settings.js';
 
@@ -128,8 +133,9 @@ test('Printing - Report Printing', async ({ browser }) => {
   // Template should auto-fill (there is only one template available)
   await page.getByText('Sample purchase order report').waitFor();
   await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
-  await page.getByRole('button', { name: 'Print', exact: true }).click();
-  await page.getByText('Process completed successfully').first().waitFor();
+  await waitForDataOutput(page, () =>
+    page.getByRole('button', { name: 'Print', exact: true }).click()
+  );
 
   await page.context().close();
 });
