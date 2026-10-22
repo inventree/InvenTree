@@ -162,3 +162,189 @@ class PartAuditTest(InvenTreeAPITestCase):
         self.assertEqual(len(history), 1)
         self.assertEqual(history[0]['action'], ACTION.CREATE)
         self.assertEqual(history[0]['model_label'], 'Part Category')
+
+
+class BomAuditTest(InvenTreeAPITestCase):
+    """Audit tests for BomItem and BomItemSubstitute objects."""
+
+    roles = [
+        'part.view',
+        'part.change',
+        'bom.view',
+        'bom.add',
+        'bom.change',
+        'bom.delete',
+    ]
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create test data."""
+        super().setUpTestData()
+
+        cls.assembly = Part.objects.create(
+            name='Widget Assembly', description='An assembly', assembly=True
+        )
+        cls.resistor = Part.objects.create(
+            name='R_10K', description='10k resistor', component=True
+        )
+        cls.alternative = Part.objects.create(
+            name='R_10K_ALT', description='10k resistor (alt)', component=True
+        )
+
+    def entries(self, model, pk, **filters):
+        """Return audit entries for a given object (by PK - which survives deletion)."""
+        return AuditLogEntry.objects.filter(
+            content_type=ContentType.objects.get_for_model(model),
+            object_pk=str(pk),
+            **filters,
+        )
+
+    def assembly_history(self, assembly=None):
+        """Return the audit history for the assembly (including BOM changes)."""
+        assembly = assembly or self.assembly
+
+        return self.get(
+            reverse('api-audit-log-list'),
+            {'model_type': 'part.part', 'model_id': assembly.pk},
+        ).data
+
+    def test_bom_item(self):
+        """BOM item changes via the API are recorded against the assembly."""
+        from part.models import BomItem
+
+        pk = self.post(
+            reverse('api-bom-list'),
+            {'part': self.assembly.pk, 'sub_part': self.resistor.pk, 'quantity': 4},
+        ).data['pk']
+
+        url = reverse('api-bom-item-detail', kwargs={'pk': pk})
+        self.patch(url, {'quantity': 6, 'reference': 'R1-R6'})
+        self.delete(url)
+
+        entries = self.entries(BomItem, pk)
+
+        self.assertEqual(
+            sorted(entries.values_list('action', flat=True)),
+            [ACTION.CREATE, ACTION.UPDATE, ACTION.DELETE],
+        )
+
+        for entry in entries:
+            self.assertEqual(entry.actor, self.user)
+            self.assertEqual(entry.parent_object_pk, str(self.assembly.pk))
+            self.assertNotIn('checksum', entry.changes_dict)
+            self.assertNotIn('validated', entry.changes_dict)
+            self.assertNotIn(' object (', entry.object_repr)
+
+        update = entries.get(action=ACTION.UPDATE)
+        self.assertEqual(update.changes_dict['reference'], ['', 'R1-R6'])
+
+        bom_actions = [
+            e['action']
+            for e in self.assembly_history()
+            if e['model_type'] == 'part.bomitem'
+        ]
+
+        self.assertEqual(
+            sorted(bom_actions), [ACTION.CREATE, ACTION.UPDATE, ACTION.DELETE]
+        )
+
+    def test_validate_bom(self):
+        """Validating the BOM (which re-saves every line) records no BOM item entries."""
+        from part.models import BomItem
+
+        items = [
+            BomItem.objects.create(part=self.assembly, sub_part=part, quantity=1)
+            for part in [self.resistor, self.alternative]
+        ]
+
+        self.assembly.validate_bom(self.user)
+
+        for item in items:
+            item.refresh_from_db()
+            self.assertTrue(item.validated)
+            self.assertFalse(
+                self.entries(BomItem, item.pk, action=ACTION.UPDATE).exists()
+            )
+
+        # ...but the validation itself is recorded against the assembly
+        entry = (
+            self
+            .entries(Part, self.assembly.pk, action=ACTION.UPDATE)
+            .order_by('pk')
+            .last()
+        )
+        self.assertEqual(entry.changes_dict['bom_validated'], [False, True])
+
+    def test_substitutes(self):
+        """Substitute changes are recorded against the assembly (not the BOM item)."""
+        from part.models import BomItem, BomItemSubstitute
+
+        bom_item = BomItem.objects.create(
+            part=self.assembly, sub_part=self.resistor, quantity=1
+        )
+
+        pk = self.post(
+            reverse('api-bom-substitute-list'),
+            {'bom_item': bom_item.pk, 'part': self.alternative.pk},
+        ).data['pk']
+
+        self.delete(reverse('api-bom-substitute-detail', kwargs={'pk': pk}))
+
+        entries = self.entries(BomItemSubstitute, pk)
+
+        self.assertEqual(
+            sorted(entries.values_list('action', flat=True)),
+            [ACTION.CREATE, ACTION.DELETE],
+        )
+
+        for entry in entries:
+            self.assertEqual(entry.parent_content_type, Part.get_content_type())
+            self.assertEqual(entry.parent_object_pk, str(self.assembly.pk))
+            self.assertEqual(
+                entry.object_repr,
+                f'{self.alternative.full_name} (substitute for {self.resistor.full_name})',
+            )
+
+        self.assertIn(
+            'part.bomitemsubstitute', {e['model_type'] for e in self.assembly_history()}
+        )
+
+    def test_substitute_cascade_delete(self):
+        """Substitutes deleted along with their BOM item retain the assembly reference."""
+        from part.models import BomItem, BomItemSubstitute
+
+        bom_item = BomItem.objects.create(
+            part=self.assembly, sub_part=self.resistor, quantity=1
+        )
+        substitute = BomItemSubstitute.objects.create(
+            bom_item=bom_item, part=self.alternative
+        )
+        substitute_pk = substitute.pk
+
+        BomItem.objects.get(pk=bom_item.pk).delete()
+
+        entry = self.entries(
+            BomItemSubstitute, substitute_pk, action=ACTION.DELETE
+        ).get()
+        self.assertEqual(entry.parent_object_pk, str(self.assembly.pk))
+
+    def test_copy_bom(self):
+        """Copying a BOM is recorded against the new assembly."""
+        from part.models import BomItem, BomItemSubstitute
+
+        bom_item = BomItem.objects.create(
+            part=self.assembly, sub_part=self.resistor, quantity=2
+        )
+        BomItemSubstitute.objects.create(bom_item=bom_item, part=self.alternative)
+
+        other = Part.objects.create(
+            name='Widget Assembly v2', description='An assembly', assembly=True
+        )
+        other.copy_bom_from(self.assembly)
+
+        model_types = [
+            (e['model_type'], e['action']) for e in self.assembly_history(other)
+        ]
+
+        self.assertIn(('part.bomitem', ACTION.CREATE), model_types)
+        self.assertIn(('part.bomitemsubstitute', ACTION.CREATE), model_types)

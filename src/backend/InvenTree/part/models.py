@@ -2902,7 +2902,11 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         return [x.strip() for x in self.choices.split(',') if x.strip()]
 
 
-class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+class BomItem(
+    InvenTree.models.InvenTreeAuditMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeModel,
+):
     """A BomItem links a part to its component items.
 
     A part can have a BOM (bill of materials) which defines
@@ -2927,6 +2931,15 @@ class BomItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
         inherited: This BomItem can be inherited by the BOMs of variant parts
         allow_variants: Stock for part variants can be substituted for this BomItem
     """
+
+    # Changes to a BOM item are included in the history of the assembly
+    AUDIT_PARENT_FIELD = 'part'
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Recalculated automatically - validate_bom() re-saves every BOM line
+        'checksum',
+        'validated',
+    )
 
     class Meta:
         """Metaclass providing extra model definition."""
@@ -3573,7 +3586,9 @@ def update_pricing_after_delete(sender, instance, **kwargs):
             pass
 
 
-class BomItemSubstitute(InvenTree.models.InvenTreeMetadataModel):
+class BomItemSubstitute(
+    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeMetadataModel
+):
     """A BomItemSubstitute provides a specification for alternative parts, which can be used in a bill of materials.
 
     Attributes:
@@ -3588,6 +3603,35 @@ class BomItemSubstitute(InvenTree.models.InvenTreeMetadataModel):
 
         # Prevent duplication of substitute parts
         unique_together = ('part', 'bom_item')
+
+    def __str__(self):
+        """Render a string representation of a BomItemSubstitute instance."""
+        return _('{substitute} (substitute for {part})').format(
+            substitute=self.part.full_name, part=self.bom_item.sub_part.full_name
+        )
+
+    def get_audit_parent_reference(self):
+        """Audit entries for a substitute are included in the history of the *assembly*.
+
+        i.e. the parent of the BomItem (skipping a level), so that all BOM changes
+        are shown in the history of the assembly part.
+        """
+        from django.contrib.contenttypes.models import ContentType
+
+        if 'bom_item' in self._state.fields_cache:
+            part_id = self.bom_item.part_id
+        else:
+            part_id = (
+                BomItem.objects
+                .filter(pk=self.bom_item_id)
+                .values_list('part_id', flat=True)
+                .first()
+            )
+
+        if part_id is None:
+            return None
+
+        return ContentType.objects.get_for_model(Part), str(part_id)
 
     def save(self, *args, **kwargs):
         """Enforce a full_clean when saving the BomItemSubstitute model."""
