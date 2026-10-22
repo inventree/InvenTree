@@ -209,6 +209,11 @@ test('Barcode Scanning - Create stock for selected parts', async ({
   await scan(page, '{"part": 1}');
   await scan(page, '{"part": 1}');
 
+  // Wait for both scanned rows before selecting them
+  await expect(
+    page.getByRole('cell', { name: 'part', exact: true })
+  ).toHaveCount(2);
+
   await page.getByRole('checkbox', { name: 'Select all records' }).check();
   await page.getByText('2 items selected').waitFor();
 
