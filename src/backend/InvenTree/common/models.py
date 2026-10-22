@@ -1956,6 +1956,7 @@ def rename_attachment(instance, filename: str):
 
 
 class Attachment(
+    InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeTagsMixin,
     InvenTree.models.InvenTreeModel,
@@ -1980,6 +1981,12 @@ class Attachment(
     """
 
     THUMBNAIL_SIZE = 256
+
+    # Derived values, updated automatically after upload (and by the thumbnail task)
+    AUDIT_EXCLUDE_FIELDS = ('thumbnail', 'is_image', 'file_size')
+
+    # Access to an attachment is determined by the object it is linked to
+    AUDIT_REQUIRE_PARENT_PERMISSION = True
 
     class Meta:
         """Metaclass options."""
@@ -2059,6 +2066,23 @@ class Attachment(
             InvenTree.tasks.offload_task(
                 common.tasks.rebuild_attachment, self.pk, group='attachments'
             )
+
+    def get_audit_parent_reference(self):
+        """Audit entries for an attachment are included in the history of the linked object.
+
+        The linked object is identified without being fetched, so that the reference
+        is still recorded when the attachment is deleted along with its object.
+        """
+        from django.contrib.contenttypes.models import ContentType
+
+        try:
+            model_class = common.validators.attachment_model_class_from_label(
+                self.model_type
+            )
+        except ValidationError:
+            return None
+
+        return ContentType.objects.get_for_model(model_class), str(self.model_id)
 
     def clean_svg(self, field):
         """Sanitize SVG file before saving."""

@@ -544,6 +544,8 @@ class InvenTreeAuditMixin:
         AUDIT_M2M_FIELDS: Many-to-many fields which are tracked
         AUDIT_PARENT_FIELD: Name of the field which links to the "parent" object (e.g. 'order' for a line item)
         AUDIT_VIEW_RESTRICTION: Restrict reading audit history to 'staff' or 'superuser' users (or None)
+        AUDIT_REQUIRE_PARENT_PERMISSION: Entries are only visible to users who can view the *parent* model
+            (for models whose access is determined by the linked object, e.g. attachments)
     """
 
     AUDIT_EXCLUDE_FIELDS: tuple[str, ...] = ()
@@ -551,6 +553,7 @@ class InvenTreeAuditMixin:
     AUDIT_M2M_FIELDS: tuple[str, ...] = ()
     AUDIT_PARENT_FIELD: Optional[str] = None
     AUDIT_VIEW_RESTRICTION: Optional[str] = None
+    AUDIT_REQUIRE_PARENT_PERMISSION: bool = False
 
     def get_audit_parent(self):
         """Return the "parent" object for audit log entries against this instance.
@@ -560,6 +563,19 @@ class InvenTreeAuditMixin:
         """
         if self.AUDIT_PARENT_FIELD:
             return getattr(self, self.AUDIT_PARENT_FIELD, None)
+
+        return None
+
+    def get_audit_parent_reference(self) -> Optional[tuple[Any, str]]:
+        """Return a (ContentType, pk) reference to the "parent" object (or None).
+
+        Override this (rather than get_audit_parent) where the parent can be identified
+        without fetching it from the database (e.g. generic model_type / model_id links).
+        """
+        from django.contrib.contenttypes.models import ContentType
+
+        if parent := self.get_audit_parent():
+            return ContentType.objects.get_for_model(parent), str(parent.pk)
 
         return None
 

@@ -11,6 +11,7 @@ import audit.serializers
 from audit.models import AuditLogEntry
 from audit.permissions import (
     get_viewable_audit_content_types,
+    parent_permission_content_types,
     user_can_view_audit_model,
 )
 from common.filters import determine_content_type
@@ -118,8 +119,16 @@ class AuditLogMixin:
         if allowed is None:
             return queryset
 
-        # Note: parent permissions are handled by the filter (and serializer)
-        return queryset.filter(content_type__in=allowed)
+        queryset = queryset.filter(content_type__in=allowed)
+
+        # Some models (e.g. attachments) are only visible with permission on the parent model
+        if restricted := parent_permission_content_types():
+            queryset = queryset.filter(
+                ~Q(content_type__in=restricted) | Q(parent_content_type__in=allowed)
+            )
+
+        # Note: otherwise parent permissions are handled by the filter (and serializer)
+        return queryset
 
 
 class AuditLogList(AuditLogMixin, ListAPI):

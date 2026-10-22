@@ -5,6 +5,8 @@ Rules:
 - Querying the history of a parent object (which includes child entries) requires
   permission to view the parent model
 - The parent reference of an entry is only exposed if the user may view the parent model
+- For models with AUDIT_REQUIRE_PARENT_PERMISSION (e.g. attachments), entries are only
+  visible if the user may view the parent model
 """
 
 from typing import Optional
@@ -56,3 +58,16 @@ def get_viewable_audit_content_types(user) -> Optional[list[int]]:
             allowed.append(ct.pk)
 
     return allowed
+
+
+def parent_permission_content_types() -> list[int]:
+    """Return the ContentType IDs of audited models which require parent permission."""
+    from django.contrib.contenttypes.models import ContentType
+
+    from audit.registry import audited_models
+
+    return [
+        ContentType.objects.get_for_model(model).pk
+        for model in audited_models()
+        if getattr(model, 'AUDIT_REQUIRE_PARENT_PERMISSION', False)
+    ]

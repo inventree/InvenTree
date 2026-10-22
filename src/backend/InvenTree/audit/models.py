@@ -1,5 +1,7 @@
 """Database models for the audit app."""
 
+import os
+
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
@@ -12,14 +14,33 @@ import audit.context
 MASKED_VALUE = '***'
 
 
-def get_audit_parent(instance):
-    """Return the audit "parent" object for the provided instance (or None)."""
-    func = getattr(instance, 'get_audit_parent', None)
-
-    if callable(func):
+def get_audit_parent_reference(instance):
+    """Return a (ContentType, pk) reference to the audit "parent" of an instance (or None)."""
+    if callable(func := getattr(instance, 'get_audit_parent_reference', None)):
         return func()
 
+    # Fallback for models which provide get_audit_parent() only
+    if callable(func := getattr(instance, 'get_audit_parent', None)):
+        if parent := func():
+            return ContentType.objects.get_for_model(parent), str(parent.pk)
+
     return None
+
+
+def file_field_basenames(model, changes: dict) -> dict:
+    """Reduce recorded file field values to the filename only (not the full storage path)."""
+    for name, value in changes.items():
+        try:
+            field = model._meta.get_field(name)
+        except FieldDoesNotExist:
+            continue
+
+        if isinstance(field, models.FileField) and isinstance(value, (list, tuple)):
+            changes[name] = [
+                os.path.basename(v) if isinstance(v, str) and v else v for v in value
+            ]
+
+    return changes
 
 
 def is_concrete_field(model, field_name: str) -> bool:
@@ -63,11 +84,10 @@ class AuditLogEntryManager(LogEntryManager):
 
     def get_audit_kwargs(self, instance, kwargs: dict) -> dict:
         """Update the provided LogEntry kwargs with InvenTree specific data."""
-        if parent := get_audit_parent(instance):
-            kwargs.setdefault(
-                'parent_content_type', ContentType.objects.get_for_model(parent)
-            )
-            kwargs.setdefault('parent_object_pk', str(parent.pk))
+        if reference := get_audit_parent_reference(instance):
+            parent_ct, parent_pk = reference
+            kwargs.setdefault('parent_content_type', parent_ct)
+            kwargs.setdefault('parent_object_pk', parent_pk)
 
         if 'actor' not in kwargs and (actor := audit.context.get_request_actor()):
             kwargs['actor'] = actor
@@ -124,7 +144,7 @@ class AuditLogEntryManager(LogEntryManager):
                 if not changes and not force_log:
                     return None
 
-            kwargs['changes'] = changes
+            kwargs['changes'] = file_field_basenames(type(instance), changes)
 
         kwargs = self.get_audit_kwargs(instance, kwargs)
         return super().log_create(instance, force_log=force_log, **kwargs)
