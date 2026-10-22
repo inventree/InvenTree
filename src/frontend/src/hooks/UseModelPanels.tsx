@@ -1,6 +1,6 @@
 import type { ModelType } from '@lib/enums/ModelType';
-import type { ModelFeaturePanelFactory, PanelType } from '@lib/types/Panel';
-import { useMemo } from 'react';
+import type { PanelType } from '@lib/types/Panel';
+import { useEffect, useMemo, useState } from 'react';
 import { ModelFeaturePanelLookup } from '../components/panels/ModelFeaturePanels';
 import { useModelFeatures } from '../states/ModelFeatureState';
 import { useInstanceInfo } from './UseInstanceInfo';
@@ -22,36 +22,65 @@ export function useModelPanels({
   panels: PanelType[];
 }): PanelType[] {
   const features = useModelFeatures(model);
-  const factories: ModelFeaturePanelFactory[] = useMemo(
+  const featureFactories = useMemo(
     () =>
       Object.entries(ModelFeaturePanelLookup)
         .filter(([feature]) => features.includes(feature))
         .map(([, factory]) => factory),
     [features]
   );
-
+  const [loadedPanels, setLoadedPanels] = useState<{
+    model: string;
+    id: number;
+    panels: PanelType[];
+  }>();
   const { instanceInfo } = useInstanceInfo({
-    modelType: factories.length > 0 ? (model as ModelType) : undefined,
+    modelType: featureFactories.length > 0 ? (model as ModelType) : undefined,
     modelId: id ?? undefined
   });
 
+  // lazy load feature panels
+  useEffect(() => {
+    if (!model || !id || featureFactories.length === 0) {
+      return;
+    }
+
+    let cancelled = false;
+
+    Promise.all(
+      featureFactories.map((factory) =>
+        factory({ model, id, instanceInfo: { ...instanceInfo } })
+      )
+    )
+      .then((panels) => {
+        if (!cancelled) {
+          setLoadedPanels({ model, id, panels });
+        }
+      })
+      .catch((error: unknown) => {
+        console.error('ERR: Error loading model feature panels', error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [model, id, featureFactories, instanceInfo]);
+
   return useMemo(() => {
-    if (!model || !id || factories.length == 0) {
+    if (
+      !model ||
+      !id ||
+      loadedPanels?.model !== model ||
+      loadedPanels.id !== id
+    ) {
       return panels;
     }
 
     const existing = new Set(panels.map((panel) => panel.name));
-
-    const featurePanels = factories
-      .map((factory) =>
-        factory({
-          model: model,
-          id: id,
-          instanceInfo: { ...instanceInfo }
-        })
-      )
-      .filter((panel) => !existing.has(panel.name));
+    const featurePanels = loadedPanels.panels.filter(
+      (panel) => !existing.has(panel.name)
+    );
 
     return [...panels, ...featurePanels];
-  }, [model, id, panels, factories, instanceInfo]);
+  }, [model, id, panels, loadedPanels]);
 }

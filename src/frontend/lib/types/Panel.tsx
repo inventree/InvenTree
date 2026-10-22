@@ -38,7 +38,7 @@ export type ModelFeaturePanelProps = {
  */
 export type ModelFeaturePanelFactory = (
   props: Readonly<ModelFeaturePanelProps>
-) => PanelType;
+) => PanelType | Promise<PanelType>;
 
 /**
  * Type used to specify a group of panels
