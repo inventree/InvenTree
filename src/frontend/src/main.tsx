@@ -104,13 +104,17 @@ window.INVENTREE_SETTINGS = {
 if (window.INVENTREE_SETTINGS.sentry_dsn) {
   console.log('Sentry enabled');
   // Loaded on demand to keep Sentry out of the initial bundle
-  import('@sentry/react').then((Sentry) =>
-    Sentry.init({
-      dsn: window.INVENTREE_SETTINGS.sentry_dsn,
-      tracesSampleRate: 1.0,
-      environment: window.INVENTREE_SETTINGS.environment || 'default'
-    })
-  );
+  import('@sentry/react')
+    .then((Sentry) =>
+      Sentry.init({
+        dsn: window.INVENTREE_SETTINGS.sentry_dsn,
+        tracesSampleRate: 1.0,
+        environment: window.INVENTREE_SETTINGS.environment || 'default'
+      })
+    )
+    .catch((err) => {
+      console.error('Failed to load Sentry:', err);
+    });
 }
 // Redirect to base url if on /
 if (window.location.pathname === '/') {
