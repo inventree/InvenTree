@@ -23,6 +23,29 @@ def is_audited(model) -> bool:
     return not disabled and auditlog.contains(model)
 
 
+def copy_related_cache(source, target) -> None:
+    """Copy cached related objects from one instance of a model to another.
+
+    Avoids re-fetching related objects (e.g. for the audit entry string representation)
+    for rows which have been re-read from the database. Only relations whose
+    foreign key value is unchanged between the two instances are copied.
+    """
+    for name, related in source._state.fields_cache.items():
+        try:
+            field = source._meta.get_field(name)
+        except FieldDoesNotExist:
+            continue
+
+        attname = getattr(field, 'attname', None)
+
+        if (
+            attname
+            and (field.many_to_one or field.one_to_one)
+            and getattr(source, attname, None) == getattr(target, attname, None)
+        ):
+            target._state.fields_cache.setdefault(name, related)
+
+
 def audited_update(queryset, **values) -> int:
     """Perform QuerySet.update(), recording an audit entry for each modified row.
 
@@ -115,6 +138,11 @@ def audited_bulk_update(model, objs: list, fields: list[str], **kwargs) -> int:
         count = model.objects.bulk_update(objs, fields, **kwargs)
 
         new_rows = manager.in_bulk(pks)
+
+        # Reuse any related objects already loaded by the caller
+        for obj in objs:
+            if new := new_rows.get(obj.pk):
+                copy_related_cache(obj, new)
 
         for pk, old in old_rows.items():
             if new := new_rows.get(pk):

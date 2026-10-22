@@ -9,6 +9,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelInformationDict } from '@lib/enums/ModelInformation';
 import type { ModelType } from '@lib/enums/ModelType';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
@@ -44,6 +45,7 @@ type AuditChange = {
   model_type?: string | null;
   operation?: string | null;
   objects?: string[] | null;
+  numeric?: boolean;
 };
 
 // Maximum number of changes rendered inline (the remainder are shown when the row is expanded)
@@ -98,11 +100,13 @@ function AuditValue({
   value,
   display,
   modelType,
+  numeric,
   navigate
 }: Readonly<{
   value: any;
   display?: string | null;
   modelType?: string | null;
+  numeric?: boolean;
   navigate: NavigateFunction;
 }>): ReactNode {
   if (value === null || value === undefined || value === '') {
@@ -117,6 +121,9 @@ function AuditValue({
 
   if (display) {
     text = display;
+  } else if (numeric && Number.isFinite(Number(value))) {
+    // Numeric values (decimals are recorded as strings, e.g. '10.00000')
+    text = String(formatDecimal(Number(value)));
   } else if (typeof value === 'boolean') {
     text = value ? t`Yes` : t`No`;
   } else if (typeof value === 'object') {
@@ -180,6 +187,7 @@ function AuditChangeItem({
       value={change.new}
       display={change.new_display}
       modelType={change.model_type}
+      numeric={change.numeric}
       navigate={navigate}
     />
   );
@@ -195,6 +203,7 @@ function AuditChangeItem({
             value={change.old}
             display={change.old_display}
             modelType={change.model_type}
+            numeric={change.numeric}
             navigate={navigate}
           />
           <IconArrowRight size={14} />
@@ -318,6 +327,7 @@ function AuditChangesDetail({
                         value={change.old}
                         display={change.old_display}
                         modelType={change.model_type}
+                        numeric={change.numeric}
                         navigate={navigate}
                       />
                     </Table.Td>
@@ -328,6 +338,7 @@ function AuditChangesDetail({
                         value={change.new}
                         display={change.new_display}
                         modelType={change.model_type}
+                        numeric={change.numeric}
                         navigate={navigate}
                       />
                     </Table.Td>

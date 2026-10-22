@@ -31,7 +31,11 @@ TEST_MODELS = [PurchaseOrder, PurchaseOrderLineItem]
 
 
 class AuditTestMixin:
-    """Temporarily register test models with the audit log."""
+    """Ensure that the test models are registered with the audit log.
+
+    Models which are already audited (in production) are left registered as they are -
+    only models registered here are unregistered again afterwards.
+    """
 
     @classmethod
     def setUpClass(cls):
@@ -44,7 +48,11 @@ class AuditTestMixin:
         )
         cls.parent_patch.start()
 
-        for model in TEST_MODELS:
+        cls.registered_models = [
+            model for model in TEST_MODELS if not auditlog.contains(model)
+        ]
+
+        for model in cls.registered_models:
             register_model(model)
 
         super().setUpClass()
@@ -54,7 +62,7 @@ class AuditTestMixin:
         """Unregister test models."""
         super().tearDownClass()
 
-        for model in TEST_MODELS:
+        for model in cls.registered_models:
             auditlog.unregister(model)
 
         cls.parent_patch.stop()
@@ -100,27 +108,41 @@ class AuditRegistryTest(TestCase):
                 'company.manufacturerpart',
                 'company.supplierpart',
                 'company.supplierpricebreak',
+                'order.purchaseorder',
+                'order.purchaseorderextraline',
+                'order.purchaseorderlineitem',
+                'order.returnorder',
+                'order.returnorderextraline',
+                'order.returnorderlineitem',
+                'order.salesorder',
+                'order.salesorderextraline',
+                'order.salesorderlineitem',
+                'order.salesordershipment',
+                'order.transferorder',
+                'order.transferorderlineitem',
             ],
         )
 
         for model in audited_models():
             self.assertTrue(auditlog.contains(model))
 
-        for model in TEST_MODELS:
-            self.assertFalse(auditlog.contains(model))
-
     def test_register_model(self):
         """Registration applies the base excluded fields."""
-        register_model(PurchaseOrder, exclude_fields=['notes'])
+        from common.models import NotificationEntry
+
+        # Note: a model which is *not* audited in production
+        self.assertFalse(auditlog.contains(NotificationEntry))
+
+        register_model(NotificationEntry, exclude_fields=['notes'])
 
         try:
-            self.assertTrue(auditlog.contains(PurchaseOrder))
-            exclude = auditlog.get_model_fields(PurchaseOrder)['exclude_fields']
+            self.assertTrue(auditlog.contains(NotificationEntry))
+            exclude = auditlog.get_model_fields(NotificationEntry)['exclude_fields']
 
             for field in [*BASE_EXCLUDE_FIELDS, 'notes']:
                 self.assertIn(field, exclude)
         finally:
-            auditlog.unregister(PurchaseOrder)
+            auditlog.unregister(NotificationEntry)
 
     def test_mask_changes(self):
         """All values are replaced when masking changes."""
@@ -516,6 +538,7 @@ class AuditAPITest(AuditTestMixin, InvenTreeAPITestCase):
 
         self.assertEqual(row['type'], 'value')
         self.assertEqual(row['label'], 'Description')
+        self.assertFalse(row['numeric'])
 
         # Primary key and automatically updated fields are not shown
         data = self.po_history(changes_detail=True, include_children=False)

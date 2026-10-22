@@ -24,6 +24,32 @@ def check_audit_enabled(sender, instance, action, **kwargs):
     return None
 
 
+def recorded_field_value(model, instance, field_name: str):
+    """Return the value of a field, in the form recorded by auditlog.
+
+    Mirrors the conversion applied by auditlog.diff.model_instance_diff(),
+    so that deferred entries are identical to those recorded directly.
+    """
+    from django.utils.encoding import smart_str
+
+    from auditlog.diff import get_field_value, get_mask_function, is_primitive
+    from auditlog.registry import auditlog
+
+    use_json = settings.AUDITLOG_STORE_JSON_CHANGES
+    value = get_field_value(instance, model._meta.get_field(field_name), use_json)
+
+    model_fields = auditlog.get_model_fields(model)
+
+    if field_name in model_fields['mask_fields']:
+        mask_func = get_mask_function(model_fields.get('mask_callable'))
+        return mask_func(smart_str(value))
+
+    if not use_json or not is_primitive(value):
+        return smart_str(value)
+
+    return value
+
+
 @receiver(pre_save, dispatch_uid='inventree_audit_clear_deferred_log')
 def clear_deferred_log(sender, instance, **kwargs):
     """Discard any deferred entry left over from a previous (failed) save of this instance.
@@ -36,8 +62,6 @@ def clear_deferred_log(sender, instance, **kwargs):
 @receiver(post_save, dispatch_uid='inventree_audit_resolve_deferred_log')
 def resolve_deferred_log(sender, instance, created, **kwargs):
     """Write a deferred audit entry, with query expression values resolved from the database."""
-    from auditlog.diff import get_field_value
-
     from audit.models import AuditLogEntry
 
     if not (pending := instance.__dict__.pop(DEFERRED_LOG_ATTR, None)):
@@ -53,11 +77,7 @@ def resolve_deferred_log(sender, instance, created, **kwargs):
 
     for name in pending['fields']:
         old = changes[name][0]
-        new = get_field_value(
-            saved,
-            sender._meta.get_field(name),
-            use_json_for_changes=settings.AUDITLOG_STORE_JSON_CHANGES,
-        )
+        new = recorded_field_value(sender, saved, name)
         changes[name] = [old, new]
 
     AuditLogEntry.objects.log_create(

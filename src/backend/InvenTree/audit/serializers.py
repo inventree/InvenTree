@@ -7,6 +7,7 @@ from django.core.exceptions import (
     ObjectDoesNotExist,
     ValidationError,
 )
+from django.db import models
 from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
@@ -39,6 +40,23 @@ class AuditChangeDetailSerializer(serializers.Serializer):
     )
     objects = serializers.ListField(
         child=serializers.CharField(), allow_null=True, required=False
+    )
+    numeric = serializers.BooleanField(
+        required=False, help_text=_('The field holds a numeric value')
+    )
+
+
+def is_numeric_field(field) -> bool:
+    """Return True if the model field holds a plain numeric value.
+
+    Fields with choices are excluded (their values are displayed via the choice label).
+    Note: decimal values are recorded as strings (e.g. '10.00000').
+    """
+    if field is None or getattr(field, 'flatchoices', None):
+        return False
+
+    return isinstance(
+        field, (models.IntegerField, models.DecimalField, models.FloatField)
     )
 
 
@@ -211,6 +229,7 @@ class AuditLogEntrySerializer(
                 'model_type': None,
                 'operation': None,
                 'objects': None,
+                'numeric': is_numeric_field(field),
             }
 
             if isinstance(value, dict) and value.get('type') == 'm2m':

@@ -574,6 +574,20 @@ class InvenTreeAuditMixin:
         """
         from django.contrib.contenttypes.models import ContentType
 
+        # Resolve a foreign key parent from its ID, without fetching the related object
+        if self.AUDIT_PARENT_FIELD:
+            field = self._meta.get_field(self.AUDIT_PARENT_FIELD)
+
+            if field.many_to_one or field.one_to_one:
+                parent_id = getattr(self, field.attname)
+
+                if parent_id is None:
+                    return None
+
+                return ContentType.objects.get_for_model(field.related_model), str(
+                    parent_id
+                )
+
         if parent := self.get_audit_parent():
             return ContentType.objects.get_for_model(parent), str(parent.pk)
 
