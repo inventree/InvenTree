@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test';
+import { type Page, expect } from '@playwright/test';
 import { createApi } from '../api';
 import { test } from '../baseFixtures';
 import { adminuser } from '../defaults';
@@ -193,9 +193,9 @@ test('Barcode Scanning - Duplicate parts allowed', async ({ browser }) => {
   await scan(page, '{"part": 1}');
   await scan(page, '{"part": 1}');
 
-  await expect(page.getByRole('cell', { name: 'part', exact: true })).toHaveCount(
-    2
-  );
+  await expect(
+    page.getByRole('cell', { name: 'part', exact: true })
+  ).toHaveCount(2);
   await expect(page.getByText('Item already scanned')).toHaveCount(0);
 });
 
