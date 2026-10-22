@@ -89,7 +89,10 @@ class AuditRegistryTest(TestCase):
             [model._meta.label_lower for model in audited_models()],
             [
                 'common.attachment',
+                'common.customunit',
                 'common.parameter',
+                'common.parametertemplate',
+                'common.projectcode',
                 'company.address',
                 'company.company',
                 'company.contact',

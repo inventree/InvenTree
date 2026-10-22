@@ -426,3 +426,140 @@ class ParameterAuditTest(InvenTreeAPITestCase):
 
         with self.assertRaises(TypeError):
             audited_bulk_create(Address, [])
+
+
+class ConfigurationAuditTest(InvenTreeAPITestCase):
+    """Tests for audit history of ParameterTemplate / ProjectCode / CustomUnit objects."""
+
+    roles = ['part.view', 'part.add', 'part.change', 'part.delete']
+
+    def entries(self, model, pk, **filters):
+        """Return audit entries for a given object (by PK - which survives deletion)."""
+        from django.contrib.contenttypes.models import ContentType
+
+        return AuditLogEntry.objects.filter(
+            content_type=ContentType.objects.get_for_model(model),
+            object_pk=str(pk),
+            **filters,
+        )
+
+    def history(self, model_type, pk):
+        """Return the audit history for an object, with change details."""
+        return self.get(
+            reverse('api-audit-log-list'),
+            {'model_type': model_type, 'model_id': pk, 'changes_detail': True},
+        ).data
+
+    def check_crud(self, model, list_url, detail_name, create, update):
+        """Create, update and delete an object via the API, and check the audit trail.
+
+        Returns the UPDATE entry.
+        """
+        response = self.post(reverse(list_url), create)
+        pk = response.data['pk']
+
+        url = reverse(detail_name, kwargs={'pk': pk})
+        self.patch(url, update)
+        self.delete(url)
+
+        entries = self.entries(model, pk)
+
+        self.assertEqual(
+            sorted(entries.values_list('action', flat=True)),
+            [ACTION.CREATE, ACTION.UPDATE, ACTION.DELETE],
+        )
+
+        for entry in entries:
+            self.assertEqual(entry.actor, self.user)
+            self.assertIsNone(entry.parent_content_type)
+            self.assertNotIn('metadata', entry.changes_dict)
+
+        return entries.get(action=ACTION.UPDATE)
+
+    def test_parameter_template(self):
+        """ParameterTemplate changes are recorded (including choice field labels)."""
+        from common.models import ParameterTemplate
+
+        update = self.check_crud(
+            ParameterTemplate,
+            'api-parameter-template-list',
+            'api-parameter-template-detail',
+            {'name': 'Resistance', 'units': 'ohm', 'description': 'Resistance'},
+            {'units': 'kohm', 'unique': ParameterTemplate.UniqueOptions.GLOBAL},
+        )
+
+        self.assertEqual(update.changes_dict['units'], ['ohm', 'kohm'])
+        self.assertEqual(
+            update.changes_dict['unique'],
+            [
+                ParameterTemplate.UniqueOptions.NONE,
+                ParameterTemplate.UniqueOptions.GLOBAL,
+            ],
+        )
+        self.assertEqual(update.object_repr, 'Resistance (kohm)')
+
+    def test_parameter_template_display(self):
+        """Choice field values are shown with their labels in the API."""
+        from common.models import ParameterTemplate
+
+        template = ParameterTemplate.objects.create(name='Colour')
+        template.unique = ParameterTemplate.UniqueOptions.MODEL_TYPE
+        template.save()
+
+        [entry] = [
+            e
+            for e in self.history('common.parametertemplate', template.pk)
+            if e['action'] == ACTION.UPDATE
+        ]
+        [row] = entry['changes_detail']
+
+        self.assertEqual(row['field'], 'unique')
+        self.assertEqual(
+            row['new_display'], str(ParameterTemplate.UniqueOptions.MODEL_TYPE.label)
+        )
+
+    def test_project_code(self):
+        """ProjectCode changes are recorded (including the responsible owner)."""
+        from common.models import ProjectCode
+        from users.models import Owner
+
+        owner = Owner.get_owner(self.user)
+
+        update = self.check_crud(
+            ProjectCode,
+            'api-project-code-list',
+            'api-project-code-detail',
+            {'code': 'PRJ-001', 'description': 'Project one'},
+            {'description': 'Project 1', 'responsible': owner.pk, 'active': False},
+        )
+
+        self.assertEqual(
+            update.changes_dict['description'], ['Project one', 'Project 1']
+        )
+        self.assertEqual(update.changes_dict['responsible'], [None, owner.pk])
+        self.assertEqual(update.changes_dict['active'], [True, False])
+        self.assertEqual(update.object_repr, 'PRJ-001')
+
+    def test_custom_unit(self):
+        """CustomUnit changes are recorded, and the unit registry still reloads."""
+        from common.models import CustomUnit
+        from InvenTree.conversion import convert_physical_value
+
+        update = self.check_crud(
+            CustomUnit,
+            'api-custom-unit-list',
+            'api-custom-unit-detail',
+            {'name': 'furlong', 'definition': '220 yard', 'symbol': 'fur'},
+            {'definition': '201.168 meter'},
+        )
+
+        self.assertEqual(
+            update.changes_dict['definition'], ['220 yard', '201.168 meter']
+        )
+        self.assertEqual(update.object_repr, 'furlong')
+
+        # Registry reload (post_save receiver) is unaffected by auditing
+        CustomUnit.objects.create(name='smoot', definition='1.7018 meter')
+        self.assertAlmostEqual(
+            float(convert_physical_value('1 smoot', 'meter')), 1.7018, places=4
+        )

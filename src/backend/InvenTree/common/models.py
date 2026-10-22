@@ -151,7 +151,9 @@ class UpdatedUserMixin(models.Model):
     )
 
 
-class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
+class ProjectCode(
+    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeMetadataModel
+):
     """A ProjectCode is a unique identifier for a project."""
 
     IMPORT_ID_FIELDS = ['code']
@@ -1815,7 +1817,7 @@ class NewsFeedEntry(models.Model):
     )
 
 
-class CustomUnit(models.Model):
+class CustomUnit(InvenTree.models.InvenTreeAuditMixin, models.Model):
     """Model for storing custom physical unit definitions.
 
     Model Attributes:
@@ -1831,6 +1833,10 @@ class CustomUnit(models.Model):
         """Class meta options."""
 
         verbose_name = _('Custom Unit')
+
+    def __str__(self):
+        """Return a string representation of this CustomUnit."""
+        return self.name
 
     def fmt_string(self):
         """Construct a unit definition string e.g. 'dog_year = 52 * day = dy'."""
@@ -2656,7 +2662,9 @@ class SelectionListEntry(models.Model):
 
 
 class ParameterTemplate(
-    InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
+    InvenTree.models.InvenTreeAuditMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeModel,
 ):
     """A ParameterTemplate provides a template for defining parameter values against various models.
 
