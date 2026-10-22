@@ -168,30 +168,35 @@ export default function SalesOrderShipmentDetail() {
       <DetailsBadge
         key='pending'
         label={t`Pending`}
+        tooltip={t`This shipment has not yet been sent`}
         color='gray'
         visible={isPending}
       />,
       <DetailsBadge
         key='checked'
         label={t`Checked`}
+        tooltip={t`This shipment has been checked`}
         color='green'
         visible={isPending && isChecked}
       />,
       <DetailsBadge
         key='not-checked'
         label={t`Not Checked`}
+        tooltip={t`This shipment has not been checked`}
         color='red'
         visible={isPending && !isChecked}
       />,
       <DetailsBadge
         key='shipped'
         label={t`Shipped`}
+        tooltip={t`This shipment has been sent`}
         color='green'
         visible={!isPending}
       />,
       <DetailsBadge
         key='delivered'
         label={t`Delivered`}
+        tooltip={t`This shipment has been delivered`}
         color='blue'
         visible={!!shipment.delivery_date}
       />

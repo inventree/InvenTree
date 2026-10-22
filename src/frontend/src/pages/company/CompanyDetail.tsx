@@ -277,6 +277,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     return [
       <DetailsBadge
         label={t`Inactive`}
+        tooltip={t`This company is inactive`}
         color='red'
         visible={company.active == false}
       />
