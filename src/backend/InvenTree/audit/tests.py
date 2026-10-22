@@ -10,7 +10,7 @@ from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -607,3 +607,56 @@ class AuditAPITest(AuditTestMixin, InvenTreeAPITestCase):
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['changes_detail'][0]['label'], 'Name')
         self.assertEqual(data[0]['changes_detail'][0]['new'], 'b')
+
+
+class AuditAdminTest(AuditTestMixin, InvenTreeAPITestCase):
+    """Tests for the AuditLogEntry admin class."""
+
+    superuser = True
+
+    def test_admin_registration(self):
+        """The custom admin class replaces the upstream one."""
+        from django.contrib import admin
+
+        from audit.admin import AuditLogEntryAdmin
+
+        model_admin = admin.site._registry[AuditLogEntry]
+
+        self.assertIsInstance(model_admin, AuditLogEntryAdmin)
+
+        # Remains read-only
+        self.assertFalse(model_admin.has_add_permission(None))
+        self.assertFalse(model_admin.has_change_permission(None))
+
+    @override_settings(
+        SITE_URL='http://testserver', CSRF_TRUSTED_ORIGINS=['http://testserver']
+    )
+    def test_filter_by_user(self):
+        """The admin changelist can be filtered by the user who made the change."""
+        other = get_user_model().objects.create_user(username='other_user')
+
+        with audit.context.audit_source('test'):
+            from auditlog.context import set_actor
+
+            with set_actor(self.user):
+                self.po.description = 'By test user'
+                self.po.save()
+
+            with set_actor(other):
+                self.po.description = 'By other user'
+                self.po.save()
+
+        url = reverse('admin:audit_auditlogentry_changelist')
+
+        # The filter lists users with recorded entries
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'other_user')
+
+        response = self.client.get(url, {'actor__id__exact': other.pk})
+        self.assertEqual(response.status_code, 200)
+
+        entries = list(response.context['cl'].result_list)
+
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0].actor, other)
