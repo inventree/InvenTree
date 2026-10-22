@@ -1058,7 +1058,12 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
         B) delete_children = True and delete_items = False
         C) delete_children = False and delete_items = True
         D) delete_children = False and delete_items = False
+
+        Note: re-parenting uses audited_update(), so that the change is recorded
+        for audited models (it falls back to a plain update() otherwise).
         """
+        from audit.helpers import audited_update
+
         child_nodes = self.get_descendants(include_self=False)
 
         # Case A: Delete all child items, and all child nodes.
@@ -1074,7 +1079,7 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
         elif delete_children and not delete_items:
             if items := self.get_items(cascade=True):
                 parent = getattr(self, self.NODE_PARENT_KEY, None)
-                items.update(**{self.ITEM_PARENT_KEY: parent})
+                audited_update(items, **{self.ITEM_PARENT_KEY: parent})
             self.delete_nodes(child_nodes)
 
         # Case C: Delete all child items, but keep all child nodes
@@ -1083,7 +1088,7 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
         elif not delete_children and delete_items:
             self.delete_items(cascade=False)
             parent = getattr(self, self.NODE_PARENT_KEY, None)
-            self.get_children().update(**{self.NODE_PARENT_KEY: parent})
+            audited_update(self.get_children(), **{self.NODE_PARENT_KEY: parent})
 
         # Case D: Keep all child items, and keep all child nodes
         # - Move all items directly associated with this node up one level
@@ -1091,8 +1096,8 @@ class InvenTreeTree(ContentTypeMixin, MPTTModel):
         elif not delete_children and not delete_items:
             parent = getattr(self, self.NODE_PARENT_KEY, None)
             if items := self.get_items(cascade=False):
-                items.update(**{self.ITEM_PARENT_KEY: parent})
-            self.get_children().update(**{self.NODE_PARENT_KEY: parent})
+                audited_update(items, **{self.ITEM_PARENT_KEY: parent})
+            audited_update(self.get_children(), **{self.NODE_PARENT_KEY: parent})
 
     def delete_nodes(self, nodes):
         """Delete  a set of nodes from the tree.

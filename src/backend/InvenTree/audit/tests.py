@@ -88,6 +88,7 @@ class AuditRegistryTest(TestCase):
         self.assertEqual(
             [model._meta.label_lower for model in audited_models()],
             [
+                'build.build',
                 'common.attachment',
                 'common.customunit',
                 'common.parameter',

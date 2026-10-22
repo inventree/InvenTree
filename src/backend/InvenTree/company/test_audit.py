@@ -255,6 +255,67 @@ class AuditedUpdateTest(InvenTreeAPITestCase):
         self.assertEqual(self.update_entries().count(), 0)
         self.assertEqual(Company.objects.filter(description='B').count(), 3)
 
+    def test_bulk_update(self):
+        """audited_bulk_update() records an entry for each modified row."""
+        from audit.helpers import audited_bulk_update
+
+        a, b, c = self.companies
+
+        a.description = 'Bulk A'
+        b.description = 'Bulk B'
+        # 'c' is included, but not modified
+
+        n = audited_bulk_update(Company, [a, b, c], ['description'])
+
+        self.assertEqual(n, 3)
+        self.assertEqual(self.update_entries().count(), 2)
+
+        for company in [a, b]:
+            entry = self.update_entries().get(object_pk=str(company.pk))
+            self.assertEqual(
+                entry.changes_dict, {'description': ['Original', company.description]}
+            )
+
+    def test_bulk_update_expression(self):
+        """audited_bulk_update() records the value written by an F() expression."""
+        from audit.helpers import audited_bulk_update
+
+        for company in self.companies:
+            company.name = F('description')
+
+        audited_bulk_update(Company, self.companies, ['name'])
+
+        self.assertEqual(self.update_entries().count(), 3)
+
+        for entry in self.update_entries():
+            self.assertEqual(entry.changes_dict['name'][1], 'Original')
+
+    def test_bulk_update_fields_only(self):
+        """Only the fields passed to bulk_update() are recorded."""
+        from audit.helpers import audited_bulk_update
+
+        company = self.companies[0]
+        company.description = 'Changed'
+        company.website = 'https://example.com'
+
+        audited_bulk_update(Company, [company], ['description'])
+
+        entry = self.update_entries().get()
+        self.assertEqual(list(entry.changes_dict.keys()), ['description'])
+
+    def test_bulk_update_disabled(self):
+        """No entries are recorded by audited_bulk_update() when auditing is disabled."""
+        from audit.helpers import audited_bulk_update
+
+        for company in self.companies:
+            company.description = 'Quiet'
+
+        with disable_auditlog():
+            audited_bulk_update(Company, self.companies, ['description'])
+
+        self.assertEqual(self.update_entries().count(), 0)
+        self.assertEqual(Company.objects.filter(description='Quiet').count(), 3)
+
     def test_unaudited_model(self):
         """Models which are not audited fall back to a plain update."""
         from part.models import PartCategory

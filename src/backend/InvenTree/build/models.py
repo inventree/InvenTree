@@ -84,6 +84,7 @@ class BuildReportContext(report.mixins.BaseReportContext, TypedDict):
 
 
 class Build(
+    InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.PluginValidationMixin,
     report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeParameterMixin,

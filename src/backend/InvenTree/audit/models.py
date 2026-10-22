@@ -27,6 +27,32 @@ def get_audit_parent_reference(instance):
     return None
 
 
+# Attribute used to defer an audit entry until the instance has been saved
+DEFERRED_LOG_ATTR = '_audit_deferred_log'
+
+
+def expression_fields(instance, changes: dict) -> list[str]:
+    """Return the changed fields whose (unsaved) value is a query expression (e.g. F('x') + 1).
+
+    The value written by such an expression is only known once the instance has been saved.
+    """
+    fields = []
+
+    for name in changes:
+        try:
+            field = type(instance)._meta.get_field(name)
+        except FieldDoesNotExist:
+            continue
+
+        # Read the raw attribute value - avoids any related object lookups
+        value = instance.__dict__.get(getattr(field, 'attname', name))
+
+        if hasattr(value, 'resolve_expression'):
+            fields.append(name)
+
+    return fields
+
+
 def file_field_basenames(model, changes: dict) -> dict:
     """Reduce recorded file field values to the filename only (not the full storage path)."""
     for name, value in changes.items():
@@ -118,7 +144,14 @@ class AuditLogEntryManager(LogEntryManager):
         For updates, fields whose recorded old and new values are identical are dropped.
         These occur when the in-memory value differs from the database value only in type
         (e.g. an empty FieldFile vs. an empty string), and would otherwise add noise to every save.
+
+        Updates which assign a query expression (e.g. F('completed') + 1) are deferred until
+        after the save, so that the value actually written can be recorded
+        (see audit.signals.resolve_deferred_log).
         """
+        # Internal flag: this entry has been deferred, and the expression values resolved
+        resolved = kwargs.pop('_audit_resolved', False)
+
         changes = kwargs.get('changes')
 
         if isinstance(changes, dict):
@@ -131,6 +164,14 @@ class AuditLogEntryManager(LogEntryManager):
             }
 
             if kwargs.get('action') == AuditLogEntry.Action.UPDATE:
+                if not resolved and (fields := expression_fields(instance, changes)):
+                    instance.__dict__[DEFERRED_LOG_ATTR] = {
+                        'force_log': force_log,
+                        'kwargs': {**kwargs, 'changes': changes},
+                        'fields': fields,
+                    }
+                    return None
+
                 changes = {
                     field: value
                     for field, value in changes.items()

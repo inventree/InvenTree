@@ -81,6 +81,56 @@ def audited_update(queryset, **values) -> int:
     return count
 
 
+def audited_bulk_update(model, objs: list, fields: list[str], **kwargs) -> int:
+    """Perform Model.objects.bulk_update(), recording an audit entry for each modified row.
+
+    As with audited_update(), the old and new values are read from the database,
+    so the recorded changes reflect what was actually written (including F() expressions).
+
+    Arguments:
+        model: The model class
+        objs: The (saved) model instances to update
+        fields: The fields to update
+        kwargs: Additional arguments passed through to bulk_update() (e.g. batch_size)
+
+    Returns:
+        int: The number of rows updated (as per bulk_update())
+    """
+    from auditlog.receivers import _create_log_entry
+
+    from audit.models import AuditLogEntry
+
+    if not is_audited(model):
+        return model.objects.bulk_update(objs, fields, **kwargs)
+
+    manager = model._base_manager
+    pks = [obj.pk for obj in objs]
+
+    with transaction.atomic():
+        if connection.features.has_select_for_update:
+            old_rows = manager.select_for_update().in_bulk(pks)
+        else:
+            old_rows = manager.in_bulk(pks)
+
+        count = model.objects.bulk_update(objs, fields, **kwargs)
+
+        new_rows = manager.in_bulk(pks)
+
+        for pk, old in old_rows.items():
+            if new := new_rows.get(pk):
+                _create_log_entry(
+                    action=AuditLogEntry.Action.UPDATE,
+                    instance=new,
+                    sender=model,
+                    diff_old=old,
+                    diff_new=new,
+                    fields_to_check=list(fields),
+                    use_json_for_changes=settings.AUDITLOG_STORE_JSON_CHANGES,
+                )
+
+    return count
+
+
 def audited_bulk_create(model, objs: list) -> list:
     """Bulk create model instances, recording a CREATE audit entry for each new row.
 
