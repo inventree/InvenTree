@@ -291,7 +291,7 @@ export default function ImporterColumnSelector({
     );
 
     api
-      .post(url)
+      .post(url, {}, { timeout: 300000 })
       .then(() => {
         session.refreshSession();
       })

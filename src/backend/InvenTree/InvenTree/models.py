@@ -214,6 +214,13 @@ class MetadataMixin(models.Model):
         if self.metadata is None:
             self.metadata = {}
 
+        if isinstance(self.metadata, str):
+            try:
+                import json
+                self.metadata = json.loads(self.metadata)
+            except Exception:
+                pass
+
         if type(self.metadata) is not dict:
             raise ValidationError({
                 'metadata': _('Metadata must be a python dict object')

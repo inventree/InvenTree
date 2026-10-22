@@ -16,8 +16,9 @@ import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
 import useTable from '@lib/hooks/UseTable';
 import type { TableFilter } from '@lib/types/Filters';
-import type { TableColumn } from '@lib/types/Tables';
-import { IconPackageImport } from '@tabler/icons-react';
+import { IconFileUpload, IconPackageImport } from '@tabler/icons-react';
+import { dataImporterSessionFields } from '../../forms/ImporterForms';
+import { openGlobalImporter } from '../../states/ImporterState';
 import {
   BooleanColumn,
   CompanyColumn,
@@ -224,8 +225,31 @@ export function SupplierPartTable({
     partId: partId
   });
 
+  const importSessionFields = useMemo(() => {
+    return dataImporterSessionFields({
+      modelType: ModelType.supplierpart,
+      allowUpdate: true
+    });
+  }, []);
+
+  const importSupplierParts = useCreateApiFormModal({
+    url: ApiEndpoints.import_session_list,
+    title: t`Import Supplier Parts`,
+    fields: importSessionFields,
+    onFormSuccess: (response: any) => {
+      openGlobalImporter(response.pk, { onClose: table.refreshTable });
+    }
+  });
+
   const tableActions = useMemo(() => {
     return [
+      <ActionButton
+        key='import-supplier-parts'
+        icon={<IconFileUpload />}
+        tooltip={t`Import Supplier Parts`}
+        onClick={() => importSupplierParts.open()}
+        hidden={!user.hasAddRole(UserRoles.purchase_order)}
+      />,
       <AddItemButton
         key='add-supplier-part'
         tooltip={t`Add supplier part`}
@@ -245,7 +269,7 @@ export function SupplierPartTable({
         }
       />
     ];
-  }, [user, partId, supplierPlugins]);
+  }, [user, partId, supplierPlugins, importSupplierParts]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -351,6 +375,7 @@ export function SupplierPartTable({
   return (
     <>
       {addSupplierPart.modal}
+      {importSupplierParts.modal}
       {editSupplierPart.modal}
       {duplicateSupplierPart.modal}
       {deleteSupplierPart.modal}

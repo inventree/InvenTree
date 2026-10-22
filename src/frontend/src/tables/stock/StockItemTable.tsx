@@ -42,7 +42,10 @@ import {
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
+import { IconFileUpload } from '@tabler/icons-react';
 import { useStockFields } from '../../forms/StockForms';
+import { dataImporterSessionFields } from '../../forms/ImporterForms';
+import { openGlobalImporter } from '../../states/ImporterState';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
@@ -563,6 +566,22 @@ export function StockItemTable({
     changeBatch: true
   });
 
+  const importSessionFields = useMemo(() => {
+    return dataImporterSessionFields({
+      modelType: ModelType.stockitem,
+      allowUpdate: true
+    });
+  }, []);
+
+  const importStock = useCreateApiFormModal({
+    url: ApiEndpoints.import_session_list,
+    title: t`Import Stock Items`,
+    fields: importSessionFields,
+    onFormSuccess: (response: any) => {
+      openGlobalImporter(response.pk, { onClose: table.refreshTable });
+    }
+  });
+
   const tableActions = useMemo(() => {
     return [
       stockAdjustActions.dropdown,
@@ -579,6 +598,13 @@ export function StockItemTable({
           orderPartsWizard.openWizard();
         }}
       />,
+      <ActionButton
+        key='import-stock-items'
+        hidden={!allowAdd || !user.hasAddRole(UserRoles.stock)}
+        tooltip={t`Import Stock Items`}
+        icon={<IconFileUpload />}
+        onClick={() => importStock.open()}
+      />,
       <AddItemButton
         key='add-stock-item'
         hidden={!allowAdd || !user.hasAddRole(UserRoles.stock)}
@@ -591,12 +617,14 @@ export function StockItemTable({
     allowAdd,
     table.hasSelectedRecords,
     table.selectedRecords,
-    stockAdjustActions.dropdown
+    stockAdjustActions.dropdown,
+    importStock
   ]);
 
   return (
     <>
       {newStockItem.modal}
+      {importStock.modal}
       {orderPartsWizard.wizard}
       {stockAdjustActions.modals.map((modal) => modal.modal)}
       <InvenTreeTable

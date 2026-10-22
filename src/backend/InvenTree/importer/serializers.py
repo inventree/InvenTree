@@ -225,7 +225,8 @@ class DataImportAcceptRowSerializer(serializers.Serializer):
     rows = serializers.PrimaryKeyRelatedField(
         queryset=importer.models.DataImportRow.objects.all(),
         many=True,
-        required=True,
+        required=False,
+        default=list,
         label=_('Rows'),
         help_text=_('List of row IDs to accept'),
     )
@@ -240,7 +241,10 @@ class DataImportAcceptRowSerializer(serializers.Serializer):
         session = self.context.get('session', None)
 
         if not rows or len(rows) == 0:
-            raise ValidationError(_('No rows provided'))
+            if session:
+                rows = list(session.rows.filter(valid=True, complete=False))
+            if not rows or len(rows) == 0:
+                raise ValidationError(_('No rows provided'))
 
         for row in rows:
             if row.session != session:
@@ -260,8 +264,10 @@ class DataImportAcceptRowSerializer(serializers.Serializer):
 
         request = self.context.get('request', None)
 
-        for row in rows:
-            row.validate(commit=True, request=request)
+        from django.db import transaction
+        with transaction.atomic():
+            for row in rows:
+                row.validate(commit=True, request=request)
 
         if session := self.context.get('session', None):
             # ensure current state is available
@@ -269,3 +275,9 @@ class DataImportAcceptRowSerializer(serializers.Serializer):
             session.check_complete()
 
         return rows
+
+    def to_representation(self, instance):
+        """Prevent serialization failure when staging rows are deleted on completion."""
+        return {'rows': []}
+
+

@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Group, HoverCard, Paper, Space, Stack, Text } from '@mantine/core';
+import { Button, Group, HoverCard, Paper, Space, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import {
   IconArrowRight,
@@ -199,7 +199,8 @@ export default function ImporterDataSelector({
           apiUrl(ApiEndpoints.import_session_accept_rows, session.sessionId),
           {
             rows: rows
-          }
+          },
+          { timeout: 300000 }
         )
         .catch(() => {
           notifications.show({
@@ -406,19 +407,40 @@ export default function ImporterDataSelector({
       table.hasSelectedRecords &&
       table.selectedRecords.every((row: any) => row.valid && !row.complete);
 
+    const hasIncompleteRows: boolean =
+      (session.completedRowCount ?? 0) < (session.rowCount ?? 0);
+
     return [
+      <Button
+        key='import-all-rows'
+        size='xs'
+        color='green'
+        leftSection={<IconCircleCheck size={16} />}
+        disabled={!hasIncompleteRows}
+        onClick={() => {
+          importData([]);
+        }}
+      >
+        {t`Import All Valid Rows`}
+      </Button>,
       <ActionButton
         key='import-selected-rows'
         disabled={!canImport}
         icon={<IconArrowRight />}
-        color='green'
+        color='blue'
         tooltip={t`Import selected rows`}
         onClick={() => {
           importData(table.selectedRecords.map((row: any) => row.pk));
         }}
       />
     ];
-  }, [table.hasSelectedRecords, table.selectedRecords]);
+  }, [
+    table.hasSelectedRecords,
+    table.selectedRecords,
+    session.completedRowCount,
+    session.rowCount,
+    importData
+  ]);
 
   return (
     <>
