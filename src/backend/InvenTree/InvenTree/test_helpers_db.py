@@ -74,6 +74,29 @@ class BulkCreateAndFetchTest(TestCase):
         self.assertEqual(len(result), 2)
         self.assertNotIn('Existing', [c.name for c in result])
 
+    def test_preserves_metadata(self):
+        """Metadata provided with the input items is retained (in the database and on the items)."""
+        company = Company.objects.create(name='ACME')
+
+        items = [
+            Contact(company=company, name='With metadata', metadata={'key': 'value'}),
+            Contact(company=company, name='Without metadata'),
+        ]
+
+        result = bulk_create_and_fetch(Contact, items)
+
+        self.assertEqual(result[0].metadata, {'key': 'value'})
+        self.assertIsNone(result[1].metadata)
+
+        # The input items are not left with the temporary bulk-create metadata
+        self.assertEqual(items[0].metadata, {'key': 'value'})
+        self.assertIsNone(items[1].metadata)
+
+        # No temporary metadata remains in the database
+        self.assertFalse(
+            Contact.objects.filter(metadata__has_key='bulk_create_id').exists()
+        )
+
     def test_empty_list(self):
         """Calling with an empty list of items should not raise, and return no items."""
         result = bulk_create_and_fetch(Contact, [])

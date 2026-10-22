@@ -6,6 +6,7 @@ Code which modifies audited models in bulk should use these helpers instead.
 """
 
 from django.conf import settings
+from django.core.exceptions import FieldDoesNotExist
 from django.db import connection, transaction
 
 from auditlog.context import auditlog_disabled
@@ -78,3 +79,65 @@ def audited_update(queryset, **values) -> int:
                 )
 
     return count
+
+
+def audited_bulk_create(model, objs: list) -> list:
+    """Bulk create model instances, recording a CREATE audit entry for each new row.
+
+    Uses InvenTree.helpers_db.bulk_create_and_fetch() to resolve the created rows,
+    so that entries are recorded on every database backend - including those which do
+    not return primary keys from bulk_create() (e.g. MySQL). The same code path is used
+    for all backends, so that it is exercised by CI regardless of the test database.
+
+    Primary keys are populated on the provided objects (as per bulk_create()).
+
+    Arguments:
+        model: The model class (must provide a 'metadata' field)
+        objs: The (unsaved) model instances to create
+
+    Returns:
+        list: The created objects, as fetched from the database (in insertion order)
+    """
+    from auditlog.receivers import _create_log_entry
+
+    from audit.models import AuditLogEntry
+    from InvenTree.helpers_db import bulk_create_and_fetch
+
+    # Required by bulk_create_and_fetch() - checked for all models (not only audited ones),
+    # so that an unsupported model is caught in development rather than at runtime
+    try:
+        model._meta.get_field('metadata')
+    except FieldDoesNotExist:
+        raise TypeError(
+            f"audited_bulk_create() requires a 'metadata' field: {model._meta.label}"
+        )
+
+    if not objs:
+        return []
+
+    with transaction.atomic():
+        created = list(bulk_create_and_fetch(model, objs))
+
+        if len(created) != len(objs):  # pragma: no cover
+            raise ValueError(
+                f'Expected {len(objs)} {model._meta.label} objects, fetched {len(created)}'
+            )
+
+        # Back-populate primary keys onto the provided objects
+        for obj, instance in zip(objs, created, strict=True):
+            obj.pk = instance.pk
+            obj._state.adding = False
+            obj._state.db = instance._state.db
+
+        if is_audited(model):
+            for instance in created:
+                _create_log_entry(
+                    action=AuditLogEntry.Action.CREATE,
+                    instance=instance,
+                    sender=model,
+                    diff_old=None,
+                    diff_new=instance,
+                    use_json_for_changes=settings.AUDITLOG_STORE_JSON_CHANGES,
+                )
+
+    return created

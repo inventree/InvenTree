@@ -2877,7 +2877,10 @@ def post_save_parameter_template(sender, instance, created, **kwargs):
 
 
 class Parameter(
-    UpdatedUserMixin, InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
+    InvenTree.models.InvenTreeAuditMixin,
+    UpdatedUserMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeModel,
 ):
     """Class which represents a parameter value assigned to a particular model instance.
 
@@ -2891,6 +2894,16 @@ class Parameter(
         updated: Date/time that this parameter was last updated
         updated_by: User who last updated this parameter
     """
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Derived from 'data'
+        'data_numeric',
+        # Redundant with the audit entry actor
+        'updated_by',
+    )
+
+    # Access to a parameter is determined by the object it is linked to
+    AUDIT_REQUIRE_PARENT_PERMISSION = True
 
     class Meta:
         """Meta options for Parameter model."""
@@ -2914,6 +2927,22 @@ class Parameter(
     def get_api_url() -> str:
         """Return the API URL associated with the Parameter model."""
         return reverse('api-parameter-list')
+
+    def __str__(self):
+        """Return a string representation of this Parameter (e.g. 'Length: 10 mm')."""
+        value = f'{self.template.name}: {self.data}'
+
+        if self.template.units:
+            value += f' {self.template.units}'
+
+        return value
+
+    def get_audit_parent_reference(self):
+        """Audit entries for a parameter are included in the history of the linked object."""
+        if self.model_type_id is None:
+            return None
+
+        return ContentType.objects.get_for_id(self.model_type_id), str(self.model_id)
 
     def save(self, *args, **kwargs):
         """Custom save method for Parameter model.

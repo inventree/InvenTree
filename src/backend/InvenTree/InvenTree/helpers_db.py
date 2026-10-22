@@ -31,8 +31,10 @@ def bulk_create_and_fetch(
 
     Assumptions:
         - The provided model type has a "metadata" attribute which can be overloaded for this purpose
-        - No "metadata" is provided in the input items, as this will be overwritten by the method
         - The model type has an incrementing ID field (default: "pk")
+
+    Any "metadata" provided on the input items is temporarily replaced,
+    and restored (both in the database and on the input items) once the items have been fetched.
 
     """
     bulk_create_id = uuid.uuid4().hex
@@ -49,6 +51,9 @@ def bulk_create_and_fetch(
         if instance := model.objects.order_by(f'-{id_field}').first():
             lookup_filters[f'{id_field}__gt'] = getattr(instance, id_field)
 
+    # Retain any metadata provided with the input items, so that it can be restored
+    original_metadata = [item.metadata for item in items]
+
     # Overwrite the metadata values
     for item in items:
         item.metadata = metadata
@@ -63,6 +68,21 @@ def bulk_create_and_fetch(
 
     # Override the metadata values to remove the temporary bulk_create_id
     instances.update(metadata=None)
+
+    # Restore the original metadata on the input items
+    for item, original in zip(items, original_metadata, strict=True):
+        item.metadata = original
+
+    # ...and in the database, for any items which provided their own metadata.
+    # Note: pks are in insertion order, so correspond positionally with the input items
+    restored = [
+        model(pk=pk, metadata=original)
+        for pk, original in zip(pks, original_metadata, strict=True)
+        if original is not None
+    ]
+
+    if restored:
+        model.objects.bulk_update(restored, ['metadata'], batch_size=500)
 
     # Fetch the newly created items (by primary key, as the metadata filter no longer matches)
     # Ordered by id_field: auto-increment values are assigned in insertion order on every

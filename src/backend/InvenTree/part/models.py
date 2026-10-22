@@ -41,6 +41,7 @@ import part.helpers as part_helpers
 import part.settings as part_settings
 import report.mixins
 import users.models
+from audit.helpers import audited_bulk_create
 from build import models as BuildModels
 from build.status_codes import BuildStatusGroups
 from common.icons import validate_icon
@@ -2403,7 +2404,7 @@ class Part(
                 )
             )
 
-        Parameter.objects.bulk_create(parameters, batch_size=250)
+        audited_bulk_create(Parameter, parameters)
 
     def getTestTemplates(
         self, required=None, include_parent: bool = True, enabled=None

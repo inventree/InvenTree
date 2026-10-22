@@ -685,7 +685,9 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
             parameters.append(parameter)
 
         if len(parameters) > 0:
-            common.models.Parameter.objects.bulk_create(parameters, batch_size=250)
+            from audit.helpers import audited_bulk_create
+
+            audited_bulk_create(common.models.Parameter, parameters)
 
     def get_parameter(self, name: str):
         """Return a Parameter instance for the given parameter name.
