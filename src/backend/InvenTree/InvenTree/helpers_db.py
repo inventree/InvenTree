@@ -71,9 +71,9 @@ def _bulk_create_and_fetch_by_metadata(
     # Generate temporary metadata for bulk fetching
     metadata = {'bulk_create_id': bulk_create_id}
 
-    lookup_filters = dict(filters) if filters else {}
-
-    lookup_filters['metadata__bulk_create_id'] = bulk_create_id
+    # Note: caller-provided filters are only applied to the returned queryset,
+    # so that *every* created item is found (and its temporary metadata cleared)
+    lookup_filters = {'metadata__bulk_create_id': bulk_create_id}
 
     # Find the "most recent" item in the database, to set a search floor
     if instance := model.objects.order_by(f'-{id_field}').first():
@@ -115,4 +115,6 @@ def _bulk_create_and_fetch_by_metadata(
     # backend, so this restores correspondence with the input 'items' list for callers that
     # zip the result against it positionally. Without this, some backends (e.g. MySQL) may
     # return 'pk__in' rows in a different order than they were inserted.
-    return model.objects.filter(**{f'{id_field}__in': pks}).order_by(id_field)
+    return model.objects.filter(**{f'{id_field}__in': pks}, **(filters or {})).order_by(
+        id_field
+    )
