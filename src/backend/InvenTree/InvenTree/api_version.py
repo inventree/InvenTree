@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 563
 
 INVENTREE_API_TEXT = """
 
-v563 -> 2026-10-22 : https://github.com/inventree/InvenTree/pull/XXXX
+v563 -> 2026-10-22 : https://github.com/inventree/InvenTree/pull/13072
     - Adds feature info to contenttype endpoint
 
 v562 -> 2026-10-21 : https://github.com/inventree/InvenTree/pull/13034
