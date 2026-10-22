@@ -400,6 +400,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         return quantity
 
     batch_code = serializers.CharField(
+        max_length=StockItem._meta.get_field('batch').max_length,
         required=False,
         allow_blank=True,
         default=generate_batch_code,
@@ -535,6 +536,7 @@ class BuildOutputScrapSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         label=_('Notes'),
+        max_length=stock_models.StockItemTracking.NOTES_MAX_LENGTH,
         help_text=_('Reason for scrapping build output(s)'),
         required=True,
         allow_blank=False,
@@ -595,7 +597,12 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         help_text=_('Complete outputs if stock has not been fully allocated'),
     )
 
-    notes = serializers.CharField(label=_('Notes'), required=False, allow_blank=True)
+    notes = serializers.CharField(
+        label=_('Notes'),
+        max_length=stock_models.StockItemTracking.NOTES_MAX_LENGTH,
+        required=False,
+        allow_blank=True,
+    )
 
     def validate(self, data):
         """Perform data validation for this serializer."""
@@ -1779,6 +1786,7 @@ class BuildConsumeSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         label=_('Notes'),
+        max_length=stock_models.StockItemTracking.NOTES_MAX_LENGTH,
         help_text=_('Optional notes for the stock consumption'),
         required=False,
         allow_blank=True,

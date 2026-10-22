@@ -2108,6 +2108,25 @@ class StockItemTest(StockAPITestCase):
         self.assertIn('part', response.data)
         self.assertNotIn('part_detail', response.data)
 
+    def test_note_max_length(self):
+        """Test that overly long transaction notes are rejected with a validation error."""
+        max_length = StockItemTracking.NOTES_MAX_LENGTH
+        note = 'x' * (max_length + 1)
+
+        for url, data in [
+            (reverse('api-stock-item-install', kwargs={'pk': 1}), {'stock_item': 2}),
+            (reverse('api-stock-item-uninstall', kwargs={'pk': 1}), {'location': 1}),
+            (
+                reverse('api-stock-change-status'),
+                {'items': [1], 'status': StockStatus.DAMAGED.value},
+            ),
+        ]:
+            response = self.post(url, {**data, 'note': note}, expected_code=400)
+            self.assertIn(
+                f'Ensure this field has no more than {max_length} characters',
+                str(response.data['note']),
+            )
+
     def test_install(self):
         """Test that stock item can be installed into another item, via the API."""
         # Select the "parent" stock item
@@ -2995,6 +3014,33 @@ class StocktakeTest(StockAPITestCase):
             response = self.post(url, data, expected_code=201)
             self.assertEqual(response.data['items'][0]['pk'], 1234)
             self.assertEqual(response.data['items'][0]['quantity'], target[endpoint])
+
+    def test_notes_max_length(self):
+        """Test that overly long notes are rejected with a validation error."""
+        max_length = StockItemTracking.NOTES_MAX_LENGTH
+
+        for endpoint in [
+            'api-stock-count',
+            'api-stock-add',
+            'api-stock-remove',
+            'api-stock-transfer',
+        ]:
+            url = reverse(endpoint)
+            data = {
+                'items': [{'pk': 1234, 'quantity': 10}],
+                'location': 1,
+                'notes': 'x' * (max_length + 1),
+            }
+
+            response = self.post(url, data, expected_code=400)
+            self.assertIn(
+                f'Ensure this field has no more than {max_length} characters',
+                str(response.data['notes']),
+            )
+
+            # Notes at the maximum length are accepted
+            data['notes'] = 'x' * max_length
+            self.post(url, data, expected_code=201)
 
     def test_count_serialized(self):
         """Test that counting a serialized stock item correctly updates stocktake_date."""

@@ -23,7 +23,7 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from common.currency import currency_codes
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
-from company.models import Company, Contact, SupplierPart, SupplierPriceBreak
+from company.models import Address, Company, Contact, SupplierPart, SupplierPriceBreak
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
 from order.models import SalesOrderAllocation, SalesOrderLineItem, SalesOrderShipment
@@ -38,7 +38,7 @@ from order.status_codes import (
     TransferOrderStatusGroups,
 )
 from part.models import Part
-from stock.models import StockItem, StockLocation, StockSortOrder
+from stock.models import StockItem, StockItemTracking, StockLocation, StockSortOrder
 from stock.status_codes import StockHistoryCode, StockStatus
 from users.models import Owner
 
@@ -113,6 +113,17 @@ class PurchaseOrderTest(OrderTest):
             for k, v in spec.items():
                 self.assertIn(k, field_data)
                 self.assertEqual(field_data[k], v)
+
+        # Checks for the 'address' field
+        check_options(
+            post,
+            'address',
+            {
+                'type': 'related field',
+                'label': 'Supplier Address',
+                'help_text': 'Supplier address for this order',
+            },
+        )
 
         # Checks for the 'order_currency' field
         check_options(
@@ -1094,6 +1105,269 @@ class PurchaseOrderTest(OrderTest):
         )
 
 
+class PurchaseOrderReceivingCompanyTest(OrderTest):
+    """Unit tests for the 'receiving_company' and 'delivery_address' fields of the PurchaseOrder API."""
+
+    LIST_URL = reverse('api-po-list')
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create internal companies and addresses for testing."""
+        super().setUpTestData()
+
+        cls.supplier = Company.objects.get(pk=1)
+
+        cls.alpha = Company.objects.create(name='Alpha Internal', is_internal=True)
+        cls.beta = Company.objects.create(name='Beta Internal', is_internal=True)
+
+        cls.alpha_address = Address.objects.create(company=cls.alpha, title='Alpha HQ')
+        cls.beta_address = Address.objects.create(company=cls.beta, title='Beta HQ')
+        cls.supplier_address = Address.objects.create(
+            company=cls.supplier, title='Supplier HQ'
+        )
+
+    def setUp(self):
+        """Ensure the default internal company setting is configured for each test."""
+        super().setUp()
+
+        self.assignRole('purchase_order.add')
+        self.assignRole('purchase_order.change')
+
+        # Unless otherwise specified, 'beta' is the default internal company
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', self.beta.pk)
+
+        self.reference_idx = 0
+
+    def tearDown(self):
+        """Reset the default internal company setting."""
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', '')
+        super().tearDown()
+
+    def order_data(self, **kwargs) -> dict:
+        """Construct data for creating a new PurchaseOrder via the API."""
+        self.reference_idx += 1
+
+        return {
+            'reference': f'PO-9999{self.reference_idx:04d}',
+            'supplier': self.supplier.pk,
+            'description': 'A test purchase order',
+            **kwargs,
+        }
+
+    def create_order(self, **kwargs) -> models.PurchaseOrder:
+        """Create a new PurchaseOrder (with the specified receiving company and address)."""
+        self.reference_idx += 1
+
+        return models.PurchaseOrder.objects.create(
+            reference=f'PO-8888{self.reference_idx:04d}',
+            supplier=self.supplier,
+            **kwargs,
+        )
+
+    def options_default(self):
+        """Return the default value for 'receiving_company' from an OPTIONS request."""
+        response = self.options(self.LIST_URL, expected_code=200)
+        field = response.data['actions']['POST']['receiving_company']
+
+        # Only internal companies can be selected
+        self.assertEqual(field['filters'], {'is_internal': True})
+
+        return field.get('default')
+
+    def test_options_default(self):
+        """The default internal company is presented as the default in an OPTIONS request."""
+        self.assertEqual(self.options_default(), self.beta.pk)
+
+        # Changing the setting changes the presented default
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', self.alpha.pk)
+        self.assertEqual(self.options_default(), self.alpha.pk)
+
+    def test_options_default_single_company(self):
+        """A single internal company is presented as the default, even without the setting."""
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', '')
+
+        # Multiple internal companies, and no setting - no default
+        self.assertIsNone(self.options_default())
+
+        # Only a single internal company - it is the default
+        self.beta.is_internal = False
+        self.beta.save()
+
+        self.assertEqual(self.options_default(), self.alpha.pk)
+
+        # No internal companies - no default
+        self.alpha.is_internal = False
+        self.alpha.save()
+
+        self.assertIsNone(self.options_default())
+
+    def test_create_default(self):
+        """The default internal company is used when no receiving company is specified."""
+        response = self.post(self.LIST_URL, self.order_data(), expected_code=201)
+        self.assertEqual(response.data['receiving_company'], self.beta.pk)
+
+        po = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(po.receiving_company, self.beta)
+
+        # Without a default internal company, the field is left blank
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', '')
+
+        response = self.post(self.LIST_URL, self.order_data(), expected_code=201)
+        self.assertIsNone(response.data['receiving_company'])
+
+    def test_create_explicit(self):
+        """A specified receiving company takes priority over the default."""
+        response = self.post(
+            self.LIST_URL,
+            self.order_data(receiving_company=self.alpha.pk),
+            expected_code=201,
+        )
+        self.assertEqual(response.data['receiving_company'], self.alpha.pk)
+
+        po = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(po.receiving_company, self.alpha)
+
+        # An explicit null value is also respected
+        response = self.post(
+            self.LIST_URL, self.order_data(receiving_company=None), expected_code=201
+        )
+        self.assertIsNone(response.data['receiving_company'])
+
+    def test_create_non_internal(self):
+        """A non-internal company cannot be specified as the receiving company."""
+        self.assertFalse(self.supplier.is_internal)
+
+        response = self.post(
+            self.LIST_URL,
+            self.order_data(receiving_company=self.supplier.pk),
+            expected_code=400,
+        )
+        self.assertIn('receiving_company', response.data)
+
+    def test_create_delivery_address(self):
+        """Regression test: the delivery address must match the receiving company on creation."""
+        # Matching address (with the default receiving company)
+        response = self.post(
+            self.LIST_URL,
+            self.order_data(delivery_address=self.beta_address.pk),
+            expected_code=201,
+        )
+        self.assertEqual(response.data['receiving_company'], self.beta.pk)
+        self.assertEqual(response.data['delivery_address'], self.beta_address.pk)
+        self.assertEqual(
+            response.data['delivery_address_detail']['pk'], self.beta_address.pk
+        )
+
+        # Matching address (with an explicit receiving company)
+        response = self.post(
+            self.LIST_URL,
+            self.order_data(
+                receiving_company=self.alpha.pk, delivery_address=self.alpha_address.pk
+            ),
+            expected_code=201,
+        )
+        self.assertEqual(response.data['delivery_address'], self.alpha_address.pk)
+
+        # Address belongs to a different internal company
+        n = models.PurchaseOrder.objects.count()
+
+        for company, address in [
+            (self.alpha, self.beta_address),
+            (self.beta, self.alpha_address),
+            (self.beta, self.supplier_address),
+        ]:
+            response = self.post(
+                self.LIST_URL,
+                self.order_data(
+                    receiving_company=company.pk, delivery_address=address.pk
+                ),
+                expected_code=400,
+            )
+            self.assertIn(
+                'Delivery address does not match selected receiving company',
+                str(response.data['delivery_address']),
+            )
+
+        # Address specified without a receiving company
+        response = self.post(
+            self.LIST_URL,
+            self.order_data(
+                receiving_company=None, delivery_address=self.beta_address.pk
+            ),
+            expected_code=400,
+        )
+        self.assertIn(
+            'Receiving company must be specified when a delivery address is provided',
+            str(response.data['receiving_company']),
+        )
+
+        # No orders were created by the invalid requests
+        self.assertEqual(models.PurchaseOrder.objects.count(), n)
+
+    def test_update_delivery_address(self):
+        """Regression test: the delivery address must match the receiving company on update."""
+        po = self.create_order(receiving_company=self.alpha)
+        url = reverse('api-po-detail', kwargs={'pk': po.pk})
+
+        # Address belongs to a different company
+        for address in [self.beta_address, self.supplier_address]:
+            response = self.patch(
+                url, {'delivery_address': address.pk}, expected_code=400
+            )
+            self.assertIn(
+                'Delivery address does not match selected receiving company',
+                str(response.data['delivery_address']),
+            )
+
+        # Matching address
+        response = self.patch(
+            url, {'delivery_address': self.alpha_address.pk}, expected_code=200
+        )
+        self.assertEqual(response.data['delivery_address'], self.alpha_address.pk)
+
+        # Changing the receiving company without changing the address is rejected
+        response = self.patch(
+            url, {'receiving_company': self.beta.pk}, expected_code=400
+        )
+        self.assertIn(
+            'Delivery address does not match selected receiving company',
+            str(response.data['delivery_address']),
+        )
+
+        # Clearing the receiving company while an address is set is rejected
+        response = self.patch(url, {'receiving_company': None}, expected_code=400)
+        self.assertIn(
+            'Receiving company must be specified when a delivery address is provided',
+            str(response.data['receiving_company']),
+        )
+
+        # The order is unchanged by the rejected requests
+        po.refresh_from_db()
+        self.assertEqual(po.receiving_company, self.alpha)
+        self.assertEqual(po.delivery_address, self.alpha_address)
+
+        # Changing both the company and the address together is accepted
+        response = self.patch(
+            url,
+            {
+                'receiving_company': self.beta.pk,
+                'delivery_address': self.beta_address.pk,
+            },
+            expected_code=200,
+        )
+        self.assertEqual(response.data['receiving_company'], self.beta.pk)
+        self.assertEqual(response.data['delivery_address'], self.beta_address.pk)
+
+        # Clearing both the company and the address together is accepted
+        response = self.patch(
+            url,
+            {'receiving_company': None, 'delivery_address': None},
+            expected_code=200,
+        )
+        self.assertIsNone(response.data['receiving_company'])
+        self.assertIsNone(response.data['delivery_address'])
+
+
 class PurchaseOrderLineItemTest(OrderTest):
     """Unit tests for PurchaseOrderLineItems."""
 
@@ -1638,6 +1912,48 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         self.assertEqual(item_1.batch, 'B-abc-123')
         self.assertEqual(item_2.batch, 'B-xyz-789')
+
+    def test_field_max_length(self):
+        """Test that overly long values are rejected with a validation error."""
+
+        def stock_field(name):
+            return StockItem._meta.get_field(name).max_length
+
+        limits = {
+            'batch_code': stock_field('batch'),
+            'packaging': stock_field('packaging'),
+            'barcode': stock_field('barcode_data'),
+            'note': StockItemTracking.NOTES_MAX_LENGTH,
+        }
+
+        line_data = {'line_item': 1, 'quantity': 10}
+
+        for field, max_length in limits.items():
+            line_data[field] = 'x' * (max_length + 1)
+
+        data = {
+            'items': [line_data],
+            'location': 1,
+            'batch_code': 'x' * (limits['batch_code'] + 1),
+        }
+
+        n = StockItem.objects.count()
+
+        response = self.post(self.url, data, expected_code=400)
+
+        expected = 'Ensure this field has no more than {} characters'
+
+        self.assertIn(
+            expected.format(limits['batch_code']), str(response.data['batch_code'])
+        )
+
+        for field, max_length in limits.items():
+            self.assertIn(
+                expected.format(max_length), str(response.data['items'][0][field])
+            )
+
+        # No stock items should have been created
+        self.assertEqual(n, StockItem.objects.count())
 
     def test_top_level_batch_code(self):
         """Test the top-level 'batch_code' field.
@@ -2721,15 +3037,13 @@ class SalesOrderLineItemTest(OrderTest):
         n_parts = Part.objects.filter(salable=True).count()
 
         # List by part
-        for part in Part.objects.filter(salable=True)[:3]:
+        for part in Part.objects.filter(salable=True).order_by('pk')[:3]:
             response = self.get(self.url, {'part': part.pk, 'limit': 10})
-
             self.assertEqual(response.data['count'], n_orders)
 
         # List by order
-        for order in models.SalesOrder.objects.all()[:3]:
+        for order in models.SalesOrder.objects.order_by('pk')[:3]:
             response = self.get(self.url, {'order': order.pk, 'limit': 10})
-
             self.assertEqual(response.data['count'], n_parts)
 
         # Filter by has_pricing status
@@ -3644,6 +3958,26 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         'stock',
     ]
     roles = ['return_order.view']
+
+    def test_receive_note_max_length(self):
+        """Test that an overly long 'note' value is rejected with a validation error."""
+        self.assignRole('return_order.add')
+
+        rma = models.ReturnOrder.objects.first()
+        url = reverse('api-return-order-receive', kwargs={'pk': rma.pk})
+
+        max_length = StockItemTracking.NOTES_MAX_LENGTH
+
+        response = self.post(
+            url,
+            {'items': [], 'location': 1, 'note': 'x' * (max_length + 1)},
+            expected_code=400,
+        )
+
+        self.assertIn(
+            f'Ensure this field has no more than {max_length} characters',
+            str(response.data['note']),
+        )
 
     def test_options(self):
         """Test the OPTIONS endpoint."""

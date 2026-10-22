@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Anchor, Group, Text } from '@mantine/core';
+import { Alert, Anchor, Group, Stack, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '@lib/components/AddItemButton';
@@ -12,6 +12,7 @@ import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
 import { apiUrl } from '@lib/functions/Api';
+import { formatDecimal } from '@lib/functions/Formatting';
 import { getDetailUrl } from '@lib/functions/Navigation';
 import useTable from '@lib/hooks/UseTable';
 import type { ApiFormFieldSet } from '@lib/types/Forms';
@@ -33,7 +34,15 @@ export function calculateSupplierPartUnitPrice(record: any) {
   return unit_price;
 }
 
-export function SupplierPriceBreakColumns(): TableColumn[] {
+/**
+ * Construct table columns for supplier price breaks
+ * @param units - The units of measure for the base part (the "unit" in "unit price")
+ */
+export function SupplierPriceBreakColumns({
+  units
+}: Readonly<{
+  units?: string;
+}> = {}): TableColumn[] {
   return [
     {
       accessor: 'supplier',
@@ -85,8 +94,6 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
       sortable: true,
       switchable: true,
       render: (record: any) => {
-        const units = record.part_detail?.pack_quantity;
-
         const price = formatCurrency(calculateSupplierPartUnitPrice(record), {
           currency: record.price_currency
         });
@@ -112,8 +119,10 @@ export default function SupplierPriceBreakTable({
   const user = useUserState();
 
   const columns: TableColumn[] = useMemo(() => {
-    return SupplierPriceBreakColumns();
-  }, []);
+    return SupplierPriceBreakColumns({
+      units: supplierPart?.part_detail?.units
+    });
+  }, [supplierPart?.part_detail?.units]);
 
   const supplierPriceBreakFields: ApiFormFieldSet = useMemo(() => {
     return {
@@ -127,12 +136,52 @@ export default function SupplierPriceBreakTable({
     };
   }, []);
 
+  const priceBreakInfo = useMemo(() => {
+    const packQuantity = supplierPart?.pack_quantity;
+    const packQuantityNative = supplierPart?.pack_quantity_native ?? 1;
+    const units = supplierPart?.part_detail?.units;
+
+    if (packQuantityNative == 1) {
+      return undefined;
+    }
+
+    // Pack quantity expressed in the native units of the base part
+    const nativeQuantity = [formatDecimal(Number(packQuantityNative)), units]
+      .filter(Boolean)
+      .join(' ');
+
+    // If the pack quantity was specified with its own units (e.g. "250 ml"),
+    // also show the converted value (e.g. "0.25 litres")
+    const packDescription = Number.isFinite(Number(packQuantity))
+      ? nativeQuantity
+      : `${packQuantity} (${nativeQuantity})`;
+
+    return (
+      <Alert color='blue' title={t`Supplier Pricing`}>
+        <Stack gap='xs'>
+          <Text size='sm'>
+            {t`The quantity is the number of supplier packs which must be purchased for this price break to apply.`}
+          </Text>
+          <Text size='sm'>
+            {t`The price is the cost of a single supplier pack, not the total cost for the specified quantity.`}
+          </Text>
+          {packQuantity && (
+            <Text size='sm'>
+              {t`Each supplier pack contains`} <b>{packDescription}</b>
+            </Text>
+          )}
+        </Stack>
+      </Alert>
+    );
+  }, [supplierPart]);
+
   const [selectedPriceBreak, setSelectedPriceBreak] = useState<number>(0);
 
   const newPriceBreak = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.supplier_part_pricing_list),
     title: t`Add Price Break`,
     fields: supplierPriceBreakFields,
+    preFormContent: priceBreakInfo,
     initialData: {
       part: supplierPart.pk,
       price_currency: supplierPart.supplier_detail.currency
@@ -145,6 +194,7 @@ export default function SupplierPriceBreakTable({
     pk: selectedPriceBreak,
     title: t`Edit Price Break`,
     fields: supplierPriceBreakFields,
+    preFormContent: priceBreakInfo,
     table: table
   });
 
