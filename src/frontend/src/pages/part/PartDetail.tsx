@@ -64,6 +64,9 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import HistoryPanel, {
+  useShowHistoryPanel
+} from '../../components/panels/HistoryPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
@@ -284,6 +287,8 @@ export default function PartDetail() {
   }, [enableRevisionSelection, part, partRevisionOptions]);
 
   // Part data panels (recalculate when part data changes)
+  const showHistory = useShowHistoryPanel();
+
   const partPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -518,6 +523,11 @@ export default function PartDetail() {
         model_type: ModelType.part,
         model_id: part?.pk,
         note_count: instanceInfo.note_count
+      }),
+      HistoryPanel({
+        model_type: ModelType.part,
+        model_id: part?.pk,
+        visible: showHistory
       })
     ];
   }, [
@@ -529,7 +539,8 @@ export default function PartDetail() {
     bomInformation,
     revisionSelector,
     refreshInstance,
-    instanceInfo
+    instanceInfo,
+    showHistory
   ]);
 
   const breadcrumbs = useMemo(() => {

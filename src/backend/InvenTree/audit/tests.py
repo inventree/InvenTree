@@ -120,6 +120,8 @@ class AuditRegistryTest(TestCase):
                 'order.salesordershipment',
                 'order.transferorder',
                 'order.transferorderlineitem',
+                'part.part',
+                'part.partcategory',
             ],
         )
 

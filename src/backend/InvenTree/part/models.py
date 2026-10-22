@@ -62,6 +62,7 @@ logger = structlog.get_logger('inventree')
 
 
 class PartCategory(
+    InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
@@ -80,6 +81,11 @@ class PartCategory(
     ITEM_PARENT_KEY = 'category'
     EXTRA_PATH_FIELDS = ['icon']
     IMPORT_ID_FIELDS = ['pathstring', 'name']
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Derived - recalculated (in bulk) when a category is renamed or moved
+        'pathstring',
+    )
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -456,6 +462,7 @@ class PartReportContext(report.mixins.BaseReportContext, TypedDict):
 
 @cleanup.ignore
 class Part(
+    InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
@@ -516,6 +523,13 @@ class Part(
     IMPORT_ID_FIELDS = ['IPN', 'name']
 
     objects = TreeManager()
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Derived from the BOM (bom_validated / bom_checked_by / bom_checked_date are recorded)
+        'bom_checksum',
+        # Derived from 'barcode_data'
+        'barcode_hash',
+    )
 
     class Meta:
         """Metaclass defines extra model properties."""
