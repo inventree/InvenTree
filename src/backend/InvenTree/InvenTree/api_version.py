@@ -8,6 +8,7 @@ INVENTREE_API_TEXT = """
 
 v563 -> 2026-10-22 : https://github.com/inventree/InvenTree/pull/TODO
     - Adds read-only audit log API endpoints (/api/audit/)
+    - OPTIONS metadata includes a "filters" entry, listing the available choices for choice-based list filters
 
 v562 -> 2026-10-21 : https://github.com/inventree/InvenTree/pull/13034
     - Adds new "pricing" user role, covering the PartPricing, PartSellPriceBreak and PartInternalPriceBreak models

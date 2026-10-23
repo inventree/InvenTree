@@ -1,7 +1,9 @@
 """API endpoints for the audit app."""
 
+from django import forms
 from django.db.models import Q
 from django.urls import include, path
+from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
@@ -21,6 +23,55 @@ from InvenTree.helpers_api import InvenTreeApiRouter
 from InvenTree.permissions import IsAdminOrAdminScope
 
 
+def audited_model_type_choices(user=None) -> list[tuple[str, str]]:
+    """Return (model_type, label) choices for the audited models.
+
+    If a user is provided, only the models which the user may view are returned.
+    """
+    from django.contrib.contenttypes.models import ContentType
+
+    from audit.registry import audited_models
+
+    allowed = get_viewable_audit_content_types(user) if user else None
+
+    choices = []
+
+    for model in audited_models():
+        ct = ContentType.objects.get_for_model(model)
+
+        if allowed is not None and ct.pk not in allowed:
+            continue
+
+        choices.append((
+            f'{ct.app_label}.{ct.model}',
+            capfirst(str(model._meta.verbose_name)),
+        ))
+
+    return sorted(choices, key=lambda choice: choice[1])
+
+
+class AnyValueChoiceField(forms.ChoiceField):
+    """A ChoiceField which provides a list of choices, but accepts any value.
+
+    The choices are used to describe the common values (e.g. for display in a client),
+    while other supported formats are still accepted by the filter.
+    """
+
+    def valid_value(self, value):
+        """Accept any value."""
+        return True
+
+
+class ModelTypeChoiceFilter(rest_filters.ChoiceFilter):
+    """Choice filter for the model type of an audit entry.
+
+    The choices are the audited model types ('app_label.model'), but any value supported
+    by common.filters.determine_content_type is accepted (e.g. a model name, or a ContentType ID).
+    """
+
+    field_class = AnyValueChoiceField
+
+
 class AuditLogFilter(rest_filters.FilterSet):
     """Custom filters for the AuditLogList API endpoint."""
 
@@ -30,7 +81,8 @@ class AuditLogFilter(rest_filters.FilterSet):
         model = AuditLogEntry
         fields = ['action', 'actor', 'cid']
 
-    model_type = rest_filters.CharFilter(
+    model_type = ModelTypeChoiceFilter(
+        choices=audited_model_type_choices,
         method='filter_noop',
         label=_('Model Type'),
         help_text=_('Model type (e.g. "order.purchaseorder" or "purchaseorder")'),
@@ -55,6 +107,17 @@ class AuditLogFilter(rest_filters.FilterSet):
     max_date = rest_filters.DateFilter(
         field_name='timestamp', lookup_expr='date__lte', label=_('Max Date')
     )
+
+    def __init__(self, *args, **kwargs):
+        """Limit the model type choices to those which the requesting user may view."""
+        super().__init__(*args, **kwargs)
+
+        user = getattr(self.request, 'user', None)
+
+        if user and user.is_authenticated:
+            self.filters['model_type'].extra['choices'] = audited_model_type_choices(
+                user
+            )
 
     def filter_noop(self, queryset, name, value):
         """Combined filtering is performed in filter_queryset()."""

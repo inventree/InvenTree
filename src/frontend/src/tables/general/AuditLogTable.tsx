@@ -23,6 +23,7 @@ import {
   UserFilter
 } from '../../components/tables/Filter';
 import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
+import { useFilters } from '../../hooks/UseFilter';
 import { useUserState } from '../../states/UserState';
 
 // Action codes, as defined by django-auditlog
@@ -377,6 +378,19 @@ export function AuditLogTable({
 
   const singleObject = modelType !== undefined && modelId !== undefined;
 
+  // Model type choices are provided via the OPTIONS metadata for the list endpoint
+  const modelTypeFilters = useFilters({
+    url: apiUrl(ApiEndpoints.audit_log_list),
+    method: 'OPTIONS',
+    accessor: 'data.filters.model_type.choices',
+    transform: (item: any) => ({
+      value: item.value,
+      label: item.display_name
+    }),
+    // Not required if the table is restricted to a particular model type
+    enabled: !modelType
+  });
+
   const tableFilters: TableFilter[] = useMemo(() => {
     const filters: TableFilter[] = [
       {
@@ -399,6 +413,16 @@ export function AuditLogTable({
       MaxDateFilter()
     ];
 
+    if (!modelType) {
+      filters.push({
+        name: 'model_type',
+        label: t`Model Type`,
+        description: t`Filter by the type of item which was changed`,
+        type: 'choice',
+        choices: modelTypeFilters.choices
+      });
+    }
+
     if (singleObject && includeChildren === undefined) {
       filters.push({
         name: 'include_children',
@@ -409,7 +433,7 @@ export function AuditLogTable({
     }
 
     return filters;
-  }, [singleObject, includeChildren]);
+  }, [singleObject, includeChildren, modelType, modelTypeFilters.choices]);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [

@@ -548,6 +548,33 @@ class AuditAPITest(AuditTestMixin, InvenTreeAPITestCase):
 
             self.assertGreater(len(self.po_history(include_children=False)), 0)
 
+    def test_model_type_filter_options(self):
+        """The model type filter choices are provided via the OPTIONS metadata."""
+        response = self.options(self.list_url())
+
+        filters = response.data['filters']
+
+        # Model-backed filters (e.g. 'actor') are never exposed
+        self.assertNotIn('actor', filters)
+
+        choices = {
+            c['value']: c['display_name'] for c in filters['model_type']['choices']
+        }
+
+        self.assertEqual(choices['order.purchaseorder'], 'Purchase Order')
+        self.assertIn('order.purchaseorderlineitem', choices)
+
+        # Only models which the user can view are provided
+        self.assertNotIn('part.part', choices)
+        self.assertNotIn('build.build', choices)
+
+        # The chosen value filters the entries
+        data = self.get(self.list_url(), {'model_type': 'order.purchaseorder'}).data
+        self.assertGreater(len(data), 0)
+
+        for entry in data:
+            self.assertEqual(entry['model_type'], 'order.purchaseorder')
+
     def test_superuser(self):
         """Superusers can view all entries."""
         self.clearRoles()
