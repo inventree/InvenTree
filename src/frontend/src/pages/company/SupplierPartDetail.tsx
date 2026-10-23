@@ -232,11 +232,13 @@ export default function SupplierPartDetail() {
     return [
       <DetailsBadge
         label={t`Inactive`}
+        tooltip={t`This supplier part is inactive`}
         color='red'
         visible={supplierPart.active == false}
       />,
       <DetailsBadge
         label={`${t`In Stock`}: ${formatDecimal(supplierPart.in_stock)}`}
+        tooltip={t`Quantity of this supplier part in stock`}
         color={'green'}
         visible={
           supplierPart?.active &&
@@ -247,12 +249,14 @@ export default function SupplierPartDetail() {
       />,
       <DetailsBadge
         label={t`No Stock`}
+        tooltip={t`There is no stock available for this supplier part`}
         color={'red'}
         visible={supplierPart.active && supplierPart.in_stock == 0}
         key='no_stock'
       />,
       <DetailsBadge
         label={`${t`On Order`}: ${formatDecimal(supplierPart.on_order)}`}
+        tooltip={t`Quantity on order from outstanding purchase orders`}
         color='blue'
         visible={supplierPart.on_order > 0}
         key='on_order'

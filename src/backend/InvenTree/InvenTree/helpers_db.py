@@ -3,8 +3,17 @@
 import uuid
 from typing import Optional
 
-from django.db import transaction
+from django.db import connections, router, transaction
 from django.db.models import QuerySet
+
+
+def bulk_insert_returns_pks(model) -> bool:
+    """Return True if the database backend returns primary keys from bulk_create() for this model.
+
+    e.g. PostgreSQL, SQLite 3.35+ and MariaDB 10.5+ do, MySQL does not.
+    """
+    db = router.db_for_write(model)
+    return connections[db].features.can_return_rows_from_bulk_insert
 
 
 @transaction.atomic
@@ -20,36 +29,58 @@ def bulk_create_and_fetch(
         filters: Optional dictionary of filters to apply when fetching the created items.
 
     Returns:
-        A QuerySet containing the created items.
+        A QuerySet containing the created items, ordered by id_field (i.e. insertion order).
 
     This helper method is required because the Django bulk_create() method
     does not guarantee that the ID values of the created items will be populated in the returned objects.
     In particular, MySQL does not support returning the ID values of bulk created items.
 
-    So, we provide temporary metadata to the created items,
+    If the database backend returns primary keys from bulk_create() (e.g. PostgreSQL),
+    these are used directly. Otherwise, we provide temporary metadata to the created items,
     which can be used to fetch the created items from the database.
 
-    Assumptions:
+    Assumptions (for backends which do not return primary keys):
         - The provided model type has a "metadata" attribute which can be overloaded for this purpose
         - The model type has an incrementing ID field (default: "pk")
 
-    Any "metadata" provided on the input items is temporarily replaced,
-    and restored (both in the database and on the input items) once the items have been fetched.
+    Any "metadata" provided on the input items is retained (on both code paths).
+    """
+    id_field = id_field or 'pk'
 
+    if not items:
+        return model.objects.none()
+
+    if bulk_insert_returns_pks(model):
+        created = model.objects.bulk_create(items, batch_size=500)
+        pks = [item.pk for item in created]
+
+        return model.objects.filter(pk__in=pks, **(filters or {})).order_by(id_field)
+
+    return _bulk_create_and_fetch_by_metadata(model, items, id_field, filters)
+
+
+def _bulk_create_and_fetch_by_metadata(
+    model, items, id_field: str, filters: Optional[dict]
+) -> QuerySet:
+    """Fallback for bulk_create_and_fetch(), for backends which do not return primary keys.
+
+    The created items are tagged with temporary metadata, which is used to fetch them back.
     """
     bulk_create_id = uuid.uuid4().hex
 
     # Generate temporary metadata for bulk fetching
     metadata = {'bulk_create_id': bulk_create_id}
 
-    lookup_filters = dict(filters) if filters else {}
+    # Note: caller-provided filters are only applied to the returned queryset,
+    # so that *every* created item is found (and its temporary metadata cleared)
+    lookup_filters = {'metadata__bulk_create_id': bulk_create_id}
 
-    lookup_filters['metadata__bulk_create_id'] = bulk_create_id
+    # Find the "most recent" item in the database, to set a search floor
+    if instance := model.objects.order_by(f'-{id_field}').first():
+        lookup_filters[f'{id_field}__gt'] = getattr(instance, id_field)
 
-    if id_field:
-        # Find the "most recent" item in the database, to set a search floor
-        if instance := model.objects.order_by(f'-{id_field}').first():
-            lookup_filters[f'{id_field}__gt'] = getattr(instance, id_field)
+    # Retain any metadata provided with the input items, so that it can be restored
+    original_metadata = [item.metadata for item in items]
 
     # Retain any metadata provided with the input items, so that it can be restored
     original_metadata = [item.metadata for item in items]
@@ -61,8 +92,6 @@ def bulk_create_and_fetch(
     model.objects.bulk_create(items, batch_size=500)
 
     instances = model.objects.filter(**lookup_filters)
-
-    id_field = id_field or 'pk'
 
     pks = list(instances.order_by(id_field).values_list(id_field, flat=True))
 
@@ -89,4 +118,6 @@ def bulk_create_and_fetch(
     # backend, so this restores correspondence with the input 'items' list for callers that
     # zip the result against it positionally. Without this, some backends (e.g. MySQL) may
     # return 'pk__in' rows in a different order than they were inserted.
-    return model.objects.filter(**{f'{id_field}__in': pks}).order_by(id_field)
+    return model.objects.filter(**{f'{id_field}__in': pks}, **(filters or {})).order_by(
+        id_field
+    )

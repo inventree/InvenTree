@@ -586,6 +586,7 @@ export default function BuildDetail() {
           />,
           <DetailsBadge
             label={t`External`}
+            tooltip={t`This build order is fulfilled by an external supplier`}
             color='blue'
             key='external'
             visible={build.external}
