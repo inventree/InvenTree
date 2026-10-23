@@ -25,7 +25,12 @@ from corsheaders.defaults import default_headers as default_cors_headers
 
 import InvenTree.backup
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
-from InvenTree.config import get_boolean_setting, get_oidc_private_key, get_setting
+from InvenTree.config import (
+    ensure_middleware,
+    get_boolean_setting,
+    get_oidc_private_key,
+    get_setting,
+)
 from InvenTree.ready import isInMainThread, isRunningBackup
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.validators import invalid_site_url_hint
@@ -407,23 +412,11 @@ MIDDLEWARE = CONFIG.get(
 
 # The audit log middleware is required for audit entries to record the user (and request context).
 # MIDDLEWARE may be overridden via the config file - ensure that it is always present
-AUDIT_MIDDLEWARE = 'audit.middleware.InvenTreeAuditlogMiddleware'
-
-if AUDIT_MIDDLEWARE not in MIDDLEWARE:
-    logger.warning(
-        'INVE-W17: %s missing from MIDDLEWARE configuration - adding automatically',
-        AUDIT_MIDDLEWARE,
-    )
-
-    MIDDLEWARE = list(MIDDLEWARE)
-
-    # Place after the structlog request middleware if present (shares the request ID)
-    structlog_middleware = 'django_structlog.middlewares.RequestMiddleware'
-
-    if structlog_middleware in MIDDLEWARE:
-        MIDDLEWARE.insert(MIDDLEWARE.index(structlog_middleware) + 1, AUDIT_MIDDLEWARE)
-    else:
-        MIDDLEWARE.append(AUDIT_MIDDLEWARE)
+MIDDLEWARE = ensure_middleware(
+    MIDDLEWARE,
+    'audit.middleware.InvenTreeAuditlogMiddleware',
+    after='django_structlog.middlewares.RequestMiddleware',
+)
 
 # Audit log configuration (django-auditlog)
 # Ref: https://django-auditlog.readthedocs.io/en/latest/usage.html#settings
