@@ -237,6 +237,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'INVENTREE_LINK_PROOF': {
+        'name': _('Allow Link Proof'),
+        'description': _(
+            'Allow other instances to verify the server identity without revealing the instance ID'
+        ),
+        'default': True,
+        'validator': bool,
+    },
     'INVENTREE_INSTANCE': {
         'name': _('Server Instance Name'),
         'default': 'InvenTree',

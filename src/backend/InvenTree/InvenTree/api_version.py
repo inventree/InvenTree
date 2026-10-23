@@ -1,14 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 563
+INVENTREE_API_VERSION = 564
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v563 -> 2026-10-22 : https://github.com/inventree/InvenTree/pull/TODO
+v564 -> 2026-10-24 : https://github.com/inventree/InvenTree/pull/13069
     - Adds read-only audit log API endpoints (/api/audit/)
     - OPTIONS metadata includes a "filters" entry, listing the available choices for choice-based list filters
+
+v563 -> 2026-10-22 : https://github.com/inventree/InvenTree/pull/13030
+    - Adds optional 'link_nonce' mechanism to the API root
 
 v562 -> 2026-10-21 : https://github.com/inventree/InvenTree/pull/13034
     - Adds new "pricing" user role, covering the PartPricing, PartSellPriceBreak and PartInternalPriceBreak models
