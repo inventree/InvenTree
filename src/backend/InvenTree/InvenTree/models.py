@@ -35,6 +35,7 @@ import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.sentry
 import report.mixins
+from InvenTree.model_features import ModelFeatureMixin
 
 logger = structlog.get_logger('inventree')
 
@@ -532,12 +533,16 @@ class InvenTreePermissionCheckMixin:
         return user.has_perm(perm)
 
 
-class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
+class InvenTreeParameterMixin(
+    ModelFeatureMixin, InvenTreePermissionCheckMixin, models.Model
+):
     """Provides an abstracted class for managing parameters.
 
     Links the implementing model to the common.models.Parameter table,
     and provides the following methods:
     """
+
+    MODEL_FEATURE = 'org.inventree.i.modelfeatures.parameters'
 
     class Meta:
         """Metaclass options for InvenTreeParameterMixin."""
@@ -682,12 +687,16 @@ class InvenTreeParameterMixin(InvenTreePermissionCheckMixin, models.Model):
         return True
 
 
-class InvenTreeNoteMixin(InvenTreePermissionCheckMixin, models.Model):
+class InvenTreeNoteMixin(
+    ModelFeatureMixin, InvenTreePermissionCheckMixin, models.Model
+):
     """Provides an abstracted class for managing notes.
 
     Links the implementing model to the common.models.Note table,
     and provides multiple accessor / helper methods.
     """
+
+    MODEL_FEATURE = 'org.inventree.i.modelfeatures.notes'
 
     class Meta:
         """Metaclass options for InvenTreeNoteMixin."""
@@ -835,7 +844,7 @@ class InvenTreeNoteMixin(InvenTreePermissionCheckMixin, models.Model):
         return True
 
 
-class InvenTreeAttachmentMixin(InvenTreePermissionCheckMixin):
+class InvenTreeAttachmentMixin(ModelFeatureMixin, InvenTreePermissionCheckMixin):
     """Provides an abstracted class for managing file attachments.
 
     Links the implementing model to the common.models.Attachment table,
@@ -843,6 +852,8 @@ class InvenTreeAttachmentMixin(InvenTreePermissionCheckMixin):
 
     - attachments: Return a queryset containing all attachments for this model
     """
+
+    MODEL_FEATURE = 'org.inventree.i.modelfeatures.attachments'
 
     def delete(self, *args, **kwargs):
         """Handle the deletion of a model instance.
@@ -1474,13 +1485,15 @@ class PathStringMixin(models.Model):
         ]
 
 
-class InvenTreeTagsMixin(models.Model):
+class InvenTreeTagsMixin(ModelFeatureMixin, models.Model):
     """A mixin class for adding tag functionality to a model class.
 
     The following fields are added to any model which implements this mixin:
 
     - tags : A text field for storing comma-separated tags
     """
+
+    MODEL_FEATURE = 'org.inventree.i.modelfeatures.tags'
 
     class Meta:
         """Metaclass options for this mixin.
@@ -1493,7 +1506,7 @@ class InvenTreeTagsMixin(models.Model):
     tags = TaggableManager(blank=True)
 
 
-class InvenTreeBarcodeMixin(models.Model):
+class InvenTreeBarcodeMixin(ModelFeatureMixin, models.Model):
     """A mixin class for adding barcode functionality to a model class.
 
     Two types of barcodes are supported:
@@ -1508,6 +1521,8 @@ class InvenTreeBarcodeMixin(models.Model):
 
     The barcode_model_type_code() classmethod must be implemented in the model class.
     """
+
+    MODEL_FEATURE = 'org.inventree.i.modelfeatures.barcode'
 
     class Meta:
         """Metaclass options for this mixin.
@@ -1765,13 +1780,15 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
         )
 
 
-class InvenTreeImageMixin(models.Model):
+class InvenTreeImageMixin(ModelFeatureMixin, models.Model):
     """A mixin class for adding image functionality to a model class.
 
     The following fields are added to any model which implements this mixin:
 
     - image : An image field for storing an image
     """
+
+    MODEL_FEATURE = 'org.inventree.i.modelfeatures.image'
 
     IMAGE_RENAME: Callable | None = None
 

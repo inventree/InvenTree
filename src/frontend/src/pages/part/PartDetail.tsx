@@ -63,8 +63,6 @@ import {
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import AttachmentPanel from '../../components/panels/AttachmentPanel';
-import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
@@ -484,6 +482,7 @@ export default function PartDetail() {
         icon: <IconLayersLinked />,
         content: <RelatedPartTable partId={part.pk} />
       },
+      // TODO: remove this panel once generic model locking is available
       {
         name: 'parameters',
         label: t`Parameters`,
@@ -508,17 +507,7 @@ export default function PartDetail() {
             />
           </>
         )
-      },
-      AttachmentPanel({
-        model_type: ModelType.part,
-        model_id: part?.pk,
-        attachment_count: instanceInfo.attachment_count
-      }),
-      NotesPanel({
-        model_type: ModelType.part,
-        model_id: part?.pk,
-        note_count: instanceInfo.note_count
-      })
+      }
     ];
   }, [
     id,

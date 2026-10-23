@@ -22,10 +22,7 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import AttachmentPanel from '../../components/panels/AttachmentPanel';
-import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import ParametersPanel from '../../components/panels/ParametersPanel';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -33,7 +30,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useUserState } from '../../states/UserState';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -57,11 +53,6 @@ export default function ManufacturerPartDetail() {
       manufacturer_detail: true,
       tags: true
     }
-  });
-
-  const { instanceInfo } = useInstanceInfo({
-    modelType: ModelType.manufacturerpart,
-    modelId: manufacturerPart?.pk
   });
 
   const panels: PanelType[] = useMemo(() => {
@@ -105,24 +96,9 @@ export default function ManufacturerPartDetail() {
         ) : (
           <Skeleton />
         )
-      },
-      ParametersPanel({
-        model_type: ModelType.manufacturerpart,
-        model_id: manufacturerPart?.pk,
-        parameter_count: instanceInfo.parameter_count
-      }),
-      AttachmentPanel({
-        model_type: ModelType.manufacturerpart,
-        model_id: manufacturerPart?.pk,
-        attachment_count: instanceInfo.attachment_count
-      }),
-      NotesPanel({
-        model_type: ModelType.manufacturerpart,
-        model_id: manufacturerPart?.pk,
-        note_count: instanceInfo.note_count
-      })
+      }
     ];
-  }, [user, manufacturerPart, instanceInfo]);
+  }, [user, manufacturerPart]);
 
   const editManufacturerPartFields = useManufacturerPartFields();
 

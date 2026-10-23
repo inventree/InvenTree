@@ -18,6 +18,7 @@ import InvenTree.conversion
 import InvenTree.ready
 import InvenTree.tasks
 from InvenTree.config import get_setting
+from InvenTree.model_features import build_model_features_cache
 from InvenTree.ready import ignore_ready_warning
 
 logger = structlog.get_logger('inventree')
@@ -96,6 +97,7 @@ class InvenTreeConfig(AppConfig):
 
         self.update_site_url()
         self.load_unit_registry()
+        build_model_features_cache()
 
         if InvenTree.ready.canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()

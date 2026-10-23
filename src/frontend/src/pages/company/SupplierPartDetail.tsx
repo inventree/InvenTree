@@ -26,10 +26,7 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import AttachmentPanel from '../../components/panels/AttachmentPanel';
-import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import ParametersPanel from '../../components/panels/ParametersPanel';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
@@ -37,7 +34,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useUserState } from '../../states/UserState';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import SupplierPriceBreakTable from '../../tables/purchasing/SupplierPriceBreakTable';
@@ -65,11 +61,6 @@ export default function SupplierPartDetail() {
       manufacturer_detail: true,
       tags: true
     }
-  });
-
-  const { instanceInfo } = useInstanceInfo({
-    modelType: ModelType.supplierpart,
-    modelId: supplierPart?.pk
   });
 
   const panels: PanelType[] = useMemo(() => {
@@ -122,24 +113,9 @@ export default function SupplierPartDetail() {
         ) : (
           <Skeleton />
         )
-      },
-      ParametersPanel({
-        model_type: ModelType.supplierpart,
-        model_id: supplierPart?.pk,
-        parameter_count: instanceInfo.parameter_count
-      }),
-      AttachmentPanel({
-        model_type: ModelType.supplierpart,
-        model_id: supplierPart?.pk,
-        attachment_count: instanceInfo.attachment_count
-      }),
-      NotesPanel({
-        model_type: ModelType.supplierpart,
-        model_id: supplierPart?.pk,
-        note_count: instanceInfo.note_count
-      })
+      }
     ];
-  }, [supplierPart, instanceInfo]);
+  }, [supplierPart]);
 
   const supplierPartActions = useMemo(() => {
     return [

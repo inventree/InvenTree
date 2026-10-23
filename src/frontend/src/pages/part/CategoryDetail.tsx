@@ -31,7 +31,6 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/panels/PanelGroup';
-import ParametersPanel from '../../components/panels/ParametersPanel';
 import SegmentedControlPanel from '../../components/panels/SegmentedControlPanel';
 import { partCategoryFields } from '../../forms/PartForms';
 import {
@@ -39,7 +38,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import { useUserSettingsState } from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
@@ -79,11 +77,6 @@ export default function CategoryDetail() {
     params: {
       path_detail: true
     }
-  });
-
-  const { instanceInfo } = useInstanceInfo({
-    modelType: ModelType.partcategory,
-    modelId: category?.pk
   });
 
   const stockOperationProps: StockOperationProps = useMemo(() => {
@@ -257,12 +250,6 @@ export default function CategoryDetail() {
           />
         )
       },
-      ParametersPanel({
-        model_type: ModelType.partcategory,
-        model_id: category?.pk,
-        hidden: !id || !category.pk,
-        parameter_count: instanceInfo.parameter_count
-      }),
       {
         name: 'category_parameters',
         label: t`Parameter Templates`,
@@ -271,7 +258,7 @@ export default function CategoryDetail() {
         content: <PartCategoryTemplateTable categoryId={category?.pk} />
       }
     ],
-    [category, id, partsView, instanceInfo]
+    [category, id, partsView]
   );
 
   const breadcrumbs = useMemo(
