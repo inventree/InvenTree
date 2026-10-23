@@ -1,10 +1,11 @@
 """API endpoints for the audit app."""
 
 from django.db.models import Q
-from django.urls import path
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
+from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 
 import audit.serializers
@@ -16,7 +17,7 @@ from audit.permissions import (
 )
 from common.filters import determine_content_type
 from InvenTree.filters import SEARCH_ORDER_FILTER
-from InvenTree.mixins import ListAPI, RetrieveAPI
+from InvenTree.helpers_api import InvenTreeApiRouter
 from InvenTree.permissions import IsAdminOrAdminScope
 
 
@@ -98,8 +99,12 @@ class AuditLogFilter(rest_filters.FilterSet):
         return queryset.filter(own)
 
 
-class AuditLogMixin:
-    """Mixin class for AuditLogEntry API endpoints."""
+class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
+    """API endpoint for audit log entries (read-only).
+
+    - GET (list): Return a list of audit log entries
+    - GET (detail): Return a single audit log entry
+    """
 
     queryset = AuditLogEntry.objects.all().select_related(
         'content_type', 'parent_content_type'
@@ -109,6 +114,14 @@ class AuditLogMixin:
     # The audit log is only available to staff users.
     # Entries are *additionally* filtered by the user's permissions on each audited model.
     permission_classes = [IsAdminOrAdminScope]
+
+    filterset_class = AuditLogFilter
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['timestamp', 'action', 'actor']
+    ordering = '-timestamp'
+
+    search_fields = ['object_repr', 'actor__username']
 
     def get_queryset(self):
         """Restrict entries to those the requesting user is allowed to view."""
@@ -131,23 +144,7 @@ class AuditLogMixin:
         return queryset
 
 
-class AuditLogList(AuditLogMixin, ListAPI):
-    """List API endpoint for audit log entries (read-only)."""
+audit_router = InvenTreeApiRouter()
+audit_router.register('', AuditLogViewSet, basename='api-audit-log')
 
-    filterset_class = AuditLogFilter
-    filter_backends = SEARCH_ORDER_FILTER
-
-    ordering_fields = ['timestamp', 'action', 'actor']
-    ordering = '-timestamp'
-
-    search_fields = ['object_repr', 'actor__username']
-
-
-class AuditLogDetail(AuditLogMixin, RetrieveAPI):
-    """Detail API endpoint for a single audit log entry (read-only)."""
-
-
-audit_api_urls = [
-    path('<int:pk>/', AuditLogDetail.as_view(), name='api-audit-log-detail'),
-    path('', AuditLogList.as_view(), name='api-audit-log-list'),
-]
+audit_api_urls = [path('', include(audit_router.urls))]
