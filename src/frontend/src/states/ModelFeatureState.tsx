@@ -63,6 +63,8 @@ export const useModelFeatureState = create<ModelFeatureStateProps>()(
   )
 );
 
+const EMPTY_FEATURES: ModelFeatureRef[] = [];
+
 /**
  * Hook to get list of features for given model type.
  * Returns an empty list if the model is unknown, or the information is not (yet) loaded.
@@ -71,6 +73,6 @@ export function useModelFeatures(
   model: ModelType | string | undefined
 ): ModelFeatureRef[] {
   return useModelFeatureState(
-    (state) => (model ? state.features?.[model] : undefined) ?? []
+    (state) => (model ? state.features?.[model] : undefined) ?? EMPTY_FEATURES
   );
 }
