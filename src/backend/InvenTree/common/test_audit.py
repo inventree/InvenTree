@@ -790,3 +790,20 @@ class GlobalSettingAuditTest(InvenTreeAPITestCase):
         self.clearRoles()
 
         self.assertGreater(len(self.get(url, params).data), 0)
+
+    def test_default_value_not_recorded(self):
+        """Settings created automatically (with their default value) are not recorded."""
+        from common.models import InvenTreeSetting
+        from common.settings import get_global_setting
+
+        InvenTreeSetting.objects.filter(key='AUDIT_LOG_DELETE_DAYS').delete()
+
+        n = self.entries().count()
+
+        # Reading the setting creates it (with the default value)
+        get_global_setting('AUDIT_LOG_DELETE_DAYS')
+        self.assertTrue(
+            InvenTreeSetting.objects.filter(key='AUDIT_LOG_DELETE_DAYS').exists()
+        )
+
+        self.assertEqual(self.entries().count(), n)

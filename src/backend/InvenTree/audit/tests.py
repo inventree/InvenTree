@@ -31,6 +31,22 @@ from part.models import Part
 TEST_MODELS = [PurchaseOrder, PurchaseOrderLineItem]
 
 
+def setting_content_type():
+    """Return the ContentType for global settings."""
+    from common.models import InvenTreeSetting
+
+    return ContentType.objects.get_for_model(InvenTreeSetting)
+
+
+def audited_entries():
+    """Return all audit entries, except for changes to global settings.
+
+    Changes to the audit log settings are always recorded,
+    even when the audit log is disabled.
+    """
+    return AuditLogEntry.objects.exclude(content_type=setting_content_type())
+
+
 class AuditTestMixin:
     """Ensure that the test models are registered with the audit log.
 
@@ -100,6 +116,7 @@ class AuditRegistryTest(TestCase):
                 'build.build',
                 'common.attachment',
                 'common.customunit',
+                'common.inventreesetting',
                 'common.parameter',
                 'common.parametertemplate',
                 'common.projectcode',
@@ -290,7 +307,11 @@ class AuditModelTest(AuditTestMixin, TestCase):
         with mock.patch('audit.tasks.DELETE_BATCH_SIZE', 1):
             delete_old_audit_entries()
 
-        self.assertEqual(AuditLogEntry.objects.count(), 1)
+        # Only the recent entries remain (including the settings changes above)
+        self.assertEqual(
+            AuditLogEntry.objects.exclude(content_type=setting_content_type()).count(),
+            1,
+        )
 
     def test_retention_keep_summary(self):
         """With 'keep summary' enabled, the creation and latest entry of each object are kept."""
@@ -1011,17 +1032,17 @@ class AuditDisabledTest(InvenTreeAPITestCase):
             ('context', disable_auditlog),
         ]:
             with self.subTest(disabled_by=name):
-                n = AuditLogEntry.objects.count()
+                n = audited_entries().count()
 
                 with context():
                     operation()
 
-                self.assertEqual(AuditLogEntry.objects.count(), n)
+                self.assertEqual(audited_entries().count(), n)
 
         # Sanity check: the same operation *is* recorded when enabled
-        n = AuditLogEntry.objects.count()
+        n = audited_entries().count()
         operation()
-        self.assertGreater(AuditLogEntry.objects.count(), n)
+        self.assertGreater(audited_entries().count(), n)
 
     def test_create_update_delete(self):
         """Model create / update / delete operations."""
@@ -1156,15 +1177,15 @@ class AuditDisabledTest(InvenTreeAPITestCase):
             with self.subTest(operation=operation.__name__):
                 # Note: disable_auditlog() is not propagated to the request thread,
                 # so only the global setting is tested here
-                n = AuditLogEntry.objects.count()
+                n = audited_entries().count()
 
                 with self.setting_disabled():
                     operation()
 
-                self.assertEqual(AuditLogEntry.objects.count(), n)
+                self.assertEqual(audited_entries().count(), n)
 
                 operation()
-                self.assertGreater(AuditLogEntry.objects.count(), n)
+                self.assertGreater(audited_entries().count(), n)
 
 
 class AuditRetentionTest(InvenTreeAPITestCase):

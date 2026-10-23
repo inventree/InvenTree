@@ -248,6 +248,11 @@ class BaseInvenTreeSetting(UpdatedUserMixin, models.Model):
         # Execute before_save action
         self._call_settings_function('before_save', args, kwargs)
 
+        # Values are stored as strings - convert the (cleaned) value here, as the database would,
+        # so that the audit log compares like with like (e.g. 'True' vs True)
+        if self.value is not None and not isinstance(self.value, str):
+            self.value = str(self.value)
+
         super().save()
 
         # Update this setting in the cache after it was saved so a pk exists
@@ -653,6 +658,9 @@ class BaseInvenTreeSetting(UpdatedUserMixin, models.Model):
                     extra_fields[field] = kwargs[field]
 
             setting = cls(key=key, value=default_value, **extra_fields)
+
+            # Creating a setting with its default value is not a user change
+            setting.audit_skip = True
 
             try:
                 # Wrap this statement in "atomic", so it can be rolled back if it fails
@@ -1281,9 +1289,13 @@ class InvenTreeSetting(InvenTree.models.InvenTreeAuditMixin, BaseInvenTreeSettin
     def should_audit(self) -> bool:
         """Do not record changes to settings which are written by the system.
 
-        Internal settings (prefixed with '_') are written automatically,
-        e.g. by every scheduled task run.
+        - Internal settings (prefixed with '_') are written automatically,
+          e.g. by every scheduled task run
+        - Settings which are created automatically (with the default value) when first accessed
         """
+        if getattr(self, 'audit_skip', False):
+            return False
+
         return not (str(self.key).startswith('_') or self.key in self.AUDIT_IGNORE_KEYS)
 
     def audit_always(self) -> bool:
@@ -1316,11 +1328,6 @@ class InvenTreeSetting(InvenTree.models.InvenTreeAuditMixin, BaseInvenTreeSettin
         # If an override is specified for this setting, use that value
         if self.key in overrides:
             self.value = overrides[self.key]
-
-        # Values are stored as strings - convert here (as the database would),
-        # so that the audit log compares like with like (e.g. 'True' vs True)
-        if self.value is not None and not isinstance(self.value, str):
-            self.value = str(self.value)
 
         super().save()
 
