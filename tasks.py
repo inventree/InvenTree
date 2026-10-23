@@ -2126,6 +2126,7 @@ def export_definitions(c, basedir: str = ''):
         base_path.joinpath('inventree_report_context.json'),
         base_path.joinpath('inventree_status_codes.json'),
         base_path.joinpath('inventree_roles.json'),
+        base_path.joinpath('inventree_audited_models.json'),
     ]
 
     info('Exporting definitions...')
@@ -2145,6 +2146,9 @@ def export_definitions(c, basedir: str = ''):
 
     check_file_existence(filenames[5], overwrite=True)
     manage(c, f'export_roles {filenames[5]}', pty=True)
+
+    check_file_existence(filenames[6], overwrite=True)
+    manage(c, f'export_audited_models {filenames[6]}', pty=True)
 
     info('Exporting definitions complete')
 

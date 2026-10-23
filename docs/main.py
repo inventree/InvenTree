@@ -91,6 +91,9 @@ with open(gen_base.joinpath('inventree_report_context.json'), encoding='utf-8') 
 # User permission roles
 with open(gen_base.joinpath('inventree_roles.json'), encoding='utf-8') as f:
     ROLES = json.load(f)
+# Audited models
+with open(gen_base.joinpath('inventree_audited_models.json'), encoding='utf-8') as f:
+    AUDITED_MODELS = json.load(f)
 
 
 def get_repo_url(raw=False):
@@ -492,6 +495,32 @@ def define_env(env):
         for role in ROLES:
             description = role['description'] or role['label']
             ret_data += f'| **{role["label"]}** | {description} |\n'
+
+        return ret_data
+
+    @env.macro
+    def audited_models():
+        """Render a markdown table of the models which are recorded in the audit log.
+
+        The table is built directly from `docs/generated/inventree_audited_models.json`
+        (produced by the `export_audited_models` management command, sourced from
+        the models which implement `InvenTreeAuditMixin`), so it can never drift out
+        of sync with the models actually audited in the source code.
+        """
+        global AUDITED_MODELS
+
+        ret_data = '| Category | Model | Model Type | Parent | Notes |\n'
+        ret_data += '| --- | --- | --- | --- | --- |\n'
+
+        for model in AUDITED_MODELS:
+            parent = model['parent']
+            notes = model['parent_note']
+
+            if fields := model['include_fields']:
+                fields = ', '.join(f'`{field}`' for field in fields)
+                notes = f'Only the following fields are recorded: {fields}'
+
+            ret_data += f'| {model["app"]} | {model["name"]} | `{model["model_type"]}` | {parent} | {notes} |\n'
 
         return ret_data
 
