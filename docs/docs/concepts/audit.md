@@ -25,7 +25,10 @@ Some notes on what is recorded:
 - **Field changes** - For updates, only the fields which have actually changed are recorded. Saving an item without changing any values does not create an audit entry.
 - **Parent linkage** - Many audited models are linked to a *parent* item. For example, a purchase order line item is linked to its purchase order, and a BOM item is linked to its assembly part. Changes to child items are displayed in the history of the parent item.
 - **Files** - For file fields (such as attachments), only the filename is recorded, not the file contents.
-- **Request information** - Each entry records the user who made the change, along with the remote IP address and a correlation ID which links together all changes made in a single request.
+- **Request information** - Each entry records the user who made the change, along with the remote IP address and a correlation ID which links together all changes made in a single request. The username is retained, even if the user account is later deleted.
+- **Background tasks** - Changes made by background tasks are recorded against the name of the task which made the change.
+- **System settings** - Changes to [global settings](../settings/global.md) are recorded (and are only visible to staff users). Internal settings which are updated automatically by the system are not recorded, and the values of protected settings are never stored.
+- **Audit settings** - Changes to the audit log settings are *always* recorded, even if the audit log is disabled. This ensures that disabling the audit log (or adjusting the retention period) cannot go unnoticed.
 
 #### What Is Not Recorded
 
