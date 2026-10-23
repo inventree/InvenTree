@@ -510,10 +510,13 @@ class ParameterAuditTest(InvenTreeAPITestCase):
         with CaptureQueriesContext(connection) as context:
             audited_bulk_create(Parameter, objs)
 
+        # Table name quoting differs between backends (e.g. backticks for MySQL)
         table = AuditLogEntry._meta.db_table
 
         inserts = [
-            q for q in context.captured_queries if f'INSERT INTO "{table}"' in q['sql']
+            q
+            for q in context.captured_queries
+            if q['sql'].startswith('INSERT INTO') and table in q['sql']
         ]
 
         self.assertEqual(len(inserts), 1)

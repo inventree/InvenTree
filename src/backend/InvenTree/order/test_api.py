@@ -2105,6 +2105,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         N_ITEMS = StockItem.objects.count()
 
         # Receive all items in a single request
+        # Includes a fixed overhead (independent of N_LINES) for recording audit entries
         response = self.post(
             url,
             {
@@ -2118,7 +2119,7 @@ class PurchaseOrderReceiveTest(OrderTest):
                 ],
                 'location': location.pk,
             },
-            max_query_count=104 + 3 * N_LINES,
+            max_query_count=124 + 3 * N_LINES,
         ).data
 
         # Check for expected response
@@ -2240,11 +2241,12 @@ class PurchaseOrderReceiveTest(OrderTest):
             'location': location.pk,
         }
 
+        # Includes a fixed overhead (independent of N_LINES) for recording audit entries
         with self.settings(
             PLUGIN_TESTING_EVENTS=True, PLUGIN_TESTING_EVENTS_ASYNC=True
         ):
             response = self.post(
-                url, data, max_query_count=400, benchmark=True, format='json'
+                url, data, max_query_count=420, benchmark=True, format='json'
             )
 
         self.assertEqual(response.status_code, 201)
