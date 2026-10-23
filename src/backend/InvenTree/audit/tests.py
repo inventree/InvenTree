@@ -1165,3 +1165,76 @@ class AuditDisabledTest(InvenTreeAPITestCase):
 
                 operation()
                 self.assertGreater(AuditLogEntry.objects.count(), n)
+
+
+class AuditRetentionTest(InvenTreeAPITestCase):
+    """Audit entries are retained when related objects are removed."""
+
+    roles = ['purchase_order.change', 'purchase_order.view']
+
+    def test_stale_parent_content_type(self):
+        """Removing a stale (parent) content type does not delete child entries."""
+        from django.core.management import call_command
+
+        company = Company.objects.create(name='Child Company')
+        entry = AuditLogEntry.objects.get_for_object(company).get()
+
+        stale = ContentType.objects.create(app_label='removed_app', model='removed')
+
+        entry.parent_content_type = stale
+        entry.parent_object_pk = '1'
+        entry.save()
+
+        call_command(
+            'remove_stale_contenttypes',
+            '--include-stale-apps',
+            '--no-input',
+            verbosity=0,
+        )
+
+        self.assertFalse(ContentType.objects.filter(pk=stale.pk).exists())
+
+        entry.refresh_from_db()
+        self.assertIsNone(entry.parent_content_type)
+
+    def test_deleted_user(self):
+        """The username of the actor is retained if the user is deleted."""
+        user = get_user_model().objects.create_user(
+            username='leaver', password='password', is_staff=True
+        )
+        self.client.force_login(user)
+
+        company = Company.objects.create(name='Edited Company', is_supplier=True)
+
+        # Grant the user permission to edit the company
+        for group in self.user.groups.all():
+            user.groups.add(group)
+
+        self.patch(
+            reverse('api-company-detail', kwargs={'pk': company.pk}),
+            {'description': 'Edited by leaver'},
+        )
+
+        entry = (
+            AuditLogEntry.objects
+            .get_for_object(company)
+            .filter(action=AuditLogEntry.Action.UPDATE)
+            .get()
+        )
+
+        self.assertEqual(entry.actor, user)
+        self.assertEqual(entry.actor_username, 'leaver')
+
+        user.delete()
+        entry.refresh_from_db()
+
+        self.assertIsNone(entry.actor)
+        self.assertEqual(entry.actor_username, 'leaver')
+
+        # The username is provided via the API
+        self.client.force_login(self.user)
+        url = reverse('api-audit-log-detail', kwargs={'pk': entry.pk})
+
+        data = self.get(url).data
+        self.assertIsNone(data['actor'])
+        self.assertEqual(data['actor_username'], 'leaver')

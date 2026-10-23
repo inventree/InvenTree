@@ -504,6 +504,15 @@ export function AuditLogTable({
             return RenderUser({ instance: record.actor_detail });
           }
 
+          // The user account has since been deleted
+          if (record.actor_username) {
+            return (
+              <Text size='sm' c='dimmed'>
+                {t`${record.actor_username} (deleted)`}
+              </Text>
+            );
+          }
+
           if (record.additional_data?.source) {
             return (
               <Text size='sm' c='dimmed' fs='italic'>

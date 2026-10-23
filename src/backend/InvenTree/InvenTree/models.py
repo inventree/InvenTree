@@ -595,6 +595,21 @@ class InvenTreeAuditMixin:
 
         return None
 
+    def should_audit(self) -> bool:
+        """Return False to skip recording audit entries for this instance.
+
+        Used where only some rows of a model are of interest
+        (e.g. settings which are written automatically by the system).
+        """
+        return True
+
+    def audit_always(self) -> bool:
+        """Return True to record audit entries for this instance, even if the audit log is disabled.
+
+        Used for changes which must always be recorded (e.g. disabling the audit log itself).
+        """
+        return False
+
     def is_audit_masked(self) -> bool:
         """Return True if *all* values recorded against this instance must be masked.
 

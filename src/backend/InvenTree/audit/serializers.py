@@ -80,6 +80,7 @@ class AuditLogEntrySerializer(
             'action_label',
             'actor',
             'actor_detail',
+            'actor_username',
             'model_type',
             'model_label',
             'object_pk',

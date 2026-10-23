@@ -15,9 +15,22 @@ from audit.models import DEFERRED_LOG_ATTR
 def check_audit_enabled(sender, instance, action, **kwargs):
     """Skip writing audit entries if the audit log is disabled via global setting.
 
+    - Instances can opt out of being recorded (should_audit)
+    - Instances can be recorded even if the audit log is disabled (audit_always)
+
     Returning False from a pre_log receiver prevents the entry being created.
     """
     from common.settings import get_global_setting
+
+    should_audit = getattr(instance, 'should_audit', None)
+
+    if callable(should_audit) and not should_audit():
+        return False
+
+    audit_always = getattr(instance, 'audit_always', None)
+
+    if callable(audit_always) and audit_always():
+        return None
 
     # create=False: never write to the settings table from within the audit hook
     if not get_global_setting('AUDIT_LOG_ENABLED', True, create=False):

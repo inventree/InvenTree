@@ -1260,12 +1260,39 @@ class BaseInvenTreeSetting(UpdatedUserMixin, models.Model):
         return self.__class__.is_required(self.key, **self.get_filters_for_instance())
 
 
-class InvenTreeSetting(BaseInvenTreeSetting):
+class InvenTreeSetting(InvenTree.models.InvenTreeAuditMixin, BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
     The class provides a way of retrieving the value for a particular key,
     even if that key does not exist.
     """
+
+    # Only the setting key and value are recorded in the audit log
+    # (e.g. 'updated_by' is redundant with the audit entry actor)
+    AUDIT_INCLUDE_FIELDS = ('key', 'value')
+
+    # Settings which are written automatically by the system (not by users)
+    AUDIT_IGNORE_KEYS = ('SERVER_RESTART_REQUIRED',)
+
+    def __str__(self):
+        """Return the setting key."""
+        return str(self.key)
+
+    def should_audit(self) -> bool:
+        """Do not record changes to settings which are written by the system.
+
+        Internal settings (prefixed with '_') are written automatically,
+        e.g. by every scheduled task run.
+        """
+        return not (str(self.key).startswith('_') or self.key in self.AUDIT_IGNORE_KEYS)
+
+    def audit_always(self) -> bool:
+        """Changes to the audit log settings are always recorded (e.g. disabling the audit log)."""
+        return str(self.key).startswith('AUDIT_LOG_')
+
+    def is_audit_masked(self) -> bool:
+        """Protected setting values are never recorded."""
+        return self.protected
 
     from common.setting.system import SYSTEM_SETTINGS
 
@@ -1289,6 +1316,11 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         # If an override is specified for this setting, use that value
         if self.key in overrides:
             self.value = overrides[self.key]
+
+        # Values are stored as strings - convert here (as the database would),
+        # so that the audit log compares like with like (e.g. 'True' vs True)
+        if self.value is not None and not isinstance(self.value, str):
+            self.value = str(self.value)
 
         super().save()
 

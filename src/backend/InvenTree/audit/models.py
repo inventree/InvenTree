@@ -165,6 +165,10 @@ class AuditLogEntryManager(LogEntryManager):
             kwargs['actor'] = actor
             kwargs['actor_email'] = getattr(actor, 'email', None)
 
+        # Record the username, so that the actor is still identified if the user is deleted
+        if (actor := kwargs.get('actor')) and not kwargs.get('actor_username'):
+            kwargs['actor_username'] = getattr(actor, 'username', None)
+
         if source := audit.context.get_source():
             get_additional_data = getattr(instance, 'get_additional_data', None)
 
@@ -300,9 +304,11 @@ class AuditLogEntry(AbstractLogEntry):
 
     objects = AuditLogEntryManager()
 
+    # Note: SET_NULL (rather than CASCADE) so that removing a stale content type
+    # (e.g. an uninstalled plugin) does not delete the history of child objects
     parent_content_type = models.ForeignKey(
         ContentType,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name='+',
@@ -311,6 +317,11 @@ class AuditLogEntry(AbstractLogEntry):
 
     parent_object_pk = models.CharField(
         max_length=255, null=True, blank=True, verbose_name=_('Parent Object PK')
+    )
+
+    # Snapshot of the actor's username (retained if the user is deleted)
+    actor_username = models.CharField(
+        max_length=150, null=True, blank=True, verbose_name=_('Actor Username')
     )
 
     @property

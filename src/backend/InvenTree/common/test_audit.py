@@ -666,3 +666,127 @@ class ConfigurationAuditTest(InvenTreeAPITestCase):
         self.assertAlmostEqual(
             float(convert_physical_value('1 smoot', 'meter')), 1.7018, places=4
         )
+
+
+class GlobalSettingAuditTest(InvenTreeAPITestCase):
+    """Audit tests for global settings."""
+
+    roles = 'all'
+
+    def entries(self, **filters):
+        """Return audit entries for global settings."""
+        from django.contrib.contenttypes.models import ContentType
+
+        from common.models import InvenTreeSetting
+
+        return AuditLogEntry.objects.filter(
+            content_type=ContentType.objects.get_for_model(InvenTreeSetting), **filters
+        )
+
+    def set_value(self, key, value):
+        """Change a global setting via the API."""
+        self.patch(
+            reverse('api-global-setting-detail', kwargs={'key': key}), {'value': value}
+        )
+
+    def test_setting_change(self):
+        """Changes to a global setting are recorded (key and value only)."""
+        self.set_value('INVENTREE_INSTANCE', 'Audit Instance')
+
+        entry = self.entries(object_repr='INVENTREE_INSTANCE').order_by('pk').last()
+
+        self.assertEqual(entry.actor, self.user)
+        self.assertEqual(entry.changes_dict['value'][1], 'Audit Instance')
+
+        for field in entry.changes_dict:
+            self.assertIn(field, ['key', 'value'])
+
+    def test_unchanged_value(self):
+        """Saving a setting with an unchanged value is not recorded."""
+        self.set_value('AUDIT_LOG_DELETE_OLD_ENTRIES', True)
+
+        n = self.entries().count()
+        self.set_value('AUDIT_LOG_DELETE_OLD_ENTRIES', True)
+
+        self.assertEqual(self.entries().count(), n)
+
+    def test_system_settings_not_recorded(self):
+        """Settings which are written automatically by the system are not recorded."""
+        from common.models import InvenTreeSetting
+        from common.settings import set_global_setting
+
+        n = self.entries().count()
+
+        # Internal settings (e.g. written by every scheduled task run)
+        set_global_setting('_TEST_TASK_ATTEMPT', 'now', change_user=None)
+
+        # Changing this setting also sets 'SERVER_RESTART_REQUIRED'
+        self.assertFalse(InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))
+        self.set_value('PLUGIN_ON_STARTUP', True)
+        self.assertTrue(InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))
+
+        keys = list(
+            self.entries().order_by('pk')[n:].values_list('object_repr', flat=True)
+        )
+
+        self.assertEqual(keys, ['PLUGIN_ON_STARTUP'])
+
+    def test_protected_value(self):
+        """The values of protected settings are never recorded."""
+        from unittest import mock
+
+        from audit.models import MASKED_VALUE
+        from common.models import InvenTreeSetting
+
+        with mock.patch.object(InvenTreeSetting, 'is_protected', return_value=True):
+            self.set_value('INVENTREE_INSTANCE', 'secret-value')
+
+        entry = self.entries(object_repr='INVENTREE_INSTANCE').order_by('pk').last()
+
+        self.assertEqual(entry.changes_dict['value'][1], MASKED_VALUE)
+
+        for field in ['changes', 'changes_text', 'additional_data', 'object_repr']:
+            self.assertNotIn('secret-value', str(getattr(entry, field)))
+
+    def test_disable_audit_log(self):
+        """Disabling (and re-enabling) the audit log is always recorded."""
+        self.set_value('AUDIT_LOG_ENABLED', False)
+
+        entry = self.entries(object_repr='AUDIT_LOG_ENABLED').order_by('pk').last()
+
+        self.assertEqual(entry.actor, self.user)
+        self.assertEqual(entry.changes_dict['value'], ['True', 'False'])
+
+        # Other changes are no longer recorded
+        n = AuditLogEntry.objects.count()
+        self.set_value('INVENTREE_INSTANCE', 'Not recorded')
+        self.set_value('AUDIT_LOG_DELETE_DAYS', 7)
+        Company.objects.create(name='Not recorded')
+
+        # ...except for changes to the audit log settings themselves
+        self.assertEqual(AuditLogEntry.objects.count(), n + 1)
+        self.assertEqual(
+            AuditLogEntry.objects.order_by('pk').last().object_repr,
+            'AUDIT_LOG_DELETE_DAYS',
+        )
+
+        self.set_value('AUDIT_LOG_ENABLED', True)
+
+        entry = self.entries(object_repr='AUDIT_LOG_ENABLED').order_by('pk').last()
+        self.assertEqual(entry.changes_dict['value'], ['False', 'True'])
+
+    def test_staff_only(self):
+        """Setting history is only visible to staff users."""
+        self.set_value('INVENTREE_INSTANCE', 'Staff only')
+
+        url = reverse('api-audit-log-list')
+        params = {'model_type': 'common.inventreesetting'}
+
+        self.assertGreater(len(self.get(url, params).data), 0)
+
+        # Staff users without the 'admin' role can still view settings history
+        self.user.is_superuser = False
+        self.user.save()
+        self.clearRoles()
+
+        self.assertGreater(len(self.get(url, params).data), 0)
