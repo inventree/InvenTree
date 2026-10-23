@@ -5,6 +5,7 @@ import os
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
+from django.utils.functional import Promise
 from django.utils.translation import gettext_lazy as _
 
 from auditlog.models import AbstractLogEntry, LogEntryManager
@@ -65,6 +66,18 @@ def file_field_basenames(model, changes: dict) -> dict:
             changes[name] = [
                 os.path.basename(v) if isinstance(v, str) and v else v for v in value
             ]
+
+    return changes
+
+
+def resolve_lazy_strings(changes: dict) -> dict:
+    """Convert lazy translation strings to plain strings, so that the changes are JSON serializable.
+
+    Upstream only performs this conversion when AUDITLOG_STORE_JSON_CHANGES is disabled.
+    """
+    for name, value in changes.items():
+        if isinstance(value, (list, tuple)):
+            changes[name] = [str(v) if isinstance(v, Promise) else v for v in value]
 
     return changes
 
@@ -185,10 +198,21 @@ class AuditLogEntryManager(LogEntryManager):
                 if not changes and not force_log:
                     return None
 
-            kwargs['changes'] = file_field_basenames(type(instance), changes)
+            kwargs['changes'] = file_field_basenames(
+                type(instance), resolve_lazy_strings(changes)
+            )
 
         kwargs = self.get_audit_kwargs(instance, kwargs)
         return super().log_create(instance, force_log=force_log, **kwargs)
+
+    def create(self, **kwargs):
+        """Create a new log entry, or add it to the current batch (see audit.helpers.write_batched)."""
+        if (batch := audit.context.get_batch()) is not None:
+            entry = self.model(**kwargs)
+            batch.append(entry)
+            return entry
+
+        return super().create(**kwargs)
 
     def log_m2m_changes(
         self, changed_queryset, instance, operation, field_name, **kwargs

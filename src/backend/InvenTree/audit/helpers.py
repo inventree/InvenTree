@@ -5,9 +5,12 @@ so changes made this way are not recorded by django-auditlog.
 Code which modifies audited models in bulk should use these helpers instead.
 """
 
+import contextlib
+
 from django.conf import settings
 from django.core.exceptions import FieldDoesNotExist
 from django.db import connection, transaction
+from django.db.models.signals import pre_save
 
 from auditlog.context import auditlog_disabled
 from auditlog.registry import auditlog
@@ -21,6 +24,36 @@ def is_audited(model) -> bool:
         disabled = False
 
     return not disabled and auditlog.contains(model)
+
+
+@contextlib.contextmanager
+def write_batched():
+    """Write all audit entries created within this context with a single bulk insert.
+
+    Avoids one INSERT query per modified row for the bulk helpers below.
+    Must be used within a transaction, so that the entries are written atomically with the changes.
+
+    Note: post_log receivers are passed the (unsaved) log entry.
+    """
+    from audit.context import audit_batch
+    from audit.models import AuditLogEntry
+
+    with audit_batch() as entries:
+        yield
+
+        if entries:
+            # Upstream applies context data (e.g. remote_addr) via a pre_save receiver,
+            # which bulk_create() does not trigger
+            for entry in entries:
+                pre_save.send(
+                    sender=AuditLogEntry,
+                    instance=entry,
+                    raw=False,
+                    using=AuditLogEntry.objects.db,
+                    update_fields=None,
+                )
+
+            AuditLogEntry.objects.bulk_create(entries)
 
 
 def copy_related_cache(source, target) -> None:
@@ -89,17 +122,18 @@ def audited_update(queryset, **values) -> int:
 
         new_rows = manager.in_bulk(pks)
 
-        for old in old_rows:
-            if new := new_rows.get(old.pk):
-                _create_log_entry(
-                    action=AuditLogEntry.Action.UPDATE,
-                    instance=new,
-                    sender=model,
-                    diff_old=old,
-                    diff_new=new,
-                    fields_to_check=list(values.keys()),
-                    use_json_for_changes=settings.AUDITLOG_STORE_JSON_CHANGES,
-                )
+        with write_batched():
+            for old in old_rows:
+                if new := new_rows.get(old.pk):
+                    _create_log_entry(
+                        action=AuditLogEntry.Action.UPDATE,
+                        instance=new,
+                        sender=model,
+                        diff_old=old,
+                        diff_new=new,
+                        fields_to_check=list(values.keys()),
+                        use_json_for_changes=settings.AUDITLOG_STORE_JSON_CHANGES,
+                    )
 
     return count
 
@@ -144,17 +178,18 @@ def audited_bulk_update(model, objs: list, fields: list[str], **kwargs) -> int:
             if new := new_rows.get(obj.pk):
                 copy_related_cache(obj, new)
 
-        for pk, old in old_rows.items():
-            if new := new_rows.get(pk):
-                _create_log_entry(
-                    action=AuditLogEntry.Action.UPDATE,
-                    instance=new,
-                    sender=model,
-                    diff_old=old,
-                    diff_new=new,
-                    fields_to_check=list(fields),
-                    use_json_for_changes=settings.AUDITLOG_STORE_JSON_CHANGES,
-                )
+        with write_batched():
+            for pk, old in old_rows.items():
+                if new := new_rows.get(pk):
+                    _create_log_entry(
+                        action=AuditLogEntry.Action.UPDATE,
+                        instance=new,
+                        sender=model,
+                        diff_old=old,
+                        diff_new=new,
+                        fields_to_check=list(fields),
+                        use_json_for_changes=settings.AUDITLOG_STORE_JSON_CHANGES,
+                    )
 
     return count
 
@@ -164,8 +199,7 @@ def audited_bulk_create(model, objs: list) -> list:
 
     Uses InvenTree.helpers_db.bulk_create_and_fetch() to resolve the created rows,
     so that entries are recorded on every database backend - including those which do
-    not return primary keys from bulk_create() (e.g. MySQL). The same code path is used
-    for all backends, so that it is exercised by CI regardless of the test database.
+    not return primary keys from bulk_create() (e.g. MySQL).
 
     Primary keys are populated on the provided objects (as per bulk_create()).
 
@@ -208,14 +242,15 @@ def audited_bulk_create(model, objs: list) -> list:
             obj._state.db = instance._state.db
 
         if is_audited(model):
-            for instance in created:
-                _create_log_entry(
-                    action=AuditLogEntry.Action.CREATE,
-                    instance=instance,
-                    sender=model,
-                    diff_old=None,
-                    diff_new=instance,
-                    use_json_for_changes=settings.AUDITLOG_STORE_JSON_CHANGES,
-                )
+            with write_batched():
+                for instance in created:
+                    _create_log_entry(
+                        action=AuditLogEntry.Action.CREATE,
+                        instance=instance,
+                        sender=model,
+                        diff_old=None,
+                        diff_new=instance,
+                        use_json_for_changes=settings.AUDITLOG_STORE_JSON_CHANGES,
+                    )
 
     return created

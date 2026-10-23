@@ -15,6 +15,35 @@ from typing import Optional
 _audit_request = ContextVar('inventree_audit_request', default=None)
 _audit_cid = ContextVar('inventree_audit_cid', default=None)
 _audit_source = ContextVar('inventree_audit_source', default=None)
+_audit_batch = ContextVar('inventree_audit_batch', default=None)
+
+
+@contextlib.contextmanager
+def audit_batch():
+    """Collect (unsaved) audit entries created within this context, rather than saving each one.
+
+    Nested contexts share the outermost list.
+
+    Yields:
+        The list of collected entries, which the caller is responsible for writing
+        (or None for a nested context, as there is nothing to write).
+    """
+    if _audit_batch.get() is not None:
+        yield None
+        return
+
+    entries = []
+    token = _audit_batch.set(entries)
+
+    try:
+        yield entries
+    finally:
+        _audit_batch.reset(token)
+
+
+def get_batch() -> Optional[list]:
+    """Return the list of audit entries being collected, or None if not batching."""
+    return _audit_batch.get()
 
 
 @contextlib.contextmanager

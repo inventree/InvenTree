@@ -82,9 +82,6 @@ def _bulk_create_and_fetch_by_metadata(
     # Retain any metadata provided with the input items, so that it can be restored
     original_metadata = [item.metadata for item in items]
 
-    # Retain any metadata provided with the input items, so that it can be restored
-    original_metadata = [item.metadata for item in items]
-
     # Overwrite the metadata values
     for item in items:
         item.metadata = metadata

@@ -318,16 +318,22 @@ class AuditedUpdateTest(InvenTreeAPITestCase):
 
     def test_unaudited_model(self):
         """Models which are not audited fall back to a plain update."""
-        from part.models import PartCategory
+        from django.contrib.contenttypes.models import ContentType
 
-        PartCategory.objects.create(name='Cat', description='x')
+        from audit.helpers import is_audited
+        from stock.models import StockLocationType
 
-        n = audited_update(PartCategory.objects.all(), description='y')
+        self.assertFalse(is_audited(StockLocationType))
+
+        StockLocationType.objects.create(name='Type', description='x')
+
+        n = audited_update(StockLocationType.objects.all(), description='y')
 
         self.assertEqual(n, 1)
+        self.assertEqual(StockLocationType.objects.get().description, 'y')
         self.assertFalse(
             AuditLogEntry.objects.filter(
-                content_type=PartCategory.get_content_type()
+                content_type=ContentType.objects.get_for_model(StockLocationType)
             ).exists()
         )
 

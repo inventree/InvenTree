@@ -109,6 +109,19 @@ class AttachmentAuditTest(InvenTreeAPITestCase):
             [(e['model_type'], e['action']) for e in self.company_history()],
         )
 
+    def test_lazy_string_value(self):
+        """Lazy translation strings (e.g. a generated report comment) are recorded as plain strings."""
+        from django.utils.translation import gettext_lazy
+
+        self.company.create_attachment(
+            link='https://example.com/report', comment=gettext_lazy('Generated')
+        )
+
+        attachment = Attachment.objects.get(link='https://example.com/report')
+
+        entry = self.entries(attachment, action=ACTION.CREATE).get()
+        self.assertEqual(entry.changes_dict['comment'], [None, 'Generated'])
+
     def test_edit_and_rename(self):
         """Comment edits and file renames are recorded (filename only)."""
         attachment = self.upload(filename='original.txt')
@@ -384,8 +397,13 @@ class ParameterAuditTest(InvenTreeAPITestCase):
             for template, value in [(self.colour, 'Green'), (self.length, '7')]
         ]
 
-        with mock.patch.object(
-            Parameter.objects, 'bulk_create', side_effect=bulk_create_without_pk
+        with (
+            mock.patch(
+                'InvenTree.helpers_db.bulk_insert_returns_pks', return_value=False
+            ),
+            mock.patch.object(
+                Parameter.objects, 'bulk_create', side_effect=bulk_create_without_pk
+            ),
         ):
             created = audited_bulk_create(Parameter, objs)
 
@@ -418,6 +436,88 @@ class ParameterAuditTest(InvenTreeAPITestCase):
 
         copied = Parameter.objects.get(model_id=other.pk, template=self.colour)
         self.assertEqual(copied.metadata, {'source': 'datasheet'})
+
+    def test_bulk_create_api(self):
+        """Entries for a bulk API create are written together, with the request context."""
+        response = self.post(
+            reverse('api-parameter-list'),
+            [
+                {
+                    'model_type': 'part',
+                    'model_id': self.part.pk,
+                    'template': template.pk,
+                    'data': value,
+                }
+                for template, value in [(self.length, '10'), (self.colour, 'Red')]
+            ],
+            format='json',
+        )
+
+        pks = [str(item['pk']) for item in response.data]
+        entries = self.entries(object_pk__in=pks, action=ACTION.CREATE)
+
+        self.assertEqual(entries.count(), 2)
+        self.assertEqual(len({entry.cid for entry in entries}), 1)
+
+        for entry in entries:
+            self.assertEqual(entry.actor, self.user)
+            self.assertEqual(entry.remote_addr, '127.0.0.1')
+            self.assertEqual(entry.parent_object_pk, str(self.part.pk))
+
+    def test_bulk_create_api_error(self):
+        """No entries are written if any item in a bulk API create is invalid."""
+        self.post(
+            reverse('api-parameter-list'),
+            [
+                {
+                    'model_type': 'part',
+                    'model_id': self.part.pk,
+                    'template': self.colour.pk,
+                    'data': 'Red',
+                },
+                {'model_type': 'part', 'model_id': self.part.pk, 'template': 9999},
+            ],
+            format='json',
+            expected_code=400,
+        )
+
+        self.assertFalse(self.entries().exists())
+
+    def test_bulk_create_single_insert(self):
+        """audited_bulk_create() writes all audit entries with a single query."""
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+
+        from audit.helpers import audited_bulk_create
+        from common.models import Parameter
+        from part.models import Part
+
+        parts = [
+            Part.objects.create(name=f'R{idx}', description='Resistor')
+            for idx in range(5)
+        ]
+
+        objs = [
+            Parameter(
+                model_type=Part.get_content_type(),
+                model_id=part.pk,
+                template=self.colour,
+                data='Red',
+            )
+            for part in parts
+        ]
+
+        with CaptureQueriesContext(connection) as context:
+            audited_bulk_create(Parameter, objs)
+
+        table = AuditLogEntry._meta.db_table
+
+        inserts = [
+            q for q in context.captured_queries if f'INSERT INTO "{table}"' in q['sql']
+        ]
+
+        self.assertEqual(len(inserts), 1)
+        self.assertEqual(self.entries(action=ACTION.CREATE).count(), 5)
 
     def test_requires_metadata_field(self):
         """audited_bulk_create() rejects models without a 'metadata' field."""
