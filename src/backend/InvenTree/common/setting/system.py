@@ -1340,6 +1340,14 @@ SYSTEM_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': False,
         'validator': bool,
     },
+    'AUDIT_LOG_DELETE_KEEP_SUMMARY': {
+        'name': _('Retain Audit Log Summary'),
+        'description': _(
+            'When deleting old audit log entries, always keep the creation entry and the most recent entry for each item'
+        ),
+        'default': True,
+        'validator': bool,
+    },
     'AUDIT_LOG_DELETE_DAYS': {
         'name': _('Audit Log Deletion Interval'),
         'description': _(

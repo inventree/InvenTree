@@ -278,13 +278,58 @@ class AuditModelTest(AuditTestMixin, TestCase):
 
         set_global_setting('AUDIT_LOG_DELETE_OLD_ENTRIES', True)
         set_global_setting('AUDIT_LOG_DELETE_DAYS', 30)
+        set_global_setting('AUDIT_LOG_DELETE_KEEP_SUMMARY', False)
+        self.addCleanup(set_global_setting, 'AUDIT_LOG_DELETE_OLD_ENTRIES', False)
+        self.addCleanup(set_global_setting, 'AUDIT_LOG_DELETE_DAYS', 365)
+        self.addCleanup(set_global_setting, 'AUDIT_LOG_DELETE_KEEP_SUMMARY', True)
+
+        with mock.patch('audit.tasks.DELETE_BATCH_SIZE', 1):
+            delete_old_audit_entries()
+
+        self.assertEqual(AuditLogEntry.objects.count(), 1)
+
+    def test_retention_keep_summary(self):
+        """With 'keep summary' enabled, the creation and latest entry of each object are kept."""
+        # An object with multiple updates
+        for description in ['First', 'Second', 'Third']:
+            self.po.description = description
+            self.po.save()
+
+        # A deleted object
+        line = PurchaseOrderLineItem.objects.create(
+            order=self.po, part=self.supplier_part, quantity=5
+        )
+        line_pk = line.pk
+        line.quantity = 10
+        line.save()
+        line.delete()
+
+        # Everything is "old"
+        AuditLogEntry.objects.update(timestamp=timezone.now() - timedelta(days=100))
+
+        set_global_setting('AUDIT_LOG_DELETE_OLD_ENTRIES', True)
+        set_global_setting('AUDIT_LOG_DELETE_DAYS', 30)
         self.addCleanup(set_global_setting, 'AUDIT_LOG_DELETE_OLD_ENTRIES', False)
         self.addCleanup(set_global_setting, 'AUDIT_LOG_DELETE_DAYS', 365)
 
         with mock.patch('audit.tasks.DELETE_BATCH_SIZE', 1):
             delete_old_audit_entries()
 
-        self.assertEqual(AuditLogEntry.objects.count(), 1)
+        po_entries = self.entries_for(self.po).order_by('pk')
+        self.assertEqual(
+            [e.action for e in po_entries],
+            [AuditLogEntry.Action.CREATE, AuditLogEntry.Action.UPDATE],
+        )
+        self.assertEqual(po_entries.last().changes_dict['description'][1], 'Third')
+
+        line_entries = AuditLogEntry.objects.filter(
+            content_type=PurchaseOrderLineItem.get_content_type(),
+            object_pk=str(line_pk),
+        ).order_by('pk')
+        self.assertEqual(
+            [e.action for e in line_entries],
+            [AuditLogEntry.Action.CREATE, AuditLogEntry.Action.DELETE],
+        )
 
 
 class AuditAPITest(AuditTestMixin, InvenTreeAPITestCase):
@@ -323,6 +368,31 @@ class AuditAPITest(AuditTestMixin, InvenTreeAPITestCase):
         self.assertEqual(data[0]['model_type'], 'order.purchaseorder')
         self.assertEqual(data[0]['model_label'], 'Purchase Order')
         self.assertEqual(data[0]['changes']['description'][1], 'Session edit')
+
+    def test_correlation_id(self):
+        """The correlation ID matches the request ID (as used by structlog)."""
+        url = reverse('api-po-detail', kwargs={'pk': self.po.pk})
+
+        # Request ID provided by the client / reverse proxy
+        self.patch(url, {'description': 'One'}, HTTP_X_REQUEST_ID='req-abc-123')
+
+        entry = self.entries_for(self.po, action=AuditLogEntry.Action.UPDATE).get()
+        self.assertEqual(entry.cid, 'req-abc-123')
+
+        # Otherwise a unique ID is generated per request
+        self.patch(url, {'description': 'Two'})
+        self.patch(url, {'description': 'Three'})
+
+        cids = list(
+            self
+            .entries_for(self.po, action=AuditLogEntry.Action.UPDATE)
+            .exclude(cid='req-abc-123')
+            .values_list('cid', flat=True)
+        )
+
+        self.assertEqual(len(cids), 2)
+        self.assertTrue(all(cids))
+        self.assertNotEqual(cids[0], cids[1])
 
     def test_basic_auth_actor(self):
         """Users authenticated by DRF (not middleware) are recorded as the actor."""
@@ -611,6 +681,48 @@ class AuditAPITest(AuditTestMixin, InvenTreeAPITestCase):
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['changes_detail'][0]['label'], 'Name')
         self.assertEqual(data[0]['changes_detail'][0]['new'], 'b')
+
+
+class AuditMiddlewareConfigTest(TestCase):
+    """Tests for ensuring the audit middleware is always configured."""
+
+    AUDIT = 'audit.middleware.InvenTreeAuditlogMiddleware'
+    STRUCTLOG = 'django_structlog.middlewares.RequestMiddleware'
+
+    def test_installed(self):
+        """The audit middleware is present in the active configuration."""
+        from django.conf import settings
+
+        self.assertIn(self.AUDIT, settings.MIDDLEWARE)
+
+        # Placed after the structlog middleware (shares the request ID)
+        self.assertGreater(
+            settings.MIDDLEWARE.index(self.AUDIT),
+            settings.MIDDLEWARE.index(self.STRUCTLOG),
+        )
+
+    def test_ensure_middleware(self):
+        """Missing middleware is added (after the specified middleware, if present)."""
+        from InvenTree.config import ensure_middleware
+
+        # Already present - unchanged
+        middleware = ['a', self.AUDIT, 'b']
+        self.assertEqual(ensure_middleware(middleware, self.AUDIT), middleware)
+
+        # Missing - inserted after the specified middleware (with a warning)
+        with self.assertLogs('inventree', level='WARNING') as logs:
+            result = ensure_middleware(
+                ['a', self.STRUCTLOG, 'b'], self.AUDIT, after=self.STRUCTLOG
+            )
+
+        self.assertEqual(result, ['a', self.STRUCTLOG, self.AUDIT, 'b'])
+        self.assertIn('INVE-W17', logs.output[0])
+
+        # Missing (and the 'after' middleware is not present) - appended
+        with self.assertLogs('inventree', level='WARNING'):
+            result = ensure_middleware(['a', 'b'], self.AUDIT, after=self.STRUCTLOG)
+
+        self.assertEqual(result, ['a', 'b', self.AUDIT])
 
 
 class AuditAdminTest(AuditTestMixin, InvenTreeAPITestCase):

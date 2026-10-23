@@ -2,6 +2,7 @@
 
 from datetime import timedelta
 
+from django.db.models import Exists, OuterRef
 from django.utils import timezone
 
 import structlog
@@ -24,6 +25,12 @@ def delete_old_audit_entries():
 
     Entries are deleted in small batches, so that no single long-running
     transaction holds locks on the (potentially very large) audit table.
+
+    If AUDIT_LOG_DELETE_KEEP_SUMMARY is enabled, the following entries are retained
+    for each object (regardless of age), so that it is always known who created
+    and who last modified an object:
+    - The CREATE entry
+    - The most recent entry (for a deleted object, this is the DELETE entry)
     """
     from audit.models import AuditLogEntry
 
@@ -35,6 +42,18 @@ def delete_old_audit_entries():
     threshold = timezone.now() - timedelta(days=delete_n_days)
 
     old_entries = AuditLogEntry.objects.filter(timestamp__lte=threshold)
+
+    if get_global_setting('AUDIT_LOG_DELETE_KEEP_SUMMARY', True):
+        # Only delete entries which have a newer entry for the same object
+        newer_entries = AuditLogEntry.objects.filter(
+            content_type=OuterRef('content_type'),
+            object_pk=OuterRef('object_pk'),
+            pk__gt=OuterRef('pk'),
+        )
+
+        old_entries = old_entries.exclude(action=AuditLogEntry.Action.CREATE).filter(
+            Exists(newer_entries)
+        )
 
     deleted = 0
 

@@ -12,6 +12,8 @@ import uuid
 from contextvars import ContextVar
 from typing import Optional
 
+import structlog
+
 _audit_request = ContextVar('inventree_audit_request', default=None)
 _audit_cid = ContextVar('inventree_audit_cid', default=None)
 _audit_source = ContextVar('inventree_audit_source', default=None)
@@ -79,8 +81,17 @@ def audit_source(source: str):
 def get_cid() -> Optional[str]:
     """Return the current correlation ID (used as AUDITLOG_CID_GETTER).
 
-    The correlation ID is always generated server-side, never read from a request header.
+    - Within a request: the request ID bound by django-structlog, so that audit entries
+      can be matched against log entries (and the X-Request-ID header) for the request.
+      Note: django-structlog uses the incoming 'X-Request-ID' header if provided
+      (e.g. by a reverse proxy), otherwise generates a new UUID.
+    - Otherwise (e.g. background tasks, or if the structlog middleware is not installed):
+      a server-generated ID (see audit_request / audit_source).
     """
+    if _audit_source.get() is None and _audit_request.get() is not None:
+        if request_id := structlog.contextvars.get_contextvars().get('request_id'):
+            return str(request_id)
+
     return _audit_cid.get()
 
 

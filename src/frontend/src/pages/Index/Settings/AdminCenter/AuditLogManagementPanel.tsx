@@ -39,7 +39,8 @@ export default function AuditLogManagementPanel() {
               keys={[
                 'AUDIT_LOG_ENABLED',
                 'AUDIT_LOG_DELETE_OLD_ENTRIES',
-                'AUDIT_LOG_DELETE_DAYS'
+                'AUDIT_LOG_DELETE_DAYS',
+                'AUDIT_LOG_DELETE_KEEP_SUMMARY'
               ]}
             />
           </Accordion.Panel>
