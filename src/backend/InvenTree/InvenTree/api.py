@@ -33,6 +33,7 @@ from common.settings import get_global_setting
 from InvenTree import helpers, ready
 from InvenTree.auth_overrides import registration_enabled
 from InvenTree.mixins import ListCreateAPI
+from InvenTree.proof import calculate_proof
 from InvenTree.tasks import batch_offload_tasks
 from plugin.base.event.events import batch_events
 from plugin.serializers import MetadataSerializer
@@ -248,6 +249,9 @@ class InfoApiSerializer(serializers.Serializer):
 
     server = serializers.CharField(read_only=True)
     id = serializers.CharField(read_only=True, allow_null=True)
+    link = serializers.CharField(
+        read_only=True, allow_null=True, help_text='Temporary identity proof'
+    )
     version = serializers.CharField(read_only=True)
     instance = serializers.CharField(read_only=True)
     apiVersion = serializers.IntegerField(read_only=True)  # noqa: N815
@@ -286,11 +290,20 @@ class InfoView(APIView):
         return OrmQ.objects.count()
 
     @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='link_nonce',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Nonce for short-term identity proof',
+            )
+        ],
         responses={
             200: OpenApiResponse(
                 response=InfoApiSerializer, description='InvenTree server information'
             )
-        }
+        },
     )
     def get(self, request, *args, **kwargs):
         """Serve current server information."""
@@ -343,6 +356,8 @@ class InfoView(APIView):
             },
             'system_state': {'cors_allow_all': settings.CORS_ALLOW_ALL_ORIGINS},
         }
+        if nonce := request.query_params.get('link_nonce'):
+            data['link'] = calculate_proof(nonce)
 
         return JsonResponse(data)
 
