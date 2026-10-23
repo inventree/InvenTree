@@ -7,6 +7,8 @@ from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 
@@ -62,6 +64,8 @@ class AnyValueChoiceField(forms.ChoiceField):
         return True
 
 
+# Note: the choices are dynamic (and any value is accepted), so the schema type is declared explicitly
+@extend_schema_field(OpenApiTypes.STR)
 class ModelTypeChoiceFilter(rest_filters.ChoiceFilter):
     """Choice filter for the model type of an audit entry.
 
