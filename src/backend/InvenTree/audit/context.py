@@ -78,6 +78,56 @@ def audit_source(source: str):
         _audit_cid.reset(cid_token)
 
 
+def task_name(func) -> str:
+    """Return the dotted name of a task function (which may be provided as a string)."""
+    if isinstance(func, str):
+        return func
+
+    module = getattr(func, '__module__', None)
+    name = getattr(func, '__qualname__', None) or getattr(func, '__name__', None)
+
+    if module and name:
+        return f'{module}.{name}'
+
+    return repr(func)
+
+
+@contextlib.contextmanager
+def audit_task(func):
+    """Mark audit entries created within this context as originating from a background task.
+
+    If a request is active (e.g. a task run synchronously as part of a request),
+    the changes are attributed to the request instead.
+    """
+    if _audit_request.get() is not None:
+        yield
+        return
+
+    with audit_source(f'task:{task_name(func)}'):
+        yield
+
+
+# Context managers for tasks which are executed by the background worker
+_worker_tasks: list = []
+
+
+def begin_worker_task(func) -> None:
+    """Enter the audit_task context for a task executed by the background worker.
+
+    The worker provides separate signals before and after a task is executed,
+    so the context is entered (and exited) manually.
+    """
+    context = audit_task(func)
+    context.__enter__()
+    _worker_tasks.append(context)
+
+
+def end_worker_task() -> None:
+    """Exit the audit_task context for the most recent worker task."""
+    if _worker_tasks:
+        _worker_tasks.pop().__exit__(None, None, None)
+
+
 def get_cid() -> Optional[str]:
     """Return the current correlation ID (used as AUDITLOG_CID_GETTER).
 

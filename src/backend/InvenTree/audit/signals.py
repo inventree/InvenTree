@@ -5,7 +5,9 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from auditlog.signals import pre_log
+from django_q.signals import post_execute_in_worker, pre_execute
 
+import audit.context
 from audit.models import DEFERRED_LOG_ATTR
 
 
@@ -86,3 +88,15 @@ def resolve_deferred_log(sender, instance, created, **kwargs):
         _audit_resolved=True,
         **{**log_kwargs, 'changes': changes},
     )
+
+
+@receiver(pre_execute, dispatch_uid='inventree_audit_pre_execute')
+def begin_worker_task(sender, func, task, **kwargs):
+    """Tag audit entries created by a background worker task with the task name."""
+    audit.context.begin_worker_task(task.get('func') or func)
+
+
+@receiver(post_execute_in_worker, dispatch_uid='inventree_audit_post_execute')
+def end_worker_task(sender, func, task, **kwargs):
+    """Clear the audit context once a background worker task has finished."""
+    audit.context.end_worker_task()
