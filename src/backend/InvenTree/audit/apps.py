@@ -15,7 +15,6 @@ class AuditConfig(AppConfig):
         Registration only connects model signals (no database access),
         and must run in every process which can save models (server, worker, shell).
         """
-        import audit.checks  # noqa: F401 - register system checks
         import audit.signals  # noqa: F401 - connect signal receivers
         from audit.registry import register_audited_models
 

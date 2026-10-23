@@ -395,15 +395,35 @@ MIDDLEWARE = CONFIG.get(
         'InvenTree.middleware.AuthRequiredMiddleware',
         'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
         'oauth2_provider.middleware.OAuth2TokenMiddleware',  # oauth2_provider
-        'audit.middleware.InvenTreeAuditlogMiddleware',  # Audit log context (after authentication)
         'maintenance_mode.middleware.MaintenanceModeMiddleware',
         'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
         'InvenTree.middleware.InvenTreeRequestCacheMiddleware',  # Request caching
         'InvenTree.middleware.InvenTreeHostSettingsMiddleware',  # Ensuring correct hosting/security settings
         'django_structlog.middlewares.RequestMiddleware',  # Structured logging
+        'audit.middleware.InvenTreeAuditlogMiddleware',  # Audit log context (after maintenance + request ID)
         'InvenTree.middleware.InvenTreeVersionHeaderMiddleware',
     ],
 )
+
+# The audit log middleware is required for audit entries to record the user (and request context).
+# MIDDLEWARE may be overridden via the config file - ensure that it is always present
+AUDIT_MIDDLEWARE = 'audit.middleware.InvenTreeAuditlogMiddleware'
+
+if AUDIT_MIDDLEWARE not in MIDDLEWARE:
+    logger.warning(
+        'INVE-W17: %s missing from MIDDLEWARE configuration - adding automatically',
+        AUDIT_MIDDLEWARE,
+    )
+
+    MIDDLEWARE = list(MIDDLEWARE)
+
+    # Place after the structlog request middleware if present (shares the request ID)
+    structlog_middleware = 'django_structlog.middlewares.RequestMiddleware'
+
+    if structlog_middleware in MIDDLEWARE:
+        MIDDLEWARE.insert(MIDDLEWARE.index(structlog_middleware) + 1, AUDIT_MIDDLEWARE)
+    else:
+        MIDDLEWARE.append(AUDIT_MIDDLEWARE)
 
 # Audit log configuration (django-auditlog)
 # Ref: https://django-auditlog.readthedocs.io/en/latest/usage.html#settings
@@ -411,8 +431,8 @@ MIDDLEWARE = CONFIG.get(
 AUDITLOG_LOGENTRY_MODEL = 'audit.AuditLogEntry'
 AUDITLOG_STORE_JSON_CHANGES = True  # Store values as JSON types, rather than strings
 AUDITLOG_DISABLE_ON_RAW_SAVE = True  # Do not log fixture loading / raw saves
-AUDITLOG_CID_HEADER = None  # Never accept a client-supplied correlation ID
-AUDITLOG_CID_GETTER = 'audit.context.get_cid'  # Server-generated correlation ID
+AUDITLOG_CID_HEADER = None  # Correlation ID is provided by AUDITLOG_CID_GETTER (below)
+AUDITLOG_CID_GETTER = 'audit.context.get_cid'  # Matches the structlog request ID
 
 # The upstream auditlog migrations only define the (swapped out) LogEntry model,
 # and do not mark it as swappable - so would create an unused 'auditlog_logentry' table.

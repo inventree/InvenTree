@@ -15,7 +15,7 @@ class InvenTreeAuditlogMiddleware(AuditlogMiddleware):
     - The actor is not captured here, but resolved lazily (see audit.context)
     - The remote address is taken from REMOTE_ADDR only, and validated
       (upstream trusts the first X-Forwarded-For entry and X-Forwarded-Port as-is)
-    - The correlation ID is generated server-side (see audit.context.get_cid)
+    - The correlation ID matches the structlog request ID (see audit.context.get_cid)
     """
 
     @staticmethod
