@@ -214,7 +214,7 @@ nav:
       - Developing a Plugin: plugins/develop.md
       - Frontend Integration: plugins/frontend.md
       - Plugin Creator: plugins/creator.md
-      - Plugin Walkthrough: plugins/walkthrough.md
+      - Step-by-Step Walkthrough: plugins/walkthrough.md
     - Guides:
       - Model Metadata: plugins/metadata.md
       - Tags: plugins/tags.md
