@@ -219,61 +219,62 @@ nav:
       - Model Metadata: plugins/metadata.md
       - Tags: plugins/tags.md
       - Unit Test: plugins/test.md
-    - Plugin Mixins:
-      - Action Mixin: plugins/mixins/action.md
-      - Allocate Mixin: plugins/mixins/allocate.md
-      - API Mixin: plugins/mixins/api.md
-      - App Mixin: plugins/mixins/app.md
-      - Barcode Mixin: plugins/mixins/barcode.md
-      - Currency Mixin: plugins/mixins/currency.md
-      - Event Mixin: plugins/mixins/event.md
-      - Data Export Mixin: plugins/mixins/export.md
-      - Icon Pack Mixin: plugins/mixins/icon.md
-      - Label Printing Mixin: plugins/mixins/label.md
-      - Locate Mixin: plugins/mixins/locate.md
-      - Machine Mixin: plugins/mixins/machine.md
-      - Mail Mixin: plugins/mixins/mail.md
-      - Navigation Mixin: plugins/mixins/navigation.md
-      - Notification Mixin: plugins/mixins/notification.md
-      - Report Mixin: plugins/mixins/report.md
-      - Schedule Mixin: plugins/mixins/schedule.md
-      - Settings Mixin: plugins/mixins/settings.md
-      - Supplier Mixin: plugins/mixins/supplier.md
-      - Transition Mixin: plugins/mixins/transition.md
-      - URL Mixin: plugins/mixins/urls.md
-      - User Interface Mixin: plugins/mixins/ui.md
-      - Validation Mixin: plugins/mixins/validation.md
-      - Well-Known Mixin: plugins/mixins/wellknown.md
-    - Machines:
-      - Overview: plugins/machines/overview.md
-      - Label Printer: plugins/machines/label_printer.md
-    - Builtin:
-      - Builtin Plugins: plugins/builtin/index.md
-      - Barcode Plugins:
-        - Barcode Plugins: plugins/builtin/barcode_index.md
-        - InvenTree Barcode: plugins/builtin/inventree_barcode.md
-        - DigiKey Barcode Plugin: plugins/builtin/barcode_digikey.md
-        - LCSC Barcode Plugin: plugins/builtin/barcode_lcsc.md
-        - Mouser Barcode Plugin: plugins/builtin/barcode_mouser.md
-        - TME Barcode Plugin: plugins/builtin/barcode_tme.md
-      - Event Plugins:
-        - Auto Create Builds: plugins/builtin/auto_create_builds.md
-        - Auto Issue: plugins/builtin/auto_issue.md
-        - Part Update Notification: plugins/builtin/part_notifications.md
-      - Export Plugins:
-        - BOM Exporter: plugins/builtin/bom_exporter.md
-        - InvenTree Exporter: plugins/builtin/inventree_exporter.md
-        - Parameter Exporter: plugins/builtin/parameter_exporter.md
-        - Stocktake Exporter: plugins/builtin/stocktake_exporter.md
-      - Label Printing:
-        - Label Printer: plugins/builtin/inventree_label.md
-        - Label Machine: plugins/builtin/inventree_label_machine.md
-        - Label Sheet: plugins/builtin/inventree_label_sheet.md
-      - Notification Plugins:
-        - Email Notifications: plugins/builtin/email_notification.md
-        - Slack Notifications: plugins/builtin/slack_notification.md
-        - UI Notifications: plugins/builtin/ui_notification.md
-      - Currency Exchange: plugins/builtin/currency_exchange.md
+    - References:
+      - Plugin Mixins:
+        - Action Mixin: plugins/mixins/action.md
+        - Allocate Mixin: plugins/mixins/allocate.md
+        - API Mixin: plugins/mixins/api.md
+        - App Mixin: plugins/mixins/app.md
+        - Barcode Mixin: plugins/mixins/barcode.md
+        - Currency Mixin: plugins/mixins/currency.md
+        - Event Mixin: plugins/mixins/event.md
+        - Data Export Mixin: plugins/mixins/export.md
+        - Icon Pack Mixin: plugins/mixins/icon.md
+        - Label Printing Mixin: plugins/mixins/label.md
+        - Locate Mixin: plugins/mixins/locate.md
+        - Machine Mixin: plugins/mixins/machine.md
+        - Mail Mixin: plugins/mixins/mail.md
+        - Navigation Mixin: plugins/mixins/navigation.md
+        - Notification Mixin: plugins/mixins/notification.md
+        - Report Mixin: plugins/mixins/report.md
+        - Schedule Mixin: plugins/mixins/schedule.md
+        - Settings Mixin: plugins/mixins/settings.md
+        - Supplier Mixin: plugins/mixins/supplier.md
+        - Transition Mixin: plugins/mixins/transition.md
+        - URL Mixin: plugins/mixins/urls.md
+        - User Interface Mixin: plugins/mixins/ui.md
+        - Validation Mixin: plugins/mixins/validation.md
+        - Well-Known Mixin: plugins/mixins/wellknown.md
+      - Machines:
+        - Overview: plugins/machines/overview.md
+        - Label Printer: plugins/machines/label_printer.md
+      - Builtin:
+        - Builtin Plugins: plugins/builtin/index.md
+        - Barcode Plugins:
+          - Barcode Plugins: plugins/builtin/barcode_index.md
+          - InvenTree Barcode: plugins/builtin/inventree_barcode.md
+          - DigiKey Barcode Plugin: plugins/builtin/barcode_digikey.md
+          - LCSC Barcode Plugin: plugins/builtin/barcode_lcsc.md
+          - Mouser Barcode Plugin: plugins/builtin/barcode_mouser.md
+          - TME Barcode Plugin: plugins/builtin/barcode_tme.md
+        - Event Plugins:
+          - Auto Create Builds: plugins/builtin/auto_create_builds.md
+          - Auto Issue: plugins/builtin/auto_issue.md
+          - Part Update Notification: plugins/builtin/part_notifications.md
+        - Export Plugins:
+          - BOM Exporter: plugins/builtin/bom_exporter.md
+          - InvenTree Exporter: plugins/builtin/inventree_exporter.md
+          - Parameter Exporter: plugins/builtin/parameter_exporter.md
+          - Stocktake Exporter: plugins/builtin/stocktake_exporter.md
+        - Label Printing:
+          - Label Printer: plugins/builtin/inventree_label.md
+          - Label Machine: plugins/builtin/inventree_label_machine.md
+          - Label Sheet: plugins/builtin/inventree_label_sheet.md
+        - Notification Plugins:
+          - Email Notifications: plugins/builtin/email_notification.md
+          - Slack Notifications: plugins/builtin/slack_notification.md
+          - UI Notifications: plugins/builtin/ui_notification.md
+        - Currency Exchange: plugins/builtin/currency_exchange.md
   - "Mobile App":
     - Overview: app/index.md
     - Connect: app/connect.md
