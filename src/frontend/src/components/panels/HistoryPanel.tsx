@@ -5,7 +5,10 @@ import { useMemo } from 'react';
 
 import type { ModelType } from '@lib/enums/ModelType';
 import type { PanelType } from '@lib/types/Panel';
-import { useUserSettingsState } from '../../states/SettingsStates';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../../states/SettingsStates';
 import { useUserState } from '../../states/UserState';
 import { AuditLogTable } from '../../tables/general/AuditLogTable';
 
@@ -17,10 +20,14 @@ import { AuditLogTable } from '../../tables/general/AuditLogTable';
 export function useShowHistoryPanel(): boolean {
   const user = useUserState();
   const userSettings = useUserSettingsState();
+  const globalSettings = useGlobalSettingsState();
 
   return useMemo(
-    () => user.isStaff() && userSettings.isSet('DISPLAY_HISTORY_TAB', false),
-    [user, userSettings]
+    () =>
+      user.isStaff() &&
+      globalSettings.isSet('AUDIT_LOG_ENABLED') &&
+      userSettings.isSet('DISPLAY_HISTORY_TAB', false),
+    [user, userSettings, globalSettings]
   );
 }
 
