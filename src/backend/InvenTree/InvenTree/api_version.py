@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 562
+INVENTREE_API_VERSION = 563
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v563 -> 2026-10-22 : https://github.com/inventree/InvenTree/pull/13030
+    - Adds optional 'link_nonce' mechanism to the API root
 
 v562 -> 2026-10-21 : https://github.com/inventree/InvenTree/pull/13034
     - Adds new "pricing" user role, covering the PartPricing, PartSellPriceBreak and PartInternalPriceBreak models
