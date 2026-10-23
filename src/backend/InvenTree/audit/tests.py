@@ -4,6 +4,7 @@ No production models are audited yet, so these tests temporarily register
 PurchaseOrder (parent) and PurchaseOrderLineItem (child) with the audit log.
 """
 
+import contextlib
 from base64 import b64encode
 from datetime import timedelta
 from unittest import mock
@@ -806,3 +807,361 @@ class AuditAdminTest(AuditTestMixin, InvenTreeAPITestCase):
 
         self.assertEqual(len(entries), 1)
         self.assertEqual(entries[0].actor, other)
+
+
+def audit_task_helper(pk: int, description: str):
+    """Background task used to test the audit source of task changes."""
+    company = Company.objects.get(pk=pk)
+    company.description = description
+    company.save()
+
+
+class AuditSourceTest(InvenTreeAPITestCase):
+    """Tests for the context recorded against programmatic (non-request) changes."""
+
+    roles = ['purchase_order.change']
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create test data."""
+        super().setUpTestData()
+
+        cls.company = Company.objects.create(name='Source Company', is_supplier=True)
+
+    def last_update(self):
+        """Return the most recent UPDATE entry for the test company."""
+        return (
+            AuditLogEntry.objects
+            .get_for_object(self.company)
+            .filter(action=AuditLogEntry.Action.UPDATE)
+            .order_by('pk')
+            .last()
+        )
+
+    def test_programmatic_update(self):
+        """A plain ORM change (no request, no task) is recorded without any request context."""
+        self.company.description = 'Programmatic'
+        self.company.save()
+
+        entry = self.last_update()
+
+        self.assertEqual(entry.changes_dict['description'], ['', 'Programmatic'])
+        self.assertIsNone(entry.actor)
+        self.assertIsNone(entry.remote_addr)
+        self.assertIsNone(entry.additional_data)
+
+    def test_programmatic_bulk_create(self):
+        """Entries for a programmatic bulk create have no actor."""
+        from audit.helpers import audited_bulk_create
+        from common.models import Parameter, ParameterTemplate
+
+        template = ParameterTemplate.objects.create(name='Source Template')
+
+        [parameter] = audited_bulk_create(
+            Parameter,
+            [
+                Parameter(
+                    model_type=Part.get_content_type(),
+                    model_id=Part.objects.create(name='P', description='P').pk,
+                    template=template,
+                    data='X',
+                )
+            ],
+        )
+
+        entry = AuditLogEntry.objects.get_for_object(parameter).get()
+
+        self.assertEqual(entry.action, AuditLogEntry.Action.CREATE)
+        self.assertIsNone(entry.actor)
+        self.assertIsNone(entry.remote_addr)
+
+    def test_actor_not_retained(self):
+        """The actor of a request is not attributed to later programmatic changes."""
+        self.patch(
+            reverse('api-company-detail', kwargs={'pk': self.company.pk}),
+            {'description': 'Via API'},
+        )
+
+        api_entry = self.last_update()
+        self.assertEqual(api_entry.actor, self.user)
+
+        self.company.refresh_from_db()
+        self.company.description = 'Programmatic'
+        self.company.save()
+
+        entry = self.last_update()
+
+        self.assertNotEqual(entry.pk, api_entry.pk)
+        self.assertIsNone(entry.actor)
+        self.assertIsNone(entry.remote_addr)
+        self.assertNotEqual(entry.cid, api_entry.cid)
+
+    def run_task(self, description: str, **kwargs):
+        """Run the test task (synchronously) via offload_task."""
+        from InvenTree.tasks import offload_task
+
+        offload_task(
+            'audit.tests.audit_task_helper',
+            self.company.pk,
+            description,
+            force_sync=True,
+            **kwargs,
+        )
+
+    def test_sync_task(self):
+        """Changes made by a (synchronous) task are tagged with the task name."""
+        self.run_task('From task')
+
+        entry = self.last_update()
+
+        self.assertEqual(entry.changes_dict['description'], ['', 'From task'])
+        self.assertEqual(
+            entry.additional_data, {'source': 'task:audit.tests.audit_task_helper'}
+        )
+        self.assertIsNone(entry.actor)
+        self.assertIsNotNone(entry.cid)
+
+        # Context is reset afterwards
+        self.assertIsNone(audit.context.get_source())
+        self.assertIsNone(audit.context.get_cid())
+
+    def test_sync_task_in_request(self):
+        """A task run synchronously within a request is attributed to the request."""
+        request = mock.Mock(user=self.user)
+
+        with audit.context.audit_request(request):
+            self.run_task('From request')
+
+        entry = self.last_update()
+
+        self.assertEqual(entry.actor, self.user)
+        self.assertIsNone(entry.additional_data)
+
+    def test_worker_task(self):
+        """Changes made by a task executed by the background worker are tagged with the task name."""
+        from django_q.tasks import AsyncTask
+
+        task = AsyncTask(
+            'audit.tests.audit_task_helper', self.company.pk, 'From worker', sync=True
+        )
+        task.run()
+
+        entry = self.last_update()
+
+        self.assertEqual(entry.changes_dict['description'], ['', 'From worker'])
+        self.assertEqual(
+            entry.additional_data, {'source': 'task:audit.tests.audit_task_helper'}
+        )
+        self.assertIsNone(entry.actor)
+        self.assertIsNotNone(entry.cid)
+
+        # Context is reset afterwards
+        self.assertIsNone(audit.context.get_source())
+        self.assertIsNone(audit.context.get_cid())
+
+    def test_worker_task_failure(self):
+        """The audit context is reset even if a worker task fails."""
+        from django_q.tasks import AsyncTask
+
+        task = AsyncTask('audit.tests.audit_task_helper', -1, 'Missing', sync=True)
+
+        with contextlib.suppress(Exception):
+            task.run()
+
+        self.assertIsNone(audit.context.get_source())
+        self.assertIsNone(audit.context.get_cid())
+
+
+class AuditDisabledTest(InvenTreeAPITestCase):
+    """No audit entries are recorded (via any write path) when auditing is disabled.
+
+    Each path is tested both with the AUDIT_LOG_ENABLED setting disabled,
+    and within the django-auditlog disable_auditlog() context.
+    """
+
+    roles = ['part.add', 'part.change', 'part.view', 'purchase_order.change']
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create test data."""
+        from common.models import ParameterTemplate
+
+        super().setUpTestData()
+
+        cls.company = Company.objects.create(name='Disabled Company', is_supplier=True)
+        cls.part = Part.objects.create(name='Disabled Part', description='A part')
+        cls.template = ParameterTemplate.objects.create(name='Disabled Template')
+
+    @contextlib.contextmanager
+    def setting_disabled(self):
+        """Disable auditing via the global setting."""
+        set_global_setting('AUDIT_LOG_ENABLED', False)
+
+        try:
+            yield
+        finally:
+            set_global_setting('AUDIT_LOG_ENABLED', True)
+
+    def check_disabled(self, operation):
+        """Check that the operation is recorded when enabled - and not when disabled."""
+        from auditlog.context import disable_auditlog
+
+        for name, context in [
+            ('setting', self.setting_disabled),
+            ('context', disable_auditlog),
+        ]:
+            with self.subTest(disabled_by=name):
+                n = AuditLogEntry.objects.count()
+
+                with context():
+                    operation()
+
+                self.assertEqual(AuditLogEntry.objects.count(), n)
+
+        # Sanity check: the same operation *is* recorded when enabled
+        n = AuditLogEntry.objects.count()
+        operation()
+        self.assertGreater(AuditLogEntry.objects.count(), n)
+
+    def test_create_update_delete(self):
+        """Model create / update / delete operations."""
+        counter = iter(range(100))
+
+        def create():
+            Company.objects.create(name=f'New {next(counter)}')
+
+        def update():
+            self.company.description = f'Description {next(counter)}'
+            self.company.save()
+
+        def delete():
+            Company.objects.create(name=f'Delete {next(counter)}').delete()
+
+        for operation in [create, update, delete]:
+            with self.subTest(operation=operation.__name__):
+                self.check_disabled(operation)
+
+    def test_child_model(self):
+        """Changes to child models (linked to a parent)."""
+        from company.models import Address
+
+        counter = iter(range(100))
+
+        self.check_disabled(
+            lambda: Address.objects.create(
+                company=self.company, title=f'Address {next(counter)}', line1='1'
+            )
+        )
+
+    def test_expression_update(self):
+        """Deferred (F() expression) updates."""
+        from django.db.models import F
+
+        from build.models import Build
+
+        build = Build.objects.create(
+            part=Part.objects.create(
+                name='Assembly', description='An assembly', assembly=True
+            ),
+            reference='BO-9901',
+            quantity=10,
+        )
+
+        def update():
+            build.priority = F('priority') + 1
+            build.save(update_fields=['priority'])
+            build.refresh_from_db()
+
+        self.check_disabled(update)
+
+    def test_audited_update(self):
+        """The audited_update() helper."""
+        from audit.helpers import audited_update
+
+        counter = iter(range(100))
+
+        self.check_disabled(
+            lambda: audited_update(
+                Company.objects.filter(pk=self.company.pk),
+                description=f'Update {next(counter)}',
+            )
+        )
+
+    def test_audited_bulk_update(self):
+        """The audited_bulk_update() helper."""
+        from audit.helpers import audited_bulk_update
+
+        counter = iter(range(100))
+
+        def update():
+            self.company.description = f'Bulk {next(counter)}'
+            audited_bulk_update(Company, [self.company], ['description'])
+
+        self.check_disabled(update)
+
+    def test_audited_bulk_create(self):
+        """The audited_bulk_create() helper."""
+        from audit.helpers import audited_bulk_create
+        from common.models import Parameter
+
+        counter = iter(range(100))
+
+        self.check_disabled(
+            lambda: audited_bulk_create(
+                Parameter,
+                [
+                    Parameter(
+                        model_type=Part.get_content_type(),
+                        model_id=Part.objects.create(
+                            name=f'P{next(counter)}', description='P'
+                        ).pk,
+                        template=self.template,
+                        data='X',
+                    )
+                ],
+            )
+        )
+
+    def test_api(self):
+        """API requests (including batched bulk creation)."""
+        counter = iter(range(100))
+
+        def update():
+            self.patch(
+                reverse('api-company-detail', kwargs={'pk': self.company.pk}),
+                {'description': f'API {next(counter)}'},
+            )
+
+        def bulk_create():
+            parts = [
+                Part.objects.create(name=f'API {next(counter)}', description='P')
+                for _ in range(2)
+            ]
+
+            self.post(
+                reverse('api-parameter-list'),
+                [
+                    {
+                        'model_type': 'part',
+                        'model_id': part.pk,
+                        'template': self.template.pk,
+                        'data': 'Y',
+                    }
+                    for part in parts
+                ],
+                format='json',
+            )
+
+        for operation in [update, bulk_create]:
+            with self.subTest(operation=operation.__name__):
+                # Note: disable_auditlog() is not propagated to the request thread,
+                # so only the global setting is tested here
+                n = AuditLogEntry.objects.count()
+
+                with self.setting_disabled():
+                    operation()
+
+                self.assertEqual(AuditLogEntry.objects.count(), n)
+
+                operation()
+                self.assertGreater(AuditLogEntry.objects.count(), n)
