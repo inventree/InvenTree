@@ -1419,6 +1419,10 @@ class PriceBreak(MetaMixin):
         help_text=_('Unit price at specified quantity'),
     )
 
+    def __str__(self):
+        """Return a string representation of this price break (e.g. 'R_10K - $1.50 @ 10')."""
+        return f'{self.part} - {self.price} @ {InvenTree.helpers.decimal2string(self.quantity)}'
+
     def convert_to(self, currency_code: str, raise_error: bool = False):
         """Convert the unit-price at this price break to the specified currency code.
 

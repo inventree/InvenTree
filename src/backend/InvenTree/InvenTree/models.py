@@ -539,6 +539,7 @@ class InvenTreeAuditMixin:
     when the 'audit' app is loaded (see audit.registry).
 
     Attributes:
+        AUDIT_INCLUDE_FIELDS: If specified, *only* these fields are recorded (e.g. user-editable fields of a cache model)
         AUDIT_EXCLUDE_FIELDS: Fields which are never recorded (merged with a base set, see audit.registry)
         AUDIT_MASK_FIELDS: Fields whose values are masked (the change is recorded, the value is not)
         AUDIT_M2M_FIELDS: Many-to-many fields which are tracked
@@ -548,6 +549,7 @@ class InvenTreeAuditMixin:
             (for models whose access is determined by the linked object, e.g. attachments)
     """
 
+    AUDIT_INCLUDE_FIELDS: tuple[str, ...] = ()
     AUDIT_EXCLUDE_FIELDS: tuple[str, ...] = ()
     AUDIT_MASK_FIELDS: tuple[str, ...] = ()
     AUDIT_M2M_FIELDS: tuple[str, ...] = ()

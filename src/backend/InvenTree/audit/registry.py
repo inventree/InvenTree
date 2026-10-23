@@ -72,8 +72,15 @@ def register_model(model, **kwargs) -> None:
         *kwargs.pop('m2m_fields', ()),
     }
 
+    # If specified, *only* these fields are recorded
+    include_fields = {
+        *getattr(model, 'AUDIT_INCLUDE_FIELDS', ()),
+        *kwargs.pop('include_fields', ()),
+    }
+
     auditlog.register(
         model,
+        include_fields=sorted(include_fields),
         exclude_fields=sorted(exclude_fields),
         mask_fields=sorted(mask_fields),
         m2m_fields=m2m_fields,

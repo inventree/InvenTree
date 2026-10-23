@@ -124,6 +124,9 @@ class AuditRegistryTest(TestCase):
                 'part.bomitemsubstitute',
                 'part.part',
                 'part.partcategory',
+                'pricing.partinternalpricebreak',
+                'pricing.partpricing',
+                'pricing.partsellpricebreak',
             ],
         )
 

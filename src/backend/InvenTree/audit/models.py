@@ -82,6 +82,39 @@ def resolve_lazy_strings(changes: dict) -> dict:
     return changes
 
 
+def drop_orphan_currency_changes(instance, changes: dict) -> dict:
+    """Remove changes to money currency fields whose amount is not set (and has not changed).
+
+    django-money stores the currency of a MoneyField 'x' in a separate field 'x_currency',
+    which has a default value (e.g. 'USD') even when the amount is empty.
+    Without this, creating an object records e.g. {'price_currency': [None, 'USD']}.
+    """
+    from djmoney.models.fields import MoneyField
+
+    result = {}
+
+    for field, value in changes.items():
+        if field.endswith('_currency'):
+            amount = field[: -len('_currency')]
+
+            try:
+                amount_field = type(instance)._meta.get_field(amount)
+            except FieldDoesNotExist:
+                amount_field = None
+
+            # Only applies to the currency field of a MoneyField (e.g. not 'order_currency')
+            if (
+                isinstance(amount_field, MoneyField)
+                and amount not in changes
+                and getattr(instance, amount, None) is None
+            ):
+                continue
+
+        result[field] = value
+
+    return result
+
+
 def is_concrete_field(model, field_name: str) -> bool:
     """Return True if field_name is a concrete field on the model (or is unknown)."""
     try:
@@ -175,6 +208,12 @@ class AuditLogEntryManager(LogEntryManager):
                 for field, value in changes.items()
                 if is_concrete_field(type(instance), field)
             }
+
+            # A money currency field (e.g. 'price_currency') is meaningless without an amount
+            changes = drop_orphan_currency_changes(instance, changes)
+
+            if not changes and not force_log:
+                return None
 
             if kwargs.get('action') == AuditLogEntry.Action.UPDATE:
                 if not resolved and (fields := expression_fields(instance, changes)):

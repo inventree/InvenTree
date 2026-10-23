@@ -19,6 +19,7 @@ import common.currency
 import common.models
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 from common.currency import currency_code_default
@@ -33,7 +34,7 @@ from part.models import Part
 logger = structlog.get_logger('inventree')
 
 
-class PartPricing(common.models.MetaMixin):
+class PartPricing(InvenTree.models.InvenTreeAuditMixin, common.models.MetaMixin):
     """Model for caching min/max pricing information for a particular Part.
 
     It is prohibitively expensive to calculate min/max pricing for a part "on the fly".
@@ -59,6 +60,18 @@ class PartPricing(common.models.MetaMixin):
     - Detailed pricing information is very context specific in any case
     """
 
+    # Pricing is recalculated automatically (in the background) - only the
+    # user-specified override values are recorded in the audit log
+    AUDIT_INCLUDE_FIELDS = (
+        'override_min',
+        'override_min_currency',
+        'override_max',
+        'override_max_currency',
+    )
+
+    # Changes to the pricing overrides are included in the history of the part
+    AUDIT_PARENT_FIELD = 'part'
+
     class Meta:
         """Metaclass providing extra model definition."""
 
@@ -67,6 +80,10 @@ class PartPricing(common.models.MetaMixin):
 
     # When calculating assembly pricing, we limit the depth of the calculation
     MAX_PRICING_DEPTH = 50
+
+    def __str__(self):
+        """Return a string representation of this PartPricing instance."""
+        return _('{part} pricing').format(part=self.part)
 
     @property
     def is_valid(self):
@@ -834,8 +851,13 @@ class PartPricing(common.models.MetaMixin):
     )
 
 
-class PartSellPriceBreak(common.models.PriceBreak):
+class PartSellPriceBreak(
+    InvenTree.models.InvenTreeAuditMixin, common.models.PriceBreak
+):
     """Represents a price break for selling this part."""
+
+    # Changes to a price break are included in the history of the part
+    AUDIT_PARENT_FIELD = 'part'
 
     class Meta:
         """Metaclass providing extra model definition."""
@@ -859,8 +881,13 @@ class PartSellPriceBreak(common.models.PriceBreak):
     )
 
 
-class PartInternalPriceBreak(common.models.PriceBreak):
+class PartInternalPriceBreak(
+    InvenTree.models.InvenTreeAuditMixin, common.models.PriceBreak
+):
     """Represents a price break for internally selling this part."""
+
+    # Changes to a price break are included in the history of the part
+    AUDIT_PARENT_FIELD = 'part'
 
     class Meta:
         """Metaclass providing extra model definition."""

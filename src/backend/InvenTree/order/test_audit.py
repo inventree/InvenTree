@@ -112,6 +112,20 @@ class PurchaseOrderAuditTest(OrderAuditTestBase):
         for field in ['total_price', 'total_price_currency', 'updated_at']:
             self.assertNotIn(field, entry.changes_dict)
 
+    def test_order_currency(self):
+        """Changes to the order currency (not a MoneyField currency) are recorded."""
+        po = models.PurchaseOrder.objects.get(pk=1)
+        po.order_currency = 'AUD'
+        po.save()
+
+        entry = (
+            self
+            .entries(models.PurchaseOrder, po.pk, action=ACTION.UPDATE)
+            .order_by('pk')
+            .last()
+        )
+        self.assertEqual(entry.changes_dict['order_currency'][1], 'AUD')
+
     def test_total_price_not_recorded(self):
         """Saving an order (which recalculates the total price) records no entry."""
         po = models.PurchaseOrder.objects.get(pk=1)
