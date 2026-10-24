@@ -510,6 +510,21 @@ def GetExportFormats() -> list:
     return [opt[0] for opt in GetExportOptions()]
 
 
+def escape_export_value(value):
+    """Escape a value for export to a tabular data file, to prevent formula injection.
+
+    String values which start with a character that a spreadsheet application
+    may interpret as a formula are prefixed with a single quote character.
+    Non-string values are returned unchanged.
+
+    Ref: https://owasp.org/www-community/attacks/CSV_Injection
+    """
+    if isinstance(value, str) and value.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + value
+
+    return value
+
+
 def DownloadFile(
     data, filename, content_type='application/text', inline=False
 ) -> StreamingHttpResponse:
