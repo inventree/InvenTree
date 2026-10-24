@@ -2219,7 +2219,9 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                         kwargs[field_name] = field_value
 
                 if merge:
-                    target = stock_item.find_merge_target(location)
+                    target = stock_item.find_merge_target(
+                        location, status=kwargs.get('status')
+                    )
 
                     if target:
                         merge_kwargs = {
@@ -2257,6 +2259,11 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                             for field_name in StockItem.optional_transfer_fields():
                                 if field_name in kwargs:
                                     transfer_deltas[field_name] = kwargs[field_name]
+
+                            # Apply the new status (in memory only, as the item is about to be merged)
+                            # so that the merge checks compare against the requested status
+                            if status := kwargs.get('status'):
+                                stock_item.set_status(status)
 
                             merge_kwargs['transfer_deltas'] = transfer_deltas
                             target.merge_stock_items([stock_item], **merge_kwargs)
