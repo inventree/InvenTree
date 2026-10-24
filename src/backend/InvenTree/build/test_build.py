@@ -20,6 +20,7 @@ from django_q.models import OrmQ
 
 import build.tasks
 import common.models
+import common.notifications
 import company.models
 from build.models import Build, BuildItem, BuildLine, generate_next_build_reference
 from build.status_codes import BuildStatus
@@ -441,6 +442,45 @@ class BuildTest(BuildTestBase):
         self.allocate_stock(None, {self.stock_1_2: 50, self.stock_2_1: 50})
 
         self.assertTrue(self.build.is_fully_allocated(tracked=False))
+
+    def test_output_allocation_piece_count(self):
+        """Tracked output allocation must account for the BOM piece_count."""
+        # 2 x 3 = 6 units of sub_part_3 required per output
+        self.bom_item_3.piece_count = 3
+        self.bom_item_3.save()
+
+        # Allocating the bare BOM quantity is not sufficient
+        self.allocate_stock(self.output_1, {self.stock_3_1: 2})
+        self.assertFalse(self.build.is_output_fully_allocated(self.output_1))
+
+        BuildItem.objects.filter(install_into=self.output_1).delete()
+
+        self.allocate_stock(self.output_1, {self.stock_3_1: 6})
+        self.assertTrue(self.build.is_output_fully_allocated(self.output_1))
+
+    def test_check_build_stock_piece_count(self):
+        """The 'stock required' notification must account for the BOM piece_count."""
+
+        def required_lines():
+            with mock.patch.object(
+                common.notifications, 'trigger_notification'
+            ) as notify:
+                build.tasks.check_build_stock(self.build)
+
+            if not notify.called:
+                return {}
+
+            context = notify.call_args.kwargs['context']
+            return {line['part'].pk: line['required'] for line in context['lines']}
+
+        # 5 x 10 = 50 required, 103 available
+        self.assertNotIn(self.sub_part_1.pk, required_lines())
+
+        # 5 x 3 x 10 = 150 required, 103 available
+        self.bom_item_1.piece_count = 3
+        self.bom_item_1.save()
+
+        self.assertEqual(required_lines()[self.sub_part_1.pk], 150)
 
     def test_overallocation_and_trim(self):
         """Test overallocation of stock and trim function."""

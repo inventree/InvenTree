@@ -2057,7 +2057,7 @@ class Build(
             )
 
             # The amount allocated against an output must at least equal the BOM quantity
-            if allocated['q'] < line.bom_item.quantity:
+            if allocated['q'] < line.bom_item.unit_quantity:
                 return False
 
         # At this stage, we can assume that the output is fully allocated

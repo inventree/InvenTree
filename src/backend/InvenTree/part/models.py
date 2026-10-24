@@ -3474,6 +3474,15 @@ class BomItem(
         except Part.DoesNotExist:
             raise ValidationError({'sub_part': _('Sub part must be specified')})
 
+    @property
+    def unit_quantity(self) -> Decimal:
+        """Return the quantity of sub_part required to produce a single assembly.
+
+        This accounts for the piece_count (total material = quantity x piece_count),
+        but does not include attrition, setup quantity or rounding.
+        """
+        return Decimal(self.quantity) * Decimal(self.piece_count)
+
     def can_build_quantity(self, available_stock: float) -> int:
         """Calculate the number of assemblies that can be built with the available stock.
 
@@ -3486,7 +3495,7 @@ class BomItem(
         """
         # Account for setup quantity
         available_stock = Decimal(max(0, available_stock - self.setup_quantity))
-        quantity_decimal = Decimal(self.quantity)
+        quantity_decimal = self.unit_quantity
         attrition_decimal = Decimal(self.attrition) / 100
         n = quantity_decimal * (1 + attrition_decimal)
 
