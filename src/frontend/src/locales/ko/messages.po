@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-23 21:32\n"
+"PO-Revision-Date: 2026-10-24 06:39\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -82,7 +82,7 @@ msgstr "삭제"
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:148
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:323
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:414
-#: src/tables/build/BuildOutputTable.tsx:666
+#: src/tables/build/BuildOutputTable.tsx:665
 #: src/tables/settings/ApiTokenTable.tsx:270
 msgid "Cancel"
 msgstr "취소"
@@ -696,7 +696,7 @@ msgstr "선택 항목"
 #: src/pages/part/PartPricingPanel.tsx:71
 #: src/states/IconState.tsx:46
 #: src/states/IconState.tsx:76
-#: src/tables/bom/BomTable.tsx:703
+#: src/tables/bom/BomTable.tsx:708
 #: src/tables/settings/EmailTable.tsx:109
 #: src/tables/stock/StockItemTestResultTable.tsx:342
 msgid "Error"
@@ -881,7 +881,7 @@ msgstr "바코드가 예상 모델 유형과 일치하지 않습니다."
 #: src/components/wizards/ImportPartWizard.tsx:566
 #: src/components/wizards/ImportPartWizard.tsx:691
 #: src/pages/Index/Settings/AdminCenter/CurrencyManagementPanel.tsx:45
-#: src/tables/bom/BomTable.tsx:694
+#: src/tables/bom/BomTable.tsx:699
 #: src/tables/settings/PendingTasksTable.tsx:68
 msgid "Success"
 msgstr "성공"
@@ -1565,8 +1565,8 @@ msgstr "이 항목에 연결된 이미지를 제거하시겠습니까?"
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:273
 #: src/tables/build/BuildAllocatedStockTable.tsx:183
 #: src/tables/build/BuildAllocatedStockTable.tsx:278
-#: src/tables/build/BuildLineTable.tsx:173
-#: src/tables/build/BuildLineTable.tsx:774
+#: src/tables/build/BuildLineTable.tsx:181
+#: src/tables/build/BuildLineTable.tsx:784
 #: src/tables/sales/SalesOrderAllocationTable.tsx:229
 #: src/tables/sales/SalesOrderAllocationTable.tsx:252
 #: src/tables/stock/TransferOrderAllocationTable.tsx:183
@@ -2516,7 +2516,7 @@ msgstr "행 검증 상태로 필터링"
 
 #: src/components/importer/ImportDataSelector.tsx:396
 #: src/components/wizards/WizardDrawer.tsx:113
-#: src/tables/build/BuildOutputTable.tsx:638
+#: src/tables/build/BuildOutputTable.tsx:637
 msgid "Complete"
 msgstr "완벽한"
 
@@ -2785,7 +2785,7 @@ msgid "Create a new part"
 msgstr "새 부품 생성"
 
 #: src/components/items/PartCreationMenu.tsx:92
-#: src/tables/bom/BomTable.tsx:781
+#: src/tables/bom/BomTable.tsx:786
 #: src/tables/general/ParameterTable.tsx:203
 msgid "Import from File"
 msgstr "파일에서 가져오기"
@@ -2865,7 +2865,7 @@ msgstr "항목 없음"
 #: src/pages/stock/StockDetail.tsx:682
 #: src/pages/stock/StockDetailsPanel.tsx:204
 #: src/tables/build/BuildAllocatedStockTable.tsx:128
-#: src/tables/build/BuildLineTable.tsx:255
+#: src/tables/build/BuildLineTable.tsx:263
 #: src/tables/stock/StockItemTable.tsx:218
 msgid "Available"
 msgstr "사용 가능"
@@ -3789,7 +3789,7 @@ msgstr "가상"
 
 #: src/components/render/Part.tsx:34
 #: src/components/tables/PartStockCell.tsx:113
-#: src/tables/bom/BomTable.tsx:425
+#: src/tables/bom/BomTable.tsx:430
 msgid "No stock"
 msgstr "재고 없음"
 
@@ -3800,8 +3800,8 @@ msgstr "재고 없음"
 #: src/pages/company/SupplierPartDetailsPanel.tsx:151
 #: src/pages/part/PartDetail.tsx:611
 #: src/pages/part/PartDetailsPanel.tsx:174
-#: src/tables/bom/BomTable.tsx:589
-#: src/tables/build/BuildLineTable.tsx:285
+#: src/tables/bom/BomTable.tsx:594
+#: src/tables/build/BuildLineTable.tsx:293
 #: src/tables/part/PartTable.tsx:83
 #: src/tables/part/PartTableFilters.tsx:149
 msgid "On Order"
@@ -3892,7 +3892,7 @@ msgstr "시리얼 번호"
 #: src/pages/part/pricing/PriceBreakPanel.tsx:173
 #: src/pages/stock/StockDetail.tsx:675
 #: src/pages/stock/StockDetailsPanel.tsx:197
-#: src/tables/build/BuildLineTable.tsx:143
+#: src/tables/build/BuildLineTable.tsx:151
 #: src/tables/part/PartPurchaseOrdersTable.tsx:103
 #: src/tables/part/PartTestResultTable.tsx:282
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:183
@@ -3915,7 +3915,7 @@ msgstr "수량"
 #: src/forms/StockForms.tsx:1838
 #: src/forms/StockForms.tsx:1885
 #: src/forms/StockForms.tsx:1929
-#: src/tables/build/BuildLineTable.tsx:153
+#: src/tables/build/BuildLineTable.tsx:161
 msgid "Batch"
 msgstr "일괄"
 
@@ -4065,7 +4065,7 @@ msgstr "부품이 활성화되지 않았습니다."
 
 #: src/components/tables/ColumnRenderers.tsx:75
 #: src/pages/part/PartDetail.tsx:496
-#: src/tables/bom/BomTable.tsx:839
+#: src/tables/bom/BomTable.tsx:848
 #: src/tables/part/PartTestTemplateTable.tsx:262
 msgid "Part is Locked"
 msgstr "부품이 잠겨 있습니다"
@@ -4142,7 +4142,7 @@ msgid "This stock item is partially allocated"
 msgstr "이 재고 품목은 일부 할당되었습니다"
 
 #: src/components/tables/ColumnRenderers.tsx:274
-#: src/tables/build/BuildLineTable.tsx:366
+#: src/tables/build/BuildLineTable.tsx:374
 #: src/tables/sales/SalesOrderLineItemTable.tsx:198
 #: src/tables/stock/TransferOrderLineItemTable.tsx:143
 msgid "No stock available"
@@ -4154,7 +4154,7 @@ msgstr "본 상품은 재고가 소진되었습니다"
 
 #: src/components/tables/ColumnRenderers.tsx:301
 #: src/components/tables/PartStockCell.tsx:134
-#: src/tables/bom/BomTable.tsx:476
+#: src/tables/bom/BomTable.tsx:481
 #: src/tables/sales/SalesOrderLineItemTable.tsx:227
 #: src/tables/stock/TransferOrderLineItemTable.tsx:172
 msgid "Stock Information"
@@ -4182,7 +4182,7 @@ msgstr "기본 위치"
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:46
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:25
 #: src/tables/build/BuildAllocatedStockTable.tsx:113
-#: src/tables/build/BuildLineTable.tsx:418
+#: src/tables/build/BuildLineTable.tsx:426
 msgid "Reference"
 msgstr "참조"
 
@@ -4193,7 +4193,7 @@ msgid "Note"
 msgstr "메모"
 
 #: src/components/tables/ColumnRenderers.tsx:581
-#: src/tables/build/BuildOutputTable.tsx:716
+#: src/tables/build/BuildOutputTable.tsx:715
 msgid "Allocated Lines"
 msgstr "할당된 항목"
 
@@ -4245,7 +4245,7 @@ msgstr "통화"
 #: src/components/tables/ColumnRenderers.tsx:813
 #: src/pages/part/pricing/BomPricingPanel.tsx:61
 #: src/pages/part/pricing/BomPricingPanel.tsx:144
-#: src/tables/bom/BomTable.tsx:362
+#: src/tables/bom/BomTable.tsx:367
 #: src/tables/general/ExtraLineItemTable.tsx:86
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:275
 #: src/tables/purchasing/PurchaseOrderTable.tsx:101
@@ -4511,7 +4511,7 @@ msgstr "부품 변형 결과 포함"
 #: src/pages/sales/SalesOrderDetailsPanel.tsx:73
 #: src/pages/stock/StockDetailsPanel.tsx:108
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:51
-#: src/tables/build/BuildOutputTable.tsx:499
+#: src/tables/build/BuildOutputTable.tsx:498
 #: src/tables/machine/MachineListTable.tsx:388
 #: src/tables/part/PartPurchaseOrdersTable.tsx:46
 #: src/tables/part/PartSalesOrdersTable.tsx:45
@@ -4783,7 +4783,7 @@ msgid "Active Filters"
 msgstr "활성 필터"
 
 #: src/components/tables/PartStockCell.tsx:11
-#: src/tables/bom/BomTable.tsx:420
+#: src/tables/bom/BomTable.tsx:425
 #: src/tables/sales/SalesOrderLineItemTable.tsx:179
 #: src/tables/sales/SalesOrderLineItemTable.tsx:237
 #: src/tables/sales/SalesOrderLineItemTable.tsx:254
@@ -4802,7 +4802,7 @@ msgid "Maximum stock"
 msgstr "최대 재고"
 
 #: src/components/tables/PartStockCell.tsx:62
-#: src/tables/bom/BomTable.tsx:467
+#: src/tables/bom/BomTable.tsx:472
 msgid "Building"
 msgstr "생산 중"
 
@@ -4819,14 +4819,14 @@ msgid "Sales Order Allocations"
 msgstr "판매 주문 할당"
 
 #: src/components/tables/PartStockCell.tsx:93
-#: src/tables/bom/BomTable.tsx:433
-#: src/tables/build/BuildLineTable.tsx:339
+#: src/tables/bom/BomTable.tsx:438
+#: src/tables/build/BuildLineTable.tsx:347
 msgid "External stock"
 msgstr "외부 재고"
 
 #: src/components/tables/PartStockCell.tsx:101
-#: src/tables/bom/BomTable.tsx:450
-#: src/tables/build/BuildLineTable.tsx:312
+#: src/tables/bom/BomTable.tsx:455
+#: src/tables/build/BuildLineTable.tsx:320
 #: src/tables/sales/SalesOrderLineItemTable.tsx:204
 #: src/tables/stock/TransferOrderLineItemTable.tsx:149
 msgid "Includes variant stock"
@@ -5318,7 +5318,7 @@ msgid "Sales Requirements"
 msgstr "판매 요건"
 
 #: src/components/wizards/OrderPartsWizard.tsx:147
-#: src/tables/build/BuildLineTable.tsx:478
+#: src/tables/build/BuildLineTable.tsx:488
 msgid "Required Quantity"
 msgstr "필요한 수량"
 
@@ -5410,7 +5410,7 @@ msgid "Please correct the errors in the selected parts"
 msgstr "선택한 부분의 오류를 수정해주세요"
 
 #: src/components/wizards/OrderPartsWizard.tsx:630
-#: src/tables/build/BuildLineTable.tsx:961
+#: src/tables/build/BuildLineTable.tsx:971
 #: src/tables/part/PartTable.tsx:267
 #: src/tables/sales/SalesOrderLineItemTable.tsx:459
 #: src/tables/stock/TransferOrderLineItemTable.tsx:333
@@ -5998,7 +5998,7 @@ msgstr "대체 부품이 추가되었습니다"
 #: src/forms/BuildForms.tsx:466
 #: src/forms/BuildForms.tsx:758
 #: src/tables/build/BuildAllocatedStockTable.tsx:150
-#: src/tables/build/BuildOutputTable.tsx:688
+#: src/tables/build/BuildOutputTable.tsx:687
 #: src/tables/part/PartTestResultTable.tsx:285
 msgid "Build Output"
 msgstr "생산 결과물"
@@ -6056,7 +6056,7 @@ msgstr "할당된 재고 품목은 재고로 반환됩니다."
 #: src/forms/TransferOrderForms.tsx:240
 #: src/pages/part/PartDetail.tsx:597
 #: src/tables/build/BuildAllocatedStockTable.tsx:132
-#: src/tables/build/BuildLineTable.tsx:245
+#: src/tables/build/BuildLineTable.tsx:253
 #: src/tables/sales/SalesOrderLineItemTable.tsx:428
 #: src/tables/stock/StockItemTable.tsx:213
 #: src/tables/stock/TransferOrderLineItemTable.tsx:493
@@ -6082,10 +6082,10 @@ msgstr "재고 할당의 원본 위치를 선택하세요"
 #: src/forms/BuildForms.tsx:773
 #: src/forms/SalesOrderForms.tsx:467
 #: src/forms/TransferOrderForms.tsx:263
-#: src/tables/build/BuildLineTable.tsx:689
-#: src/tables/build/BuildLineTable.tsx:865
-#: src/tables/build/BuildLineTable.tsx:870
-#: src/tables/build/BuildLineTable.tsx:976
+#: src/tables/build/BuildLineTable.tsx:699
+#: src/tables/build/BuildLineTable.tsx:875
+#: src/tables/build/BuildLineTable.tsx:880
+#: src/tables/build/BuildLineTable.tsx:986
 #: src/tables/build/BuildOutputTable.tsx:240
 #: src/tables/sales/SalesOrderLineItemTable.tsx:469
 #: src/tables/sales/SalesOrderLineItemTable.tsx:515
@@ -6115,20 +6115,20 @@ msgstr "재고 품목이 할당되었습니다"
 #: src/pages/stock/TransferOrderDetailsPanel.tsx:71
 #: src/tables/build/BuildAllocatedStockTable.tsx:263
 #: src/tables/build/BuildAllocatedStockTable.tsx:299
-#: src/tables/build/BuildLineTable.tsx:879
-#: src/tables/build/BuildLineTable.tsx:1010
+#: src/tables/build/BuildLineTable.tsx:889
+#: src/tables/build/BuildLineTable.tsx:1020
 #: src/tables/stock/TransferOrderTable.tsx:57
 msgid "Consume Stock"
 msgstr "재고 소비"
 
 #: src/forms/BuildForms.tsx:928
-#: src/tables/build/BuildLineTable.tsx:593
+#: src/tables/build/BuildLineTable.tsx:603
 #: src/tables/part/PartBuildAllocationsTable.tsx:102
 msgid "Fully consumed"
 msgstr "완전히 소비됨"
 
 #: src/forms/BuildForms.tsx:973
-#: src/tables/build/BuildLineTable.tsx:250
+#: src/tables/build/BuildLineTable.tsx:258
 #: src/tables/stock/StockItemTable.tsx:242
 msgid "Consumed"
 msgstr "소비됨"
@@ -6244,8 +6244,8 @@ msgstr "기본 위치가 선택되었습니다"
 
 #: src/forms/PurchaseOrderForms.tsx:612
 #: src/pages/part/PartDetailsPanel.tsx:268
-#: src/tables/bom/BomTable.tsx:328
-#: src/tables/bom/BomTable.tsx:579
+#: src/tables/bom/BomTable.tsx:333
+#: src/tables/bom/BomTable.tsx:584
 msgid "Virtual Part"
 msgstr "가상 부품"
 
@@ -6497,7 +6497,7 @@ msgid "Component"
 msgstr "요소"
 
 #: src/forms/StockForms.tsx:947
-#: src/tables/build/BuildLineTable.tsx:462
+#: src/tables/build/BuildLineTable.tsx:470
 msgid "Unit Quantity"
 msgstr "단위 수량"
 
@@ -6508,7 +6508,7 @@ msgstr "단위 수량"
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:129
 #: src/pages/part/pricing/SupplierPricingPanel.tsx:67
 #: src/pages/stock/StockDetailsPanel.tsx:323
-#: src/tables/bom/BomTable.tsx:352
+#: src/tables/bom/BomTable.tsx:357
 #: src/tables/general/ExtraLineItemTable.tsx:73
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:266
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:93
@@ -7751,7 +7751,7 @@ msgstr "WebAuthn 자격 증명 제거"
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:312
 #: src/pages/Index/Settings/AccountSettings/MFASettings.tsx:403
 #: src/tables/build/BuildAllocatedStockTable.tsx:186
-#: src/tables/build/BuildLineTable.tsx:777
+#: src/tables/build/BuildLineTable.tsx:787
 #: src/tables/sales/SalesOrderAllocationTable.tsx:225
 #: src/tables/stock/TransferOrderAllocationTable.tsx:179
 msgid "Confirm Removal"
@@ -9168,7 +9168,7 @@ msgstr "하위 생산 주문"
 #: src/pages/build/BuildDetail.tsx:355
 #: src/pages/part/PartDetail.tsx:472
 #: src/pages/stock/StockDetail.tsx:281
-#: src/tables/build/BuildOutputTable.tsx:760
+#: src/tables/build/BuildOutputTable.tsx:759
 #: src/tables/stock/StockItemTestResultTable.tsx:177
 msgid "Test Results"
 msgstr "테스트 결과"
@@ -9401,8 +9401,8 @@ msgstr "생산 수량"
 
 #: src/pages/build/BuildOrderDetailsPanel.tsx:121
 #: src/pages/part/PartDetailsPanel.tsx:224
-#: src/tables/bom/BomTable.tsx:483
-#: src/tables/bom/BomTable.tsx:546
+#: src/tables/bom/BomTable.tsx:488
+#: src/tables/bom/BomTable.tsx:551
 msgid "Can Build"
 msgstr "생산 가능"
 
@@ -9887,8 +9887,8 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:646
 #: src/pages/part/bom/BomCompare.tsx:38
-#: src/tables/bom/BomTable.tsx:614
-#: src/tables/build/BuildLineTable.tsx:260
+#: src/tables/bom/BomTable.tsx:619
+#: src/tables/build/BuildLineTable.tsx:268
 #: src/tables/part/PartTableFilters.tsx:109
 msgid "Consumable"
 msgstr "소모품"
@@ -9916,7 +9916,7 @@ msgstr "주문하다"
 
 #: src/pages/part/PartDetail.tsx:762
 #: src/pages/stock/StockDetail.tsx:614
-#: src/tables/build/BuildLineTable.tsx:899
+#: src/tables/build/BuildLineTable.tsx:909
 msgid "Order Stock"
 msgstr "재고 주문"
 
@@ -9967,8 +9967,8 @@ msgid "Keywords"
 msgstr "키워드"
 
 #: src/pages/part/PartDetailsPanel.tsx:168
-#: src/tables/bom/BomTable.tsx:584
-#: src/tables/build/BuildLineTable.tsx:369
+#: src/tables/bom/BomTable.tsx:589
+#: src/tables/build/BuildLineTable.tsx:377
 #: src/tables/part/PartTableFilters.tsx:143
 #: src/tables/sales/SalesOrderLineItemTable.tsx:176
 #: src/tables/stock/TransferOrderLineItemTable.tsx:121
@@ -10007,7 +10007,7 @@ msgid "Template Part"
 msgstr "템플릿 부분"
 
 #: src/pages/part/PartDetailsPanel.tsx:252
-#: src/tables/bom/BomTable.tsx:574
+#: src/tables/bom/BomTable.tsx:579
 msgid "Assembled Part"
 msgstr "조립부품"
 
@@ -10016,12 +10016,12 @@ msgid "Component Part"
 msgstr "구성 부품"
 
 #: src/pages/part/PartDetailsPanel.tsx:257
-#: src/tables/bom/BomTable.tsx:559
+#: src/tables/bom/BomTable.tsx:564
 msgid "Testable Part"
 msgstr "테스트 가능한 부분"
 
 #: src/pages/part/PartDetailsPanel.tsx:260
-#: src/tables/bom/BomTable.tsx:564
+#: src/tables/bom/BomTable.tsx:569
 msgid "Trackable Part"
 msgstr "추적 가능한 부분"
 
@@ -10226,35 +10226,35 @@ msgid "Validated By"
 msgstr "검증자"
 
 #: src/pages/part/bom/BomCompare.tsx:35
-#: src/tables/bom/BomTable.tsx:604
+#: src/tables/bom/BomTable.tsx:609
 msgid "Allow Variants"
 msgstr "변형 허용"
 
 #: src/pages/part/bom/BomCompare.tsx:36
-#: src/tables/bom/BomTable.tsx:599
+#: src/tables/bom/BomTable.tsx:604
 #: src/tables/bom/UsedInTable.tsx:92
 msgid "Inherited"
 msgstr "상속됨"
 
 #: src/pages/part/bom/BomCompare.tsx:37
-#: src/tables/bom/BomTable.tsx:609
+#: src/tables/bom/BomTable.tsx:614
 #: src/tables/bom/UsedInTable.tsx:102
-#: src/tables/build/BuildLineTable.tsx:265
+#: src/tables/build/BuildLineTable.tsx:273
 msgid "Optional"
 msgstr "선택 사항"
 
 #: src/pages/part/bom/BomCompare.tsx:39
-#: src/tables/build/BuildLineTable.tsx:489
+#: src/tables/build/BuildLineTable.tsx:499
 msgid "Setup Quantity"
 msgstr "설정 수량"
 
 #: src/pages/part/bom/BomCompare.tsx:40
-#: src/tables/build/BuildLineTable.tsx:498
+#: src/tables/build/BuildLineTable.tsx:508
 msgid "Attrition"
 msgstr "마찰"
 
 #: src/pages/part/bom/BomCompare.tsx:41
-#: src/tables/build/BuildLineTable.tsx:506
+#: src/tables/build/BuildLineTable.tsx:516
 msgid "Rounding Multiple"
 msgstr "반올림 배수"
 
@@ -11033,7 +11033,7 @@ msgid "Stock Operations"
 msgstr "재고 운영"
 
 #: src/pages/stock/StockDetail.tsx:589
-#: src/tables/build/BuildOutputTable.tsx:627
+#: src/tables/build/BuildOutputTable.tsx:626
 msgid "Serialize"
 msgstr "일련번호 지정"
 
@@ -11337,15 +11337,15 @@ msgstr "서버에서 아이콘 패키지를 불러오는 중 오류 발생"
 #~ msgid "Upload Data"
 #~ msgstr "Upload Data"
 
-#: src/tables/bom/BomTable.tsx:156
+#: src/tables/bom/BomTable.tsx:161
 msgid "This BOM item is defined for a different parent"
 msgstr "이 BOM 항목은 다른 상위 항목에 대해 정의되었습니다."
 
-#: src/tables/bom/BomTable.tsx:163
+#: src/tables/bom/BomTable.tsx:168
 msgid "This BOM item has not been validated"
 msgstr "이 BOM 항목은 아직 검증되지 않았습니다"
 
-#: src/tables/bom/BomTable.tsx:183
+#: src/tables/bom/BomTable.tsx:188
 msgid "Part Information"
 msgstr "부품정보"
 
@@ -11357,7 +11357,7 @@ msgstr "부품정보"
 #~ msgid "Show asssmbled items"
 #~ msgstr "Show asssmbled items"
 
-#: src/tables/bom/BomTable.tsx:314
+#: src/tables/bom/BomTable.tsx:319
 msgid "Substitutes"
 msgstr "대체 부품"
 
@@ -11385,178 +11385,178 @@ msgstr "대체 부품"
 #~ msgid "Validate BOM line"
 #~ msgstr "Validate BOM line"
 
-#: src/tables/bom/BomTable.tsx:441
-#: src/tables/build/BuildLineTable.tsx:302
+#: src/tables/bom/BomTable.tsx:446
+#: src/tables/build/BuildLineTable.tsx:310
 msgid "Includes substitute stock"
 msgstr "대체재고 포함"
 
-#: src/tables/bom/BomTable.tsx:459
-#: src/tables/build/BuildLineTable.tsx:330
+#: src/tables/bom/BomTable.tsx:464
+#: src/tables/build/BuildLineTable.tsx:338
 #: src/tables/sales/SalesOrderLineItemTable.tsx:218
 #: src/tables/stock/TransferOrderLineItemTable.tsx:163
 msgid "On order"
 msgstr "주문시"
 
-#: src/tables/bom/BomTable.tsx:535
-#: src/tables/build/BuildLineTable.tsx:575
-#: src/tables/build/BuildLineTable.tsx:620
+#: src/tables/bom/BomTable.tsx:540
+#: src/tables/build/BuildLineTable.tsx:585
+#: src/tables/build/BuildLineTable.tsx:630
 msgid "Consumable item"
 msgstr "소모성 아이템"
 
-#: src/tables/bom/BomTable.tsx:538
+#: src/tables/bom/BomTable.tsx:543
 msgid "No available stock"
 msgstr "사용 가능한 재고 없음"
 
-#: src/tables/bom/BomTable.tsx:560
-#: src/tables/build/BuildLineTable.tsx:276
+#: src/tables/bom/BomTable.tsx:565
+#: src/tables/build/BuildLineTable.tsx:284
 msgid "Show testable items"
 msgstr "테스트 가능한 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:565
+#: src/tables/bom/BomTable.tsx:570
 msgid "Show trackable items"
 msgstr "추적 가능한 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:569
+#: src/tables/bom/BomTable.tsx:574
 #: src/tables/purchasing/ManufacturerPartParametricTable.tsx:46
 #: src/tables/purchasing/ManufacturerPartTable.tsx:161
 #: src/tables/purchasing/SupplierPartTable.tsx:264
 msgid "Active Part"
 msgstr "활성 부품"
 
-#: src/tables/bom/BomTable.tsx:570
+#: src/tables/bom/BomTable.tsx:575
 #: src/tables/settings/ProjectCodeTable.tsx:105
 msgid "Show active items"
 msgstr "활성 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:575
-#: src/tables/build/BuildLineTable.tsx:271
+#: src/tables/bom/BomTable.tsx:580
+#: src/tables/build/BuildLineTable.tsx:279
 msgid "Show assembled items"
 msgstr "조립 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:580
+#: src/tables/bom/BomTable.tsx:585
 msgid "Show virtual items"
 msgstr "가상 아이템 표시"
 
-#: src/tables/bom/BomTable.tsx:585
+#: src/tables/bom/BomTable.tsx:590
 msgid "Show items with available stock"
 msgstr "재고가 있는 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:590
+#: src/tables/bom/BomTable.tsx:595
 msgid "Show items on order"
 msgstr "주문한 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:594
+#: src/tables/bom/BomTable.tsx:599
 msgid "Validated"
 msgstr "검증됨"
 
-#: src/tables/bom/BomTable.tsx:595
+#: src/tables/bom/BomTable.tsx:600
 msgid "Show validated items"
 msgstr "검증된 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:600
+#: src/tables/bom/BomTable.tsx:605
 #: src/tables/bom/UsedInTable.tsx:93
 msgid "Show inherited items"
 msgstr "상속된 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:605
+#: src/tables/bom/BomTable.tsx:610
 msgid "Show items which allow variant substitution"
 msgstr "변형 대체를 허용하는 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:610
+#: src/tables/bom/BomTable.tsx:615
 #: src/tables/bom/UsedInTable.tsx:103
 msgid "Show optional items"
 msgstr "선택 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:615
+#: src/tables/bom/BomTable.tsx:620
 msgid "Show consumable items"
 msgstr "소모성 아이템 표시"
 
-#: src/tables/bom/BomTable.tsx:619
+#: src/tables/bom/BomTable.tsx:624
 #: src/tables/part/PartTableFilters.tsx:137
 msgid "Has Pricing"
 msgstr "가격 있음"
 
-#: src/tables/bom/BomTable.tsx:620
+#: src/tables/bom/BomTable.tsx:625
 msgid "Show items with pricing"
 msgstr "가격이 포함된 항목 표시"
 
-#: src/tables/bom/BomTable.tsx:642
+#: src/tables/bom/BomTable.tsx:647
 msgid "Import BOM Data"
 msgstr "BOM 데이터 가져오기"
 
-#: src/tables/bom/BomTable.tsx:653
-#: src/tables/bom/BomTable.tsx:775
+#: src/tables/bom/BomTable.tsx:658
+#: src/tables/bom/BomTable.tsx:780
 msgid "Add BOM Item"
 msgstr "BOM 항목 추가"
 
-#: src/tables/bom/BomTable.tsx:658
+#: src/tables/bom/BomTable.tsx:663
 msgid "BOM item created"
 msgstr "BOM 항목이 생성되었습니다."
 
-#: src/tables/bom/BomTable.tsx:665
+#: src/tables/bom/BomTable.tsx:670
 #: src/tables/bom/UsedInTable.tsx:123
 msgid "Edit BOM Item"
 msgstr "BOM 항목 편집"
 
-#: src/tables/bom/BomTable.tsx:667
+#: src/tables/bom/BomTable.tsx:672
 #: src/tables/bom/UsedInTable.tsx:127
 msgid "BOM item updated"
 msgstr "BOM 항목이 업데이트되었습니다."
 
-#: src/tables/bom/BomTable.tsx:674
+#: src/tables/bom/BomTable.tsx:679
 msgid "Delete BOM Item"
 msgstr "BOM 항목 삭제"
 
-#: src/tables/bom/BomTable.tsx:675
+#: src/tables/bom/BomTable.tsx:680
 msgid "BOM item deleted"
 msgstr "BOM 항목이 삭제되었습니다."
 
-#: src/tables/bom/BomTable.tsx:695
+#: src/tables/bom/BomTable.tsx:700
 msgid "BOM item validated"
 msgstr "BOM 항목이 검증되었습니다."
 
-#: src/tables/bom/BomTable.tsx:704
+#: src/tables/bom/BomTable.tsx:709
 msgid "Failed to validate BOM item"
 msgstr "BOM 항목을 검증하지 못했습니다."
 
-#: src/tables/bom/BomTable.tsx:716
+#: src/tables/bom/BomTable.tsx:721
 msgid "View BOM"
 msgstr "BOM 보기"
 
-#: src/tables/bom/BomTable.tsx:727
+#: src/tables/bom/BomTable.tsx:732
 msgid "Validate BOM Line"
 msgstr "BOM 행 검증"
 
-#: src/tables/bom/BomTable.tsx:744
+#: src/tables/bom/BomTable.tsx:749
 msgid "Edit Substitutes"
 msgstr "대체 부품 편집"
 
-#: src/tables/bom/BomTable.tsx:769
+#: src/tables/bom/BomTable.tsx:774
 msgid "Add BOM Items"
 msgstr "BOM 항목 추가"
 
-#: src/tables/bom/BomTable.tsx:777
+#: src/tables/bom/BomTable.tsx:782
 msgid "Add a single BOM item"
 msgstr "단일 BOM 항목 추가"
 
-#: src/tables/bom/BomTable.tsx:783
+#: src/tables/bom/BomTable.tsx:788
 msgid "Import BOM items from a file"
 msgstr "파일에서 BOM 항목 가져오기"
 
-#: src/tables/bom/BomTable.tsx:791
+#: src/tables/bom/BomTable.tsx:796
 msgid "Edit BOM"
 msgstr "BOM 편집"
 
-#: src/tables/bom/BomTable.tsx:801
+#: src/tables/bom/BomTable.tsx:806
 msgid "Finish Editing BOM"
 msgstr "BOM 편집 완료"
 
-#: src/tables/bom/BomTable.tsx:844
+#: src/tables/bom/BomTable.tsx:853
 msgid "Bill of materials cannot be edited, as the part is locked"
 msgstr "부품이 잠겨 있으므로 BOM을 편집할 수 없습니다."
 
 #: src/tables/bom/UsedInTable.tsx:47
-#: src/tables/build/BuildLineTable.tsx:270
+#: src/tables/build/BuildLineTable.tsx:278
 #: src/tables/part/PartBuildAllocationsTable.tsx:61
 #: src/tables/part/PartTableFilters.tsx:25
 #: src/tables/stock/StockItemTable.tsx:208
@@ -11640,7 +11640,7 @@ msgstr "주문 상태"
 #~ msgstr "Edit Build Item"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:169
-#: src/tables/build/BuildLineTable.tsx:760
+#: src/tables/build/BuildLineTable.tsx:770
 msgid "Edit Stock Allocation"
 msgstr "재고 할당 편집"
 
@@ -11654,26 +11654,26 @@ msgstr "재고 할당 편집"
 #~ msgstr "Delete Stock Allocation"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:182
-#: src/tables/build/BuildLineTable.tsx:773
+#: src/tables/build/BuildLineTable.tsx:783
 #: src/tables/sales/SalesOrderAllocationTable.tsx:223
 #: src/tables/stock/TransferOrderAllocationTable.tsx:177
 msgid "Remove Allocated Stock"
 msgstr "할당된 재고 제거"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:187
-#: src/tables/build/BuildLineTable.tsx:778
+#: src/tables/build/BuildLineTable.tsx:788
 #: src/tables/sales/SalesOrderAllocationTable.tsx:226
 #: src/tables/stock/TransferOrderAllocationTable.tsx:180
 msgid "Are you sure you want to remove this allocated stock from the order?"
 msgstr "할당된 재고를 주문에서 제거하시겠습니까?"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:202
-#: src/tables/build/BuildLineTable.tsx:793
+#: src/tables/build/BuildLineTable.tsx:803
 msgid "Consuming allocated stock"
 msgstr "할당된 재고를 소비합니다."
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:203
-#: src/tables/build/BuildLineTable.tsx:794
+#: src/tables/build/BuildLineTable.tsx:804
 msgid "Stock consumed successfully"
 msgstr "재고가 성공적으로 소비되었습니다."
 
@@ -11682,7 +11682,7 @@ msgid "Consume"
 msgstr "소비하다"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:279
-#: src/tables/build/BuildLineTable.tsx:174
+#: src/tables/build/BuildLineTable.tsx:182
 #: src/tables/sales/SalesOrderAllocationTable.tsx:253
 #: src/tables/stock/TransferOrderAllocationTable.tsx:200
 msgid "Remove allocated stock"
@@ -11692,71 +11692,71 @@ msgstr "할당된 재고 제거"
 #~ msgid "Show lines with available stock"
 #~ msgstr "Show lines with available stock"
 
-#: src/tables/build/BuildLineTable.tsx:83
+#: src/tables/build/BuildLineTable.tsx:91
 msgid "Allocated part differs from the BOM part"
 msgstr ""
-
-#: src/tables/build/BuildLineTable.tsx:183
-msgid "View Stock Item"
-msgstr "재고 품목 보기"
 
 #: src/tables/build/BuildLineTable.tsx:189
 #~ msgid "Show allocated lines"
 #~ msgstr "Show allocated lines"
 
-#: src/tables/build/BuildLineTable.tsx:246
+#: src/tables/build/BuildLineTable.tsx:191
+msgid "View Stock Item"
+msgstr "재고 품목 보기"
+
+#: src/tables/build/BuildLineTable.tsx:254
 msgid "Show fully allocated lines"
 msgstr "완전히 할당된 항목 표시"
 
-#: src/tables/build/BuildLineTable.tsx:251
+#: src/tables/build/BuildLineTable.tsx:259
 msgid "Show fully consumed lines"
 msgstr "완전히 소모된 항목 표시"
 
-#: src/tables/build/BuildLineTable.tsx:256
+#: src/tables/build/BuildLineTable.tsx:264
 msgid "Show items with sufficient available stock"
 msgstr "재고가 충분한 품목 표시"
 
-#: src/tables/build/BuildLineTable.tsx:261
+#: src/tables/build/BuildLineTable.tsx:269
 msgid "Show consumable lines"
 msgstr "소모성 항목 표시"
 
-#: src/tables/build/BuildLineTable.tsx:266
+#: src/tables/build/BuildLineTable.tsx:274
 msgid "Show optional lines"
 msgstr "선택 항목 표시"
 
-#: src/tables/build/BuildLineTable.tsx:275
+#: src/tables/build/BuildLineTable.tsx:283
 #: src/tables/part/PartTableFilters.tsx:49
 msgid "Testable"
 msgstr "테스트 가능"
 
-#: src/tables/build/BuildLineTable.tsx:280
+#: src/tables/build/BuildLineTable.tsx:288
 #: src/tables/stock/StockItemTable.tsx:263
 msgid "Tracked"
 msgstr "추적됨"
 
-#: src/tables/build/BuildLineTable.tsx:281
+#: src/tables/build/BuildLineTable.tsx:289
 msgid "Show tracked lines"
 msgstr "추적된 항목 표시"
 
-#: src/tables/build/BuildLineTable.tsx:286
+#: src/tables/build/BuildLineTable.tsx:294
 msgid "Show items with stock on order"
 msgstr "주문된 재고가 있는 항목 표시"
 
-#: src/tables/build/BuildLineTable.tsx:321
+#: src/tables/build/BuildLineTable.tsx:329
 #: src/tables/sales/SalesOrderLineItemTable.tsx:210
 #: src/tables/stock/TransferOrderLineItemTable.tsx:155
 msgid "In production"
 msgstr "생산 중"
 
-#: src/tables/build/BuildLineTable.tsx:349
+#: src/tables/build/BuildLineTable.tsx:357
 msgid "Insufficient stock"
 msgstr "재고 부족"
 
-#: src/tables/build/BuildLineTable.tsx:448
+#: src/tables/build/BuildLineTable.tsx:456
 msgid "Gets Inherited"
 msgstr "상속됨"
 
-#: src/tables/build/BuildLineTable.tsx:515
+#: src/tables/build/BuildLineTable.tsx:525
 msgid "BOM Information"
 msgstr "BOM 정보"
 
@@ -11764,90 +11764,90 @@ msgstr "BOM 정보"
 #~ msgid "Auto allocation in progress"
 #~ msgstr "Auto allocation in progress"
 
-#: src/tables/build/BuildLineTable.tsx:594
-#: src/tables/part/PartBuildAllocationsTable.tsx:103
-msgid "Fully allocated"
-msgstr "완전히 할당됨"
-
 #: src/tables/build/BuildLineTable.tsx:598
 #~ msgid "Automatically allocate stock to this build according to the selected options"
 #~ msgstr "Automatically allocate stock to this build according to the selected options"
 
-#: src/tables/build/BuildLineTable.tsx:646
+#: src/tables/build/BuildLineTable.tsx:604
+#: src/tables/part/PartBuildAllocationsTable.tsx:103
+msgid "Fully allocated"
+msgstr "완전히 할당됨"
+
+#: src/tables/build/BuildLineTable.tsx:656
 #: src/tables/sales/SalesOrderLineItemTable.tsx:351
 #: src/tables/stock/TransferOrderLineItemTable.tsx:251
 msgid "Create Build Order"
 msgstr "생산 주문 생성"
 
-#: src/tables/build/BuildLineTable.tsx:661
+#: src/tables/build/BuildLineTable.tsx:671
 #: src/tables/build/BuildOutputTable.tsx:230
 msgid "Allocating stock to build order"
 msgstr "생산 주문에 재고 할당 중"
 
-#: src/tables/build/BuildLineTable.tsx:662
+#: src/tables/build/BuildLineTable.tsx:672
 #: src/tables/build/BuildOutputTable.tsx:231
 #: src/tables/sales/SalesOrderLineItemTable.tsx:377
 msgid "Stock allocation complete"
 msgstr "재고 할당이 완료되었습니다"
 
-#: src/tables/build/BuildLineTable.tsx:672
-#: src/tables/build/BuildLineTable.tsx:680
-#: src/tables/build/BuildLineTable.tsx:942
+#: src/tables/build/BuildLineTable.tsx:682
+#: src/tables/build/BuildLineTable.tsx:690
+#: src/tables/build/BuildLineTable.tsx:952
 #: src/tables/build/BuildOutputTable.tsx:254
-#: src/tables/build/BuildOutputTable.tsx:538
+#: src/tables/build/BuildOutputTable.tsx:537
 #: src/tables/sales/SalesOrderLineItemTable.tsx:408
 #: src/tables/sales/SalesOrderLineItemTable.tsx:482
 msgid "Auto Allocate Stock"
 msgstr "재고 자동 할당"
 
-#: src/tables/build/BuildLineTable.tsx:674
+#: src/tables/build/BuildLineTable.tsx:684
 msgid "Auto-allocating stock for"
 msgstr "재고 자동 할당 대상"
 
-#: src/tables/build/BuildLineTable.tsx:674
+#: src/tables/build/BuildLineTable.tsx:684
 msgid "selected line item(s)"
 msgstr "선택된 라인 항목"
 
-#: src/tables/build/BuildLineTable.tsx:681
+#: src/tables/build/BuildLineTable.tsx:691
 msgid "Automatically allocate untracked BOM items to this build according to the selected options"
 msgstr "선택한 옵션에 따라 추적되지 않는 BOM 항목을 이 생산에 자동 할당합니다"
 
-#: src/tables/build/BuildLineTable.tsx:726
-#: src/tables/build/BuildLineTable.tsx:740
-#: src/tables/build/BuildLineTable.tsx:889
-#: src/tables/build/BuildLineTable.tsx:998
-#: src/tables/build/BuildOutputTable.tsx:450
-#: src/tables/build/BuildOutputTable.tsx:455
+#: src/tables/build/BuildLineTable.tsx:736
+#: src/tables/build/BuildLineTable.tsx:750
+#: src/tables/build/BuildLineTable.tsx:899
+#: src/tables/build/BuildLineTable.tsx:1008
+#: src/tables/build/BuildOutputTable.tsx:449
+#: src/tables/build/BuildOutputTable.tsx:454
 msgid "Deallocate Stock"
 msgstr "재고 할당 해제"
 
-#: src/tables/build/BuildLineTable.tsx:742
+#: src/tables/build/BuildLineTable.tsx:752
 msgid "Deallocate all untracked stock for this build order"
 msgstr "이 생산 주문의 모든 비추적 재고 할당 해제"
 
-#: src/tables/build/BuildLineTable.tsx:744
+#: src/tables/build/BuildLineTable.tsx:754
 msgid "Deallocate stock from the selected line item"
 msgstr "선택한 항목에서 재고 할당 해제"
 
-#: src/tables/build/BuildLineTable.tsx:748
+#: src/tables/build/BuildLineTable.tsx:758
 msgid "Stock has been deallocated"
 msgstr "재고 할당이 취소되었습니다"
 
-#: src/tables/build/BuildLineTable.tsx:869
+#: src/tables/build/BuildLineTable.tsx:879
 msgid "Trackable parts must be allocated via the Build Outputs tab"
 msgstr "추적 가능한 부품은 빌드 출력 탭을 통해 할당해야 합니다"
 
-#: src/tables/build/BuildLineTable.tsx:909
+#: src/tables/build/BuildLineTable.tsx:919
 msgid "Build Stock"
 msgstr "생산 재고"
 
-#: src/tables/build/BuildLineTable.tsx:922
+#: src/tables/build/BuildLineTable.tsx:932
 #: src/tables/sales/SalesOrderLineItemTable.tsx:596
 #: src/tables/stock/TransferOrderLineItemTable.tsx:450
 msgid "View Part"
 msgstr "부품 보기"
 
-#: src/tables/build/BuildLineTable.tsx:943
+#: src/tables/build/BuildLineTable.tsx:953
 msgid "Build order must be issued before stock can be allocated"
 msgstr ""
 
@@ -11902,49 +11902,49 @@ msgstr "선택한 옵션에 따라 추적되는 BOM 항목을 이 생산에 자�
 #~ msgid "Edit build output"
 #~ msgstr "Edit build output"
 
-#: src/tables/build/BuildOutputTable.tsx:335
-#: src/tables/build/BuildOutputTable.tsx:579
+#: src/tables/build/BuildOutputTable.tsx:334
+#: src/tables/build/BuildOutputTable.tsx:578
 msgid "Add Build Output"
 msgstr "생산 결과물 추가"
 
-#: src/tables/build/BuildOutputTable.tsx:338
+#: src/tables/build/BuildOutputTable.tsx:337
 msgid "Build output created"
 msgstr "생산 결과물이 생성되었습니다"
 
-#: src/tables/build/BuildOutputTable.tsx:360
+#: src/tables/build/BuildOutputTable.tsx:359
 msgid "Completing build outputs"
 msgstr "빌드 출력 완료 처리 중"
 
-#: src/tables/build/BuildOutputTable.tsx:361
+#: src/tables/build/BuildOutputTable.tsx:360
 msgid "Build outputs have been completed"
 msgstr "생산 결과물이 완료되었습니다"
 
-#: src/tables/build/BuildOutputTable.tsx:370
+#: src/tables/build/BuildOutputTable.tsx:369
 msgid "Scrapping build outputs"
 msgstr "빌드 출력 폐기 처리 중"
 
-#: src/tables/build/BuildOutputTable.tsx:371
+#: src/tables/build/BuildOutputTable.tsx:370
 msgid "Build outputs have been scrapped"
 msgstr "생산 결과물이 폐기되었습니다"
 
-#: src/tables/build/BuildOutputTable.tsx:380
+#: src/tables/build/BuildOutputTable.tsx:379
 msgid "Cancelling build outputs"
 msgstr "빌드 출력 취소 처리 중"
 
-#: src/tables/build/BuildOutputTable.tsx:381
+#: src/tables/build/BuildOutputTable.tsx:380
 msgid "Build outputs have been cancelled"
 msgstr "생산 결과물이 취소되었습니다"
 
-#: src/tables/build/BuildOutputTable.tsx:441
-#: src/tables/build/BuildOutputTable.tsx:649
+#: src/tables/build/BuildOutputTable.tsx:440
+#: src/tables/build/BuildOutputTable.tsx:648
 msgid "Edit Build Output"
 msgstr "생산 결과물 편집"
 
-#: src/tables/build/BuildOutputTable.tsx:457
+#: src/tables/build/BuildOutputTable.tsx:456
 msgid "This action will deallocate all stock from the selected build output"
 msgstr "이 작업은 선택한 생산 결과물의 모든 재고 할당을 해제합니다"
 
-#: src/tables/build/BuildOutputTable.tsx:482
+#: src/tables/build/BuildOutputTable.tsx:481
 msgid "Serialize Build Output"
 msgstr "생산 결과물 일련번호 지정"
 
@@ -11952,69 +11952,69 @@ msgstr "생산 결과물 일련번호 지정"
 #~ msgid "View Build Output"
 #~ msgstr "View Build Output"
 
-#: src/tables/build/BuildOutputTable.tsx:500
+#: src/tables/build/BuildOutputTable.tsx:499
 #: src/tables/part/PartTestResultTable.tsx:329
 #: src/tables/stock/StockItemTable.tsx:203
 msgid "Filter by stock status"
 msgstr "재고 상태로 필터링"
 
-#: src/tables/build/BuildOutputTable.tsx:546
+#: src/tables/build/BuildOutputTable.tsx:545
 msgid "Complete selected outputs"
 msgstr "선택한 결과물 완료"
 
-#: src/tables/build/BuildOutputTable.tsx:557
+#: src/tables/build/BuildOutputTable.tsx:556
 msgid "Scrap selected outputs"
 msgstr "선택한 결과물 폐기"
 
-#: src/tables/build/BuildOutputTable.tsx:568
+#: src/tables/build/BuildOutputTable.tsx:567
 msgid "Cancel selected outputs"
 msgstr "선택한 결과물 취소"
 
-#: src/tables/build/BuildOutputTable.tsx:599
+#: src/tables/build/BuildOutputTable.tsx:598
 msgid "Allocate"
 msgstr "할당하다"
 
-#: src/tables/build/BuildOutputTable.tsx:600
+#: src/tables/build/BuildOutputTable.tsx:599
 msgid "Allocate stock to build output"
 msgstr "생산 결과물에 재고 할당"
 
-#: src/tables/build/BuildOutputTable.tsx:613
+#: src/tables/build/BuildOutputTable.tsx:612
 msgid "Deallocate"
 msgstr "할당 해제"
 
-#: src/tables/build/BuildOutputTable.tsx:614
+#: src/tables/build/BuildOutputTable.tsx:613
 msgid "Deallocate stock from build output"
 msgstr "생산 결과물에서 재고 할당 해제"
 
-#: src/tables/build/BuildOutputTable.tsx:628
+#: src/tables/build/BuildOutputTable.tsx:627
 msgid "Serialize build output"
 msgstr "생산 결과물 일련번호 지정"
 
-#: src/tables/build/BuildOutputTable.tsx:639
+#: src/tables/build/BuildOutputTable.tsx:638
 msgid "Complete build output"
 msgstr "생산 결과물 완료"
 
-#: src/tables/build/BuildOutputTable.tsx:656
+#: src/tables/build/BuildOutputTable.tsx:655
 msgid "Scrap"
 msgstr "권투 시합"
 
-#: src/tables/build/BuildOutputTable.tsx:657
+#: src/tables/build/BuildOutputTable.tsx:656
 msgid "Scrap build output"
 msgstr "생산 결과물 폐기"
 
-#: src/tables/build/BuildOutputTable.tsx:667
+#: src/tables/build/BuildOutputTable.tsx:666
 msgid "Cancel build output"
 msgstr "생산 결과물 취소"
 
-#: src/tables/build/BuildOutputTable.tsx:731
+#: src/tables/build/BuildOutputTable.tsx:730
 msgid "Required Tests"
 msgstr "필수 테스트"
 
-#: src/tables/build/BuildOutputTable.tsx:807
+#: src/tables/build/BuildOutputTable.tsx:806
 msgid "External Build"
 msgstr "외부 생산"
 
-#: src/tables/build/BuildOutputTable.tsx:809
+#: src/tables/build/BuildOutputTable.tsx:808
 msgid "This build order is fulfilled by an external purchase order"
 msgstr "이 생산 주문은 외부 발주서로 이행됩니다"
 
