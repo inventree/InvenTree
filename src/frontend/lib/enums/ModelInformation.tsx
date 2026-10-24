@@ -180,6 +180,23 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.build_item_list,
     icon: 'build_order'
   },
+  nonconformance: {
+    label: () => t`Non-Conformance`,
+    label_multiple: () => t`Non-Conformances`,
+    url_overview: '/manufacturing/index/ncr',
+    url_detail: '/manufacturing/ncr/:pk/',
+    api_endpoint: ApiEndpoints.ncr_list,
+    admin_url: '/build/nonconformance/',
+    supports_barcode: true,
+    icon: 'ncr',
+    default_query_params: { part_detail: true }
+  },
+  nonconformancestockitem: {
+    label: () => t`Non-Conformance Stock Item`,
+    label_multiple: () => t`Non-Conformance Stock Items`,
+    api_endpoint: ApiEndpoints.ncr_stock_item_list,
+    icon: 'ncr'
+  },
   company: {
     label: () => t`Company`,
     label_multiple: () => t`Companies`,
