@@ -1005,6 +1005,39 @@ class PurchaseOrderTest(OrderTest):
         )
         self.assertEqual(response.status_code, 200)
 
+    def test_po_calendar_auth_password_colon(self):
+        """Test header authorization with a password containing a colon."""
+        password = 'pass:word:123'
+        self.user.set_password(password)
+        self.user.save()
+        self.client.logout()
+
+        base64_token = base64.b64encode(f'{self.username}:{password}'.encode()).decode(
+            'ascii'
+        )
+        response = self.client.get(
+            reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}),
+            format='json',
+            headers={'authorization': f'basic {base64_token}'},
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_po_calendar_auth_malformed(self):
+        """Test that malformed basic authorization headers return 401, not 500."""
+        self.client.logout()
+        url = reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'})
+
+        for token in [
+            'not-base64!!',  # invalid base64
+            base64.b64encode(b'\xff\xfe\xfd').decode('ascii'),  # invalid utf-8
+            base64.b64encode(b'no-colon-here').decode('ascii'),  # no separator
+        ]:
+            response = self.client.get(
+                url, format='json', headers={'authorization': f'basic {token}'}
+            )
+            self.assertEqual(response.status_code, 401)
+            self.assertEqual(response['WWW-Authenticate'], 'Basic realm="api"')
+
     def test_po_calendar_no_permission(self):
         """Test that an authenticated user without purchase_order view permission is denied."""
         self.clearRoles()
