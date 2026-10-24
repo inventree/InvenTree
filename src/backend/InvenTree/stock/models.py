@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextvars
+import copy
 import os
 from contextlib import contextmanager
 from datetime import timedelta
@@ -2671,8 +2672,14 @@ class StockItem(
 
         return True
 
-    def find_merge_target(self, location):
-        """Find an existing stock item at location that can absorb this item."""
+    def find_merge_target(self, location, status=None):
+        """Find an existing stock item at location that can absorb this item.
+
+        Arguments:
+            location: The destination StockLocation
+            status: Optional status which will be applied to this item as part of the move.
+                If provided, the merge target must match this status (rather than the current status)
+        """
         if location is None:
             return None
 
@@ -2680,6 +2687,15 @@ class StockItem(
         # (e.g. not serialized, in production, installed, or assigned to an order / customer)
         if not self.can_merge():
             return None
+
+        # Compare candidates against the status this item will have *after* the move
+        incoming = self
+
+        if status and not self.compare_status(status):
+            incoming = copy.copy(self)
+
+            if not incoming.set_status(status):
+                return None
 
         candidates = list(
             StockItem.objects
@@ -2700,7 +2716,7 @@ class StockItem(
             search_order = candidates
 
         for target in search_order:
-            if target.can_merge(other=self, raise_error=False):
+            if target.can_merge(other=incoming, raise_error=False):
                 return target
 
         return None
