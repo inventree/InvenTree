@@ -10,7 +10,7 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 
 import common.models
-from InvenTree.helpers import current_date
+from InvenTree.helpers import current_date, escape_export_value
 
 logger = structlog.get_logger('inventree')
 
@@ -227,7 +227,9 @@ def perform_stocktake(
         for entry in history_entries:
             entry.date = today
             row = serializer.to_representation(entry)
-            dataset.append([row.get(header, '') for header in header_keys])
+            dataset.append([
+                escape_export_value(row.get(header, '')) for header in header_keys
+            ])
 
         datafile = dataset.export('csv')
 

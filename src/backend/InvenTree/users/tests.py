@@ -194,6 +194,51 @@ class RuleSetModelTest(TestCase):
         # There should now not be any permissions assigned to this group
         self.assertEqual(group.permissions.count(), 0)
 
+    def test_permission_inherit_stable(self):
+        """Inherited child permissions must survive repeated group updates.
+
+        The 'part' role grants permissions against 'part_bomitem' via RULESET_CHANGE_INHERIT,
+        even though 'part_bomitem' is not covered by the 'part' role directly.
+        These inherited permissions must not be dropped (or toggled) on subsequent updates.
+        """
+        group = Group.objects.create(name='Inherit group')
+
+        part_rule = group.rule_sets.get(name='part')
+        part_rule.can_add = True
+        part_rule.can_delete = True
+        part_rule.save()
+
+        expected = {
+            f'part.{action}_bomitem' for action in ['view', 'add', 'change', 'delete']
+        }
+
+        for _ in range(4):
+            group.save()
+
+            permissions = {
+                f'{p.content_type.app_label}.{p.codename}'
+                for p in group.permissions.all().prefetch_related('content_type')
+            }
+
+            self.assertTrue(expected.issubset(permissions))
+
+        # Removing the parent permissions also removes the inherited permissions
+        part_rule.can_view = False
+        part_rule.can_add = False
+        part_rule.can_change = False
+        part_rule.can_delete = False
+        part_rule.save()
+
+        for _ in range(2):
+            group.save()
+
+            permissions = {
+                f'{p.content_type.app_label}.{p.codename}'
+                for p in group.permissions.all().prefetch_related('content_type')
+            }
+
+            self.assertTrue(expected.isdisjoint(permissions))
+
 
 class OwnerModelTest(InvenTreeTestCase):
     """Some simplistic tests to ensure the Owner model is setup correctly."""

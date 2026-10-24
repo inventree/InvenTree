@@ -498,7 +498,9 @@ class PurchaseOrderViewSet(
         items = serializer.save()
         queryset = stock_serializers.StockItemSerializer.annotate_queryset(items)
 
-        response = stock_serializers.StockItemSerializer(queryset, many=True)
+        response = stock_serializers.StockItemSerializer(
+            queryset, many=True, permission_user=request.user
+        )
         return Response(response.data, status=status.HTTP_201_CREATED)
 
 
@@ -681,7 +683,9 @@ class PurchaseOrderLineItemViewSet(
         ):
             line_item.update_pricing()
 
-        serializer = serializers.PurchaseOrderLineItemSerializer(line_item)
+        serializer = serializers.PurchaseOrderLineItemSerializer(
+            line_item, permission_user=request.user
+        )
         headers = self.get_success_headers(serializer.data)
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
@@ -2516,6 +2520,7 @@ class OrderCalendarExport(ICalFeed):
         https://www.djangosnippets.org/snippets/243/
         """
         import base64
+        import binascii
 
         if request.user.is_authenticated:
             # Authenticated on first try - maybe normal browser call?
@@ -2530,11 +2535,20 @@ class OrderCalendarExport(ICalFeed):
                 # NOTE: We are only support basic authentication for now.
                 #
                 if auth[0].lower() == 'basic':
-                    uname, passwd = base64.b64decode(auth[1]).decode('ascii').split(':')
-                    user = authenticate(username=uname, password=passwd)
-                    if user is not None and user.is_active:
-                        login(request, user)
-                        request.user = user
+                    try:
+                        # Split on the first colon only - passwords may contain ':'
+                        uname, passwd = (
+                            base64.b64decode(auth[1]).decode('utf-8').split(':', 1)
+                        )
+                    except (binascii.Error, UnicodeDecodeError, ValueError):
+                        # Malformed header - fall through to the 401 response
+                        uname = passwd = None
+
+                    if uname is not None:
+                        user = authenticate(username=uname, password=passwd)
+                        if user is not None and user.is_active:
+                            login(request, user)
+                            request.user = user
 
         # Check again
         if request.user.is_authenticated:

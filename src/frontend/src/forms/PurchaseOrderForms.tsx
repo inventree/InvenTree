@@ -14,6 +14,7 @@ import {
 import { useDisclosure, useId } from '@mantine/hooks';
 import {
   IconAddressBook,
+  IconBuildingSkyscraper,
   IconCalendar,
   IconCoins,
   IconCurrencyDollar,
@@ -254,6 +255,9 @@ export function usePurchaseOrderFields({
 }): ApiFormFieldSet {
   const globalSettings = useGlobalSettingsState();
 
+  const [supplier, setSupplier] = useState<number | null>(supplierId ?? null);
+  const [receivingCompany, setReceivingCompany] = useState<number | null>(null);
+
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       reference: {
@@ -266,6 +270,9 @@ export function usePurchaseOrderFields({
         filters: {
           is_supplier: true,
           active: true
+        },
+        onValueChange: (value: any) => {
+          setSupplier(value || null);
         },
         addCreateFields: {
           name: {},
@@ -301,6 +308,7 @@ export function usePurchaseOrderFields({
       link: {},
       contact: {
         icon: <IconUser />,
+        disabled: !supplier,
         adjustFilters: (value: ApiFormAdjustFilterType) => {
           return {
             ...value.filters,
@@ -310,10 +318,31 @@ export function usePurchaseOrderFields({
       },
       address: {
         icon: <IconAddressBook />,
+        disabled: !supplier,
         adjustFilters: (value: ApiFormAdjustFilterType) => {
           return {
             ...value.filters,
             company: value.data.supplier
+          };
+        }
+      },
+      receiving_company: {
+        icon: <IconBuildingSkyscraper />,
+        filters: {
+          is_internal: true,
+          active: true
+        },
+        onValueChange: (value: any) => {
+          setReceivingCompany(value || null);
+        }
+      },
+      delivery_address: {
+        icon: <IconAddressBook />,
+        disabled: !receivingCompany,
+        adjustFilters: (value: ApiFormAdjustFilterType) => {
+          return {
+            ...value.filters,
+            company: value.data.receiving_company
           };
         }
       },
@@ -346,7 +375,14 @@ export function usePurchaseOrderFields({
     }
 
     return fields;
-  }, [duplicateOrderId, supplierId, create, globalSettings]);
+  }, [
+    duplicateOrderId,
+    supplierId,
+    create,
+    globalSettings,
+    supplier,
+    receivingCompany
+  ]);
 }
 
 /**

@@ -660,23 +660,27 @@ export default function StockDetail() {
           <DetailsBadge
             color='yellow'
             label={t`In Production`}
+            tooltip={t`This stock item is currently being built`}
             visible={stockitem.is_building}
           />,
           <DetailsBadge
             color='blue'
             label={`${t`Serial Number`}: ${stockitem.serial}`}
+            tooltip={t`Serial number of this stock item`}
             visible={!!stockitem.serial}
             key='serial'
           />,
           <DetailsBadge
             color='blue'
             label={`${t`Quantity`}: ${formatDecimal(stockitem.quantity)}`}
+            tooltip={t`Total quantity of this stock item`}
             visible={!stockitem.serial}
             key='quantity'
           />,
           <DetailsBadge
             color='yellow'
             label={`${t`Available`}: ${formatDecimal(available)}`}
+            tooltip={t`Quantity which is not allocated to orders`}
             visible={
               stockitem.in_stock &&
               !stockitem.serial &&
@@ -687,6 +691,7 @@ export default function StockDetail() {
           <DetailsBadge
             color='blue'
             label={`${t`Batch Code`}: ${stockitem.batch}`}
+            tooltip={t`Batch code of this stock item`}
             visible={!!stockitem.batch}
             key='batch'
           />,
@@ -702,18 +707,21 @@ export default function StockDetail() {
           <DetailsBadge
             color='yellow'
             label={t`Stale`}
+            tooltip={t`This stock item is approaching its expiry date`}
             visible={enableExpiry && stockitem.stale && !stockitem.expired}
             key='stale'
           />,
           <DetailsBadge
             color='orange'
             label={t`Expired`}
+            tooltip={t`This stock item has passed its expiry date`}
             visible={enableExpiry && stockitem.expired}
             key='expired'
           />,
           <DetailsBadge
             color='red'
             label={t`Unavailable`}
+            tooltip={t`This stock item is not available in stock`}
             visible={stockitem.in_stock == false}
             key='unavailable'
           />

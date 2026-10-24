@@ -357,6 +357,23 @@ class BuildTest(BuildAPITest):
         with self.assertRaises(Build.DoesNotExist):
             Build.objects.get(pk=1)
 
+    def test_create_output_batch_code_max_length(self):
+        """Test that an overly long batch code is rejected with a validation error."""
+        url = reverse('api-build-output-create', kwargs={'pk': 1})
+
+        max_length = int(StockItem._meta.get_field('batch').max_length)
+
+        response = self.post(
+            url,
+            {'quantity': 1, 'batch_code': 'x' * (max_length + 1)},
+            expected_code=400,
+        )
+
+        self.assertIn(
+            f'Ensure this field has no more than {max_length} characters',
+            str(response.data['batch_code']),
+        )
+
     def test_create_delete_output(self):
         """Test that we can create and delete build outputs via the API."""
         bo = Build.objects.get(pk=1)
@@ -2262,6 +2279,43 @@ class BuildLineTests(BuildAPITest):
         response = self.get(url, {'build': build.pk}, expected_code=200)
         line_data = next(item for item in response.data if item['pk'] == line.pk)
         self.assertEqual(line_data['allocated'], 1)
+
+    def test_ordering_unit_quantity_piece_count(self):
+        """Ordering by 'unit_quantity' must account for the BOM piece_count."""
+        assembly = Part.objects.create(
+            name='Unit Quantity Assembly',
+            description='Assembly for unit quantity ordering',
+            assembly=True,
+        )
+
+        wire = Part.objects.create(
+            name='Wire', description='Cut-to-length wire', component=True
+        )
+        screw = Part.objects.create(name='Screw', description='A screw', component=True)
+
+        # 2 x 5 = 10 units of wire per assembly
+        BomItem.objects.create(part=assembly, sub_part=wire, quantity=2, piece_count=5)
+
+        # 3 x 1 = 3 screws per assembly
+        BomItem.objects.create(part=assembly, sub_part=screw, quantity=3)
+
+        build = Build.objects.create(
+            part=assembly, reference='BO-9998', quantity=1, title='Unit quantity'
+        )
+
+        url = reverse('api-build-line-list')
+
+        response = self.get(
+            url, {'build': build.pk, 'ordering': 'unit_quantity'}, expected_code=200
+        )
+
+        self.assertEqual([line['part'] for line in response.data], [screw.pk, wire.pk])
+
+        response = self.get(
+            url, {'build': build.pk, 'ordering': '-unit_quantity'}, expected_code=200
+        )
+
+        self.assertEqual([line['part'] for line in response.data], [wire.pk, screw.pk])
 
 
 class BuildConsumeTest(BuildAPITest):

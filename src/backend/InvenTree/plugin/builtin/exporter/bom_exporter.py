@@ -241,7 +241,7 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
 
         if self.export_total_quantity:
             # Calculate the total quantity for this BOM item
-            total_quantity = Decimal(bom_item.quantity) * multiplier
+            total_quantity = bom_item.unit_quantity * multiplier
             row['total_quantity'] = normalize(total_quantity)
 
         self.bom_data.append(row)
@@ -258,7 +258,7 @@ class BomExporterPlugin(DataExportMixin, InvenTreePlugin):
                 self.process_bom_row(
                     item,
                     level=level + 1,
-                    multiplier=multiplier * bom_item.quantity,
+                    multiplier=multiplier * bom_item.unit_quantity,
                     **kwargs,
                 )
 
