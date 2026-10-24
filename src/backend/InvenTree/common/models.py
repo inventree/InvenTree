@@ -248,12 +248,18 @@ class BaseInvenTreeSetting(UpdatedUserMixin, models.Model):
         # Execute before_save action
         self._call_settings_function('before_save', args, kwargs)
 
-        # Values are stored as strings - convert the (cleaned) value here, as the database would,
-        # so that the audit log compares like with like (e.g. 'True' vs True)
-        if self.value is not None and not isinstance(self.value, str):
-            self.value = str(self.value)
+        # Values are stored as strings - convert the (cleaned) value for the database write,
+        # so that the audit log compares like with like (e.g. 'True' vs True).
+        # The cleaned (native) value is restored afterwards, as callers may rely on it
+        value = self.value
 
-        super().save()
+        if value is not None and not isinstance(value, str):
+            self.value = str(value)
+
+        try:
+            super().save()
+        finally:
+            self.value = value
 
         # Update this setting in the cache after it was saved so a pk exists
         if do_cache:
