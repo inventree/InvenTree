@@ -712,6 +712,8 @@ class GlobalSettingAuditTest(InvenTreeAPITestCase):
 
     def test_system_settings_not_recorded(self):
         """Settings which are written automatically by the system are not recorded."""
+        from unittest import mock
+
         from common.models import InvenTreeSetting
         from common.settings import set_global_setting
 
@@ -720,16 +722,27 @@ class GlobalSettingAuditTest(InvenTreeAPITestCase):
         # Internal settings (e.g. written by every scheduled task run)
         set_global_setting('_TEST_TASK_ATTEMPT', 'now', change_user=None)
 
-        # Changing this setting also sets 'SERVER_RESTART_REQUIRED'
-        self.assertFalse(InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))
-        self.set_value('PLUGIN_ON_STARTUP', True)
-        self.assertTrue(InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))
+        # Changing a setting which requires a restart also sets 'SERVER_RESTART_REQUIRED'
+        # Note: A setting which is not overridden by the environment is used here
+        # (e.g. PLUGIN_ON_STARTUP is set via environment variable in the docker image)
+        def requires_restart(setting):
+            return setting.key == 'INVENTREE_INSTANCE'
+
+        with mock.patch.object(
+            InvenTreeSetting,
+            'requires_restart',
+            autospec=True,
+            side_effect=requires_restart,
+        ):
+            self.assertFalse(InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))
+            self.set_value('INVENTREE_INSTANCE', 'Restart Instance')
+            self.assertTrue(InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))
 
         keys = list(
             self.entries().order_by('pk')[n:].values_list('object_repr', flat=True)
         )
 
-        self.assertEqual(keys, ['PLUGIN_ON_STARTUP'])
+        self.assertEqual(keys, ['INVENTREE_INSTANCE'])
 
     def test_protected_value(self):
         """The values of protected settings are never recorded."""
