@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 04:02+0000\n"
-"PO-Revision-Date: 2026-10-21 04:06\n"
+"POT-Creation-Date: 2026-10-24 04:53+0000\n"
+"PO-Revision-Date: 2026-10-24 04:57\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -17,43 +17,43 @@ msgstr ""
 "X-Crowdin-File: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 250\n"
 
-#: InvenTree/api.py:378
+#: InvenTree/api.py:393
 msgid "API endpoint not found"
 msgstr "API 엔드포인트를 찾을 수 없습니다"
 
-#: InvenTree/api.py:451
+#: InvenTree/api.py:466
 msgid "List of items must be provided for bulk operation"
 msgstr "일괄 작업을 위해 항목 목록을 제공해야 합니다"
 
-#: InvenTree/api.py:458
+#: InvenTree/api.py:473
 msgid "Items must be provided as a list"
 msgstr "항목은 목록 형태로 제공되어야 합니다"
 
-#: InvenTree/api.py:466
+#: InvenTree/api.py:481
 msgid "Invalid items list provided"
 msgstr "잘못된 항목 목록이 제공되었습니다"
 
-#: InvenTree/api.py:471
+#: InvenTree/api.py:486
 msgid "All filter must only be used with true"
 msgstr "all 필터는 true와 함께만 사용할 수 있습니다"
 
-#: InvenTree/api.py:476
+#: InvenTree/api.py:491
 msgid "No items match the provided criteria"
 msgstr "제공된 조건과 일치하는 항목이 없습니다"
 
-#: InvenTree/api.py:500
+#: InvenTree/api.py:515
 msgid "No data provided"
 msgstr "데이터가 제공되지 않았습니다"
 
-#: InvenTree/api.py:516
+#: InvenTree/api.py:531
 msgid "This field must be unique."
 msgstr "이 필드는 고유해야 합니다."
 
-#: InvenTree/api.py:620
+#: InvenTree/api.py:635
 msgid "Item no longer matches the provided criteria"
 msgstr ""
 
-#: InvenTree/api.py:875 InvenTree/models.py:1567
+#: InvenTree/api.py:890 InvenTree/models.py:1567
 msgid "User does not have permission to view this model"
 msgstr "이 모델을 볼 수 있는 권한이 없습니다."
 
@@ -92,7 +92,7 @@ msgid "Could not convert {original} to {unit}"
 msgstr "{original}을(를) {unit}(으)로 변환할 수 없습니다"
 
 #: InvenTree/conversion.py:334 InvenTree/conversion.py:348
-#: InvenTree/helpers.py:621 order/models.py:890 order/models.py:1188
+#: InvenTree/helpers.py:636 order/models.py:890 order/models.py:1188
 #: part/models.py:3061 stock/models.py:2114
 msgid "Invalid quantity provided"
 msgstr "잘못된 수량이 제공되었습니다"
@@ -133,43 +133,43 @@ msgstr "값 '{name}'이(가) 패턴 형식에 없습니다"
 msgid "Provided value does not match required pattern: "
 msgstr "제공된 값이 요구되는 패턴과 일치하지 않습니다: "
 
-#: InvenTree/helpers.py:625
+#: InvenTree/helpers.py:640
 msgid "Cannot serialize more than 1000 items at once"
 msgstr "한 번에 1000개를 초과하여 직렬화할 수 없습니다"
 
-#: InvenTree/helpers.py:631
+#: InvenTree/helpers.py:646
 msgid "Empty serial number string"
 msgstr "시리얼 번호 문자열이 비어 있습니다"
 
-#: InvenTree/helpers.py:665
+#: InvenTree/helpers.py:680
 msgid "Serial number exceeds maximum length"
 msgstr ""
 
-#: InvenTree/helpers.py:669
+#: InvenTree/helpers.py:684
 msgid "Duplicate serial"
 msgstr "중복된 시리얼"
 
-#: InvenTree/helpers.py:701 InvenTree/helpers.py:744 InvenTree/helpers.py:762
-#: InvenTree/helpers.py:769 InvenTree/helpers.py:788
+#: InvenTree/helpers.py:716 InvenTree/helpers.py:759 InvenTree/helpers.py:777
+#: InvenTree/helpers.py:784 InvenTree/helpers.py:803
 #, python-brace-format
 msgid "Invalid group: {group}"
 msgstr "잘못된 그룹: {group}"
 
-#: InvenTree/helpers.py:732
+#: InvenTree/helpers.py:747
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
 msgstr "그룹 범위 {group}이(가) 허용된 수량({expected_quantity})을 초과합니다"
 
-#: InvenTree/helpers.py:798
+#: InvenTree/helpers.py:813
 msgid "No serial numbers found"
 msgstr "시리얼 번호를 찾을 수 없습니다"
 
-#: InvenTree/helpers.py:805
+#: InvenTree/helpers.py:820
 #, python-brace-format
 msgid "Number of unique serial numbers ({n}) must match quantity ({q})"
 msgstr "고유 시리얼 번호 개수({n})는 수량({q})과 일치해야 합니다"
 
-#: InvenTree/helpers.py:935
+#: InvenTree/helpers.py:950
 msgid "Remove HTML tags from this value"
 msgstr "이 값에서 HTML 태그를 제거하세요"
 
@@ -729,7 +729,7 @@ msgstr "소모품"
 msgid "Optional"
 msgstr "선택사항"
 
-#: build/api.py:479 build/serializers.py:1469 common/setting/system.py:513
+#: build/api.py:479 build/serializers.py:1469 common/setting/system.py:521
 #: part/models.py:1282 part/serializers.py:1482 part/serializers.py:1508
 #: stock/api.py:712
 msgid "Assembly"
@@ -1486,7 +1486,7 @@ msgstr "빌드 참조"
 msgid "Part Category Name"
 msgstr "부품 카테고리 이름"
 
-#: build/serializers.py:1433 common/setting/system.py:537 part/models.py:1294
+#: build/serializers.py:1433 common/setting/system.py:545 part/models.py:1294
 msgid "Trackable"
 msgstr "추적 가능"
 
@@ -2378,7 +2378,7 @@ msgstr "매개변수에 지정된 모델 유형이 올바르지 않습니다"
 msgid "ID of the target model for this parameter"
 msgstr "이 매개변수의 대상 모델 ID"
 
-#: common/models.py:3079 common/models.py:3376 common/setting/system.py:507
+#: common/models.py:3079 common/models.py:3376 common/setting/system.py:515
 #: report/models.py:478 report/models.py:812 report/serializers.py:115
 #: report/serializers.py:166 stock/serializers.py:250
 msgid "Template"
@@ -2853,1294 +2853,1302 @@ msgid "Announce the instance ID of the server in the server status info (unauthe
 msgstr "서버 상태 정보(인증 없음)에 서버 인스턴스 ID를 알립니다"
 
 #: common/setting/system.py:241
+msgid "Allow Link Proof"
+msgstr ""
+
+#: common/setting/system.py:243
+msgid "Allow other instances to verify the server identity without revealing the instance ID"
+msgstr ""
+
+#: common/setting/system.py:249
 msgid "Server Instance Name"
 msgstr "서버 인스턴스 이름"
 
-#: common/setting/system.py:243
+#: common/setting/system.py:251
 msgid "String descriptor for the server instance"
 msgstr "서버 인스턴스를 설명하는 문자열"
 
-#: common/setting/system.py:247
+#: common/setting/system.py:255
 msgid "Use instance name"
 msgstr "인스턴스 이름 사용"
 
-#: common/setting/system.py:248
+#: common/setting/system.py:256
 msgid "Use the instance name in the title-bar"
 msgstr "제목 표시줄에 인스턴스 이름을 사용합니다"
 
-#: common/setting/system.py:253
+#: common/setting/system.py:261
 msgid "Restrict showing `about`"
 msgstr "`about` 표시 제한"
 
-#: common/setting/system.py:254
+#: common/setting/system.py:262
 msgid "Show the `about` modal only to superusers"
 msgstr "`about` 모달을 슈퍼유저에게만 표시합니다"
 
-#: common/setting/system.py:259
+#: common/setting/system.py:267
 msgid "Show superuser banner"
 msgstr "슈퍼유저 배너 표시"
 
-#: common/setting/system.py:260
+#: common/setting/system.py:268
 msgid "Show a warning banner in the UI when logged in as superuser"
 msgstr "슈퍼유저로 로그인했을 때 UI에 경고 배너를 표시합니다"
 
-#: common/setting/system.py:266
+#: common/setting/system.py:274
 msgid "Show admin banner"
 msgstr "관리자 배너 표시"
 
-#: common/setting/system.py:267
+#: common/setting/system.py:275
 msgid "Show a warning banner in the UI when logged in as admin"
 msgstr "관리자로 로그인했을 때 UI에 경고 배너를 표시합니다"
 
-#: common/setting/system.py:272 company/models.py:182 company/models.py:183
+#: common/setting/system.py:280 company/models.py:182 company/models.py:183
 msgid "Company name"
 msgstr "회사명"
 
-#: common/setting/system.py:273
+#: common/setting/system.py:281
 msgid "Internal company name"
 msgstr "내부 회사명"
 
-#: common/setting/system.py:277
+#: common/setting/system.py:285
 msgid "Default internal company"
 msgstr ""
 
-#: common/setting/system.py:278
+#: common/setting/system.py:286
 msgid "Internal company which represents this organization"
 msgstr ""
 
-#: common/setting/system.py:285
+#: common/setting/system.py:293
 msgid "Base URL"
 msgstr "기본 URL"
 
-#: common/setting/system.py:286
+#: common/setting/system.py:294
 msgid "Base URL for server instance"
 msgstr "서버 인스턴스의 기본 URL"
 
-#: common/setting/system.py:292
+#: common/setting/system.py:300
 msgid "Default Currency"
 msgstr "기본 통화"
 
-#: common/setting/system.py:293
+#: common/setting/system.py:301
 msgid "Select base currency for pricing calculations"
 msgstr "가격 계산에 사용할 기준 통화를 선택합니다"
 
-#: common/setting/system.py:299
+#: common/setting/system.py:307
 msgid "Supported Currencies"
 msgstr "지원 통화"
 
-#: common/setting/system.py:300
+#: common/setting/system.py:308
 msgid "List of supported currency codes"
 msgstr "지원하는 통화 코드 목록"
 
-#: common/setting/system.py:306
+#: common/setting/system.py:314
 msgid "Currency Update Interval"
 msgstr "환율 업데이트 간격"
 
-#: common/setting/system.py:307
+#: common/setting/system.py:315
 msgid "How often to update exchange rates (set to zero to disable)"
 msgstr "환율을 업데이트하는 주기(0으로 설정하면 비활성화)"
 
-#: common/setting/system.py:309 common/setting/system.py:338
-#: common/setting/system.py:351 common/setting/system.py:359
-#: common/setting/system.py:366 common/setting/system.py:375
-#: common/setting/system.py:384 common/setting/system.py:637
-#: common/setting/system.py:665 common/setting/system.py:796
-#: common/setting/system.py:1293 common/setting/system.py:1309
-#: common/setting/system.py:1326
+#: common/setting/system.py:317 common/setting/system.py:346
+#: common/setting/system.py:359 common/setting/system.py:367
+#: common/setting/system.py:374 common/setting/system.py:383
+#: common/setting/system.py:392 common/setting/system.py:645
+#: common/setting/system.py:673 common/setting/system.py:804
+#: common/setting/system.py:1301 common/setting/system.py:1317
+#: common/setting/system.py:1334
 msgid "days"
 msgstr "일"
 
-#: common/setting/system.py:313
+#: common/setting/system.py:321
 msgid "Currency Update Plugin"
 msgstr "환율 업데이트 플러그인"
 
-#: common/setting/system.py:314
+#: common/setting/system.py:322
 msgid "Currency update plugin to use"
 msgstr "사용할 환율 업데이트 플러그인"
 
-#: common/setting/system.py:319
+#: common/setting/system.py:327
 msgid "Upload Size Limit"
 msgstr "업로드 크기 제한"
 
-#: common/setting/system.py:320
+#: common/setting/system.py:328
 msgid "Maximum allowable upload size for images and files"
 msgstr "이미지 및 파일의 최대 업로드 크기"
 
-#: common/setting/system.py:327
+#: common/setting/system.py:335
 msgid "Strict URL Validation"
 msgstr "엄격한 URL 검증"
 
-#: common/setting/system.py:328
+#: common/setting/system.py:336
 msgid "Require schema specification when validating URLs"
 msgstr "URL 검증 시 스키마 지정을 요구합니다"
 
-#: common/setting/system.py:334
+#: common/setting/system.py:342
 msgid "Update Check Interval"
 msgstr "업데이트 확인 간격"
 
-#: common/setting/system.py:335
+#: common/setting/system.py:343
 msgid "How often to check for updates (set to zero to disable)"
 msgstr "업데이트를 확인하는 주기(0으로 설정하면 비활성화)"
 
-#: common/setting/system.py:341
+#: common/setting/system.py:349
 msgid "Automatic Backup"
 msgstr "자동 백업"
 
-#: common/setting/system.py:342
+#: common/setting/system.py:350
 msgid "Enable automatic backup of database and media files"
 msgstr "데이터베이스 및 미디어 파일의 자동 백업을 활성화합니다"
 
-#: common/setting/system.py:347
+#: common/setting/system.py:355
 msgid "Auto Backup Interval"
 msgstr "자동 백업 간격"
 
-#: common/setting/system.py:348
+#: common/setting/system.py:356
 msgid "Specify number of days between automated backup events"
 msgstr "자동 백업 이벤트 사이의 일 수를 지정합니다"
 
-#: common/setting/system.py:354
+#: common/setting/system.py:362
 msgid "Task Deletion Interval"
 msgstr "작업 삭제 간격"
 
-#: common/setting/system.py:356
+#: common/setting/system.py:364
 msgid "Background task results will be deleted after specified number of days"
 msgstr "백그라운드 작업 결과는 지정한 일 수 이후 삭제됩니다"
 
-#: common/setting/system.py:363
+#: common/setting/system.py:371
 msgid "Error Log Deletion Interval"
 msgstr "오류 로그 삭제 간격"
 
-#: common/setting/system.py:364
+#: common/setting/system.py:372
 msgid "Error logs will be deleted after specified number of days"
 msgstr "오류 로그는 지정한 일 수 이후 삭제됩니다"
 
-#: common/setting/system.py:370
+#: common/setting/system.py:378
 msgid "Notification Deletion Interval"
 msgstr "알림 삭제 간격"
 
-#: common/setting/system.py:372
+#: common/setting/system.py:380
 msgid "User notifications will be deleted after specified number of days"
 msgstr "사용자 알림은 지정한 일 수 이후 삭제됩니다"
 
-#: common/setting/system.py:379
+#: common/setting/system.py:387
 msgid "Email Deletion Interval"
 msgstr "이메일 삭제 간격"
 
-#: common/setting/system.py:381
+#: common/setting/system.py:389
 msgid "Email messages will be deleted after specified number of days"
 msgstr "이메일 메시지는 지정한 일 수 이후 삭제됩니다"
 
-#: common/setting/system.py:388
+#: common/setting/system.py:396
 msgid "Protect Email Log"
 msgstr "이메일 로그 보호"
 
-#: common/setting/system.py:389
+#: common/setting/system.py:397
 msgid "Prevent deletion of email log entries"
 msgstr "이메일 로그 항목 삭제를 방지합니다"
 
-#: common/setting/system.py:394
+#: common/setting/system.py:402
 msgid "Barcode Support"
 msgstr "바코드 지원"
 
-#: common/setting/system.py:395
+#: common/setting/system.py:403
 msgid "Enable barcode scanner support in the web interface"
 msgstr "웹 인터페이스에서 바코드 스캐너 지원을 활성화합니다"
 
-#: common/setting/system.py:401
+#: common/setting/system.py:409
 msgid "Store Barcode Results"
 msgstr "바코드 결과 저장"
 
-#: common/setting/system.py:402
+#: common/setting/system.py:410
 msgid "Store barcode scan results in the database"
 msgstr "바코드 스캔 결과를 데이터베이스에 저장합니다"
 
-#: common/setting/system.py:408
+#: common/setting/system.py:416
 msgid "Barcode Scans Maximum Count"
 msgstr "바코드 스캔 최대 개수"
 
-#: common/setting/system.py:409
+#: common/setting/system.py:417
 msgid "Maximum number of barcode scan results to store"
 msgstr "저장할 바코드 스캔 결과의 최대 개수"
 
-#: common/setting/system.py:414
+#: common/setting/system.py:422
 msgid "Barcode Input Delay"
 msgstr "바코드 입력 지연"
 
-#: common/setting/system.py:415
+#: common/setting/system.py:423
 msgid "Barcode input processing delay time"
 msgstr "바코드 입력 처리 지연 시간"
 
-#: common/setting/system.py:421
+#: common/setting/system.py:429
 msgid "Barcode Webcam Support"
 msgstr "바코드 웹캠 지원"
 
-#: common/setting/system.py:422
+#: common/setting/system.py:430
 msgid "Allow barcode scanning via webcam in browser"
 msgstr "브라우저에서 웹캠을 통한 바코드 스캔을 허용합니다"
 
-#: common/setting/system.py:428
+#: common/setting/system.py:436
 msgid "Barcode Show Data"
 msgstr "바코드 데이터 표시"
 
-#: common/setting/system.py:429
+#: common/setting/system.py:437
 msgid "Display barcode data in browser as text"
 msgstr "브라우저에 바코드 데이터를 텍스트로 표시합니다"
 
-#: common/setting/system.py:435
+#: common/setting/system.py:443
 msgid "Barcode Generation Plugin"
 msgstr "바코드 생성 플러그인"
 
-#: common/setting/system.py:436
+#: common/setting/system.py:444
 msgid "Plugin to use for internal barcode data generation"
 msgstr "내부 바코드 데이터 생성에 사용할 플러그인"
 
-#: common/setting/system.py:441
+#: common/setting/system.py:449
 msgid "Part Locking"
 msgstr "부품 잠금"
 
-#: common/setting/system.py:442
+#: common/setting/system.py:450
 msgid "Enable locking of parts to prevent modification"
 msgstr "수정 방지를 위한 부품 잠금 활성화"
 
-#: common/setting/system.py:448
+#: common/setting/system.py:456
 msgid "Part Revisions"
 msgstr "부품 리비전"
 
-#: common/setting/system.py:449
+#: common/setting/system.py:457
 msgid "Enable revision field for Part"
 msgstr "부품에 리비전 필드를 활성화합니다"
 
-#: common/setting/system.py:455
+#: common/setting/system.py:463
 msgid "Assembly Revision Only"
 msgstr "조립품 리비전만"
 
-#: common/setting/system.py:456
+#: common/setting/system.py:464
 msgid "Only allow revisions for assembly parts"
 msgstr "조립 부품에만 리비전을 허용합니다"
 
-#: common/setting/system.py:461
+#: common/setting/system.py:469
 msgid "Allow Deletion from Assembly"
 msgstr "조립품에서 삭제 허용"
 
-#: common/setting/system.py:462
+#: common/setting/system.py:470
 msgid "Allow deletion of parts which are used in an assembly"
 msgstr "조립품에 사용되는 부품의 삭제를 허용합니다"
 
-#: common/setting/system.py:467
+#: common/setting/system.py:475
 msgid "IPN Regex"
 msgstr "IPN 정규식"
 
-#: common/setting/system.py:468
+#: common/setting/system.py:476
 msgid "Regular expression pattern for matching Part IPN"
 msgstr "부품 IPN과 일치시키기 위한 정규식 패턴"
 
-#: common/setting/system.py:471
+#: common/setting/system.py:479
 msgid "Allow Duplicate IPN"
 msgstr "IPN 중복 허용"
 
-#: common/setting/system.py:472
+#: common/setting/system.py:480
 msgid "Allow multiple parts to share the same IPN"
 msgstr "여러 부품이 동일한 IPN을 공유하도록 허용합니다"
 
-#: common/setting/system.py:477
+#: common/setting/system.py:485
 msgid "Allow Editing IPN"
 msgstr "IPN 편집 허용"
 
-#: common/setting/system.py:478
+#: common/setting/system.py:486
 msgid "Allow changing the IPN value while editing a part"
 msgstr "부품 편집 중 IPN 값 변경을 허용합니다"
 
-#: common/setting/system.py:483
+#: common/setting/system.py:491
 msgid "Copy Part BOM Data"
 msgstr "부품 BOM 데이터 복사"
 
-#: common/setting/system.py:484
+#: common/setting/system.py:492
 msgid "Copy BOM data by default when duplicating a part"
 msgstr "부품을 복제할 때 기본으로 BOM 데이터를 복사합니다"
 
-#: common/setting/system.py:489
+#: common/setting/system.py:497
 msgid "Copy Part Parameter Data"
 msgstr "부품 매개변수 데이터 복사"
 
-#: common/setting/system.py:490
+#: common/setting/system.py:498
 msgid "Copy parameter data by default when duplicating a part"
 msgstr "부품을 복제할 때 기본으로 매개변수 데이터를 복사합니다"
 
-#: common/setting/system.py:495
+#: common/setting/system.py:503
 msgid "Copy Part Test Data"
 msgstr "부품 테스트 데이터 복사"
 
-#: common/setting/system.py:496
+#: common/setting/system.py:504
 msgid "Copy test data by default when duplicating a part"
 msgstr "부품을 복제할 때 기본으로 테스트 데이터를 복사합니다"
 
-#: common/setting/system.py:501
+#: common/setting/system.py:509
 msgid "Copy Category Parameter Templates"
 msgstr "카테고리 매개변수 템플릿 복사"
 
-#: common/setting/system.py:502
+#: common/setting/system.py:510
 msgid "Copy category parameter templates when creating a part"
 msgstr "부품을 생성할 때 카테고리 매개변수 템플릿을 복사합니다"
 
-#: common/setting/system.py:508
+#: common/setting/system.py:516
 msgid "Parts are templates by default"
 msgstr "부품은 기본적으로 템플릿입니다"
 
-#: common/setting/system.py:514
+#: common/setting/system.py:522
 msgid "Parts can be assembled from other components by default"
 msgstr "부품은 기본적으로 다른 구성요소로 조립할 수 있습니다"
 
-#: common/setting/system.py:519 part/models.py:1288 part/serializers.py:1517
+#: common/setting/system.py:527 part/models.py:1288 part/serializers.py:1517
 #: part/serializers.py:1525
 msgid "Component"
 msgstr "구성요소"
 
-#: common/setting/system.py:520
+#: common/setting/system.py:528
 msgid "Parts can be used as sub-components by default"
 msgstr "부품은 기본적으로 하위 구성요소로 사용할 수 있습니다"
 
-#: common/setting/system.py:525 part/models.py:1306
+#: common/setting/system.py:533 part/models.py:1306
 msgid "Purchaseable"
 msgstr "구매 가능"
 
-#: common/setting/system.py:526
+#: common/setting/system.py:534
 msgid "Parts are purchaseable by default"
 msgstr "부품은 기본적으로 구매 가능합니다"
 
-#: common/setting/system.py:531 part/models.py:1312 stock/api.py:716
+#: common/setting/system.py:539 part/models.py:1312 stock/api.py:716
 msgid "Salable"
 msgstr "판매 가능"
 
-#: common/setting/system.py:532
+#: common/setting/system.py:540
 msgid "Parts are salable by default"
 msgstr "부품은 기본적으로 판매 가능합니다"
 
-#: common/setting/system.py:538
+#: common/setting/system.py:546
 msgid "Parts are trackable by default"
 msgstr "부품은 기본적으로 추적 가능합니다"
 
-#: common/setting/system.py:543 part/models.py:1328
+#: common/setting/system.py:551 part/models.py:1328
 msgid "Virtual"
 msgstr "가상"
 
-#: common/setting/system.py:544
+#: common/setting/system.py:552
 msgid "Parts are virtual by default"
 msgstr "부품은 기본적으로 가상입니다"
 
-#: common/setting/system.py:549
+#: common/setting/system.py:557
 msgid "Show related parts"
 msgstr "관련 부품 표시"
 
-#: common/setting/system.py:550
+#: common/setting/system.py:558
 msgid "Display related parts for a part"
 msgstr "부품에 대한 관련 부품을 표시합니다"
 
-#: common/setting/system.py:555
+#: common/setting/system.py:563
 msgid "Initial Stock Data"
 msgstr "초기 재고 데이터"
 
-#: common/setting/system.py:556
+#: common/setting/system.py:564
 msgid "Allow creation of initial stock when adding a new part"
 msgstr "새 부품 추가 시 초기 재고 생성을 허용합니다"
 
-#: common/setting/system.py:561
+#: common/setting/system.py:569
 msgid "Initial Supplier Data"
 msgstr "초기 공급업체 데이터"
 
-#: common/setting/system.py:563
+#: common/setting/system.py:571
 msgid "Allow creation of initial supplier data when adding a new part"
 msgstr "새 부품 추가 시 초기 공급업체 데이터 생성을 허용합니다"
 
-#: common/setting/system.py:569
+#: common/setting/system.py:577
 msgid "Part Name Display Format"
 msgstr "부품명 표시 형식"
 
-#: common/setting/system.py:570
+#: common/setting/system.py:578
 msgid "Format to display the part name"
 msgstr "부품명을 표시하는 형식"
 
-#: common/setting/system.py:576
+#: common/setting/system.py:584
 msgid "Part Category Default Icon"
 msgstr "부품 카테고리 기본 아이콘"
 
-#: common/setting/system.py:577
+#: common/setting/system.py:585
 msgid "Part category default icon (empty means no icon)"
 msgstr "부품 카테고리 기본 아이콘(비워두면 아이콘 없음)"
 
-#: common/setting/system.py:582
+#: common/setting/system.py:590
 msgid "Minimum Pricing Decimal Places"
 msgstr "가격 최소 소수 자릿수"
 
-#: common/setting/system.py:584
+#: common/setting/system.py:592
 msgid "Minimum number of decimal places to display when rendering pricing data"
 msgstr "가격 데이터를 표시할 때 최소 소수 자릿수"
 
-#: common/setting/system.py:595
+#: common/setting/system.py:603
 msgid "Maximum Pricing Decimal Places"
 msgstr "가격 최대 소수 자릿수"
 
-#: common/setting/system.py:597
+#: common/setting/system.py:605
 msgid "Maximum number of decimal places to display when rendering pricing data"
 msgstr "가격 데이터를 표시할 때 최대 소수 자릿수"
 
-#: common/setting/system.py:608
+#: common/setting/system.py:616
 msgid "Use Supplier Pricing"
 msgstr "공급업체 가격 사용"
 
-#: common/setting/system.py:610
+#: common/setting/system.py:618
 msgid "Include supplier price breaks in overall pricing calculations"
 msgstr "전체 가격 계산에 공급업체 수량별 가격을 포함합니다"
 
-#: common/setting/system.py:616
+#: common/setting/system.py:624
 msgid "Purchase History Override"
 msgstr "구매 이력 우선"
 
-#: common/setting/system.py:618
+#: common/setting/system.py:626
 msgid "Historical purchase order pricing overrides supplier price breaks"
 msgstr "과거 구매 주문 가격이 공급업체 수량별 가격보다 우선합니다"
 
-#: common/setting/system.py:624
+#: common/setting/system.py:632
 msgid "Use Stock Item Pricing"
 msgstr "재고 항목 가격 사용"
 
-#: common/setting/system.py:626
+#: common/setting/system.py:634
 msgid "Use pricing from manually entered stock data for pricing calculations"
 msgstr "가격 계산에 수동으로 입력한 재고 데이터의 가격을 사용합니다"
 
-#: common/setting/system.py:632
+#: common/setting/system.py:640
 msgid "Stock Item Pricing Age"
 msgstr "재고 항목 가격 유효 기간"
 
-#: common/setting/system.py:634
+#: common/setting/system.py:642
 msgid "Exclude stock items older than this number of days from pricing calculations"
 msgstr "가격 계산에서 지정한 일 수보다 오래된 재고 항목을 제외합니다"
 
-#: common/setting/system.py:641
+#: common/setting/system.py:649
 msgid "Use Variant Pricing"
 msgstr "변형(Variant) 가격 사용"
 
-#: common/setting/system.py:642
+#: common/setting/system.py:650
 msgid "Include variant pricing in overall pricing calculations"
 msgstr "전체 가격 계산에 변형(Variant) 가격을 포함합니다"
 
-#: common/setting/system.py:647
+#: common/setting/system.py:655
 msgid "Active Variants Only"
 msgstr "활성 변형만"
 
-#: common/setting/system.py:649
+#: common/setting/system.py:657
 msgid "Only use active variant parts for calculating variant pricing"
 msgstr "변형(Variant) 가격 계산에 활성 변형 부품만 사용합니다"
 
-#: common/setting/system.py:655
+#: common/setting/system.py:663
 msgid "Auto Update Pricing"
 msgstr "가격 자동 업데이트"
 
-#: common/setting/system.py:657
+#: common/setting/system.py:665
 msgid "Automatically update part pricing when internal data changes"
 msgstr "내부 데이터가 변경되면 부품 가격을 자동으로 업데이트"
 
-#: common/setting/system.py:663
+#: common/setting/system.py:671
 msgid "Pricing Rebuild Interval"
 msgstr "가격 재구성 간격"
 
-#: common/setting/system.py:664
+#: common/setting/system.py:672
 msgid "Number of days before part pricing is automatically updated"
 msgstr "부품 가격이 자동으로 업데이트되기까지의 일 수"
 
-#: common/setting/system.py:670
+#: common/setting/system.py:678
 msgid "Internal Prices"
 msgstr "내부 가격"
 
-#: common/setting/system.py:671
+#: common/setting/system.py:679
 msgid "Enable internal prices for parts"
 msgstr "부품에 대해 내부 가격 사용"
 
-#: common/setting/system.py:676
+#: common/setting/system.py:684
 msgid "Internal Price Override"
 msgstr "내부 가격 우선 적용"
 
-#: common/setting/system.py:678
+#: common/setting/system.py:686
 msgid "If available, internal prices override price range calculations"
 msgstr "가능한 경우 내부 가격이 가격 범위 계산보다 우선합니다"
 
-#: common/setting/system.py:684
+#: common/setting/system.py:692
 msgid "Allow BOM Zero Quantity"
 msgstr "BOM 수량 0 허용"
 
-#: common/setting/system.py:686
+#: common/setting/system.py:694
 msgid "Accept a zero quantity for BOM item for part. Enables using setup quantity to define a quantity required per build, independent of build quantity"
 msgstr "부품의 BOM 항목에 수량 0을 허용합니다. 설정 수량을 사용해 빌드 수량과 무관하게 빌드당 필요한 수량을 정의할 수 있습니다"
 
-#: common/setting/system.py:692
+#: common/setting/system.py:700
 msgid "Enable label printing"
 msgstr "라벨 인쇄 사용"
 
-#: common/setting/system.py:693
+#: common/setting/system.py:701
 msgid "Enable label printing from the web interface"
 msgstr "웹 인터페이스에서 라벨 인쇄를 사용합니다"
 
-#: common/setting/system.py:699
+#: common/setting/system.py:707
 msgid "Label Image DPI"
 msgstr "라벨 이미지 DPI"
 
-#: common/setting/system.py:701
+#: common/setting/system.py:709
 msgid "DPI resolution when generating image files to supply to label printing plugins"
 msgstr "라벨 인쇄 플러그인에 제공할 이미지 파일 생성 시 DPI 해상도"
 
-#: common/setting/system.py:707
+#: common/setting/system.py:715
 msgid "Enable Reports"
 msgstr "보고서 사용"
 
-#: common/setting/system.py:708
+#: common/setting/system.py:716
 msgid "Enable generation of reports"
 msgstr "보고서 생성을 사용합니다"
 
-#: common/setting/system.py:714
+#: common/setting/system.py:722
 msgid "Debug Mode"
 msgstr "디버그 모드"
 
-#: common/setting/system.py:715
+#: common/setting/system.py:723
 msgid "Generate reports in debug mode (HTML output)"
 msgstr "디버그 모드에서 보고서 생성(HTML 출력)"
 
-#: common/setting/system.py:721
+#: common/setting/system.py:729
 msgid "Report URL Fetching"
 msgstr "보고서 URL 가져오기"
 
-#: common/setting/system.py:722
+#: common/setting/system.py:730
 msgid "Allow fetching of remote URLs when generating reports"
 msgstr "보고서 생성 시 원격 URL 가져오기 허용"
 
-#: common/setting/system.py:728
+#: common/setting/system.py:736
 msgid "Log Report Errors"
 msgstr "보고서 오류 로그"
 
-#: common/setting/system.py:729
+#: common/setting/system.py:737
 msgid "Log errors which occur when generating reports"
 msgstr "보고서 생성 중 발생하는 오류를 기록합니다"
 
-#: common/setting/system.py:735 plugin/builtin/labels/label_sheet.py:30
+#: common/setting/system.py:743 plugin/builtin/labels/label_sheet.py:30
 #: report/models.py:486
 msgid "Page Size"
 msgstr "페이지 크기"
 
-#: common/setting/system.py:736
+#: common/setting/system.py:744
 msgid "Default page size for PDF reports"
 msgstr "PDF 보고서의 기본 페이지 크기"
 
-#: common/setting/system.py:741
+#: common/setting/system.py:749
 msgid "Enforce Parameter Units"
 msgstr "매개변수 단위 강제"
 
-#: common/setting/system.py:743
+#: common/setting/system.py:751
 msgid "If units are provided, parameter values must match the specified units"
 msgstr "단위가 제공된 경우, 매개변수 값은 지정된 단위와 일치해야 합니다"
 
-#: common/setting/system.py:749
+#: common/setting/system.py:757
 msgid "Globally Unique Serials"
 msgstr "전역 고유 시리얼"
 
-#: common/setting/system.py:750
+#: common/setting/system.py:758
 msgid "Serial numbers for stock items must be globally unique"
 msgstr "재고 항목의 시리얼 번호는 전역적으로 고유해야 합니다"
 
-#: common/setting/system.py:755
+#: common/setting/system.py:763
 msgid "Delete Depleted Stock"
 msgstr "소진된 재고 삭제"
 
-#: common/setting/system.py:756
+#: common/setting/system.py:764
 msgid "Determines default behavior when a stock item is depleted"
 msgstr "재고 항목이 소진되었을 때의 기본 동작을 결정합니다"
 
-#: common/setting/system.py:761
+#: common/setting/system.py:769
 msgid "Allow Edit Serial Number"
 msgstr "일련번호 편집 허용"
 
-#: common/setting/system.py:762
+#: common/setting/system.py:770
 msgid "Allow editing of serial number for stock items"
 msgstr "재고 항목의 일련번호 편집 허용"
 
-#: common/setting/system.py:767
+#: common/setting/system.py:775
 msgid "Delete Serialized Stock"
 msgstr "일련번호 재고 삭제"
 
-#: common/setting/system.py:768
+#: common/setting/system.py:776
 msgid "Allow deletion of stock items which have a serial number"
 msgstr "일련번호가 있는 재고 항목의 삭제 허용"
 
-#: common/setting/system.py:773
+#: common/setting/system.py:781
 msgid "Batch Code Template"
 msgstr "배치 코드 템플릿"
 
-#: common/setting/system.py:774
+#: common/setting/system.py:782
 msgid "Template for generating default batch codes for stock items"
 msgstr "재고 항목의 기본 배치 코드를 생성하기 위한 템플릿"
 
-#: common/setting/system.py:778
+#: common/setting/system.py:786
 msgid "Stock Expiry"
 msgstr "재고 만료"
 
-#: common/setting/system.py:779
+#: common/setting/system.py:787
 msgid "Enable stock expiry functionality"
 msgstr "재고 만료 기능 사용"
 
-#: common/setting/system.py:785
+#: common/setting/system.py:793
 msgid "Sell Expired Stock"
 msgstr "만료 재고 판매"
 
-#: common/setting/system.py:786
+#: common/setting/system.py:794
 msgid "Allow sale of expired stock"
 msgstr "만료된 재고의 판매를 허용합니다"
 
-#: common/setting/system.py:791
+#: common/setting/system.py:799
 msgid "Stock Stale Time"
 msgstr "재고 경과 시간"
 
-#: common/setting/system.py:793
+#: common/setting/system.py:801
 msgid "Number of days stock items are considered stale before expiring"
 msgstr "만료 전 재고 항목을 오래된 것으로 간주하는 일 수"
 
-#: common/setting/system.py:800
+#: common/setting/system.py:808
 msgid "Build Expired Stock"
 msgstr "만료 재고로 빌드"
 
-#: common/setting/system.py:801
+#: common/setting/system.py:809
 msgid "Allow building with expired stock"
 msgstr "만료된 재고로 빌드하는 것을 허용합니다"
 
-#: common/setting/system.py:806
+#: common/setting/system.py:814
 msgid "Stock Ownership Control"
 msgstr "재고 소유권 제어"
 
-#: common/setting/system.py:807
+#: common/setting/system.py:815
 msgid "Enable ownership control over stock locations and items"
 msgstr "재고 위치 및 항목에 대한 소유권 제어를 사용합니다"
 
-#: common/setting/system.py:813
+#: common/setting/system.py:821
 msgid "Stock Location Default Icon"
 msgstr "재고 위치 기본 아이콘"
 
-#: common/setting/system.py:814
+#: common/setting/system.py:822
 msgid "Stock location default icon (empty means no icon)"
 msgstr "재고 위치 기본 아이콘(비어 있으면 아이콘 없음)"
 
-#: common/setting/system.py:819
+#: common/setting/system.py:827
 msgid "Show Installed Stock Items"
 msgstr "설치된 재고 항목 표시"
 
-#: common/setting/system.py:820
+#: common/setting/system.py:828
 msgid "Display installed stock items in stock tables"
 msgstr "재고 표에서 설치된 재고 항목을 표시합니다"
 
-#: common/setting/system.py:825
+#: common/setting/system.py:833
 msgid "Check BOM when installing items"
 msgstr "항목 설치 시 BOM 확인"
 
-#: common/setting/system.py:827
+#: common/setting/system.py:835
 msgid "Installed stock items must exist in the BOM for the parent part"
 msgstr "설치된 재고 항목은 상위 부품의 BOM에 존재해야 합니다"
 
-#: common/setting/system.py:833
+#: common/setting/system.py:841
 msgid "Allow Out of Stock Transfer"
 msgstr "재고 없음 상태 이동 허용"
 
-#: common/setting/system.py:835
+#: common/setting/system.py:843
 msgid "Allow stock items which are not in stock to be transferred between stock locations"
 msgstr "재고가 없는 재고 항목을 재고 위치 간에 이동할 수 있도록 허용합니다"
 
-#: common/setting/system.py:841
+#: common/setting/system.py:849
 msgid "Merge stock with existing stock on transfer by default"
 msgstr "반출 시 기본적으로 기존 재고와 병합"
 
-#: common/setting/system.py:843
+#: common/setting/system.py:851
 msgid "Default state for merge stock on transfer behaviour. (Can be changed per transfer if desired)"
 msgstr "반출 시 재고 병합 동작의 기본 상태입니다. (필요 시 반출별로 변경 가능)"
 
-#: common/setting/system.py:849
+#: common/setting/system.py:857
 msgid "Build Order Reference Pattern"
 msgstr "작업 지시서 참조번호 패턴"
 
-#: common/setting/system.py:850
+#: common/setting/system.py:858
 msgid "Required pattern for generating Build Order reference field"
 msgstr "작업 지시서 참조번호 필드를 생성하기 위한 필수 패턴"
 
-#: common/setting/system.py:855 common/setting/system.py:924
-#: common/setting/system.py:944 common/setting/system.py:995
-#: common/setting/system.py:1025
+#: common/setting/system.py:863 common/setting/system.py:932
+#: common/setting/system.py:952 common/setting/system.py:1003
+#: common/setting/system.py:1033
 msgid "Require Responsible Owner"
 msgstr "책임자 필수"
 
-#: common/setting/system.py:856 common/setting/system.py:925
-#: common/setting/system.py:945 common/setting/system.py:996
-#: common/setting/system.py:1026
+#: common/setting/system.py:864 common/setting/system.py:933
+#: common/setting/system.py:953 common/setting/system.py:1004
+#: common/setting/system.py:1034
 msgid "A responsible owner must be assigned to each order"
 msgstr "각 주문에는 책임자가 지정되어야 합니다"
 
-#: common/setting/system.py:861
+#: common/setting/system.py:869
 msgid "Require Active Part"
 msgstr "활성 부품 필수"
 
-#: common/setting/system.py:862
+#: common/setting/system.py:870
 msgid "Prevent build order creation for inactive parts"
 msgstr "비활성 부품에 대해 작업 지시서 생성을 방지합니다"
 
-#: common/setting/system.py:867
+#: common/setting/system.py:875
 msgid "Require Locked Part"
 msgstr "잠긴 부품 필수"
 
-#: common/setting/system.py:868
+#: common/setting/system.py:876
 msgid "Prevent build order creation for unlocked parts"
 msgstr "잠기지 않은 부품에 대해 작업 지시서 생성을 방지합니다"
 
-#: common/setting/system.py:873
+#: common/setting/system.py:881
 msgid "Require Valid BOM"
 msgstr "유효한 BOM 필수"
 
-#: common/setting/system.py:874
+#: common/setting/system.py:882
 msgid "Prevent build order creation unless BOM has been validated"
 msgstr "BOM이 검증되지 않으면 작업 지시서 생성을 방지합니다"
 
-#: common/setting/system.py:879
+#: common/setting/system.py:887
 msgid "Require Closed Child Orders"
 msgstr "하위 주문 종료 필수"
 
-#: common/setting/system.py:881
+#: common/setting/system.py:889
 msgid "Prevent build order completion until all child orders are closed"
 msgstr "모든 하위 주문이 종료될 때까지 작업 지시서 완료를 방지합니다"
 
-#: common/setting/system.py:887
+#: common/setting/system.py:895
 msgid "External Build Orders"
 msgstr "외주 생산 작업 지시서"
 
-#: common/setting/system.py:888
+#: common/setting/system.py:896
 msgid "Enable external build order functionality"
 msgstr "외주 생산 작업 지시서 기능 사용"
 
-#: common/setting/system.py:893
+#: common/setting/system.py:901
 msgid "Require External Build Orders"
 msgstr "외부 제작 주문 필요"
 
-#: common/setting/system.py:895
+#: common/setting/system.py:903
 msgid "Require an external build order when ordering assembled parts from an external supplier"
 msgstr "외부 공급업체에서 조립 부품을 주문할 때 외부 제작 주문 필요"
 
-#: common/setting/system.py:901
+#: common/setting/system.py:909
 msgid "Block Until Tests Pass"
 msgstr "테스트 통과 전까지 차단"
 
-#: common/setting/system.py:903
+#: common/setting/system.py:911
 msgid "Prevent build outputs from being completed until all required tests pass"
 msgstr "필수 테스트가 모두 통과될 때까지 생산 완제품 완료를 방지합니다"
 
-#: common/setting/system.py:909
+#: common/setting/system.py:917
 msgid "Enable Return Orders"
 msgstr "반품 주문 사용"
 
-#: common/setting/system.py:910
+#: common/setting/system.py:918
 msgid "Enable return order functionality in the user interface"
 msgstr "사용자 인터페이스에서 반품 주문 기능을 사용합니다"
 
-#: common/setting/system.py:916
+#: common/setting/system.py:924
 msgid "Return Order Reference Pattern"
 msgstr "반품 주문 참조 패턴"
 
-#: common/setting/system.py:918
+#: common/setting/system.py:926
 msgid "Required pattern for generating Return Order reference field"
 msgstr "반품 주문 참조 필드를 생성하기 위한 필수 패턴"
 
-#: common/setting/system.py:930
+#: common/setting/system.py:938
 msgid "Edit Completed Return Orders"
 msgstr "완료된 반품 주문 편집"
 
-#: common/setting/system.py:932
+#: common/setting/system.py:940
 msgid "Allow editing of return orders after they have been completed"
 msgstr "반품 주문이 완료된 후에도 편집을 허용합니다"
 
-#: common/setting/system.py:938
+#: common/setting/system.py:946
 msgid "Sales Order Reference Pattern"
 msgstr "판매 주문 참조 패턴"
 
-#: common/setting/system.py:939
+#: common/setting/system.py:947
 msgid "Required pattern for generating Sales Order reference field"
 msgstr "판매 주문 참조 필드를 생성하기 위한 필수 패턴"
 
-#: common/setting/system.py:950
+#: common/setting/system.py:958
 msgid "Sales Order Default Shipment"
 msgstr "판매 주문 기본 배송"
 
-#: common/setting/system.py:951
+#: common/setting/system.py:959
 msgid "Enable creation of default shipment with sales orders"
 msgstr "판매 주문과 함께 기본 배송 생성 사용"
 
-#: common/setting/system.py:956
+#: common/setting/system.py:964
 msgid "Edit Completed Sales Orders"
 msgstr "완료된 판매 주문 편집"
 
-#: common/setting/system.py:958
+#: common/setting/system.py:966
 msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr "판매 주문이 배송되었거나 완료된 후에도 편집을 허용합니다"
 
-#: common/setting/system.py:964
+#: common/setting/system.py:972
 msgid "Shipment Requires Checking"
 msgstr "배송 확인 필요"
 
-#: common/setting/system.py:966
+#: common/setting/system.py:974
 msgid "Prevent completion of shipments until items have been checked"
 msgstr "항목이 확인될 때까지 배송 완료를 방지합니다"
 
-#: common/setting/system.py:972
+#: common/setting/system.py:980
 msgid "Mark Shipped Orders as Complete"
 msgstr "배송된 주문을 완료로 표시"
 
-#: common/setting/system.py:974
+#: common/setting/system.py:982
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
 msgstr "\"배송됨\" 상태를 건너뛰고, 배송된 것으로 표시된 판매 주문을 자동으로 완료 처리합니다"
 
-#: common/setting/system.py:980
+#: common/setting/system.py:988
 msgid "Enable Transfer Orders"
 msgstr "전송 주문 활성화"
 
-#: common/setting/system.py:981
+#: common/setting/system.py:989
 msgid "Enable transfer order functionality in the user interface"
 msgstr "사용자 인터페이스에서 전송 주문 기능 활성화"
 
-#: common/setting/system.py:987
+#: common/setting/system.py:995
 msgid "Transfer Order Reference Pattern"
 msgstr "전송 주문 참조 패턴"
 
-#: common/setting/system.py:989
+#: common/setting/system.py:997
 msgid "Required pattern for generating Transfer Order reference field"
 msgstr "전송 주문 참조 필드 생성에 필요한 패턴"
 
-#: common/setting/system.py:1001
+#: common/setting/system.py:1009
 msgid "Edit Completed Transfer Orders"
 msgstr ""
 
-#: common/setting/system.py:1003
+#: common/setting/system.py:1011
 msgid "Allow editing of transfer orders after they have been completed"
 msgstr ""
 
-#: common/setting/system.py:1009
+#: common/setting/system.py:1017
 msgid "Block Incomplete Item Tests"
 msgstr "미완료 항목 테스트 차단"
 
-#: common/setting/system.py:1011
+#: common/setting/system.py:1019
 msgid "Prevent allocation of stock items to sales orders if required item tests are incomplete"
 msgstr "필요한 항목 테스트가 완료되지 않은 경우 재고 항목을 판매 주문에 할당하지 않음"
 
-#: common/setting/system.py:1017
+#: common/setting/system.py:1025
 msgid "Purchase Order Reference Pattern"
 msgstr "구매 주문 참조 패턴"
 
-#: common/setting/system.py:1019
+#: common/setting/system.py:1027
 msgid "Required pattern for generating Purchase Order reference field"
 msgstr "구매 주문 참조 필드를 생성하기 위한 필수 패턴"
 
-#: common/setting/system.py:1031
+#: common/setting/system.py:1039
 msgid "Edit Completed Purchase Orders"
 msgstr "완료된 구매 주문 편집"
 
-#: common/setting/system.py:1033
+#: common/setting/system.py:1041
 msgid "Allow editing of purchase orders after they have been shipped or completed"
 msgstr "구매 주문이 배송되었거나 완료된 후에도 편집을 허용합니다"
 
-#: common/setting/system.py:1039
+#: common/setting/system.py:1047
 msgid "Convert Currency"
 msgstr "통화 변환"
 
-#: common/setting/system.py:1040
+#: common/setting/system.py:1048
 msgid "Convert item value to base currency when receiving stock"
 msgstr "재고 수령 시 항목 값을 기준 통화로 변환합니다"
 
-#: common/setting/system.py:1045
+#: common/setting/system.py:1053
 msgid "Auto Complete Purchase Orders"
 msgstr "구매 주문 자동 완료"
 
-#: common/setting/system.py:1047
+#: common/setting/system.py:1055
 msgid "Automatically mark purchase orders as complete when all line items are received"
 msgstr "모든 라인 항목을 수령하면 구매 주문을 자동으로 완료로 표시합니다"
 
-#: common/setting/system.py:1053
+#: common/setting/system.py:1061
 msgid "Merge Purchase Order Line Items"
 msgstr ""
 
-#: common/setting/system.py:1055
+#: common/setting/system.py:1063
 msgid "Merge new purchase order line items with existing lines that share the same part, destination, and target date"
 msgstr ""
 
-#: common/setting/system.py:1061
+#: common/setting/system.py:1069
 msgid "Default Receive Location"
 msgstr ""
 
-#: common/setting/system.py:1063
+#: common/setting/system.py:1071
 msgid "Default destination location for received goods on new purchase orders"
 msgstr ""
 
-#: common/setting/system.py:1071
+#: common/setting/system.py:1079
 msgid "Enable password forgot"
 msgstr "비밀번호 찾기 사용"
 
-#: common/setting/system.py:1072
+#: common/setting/system.py:1080
 msgid "Enable password forgot function on the login pages"
 msgstr "로그인 페이지에서 비밀번호 찾기 기능을 사용합니다"
 
-#: common/setting/system.py:1078
+#: common/setting/system.py:1086
 msgid "Enable registration"
 msgstr "회원가입 사용"
 
-#: common/setting/system.py:1079
+#: common/setting/system.py:1087
 msgid "Enable self-registration for users on the login pages"
 msgstr "로그인 페이지에서 사용자 자기 등록(회원가입)을 사용합니다"
 
-#: common/setting/system.py:1085
+#: common/setting/system.py:1093
 msgid "Enable SSO"
 msgstr "SSO 사용"
 
-#: common/setting/system.py:1086
+#: common/setting/system.py:1094
 msgid "Enable SSO on the login pages"
 msgstr "로그인 페이지에서 SSO를 사용합니다"
 
-#: common/setting/system.py:1092
+#: common/setting/system.py:1100
 msgid "Enable SSO registration"
 msgstr "SSO 등록 사용"
 
-#: common/setting/system.py:1094
+#: common/setting/system.py:1102
 msgid "Enable self-registration via SSO for users on the login pages"
 msgstr "로그인 페이지에서 SSO를 통한 자기 등록(회원가입)을 사용합니다"
 
-#: common/setting/system.py:1101
+#: common/setting/system.py:1109
 msgid "Enable SSO group sync"
 msgstr "SSO 그룹 동기화 사용"
 
-#: common/setting/system.py:1103
+#: common/setting/system.py:1111
 msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
 msgstr "IdP에서 제공하는 그룹과 InvenTree 그룹의 동기화를 사용합니다"
 
-#: common/setting/system.py:1110
+#: common/setting/system.py:1118
 msgid "SSO group key"
 msgstr "SSO 그룹 키"
 
-#: common/setting/system.py:1111
+#: common/setting/system.py:1119
 msgid "The name of the groups claim attribute provided by the IdP"
 msgstr "IdP에서 제공하는 groups 클레임 속성의 이름"
 
-#: common/setting/system.py:1117
+#: common/setting/system.py:1125
 msgid "SSO group map"
 msgstr "SSO 그룹 매핑"
 
-#: common/setting/system.py:1119
+#: common/setting/system.py:1127
 msgid "A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created."
 msgstr "SSO 그룹을 로컬 InvenTree 그룹으로 매핑합니다. 로컬 그룹이 없으면 생성됩니다."
 
-#: common/setting/system.py:1126
+#: common/setting/system.py:1134
 msgid "Remove groups outside of SSO"
 msgstr "SSO 외부 그룹 제거"
 
-#: common/setting/system.py:1128
+#: common/setting/system.py:1136
 msgid "Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues"
 msgstr "IdP에서 제공되지 않는 그룹이 사용자에게 할당되어 있으면 제거할지 여부입니다. 이 설정을 비활성화하면 보안 문제가 발생할 수 있습니다"
 
-#: common/setting/system.py:1134
+#: common/setting/system.py:1142
 msgid "Disabling this setting will stop cleaning up groups that external users no longer belong to. This might cause security issues."
 msgstr ""
 
-#: common/setting/system.py:1139
+#: common/setting/system.py:1147
 msgid "Email required"
 msgstr "이메일 필수"
 
-#: common/setting/system.py:1140
+#: common/setting/system.py:1148
 msgid "Require user to supply mail on signup"
 msgstr "회원가입 시 이메일 입력을 요구합니다"
 
-#: common/setting/system.py:1145
+#: common/setting/system.py:1153
 msgid "Auto-fill SSO users"
 msgstr "SSO 사용자 자동 입력"
 
-#: common/setting/system.py:1146
+#: common/setting/system.py:1154
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr "SSO 계정 데이터에서 사용자 상세 정보를 자동으로 채웁니다"
 
-#: common/setting/system.py:1151
+#: common/setting/system.py:1159
 msgid "Mail twice"
 msgstr "이메일 2회 입력"
 
-#: common/setting/system.py:1152
+#: common/setting/system.py:1160
 msgid "On signup ask users twice for their mail"
 msgstr "회원가입 시 이메일을 두 번 입력하도록 요청합니다"
 
-#: common/setting/system.py:1157
+#: common/setting/system.py:1165
 msgid "Password twice"
 msgstr "비밀번호 2회 입력"
 
-#: common/setting/system.py:1158
+#: common/setting/system.py:1166
 msgid "On signup ask users twice for their password"
 msgstr "회원가입 시 비밀번호를 두 번 입력하도록 요청합니다"
 
-#: common/setting/system.py:1163
+#: common/setting/system.py:1171
 msgid "Allowed domains"
 msgstr "허용된 도메인"
 
-#: common/setting/system.py:1165
+#: common/setting/system.py:1173
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
 msgstr "특정 도메인으로 회원가입을 제한합니다(쉼표로 구분, @로 시작)"
 
-#: common/setting/system.py:1172
+#: common/setting/system.py:1180
 msgid "Group on signup"
 msgstr "회원가입 시 그룹"
 
-#: common/setting/system.py:1174
+#: common/setting/system.py:1182
 msgid "Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP."
 msgstr "등록 시 새 사용자가 할당될 그룹입니다. SSO 그룹 동기화가 활성화된 경우, IdP에서 그룹을 할당할 수 없을 때만 이 그룹이 설정됩니다."
 
-#: common/setting/system.py:1181
+#: common/setting/system.py:1189
 msgid "Enforce MFA"
 msgstr "MFA 강제"
 
-#: common/setting/system.py:1182
+#: common/setting/system.py:1190
 msgid "Users must use multifactor security."
 msgstr "사용자는 다중 요소 보안을 사용해야 합니다."
 
-#: common/setting/system.py:1187
+#: common/setting/system.py:1195
 msgid "Enabling this setting will require all users to set up multifactor authentication. All sessions will be disconnected immediately."
 msgstr "이 설정을 활성화하면 모든 사용자가 다중 요소 인증을 설정해야 합니다. 모든 세션이 즉시 연결 해제됩니다."
 
-#: common/setting/system.py:1193
+#: common/setting/system.py:1201
 msgid "Check plugins on startup"
 msgstr "시작 시 플러그인 확인"
 
-#: common/setting/system.py:1195
+#: common/setting/system.py:1203
 msgid "Check that all plugins are installed on startup - enable in container environments"
 msgstr "시작 시 모든 플러그인이 설치되어 있는지 확인합니다(컨테이너 환경에서 사용)"
 
-#: common/setting/system.py:1202
+#: common/setting/system.py:1210
 msgid "Check for plugin updates"
 msgstr "플러그인 업데이트 확인"
 
-#: common/setting/system.py:1203
+#: common/setting/system.py:1211
 msgid "Enable periodic checks for updates to installed plugins"
 msgstr "설치된 플러그인의 업데이트를 주기적으로 확인합니다"
 
-#: common/setting/system.py:1209
+#: common/setting/system.py:1217
 msgid "Enable URL integration"
 msgstr "URL 통합 사용"
 
-#: common/setting/system.py:1210
+#: common/setting/system.py:1218
 msgid "Enable plugins to add URL routes"
 msgstr "플러그인이 URL 라우트를 추가할 수 있도록 허용합니다"
 
-#: common/setting/system.py:1217
+#: common/setting/system.py:1225
 msgid "Enable navigation integration"
 msgstr "내비게이션 통합 사용"
 
-#: common/setting/system.py:1218
+#: common/setting/system.py:1226
 msgid "Enable plugins to integrate into navigation"
 msgstr "플러그인이 내비게이션에 통합될 수 있도록 허용합니다"
 
-#: common/setting/system.py:1225
+#: common/setting/system.py:1233
 msgid "Enable app integration"
 msgstr "앱 통합 사용"
 
-#: common/setting/system.py:1226
+#: common/setting/system.py:1234
 msgid "Enable plugins to add apps"
 msgstr "플러그인이 앱을 추가할 수 있도록 허용합니다"
 
-#: common/setting/system.py:1233
+#: common/setting/system.py:1241
 msgid "Enable schedule integration"
 msgstr "스케줄 통합 사용"
 
-#: common/setting/system.py:1234
+#: common/setting/system.py:1242
 msgid "Enable plugins to run scheduled tasks"
 msgstr "플러그인이 예약 작업을 실행할 수 있도록 허용합니다"
 
-#: common/setting/system.py:1241
+#: common/setting/system.py:1249
 msgid "Enable event integration"
 msgstr "이벤트 통합 사용"
 
-#: common/setting/system.py:1242
+#: common/setting/system.py:1250
 msgid "Enable plugins to respond to internal events"
 msgstr "플러그인이 내부 이벤트에 응답할 수 있도록 허용합니다"
 
-#: common/setting/system.py:1249
+#: common/setting/system.py:1257
 msgid "Enable interface integration"
 msgstr "인터페이스 통합 사용"
 
-#: common/setting/system.py:1250
+#: common/setting/system.py:1258
 msgid "Enable plugins to integrate into the user interface"
 msgstr "플러그인이 사용자 인터페이스에 통합될 수 있도록 허용합니다"
 
-#: common/setting/system.py:1257
+#: common/setting/system.py:1265
 msgid "Enable mail integration"
 msgstr "메일 통합 사용"
 
-#: common/setting/system.py:1258
+#: common/setting/system.py:1266
 msgid "Enable plugins to process outgoing/incoming mails"
 msgstr "플러그인이 발신/수신 메일을 처리할 수 있도록 허용합니다"
 
-#: common/setting/system.py:1265
+#: common/setting/system.py:1273
 msgid "Enable project codes"
 msgstr "프로젝트 코드 사용"
 
-#: common/setting/system.py:1266
+#: common/setting/system.py:1274
 msgid "Enable project codes for tracking projects"
 msgstr "프로젝트를 추적하기 위한 프로젝트 코드를 사용합니다"
 
-#: common/setting/system.py:1272
+#: common/setting/system.py:1280
 msgid "Enable Stocktake"
 msgstr "재고 실사 사용"
 
-#: common/setting/system.py:1274
+#: common/setting/system.py:1282
 msgid "Enable functionality for recording historical stock levels and value"
 msgstr "과거 재고 수준과 가치를 기록하는 기능을 사용합니다"
 
-#: common/setting/system.py:1281
+#: common/setting/system.py:1289
 msgid "Exclude External Locations"
 msgstr "외부 위치 제외"
 
-#: common/setting/system.py:1283
+#: common/setting/system.py:1291
 msgid "Exclude stock items in external locations from stocktake calculations"
 msgstr "외부 위치의 재고 품목을 재고 실사 계산에서 제외합니다"
 
-#: common/setting/system.py:1289
+#: common/setting/system.py:1297
 msgid "Automatic Stocktake Period"
 msgstr "자동 재고 실사 주기"
 
-#: common/setting/system.py:1290
+#: common/setting/system.py:1298
 msgid "Number of days between automatic stocktake recording"
 msgstr "자동 재고 실사 기록 간격(일)"
 
-#: common/setting/system.py:1296
+#: common/setting/system.py:1304
 msgid "Delete Old Stocktake Entries"
 msgstr "오래된 재고 실사 항목 삭제"
 
-#: common/setting/system.py:1298
+#: common/setting/system.py:1306
 msgid "Delete stocktake entries older than the specified number of days"
 msgstr "지정된 일수보다 오래된 재고 실사 항목을 삭제합니다"
 
-#: common/setting/system.py:1304
+#: common/setting/system.py:1312
 msgid "Stocktake Deletion Interval"
 msgstr "재고 실사 삭제 간격"
 
-#: common/setting/system.py:1306
+#: common/setting/system.py:1314
 msgid "Stocktake entries will be deleted after specified number of days"
 msgstr "재고 실사 항목은 지정된 일수 후 삭제됩니다"
 
-#: common/setting/system.py:1313
+#: common/setting/system.py:1321
 msgid "Delete Old Stock Tracking Entries"
 msgstr "오래된 재고 추적 항목 삭제"
 
-#: common/setting/system.py:1315
+#: common/setting/system.py:1323
 msgid "Delete stock tracking entries older than the specified number of days"
 msgstr "지정된 일수보다 오래된 재고 추적 항목을 삭제합니다"
 
-#: common/setting/system.py:1321
+#: common/setting/system.py:1329
 msgid "Stock Tracking Deletion Interval"
 msgstr "재고 추적 삭제 간격"
 
-#: common/setting/system.py:1323
+#: common/setting/system.py:1331
 msgid "Stock tracking entries will be deleted after specified number of days"
 msgstr "재고 추적 항목은 지정된 일수 후 삭제됩니다"
 
-#: common/setting/system.py:1330
+#: common/setting/system.py:1338
 msgid "Display Users full names"
 msgstr "사용자 전체 이름 표시"
 
-#: common/setting/system.py:1331
+#: common/setting/system.py:1339
 msgid "Display Users full names instead of usernames"
 msgstr "사용자 이름 대신 사용자 전체 이름을 표시합니다"
 
-#: common/setting/system.py:1336
+#: common/setting/system.py:1344
 msgid "Display User Profiles"
 msgstr "사용자 프로필 표시"
 
-#: common/setting/system.py:1337
+#: common/setting/system.py:1345
 msgid "Display Users Profiles on their profile page"
 msgstr "프로필 페이지에 사용자 프로필을 표시합니다"
 
-#: common/setting/system.py:1342
+#: common/setting/system.py:1350
 msgid "Week Starts On"
 msgstr "주 시작 요일"
 
-#: common/setting/system.py:1343
+#: common/setting/system.py:1351
 msgid "Starting day of the week, for display in calendar views"
 msgstr "달력 보기에 표시할 한 주의 시작 요일"
 
-#: common/setting/system.py:1346
+#: common/setting/system.py:1354
 msgid "Sunday"
 msgstr "일요일"
 
-#: common/setting/system.py:1347
+#: common/setting/system.py:1355
 msgid "Monday"
 msgstr "월요일"
 
-#: common/setting/system.py:1348
+#: common/setting/system.py:1356
 msgid "Tuesday"
 msgstr "화요일"
 
-#: common/setting/system.py:1349
+#: common/setting/system.py:1357
 msgid "Wednesday"
 msgstr "수요일"
 
-#: common/setting/system.py:1350
+#: common/setting/system.py:1358
 msgid "Thursday"
 msgstr "목요일"
 
-#: common/setting/system.py:1351
+#: common/setting/system.py:1359
 msgid "Friday"
 msgstr "금요일"
 
-#: common/setting/system.py:1352
+#: common/setting/system.py:1360
 msgid "Saturday"
 msgstr "토요일"
 
-#: common/setting/system.py:1356
+#: common/setting/system.py:1364
 msgid "Calendar Horizon"
 msgstr "달력 표시 기간"
 
-#: common/setting/system.py:1358
+#: common/setting/system.py:1366
 msgid "Number of months into the future to display in calendar views"
 msgstr "달력 보기에 표시할 향후 개월 수"
 
-#: common/setting/system.py:1362
+#: common/setting/system.py:1370
 msgid "months"
 msgstr "개월"
 
-#: common/setting/system.py:1365
+#: common/setting/system.py:1373
 msgid "Enable Test Station Data"
 msgstr "테스트 스테이션 데이터 사용"
 
-#: common/setting/system.py:1366
+#: common/setting/system.py:1374
 msgid "Enable test station data collection for test results"
 msgstr "테스트 결과를 위한 테스트 스테이션 데이터 수집을 사용합니다"
 
-#: common/setting/system.py:1372
+#: common/setting/system.py:1380
 msgid "Enable Machine Ping"
 msgstr "장비 핑 사용"
 
-#: common/setting/system.py:1374
+#: common/setting/system.py:1382
 msgid "Enable periodic ping task of registered machines to check their status"
 msgstr "등록된 장비의 상태를 확인하기 위해 주기적으로 핑 작업을 수행합니다"
 
-#: common/setting/system.py:1380
+#: common/setting/system.py:1388
 msgid "Enable Sales Orders"
 msgstr ""
 
-#: common/setting/system.py:1381
+#: common/setting/system.py:1389
 msgid "Enable sales order functionality in the user interface"
 msgstr ""
 
-#: common/setting/system.py:1387
+#: common/setting/system.py:1395
 msgid "Enable Purchase Orders"
 msgstr ""
 
-#: common/setting/system.py:1388
+#: common/setting/system.py:1396
 msgid "Enable purchase order functionality in the user interface"
 msgstr ""
 
-#: common/setting/system.py:1394
+#: common/setting/system.py:1402
 msgid "Enable Build Orders"
 msgstr ""
 
-#: common/setting/system.py:1395
+#: common/setting/system.py:1403
 msgid "Enable build order functionality in the user interface"
 msgstr ""
 
@@ -4941,11 +4949,11 @@ msgstr "가격 구간"
 msgid "Pretty Name"
 msgstr "표시 이름"
 
-#: data_exporter/mixins.py:341 data_exporter/mixins.py:430
+#: data_exporter/mixins.py:343 data_exporter/mixins.py:432
 msgid "Error occurred during data export"
 msgstr "데이터 내보내기 중 오류가 발생했습니다"
 
-#: data_exporter/mixins.py:408
+#: data_exporter/mixins.py:410
 msgid "Data export plugin returned incorrect data format"
 msgstr "데이터 내보내기 플러그인이 잘못된 데이터 형식을 반환했습니다"
 
@@ -5250,7 +5258,7 @@ msgstr "각 라벨에 대해 인쇄할 복사본 수"
 msgid "Connected"
 msgstr "연결됨"
 
-#: machine/machine_types/label_printer.py:236 order/api.py:2581
+#: machine/machine_types/label_printer.py:236 order/api.py:2591
 msgid "Unknown"
 msgstr "알 수 없음"
 
@@ -5501,14 +5509,14 @@ msgstr ""
 msgid "Transfer order not found"
 msgstr ""
 
-#: order/api.py:2573 order/models.py:665 order/models.py:2406
+#: order/api.py:2583 order/models.py:665 order/models.py:2406
 #: order/models.py:2532
 #: report/templates/report/inventree_purchase_order_report.html:13
 #: stock/serializers.py:134 templates/email/overdue_purchase_order.html:15
 msgid "Purchase Order"
 msgstr "구매 주문"
 
-#: order/api.py:2575 order/models.py:1465 order/models.py:2584
+#: order/api.py:2585 order/models.py:1465 order/models.py:2584
 #: order/models.py:2772 order/models.py:3171
 #: report/templates/report/inventree_build_order_report.html:134
 #: report/templates/report/inventree_sales_order_report.html:13
@@ -5517,14 +5525,14 @@ msgstr "구매 주문"
 msgid "Sales Order"
 msgstr "판매 주문"
 
-#: order/api.py:2577 order/models.py:3337 order/models.py:3689
+#: order/api.py:2587 order/models.py:3337 order/models.py:3689
 #: order/models.py:3755
 #: report/templates/report/inventree_return_order_report.html:12
 #: templates/email/overdue_return_order.html:15
 msgid "Return Order"
 msgstr "반품 주문"
 
-#: order/api.py:2579 order/models.py:3777 order/models.py:4122
+#: order/api.py:2589 order/models.py:3777 order/models.py:4122
 #: report/templates/report/inventree_transfer_order_report.html:11
 msgid "Transfer Order"
 msgstr "전송 주문"
