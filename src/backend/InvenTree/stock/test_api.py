@@ -3610,6 +3610,78 @@ class StockTransferMergeTest(StockAPITestCase):
         existing.refresh_from_db()
         self.assertEqual(existing.quantity, 100)
 
+    def test_transfer_merge_with_status_change(self):
+        """Merge-on-transfer must match against the *requested* status.
+
+        Regression test for https://github.com/inventree/InvenTree/issues/13086
+        The merge target used to be selected using the current status of the item,
+        so a full transfer with a new status was merged into stock with the old status.
+        """
+        damaged = StockStatus.DAMAGED.value
+
+        # Full quantity transfer, with no matching target at the destination
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=10
+        )
+        incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=5
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {'pk': incoming.pk, 'quantity': 5, 'status': damaged, 'merge': True}
+                ],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 10)
+        self.assertEqual(existing.status, StockStatus.OK.value)
+
+        incoming.refresh_from_db()
+        self.assertEqual(incoming.location, self.dest)
+        self.assertEqual(incoming.quantity, 5)
+        self.assertEqual(incoming.status, damaged)
+
+        # Subsequent damaged stock should merge into the damaged item (not the OK item)
+        # Check both a full quantity (3 of 3) and a partial (2 of 5) transfer
+        for quantity, available in [(3, 3), (2, 5)]:
+            source = StockItem.objects.create(
+                part=self.part, location=self.source_loc, quantity=available
+            )
+
+            self.post(
+                self.url,
+                {
+                    'items': [
+                        {
+                            'pk': source.pk,
+                            'quantity': quantity,
+                            'status': damaged,
+                            'merge': True,
+                        }
+                    ],
+                    'location': self.dest.pk,
+                },
+                expected_code=201,
+            )
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 10)
+        self.assertEqual(existing.status, StockStatus.OK.value)
+
+        incoming.refresh_from_db()
+        self.assertEqual(incoming.quantity, 10)
+        self.assertEqual(incoming.status, damaged)
+
+        self.assertEqual(
+            StockItem.objects.filter(part=self.part, location=self.dest).count(), 2
+        )
+
 
 class StockItemDeletionTest(StockAPITestCase):
     """Tests for stock item deletion via the API."""
