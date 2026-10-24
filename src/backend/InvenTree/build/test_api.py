@@ -2280,6 +2280,43 @@ class BuildLineTests(BuildAPITest):
         line_data = next(item for item in response.data if item['pk'] == line.pk)
         self.assertEqual(line_data['allocated'], 1)
 
+    def test_ordering_unit_quantity_piece_count(self):
+        """Ordering by 'unit_quantity' must account for the BOM piece_count."""
+        assembly = Part.objects.create(
+            name='Unit Quantity Assembly',
+            description='Assembly for unit quantity ordering',
+            assembly=True,
+        )
+
+        wire = Part.objects.create(
+            name='Wire', description='Cut-to-length wire', component=True
+        )
+        screw = Part.objects.create(name='Screw', description='A screw', component=True)
+
+        # 2 x 5 = 10 units of wire per assembly
+        BomItem.objects.create(part=assembly, sub_part=wire, quantity=2, piece_count=5)
+
+        # 3 x 1 = 3 screws per assembly
+        BomItem.objects.create(part=assembly, sub_part=screw, quantity=3)
+
+        build = Build.objects.create(
+            part=assembly, reference='BO-9998', quantity=1, title='Unit quantity'
+        )
+
+        url = reverse('api-build-line-list')
+
+        response = self.get(
+            url, {'build': build.pk, 'ordering': 'unit_quantity'}, expected_code=200
+        )
+
+        self.assertEqual([line['part'] for line in response.data], [screw.pk, wire.pk])
+
+        response = self.get(
+            url, {'build': build.pk, 'ordering': '-unit_quantity'}, expected_code=200
+        )
+
+        self.assertEqual([line['part'] for line in response.data], [wire.pk, screw.pk])
+
 
 class BuildConsumeTest(BuildAPITest):
     """Test consuming allocated stock."""

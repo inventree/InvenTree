@@ -366,13 +366,13 @@ class PartPricing(common.models.MetaMixin):
 
             # Update cumulative totals
             if bom_item_min is not None:
-                bom_item_min *= bom_item.quantity
+                bom_item_min *= bom_item.unit_quantity
                 cumulative_min += self.convert(bom_item_min)
 
                 any_min_elements = True
 
             if bom_item_max is not None:
-                bom_item_max *= bom_item.quantity
+                bom_item_max *= bom_item.unit_quantity
                 cumulative_max += self.convert(bom_item_max)
 
                 any_max_elements = True

@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 563
+INVENTREE_API_VERSION = 564
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v564 -> 2026-10-24 : https://github.com/inventree/InvenTree/pull/xxxxx
+    - BomItem "can_build", "pricing_min_total" and "pricing_max_total" fields now account for "piece_count"
+    - BuildLine "unit_quantity" ordering now accounts for the BOM "piece_count"
 
 v563 -> 2026-10-22 : https://github.com/inventree/InvenTree/pull/13030
     - Adds optional 'link_nonce' mechanism to the API root
