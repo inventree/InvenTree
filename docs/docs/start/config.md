@@ -327,7 +327,7 @@ Enabling global caching requires connection to a redis server (which is separate
 The following cache settings are available:
 
 {{ configtable() }}
-{{ configsetting("INVENTREE_CACHE_ENABLED") }} Enable redis caching |
+{{ configsetting("INVENTREE_CACHE_ENABLED", default="True if `INVENTREE_CACHE_HOST` is set") }} Enable redis caching |
 {{ configsetting("INVENTREE_CACHE_HOST") }} Cache server host |
 {{ configsetting("INVENTREE_CACHE_PORT") }} Cache server port |
 {{ configsetting("INVENTREE_CACHE_PASSWORD") }} Cache server password |
@@ -341,6 +341,8 @@ The following cache settings are available:
 {{ configsetting("INVENTREE_CACHE_KEEPALIVE_INTERVAL") }} Cache keepalive interval |
 {{ configsetting("INVENTREE_CACHE_USER_TIMEOUT") }} Cache user timeout |
 
+!!! tip "Cache Host"
+    If a value is provided for `INVENTREE_CACHE_HOST`, global caching will be enabled, unless the `INVENTREE_CACHE_ENABLED` setting is explicitly set to `False`.
 
 !!! tip "Cache Password"
     The value specified for `INVENTREE_CACHE_PASSWORD` should not contain comma `,` or colon `:` characters, otherwise the connection to the cache server may fail.
