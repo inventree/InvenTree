@@ -6,6 +6,7 @@ from decimal import Decimal
 import django.core.exceptions as django_exceptions
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.core import mail
 from django.test import TestCase
 
 from djmoney.money import Money
@@ -13,7 +14,7 @@ from djmoney.money import Money
 import common.models
 import order.tasks
 from common.settings import get_global_setting, set_global_setting
-from company.models import Company, Contact, SupplierPart
+from company.models import Address, Company, Contact, SupplierPart
 from InvenTree.helpers import current_date
 from InvenTree.unit_test import (
     ExchangeRateMixin,
@@ -22,6 +23,7 @@ from InvenTree.unit_test import (
 )
 from order.status_codes import PurchaseOrderStatus
 from part.models import Part
+from plugin import registry
 from stock.models import StockItem, StockLocation
 from users.models import Owner
 
@@ -108,6 +110,101 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
         order.contact = contact
         order.clean()  # Should not raise
         order.save()
+
+    def test_default_receiving_company(self):
+        """Test that the default internal company is assigned to a new PurchaseOrder."""
+        supplier = Company.objects.get(pk=1)
+
+        # No internal companies exist - no default
+        po = PurchaseOrder.objects.create(reference='PO-77770001', supplier=supplier)
+        self.assertIsNone(po.receiving_company)
+
+        # Single internal company is used as the default
+        alpha = Company.objects.create(name='Alpha Internal', is_internal=True)
+        po = PurchaseOrder.objects.create(reference='PO-77770002', supplier=supplier)
+        self.assertEqual(po.receiving_company, alpha)
+
+        # Multiple internal companies, with the default specified by the setting
+        beta = Company.objects.create(name='Beta Internal', is_internal=True)
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', beta.pk)
+
+        po = PurchaseOrder.objects.create(reference='PO-77770003', supplier=supplier)
+        self.assertEqual(po.receiving_company, beta)
+
+        # Explicitly specified company is not overridden
+        po = PurchaseOrder.objects.create(
+            reference='PO-77770004', supplier=supplier, receiving_company=alpha
+        )
+        self.assertEqual(po.receiving_company, alpha)
+
+        # Existing orders are not modified when the default changes
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', alpha.pk)
+        po = PurchaseOrder.objects.get(reference='PO-77770003')
+        self.assertEqual(po.receiving_company, beta)
+
+        set_global_setting('INVENTREE_DEFAULT_INTERNAL_COMPANY', '')
+
+    def test_validate_delivery_address(self):
+        """Regression test for validation of the delivery address against the receiving company."""
+        order = PurchaseOrder.objects.first()
+
+        alpha = Company.objects.create(name='Alpha Internal', is_internal=True)
+        beta = Company.objects.create(name='Beta Internal', is_internal=True)
+
+        alpha_address = Address.objects.create(company=alpha, title='Alpha HQ')
+        beta_address = Address.objects.create(company=beta, title='Beta HQ')
+        supplier_address = Address.objects.create(
+            company=order.supplier, title='Supplier HQ'
+        )
+
+        # Delivery address belongs to a different company
+        order.receiving_company = alpha
+
+        for address in [beta_address, supplier_address]:
+            order.delivery_address = address
+
+            with self.assertRaises(django_exceptions.ValidationError) as err:
+                order.clean()
+
+            self.assertIn(
+                'Delivery address does not match selected receiving company',
+                str(err.exception.message_dict['delivery_address']),
+            )
+
+        # Delivery address without a receiving company
+        order.receiving_company = None
+        order.delivery_address = alpha_address
+
+        with self.assertRaises(django_exceptions.ValidationError) as err:
+            order.clean()
+
+        self.assertIn(
+            'Receiving company must be specified when a delivery address is provided',
+            str(err.exception.message_dict['receiving_company']),
+        )
+
+        # Receiving company which is not an internal company
+        order.receiving_company = order.supplier
+        order.delivery_address = None
+
+        with self.assertRaises(django_exceptions.ValidationError) as err:
+            order.clean()
+
+        self.assertIn('receiving_company', err.exception.message_dict)
+
+        # Valid combinations
+        order.receiving_company = alpha
+        order.delivery_address = alpha_address
+        order.clean()
+        order.save()
+
+        order.receiving_company = alpha
+        order.delivery_address = None
+        order.clean()
+
+        order.receiving_company = None
+        order.delivery_address = None
+        order.clean()
 
     def test_rebuild_reference(self):
         """Test that the reference_int field is correctly updated when the model is saved."""
@@ -555,6 +652,68 @@ class OrderTest(ExchangeRateMixin, PluginRegistryMixin, TestCase):
 
         # However *no* notification should have been generated for the creating user
         self.assertFalse(messages.filter(user__pk=3).exists())
+
+    def test_received_email_notification(self):
+        """Test the email notification sent when items are received against a PurchaseOrder.
+
+        - The responsible user should receive an email
+        - The email should list the received stock items
+        """
+        user = get_user_model().objects.get(pk=4)
+        user.email = 'sam@demo.inventree.org'
+        user.save()
+
+        # Enable email notifications for the responsible user
+        plugin = registry.get_plugin('inventree-email-notification')
+        self.assertIsNotNone(plugin)
+        plugin.set_user_setting('NOTIFY_BY_EMAIL', True, user)
+
+        po = PurchaseOrder.objects.get(pk=1)
+        po.responsible = Owner.create(obj=user)
+        po.save()
+        po.place_order()
+
+        # Ignore any emails sent when the order was placed
+        common.models.NotificationEntry.objects.all().delete()
+        mail.outbox.clear()
+
+        location = StockLocation.objects.get(pk=1)
+        line_1 = PurchaseOrderLineItem.objects.get(pk=1)
+        line_2 = PurchaseOrderLineItem.objects.get(pk=3)
+
+        stock_items = po.receive_line_items(
+            location,
+            [
+                {'line_item': line_1, 'quantity': 15},
+                {'line_item': line_2, 'quantity': 37},
+            ],
+            user=get_user_model().objects.get(pk=1),
+        )
+
+        self.assertEqual(stock_items.count(), 2)
+
+        # Exactly one email should have been sent, to the responsible user
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+
+        self.assertEqual(email.to, [user.email])
+        self.assertIn('Items Received', email.subject)
+
+        html = email.alternatives[0][0]
+
+        # Order information
+        self.assertIn('Items have been received against a purchase order', html)
+        self.assertIn(po.get_absolute_url(), html)
+
+        # Table of received items
+        self.assertIn('<th>Part</th>', html)
+        self.assertIn('<th>Quantity</th>', html)
+        self.assertIn('<th>Location</th>', html)
+
+        for item in stock_items:
+            self.assertIn(f'<td>{item.part.name}</td>', html)
+            self.assertIn(f'<td>{item.quantity}</td>', html)
+            self.assertIn(f'<td>{item.location.pathstring}</td>', html)
 
     def test_metadata(self):
         """Unit tests for the metadata field."""

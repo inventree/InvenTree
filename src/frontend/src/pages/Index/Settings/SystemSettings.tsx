@@ -47,10 +47,12 @@ export default function SystemSettings() {
               keys={[
                 'INVENTREE_BASE_URL',
                 'INVENTREE_COMPANY_NAME',
+                'INVENTREE_DEFAULT_INTERNAL_COMPANY',
                 'INVENTREE_INSTANCE',
                 'INVENTREE_INSTANCE_TITLE',
                 'INVENTREE_INSTANCE_ID',
                 'INVENTREE_ANNOUNCE_ID',
+                'INVENTREE_LINK_PROOF',
                 'INVENTREE_SHOW_SUPERUSER_BANNER',
                 'INVENTREE_SHOW_ADMIN_BANNER',
                 'INVENTREE_RESTRICT_ABOUT',

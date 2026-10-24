@@ -33,6 +33,7 @@ API schema documentation is split into the following categories:
 | [External Order Management](./schema/order.md) | External Order Management |
 | [Parts and Part Categories](./schema/part.md) | Parts and Part Categories |
 | [Plugin Functionality](./schema/plugins.md) | Plugin Functionality |
+| [Pricing Information](./schema/pricing.md) | Part Pricing |
 | [Report Generation](./schema/report.md) | Report Generation |
 | [Settings Management](./schema/settings.md) | Settings Management |
 | [Stock and Stock Locations](./schema/stock.md) | Stock and Stock Locations |

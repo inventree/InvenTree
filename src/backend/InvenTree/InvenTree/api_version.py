@@ -1,10 +1,52 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 554
+INVENTREE_API_VERSION = 564
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v564 -> 2026-10-24 : https://github.com/inventree/InvenTree/pull/xxxxx
+    - BomItem "can_build", "pricing_min_total" and "pricing_max_total" fields now account for "piece_count"
+    - BuildLine "unit_quantity" ordering now accounts for the BOM "piece_count"
+
+v563 -> 2026-10-22 : https://github.com/inventree/InvenTree/pull/13030
+    - Adds optional 'link_nonce' mechanism to the API root
+
+v562 -> 2026-10-21 : https://github.com/inventree/InvenTree/pull/13034
+    - Adds new "pricing" user role, covering the PartPricing, PartSellPriceBreak and PartInternalPriceBreak models
+    - The "part" role no longer grants access to part pricing data
+    - Cached pricing fields (pricing_min, pricing_max, etc) are omitted from Part and BomItem API responses for users without the "pricing" view permission
+    - This also applies to nested (embedded) part data, e.g. "part_detail" and "sub_part_detail" fields
+    - Moves part pricing endpoints to the new /api/pricing/ namespace:
+        - /api/part/sale-price/ -> /api/pricing/sale-price/
+        - /api/part/internal-price/ -> /api/pricing/internal-price/
+        - /api/part/<id>/pricing/ -> /api/pricing/part/<id>/
+    - The legacy endpoints redirect (HTTP 308, preserving the request method and body) to the new endpoints
+
+v561 -> 2026-10-21 : https://github.com/inventree/InvenTree/pull/13046
+    - Fix ordering of social applications in API schema
+
+v560 -> 2026-10-17 : https://github.com/inventree/InvenTree/pull/12737
+    - Adds search and ordering fields across remaining API endpoints (machine, stock, importer, report)
+
+v559 -> 2026-10-17 : https://github.com/inventree/InvenTree/pull/13023
+    - Enforce maximum length for "notes" field in stock-adjustment API endpoints
+
+v558 -> 2026-10-15 : https://github.com/inventree/InvenTree/pull/9768
+    - Adds "receiving_company" and "delivery_address" fields to the PurchaseOrder API endpoint
+
+v557 -> 2026-10-15 : https://github.com/inventree/InvenTree/pull/12978
+    - Adds tips endpoints
+
+v556 -> 2026-10-14 : https://github.com/inventree/InvenTree/pull/13017
+    - Adds 'is_internal' field (and filter) to the Company API endpoint
+    - Adds 'INVENTREE_DEFAULT_INTERNAL_COMPANY' global setting
+    - Exposes 'model_filters' on the global and user settings API endpoints
+
+v555 -> 2026-10-14 : https://github.com/inventree/InvenTree/pull/13016
+    - Adds "contact" field to the SalesOrderShipment model and API endpoint
+    - Adds "phone" and "email" fields to the Address model and API endpoint
 
 v554 -> 2026-10-09 : https://github.com/inventree/InvenTree/pull/12986
     - Add missing nullable annotations for read_only fields

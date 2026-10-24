@@ -12,6 +12,7 @@ from django.test.utils import CaptureQueriesContext, override_settings
 from django.urls import reverse
 
 import pytest
+from djmoney.money import Money
 from PIL import Image
 from rest_framework.test import APIClient
 
@@ -37,9 +38,9 @@ from part.models import (
     PartCategory,
     PartCategoryParameterTemplate,
     PartRelated,
-    PartSellPriceBreak,
     PartTestTemplate,
 )
+from pricing.models import PartSellPriceBreak
 from stock.models import StockItem, StockLocation
 from stock.status_codes import StockStatus
 
@@ -822,6 +823,7 @@ class PartAPITestBase(InvenTreeAPITestCase):
         'part.delete',
         'part_category.change',
         'part_category.add',
+        'pricing.view',
         'stock_location.view',
     ]
 
@@ -1466,6 +1468,15 @@ class PartAPITest(PartAPITestBase):
                     self.assertIn(field, response.data)
                 else:
                     self.assertNotIn(field, response.data)
+
+        # Without the 'pricing' role, pricing fields are never included
+        self.clearRoles()
+        self.assignRole('part.view')
+
+        response = self.get(url, {'pricing': True}, expected_code=200)
+
+        for field in pricing_fields:
+            self.assertNotIn(field, response.data)
 
     def test_parameters_info(self):
         """Test annotation of 'parameters' detail against a Part instance."""
@@ -2480,45 +2491,6 @@ class PartNotesTests(InvenTreeAPITestCase):
         self.assertEqual(response.data['content'], notes.strip())
 
 
-class PartPricingDetailTests(InvenTreeAPITestCase):
-    """Tests for the part pricing API endpoint."""
-
-    fixtures = ['category', 'part', 'location']
-
-    roles = ['part.change']
-
-    def url(self, pk):
-        """Construct a pricing URL."""
-        return reverse('api-part-pricing', kwargs={'pk': pk})
-
-    def test_pricing_detail(self):
-        """Test an empty pricing detail."""
-        response = self.get(self.url(1), expected_code=200)
-
-        # Check for expected fields
-        expected_fields = [
-            'currency',
-            'updated',
-            'bom_cost_min',
-            'bom_cost_max',
-            'purchase_cost_min',
-            'purchase_cost_max',
-            'internal_cost_min',
-            'internal_cost_max',
-            'supplier_price_min',
-            'supplier_price_max',
-            'overall_min',
-            'overall_max',
-        ]
-
-        for field in expected_fields:
-            self.assertIn(field, response.data)
-
-        # Empty fields (no pricing by default)
-        for field in expected_fields[2:]:
-            self.assertIsNone(response.data[field])
-
-
 class PartAPIAggregationTest(InvenTreeAPITestCase):
     """Tests to ensure that the various aggregation annotations are working correctly."""
 
@@ -3074,12 +3046,8 @@ class BomItemTest(InvenTreeAPITestCase):
         from part.models import BomItemSubstitute
 
         # Viewing 'substitutes' requires the 'bom' role (BomItemSubstitute is not
-        # covered by the part->bomitem RULESET_CHANGE_INHERIT fallback). Grant both
-        # 'add' and 'delete' so the 'bom' RuleSet ends up fully matching the existing
-        # part-inherited bomitem permissions - granting only 'view' would otherwise
-        # cause update_group_roles() to wipe those already-inherited permissions.
-        self.assignRole('bom.add')
-        self.assignRole('bom.delete')
+        # covered by the part->bomitem RULESET_CHANGE_INHERIT fallback)
+        self.assignRole('bom.view')
 
         bom_item = BomItem.objects.get(pk=3)
 
@@ -3158,10 +3126,11 @@ class BomItemTest(InvenTreeAPITestCase):
 
     def test_output_options(self):
         """Test that various output options work as expected."""
-        # Viewing 'substitutes' requires the 'bom' role (see test_get_bom_detail for why
-        # both 'add' and 'delete' are granted together).
-        self.assignRole('bom.add')
-        self.assignRole('bom.delete')
+        # Viewing 'substitutes' requires the 'bom' role
+        self.assignRole('bom.view')
+
+        # Viewing cached pricing data requires the 'pricing' role
+        self.assignRole('pricing.view')
 
         self.run_output_test(
             reverse('api-bom-item-detail', kwargs={'pk': 3}),
@@ -3513,6 +3482,113 @@ class BomItemTest(InvenTreeAPITestCase):
         can_build = response.data['can_build']
         self.assertAlmostEqual(can_build, 482.9, places=1)
 
+    def test_piece_count_can_build(self):
+        """Test that the 'can_build' annotation accounts for piece_count."""
+        assembly = Part.objects.create(
+            name='Cable Assembly', description='A cable assembly', assembly=True
+        )
+
+        wire = Part.objects.create(
+            name='Wire', description='Cut-to-length wire', component=True
+        )
+
+        bom_item = BomItem.objects.create(
+            part=assembly, sub_part=wire, quantity=2, piece_count=5
+        )
+
+        StockItem.objects.create(part=wire, quantity=20)
+
+        response = self.get(
+            reverse('api-bom-item-detail', kwargs={'pk': bom_item.pk}),
+            expected_code=200,
+        )
+
+        # 20 / (2 * 5) = 2
+        self.assertEqual(response.data['piece_count'], 5)
+        self.assertAlmostEqual(response.data['can_build'], 2)
+
+        # The part requirements endpoint also accounts for piece_count
+        response = self.get(
+            reverse('api-part-requirements', kwargs={'pk': assembly.pk}),
+            expected_code=200,
+        )
+
+        self.assertEqual(response.data['can_build'], 2)
+
+    def test_piece_count_pricing(self):
+        """Test that BOM pricing totals account for piece_count."""
+        assembly = Part.objects.create(
+            name='Cable Assembly', description='A cable assembly', assembly=True
+        )
+
+        wire = Part.objects.create(
+            name='Wire', description='Cut-to-length wire', component=True
+        )
+
+        pricing = wire.pricing
+        pricing.internal_cost_min = Money(2, 'USD')
+        pricing.internal_cost_max = Money(3, 'USD')
+        pricing.save()
+
+        bom_item = BomItem.objects.create(
+            part=assembly, sub_part=wire, quantity=4, piece_count=5
+        )
+
+        self.assignRole('pricing.view')
+
+        response = self.get(
+            reverse('api-bom-item-detail', kwargs={'pk': bom_item.pk}),
+            {'pricing': True},
+            expected_code=200,
+        )
+
+        # 4 x 5 = 20 units required per assembly
+        self.assertAlmostEqual(float(response.data['pricing_min_total']), 40)
+        self.assertAlmostEqual(float(response.data['pricing_max_total']), 60)
+
+    def test_piece_count_bom_export(self):
+        """Test that the BOM exporter total quantity accounts for piece_count."""
+        assembly = Part.objects.create(
+            name='Top Assembly', description='Top level assembly', assembly=True
+        )
+
+        sub_assembly = Part.objects.create(
+            name='Sub Assembly',
+            description='A sub-assembly',
+            assembly=True,
+            component=True,
+        )
+
+        wire = Part.objects.create(
+            name='Wire', description='Cut-to-length wire', component=True
+        )
+
+        BomItem.objects.create(
+            part=assembly, sub_part=sub_assembly, quantity=2, piece_count=3
+        )
+        BomItem.objects.create(
+            part=sub_assembly, sub_part=wire, quantity=4, piece_count=5
+        )
+
+        with self.export_data(
+            reverse('api-bom-list'),
+            {'part': assembly.pk, 'export_levels': 0},
+            export_plugin='bom-exporter',
+        ) as data_file:
+            data = self.process_csv(
+                data_file,
+                required_cols=['BOM Level', 'Total Quantity'],
+                required_rows=2,
+            )
+
+        totals = {str(row['BOM Level']): Decimal(row['Total Quantity']) for row in data}
+
+        # Level 1: 2 x 3 = 6 sub-assemblies
+        self.assertEqual(totals['1'], 6)
+
+        # Level 2: (4 x 5) x 6 = 120 units of wire
+        self.assertEqual(totals['2'], 120)
+
     def test_piece_count_get(self):
         """Test that piece_count is returned in GET response for BomItem."""
         bom_item = BomItem.objects.first()
@@ -3637,71 +3713,6 @@ class AttachmentTest(InvenTreeAPITestCase):
         self.assertEqual(data['model_id'], 1)
         self.assertEqual(data['link'], link)
         self.assertEqual(data['comment'], 'Hello world')
-
-
-class PartInternalPriceBreakTest(InvenTreeAPITestCase):
-    """Unit tests for the PartInternalPrice API endpoints."""
-
-    fixtures = [
-        'category',
-        'part',
-        'params',
-        'location',
-        'bom',
-        'company',
-        'test_templates',
-        'manufacturer_part',
-        'supplier_part',
-        'order',
-        'stock',
-    ]
-
-    roles = [
-        'part.change',
-        'part.add',
-        'part.delete',
-        'part_category.change',
-        'part_category.add',
-        'part_category.delete',
-    ]
-
-    def test_create_price_breaks(self):
-        """Test we can create price breaks at various quantities."""
-        url = reverse('api-part-internal-price-list')
-
-        breaks = [
-            (1.0, 101),
-            (1.1, 92.555555555),
-            (1.5, 90.999999999),
-            (1.756, 89),
-            (2, 86),
-            (25, 80),
-        ]
-
-        for q, p in breaks:
-            data = self.post(
-                url, {'part': 1, 'quantity': q, 'price': p}, expected_code=201
-            ).data
-
-            self.assertEqual(data['part'], 1)
-            self.assertEqual(round(Decimal(data['quantity']), 4), round(Decimal(q), 4))
-            self.assertEqual(round(Decimal(data['price']), 4), round(Decimal(p), 4))
-
-        # Now, ensure that we can delete the Part via the API
-        # In particular this test checks that there are no circular post_delete relationships
-        # Ref: https://github.com/inventree/InvenTree/pull/3986
-
-        # First, ensure the part instance can be deleted
-        p = Part.objects.get(pk=1)
-        p.active = False
-        p.save()
-
-        InvenTreeSetting.set_setting('PART_ALLOW_DELETE_FROM_ASSEMBLY', True)
-
-        self.delete(reverse('api-part-detail', kwargs={'pk': 1}))
-
-        with self.assertRaises(Part.DoesNotExist):
-            p.refresh_from_db()
 
 
 class PartTestTemplateTest(PartAPITestBase):

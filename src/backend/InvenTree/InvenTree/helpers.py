@@ -510,6 +510,21 @@ def GetExportFormats() -> list:
     return [opt[0] for opt in GetExportOptions()]
 
 
+def escape_export_value(value):
+    """Escape a value for export to a tabular data file, to prevent formula injection.
+
+    String values which start with a character that a spreadsheet application
+    may interpret as a formula are prefixed with a single quote character.
+    Non-string values are returned unchanged.
+
+    Ref: https://owasp.org/www-community/attacks/CSV_Injection
+    """
+    if isinstance(value, str) and value.startswith(('=', '+', '-', '@', '\t', '\r')):
+        return "'" + value
+
+    return value
+
+
 def DownloadFile(
     data, filename, content_type='application/text', inline=False
 ) -> StreamingHttpResponse:
@@ -637,6 +652,10 @@ def extract_serial_numbers(
         input_string = input_string.replace('~', str(next_value), 1)
         next_value = increment_serial_number(next_value, part=part)
 
+    from stock.models import StockItem
+
+    serial_max_length = int(StockItem._meta.get_field('serial').max_length)
+
     # Split input string by whitespace or comma (,) characters
     groups = re.split(r'[\s,]+', input_string)
 
@@ -656,7 +675,12 @@ def extract_serial_numbers(
         if len(serial) == 0:
             return
 
-        if serial in serials:
+        if len(serial) > serial_max_length:
+            add_error(
+                _('Serial number exceeds maximum length')
+                + f' ({serial_max_length}): {serial[:20]}...'
+            )
+        elif serial in serials:
             add_error(_('Duplicate serial') + f': {serial}')
         else:
             serials.append(serial)

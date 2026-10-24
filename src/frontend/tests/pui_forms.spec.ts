@@ -218,13 +218,7 @@ test('Forms - Keep form open option', async ({ browser }) => {
 test('Forms - DateTime Field', async ({ browser }) => {
   // The "started_datetime" / "finished_datetime" test-result fields are only
   // shown when the "TEST_STATION_DATA" global setting is enabled
-  const api = await createApi({});
-  const settingUrl = 'settings/global/TEST_STATION_DATA/';
-
-  const enableResponse = await api.patch(settingUrl, {
-    data: { value: 'true' }
-  });
-  expect(enableResponse.status()).toBe(200);
+  await setSettingState({ setting: 'TEST_STATION_DATA', value: true });
 
   const page = await doCachedLogin(browser, {
     user: stevenuser,
@@ -282,10 +276,7 @@ test('Forms - DateTime Field', async ({ browser }) => {
   await page.getByText('Test result updated').waitFor();
 
   // Restore the global setting to its default value
-  const disableResponse = await api.patch(settingUrl, {
-    data: { value: 'false' }
-  });
-  expect(disableResponse.status()).toBe(200);
+  await setSettingState({ setting: 'TEST_STATION_DATA', value: false });
 });
 
 // Test the "nested object" field type, via the "Initial Supplier" section
@@ -306,6 +297,9 @@ test('Forms - Nested Object Field', async ({ browser }) => {
   const partName = `Test Part ${new Date().getTime()}`;
   await page.getByLabel('text-field-name', { exact: true }).fill(partName);
 
+  await page.waitForTimeout(100);
+  await page.waitForLoadState('networkidle');
+
   // The "Initial Supplier" nested-object field should be visible and expanded by default
   await page.getByText('Supplier Information').waitFor();
 
@@ -314,7 +308,12 @@ test('Forms - Nested Object Field', async ({ browser }) => {
   );
   await expect(supplierField).toBeVisible();
   await supplierField.fill('Mouser');
-  await page.getByText('Mouser Electronics').first().click();
+  await page.waitForTimeout(100);
+  await page.waitForLoadState('networkidle');
+  await page
+    .getByRole('option', { name: /Mouser Electronics/ })
+    .first()
+    .click();
 
   const skuValue = `SKU-${new Date().getTime()}`;
   await page

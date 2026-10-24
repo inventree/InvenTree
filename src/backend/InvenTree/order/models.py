@@ -36,7 +36,13 @@ from build.status_codes import BuildStatus
 from common.currency import currency_code_default
 from common.notifications import InvenTreeNotificationBodies
 from common.settings import get_global_setting
-from company.models import Address, Company, Contact, SupplierPart
+from company.models import (
+    Address,
+    Company,
+    Contact,
+    SupplierPart,
+    default_internal_company,
+)
 from generic.states import (
     RETURN_VALUE,
     Deprecations,
@@ -644,6 +650,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
         supplier_reference: Optional field for supplier order reference code
         received_by: User that received the goods
         target_date: Expected delivery target date for PurchaseOrder completion (optional)
+        receiving_company: Internal company which is receiving the goods
+        delivery_address: Address (of the receiving company) to which the goods are delivered
     """
 
     REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
@@ -655,6 +663,30 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Model meta options."""
 
         verbose_name = _('Purchase Order')
+
+    def clean(self):
+        """Custom clean method for the PurchaseOrder model."""
+        super().clean()
+
+        if self.receiving_company and not self.receiving_company.is_internal:
+            raise ValidationError({
+                'receiving_company': _('Receiving company must be an internal company')
+            })
+
+        if self.delivery_address:
+            if not self.receiving_company:
+                raise ValidationError({
+                    'receiving_company': _(
+                        'Receiving company must be specified when a delivery address is provided'
+                    )
+                })
+
+            if self.delivery_address.company != self.receiving_company:
+                raise ValidationError({
+                    'delivery_address': _(
+                        'Delivery address does not match selected receiving company'
+                    )
+                })
 
     def clean_line_item(self, line):
         """Clean a line item for this PurchaseOrder."""
@@ -688,6 +720,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
         defaults = {
             'reference': order.validators.generate_next_purchase_order_reference()
         }
+
+        if company_pk := default_internal_company():
+            defaults['receiving_company'] = company_pk
 
         return defaults
 
@@ -748,6 +783,16 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Accessor helper for Order base class."""
         return self.supplier
 
+    address = models.ForeignKey(
+        Address,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Supplier Address'),
+        help_text=_('Supplier address for this order'),
+        related_name='+',
+    )
+
     supplier_reference = models.CharField(
         max_length=64,
         blank=True,
@@ -779,6 +824,28 @@ class PurchaseOrder(TotalPriceMixin, Order):
         null=True,
         verbose_name=_('Destination'),
         help_text=_('Destination for received items'),
+    )
+
+    receiving_company = models.ForeignKey(
+        Company,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        default=default_internal_company,
+        limit_choices_to={'is_internal': True},
+        related_name='receiving_purchase_orders',
+        verbose_name=_('Receiving Company'),
+        help_text=_('Internal company which is receiving the items'),
+    )
+
+    delivery_address = models.ForeignKey(
+        Address,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='delivery_purchase_orders',
+        verbose_name=_('Delivery Address'),
+        help_text=_('Delivery address for this order'),
     )
 
     @transaction.atomic
@@ -1322,6 +1389,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             PurchaseOrder,
             exclude=user,
             content=InvenTreeNotificationBodies.ItemsReceived,
+            html_context={'order': self, 'stock_items': stock_items},
             extra_users=notify_users,
         )
 
@@ -2639,6 +2707,7 @@ class SalesOrderShipment(
     Attributes:
         order: SalesOrder reference
         shipment_address: Shipping address for this shipment (optional)
+        contact: Point of contact for this shipment (optional)
         shipment_date: Date this shipment was "shipped" (or null)
         checked_by: User reference field indicating who checked this order
         reference: Custom reference text for this shipment (e.g. consignment number?)
@@ -2660,7 +2729,7 @@ class SalesOrderShipment(
         """Custom clean method for the SalesOrderShipment class.
 
         Raises:
-            ValidationError: If the shipment address does not match the customer
+            ValidationError: If the shipment address or contact does not match the customer
         """
         super().clean()
 
@@ -2668,6 +2737,12 @@ class SalesOrderShipment(
             if self.shipment_address.company != self.order.customer:
                 raise ValidationError({
                     'shipment_address': _('Shipment address must match the customer')
+                })
+
+        if self.order and self.contact:
+            if self.contact.company != self.order.customer:
+                raise ValidationError({
+                    'contact': _('Contact does not match the customer')
                 })
 
     @staticmethod
@@ -2704,6 +2779,16 @@ class SalesOrderShipment(
         null=True,
         verbose_name=_('Address'),
         help_text=_('Shipping address for this shipment'),
+        related_name='+',
+    )
+
+    contact = models.ForeignKey(
+        Contact,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Contact'),
+        help_text=_('Point of contact for this shipment'),
         related_name='+',
     )
 

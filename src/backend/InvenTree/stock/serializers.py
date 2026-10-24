@@ -773,6 +773,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         required=False,
+        max_length=StockItemTracking.NOTES_MAX_LENGTH,
         allow_blank=True,
         label=_('Notes'),
         help_text=_('Optional note field'),
@@ -876,6 +877,7 @@ class InstallStockItemSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
+        max_length=StockItemTracking.NOTES_MAX_LENGTH,
         label=_('Note'),
         help_text=_('Add transaction note (optional)'),
         required=False,
@@ -956,6 +958,7 @@ class UninstallStockItemSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
+        max_length=StockItemTracking.NOTES_MAX_LENGTH,
         label=_('Notes'),
         help_text=_('Add transaction note (optional)'),
         required=False,
@@ -1134,6 +1137,7 @@ class DisassembleStockItemSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         required=False,
+        max_length=StockItemTracking.NOTES_MAX_LENGTH,
         allow_blank=True,
         label=_('Notes'),
         help_text=_('Optional note field'),
@@ -1301,6 +1305,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
+        max_length=StockItemTracking.NOTES_MAX_LENGTH,
         label=_('Notes'),
         help_text=_('Add transaction note (optional)'),
         required=False,
@@ -1684,6 +1689,7 @@ class StockAssignmentSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         required=False,
+        max_length=StockItemTracking.NOTES_MAX_LENGTH,
         allow_blank=True,
         label=_('Notes'),
         help_text=_('Stock assignment notes'),
@@ -1773,6 +1779,7 @@ class StockMergeSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         required=False,
+        max_length=StockItemTracking.NOTES_MAX_LENGTH,
         allow_blank=True,
         label=_('Notes'),
         help_text=_('Stock merging notes'),
@@ -1982,6 +1989,7 @@ class StockAdjustmentSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         required=False,
+        max_length=StockItemTracking.NOTES_MAX_LENGTH,
         allow_blank=True,
         label=_('Notes'),
         help_text=_('Stock transaction notes'),
@@ -2211,7 +2219,9 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                         kwargs[field_name] = field_value
 
                 if merge:
-                    target = stock_item.find_merge_target(location)
+                    target = stock_item.find_merge_target(
+                        location, status=kwargs.get('status')
+                    )
 
                     if target:
                         merge_kwargs = {
@@ -2249,6 +2259,11 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                             for field_name in StockItem.optional_transfer_fields():
                                 if field_name in kwargs:
                                     transfer_deltas[field_name] = kwargs[field_name]
+
+                            # Apply the new status (in memory only, as the item is about to be merged)
+                            # so that the merge checks compare against the requested status
+                            if status := kwargs.get('status'):
+                                stock_item.set_status(status)
 
                             merge_kwargs['transfer_deltas'] = transfer_deltas
                             target.merge_stock_items([stock_item], **merge_kwargs)

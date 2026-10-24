@@ -3,7 +3,15 @@
 from __future__ import annotations
 
 from django.contrib.auth.models import User
-from django.db.models import DecimalField, F, OuterRef, Q, Subquery, Sum
+from django.db.models import (
+    DecimalField,
+    ExpressionWrapper,
+    F,
+    OuterRef,
+    Q,
+    Subquery,
+    Sum,
+)
 from django.db.models.functions import Coalesce
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
@@ -614,8 +622,16 @@ class BuildLineMixin(SerializerContextMixin):
 
         source_build = self.source_build
 
-        return build.serializers.BuildLineSerializer.annotate_queryset(
+        queryset = build.serializers.BuildLineSerializer.annotate_queryset(
             queryset, build=source_build
+        )
+
+        # Quantity required per assembly (used for ordering)
+        return queryset.alias(
+            unit_quantity=ExpressionWrapper(
+                F('bom_item__quantity') * F('bom_item__piece_count'),
+                output_field=DecimalField(),
+            )
         )
 
 
@@ -682,7 +698,6 @@ class BuildLineList(
         'part': 'bom_item__sub_part__name',
         'IPN': 'bom_item__sub_part__IPN',
         'reference': 'bom_item__reference',
-        'unit_quantity': 'bom_item__quantity',
         'category': 'bom_item__sub_part__category__name',
         'consumable': 'bom_item__consumable',
         'optional': 'bom_item__optional',
@@ -780,7 +795,9 @@ class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
         outputs = serializer.save()
 
         queryset = stock.serializers.StockItemSerializer.annotate_queryset(outputs)
-        response = stock.serializers.StockItemSerializer(queryset, many=True)
+        response = stock.serializers.StockItemSerializer(
+            queryset, many=True, permission_user=request.user
+        )
 
         # Return the created outputs
         return Response(response.data, status=status.HTTP_201_CREATED)

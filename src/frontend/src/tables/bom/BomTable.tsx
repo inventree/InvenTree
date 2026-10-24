@@ -85,6 +85,11 @@ function quantityChain(record: any): number[] {
   return record.quantity_chain ?? [Number(record.quantity)];
 }
 
+// Quantity of a BomItem required for a single parent assembly (quantity x piece_count)
+function unitQuantity(record: any): number {
+  return Number(record.quantity) * Number(record.piece_count ?? 1);
+}
+
 // Quantity of a BomItem required for a single unit of the top-level assembly
 function totalQuantity(record: any): number {
   return quantityChain(record).reduce((total, qty) => total * qty, 1);
@@ -821,7 +826,11 @@ export function BomTable({
       // Multiply quantities through each level of the BOM
       transformChild: (child: any, parent: any) => ({
         ...child,
-        quantity_chain: [Number(child.quantity), ...quantityChain(parent)]
+        quantity_chain: [
+          Number(child.quantity),
+          unitQuantity(parent),
+          ...quantityChain(parent).slice(1)
+        ]
       })
     };
   }, [isEditing, showSubassemblies]);

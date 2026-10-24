@@ -25,6 +25,7 @@ SPECIAL_PATHS = {
     'order': 'External Order Management',
     'part': 'Parts and Part Categories',
     'plugins': 'Plugin Functionality',
+    'pricing': 'Part Pricing',
     'report': 'Report Generation',
     'settings': 'Settings Management',
     'stock': 'Stock and Stock Locations',

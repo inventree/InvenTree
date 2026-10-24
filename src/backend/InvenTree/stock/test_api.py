@@ -2108,6 +2108,25 @@ class StockItemTest(StockAPITestCase):
         self.assertIn('part', response.data)
         self.assertNotIn('part_detail', response.data)
 
+    def test_note_max_length(self):
+        """Test that overly long transaction notes are rejected with a validation error."""
+        max_length = StockItemTracking.NOTES_MAX_LENGTH
+        note = 'x' * (max_length + 1)
+
+        for url, data in [
+            (reverse('api-stock-item-install', kwargs={'pk': 1}), {'stock_item': 2}),
+            (reverse('api-stock-item-uninstall', kwargs={'pk': 1}), {'location': 1}),
+            (
+                reverse('api-stock-change-status'),
+                {'items': [1], 'status': StockStatus.DAMAGED.value},
+            ),
+        ]:
+            response = self.post(url, {**data, 'note': note}, expected_code=400)
+            self.assertIn(
+                f'Ensure this field has no more than {max_length} characters',
+                str(response.data['note']),
+            )
+
     def test_install(self):
         """Test that stock item can be installed into another item, via the API."""
         # Select the "parent" stock item
@@ -2996,6 +3015,33 @@ class StocktakeTest(StockAPITestCase):
             self.assertEqual(response.data['items'][0]['pk'], 1234)
             self.assertEqual(response.data['items'][0]['quantity'], target[endpoint])
 
+    def test_notes_max_length(self):
+        """Test that overly long notes are rejected with a validation error."""
+        max_length = StockItemTracking.NOTES_MAX_LENGTH
+
+        for endpoint in [
+            'api-stock-count',
+            'api-stock-add',
+            'api-stock-remove',
+            'api-stock-transfer',
+        ]:
+            url = reverse(endpoint)
+            data = {
+                'items': [{'pk': 1234, 'quantity': 10}],
+                'location': 1,
+                'notes': 'x' * (max_length + 1),
+            }
+
+            response = self.post(url, data, expected_code=400)
+            self.assertIn(
+                f'Ensure this field has no more than {max_length} characters',
+                str(response.data['notes']),
+            )
+
+            # Notes at the maximum length are accepted
+            data['notes'] = 'x' * max_length
+            self.post(url, data, expected_code=201)
+
     def test_count_serialized(self):
         """Test that counting a serialized stock item correctly updates stocktake_date."""
         import datetime
@@ -3563,6 +3609,78 @@ class StockTransferMergeTest(StockAPITestCase):
 
         existing.refresh_from_db()
         self.assertEqual(existing.quantity, 100)
+
+    def test_transfer_merge_with_status_change(self):
+        """Merge-on-transfer must match against the *requested* status.
+
+        Regression test for https://github.com/inventree/InvenTree/issues/13086
+        The merge target used to be selected using the current status of the item,
+        so a full transfer with a new status was merged into stock with the old status.
+        """
+        damaged = StockStatus.DAMAGED.value
+
+        # Full quantity transfer, with no matching target at the destination
+        existing = StockItem.objects.create(
+            part=self.part, location=self.dest, quantity=10
+        )
+        incoming = StockItem.objects.create(
+            part=self.part, location=self.source_loc, quantity=5
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {'pk': incoming.pk, 'quantity': 5, 'status': damaged, 'merge': True}
+                ],
+                'location': self.dest.pk,
+            },
+            expected_code=201,
+        )
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 10)
+        self.assertEqual(existing.status, StockStatus.OK.value)
+
+        incoming.refresh_from_db()
+        self.assertEqual(incoming.location, self.dest)
+        self.assertEqual(incoming.quantity, 5)
+        self.assertEqual(incoming.status, damaged)
+
+        # Subsequent damaged stock should merge into the damaged item (not the OK item)
+        # Check both a full quantity (3 of 3) and a partial (2 of 5) transfer
+        for quantity, available in [(3, 3), (2, 5)]:
+            source = StockItem.objects.create(
+                part=self.part, location=self.source_loc, quantity=available
+            )
+
+            self.post(
+                self.url,
+                {
+                    'items': [
+                        {
+                            'pk': source.pk,
+                            'quantity': quantity,
+                            'status': damaged,
+                            'merge': True,
+                        }
+                    ],
+                    'location': self.dest.pk,
+                },
+                expected_code=201,
+            )
+
+        existing.refresh_from_db()
+        self.assertEqual(existing.quantity, 10)
+        self.assertEqual(existing.status, StockStatus.OK.value)
+
+        incoming.refresh_from_db()
+        self.assertEqual(incoming.quantity, 10)
+        self.assertEqual(incoming.status, damaged)
+
+        self.assertEqual(
+            StockItem.objects.filter(part=self.part, location=self.dest).count(), 2
+        )
 
 
 class StockItemDeletionTest(StockAPITestCase):

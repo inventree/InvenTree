@@ -5,11 +5,13 @@ import {
   IconArrowMerge,
   IconBell,
   IconBinaryTree2,
+  IconBook,
   IconBookmarks,
   IconBox,
   IconBrandTelegram,
   IconBuilding,
   IconBuildingFactory2,
+  IconBuildingSkyscraper,
   IconBuildingStore,
   IconBusinessplan,
   IconCalendar,
@@ -158,6 +160,7 @@ const icons: InvenTreeIconType = {
   manufacturers: IconBuildingFactory2,
   suppliers: IconBuilding,
   customers: IconBuildingStore,
+  internal_company: IconBuildingSkyscraper,
   purchase_orders: IconShoppingCart,
   return_orders: IconTruckReturn,
   transfer_orders: IconTransfer,
@@ -278,7 +281,8 @@ const icons: InvenTreeIconType = {
 
   chart_bar: IconChartBar,
   chart_line: IconChartLine,
-  news: IconNews
+  news: IconNews,
+  book: IconBook
 };
 
 /**
