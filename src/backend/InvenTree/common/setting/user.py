@@ -249,6 +249,14 @@ USER_SETTINGS: dict[str, InvenTreeSettingsKeyType] = {
         'default': True,
         'validator': bool,
     },
+    'DISPLAY_HISTORY_TAB': {
+        'name': _('Show Change History'),
+        'description': _(
+            'Display the change history (audit log) panel on detail pages (staff users only)'
+        ),
+        'default': False,
+        'validator': bool,
+    },
     'ENABLE_LAST_BREADCRUMB': {
         'name': _('Show Last Breadcrumb'),
         'description': _('Show the current page in breadcrumbs'),

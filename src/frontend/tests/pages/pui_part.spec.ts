@@ -13,7 +13,8 @@ import {
   openDetailAction,
   setTableChoiceFilter,
   showParametricView,
-  showTableView
+  showTableView,
+  tableSearch
 } from '../helpers';
 
 import { adminuser } from '../defaults';
@@ -406,7 +407,7 @@ test('Parts - BOM Nesting', async ({ browser }) => {
   await expect(page.getByText('MAX232IDR')).toHaveCount(0);
 
   // Searching reloads the table, which discards sub-assembly rows
-  await page.getByLabel('table-search-input').fill('Doohickey');
+  await tableSearch(page, 'Doohickey');
   await expect(page.getByText('M3x10 Torx')).toHaveCount(0);
   await expect(
     page.getByRole('button', { name: 'nested-row-collapse' })
