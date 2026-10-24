@@ -1,7 +1,13 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from './baseFixtures.js';
 import { adminuser, allaccessuser, stevenuser } from './defaults.js';
-import { loadTab, navigate, setTableChoiceFilter } from './helpers.js';
+import {
+  clearTableSearch,
+  loadTab,
+  navigate,
+  setTableChoiceFilter,
+  tableSearch
+} from './helpers.js';
 import { doCachedLogin } from './login.js';
 
 /**
@@ -25,11 +31,15 @@ test('Audit - Admin Center', async ({ browser }) => {
   await page.getByRole('button', { name: 'Audit Log', exact: true }).waitFor();
 
   // Historical records are displayed
+  await tableSearch(page, 'red round table');
   await page.getByRole('cell', { name: 'BOM Item' }).first().waitFor();
+
+  await tableSearch(page, 'PO0020');
   await page.getByRole('cell', { name: 'Purchase Order' }).first().waitFor();
   await page.getByText('UPDATED').first().waitFor();
 
   // Filter by model type
+  await clearTableSearch(page);
   await setTableChoiceFilter(page, 'Model Type', 'Build Order');
   await page.getByRole('cell', { name: 'Build Order' }).first().waitFor();
   await expect(page.getByRole('cell', { name: 'BOM Item' })).toHaveCount(0);
