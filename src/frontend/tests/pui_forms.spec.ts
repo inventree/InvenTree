@@ -368,7 +368,7 @@ test('Forms - Initial Stock Field', async ({ browser }) => {
   await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
 });
 
-test('Forms - Selecting default stock location automatically if it is set for a part', async ({
+test('Forms - Default Part Location', async ({
   browser
 }) => {
   // Create a new part and select a the default stock location for the part
@@ -413,7 +413,7 @@ test('Forms - Selecting default stock location automatically if it is set for a 
   await setSettingState({ setting: 'PART_CREATE_INITIAL', value: false });
 });
 
-test('Forms - Selecting default stock location automatically if it is set for a part category', async ({
+test('Forms - Default Category Location', async ({
   browser
 }) => {
   const suffix = Date.now();
