@@ -544,6 +544,19 @@ class UserCreateSerializer(ExtendedUserSerializer):
                 _('You do not have permission to create users')
             )
 
+        # Email-based flows (password reset, login link) look users up by email,
+        # and fail silently if more than one user has the same address
+        if email := attrs.get('email'):
+            from allauth.account.models import EmailAddress
+
+            if (
+                User.objects.filter(email__iexact=email).exists()
+                or EmailAddress.objects.filter(email__iexact=email).exists()
+            ):
+                raise serializers.ValidationError({
+                    'email': _('A user with this email address already exists')
+                })
+
         # Generate a random password
         password = make_random_password(length=14)
         attrs.update({'password': password})
