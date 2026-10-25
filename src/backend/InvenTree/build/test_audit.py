@@ -265,3 +265,73 @@ class BuildStockAuditTest(BuildTestBase):
 
         self.assertEqual(entry.event_type, StockHistoryCode.BUILD_OUTPUT_COMPLETED)
         self.assertEqual(entry.changes_dict['is_building'], [True, False])
+
+    def test_scrap_output(self):
+        """Scrapping a build output records a single entry."""
+        from stock.models import StockLocation
+        from stock.status_codes import StockHistoryCode, StockStatus
+
+        self.build.issue_build()
+
+        location = StockLocation.objects.create(name='Scrap')
+
+        n = len(self.stock_entries(self.output_1))
+
+        self.build.scrap_build_output(
+            self.output_1,
+            self.output_1.quantity,
+            location,
+            user=self.user,
+            notes='Scrapped',
+            discard_allocations=True,
+        )
+
+        [entry] = self.stock_entries(self.output_1, n)
+
+        self.assertEqual(entry.event_type, StockHistoryCode.BUILD_OUTPUT_REJECTED)
+        self.assertEqual(entry.notes, 'Scrapped')
+        self.assertEqual(
+            entry.changes_dict['status'],
+            [StockStatus.OK.value, StockStatus.REJECTED.value],
+        )
+
+    def test_consume_install(self):
+        """Consuming trackable stock (installed into an output) records an entry for both items."""
+        from build.models import BuildItem
+        from stock.models import StockItem
+        from stock.status_codes import StockHistoryCode
+
+        component = StockItem.objects.create(
+            part=self.sub_part_3, quantity=1, serial='SN-1'
+        )
+
+        BuildItem.objects.create(
+            build_line=self.line_3,
+            stock_item=component,
+            quantity=1,
+            install_into=self.output_1,
+        )
+
+        n_component = len(self.stock_entries(component))
+        n_output = len(self.stock_entries(self.output_1))
+
+        self.build.complete_allocations(
+            BuildItem.objects.filter(stock_item=component), user=self.user
+        )
+
+        [entry] = self.stock_entries(component, n_component)
+
+        self.assertEqual(entry.event_type, StockHistoryCode.INSTALLED_INTO_ASSEMBLY)
+        self.assertEqual(entry.changes_dict['belongs_to'], [None, self.output_1.pk])
+        self.assertEqual(
+            entry.additional_data['deltas']['buildorder']['pk'], self.build.pk
+        )
+
+        # Nothing changed for the output itself - the event is recorded regardless
+        [entry] = self.stock_entries(self.output_1, n_output)
+
+        self.assertEqual(entry.event_type, StockHistoryCode.INSTALLED_CHILD_ITEM)
+        self.assertEqual(entry.changes_dict, {})
+        self.assertEqual(
+            entry.additional_data['deltas']['stockitem']['pk'], component.pk
+        )

@@ -5,6 +5,7 @@ import io
 import json
 import threading
 from datetime import date, datetime, timedelta
+from decimal import Decimal
 from typing import Optional
 from unittest import mock
 
@@ -24,7 +25,7 @@ from common.currency import currency_codes
 from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from common.settings import set_global_setting
 from company.models import Address, Company, Contact, SupplierPart, SupplierPriceBreak
-from InvenTree.unit_test import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase, stock_history
 from order import models
 from order.models import SalesOrderAllocation, SalesOrderLineItem, SalesOrderShipment
 from order.serializers import TransferOrderSerialAllocationSerializer
@@ -2166,13 +2167,15 @@ class PurchaseOrderReceiveTest(OrderTest):
             self.assertEqual(item['status'], StockStatus.QUARANTINED)
 
             stock_item = StockItem.objects.get(pk=item['pk'])
-            # Check that the item has tracking entries
-            self.assertEqual(stock_item.tracking_info.count(), 1)
-            entry = stock_item.tracking_info.first()
-            self.assertEqual(entry.deltas['quantity'], stock_item.quantity)
-            self.assertEqual(entry.user, self.user)
+            # Check that the item has a single stock history entry (its creation)
+            self.assertEqual(stock_history(stock_item).count(), 1)
+            entry = stock_history(stock_item).first()
             self.assertEqual(
-                entry.tracking_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
+                Decimal(entry.changes_dict['quantity'][1]), stock_item.quantity
+            )
+            self.assertEqual(entry.actor, self.user)
+            self.assertEqual(
+                entry.event_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
             )
 
         # Check that the order has been completed
@@ -2207,10 +2210,10 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         stock_item = StockItem.objects.get(pk=response[0]['pk'])
 
-        self.assertEqual(stock_item.tracking_info.count(), 1)
-        entry = stock_item.tracking_info.first()
+        self.assertEqual(stock_history(stock_item).count(), 1)
+        entry = stock_history(stock_item).first()
         self.assertEqual(
-            entry.tracking_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
+            entry.event_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
         )
         self.assertEqual(entry.notes, 'Damaged box, 2 units short')
 
@@ -2239,8 +2242,11 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         for i in range(200, 203):
             item = StockItem.objects.get(serial_int=i)
-            self.assertEqual(item.tracking_info.count(), 1)
-            entry = item.tracking_info.first()
+            self.assertEqual(stock_history(item).count(), 1)
+            entry = stock_history(item).first()
+            self.assertEqual(
+                entry.event_type, StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
+            )
             self.assertEqual(entry.notes, 'Received via serialized batch')
 
     def test_bulk_receive_query_benchmark(self):
@@ -4222,7 +4228,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         # Get a reference to one of the stock items
         stock_item = rma.lines.first().item
 
-        n_tracking = stock_item.tracking_info.count()
+        n_tracking = stock_history(stock_item).count()
 
         # Receive items successfully
         data = receive(
@@ -4234,16 +4240,19 @@ class ReturnOrderTests(InvenTreeAPITestCase):
             self.assertTrue(line.received)
             self.assertIsNotNone(line.received_date)
 
-        # A single tracking entry should have been added to the item
-        self.assertEqual(stock_item.tracking_info.count(), n_tracking + 1)
+        # A single audit entry should have been added to the item
+        self.assertEqual(stock_history(stock_item).count(), n_tracking + 1)
 
-        tracking_entry = stock_item.tracking_info.last()
-        deltas = tracking_entry.deltas
+        entry = stock_history(stock_item).last()
+        self.assertEqual(
+            entry.event_type, StockHistoryCode.RETURNED_AGAINST_RETURN_ORDER
+        )
 
-        self.assertEqual(deltas['status'], StockStatus.QUARANTINED)
-        self.assertEqual(deltas['customer'], customer.pk)
-        self.assertEqual(deltas['location'], 1)
-        self.assertEqual(deltas['returnorder'], rma.pk)
+        # Field changes are recorded as such (and not duplicated in the deltas)
+        self.assertEqual(entry.changes_dict['status'][1], StockStatus.QUARANTINED)
+        self.assertEqual(entry.changes_dict['customer'], [customer.pk, None])
+        self.assertEqual(entry.changes_dict['location'][1], 1)
+        self.assertEqual(entry.additional_data['deltas']['returnorder']['pk'], rma.pk)
 
     def test_receive_untracked(self):
         """Test that we can receive untracked items against a ReturnOrder.

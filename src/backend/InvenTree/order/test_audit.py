@@ -522,6 +522,36 @@ class ReturnOrderAuditTest(OrderAuditTestBase):
             update.changes_dict['description'], ['Restocking fee', 'Inspection fee']
         )
 
+    def test_receive_stock(self):
+        """Receiving an item against a return order records a single entry."""
+        from stock.models import StockItem
+        from stock.status_codes import StockHistoryCode, StockStatus
+
+        location = StockLocation.objects.create(name='Returns')
+
+        line = models.ReturnOrderLineItem.objects.create(
+            order=self.order, item=self.item
+        )
+
+        self.order.issue_order()
+
+        n = self.entries(StockItem, self.item.pk).count()
+
+        self.order.receive_line_item(line, location, self.user, note='Inspected')
+
+        [entry] = list(self.entries(StockItem, self.item.pk).order_by('pk')[n:])
+
+        self.assertEqual(
+            entry.event_type, StockHistoryCode.RETURNED_AGAINST_RETURN_ORDER
+        )
+        self.assertEqual(entry.actor, self.user)
+        self.assertEqual(entry.notes, 'Inspected')
+        self.assertEqual(entry.changes_dict['location'][1], location.pk)
+        self.assertEqual(entry.changes_dict['status'][1], StockStatus.QUARANTINED.value)
+        self.assertEqual(
+            entry.additional_data['deltas']['returnorder']['pk'], self.order.pk
+        )
+
 
 class TransferOrderAuditTest(OrderAuditTestBase):
     """Audit tests for TransferOrder and line items."""
@@ -604,3 +634,17 @@ class TransferOrderAuditTest(OrderAuditTestBase):
         )
         self.assertNotIn('F(', str(entry.changes))
         self.assertEqual(entry.parent_object_pk, str(self.order.pk))
+
+        # The transferred stock records a single STOCK_MOVE event (linked to the order)
+        from stock.models import StockItem
+        from stock.status_codes import StockHistoryCode
+
+        moved = StockItem.objects.get(parent=self.stock)
+
+        [created] = self.entries(StockItem, moved.pk)
+
+        self.assertEqual(created.event_type, StockHistoryCode.SPLIT_FROM_PARENT)
+        self.assertEqual(created.changes_dict['location'][1], self.target.pk)
+        self.assertEqual(
+            created.additional_data['deltas']['transferorder']['pk'], self.order.pk
+        )

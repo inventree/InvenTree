@@ -3,6 +3,7 @@
 import os
 import random
 from datetime import datetime, timedelta
+from decimal import Decimal
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -23,6 +24,8 @@ from InvenTree.unit_test import (
     InvenTreeAPIPerformanceTestCase,
     InvenTreeAPITestCase,
     findOffloadedEvent,
+    stock_events,
+    stock_history,
 )
 from part.models import Part, PartTestTemplate
 from stock.models import (
@@ -1621,9 +1624,10 @@ class StockItemTest(StockAPITestCase):
 
         # Check that the item was associated with the correct user
         item = StockItem.objects.get(pk=response.data[0]['pk'])
-        self.assertEqual(item.tracking_info_count, 1)
-        tracking = item.tracking_info.first()
-        self.assertEqual(tracking.user, self.user)
+        self.assertEqual(stock_events(item).count(), 1)
+        tracking = stock_events(item).first()
+        self.assertEqual(tracking.event_type, StockHistoryCode.CREATED)
+        self.assertEqual(tracking.actor, self.user)
 
         # What if we explicitly set the location to a different value?
 
@@ -2139,7 +2143,7 @@ class StockItemTest(StockAPITestCase):
         sub_part = part.models.Part.objects.get(pk=50)
         sub_item = StockItem.objects.create(part=sub_part, serial='xyz-123', quantity=1)
 
-        n_entries = sub_item.tracking_info.count()
+        n_entries = stock_events(sub_item).count()
 
         self.assertIsNone(sub_item.belongs_to)
 
@@ -2170,7 +2174,11 @@ class StockItemTest(StockAPITestCase):
 
         self.assertEqual(sub_item.belongs_to, item)
 
-        self.assertEqual(n_entries + 1, sub_item.tracking_info.count())
+        self.assertEqual(n_entries + 1, stock_events(sub_item).count())
+        self.assertEqual(
+            stock_events(sub_item).last().event_type,
+            StockHistoryCode.INSTALLED_INTO_ASSEMBLY,
+        )
 
         # Try to install again - this time, should fail because the StockItem is not available!
         response = self.post(
@@ -2215,7 +2223,7 @@ class StockItemTest(StockAPITestCase):
         item.customer = customer
         item.save()
 
-        n_entries = item.tracking_info_count
+        n_entries = stock_events(item).count()
 
         url = reverse('api-stock-return')
 
@@ -2249,8 +2257,12 @@ class StockItemTest(StockAPITestCase):
 
         item.refresh_from_db()
 
-        # A new stock tracking entry should have been created
-        self.assertEqual(n_entries + 1, item.tracking_info_count)
+        # A new stock tracking event should have been recorded
+        self.assertEqual(n_entries + 1, stock_events(item).count())
+
+        entry = stock_events(item).last()
+        self.assertEqual(entry.event_type, StockHistoryCode.RETURNED_TO_STOCK)
+        self.assertEqual(entry.notes, 'Returned from this customer for testing')
 
         # The item is now in stock
         self.assertIsNone(item.customer)
@@ -2638,18 +2650,18 @@ class StockItemDisassembleTest(StockAPITestCase):
 
         # Check stock tracking entries have been created
         self.assertTrue(
-            self.item.tracking_info.filter(
-                tracking_type=StockHistoryCode.DISASSEMBLED.value
-            ).exists()
+            stock_events(self.item, event_type=StockHistoryCode.DISASSEMBLED).exists()
         )
 
         for item in [item_1, item_50]:
-            entry = item.tracking_info.filter(
-                tracking_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY.value
+            entry = stock_events(
+                item, event_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY
             ).first()
 
             self.assertIsNotNone(entry)
-            self.assertEqual(entry.deltas['stockitem'], self.item.pk)
+            self.assertEqual(
+                entry.additional_data['deltas']['stockitem']['pk'], self.item.pk
+            )
 
     def test_full_disassembly(self):
         """Test that a fully disassembled item is retained at zero quantity."""
@@ -2695,13 +2707,13 @@ class StockItemDisassembleTest(StockAPITestCase):
         # an output of the build) - instead it is recorded in the stock history
         self.assertIsNone(component.build)
 
-        entry = component.tracking_info.filter(
-            tracking_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY.value
+        entry = stock_events(
+            component, event_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY
         ).first()
 
         self.assertIsNotNone(entry)
-        self.assertEqual(entry.deltas['buildorder'], bo.pk)
-        self.assertEqual(entry.deltas['purchaseorder'], po.pk)
+        self.assertEqual(entry.additional_data['deltas']['buildorder']['pk'], bo.pk)
+        self.assertEqual(entry.additional_data['deltas']['purchaseorder']['pk'], po.pk)
 
     def test_explicit_pricing(self):
         """Test that automatic cost allocation is skipped if explicit pricing is provided."""
@@ -2770,23 +2782,23 @@ class StockItemDisassembleTest(StockAPITestCase):
 
         # Uninstalled items are updated, not created afresh
         self.assertTrue(
-            sub_1.tracking_info.filter(
-                tracking_type=StockHistoryCode.REMOVED_FROM_ASSEMBLY.value
+            stock_events(
+                sub_1, event_type=StockHistoryCode.REMOVED_FROM_ASSEMBLY
             ).exists()
         )
         self.assertFalse(
-            sub_1.tracking_info.filter(
-                tracking_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY.value
+            stock_events(
+                sub_1, event_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY
             ).exists()
         )
         self.assertTrue(
-            self.item.tracking_info.filter(
-                tracking_type=StockHistoryCode.REMOVED_CHILD_ITEM.value
+            stock_events(
+                self.item, event_type=StockHistoryCode.REMOVED_CHILD_ITEM
             ).exists()
         )
         self.assertTrue(
-            new_item.tracking_info.filter(
-                tracking_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY.value
+            stock_events(
+                new_item, event_type=StockHistoryCode.CREATED_FROM_DISASSEMBLY
             ).exists()
         )
 
@@ -3150,12 +3162,9 @@ class StocktakeTest(StockAPITestCase):
         item_a.refresh_from_db()
         self.assertEqual(item_a.location.pk, 1)
 
-        # Tracking entry records the location change
-        entry = StockItemTracking.objects.filter(
-            item=item_a, tracking_type=StockHistoryCode.STOCK_COUNT
-        ).latest('date')
-        self.assertEqual(entry.deltas.get('location'), 1)
-        self.assertEqual(entry.deltas.get('old_location'), 5)
+        # The stocktake event records the location change
+        entry = stock_events(item_a, event_type=StockHistoryCode.STOCK_COUNT).last()
+        self.assertEqual(entry.changes_dict['location'], [5, 1])
 
         # --- location is updated for multiple items simultaneously ---
         response = self.post(
@@ -3176,13 +3185,10 @@ class StocktakeTest(StockAPITestCase):
         self.assertEqual(item_a.location.pk, 2)
         self.assertEqual(item_b.location.pk, 2)
 
-        # Both items have a tracking entry with the new location
+        # Both items have a stocktake event with the new location
         for item, old_loc in [(item_a, 1), (item_b, 3)]:
-            entry = StockItemTracking.objects.filter(
-                item=item, tracking_type=StockHistoryCode.STOCK_COUNT
-            ).latest('date')
-            self.assertEqual(entry.deltas.get('location'), 2)
-            self.assertEqual(entry.deltas.get('old_location'), old_loc)
+            entry = stock_events(item, event_type=StockHistoryCode.STOCK_COUNT).last()
+            self.assertEqual(entry.changes_dict['location'], [old_loc, 2])
 
         # --- location is unchanged when not provided ---
         response = self.post(
@@ -3193,12 +3199,10 @@ class StocktakeTest(StockAPITestCase):
         # Location should still be 2 (unchanged from the previous count)
         self.assertEqual(item_a.location.pk, 2)
 
-        # Tracking entry has no location delta when location was not provided
-        entry = StockItemTracking.objects.filter(
-            item=item_a, tracking_type=StockHistoryCode.STOCK_COUNT
-        ).latest('date')
-        self.assertNotIn('location', entry.deltas)
-        self.assertNotIn('old_location', entry.deltas)
+        # No location change is recorded when location was not provided
+        entry = stock_events(item_a, event_type=StockHistoryCode.STOCK_COUNT).last()
+        self.assertNotIn('location', entry.changes_dict)
+        self.assertNotIn('location', (entry.additional_data or {}).get('deltas', {}))
 
         # --- structural location is rejected ---
         structural = StockLocation.objects.create(name='Structural', structural=True)
@@ -3254,14 +3258,13 @@ class StocktakeTest(StockAPITestCase):
         self.assertIsNotNone(item.stocktake_date)
 
         # The stock history entry must agree with the saved state
-        entry = StockItemTracking.objects.filter(
-            item=item, tracking_type=StockHistoryCode.STOCK_COUNT
-        ).latest('date')
-        self.assertEqual(entry.deltas.get('quantity'), float(quantity))
-        self.assertEqual(entry.deltas.get('location'), 1)
-        self.assertEqual(entry.deltas.get('old_location'), 5)
-        self.assertEqual(entry.deltas.get('status'), StockStatus.DAMAGED.value)
-        self.assertEqual(entry.deltas.get('old_status'), StockStatus.OK.value)
+        entry = stock_events(item, event_type=StockHistoryCode.STOCK_COUNT).last()
+        self.assertEqual(entry.additional_data['deltas']['quantity'], float(quantity))
+        self.assertEqual(entry.changes_dict['location'], [5, 1])
+        self.assertEqual(
+            entry.changes_dict['status'],
+            [StockStatus.OK.value, StockStatus.DAMAGED.value],
+        )
 
     def test_bulk_count_query_benchmark(self):
         """Benchmark: measure the number of DB queries required to count 100 stock items at once."""
@@ -3495,9 +3498,6 @@ class StockTransferMergeTest(StockAPITestCase):
 
     def test_transfer_merge_does_not_copy_source_tracking(self):
         """Transfer merge keeps destination history and adds a single merge entry."""
-        # Track total number of tracking entries created
-        N_TRACKING_ENTRIES = StockItemTracking.objects.count()
-
         existing = StockItem.objects.create(
             part=self.part, location=self.dest, quantity=100
         )
@@ -3510,7 +3510,7 @@ class StockTransferMergeTest(StockAPITestCase):
         )
 
         incoming_pk = incoming.pk
-        tracking_count = existing.tracking_info.count()
+        tracking_count = stock_events(existing).count()
 
         self.post(
             self.url,
@@ -3523,35 +3523,39 @@ class StockTransferMergeTest(StockAPITestCase):
 
         existing.refresh_from_db()
 
+        # The history of the incoming item is not copied to the existing item
         self.assertFalse(
-            existing.tracking_info.filter(notes='Source tracking entry').exists()
+            stock_history(existing, notes='Source tracking entry').exists()
         )
-        self.assertEqual(existing.tracking_info.count(), tracking_count + 1)
-        merge_entry = existing.tracking_info.filter(
-            tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
+        self.assertEqual(stock_events(existing).count(), tracking_count + 1)
+
+        merge_entry = stock_events(
+            existing, event_type=StockHistoryCode.MERGED_STOCK_ITEMS
         ).first()
+
         self.assertIsNotNone(merge_entry)
-        self.assertEqual(merge_entry.deltas['added'], 50.0)
-        self.assertEqual(merge_entry.deltas['quantity'], 150.0)
-        self.assertEqual(merge_entry.deltas['stockitem'], incoming_pk)
-        self.assertEqual(merge_entry.deltas['location'], self.dest.pk)
+        self.assertEqual(
+            [Decimal(value) for value in merge_entry.changes_dict['quantity']],
+            [100, 150],
+        )
 
-        self.assertEqual(StockItemTracking.objects.count(), N_TRACKING_ENTRIES + 4)
+        deltas = merge_entry.additional_data['deltas']
+        self.assertEqual(deltas['added'], 50.0)
+        self.assertEqual(deltas['stockitem']['pk'], incoming_pk)
+        self.assertEqual(deltas['location']['pk'], self.dest.pk)
 
-        # Ensure tracking entries were bulk created in the correct order
-        entries = list(StockItemTracking.objects.order_by('-pk')[:4])[::-1]
+        # Ensure the expected events were recorded (in order)
+        self.assertEqual(
+            list(stock_events(existing).values_list('event_type', flat=True)),
+            [StockHistoryCode.CREATED, StockHistoryCode.MERGED_STOCK_ITEMS],
+        )
+        self.assertEqual(
+            list(stock_events(incoming_pk).values_list('event_type', flat=True)),
+            [StockHistoryCode.CREATED, StockHistoryCode.STOCK_UPDATE],
+        )
 
-        for idx, tt in enumerate([
-            StockHistoryCode.CREATED,
-            StockHistoryCode.CREATED,
-            StockHistoryCode.STOCK_UPDATE,
-            StockHistoryCode.MERGED_STOCK_ITEMS,
-        ]):
-            self.assertEqual(
-                entries[idx].tracking_type,
-                tt,
-                f'Entry {idx} has unexpected tracking type {entries[idx].tracking_type}',
-            )
+        # The incoming item was deleted (as part of the merge)
+        self.assertTrue(stock_history(incoming_pk, action=2).exists())
 
     def test_transfer_merge_partial_reuses_split_transfer_deltas(self):
         """Partial merge reuses split transfer deltas on the merge tracking entry."""
@@ -3574,14 +3578,18 @@ class StockTransferMergeTest(StockAPITestCase):
         incoming.refresh_from_db()
         self.assertEqual(incoming.quantity, 70)
 
-        merge_entry = existing.tracking_info.filter(
-            tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
+        merge_entry = stock_events(
+            existing, event_type=StockHistoryCode.MERGED_STOCK_ITEMS
         ).first()
-        self.assertEqual(merge_entry.deltas['stockitem'], incoming.pk)
-        self.assertEqual(merge_entry.deltas['location'], self.dest.pk)
+
+        deltas = merge_entry.additional_data['deltas']
+        self.assertEqual(deltas['stockitem']['pk'], incoming.pk)
+        self.assertEqual(deltas['location']['pk'], self.dest.pk)
+
+        # No split event is recorded against the source item
         self.assertFalse(
-            incoming.tracking_info.filter(
-                tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM
+            stock_events(
+                incoming, event_type=StockHistoryCode.SPLIT_CHILD_ITEM
             ).exists()
         )
 

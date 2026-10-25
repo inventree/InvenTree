@@ -14,11 +14,8 @@ from stock.status_codes import StockHistoryCode, StockStatus
 ACTION = AuditLogEntry.Action
 
 
-class StockAuditTest(InvenTreeAPITestCase):
-    """Stock operations are recorded as named events in the audit log.
-
-    Each operation records a single audit entry for each affected stock item.
-    """
+class StockAuditTestBase(InvenTreeAPITestCase):
+    """Base class for stock item audit tests."""
 
     roles = ['stock.view', 'stock.add', 'stock.change', 'stock.delete', 'part.view']
 
@@ -58,6 +55,13 @@ class StockAuditTest(InvenTreeAPITestCase):
     def new_entries(self, item, n):
         """Return the audit entries for a stock item, recorded after the first n entries."""
         return list(self.entries(item)[n:])
+
+
+class StockAuditTest(StockAuditTestBase):
+    """Stock operations are recorded as named events in the audit log.
+
+    Each operation records a single audit entry for each affected stock item.
+    """
 
     def test_create(self):
         """Creating a stock item records a single CREATE entry, with the CREATED event."""
@@ -383,3 +387,183 @@ class StockAuditTest(InvenTreeAPITestCase):
         self.assignRole('part.view')
 
         self.assertEqual(self.get(url, params).data, [])
+
+
+class StockEventCoverageTest(StockAuditTestBase):
+    """Regression tests for the remaining stock tracking event types."""
+
+    def latest(self, item):
+        """Return the most recent audit entry for a stock item."""
+        return self.entries(item).last()
+
+    def test_update_same_location(self):
+        """Moving stock into its current location records a STOCK_UPDATE event."""
+        n = self.entries(self.item).count()
+
+        self.item.move(self.loc_a, 'Same place', self.user, batch='B-2')
+
+        [entry] = self.new_entries(self.item, n)
+
+        self.assertEqual(entry.event_type, StockHistoryCode.STOCK_UPDATE)
+        self.assertEqual(entry.notes, 'Same place')
+        self.assertEqual(entry.changes_dict['batch'], ['', 'B-2'])
+
+    def test_customer(self):
+        """Sending stock to a customer (and returning it) records the expected events."""
+        from company.models import Company
+
+        customer = Company.objects.create(name='Audit Customer', is_customer=True)
+
+        n = self.entries(self.item).count()
+
+        self.item.allocateToCustomer(customer, user=self.user, notes='Sent')
+
+        [entry] = self.new_entries(self.item, n)
+
+        self.assertEqual(entry.event_type, StockHistoryCode.SENT_TO_CUSTOMER)
+        self.assertEqual(entry.changes_dict['customer'], [None, customer.pk])
+        self.assertEqual(entry.additional_data['deltas']['quantity'], 100.0)
+
+        # Return the item from the customer
+        self.item.refresh_from_db()
+        n = self.entries(self.item).count()
+
+        self.item.return_from_customer(self.loc_b, user=self.user, notes='Returned')
+
+        [entry] = self.new_entries(self.item, n)
+
+        self.assertEqual(entry.event_type, StockHistoryCode.RETURNED_FROM_CUSTOMER)
+        self.assertEqual(entry.notes, 'Returned')
+
+        # The customer is recorded as a field change (not duplicated in the deltas)
+        self.assertEqual(entry.changes_dict['customer'], [customer.pk, None])
+        self.assertNotIn('customer', entry.additional_data['deltas'])
+
+    def test_ship_against_order(self):
+        """Allocating stock against a sales order records the SHIPPED_AGAINST_SALES_ORDER event."""
+        from company.models import Company
+        from order.models import SalesOrder
+
+        customer = Company.objects.create(name='Order Customer', is_customer=True)
+        order = SalesOrder.objects.create(customer=customer, reference='SO-7777')
+
+        n = self.entries(self.item).count()
+
+        self.item.allocateToCustomer(customer, quantity=40, order=order, user=self.user)
+
+        # The original item is split - the remaining stock records the split
+        [entry] = self.new_entries(self.item, n)
+        self.assertEqual(entry.event_type, StockHistoryCode.SPLIT_CHILD_ITEM)
+
+        shipped = StockItem.objects.get(parent=self.item)
+
+        # The split item records its creation, and the shipment
+        [created, shipped_entry] = self.entries(shipped)
+
+        self.assertEqual(created.event_type, StockHistoryCode.SPLIT_FROM_PARENT)
+        self.assertEqual(
+            shipped_entry.event_type, StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
+        )
+        self.assertEqual(
+            shipped_entry.additional_data['deltas']['salesorder']['pk'], order.pk
+        )
+
+    def test_return_to_stock(self):
+        """Returning (consumed) stock to stock records the RETURNED_TO_STOCK event."""
+        from company.models import Company
+
+        customer = Company.objects.create(name='Return Customer', is_customer=True)
+
+        self.item.customer = customer
+        self.item.location = None
+        self.item.save()
+
+        n = self.entries(self.item).count()
+
+        self.item.return_to_stock(self.loc_b, self.user, notes='Back in stock')
+
+        [entry] = self.new_entries(self.item, n)
+
+        self.assertEqual(entry.event_type, StockHistoryCode.RETURNED_TO_STOCK)
+        self.assertEqual(entry.notes, 'Back in stock')
+        self.assertEqual(entry.changes_dict['location'], [None, self.loc_b.pk])
+
+    def test_convert_to_variant(self):
+        """Converting a stock item to a variant records the CONVERTED_TO_VARIANT event."""
+        template = Part.objects.create(
+            name='Template', description='A template', is_template=True
+        )
+        variant = Part.objects.create(
+            name='Variant', description='A variant', variant_of=template
+        )
+
+        item = StockItem.objects.create(part=template, quantity=5)
+        n = self.entries(item).count()
+
+        item.convert_to_variant(variant, self.user)
+
+        [entry] = self.new_entries(item, n)
+
+        self.assertEqual(entry.event_type, StockHistoryCode.CONVERTED_TO_VARIANT)
+        self.assertEqual(entry.changes_dict['part'], [template.pk, variant.pk])
+
+    def test_disassemble(self):
+        """Disassembling stock records DISASSEMBLED and CREATED_FROM_DISASSEMBLY events."""
+        from part.models import BomItem
+
+        bom_item = BomItem.objects.create(
+            part=self.assembly, sub_part=self.part, quantity=2
+        )
+
+        assembly = StockItem.objects.create(part=self.assembly, quantity=5)
+        n = self.entries(assembly).count()
+
+        components = assembly.disassemble(
+            2,
+            [{'bom_item': bom_item, 'quantity': 4, 'location': self.loc_b}],
+            self.user,
+            notes='Broken down',
+        )
+
+        [entry] = self.new_entries(assembly, n)
+
+        self.assertEqual(entry.event_type, StockHistoryCode.DISASSEMBLED)
+        self.assertEqual(entry.additional_data['deltas'], {'removed': 2.0})
+
+        [component] = components
+        [entry] = self.entries(component)
+
+        self.assertEqual(entry.action, ACTION.CREATE)
+        self.assertEqual(entry.event_type, StockHistoryCode.CREATED_FROM_DISASSEMBLY)
+        self.assertEqual(
+            entry.additional_data['deltas']['stockitem']['pk'], assembly.pk
+        )
+
+    def test_transfer_merge(self):
+        """Transferring stock into an existing item (merge) records the event against the merged item."""
+        target = StockItem.objects.create(
+            part=self.part, quantity=10, location=self.loc_b
+        )
+
+        n = self.entries(target).count()
+
+        self.post(
+            reverse('api-stock-transfer'),
+            {
+                'items': [{'pk': self.item.pk, 'quantity': 100, 'merge': True}],
+                'location': self.loc_b.pk,
+                'notes': 'Merged on transfer',
+            },
+            expected_code=201,
+        )
+
+        target.refresh_from_db()
+        self.assertEqual(target.quantity, 110)
+
+        [entry] = self.new_entries(target, n)
+
+        self.assertEqual(entry.event_type, StockHistoryCode.MERGED_STOCK_ITEMS)
+        self.assertEqual(entry.notes, 'Merged on transfer')
+        self.assertEqual(
+            entry.additional_data['deltas']['stockitem']['pk'], self.item.pk
+        )

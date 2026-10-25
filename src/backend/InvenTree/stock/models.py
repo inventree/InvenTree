@@ -474,12 +474,13 @@ class StockItem(
     AUDIT_EXCLUDE_FIELDS = ('barcode_hash', 'serial_int')
 
     # Tracking deltas which are not recorded in the audit log
-    # (status changes are recorded as field changes, and the customer name via the customer reference)
+    # (status / location changes are recorded as field changes, and the customer name via the customer reference)
     AUDIT_IGNORE_DELTAS = (
         'status',
         'status_logical',
         'old_status',
         'old_status_logical',
+        'old_location',
         'customer_name',
     )
 

@@ -24,6 +24,9 @@ from InvenTree.unit_test import (
     InvenTreeAPITestCase,
     InvenTreeTestCase,
     addUserPermission,
+    stock_events,
+    stock_history,
+    stock_history_count,
 )
 from order.models import (
     SalesOrder,
@@ -35,7 +38,7 @@ from order.models import (
 from order.serializers import SalesOrderShipmentAllocationSerializer
 from part.models import Part
 from stock.events import StockEvents
-from stock.models import StockItem, StockItemTracking, StockLocation
+from stock.models import StockItem, StockLocation
 from stock.status_codes import StockHistoryCode
 from users.models import Owner
 
@@ -506,7 +509,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
         self.assertFalse(self.shipment.check_can_complete(raise_error=False))
 
         n_items = StockItem.objects.count()
-        n_tracking = StockItemTracking.objects.count()
+        n_tracking = stock_history_count()
 
         # Simulate a duplicated task execution
         # (e.g. a second completion request submitted before the first task ran)
@@ -519,7 +522,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
 
         # No additional stock items or tracking entries have been created
         self.assertEqual(StockItem.objects.count(), n_items)
-        self.assertEqual(StockItemTracking.objects.count(), n_tracking)
+        self.assertEqual(stock_history_count(), n_tracking)
 
     def test_shipment_many_items(self):
         """Test completion of a shipment with many items.
@@ -674,25 +677,18 @@ class SalesOrderTest(InvenTreeAPITestCase):
         self.assertEqual(len(low_stock_tasks), 1)
         self.assertEqual(low_stock_tasks[0].args(), (part.pk,))
 
-        # Exactly one StockItemTracking entry should exist per split, per side
+        # Exactly one 'split' event should exist per split (on the original item)
         self.assertEqual(
-            StockItemTracking.objects.filter(
-                tracking_type=StockHistoryCode.SPLIT_FROM_PARENT.value
-            ).count(),
-            len(split_pks),
-        )
-        self.assertEqual(
-            StockItemTracking.objects.filter(
-                tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value
-            ).count(),
+            stock_history_count(event_type=StockHistoryCode.SPLIT_CHILD_ITEM),
             len(split_pks),
         )
 
-        # Exactly one 'shipped' tracking entry should exist per allocated item
+        # Exactly one 'shipped' event should exist per allocated item
+        # (for split items, this is recorded against the creation of the new item)
         self.assertEqual(
-            StockItemTracking.objects.filter(
-                tracking_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value
-            ).count(),
+            stock_history_count(
+                event_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
+            ),
             N_ITEMS,
         )
 
@@ -704,15 +700,15 @@ class SalesOrderTest(InvenTreeAPITestCase):
             self.assertEqual(item.customer, customer)
 
             self.assertFalse(
-                StockItemTracking.objects.filter(
-                    item=item, tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value
+                stock_events(
+                    item, event_type=StockHistoryCode.SPLIT_CHILD_ITEM
                 ).exists()
             )
             self.assertTrue(
-                StockItemTracking.objects.filter(
-                    item=item,
-                    tracking_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value,
-                    deltas__salesorder=so.pk,
+                stock_events(
+                    item,
+                    event_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER,
+                    additional_data__deltas__salesorder__pk=so.pk,
                 ).exists()
             )
 
@@ -735,24 +731,20 @@ class SalesOrderTest(InvenTreeAPITestCase):
         )
 
         self.assertEqual(sample_new_item.quantity, 1)
-        self.assertTrue(
-            StockItemTracking.objects.filter(
-                item=sample_new_item,
-                tracking_type=StockHistoryCode.SPLIT_FROM_PARENT.value,
-                deltas__stockitem=sample_original.pk,
-            ).exists()
+
+        # The new item records a single entry - its creation (as a child of the original),
+        # with the 'shipped' event
+        [created] = stock_history(sample_new_item)
+        self.assertEqual(created.changes_dict['parent'], [None, sample_original.pk])
+        self.assertEqual(
+            created.event_type, StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
         )
+        self.assertEqual(created.additional_data['deltas']['salesorder']['pk'], so.pk)
+
+        # The original item records the split
         self.assertTrue(
-            StockItemTracking.objects.filter(
-                item=sample_original,
-                tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value,
-            ).exists()
-        )
-        self.assertTrue(
-            StockItemTracking.objects.filter(
-                item=sample_new_item,
-                tracking_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value,
-                deltas__salesorder=so.pk,
+            stock_events(
+                sample_original, event_type=StockHistoryCode.SPLIT_CHILD_ITEM
             ).exists()
         )
         self.assertTrue(

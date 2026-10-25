@@ -3122,13 +3122,12 @@ class SalesOrderShipment(
             record_created(stock.models.StockItem, new_stock_items)
 
             # Flush all StockItem field changes (quantity reductions, and shipment details)
-            audited_bulk_update(
-                stock.models.StockItem, list(seen_stock_items.values()), ['quantity']
-            )
+            # Note: Newly split items were created with their final state (no update required),
+            # and any other shipped item is one of the (existing) items drawn from
             audited_bulk_update(
                 stock.models.StockItem,
-                [item for item, _ in shipped_items],
-                ['sales_order', 'customer', 'location'],
+                list(seen_stock_items.values()),
+                ['quantity', 'sales_order', 'customer', 'location'],
             )
 
         # Update sales order lines for "seen_lines"

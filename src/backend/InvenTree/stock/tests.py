@@ -2,6 +2,7 @@
 
 import datetime
 import threading
+from decimal import Decimal
 from unittest import mock
 
 from django.contrib.auth import get_user_model
@@ -20,20 +21,19 @@ from audit.models import AuditLogEntry
 from build.models import Build
 from common.models import InvenTreeSetting
 from company.models import Company
-from InvenTree.unit_test import AdminTestCase, InvenTreeTestCase
+from InvenTree.unit_test import (
+    AdminTestCase,
+    InvenTreeTestCase,
+    stock_events,
+    stock_history,
+)
 from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
 from plugin.base.event.events import batch_events
 from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
 
-from .models import (
-    StockItem,
-    StockItemTestResult,
-    StockItemTracking,
-    StockLocation,
-    StockLocationType,
-)
+from .models import StockItem, StockItemTestResult, StockLocation, StockLocationType
 
 
 class StockTestBase(InvenTreeTestCase):
@@ -296,21 +296,23 @@ class StockTest(StockTestBase):
         )
 
         # Check that a tracking item was added
-        track = StockItemTracking.objects.filter(item=it).latest('id')
+        track = stock_events(it).last()
 
-        self.assertEqual(track.item, it)
-        self.assertEqual(track.tracking_type, StockHistoryCode.STOCK_MOVE)
+        self.assertEqual(track.event_type, StockHistoryCode.STOCK_MOVE)
         self.assertEqual(track.notes, 'Moved to the bathroom')
 
     def test_self_move(self):
         """Test moving stock to its current location."""
         it = StockItem.objects.get(pk=1)
 
-        n = it.tracking_info.count()
+        n = stock_events(it).count()
         self.assertTrue(it.move(it.location, 'Moved to same place', None))
 
-        # Ensure tracking info was not added
-        self.assertEqual(it.tracking_info.count(), n + 1)
+        # A STOCK_UPDATE event is recorded
+        self.assertEqual(stock_events(it).count(), n + 1)
+        self.assertEqual(
+            stock_events(it).last().event_type, StockHistoryCode.STOCK_UPDATE
+        )
 
     def test_partial_move(self):
         """Test partial stock moving."""
@@ -362,12 +364,14 @@ class StockTest(StockTestBase):
         parent = StockItem.objects.get(id=1234)
         child = parent.splitStock(100, None, self.user)
 
-        parent_entry = parent.tracking_info.filter(
-            tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value
+        parent_entry = stock_events(
+            parent, event_type=StockHistoryCode.SPLIT_CHILD_ITEM
         ).first()
 
         self.assertIsNotNone(parent_entry)
-        self.assertEqual(parent_entry.deltas.get('stockitem'), child.pk)
+        self.assertEqual(
+            parent_entry.additional_data['deltas']['stockitem']['pk'], child.pk
+        )
 
     def test_delete_reparents_children(self):
         """Test that deleting an intermediate item re-links children to the grandparent."""
@@ -457,14 +461,16 @@ class StockTest(StockTestBase):
         self.assertEqual(item.quantity, 0)
 
         # History records the quantity which was *actually* removed
-        entry = item.tracking_info.latest('pk')
-        self.assertEqual(entry.deltas['removed'], 10.0)
-        self.assertEqual(entry.deltas['quantity'], 0.0)
+        entry = stock_events(item).last()
+        self.assertEqual(entry.additional_data['deltas']['removed'], 10.0)
+        self.assertEqual(
+            [Decimal(value) for value in entry.changes_dict['quantity']], [10, 0]
+        )
 
         # Removing stock from an empty item fails, and adds no history
-        n = item.tracking_info.count()
+        n = stock_history(item).count()
         self.assertFalse(item.take_stock(5, self.user))
-        self.assertEqual(item.tracking_info.count(), n)
+        self.assertEqual(stock_history(item).count(), n)
 
         # --- allocateToCustomer: allocate more than available ---
         customer = Company.objects.create(name='Clamp customer', is_customer=True)
@@ -478,8 +484,8 @@ class StockTest(StockTestBase):
         self.assertEqual(allocated.customer, customer)
 
         # History records the quantity which was *actually* allocated
-        entry = allocated.tracking_info.latest('pk')
-        self.assertEqual(entry.deltas['quantity'], 10.0)
+        entry = stock_events(allocated).last()
+        self.assertEqual(entry.additional_data['deltas']['quantity'], 10.0)
 
         # A zero quantity is rejected outright
         item = StockItem.objects.create(part=part, quantity=10)
@@ -504,15 +510,15 @@ class StockTest(StockTestBase):
         self.assertEqual(component.quantity, 10)
 
         # Both history entries record the quantity which was *actually* installed
-        entry = component.tracking_info.filter(
-            tracking_type=StockHistoryCode.INSTALLED_INTO_ASSEMBLY
-        ).latest('pk')
-        self.assertEqual(entry.deltas['quantity'], 10.0)
+        entry = stock_events(
+            component, event_type=StockHistoryCode.INSTALLED_INTO_ASSEMBLY
+        ).last()
+        self.assertEqual(entry.additional_data['deltas']['quantity'], 10.0)
 
-        entry = parent_item.tracking_info.filter(
-            tracking_type=StockHistoryCode.INSTALLED_CHILD_ITEM
-        ).latest('pk')
-        self.assertEqual(entry.deltas['quantity'], 10.0)
+        entry = stock_events(
+            parent_item, event_type=StockHistoryCode.INSTALLED_CHILD_ITEM
+        ).last()
+        self.assertEqual(entry.additional_data['deltas']['quantity'], 10.0)
 
         # A zero quantity is rejected outright
         other = StockItem.objects.create(part=part, quantity=5)
@@ -528,8 +534,8 @@ class StockTest(StockTestBase):
         item.belongs_to = parent
         item.save()
 
-        n_entries = item.tracking_info.count()
-        n_parent_entries = parent.tracking_info.count()
+        n_entries = stock_history(item).count()
+        n_parent_entries = stock_history(parent).count()
 
         structural = StockLocation.objects.create(
             name='Structural location', structural=True
@@ -542,8 +548,8 @@ class StockTest(StockTestBase):
         item.refresh_from_db()
         self.assertEqual(item.belongs_to, parent)
         self.assertNotEqual(item.location, structural)
-        self.assertEqual(item.tracking_info.count(), n_entries)
-        self.assertEqual(parent.tracking_info.count(), n_parent_entries)
+        self.assertEqual(stock_history(item).count(), n_entries)
+        self.assertEqual(stock_history(parent).count(), n_parent_entries)
 
         # Uninstalling into a non-structural location is still permitted
         item.uninstall_into_location(self.drawer2, self.user, 'Uninstalling')
@@ -672,12 +678,12 @@ class StockTest(StockTestBase):
         self.assertEqual(it.quantity, 255)
 
         # Check that a tracking item was added
-        track = StockItemTracking.objects.filter(item=it).latest('id')
+        track = stock_events(it).last()
 
-        self.assertEqual(track.tracking_type, StockHistoryCode.STOCK_COUNT)
+        self.assertEqual(track.event_type, StockHistoryCode.STOCK_COUNT)
         self.assertIn('Counted items', track.notes)
 
-        n = it.tracking_info.count()
+        n = stock_history(it).count()
         self.assertFalse(
             it.stocktake(
                 -1,
@@ -687,8 +693,8 @@ class StockTest(StockTestBase):
             )
         )
 
-        # Ensure tracking info was not added
-        self.assertEqual(it.tracking_info.count(), n)
+        # Ensure no history was added
+        self.assertEqual(stock_history(it).count(), n)
 
         it.refresh_from_db()
         self.assertEqual(it.status, StockStatus.OK.value)
@@ -781,9 +787,9 @@ class StockTest(StockTestBase):
         self.assertEqual(it.quantity, n + 45)
 
         # Check that a tracking item was added
-        track = StockItemTracking.objects.filter(item=it).latest('id')
+        track = stock_events(it).last()
 
-        self.assertEqual(track.tracking_type, StockHistoryCode.STOCK_ADD)
+        self.assertEqual(track.event_type, StockHistoryCode.STOCK_ADD)
         self.assertIn('Added some items', track.notes)
 
         self.assertFalse(it.add_stock(-10, None))
@@ -811,11 +817,9 @@ class StockTest(StockTestBase):
         self.assertFalse(ait.location)
 
         # Check that a tracking item was added
-        track = StockItemTracking.objects.filter(item=ait).latest('id')
+        track = stock_events(ait).last()
 
-        self.assertEqual(
-            track.tracking_type, StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
-        )
+        self.assertEqual(track.event_type, StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER)
         self.assertIn('Allocated some stock', track.notes)
 
     def test_return_from_customer(self):
@@ -870,9 +874,9 @@ class StockTest(StockTestBase):
         self.assertFalse(ait.sales_order)
 
         # Check that a tracking item was added
-        track = StockItemTracking.objects.filter(item=ait).latest('id')
+        track = stock_events(ait).last()
 
-        self.assertEqual(track.tracking_type, StockHistoryCode.RETURNED_FROM_CUSTOMER)
+        self.assertEqual(track.event_type, StockHistoryCode.RETURNED_FROM_CUSTOMER)
         self.assertIn('Stock removed from customer', track.notes)
 
         # Establish total stock for the part after remove from customer to check that we still have the correct quantity in stock
@@ -890,11 +894,11 @@ class StockTest(StockTestBase):
         self.assertEqual(it.quantity, n - 15)
 
         # Check that a tracking item was added
-        track = StockItemTracking.objects.filter(item=it).latest('id')
+        track = stock_events(it).last()
 
-        self.assertEqual(track.tracking_type, StockHistoryCode.STOCK_REMOVE)
+        self.assertEqual(track.event_type, StockHistoryCode.STOCK_REMOVE)
         self.assertIn('Removed some items', track.notes)
-        self.assertTrue(it.has_tracking_info)
+        self.assertTrue(stock_events(it).exists())
 
         # Test that negative quantity does nothing
         self.assertFalse(it.take_stock(-10, None))
@@ -1113,12 +1117,14 @@ class StockTest(StockTestBase):
         self.assertEqual(s1.quantity, 60)
         self.assertIsNone(s1.purchase_price)
 
-        merge_entry = s1.tracking_info.filter(
-            tracking_type=StockHistoryCode.MERGED_STOCK_ITEMS
+        merge_entry = stock_events(
+            s1, event_type=StockHistoryCode.MERGED_STOCK_ITEMS
         ).first()
         self.assertIsNotNone(merge_entry)
-        self.assertEqual(merge_entry.deltas['added'], 50.0)
-        self.assertEqual(merge_entry.deltas['quantity'], 60.0)
+        self.assertEqual(merge_entry.additional_data['deltas']['added'], 50.0)
+        self.assertEqual(
+            [Decimal(value) for value in merge_entry.changes_dict['quantity']], [10, 60]
+        )
 
         part.stock_items.all().delete()
 
@@ -2328,7 +2334,7 @@ class StockItemTakeStockConcurrencyTest(TransactionTestCase):
     lock is acquired) in-memory copy, could both cap to the same amount - the
     first to acquire the lock removes it all, and the second, upon acquiring
     the lock, would find nothing left, but would still record a phantom
-    removal in StockItemTracking and report success.
+    removal in the stock history and report success.
 
     take_stock() now performs the cap *after* lock_quantity() has refreshed
     self.quantity, so the loser of the race is correctly capped to zero and
@@ -2409,8 +2415,7 @@ class StockItemTakeStockConcurrencyTest(TransactionTestCase):
         # recorded 'removed' amount must not exceed the quantity that
         # actually existed
         total_removed = sum(
-            entry.deltas.get('removed', 0)
-            for entry in self.item.tracking_info.all()
-            if entry.deltas
+            (entry.additional_data or {}).get('deltas', {}).get('removed', 0)
+            for entry in stock_events(self.item)
         )
         self.assertEqual(total_removed, 10)
