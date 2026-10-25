@@ -18,6 +18,7 @@ _audit_request = ContextVar('inventree_audit_request', default=None)
 _audit_cid = ContextVar('inventree_audit_cid', default=None)
 _audit_source = ContextVar('inventree_audit_source', default=None)
 _audit_batch = ContextVar('inventree_audit_batch', default=None)
+_audit_events = ContextVar('inventree_audit_events', default=None)
 
 
 @contextlib.contextmanager
@@ -46,6 +47,54 @@ def audit_batch():
 def get_batch() -> Optional[list]:
     """Return the list of audit entries being collected, or None if not batching."""
     return _audit_batch.get()
+
+
+class PendingEvent:
+    """A named event which is waiting to be attached to an audit entry (see audit.helpers.audit_event)."""
+
+    def __init__(self, instance, event_type: int, notes=None, deltas=None):
+        """Initialize the pending event."""
+        self.instance = instance
+        self.event_type = event_type
+        self.notes = notes
+        self.deltas = deltas
+        self.consumed = False
+
+    def matches(self, instance) -> bool:
+        """Return True if this event applies to the provided instance.
+
+        Instances are matched by identity, or by model and primary key
+        (e.g. if the same database row is saved via a different instance).
+        """
+        if instance is self.instance:
+            return True
+
+        return (
+            instance.pk is not None
+            and type(instance) is type(self.instance)
+            and instance.pk == self.instance.pk
+        )
+
+
+@contextlib.contextmanager
+def pending_events(events: list):
+    """Register the provided events as pending for the duration of the context."""
+    token = _audit_events.set([*(_audit_events.get() or []), *events])
+
+    try:
+        yield
+    finally:
+        _audit_events.reset(token)
+
+
+def consume_event(instance) -> Optional[PendingEvent]:
+    """Return (and consume) the first pending event for the provided instance, if any."""
+    for event in _audit_events.get() or []:
+        if not event.consumed and event.matches(instance):
+            event.consumed = True
+            return event
+
+    return None
 
 
 @contextlib.contextmanager

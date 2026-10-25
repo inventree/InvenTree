@@ -1,11 +1,14 @@
-"""Helper functions for recording audit entries for bulk database operations.
+"""Helper functions for recording audit entries.
 
-QuerySet.update() (and bulk_create / bulk_update) bypass model signals,
-so changes made this way are not recorded by django-auditlog.
-Code which modifies audited models in bulk should use these helpers instead.
+- Named events (with notes and deltas) can be recorded against an instance (audit_event / log_event)
+- QuerySet.update() (and bulk_create / bulk_update) bypass model signals,
+  so changes made this way are not recorded by django-auditlog.
+  Code which modifies audited models in bulk should use the bulk helpers instead.
 """
 
 import contextlib
+import datetime
+from decimal import Decimal
 
 from django.conf import settings
 from django.core.exceptions import FieldDoesNotExist
@@ -14,6 +17,7 @@ from django.db.models.signals import pre_save
 
 from auditlog.context import auditlog_disabled
 from auditlog.registry import auditlog
+from auditlog.signals import pre_log
 
 
 def is_audited(model) -> bool:
@@ -254,3 +258,125 @@ def audited_bulk_create(model, objs: list) -> list:
                     )
 
     return created
+
+
+def audit_reference(obj) -> dict:
+    """Return a reference to a model instance, for recording in event deltas.
+
+    The string representation is recorded at the time of the event,
+    so that the reference remains meaningful if the object is later changed or deleted.
+    """
+    return {
+        'model_type': f'{obj._meta.app_label}.{obj._meta.model_name}',
+        'pk': obj.pk,
+        'str': str(obj),
+    }
+
+
+def serialize_deltas(value):
+    """Convert event deltas into a JSON serializable form.
+
+    - Model instances are converted to references (see audit_reference)
+    - Decimal values are converted to float
+    - Dates are converted to ISO format strings
+    """
+    from django.db import models
+
+    if isinstance(value, models.Model):
+        return audit_reference(value)
+
+    if isinstance(value, dict):
+        return {str(key): serialize_deltas(val) for key, val in value.items()}
+
+    if isinstance(value, (list, tuple, set)):
+        return [serialize_deltas(val) for val in value]
+
+    if isinstance(value, Decimal):
+        return float(value)
+
+    if isinstance(value, (datetime.date, datetime.datetime)):
+        return value.isoformat()
+
+    return value
+
+
+def validate_event_type(model, event_type: int) -> int:
+    """Ensure that the event type is valid for the given model."""
+    from audit.registry import event_type_choices
+
+    if event_type is None:
+        raise ValueError('An event type must be provided')
+
+    if int(event_type) not in event_type_choices(model):
+        raise ValueError(
+            f"Invalid audit event type '{event_type}' for model {model._meta.label}"
+        )
+
+    return int(event_type)
+
+
+@contextlib.contextmanager
+def audit_event(instance, event_type: int, notes: str = '', deltas=None):
+    """Record a named event against an instance.
+
+    The first audit entry recorded for the instance within this context
+    (e.g. when the instance is saved) carries the event type, notes and deltas.
+
+    If no entry is recorded for the instance (e.g. no fields were changed, or the
+    instance was not saved), an entry is created for the event when the context exits.
+
+    Contexts can be nested, to record events against multiple instances.
+
+    Arguments:
+        instance: The (audited) model instance
+        event_type: The event type (must be defined in the AUDIT_EVENT_TYPES of the model)
+        notes: Optional notes associated with the event
+        deltas: Optional dict of additional information (e.g. references to related objects)
+
+    Yields:
+        The pending event (consumed once it has been attached to an audit entry)
+    """
+    from audit.context import PendingEvent, pending_events
+    from audit.models import NOTES_MAX_LENGTH
+
+    event = PendingEvent(
+        instance,
+        validate_event_type(type(instance), event_type),
+        notes=str(notes)[:NOTES_MAX_LENGTH] if notes else None,
+        deltas=serialize_deltas(deltas) if deltas else None,
+    )
+
+    with pending_events([event]):
+        yield event
+
+        if not event.consumed:
+            write_event_entry(event)
+
+
+def write_event_entry(event) -> None:
+    """Write an audit entry for an event which has not been attached to any other entry."""
+    from audit.models import AuditLogEntry
+
+    instance = event.instance
+
+    # The instance was never saved (or has since been deleted)
+    if instance.pk is None or not is_audited(type(instance)):
+        return
+
+    action = AuditLogEntry.Action.UPDATE
+
+    # Apply the same checks as for any other entry (e.g. audit log disabled)
+    results = pre_log.send(type(instance), instance=instance, action=action)
+
+    if any(result is False for _, result in results):
+        return
+
+    AuditLogEntry.objects.log_create(
+        instance, action=action, changes={}, force_log=True
+    )
+
+
+def log_event(instance, event_type: int, notes: str = '', deltas=None) -> None:
+    """Record a named event against an instance, which does not involve saving the instance."""
+    with audit_event(instance, event_type, notes=notes, deltas=deltas):
+        pass

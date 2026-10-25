@@ -1,5 +1,7 @@
 """Registration of audited models with django-auditlog."""
 
+from typing import Optional
+
 from django.apps import apps
 
 import structlog
@@ -103,3 +105,30 @@ def get_view_restriction(model):
         return restriction
 
     return AUDIT_VIEW_RESTRICTIONS.get(model._meta.label_lower)
+
+
+def event_type_choices(model) -> dict[int, str]:
+    """Return a mapping of event type value -> label for the given model.
+
+    Event types are defined by the AUDIT_EVENT_TYPES attribute of the model,
+    which may be a StatusCode enumeration or a Django Choices class.
+    """
+    enum = getattr(model, 'AUDIT_EVENT_TYPES', None)
+
+    if enum is None:
+        return {}
+
+    # StatusCode enumeration (e.g. StockHistoryCode)
+    if callable(getattr(enum, 'items', None)):
+        return {int(key): str(label) for key, label in enum.items(custom=False)}
+
+    # Django Choices class
+    return {int(key): str(label) for key, label in enum.choices}
+
+
+def event_type_label(model, event_type: int) -> Optional[str]:
+    """Return the label for an event type of the given model (or None if unknown)."""
+    if model is None or event_type is None:
+        return None
+
+    return event_type_choices(model).get(int(event_type))

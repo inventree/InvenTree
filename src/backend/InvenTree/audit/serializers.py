@@ -81,6 +81,10 @@ class AuditLogEntrySerializer(
             'actor',
             'actor_detail',
             'actor_username',
+            'event_type',
+            'event_label',
+            'notes',
+            'deltas',
             'model_type',
             'model_label',
             'object_pk',
@@ -114,6 +118,42 @@ class AuditLogEntrySerializer(
     parent_model_type = serializers.CharField(
         read_only=True, allow_null=True, label=_('Parent Model Type')
     )
+
+    event_label = serializers.CharField(
+        read_only=True, allow_null=True, label=_('Event')
+    )
+
+    deltas = serializers.SerializerMethodField(label=_('Deltas'))
+
+    @extend_schema_field(serializers.JSONField(allow_null=True))
+    def get_deltas(self, entry: AuditLogEntry) -> Optional[dict]:
+        """Return the deltas recorded against a named event.
+
+        References to objects which the user cannot view are redacted.
+        """
+        deltas = (entry.additional_data or {}).get('deltas')
+
+        if not isinstance(deltas, dict):
+            return None
+
+        return {key: self.redact_reference(value) for key, value in deltas.items()}
+
+    def redact_reference(self, value):
+        """Redact a reference to a model instance, if the user cannot view the model."""
+        from django.apps import apps
+
+        if not (isinstance(value, dict) and 'model_type' in value and 'pk' in value):
+            return value
+
+        try:
+            model = apps.get_model(value['model_type'])
+        except (LookupError, ValueError):
+            model = None
+
+        if self.can_view_model(model):
+            return value
+
+        return {**value, 'pk': None, 'str': None}
 
     changes = serializers.SerializerMethodField(label=_('Changes'))
 
@@ -296,6 +336,15 @@ class AuditLogEntrySerializer(
         if not (user and user.is_staff):
             for field in self.STAFF_ONLY_FIELDS:
                 data.pop(field, None)
+
+        # Event deltas are provided (with redaction) via the 'deltas' field
+        if isinstance(data.get('additional_data'), dict):
+            additional_data = {
+                key: value
+                for key, value in data['additional_data'].items()
+                if key != 'deltas'
+            }
+            data['additional_data'] = additional_data or None
 
         # Only expose the parent reference if the user may view the parent model
         if parent_ct := instance.parent_content_type:

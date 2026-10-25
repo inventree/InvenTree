@@ -7,10 +7,12 @@ PurchaseOrder (parent) and PurchaseOrderLineItem (child) with the audit log.
 import contextlib
 from base64 import b64encode
 from datetime import timedelta
+from decimal import Decimal
 from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
+from django.db import models
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -536,8 +538,8 @@ class AuditAPITest(AuditTestMixin, InvenTreeAPITestCase):
                 len(line_entries({'model_type': 'purchaseorderlineitem'})), 1
             )
 
-    def test_staff_required(self):
-        """The audit log API is only available to staff users."""
+    def test_non_staff(self):
+        """Non-staff users can view entries for models they have permission to view."""
         self.patch_po('Edit')
 
         entry = self.entries_for(self.po).first()
@@ -548,12 +550,24 @@ class AuditAPITest(AuditTestMixin, InvenTreeAPITestCase):
         self.assertEqual(data[0]['remote_addr'], '127.0.0.1')
         self.get(detail_url)
 
-        # Non-staff users are denied - even with view permission on the audited model
         self.user.is_staff = False
         self.user.save()
 
-        self.get(self.list_url(), expected_code=403)
-        self.get(detail_url, expected_code=403)
+        # Non-staff users can view the entries - but not the remote address
+        data = self.po_history()
+        self.assertGreater(len(data), 0)
+        self.assertNotIn('remote_addr', data[0])
+        self.assertNotIn('remote_addr', self.get(detail_url).data)
+
+        # ...but not without view permission on the audited model
+        self.clearRoles()
+
+        self.assertEqual(self.po_history(), [])
+        self.get(detail_url, expected_code=404)
+
+        # Anonymous users are denied
+        self.client.logout()
+        self.get(self.list_url(), expected_code=401)
 
     def test_view_restriction(self):
         """Models with a view restriction are hidden from users without that status."""
@@ -1259,3 +1273,256 @@ class AuditRetentionTest(InvenTreeAPITestCase):
         data = self.get(url).data
         self.assertIsNone(data['actor'])
         self.assertEqual(data['actor_username'], 'leaver')
+
+
+class AuditTestEvents(models.IntegerChoices):
+    """Event types used for testing named audit events."""
+
+    MOVED = 10, 'Moved'
+    COUNTED = 20, 'Counted'
+
+
+class AuditEventTest(InvenTreeAPITestCase):
+    """Tests for named audit events (see audit.helpers.audit_event)."""
+
+    roles = ['purchase_order.view', 'purchase_order.change']
+
+    @classmethod
+    def setUpClass(cls):
+        """Define event types for the Company model."""
+        cls.events_patch = mock.patch.object(
+            Company, 'AUDIT_EVENT_TYPES', AuditTestEvents
+        )
+        cls.events_patch.start()
+
+        super().setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        """Remove event types from the Company model."""
+        super().tearDownClass()
+        cls.events_patch.stop()
+
+    @classmethod
+    def setUpTestData(cls):
+        """Create test data."""
+        super().setUpTestData()
+
+        cls.company = Company.objects.create(name='Event Company', is_supplier=True)
+        cls.part = Part.objects.create(name='Event Part', description='A part')
+
+    def entries(self):
+        """Return all entries for the test company (oldest first)."""
+        return AuditLogEntry.objects.get_for_object(self.company).order_by('pk')
+
+    def test_event_with_changes(self):
+        """The event is attached to the entry recorded when the instance is saved."""
+        from audit.helpers import audit_event
+
+        n = self.entries().count()
+
+        with audit_event(
+            self.company,
+            AuditTestEvents.MOVED,
+            notes='Moved company',
+            deltas={'part': self.part, 'quantity': Decimal('1.5')},
+        ):
+            self.company.description = 'Moved'
+            self.company.save()
+
+        # A single entry, which records both the changes and the event
+        self.assertEqual(self.entries().count(), n + 1)
+
+        entry = self.entries().last()
+
+        self.assertEqual(entry.event_type, AuditTestEvents.MOVED)
+        self.assertEqual(entry.event_label, 'Moved')
+        self.assertEqual(entry.notes, 'Moved company')
+        self.assertEqual(entry.changes_dict['description'], ['', 'Moved'])
+        self.assertEqual(
+            entry.additional_data['deltas'],
+            {
+                'part': {
+                    'model_type': 'part.part',
+                    'pk': self.part.pk,
+                    'str': str(self.part),
+                },
+                'quantity': 1.5,
+            },
+        )
+
+    def test_event_without_changes(self):
+        """An event is recorded even if no fields are changed."""
+        from audit.helpers import audit_event, log_event
+
+        n = self.entries().count()
+
+        # Saved, but not changed
+        with audit_event(self.company, AuditTestEvents.COUNTED, notes='Counted'):
+            self.company.save()
+
+        # Not saved at all
+        log_event(self.company, AuditTestEvents.COUNTED, deltas={'quantity': 5})
+
+        entries = list(self.entries()[n:])
+
+        self.assertEqual(len(entries), 2)
+
+        for entry in entries:
+            self.assertEqual(entry.action, AuditLogEntry.Action.UPDATE)
+            self.assertEqual(entry.event_type, AuditTestEvents.COUNTED)
+            self.assertEqual(entry.changes_dict, {})
+
+        self.assertEqual(entries[0].notes, 'Counted')
+        self.assertEqual(entries[1].additional_data['deltas'], {'quantity': 5})
+
+    def test_no_changes_without_event(self):
+        """Saving an instance without changes (and without an event) is not recorded."""
+        n = self.entries().count()
+        self.company.save()
+        self.assertEqual(self.entries().count(), n)
+
+    def test_multiple_instances(self):
+        """Events can be recorded against multiple instances (one entry each)."""
+        from audit.helpers import audit_event
+
+        other = Company.objects.create(name='Other Company')
+
+        with (
+            audit_event(self.company, AuditTestEvents.MOVED, deltas={'to': other}),
+            audit_event(other, AuditTestEvents.COUNTED, deltas={'from': self.company}),
+        ):
+            self.company.description = 'A'
+            self.company.save()
+
+        entry = self.entries().last()
+        self.assertEqual(entry.event_type, AuditTestEvents.MOVED)
+        self.assertEqual(entry.additional_data['deltas']['to']['pk'], other.pk)
+
+        # The other instance was not saved - so an entry is created for the event
+        other_entry = AuditLogEntry.objects.get_for_object(other).order_by('pk').last()
+        self.assertEqual(other_entry.event_type, AuditTestEvents.COUNTED)
+        self.assertEqual(other_entry.changes_dict, {})
+
+    def test_new_instance(self):
+        """An event can be attached to the creation of a new instance."""
+        from audit.helpers import audit_event
+
+        company = Company(name='New Company')
+
+        with audit_event(company, AuditTestEvents.MOVED, notes='Created'):
+            company.save()
+
+        [entry] = AuditLogEntry.objects.get_for_object(company)
+
+        self.assertEqual(entry.action, AuditLogEntry.Action.CREATE)
+        self.assertEqual(entry.event_type, AuditTestEvents.MOVED)
+        self.assertEqual(entry.notes, 'Created')
+
+    def test_invalid_event_type(self):
+        """Event types must be defined by the model."""
+        from audit.helpers import log_event
+
+        with self.assertRaises(ValueError):
+            log_event(self.company, 999)
+
+        with self.assertRaises(ValueError):
+            log_event(self.company, None)
+
+        # Models without event types
+        with self.assertRaises(ValueError):
+            log_event(self.part, AuditTestEvents.MOVED)
+
+    def test_error_not_recorded(self):
+        """No event entry is created if an error occurs within the context."""
+        from audit.helpers import audit_event
+
+        n = self.entries().count()
+
+        with (
+            self.assertRaises(RuntimeError),
+            audit_event(self.company, AuditTestEvents.MOVED),
+        ):
+            raise RuntimeError('Failed')
+
+        self.assertEqual(self.entries().count(), n)
+
+    def test_disabled(self):
+        """Events are not recorded when auditing is disabled."""
+        from auditlog.context import disable_auditlog
+
+        from audit.helpers import log_event
+
+        n = self.entries().count()
+
+        with disable_auditlog():
+            log_event(self.company, AuditTestEvents.MOVED)
+
+        set_global_setting('AUDIT_LOG_ENABLED', False)
+        self.addCleanup(set_global_setting, 'AUDIT_LOG_ENABLED', True)
+
+        log_event(self.company, AuditTestEvents.MOVED)
+
+        self.assertEqual(self.entries().count(), n)
+
+    def test_batched(self):
+        """Event entries can be written in a batch."""
+        from django.db import transaction
+
+        from audit.helpers import log_event, write_batched
+
+        n = self.entries().count()
+
+        with transaction.atomic(), write_batched():
+            log_event(self.company, AuditTestEvents.MOVED)
+            log_event(self.company, AuditTestEvents.COUNTED)
+
+            # Not written until the batch is complete
+            self.assertEqual(self.entries().count(), n)
+
+        self.assertEqual(
+            [entry.event_type for entry in self.entries()[n:]],
+            [AuditTestEvents.MOVED, AuditTestEvents.COUNTED],
+        )
+
+    def test_api(self):
+        """Event information is provided via the API (with redacted references)."""
+        from audit.helpers import log_event
+
+        log_event(
+            self.company,
+            AuditTestEvents.MOVED,
+            notes='Via API',
+            deltas={'part': self.part, 'quantity': 3},
+        )
+
+        entry = self.entries().last()
+        url = reverse('api-audit-log-list')
+
+        # Filter by event type
+        data = self.get(url, {'event_type': AuditTestEvents.MOVED}).data
+        self.assertEqual([item['pk'] for item in data], [entry.pk])
+        self.assertEqual(
+            self.get(url, {'event_type': AuditTestEvents.COUNTED}).data, []
+        )
+
+        [item] = data
+
+        self.assertEqual(item['event_type'], AuditTestEvents.MOVED)
+        self.assertEqual(item['event_label'], 'Moved')
+        self.assertEqual(item['notes'], 'Via API')
+        self.assertEqual(item['deltas']['quantity'], 3)
+
+        # Deltas are only provided via the 'deltas' field
+        self.assertIsNone(item['additional_data'])
+
+        # The user cannot view parts - the reference is redacted
+        self.assertEqual(
+            item['deltas']['part'], {'model_type': 'part.part', 'pk': None, 'str': None}
+        )
+
+        self.assignRole('part.view')
+
+        item = self.get(url, {'event_type': AuditTestEvents.MOVED}).data[0]
+        self.assertEqual(item['deltas']['part']['pk'], self.part.pk)
+        self.assertEqual(item['deltas']['part']['str'], str(self.part))
