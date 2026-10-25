@@ -112,7 +112,13 @@ def audited_update(queryset, **values) -> int:
 
     with transaction.atomic():
         if connection.features.has_select_for_update:
-            old_rows = list(queryset.select_for_update())
+            # Only lock rows of the model itself (related rows may be joined via select_related)
+            if connection.features.has_select_for_update_of:
+                locked = queryset.select_for_update(of=('self',))
+            else:
+                locked = queryset.select_for_update()
+
+            old_rows = list(locked)
         else:
             old_rows = list(queryset)
 
@@ -129,6 +135,9 @@ def audited_update(queryset, **values) -> int:
         with write_batched():
             for old in old_rows:
                 if new := new_rows.get(old.pk):
+                    # Retain cached related objects (e.g. from select_related)
+                    copy_related_cache(old, new)
+
                     _create_log_entry(
                         action=AuditLogEntry.Action.UPDATE,
                         instance=new,
@@ -214,9 +223,6 @@ def audited_bulk_create(model, objs: list) -> list:
     Returns:
         list: The created objects, as fetched from the database (in insertion order)
     """
-    from auditlog.receivers import _create_log_entry
-
-    from audit.models import AuditLogEntry
     from InvenTree.helpers_db import bulk_create_and_fetch
 
     # Required by bulk_create_and_fetch() - checked for all models (not only audited ones),
@@ -245,19 +251,37 @@ def audited_bulk_create(model, objs: list) -> list:
             obj._state.adding = False
             obj._state.db = instance._state.db
 
-        if is_audited(model):
-            with write_batched():
-                for instance in created:
-                    _create_log_entry(
-                        action=AuditLogEntry.Action.CREATE,
-                        instance=instance,
-                        sender=model,
-                        diff_old=None,
-                        diff_new=instance,
-                        use_json_for_changes=settings.AUDITLOG_STORE_JSON_CHANGES,
-                    )
+        record_created(model, created)
 
     return created
+
+
+def record_created(model, instances) -> None:
+    """Record a CREATE audit entry for each of the provided (newly created) instances.
+
+    For instances which have been created in bulk (bypassing model signals),
+    e.g. via InvenTree.helpers_db.bulk_create_and_fetch().
+    The entries are written with a single bulk insert.
+
+    Note: Any pending events for the instances (see audit_event) are attached to the entries.
+    """
+    from auditlog.receivers import _create_log_entry
+
+    from audit.models import AuditLogEntry
+
+    if not is_audited(model):
+        return
+
+    with transaction.atomic(), write_batched():
+        for instance in instances:
+            _create_log_entry(
+                action=AuditLogEntry.Action.CREATE,
+                instance=instance,
+                sender=model,
+                diff_old=None,
+                diff_new=instance,
+                use_json_for_changes=settings.AUDITLOG_STORE_JSON_CHANGES,
+            )
 
 
 def audit_reference(obj) -> dict:
@@ -316,7 +340,7 @@ def validate_event_type(model, event_type: int) -> int:
 
 
 @contextlib.contextmanager
-def audit_event(instance, event_type: int, notes: str = '', deltas=None):
+def audit_event(instance, event_type: int, notes: str = '', deltas=None, actor=None):
     """Record a named event against an instance.
 
     The first audit entry recorded for the instance within this context
@@ -332,6 +356,8 @@ def audit_event(instance, event_type: int, notes: str = '', deltas=None):
         event_type: The event type (must be defined in the AUDIT_EVENT_TYPES of the model)
         notes: Optional notes associated with the event
         deltas: Optional dict of additional information (e.g. references to related objects)
+            Deltas which are also recorded as field changes (of the same entry) are omitted.
+        actor: Optional user who performed the event (defaults to the user of the current request)
 
     Yields:
         The pending event (consumed once it has been attached to an audit entry)
@@ -344,6 +370,7 @@ def audit_event(instance, event_type: int, notes: str = '', deltas=None):
         validate_event_type(type(instance), event_type),
         notes=str(notes)[:NOTES_MAX_LENGTH] if notes else None,
         deltas=serialize_deltas(deltas) if deltas else None,
+        actor=actor,
     )
 
     with pending_events([event]):
@@ -376,7 +403,9 @@ def write_event_entry(event) -> None:
     )
 
 
-def log_event(instance, event_type: int, notes: str = '', deltas=None) -> None:
+def log_event(
+    instance, event_type: int, notes: str = '', deltas=None, actor=None
+) -> None:
     """Record a named event against an instance, which does not involve saving the instance."""
-    with audit_event(instance, event_type, notes=notes, deltas=deltas):
+    with audit_event(instance, event_type, notes=notes, deltas=deltas, actor=actor):
         pass

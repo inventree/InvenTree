@@ -152,3 +152,116 @@ class BuildAuditAPITest(InvenTreeAPITestCase):
 
         self.assertEqual(len(history), 1)
         self.assertEqual(history[0]['model_label'], 'Build Order')
+
+
+class BuildStockAuditTest(BuildTestBase):
+    """Stock operations performed by a build order record a single audit entry per stock item."""
+
+    def stock_entries(self, item, n=0):
+        """Return the audit entries for a stock item (after the first n entries)."""
+        from stock.models import StockItem
+
+        return list(
+            AuditLogEntry.objects.filter(
+                content_type=StockItem.get_content_type(), object_pk=str(item.pk)
+            ).order_by('pk')[n:]
+        )
+
+    def test_create_output(self):
+        """Creating build outputs records a single CREATE entry for each output."""
+        from part.models import Part
+        from stock.status_codes import StockHistoryCode
+
+        # An assembly without any trackable components
+        assembly = Part.objects.create(
+            name='Simple Assembly', description='An assembly', assembly=True
+        )
+        build = Build.objects.create(part=assembly, quantity=5, reference='BO-9876')
+
+        outputs = build.create_build_output(5, user=self.user)
+
+        for output in outputs:
+            [entry] = self.stock_entries(output)
+
+            self.assertEqual(entry.action, ACTION.CREATE)
+            self.assertEqual(entry.event_type, StockHistoryCode.BUILD_OUTPUT_CREATED)
+            self.assertEqual(entry.actor, self.user)
+            self.assertEqual(
+                entry.additional_data['deltas']['buildorder']['pk'], build.pk
+            )
+
+    def test_create_serialized_outputs(self):
+        """Creating serialized build outputs records a single CREATE entry for each output."""
+        from stock.status_codes import StockHistoryCode
+
+        self.build.part.trackable = True
+        self.build.part.save()
+
+        outputs = self.build.create_build_output(
+            3, serials=['1001', '1002', '1003'], user=self.user
+        )
+
+        self.assertEqual(outputs.count(), 3)
+
+        for output in outputs:
+            [entry] = self.stock_entries(output)
+
+            self.assertEqual(entry.event_type, StockHistoryCode.BUILD_OUTPUT_CREATED)
+            self.assertEqual(entry.changes_dict['serial'][1], output.serial)
+
+    def test_consume(self):
+        """Consuming allocated stock records a single entry for each affected item."""
+        from build.models import BuildItem
+        from stock.models import StockItem
+        from stock.status_codes import StockHistoryCode
+
+        BuildItem.objects.create(
+            build_line=self.line_1, stock_item=self.stock_1_1, quantity=3
+        )
+        BuildItem.objects.create(
+            build_line=self.line_1, stock_item=self.stock_1_2, quantity=10
+        )
+
+        n_1 = len(self.stock_entries(self.stock_1_1))
+        n_2 = len(self.stock_entries(self.stock_1_2))
+
+        self.build.complete_allocations(
+            BuildItem.objects.filter(build_line__build=self.build), user=self.user
+        )
+
+        # Fully consumed item
+        [entry] = self.stock_entries(self.stock_1_1, n_1)
+
+        self.assertEqual(entry.event_type, StockHistoryCode.BUILD_CONSUMED)
+        self.assertEqual(entry.changes_dict['consumed_by'], [None, self.build.pk])
+        self.assertEqual(entry.actor, self.user)
+
+        # Partially consumed item (split)
+        [entry] = self.stock_entries(self.stock_1_2, n_2)
+
+        self.assertEqual(entry.event_type, StockHistoryCode.SPLIT_CHILD_ITEM)
+        self.assertEqual(entry.changes_dict['quantity'], ['100.00000', '90.00000'])
+
+        # The split item is created (and consumed)
+        split = StockItem.objects.get(parent=self.stock_1_2)
+
+        [entry] = self.stock_entries(split)
+
+        self.assertEqual(entry.action, ACTION.CREATE)
+        self.assertEqual(entry.event_type, StockHistoryCode.BUILD_CONSUMED)
+        self.assertEqual(entry.changes_dict['consumed_by'][1], self.build.pk)
+
+    def test_complete_output(self):
+        """Completing a build output records a single entry."""
+        from stock.status_codes import StockHistoryCode
+
+        self.build.issue_build()
+
+        n = len(self.stock_entries(self.output_1))
+
+        self.build.complete_build_output(self.output_1, self.user)
+
+        [entry] = self.stock_entries(self.output_1, n)
+
+        self.assertEqual(entry.event_type, StockHistoryCode.BUILD_OUTPUT_COMPLETED)
+        self.assertEqual(entry.changes_dict['is_building'], [True, False])

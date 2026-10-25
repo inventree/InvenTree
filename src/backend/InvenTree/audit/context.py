@@ -52,49 +52,115 @@ def get_batch() -> Optional[list]:
 class PendingEvent:
     """A named event which is waiting to be attached to an audit entry (see audit.helpers.audit_event)."""
 
-    def __init__(self, instance, event_type: int, notes=None, deltas=None):
+    def __init__(self, instance, event_type: int, notes=None, deltas=None, actor=None):
         """Initialize the pending event."""
         self.instance = instance
         self.event_type = event_type
         self.notes = notes
         self.deltas = deltas
+        self.actor = actor
         self.consumed = False
 
-    def matches(self, instance) -> bool:
-        """Return True if this event applies to the provided instance.
+
+def instance_key(instance) -> Optional[tuple]:
+    """Return a key which identifies the database row of an instance (or None if unsaved)."""
+    if instance.pk is None:
+        return None
+
+    return (type(instance), instance.pk)
+
+
+class EventRegistry:
+    """The pending events within an audit_event() context.
+
+    Events are indexed by instance (identity), and by database row (model and primary key),
+    so that matching events can be found efficiently for large numbers of events.
+    """
+
+    def __init__(self):
+        """Initialize an empty registry."""
+        self.counter = 0
+        self.by_id: dict[int, list] = {}
+        self.by_key: dict[tuple, list] = {}
+
+    def add(self, event: PendingEvent) -> None:
+        """Add an event to the registry."""
+        self.counter += 1
+        event.order = self.counter
+
+        self.by_id.setdefault(id(event.instance), []).append(event)
+
+        if key := instance_key(event.instance):
+            self.by_key.setdefault(key, []).append(event)
+
+    def remove(self, event: PendingEvent) -> None:
+        """Remove an event from the registry."""
+        for index, key in [
+            (self.by_id, id(event.instance)),
+            (self.by_key, instance_key(event.instance)),
+        ]:
+            if key is not None and event in (events := index.get(key, [])):
+                events.remove(event)
+
+                if not events:
+                    del index[key]
+
+    def find(self, instance) -> Optional[PendingEvent]:
+        """Return the first (unconsumed) pending event for the provided instance.
 
         Instances are matched by identity, or by model and primary key
         (e.g. if the same database row is saved via a different instance).
         """
-        if instance is self.instance:
-            return True
+        candidates = list(self.by_id.get(id(instance), []))
 
-        return (
-            instance.pk is not None
-            and type(instance) is type(self.instance)
-            and instance.pk == self.instance.pk
-        )
+        if key := instance_key(instance):
+            candidates += self.by_key.get(key, [])
+
+        candidates = [event for event in candidates if not event.consumed]
+
+        return min(candidates, key=lambda event: event.order, default=None)
 
 
 @contextlib.contextmanager
 def pending_events(events: list):
     """Register the provided events as pending for the duration of the context."""
-    token = _audit_events.set([*(_audit_events.get() or []), *events])
+    registry = _audit_events.get()
+    token = None
+
+    if registry is None:
+        registry = EventRegistry()
+        token = _audit_events.set(registry)
+
+    for event in events:
+        registry.add(event)
 
     try:
         yield
     finally:
-        _audit_events.reset(token)
+        for event in events:
+            registry.remove(event)
+
+        if token is not None:
+            _audit_events.reset(token)
+
+
+def has_pending_event(instance) -> bool:
+    """Return True if there is a pending (unconsumed) event for the provided instance."""
+    registry = _audit_events.get()
+    return registry is not None and registry.find(instance) is not None
 
 
 def consume_event(instance) -> Optional[PendingEvent]:
     """Return (and consume) the first pending event for the provided instance, if any."""
-    for event in _audit_events.get() or []:
-        if not event.consumed and event.matches(instance):
-            event.consumed = True
-            return event
+    registry = _audit_events.get()
 
-    return None
+    if registry is None:
+        return None
+
+    if event := registry.find(instance):
+        event.consumed = True
+
+    return event
 
 
 @contextlib.contextmanager

@@ -1300,32 +1300,32 @@ class StockList(
 
         with transaction.atomic():
             if serials:
+                create_data = {**serializer.validated_data}
+
+                if status_value:
+                    # Resolve the (possibly custom) status before the items are created,
+                    # so that each item is created with the correct status
+                    status_item = StockItem()
+
+                    if status_item.set_status(status_value):
+                        create_data['status'] = status_item.status
+                        create_data['status_custom_key'] = status_item.status_custom_key
+
                 # Create multiple serialized StockItem objects
+                # (recording a tracking event for each new item)
                 items = StockItem._create_serial_numbers(
-                    serials, **serializer.validated_data
+                    serials,
+                    tracking=lambda item: {
+                        'entry_type': StockHistoryCode.CREATED,
+                        'user': user,
+                        'deltas': {'status': status_value},
+                        'quantity': float(item.quantity),
+                    },
+                    **create_data,
                 )
 
-                # Next, bulk-create stock tracking entries for the newly created items
-                tracking = []
-
                 for item in items:
-                    if status_value and not item.compare_status(status_value):
-                        item.set_status(status_value)
-                        item.save()
-
                     apply_duplicate_options(item)
-
-                    if entry := item.add_tracking_entry(
-                        StockHistoryCode.CREATED,
-                        user,
-                        deltas={'status': status_value},
-                        location=location,
-                        quantity=float(item.quantity),
-                        commit=False,
-                    ):
-                        tracking.append(entry)
-
-                StockItemTracking.objects.bulk_create(tracking, batch_size=250)
 
                 # Annotate the stock items with part information
                 queryset = StockSerializers.StockItemSerializer.annotate_queryset(items)

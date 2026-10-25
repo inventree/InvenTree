@@ -165,7 +165,13 @@ class AuditLogEntryManager(LogEntryManager):
             kwargs.setdefault('parent_content_type', parent_ct)
             kwargs.setdefault('parent_object_pk', parent_pk)
 
-        if 'actor' not in kwargs and (actor := audit.context.get_request_actor()):
+        # A pending named event for this instance (see audit.helpers.audit_event)
+        event = audit.context.consume_event(instance)
+
+        # The actor is (in order of preference) provided explicitly, by the event, or by the request
+        if 'actor' not in kwargs and (
+            actor := (event and event.actor) or audit.context.get_request_actor()
+        ):
             kwargs['actor'] = actor
             kwargs['actor_email'] = getattr(actor, 'email', None)
 
@@ -183,15 +189,23 @@ class AuditLogEntryManager(LogEntryManager):
 
             kwargs['additional_data'] = {**(additional_data or {}), 'source': source}
 
-        # Attach a pending named event (see audit.helpers.audit_event)
-        if event := audit.context.consume_event(instance):
+        # Attach the pending named event
+        if event:
             kwargs['event_type'] = event.event_type
             kwargs['notes'] = event.notes or None
 
-            if event.deltas:
+            # Deltas which are already recorded as field changes are not duplicated
+            changes = kwargs.get('changes')
+            deltas = {
+                key: value
+                for key, value in (event.deltas or {}).items()
+                if not (isinstance(changes, dict) and key in changes)
+            }
+
+            if deltas:
                 kwargs['additional_data'] = {
                     **(kwargs.get('additional_data') or {}),
-                    'deltas': event.deltas,
+                    'deltas': deltas,
                 }
 
         is_masked = getattr(instance, 'is_audit_masked', None)

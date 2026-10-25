@@ -28,6 +28,7 @@ import part.models as part_models
 import part.serializers as part_serializers
 import stock.filters
 import stock.status_codes
+from audit.helpers import write_batched
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
@@ -1335,44 +1336,54 @@ class StockChangeStatusSerializer(serializers.Serializer):
         # Pre-cache the custom status values (to reduce DB hits)
         custom_status_codes = StockItem.STATUS_CLASS.custom_values()
 
-        for item in items:
-            # Ignore items which are already in the desired status
+        # Audit log entries are written in a single query
+        with write_batched():
+            for item in items:
+                # Ignore items which are already in the desired status
 
-            # Careful check for custom status codes also
-            if item.compare_status(status):
-                custom_status = item.get_custom_status()
-                if status == custom_status or custom_status is None:
-                    continue
+                # Careful check for custom status codes also
+                if item.compare_status(status):
+                    custom_status = item.get_custom_status()
+                    if status == custom_status or custom_status is None:
+                        continue
 
-            deltas = {'status': status}
+                deltas = {'status': status}
 
-            # before save, track old status logical
-            deltas['old_status_logical'] = item.status
+                # before save, track old status logical
+                deltas['old_status_logical'] = item.status
 
-            if item.get_custom_status():
-                deltas['old_status'] = item.get_custom_status()
-            else:
-                deltas['old_status'] = item.status
+                if item.get_custom_status():
+                    deltas['old_status'] = item.get_custom_status()
+                else:
+                    deltas['old_status'] = item.status
 
-            item.set_status(status, custom_values=custom_status_codes)
-            item.save(add_note=False)
+                item.set_status(status, custom_values=custom_status_codes)
 
-            # after save, can track new status_logical
-            deltas['status_logical'] = item.status
-
-            # Create a new transaction note for each item
-            transaction_notes.append(
-                StockItemTracking(
-                    item=item,
-                    tracking_type=stock.status_codes.StockHistoryCode.EDITED.value,
-                    date=now,
-                    deltas=deltas,
-                    user=user,
+                # Note: Legacy tracking entries are created in bulk (below)
+                with item.tracking_event(
+                    stock.status_codes.StockHistoryCode.EDITED,
+                    user,
                     notes=note,
-                )
-            )
+                    legacy=False,
+                ):
+                    item.save(add_note=False)
 
-        # Create tracking entries
+                # after save, can track new status_logical
+                deltas['status_logical'] = item.status
+
+                # Create a new transaction note for each item
+                transaction_notes.append(
+                    StockItemTracking(
+                        item=item,
+                        tracking_type=stock.status_codes.StockHistoryCode.EDITED.value,
+                        date=now,
+                        deltas=deltas,
+                        user=user,
+                        notes=note,
+                    )
+                )
+
+        # TODO: Legacy tracking entries are to be removed (replaced by the audit log)
         StockItemTracking.objects.bulk_create(transaction_notes, batch_size=250)
 
 
@@ -2251,10 +2262,10 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                             merge_kwargs['transfer_deltas'] = transfer_deltas
                             target.merge_stock_items([piece], **merge_kwargs)
                         else:
-                            transfer_deltas = {'stockitem': stock_item.pk}
+                            transfer_deltas = {'stockitem': stock_item}
 
                             if location:
-                                transfer_deltas['location'] = location.pk
+                                transfer_deltas['location'] = location
 
                             for field_name in StockItem.optional_transfer_fields():
                                 if field_name in kwargs:

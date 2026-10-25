@@ -147,6 +147,7 @@ class AuditRegistryTest(TestCase):
                 'pricing.partinternalpricebreak',
                 'pricing.partpricing',
                 'pricing.partsellpricebreak',
+                'stock.stockitem',
             ],
         )
 

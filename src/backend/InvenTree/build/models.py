@@ -2,6 +2,7 @@
 
 import copy
 import decimal
+from contextlib import ExitStack
 from typing import Optional, TypedDict
 
 from django.contrib.auth.models import User
@@ -31,6 +32,13 @@ import part.models
 import report.mixins
 import stock.models
 import users.models
+from audit.helpers import (
+    audit_event,
+    audited_bulk_update,
+    copy_related_cache,
+    record_created,
+    write_batched,
+)
 from build.events import BuildEvents
 from build.filters import annotate_allocated_quantity, annotate_required_quantity
 from build.status_codes import BuildStatus, BuildStatusGroups
@@ -843,8 +851,10 @@ class Build(
         # which the tracking entries and (for installed items) BuildItem records need below
         new_stock_item_data = [new_item for _, new_item, _ in split_items]
 
-        new_stock_items = bulk_create_and_fetch(
-            stock.models.StockItem, new_stock_item_data
+        # Evaluate the queryset immediately (into a list) - otherwise, indexing into it
+        # below would re-query the database once per split item
+        new_stock_items = list(
+            bulk_create_and_fetch(stock.models.StockItem, new_stock_item_data)
         )
 
         # Back-populate the resolved primary keys onto the original 'new_item' objects
@@ -853,8 +863,13 @@ class Build(
         # resolved pk too. On backends that can't return pks from bulk_create (MySQL),
         # 'new_stock_items' are freshly-fetched, distinct objects, so a plain list
         # replacement here would leave those other references with pk=None.
-        for i, (_stock_item, new_item, _quantity) in enumerate(split_items):
+        for i, (source_item, new_item, _quantity) in enumerate(split_items):
             new_item.pk = new_stock_items[i].pk
+            new_item._state.adding = False
+
+            # Retain the cached related objects (avoid per-item lookups)
+            copy_related_cache(source_item, new_item)
+            copy_related_cache(source_item, new_stock_items[i])
 
         tracking_entries = []
         split_events = []
@@ -936,12 +951,56 @@ class Build(
                 )
             )
 
-        # Flush all StockItem field changes (quantity reductions, consumption, installs)
-        stock.models.StockItem.objects.bulk_update(
-            seen_stock_items.values(),
-            ['quantity', 'consumed_by', 'location', 'belongs_to'],
-        )
+        # Record the operation in the audit log - a single entry for each stock item
+        with write_batched(), ExitStack() as events:
 
+            def audit(item, code, deltas):
+                """Record a named event against the provided stock item."""
+                events.enter_context(
+                    audit_event(item, code, notes=notes, deltas=deltas, actor=user)
+                )
+
+            for source_item, new_item, quantity in split_items:
+                audit(
+                    source_item,
+                    StockHistoryCode.SPLIT_CHILD_ITEM,
+                    {
+                        'stockitem': new_item,
+                        'removed': quantity,
+                        'quantity': source_item.quantity,
+                    },
+                )
+
+            for _build_item, target_item, output, quantity in install_items:
+                audit(
+                    target_item,
+                    StockHistoryCode.INSTALLED_INTO_ASSEMBLY,
+                    {'stockitem': output, 'quantity': quantity, 'buildorder': self},
+                )
+                audit(
+                    output,
+                    StockHistoryCode.INSTALLED_CHILD_ITEM,
+                    {'stockitem': target_item, 'quantity': quantity},
+                )
+
+            for target_item, quantity in consume_items:
+                audit(
+                    target_item,
+                    StockHistoryCode.BUILD_CONSUMED,
+                    {'buildorder': self, 'quantity': quantity},
+                )
+
+            # Newly split items are recorded as created (with the consume / install event)
+            record_created(stock.models.StockItem, new_stock_items)
+
+            # Flush all StockItem field changes (quantity reductions, consumption, installs)
+            audited_bulk_update(
+                stock.models.StockItem,
+                list(seen_stock_items.values()),
+                ['quantity', 'consumed_by', 'location', 'belongs_to'],
+            )
+
+        # TODO: Legacy tracking entries are to be removed (replaced by the audit log)
         stock.models.StockItemTracking.objects.bulk_create(tracking_entries)
 
         # Update build lines for "seen_build_lines"
@@ -1181,12 +1240,22 @@ class Build(
         if serials:
             """Create multiple build outputs with a single quantity of 1."""
 
-            # Create tracking entries for each item
-            tracking = []
             allocations = []
 
+            # Record a tracking event for each new output
             outputs = stock.models.StockItem._create_serial_numbers(
                 serials,
+                tracking=lambda output: {
+                    'entry_type': StockHistoryCode.BUILD_OUTPUT_CREATED,
+                    'user': user,
+                    'deltas': {
+                        'quantity': 1,
+                        'buildorder': self,
+                        'batch': output.batch,
+                        'serial': output.serial,
+                        'location': location,
+                    },
+                },
                 part=self.part,
                 build=self,
                 batch=batch,
@@ -1195,21 +1264,6 @@ class Build(
             )
 
             for output in outputs:
-                # Generate a new historical tracking entry
-                if entry := output.add_tracking_entry(
-                    StockHistoryCode.BUILD_OUTPUT_CREATED,
-                    user,
-                    deltas={
-                        'quantity': 1,
-                        'buildorder': self.pk,
-                        'batch': output.batch,
-                        'serial': output.serial,
-                        'location': location.pk if location else None,
-                    },
-                    commit=False,
-                ):
-                    tracking.append(entry)
-
                 # Auto-allocate stock based on serial number
                 if auto_allocate:
                     if new_allocations := self.auto_allocate_tracked_output(
@@ -1217,16 +1271,13 @@ class Build(
                     ):
                         allocations.extend(new_allocations)
 
-            # Bulk create tracking entries
-            stock.models.StockItemTracking.objects.bulk_create(tracking, batch_size=250)
-
             # Generate stock allocations
             BuildItem.objects.bulk_create(allocations, batch_size=250)
 
         else:
             """Create a single build output of the given quantity."""
 
-            output = stock.models.StockItem.objects.create(
+            output = stock.models.StockItem(
                 quantity=quantity,
                 location=location,
                 part=self.part,
@@ -1235,16 +1286,17 @@ class Build(
                 is_building=True,
             )
 
-            output.add_tracking_entry(
+            with output.tracking_event(
                 StockHistoryCode.BUILD_OUTPUT_CREATED,
                 user,
                 deltas={
                     'quantity': float(quantity),
-                    'buildorder': self.pk,
+                    'buildorder': self,
                     'batch': batch,
-                    'location': location.pk if location else None,
+                    'location': location,
                 },
-            )
+            ):
+                output.save()
 
             # Ensure we return a QuerySet object here, too
             outputs = stock.models.StockItem.objects.filter(pk=output.pk)
@@ -1384,32 +1436,31 @@ class Build(
             )
             output.build = self
 
-        # Update build output item
-        output.is_building = False
-        output.status = StockStatus.REJECTED.value
-        output.location = location
-        output.save(add_note=False)
-
-        allocated_items = output.items_to_install.all()
-
-        # Complete or discard allocations
-        if not discard_allocations:
-            self.complete_allocations(build_items=allocated_items, user=user)
-
-        # Delete allocations
-        allocated_items.all().delete()
-
-        output.add_tracking_entry(
+        with output.tracking_event(
             StockHistoryCode.BUILD_OUTPUT_REJECTED,
             user,
             notes=notes,
             deltas={
                 'quantity': float(quantity),
-                'location': location.pk,
+                'location': location,
                 'status': StockStatus.REJECTED.value,
-                'buildorder': self.pk,
+                'buildorder': self,
             },
-        )
+        ):
+            # Update build output item
+            output.is_building = False
+            output.status = StockStatus.REJECTED.value
+            output.location = location
+            output.save(add_note=False)
+
+            allocated_items = output.items_to_install.all()
+
+            # Complete or discard allocations
+            if not discard_allocations:
+                self.complete_allocations(build_items=allocated_items, user=user)
+
+            # Delete allocations
+            allocated_items.all().delete()
 
     def can_complete_output(
         self,
@@ -1527,20 +1578,19 @@ class Build(
         # Assign the stock status
         output.set_status(status)
 
-        output.save(add_note=False)
-
         deltas = {
             'status': status,
-            'buildorder': self.pk,
+            'buildorder': self,
             'quantity': float(output.quantity),
         }
 
         if location:
-            deltas['location'] = location.pk
+            deltas['location'] = location
 
-        output.add_tracking_entry(
+        with output.tracking_event(
             StockHistoryCode.BUILD_OUTPUT_COMPLETED, user, notes=notes, deltas=deltas
-        )
+        ):
+            output.save(add_note=False)
 
         trigger_event(BuildEvents.OUTPUT_COMPLETED, id=output.pk, build_id=self.pk)
 

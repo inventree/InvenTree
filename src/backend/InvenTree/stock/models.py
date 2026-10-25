@@ -5,7 +5,8 @@ from __future__ import annotations
 import contextvars
 import copy
 import os
-from contextlib import contextmanager
+from collections.abc import Callable
+from contextlib import ExitStack, contextmanager, nullcontext
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
@@ -425,6 +426,7 @@ STOCK_SORT_DEFAULT = StockSortOrder.DATE_OLDEST
 
 
 class StockItem(
+    InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNoteMixin,
@@ -464,6 +466,23 @@ class StockItem(
 
     IMPORT_ID_FIELDS = ['serial']
     STATUS_CLASS = StockStatus
+
+    # Stock operations are recorded as named events in the audit log (see tracking_event)
+    AUDIT_EVENT_TYPES = StockHistoryCode
+    AUDIT_PARENT_FIELD = 'part'
+
+    # Fields which are derived from other fields
+    AUDIT_EXCLUDE_FIELDS = ('barcode_hash', 'serial_int')
+
+    # Tracking deltas which are not recorded in the audit log
+    # (status changes are recorded as field changes, and the customer name via the customer reference)
+    AUDIT_IGNORE_DELTAS = (
+        'status',
+        'status_logical',
+        'old_status',
+        'old_status_logical',
+        'customer_name',
+    )
 
     class Meta:
         """Model meta options."""
@@ -513,6 +532,9 @@ class StockItem(
 
         notes = kwargs.pop('notes', '')
 
+        # Tracking event recorded against this save (if any)
+        event = None
+
         if self.pk:
             # StockItem has already been saved
 
@@ -545,27 +567,25 @@ class StockItem(
                         deltas['old_status_logical'] = old.status
 
                 if add_note and len(deltas) > 0:
-                    self.add_tracking_entry(
+                    event = self.tracking_event(
                         StockHistoryCode.EDITED, user, deltas=deltas, notes=notes
                     )
 
             except (ValueError, StockItem.DoesNotExist):
                 pass
 
-        super().save(*args, **kwargs)
-
-        # If user information is provided, and no existing note exists, create one!
-        if add_note and self.tracking_info.count() == 0:
-            tracking_info = {'status': self.status}
-
-            self.add_tracking_entry(
+        elif add_note:
+            # A new StockItem is being created
+            event = self.tracking_event(
                 StockHistoryCode.CREATED,
                 user,
-                deltas=tracking_info,
+                deltas={'status': self.status},
                 notes=notes,
-                location=self.location,
                 quantity=float(self.quantity),
             )
+
+        with event or nullcontext():
+            super().save(*args, **kwargs)
 
     def delete(self, ignore_serial_check: bool = False, **kwargs):
         """Custom delete method for StockItem model.
@@ -586,8 +606,14 @@ class StockItem(
             # Re-link any child items to the parent of this item,
             # so the genealogy chain survives deletion of an intermediate item
 
+            from audit.helpers import audited_update
+
             parent = StockItem.objects.filter(pk=self.parent_id).first()
-            StockItem.objects.filter(parent=self).update(parent=parent)
+            children = StockItem.objects.filter(parent=self).select_related(
+                'part', 'location', 'purchase_order__supplier'
+            )
+
+            audited_update(children, parent=parent)
 
             super().delete(**kwargs)
 
@@ -735,11 +761,15 @@ class StockItem(
 
     @classmethod
     @transaction.atomic
-    def _create_serial_numbers(cls, serials: list, **kwargs) -> QuerySet:
+    def _create_serial_numbers(
+        cls, serials: list, tracking: Callable | None = None, **kwargs
+    ) -> QuerySet:
         """Create multiple stock items with the provided serial numbers.
 
         Arguments:
             serials: List of serial numbers to create
+            tracking: Optional callable which returns the tracking event for each created item
+                (see StockItem._record_created_items)
             **kwargs: Additional keyword arguments to pass to the StockItem creation function
 
         Returns:
@@ -755,7 +785,7 @@ class StockItem(
         serialized against each other (see _lock_serial_numbers()), so unlike
         other validation checks, this method's duplicate-serial protection is
         safe even when the caller's own pre-check raced against another
-        request. It does not generate any "stock tracking entries".
+        request. Stock tracking events are only recorded if 'tracking' is provided.
 
         Note: This is an 'internal' function and should not be used by external code / plugins.
         """
@@ -835,6 +865,17 @@ class StockItem(
         except IntegrityError as exc:
             raise ValidationError({'serial_numbers': str(exc)}) from exc
 
+        # Every new item shares the same related objects - avoid redundant per-item lookups
+        # (bulk_create_and_fetch() does not preserve the cached related objects)
+        from audit.helpers import copy_related_cache
+
+        template = StockItem(**data)
+
+        for item in items:
+            copy_related_cache(template, item)
+
+        StockItem._record_created_items(items, tracking=tracking)
+
         # Trigger a 'created' event for the new items
         # Note that instead of a single event for each item,
         # we trigger a single event for all items created
@@ -843,6 +884,30 @@ class StockItem(
 
         # Return the newly created StockItem objects
         return items
+
+    @staticmethod
+    def _record_created_items(items, tracking: Callable | None = None) -> None:
+        """Record audit (and tracking) entries for stock items which have been created in bulk.
+
+        Items created in bulk (e.g. via bulk_create_and_fetch) bypass model signals,
+        so the audit entries must be recorded explicitly.
+
+        Arguments:
+            items: The newly created StockItem instances
+            tracking: Optional callable which returns the tracking_event() kwargs for each item
+                (or None, if no tracking event is to be recorded for that item)
+        """
+        from audit.helpers import record_created
+
+        items = list(items)
+
+        with batch_tracking_entries(), ExitStack() as stack:
+            if tracking is not None:
+                for item in items:
+                    if event := tracking(item):
+                        stack.enter_context(item.tracking_event(**event))
+
+            record_created(StockItem, items)
 
     @staticmethod
     def convert_serial_to_int(serial: str) -> int | None:
@@ -1371,14 +1436,14 @@ class StockItem(
             return
 
         self.part = variant
-        self.save()
 
-        self.add_tracking_entry(
+        with self.tracking_event(
             StockHistoryCode.CONVERTED_TO_VARIANT,
             user,
-            deltas={'part': variant.pk},
+            deltas={'part': variant},
             notes=_('Converted to part') + ': ' + variant.full_name,
-        )
+        ):
+            self.save()
 
     def get_item_owner(self):
         """Return the closest "owner" for this StockItem.
@@ -1509,26 +1574,25 @@ class StockItem(
         else:
             item = self.splitStock(quantity, None, user)
 
-        # Update StockItem fields with new information
-        item.sales_order = order
-        item.customer = customer
-        item.location = None
-
-        item.save(add_note=False)
-
         code = StockHistoryCode.SENT_TO_CUSTOMER
         deltas = {'quantity': float(quantity)}
 
         if customer is not None:
-            deltas['customer'] = customer.pk
+            deltas['customer'] = customer
             deltas['customer_name'] = customer.name
 
         # If an order is provided, we are shipping against a SalesOrder, not manually!
         if order:
             code = StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
-            deltas['salesorder'] = order.pk
+            deltas['salesorder'] = order
 
-        item.add_tracking_entry(code, user, deltas, notes=notes)
+        # Update StockItem fields with new information
+        item.sales_order = order
+        item.customer = customer
+        item.location = None
+
+        with item.tracking_event(code, user, deltas, notes=notes):
+            item.save(add_note=False)
 
         trigger_event(
             StockEvents.ITEM_ASSIGNED_TO_CUSTOMER,
@@ -1605,14 +1669,14 @@ class StockItem(
         }
 
         if location:
-            tracking_info['location'] = location.pk
+            tracking_info['location'] = location
 
         if item.customer:
-            tracking_info['customer'] = item.customer.id
+            tracking_info['customer'] = item.customer
             tracking_info['customer_name'] = item.customer.name
 
         if item.consumed_by:
-            tracking_info['build_order'] = item.consumed_by.id
+            tracking_info['build_order'] = item.consumed_by
 
         # Clear out allocation information for the stock item
         item.consumed_by = None
@@ -1635,13 +1699,12 @@ class StockItem(
                 )
                 tracking_info['old_status_logical'] = old_status_logical
 
-        item.save()
+        with item.tracking_event(
+            tracking_code, user, notes=notes, deltas=tracking_info
+        ):
+            item.save()
 
         item.clearAllocations()
-
-        item.add_tracking_entry(
-            tracking_code, user, notes=notes, deltas=tracking_info, location=location
-        )
 
         trigger_event(StockEvents.ITEM_RETURNED_TO_STOCK, id=item.id)
 
@@ -1923,25 +1986,28 @@ class StockItem(
             stock_item.consumed_by = build
 
         stock_item.location = None
-        stock_item.save(add_note=False)
 
-        deltas = {'stockitem': self.pk, 'quantity': float(quantity)}
+        deltas = {'stockitem': self, 'quantity': float(quantity)}
 
         if build is not None:
-            deltas['buildorder'] = build.pk
+            deltas['buildorder'] = build
 
-        # Add a transaction note to the other item
-        stock_item.add_tracking_entry(
-            StockHistoryCode.INSTALLED_INTO_ASSEMBLY, user, notes=notes, deltas=deltas
-        )
-
-        # Add a transaction note to this item (the assembly)
-        self.add_tracking_entry(
-            StockHistoryCode.INSTALLED_CHILD_ITEM,
-            user,
-            notes=notes,
-            deltas={'stockitem': stock_item.pk, 'quantity': float(quantity)},
-        )
+        # Record the operation against both the installed item and this item (the assembly)
+        with (
+            stock_item.tracking_event(
+                StockHistoryCode.INSTALLED_INTO_ASSEMBLY,
+                user,
+                notes=notes,
+                deltas=deltas,
+            ),
+            self.tracking_event(
+                StockHistoryCode.INSTALLED_CHILD_ITEM,
+                user,
+                notes=notes,
+                deltas={'stockitem': stock_item, 'quantity': float(quantity)},
+            ),
+        ):
+            stock_item.save(add_note=False)
 
         trigger_event(
             StockEvents.ITEM_INSTALLED_INTO_ASSEMBLY,
@@ -1967,33 +2033,29 @@ class StockItem(
                 'location': _('Cannot assign stock to structural location')
             })
 
-        # Add a transaction note to the parent item
-        self.belongs_to.add_tracking_entry(
-            StockHistoryCode.REMOVED_CHILD_ITEM,
-            user,
-            deltas={'stockitem': self.pk, 'quantity': float(self.quantity)},
-            notes=notes,
-        )
+        tracking_info = {'stockitem': self.belongs_to, 'quantity': float(self.quantity)}
 
-        tracking_info = {
-            'stockitem': self.belongs_to.pk,
-            'quantity': float(self.quantity),
-        }
+        # Record the operation against both the parent item and this item
+        with (
+            self.belongs_to.tracking_event(
+                StockHistoryCode.REMOVED_CHILD_ITEM,
+                user,
+                deltas={'stockitem': self, 'quantity': float(self.quantity)},
+                notes=notes,
+            ),
+            self.tracking_event(
+                StockHistoryCode.REMOVED_FROM_ASSEMBLY,
+                user,
+                notes=notes,
+                deltas=tracking_info,
+            ),
+        ):
+            # Mark this stock item as *not* belonging to anyone
+            self.belongs_to = None
+            self.consumed_by = None
+            self.location = location
 
-        self.add_tracking_entry(
-            StockHistoryCode.REMOVED_FROM_ASSEMBLY,
-            user,
-            notes=notes,
-            deltas=tracking_info,
-            location=location,
-        )
-
-        # Mark this stock item as *not* belonging to anyone
-        self.belongs_to = None
-        self.consumed_by = None
-        self.location = location
-
-        self.save()
+            self.save()
 
     def allocate_disassembly_pricing(self, quantity, lines: list) -> list:
         """Allocate the purchase price of this stock item across disassembly lines.
@@ -2212,25 +2274,23 @@ class StockItem(
             if status := line.get('status'):
                 new_item.set_status(status, custom_values=custom_status_values)
 
-            # Ensure the tree structure is observed
-            new_item.save(add_note=False)
-
-            deltas = {'stockitem': self.pk, 'quantity': float(line_quantity)}
+            deltas = {'stockitem': self, 'quantity': float(line_quantity)}
 
             # Record traceability links against the disassembled assembly
             if self.build:
-                deltas['buildorder'] = self.build.pk
+                deltas['buildorder'] = self.build
 
             if self.purchase_order:
-                deltas['purchaseorder'] = self.purchase_order.pk
+                deltas['purchaseorder'] = self.purchase_order
 
-            new_item.add_tracking_entry(
+            # Ensure the tree structure is observed
+            with new_item.tracking_event(
                 StockHistoryCode.CREATED_FROM_DISASSEMBLY,
                 user,
                 notes=notes,
                 deltas=deltas,
-                location=destination,
-            )
+            ):
+                new_item.save(add_note=False)
 
             items.append(new_item)
 
@@ -2255,11 +2315,10 @@ class StockItem(
 
             self.quantity = self.quantity - quantity
 
-        self.save(add_note=False)
-
-        self.add_tracking_entry(
+        with self.tracking_event(
             StockHistoryCode.DISASSEMBLED, user, notes=notes, deltas=deltas
-        )
+        ):
+            self.save(add_note=False)
 
         trigger_event(StockEvents.ITEM_DISASSEMBLED, id=self.pk)
 
@@ -2336,6 +2395,113 @@ class StockItem(
         """Is tracking info available?"""
         return self.tracking_info_count > 0
 
+    def _tracking_deltas(self, deltas: dict | None, kwargs: dict) -> dict:
+        """Return the deltas for a tracking event, including any information provided via kwargs.
+
+        Model references (see model_reference_fields) may be provided as kwargs,
+        and are retained as model instances (see _legacy_deltas and _audit_deltas).
+        """
+        deltas = dict(deltas or {})
+
+        for field in StockItem.model_reference_fields():
+            if (instance := kwargs.pop(field, None)) is not None:
+                deltas.setdefault(field, instance)
+
+        # Quantity specified?
+        if quantity := kwargs.get('quantity'):
+            deltas['quantity'] = float(quantity)
+
+        return deltas
+
+    def _audit_deltas(self, deltas: dict) -> dict:
+        """Return the deltas to record in the audit log for a tracking event."""
+        return {
+            key: value
+            for key, value in deltas.items()
+            if key not in self.AUDIT_IGNORE_DELTAS
+        }
+
+    @staticmethod
+    def _legacy_deltas(deltas: dict) -> dict:
+        """Return the deltas to record in a (legacy) StockItemTracking entry - model references are recorded by pk.
+
+        References may be provided as model instances, or as serialized references (see audit.helpers.audit_reference).
+        """
+
+        def legacy_value(value):
+            if isinstance(value, models.Model):
+                return value.pk
+
+            if isinstance(value, dict) and {'model_type', 'pk'} <= value.keys():
+                return value['pk']
+
+            return value
+
+        return {key: legacy_value(value) for key, value in deltas.items()}
+
+    @staticmethod
+    def _is_empty_tracking_event(entry_type: int, deltas: dict, notes: str) -> bool:
+        """Return True if the tracking event contains no information, and should not be recorded."""
+        return (
+            entry_type == StockHistoryCode.STOCK_UPDATE
+            and len(deltas) == 0
+            and not notes
+        )
+
+    @contextmanager
+    def tracking_event(
+        self,
+        entry_type: int,
+        user: User | None = None,
+        deltas: dict | None = None,
+        notes: str = '',
+        legacy: bool = True,
+        **kwargs,
+    ):
+        """Record a stock tracking event against this StockItem.
+
+        - Changes to this item which are saved within the context are recorded
+          in the audit log as part of this event (as a single entry)
+        - If this item is not saved (or not changed) within the context,
+          an entry for the event is recorded when the context exits
+        - If an event is already pending for this item (e.g. save() is called within a
+          stock operation), the outer event takes precedence in the audit log
+
+        Arguments:
+            entry_type: Code describing the "type" of historical action (see StockHistoryCode)
+            user: The user performing this action
+            deltas: Additional information about the event (model references may be provided as instances)
+            notes: Notes associated with the event
+            legacy: If True, also record a (legacy) StockItemTracking entry
+            **kwargs: Model references (see model_reference_fields) and quantity
+        """
+        from audit.context import has_pending_event
+        from audit.helpers import audit_event
+
+        deltas = self._tracking_deltas(deltas, kwargs)
+
+        if self._is_empty_tracking_event(entry_type, deltas, notes):
+            yield
+            return
+
+        if has_pending_event(self):
+            event = nullcontext()
+        else:
+            event = audit_event(
+                self,
+                entry_type,
+                notes=notes,
+                deltas=self._audit_deltas(deltas),
+                actor=user,
+            )
+
+        with event:
+            yield
+
+        # TODO: Legacy tracking entries are to be removed (replaced by the audit log)
+        if legacy:
+            self._add_legacy_tracking_entry(entry_type, user, deltas, notes)
+
     def add_tracking_entry(
         self,
         entry_type: int,
@@ -2347,47 +2513,62 @@ class StockItem(
     ):
         """Add a history tracking entry for this StockItem.
 
+        Note: This records the event immediately, and must not be called after saving
+        changes to this item as part of the same operation (which would record
+        two separate audit entries) - use tracking_event() around the save instead.
+
         Args:
             entry_type (int): Code describing the "type" of historical action (see StockHistoryCode)
             user (User): The user performing this action
             deltas (dict, optional): A map of the changes made to the model. Defaults to None.
             notes (str, optional): URL associated with this tracking entry. Defaults to ''.
-            commit (bool, optional): If True, save the entry to the database. Defaults to True.
+            commit (bool, optional): If True, save the (legacy) entry to the database. Defaults to True.
 
         Returns:
-            StockItemTracking: The created tracking entry
+            StockItemTracking: The created (legacy) tracking entry
         """
-        if deltas is None:
-            deltas = {}
+        from audit.context import has_pending_event
+        from audit.helpers import log_event
 
-        # Prevent empty entry
-        if (
-            entry_type == StockHistoryCode.STOCK_UPDATE
-            and len(deltas) == 0
-            and not notes
-        ):
+        deltas = self._tracking_deltas(deltas, kwargs)
+
+        if self._is_empty_tracking_event(entry_type, deltas, notes):
             return None
 
-        # Extract any additional information from the kwargs
-        self._apply_model_reference_fields(kwargs, deltas)
+        if not has_pending_event(self):
+            log_event(
+                self,
+                entry_type,
+                notes=notes,
+                deltas=self._audit_deltas(deltas),
+                actor=user,
+            )
 
-        # Quantity specified?
-        quantity = kwargs.get('quantity')
+        # TODO: Legacy tracking entries are to be removed (replaced by the audit log)
+        return self._add_legacy_tracking_entry(
+            entry_type, user, deltas, notes, commit=commit
+        )
 
-        if quantity:
-            deltas['quantity'] = float(quantity)
-
+    def _add_legacy_tracking_entry(
+        self,
+        entry_type: int,
+        user: User | None,
+        deltas: dict,
+        notes: str = '',
+        commit: bool = True,
+    ):
+        """Create a (legacy) StockItemTracking entry for this StockItem."""
         # If this item has already been deleted (e.g. depleted via delete_on_deplete),
         # self.pk is None - Django refuses to save a FK pointing at an unsaved instance,
         # even for a nullable/SET_NULL field, so pass None explicitly instead of self.
         entry = StockItemTracking(
             item=self if self.pk else None,
             part=self.part,
-            tracking_type=entry_type.value,
+            tracking_type=int(entry_type),
             user=user,
             date=InvenTree.helpers.current_time(),
             notes=notes,
-            deltas=deltas,
+            deltas=self._legacy_deltas(deltas),
         )
 
         if commit:
@@ -2485,49 +2666,35 @@ class StockItem(
         data['parent'] = self
 
         # Generate a new serial number for each item
-        items = StockItem._create_serial_numbers(serials, **data)
-
-        # Create a new tracking entry for each item
-        history_items = []
-
-        # Every new item shares this exact part - avoid a redundant per-item
-        # part_id -> Part lookup (bulk_create_and_fetch() does not preserve the
-        # cached FK) by seeding each item's cache with the instance we already have
-        part = self.part
+        items = StockItem._create_serial_numbers(
+            serials,
+            tracking=lambda item: {
+                'entry_type': StockHistoryCode.SPLIT_FROM_PARENT,
+                'user': user,
+                'notes': notes,
+                'quantity': 1,
+            },
+            **data,
+        )
 
         # Check (once) whether there are any test results to copy across, rather
         # than re-querying an identical (and usually empty) result set per item
         has_test_results = self.test_results.exists()
 
-        for item in items:
-            item.part = part
+        with batch_tracking_entries():
+            for item in items:
+                # TODO: Legacy tracking entries are to be removed (replaced by the audit log)
+                # Note: The serial number is recorded in the audit log as part of the item creation
+                item._add_legacy_tracking_entry(
+                    StockHistoryCode.ASSIGNED_SERIAL,
+                    user,
+                    {'serial': item.serial},
+                    notes=notes,
+                )
 
-            # Construct tracking entries for the new StockItem
-            if entry := item.add_tracking_entry(
-                StockHistoryCode.SPLIT_FROM_PARENT,
-                user,
-                quantity=1,
-                notes=notes,
-                location=location,
-                commit=False,
-            ):
-                history_items.append(entry)
-
-            if entry := item.add_tracking_entry(
-                StockHistoryCode.ASSIGNED_SERIAL,
-                user,
-                notes=notes,
-                deltas={'serial': item.serial},
-                location=location,
-                commit=False,
-            ):
-                history_items.append(entry)
-
-            # Copy any test results from this item to the new one
-            if has_test_results:
-                item.copyTestResultsFrom(self)
-
-        StockItemTracking.objects.bulk_create(history_items, batch_size=250)
+                # Copy any test results from this item to the new one
+                if has_test_results:
+                    item.copyTestResultsFrom(self)
 
         # Remove the equivalent number of items
         self.take_stock(
@@ -2764,6 +2931,12 @@ class StockItem(
         location = kwargs.get('location', self.location)
         notes = kwargs.get('notes') or ''
 
+        # Any references to other items (e.g. the merged item) must be recorded
+        # *before* the merged items are deleted below
+        from audit.helpers import serialize_deltas
+
+        transfer_deltas = serialize_deltas(kwargs.pop('transfer_deltas', None) or {})
+
         parent_id = self.parent.pk if self.parent else None
 
         # Keep track of pricing data for the merged data
@@ -2811,8 +2984,6 @@ class StockItem(
 
             other.delete()
 
-        transfer_deltas = kwargs.pop('transfer_deltas', None)
-
         tracking_deltas = {
             'quantity': float(self.quantity),
             'added': float(merged_quantity),
@@ -2822,14 +2993,6 @@ class StockItem(
 
         if transfer_deltas:
             tracking_deltas.update(transfer_deltas)
-
-        self.add_tracking_entry(
-            StockHistoryCode.MERGED_STOCK_ITEMS,
-            user,
-            quantity=self.quantity,
-            notes=notes,
-            deltas=tracking_deltas,
-        )
 
         # Update the location of the item
         self.location = location
@@ -2856,7 +3019,14 @@ class StockItem(
             if quantity > 0:
                 self.purchase_price = total_price / quantity
 
-        self.save()
+        with self.tracking_event(
+            StockHistoryCode.MERGED_STOCK_ITEMS,
+            user,
+            quantity=self.quantity,
+            notes=notes,
+            deltas=tracking_deltas,
+        ):
+            self.save()
 
     @transaction.atomic
     def splitStock(self, quantity, location=None, user=None, **kwargs):
@@ -2936,7 +3106,7 @@ class StockItem(
         new_stock.parent = self
 
         # Create 'deltas' dict to record changes for tracking
-        deltas = {'stockitem': self.pk}
+        deltas = {'stockitem': self}
 
         new_stock._apply_model_reference_fields(kwargs, deltas)
 
@@ -2946,25 +3116,27 @@ class StockItem(
         # Optional fields which can be supplied in a 'move' call
         new_stock._apply_optional_transfer_fields(kwargs, deltas)
 
-        new_stock.save(add_note=False)
+        if record_tracking:
+            # Record a stock tracking event for the newly created item
+            event = new_stock.tracking_event(
+                StockHistoryCode.SPLIT_FROM_PARENT,
+                user,
+                quantity=quantity,
+                notes=kwargs.get('notes', ''),
+                deltas=deltas,
+            )
+        else:
+            event = nullcontext()
+
+        with event:
+            new_stock.save(add_note=False)
 
         if split_transfer_deltas is not None:
             split_transfer_deltas.clear()
             split_transfer_deltas.update(deltas)
 
             if location:
-                split_transfer_deltas['location'] = location.pk
-
-        if record_tracking:
-            # Add a stock tracking entry for the newly created item
-            new_stock.add_tracking_entry(
-                StockHistoryCode.SPLIT_FROM_PARENT,
-                user,
-                quantity=quantity,
-                notes=kwargs.get('notes', ''),
-                location=location,
-                deltas=deltas,
-            )
+                split_transfer_deltas['location'] = location
 
         # Copy the test results of this part to the new one
         if kwargs.get('copy_test_results', True):
@@ -3015,15 +3187,15 @@ class StockItem(
         ]
 
     def _apply_model_reference_fields(self, kwargs: dict, deltas: dict) -> None:
-        """Pop any model reference kwargs (see model_reference_fields) and record their pk in deltas."""
+        """Pop any model reference kwargs (see model_reference_fields) and record them in deltas.
+
+        Model instances are retained - these are recorded as references in the audit log
+        (and by pk in legacy tracking entries, see _legacy_deltas).
+        """
         for field in StockItem.model_reference_fields():
             instance = deltas.pop(field, None) or kwargs.pop(field, None)
 
-            if instance is None:
-                continue
-            elif hasattr(instance, 'pk'):
-                deltas[field] = instance.pk
-            else:
+            if instance is not None:
                 deltas[field] = instance
 
     def _resolve_status_kwarg(self, kwargs: dict):
@@ -3061,11 +3233,8 @@ class StockItem(
             if field in kwargs:
                 setattr(self, field, kwargs[field])
 
-                # If the provided value is a model instance, store the primary key in the deltas dict
-                if hasattr(kwargs[field], 'pk'):
-                    deltas[field] = kwargs[field].pk
-                else:
-                    deltas[field] = kwargs[field]
+                # Model instances are retained (see _legacy_deltas and _audit_deltas)
+                deltas[field] = kwargs[field]
 
     @transaction.atomic
     def move(self, location, notes, user, **kwargs):
@@ -3138,7 +3307,7 @@ class StockItem(
         if same_location:
             tracking_code = StockHistoryCode.STOCK_UPDATE
         else:
-            tracking_info['location'] = location.pk
+            tracking_info['location'] = location
 
         status = self._resolve_status_kwarg(kwargs)
         self._apply_status_change(status, tracking_info)
@@ -3147,9 +3316,10 @@ class StockItem(
         # Optional fields which can be supplied in a 'move' call
         self._apply_optional_transfer_fields(kwargs, tracking_info)
 
-        self.add_tracking_entry(tracking_code, user, notes=notes, deltas=tracking_info)
-
-        self.save(add_note=False)
+        with self.tracking_event(
+            tracking_code, user, notes=notes, deltas=tracking_info
+        ):
+            self.save(add_note=False)
 
         # Trigger event for the plugin system
         trigger_event(
@@ -3266,8 +3436,8 @@ class StockItem(
         if location and location != self.location:
             old_location = self.location
             self.location = location
-            tracking_info['location'] = location.pk
-            tracking_info['old_location'] = old_location.pk if old_location else None
+            tracking_info['location'] = location
+            tracking_info['old_location'] = old_location
 
         status = self._resolve_status_kwarg(kwargs)
         self._apply_status_change(status, tracking_info)
@@ -3295,40 +3465,37 @@ class StockItem(
             self.stocktake_date = InvenTree.helpers.current_date()
             self.stocktake_user = user
 
-        raw_update_result = None if self.serialized else self.updateQuantity(count)
-        quantity_updated = self.serialized or raw_update_result
+        # Record the resulting quantity, whether or not this item survives the stocktake
+        # (i.e. even if the item is deleted, when counted to zero with delete_on_deplete set)
+        tracking_info['quantity'] = 1 if self.serialized else float(count)
 
-        # True only if updateQuantity() actually performed the save above
-        # (as opposed to: serialized item, no change, or item deleted)
-        update_persisted = raw_update_result is True
-
-        # Record the resulting quantity, whether or not this item survived the stocktake
-        # (self.quantity is updated by updateQuantity() even if the item was deleted)
-        tracking_info['quantity'] = 1 if self.serialized else float(self.quantity)
-
-        # Save if the quantity or any other field was changed, and updateQuantity()
-        # didn't already do so above.
-        # Note that updateQuantity() may have *deleted* the item (depleted to zero),
-        # in which case there is nothing left to save.
-        if self.pk and (quantity_updated or fields_updated):
-            if not update_persisted:
-                self.save(add_note=False)
-
-            trigger_event(
-                StockEvents.ITEM_COUNTED,
-                id=self.id,
-                quantity=1 if self.serialized else float(self.quantity),
-            )
-
-        # Always record a tracking entry, even if the item was deleted as a result
-        # of this stocktake (e.g. counted to zero with delete_on_deplete set) -
-        # StockItemTracking.item uses SET_NULL so the history is retained regardless.
-        self.add_tracking_entry(
+        # Always record a tracking event (even if nothing was changed)
+        with self.tracking_event(
             StockHistoryCode.STOCK_COUNT,
             user,
             notes=kwargs.get('notes', ''),
             deltas=tracking_info,
-        )
+        ):
+            raw_update_result = None if self.serialized else self.updateQuantity(count)
+            quantity_updated = self.serialized or raw_update_result
+
+            # True only if updateQuantity() actually performed the save above
+            # (as opposed to: serialized item, no change, or item deleted)
+            update_persisted = raw_update_result is True
+
+            # Save if the quantity or any other field was changed, and updateQuantity()
+            # didn't already do so above.
+            # Note that updateQuantity() may have *deleted* the item (depleted to zero),
+            # in which case there is nothing left to save.
+            if self.pk and (quantity_updated or fields_updated):
+                if not update_persisted:
+                    self.save(add_note=False)
+
+                trigger_event(
+                    StockEvents.ITEM_COUNTED,
+                    id=self.id,
+                    quantity=1 if self.serialized else float(self.quantity),
+                )
 
     @transaction.atomic
     def add_stock(self, quantity, user, **kwargs):
@@ -3365,30 +3532,21 @@ class StockItem(
         self._apply_status_change(status, tracking_info)
         self._apply_model_reference_fields(kwargs, tracking_info)
 
-        # Determine up-front whether any optional fields will actually change,
-        # so we can skip the second save() below when updateQuantity() (which
-        # already writes the full row, including the status/reference field
-        # changes applied above) has already persisted everything that matters.
-        optional_fields_changed = any(
-            field in kwargs for field in StockItem.optional_transfer_fields()
-        )
+        # Optional fields which can be supplied in an 'add' call
+        # Note: Applied *before* the quantity is updated, so that all changes
+        # are written in the single save() performed by updateQuantity()
+        self._apply_optional_transfer_fields(kwargs, tracking_info)
 
-        if self.updateQuantity(self.quantity + quantity):
-            tracking_info['added'] = float(quantity)
-            tracking_info['quantity'] = float(self.quantity)
+        tracking_info['added'] = float(quantity)
+        tracking_info['quantity'] = float(self.quantity + quantity)
 
-            # Optional fields which can be supplied in a 'stocktake' call
-            self._apply_optional_transfer_fields(kwargs, tracking_info)
-
-            if optional_fields_changed:
-                self.save(add_note=False)
-
-            self.add_tracking_entry(
-                StockHistoryCode.STOCK_ADD,
-                user,
-                notes=kwargs.get('notes', ''),
-                deltas=tracking_info,
-            )
+        with self.tracking_event(
+            StockHistoryCode.STOCK_ADD,
+            user,
+            notes=kwargs.get('notes', ''),
+            deltas=tracking_info,
+        ):
+            self.updateQuantity(self.quantity + quantity)
 
         return True
 
@@ -3439,35 +3597,26 @@ class StockItem(
         self._apply_status_change(status, deltas)
         self._apply_model_reference_fields(kwargs, deltas)
 
-        # Determine up-front whether any optional fields will actually change,
-        # so we can skip the second save() below when updateQuantity() (which
-        # already writes the full row, including the status/reference field
-        # changes applied above) has already persisted everything that matters.
-        optional_fields_changed = any(
-            field in kwargs for field in StockItem.optional_transfer_fields()
-        )
+        # Optional fields which can be supplied in a 'remove' call
+        # Note: Applied *before* the quantity is updated, so that all changes
+        # are written in the single save() performed by updateQuantity()
+        self._apply_optional_transfer_fields(kwargs, deltas)
 
-        quantity_updated = self.updateQuantity(self.quantity - quantity)
-
-        # Record the resulting quantity, whether or not this item survived the removal
-        # (self.quantity is updated by updateQuantity() even if the item was deleted)
+        # Record the resulting quantity, whether or not this item survives the removal
         deltas['removed'] = float(quantity)
-        deltas['quantity'] = float(self.quantity)
+        deltas['quantity'] = float(self.quantity - quantity)
 
-        if quantity_updated:
-            # Optional fields which can be supplied in a 'stocktake' call
-            self._apply_optional_transfer_fields(kwargs, deltas)
-
-            if optional_fields_changed:
-                self.save(add_note=False)
-
-        # Always record a tracking entry, even if the item was deleted as a result
-        # of this removal (e.g. depleted to zero with delete_on_deplete set) -
-        # StockItemTracking.item uses SET_NULL so the history is retained regardless.
+        # Always record a tracking event, even if the item is deleted as a result
+        # of this removal (e.g. depleted to zero with delete_on_deplete set)
         if record_tracking:
-            self.add_tracking_entry(
+            event = self.tracking_event(
                 code, user, notes=kwargs.get('notes', ''), deltas=deltas
             )
+        else:
+            event = nullcontext()
+
+        with event:
+            self.updateQuantity(self.quantity - quantity)
 
         return True
 
@@ -3719,11 +3868,15 @@ def batch_tracking_entries():
         yield _tracking_batch.get()
         return
 
+    from audit.helpers import write_batched
+
     batch = TrackingEntryBatch()
     token = _tracking_batch.set(batch)
 
     try:
-        yield batch
+        # Audit log entries are also written in bulk (when the context exits)
+        with write_batched():
+            yield batch
     finally:
         _tracking_batch.reset(token)
         transaction.on_commit(batch.flush)

@@ -1,6 +1,7 @@
 """Order model definitions."""
 
 import copy
+from contextlib import ExitStack
 from decimal import Decimal
 from typing import Any, Optional, TypedDict
 
@@ -32,7 +33,13 @@ import order.validators
 import report.mixins
 import stock.models
 import users.models as UserModels
-from audit.helpers import audited_bulk_update
+from audit.helpers import (
+    audit_event,
+    audited_bulk_update,
+    copy_related_cache,
+    record_created,
+    write_batched,
+)
 from build.status_codes import BuildStatus
 from common.currency import currency_code_default
 from common.notifications import InvenTreeNotificationBodies
@@ -1139,21 +1146,15 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
         # List of stock items which have been created
         stock_items: list[stock.models.StockItem] = []
 
-        # Per-item 'note' text, index-aligned with stock_items - StockItem no longer
-        # has its own 'notes' field, so this is threaded through to each item's
-        # RECEIVED_AGAINST_PURCHASE_ORDER tracking entry instead (see below)
-        stock_item_notes: list[str] = []
-
         # List of stock items to bulk create
         bulk_create_items: list[stock.models.StockItem] = []
 
         # Notes for bulk_create_items, appended in lockstep - bulk_create_and_fetch()
         # re-fetches fresh instances from the database, so any note has to be tracked
-        # positionally here rather than stashed on the (discarded) unsaved instance
+        # positionally here rather than stashed on the (discarded) unsaved instance.
+        # StockItem has no 'notes' field, so the note is recorded against each item's
+        # RECEIVED_AGAINST_PURCHASE_ORDER tracking event instead
         bulk_create_notes: list[str] = []
-
-        # List of tracking entries to create
-        tracking_entries: list[stock.models.StockItemTracking] = []
 
         # List of line items to update
         line_items_to_update: list[PurchaseOrderLineItem] = []
@@ -1327,7 +1328,11 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
             # Now, create the new stock items
             if serialize:
                 new_items = stock.models.StockItem._create_serial_numbers(
-                    serials=serials, **stock_data
+                    serials=serials,
+                    tracking=lambda item, note=note: self._receive_tracking_event(
+                        item, user, note
+                    ),
+                    **stock_data,
                 )
 
                 for new_item in new_items:
@@ -1341,7 +1346,6 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
                     new_item.run_plugin_validation()
 
                     stock_items.append(new_item)
-                    stock_item_notes.append(note)
 
             else:
                 new_item = stock.models.StockItem(**stock_data, serial='', parent=None)
@@ -1368,29 +1372,23 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
                 bulk_create_and_fetch(stock.models.StockItem, bulk_create_items)
             )
 
-            stock_items.extend(new_items)
-            stock_item_notes.extend(bulk_create_notes)
+            # Retain the cached related objects (avoid per-item lookups)
+            for original, new_item in zip(bulk_create_items, new_items, strict=True):
+                copy_related_cache(original, new_item)
 
-        # Generate a new tracking entry for each stock item
-        for item, item_note in zip(stock_items, stock_item_notes, strict=True):
-            tracking_entries.append(
-                item.add_tracking_entry(
-                    StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
-                    user,
-                    deltas={
-                        'location': item.location.pk if item.location else None,
-                        'purchaseorder': self.pk,
-                        'quantity': float(item.quantity),
-                    },
-                    notes=item_note,
-                    commit=False,
-                )
+            # Record a tracking event for each new item
+            item_notes = dict(
+                zip([item.pk for item in new_items], bulk_create_notes, strict=True)
             )
 
-        # Bulk create new tracking entries for each item
-        stock.models.StockItemTracking.objects.bulk_create(
-            tracking_entries, batch_size=250
-        )
+            stock.models.StockItem._record_created_items(
+                new_items,
+                tracking=lambda item: self._receive_tracking_event(
+                    item, user, item_notes[item.pk]
+                ),
+            )
+
+            stock_items.extend(new_items)
 
         # Update received quantity for each line item
         audited_bulk_update(PurchaseOrderLineItem, line_items_to_update, ['received'])
@@ -1424,6 +1422,19 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
         return stock.models.StockItem.objects.filter(
             pk__in=[item.pk for item in stock_items]
         )
+
+    def _receive_tracking_event(self, item, user, notes: str) -> dict:
+        """Return the tracking event for a stock item received against this order."""
+        return {
+            'entry_type': StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
+            'user': user,
+            'notes': notes,
+            'deltas': {
+                'location': item.location,
+                'purchaseorder': self,
+                'quantity': float(item.quantity),
+            },
+        }
 
     @transaction.atomic
     def receive_line_item(
@@ -3057,6 +3068,10 @@ class SalesOrderShipment(
 
         for i, (source, placeholder, quantity) in enumerate(split_items):
             persisted = new_stock_items[i]
+
+            # Retain the cached related objects (avoid per-item lookups)
+            copy_related_cache(source, persisted)
+
             split_item_map[id(placeholder)] = persisted
             split_items[i] = (source, persisted, quantity)
 
@@ -3121,14 +3136,45 @@ class SalesOrderShipment(
                 {'id': target_item.pk, 'customer': customer.pk if customer else None},
             ))
 
-        # Flush all StockItem field changes (quantity reductions, and shipment details)
-        stock.models.StockItem.objects.bulk_update(
-            seen_stock_items.values(), ['quantity']
-        )
-        stock.models.StockItem.objects.bulk_update(
-            [item for item, _ in shipped_items], ['sales_order', 'customer', 'location']
-        )
+        # Record the operation in the audit log - a single entry for each stock item
+        with write_batched(), ExitStack() as events:
 
+            def audit(item, code, deltas):
+                """Record a named event against the provided stock item."""
+                events.enter_context(audit_event(item, code, deltas=deltas, actor=user))
+
+            for source_item, new_item, quantity in split_items:
+                audit(
+                    source_item,
+                    StockHistoryCode.SPLIT_CHILD_ITEM,
+                    {
+                        'stockitem': new_item,
+                        'removed': quantity,
+                        'quantity': source_item.quantity,
+                    },
+                )
+
+            for target_item, quantity in shipped_items:
+                audit(
+                    target_item,
+                    StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER,
+                    {'quantity': quantity, 'salesorder': order, 'customer': customer},
+                )
+
+            # Newly split items are recorded as created (with the shipment event)
+            record_created(stock.models.StockItem, new_stock_items)
+
+            # Flush all StockItem field changes (quantity reductions, and shipment details)
+            audited_bulk_update(
+                stock.models.StockItem, list(seen_stock_items.values()), ['quantity']
+            )
+            audited_bulk_update(
+                stock.models.StockItem,
+                [item for item, _ in shipped_items],
+                ['sales_order', 'customer', 'location'],
+            )
+
+        # TODO: Legacy tracking entries are to be removed (replaced by the audit log)
         stock.models.StockItemTracking.objects.bulk_create(tracking_entries)
 
         # Update sales order lines for "seen_lines"
@@ -3658,31 +3704,29 @@ class ReturnOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
         deltas = {
             'status': status,
-            'returnorder': self.pk,
-            'location': location.pk,
+            'returnorder': self,
+            'location': location,
             'quantity': float(line.quantity),
         }
 
         if stock_item.customer:
-            deltas['customer'] = stock_item.customer.pk
+            deltas['customer'] = stock_item.customer
 
         # Update the StockItem
         stock_item.set_status(status)
         stock_item.location = location
         stock_item.customer = None
         stock_item.sales_order = None
-        stock_item.save(add_note=False)
-        stock_item.clearAllocations()
 
-        # Add a tracking entry to the StockItem
-        stock_item.add_tracking_entry(
+        with stock_item.tracking_event(
             StockHistoryCode.RETURNED_AGAINST_RETURN_ORDER,
             user,
             notes=kwargs.get('note', ''),
             deltas=deltas,
-            location=location,
-            returnorder=self,
-        )
+        ):
+            stock_item.save(add_note=False)
+
+        stock_item.clearAllocations()
 
         # Update the LineItem
         line.received_date = InvenTree.helpers.current_date()
