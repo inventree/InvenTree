@@ -237,6 +237,27 @@ function getChanges(record: any): AuditChange[] {
  * Return a human readable label for an event delta key (e.g. 'sales_order' -> 'Sales order')
  */
 function deltaLabel(key: string): string {
+  // Labels for commonly used delta keys (e.g. stock tracking events)
+  const labels: Record<string, string> = {
+    added: t`Added`,
+    build_order: t`Build Order`,
+    buildorder: t`Build Order`,
+    customer: t`Customer`,
+    location: t`Location`,
+    part: t`Part`,
+    purchaseorder: t`Purchase Order`,
+    quantity: t`Quantity`,
+    removed: t`Removed`,
+    returnorder: t`Return Order`,
+    salesorder: t`Sales Order`,
+    stockitem: t`Stock Item`,
+    transferorder: t`Transfer Order`
+  };
+
+  if (key in labels) {
+    return labels[key];
+  }
+
   const label = key.replaceAll('_', ' ');
   return label.charAt(0).toUpperCase() + label.slice(1);
 }

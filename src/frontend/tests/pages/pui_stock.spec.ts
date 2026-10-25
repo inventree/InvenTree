@@ -501,6 +501,44 @@ test('Stock - Return Items', async ({ browser }) => {
   await page.getByText('This field is required.').first().waitFor();
 });
 
+test('Stock - History (Stock Item)', async ({ browser }) => {
+  // Note: The 'admin' user has the "Show Change History" setting enabled
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'stock/item/193/history'
+  });
+
+  await page.getByText('widget.purple | Purple Widget').first().waitFor();
+
+  // Stock tracking events are displayed in the "History" tab
+  await page.getByText('Installed into assembly').first().waitFor();
+  await page.getByText('Assigned serial number').first().waitFor();
+  await page.getByText('Stock item created').first().waitFor();
+
+  // Event deltas link to the related stock item
+  await page.getByText('Widget Board (assembled) #159').first().waitFor();
+});
+
+test('Stock - History (Part)', async ({ browser }) => {
+  // Note: The 'admin' user has the "Show Change History" setting enabled
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'part/76/history'
+  });
+
+  await page.getByText('widget.purple | Purple Widget').first().waitFor();
+
+  // The history of the part includes stock tracking events for its stock items
+  await page.getByText('Shipped against Sales Order').first().waitFor();
+  await page.getByText('Customer D').first().waitFor();
+  await page.getByText('SO0009').first().waitFor();
+  await page.getByText('Installed into assembly').first().waitFor();
+  await page.getByText('Purple Widget #35').first().waitFor();
+
+  // ...as well as changes to the part itself (e.g. parameters)
+  await page.getByText('Color: Purple').first().waitFor();
+});
+
 test('Stock - History', async ({ browser }) => {
   // Note: The 'admin' user has the "Show Change History" setting enabled
   const page = await doCachedLogin(browser, {
