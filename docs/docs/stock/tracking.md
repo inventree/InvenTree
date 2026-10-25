@@ -25,26 +25,18 @@ Each stock tracking entry records a specific *type*, indicating which event trig
 
 ## Viewing Stock Tracking History
 
-There are multiple ways to view the stock tracking history for a particular stock item or part via the user interface.
+Stock tracking events are recorded in the [audit log](../concepts/audit.md), along with any other changes made to a stock item. Each event records the user who performed the action, any notes provided, and additional information about the event (such as the quantity added or removed, or the order which the item was received against).
 
-### Stock Item Tracking History
+!!! warning "Audit Log Required"
+    Stock tracking history is recorded in the audit log. If the audit log is disabled (via the `Enable Audit Log` system setting), **no stock tracking history is recorded**. Refer to the [audit log documentation](../concepts/audit.md#settings) for more information.
 
-The stock tracking history for a particular stock item can be viewed on the *Stock Item Detail* page, under the *Stock Tracking* tab:
+The stock tracking history is displayed in the *History* panel of the *Stock Item Detail* page. The history of all stock items for a particular part is also displayed in the *History* panel of the *Part Detail* page.
 
-{{ image("stock/stock_item_tracking_history.png", title="Stock tracking tab") }}
-
-This view displays all tracking entries associated with the particular stock item.
-
-### Part Tracking History
-
-Additionally, the stock tracking history for a particular part can be viewed on the *Part Detail* page, under the *Stock History* tab:
-
-{{ image("stock/part_tracking_history.png", title="Part stock tracking history") }}
-
-This view displays all tracking entries associated with any stock item linked to the particular part.
+!!! info "Show Change History"
+    The *History* panel is only displayed if the *Show Change History* user setting is enabled. Refer to the [audit log documentation](../concepts/audit.md#viewing-change-history) for more information.
 
 !!! info "Deleted Stock Items"
-    Even if a stock item is deleted from the system, the associated stock tracking entries are retained for historical reference. They will be visible in the part tracking history, but not in the stock item tracking history (as the stock item itself has been deleted).
+    Even if a stock item is deleted from the system, the associated history is retained for historical reference. It is visible in the history of the part, but not in the history of the stock item (as the stock item itself has been deleted).
 
 ## Installed Stock Items
 

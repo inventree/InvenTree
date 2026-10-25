@@ -36,7 +36,6 @@ To keep the audit log focused and performant, some changes are intentionally *no
 
 - **Derived fields** - Internal or calculated fields (such as tree structure fields, cached pricing values and metadata) are excluded.
 - **Data import** - Changes made using the [data import](./data_import.md) tool are not recorded.
-- **Stock items** - Changes to stock items are tracked separately using [stock tracking](../stock/tracking.md).
 - **Unsupported models** - Only the models listed below are audited.
 
 ### Audited Models
@@ -55,8 +54,10 @@ Some models record named *events* in the audit log, in addition to field changes
 
 An event may be recorded even if no fields of the item were changed.
 
+For example, stock operations (such as moving, counting or shipping stock) are recorded as [stock tracking](../stock/tracking.md) events against each affected stock item.
+
 !!! warning "Disabling the Audit Log"
-    Events are recorded in the audit log, and are subject to the same settings as all other audit entries. If the audit log is disabled, events are **not** recorded.
+    Events are recorded in the audit log, and are subject to the same settings as all other audit entries. If the audit log is disabled, events are **not** recorded - this includes **all stock tracking history**.
 
 ### Viewing Change History
 

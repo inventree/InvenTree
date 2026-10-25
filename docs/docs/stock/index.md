@@ -44,9 +44,9 @@ Refer to the [traceability](./traceability.md) page for more information on how 
 
 ## Stock Tracking
 
-Every time a *Stock Item* is adjusted, a *Stock Tracking* entry is automatically created. This ensures a complete history of the *Stock Item* is maintained as long as the item is in the system.
+Every time a *Stock Item* is adjusted, a stock tracking event is automatically recorded in the [audit log](../concepts/audit.md). This ensures a complete history of the *Stock Item* is maintained.
 
-Each stock tracking historical item records the user who performed the action. [Read more about stock tracking here](./tracking.md).
+Each stock tracking event records the user who performed the action. [Read more about stock tracking here](./tracking.md).
 
 ## Stock Locations
 
