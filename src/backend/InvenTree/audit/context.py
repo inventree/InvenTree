@@ -18,6 +18,7 @@ _audit_request = ContextVar('inventree_audit_request', default=None)
 _audit_cid = ContextVar('inventree_audit_cid', default=None)
 _audit_source = ContextVar('inventree_audit_source', default=None)
 _audit_batch = ContextVar('inventree_audit_batch', default=None)
+_audit_batch_cid = ContextVar('inventree_audit_batch_cid', default=None)
 _audit_events = ContextVar('inventree_audit_events', default=None)
 
 
@@ -26,6 +27,9 @@ def audit_batch():
     """Collect (unsaved) audit entries created within this context, rather than saving each one.
 
     Nested contexts share the outermost list.
+
+    The correlation ID is resolved once for the batch (see get_cid),
+    as resolving it for every entry is expensive for large batches.
 
     Yields:
         The list of collected entries, which the caller is responsible for writing
@@ -37,10 +41,12 @@ def audit_batch():
 
     entries = []
     token = _audit_batch.set(entries)
+    cid_token = _audit_batch_cid.set(resolve_cid())
 
     try:
         yield entries
     finally:
+        _audit_batch_cid.reset(cid_token)
         _audit_batch.reset(token)
 
 
@@ -245,6 +251,17 @@ def end_worker_task() -> None:
 
 def get_cid() -> Optional[str]:
     """Return the current correlation ID (used as AUDITLOG_CID_GETTER).
+
+    Within an audit_batch() context, the ID resolved when the batch was entered is returned.
+    """
+    if cid := _audit_batch_cid.get():
+        return cid
+
+    return resolve_cid()
+
+
+def resolve_cid() -> Optional[str]:
+    """Resolve the current correlation ID.
 
     - Within a request: the request ID bound by django-structlog, so that audit entries
       can be matched against log entries (and the X-Request-ID header) for the request.

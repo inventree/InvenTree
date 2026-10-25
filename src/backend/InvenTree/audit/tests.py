@@ -12,7 +12,7 @@ from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
-from django.db import models
+from django.db import models, transaction
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -20,6 +20,7 @@ from django.utils import timezone
 from auditlog.registry import auditlog
 
 import audit.context
+from audit.helpers import write_batched
 from audit.models import MASKED_VALUE, AuditLogEntry, mask_changes
 from audit.registry import BASE_EXCLUDE_FIELDS, audited_models, register_model
 from audit.serializers import AuditLogEntrySerializer
@@ -270,6 +271,32 @@ class AuditModelTest(AuditTestMixin, TestCase):
 
         # Context is reset afterwards
         self.assertIsNone(audit.context.get_source())
+        self.assertIsNone(audit.context.get_cid())
+
+    def test_batch_cid(self):
+        """The correlation ID is resolved once for an audit batch."""
+        with audit.context.audit_source('task:test_task'):
+            cid = audit.context.get_cid()
+
+            with (
+                mock.patch.object(
+                    audit.context, 'resolve_cid', wraps=audit.context.resolve_cid
+                ) as resolve,
+                transaction.atomic(),
+                write_batched(),
+            ):
+                for idx in range(3):
+                    self.po.description = f'Batched {idx}'
+                    self.po.save()
+
+            self.assertEqual(resolve.call_count, 1)
+
+        entries = self.entries_for(self.po, action=AuditLogEntry.Action.UPDATE)
+
+        self.assertEqual(entries.count(), 3)
+        self.assertEqual({entry.cid for entry in entries}, {cid})
+
+        # Context is reset afterwards
         self.assertIsNone(audit.context.get_cid())
 
     def test_disabled(self):
