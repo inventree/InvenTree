@@ -1,7 +1,6 @@
 """Unit testing for the Stock API."""
 
 import os
-import random
 from datetime import datetime, timedelta
 from decimal import Decimal
 
@@ -4114,127 +4113,6 @@ class StockTestResultTest(StockAPITestCase):
         self.run_output_test(
             reverse('api-stock-test-result-detail', kwargs={'pk': 1}),
             ['user_detail', 'template_detail'],
-        )
-
-
-class StockTrackingTest(StockAPITestCase):
-    """Tests for the StockTracking API endpoints."""
-
-    fixtures = [
-        *StockAPITestCase.fixtures,
-        'build',
-        'order',
-        'return_order',
-        'sales_order',
-    ]
-
-    @classmethod
-    def setUpTestData(cls):
-        """Initialize some test data for the StockTracking tests."""
-        super().setUpTestData()
-
-        import build.models
-        import company.models
-        import order.models
-        import stock.models
-        import stock.status_codes
-
-        entries = []
-
-        N_BO = build.models.Build.objects.count()
-        N_PO = order.models.PurchaseOrder.objects.count()
-        N_RO = order.models.ReturnOrder.objects.count()
-        N_SO = order.models.SalesOrder.objects.count()
-
-        N_COMPANY = company.models.Company.objects.count()
-        N_LOCATION = stock.models.StockLocation.objects.count()
-
-        # Generate a large quantity of tracking items
-        # Note that the pk values are not guaranteed to exist in the database
-        for item in StockItem.objects.all():
-            for i in range(50):
-                entries.append(
-                    StockItemTracking(
-                        item=item,
-                        notes='This is a test entry',
-                        tracking_type=stock.status_codes.StockHistoryCode.LEGACY.value,
-                        deltas={
-                            'quantity': 50 - i,
-                            'buildorder': random.randint(0, N_BO + 1),
-                            'purchaseorder': random.randint(0, N_PO + 1),
-                            'returnorder': random.randint(0, N_RO + 1),
-                            'salesorder': random.randint(0, N_SO + 1),
-                            'customer': random.randint(0, N_COMPANY + 1),
-                            'location': random.randint(0, N_LOCATION + 1),
-                        },
-                    )
-                )
-
-        StockItemTracking.objects.bulk_create(entries)
-
-    def get_url(self):
-        """Helper function to get stock tracking api url."""
-        return reverse('api-stock-tracking-list')
-
-    def test_count(self):
-        """Test list endpoint with limit = 1."""
-        url = self.get_url()
-
-        N = StockItemTracking.objects.count()
-
-        # Test counting
-        response = self.get(url, {'limit': 1})
-        self.assertEqual(response.data['count'], N)
-
-        # Test with search and pagination
-        response = self.get(url, {'limit': 1, 'offset': 10, 'search': 'berries'})
-
-        self.assertEqual(response.data['count'], 0)
-
-    def test_list(self):
-        """Test list endpoint."""
-        url = self.get_url()
-
-        N = StockItemTracking.objects.count()
-        self.assertGreater(N, 1000)
-
-        response = self.client.get(url, max_query_count=25)
-        self.assertEqual(len(response.data), N)
-
-        # Check expected delta values
-        keys = ['quantity', 'returnorder', 'buildorder', 'customer']
-
-        for item in response.data:
-            deltas = item['deltas']
-
-            for key in keys:
-                self.assertIn(key, deltas)
-                self.assertIsNotNone(deltas.get(key, None))
-
-    def test_output_options(self):
-        """Test output options."""
-        self.run_output_test(
-            self.get_url(),
-            ['item_detail', 'user_detail'],
-            additional_params={'limit': 2},
-            assert_fnc=lambda x: x.data['results'][0],
-        )
-
-    def test_status_codes_endpoint(self):
-        """The 'track/status/' endpoint must resolve to the status-codes view.
-
-        Regression test: ensures the literal 'status/' path is not shadowed by the
-        'track/<pk>/' detail route it sits alongside in the same urlconf.
-        """
-        response = self.get(
-            reverse('api-stock-tracking-status-codes'), expected_code=200
-        )
-
-        self.assertIn('status_class', response.data)
-        self.assertIn('values', response.data)
-        self.assertIn('CREATED', response.data['values'])
-        self.assertEqual(
-            response.data['values']['CREATED']['key'], StockHistoryCode.CREATED.value
         )
 
 

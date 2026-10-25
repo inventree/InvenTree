@@ -3724,11 +3724,6 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
 
         verbose_name = _('Stock Item Tracking')
 
-    @staticmethod
-    def get_api_url():
-        """Return API url."""
-        return reverse('api-stock-tracking-list')
-
     def save(self, *args, **kwargs):
         """Ensure that the 'part' link is always correct."""
         if self.item:

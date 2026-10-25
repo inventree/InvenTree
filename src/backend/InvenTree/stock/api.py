@@ -26,9 +26,7 @@ import InvenTree.helpers
 import InvenTree.permissions
 import stock.serializers as StockSerializers
 from build.models import Build
-from build.serializers import BuildSerializer
 from company.models import Company, ManufacturerPart, SupplierPart
-from company.serializers import CompanySerializer
 from data_exporter.mixins import DataExportViewMixin
 from generic.states.api import StatusView
 from InvenTree.api import (
@@ -56,20 +54,11 @@ from InvenTree.mixins import (
     SerializerContextMixin,
 )
 from InvenTree.serializers import apply_duplicate_copy_options
-from order.models import PurchaseOrder, ReturnOrder, SalesOrder, TransferOrder
-from order.serializers import (
-    PurchaseOrderSerializer,
-    ReturnOrderSerializer,
-    SalesOrderSerializer,
-    TransferOrderSerializer,
-)
 from part.models import BomItem, Part, PartCategory
-from part.serializers import PartBriefSerializer
 from stock.generators import generate_batch_code, generate_serial_number
 from stock.models import (
     StockItem,
     StockItemTestResult,
-    StockItemTracking,
     StockLocation,
     StockLocationType,
 )
@@ -1578,161 +1567,6 @@ class StockItemTestResultList(
         serializer.save(user=self.request.user)
 
 
-class StockTrackingDetail(RetrieveAPI):
-    """Detail API endpoint for StockItemTracking model."""
-
-    queryset = StockItemTracking.objects.all()
-    serializer_class = StockSerializers.StockTrackingSerializer
-
-
-class StockTrackingOutputOptions(OutputConfiguration):
-    """Output options for StockItemTracking endpoint."""
-
-    OPTIONS = [
-        InvenTreeOutputOption(flag='item_detail'),
-        InvenTreeOutputOption(flag='user_detail'),
-    ]
-
-
-class StockTrackingFilter(FilterSet):
-    """API filter options for the StockTrackingList endpoint."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = StockItemTracking
-        fields = ['item', 'user']
-
-    include_variants = rest_filters.BooleanFilter(
-        label=_('Include Part Variants'), method='filter_include_variants'
-    )
-
-    def filter_include_variants(self, queryset, name, value):
-        """Filter by whether or not to include part variants.
-
-        Note:
-        - This filter does nothing by itself, and is only used to modify the behavior of the 'part' filter.
-        - Refer to the 'filter_part' method for more information on how this works.
-        """
-        return queryset
-
-    part = rest_filters.ModelChoiceFilter(
-        label=_('Part'), queryset=Part.objects.all(), method='filter_part'
-    )
-
-    def filter_part(self, queryset, name, part):
-        """Filter StockTracking entries by the linked part.
-
-        Note:
-        - This filter behavior also takes into account the 'include_variants' filter, which determines whether or not to include part variants in the results.
-        """
-        include_variants = str2bool(self.data.get('include_variants', False))
-
-        if include_variants:
-            return queryset.filter(part__in=part.get_descendants(include_self=True))
-        else:
-            return queryset.filter(part=part)
-
-    min_date = InvenTreeDateFilter(
-        label=_('Date after'), field_name='date', lookup_expr='gt'
-    )
-
-    max_date = InvenTreeDateFilter(
-        label=_('Date before'), field_name='date', lookup_expr='lt'
-    )
-
-
-class StockTrackingList(
-    SerializerContextMixin, DataExportViewMixin, OutputOptionsMixin, ListAPI
-):
-    """API endpoint for list view of StockItemTracking objects.
-
-    StockItemTracking objects are read-only
-    (they are created by internal model functionality)
-
-    - GET: Return list of StockItemTracking objects
-    """
-
-    queryset = StockItemTracking.objects.all().prefetch_related('item', 'part')
-    serializer_class = StockSerializers.StockTrackingSerializer
-    filterset_class = StockTrackingFilter
-    output_options = StockTrackingOutputOptions
-
-    def get_delta_model_map(self) -> dict:
-        """Return a mapping of delta models to their respective models and serializers.
-
-        This is used to generate additional context information for the historical data,
-        with some attempt at caching so that we can reduce the number of database hits.
-        """
-        return {
-            'part': (Part, PartBriefSerializer),
-            'location': (StockLocation, StockSerializers.LocationSerializer),
-            'customer': (Company, CompanySerializer),
-            'purchaseorder': (PurchaseOrder, PurchaseOrderSerializer),
-            'salesorder': (SalesOrder, SalesOrderSerializer),
-            'returnorder': (ReturnOrder, ReturnOrderSerializer),
-            'transferorder': (TransferOrder, TransferOrderSerializer),
-            'buildorder': (Build, BuildSerializer),
-            'item': (StockItem, StockSerializers.StockItemSerializer),
-            'stockitem': (StockItem, StockSerializers.StockItemSerializer),
-        }
-
-    def list(self, request, *args, **kwargs):
-        """List all stock tracking entries."""
-        queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-        else:
-            serializer = self.get_serializer(queryset, many=True)
-
-        data = serializer.data
-
-        delta_models = self.get_delta_model_map()
-
-        # Construct a set of related models we need to lookup for later
-        related_model_lookups = {key: set() for key in delta_models}
-
-        # Run a first pass through the data to determine which related models we need to lookup
-        for item in data:
-            deltas = item['deltas'] or {}
-
-            for key in delta_models:
-                if key in deltas:
-                    related_model_lookups[key].add(deltas[key])
-
-        for key in delta_models:
-            model, serializer = delta_models[key]
-
-            # Fetch all related models in one go
-            related_models = model.objects.filter(pk__in=related_model_lookups[key])
-
-            # Construct a mapping of pk -> serialized data
-            related_data = {obj.pk: serializer(obj).data for obj in related_models}
-
-            # Now, update the data with the serialized data
-            for item in data:
-                deltas = item['deltas'] or {}
-
-                if key in deltas:
-                    item['deltas'][f'{key}_detail'] = related_data.get(deltas[key])
-
-        if page is not None:
-            return self.get_paginated_response(data)
-
-        return Response(data)
-
-    filter_backends = SEARCH_ORDER_FILTER
-
-    ordering = '-date'
-
-    ordering_fields = ['date']
-
-    search_fields = ['notes']
-
-
 stock_api_urls = [
     path(
         'location/',
@@ -1794,25 +1628,6 @@ stock_api_urls = [
             path(
                 '', StockItemTestResultList.as_view(), name='api-stock-test-result-list'
             ),
-        ]),
-    ),
-    # StockItemTracking API endpoints
-    path(
-        'track/',
-        include([
-            path(
-                '<int:pk>/',
-                StockTrackingDetail.as_view(),
-                name='api-stock-tracking-detail',
-            ),
-            # Stock tracking status code information
-            path(
-                'status/',
-                StatusView.as_view(),
-                {StatusView.MODEL_REF: StockHistoryCode},
-                name='api-stock-tracking-status-codes',
-            ),
-            path('', StockTrackingList.as_view(), name='api-stock-tracking-list'),
         ]),
     ),
     # Detail views for a single stock item

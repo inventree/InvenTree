@@ -10,6 +10,8 @@ v566 -> 2026-10-25 : https://github.com/inventree/InvenTree/pull/TODO
     - Audit log API (/api/audit/) is available to all authenticated users (entries are filtered by model permissions)
     - Adds "event_type", "event_label", "notes" and "deltas" fields to the audit log API
     - Adds "event_type" filter to the audit log API
+    - Stock item history is recorded in the audit log (StockItem events, with event_type values from StockHistoryCode)
+    - Breaking: Removes the stock tracking API endpoints (/api/stock/track/, /api/stock/track/<id>/, /api/stock/track/status/) - use /api/audit/ instead
 
 v565 -> 2026-10-24 : https://github.com/inventree/InvenTree/pull/13069
     - Adds read-only audit log API endpoints (/api/audit/)
