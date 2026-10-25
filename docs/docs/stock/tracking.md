@@ -4,24 +4,29 @@ title: Stock Tracking
 
 ## Stock Tracking
 
-Stock tracking entries record the history of stock item adjustments, including the user who performed the action, the date of the action, and the quantity change. This allows users to maintain a complete history of stock item movements and adjustments over time.
+Stock tracking records the history of stock item adjustments, including the user who performed the action, the date of the action, and the changes made to the stock item (e.g. quantity or location). This allows users to maintain a complete history of stock item movements and adjustments over time.
+
+Stock tracking history is recorded in the [audit log](../concepts/audit.md) - each stock operation is recorded as a named [event](../concepts/audit.md#events) against each affected stock item.
 
 ### Tracking Events
 
-Stock tracking entries are created automatically whenever a stock item is adjusted, either through manual adjustments or through automated processes such as order fulfillment or build completion.
+Stock tracking events are recorded automatically whenever a stock item is adjusted, either through manual adjustments or through automated processes such as order fulfillment or build completion.
 
-Some examples of events that may trigger stock tracking entries include:
+Some examples of operations that record stock tracking events include:
 
 - Manual stock adjustments (e.g. correcting inventory counts)
 - Creation of new stock items (e.g. receiving new inventory)
 - Allocation of stock items to orders (e.g. shipping items against sales orders)
 - Consumption of stock items during build processes (e.g. using items to complete a build order)
 
-### Tracking Entry Types
+### Tracking Event Types
 
-Each stock tracking entry records a specific *type*, indicating which event triggered it:
+Each stock tracking event records a specific *type*, indicating which operation triggered it:
 
 {{ statuscodes("StockHistoryCode") }}
+
+!!! info "Legacy Event Types"
+    The *Legacy stock tracking entry*, *Edited stock item* and *Assigned serial number* event types are only present in stock history recorded by older versions of InvenTree. Edits to a stock item (e.g. changing the status) are now recorded as regular updates in the audit log, and serial numbers are recorded as part of the creation of the stock item.
 
 ## Viewing Stock Tracking History
 
@@ -30,7 +35,19 @@ Stock tracking events are recorded in the [audit log](../concepts/audit.md), alo
 !!! warning "Audit Log Required"
     Stock tracking history is recorded in the audit log. If the audit log is disabled (via the `Enable Audit Log` system setting), **no stock tracking history is recorded**. Refer to the [audit log documentation](../concepts/audit.md#settings) for more information.
 
-The stock tracking history is displayed in the *History* panel of the *Stock Item Detail* page. The history of all stock items for a particular part is also displayed in the *History* panel of the *Part Detail* page.
+### Stock Item History
+
+The stock tracking history for a particular stock item is displayed in the *History* panel of the *Stock Item Detail* page:
+
+{{ image("stock/stock_item_history.png", "Stock item history") }}
+
+Each entry displays the type of event, along with any changes made to the stock item, and any additional information recorded against the event (such as notes, quantities, or links to related orders and stock items).
+
+### Part History
+
+The history of all stock items for a particular part is displayed in the *History* panel of the *Part Detail* page, along with any changes made to the part itself:
+
+{{ image("stock/part_stock_history.png", "Part stock history") }}
 
 !!! info "Show Change History"
     The *History* panel is only displayed if the *Show Change History* user setting is enabled. Refer to the [audit log documentation](../concepts/audit.md#viewing-change-history) for more information.
