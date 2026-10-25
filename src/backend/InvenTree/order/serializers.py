@@ -927,7 +927,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
-        max_length=stock.models.StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=stock.models.StockItem.TRACKING_NOTES_MAX_LENGTH,
         label=_('Note'),
         help_text=_('Additional note for incoming stock items'),
         required=False,
@@ -2344,7 +2344,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
-        max_length=stock.models.StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=stock.models.StockItem.TRACKING_NOTES_MAX_LENGTH,
         label=_('Note'),
         help_text=_('Additional note for incoming stock items'),
         required=False,

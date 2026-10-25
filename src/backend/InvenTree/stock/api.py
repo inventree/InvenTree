@@ -1281,9 +1281,6 @@ class StockList(
             # handling here - only copy_notes can go through the shared helper
             apply_duplicate_copy_options(item, duplicate, original, copy_notes=True)
 
-            # TODO: The 'copy_history' option is no longer supported
-            # (stock history is recorded in the audit log, and is not copied)
-
             if duplicate.get('copy_tests', False):
                 item.copyTestResultsFrom(original)
 

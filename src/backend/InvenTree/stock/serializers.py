@@ -45,13 +45,7 @@ from InvenTree.tasks import batch_offload_tasks
 from plugin.base.event.events import batch_events
 from users.serializers import UserSerializer
 
-from .models import (
-    StockItem,
-    StockItemTestResult,
-    StockItemTracking,
-    StockLocation,
-    StockLocationType,
-)
+from .models import StockItem, StockItemTestResult, StockLocation, StockLocationType
 
 logger = structlog.get_logger('inventree')
 
@@ -326,7 +320,7 @@ class StockItemSerializer(
     - Includes serialization for the item location
     """
 
-    export_exclude_fields = ['tags', 'tracking_items']
+    export_exclude_fields = ['tags']
 
     SKIP_CREATE_FIELDS = ['duplicate']
 
@@ -400,7 +394,6 @@ class StockItemSerializer(
             'supplier_part_detail',
             'tags',
             'tests',
-            'tracking_items',
         ]
         read_only_fields = [
             'allocated',
@@ -486,13 +479,7 @@ class StockItemSerializer(
                 'label': _('Copy Test Results'),
                 'help_text': _('Copy test results from the original stock item'),
                 'default': False,
-            },
-            {
-                'name': 'copy_history',
-                'label': _('Copy History'),
-                'help_text': _('Copy stock history from the original stock item'),
-                'default': False,
-            },
+            }
         ],
     )
 
@@ -559,7 +546,6 @@ class StockItemSerializer(
         )
 
         # Annotate the queryset with the number of tracking items
-        queryset = queryset.annotate(tracking_items=SubqueryCount('tracking_info'))
 
         # Add flag to indicate if the StockItem has expired
         queryset = queryset.annotate(
@@ -689,9 +675,6 @@ class StockItemSerializer(
         read_only=True, allow_null=True, label=_('Child Items')
     )
     stale = serializers.BooleanField(read_only=True, allow_null=True, label=_('Stale'))
-    tracking_items = serializers.IntegerField(
-        read_only=True, allow_null=True, label=_('Tracking Items')
-    )
 
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
         label=_('Purchase Price'),
@@ -773,7 +756,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         required=False,
-        max_length=StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=StockItem.TRACKING_NOTES_MAX_LENGTH,
         allow_blank=True,
         label=_('Notes'),
         help_text=_('Optional note field'),
@@ -877,7 +860,7 @@ class InstallStockItemSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
-        max_length=StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=StockItem.TRACKING_NOTES_MAX_LENGTH,
         label=_('Note'),
         help_text=_('Add transaction note (optional)'),
         required=False,
@@ -958,7 +941,7 @@ class UninstallStockItemSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
-        max_length=StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=StockItem.TRACKING_NOTES_MAX_LENGTH,
         label=_('Notes'),
         help_text=_('Add transaction note (optional)'),
         required=False,
@@ -1137,7 +1120,7 @@ class DisassembleStockItemSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         required=False,
-        max_length=StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=StockItem.TRACKING_NOTES_MAX_LENGTH,
         allow_blank=True,
         label=_('Notes'),
         help_text=_('Optional note field'),
@@ -1305,7 +1288,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
     )
 
     note = serializers.CharField(
-        max_length=StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=StockItem.TRACKING_NOTES_MAX_LENGTH,
         label=_('Notes'),
         help_text=_('Add transaction note (optional)'),
         required=False,
@@ -1592,7 +1575,7 @@ class StockAssignmentSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         required=False,
-        max_length=StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=StockItem.TRACKING_NOTES_MAX_LENGTH,
         allow_blank=True,
         label=_('Notes'),
         help_text=_('Stock assignment notes'),
@@ -1682,7 +1665,7 @@ class StockMergeSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         required=False,
-        max_length=StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=StockItem.TRACKING_NOTES_MAX_LENGTH,
         allow_blank=True,
         label=_('Notes'),
         help_text=_('Stock merging notes'),
@@ -1892,7 +1875,7 @@ class StockAdjustmentSerializer(serializers.Serializer):
 
     notes = serializers.CharField(
         required=False,
-        max_length=StockItemTracking.NOTES_MAX_LENGTH,
+        max_length=StockItem.TRACKING_NOTES_MAX_LENGTH,
         allow_blank=True,
         label=_('Notes'),
         help_text=_('Stock transaction notes'),

@@ -36,6 +36,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import order.models
 import report.mixins
+from audit.models import NOTES_MAX_LENGTH as AUDIT_NOTES_MAX_LENGTH
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
@@ -465,6 +466,9 @@ class StockItem(
 
     IMPORT_ID_FIELDS = ['serial']
     STATUS_CLASS = StockStatus
+
+    # Maximum length of the notes recorded against a stock tracking event
+    TRACKING_NOTES_MAX_LENGTH = AUDIT_NOTES_MAX_LENGTH
 
     # Stock operations are recorded as named events in the audit log (see tracking_event)
     AUDIT_EVENT_TYPES = StockHistoryCode
@@ -2356,16 +2360,6 @@ class StockItem(
 
         return self.sales_order is None
 
-    @property
-    def tracking_info_count(self):
-        """How many tracking entries are available?"""
-        return self.tracking_info.count()
-
-    @property
-    def has_tracking_info(self):
-        """Is tracking info available?"""
-        return self.tracking_info_count > 0
-
     def _tracking_deltas(self, deltas: dict | None, kwargs: dict) -> dict:
         """Return the deltas for a tracking event, including any information provided via kwargs.
 
@@ -3698,81 +3692,6 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
         if instance.part:
             instance.part.schedule_pricing_update(create=True)
-
-
-class StockItemTracking(InvenTree.models.InvenTreeModel):
-    """Stock tracking entry - used for tracking history of a particular StockItem.
-
-    Attributes:
-        item: ForeignKey reference to a particular StockItem
-        part: ForeignKey reference to the Part associated with this StockItem
-        date: Date that this tracking info was created
-        tracking_type: The type of tracking information
-        notes: Associated notes (input by user)
-        user: The user associated with this tracking info
-        deltas: The changes associated with this history item
-
-    Notes:
-        If the underlying stock item is deleted, the "item" field will be set to null, but the tracking information will be retained.
-        The tracking data will be removed if the associated part is deleted, as the tracking information is not relevant without the part context.
-    """
-
-    NOTES_MAX_LENGTH = 512
-
-    class Meta:
-        """Meta data for the StockItemTracking class."""
-
-        verbose_name = _('Stock Item Tracking')
-
-    def save(self, *args, **kwargs):
-        """Ensure that the 'part' link is always correct."""
-        if self.item:
-            self.part = self.item.part
-
-        super().save(*args, **kwargs)
-
-    def get_absolute_url(self):
-        """Return url for instance."""
-        return InvenTree.helpers.pui_url(f'/stock/item/{self.item.id}')
-
-    def label(self):
-        """Return label."""
-        if self.tracking_type in StockHistoryCode.keys():  # noqa: SIM118
-            return StockHistoryCode.label(self.tracking_type)
-
-        return getattr(self, 'title', '')
-
-    tracking_type = models.IntegerField(default=StockHistoryCode.LEGACY)
-
-    item = models.ForeignKey(
-        StockItem,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=False,
-        related_name='tracking_info',
-    )
-
-    part = models.ForeignKey(
-        'part.part',
-        on_delete=models.CASCADE,
-        related_name='stock_tracking_info',
-        null=True,
-        blank=True,
-    )
-
-    date = models.DateTimeField(auto_now_add=True, editable=False)
-
-    notes = models.CharField(
-        blank=True,
-        null=True,
-        max_length=NOTES_MAX_LENGTH,
-        verbose_name=_('Notes'),
-        help_text=_('Entry notes'),
-    )
-
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
-
-    deltas = models.JSONField(null=True, blank=True)
 
 
 def rename_stock_item_test_result_attachment(instance, filename):

@@ -148,11 +148,7 @@ def get_ruleset_models() -> dict:
             'pricing_partinternalpricebreak',
         ],
         RuleSetEnum.STOCK_LOCATION: ['stock_stocklocation', 'stock_stocklocationtype'],
-        RuleSetEnum.STOCK: [
-            'stock_stockitem',
-            'stock_stockitemtracking',
-            'stock_stockitemtestresult',
-        ],
+        RuleSetEnum.STOCK: ['stock_stockitem', 'stock_stockitemtestresult'],
         RuleSetEnum.PURCHASE_ORDER: [
             'company_company',
             'company_contact',

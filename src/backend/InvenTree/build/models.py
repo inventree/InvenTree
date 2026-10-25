@@ -695,7 +695,7 @@ class Build(
 
         Notes:
             This unrolls what would otherwise be a per-BuildItem call, so that the underlying StockItem,
-            StockItemTracking, BuildLine and BuildItem writes can be batched into
+            audit log, BuildLine and BuildItem writes can be batched into
             a handful of bulk queries instead of several per build item.
         """
         import part.tasks

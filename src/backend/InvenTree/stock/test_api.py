@@ -30,7 +30,6 @@ from part.models import Part, PartTestTemplate
 from stock.models import (
     StockItem,
     StockItemTestResult,
-    StockItemTracking,
     StockLocation,
     StockLocationType,
 )
@@ -2113,7 +2112,7 @@ class StockItemTest(StockAPITestCase):
 
     def test_note_max_length(self):
         """Test that overly long transaction notes are rejected with a validation error."""
-        max_length = StockItemTracking.NOTES_MAX_LENGTH
+        max_length = StockItem.TRACKING_NOTES_MAX_LENGTH
         note = 'x' * (max_length + 1)
 
         for url, data in [
@@ -3048,7 +3047,7 @@ class StocktakeTest(StockAPITestCase):
 
     def test_notes_max_length(self):
         """Test that overly long notes are rejected with a validation error."""
-        max_length = StockItemTracking.NOTES_MAX_LENGTH
+        max_length = StockItem.TRACKING_NOTES_MAX_LENGTH
 
         for endpoint in [
             'api-stock-count',

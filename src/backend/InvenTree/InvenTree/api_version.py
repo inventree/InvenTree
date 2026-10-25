@@ -12,6 +12,8 @@ v566 -> 2026-10-25 : https://github.com/inventree/InvenTree/pull/TODO
     - Adds "event_type" filter to the audit log API
     - Stock item history is recorded in the audit log (StockItem events, with event_type values from StockHistoryCode)
     - Breaking: Removes the stock tracking API endpoints (/api/stock/track/, /api/stock/track/<id>/, /api/stock/track/status/) - use /api/audit/ instead
+    - Breaking: Removes the "tracking_items" field from the StockItem API
+    - Breaking: Removes the "copy_history" option when duplicating a StockItem
 
 v565 -> 2026-10-24 : https://github.com/inventree/InvenTree/pull/13069
     - Adds read-only audit log API endpoints (/api/audit/)

@@ -39,7 +39,7 @@ from order.status_codes import (
     TransferOrderStatusGroups,
 )
 from part.models import Part
-from stock.models import StockItem, StockItemTracking, StockLocation, StockSortOrder
+from stock.models import StockItem, StockLocation, StockSortOrder
 from stock.status_codes import StockHistoryCode, StockStatus
 from users.models import Owner
 
@@ -1957,7 +1957,7 @@ class PurchaseOrderReceiveTest(OrderTest):
             'batch_code': stock_field('batch'),
             'packaging': stock_field('packaging'),
             'barcode': stock_field('barcode_data'),
-            'note': StockItemTracking.NOTES_MAX_LENGTH,
+            'note': StockItem.TRACKING_NOTES_MAX_LENGTH,
         }
 
         line_data = {'line_item': 1, 'quantity': 10}
@@ -4007,7 +4007,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         rma = models.ReturnOrder.objects.first()
         url = reverse('api-return-order-receive', kwargs={'pk': rma.pk})
 
-        max_length = StockItemTracking.NOTES_MAX_LENGTH
+        max_length = StockItem.TRACKING_NOTES_MAX_LENGTH
 
         response = self.post(
             url,

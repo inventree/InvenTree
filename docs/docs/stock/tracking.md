@@ -65,9 +65,7 @@ Additionally, installed items are automatically uninstalled when the parent item
 
 ## Stock Tracking Settings
 
-There are a number of configuration options available for controlling the behavior of stock tracking functionality in the [system settings view](../settings/global.md):
+Stock tracking history is recorded in the audit log, and is subject to the [audit log settings](../concepts/audit.md#settings). For example, old stock tracking history can be automatically removed using the {{ globalsetting("AUDIT_LOG_DELETE_OLD_ENTRIES", short=True) }} setting.
 
-| Name | Description | Default | Units |
-| ---- | ----------- | ------- | ----- |
-{{ globalsetting("STOCK_TRACKING_DELETE_OLD_ENTRIES") }}
-{{ globalsetting("STOCK_TRACKING_DELETE_DAYS") }}
+!!! info "Audit Log Retention"
+    The *Delete Old Stock Tracking Entries* and *Stock Tracking Deletion Interval* settings have been removed. The retention of stock tracking history is now controlled by the audit log settings.

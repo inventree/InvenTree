@@ -2985,7 +2985,7 @@ class SalesOrderShipment(
 
         Notes:
             This unrolls what would otherwise be a per-allocation call, so that the underlying
-            StockItem, StockItemTracking, SalesOrderLineItem and SalesOrderAllocation writes can
+            StockItem, audit log, SalesOrderLineItem and SalesOrderAllocation writes can
             be batched into a handful of bulk queries instead of several per allocation.
         """
         import part.tasks
