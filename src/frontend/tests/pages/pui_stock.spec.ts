@@ -1,5 +1,5 @@
 import { expect, test } from '../baseFixtures.js';
-import { stevenuser } from '../defaults.js';
+import { adminuser, stevenuser } from '../defaults.js';
 import {
   clearTableFilters,
   clickButtonIfVisible,
@@ -30,7 +30,6 @@ test('Stock - Basic Tests', async ({ browser }) => {
   await navigate(page, 'stock/item/1194/details');
   await page.getByText('D.123 | Doohickey').waitFor();
   await page.getByText('Batch Code: BX-123-2024-2-7').waitFor();
-  await loadTab(page, 'Stock Tracking');
   await loadTab(page, 'Test Results');
   await page.getByText('395c6d5586e5fb656901d047be27e1f7').waitFor();
   await loadTab(page, 'Installed Items');
@@ -47,12 +46,6 @@ test('Stock - Basic Tests', async ({ browser }) => {
 
   // Automatically navigate through to the newly created stock item
   await page.getByText('Quantity: 987').first().waitFor();
-  await loadTab(page, 'Stock Tracking');
-  await page
-    .getByRole('cell', { name: 'Stock item created' })
-    .first()
-    .waitFor();
-  await page.getByRole('cell', { name: 'allaccess Ally Access' }).waitFor();
 });
 
 test('Stock - Location Tree', async ({ browser }) => {
@@ -508,24 +501,21 @@ test('Stock - Return Items', async ({ browser }) => {
   await page.getByText('This field is required.').first().waitFor();
 });
 
-test('Stock - Tracking', async ({ browser }) => {
-  const page = await doCachedLogin(browser, { url: 'stock/item/176/details' });
+test('Stock - History', async ({ browser }) => {
+  // Note: The 'admin' user has the "Show Change History" setting enabled
+  const page = await doCachedLogin(browser, {
+    user: adminuser,
+    url: 'stock/item/176/details'
+  });
 
   await page.getByRole('link', { name: 'Widget Assembly # 2' }).waitFor();
 
-  // Navigate to the "stock tracking" tab
-  await loadTab(page, 'Stock Tracking');
-
-  await page.getByText('Factory/Office Block/Room').first().waitFor();
-  await page.getByRole('link', { name: 'Widget Assembly' }).waitFor();
-  await page.getByRole('cell', { name: 'Installed into assembly' }).waitFor();
-
-  /* Add some more stock items and tracking information:
+  /* Add some more stock items and history information:
    * - Duplicate this stock item
    * - Give it a unique serial number
-   * - Ensure the tracking information is duplicated correctly
+   * - Ensure the creation of the new item is recorded
    * - Delete the new stock item
-   * - Ensure that the tracking information is retained against the base part
+   * - Ensure that the history is retained against the base part
    */
 
   // Duplicate the stock item
@@ -540,13 +530,10 @@ test('Stock - Tracking', async ({ browser }) => {
     .fill('9876');
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  // Check stock tracking information is correct
+  // Check that the creation of the new item is recorded
   await page.getByText('Serial Number: 9876').first().waitFor();
-  await loadTab(page, 'Stock Tracking');
-  await page
-    .getByRole('cell', { name: 'Stock item created' })
-    .first()
-    .waitFor();
+  await loadTab(page, 'History', true);
+  await page.getByText('Stock item created').first().waitFor();
 
   // Delete this stock item
   await page
@@ -557,17 +544,10 @@ test('Stock - Tracking', async ({ browser }) => {
     .click();
   await page.getByRole('button', { name: 'Delete' }).click();
 
-  // Check stock tracking for base part
-  await loadTab(page, 'Stock History');
-  await page.getByRole('button', { name: 'Stock Tracking' }).click();
-
-  await page.getByText('Stock item no longer exists').first().waitFor();
-  await page
-    .getByRole('cell', { name: 'Thumbnail Blue Widget' })
-    .first()
-    .waitFor();
-
-  await page.getByText('# 162').first().waitFor();
+  // The history of the deleted item is retained against the base part
+  await loadTab(page, 'History', true);
+  await page.getByText('Object was deleted').first().waitFor();
+  await page.getByText('Stock item created').first().waitFor();
 });
 
 test('Stock - Location', async ({ browser }) => {

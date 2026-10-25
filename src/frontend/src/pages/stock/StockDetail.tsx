@@ -5,7 +5,6 @@ import {
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
-  IconHistory,
   IconInfoCircle,
   IconPackages,
   IconShoppingCart,
@@ -72,7 +71,6 @@ import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTa
 import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
-import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 import TransferOrderAllocationTable from '../../tables/stock/TransferOrderAllocationTable';
 import { StockDetailsPanel } from './StockDetailsPanel';
 
@@ -200,16 +198,6 @@ export default function StockDetail() {
             showSerialNav
             refreshInstance={refreshInstance}
           />
-        )
-      },
-      {
-        name: 'tracking',
-        label: t`Stock Tracking`,
-        icon: <IconHistory />,
-        content: stockitem.pk ? (
-          <StockTrackingTable itemId={stockitem.pk} />
-        ) : (
-          <Skeleton />
         )
       },
       {
