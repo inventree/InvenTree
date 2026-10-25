@@ -1377,6 +1377,28 @@ class AuditEventTest(InvenTreeAPITestCase):
         self.assertEqual(entries[0].notes, 'Counted')
         self.assertEqual(entries[1].additional_data['deltas'], {'quantity': 5})
 
+    def test_unnamed_event(self):
+        """Notes (without an event type) are attached to an entry - but do not create one."""
+        from audit.helpers import audit_event
+
+        n = self.entries().count()
+
+        # No changes - no entry
+        with audit_event(self.company, None, notes='Nothing changed'):
+            self.company.save()
+
+        self.assertEqual(self.entries().count(), n)
+
+        with audit_event(self.company, None, notes='Changed'):
+            self.company.description = 'Unnamed'
+            self.company.save()
+
+        [entry] = list(self.entries()[n:])
+
+        self.assertIsNone(entry.event_type)
+        self.assertIsNone(entry.event_label)
+        self.assertEqual(entry.notes, 'Changed')
+
     def test_no_changes_without_event(self):
         """Saving an instance without changes (and without an event) is not recorded."""
         n = self.entries().count()

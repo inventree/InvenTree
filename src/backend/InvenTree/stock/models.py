@@ -517,6 +517,7 @@ class StockItem(
         Performs a number of checks:
         - Unique serial number requirement
         - Adds a transaction note when the item is first created.
+        - Records the user / notes (if provided) against the audit entry for an update.
         """
         self.validate_unique()
         self.clean()
@@ -536,43 +537,13 @@ class StockItem(
         event = None
 
         if self.pk:
-            # StockItem has already been saved
+            # Changes to an existing item are recorded as a regular update,
+            # including the user and notes (if provided) - unless an event is already pending
+            from audit.context import has_pending_event
+            from audit.helpers import audit_event
 
-            # Check if "interesting" fields have been changed
-            # (we wish to record these as historical records)
-
-            try:
-                old = StockItem.objects.get(pk=self.pk)
-                old_custom_status = old.get_custom_status()
-                custom_status = self.get_custom_status()
-
-                deltas = {}
-
-                # Status changed?
-                if old.status != self.status:
-                    # Custom status changed?
-                    # Matches custom status tracking behavior of StockChangeStatusSerializer
-                    if old_custom_status != custom_status:
-                        deltas['status'] = custom_status
-                        deltas['status_logical'] = self.status
-                    else:
-                        deltas['status'] = self.status
-                        deltas['status_logical'] = self.status
-
-                    if old_custom_status:
-                        deltas['old_status'] = old_custom_status
-                        deltas['old_status_logical'] = old.status
-                    else:
-                        deltas['old_status'] = old.status
-                        deltas['old_status_logical'] = old.status
-
-                if add_note and len(deltas) > 0:
-                    event = self.tracking_event(
-                        StockHistoryCode.EDITED, user, deltas=deltas, notes=notes
-                    )
-
-            except (ValueError, StockItem.DoesNotExist):
-                pass
+            if (user or notes) and not has_pending_event(self):
+                event = audit_event(self, None, notes=notes, actor=user)
 
         elif add_note:
             # A new StockItem is being created
@@ -2455,7 +2426,6 @@ class StockItem(
         user: User | None = None,
         deltas: dict | None = None,
         notes: str = '',
-        legacy: bool = True,
         **kwargs,
     ):
         """Record a stock tracking event against this StockItem.
@@ -2472,7 +2442,6 @@ class StockItem(
             user: The user performing this action
             deltas: Additional information about the event (model references may be provided as instances)
             notes: Notes associated with the event
-            legacy: If True, also record a (legacy) StockItemTracking entry
             **kwargs: Model references (see model_reference_fields) and quantity
         """
         from audit.context import has_pending_event
@@ -2499,8 +2468,7 @@ class StockItem(
             yield
 
         # TODO: Legacy tracking entries are to be removed (replaced by the audit log)
-        if legacy:
-            self._add_legacy_tracking_entry(entry_type, user, deltas, notes)
+        self._add_legacy_tracking_entry(entry_type, user, deltas, notes)
 
     def add_tracking_entry(
         self,

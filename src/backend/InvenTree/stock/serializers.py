@@ -28,7 +28,7 @@ import part.models as part_models
 import part.serializers as part_serializers
 import stock.filters
 import stock.status_codes
-from audit.helpers import write_batched
+from audit.helpers import audit_event, write_batched
 from common.settings import get_global_setting
 from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.registry import register_importer
@@ -1326,13 +1326,6 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         note = data.get('note', '')
 
-        transaction_notes = []
-
-        now = InvenTree.helpers.current_time()
-
-        # Instead of performing database updates for each item,
-        # perform bulk database updates (much more efficient)
-
         # Pre-cache the custom status values (to reduce DB hits)
         custom_status_codes = StockItem.STATUS_CLASS.custom_values()
 
@@ -1347,44 +1340,11 @@ class StockChangeStatusSerializer(serializers.Serializer):
                     if status == custom_status or custom_status is None:
                         continue
 
-                deltas = {'status': status}
-
-                # before save, track old status logical
-                deltas['old_status_logical'] = item.status
-
-                if item.get_custom_status():
-                    deltas['old_status'] = item.get_custom_status()
-                else:
-                    deltas['old_status'] = item.status
-
                 item.set_status(status, custom_values=custom_status_codes)
 
-                # Note: Legacy tracking entries are created in bulk (below)
-                with item.tracking_event(
-                    stock.status_codes.StockHistoryCode.EDITED,
-                    user,
-                    notes=note,
-                    legacy=False,
-                ):
+                # The status change is recorded as a regular update (with the provided note)
+                with audit_event(item, None, notes=note, actor=user):
                     item.save(add_note=False)
-
-                # after save, can track new status_logical
-                deltas['status_logical'] = item.status
-
-                # Create a new transaction note for each item
-                transaction_notes.append(
-                    StockItemTracking(
-                        item=item,
-                        tracking_type=stock.status_codes.StockHistoryCode.EDITED.value,
-                        date=now,
-                        deltas=deltas,
-                        user=user,
-                        notes=note,
-                    )
-                )
-
-        # TODO: Legacy tracking entries are to be removed (replaced by the audit log)
-        StockItemTracking.objects.bulk_create(transaction_notes, batch_size=250)
 
 
 class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer):

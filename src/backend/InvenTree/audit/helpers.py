@@ -9,6 +9,7 @@
 import contextlib
 import datetime
 from decimal import Decimal
+from typing import Optional
 
 from django.conf import settings
 from django.core.exceptions import FieldDoesNotExist
@@ -340,7 +341,9 @@ def validate_event_type(model, event_type: int) -> int:
 
 
 @contextlib.contextmanager
-def audit_event(instance, event_type: int, notes: str = '', deltas=None, actor=None):
+def audit_event(
+    instance, event_type: Optional[int], notes: str = '', deltas=None, actor=None
+):
     """Record a named event against an instance.
 
     The first audit entry recorded for the instance within this context
@@ -349,11 +352,14 @@ def audit_event(instance, event_type: int, notes: str = '', deltas=None, actor=N
     If no entry is recorded for the instance (e.g. no fields were changed, or the
     instance was not saved), an entry is created for the event when the context exits.
 
+    If no event type is provided, the notes / deltas / actor are attached to any entry
+    recorded for the instance within this context - but no entry is created otherwise.
+
     Contexts can be nested, to record events against multiple instances.
 
     Arguments:
         instance: The (audited) model instance
-        event_type: The event type (must be defined in the AUDIT_EVENT_TYPES of the model)
+        event_type: The event type (must be defined in the AUDIT_EVENT_TYPES of the model), or None
         notes: Optional notes associated with the event
         deltas: Optional dict of additional information (e.g. references to related objects)
             Deltas which are also recorded as field changes (of the same entry) are omitted.
@@ -365,9 +371,12 @@ def audit_event(instance, event_type: int, notes: str = '', deltas=None, actor=N
     from audit.context import PendingEvent, pending_events
     from audit.models import NOTES_MAX_LENGTH
 
+    if event_type is not None:
+        event_type = validate_event_type(type(instance), event_type)
+
     event = PendingEvent(
         instance,
-        validate_event_type(type(instance), event_type),
+        event_type,
         notes=str(notes)[:NOTES_MAX_LENGTH] if notes else None,
         deltas=serialize_deltas(deltas) if deltas else None,
         actor=actor,
@@ -376,7 +385,8 @@ def audit_event(instance, event_type: int, notes: str = '', deltas=None, actor=N
     with pending_events([event]):
         yield event
 
-        if not event.consumed:
+        # An entry is only created without any changes for a *named* event
+        if not event.consumed and event.event_type is not None:
             write_event_entry(event)
 
 
@@ -407,5 +417,7 @@ def log_event(
     instance, event_type: int, notes: str = '', deltas=None, actor=None
 ) -> None:
     """Record a named event against an instance, which does not involve saving the instance."""
+    validate_event_type(type(instance), event_type)
+
     with audit_event(instance, event_type, notes=notes, deltas=deltas, actor=actor):
         pass

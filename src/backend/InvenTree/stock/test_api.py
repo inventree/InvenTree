@@ -2300,6 +2300,18 @@ class StockItemTest(StockAPITestCase):
             stock_item.refresh_from_db()
             self.assertEqual(stock_item.part, variant)
 
+    def status_change(self, item):
+        """Return the most recent audit entry for the provided stock item."""
+        from audit.models import AuditLogEntry
+
+        return (
+            AuditLogEntry.objects
+            .get_for_object(item)
+            .filter(action=AuditLogEntry.Action.UPDATE)
+            .order_by('pk')
+            .last()
+        )
+
     def test_set_status(self):
         """Test API endpoint for setting StockItem status."""
         url = reverse('api-stock-change-status')
@@ -2317,11 +2329,12 @@ class StockItemTest(StockAPITestCase):
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.OK.value)
-            self.assertEqual(item.tracking_info.count(), 1)
+            self.assertIsNone(self.status_change(item))
 
         data = {
             'items': [item.pk for item in items],
             'status': StockStatus.DAMAGED.value,
+            'note': 'Damaged in transit',
         }
 
         self.post(url, data, expected_code=201)
@@ -2330,20 +2343,22 @@ class StockItemTest(StockAPITestCase):
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.DAMAGED.value)
-            self.assertEqual(item.tracking_info.count(), 2)
-            tracking = item.tracking_info.last()
-            self.assertEqual(tracking.deltas['old_status'], StockStatus.OK.value)
+
+            # The status change is recorded as a regular update
+            entry = self.status_change(item)
+            self.assertIsNone(entry.event_type)
+            self.assertEqual(entry.actor, self.user)
+            self.assertEqual(entry.notes, 'Damaged in transit')
             self.assertEqual(
-                tracking.deltas['old_status_logical'], StockStatus.OK.value
-            )
-            self.assertEqual(tracking.deltas['status'], StockStatus.DAMAGED.value)
-            self.assertEqual(
-                tracking.deltas['status_logical'], StockStatus.DAMAGED.value
+                entry.changes_dict['status'],
+                [StockStatus.OK.value, StockStatus.DAMAGED.value],
             )
 
         # Same test, but with one item unchanged
         items[0].set_status(StockStatus.ATTENTION.value)
         items[0].save()
+
+        unchanged = self.status_change(items[0])
 
         data['status'] = StockStatus.ATTENTION.value
 
@@ -2352,10 +2367,15 @@ class StockItemTest(StockAPITestCase):
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.ATTENTION.value)
-            self.assertEqual(item.tracking_info.count(), 3)
 
-            tracking = item.tracking_info.last()
-            self.assertEqual(tracking.tracking_type, StockHistoryCode.EDITED.value)
+        # No entry is recorded for the unchanged item
+        self.assertEqual(self.status_change(items[0]).pk, unchanged.pk)
+
+        for item in items[1:]:
+            self.assertEqual(
+                self.status_change(item).changes_dict['status'],
+                [StockStatus.DAMAGED.value, StockStatus.ATTENTION.value],
+            )
 
     def test_set_custom_status(self):
         """Test API endpoint for setting StockItem custom status."""
@@ -2374,7 +2394,6 @@ class StockItemTest(StockAPITestCase):
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.OK.value)
-            self.assertEqual(item.tracking_info.count(), 1)
 
         # Test tracking with custom status
         # *from* standard *to* custom
@@ -2389,35 +2408,36 @@ class StockItemTest(StockAPITestCase):
             item.refresh_from_db()
             self.assertEqual(item.status, self.inspect_custom_status.logical_key)
             self.assertEqual(item.get_custom_status(), self.inspect_custom_status.key)
-            tracking = item.tracking_info.last()
-            self.assertEqual(tracking.deltas['old_status'], StockStatus.OK.value)
+
+            changes = self.status_change(item).changes_dict
+
             self.assertEqual(
-                tracking.deltas['old_status_logical'], StockStatus.OK.value
+                changes['status'],
+                [StockStatus.OK.value, self.inspect_custom_status.logical_key],
             )
-            self.assertEqual(tracking.deltas['status'], self.inspect_custom_status.key)
             self.assertEqual(
-                tracking.deltas['status_logical'],
-                self.inspect_custom_status.logical_key,
+                changes['status_custom_key'], [None, self.inspect_custom_status.key]
             )
 
         # reverse case
         # *from* custom *to* standard
         data['status'] = StockStatus.OK.value
         self.post(url, data, expected_code=201)
+
         for item in items:
             item.refresh_from_db()
             self.assertEqual(item.status, StockStatus.OK.value)
             self.assertIsNone(item.get_custom_status())
-            tracking = item.tracking_info.last()
+
+            changes = self.status_change(item).changes_dict
+
             self.assertEqual(
-                tracking.deltas['old_status'], self.inspect_custom_status.key
+                changes['status'],
+                [self.inspect_custom_status.logical_key, StockStatus.OK.value],
             )
             self.assertEqual(
-                tracking.deltas['old_status_logical'],
-                self.inspect_custom_status.logical_key,
+                changes['status_custom_key'], [self.inspect_custom_status.key, None]
             )
-            self.assertEqual(tracking.deltas['status'], StockStatus.OK.value)
-            self.assertEqual(tracking.deltas['status_logical'], StockStatus.OK.value)
 
     def test_bulk_batch_change(self):
         """Test that we can bulk-change batch code for a set of stock items."""

@@ -240,7 +240,9 @@ class StockAuditTest(InvenTreeAPITestCase):
 
         [entry] = self.new_entries(self.item, n)
 
-        self.assertEqual(entry.event_type, StockHistoryCode.EDITED)
+        # A regular update (not a named event) - but the note is retained
+        self.assertEqual(entry.action, ACTION.UPDATE)
+        self.assertIsNone(entry.event_type)
         self.assertEqual(entry.notes, 'Damaged')
         self.assertEqual(entry.actor, self.user)
         self.assertEqual(
@@ -250,6 +252,26 @@ class StockAuditTest(InvenTreeAPITestCase):
 
         # Status information is recorded as field changes (not as deltas)
         self.assertIsNone(entry.additional_data)
+
+    def test_edit(self):
+        """Editing a stock item (e.g. changing the status) records a regular update entry."""
+        n = self.entries(self.item).count()
+
+        self.patch(
+            reverse('api-stock-detail', kwargs={'pk': self.item.pk}),
+            {'status': StockStatus.DAMAGED.value, 'batch': 'B-999'},
+        )
+
+        [entry] = self.new_entries(self.item, n)
+
+        self.assertEqual(entry.action, ACTION.UPDATE)
+        self.assertIsNone(entry.event_type)
+        self.assertEqual(entry.actor, self.user)
+        self.assertEqual(
+            entry.changes_dict['status'],
+            [StockStatus.OK.value, StockStatus.DAMAGED.value],
+        )
+        self.assertEqual(entry.changes_dict['batch'], ['', 'B-999'])
 
     def test_install(self):
         """Installing an item records an entry against both items."""
