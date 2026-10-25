@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 566
 
 INVENTREE_API_TEXT = """
 
-v566 -> 2026-10-25 : https://github.com/inventree/InvenTree/pull/TODO
+v566 -> 2026-10-25 : https://github.com/inventree/InvenTree/pull/13101
     - Audit log API (/api/audit/) is available to all authenticated users (entries are filtered by model permissions)
     - Adds "event_type", "event_label", "notes" and "deltas" fields to the audit log API
     - Adds "event_type" filter to the audit log API
