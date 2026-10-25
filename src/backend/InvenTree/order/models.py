@@ -32,6 +32,7 @@ import order.validators
 import report.mixins
 import stock.models
 import users.models as UserModels
+from audit.helpers import audited_bulk_update
 from build.status_codes import BuildStatus
 from common.currency import currency_code_default
 from common.notifications import InvenTreeNotificationBodies
@@ -86,6 +87,32 @@ from stock.events import StockEvents
 from stock.status_codes import StockHistoryCode, StockStatus
 
 logger = structlog.get_logger('inventree')
+
+
+class AuditedOrderMixin(InvenTree.models.InvenTreeAuditMixin):
+    """Audit log configuration for order models."""
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Recalculated automatically on every save
+        'total_price',
+        'total_price_currency',
+        # Derived from 'barcode_data'
+        'barcode_hash',
+    )
+
+
+class AuditedLineItemMixin(InvenTree.models.InvenTreeAuditMixin):
+    """Audit log configuration for order line item models.
+
+    Changes to line items are included in the history of the order.
+    """
+
+    AUDIT_PARENT_FIELD = 'order'
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Additional (plugin) context data for extra lines
+        'context',
+    )
 
 
 class TotalPriceMixin(models.Model):
@@ -642,7 +669,7 @@ class Order(
         raise NotImplementedError(f'get_status_class() not implemented for {__class__}')
 
 
-class PurchaseOrder(TotalPriceMixin, Order):
+class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
     """A PurchaseOrder represents goods shipped inwards from an external supplier.
 
     Attributes:
@@ -1366,7 +1393,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         )
 
         # Update received quantity for each line item
-        PurchaseOrderLineItem.objects.bulk_update(line_items_to_update, ['received'])
+        audited_bulk_update(PurchaseOrderLineItem, line_items_to_update, ['received'])
 
         # Trigger an event for any interested plugins
         trigger_event(
@@ -1451,7 +1478,7 @@ SERIALIZED_STOCK_CHOICES = [
 SERIALIZED_STOCK_DEFAULT = 'any'
 
 
-class SalesOrder(TotalPriceMixin, Order):
+class SalesOrder(AuditedOrderMixin, TotalPriceMixin, Order):
     """A SalesOrder represents a list of goods shipped outwards to a customer."""
 
     REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
@@ -2286,6 +2313,14 @@ class OrderExtraLine(OrderLineItem):
 
         abstract = True
 
+    def __str__(self):
+        """Render a string representation of an extra line item."""
+        return '{n} x {description} - {order}'.format(
+            n=decimal2string(self.quantity),
+            description=self.description or self.reference or _('Extra line'),
+            order=self.order,
+        )
+
     description = models.CharField(
         max_length=250,
         blank=True,
@@ -2311,7 +2346,7 @@ class OrderExtraLine(OrderLineItem):
     )
 
 
-class PurchaseOrderLineItem(OrderLineItem):
+class PurchaseOrderLineItem(AuditedLineItemMixin, OrderLineItem):
     """Model for a purchase order line item.
 
     Attributes:
@@ -2507,7 +2542,7 @@ class PurchaseOrderLineItem(OrderLineItem):
             self.save()
 
 
-class PurchaseOrderExtraLine(OrderExtraLine):
+class PurchaseOrderExtraLine(AuditedLineItemMixin, OrderExtraLine):
     """Model for a single ExtraLine in a PurchaseOrder.
 
     Attributes:
@@ -2533,7 +2568,7 @@ class PurchaseOrderExtraLine(OrderExtraLine):
     )
 
 
-class SalesOrderLineItem(OrderLineItem):
+class SalesOrderLineItem(AuditedLineItemMixin, OrderLineItem):
     """Model for a single LineItem in a SalesOrder.
 
     Attributes:
@@ -2575,6 +2610,14 @@ class SalesOrderLineItem(OrderLineItem):
                 raise ValidationError({
                     'part': _('Only salable parts can be assigned to a sales order')
                 })
+
+    def __str__(self):
+        """Render a string representation of a SalesOrderLineItem instance."""
+        return '{n} x {part} - {order}'.format(
+            n=decimal2string(self.quantity),
+            part=self.part.full_name if self.part else _('Unknown part'),
+            order=self.order,
+        )
 
     order = models.ForeignKey(
         SalesOrder,
@@ -2689,6 +2732,7 @@ class SalesOrderShipmentReportContext(report.mixins.BaseReportContext, TypedDict
 
 
 class SalesOrderShipment(
+    InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
@@ -2712,6 +2756,14 @@ class SalesOrderShipment(
         checked_by: User reference field indicating who checked this order
         reference: Custom reference text for this shipment (e.g. consignment number?)
     """
+
+    # Changes to a shipment are included in the history of the sales order
+    AUDIT_PARENT_FIELD = 'order'
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Derived from 'barcode_data'
+        'barcode_hash',
+    )
 
     @classmethod
     def barcode_model_type_code(cls):
@@ -2761,6 +2813,12 @@ class SalesOrderShipment(
             'tracking_number': self.tracking_number,
             'title': str(self),
         }
+
+    def __str__(self):
+        """Render a string representation of a SalesOrderShipment instance."""
+        return '{order} - {label} {reference}'.format(
+            order=self.order, label=_('Shipment'), reference=self.reference
+        )
 
     order = models.ForeignKey(
         SalesOrder,
@@ -3074,7 +3132,7 @@ class SalesOrderShipment(
         stock.models.StockItemTracking.objects.bulk_create(tracking_entries)
 
         # Update sales order lines for "seen_lines"
-        SalesOrderLineItem.objects.bulk_update(seen_lines.values(), ['shipped'])
+        audited_bulk_update(SalesOrderLineItem, list(seen_lines.values()), ['shipped'])
 
         # Repoint allocations onto their (possibly newly split) StockItem
         if allocations_to_update:
@@ -3146,7 +3204,7 @@ class SalesOrderShipment(
         return task_id
 
 
-class SalesOrderExtraLine(OrderExtraLine):
+class SalesOrderExtraLine(AuditedLineItemMixin, OrderExtraLine):
     """Model for a single ExtraLine in a SalesOrder.
 
     Attributes:
@@ -3317,7 +3375,7 @@ class SalesOrderAllocation(models.Model):
         self.refresh_from_db()
 
 
-class ReturnOrder(TotalPriceMixin, Order):
+class ReturnOrder(AuditedOrderMixin, TotalPriceMixin, Order):
     """A ReturnOrder represents goods returned from a customer, e.g. an RMA or warranty.
 
     Attributes:
@@ -3642,7 +3700,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         )
 
 
-class ReturnOrderLineItem(StatusCodeMixin, OrderLineItem):
+class ReturnOrderLineItem(AuditedLineItemMixin, StatusCodeMixin, OrderLineItem):
     """Model for a single LineItem in a ReturnOrder."""
 
     STATUS_CLASS = ReturnOrderLineStatus
@@ -3680,6 +3738,12 @@ class ReturnOrderLineItem(StatusCodeMixin, OrderLineItem):
             raise ValidationError({
                 'quantity': _('Invalid quantity for serialized stock item')
             })
+
+    def __str__(self):
+        """Render a string representation of a ReturnOrderLineItem instance."""
+        return '{item} - {order}'.format(
+            item=self.item if self.item_id else _('Unknown item'), order=self.order
+        )
 
     order = models.ForeignKey(
         ReturnOrder,
@@ -3734,7 +3798,7 @@ class ReturnOrderLineItem(StatusCodeMixin, OrderLineItem):
     )
 
 
-class ReturnOrderExtraLine(OrderExtraLine):
+class ReturnOrderExtraLine(AuditedLineItemMixin, OrderExtraLine):
     """Model for a single ExtraLine in a ReturnOrder."""
 
     class Meta:
@@ -3756,7 +3820,7 @@ class ReturnOrderExtraLine(OrderExtraLine):
     )
 
 
-class TransferOrder(Order):
+class TransferOrder(AuditedOrderMixin, Order):
     """A Transfer Order represents a request to transfer stock from one location to another. It provides a place to queue and review changes before execution.
 
     Attributes:
@@ -4088,7 +4152,7 @@ class TransferOrder(Order):
         return TransferOrderAllocation.objects.filter(line__order=self)
 
 
-class TransferOrderLineItem(OrderLineItem):
+class TransferOrderLineItem(AuditedLineItemMixin, OrderLineItem):
     """Model for a single LineItem in a TransferOrder.
 
     Attributes:
@@ -4113,6 +4177,14 @@ class TransferOrderLineItem(OrderLineItem):
     def get_api_url():
         """Return the API URL associated with the TransferOrderLineItem model."""
         return reverse('api-transfer-order-line-list')
+
+    def __str__(self):
+        """Render a string representation of a TransferOrderLineItem instance."""
+        return '{n} x {part} - {order}'.format(
+            n=decimal2string(self.quantity),
+            part=self.part.full_name if self.part else _('Unknown part'),
+            order=self.order,
+        )
 
     order = models.ForeignKey(
         TransferOrder,

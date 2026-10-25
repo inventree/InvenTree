@@ -26,6 +26,7 @@ import InvenTree.models
 import InvenTree.ready
 import InvenTree.validators
 import report.mixins
+from audit.helpers import audited_update
 from common.currency import currency_code_default
 from common.settings import get_global_setting
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
@@ -86,6 +87,7 @@ def default_internal_company() -> Optional[int]:
 
 
 class Company(
+    InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeNoteMixin,
@@ -337,7 +339,9 @@ class Company(
         ).distinct()
 
 
-class Contact(InvenTree.models.InvenTreeMetadataModel):
+class Contact(
+    InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeMetadataModel
+):
     """A Contact represents a person who works at a particular company. A Company may have zero or more associated Contact objects.
 
     Attributes:
@@ -349,6 +353,9 @@ class Contact(InvenTree.models.InvenTreeMetadataModel):
     """
 
     IMPORT_ID_FIELDS = ['name', 'email']
+
+    # Changes to a contact are included in the history of the company
+    AUDIT_PARENT_FIELD = 'company'
 
     class Meta:
         """Metaclass defines extra model options."""
@@ -372,8 +379,12 @@ class Contact(InvenTree.models.InvenTreeMetadataModel):
 
     role = models.CharField(max_length=100, blank=True)
 
+    def __str__(self):
+        """Return a string representation of this Contact."""
+        return self.name
 
-class Address(InvenTree.models.InvenTreeModel):
+
+class Address(InvenTree.models.InvenTreeAuditMixin, InvenTree.models.InvenTreeModel):
     """An address represents a physical location where the company is located. It is possible for a company to have multiple locations.
 
     Attributes:
@@ -390,6 +401,9 @@ class Address(InvenTree.models.InvenTreeModel):
         internal_shipping_notes: Internal notes regarding shipping to this address
         link: External link to additional address information
     """
+
+    # Changes to an address are included in the history of the company
+    AUDIT_PARENT_FIELD = 'company'
 
     class Meta:
         """Metaclass defines extra model options."""
@@ -435,9 +449,13 @@ class Address(InvenTree.models.InvenTreeModel):
 
         # Once this address is saved, check others
         if self.primary:
-            Address.objects.filter(company=self.company).exclude(pk=self.pk).filter(
-                primary=True
-            ).update(primary=False)
+            audited_update(
+                Address.objects
+                .filter(company=self.company)
+                .exclude(pk=self.pk)
+                .filter(primary=True),
+                primary=False,
+            )
 
     @staticmethod
     def get_api_url():
@@ -543,6 +561,7 @@ class Address(InvenTree.models.InvenTreeModel):
 
 
 class ManufacturerPart(
+    InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
@@ -561,6 +580,9 @@ class ManufacturerPart(
     """
 
     IMPORT_ID_FIELDS = ['MPN']
+
+    # Changes to a manufacturer part are included in the history of the manufacturer
+    AUDIT_PARENT_FIELD = 'manufacturer'
 
     class Meta:
         """Metaclass defines extra model options."""
@@ -658,6 +680,7 @@ class ManufacturerPart(
 
 
 class SupplierPart(
+    InvenTree.models.InvenTreeAuditMixin,
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeParameterMixin,
     InvenTree.models.MetadataMixin,
@@ -688,6 +711,17 @@ class SupplierPart(
     """
 
     IMPORT_ID_FIELDS = ['SKU']
+
+    # Changes to a supplier part are included in the history of the supplier
+    AUDIT_PARENT_FIELD = 'supplier'
+
+    AUDIT_EXCLUDE_FIELDS = (
+        # Supplier-provided stock levels (e.g. updated by supplier plugins) are not user edits
+        'available',
+        'availability_updated',
+        # Derived from 'pack_quantity'
+        'pack_quantity_native',
+    )
 
     class Meta:
         """Metaclass defines extra model options."""
@@ -810,9 +844,13 @@ class SupplierPart(
 
         # Once this SupplierPart is saved, check others
         if self.primary:
-            SupplierPart.objects.filter(part=self.part).exclude(pk=self.pk).filter(
-                primary=True
-            ).update(primary=False)
+            audited_update(
+                SupplierPart.objects
+                .filter(part=self.part)
+                .exclude(pk=self.pk)
+                .filter(primary=True),
+                primary=False,
+            )
 
     part = models.ForeignKey(
         'part.Part',
@@ -1055,7 +1093,9 @@ class SupplierPart(
         return s
 
 
-class SupplierPriceBreak(common.models.PriceBreak):
+class SupplierPriceBreak(
+    InvenTree.models.InvenTreeAuditMixin, common.models.PriceBreak
+):
     """Represents a quantity price break for a SupplierPart.
 
     - Suppliers can offer discounts at larger quantities
@@ -1068,6 +1108,9 @@ class SupplierPriceBreak(common.models.PriceBreak):
         cost: Cost at specified quantity
         currency: Reference to the currency of this pricebreak (leave empty for base currency)
     """
+
+    # Changes to a price break are included in the history of the supplier part
+    AUDIT_PARENT_FIELD = 'part'
 
     class Meta:
         """Metaclass defines extra model options."""

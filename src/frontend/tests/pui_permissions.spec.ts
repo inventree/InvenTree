@@ -6,12 +6,18 @@ import { test } from './baseFixtures';
 import { adminuser, readeruser } from './defaults';
 import { clickOnRowMenu, loadTab } from './helpers';
 import { doCachedLogin } from './login';
+import { setSettingState } from './settings';
 
 /**
  * Test the "admin" account
  * - This is a superuser account, so should have *all* permissions available
  */
 test('Permissions - Admin', async ({ browser }) => {
+  await setSettingState({
+    setting: 'INVENTREE_SHOW_SUPERUSER_BANNER',
+    value: true
+  });
+
   // Login, and start on the "admin" page
   const page = await doCachedLogin(browser, {
     user: adminuser,

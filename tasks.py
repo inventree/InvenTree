@@ -1206,9 +1206,11 @@ def update(
         'exclude_plugins': 'Exclude plugin data from the output file (default = False)',
         'include_sso': 'Include SSO token data in the output file (default = False)',
         'include_session': 'Include user session data in the output file (default = False)',
+        'include_remote_addr': 'Include remote IP addresses for audit log entries in the output file (default = False)',
         'prettify': 'Pretty-print the output file with indentation (default = False)',
         'bulk': 'Use bulkdumpdata for improved performance on large datasets (default = False)',
         'verbose': 'Print verbose output from management commands',
+        'summary': 'Write a summary of the exported records (record counts and metadata) to the specified JSON file',
     }
 )
 @state_logger
@@ -1222,9 +1224,11 @@ def export_records(
     exclude_plugins: bool = False,
     include_sso: bool = False,
     include_session: bool = False,
+    include_remote_addr: bool = False,
     prettify: bool = False,
     bulk: bool = False,
     verbose: bool = False,
+    summary: Optional[str] = None,
 ):
     """Export all database records to a file."""
     # Get an absolute path to the file
@@ -1232,11 +1236,21 @@ def export_records(
     if not target.is_absolute():
         target = local_dir().joinpath(filename).resolve()
 
+    summary_target = None
+
+    if summary:
+        summary_target = Path(summary)
+        if not summary_target.is_absolute():
+            summary_target = local_dir().joinpath(summary).resolve()
+
     info(f"Exporting database records to file '{target}'")
 
     wait(c, verbose=verbose)
 
     check_file_existence(target, overwrite)
+
+    if summary_target:
+        check_file_existence(summary_target, overwrite)
 
     excludes = content_excludes(
         allow_email=include_email,
@@ -1298,9 +1312,16 @@ def export_records(
                 if model_name == 'auth.user':
                     entry['fields']['user_permissions'] = []
 
+            # Remove remote IP addresses from audit log entries
+            if include_remote_addr is False and model_name == 'audit.auditlogentry':
+                entry['fields']['remote_addr'] = None
+
             yield entry
 
     indent = 2 if prettify else None
+
+    # Number of exported records, for each model type
+    record_counts: dict[str, int] = {}
 
     # Write the processed data to file, one entry at a time - avoids ever
     # holding a second full copy of the (potentially huge) dataset in memory,
@@ -1313,9 +1334,24 @@ def export_records(
             if prettify:
                 f_out.write('\n')
             f_out.write(json.dumps(entry, indent=indent))
+
+            if model_name := entry.get('model'):
+                record_counts[model_name] = record_counts.get(model_name, 0) + 1
         if prettify:
             f_out.write('\n')
         f_out.write(']')
+
+    if summary_target:
+        info(f"Writing export summary to file '{summary_target}'")
+
+        summary_data = {
+            'metadata': metadata_entry,
+            'total_records': sum(record_counts.values()),
+            'records': dict(sorted(record_counts.items())),
+        }
+
+        with open(summary_target, 'w', encoding='utf-8') as f_out:
+            json.dump(summary_data, f_out, indent=2)
 
     success('Data export completed')
 
@@ -2126,6 +2162,7 @@ def export_definitions(c, basedir: str = ''):
         base_path.joinpath('inventree_report_context.json'),
         base_path.joinpath('inventree_status_codes.json'),
         base_path.joinpath('inventree_roles.json'),
+        base_path.joinpath('inventree_audited_models.json'),
     ]
 
     info('Exporting definitions...')
@@ -2145,6 +2182,9 @@ def export_definitions(c, basedir: str = ''):
 
     check_file_existence(filenames[5], overwrite=True)
     manage(c, f'export_roles {filenames[5]}', pty=True)
+
+    check_file_existence(filenames[6], overwrite=True)
+    manage(c, f'export_audited_models {filenames[6]}', pty=True)
 
     info('Exporting definitions complete')
 

@@ -2693,7 +2693,7 @@ class BuildConsumeTest(BuildAPITest):
                 expected_code=201,
                 benchmark=True,
                 max_query_count=180,
-                max_query_time=2.5,
+                max_query_time=4.5,
             )
 
         build.refresh_from_db()

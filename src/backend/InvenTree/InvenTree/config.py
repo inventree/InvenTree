@@ -58,6 +58,41 @@ def to_dict(value):
     return {}
 
 
+def ensure_middleware(
+    middleware: list[str], required: str, after: Optional[str] = None
+) -> list[str]:
+    """Ensure that a required middleware class is present in the provided MIDDLEWARE list.
+
+    The MIDDLEWARE setting can be overridden via the configuration file, which may omit
+    middleware which is required for correct operation. Any missing middleware is added
+    (and a warning logged), rather than preventing the server from starting.
+
+    Arguments:
+        middleware: The configured list of middleware classes
+        required: The middleware class which must be present
+        after: Insert after this middleware class (if present), otherwise append
+
+    Returns:
+        A list of middleware classes, including the required middleware
+    """
+    middleware = list(middleware)
+
+    if required in middleware:
+        return middleware
+
+    logger.warning(
+        'INVE-W17: %s missing from MIDDLEWARE configuration - adding automatically',
+        required,
+    )
+
+    if after and after in middleware:
+        middleware.insert(middleware.index(after) + 1, required)
+    else:
+        middleware.append(required)
+
+    return middleware
+
+
 def is_true(x):
     """Shortcut function to determine if a value "looks" like a boolean."""
     return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true', 'on']

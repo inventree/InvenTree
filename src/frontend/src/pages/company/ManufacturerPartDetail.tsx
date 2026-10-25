@@ -23,6 +23,9 @@ import {
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import HistoryPanel, {
+  useShowHistoryPanel
+} from '../../components/panels/HistoryPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
@@ -63,6 +66,8 @@ export default function ManufacturerPartDetail() {
     modelType: ModelType.manufacturerpart,
     modelId: manufacturerPart?.pk
   });
+
+  const showHistory = useShowHistoryPanel();
 
   const panels: PanelType[] = useMemo(() => {
     return [
@@ -120,9 +125,14 @@ export default function ManufacturerPartDetail() {
         model_type: ModelType.manufacturerpart,
         model_id: manufacturerPart?.pk,
         note_count: instanceInfo.note_count
+      }),
+      HistoryPanel({
+        model_type: ModelType.manufacturerpart,
+        model_id: manufacturerPart?.pk,
+        visible: showHistory
       })
     ];
-  }, [user, manufacturerPart, instanceInfo]);
+  }, [user, manufacturerPart, instanceInfo, showHistory]);
 
   const editManufacturerPartFields = useManufacturerPartFields();
 
