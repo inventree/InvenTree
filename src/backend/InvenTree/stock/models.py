@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import contextvars
 import copy
 import os
 from collections.abc import Callable
@@ -872,7 +871,7 @@ class StockItem(
 
         items = list(items)
 
-        with batch_tracking_entries(), ExitStack() as stack:
+        with ExitStack() as stack:
             if tracking is not None:
                 for item in items:
                     if event := tracking(item):
@@ -2370,7 +2369,7 @@ class StockItem(
         """Return the deltas for a tracking event, including any information provided via kwargs.
 
         Model references (see model_reference_fields) may be provided as kwargs,
-        and are retained as model instances (see _legacy_deltas and _audit_deltas).
+        and are retained as model instances (recorded as references in the audit log).
         """
         deltas = dict(deltas or {})
 
@@ -2391,24 +2390,6 @@ class StockItem(
             for key, value in deltas.items()
             if key not in self.AUDIT_IGNORE_DELTAS
         }
-
-    @staticmethod
-    def _legacy_deltas(deltas: dict) -> dict:
-        """Return the deltas to record in a (legacy) StockItemTracking entry - model references are recorded by pk.
-
-        References may be provided as model instances, or as serialized references (see audit.helpers.audit_reference).
-        """
-
-        def legacy_value(value):
-            if isinstance(value, models.Model):
-                return value.pk
-
-            if isinstance(value, dict) and {'model_type', 'pk'} <= value.keys():
-                return value['pk']
-
-            return value
-
-        return {key: legacy_value(value) for key, value in deltas.items()}
 
     @staticmethod
     def _is_empty_tracking_event(entry_type: int, deltas: dict, notes: str) -> bool:
@@ -2467,19 +2448,15 @@ class StockItem(
         with event:
             yield
 
-        # TODO: Legacy tracking entries are to be removed (replaced by the audit log)
-        self._add_legacy_tracking_entry(entry_type, user, deltas, notes)
-
     def add_tracking_entry(
         self,
         entry_type: int,
-        user: User,
+        user: User | None,
         deltas: dict | None = None,
         notes: str = '',
-        commit: bool = True,
         **kwargs,
-    ):
-        """Add a history tracking entry for this StockItem.
+    ) -> None:
+        """Record a stock tracking event for this StockItem (in the audit log).
 
         Note: This records the event immediately, and must not be called after saving
         changes to this item as part of the same operation (which would record
@@ -2488,12 +2465,9 @@ class StockItem(
         Args:
             entry_type (int): Code describing the "type" of historical action (see StockHistoryCode)
             user (User): The user performing this action
-            deltas (dict, optional): A map of the changes made to the model. Defaults to None.
-            notes (str, optional): URL associated with this tracking entry. Defaults to ''.
-            commit (bool, optional): If True, save the (legacy) entry to the database. Defaults to True.
-
-        Returns:
-            StockItemTracking: The created (legacy) tracking entry
+            deltas (dict, optional): Additional information about the event. Defaults to None.
+            notes (str, optional): Notes associated with the event. Defaults to ''.
+            **kwargs: Model references (see model_reference_fields) and quantity
         """
         from audit.context import has_pending_event
         from audit.helpers import log_event
@@ -2501,7 +2475,7 @@ class StockItem(
         deltas = self._tracking_deltas(deltas, kwargs)
 
         if self._is_empty_tracking_event(entry_type, deltas, notes):
-            return None
+            return
 
         if not has_pending_event(self):
             log_event(
@@ -2511,42 +2485,6 @@ class StockItem(
                 deltas=self._audit_deltas(deltas),
                 actor=user,
             )
-
-        # TODO: Legacy tracking entries are to be removed (replaced by the audit log)
-        return self._add_legacy_tracking_entry(
-            entry_type, user, deltas, notes, commit=commit
-        )
-
-    def _add_legacy_tracking_entry(
-        self,
-        entry_type: int,
-        user: User | None,
-        deltas: dict,
-        notes: str = '',
-        commit: bool = True,
-    ):
-        """Create a (legacy) StockItemTracking entry for this StockItem."""
-        # If this item has already been deleted (e.g. depleted via delete_on_deplete),
-        # self.pk is None - Django refuses to save a FK pointing at an unsaved instance,
-        # even for a nullable/SET_NULL field, so pass None explicitly instead of self.
-        entry = StockItemTracking(
-            item=self if self.pk else None,
-            part=self.part,
-            tracking_type=int(entry_type),
-            user=user,
-            date=InvenTree.helpers.current_time(),
-            notes=notes,
-            deltas=self._legacy_deltas(deltas),
-        )
-
-        if commit:
-            if (batch := _tracking_batch.get()) is not None:
-                # A batch_tracking_entries() context is active - queue rather than save now
-                batch.add(entry)
-            else:
-                entry.save()
-
-        return entry
 
     @transaction.atomic
     def serializeStock(
@@ -2649,20 +2587,10 @@ class StockItem(
         # than re-querying an identical (and usually empty) result set per item
         has_test_results = self.test_results.exists()
 
-        with batch_tracking_entries():
+        # Copy any test results from this item to the new items
+        if has_test_results:
             for item in items:
-                # TODO: Legacy tracking entries are to be removed (replaced by the audit log)
-                # Note: The serial number is recorded in the audit log as part of the item creation
-                item._add_legacy_tracking_entry(
-                    StockHistoryCode.ASSIGNED_SERIAL,
-                    user,
-                    {'serial': item.serial},
-                    notes=notes,
-                )
-
-                # Copy any test results from this item to the new one
-                if has_test_results:
-                    item.copyTestResultsFrom(self)
+                item.copyTestResultsFrom(self)
 
         # Remove the equivalent number of items
         self.take_stock(
@@ -2670,14 +2598,6 @@ class StockItem(
         )
 
         return items
-
-    @transaction.atomic
-    def copyHistoryFrom(self, other):
-        """Copy stock history from another StockItem."""
-        for item in other.tracking_info.all():
-            item.item = self
-            item.pk = None
-            item.save()
 
     @transaction.atomic
     def copyTestResultsFrom(self, other: StockItem, filters: dict | None = None):
@@ -3157,8 +3077,7 @@ class StockItem(
     def _apply_model_reference_fields(self, kwargs: dict, deltas: dict) -> None:
         """Pop any model reference kwargs (see model_reference_fields) and record them in deltas.
 
-        Model instances are retained - these are recorded as references in the audit log
-        (and by pk in legacy tracking entries, see _legacy_deltas).
+        Model instances are retained - these are recorded as references in the audit log.
         """
         for field in StockItem.model_reference_fields():
             instance = deltas.pop(field, None) or kwargs.pop(field, None)
@@ -3201,7 +3120,7 @@ class StockItem(
             if field in kwargs:
                 setattr(self, field, kwargs[field])
 
-                # Model instances are retained (see _legacy_deltas and _audit_deltas)
+                # Model instances are retained (recorded as references in the audit log)
                 deltas[field] = kwargs[field]
 
     @transaction.atomic
@@ -3778,76 +3697,6 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     if InvenTree.ready.canAppAccessDatabase(allow_test=settings.TESTING_PRICING):
         if instance.part:
             instance.part.schedule_pricing_update(create=True)
-
-
-# Context-local batch of pending StockItemTracking entries (see batch_tracking_entries())
-_tracking_batch: contextvars.ContextVar = contextvars.ContextVar(
-    'tracking_batch', default=None
-)
-
-
-class TrackingEntryBatch:
-    """Collects StockItemTracking entries created within a batch_tracking_entries() scope."""
-
-    def __init__(self):
-        """Initialize an empty batch."""
-        self.entries: list[StockItemTracking] = []
-
-    def add(self, entry: StockItemTracking) -> None:
-        """Record a single (unsaved) tracking entry against this batch."""
-        self.entries.append(entry)
-
-    def flush(self) -> None:
-        """Bulk-create all entries collected so far, in a single database write."""
-        entries, self.entries = self.entries, []
-
-        if entries:
-            StockItemTracking.objects.bulk_create(entries, batch_size=250)
-
-
-@contextmanager
-def batch_tracking_entries():
-    """Batch StockItemTracking entries created within this scope into a single bulk_create().
-
-    StockItem.add_tracking_entry() saves its entry immediately by default (commit=True).
-    While this context is active, any such call - made directly, or indirectly via a nested
-    function call - is queued instead of saved immediately. The queued entries are flushed via
-    a single bulk_create() when the current transaction commits (or immediately, if no
-    transaction is active). If the transaction is instead rolled back, the queued entries are
-    discarded, rather than being written for a change that never happened.
-
-    Calls that already pass commit=False to add_tracking_entry() are unaffected either way -
-    that contract (the caller takes ownership of saving/collecting the entry itself, as done
-    for example in PurchaseOrder.receive_line_items()) is unchanged.
-
-    Nesting is not supported: a nested batch_tracking_entries() call reuses the outer batch,
-    and only the outermost call schedules a flush.
-
-    This mirrors plugin.base.event.events.batch_events() - see that docstring for the
-    reasoning behind the on-commit flush and the context-local (rather than parameter-based)
-    design, which allows existing single-item entrypoints (e.g. StockItem.stocktake()) to be
-    reused unmodified by both single-item and bulk callers.
-
-    Yields:
-        The current TrackingEntryBatch instance
-    """
-    if _tracking_batch.get() is not None:
-        # Already inside a batch - extend it, rather than creating a nested one
-        yield _tracking_batch.get()
-        return
-
-    from audit.helpers import write_batched
-
-    batch = TrackingEntryBatch()
-    token = _tracking_batch.set(batch)
-
-    try:
-        # Audit log entries are also written in bulk (when the context exits)
-        with write_batched():
-            yield batch
-    finally:
-        _tracking_batch.reset(token)
-        transaction.on_commit(batch.flush)
 
 
 class StockItemTracking(InvenTree.models.InvenTreeModel):

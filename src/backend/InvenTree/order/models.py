@@ -3083,58 +3083,15 @@ class SalesOrderShipment(
         for allocation in allocations_to_update:
             allocation.item = split_item_map[id(allocation.item)]
 
-        tracking_entries = []
-        split_events = []
-        customer_events = []
+        split_events = [
+            ((), {'id': new_item.pk, 'parent': source_item.pk})
+            for source_item, new_item, _quantity in split_items
+        ]
 
-        # Split stock items for "split_items"
-        for source_item, new_item, quantity in split_items:
-            tracking_entries.append(
-                stock.models.StockItemTracking(
-                    item_id=new_item.pk,
-                    part_id=new_item.part_id,
-                    tracking_type=StockHistoryCode.SPLIT_FROM_PARENT.value,
-                    user=user,
-                    deltas={'stockitem': source_item.pk, 'quantity': float(quantity)},
-                )
-            )
-            tracking_entries.append(
-                stock.models.StockItemTracking(
-                    item_id=source_item.pk,
-                    part_id=source_item.part_id,
-                    tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value,
-                    user=user,
-                    deltas={
-                        'removed': float(quantity),
-                        'quantity': float(source_item.quantity),
-                    },
-                )
-            )
-
-            split_events.append(((), {'id': new_item.pk, 'parent': source_item.pk}))
-
-        # Ship stock items for "shipped_items"
-        for target_item, quantity in shipped_items:
-            deltas = {'quantity': float(quantity), 'salesorder': order.pk}
-
-            if customer is not None:
-                deltas['customer'] = customer.pk
-                deltas['customer_name'] = customer.name
-
-            tracking_entries.append(
-                stock.models.StockItemTracking(
-                    item_id=target_item.pk,
-                    part_id=target_item.part_id,
-                    tracking_type=StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER.value,
-                    user=user,
-                    deltas=deltas,
-                )
-            )
-
-            customer_events.append((
-                (),
-                {'id': target_item.pk, 'customer': customer.pk if customer else None},
-            ))
+        customer_events = [
+            ((), {'id': target_item.pk, 'customer': customer.pk if customer else None})
+            for target_item, _quantity in shipped_items
+        ]
 
         # Record the operation in the audit log - a single entry for each stock item
         with write_batched(), ExitStack() as events:
@@ -3173,9 +3130,6 @@ class SalesOrderShipment(
                 [item for item, _ in shipped_items],
                 ['sales_order', 'customer', 'location'],
             )
-
-        # TODO: Legacy tracking entries are to be removed (replaced by the audit log)
-        stock.models.StockItemTracking.objects.bulk_create(tracking_entries)
 
         # Update sales order lines for "seen_lines"
         audited_bulk_update(SalesOrderLineItem, list(seen_lines.values()), ['shipped'])

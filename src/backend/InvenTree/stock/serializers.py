@@ -51,7 +51,6 @@ from .models import (
     StockItemTracking,
     StockLocation,
     StockLocationType,
-    batch_tracking_entries,
 )
 
 logger = structlog.get_logger('inventree')
@@ -842,7 +841,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
         with (
             transaction.atomic(),
             batch_events(),
-            batch_tracking_entries(),
+            write_batched(),
             batch_offload_tasks(),
         ):
             return (
@@ -2044,7 +2043,7 @@ class StockCountSerializer(StockAdjustmentSerializer):
         with (
             transaction.atomic(),
             batch_events(),
-            batch_tracking_entries(),
+            write_batched(),
             batch_offload_tasks(),
         ):
             for item in items:
@@ -2077,7 +2076,7 @@ class StockAddSerializer(StockAdjustmentSerializer):
         with (
             transaction.atomic(),
             batch_events(),
-            batch_tracking_entries(),
+            write_batched(),
             batch_offload_tasks(),
         ):
             for item in data['items']:
@@ -2111,7 +2110,7 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
         with (
             transaction.atomic(),
             batch_events(),
-            batch_tracking_entries(),
+            write_batched(),
             batch_offload_tasks(),
         ):
             for item in data['items']:
@@ -2173,7 +2172,7 @@ class StockTransferSerializer(StockAdjustmentSerializer):
         with (
             transaction.atomic(),
             batch_events(),
-            batch_tracking_entries(),
+            write_batched(),
             batch_offload_tasks(),
         ):
             for item in items:

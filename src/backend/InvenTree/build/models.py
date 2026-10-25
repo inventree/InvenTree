@@ -871,65 +871,15 @@ class Build(
             copy_related_cache(source_item, new_item)
             copy_related_cache(source_item, new_stock_items[i])
 
-        tracking_entries = []
         split_events = []
         install_events = []
 
         # Split stock items for "split_items"
-        for source_item, new_item, quantity in split_items:
-            tracking_entries.append(
-                stock.models.StockItemTracking(
-                    item_id=new_item.pk,
-                    part_id=new_item.part_id,
-                    tracking_type=StockHistoryCode.SPLIT_FROM_PARENT.value,
-                    user=user,
-                    notes=notes,
-                    deltas={'stockitem': source_item.pk, 'quantity': float(quantity)},
-                )
-            )
-            tracking_entries.append(
-                stock.models.StockItemTracking(
-                    item_id=source_item.pk,
-                    part_id=source_item.part_id,
-                    tracking_type=StockHistoryCode.SPLIT_CHILD_ITEM.value,
-                    user=user,
-                    notes=notes,
-                    deltas={
-                        'removed': float(quantity),
-                        'quantity': float(source_item.quantity),
-                    },
-                )
-            )
-
+        for source_item, new_item, _quantity in split_items:
             split_events.append(((), {'id': new_item.pk, 'parent': source_item.pk}))
 
         # Install stock items for "install_items"
-        for build_item, target_item, output, quantity in install_items:
-            tracking_entries.append(
-                stock.models.StockItemTracking(
-                    item_id=target_item.pk,
-                    part_id=target_item.part_id,
-                    tracking_type=StockHistoryCode.INSTALLED_INTO_ASSEMBLY.value,
-                    user=user,
-                    notes=notes,
-                    deltas={
-                        'stockitem': output.pk,
-                        'quantity': float(quantity),
-                        'buildorder': self.pk,
-                    },
-                )
-            )
-            tracking_entries.append(
-                stock.models.StockItemTracking(
-                    item_id=output.pk,
-                    part_id=output.part_id,
-                    tracking_type=StockHistoryCode.INSTALLED_CHILD_ITEM.value,
-                    user=user,
-                    notes=notes,
-                    deltas={'stockitem': target_item.pk, 'quantity': float(quantity)},
-                )
-            )
-
+        for build_item, target_item, output, _quantity in install_items:
             install_events.append((
                 (),
                 {'id': target_item.pk, 'assembly_id': output.pk},
@@ -937,19 +887,6 @@ class Build(
 
             # Ensure the build item points to the (possibly newly split) stock item
             build_item.stock_item = target_item
-
-        # Consume stock items for "consume_items"
-        for target_item, quantity in consume_items:
-            tracking_entries.append(
-                stock.models.StockItemTracking(
-                    item_id=target_item.pk,
-                    part_id=target_item.part_id,
-                    tracking_type=StockHistoryCode.BUILD_CONSUMED.value,
-                    user=user,
-                    notes=notes,
-                    deltas={'buildorder': self.pk, 'quantity': float(quantity)},
-                )
-            )
 
         # Record the operation in the audit log - a single entry for each stock item
         with write_batched(), ExitStack() as events:
@@ -999,9 +936,6 @@ class Build(
                 list(seen_stock_items.values()),
                 ['quantity', 'consumed_by', 'location', 'belongs_to'],
             )
-
-        # TODO: Legacy tracking entries are to be removed (replaced by the audit log)
-        stock.models.StockItemTracking.objects.bulk_create(tracking_entries)
 
         # Update build lines for "seen_build_lines"
         BuildLine.objects.bulk_update(seen_build_lines.values(), ['consumed'])

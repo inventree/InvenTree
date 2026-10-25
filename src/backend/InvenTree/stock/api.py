@@ -1287,13 +1287,13 @@ class StockList(
 
             original = duplicate['original']
 
-            # copy_history/copy_tests don't follow the copy_<x>_from() naming
-            # convention (copyHistoryFrom/copyTestResultsFrom), so still need
+            # copy_tests doesn't follow the copy_<x>_from() naming
+            # convention (copyTestResultsFrom), so still needs
             # handling here - only copy_notes can go through the shared helper
             apply_duplicate_copy_options(item, duplicate, original, copy_notes=True)
 
-            if duplicate.get('copy_history', False):
-                item.copyHistoryFrom(original)
+            # TODO: The 'copy_history' option is no longer supported
+            # (stock history is recorded in the audit log, and is not copied)
 
             if duplicate.get('copy_tests', False):
                 item.copyTestResultsFrom(original)
