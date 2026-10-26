@@ -309,6 +309,8 @@ class TestStockTrackingAuditMigration(MigratorTestCase):
         """Create legacy stock tracking entries to be migrated."""
         from datetime import datetime, timezone
 
+        from django.conf import settings
+
         apps = self.old_state.apps
 
         User = apps.get_model('auth', 'user')
@@ -357,7 +359,9 @@ class TestStockTrackingAuditMigration(MigratorTestCase):
                 user=user,
             )
 
-            date = datetime(2025, 1, day, 12, 0, tzinfo=timezone.utc)
+            # MySQL rejects timezone-aware values when USE_TZ is False
+            utc = timezone.utc if settings.USE_TZ else None
+            date = datetime(2025, 1, day, 12, 0, tzinfo=utc)
             StockItemTracking.objects.filter(pk=entry.pk).update(date=date)
 
             return entry.pk
