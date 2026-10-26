@@ -168,7 +168,73 @@ class InvenTreeMetadata(SimpleMetadata):
             # then we don't need a permission
             pass
 
+        if filters := self.get_filter_metadata(request, view):
+            metadata['filters'] = filters
+
         return metadata
+
+    def get_filter_metadata(self, request, view) -> dict:
+        """Return information on the choice filters available for an API endpoint.
+
+        For each ChoiceFilter (or MultipleChoiceFilter) defined by the view's filterset,
+        the available choices are provided, e.g. so that a client can render a filter selection.
+        Model-backed choice filters (ModelChoiceFilter etc) are excluded.
+
+        The filterset is instantiated with the current request, so that the
+        choices can be specific to the requesting user.
+
+        Returns:
+            dict: A mapping of filter name -> {'type', 'label', 'choices'}
+        """
+        from django_filters import (
+            ChoiceFilter,
+            ModelChoiceFilter,
+            ModelMultipleChoiceFilter,
+            MultipleChoiceFilter,
+        )
+
+        filterset_class = getattr(view, 'filterset_class', None)
+
+        if filterset_class is None:
+            return {}
+
+        try:
+            filterset = filterset_class(
+                data={}, queryset=view.get_queryset(), request=request
+            )
+        except Exception:
+            # Filter information is optional - never prevent the OPTIONS response
+            logger.exception(
+                'Could not construct filterset for %s', view.__class__.__name__
+            )
+            return {}
+
+        filters = {}
+
+        for name, filter_instance in filterset.filters.items():
+            if not isinstance(filter_instance, (ChoiceFilter, MultipleChoiceFilter)):
+                continue
+
+            # Model-backed choices (e.g. foreign key filters) are not exposed:
+            # these may be unbounded, and would expose related objects to the client
+            if isinstance(
+                filter_instance, (ModelChoiceFilter, ModelMultipleChoiceFilter)
+            ):
+                continue
+
+            choices = [
+                {'value': value, 'display_name': str(label)}
+                for value, label in filter_instance.field.choices
+                if value not in ('', None)
+            ]
+
+            filters[name] = {
+                'type': 'choice',
+                'label': str(filter_instance.label or name),
+                'choices': choices,
+            }
+
+        return filters
 
     def override_value(self, field_name: str, field_key: str, field_value, model_value):
         """Override a value on the serializer with a matching value for the model.

@@ -29,6 +29,7 @@ import InvenTree.config
 import InvenTree.filters
 import InvenTree.permissions
 import InvenTree.version
+from audit.helpers import write_batched
 from common.settings import get_global_setting
 from InvenTree import helpers, ready
 from InvenTree.auth_overrides import registration_enabled
@@ -534,7 +535,12 @@ class BulkCreateMixin:
                 if has_unique_errors:
                     raise ValidationError(unique_errors)
 
-            with transaction.atomic(), batch_events(), batch_offload_tasks():
+            with (
+                transaction.atomic(),
+                batch_events(),
+                batch_offload_tasks(),
+                write_batched(),
+            ):
                 for item in data:
                     serializer = self.get_serializer(data=item)
                     if serializer.is_valid():

@@ -515,9 +515,14 @@ def offload_task(
                 )
                 return False
 
+        from audit.context import audit_task
+
         # Workers are not running: run it as synchronous task
         try:
-            with tracer.start_as_current_span(f'sync worker: {taskname}'):
+            with (
+                tracer.start_as_current_span(f'sync worker: {taskname}'),
+                audit_task(taskname),
+            ):
                 _func(*args, **kwargs)
         except Exception as exc:
             log_error('offload_task', scope='worker')

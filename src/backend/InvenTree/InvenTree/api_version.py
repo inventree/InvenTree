@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 564
+INVENTREE_API_VERSION = 565
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v564 -> 2026-10-24 : https://github.com/inventree/InvenTree/pull/xxxxx
+v565 -> 2026-10-24 : https://github.com/inventree/InvenTree/pull/13069
+    - Adds read-only audit log API endpoints (/api/audit/)
+    - OPTIONS metadata includes a "filters" entry, listing the available choices for choice-based list filters
+
+v564 -> 2026-10-24 : https://github.com/inventree/InvenTree/pull/13090
     - BomItem "can_build", "pricing_min_total" and "pricing_max_total" fields now account for "piece_count"
     - BuildLine "unit_quantity" ordering now accounts for the BOM "piece_count"
 
