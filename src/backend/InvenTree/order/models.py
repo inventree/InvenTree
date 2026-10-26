@@ -1327,18 +1327,22 @@ class PurchaseOrder(AuditedOrderMixin, TotalPriceMixin, Order):
 
             # Now, create the new stock items
             if serialize:
+                # Resolve the (possibly custom) status *before* the items are created,
+                # so that each new item is created (and recorded) with the selected status
+                status_item = stock.models.StockItem()
+                status_item.set_status(status, custom_values=custom_stock_status_values)
+
                 new_items = stock.models.StockItem._create_serial_numbers(
                     serials=serials,
                     tracking=lambda item, note=note: self._receive_tracking_event(
                         item, user, note
                     ),
+                    status=status_item.status,
+                    status_custom_key=status_item.status_custom_key,
                     **stock_data,
                 )
 
                 for new_item in new_items:
-                    new_item.set_status(
-                        status, custom_values=custom_stock_status_values
-                    )
                     # run validation for serialized items plugin.validate_batch_code
                     new_item.validate_batch_code()
 

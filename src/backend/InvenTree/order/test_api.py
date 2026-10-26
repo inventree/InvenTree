@@ -2249,6 +2249,79 @@ class PurchaseOrderReceiveTest(OrderTest):
             )
             self.assertEqual(entry.notes, 'Received via serialized batch')
 
+    def test_receive_serialized_status(self):
+        """Test that the selected status (including custom status values) is applied to received serialized items.
+
+        Regression test: the status was previously only applied to the (already created)
+        serialized items in memory, and was never saved to the database.
+        """
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 3,
+                        'serial_numbers': '300+',
+                        'status': StockStatus.DAMAGED.value,
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201,
+        )
+
+        for i in range(300, 303):
+            item = StockItem.objects.get(serial_int=i)
+            self.assertEqual(item.status, StockStatus.DAMAGED.value)
+
+            # The status is recorded against the creation of the item
+            [entry] = stock_history(item)
+            self.assertEqual(
+                entry.changes_dict['status'], [None, StockStatus.DAMAGED.value]
+            )
+
+        # A custom status value is also applied (and recorded)
+        custom_status = InvenTreeCustomUserStateModel.objects.create(
+            key=1055,
+            name='Damaged (cosmetic)',
+            label='Damaged (cosmetic)',
+            color='warning',
+            logical_key=StockStatus.DAMAGED.value,
+            model=ContentType.objects.get_for_model(StockItem),
+            reference_status='StockStatus',
+        )
+
+        self.post(
+            self.url,
+            {
+                'items': [
+                    {
+                        'line_item': 1,
+                        'quantity': 3,
+                        'serial_numbers': '400+',
+                        'status': custom_status.key,
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=201,
+        )
+
+        for i in range(400, 403):
+            item = StockItem.objects.get(serial_int=i)
+            self.assertEqual(item.status, StockStatus.DAMAGED.value)
+            self.assertEqual(item.status_custom_key, custom_status.key)
+            self.assertEqual(item.get_custom_status(), custom_status.key)
+
+            [entry] = stock_history(item)
+            self.assertEqual(
+                entry.changes_dict['status'], [None, StockStatus.DAMAGED.value]
+            )
+            self.assertEqual(
+                entry.changes_dict['status_custom_key'], [None, custom_status.key]
+            )
+
     def test_bulk_receive_query_benchmark(self):
         """Benchmark: measure the number of DB queries required to receive 100 line items at once."""
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_EVENTS', True, change_user=None)
