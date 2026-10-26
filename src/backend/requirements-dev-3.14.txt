@@ -696,23 +696,23 @@ pip-tools==7.6.2 \
     # via
     #   -c src/backend/requirements-dev.txt
     #   -r src/backend/requirements-dev.in
-pluggy==1.6.0 \
-    --hash=sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3 \
-    --hash=sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746
+pluggy==1.7.0 \
+    --hash=sha256:7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec \
+    --hash=sha256:d1eaa46ebb595891b860ab086b4d09c8588af65ebd4361b8e8f4bb8920b90ba8
     # via
     #   -c src/backend/requirements-dev.txt
     #   pytest
-prek==0.5.5 \
-    --hash=sha256:120ef7d4b6bb58155e74827743c266e48501efb0e4c37ff726b14fe6e86a126b \
-    --hash=sha256:15bff9039349466ea9bf6b0c173b822ff08f8ae4cfbfdea782492e519c06d874 \
-    --hash=sha256:16bf596768bb754779c7d42317e9ca16ac609c0cce7d13bae0829944ab40a26a \
-    --hash=sha256:2f610927b95e84b28173a4c810892a7b5d5bb55bee792ddf97178fa97654633e \
-    --hash=sha256:2f6c453a12c21757b23bbbc97415aef78527841ad3f9e61f52cb35cf012f93e5 \
-    --hash=sha256:3db3191d2509830c75438e20956a47c2259867d18a4106064ed75088b968a0c6 \
-    --hash=sha256:50fbceb0f728b504023f6e6c9037ac0656436949d94f7a85bac5542e6c1a4a75 \
-    --hash=sha256:73d509c0d9556171de2502bada4962be7a25871e7b23e782549074e1416dc850 \
-    --hash=sha256:76c867fdbd4e4f19e6b6b2988bd1e1407d1324170ebcf1428e4e34f8f0751a99 \
-    --hash=sha256:c69f60c2b3b4d481e38d0eab3b97ac05ec05d7648ae690925ae95ca9d22c7643
+prek==0.5.6 \
+    --hash=sha256:0ac40373841d087ec5efebd5b84c5c0eb5671285fdc7c2b4473096b30d0bf1e5 \
+    --hash=sha256:4325b7ff03720394825b99b0696d1cc6f83999f429110c3f9381b2645a4c398f \
+    --hash=sha256:84215a6b8b3e8825eba924d91422df7c35e0413c134796a6821dcb917858ec8e \
+    --hash=sha256:86407b8be824faa81f299fa41cf466bc811882ddf3a05ef5c578b172abaf1183 \
+    --hash=sha256:87a8c19f873b96be809b4368959ed908cfa06255dba15082d0fb91173e9293bc \
+    --hash=sha256:a10d206fe05cc26c551bb986de255115d52e11306a36cdbcdcd0ab725317a5b2 \
+    --hash=sha256:aabec01beeb372bcdc48f6b339021bc33c07edf477b337fc92dc5d3b01f99150 \
+    --hash=sha256:b2e6b232654b16e37a554951f84af35470a4bd857af89c21e8fc87e2a475351d \
+    --hash=sha256:e32821fb947700d322ca9d401009962bc9652e017fa232ceb27ce89168044e5b \
+    --hash=sha256:fd60c48d25dca3269f0f17ba8bdf7a89a7beb9cb02e00b7ca8127a0e41caa15a
     # via
     #   -c src/backend/requirements-dev.txt
     #   -r src/backend/requirements-dev.in
