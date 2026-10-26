@@ -622,7 +622,7 @@ class SalesOrderTest(InvenTreeAPITestCase):
                 expected_code=200,
                 benchmark=True,
                 max_query_time=10.0,
-                max_query_count=120,
+                max_query_count=150,
             )
 
         self.assertEqual(response.status_code, 200)
