@@ -26,9 +26,6 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import HistoryPanel, {
-  useShowHistoryPanel
-} from '../../components/panels/HistoryPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { useTransferOrderFields } from '../../forms/TransferOrderForms';
@@ -92,8 +89,6 @@ export default function TransferOrderDetail() {
   ) : (
     <TransferOrderDetailsPanel instance={order} />
   );
-
-  const showHistory = useShowHistoryPanel();
 
   const orderPanels: PanelType[] = useMemo(() => {
     return [
@@ -173,14 +168,9 @@ export default function TransferOrderDetail() {
             modelTarget={ModelType.stockitem}
           />
         )
-      },
-      HistoryPanel({
-        model_type: ModelType.transferorder,
-        model_id: order.pk,
-        visible: showHistory
-      })
+      }
     ];
-  }, [order, id, user, showHistory]);
+  }, [order, id, user]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading

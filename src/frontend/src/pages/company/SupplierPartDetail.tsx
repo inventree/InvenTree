@@ -26,9 +26,6 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import HistoryPanel, {
-  useShowHistoryPanel
-} from '../../components/panels/HistoryPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import {
@@ -65,8 +62,6 @@ export default function SupplierPartDetail() {
       tags: true
     }
   });
-
-  const showHistory = useShowHistoryPanel();
 
   const panels: PanelType[] = useMemo(() => {
     return [
@@ -118,14 +113,9 @@ export default function SupplierPartDetail() {
         ) : (
           <Skeleton />
         )
-      },
-      HistoryPanel({
-        model_type: ModelType.supplierpart,
-        model_id: supplierPart?.pk,
-        visible: showHistory
-      })
+      }
     ];
-  }, [supplierPart, showHistory]);
+  }, [supplierPart]);
 
   const supplierPartActions = useMemo(() => {
     return [

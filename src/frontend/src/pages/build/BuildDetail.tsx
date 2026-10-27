@@ -37,9 +37,6 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import HistoryPanel, {
-  useShowHistoryPanel
-} from '../../components/panels/HistoryPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { RenderStockLocation } from '../../components/render/Stock';
@@ -231,8 +228,6 @@ export default function BuildDetail() {
     refetchOnMount: true
   });
 
-  const showHistory = useShowHistoryPanel();
-
   const buildPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -356,12 +351,7 @@ export default function BuildDetail() {
         ) : (
           <Skeleton />
         )
-      },
-      HistoryPanel({
-        model_type: ModelType.build,
-        model_id: build.pk,
-        visible: showHistory
-      })
+      }
     ];
   }, [
     build,
@@ -372,8 +362,7 @@ export default function BuildDetail() {
     showChildBuilds,
     buildLineQuery.isFetching,
     buildLineQuery.isLoading,
-    buildLineData,
-    showHistory
+    buildLineData
   ]);
 
   const editBuildOrderFields = useBuildOrderFields({

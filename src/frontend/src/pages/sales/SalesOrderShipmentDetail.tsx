@@ -26,9 +26,6 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import HistoryPanel, {
-  useShowHistoryPanel
-} from '../../components/panels/HistoryPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import {
   useCheckShipmentForm,
@@ -68,8 +65,6 @@ export default function SalesOrderShipmentDetail() {
   const isPending = useMemo(() => !shipment.shipment_date, [shipment]);
   const isChecked = useMemo(() => !!shipment.checked_by, [shipment]);
 
-  const showHistory = useShowHistoryPanel();
-
   const shipmentPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -97,14 +92,9 @@ export default function SalesOrderShipmentDetail() {
             modelTarget={ModelType.stockitem}
           />
         )
-      },
-      HistoryPanel({
-        model_type: ModelType.salesordershipment,
-        model_id: shipment.pk,
-        visible: showHistory
-      })
+      }
     ];
-  }, [isPending, shipment, showHistory]);
+  }, [isPending, shipment]);
 
   const editShipmentFields = useSalesOrderShipmentFields({
     pending: isPending,

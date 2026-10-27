@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { SettingsStateProps } from './Settings';
 
 // The type of indicator dot to be shown against a panel
 export type PanelIndicatorType = 'info' | 'warning' | 'danger' | null;
@@ -31,6 +32,8 @@ export type ModelFeaturePanelProps = {
   model: string;
   id: number;
   instanceInfo: Record<string, number | undefined>;
+  userSettings: SettingsStateProps;
+  globalSettings: SettingsStateProps;
 };
 
 /**

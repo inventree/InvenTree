@@ -23,9 +23,6 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import HistoryPanel, {
-  useShowHistoryPanel
-} from '../../components/panels/HistoryPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
@@ -127,8 +124,6 @@ export default function PurchaseOrderDetail() {
     modelType: ModelType.purchaseorder
   });
 
-  const showHistory = useShowHistoryPanel();
-
   const orderPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -198,14 +193,9 @@ export default function PurchaseOrderDetail() {
             }}
           />
         )
-      },
-      HistoryPanel({
-        model_type: ModelType.purchaseorder,
-        model_id: order.pk,
-        visible: showHistory
-      })
+      }
     ];
-  }, [order, id, user, showHistory]);
+  }, [order, id, user]);
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_issue, order.pk),

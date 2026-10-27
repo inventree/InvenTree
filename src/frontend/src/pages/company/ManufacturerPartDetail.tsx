@@ -22,9 +22,6 @@ import {
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import HistoryPanel, {
-  useShowHistoryPanel
-} from '../../components/panels/HistoryPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import {
@@ -57,8 +54,6 @@ export default function ManufacturerPartDetail() {
       tags: true
     }
   });
-
-  const showHistory = useShowHistoryPanel();
 
   const panels: PanelType[] = useMemo(() => {
     return [
@@ -101,14 +96,9 @@ export default function ManufacturerPartDetail() {
         ) : (
           <Skeleton />
         )
-      },
-      HistoryPanel({
-        model_type: ModelType.manufacturerpart,
-        model_id: manufacturerPart?.pk,
-        visible: showHistory
-      })
+      }
     ];
-  }, [user, manufacturerPart, showHistory]);
+  }, [user, manufacturerPart]);
 
   const editManufacturerPartFields = useManufacturerPartFields();
 

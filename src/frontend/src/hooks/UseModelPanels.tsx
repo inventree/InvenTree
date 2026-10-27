@@ -3,6 +3,10 @@ import type { PanelType } from '@lib/types/Panel';
 import { useEffect, useMemo, useState } from 'react';
 import { ModelFeaturePanelLookup } from '../components/panels/ModelFeaturePanels';
 import { useModelFeatures } from '../states/ModelFeatureState';
+import {
+  useGlobalSettingsState,
+  useUserSettingsState
+} from '../states/SettingsStates';
 import { useInstanceInfo } from './UseInstanceInfo';
 
 /**
@@ -38,6 +42,8 @@ export function useModelPanels({
     modelType: featureFactories.length > 0 ? (model as ModelType) : undefined,
     modelId: id ?? undefined
   });
+  const userSettings = useUserSettingsState();
+  const globalSettings = useGlobalSettingsState();
 
   // lazy load feature panels
   useEffect(() => {
@@ -49,7 +55,13 @@ export function useModelPanels({
 
     Promise.all(
       featureFactories.map((factory) =>
-        factory({ model, id, instanceInfo: { ...instanceInfo } })
+        factory({
+          model,
+          id,
+          instanceInfo: { ...instanceInfo },
+          userSettings,
+          globalSettings
+        })
       )
     )
       .then((panels) => {
@@ -64,7 +76,7 @@ export function useModelPanels({
     return () => {
       cancelled = true;
     };
-  }, [model, id, featureFactories, instanceInfo]);
+  }, [model, id, featureFactories, instanceInfo, userSettings, globalSettings]);
 
   return useMemo(() => {
     if (

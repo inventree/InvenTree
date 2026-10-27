@@ -8,5 +8,6 @@ export enum ModelFeature {
   barcode = 'org.inventree.i.modelfeatures.barcode',
   tags = 'org.inventree.i.modelfeatures.tags',
   image = 'org.inventree.i.modelfeatures.image',
-  report = 'org.inventree.i.modelfeatures.report'
+  report = 'org.inventree.i.modelfeatures.report',
+  history = 'org.inventree.i.modelfeatures.history'
 }

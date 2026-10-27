@@ -39,9 +39,6 @@ import {
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import HistoryPanel, {
-  useShowHistoryPanel
-} from '../../components/panels/HistoryPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import LocateItemButton from '../../components/plugins/LocateItemButton';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -175,8 +172,6 @@ export default function StockDetail() {
     return stockitem?.part_detail?.assembly;
   }, [trackedBomItemQuery, stockitem]);
 
-  const showHistory = useShowHistoryPanel();
-
   const stockPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -295,15 +290,9 @@ export default function StockDetail() {
         ) : (
           <Skeleton />
         )
-      },
-      HistoryPanel({
-        model_type: ModelType.stockitem,
-        model_id: stockitem.pk,
-        visible: showHistory
-      })
+      }
     ];
   }, [
-    showHistory,
     showSalesAllocations,
     showBuildAllocations,
     showInstalledItems,

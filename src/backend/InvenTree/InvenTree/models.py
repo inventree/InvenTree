@@ -533,7 +533,7 @@ class InvenTreePermissionCheckMixin:
         return user.has_perm(perm)
 
 
-class InvenTreeAuditMixin:
+class InvenTreeAuditMixin(ModelFeatureMixin):
     """Opt a model in to the audit log (field-level change history).
 
     Any concrete model which inherits from this mixin is registered with django-auditlog
@@ -551,6 +551,8 @@ class InvenTreeAuditMixin:
         AUDIT_EVENT_TYPES: Enumeration of named event types which can be recorded against this model
             (e.g. StockHistoryCode) - see audit.helpers.audit_event
     """
+
+    MODEL_FEATURE = 'org.inventree.i.modelfeatures.history'
 
     AUDIT_INCLUDE_FIELDS: tuple[str, ...] = ()
     AUDIT_EXCLUDE_FIELDS: tuple[str, ...] = ()
