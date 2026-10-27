@@ -1744,16 +1744,6 @@ class ReportSecurityTest(InvenTreeAPITestCase):
         with restricted_db_access(), self.assertRaises(PermissionDenied):
             list(Session.objects.all())
 
-    def test_write_blocked(self):
-        """Write queries are rejected during rendering."""
-        from django.core.exceptions import PermissionDenied
-
-        from part.models import PartCategory
-        from report.security import restricted_db_access
-
-        with restricted_db_access(), self.assertRaises(PermissionDenied):
-            PartCategory.objects.update(description='x')
-
     def test_normal_access(self):
         """Regular models still work."""
         out = self.render("{% filter_db_model 'part.part' as q %}{{ q|length }}")

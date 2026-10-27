@@ -1,9 +1,9 @@
 """Hardening helpers for report / label template rendering.
 
 Templates are considered trusted (see the threat model), but rendering is
-restricted as defence-in-depth: while a template renders, database access is
-read-only and tables holding credentials, sessions, tokens, or outbound mail
-cannot be queried - neither via ``filter_db_model`` nor by relation traversal.
+restricted as defence-in-depth: while a template renders, tables holding
+credentials, sessions, tokens, or outbound mail cannot be queried - neither via
+``filter_db_model`` nor by relation traversal.
 
 Note: this operates on whole tables. It cannot hide individual rows or
 columns of tables that are legitimately needed by reports.
@@ -43,7 +43,6 @@ BLOCKED_MODELS = [
 BLOCKED_APPS = ['sessions', 'socialaccount', 'oauth2_provider', 'mfa', 'usersessions']
 
 _WORD = re.compile(r'\w+')
-_READ_ONLY = re.compile(r'^\s*\(*\s*(select|with)\b', re.IGNORECASE)
 
 
 class ReportAccessDenied(PermissionDenied):
@@ -89,9 +88,6 @@ def is_model_blocked(model) -> bool:
 
 def _guard(tables: set):
     def wrapper(execute, sql, params, many, context):
-        if not _READ_ONLY.match(sql):
-            raise ReportAccessDenied('Write queries are not allowed in templates')
-
         if tables.intersection(w.lower() for w in _WORD.findall(sql)):
             raise ReportAccessDenied('Access to this data is not allowed in templates')
 
@@ -102,7 +98,7 @@ def _guard(tables: set):
 
 @contextmanager
 def restricted_db_access():
-    """Context manager: read-only database access without restricted tables."""
+    """Context manager: prevent database access to restricted tables."""
     guard = _guard(blocked_tables())
 
     with ExitStack() as stack:
