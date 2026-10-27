@@ -712,7 +712,15 @@ class Build(
         # Preselect related fields to avoid per-row database queries below
         build_items = list(
             build_items.select_related(
-                'build_line', 'stock_item', 'stock_item__part', 'install_into'
+                'build_line',
+                'stock_item',
+                'stock_item__part',
+                'stock_item__location',
+                'stock_item__purchase_order__supplier',
+                'install_into',
+                'install_into__part',
+                'install_into__location',
+                'install_into__purchase_order__supplier',
             )
         )
 
