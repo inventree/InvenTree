@@ -217,7 +217,7 @@ The `filter_db_model` function allows for filtering of a database model based on
         show_source: False
 
 !!! warning "Restricted Data"
-    While a template renders, database access is read-only and tables holding sensitive information - such assessions, API tokens, outbound emails, plugin settings and social / OAuth / MFA data - are blocked. Access raises a permission error. This is defence-in-depth only: it works on whole tables, and templates remain [trusted](../concepts/threat_model.md).
+    While a template renders, database access is read-only and tables holding sensitive information - such as user sessions, API tokens, outbound emails, plugin settings and social / OAuth / MFA data - are blocked. Access raises a permission error. This is defence-in-depth only: it works on whole tables, and templates remain [trusted](../concepts/threat_model.md).
 
 #### Example
 
