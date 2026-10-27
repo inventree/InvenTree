@@ -323,18 +323,23 @@ function AuditChangesSummary({
   record: any;
   navigate: NavigateFunction;
 }>): ReactNode {
+  const eventDetails = (
+    <AuditEventDetails record={record} navigate={navigate} />
+  );
+
   if (record.action == AuditAction.DELETE) {
+    // A named event may be recorded against the deletion (e.g. stock depleted to zero)
     return (
-      <Text size='sm' c='dimmed' fs='italic'>
-        {t`Object was deleted`}
-      </Text>
+      <Stack gap={2}>
+        {eventDetails}
+        <Text size='sm' c='dimmed' fs='italic'>
+          {t`Object was deleted`}
+        </Text>
+      </Stack>
     );
   }
 
   const changes = getChanges(record);
-  const eventDetails = (
-    <AuditEventDetails record={record} navigate={navigate} />
-  );
 
   if (changes.length == 0) {
     // A named event may be recorded without any field changes
