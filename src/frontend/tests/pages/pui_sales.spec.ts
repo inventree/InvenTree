@@ -615,3 +615,54 @@ test('Sales Orders - Parametric View', async ({ browser }) => {
   await page.getByRole('cell', { name: 'SO0001' }).waitFor();
   await expect(page.getByRole('cell', { name: 'SO0002' })).toHaveCount(0);
 });
+
+// Edit and remove stock allocations (allocation forms)
+test('Sales Orders - Edit Allocations', async ({ browser }) => {
+  const page = await doCachedLogin(browser, { url: 'sales/sales-order/11/' });
+
+  // Work on a duplicate, to avoid modifying fixture data
+  await page.getByRole('button', { name: 'action-menu-order-actions' }).click();
+  await page.getByRole('menuitem', { name: 'Duplicate' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Pending').first().waitFor();
+
+  await loadTab(page, 'Line Items');
+  await page
+    .getByRole('button', { name: 'action-button-auto-allocate-' })
+    .click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Stock allocation complete').first().waitFor();
+
+  // Open the edit allocation form (serialized stock, so quantity is fixed)
+  await loadTab(page, 'Allocated Stock');
+  await page.waitForLoadState('networkidle');
+  const row = page.getByRole('row').nth(1);
+  await row.getByLabel(/row-action-menu-/i).click();
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+  await page.waitForLoadState('networkidle');
+  await page.getByLabel('number-field-quantity').waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Remove the allocation
+  await page
+    .getByRole('row')
+    .nth(1)
+    .getByLabel(/row-action-menu-/i)
+    .click();
+  await page.getByRole('menuitem', { name: 'Remove' }).click();
+  await page.getByRole('button', { name: 'Remove', exact: true }).click();
+  await page.waitForLoadState('networkidle');
+
+  // Open the manual allocation form
+  await loadTab(page, 'Line Items');
+  await clickOnRowMenu(page.getByRole('cell', { name: 'widget.blue' }).first());
+  await page.getByRole('menuitem', { name: 'Allocate stock' }).click();
+  await page.getByLabel('related-field-stock_item').waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  // Cancel the order to release allocated stock
+  await page.getByRole('button', { name: 'action-menu-order-actions' }).click();
+  await page.getByRole('menuitem', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Cancelled').first().waitFor();
+});
