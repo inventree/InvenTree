@@ -62,6 +62,7 @@ export default function UserSettings() {
               'DATE_DISPLAY_FORMAT',
               'FORMS_CLOSE_USING_ESCAPE',
               'DISPLAY_STOCKTAKE_TAB',
+              'DISPLAY_HISTORY_TAB',
               'ENABLE_LAST_BREADCRUMB',
               'NAVIGATION_TREE_PINNED',
               'SHOW_EXTRA_MODEL_INFO',

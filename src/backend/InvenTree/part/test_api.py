@@ -12,6 +12,7 @@ from django.test.utils import CaptureQueriesContext, override_settings
 from django.urls import reverse
 
 import pytest
+from djmoney.money import Money
 from PIL import Image
 from rest_framework.test import APIClient
 
@@ -3480,6 +3481,113 @@ class BomItemTest(InvenTreeAPITestCase):
 
         can_build = response.data['can_build']
         self.assertAlmostEqual(can_build, 482.9, places=1)
+
+    def test_piece_count_can_build(self):
+        """Test that the 'can_build' annotation accounts for piece_count."""
+        assembly = Part.objects.create(
+            name='Cable Assembly', description='A cable assembly', assembly=True
+        )
+
+        wire = Part.objects.create(
+            name='Wire', description='Cut-to-length wire', component=True
+        )
+
+        bom_item = BomItem.objects.create(
+            part=assembly, sub_part=wire, quantity=2, piece_count=5
+        )
+
+        StockItem.objects.create(part=wire, quantity=20)
+
+        response = self.get(
+            reverse('api-bom-item-detail', kwargs={'pk': bom_item.pk}),
+            expected_code=200,
+        )
+
+        # 20 / (2 * 5) = 2
+        self.assertEqual(response.data['piece_count'], 5)
+        self.assertAlmostEqual(response.data['can_build'], 2)
+
+        # The part requirements endpoint also accounts for piece_count
+        response = self.get(
+            reverse('api-part-requirements', kwargs={'pk': assembly.pk}),
+            expected_code=200,
+        )
+
+        self.assertEqual(response.data['can_build'], 2)
+
+    def test_piece_count_pricing(self):
+        """Test that BOM pricing totals account for piece_count."""
+        assembly = Part.objects.create(
+            name='Cable Assembly', description='A cable assembly', assembly=True
+        )
+
+        wire = Part.objects.create(
+            name='Wire', description='Cut-to-length wire', component=True
+        )
+
+        pricing = wire.pricing
+        pricing.internal_cost_min = Money(2, 'USD')
+        pricing.internal_cost_max = Money(3, 'USD')
+        pricing.save()
+
+        bom_item = BomItem.objects.create(
+            part=assembly, sub_part=wire, quantity=4, piece_count=5
+        )
+
+        self.assignRole('pricing.view')
+
+        response = self.get(
+            reverse('api-bom-item-detail', kwargs={'pk': bom_item.pk}),
+            {'pricing': True},
+            expected_code=200,
+        )
+
+        # 4 x 5 = 20 units required per assembly
+        self.assertAlmostEqual(float(response.data['pricing_min_total']), 40)
+        self.assertAlmostEqual(float(response.data['pricing_max_total']), 60)
+
+    def test_piece_count_bom_export(self):
+        """Test that the BOM exporter total quantity accounts for piece_count."""
+        assembly = Part.objects.create(
+            name='Top Assembly', description='Top level assembly', assembly=True
+        )
+
+        sub_assembly = Part.objects.create(
+            name='Sub Assembly',
+            description='A sub-assembly',
+            assembly=True,
+            component=True,
+        )
+
+        wire = Part.objects.create(
+            name='Wire', description='Cut-to-length wire', component=True
+        )
+
+        BomItem.objects.create(
+            part=assembly, sub_part=sub_assembly, quantity=2, piece_count=3
+        )
+        BomItem.objects.create(
+            part=sub_assembly, sub_part=wire, quantity=4, piece_count=5
+        )
+
+        with self.export_data(
+            reverse('api-bom-list'),
+            {'part': assembly.pk, 'export_levels': 0},
+            export_plugin='bom-exporter',
+        ) as data_file:
+            data = self.process_csv(
+                data_file,
+                required_cols=['BOM Level', 'Total Quantity'],
+                required_rows=2,
+            )
+
+        totals = {str(row['BOM Level']): Decimal(row['Total Quantity']) for row in data}
+
+        # Level 1: 2 x 3 = 6 sub-assemblies
+        self.assertEqual(totals['1'], 6)
+
+        # Level 2: (4 x 5) x 6 = 120 units of wire
+        self.assertEqual(totals['2'], 120)
 
     def test_piece_count_get(self):
         """Test that piece_count is returned in GET response for BomItem."""

@@ -24,6 +24,9 @@ import {
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import AttachmentPanel from '../../components/panels/AttachmentPanel';
+import HistoryPanel, {
+  useShowHistoryPanel
+} from '../../components/panels/HistoryPanel';
 import NotesPanel from '../../components/panels/NotesPanel';
 import { PanelGroup } from '../../components/panels/PanelGroup';
 import ParametersPanel from '../../components/panels/ParametersPanel';
@@ -97,6 +100,8 @@ export default function ReturnOrderDetail() {
     );
   }, [order, globalSettings]);
 
+  const showHistory = useShowHistoryPanel();
+
   const orderPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -168,9 +173,14 @@ export default function ReturnOrderDetail() {
         model_type: ModelType.returnorder,
         model_id: order.pk,
         note_count: instanceInfo.note_count
+      }),
+      HistoryPanel({
+        model_type: ModelType.returnorder,
+        model_id: order.pk,
+        visible: showHistory
       })
     ];
-  }, [order, id, user, instanceInfo]);
+  }, [order, id, user, instanceInfo, showHistory]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading

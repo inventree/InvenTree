@@ -109,6 +109,7 @@ nav:
     - Parameters: concepts/parameters.md
     - Notes: concepts/notes.md
     - Tags: concepts/tags.md
+    - Audit Log: concepts/audit.md
     - Barcodes:
       - Barcode Support: barcodes/index.md
       - Internal Barcodes: barcodes/internal.md
