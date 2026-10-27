@@ -21,6 +21,8 @@ BLOCKED_MODELS = [
     'sessions.session',
     'common.emailmessage',
     'common.emailthread',
+    'common.webhookendpoint',
+    'common.webhookmessage',
     'users.apitoken',
     'users.userprofile',
     'authtoken.token',
